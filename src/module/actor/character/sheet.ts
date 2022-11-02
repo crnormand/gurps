@@ -223,7 +223,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		)
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
 		const resource_trackers = Array.from(this.actor.resource_trackers.values())
-		console.log(resource_trackers)
 		const encumbrance = this.prepareEncumbrance()
 		const lifts = this.prepareLifts()
 		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)

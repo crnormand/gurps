@@ -2,7 +2,7 @@ import { CharacterGURPS } from "@actor"
 import { NumberCompare, NumberComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { BasePrereq, Prereq, PrereqType } from "@prereq"
-import { extractTechLevel, i18n, numberCompare, toArray } from "@util"
+import { extractTechLevel, i18n, numberCompare } from "@util"
 import { PrereqConstructionContext } from "./base"
 
 export interface PrereqList extends Omit<BasePrereq, "has"> {
@@ -23,7 +23,7 @@ export class PrereqList extends BasePrereq {
 		super(data, context)
 		Object.assign(this, mergeObject(PrereqList.defaults, data))
 		if ((data as PrereqList).prereqs) {
-			const list = toArray((data as PrereqList).prereqs)
+			const list = (data as PrereqList).prereqs
 			this.prereqs = []
 			for (const e of list) {
 				const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[e.type as PrereqType]

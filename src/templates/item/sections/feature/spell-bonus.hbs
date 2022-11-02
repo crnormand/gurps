@@ -1,32 +1,45 @@
 <div class="field-3">
 	<div class="placeholder"> </div>
-	<select name="system.features.{{@index}}.match">
+	<select name="array.system.features.{{@index}}.match">
 		{{#select this.match}}
-		{{#each config.select.spell_match as |v k|}}
-		<option value="{{k}}">{{localize v}}</option>
-		{{/each}}
+			{{#each config.select.spell_match as |v k|}}
+				<option value="{{k}}">{{localize v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
-	<select name="system.features.{{@index}}.name.compare" {{input_lock (neq this.match "all_colleges" )}}>
+	<select name="array.system.features.{{@index}}.name.compare" {{input_lock (neq this.match "all_colleges")}}>
 		{{#select this.name.compare}}
-		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize v}}</option>
-		{{/each}}
+			{{#each config.select.string_compare as |v k|}}
+				<option value="{{k}}">{{localize v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat "system.features." @index ".name.qualifier")
-	data=this.name.qualifier
-	type="String" class=(input_lock (and (neq this.match "all_colleges") (neq this.name.compare "none")))}}
+	<div class="field">
+		<input
+			type="text"
+			name="array.system.features.{{@index}}.name.qualifier"
+			value="{{this.name.qualifier}}"
+			data-dtype="String"
+			{{input_lock (and (neq this.match "all_colleges") (neq this.name.compare "none"))}}
+		/>
+	</div>
 </div>
 <div class="field-2">
 	<div class="placeholder"> </div>
-	<select name="system.features.{{@index}}.tags.compare">
+	<select name="array.system.features.{{@index}}.tags.compare">
 		{{#select this.tags.compare}}
-		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.tags"}} {{localize v}}</option>
-		{{/each}}
+			{{#each config.select.string_compare as |v k|}}
+				<option value="{{k}}">{{localize "gurps.field_prefix.tags"}} {{localize v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat "system.features." @index ".tags.qualifier")
-	data=this.tags.qualifier type="String" class=(input_lock (neq this.tags.compare "none"))}}
+	<div class="field">
+		<input
+			type="text"
+			name="array.system.features.{{@index}}.tags.qualifier"
+			value="{{this.tags.qualifier}}"
+			data-dtype="String"
+			{{input_lock (neq this.tags.compare "none")}}
+		/>
+	</div>
 </div>

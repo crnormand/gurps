@@ -1,12 +1,7 @@
 import { StringCompare, StringComparison } from "@module/data"
-import { BaseFeature, FeatureConstructionContext } from "./base"
+import { BaseFeature } from "./base"
 
 export class SkillBonus extends BaseFeature {
-	constructor(data: SkillBonus | any, context: FeatureConstructionContext = {}) {
-		super(data, context)
-		Object.assign(this, { ...data, ...SkillBonus.defaults })
-	}
-
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
 			type: "skill_bonus",

@@ -95,7 +95,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.modified_date = sd.created_date
 		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
 		sd.attributes = this.newAttributes(sd.settings.attributes)
-		sd.resource_trackers = []
+		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
 	}
@@ -502,7 +502,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		return this.system.settings.body_type.locations
+		return this.system.settings.body_type?.locations ?? []
 		// Return this.system.settings.body_type.locations.map(e => {
 		// 	e.roll_range = e.calc?.roll_range || ""
 		// 	e.dr = {}
@@ -811,7 +811,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareBaseData(): void {
 		super.prepareBaseData()
-		if (this.noPrepare) return
+		if (this.noPrepare) {
+			this.noPrepare = false
+			return
+		}
 		this.system.settings.attributes.forEach(e => (e.cost_adj_percent_per_sm ??= 0))
 		if (this.system.attributes.length === 0) {
 			this.system.attributes = this.newAttributes()
@@ -824,27 +827,27 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	override prepareEmbeddedDocuments(): void {
-		super.prepareEmbeddedDocuments()
-		if (!this.noPrepare) {
-			this.updateSkills()
-			this.updateSpells()
-			for (let i = 0; i < 5; i++) {
-				this.processFeatures()
-				this.processPrereqs()
-				let skillsChanged = this.updateSkills()
-				let spellsChanged = this.updateSpells()
-				if (!skillsChanged && !spellsChanged) break
-			}
-			this.pools = {}
-			for (const a of Object.values(this.attributes)) {
-				if (a.attribute_def.type === AttributeType.Pool)
-					this.pools[a.attribute_def.name] = {
-						max: a.max,
-						value: a.current,
-					}
-			}
-		} else {
+		if (this.noPrepare) {
 			this.noPrepare = false
+			return
+		}
+		super.prepareEmbeddedDocuments()
+		this.updateSkills()
+		this.updateSpells()
+		for (let i = 0; i < 5; i++) {
+			this.processFeatures()
+			this.processPrereqs()
+			let skillsChanged = this.updateSkills()
+			let spellsChanged = this.updateSpells()
+			if (!skillsChanged && !spellsChanged) break
+		}
+		this.pools = {}
+		for (const a of Object.values(this.attributes)) {
+			if (a.attribute_def.type === AttributeType.Pool)
+				this.pools[a.attribute_def.name] = {
+					max: a.max,
+					value: a.current,
+				}
 		}
 	}
 

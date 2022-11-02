@@ -277,7 +277,8 @@
 			"cr": 0,
 			"cr_adj": "none",
 			"features": [],
-			"weapons": []
+			"weapons": [],
+			"study": []
 		},
 		"trait_container": {
 			"templates": ["common"],
@@ -304,7 +305,8 @@
 			"points": 1,
 			"encumbrance_penalty_multiplier": 0,
 			"features": [],
-			"weapons": []
+			"weapons": [],
+			"study": []
 		},
 		"technique": {
 			"templates": ["common", "prereqs"],
@@ -317,7 +319,8 @@
 				"modifier": 0
 			},
 			"features": [],
-			"weapons": []
+			"weapons": [],
+			"study": []
 		},
 		"skill_container": {
 			"templates": ["common"],
@@ -335,7 +338,8 @@
 			"casting_time": "1 sec",
 			"duration": "Instant",
 			"weapons": [],
-			"college": []
+			"college": [],
+			"study": []
 		},
 		"ritual_magic_spell": {
 			"templates": ["common", "prereqs"],
@@ -350,7 +354,8 @@
 			"base_skill": "Ritual Magic",
 			"prereq_count": 0,
 			"weapons": [],
-			"college": []
+			"college": [],
+			"study": []
 		},
 		"spell_container": {
 			"templates": ["common"],

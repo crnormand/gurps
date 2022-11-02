@@ -1,12 +1,10 @@
 <div id="defaults">
 	<div class="header">{{localize "gurps.default.header"}}</div>
 	<div class="content">
-		<div>
-			<i class="add button gcs-circled-add"></i>
-		</div>
+		<div> <a class="add button gcs-circled-add"></a> </div>
 		{{#each this.defaults}}
-		<div class="default">
-			<i class="remove button gcs-trash" data-index="{{@index}}"></i>
+			<div class="default">
+				<a class="remove button gcs-trash" data-index="{{@index}}"></a>
 			<select name="{{../sysPrefix}}defaults.{{@index}}.type" data-index="{{@index}}">
 				{{#select this.type}}
 				<option value="10">{{localize "gurps.select.defaults.ten"}}</option>
@@ -18,13 +16,15 @@
 				<option value="skill">{{localize "gurps.select.defaults.skill"}}</option>
 				{{/select}}
 			</select>
-			{{>sections/input-text field="field" name=(concat ../sysPrefix "defaults." @index ".name") data=this.name
-			type="String"
-			class=(input_lock (eq this.type "skill"))}}
-			{{>sections/input-text field="field" name=(concat ../sysPrefix "defaults." @index ".specialization")
-			data=this.specialization type="String" class=(input_lock (eq this.type "skill"))}}
-			{{>sections/input-text field="field" name=(concat "NUMBER." ../sysPrefix "defaults." @index ".modifier")
-			data=(signed this.modifier) type="String"}}
+			<div class="field">
+				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}.name" value="{{this.name}}" data-dtype="String" {{input_lock (eq this.type "skill")}} />
+			</div>
+			<div class="field">
+				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}.specialization" value="{{this.specialization}}" data-dtype="String" {{input_lock (eq this.type "skill")}} />
+			</div>
+			<div class="field">
+				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}modifier" value="{{signed this.modifier}}" data-dtype="String"/>
+			</div>
 		</div>
 		{{/each}}
 	</div>

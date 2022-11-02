@@ -99,31 +99,30 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 		context?: DocumentModificationContext | undefined
 	): Promise<Document<any, any, Metadata<any>>[]> {
 		if (embeddedName !== "Item") return super.updateEmbeddedDocuments(embeddedName, updates, context)
-
 		const contained: any[] = (this.getFlag(SYSTEM_NAME, "contentsData") as any[]) ?? []
 		if (!Array.isArray(updates)) updates = [updates]
 		const updated: any[] = []
 		const newContained = contained.map((existing: ItemGURPS) => {
 			const theUpdate = updates.find(update => update._id === existing._id)
 			if (theUpdate) {
-				const newData = mergeObject(theUpdate, existing, {
-					overwrite: false,
+				const newData = mergeObject(existing, theUpdate, {
+					overwrite: true,
 					insertKeys: true,
 					insertValues: true,
 					inplace: false,
 				})
-				if (newData["system.prereqs.-=prereqs"]) delete newData["system.prereqs.-=prereqs"]
-				// Temporary hack to fix prereqs. will fix later
-				// TODO: fix later
-				if (Object.keys(theUpdate).includes("system.prereqs.-=prereqs"))
-					(newData.system as any).prereqs.prereqs = null
+				// If (newData["system.prereqs.-=prereqs"]) delete newData["system.prereqs.-=prereqs"]
+				// // Temporary hack to fix prereqs. will fix later
+				// // TODO: fix later
+				// if (Object.keys(theUpdate).includes("system.prereqs.-=prereqs"))
+				// 	(newData.system as any).prereqs.prereqs = null
 				updated.push(newData)
 				return newData
 			}
 			return existing
 		})
 
-		if (updated.length) {
+		if (updated.length > 0) {
 			if (this.parent) {
 				await this.parent.updateEmbeddedDocuments("Item", [
 					{
@@ -174,10 +173,12 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 	}
 
 	prepareData(): void {
+		if (this.actor?.noPrepare) return
 		super.prepareData()
 	}
 
 	prepareEmbeddedDocuments(): void {
+		if (this.actor?.noPrepare) return
 		super.prepareEmbeddedDocuments()
 		const containedItems = (this.getFlag(SYSTEM_NAME, "contentsData") as ItemDataGURPS[]) ?? []
 		const oldItems = this.items ?? new Collection()
@@ -192,18 +193,29 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 				this.items.set(item._id!, theItem as ItemGURPS)
 			} else {
 				const currentItem = oldItems.get(item._id!)!
-				setProperty(currentItem._source, "name", item.name)
-				setProperty(currentItem._source, "flags", item.flags)
-				setProperty(currentItem._source, "system", item.system)
-				setProperty(currentItem._source, "sort", item.sort)
+				;(currentItem as any).name = item.name
+				;(currentItem as any).flags = item.flags
+				;(currentItem as any).system = item.system
+				;(currentItem as any).img = item.img
+				;(currentItem as any).sort = item.sort
+				// SetProperty(currentItem._source, "name", item.name)
+				// setProperty(currentItem._source, "flags", item.flags)
+				// setProperty(currentItem._source, "system", item.system)
+				// setProperty(currentItem._source, "sort", item.sort)
+				// setProperty(currentItem, "name", item.name)
+				// setProperty(currentItem, "flags", item.flags)
+				// setProperty(currentItem, "system", item.system)
+				// setProperty(currentItem, "sort", item.sort)
 				currentItem.prepareData()
 				this.items.set(item._id!, currentItem)
-				if (this.sheet) {
-					currentItem.render(false, {
-						// @ts-ignore
-						action: "update",
-						data: currentItem.toObject(),
-					})
+				if (this.sheet?.rendered) {
+					// @ts-ignore
+					this.sheet.render(false, { action: "update" })
+					// CurrentItem.render(false, {
+					// 	// @ts-ignore
+					// 	action: "update",
+					// 	data: currentItem.toObject(),
+					// })
 				}
 			}
 		}

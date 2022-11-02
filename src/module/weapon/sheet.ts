@@ -1,8 +1,9 @@
 import { CharacterGURPS } from "@actor"
 import { ItemGURPS } from "@item"
+import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
 import { SYSTEM_NAME } from "@module/settings"
-import { i18n, toArray } from "@util"
+import { i18n } from "@util"
 import { Weapon } from "."
 
 export class WeaponSheet extends FormApplication {
@@ -82,11 +83,11 @@ export class WeaponSheet extends FormApplication {
 		return all_buttons
 	}
 
-	protected _updateObject(event: Event, formData: DocumentSheetConfig.FormData | any): Promise<any> {
+	protected _updateObject(_event: Event, formData: DocumentSheetConfig.FormData | any): Promise<any> {
 		// FormData = FormApplicationGURPS.updateObject(event, formData)
 		formData["damage.base"] = new DiceGURPS(formData["damage.base"] as string).stringExtra(false)
 
-		const weaponList: Weapon[] = toArray(duplicate(getProperty(this.object, "system.weapons")))
+		const weaponList: Weapon[] = (this.object.system as any).weapons
 		for (const [k, v] of Object.entries(formData)) {
 			setProperty(weaponList[this.index], k, v)
 		}
@@ -95,8 +96,8 @@ export class WeaponSheet extends FormApplication {
 	}
 
 	protected async _addDefault(_event: JQuery.ClickEvent): Promise<any> {
-		const weapons = toArray(duplicate(getProperty(this.object, "system.weapons")))
-		const defaults = toArray(duplicate(getProperty(this.weapon, "defaults")))
+		const weapons: Partial<Weapon>[] = (this.object.system as any).weapons
+		const defaults: Partial<SkillDefault>[] = this.weapon.defaults
 		defaults.push({
 			type: "skill",
 			name: "",
@@ -104,7 +105,7 @@ export class WeaponSheet extends FormApplication {
 			modifier: 0,
 		})
 		const update: any = {}
-		this.weapon.defaults = defaults
+		;(this.weapon as any).defaults = defaults
 		weapons[this.index] = { ...this.weapon }
 		update["system.weapons"] = weapons
 		await this.object.update(update)
@@ -113,11 +114,11 @@ export class WeaponSheet extends FormApplication {
 
 	protected async _removeDefault(event: JQuery.ClickEvent): Promise<any> {
 		const index = $(event.currentTarget).data("index")
-		const weapons = toArray(duplicate(getProperty(this.object, "system.weapons")))
-		const defaults = toArray(duplicate(getProperty(this.weapon, "defaults")))
+		const weapons: Partial<Weapon>[] = (this.object.system as any).weapons
+		const defaults: Partial<SkillDefault>[] = this.weapon.defaults
 		defaults.splice(index, 1)
 		const update: any = {}
-		this.weapon.defaults = defaults
+		;(this.weapon as any).defaults = defaults
 		weapons[this.index] = { ...this.weapon }
 		update["system.weapons"] = weapons
 		await this.object.update(update)

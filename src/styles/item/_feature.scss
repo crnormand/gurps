@@ -1,5 +1,6 @@
 #features,
-#defaults {
+#defaults,
+#study {
 	margin: 2px 16px;
 	.content {
 		border: 1px solid rgb(var(--color-header));
@@ -10,13 +11,19 @@
 		}
 	}
 }
+
+.feature,
+.default,
+.study-entry {
+	a {
+		align-self: center;
+	}
+}
+
 .feature {
 	display: grid;
 	grid-auto-flow: rows;
 	grid-gap: 5px;
-	i {
-		align-self: center;
-	}
 	> div {
 		display: grid;
 		grid-gap: 5px;
@@ -52,4 +59,10 @@
 	display: grid;
 	grid-gap: 5px;
 	grid-template-columns: 0fr 0fr 1fr 1fr 0fr;
+}
+
+.study-entry {
+	display: grid;
+	grid-gap: 5px;
+	grid-template-columns: 0fr 0fr 0fr 0fr 0fr 1fr;
 }

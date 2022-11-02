@@ -30,7 +30,7 @@
             </div>
             <div class="label">{{ localize "gurps.item.cr" }}</div>
             <div class="field">
-                <select name="NUMBER.system.cr" data-dtype="String">
+                <select name="system.cr" data-dtype="Number">
                     {{#select system.cr }}
                     {{#each config.select.cr_level as |v k | }}
                         <option value="{{k}}">

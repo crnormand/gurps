@@ -1,86 +1,82 @@
-<form class="{{ cssClass }} gurps" autocomplete="off">
-    <div id="sheet">
-        <div id="details">
-<div class="label">{{localize "gurps.item.name"}}</div>
-<div class="field">
-<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
-</div>
-<div class="label">{{localize "gurps.item.notes"}}</div>
-<div class="field">
-<input type="text" name="system.notes" value="{{system.notes}}" data-dtype="String" />
-</div>
-<div class="label">{{localize "gurps.item.vtt_notes"}}</div>
-<div class="field">
-<input type="text" name="system.vtt_notes" value="{{system.vtt_notes}}" data-dtype="String" />
-</div>
-<div class="label">{{localize "gurps.item.tech_level"}}</div>
-<div class="field">
-<input type="text" name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
-</div>
-<div class="label">{{localize "gurps.item.legality_class"}}</div>
-<div class="field">
-<input type="text" name="system.legality_class" value="{{system.legality_class}}" data-dtype="String" />
-</div>
-            <div class="label">{{ localize "gurps.item.quantity" }}</div>
-            <div class="field no-stretch">
-                {{>sections/input-text field="field" name="NUMBER.system.quantity" data=system.quantity type="String" }}
-                {{#if document.actor }}
-                    <label class="label checkbox-label">
-                        <input class="input" type="checkbox" {{ checked system.equipped }} />
-                        {{ localize "gurps.item.equipped" }}
-                    </label>
-                {{/if }}
-            </div>
-            <div class="label">{{ localize "gurps.item.value" }}</div>
-            <div class="field no-stretch">
-                {{>sections/input-text name="NUMBER.system.value" data=system.value type="String" }}
-                <div class="label">{{ localize "gurps.item.extended_value" }}</div>
-                {{>sections/input-text data=document.extendedValueFast type="String" class="readonly tabIndex='-1'" }}
-            </div>
-            <div class="label">{{ localize "gurps.item.weight" }}</div>
-            <div class="field no-stretch">
-                {{>sections/input-text name="system.weight" data=document.weightString type="String" }}
-                <div class="label">{{ localize "gurps.item.extended_weight" }}</div>
-                {{>sections/input-text data=document.extendedWeightFast type="String" class="readonly tabIndex='-1'" }}
-            </div>
-            <div class="label"></div>
-            <div class="field no-stretch check">
-                <label class="label checkbox-label">
-                    <input class="input" type="checkbox" {{ checked system.ignore_weight_for_skills }} />
-                    {{ localize "gurps.item.ignore_weight_for_skills" }}
-                </label>
-            </div>
-            <div class="label">{{ localize "gurps.item.uses" }}</div>
-            <div class="field no-stretch">
-                {{>sections/input-text name="NUMBER.system.uses" data=system.uses type="String" class=(input_lock (neq
-                system.max_uses 0))}}
-                <div class="label">{{ localize "gurps.item.max_uses" }}</div>
-                {{>sections/input-text name="NUMBER.system.max_uses" data=system.max_uses type="String" }}
-            </div>
-            {{>sections/input-text field="field" label="gurps.item.tags" name="system.tags" data=(join system.tags ", ")
-            type="String"}}
-            {{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
-            data=system.reference type="String"}}
-        </div>
-        {{>item/sections/prerequisites }}
-        {{>item/sections/features }}
-        <div id="equipment-modifiers" class="item-list">
-            <div class="header enabled">
-                <i class="gcs-checkmark"></i>
-            </div>
-            <div class="header desc">{{ localize "gurps.item.eqp_modifier_desc" }}</div>
-            <div class="header tl">{{ localize "gurps.item.modifier_tl" }}</div>
-            <div class="header cost">{{ localize "gurps.item.modifier_cost" }}</div>
-            <div class="header weight">{{ localize "gurps.item.modifier_weight" }}</div>
-            <div class="header tags">{{ localize "gurps.item.tags" }}</div>
-            <div class="header reference">
-                <i class="gcs-bookmark"></i>
-            </div>
-            {{#each (sort modifiers "sort") }}
-                {{>eqp-mod }}
-            {{/each }}
-        </div>
-        {{>item/sections/melee }}
-        {{>item/sections/ranged }}
-    </div>
+<form class="{{cssClass}} gurps" autocomplete="off">
+	<div id="sheet">
+		<div id="details">
+			<div class="label">{{localize "gurps.item.name"}}</div>
+			<div class="field">
+				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.notes"}}</div>
+			<div class="field">
+				<input type="text" name="system.notes" value="{{system.notes}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.vtt_notes"}}</div>
+			<div class="field">
+				<input type="text" name="system.vtt_notes" value="{{system.vtt_notes}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.tech_level"}}</div>
+			<div class="field">
+				<input type="text" name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.legality_class"}}</div>
+			<div class="field">
+				<input type="text" name="system.legality_class" value="{{system.legality_class}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.quantity"}}</div>
+			<div class="field no-stretch">
+				<input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number" />
+				<label class="label checkbox-label">
+					<input class="input" type="checkbox" {{checked system.equipped}} />
+					{{localize "gurps.item.equipped"}}
+				</label>
+			</div>
+			<div class="label">{{localize "gurps.item.value"}}</div>
+			<div class="field no-stretch">
+				<input type="text" name="system.value" value="{{system.value}}" data-dtype="Number" />
+				<div class="label">{{localize "gurps.item.extended_value"}}</div>
+				<input type="text" value="{{document.extendedValueFast}}" readonly tabIndex="-1" />
+			</div>
+			<div class="label">{{localize "gurps.item.weight"}}</div>
+			<div class="field no-stretch">
+				<input type="text" name="system.weight" value="{{system.weight}}" data-dtype="Number" />
+				<div class="label">{{localize "gurps.item.extended_weight"}}</div>
+				<input type="text" value="{{document.extendedWeightFast}}" readonly tabIndex="-1" />
+			</div>
+			<div class="label">{{localize "gurps.item.uses"}}</div>
+			<div class="field no-stretch">
+				<input
+					type="text"
+					name="system.uses"
+					value="{{system.uses}}"
+					data-dtype="Number"
+					{{input_lock (neq system.max_uses 0)}}
+				/>
+				<div class="label">{{localize "gurps.item.max_uses"}}</div>
+				<input type="text" name="system.max_uses" value="{{system.max_uses}}" data-dtype="Number" />
+			</div>
+			<div class="label">{{localize "gurps.item.tags"}}</div>
+			<div class="field">
+				<input type="text" name="system.tags" value="{{join system.tags '.'}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.reference"}}</div>
+			<div class="field">
+				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
+			</div>
+		</div>
+		{{>item/sections/prerequisites}}
+		{{>item/sections/features}}
+		<div id="equipment-modifiers" class="item-list">
+			<div class="header enabled"><i class="gcs-checkmark"></i></div>
+			<div class="header desc">{{localize "gurps.item.eqp_modifier_desc"}}</div>
+			<div class="header tl">{{localize "gurps.item.modifier_tl"}}</div>
+			<div class="header cost">{{localize "gurps.item.modifier_cost"}}</div>
+			<div class="header weight">{{localize "gurps.item.modifier_weight"}}</div>
+			<div class="header tags">{{localize "gurps.item.tags"}}</div>
+			<div class="header reference"><i class="gcs-bookmark"></i></div>
+			{{#each (sort modifiers "sort")}}
+			{{>eqp-mod}}
+			{{/each}}
+		</div>
+		{{>item/sections/melee}}
+		{{>item/sections/ranged}}
+	</div>
 </form>

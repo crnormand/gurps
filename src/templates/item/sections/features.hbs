@@ -2,14 +2,14 @@
     <div class="header">{{localize "gurps.feature.header"}}</div>
     <div class="content">
         <div>
-            <i class="add button gcs-circled-add"></i>
+            <a class="add button gcs-circled-add"></a>
         </div>
         {{#each system.features }}
             <div class="feature">
                 <div class="top">
-                    <i class="remove button gcs-trash" data-index="{{@index}}"></i>
+                    <a class="remove button gcs-trash" data-index="{{@index}}"></a>
                     <select class="type"
-                            name="system.features.{{@index}}.type"
+                            name="array.system.features.{{@index}}.type"
                             data-index="{{@index}}">
                         {{#select this.type}}
                         {{#each ../config.select.features as |v k| }}
@@ -30,25 +30,25 @@
                     {{>cost-reduction config=../config attributes=../attributes}}
                 {{else}}
 					<div class="field">
-						<input type="text" name="system.features.{{@index}}.amount" value="{{this.amount}}" data-dtype="String" />
+						<input type="text" name="array.system.features.{{@index}}.amount" value="{{signed this.amount}}" data-dtype="Number" />
 					</div>
                     {{#if (eq this.type "weapon_bonus") }}
                         <div class="field">
                             <label class="checkbox-label">
-                                <input class="input" type="checkbox" data-dtype="Boolean" name="system.features.{{@index}}.per_level" {{checked this.per_level}} />
+                                <input class="input" type="checkbox" data-dtype="Boolean" name="array.system.features.{{@index}}.per_level" {{checked this.per_level}} />
                                 {{localize "gurps.feature.per_die"}}
                             </label>
                         </div>
                         <div class="field">
                             <label class="checkbox-label">
-                                <input class="input" type="checkbox" data-dtype="Boolean" name="system.features.{{@index}}.percent" {{checked this.percent}} />
+                                <input class="input" type="checkbox" data-dtype="Boolean" name="array.system.features.{{@index}}.percent" {{checked this.percent}} />
                                 {{localize "gurps.feature.percent"}}
                             </label>
                         </div>
                     {{else}}
                         <div class="field">
                             <label class="checkbox-label">
-                                <input class="input" type="checkbox" data-dtype="Boolean" name="system.features.{{@index}}.per_level" {{checked this.per_level}} />
+                                <input class="input" type="checkbox" data-dtype="Boolean" name="array.system.features.{{@index}}.per_level" {{checked this.per_level}} />
                                 {{localize "gurps.feature.per_level"}}
                             </label>
                         </div>

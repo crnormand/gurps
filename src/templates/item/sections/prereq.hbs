@@ -2,10 +2,10 @@
 	<div class="top">
 		{{#if (eq this.type "prereq_list")}}
 		{{#unless (eq indent 0)}}
-		<i class="remove button gcs-trash" data-path="{{path}}"></i>
+		<a class="remove button gcs-trash" data-path="{{path}}"></a>
 		{{/unless}}
-		<i class="add-child button gcs-circled-add" data-path="{{path}}"></i>
-		<i class="add-list button gcs-circled-vertical-ellipsis" data-path="{{path}}"></i>
+		<a class="add-child button gcs-circled-add" data-path="{{path}}"></a>
+		<a class="add-list button gcs-circled-vertical-ellipsis" data-path="{{path}}"></a>
 		<select name="{{path}}.when_tl.compare" data-dtype="String">
 			{{#select this.when_tl.compare}}
 			{{#each config.select.number_compare as |v k|}}
@@ -25,7 +25,7 @@
 			{{/select}}
 		</select>
 		{{else}}
-		<i class="remove button gcs-trash" data-path="{{path}}"></i>
+		<a class="remove button gcs-trash" data-path="{{path}}"></a>
 		<select name="{{path}}.has" data-dtype="String">
 			{{#select this.has}}
 			{{#each config.select.has as |v k|}}

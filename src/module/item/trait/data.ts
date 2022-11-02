@@ -1,7 +1,7 @@
 import { Feature } from "@feature"
 import { SkillBonus } from "@feature/skill_bonus"
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { CRAdjustment } from "@module/data"
+import { CRAdjustment, Study } from "@module/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
@@ -35,6 +35,7 @@ export interface TraitSystemData extends BaseContainerSystemData {
 	cr_adj: CRAdjustment
 	features?: Feature[]
 	weapons?: Weapon[]
+	study: Study[]
 }
 
 const CR_Features = new Map()

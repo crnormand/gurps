@@ -8,9 +8,10 @@ import {
 } from "@actor/static_character/data"
 import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
+import { Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { Static } from "@util"
-import { i18n } from "./misc"
+import { getAdjustedStudyHours, i18n } from "./misc"
 
 /**
  *
@@ -206,6 +207,10 @@ export function registerHandlebarsHelpers() {
 		if (!a) return ""
 		if (a.includes("http")) return i18n("gurps.character.link")
 		return a
+	})
+
+	Handlebars.registerHelper("adjustedStudyHours", function (entry: Study): number {
+		return getAdjustedStudyHours(entry)
 	})
 
 	// Handlebars.registerHelper("selected", function (list: any[], item: string): string {
