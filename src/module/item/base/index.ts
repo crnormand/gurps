@@ -5,12 +5,13 @@ import {
 import { ItemDataGURPS, ItemFlagsGURPS, ItemType } from "@item/data"
 import { CharacterGURPS } from "@actor/character"
 import { BaseWeapon, MeleeWeapon, RangedWeapon, Weapon } from "@module/weapon"
+import { Study } from "@module/data"
 import { Feature } from "@feature"
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
 import { SYSTEM_NAME } from "@module/settings"
 import { BaseItemSourceGURPS, ItemSystemData } from "./data"
 import { ItemDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
-import { toArray } from "@util"
+import { getAdjustedStudyHours } from "@util"
 import { BaseFeature } from "@feature/base"
 import { PrereqList } from "@prereq"
 import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
@@ -69,7 +70,7 @@ class BaseItemGURPS extends Item {
 	): Promise<this | undefined> {
 		if (this.actor && context?.noPrepare) this.actor.noPrepare = true
 		if (!(this.parent instanceof Item)) return super.update(data, context)
-		data = expandObject(data)
+		// Data = expandObject(data)
 		data._id = this.id
 		await this.parent.updateEmbeddedDocuments("Item", [data])
 		// @ts-ignore
@@ -86,24 +87,24 @@ class BaseItemGURPS extends Item {
 	}
 
 	// Should not be necessary
-	override prepareBaseData(): void {
-		mergeObject(this.system, this._source.system)
-		mergeObject(this.flags, this._source.flags)
-		setProperty(this, "name", this._source.name)
-		setProperty(this, "sort", this._source.sort)
-		if (getProperty(this, "system.features"))
-			setProperty(this, "system.features", {
-				...getProperty(this, "system.features"),
-			})
-		if (getProperty(this, "system.prereqs.prereqs"))
-			setProperty(this, "system.prereqs.prereqs", {
-				...getProperty(this, "system.prereqs.prereqs"),
-			})
-		if (getProperty(this, "system.weapons"))
-			setProperty(this, "system.weapons", {
-				...getProperty(this, "system.weapons"),
-			})
-	}
+	// override prepareBaseData(): void {
+	// mergeObject(this.system, this._source.system)
+	// mergeObject(this.flags, this._source.flags)
+	// setProperty(this, "name", this._source.name)
+	// setProperty(this, "sort", this._source.sort)
+	// if (getProperty(this, "system.features"))
+	// 	setProperty(this, "system.features", {
+	// 		...getProperty(this, "system.features"),
+	// 	})
+	// if (getProperty(this, "system.prereqs.prereqs"))
+	// 	setProperty(this, "system.prereqs.prereqs", {
+	// 		...getProperty(this, "system.prereqs.prereqs"),
+	// 	})
+	// if (getProperty(this, "system.weapons"))
+	// 	setProperty(this, "system.weapons", {
+	// 		...getProperty(this, "system.weapons"),
+	// 	})
+	// }
 
 	get formattedName(): string {
 		return this.name ?? ""
@@ -132,12 +133,9 @@ class BaseItemGURPS extends Item {
 
 	get features(): Feature[] {
 		if (this.system.hasOwnProperty("features")) {
-			const features: Feature[] = []
-			const list = toArray((this.system as any).features)
-			for (const f of list ?? []) {
-				features.push(new BaseFeature({ ...f, parent: this.uuid, item: this }))
-			}
-			return features
+			return (this.system as any).features.map(
+				(e: Partial<Feature>) => new BaseFeature({ ...e, parent: this.uuid, item: this })
+			)
 		}
 		return []
 	}
@@ -174,7 +172,7 @@ class BaseItemGURPS extends Item {
 		)
 			return new Map()
 		const weapons: Map<number, Weapon> = new Map()
-		toArray((this as any).system.weapons).forEach((w: any, index: number) => {
+		;(this.system as any).weapons.forEach((w: any, index: number) => {
 			weapons.set(
 				index,
 				new BaseWeapon({
@@ -184,6 +182,13 @@ class BaseItemGURPS extends Item {
 			)
 		})
 		return weapons
+	}
+
+	get studyHours(): number {
+		if (!["trait", "skill", "technique", "spell", "ritual_magic_spell"].includes(this.type)) return 0
+		return (this.system as any).study
+			.map((e: Study) => getAdjustedStudyHours(e))
+			.reduce((partialSum: number, a: number) => partialSum + a, 0)
 	}
 
 	get parents(): Array<any> {

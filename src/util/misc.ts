@@ -1,4 +1,4 @@
-import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
+import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "@module/data"
 import { v4 as uuidv4 } from "uuid"
 
 /**
@@ -224,19 +224,6 @@ export function floatingMul(...args: number[]): number {
 
 /**
  *
- * @param obj
- */
-export function toArray(obj: any): any[] {
-	if (Array.isArray(obj)) return obj
-	const arr: any[] = []
-	for (const [key, value] of Object.entries(obj)) {
-		if (!isNaN(key as any) && !arr[parseInt(key)]) arr.push(value)
-	}
-	return arr
-}
-
-/**
- *
  * @param n
  */
 export function toWord(n: number): string {
@@ -285,3 +272,65 @@ export function capitalize(s: string): string {
 // 	},
 // 	enumerable: false
 // });
+
+/**
+ *
+ * @param s
+ */
+export function getAdjustedStudyHours(s: Study): number {
+	switch (s.type) {
+		case StudyType.Self:
+			return s.hours * 0.5
+		case StudyType.Job:
+			return s.hours * 0.25
+		case StudyType.Teacher:
+			return s.hours
+		case StudyType.Intensive:
+			return s.hours * 2
+	}
+}
+
+/**
+ *
+ * @param _event
+ * @param formData
+ * @param object
+ */
+export function prepareFormData(_event: Event, formData: any, object: any): any {
+	for (let aKey of Object.keys(formData)) {
+		if (aKey.startsWith("array.") && aKey.match(/\d/)) {
+			const key = aKey.replace(/^array./g, "")
+			const arrayKey = key.split(/.\d+./)[0]
+			const array: any[] = getProperty(object, arrayKey)
+			const index = parseInt(key.match(/.(\d+)./)![1])
+			const prop = key.replace(new RegExp(`^${arrayKey}.${index}.`), "")
+			setArrayProperty(array, index, prop, formData[aKey])
+			formData[arrayKey] = array
+			delete formData[aKey]
+		} else if (aKey.startsWith("array.")) {
+			formData[aKey.replace("array.", "")] = formData[aKey]
+			delete formData[aKey]
+		}
+	}
+	return formData
+}
+
+/**
+ *
+ * @param a
+ * @param index
+ * @param prop
+ * @param value
+ */
+function setArrayProperty(a: any[], index: number, prop: string, value: any): any[] {
+	if (prop.match(/.\d+./)) {
+		const inArrayKey = prop.split(/.\d+./)[0]
+		const inArrayArray = getProperty(a[index], inArrayKey)
+		const inArrayIndex = parseInt(prop.match(/.(\d+)./)![1])
+		const inArrayProp = prop.replace(`${inArrayKey}.${inArrayIndex}.`, "")
+		setProperty(a[index], inArrayKey, setArrayProperty(inArrayArray, inArrayIndex, inArrayProp, value))
+		return a
+	}
+	setProperty(a[index], prop, value)
+	return a
+}

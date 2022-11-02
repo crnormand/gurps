@@ -3,8 +3,7 @@
 	<select name="{{path}}.name.compare">
 		{{#select this.name.compare}}
 		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.skill_name"}} {{localize (concat
-			"gurps.select.string_compare." v)}}</option>
+		<option value="{{k}}">{{localize "gurps.field_prefix.name"}} {{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>
@@ -16,8 +15,7 @@
 	<select name="{{path}}.specialization.compare">
 		{{#select this.specialization.compare}}
 		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.specialization"}} {{localize (concat
-			"gurps.select.string_compare." v)}}</option>
+		<option value="{{k}}">{{localize "gurps.field_prefix.specialization"}} {{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>
@@ -30,8 +28,7 @@
 	<select name="{{path}}.level.compare">
 		{{#select this.level.compare}}
 		{{#each config.select.number_compare as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.level"}} {{localize (concat
-			"gurps.select.number_compare." v)}}</option>
+		<option value="{{k}}">{{localize "gurps.field_prefix.level"}} {{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>

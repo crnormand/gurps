@@ -38,6 +38,7 @@ export interface CharacterImportedData extends Omit<CharacterSystemData, "attrib
 	other_equipment: Array<EquipmentSystemData | EquipmentContainerSystemData>
 	notes: Array<NoteSystemData | NoteContainerSystemData>
 	attributes: Array<AttributeObj>
+	third_party: any
 }
 
 export class CharacterImporter {
@@ -84,6 +85,7 @@ export class CharacterImporter {
 			commit = { ...commit, ...(await this.importProfile(r.profile)) }
 			commit = { ...commit, ...this.importSettings(r.settings) }
 			commit = { ...commit, ...this.importAttributes(r.attributes) }
+			commit = { ...commit, ...this.importResourceTrackers(r.third_party) }
 
 			// Begin item import
 			const items: Array<ItemGURPS> = []
@@ -217,15 +219,16 @@ export class CharacterImporter {
 	}
 
 	importAttributes(attributes: AttributeObj[]) {
-		// Const atts: Record<string, AttributeObj> = {}
-		// for (const a of attributes) {
-		// 	atts[a.attr_id] = a
-		// }
-		// return {
-		// 	"system.attributes": atts,
-		// }
 		return {
 			"system.attributes": attributes,
+		}
+	}
+
+	importResourceTrackers(tp: any) {
+		if (!tp) return
+		return {
+			"system.settings.resource_trackers": tp.settings?.resource_trackers ?? [],
+			"system.resource_trackers": tp.resource_trackers ?? [],
 		}
 	}
 
@@ -365,6 +368,7 @@ export class CharacterImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -435,6 +439,7 @@ export class CharacterImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -458,6 +463,7 @@ export class CharacterImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -496,6 +502,7 @@ export class CharacterImporter {
 			casting_time: data.casting_time ?? "",
 			duration: data.duration ?? "",
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -523,6 +530,7 @@ export class CharacterImporter {
 			base_skill: data.base_skill ?? "",
 			prereq_count: data.prereq_count ?? 0,
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 

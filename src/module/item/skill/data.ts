@@ -1,6 +1,6 @@
 import { Feature } from "@feature"
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { Difficulty } from "@module/data"
+import { Difficulty, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { Weapon } from "@module/weapon"
@@ -33,6 +33,7 @@ export interface SkillSystemData extends ItemSystemData {
 	weapons: Weapon[]
 	defaults: SkillDefault[]
 	features: Feature[]
+	study: Study[]
 	// Calc: {
 	// 	level: number;
 	// 	rsl: string;

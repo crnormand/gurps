@@ -1,6 +1,7 @@
 import { Feature } from "@feature"
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
 import { EncumbrancePenaltyMultiplier } from "@item/skill/data"
+import { Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
@@ -35,4 +36,5 @@ export interface TechniqueSystemData extends ItemSystemData {
 	default: SkillDefault
 	limit: number
 	limited: boolean
+	study: Study[]
 }

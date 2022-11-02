@@ -110,6 +110,19 @@ export enum Difficulty {
 	Wildcard = "w",
 }
 
+export interface Study {
+	type: StudyType
+	hours: number
+	note: string
+}
+
+export enum StudyType {
+	Self = "self",
+	Job = "job",
+	Teacher = "teacher",
+	Intensive = "intensive",
+}
+
 export enum RollType {
 	Attribute = "attribute",
 	Skill = "skill",

@@ -742,11 +742,29 @@
 				"primary_separator": "Primary Separator",
 				"secondary_separator": "Secondary Separator",
 				"pool_separator": "Pool Separator"
+			},
+			"study_type": {
+				"self": "Self-Taught",
+				"job": "On-the-Job Training",
+				"teacher": "Professional Teacher",
+				"intensive": "Intensive Training"
+			}
+		},
+		"study": {
+			"header": "Study",
+			"studied": "Studied {hours}/200 hours",
+			"tooltip": {
+				"max": "Maximum of {hours} hours per day",
+				"max_no_job": "Maximum of {hours} hours per day with no job",
+				"max_part_time_job": "Maximum of {hours} hours per day with a part-time job",
+				"max_full_time_job": "Maximum of {hours} hours per day with a full-time job",
+				"teacher_teaching": "The teacher must have the Teaching skill at 12+",
+				"teacher_prereq": "The teacher must have the skill/spell/trait being taught at the same or higher level than you, or have as many or more points spent in it as you do"
 			}
 		},
 		"field_prefix": {
 			"tech_level": "When the Tech Level",
-			"trait_name": "whose name",
+			"name": "whose name",
 			"combined_with": "combined with",
 			"attribute_level": "which is",
 			"skills_with_name": "to skills whose name",

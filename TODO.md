@@ -10,9 +10,15 @@
 -   Global Foundry styling
 -   Style (font & color) settings
 -   Manual Light & Dark Mode
+-   Drag items to chat, get item chat entry with name, notes, rollables, etc.
+-   baseitemsheet updateObject change the way features, prereqs, study, etc. fields are updated to account for array
+-   different readonly style on context (see calc skill level vs calc study hours)
+-   label next to button color (study)
+-   total label doesn't show when no study hours entered
 
 ## 1.0.0
 
+-   add info tooltip icon to font
 -   Drag rollable buttons to hotbar or message box for macros
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility
@@ -33,10 +39,8 @@
 -   Convert over module compatibility
 -   Convert over resource tracker functionality
 -   Convert over as much of the old localization files as we can
--   Implement UI customization settings (colors, fonts)
 -   probably a bunch of other stuff I'm forgetting
 -   Dynamic Character changes
-    -   add non-attribute resource trackers to dynamic character (optional, could think of better solution)
     -   add move modes to dynamic character
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
         the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings

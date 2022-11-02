@@ -1,4 +1,8 @@
 <div class="conditional-modifier">
 	<div class="placeholder"> </div>
-	{{>sections/textarea field="field" name=(concat "system.features." @index ".situation") data=this.situation type="String"}}
+	<div class="field">
+		<textarea type="text" name="array.system.features.{{@index}}.situation" data-dtype="String">{{{textareaFormat
+				this.situation
+			}}}</textarea>
+	</div>
 </div>

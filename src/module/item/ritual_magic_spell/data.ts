@@ -1,4 +1,5 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { Study } from "@module/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
@@ -33,4 +34,5 @@ export interface RitualMagicSpellSystemData extends ItemSystemData {
 	// };
 	base_skill: string
 	prereq_count: number
+	study: Study[]
 }

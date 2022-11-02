@@ -3,8 +3,7 @@
 	<select name="{{path}}.sub_type">
 		{{#select this.sub_type}}
 		{{#each config.select.spell_sub_type as |v k|}}
-		<option value="{{k}}">{{localize (concat
-			"gurps.select.spell_sub_type." v)}}</option>
+		<option value="{{k}}">{{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>
@@ -13,8 +12,7 @@
 		{{#select this.qualifier.compare}}
 		{{!-- {{#unless (or (eq this.sub_type "college_count") (eq this.sub_type "any"))}} --}}
 		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize (concat
-			"gurps.select.string_compare." v)}}</option>
+		<option value="{{k}}">{{localize v}}</option>
 		{{/each}}
 		{{!-- {{/unless}} --}}
 		{{/select}}

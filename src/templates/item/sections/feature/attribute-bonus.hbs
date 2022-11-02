@@ -1,13 +1,13 @@
 <div class="attribute-bonus">
 	<div class="placeholder"> </div>
-	<select name="system.features.{{@index}}.attribute">
+	<select name="array.system.features.{{@index}}.attribute">
 		{{#select this.attribute}}
 			{{#each attributes as |v k|}}
 				<option value="{{k}}">{{v}}</option>
 			{{/each}}
 		{{/select}}
 	</select>
-	<select name="system.features.{{@index}}.limitation" {{input_lock (eq this.attribute "st")}}>
+	<select name="array.system.features.{{@index}}.limitation" {{input_lock (eq this.attribute "st")}}>
 		{{#select this.limitation}}
 			{{#each config.select.st_limitation as |v k|}}
 				<option value="{{k}}">{{localize v}}</option>

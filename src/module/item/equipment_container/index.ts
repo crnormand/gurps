@@ -31,14 +31,6 @@ export class EquipmentContainerGURPS extends ContainerGURPS {
 		return parseFloat(this.system.weight)
 	}
 
-	// Get features() {
-	// 	const features: Feature[] = [];
-	// 	for (const f of this.system.features ?? []) {
-	// 		features.push(new BaseFeature(f));
-	// 	}
-	// 	return features;
-	// }
-
 	get enabled(): boolean {
 		return this.equipped
 	}
