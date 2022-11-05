@@ -2,6 +2,9 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.15.8
+- Fix for https://github.com/crnormand/gurps/issues/1644 (Mod Bucket stops after one modifier is clicked if not using mouseover to open).
+
 Release 0.15.7
 
 - Fixed chat commands not returning true/false (for use in /if commands)
