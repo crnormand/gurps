@@ -72,6 +72,14 @@ class DiceGURPS {
 		return this.toString(false)
 	}
 
+	minimum(extraDiceFromModifiers: boolean): number {
+		let [count, result] = this.adjustedCountAndModifier(extraDiceFromModifiers)
+		if (this.sides > 0) {
+			result += count
+		}
+		return result * this.multiplier
+	}
+
 	toString(keepSix: boolean): string {
 		let str = ""
 		str += this.count

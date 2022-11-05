@@ -40,6 +40,7 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/character/config/attributes",
 		"actor/character/config/threshold",
 		"actor/character/config/body-type",
+		"actor/character/config/location",
 		"actor/character/config/resource-trackers",
 
 		"actor/static_character/sections/attributes",

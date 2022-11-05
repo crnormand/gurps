@@ -20,7 +20,7 @@
                 <div class="header location">{{ localize "gurps.character.body_type.location" }}</div>
                 <div class="header dr">{{ localize "gurps.character.body_type.dr" }}</div>
                 {{#each document.HitLocations }}
-                    {{>actor/character/sections/hit-location tab="" }}
+                    {{>actor/character/sections/hit-location tab=0 }}
                 {{/each }}
             </div>
             <div id="encumbrance-lifting">

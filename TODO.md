@@ -3,18 +3,13 @@
 ## In Progress
 
 -   Implement GCS-style hit location table editor
--   Customizable default attributes/body plan/sheet settings
--   Replace "input-text" partial with sensible function
--   GCS 5.3 Study Time support
+    -   disable buttons on certain conditions
+-   Customizable default attributes/body plan/sheet settings/resource trackers
 -   Character export/sync
 -   Global Foundry styling
 -   Style (font & color) settings
 -   Manual Light & Dark Mode
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
--   baseitemsheet updateObject change the way features, prereqs, study, etc. fields are updated to account for array
--   different readonly style on context (see calc skill level vs calc study hours)
--   label next to button color (study)
--   total label doesn't show when no study hours entered
 
 ## 1.0.0
 
@@ -37,9 +32,7 @@
 -   Convert the modifier bucket over
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
--   Convert over resource tracker functionality
 -   Convert over as much of the old localization files as we can
--   probably a bunch of other stuff I'm forgetting
 -   Dynamic Character changes
     -   add move modes to dynamic character
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
@@ -60,9 +53,11 @@
 -   Redo drag & drop indicators
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -   switch between number and dice display for skill rolls
+-   probably a bunch of other stuff I'm forgetting
 
 ## 1.1.0 and beyond
 
+-   Fix textarea height
 -   GCS 5.3 Template support
 -   Vehicles
     -   Spaceships

@@ -10,6 +10,15 @@
 			padding: 5px;
 		}
 	}
+	.control {
+		display: flex;
+		gap: 5px;
+	}
+
+	input[readonly] {
+		background-color: transparent;
+		color: rgba(var(--color-on-content), 0.5);
+	}
 }
 
 .feature,
