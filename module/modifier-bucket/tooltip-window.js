@@ -32,6 +32,10 @@ export default class ModifierBucketEditor extends Application {
     })
   }
 
+  get title() {
+    return 'Modifiers'
+  }
+
   /**
    * @override
    * @param {*} force
