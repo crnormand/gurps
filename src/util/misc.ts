@@ -172,15 +172,21 @@ export interface Fraction {
 export function extractFraction(s: string): Fraction {
 	if (typeof s !== "string") s = `${s}`
 	let v = s.trim()
-	while (v.length > 0 && v[-1].match("[0-9]")) {
-		v = v.substring(0, v.length - 1)
+
+	const revised = determineModWeightValueTypeFromString(s)
+
+	// If it is a weight_multiplier or weight_percentage_multiplier, it starts or ends with an 'x'.
+	// Remove that character.
+	if (["weight_multiplier", "weight_percentage_multiplier"].includes(revised)) {
+		if (v.startsWith("x")) v = v.substring(1, v.length)
+		if (v.endsWith("x")) v = v.substring(0, v.length - 1)
 	}
+
 	const f = v.split("/")
 	const fraction: Fraction = {
 		numerator: parseInt(f[0]) || 0,
 		denominator: parseInt(f[1]) || 1,
 	}
-	const revised = determineModWeightValueTypeFromString(s)
 	if (revised === "weight_percentage_multiplier") {
 		if (fraction.numerator <= 0) {
 			fraction.numerator = 100
