@@ -34,6 +34,7 @@ export function i18n_f(value: string, data: Record<string, unknown>, fallback?: 
  */
 export function sanitize(id: string, permit_leading_digits: boolean, reserved: string[]): string {
 	const buffer: string[] = []
+	console.log(id)
 	for (let ch of id.split("")) {
 		if (ch.match("[A-Z]")) ch = ch.toLowerCase()
 		if (ch === "_" || ch.match("[a-z]") || (ch.match("[0-9]") && (permit_leading_digits || buffer.length > 0)))
@@ -172,7 +173,7 @@ export interface Fraction {
 export function extractFraction(s: string): Fraction {
 	if (typeof s !== "string") s = `${s}`
 	let v = s.trim()
-	while (v.length > 0 && v[-1].match("[0-9]")) {
+	while (v.length > 0 && v.at(-1)?.match("[0-9]")) {
 		v = v.substring(0, v.length - 1)
 	}
 	const f = v.split("/")
@@ -298,6 +299,7 @@ export function getAdjustedStudyHours(s: Study): number {
  */
 export function prepareFormData(_event: Event, formData: any, object: any): any {
 	for (let aKey of Object.keys(formData)) {
+		if (formData[aKey] === null) formData[aKey] = "0"
 		if (aKey.startsWith("array.") && aKey.match(/\d/)) {
 			const key = aKey.replace(/^array./g, "")
 			const arrayKey = key.split(/.\d+./)[0]

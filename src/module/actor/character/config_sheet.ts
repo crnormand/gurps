@@ -1,10 +1,11 @@
-import { AttributeDef, AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
-import { PoolThresholdDef, ThresholdOp } from "@module/attribute/pool_threshold"
+import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { CharacterGURPS } from "."
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
+import { i18n, prepareFormData } from "@util"
+import { HitLocationTable } from "./data"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS
@@ -17,12 +18,15 @@ export class CharacterSheetConfig extends FormApplication {
 
 	resource_trackers: ResourceTrackerDefObj[]
 
+	body_type: HitLocationTable
+
 	constructor(object: CharacterGURPS, options?: any) {
 		super(object, options)
 		this.object = object
 		this.filename = ""
 		this.attributes = this.object.system.settings.attributes
 		this.resource_trackers = this.object.system.settings.resource_trackers
+		this.body_type = this.object.system.settings.body_type
 	}
 
 	static get defaultOptions(): FormApplicationOptions {
@@ -54,15 +58,18 @@ export class CharacterSheetConfig extends FormApplication {
 		const actor = this.object
 		this.attributes = this.object.system.settings.attributes
 		this.resource_trackers = this.object.system.settings.resource_trackers
-		const primaryAttributes = actor.settings.attributes
-			.filter(e => actor.primaryAttributes(true).has(e.id))
-			.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
-		const secondaryAttributes = actor.settings.attributes
-			.filter(e => actor.secondaryAttributes(true).has(e.id))
-			.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
-		const poolAttributes = actor.settings.attributes
-			.filter(e => actor.poolAttributes(true).has(e.id))
-			.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
+		const attributes = actor.settings.attributes.map(e =>
+			mergeObject(e, { order: actor.attributes.get(e.id)!.order })
+		)
+		// Const primaryAttributes = actor.settings.attributes
+		// 	.filter(e => actor.primaryAttributes(true).has(e.id))
+		// 	.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
+		// const secondaryAttributes = actor.settings.attributes
+		// 	.filter(e => actor.secondaryAttributes(true).has(e.id))
+		// 	.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
+		// const poolAttributes = actor.settings.attributes
+		// 	.filter(e => actor.poolAttributes(true).has(e.id))
+		// 	.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
 		const resourceTrackers = actor.settings.resource_trackers
 
 		return {
@@ -70,9 +77,10 @@ export class CharacterSheetConfig extends FormApplication {
 			actor: actor.toObject(),
 			system: actor.system,
 			// Attributes: actor.system.settings.attributes,
-			primaryAttributes: primaryAttributes,
-			secondaryAttributes: secondaryAttributes,
-			poolAttributes: poolAttributes,
+			attributes: attributes,
+			// PrimaryAttributes: primaryAttributes,
+			// secondaryAttributes: secondaryAttributes,
+			// poolAttributes: poolAttributes,
 			resourceTrackers: resourceTrackers,
 			locations: actor.system.settings.body_type,
 			filename: this.filename,
@@ -152,7 +160,7 @@ export class CharacterSheetConfig extends FormApplication {
 		html.find("textarea")
 			.each(function () {
 				const height = this.scrollHeight
-				this.setAttribute("style", `height:${height}px;`)
+				this.setAttribute("style", "height:	auto;")
 			})
 			.on("input", function () {
 				const height = this.scrollHeight
@@ -169,9 +177,8 @@ export class CharacterSheetConfig extends FormApplication {
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" = $(
-			event.currentTarget
-		).data("type")
+		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" | "locations" =
+			$(event.currentTarget).data("type")
 		let new_id = ""
 		if (type === "attributes" || type === "resource_trackers")
 			for (let n = 0; n < 26; n++) {
@@ -228,6 +235,22 @@ export class CharacterSheetConfig extends FormApplication {
 				})
 				await this.object.update({ "system.settings.resource_trackers": this.resource_trackers })
 				return this.render()
+			case "locations":
+				const path = $(event.currentTarget).data("path").replace("array.", "")
+				const locations = getProperty(this.object, `${path}.locations`) ?? []
+				locations.push({
+					id: i18n("gurps.placeholder.hit_location.id"),
+					choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
+					table_name: i18n("gurps.placeholder.hit_location.table_name"),
+					slots: 0,
+					hit_penalty: 0,
+					dr_bonus: 0,
+					description: "",
+				})
+				const formData: any = {}
+				formData[`array.${path}.locations`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return $(this.form!).find('[name="{{path}}.id"]').trigger("select")
 		}
 	}
 
@@ -310,67 +333,67 @@ export class CharacterSheetConfig extends FormApplication {
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
 		// FormData = FormApplicationGURPS.updateObject(event, formData)
+		formData = prepareFormData(event, formData, this.object)
 		const element = $(event.currentTarget!)
 		if (element.hasClass("invalid")) delete formData[element.prop("name")]
 		if (!this.object.id) return
 		if (formData["system.settings.block_layout"])
 			formData["system.settings.block_layout"] = formData["system.settings.block_layout"].split("\n")
 		// Set values inside system.attributes array, and amend written values based on input
-		for (const i of Object.keys(formData)) {
-			if (i.startsWith("attributes.")) {
-				const attributes = this.attributes
-				// Const attributes: AttributeDef[] =
-				// 	(formData["system.settings.attributes"] as AttributeDef[]) ?? this.object.system.settings.attributes
-				const index = parseInt(i.split(".")[1])
-				const key = i.replace(`attributes.${index}.`, "")
-				if (key.startsWith("thresholds.")) {
-					const tindex = parseInt(key.split(".")[1])
-					const thresholds = attributes[index].thresholds!
-					const tkey = key.replace(`thresholds.${tindex}.`, "")
-					if (tkey.startsWith("halve_")) {
-						if (!formData[i] && thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-							thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
-						} else if (formData[i] && !thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-							thresholds[tindex].ops!.push(tkey as ThresholdOp)
-						}
-					} else {
-						setProperty(thresholds[tindex], tkey, formData[i])
-					}
-					setProperty(attributes[index], "thresholds", thresholds)
-				} else {
-					setProperty(attributes[index], key, formData[i])
-				}
-				formData["system.settings.attributes"] = attributes
-				delete formData[i]
-			}
-			if (i.startsWith("resource_trackers.")) {
-				const trackers: ResourceTrackerDefObj[] = this.resource_trackers
-				// (formData["system.settings.resource_trackers"] as ResourceTrackerDef[]) ??
-				// this.resource_trackers
-				const index = parseInt(i.split(".")[1])
-				const key = i.replace(`resource_trackers.${index}.`, "")
-				if (key.startsWith("thresholds.")) {
-					const tindex = parseInt(key.split(".")[1])
-					const thresholds = trackers[index].thresholds!
-					const tkey = key.replace(`thresholds.${tindex}.`, "")
-					if (tkey.startsWith("halve_")) {
-						if (!formData[i] && thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-							thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
-						} else if (formData[i] && !thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-							thresholds[tindex].ops!.push(tkey as ThresholdOp)
-						}
-					} else {
-						setProperty(thresholds[tindex], tkey, formData[i])
-					}
-					setProperty(trackers[index], "thresholds", thresholds)
-				} else {
-					setProperty(trackers[index], key, formData[i])
-				}
-				formData["system.settings.resource_trackers"] = trackers
-				delete formData[i]
-			}
-		}
-
+		// for (const i of Object.keys(formData)) {
+		// 	if (i.startsWith("attributes.")) {
+		// 		const attributes = this.attributes
+		// 		// Const attributes: AttributeDef[] =
+		// 		// 	(formData["system.settings.attributes"] as AttributeDef[]) ?? this.object.system.settings.attributes
+		// 		const index = parseInt(i.split(".")[1])
+		// 		const key = i.replace(`attributes.${index}.`, "")
+		// 		if (key.startsWith("thresholds.")) {
+		// 			const tindex = parseInt(key.split(".")[1])
+		// 			const thresholds = attributes[index].thresholds!
+		// 			const tkey = key.replace(`thresholds.${tindex}.`, "")
+		// 			if (tkey.startsWith("halve_")) {
+		// 				if (!formData[i] && thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
+		// 					thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
+		// 				} else if (formData[i] && !thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
+		// 					thresholds[tindex].ops!.push(tkey as ThresholdOp)
+		// 				}
+		// 			} else {
+		// 				setProperty(thresholds[tindex], tkey, formData[i])
+		// 			}
+		// 			setProperty(attributes[index], "thresholds", thresholds)
+		// 		} else {
+		// 			setProperty(attributes[index], key, formData[i])
+		// 		}
+		// 		formData["system.settings.attributes"] = attributes
+		// 		delete formData[i]
+		// 	}
+		// 	if (i.startsWith("resource_trackers.")) {
+		// 		const trackers: ResourceTrackerDefObj[] = this.resource_trackers
+		// 		// (formData["system.settings.resource_trackers"] as ResourceTrackerDef[]) ??
+		// 		// this.resource_trackers
+		// 		const index = parseInt(i.split(".")[1])
+		// 		const key = i.replace(`resource_trackers.${index}.`, "")
+		// 		if (key.startsWith("thresholds.")) {
+		// 			const tindex = parseInt(key.split(".")[1])
+		// 			const thresholds = trackers[index].thresholds!
+		// 			const tkey = key.replace(`thresholds.${tindex}.`, "")
+		// 			if (tkey.startsWith("halve_")) {
+		// 				if (!formData[i] && thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
+		// 					thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
+		// 				} else if (formData[i] && !thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
+		// 					thresholds[tindex].ops!.push(tkey as ThresholdOp)
+		// 				}
+		// 			} else {
+		// 				setProperty(thresholds[tindex], tkey, formData[i])
+		// 			}
+		// 			setProperty(trackers[index], "thresholds", thresholds)
+		// 		} else {
+		// 			setProperty(trackers[index], key, formData[i])
+		// 		}
+		// 		formData["system.settings.resource_trackers"] = trackers
+		// 		delete formData[i]
+		// 	}
+		// }
 		await this.object.update(formData)
 		return this.render()
 	}
@@ -415,7 +438,6 @@ export class CharacterSheetConfig extends FormApplication {
 		if (!element.hasClass("item")) element = element.parent(".item")
 		// Const target_id = element.data("id")
 		const target_index = element.data("index")
-		// Console.log(dragData, target_id, target_index)
 		const above = element.hasClass("border-top")
 		if (dragData.order === target_index) return this.render()
 		if (above && dragData.order === target_index - 1) return this.render()

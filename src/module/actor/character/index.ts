@@ -47,7 +47,7 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
+import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation, HitLocationTable } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 
@@ -502,18 +502,39 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		return this.system.settings.body_type?.locations ?? []
-		// Return this.system.settings.body_type.locations.map(e => {
-		// 	e.roll_range = e.calc?.roll_range || ""
-		// 	e.dr = {}
-		// 	const all = e.calc?.dr.all || { value: 0 }
-		// 	for (const k of Object.keys(e.calc?.dr || {})) {
-		// 		if (k === "all") e.dr[k] = { value: all.value }
-		// 		else e.dr[k] = { value: all.value + e.calc!.dr[k].value }
-		// 	}
-		// 	delete e.calc
-		// 	return e
-		// })
+		/**
+		 *
+		 * @param b
+		 */
+		function updateRollRanges(b: HitLocationTable) {
+			let start = new DiceGURPS(b.roll).minimum(false)
+			for (const i of b.locations) {
+				start = updateRollRange(i, start)
+			}
+		}
+		/**
+		 *
+		 * @param h
+		 * @param start
+		 */
+		function updateRollRange(h: HitLocation, start: number): number {
+			h.calc ??= { roll_range: "", dr: {} }
+			h.slots ??= 0
+			if (h.slots === 0) h.calc.roll_range = "-"
+			else if (h.slots === 1) h.calc.roll_range = start.toString()
+			else {
+				h.calc.roll_range = `${start}-${start + h.slots - 1}`
+			}
+			if (h.sub_table) {
+				updateRollRanges(h.sub_table)
+			}
+			return start + h.slots
+		}
+
+		const body = this.system.settings.body_type
+		if (!body) return []
+		updateRollRanges(body)
+		return body.locations
 	}
 
 	// Item Types

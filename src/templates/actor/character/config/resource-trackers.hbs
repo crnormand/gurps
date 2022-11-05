@@ -14,7 +14,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="resource_trackers.{{this.order}}.id"
+						name="array.system.settings.resource_trackers.{{this.order}}.id"
 						value="{{this.id}}"
 						data-dtype="String"
 					/>
@@ -23,7 +23,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="resource_trackers.{{this.order}}.name"
+						name="array.system.settings.resource_trackers.{{this.order}}.name"
 						value="{{this.name}}"
 						data-dtype="String"
 					/>
@@ -31,7 +31,7 @@
 				<div class="label">{{localize "gurps.resource_tracker_def.max"}}</div>
 				<div class="field no-stretch">
 					<input
-						name="resource_trackers.{{this.order}}.max"
+						name="array.system.settings.resource_trackers.{{this.order}}.max"
 						class="input"
 						type="text"
 						data-dtype="Number"
@@ -41,7 +41,7 @@
 						<input
 							class="input"
 							type="checkbox"
-							name="resource_trackers.{{this.order}}.isMaxEnforced"
+							name="array.system.settings.resource_trackers.{{this.order}}.isMaxEnforced"
 							{{checked this.isMaxEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.max_enforced"}}
@@ -50,7 +50,7 @@
 				<div class="label">{{localize "gurps.resource_tracker_def.min"}}</div>
 				<div class="field no-stretch">
 					<input
-						name="resource_trackers.{{this.order}}.min"
+						name="array.system.settings.resource_trackers.{{this.order}}.min"
 						class="input"
 						type="text"
 						data-dtype="Number"
@@ -60,7 +60,7 @@
 						<input
 							class="input"
 							type="checkbox"
-							name="resource_trackers.{{this.order}}.isMinEnforced"
+							name="array.system.settings.resource_trackers.{{this.order}}.isMinEnforced"
 							{{checked this.isMinEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.min_enforced"}}

@@ -232,7 +232,17 @@
 					"button": "Attributes"
 				},
 				"body_type": {
-					"button": "Body Type"
+					"button": "Body Type",
+					"name": "Name",
+					"roll": "Roll",
+					"sub_roll": "Sub-Roll",
+					"id": "ID",
+					"choice_name": "Choice Name",
+					"table_name": "Table Name",
+					"slots": "Slots",
+					"hit_penalty": "Hit Penalty",
+					"dr_bonus": "DR Bonus",
+					"description": "Description"
 				},
 				"resource_trackers": {
 					"button": "Resource Trackers"
@@ -429,7 +439,8 @@
 			"max_uses": "Maximum Uses",
 			"limit": "Cannot exceed default skill level by more than",
 			"total": "Total",
-			"slash": "/"
+			"slash": "/",
+			"note": "Note"
 		},
 		"attributes": {
 			"dodge": "Dodge",
@@ -877,6 +888,13 @@
 			"cm": "cm",
 			"km": "km",
 			"m": "m"
+		},
+		"placeholder": {
+			"hit_location": {
+				"id": "id",
+				"choice_name": "untitled choice",
+				"table_name": "untitled location"
+			}
 		},
 		"settings": {
 			"show_token_modifiers": {

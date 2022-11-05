@@ -54,6 +54,12 @@
 }
 
 .gurps {
+	a {
+		&:hover,
+		&:active {
+			text-shadow: none;
+		}
+	}
 	input[type="text"],
 	input[type="search"],
 	input[type="number"] {
@@ -337,7 +343,8 @@
 			padding: 0 2px;
 		}
 		&[readonly] {
-			background-color: rgb(var(--color-background));
+			// background-color: rgb(var(--color-background));
+			background-color: transparent;
 			color: rgb(var(--color-on-background));
 			pointer-events: none;
 		}
