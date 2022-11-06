@@ -2,14 +2,13 @@
 
 ## In Progress
 
--   Implement GCS-style hit location table editor
-    -   disable buttons on certain conditions
 -   Customizable default attributes/body plan/sheet settings/resource trackers
 -   Character export/sync
 -   Global Foundry styling
 -   Style (font & color) settings
 -   Manual Light & Dark Mode
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
+-	prompt to import character on creation
 
 ## 1.0.0
 
@@ -58,6 +57,7 @@
 ## 1.1.0 and beyond
 
 -   Fix textarea height
+-	focus on field of newly created attribute/location/etc. on creation
 -   GCS 5.3 Template support
 -   Vehicles
     -   Spaceships

@@ -14,11 +14,38 @@
 				{{/if}}
 			</div>
 			<div class="fieldblock">
+				{{#if (in this.type "_separator")}}
 				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
 				<div class="field">
 					<input type="text" name="array.system.settings.attributes.{{this.order}}.id" value="{{this.id}}" data-dtype="String" />
 				</div>
 				<div class="label">{{localize "gurps.attribute_def.name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{this.order}}.name"
+						value="{{this.name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
+				<div class="field">
+					<select name="array.system.settings.attributes.{{this.order}}.type" data-dtype="String">
+						{{#select this.type}}
+							{{#each @root.config.select.attribute_type as |v k|}}
+								<option value="{{k}}">
+									{{localize v}}
+								</option>
+							{{/each}}
+						{{/select}}
+					</select>
+				</div>
+				{{else}}
+				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
+				<div class="field">
+					<input type="text" name="array.system.settings.attributes.{{this.order}}.id" value="{{this.id}}" data-dtype="String" />
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.short_name"}}</div>
 				<div class="field">
 					<input
 						type="text"
@@ -81,6 +108,7 @@
 					{{>actor/character/config/threshold id=../this.order parent="array.system.settings.attributes"}}
 					{{/each}}
 				</div>
+				{{/if}}
 				{{/if}}
 			</div>
 		</div>

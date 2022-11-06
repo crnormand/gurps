@@ -34,7 +34,6 @@ export function i18n_f(value: string, data: Record<string, unknown>, fallback?: 
  */
 export function sanitize(id: string, permit_leading_digits: boolean, reserved: string[]): string {
 	const buffer: string[] = []
-	console.log(id)
 	for (let ch of id.split("")) {
 		if (ch.match("[A-Z]")) ch = ch.toLowerCase()
 		if (ch === "_" || ch.match("[a-z]") || (ch.match("[0-9]") && (permit_leading_digits || buffer.length > 0)))
@@ -300,6 +299,16 @@ export function getAdjustedStudyHours(s: Study): number {
 export function prepareFormData(_event: Event, formData: any, object: any): any {
 	for (let aKey of Object.keys(formData)) {
 		if (formData[aKey] === null) formData[aKey] = "0"
+		if (aKey.includes(".halve_")) {
+			const tKey = aKey.replace(/\.halve_.*$/, "")
+			const tOp = aKey.split(".").at(-1)
+			// Console.log(tKey, tOp)
+			formData[`${tKey}.ops`] ??= []
+			if (formData[aKey]) formData[`${tKey}.ops`].push(tOp)
+			delete formData[aKey]
+		}
+	}
+	for (let aKey of Object.keys(formData)) {
 		if (aKey.startsWith("array.") && aKey.match(/\d/)) {
 			const key = aKey.replace(/^array./g, "")
 			const arrayKey = key.split(/.\d+./)[0]
