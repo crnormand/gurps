@@ -1232,26 +1232,14 @@ export class GurpsActor extends Actor {
       'system.traits': ts,
     }
 
-    if (!!p.portrait && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_OVERWRITE_PORTRAITS)) {
-      const path = this.getPortraitPath()
-      let currentDir = ''
-      for (let i = 0; i < path.split('/').length; i++) {
-        try {
-          currentDir += path.split('/')[i] + '/'
-          await FilePicker.createDirectory('data', currentDir)
-        } catch (err) {
-          continue
-        }
+    if (p.portrait) {
+      if (game.user.hasPermission('FILES_UPLOAD')) {
+        r.img = `data:image/png;base64,${p.portrait}.png`
+      } else {
+        await ui.notifications.error(
+          'You do not have "FILES_UPLOAD" permission, portrait upload has failed. Please ask your GM to import your character, or acquire the correct permissions.'
+        )
       }
-      const filename = `${this.removeAccents(p.name)}${this.id}_portrait.png`.replaceAll(' ', '_')
-      const url = `data:image/png;base64,${p.portrait}`
-      await fetch(url)
-        .then(res => res.blob())
-        .then(blob => {
-          const file = new File([blob], filename)
-          FilePicker.upload('data', path, file, {}, { notify: false })
-        })
-      r.img = (path + '/' + filename).replaceAll(' ', '_').replaceAll('//', '/')
     }
     return r
   }
