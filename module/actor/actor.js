@@ -425,7 +425,8 @@ export class GurpsActor extends Actor {
               let locs = splitArgs(m[2])
               locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             }
-            recurselist(data.hitlocations, (e, k, d) => {
+            recurselist(data.hitlocations, (e, _k, _d) => {
+              // console.log(e, _k, _d)
               if (!locpatterns || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
                 let dr = e.dr ?? ''
                 dr += ''
@@ -435,6 +436,7 @@ export class GurpsActor extends Actor {
                   let dr2 = parseInt(m[3]) + delta
                   e.dr = dr + m[2] + dr2
                 } else if (!isNaN(parseInt(dr))) e.dr = parseInt(dr) + delta
+                console.warn(e.where, e.dr)
               }
             })
           } // end DR
@@ -1232,27 +1234,16 @@ export class GurpsActor extends Actor {
       'system.traits': ts,
     }
 
-    if (!!p.portrait && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_OVERWRITE_PORTRAITS)) {
-      const path = this.getPortraitPath()
-      let currentDir = ''
-      for (let i = 0; i < path.split('/').length; i++) {
-        try {
-          currentDir += path.split('/')[i] + '/'
-          await FilePicker.createDirectory('data', currentDir)
-        } catch (err) {
-          continue
-        }
+    if (p.portrait) {
+      if (game.user.hasPermission('FILES_UPLOAD')) {
+        r.img = `data:image/png;base64,${p.portrait}.png`
+      } else {
+        await ui.notifications.error(
+          'You do not have "FILES_UPLOAD" permissions, portrait upload failed. Ask your GM to upload your file, or acquire adequate permissions.'
+        )
       }
-      const filename = `${this.removeAccents(p.name)}${this.id}_portrait.png`.replaceAll(' ', '_')
-      const url = `data:image/png;base64,${p.portrait}`
-      await fetch(url)
-        .then(res => res.blob())
-        .then(blob => {
-          const file = new File([blob], filename)
-          FilePicker.upload('data', path, file, {}, { notify: false })
-        })
-      r.img = (path + '/' + filename).replaceAll(' ', '_').replaceAll('//', '/')
     }
+
     return r
   }
 
