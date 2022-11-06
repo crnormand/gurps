@@ -42,7 +42,6 @@ export class AttributeDef {
 	}
 
 	set id(v: string) {
-		console.log(this, v)
 		this.def_id = sanitize(v, false, reserved_ids)
 	}
 

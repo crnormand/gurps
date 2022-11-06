@@ -1,8 +1,16 @@
-<div class="item" data-id="{{this.id}}" data-path="{{path}}" data-type="locations">
+<div class="item"data-path="{{path}}" data-index="{{@index}}" data-type="locations">
 	<div class="controls">
-		<a class="gcs-grip drag" data-index="{{@index}}" data-type="locations"></a>
-		<a class="gcs-trash delete" data-index="{{@index}}" data-type="locations"></a>
-		<a class="gcs-circled-add disabled"></a>
+		<a class="gcs-grip drag" data-path="{{path}}" data-index="{{@index}}" data-type="locations"></a>
+		{{#if (eq l 1)}}
+		<a class="gcs-trash disabled"></a>
+		{{else}}
+		<a class="gcs-trash delete" data-path="{{path}}" data-index="{{@index}}" data-type="locations"></a>
+		{{/if}}
+		{{#if this.sub_table}}
+			<a class="gcs-circled-add disabled"></a>
+		{{else}}
+			<a class="gcs-circled-add add" data-path="{{path}}" data-index="{{@index}}" data-type="sub_table"></a>
+		{{/if}}
 	</div>
 	<div class="fieldblock">
 		<div class="label">{{localize "gurps.character.settings.body_type.id"}}</div>
@@ -73,14 +81,16 @@
 			></input>
 		</div>
 			<div class="sub-table-controls">
-				<a class="gcs-trash delete" data-index="{{path}}.{{@index}}" data-type="locations"></a>
-				<a class="gcs-circled-add disabled"></a>
+				<a class="gcs-trash delete" data-path="{{path}}" data-index="{{@index}}" data-type="sub_table"></a>
+				<a class="gcs-circled-add add" data-path="{{path}}.{{@index}}.sub_table" data-index="{{@index}}" data-type="locations"></a>
 			</div>
+			{{#with this.sub_table}}
 			<div class="item-list">
-				{{#with this.sub_table}}
-				{{>actor/character/config/body-type path=(concat ../path "." @index ".sub_table")}}
-				{{/with}}
+			{{#each this.locations}}
+			{{>actor/character/config/location path=(concat ../../path "." @index ".sub_table.locations") l=../this.locations.length}}
+			{{/each}}
 			</div>
+			{{/with}}
 		{{/if}}
 	</div>
 </div>

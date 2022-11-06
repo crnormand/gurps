@@ -378,11 +378,11 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	weightCarried(for_skills: boolean): number {
 		let total = 0
-		for (const e of this.carried_equipment) {
+		this.carried_equipment.forEach(e => {
 			if (e.parent === this) {
 				total += e.extendedWeight(for_skills, this.settings.default_weight_units)
 			}
-		}
+		})
 		return floatingMul(total)
 	}
 
@@ -394,12 +394,16 @@ class CharacterGURPS extends BaseActorGURPS {
 		return floatingMul(value)
 	}
 
+	get fastWealthNotCarried(): string {
+		return `$${this.wealthNotCarried()}`
+	}
+
 	wealthNotCarried(): number {
 		let value = 0
-		for (const e of this.other_equipment) {
+		this.other_equipment.forEach(e => {
 			if (e.parent === this) value += e.extendedValue
-		}
-		return value
+		})
+		return floatingMul(value)
 	}
 
 	get strengthOrZero(): number {

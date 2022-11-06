@@ -1,22 +1,18 @@
-{{#if (eq path "array.system.settings.body_type")}}
 <div class="add">
 	<a class="gcs-circled-add add" data-path="{{path}}" data-type="locations"></a>
 </div>
-{{/if}}
 <div class="fieldblock">
-	{{#if (eq path "array.system.settings.body_type")}}
-		<div class="label">{{localize "gurps.character.settings.body_type.name"}}</div>
-		<div class="field">
-			<input type="text" name="{{path}}.name" value="{{this.name}}" data-dtype="String" />
-		</div>
-		<div class="label">{{localize "gurps.character.settings.body_type.roll"}}</div>
-		<div class="field">
-			<input type="text" name="{{path}}.roll" value="{{this.roll}}" data-dtype="String" />
-		</div>
-	{{/if}}
+	<div class="label">{{localize "gurps.character.settings.body_type.name"}}</div>
+	<div class="field">
+		<input type="text" name="{{path}}.name" value="{{this.name}}" data-dtype="String" />
+	</div>
+	<div class="label">{{localize "gurps.character.settings.body_type.roll"}}</div>
+	<div class="field">
+		<input type="text" name="{{path}}.roll" value="{{this.roll}}" data-dtype="String" />
+	</div>
 	<div class="item-list">
 		{{#each this.locations}}
-		{{>actor/character/config/location path=(concat ../path ".locations")}}
+		{{>actor/character/config/location path=(concat ../path ".locations") l=../this.locations.length}}
 		{{/each}}
 	</div>
 </div>

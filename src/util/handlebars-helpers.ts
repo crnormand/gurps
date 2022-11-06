@@ -138,15 +138,18 @@ export function registerHandlebarsHelpers() {
 	})
 
 	// TODO: change to variable init and step
-	Handlebars.registerHelper("indent", function (i: number, type: "padding" | "text" = "padding"): string {
-		const init = -6
-		const step = 12
-		let sum = init
-		sum += step * i
-		if (type === "text") return `style="text-indent: ${sum}px;"`
-		return `style="padding-left: ${sum}px;"`
-		// Return `style="padding-left: ${sum}px;"`
-	})
+	Handlebars.registerHelper(
+		"indent",
+		function (i: number, type: "padding" | "text" = "padding", init = -6, step = 12): string {
+			// Const init = -6
+			// const step = 12
+			let sum = init
+			sum += step * i
+			if (type === "text") return `style="text-indent: ${sum}px;"`
+			return `style="padding-left: ${sum}px;"`
+			// Return `style="padding-left: ${sum}px;"`
+		}
+	)
 
 	Handlebars.registerHelper("spellValues", function (i: SpellGURPS): string {
 		const values = {

@@ -159,7 +159,7 @@ export class CharacterSheetConfig extends FormApplication {
 		html.find(".import-confirm").on("click", event => this._import(event))
 		html.find("textarea")
 			.each(function () {
-				const height = this.scrollHeight
+				// Const height = this.scrollHeight
 				this.setAttribute("style", "height:	auto;")
 			})
 			.on("input", function () {
@@ -177,8 +177,15 @@ export class CharacterSheetConfig extends FormApplication {
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" | "locations" =
-			$(event.currentTarget).data("type")
+		let path = ""
+		let locations = []
+		const type:
+			| "attributes"
+			| "resource_trackers"
+			| "attribute_thresholds"
+			| "tracker_thresholds"
+			| "locations"
+			| "sub_table" = $(event.currentTarget).data("type")
 		let new_id = ""
 		if (type === "attributes" || type === "resource_trackers")
 			for (let n = 0; n < 26; n++) {
@@ -188,6 +195,7 @@ export class CharacterSheetConfig extends FormApplication {
 					break
 				}
 			}
+		let formData: any = {}
 		switch (type) {
 			case "attributes":
 				// TODO: account for possibility of all letters being taken
@@ -236,8 +244,8 @@ export class CharacterSheetConfig extends FormApplication {
 				await this.object.update({ "system.settings.resource_trackers": this.resource_trackers })
 				return this.render()
 			case "locations":
-				const path = $(event.currentTarget).data("path").replace("array.", "")
-				const locations = getProperty(this.object, `${path}.locations`) ?? []
+				path = $(event.currentTarget).data("path").replace("array.", "")
+				locations = getProperty(this.object, `${path}.locations`) ?? []
 				locations.push({
 					id: i18n("gurps.placeholder.hit_location.id"),
 					choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
@@ -247,19 +255,49 @@ export class CharacterSheetConfig extends FormApplication {
 					dr_bonus: 0,
 					description: "",
 				})
-				const formData: any = {}
-				formData[`array.${path}.locations`] = locations
+				formData ??= {}
+				formData[`array.${path}`] = locations
 				await this._updateObject(event as unknown as Event, formData)
-				return $(this.form!).find('[name="{{path}}.id"]').trigger("select")
+				return this.render()
+			case "sub_table":
+				path = $(event.currentTarget).data("path").replace("array.", "")
+				const index = Number($(event.currentTarget).data("index"))
+				locations = getProperty(this.object, `${path}`) ?? []
+				locations[index].sub_table = {
+					name: "",
+					roll: "1d",
+					locations: [
+						{
+							id: i18n("gurps.placeholder.hit_location.id"),
+							choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
+							table_name: i18n("gurps.placeholder.hit_location.table_name"),
+							slots: 0,
+							hit_penalty: 0,
+							dr_bonus: 0,
+							description: "",
+						},
+					],
+				}
+				formData ??= {}
+				formData[`array.${path}`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return this.render()
 		}
 	}
 
 	private async _onDeleteItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" = $(
-			event.currentTarget
-		).data("type")
+		const path = $(event.currentTarget).data("path")?.replace("array.", "")
+		let locations = []
+		let formData: any = {}
+		const type:
+			| "attributes"
+			| "resource_trackers"
+			| "attribute_thresholds"
+			| "tracker_thresholds"
+			| "locations"
+			| "sub_table" = $(event.currentTarget).data("type")
 		const index = Number($(event.currentTarget).data("index")) || 0
 		const parent_index = Number($(event.currentTarget).data("pindex")) || 0
 		switch (type) {
@@ -278,6 +316,20 @@ export class CharacterSheetConfig extends FormApplication {
 			case "tracker_thresholds":
 				this.resource_trackers[parent_index].thresholds?.splice(index, 1)
 				await this.object.update({ "system.settings.resource_trackers": this.resource_trackers })
+				return this.render()
+			case "locations":
+				locations = getProperty(this.object, `${path}`) ?? []
+				locations.splice($(event.currentTarget).data("index"), 1)
+				formData ??= {}
+				formData[`array.${path}`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return this.render()
+			case "sub_table":
+				locations = getProperty(this.object, `${path}`) ?? []
+				delete locations[index].sub_table
+				formData ??= {}
+				formData[`array.${path}`] = locations
+				await this._updateObject(event as unknown as Event, formData)
 				return this.render()
 		}
 	}
@@ -418,9 +470,6 @@ export class CharacterSheetConfig extends FormApplication {
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
 		const element = $(event.currentTarget!)
-		console.log(event.originalEvent)
-		// Let dragData = JSON.parse($(event as any).originalEvent!.dataTransfer!.getData("text/plain"))
-		// console.log(dragData)
 		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
 		element.siblings(".item").removeClass("border-top").removeClass("border-bottom")
 		if (heightAcross > 0.5) {
@@ -436,7 +485,7 @@ export class CharacterSheetConfig extends FormApplication {
 		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
-		// Const target_id = element.data("id")
+
 		const target_index = element.data("index")
 		const above = element.hasClass("border-top")
 		if (dragData.order === target_index) return this.render()
@@ -444,10 +493,12 @@ export class CharacterSheetConfig extends FormApplication {
 		if (!above && dragData.order === target_index + 1) return this.render()
 
 		let container: any[] = []
+		const path = element.data("path")?.replace("array.", "")
 		if (dragData.type === "attributes") container = this.attributes
-		if (dragData.type === "resource_trackers") container = this.resource_trackers
-		if (dragData.type === "attribute_thresholds") container = this.attributes
-		if (dragData.type === "tracker_thresholds") container = this.resource_trackers
+		else if (dragData.type === "resource_trackers") container = this.resource_trackers
+		else if (dragData.type === "attribute_thresholds") container = this.attributes
+		else if (dragData.type === "tracker_thresholds") container = this.resource_trackers
+		else if (dragData.type === "locations") container = getProperty(this.object, path)
 		if (!container) return
 
 		let item
@@ -458,12 +509,11 @@ export class CharacterSheetConfig extends FormApplication {
 			item = container.splice(dragData.index, 1)[0]
 			container.splice(target_index, 0, item as any)
 		}
-		if (!dragData.type.includes("_thresholds"))
+		if (["attributes", "resource_tracers"].includes(dragData.type))
 			container.forEach((v: any, k: number) => {
 				v.order = k
 			})
 
-		console.log(container)
 		switch (dragData.type) {
 			case "attributes":
 			case "attribute_thresholds":
@@ -471,9 +521,12 @@ export class CharacterSheetConfig extends FormApplication {
 				return this.render()
 			case "resource_trackers":
 			case "tracker_thresholds":
-				console.log(container)
 				await this.object.update({ "system.settings.resource_trackers": container })
 				return this.render()
+			case "locations":
+				const formData: any = {}
+				formData[`array.${path}`] = container
+				return this._updateObject(event, formData)
 		}
 
 		// Const attributes = this.object.system.attributes

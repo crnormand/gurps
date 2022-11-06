@@ -69,6 +69,20 @@
 		line-height: 16px;
 		margin-bottom: 5px;
 	}
+	.tab a {
+		width: 17px;
+		margin: 2px;
+		padding: 0px 2px;
+		color: rgb(var(--color-icon-button));
+		&:hover {
+			color: rgb(var(--color-icon-button-rollover));
+			text-shadow: none;
+		}
+		&:active {
+			color: rgb(var(--color-icon-button-rollover));
+			border-radius: 4px;
+		}
+	}
 	.tab[data-tab="body-type"] .fieldblock .item-list {
 		grid-column: 1 / span 2;
 		border: 1px solid rgb(var(--color-divider));
@@ -80,20 +94,20 @@
 			display: grid;
 			height: 20px;
 			align-items: center;
-			a.add {
-				width: 17px;
-				margin: 2px;
-				padding: 0px 2px;
-				color: rgb(var(--color-icon-button));
-				&:hover {
-					color: rgb(var(--color-icon-button-rollover));
-					text-shadow: none;
-				}
-				&:active {
-					color: rgb(var(--color-icon-button-rollover));
-					border-radius: 4px;
-				}
-			}
+			// a.add {
+			// 	width: 17px;
+			// 	margin: 2px;
+			// 	padding: 0px 2px;
+			// 	color: rgb(var(--color-icon-button));
+			// 	&:hover {
+			// 		color: rgb(var(--color-icon-button-rollover));
+			// 		text-shadow: none;
+			// 	}
+			// 	&:active {
+			// 		color: rgb(var(--color-icon-button-rollover));
+			// 		border-radius: 4px;
+			// 	}
+			// }
 		}
 		.thresholds {
 			grid-column: 1 / span 2;
