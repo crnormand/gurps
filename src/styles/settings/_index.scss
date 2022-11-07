@@ -1,0 +1,8 @@
+.window-app.settings-menu {
+	&#colors-settings {
+		@import "colors";
+	}
+	.window-content {
+		background: rgb(var(--color-background));
+	}
+}

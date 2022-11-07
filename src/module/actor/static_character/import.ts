@@ -301,27 +301,13 @@ export class StaticCharacterImporter {
 			"system.traits": ts,
 		}
 
-		if (p.portrait && (game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_OVERWRITE)) {
-			const path = this.getPortraitPath()
-			let currentDir = ""
-			for (let i = 0; i < path.split("/").length; i++) {
-				try {
-					currentDir += `${path.split("/")[i]}/`
-					await FilePicker.createDirectory("data", currentDir)
-				} catch (err) {
-					continue
-				}
+		if (p.portrait) {
+			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
+				r.img = `data:imdage/png;base64,${p.portrait}.png`
+			} else {
+				console.error(i18n("gurps.error.import.portait_permissions"))
+				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
 			}
-			const filename = `${this.removeAccents(p.name)}${this.document.id}_portrait.png`.replaceAll(" ", "_")
-			const url = `data:image/png;base64,${p.portrait}`
-			await fetch(url)
-				.then(res => res.blob())
-				.then(blob => {
-					const file = new File([blob], filename)
-					// @ts-ignore
-					FilePicker.upload("data", path, file, {}, { notify: false })
-				})
-			r.img = `${path}/${filename}`.replaceAll(" ", "_").replaceAll("//", "/")
 		}
 		return r
 	}
@@ -995,11 +981,6 @@ export class StaticCharacterImporter {
 			whisper: [(game as Game).user!.id],
 		})
 		return false
-	}
-
-	getPortraitPath() {
-		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH) === "global") return "images/portraits/"
-		return `worlds/${(game as Game).world.id}/images/portraits`
 	}
 
 	removeAccents(str: string) {

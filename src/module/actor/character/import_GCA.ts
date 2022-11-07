@@ -191,38 +191,14 @@ export class GCAImporter {
 		if (tech_level) p["system.profile.tech_level"] = tech_level.score
 
 		if (data.vitals.portraitimage) {
-			/**
-			 *
-			 */
-			function getPortraitPath(): string {
-				if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH) === "global")
-					return "images/portraits/"
-				return `worlds/${(game as Game).world.id}/images/portraits`
-			}
-
-			const path: string = getPortraitPath()
-			let currentDir = ""
-			for (const i of path.split("/")) {
-				try {
-					currentDir += `${i}/`
-					await FilePicker.createDirectory("data", currentDir)
-				} catch (err) {
-					continue
-				}
-			}
 			const portrait = data.vitals.portraitimage.replaceAll(/\n/g, "")
-			const filename = `${removeAccents(data.name)}_${this.document.id}_portrait.png`.replaceAll(" ", "_")
-			const url = `data:image/png;base64,${portrait}`
-			await fetch(url)
-				.then(res => res.blob())
-				.then(blob => {
-					const file = new File([blob], filename)
-					// TODO: get rid of as any when new types version drops
-					;(FilePicker as any).upload("data", path, file, {}, { notify: false })
-				})
-			p.img = (path + filename).replaceAll(" ", "_")
+			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
+				p.img = `data:imdage/png;base64,${portrait}.png`
+			} else {
+				console.error(i18n("gurps.error.import.portait_permissions"))
+				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
+			}
 		}
-
 		return p
 	}
 

@@ -65,6 +65,7 @@ import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { StaticItemSheet } from "@item/static/sheet"
+import { ColorSettings } from "./settings/colors"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -251,6 +252,7 @@ Hooks.once("setup", async () => {
 // When ready
 Hooks.once("ready", async () => {
 	// Do anything once the system is ready
+	ColorSettings.applyColors()
 
 	// Enable drag image
 	const DRAG_IMAGE = document.createElement("div")

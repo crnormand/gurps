@@ -396,6 +396,11 @@ const GURPSCONFIG: any = {
 			[StudyType.Teacher]: "gurps.select.study_type.teacher",
 			[StudyType.Intensive]: "gurps.select.study_type.intensive",
 		},
+		color_mode_preference: {
+			auto: "gurps.select.color_mode_preference.auto",
+			dark: "gurps.select.color_mode_preference.dark",
+			light: "gurps.select.color_mode_preference.light",
+		},
 	},
 }
 // GURPSCONFIG.Item.documentClasses = {};
