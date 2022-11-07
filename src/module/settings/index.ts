@@ -1,15 +1,14 @@
 import { CharacterProfile } from "@actor/character/data"
-import { i18n } from "@util"
-import { AttributeDefObj, AttributeType } from "./attribute/attribute_def"
-import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data"
-import { GURPS } from "./gurps"
-import { ResourceTrackerDefObj } from "./resource_tracker/tracker_def"
+import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
+import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "@module/data"
+import { GURPS } from "@module/gurps"
+import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
+import { ColorSettings } from "./colors"
 
 export const SYSTEM_NAME = "gcsga"
 export enum SETTINGS {
 	BASIC_SET_PDF = "basic_set_pdf",
 	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
-	PORTRAIT_PATH = "portrait_path",
 	PORTRAIT_OVERWRITE = "portrait_overwrite",
 	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
 	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
@@ -18,6 +17,7 @@ export enum SETTINGS {
 	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
 	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
 	MODIFIER_MODE = "modifier_mode",
+	COLORS = "colors",
 }
 
 /**
@@ -27,46 +27,43 @@ export function registerSettings(): void {
 	// Register any custom system settings here
 	const g = game as Game
 
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.COLORS, {
+		name: "gurps.settings.colors.name",
+		label: "gurps.settings.colors.label",
+		hint: "gurps.settings.colors.hint",
+		icon: "gcs-settings",
+		// @ts-ignore
+		type: ColorSettings,
+		restricted: false,
+	})
+	ColorSettings.registerSettings()
+
 	g.settings.register(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF, {
-		name: i18n("gurps.settings.basic_set_pdfs.name"),
-		hint: i18n("gurps.settings.basic_set_pdfs.hint"),
+		name: "gurps.settings.basic_set_pdfs.name",
+		hint: "gurps.settings.basic_set_pdfs.hint",
 		scope: "world",
 		config: true,
 		type: String,
 		choices: {
-			combined: i18n("gurps.settings.basic_set_pdfs.choices.combined"),
-			separate: i18n("gurps.settings.basic_set_pdfs.choices.separate"),
+			combined: "gurps.settings.basic_set_pdfs.choices.combined",
+			separate: "gurps.settings.basic_set_pdfs.choices.separate",
 		},
 		default: "combined",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG, {
-		name: i18n("gurps.settings.server_side_file_dialog.name"),
-		hint: i18n("gurps.settings.server_side_file_dialog.hint"),
+		name: "gurps.settings.server_side_file_dialog.name",
+		hint: "gurps.settings.server_side_file_dialog.hint",
 		scope: "client",
 		config: true,
 		type: Boolean,
 		default: false,
 	})
 
-	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH, {
-		name: i18n("gurps.settings.portrait_path.name"),
-		hint: i18n("gurps.settings.portrait_path.hint"),
-		scope: "world",
-		config: true,
-		type: String,
-		choices: {
-			global: i18n("gurps.settings.portrait_path.choices.global"),
-			local: i18n("gurps.settings.portrait_path.choices.local"),
-		},
-		default: "global",
-		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
-	})
-
 	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_OVERWRITE, {
-		name: i18n("gurps.settings.portrait_overwrite.name"),
-		hint: i18n("gurps.settings.portrait_overwrite.hint"),
+		name: "gurps.settings.portrait_overwrite.name",
+		hint: "gurps.settings.portrait_overwrite.hint",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -85,38 +82,38 @@ export function registerSettings(): void {
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP, {
-		name: i18n("gurps.settings.import_hp_fp.name"),
-		hint: i18n("gurps.settings.import_hp_fp.hint"),
+		name: "gurps.settings.import_hp_fp.name",
+		hint: "gurps.settings.import_hp_fp.hint",
 		scope: "world",
 		config: true,
 		type: String,
 		choices: {
-			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
-			no: i18n("GURPS.settingImportHPAndFPIgnore"),
-			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+			yes: "GURPS.settingImportHPAndFPUseFile",
+			no: "GURPS.settingImportHPAndFPIgnore",
+			ask: "GURPS.settingImportHPAndFPAsk",
 		},
 		default: "ask",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN, {
-		name: i18n("gurps.settings.import_body_plan.name"),
-		hint: i18n("gurps.settings.import_body_plan.hint"),
+		name: "gurps.settings.import_body_plan.name",
+		hint: "gurps.settings.import_body_plan.hint",
 		scope: "world",
 		config: true,
 		type: String,
 		choices: {
-			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
-			no: i18n("GURPS.settingImportHPAndFPIgnore"),
-			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+			yes: "GURPS.settingImportHPAndFPUseFile",
+			no: "GURPS.settingImportHPAndFPIgnore",
+			ask: "GURPS.settingImportHPAndFPAsk",
 		},
 		default: "ask",
 		onChange: (value: string) => console.log(`Import of Body Plan : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME, {
-		name: i18n("GURPS.settingImportIgnoreName"),
-		hint: i18n("GURPS.settingHintImportIgnoreName"),
+		name: "GURPS.settingImportIgnoreName",
+		hint: "GURPS.settingHintImportIgnoreName",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -125,14 +122,14 @@ export function registerSettings(): void {
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
-		name: i18n("gurps.settings.modifier_mode.name"),
-		hint: i18n("gurps.settings.modifier_mode.hint"),
+		name: "gurps.settings.modifier_mode.name",
+		hint: "gurps.settings.modifier_mode.hint",
 		scope: "client",
 		config: true,
 		type: String,
 		choices: {
-			bucket: i18n("gurps.settings.modifier_mode.choices.bucket"),
-			prompt: i18n("gurps.settings.modifier_mode.choices.prompt"),
+			bucket: "gurps.settings.modifier_mode.choices.bucket",
+			prompt: "gurps.settings.modifier_mode.choices.prompt",
 		},
 		default: "prompt",
 		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),

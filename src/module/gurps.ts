@@ -65,6 +65,7 @@ import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { StaticItemSheet } from "@item/static/sheet"
+import { ColorSettings } from "./settings/colors"
 import { ApplyDamageDialog } from "./damage_calculator/apply_damage_dlg"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
@@ -74,7 +75,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	; (globalThis as any).GURPS = GURPS
+	;(globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -112,13 +113,13 @@ Hooks.once("init", async () => {
 
 	const src = `systems/${SYSTEM_NAME}/assets/gurps4e.svg`
 	$("#logo").attr("src", src)
-		// $("#logo").attr("width", "100px");
+	// $("#logo").attr("width", "100px");
 
-		// Assign custom classes and constants hereby
-		; (CONFIG as any).GURPS = GURPSCONFIG
-		; (CONFIG.Item.documentClass as any) = BaseItemGURPS
+	// Assign custom classes and constants hereby
+	;(CONFIG as any).GURPS = GURPSCONFIG
+	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
-		; (CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
 
 	StaticHitLocation.init()
 
@@ -259,6 +260,7 @@ Hooks.once("setup", async () => {
 // When ready
 Hooks.once("ready", async () => {
 	// Do anything once the system is ready
+	ColorSettings.applyColors()
 
 	// Enable drag image
 	const DRAG_IMAGE = document.createElement("div")
@@ -268,7 +270,7 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-		; (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
 	GURPS.ModifierButton = new ModifierButton()
 	GURPS.ModifierButton.render(true)
 
@@ -281,6 +283,13 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
+
+	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
+		if (message === "/dmg") {
+			ApplyDamageDialog.open()
+		}
+		return message !== "/dmg"
+	})
 })
 
 // Add any additional hooks if necessary

@@ -4,15 +4,14 @@
 
 -   Customizable default attributes/body plan/sheet settings/resource trackers
 -   Character export/sync
--   Global Foundry styling
--   Style (font & color) settings
--   Manual Light & Dark Mode
--   Drag items to chat, get item chat entry with name, notes, rollables, etc.
--	prompt to import character on creation
+-   prompt to import character on creation
+-   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
 
 ## 1.0.0
 
--   add info tooltip icon to font
+-   Drag items to chat, get item chat entry with name, notes, rollables, etc.
+-   equipped equipment prereq
+-   change skill level when prereqs not satisfied
 -   Drag rollable buttons to hotbar or message box for macros
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility
@@ -52,12 +51,13 @@
 -   Redo drag & drop indicators
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -   switch between number and dice display for skill rolls
+-   Global Foundry styling
 -   probably a bunch of other stuff I'm forgetting
 
 ## 1.1.0 and beyond
 
 -   Fix textarea height
--	focus on field of newly created attribute/location/etc. on creation
+-   focus on field of newly created attribute/location/etc. on creation
 -   GCS 5.3 Template support
 -   Vehicles
     -   Spaceships
