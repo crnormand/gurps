@@ -16,6 +16,7 @@ const createDamageTarget = function (actor: ActorGURPS): DamageTarget {
 }
 
 interface DamageTarget {
+	name: string
 	// CharacterGURPS.attributes.get(gid.ST).calc.value
 	ST: number
 	// CharacterGURPS.attributes.get(gid.HitPoints).calc
@@ -94,6 +95,10 @@ class DamageTargetActor implements DamageTarget {
 
 	constructor(actor: ActorGURPS) {
 		this.actor = actor
+	}
+
+	get name(): string {
+		return this.actor.name ?? ""
 	}
 
 	get ST(): number {

@@ -10,53 +10,28 @@ class ApplyDamageDialog extends Application {
 		console.log("Apply Damage!")
 
 		// @ts-ignore game.actors.get until types v10
-		let attacker = game.actors.get("T1F2t39tufdO1OGA")
+		let attacker = game.actors.get("WWwVSw6Pslsi3p69")
 
 		let roll: DamageRoll = {
 			locationId: "torso",
 			attacker: attacker,
-			dice: new DiceGURPS("3d+1"),
-			basicDamage: 0,
-			damageType: DamageType.injury,
-			damageModifier: "",
+			dice: new DiceGURPS("3d-1x5"),
+			basicDamage: 63,
+			damageType: DamageType.cr,
+			damageModifier: "ex",
 			weapon: null,
-			armorDivisor: 0,
+			armorDivisor: 2,
 			rofMultiplier: 0,
 			range: null,
 			isHalfDamage: false,
 			isShotgunCloseRange: false,
-			vulnerability: 0,
+			vulnerability: 1,
 			internalExplosion: false,
 		}
 
 		// @ts-ignore game.actors.get until types v10
-		let actor = game.actors.get("T1F2t39tufdO1OGA")
+		let actor = game.actors.get("oxKGupaw2QLVfRQx")
 		let target: DamageTarget = createDamageTarget(actor)
-
-		// Let target: DamageTarget = {
-		// 	ST: 0,
-		// 	hitPoints: {
-		// 		value: 0,
-		// 		current: 0,
-		// 	},
-		// 	hitLocationTable: new HitLocationTableAdapter({
-		// 		name: "Humanoid",
-		// 		roll: new DiceGURPS("3d"),
-		// 		locations: [],
-		// 	}),
-
-		// 	getTrait: function (name: string): TraitAdapter | undefined {
-		// 		throw new Error("Function not implemented.")
-		// 	},
-
-		// 	hasTrait: function (name: string): boolean {
-		// 		throw new Error("Function not implemented.")
-		// 	},
-
-		// 	isUnliving: false,
-		// 	isHomogenous: false,
-		// 	isDiffuse: false,
-		// }
 
 		const app = new ApplyDamageDialog(roll, target)
 		app.render(true)
@@ -76,18 +51,43 @@ class ApplyDamageDialog extends Application {
 			resizable: false,
 			id: "ApplyDamageDialog",
 			template: `systems/${SYSTEM_NAME}/templates/damage_calculator/apply-damage.hbs`,
-			classes: ["apply-damage"],
+			classes: ["apply-damage", "gurps"],
 		})
 	}
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object {
 		return mergeObject(super.getData(options), {
-			attacker: this.attacker,
+			roll: this.roll,
+			target: this.target,
+			source: this.damageRollText,
+			type: this.damageTypeAbbreviation,
+			isExplosion: this.isExplosion,
 		})
 	}
 
-	private get attacker(): DamageAttacker {
-		return this.calculator.damageRoll.attacker
+	get title() {
+		return "Apply Damage"
+	}
+
+	private get target(): DamageTarget {
+		return this.calculator.target
+	}
+
+	private get roll(): DamageRoll {
+		return this.calculator.damageRoll
+	}
+
+	private get damageRollText(): string {
+		return `${this.roll.dice}${this.roll.armorDivisor ? ` (${this.roll.armorDivisor})` : ""}`
+	}
+
+	private get damageTypeAbbreviation(): string {
+		let index = Object.values(DamageType).indexOf(this.roll.damageType)
+		return Object.keys(DamageType)[index]
+	}
+
+	private get isExplosion(): boolean {
+		return this.roll.damageModifier === "ex"
 	}
 }
 

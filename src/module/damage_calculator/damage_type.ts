@@ -31,11 +31,6 @@ enum DamageType {
 	kb = "knockback only",
 }
 
-const damageTypeMap: Record<string, DamageType> = {
-	inj: DamageType.injury,
-	dmg: DamageType.injury,
-}
-
 const AnyPiercingType: DamageType[] = [DamageType.pi, DamageType["pi-"], DamageType["pi+"], DamageType["pi++"]]
 
 type DamageTypeData = {

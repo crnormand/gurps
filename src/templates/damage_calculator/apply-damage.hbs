@@ -1,10 +1,82 @@
-<div id="apply-damage-app-window" class="{{cssClass}} gurps apply-damage" autocomplete="off">
+<div id="apply-damage" autocomplete="off">
 	<div id="damage-roll">
 		<div class="header">Damage Roll</div>
-		<div class="field-block">
+		<div class="fieldblock">
 			<div class="label">Attacker</div>
+			<div class="field">{{this.roll.attacker.name}}</div>
+			<div class="label">Weapon</div>
+			<div class="field">—</div>
+			<div class="label">Source roll</div>
 			<div class="field">
-				{{this.attacker.name}}
+				{{this.source}}
+				{{this.type}}
+				{{this.roll.damageModifier}}
+			</div>
+			<div class="label">Armor Divisor</div>
+			<div class="field">{{this.roll.armorDivisor}}</div>
+			<div class="label">Damage type</div>
+			<div class="field">{{this.type}}</div>
+			<div class="label">
+				<label for="exp">Explosion</label>
+			</div>
+			<div class="field">
+				<input id="exp" type="checkbox" {{checked isExplosion}} />
+			</div>
+			<div class="label">Damage</div>
+			<div class="field">{{this.roll.basicDamage}}</div>
+			<div class="label">Range</div>
+			<div class="field">—</div>
+			<div class="label">
+				<label for="1/2D">Ranged, 1/2D</label>
+			</div>
+			<div class="field">
+				<input id="1/2D" type="checkbox" />
+			</div>
+			<div class="label">
+				<label for="shotgun">Shotgun, extremely<br />close</label>
+			</div>
+			<div class="field">
+				<input id="shotgun" type="checkbox" />
+			</div>
+
+			<div style="grid-column: span 2;"><hr /></div>
+
+			<div class="label">Target</div>
+			<div class="field">
+				{{this.target.name}}
+			</div>
+			<div class="label">Hit Location</div>
+			<div class="field">{{this.roll.locationId}}</div>
+			<div class="label">Hardened DR</div>
+			<div class="field">0 (None)</div>
+			<div class="label">
+				<label for="flexible">Flexible armor</label>
+			</div>
+			<div class="field">
+				<input id="flexible" type="checkbox" />
+			</div>
+			<div class="label">Vulnerability</div>
+			<div class="field">
+				×{{this.roll.vulnerability}}
+				(None)
+			</div>
+			<div class="label">
+				<label for="tolerance">Injury Tolerance</label>
+			</div>
+			<div class="field">
+				<input id="tolerance" type="checkbox" />
+			</div>
+			<div class="label">
+				<label for="reduct">Damage Reduction</label>
+			</div>
+			<div class="field">
+				<input id="reduct" type="checkbox" />
+			</div>
+			<div class="label">
+				<label for="explosion">Internal explosion</label>
+			</div>
+			<div class="field">
+				<input id="explosion" type="checkbox" />
 			</div>
 		</div>
 	</div>
