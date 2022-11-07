@@ -9,9 +9,13 @@ import { HitLocationTableAdapter } from "./hit_location"
 class ApplyDamageDialog extends Application {
 	static open() {
 		console.log("Apply Damage!")
+
+		// @ts-ignore game.actors.get until types v10
+		let attacker = game.actors.get("T1F2t39tufdO1OGA")
+
 		let roll: DamageRoll = {
 			locationId: "torso",
-			attacker: { name: "Barberino" },
+			attacker: attacker,
 			dice: new DiceGURPS("3d+1"),
 			basicDamage: 0,
 			damageType: DamageType.injury,
@@ -26,30 +30,34 @@ class ApplyDamageDialog extends Application {
 			internalExplosion: false,
 		}
 
-		let target: DamageTarget = {
-			ST: 0,
-			hitPoints: {
-				value: 0,
-				current: 0,
-			},
-			hitLocationTable: new HitLocationTableAdapter({
-				name: "Humanoid",
-				roll: new DiceGURPS("3d"),
-				locations: [],
-			}),
+		// @ts-ignore game.actors.get until types v10
+		let actor = game.actors.get("T1F2t39tufdO1OGA")
+		let target: DamageTarget = new DamageTargetActor(actor)
 
-			getTrait: function (name: string): TraitAdapter | undefined {
-				throw new Error("Function not implemented.")
-			},
+		// Let target: DamageTarget = {
+		// 	ST: 0,
+		// 	hitPoints: {
+		// 		value: 0,
+		// 		current: 0,
+		// 	},
+		// 	hitLocationTable: new HitLocationTableAdapter({
+		// 		name: "Humanoid",
+		// 		roll: new DiceGURPS("3d"),
+		// 		locations: [],
+		// 	}),
 
-			hasTrait: function (name: string): boolean {
-				throw new Error("Function not implemented.")
-			},
+		// 	getTrait: function (name: string): TraitAdapter | undefined {
+		// 		throw new Error("Function not implemented.")
+		// 	},
 
-			isUnliving: false,
-			isHomogenous: false,
-			isDiffuse: false,
-		}
+		// 	hasTrait: function (name: string): boolean {
+		// 		throw new Error("Function not implemented.")
+		// 	},
+
+		// 	isUnliving: false,
+		// 	isHomogenous: false,
+		// 	isDiffuse: false,
+		// }
 
 		const app = new ApplyDamageDialog(roll, target)
 		app.render(true)
@@ -75,7 +83,7 @@ class ApplyDamageDialog extends Application {
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object {
 		return mergeObject(super.getData(options), {
-			attacker: this.attacker.name,
+			attacker: this.attacker,
 		})
 	}
 

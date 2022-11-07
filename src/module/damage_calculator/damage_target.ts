@@ -1,4 +1,8 @@
 import { HitLocationTableAdapter } from "./hit_location"
+import { ActorGURPS, CharacterGURPS } from "../actor/index"
+import { Trait } from "@module/compendium/tabs"
+import { TraitGURPS } from "../item/trait/index"
+import { TraitModifierGURPS } from "../item/trait_modifier/index"
 
 /**
  * The target of a damage roll.
@@ -28,31 +32,106 @@ interface DamageTarget {
 }
 
 class TraitModifierAdapter {
-	levels = 0
+	private modifier: TraitModifierGURPS
+
+	get levels() {
+		return this.modifier.levels
+	}
 
 	name = ""
 
-	constructor(name: string, levels: number) {
-		this.name = name
-		this.levels = levels
+	constructor(modifier: TraitModifierGURPS) {
+		this.modifier = modifier
 	}
 }
 
 class TraitAdapter {
+	private trait: TraitGURPS
+
 	getModifier(name: string): TraitModifierAdapter | undefined {
 		return this.modifiers.find(it => it.name === name)
 	}
 
-	levels = 0
+	get levels() {
+		return this.trait.levels
+	}
 
-	name = ""
+	get name() {
+		return this.trait.name
+	}
 
-	modifiers: TraitModifierAdapter[] = []
+	get modifiers(): TraitModifierAdapter[] {
+		return this.trait.modifiers.contents
+			.filter(it => it instanceof TraitModifierGURPS)
+			.map(it => new TraitModifierAdapter(it as TraitModifierGURPS))
+	}
 
-	constructor(name: string, levels: number) {
-		this.levels = levels
-		this.name = name
+	constructor(trait: TraitGURPS) {
+		this.trait = trait
 	}
 }
 
-export { DamageTarget, TraitAdapter, TraitModifierAdapter }
+class DamageTargetActor implements DamageTarget {
+	static DamageReduction = "Damage Reduction"
+
+	private actor: ActorGURPS
+
+	constructor(actor: ActorGURPS) {
+		this.actor = actor
+	}
+
+	get ST(): number {
+		return this.actor.attributes.get("st").calc.value
+	}
+
+	get hitPoints(): HitPointsCalc {
+		return this.actor.attributes.get("hp").calc
+	}
+
+	get hitLocationTable(): HitLocationTableAdapter {
+		if (this.actor instanceof CharacterGURPS)
+			return new HitLocationTableAdapter(this.actor.system.settings.body_type)
+		// @ts-ignore until I have a solution for StaticCharacterGURPS
+		return undefined
+	}
+
+	/**
+	 * This is where we would add special handling to look for traits under different names.
+	 * @param name
+	 */
+	getTrait(name: string): TraitAdapter | undefined {
+		if (this.actor instanceof CharacterGURPS) {
+			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
+			let found = traits.find(it => it.name === name)
+			return new TraitAdapter(found as TraitGURPS)
+		}
+	}
+
+	hasTrait(name: string): boolean {
+		return !!this.getTrait(name)
+	}
+
+	get isUnliving(): boolean {
+		// Try "Injury Tolerance (Unliving)" and "Unliving"
+		if (this.hasTrait("Unliving")) return true
+		if (!this.hasTrait("Injury Tolerance")) return false
+		let trait = this.getTrait("Injury Tolerance")
+		return !!trait?.getModifier("Unliving")
+	}
+
+	get isHomogenous(): boolean {
+		if (this.hasTrait("Homogenous")) return true
+		if (!this.hasTrait("Injury Tolerance")) return false
+		let trait = this.getTrait("Injury Tolerance")
+		return !!trait?.getModifier("Homogenous")
+	}
+
+	get isDiffuse(): boolean {
+		if (this.hasTrait("Diffuse")) return true
+		if (!this.hasTrait("Injury Tolerance")) return false
+		let trait = this.getTrait("Injury Tolerance")
+		return !!trait?.getModifier("Diffuse")
+	}
+}
+
+export { DamageTargetActor, DamageTarget, TraitAdapter, TraitModifierAdapter }
