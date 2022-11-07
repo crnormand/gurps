@@ -2,9 +2,8 @@ import { DiceGURPS } from "@module/dice"
 import { SYSTEM_NAME } from "@module/settings"
 import { DamageCalculator } from "."
 import { DamageAttacker, DamageRoll } from "./damage_roll"
-import { DamageTarget, TraitAdapter } from "./damage_target"
+import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
-import { HitLocationTableAdapter } from "./hit_location"
 
 class ApplyDamageDialog extends Application {
 	static open() {
@@ -32,7 +31,7 @@ class ApplyDamageDialog extends Application {
 
 		// @ts-ignore game.actors.get until types v10
 		let actor = game.actors.get("T1F2t39tufdO1OGA")
-		let target: DamageTarget = new DamageTargetActor(actor)
+		let target: DamageTarget = createDamageTarget(actor)
 
 		// Let target: DamageTarget = {
 		// 	ST: 0,

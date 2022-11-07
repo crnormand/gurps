@@ -11,6 +11,10 @@ import { TraitModifierGURPS } from "../item/trait_modifier/index"
  */
 type HitPointsCalc = { value: number; current: number }
 
+const createDamageTarget = function (actor: ActorGURPS): DamageTarget {
+	return new DamageTargetActor(actor)
+}
+
 interface DamageTarget {
 	// CharacterGURPS.attributes.get(gid.ST).calc.value
 	ST: number
@@ -20,7 +24,7 @@ interface DamageTarget {
 	// TODO It would be better to have a method to return DR directly; this would allow DR overrides.
 	hitLocationTable: HitLocationTableAdapter
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
-	getTrait(name: string): TraitAdapter | undefined
+	getTrait(name: string): TargetTrait | undefined
 	//
 	hasTrait(name: string): boolean
 	// This.hasTrait("Injury Tolerance (Unliving)").
@@ -31,7 +35,19 @@ interface DamageTarget {
 	isDiffuse: boolean
 }
 
-class TraitModifierAdapter {
+interface TargetTrait {
+	getModifier(name: string): TargetTraitModifier | undefined
+	levels: number
+	name: string | null
+	modifiers: TargetTraitModifier[]
+}
+
+interface TargetTraitModifier {
+	levels: number
+	name: string
+}
+
+class TraitModifierAdapter implements TargetTraitModifier {
 	private modifier: TraitModifierGURPS
 
 	get levels() {
@@ -45,7 +61,7 @@ class TraitModifierAdapter {
 	}
 }
 
-class TraitAdapter {
+class TraitAdapter implements TargetTrait {
 	private trait: TraitGURPS
 
 	getModifier(name: string): TraitModifierAdapter | undefined {
@@ -99,7 +115,7 @@ class DamageTargetActor implements DamageTarget {
 	 * This is where we would add special handling to look for traits under different names.
 	 * @param name
 	 */
-	getTrait(name: string): TraitAdapter | undefined {
+	getTrait(name: string): TargetTrait | undefined {
 		if (this.actor instanceof CharacterGURPS) {
 			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
 			let found = traits.find(it => it.name === name)
@@ -134,4 +150,4 @@ class DamageTargetActor implements DamageTarget {
 	}
 }
 
-export { DamageTargetActor, DamageTarget, TraitAdapter, TraitModifierAdapter }
+export { createDamageTarget, DamageTarget, TargetTrait, TargetTraitModifier }

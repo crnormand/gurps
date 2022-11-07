@@ -2,12 +2,12 @@
 import { DamageCalculator, Extremity, Head, Limb } from "../../src/module/damage_calculator"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
-import { DamageTarget, TraitAdapter, TraitModifierAdapter } from "../../src/module/damage_calculator/damage_target"
+import { DamageTarget, TargetTrait, TargetTraitModifier } from "../../src/module/damage_calculator/damage_target"
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
 import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
 import { InjuryEffect, InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
 import { HitLocation } from "@actor/character/data"
-import { HitLocationAdapter, HitLocationTableAdapter } from "../../src/module/damage_calculator/hit_location"
+import { HitLocationTableAdapter } from "../../src/module/damage_calculator/hit_location"
 
 // Add real tests here.
 describe("Damage calculator", () => {
@@ -818,7 +818,7 @@ describe("Damage calculator", () => {
 		it("Perfect Balance gives +4 to this roll.", () => {
 			expect(_roll.damageType).toBe(DamageType.cr)
 
-			_target._traits.push(new TraitAdapter("Perfect Balance", 0))
+			_target._traits.push(new _TargetTrait("Perfect Balance", 0))
 
 			_roll.basicDamage = 10
 			let calc = _create(_roll, _target)
@@ -1751,7 +1751,7 @@ describe("Damage calculator", () => {
 		describe("No Brain.", () => {
 			const theLocations = ["skull", "eye"]
 			beforeEach(() => {
-				_target._traits.push(new TraitAdapter("No Brain", 0))
+				_target._traits.push(new _TargetTrait("No Brain", 0))
 			})
 
 			it("Hits to the skull (or eye) get no extra knockdown modifier.", () => {
@@ -1844,7 +1844,7 @@ describe("Damage calculator", () => {
 		describe("No Vitals.", () => {
 			const theLocations = ["vitals", "groin"]
 			beforeEach(() => {
-				_target._traits.push(new TraitAdapter("No Vitals", 0))
+				_target._traits.push(new _TargetTrait("No Vitals", 0))
 			})
 
 			it("Hits to the vitals or groin have the same effect as torso hits.", () => {
@@ -1895,7 +1895,7 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 				expect(calc.injury).toBe(24)
 
-				const damageReduction = new TraitAdapter("Damage Reduction", 2)
+				const damageReduction = new _TargetTrait("Damage Reduction", 2)
 				_target._traits.push(damageReduction)
 				calc = _create(_roll, _target)
 				expect(calc.injury).toBe(12)
@@ -1975,8 +1975,8 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.injury).toBe(18)
 
-			const trait = new TraitAdapter("Damage Resistance", 0)
-			trait.modifiers.push(new TraitModifierAdapter("Hardened", 2))
+			const trait = new _TargetTrait("Damage Resistance", 0)
+			trait.modifiers.push(new _TargetTraitModifier("Hardened", 2))
 			_target._traits.push(trait)
 			calc = _create(_roll, _target)
 			expect(calc.injury).toBe(14)
@@ -2182,7 +2182,7 @@ class _Target implements DamageTarget {
 
 	hitPoints = { value: 15, current: 10 }
 
-	_traits: TraitAdapter[] = []
+	_traits: TargetTrait[] = []
 
 	getTrait(name: string) {
 		return this._traits.find(it => it.name === name)
@@ -2254,4 +2254,32 @@ interface IDamageCalculator {
 
 const _create = function (roll: DamageRoll, target: DamageTarget): IDamageCalculator {
 	return new DamageCalculator(roll, target)
+}
+
+class _TargetTrait implements TargetTrait {
+	name: string
+
+	levels: number
+
+	constructor(name: string, levels: number) {
+		this.name = name
+		this.levels = levels
+	}
+
+	getModifier(name: string): TargetTraitModifier | undefined {
+		return this.modifiers.find(it => it.name === name)
+	}
+
+	modifiers: TargetTraitModifier[] = []
+}
+
+class _TargetTraitModifier implements TargetTraitModifier {
+	levels: number
+
+	name: string
+
+	constructor(name: string, levels: number) {
+		this.name = name
+		this.levels = levels
+	}
 }
