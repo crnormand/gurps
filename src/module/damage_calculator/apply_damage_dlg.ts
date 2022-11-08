@@ -5,6 +5,22 @@ import { DamageAttacker, DamageRoll } from "./damage_roll"
 import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
 
+const armorDivisorChoices = {
+	"-1": "Ignores DR",
+	100: "(100)",
+	10: "(10)",
+	5: "(5)",
+	3: "(3)",
+	2: "(2)",
+	1: "No divisor",
+	// eslint-disable-next-line quote-props
+	"0.5": "(0.5)",
+	// eslint-disable-next-line quote-props
+	"0.2": "(0.2)",
+	// eslint-disable-next-line quote-props
+	"0.1": "(0.1)",
+}
+
 class ApplyDamageDialog extends Application {
 	static open() {
 		console.log("Apply Damage!")
@@ -48,7 +64,7 @@ class ApplyDamageDialog extends Application {
 		return mergeObject(super.defaultOptions, {
 			popOut: true,
 			minimizable: false,
-			resizable: false,
+			resizable: true,
 			id: "ApplyDamageDialog",
 			template: `systems/${SYSTEM_NAME}/templates/damage_calculator/apply-damage.hbs`,
 			classes: ["apply-damage", "gurps"],
@@ -62,6 +78,8 @@ class ApplyDamageDialog extends Application {
 			source: this.damageRollText,
 			type: this.damageTypeAbbreviation,
 			isExplosion: this.isExplosion,
+			armorDivisorSelect: this.armorDivisorSelect,
+			damageTypeChoices: DamageType,
 		})
 	}
 
@@ -88,6 +106,10 @@ class ApplyDamageDialog extends Application {
 
 	private get isExplosion(): boolean {
 		return this.roll.damageModifier === "ex"
+	}
+
+	private get armorDivisorSelect(): string {
+		return this.roll.armorDivisor.toString()
 	}
 }
 

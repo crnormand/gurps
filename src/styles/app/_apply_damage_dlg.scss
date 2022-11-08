@@ -4,25 +4,35 @@
 	#apply-damage {
 		.fieldblock {
 			display: grid;
-			grid-template-columns: 0fr 1fr;
-			align-items: end;
-			text-align: left;
-			white-space: nowrap;
-			align-self: stretch;
+			grid-template-columns: max-content 1fr;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			padding: 2px 16px;
+			// align-items: end;
+			// text-align: left;
+			// white-space: nowrap;
+			// align-self: stretch;
 			background-color: rgba(var(--color-background), 1);
 			color: rgba(var(--color-on-content), 1);
 		}
 
 		.label {
 			padding: var(--padding-standard);
+			font: var(--font-label);
 			text-align: right;
-			color: rgba(var(--color-on-content), 0.6);
-			font-weight: 200;
+			display: inline-flex;
+			flex-flow: column nowrap;
+			justify-content: center;
 		}
 
 		.field {
 			height: 100%;
 			align-content: center;
+		}
+
+		.header {
+			text-align: center;
 		}
 	}
 }

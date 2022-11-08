@@ -4,39 +4,68 @@
 		<div class="fieldblock">
 			<div class="label">Attacker</div>
 			<div class="field">{{this.roll.attacker.name}}</div>
+
 			<div class="label">Weapon</div>
 			<div class="field">—</div>
+
 			<div class="label">Source roll</div>
 			<div class="field">
 				{{this.source}}
 				{{this.type}}
 				{{this.roll.damageModifier}}
 			</div>
-			<div class="label">Armor Divisor</div>
-			<div class="field">{{this.roll.armorDivisor}}</div>
-			<div class="label">Damage type</div>
-			<div class="field">{{this.type}}</div>
-			<div class="label">
-				<label for="exp">Explosion</label>
-			</div>
-			<div class="field">
-				<input id="exp" type="checkbox" {{checked isExplosion}} />
-			</div>
+
 			<div class="label">Damage</div>
-			<div class="field">{{this.roll.basicDamage}}</div>
+			<div class="field">
+				<input type="number" value="{{roll.basicDamage}}" step="any" name="basicDamage" />
+			</div>
+
+			<div class="label">Armor Divisor</div>
+			<div class="field">
+				<select name="armorDivsor">
+					{{#select armorDivisorSelect}}
+						<option value="-1">Ignores DR</option>
+						<option value="100">(100)</option>
+						<option value="10">(10)</option>
+						<option value="5">(5)</option>
+						<option value="3">(3)</option>
+						<option value="2">(2)</option>
+						<option value="1">No divisor</option>
+						<option value="0.5">(0.5)</option>
+						<option value="0.2">(0.2)</option>
+						<option value="0.1">(0.1)</option>
+					{{/select}}
+				</select>
+			</div>
+
+			<div class="label">Damage type</div>
+			<div class="field">
+				<select name="damageType">
+					{{selectOptions damageTypeChoices value=roll.damageType localize=false}}
+				</select>
+			</div>
+
+			<div class="label"></div>
+			<div class="field">
+				<label for="exp" class="checkbox-label">
+					<input id="exp" type="checkbox" {{checked isExplosion}} />Explosion
+				</label>
+			</div>
+
 			<div class="label">Range</div>
 			<div class="field">—</div>
-			<div class="label">
-				<label for="1/2D">Ranged, 1/2D</label>
-			</div>
+
+			<div class="label"></div>
 			<div class="field">
-				<input id="1/2D" type="checkbox" />
+				<label for="1/2D" class="checkbox-label">
+					<input id="1/2D" type="checkbox" />
+					Ranged, 1/2D</label>
 			</div>
-			<div class="label">
-				<label for="shotgun">Shotgun, extremely<br />close</label>
-			</div>
+
+			<div class="label"></div>
 			<div class="field">
-				<input id="shotgun" type="checkbox" />
+				<label for="shotgun" class="checkbox-label">
+					<input id="shotgun" type="checkbox" />Shotgun, extremely close</label>
 			</div>
 
 			<div style="grid-column: span 2;"><hr /></div>
@@ -45,38 +74,41 @@
 			<div class="field">
 				{{this.target.name}}
 			</div>
+
 			<div class="label">Hit Location</div>
 			<div class="field">{{this.roll.locationId}}</div>
+
 			<div class="label">Hardened DR</div>
 			<div class="field">0 (None)</div>
-			<div class="label">
-				<label for="flexible">Flexible armor</label>
-			</div>
+
+			<div class="label"></div>
 			<div class="field">
-				<input id="flexible" type="checkbox" />
+				<label for="flexible" class="checkbox-label">
+					<input id="flexible" type="checkbox" />Flexible armor</label>
 			</div>
+
 			<div class="label">Vulnerability</div>
 			<div class="field">
 				×{{this.roll.vulnerability}}
 				(None)
 			</div>
-			<div class="label">
-				<label for="tolerance">Injury Tolerance</label>
-			</div>
+
+			<div class="label"></div>
 			<div class="field">
-				<input id="tolerance" type="checkbox" />
+				<label for="tolerance" class="checkbox-label">
+					<input id="tolerance" type="checkbox" />Injury Tolerance</label>
 			</div>
-			<div class="label">
-				<label for="reduct">Damage Reduction</label>
-			</div>
+
+			<div class="label"></div>
 			<div class="field">
-				<input id="reduct" type="checkbox" />
+				<label for="reduct" class="checkbox-label">
+					<input id="reduct" type="checkbox" />Damage Reduction</label>
 			</div>
-			<div class="label">
-				<label for="explosion">Internal explosion</label>
-			</div>
+
+			<div class="label"></div>
 			<div class="field">
-				<input id="explosion" type="checkbox" />
+				<label for="explosion" class="checkbox-label">
+					<input id="explosion" type="checkbox" />Internal explosion</label>
 			</div>
 		</div>
 	</div>
