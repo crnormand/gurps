@@ -1,7 +1,8 @@
 <div id="apply-damage" autocomplete="off">
 	<div id="damage-roll">
-		<div class="header">Damage Roll</div>
 		<div class="fieldblock">
+			<div class="header">Damage Roll</div>
+
 			<div class="label">Attacker</div>
 			<div class="field">{{this.roll.attacker.name}}</div>
 
@@ -73,10 +74,10 @@
 			<div class="label"></div>
 			<div class="field nostretch">
 				<div class="label">RoF Multiplier</div>
-				<input type="number" value="{{roll.rofMultiplier}}" step="any" name="rofMultiplier" />
+				<input type="number" value="{{roll.rofMultiplier}}" step="any" name="rofMultiplier" size="3" />
 			</div>
 
-			<div style="grid-column: span 2;"><hr /></div>
+			<div class="header">Target</div>
 
 			<div class="label">Target</div>
 			<div class="field">
@@ -84,15 +85,25 @@
 			</div>
 
 			<div class="label">Hit Location</div>
-			<div class="field">{{this.roll.locationId}}</div>
-
-			<div class="label">Hardened DR</div>
-			<div class="field">0 (None)</div>
+			<div class="field nostretch">
+				<select name="hitLocation">
+					{{selectOptions hitLocationChoices value=roll.locationId localize=false}}
+				</select>
+				<div class="label">DR</div>
+				<input type="number" value="{{dr}}" step="any" name="dr" size="6" />
+			</div>
 
 			<div class="label"></div>
 			<div class="field">
 				<label for="flexible" class="checkbox-label">
 					<input id="flexible" type="checkbox" />Flexible armor</label>
+			</div>
+
+			<div class="label">Hardened DR</div>
+			<div class="field">
+				<select name="hardened">
+					{{selectOptions hardenedChoices value=target.}}
+				</select>
 			</div>
 
 			<div class="label">Vulnerability</div>

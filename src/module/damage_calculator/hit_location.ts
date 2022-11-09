@@ -105,6 +105,10 @@ class HitLocationTableAdapter {
 	get locations(): HitLocationAdapter[] {
 		return this.data.locations.map(it => new HitLocationAdapter(it))
 	}
+
+	getLocation(id: string): HitLocationAdapter | undefined {
+		return this.locations.find(it => it.id === id)
+	}
 }
 
 export { HitLocationTableAdapter, HitLocationAdapter, HitLocationCalcAdapter, HitLocationCalc }

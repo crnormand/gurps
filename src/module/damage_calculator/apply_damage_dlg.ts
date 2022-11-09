@@ -4,6 +4,7 @@ import { DamageCalculator } from "."
 import { DamageAttacker, DamageRoll } from "./damage_roll"
 import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
+import { HitLocationAdapter } from "./hit_location"
 
 const armorDivisorChoices = {
 	"-1": "Ignores DR",
@@ -80,6 +81,9 @@ class ApplyDamageDialog extends Application {
 			isExplosion: this.isExplosion,
 			armorDivisorSelect: this.armorDivisorSelect,
 			damageTypeChoices: DamageType,
+			hitLocation: this.hitLocation,
+			hitLocationChoices: this.hitLocationChoice,
+			dr: this.dr,
 		})
 	}
 
@@ -110,6 +114,20 @@ class ApplyDamageDialog extends Application {
 
 	private get armorDivisorSelect(): string {
 		return this.roll.armorDivisor.toString()
+	}
+
+	private get hitLocation(): HitLocationAdapter | undefined {
+		return this.target.hitLocationTable.getLocation(this.calculator.damageRoll.locationId)
+	}
+
+	private get dr(): number | undefined {
+		return this.hitLocation?.calc?.dr(this.roll.damageType)
+	}
+
+	private get hitLocationChoice(): Record<string, string> {
+		const choice: Record<string, string> = {}
+		this.target.hitLocationTable.locations.forEach(it => (choice[it.id] = it.choice_name))
+		return choice
 	}
 }
 
