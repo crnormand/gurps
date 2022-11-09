@@ -2172,6 +2172,8 @@ class _Attacker implements DamageAttacker {
 }
 
 class _Target implements DamageTarget {
+	name = "doesn't matter"
+
 	isDiffuse = false
 
 	isHomogenous = false

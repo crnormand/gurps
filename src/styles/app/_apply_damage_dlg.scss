@@ -9,10 +9,6 @@
 			column-gap: 9px;
 			vertical-align: middle;
 			padding: 2px 16px;
-			// align-items: end;
-			// text-align: left;
-			// white-space: nowrap;
-			// align-self: stretch;
 			background-color: rgba(var(--color-background), 1);
 			color: rgba(var(--color-on-content), 1);
 		}
@@ -28,7 +24,7 @@
 
 		.field {
 			height: 100%;
-			align-content: center;
+			align-items: baseline;
 		}
 
 		.header {

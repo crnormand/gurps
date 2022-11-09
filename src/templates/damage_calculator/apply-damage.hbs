@@ -10,9 +10,9 @@
 
 			<div class="label">Source roll</div>
 			<div class="field">
-				{{this.source}}
-				{{this.type}}
-				{{this.roll.damageModifier}}
+				{{source}}
+				{{type}}
+				{{roll.damageModifier}}
 			</div>
 
 			<div class="label">Damage</div>
@@ -52,8 +52,10 @@
 				</label>
 			</div>
 
-			<div class="label">Range</div>
-			<div class="field">—</div>
+			<div class="label">Range (yards)</div>
+			<div class="field">
+				<input type="number" value="{{roll.range}}" step="any" name="range" />
+			</div>
 
 			<div class="label"></div>
 			<div class="field">
@@ -66,6 +68,12 @@
 			<div class="field">
 				<label for="shotgun" class="checkbox-label">
 					<input id="shotgun" type="checkbox" />Shotgun, extremely close</label>
+			</div>
+
+			<div class="label"></div>
+			<div class="field nostretch">
+				<div class="label">RoF Multiplier</div>
+				<input type="number" value="{{roll.rofMultiplier}}" step="any" name="rofMultiplier" />
 			</div>
 
 			<div style="grid-column: span 2;"><hr /></div>
