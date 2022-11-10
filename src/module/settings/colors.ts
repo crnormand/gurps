@@ -126,7 +126,7 @@ export class ColorSettings extends SettingsMenuGURPS {
 		const colors = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.colors`) as any
 		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.colors`)?.default as any
 		colors[id] = defaults[id]
-		await (game as Game).settings.set(SYSTEM_NAME, "colors.colors", colors)
+		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.colors`, colors)
 		ColorSettings.applyColors()
 		this.render()
 	}
@@ -134,7 +134,7 @@ export class ColorSettings extends SettingsMenuGURPS {
 	async _onResetAll(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.colors`)?.default as any
-		await (game as Game).settings.set(SYSTEM_NAME, "colors.colors", defaults)
+		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.colors`, defaults)
 		ColorSettings.applyColors()
 		this.render()
 	}
@@ -183,11 +183,11 @@ export class ColorSettings extends SettingsMenuGURPS {
 			const value = colors[e]
 			// @ts-ignore until types v10
 			value.light = Color.fromString(value.light)
-				.rgb.map(i => i * 255)
+				.rgb.map((i: number) => i * 255)
 				.join(", ")
 			// @ts-ignore until types v10
 			value.dark = Color.fromString(value.dark)
-				.rgb.map(i => i * 255)
+				.rgb.map((i: number) => i * 255)
 				.join(", ")
 			if (modePreference === "light") $(":root").css(name, value.light)
 			else if (modePreference === "dark") $(":root").css(name, value.dark)

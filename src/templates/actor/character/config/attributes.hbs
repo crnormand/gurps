@@ -3,12 +3,12 @@
 </div>
 <div class="item-list">
 	{{#each attributes}}
-		<div class="item" data-id="{{this.id}}" data-index="{{this.order}}" data-type="attributes">
+		<div class="item" data-id="{{this.id}}" data-index="{{@index}}" data-type="attributes">
 			<div class="controls">
-				<a class="gcs-grip drag" data-index="{{this.order}}" data-type="attributes"></a>
-				<a class="gcs-trash delete" data-index="{{this.order}}" data-type="attributes"></a>
+				<a class="gcs-grip drag" data-index="{{@index}}" data-type="attributes"></a>
+				<a class="gcs-trash delete" data-index="{{@index}}" data-type="attributes"></a>
 				{{#if (eq this.type "pool")}}
-					<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="attribute_thresholds"></a>
+					<a class="gcs-circled-add add" data-id="{{@index}}" data-type="attribute_thresholds"></a>
 				{{else}}
 					<a class="gcs-circled-add disabled"></a>
 				{{/if}}
@@ -17,20 +17,20 @@
 				{{#if (in this.type "_separator")}}
 				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
 				<div class="field">
-					<input type="text" name="array.system.settings.attributes.{{this.order}}.id" value="{{this.id}}" data-dtype="String" />
+					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
 				</div>
 				<div class="label">{{localize "gurps.attribute_def.name"}}</div>
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.attributes.{{this.order}}.name"
+						name="array.system.settings.attributes.{{@index}}.name"
 						value="{{this.name}}"
 						data-dtype="String"
 					/>
 				</div>
 				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
 				<div class="field">
-					<select name="array.system.settings.attributes.{{this.order}}.type" data-dtype="String">
+					<select name="array.system.settings.attributes.{{@index}}.type" data-dtype="String">
 						{{#select this.type}}
 							{{#each @root.config.select.attribute_type as |v k|}}
 								<option value="{{k}}">
@@ -43,13 +43,13 @@
 				{{else}}
 				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
 				<div class="field">
-					<input type="text" name="array.system.settings.attributes.{{this.order}}.id" value="{{this.id}}" data-dtype="String" />
+					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
 				</div>
 				<div class="label">{{localize "gurps.attribute_def.short_name"}}</div>
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.attributes.{{this.order}}.name"
+						name="array.system.settings.attributes.{{@index}}.name"
 						value="{{this.name}}"
 						data-dtype="String"
 					/>
@@ -58,7 +58,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.attributes.{{this.order}}.full_name"
+						name="array.system.settings.attributes.{{@index}}.full_name"
 						value="{{this.full_name}}"
 						data-dtype="String"
 					/>
@@ -67,7 +67,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.attributes.{{this.order}}.attribute_base"
+						name="array.system.settings.attributes.{{@index}}.attribute_base"
 						value="{{this.attribute_base}}"
 						data-dtype="String"
 					/>
@@ -76,7 +76,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.attributes.{{this.order}}.cost_per_point"
+						name="array.system.settings.attributes.{{@index}}.cost_per_point"
 						value="{{this.cost_per_point}}"
 						data-dtype="Number"
 					/>
@@ -85,14 +85,14 @@
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.attributes.{{this.order}}.cost_adj_percent_per_sm"
+						name="array.system.settings.attributes.{{@index}}.cost_adj_percent_per_sm"
 						value="{{this.cost_adj_percent_per_sm}}%"
 						data-dtype="Number"
 					/>
 				</div>
 				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
 				<div class="field">
-					<select name="array.system.settings.attributes.{{this.order}}.type" data-dtype="String">
+					<select name="array.system.settings.attributes.{{@index}}.type" data-dtype="String">
 						{{#select this.type}}
 							{{#each @root.config.select.attribute_type as |v k|}}
 								<option value="{{k}}">
@@ -105,7 +105,7 @@
 				{{#if (eq this.type "pool")}}
 				<div class="item-list thresholds">
 					{{#each this.thresholds}}
-					{{>actor/character/config/threshold id=../this.order parent="array.system.settings.attributes"}}
+					{{>actor/character/config/threshold id=@../index parent="array.system.settings.attributes"}}
 					{{/each}}
 				</div>
 				{{/if}}

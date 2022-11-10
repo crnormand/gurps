@@ -2,6 +2,7 @@
 
 ## In Progress
 
+-   when skill is rolled from tree, show which skill is rolled
 -   Customizable default attributes/body plan/sheet settings/resource trackers
 -   Character export/sync
 -   prompt to import character on creation

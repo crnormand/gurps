@@ -1,9 +1,14 @@
 import { CharacterProfile } from "@actor/character/data"
 import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
-import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "@module/data"
+import { DamageProgression, DisplayMode } from "@module/data"
 import { GURPS } from "@module/gurps"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
+import { LengthUnits, WeightUnits } from "@util/measure"
+import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
+import { DefaultHitLocationSettings } from "./hit_locations"
+import { DefaultResourceTrackerSettings } from "./resource_trackers"
+import { DefaultSheetSettings } from "./sheet_settings"
 
 export const SYSTEM_NAME = "gcsga"
 export enum SETTINGS {
@@ -18,6 +23,10 @@ export enum SETTINGS {
 	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
 	MODIFIER_MODE = "modifier_mode",
 	COLORS = "colors",
+	DEFAULT_ATTRIBUTES = "default_attributes",
+	DEFAULT_RESOURCE_TRACKERS = "default_resource_trackers",
+	DEFAULT_HIT_LOCATIONS = "default_hit_locations",
+	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
 }
 
 /**
@@ -31,12 +40,56 @@ export function registerSettings(): void {
 		name: "gurps.settings.colors.name",
 		label: "gurps.settings.colors.label",
 		hint: "gurps.settings.colors.hint",
-		icon: "gcs-settings",
+		icon: "fas fa-palette",
 		// @ts-ignore
 		type: ColorSettings,
 		restricted: false,
 	})
 	ColorSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_ATTRIBUTES, {
+		name: "gurps.settings.default_attributes.name",
+		label: "gurps.settings.default_attributes.label",
+		hint: "gurps.settings.default_attributes.hint",
+		icon: "gcs-attribute",
+		// @ts-ignore
+		type: DefaultAttributeSettings,
+		restricted: false,
+	})
+	DefaultAttributeSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_RESOURCE_TRACKERS, {
+		name: "gurps.settings.default_resource_trackers.name",
+		label: "gurps.settings.default_resource_trackers.label",
+		hint: "gurps.settings.default_resource_trackers.hint",
+		icon: "gcs-coins",
+		// @ts-ignore
+		type: DefaultResourceTrackerSettings,
+		restricted: true,
+	})
+	DefaultResourceTrackerSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_HIT_LOCATIONS, {
+		name: "gurps.settings.default_hit_locations.name",
+		label: "gurps.settings.default_hit_locations.label",
+		hint: "gurps.settings.default_hit_locations.hint",
+		icon: "gcs-body-type",
+		// @ts-ignore
+		type: DefaultHitLocationSettings,
+		restricted: true,
+	})
+	DefaultHitLocationSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_SHEET_SETTINGS, {
+		name: "gurps.settings.default_sheet_settings.name",
+		label: "gurps.settings.default_sheet_settings.label",
+		hint: "gurps.settings.default_sheet_settings.hint",
+		icon: "gcs-settings",
+		// @ts-ignore
+		type: DefaultSheetSettings,
+		restricted: true,
+	})
+	DefaultSheetSettings.registerSettings()
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF, {
 		name: "gurps.settings.basic_set_pdfs.name",
@@ -168,7 +221,6 @@ interface provider {
 		use_modifying_dice_plus_adds: boolean
 		damage_progression: DamageProgression
 		use_simple_metric_conversions: boolean
-		show_difficulty: boolean
 		show_trait_modifier_adj: boolean
 		show_equipment_modifier_adj: boolean
 		show_spell_adj: boolean
@@ -194,17 +246,16 @@ interface provider {
 
 export const SETTINGS_TEMP: provider = {
 	sheet: {
-		default_length_units: "ft_in",
-		default_weight_units: "lb",
-		user_description_display: "tooltip",
-		modifiers_display: "inline",
-		notes_display: "inline",
-		skill_level_adj_display: "tooltip",
+		default_length_units: LengthUnits.FeetAndInches,
+		default_weight_units: WeightUnits.Pound,
+		user_description_display: DisplayMode.Tooltip,
+		modifiers_display: DisplayMode.Inline,
+		notes_display: DisplayMode.Inline,
+		skill_level_adj_display: DisplayMode.Tooltip,
 		use_multiplicative_modifiers: false,
 		use_modifying_dice_plus_adds: false,
 		damage_progression: DamageProgression.BasicSet,
 		use_simple_metric_conversions: true,
-		show_difficulty: false,
 		show_trait_modifier_adj: false,
 		show_equipment_modifier_adj: false,
 		show_spell_adj: false,
