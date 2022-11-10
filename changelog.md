@@ -5,6 +5,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.15.9
 
 - Update to JB2A 0.5.1
+- Fix for https://github.com/crnormand/gurps/issues/1644 (Mod Bucket stops after one modifier is clicked if not using mouseover to open).
+- Fixed some issues with pre v1.0.0 Items
 
 Release 0.15.8 11/06/2022
 
