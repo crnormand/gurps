@@ -145,9 +145,9 @@ export class CompositeDamageCalculator {
           ['Injury Tolerance (Unliving)', 'Unliving'].includes(value.name) ||
           (value.name === 'Injury Tolerance' && value.notes.includes('Unliving'))
         )
-
-        if (!found && Object.keys(value.contains).length > 0) {
-          found = self.isUnliving(Object.values(value.contains), false)
+        const contents = value.contains ?? value.collapsed
+        if (!found && Object.keys(contents).length > 0) {
+          found = self.isUnliving(Object.values(contents), false)
         }
         return found
       })
@@ -164,8 +164,9 @@ export class CompositeDamageCalculator {
           (value.name === 'Injury Tolerance' && value.notes.includes('Homogenous'))
         )
 
-        if (!found && Object.keys(value.contains).length > 0) {
-          found = self.isHomogenous(Object.values(value.contains), false)
+        const contents = value.contains ?? value.collapsed
+        if (!found && Object.keys(contents).length > 0) {
+          found = self.isHomogenous(Object.values(contents), false)
         }
         return found
       })
@@ -182,8 +183,9 @@ export class CompositeDamageCalculator {
           (value.name === 'Injury Tolerance' && value.notes.includes('Diffuse'))
         )
 
-        if (!found && Object.keys(value.contains).length > 0) {
-          found = self.isDiffuse(Object.values(value.contains), false)
+        const contents = value.contains ?? value.collapsed
+        if (!found && Object.keys(contents).length > 0) {
+          found = self.isDiffuse(Object.values(contents), false)
         }
         return found
       })
