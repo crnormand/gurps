@@ -426,9 +426,8 @@ if (!globalThis.GURPS) {
     // on a floating skill check, we want the skill with the highest relative skill level
     if (!!action.floatingAttribute) {
       if (!!actor) {
-        let value = GURPS.resolve(action.floatingAttribute, actordata.data)
+        let value = GURPS.resolve(action.floatingAttribute, actordata)
         let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
-        console.log(rsl)
         let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
         skillLevel = valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
       } else {
