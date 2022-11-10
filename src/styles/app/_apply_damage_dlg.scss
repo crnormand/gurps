@@ -4,7 +4,7 @@
 	#apply-damage {
 		.fieldblock {
 			display: grid;
-			grid-template-columns: max-content 1fr;
+			grid-template-columns: max-content 1fr min-content;
 			row-gap: 4px;
 			column-gap: 9px;
 			vertical-align: middle;
@@ -20,16 +20,55 @@
 			display: inline-flex;
 			flex-flow: column nowrap;
 			justify-content: center;
+			height: 100%;
 		}
 
 		.field {
 			height: 100%;
 			align-items: baseline;
+
+			&.direct-damage {
+				display: flex;
+				flex-flow: row nowrap;
+			}
+		}
+
+		input[name="basicDamage"] {
+			width: 6em;
+		}
+
+		.field.nostretch {
+			input {
+				width: auto;
+			}
 		}
 
 		.header {
 			text-align: center;
-			grid-column: span 2;
+			grid-column: span 3;
+		}
+
+		.pdf {
+			color: blue;
+			text-decoration: underline;
+			font-size: 80%;
+			text-align: left;
+		}
+	}
+
+	#target {
+		margin: 2px 16px;
+
+		.content {
+			border: 1px solid rgb(var(--color-header));
+			background-color: rgb(var(--color-content));
+			display: grid;
+			grid-template-columns: max-content 1fr min-content;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			padding: 2px 16px;
+			color: rgba(var(--color-on-content), 1);
 		}
 	}
 }

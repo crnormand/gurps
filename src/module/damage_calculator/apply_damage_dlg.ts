@@ -5,23 +5,6 @@ import { DamageAttacker, DamageRoll } from "./damage_roll"
 import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
 import { HitLocationAdapter } from "./hit_location"
-
-const armorDivisorChoices = {
-	"-1": "Ignores DR",
-	100: "(100)",
-	10: "(10)",
-	5: "(5)",
-	3: "(3)",
-	2: "(2)",
-	1: "No divisor",
-	// eslint-disable-next-line quote-props
-	"0.5": "(0.5)",
-	// eslint-disable-next-line quote-props
-	"0.2": "(0.2)",
-	// eslint-disable-next-line quote-props
-	"0.1": "(0.1)",
-}
-
 class ApplyDamageDialog extends Application {
 	static open() {
 		console.log("Apply Damage!")
@@ -66,6 +49,7 @@ class ApplyDamageDialog extends Application {
 			popOut: true,
 			minimizable: false,
 			resizable: true,
+			width: 0,
 			id: "ApplyDamageDialog",
 			template: `systems/${SYSTEM_NAME}/templates/damage_calculator/apply-damage.hbs`,
 			classes: ["apply-damage", "gurps"],
@@ -84,6 +68,11 @@ class ApplyDamageDialog extends Application {
 			hitLocation: this.hitLocation,
 			hitLocationChoices: this.hitLocationChoice,
 			dr: this.dr,
+			hardenedChoices: hardenedChoices,
+			vulnerabilityChoices: vulnerabilityChoices,
+			injuryToleranceChoices: injuryToleranceChoices,
+			damageReductionChoices: damageReductionChoices,
+			poolChoices: poolChoices,
 		})
 	}
 
@@ -129,6 +118,43 @@ class ApplyDamageDialog extends Application {
 		this.target.hitLocationTable.locations.forEach(it => (choice[it.id] = it.choice_name))
 		return choice
 	}
+}
+
+const hardenedChoices = {
+	0: "None (0)",
+	1: "1",
+	2: "2",
+	3: "3",
+	4: "4",
+	5: "5",
+	6: "6",
+}
+
+const vulnerabilityChoices = {
+	1: "None",
+	2: "×2",
+	3: "×3",
+	4: "×4",
+}
+
+const damageReductionChoices = {
+	1: "None",
+	2: "2",
+	3: "3",
+	4: "4",
+}
+
+const injuryToleranceChoices = {
+	0: "None",
+	1: "Unliving",
+	2: "Homogenous",
+	3: "Diffuse",
+}
+
+const poolChoices = {
+	hp: "Hit Points",
+	fp: "Fatigue Points",
+	cp: "Control Points",
 }
 
 export { ApplyDamageDialog }
