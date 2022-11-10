@@ -193,7 +193,7 @@ export class GurpsActor extends Actor {
         orig = []
       }
     }
-    for (const item of good) await this.addItemData(item.system) // re-add the item equipment and features
+    for (const item of good) await this.addItemData(item) // re-add the item equipment and features
 
     await this.internalUpdate({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
