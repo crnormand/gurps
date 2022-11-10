@@ -1,7 +1,8 @@
 import { ActorDataGURPS, ActorSourceGURPS } from "@actor/data"
-import {
+import Document, {
 	Context,
 	DocumentModificationOptions,
+	Metadata,
 } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
@@ -20,7 +21,7 @@ class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
 			super(data, context)
-			this.noPrepare = true
+			this.noPrepare = false
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = (CONFIG as any).GURPS.Actor.documentClasses[data.type]
@@ -72,6 +73,14 @@ class BaseActorGURPS extends Actor {
 				return [e.id!, e]
 			})
 		)
+	}
+
+	updateEmbeddedDocuments(
+		embeddedName: string,
+		updates?: Record<string, unknown>[] | undefined,
+		context?: DocumentModificationContext | undefined
+	): Promise<Document<any, this, Metadata<any>>[]> {
+		return super.updateEmbeddedDocuments(embeddedName, updates, context)
 	}
 
 	get sizeMod(): number {

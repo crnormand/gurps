@@ -1,0 +1,26 @@
+<div id="study">
+	<div class="header">{{localize "gurps.study.header"}}</div>
+	<div class="content">
+		<div class="control">
+			<a class="add button gcs-circled-add"></a><div>{{#if document.studyHours}}{{localize "gurps.study.studied" hours=document.studyHours}}{{/if}}</div>
+		</div>
+		{{#each system.study}}
+			<div class="study-entry">
+				<a class="remove button gcs-trash" data-index="{{@index}}"></a>
+				<select class="type" name="array.system.study.{{@index}}.type" data-index="{{@index}}">
+				{{#select this.type}}
+					{{#each ../config.select.study_type as |v k| }}
+						<option value="{{k}}">
+							{{localize v}}
+						</option>
+					{{/each}}
+				{{/select}}
+				</select>
+				<a class="gcs-info" data-index="{{@index}}"></a>
+				<input type="text" name="array.system.study.{{@index}}.hours" value="{{this.hours}}" data-dtype="Number" />
+				<input type="text" value="{{adjustedStudyHours this}}" readonly tabIndex="-1" />
+				<input type="text" name="array.system.study.{{@index}}.note" value="{{this.notes}}" data-dtype="String" placeholder="{{localize 'gurps.item.note'}}"/>
+			</div>
+		{{/each}}
+	</div>
+</div>

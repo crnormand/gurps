@@ -47,7 +47,7 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
+import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation, HitLocationTable } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 
@@ -95,7 +95,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.modified_date = sd.created_date
 		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
 		sd.attributes = this.newAttributes(sd.settings.attributes)
-		sd.resource_trackers = []
+		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
 	}
@@ -104,6 +104,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
+		if (context?.noPrepare) this.noPrepare = true
 		console.log(data, context)
 		this.updateAttributes(data)
 		this.checkImport(data)
@@ -377,11 +378,11 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	weightCarried(for_skills: boolean): number {
 		let total = 0
-		for (const e of this.carried_equipment) {
+		this.carried_equipment.forEach(e => {
 			if (e.parent === this) {
 				total += e.extendedWeight(for_skills, this.settings.default_weight_units)
 			}
-		}
+		})
 		return floatingMul(total)
 	}
 
@@ -393,12 +394,16 @@ class CharacterGURPS extends BaseActorGURPS {
 		return floatingMul(value)
 	}
 
+	get fastWealthNotCarried(): string {
+		return `$${this.wealthNotCarried()}`
+	}
+
 	wealthNotCarried(): number {
 		let value = 0
-		for (const e of this.other_equipment) {
+		this.other_equipment.forEach(e => {
 			if (e.parent === this) value += e.extendedValue
-		}
-		return value
+		})
+		return floatingMul(value)
 	}
 
 	get strengthOrZero(): number {
@@ -501,18 +506,39 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		return this.system.settings?.body_type?.locations?.map(e => {
-			const l = e
-			l.roll_range = e.calc?.roll_range || "-"
-			l.dr = {}
-			const all = e.calc?.dr.all || 0
-			for (const k of Object.keys(e.calc?.dr ?? {})) {
-				if (k === "all") l.dr[k] = all
-				else l.dr[k] = all + e.calc!.dr[k]
+		/**
+		 *
+		 * @param b
+		 */
+		function updateRollRanges(b: HitLocationTable) {
+			let start = new DiceGURPS(b.roll).minimum(false)
+			for (const i of b.locations) {
+				start = updateRollRange(i, start)
 			}
-			delete l.calc
-			return l
-		})
+		}
+		/**
+		 *
+		 * @param h
+		 * @param start
+		 */
+		function updateRollRange(h: HitLocation, start: number): number {
+			h.calc ??= { roll_range: "", dr: {} }
+			h.slots ??= 0
+			if (h.slots === 0) h.calc.roll_range = "-"
+			else if (h.slots === 1) h.calc.roll_range = start.toString()
+			else {
+				h.calc.roll_range = `${start}-${start + h.slots - 1}`
+			}
+			if (h.sub_table) {
+				updateRollRanges(h.sub_table)
+			}
+			return start + h.slots
+		}
+
+		const body = this.system.settings.body_type
+		if (!body) return []
+		updateRollRanges(body)
+		return body.locations
 	}
 
 	// Item Types
@@ -810,6 +836,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareBaseData(): void {
 		super.prepareBaseData()
+		if (this.noPrepare) {
+			this.noPrepare = false
+			return
+		}
 		this.system.settings.attributes.forEach(e => (e.cost_adj_percent_per_sm ??= 0))
 		if (this.system.attributes.length === 0) {
 			this.system.attributes = this.newAttributes()
@@ -822,27 +852,27 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	override prepareEmbeddedDocuments(): void {
-		super.prepareEmbeddedDocuments()
-		if (!this.noPrepare) {
-			this.updateSkills()
-			this.updateSpells()
-			for (let i = 0; i < 5; i++) {
-				this.processFeatures()
-				this.processPrereqs()
-				let skillsChanged = this.updateSkills()
-				let spellsChanged = this.updateSpells()
-				if (!skillsChanged && !spellsChanged) break
-			}
-			this.pools = {}
-			for (const a of Object.values(this.attributes)) {
-				if (a.attribute_def.type === AttributeType.Pool)
-					this.pools[a.attribute_def.name] = {
-						max: a.max,
-						value: a.current,
-					}
-			}
-		} else {
+		if (this.noPrepare) {
 			this.noPrepare = false
+			return
+		}
+		super.prepareEmbeddedDocuments()
+		this.updateSkills()
+		this.updateSpells()
+		for (let i = 0; i < 5; i++) {
+			this.processFeatures()
+			this.processPrereqs()
+			let skillsChanged = this.updateSkills()
+			let spellsChanged = this.updateSpells()
+			if (!skillsChanged && !spellsChanged) break
+		}
+		this.pools = {}
+		for (const a of Object.values(this.attributes)) {
+			if (a.attribute_def.type === AttributeType.Pool)
+				this.pools[a.attribute_def.name] = {
+					max: a.max,
+					value: a.current,
+				}
 		}
 	}
 
@@ -1352,22 +1382,30 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.variableResolverExclusions.set(variableName, true)
 		if (gid.SizeModifier === variableName) return this.profile.SM.signedString()
 		const parts = variableName.split(".") // TODO: check
-		const attr = this.attributes.get(parts[0])
+		let attr: Attribute | ResourceTracker | undefined = this.attributes.get(parts[0])
+		if (!attr) attr = this.resource_trackers.get(parts[0])
 		if (!attr) {
 			console.warn(`No such variable: $${variableName}`)
 			return ""
 		}
-		const def = this.settings.attributes.find(e => e.id === attr.attr_id)
-		// Const def = this.settings.attributes[attr.attr_id]
+		let def
+		if (attr instanceof Attribute) {
+			// Def = this.settings.attributes.find(e => e.id === (attr as Attribute).attr_id)
+			def = attr.attribute_def
+		} else if (attr instanceof ResourceTracker) {
+			def = attr.tracker_def
+			// Def = this.settings.resource_trackers.find(e => e.id === (attr as ResourceTracker).tracker_id)
+		}
 		if (!def) {
 			console.warn(`No such variable definition: $${variableName}`)
 			return ""
 		}
-		if (def.type === AttributeType.Pool && parts.length > 1) {
+		if ((def instanceof ResourceTrackerDef || def.type === AttributeType.Pool) && parts.length > 1) {
 			switch (parts[1]) {
 				case "current":
 					return attr.current.toString()
 				case "maximum":
+				case "max":
 					return attr.max.toString()
 				default:
 					console.warn(`No such variable: $${variableName}`)

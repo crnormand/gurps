@@ -1,11 +1,11 @@
-<select name="{{path}}.which">
+<select name="array.system.features.{{@index}}.which">
 	{{#select this.which}}
 		{{#each attributes as |v k|}}
 			<option value="{{k}}">{{v}}</option>
 		{{/each}}
 	{{/select}}
 </select>
-<select name="{{path}}.percentage">
+<select name="array.system.features.{{@index}}.percentage">
 	{{#select this.percentage}}
 		{{#each config.select.percentage as |v k|}}
 			<option value="{{k}}">{{localize "gurps.field_prefix.percentage" value=v}}</option>

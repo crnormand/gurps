@@ -1,11 +1,11 @@
 import { CharacterGURPS } from "@actor"
 import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@item"
-import { NumberComparison, StringComparison } from "@module/data"
+import { NumberComparison, StringComparison, StudyType } from "@module/data"
 import { SYSTEM_NAME } from "@module/settings"
 import { WeaponSheet } from "@module/weapon/sheet"
 import { PrereqType } from "@prereq"
-import { i18n, toArray } from "@util"
+import { i18n, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
 // @ts-ignore
@@ -72,7 +72,7 @@ export class ItemSheetGURPS extends ItemSheet {
 				config: (CONFIG as any).GURPS,
 				attributes: attributes,
 				locations: locations,
-				sysPrefix: "system.",
+				sysPrefix: "array.system.",
 			},
 		}
 
@@ -103,6 +103,8 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find("#features .add").on("click", event => this._addFeature(event))
 		html.find(".feature .remove").on("click", event => this._removeFeature(event))
 		html.find(".feature .type").on("change", event => this._onFeatureTypeChange(event))
+		html.find("#study .add").on("click", event => this._addStudy(event))
+		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
 		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
 		html.find("textarea")
 			.each(function () {
@@ -125,6 +127,7 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
 		// FormApplicationGURPS.updateObject(event, formData)
+		formData = prepareFormData(event, formData, this.object)
 		if (formData["system.tags"] && typeof formData["system.tags"] === "string") {
 			const tags = formData["system.tags"].split(",").map(e => e.trim())
 			formData["system.tags"] = tags
@@ -137,8 +140,9 @@ export class ItemSheetGURPS extends ItemSheet {
 	}
 
 	protected async _addPrereqChild(event: JQuery.ClickEvent): Promise<any> {
-		const path = $(event.currentTarget).data("path")
-		const prereqs = toArray(duplicate(getProperty(this.item as any, `${path}.prereqs`)))
+		event.preventDefault()
+		const path = $(event.currentTarget).data("path").replace("array.", "")
+		const prereqs = getProperty(this.item, `${path}.prereqs`)
 		prereqs.push({
 			type: "trait_prereq",
 			name: { compare: StringComparison.Is, qualifier: "" },
@@ -146,79 +150,60 @@ export class ItemSheetGURPS extends ItemSheet {
 			level: { compare: NumberComparison.AtLeast, qualifier: 0 },
 			has: true,
 		})
-		const update: any = {}
-		// Update["system.prereqs"] = await this.getPrereqUpdate(`${path}.prereqs`, { ...prereqs });
-		update["system.prereqs.prereqs"] = await this.getPrereqUpdate(`${path}.prereqs`, { ...prereqs })
-		// Await this.item.update({ "system.-=prereqs": null }, { render: false });
-		return this.item.update(update)
+		const formData: any = {}
+		formData[`array.${path}.prereqs`] = prereqs
+		return this._updateObject(null as unknown as Event, formData)
 	}
 
 	protected async _addPrereqList(event: JQuery.ClickEvent): Promise<any> {
-		const path = $(event.currentTarget).data("path")
-		const prereqs = toArray(duplicate(getProperty(this.item as any, `${path}.prereqs`)))
+		event.preventDefault()
+		const path = $(event.currentTarget).data("path").replace("array.", "")
+		const prereqs = getProperty(this.item, `${path}.prereqs`)
 		prereqs.push({
 			type: "prereq_list",
 			prereqs: [],
 			when_tl: { compare: NumberComparison.None },
 		})
-		const update: any = {}
-		// Update["system.prereqs"] = await this.getPrereqUpdate(`${path}.prereqs`, { ...prereqs });
-		// update["system.prereqs.prereqs"] = await this.getPrereqUpdate(path, { ...prereqs });
-		update["system.prereqs.prereqs"] = await this.getPrereqUpdate(`${path}.prereqs`, { ...prereqs })
-		// Await this.item.update({ "system.-=prereqs": null }, { render: false });
-		return this.item.update(update)
+		const formData: any = {}
+		formData[`array.${path}.prereqs`] = prereqs
+		return this._updateObject(null as unknown as Event, formData)
 	}
 
 	protected async _removePrereq(event: JQuery.ClickEvent): Promise<any> {
-		// Path = system.prereqs.prereqs.0
-		let path = $(event.currentTarget).data("path")
+		event.preventDefault()
+		let path = $(event.currentTarget).data("path").replace("array.", "")
 		const items = path.split(".")
 		const index = items.pop()
 		path = items.join(".")
-		const prereqs = toArray(duplicate(getProperty(this.item as any, path)))
+		const prereqs = getProperty(this.item, `${path}`)
 		prereqs.splice(index, 1)
-		const update: any = {}
-		// Update["system.prereqs"] = await this.getPrereqUpdate(path, { ...prereqs });
-		update["system.prereqs.prereqs"] = await this.getPrereqUpdate(path, {
-			...prereqs,
-		})
-		// Await this.item.update({ "system.prereqs.-=prereqs": null }, { render: false });
-		return this.item.update(update)
+		const formData: any = {}
+		formData[`array.${path}`] = prereqs
+		return this._updateObject(null as unknown as Event, formData)
 	}
 
 	protected async _onPrereqTypeChange(event: JQuery.ChangeEvent): Promise<any> {
+		event.preventDefault()
 		const value = event.currentTarget.value
 		const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[value as PrereqType]
-		let path = $(event.currentTarget).data("path")
+		let path = $(event.currentTarget).data("path").replace("array.", "")
 		const items = path.split(".")
 		const index = items.pop()
 		path = items.join(".")
-		const prereqs = toArray(duplicate(getProperty(this.item as any, path)))
+		const prereqs = getProperty(this.item, `${path}`)
 		prereqs[index] = {
 			type: value,
 			...PrereqConstructor.defaults,
 			has: prereqs[index].has,
 		}
-		const update: any = {}
-		// Update["system.prereqs"] = await this.getPrereqUpdate(path, { ...prereqs });
-		update["system.prereqs.prereqs"] = await this.getPrereqUpdate(path, prereqs)
-		// Await this.item.update({ "system.prereqs.-=prereqs": null }, { render: false });
-		return this.item.update(update)
-	}
-
-	async getPrereqUpdate(path: string, data: any): Promise<any> {
-		// If (path === "system.prereqs") return data;
-		if (path === "system.prereqs.prereqs") return toArray(data)
-		const list = path.split(".")
-		const variable: string = list.pop()!
-		const parent = duplicate(getProperty(this.item as any, list.join(".")))
-		parent[variable] = data
-		return this.getPrereqUpdate(list.join("."), parent)
+		const formData: any = {}
+		formData[`array.${path}`] = prereqs
+		return this._updateObject(null as unknown as Event, formData)
 	}
 
 	protected async _addFeature(event: JQuery.ClickEvent): Promise<any> {
 		event.preventDefault()
-		const features = toArray(duplicate(getProperty(this.item as any, "system.features")))
+		const features = (this.item.system as any).features
 		features.push({
 			type: "attribute_bonus",
 			attribute: "st",
@@ -234,10 +219,32 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	protected async _removeFeature(event: JQuery.ClickEvent): Promise<any> {
 		const index = $(event.currentTarget).data("index")
-		const features = toArray(duplicate(getProperty(this.item as any, "system.features")))
+		const features = (this.item.system as any).features
 		features.splice(index, 1)
 		const update: any = {}
 		update["system.features"] = features
+		return this.item.update(update)
+	}
+
+	protected async _addStudy(event: JQuery.ClickEvent): Promise<any> {
+		event.preventDefault()
+		const study = (this.item.system as any).study
+		study.push({
+			type: StudyType.Self,
+			hours: 0,
+			note: "",
+		})
+		const update: any = {}
+		update["system.study"] = study
+		return this.item.update(update)
+	}
+
+	protected async _removeStudy(event: JQuery.ClickEvent): Promise<any> {
+		const index = $(event.currentTarget).data("index")
+		const study = (this.item.system as any).study
+		study.splice(index, 1)
+		const update: any = {}
+		update["system.study"] = study
 		return this.item.update(update)
 	}
 
@@ -245,7 +252,7 @@ export class ItemSheetGURPS extends ItemSheet {
 		const value = event.currentTarget.value
 		const index = $(event.currentTarget).data("index")
 		const FeatureConstructor = (CONFIG as any).GURPS.Feature.classes[value as FeatureType]
-		const features = toArray(duplicate(getProperty(this.item as any, "system.features")))
+		const features = (this.item.system as any).features
 		features[index] = {
 			type: value,
 			...FeatureConstructor.defaults,

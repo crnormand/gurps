@@ -2,99 +2,115 @@
 	<a class="gcs-circled-add add" data-type="attributes"></a>
 </div>
 <div class="item-list">
-    {{#each primaryAttributes }}
-		<div class="item" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute">
-            <div class="controls">
-				<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute"></a>
-                <a class="gcs-trash"></a>
-                <a class="gcs-circled-add disabled"></a>
-            </div>
-            <div class="fieldblock">
-                {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.order ".id") data=this.id type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.order ".name") data=this.name type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.order ".full_name") data=this.full_name type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.order ".attribute_base") data=this.attribute_base type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.order ".cost_per_point") data=this.cost_per_point type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.order ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="String" }}
-                <div class="label">{{localize "gurps.attribute_def.type"}}</div>
-                <div class="field">
-                    <select name="attributes.{{this.order}}.type" data-dtype="String">
-                        {{#select this.type }}
-                        {{#each @root.config.select.attribute_type as |v k| }}
-                            <option value="{{k}}">
-                                {{ localize v }}
-                            </option>
-                        {{/each }}
-                    {{/select }}
-                </select>
-            </div>
-        </div>
-    </div>
-{{/each}}
-{{#each secondaryAttributes }}
-    <div class="item">
-        <div class="controls">
-			<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute"></a>
-            <a class="gcs-trash"></a>
-            <a class="gcs-circled-add disabled"></a>
-        </div>
-        <div class="fieldblock">
-            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.order ".id") data=this.id type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.order ".name") data=this.name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.order ".full_name") data=this.full_name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.order ".attribute_base") data=this.attribute_base type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.order ".cost_per_point") data=this.cost_per_point type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.order ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="String" }}
-            <div class="label">{{localize "gurps.attribute_def.type"}}</div>
-            <div class="field">
-                <select name="attributes.{{this.order}}.type" data-dtype="String">
-                    {{#select this.type }}
-                    {{#each @root.config.select.attribute_type as |v k| }}
-                        <option value="{{k}}">
-                            {{ localize v }}
-                        </option>
-                    {{/each }}
-                {{/select }}
-            </select>
-        </div>
-    </div>
-</div>
-{{/each}}
-{{#each poolAttributes}}
-    <div class="item">
-        <div class="controls">
-			<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute"></a>
-            <a class="gcs-trash"></a>
-            <a class="gcs-circled-add disabled"></a>
-        </div>
-        <div class="fieldblock">
-            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.order ".id") data=this.id type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.order ".name") data=this.name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.order ".full_name") data=this.full_name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.order ".attribute_base") data=this.attribute_base type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.order ".cost_per_point") data=this.cost_per_point type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.order ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="String" }}
-            <div class="label">{{localize "gurps.attribute_def.type"}}</div>
-            <div class="field">
-                <select name="attributes.{{this.order}}.type" data-dtype="String">
-                    {{#select this.type }}
-                    {{#each @root.config.select.attribute_type as |v k| }}
-                        <option value="{{k}}">
-                            {{ localize v }}
-                        </option>
-                    {{/each }}
-                {{/select }}
-            </select>
-        </div>
-		<div class="item-list thresholds">
-			<div class="add">
-				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="attribute_thresholds"></a>
+	{{#each attributes}}
+		<div class="item" data-id="{{this.id}}" data-index="{{@index}}" data-type="attributes">
+			<div class="controls">
+				<a class="gcs-grip drag" data-index="{{@index}}" data-type="attributes"></a>
+				<a class="gcs-trash delete" data-index="{{@index}}" data-type="attributes"></a>
+				{{#if (eq this.type "pool")}}
+					<a class="gcs-circled-add add" data-id="{{@index}}" data-type="attribute_thresholds"></a>
+				{{else}}
+					<a class="gcs-circled-add disabled"></a>
+				{{/if}}
 			</div>
-			{{#each this.thresholds}}
-			{{>actor/character/config/threshold id=../this.order}}
-			{{/each}}
+			<div class="fieldblock">
+				{{#if (in this.type "_separator")}}
+				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
+				<div class="field">
+					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{@index}}.name"
+						value="{{this.name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
+				<div class="field">
+					<select name="array.system.settings.attributes.{{@index}}.type" data-dtype="String">
+						{{#select this.type}}
+							{{#each @root.config.select.attribute_type as |v k|}}
+								<option value="{{k}}">
+									{{localize v}}
+								</option>
+							{{/each}}
+						{{/select}}
+					</select>
+				</div>
+				{{else}}
+				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
+				<div class="field">
+					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.short_name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{@index}}.name"
+						value="{{this.name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.full_name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{@index}}.full_name"
+						value="{{this.full_name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.attribute_base"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{@index}}.attribute_base"
+						value="{{this.attribute_base}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.cost_per_point"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{@index}}.cost_per_point"
+						value="{{this.cost_per_point}}"
+						data-dtype="Number"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.cost_adj_percent_per_sm"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.attributes.{{@index}}.cost_adj_percent_per_sm"
+						value="{{this.cost_adj_percent_per_sm}}%"
+						data-dtype="Number"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
+				<div class="field">
+					<select name="array.system.settings.attributes.{{@index}}.type" data-dtype="String">
+						{{#select this.type}}
+							{{#each @root.config.select.attribute_type as |v k|}}
+								<option value="{{k}}">
+									{{localize v}}
+								</option>
+							{{/each}}
+						{{/select}}
+					</select>
+				</div>
+				{{#if (eq this.type "pool")}}
+				<div class="item-list thresholds">
+					{{#each this.thresholds}}
+					{{>actor/character/config/threshold id=@../index parent="array.system.settings.attributes"}}
+					{{/each}}
+				</div>
+				{{/if}}
+				{{/if}}
+			</div>
 		</div>
-    </div>
-</div>
-{{/each}}
+	{{/each}}
 </div>

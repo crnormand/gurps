@@ -3,7 +3,6 @@ import { ContainerGURPS } from "@item/container"
 import { Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { toArray } from "@util"
 import { baseRelativeLevel, SkillData, SkillLevel } from "./data"
 
 export class SkillGURPS extends ContainerGURPS {
@@ -54,7 +53,7 @@ export class SkillGURPS extends ContainerGURPS {
 	get defaults(): SkillDefault[] {
 		if (this.system.hasOwnProperty("defaults")) {
 			const defaults: SkillDefault[] = []
-			const list = toArray((this.system as any).defaults)
+			const list = (this.system as any).defaults
 			for (const f of list ?? []) {
 				defaults.push(new SkillDefault(f))
 			}

@@ -1,25 +1,32 @@
 <div class="field-3">
 	<div class="placeholder"> </div>
-	<select name="system.features.{{@index}}.selection_type">
+	<select name="array.system.features.{{@index}}.selection_type">
 		{{#select this.selection_type}}
 		{{#each config.select.skill_bonus_selection_type as |v k|}}
 		<option value="{{k}}">{{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>
-	<select name="system.features.{{@index}}.name.compare" {{input_lock (neq this.selection_type "this_weapon" )}}>
+	<select name="array.system.features.{{@index}}.name.compare" {{input_lock (neq this.selection_type "this_weapon")}}>
 		{{#select this.name.compare}}
 		{{#each config.select.string_compare as |v k|}}
 		<option value="{{k}}">{{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat "system.features." @index ".name.qualifier") data=this.name.qualifier
-	type="String" class=(input_lock (and (neq this.selection_type "this_weapon") (neq this.name.compare "none")))}}
+	<div class="field">
+		<input
+			type="text"
+			name="array.system.features.{{@index}}.name.qualifier"
+			value="{{this.name.qualifier}}"
+			data-dtype="String"
+			{{input_lock (and (neq this.selection_type "this_weapon") (neq this.name.compare "none"))}}
+		/>
+	</div>
 </div>
 <div class="field-2">
 	<div class="placeholder"> </div>
-	<select name="system.features.{{@index}}.specialization.compare">
+	<select name="array.system.features.{{@index}}.specialization.compare">
 		{{#select this.specialization.compare}}
 		{{#each config.select.string_compare as |v k|}}
 		{{#if (eq ../this.selection_type "weapons_with_required_skill")}}
@@ -30,20 +37,34 @@
 		{{/each}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat "system.features." @index ".specialization.qualifier")
-	data=this.specialization.qualifier type="String" class=(input_lock (neq this.specialization.compare "none"))}}
+	<div class="field">
+		<input
+			type="text"
+			name="array.system.features.{{@index}}.specialization.qualifier"
+			value="{{this.specialization.qualifier}}"
+			data-dtype="String"
+			{{input_lock (neq this.specialization.compare "none")}}
+		/>
+	</div>
 </div>
 {{#unless (eq this.selection_type "this_weapon")}}
-<div class="field-2">
-	<div class="placeholder"> </div>
-	<select name="system.features.{{@index}}.tags.compare">
-		{{#select this.tags.compare}}
-		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.tags"}} {{localize v}}</option>
-		{{/each}}
-		{{/select}}
-	</select>
-	{{>sections/input-text field="field" name=(concat "system.features." @index ".tags.qualifier")
-	data=this.tags.qualifier type="String" class=(input_lock (neq this.tags.compare "none"))}}
-</div>
+	<div class="field-2">
+		<div class="placeholder"> </div>
+		<select name="array.system.features.{{@index}}.tags.compare">
+			{{#select this.tags.compare}}
+			{{#each config.select.string_compare as |v k|}}
+			<option value="{{k}}">{{localize "gurps.field_prefix.tags"}} {{localize v}}</option>
+			{{/each}}
+			{{/select}}
+		</select>
+		<div class="field">
+			<input
+				type="text"
+				name="array.system.features.{{@index}}.tags.qualifier"
+				value="{{this.tags.qualifier}}"
+				data-dtype="String"
+				{{input_lock (neq this.tags.compare "none")}}
+			/>
+		</div>
+	</div>
 {{/unless}}

@@ -1,0 +1,96 @@
+<div class="item"data-path="{{path}}" data-index="{{@index}}" data-type="locations">
+	<div class="controls">
+		<a class="gcs-grip drag" data-path="{{path}}" data-index="{{@index}}" data-type="locations"></a>
+		{{#if (eq l 1)}}
+		<a class="gcs-trash disabled"></a>
+		{{else}}
+		<a class="gcs-trash delete" data-path="{{path}}" data-index="{{@index}}" data-type="locations"></a>
+		{{/if}}
+		{{#if this.sub_table}}
+			<a class="gcs-circled-add disabled"></a>
+		{{else}}
+			<a class="gcs-circled-add add" data-path="{{path}}" data-index="{{@index}}" data-type="sub_table"></a>
+		{{/if}}
+	</div>
+	<div class="fieldblock">
+		<div class="label">{{localize "gurps.character.settings.body_type.id"}}</div>
+		<div class="field">
+			<input type="text" name="{{path}}.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
+		</div>
+		<div class="label">{{localize "gurps.character.settings.body_type.choice_name"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{path}}.{{@index}}.choice_name"
+				value="{{this.choice_name}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.settings.body_type.table_name"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{path}}.{{@index}}.table_name"
+				value="{{this.table_name}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.settings.body_type.slots"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{path}}.{{@index}}.slots"
+				value="{{this.slots}}"
+				data-dtype="Number"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.settings.body_type.hit_penalty"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{path}}.{{@index}}.hit_penalty"
+				value="{{this.hit_penalty}}"
+				data-dtype="Number"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.settings.body_type.dr_bonus"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{path}}.{{@index}}.dr_bonus"
+				value="{{this.dr_bonus}}"
+				data-dtype="Number"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.settings.body_type.description"}}</div>
+		<div class="field">
+			<textarea
+				type="text"
+				name="{{path}}.{{@index}}.description"
+				data-dtype="String"
+			>{{textareaFormat this.description}}</textarea>
+		</div>
+		{{#if this.sub_table}}
+		<div class="label">{{localize "gurps.character.settings.body_type.sub_roll"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{path}}.{{@index}}.sub_table.roll"
+				value="{{this.sub_table.roll}}"
+				data-dtype="String"
+			></input>
+		</div>
+			<div class="sub-table-controls">
+				<a class="gcs-trash delete" data-path="{{path}}" data-index="{{@index}}" data-type="sub_table"></a>
+				<a class="gcs-circled-add add" data-path="{{path}}.{{@index}}.sub_table" data-index="{{@index}}" data-type="locations"></a>
+			</div>
+			{{#with this.sub_table}}
+			<div class="item-list">
+			{{#each this.locations}}
+			{{>actor/character/config/location path=(concat ../../path "." @index ".sub_table.locations") l=../this.locations.length}}
+			{{/each}}
+			</div>
+			{{/with}}
+		{{/if}}
+	</div>
+</div>

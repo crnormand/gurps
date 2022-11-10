@@ -19,6 +19,9 @@
 {{/if }}
 {{#if (and (in @root.settings.notes_display "inline") this.notes) }}
     {{{ format this.notes }}}
+	{{#if this.system.study}}
+	{{localize "gurps.study.studied" hours=this.studyHours}}
+	{{/if}}
 {{/if}}
 {{#if (or (eq this.type "spell") (eq this.type "ritual_magic_spell")) }}
     {{#if (and this.notes (spellValues this)) }}

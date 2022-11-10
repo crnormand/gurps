@@ -8,9 +8,10 @@ import {
 } from "@actor/static_character/data"
 import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
+import { Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { Static } from "@util"
-import { i18n } from "./misc"
+import { getAdjustedStudyHours, i18n } from "./misc"
 
 /**
  *
@@ -137,13 +138,18 @@ export function registerHandlebarsHelpers() {
 	})
 
 	// TODO: change to variable init and step
-	Handlebars.registerHelper("indent", function (i: number): string {
-		const init = -6
-		const step = 12
-		let sum = init
-		sum += step * i
-		return `style="padding-left: ${sum}px;"`
-	})
+	Handlebars.registerHelper(
+		"indent",
+		function (i: number, type: "padding" | "text" = "padding", init = -6, step = 12): string {
+			// Const init = -6
+			// const step = 12
+			let sum = init
+			sum += step * i
+			if (type === "text") return `style="text-indent: ${sum}px;"`
+			return `style="padding-left: ${sum}px;"`
+			// Return `style="padding-left: ${sum}px;"`
+		}
+	)
 
 	Handlebars.registerHelper("spellValues", function (i: SpellGURPS): string {
 		const values = {
@@ -208,6 +214,10 @@ export function registerHandlebarsHelpers() {
 		return a
 	})
 
+	Handlebars.registerHelper("adjustedStudyHours", function (entry: Study): number {
+		return getAdjustedStudyHours(entry)
+	})
+
 	// Handlebars.registerHelper("selected", function (list: any[], item: string): string {
 	// 	console.warn(list);
 	// 	if (list.includes(item)) return "selected";
@@ -245,7 +255,7 @@ export function registerHandlebarsHelpers() {
 		// If (!s) return ""
 		if (typeof s === "string") return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
 		else {
-			return s.join("\r") || ""
+			return s?.join("\r") || ""
 		}
 	})
 

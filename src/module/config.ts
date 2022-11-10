@@ -40,7 +40,7 @@ import { PrereqList } from "@prereq/prereq_list"
 import { SkillPrereq } from "@prereq/skill_prereq"
 import { SpellPrereq } from "@prereq/spell_prereq"
 import { TraitPrereq } from "@prereq/trait_prereq"
-import { rollModifiers } from "./data"
+import { rollModifiers, StudyType } from "./data"
 import { MeleeWeapon, RangedWeapon } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
@@ -205,11 +205,11 @@ const GURPSCONFIG: any = {
 			spell_prereq: "gurps.select.prereqs.spell_prereq",
 		},
 		spell_sub_type: {
-			name: "gurps.select.spell_sub_types.name",
-			tag: "gurps.select.spell_sub_types.tag",
-			college: "gurps.select.spell_sub_types.college",
-			college_count: "gurps.select.spell_sub_types.college_count",
-			any: "gurps.select.spell_sub_types.any",
+			name: "gurps.select.spell_sub_type.name",
+			tag: "gurps.select.spell_sub_type.tag",
+			college: "gurps.select.spell_sub_type.college",
+			college_count: "gurps.select.spell_sub_type.college_count",
+			any: "gurps.select.spell_sub_type.any",
 		},
 		features: {
 			attribute_bonus: "gurps.select.features.attribute_bonus",
@@ -389,6 +389,17 @@ const GURPSCONFIG: any = {
 			primary_separator: "gurps.select.attribute_type.primary_separator",
 			secondary_separator: "gurps.select.attribute_type.secondary_separator",
 			pool_separator: "gurps.select.attribute_type.pool_separator",
+		},
+		study_type: {
+			[StudyType.Self]: "gurps.select.study_type.self",
+			[StudyType.Job]: "gurps.select.study_type.job",
+			[StudyType.Teacher]: "gurps.select.study_type.teacher",
+			[StudyType.Intensive]: "gurps.select.study_type.intensive",
+		},
+		color_mode_preference: {
+			auto: "gurps.select.color_mode_preference.auto",
+			dark: "gurps.select.color_mode_preference.dark",
+			light: "gurps.select.color_mode_preference.light",
 		},
 	},
 }

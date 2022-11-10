@@ -4,8 +4,8 @@ import { EquipmentContainerGURPS } from "@item/equipment_container"
 import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
-import { WeightUnits } from "@module/data"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
+import { WeightUnits } from "@util/measure"
 import { EquipmentData } from "./data"
 
 export class EquipmentGURPS extends ContainerGURPS {
@@ -106,7 +106,7 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get adjustedWeightFast(): string {
-		return `${this.adjustedWeight(false, "lb").toString()} lb`
+		return `${this.adjustedWeight(false, WeightUnits.Pound).toString()} ${WeightUnits.Pound}`
 	}
 
 	adjustedWeight(for_skills: boolean, units: WeightUnits): number {
@@ -119,7 +119,7 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get extendedWeightFast(): string {
-		return `${this.extendedWeight(false, "lb").toString()} lb`
+		return `${this.extendedWeight(false, WeightUnits.Pound).toString()} ${WeightUnits.Pound}`
 	}
 
 	extendedWeightAdjustForMods(units: WeightUnits, for_skills: boolean): number {

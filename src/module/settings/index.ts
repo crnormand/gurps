@@ -1,15 +1,19 @@
 import { CharacterProfile } from "@actor/character/data"
-import { i18n } from "@util"
-import { AttributeDefObj, AttributeType } from "./attribute/attribute_def"
-import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data"
-import { GURPS } from "./gurps"
-import { ResourceTrackerDefObj } from "./resource_tracker/tracker_def"
+import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
+import { DamageProgression, DisplayMode } from "@module/data"
+import { GURPS } from "@module/gurps"
+import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
+import { LengthUnits, WeightUnits } from "@util/measure"
+import { DefaultAttributeSettings } from "./attributes"
+import { ColorSettings } from "./colors"
+import { DefaultHitLocationSettings } from "./hit_locations"
+import { DefaultResourceTrackerSettings } from "./resource_trackers"
+import { DefaultSheetSettings } from "./sheet_settings"
 
 export const SYSTEM_NAME = "gcsga"
 export enum SETTINGS {
 	BASIC_SET_PDF = "basic_set_pdf",
 	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
-	PORTRAIT_PATH = "portrait_path",
 	PORTRAIT_OVERWRITE = "portrait_overwrite",
 	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
 	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
@@ -18,6 +22,11 @@ export enum SETTINGS {
 	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
 	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
 	MODIFIER_MODE = "modifier_mode",
+	COLORS = "colors",
+	DEFAULT_ATTRIBUTES = "default_attributes",
+	DEFAULT_RESOURCE_TRACKERS = "default_resource_trackers",
+	DEFAULT_HIT_LOCATIONS = "default_hit_locations",
+	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
 }
 
 /**
@@ -27,46 +36,87 @@ export function registerSettings(): void {
 	// Register any custom system settings here
 	const g = game as Game
 
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.COLORS, {
+		name: "gurps.settings.colors.name",
+		label: "gurps.settings.colors.label",
+		hint: "gurps.settings.colors.hint",
+		icon: "fas fa-palette",
+		// @ts-ignore
+		type: ColorSettings,
+		restricted: false,
+	})
+	ColorSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_ATTRIBUTES, {
+		name: "gurps.settings.default_attributes.name",
+		label: "gurps.settings.default_attributes.label",
+		hint: "gurps.settings.default_attributes.hint",
+		icon: "gcs-attribute",
+		// @ts-ignore
+		type: DefaultAttributeSettings,
+		restricted: false,
+	})
+	DefaultAttributeSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_RESOURCE_TRACKERS, {
+		name: "gurps.settings.default_resource_trackers.name",
+		label: "gurps.settings.default_resource_trackers.label",
+		hint: "gurps.settings.default_resource_trackers.hint",
+		icon: "gcs-coins",
+		// @ts-ignore
+		type: DefaultResourceTrackerSettings,
+		restricted: true,
+	})
+	DefaultResourceTrackerSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_HIT_LOCATIONS, {
+		name: "gurps.settings.default_hit_locations.name",
+		label: "gurps.settings.default_hit_locations.label",
+		hint: "gurps.settings.default_hit_locations.hint",
+		icon: "gcs-body-type",
+		// @ts-ignore
+		type: DefaultHitLocationSettings,
+		restricted: true,
+	})
+	DefaultHitLocationSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.DEFAULT_SHEET_SETTINGS, {
+		name: "gurps.settings.default_sheet_settings.name",
+		label: "gurps.settings.default_sheet_settings.label",
+		hint: "gurps.settings.default_sheet_settings.hint",
+		icon: "gcs-settings",
+		// @ts-ignore
+		type: DefaultSheetSettings,
+		restricted: true,
+	})
+	DefaultSheetSettings.registerSettings()
+
 	g.settings.register(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF, {
-		name: i18n("gurps.settings.basic_set_pdfs.name"),
-		hint: i18n("gurps.settings.basic_set_pdfs.hint"),
+		name: "gurps.settings.basic_set_pdfs.name",
+		hint: "gurps.settings.basic_set_pdfs.hint",
 		scope: "world",
 		config: true,
 		type: String,
 		choices: {
-			combined: i18n("gurps.settings.basic_set_pdfs.choices.combined"),
-			separate: i18n("gurps.settings.basic_set_pdfs.choices.separate"),
+			combined: "gurps.settings.basic_set_pdfs.choices.combined",
+			separate: "gurps.settings.basic_set_pdfs.choices.separate",
 		},
 		default: "combined",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG, {
-		name: i18n("gurps.settings.server_side_file_dialog.name"),
-		hint: i18n("gurps.settings.server_side_file_dialog.hint"),
+		name: "gurps.settings.server_side_file_dialog.name",
+		hint: "gurps.settings.server_side_file_dialog.hint",
 		scope: "client",
 		config: true,
 		type: Boolean,
 		default: false,
 	})
 
-	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH, {
-		name: i18n("gurps.settings.portrait_path.name"),
-		hint: i18n("gurps.settings.portrait_path.hint"),
-		scope: "world",
-		config: true,
-		type: String,
-		choices: {
-			global: i18n("gurps.settings.portrait_path.choices.global"),
-			local: i18n("gurps.settings.portrait_path.choices.local"),
-		},
-		default: "global",
-		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
-	})
-
 	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_OVERWRITE, {
-		name: i18n("gurps.settings.portrait_overwrite.name"),
-		hint: i18n("gurps.settings.portrait_overwrite.hint"),
+		name: "gurps.settings.portrait_overwrite.name",
+		hint: "gurps.settings.portrait_overwrite.hint",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -85,38 +135,38 @@ export function registerSettings(): void {
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP, {
-		name: i18n("gurps.settings.import_hp_fp.name"),
-		hint: i18n("gurps.settings.import_hp_fp.hint"),
+		name: "gurps.settings.import_hp_fp.name",
+		hint: "gurps.settings.import_hp_fp.hint",
 		scope: "world",
 		config: true,
 		type: String,
 		choices: {
-			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
-			no: i18n("GURPS.settingImportHPAndFPIgnore"),
-			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+			yes: "GURPS.settingImportHPAndFPUseFile",
+			no: "GURPS.settingImportHPAndFPIgnore",
+			ask: "GURPS.settingImportHPAndFPAsk",
 		},
 		default: "ask",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN, {
-		name: i18n("gurps.settings.import_body_plan.name"),
-		hint: i18n("gurps.settings.import_body_plan.hint"),
+		name: "gurps.settings.import_body_plan.name",
+		hint: "gurps.settings.import_body_plan.hint",
 		scope: "world",
 		config: true,
 		type: String,
 		choices: {
-			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
-			no: i18n("GURPS.settingImportHPAndFPIgnore"),
-			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+			yes: "GURPS.settingImportHPAndFPUseFile",
+			no: "GURPS.settingImportHPAndFPIgnore",
+			ask: "GURPS.settingImportHPAndFPAsk",
 		},
 		default: "ask",
 		onChange: (value: string) => console.log(`Import of Body Plan : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME, {
-		name: i18n("GURPS.settingImportIgnoreName"),
-		hint: i18n("GURPS.settingHintImportIgnoreName"),
+		name: "GURPS.settingImportIgnoreName",
+		hint: "GURPS.settingHintImportIgnoreName",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -125,14 +175,14 @@ export function registerSettings(): void {
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
-		name: i18n("gurps.settings.modifier_mode.name"),
-		hint: i18n("gurps.settings.modifier_mode.hint"),
+		name: "gurps.settings.modifier_mode.name",
+		hint: "gurps.settings.modifier_mode.hint",
 		scope: "client",
 		config: true,
 		type: String,
 		choices: {
-			bucket: i18n("gurps.settings.modifier_mode.choices.bucket"),
-			prompt: i18n("gurps.settings.modifier_mode.choices.prompt"),
+			bucket: "gurps.settings.modifier_mode.choices.bucket",
+			prompt: "gurps.settings.modifier_mode.choices.prompt",
 		},
 		default: "prompt",
 		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
@@ -171,7 +221,6 @@ interface provider {
 		use_modifying_dice_plus_adds: boolean
 		damage_progression: DamageProgression
 		use_simple_metric_conversions: boolean
-		show_difficulty: boolean
 		show_trait_modifier_adj: boolean
 		show_equipment_modifier_adj: boolean
 		show_spell_adj: boolean
@@ -197,17 +246,16 @@ interface provider {
 
 export const SETTINGS_TEMP: provider = {
 	sheet: {
-		default_length_units: "ft_in",
-		default_weight_units: "lb",
-		user_description_display: "tooltip",
-		modifiers_display: "inline",
-		notes_display: "inline",
-		skill_level_adj_display: "tooltip",
+		default_length_units: LengthUnits.FeetAndInches,
+		default_weight_units: WeightUnits.Pound,
+		user_description_display: DisplayMode.Tooltip,
+		modifiers_display: DisplayMode.Inline,
+		notes_display: DisplayMode.Inline,
+		skill_level_adj_display: DisplayMode.Tooltip,
 		use_multiplicative_modifiers: false,
 		use_modifying_dice_plus_adds: false,
 		damage_progression: DamageProgression.BasicSet,
 		use_simple_metric_conversions: true,
-		show_difficulty: false,
 		show_trait_modifier_adj: false,
 		show_equipment_modifier_adj: false,
 		show_spell_adj: false,

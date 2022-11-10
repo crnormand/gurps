@@ -47,12 +47,12 @@
 		grid-auto-flow: column;
 	}
 	.fieldblock {
+		grid-template-columns: min-content auto;
 		hr,
 		.title {
 			font: var(--font-system);
 			grid-column: 1 / span 2;
 		}
-		grid-template-columns: min-content auto;
 		.label {
 			white-space: nowrap;
 			text-align: right;
@@ -63,32 +63,51 @@
 		width: 100%;
 		margin: 0;
 	}
-	textarea.input {
+	textarea {
 		grid-column: 1 / span 2;
 		width: 100%;
 		line-height: 16px;
 		margin-bottom: 5px;
 	}
+	.tab a {
+		width: 17px;
+		margin: 2px;
+		padding: 0px 2px;
+		color: rgb(var(--color-icon-button));
+		&:hover {
+			color: rgb(var(--color-icon-button-rollover));
+			text-shadow: none;
+		}
+		&:active {
+			color: rgb(var(--color-icon-button-rollover));
+			border-radius: 4px;
+		}
+	}
+	.tab[data-tab="body-type"] .fieldblock .item-list {
+		grid-column: 1 / span 2;
+		border: 1px solid rgb(var(--color-divider));
+	}
 	.tab[data-tab="attributes"],
+	.tab[data-tab="body-type"],
 	.tab[data-tab="resource-trackers"] {
 		div.add {
 			display: grid;
 			height: 20px;
 			align-items: center;
-			a.add {
-				width: 17px;
-				margin: 2px;
-				padding: 0px 2px;
-				color: rgb(var(--color-icon-button));
-				&:hover {
-					color: rgb(var(--color-icon-button-rollover));
-					text-shadow: none;
-				}
-				&:active {
-					color: rgb(var(--color-icon-button-rollover));
-					border-radius: 4px;
-				}
-			}
+			// a.add {
+			// 	width: 17px;
+			// 	margin: 2px;
+			// 	padding: 0px 2px;
+			// 	color: rgb(var(--color-icon-button));
+			// 	&:hover {
+			// 		color: rgb(var(--color-icon-button-rollover));
+			// 		text-shadow: none;
+			// 	}
+			// 	&:active {
+			// 		color: rgb(var(--color-icon-button-rollover));
+			// 		border-radius: 4px;
+			// 	}
+			// }
 		}
 		.thresholds {
 			grid-column: 1 / span 2;

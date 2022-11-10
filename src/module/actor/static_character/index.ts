@@ -54,7 +54,6 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 
 	get trackers(): { [key: string]: StaticResourceTracker } {
 		return this.system.additionalresources.tracker
-		// Return toArray(this.system.additionalresources.tracker)
 	}
 
 	override get sizeMod(): number {

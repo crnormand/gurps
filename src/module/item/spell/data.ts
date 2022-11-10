@@ -1,4 +1,5 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { Study } from "@module/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
@@ -27,6 +28,7 @@ export interface SpellSystemData extends ItemSystemData {
 	duration: string
 	points: number
 	weapons: Weapon[]
+	study: Study[]
 	// Calc: {
 	// 	level: number;
 	// 	rsl: string;

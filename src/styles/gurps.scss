@@ -54,6 +54,12 @@
 }
 
 .gurps {
+	a {
+		&:hover,
+		&:active {
+			text-shadow: none;
+		}
+	}
 	input[type="text"],
 	input[type="search"],
 	input[type="number"] {
@@ -71,11 +77,11 @@
 			border-width: 2px;
 			padding: 0 2px;
 		}
-		&[readonly] {
-			background-color: rgb(var(--color-background));
-			color: rgb(var(--color-on-background));
-			pointer-events: none;
-		}
+		// &[readonly] {
+		// 	background-color: rgb(var(--color-background));
+		// 	color: rgb(var(--color-on-background));
+		// 	pointer-events: none;
+		// }
 		&:disabled {
 			// background-color: rgb(var(--color-background));
 			color: rgba(var(--color-on-editable), 0); // Invisible Text
@@ -263,11 +269,11 @@
 			border-width: 2px;
 			padding: 0 2px;
 		}
-		&[readonly] {
-			background-color: rgb(var(--color-background));
-			color: rgb(var(--color-on-background));
-			pointer-events: none;
-		}
+		// &[readonly] {
+		// 	background-color: rgb(var(--color-background));
+		// 	color: rgb(var(--color-on-background));
+		// 	pointer-events: none;
+		// }
 		&:disabled {
 			// background-color: rgb(var(--color-background));
 			color: rgba(var(--color-on-editable), 0); // Invisible Text
@@ -309,7 +315,7 @@
 	// 		opacity: 1;
 	// 	}
 	// }
-	textarea.input {
+	textarea {
 		min-height: 24px;
 		padding: 1px 3px;
 		line-height: 24px;
@@ -337,7 +343,8 @@
 			padding: 0 2px;
 		}
 		&[readonly] {
-			background-color: rgb(var(--color-background));
+			// background-color: rgb(var(--color-background));
+			background-color: transparent;
 			color: rgb(var(--color-on-background));
 			pointer-events: none;
 		}

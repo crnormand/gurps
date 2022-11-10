@@ -40,6 +40,7 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/character/config/attributes",
 		"actor/character/config/threshold",
 		"actor/character/config/body-type",
+		"actor/character/config/location",
 		"actor/character/config/resource-trackers",
 
 		"actor/static_character/sections/attributes",
@@ -108,6 +109,8 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"item/sections/feature/weapon-dr-divisor-bonus",
 		"item/sections/feature/cost-reduction",
 		"item/sections/feature/contained-weight-reduction",
+
+		"item/sections/study",
 
 		"item/sections/trait-mod",
 		"item/sections/eqp-mod",

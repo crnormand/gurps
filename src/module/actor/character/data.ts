@@ -1,10 +1,11 @@
-import { DamageProgression, DisplayMode, Height, LengthUnits, Weight, WeightUnits } from "@module/data"
+import { DamageProgression, DisplayMode } from "@module/data"
 import { ActorFlagsGURPS, ActorSystemData, ActorType, BaseActorSourceGURPS } from "@actor/base/data"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { Attribute, AttributeObj } from "@module/attribute"
 import { DiceGURPS } from "@module/dice"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
+import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.CharacterGCS, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -54,7 +55,6 @@ export interface CharacterSettings {
 	use_multiplicative_modifiers: boolean
 	use_modifying_dice_plus_adds: boolean
 	damage_progression: DamageProgression
-	show_difficulty: boolean
 	show_trait_modifier_adj: boolean
 	show_equipment_modifier_adj: boolean
 	show_spell_adj: boolean
@@ -87,7 +87,7 @@ export interface CharacterProfile {
 	hair: string
 	skin: string
 	handedness: string
-	height: Height
+	height: Length
 	weight: Weight
 	SM: number
 	gender: string
@@ -144,6 +144,6 @@ export interface HitLocation {
 	dr?: Record<string, number>
 	calc?: {
 		roll_range: string
-		dr: Record<string, number>
+		dr: Record<string, { value: number; flags?: Record<string, boolean> }>
 	}
 }

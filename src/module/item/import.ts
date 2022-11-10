@@ -277,6 +277,7 @@ export class ItemImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -347,6 +348,7 @@ export class ItemImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -370,6 +372,7 @@ export class ItemImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -408,6 +411,7 @@ export class ItemImporter {
 			casting_time: data.casting_time ?? "",
 			duration: data.duration ?? "",
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -435,6 +439,7 @@ export class ItemImporter {
 			base_skill: data.base_skill ?? "",
 			prereq_count: data.prereq_count ?? 0,
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 

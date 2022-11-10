@@ -19,7 +19,7 @@
 			</div>
 			<div class="label">{{localize "gurps.item.tags"}}</div>
 			<div class="field">
-				<input type="text" name="system.tags" value="{{(join system.tags ", ")}}" data-dtype="String" />
+				<input type="text" name="system.tags" value="{{join system.tags ", "}}" data-dtype="String" />
 			</div>
             <label class="label"></label>
             <div class="field">
@@ -30,7 +30,7 @@
             </div>
             <div class="label">{{ localize "gurps.item.cr" }}</div>
             <div class="field">
-                <select name="NUMBER.system.cr" data-dtype="String">
+                <select name="system.cr" data-dtype="Number">
                     {{#select system.cr }}
                     {{#each config.select.cr_level as |v k | }}
                         <option value="{{k}}">
@@ -67,13 +67,13 @@
 <div class="label">{{ localize "gurps.item.ancestry" }}</div>
 <div class="field">
     <select name="system.ancestry" data-dtype="String" {{ input_lock (eq system.container_type "race" )}}>
-        {{#select system.ancestry }}
-        {{#each config.select.ancestry as |v k | }}
+        {{#select system.ancestry}}
+        {{#each config.select.ancestry as |v k |}}
             <option value="{{k}}">
                 {{ localize v }}
             </option>
-        {{/each }}
-		{{ /select }}
+        {{/each}}
+		{{/select}}
 </select>
 </div>
 <div class="label">{{localize "gurps.item.reference"}}</div>

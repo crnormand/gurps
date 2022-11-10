@@ -38,6 +38,7 @@ export interface CharacterImportedData extends Omit<CharacterSystemData, "attrib
 	other_equipment: Array<EquipmentSystemData | EquipmentContainerSystemData>
 	notes: Array<NoteSystemData | NoteContainerSystemData>
 	attributes: Array<AttributeObj>
+	third_party: any
 }
 
 export class CharacterImporter {
@@ -84,6 +85,7 @@ export class CharacterImporter {
 			commit = { ...commit, ...(await this.importProfile(r.profile)) }
 			commit = { ...commit, ...this.importSettings(r.settings) }
 			commit = { ...commit, ...this.importAttributes(r.attributes) }
+			commit = { ...commit, ...this.importResourceTrackers(r.third_party) }
 
 			// Begin item import
 			const items: Array<ItemGURPS> = []
@@ -138,7 +140,7 @@ export class CharacterImporter {
 	}
 
 	async importProfile(profile: CharacterImportedData["profile"]) {
-		const p: any = {
+		const r: any = {
 			"system.profile.player_name": profile.player_name || "",
 			"system.profile.name": profile.name || this.document.name,
 			"system.profile.title": profile.title || "",
@@ -156,42 +158,19 @@ export class CharacterImporter {
 			"system.profile.tech_level": profile.tech_level || "",
 			"system.profile.religion": profile.religion || "",
 		}
-		if (profile.portrait) {
-			const path: string = this.getPortraitPath()
-			let currentDir = ""
-			for (const i of path.split("/")) {
-				try {
-					currentDir += `${i}/`
-					await FilePicker.createDirectory("data", currentDir)
-				} catch (err) {
-					continue
-				}
-			}
-			const filename = `${removeAccents(profile.name)}_${this.document.id}_portrait.png`.replaceAll(" ", "_")
-			const url = `data:image/png;base64,${profile.portrait}`
-			await fetch(url)
-				.then(res => res.blob())
-				.then(blob => {
-					const file = new File([blob], filename)
-					// TODO: get rid of as any when new types version drops
-					;(FilePicker as any).upload("data", path, file, {}, { notify: false })
-				})
-			p.img = (path + filename).replaceAll(" ", "_")
-		}
-		return p
-	}
 
-	getPortraitPath(): string {
-		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH) === "global") return "images/portraits/"
-		return `worlds/${(game as Game).world.id}/images/portraits`
+		if (profile.portrait) {
+			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
+				r.img = `data:imdage/png;base64,${profile.portrait}.png`
+			} else {
+				console.error(i18n("gurps.error.import.portait_permissions"))
+				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
+			}
+		}
+		return r
 	}
 
 	importSettings(settings: CharacterImportedData["settings"]) {
-		// Const attributes: Record<string, AttributeDefObj> = {}
-		// for (const att of settings.attributes as unknown as AttributeDefObj[]) {
-		// 	att.cost_adj_percent_per_sm ??= 0
-		// 	attributes[att.id] = att
-		// }
 		return {
 			"system.settings.default_length_units": settings.default_length_units ?? "ft_in",
 			"system.settings.default_weight_units": settings.default_weight_units ?? "lb",
@@ -217,15 +196,16 @@ export class CharacterImporter {
 	}
 
 	importAttributes(attributes: AttributeObj[]) {
-		// Const atts: Record<string, AttributeObj> = {}
-		// for (const a of attributes) {
-		// 	atts[a.attr_id] = a
-		// }
-		// return {
-		// 	"system.attributes": atts,
-		// }
 		return {
 			"system.attributes": attributes,
+		}
+	}
+
+	importResourceTrackers(tp: any) {
+		if (!tp) return
+		return {
+			"system.settings.resource_trackers": tp.settings?.resource_trackers ?? [],
+			"system.resource_trackers": tp.resource_trackers ?? [],
 		}
 	}
 
@@ -365,6 +345,7 @@ export class CharacterImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -435,6 +416,7 @@ export class CharacterImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -458,6 +440,7 @@ export class CharacterImporter {
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -496,6 +479,7 @@ export class CharacterImporter {
 			casting_time: data.casting_time ?? "",
 			duration: data.duration ?? "",
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 
@@ -523,6 +507,7 @@ export class CharacterImporter {
 			base_skill: data.base_skill ?? "",
 			prereq_count: data.prereq_count ?? 0,
 			vtt_notes: data.vtt_notes ?? "",
+			study: data.study ?? [],
 		}
 	}
 

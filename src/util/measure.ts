@@ -2,6 +2,8 @@ import { i18n } from "./misc"
 
 export type Length = number
 
+export type Weight = number
+
 /**
  *
  * @param n
@@ -144,4 +146,24 @@ const allLengthUnits = [
 	LengthUnits.Centimeter,
 	LengthUnits.Kilometer,
 	LengthUnits.Meter,
+]
+
+export enum WeightUnits {
+	Pound = "lb",
+	PoundAlt = "#",
+	Ounce = "oz",
+	Ton = "tn",
+	TonAlt = "t",
+	Kilogram = "kg",
+	Gram = "g",
+}
+
+const allWeightUnits = [
+	WeightUnits.Pound,
+	WeightUnits.PoundAlt,
+	WeightUnits.Ounce,
+	WeightUnits.Ton,
+	WeightUnits.TonAlt,
+	WeightUnits.Kilogram,
+	WeightUnits.Gram,
 ]
