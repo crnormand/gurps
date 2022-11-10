@@ -425,7 +425,8 @@ export class GurpsActor extends Actor {
               let locs = splitArgs(m[2])
               locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             }
-            recurselist(data.hitlocations, (e, k, d) => {
+            recurselist(data.hitlocations, (e, _k, _d) => {
+              // console.log(e, _k, _d)
               if (!locpatterns || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
                 let dr = e.dr ?? ''
                 dr += ''
@@ -435,6 +436,7 @@ export class GurpsActor extends Actor {
                   let dr2 = parseInt(m[3]) + delta
                   e.dr = dr + m[2] + dr2
                 } else if (!isNaN(parseInt(dr))) e.dr = parseInt(dr) + delta
+                console.warn(e.where, e.dr)
               }
             })
           } // end DR
@@ -1241,6 +1243,7 @@ export class GurpsActor extends Actor {
         )
       }
     }
+
     return r
   }
 
