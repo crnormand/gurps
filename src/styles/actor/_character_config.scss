@@ -47,12 +47,12 @@
 		grid-auto-flow: column;
 	}
 	.fieldblock {
+		grid-template-columns: min-content auto;
 		hr,
 		.title {
 			font: var(--font-system);
 			grid-column: 1 / span 2;
 		}
-		grid-template-columns: min-content auto;
 		.label {
 			white-space: nowrap;
 			text-align: right;

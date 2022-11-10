@@ -1,8 +1,169 @@
 .window-app.settings-menu {
+	&#colors-settings,
+	&#default_sheet_settings-settings {
+		.label {
+			white-space: nowrap;
+			text-align: right;
+			align-self: center;
+			color: rgb(var(--color-on-background));
+		}
+	}
+	a {
+		width: 17px;
+		margin: 2px;
+		padding: 0px 2px;
+		color: rgb(var(--color-icon-button));
+		&:hover {
+			color: rgb(var(--color-icon-button-rollover));
+			text-shadow: none;
+		}
+		&:active {
+			color: rgb(var(--color-icon-button-rollover));
+			border-radius: 4px;
+		}
+	}
+	.top-bar {
+		display: flex;
+		justify-content: space-evenly;
+		.field {
+			flex-grow: 0;
+			display: grid;
+			grid-auto-flow: column;
+			grid-gap: 5px;
+		}
+	}
 	&#colors-settings {
 		@import "colors";
 	}
 	.window-content {
 		background: rgb(var(--color-background));
+	}
+
+	&#default_sheet_settings-settings {
+		form {
+			overflow: hidden;
+		}
+		#details,
+		.fieldblock {
+			display: grid;
+			grid-auto-flow: row;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			padding: 5px 16px;
+			hr,
+			.title {
+				font: var(--font-system);
+				grid-column: 1 / span 2;
+			}
+			.label {
+				white-space: nowrap;
+				text-align: right;
+			}
+		}
+		.field {
+			display: grid;
+			grid-auto-flow: column;
+		}
+		hr {
+			border: 1px solid rgb(var(--color-divider));
+			width: 100%;
+			margin: 0;
+		}
+		textarea {
+			grid-column: 1 / span 2;
+			width: 100%;
+			line-height: 16px;
+			margin-bottom: 5px;
+		}
+		.tab a {
+			width: 17px;
+			margin: 2px;
+			padding: 0px 2px;
+			color: rgb(var(--color-icon-button));
+			&:hover {
+				color: rgb(var(--color-icon-button-rollover));
+				text-shadow: none;
+			}
+			&:active {
+				color: rgb(var(--color-icon-button-rollover));
+				border-radius: 4px;
+			}
+		}
+	}
+	&#default_attributes-settings,
+	&#default_resource_trackers-settings {
+		.label {
+			white-space: nowrap;
+			text-align: right;
+		}
+		.fieldblock {
+			display: grid;
+			grid-auto-flow: row;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			padding: 2px 16px;
+			grid-template-columns: min-content auto;
+		}
+		div.add {
+			display: grid;
+			height: 20px;
+			align-items: center;
+		}
+		.thresholds {
+			grid-column: 1 / span 2;
+			border: 1px solid rgb(var(--color-divider));
+		}
+		.item-list {
+			.item {
+				background-color: rgb(var(--color-content));
+				display: grid;
+				grid-template-columns: 0fr 1fr;
+				&.border-top {
+					border-top: 1px solid rgb(var(--color-drop-area));
+				}
+				&.border-bottom {
+					border-bottom: 1px solid rgb(var(--color-drop-area));
+				}
+				.controls {
+					display: grid;
+					gap: 5px;
+					padding: 5px;
+					height: min-content;
+					grid-template:
+						"drag trash"
+						"empty add";
+					> :not(.disabled) {
+						color: rgb(var(--color-icon-button));
+						&:hover {
+							color: rgb(var(--color-icon-button-rollover));
+							text-shadow: none;
+						}
+						&:active {
+							color: rgb(var(--color-icon-button-rollover));
+							text-shadow: none;
+						}
+					}
+					> .disabled {
+						color: rgba(var(--color-icon-button), 0.6);
+						cursor: default;
+						pointer-events: none;
+					}
+					.gcs-grip {
+						grid-area: drag;
+					}
+					.gcs-trash {
+						grid-area: trash;
+					}
+					.gcs-circled-add {
+						grid-area: add;
+					}
+				}
+			}
+			.item:nth-child(2n) {
+				background-color: rgb(var(--color-banding));
+			}
+		}
 	}
 }

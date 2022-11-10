@@ -1,10 +1,11 @@
-export type LengthUnits = "pt" | "in" | "ft" | "ft_in" | "yd" | "mi" | "mm" | "cm" | "km" | "m"
-export type WeightUnits = "oz" | "lb" | "tn" | "lt" | "t" | "kg" | "g"
-export type DisplayMode = "not_shown" | "inline" | "tooltip" | "inline_and_tooltip"
-
-// TODO: change
-export type Height = `${number} ${LengthUnits}` | `${number}'` | `${number}'${number}"`
-export type Weight = `${number} ${WeightUnits}`
+// Export type LengthUnits = "pt" | "in" | "ft" | "ft_in" | "yd" | "mi" | "mm" | "cm" | "km" | "m"
+// export type WeightUnits = "oz" | "lb" | "tn" | "lt" | "t" | "kg" | "g"
+export enum DisplayMode {
+	NotShown = "not_shown",
+	Inline = "inline",
+	Tooltip = "tooltip",
+	InlineAndTooltip = "inline_and_tooltip",
+}
 
 export enum DamageProgression {
 	BasicSet = "basic_set",

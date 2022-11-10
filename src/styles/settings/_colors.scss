@@ -1,0 +1,21 @@
+.fieldblock {
+	display: grid;
+	grid-template-columns: min-content 0fr 0fr 0fr min-content 0fr 0fr 0fr;
+	grid-gap: 5px;
+	padding: 5px;
+	input[type="color"] {
+		height: 24px;
+		width: 24px;
+		background-color: rgb(var(--color-control));
+		border: 1px solid rgb(var(--color-control-edge));
+		border-radius: 3px;
+		padding: 2px;
+		&::-webkit-color-swatch-wrapper {
+			padding: 0;
+		}
+		&::-webkit-color-swatch {
+			border: 1px solid rgb(var(--color-control-edge));
+			border-radius: 3px;
+		}
+	}
+}

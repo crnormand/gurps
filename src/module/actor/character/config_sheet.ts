@@ -391,61 +391,6 @@ export class CharacterSheetConfig extends FormApplication {
 		if (!this.object.id) return
 		if (formData["system.settings.block_layout"])
 			formData["system.settings.block_layout"] = formData["system.settings.block_layout"].split("\n")
-		// Set values inside system.attributes array, and amend written values based on input
-		// for (const i of Object.keys(formData)) {
-		// 	if (i.startsWith("attributes.")) {
-		// 		const attributes = this.attributes
-		// 		// Const attributes: AttributeDef[] =
-		// 		// 	(formData["system.settings.attributes"] as AttributeDef[]) ?? this.object.system.settings.attributes
-		// 		const index = parseInt(i.split(".")[1])
-		// 		const key = i.replace(`attributes.${index}.`, "")
-		// 		if (key.startsWith("thresholds.")) {
-		// 			const tindex = parseInt(key.split(".")[1])
-		// 			const thresholds = attributes[index].thresholds!
-		// 			const tkey = key.replace(`thresholds.${tindex}.`, "")
-		// 			if (tkey.startsWith("halve_")) {
-		// 				if (!formData[i] && thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-		// 					thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
-		// 				} else if (formData[i] && !thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-		// 					thresholds[tindex].ops!.push(tkey as ThresholdOp)
-		// 				}
-		// 			} else {
-		// 				setProperty(thresholds[tindex], tkey, formData[i])
-		// 			}
-		// 			setProperty(attributes[index], "thresholds", thresholds)
-		// 		} else {
-		// 			setProperty(attributes[index], key, formData[i])
-		// 		}
-		// 		formData["system.settings.attributes"] = attributes
-		// 		delete formData[i]
-		// 	}
-		// 	if (i.startsWith("resource_trackers.")) {
-		// 		const trackers: ResourceTrackerDefObj[] = this.resource_trackers
-		// 		// (formData["system.settings.resource_trackers"] as ResourceTrackerDef[]) ??
-		// 		// this.resource_trackers
-		// 		const index = parseInt(i.split(".")[1])
-		// 		const key = i.replace(`resource_trackers.${index}.`, "")
-		// 		if (key.startsWith("thresholds.")) {
-		// 			const tindex = parseInt(key.split(".")[1])
-		// 			const thresholds = trackers[index].thresholds!
-		// 			const tkey = key.replace(`thresholds.${tindex}.`, "")
-		// 			if (tkey.startsWith("halve_")) {
-		// 				if (!formData[i] && thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-		// 					thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
-		// 				} else if (formData[i] && !thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-		// 					thresholds[tindex].ops!.push(tkey as ThresholdOp)
-		// 				}
-		// 			} else {
-		// 				setProperty(thresholds[tindex], tkey, formData[i])
-		// 			}
-		// 			setProperty(trackers[index], "thresholds", thresholds)
-		// 		} else {
-		// 			setProperty(trackers[index], key, formData[i])
-		// 		}
-		// 		formData["system.settings.resource_trackers"] = trackers
-		// 		delete formData[i]
-		// 	}
-		// }
 		await this.object.update(formData)
 		return this.render()
 	}

@@ -302,7 +302,6 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
 		if (aKey.includes(".halve_")) {
 			const tKey = aKey.replace(/\.halve_.*$/, "")
 			const tOp = aKey.split(".").at(-1)
-			// Console.log(tKey, tOp)
 			formData[`${tKey}.ops`] ??= []
 			if (formData[aKey]) formData[`${tKey}.ops`].push(tOp)
 			delete formData[aKey]

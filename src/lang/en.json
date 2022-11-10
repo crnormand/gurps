@@ -903,6 +903,7 @@
 			}
 		},
 		"settings": {
+			"reset_all": "Reset All",
 			"show_token_modifiers": {
 				"name": "Show Token Modifiers",
 				"hint": "Enable the Token Effect Modifiers pop-up window."
@@ -939,7 +940,6 @@
 				"name": "Colors",
 				"label": "Color Settings",
 				"hint": "Colors used throughout the GURPS Game Aid.",
-				"reset_all": "Reset All",
 				"modePreference": "Color Mode",
 				"colorBackground": "Background",
 				"colorOnBackground": "On Background",
@@ -1009,6 +1009,21 @@
 				"colorFailure": "Failure",
 				"colorCriticalSuccess": "Critical Success",
 				"colorCriticalFailure": "Critical Failure"
+			},
+			"default_sheet_settings": {
+				"name": "Default Sheet Settings",
+				"label": "Edit Default Sheet Settings",
+				"hint": "Sheet settings used when creating new Characters."
+			},
+			"default_attributes": {
+				"name": "Default Attributes",
+				"label": "Edit Default Attributes",
+				"hint": "Attributes assigned when creating new Characters."
+			},
+			"default_resource_trackers": {
+				"name": "Default Resource Trackers",
+				"label": "Edit Default Resource Trackers",
+				"hint": "Resource Trackers assigned when creating new Characters."
 			}
 		},
 		"error": {

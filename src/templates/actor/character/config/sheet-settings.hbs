@@ -1,46 +1,48 @@
 <div id="details">
-	<div>
-		{{#if (neq system.import.name "")}}
-			<button class="quick-import">
-				<i class="fas fa-arrows-rotate"></i>
-				{{localize "gurps.character.settings.import.reimport" file=system.import.name}}
-			</button>
-		{{else}}
-			<button class="quick-import" disabled>
-				<i class="fas fa-arrows-rotate"></i>
-				{{localize
-					"gurps.character.settings.import.reimport"
-					file=(localize "gurps.character.settings.import.none")
-				}}
-			</button>
-		{{/if}}
-	</div>
-	<div>
-		<label for="file-upload" class="button">
-			<i class="fas fa-file"></i>
-			{{localize "gurps.character.settings.import.file"}}
-			<input id="file-upload" type="file" accept=".gcs" style="display: none;" />
-		</label>
-		{{#if (neq filename "")}}
-			<button class="import-confirm">
-				<i class="fas fa-file-import"></i>
-				{{localize "gurps.character.settings.import.import" file=filename}}
-			</button>
-		{{else}}
-			<button class="import-confirm" disabled>
-				<i class="fas fa-file-import"></i>
-				{{localize
-					"gurps.character.settings.import.import"
-					file=(localize "gurps.character.settings.import.none")
-				}}
-			</button>
-		{{/if}}
-	</div>
-	<div>{{{localize "gurps.character.settings.import.note" name=actor.name}}}</div>
-	<div>
-		<i class="gcs gcs-triangle-exclamation"></i>
-		{{{localize "gurps.character.settings.import.warning"}}}
-	</div>
+	{{#if actor}}
+		<div>
+			{{#if (neq system.import.name "")}}
+				<button class="quick-import">
+					<i class="fas fa-arrows-rotate"></i>
+					{{localize "gurps.character.settings.import.reimport" file=system.import.name}}
+				</button>
+			{{else}}
+				<button class="quick-import" disabled>
+					<i class="fas fa-arrows-rotate"></i>
+					{{localize
+						"gurps.character.settings.import.reimport"
+						file=(localize "gurps.character.settings.import.none")
+					}}
+				</button>
+			{{/if}}
+		</div>
+		<div>
+			<label for="file-upload" class="button">
+				<i class="fas fa-file"></i>
+				{{localize "gurps.character.settings.import.file"}}
+				<input id="file-upload" type="file" accept=".gcs" style="display: none;" />
+			</label>
+			{{#if (neq filename "")}}
+				<button class="import-confirm">
+					<i class="fas fa-file-import"></i>
+					{{localize "gurps.character.settings.import.import" file=filename}}
+				</button>
+			{{else}}
+				<button class="import-confirm" disabled>
+					<i class="fas fa-file-import"></i>
+					{{localize
+						"gurps.character.settings.import.import"
+						file=(localize "gurps.character.settings.import.none")
+					}}
+				</button>
+			{{/if}}
+		</div>
+		<div>{{{localize "gurps.character.settings.import.note" name=actor.name}}}</div>
+		<div>
+			<i class="gcs gcs-triangle-exclamation"></i>
+			{{{localize "gurps.character.settings.import.warning"}}}
+		</div>
+	{{/if}}
 	<div class="field">
 		<div class="label">{{localize "gurps.character.settings.damage_progression"}}</div>
 		<select name="system.settings.damage_progression" data-dtype="String">
@@ -125,6 +127,8 @@
 			{{localize "gurps.character.settings.exclude_unspent_points_from_total"}}
 		</label>
 	</div>
+</div>
+<div class="fieldblock">
 	<div class="title">{{localize "gurps.character.settings.units.title"}}</div>
 	<hr />
 	<div class="label">{{localize "gurps.character.settings.units.length"}}</div>
@@ -151,8 +155,6 @@
 			{{/select}}
 		</select>
 	</div>
-</div>
-<div class="fieldblock">
 	<div class="title">{{localize "gurps.character.settings.display.title"}}</div>
 	<hr />
 	<div class="label">{{localize "gurps.character.settings.display.user_description"}}</div>
