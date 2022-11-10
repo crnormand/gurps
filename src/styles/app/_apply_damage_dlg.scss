@@ -33,7 +33,8 @@
 			}
 		}
 
-		input[name="basicDamage"] {
+		input[name="basicDamage"],
+		input[name="dr"] {
 			width: 6em;
 		}
 
@@ -49,10 +50,15 @@
 		}
 
 		.pdf {
-			color: blue;
-			text-decoration: underline;
+			color: rgba(var(--color-text-dark-inactive), 1);
+			text-decoration: none;
 			font-size: 80%;
 			text-align: left;
+
+			&:hover {
+				color: blue;
+				text-decoration: underline;
+			}
 		}
 	}
 
