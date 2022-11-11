@@ -244,7 +244,7 @@ Hooks.once("init", async () => {
 		label: i18n("gurps.system.sheet.pdf_edit"),
 	})
 
-	Hooks.on("chatMessage", function(_log, message, chatMessageData) {
+	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
 		if (message === "/dmg") {
 			ApplyDamageDialog.open()
 		}
