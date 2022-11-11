@@ -106,6 +106,7 @@ class ApplyDamageDialog extends Application {
 	}
 
 	private get hitLocation(): HitLocationAdapter | undefined {
+		console.log(this.target, this.target.hitLocationTable)
 		return this.target.hitLocationTable.getLocation(this.calculator.damageRoll.locationId)
 	}
 
