@@ -4,9 +4,7 @@ import { SettingsMenuGURPS } from "./menu"
 export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 	static override readonly namespace = "default_hit_locations"
 
-	static override readonly SETTINGS = [
-		"body_type"
-	]
+	static override readonly SETTINGS = ["body_type"]
 
 	protected static override get settings(): Record<string, any> {
 		return {
@@ -227,7 +225,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 						},
 					],
 				},
-			}
+			},
 		}
 	}
 
