@@ -2,7 +2,6 @@
 
 ## In Progress
 
--   when skill is rolled from tree, show which skill is rolled
 -   Customizable default attributes/body plan/sheet settings/resource trackers
 -   Character export/sync
 -   prompt to import character on creation
@@ -10,6 +9,7 @@
 
 ## 1.0.0
 
+-   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   equipped equipment prereq
 -   change skill level when prereqs not satisfied
@@ -31,7 +31,6 @@
 -   Convert the modifier bucket over
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
--   Convert over as much of the old localization files as we can
 -   Dynamic Character changes
     -   add move modes to dynamic character
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
@@ -45,7 +44,6 @@
 -   Incorporate v10 tooltip API
 -   Skill Defaults from compendium
 -   @X@ notation dialog box for items
--   Support custom hit location tables in damage calculator
 -   Tech Level Modifiers (B168)
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
