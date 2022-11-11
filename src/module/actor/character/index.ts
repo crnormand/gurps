@@ -119,7 +119,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		data["system.modified_date"] = new Date().toISOString()
 	}
 
-	// TODO: move to character/sheet -> _updateObject
+	// TODO: move to character/sheet -> _updateObject (maybe?)
 	updateAttributes(data?: any) {
 		for (const i in data) {
 			if (i.includes("system.import")) return
@@ -1415,75 +1415,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.variableResolverExclusions = new Map()
 		return attr?.max.toString()
 	}
-
-	// 	// Import from GCS
-	// 	async importCharacter() {
-	// 		const import_path = this.importData.path
-	// 		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)
-	// 		if (import_name) {
-	// 			const file_path = import_name[1].replace(/\\/g, "/")
-	// 			const request = new XMLHttpRequest()
-	// 			request.open("GET", file_path)
-
-	// 			new Promise(resolve => {
-	// 				request.onload = () => {
-	// 					if (request.status === 200) {
-	// 						const text = request.response
-	// 						CharacterImporter.import(this, {
-	// 							text: text,
-	// 							name: import_name[1],
-	// 							path: import_path,
-	// 						})
-	// 					} else this._openImportDialog()
-	// 					resolve(this)
-	// 				}
-	// 			})
-	// 			request.send(null)
-	// 		} else this._openImportDialog()
-	// 	}
-
-	// 	_openImportDialog() {
-	// 		setTimeout(async () => {
-	// 			new Dialog(
-	// 				{
-	// 					title: `Import character data for: ${this.name}`,
-	// 					content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import.hbs`, {
-	// 						name: `"${this.name}"`,
-	// 					}),
-	// 					buttons: {
-	// 						import: {
-	// 							icon: '<i class="fas fa-file-import"></i>',
-	// 							label: "Import",
-	// 							callback: html => {
-	// 								const form = $(html).find("form")[0]
-	// 								const files = form.data.files
-	// 								if (!files.length) {
-	// 									return ui.notifications?.error("You did not upload a data file!")
-	// 								} else {
-	// 									const file = files[0]
-	// 									readTextFromFile(file).then(text =>
-	// 										CharacterImporter.import(this, {
-	// 											text: text,
-	// 											name: file.name,
-	// 											path: file.path,
-	// 										})
-	// 									)
-	// 								}
-	// 							},
-	// 						},
-	// 						no: {
-	// 							icon: '<i class="fas fa-times"></i>',
-	// 							label: "Cancel",
-	// 						},
-	// 					},
-	// 					default: "import",
-	// 				},
-	// 				{
-	// 					width: 400,
-	// 				}
-	// 			).render(true)
-	// 		}, 200)
-	// 	}
 }
 
 /**
