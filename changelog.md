@@ -2,9 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.15.11 11/10/2022
+Release 0.15.11 
 
 - Change Github release.yml to include 'utils'
+- Fixed more Item issues caused by the v9->v10 upgrade.   Items will now split and combine by name.
 
 Release 0.15.10 11/10/2022
 
