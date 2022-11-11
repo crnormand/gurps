@@ -9,6 +9,7 @@
 
 ## 1.0.0
 
+
 -   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   equipped equipment prereq
@@ -31,6 +32,7 @@
 -   Convert the modifier bucket over
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
+
 -   Dynamic Character changes
     -   add move modes to dynamic character
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".

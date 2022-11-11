@@ -66,6 +66,7 @@ import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { StaticItemSheet } from "@item/static/sheet"
 import { ColorSettings } from "./settings/colors"
+import { ApplyDamageDialog } from "./damage_calculator/apply_damage_dlg"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -78,6 +79,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
+
 	GURPS.BANNER = `                                                                                       
       .:~!!~:.        ...::  .:..:.   :..::::::.       .:..:::::..        :~7??!^.     
     ?#@@&##&@@#J.     5@@&!  :&@@&.  .B@@@&##&@@@#7    ^&@@&#&&&@@&Y   :G@@@&&&@@@#J.  
@@ -242,6 +244,13 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.pdf_edit"),
 	})
+
+	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
+		if (message === "/dmg") {
+			ApplyDamageDialog.open()
+		}
+		return message !== "/dmg"
+	})
 })
 
 // Setup system
@@ -275,6 +284,13 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
+
+	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
+		if (message === "/dmg") {
+			ApplyDamageDialog.open()
+		}
+		return message !== "/dmg"
+	})
 })
 
 // Add any additional hooks if necessary

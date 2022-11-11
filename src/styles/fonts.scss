@@ -11,9 +11,10 @@
 @font-face {
 	font-family: "Roboto Flex";
 	src: url("../fonts/roboto_flex.ttf");
-	font-weigth: normal;
-	font-style: normal;
+	font-weight: 100 900;
+	font-style: normal oblique;
 }
+
 /* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
 /* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
 /*
@@ -69,112 +70,184 @@
 
 .gcs-all-seeing-eye:before {
 	content: "\e800";
-} /* '' */
+}
+
+/* '' */
 .gcs-attribute:before {
 	content: "\e801";
-} /* '' */
+}
+
+/* '' */
 .gcs-bookmark:before {
 	content: "\e802";
-} /* '' */
+}
+
+/* '' */
 .gcs-body-type:before {
 	content: "\e803";
-} /* '' */
+}
+
+/* '' */
 .gcs-character:before {
 	content: "\e804";
-} /* '' */
+}
+
+/* '' */
 .gcs-checkmark:before {
 	content: "\e805";
-} /* '' */
+}
+
+/* '' */
 .gcs-chevron-right:before {
 	content: "\e806";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-add:before {
 	content: "\e807";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-chevron-down:before {
 	content: "\e808";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-chevron-right:before {
 	content: "\e809";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-exclamation:before {
 	content: "\e80a";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-question:before {
 	content: "\e80b";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-vertical-ellipsis:before {
 	content: "\e80c";
-} /* '' */
+}
+
+/* '' */
 .gcs-circled-x:before {
 	content: "\e80d";
-} /* '' */
+}
+
+/* '' */
 .gcs-closed-folder:before {
 	content: "\e80e";
-} /* '' */
+}
+
+/* '' */
 .gcs-coins:before {
 	content: "\e80f";
-} /* '' */
+}
+
+/* '' */
 .gcs-edit:before {
 	content: "\e810";
-} /* '' */
+}
+
+/* '' */
 .gcs-eqp-modifier:before {
 	content: "\e811";
-} /* '' */
+}
+
+/* '' */
 .gcs-equipment:before {
 	content: "\e812";
-} /* '' */
+}
+
+/* '' */
 .gcs-gears:before {
 	content: "\e813";
-} /* '' */
+}
+
+/* '' */
 .gcs-grip:before {
 	content: "\e814";
-} /* '' */
+}
+
+/* '' */
 .gcs-melee-weapon:before {
 	content: "\e815";
-} /* '' */
+}
+
+/* '' */
 .gcs-menu:before {
 	content: "\e816";
-} /* '' */
+}
+
+/* '' */
 .gcs-modifier:before {
 	content: "\e817";
-} /* '' */
+}
+
+/* '' */
 .gcs-note:before {
 	content: "\e818";
-} /* '' */
+}
+
+/* '' */
 .gcs-open-folder:before {
 	content: "\e819";
-} /* '' */
+}
+
+/* '' */
 .gcs-randomize:before {
 	content: "\e81a";
-} /* '' */
+}
+
+/* '' */
 .gcs-ranged-weapon:before {
 	content: "\e81b";
-} /* '' */
+}
+
+/* '' */
 .gcs-settings:before {
 	content: "\e81c";
-} /* '' */
+}
+
+/* '' */
 .gcs-spell:before {
 	content: "\e81d";
-} /* '' */
+}
+
+/* '' */
 .gcs-skill:before {
 	content: "\e81e";
-} /* '' */
+}
+
+/* '' */
 .gcs-stack:before {
 	content: "\e81f";
-} /* '' */
+}
+
+/* '' */
 .gcs-trait:before {
 	content: "\e820";
-} /* '' */
+}
+
+/* '' */
 .gcs-trash:before {
 	content: "\e821";
-} /* '' */
+}
+
+/* '' */
 .gcs-triangle-exclamation:before {
 	content: "\e822";
-} /* '' */
+}
+
+/* '' */
 .gcs-weight:before {
 	content: "\e823";
-} /* '' */
+}
+
+/* '' */
 .gcs-not:before {
 	content: "\e824";
 } /* '' */
