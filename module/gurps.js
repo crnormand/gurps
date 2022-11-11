@@ -2344,13 +2344,13 @@ if (!globalThis.GURPS) {
           content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
           yes: () => {
             // @ts-ignore
-            let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.system.globalid)
+            let destKey = destactor._findEqtkeyForId('name', resp.itemData.name)
             if (!!destKey) {
               // already have some
               // @ts-ignore
               let destEqt = getProperty(destactor, destKey)
               // @ts-ignore
-              destactor.updateEqtCount(destKey, destEqt.count + resp.count)
+              destactor.updateEqtCount(destKey, +destEqt.count + resp.count)
             } else {
               resp.itemData.system.equipped = true
               // @ts-ignore
@@ -2389,7 +2389,7 @@ if (!globalThis.GURPS) {
           srcActor.deleteEquipment(resp.srckey)
         } else {
           // @ts-ignore
-          srcActor.updateEqtCount(resp.srckey, eqt.count - resp.count)
+          srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }
         // @ts-ignore
         let destActor = game.actors.get(resp.destactorid)
