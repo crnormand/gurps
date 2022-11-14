@@ -5,7 +5,7 @@ import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
 import { SETTINGS, SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
 import { BasePrereq } from "@prereq"
-import { capitalize, i18n, i18n_f, newUUID, removeAccents } from "@util"
+import { capitalize, i18n, i18n_f, newUUID } from "@util"
 import { XMLtoJS } from "@util/xml_js"
 import { CharacterGURPS } from "."
 import { CharacterDataGURPS, HitLocationTable } from "./data"
@@ -241,8 +241,12 @@ export class GCAImporter {
 				description: description,
 			})
 		}
+		const default_sheet = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
+		) as any
 		return {
-			"system.settings": mergeObject(SETTINGS_TEMP.sheet, {
+			"system.settings": mergeObject(default_sheet, {
 				body_type: body,
 			}),
 		}

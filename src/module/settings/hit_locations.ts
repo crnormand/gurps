@@ -268,7 +268,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 					description: "",
 				})
 				formData ??= {}
-				formData[`array.${path}`] = locations
+				formData[`array.${path}.locations`] = locations
 				await this._updateObject(event as unknown as Event, formData)
 				return this.render()
 			case "sub_table":

@@ -2,13 +2,12 @@
 
 ## In Progress
 
--   Customizable default attributes/body plan/sheet settings/resource trackers
 -   Character export/sync
+    -   server-side upload
 -   prompt to import character on creation
 -   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
 
 ## 1.0.0
-
 
 -   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
@@ -57,6 +56,7 @@
 
 ## 1.1.0 and beyond
 
+-   autofill bio
 -   Fix textarea height
 -   focus on field of newly created attribute/location/etc. on creation
 -   GCS 5.3 Template support

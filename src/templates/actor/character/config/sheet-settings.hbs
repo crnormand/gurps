@@ -1,3 +1,15 @@
+{{#unless actor}}
+	<div class="fieldblock">
+		<div class="label">{{localize "gurps.settings.default_sheet_settings.initial_points"}}</div>
+		<div class="field">
+			<input type="text" name="initial_points" value="{{initial_points}}" data-dtype="Number" />
+		</div>
+		<div class="label">{{localize "gurps.settings.default_sheet_settings.default_tech_level"}}</div>
+		<div class="field">
+			<input type="text" name="tech_level" value="{{tech_level}}" data-dtype="Number" />
+		</div>
+	</div>
+{{/unless}}
 <div id="details">
 	{{#if actor}}
 		<div>
@@ -55,6 +67,18 @@
 			{{/select}}
 		</select>
 	</div>
+	{{#unless actor}}
+		<label class="label checkbox-label">
+			<input
+				class="input"
+				type="checkbox"
+				name="populate_description"
+				data-dtype="Boolean"
+				{{checked populate_description}}
+			/>
+			{{localize "gurps.settings.default_sheet_settings.populate_description"}}
+		</label>
+	{{/unless}}
 	<div class="field">
 		<label class="label checkbox-label">
 			<input

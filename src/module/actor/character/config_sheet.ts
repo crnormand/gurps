@@ -256,7 +256,7 @@ export class CharacterSheetConfig extends FormApplication {
 					description: "",
 				})
 				formData ??= {}
-				formData[`array.${path}`] = locations
+				formData[`array.${path}.locations`] = locations
 				await this._updateObject(event as unknown as Event, formData)
 				return this.render()
 			case "sub_table":
@@ -384,7 +384,6 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
-		// FormData = FormApplicationGURPS.updateObject(event, formData)
 		formData = prepareFormData(event, formData, this.object)
 		const element = $(event.currentTarget!)
 		if (element.hasClass("invalid")) delete formData[element.prop("name")]

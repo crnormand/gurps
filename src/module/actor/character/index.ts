@@ -32,7 +32,7 @@ import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
 import { attrPrefix, gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { SETTINGS_TEMP } from "@module/settings"
+import { SETTINGS, SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { MeleeWeapon, RangedWeapon, Weapon, WeaponType } from "@module/weapon"
@@ -47,7 +47,14 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation, HitLocationTable } from "./data"
+import {
+	CharacterSettings,
+	CharacterSource,
+	CharacterSystemData,
+	Encumbrance,
+	HitLocation,
+	HitLocationTable,
+} from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 
@@ -70,16 +77,65 @@ class CharacterGURPS extends BaseActorGURPS {
 	SizeModBonus = 0
 
 	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
-		const sd: CharacterSystemData | any = {
+		const default_settings = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
+		) as CharacterSettings
+		const default_attributes = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
+		) as CharacterSettings["attributes"]
+		const default_resource_trackers = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
+		) as CharacterSettings["resource_trackers"]
+		const default_hit_locations = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
+		) as CharacterSettings["body_type"]
+		const populate_description = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.populate_description`
+		) as boolean
+		const initial_points = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.initial_points`
+		) as number
+		const default_tech_level = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.tech_level`
+		) as string
+		const sd: Partial<CharacterSystemData> = {
 			id: newUUID(),
 			created_date: getCurrentTime(),
-			total_points: SETTINGS_TEMP.general.initial_points,
-			settings: SETTINGS_TEMP.sheet,
+			// Total_points: SETTINGS_TEMP.general.initial_points,
+			// settings: SETTINGS_TEMP.sheet,
+			// total_points: 100, // TODO: change
+			// settings: default_settings,
+			profile: {
+				player_name: "",
+				name: "",
+				title: "",
+				organization: "",
+				age: "",
+				birthday: "",
+				eyes: "",
+				hair: "",
+				skin: "",
+				handedness: "",
+				height: 0,
+				weight: 0,
+				SM: 0,
+				gender: "",
+				tech_level: "",
+				religion: "",
+				portrait: "",
+			},
 			editing: true,
 			calc: {
 				swing: "",
 				thrust: "",
-				basic_lift: "0 lb",
+				basic_lift: 0,
 				lifting_st_bonus: 0,
 				striking_st_bonus: 0,
 				throwing_st_bonus: 0,
@@ -90,10 +146,21 @@ class CharacterGURPS extends BaseActorGURPS {
 				parry_bonus: 0,
 			},
 		}
-		sd.total_points = SETTINGS_TEMP.general.initial_points
-		sd.settings = SETTINGS_TEMP.sheet
+		sd.total_points = initial_points
+		sd.points_record = [
+			{
+				when: sd.created_date!,
+				points: initial_points,
+				reason: i18n("gurps.character.points_record.initial_points"),
+			},
+		]
+		sd.settings = default_settings
+		sd.settings.attributes = default_attributes
+		sd.settings.body_type = default_hit_locations
+		sd.settings.resource_trackers = default_resource_trackers
 		sd.modified_date = sd.created_date
-		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
+		if (populate_description) sd.profile = SETTINGS_TEMP.general.auto_fill
+		sd.profile!.tech_level = default_tech_level
 		sd.attributes = this.newAttributes(sd.settings.attributes)
 		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
@@ -1414,6 +1481,41 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 		this.variableResolverExclusions = new Map()
 		return attr?.max.toString()
+	}
+
+	protected async saveServer() {
+		const json = this.exportSystemData()
+		const name = json.name.split("/").at(-1)
+		const blob = new Blob([json.text], { type: "text/plain" })
+		const file = new File([blob], name)
+		await FilePicker.upload("data", json.name, file)
+	}
+
+	protected saveLocal() {
+		const json = this.exportSystemData()
+		json.name = json.name.split("/").at(-1)
+		saveDataToFile(json.text, "gcs", json.name)
+	}
+
+	protected exportSystemData() {
+		const system: any = this.system
+		const third_party: any = {}
+
+		third_party.settings = { resource_trackers: system.settings.resource_trackers }
+		third_party.resource_trackers = system.resource_trackers
+		third_party.import = system.import
+		third_party.move = system.move
+		system.third_party = third_party
+
+		delete system.resource_trackers
+		delete system.settings.resource_trackers
+		delete system.import
+		delete system.move
+
+		const json = JSON.stringify(system)
+		const filename = system.third_party.import.name.split("/").at(-1)
+
+		return { text: json, name: filename }
 	}
 }
 

@@ -197,7 +197,8 @@
 				"title": "Points Record for {name}",
 				"when": "When",
 				"points": "Points",
-				"reason": "Reason"
+				"reason": "Reason",
+				"initial_points": "Initial points"
 			},
 			"macros": {
 				"title": "Quick Macros",
@@ -1013,7 +1014,10 @@
 			"default_sheet_settings": {
 				"name": "Default Sheet Settings",
 				"label": "Edit Default Sheet Settings",
-				"hint": "Sheet settings used when creating new Characters."
+				"hint": "Sheet settings used when creating new Characters.",
+				"initial_points": "Initial Points",
+				"default_tech_level": "Default Tech Level",
+				"populate_description": "Fill in initial description"
 			},
 			"default_attributes": {
 				"name": "Default Attributes",
@@ -1024,6 +1028,11 @@
 				"name": "Default Resource Trackers",
 				"label": "Edit Default Resource Trackers",
 				"hint": "Resource Trackers assigned when creating new Characters."
+			},
+			"default_hit_locations": {
+				"name": "Default Body Type",
+				"label": "Edit Default Body Type",
+				"hint": "The Body Type assigned when creating new Characters."
 			}
 		},
 		"error": {

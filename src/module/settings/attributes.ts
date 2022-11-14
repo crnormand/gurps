@@ -18,7 +18,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 			id: `${this.namespace}-settings`,
 			template: `systems/${SYSTEM_NAME}/templates/system/settings/${this.namespace}.hbs`,
 			width: 480,
-			height: "auto",
+			height: 600,
 			submitOnClose: true,
 			submitOnChange: true,
 			closeOnSubmit: false,
@@ -49,6 +49,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						full_name: "Dexterity",
 						attribute_base: "10",
 						cost_per_point: 20,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "iq",
@@ -57,6 +58,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						full_name: "Intelligence",
 						attribute_base: "10",
 						cost_per_point: 20,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "ht",
@@ -65,6 +67,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						full_name: "Health",
 						attribute_base: "10",
 						cost_per_point: 10,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "will",
@@ -72,6 +75,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Will",
 						attribute_base: "$iq",
 						cost_per_point: 5,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "fright_check",
@@ -79,6 +83,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Fright Check",
 						attribute_base: "$will",
 						cost_per_point: 2,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "per",
@@ -87,6 +92,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						full_name: "Perception",
 						attribute_base: "$iq",
 						cost_per_point: 5,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "vision",
@@ -94,6 +100,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Vision",
 						attribute_base: "$per",
 						cost_per_point: 2,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "hearing",
@@ -101,6 +108,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Hearing",
 						attribute_base: "$per",
 						cost_per_point: 2,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "taste_smell",
@@ -108,6 +116,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Taste \u0026 Smell",
 						attribute_base: "$per",
 						cost_per_point: 2,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "touch",
@@ -115,6 +124,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Touch",
 						attribute_base: "$per",
 						cost_per_point: 2,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "basic_speed",
@@ -122,6 +132,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Basic Speed",
 						attribute_base: "($dx+$ht)/4",
 						cost_per_point: 20,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "basic_move",
@@ -129,6 +140,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						name: "Basic Move",
 						attribute_base: "floor($basic_speed)",
 						cost_per_point: 5,
+						cost_adj_percent_per_sm: 0,
 					},
 					{
 						id: "fp",
@@ -137,6 +149,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						full_name: "Fatigue Points",
 						attribute_base: "$ht",
 						cost_per_point: 3,
+						cost_adj_percent_per_sm: 0,
 						thresholds: [
 							{
 								state: "Unconscious",
