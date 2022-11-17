@@ -1397,7 +1397,7 @@ if (!globalThis.GURPS) {
         let k = target.toUpperCase()
         // @ts-ignore
         delta = actor.system[k].value - delta
-        await actor.update({ ['data.' + k + '.value']: delta })
+        await actor.update({ ['system.' + k + '.value']: delta })
       }
       if (target.match(/^tr/i)) {
         await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
