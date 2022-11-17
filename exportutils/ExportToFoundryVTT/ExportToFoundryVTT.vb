@@ -104,76 +104,16 @@ Public Class ExportToFoundryVTT
         '* Included Sections 
         '******************************
         newOption = New GCA5Engine.SheetOption
-        newOption.Name = "Header_TextBlocks"
+        newOption.Name = "Header_ItemNotes"
         newOption.Type = GCA5Engine.OptionType.Header
-        newOption.UserPrompt = "Sections to Include"
+        newOption.UserPrompt = "Item Notes"
         ok = Options.AddOption(newOption)
 
         newOption = New GCA5Engine.SheetOption
-        newOption.Name = "ShowMovementBlock"
+        newOption.Name = "NotesIncludeDescription"
         newOption.Type = GCA5Engine.OptionType.YesNo
-        newOption.UserPrompt = "Include a block showing all the Environment Move rates?"
+        newOption.UserPrompt = "Include a trait's Description in the User Notes and VTT Notes block."
         newOption.DefaultValue = True
-        ok = Options.AddOption(newOption)
-
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "ShowMovementZero"
-        newOption.Type = GCA5Engine.OptionType.YesNo
-        newOption.UserPrompt = "When printing the block above, include movement rates even when they're at zero?"
-        newOption.DefaultValue = False
-        ok = Options.AddOption(newOption)
-
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "ShowAllAdditionalStats"
-        newOption.Type = GCA5Engine.OptionType.YesNo
-        newOption.UserPrompt = "Include a block showing all additional attributes that aren't hidden?"
-        newOption.DefaultValue = False
-        ok = Options.AddOption(newOption)
-
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "ShowAdditionalStatsAtZero"
-        newOption.Type = GCA5Engine.OptionType.YesNo
-        newOption.UserPrompt = "When printing the block above, include attributes even when they're at zero?"
-        newOption.DefaultValue = False
-        ok = Options.AddOption(newOption)
-
-        '******************************
-        '* Other Stuff 
-        '******************************
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "Header_Other"
-        newOption.Type = GCA5Engine.OptionType.Header
-        newOption.UserPrompt = "Other Options"
-        ok = Options.AddOption(newOption)
-
-        'NOTE: Because List is now a 0-based Array, the number of the 
-        'DefaultValue and the selected Value is 0-based!
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "HeadingStyle"
-        newOption.Type = GCA5Engine.OptionType.ListNumber
-        newOption.UserPrompt = "Please select the way you'd like to differentiate section headers from their various items."
-        newOption.DefaultValue = 1 'second item
-        newOption.List = {"Do nothing", "Use a row of dashes under the header", "Use BBCode to mark the header as bold", "Use HTML to mark the header as bold"}
-        ok = Options.AddOption(newOption)
-
-        'NOTE: Because List is now a 0-based Array, the number of the 
-        'DefaultValue and the selected Value is 0-based!
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "BonusLineStyle"
-        newOption.Type = GCA5Engine.OptionType.ListNumber
-        newOption.UserPrompt = "Please select the way you'd like to differentiate bonus lines ('Includes: +X from Z') from their related items."
-        newOption.DefaultValue = 1 'second item
-        newOption.List = {"Do nothing", "Use a tab Character preceding them", "Use BBCode to mark them in italic", "Use HTML to mark them in italic", "Tab Character and BBCode", "Tab Character and HTML"}
-        ok = Options.AddOption(newOption)
-
-        'NOTE: Because List is now a 0-based Array, the number of the 
-        'DefaultValue and the selected Value is 0-based!
-        newOption = New GCA5Engine.SheetOption
-        newOption.Name = "PointsLineStyle"
-        newOption.Type = GCA5Engine.OptionType.ListNumber
-        newOption.UserPrompt = "Please select the way you'd like to differentiate the Point Summary line from the surrounding text."
-        newOption.DefaultValue = 1 'second item
-        newOption.List = {"Do nothing", "Print it as multiple lines with a header", "Use BBCode to mark them in bold", "Use HTML to mark them in bold", "Use BBCode to mark them in italic", "Use HTML to mark them in italic", "Use BBCode to mark them in bold and italic", "Use HTML to mark them in bold and italic"}
         ok = Options.AddOption(newOption)
 
     End Sub
@@ -534,7 +474,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<relativelevel type=""string"">" & tmp & "</relativelevel>")
 
                 fw.Paragraph("<points type=""number"">" & CurChar.Items(i).TagItem("points") & "</points>")
-                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                 fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                 fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                 fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -611,7 +551,8 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<class type=""string"">" & spellClass & "</class>")
                 fw.Paragraph("<type type=""string"">" & CurChar.Items(i).TagItem("type") & "</type>")
                 fw.Paragraph("<points type=""number"">" & CurChar.Items(i).TagItem("points") & "</points>")
-                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
+				
 
                 fw.Paragraph("<time type=""string"">" & CurChar.Items(i).TagItem("time") & "</time>")
                 fw.Paragraph("<duration type=""string"">" & CurChar.Items(i).TagItem("duration") & "</duration>")
@@ -941,7 +882,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<weight type=""string"">" & StrToDbl(CurChar.Items(i).tagitem("weight")) /qty & "</weight>")
 
                 'print the notes (not currently shown on Fantasy Grounds character sheet)
-                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                 
                 fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).TagItem("techlvl") & "</tl>")
                 
@@ -1073,7 +1014,7 @@ Public Class ExportToFoundryVTT
                     fw.Paragraph("<lc type=""string"">" & CurChar.Items(i).TagItem("lc") & "</lc>")
 
                     'print the notes (not currently shown on Fantasy Grounds character sheet)
-                    fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
 
                     fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "techlvl") & "</tl>")
 
@@ -1381,7 +1322,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                     fw.Paragraph("</id-" & tag_index & ">")
 
                 End If
@@ -1422,7 +1363,7 @@ Public Class ExportToFoundryVTT
                             work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                         End If
                         fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                        fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                        fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                         fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                         fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                         fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1465,7 +1406,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1525,7 +1466,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & CreateControlRoll(mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes"))) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & CreateControlRoll(mods_text & UpdateEscapeChars(UserVTTNotes(CurChar, i))) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1567,7 +1508,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(UserVTTNotes(CurChar, i)) & "</text>") '2022-11-17 - combine user notes & vtt notes - ADS
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1872,7 +1813,7 @@ Public Class ExportToFoundryVTT
 
         ' then print, converting carriage returns to \r
         ' (I've done this in two steps in case the pairs ever come through the other way round, e.g. after editing in a different app)
-        fw.Paragraph("<description type=""string"">" & UpdateEscapeChars(PlainText(CurChar.Description)) & "</description>")
+        fw.Paragraph("<description type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Description)) & "</description>") '2022-11-17 - new function is more robust - ADS
 
     End Sub
 
@@ -1902,7 +1843,7 @@ Public Class ExportToFoundryVTT
         ' then print, converting carriage returns to \r
         ' (I've done this in two steps in case the pairs ever come through the other way round, e.g. after editing in a different app)
         fw.Paragraph("<name type=""string"">Character Note</name>")
-        fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(PlainText(CurChar.Notes)) & "</text>")
+        fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Notes)) & "</text>") '2022-11-17 - new function is more robust - ADS
 
         fw.Paragraph("</id-00001>")
         fw.Paragraph("</notelist>")
@@ -2111,6 +2052,40 @@ Public Class ExportToFoundryVTT
         On Error GoTo 0
         'disable error handling
 
+    End Function
+
+'****************************************
+'* Function
+'* Convenient way to get UserNotes and VTTNotes combined
+'* ~ ADS
+'****************************************
+    Function UserVTTNotes(CurChar as GCACharacter, Index As Integer) As String
+        Dim ret As String = ""
+        dim desc as string = RTFtoPlainText(CurChar.Items(Index).TagItem("description")).Trim
+		Dim user As String = RTFtoPlainText(CurChar.Items(Index).TagItem("usernotes")).Trim
+        Dim vtt As String = CurChar.Items(Index).TagItem("vttnotes").Trim
+
+		If MyOptions.Value("NotesIncludeDescription") = True Then
+			If desc <> "" Then ret = desc
+		End If
+
+        If user <> "" Then
+            If ret = "" Then
+                ret = user
+            Else
+                ret = ret & vblf & user
+            End If
+        End If
+		
+        If vtt <> "" Then
+            If ret = "" Then
+                ret = vtt
+            Else
+                ret = ret & vblf & vtt
+            End If
+        End If
+
+        Return ret
     End Function
 
 End Class
