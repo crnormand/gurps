@@ -534,7 +534,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<relativelevel type=""string"">" & tmp & "</relativelevel>")
 
                 fw.Paragraph("<points type=""number"">" & CurChar.Items(i).TagItem("points") & "</points>")
-                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
                 fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                 fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                 fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -611,7 +611,8 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<class type=""string"">" & spellClass & "</class>")
                 fw.Paragraph("<type type=""string"">" & CurChar.Items(i).TagItem("type") & "</type>")
                 fw.Paragraph("<points type=""number"">" & CurChar.Items(i).TagItem("points") & "</points>")
-                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
+				
 
                 fw.Paragraph("<time type=""string"">" & CurChar.Items(i).TagItem("time") & "</time>")
                 fw.Paragraph("<duration type=""string"">" & CurChar.Items(i).TagItem("duration") & "</duration>")
@@ -941,7 +942,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<weight type=""string"">" & StrToDbl(CurChar.Items(i).tagitem("weight")) /qty & "</weight>")
 
                 'print the notes (not currently shown on Fantasy Grounds character sheet)
-                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
                 
                 fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).TagItem("techlvl") & "</tl>")
                 
@@ -1073,7 +1074,7 @@ Public Class ExportToFoundryVTT
                     fw.Paragraph("<lc type=""string"">" & CurChar.Items(i).TagItem("lc") & "</lc>")
 
                     'print the notes (not currently shown on Fantasy Grounds character sheet)
-                    fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
 
                     fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "techlvl") & "</tl>")
 
@@ -1381,7 +1382,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
                     fw.Paragraph("</id-" & tag_index & ">")
 
                 End If
@@ -1422,7 +1423,7 @@ Public Class ExportToFoundryVTT
                             work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                         End If
                         fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                        fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                        fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
                         fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                         fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                         fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1465,7 +1466,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1525,7 +1526,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & CreateControlRoll(mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes"))) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & CreateControlRoll(mods_text & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes")))) & "</text>") '2022-11-17 - convert to plain text - ADS
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1567,7 +1568,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(RTFtoPlainText(CurChar.Items(i).TagItem("usernotes"))) & "</text>") '2022-11-17 - convert to plain text - ADS
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1872,7 +1873,7 @@ Public Class ExportToFoundryVTT
 
         ' then print, converting carriage returns to \r
         ' (I've done this in two steps in case the pairs ever come through the other way round, e.g. after editing in a different app)
-        fw.Paragraph("<description type=""string"">" & UpdateEscapeChars(PlainText(CurChar.Description)) & "</description>")
+        fw.Paragraph("<description type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Description)) & "</description>") '2022-11-17 - new function is more robust
 
     End Sub
 
@@ -1902,7 +1903,7 @@ Public Class ExportToFoundryVTT
         ' then print, converting carriage returns to \r
         ' (I've done this in two steps in case the pairs ever come through the other way round, e.g. after editing in a different app)
         fw.Paragraph("<name type=""string"">Character Note</name>")
-        fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(PlainText(CurChar.Notes)) & "</text>")
+        fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(RTFtoPlainText(CurChar.Notes)) & "</text>") '2022-11-17 - new function is more robust
 
         fw.Paragraph("</id-00001>")
         fw.Paragraph("</notelist>")
