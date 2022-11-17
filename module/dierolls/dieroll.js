@@ -70,6 +70,7 @@ export async function doRoll({
     await roll.evaluate({ async: true })
     let rtotal = roll.total
 
+    chatdata['showPlus'] = true
     chatdata['rtotal'] = rtotal
     chatdata['loaded'] = !!roll.isLoaded
     chatdata['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : ''

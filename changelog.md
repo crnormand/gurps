@@ -1,6 +1,8 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
+Release 0.15.12 11/17/2022
+
+- Fixed chat display of OTF modifiers (including "+0")
 
 Release 0.15.11 11/10/2022
 
