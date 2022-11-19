@@ -61,14 +61,23 @@
 		&.quantity {
 			min-width: 1em; //possibly unnecessary
 		}
-		&.drop-over {
+		&.border-top {
+			border-top: 2px dashed rgb(var(--color-drop-area));
 			&.desc {
 				border-top: none;
 				.name {
 					border-top: 2px dashed rgb(var(--color-drop-area));
 				}
 			}
-			border-top: 2px dashed rgb(var(--color-drop-area));
+		}
+		&.border-bottom {
+			border-bottom: 2px dashed rgb(var(--color-drop-area));
+			&.desc {
+				border-bottom: none;
+				.item-notes {
+					border-bottom: 2px dashed rgb(var(--color-drop-area));
+				}
+			}
 		}
 	}
 

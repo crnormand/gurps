@@ -216,10 +216,16 @@
 				"water": "Water",
 				"other": "Other..."
 			},
+			"import_prompt": {
+				"title": "Import Existing File?",
+				"import": "Import",
+				"prompt": "Would you like to import an existing file?"
+			},
 			"settings": {
 				"import": {
 					"reimport": "Re-Import ({file})",
 					"import": "Import ({file})",
+					"export": "Export ({file})",
 					"none": "None",
 					"file": "Choose File",
 					"title": "Import",
@@ -869,6 +875,17 @@
 				"browse": "Browse All",
 				"pinned_category": "Pinned"
 			},
+			"modifier_bucket": {
+				"current_effects": "Current Effects",
+				"send": "Send Modifier Bucket to:",
+				"current_mods": "Current Modifiers",
+				"melee": "Melee Attack",
+				"ranged": "Ranged Attack",
+				"defense": "Defense",
+				"categories": "Modifiers by Category",
+				"pinned": "Pinned Modifiers",
+				"search": "Search for Modifiers"
+			},
 			"library_import": {
 				"button": "Import GCS Library",
 				"title": "Import GCS Library",
@@ -936,6 +953,14 @@
 			"enable_token_modifier_window": {
 				"name": "Enable Token Modifier Window",
 				"hint": "Enable the Token Modifier Window, which shows modifiers related to selected and targeted tokens"
+			},
+			"modifier_mode": {
+				"name": "Modifier Application",
+				"hint": "Choose between using the Modifier Bucket and Modifier Prompt. Note: Change will only be applied after a refresh.",
+				"choices": {
+					"bucket": "Modifier Bucket",
+					"prompt": "Modifier Prompt"
+				}
 			},
 			"colors": {
 				"name": "Colors",

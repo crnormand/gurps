@@ -2,13 +2,17 @@
 
 ## In Progress
 
--   Character export/sync
-    -   server-side upload
--   prompt to import character on creation
--   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
+-   Convert the modifier bucket over
+    -   add search function, same as mod prompt
+    -   css
+    -   premade lists
+    -   add 0.15 categories
+    -   settings window for editing master list
+    -   pinned appears as category always (for awareness)
 
 ## 1.0.0
 
+-   send mofidiers from prompt
 -   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   equipped equipment prereq
@@ -28,10 +32,8 @@
     -   meta-traits
     -   racial templates
     -   alternate abilities
--   Convert the modifier bucket over
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
-
 -   Dynamic Character changes
     -   add move modes to dynamic character
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
@@ -48,10 +50,10 @@
 -   Tech Level Modifiers (B168)
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
--   Redo drag & drop indicators
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -   switch between number and dice display for skill rolls
 -   Global Foundry styling
+-   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
 -   probably a bunch of other stuff I'm forgetting
 
 ## 1.1.0 and beyond

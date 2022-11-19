@@ -1,0 +1,72 @@
+<form class="{{cssClass}}">
+	<div id="current-effects" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.current_effects"}}</div>
+		<div class="content">
+			{{#each currentEffects}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="send-modifiers" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.send"}}</div>
+		<div class="content">
+			{{#each activeMods}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="current-modifiers" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.current_mods"}}</div>
+		<div class="content">
+			{{#each currentModifiers}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="melee" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.melee"}}</div>
+		<div class="content">
+			{{#each meleeMods}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="ranged" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.ranged"}}</div>
+		<div class="content">
+			{{#each rangedMods}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="defense" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.defense"}}</div>
+		<div class="content">
+			{{#each defenseMods}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="categories" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.categories"}}</div>
+		<div class="content">
+			{{#each categories}}
+				<select>
+					<option>{{localize this.name}}</option>
+					{{#each this.items}}
+						<option value="{{@../index}}.{{@index}}">{{localize this.name}}</option>
+					{{/each}}
+				</select>
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+	<div id="search" class="section">
+		<div class="header">{{localize "gurps.system.modifier_bucket.search"}}</div>
+		<div class="content">
+			{{#each activeMods}}
+				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+			{{/each}}
+		</div>
+	</div>
+</form>

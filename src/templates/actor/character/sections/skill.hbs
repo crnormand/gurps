@@ -1,4 +1,4 @@
-<div class="desc item" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+<div class="desc item{{#if (in this.type '_container')}} container{{/if}}" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
 	<div class="dropdown">
 		{{#if (eq this.type "skill_container")}}
 		{{#if this.open}}

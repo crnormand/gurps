@@ -1,4 +1,4 @@
-import { ActorGURPS } from "@actor"
+import { ActorGURPS, BaseActorGURPS } from "@actor"
 import { ContainerGURPS, ItemGURPS } from "@item"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
@@ -18,9 +18,16 @@ export class ActorSheetGURPS extends ActorSheet {
 	}
 
 	// DragData handling
-	protected override async _onDropItem(event: DragEvent, data: ActorSheet.DropData.Item): Promise<unknown> {
-		// Remove Drag Markers
-		$(".drop-over").removeClass("drop-over")
+	protected override async _onDropItem(
+		event: DragEvent,
+		data: ActorSheet.DropData.Item & { actor: BaseActorGURPS }
+	): Promise<unknown> {
+		const element = $(event.currentTarget!)
+		console.log(element)
+		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
+		const top = Boolean($(".border-top").length)
+		$(".border-bottom").removeClass("border-bottom")
+		$(".border-top").removeClass("border-top")
 
 		if (!this.actor.isOwner) return false
 
@@ -29,7 +36,8 @@ export class ActorSheetGURPS extends ActorSheet {
 		const itemData = item.toObject()
 
 		// Handle item sorting within the same Actor
-		if (this.actor.uuid === item.actor?.uuid) return this._onSortItem(event, itemData)
+		if (this.actor.uuid === item.actor?.uuid)
+			return this._onSortItem(event, itemData, { top: top, in: widthAcross > 0.3 })
 
 		return this._onDropItemCreate(itemData)
 	}
@@ -42,12 +50,11 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		// Owned Items
 		if ($(list as HTMLElement).data("uuid")) {
-			// If ((list as HTMLElement).dataset.itemI) {
-			const itemData = duplicate((await fromUuid($(list as HTMLElement).data("uuid"))) as Item | Actor) as any
-			delete itemData._id
+			const uuid = $(list as HTMLElement).data("uuid")
+			const itemData = (await fromUuid(uuid)) as Item
 			dragData = {
 				type: "Item",
-				data: itemData,
+				uuid: uuid,
 			}
 
 			// Create custom drag image
@@ -75,17 +82,25 @@ export class ActorSheetGURPS extends ActorSheet {
 
 	protected override async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties>
+		itemData: PropertiesToSource<ItemDataBaseProperties>,
+		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
+		console.log("_onSortItem", options)
 		const source = this.actor.deepItems.get(itemData._id!)
-		const dropTarget = $(event.target!).closest("[data-item-id]")
-		const target = this.actor.deepItems.get(dropTarget.data("item-id"))
+		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
+		if (!options?.top) dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
+		let target = this.actor.deepItems.get(dropTarget.data("uuid").split(".").at(-1))
 		if (!target) return []
-		const parent = target?.parent
-		const siblings = (target!.parent!.items as Collection<ItemGURPS>).filter(
+		let parent = target?.parent
+		let parents = target?.parents
+		if (options.in) {
+			parent = target as ContainerGURPS
+			target = parent.children.contents[0] ?? null
+		}
+		console.log(parent, target)
+		const siblings = (parent!.items as Collection<ItemGURPS>).filter(
 			i => i._id !== source!._id && source!.sameSection(i)
 		)
-
 		if (target && !source?.sameSection(target)) return []
 
 		const sortUpdates = SortingHelpers.performIntegerSort(source, {
@@ -98,8 +113,8 @@ export class ActorSheetGURPS extends ActorSheet {
 			return update
 		})
 
-		if (source && target && source.parent !== target.parent) {
-			if (source instanceof ContainerGURPS && target.parents.includes(source)) return []
+		if (source && source.parent !== parent) {
+			if (source instanceof ContainerGURPS && parents.includes(source)) return []
 			await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
 			return parent?.createEmbeddedDocuments(
 				"Item",
@@ -115,6 +130,7 @@ export class ActorSheetGURPS extends ActorSheet {
 				{ temporary: false }
 			)
 		}
+		console.log("updateData", updateData)
 		return parent!.updateEmbeddedDocuments("Item", updateData) as unknown as Item[]
 	}
 

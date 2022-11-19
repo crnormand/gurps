@@ -48,11 +48,10 @@
 					}}
 				</button>
 			{{/if}}
-		</div>
-		<div>{{{localize "gurps.character.settings.import.note" name=actor.name}}}</div>
-		<div>
-			<i class="gcs gcs-triangle-exclamation"></i>
-			{{{localize "gurps.character.settings.import.warning"}}}
+			<button class="quick-import">
+				<i class="fas fa-arrows-rotate"></i>
+				{{localize "gurps.character.settings.import.export" file=(concat actor.name ".gcs")}}
+			</button>
 		</div>
 	{{/if}}
 	<div class="field">

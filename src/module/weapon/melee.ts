@@ -3,10 +3,6 @@ import { TooltipGURPS } from "@module/tooltip"
 import { BaseWeapon } from "./base"
 
 class MeleeWeapon extends BaseWeapon {
-	// Reach = "";
-	// parry = "";
-	// block = "";
-
 	get fastResolvedParry(): string {
 		return this.resolvedParry()
 	}

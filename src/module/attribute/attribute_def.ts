@@ -15,16 +15,6 @@ export enum AttributeType {
 export const reserved_ids: string[] = [gid.Skill, gid.Parry, gid.Block, gid.Dodge, gid.SizeModifier, gid.Ten]
 
 export class AttributeDef {
-	// Def_id = "";
-	// type: AttributeType = "integer";
-	// name = "";
-	// full_name = "";
-	// attribute_base = "10";
-	// cost_per_point = 10;
-	// cost_adj_percent_per_sm = 0;
-	// thresholds?: PolThreshold[];
-	// order = 0;
-
 	constructor(data?: AttributeDefObj) {
 		if (data) {
 			const thr: PoolThreshold[] = []

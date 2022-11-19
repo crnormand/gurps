@@ -87,6 +87,20 @@ export function registerSettings(): void {
 	})
 	DefaultSheetSettings.registerSettings()
 
+	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
+		name: "gurps.settings.modifier_mode.name",
+		hint: "gurps.settings.modifier_mode.hint",
+		scope: "client",
+		config: true,
+		type: String,
+		choices: {
+			prompt: "gurps.settings.modifier_mode.choices.prompt",
+			bucket: "gurps.settings.modifier_mode.choices.bucket",
+		},
+		default: "prompt",
+		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
+	})
+
 	g.settings.register(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF, {
 		name: "gurps.settings.basic_set_pdfs.name",
 		hint: "gurps.settings.basic_set_pdfs.hint",
@@ -168,20 +182,6 @@ export function registerSettings(): void {
 		type: Boolean,
 		default: false,
 		onChange: value => console.log(`Ignore import name : ${value}`),
-	})
-
-	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
-		name: "gurps.settings.modifier_mode.name",
-		hint: "gurps.settings.modifier_mode.hint",
-		scope: "client",
-		config: true,
-		type: String,
-		choices: {
-			bucket: "gurps.settings.modifier_mode.choices.bucket",
-			prompt: "gurps.settings.modifier_mode.choices.prompt",
-		},
-		default: "prompt",
-		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
 	})
 }
 

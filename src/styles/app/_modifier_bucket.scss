@@ -1,0 +1,10 @@
+#modifier-bucket-window {
+	position: absolute;
+	display: grid;
+	grid-auto-flow: column;
+	grid-gap: 5px;
+	grid-template:
+		"none list"
+		"bar list";
+	align-items: end;
+}

@@ -185,6 +185,9 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 
 		this.items = new Collection()
 		for (const item of containedItems) {
+			if (this.type === "equipment_container" && item.type === "equipment") {
+				item.system.other = (this.system as any).other
+			}
 			if (!oldItems.has(item._id!)) {
 				const theItem = new CONFIG.Item.documentClass(item, {
 					parent: this as any,

@@ -57,6 +57,7 @@ import {
 } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
+import { CharacterImporter } from "./import"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -95,15 +96,15 @@ class CharacterGURPS extends BaseActorGURPS {
 		) as CharacterSettings["body_type"]
 		const populate_description = (game as Game).settings.get(
 			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.populate_description`
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.populate_description`
 		) as boolean
 		const initial_points = (game as Game).settings.get(
 			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.initial_points`
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.initial_points`
 		) as number
 		const default_tech_level = (game as Game).settings.get(
 			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.tech_level`
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.tech_level`
 		) as string
 		const sd: Partial<CharacterSystemData> = {
 			id: newUUID(),
@@ -165,6 +166,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
+		this.promptImport()
 	}
 
 	override update(
@@ -695,33 +697,21 @@ class CharacterGURPS extends BaseActorGURPS {
 			t.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(t.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		for (const sk of this.skills) {
 			sk.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(sk.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		for (const sp of this.spells) {
 			sp.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(sp.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		for (const e of this.carried_equipment) {
 			e.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(e.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		weaponList.sort((a, b) => (a.usage > b.usage ? 1 : b.usage > a.usage ? -1 : 0))
 		return weaponList
@@ -879,7 +869,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	getResourceTrackers(): Map<string, ResourceTracker> {
 		const trackers: Map<string, ResourceTracker> = new Map()
 		const tracker_array = this.system.resource_trackers
-		if (!tracker_array.length) return trackers
+		if (!tracker_array?.length) return trackers
 		tracker_array.forEach((v, k) => {
 			trackers.set(v.tracker_id, new ResourceTracker(this, v.tracker_id, k, v))
 		})
@@ -1483,22 +1473,25 @@ class CharacterGURPS extends BaseActorGURPS {
 		return attr?.max.toString()
 	}
 
-	protected async saveServer() {
-		const json = this.exportSystemData()
-		const name = json.name.split("/").at(-1)
-		const blob = new Blob([json.text], { type: "text/plain" })
-		const file = new File([blob], name)
-		await FilePicker.upload("data", json.name, file)
-	}
+	// Unused
+	// protected async saveServer() {
+	// 	const json = this.exportSystemData()
+	// 	const name = json.name.split("/").at(-1)
+	// 	const blob = new Blob([json.text], { type: "text/plain" })
+	// 	const file = new File([blob], name)
+	// 	await FilePicker.upload("data", json.name, file)
+	// }
 
-	protected saveLocal() {
+	saveLocal(): void {
 		const json = this.exportSystemData()
-		json.name = json.name.split("/").at(-1)
-		saveDataToFile(json.text, "gcs", json.name)
+		json.name = json.name
+		return saveDataToFile(json.text, "gcs", json.name)
 	}
 
 	protected exportSystemData() {
-		const system: any = this.system
+		const system: any = duplicate(this.system)
+		system.type = "character"
+		const items = this.items.map((e: any) => e.exportSystemData())
 		const third_party: any = {}
 
 		third_party.settings = { resource_trackers: system.settings.resource_trackers }
@@ -1506,16 +1499,101 @@ class CharacterGURPS extends BaseActorGURPS {
 		third_party.import = system.import
 		third_party.move = system.move
 		system.third_party = third_party
+		system.traits = items.filter(e => e.type.includes("trait")) ?? []
+		system.skills = items.filter(e => ["skill", "skill_container", "technique"].includes(e.type)) ?? []
+		system.spells = items.filter(e => ["spell", "spell_container", "ritual_magic_spell"].includes(e.type)) ?? []
+		system.equipment = items.filter(e => ["equipment", "equipment_container"].includes(e.type) && !e.other) ?? []
+		system.other_equipment =
+			items.filter(e => ["equipment", "equipment_container"].includes(e.type) && e.other) ?? []
+		system.notes = items.filter(e => ["note", "note_container"].includes(e.type)) ?? []
+		system.settings.attributes = system.settings.attributes.map((e: Partial<AttributeDef>) => {
+			const f = { ...e }
+			f.id = e.def_id
+			delete f.def_id
+			delete f.order
+			if (f.type !== AttributeType.Pool) delete f.thresholds
+			return f
+		})
+		system.attributes = system.attributes.map((e: Partial<AttributeObj>) => {
+			const f = { ...e }
+			delete f.bonus
+			delete f.cost_reduction
+			delete f.order
+			return f
+		})
 
 		delete system.resource_trackers
 		delete system.settings.resource_trackers
 		delete system.import
 		delete system.move
+		delete system.pools
 
-		const json = JSON.stringify(system)
-		const filename = system.third_party.import.name.split("/").at(-1)
+		console.log(system)
+		const json = JSON.stringify(system, null, "\t")
+		const filename = `${this.name}.gcs`
 
 		return { text: json, name: filename }
+	}
+
+	async promptImport() {
+		let dialog = new Dialog({
+			title: i18n("gurps.character.import_prompt.title"),
+			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import-prompt.hbs`, { object: this }),
+			buttons: {
+				import: {
+					icon: '<i class="fas fa-file-import"></i>',
+					label: i18n("gurps.character.import_prompt.import"),
+					callback: html => {
+						let file: any = null
+						if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+							const filepicker = new FilePicker({
+								callback: (path: string) => {
+									const request = new XMLHttpRequest()
+									request.open("GET", path)
+									new Promise(resolve => {
+										request.onload = () => {
+											if (request.status == 200) {
+												const text = request.response
+												file = {
+													text: text,
+													name: path,
+													path: request.responseURL,
+												}
+												CharacterImporter.import(this, file)
+											}
+											resolve(this)
+										}
+									})
+									request.send(null)
+								},
+							})
+							filepicker.extensions = [".gcs", ".xml", ".gca5"]
+							filepicker.render(true)
+						} else {
+							const inputEl = document.createElement("input")
+							inputEl.type = "file"
+							$(inputEl).on("change", event => {
+								const rawFile = $(event.currentTarget).prop("files")[0]
+								file = {
+									text: "",
+									name: rawFile.name,
+									path: rawFile.path,
+								}
+								readTextFromFile(rawFile).then(text => {
+									CharacterImporter.import(this, {
+										text: text,
+										name: rawFile.name,
+										path: rawFile.path,
+									})
+								})
+							})
+							$(inputEl).trigger("click")
+						}
+					},
+				},
+			},
+		})
+		dialog.render(true)
 	}
 }
 

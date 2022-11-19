@@ -61,26 +61,13 @@ export class CharacterSheetConfig extends FormApplication {
 		const attributes = actor.settings.attributes.map(e =>
 			mergeObject(e, { order: actor.attributes.get(e.id)!.order })
 		)
-		// Const primaryAttributes = actor.settings.attributes
-		// 	.filter(e => actor.primaryAttributes(true).has(e.id))
-		// 	.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
-		// const secondaryAttributes = actor.settings.attributes
-		// 	.filter(e => actor.secondaryAttributes(true).has(e.id))
-		// 	.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
-		// const poolAttributes = actor.settings.attributes
-		// 	.filter(e => actor.poolAttributes(true).has(e.id))
-		// 	.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
 		const resourceTrackers = actor.settings.resource_trackers
 
 		return {
 			options: options,
 			actor: actor.toObject(),
 			system: actor.system,
-			// Attributes: actor.system.settings.attributes,
 			attributes: attributes,
-			// PrimaryAttributes: primaryAttributes,
-			// secondaryAttributes: secondaryAttributes,
-			// poolAttributes: poolAttributes,
 			resourceTrackers: resourceTrackers,
 			locations: actor.system.settings.body_type,
 			filename: this.filename,
@@ -172,6 +159,12 @@ export class CharacterSheetConfig extends FormApplication {
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".delete").on("click", event => this._onDeleteItem(event))
+		html.find(".export").on("click", event => this._onExport(event))
+	}
+
+	_onExport(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		return this.object.saveLocal()
 	}
 
 	async _onAddItem(event: JQuery.ClickEvent) {

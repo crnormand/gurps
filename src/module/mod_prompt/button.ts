@@ -1,5 +1,6 @@
 import { RollModifier, UserFlags } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { ModifierBucket } from "@module/mod_bucket/window"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 import { ModifierWindow } from "./window"
 
@@ -7,7 +8,12 @@ export class ModifierButton extends Application {
 	constructor(options = {}) {
 		super(options)
 		this.showing = false
-		this.window = new ModifierWindow(this, {})
+		const modifierMode = ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as string) || "prompt"
+		if (modifierMode === "prompt") {
+			this.window = new ModifierWindow(this, {})
+		} else {
+			this.window = new ModifierBucket(this, {})
+		}
 	}
 
 	async render(
@@ -113,5 +119,5 @@ export class ModifierButton extends Application {
 
 export interface ModifierButton extends Application {
 	showing: boolean
-	window: ModifierWindow
+	window: ModifierWindow | ModifierBucket
 }

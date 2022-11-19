@@ -21,11 +21,11 @@ import { TraitModifierSystemData } from "@item/trait_modifier/data"
 import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data"
 import { AttributeObj } from "@module/attribute"
 import { CR, DamageProgression } from "@module/data"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon, Weapon } from "@module/weapon"
 import { BasePrereq, PrereqList } from "@prereq"
-import { i18n, i18n_f, newUUID, removeAccents } from "@util"
+import { i18n, i18n_f, newUUID } from "@util"
 import { CharacterSystemData } from "./data"
 import { GCAImporter } from "./import_GCA"
 import { CharacterSheetGURPS } from "./sheet"
@@ -537,7 +537,7 @@ export class CharacterImporter {
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			tech_level: data.tech_level ?? "",
 			value: data.value ?? 0,
-			weight: data.weight ?? 0,
+			weight: data.weight ?? "0 lb",
 			uses: data.uses ?? 0,
 			max_uses: data.max_uses ?? 0,
 			equipped: data.equipped ?? true,
@@ -563,7 +563,7 @@ export class CharacterImporter {
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			tech_level: data.tech_level ?? "",
 			value: data.value ?? 0,
-			weight: data.weight ?? 0,
+			weight: data.weight ?? "0 lb",
 			uses: data.uses ?? 0,
 			max_uses: data.max_uses ?? 0,
 			equipped: data.equipped ?? true,
@@ -649,6 +649,7 @@ export class CharacterImporter {
 	importWeapons(features: Weapon[]): Weapon[] {
 		const list: Weapon[] = []
 		for (const w of features) {
+			console.log(w)
 			list.push(new BaseWeapon(w))
 		}
 		return list

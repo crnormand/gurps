@@ -17,6 +17,7 @@ import { PrereqList } from "@prereq"
 import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 import { ContainerGURPS } from "@item/container"
 import { ItemGURPS } from "@item"
+import { DiceGURPS } from "@module/dice"
 
 export interface ItemConstructionContextGURPS extends Context<Actor | Item> {
 	gurps?: {
@@ -174,10 +175,10 @@ class BaseItemGURPS extends Item {
 		const weapons: Map<number, Weapon> = new Map()
 		;(this.system as any).weapons.forEach((w: any, index: number) => {
 			weapons.set(
-				index,
+				w.id,
 				new BaseWeapon({
 					...w,
-					...{ parent: this, actor: this.actor, id: index },
+					...{ parent: this, actor: this.actor, index: index },
 				})
 			)
 		})
@@ -218,6 +219,21 @@ class BaseItemGURPS extends Item {
 			if (i.includes(this.type) && i.includes(compare.type)) return true
 		}
 		return false
+	}
+
+	exportSystemData(): any {
+		const system: any = this.system
+		if ((this as any).children)
+			system.children = (this as any).children.map((e: BaseItemGURPS) => e.exportSystemData())
+		if ((this as any).modifiers)
+			system.modifiers = (this as any).modifiers.map((e: BaseItemGURPS) => e.exportSystemData())
+		if (system.weapons)
+			system.weapons = system.weapons.map(function (e: BaseWeapon) {
+				const f: any = { ...e }
+				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
+				return f
+			})
+		return system
 	}
 }
 
