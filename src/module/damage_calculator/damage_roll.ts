@@ -15,6 +15,7 @@ interface DamageRoll {
 	dice: DiceGURPS
 	basicDamage: number
 	damageType: DamageType
+	applyTo: "HP" | "FP" | string
 
 	/**
 	 * Currently, the DamageCalculator only cares about "tbb" (tight beam burning).

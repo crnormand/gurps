@@ -164,23 +164,25 @@
 			Test
 		</div>
 		<div id="calc">
-			<div class="header">Calculation</div>
-			<div class="step">Basic Damage</div>
-			<div class="value">4</div>
-			<div class="descr">HP</div>
-			<div class="step">DR</div>
-			<div class="value">0</div>
-			<div class="descr">torso</div>
-			<div class="step">Penetrating</div>
-			<div class="value">4</div>
-			<div class="descr">4 − 0</div>
-			<div class="step">Modifier</div>
-			<div class="value">×1</div>
-			<div class="descr">cr</div>
-			<div class="step">Injury</div>
-			<div class="value">4</div>
-			<div class="descr">= 4 × 1</div>
-			<div style="grid-columns: span 3; display: flex; flex-flow: row nowrap;">
+			<div class="table">
+				<div class="header">Calculation</div>
+				<div class="step">Basic Damage</div>
+				<div class="value">4</div>
+				<div class="descr">HP</div>
+				<div class="step">DR</div>
+				<div class="value">0</div>
+				<div class="descr">torso</div>
+				<div class="step">Penetrating</div>
+				<div class="value">4</div>
+				<div class="descr">4 − 0</div>
+				<div class="step">Modifier</div>
+				<div class="value">×1</div>
+				<div class="descr">cr</div>
+				<div class="step">Injury</div>
+				<div class="value">4</div>
+				<div class="descr">= 4 × 1</div>
+			</div>
+			<div class="apply">
 				<div class="label">Injury</div>
 				<input type="number" value="{{roll.injury}}" step="any" name="injury" size="4" />
 				<button type="button" class="apply-button gcs-checkmark">Apply</button>
