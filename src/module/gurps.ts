@@ -66,6 +66,7 @@ import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { StaticItemSheet } from "@item/static/sheet"
 import { ColorSettings } from "./settings/colors"
+import { ApplyDamageDialog } from "./damage_calculator/apply_damage_dlg"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -78,17 +79,18 @@ if (!(globalThis as any).GURPS) {
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
-	GURPS.BANNER = `                                                                                       
-      .:~!!~:.        ...::  .:..:.   :..::::::.       .:..:::::..        :~7??!^.     
-    ?#@@&##&@@#J.     5@@&!  :&@@&.  .B@@@&##&@@@#7    ^&@@&#&&&@@&Y   :G@@@&&&@@@#J.  
-  ~&@@Y.     J@@7    ^@@P     G@@Y    7@@&     ^&@@5    B@@?    ^#@@# .@@@J     :@@@!  
- ^@@@^              :@@B      G@@5    7@@#      J@@B    B@@?     ~@@@.:@@@#7^.   ^!    
- B@@B       :^::^   &@@:      G@@5    7@@&~~~~!P@@#.    B@@?    ^&@@5  7&@@@@@@&BY~.   
- G@@#       :&@@B  ^@@&       G@@5    7@@@#B&@@@5.      B@@J.~5&@@B^     .^?5B&@@@@@5  
- :@@@7       G@@Y  :@@@:      G@@P    7@@&   P@@&:      B@@@&#P?^               .B@@@^ 
-  ^&@@P.     G@@Y   Y@@&~     G@@5    7@@#    J@@@!     B@@J          P@@@.      5@@@: 
-    7#@@&P?!~&@@G    !&@@@#GPP@@@#    5@@@.    !@@@P.  .&@@Y          .5@@@B5JYG@@@&~  
-      .^?5GBBBGG5.     .~?JYY5YJJJ^  .JJJJ~     :JJY7  ~JJJJ.           .~YB#&&BP7:    
+
+	GURPS.BANNER = `
+      .:~!!~:.        ...::  .:..:.   :..::::::.       .:..:::::..        :~7??!^.
+    ?#@@&##&@@#J.     5@@&!  :&@@&.  .B@@@&##&@@@#7    ^&@@&#&&&@@&Y   :G@@@&&&@@@#J.
+  ~&@@Y.     J@@7    ^@@P     G@@Y    7@@&     ^&@@5    B@@?    ^#@@# .@@@J     :@@@!
+ ^@@@^              :@@B      G@@5    7@@#      J@@B    B@@?     ~@@@.:@@@#7^.   ^!
+ B@@B       :^::^   &@@:      G@@5    7@@&~~~~!P@@#.    B@@?    ^&@@5  7&@@@@@@&BY~.
+ G@@#       :&@@B  ^@@&       G@@5    7@@@#B&@@@5.      B@@J.~5&@@B^     .^?5B&@@@@@5
+ :@@@7       G@@Y  :@@@:      G@@P    7@@&   P@@&:      B@@@&#P?^               .B@@@^
+  ^&@@P.     G@@Y   Y@@&~     G@@5    7@@#    J@@@!     B@@J          P@@@.      5@@@:
+    7#@@&P?!~&@@G    !&@@@#GPP@@@#    5@@@.    !@@@P.  .&@@Y          .5@@@B5JYG@@@&~
+      .^?5GBBBGG5.     .~?JYY5YJJJ^  .JJJJ~     :JJY7  ~JJJJ.           .~YB#&&BP7:
                                                                                        `
 	GURPS.eval = evaluateToNumber
 	GURPS.search = fSearch
@@ -242,6 +244,15 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.pdf_edit"),
 	})
+
+	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
+		if (message.startsWith("/dmg ")) {
+			let parts = message.split(" ").slice(1, message.length)
+			ApplyDamageDialog.open(parts[0], parts[1])
+			return false
+		}
+		return true
+	})
 })
 
 // Setup system
@@ -275,6 +286,15 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
+
+	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
+		if (message.startsWith("/dmg ")) {
+			let parts = message.split(" ").slice(1, message.length)
+			ApplyDamageDialog.open(parts[0], parts[1])
+			return false
+		}
+		return true
+	})
 })
 
 // Add any additional hooks if necessary

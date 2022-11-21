@@ -1,5 +1,8 @@
 const GURPSFormat = true
 
+const negative = ["-", "–"] // Include the minus sign as well as dash.
+const times = ["x", "×"] // Include the times sign as well as 'x'.
+
 class DiceGURPS {
 	sides: number
 
@@ -52,8 +55,8 @@ class DiceGURPS {
 		} else if (hadD && !hadSides && hadCount) {
 			dice.sides = 6
 		}
-		if (["+", "-"].includes(ch)) {
-			const neg = ch === "-"
+		if (["+", ...negative].includes(ch)) {
+			const neg = negative.includes(ch)
 			;[dice.modifier, i] = extractValue(str, i)
 			if (neg) dice.modifier = -dice.modifier
 			;[ch, i] = nextChar(str, i)
@@ -62,7 +65,7 @@ class DiceGURPS {
 			dice.modifier! += dice.count
 			dice.count = 0
 		}
-		if (ch.toLowerCase() === "x") [dice.multiplier] = extractValue(str, i)
+		if (times.includes(ch.toLowerCase())) [dice.multiplier] = extractValue(str, i)
 		if (dice.multiplier === 0) dice.multiplier = 1
 		dice = normalize(dice)
 		return dice
@@ -86,10 +89,10 @@ class DiceGURPS {
 		str += "d"
 		if (this.sides !== 6 || keepSix) str += this.sides
 		if (this.modifier) {
-			if (this.modifier > 0) str += "+"
-			str += this.modifier
+			str += this.modifier > 0 ? "+" : "–"
+			str += Math.abs(this.modifier)
 		}
-		if (this.multiplier !== 1) str += `x${this.multiplier}`
+		if (this.multiplier !== 1) str += `×${this.multiplier}`
 		return str
 	}
 
@@ -106,7 +109,7 @@ class DiceGURPS {
 			buffer += modifier.toString()
 		} else if (modifier < 0) buffer += modifier.toString()
 		if (buffer.length === 0) buffer += "0"
-		if (this.multiplier !== 1) buffer += `x${this.multiplier}`
+		if (this.multiplier !== 1) buffer += `×${this.multiplier}`
 		return buffer
 	}
 

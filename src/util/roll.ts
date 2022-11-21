@@ -38,6 +38,8 @@ export async function handleRoll(
 			rollData = await getRollData(user, actor, data, name, "3d6")
 			return rollAttack(rollData)
 		case RollType.Damage:
+			name = `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`
+			// RollData = await getRollData(user, actor, data, name, "3d6")
 			return rollDamage(user, actor, data)
 	}
 }
@@ -341,9 +343,7 @@ async function rollDamage(
 	const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
 	const roll = Roll.create(dice.toString(true))
 	await roll.evaluate({ async: true })
-	const rolls = roll.dice[0].results.map(e => {
-		return { result: e.result, word: toWord(e.result) }
-	})
+
 	let rollTotal = roll.total!
 	const speaker = ChatMessage.getSpeaker({ actor: actor })
 
@@ -358,27 +358,30 @@ async function rollDamage(
 	const damage = applyMods(rollTotal, user)
 	const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
-	const chatData = {
-		user,
-		actor,
-		data,
-		rolls,
-		damage,
-		damageType,
+	const chatData: Record<string, any> = {
+		data: data,
+		name: `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+		modifiers: data.modifiers,
+		// User,
+		// actor,
+		// data,
+		// rolls,
+		// damage,
+		// damageType,
 	}
 
-	// Const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData);
+	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData)
 
-	// const messageData = {
-	// 	user: user,
-	// 	speaker: speaker,
-	// 	type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-	// 	content: message,
-	// 	roll: JSON.stringify(roll),
-	// 	sound: CONFIG.sounds.dice,
-	// };
-	// ChatMessage.create(messageData, {});
-	// await resetMods(user);
+	const messageData = {
+		user: user,
+		speaker: speaker,
+		type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+		content: message,
+		roll: JSON.stringify(roll),
+		sound: CONFIG.sounds.dice,
+	}
+	ChatMessage.create(messageData, {})
+	// Await resetMods(user);
 	// if ([RollSuccess.CriticalSuccess, RollSuccess.Success].includes(success)) {
 	// 	marginMod.modifier = margin;
 	// 	marginMod.name = i18n_f("gurps.roll.success_from", { from: name });

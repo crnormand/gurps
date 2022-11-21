@@ -1,0 +1,147 @@
+@import "../variables";
+
+.window-app.gurps {
+	#apply-damage {
+		.fieldblock {
+			padding: 2px 16px;
+			color: rgba(var(--color-on-content), 1);
+			background-color: rgba(var(--color-background), 1);
+			display: grid;
+			grid-template-columns: max-content 1fr min-content;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+		}
+
+		.label {
+			padding: var(--padding-standard);
+			font: var(--font-label);
+			text-align: right;
+			display: inline-flex;
+			flex-flow: column nowrap;
+			justify-content: center;
+			height: 100%;
+		}
+
+		.field {
+			height: 100%;
+			align-items: baseline;
+
+			&.direct-damage,
+			&.location {
+				display: flex;
+				flex-flow: row nowrap;
+			}
+		}
+
+		input[name="basicDamage"],
+		input[name="rofMultiplier"],
+		input[name="range"],
+		input[name="woundMod"],
+		input[name="injury"],
+		input[name="dr"] {
+			width: 6em;
+		}
+
+		.header {
+			text-align: center;
+			grid-column: span 3;
+		}
+
+		.pdf {
+			color: rgba(var(--color-text-dark-inactive), 1);
+			text-decoration: none;
+			font-size: 80%;
+			text-align: left;
+
+			&:hover {
+				color: blue;
+				text-decoration: underline;
+				font-weight: 500;
+			}
+		}
+
+		#target {
+			padding: 2px 16px;
+
+			.content {
+				border: 1px solid rgb(var(--color-header));
+				padding: 2px 16px;
+				color: rgba(var(--color-on-content), 1);
+				background-color: rgb(var(--color-content));
+				display: grid;
+				grid-template-columns: max-content 1fr min-content;
+				row-gap: 4px;
+				column-gap: 9px;
+				vertical-align: middle;
+				overflow: hidden;
+			}
+		}
+
+		#results {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			overflow: hidden;
+		}
+
+		#calc {
+			display: flex;
+			flex-flow: column nowrap;
+			justify-content: space-between;
+			margin: 2px 16px;
+
+			.table {
+				border: 1px solid rgb(var(--color-header));
+				display: grid;
+				grid-template-columns: max-content min-content 1fr;
+
+				> div:not(.header) {
+					background-color: rgb(var(--color-content));
+					color: rgb(var(--color-on-content));
+					border-right: 1px solid rgb(var(--color-interior-divider));
+					border-bottom: 1px solid rgb(var(--color-interior-divider));
+				}
+
+				> div {
+					padding: var(--padding-standard);
+				}
+
+				.step,
+				.descr {
+					font: var(--font-label);
+					font-size: 80%;
+					text-align: right;
+					display: inline-flex;
+					flex-flow: column nowrap;
+					justify-content: center;
+					height: 100%;
+				}
+
+				.descr {
+					text-align: left;
+				}
+
+				.value {
+					text-align: center;
+				}
+
+				.step:nth-child(2n + 1):not(.header),
+				.value:nth-child(2n + 2):not(.header),
+				.descr:nth-child(2n + 3):not(.header) {
+					background-color: rgb(var(--color-banding));
+					color: rgb(var(--color-on-banding));
+				}
+			}
+
+			.apply {
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: space-between;
+				margin-top: 2px;
+			}
+		}
+	}
+}
