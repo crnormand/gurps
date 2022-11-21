@@ -193,6 +193,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		// Data.item = this.actor.deepItems.get($(event.currentTarget).data("item-id"));
 		if ([RollType.Damage, RollType.Attack].includes(type))
 			data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
+
+		// Array.from(game.users.get("zyTvt0jv0VqeYANd").targets)[0]
+
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
