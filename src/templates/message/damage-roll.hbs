@@ -9,4 +9,14 @@
 					{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
-</div>
+	<div class="result failure">{{total}} points of damage</div>
+	<hr />
+	<div class="total">{{#each rolls}}
+			{{#unless (eq @index 0)}} + {{/unless}}
+			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
+		{{/each}}
+		+
+		{{modifierTotal}}
+		=
+		{{total}}
+	</div></div>

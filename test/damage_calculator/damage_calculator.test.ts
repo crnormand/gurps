@@ -2207,6 +2207,8 @@ class _Target implements DamageTarget {
 }
 
 class _DamageRoll implements DamageRoll {
+	applyTo = "HP"
+
 	// Not a real location id, which should be something like "torso".
 	locationId = "dummy"
 

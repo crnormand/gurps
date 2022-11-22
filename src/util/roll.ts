@@ -343,9 +343,9 @@ async function rollDamage(
 	const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
 	const roll = Roll.create(dice.toString(true))
 	await roll.evaluate({ async: true })
-
-	let rollTotal = roll.total!
-	const speaker = ChatMessage.getSpeaker({ actor: actor })
+	const rolls = roll.dice[0].results.map(e => {
+		return { result: e.result, word: toWord(e.result) }
+	})
 
 	const modifiers: Array<RollModifier & { class?: string }> = [
 		...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
@@ -355,13 +355,22 @@ async function rollDamage(
 		if (m.modifier > 0) m.class = "pos"
 		if (m.modifier < 0) m.class = "neg"
 	})
-	const damage = applyMods(rollTotal, user)
+
+	const rollTotal = roll.total!
+	const modifierTotal = applyMods(0, user)
+	const damage = rollTotal + modifierTotal
 	const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
+
+	const speaker = ChatMessage.getSpeaker({ actor: actor })
 
 	const chatData: Record<string, any> = {
 		data: data,
-		name: `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
-		modifiers: data.modifiers,
+		name: `${data.weapon.name}${data.weapon.usage ? ` – ${data.weapon.usage}` : ""}`,
+		modifiers: modifiers,
+		total: damage,
+		damageType: damageType,
+		rolls: rolls,
+		modifierTotal: modifierTotal,
 		// User,
 		// actor,
 		// data,
