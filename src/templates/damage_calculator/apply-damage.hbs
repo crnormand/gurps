@@ -1,164 +1,191 @@
 <div id="apply-damage" autocomplete="off">
-	<div id="damage-roll">
-		<div class="header">Damage Roll</div>
-		<div class="fieldblock">
-			<div class="label">Attacker</div>
-			<div class="field">{{this.roll.attacker.name}}</div>
-			<div></div>
+	<div class="header">Damage Roll</div>
+	<div class="fieldblock">
+		<div class="label">Attacker</div>
+		<div class="field">{{this.roll.attacker.name}}</div>
+		<div></div>
 
-			<div class="label">Weapon</div>
-			<div class="field">—</div>
-			<div></div>
+		<div class="label">Weapon</div>
+		<div class="field">—</div>
+		<div></div>
 
-			<div class="label">Source roll</div>
-			<div class="field">
-				{{source}}
-				{{type}}
-				{{roll.damageModifier}}
-			</div>
-			<div></div>
+		<div class="label">Source roll</div>
+		<div class="field">
+			{{source}}
+			{{type}}
+			{{roll.damageModifier}}
+		</div>
+		<div></div>
 
-			<div class="label">Damage</div>
-			<div class="field no-stretch direct-damage">
-				<input type="number" value="{{roll.basicDamage}}" step="any" name="basicDamage" size="4" />
-				<div class="label">
-					<select name="pool">
-						{{selectOptions poolChoices value="hp"}}
-					</select>
-				</div>
-				<button type="button" class="apply-button gcs-checkmark">Apply</button>
-			</div>
-			<div></div>
-
-			<div class="label">Armor Divisor</div>
-			<div class="field">
-				<select name="armorDivsor">
-					{{#select armorDivisorSelect}}
-						<option value="-1">Ignores DR</option>
-						<option value="100">(100)</option>
-						<option value="10">(10)</option>
-						<option value="5">(5)</option>
-						<option value="3">(3)</option>
-						<option value="2">(2)</option>
-						<option value="1">No divisor</option>
-						<option value="0.5">(0.5)</option>
-						<option value="0.2">(0.2)</option>
-						<option value="0.1">(0.1)</option>
-					{{/select}}
+		<div class="label">Basic Damage</div>
+		<div class="field no-stretch direct-damage">
+			<input type="number" value="{{roll.basicDamage}}" step="any" name="basicDamage" size="4" />
+			<div class="label">
+				<select name="pool">
+					{{selectOptions poolChoices value="hp"}}
 				</select>
 			</div>
-			<div class="label pdf">B378</div>
+			<button type="button" class="apply-button gcs-checkmark">Apply</button>
+		</div>
+		<div></div>
 
-			<div class="label">Damage type</div>
+		<div class="label">Armor Divisor</div>
+		<div class="field">
+			<select name="armorDivsor">
+				{{#select armorDivisorSelect}}
+					<option value="-1">Ignores DR</option>
+					<option value="100">(100)</option>
+					<option value="10">(10)</option>
+					<option value="5">(5)</option>
+					<option value="3">(3)</option>
+					<option value="2">(2)</option>
+					<option value="1">No divisor</option>
+					<option value="0.5">(0.5)</option>
+					<option value="0.2">(0.2)</option>
+					<option value="0.1">(0.1)</option>
+				{{/select}}
+			</select>
+		</div>
+		<div class="label pdf">B378</div>
+
+		<div class="label">Damage type</div>
+		<div class="field no-stretch type">
+			<select name="damageType">
+				{{selectOptions damageTypeChoices value=roll.damageType localize=false}}
+			</select>
+			<div class="label">Modifier</div>
+			<input type="number" value="{{roll.woundMod}}" step="any" name="woundMod" size="3" />
+		</div>
+		<div class="label pdf">B268</div>
+
+		<div class="label"></div>
+		<div class="field">
+			<label for="exp" class="checkbox-label">
+				<input id="exp" type="checkbox" {{checked isExplosion}} />Explosion
+			</label>
+		</div>
+		<div class="label pdf">B414</div>
+
+		<div class="label">Range (yards)</div>
+		<div class="field no-stretch range">
+			<input type="number" value="{{roll.range}}" step="any" name="range" />
+			<label for="1/2D" class="checkbox-label">
+				<input id="1/2D" type="checkbox" />
+				Ranged, 1/2D</label>
+		</div>
+		<div class="label pdf">B378</div>
+
+		<div class="label"></div>
+		<div class="field">
+			<label for="shotgun" class="checkbox-label">
+				<input id="shotgun" type="checkbox" />Shotgun, extremely close</label>
+		</div>
+		<div class="label pdf">B409</div>
+
+		<div class="label"></div>
+		<div class="field no-stretch">
+			<div class="label">RoF Multiplier</div>
+			<input type="number" value="{{roll.rofMultiplier}}" step="any" name="rofMultiplier" size="3" />
+		</div>
+		<div> </div>
+	</div>
+
+	<div id="target">
+		<div class="header">Target</div>
+		<div class="content">
+
+			<div class="label">Target</div>
 			<div class="field">
-				<select name="damageType">
-					{{selectOptions damageTypeChoices value=roll.damageType localize=false}}
-				</select>
+				{{this.target.name}}
 			</div>
-			<div class="label pdf">B268</div>
+			<div></div>
+
+			<div class="label">Hit Location</div>
+			<div class="field no-stretch location">
+				<select name="hitLocation">
+					{{selectOptions hitLocationChoices value=roll.locationId localize=false}}
+				</select>
+				<button type="button" class=""><i class="fa-light fa-dice"></i></button>
+				<div class="label">DR</div>
+				<input type="number" value="{{dr}}" step="any" name="dr" size="6" />
+			</div>
+			<div class="label pdf">B398</div>
 
 			<div class="label"></div>
 			<div class="field">
-				<label for="exp" class="checkbox-label">
-					<input id="exp" type="checkbox" {{checked isExplosion}} />Explosion
-				</label>
+				<label for="flexible" class="checkbox-label">
+					<input id="flexible" type="checkbox" />Flexible armor</label>
+			</div>
+			<div class="label pdf">B378</div>
+
+			<div class="label">Hardened DR</div>
+			<div class="field">
+				<select name="hardened">
+					{{selectOptions hardenedChoices value=0}}
+				</select>
+			</div>
+			<div class="label pdf">B47</div>
+
+			<div class="label">Vulnerability</div>
+			<div class="field">
+				<select name="vulnerability">
+					{{selectOptions vulnerabilityChoices value=1}}
+				</select>
+			</div>
+			<div class="label pdf">B161</div>
+
+			<div class="label">Injury Tolerance</div>
+			<div class="field">
+				<select name="tolerance">
+					{{selectOptions injuryToleranceChoices value=0}}
+				</select>
+			</div>
+			<div class="label pdf">B60</div>
+
+			<div class="label">Damage<br />Reduction</div>
+			<div class="field">
+				<select name="reduction">
+					{{selectOptions damageReductionChoices value=0}}
+				</select>
+			</div>
+			<div class="label pdf">P53</div>
+
+			<div class="label"></div>
+			<div class="field">
+				<label for="explosion" class="checkbox-label">
+					<input id="explosion" type="checkbox" />Internal explosion</label>
 			</div>
 			<div class="label pdf">B414</div>
-
-			<div class="label">Range (yards)</div>
-			<div class="field">
-				<input type="number" value="{{roll.range}}" step="any" name="range" />
-			</div>
-			<div class="label pdf"></div>
-
-			<div class="label"></div>
-			<div class="field">
-				<label for="1/2D" class="checkbox-label">
-					<input id="1/2D" type="checkbox" />
-					Ranged, 1/2D</label>
-			</div>
-			<div class="label pdf">B378</div>
-
-			<div class="label"></div>
-			<div class="field">
-				<label for="shotgun" class="checkbox-label">
-					<input id="shotgun" type="checkbox" />Shotgun, extremely close</label>
-			</div>
-			<div class="label pdf">B409</div>
-
-			<div class="label"></div>
-			<div class="field no-stretch">
-				<div class="label">RoF Multiplier</div>
-				<input type="number" value="{{roll.rofMultiplier}}" step="any" name="rofMultiplier" size="3" />
-			</div>
-			<div></div>
 		</div>
+	</div>
 
-		<div id="target">
-			<div class="header">Target</div>
-			<div class="content">
-
-				<div class="label">Target</div>
-				<div class="field">
-					{{this.target.name}}
-				</div>
-				<div></div>
-
-				<div class="label">Hit Location</div>
-				<div class="field no-stretch">
-					<select name="hitLocation">
-						{{selectOptions hitLocationChoices value=roll.locationId localize=false}}
-					</select>
-					<div class="label">DR</div>
-					<input type="number" value="{{dr}}" step="any" name="dr" size="6" />
-				</div>
-				<div class="label pdf">B398</div>
-
-				<div class="label"></div>
-				<div class="field">
-					<label for="flexible" class="checkbox-label">
-						<input id="flexible" type="checkbox" />Flexible armor</label>
-				</div>
-				<div class="label pdf">B378</div>
-
-				<div class="label">Hardened DR</div>
-				<div class="field">
-					<select name="hardened">
-						{{selectOptions hardenedChoices value=0}}
-					</select>
-				</div>
-				<div class="label pdf">B47</div>
-
-				<div class="label">Vulnerability</div>
-				<div class="field">
-					<select name="vulnerability">
-						{{selectOptions vulnerabilityChoices value=1}}
-					</select>
-				</div>
-				<div class="label pdf">B161</div>
-
-				<div class="label">Injury Tolerance</div>
-				<div class="field">
-					<select name="tolerance">
-						{{selectOptions injuryToleranceChoices value=0}}
-					</select>
-				</div>
-				<div class="label pdf">B60</div>
-
-				<div class="label">Damage Reduction</div>
-				<div class="field">
-					<select name="reduction">
-						{{selectOptions damageReductionChoices value=0}}
-					</select>
-				</div>
-				<div class="label pdf">P53</div>
-
-				<div class="label"></div>
-				<div class="field">
-					<label for="explosion" class="checkbox-label">
-						<input id="explosion" type="checkbox" />Internal explosion</label>
-				</div>
-				<div class="label pdf">B414</div>
+	<div id="results">
+		<div id="effects">
+			Test
+		</div>
+		<div id="calc">
+			<div class="table">
+				<div class="header">Calculation</div>
+				<div class="step">Basic Damage</div>
+				<div class="value">4</div>
+				<div class="descr">HP</div>
+				<div class="step">DR</div>
+				<div class="value">0</div>
+				<div class="descr">torso</div>
+				<div class="step">Penetrating</div>
+				<div class="value">4</div>
+				<div class="descr">4 − 0</div>
+				<div class="step">Modifier</div>
+				<div class="value">×1</div>
+				<div class="descr">cr</div>
+				<div class="step">Injury</div>
+				<div class="value">4</div>
+				<div class="descr">= 4 × 1</div>
+			</div>
+			<div class="apply">
+				<div class="label">Injury</div>
+				<input type="number" value="{{roll.injury}}" step="any" name="injury" size="4" />
+				<button type="button" class="apply-button gcs-checkmark">Apply</button>
 			</div>
 		</div>
 	</div>

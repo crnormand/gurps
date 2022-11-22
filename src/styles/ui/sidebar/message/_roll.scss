@@ -16,6 +16,7 @@
 	// }
 	&.attack,
 	&.attribute,
+	&.damage,
 	&.skill {
 		display: grid;
 		grid-auto-flow: row;
@@ -44,11 +45,13 @@
 			color: white;
 			cursor: pointer;
 			transition: all 0.1s linear 0s;
+
 			&:hover {
 				color: rgb(var(--color-skill));
 				background-color: white;
 			}
 		}
+
 		.mod {
 			margin: auto;
 			border: 2px solid;
@@ -59,24 +62,29 @@
 			cursor: pointer;
 			transition: all 0.1s linear 0s;
 			font-weight: bold;
+
 			&.mod-pos {
 				border-color: rgb(var(--color-success));
 				background-color: rgb(var(--color-success));
 				color: white;
+
 				&:hover {
 					color: rgb(var(--color-success));
 					background-color: white;
 				}
 			}
+
 			&.mod-neg {
 				border-color: rgb(var(--color-failure));
 				background-color: rgb(var(--color-failure));
 				color: white;
+
 				&:hover {
 					color: rgb(var(--color-failure));
 					background-color: white;
 				}
 			}
+
 			&.mod-zero {
 				border-color: yellow;
 				background-color: yellow;
@@ -89,6 +97,7 @@
 			grid-auto-flow: rows;
 			grid-gap: 2px;
 		}
+
 		.result {
 			font-size: var(--font-size-20);
 			font-weight: bold;
@@ -110,24 +119,50 @@
 				color: rgb(var(--color-critical-success));
 				border-color: rgb(var(--color-critical-success));
 			}
+
 			&.critical_failure {
 				/* background-color: rgb(var(--color-critical-failure)); */
 				color: rgb(var(--color-critical-failure));
 				border-color: rgb(var(--color-critical-failure));
 			}
+
 			&.success {
 				/* background-color: rgb(var(--color-success)); */
 				color: rgb(var(--color-success));
 				border-color: rgb(var(--color-success));
 			}
+
 			&.failure {
 				/* background-color: rgb(var(--color-failure)); */
 				color: rgb(var(--color-failure));
 				border-color: rgb(var(--color-failure));
 			}
 		}
+
 		.total {
 			margin-bottom: 5px;
+		}
+	}
+
+	&.damage {
+		.modifiers {
+			margin-bottom: 5px;
+		}
+
+		.name {
+			font-size: var(--font-size-16);
+		}
+
+		.result {
+			font-size: var(--font-size-18);
+
+			&:before {
+				content: "\e411";
+				font-family: "Font Awesome 6 Pro";
+				font-weight: 400;
+				color: rgb(var(--color-icon-button));
+				margin-right: 4px;
+			}
 		}
 	}
 }

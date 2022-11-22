@@ -1,0 +1,25 @@
+<div class="message-roll damage">
+	<div data-uuid="{{data.item.uuid}}" data-weapon="{{data.weapon.id}}" data-type="damage" class="name rollable">
+		{{name}}
+		({{diceString dice}})
+	</div>
+	<div class="modifiers">
+		{{#each modifiers}}
+			<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
+					{{this.name}}{{/if}}</div>
+		{{/each}}
+	</div>
+	<div class="result failure">{{total}}
+		points of
+		{{damageType}}
+		damage</div>
+	<hr />
+	<div class="total">{{#each rolls}}
+			{{#unless (eq @index 0)}} + {{/unless}}
+			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
+		{{/each}}
+		{{modifierString dice.modifier}}
+		{{modifierString modifierTotal}}
+		=
+		{{total}}
+	</div></div>

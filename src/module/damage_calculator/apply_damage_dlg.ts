@@ -6,20 +6,21 @@ import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
 import { HitLocationAdapter } from "./hit_location"
 class ApplyDamageDialog extends Application {
-	static open() {
+	static open(attackerId: string, targetId: string) {
 		console.log("Apply Damage!")
 
 		// @ts-ignore game.actors.get until types v10
-		let attacker = game.actors.get("WWwVSw6Pslsi3p69")
+		let attacker = game.actors.get(attackerId)
 
 		let roll: DamageRoll = {
-			locationId: "torso",
 			attacker: attacker,
-			dice: new DiceGURPS("3d-1x5"),
-			basicDamage: 63,
+			weapon: "Fine Spear (2H Swing)",
+			locationId: "torso",
+			dice: new DiceGURPS("2d+4"),
+			basicDamage: 11,
 			damageType: DamageType.cr,
-			damageModifier: "ex",
-			weapon: null,
+			damageModifier: "",
+			applyTo: "HP",
 			armorDivisor: 2,
 			rofMultiplier: 0,
 			range: null,
@@ -30,7 +31,7 @@ class ApplyDamageDialog extends Application {
 		}
 
 		// @ts-ignore game.actors.get until types v10
-		let actor = game.actors.get("oxKGupaw2QLVfRQx")
+		let actor = game.actors.get(targetId)
 		let target: DamageTarget = createDamageTarget(actor)
 
 		const app = new ApplyDamageDialog(roll, target)
