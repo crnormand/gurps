@@ -93,6 +93,7 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"item/sections/prereq/attribute-prereq",
 		"item/sections/prereq/contained-quantity-prereq",
 		"item/sections/prereq/contained-weight-prereq",
+		"item/sections/prereq/equipped-equipment-prereq",
 		"item/sections/prereq/skill-prereq",
 		"item/sections/prereq/spell-prereq",
 
@@ -130,6 +131,8 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"compendium-browser/note",
 		"compendium-browser/item-notes",
 		"compendium-browser/settings",
+
+		"modifier-bucket/modifier",
 	]
 	const formattedPaths: string[] = []
 	for (let filename of templatePaths) {

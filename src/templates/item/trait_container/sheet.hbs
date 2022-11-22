@@ -1,4 +1,4 @@
-<form class="{{ cssClass }} gcs" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
     <div id="sheet">
         <div id="details">
 			<div class="label">{{localize "gurps.item.name"}}</div>
@@ -24,7 +24,7 @@
             <label class="label"></label>
             <div class="field">
                 <label class="checkbox-label">
-                    <input class="input" name="system.disabled" type="checkbox" data-dtype="Boolean" {{ checked (not system.disabled)}} />
+                    <input name="system.disabled" type="checkbox" data-dtype="Boolean" {{ checked (not system.disabled)}} />
                     {{ localize "gurps.item.enabled" }}
                 </label>
             </div>
@@ -81,7 +81,7 @@
 	<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 </div>
 </div>
-<div id="trait-modifiers" class="item-list">
+<div id="trait-modifiers" class="item-list table">
     <div class="header enabled">
         <i class="gcs-checkmark"></i>
     </div>

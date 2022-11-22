@@ -1,4 +1,4 @@
-<form class="{{ cssClass }} gcs" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
     <div id="sheet">
         <div id="details">
             <div class="label">{{localize "gurps.item.name"}}</div>
@@ -25,7 +25,7 @@
             <label class="label"></label>
             <div class="field">
                 <label class="checkbox-label">
-                    <input class="input" name="system.disabled" type="checkbox" data-dtype="Boolean" {{checked (not
+                    <input name="system.disabled" type="checkbox" data-dtype="Boolean" {{checked (not
                         system.disabled)}} />
                     {{ localize "gurps.item.enabled" }}
                 </label>
@@ -34,14 +34,14 @@
             <div class="field no-stretch">
                 <input type="text" data="{{document.adjustedPoints}}" readonly tabIndex="-1" />
                 <label class="label checkbox-label">
-                    <input class="input" type="checkbox" checked />
+                    <input type="checkbox" checked />
                     {{ localize "gurps.item.round_down" }}
                 </label>
             </div>
             <div class="label">{{ localize "gurps.item.base_cost" }}</div>
             <div class="field">{{ numberInput system.base_points name="system.base_points" }}</div>
             <div class="label checkbox-label" style="justify-self: end;">
-                <input class="input" type="checkbox" name="system.can_level" data-dtype="Boolean" {{checked system.can_level}} />
+                <input type="checkbox" name="system.can_level" data-dtype="Boolean" {{checked system.can_level}} />
                 {{ localize "gurps.item.levels" }}
             </div>
             <div class="field no-stretch">
@@ -82,7 +82,7 @@
     </div>
     {{>item/sections/prerequisites }}
     {{>item/sections/features }}
-    <div id="trait-modifiers" class="item-list">
+    <div id="trait-modifiers" class="item-list table">
         <div class="header enabled">
             <i class="gcs-checkmark"></i>
         </div>
@@ -94,6 +94,12 @@
         </div>
         {{#each (sort modifiers "sort") }}
         {{>item/sections/trait-mod }}
+		{{else}}
+			<div class="enabled"></div>
+			<div class="desc filler"></div>
+			<div class="cost"></div>
+			<div class="tags"></div>
+			<div class="reference"></div>
         {{/each }}
     </div>
     {{>item/sections/melee }}

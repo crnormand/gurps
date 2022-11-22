@@ -10,8 +10,8 @@ import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
 import { Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { Static } from "@util"
-import { getAdjustedStudyHours, i18n } from "./misc"
+import { LastActor, Static } from "@util"
+import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
 
 /**
  *
@@ -41,6 +41,10 @@ export function registerHandlebarsHelpers() {
 		if (replaceMinus) return n >= 0 ? `+${n}` : `${String(n).replace("-", "−")}`
 		return n >= 0 ? `+${n}` : `${String(n)}`
 	})
+  
+  Handlebars.registerHelper("modifierString", function (n: number): string {
+		return `${n < 0 ? "-" : "+"} ${Math.abs(n)}`
+   })
 
 	Handlebars.registerHelper("abs", function (n: number) {
 		return Math.abs(n)
@@ -449,7 +453,12 @@ export function registerHandlebarsHelpers() {
 		return list.join("; ")
 	})
 
-	Handlebars.registerHelper("modifierString", function (n: number): string {
-		return `${n < 0 ? "-" : "+"} ${Math.abs(n)}`
+	Handlebars.registerHelper("modifierCost", function (c: { id: string; value: number }): string {
+		const actor = LastActor.get()
+		if (actor) {
+			const name = actor.attributes?.get(c.id)?.attribute_def.name ?? c.id.toUpperCase()
+			return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, name })
+		}
+		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
 	})
 }

@@ -25,6 +25,7 @@ import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
+import { Encumbrance } from "./data"
 import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
@@ -95,7 +96,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.find(".input").on("change", event => this._resizeInput(event))
+		html.find("input").on("change", event => this._resizeInput(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
 		html.find(".reference").on("click", event => this._handlePDF(event))
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
@@ -105,8 +106,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(":not(.disabled) > > .rollable").on("click", event => this._onClickRoll(event))
 
 		// Hover Over
-		html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
-		html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
+		html.find(".item").on("dragover", event => this._onDragItem(event))
+		// Html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
+		// html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
 
 		if (this.actor.editing) html.find(".rollable").addClass("noroll")
 
@@ -153,8 +155,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const id = $(event.currentTarget).data("item-id")
-		const item = this.actor.deepItems.get(id)
+		const uuid = $(event.currentTarget).data("uuid")
+		const item = await fromUuid(uuid)
 		return item?.update({
 			"system.equipped": !(item as EquipmentGURPS).equipped,
 		})
@@ -203,18 +205,38 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		return RollGURPS.handleRoll((game as Game).user, this.actor, data)
 	}
 
-	protected async _onItemDragEnter(event: JQuery.DragEnterEvent) {
-		event.preventDefault()
-		$(".drop-over").removeClass("drop-over")
-		const item = $(event.currentTarget).closest(".item.desc")
-		const selection = Array.prototype.slice.call(item.nextUntil(".item.desc"))
-		selection.unshift(item)
-		for (const e of selection) $(e).addClass("drop-over")
+	protected _onDragItem(event: JQuery.DragOverEvent): void {
+		let element = $(event.currentTarget!).closest(".item.desc")
+		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
+		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
+		const inContainer = widthAcross > 0.3 && element.hasClass("container")
+		if (heightAcross > 0.5 && element.hasClass("border-bottom")) return
+		if (heightAcross < 0.5 && element.hasClass("border-top")) return
+		if (inContainer && element.hasClass("border-in")) return
+		$(".border-bottom").removeClass("border-bottom")
+		const selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
+		selection.unshift(element)
+		if (inContainer) {
+			for (const e of selection) $(e).addClass("border-in")
+		} else if (heightAcross > 0.5) {
+			for (const e of selection) $(e).addClass("border-bottom")
+		} else {
+			for (const e of selection) $(e).addClass("border-top")
+		}
 	}
 
-	protected async _onItemDragLeave(event: JQuery.DragLeaveEvent) {
-		event.preventDefault()
-	}
+	// Protected async _onDragItem(event: JQuery.DragEnterEvent) {
+	// 	event.preventDefault()
+	// 	$(".border-top").removeClass("border-top")
+	// 	const item = $(event.currentTarget).closest(".item.desc")
+	// 	const selection = Array.prototype.slice.call(item.nextUntil(".item.desc"))
+	// 	selection.unshift(item)
+	// 	for (const e of selection) $(e).addClass("border-top")
+	// }
+
+	// protected async _onItemDragLeave(event: JQuery.DragLeaveEvent) {
+	// 	event.preventDefault()
+	// }
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
@@ -268,9 +290,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareEncumbrance() {
-		const encumbrance = [...this.actor.allEncumbrance]
+		const encumbrance: Array<Encumbrance & { active?: boolean }> = [...this.actor.allEncumbrance]
 		for (const e of encumbrance) {
-			if (e.level === this.actor.encumbranceLevel().level) (e as any).active = true
+			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
 		}
 		return encumbrance
 	}

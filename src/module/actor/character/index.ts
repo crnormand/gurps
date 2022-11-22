@@ -32,7 +32,7 @@ import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
 import { attrPrefix, gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { SETTINGS_TEMP } from "@module/settings"
+import { SETTINGS, SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { MeleeWeapon, RangedWeapon, Weapon, WeaponType } from "@module/weapon"
@@ -47,9 +47,17 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation, HitLocationTable } from "./data"
+import {
+	CharacterSettings,
+	CharacterSource,
+	CharacterSystemData,
+	Encumbrance,
+	HitLocation,
+	HitLocationTable,
+} from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
+import { CharacterImporter } from "./import"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -57,6 +65,8 @@ class CharacterGURPS extends BaseActorGURPS {
 	resource_trackers: Map<string, ResourceTracker> = new Map()
 
 	variableResolverExclusions: Map<string, boolean> = new Map()
+
+	skillResolverExclusions: Map<string, boolean> = new Map()
 
 	featureMap: Map<string, Feature[]>
 
@@ -70,16 +80,65 @@ class CharacterGURPS extends BaseActorGURPS {
 	SizeModBonus = 0
 
 	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
-		const sd: CharacterSystemData | any = {
+		const default_settings = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
+		) as CharacterSettings
+		const default_attributes = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
+		) as CharacterSettings["attributes"]
+		const default_resource_trackers = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
+		) as CharacterSettings["resource_trackers"]
+		const default_hit_locations = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
+		) as CharacterSettings["body_type"]
+		const populate_description = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.populate_description`
+		) as boolean
+		const initial_points = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.initial_points`
+		) as number
+		const default_tech_level = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.tech_level`
+		) as string
+		const sd: Partial<CharacterSystemData> = {
 			id: newUUID(),
 			created_date: getCurrentTime(),
-			total_points: SETTINGS_TEMP.general.initial_points,
-			settings: SETTINGS_TEMP.sheet,
+			// Total_points: SETTINGS_TEMP.general.initial_points,
+			// settings: SETTINGS_TEMP.sheet,
+			// total_points: 100, // TODO: change
+			// settings: default_settings,
+			profile: {
+				player_name: "",
+				name: "",
+				title: "",
+				organization: "",
+				age: "",
+				birthday: "",
+				eyes: "",
+				hair: "",
+				skin: "",
+				handedness: "",
+				height: 0,
+				weight: 0,
+				SM: 0,
+				gender: "",
+				tech_level: "",
+				religion: "",
+				portrait: "",
+			},
 			editing: true,
 			calc: {
 				swing: "",
 				thrust: "",
-				basic_lift: "0 lb",
+				basic_lift: 0,
 				lifting_st_bonus: 0,
 				striking_st_bonus: 0,
 				throwing_st_bonus: 0,
@@ -90,14 +149,26 @@ class CharacterGURPS extends BaseActorGURPS {
 				parry_bonus: 0,
 			},
 		}
-		sd.total_points = SETTINGS_TEMP.general.initial_points
-		sd.settings = SETTINGS_TEMP.sheet
+		sd.total_points = initial_points
+		sd.points_record = [
+			{
+				when: sd.created_date!,
+				points: initial_points,
+				reason: i18n("gurps.character.points_record.initial_points"),
+			},
+		]
+		sd.settings = default_settings
+		sd.settings.attributes = default_attributes
+		sd.settings.body_type = default_hit_locations
+		sd.settings.resource_trackers = default_resource_trackers
 		sd.modified_date = sd.created_date
-		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
+		if (populate_description) sd.profile = SETTINGS_TEMP.general.auto_fill
+		sd.profile!.tech_level = default_tech_level
 		sd.attributes = this.newAttributes(sd.settings.attributes)
 		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
+		this.promptImport()
 	}
 
 	override update(
@@ -105,7 +176,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
 		if (context?.noPrepare) this.noPrepare = true
-		console.log(data, context)
 		this.updateAttributes(data)
 		this.checkImport(data)
 		return super.update(data, context)
@@ -189,8 +259,8 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get spentPoints(): number {
 		let total = this.attributePoints
-		const [ad, disad, race, quirk] = this.traitPoints
-		total += ad + disad + race + quirk
+		const { advantages, disadvantages, race, quirks } = this.traitPoints
+		total += advantages + disadvantages + race + quirks
 		total += this.skillPoints
 		total += this.spellPoints
 		return total
@@ -234,17 +304,17 @@ class CharacterGURPS extends BaseActorGURPS {
 		return total
 	}
 
-	get traitPoints(): [number, number, number, number] {
-		let [ad, disad, race, quirk] = [0, 0, 0, 0]
+	get traitPoints(): { advantages: number; disadvantages: number; race: number; quirks: number } {
+		let [advantages, disadvantages, race, quirks] = [0, 0, 0, 0]
 		for (const t of this.traits) {
 			if (t.parent !== t.actor) continue
 			let [a, d, r, q] = t.calculatePoints()
-			ad += a
-			disad += d
+			advantages += a
+			disadvantages += d
 			race += r
-			quirk += q
+			quirks += q
 		}
-		return [ad, disad, race, quirk]
+		return { advantages, disadvantages, race, quirks }
 	}
 
 	get skillPoints(): number {
@@ -628,33 +698,21 @@ class CharacterGURPS extends BaseActorGURPS {
 			t.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(t.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		for (const sk of this.skills) {
 			sk.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(sk.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		for (const sp of this.spells) {
 			sp.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(sp.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		for (const e of this.carried_equipment) {
 			e.weapons.forEach(w => {
 				if (w.type === type) weaponList.push(w)
 			})
-			// For (const w of Object.values(e.weapons)) {
-			// 	if (w.type === type) weaponList.push(w);
-			// }
 		}
 		weaponList.sort((a, b) => (a.usage > b.usage ? 1 : b.usage > a.usage ? -1 : 0))
 		return weaponList
@@ -812,7 +870,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	getResourceTrackers(): Map<string, ResourceTracker> {
 		const trackers: Map<string, ResourceTracker> = new Map()
 		const tracker_array = this.system.resource_trackers
-		if (!tracker_array.length) return trackers
+		if (!tracker_array?.length) return trackers
 		tracker_array.forEach((v, k) => {
 			trackers.set(v.tracker_id, new ResourceTracker(this, v.tracker_id, k, v))
 		})
@@ -1414,6 +1472,150 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 		this.variableResolverExclusions = new Map()
 		return attr?.max.toString()
+	}
+
+	// Unused
+	// protected async saveServer() {
+	// 	const json = this.exportSystemData()
+	// 	const name = json.name.split("/").at(-1)
+	// 	const blob = new Blob([json.text], { type: "text/plain" })
+	// 	const file = new File([blob], name)
+	// 	await FilePicker.upload("data", json.name, file)
+	// }
+
+	saveLocal(): void {
+		const json = this.exportSystemData()
+		json.name = json.name
+		return saveDataToFile(json.text, "gcs", json.name)
+	}
+
+	protected exportSystemData() {
+		const system: any = duplicate(this.system)
+		system.type = "character"
+		const items = this.items.map((e: any) => e.exportSystemData())
+		const third_party: any = {}
+
+		third_party.settings = { resource_trackers: system.settings.resource_trackers }
+		third_party.resource_trackers = system.resource_trackers
+		third_party.import = system.import
+		third_party.move = system.move
+		system.third_party = third_party
+		system.traits = items.filter(e => e.type.includes("trait")) ?? []
+		system.skills = items.filter(e => ["skill", "skill_container", "technique"].includes(e.type)) ?? []
+		system.spells = items.filter(e => ["spell", "spell_container", "ritual_magic_spell"].includes(e.type)) ?? []
+		system.equipment = items.filter(e => ["equipment", "equipment_container"].includes(e.type) && !e.other) ?? []
+		system.other_equipment =
+			items.filter(e => ["equipment", "equipment_container"].includes(e.type) && e.other) ?? []
+		system.notes = items.filter(e => ["note", "note_container"].includes(e.type)) ?? []
+		system.settings.attributes = system.settings.attributes.map((e: Partial<AttributeDef>) => {
+			const f = { ...e }
+			f.id = e.def_id
+			delete f.def_id
+			delete f.order
+			if (f.type !== AttributeType.Pool) delete f.thresholds
+			return f
+		})
+		system.attributes = system.attributes.map((e: Partial<AttributeObj>) => {
+			const f = { ...e }
+			delete f.bonus
+			delete f.cost_reduction
+			delete f.order
+			return f
+		})
+
+		delete system.resource_trackers
+		delete system.settings.resource_trackers
+		delete system.import
+		delete system.move
+		delete system.pools
+
+		const json = JSON.stringify(system, null, "\t")
+		const filename = `${this.name}.gcs`
+
+		return { text: json, name: filename }
+	}
+
+	async promptImport() {
+		let dialog = new Dialog({
+			title: i18n("gurps.character.import_prompt.title"),
+			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import-prompt.hbs`, { object: this }),
+			buttons: {
+				import: {
+					icon: '<i class="fas fa-file-import"></i>',
+					label: i18n("gurps.character.import_prompt.import"),
+					callback: _html => {
+						let file: any = null
+						if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+							const filepicker = new FilePicker({
+								callback: (path: string) => {
+									const request = new XMLHttpRequest()
+									request.open("GET", path)
+									new Promise(resolve => {
+										request.onload = () => {
+											if (request.status == 200) {
+												const text = request.response
+												file = {
+													text: text,
+													name: path,
+													path: request.responseURL,
+												}
+												CharacterImporter.import(this, file)
+											}
+											resolve(this)
+										}
+									})
+									request.send(null)
+								},
+							})
+							filepicker.extensions = [".gcs", ".xml", ".gca5"]
+							filepicker.render(true)
+						} else {
+							const inputEl = document.createElement("input")
+							inputEl.type = "file"
+							$(inputEl).on("change", event => {
+								const rawFile = $(event.currentTarget).prop("files")[0]
+								file = {
+									text: "",
+									name: rawFile.name,
+									path: rawFile.path,
+								}
+								readTextFromFile(rawFile).then(text => {
+									CharacterImporter.import(this, {
+										text: text,
+										name: rawFile.name,
+										path: rawFile.path,
+									})
+								})
+							})
+							$(inputEl).trigger("click")
+						}
+					},
+				},
+			},
+		})
+		dialog.render(true)
+	}
+
+	isSkillLevelResolutionExcluded(name: string, specialization: string): boolean {
+		if (this.skillResolverExclusions.has(this.skillLevelResolutionKey(name, specialization))) {
+			if (specialization) name += ` (${specialization})`
+			console.error(`Attempt to resolve skill level via itself: ${name}`)
+			return true
+		}
+		return false
+	}
+
+	registerSkillLevelResolutionExclusion(name: string, specialization: string) {
+		this.skillResolverExclusions ??= new Map()
+		this.skillResolverExclusions.set(this.skillLevelResolutionKey(name, specialization), true)
+	}
+
+	unregisterSkillLevelResolutionExclusion(name: string, specialization: string) {
+		this.skillResolverExclusions.delete(this.skillLevelResolutionKey(name, specialization))
+	}
+
+	skillLevelResolutionKey(name: string, specialization: string): string {
+		return `${name}\u0000${specialization}`
 	}
 }
 

@@ -6,6 +6,12 @@
 		<div class="separator_parent">
 			<div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div>
 		</div>
+		{{else if (or (eq this.attribute_def.type "integer_ref") (eq this.attribte_def.type "decimal_ref"))}}
+		<div class="points"> </div>
+		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">
+			<input class="number" type="text" value="{{this.current}}" disabled/>
+		</div>
+		<div class="label">{{this.attribute_def.combinedName}}</div>
 		{{else}}
 		<div class="points">[{{this.points}}]</div>
 		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">

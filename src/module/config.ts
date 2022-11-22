@@ -36,6 +36,7 @@ import { StaticItemGURPS } from "@item/static"
 import { AttributePrereq } from "@prereq/attribute_prereq"
 import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
 import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
+import { EquippedEquipmentPrereq } from "@prereq/equipped_equipment_prereq"
 import { PrereqList } from "@prereq/prereq_list"
 import { SkillPrereq } from "@prereq/skill_prereq"
 import { SpellPrereq } from "@prereq/spell_prereq"
@@ -142,6 +143,7 @@ const GURPSCONFIG: any = {
 			attribute_prereq: AttributePrereq,
 			contained_quantity_prereq: ContainedQuantityPrereq,
 			contained_weight_prereq: ContainedWeightPrereq,
+			equipped_equipment_prereq: EquippedEquipmentPrereq,
 			skill_prereq: SkillPrereq,
 			spell_prereq: SpellPrereq,
 		},
@@ -201,6 +203,7 @@ const GURPSCONFIG: any = {
 			attribute_prereq: "gurps.select.prereqs.attribute_prereq",
 			contained_quantity_prereq: "gurps.select.prereqs.contained_quantity_prereq",
 			contained_weight_prereq: "gurps.select.prereqs.contained_weight_prereq",
+			equipped_equipment_prereq: "gurps.select.prereqs.equipped_equipment_prereq",
 			skill_prereq: "gurps.select.prereqs.skill_prereq",
 			spell_prereq: "gurps.select.prereqs.spell_prereq",
 		},
@@ -384,7 +387,9 @@ const GURPSCONFIG: any = {
 		},
 		attribute_type: {
 			integer: "gurps.select.attribute_type.integer",
+			integer_ref: "gurps.select.attribute_type.integer_ref",
 			decimal: "gurps.select.attribute_type.decimal",
+			decimal_ref: "gurps.select.attribute_type.decimal_ref",
 			pool: "gurps.select.attribute_type.pool",
 			primary_separator: "gurps.select.attribute_type.primary_separator",
 			secondary_separator: "gurps.select.attribute_type.secondary_separator",

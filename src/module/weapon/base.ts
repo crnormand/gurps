@@ -3,7 +3,7 @@ import { MeleeWeapon, WeaponType } from "."
 import { EquipmentContainerGURPS, EquipmentGURPS, ItemGURPS, TraitGURPS } from "@item"
 import { TooltipGURPS } from "@module/tooltip"
 import { CharacterGURPS } from "@actor"
-import { i18n, stringCompare } from "@util"
+import { i18n, newUUID, stringCompare } from "@util"
 import { Feature } from "@feature"
 import { SkillBonus } from "@feature/skill_bonus"
 import { gid } from "@module/data"
@@ -17,7 +17,6 @@ export interface WeaponConstructionContext {
 class BaseWeapon {
 	type: WeaponType = "melee_weapon"
 
-	// Damage: WeaponDamage;
 	strength = ""
 
 	usage = ""
@@ -27,19 +26,16 @@ class BaseWeapon {
 	defaults: SkillDefault[] = []
 
 	constructor(data: BaseWeapon | any, context: WeaponConstructionContext = {}) {
-		// This.damage = new WeaponDamage({ parent: this });
 		if (context?.ready) {
 			Object.assign(this, data)
-			// This.actor = this.parent.actor;
+			this.id ??= newUUID()
 			this.defaults = this.defaults.map(e => {
 				return new SkillDefault(e)
 			})
-			// This.damage = new WeaponDamage({ ...data.damage, ...{ parent: this } });
 			this.damage = new WeaponDamage(data.damage)
 			// Horrible hack to prevent max stack size error
 			if (!context?.recursive)
 				this.damage.parent = new BaseWeapon({ ...this }, { ...context, ...{ recursive: true } })
-			// This.damage.parent = this;
 		} else {
 			mergeObject(context, { ready: true })
 			const WeaponConstructor = (CONFIG as any).GURPS.Weapon.classes[data.type as WeaponType]
@@ -265,16 +261,17 @@ interface BaseWeapon {
 	strength: string
 	usage: string
 	usage_notes: string
-	reach: string
-	parry: string
-	block: string
-	accuracy: string
-	range: string
-	rate_of_fire: string
-	shots: string
-	bulk: string
-	recoil: string
+	// Reach: string
+	// parry: string
+	// block: string
+	// accuracy: string
+	// range: string
+	// rate_of_fire: string
+	// shots: string
+	// bulk: string
+	// recoil: string
 	defaults: SkillDefault[]
+	index: number
 }
 
 export { BaseWeapon }

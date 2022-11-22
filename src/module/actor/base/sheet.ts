@@ -1,4 +1,4 @@
-import { ActorGURPS } from "@actor"
+import { ActorGURPS, BaseActorGURPS } from "@actor"
 import { ContainerGURPS, ItemGURPS } from "@item"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
@@ -18,18 +18,34 @@ export class ActorSheetGURPS extends ActorSheet {
 	}
 
 	// DragData handling
-	protected override async _onDropItem(event: DragEvent, data: ActorSheet.DropData.Item): Promise<unknown> {
-		// Remove Drag Markers
-		$(".drop-over").removeClass("drop-over")
+	protected override async _onDropItem(
+		event: DragEvent,
+		data: ActorSheet.DropData.Item & { actor: BaseActorGURPS; _uuid?: string }
+	): Promise<unknown> {
+		const element = $(event.currentTarget!)
+		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
+		const top = Boolean($(".border-top").length)
+		$(".border-bottom").removeClass("border-bottom")
+		$(".border-top").removeClass("border-top")
 
 		if (!this.actor.isOwner) return false
 
 		// Const item = await (BaseItemGURPS as any).implementation.fromDropData(data);
-		const item = await (Item.implementation as any).fromDropData(data)
+		let item: Item
+		if (data._uuid) {
+			const importData = {
+				type: data.type,
+				uuid: data._uuid,
+			}
+			item = await (Item.implementation as any).fromDropData(importData)
+		} else {
+			item = await (Item.implementation as any).fromDropData(data)
+		}
 		const itemData = item.toObject()
 
 		// Handle item sorting within the same Actor
-		if (this.actor.uuid === item.actor?.uuid) return this._onSortItem(event, itemData)
+		if (this.actor.uuid === item.actor?.uuid)
+			return this._onSortItem(event, itemData, { top: top, in: widthAcross > 0.3 })
 
 		return this._onDropItemCreate(itemData)
 	}
@@ -38,15 +54,20 @@ export class ActorSheetGURPS extends ActorSheet {
 		const list = event.currentTarget
 		// If (event.target.classList.contains("contents-link")) return;
 
+		let itemData: any
 		let dragData: any
 
 		// Owned Items
 		if ($(list as HTMLElement).data("uuid")) {
-			// If ((list as HTMLElement).dataset.itemI) {
-			const itemData = duplicate((await fromUuid($(list as HTMLElement).data("uuid"))) as Item | Actor) as any
-			delete itemData._id
+			const uuid = $(list as HTMLElement).data("uuid")
+			itemData = (await fromUuid(uuid))?.toObject()
+			itemData._id = null
+			// Adding both uuid and itemData here. Foundry default functions don't read _uuid, but they do read uuid
+			// this prevents Foundry from attempting to get the object from uuid, which would cause it to complain
+			// e.g. in cases where an item inside a container is dragged into the items tab
 			dragData = {
 				type: "Item",
+				_uuid: uuid,
 				data: itemData,
 			}
 
@@ -71,21 +92,30 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		// Set data transfer
 		event.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
+		// If (dragData.type === "Item") {
+		// 	await this.actor.deepItems.get(itemData._id)?.delete()
+		// }
 	}
 
 	protected override async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties>
+		itemData: PropertiesToSource<ItemDataBaseProperties>,
+		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
 		const source = this.actor.deepItems.get(itemData._id!)
-		const dropTarget = $(event.target!).closest("[data-item-id]")
-		const target = this.actor.deepItems.get(dropTarget.data("item-id"))
+		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
+		if (!options?.top) dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
+		let target = this.actor.deepItems.get(dropTarget.data("uuid").split(".").at(-1))
 		if (!target) return []
-		const parent = target?.parent
-		const siblings = (target!.parent!.items as Collection<ItemGURPS>).filter(
+		let parent = target?.parent
+		let parents = target?.parents
+		if (options.in) {
+			parent = target as ContainerGURPS
+			target = parent.children.contents[0] ?? null
+		}
+		const siblings = (parent!.items as Collection<ItemGURPS>).filter(
 			i => i._id !== source!._id && source!.sameSection(i)
 		)
-
 		if (target && !source?.sameSection(target)) return []
 
 		const sortUpdates = SortingHelpers.performIntegerSort(source, {
@@ -98,8 +128,8 @@ export class ActorSheetGURPS extends ActorSheet {
 			return update
 		})
 
-		if (source && target && source.parent !== target.parent) {
-			if (source instanceof ContainerGURPS && target.parents.includes(source)) return []
+		if (source && source.parent !== parent) {
+			if (source instanceof ContainerGURPS && parents.includes(source)) return []
 			await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
 			return parent?.createEmbeddedDocuments(
 				"Item",

@@ -6,7 +6,7 @@ import { SettingsMenuGURPS } from "./menu"
 export class DefaultSheetSettings extends SettingsMenuGURPS {
 	static override readonly namespace = "default_sheet_settings"
 
-	static override readonly SETTINGS = ["settings"]
+	static override readonly SETTINGS = ["settings", "initial_points", "tech_level", "populate_description"]
 
 	static override get defaultOptions(): FormApplicationOptions {
 		const options = super.defaultOptions
@@ -58,6 +58,24 @@ export class DefaultSheetSettings extends SettingsMenuGURPS {
 					],
 				},
 			},
+			initial_points: {
+				name: "",
+				hint: "",
+				type: Number,
+				default: 250,
+			},
+			tech_level: {
+				name: "",
+				hint: "",
+				type: String,
+				default: "3",
+			},
+			populate_description: {
+				name: "",
+				hint: "",
+				type: Boolean,
+				default: true,
+			},
 		}
 	}
 
@@ -68,16 +86,23 @@ export class DefaultSheetSettings extends SettingsMenuGURPS {
 
 	async _onResetAll(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.settings`)
-			?.default as any
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.colors`, defaults)
+		for (const k of DefaultSheetSettings.SETTINGS) {
+			const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${k}`)?.default
+			await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.${k}`, defaults)
+		}
 		this.render()
 	}
 
 	override async getData(): Promise<any> {
 		const settings = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.settings`)
+		const initial_points = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.initial_points`)
+		const tech_level = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.tech_level`)
+		const populate_description = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.populate_description`)
 		return {
 			system: { settings: settings },
+			initial_points: initial_points,
+			tech_level: tech_level,
+			populate_description: populate_description,
 			actor: null,
 			config: (CONFIG as any).GURPS,
 		}
@@ -85,6 +110,10 @@ export class DefaultSheetSettings extends SettingsMenuGURPS {
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
 		const settings: any = {}
+		for (const k of ["initial_points", "tech_level", "populate_description"]) {
+			await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.${k}`, formData[k])
+			delete formData[k]
+		}
 		if (formData["system.settings.block_layout"])
 			formData["system.settings.block_layout"] = formData["system.settings.block_layout"].split("\n")
 		for (const k of Object.keys(formData)) {

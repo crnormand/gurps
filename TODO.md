@@ -2,14 +2,23 @@
 
 ## In Progress
 
--   Customizable default attributes/body plan/sheet settings/resource trackers
--   Character export/sync
--   prompt to import character on creation
--   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
+-   Convert the modifier bucket over
+    -   add search function, same as mod prompt
+    -   css
+    -   premade lists
+    -   add 0.15 categories
+    -   settings window for editing master list
+    -   pinned appears as category always (for awareness)
+-   DR "to the unrecognized part (@part@) for body type (default)"
+-   att "to unrecognized key (@key@)"
+    -   get body type of lastchar or default when opening item and check location id against it
+-   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
+    -   features not updated in dragdata for some reason
+    -   only happens with toObject function, features not updated
 
 ## 1.0.0
 
-
+-   send mofidiers from prompt
 -   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   equipped equipment prereq
@@ -29,10 +38,8 @@
     -   meta-traits
     -   racial templates
     -   alternate abilities
--   Convert the modifier bucket over
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
-
 -   Dynamic Character changes
     -   add move modes to dynamic character
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
@@ -49,14 +56,16 @@
 -   Tech Level Modifiers (B168)
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
--   Redo drag & drop indicators
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -   switch between number and dice display for skill rolls
 -   Global Foundry styling
+-   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
 -   probably a bunch of other stuff I'm forgetting
 
 ## 1.1.0 and beyond
 
+-   mass import characters (add to library browser)
+-   autofill bio
 -   Fix textarea height
 -   focus on field of newly created attribute/location/etc. on creation
 -   GCS 5.3 Template support

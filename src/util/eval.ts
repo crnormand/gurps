@@ -1,9 +1,20 @@
 import { evalOperators, Operator } from "./operator"
 import { eFunction, evalFunctions } from "./function"
+import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS } from "@item"
 
 // VariableResolver is used to resolve variables in expressions into their values.
 export interface VariableResolver {
 	resolveVariable: (variableName: string) => string
+	skills: Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS>
+	isSkillLevelResolutionExcluded: (name: string, specialization: string) => boolean
+	registerSkillLevelResolutionExclusion: (name: string, specialization: string) => void
+	unregisterSkillLevelResolutionExclusion: (name: string, specialization: string) => void
+	encumbranceLevel: (forSkills: boolean) => {
+		level: number
+		maximum_carry: number
+		penalty: number
+		name: string
+	}
 }
 
 class expressionOperand {
@@ -303,6 +314,8 @@ export class Evaluator {
 		} else if (operand instanceof expressionOperand) {
 			const v = this.replaceVariables(operand.value)
 			if (operand.unaryOp && operand.unaryOp.evaluateUnary) return operand.unaryOp.evaluateUnary(v)
+			// If (v === "false") return false
+			// if (v === "true") return true
 			return v
 		} else if (operand instanceof parsedFunction) {
 			const s = this.replaceVariables(operand.args)

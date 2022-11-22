@@ -108,21 +108,69 @@ function toInches(length: number, unit: LengthUnits): Length {
 	switch (unit) {
 		case LengthUnits.FeetAndInches:
 		case LengthUnits.Inch:
-			return length as unknown as Length
+			return length as Length
 		case LengthUnits.Feet:
-			return (length * 12) as unknown as Length
+			return (length * 12) as Length
 		case LengthUnits.Yard:
-			return (length * 36) as unknown as Length
+			return (length * 36) as Length
 		case LengthUnits.Mile:
-			return (length * 63360) as unknown as Length
+			return (length * 63360) as Length
 		case LengthUnits.Centimeter:
-			return ((length * 36) / 100) as unknown as Length
+			return ((length * 36) / 100) as Length
 		case LengthUnits.Kilometer:
-			return (length * 36000) as unknown as Length
+			return (length * 36000) as Length
 		case LengthUnits.Meter:
-			return (length * 36) as unknown as Length
+			return (length * 36) as Length
 		default:
 			return toInches(length, LengthUnits.FeetAndInches)
+	}
+}
+
+/**
+ *
+ * @param weight
+ * @param unit
+ */
+export function weightFormat(weight: Weight, unit: WeightUnits): string {
+	switch (unit) {
+		case WeightUnits.Pound:
+		case WeightUnits.PoundAlt:
+			return `${weight} ${unit}`
+		case WeightUnits.Ounce:
+			return `${weight * 16} ${unit}`
+		case WeightUnits.Ton:
+		case WeightUnits.TonAlt:
+			return `${weight * 2000} ${unit}`
+		case WeightUnits.Kilogram:
+			return `${weight * 2} ${unit}`
+		case WeightUnits.Gram:
+			return `${weight * 500} ${unit}`
+		default:
+			return weightFormat(weight, WeightUnits.Pound)
+	}
+}
+
+/**
+ *
+ * @param weight
+ * @param unit
+ */
+export function toPounds(weight: number, unit: WeightUnits): Weight {
+	switch (unit) {
+		case WeightUnits.Pound:
+		case WeightUnits.PoundAlt:
+			return weight as Weight
+		case WeightUnits.Ounce:
+			return (weight / 16) as Weight
+		case WeightUnits.Ton:
+		case WeightUnits.TonAlt:
+			return (weight / 2000) as Weight
+		case WeightUnits.Kilogram:
+			return (weight / 2) as Weight
+		case WeightUnits.Gram:
+			return (weight / 500) as Weight
+		default:
+			return toPounds(weight, WeightUnits.Pound)
 	}
 }
 
@@ -137,7 +185,7 @@ export enum LengthUnits {
 	Meter = "m",
 }
 
-const allLengthUnits = [
+export const allLengthUnits = [
 	LengthUnits.FeetAndInches,
 	LengthUnits.Inch,
 	LengthUnits.Feet,
@@ -158,7 +206,7 @@ export enum WeightUnits {
 	Gram = "g",
 }
 
-const allWeightUnits = [
+export const allWeightUnits = [
 	WeightUnits.Pound,
 	WeightUnits.PoundAlt,
 	WeightUnits.Ounce,

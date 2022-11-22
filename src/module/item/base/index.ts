@@ -17,6 +17,7 @@ import { PrereqList } from "@prereq"
 import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 import { ContainerGURPS } from "@item/container"
 import { ItemGURPS } from "@item"
+import { DiceGURPS } from "@module/dice"
 
 export interface ItemConstructionContextGURPS extends Context<Actor | Item> {
 	gurps?: {
@@ -70,7 +71,6 @@ class BaseItemGURPS extends Item {
 	): Promise<this | undefined> {
 		if (this.actor && context?.noPrepare) this.actor.noPrepare = true
 		if (!(this.parent instanceof Item)) return super.update(data, context)
-		// Data = expandObject(data)
 		data._id = this.id
 		await this.parent.updateEmbeddedDocuments("Item", [data])
 		// @ts-ignore
@@ -150,15 +150,15 @@ class BaseItemGURPS extends Item {
 		return this.prereqs?.prereqs.length === 0
 	}
 
-	get meleeWeapons(): Map<number, MeleeWeapon> {
-		return new Map([...this.weapons].filter(([_k, v]) => v instanceof MeleeWeapon)) as Map<number, MeleeWeapon>
+	get meleeWeapons(): Map<string, MeleeWeapon> {
+		return new Map([...this.weapons].filter(([_k, v]) => v instanceof MeleeWeapon)) as Map<string, MeleeWeapon>
 	}
 
-	get rangedWeapons(): Map<number, RangedWeapon> {
-		return new Map([...this.weapons].filter(([_k, v]) => v instanceof RangedWeapon)) as Map<number, RangedWeapon>
+	get rangedWeapons(): Map<string, RangedWeapon> {
+		return new Map([...this.weapons].filter(([_k, v]) => v instanceof RangedWeapon)) as Map<string, RangedWeapon>
 	}
 
-	get weapons(): Map<number, Weapon> {
+	get weapons(): Map<string, Weapon> {
 		if (
 			![
 				"trait",
@@ -171,13 +171,13 @@ class BaseItemGURPS extends Item {
 			].includes(this.type)
 		)
 			return new Map()
-		const weapons: Map<number, Weapon> = new Map()
+		const weapons: Map<string, Weapon> = new Map()
 		;(this.system as any).weapons.forEach((w: any, index: number) => {
 			weapons.set(
-				index,
+				w.id,
 				new BaseWeapon({
 					...w,
-					...{ parent: this, actor: this.actor, id: index },
+					...{ parent: this, actor: this.actor, index: index },
 				})
 			)
 		})
@@ -218,6 +218,21 @@ class BaseItemGURPS extends Item {
 			if (i.includes(this.type) && i.includes(compare.type)) return true
 		}
 		return false
+	}
+
+	exportSystemData(): any {
+		const system: any = this.system
+		if ((this as any).children)
+			system.children = (this as any).children.map((e: BaseItemGURPS) => e.exportSystemData())
+		if ((this as any).modifiers)
+			system.modifiers = (this as any).modifiers.map((e: BaseItemGURPS) => e.exportSystemData())
+		if (system.weapons)
+			system.weapons = system.weapons.map(function (e: BaseWeapon) {
+				const f: any = { ...e }
+				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
+				return f
+			})
+		return system
 	}
 }
 

@@ -2,7 +2,7 @@
 	margin: 2px 16px;
 	border: 1px solid rgb(var(--color-header));
 	display: grid;
-	grid-template-columns: 1fr repeat(6, auto);
+	grid-template-columns: 1fr repeat(6, min-content);
 
 	.header {
 		grid-area: auto;

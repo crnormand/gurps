@@ -1,3 +1,4 @@
+import { i18n, prepareFormData } from "@util"
 import { SYSTEM_NAME } from "."
 import { SettingsMenuGURPS } from "./menu"
 
@@ -230,11 +231,158 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 	}
 
 	override async getData(): Promise<any> {
-		const attributes = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
+		const body_type = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.body_type`)
 		return {
-			attributes: attributes,
+			body_type: body_type,
 			actor: null,
+			path: "array.system.settings.body_type",
 			config: (CONFIG as any).GURPS,
 		}
+	}
+
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
+		html.find(".item").on("dragover", event => this._onDragItem(event))
+		html.find(".add").on("click", event => this._onAddItem(event))
+		html.find(".delete").on("click", event => this._onDeleteItem(event))
+	}
+
+	async _onAddItem(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		event.stopPropagation()
+		let path = ""
+		let locations = []
+		const type: "locations" | "sub_table" = $(event.currentTarget).data("type")
+		let formData: any = {}
+		switch (type) {
+			case "locations":
+				path = $(event.currentTarget).data("path").replace("array.", "")
+				locations = getProperty(this.object, `${path}.locations`) ?? []
+				locations.push({
+					id: i18n("gurps.placeholder.hit_location.id"),
+					choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
+					table_name: i18n("gurps.placeholder.hit_location.table_name"),
+					slots: 0,
+					hit_penalty: 0,
+					dr_bonus: 0,
+					description: "",
+				})
+				formData ??= {}
+				formData[`array.${path}.locations`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return this.render()
+			case "sub_table":
+				path = $(event.currentTarget).data("path").replace("array.", "")
+				const index = Number($(event.currentTarget).data("index"))
+				locations = getProperty(this.object, `${path}`) ?? []
+				locations[index].sub_table = {
+					name: "",
+					roll: "1d",
+					locations: [
+						{
+							id: i18n("gurps.placeholder.hit_location.id"),
+							choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
+							table_name: i18n("gurps.placeholder.hit_location.table_name"),
+							slots: 0,
+							hit_penalty: 0,
+							dr_bonus: 0,
+							description: "",
+						},
+					],
+				}
+				formData ??= {}
+				formData[`array.${path}`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return this.render()
+		}
+	}
+
+	private async _onDeleteItem(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		event.stopPropagation()
+		const path = $(event.currentTarget).data("path")?.replace("array.", "")
+		let locations = []
+		let formData: any = {}
+		const type: "locations" | "sub_table" = $(event.currentTarget).data("type")
+		const index = Number($(event.currentTarget).data("index")) || 0
+		switch (type) {
+			case "locations":
+				locations = getProperty(this.object, `${path}`) ?? []
+				locations.splice($(event.currentTarget).data("index"), 1)
+				formData ??= {}
+				formData[`array.${path}`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return this.render()
+			case "sub_table":
+				locations = getProperty(this.object, `${path}`) ?? []
+				delete locations[index].sub_table
+				formData ??= {}
+				formData[`array.${path}`] = locations
+				await this._updateObject(event as unknown as Event, formData)
+				return this.render()
+		}
+	}
+
+	async _onDragStart(event: DragEvent) {
+		// TODO:update
+		const item = $(event.currentTarget!)
+		const type: "locations" = item.data("type")
+		const index = Number(item.data("index"))
+		event.dataTransfer?.setData(
+			"text/plain",
+			JSON.stringify({
+				type: type,
+				index: index,
+			})
+		)
+		;(event as any).dragType = type
+	}
+
+	protected _onDragItem(event: JQuery.DragOverEvent): void {
+		const element = $(event.currentTarget!)
+		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
+		element.siblings(".item").removeClass("border-top").removeClass("border-bottom")
+		if (heightAcross > 0.5) {
+			element.removeClass("border-top")
+			element.addClass("border-bottom")
+		} else {
+			element.removeClass("border-bottom")
+			element.addClass("border-top")
+		}
+	}
+
+	protected async _onDrop(event: DragEvent): Promise<unknown> {
+		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
+		let element = $(event.target!)
+		if (!element.hasClass("item")) element = element.parent(".item")
+
+		const target_index = element.data("index")
+		const above = element.hasClass("border-top")
+		if (dragData.order === target_index) return this.render()
+		if (above && dragData.order === target_index - 1) return this.render()
+		if (!above && dragData.order === target_index + 1) return this.render()
+
+		let container: any[] = []
+		const path = element.data("path")?.replace("array.", "")
+		if (dragData.type === "locations") container = getProperty(this.object, path)
+		if (!container) return
+
+		let item
+		item = container.splice(dragData.index, 1)[0]
+		container.splice(target_index, 0, item as any)
+
+		const formData: any = {}
+		formData[`array.${path}`] = container
+		return this._updateObject(event, formData)
+	}
+
+	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
+		const body_type = await (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.body_type`)
+		formData = prepareFormData(_event, formData, { system: { settings: { body_type } } })
+		await (game as Game).settings.set(
+			SYSTEM_NAME,
+			`${this.namespace}.body_type`,
+			formData["system.settings.body_type"]
+		)
 	}
 }

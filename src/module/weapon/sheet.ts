@@ -1,16 +1,19 @@
 import { CharacterGURPS } from "@actor"
 import { ItemGURPS } from "@item"
+import { Attribute } from "@module/attribute"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 import { Weapon } from "."
 
 export class WeaponSheet extends FormApplication {
-	constructor(object: ItemGURPS, index: number, options: any = {}) {
+	constructor(object: ItemGURPS, uuid: string, options: any = {}) {
 		super(object, options)
-		this.index = index
-		this.weapon = (object.system as any).weapons[index]
+		this.uuid = uuid
+		this.weapon = object.weapons.get(this.uuid)!
+		this.index = this.weapon.index
+		this.weapon = (object.system as any).weapons[this.index]
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
@@ -42,31 +45,24 @@ export class WeaponSheet extends FormApplication {
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {
 		const attributes: Record<string, string> = {}
+		const defaultAttributes = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
+		) as Attribute[]
 		if (this.object.actor) {
 			const actor = this.object.actor as unknown as CharacterGURPS
 			for (const e of Object.values(actor.attributes)) {
 				attributes[e.attr_id] = e.attribute_def.name
 			}
 		} else {
-			mergeObject(attributes, {
-				st: "ST",
-				dx: "DX",
-				iq: "IQ",
-				ht: "HT",
-				will: "Will",
-				fright_check: "Fright Check",
-				per: "Perception",
-				vision: "Vision",
-				hearing: "Hearing",
-				taste_smell: "Taste & Smell",
-				touch: "Touch",
-				basic_speed: "Basic Speed",
-				basic_move: "Basic Move",
-				fp: "FP",
-				hp: "HP",
-			})
+			mergeObject(
+				attributes,
+				defaultAttributes.reduce(function (map: any, obj: any) {
+					map[obj.id] = obj.name
+					return map
+				}, {})
+			)
 		}
-		console.log(this.weapon)
 		return {
 			...super.getData(options),
 			weapon: this.weapon,
@@ -128,6 +124,7 @@ export class WeaponSheet extends FormApplication {
 
 export interface WeaponSheet extends FormApplication {
 	object: ItemGURPS
-	index: number
+	uuid: string
 	weapon: Weapon
+	index: number
 }

@@ -28,13 +28,12 @@ type CharacterFlags = ActorFlagsGURPS & {
 
 export interface CharacterSystemData extends ActorSystemData {
 	version: number
-	// Import: CharacterImportData;
+	move: CharacterMove
 	import: { name: string; path: string; last_import: string }
 	settings: CharacterSettings
 	created_date: string
 	modified_date: string
 	profile: CharacterProfile
-	// Attributes: Record<string, Attribute | AttributeObj>
 	attributes: AttributeObj[]
 	resource_trackers: ResourceTrackerObj[]
 	total_points: number
@@ -43,6 +42,13 @@ export interface CharacterSystemData extends ActorSystemData {
 	editing: boolean
 	// TODO: check if this fits
 	pools: { [key: string]: Partial<Attribute> }
+	third_party?: any
+}
+
+export interface CharacterMove {
+	maneuver: string
+	posture: string
+	type: string
 }
 
 export interface CharacterSettings {

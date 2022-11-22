@@ -43,6 +43,9 @@
 		form {
 			overflow: hidden;
 		}
+		.fieldblock {
+			grid-template-columns: auto auto;
+		}
 		#details,
 		.fieldblock {
 			display: grid;

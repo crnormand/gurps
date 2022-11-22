@@ -4,15 +4,11 @@ import { EquipmentGURPS, processMultiplyAddWeightStep, valueAdjustedForModifiers
 import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
-import { WeightUnits } from "@util/measure"
+import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentContainerData } from "./data"
 
 export class EquipmentContainerGURPS extends ContainerGURPS {
 	unsatisfied_reason = ""
-
-	// Static override get schema(): typeof EquipmentContainerData {
-	// 	return EquipmentContainerData;
-	// }
 
 	// Getters
 	get other(): boolean {
@@ -28,7 +24,20 @@ export class EquipmentContainerGURPS extends ContainerGURPS {
 	}
 
 	get weight(): number {
-		return parseFloat(this.system.weight)
+		const baseWeight = parseFloat(this.system.weight)
+		const units = this.system.weight.replace(`${baseWeight}`, "").trim()
+		if (allWeightUnits.includes(units as any)) return toPounds(baseWeight, units as WeightUnits)
+		return baseWeight
+	}
+
+	get weightUnits(): WeightUnits {
+		const units = this.system.weight.replace(/\d/g, "").trim()
+		if (allWeightUnits.includes(units as any)) return units as WeightUnits
+		return WeightUnits.Pound
+	}
+
+	get weightString(): string {
+		return weightFormat(this.weight, this.weightUnits)
 	}
 
 	get enabled(): boolean {
@@ -104,7 +113,7 @@ export class EquipmentContainerGURPS extends ContainerGURPS {
 	}
 
 	get adjustedWeightFast(): string {
-		return `${this.adjustedWeight(false, WeightUnits.Pound).toString()} ${WeightUnits.Pound}`
+		return `${this.adjustedWeight(false, this.weightUnits)} ${WeightUnits.Pound}`
 	}
 
 	weightAdjustedForMods(units: WeightUnits): number {
@@ -172,6 +181,11 @@ export class EquipmentContainerGURPS extends ContainerGURPS {
 			base += Math.max(contained - reduction, 0)
 		}
 		return floatingMul(base * this.quantity)
+	}
+
+	prepareBaseData(): void {
+		this.system.weight = this.weightString
+		super.prepareBaseData()
 	}
 }
 

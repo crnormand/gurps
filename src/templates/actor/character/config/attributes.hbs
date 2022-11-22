@@ -19,6 +19,18 @@
 				<div class="field">
 					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
 				</div>
+				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
+				<div class="field">
+					<select name="array.system.settings.attributes.{{@index}}.type" data-dtype="String">
+						{{#select this.type}}
+							{{#each @root.config.select.attribute_type as |v k|}}
+								<option value="{{k}}">
+									{{localize v}}
+								</option>
+							{{/each}}
+						{{/select}}
+					</select>
+				</div>
 				<div class="label">{{localize "gurps.attribute_def.name"}}</div>
 				<div class="field">
 					<input
@@ -27,6 +39,11 @@
 						value="{{this.name}}"
 						data-dtype="String"
 					/>
+				</div>
+				{{else}}
+				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
+				<div class="field">
+					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
 				</div>
 				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
 				<div class="field">
@@ -40,11 +57,13 @@
 						{{/select}}
 					</select>
 				</div>
-				{{else}}
-				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
-				<div class="field">
-					<input type="text" name="array.system.settings.attributes.{{@index}}.id" value="{{this.id}}" data-dtype="String" />
+				{{#if (eq this.type "pool")}}
+				<div class="item-list thresholds">
+					{{#each this.thresholds}}
+					{{>actor/character/config/threshold id=@../index parent="array.system.settings.attributes"}}
+					{{/each}}
 				</div>
+				{{/if}}
 				<div class="label">{{localize "gurps.attribute_def.short_name"}}</div>
 				<div class="field">
 					<input
@@ -72,6 +91,7 @@
 						data-dtype="String"
 					/>
 				</div>
+				{{#unless (in this.type "_ref")}}
 				<div class="label">{{localize "gurps.attribute_def.cost_per_point"}}</div>
 				<div class="field">
 					<input
@@ -86,29 +106,11 @@
 					<input
 						type="text"
 						name="array.system.settings.attributes.{{@index}}.cost_adj_percent_per_sm"
-						value="{{this.cost_adj_percent_per_sm}}%"
+						value="{{this.cost_adj_percent_per_sm}}"
 						data-dtype="Number"
 					/>
 				</div>
-				<div class="label">{{localize "gurps.attribute_def.type"}}</div>
-				<div class="field">
-					<select name="array.system.settings.attributes.{{@index}}.type" data-dtype="String">
-						{{#select this.type}}
-							{{#each @root.config.select.attribute_type as |v k|}}
-								<option value="{{k}}">
-									{{localize v}}
-								</option>
-							{{/each}}
-						{{/select}}
-					</select>
-				</div>
-				{{#if (eq this.type "pool")}}
-				<div class="item-list thresholds">
-					{{#each this.thresholds}}
-					{{>actor/character/config/threshold id=@../index parent="array.system.settings.attributes"}}
-					{{/each}}
-				</div>
-				{{/if}}
+				{{/unless}}
 				{{/if}}
 			</div>
 		</div>

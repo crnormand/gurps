@@ -105,14 +105,15 @@ export class ModifierBrowse extends Application {
 	getData(options?: Partial<ApplicationOptions> | undefined): object | Promise<object> {
 		const categories: ModCategory[] = []
 		for (const m of this.mods) {
-			for (const c of m.tags) {
-				let cat = categories.find(e => e.name === c)
-				if (!cat) {
-					categories.push({ name: c, mods: [], showing: false })
-					cat = categories.find(e => e.name === c)
+			if (m.tags)
+				for (const c of m.tags) {
+					let cat = categories.find(e => e.name === c)
+					if (!cat) {
+						categories.push({ name: c, mods: [], showing: false })
+						cat = categories.find(e => e.name === c)
+					}
+					cat?.mods.push(m)
 				}
-				cat?.mods.push(m)
-			}
 		}
 		categories.sort((a: ModCategory, b: ModCategory) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
 		const pinnedMods: RollModifier[] =

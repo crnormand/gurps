@@ -197,7 +197,8 @@
 				"title": "Points Record for {name}",
 				"when": "When",
 				"points": "Points",
-				"reason": "Reason"
+				"reason": "Reason",
+				"initial_points": "Initial points"
 			},
 			"macros": {
 				"title": "Quick Macros",
@@ -215,10 +216,16 @@
 				"water": "Water",
 				"other": "Other..."
 			},
+			"import_prompt": {
+				"title": "Import Existing File?",
+				"import": "Import",
+				"prompt": "Would you like to import an existing file?"
+			},
 			"settings": {
 				"import": {
 					"reimport": "Re-Import ({file})",
 					"import": "Import ({file})",
+					"export": "Export ({file})",
 					"none": "None",
 					"file": "Choose File",
 					"title": "Import",
@@ -590,6 +597,7 @@
 				"attribute_prereq": "the attribute",
 				"contained_quantity_prereq": "a contained quantity",
 				"contained_weight_prereq": "a contained weight",
+				"equipped_equipment_prereq": "has equipped equipment",
 				"skill_prereq": "a skill",
 				"spell_prereq": "spell(s)"
 			},
@@ -749,7 +757,9 @@
 			},
 			"attribute_type": {
 				"integer": "Integer",
+				"integer_ref": "Integer (Display Only)",
 				"decimal": "Decimal",
+				"decimal_ref": "Decimal (Display Only)",
 				"pool": "Pool",
 				"primary_separator": "Primary Separator",
 				"secondary_separator": "Secondary Separator",
@@ -868,6 +878,19 @@
 				"browse": "Browse All",
 				"pinned_category": "Pinned"
 			},
+			"modifier_bucket": {
+				"current_effects": "Current Effects",
+				"send": "Send Modifier Bucket to:",
+				"current_mods": "Current Modifiers",
+				"melee": "Melee Attack",
+				"ranged": "Ranged Attack",
+				"defense": "Defense",
+				"categories": "Modifiers by Category",
+				"pinned": "Pinned Modifiers",
+				"search": "Search for Modifiers",
+				"max": "*Max {max}",
+				"cost": "*Cost {value}{id}"
+			},
 			"library_import": {
 				"button": "Import GCS Library",
 				"title": "Import GCS Library",
@@ -935,6 +958,14 @@
 			"enable_token_modifier_window": {
 				"name": "Enable Token Modifier Window",
 				"hint": "Enable the Token Modifier Window, which shows modifiers related to selected and targeted tokens"
+			},
+			"modifier_mode": {
+				"name": "Modifier Application",
+				"hint": "Choose between using the Modifier Bucket and Modifier Prompt. Note: Change will only be applied after a refresh.",
+				"choices": {
+					"bucket": "Modifier Bucket",
+					"prompt": "Modifier Prompt"
+				}
 			},
 			"colors": {
 				"name": "Colors",
@@ -1013,7 +1044,10 @@
 			"default_sheet_settings": {
 				"name": "Default Sheet Settings",
 				"label": "Edit Default Sheet Settings",
-				"hint": "Sheet settings used when creating new Characters."
+				"hint": "Sheet settings used when creating new Characters.",
+				"initial_points": "Initial Points",
+				"default_tech_level": "Default Tech Level",
+				"populate_description": "Fill in initial description"
 			},
 			"default_attributes": {
 				"name": "Default Attributes",
@@ -1024,7 +1058,20 @@
 				"name": "Default Resource Trackers",
 				"label": "Edit Default Resource Trackers",
 				"hint": "Resource Trackers assigned when creating new Characters."
+			},
+			"default_hit_locations": {
+				"name": "Default Body Type",
+				"label": "Edit Default Body Type",
+				"hint": "The Body Type assigned when creating new Characters."
 			}
+		},
+		"context_menu": {
+			"new_equipment_modifier": "New Equipment Modifier",
+			"new_equipment_modifier_container": "New Equipment Modifier Container",
+			"new_trait_modifier": "New Trait Modifier",
+			"new_trait_modifier_container": "New Trait Modifier Container",
+			"new_melee_weapon": "New Melee Weapon",
+			"new_ranged_weapon": "New Ranged Weapon"
 		},
 		"error": {
 			"header": "Error!",

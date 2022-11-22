@@ -139,7 +139,10 @@ export enum RollType {
 export interface RollModifier {
 	name: string
 	modifier: number
-	tags: string[]
+	max?: number
+	tags?: string[]
+	cost?: { id: string; value: number }
+	reference?: string
 }
 
 export const rollModifiers: RollModifier[] = [

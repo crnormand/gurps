@@ -325,8 +325,6 @@ Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
 })
 
 Hooks.on("controlToken", (...args: any[]) => {
-	// If (GURPS.IgnoreTokenSelect) return
-	console.log([...args])
 	if (args.length > 1) {
 		let a = args[0]?.actor
 		if (a) {
