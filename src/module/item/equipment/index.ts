@@ -5,7 +5,7 @@ import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
-import { WeightUnits } from "@util/measure"
+import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentData } from "./data"
 
 export class EquipmentGURPS extends ContainerGURPS {
@@ -29,12 +29,20 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get weight(): number {
-		return parseFloat(this.system.weight)
+		const baseWeight = parseFloat(this.system.weight)
+		const units = this.system.weight.replace(`${baseWeight}`, "").trim()
+		if (allWeightUnits.includes(units as any)) return toPounds(baseWeight, units as WeightUnits)
+		return baseWeight
+	}
+
+	get weightUnits(): WeightUnits {
+		const units = this.system.weight.replace(/\d/g, "").trim()
+		if (allWeightUnits.includes(units as any)) return units as WeightUnits
+		return WeightUnits.Pound
 	}
 
 	get weightString(): string {
-		// TODO: change to default unit
-		return `${this.weight} lb`
+		return weightFormat(this.weight, this.weightUnits)
 	}
 
 	get enabled(): boolean {
@@ -61,7 +69,6 @@ export class EquipmentGURPS extends ContainerGURPS {
 		return this.system.max_uses
 	}
 
-	// Embedded Items
 	// Embedded Items
 	get children(): Collection<EquipmentGURPS | EquipmentContainerGURPS> {
 		return super.children as Collection<EquipmentGURPS | EquipmentContainerGURPS>
@@ -106,7 +113,7 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get adjustedWeightFast(): string {
-		return `${this.adjustedWeight(false, WeightUnits.Pound).toString()} ${WeightUnits.Pound}`
+		return `${this.adjustedWeight(false, this.weightUnits)} ${WeightUnits.Pound}`
 	}
 
 	adjustedWeight(for_skills: boolean, units: WeightUnits): number {
@@ -119,7 +126,12 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get extendedWeightFast(): string {
-		return `${this.extendedWeight(false, WeightUnits.Pound).toString()} ${WeightUnits.Pound}`
+		return `${this.extendedWeight(false, WeightUnits.Pound)} ${WeightUnits.Pound}`
+	}
+
+	prepareBaseData(): void {
+		this.system.weight = this.weightString
+		super.prepareBaseData()
 	}
 
 	extendedWeightAdjustForMods(units: WeightUnits, for_skills: boolean): number {

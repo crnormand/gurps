@@ -1,9 +1,9 @@
-<form class="{{cssClass}}">
+<div id="modifier-bucket-window" class="gurps">
 	<div id="current-effects" class="section">
 		<div class="header">{{localize "gurps.system.modifier_bucket.current_effects"}}</div>
 		<div class="content">
 			{{#each currentEffects}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -11,7 +11,7 @@
 		<div class="header">{{localize "gurps.system.modifier_bucket.send"}}</div>
 		<div class="content">
 			{{#each activeMods}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -19,7 +19,7 @@
 		<div class="header">{{localize "gurps.system.modifier_bucket.current_mods"}}</div>
 		<div class="content">
 			{{#each currentModifiers}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -27,7 +27,7 @@
 		<div class="header">{{localize "gurps.system.modifier_bucket.melee"}}</div>
 		<div class="content">
 			{{#each meleeMods}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -35,7 +35,7 @@
 		<div class="header">{{localize "gurps.system.modifier_bucket.ranged"}}</div>
 		<div class="content">
 			{{#each rangedMods}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -43,7 +43,7 @@
 		<div class="header">{{localize "gurps.system.modifier_bucket.defense"}}</div>
 		<div class="content">
 			{{#each defenseMods}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -57,7 +57,7 @@
 						<option value="{{@../index}}.{{@index}}">{{localize this.name}}</option>
 					{{/each}}
 				</select>
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
@@ -65,8 +65,8 @@
 		<div class="header">{{localize "gurps.system.modifier_bucket.search"}}</div>
 		<div class="content">
 			{{#each activeMods}}
-				<div class="modifier">{{signed this.modifier}}: {{this.name}}</div>
+				{{>modifier-bucket/modifier}}
 			{{/each}}
 		</div>
 	</div>
-</form>
+</div>

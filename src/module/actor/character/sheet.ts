@@ -25,6 +25,7 @@ import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
+import { Encumbrance } from "./data"
 import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
@@ -95,7 +96,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.find(".input").on("change", event => this._resizeInput(event))
+		html.find("input").on("change", event => this._resizeInput(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
 		html.find(".reference").on("click", event => this._handlePDF(event))
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
@@ -154,8 +155,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const id = $(event.currentTarget).data("item-id")
-		const item = this.actor.deepItems.get(id)
+		const uuid = $(event.currentTarget).data("uuid")
+		const item = await fromUuid(uuid)
 		return item?.update({
 			"system.equipped": !(item as EquipmentGURPS).equipped,
 		})
@@ -209,8 +210,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		if (heightAcross > 0.5 && element.hasClass("border-bottom")) return
 		if (heightAcross < 0.5 && element.hasClass("border-top")) return
 		if (inContainer && element.hasClass("border-in")) return
-		// Console.log("ping")
-		$(".border-top").removeClass("border-top")
 		$(".border-bottom").removeClass("border-bottom")
 		const selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
 		selection.unshift(element)
@@ -288,9 +287,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareEncumbrance() {
-		const encumbrance = [...this.actor.allEncumbrance]
+		const encumbrance: Array<Encumbrance & { active?: boolean }> = [...this.actor.allEncumbrance]
 		for (const e of encumbrance) {
-			if (e.level === this.actor.encumbranceLevel().level) (e as any).active = true
+			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
 		}
 		return encumbrance
 	}

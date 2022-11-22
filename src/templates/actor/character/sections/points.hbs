@@ -1,26 +1,46 @@
 <div id="points">
-	<div class="header">{{actor.totalPoints}} {{localize "gurps.character.points.title"}}<a class="gcs-edit edit-points"></a></div>
+	<div class="header">{{actor.totalPoints}}
+		{{localize "gurps.character.points.title"}}<a class="gcs-edit edit-points"></a></div>
 	<div class="fieldblock">
 		{{#if (overspent actor)}}
-		<div class="field"><input type="text" class="input overspent" value="{{actor.unspentPoints}}" disabled /></div>
+			<div class="field"><input
+					type="text"
+					class="input overspent"
+					value="{{actor.unspentPoints}}"
+					disabled
+				/></div>
 			<div class="label overspent">{{localize "gurps.character.points.overspent"}}</div>
 		{{else}}
-		<div class="field"><input type="text" class="input" value="{{actor.unspentPoints}}" disabled /></div>
+			<div class="field"><input type="text" value="{{actor.unspentPoints}}" disabled /></div>
 			<div class="label">{{localize "gurps.character.points.unspent"}}</div>
 		{{/if}}
-		{{>sections/input-text after="gurps.character.points.race" field="field" data=actor.traitPoints.[2]
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.attributes" field="field" data=actor.attributePoints
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.advantages" field="field" data=actor.traitPoints.[0]
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.disadvantages" field="field" data=actor.traitPoints.[1]
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.quirks" field="field" data=actor.traitPoints.[3]
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.skills" field="field" data=actor.skillPoints
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.spells" field="field" data=actor.spellPoints
-		class="disabled"}}
+		<div class="field">
+			<input type="text" value="{{actor.traitPoints.race}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.race"}}</div>
+		<div class="field">
+			<input type="text" value="{{actor.attributePoints}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.attributes"}}</div>
+		<div class="field">
+			<input type="text" value="{{actor.traitPoints.advantages}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.advantages"}}</div>
+		<div class="field">
+			<input type="text" value="{{actor.traitPoints.disadvantages}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.disadvantages"}}</div>
+		<div class="field">
+			<input type="text" value="{{actor.traitPoints.quirks}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.quirks"}}</div>
+		<div class="field">
+			<input type="text" value="{{actor.skillPoints}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.skills"}}</div>
+		<div class="field">
+			<input type="text" value="{{actor.spellPoints}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.spells"}}</div>
 	</div>
 </div>

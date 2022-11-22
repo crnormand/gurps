@@ -70,7 +70,6 @@ export class PointRecordSheet extends FormApplication {
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
 		// FormData = await FormApplicationGURPS.updateObject(event, formData)
-		console.log(formData)
 		if (!this.object.id) return
 		const data: any = {}
 		const record: any[] = this.object.system.points_record
@@ -91,7 +90,6 @@ export class PointRecordSheet extends FormApplication {
 		}
 		data["system.points_record"] = record
 		data["system.total_points"] = record.reduce((partialSum, a) => partialSum + a.points, 0)
-		console.log(data)
 
 		await this.object.update(data)
 		return this.render()

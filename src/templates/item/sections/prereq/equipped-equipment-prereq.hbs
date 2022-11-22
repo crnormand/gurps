@@ -1,0 +1,18 @@
+<div>
+	<div class="placeholder"> </div>
+	<select name="{{path}}.name.compare">
+		{{#select this.name.compare}}
+			{{#each config.select.string_compare as |v k|}}
+				<option value="{{k}}">{{localize "gurps.field_prefix.name"}} {{localize v}}</option>
+			{{/each}}
+		{{/select}}
+	</select>
+	<div class="field">
+		<input
+			name="{{path}}.name.qualifier"
+			value="{{this.name.qualifier}}"
+			data-dtype="String"
+			{{input_lock (neq this.name.compare "none")}}
+		/>
+	</div>
+</div>

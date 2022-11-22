@@ -3,6 +3,7 @@ import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@item"
 import { NumberComparison, StringComparison, StudyType } from "@module/data"
 import { SYSTEM_NAME } from "@module/settings"
+import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { WeaponSheet } from "@module/weapon/sheet"
 import { PrereqType } from "@prereq"
 import { i18n, prepareFormData } from "@util"
@@ -96,6 +97,13 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		ContextMenu.create(this, html, "#melee div", [
+			{ name: i18n("gurps.context_menu.new_melee_weapon"), icon: "", callback: () => this._addMelee() },
+		])
+		ContextMenu.create(this, html, "#ranged div", [
+			{ name: i18n("gurps.context_menu.new_ranged_weapon"), icon: "", callback: () => this._addRanged() },
+		])
+
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
 		html.find(".prereq .add-list").on("click", event => this._addPrereqList(event))
 		html.find(".prereq .remove").on("click", event => this._removePrereq(event))
@@ -201,6 +209,24 @@ export class ItemSheetGURPS extends ItemSheet {
 		return this._updateObject(null as unknown as Event, formData)
 	}
 
+	_addMelee() {
+		const weapons = (this.item.system as any).weapons
+		const newMelee = new MeleeWeapon({ type: "melee_weapon" })
+		weapons.push(newMelee)
+		const update: any = {}
+		update["system.weapons"] = weapons
+		return this.item.update(update)
+	}
+
+	_addRanged() {
+		const weapons = (this.item.system as any).weapons
+		const newRanged = new RangedWeapon({ type: "ranged_weapon" })
+		weapons.push(newRanged)
+		const update: any = {}
+		update["system.weapons"] = weapons
+		return this.item.update(update)
+	}
+
 	protected async _addFeature(event: JQuery.ClickEvent): Promise<any> {
 		event.preventDefault()
 		const features = (this.item.system as any).features
@@ -267,8 +293,8 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	protected async _onWeaponEdit(event: JQuery.DoubleClickEvent): Promise<any> {
 		event.preventDefault()
-		const index = $(event.currentTarget).data("index")
-		new WeaponSheet(this.item as ItemGURPS, index, {}).render(true)
+		const uuid = $(event.currentTarget).data("uuid")
+		new WeaponSheet(this.item as ItemGURPS, uuid, {}).render(true)
 	}
 
 	protected override _getHeaderButtons(): Application.HeaderButton[] {

@@ -1,4 +1,4 @@
-<form class="{{cssClass}} gcs" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
 			{{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String"}}
@@ -14,7 +14,7 @@
 				{{!-- data=system.tech_level type="String" class="disabled"}} --}}
 				{{!-- {{/if}} --}}
 				{{!-- <label class="label checkbox-label"> --}}
-					{{!-- <input class="input" type="checkbox" name="system.tech_level_required" data-dtype="Boolean"
+					{{!-- <input type="checkbox" name="system.tech_level_required" data-dtype="Boolean"
 						--}} {{!-- {{checked system.tech_level_required}} /> --}}
 					{{!-- {{localize "gurps.item.tech_level_required"}} --}}
 					{{!-- </label> --}}
@@ -44,7 +44,7 @@
 			<div class="label"></div>
 			<div class="field no-stretch">
 				<label class="label checkbox-label">
-					<input class="input" type="checkbox" name="system.limited" data-dtype="Boolean" {{checked
+					<input type="checkbox" name="system.limited" data-dtype="Boolean" {{checked
 						system.limited}} />
 					{{localize "gurps.item.limit"}}
 				</label>

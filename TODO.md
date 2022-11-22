@@ -9,6 +9,12 @@
     -   add 0.15 categories
     -   settings window for editing master list
     -   pinned appears as category always (for awareness)
+-   DR "to the unrecognized part (@part@) for body type (default)"
+-   att "to unrecognized key (@key@)"
+    -   get body type of lastchar or default when opening item and check location id against it
+-   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
+    -   features not updated in dragdata for some reason
+    -   only happens with toObject function, features not updated
 
 ## 1.0.0
 
@@ -58,6 +64,7 @@
 
 ## 1.1.0 and beyond
 
+-   mass import characters (add to library browser)
 -   autofill bio
 -   Fix textarea height
 -   focus on field of newly created attribute/location/etc. on creation

@@ -146,8 +146,21 @@
 			margin-top: 1em;
 		}
 	}
+	.table {
+		> div.header {
+			font: var(--font-label);
+		}
+		> div:not(.header) {
+			font: var(--font-field);
+		}
+		> div.filler,
+		> div:not(.header) {
+			min-height: 18px;
+		}
+	}
 }
 
+.gurps,
 .window-app.gurps {
 	// Header
 	background-image: linear-gradient(rgba(var(--color-focused-tab), 1), rgba(var(--color-focused-tab), 1));

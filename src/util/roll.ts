@@ -167,7 +167,6 @@ async function resetMods(user: StoredDocument<User> | null) {
  */
 function addModifier(user: StoredDocument<User> | null, actor: ActorGURPS, data: { [key: string]: any }) {
 	if (!user) return
-	console.log(user, actor, data)
 	const mod: RollModifier = {
 		name: data.comment,
 		modifier: data.modifier,

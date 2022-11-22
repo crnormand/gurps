@@ -83,6 +83,7 @@ export function stringCompare(value?: string | string[] | null, base?: StringCom
 	value = value.map(e => {
 		return e.toLowerCase()
 	})
+	base.qualifier = base.qualifier?.toLowerCase()
 	switch (base.compare) {
 		case StringComparison.None:
 			return true
@@ -343,4 +344,13 @@ function setArrayProperty(a: any[], index: number, prop: string, value: any): an
 	}
 	setProperty(a[index], prop, value)
 	return a
+}
+
+/**
+ *
+ * @param s
+ * @param t
+ */
+export function equalFold(s: string, t: string): boolean {
+	return s.toLowerCase() === t.toLowerCase()
 }

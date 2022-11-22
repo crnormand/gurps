@@ -89,7 +89,7 @@ class DiceGURPS {
 		str += "d"
 		if (this.sides !== 6 || keepSix) str += this.sides
 		if (this.modifier) {
-			str += this.modifier > 0 ? (str += "+") : "–"
+			str += this.modifier > 0 ? "+" : "–"
 			str += Math.abs(this.modifier)
 		}
 		if (this.multiplier !== 1) str += `×${this.multiplier}`

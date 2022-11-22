@@ -71,7 +71,6 @@ class BaseItemGURPS extends Item {
 	): Promise<this | undefined> {
 		if (this.actor && context?.noPrepare) this.actor.noPrepare = true
 		if (!(this.parent instanceof Item)) return super.update(data, context)
-		// Data = expandObject(data)
 		data._id = this.id
 		await this.parent.updateEmbeddedDocuments("Item", [data])
 		// @ts-ignore
@@ -151,15 +150,15 @@ class BaseItemGURPS extends Item {
 		return this.prereqs?.prereqs.length === 0
 	}
 
-	get meleeWeapons(): Map<number, MeleeWeapon> {
-		return new Map([...this.weapons].filter(([_k, v]) => v instanceof MeleeWeapon)) as Map<number, MeleeWeapon>
+	get meleeWeapons(): Map<string, MeleeWeapon> {
+		return new Map([...this.weapons].filter(([_k, v]) => v instanceof MeleeWeapon)) as Map<string, MeleeWeapon>
 	}
 
-	get rangedWeapons(): Map<number, RangedWeapon> {
-		return new Map([...this.weapons].filter(([_k, v]) => v instanceof RangedWeapon)) as Map<number, RangedWeapon>
+	get rangedWeapons(): Map<string, RangedWeapon> {
+		return new Map([...this.weapons].filter(([_k, v]) => v instanceof RangedWeapon)) as Map<string, RangedWeapon>
 	}
 
-	get weapons(): Map<number, Weapon> {
+	get weapons(): Map<string, Weapon> {
 		if (
 			![
 				"trait",
@@ -172,7 +171,7 @@ class BaseItemGURPS extends Item {
 			].includes(this.type)
 		)
 			return new Map()
-		const weapons: Map<number, Weapon> = new Map()
+		const weapons: Map<string, Weapon> = new Map()
 		;(this.system as any).weapons.forEach((w: any, index: number) => {
 			weapons.set(
 				w.id,

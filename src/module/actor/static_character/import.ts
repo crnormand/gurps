@@ -524,8 +524,6 @@ export class StaticCharacterImporter {
 			}
 		})
 
-		// Console.log("equipment:", equipment)
-
 		return {
 			"system.-=equipment": null,
 			"system.equipment": equipment,

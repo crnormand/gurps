@@ -1,67 +1,81 @@
-<form class="{{cssClass}} gcs" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
-			{{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String"}}
-			{{>sections/input-text field="field" label="gurps.item.specialization" name="system.specialization"
-			data=system.specialization type="String"}}
+			<div class="label">{{localize "gurps.item.name"}}</div>
+			<div class="field">
+				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.specialization"}}</div>
+			<div class="field">
+				<input type="text" name="system.specialization" value="{{system.specialization}}" data-dtype="String" />
+			</div>
 			<div class="label">{{localize "gurps.item.tech_level"}}</div>
 			<div class="field no-stretch">
 				{{#if system.tech_level_required}}
-				{{>sections/input-text name="system.tech_level"
-				data=system.tech_level type="String"}}
+					<input name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
 				{{else}}
-				{{>sections/input-text name="system.tech_level"
-				data=system.tech_level type="String" class="disabled"}}
+					<input name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" disabled />
 				{{/if}}
 				<label class="label checkbox-label">
-					<input class="input" type="checkbox" name="system.tech_level_required" data-dtype="Boolean"
-						{{checked system.tech_level_required}} />
+					<input
+						type="checkbox"
+						name="system.tech_level_required"
+						data-dtype="Boolean"
+						{{checked system.tech_level_required}}
+					/>
 					{{localize "gurps.item.tech_level_required"}}
 				</label>
 			</div>
-			{{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes
-			type="String"}}
-			{{>sections/textarea field="field" label="gurps.item.vtt_notes" name="system.vtt_notes"
-			data=system.vtt_notes
-			type="String"}}
-			{{>sections/input-text field="field" label="gurps.item.tags" name="system.tags" data=(join system.tags ", ")
-			type="String"}}
+			<div class="label">{{localize "gurps.item.notes"}}</div>
+			<div class="field">
+				<textarea name="system.notes" data-dtype="String">{{textareaFormat system.notes}}</textarea>
+			</div>
+			<div class="label">{{localize "gurps.item.vtt_notes"}}</div>
+			<div class="field">
+				<textarea name="system.vtt_notes" data-dtype="String">{{textareaFormat system.vtt_notes}}</textarea>
+			</div>
+			<div class="label">{{localize "gurps.item.tags"}}</div>
+			<div class="field">
+				<input type="text" name="system.tags" value="{{join system.tags ', '}}" data-dtype="String" />
+			</div>
 			<div class="label">{{localize "gurps.item.difficulty"}}</div>
 			<div class="field no-stretch">
 				<select name="attribute" data-dtype="String">
 					{{#select document.attribute}}
-					{{#each attributes as |v k|}}
-					<option value="{{k}}">{{localize v}}</option>
-					{{/each}}
+						{{#each attributes as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
 					{{/select}}
 				</select>
 				<div class="label">{{localize "gurps.item.slash"}}</div>
 				<select name="difficulty" data-dtype="String">
 					{{#select document.difficulty}}
-					{{#each config.select.difficulty as |v k|}}
-					<option value="{{k}}">{{localize v}}</option>
-					{{/each}}
+						{{#each config.select.difficulty as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
 					{{/select}}
 				</select>
 			</div>
 			<div class="label">{{localize "gurps.item.epm_before"}}</div>
 			<div class="field no-stretch">
-				{{>sections/input-text name="NUMBER.system.encumbrance_penalty_multiplier"
-				data=system.encumbrance_penalty_multiplier type="String"}}
+				<input
+					name="system.encumbrance_penalty_multiplier"
+					value="{{system.encumbrance_penalty_multiplier}}"
+					data-dtype="Number"
+				/>
 				<div class="label">{{localize "gurps.item.epm_after"}}</div>
 			</div>
 			{{#if document.actor}}
-			<div class="label">{{localize "gurps.item.points"}}</div>
-			<div class="field no-stretch">
-				{{>sections/input-text name="NUMBER.system.points" data=system.points type="String"}}
-				<div class="label">{{localize "gurps.item.level"}}</div>
-				{{>sections/input-text data=(concat document.skillLevel "/" document.relativeLevel) class="readonly
-				tabIndex='-1'"}}
-			</div>
+				<div class="label">{{localize "gurps.item.points"}}</div>
+				<div class="field no-stretch">
+					<input type="text" name="system.points" value="{{system.points}}" data-dtype="Number" />
+					<input value="{{document.skillLevel}}/{{document.relativeLevel}}" readonly tabIndex="-1" />
+				</div>
 			{{/if}}
-			{{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
-			data=system.reference
-			type="String"}}
+			<div class="label">{{localize "gurps.item.reference"}}</div>
+			<div class="field">
+				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
+			</div>
 		</div>
 		{{>item/sections/prerequisites}}
 		{{>item/sections/defaults attributes=attributes sysPrefix=sysPrefix}}

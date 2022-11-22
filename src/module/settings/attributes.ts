@@ -143,6 +143,20 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						cost_adj_percent_per_sm: 0,
 					},
 					{
+						id: "highjump",
+						type: "integer_ref",
+						name: "High Jump (inches)",
+						attribute_base:
+							"(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) - 10) * enc(false, true)",
+					},
+					{
+						id: "broadjump",
+						type: "integer_ref",
+						name: "Broad Jump (feet)",
+						attribute_base:
+							'(2 * max($basic_move, $st / 4) - 3) * enc(false, true) * (1 + max(0, trait_level("enhanced move (ground)")))',
+					},
+					{
 						id: "fp",
 						type: AttributeType.Pool,
 						name: "FP",

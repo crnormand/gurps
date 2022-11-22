@@ -11,11 +11,9 @@ class ModifierBucket extends Application {
 
 	static get defaultOptions(): ApplicationOptions {
 		return mergeObject(super.defaultOptions, {
-			id: "ModifierBucket",
 			template: `systems/${SYSTEM_NAME}/templates/modifier-bucket/window.hbs`,
 			popOut: false,
 			minimizable: false,
-			classes: ["modifier-app-bucket"],
 		})
 	}
 
@@ -32,10 +30,40 @@ class ModifierBucket extends Application {
 	getData(options?: Partial<ApplicationOptions> | undefined): object | Promise<object> {
 		const user = (game as Game).user
 		let modStack = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) ?? []
+		let meleeMods: RollModifier[] = [
+			{ name: "to hit (Determined Attack)", modifier: 4, reference: "B365" },
+			{ name: "to hit (Telegraphic Attack)", modifier: 4, reference: "MA113" },
+			{ name: "to hit (Deceptive Attack)", modifier: -2, reference: "B369" },
+			{ name: "to hit (Move and Attack)", modifier: -2, max: 9, reference: "B365" },
+			{ name: "damage (Strong Attack)", modifier: 2, reference: "B365" },
+			{ name: "damage (Might Blow)", modifier: 2, cost: { id: "fp", value: 1 }, reference: "MA131" },
+			{ name: "Heroic Charge", modifier: 0, cost: { id: "fp", value: 1 }, reference: "MA131" },
+		]
+		let rangedMods: RollModifier[] = [
+			{ name: "Aim", modifier: 1 },
+			{ name: "to hit (Determined Attack)", modifier: 1, reference: "B365" },
+		]
+		let defenseMods: RollModifier[] = [
+			{ name: "All-Out Defense", modifier: 2, reference: "B365" },
+			{ name: "to Dodge (Shield DB)", modifier: 1, reference: "B374" },
+			{ name: "to Dodge (Acrobatics, success)", modifier: 2, reference: "B374" },
+			{ name: "to Dodge (Dodge and Drop)", modifier: 3, reference: "B377" },
+			{ name: "to Dodge (Retreat)", modifier: 3, reference: "B375" },
+			{ name: "to Block/Parry (Retreat)", modifier: 1, reference: "B377" },
+			{ name: "to Dodge (Acrobatics, failed)", modifier: -2, reference: "B375" },
+			{ name: "to Dodge (attacked from side)", modifier: -2, reference: "B390" },
+			{ name: "to DOdge (attacked from reat)", modifier: -4, reference: "B391" },
+			{ name: "to defenses due to Deceptive attack", modifier: -1 },
+			{ name: "to Will Check, to maintain concentration", modifier: -1 },
+			{ name: "Feverish Defense", modifier: +2, cost: { id: "fp", value: 1 } },
+		]
 
 		return mergeObject(super.getData(options), {
 			value: this.value,
-			applied_mods: modStack,
+			activeMods: modStack,
+			meleeMods: meleeMods,
+			rangedMods: rangedMods,
+			defenseMods: defenseMods,
 		})
 	}
 

@@ -1,4 +1,4 @@
-<form class="{{cssClass}} gurps" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
 			<div class="label">{{localize "gurps.item.name"}}</div>
@@ -25,7 +25,7 @@
 			<div class="field no-stretch">
 				<input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number" />
 				<label class="label checkbox-label">
-					<input class="input" type="checkbox" {{checked system.equipped}} />
+					<input type="checkbox" {{checked system.equipped}} />
 					{{localize "gurps.item.equipped"}}
 				</label>
 			</div>
@@ -33,11 +33,11 @@
 			<div class="field no-stretch">
 				<input type="text" name="system.value" value="{{system.value}}" data-dtype="Number" />
 				<div class="label">{{localize "gurps.item.extended_value"}}</div>
-				<input type="text" value="{{document.extendedValueFast}}" readonly tabIndex="-1" />
+				<input type="text" value="{{document.extendedValue}}" readonly tabIndex="-1" />
 			</div>
 			<div class="label">{{localize "gurps.item.weight"}}</div>
 			<div class="field no-stretch">
-				<input type="text" name="system.weight" value="{{system.weight}}" data-dtype="Number" />
+				<input type="text" name="system.weight" value="{{system.weight}}" data-dtype="String" />
 				<div class="label">{{localize "gurps.item.extended_weight"}}</div>
 				<input type="text" value="{{document.extendedWeightFast}}" readonly tabIndex="-1" />
 			</div>

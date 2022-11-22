@@ -29,7 +29,6 @@ class BaseWeapon {
 		if (context?.ready) {
 			Object.assign(this, data)
 			this.id ??= newUUID()
-			// Console.log("weapon", this, data)
 			this.defaults = this.defaults.map(e => {
 				return new SkillDefault(e)
 			})
@@ -262,15 +261,15 @@ interface BaseWeapon {
 	strength: string
 	usage: string
 	usage_notes: string
-	reach: string
-	parry: string
-	block: string
-	accuracy: string
-	range: string
-	rate_of_fire: string
-	shots: string
-	bulk: string
-	recoil: string
+	// Reach: string
+	// parry: string
+	// block: string
+	// accuracy: string
+	// range: string
+	// rate_of_fire: string
+	// shots: string
+	// bulk: string
+	// recoil: string
 	defaults: SkillDefault[]
 	index: number
 }

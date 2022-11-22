@@ -13,10 +13,9 @@
 			{{/each}}
 			{{/select}}
 		</select>
-		{{>sections/input-text field="field" name=(concat "NUMBER." path ".when_tl.qualifier")
-		data=this.when_tl.qualifier
-		type="String"
-		class=(disabled (eq this.when_tl.compare "none"))}}
+		<div class="field">
+			<input type="text" name="{{path}}.when_tl.qualifier" data="{{this.when_tl.qualifier}}" data-dtype="String" {{disabled (eq this.when_tl.compare "none")}}/>
+		</div>
 		<select name="{{path}}.all" data-dtype="Boolean">
 			{{#select this.all}}
 			{{#each config.select.has as |v k|}}
@@ -26,6 +25,7 @@
 		</select>
 		{{else}}
 		<a class="remove button gcs-trash" data-path="{{path}}"></a>
+		{{#unless (eq this.type "equipped_equipment_prereq")}}
 		<select name="{{path}}.has" data-dtype="String">
 			{{#select this.has}}
 			{{#each config.select.has as |v k|}}
@@ -33,6 +33,7 @@
 			{{/each}}
 			{{/select}}
 		</select>
+		{{/unless}}
 		{{#unless (eq this.type "spell_prereq")}}
 		<select class="type" name="{{path}}.type" data-path="{{path}}">
 			{{#select this.type}}
@@ -51,9 +52,9 @@
 			{{/each}}
 			{{/select}}
 		</select>
-		{{>sections/input-text field="field" name=(concat "NUMBER." path ".quantity.qualifier")
-		data=this.quantity.qualifier
-		type="String"}}
+		<div class="field">
+			<input name="{{path}}.quantity.qualifier" data="{{this.quantity.qualifier}}" data-dtype="String"/>
+		</div>
 		<select class="type" name="{{path}}.type" data-path="{{path}}">
 			{{#select this.type}}
 			{{#each config.select.prereqs as |v k|}}
@@ -64,6 +65,7 @@
 		{{/unless}}
 		{{/if}}
 	</div>
+	{{#if (eq this.type "equipped_equipment_prereq")}}{{>item/sections/prereq/equipped-equipment-prereq}}{{/if}}
 	{{#if (eq this.type "trait_prereq")}}{{>item/sections/prereq/trait-prereq}}{{/if}}
 	{{#if (eq this.type "attribute_prereq")}}{{>item/sections/prereq/attribute-prereq}}{{/if}}
 	{{#if (eq this.type "skill_prereq")}}{{>item/sections/prereq/skill-prereq}}{{/if}}

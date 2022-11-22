@@ -7,4 +7,17 @@
 		"none list"
 		"bar list";
 	align-items: end;
+	border: 2px solid rgb(var(--color-focused-tab));
+	border-radius: 4px;
+	background: rgb(var(--color-background));
+	color: rgb(var(--color-on-background));
+	padding: 5px;
+
+	.section {
+		border: 1px solid rgb(var(--color-header));
+		.content {
+			background-color: rgb(var(--color-content));
+			color: rgb(var(--color-on-content));
+		}
+	}
 }

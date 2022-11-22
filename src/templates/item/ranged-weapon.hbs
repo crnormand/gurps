@@ -1,15 +1,14 @@
-<form class="{{cssClass}} gurps" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
 			<div class="label">{{localize "gurps.weapon.usage"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="usage" value="{{weapon.usage}}" data-dtype="String" />
+				<input type="text" name="usage" value="{{weapon.usage}}" data-dtype="String" />
 			</div>
 			<div class="label">{{localize "gurps.weapon.notes"}}</div>
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="usage_notes"
 					value="{{weapon.usage_notes}}"
 					data-dtype="String"
@@ -17,7 +16,7 @@
 			</div>
 			<div class="label">{{localize "gurps.weapon.strength"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="strength" value="{{weapon.strength}}" data-dtype="String" />
+				<input type="text" name="strength" value="{{weapon.strength}}" data-dtype="String" />
 			</div>
 			<div class="label">{{localize "gurps.weapon.damage.st"}}</div>
 			<div class="field">
@@ -33,7 +32,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.base"
 					value="{{diceString weapon.damage.base}}"
 					data-dtype="String"
@@ -43,7 +41,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.modifier_per_die"
 					value="{{weapon.damage.modifier_per_die}}"
 					data-dtype="Number"
@@ -53,7 +50,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.armor_divisor"
 					value="{{weapon.damage.armor_divisor}}"
 					data-dtype="Number"
@@ -63,7 +59,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.type"
 					value="{{weapon.damage.type}}"
 					data-dtype="String"
@@ -73,7 +68,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.fragmentation"
 					value="{{diceString weapon.damage.fragmentation}}"
 					data-dtype="String"
@@ -83,7 +77,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.fragmentation_armor_divisor"
 					value="{{weapon.damage.fragmentation_armor_divisor}}"
 					data-dtype="Number"
@@ -93,7 +86,6 @@
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="damage.fragmentation_type"
 					value="{{weapon.damage.fragmentation_type}}"
 					data-dtype="String"
@@ -101,13 +93,12 @@
 			</div>
 			<div class="label">{{localize "gurps.weapon.accuracy"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="accuracy" value="{{weapon.accuracy}}" data-dtype="String" />
+				<input type="text" name="accuracy" value="{{weapon.accuracy}}" data-dtype="String" />
 			</div>
 			<div class="label">{{localize "gurps.weapon.rate_of_fire"}}</div>
 			<div class="field">
 				<input
 					type="text"
-					class="input"
 					name="rate_of_fire"
 					value="{{weapon.rate_of_fire}}"
 					data-dtype="String"
@@ -115,19 +106,19 @@
 			</div>
 			<div class="label">{{localize "gurps.weapon.range"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="range" value="{{weapon.range}}" data-dtype="String" />
+				<input type="text" name="range" value="{{weapon.range}}" data-dtype="String" />
 			</div>
 			<div class="label">{{localize "gurps.weapon.recoil"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="recoil" value="{{weapon.recoil}}" data-dtype="String" />
+				<input type="text" name="recoil" value="{{weapon.recoil}}" data-dtype="String" />
 			</div>
 			<div class="label">{{localize "gurps.weapon.shots"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="shots" value="{{weapon.shots}}" data-dtype="String" />
+				<input type="text" name="shots" value="{{weapon.shots}}" data-dtype="String" />
 			</div>
 			<div class="label">{{localize "gurps.weapon.bulk"}}</div>
 			<div class="field">
-				<input type="text" class="input" name="bulk" value="{{weapon.bulk}}" data-dtype="String" />
+				<input type="text" name="bulk" value="{{weapon.bulk}}" data-dtype="String" />
 			</div>
 		</div>
 		{{>item/sections/defaults weapon attributes=attributes sysPrefix=sysPrefix}}

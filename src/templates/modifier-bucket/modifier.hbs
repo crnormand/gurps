@@ -1,0 +1,6 @@
+<button class="modifier" , data-modifier="{{this.modifier}}" , data-comment="{{this.name}}">
+	{{this.modifier}}:
+	{{this.name}}{{#if this.max}}{{localize "gurps.system.modifier_bucket.max" max=this.max}}{{/if}}{{#if
+		this.cost
+	}}{{modifierCost this.cost}}{{/if}}
+</button>

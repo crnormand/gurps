@@ -5,7 +5,9 @@ import { CharacterGURPS } from "@actor"
 
 export enum AttributeType {
 	Integer = "integer",
+	IntegerRef = "integer_ref",
 	Decimal = "decimal",
+	DecimalRef = "decimal_ref",
 	Pool = "pool",
 	PrimarySeparator = "primary_separator",
 	SecondarySeparator = "secondary_separator",
@@ -57,13 +59,13 @@ export class AttributeDef {
 	}
 
 	computeCost(actor: CharacterGURPS, value: number, cost_reduction: number, size_modifier: number): number {
-		let cost = value * this.cost_per_point
+		let cost = value * (this.cost_per_point || 0)
 		if (
 			size_modifier > 0 &&
-			this.cost_adj_percent_per_sm > 0 &&
+			(this.cost_adj_percent_per_sm ?? 0) > 0 &&
 			!(this.def_id === "hp" && actor.settings.damage_progression === DamageProgression.KnowingYourOwnStrength)
 		)
-			cost_reduction = size_modifier * this.cost_adj_percent_per_sm
+			cost_reduction = size_modifier * (this.cost_adj_percent_per_sm ?? 0)
 		if (cost_reduction > 0) {
 			if (cost_reduction > 80) cost_reduction = 80
 			cost = (cost * (100 - cost_reduction)) / 100
@@ -78,7 +80,7 @@ export interface AttributeDefObj {
 	name: string
 	full_name?: string
 	attribute_base: string
-	cost_per_point: number
+	cost_per_point?: number
 	cost_adj_percent_per_sm?: number
 	thresholds?: PoolThresholdDef[]
 	order?: number
@@ -90,8 +92,8 @@ export interface AttributeDef {
 	name: string
 	full_name: string
 	attribute_base: string
-	cost_per_point: number
-	cost_adj_percent_per_sm: number
+	cost_per_point?: number
+	cost_adj_percent_per_sm?: number
 	thresholds?: PoolThreshold[]
 	order: number
 }

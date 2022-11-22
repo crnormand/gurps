@@ -340,6 +340,7 @@ function From(arg: any): number {
 		case "string":
 			return parseFloat(arg)
 		default:
-			throw new Error(`Not a number: ${arg}`)
+			console.error(`Not a number: ${arg}`)
+			return 0
 	}
 }

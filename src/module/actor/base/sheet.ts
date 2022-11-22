@@ -20,10 +20,9 @@ export class ActorSheetGURPS extends ActorSheet {
 	// DragData handling
 	protected override async _onDropItem(
 		event: DragEvent,
-		data: ActorSheet.DropData.Item & { actor: BaseActorGURPS }
+		data: ActorSheet.DropData.Item & { actor: BaseActorGURPS; _uuid?: string }
 	): Promise<unknown> {
 		const element = $(event.currentTarget!)
-		console.log(element)
 		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
 		const top = Boolean($(".border-top").length)
 		$(".border-bottom").removeClass("border-bottom")
@@ -32,7 +31,16 @@ export class ActorSheetGURPS extends ActorSheet {
 		if (!this.actor.isOwner) return false
 
 		// Const item = await (BaseItemGURPS as any).implementation.fromDropData(data);
-		const item = await (Item.implementation as any).fromDropData(data)
+		let item: Item
+		if (data._uuid) {
+			const importData = {
+				type: data.type,
+				uuid: data._uuid,
+			}
+			item = await (Item.implementation as any).fromDropData(importData)
+		} else {
+			item = await (Item.implementation as any).fromDropData(data)
+		}
 		const itemData = item.toObject()
 
 		// Handle item sorting within the same Actor
@@ -46,15 +54,21 @@ export class ActorSheetGURPS extends ActorSheet {
 		const list = event.currentTarget
 		// If (event.target.classList.contains("contents-link")) return;
 
+		let itemData: any
 		let dragData: any
 
 		// Owned Items
 		if ($(list as HTMLElement).data("uuid")) {
 			const uuid = $(list as HTMLElement).data("uuid")
-			const itemData = (await fromUuid(uuid)) as Item
+			itemData = (await fromUuid(uuid))?.toObject()
+			itemData._id = null
+			// Adding both uuid and itemData here. Foundry default functions don't read _uuid, but they do read uuid
+			// this prevents Foundry from attempting to get the object from uuid, which would cause it to complain
+			// e.g. in cases where an item inside a container is dragged into the items tab
 			dragData = {
 				type: "Item",
-				uuid: uuid,
+				_uuid: uuid,
+				data: itemData,
 			}
 
 			// Create custom drag image
@@ -78,6 +92,9 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		// Set data transfer
 		event.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
+		// If (dragData.type === "Item") {
+		// 	await this.actor.deepItems.get(itemData._id)?.delete()
+		// }
 	}
 
 	protected override async _onSortItem(
@@ -85,7 +102,6 @@ export class ActorSheetGURPS extends ActorSheet {
 		itemData: PropertiesToSource<ItemDataBaseProperties>,
 		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
-		console.log("_onSortItem", options)
 		const source = this.actor.deepItems.get(itemData._id!)
 		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
 		if (!options?.top) dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
@@ -97,7 +113,6 @@ export class ActorSheetGURPS extends ActorSheet {
 			parent = target as ContainerGURPS
 			target = parent.children.contents[0] ?? null
 		}
-		console.log(parent, target)
 		const siblings = (parent!.items as Collection<ItemGURPS>).filter(
 			i => i._id !== source!._id && source!.sameSection(i)
 		)
@@ -130,7 +145,6 @@ export class ActorSheetGURPS extends ActorSheet {
 				{ temporary: false }
 			)
 		}
-		console.log("updateData", updateData)
 		return parent!.updateEmbeddedDocuments("Item", updateData) as unknown as Item[]
 	}
 

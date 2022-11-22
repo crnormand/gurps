@@ -1,6 +1,6 @@
-import { TraitGURPS } from "@item"
+import { SkillContainerGURPS, TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
-import { Evaluator, Measure, VariableResolver } from "@util"
+import { equalFold, Evaluator, Measure, VariableResolver } from "@util"
 
 export type eFunction = (e: Evaluator, a: string) => any
 
@@ -30,6 +30,7 @@ export function evalFunctions(): Map<string, eFunction> {
 	m.set("dice", evalDice)
 	m.set("roll", evalRoll)
 	m.set("signed", evalSigned)
+	m.set("skill_level", evalSkillLevel)
 	m.set("ssrt", evalSSRT)
 	m.set("ssrt_to_yards", evalSSRTYards)
 	m.set("enc", evalEncumbrance)
@@ -239,7 +240,7 @@ function evalRoll(e: Evaluator, a: string): any {
  * @param e
  * @param a
  */
-function evalToBool(e: Evaluator, a: string): boolean {
+function evalToBool(e: Evaluator, a: any): boolean {
 	const evaluated = e.evaluateNew(a)
 	switch (typeof evaluated) {
 		case "boolean":
@@ -261,6 +262,43 @@ function evalToBool(e: Evaluator, a: string): boolean {
 function evalSigned(e: Evaluator, a: string): any {
 	const n = evalToNumber(e, a)
 	return n.signedString()
+}
+
+/**
+ *
+ * @param e
+ * @param arg
+ */
+function evalSkillLevel(e: Evaluator, arg: string): any {
+	const entity = e.resolver
+	if (!entity) return 0
+	let [name, remaining] = nextArg(arg)
+	name = evalToString(e, name)
+	if (!name) return 0
+	name = name.trim()
+	let specialization: string
+	;[specialization, remaining] = nextArg(remaining)
+	specialization = specialization.trim()
+	if (!specialization || !evalToString(e, specialization)) return 0
+	specialization = specialization.replaceAll('"', "")
+	;[arg] = nextArg(remaining)
+	arg = arg.trim()
+	let relative = false
+	if (arg) relative = evalToBool(e, arg)
+	if (entity.isSkillLevelResolutionExcluded(name, specialization)) return 0
+	entity.registerSkillLevelResolutionExclusion(name, specialization)
+	let level = -Infinity
+	entity.skills.forEach(s => {
+		if (s instanceof SkillContainerGURPS) return
+		if (level !== -Infinity) return
+		if (equalFold(s.name || "", name) && equalFold(s.specialization, specialization)) {
+			s.updateLevel()
+			if (relative) level = s.level.relative_level
+			else level = s.level.level
+		}
+	})
+	entity.unregisterSkillLevelResolutionExclusion(name, specialization)
+	return level
 }
 
 /**
@@ -294,11 +332,18 @@ export function evalToString(e: Evaluator, a: string): string {
  * @param a
  */
 export function evalEncumbrance(e: Evaluator, a: string): any {
-	const [arg, _] = nextArg(a)
+	let [arg, remaining] = nextArg(a)
 	const forSkills = evalToBool(e, arg)
-	const entity: VariableResolver | undefined = e.resolver
+	let returnFactor = false
+	;[arg] = nextArg(remaining)
+	if (arg.trim()) {
+		returnFactor = evalToBool(e, remaining)
+	}
+	const entity = e.resolver
 	if (!entity) return 0
-	return (entity as any).encumbranceLevel(forSkills)
+	const level = entity.encumbranceLevel(forSkills).level
+	if (returnFactor) return 1 - (level * 2) / 10
+	return level
 }
 
 /**

@@ -66,6 +66,8 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	variableResolverExclusions: Map<string, boolean> = new Map()
 
+	skillResolverExclusions: Map<string, boolean> = new Map()
+
 	featureMap: Map<string, Feature[]>
 
 	constructor(data: CharacterSource, context: ActorConstructorContextGURPS = {}) {
@@ -174,7 +176,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
 		if (context?.noPrepare) this.noPrepare = true
-		console.log(data, context)
 		this.updateAttributes(data)
 		this.checkImport(data)
 		return super.update(data, context)
@@ -258,8 +259,8 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get spentPoints(): number {
 		let total = this.attributePoints
-		const [ad, disad, race, quirk] = this.traitPoints
-		total += ad + disad + race + quirk
+		const { advantages, disadvantages, race, quirks } = this.traitPoints
+		total += advantages + disadvantages + race + quirks
 		total += this.skillPoints
 		total += this.spellPoints
 		return total
@@ -303,17 +304,17 @@ class CharacterGURPS extends BaseActorGURPS {
 		return total
 	}
 
-	get traitPoints(): [number, number, number, number] {
-		let [ad, disad, race, quirk] = [0, 0, 0, 0]
+	get traitPoints(): { advantages: number; disadvantages: number; race: number; quirks: number } {
+		let [advantages, disadvantages, race, quirks] = [0, 0, 0, 0]
 		for (const t of this.traits) {
 			if (t.parent !== t.actor) continue
 			let [a, d, r, q] = t.calculatePoints()
-			ad += a
-			disad += d
+			advantages += a
+			disadvantages += d
 			race += r
-			quirk += q
+			quirks += q
 		}
-		return [ad, disad, race, quirk]
+		return { advantages, disadvantages, race, quirks }
 	}
 
 	get skillPoints(): number {
@@ -1528,7 +1529,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		delete system.move
 		delete system.pools
 
-		console.log(system)
 		const json = JSON.stringify(system, null, "\t")
 		const filename = `${this.name}.gcs`
 
@@ -1543,7 +1543,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				import: {
 					icon: '<i class="fas fa-file-import"></i>',
 					label: i18n("gurps.character.import_prompt.import"),
-					callback: html => {
+					callback: _html => {
 						let file: any = null
 						if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
 							const filepicker = new FilePicker({
@@ -1594,6 +1594,28 @@ class CharacterGURPS extends BaseActorGURPS {
 			},
 		})
 		dialog.render(true)
+	}
+
+	isSkillLevelResolutionExcluded(name: string, specialization: string): boolean {
+		if (this.skillResolverExclusions.has(this.skillLevelResolutionKey(name, specialization))) {
+			if (specialization) name += ` (${specialization})`
+			console.error(`Attempt to resolve skill level via itself: ${name}`)
+			return true
+		}
+		return false
+	}
+
+	registerSkillLevelResolutionExclusion(name: string, specialization: string) {
+		this.skillResolverExclusions ??= new Map()
+		this.skillResolverExclusions.set(this.skillLevelResolutionKey(name, specialization), true)
+	}
+
+	unregisterSkillLevelResolutionExclusion(name: string, specialization: string) {
+		this.skillResolverExclusions.delete(this.skillLevelResolutionKey(name, specialization))
+	}
+
+	skillLevelResolutionKey(name: string, specialization: string): string {
+		return `${name}\u0000${specialization}`
 	}
 }
 

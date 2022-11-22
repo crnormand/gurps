@@ -1,4 +1,4 @@
-<div id="ranged" class="weapon-list">
+<div id="ranged" class="weapon-list table">
 	<div class="header usage">{{localize "gurps.character.ranged.usage"}}</div>
 	<div class="header level">{{localize "gurps.character.ranged.level"}}</div>
 	<div class="header accuracy">{{localize "gurps.character.ranged.accuracy"}}</div>
@@ -10,24 +10,35 @@
 	<div class="header recoil">{{localize "gurps.character.ranged.recoil"}}</div>
 	<div class="header st">{{localize "gurps.character.ranged.st"}}</div>
 	{{#each rangedWeapons}}
-	<div class="usage" data-index="{{this.index}}">
+	<div class="usage" data-uuid="{{this.id}}">
 		<div class="name">
 			{{this.usage}}
 		</div>
 		{{>actor/character/sections/item-notes}}
 	</div>
-	<div data-index="{{this.index}}" class="level">
+	<div data-uuid="{{this.id}}" class="level">
 		{{this.level}}</div>
-	<div data-index="{{this.index}}" class="accuracy">
+	<div data-uuid="{{this.id}}" class="accuracy">
 		{{signed this.accuracy}}</div>
-	<div data-index="{{this.index}}" class="damage">
+	<div data-uuid="{{this.id}}" class="damage">
 		{{this.damage}}</div>
-	<div data-index="{{this.index}}" class="range">{{this.range}}</div>
-	<div data-index="{{this.index}}" class="rate-of-fire">{{this.rate_of_fire}}</div>
-	<div data-index="{{this.index}}" class="shots">{{this.shots}}</div>
-	<div data-index="{{this.index}}" class="bulk">{{this.bulk}}
+	<div data-uuid="{{this.id}}" class="range">{{this.range}}</div>
+	<div data-uuid="{{this.id}}" class="rate-of-fire">{{this.rate_of_fire}}</div>
+	<div data-uuid="{{this.id}}" class="shots">{{this.shots}}</div>
+	<div data-uuid="{{this.id}}" class="bulk">{{this.bulk}}
 	</div>
-	<div data-index="{{this.index}}" class="recoil">{{this.recoil}}</div>
-	<div data-index="{{this.index}}" class="st">{{this.st}}</div>
+	<div data-uuid="{{this.id}}" class="recoil">{{this.recoil}}</div>
+	<div data-uuid="{{this.id}}" class="st">{{this.strength}}</div>
+	{{else}}
+	<div class="usage filler"></div>
+	<div class="level"></div>
+	<div class="accuracy"></div>
+	<div class="damage"></div>
+	<div class="range"></div>
+	<div class="rate-of-fire"></div>
+	<div class="shots"></div>
+	<div class="bulk"></div>
+	<div class="recoil"></div>
+	<div class="st"></div>
 	{{/each}}
 </div>
