@@ -366,6 +366,7 @@ async function rollDamage(
 	const chatData: Record<string, any> = {
 		data: data,
 		name: `${data.weapon.name}${data.weapon.usage ? ` – ${data.weapon.usage}` : ""}`,
+		dice: dice,
 		modifiers: modifiers,
 		total: damage,
 		damageType: damageType,

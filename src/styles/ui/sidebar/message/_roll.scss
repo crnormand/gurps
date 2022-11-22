@@ -148,5 +148,21 @@
 		.modifiers {
 			margin-bottom: 5px;
 		}
+
+		.name {
+			font-size: var(--font-size-16);
+		}
+
+		.result {
+			font-size: var(--font-size-18);
+
+			&:before {
+				content: "\e411";
+				font-family: "Font Awesome 6 Pro";
+				font-weight: 400;
+				color: rgb(var(--color-icon-button));
+				margin-right: 4px;
+			}
+		}
 	}
 }

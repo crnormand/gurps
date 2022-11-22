@@ -448,4 +448,8 @@ export function registerHandlebarsHelpers() {
 		}
 		return list.join("; ")
 	})
+
+	Handlebars.registerHelper("modifierString", function (n: number): string {
+		return `${n < 0 ? "-" : "+"} ${Math.abs(n)}`
+	})
 }
