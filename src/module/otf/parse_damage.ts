@@ -1,7 +1,7 @@
 import { ParsedOtF, OtFAction, OtFActionDamage } from './base'
 import { sanitizeOtF, gspan } from './utils'
 import { d6ify } from "@util"
-import { HitLocation } from "@module/actor/character/data"
+import { StaticHitLocation } from "@module/actor/static_character/hit_location"
 import { GURPS } from "@module/gurps"
 
 
@@ -57,8 +57,8 @@ export function parseForRollOrDamage(str:string, overridetxt = ''): ParsedOtF | 
     const other = a.groups?.other ? a.groups.other.trim() : ""
     let [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     let dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
-    if (!dmap) {
-      dmap = GURPS.DamageTables.translate(extDamageType?.toLowerCase())
+    if (!dmap && extDamageType) {
+      dmap = GURPS.DamageTables.translate(extDamageType.toLowerCase())
       if (dmap) {
         actualType = extDamageType
         extDamageType = ''
@@ -161,7 +161,7 @@ export function parseForRollOrDamage(str:string, overridetxt = ''): ParsedOtF | 
 /**
  * @param {Record<string, string>} matches
  */
-function _parseOtherForTypeModiferAndLocation(other) {
+function _parseOtherForTypeModiferAndLocation(other: string): [string, string | undefined, string | undefined ] {
   // change the regex from /(w+)(.*)/ to /([A-Za-z0-9_+-]+)(.*)/ to make sure we recognize pi-, pi+ and pi++
   const dmgTypeMatch = other.match(/([A-Za-z0-9_]+[+-]?\+?)(.*)/)
   const actualType = !!dmgTypeMatch ? dmgTypeMatch[1] : other // only take the first word as damage type
@@ -173,12 +173,17 @@ function _parseOtherForTypeModiferAndLocation(other) {
     if (dmgTypeMatch[2].includes('@')) {
       const [type, loc] = dmgTypeMatch[2].trim().split('@')
       extDamageType = !!type.trim() ? type.trim() : undefined
-      hitLocation = !!loc.trim() ? HitLocation.translate(loc.trim()) : undefined
+      hitLocation = !!loc.trim() ? StaticHitLocation.translate(loc.trim()) : undefined
     } else extDamageType = dmgTypeMatch[2].trim() // 'ex' or 'inc' or more likely, undefined
   return [actualType, extDamageType, hitLocation]
 }
 
-function _getFormulaComponents(groups) {
+/**
+ * ASCII to Unicode (decode Base64 to original data)
+ * @param {[key:string]: string} groups // RegEx 'groups' attribute
+ * @returns [string, string, string, string] 
+ */
+function _getFormulaComponents(groups: {[key:string]: string}): [string, string, string, string] {
   let adds = (groups.adds || '').replace('–', '-')
   let m = groups.other.match(/([+-]@margin)/i)
   if (!adds && !!m) {

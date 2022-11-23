@@ -17,7 +17,8 @@
   (\(-?[\.\d]+\))? == (-.#)
 */
 
-import { OtF, ParsedOtF, OtFAction, sanitizeOtF, utoa } from './utils'
+import { OtF, ParsedOtF, OtFAction } from './base'
+import { sanitizeOtF, utoa } from './utils'
 import { d6ify } from "@util"
 import { parseForRollOrDamage } from "./parse_damage"
 
