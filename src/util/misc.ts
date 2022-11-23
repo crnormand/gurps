@@ -354,3 +354,14 @@ function setArrayProperty(a: any[], index: number, prop: string, value: any): an
 export function equalFold(s: string, t: string): boolean {
 	return s.toLowerCase() === t.toLowerCase()
 }
+
+/**
+ * Prounounced "dee six if eye" Convert a GURPS dice roll to Foundry dice roll (e.g. 1d => 1d6, 2d-1 => 2d6-1)
+ * @param {string} str
+ * @param {string | null} flavor
+ * @returns {string}
+ */
+export function d6ify(str: string, flavor: string): string {
+  let w = str.replace(/d([^6])/g, `d6${flavor || ''}$1`) // Find 'd's without a 6 behind it, and add it.
+  return w.replace(/d$/g, `d6${flavor || ''}`) // and do the same for the end of the line.
+}
