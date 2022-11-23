@@ -1,5 +1,3 @@
-import { d6ify, utoa, } from './utilities.js'
-
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
   +N <desc>
@@ -19,7 +17,9 @@ import { d6ify, utoa, } from './utilities.js'
   (\(-?[\.\d]+\))? == (-.#)
 */
 
-import { OtF, ParsedOtF, OtFAction, sanitizeOtF } from './utils'
+import { OtF, ParsedOtF, OtFAction, sanitizeOtF, utoa } from './utils'
+import { d6ify } from "@util"
+import { parseForRollOrDamage } from "./parse_damage"
 
 
 /**
@@ -28,7 +28,7 @@ import { OtF, ParsedOtF, OtFAction, sanitizeOtF } from './utils'
  * @param {boolean} clrdmods
  * @returns {{text: string, action?: Action}}
  */
-export function parselink(str : string, htmldesc : string, clrdmods = false) {
+export function parselink(str : string, htmldesc= '', clrdmods = false): ParsedOtF {
   str = sanitizeOtF(str)
   if (str.length < 2) return { text: str }
 
@@ -529,61 +529,3 @@ export function parselink(str : string, htmldesc : string, clrdmods = false) {
   return { text: str }
 }
 
-/**
- * @param {string | undefined} overridetxt
- * @param {string} str
- * @param {Action} action
- * @param {boolean} plus
- * @param {boolean} clrdmods
- */
-function gmspan(overridetxt, str, action, plus, clrdmods) {
-  if (!!overridetxt) {
-    str = overridetxt
-    action.overridetxt = overridetxt
-  }
-  let a = !!action
-    ? " data-action='" +
-      utoa(JSON.stringify(action)) +
-      "' data-otf='" +
-      (!!action.blindroll ? '!' : '') +
-      action.orig +
-      "'"
-    : ''
-  if (action.type === 'modifier') {
-    if (str.startsWith('-')) str = '&minus;' + str.slice(1) // \u2212
-  }
-  let s = `<span class='glinkmod'${a}>${str}`
-  if (clrdmods) {
-    if (plus) s = `<span class='glinkmodplus'${a}>${str}`
-    else s = `<span class='glinkmodminus'${a}>${str}`
-  }
-  return s + '</span>'
-}
-
-/**
- * @param {string | undefined} overridetxt
- * @param {string} str
- * @param {Action} action
- * @param {string | undefined} [prefix]
- * @param {string | undefined} [comment]
- */
-export function gspan(overridetxt, str, action, prefix, comment) {
-  if (!!overridetxt) {
-    str = overridetxt
-    prefix = ''
-    comment = ''
-    action.overridetxt = overridetxt
-  }
-  let s = "<span class='gurpslink'"
-  if (!!action)
-    s +=
-      " data-action='" +
-      utoa(JSON.stringify(action)) +
-      "' data-otf='" +
-      (!!action.blindroll ? '!' : '') +
-      action.orig +
-      "'"
-  s += '>' + (!!prefix ? prefix : '') + str.trim() + '</span>'
-  if (!!comment) s += ' ' + comment
-  return s
-}

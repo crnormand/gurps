@@ -1,5 +1,8 @@
+import { ParsedOtF, OtFAction, OtFActionDamage } from './base'
+import { sanitizeOtF, gspan } from './utils'
 import { d6ify } from "@util"
-import { HitLocation } from "@module/damage_calculator/hit_location"
+import { HitLocation } from "@module/actor/character/data"
+import { GURPS } from "@module/gurps"
 
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
@@ -43,20 +46,20 @@ export const DMG_INDEX_BASICDAMAGE = 1
  * @param {string} [overridetxt]
  * @returns {{text: string, action: Action} | null}
  */
-export function parseForRollOrDamage(str, overridetxt) {
+export function parseForRollOrDamage(str:string, overridetxt = ''): ParsedOtF | undefined {
   // Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
-  str = str.toString() // convert possible array to single string
+  str = str.toString() // Convert possible array to single string
   let a = str.match(DAMAGE_REGEX)
-  if (!!a) {
-    const D = a.groups.D || '' // Can now support non-variable damage '2 cut' or '2x3(1) imp'
-    const other = !!a.groups.other ? a.groups.other.trim() : ''
+  if (a?.groups) {
+    const D = a.groups.D || "" // Can now support non-variable damage '2 cut' or '2x3(1) imp'
+    const other = a.groups?.other ? a.groups.other.trim() : ""
     let [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     let dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
     if (!dmap) {
       dmap = GURPS.DamageTables.translate(extDamageType?.toLowerCase())
-      if (!!dmap) {
+      if (dmap) {
         actualType = extDamageType
         extDamageType = ''
       }
@@ -64,17 +67,17 @@ export function parseForRollOrDamage(str, overridetxt) {
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
     const [adds, multiplier, divisor, bang] = _getFormulaComponents(a.groups)
 
-    var next
-    if (a.groups.follow) {
-      next = parseForRollOrDamage(a.groups.follow.substring(1).trim()) // remove ',')
-      if (!!next) next = next.action
+    let next: OtFActionDamage | undefined
+    if (a.groups?.follow) {
+      const tmp: ParsedOtF | undefined = parseForRollOrDamage(a.groups.follow.substring(1).trim()) // Remove ',')
+      if (tmp?.action) next = <OtFActionDamage>tmp.action
     }
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
       let dice = D === 'd' ? d6ify(D) : D
-      if (!dice) return null // if no damage type and no dice, not a roll, ex: [70]
-      let action = {
+      if (!dice) return undefined // If no damage type and no dice, not a roll, ex: [70]
+      let action: OtFActionDamage = {
         orig: str,
         type: 'roll',
         displayformula: a.groups.roll + D + adds + multiplier + bang,
@@ -83,15 +86,15 @@ export function parseForRollOrDamage(str, overridetxt) {
         costs: a.groups.cost,
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
-        next: next,
+        next: next
       }
-      return {
+      return <ParsedOtF>{
         text: gspan(overridetxt, str, action),
         action: action,
       }
     } else {
       // Damage roll 1d+2 cut.
-      let action = {
+      let action: OtFActionDamage = {
         orig: str,
         type: 'damage',
         formula: a.groups.roll + D + adds + multiplier + divisor + bang,
@@ -102,7 +105,7 @@ export function parseForRollOrDamage(str, overridetxt) {
         accumulate: !!a.groups.accum,
         next: next,
       }
-      return {
+      return <ParsedOtF>{
         text: gspan(overridetxt, str, action),
         action: action,
       }
@@ -110,7 +113,7 @@ export function parseForRollOrDamage(str, overridetxt) {
   }
 
   a = str.match(DERIVED_DAMAGE_REGEX) // SW+1
-  if (!!a) {
+  if (a?.groups) {
     const basic = a.groups.att
     const other = !!a.groups.other ? a.groups.other.trim() : ''
     const [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
@@ -120,7 +123,7 @@ export function parseForRollOrDamage(str, overridetxt) {
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
-      let action = {
+      let action: OtFActionDamage = {
         orig: str,
         type: 'derivedroll',
         derivedformula: basic,
@@ -130,12 +133,12 @@ export function parseForRollOrDamage(str, overridetxt) {
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
       }
-      return {
+      return <ParsedOtF>{
         text: gspan(overridetxt, str, action),
         action: action,
       }
     } else {
-      let action = {
+      let action: OtFActionDamage = {
         orig: str,
         type: 'deriveddamage',
         derivedformula: basic,
@@ -146,13 +149,13 @@ export function parseForRollOrDamage(str, overridetxt) {
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
       }
-      return {
+      return <ParsedOtF>{
         text: gspan(overridetxt, str, action),
         action: action,
       }
     }
   }
-  return null
+  return undefined
 }
 
 /**

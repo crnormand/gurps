@@ -1,17 +1,5 @@
-'use strict'
-
-export type OtF = "modifier" | "attribute" | "pdf" | "controlroll" // ...
-
-export interface ParsedOtF {
-  text: string,
-  action?: OtFAction 
-}
-
-export interface OtFAction {
-  orig: string,
-  spantext: string,
-  type: OtF
-}
+import { HitLocation } from "@module/actor/character/data"
+import { OtFAction } from "./base"
 
 export function sanitizeOtF(str: string): string {
   str = str.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25')
@@ -28,3 +16,82 @@ export function sanitizeOtF(str: string): string {
   str = str.replace(/\u2011/g, '-') // replace non-breaking hyphon with a minus sign
   return str
 }
+
+
+/**
+ * ASCII to Unicode (decode Base64 to original data)
+ * @param {string} b64
+ * @returns {string}
+ */
+export function atou(b64: string): string {
+  return decodeURIComponent(escape(atob(b64)))
+}
+
+/**
+ * Unicode to ASCII (encode data to Base64)
+ * @param {string} data
+ * @returns {string}
+ */
+export function utoa(data: string): string {
+  return btoa(unescape(encodeURIComponent(data)))
+}
+
+/**
+ * @param {string | undefined} overridetxt
+ * @param {string} str
+ * @param {OtFAction} action
+ * @param {boolean} plus
+ * @param {boolean} clrdmods
+ */
+export function gmspan(overridetxt: string, str: string, action: OtFAction, plus = true, clrdmods = false): string {
+  if (!!overridetxt) {
+    str = overridetxt
+    action.overridetxt = overridetxt
+  }
+  let a = !!action
+    ? " data-action='" +
+      utoa(JSON.stringify(action)) +
+      "' data-otf='" +
+      (!!action.blindroll ? '!' : '') +
+      action.orig +
+      "'"
+    : ''
+  if (action.type === 'modifier') {
+    if (str.startsWith('-')) str = '&minus;' + str.slice(1) // \u2212
+  }
+  let s = `<span class='glinkmod'${a}>${str}`
+  if (clrdmods) {
+    if (plus) s = `<span class='glinkmodplus'${a}>${str}`
+    else s = `<span class='glinkmodminus'${a}>${str}`
+  }
+  return s + '</span>'
+}
+
+/**
+ * @param {string | undefined} overridetxt
+ * @param {string} str
+ * @param {OtFAction} action
+ * @param {string | undefined} [prefix]
+ * @param {string | undefined} [comment]
+ */
+export function gspan(overridetxt: string, str: string, action: OtFAction, prefix = "", comment = ""): string {
+  if (!!overridetxt) {
+    str = overridetxt
+    prefix = ''
+    comment = ''
+    action.overridetxt = overridetxt
+  }
+  let s = "<span class='gurpslink'"
+  if (!!action)
+    s +=
+      " data-action='" +
+      utoa(JSON.stringify(action)) +
+      "' data-otf='" +
+      (!!action.blindroll ? '!' : '') +
+      action.orig +
+      "'"
+  s += '>' + (!!prefix ? prefix : '') + str.trim() + '</span>'
+  if (!!comment) s += ' ' + comment
+  return s
+}
+

@@ -361,7 +361,7 @@ export function equalFold(s: string, t: string): boolean {
  * @param {string | null} flavor
  * @returns {string}
  */
-export function d6ify(str: string, flavor: string): string {
+export function d6ify(str: string, flavor = ""): string {
   let w = str.replace(/d([^6])/g, `d6${flavor || ''}$1`) // Find 'd's without a 6 behind it, and add it.
   return w.replace(/d$/g, `d6${flavor || ''}`) // and do the same for the end of the line.
 }
