@@ -20,7 +20,7 @@ import { TraitContainerSystemData } from "@item/trait_container/data"
 import { TraitModifierSystemData } from "@item/trait_modifier/data"
 import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data"
 import { AttributeObj } from "@module/attribute"
-import { CR, DamageProgression } from "@module/data"
+import { CR, DamageProgression, DisplayMode } from "@module/data"
 import { SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon, Weapon } from "@module/weapon"
@@ -29,6 +29,7 @@ import { i18n, i18n_f, newUUID } from "@util"
 import { CharacterSystemData } from "./data"
 import { GCAImporter } from "./import_GCA"
 import { CharacterSheetGURPS } from "./sheet"
+import { LengthUnits, WeightUnits } from "@util/measure"
 
 export interface CharacterImportedData extends Omit<CharacterSystemData, "attributes"> {
 	traits: Array<TraitSystemData | TraitContainerSystemData>
@@ -172,12 +173,12 @@ export class CharacterImporter {
 
 	importSettings(settings: CharacterImportedData["settings"]) {
 		return {
-			"system.settings.default_length_units": settings.default_length_units ?? "ft_in",
-			"system.settings.default_weight_units": settings.default_weight_units ?? "lb",
-			"system.settings.user_description_display": settings.user_description_display ?? "tooltip",
-			"system.settings.modifiers_display": settings.modifiers_display ?? "inline",
-			"system.settings.notes_display": settings.notes_display ?? "inline",
-			"system.settings.skill_level_adj_display": settings.skill_level_adj_display ?? "tooltip",
+			"system.settings.default_length_units": settings.default_length_units ?? LengthUnits.FeetAndInches,
+			"system.settings.default_weight_units": settings.default_weight_units ?? WeightUnits.Pound,
+			"system.settings.user_description_display": settings.user_description_display ?? DisplayMode.Tooltip,
+			"system.settings.modifiers_display": settings.modifiers_display ?? DisplayMode.Inline,
+			"system.settings.notes_display": settings.notes_display ?? DisplayMode.Inline,
+			"system.settings.skill_level_adj_display": settings.skill_level_adj_display ?? DisplayMode.Tooltip,
 			"system.settings.use_multiplicative_modifiers": settings.use_multiplicative_modifiers ?? false,
 			"system.settings.use_modifying_dice_plus_adds": settings.use_modifying_dice_plus_adds ?? false,
 			"system.settings.damage_progression": settings.damage_progression ?? DamageProgression.BasicSet,
@@ -188,7 +189,6 @@ export class CharacterImporter {
 			"system.settings.exclude_unspent_points_from_total": settings.exclude_unspent_points_from_total ?? false,
 			"system.settings.page": settings.page,
 			"system.settings.block_layout": settings.block_layout,
-			// "system.settings.attributes": attributes,
 			"system.settings.attributes": settings.attributes,
 			"system.settings.resource_trackers": [],
 			"system.settings.body_type": settings.body_type,

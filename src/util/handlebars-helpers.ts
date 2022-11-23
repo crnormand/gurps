@@ -41,10 +41,10 @@ export function registerHandlebarsHelpers() {
 		if (replaceMinus) return n >= 0 ? `+${n}` : `${String(n).replace("-", "−")}`
 		return n >= 0 ? `+${n}` : `${String(n)}`
 	})
-  
-  Handlebars.registerHelper("modifierString", function (n: number): string {
+
+	Handlebars.registerHelper("modifierString", function (n: number): string {
 		return `${n < 0 ? "-" : "+"} ${Math.abs(n)}`
-   })
+	})
 
 	Handlebars.registerHelper("abs", function (n: number) {
 		return Math.abs(n)
