@@ -1,5 +1,9 @@
 <div class="add">
 	<a class="gcs-circled-add add" data-type="resource_trackers"></a>
+	{{#if actor}}
+	<a class="gcs-reset reset-all" data-type="resource_trackers"></a>
+	<div>{{localize "gurps.settings.reset_all"}}</div>
+	{{/if}}
 </div>
 <div class="item-list">
 	{{#each resourceTrackers}}

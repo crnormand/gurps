@@ -21,7 +21,6 @@
 -   send mofidiers from prompt
 -   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
--   equipped equipment prereq
 -   change skill level when prereqs not satisfied
 -   Drag rollable buttons to hotbar or message box for macros
 -   Finish the Damage Calculator conversion

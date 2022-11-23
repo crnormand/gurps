@@ -38,18 +38,10 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.find(".reset-all").on("click", event => this._onResetAll(event))
+		// Html.find(".reset-all").on("click", event => this._onResetAll(event))
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".delete").on("click", event => this._onDeleteItem(event))
-	}
-
-	async _onResetAll(event: JQuery.ClickEvent) {
-		event.preventDefault()
-		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.resource_trackers`)
-			?.default as any
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, defaults)
-		this.render()
 	}
 
 	async _onAddItem(event: JQuery.ClickEvent) {

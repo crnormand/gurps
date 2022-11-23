@@ -117,7 +117,7 @@ export class ColorSettings extends SettingsMenuGURPS {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 		html.find(".reset").on("click", event => this._onReset(event))
-		html.find(".reset-all").on("click", event => this._onResetAll(event))
+		// Html.find(".reset-all").on("click", event => this._onResetAll(event))
 	}
 
 	async _onReset(event: JQuery.ClickEvent) {
@@ -131,10 +131,14 @@ export class ColorSettings extends SettingsMenuGURPS {
 		this.render()
 	}
 
-	async _onResetAll(event: JQuery.ClickEvent) {
+	override async _onResetAll(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.colors`)?.default as any
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.colors`, defaults)
+		const constructor = this.constructor
+		for (const setting of constructor.SETTINGS) {
+			const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${setting}`)
+				?.default as any
+			await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.${setting}`, defaults)
+		}
 		ColorSettings.applyColors()
 		this.render()
 	}

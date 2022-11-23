@@ -92,22 +92,12 @@
 	.tab[data-tab="resource-trackers"] {
 		div.add {
 			display: grid;
-			height: 20px;
+			grid-auto-flow: column;
+			white-space: nowrap;
+			gap: 5px;
+			justify-content: start;
+			color: rgb(var(--color-icon-button));
 			align-items: center;
-			// a.add {
-			// 	width: 17px;
-			// 	margin: 2px;
-			// 	padding: 0px 2px;
-			// 	color: rgb(var(--color-icon-button));
-			// 	&:hover {
-			// 		color: rgb(var(--color-icon-button-rollover));
-			// 		text-shadow: none;
-			// 	}
-			// 	&:active {
-			// 		color: rgb(var(--color-icon-button-rollover));
-			// 		border-radius: 4px;
-			// 	}
-			// }
 		}
 		.thresholds {
 			grid-column: 1 / span 2;

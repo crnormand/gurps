@@ -1,3 +1,4 @@
+import { i18n } from "@util"
 import { SYSTEM_NAME } from "."
 
 abstract class SettingsMenuGURPS extends FormApplication {
@@ -65,6 +66,32 @@ abstract class SettingsMenuGURPS extends FormApplication {
 			const settingKey = `${this.namespace}.${key}`
 			await (game as Game).settings.set(SYSTEM_NAME, settingKey, formData[key])
 		}
+	}
+
+	async _onResetAll(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const constructor = this.constructor
+		for (const setting of constructor.SETTINGS) {
+			const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${setting}`)
+				?.default as any
+			await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.${setting}`, defaults)
+		}
+		this.render()
+	}
+
+	protected override _getHeaderButtons(): Application.HeaderButton[] {
+		const buttons: Application.HeaderButton[] = [
+			{
+				label: i18n("gurps.settings.reset_all"),
+				icon: "gcs-reset",
+				class: "reset-all",
+				onclick: event => this._onResetAll(event),
+			},
+		]
+		const all_buttons = [...buttons, ...super._getHeaderButtons()]
+		all_buttons.at(-1)!.label = ""
+		all_buttons.at(-1)!.icon = "gcs-circled-x"
+		return all_buttons
 	}
 }
 
