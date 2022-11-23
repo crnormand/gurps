@@ -372,7 +372,7 @@ const GURPSCONFIG: any = {
 		},
 		default_weight_units: {
 			lb: "gurps.select.default_weight_units.lb",
-			lb_2: "gurps.select.default_weight_units.#",
+			"#": "gurps.select.default_weight_units.#",
 			oz: "gurps.select.default_weight_units.oz",
 			tn: "gurps.select.default_weight_units.tn",
 			t: "gurps.select.default_weight_units.t",

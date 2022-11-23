@@ -1,4 +1,5 @@
 import { BaseItemGURPS } from "@item/base"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import {
 	determineModWeightValueTypeFromString,
 	extractFraction,
@@ -7,6 +8,7 @@ import {
 	i18n,
 	WeightValueType,
 } from "@util"
+import { WeightUnits } from "@util/measure"
 import { EquipmentCostType, EquipmentModifierData, EquipmentWeightType } from "./data"
 
 export class EquipmentModifierGURPS extends BaseItemGURPS {
@@ -30,13 +32,22 @@ export class EquipmentModifierGURPS extends BaseItemGURPS {
 		return this.system.cost
 	}
 
+	get weightUnits(): WeightUnits {
+		if (this.actor) return this.actor.weightUnits
+		const default_settings = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
+		) as any
+		return default_settings.default_weight_units
+	}
+
 	get weightDescription(): string {
 		if (
 			this.weightType === "to_original_weight" &&
 			(this.weightAmount === "" || this.weightAmount.startsWith("+0"))
 		)
 			return ""
-		return this.formatWeight(this.system.weight, "lb") + i18n(this.weightType)
+		return this.formatWeight(this.system.weight, this.weightUnits) + i18n(this.weightType)
 	}
 
 	formatWeight(weight: string, unit: string): string {

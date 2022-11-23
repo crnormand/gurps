@@ -1,5 +1,3 @@
-// Export type LengthUnits = "pt" | "in" | "ft" | "ft_in" | "yd" | "mi" | "mm" | "cm" | "km" | "m"
-// export type WeightUnits = "oz" | "lb" | "tn" | "lt" | "t" | "kg" | "g"
 export enum DisplayMode {
 	NotShown = "not_shown",
 	Inline = "inline",

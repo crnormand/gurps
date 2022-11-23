@@ -58,6 +58,7 @@ import {
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
+import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -220,6 +221,15 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// Getters
+
+	get weightUnits(): WeightUnits {
+		return this.settings.default_weight_units
+	}
+
+	get lengthUnits(): LengthUnits {
+		return this.settings.default_length_units
+	}
+
 	get editing() {
 		return this.system.editing
 	}
@@ -399,6 +409,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		return this.system.created_date
 	}
 
+	// Returns Basic Lift in pounds
 	get basicLift(): number {
 		const basicLift = (this.resolveAttributeCurrent(gid.Strength) + (this.calc?.lifting_st_bonus ?? 0)) ** 2 / 5
 		if (basicLift === Infinity || basicLift === -Infinity) return 0
@@ -435,7 +446,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get fastWeightCarried(): string {
-		return `${this.weightCarried(false)} ${this.settings.default_weight_units}`
+		return weightFormat(this.weightCarried(false), this.weightUnits)
 	}
 
 	encumbranceLevel(for_skills = true): Encumbrance {

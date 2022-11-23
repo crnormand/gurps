@@ -23,6 +23,7 @@ import { ResourceTrackerObj } from "@module/resource_tracker"
 import { SYSTEM_NAME } from "@module/settings"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
+import { weightFormat } from "@util/measure"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
 import { Encumbrance } from "./data"
@@ -290,22 +291,23 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareEncumbrance() {
-		const encumbrance: Array<Encumbrance & { active?: boolean }> = [...this.actor.allEncumbrance]
+		const encumbrance: Array<Encumbrance & { active?: boolean; carry?: string }> = [...this.actor.allEncumbrance]
 		for (const e of encumbrance) {
 			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
+			e.carry = weightFormat(e.maximum_carry, this.actor.weightUnits)
 		}
 		return encumbrance
 	}
 
 	prepareLifts() {
 		const lifts = {
-			basic_lift: `${this.actor.basicLift} ${this.actor.settings.default_weight_units}`,
-			one_handed_lift: `${this.actor.oneHandedLift} ${this.actor.settings.default_weight_units}`,
-			two_handed_lift: `${this.actor.twoHandedLift} ${this.actor.settings.default_weight_units}`,
-			shove: `${this.actor.shove} ${this.actor.settings.default_weight_units}`,
-			running_shove: `${this.actor.runningShove} ${this.actor.settings.default_weight_units}`,
-			carry_on_back: `${this.actor.carryOnBack} ${this.actor.settings.default_weight_units}`,
-			shift_slightly: `${this.actor.shiftSlightly} ${this.actor.settings.default_weight_units}`,
+			basic_lift: weightFormat(this.actor.basicLift, this.actor.weightUnits),
+			one_handed_lift: weightFormat(this.actor.oneHandedLift, this.actor.weightUnits),
+			two_handed_lift: weightFormat(this.actor.twoHandedLift, this.actor.weightUnits),
+			shove: weightFormat(this.actor.shove, this.actor.weightUnits),
+			running_shove: weightFormat(this.actor.runningShove, this.actor.weightUnits),
+			carry_on_back: weightFormat(this.actor.carryOnBack, this.actor.weightUnits),
+			shift_slightly: weightFormat(this.actor.shiftSlightly, this.actor.weightUnits),
 		}
 		return lifts
 	}

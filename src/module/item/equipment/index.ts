@@ -4,6 +4,7 @@ import { EquipmentContainerGURPS } from "@item/equipment_container"
 import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
 import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentData } from "./data"
@@ -36,9 +37,12 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get weightUnits(): WeightUnits {
-		const units = this.system.weight.replace(/\d/g, "").trim()
-		if (allWeightUnits.includes(units as any)) return units as WeightUnits
-		return WeightUnits.Pound
+		if (this.actor) return this.actor.weightUnits
+		const default_settings = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
+		) as any
+		return default_settings.default_weight_units
 	}
 
 	get weightString(): string {
@@ -113,7 +117,7 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get adjustedWeightFast(): string {
-		return `${this.adjustedWeight(false, this.weightUnits)} ${WeightUnits.Pound}`
+		return weightFormat(this.adjustedWeight(false, this.weightUnits), this.weightUnits)
 	}
 
 	adjustedWeight(for_skills: boolean, units: WeightUnits): number {
@@ -126,7 +130,7 @@ export class EquipmentGURPS extends ContainerGURPS {
 	}
 
 	get extendedWeightFast(): string {
-		return `${this.extendedWeight(false, WeightUnits.Pound)} ${WeightUnits.Pound}`
+		return weightFormat(this.extendedWeight(false, this.weightUnits), this.weightUnits)
 	}
 
 	prepareBaseData(): void {

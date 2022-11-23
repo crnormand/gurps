@@ -1,4 +1,4 @@
-import { i18n } from "./misc"
+import { floatingMul, i18n } from "./misc"
 
 export type Length = number
 
@@ -142,7 +142,7 @@ export function weightFormat(weight: Weight, unit: WeightUnits): string {
 		case WeightUnits.TonAlt:
 			return `${weight * 2000} ${unit}`
 		case WeightUnits.Kilogram:
-			return `${weight * 2} ${unit}`
+			return `${weight / 2} ${unit}`
 		case WeightUnits.Gram:
 			return `${weight * 500} ${unit}`
 		default:
@@ -150,6 +150,24 @@ export function weightFormat(weight: Weight, unit: WeightUnits): string {
 	}
 }
 
+// Export function fromPounds(weight: number, unit: WeightUnits): Weight {
+// 	switch (unit) {
+// 		case WeightUnits.Pound:
+// 		case WeightUnits.PoundAlt:
+// 			return floatingMul(weight) as Weight
+// 		case WeightUnits.Ounce:
+// 			return floatingMul(weight * 16) as Weight
+// 		case WeightUnits.Ton:
+// 		case WeightUnits.TonAlt:
+// 			return floatingMul(weight * 2000) as Weight
+// 		case WeightUnits.Kilogram:
+// 			return floatingMul(weight * 2) as Weight
+// 		case WeightUnits.Gram:
+// 			return floatingMul(weight * 500) as Weight
+// 		default:
+// 			return fromPounds(weight, WeightUnits.Pound)
+// 	}
+// }
 /**
  *
  * @param weight
@@ -166,7 +184,7 @@ export function toPounds(weight: number, unit: WeightUnits): Weight {
 		case WeightUnits.TonAlt:
 			return (weight / 2000) as Weight
 		case WeightUnits.Kilogram:
-			return (weight / 2) as Weight
+			return (weight * 2) as Weight
 		case WeightUnits.Gram:
 			return (weight / 500) as Weight
 		default:
