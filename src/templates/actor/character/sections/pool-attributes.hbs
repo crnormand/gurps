@@ -1,12 +1,17 @@
 <div id="pool-attributes">
 	<div class="header">{{localize "gurps.character.point_pools"}}</div>
-	<div class="fieldblock6">
+	<div class="fieldblock7">
 		{{#each point_pools}}
 			{{#if (eq this.attribute_def.type "pool_separator")}}
 				<div class="separator_parent">
 					<div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div>
 				</div>
 			{{else}}
+			{{#if ../editing}}
+			<i class="menu fas fa-ellipsis-vertical" data-id="{{this.id}}"></i>
+			{{else}}
+			<div style="padding: 0;"></div>
+			{{/if}}
 				<div class="points">[{{this.points}}]</div>
 				<div class="field">
 					<input

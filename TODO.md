@@ -18,7 +18,9 @@
 
 ## 1.0.0
 
--   send mofidiers from prompt
+-   range ruler
+-   dice roller button
+-   send mofifiers from prompt
 -   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   change skill level when prereqs not satisfied

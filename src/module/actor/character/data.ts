@@ -12,7 +12,7 @@ export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Characte
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-		CharacterSystemData {
+	CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags
@@ -75,9 +75,7 @@ export interface CharacterSettings {
 		orientation: string
 	}
 	block_layout: Array<string>
-	// Attributes: Record<string, AttributeSettingDef>;
 	body_type: HitLocationTable
-	// Attributes: Record<string, AttributeDef> // AttributeObj represents the attribute as an object
 	attributes: AttributeDefObj[]
 	resource_trackers: ResourceTrackerDefObj[]
 }
