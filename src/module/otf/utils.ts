@@ -1,4 +1,5 @@
 import { HitLocation } from "@module/actor/character/data"
+import { string } from "@util/fractions"
 import { OtFAction } from "./base"
 
 export function sanitizeOtF(str: string): string {
@@ -14,6 +15,7 @@ export function sanitizeOtF(str: string): string {
   str = str.replace(/&quot;/g, '"') // double quotes
   // str = str.replace(/(\u2018|\u2019)/g, "'") // single quotes
   str = str.replace(/\u2011/g, '-') // replace non-breaking hyphon with a minus sign
+  str = str.replace('–', '-').replace('\u2212', '-')  // Allow display of long hyphen for minus
   return str
 }
 
@@ -43,7 +45,7 @@ export function utoa(data: string): string {
  * @param {boolean} plus
  * @param {boolean} clrdmods
  */
-export function gmspan(overridetxt: string, str: string, action: OtFAction, plus = true, clrdmods = false): string {
+export function gmspan(overridetxt: string | undefined, str: string, action: OtFAction, plus = true, clrdmods = false): string {
   if (!!overridetxt) {
     str = overridetxt
     action.overridetxt = overridetxt
@@ -74,7 +76,7 @@ export function gmspan(overridetxt: string, str: string, action: OtFAction, plus
  * @param {string | undefined} [prefix]
  * @param {string | undefined} [comment]
  */
-export function gspan(overridetxt: string, str: string, action: OtFAction, prefix = "", comment = ""): string {
+export function gspan(overridetxt: string | undefined, str: string, action: OtFAction, prefix = "", comment = ""): string {
   if (!!overridetxt) {
     str = overridetxt
     prefix = ''
@@ -94,4 +96,3 @@ export function gspan(overridetxt: string, str: string, action: OtFAction, prefi
   if (!!comment) s += ' ' + comment
   return s
 }
-

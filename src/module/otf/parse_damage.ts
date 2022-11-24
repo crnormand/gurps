@@ -1,4 +1,4 @@
-import { ParsedOtF, OtFAction, OtFActionDamage } from './base'
+import { ParsedOtF, OtFAction, OtFDamageAction, OptionalCheckParameters } from './base'
 import { sanitizeOtF, gspan } from './utils'
 import { d6ify } from "@util"
 import { StaticHitLocation } from "@module/actor/static_character/hit_location"
@@ -46,7 +46,7 @@ export const DMG_INDEX_BASICDAMAGE = 1
  * @param {string} [overridetxt]
  * @returns {{text: string, action: Action} | null}
  */
-export function parseForRollOrDamage(str:string, overridetxt = ''): ParsedOtF | undefined {
+export function parseForRollOrDamage(str:string, opts: OptionalCheckParameters): ParsedOtF | undefined {
   // Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
@@ -67,46 +67,50 @@ export function parseForRollOrDamage(str:string, overridetxt = ''): ParsedOtF | 
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
     const [adds, multiplier, divisor, bang] = _getFormulaComponents(a.groups)
 
-    let next: OtFActionDamage | undefined
+    let next: OtFAction | undefined
     if (a.groups?.follow) {
-      const tmp: ParsedOtF | undefined = parseForRollOrDamage(a.groups.follow.substring(1).trim()) // Remove ',')
-      if (tmp?.action) next = <OtFActionDamage>tmp.action
+      const tmp: ParsedOtF | undefined = parseForRollOrDamage(a.groups.follow.substring(1).trim(), opts) // Remove ',')
+      if (tmp?.action) next = tmp.action
     }
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
       let dice = D === 'd' ? d6ify(D) : D
       if (!dice) return undefined // If no damage type and no dice, not a roll, ex: [70]
-      let action: OtFActionDamage = {
+      let action: OtFDamageAction = {
         orig: str,
         type: 'roll',
         displayformula: a.groups.roll + D + adds + multiplier + bang,
         formula: a.groups.roll + dice + adds + multiplier + bang,
         desc: other, // Action description
+        blindroll: opts.blindroll,
+        sourceId: opts.sourceId,
         costs: a.groups.cost,
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
         next: next
       }
       return <ParsedOtF>{
-        text: gspan(overridetxt, str, action),
+        text: gspan(opts.overridetxt, str, action),
         action: action,
       }
     } else {
       // Damage roll 1d+2 cut.
-      let action: OtFActionDamage = {
+      let action: OtFDamageAction = {
         orig: str,
         type: 'damage',
         formula: a.groups.roll + D + adds + multiplier + divisor + bang,
         damagetype: !!dmap ? dmap : actualType,
         extdamagetype: extDamageType,
+        blindroll: opts.blindroll,
+        sourceId: opts.sourceId,
         costs: a.groups.costs,
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
         next: next,
       }
       return <ParsedOtF>{
-        text: gspan(overridetxt, str, action),
+        text: gspan(opts.overridetxt, str, action),
         action: action,
       }
     }
@@ -123,34 +127,38 @@ export function parseForRollOrDamage(str:string, overridetxt = ''): ParsedOtF | 
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
-      let action: OtFActionDamage = {
+      let action: OtFDamageAction = {
         orig: str,
         type: 'derivedroll',
         derivedformula: basic,
         formula: adds + multiplier + bang,
         desc: other,
+        blindroll: opts.blindroll,
+        sourceId: opts.sourceId,
         costs: a.groups.costs,
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
       }
       return <ParsedOtF>{
-        text: gspan(overridetxt, str, action),
+        text: gspan(opts.overridetxt, str, action),
         action: action,
       }
     } else {
-      let action: OtFActionDamage = {
+      let action: OtFDamageAction = {
         orig: str,
         type: 'deriveddamage',
         derivedformula: basic,
         formula: adds + multiplier + divisor + bang,
         damagetype: actualType,
         extdamagetype: extDamageType,
+        blindroll: opts.blindroll,
+        sourceId: opts.sourceId,
         costs: a.groups.costs,
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
       }
       return <ParsedOtF>{
-        text: gspan(overridetxt, str, action),
+        text: gspan(opts.overridetxt, str, action),
         action: action,
       }
     }
