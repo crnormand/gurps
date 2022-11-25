@@ -56,15 +56,23 @@
 		}
 	}
 
+	.fieldblock6,
 	.fieldblock7 {
 		display: grid;
-		grid-template-columns: repeat(7, auto);
 		white-space: nowrap;
 		background-color: rgba(var(--color-content), 1);
 		color: rgba(var(--color-on-content), 1);
 		> * {
 			padding: var(--padding-standard);
 		}
+	}
+
+	.fieldblock6 {
+		grid-template-columns: repeat(6, auto);
+	}
+
+	.fieldblock7 {
+		grid-template-columns: repeat(7, auto);
 	}
 
 	.label {

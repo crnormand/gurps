@@ -7,12 +7,12 @@ import { ResourceTrackerObj } from "@module/resource_tracker"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
 
-export interface CharacterSource extends BaseActorSourceGURPS<ActorType.CharacterGCS, CharacterSystemData> {
+export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-	CharacterSystemData {
+		CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags

@@ -222,6 +222,7 @@
 				"prompt": "Would you like to import an existing file?"
 			},
 			"settings": {
+				"header": "{name}: Character Configuration",
 				"import": {
 					"reimport": "Re-Import ({file})",
 					"import": "Import ({file})",

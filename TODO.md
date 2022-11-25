@@ -2,6 +2,8 @@
 
 ## In Progress
 
+-   add support for static resource trackers
+    -   implement UI
 -   Convert the modifier bucket over
     -   add search function, same as mod prompt
     -   css
@@ -32,13 +34,6 @@
 -   Implement "static" items (0.15 and older) compatibility
     -   add deprecation warning to static items
 -   Add conversion from "static" to newer "dynamic" characters
--   Finish GCA5 direct import
-    -   prereqs (leave for later)
-    -   appearance
-    -   finish features
-    -   meta-traits
-    -   racial templates
-    -   alternate abilities
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
 -   Dynamic Character changes
@@ -59,12 +54,18 @@
 -   Change unsatisfied prerequisite messages for better formatting & localization
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -   switch between number and dice display for skill rolls
--   Global Foundry styling
--   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
--   probably a bunch of other stuff I'm forgetting
 
 ## 1.1.0 and beyond
 
+-   Global Foundry styling
+-   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
+-   Finish GCA5 direct import
+    -   prereqs (leave for later)
+    -   appearance
+    -   finish features
+    -   meta-traits
+    -   racial templates
+    -   alternate abilities
 -   mass import characters (add to library browser)
 -   autofill bio
 -   Fix textarea height

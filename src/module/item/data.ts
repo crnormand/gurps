@@ -38,6 +38,8 @@ export type ItemDataGURPS =
 	| NoteData
 	| NoteContainerData
 
+export type ItemSourceGURPS = ItemDataGURPS["_source"]
+
 export type ContainerDataGURPS =
 	| TraitData
 	| TraitContainerData

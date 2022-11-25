@@ -126,23 +126,19 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		if (!attribute) return
 		attribute.apply_ops ??= true
 		const apply_ops = attribute.apply_ops
-		const ctx = new ContextMenu(
-			html, "#pool-attributes .menu",
-			[
-				{
-					name: "Apply Threshold Modifiers",
-					icon: (attribute.apply_ops) ? "<i class='gcs-checkmark'></i>" : "",
-					callback: () => {
-						const update: any = {}
-						update[`attributes.${id}.apply_ops`] = !apply_ops
-						return this._updateObject(event as unknown as Event, update)
-					}
-				}
-			]
-		)
+		const ctx = new ContextMenu(html, "#pool-attributes .menu", [
+			{
+				name: "Apply Threshold Modifiers",
+				icon: attribute.apply_ops ? "<i class='gcs-checkmark'></i>" : "",
+				callback: () => {
+					const update: any = {}
+					update[`attributes.${id}.apply_ops`] = !apply_ops
+					return this._updateObject(event as unknown as Event, update)
+				},
+			},
+		])
 		await ctx.render($(event.currentTarget))
 		// $(event.currentTarget).trigger("contextmenu")
-
 	}
 
 	protected _resizeInput(event: JQuery.ChangeEvent) {
@@ -416,21 +412,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-				edit_button,
-				// {
-				// 	label: "",
-				// 	// Label: "Import",
-				// 	class: "import",
-				// 	icon: "fas fa-file-import",
-				// 	onclick: event => this._onFileImport(event),
-				// },
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._openGMenu(event),
-				},
-			]
+					edit_button,
+					// {
+					// 	label: "",
+					// 	// Label: "Import",
+					// 	class: "import",
+					// 	icon: "fas fa-file-import",
+					// 	onclick: event => this._onFileImport(event),
+					// },
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._openGMenu(event),
+					},
+			  ]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""
