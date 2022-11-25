@@ -18,7 +18,9 @@
 			{{#unless (eq @index 0)}} + {{/unless}}
 			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
 		{{/each}}
-		{{modifierString dice.modifier}}
+		{{#if dice.modifier}}
+			{{modifierString dice.modifier}}
+		{{/if}}
 		{{#if modifierTotal}}
 			{{modifierString modifierTotal}}
 		{{/if}}
