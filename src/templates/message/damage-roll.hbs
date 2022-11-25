@@ -19,7 +19,9 @@
 			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
 		{{/each}}
 		{{modifierString dice.modifier}}
-		{{modifierString modifierTotal}}
+		{{#if modifierTotal}}
+			{{modifierString modifierTotal}}
+		{{/if}}
 		=
 		{{total}}
 	</div></div>
