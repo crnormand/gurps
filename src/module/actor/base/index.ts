@@ -7,8 +7,12 @@ import Document, {
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
 import { SYSTEM_NAME } from "@module/settings"
-import { ContainerGURPS, ItemGURPS } from "@item"
+import { ContainerGURPS, ItemGURPS, TraitContainerGURPS, TraitGURPS } from "@item"
 import { ActorFlags, ActorSystemData, BaseActorSourceGURPS } from "./data"
+import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
+import { DamageTarget } from "@module/damage_calculator/damage_target"
+import { DamageRoll, DamageRollAdapter } from "@module/damage_calculator/damage_roll"
+import { Attribute } from "@module/attribute"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -104,12 +108,24 @@ class BaseActorGURPS extends Actor {
 			})
 		}
 	}
+
+	handleDamageDrop(payload: any): void {
+		let roll: DamageRoll = new DamageRollAdapter(payload)
+		let target: DamageTarget = this.createDamageTargetAdapter()
+		new ApplyDamageDialog(roll, target).render(true)
+	}
+
+	createDamageTargetAdapter(): DamageTarget {
+		throw new Error("Override this!")
+	}
 }
 
 interface BaseActorGURPS extends Actor {
 	// Readonly data: BaseActorDataGURPS;
 	noPrepare: boolean
 	deepItems: Collection<ItemGURPS>
+	attributes: Map<string, Attribute>
+	traits: Collection<TraitGURPS | TraitContainerGURPS>
 	// Temp
 	system: ActorSystemData
 	_source: BaseActorSourceGURPS

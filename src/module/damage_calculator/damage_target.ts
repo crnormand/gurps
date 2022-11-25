@@ -1,6 +1,5 @@
 import { HitLocationTableAdapter } from "./hit_location"
-import { ActorGURPS, CharacterGURPS } from "../actor/index"
-import { Trait } from "@module/compendium/tabs"
+import { BaseActorGURPS } from "../actor/index"
 import { TraitGURPS } from "../item/trait/index"
 import { TraitModifierGURPS } from "../item/trait_modifier/index"
 
@@ -11,7 +10,7 @@ import { TraitModifierGURPS } from "../item/trait_modifier/index"
  */
 type HitPointsCalc = { value: number; current: number }
 
-const createDamageTarget = function (actor: ActorGURPS): DamageTarget {
+const createDamageTarget = function (actor: BaseActorGURPS): DamageTarget {
 	return new DamageTargetActor(actor)
 }
 
@@ -91,9 +90,9 @@ class TraitAdapter implements TargetTrait {
 class DamageTargetActor implements DamageTarget {
 	static DamageReduction = "Damage Reduction"
 
-	private actor: ActorGURPS
+	private actor: BaseActorGURPS
 
-	constructor(actor: ActorGURPS) {
+	constructor(actor: BaseActorGURPS) {
 		this.actor = actor
 	}
 
@@ -102,18 +101,18 @@ class DamageTargetActor implements DamageTarget {
 	}
 
 	get ST(): number {
-		return this.actor.attributes.get("st").calc.value
+		// @ts-ignore
+		return this.actor.attributes.get("st")?.calc.value
 	}
 
 	get hitPoints(): HitPointsCalc {
-		return this.actor.attributes.get("hp").calc
+		// @ts-ignore
+		return this.actor.attributes.get("hp")?.calc
 	}
 
 	get hitLocationTable(): HitLocationTableAdapter {
-		if (this.actor instanceof CharacterGURPS)
-			return new HitLocationTableAdapter(this.actor.system.settings.body_type)
-		// @ts-ignore until I have a solution for StaticCharacterGURPS
-		return undefined
+		// @ts-ignore
+		return new HitLocationTableAdapter(this.actor.system.settings.body_type)
 	}
 
 	/**
@@ -121,7 +120,7 @@ class DamageTargetActor implements DamageTarget {
 	 * @param name
 	 */
 	getTrait(name: string): TargetTrait | undefined {
-		if (this.actor instanceof CharacterGURPS) {
+		if (this.actor instanceof BaseActorGURPS) {
 			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
 			let found = traits.find(it => it.name === name)
 			return new TraitAdapter(found as TraitGURPS)

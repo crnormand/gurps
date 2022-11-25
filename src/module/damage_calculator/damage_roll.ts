@@ -82,4 +82,62 @@ enum DefaultHitLocations {
 	LargeArea = "LargeArea",
 }
 
-export { DamageRoll, DamageAttacker, DefaultHitLocations, DamageWeapon }
+class DamageRollAdapter implements DamageRoll {
+	private _payload: any
+
+	constructor(payload: any) {
+		this._payload = payload
+
+		this.locationId = ""
+		this.internalExplosion = false
+		this.basicDamage = 0
+		this.damageType = DamageType.cr
+		this.applyTo = ""
+		this.damageModifier = ""
+		this.weapon = null
+		this.armorDivisor = 1
+		this.rofMultiplier = 1
+		this.range = null
+		this.isHalfDamage = false
+		this.isShotgunCloseRange = false
+		this.vulnerability = 1
+		this.dice = new DiceGURPS()
+		this.attacker = new DamageAttackerAdapter()
+	}
+
+	locationId: string
+
+	attacker: DamageAttacker
+
+	dice: DiceGURPS
+
+	basicDamage: number
+
+	damageType: DamageType
+
+	applyTo: string
+
+	damageModifier: string
+
+	weapon: DamageWeapon | null
+
+	armorDivisor: number
+
+	rofMultiplier: number
+
+	range: number | null
+
+	isHalfDamage: boolean
+
+	isShotgunCloseRange: boolean
+
+	vulnerability: number
+
+	internalExplosion: boolean
+}
+
+class DamageAttackerAdapter implements DamageAttacker {
+	name = ""
+}
+
+export { DamageRoll, DamageRollAdapter, DamageAttacker, DefaultHitLocations, DamageWeapon }
