@@ -6,7 +6,7 @@ export default class DamageChat {
 
 		const dragSections = html.find(".result")
 		for (const section of dragSections) {
-			section.setAttribute("draggable", true)
+			// Section.setAttribute("draggable", "true")
 		}
 		return false
 	}
