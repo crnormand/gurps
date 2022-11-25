@@ -23,7 +23,8 @@ export interface MoveMode {
 	default: boolean
 }
 
-export interface StaticCharacterSource extends BaseActorSourceGURPS<ActorType.CharacterGCA, StaticCharacterSystemData> {
+export interface StaticCharacterSource
+	extends BaseActorSourceGURPS<ActorType.StaticCharacter, StaticCharacterSystemData> {
 	flags: DeepPartial<StaticCharacterFlags>
 }
 export interface StaticCharacterDataGURPS

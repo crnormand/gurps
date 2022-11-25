@@ -1,0 +1,79 @@
+<div class="add">
+	<a class="gcs-circled-add add" data-type="resource_trackers"></a>
+	{{#if actor}}
+	<a class="gcs-reset reset-all" data-type="resource_trackers"></a>
+	<div>{{localize "gurps.settings.reset_all"}}</div>
+	{{/if}}
+</div>
+<div class="item-list">
+	{{#each resourceTrackers}}
+		<div class="item" data-id="{{this.id}}" data-index="{{@index}}" data-type="resource_trackers">
+			<div class="controls">
+				<a class="gcs-grip drag" data-index="{{@index}}" data-type="resource_trackers"></a>
+				<a class="gcs-trash delete" data-index="{{@index}}" data-type="resource_trackers"></a>
+				<a class="gcs-circled-add add" data-id="{{@index}}" data-type="tracker_thresholds"></a>
+			</div>
+			<div class="fieldblock">
+				<div class="label">{{localize "gurps.resource_tracker_def.id"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.resource_trackers.{{@index}}.id"
+						value="{{this.id}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="array.system.settings.resource_trackers.{{@index}}.name"
+						value="{{this.name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.max"}}</div>
+				<div class="field no-stretch">
+					<input
+						name="array.system.settings.resource_trackers.{{@index}}.max"
+						type="text"
+						data-dtype="Number"
+						value="{{this.max}}"
+					/>
+					<label class="label checkbox-label">
+						<input
+							type="checkbox"
+							name="array.system.settings.resource_trackers.{{@index}}.isMaxEnforced"
+							{{checked this.isMaxEnforced}}
+						/>
+						{{localize "gurps.resource_tracker_def.max_enforced"}}
+					</label>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.min"}}</div>
+				<div class="field no-stretch">
+					<input
+						name="array.system.settings.resource_trackers.{{@index}}.min"
+						type="text"
+						data-dtype="Number"
+						value="{{this.min}}"
+					/>
+					<label class="label checkbox-label">
+						<input
+							type="checkbox"
+							name="array.system.settings.resource_trackers.{{@index}}.isMinEnforced"
+							{{checked this.isMinEnforced}}
+						/>
+						{{localize "gurps.resource_tracker_def.min_enforced"}}
+					</label>
+				</div>
+				{{#if this.thresholds}}
+				<div class="item-list thresholds">
+					{{#each this.thresholds}}
+					{{>actor/character/config/threshold id=@../index parent="array.system.settings.resource_trackers"}}
+					{{/each}}
+				</div>
+				{{/if}}
+			</div>
+		</div>
+	{{/each}}
+</div>

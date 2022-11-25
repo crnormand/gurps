@@ -4,7 +4,7 @@ import { CharacterGURPS } from "."
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
-import { i18n, prepareFormData } from "@util"
+import { i18n, i18n_f, prepareFormData } from "@util"
 import { CharacterSettings, HitLocationTable } from "./data"
 
 export class CharacterSheetConfig extends FormApplication {
@@ -51,7 +51,7 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	get title() {
-		return `${this.object.name}: Character Configuration`
+		return i18n_f("gurps.character.settings.header", { name: this.object.name })
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {

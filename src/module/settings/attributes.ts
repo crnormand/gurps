@@ -86,6 +86,11 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						cost_adj_percent_per_sm: 0,
 					},
 					{
+						id: "senses",
+						type: "secondary_separator",
+						name: "Senses",
+					},
+					{
 						id: "per",
 						type: AttributeType.Integer,
 						name: "Per",
@@ -125,6 +130,11 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						attribute_base: "$per",
 						cost_per_point: 2,
 						cost_adj_percent_per_sm: 0,
+					},
+					{
+						id: "movement",
+						type: "secondary_separator",
+						name: "Movement",
 					},
 					{
 						id: "basic_speed",
