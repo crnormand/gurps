@@ -1,4 +1,4 @@
-import { DiceGURPS } from "@module/dice"
+import { DiceGURPS } from "../../module/dice"
 import { DamageType } from "./damage_type"
 
 /**
