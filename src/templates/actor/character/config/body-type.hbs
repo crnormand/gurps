@@ -1,5 +1,9 @@
 <div class="add">
 	<a class="gcs-circled-add add" data-path="{{path}}" data-type="locations"></a>
+	{{#if actor}}
+	<a class="gcs-reset reset-all" data-type="locations"></a>
+	<div>{{localize "gurps.settings.reset_all"}}</div>
+	{{/if}}
 </div>
 <div class="fieldblock">
 	<div class="label">{{localize "gurps.character.settings.body_type.name"}}</div>

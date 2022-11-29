@@ -11,6 +11,7 @@ export interface AttributeObj {
 	adj: number
 	damage?: number
 	attribute_def?: AttributeDef
+	apply_ops?: boolean
 	calc?: {
 		value: number
 		current?: number
@@ -32,6 +33,8 @@ export class Attribute {
 	adj = 0
 
 	damage?: number
+
+	apply_ops?: boolean
 
 	constructor(actor: CharacterGURPS, attr_id: string, order: number, data?: any) {
 		if (data) Object.assign(this, data)

@@ -4,8 +4,8 @@ import { CharacterGURPS } from "."
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
-import { i18n, prepareFormData } from "@util"
-import { HitLocationTable } from "./data"
+import { i18n, i18n_f, prepareFormData } from "@util"
+import { CharacterSettings, HitLocationTable } from "./data"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS
@@ -51,7 +51,7 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	get title() {
-		return `${this.object.name}: Character Configuration`
+		return i18n_f("gurps.character.settings.header", { name: this.object.name })
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {
@@ -78,6 +78,7 @@ export class CharacterSheetConfig extends FormApplication {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
+		html.find("a.reset-all").on("click", event => this._onReset(event))
 		html.find("input[name$='.id']").on("input", event => {
 			const value = $(event.currentTarget).val()
 			const name = $(event.currentTarget).prop("name")
@@ -160,6 +161,29 @@ export class CharacterSheetConfig extends FormApplication {
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".delete").on("click", event => this._onDeleteItem(event))
 		html.find(".export").on("click", event => this._onExport(event))
+	}
+
+	async _onReset(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const type = $(event.currentTarget).data("type")
+		const default_attributes = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
+		) as CharacterSettings["attributes"]
+		const default_resource_trackers = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
+		) as CharacterSettings["resource_trackers"]
+		const default_hit_locations = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
+		) as CharacterSettings["body_type"]
+		const update: any = {}
+		if (type === "attributes") update["system.settings.attributes"] = default_attributes
+		if (type === "resource_trackers") update["system.settings.resource_trackers"] = default_resource_trackers
+		if (type === "locations") update["system.settings.body_type"] = default_hit_locations
+		await this.object.update(update)
+		return this.render()
 	}
 
 	_onExport(event: JQuery.ClickEvent) {

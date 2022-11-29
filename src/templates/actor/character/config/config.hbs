@@ -12,7 +12,7 @@
         <div class="tab browser" data-group="primary" data-tab="attributes">{{>actor/character/config/attributes}}</div>
         <div class="tab browser" data-group="primary" data-tab="body-type">
 			{{#with locations}}
-			{{>actor/character/config/body-type path="array.system.settings.body_type"}}
+			{{>actor/character/config/body-type path="array.system.settings.body_type" actor=../actor}}
 			{{/with}}
 		</div>
         <div class="tab browser" data-group="primary" data-tab="resource-trackers">{{>actor/character/config/resource-trackers}}</div>

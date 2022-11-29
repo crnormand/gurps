@@ -4,9 +4,12 @@ import { openPDF } from "@module/pdf"
 import { SYSTEM_NAME } from "@module/settings"
 import { i18n, RollGURPS, Static } from "@util"
 import { StaticCharacterGURPS } from "."
+import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
 
 export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
+	config: StaticCharacterSheetConfig | null = null
+
 	static get defaultOptions(): ActorSheet.Options {
 		return mergeObject(super.defaultOptions, {
 			classes: super.defaultOptions.classes.concat(["character", "static"]),
@@ -219,6 +222,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _onGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
+		this.config ??= new StaticCharacterSheetConfig(this.document as StaticCharacterGURPS, {
+			top: this.position.top! + 40,
+			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
+		})
+		this.config.render(true)
 		// New CharacterSheetConfig(this.document as StaticCh, {
 		// 	top: this.position.top! + 40,
 		// 	left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,

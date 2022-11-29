@@ -379,6 +379,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	countThresholdOpMet(op: ThresholdOp, attributes: Map<string, Attribute>) {
 		let total = 0
 		attributes.forEach(a => {
+			if (!a.apply_ops) return
 			const threshold = a.currentThreshold
 			if (threshold && threshold.ops?.includes(op)) total++
 		})

@@ -2,11 +2,11 @@
 import { ActorDataSource } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 
 export enum ActorType {
-	CharacterGCS = "character_gcs",
-	CharacterGCA = "character",
-	MassCombatElement = "element",
-	Vehicle = "vehicle",
-	Merchant = "merchant",
+	Character = "character_gcs",
+	StaticCharacter = "character",
+	// MassCombatElement = "element",
+	// Vehicle = "vehicle",
+	// Merchant = "merchant",
 }
 
 export interface ActorFlagsGURPS extends Record<string, unknown> {
@@ -23,7 +23,7 @@ export interface BaseActorSourceGURPS<
 	TSystemData extends ActorSystemData = ActorSystemData
 > extends ActorDataSource {
 	type: TActorType
-	data: TSystemData
+	system: TSystemData
 	flags: DeepPartial<ActorFlagsGURPS>
 }
 

@@ -86,6 +86,11 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						cost_adj_percent_per_sm: 0,
 					},
 					{
+						id: "senses",
+						type: "secondary_separator",
+						name: "Senses",
+					},
+					{
 						id: "per",
 						type: AttributeType.Integer,
 						name: "Per",
@@ -125,6 +130,11 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						attribute_base: "$per",
 						cost_per_point: 2,
 						cost_adj_percent_per_sm: 0,
+					},
+					{
+						id: "movement",
+						type: "secondary_separator",
+						name: "Movement",
 					},
 					{
 						id: "basic_speed",
@@ -265,18 +275,10 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.find(".reset-all").on("click", event => this._onResetAll(event))
+		// Html.find(".reset-all").on("click", event => this._onResetAll(event))
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".delete").on("click", event => this._onDeleteItem(event))
-	}
-
-	async _onResetAll(event: JQuery.ClickEvent) {
-		event.preventDefault()
-		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.attributes`)
-			?.default as any
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, defaults)
-		this.render()
 	}
 
 	async _onAddItem(event: JQuery.ClickEvent) {

@@ -8,7 +8,12 @@
 			color: rgb(var(--color-on-background));
 		}
 	}
-	a {
+	.window-header .reset-all {
+		display: grid;
+		grid-auto-flow: column;
+		gap: 5px;
+	}
+	.window-content a {
 		width: 17px;
 		margin: 2px;
 		padding: 0px 2px;
