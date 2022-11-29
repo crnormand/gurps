@@ -57,6 +57,7 @@
 
 ## 1.1.0 and beyond
 
+-   reimporting a character over another one doesn't visibly change portrait until refresh because it is stored in cache. fix?
 -   Global Foundry styling
 -   import/export for settings (colors, attributes, body type, resource trackers, sheet settings)
 -   Finish GCA5 direct import

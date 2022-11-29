@@ -40,6 +40,7 @@ import {
 	damageProgression,
 	floatingMul,
 	getCurrentTime,
+	getHitLocations,
 	i18n,
 	i18n_f,
 	newUUID,
@@ -588,39 +589,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		/**
-		 *
-		 * @param b
-		 */
-		function updateRollRanges(b: HitLocationTable) {
-			let start = new DiceGURPS(b.roll).minimum(false)
-			for (const i of b.locations) {
-				start = updateRollRange(i, start)
-			}
-		}
-		/**
-		 *
-		 * @param h
-		 * @param start
-		 */
-		function updateRollRange(h: HitLocation, start: number): number {
-			h.calc ??= { roll_range: "", dr: {} }
-			h.slots ??= 0
-			if (h.slots === 0) h.calc.roll_range = "-"
-			else if (h.slots === 1) h.calc.roll_range = start.toString()
-			else {
-				h.calc.roll_range = `${start}-${start + h.slots - 1}`
-			}
-			if (h.sub_table) {
-				updateRollRanges(h.sub_table)
-			}
-			return start + h.slots
-		}
-
-		const body = this.system.settings.body_type
-		if (!body) return []
-		updateRollRanges(body)
-		return body.locations
+		return getHitLocations(this.system.settings.body_type)
 	}
 
 	// Item Types

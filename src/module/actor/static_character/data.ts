@@ -29,7 +29,7 @@ export interface StaticCharacterSource
 }
 export interface StaticCharacterDataGURPS
 	extends Omit<StaticCharacterSource, "effects" | "flags" | "items" | "token">,
-		StaticCharacterSystemData {
+	StaticCharacterSystemData {
 	readonly type: StaticCharacterSource["type"]
 	data: StaticCharacterSystemData
 	flags: StaticCharacterFlags
@@ -154,7 +154,9 @@ export interface StaticResourceTracker {
 	isDamageTracker: boolean
 	isDamageType: boolean
 	max: number
+	isMaxEnforced: boolean
 	min: number
+	isMinEnforced: boolean
 	name: string
 	pdf: string
 	points: number
@@ -177,7 +179,7 @@ export enum StaticThresholdComparison {
 	GreaterThanOrEqual = "≤",
 }
 
-enum StaticThresholdOperator {
+export enum StaticThresholdOperator {
 	Add = "+",
 	Subtract = "−",
 	Multiply = "×",

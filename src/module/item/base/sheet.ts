@@ -1,12 +1,14 @@
 import { CharacterGURPS } from "@actor"
+import { HitLocationTable } from "@actor/character/data"
 import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@item"
+import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { NumberComparison, StringComparison, StudyType } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { WeaponSheet } from "@module/weapon/sheet"
 import { PrereqType } from "@prereq"
-import { i18n, prepareFormData } from "@util"
+import { getHitLocations, i18n, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
 // @ts-ignore
@@ -15,44 +17,24 @@ export class ItemSheetGURPS extends ItemSheet {
 		const itemData = this.object.toObject(false)
 		const attributes: Record<string, string> = {}
 		const locations: Record<string, string> = {}
+		const default_attributes = (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`) as AttributeDefObj[]
+		const default_locations = (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`) as HitLocationTable
 		const actor = this.item.actor as unknown as CharacterGURPS
 		if (actor) {
 			actor.attributes.forEach(e => {
+				if (e.attribute_def.type.includes("_separator")) return
 				attributes[e.attr_id] = e.attribute_def.name
 			})
-			for (const e of actor.system.settings.body_type.locations) {
+			for (const e of actor.HitLocations) {
 				locations[e.id] = e.choice_name
 			}
 		} else {
-			mergeObject(attributes, {
-				st: "ST",
-				dx: "DX",
-				iq: "IQ",
-				ht: "HT",
-				will: "Will",
-				fright_check: "Fright Check",
-				per: "Perception",
-				vision: "Vision",
-				hearing: "Hearing",
-				taste_smell: "Taste & Smell",
-				touch: "Touch",
-				basic_speed: "Basic Speed",
-				basic_move: "Basic Move",
-				fp: "FP",
-				hp: "HP",
+			default_attributes.forEach(e => {
+				if (e.type.includes("_separator")) return
+				attributes[e.id] = e.name
 			})
-			mergeObject(locations, {
-				eyes: "Eyes",
-				skull: "Skull",
-				face: "Face",
-				leg: "Leg",
-				arm: "Arm",
-				torso: "Torso",
-				groin: "Groin",
-				hand: "Hand",
-				foot: "Foot",
-				neck: "Neck",
-				vitals: "Vitals",
+			getHitLocations(default_locations).forEach(e => {
+				locations[e.id] = e.choice_name
 			})
 		}
 		attributes.dodge = i18n("gurps.attributes.dodge")
@@ -115,11 +97,11 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
 		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
 		html.find("textarea")
-			.each(function () {
+			.each(function() {
 				const height = this.scrollHeight - 2
 				this.setAttribute("style", `height:${height}px;`)
 			})
-			.on("input", function () {
+			.on("input", function() {
 				const height = this.scrollHeight
 				// Const height = this.value.split("\r").length * 24;
 				this.style.height = "0"

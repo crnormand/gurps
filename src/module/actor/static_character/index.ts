@@ -2,6 +2,8 @@ import { BaseActorGURPS } from "@actor/base"
 // Import { ActorFlags } from "@actor/base/data"
 import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
+import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
+import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 // Import { RollModifier } from "@module/data"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n, newUUID, Static } from "@util"
@@ -17,7 +19,7 @@ import {
 } from "./data"
 import { StaticCharacterImporter } from "./import"
 
-Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			// @ts-ignore until v10 types
@@ -26,6 +28,12 @@ Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 })
 
 class StaticCharacterGURPS extends BaseActorGURPS {
+
+	update(data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined, context?: (DocumentModificationContext & MergeObjectOptions) | undefined): Promise<this | undefined> {
+		console.log(data)
+		return super.update(data, context)
+	}
+
 	getOwners() {
 		return (game as Game).users?.contents.filter(
 			u => this.getUserLevel(u) ?? 0 >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
@@ -841,7 +849,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		newobj[objkey] = oldotf
 		let notes
 		let newotf
-		;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
+			;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
 		if (newotf) newobj[objkey] = newotf
 		newobj.notes = notes?.trim()
 	}
