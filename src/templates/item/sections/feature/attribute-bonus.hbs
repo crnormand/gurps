@@ -3,7 +3,7 @@
 	<select name="array.system.features.{{@index}}.attribute">
 		{{#select this.attribute}}
 			{{#each attributes as |v k|}}
-				<option value="{{k}}">{{v}}</option>
+				<option value="{{k}}">{{localize "gurps.field_prefix.attribute" att=v}}</option>
 			{{/each}}
 		{{/select}}
 	</select>

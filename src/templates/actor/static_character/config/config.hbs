@@ -1,4 +1,3 @@
-
 <form autocomplete="off">
     <nav class="nav-tabs" data-group="primary">
         <a data-tab="sheet-settings"><i class="gcs-settings"></i>{{localize "gurps.character.settings.sheet_settings.button"}}</a>
@@ -6,9 +5,11 @@
     </nav>
     <section class="content">
         <div class="tab browser" data-group="primary" data-tab="sheet-settings">
-            {{>actor/static_character/config/sheet-settings}}
-        </div>
-        <div class="tab browser" data-group="primary" data-tab="resource-trackers">{{>actor/static_character/config/resource-trackers}}</div>
+			{{>actor/static_character/config/sheet-settings}}
+		</div>
+        <div class="tab browser" data-group="primary" data-tab="resource-trackers">
+			{{>actor/static_character/config/resource-trackers}}
+		</div>
     </section>
 </div>
 </form>

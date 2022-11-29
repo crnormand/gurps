@@ -1,4 +1,6 @@
+import { HitLocation, HitLocationTable } from "@actor/character/data"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "@module/data"
+import { DiceGURPS } from "@module/dice"
 import { v4 as uuidv4 } from "uuid"
 
 /**
@@ -353,4 +355,39 @@ function setArrayProperty(a: any[], index: number, prop: string, value: any): an
  */
 export function equalFold(s: string, t: string): boolean {
 	return s.toLowerCase() === t.toLowerCase()
+}
+
+export function getHitLocations(body: HitLocationTable): HitLocation[] {
+	/**
+	 *
+	 * @param b
+	 */
+	function updateRollRanges(b: HitLocationTable) {
+		let start = new DiceGURPS(b.roll).minimum(false)
+		for (const i of b.locations) {
+			start = updateRollRange(i, start)
+		}
+	}
+	/**
+	 *
+	 * @param h
+	 * @param start
+	 */
+	function updateRollRange(h: HitLocation, start: number): number {
+		h.calc ??= { roll_range: "", dr: {} }
+		h.slots ??= 0
+		if (h.slots === 0) h.calc.roll_range = "-"
+		else if (h.slots === 1) h.calc.roll_range = start.toString()
+		else {
+			h.calc.roll_range = `${start}-${start + h.slots - 1}`
+		}
+		if (h.sub_table) {
+			updateRollRanges(h.sub_table)
+		}
+		return start + h.slots
+	}
+
+	if (!body) return []
+	updateRollRanges(body)
+	return body.locations
 }

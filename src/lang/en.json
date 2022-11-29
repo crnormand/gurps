@@ -276,7 +276,8 @@
 				},
 				"block_layout": {
 					"title": "Block Layout"
-				}
+				},
+				"easy_update": "Easy Update"
 			},
 			"points": {
 				"title": "Points",
@@ -473,6 +474,8 @@
 		},
 		"resource_tracker_def": {
 			"id": "ID",
+			"alias": "Alias",
+			"pdf": "Reference",
 			"name": "Name",
 			"tracker_base": "Base Value",
 			"max": "Max",
@@ -791,6 +794,7 @@
 			}
 		},
 		"field_prefix": {
+			"attribute": "to {att}",
 			"tech_level": "When the Tech Level",
 			"name": "whose name",
 			"combined_with": "combined with",
