@@ -231,7 +231,8 @@
 					"file": "Choose File",
 					"title": "Import",
 					"note": "Select a file exported from GCS.<br><b>This import will overwrite the data for {name}</b>",
-					"warning": "<b>NOTE:</b> This action cannot be un-done."
+					"warning": "<b>NOTE:</b> This action cannot be un-done.",
+					"success": "Successfully updated {actor} to the new Character model."
 				},
 				"sheet_settings": {
 					"button": "Sheet Settings"

@@ -82,7 +82,6 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/static_character/config/sheet-settings",
 		"actor/static_character/config/resource-trackers",
 
-
 		"actor/character/sections/error",
 		"actor/drag-image",
 
