@@ -357,6 +357,10 @@ export function equalFold(s: string, t: string): boolean {
 	return s.toLowerCase() === t.toLowerCase()
 }
 
+/**
+ *
+ * @param body
+ */
 export function getHitLocations(body: HitLocationTable): HitLocation[] {
 	/**
 	 *

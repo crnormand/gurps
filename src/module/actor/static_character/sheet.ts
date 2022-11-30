@@ -232,6 +232,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		// 	left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
 		// }).render(true)
 	}
+
+	async close(options?: FormApplication.CloseOptions | undefined): Promise<void> {
+		await this.config?.close(options)
+		return super.close(options)
+	}
 }
 
 export interface StaticCharacterSheetGURPS extends ActorSheetGURPS {

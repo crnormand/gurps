@@ -1,5 +1,8 @@
+import { ActorType } from "@actor/base/data"
+import { CharacterGURPS } from "@actor/character"
+import { CharacterImporter } from "@actor/character/import"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
-import { i18n_f } from "@util"
+import { i18n, i18n_f } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticResourceTracker, StaticThresholdComparison, StaticThresholdOperator } from "./data"
 import { StaticCharacterImporter } from "./import"
@@ -82,17 +85,18 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-						(this.file = {
-							text: text,
-							name: files[0].name,
-							path: files[0].path,
-						})
+							(this.file = {
+								text: text,
+								name: files[0].name,
+								path: files[0].path,
+							})
 					)
 				}
 				this.render()
 			})
 		}
 		html.find(".import-confirm").on("click", event => this._import(event))
+		html.find(".easy-update").on("click", event => this._easyUpdate(event))
 	}
 
 	protected async _import(event: JQuery.ClickEvent) {
@@ -129,12 +133,47 @@ export class StaticCharacterSheetConfig extends FormApplication {
 		request.send(null)
 	}
 
+	protected async _easyUpdate(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		console.log("updating character:", this.object.name)
+		const import_path = this.object.system.additionalresources.importpath
+		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)
+		const file_path = import_name?.[1].replace(/\\/g, "/") || this.object.system.additionalresources.importpath
+		const request = new XMLHttpRequest()
+		request.open("GET", file_path)
+
+		const new_actor = (await Actor.create(
+			{
+				name: this.object.name!,
+				type: ActorType.Character,
+				img: this.object.img,
+			},
+			{ promptImport: false } as any
+		)) as CharacterGURPS
+		await new_actor?.update({ ownership: (this.object as any).ownership })
+		new Promise(resolve => {
+			request.onload = () => {
+				if (request.status === 200) {
+					const text = request.response
+					CharacterImporter.import(new_actor, {
+						text: text,
+						name: file_path,
+						path: import_path,
+					})
+				}
+				resolve(this)
+			}
+		})
+		request.send(null)
+		await this.object.delete()
+		await new_actor.sheet?.render(true)
+		return ui.notifications?.info(i18n_f("gurps.character.settings.import.success", { actor: this.object.name! }))
+	}
+
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const type:
-			| "resource_trackers"
-			| "tracker_thresholds" = $(event.currentTarget).data("type")
+		const type: "resource_trackers" | "tracker_thresholds" = $(event.currentTarget).data("type")
 		const resource_trackers = Object.values(this.resource_trackers)
 		let updated_trackers: any = {}
 		switch (type) {
@@ -155,9 +194,13 @@ export class StaticCharacterSheetConfig extends FormApplication {
 
 					thresholds: [],
 				})
-				updated_trackers = resource_trackers.reduce((a, v, k) => ({
-					...a, [String(k).padStart(5, "0")]: v
-				}), {})
+				updated_trackers = resource_trackers.reduce(
+					(a, v, k) => ({
+						...a,
+						[String(k).padStart(5, "0")]: v,
+					}),
+					{}
+				)
 				await this.object.update({ "system.additionalresources.tracker": updated_trackers })
 				return this.render()
 			case "tracker_thresholds":
@@ -167,11 +210,15 @@ export class StaticCharacterSheetConfig extends FormApplication {
 					comparison: StaticThresholdComparison.LessThan,
 					operator: StaticThresholdOperator.Add,
 					value: 0,
-					condition: ""
+					condition: "",
 				})
-				updated_trackers = resource_trackers.reduce((a, v, k) => ({
-					...a, [String(k).padStart(5, "0")]: v
-				}), {})
+				updated_trackers = resource_trackers.reduce(
+					(a, v, k) => ({
+						...a,
+						[String(k).padStart(5, "0")]: v,
+					}),
+					{}
+				)
 				await this.object.update({ "system.additionalresources.tracker": updated_trackers })
 				return this.render()
 		}

@@ -17,8 +17,14 @@ export class ItemSheetGURPS extends ItemSheet {
 		const itemData = this.object.toObject(false)
 		const attributes: Record<string, string> = {}
 		const locations: Record<string, string> = {}
-		const default_attributes = (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`) as AttributeDefObj[]
-		const default_locations = (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`) as HitLocationTable
+		const default_attributes = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
+		) as AttributeDefObj[]
+		const default_locations = (game as Game).settings.get(
+			SYSTEM_NAME,
+			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
+		) as HitLocationTable
 		const actor = this.item.actor as unknown as CharacterGURPS
 		if (actor) {
 			actor.attributes.forEach(e => {
@@ -97,11 +103,11 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
 		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
 		html.find("textarea")
-			.each(function() {
+			.each(function () {
 				const height = this.scrollHeight - 2
 				this.setAttribute("style", `height:${height}px;`)
 			})
-			.on("input", function() {
+			.on("input", function () {
 				const height = this.scrollHeight
 				// Const height = this.value.split("\r").length * 24;
 				this.style.height = "0"

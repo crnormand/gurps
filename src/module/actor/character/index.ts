@@ -48,14 +48,7 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import {
-	CharacterSettings,
-	CharacterSource,
-	CharacterSystemData,
-	Encumbrance,
-	HitLocation,
-	HitLocationTable,
-} from "./data"
+import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
@@ -81,7 +74,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	SizeModBonus = 0
 
-	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
+	protected _onCreate(data: any, options: DocumentModificationOptions | any, userId: string): void {
 		const default_settings = (game as Game).settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
@@ -170,7 +163,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
-		this.promptImport()
+		if (options.promptImport) {
+			this.promptImport()
+		}
 	}
 
 	override update(

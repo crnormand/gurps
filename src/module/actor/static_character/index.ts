@@ -19,7 +19,7 @@ import {
 } from "./data"
 import { StaticCharacterImporter } from "./import"
 
-Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			// @ts-ignore until v10 types
@@ -28,9 +28,11 @@ Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
 })
 
 class StaticCharacterGURPS extends BaseActorGURPS {
-
-	update(data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined, context?: (DocumentModificationContext & MergeObjectOptions) | undefined): Promise<this | undefined> {
-		console.log(data)
+	update(
+		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
+		context?: (DocumentModificationContext & MergeObjectOptions) | undefined
+	): Promise<this | undefined> {
+		// Console.log(data)
 		return super.update(data, context)
 	}
 
@@ -43,6 +45,14 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// Getters
 	get editing() {
 		return this.system.editing
+	}
+
+	get importData(): { name: string; path: string; last_import: string } {
+		return {
+			name: this.system.additionalresources.importname,
+			path: this.system.additionalresources.importpath,
+			last_import: this.system.lastImport,
+		}
 	}
 
 	get attributes(): Map<string, any> {
@@ -849,7 +859,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		newobj[objkey] = oldotf
 		let notes
 		let newotf
-			;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
+		;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
 		if (newotf) newobj[objkey] = newotf
 		newobj.notes = notes?.trim()
 	}
