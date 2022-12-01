@@ -1,8 +1,8 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { SYSTEM_NAME } from "@module/settings"
-import { i18n, RollGURPS, Static } from "@util"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { i18n, i18n_f, RollGURPS, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
@@ -192,14 +192,6 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-					edit_button,
-					{
-						label: "",
-						// Label: "Import",
-						class: "import",
-						icon: "fas fa-file-import",
-						onclick: event => this._onFileImport(event),
-					},
 					{
 						label: "",
 						class: "gmenu",
@@ -208,11 +200,19 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 					},
 			  ]
 			: []
-		const all_buttons = [...buttons, ...super._getHeaderButtons()]
-		// All_buttons.at(-1)!.label = ""
-		// all_buttons.at(-1)!.icon = "gcs-circled-x"
+		const show_import = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
+		const import_path = this.actor.system.additionalresources.importpath
+		let label = i18n("gurps.character.header.import")
+		if (import_path) label = i18n("gurps.character.header.reimport")
+		if (show_import)
+			buttons.unshift({
+				label: label,
+				class: "import",
+				icon: "fas fa-file-import",
+				onclick: event => this._onFileImport(event),
+			})
+		const all_buttons = [edit_button, ...buttons, ...super._getHeaderButtons()]
 		return all_buttons
-		// Return buttons.concat(super._getHeaderButtons());
 	}
 
 	async _onFileImport(event: any) {

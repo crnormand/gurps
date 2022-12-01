@@ -19,6 +19,7 @@ export enum SETTINGS {
 	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
 	MODIFIER_MODE = "modifier_mode",
 	COLORS = "colors",
+	SHOW_IMPORT_BUTTON = "show_import_button",
 	DEFAULT_ATTRIBUTES = "default_attributes",
 	DEFAULT_RESOURCE_TRACKERS = "default_resource_trackers",
 	DEFAULT_HIT_LOCATIONS = "default_hit_locations",
@@ -113,6 +114,15 @@ export function registerSettings(): void {
 		},
 		default: "combined",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON, {
+		name: "gurps.settings.show_import_button.name",
+		hint: "gurps.settings.show_import_button.hint",
+		scope: "client",
+		config: true,
+		type: Boolean,
+		default: true,
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG, {

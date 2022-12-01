@@ -41,8 +41,8 @@ export class TokenModifierControl {
 
 	_registerSetting() {
 		;(game as Game).settings.register(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS, {
-			name: i18n("gurps.settings.show_token_modifiers.title"),
-			hint: i18n("gurps.settings.show_token_modifiers.hint"),
+			name: "gurps.settings.show_token_modifiers.name",
+			hint: "gurps.settings.show_token_modifiers.hint",
 			scope: "client",
 			config: true,
 			type: Boolean,
