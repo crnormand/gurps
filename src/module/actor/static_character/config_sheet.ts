@@ -2,7 +2,7 @@ import { ActorType } from "@actor/base/data"
 import { CharacterGURPS } from "@actor/character"
 import { CharacterImporter } from "@actor/character/import"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
-import { i18n, i18n_f } from "@util"
+import { i18n_f } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticResourceTracker, StaticThresholdComparison, StaticThresholdOperator } from "./data"
 import { StaticCharacterImporter } from "./import"
@@ -47,6 +47,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".quick-import").on("click", event => this._reimport(event))
 		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
@@ -207,10 +208,10 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				resource_trackers[parseInt($(event.currentTarget).data("id"))].thresholds ??= []
 				resource_trackers[parseInt($(event.currentTarget).data("id"))].thresholds!.push({
 					color: "#ffffff",
-					comparison: StaticThresholdComparison.LessThan,
-					operator: StaticThresholdOperator.Add,
+					comparison: StaticThresholdComparison.GreaterThan,
+					operator: StaticThresholdOperator.Multiply,
 					value: 0,
-					condition: "",
+					condition: "Normal",
 				})
 				updated_trackers = resource_trackers.reduce(
 					(a, v, k) => ({
@@ -249,6 +250,11 @@ export class StaticCharacterSheetConfig extends FormApplication {
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
+		Object.keys(formData).forEach(k => {
+			formData[k.replace("resource_trackers", "system.additionalresources.tracker")] = formData[k]
+			delete formData[k]
+		})
+		await this.object.update(formData)
 		return this.render()
 	}
 }
