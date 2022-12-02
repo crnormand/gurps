@@ -29,7 +29,7 @@ export interface StaticCharacterSource
 }
 export interface StaticCharacterDataGURPS
 	extends Omit<StaticCharacterSource, "effects" | "flags" | "items" | "token">,
-		StaticCharacterSystemData {
+	StaticCharacterSystemData {
 	readonly type: StaticCharacterSource["type"]
 	data: StaticCharacterSystemData
 	flags: StaticCharacterFlags
@@ -162,6 +162,7 @@ export interface StaticResourceTracker {
 	points: number
 	value: number
 	thresholds: StaticResourceThreshold[]
+	index?: string
 }
 
 export interface StaticResourceThreshold {

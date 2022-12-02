@@ -2,8 +2,6 @@
 
 ## In Progress
 
--   add support for static resource trackers
-    -   implement UI
 -   Convert the modifier bucket over
     -   add search function, same as mod prompt
     -   css
@@ -57,6 +55,7 @@
 
 ## 1.1.0 and beyond
 
+-   roll skills based on other attributes
 -   add way to hide specific result, target, and mods of roll but just show success/failure/crit
 -   reimporting a character over another one doesn't visibly change portrait until refresh because it is stored in cache. fix?
 -   Global Foundry styling

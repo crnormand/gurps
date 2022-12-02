@@ -2,7 +2,7 @@ import { ActorType } from "@actor/base/data"
 import { CharacterGURPS } from "@actor/character"
 import { CharacterImporter } from "@actor/character/import"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
-import { i18n_f } from "@util"
+import { i18n_f, prepareFormData } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticResourceTracker, StaticThresholdComparison, StaticThresholdOperator } from "./data"
 import { StaticCharacterImporter } from "./import"
@@ -14,20 +14,21 @@ export class StaticCharacterSheetConfig extends FormApplication {
 
 	file?: { text: string; name: string; path: string }
 
-	resource_trackers: { [key: string]: StaticResourceTracker }
+	resource_trackers: StaticResourceTracker[]
 
 	constructor(object: StaticCharacterGURPS, options?: any) {
 		super(object, options)
 		this.object = object
 		this.filename = ""
-		this.resource_trackers = this.object.system.additionalresources.tracker
+		this.resource_trackers = this.object.trackers
 	}
 
 	static get defaultOptions(): FormApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			classes: ["form", "character-config", "gurps"],
 			template: `systems/${SYSTEM_NAME}/templates/actor/static_character/config/config.hbs`,
-			width: 450,
+			width: 560,
+			height: 560,
 			resizable: true,
 			submitOnChange: true,
 			submitOnClose: true,
@@ -39,6 +40,8 @@ export class StaticCharacterSheetConfig extends FormApplication {
 					initital: "sheet-settings",
 				},
 			],
+			dragDrop: [{ dragSelector: ".item-list .item .controls .drag", dropSelector: null }],
+			scrollY: [".item-list", ".tab"],
 		})
 	}
 
@@ -48,7 +51,9 @@ export class StaticCharacterSheetConfig extends FormApplication {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		html.find(".item").on("dragover", event => this._onDragItem(event))
 		html.find(".add").on("click", event => this._onAddItem(event))
+		html.find(".delete").on("click", event => this._onDeleteItem(event))
 		html.find(".quick-import").on("click", event => this._reimport(event))
 		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
 			html.find("input[type='file']").on("click", event => {
@@ -86,11 +91,11 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-							(this.file = {
-								text: text,
-								name: files[0].name,
-								path: files[0].path,
-							})
+						(this.file = {
+							text: text,
+							name: files[0].name,
+							path: files[0].path,
+						})
 					)
 				}
 				this.render()
@@ -198,15 +203,17 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				updated_trackers = resource_trackers.reduce(
 					(a, v, k) => ({
 						...a,
-						[String(k).padStart(5, "0")]: v,
+						// [String(k).padStart(5, "0")]: v,
+						[k]: v,
 					}),
 					{}
 				)
+				await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
 				await this.object.update({ "system.additionalresources.tracker": updated_trackers })
 				return this.render()
 			case "tracker_thresholds":
-				resource_trackers[parseInt($(event.currentTarget).data("id"))].thresholds ??= []
-				resource_trackers[parseInt($(event.currentTarget).data("id"))].thresholds!.push({
+				resource_trackers[parseInt($(event.currentTarget).data("index"))].thresholds ??= []
+				resource_trackers[parseInt($(event.currentTarget).data("index"))].thresholds!.push({
 					color: "#ffffff",
 					comparison: StaticThresholdComparison.GreaterThan,
 					operator: StaticThresholdOperator.Multiply,
@@ -216,18 +223,125 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				updated_trackers = resource_trackers.reduce(
 					(a, v, k) => ({
 						...a,
-						[String(k).padStart(5, "0")]: v,
+						// [String(k).padStart(5, "0")]: v,
+						[k]: v,
 					}),
 					{}
 				)
+				await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
 				await this.object.update({ "system.additionalresources.tracker": updated_trackers })
 				return this.render()
 		}
 	}
 
+	private async _onDeleteItem(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		event.stopPropagation()
+		let updated_trackers
+		const type:
+			| "resource_trackers"
+			| "tracker_thresholds" = $(event.currentTarget).data("type")
+		const index = Number($(event.currentTarget).data("index")) || 0
+		const parent_index = Number($(event.currentTarget).data("pindex")) || 0
+		switch (type) {
+			case "resource_trackers":
+				this.resource_trackers.splice(index, 1)
+				updated_trackers = this.resource_trackers.reduce(
+					(a, v, k) => ({
+						...a,
+						// [String(k).padStart(5, "0")]: v,
+						[k]: v,
+					}),
+					{}
+				)
+				await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
+				await this.object.update({ "system.additionalresources.tracker": updated_trackers })
+				return this.render()
+			case "tracker_thresholds":
+				console.log(this.resource_trackers, parent_index, index)
+				this.resource_trackers[parent_index].thresholds?.splice(index, 1)
+				updated_trackers = this.resource_trackers.reduce(
+					(a, v, k) => ({
+						...a,
+						// [String(k).padStart(5, "0")]: v,
+						[k]: v,
+					}),
+					{}
+				)
+				await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
+				await this.object.update({ "system.additionalresources.tracker": this.resource_trackers })
+				return this.render()
+		}
+	}
+
+	async _onDragStart(event: DragEvent) {
+		// TODO:update
+		const item = $(event.currentTarget!)
+		const type: "resource_trackers" | "tracker_thresholds" = item.data("type")
+		const index = Number(item.data("index"))
+		const parent_index = Number(item.data("pindex")) || 0
+		event.dataTransfer?.setData(
+			"text/plain",
+			JSON.stringify({
+				type: type,
+				index: index,
+				parent_index: parent_index,
+			})
+		)
+			; (event as any).dragType = type
+	}
+
+	protected _onDragItem(event: JQuery.DragOverEvent): void {
+		const element = $(event.currentTarget!)
+		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
+		element.siblings(".item").removeClass("border-top").removeClass("border-bottom")
+		if (heightAcross > 0.5) {
+			element.removeClass("border-top")
+			element.addClass("border-bottom")
+		} else {
+			element.removeClass("border-bottom")
+			element.addClass("border-top")
+		}
+	}
+
+	protected async _onDrop(event: DragEvent): Promise<unknown> {
+		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
+		const index = Number(dragData.index)
+		let element = $(event.target!)
+		if (!element.hasClass("item")) element = element.parent(".item")
+
+		const target_index = element.data("index")
+		const above = element.hasClass("border-top")
+		if (index === target_index) return this.render()
+		if (above && index === target_index - 1) return this.render()
+		if (!above && index === target_index + 1) return this.render()
+
+		const container = this.resource_trackers
+
+		let item
+		if (dragData.type.includes("_thresholds")) {
+			item = container[dragData.parent_index].thresholds.splice(dragData.index, 1)[0]
+			container[dragData.parent_index].thresholds.splice(target_index, 0, item as any)
+		} else {
+			item = container.splice(dragData.index, 1)[0]
+			container.splice(target_index, 0, item as any)
+		}
+
+		const updated_trackers = container.reduce(
+			(a, v, k) => ({
+				...a,
+				// [String(k).padStart(5, "0")]: v,
+				[k]: v,
+			}),
+			{}
+		)
+		await this.object.update({ "system.additionalresources.tracker": updated_trackers })
+		return this.render()
+	}
+
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {
 		const actor = this.object
-		this.resource_trackers = this.object.system.additionalresources.tracker
+		this.resource_trackers = this.object.trackers
 		const resourceTrackers = actor.trackers
 		let deprecation: string = this.object.getFlag(SYSTEM_NAME, "deprecation_acknowledged")
 			? "acknowledged"
@@ -250,10 +364,9 @@ export class StaticCharacterSheetConfig extends FormApplication {
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
-		Object.keys(formData).forEach(k => {
-			formData[k.replace("resource_trackers", "system.additionalresources.tracker")] = formData[k]
-			delete formData[k]
-		})
+		formData = prepareFormData(event, formData, this.object)
+		console.log(formData)
+		await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
 		await this.object.update(formData)
 		return this.render()
 	}

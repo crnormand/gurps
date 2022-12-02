@@ -323,6 +323,16 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
 		} else if (aKey.startsWith("array.")) {
 			formData[aKey.replace("array.", "")] = formData[aKey]
 			delete formData[aKey]
+			// HACK: stupid exception for static resource trackers only. remove in 2.0
+		} else if (aKey.startsWith("sarray.") && aKey.match(/\d/)) {
+			const key = aKey.replace(/^sarray./g, "")
+			const arrayKey = key.split(/thresholds.\d+./)[0] + "thresholds"
+			const array: any[] = getProperty(object, arrayKey)
+			const index = parseInt(key.match(/thresholds.(\d+)./)![1])
+			const prop = key.replace(new RegExp(`^${arrayKey}.${index}.`), "")
+			setArrayProperty(array, index, prop, formData[aKey])
+			formData[arrayKey] = array
+			delete formData[aKey]
 		}
 	}
 	return formData
