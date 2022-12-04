@@ -48,11 +48,12 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
+import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
 import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
+import { HitLocation } from "./hit_location"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
