@@ -7,44 +7,53 @@
 </div>
 <div class="item-list">
 	{{#each resourceTrackers}}
-		<div class="item" data-id="{{this.id}}" data-index="{{@index}}" data-type="resource_trackers">
+		<div class="item" data-id="{{this.id}}" data-index="{{this.index}}" data-type="resource_trackers">
 			<div class="controls">
 				<a class="gcs-grip drag" data-index="{{@index}}" data-type="resource_trackers"></a>
 				<a class="gcs-trash delete" data-index="{{@index}}" data-type="resource_trackers"></a>
 				<a class="gcs-circled-add add" data-id="{{@index}}" data-type="tracker_thresholds"></a>
 			</div>
 			<div class="fieldblock">
-				<div class="label">{{localize "gurps.resource_tracker_def.id"}}</div>
-				<div class="field">
-					<input
-						type="text"
-						name="array.system.settings.resource_trackers.{{@index}}.id"
-						value="{{this.id}}"
-						data-dtype="String"
-					/>
-				</div>
 				<div class="label">{{localize "gurps.resource_tracker_def.name"}}</div>
 				<div class="field">
 					<input
 						type="text"
-						name="array.system.settings.resource_trackers.{{@index}}.name"
+						name="resource_trackers.{{this.index}}.name"
 						value="{{this.name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.alias"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="resource_trackers.{{this.index}}.alias"
+						value="{{this.alias}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.pdf"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="resource_trackers.{{this.index}}.pdf"
+						value="{{this.pdf}}"
 						data-dtype="String"
 					/>
 				</div>
 				<div class="label">{{localize "gurps.resource_tracker_def.max"}}</div>
 				<div class="field no-stretch">
 					<input
-						name="array.system.settings.resource_trackers.{{@index}}.max"
 						type="text"
-						data-dtype="Number"
+						name="resource_trackers.{{this.index}}.max"
 						value="{{this.max}}"
+						data-dtype="String"
 					/>
 					<label class="label checkbox-label">
 						<input
 							type="checkbox"
-							name="array.system.settings.resource_trackers.{{@index}}.isMaxEnforced"
-							{{checked this.isMaxEnforced}}
+							name="resource_trackers.{{this.index}}.isMaxEnforced"
+							{{checked this.isMinEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.max_enforced"}}
 					</label>
@@ -52,15 +61,15 @@
 				<div class="label">{{localize "gurps.resource_tracker_def.min"}}</div>
 				<div class="field no-stretch">
 					<input
-						name="array.system.settings.resource_trackers.{{@index}}.min"
 						type="text"
-						data-dtype="Number"
+						name="resource_trackers.{{this.index}}.min"
 						value="{{this.min}}"
+						data-dtype="String"
 					/>
 					<label class="label checkbox-label">
 						<input
 							type="checkbox"
-							name="array.system.settings.resource_trackers.{{@index}}.isMinEnforced"
+							name="resource_trackers.{{this.index}}.isMinEnforced"
 							{{checked this.isMinEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.min_enforced"}}
@@ -69,7 +78,7 @@
 				{{#if this.thresholds}}
 				<div class="item-list thresholds">
 					{{#each this.thresholds}}
-					{{>actor/character/config/threshold id=@../index parent="array.system.settings.resource_trackers"}}
+					{{>actor/static_character/config/threshold id=../this.index parent="resource_trackers"}}
 					{{/each}}
 				</div>
 				{{/if}}

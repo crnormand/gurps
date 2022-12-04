@@ -1,13 +1,24 @@
 <div class="header">{{localize "gurps.character.resource_trackers.title"}}</div>
 <div class="fieldblock6">
 	{{#each document.trackers}}
-	<div class="points">[{{this.points}}]</div>
-	{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat
-	"system.additionalresources.tracker." @key ".value")
-	data=this.value type="Number"}}
-	{{>sections/input-text after=this.name field="field" data=this.max type="Number" class="disabled"}}
-	<div class="label tooltip">
-		[{{localize (resourceCondition this)}}]
-	</div>
+		<div class="points">{{this.pdf}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="system.additionalresources.tracker.{{@key}}.value"
+				value={{this.value}}
+				data-type="Number"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.pool_of"}}</div>
+		<div class="field">
+			<input class="text" data-dtype="Number" value="{{this.max}}" disabled />
+		</div>
+		<div class="label">{{this.name}}</div>
+		<div class="label tooltip">
+			{{#if this.currentThreshold.condition}}
+				[{{this.currentThreshold.condition}}]
+			{{/if}}
+		</div>
 	{{/each}}
 </div>

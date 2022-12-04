@@ -1,0 +1,44 @@
+<div class="item" data-index="{{@index}}" data-type="threshold">
+	<div class="controls">
+		<a class="gcs-grip drag" data-pindex="{{id}}" data-index="{{@index}}" data-type="tracker_thresholds"></a>
+		<a class="gcs-trash delete" data-pindex="{{id}}" data-index="{{@index}}" data-type="tracker_thresholds"></a>
+	</div>
+	<div class="fieldblock">
+		<div class="label">{{localize "gurps.attribute_def.state"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{parent}}.{{id}}.thresholds.{{@index}}.state"
+				value="{{this.condition}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.attribute_def.expression"}}</div>
+		<div class="field no-stretch">
+			<select name="{{parent}}.{{id}}.thresholds.{{@index}}.comparison" data-dtype="String">
+				{{#select this.type}}
+					{{#each @root.config.select.srt_comparison as |v k|}}
+						<option value="{{k}}">
+							{{localize v}}
+						</option>
+					{{/each}}
+				{{/select}}
+			</select>
+			<select name="{{parent}}.{{id}}.thresholds.{{@index}}.operator" data-dtype="String">
+				{{#select this.type}}
+					{{#each @root.config.select.srt_operator as |v k|}}
+						<option value="{{k}}">
+							{{localize v}}
+						</option>
+					{{/each}}
+				{{/select}}
+			</select>
+			<input
+				type="text"
+				name="{{parent}}.{{id}}.thresholds.{{@index}}.value"
+				value="{{this.value}}"
+				data-dtype="String"
+			/>
+		</div>
+	</div>
+</div>

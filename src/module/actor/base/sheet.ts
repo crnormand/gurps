@@ -2,6 +2,7 @@ import { ActorGURPS, BaseActorGURPS } from "@actor"
 import { ContainerGURPS, ItemGURPS } from "@item"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
+import DamageChat from "@module/damage_calculator/damage_chat_message"
 import { SYSTEM_NAME } from "@module/settings"
 
 export class ActorSheetGURPS extends ActorSheet {
@@ -15,6 +16,14 @@ export class ActorSheetGURPS extends ActorSheet {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+	}
+
+	protected override _onDrop(event: DragEvent): void {
+		if (!event?.dataTransfer) return
+
+		let dragData = JSON.parse(event?.dataTransfer.getData("text/plain"))
+
+		if (dragData.type === DamageChat.TYPE) this.actor.handleDamageDrop(dragData.payload)
 	}
 
 	// DragData handling

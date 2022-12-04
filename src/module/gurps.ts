@@ -69,6 +69,7 @@ import { ColorSettings } from "./settings/colors"
 import { ApplyDamageDialog } from "./damage_calculator/apply_damage_dlg"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
+import DamageChat from "./damage_calculator/damage_chat_message"
 
 Error.stackTraceLimit = Infinity
 
@@ -245,14 +246,7 @@ Hooks.once("init", async () => {
 		label: i18n("gurps.system.sheet.pdf_edit"),
 	})
 
-	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
-		if (message.startsWith("/dmg ")) {
-			let parts = message.split(" ").slice(1, message.length)
-			ApplyDamageDialog.open(parts[0], parts[1])
-			return false
-		}
-		return true
-	})
+	Hooks.on("renderChatMessage", DamageChat.renderChatMessage)
 })
 
 // Setup system
@@ -286,15 +280,6 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
-
-	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
-		if (message.startsWith("/dmg ")) {
-			let parts = message.split(" ").slice(1, message.length)
-			ApplyDamageDialog.open(parts[0], parts[1])
-			return false
-		}
-		return true
-	})
 })
 
 // Add any additional hooks if necessary

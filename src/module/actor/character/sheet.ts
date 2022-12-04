@@ -448,6 +448,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		})
 		this.config.render(true)
 	}
+
+	async close(options?: FormApplication.CloseOptions | undefined): Promise<void> {
+		await this.config?.close(options)
+		return super.close(options)
+	}
 }
 
 export interface CharacterSheetGURPS extends ActorSheetGURPS {

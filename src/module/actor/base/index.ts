@@ -7,8 +7,13 @@ import Document, {
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
 import { SYSTEM_NAME } from "@module/settings"
-import { ContainerGURPS, ItemGURPS } from "@item"
+import { ContainerGURPS, ItemGURPS, TraitContainerGURPS, TraitGURPS, TraitModifierGURPS } from "@item"
 import { ActorFlags, ActorSystemData, BaseActorSourceGURPS } from "./data"
+import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
+import { DamageRoll, DamageRollAdapter } from "@module/damage_calculator/damage_roll"
+import { Attribute } from "@module/attribute"
+import { DamageTarget, HitPointsCalc, TargetTrait, TargetTraitModifier } from "@module/damage_calculator/damage_target"
+import { HitLocationTable } from "@actor/character/hit_location"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -104,12 +109,140 @@ class BaseActorGURPS extends Actor {
 			})
 		}
 	}
+
+	handleDamageDrop(payload: any): void {
+		let roll: DamageRoll = new DamageRollAdapter(payload)
+		let target: DamageTarget = this.createDamageTargetAdapter()
+		new ApplyDamageDialog(roll, target).render(true)
+	}
+
+	createDamageTargetAdapter(): DamageTarget {
+		throw new DamageTargetActor(this)
+	}
+}
+
+/**
+ * Adapt a BaseActorGURPS to the DamageTarget interface expected by the Damage Calculator.
+ */
+class DamageTargetActor implements DamageTarget {
+	static DamageReduction = "Damage Reduction"
+
+	private actor: BaseActorGURPS
+
+	constructor(actor: BaseActorGURPS) {
+		this.actor = actor
+	}
+
+	get name(): string {
+		return this.actor.name ?? ""
+	}
+
+	get ST(): number {
+		// @ts-ignore
+		return this.actor.attributes.get("st")?.calc.value
+	}
+
+	get hitPoints(): HitPointsCalc {
+		// @ts-ignore
+		return this.actor.attributes.get("hp")?.calc
+	}
+
+	get hitLocationTable(): HitLocationTable {
+		// @ts-ignore
+		return this.actor.system.settings.body_type
+	}
+
+	/**
+	 * This is where we would add special handling to look for traits under different names.
+	 * @param name
+	 */
+	getTrait(name: string): TargetTrait | undefined {
+		if (this.actor instanceof BaseActorGURPS) {
+			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
+			let found = traits.find(it => it.name === name)
+			return new TraitAdapter(found as TraitGURPS)
+		}
+	}
+
+	hasTrait(name: string): boolean {
+		return !!this.getTrait(name)
+	}
+
+	get isUnliving(): boolean {
+		// Try "Injury Tolerance (Unliving)" and "Unliving"
+		if (this.hasTrait("Unliving")) return true
+		if (!this.hasTrait("Injury Tolerance")) return false
+		let trait = this.getTrait("Injury Tolerance")
+		return !!trait?.getModifier("Unliving")
+	}
+
+	get isHomogenous(): boolean {
+		if (this.hasTrait("Homogenous")) return true
+		if (!this.hasTrait("Injury Tolerance")) return false
+		let trait = this.getTrait("Injury Tolerance")
+		return !!trait?.getModifier("Homogenous")
+	}
+
+	get isDiffuse(): boolean {
+		if (this.hasTrait("Diffuse")) return true
+		if (!this.hasTrait("Injury Tolerance")) return false
+		let trait = this.getTrait("Injury Tolerance")
+		return !!trait?.getModifier("Diffuse")
+	}
+}
+
+/**
+ * Adapt a TraitGURPS to the TargetTrait interface expected by the Damage Calculator.
+ */
+class TraitAdapter implements TargetTrait {
+	private trait: TraitGURPS
+
+	getModifier(name: string): TraitModifierAdapter | undefined {
+		return this.modifiers.find(it => it.name === name)
+	}
+
+	get levels() {
+		return this.trait.levels
+	}
+
+	get name() {
+		return this.trait.name
+	}
+
+	get modifiers(): TraitModifierAdapter[] {
+		return this.trait.modifiers.contents
+			.filter(it => it instanceof TraitModifierGURPS)
+			.map(it => new TraitModifierAdapter(it as TraitModifierGURPS))
+	}
+
+	constructor(trait: TraitGURPS) {
+		this.trait = trait
+	}
+}
+
+/**
+ * Adapt the TraitModifierGURPS to the interface expected by Damage calculator.
+ */
+class TraitModifierAdapter implements TargetTraitModifier {
+	private modifier: TraitModifierGURPS
+
+	get levels() {
+		return this.modifier.levels
+	}
+
+	name = ""
+
+	constructor(modifier: TraitModifierGURPS) {
+		this.modifier = modifier
+	}
 }
 
 interface BaseActorGURPS extends Actor {
 	// Readonly data: BaseActorDataGURPS;
 	noPrepare: boolean
 	deepItems: Collection<ItemGURPS>
+	attributes: Map<string, Attribute>
+	traits: Collection<TraitGURPS | TraitContainerGURPS>
 	// Temp
 	system: ActorSystemData
 	_source: BaseActorSourceGURPS

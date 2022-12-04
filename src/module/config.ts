@@ -1,5 +1,6 @@
 import { CharacterGURPS } from "@actor/character"
 import { StaticCharacterGURPS } from "@actor/static_character"
+import { StaticThresholdComparison, StaticThresholdOperator } from "@actor/static_character/data"
 import { AttributeBonus } from "@feature/attribute_bonus"
 import { ConditionalModifier } from "@feature/conditional_modifier"
 import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
@@ -405,6 +406,19 @@ const GURPSCONFIG: any = {
 			auto: "gurps.select.color_mode_preference.auto",
 			dark: "gurps.select.color_mode_preference.dark",
 			light: "gurps.select.color_mode_preference.light",
+		},
+		// Srt = static_resource_tracker
+		srt_comparison: {
+			[StaticThresholdComparison.LessThan]: "gurps.select.srt_comparison.less_than",
+			[StaticThresholdComparison.GreaterThan]: "gurps.select.srt_comparison.greater_than",
+			[StaticThresholdComparison.LessThanOrEqual]: "gurps.select.srt_comparison.less_than_or_equal",
+			[StaticThresholdComparison.GreaterThanOrEqual]: "gurps.select.srt_comparison.greater_than_or_equal",
+		},
+		srt_operator: {
+			[StaticThresholdOperator.Add]: "gurps.select.srt_operator.add",
+			[StaticThresholdOperator.Subtract]: "gurps.select.srt_operator.subtract",
+			[StaticThresholdOperator.Multiply]: "gurps.select.srt_operator.multiply",
+			[StaticThresholdOperator.Divide]: "gurps.select.srt_operator.divide",
 		},
 	},
 }

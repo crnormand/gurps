@@ -1,4 +1,6 @@
-import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "../module/data"
+import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
+import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "@module/data"
+import { DiceGURPS } from "@module/dice"
 import { v4 as uuidv4 } from "uuid"
 
 /**
@@ -356,12 +358,40 @@ export function equalFold(s: string, t: string): boolean {
 }
 
 /**
- * Prounounced "dee six if eye" Convert a GURPS dice roll to Foundry dice roll (e.g. 1d => 1d6, 2d-1 => 2d6-1)
- * @param {string} str
- * @param {string | null} flavor
- * @returns {string}
+ *
+ * @param body
  */
-export function d6ify(str: string, flavor = ""): string {
-  let w = str.replace(/d([^6])/g, `d6${flavor || ''}$1`) // Find 'd's without a 6 behind it, and add it.
-  return w.replace(/d$/g, `d6${flavor || ''}`) // and do the same for the end of the line.
+export function getHitLocations(body: HitLocationTable): HitLocation[] {
+	/**
+	 *
+	 * @param b
+	 */
+	function updateRollRanges(b: HitLocationTable) {
+		let start = new DiceGURPS(b.roll).minimum(false)
+		for (const i of b.locations) {
+			start = updateRollRange(i, start)
+		}
+	}
+	/**
+	 *
+	 * @param h
+	 * @param start
+	 */
+	function updateRollRange(h: HitLocation, start: number): number {
+		h.calc ??= { roll_range: "", dr: {} }
+		h.slots ??= 0
+		if (h.slots === 0) h.calc.roll_range = "-"
+		else if (h.slots === 1) h.calc.roll_range = start.toString()
+		else {
+			h.calc.roll_range = `${start}-${start + h.slots - 1}`
+		}
+		if (h.sub_table) {
+			updateRollRanges(h.sub_table)
+		}
+		return start + h.slots
+	}
+
+	if (!body) return []
+	updateRollRanges(body)
+	return body.locations
 }
