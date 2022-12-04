@@ -19,4 +19,19 @@ export default {
 			},
 		],
 	],
+	moduleNameMapper: {
+		"@assets/(.*)": "<rootDir>/src/assets/$1",
+		"@actor": "<rootDir>/src/module/actor/",
+		"@actor/(.*)": "<rootDir>/src/module/actor/$1",
+		"@item": "<rootDir>/src/module/item/",
+		"@item/(.*)": "<rootDir>/src/module/item/$1",
+		"@feature": "<rootDir>/src/module/feature/",
+		"@feature/(.*)": "<rootDir>/src/module/feature/$1",
+		"@prereq": "<rootDir>/src/module/prereq/",
+		"@prereq/(.*)": "<rootDir>/src/module/prereq/$1",
+		"@module/(.*)": "<rootDir>/src/module/$1",
+		"@scripts/(.*)": "<rootDir>/src/scripts/$1",
+		"@util/(.*)": "<rootDir>/src/util/$1",
+		"@util": "<rootDir>/src/util/",
+	}
 }
