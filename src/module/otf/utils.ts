@@ -1,5 +1,5 @@
-import { HitLocation } from "@module/actor/character/data"
-import { string } from "@util/fractions"
+import { HitLocation } from "../actor/character/data"
+import { string } from "../../util/fractions"
 import { OtFAction } from "./base"
 
 export function sanitizeOtF(str: string): string {

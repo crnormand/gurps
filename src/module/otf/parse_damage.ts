@@ -1,8 +1,8 @@
 import { ParsedOtF, OtFAction, OtFDamageAction, OptionalCheckParameters } from './base'
 import { sanitizeOtF, gspan } from './utils'
-import { d6ify } from "@util"
-import { StaticHitLocation } from "@module/actor/static_character/hit_location"
-import { GURPS } from "@module/gurps"
+import { d6ify } from "../../util/misc"
+import { StaticHitLocation } from "../actor/static_character/hit_location"
+import { GURPS } from "../gurps"
 
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].

@@ -1,4 +1,4 @@
-import { HitLocation } from "@module/actor/character/data"
+import { HitLocation } from "../actor/character/data"
 import { parseForRollOrDamage} from "./parse_damage"
 import { parselink } from "./parse_otf"
 import { ParsedOtF } from "./base"

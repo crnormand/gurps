@@ -1,4 +1,4 @@
-import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "@module/data"
+import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "../module/data"
 import { v4 as uuidv4 } from "uuid"
 
 /**
