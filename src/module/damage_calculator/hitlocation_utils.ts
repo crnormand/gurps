@@ -7,7 +7,7 @@ export const getHitLocation = function (table: HitLocationTable, location: strin
 
 export const getHitLocationDR = function (location: HitLocation | undefined, damageType: DamageType): number {
 	if (!location || !location.calc) return 0
-	return location.calc.dr[`${damageType}`].value ?? location.calc.dr.all.value
+	return location.calc.dr[`${damageType}`]?.value ?? location.calc.dr.all.value
 }
 
 export const isFlexibleArmor = function (location: HitLocation | undefined): boolean {
