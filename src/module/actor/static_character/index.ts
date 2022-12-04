@@ -2,6 +2,8 @@ import { BaseActorGURPS } from "@actor/base"
 // Import { ActorFlags } from "@actor/base/data"
 import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
+import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
+import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 // Import { RollModifier } from "@module/data"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n, newUUID, Static } from "@util"
@@ -26,6 +28,14 @@ Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 })
 
 class StaticCharacterGURPS extends BaseActorGURPS {
+	update(
+		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
+		context?: (DocumentModificationContext & MergeObjectOptions) | undefined
+	): Promise<this | undefined> {
+		// Console.log(data)
+		return super.update(data, context)
+	}
+
 	getOwners() {
 		return (game as Game).users?.contents.filter(
 			u => this.getUserLevel(u) ?? 0 >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
@@ -35,6 +45,14 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// Getters
 	get editing() {
 		return this.system.editing
+	}
+
+	get importData(): { name: string; path: string; last_import: string } {
+		return {
+			name: this.system.additionalresources.importname,
+			path: this.system.additionalresources.importpath,
+			last_import: this.system.lastImport,
+		}
 	}
 
 	get attributes(): Map<string, any> {
@@ -52,8 +70,13 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		return atts
 	}
 
-	get trackers(): { [key: string]: StaticResourceTracker } {
-		return this.system.additionalresources.tracker
+	get trackers(): Array<StaticResourceTracker & { index: string }> {
+		return Object.keys(this.system.additionalresources.tracker).map(k => {
+			const v = this.system.additionalresources.tracker[k]
+			return mergeObject(v, {
+				index: k,
+			})
+		})
 	}
 
 	override get sizeMod(): number {
@@ -771,46 +794,91 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	}
 
 	_openImportDialog() {
-		setTimeout(async () => {
-			new Dialog(
-				{
-					title: `Import character data for: ${this.name}`,
-					content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import.hbs`, {
-						name: `"${this.name}"`,
-					}),
-					buttons: {
-						import: {
-							icon: '<i class="fas fa-file-import"></i>',
-							label: "Import",
-							callback: html => {
-								const form = $(html).find("form")[0]
-								const files = form.data.files
-								if (!files.length) {
-									return ui.notifications?.error("You did not upload a data file!")
-								} else {
-									const file = files[0]
-									readTextFromFile(file).then(text =>
-										StaticCharacterImporter.import(this, {
-											text: text,
-											name: file.name,
-											path: file.path,
-										})
-									)
+		let file: any = null
+		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+			const filepicker = new FilePicker({
+				callback: (path: string) => {
+					const request = new XMLHttpRequest()
+					request.open("GET", path)
+					new Promise(resolve => {
+						request.onload = () => {
+							if (request.status == 200) {
+								const text = request.response
+								file = {
+									text: text,
+									name: path,
+									path: request.responseURL,
 								}
-							},
-						},
-						no: {
-							icon: '<i class="fas fa-times"></i>',
-							label: "Cancel",
-						},
-					},
-					default: "import",
+								StaticCharacterImporter.import(this, file)
+							}
+							resolve(this)
+						}
+					})
+					request.send(null)
 				},
-				{
-					width: 400,
+			})
+			filepicker.extensions = [".gcs", ".xml", ".gca5"]
+			filepicker.render(true)
+		} else {
+			const inputEl = document.createElement("input")
+			inputEl.type = "file"
+			$(inputEl).on("change", event => {
+				const rawFile = $(event.currentTarget).prop("files")[0]
+				file = {
+					text: "",
+					name: rawFile.name,
+					path: rawFile.path,
 				}
-			).render(true)
-		}, 200)
+				readTextFromFile(rawFile).then(text => {
+					StaticCharacterImporter.import(this, {
+						text: text,
+						name: rawFile.name,
+						path: rawFile.path,
+					})
+				})
+			})
+			$(inputEl).trigger("click")
+		}
+		// SetTimeout(async () => {
+		// 	new Dialog(
+		// 		{
+		// 			title: `Import character data for: ${this.name}`,
+		// 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import.hbs`, {
+		// 				name: `"${this.name}"`,
+		// 			}),
+		// 			buttons: {
+		// 				import: {
+		// 					icon: '<i class="fas fa-file-import"></i>',
+		// 					label: "Import",
+		// 					callback: html => {
+		// 						const form = $(html).find("form")[0]
+		// 						const files = form.data.files
+		// 						if (!files.length) {
+		// 							return ui.notifications?.error("You did not upload a data file!")
+		// 						} else {
+		// 							const file = files[0]
+		// 							readTextFromFile(file).then(text =>
+		// 								StaticCharacterImporter.import(this, {
+		// 									text: text,
+		// 									name: file.name,
+		// 									path: file.path,
+		// 								})
+		// 							)
+		// 						}
+		// 					},
+		// 				},
+		// 				no: {
+		// 					icon: '<i class="fas fa-times"></i>',
+		// 					label: "Cancel",
+		// 				},
+		// 			},
+		// 			default: "import",
+		// 		},
+		// 		{
+		// 			width: 400,
+		// 		}
+		// 	).render(true)
+		// }, 200)
 	}
 
 	_findElementIn(list: string, uuid: string, name = "", mode = "") {

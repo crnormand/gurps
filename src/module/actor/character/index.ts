@@ -40,6 +40,7 @@ import {
 	damageProgression,
 	floatingMul,
 	getCurrentTime,
+	getHitLocations,
 	i18n,
 	i18n_f,
 	newUUID,
@@ -47,14 +48,7 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import {
-	CharacterSettings,
-	CharacterSource,
-	CharacterSystemData,
-	Encumbrance,
-	HitLocation,
-	HitLocationTable,
-} from "./data"
+import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
@@ -80,7 +74,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	SizeModBonus = 0
 
-	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
+	protected _onCreate(data: any, options: DocumentModificationOptions | any, userId: string): void {
 		const default_settings = (game as Game).settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
@@ -169,7 +163,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
-		this.promptImport()
+		if (options.promptImport) {
+			this.promptImport()
+		}
 	}
 
 	override update(
@@ -588,39 +584,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		/**
-		 *
-		 * @param b
-		 */
-		function updateRollRanges(b: HitLocationTable) {
-			let start = new DiceGURPS(b.roll).minimum(false)
-			for (const i of b.locations) {
-				start = updateRollRange(i, start)
-			}
-		}
-		/**
-		 *
-		 * @param h
-		 * @param start
-		 */
-		function updateRollRange(h: HitLocation, start: number): number {
-			h.calc ??= { roll_range: "", dr: {} }
-			h.slots ??= 0
-			if (h.slots === 0) h.calc.roll_range = "-"
-			else if (h.slots === 1) h.calc.roll_range = start.toString()
-			else {
-				h.calc.roll_range = `${start}-${start + h.slots - 1}`
-			}
-			if (h.sub_table) {
-				updateRollRanges(h.sub_table)
-			}
-			return start + h.slots
-		}
-
-		const body = this.system.settings.body_type
-		if (!body) return []
-		updateRollRanges(body)
-		return body.locations
+		return getHitLocations(this.system.settings.body_type)
 	}
 
 	// Item Types

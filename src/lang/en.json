@@ -181,6 +181,10 @@
 			"pool_of": "of",
 			"copyright": "GCS is copyrighted ©1998-{current_year} by Richard A. Wilkes. All rights reserved",
 			"link": "Link",
+			"header": {
+				"import": "Import",
+				"reimport": "Re-Import"
+			},
 			"cr_reaction": "from others when {trait} is triggered",
 			"cr_adj_display": {
 				"action_penalty": "{penalty} Action Penalty",
@@ -231,7 +235,8 @@
 					"file": "Choose File",
 					"title": "Import",
 					"note": "Select a file exported from GCS.<br><b>This import will overwrite the data for {name}</b>",
-					"warning": "<b>NOTE:</b> This action cannot be un-done."
+					"warning": "<b>NOTE:</b> This action cannot be un-done.",
+					"success": "Successfully updated {actor} to the new Character model."
 				},
 				"sheet_settings": {
 					"button": "Sheet Settings"
@@ -276,7 +281,8 @@
 				},
 				"block_layout": {
 					"title": "Block Layout"
-				}
+				},
+				"easy_update": "Easy Update"
 			},
 			"points": {
 				"title": "Points",
@@ -473,6 +479,8 @@
 		},
 		"resource_tracker_def": {
 			"id": "ID",
+			"alias": "Alias",
+			"pdf": "Reference",
 			"name": "Name",
 			"tracker_base": "Base Value",
 			"max": "Max",
@@ -776,6 +784,18 @@
 				"auto": "Automatic",
 				"dark": "Dark",
 				"light": "Light"
+			},
+			"srt_comparison": {
+				"less_than": "<",
+				"greater_than": ">",
+				"less_than_or_equal": "≥",
+				"greater_than_or_equal": "≤"
+			},
+			"srt_operator": {
+				"add": "Max +",
+				"subtract": "Max -",
+				"multiply": "Max ×",
+				"divide": "Max ÷"
 			}
 		},
 		"study": {
@@ -791,6 +811,7 @@
 			}
 		},
 		"field_prefix": {
+			"attribute": "to {att}",
 			"tech_level": "When the Tech Level",
 			"name": "whose name",
 			"combined_with": "combined with",
@@ -931,6 +952,10 @@
 			"show_token_modifiers": {
 				"name": "Show Token Modifiers",
 				"hint": "Enable the Token Effect Modifiers pop-up window."
+			},
+			"show_import_button": {
+				"name": "Show Import Button",
+				"hint": "Toggle whether the \"Import\" button is displayed on character sheet headers."
 			},
 			"basic_set_pdfs": {
 				"name": "Basic Set PDFs",

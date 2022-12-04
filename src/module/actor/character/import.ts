@@ -1,4 +1,4 @@
-import { CharacterGURPS } from "@actor"
+import { CharacterGURPS, StaticCharacterGURPS } from "@actor"
 import { Feature } from "@feature"
 import { BaseFeature } from "@feature/base"
 import { ItemGURPS } from "@item"
@@ -30,6 +30,7 @@ import { CharacterSystemData } from "./data"
 import { GCAImporter } from "./import_GCA"
 import { CharacterSheetGURPS } from "./sheet"
 import { LengthUnits, WeightUnits } from "@util/measure"
+import { ActorType } from "@actor/base/data"
 
 export interface CharacterImportedData extends Omit<CharacterSystemData, "attributes"> {
 	traits: Array<TraitSystemData | TraitContainerSystemData>
@@ -45,20 +46,20 @@ export interface CharacterImportedData extends Omit<CharacterSystemData, "attrib
 export class CharacterImporter {
 	version: number
 
-	document: CharacterGURPS
+	document: CharacterGURPS | StaticCharacterGURPS
 
-	constructor(document: CharacterGURPS) {
+	constructor(document: CharacterGURPS | StaticCharacterGURPS) {
 		this.version = 4
 		this.document = document
 	}
 
-	static import(document: CharacterGURPS, file: { text: string; name: string; path: string }) {
-		if (file.name.includes(".gca5")) return GCAImporter.import(document, file)
+	static import(document: CharacterGURPS | StaticCharacterGURPS, file: { text: string; name: string; path: string }) {
+		// If (file.name.includes(".gca5")) return GCAImporter.import(document, file)
 		const importer = new CharacterImporter(document)
 		importer._import(document, file)
 	}
 
-	async _import(document: CharacterGURPS, file: { text: string; name: string; path: string }) {
+	async _import(document: CharacterGURPS | StaticCharacterGURPS, file: { text: string; name: string; path: string }) {
 		const json = file.text
 		let r: CharacterImportedData
 		const errorMessages: string[] = []
@@ -80,6 +81,9 @@ export class CharacterImporter {
 				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_old")])
 			else if (r.version > this.version)
 				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_new")])
+			if (this.document instanceof StaticCharacterGURPS) {
+				commit = { ...commit, ...{ type: ActorType.Character } }
+			}
 			commit = { ...commit, ...{ "system.import": imp } }
 			commit = { ...commit, ...{ name: r.profile.name, "prototypeToken.name": r.profile.name } }
 			commit = { ...commit, ...this.importMiscData(r) }
@@ -649,7 +653,6 @@ export class CharacterImporter {
 	importWeapons(features: Weapon[]): Weapon[] {
 		const list: Weapon[] = []
 		for (const w of features) {
-			console.log(w)
 			list.push(new BaseWeapon(w))
 		}
 		return list
