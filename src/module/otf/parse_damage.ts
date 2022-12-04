@@ -1,6 +1,6 @@
 import { ParsedOtF, OtFAction, OtFDamageAction, OptionalCheckParameters } from './base'
-import { sanitizeOtF, gspan } from './utils'
-import { d6ify } from "../../util/misc"
+import { gspan } from './utils'
+import { d6ify } from "@util/misc"
 import { StaticHitLocation } from "../actor/static_character/hit_location"
 import { GURPS } from "../gurps"
 
@@ -182,6 +182,7 @@ function _parseOtherForTypeModiferAndLocation(other: string): [string, string | 
       const [type, loc] = dmgTypeMatch[2].trim().split('@')
       extDamageType = !!type.trim() ? type.trim() : undefined
       hitLocation = !!loc.trim() ? StaticHitLocation.translate(loc.trim()) : undefined
+      //hitLocation = !!loc.trim() ? loc.trim() : undefined
     } else extDamageType = dmgTypeMatch[2].trim() // 'ex' or 'inc' or more likely, undefined
   return [actualType, extDamageType, hitLocation]
 }

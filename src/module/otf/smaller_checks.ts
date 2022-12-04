@@ -1,5 +1,4 @@
 import { ParsedOtF, OtFAction, OtFTestAction, OtFLinkedAction, OptionalCheckParameters } from "./base"
-import { parselink, OtFChecker } from "./parse_otf"
 import { gspan } from "./utils"
 
 

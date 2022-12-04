@@ -1,5 +1,5 @@
 /* eslint-disable jest/no-disabled-tests */
-import { parselink } from "../../src/module/otf"
+import { parselink } from "@module/otf"
 
 describe('too small or non-matching', () => {
   it("empty", () => {
