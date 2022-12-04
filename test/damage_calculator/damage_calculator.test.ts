@@ -2,11 +2,11 @@
 import { DamageCalculator, Extremity, Head, Limb } from "../../src/module/damage_calculator"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
-import { DamageTarget, TargetTrait, TargetTraitModifier } from "../../src/module/damage_calculator/damage_target"
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
 import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
 import { InjuryEffect, InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
+import { DamageTarget, TargetTrait, TargetTraitModifier } from "@module/damage_calculator/damage_target"
 
 // Add real tests here.
 describe("Damage calculator", () => {

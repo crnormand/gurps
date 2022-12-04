@@ -247,16 +247,6 @@ Hooks.once("init", async () => {
 	})
 
 	Hooks.on("renderChatMessage", DamageChat.renderChatMessage)
-
-	// TEMPORARY -- used only for debugging
-	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
-		if (message.startsWith("/dmg ")) {
-			let parts = message.split(" ").slice(1, message.length)
-			ApplyDamageDialog.open(parts[0], parts[1])
-			return false
-		}
-		return true
-	})
 })
 
 // Setup system
@@ -290,15 +280,6 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
-
-	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
-		if (message.startsWith("/dmg ")) {
-			let parts = message.split(" ").slice(1, message.length)
-			ApplyDamageDialog.open(parts[0], parts[1])
-			return false
-		}
-		return true
-	})
 })
 
 // Add any additional hooks if necessary
