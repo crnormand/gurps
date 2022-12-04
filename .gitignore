@@ -34,3 +34,7 @@ junit.xml
 #test coverage
 coverage
 test-report.html
+
+# Eclipse information
+.settings
+.project

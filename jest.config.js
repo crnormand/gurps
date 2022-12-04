@@ -33,5 +33,5 @@ export default {
 		"@scripts/(.*)": "<rootDir>/src/scripts/$1",
 		"@util/(.*)": "<rootDir>/src/util/$1",
 		"@util": "<rootDir>/src/util/",
-	},
+	}
 }
