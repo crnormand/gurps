@@ -3,43 +3,11 @@ import { DiceGURPS } from "@module/dice"
 import { SYSTEM_NAME } from "@module/settings"
 import { DamageCalculator } from "."
 import { DamageAttacker, DamageRoll } from "./damage_roll"
-import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
 import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
+import { DamageTarget } from "./damage_target"
 
 class ApplyDamageDialog extends Application {
-	static open(attackerId: string, targetId: string) {
-		console.log("Apply Damage!")
-
-		// @ts-ignore game.actors.get until types v10
-		let attacker = game.actors.get(attackerId)
-
-		let roll: DamageRoll = {
-			attacker: attacker,
-			weapon: "Fine Spear (2H Swing)",
-			locationId: "torso",
-			dice: new DiceGURPS("2d+4"),
-			basicDamage: 11,
-			damageType: DamageType.cr,
-			damageModifier: "",
-			applyTo: "HP",
-			armorDivisor: 2,
-			rofMultiplier: 0,
-			range: null,
-			isHalfDamage: false,
-			isShotgunCloseRange: false,
-			vulnerability: 1,
-			internalExplosion: false,
-		}
-
-		// @ts-ignore game.actors.get until types v10
-		let actor = game.actors.get(targetId)
-		let target: DamageTarget = createDamageTarget(actor)
-
-		const app = new ApplyDamageDialog(roll, target)
-		app.render(true)
-	}
-
 	private calculator: DamageCalculator
 
 	constructor(roll: DamageRoll, target: DamageTarget, options = {}) {

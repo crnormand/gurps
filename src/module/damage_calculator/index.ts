@@ -1,7 +1,6 @@
 import { HitLocation } from "@actor/character/hit_location"
 import { RollType } from "../data"
 import { DamageRoll, DefaultHitLocations } from "./damage_roll"
-import { DamageTarget } from "./damage_target"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
 import {
 	CheckFailureConsequence,
@@ -13,6 +12,7 @@ import {
 } from "./injury_effect"
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 import { getHitLocation, getHitLocationDR, isFlexibleArmor } from "./hitlocation_utils"
+import { DamageTarget } from "./damage_target"
 
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
