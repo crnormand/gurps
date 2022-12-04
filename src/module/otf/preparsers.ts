@@ -28,9 +28,9 @@ export function parseOverrideText(str: string): [string, string | undefined] {
         (a common problem for GMs that manage a lot of NPCs)
     */
   export function parseSourceId(str: string): [string, string | undefined ] {
-    let m = str.match(/^@((?<src>[^@]+)@(?<remain>.*)/)
+    let m = str.match(/^@(?<src>[^@]+)@(?<remain>.*)/)
     if (m?.groups) {
-      return [m.groups.reamin.trim(), m.groups.src]
+      return [m.groups.remain.trim(), m.groups.src]
     }
     return [str, undefined]
   }
