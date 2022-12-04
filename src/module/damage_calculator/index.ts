@@ -1,8 +1,8 @@
+import { HitLocation } from "@actor/character/hit_location"
 import { RollType } from "../data"
 import { DamageRoll, DefaultHitLocations } from "./damage_roll"
 import { DamageTarget } from "./damage_target"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
-import { HitLocationAdapter } from "./hit_location"
 import {
 	CheckFailureConsequence,
 	EffectCheck,
@@ -12,6 +12,7 @@ import {
 	RollModifier,
 } from "./injury_effect"
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
+import { getHitLocation, getHitLocationDR, isFlexibleArmor } from "./hitlocation_utils"
 
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
@@ -112,16 +113,12 @@ class DamageCalculator {
 	get bluntTrauma(): number {
 		if (this.damageRoll.damageType === DamageType.fat) return 0
 
-		if (this.penetratingDamage > 0 || !this._isFlexibleArmor()) return 0
+		if (
+			this.penetratingDamage > 0 ||
+			!isFlexibleArmor(getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId))
+		)
+			return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
-	}
-
-	private _isFlexibleArmor() {
-		return this._targetedHitLocation?.calc?.isFlexible(this.damageRoll.damageType) ?? false
-	}
-
-	private get _targetedHitLocation(): HitLocationAdapter | undefined {
-		return this._defenderHitLocations.find(it => it.id === this.damageRoll.locationId)
 	}
 
 	/**
@@ -326,22 +323,21 @@ class DamageCalculator {
 	private get _basicDR() {
 		let basicDr = 0
 		if (this._isLargeAreaInjury) {
-			let torso = this.findHitLocation(Torso)
+			let torso = getHitLocation(this.target.hitLocationTable, Torso)
 
 			let allDR: number[] = this.target.hitLocationTable.locations
-				.map(it => it.calc?.dr(this.damageRoll.damageType) ?? -1)
+				.map(it => getHitLocationDR(it, this.damageRoll.damageType))
 				.filter(it => it !== -1)
 
-			basicDr = ((torso?.calc?.dr(this.damageRoll.damageType) ?? 0) + Math.min(...allDR)) / 2
+			basicDr = (getHitLocationDR(torso, this.damageRoll.damageType) + Math.min(...allDR)) / 2
 		} else {
-			basicDr = this._targetedHitLocation?.calc?.dr(this.damageRoll.damageType) ?? 0
+			basicDr = getHitLocationDR(
+				getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
+				this.damageRoll.damageType
+			)
 		}
 
 		return basicDr * this._multiplierForShotgunExtremelyClose
-	}
-
-	private findHitLocation(TORSO: string) {
-		return this.target.hitLocationTable.locations.find(it => it.id === TORSO)
 	}
 
 	private get _isLargeAreaInjury() {
@@ -444,7 +440,7 @@ class DamageCalculator {
 		return this.damageRoll.damageType === DamageType.burn && this.damageRoll.damageModifier === "tbb"
 	}
 
-	private get _defenderHitLocations(): Array<HitLocationAdapter> {
+	private get _defenderHitLocations(): Array<HitLocation> {
 		return this.target.hitLocationTable.locations
 	}
 }

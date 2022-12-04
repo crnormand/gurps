@@ -1,4 +1,4 @@
-import { HitLocation, HitLocationTable } from "@actor/character/data"
+import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { v4 as uuidv4 } from "uuid"

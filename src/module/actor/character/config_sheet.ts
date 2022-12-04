@@ -5,7 +5,8 @@ import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
 import { i18n, i18n_f, prepareFormData } from "@util"
-import { CharacterSettings, HitLocationTable } from "./data"
+import { CharacterSettings } from "./data"
+import { HitLocationTable } from "./hit_location"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS

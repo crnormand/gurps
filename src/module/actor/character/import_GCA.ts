@@ -8,7 +8,8 @@ import { BasePrereq } from "@prereq"
 import { capitalize, i18n, i18n_f, newUUID } from "@util"
 import { XMLtoJS } from "@util/xml_js"
 import { CharacterGURPS } from "."
-import { CharacterDataGURPS, HitLocationTable } from "./data"
+import { CharacterDataGURPS } from "./data"
+import { HitLocationTable } from "./hit_location"
 import { CharacterImportedData } from "./import"
 
 export class GCAImporter {

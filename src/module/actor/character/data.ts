@@ -2,10 +2,10 @@ import { DamageProgression, DisplayMode } from "@module/data"
 import { ActorFlagsGURPS, ActorSystemData, ActorType, BaseActorSourceGURPS } from "@actor/base/data"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { Attribute, AttributeObj } from "@module/attribute"
-import { DiceGURPS } from "@module/dice"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
+import { HitLocationTable } from "./hit_location"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -127,32 +127,4 @@ export interface Encumbrance {
 	maximum_carry: number
 	penalty: number
 	name: string
-}
-
-export interface HitLocationTable {
-	name: string
-	roll: DiceGURPS
-	locations: HitLocation[]
-}
-
-export interface DrValue {
-	value: number
-	flags?: Record<string, boolean>
-}
-
-export interface HitLocation {
-	id: string
-	choice_name: string
-	table_name: string
-	slots: number
-	hit_penalty: number
-	dr_bonus: number
-	description: string
-	sub_table?: HitLocationTable
-	roll_range?: string
-	dr?: Record<string, DrValue>
-	calc?: {
-		roll_range: string
-		dr: Record<string, { value: number; flags?: Record<string, boolean> }>
-	}
 }

@@ -6,8 +6,7 @@ import { DamageTarget, TargetTrait, TargetTraitModifier } from "../../src/module
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
 import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
 import { InjuryEffect, InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
-import { HitLocation } from "@actor/character/data"
-import { HitLocationTableAdapter } from "../../src/module/damage_calculator/hit_location"
+import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 
 // Add real tests here.
 describe("Damage calculator", () => {
@@ -198,17 +197,17 @@ describe("Damage calculator", () => {
 			slots: 1,
 		}
 
-		_target.hitLocationTable.data.locations.push(_torso)
-		_target.hitLocationTable.data.locations.push(_vitals)
-		_target.hitLocationTable.data.locations.push(_skull)
-		_target.hitLocationTable.data.locations.push(_eye)
-		_target.hitLocationTable.data.locations.push(_face)
-		_target.hitLocationTable.data.locations.push(_neck)
-		_target.hitLocationTable.data.locations.push(_groin)
-		_target.hitLocationTable.data.locations.push(_arm)
-		_target.hitLocationTable.data.locations.push(_leg)
-		_target.hitLocationTable.data.locations.push(_hand)
-		_target.hitLocationTable.data.locations.push(_foot)
+		_target.hitLocationTable.locations.push(_torso)
+		_target.hitLocationTable.locations.push(_vitals)
+		_target.hitLocationTable.locations.push(_skull)
+		_target.hitLocationTable.locations.push(_eye)
+		_target.hitLocationTable.locations.push(_face)
+		_target.hitLocationTable.locations.push(_neck)
+		_target.hitLocationTable.locations.push(_groin)
+		_target.hitLocationTable.locations.push(_arm)
+		_target.hitLocationTable.locations.push(_leg)
+		_target.hitLocationTable.locations.push(_hand)
+		_target.hitLocationTable.locations.push(_foot)
 		_roll.basicDamage = 10
 	})
 
@@ -2201,8 +2200,8 @@ class _Target implements DamageTarget {
 		locations: new Array<HitLocation>(),
 	}
 
-	get hitLocationTable(): HitLocationTableAdapter {
-		return new HitLocationTableAdapter(this._dummyHitLocationTable)
+	get hitLocationTable(): HitLocationTable {
+		return this._dummyHitLocationTable
 	}
 }
 

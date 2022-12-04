@@ -1,10 +1,12 @@
+import { HitLocation } from "@actor/character/hit_location"
 import { DiceGURPS } from "@module/dice"
 import { SYSTEM_NAME } from "@module/settings"
 import { DamageCalculator } from "."
 import { DamageAttacker, DamageRoll } from "./damage_roll"
 import { createDamageTarget, DamageTarget } from "./damage_target"
 import { DamageType } from "./damage_type"
-import { HitLocationAdapter } from "./hit_location"
+import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
+
 class ApplyDamageDialog extends Application {
 	static open(attackerId: string, targetId: string) {
 		console.log("Apply Damage!")
@@ -106,13 +108,12 @@ class ApplyDamageDialog extends Application {
 		return this.roll.armorDivisor.toString()
 	}
 
-	private get hitLocation(): HitLocationAdapter | undefined {
-		console.log(this.target, this.target.hitLocationTable)
-		return this.target.hitLocationTable.getLocation(this.calculator.damageRoll.locationId)
+	private get hitLocation(): HitLocation | undefined {
+		return getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
 	}
 
 	private get dr(): number | undefined {
-		return this.hitLocation?.calc?.dr(this.roll.damageType)
+		return getHitLocationDR(this.hitLocation, this.roll.damageType)
 	}
 
 	private get hitLocationChoice(): Record<string, string> {

@@ -1,7 +1,7 @@
-import { HitLocationTableAdapter } from "./hit_location"
 import { BaseActorGURPS } from "../actor/index"
 import { TraitGURPS } from "../item/trait/index"
 import { TraitModifierGURPS } from "../item/trait_modifier/index"
+import { HitLocationTable } from "@actor/character/hit_location"
 
 /**
  * The target of a damage roll.
@@ -22,7 +22,7 @@ interface DamageTarget {
 	hitPoints: HitPointsCalc
 	// CharacterGURPS.system.settings.body_type
 	// TODO It would be better to have a method to return DR directly; this would allow DR overrides.
-	hitLocationTable: HitLocationTableAdapter
+	hitLocationTable: HitLocationTable
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
 	getTrait(name: string): TargetTrait | undefined
 	//
@@ -110,9 +110,9 @@ class DamageTargetActor implements DamageTarget {
 		return this.actor.attributes.get("hp")?.calc
 	}
 
-	get hitLocationTable(): HitLocationTableAdapter {
+	get hitLocationTable(): HitLocationTable {
 		// @ts-ignore
-		return new HitLocationTableAdapter(this.actor.system.settings.body_type)
+		return this.actor.system.settings.body_type
 	}
 
 	/**
