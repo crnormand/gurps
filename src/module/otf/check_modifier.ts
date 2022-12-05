@@ -1,5 +1,5 @@
-import { ParsedOtF, OtFNumberedAction, OptionalCheckParameters } from "./base"
-import { parselink, OtFChecker } from "./parse_otf"
+import { ParsedOtF, OtFCostsAction, OptionalCheckParameters } from "./base"
+import { parselink } from "./parse_otf"
 import { gmspan } from "./utils"
 
 export function checkForModifier(str: string, opts: OptionalCheckParameters): ParsedOtF | undefined {
@@ -17,7 +17,7 @@ export function checkForModifier(str: string, opts: OptionalCheckParameters): Pa
       if (remaining.action?.type == 'modifier') spantext += ' & ' + remaining.action.spantext
     }
 
-    let action: OtFNumberedAction = {
+    let action: OtFCostsAction = {
       orig: str,
       spantext: spantext,
       type: 'modifier',
@@ -42,11 +42,11 @@ export function checkForModifier(str: string, opts: OptionalCheckParameters): Pa
         remaining = parselink(m.groups.remain.substring(1).trim()) // remove the leading &
       if (remaining.action?.type == 'modifier') spantext += ' & ' + remaining.action.spantext
     }
-    let action: OtFNumberedAction = {
+    let action: OtFCostsAction = {
       orig: str,
       spantext: spantext,
       type: 'modifier',
-      num: Number(mod),
+      margin: mod,
       desc: desc.trim(),
       next: remaining?.action,
     }
