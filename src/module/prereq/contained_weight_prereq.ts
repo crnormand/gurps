@@ -2,9 +2,8 @@ import { CharacterGURPS } from "@actor"
 import { EquipmentContainerGURPS, EquipmentGURPS } from "@item"
 import { NumberCompare, NumberComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { BasePrereq } from "@prereq"
 import { i18n, numberCompare } from "@util"
-import { PrereqConstructionContext } from "./base"
+import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export interface ContainedWeightPrereq extends BasePrereq {
 	qualifier: NumberCompare

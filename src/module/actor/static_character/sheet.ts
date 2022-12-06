@@ -1,8 +1,8 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
-import { RollType } from "@module/data"
+import { RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
-import { i18n, i18n_f, RollGURPS, Static } from "@util"
+import { SETTINGS } from "@module/settings"
+import { i18n, RollGURPS, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
@@ -213,6 +213,22 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			})
 		const all_buttons = [edit_button, ...buttons, ...super._getHeaderButtons()]
 		return all_buttons
+	}
+
+	protected async _updateObject(event: Event, formData: any): Promise<unknown> {
+		Object.keys(formData).forEach(k => {
+			if (k.startsWith("system.additionalresources.tracker")) {
+				const tracker_k = k.replace(/.value$/, "")
+				const max = getProperty(this.actor, `${tracker_k}.max`)
+				const max_enforced = getProperty(this.actor, `${tracker_k}.isMaxEnforced`)
+				const min = getProperty(this.actor, `${tracker_k}.min`)
+				const min_enforced = getProperty(this.actor, `${tracker_k}.isMinEnforced`)
+				if (max_enforced && formData[k] > max) formData[k] = max
+				if (min_enforced && formData[k] < min) formData[k] = min
+			}
+		})
+		await super._updateObject(event, formData)
+		return this.render()
 	}
 
 	async _onFileImport(event: any) {

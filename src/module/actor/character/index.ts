@@ -30,9 +30,9 @@ import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeDef, AttributeType } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
-import { attrPrefix, gid } from "@module/data"
+import { attrPrefix, gid, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { SETTINGS, SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { MeleeWeapon, RangedWeapon, Weapon, WeaponType } from "@module/weapon"
@@ -48,7 +48,14 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
+import {
+	CharacterSettings,
+	CharacterSource,
+	CharacterSystemData,
+	Encumbrance,
+	HitLocation,
+	HitLocationTable,
+} from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
@@ -88,10 +95,11 @@ class CharacterGURPS extends BaseActorGURPS {
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
 		) as CharacterSettings["resource_trackers"]
-		const default_hit_locations = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
-		) as CharacterSettings["body_type"]
+		const default_hit_locations = {
+			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+		} as HitLocationTable
 		const populate_description = (game as Game).settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.populate_description`
@@ -658,11 +666,11 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Weapons
 	get meleeWeapons(): MeleeWeapon[] {
-		return this.weapons("melee_weapon") as MeleeWeapon[]
+		return this.weapons(WeaponType.MeleeWeapon) as MeleeWeapon[]
 	}
 
 	get rangedWeapons(): RangedWeapon[] {
-		return this.weapons("ranged_weapon") as RangedWeapon[]
+		return this.weapons(WeaponType.RangedWeapon) as RangedWeapon[]
 	}
 
 	weapons(type: WeaponType): Weapon[] {

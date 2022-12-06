@@ -9,12 +9,12 @@ import {
 import EmbeddedCollection from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs"
 import { Document } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/module.mjs"
 import { DocumentConstructor } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 import { BaseContainerSystemData } from "./data"
 
 export abstract class ContainerGURPS extends BaseItemGURPS {
 	// Items?: EmbeddedCollection<ConfiguredDocumentClass<typeof BaseItemGURPS>, any>;
-	items: foundry.utils.Collection<ItemGURPS> = new Collection()
+	items: foundry.utils.Collection<Item> = new Collection()
 
 	constructor(data: ContainerDataGURPS, context: Context<Actor> & ItemConstructionContextGURPS = {}) {
 		if (!data.flags?.[SYSTEM_NAME]?.contentsData) mergeObject(data, { [`flags.${SYSTEM_NAME}.contentsData`]: [] })
@@ -22,8 +22,8 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 	}
 
 	// Getters
-	get deepItems(): Collection<ItemGURPS> {
-		const deepItems: ItemGURPS[] = []
+	get deepItems(): Collection<Item> {
+		const deepItems: Item[] = []
 		if (this.items)
 			for (const item of this.items) {
 				deepItems.push(item)
@@ -193,7 +193,7 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 					parent: this as any,
 				})
 				theItem.prepareData()
-				this.items.set(item._id!, theItem as ItemGURPS)
+				this.items.set(item._id!, theItem)
 			} else {
 				const currentItem = oldItems.get(item._id!)!
 				;(currentItem as any).name = item.name

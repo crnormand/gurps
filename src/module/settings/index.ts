@@ -1,12 +1,12 @@
 import { CharacterProfile } from "@actor/character/data"
-import { GURPS } from "@module/gurps"
+import { SYSTEM_NAME } from "@module/data"
 import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
 import { DefaultHitLocationSettings } from "./hit_locations"
 import { DefaultResourceTrackerSettings } from "./resource_trackers"
 import { DefaultSheetSettings } from "./sheet_settings"
 
-export const SYSTEM_NAME = "gcsga"
+// Export const SYSTEM_NAME = "gcsga"
 export enum SETTINGS {
 	BASIC_SET_PDF = "basic_set_pdf",
 	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
@@ -150,7 +150,7 @@ export function registerSettings(): void {
 		type: Object,
 		scope: "world",
 		onChange: () => {
-			GURPS.CompendiumBrowser.loadSettings()
+			;(game as any).CompendiumBrowser.loadSettings()
 		},
 	})
 

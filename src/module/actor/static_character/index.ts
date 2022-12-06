@@ -4,8 +4,9 @@ import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
+import { SYSTEM_NAME } from "@module/data"
 // Import { RollModifier } from "@module/data"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS } from "@module/settings"
 import { i18n, newUUID, Static } from "@util"
 import { StaticAdvantage, StaticEquipment } from "./components"
 import {
@@ -15,7 +16,10 @@ import {
 	StaticAttributeName,
 	StaticCharacterSource,
 	StaticCharacterSystemData,
+	StaticResourceThreshold,
 	StaticResourceTracker,
+	StaticThresholdComparison,
+	StaticThresholdOperator,
 } from "./data"
 import { StaticCharacterImporter } from "./import"
 
@@ -70,11 +74,37 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		return atts
 	}
 
-	get trackers(): Array<StaticResourceTracker & { index: string }> {
+	get trackers(): StaticResourceTracker[] {
+		/**
+		 *
+		 * @param v
+		 */
+		function getCurrentThreshold(v: StaticResourceTracker): StaticResourceThreshold | null {
+			const thresholds = v.thresholds
+			if (!thresholds?.length) return null
+			let current = thresholds.at(-1)!
+			for (const t of thresholds) {
+				let compare = v.max
+				if (t.operator === StaticThresholdOperator.Add) compare += t.value
+				else if (t.operator === StaticThresholdOperator.Subtract) compare -= t.value
+				else if (t.operator === StaticThresholdOperator.Multiply) compare *= t.value
+				else if (t.operator === StaticThresholdOperator.Divide) compare /= t.value
+
+				if (t.comparison === StaticThresholdComparison.LessThan && v.value < compare) return t
+				else if (t.comparison === StaticThresholdComparison.LessThanOrEqual && v.value <= compare) return t
+				else if (t.comparison === StaticThresholdComparison.GreaterThan && v.value > compare) return t
+				else if (t.comparison === StaticThresholdComparison.GreaterThanOrEqual && v.value >= compare) return t
+			}
+			return current
+		}
+
+		if (!this.system.additionalresources.tracker) return []
 		return Object.keys(this.system.additionalresources.tracker).map(k => {
 			const v = this.system.additionalresources.tracker[k]
+			const currentThreshold = getCurrentThreshold(v)
 			return mergeObject(v, {
 				index: k,
+				currentThreshold: currentThreshold,
 			})
 		})
 	}

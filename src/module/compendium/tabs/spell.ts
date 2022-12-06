@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { CompendiumTab } from "./base"
 

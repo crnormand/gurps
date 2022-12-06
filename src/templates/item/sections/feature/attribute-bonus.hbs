@@ -2,6 +2,12 @@
 	<div class="placeholder"> </div>
 	<select name="array.system.features.{{@index}}.attribute">
 		{{#select this.attribute}}
+			{{#unless (in attributes this.attribute)}}
+				<option value="{{this.attribute}}">{{localize
+						"gurps.field_prefix.attribute_unkown"
+						att=this.attribute
+					}}</option>
+			{{/unless}}
 			{{#each attributes as |v k|}}
 				<option value="{{k}}">{{localize "gurps.field_prefix.attribute" att=v}}</option>
 			{{/each}}

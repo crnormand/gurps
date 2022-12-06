@@ -1,10 +1,10 @@
 import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { CharacterGURPS } from "."
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
 import { i18n, i18n_f, prepareFormData } from "@util"
+import { SYSTEM_NAME } from "@module/data"
 import { CharacterSettings } from "./data"
 import { HitLocationTable } from "./hit_location"
 
@@ -175,10 +175,11 @@ export class CharacterSheetConfig extends FormApplication {
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
 		) as CharacterSettings["resource_trackers"]
-		const default_hit_locations = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
-		) as CharacterSettings["body_type"]
+		const default_hit_locations = {
+			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+		} as HitLocationTable
 		const update: any = {}
 		if (type === "attributes") update["system.settings.attributes"] = default_attributes
 		if (type === "resource_trackers") update["system.settings.resource_trackers"] = default_resource_trackers

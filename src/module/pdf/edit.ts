@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 
 // @ts-ignore
 export class PDFEditorSheet extends JournalPDFPageSheet {

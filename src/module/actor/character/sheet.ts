@@ -17,10 +17,9 @@ import {
 import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
-import { RollType } from "@module/data"
+import { RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
-import { SYSTEM_NAME } from "@module/settings"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
 import { weightFormat } from "@util/measure"
@@ -153,6 +152,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = this.actor.deepItems.get(id)
+		// @ts-ignore
 		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
 	}
 

@@ -1,5 +1,4 @@
 import { SkillDefault } from "@module/default"
-import { MeleeWeapon, WeaponType } from "."
 import { EquipmentContainerGURPS, EquipmentGURPS, ItemGURPS, TraitGURPS } from "@item"
 import { TooltipGURPS } from "@module/tooltip"
 import { CharacterGURPS } from "@actor"
@@ -14,8 +13,13 @@ export interface WeaponConstructionContext {
 	recursive?: boolean
 }
 
+export enum WeaponType {
+	MeleeWeapon = "melee_weapon",
+	RangedWeapon = "ranged_weapon",
+}
+
 class BaseWeapon {
-	type: WeaponType = "melee_weapon"
+	type: WeaponType = WeaponType.MeleeWeapon
 
 	strength = ""
 
@@ -127,8 +131,8 @@ class BaseWeapon {
 	}
 
 	skillLevelPostAdjustment(actor: CharacterGURPS, tooltip: TooltipGURPS): number {
-		if (this instanceof MeleeWeapon)
-			if (this.parry?.toLowerCase().includes("f")) return this.encumbrancePenalty(actor, tooltip)
+		if (this.type === WeaponType.MeleeWeapon)
+			if ((this as any).parry?.toLowerCase().includes("f")) return this.encumbrancePenalty(actor, tooltip)
 		return 0
 	}
 

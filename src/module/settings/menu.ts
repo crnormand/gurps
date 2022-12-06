@@ -1,5 +1,5 @@
+import { SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
-import { SYSTEM_NAME } from "."
 
 abstract class SettingsMenuGURPS extends FormApplication {
 	static readonly namespace: string

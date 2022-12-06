@@ -1,9 +1,0 @@
-<div id="trait-modifiers">
-	<div class="header enabled"><i class="gcs-checkmark"></i></div>
-	<div class="header desc">{{localize "gcsga.trait.modifier_desc"}}</div>
-	<div class="header cost_modifier">{{localize "gcsga.trait.modifier_cost"}}</div>
-	<div class="header tags">{{localize "gcsga.trait.tags"}}</div>
-	<div class="header reference"><i class="gcs-bookmark"></i></div>
-	{{#each this.modifiers}}
-	{{/each}}
-</div>

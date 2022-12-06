@@ -1,5 +1,5 @@
 import { ItemGURPS } from "@item"
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 import { EquipmentData, EquipmentSystemData } from "./equipment/data"
 import { EquipmentContainerData, EquipmentContainerSystemData } from "./equipment_container/data"
 import { EquipmentModifierData, EquipmentModifierSystemData } from "./equipment_modifier/data"

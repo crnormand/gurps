@@ -1,5 +1,5 @@
+import { SYSTEM_NAME } from "@module/data"
 import { prepareFormData } from "@util"
-import { SYSTEM_NAME } from "."
 import { SettingsMenuGURPS } from "./menu"
 
 export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {

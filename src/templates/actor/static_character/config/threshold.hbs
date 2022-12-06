@@ -8,15 +8,15 @@
 		<div class="field">
 			<input
 				type="text"
-				name="{{parent}}.{{id}}.thresholds.{{@index}}.state"
+				name="sarray.{{parent}}.{{id}}.thresholds.{{@index}}.condition"
 				value="{{this.condition}}"
 				data-dtype="String"
 			/>
 		</div>
 		<div class="label">{{localize "gurps.attribute_def.expression"}}</div>
 		<div class="field no-stretch">
-			<select name="{{parent}}.{{id}}.thresholds.{{@index}}.comparison" data-dtype="String">
-				{{#select this.type}}
+			<select name="sarray.{{parent}}.{{id}}.thresholds.{{@index}}.comparison" data-dtype="String">
+				{{#select this.comparison}}
 					{{#each @root.config.select.srt_comparison as |v k|}}
 						<option value="{{k}}">
 							{{localize v}}
@@ -24,8 +24,8 @@
 					{{/each}}
 				{{/select}}
 			</select>
-			<select name="{{parent}}.{{id}}.thresholds.{{@index}}.operator" data-dtype="String">
-				{{#select this.type}}
+			<select name="sarray.{{parent}}.{{id}}.thresholds.{{@index}}.operator" data-dtype="String">
+				{{#select this.operator}}
 					{{#each @root.config.select.srt_operator as |v k|}}
 						<option value="{{k}}">
 							{{localize v}}
@@ -35,9 +35,9 @@
 			</select>
 			<input
 				type="text"
-				name="{{parent}}.{{id}}.thresholds.{{@index}}.value"
+				name="sarray.{{parent}}.{{id}}.thresholds.{{@index}}.value"
 				value="{{this.value}}"
-				data-dtype="String"
+				data-dtype="Number"
 			/>
 		</div>
 	</div>

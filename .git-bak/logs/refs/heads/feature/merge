@@ -1,3 +1,0 @@
-0000000000000000000000000000000000000000 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663414026 +0100	branch: Created from HEAD
-2299c86fba996626ff11d129d0a7001cb897a499 71df017a3b34e34d95cb0c054e81748901815ef2 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663414030 +0100	commit: starting static char integration
-71df017a3b34e34d95cb0c054e81748901815ef2 904084a548a3964bcca3aabd7a9ed949be8e7600 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507072 +0100	commit: changed input span elements to textarea

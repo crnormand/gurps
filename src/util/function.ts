@@ -1,6 +1,26 @@
-import { SkillContainerGURPS, TraitGURPS } from "@item"
+// Import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS, TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
-import { equalFold, Evaluator, Measure, VariableResolver } from "@util"
+import { equalFold } from "./misc"
+import * as Measure from "./measure"
+
+export interface VariableResolver {
+	resolveVariable: (variableName: string) => string
+	skills: Collection<Item | any>
+	isSkillLevelResolutionExcluded: (name: string, specialization: string) => boolean
+	registerSkillLevelResolutionExclusion: (name: string, specialization: string) => void
+	unregisterSkillLevelResolutionExclusion: (name: string, specialization: string) => void
+	encumbranceLevel: (forSkills: boolean) => {
+		level: number
+		maximum_carry: number
+		penalty: number
+		name: string
+	}
+}
+
+export interface Evaluator {
+	evaluateNew: (expression: string) => any
+	resolver: VariableResolver
+}
 
 export type eFunction = (e: Evaluator, a: string) => any
 
@@ -289,7 +309,7 @@ function evalSkillLevel(e: Evaluator, arg: string): any {
 	entity.registerSkillLevelResolutionExclusion(name, specialization)
 	let level = -Infinity
 	entity.skills.forEach(s => {
-		if (s instanceof SkillContainerGURPS) return
+		if (s.type === "skill_container") return
 		if (level !== -Infinity) return
 		if (equalFold(s.name || "", name) && equalFold(s.specialization, specialization)) {
 			s.updateLevel()
@@ -357,9 +377,8 @@ export function evalTraitLevel(e: Evaluator, a: string): any {
 	const arg = a.replaceAll(/^['"]|[']$/g, "")
 	let levels = -1
 	;(entity as any).traits
-		.filter((t: TraitGURPS) => t.name === arg && t instanceof TraitGURPS)
-		.every((t: TraitGURPS) => {
-			t = t as unknown as TraitGURPS
+		.filter((t: Item) => t.name === arg && t.type === "trait")
+		.every((t: Item | any) => {
 			if (t.isLeveled) levels = t.levels
 			return true
 		})

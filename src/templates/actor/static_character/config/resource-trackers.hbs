@@ -7,18 +7,18 @@
 </div>
 <div class="item-list">
 	{{#each resourceTrackers}}
-		<div class="item" data-id="{{this.id}}" data-index="{{this.index}}" data-type="resource_trackers">
+		<div class="item" data-index="{{this.index}}" data-type="resource_trackers">
 			<div class="controls">
 				<a class="gcs-grip drag" data-index="{{@index}}" data-type="resource_trackers"></a>
 				<a class="gcs-trash delete" data-index="{{@index}}" data-type="resource_trackers"></a>
-				<a class="gcs-circled-add add" data-id="{{@index}}" data-type="tracker_thresholds"></a>
+				<a class="gcs-circled-add add" data-index="{{@index}}" data-type="tracker_thresholds"></a>
 			</div>
 			<div class="fieldblock">
 				<div class="label">{{localize "gurps.resource_tracker_def.name"}}</div>
 				<div class="field">
 					<input
 						type="text"
-						name="resource_trackers.{{this.index}}.name"
+						name="system.additionalresources.tracker.{{this.index}}.name"
 						value="{{this.name}}"
 						data-dtype="String"
 					/>
@@ -27,7 +27,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="resource_trackers.{{this.index}}.alias"
+						name="system.additionalresources.tracker.{{this.index}}.alias"
 						value="{{this.alias}}"
 						data-dtype="String"
 					/>
@@ -36,7 +36,7 @@
 				<div class="field">
 					<input
 						type="text"
-						name="resource_trackers.{{this.index}}.pdf"
+						name="system.additionalresources.tracker.{{this.index}}.pdf"
 						value="{{this.pdf}}"
 						data-dtype="String"
 					/>
@@ -45,15 +45,15 @@
 				<div class="field no-stretch">
 					<input
 						type="text"
-						name="resource_trackers.{{this.index}}.max"
+						name="system.additionalresources.tracker.{{this.index}}.max"
 						value="{{this.max}}"
-						data-dtype="String"
+						data-dtype="Number"
 					/>
 					<label class="label checkbox-label">
 						<input
 							type="checkbox"
-							name="resource_trackers.{{this.index}}.isMaxEnforced"
-							{{checked this.isMinEnforced}}
+							name="system.additionalresources.tracker.{{this.index}}.isMaxEnforced"
+							{{checked this.isMaxEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.max_enforced"}}
 					</label>
@@ -62,23 +62,32 @@
 				<div class="field no-stretch">
 					<input
 						type="text"
-						name="resource_trackers.{{this.index}}.min"
+						name="system.additionalresources.tracker.{{this.index}}.min"
 						value="{{this.min}}"
-						data-dtype="String"
+						data-dtype="Number"
 					/>
 					<label class="label checkbox-label">
 						<input
 							type="checkbox"
-							name="resource_trackers.{{this.index}}.isMinEnforced"
+							name="system.additionalresources.tracker.{{this.index}}.isMinEnforced"
 							{{checked this.isMinEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.min_enforced"}}
 					</label>
 				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.current"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="system.additionalresources.tracker.{{this.index}}.value"
+						value="{{this.value}}"
+						data-dtype="Number"
+					/>
+				</div>
 				{{#if this.thresholds}}
 				<div class="item-list thresholds">
 					{{#each this.thresholds}}
-					{{>actor/static_character/config/threshold id=../this.index parent="resource_trackers"}}
+					{{>actor/static_character/config/threshold id=../this.index parent="system.additionalresources.tracker"}}
 					{{/each}}
 				</div>
 				{{/if}}
