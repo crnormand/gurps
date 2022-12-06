@@ -1,16 +1,9 @@
 import { ParsedOtF, OptionalCheckParameters } from "./base"
 import { sanitizeOtF } from "./utils"
 import { parseOverrideText, parseBlindRoll, parseSourceId } from "./preparsers"
-import { parseForRollOrDamage } from "./parse_damage"
+// Import { parseForRollOrDamage } from "./parse_damage"
 import { checkForModifier } from "./check_modifier"
-import {
-	checkForChat,
-	checkForHtml,
-	checkForIf,
-	checkForExists,
-	checkForPDF,
-	checkForFoundryDrops,
-} from "./smaller_checks"
+import { checkForChat, checkForHtml, checkForIf, checkForExists, checkForPDF, checkForFoundryDrops } from "./smaller_checks"
 import { checkForSelfControl } from "./self_control"
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
@@ -36,7 +29,7 @@ export interface OtFChecker {
 	(str: string, opt: OptionalCheckParameters): ParsedOtF | undefined
 }
 const checkFunctions: Array<OtFChecker> = []
-checkFunctions.push(parseForRollOrDamage) // This should be first!
+// CheckFunctions.push(parseForRollOrDamage)   // This should be first!
 checkFunctions.push(checkForModifier)
 checkFunctions.push(checkForChat)
 checkFunctions.push(checkForHtml)
