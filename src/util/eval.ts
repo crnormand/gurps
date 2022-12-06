@@ -75,7 +75,7 @@ class parsedFunction {
 
 // Evaluator is used to evaluate an expression. If you do not have any variables that will be resolved, you can leave
 // Resolver unset.
-export class Evaluator {
+class Evaluator {
 	resolver: VariableResolver
 
 	operators: Operator[] = evalOperators(true)
@@ -356,6 +356,8 @@ export class Evaluator {
 		return expression
 	}
 }
+
+export { Evaluator }
 
 /**
  *

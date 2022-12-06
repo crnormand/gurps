@@ -1,45 +1,29 @@
 <div id="pool-attributes">
 	<div class="header">{{localize "gurps.character.point_pools"}}</div>
 	<div class="fieldblock6">
-		{{!-- {{#each point_pools}} --}}
-		{{!-- {{#if (eq this.attribute_def.type "pool_separator")}} --}}
-		{{!-- <div class="separator_parent"> --}}
-			{{!-- <div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div> --}}
-			{{!-- </div> --}}
-		{{!-- {{else}} --}}
 		<div class="points">[{{system.HP.points}}]</div>
-		{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name="system.HP.value"
-		data=system.HP.value type="Number"}}
-		{{>sections/input-text after="HP" field="field" name="system.HP.max"
-		data=system.HP.max type="Number" class="disabled"}}
+		<div class="field">
+			<input type="text" name="system.HP.value" value="{{system.HP.value}}" data-dtype="Number" />
+		</div>
+		<div class="label">{{localize "gurps.character.pool_of"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.HP.value}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.static.hp"}}</div>
 		<div class="label tooltip">
 			[{{localize (hpFpCondition "HP" system.HP "label")}}]
 		</div>
 		<div class="points">[{{system.FP.points}}]</div>
-		{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name="system.FP.value"
-		data=system.FP.value type="Number"}}
-		{{>sections/input-text after="FP" field="field" name="system.FP.max"
-		data=system.FP.max type="Number" class="disabled"}}
+		<div class="field">
+			<input type="text" name="system.FP.value" value="{{system.FP.value}}" data-dtype="Number" />
+		</div>
+		<div class="label">{{localize "gurps.character.pool_of"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.FP.value}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.static.fp"}}</div>
 		<div class="label tooltip" as |this index|>
 			[{{localize (hpFpCondition "FP" system.FP "label")}}]
 		</div>
-		{{!-- <div class="points">[{{this.points}}]</div> --}}
-		{{!-- {{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat --}}
-		{{!-- "system.attributes." this.id --}}
-		{{!-- ".damage") data=this.current type="Number"}} --}}
-		{{!-- {{>sections/input-text after=this.attribute_def.name field="field" name=(concat "system.attributes."
-		this.id --}}
-		{{!-- ".adj") --}}
-		{{!-- data=this.max type="Number" class=(input_lock ../editing)}} --}}
-		{{!-- <div class="label tooltip"> --}}
-			{{!-- {{#if this.currentThreshold.state}} --}}
-			{{!-- [{{this.currentThreshold.state}}] --}}
-			{{!-- {{#if this.currentThreshold.explanation}} --}}
-			{{!-- <span class="tooltiptext">{{{this.currentThreshold.explanation}}}</span> --}}
-			{{!-- {{/if}} --}}
-			{{!-- {{/if}} --}}
-			{{!-- </div> --}}
-		{{!-- {{/if}} --}}
-		{{!-- {{/each}} --}}
 	</div>
 </div>

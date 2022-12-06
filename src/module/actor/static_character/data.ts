@@ -162,6 +162,7 @@ export interface StaticResourceTracker {
 	points: number
 	value: number
 	thresholds: StaticResourceThreshold[]
+	index?: string
 }
 
 export interface StaticResourceThreshold {
@@ -174,9 +175,9 @@ export interface StaticResourceThreshold {
 
 export enum StaticThresholdComparison {
 	LessThan = "<",
+	LessThanOrEqual = "≤",
 	GreaterThan = ">",
-	LessThanOrEqual = "≥",
-	GreaterThanOrEqual = "≤",
+	GreaterThanOrEqual = "≥",
 }
 
 export enum StaticThresholdOperator {

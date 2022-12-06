@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "./settings"
+import { SYSTEM_NAME } from "./data"
 
 /**
  *
@@ -136,7 +136,9 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"compendium-browser/item-notes",
 		"compendium-browser/settings",
 
+		"modifier-bucket/active",
 		"modifier-bucket/modifier",
+		"modifier-bucket/player",
 	]
 	const formattedPaths: string[] = []
 	for (let filename of templatePaths) {

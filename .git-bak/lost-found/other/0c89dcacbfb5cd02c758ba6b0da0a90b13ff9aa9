@@ -1,3 +1,0 @@
-import { CompendiumTab } from "./base";
-
-export class CompendiumSkillTab extends CompendiumTab { }

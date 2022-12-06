@@ -17,13 +17,12 @@ import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { TraitModifierSystemData } from "@item/trait_modifier/data"
 import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data"
-import { CR } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { CR, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon, Weapon } from "@module/weapon"
 import { BasePrereq, PrereqList } from "@prereq"
 import { i18n, i18n_f, newUUID } from "@util"
-import { GURPS } from "@module/gurps"
+// Import { GURPS } from "@module/gurps"
 
 interface ItemLibraryData {
 	type: ItemLibraryType
@@ -137,7 +136,8 @@ export class ItemImporter {
 			let counter = items.length
 			Item.create(items as any, { pack: `world.${name}` })
 			ui.notifications?.info(i18n_f("gurps.system.library_import.finished", { number: counter }))
-			const cb = GURPS.CompendiumBrowser
+			const cb = (game as any).CompendiumBrowser
+			// Const cb = GURPS.CompendiumBrowser
 			if (cb.rendered) cb.render(true)
 		} catch (err) {
 			console.error(err)

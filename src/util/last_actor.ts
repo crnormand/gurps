@@ -1,5 +1,5 @@
 import { ActorGURPS } from "@actor"
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 
 export class LastActor {
 	static set(actor: ActorGURPS, token?: TokenDocument): void {

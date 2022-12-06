@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 
 export class PDFViewerSheet extends DocumentSheet {
 	pageNumber = 1

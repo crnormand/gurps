@@ -2,7 +2,7 @@ import { ActorGURPS } from "@actor"
 import { SkillGURPS } from "@item"
 import { RollGURPS } from "@util"
 import { RollModifier, RollType } from "./data"
-import { GURPS } from "./gurps"
+// Import { GURPS } from "./gurps"
 
 /**
  *
@@ -24,7 +24,7 @@ export function addChatListeners(html: JQuery<HTMLElement>): void {
 async function _onModClick(event: JQuery.ClickEvent): Promise<void> {
 	event.preventDefault()
 	const mod: RollModifier = $(event.currentTarget).data("mod")
-	await GURPS.ModifierButton.window.addModifier(mod)
+	await (game as any).ModifierButton.window.addModifier(mod)
 }
 
 /**
@@ -35,7 +35,7 @@ async function _onModRClick(event: JQuery.ContextMenuEvent): Promise<void> {
 	event.preventDefault()
 	const mod: RollModifier = $(event.currentTarget).data("mod")
 	mod.modifier = -mod.modifier
-	await GURPS.ModifierButton.window.addModifier(mod)
+	await (game as any).ModifierButton.window.addModifier(mod)
 }
 
 /**

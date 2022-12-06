@@ -410,8 +410,8 @@ const GURPSCONFIG: any = {
 		// Srt = static_resource_tracker
 		srt_comparison: {
 			[StaticThresholdComparison.LessThan]: "gurps.select.srt_comparison.less_than",
-			[StaticThresholdComparison.GreaterThan]: "gurps.select.srt_comparison.greater_than",
 			[StaticThresholdComparison.LessThanOrEqual]: "gurps.select.srt_comparison.less_than_or_equal",
+			[StaticThresholdComparison.GreaterThan]: "gurps.select.srt_comparison.greater_than",
 			[StaticThresholdComparison.GreaterThanOrEqual]: "gurps.select.srt_comparison.greater_than_or_equal",
 		},
 		srt_operator: {

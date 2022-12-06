@@ -1,6 +1,5 @@
-import { RollModifier, UserFlags } from "@module/data"
+import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
 import { ModifierButton } from "@module/mod_prompt/button"
-import { SYSTEM_NAME } from "@module/settings"
 
 class ModifierBucket extends Application {
 	constructor(button: ModifierButton, options = {}) {
@@ -52,18 +51,21 @@ class ModifierBucket extends Application {
 			{ name: "to Block/Parry (Retreat)", modifier: 1, reference: "B377" },
 			{ name: "to Dodge (Acrobatics, failed)", modifier: -2, reference: "B375" },
 			{ name: "to Dodge (attacked from side)", modifier: -2, reference: "B390" },
-			{ name: "to DOdge (attacked from reat)", modifier: -4, reference: "B391" },
+			{ name: "to Dodge (attacked from reat)", modifier: -4, reference: "B391" },
 			{ name: "to defenses due to Deceptive attack", modifier: -1 },
 			{ name: "to Will Check, to maintain concentration", modifier: -1 },
 			{ name: "Feverish Defense", modifier: +2, cost: { id: "fp", value: 1 } },
 		]
 
+		const players = (game as Game).users ?? []
+
 		return mergeObject(super.getData(options), {
 			value: this.value,
-			activeMods: modStack,
+			players: players,
 			meleeMods: meleeMods,
 			rangedMods: rangedMods,
 			defenseMods: defenseMods,
+			currentMods: modStack,
 		})
 	}
 
@@ -78,7 +80,8 @@ class ModifierBucket extends Application {
 		const buttonLeft = (button.position()?.left || 0) + 220 ?? 0
 		let buttonWidth = parseFloat(button.css("width").replace("px", ""))
 		// Let width = parseFloat(html.find(".searchbar").css("width").replace("px", ""));
-		const width = 180
+		// const width = 900
+		const width = html.width() || 640
 		let height = parseFloat(html.css("height").replace("px", ""))
 
 		let left = Math.max(buttonLeft + buttonWidth / 2 - width / 2, 10)
@@ -93,7 +96,9 @@ class ModifierBucket extends Application {
 		searchbar.on("keydown", event => this._keyDown(event))
 
 		// Modifier Deleting
-		html.find(".click-delete").on("click", event => this.removeModifier(event))
+		html.find(".active").on("click", event => this.removeModifier(event))
+		html.find(".player").on("click", event => this.sendToPlayer(event))
+		html.find(".modifier").on("click", event => this._onClickModifier(event))
 	}
 
 	_keyDown(event: JQuery.KeyDownEvent) {
@@ -118,6 +123,15 @@ class ModifierBucket extends Application {
 					return this.close()
 			}
 		}
+	}
+
+	_onClickModifier(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const modifier: RollModifier = {
+			name: $(event.currentTarget).data("name"),
+			modifier: $(event.currentTarget).data("modifier"),
+		}
+		return this.addModifier(modifier)
 	}
 
 	removeModifier(event: JQuery.ClickEvent) {
@@ -154,6 +168,15 @@ class ModifierBucket extends Application {
 		this.value = ""
 		this.render()
 		this.button.render()
+	}
+
+	sendToPlayer(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const uuid = $(event.currentTarget).data("uuid")
+		const player = (game as Game).users?.get(uuid)
+		if (!player) return
+		const modStack = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
+		return player.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modStack)
 	}
 }
 

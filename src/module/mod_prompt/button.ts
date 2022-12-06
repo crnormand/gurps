@@ -1,6 +1,6 @@
-import { RollModifier, UserFlags } from "@module/data"
+import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
 import { ModifierBucket } from "@module/mod_bucket/window"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS } from "@module/settings"
 import { i18n } from "@util"
 import { ModifierWindow } from "./window"
 

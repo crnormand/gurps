@@ -1,3 +1,5 @@
+export const SYSTEM_NAME = "gcsga"
+
 export enum DisplayMode {
 	NotShown = "not_shown",
 	Inline = "inline",

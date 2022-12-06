@@ -10,7 +10,7 @@ import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
 import { Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { LastActor, Static } from "@util"
+import * as Static from "./static"
 import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
 
 /**
@@ -228,9 +228,12 @@ export function registerHandlebarsHelpers() {
 	// 	return "";
 	// });
 
-	Handlebars.registerHelper("in", function (total: string, sub: string): boolean {
+	Handlebars.registerHelper("in", function (total: string | any[] | any, sub: string): boolean {
 		if (!total) total = ""
-		return total.includes(sub)
+		if (Array.isArray(total)) return total.includes(sub)
+		if (typeof total === "string") return total.includes(sub)
+		return Object.keys(total).includes(sub)
+		// Return total.includes(sub)
 	})
 
 	// May be temporary
@@ -454,11 +457,12 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("modifierCost", function (c: { id: string; value: number }): string {
-		const actor = LastActor.get()
-		if (actor) {
-			const name = actor.attributes?.get(c.id)?.attribute_def.name ?? c.id.toUpperCase()
-			return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, name })
-		}
+		console.log(c)
+		// Const actor = LastActor.get()
+		// if (actor) {
+		// 	const name = actor.attributes?.get(c.id)?.attribute_def.name ?? c.id.toUpperCase()
+		// 	return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, name })
+		// }
 		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
 	})
 }

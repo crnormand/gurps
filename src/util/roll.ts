@@ -1,8 +1,6 @@
 import { ActorGURPS, CharacterGURPS } from "@actor"
-import { RollModifier, RollType, UserFlags } from "@module/data"
+import { RollModifier, RollType, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { GURPS } from "@module/gurps"
-import { SYSTEM_NAME } from "@module/settings"
 import { i18n_f, toWord } from "./misc"
 
 /**
@@ -157,7 +155,7 @@ async function resetMods(user: StoredDocument<User> | null) {
 	const sticky = user.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky)
 	if (sticky === false) {
 		await user.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
-		const button = GURPS.ModifierButton
+		const button = (game as any).ModifierButton
 		return button.render()
 	}
 }
@@ -165,16 +163,16 @@ async function resetMods(user: StoredDocument<User> | null) {
 /**
  * Handle adding modifiers via OTF
  * @param {StoredDocument<User>} user
- * @param {ActorGURPS} actor
+ * @param {ActorGURPS} _actor
  */
-function addModifier(user: StoredDocument<User> | null, actor: ActorGURPS, data: { [key: string]: any }) {
+function addModifier(user: StoredDocument<User> | null, _actor: ActorGURPS, data: { [key: string]: any }) {
 	if (!user) return
 	const mod: RollModifier = {
 		name: data.comment,
 		modifier: data.modifier,
 		tags: [],
 	}
-	return GURPS.ModifierButton.window.addModifier(mod)
+	return (game as any).ModifierButton.window.addModifier(mod)
 }
 
 /**

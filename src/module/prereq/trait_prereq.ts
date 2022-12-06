@@ -1,9 +1,8 @@
 import { CharacterGURPS } from "@actor"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { BasePrereq } from "@prereq"
 import { i18n, numberCompare, stringCompare } from "@util"
-import { PrereqConstructionContext } from "./base"
+import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export class TraitPrereq extends BasePrereq {
 	constructor(data: TraitPrereq | any, context: PrereqConstructionContext = {}) {

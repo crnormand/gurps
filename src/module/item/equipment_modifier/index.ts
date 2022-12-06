@@ -1,5 +1,6 @@
 import { BaseItemGURPS } from "@item/base"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
+import { SETTINGS } from "@module/settings"
 import {
 	determineModWeightValueTypeFromString,
 	extractFraction,

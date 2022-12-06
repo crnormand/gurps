@@ -1,3 +1,0 @@
-<div id='modifier-app-window' class='{{cssClass}}' autocomplete='off'>
-	<input class="checkem" type="text" />
-</div>

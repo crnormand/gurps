@@ -2,8 +2,6 @@
 
 ## In Progress
 
--   add support for static resource trackers
-    -   implement UI
 -   Convert the modifier bucket over
     -   add search function, same as mod prompt
     -   css
@@ -11,9 +9,8 @@
     -   add 0.15 categories
     -   settings window for editing master list
     -   pinned appears as category always (for awareness)
--   DR "to the unrecognized part (@part@) for body type (default)"
--   att "to unrecognized key (@key@)"
-    -   get body type of lastchar or default when opening item and check location id against it
+    -   use modifier colors for buttons themselves (solid green background white text, reverse with fade etc.)
+    -   modifier bucket journals
 -   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
     -   features not updated in dragdata for some reason
     -   only happens with toObject function, features not updated
@@ -57,6 +54,7 @@
 
 ## 1.1.0 and beyond
 
+-   roll skills based on other attributes
 -   add way to hide specific result, target, and mods of roll but just show success/failure/crit
 -   reimporting a character over another one doesn't visibly change portrait until refresh because it is stored in cache. fix?
 -   Global Foundry styling

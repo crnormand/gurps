@@ -44,6 +44,96 @@
 		background: rgb(var(--color-background));
 	}
 
+	&#default_hit_locations-settings {
+		.fieldblock {
+			display: grid;
+			grid-template-columns: min-content auto;
+			grid-auto-flow: row;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			padding: 2px 16px;
+			hr,
+			.title {
+				font: var(--font-system);
+				grid-column: 1 / span 2;
+			}
+			.label {
+				white-space: nowrap;
+				text-align: right;
+			}
+		}
+		.field {
+			display: grid;
+			grid-auto-flow: column;
+		}
+		div.add {
+			display: grid;
+			grid-auto-flow: column;
+			white-space: nowrap;
+			gap: 5px;
+			justify-content: start;
+			color: rgb(var(--color-icon-button));
+			align-items: center;
+		}
+		.thresholds {
+			grid-column: 1 / span 2;
+			border: 1px solid rgb(var(--color-divider));
+		}
+		.item-list {
+			grid-column: 1 / span 2;
+			border: 1px solid rgb(var(--color-divider));
+			.item {
+				background-color: rgb(var(--color-content));
+				display: grid;
+				grid-template-columns: 0fr 1fr;
+				&.border-top {
+					border-top: 1px solid rgb(var(--color-drop-area));
+				}
+				&.border-bottom {
+					border-bottom: 1px solid rgb(var(--color-drop-area));
+				}
+				.controls {
+					display: grid;
+					gap: 5px;
+					padding: 5px;
+					height: min-content;
+					grid-template:
+						"drag trash"
+						"empty add";
+					> :not(.disabled) {
+						color: rgb(var(--color-icon-button));
+						&:hover {
+							color: rgb(var(--color-icon-button-rollover));
+							text-shadow: none;
+						}
+						&:active {
+							color: rgb(var(--color-icon-button-rollover));
+							text-shadow: none;
+						}
+					}
+					> .disabled {
+						color: rgba(var(--color-icon-button), 0.6);
+						cursor: default;
+						pointer-events: none;
+					}
+					.gcs-grip {
+						grid-area: drag;
+					}
+					.gcs-trash {
+						grid-area: trash;
+					}
+					.gcs-circled-add {
+						grid-area: add;
+					}
+				}
+			}
+			.item:nth-child(2n) {
+				background-color: rgb(var(--color-banding));
+			}
+		}
+	}
+
 	&#default_sheet_settings-settings {
 		form {
 			overflow: hidden;

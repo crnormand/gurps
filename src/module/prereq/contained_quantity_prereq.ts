@@ -1,10 +1,8 @@
-import { CharacterGURPS } from "@actor"
 import { EquipmentContainerGURPS, EquipmentGURPS } from "@item"
 import { NumberCompare, NumberComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { BasePrereq } from "@prereq"
 import { i18n, numberCompare } from "@util"
-import { PrereqConstructionContext } from "./base"
+import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export interface ContainedQuantityPrereq extends BasePrereq {
 	quantity: NumberCompare
@@ -23,7 +21,7 @@ export class ContainedQuantityPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(_: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(_: Actor, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
 		let satisfied = false
 		const eqp = exclude instanceof EquipmentGURPS || exclude instanceof EquipmentContainerGURPS ? exclude : null
 		if (eqp) {

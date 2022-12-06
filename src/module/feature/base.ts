@@ -1,5 +1,5 @@
 import { Feature } from "@feature"
-import { ItemGURPS, TraitGURPS } from "@item"
+// Import { ItemGURPS, TraitGURPS } from "@item"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
 
@@ -53,7 +53,7 @@ export class BaseFeature {
 
 	get levels(): number {
 		if (this.item) {
-			if (this.item instanceof TraitGURPS) return this.item.levels
+			if (this.item.type === "trait") return (this.item as any).levels
 			return 1
 		}
 		return this._levels
@@ -63,7 +63,7 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	setParent(parent: ItemGURPS): void {
+	setParent(parent: Item): void {
 		this.parent = parent.uuid
 	}
 
@@ -89,7 +89,7 @@ export class BaseFeature {
 export interface BaseFeature {
 	parent: string
 	type: FeatureType
-	item?: ItemGURPS
+	item?: Item
 	amount: number
 	per_level: boolean
 	_levels: number
