@@ -1,5 +1,5 @@
 import { CharacterGURPS } from "@actor"
-import { HitLocationTable } from "@actor/character/data"
+import { HitLocationTable } from "@actor/character/hit_location"
 import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@item"
 import { AttributeDefObj } from "@module/attribute/attribute_def"

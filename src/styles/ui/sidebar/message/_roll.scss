@@ -163,6 +163,10 @@
 				color: rgb(var(--color-icon-button));
 				margin-right: 4px;
 			}
+
+			&:hover {
+				box-shadow: 0 0 10px rgb(var(--color-failure));
+			}
 		}
 	}
 }

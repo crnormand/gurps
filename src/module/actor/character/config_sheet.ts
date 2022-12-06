@@ -1,12 +1,12 @@
 import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { CharacterGURPS } from "."
-import { SETTINGS } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
 import { i18n, i18n_f, prepareFormData } from "@util"
-import { CharacterSettings, HitLocationTable } from "./data"
 import { SYSTEM_NAME } from "@module/data"
+import { CharacterSettings } from "./data"
+import { HitLocationTable } from "./hit_location"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS

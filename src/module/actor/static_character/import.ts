@@ -1,4 +1,4 @@
-import { HitLocationTable } from "@actor/character/data"
+import { HitLocationTable } from "@actor/character/hit_location"
 import { CharacterImportedData } from "@actor/character/import"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"

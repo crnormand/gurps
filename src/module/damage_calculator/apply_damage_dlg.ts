@@ -1,43 +1,13 @@
 import { SYSTEM_NAME } from "@module/data"
+import { HitLocation } from "@actor/character/hit_location"
 import { DiceGURPS } from "@module/dice"
 import { DamageCalculator } from "."
-import { DamageRoll } from "./damage_roll"
 import { createDamageTarget, DamageTarget } from "./damage_target"
+import { DamageAttacker, DamageRoll } from "./damage_roll"
 import { DamageType } from "./damage_type"
-import { HitLocationAdapter } from "./hit_location"
+import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
+
 class ApplyDamageDialog extends Application {
-	static open(attackerId: string, targetId: string) {
-		console.log("Apply Damage!")
-
-		// @ts-ignore game.actors.get until types v10
-		let attacker = game.actors.get(attackerId)
-
-		let roll: DamageRoll = {
-			attacker: attacker,
-			weapon: "Fine Spear (2H Swing)",
-			locationId: "torso",
-			dice: new DiceGURPS("2d+4"),
-			basicDamage: 11,
-			damageType: DamageType.cr,
-			damageModifier: "",
-			applyTo: "HP",
-			armorDivisor: 2,
-			rofMultiplier: 0,
-			range: null,
-			isHalfDamage: false,
-			isShotgunCloseRange: false,
-			vulnerability: 1,
-			internalExplosion: false,
-		}
-
-		// @ts-ignore game.actors.get until types v10
-		let actor = game.actors.get(targetId)
-		let target: DamageTarget = createDamageTarget(actor)
-
-		const app = new ApplyDamageDialog(roll, target)
-		app.render(true)
-	}
-
 	private calculator: DamageCalculator
 
 	constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
@@ -78,7 +48,7 @@ class ApplyDamageDialog extends Application {
 	}
 
 	get title() {
-		return "Apply Damage"
+		retuern "Apply Damage"
 	}
 
 	private get target(): DamageTarget {
@@ -100,19 +70,18 @@ class ApplyDamageDialog extends Application {
 
 	private get isExplosion(): boolean {
 		return this.roll.damageModifier === "ex"
-	}
+	}e
 
 	private get armorDivisorSelect(): string {
 		return this.roll.armorDivisor.toString()
 	}
 
-	private get hitLocation(): HitLocationAdapter | undefined {
-		console.log(this.target, this.target.hitLocationTable)
-		return this.target.hitLocationTable.getLocation(this.calculator.damageRoll.locationId)
+	private get hitLocation(): HitLocation | undefined {
+		return getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
 	}
 
 	private get dr(): number | undefined {
-		return this.hitLocation?.calc?.dr(this.roll.damageType)
+		return getHitLocationDR(this.hitLocation, this.roll.damageType)
 	}
 
 	private get hitLocationChoice(): Record<string, string> {
