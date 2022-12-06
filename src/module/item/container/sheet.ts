@@ -3,8 +3,8 @@ import { ItemGURPS } from "@item"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
-import { SYSTEM_NAME } from "@module/settings"
 import { ContainerGURPS } from "."
+import { SYSTEM_NAME } from "@module/data"
 
 export class ContainerSheetGURPS extends ItemSheetGURPS {
 	static get defaultOptions(): DocumentSheetOptions {
@@ -114,12 +114,12 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		event: DragEvent,
 		itemData: PropertiesToSource<ItemDataBaseProperties>
 	): Promise<Item[]> {
-		const source = (this.item as ContainerGURPS).deepItems.get(itemData._id!)
+		const source = (this.item as any).deepItems.get(itemData._id!)
 		const dropTarget = $(event.target!).closest("[data-item-id]")
-		const target = (this.item as ContainerGURPS).deepItems.get(dropTarget.data("item-id"))
+		const target = (this.item as any).deepItems.get(dropTarget.data("item-id"))
 		if (!target) return []
-		const parent = target?.parent
-		const siblings = (target!.parent!.items as Collection<ItemGURPS>).filter(i => i._id !== source!._id)
+		const parent = target?.parent as Actor | Item
+		const siblings = target!.parent!.items.filter((i: Item) => i.id !== source!.id)
 
 		const sortUpdates = SortingHelpers.performIntegerSort(source, {
 			target: target,
@@ -127,14 +127,14 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		})
 		const updateData = sortUpdates.map(u => {
 			const update = u.update
-			;(update as any)._id = u.target!._id
+			;(update as any)._id = u.target!.id
 			return update
 		})
 
 		if (source && target && source.parent !== target.parent) {
 			if (source instanceof ContainerGURPS && target.parents.includes(source)) return []
-			await source!.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
-			return parent?.createEmbeddedDocuments(
+			await source!.parent!.deleteEmbeddedDocuments("Item", [source!.id!], { render: false })
+			return (parent as any)?.createEmbeddedDocuments(
 				"Item",
 				[
 					{

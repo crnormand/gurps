@@ -1,5 +1,5 @@
 import { ContainerGURPS } from "@item/container"
-import { TraitContainerGURPS } from "@item/trait_container"
+// Import { TraitContainerGURPS } from "@item/trait_container"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
 import { CR, CRAdjustment } from "@module/data"
@@ -23,7 +23,7 @@ export class TraitGURPS extends ContainerGURPS {
 	get enabled(): boolean {
 		if (this.system.disabled) return false
 		let enabled = !this.system.disabled
-		if (this.parent && this.parent instanceof TraitContainerGURPS) enabled = enabled && this.parent.enabled
+		if (this.parent && this.parent.type === "trait_container") enabled = enabled && (this.parent as any).enabled
 		return enabled
 	}
 

@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "."
+import { SYSTEM_NAME } from "@module/data"
 import { SettingsMenuGURPS } from "./menu"
 
 export class ColorSettings extends SettingsMenuGURPS {

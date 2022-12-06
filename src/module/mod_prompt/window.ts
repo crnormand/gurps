@@ -1,5 +1,4 @@
-import { RollModifier, UserFlags } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
 import { fSearch } from "@util/fuse"
 import { ModifierBrowse } from "./browse"
 import { ModifierButton } from "./button"

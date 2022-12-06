@@ -1,23 +1,88 @@
 #modifier-bucket-window {
 	position: absolute;
-	display: grid;
-	grid-auto-flow: column;
-	grid-gap: 5px;
-	grid-template:
-		"none list"
-		"bar list";
-	align-items: end;
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	// align-items: end;
 	border: 2px solid rgb(var(--color-focused-tab));
 	border-radius: 4px;
 	background: rgb(var(--color-background));
 	color: rgb(var(--color-on-background));
 	padding: 5px;
+	z-index: var(--z-index-mod);
+
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
 
 	.section {
 		border: 1px solid rgb(var(--color-header));
+		height: 100%;
+		.header {
+			text-align: center;
+		}
 		.content {
 			background-color: rgb(var(--color-content));
 			color: rgb(var(--color-on-content));
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			padding: 4px;
+			height: calc(100% - 18px);
+		}
+	}
+	#search {
+		grid-area: search;
+	}
+
+	.active {
+		display: flex;
+		gap: 5px;
+	}
+
+	.active,
+	.modifier {
+		// margin: auto;
+		border: 2px solid;
+		border-radius: 4px;
+		// max-width: 80%;
+		// min-width: 150px;
+		padding: var(--padding-standard);
+		cursor: pointer;
+		transition: all 0.1s linear 0s;
+		font-weight: bold;
+
+		&.pos {
+			border-color: rgb(var(--color-success));
+			background-color: rgb(var(--color-success));
+			color: white;
+
+			&:hover {
+				color: rgb(var(--color-success));
+				background-color: white;
+			}
+		}
+
+		&.neg {
+			border-color: rgb(var(--color-failure));
+			background-color: rgb(var(--color-failure));
+			color: white;
+			&:hover {
+				color: rgb(var(--color-failure));
+				background-color: white;
+			}
+		}
+
+		&.zero {
+			border-color: rgb(var(--color-skill));
+			background-color: rgb(var(--color-skill));
+			color: white;
+			&:hover {
+				color: rgb(var(--color-skill));
+				background-color: white;
+			}
 		}
 	}
 }

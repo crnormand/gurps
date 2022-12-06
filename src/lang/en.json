@@ -44,6 +44,9 @@
 			"hearing": "Hearing",
 			"tastesmell": "Taste & Smell",
 			"touch": "Touch",
+			"hp": "HP",
+			"fp": "FP",
+			"qp": "QP",
 			"status": {
 				"normal": "Normal",
 				"reeling": "Reeling",
@@ -486,7 +489,8 @@
 			"max": "Max",
 			"max_enforced": "Enforce",
 			"min": "Min",
-			"min_enforced": "Enforce"
+			"min_enforced": "Enforce",
+			"current": "Current"
 		},
 		"prereq": {
 			"header": "Prerequisites"
@@ -787,9 +791,9 @@
 			},
 			"srt_comparison": {
 				"less_than": "<",
+				"less_than_or_equal": "≤",
 				"greater_than": ">",
-				"less_than_or_equal": "≥",
-				"greater_than_or_equal": "≤"
+				"greater_than_or_equal": "≥"
 			},
 			"srt_operator": {
 				"add": "Max +",
@@ -812,6 +816,7 @@
 		},
 		"field_prefix": {
 			"attribute": "to {att}",
+			"attribute_unknown": "to the unrecognized key ({att})",
 			"tech_level": "When the Tech Level",
 			"name": "whose name",
 			"combined_with": "combined with",
@@ -827,6 +832,7 @@
 			"dr_bonus_before": "against",
 			"dr_bonus_after": "attacks",
 			"dr": "to the {location}",
+			"dr_unknown": "to the unrecognized part ({part}) for body type ({type})",
 			"percentage": "by {value}%"
 		},
 		"compendium_browser": {

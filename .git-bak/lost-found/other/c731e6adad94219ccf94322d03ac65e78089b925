@@ -1,3 +1,0 @@
-<div id='modifier-app-window' class='{{cssClass}}' autocomplete='off'>
-	<input class="searchbar" type="text" value="{{value}}" />
-</div>

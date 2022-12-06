@@ -4,8 +4,9 @@ import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
+import { SYSTEM_NAME } from "@module/data"
 // Import { RollModifier } from "@module/data"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS } from "@module/settings"
 import { i18n, newUUID, Static } from "@util"
 import { StaticAdvantage, StaticEquipment } from "./components"
 import {
@@ -15,11 +16,14 @@ import {
 	StaticAttributeName,
 	StaticCharacterSource,
 	StaticCharacterSystemData,
+	StaticResourceThreshold,
 	StaticResourceTracker,
+	StaticThresholdComparison,
+	StaticThresholdOperator,
 } from "./data"
 import { StaticCharacterImporter } from "./import"
 
-Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			// @ts-ignore until v10 types
@@ -32,7 +36,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
 		context?: (DocumentModificationContext & MergeObjectOptions) | undefined
 	): Promise<this | undefined> {
-		// console.log(data)
+		// Console.log(data)
 		return super.update(data, context)
 	}
 
@@ -71,11 +75,36 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	}
 
 	get trackers(): StaticResourceTracker[] {
+		/**
+		 *
+		 * @param v
+		 */
+		function getCurrentThreshold(v: StaticResourceTracker): StaticResourceThreshold | null {
+			const thresholds = v.thresholds
+			if (!thresholds?.length) return null
+			let current = thresholds.at(-1)!
+			for (const t of thresholds) {
+				let compare = v.max
+				if (t.operator === StaticThresholdOperator.Add) compare += t.value
+				else if (t.operator === StaticThresholdOperator.Subtract) compare -= t.value
+				else if (t.operator === StaticThresholdOperator.Multiply) compare *= t.value
+				else if (t.operator === StaticThresholdOperator.Divide) compare /= t.value
+
+				if (t.comparison === StaticThresholdComparison.LessThan && v.value < compare) return t
+				else if (t.comparison === StaticThresholdComparison.LessThanOrEqual && v.value <= compare) return t
+				else if (t.comparison === StaticThresholdComparison.GreaterThan && v.value > compare) return t
+				else if (t.comparison === StaticThresholdComparison.GreaterThanOrEqual && v.value >= compare) return t
+			}
+			return current
+		}
+
 		if (!this.system.additionalresources.tracker) return []
 		return Object.keys(this.system.additionalresources.tracker).map(k => {
 			const v = this.system.additionalresources.tracker[k]
+			const currentThreshold = getCurrentThreshold(v)
 			return mergeObject(v, {
 				index: k,
+				currentThreshold: currentThreshold,
 			})
 		})
 	}
@@ -910,7 +939,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		newobj[objkey] = oldotf
 		let notes
 		let newotf
-			;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
+		;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
 		if (newotf) newobj[objkey] = newotf
 		newobj.notes = notes?.trim()
 	}

@@ -29,7 +29,7 @@
  */
 
 // Import TypeScript modules
-import { registerSettings, SYSTEM_NAME } from "./settings"
+import { registerSettings } from "./settings"
 import { preloadTemplates } from "./preload-templates"
 import { evaluateToNumber, i18n, LastActor, registerHandlebarsHelpers, Static } from "@util"
 import { CharacterSheetGURPS } from "@actor/sheet"
@@ -60,7 +60,7 @@ import { CompendiumBrowser } from "./compendium"
 import { PDFViewerSheet } from "@module/pdf/sheet"
 import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
-import { UserFlags } from "./data"
+import { SYSTEM_NAME, UserFlags } from "./data"
 import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
@@ -245,7 +245,7 @@ Hooks.once("init", async () => {
 		label: i18n("gurps.system.sheet.pdf_edit"),
 	})
 
-	Hooks.on("chatMessage", function (_log, message, chatMessageData) {
+	Hooks.on("chatMessage", function (_log, message, _chatMessageData) {
 		if (message.startsWith("/dmg ")) {
 			let parts = message.split(" ").slice(1, message.length)
 			ApplyDamageDialog.open(parts[0], parts[1])
@@ -274,10 +274,8 @@ Hooks.once("ready", async () => {
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
 	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-	GURPS.ModifierButton = new ModifierButton()
-	GURPS.ModifierButton.render(true)
-
-	GURPS.CompendiumBrowser = new CompendiumBrowser()
+	;(game as any).ModifierButton = new ModifierButton()
+	;(game as any).ModifierButton.render(true)(game as any).CompendiumBrowser = new CompendiumBrowser()
 
 	await Promise.all(
 		(game as Game).actors!.map(async actor => {
@@ -311,13 +309,13 @@ Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) 
 		const browseButton = $(
 			`<button><i class='fas fa-book-open-cover'></i>${i18n("gurps.compendium_browser.button")}</button>`
 		)
-		browseButton.on("click", _event => GURPS.CompendiumBrowser.render(true))
+		browseButton.on("click", _event => (game as any).CompendiumBrowser.render(true))
 		html.find(".directory-footer").append(browseButton)
 	}
 })
 
 Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
-	const cb = GURPS.CompendiumBrowser
+	const cb = (game as any).CompendiumBrowser
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()

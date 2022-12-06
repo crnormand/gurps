@@ -2,6 +2,13 @@
 	<div class="placeholder"> </div>
 	<select name="array.system.features.{{@index}}.location">
 		{{#select this.location}}
+			{{#unless (in locations this.location)}}
+				<option value="{{this.location}}">{{localize
+						"gurps.field_prefix.dr_unknown"
+						part=this.location
+						type=@root.defaultBodyType
+					}}</option>
+			{{/unless}}
 			{{#each locations as |v k|}}
 				<option value="{{k}}">{{localize "gurps.field_prefix.dr" location=v}}</option>
 			{{/each}}

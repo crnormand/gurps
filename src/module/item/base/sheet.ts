@@ -3,8 +3,8 @@ import { HitLocationTable } from "@actor/character/data"
 import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@item"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
-import { NumberComparison, StringComparison, StudyType } from "@module/data"
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { NumberComparison, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
+import { SETTINGS } from "@module/settings"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { WeaponSheet } from "@module/weapon/sheet"
 import { PrereqType } from "@prereq"
@@ -21,10 +21,11 @@ export class ItemSheetGURPS extends ItemSheet {
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
 		) as AttributeDefObj[]
-		const default_locations = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
-		) as HitLocationTable
+		const default_locations = {
+			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+		} as HitLocationTable
 		const actor = this.item.actor as unknown as CharacterGURPS
 		if (actor) {
 			actor.attributes.forEach(e => {
@@ -62,6 +63,7 @@ export class ItemSheetGURPS extends ItemSheet {
 				attributes: attributes,
 				locations: locations,
 				sysPrefix: "array.system.",
+				defaultBodyType: default_locations.name,
 			},
 		}
 

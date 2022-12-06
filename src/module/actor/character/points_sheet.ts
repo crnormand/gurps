@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 import { i18n_f } from "@util"
 import { CharacterGURPS } from "."
 import { PointsRecord } from "./data"

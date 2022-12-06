@@ -1,13 +1,13 @@
 /* eslint-disable jest/no-disabled-tests */
-import { DamageCalculator, Extremity, Head, Limb } from "../../src/module/damage_calculator"
-import { DiceGURPS } from "../../src/module/dice"
-import { RollType } from "../../src/module/data"
-import { DamageTarget, TargetTrait, TargetTraitModifier } from "../../src/module/damage_calculator/damage_target"
-import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
-import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
-import { InjuryEffect, InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
+import { DamageCalculator, Extremity, Head, Limb } from "@module/damage_calculator"
+import { DiceGURPS } from "@module/dice"
+import { RollType } from "@module/data"
+import { DamageTarget, TargetTrait, TargetTraitModifier } from "@module/damage_calculator/damage_target"
+import { AnyPiercingType, DamageType } from "@module/damage_calculator/damage_type"
+import { DamageAttacker, DamageRoll, DefaultHitLocations } from "@module/damage_calculator/damage_roll"
+import { InjuryEffect, InjuryEffectType } from "@module/damage_calculator/injury_effect"
 import { HitLocation } from "@actor/character/data"
-import { HitLocationTableAdapter } from "../../src/module/damage_calculator/hit_location"
+import { HitLocationTableAdapter } from "@module/damage_calculator/hit_location"
 
 // Add real tests here.
 describe("Damage calculator", () => {

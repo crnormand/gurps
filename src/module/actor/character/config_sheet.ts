@@ -1,11 +1,12 @@
 import { AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { CharacterGURPS } from "."
-import { SETTINGS, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS } from "@module/settings"
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
 import { i18n, i18n_f, prepareFormData } from "@util"
 import { CharacterSettings, HitLocationTable } from "./data"
+import { SYSTEM_NAME } from "@module/data"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS
@@ -134,11 +135,11 @@ export class CharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-						(this.file = {
-							text: text,
-							name: files[0].name,
-							path: files[0].path,
-						})
+							(this.file = {
+								text: text,
+								name: files[0].name,
+								path: files[0].path,
+							})
 					)
 				}
 				this.render()
@@ -146,11 +147,11 @@ export class CharacterSheetConfig extends FormApplication {
 		}
 		html.find(".import-confirm").on("click", event => this._import(event))
 		html.find("textarea")
-			.each(function() {
+			.each(function () {
 				// Const height = this.scrollHeight
 				this.setAttribute("style", "height:	auto;")
 			})
-			.on("input", function() {
+			.on("input", function () {
 				const height = this.scrollHeight
 				// Const height = this.value.split("\r").length * 24;
 				this.style.height = "0"
@@ -174,10 +175,11 @@ export class CharacterSheetConfig extends FormApplication {
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
 		) as CharacterSettings["resource_trackers"]
-		const default_hit_locations = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_HIT_LOCATIONS}.body_type`
-		) as CharacterSettings["body_type"]
+		const default_hit_locations = {
+			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+		} as HitLocationTable
 		const update: any = {}
 		if (type === "attributes") update["system.settings.attributes"] = default_attributes
 		if (type === "resource_trackers") update["system.settings.resource_trackers"] = default_resource_trackers
@@ -426,7 +428,7 @@ export class CharacterSheetConfig extends FormApplication {
 				parent_index: parent_index,
 			})
 		)
-			; (event as any).dragType = type
+		;(event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
@@ -505,7 +507,7 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	close(options?: FormApplication.CloseOptions | undefined): Promise<void> {
-		; (this.object.sheet as unknown as CharacterSheetGURPS).config = null
+		;(this.object.sheet as unknown as CharacterSheetGURPS).config = null
 		return super.close(options)
 	}
 }

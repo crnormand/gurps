@@ -313,10 +313,14 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
 	for (let aKey of Object.keys(formData)) {
 		if (aKey.startsWith("array.") && aKey.match(/\d/)) {
 			const key = aKey.replace(/^array./g, "")
+			// Console.log(key)
 			const arrayKey = key.split(/.\d+./)[0]
 			const array: any[] = getProperty(object, arrayKey)
+			// Console.log(object, arrayKey, array)
 			const index = parseInt(key.match(/.(\d+)./)![1])
+			// Console.log(index)
 			const prop = key.replace(new RegExp(`^${arrayKey}.${index}.`), "")
+			// Console.log(prop)
 			setArrayProperty(array, index, prop, formData[aKey])
 			formData[arrayKey] = array
 			delete formData[aKey]
@@ -326,7 +330,7 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
 			// HACK: stupid exception for static resource trackers only. remove in 2.0
 		} else if (aKey.startsWith("sarray.") && aKey.match(/\d/)) {
 			const key = aKey.replace(/^sarray./g, "")
-			const arrayKey = key.split(/thresholds.\d+./)[0] + "thresholds"
+			const arrayKey = `${key.split(/thresholds.\d+./)[0]}thresholds`
 			const array: any[] = getProperty(object, arrayKey)
 			const index = parseInt(key.match(/thresholds.(\d+)./)![1])
 			const prop = key.replace(new RegExp(`^${arrayKey}.${index}.`), "")
@@ -346,6 +350,7 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
  * @param value
  */
 function setArrayProperty(a: any[], index: number, prop: string, value: any): any[] {
+	// Console.log(a, index, prop, value)
 	if (prop.match(/.\d+./)) {
 		const inArrayKey = prop.split(/.\d+./)[0]
 		const inArrayArray = getProperty(a[index], inArrayKey)

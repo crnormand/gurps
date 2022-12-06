@@ -53,7 +53,7 @@
 						<input
 							type="checkbox"
 							name="system.additionalresources.tracker.{{this.index}}.isMaxEnforced"
-							{{checked this.isMinEnforced}}
+							{{checked this.isMaxEnforced}}
 						/>
 						{{localize "gurps.resource_tracker_def.max_enforced"}}
 					</label>
@@ -74,6 +74,15 @@
 						/>
 						{{localize "gurps.resource_tracker_def.min_enforced"}}
 					</label>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.current"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="system.additionalresources.tracker.{{this.index}}.value"
+						value="{{this.value}}"
+						data-dtype="Number"
+					/>
 				</div>
 				{{#if this.thresholds}}
 				<div class="item-list thresholds">

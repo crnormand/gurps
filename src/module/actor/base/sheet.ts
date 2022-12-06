@@ -1,8 +1,7 @@
 import { ActorGURPS, BaseActorGURPS } from "@actor"
-import { ContainerGURPS, ItemGURPS } from "@item"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
-import { SYSTEM_NAME } from "@module/settings"
+import { SYSTEM_NAME } from "@module/data"
 
 export class ActorSheetGURPS extends ActorSheet {
 	static override get defaultOptions(): ActorSheet.Options {
@@ -102,21 +101,21 @@ export class ActorSheetGURPS extends ActorSheet {
 		itemData: PropertiesToSource<ItemDataBaseProperties>,
 		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
-		const source = this.actor.deepItems.get(itemData._id!)
+		const source: any = this.actor.deepItems.get(itemData._id!)
 		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
 		if (!options?.top) dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
-		let target = this.actor.deepItems.get(dropTarget.data("uuid").split(".").at(-1))
+		let target: any = this.actor.deepItems.get(dropTarget.data("uuid").split(".").at(-1))
 		if (!target) return []
-		let parent = target?.parent
+		let parent: any = target?.parent
 		let parents = target?.parents
 		if (options.in) {
-			parent = target as ContainerGURPS
+			parent = target
 			target = parent.children.contents[0] ?? null
 		}
-		const siblings = (parent!.items as Collection<ItemGURPS>).filter(
-			i => i._id !== source!._id && source!.sameSection(i)
+		const siblings = (parent!.items as Collection<Item>).filter(
+			i => i.id !== source!.id && (source as any)!.sameSection(i)
 		)
-		if (target && !source?.sameSection(target)) return []
+		if (target && !(source as any)?.sameSection(target)) return []
 
 		const sortUpdates = SortingHelpers.performIntegerSort(source, {
 			target: target,
@@ -129,7 +128,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		})
 
 		if (source && source.parent !== parent) {
-			if (source instanceof ContainerGURPS && parents.includes(source)) return []
+			if (source.items && parents.includes(source)) return []
 			await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
 			return parent?.createEmbeddedDocuments(
 				"Item",

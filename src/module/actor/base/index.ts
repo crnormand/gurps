@@ -6,9 +6,8 @@ import Document, {
 } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
-import { SYSTEM_NAME } from "@module/settings"
-import { ContainerGURPS, ItemGURPS } from "@item"
 import { ActorFlags, ActorSystemData, BaseActorSourceGURPS } from "./data"
+import { SYSTEM_NAME } from "@module/data"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -59,12 +58,12 @@ class BaseActorGURPS extends Actor {
 		await super._preUpdate(changed, options, user)
 	}
 
-	get deepItems(): Collection<ItemGURPS> {
-		const deepItems: ItemGURPS[] = []
-		for (const item of this.items as any as Collection<ItemGURPS>) {
+	get deepItems(): Collection<Item> {
+		const deepItems: Item[] = []
+		for (const item of this.items as any as Collection<Item>) {
 			deepItems.push(item)
-			if (item instanceof ContainerGURPS)
-				for (const i of item.deepItems) {
+			if ((item as any).items)
+				for (const i of (item as any).deepItems) {
 					deepItems.push(i)
 				}
 		}
@@ -109,7 +108,7 @@ class BaseActorGURPS extends Actor {
 interface BaseActorGURPS extends Actor {
 	// Readonly data: BaseActorDataGURPS;
 	noPrepare: boolean
-	deepItems: Collection<ItemGURPS>
+	deepItems: Collection<Item>
 	// Temp
 	system: ActorSystemData
 	_source: BaseActorSourceGURPS

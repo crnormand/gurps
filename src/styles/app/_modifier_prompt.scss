@@ -94,6 +94,7 @@
 	align-items: end;
 	background: none;
 	border: none;
+	z-index: var(--z-index-mod);
 
 	#applied-mods {
 		grid-area: list;

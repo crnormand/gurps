@@ -29,7 +29,7 @@ export interface StaticCharacterSource
 }
 export interface StaticCharacterDataGURPS
 	extends Omit<StaticCharacterSource, "effects" | "flags" | "items" | "token">,
-	StaticCharacterSystemData {
+		StaticCharacterSystemData {
 	readonly type: StaticCharacterSource["type"]
 	data: StaticCharacterSystemData
 	flags: StaticCharacterFlags
@@ -175,9 +175,9 @@ export interface StaticResourceThreshold {
 
 export enum StaticThresholdComparison {
 	LessThan = "<",
+	LessThanOrEqual = "≤",
 	GreaterThan = ">",
-	LessThanOrEqual = "≥",
-	GreaterThanOrEqual = "≤",
+	GreaterThanOrEqual = "≥",
 }
 
 export enum StaticThresholdOperator {

@@ -22,42 +22,44 @@
 				data-dtype="String"
 			/>
 		</div>
-		<div class="label"></div>
-		<div class="field">
-			<label class="label checkbox-label">
-				<input
-					type="checkbox"
-					name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_move"
-					data-dtype="Boolean"
-					{{checked (in this.ops "halve_move")}}
-				/>
-				{{localize "gurps.attribute_def.halve_move"}}
-			</label>
-		</div>
-		<div class="label"></div>
-		<div class="field">
-			<label class="label checkbox-label">
-				<input
-					type="checkbox"
-					name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_dodge"
-					data-dtype="Boolean"
-					{{checked (in this.ops "halve_dodge")}}
-				/>
-				{{localize "gurps.attribute_def.halve_dodge"}}
-			</label>
-		</div>
-		<div class="label"></div>
-		<div class="field">
-			<label class="label checkbox-label">
-				<input
-					type="checkbox"
-					name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_st"
-					data-dtype="Boolean"
-					{{checked (in this.ops "halve_st")}}
-				/>
-				{{localize "gurps.attribute_def.halve_st"}}
-			</label>
-		</div>
+		{{#unless (in parent "resource_trackers")}}
+			<div class="label"></div>
+			<div class="field">
+				<label class="label checkbox-label">
+					<input
+						type="checkbox"
+						name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_move"
+						data-dtype="Boolean"
+						{{checked (in this.ops "halve_move")}}
+					/>
+					{{localize "gurps.attribute_def.halve_move"}}
+				</label>
+			</div>
+			<div class="label"></div>
+			<div class="field">
+				<label class="label checkbox-label">
+					<input
+						type="checkbox"
+						name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_dodge"
+						data-dtype="Boolean"
+						{{checked (in this.ops "halve_dodge")}}
+					/>
+					{{localize "gurps.attribute_def.halve_dodge"}}
+				</label>
+			</div>
+			<div class="label"></div>
+			<div class="field">
+				<label class="label checkbox-label">
+					<input
+						type="checkbox"
+						name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_st"
+						data-dtype="Boolean"
+						{{checked (in this.ops "halve_st")}}
+					/>
+					{{localize "gurps.attribute_def.halve_st"}}
+				</label>
+			</div>
+		{{/unless}}
 		<div class="label">{{localize "gurps.attribute_def.explanation"}}</div>
 		<div class="field">
 			<input

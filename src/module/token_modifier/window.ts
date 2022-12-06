@@ -1,6 +1,5 @@
 import { ActorFlags } from "@actor/base/data"
-import { RollModifier } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { RollModifier, SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
 import { TokenModifierControl } from "."
 
