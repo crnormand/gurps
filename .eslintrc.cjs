@@ -224,6 +224,8 @@ module.exports = {
 		"jsdoc/require-yields": "warn",
 		"jsdoc/require-yields-check": "warn",
 		"jsdoc/valid-types": "off",
+
+		"jest/no-conditional-expect": "warn",
 	},
 
 	overrides: [
