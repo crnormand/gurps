@@ -7,6 +7,7 @@ import { i18n, i18n_f, prepareFormData } from "@util"
 import { SYSTEM_NAME } from "@module/data"
 import { CharacterSettings } from "./data"
 import { HitLocationTable } from "./hit_location"
+import { SETTINGS } from "@module/settings"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS
@@ -108,7 +109,7 @@ export class CharacterSheetConfig extends FormApplication {
 						request.open("GET", path)
 						new Promise(resolve => {
 							request.onload = () => {
-								if (request.status == 200) {
+								if (request.status === 200) {
 									const text = request.response
 									this.file = {
 										text: text,

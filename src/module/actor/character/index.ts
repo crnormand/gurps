@@ -48,19 +48,12 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import {
-	CharacterSettings,
-	CharacterSource,
-	CharacterSystemData,
-	Encumbrance,
-	HitLocation,
-	HitLocationTable,
-} from "./data"
+import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
 import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
-import { HitLocation } from "./hit_location"
+import { HitLocation, HitLocationTable } from "./hit_location"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -1470,7 +1463,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	saveLocal(): void {
 		const json = this.exportSystemData()
-		json.name = json.name
+		json.name = this.name!
 		return saveDataToFile(json.text, "gcs", json.name)
 	}
 
@@ -1537,7 +1530,7 @@ class CharacterGURPS extends BaseActorGURPS {
 									request.open("GET", path)
 									new Promise(resolve => {
 										request.onload = () => {
-											if (request.status == 200) {
+											if (request.status === 200) {
 												const text = request.response
 												file = {
 													text: text,

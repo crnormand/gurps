@@ -1,9 +1,8 @@
 import { SYSTEM_NAME } from "@module/data"
 import { HitLocation } from "@actor/character/hit_location"
-import { DiceGURPS } from "@module/dice"
 import { DamageCalculator } from "."
-import { createDamageTarget, DamageTarget } from "./damage_target"
-import { DamageAttacker, DamageRoll } from "./damage_roll"
+import { DamageTarget } from "./damage_target"
+import { DamageRoll } from "./damage_roll"
 import { DamageType } from "./damage_type"
 import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
 
@@ -48,7 +47,7 @@ class ApplyDamageDialog extends Application {
 	}
 
 	get title() {
-		retuern "Apply Damage"
+		return "Apply Damage"
 	}
 
 	private get target(): DamageTarget {
@@ -70,7 +69,7 @@ class ApplyDamageDialog extends Application {
 
 	private get isExplosion(): boolean {
 		return this.roll.damageModifier === "ex"
-	}e
+	}
 
 	private get armorDivisorSelect(): string {
 		return this.roll.armorDivisor.toString()

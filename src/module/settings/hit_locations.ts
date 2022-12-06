@@ -1,4 +1,4 @@
-import { HitLocation, HitLocationTable } from "@actor/character/data"
+import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { SYSTEM_NAME } from "@module/data"
 import { i18n, prepareFormData } from "@util"
 import { SettingsMenuGURPS } from "./menu"

@@ -832,7 +832,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 					request.open("GET", path)
 					new Promise(resolve => {
 						request.onload = () => {
-							if (request.status == 200) {
+							if (request.status === 200) {
 								const text = request.response
 								file = {
 									text: text,
