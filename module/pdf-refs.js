@@ -122,6 +122,8 @@ export function handlePdf(links) {
       if (url)
         // url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
         window.open(url, '_blank')
+      else
+        ui.notifications?.warn("Unable to match book code '" + book + "'.")
     }
   })
 }

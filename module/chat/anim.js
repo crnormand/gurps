@@ -182,6 +182,33 @@ export class AnimChatProcessor extends ChatProcessor {
 
   async awaitClick(line) {
     GURPS.IgnoreTokenSelect = true
+    
+    if (!!warpgate) {
+      const location = await warpgate.crosshairs.show(
+      {
+          interval: 0,
+          size: 1,
+          drawOutline: false,
+          lockSize: true,
+          labelOffset: { x:0, y:-150 },
+          icon: 'icons/skills/targeting/crosshair-bars-yellow.webp',
+          //icon: 'icons/magic/symbols/runes-triangle-blue.webp', 
+          label: 'Click to target',
+      })
+      let grid_size = canvas.scene.grid.size
+      canvas.tokens.targetObjects({
+        x: location.x - grid_size / 2,
+        y: location.y - grid_size / 2,
+        height: grid_size,
+        width: grid_size,
+        releaseOthers: true,
+      })
+      GURPS.IgnoreTokenSelect = false
+      line = line + ' @' + parseInt(location.x) + ',' + parseInt(location.y)
+      this.registry.processLine(line)
+      return
+    }
+
     return new Promise((resolve, reject) => {
       window.addEventListener(
         'mousedown',

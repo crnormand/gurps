@@ -1,5 +1,16 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.13 12/06/2022
+
+- Added support for Warpgate module (in animations).   HIGHLY RECOMMENDED!
+- Shortened "Roll Damage" to "Damage" in successful hit msg
+- Show error if PDF book code not found
+- Allow case insensitive OTF for PDF
+- Foundry item rename now correctly renames ranged attacks
+- Fixed error in en lang selection warning
+- Rounded down Strength based ranges to nearest integer
+- Updated to JB2A 0.5.2
+
 Release 0.15.12 11/17/2022
 
 - Fixed chat display of OTF modifiers (including "+0")

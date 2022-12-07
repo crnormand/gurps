@@ -678,7 +678,9 @@ export class GurpsActor extends Actor {
       } else {
         m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
         if (m) {
-          rng = `${parseFloat(m[1]) * st}/${parseFloat(m[2]) * st}`
+          let r1 = parseFloat(m[1]) * st
+          let r2 = parseFloat(m[2]) * st
+          rng = `${parseInt(r1)}/${parseInt(r2)}`
         }
       }
       r.range = rng
