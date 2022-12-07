@@ -1,6 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
 
+Release 0.15.15 12/07/2022
+
+- Fixed /anim targeting code is Warpgate is missing
+
 Release 0.15.14 12/06/2022
 
 - Fixed overlapping Github tags
