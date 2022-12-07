@@ -50,7 +50,7 @@ export class GurpsItemSheet extends ItemSheet {
         commit = { ...commit, ...{ ['system.melee.' + k + '.name']: nm } }
       })
       recurselist(this.item.system.ranged, (e, k, d) => {
-        commit = { ...commit, ...{ ['system.melee.' + k + '.name']: nm } }
+        commit = { ...commit, ...{ ['system.ranged.' + k + '.name']: nm } }
       })
       this.item.update(commit)
     })

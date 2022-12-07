@@ -547,7 +547,8 @@ class SelectChatProcessor extends ChatProcessor {
   process(line) {
     let m = this.match
     if (m[3] == '*') {
-      canvas.tokens.placeables.forEach(t => t.control({ releaseOthers: false }))
+      canvas.activeLayer.controlAll();
+      //for (let t of canvas.tokens.placeables) {t.control({ releaseOthers: false })}
       return true
     }
     if (!!m[2]) {

@@ -284,7 +284,7 @@
   "GURPS.chatUsesSet": "'USES' set to",
   "GURPS.chatYouDoNotHaveEnough": "You do not have enough",
   "GURPS.chatYouMustBeGM": "You must be a GM to execute this command",
-  "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected checkem",
+  "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected",
   "GURPS.chatYouMustSelectTokens": "You must select tokens (or use",
   "GURPS.chatHelpHelp": "<b>/help <i>chat-command</i></b> OR\n\n<b>?<i>chat-command</i></b>: to see help for that command",
   "GURPS.chatHelpSound": "Play a sound in the background<hr>parameters:\nw: wait seconds before starting sound\nv: volume\n&lt;full path filename&gt;<hr>examples:\n/sound w2.5 /path/filename\n/sound v0.6 /path/filename\n/sound w3 v2 /path/filename",
