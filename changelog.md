@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+
+Release 0.15.14 12/06/2022
+
+- Fixed overlapping Github tags
+
 Release 0.15.13 12/06/2022
 
 - Added support for Warpgate module (in animations).   HIGHLY RECOMMENDED!
