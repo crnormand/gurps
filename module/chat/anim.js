@@ -183,7 +183,7 @@ export class AnimChatProcessor extends ChatProcessor {
   async awaitClick(line) {
     GURPS.IgnoreTokenSelect = true
     
-    if (!!warpgate) {
+    try {
       const location = await warpgate.crosshairs.show(
       {
           interval: 0,
@@ -207,7 +207,7 @@ export class AnimChatProcessor extends ChatProcessor {
       line = line + ' @' + parseInt(location.x) + ',' + parseInt(location.y)
       this.registry.processLine(line)
       return
-    }
+    } catch (error) { console.log(error) }
 
     return new Promise((resolve, reject) => {
       window.addEventListener(
