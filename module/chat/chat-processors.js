@@ -94,10 +94,34 @@ class SoundChatProcessor extends ChatProcessor {
       volume: v,
       loop: false,
     }
-    AudioHelper.play(data, true).then(sound => {
-      if (sound.failed) ui.notifications.warn('Unable to play: ' + data.src)
-    })
-  }
+    if (!data.src.endsWith('.txt')) {
+      AudioHelper.play(data, true).then(sound => {
+        if (sound.failed) ui.notifications.warn('Unable to play: ' + data.src)
+      })
+      return true
+    }
+      
+    let xhr = new XMLHttpRequest()
+    xhr.open('GET', data.src, true)
+    xhr.responseType = 'text'
+    xhr.onload = function () {
+      if (xhr.readyState === xhr.DONE) {
+        if (xhr.status === 200) {
+          let list = xhr.responseText.split('\n').map(s => s.replace(/^\.\//, '')).filter(t => !!t && !t.endsWith('.txt'))
+          let i = Math.floor(Math.random() * list.length);
+          let f= data.src.split('/').slice(0, -1).join('/') + "/" + list[i]
+          console.log(`Loaded ${list.length} sounds, picked: ${i}:${f}`)
+          data.src = f
+          AudioHelper.play(data, true).then(sound => {
+           if (sound.failed) ui.notifications.warn('Unable to play: ' + data.src)
+          })
+         
+        }
+      }
+    }
+    xhr.send(null)
+  } 
+
 }
 
 class QuickDamageChatProcessor extends ChatProcessor {

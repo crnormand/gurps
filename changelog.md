@@ -1,6 +1,12 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
 
+Release 0.15.16 12/08/2022
+
+- Added support for list of files using /sound chat command.   /sound /dir/somefile.txt read text file (list of file names) and randomly picks one
+- Prevent /anim error if no token or actor selected
+- Fixed parsing of attacks with single quotes in name
+
 Release 0.15.15 12/07/2022
 
 - Fixed /anim targeting code is Warpgate is missing

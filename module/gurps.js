@@ -27,6 +27,7 @@ import {
   wait,
   quotedAttackName,
   requestFpHp,
+  sanitize
 } from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -1242,7 +1243,8 @@ if (!globalThis.GURPS) {
     var t
     if (!actor) return t
     if (actor instanceof GurpsActor) actor = actor.system
-    let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
+    let s = sanitize(sname)
+    let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
     let smode = ''
     let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', {
       unbalanced: 'skip-lazy',
@@ -1253,7 +1255,7 @@ if (!globalThis.GURPS) {
       sname = m[0].value.trim()
       smode = m[1].value.trim().toLowerCase()
     }
-    let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
+    let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
     if (isMelee)
       // @ts-ignore
       recurselist(actor.melee, (e, k, d) => {
