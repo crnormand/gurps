@@ -181,6 +181,10 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   async awaitClick(line) {
+    if (line.match(/@\d+,\d+/)) {
+      console.log("Duplicate request for click: " + line)
+      return
+    }
     GURPS.IgnoreTokenSelect = true
     
     try {
@@ -207,7 +211,10 @@ export class AnimChatProcessor extends ChatProcessor {
       line = line + ' @' + parseInt(location.x) + ',' + parseInt(location.y)
       this.registry.processLine(line)
       return
-    } catch (error) { console.log(error) }
+    } catch (error) { 
+      GURPS.IgnoreTokenSelect = false
+      console.log(error)
+    }
 
     return new Promise((resolve, reject) => {
       window.addEventListener(
@@ -374,6 +381,10 @@ export class AnimChatProcessor extends ChatProcessor {
       ]
     }
     if (destTokens.length == 0) {
+      if (!srcToken) {
+        ui.notifications.error('No token or actor selected')
+        return false
+      }
       ui.notifications.warn('Please click the target location')
       this.send()
       await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/, ''))
