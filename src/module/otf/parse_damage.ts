@@ -2,9 +2,9 @@ import { ParsedOtF, OtFAction, OtFDamageAction, OptionalCheckParameters } from "
 import { gspan } from "./utils"
 import { d6ify } from "@util/misc"
 import { StaticHitLocation } from "../actor/static_character/hit_location"
-import { GURPS } from "../gurps"
-// Let GURPS: any = {}
-// let StaticHitLocation: any = {}
+// Import { GURPS } from "../gurps"
+let GURPS: any = {}
+// Let StaticHitLocation: any = {}
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:

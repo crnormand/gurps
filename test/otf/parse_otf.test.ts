@@ -1,4 +1,4 @@
-import { OtFLinkedAction } from "./../../src/module/otf/base";
+import { OtFLinkedAction } from "./../../src/module/otf/base"
 /* eslint-disable jest/no-disabled-tests */
 import { OtFCostsAction, parselink } from "@module/otf"
 
@@ -30,8 +30,7 @@ describe("modifiers", () => {
 		if (action) {
 			expect(action.type).toBe("modifier")
 			expect(action.num).toBe(1)
-		} else
-			expect(action).toBeDefined()
+		} else expect(action).toBeDefined()
 	})
 	it("-1", () => {
 		let s = "-1"
@@ -40,8 +39,7 @@ describe("modifiers", () => {
 		if (action) {
 			expect(action.type).toBe("modifier")
 			expect(action.num).toBe(-1)
-		} else
-			expect(action).toBeDefined()
+		} else expect(action).toBeDefined()
 	})
 	it("+1 desc", () => {
 		let s = "+1 desc"
@@ -51,8 +49,7 @@ describe("modifiers", () => {
 			expect(action.type).toBe("modifier")
 			expect(action.num).toBe(1)
 			expect(action.desc).toBe("desc")
-		} else
-			expect(action).toBeDefined()
+		} else expect(action).toBeDefined()
 	})
 	it("-1 desc", () => {
 		let s = "-1 desc"
@@ -62,8 +59,7 @@ describe("modifiers", () => {
 			expect(action.type).toBe("modifier")
 			expect(action.num).toBe(-1)
 			expect(action.desc).toBe("desc")
-		} else
-			expect(action).toBeDefined()
+		} else expect(action).toBeDefined()
 	})
 	it("+1 desc & -2 desc2", () => {
 		let s = "+1 desc & -2 desc2"
@@ -78,11 +74,8 @@ describe("modifiers", () => {
 				expect(action.type).toBe("modifier")
 				expect(action.num).toBe(-2)
 				expect(action.desc).toBe("desc2")
-			}
-			else
-				expect(action).toBeDefined()
-		} else
-			expect(action).toBeDefined()
+			} else expect(action).toBeDefined()
+		} else expect(action).toBeDefined()
 	})
 	it("-@margin desc", () => {
 		let s = "-@margin desc"
@@ -93,8 +86,7 @@ describe("modifiers", () => {
 			expect(action.num).toBeUndefined()
 			expect(action.margin).toBe("-@margin")
 			expect(action.desc).toBe(s)
-		} else
-			expect(action).toBeDefined()
+		} else expect(action).toBeDefined()
 	})
 })
 describe("chat", () => {
@@ -112,12 +104,11 @@ describe("chat", () => {
 		let s = "!/cmd"
 		let parsed_otf = parselink(s)
 		let action = <OtFCostsAction>parsed_otf.action
-		if (action) {
-			expect(action.type).toBe("chat")
-			expect(action.orig).toBe("/cmd")
-			expect(action.blindroll).toBeTruthy()
-		}
-		expect(parsed_otf.text).toMatch(new RegExp("<span[^>]+>/cmd</span>"))
+		expect(action).toBeDefined()
+		expect(action.type).toBe("chat")
+		expect(action.orig).toBe("/cmd")
+		// Expect(action.blindroll).toBeDefined()
+		expect(parsed_otf.text).toMatch(/<span[^>]+>\/cmd<\/span>/)
 	})
 	it("'override'/cmd", () => {
 		let s = "'override'/cmd"
@@ -158,7 +149,7 @@ describe("html", () => {
 		if (action) {
 			expect(action.type).toBe("href")
 			expect(action.orig).toBe(s)
-			expect(action.blindroll).toBeTruthy()
+			// Expect(action.blindroll).toBeTruthy()
 		}
 		expect(parsed_otf.text).toMatch(new RegExp(`<a href="${s}">${s}</a>`))
 	})
@@ -170,6 +161,6 @@ describe("html", () => {
 			expect(action.type).toBe("href")
 			expect(action.orig).toBe("http:///someplace")
 		}
-		expect(parsed_otf.text).toMatch(new RegExp("<a href=\"http:///someplace\">override</a>"))
+		expect(parsed_otf.text).toMatch(new RegExp('<a href="http:///someplace">override</a>'))
 	})
 })
