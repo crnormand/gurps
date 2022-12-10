@@ -28,6 +28,7 @@ import { GURPS } from "../gurps"
 
 export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d+) ?(?<type>[ \w()]+)/i
 export const DAMAGE_REGEX =
+	// eslint-disable-next-line max-len
 	/^(?<accum>\+)?(?<roll>\d+)(?<D>d\d*)?(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+)?(?<follow>,.*)?$/i
 export const DMG_INDEX_DICE = 1
 export const DMG_INDEX_D = 2
@@ -39,6 +40,7 @@ export const DMG_INDEX_TYPE = 7
 export const DMG_INDEX_COST = 8
 
 export const DERIVED_DAMAGE_REGEX =
+	// eslint-disable-next-line max-len
 	/^(?<accum>\+)?(?<att>sw|thr)()(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+])?(?<follow>,.*)?$/i
 export const DMG_INDEX_BASICDAMAGE = 1
 
