@@ -7,13 +7,19 @@ import Document, {
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
 import { SYSTEM_NAME } from "@module/data"
-import { ContainerGURPS, ItemGURPS, TraitContainerGURPS, TraitGURPS, TraitModifierGURPS } from "@item"
+import { TraitContainerGURPS, TraitGURPS, TraitModifierGURPS } from "@item"
 import { ActorFlags, ActorSystemData, BaseActorSourceGURPS } from "./data"
-import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
-import { DamageRoll, DamageRollAdapter } from "@module/damage_calculator/damage_roll"
 import { Attribute } from "@module/attribute"
-import { DamageTarget, HitPointsCalc, TargetTrait, TargetTraitModifier } from "@module/damage_calculator/damage_target"
 import { HitLocationTable } from "@actor/character/hit_location"
+import {
+	DamageRoll,
+	DamageRollAdapter,
+	DamageTarget,
+	HitPointsCalc,
+	TargetTrait,
+	TargetTraitModifier,
+} from "@module/damage_calculator"
+import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
