@@ -50,8 +50,9 @@ export const DMG_INDEX_BASICDAMAGE = 1
  * @returns {{text: string;action: Action;} | null}
  */
 export function parseForRollOrDamage(str: string, opts: OptionalCheckParameters): ParsedOtF | undefined {
-	// Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
-	// Supports:  2d+1x3(5), 4dX2(0.5), etc
+	// Straight roll: 4d, 2d-1, etc. Its "damage" if it includes a damage type.
+	// Allows "!" suffix to indicate minimum of 1.
+	// Supports:  2d+1x3(5), 4dX2(0.5), etc.
 	// Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
 	str = str.toString() // Convert possible array to single string
 	let a = str.match(DAMAGE_REGEX)
@@ -192,7 +193,7 @@ function _parseOtherForTypeModiferAndLocation(other: string): [string, string | 
 
 /**
  * ASCII to Unicode (decode Base64 to original data)
- * @returns [string, string, string, string]
+ * @returns {string[]}
  */
 function _getFormulaComponents(groups: { [key: string]: string }): [string, string, string, string] {
 	let adds = (groups.adds || "").replace("–", "-")

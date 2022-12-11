@@ -31,7 +31,7 @@ export function checkForModifier(str: string, opts: OptionalCheckParameters): Pa
 			next: remaining?.action,
 		}
 		return <ParsedOtF>{
-			text: gmspan(opts.overridetxt, spantext, action, sign == "+", opts.clrmods),
+			text: gmspan(opts.overridetxt, spantext, action, sign === "+", opts.clrmods),
 			action: action,
 		}
 	}
@@ -45,7 +45,7 @@ export function checkForModifier(str: string, opts: OptionalCheckParameters): Pa
 
 		if (m.groups.remain) {
 			remaining = parselink(m.groups.remain.substring(1).trim()) // Remove the leading &
-			if (remaining.action?.type == "modifier") spantext += ` & ${remaining.action.spantext}`
+			if (remaining.action?.type === "modifier") spantext += ` & ${remaining.action.spantext}`
 		}
 		let action: OtFCostsAction = {
 			orig: str,
@@ -56,7 +56,7 @@ export function checkForModifier(str: string, opts: OptionalCheckParameters): Pa
 			next: remaining?.action,
 		}
 		return <ParsedOtF>{
-			text: gmspan(opts.overridetxt, spantext, action, sign == "+", opts.clrmods),
+			text: gmspan(opts.overridetxt, spantext, action, sign === "+", opts.clrmods),
 			action: action,
 		}
 	}
