@@ -23,6 +23,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		let dragData = JSON.parse(event?.dataTransfer.getData("text/plain"))
 
 		if (dragData.type === DamageChat.TYPE) this.actor.handleDamageDrop(dragData.payload)
+		super._onDrop(event)
 	}
 
 	// DragData handling
@@ -132,7 +133,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		})
 		const updateData = sortUpdates.map(u => {
 			const update = u.update
-			;(update as any)._id = u.target!._id
+				; (update as any)._id = u.target!._id
 			return update
 		})
 

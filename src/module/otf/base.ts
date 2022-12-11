@@ -57,7 +57,7 @@ export interface OtFDamageAction extends OtfActionChain {
 
 // Used by modifier, controlroll
 export interface OtFNumberedAction extends OtfActionChain {
-	num?: number,
+	num?: number
 }
 
 // Used by test-if, test-exists

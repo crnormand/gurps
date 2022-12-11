@@ -127,10 +127,15 @@
 		background-color: transparent;
 		overflow-x: hidden;
 	}
-	.reference:not(.header):not([data-pdf=""]):hover {
-		background-color: rgba(var(--color-link), 1) !important;
-		color: rgba(var(--color-on-link), 1) !important;
+	.reference:not(.header):not([data-pdf=""]) {
+		color: rgba(var(--color-link), 1) !important;
 		cursor: pointer;
+		&:hover {
+			color: rgba(var(--color-link-rollover), 1) !important;
+		}
+		&:active {
+			color: rgba(var(--color-link-pressed), 1) !important;
+		}
 	}
 
 	.dropdown a {
