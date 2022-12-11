@@ -3,7 +3,14 @@ import { sanitizeOtF } from "./utils"
 import { parseOverrideText, parseBlindRoll, parseSourceId } from "./preparsers"
 // Import { parseForRollOrDamage } from "./parse_damage"
 import { checkForModifier } from "./check_modifier"
-import { checkForChat, checkForHtml, checkForIf, checkForExists, checkForPDF, checkForFoundryDrops } from "./smaller_checks"
+import {
+	checkForChat,
+	checkForHtml,
+	checkForIf,
+	checkForExists,
+	checkForPDF,
+	checkForFoundryDrops,
+} from "./smaller_checks"
 import { checkForSelfControl } from "./self_control"
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].

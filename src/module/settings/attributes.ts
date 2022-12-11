@@ -157,14 +157,28 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						type: "integer_ref",
 						name: "High Jump (inches)",
 						attribute_base:
-							"(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) - 10) * enc(false, true)",
+							"(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) - 10) * enc(false, true) * (2 ^ max(0, trait_level(super jump)))",
+					},
+					{
+						id: "running_highjump",
+						type: "integer_ref",
+						name: "when running",
+						attribute_base:
+							'(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 10) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))'
 					},
 					{
 						id: "broadjump",
 						type: "integer_ref",
-						name: "Broad Jump (feet)",
+						name: "Broad Jump (ft)",
 						attribute_base:
-							'(2 * max($basic_move, $st / 4) - 3) * enc(false, true) * (1 + max(0, trait_level("enhanced move (ground)")))',
+							"(2 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) - 3) * enc(false, true) * (2 ^ max(0, trait_level(super jump)))",
+					},
+					{
+						id: "running_broadjump",
+						type: "intefer_ref",
+						name: "when running",
+						attribute_base:
+							'(2 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 3) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))'
 					},
 					{
 						id: "fp",
@@ -354,7 +368,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				parent_index: parent_index,
 			})
 		)
-		;(event as any).dragType = type
+			; (event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

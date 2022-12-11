@@ -457,7 +457,8 @@
 			"limit": "Cannot exceed default skill level by more than",
 			"total": "Total",
 			"slash": "/",
-			"note": "Note"
+			"note": "Note",
+			"markdown_preview": "Markdown Preview"
 		},
 		"attributes": {
 			"dodge": "Dodge",
@@ -1052,12 +1053,13 @@
 				"colorOnOverloaded": "On Overloaded",
 				"colorPage": "Page",
 				"colorOnPage": "On Page",
+				"colorPageStandout": "Page Standout",
+				"colorOnPageStandout": "On Page Standout",
 				"colorPageVoid": "Page Void",
 				"colorDropArea": "Drop Area",
 				"colorLink": "Link",
-				"colorOnLink": "On Link",
-				"colorPressedLink": "Pressed Link",
-				"colorOnPressedLink": "On Pressed Link",
+				"colorLinkPressed": "Pressed Link",
+				"colorLinkRollover": "Rollover Link",
 				"colorAccent": "Accent",
 				"colorButtonRoll": "Button Roll",
 				"colorOnButtonRoll": "On Button Roll",
