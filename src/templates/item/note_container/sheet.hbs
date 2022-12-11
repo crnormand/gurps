@@ -1,9 +1,18 @@
 <form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
-			{{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes type="String"}}
-			{{>sections/input-text field="field" label="gurps.item.reference" name="system.reference" data=system.reference
-			type="String"}}
+			<div class="label">{{localize "gurps.item.notes"}}</div>
+			<div class="field">
+				<input type="text" name="system.text" value="{{system.text}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.reference"}}</div>
+			<div class="field">
+				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
+			</div>
+		</div>
+		<div class="label">{{localize "gurps.item.markdown_preview"}}</div>
+		<div class="markdown">
+			{{{document.formattedText}}}
 		</div>
 	</div>
 </form>

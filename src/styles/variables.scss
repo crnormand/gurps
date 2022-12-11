@@ -104,8 +104,9 @@
 	--color-page-void: 128, 128, 128;
 	--color-drop-area: 204, 0, 51;
 
-	--color-link: 0, 255, 127;
-	--color-on-link: 0, 0, 0;
+	--color-link: 0, 128, 64;
+	--color-link-pressed: 0, 248, 128;
+	--color-link-rollover: 0, 192, 0;
 
 	--color-pdf-link-highlight: 0, 255, 127;
 	--color-pdf-marker-highlight: 255, 255, 0;
@@ -220,8 +221,9 @@
 		--color-page-void: 0, 0, 0;
 		--color-drop-area: 255, 0, 0;
 
-		--color-link: 0, 255, 127;
-		--color-on-link: 0, 0, 0;
+		--color-link: 0, 128, 64;
+		--color-link-pressed: 0, 248, 96;
+		--color-link-rollover: 0, 179, 0;
 
 		--color-pdf-link-highlight: 0, 255, 127;
 		--color-pdf-marker-highlight: 255, 255, 0;

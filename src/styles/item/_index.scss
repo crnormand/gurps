@@ -27,6 +27,15 @@
 		transform: translateY(4px);
 		text-align: right;
 	}
+	.title {
+		text-align: center;
+		font: var(--font-system);
+	}
+	hr,
+	.title,
+	.md {
+		grid-column: 1 / span 2;
+	}
 	select {
 		align-self: center;
 		font: var(--font-system);

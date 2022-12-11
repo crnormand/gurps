@@ -60,6 +60,11 @@
 			text-shadow: none;
 		}
 	}
+	hr {
+		border: 1px solid rgb(var(--color-divider));
+		width: 100%;
+		margin: 0;
+	}
 	input[type="text"],
 	input[type="search"],
 	input[type="number"] {
@@ -155,6 +160,20 @@
 		> div.filler,
 		> div:not(.header) {
 			min-height: 18px;
+		}
+	}
+	.md {
+		font: var(--font-label);
+		* {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			vertical-align: baseline;
+			font-weight: normal;
+		}
+		h1 {
+			font-weight: 700;
 		}
 	}
 }
