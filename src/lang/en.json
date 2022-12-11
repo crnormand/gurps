@@ -1053,6 +1053,8 @@
 				"colorOnOverloaded": "On Overloaded",
 				"colorPage": "Page",
 				"colorOnPage": "On Page",
+				"colorPageStandout": "Page Standout",
+				"colorOnPageStandout": "On Page Standout",
 				"colorPageVoid": "Page Void",
 				"colorDropArea": "Drop Area",
 				"colorLink": "Link",

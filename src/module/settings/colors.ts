@@ -89,6 +89,8 @@ export class ColorSettings extends SettingsMenuGURPS {
 					colorOnOverloaded: { light: "#ffffff", dark: "#dddddd" },
 					colorPage: { light: "#ffffff", dark: "#101010" },
 					colorOnPage: { light: "#000000", dark: "#a0a0a0" },
+					colorPageStandout: { light: "#dddddd", dark: "#404040" },
+					colorOnPageStandout: { light: "#404040", dark: "#a0a0a0" },
 					colorPageVoid: { light: "#808080", dark: "#000000" },
 					colorDropArea: { light: "#cc0033", dark: "#ff0000" },
 					colorLink: { light: "#008040", dark: "#008040" },

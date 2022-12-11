@@ -7,7 +7,7 @@
 			</div>
 			<div class="label">{{localize "gurps.item.notes"}}</div>
 			<div class="field">
-				<textarea type="text" name="system.text" data-dtype="String">{{{textareaFormat system.text}}}</textarea>
+				<textarea type="text" name="system.text" data-dtype="String">{{{system.text}}}</textarea>
 			</div>
 			<div class="label">{{localize "gurps.item.reference"}}</div>
 			<div class="field">
@@ -15,9 +15,7 @@
 			</div>
 			<div class="title">{{localize "gurps.item.markdown_preview"}}</div>
 			<hr />
-			<div class="md">
-				{{{document.formattedText}}}
-			</div>
+			<div class="md">{{{document.formattedText}}}</div>
 		</div>
 	</div>
 </form>

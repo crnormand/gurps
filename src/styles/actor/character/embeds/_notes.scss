@@ -13,6 +13,21 @@
 		}
 	}
 
+	.md,
+	.md * {
+		font-family: var(--font-markdown);
+		pre {
+			margin: 4px 0;
+			white-space: pre-line;
+		}
+		code,
+		blockquote {
+			font-family: var(--font-monospace);
+			background-color: rgb(var(--color-page-standout));
+			color: rgb(var(--color-on-page-standout));
+		}
+	}
+
 	.desc,
 	.refrence {
 		border-right: 1px solid rgb(var(--color-divider));

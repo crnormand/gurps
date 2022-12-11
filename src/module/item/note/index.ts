@@ -12,11 +12,19 @@ export class NoteGURPS extends BaseItemGURPS {
 	}
 
 	get formattedText(): string {
+		const showdown_options = {
+			// @ts-ignore until v10 types
+			...CONST.SHOWDOWN_OPTIONS,
+			// ...{
+			// 	simpleLineBreaks: true
+			// }
+		}
 		// @ts-ignore until v10 types
-		Object.entries(CONST.SHOWDOWN_OPTIONS).forEach(([k, v]) => showdown.setOption(k, v));
+		Object.entries(showdown_options).forEach(([k, v]) => showdown.setOption(k, v));
 		// @ts-ignore until v10 types
 		const converter = new showdown.Converter()
-		return converter.makeHtml(this.system.text)
+		const text = this.system.text
+		return converter.makeHtml(text).replace(/\s\+/g, "\r")
 	}
 }
 
