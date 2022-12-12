@@ -1,4 +1,5 @@
 import { ActorGURPS, CharacterGURPS } from "@actor"
+import DamageChat, { DamageChatFlags } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { i18n_f, toWord } from "./misc"
@@ -361,7 +362,9 @@ async function rollDamage(
 	const speaker = ChatMessage.getSpeaker({ actor: actor })
 
 	const chatData: Record<string, any> = {
-		data: data,
+		// Data: data,
+		attacker: speaker,
+		weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },
 		name: `${data.weapon.name}${data.weapon.usage ? ` – ${data.weapon.usage}` : ""}`,
 		dice: dice,
 		modifiers: modifiers,
@@ -379,7 +382,7 @@ async function rollDamage(
 
 	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData)
 
-	const messageData = {
+	let messageData = {
 		user: user,
 		speaker: speaker,
 		type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -387,6 +390,14 @@ async function rollDamage(
 		roll: JSON.stringify(roll),
 		sound: CONFIG.sounds.dice,
 	}
+
+	let userTarget = ""
+	if ((game as Game).user?.targets.size) {
+		userTarget = (game as Game).user?.targets.values().next().value
+	}
+
+	messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
+
 	ChatMessage.create(messageData, {})
 	// Await resetMods(user);
 	// if ([RollSuccess.CriticalSuccess, RollSuccess.Success].includes(success)) {
