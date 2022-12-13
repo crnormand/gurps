@@ -8,6 +8,7 @@ import { SYSTEM_NAME } from "@module/data"
 import { CharacterSettings } from "./data"
 import { HitLocationTable } from "./hit_location"
 import { SETTINGS } from "@module/settings"
+import { DnD } from "@util/drag-drop"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS
@@ -446,7 +447,8 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	protected async _onDrop(event: DragEvent): Promise<unknown> {
-		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
+		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
+
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
 

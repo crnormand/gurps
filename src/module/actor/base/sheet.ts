@@ -2,9 +2,16 @@ import { ActorGURPS, BaseActorGURPS } from "@actor"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
 import { SYSTEM_NAME } from "@module/data"
-import DamageChat from "@module/damage_calculator/damage_chat_message"
+import { DamageChat } from "@module/damage_calculator/damage_chat_message"
+import { DnD } from "@util/drag-drop"
+
+type DispatchFunctions = Record<string, (arg: any) => void>
 
 export class ActorSheetGURPS extends ActorSheet {
+	readonly dropDispatch: DispatchFunctions = {
+		[DamageChat.TYPE]: this.actor.handleDamageDrop.bind(this.actor),
+	}
+
 	static override get defaultOptions(): ActorSheet.Options {
 		const options = ActorSheet.defaultOptions
 		mergeObject(options, {
@@ -20,9 +27,10 @@ export class ActorSheetGURPS extends ActorSheet {
 	protected override _onDrop(event: DragEvent): void {
 		if (!event?.dataTransfer) return
 
-		let dragData = JSON.parse(event?.dataTransfer.getData("text/plain"))
+		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
 
-		if (dragData.type === DamageChat.TYPE) this.actor.handleDamageDrop(dragData.payload)
+		this.dropDispatch[dragData.type](dragData.payload)
+
 		super._onDrop(event)
 	}
 
@@ -133,7 +141,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		})
 		const updateData = sortUpdates.map(u => {
 			const update = u.update
-				; (update as any)._id = u.target!._id
+			;(update as any)._id = u.target!._id
 			return update
 		})
 
