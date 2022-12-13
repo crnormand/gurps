@@ -4,6 +4,7 @@ import { CharacterImporter } from "@actor/character/import"
 import { SYSTEM_NAME } from "@module/data"
 import { SETTINGS } from "@module/settings"
 import { i18n_f, prepareFormData } from "@util"
+import { DnD } from "@util/drag-drop"
 import { StaticCharacterGURPS } from "."
 import { StaticResourceTracker, StaticThresholdComparison, StaticThresholdOperator } from "./data"
 import { StaticCharacterImporter } from "./import"
@@ -304,7 +305,8 @@ export class StaticCharacterSheetConfig extends FormApplication {
 	}
 
 	protected async _onDrop(event: DragEvent): Promise<unknown> {
-		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
+		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
+
 		const index = Number(dragData.index)
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")

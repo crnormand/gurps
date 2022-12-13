@@ -1,5 +1,5 @@
 import { ActorGURPS, CharacterGURPS } from "@actor"
-import DamageChat, { DamageChatFlags } from "@module/damage_calculator/damage_chat_message"
+import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { i18n_f, toWord } from "./misc"
@@ -361,7 +361,7 @@ async function rollDamage(
 
 	const speaker = ChatMessage.getSpeaker({ actor: actor })
 
-	const chatData: Record<string, any> = {
+	const chatData: DamagePayload = {
 		// Data: data,
 		attacker: speaker,
 		weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },

@@ -1,6 +1,7 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { SYSTEM_NAME } from "@module/data"
 import { i18n, prepareFormData } from "@util"
+import { DnD } from "@util/drag-drop"
 import { SettingsMenuGURPS } from "./menu"
 
 export class DefaultHitLocationSettings extends SettingsMenuGURPS {
@@ -366,7 +367,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 	}
 
 	protected async _onDrop(event: DragEvent): Promise<unknown> {
-		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
+		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
 
