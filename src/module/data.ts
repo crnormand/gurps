@@ -1,3 +1,20 @@
+/*
+ * I had to move SETTINGS here as well, because it fixed the weird error that leads to the code not recognizing standard
+ * foundry classes and methods.
+ *
+ * I propose that the "correct" way to deal with settings is to create our own settings class, where we expose methods
+ * to retrieve the settings, and then no one has to know the existence of either SYSTEM_NAME or a SETTINGS value.
+ * Something like this:
+ *
+ * In gurps.ts:
+ *   import { SettingsGURPS } from "my/new/module"
+ *
+ *   window.GURPS.settings = new SettingsGURPS()
+ *
+ * Wherever you want a setting's value:
+ *
+ *  const value = GURPS.settings.getDefaultBodyPlan()
+ */
 export const SYSTEM_NAME = "gcsga"
 
 export enum SETTINGS {
