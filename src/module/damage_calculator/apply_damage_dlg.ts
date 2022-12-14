@@ -6,7 +6,7 @@ import { DamageType } from "./damage_type"
 import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
 
 class ApplyDamageDialog extends Application {
-	private calculator: DamageCalculator
+	private calculator: DamageCalculator | undefined
 
 	constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
 		super(options)
@@ -50,11 +50,11 @@ class ApplyDamageDialog extends Application {
 	}
 
 	private get target(): DamageTarget {
-		return this.calculator.target
+		return this.calculator!.target
 	}
 
 	private get roll(): DamageRoll {
-		return this.calculator.damageRoll
+		return this.calculator!.damageRoll
 	}
 
 	private get damageRollText(): string {
@@ -75,7 +75,7 @@ class ApplyDamageDialog extends Application {
 	}
 
 	private get hitLocation(): HitLocation | undefined {
-		return getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
+		return getHitLocation(this.target.hitLocationTable, this.calculator!.damageRoll.locationId)
 	}
 
 	private get dr(): number | undefined {
