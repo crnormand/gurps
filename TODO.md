@@ -7,14 +7,13 @@
     -   css
     -   premade lists
     -   add 0.15 categories
-    -   settings window for editing master list
     -   pinned appears as category always (for awareness)
-    -   use modifier colors for buttons themselves (solid green background white text, reverse with fade etc.)
     -   modifier bucket journals
+	-	styling
+	-	zero mods are showing as titles, add title attribute and change conditional
 -   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
     -   features not updated in dragdata for some reason
     -   only happens with toObject function, features not updated
--	add markdown editor for notes
 
 ## 1.0.0
 

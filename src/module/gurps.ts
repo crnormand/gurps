@@ -276,6 +276,15 @@ Hooks.once("ready", async () => {
 			actor.prepareData()
 		})
 	)
+	;(game as Game).socket?.on(SYSTEM_NAME, async response => {
+		switch (response.type) {
+			case "updateBucket":
+				console.log("test?")
+				return (game as any).ModifierButton.render(true)
+			default:
+				return console.error("Unknown socket:", response.type)
+		}
+	})
 
 	// Render modifier app after user object loaded to avoid old data
 })

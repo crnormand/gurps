@@ -1,4 +1,4 @@
-import { floatingMul, i18n } from "./misc"
+import { i18n } from "./misc"
 
 export type Length = number
 
@@ -9,7 +9,7 @@ export type Weight = number
  * @param n
  * @param units
  */
-function format(n: Length, units: LengthUnits): string {
+export function lengthFormat(n: Length, units: LengthUnits): string {
 	let inches = n
 	switch (units) {
 		case LengthUnits.FeetAndInches:
@@ -37,7 +37,7 @@ function format(n: Length, units: LengthUnits): string {
 		case LengthUnits.Kilometer:
 			return `${(inches / 36000).toFixed(4)} ${f(units)}`
 		default:
-			return format(n, LengthUnits.FeetAndInches)
+			return lengthFormat(n, LengthUnits.FeetAndInches)
 	}
 }
 

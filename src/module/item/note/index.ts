@@ -20,7 +20,7 @@ export class NoteGURPS extends BaseItemGURPS {
 			// }
 		}
 		// @ts-ignore until v10 types
-		Object.entries(showdown_options).forEach(([k, v]) => showdown.setOption(k, v));
+		Object.entries(showdown_options).forEach(([k, v]) => showdown.setOption(k, v))
 		// @ts-ignore until v10 types
 		const converter = new showdown.Converter()
 		const text = this.system.text

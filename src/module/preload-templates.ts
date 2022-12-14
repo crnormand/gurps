@@ -137,6 +137,7 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"compendium-browser/settings",
 
 		"modifier-bucket/active",
+		"modifier-bucket/collapsible",
 		"modifier-bucket/modifier",
 		"modifier-bucket/player",
 	]

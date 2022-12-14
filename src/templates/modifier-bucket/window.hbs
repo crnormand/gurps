@@ -4,7 +4,7 @@
 			<div class="header">{{localize "gurps.system.modifier_bucket.current_effects"}}</div>
 			<div class="content">
 				{{#each currentEffects}}
-					{{>modifier-bucket/modifier}}
+				{{>modifier-bucket/modifier}}
 				{{/each}}
 			</div>
 		</div>
@@ -12,7 +12,7 @@
 			<div class="header">{{localize "gurps.system.modifier_bucket.send"}}</div>
 			<div class="content">
 				{{#each players}}
-					{{>modifier-bucket/player}}
+				{{>modifier-bucket/player}}
 				{{/each}}
 			</div>
 		</div>
@@ -20,7 +20,7 @@
 			<div class="header">{{localize "gurps.system.modifier_bucket.current_mods"}}</div>
 			<div class="content">
 				{{#each currentMods}}
-					{{>modifier-bucket/active}}
+				{{>modifier-bucket/active}}
 				{{/each}}
 			</div>
 		</div>
@@ -30,7 +30,7 @@
 			<div class="header">{{localize "gurps.system.modifier_bucket.melee"}}</div>
 			<div class="content">
 				{{#each meleeMods}}
-					{{>modifier-bucket/modifier}}
+				{{>modifier-bucket/modifier}}
 				{{/each}}
 			</div>
 		</div>
@@ -38,7 +38,7 @@
 			<div class="header">{{localize "gurps.system.modifier_bucket.ranged"}}</div>
 			<div class="content">
 				{{#each rangedMods}}
-					{{>modifier-bucket/modifier}}
+				{{>modifier-bucket/modifier}}
 				{{/each}}
 			</div>
 		</div>
@@ -46,7 +46,7 @@
 			<div class="header">{{localize "gurps.system.modifier_bucket.defense"}}</div>
 			<div class="content">
 				{{#each defenseMods}}
-					{{>modifier-bucket/modifier}}
+				{{>modifier-bucket/modifier}}
 				{{/each}}
 			</div>
 		</div>
@@ -54,15 +54,9 @@
 	<div class="column">
 		<div id="categories" class="section">
 			<div class="header">{{localize "gurps.system.modifier_bucket.categories"}}</div>
-			<div class="content">
-				{{#each categories}}
-					<select>
-						<option>{{localize this.name}}</option>
-						{{#each this.items}}
-							<option value="{{@../index}}.{{@index}}">{{localize this.name}}</option>
-						{{/each}}
-					</select>
-					{{>modifier-bucket/modifier}}
+			<div class="content" style="gap: 0;">
+				{{#each commonMods}}
+				{{>modifier-bucket/collapsible}}
 				{{/each}}
 			</div>
 		</div>
