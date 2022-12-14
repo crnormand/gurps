@@ -136,6 +136,8 @@ export enum RollType {
 	ControlRoll = "control_roll",
 }
 
+export type ModifierItem = RollModifier | ModifierHeader
+
 export interface RollModifier {
 	name: string
 	modifier: number
@@ -143,6 +145,10 @@ export interface RollModifier {
 	tags?: string[]
 	cost?: { id: string; value: number }
 	reference?: string
+}
+
+export interface ModifierHeader {
+	name: string
 }
 
 export const rollModifiers: RollModifier[] = [

@@ -4,6 +4,7 @@ import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
 import { DefaultHitLocationSettings } from "./hit_locations"
 import { DefaultResourceTrackerSettings } from "./resource_trackers"
+import { RollModifierSettings } from "./roll_modifiers"
 import { DefaultSheetSettings } from "./sheet_settings"
 
 // Export const SYSTEM_NAME = "gcsga"
@@ -24,6 +25,7 @@ export enum SETTINGS {
 	DEFAULT_RESOURCE_TRACKERS = "default_resource_trackers",
 	DEFAULT_HIT_LOCATIONS = "default_hit_locations",
 	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
+	ROLL_MODIFIERS = "roll_modifiers",
 }
 
 /**
@@ -87,6 +89,17 @@ export function registerSettings(): void {
 		restricted: true,
 	})
 	DefaultSheetSettings.registerSettings()
+
+	g.settings.registerMenu(SYSTEM_NAME, SETTINGS.ROLL_MODIFIERS, {
+		name: "gurps.settings.roll_modifiers.name",
+		label: "gurps.settings.roll_modifiers.label",
+		hint: "gurps.settings.roll_modifiers.hint",
+		icon: "fas fa-plus-minus",
+		// @ts-ignore
+		type: RollModifierSettings,
+		restricted: false,
+	})
+	RollModifierSettings.registerSettings()
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
 		name: "gurps.settings.modifier_mode.name",

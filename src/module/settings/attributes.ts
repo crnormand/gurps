@@ -164,7 +164,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						type: "integer_ref",
 						name: "when running",
 						attribute_base:
-							'(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 10) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))'
+							'(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 10) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))',
 					},
 					{
 						id: "broadjump",
@@ -178,7 +178,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						type: "intefer_ref",
 						name: "when running",
 						attribute_base:
-							'(2 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 3) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))'
+							'(2 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 3) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))',
 					},
 					{
 						id: "fp",
@@ -368,7 +368,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				parent_index: parent_index,
 			})
 		)
-			; (event as any).dragType = type
+		;(event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

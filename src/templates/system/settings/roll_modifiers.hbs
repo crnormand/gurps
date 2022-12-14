@@ -1,0 +1,25 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+	<div class="add">
+		<a class="gcs-circled-add add"></a>
+	</div>
+	<div class="item-list">
+		{{#each modifiers}}
+		<div class="item" data-index={{@index}}>
+			<div class="controls">
+				<a class="gcs-grip drag" data-index="{{@index}}"></a>
+				<a class="gcs-trash delete" data-index="{{@index}}"></a>
+			</div>
+			<div class="fieldblock">
+				<div class="label">{{localize "gurps.settings.roll_modifier.mod_name"}}</div>
+				<div class="field">
+					<input type="text" name="array.modifiers.{{@index}}.name" value="{{this.name}}" data-dtype="String" />
+				</div>
+				<div class="label">{{localize "gurps.settings.roll_modifier.modifier"}}</div>
+				<div class="field">
+					<input type="text" name="array.modifiers.{{@index}}.modifier" value="{{this.modifier}}" data-dtype="Number" />
+				</div>
+			</div>
+		</div>
+		{{/each}}
+	</div>
+</form>

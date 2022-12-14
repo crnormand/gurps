@@ -1,7 +1,7 @@
 import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
-import { ModifierBucket } from "@module/mod_bucket/window"
 import { SETTINGS } from "@module/settings"
 import { i18n } from "@util"
+import { ModifierBucket } from "./bucket"
 import { ModifierWindow } from "./window"
 
 export class ModifierButton extends Application {

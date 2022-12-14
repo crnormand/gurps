@@ -27,6 +27,133 @@
 			"offset": "Page Offset",
 			"code": "PDF Book Code"
 		},
+		"modifier": {
+			"status": {
+				"title": "Status and Afflictions",
+				"status": "Status",
+				"shock_1": "to IQ/DX checks (Shock 1)",
+				"shock_2": "to IQ/DX checks (Shock 2)",
+				"shock_3": "to IQ/DX checks (Shock 3)",
+				"shock_4": "to IQ/DX checks (Shock 4)",
+				"stunned": "to active defenses (Stunned)",
+				"afflictions": "Afflictions",
+				"cough_dx": "to DX checks (Coughing)",
+				"cough_iq": "to IQ checks (Coughing)",
+				"drowsy": "to IQ/DX/CR checks (Drowsy)",
+				"drunk": "to CR checks (Drunk)",
+				"tipsy": "to IQ/DX checks (Tipsy)",
+				"tipsy_cr": "to CR checks (Tipsy)",
+				"euphoria": "to IQ/DX/CR checks (Euphoria)",
+				"nausea": "to all attributes (Nauseated)",
+				"nausea_def": "to active defenses (Nauseated)",
+				"moderate_pain": "to IQ/DX/CR checks (Moderate Pain)",
+				"moderate_pain_hpt": "to IQ/DX/CR checks (Modreate Pain w/ HPT)",
+				"severe_pain": "to IQ/DX/CR checks (Severe Pain)",
+				"severe_pain_hpt": "to IQ/DX/CR checks (Modreate Pain w/ HPT)",
+				"terrible_pain": "to IQ/DX/CR checks (Terrible Pain)",
+				"terrible_pain_hpt": "to IQ/DX/CR checks (Modreate Pain w/ HPT)",
+				"retching": "to IQ/DX/CR checks (Retching)"
+			},
+			"speed": {
+				"title": "Speed / Range",
+				"range": "for range/speed {distance}"
+			},
+			"size": {
+				"title": "Size Modifier",
+				"melee_ranged": "Difference in Melee; Absolute in Ranged",
+				"size": "Size {size}"
+			},
+			"hit_location": {
+				"title": "Hit Location (if miss by 1, then *)",
+				"eyes": "to hit Eyes",
+				"skull": "to hit Skull",
+				"skull_behind": "to hit Skull, from behind",
+				"face": "to hit Face",
+				"face_behind": "to hit Face, from behind",
+				"nose": "to hit Nose [front only, *hit chest]",
+				"jaw": "to hit Jaw [front only, *hit chest]",
+				"neck_vein": "to hit Neck Vein/Artery [*hit neck]",
+				"limb_vein": "to hit Limb Vein/Aretery [*hit limb]",
+				"arm_shield": "to hit Arm, holding shield",
+				"arm": "to hit Arm",
+				"torso": "to hit Torso",
+				"vitals": "to hit Vitals [imp or pi(any) only]",
+				"heart": "to hit Vitals, Heart [imp or pi(any) only]",
+				"groin": "to hit Groing",
+				"leg": "to hit Leg",
+				"hand": "to hit Hand",
+				"foot": "to hit Foot",
+				"neck": "to hit Neck",
+				"chinks_torso": "to hit chinks in armor (torso) [&half; DR]",
+				"chinks_other": "to hit chinks in armor (other) [&half; DR]"
+			},
+			"cover": {
+				"title": "Cover and Posture",
+				"cover": "Cover",
+				"head_only": "to hit (Head only)",
+				"head_and_shoulders": "to hit (Head and shoulders)",
+				"half_exposed": "to hit (Body half exposed)",
+				"light_cover": "to hit (Behind light cover)",
+				"same_sized_figure": "to hit (Behind same-sized figure)",
+				"prone_no_cover": "to hit (Prone, no cover)",
+				"prone_head_up": "to hit (Prone, some cover, head up)",
+				"prone_head_down": "to hit (Prone, some cover, head down)",
+				"crouching_no_cover": "to hit (Crouching or Kneeling, no cover)",
+				"occupied_hex": "to hit (Firing through occupied hex)",
+				"posture": "Posture",
+				"melee_crawling": "to hit with melee combat (Crawling/Lying Down)",
+				"ranged_sitting": "to hit with ranged combat (Sitting/Crawling/Lying Down)",
+				"defense_crawling": "to active defenses (Crawling/Lying Down)",
+				"melee_crouching": "to hit with melee combat (Crouching)",
+				"ranged_crouching": "to hit with ranged combat (Crouching/Kneeling)",
+				"hit_ranged_crouching": "to be hit with ranged combat (Crouching/Kneeling)",
+				"melee_kneeling": "to hit with mnelee combat (Kneeling/Sitting)",
+				"defense_kneeling": "to active defenses (Kneeling/Sitting)"
+			},
+			"task_difficulty": {
+				"title": "Task Difficulty",
+				"automatic": "Automatic",
+				"trivial": "Trivial",
+				"very_easy": "Very Easy",
+				"easy": "Easy",
+				"very_favorable": "Very Favorable",
+				"favorable": "Favorable",
+				"unfavorable": "Unfavorable",
+				"very_unfavorable": "Very Unfavorable",
+				"hard": "Hard",
+				"very_hard": "Very Hard",
+				"dangerous": "Dangerous",
+				"impossible": "Impossible"
+			},
+			"equipment_quality": {
+				"title": "Equipmnet Quality",
+				"best_possible": "Best Possible",
+				"fine": "Fine Quality (20x cost)",
+				"good": "Good Quality (5x cost)",
+				"improvised": "Improvised",
+				"improvised_tech": "Improvised (technological)",
+				"missing": "Missing/Damaged Components",
+				"none": "None",
+				"none_tech": "None (technological)"
+			},
+			"light": {
+				"title": "Lighting",
+				"torch": "Large fire / torch / sunset / sunrise",
+				"flashlight": "Twilight / gaslight / flashlight",
+				"candlelight": "Deep twilight / candlelight",
+				"full_moon": "Full moon",
+				"half_moon": "Half moon",
+				"quarter_moon": "Quarter moon",
+				"starlight": "Starlight",
+				"starlight_clouds": "Starlight through clouds",
+				"moonless": "Overcast moonless night",
+				"total_darkness": "Total darkness"
+			},
+			"rof": {
+				"title": "Rate of Fire",
+				"rof": "Rof: {rof}"
+			}
+		},
 		"language": {
 			"language": "Language",
 			"spoken": "Spoken",
@@ -1097,6 +1224,14 @@
 				"name": "Default Body Type",
 				"label": "Edit Default Body Type",
 				"hint": "The Body Type assigned when creating new Characters."
+			},
+			"roll_modifiers": {
+				"name": "Custom Modifiers",
+				"label": "Edit Custom Modifiers",
+				"hint": "Edit roll modifiers which appear in the <b>Custom</b> category.",
+				"mod_name": "Name",
+				"modifier": "Modifier",
+				"default": "New Modifier"
 			}
 		},
 		"context_menu": {
