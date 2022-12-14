@@ -1,0 +1,10 @@
+{
+	"gurps": {
+		"static": {
+			"hit_location": {
+				"Torso": "Торс",
+				"Random": "Случайная зона"
+			}
+		}
+	}
+}

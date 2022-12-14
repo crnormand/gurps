@@ -1,6 +1,7 @@
 import { DiceGURPS } from "../dice"
 import { DamageType } from "./damage_type"
 import { HitLocationTable } from "@actor/character/hit_location"
+import { DamagePayload } from "./damage_chat_message"
 
 /**
  * DamageRoll is the parameter that is sent in (along with DamageTarget) to the DamageCalculator.
@@ -84,9 +85,9 @@ enum DefaultHitLocations {
 }
 
 class DamageRollAdapter implements DamageRoll {
-	private _payload: any
+	private _payload: DamagePayload
 
-	constructor(payload: any) {
+	constructor(payload: DamagePayload) {
 		this._payload = payload
 
 		this.locationId = ""

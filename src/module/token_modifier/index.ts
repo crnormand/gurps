@@ -1,5 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
-import { SETTINGS } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
 import { TokenModifierWindow } from "./window"
 

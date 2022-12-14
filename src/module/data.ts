@@ -1,4 +1,42 @@
+/*
+ * I had to move SETTINGS here as well, because it fixed the weird error that leads to the code not recognizing standard
+ * foundry classes and methods.
+ *
+ * I propose that the "correct" way to deal with settings is to create our own settings class, where we expose methods
+ * to retrieve the settings, and then no one has to know the existence of either SYSTEM_NAME or a SETTINGS value.
+ * Something like this:
+ *
+ * In gurps.ts:
+ *   import { SettingsGURPS } from "my/new/module"
+ *
+ *   window.GURPS.settings = new SettingsGURPS()
+ *
+ * Wherever you want a setting's value:
+ *
+ *  const value = GURPS.settings.getDefaultBodyPlan()
+ */
 export const SYSTEM_NAME = "gcsga"
+
+export enum SETTINGS {
+	BASIC_SET_PDF = "basic_set_pdf",
+	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
+	PORTRAIT_OVERWRITE = "portrait_overwrite",
+	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
+	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
+	IGNORE_IMPORT_NAME = "ignore_import_name",
+	STATIC_IMPORT_HP_FP = "import_hp_fp",
+	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
+	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
+	MODIFIER_MODE = "modifier_mode",
+	COLORS = "colors",
+	SHOW_IMPORT_BUTTON = "show_import_button",
+	DEFAULT_ATTRIBUTES = "default_attributes",
+	DEFAULT_RESOURCE_TRACKERS = "default_resource_trackers",
+	DEFAULT_HIT_LOCATIONS = "default_hit_locations",
+	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
+	ROLL_MODIFIERS = "roll_modifiers",
+	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
+}
 
 export enum DisplayMode {
 	NotShown = "not_shown",

@@ -1,6 +1,5 @@
-import { SYSTEM_NAME } from "@module/data"
+import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDFViewerSheet } from "@module/pdf/sheet"
-import { SETTINGS } from "@module/settings"
 
 export const SJG_links = {
 	ACT1: "http://www.warehouse23.com/products/gurps-action-1-heroes",

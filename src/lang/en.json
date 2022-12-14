@@ -1232,6 +1232,10 @@
 				"mod_name": "Name",
 				"modifier": "Modifier",
 				"default": "New Modifier"
+			},
+			"default_damage_location": {
+				"name": "Default Damage Location",
+				"hint": "Set the default hit location used to apply damage."
 			}
 		},
 		"context_menu": {
