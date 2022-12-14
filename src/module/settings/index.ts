@@ -26,6 +26,7 @@ export enum SETTINGS {
 	DEFAULT_HIT_LOCATIONS = "default_hit_locations",
 	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
 	ROLL_MODIFIERS = "roll_modifiers",
+	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
 }
 
 /**
@@ -205,6 +206,21 @@ export function registerSettings(): void {
 		type: Boolean,
 		default: false,
 		onChange: value => console.log(`Ignore import name : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION, {
+		name: "gurps.settings.default_damage_location.name",
+		hint: "gurps.settings.default_damage_location.hint",
+		scope: "world",
+		config: true,
+		type: String,
+		// @ts-ignore
+		choices: {
+			torso: "gurps.static.hit_location.Torso",
+			random: "gurps.static.hit_location.Random",
+		},
+		default: "torso",
+		onChange: value => console.log(`Default damage location: ${value}`),
 	})
 }
 

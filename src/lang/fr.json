@@ -1,0 +1,16 @@
+{
+	"gurps": {
+		"static": {
+			"hit_location": {
+				"Torso": "Torse",
+				"Random": "Aléatoire"
+			}
+		},
+		"settings": {
+			"default_damage_location": {
+				"name": "Dégât: Localisation par défaut",
+				"hint": "Définit la localisation par défaut pour appliquer les dégâts."
+			}
+		}
+	}
+}

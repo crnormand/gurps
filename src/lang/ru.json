@@ -1,0 +1,16 @@
+{
+	"gurps": {
+		"static": {
+			"hit_location": {
+				"Torso": "Rumpf",
+				"Random": "Zufällig"
+			}
+		},
+		"settings": {
+			"default_damage_location": {
+				"name": "Schaden: Standard Trefferzone",
+				"hint": "Legt den Standard-Trefferzone fest, die für die Anwendung von Schaden verwendet wird."
+			}
+		}
+	}
+}
