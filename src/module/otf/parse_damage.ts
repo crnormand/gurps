@@ -2,9 +2,9 @@ import { ParsedOtF, OtFAction, OtFDamageAction, OptionalCheckParameters } from "
 import { gspan } from "./utils"
 import { d6ify } from "@util/misc"
 import { StaticHitLocation } from "../actor/static_character/hit_location"
-import { GURPS } from "../gurps"
-// Let GURPS: any = {}
-// let StaticHitLocation: any = {}
+// Import { GURPS } from "../gurps"
+let GURPS: any = {}
+// Let StaticHitLocation: any = {}
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
@@ -28,7 +28,8 @@ import { GURPS } from "../gurps"
 
 export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d+) ?(?<type>[ \w()]+)/i
 export const DAMAGE_REGEX =
-	/^(?<accum>\+)?(?<roll>\d+)(?<D>d\d*)?(?<adds>[–-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+)?(?<follow>,.*)?$/i
+	// eslint-disable-next-line max-len
+	/^(?<accum>\+)?(?<roll>\d+)(?<D>d\d*)?(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+)?(?<follow>,.*)?$/i
 export const DMG_INDEX_DICE = 1
 export const DMG_INDEX_D = 2
 export const DMG_INDEX_ADDS = 3
@@ -39,7 +40,8 @@ export const DMG_INDEX_TYPE = 7
 export const DMG_INDEX_COST = 8
 
 export const DERIVED_DAMAGE_REGEX =
-	/^(?<accum>\+)?(?<att>sw|thr)()(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+])?(?<follow>,.*)?$/i
+	// eslint-disable-next-line max-len
+	/^(?<accum>\+)?(?<att>sw|thr)()(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+])?(?<follow>,.*)?$/i
 export const DMG_INDEX_BASICDAMAGE = 1
 
 /**
@@ -48,8 +50,9 @@ export const DMG_INDEX_BASICDAMAGE = 1
  * @returns {{text: string;action: Action;} | null}
  */
 export function parseForRollOrDamage(str: string, opts: OptionalCheckParameters): ParsedOtF | undefined {
-	// Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
-	// Supports:  2d+1x3(5), 4dX2(0.5), etc
+	// Straight roll: 4d, 2d-1, etc. Its "damage" if it includes a damage type.
+	// Allows "!" suffix to indicate minimum of 1.
+	// Supports:  2d+1x3(5), 4dX2(0.5), etc.
 	// Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
 	str = str.toString() // Convert possible array to single string
 	let a = str.match(DAMAGE_REGEX)
@@ -190,7 +193,7 @@ function _parseOtherForTypeModiferAndLocation(other: string): [string, string | 
 
 /**
  * ASCII to Unicode (decode Base64 to original data)
- * @returns [string, string, string, string]
+ * @returns {string[]}
  */
 function _getFormulaComponents(groups: { [key: string]: string }): [string, string, string, string] {
 	let adds = (groups.adds || "").replace("–", "-")

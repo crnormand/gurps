@@ -1,6 +1,7 @@
 import { StaticAdvantage, StaticMelee, StaticSkill, StaticSpell } from "@actor/static_character/components"
 import { ItemSheetGURPS } from "@item/base/sheet"
 import { Static } from "@util"
+import { DnD } from "@util/drag-drop"
 import { StaticItemGURPS } from "."
 import { StaticItemSystemData } from "./data"
 
@@ -118,7 +119,7 @@ export class StaticItemSheet extends ItemSheetGURPS {
 	}
 
 	async _onDrop(event: any) {
-		let dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
 		if (!["melee", "ranged", "skills", "spells", "ads", "equipment"].includes(dragData.type)) return
 		let srcActor = (game as Game).actors?.get(dragData.actorid)
 		let srcData = getProperty(srcActor!, dragData.key)

@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"types": ["@league-of-foundry-developers/foundry-vtt-types", "jest"]
+		"types": ["jest", "node", "@league-of-foundry-developers/foundry-vtt-types"]
 	},
-	"include": ["../src", "./"]
+	"include": ["../src", "./", "**/*.d.ts"]
 }

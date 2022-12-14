@@ -1,8 +1,7 @@
 import { SYSTEM_NAME } from "@module/data"
 import { HitLocation } from "@actor/character/hit_location"
-import { DamageCalculator } from "."
-import { DamageTarget } from "./damage_target"
-import { DamageRoll } from "./damage_roll"
+import { DamageCalculator } from "./damage_calculator"
+import { DamageRoll, DamageTarget } from "."
 import { DamageType } from "./damage_type"
 import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
 

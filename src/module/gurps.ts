@@ -66,9 +66,9 @@ import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { StaticItemSheet } from "@item/static/sheet"
 import { ColorSettings } from "./settings/colors"
+import { DamageChat } from "./damage_calculator/damage_chat_message"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
-import DamageChat from "./damage_calculator/damage_chat_message"
 
 Error.stackTraceLimit = Infinity
 

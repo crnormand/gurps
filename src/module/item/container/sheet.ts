@@ -5,6 +5,7 @@ import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vt
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
 import { ContainerGURPS } from "."
 import { SYSTEM_NAME } from "@module/data"
+import { DnD } from "@util/drag-drop"
 
 export class ContainerSheetGURPS extends ItemSheetGURPS {
 	static get defaultOptions(): DocumentSheetOptions {
@@ -75,7 +76,7 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		event.stopPropagation()
 		let data
 		try {
-			data = JSON.parse(event.dataTransfer?.getData("text/plain") ?? "")
+			data = DnD.getDragData(event, DnD.TEXT_PLAIN)
 		} catch (err) {
 			console.error(event.dataTransfer?.getData("text/plain"))
 			console.error(err)

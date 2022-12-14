@@ -1,12 +1,12 @@
 /* eslint-disable jest/no-disabled-tests */
-import { DamageCalculator, Extremity, Head, Limb } from "../../src/module/damage_calculator"
-import { DiceGURPS } from "../../src/module/dice"
-import { RollType } from "../../src/module/data"
-import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
-import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
-import { InjuryEffect, InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
+
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
-import { DamageTarget, TargetTrait, TargetTraitModifier } from "@module/damage_calculator/damage_target"
+import { DamageCalculator, Extremity, Head, Limb } from "@module/damage_calculator/damage_calculator"
+import { DamageAttacker, DamageRoll, DamageTarget, DefaultHitLocations, TargetTrait, TargetTraitModifier } from "@module/damage_calculator"
+import { DamageType, AnyPiercingType } from "@module/damage_calculator/damage_type"
+import { InjuryEffectType, InjuryEffect } from "@module/damage_calculator/injury_effect"
+import { RollType } from "@module/data"
+import { DiceGURPS } from "@module/dice"
 
 // Add real tests here.
 describe("Damage calculator", () => {

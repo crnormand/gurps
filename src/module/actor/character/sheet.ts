@@ -233,6 +233,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
 		let element = $(event.currentTarget!).closest(".item.desc")
+		if (!element.length) return
 		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
 		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
 		const inContainer = widthAcross > 0.3 && element.hasClass("container")

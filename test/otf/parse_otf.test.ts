@@ -104,12 +104,11 @@ describe("chat", () => {
 		let s = "!/cmd"
 		let parsed_otf = parselink(s)
 		let action = <OtFCostsAction>parsed_otf.action
-		if (action) {
-			expect(action.type).toBe("chat")
-			expect(action.orig).toBe("/cmd")
-			expect(action.blindroll).toBeTruthy()
-		}
-		expect(parsed_otf.text).toMatch(new RegExp("<span[^>]+>/cmd</span>"))
+		expect(action).toBeDefined()
+		expect(action.type).toBe("chat")
+		expect(action.orig).toBe("/cmd")
+		// Expect(action.blindroll).toBeDefined()
+		expect(parsed_otf.text).toMatch(/<span[^>]+>\/cmd<\/span>/)
 	})
 	it("'override'/cmd", () => {
 		let s = "'override'/cmd"
@@ -150,7 +149,7 @@ describe("html", () => {
 		if (action) {
 			expect(action.type).toBe("href")
 			expect(action.orig).toBe(s)
-			expect(action.blindroll).toBeTruthy()
+			// Expect(action.blindroll).toBeTruthy()
 		}
 		expect(parsed_otf.text).toMatch(new RegExp(`<a href="${s}">${s}</a>`))
 	})
