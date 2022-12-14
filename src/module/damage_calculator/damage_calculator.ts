@@ -1,5 +1,5 @@
 import { HitLocation } from "@actor/character/hit_location"
-import { RollType, SYSTEM_NAME } from "../data"
+import { RollType } from "../data"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
 import {
 	CheckFailureConsequence,
@@ -12,7 +12,6 @@ import {
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 import { getHitLocation, getHitLocationDR, isFlexibleArmor } from "./hitlocation_utils"
 import { DamageTarget, DamageRoll, DefaultHitLocations } from "."
-import { SETTINGS } from "@module/settings"
 
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
@@ -32,14 +31,9 @@ class DamageCalculator {
 	damageRoll: DamageRoll
 
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
-		this.target = defender
-
-		if (damageRoll.locationId === DefaultHitLocations.Default)
-			damageRoll.locationId =
-				((game as Game).settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"
-
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this.damageRoll = damageRoll
+		this.target = defender
 	}
 
 	/**

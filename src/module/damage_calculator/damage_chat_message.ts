@@ -8,7 +8,6 @@ export enum DamageChatFlags {
 }
 
 export type DamagePayload = {
-	hitlocation: string
 	attacker: ChatMessageData["speaker"]["_source"]
 	weapon: { itemUuid: string; weaponId: string }
 	name: string

@@ -1,5 +1,4 @@
 import { ActorGURPS, CharacterGURPS } from "@actor"
-import { DefaultHitLocations } from "@module/damage_calculator"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
@@ -363,7 +362,6 @@ async function rollDamage(
 	const speaker = ChatMessage.getSpeaker({ actor: actor })
 
 	const chatData: DamagePayload = {
-		hitlocation: DefaultHitLocations.Default,
 		// Data: data,
 		attacker: speaker,
 		weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },

@@ -20,7 +20,6 @@ import {
 	TargetTraitModifier,
 } from "@module/damage_calculator"
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
-import { DamagePayload } from "../../damage_calculator/damage_chat_message";
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -117,7 +116,7 @@ class BaseActorGURPS extends Actor {
 		}
 	}
 
-	handleDamageDrop(payload: DamagePayload): void {
+	handleDamageDrop(payload: any): void {
 		let roll: DamageRoll = new DamageRollAdapter(payload)
 		let target: DamageTarget = new DamageTargetActor(this)
 		new ApplyDamageDialog(roll, target).render(true)
