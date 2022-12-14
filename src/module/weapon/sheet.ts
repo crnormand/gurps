@@ -1,10 +1,9 @@
 import { CharacterGURPS } from "@actor"
 import { ItemGURPS } from "@item"
 import { Attribute } from "@module/attribute"
-import { SYSTEM_NAME } from "@module/data"
+import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
-import { SETTINGS } from "@module/settings"
 import { i18n } from "@util"
 import { Weapon } from "."
 

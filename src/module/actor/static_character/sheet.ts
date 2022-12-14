@@ -1,7 +1,6 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
-import { RollType, SYSTEM_NAME } from "@module/data"
+import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { SETTINGS } from "@module/settings"
 import { i18n, RollGURPS, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticCharacterSheetConfig } from "./config_sheet"

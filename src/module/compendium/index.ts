@@ -1,6 +1,5 @@
-import { ImagePath, SYSTEM_NAME } from "@module/data"
+import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { SETTINGS } from "@module/settings"
 import { i18n } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"

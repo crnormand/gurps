@@ -1,7 +1,7 @@
 import { ActorGURPS, CharacterGURPS } from "@actor"
 import { DefaultHitLocations } from "@module/damage_calculator"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
-import { RollModifier, RollType, SYSTEM_NAME, UserFlags } from "@module/data"
+import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { i18n_f, toWord } from "./misc"
 
@@ -339,13 +339,15 @@ async function rollDamage(
 	actor: ActorGURPS,
 	data: { [key: string]: any }
 ): Promise<void> {
+	// Roll the damage for the weapon.
 	const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
 	const roll = Roll.create(dice.toString(true))
 	await roll.evaluate({ async: true })
+
+	// Create an array suitable for drawing the dice on the ChatMessage.
 	const rolls = roll.dice[0].results.map(e => {
 		return { result: e.result, word: toWord(e.result) }
 	})
-
 	const modifiers: Array<RollModifier & { class?: string }> = [
 		...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
 	]
@@ -361,6 +363,11 @@ async function rollDamage(
 	const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
 	const speaker = ChatMessage.getSpeaker({ actor: actor })
+
+	// Determine Hit Location. In the future, the Attack roll (above) should be able to determine if there is a modifier
+	// for hit location. If there is, use that. Otherwise go to the world settings to determine the default damage
+	// location. (Or, eventually, we could ask the target for it's default hit location...).
+	let hitlocation = getHitLocationFromLastAttackRoll(actor)
 
 	const chatData: DamagePayload = {
 		hitlocation: DefaultHitLocations.Default,
@@ -451,4 +458,11 @@ function getSuccess(level: number, rollTotal: number): RollSuccess {
 	if (rollTotal - level >= 10) return RollSuccess.CriticalFailure
 	if (level >= rollTotal) return RollSuccess.Success
 	return RollSuccess.Failure
+}
+/**
+ *
+ * @param actor
+ */
+function getHitLocationFromLastAttackRoll(actor: ActorGURPS) {
+	return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION)
 }
