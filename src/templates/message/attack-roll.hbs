@@ -24,11 +24,5 @@
 		{{/if}}
 	</div>
 	<hr />
-	<div class="total">{{#each rolls}}
-			{{#unless (eq @index 0)}} + {{/unless}}
-			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
-		{{/each}}
-		=
-		{{total}}
-	</div>
+	<div class="total">{{{displayRolls rolls}}} = {{total}}</div>
 </div>

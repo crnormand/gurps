@@ -15,6 +15,10 @@ export async function handleRoll(
 	actor: ActorGURPS | any,
 	data: { [key: string]: any }
 ): Promise<void> {
+	const lastStack = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
+	const lastTotal = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
+	await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, lastStack)
+	await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
 	let name = ""
 	let rollData: any = {}
 	if (actor.type === "character") return staticHandleRoll(user, actor, data)

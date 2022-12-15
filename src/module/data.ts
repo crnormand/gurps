@@ -36,6 +36,7 @@ export enum SETTINGS {
 	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
 	ROLL_MODIFIERS = "roll_modifiers",
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
+	DISPLAY_DICE = "display_dice",
 }
 
 export enum DisplayMode {
@@ -187,6 +188,7 @@ export interface RollModifier {
 
 export interface ModifierHeader {
 	name: string
+	title: true
 }
 
 export const rollModifiers: RollModifier[] = [
@@ -297,6 +299,8 @@ type ImageFileExtension = "jpg" | "jpeg" | "png" | "svg" | "webp"
 
 export enum UserFlags {
 	Init = "init",
+	LastStack = "lastStack",
+	LastTotal = "lastTotal",
 	ModifierStack = "modifierStack",
 	ModifierTotal = "modifierTotal",
 	ModifierSticky = "modifierSticky",

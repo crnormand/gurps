@@ -9,8 +9,6 @@
     -   add 0.15 categories
     -   pinned appears as category always (for awareness)
     -   modifier bucket journals
-	-	styling
-	-	zero mods are showing as titles, add title attribute and change conditional
 -   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
     -   features not updated in dragdata for some reason
     -   only happens with toObject function, features not updated
@@ -41,7 +39,6 @@
     -   (?) add optional reeling to dynamic character (maybe add ability to manually switch pool state for purposes of move etc. calculation)
     -   add posture to dynamic character
     -   add maneuver to dynamic character
--   (compact) NPC sheet
 -   Active Effects with Features
 -   Incorporate v10 tooltip API
 -   Skill Defaults from compendium
@@ -54,6 +51,7 @@
 
 ## 1.1.0 and beyond
 
+-   (compact) NPC sheet
 -   roll skills based on other attributes
 -   add way to hide specific result, target, and mods of roll but just show success/failure/crit
 -   reimporting a character over another one doesn't visibly change portrait until refresh because it is stored in cache. fix?

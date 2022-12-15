@@ -2,7 +2,14 @@
 
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { DamageCalculator, Extremity, Head, Limb } from "@module/damage_calculator/damage_calculator"
-import { DamageAttacker, DamageRoll, DamageTarget, DefaultHitLocations, TargetTrait, TargetTraitModifier } from "@module/damage_calculator"
+import {
+	DamageAttacker,
+	DamageRoll,
+	DamageTarget,
+	DefaultHitLocations,
+	TargetTrait,
+	TargetTraitModifier,
+} from "@module/damage_calculator"
 import { DamageType, AnyPiercingType } from "@module/damage_calculator/damage_type"
 import { InjuryEffectType, InjuryEffect } from "@module/damage_calculator/injury_effect"
 import { RollType } from "@module/data"
