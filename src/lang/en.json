@@ -1043,7 +1043,7 @@
 				"defense": "Defense",
 				"categories": "Modifiers by Category",
 				"pinned": "Pinned Modifiers",
-				"search": "Search for Modifiers",
+				"custom": "Custom Modifiers",
 				"max": "*Max {max}",
 				"cost": "*Cost {value}{id}"
 			},

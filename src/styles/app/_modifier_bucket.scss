@@ -10,7 +10,7 @@
 	color: rgb(var(--color-on-background));
 	padding: 5px;
 	z-index: var(--z-index-mod);
-	max-height: 600px;
+	max-height: 586px;
 
 	.column {
 		display: flex;
@@ -35,15 +35,21 @@
 		}
 	}
 	#categories {
+		width: 430px;
+		max-width: 430px;
 		overflow-y: hidden;
 		.content {
 			gap: 0;
 			overflow-y: scroll;
 		}
 	}
-	#search {
-		height: 20%;
-		grid-area: search;
+	#custom {
+		height: min-content;
+	}
+	.generic {
+		display: flex;
+		gap: 4px;
+		justify-content: center;
 	}
 
 	.active {
