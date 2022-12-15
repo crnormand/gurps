@@ -1,5 +1,5 @@
 <button class="modifier {{#if (gt this.modifier 0)}}pos{{else if (eq this.modifier 0)}}zero{{else}}neg{{/if}}" data-modifier="{{this.modifier}}" , data-name="{{this.name}}">
-	{{signed this.modifier}}:
+	{{signed this.modifier}}{{#if this.name}}:{{/if}}
 	{{this.name}}{{#if this.max}}{{localize "gurps.system.modifier_bucket.max" max=this.max}}{{/if}}{{#if
 		this.cost
 	}}{{modifierCost this.cost}}{{/if}}

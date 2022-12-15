@@ -17,6 +17,7 @@ class ModifierBucket extends Application {
 			popOut: false,
 			minimizable: false,
 			width: 850,
+			scrollY: ["#categories .content"],
 		})
 	}
 
@@ -312,6 +313,10 @@ class ModifierBucket extends Application {
 			e.open = this.categoriesOpen[i]
 		})
 
+		const genericMods = [-5, -4, -3, -2, -1, +1, +2, +3, +4, +5].map(e => {
+			return { modifier: e }
+		})
+
 		const players = (game as Game).users ?? []
 
 		// Const common_modifiers: any[] = []
@@ -324,6 +329,7 @@ class ModifierBucket extends Application {
 			defenseMods: defenseMods,
 			currentMods: modStack,
 			commonMods: common_modifiers,
+			genericMods: genericMods,
 		})
 	}
 
@@ -374,16 +380,14 @@ class ModifierBucket extends Application {
 		if (modifierMatch) {
 			customMod.modifier = parseInt(modifierMatch[0]) ?? 0
 			customMod.name = value.replace(modifierMatch[0], "")
+		} else {
+			customMod.modifier = 0
+			customMod.name = value
 		}
-		if (
-			["Enter", "Escape"].includes(event.key) ||
-			// Vim keys
-			(["j", "k"].includes(event.key) && event.ctrlKey)
-		) {
+		if (["Enter", "Escape"].includes(event.key)) {
 			event.preventDefault()
 			switch (event.key) {
 				case "Enter":
-					if (event.shiftKey) return this.togglePin(customMod)
 					return this.addModifier(customMod)
 				case "Escape":
 					return this.close()

@@ -60,9 +60,15 @@
 				{{/each}}
 			</div>
 		</div>
-		<div id="search" class="section">
-			<div class="header">{{localize "gurps.system.modifier_bucket.search"}}</div>
+		<div id="custom" class="section">
+			<div class="header">{{localize "gurps.system.modifier_bucket.custom"}}</div>
 			<div class="content">
+				<div class="generic">
+					{{#each genericMods}}
+					{{>modifier-bucket/modifier}}
+					{{/each}}
+				</div>
+				<input class="searchbar" type="text"/>
 			</div>
 		</div>
 	</div>
