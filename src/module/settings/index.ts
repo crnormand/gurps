@@ -200,6 +200,15 @@ export function registerSettings(): void {
 		default: "torso",
 		onChange: value => console.log(`Default damage location: ${value}`),
 	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.DISPLAY_DICE, {
+		name: "gurps.sttings.display_dice.name",
+		hint: "gurps.settings.display_dice.hint",
+		scope: "client",
+		config: true,
+		type: Boolean,
+		default: true,
+	})
 }
 
 /**

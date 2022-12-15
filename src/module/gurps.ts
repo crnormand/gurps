@@ -98,8 +98,8 @@ if (!(globalThis as any).GURPS) {
 	GURPS.pdf = PDFViewerSheet
 	GURPS.TokenModifierControl = new TokenModifierControl()
 	GURPS.recurseList = Static.recurseList
-	GURPS.LastActor = LastActor.get
-	GURPS.LastToken = LastActor.getToken
+	GURPS.LastActor = null
+	GURPS.LastToken = null
 	GURPS.setLastActor = LastActor.set
 }
 // GURPS.XMLtoJS = XMLtoJS;
@@ -322,6 +322,25 @@ Hooks.on("controlToken", (...args: any[]) => {
 		if (a) {
 			if (args[1]) LastActor.set(a, args[0].document)
 			else LastActor.clear(a)
+			GURPS.LastActor = LastActor.get()
+			GURPS.LastToken = LastActor.getToken()
+		}
+	}
+})
+
+Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
+	/**
+	 *
+	 */
+	async function updateLastActor() {
+		GURPS.LastActor = await LastActor.get()
+		GURPS.LastToken = await LastActor.getToken()
+	}
+	if (args.length) {
+		let a = args[0]?.actor
+		if (a) {
+			LastActor.set(a, args[0])
+			updateLastActor()
 		}
 	}
 })

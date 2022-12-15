@@ -125,6 +125,13 @@
 		}
 
 		.total {
+			.no-dice {
+				background-color: rgb(var(--color-on-content));
+				color: rgb(var(--color-content));
+				border: 1px solid rgb(var(--color-on-content));
+				border-radius: 2px;
+				aspect-ratio: 1/1;
+			}
 			margin-bottom: 5px;
 		}
 	}

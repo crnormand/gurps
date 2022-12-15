@@ -8,8 +8,9 @@ export type Weight = number
  *
  * @param n
  * @param units
+ * @param u
  */
-export function lengthFormat(n: Length, units: LengthUnits): string {
+export function lengthFormat(n: Length, units: LengthUnits, u = 0): string {
 	let inches = n
 	switch (units) {
 		case LengthUnits.FeetAndInches:
@@ -26,16 +27,16 @@ export function lengthFormat(n: Length, units: LengthUnits): string {
 		case LengthUnits.Inch:
 			return `${inches} ${f(units)}`
 		case LengthUnits.Feet:
-			return `${(inches / 12).toFixed(4)} ${f(units)}`
+			return `${(inches / 12).toFixed(u)} ${f(units)}`
 		case LengthUnits.Yard:
 		case LengthUnits.Meter:
-			return `${(inches / 36).toFixed(4)} ${f(units)}`
+			return `${(inches / 36).toFixed(u)} ${f(units)}`
 		case LengthUnits.Mile:
-			return `${(inches / 63360).toFixed(4)} ${f(units)}`
+			return `${(inches / 63360).toFixed(u)} ${f(units)}`
 		case LengthUnits.Centimeter:
-			return `${((inches / 36) * 100).toFixed(4)} ${f(units)}`
+			return `${((inches / 36) * 100).toFixed(u)} ${f(units)}`
 		case LengthUnits.Kilometer:
-			return `${(inches / 36000).toFixed(4)} ${f(units)}`
+			return `${(inches / 36000).toFixed(u)} ${f(units)}`
 		default:
 			return lengthFormat(n, LengthUnits.FeetAndInches)
 	}

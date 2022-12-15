@@ -16,6 +16,7 @@ class ModifierBucket extends Application {
 			template: `systems/${SYSTEM_NAME}/templates/modifier-bucket/window.hbs`,
 			popOut: false,
 			minimizable: false,
+			width: 850,
 		})
 	}
 
@@ -60,13 +61,13 @@ class ModifierBucket extends Application {
 			{ name: "Feverish Defense", modifier: +2, cost: { id: "fp", value: 1 } },
 		]
 		const modifiersStatus: ModifierItem[] = [
-			{ name: i18n("gurps.modifier.status.status") },
+			{ name: i18n("gurps.modifier.status.status"), title: true },
 			{ name: i18n("gurps.modifier.status.shock_1"), modifier: -1 },
 			{ name: i18n("gurps.modifier.status.shock_2"), modifier: -2 },
 			{ name: i18n("gurps.modifier.status.shock_3"), modifier: -3 },
 			{ name: i18n("gurps.modifier.status.shock_4"), modifier: -4 },
 			{ name: i18n("gurps.modifier.status.stunned"), modifier: -4 },
-			{ name: i18n("gurps.modifier.status.afflictions") },
+			{ name: i18n("gurps.modifier.status.afflictions"), title: true },
 			{ name: i18n("gurps.modifier.status.cough_dx"), modifier: -3 },
 			{ name: i18n("gurps.modifier.status.cough_iq"), modifier: -1 },
 			{ name: i18n("gurps.modifier.status.drowsy"), modifier: -2 },
@@ -120,7 +121,7 @@ class ModifierBucket extends Application {
 		]
 
 		const modifiersSize: ModifierItem[] = [
-			{ name: i18n("gurps.modifier.size.melee_ranged") },
+			{ name: i18n("gurps.modifier.size.melee_ranged"), title: true },
 			...[
 				[-10, 1.5],
 				[-9, 2],
@@ -193,7 +194,7 @@ class ModifierBucket extends Application {
 		]
 
 		const modifiersCover: ModifierItem[] = [
-			{ name: i18n("gurps.modifier.cover.cover") },
+			{ name: i18n("gurps.modifier.cover.cover"), title: true },
 			{ name: i18n("gurps.modifier.cover.head_only"), modifier: -5 },
 			{ name: i18n("gurps.modifier.cover.head_and_shoulders"), modifier: -4 },
 			{ name: i18n("gurps.modifier.cover.half_exposed"), modifier: -3 },
@@ -204,7 +205,7 @@ class ModifierBucket extends Application {
 			{ name: i18n("gurps.modifier.cover.prone_head_down"), modifier: -7 },
 			{ name: i18n("gurps.modifier.cover.crouching_no_cover"), modifier: -2 },
 			{ name: i18n("gurps.modifier.cover.occupied_hex"), modifier: -4 },
-			{ name: i18n("gurps.modifier.cover.posture") },
+			{ name: i18n("gurps.modifier.cover.posture"), title: true },
 			{ name: i18n("gurps.modifier.cover.melee_crawling"), modifier: -4 },
 			{ name: i18n("gurps.modifier.cover.ranged_sitting"), modifier: -2 },
 			{ name: i18n("gurps.modifier.cover.defense_crawling"), modifier: -3 },
@@ -263,8 +264,8 @@ class ModifierBucket extends Application {
 				[4, "17-24"],
 				[5, "25-49"],
 				[6, "50-99"],
-			].map((m, d) => {
-				return { name: i18n_f("gurps.modifier.rof.rof", { rof: d }), modifier: m }
+			].map(([m, l]) => {
+				return { name: i18n_f("gurps.modifier.rof.rof", { rof: l }), modifier: Number(m) }
 			}),
 		]
 
@@ -356,12 +357,12 @@ class ModifierBucket extends Application {
 		html.find(".active").on("click", event => this.removeModifier(event))
 		html.find(".player").on("click", event => this.sendToPlayer(event))
 		html.find(".modifier").on("click", event => this._onClickModifier(event))
-		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
+		html.find(".collapsible").on("click", event => this._onCollapseToggle(event))
 	}
 
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
-		const index = parseInt($(event.currentTarget).data("index"))
+		const index = parseInt($(event.currentTarget).find(".dropdown-toggle").data("index"))
 		this.categoriesOpen[index] = !this.categoriesOpen[index]
 		return this.render()
 	}

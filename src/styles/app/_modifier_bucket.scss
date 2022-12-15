@@ -10,6 +10,7 @@
 	color: rgb(var(--color-on-background));
 	padding: 5px;
 	z-index: var(--z-index-mod);
+	max-height: 600px;
 
 	.column {
 		display: flex;
@@ -33,7 +34,15 @@
 			height: calc(100% - 18px);
 		}
 	}
+	#categories {
+		overflow-y: hidden;
+		.content {
+			gap: 0;
+			overflow-y: scroll;
+		}
+	}
 	#search {
+		height: 20%;
 		grid-area: search;
 	}
 
@@ -52,6 +61,10 @@
 		padding: var(--padding-standard);
 		background-color: rgb(var(--color-control));
 		color: rgb(var(--color-on-control));
+		&.open {
+			border-radius: 4px 4px 0 0;
+			border-bottom: 0;
+		}
 	}
 	.collapsible-content {
 		display: grid;
@@ -59,8 +72,12 @@
 		grid-auto-rows: 0fr;
 		border: 2px solid rgb(var(--color-control-edge));
 		background-color: rgb(var(--color-control));
+		&.open {
+			border-radius: 0 0 4px 4px;
+		}
 		.title {
 			text-align: center;
+			padding: var(--padding-header);
 		}
 		.modifier {
 			border-radius: 0;
