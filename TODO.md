@@ -3,10 +3,7 @@
 ## In Progress
 
 -   Convert the modifier bucket over
-    -   add search function, same as mod prompt
-    -   css
     -   premade lists
-    -   add 0.15 categories
     -   pinned appears as category always (for awareness)
     -   modifier bucket journals
 -   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
@@ -47,7 +44,6 @@
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
--   switch between number and dice display for skill rolls
 
 ## 1.1.0 and beyond
 

@@ -125,13 +125,18 @@
 		}
 
 		.total {
-			.no-dice {
-				background-color: rgb(var(--color-on-content));
-				color: rgb(var(--color-content));
-				border: 1px solid rgb(var(--color-on-content));
-				border-radius: 2px;
-				aspect-ratio: 1/1;
-			}
+			// .dice-1:before { content: "\f525"; }
+			// .dice-2:before { content: "\f528"; }
+			// .dice-3:before { content: "\f527"; }
+			// .dice-4:before { content: "\f524"; }
+			// .dice-5:before { content: "\f523"; }
+			// .dice-6:before { content: "\f526"; }
+			// .dice-1.num:before { content: "\e256"; }
+			// .dice-2.num:before { content: "\e257"; }
+			// .dice-3.num:before { content: "\e258"; }
+			// .dice-4.num:before { content: "\e259"; }
+			// .dice-5.num:before { content: "\e25a"; }
+			// .dice-6.num:before { content: "\e25b"; }
 			margin-bottom: 5px;
 		}
 	}

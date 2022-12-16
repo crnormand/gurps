@@ -1225,6 +1225,10 @@
 				"label": "Edit Default Body Type",
 				"hint": "The Body Type assigned when creating new Characters."
 			},
+			"display_dice": {
+				"name": "Display Dice Pips",
+				"hint": "If enabled, diceroll results in messages will display as pips instead of numbers."
+			},
 			"roll_modifiers": {
 				"name": "Custom Modifiers",
 				"label": "Edit Custom Modifiers",
