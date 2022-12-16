@@ -257,6 +257,7 @@ Hooks.once("setup", async () => {
 Hooks.once("ready", async () => {
 	// Do anything once the system is ready
 	ColorSettings.applyColors()
+	// ApplyDiceCSS()
 
 	// Enable drag image
 	const DRAG_IMAGE = document.createElement("div")
@@ -344,3 +345,8 @@ Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
 		}
 	}
 })
+
+// Hooks.on("renderChatMessage", () => {
+// 	console.log("lag?")
+// 	applyDiceCSS()
+// })

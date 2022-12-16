@@ -24,7 +24,7 @@ export function addChatListeners(html: JQuery<HTMLElement>): void {
 async function _onModClick(event: JQuery.ClickEvent): Promise<void> {
 	event.preventDefault()
 	const mod: RollModifier = $(event.currentTarget).data("mod")
-	await (game as any).ModifierButton.window.addModifier(mod)
+	return (game as any).ModifierButton.window.addModifier(mod)
 }
 
 /**
@@ -33,9 +33,10 @@ async function _onModClick(event: JQuery.ClickEvent): Promise<void> {
  */
 async function _onModRClick(event: JQuery.ContextMenuEvent): Promise<void> {
 	event.preventDefault()
-	const mod: RollModifier = $(event.currentTarget).data("mod")
+	event.stopPropagation()
+	const mod: RollModifier = duplicate($(event.currentTarget).data("mod"))
 	mod.modifier = -mod.modifier
-	await (game as any).ModifierButton.window.addModifier(mod)
+	return (game as any).ModifierButton.window.addModifier(mod)
 }
 
 /**
