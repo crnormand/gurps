@@ -11,6 +11,12 @@
 				"name": "Dano: Ponto de impacto padrão",
 				"hint": "Configura o ponto de impacto padrão a ser utilizada nas avaliações de dano."
 			}
+		},
+		"token": {
+			"select": "Selecionar Miniatura"
+		},
+		"misc": {
+			"apply-to": "Aplicar em"
 		}
 	}
 }

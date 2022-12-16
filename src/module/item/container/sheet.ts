@@ -5,7 +5,7 @@ import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vt
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
 import { ContainerGURPS } from "."
 import { SYSTEM_NAME } from "@module/data"
-import { DnD } from "@util/drag-drop"
+import { DnD } from "@util/drag_drop"
 
 export class ContainerSheetGURPS extends ItemSheetGURPS {
 	static get defaultOptions(): DocumentSheetOptions {

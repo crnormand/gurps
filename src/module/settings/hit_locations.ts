@@ -1,7 +1,7 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { SYSTEM_NAME } from "@module/data"
 import { i18n, prepareFormData } from "@util"
-import { DnD } from "@util/drag-drop"
+import { DnD } from "@util/drag_drop"
 import { SettingsMenuGURPS } from "./menu"
 
 export class DefaultHitLocationSettings extends SettingsMenuGURPS {

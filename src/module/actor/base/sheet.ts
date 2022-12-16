@@ -3,7 +3,7 @@ import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vt
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
 import { SYSTEM_NAME } from "@module/data"
 import { DamageChat } from "@module/damage_calculator/damage_chat_message"
-import { DnD } from "@util/drag-drop"
+import { DnD } from "@util/drag_drop"
 
 type DispatchFunctions = Record<string, (arg: any) => void>
 

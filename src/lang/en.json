@@ -1258,6 +1258,12 @@
 				"portrait_permissions": "Portrait upload failed. You do not have \"FILES_UPLOAD\" permissions. Ask your GM to import your portrait, or acquire the appropriate permissions."
 			},
 			"modifier_app_load_failed": "Failed to initialize the Modifier Stack App."
+		},
+		"token": {
+			"select": "Select Token"
+		},
+		"misc": {
+			"apply-to": "Apply to"
 		}
 	}
 }

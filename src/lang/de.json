@@ -5,6 +5,12 @@
 				"Torso": "Торс",
 				"Random": "Случайная зона"
 			}
+		},
+		"token": {
+			"select": "Wähle Token"
+		},
+		"misc": {
+			"apply-to": "Wende an auf"
 		}
 	}
 }

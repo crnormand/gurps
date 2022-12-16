@@ -7,7 +7,7 @@ import { i18n, i18n_f, prepareFormData } from "@util"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { CharacterSettings } from "./data"
 import { HitLocationTable } from "./hit_location"
-import { DnD } from "@util/drag-drop"
+import { DnD } from "@util/drag_drop"
 
 export class CharacterSheetConfig extends FormApplication {
 	object: CharacterGURPS

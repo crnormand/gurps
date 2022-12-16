@@ -1,7 +1,7 @@
 import { StaticAdvantage, StaticMelee, StaticSkill, StaticSpell } from "@actor/static_character/components"
 import { ItemSheetGURPS } from "@item/base/sheet"
 import { Static } from "@util"
-import { DnD } from "@util/drag-drop"
+import { DnD } from "@util/drag_drop"
 import { StaticItemGURPS } from "."
 import { StaticItemSystemData } from "./data"
 
