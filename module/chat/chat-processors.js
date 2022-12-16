@@ -1032,6 +1032,25 @@ class DevChatProcessor extends ChatProcessor {
         GURPS.executeOTF('/sel *\\\\/sr [/hp reset]\\\\/sr [/fp reset]\\\\/sr [/st clear]')
         break
       }
+      case 'resetstatus': {
+        for (let t of canvas.tokens.controlled) {
+          console.log(`Checking ${t.name}`)
+          const effect = t.actor.effects.contents;
+          for (let i = 0; i < effect.length; i++) {
+            let condition = effect[i].label;
+            let status = effect[i].disabled;
+            let effect_id = effect[i]._id;
+            console.log(`Removing from ${t.name} condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
+            if (status === false) {
+                try {
+                  await _token.actor.deleteEmbeddedDocuments("ActiveEffect", [effect_id]);
+                } catch (error) {
+                  console.log(error)
+                }
+            }
+          } 
+        }  
+      }
     }
   }
 }
