@@ -86,6 +86,7 @@ export class DamageChat {
 			return
 		}
 
-		TokenUtil.askWhichTokenAndApply(tokens, handleDamageDrop)
+		const token = await TokenUtil.askWhichToken(tokens)
+		if (token?.actor) handleDamageDrop(token.actor as BaseActorGURPS)
 	}
 }

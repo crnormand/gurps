@@ -1267,7 +1267,11 @@
 			"select": "Select Token"
 		},
 		"misc": {
+			"apply": "Apply",
 			"apply-to": "Apply to"
+		},
+		"damage_calculator": {
+			"injury": "Injury"
 		}
 	}
 }

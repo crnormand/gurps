@@ -2,15 +2,16 @@
 	"gurps": {
 		"static": {
 			"hit_location": {
-				"Torso": "Rumpf",
-				"Random": "Zufällig"
+				"Torso": "Торс",
+				"Random": "Случайная зона"
 			}
 		},
-		"settings": {
-			"default_damage_location": {
-				"name": "Schaden: Standard Trefferzone",
-				"hint": "Legt den Standard-Trefferzone fest, die für die Anwendung von Schaden verwendet wird."
-			}
+		"misc": {
+			"apply": "Принять",
+			"apply-to": "Apply to"
+		},
+		"damage_calculator": {
+			"injury": "Повреждения"
 		}
 	}
 }

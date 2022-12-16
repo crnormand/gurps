@@ -16,7 +16,11 @@
 			"select": "Selecionar Miniatura"
 		},
 		"misc": {
+			"apply": "Aplicar",
 			"apply-to": "Aplicar em"
+		},
+		"damage_calculator": {
+			"injury": "Lesão"
 		}
 	}
 }
