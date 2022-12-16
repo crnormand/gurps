@@ -1,6 +1,6 @@
 import { SYSTEM_NAME } from "@module/data"
 import { prepareFormData } from "@util"
-import { DnD } from "@util/drag-drop"
+import { DnD } from "@util/drag_drop"
 import { SettingsMenuGURPS } from "./menu"
 
 export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {

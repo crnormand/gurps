@@ -11,6 +11,12 @@
 				"name": "Dégât: Localisation par défaut",
 				"hint": "Définit la localisation par défaut pour appliquer les dégâts."
 			}
+		},
+		"token": {
+			"select": "Sélectionner Token"
+		},
+		"misc": {
+			"apply-to": "Appliquer à"
 		}
 	}
 }
