@@ -24,7 +24,7 @@ export class NoteGURPS extends BaseItemGURPS {
 		// @ts-ignore until v10 types
 		const converter = new showdown.Converter()
 		const text = this.system.text
-		return converter.makeHtml(text).replace(/\s\+/g, "\r")
+		return converter.makeHtml(text)?.replace(/\s\+/g, "\r")
 	}
 }
 
