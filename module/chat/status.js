@@ -150,6 +150,9 @@ export default class StatusChatProcessor extends ChatProcessor {
   getSelfTokens() {
     let list = canvas.tokens?.placeables.filter(it => it.owner)
     if (list && list.length === 1) return list
+    
+    list = canvas.tokens?.placeables.filter(it => it.actor == GURPS.LastActor)
+    if (list && list.length === 1) return list
 
     let msg = list && list.length === 0 ? i18n('GURPS.chatNoOwnedTokenFound') : i18n('GURPS.chatMultipleOwnedFound')
     ui.notifications.warn(msg)

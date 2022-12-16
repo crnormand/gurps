@@ -514,7 +514,7 @@ ul#result-effects li {
 }
 
 .toggle:checked + .label-toggle + .collapsible-content {
-  max-height: 130vh;
+  max-height: 130vh; 
 }
 
 .damage-message .label-toggle {
@@ -532,9 +532,8 @@ ul#result-effects li {
 
 .damage-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
-  /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
-  content: '\f077';
+  content: '\f077'; 
   float: right;
 }
 

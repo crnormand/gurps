@@ -1,6 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
 
+Release 0.15.17 12/15/2022
+
+- Allow attribute rolls (IQ, DX, etc.) to remember which character they came from using OtF sourceId (for GMs with multiple NPCs)
+- Add support for RcL < 1 (0.5), to support a weapon that shoots 2 rounds per attempt
+- Fix /st ... @self to work with /sr command
+- Workaround for UI blowing up (if player clicked on damage chat window to see rolls).   Rolls are now always shown for damage chat msgs
+
 Release 0.15.16 12/08/2022
 
 - Added support for list of files using /sound chat command.   /sound /dir/somefile.txt read text file (list of file names) and randomly picks one

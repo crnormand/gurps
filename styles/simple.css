@@ -2047,7 +2047,7 @@ body {
 .roll-result .roll-value,
 .roll-result .roll-detail {
   /* font-family: var(--fontawesomefamily); */
-  font-family: inherit;
+  font-family: inherit; 
 }
 
 .roll-result .roll-detail {
@@ -2055,7 +2055,7 @@ body {
 }
 
 .roll-result .roll-detail .aside {
-  font-size: inherit;
+  font-size: inherit; 
 }
 
 .roll-result .roll-detail .crit {
