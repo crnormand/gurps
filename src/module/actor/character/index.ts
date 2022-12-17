@@ -960,7 +960,8 @@ class CharacterGURPS extends BaseActorGURPS {
 				if (def) {
 					const attrID = attrPrefix + attr.attr_id
 					this.system.attributes[attr.order].bonus = this.bonusFor(attrID, undefined)
-					if (def.type !== AttributeType.Decimal) attr.bonus = Math.floor(attr.bonus)
+					if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type))
+						attr.bonus = Math.floor(attr.bonus)
 					this.system.attributes[attr.order].cost_reduction = this.costReductionFor(attrID)
 				} else {
 					this.system.attributes[attr.order].bonus = 0

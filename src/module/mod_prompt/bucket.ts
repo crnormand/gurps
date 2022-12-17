@@ -320,7 +320,6 @@ class ModifierBucket extends Application {
 		const players = (game as Game).users ?? []
 
 		// Const common_modifiers: any[] = []
-		console.log(common_modifiers)
 		return mergeObject(super.getData(options), {
 			value: this.value,
 			players: players,

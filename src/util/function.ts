@@ -268,7 +268,9 @@ function evalToBool(e: Evaluator, a: any): boolean {
 		case "number":
 			return evaluated !== 0
 		case "string":
-			return Boolean(evaluated)
+			if (evaluated === "true") return true
+			if (evaluated === "false") return false
+			return false
 		default:
 			return false
 	}
@@ -362,7 +364,7 @@ export function evalEncumbrance(e: Evaluator, a: string): any {
 	const entity = e.resolver
 	if (!entity) return 0
 	const level = entity.encumbranceLevel(forSkills).level
-	if (returnFactor) return 1 - (level * 2) / 10
+	if (returnFactor) return 1 - level / 5
 	return level
 }
 

@@ -15,7 +15,6 @@
 -   range ruler
 -   dice roller button
 -   send mofifiers from prompt
--   when skill is rolled from tree, show which skill is rolled
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   change skill level when prereqs not satisfied
 -   Drag rollable buttons to hotbar or message box for macros
@@ -47,6 +46,7 @@
 
 ## 1.1.0 and beyond
 
+-   when skill is rolled from tree, show which skill is rolled
 -   (compact) NPC sheet
 -   roll skills based on other attributes
 -   add way to hide specific result, target, and mods of roll but just show success/failure/crit
