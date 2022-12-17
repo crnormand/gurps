@@ -61,13 +61,6 @@
 						{{/select}}
 					</select>
 				</div>
-				{{#if (eq this.type "pool")}}
-				<div class="item-list thresholds">
-					{{#each this.thresholds}}
-					{{>actor/character/config/threshold id=@../index parent="array.system.settings.attributes"}}
-					{{/each}}
-				</div>
-				{{/if}}
 				<div class="label">{{localize "gurps.attribute_def.short_name"}}</div>
 				<div class="field">
 					<input
@@ -115,6 +108,13 @@
 					/>
 				</div>
 				{{/unless}}
+				{{#if (eq this.type "pool")}}
+				<div class="item-list thresholds">
+					{{#each this.thresholds}}
+					{{>actor/character/config/threshold id=@../index parent="array.system.settings.attributes"}}
+					{{/each}}
+				</div>
+				{{/if}}
 				{{/if}}
 			</div>
 		</div>

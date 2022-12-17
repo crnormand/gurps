@@ -48,7 +48,7 @@ export class CharacterSheetConfig extends FormApplication {
 				},
 			],
 			dragDrop: [{ dragSelector: ".item-list .item .controls .drag", dropSelector: null }],
-			scrollY: [".item-list", ".tab"],
+			scrollY: [".content", ".item-list", ".tab"],
 		})
 	}
 
