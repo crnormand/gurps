@@ -20,7 +20,8 @@
 			"apply-to": "Appliquer à"
 		},
 		"damage_calculator": {
-			"injury": "Blessure"
+			"injury": "Blessure",
+			"hit_location": "Localisation"
 		}
 	}
 }

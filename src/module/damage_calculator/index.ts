@@ -2,6 +2,7 @@ import { DiceGURPS } from "../dice"
 import { DamageType } from "./damage_type"
 import { HitLocationTable } from "@actor/character/hit_location"
 import { DamagePayload } from "./damage_chat_message"
+import { SETTINGS, SYSTEM_NAME } from "../data"
 
 /**
  * DamageRoll is the parameter that is sent in (along with DamageTarget) to the DamageCalculator.
@@ -87,10 +88,14 @@ enum DefaultHitLocations {
 class DamageRollAdapter implements DamageRoll {
 	private _payload: DamagePayload
 
+	private _locationId: string
+
+	private _game = game as Game
+
 	constructor(payload: DamagePayload) {
 		this._payload = payload
 
-		this.locationId = ""
+		this._locationId = payload.hitlocation
 		this.internalExplosion = false
 		this.basicDamage = 0
 		this.damageType = DamageType.cr
@@ -107,7 +112,14 @@ class DamageRollAdapter implements DamageRoll {
 		this.attacker = new DamageAttackerAdapter()
 	}
 
-	locationId: string
+	get locationId(): string {
+		if (this._locationId === "Default" || !this._locationId) {
+			// Set to default value from world settings.
+			this._locationId =
+				(this._game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"
+		}
+		return this._locationId
+	}
 
 	attacker: DamageAttacker
 

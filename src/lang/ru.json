@@ -11,7 +11,8 @@
 			"apply-to": "Apply to"
 		},
 		"damage_calculator": {
-			"injury": "Повреждения"
+			"injury": "Повреждения",
+			"hit_location": "Зона попадания"
 		}
 	}
 }

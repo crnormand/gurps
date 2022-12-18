@@ -1271,7 +1271,8 @@
 			"apply-to": "Apply to"
 		},
 		"damage_calculator": {
-			"injury": "Injury"
+			"injury": "Injury",
+			"hit_location": "Hit Location"
 		}
 	}
 }

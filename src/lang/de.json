@@ -20,7 +20,8 @@
 			"apply-to": "Wende an auf"
 		},
 		"damage_calculator": {
-			"injury": "Verletzung"
+			"injury": "Verletzung",
+			"hit_location": "Trefferzone"
 		}
 	}
 }

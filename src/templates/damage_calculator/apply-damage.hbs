@@ -100,10 +100,10 @@
 			</div>
 			<div></div>
 
-			<div class="label">Hit Location</div>
+			<div class="label">{{localize "gurps.damage_calculator.hit_location"}}</div>
 			<div class="field no-stretch location">
 				<select name="hitLocation">
-					{{selectOptions hitLocationChoices value=roll.locationId localize=false}}
+					{{selectOptions hitLocationChoices selected=roll.locationId localize=false}}
 				</select>
 				<button type="button" class=""><i class="fa-light fa-dice"></i></button>
 				<div class="label">DR</div>

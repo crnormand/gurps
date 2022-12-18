@@ -20,7 +20,8 @@
 			"apply-to": "Aplicar em"
 		},
 		"damage_calculator": {
-			"injury": "Lesão"
+			"injury": "Lesão",
+			"hit_location": "Ponto de Impacto"
 		}
 	}
 }
