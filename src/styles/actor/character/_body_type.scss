@@ -5,7 +5,7 @@
 		"title title title title"
 		"roll location penalty dr";
 	grid-template-columns: 1fr min-content min-content;
-	grid-template-rows: 0fr;
+	grid-template-rows: repeat(1000, 0fr);
 	white-space: nowrap;
 	.header {
 		grid-area: auto;

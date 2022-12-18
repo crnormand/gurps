@@ -457,7 +457,6 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("modifierCost", function (c: { id: string; value: number }): string {
-		console.log(c)
 		// Const actor = LastActor.get()
 		// if (actor) {
 		// 	const name = actor.attributes?.get(c.id)?.attribute_def.name ?? c.id.toUpperCase()

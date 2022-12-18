@@ -59,7 +59,7 @@ export class Attribute {
 		const def = this.attribute_def
 		if (!def) return 0
 		let max = def.baseValue(this.actor) + this.adj + this.bonus
-		if (def.type !== AttributeType.Decimal) {
+		if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type)) {
 			max = Math.floor(max)
 		}
 		return max

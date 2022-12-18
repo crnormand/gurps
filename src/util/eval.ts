@@ -123,7 +123,6 @@ class Evaluator {
 			if (opIndex > i || opIndex === -1) {
 				i = this.processOperand(expression, i, opIndex, unaryOp)
 				haveOperand = true
-				haveOperator = false
 				unaryOp = null
 			}
 			if (opIndex === i) {
@@ -137,7 +136,6 @@ class Evaluator {
 				}
 				if (!op || op.symbol !== ")") {
 					haveOperand = false
-					haveOperator = true
 				}
 			}
 		}
@@ -298,7 +296,7 @@ class Evaluator {
 				return v
 			}
 			let v: any
-			if (!operand.right) v = left
+			if (operand.right === undefined) v = left
 			else v = right
 			if (v) {
 				try {
@@ -309,7 +307,7 @@ class Evaluator {
 					return null
 				}
 			}
-			if (!v) console.error("Expression is invalid")
+			if (v === undefined) console.error("Expression is invalid")
 			return v
 		} else if (operand instanceof expressionOperand) {
 			const v = this.replaceVariables(operand.value)
@@ -323,7 +321,7 @@ class Evaluator {
 			if (operand.unaryOp && operand.unaryOp.evaluateUnary) return operand.unaryOp.evaluateUnary(v)
 			return v
 		} else {
-			if (operand) console.error("Invalid expression")
+			if (operand !== undefined) console.error("Invalid expression")
 			return null
 		}
 	}
