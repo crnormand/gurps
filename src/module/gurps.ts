@@ -291,7 +291,7 @@ Hooks.once("ready", async () => {
 // Add any additional hooks if necessary
 Hooks.on("renderChatMessage", (_app, html, _data) => Chat.addChatListeners(html))
 Hooks.on("renderChatMessage", DamageChat.renderChatMessage)
-Hooks.on("dropCanvasData", DamageChat.dropCanvasData)
+Hooks.on("dropCanvasData", DamageChat.handleDropOnCanvas)
 
 Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) => {
 	if (app.options.id === "compendium") {
