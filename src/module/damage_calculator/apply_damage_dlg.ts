@@ -34,6 +34,10 @@ class ApplyDamageDialog extends Application {
 		})
 	}
 
+	get title() {
+		return "Apply Damage"
+	}
+
 	getData(options?: Partial<ApplicationOptions> | undefined): object {
 		const data = mergeObject(super.getData(options), {
 			roll: this.roll,
@@ -45,7 +49,7 @@ class ApplyDamageDialog extends Application {
 			damageTypeChoices: DamageType,
 			hitLocation: this.hitLocation,
 			hitLocationChoices: this.hitLocationChoice,
-			dr: this.dr,
+			dr: this.calculator.rawDR,
 			hardenedChoices: hardenedChoices,
 			vulnerabilityChoices: vulnerabilityChoices,
 			injuryToleranceChoices: injuryToleranceChoices,
@@ -76,6 +80,9 @@ class ApplyDamageDialog extends Application {
 
 			case "location-dr": {
 				// Need to override target.dr in the calculator.
+				this.overrideDR(target.value)
+				this.render(true)
+				break
 			}
 		}
 	}
@@ -124,10 +131,6 @@ class ApplyDamageDialog extends Application {
 		return result.location?.id ?? "torso"
 	}
 
-	get title() {
-		return "Apply Damage"
-	}
-
 	private get target(): DamageTarget {
 		return this.calculator.target
 	}
@@ -157,8 +160,8 @@ class ApplyDamageDialog extends Application {
 		return HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
 	}
 
-	private get dr(): number | undefined {
-		return HitLocationUtil.getHitLocationDR(this.hitLocation, this.roll.damageType)
+	private overrideDR(dr: number | undefined) {
+		this.calculator.overrideRawDr(dr)
 	}
 
 	private get hitLocationChoice(): Record<string, string> {

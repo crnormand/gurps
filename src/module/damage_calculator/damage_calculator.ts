@@ -30,6 +30,8 @@ class DamageCalculator {
 
 	damageRoll: DamageRoll
 
+	private _rawDROverride: number | undefined
+
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this.damageRoll = damageRoll
@@ -322,6 +324,8 @@ class DamageCalculator {
 	}
 
 	private get _basicDR() {
+		if (this._rawDROverride) return this._rawDROverride
+
 		let basicDr = 0
 		if (this._isLargeAreaInjury) {
 			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
@@ -332,13 +336,23 @@ class DamageCalculator {
 
 			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageRoll.damageType) + Math.min(...allDR)) / 2
 		} else {
-			basicDr = HitLocationUtil.getHitLocationDR(
-				HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
-				this.damageRoll.damageType
-			)
+			basicDr = this.rawDR
 		}
 
 		return basicDr * this._multiplierForShotgunExtremelyClose
+	}
+
+	overrideRawDr(dr: number | undefined) {
+		this._rawDROverride = dr
+	}
+
+	get rawDR(): number {
+		return this._rawDROverride
+			? this._rawDROverride
+			: HitLocationUtil.getHitLocationDR(
+					HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
+					this.damageRoll.damageType
+			  )
 	}
 
 	private get _isLargeAreaInjury() {
