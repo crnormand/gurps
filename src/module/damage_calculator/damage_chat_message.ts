@@ -4,6 +4,7 @@ import { DiceGURPS } from "@module/dice"
 import { ChatMessageData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs"
 import { TokenUtil } from "../../util/token_utils"
 import { BaseActorGURPS } from "@actor/base"
+import { CanvasUtil } from "@util/canvas"
 
 export enum DamageChatFlags {
 	Transfer = "transfer",
@@ -21,6 +22,8 @@ export type DamagePayload = {
 	rolls: { result: number; word: string }[]
 	modifierTotal: number
 }
+
+type DropData = { type: string; x: number; y: number; payload: DamagePayload }
 
 export class DamageChat {
 	static TYPE = "damage"
@@ -64,16 +67,11 @@ export class DamageChat {
 		// Add any handling code here.
 	}
 
-	static async dropCanvasData(canvas: Canvas, dropData: any): Promise<void> {
-		const g = game as Game
-
-		// 	If (dropData.type === "Item") handle = actor => actor.handleItemDrop(dropData)
-		// 	If (dropData.type === "equipment") handle = actor => actor.handleEquipmentDrop(dropData)
-
+	static async handleDropOnCanvas(canvas: Canvas, dropData: DropData): Promise<void> {
 		if (dropData.type !== DamageChat.TYPE) return
 
 		// Check to see what is under the cursor at this drop point
-		const tokens = TokenUtil.getCanvasTokensAtPosition({ x: dropData.x, y: dropData.y })
+		const tokens = CanvasUtil.getCanvasTokensAtPosition({ x: dropData.x, y: dropData.y })
 
 		if (tokens.length === 0) return
 
@@ -86,6 +84,7 @@ export class DamageChat {
 			return
 		}
 
-		TokenUtil.askWhichTokenAndApply(tokens, handleDamageDrop)
+		const token = await TokenUtil.askWhichToken(tokens)
+		if (token?.actor) handleDamageDrop(token.actor as BaseActorGURPS)
 	}
 }

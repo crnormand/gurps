@@ -16,7 +16,14 @@
 			"select": "Selecionar Miniatura"
 		},
 		"misc": {
+			"apply": "Aplicar",
 			"apply-to": "Aplicar em"
+		},
+		"damage": {
+			"injury": "Lesão",
+			"hit_location": "Ponto de Impacto",
+			"location": "Ponto",
+			"target": "Alvo"
 		}
 	}
 }

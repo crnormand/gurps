@@ -57,7 +57,7 @@ describe("Damage calculator", () => {
 			calc: {
 				roll_range: "",
 				dr: {
-					all: { value: 0 },
+					all: 0,
 				},
 			},
 		}
@@ -65,7 +65,7 @@ describe("Damage calculator", () => {
 		_vitals = {
 			calc: {
 				dr: {
-					all: { value: 0 },
+					all: 0,
 				},
 				roll_range: "-",
 			},
@@ -80,7 +80,7 @@ describe("Damage calculator", () => {
 
 		_skull = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "3-4",
 			},
 			choice_name: "Skull",
@@ -94,7 +94,7 @@ describe("Damage calculator", () => {
 
 		_eye = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "-",
 			},
 			choice_name: "Eye",
@@ -108,7 +108,7 @@ describe("Damage calculator", () => {
 
 		_face = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "5",
 			},
 			choice_name: "Face",
@@ -122,7 +122,7 @@ describe("Damage calculator", () => {
 
 		_neck = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "5",
 			},
 			choice_name: "Face",
@@ -136,7 +136,7 @@ describe("Damage calculator", () => {
 
 		_groin = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "5",
 			},
 			choice_name: "Face",
@@ -150,7 +150,7 @@ describe("Damage calculator", () => {
 
 		_arm = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "8",
 			},
 			choice_name: "Right Arm",
@@ -164,7 +164,7 @@ describe("Damage calculator", () => {
 
 		_leg = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "6-7",
 			},
 			choice_name: "Right Leg",
@@ -178,7 +178,7 @@ describe("Damage calculator", () => {
 
 		_hand = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "15",
 			},
 			choice_name: "Hand",
@@ -192,7 +192,7 @@ describe("Damage calculator", () => {
 
 		_foot = {
 			calc: {
-				dr: { all: { value: 0 } },
+				dr: { all: 0 },
 				roll_range: "16",
 			},
 			choice_name: "Foot",
@@ -252,7 +252,7 @@ describe("Damage calculator", () => {
 
 		it("If your target has any Damage Resistance (DR) he subtracts this from your damage roll.", () => {
 			_roll.basicDamage = 8
-			_torso.calc!.dr.all = { value: 2 }
+			_torso.calc!.dr.all = 2
 
 			let calc = _create(_roll, _target)
 			expect(calc.injury).toBe(6)
@@ -266,7 +266,7 @@ describe("Damage calculator", () => {
 
 		it("If your damage roll is less than or equal to your target’s effective DR, your attack failed to penetrate.", () => {
 			_roll.basicDamage = 5
-			_torso.calc!.dr.all = { value: 9 }
+			_torso.calc!.dr.all = 9
 
 			let calc = _create(_roll, _target)
 
@@ -281,7 +281,7 @@ describe("Damage calculator", () => {
 
 		it("(Direct Injury ignores DR.)", () => {
 			_roll.damageType = DamageType.injury
-			_torso.calc!.dr.all.value = 2
+			_torso.calc!.dr.all = 2
 
 			_roll.basicDamage = 8
 			let calc = _create(_roll, _target)
@@ -302,7 +302,7 @@ describe("Damage calculator", () => {
 
 		describe("A divisor of (2) or more means that DR protects at reduced value against the attack.", () => {
 			it("Divide the target’s DR by the number in parentheses before subtracting it from basic damage; e.g., (2) means DR protects at half value.", () => {
-				_torso.calc!.dr.all.value = 20
+				_torso.calc!.dr.all = 20
 
 				let divisors = [2, 5, 10]
 				let expected = [10, 16, 18]
@@ -314,7 +314,7 @@ describe("Damage calculator", () => {
 			})
 
 			it("Round DR down. Minimum DR is 0.", () => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 
 				let divisors = [2, 3, 5, 10]
 				let expected = [18, 19, 19, 20]
@@ -326,7 +326,7 @@ describe("Damage calculator", () => {
 			})
 
 			it("(Ignores DR.)", () => {
-				_torso.calc!.dr.all.value = 20
+				_torso.calc!.dr.all = 20
 				_roll.armorDivisor = 0
 				let calc = _create(_roll, _target)
 				expect(calc.injury).toBe(20)
@@ -335,7 +335,7 @@ describe("Damage calculator", () => {
 
 		describe("Some divisors are fractions, such as (0.5), (0.2), or (0.1). DR is increased against such attacks:", () => {
 			it("... multiply DR by 2 for (0.5),", () => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 
 				_roll.armorDivisor = 0.5
 				let calc = _create(_roll, _target)
@@ -343,7 +343,7 @@ describe("Damage calculator", () => {
 			})
 
 			it("... by 5 for (0.2),", () => {
-				_torso.calc!.dr.all.value = 3
+				_torso.calc!.dr.all = 3
 
 				_roll.armorDivisor = 0.2
 				let calc = _create(_roll, _target)
@@ -351,7 +351,7 @@ describe("Damage calculator", () => {
 			})
 
 			it("... and by 10 for (0.1).", () => {
-				_torso.calc!.dr.all.value = 2
+				_torso.calc!.dr.all = 2
 				_roll.basicDamage = 21
 
 				_roll.armorDivisor = 0.1
@@ -360,7 +360,7 @@ describe("Damage calculator", () => {
 			})
 
 			it("In addition, if you have any level of this limitation, targets that have DR 0 get DR 1 against your attack.", () => {
-				_torso.calc!.dr.all.value = 0
+				_torso.calc!.dr.all = 0
 				_roll.armorDivisor = 0.5
 				let calc = _create(_roll, _target)
 				expect(calc.injury).toBe(19)
@@ -370,7 +370,7 @@ describe("Damage calculator", () => {
 
 	describe("B379: Wounding Modifiers and Injury. If there is any penetrating damage, multiply it by the attack’s “wounding modifier.”", () => {
 		beforeEach(() => {
-			_torso.calc!.dr.all.value = 5
+			_torso.calc!.dr.all = 5
 			_roll.basicDamage = 11
 		})
 
@@ -420,7 +420,7 @@ describe("Damage calculator", () => {
 
 		it("...but the minimum injury is 1 HP for any attack that penetrates DR at all.", () => {
 			_roll.damageType = DamageType["pi-"]
-			_torso.calc!.dr.all.value = 11
+			_torso.calc!.dr.all = 11
 
 			_roll.basicDamage = 12
 			let calc = _create(_roll, _target)
@@ -430,8 +430,8 @@ describe("Damage calculator", () => {
 
 	describe("B379: Flexible Armor and Blunt Trauma. An attack that does crushing, cutting, impaling, or piercing damage may inflict “blunt trauma” if it fails to penetrate flexible DR.", () => {
 		beforeEach(() => {
-			_torso.calc!.dr.all.flags = { flexible: true }
-			_torso.calc!.dr.all.value = 20
+			_torso.calc!.dr.flexible = 1
+			_torso.calc!.dr.all = 20
 		})
 
 		it("For every full 10 points of cutting, impaling, or piercing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
@@ -517,7 +517,7 @@ describe("Damage calculator", () => {
 
 	describe("B381: Shock: Any injury that causes a loss of HP also causes “shock.”", () => {
 		beforeEach(() => {
-			_torso.calc!.dr.all.value = 2
+			_torso.calc!.dr.all = 2
 		})
 
 		let verify: any = function (hp: number, noShockValues: number[], shockValues: DamageShock[]) {
@@ -663,7 +663,7 @@ describe("Damage calculator", () => {
 		})
 
 		it("Only crushing and cutting (and knockback only) attacks can cause knockback.", () => {
-			_torso.calc!.dr.all.value = 16
+			_torso.calc!.dr.all = 16
 			_target.ST = 10
 			_roll.basicDamage = 16
 
@@ -716,7 +716,7 @@ describe("Damage calculator", () => {
 
 		it("A cutting attack can cause knockback only if it fails to penetrate DR.", () => {
 			_roll.damageType = DamageType.cut
-			_torso.calc!.dr.all.value = 15
+			_torso.calc!.dr.all = 15
 
 			_roll.basicDamage = 9
 			let calc = _create(_roll, _target)
@@ -1400,7 +1400,7 @@ describe("Damage calculator", () => {
 	describe("B380: Injury to Unliving, Homogenous, and Diffuse Targets.", () => {
 		describe("Unliving.", () => {
 			beforeEach(() => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 				_target.isUnliving = true
 			})
 
@@ -1451,7 +1451,7 @@ describe("Damage calculator", () => {
 
 		describe("Homogenous.", () => {
 			beforeEach(() => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 				_target.isHomogenous = true
 			})
 
@@ -1502,7 +1502,7 @@ describe("Damage calculator", () => {
 
 		describe("Diffuse.", () => {
 			beforeEach(() => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 				_target.isDiffuse = true
 				_roll.basicDamage = 100
 			})
@@ -1539,7 +1539,7 @@ describe("Damage calculator", () => {
 	describe("B400: Injury Tolerance and Hit Location.", () => {
 		describe("Unliving.", () => {
 			beforeEach(() => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 				_target.isUnliving = true
 			})
 
@@ -1557,7 +1557,7 @@ describe("Damage calculator", () => {
 
 		describe("Homogenous.", () => {
 			beforeEach(() => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 				_target.isHomogenous = true
 			})
 
@@ -1657,7 +1657,7 @@ describe("Damage calculator", () => {
 
 		describe("Diffuse.", () => {
 			beforeEach(() => {
-				_torso.calc!.dr.all.value = 5
+				_torso.calc!.dr.all = 5
 				_target.isDiffuse = true
 				_roll.basicDamage = 100
 			})
@@ -1894,7 +1894,7 @@ describe("Damage calculator", () => {
 
 		describe("P53: Injury Tolerance (Damage Reduction).", () => {
 			it("You divide the injury you suffer by 2, 3, or 4 after subtracting DR from damage and applying wounding modifiers.", () => {
-				_torso.calc!.dr.all.value = 4
+				_torso.calc!.dr.all = 4
 				_roll.damageType = DamageType.imp
 				_roll.basicDamage = 16
 
@@ -1919,21 +1919,21 @@ describe("Damage calculator", () => {
 
 	describe("B400: Large-Area Injury.", () => {
 		beforeEach(() => {
-			_torso.calc!.dr.all.value = 5
+			_torso.calc!.dr.all = 5
 		})
 
 		it("Your “effective DR” is the average of your torso DR and the DR of the least protected hit location exposed to the attack, rounding up.", () => {
-			_torso.calc!.dr.all.value = 12
-			_vitals.calc!.dr.all.value = 6
-			_skull.calc!.dr.all.value = 6
-			_eye.calc!.dr.all.value = 2
-			_face.calc!.dr.all.value = 6
-			_neck.calc!.dr.all.value = 6
-			_groin.calc!.dr.all.value = 6
-			_arm.calc!.dr.all.value = 6
-			_leg.calc!.dr.all.value = 6
-			_hand.calc!.dr.all.value = 6
-			_foot.calc!.dr.all.value = 6
+			_torso.calc!.dr.all = 12
+			_vitals.calc!.dr.all = 6
+			_skull.calc!.dr.all = 6
+			_eye.calc!.dr.all = 2
+			_face.calc!.dr.all = 6
+			_neck.calc!.dr.all = 6
+			_groin.calc!.dr.all = 6
+			_arm.calc!.dr.all = 6
+			_leg.calc!.dr.all = 6
+			_hand.calc!.dr.all = 6
+			_foot.calc!.dr.all = 6
 
 			_roll.locationId = DefaultHitLocations.LargeArea
 			_roll.basicDamage = 10
@@ -1946,7 +1946,7 @@ describe("Damage calculator", () => {
 		it("If the target is at or beyond 1/2D range, divide basic damage by 2, rounding down.", () => {
 			_roll.damageType = DamageType.imp
 			_roll.basicDamage = 16
-			_torso.calc!.dr.all.value = 5
+			_torso.calc!.dr.all = 5
 
 			let calc = _create(_roll, _target)
 			expect(calc.injury).toBe(22)
@@ -1961,7 +1961,7 @@ describe("Damage calculator", () => {
 		it("Applies a special wounding multiplier to damage that penetrates your DR. Regular wounding multipliers further multiply the damage.", () => {
 			_roll.basicDamage = 10
 			_roll.damageType = DamageType.cr
-			_torso.calc!.dr.all.value = 5
+			_torso.calc!.dr.all = 5
 
 			_roll.vulnerability = 3
 			let calc = _create(_roll, _target)
@@ -1975,7 +1975,7 @@ describe("Damage calculator", () => {
 	describe("B47: Damage Resistance (Hardened).", () => {
 		it("Each level of Hardened reduces the armor divisor of an attack by one step.", () => {
 			// These steps are, in order: “ignores DR,” 100, 10, 5, 3, 2, and 1 (no divisor).
-			_torso.calc!.dr.all.value = 20
+			_torso.calc!.dr.all = 20
 			_roll.basicDamage = 20
 			_roll.armorDivisor = 10
 			let calc = _create(_roll, _target)
@@ -1998,7 +1998,7 @@ describe("Damage calculator", () => {
 			// Example: shotgun with 3x9 RoF and 1d+1 damage. Half of x9 is 4 (round down).
 			// The new basic damage is 1d+1 x 4 (4d+4); the target's DR is also multiplied by 4.
 
-			_torso.calc!.dr.all.value = 6
+			_torso.calc!.dr.all = 6
 
 			// TODO: It may be possible to derive this info if we had a reference to the weapon used (to find the RoF
 			// multiple and 10% of 1/2D range) and the distance between target and attacker.
@@ -2036,7 +2036,7 @@ describe("Damage calculator", () => {
 		it("Roll this damage but divide it by (3 × yards from the center of the blast), rounding down.", () => {
 			_roll.range = 2
 			_roll.basicDamage = 13
-			_torso.calc!.dr.all.value = 1
+			_torso.calc!.dr.all = 1
 
 			const calc = _create(_roll, _target)
 			expect(calc.basicDamage).toBe(2) // 13 ÷ (3 × 2) = 2
@@ -2055,7 +2055,7 @@ describe("Damage calculator", () => {
 			_roll.dice = new DiceGURPS("6d")
 			_roll.basicDamage = 24
 			_roll.armorDivisor = 3
-			_torso.calc!.dr.all.value = 3
+			_torso.calc!.dr.all = 3
 
 			_roll.range = 2
 			const calc = _create(_roll, _target)
@@ -2085,7 +2085,7 @@ describe("Damage calculator", () => {
 			_roll.dice = new DiceGURPS("6d")
 			_roll.basicDamage = 24
 			_roll.internalExplosion = true
-			_torso.calc!.dr.all.value = 3
+			_torso.calc!.dr.all = 3
 
 			_roll.range = 2
 			const calc = _create(_roll, _target)

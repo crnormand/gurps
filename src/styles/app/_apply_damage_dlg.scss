@@ -32,6 +32,10 @@
 				display: flex;
 				flex-flow: row nowrap;
 			}
+
+			button {
+				height: 100%;
+			}
 		}
 
 		input[name="basicDamage"],
