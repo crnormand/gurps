@@ -105,7 +105,7 @@
 				<select name="hitLocation">
 					{{selectOptions hitLocationChoices selected=roll.locationId localize=false}}
 				</select>
-				<button type="button" class=""><i class="fa-light fa-dice"></i></button>
+				<button type="button" class="apply-control" data-action="random-location"><i class="fa-light fa-dice"></i></button>
 				<div class="label">DR</div>
 				<input type="number" value="{{dr}}" step="any" name="dr" size="6" />
 			</div>

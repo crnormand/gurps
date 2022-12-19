@@ -4,6 +4,8 @@ import { DamageCalculator } from "./damage_calculator"
 import { DamageRoll, DamageTarget } from "."
 import { DamageType } from "./damage_type"
 import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
+import { DiceGURPS } from "@module/dice"
+import { convertRollStringToArrayOfInt } from "../../util/static"
 
 class ApplyDamageDialog extends Application {
 	private calculator: DamageCalculator
@@ -11,6 +13,12 @@ class ApplyDamageDialog extends Application {
 	constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
 		super(options)
 		this.calculator = new DamageCalculator(roll, target)
+		if (this.calculator.damageRoll.locationId === "Random") {
+			this._rollRandomLocation().then(id => {
+				this.calculator.damageRoll.locationId = id
+				this.render(true)
+			})
+		}
 	}
 
 	static get defaultOptions(): ApplicationOptions {
@@ -43,6 +51,43 @@ class ApplyDamageDialog extends Application {
 			damageReductionChoices: damageReductionChoices,
 			poolChoices: poolChoices,
 		})
+	}
+
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
+		html.find(".apply-control").on("click", this._onApplyControl.bind(this))
+	}
+
+	async _onApplyControl(event: JQuery.ClickEvent): Promise<void> {
+		event.preventDefault()
+
+		const target = event.currentTarget
+
+		switch (target.dataset.action) {
+			case "random-location": {
+				this.calculator.damageRoll.locationId = await this._rollRandomLocation()
+				this.render(true)
+				break
+			}
+		}
+	}
+
+	async _rollRandomLocation(): Promise<string> {
+		const dice = new DiceGURPS(this.target.hitLocationTable.roll)
+		const roll = Roll.create(dice.toString(true))
+		await roll.evaluate({ async: true })
+
+		const rollTotal = roll.total!
+
+		for (const location of this.target.hitLocationTable.locations) {
+			const x: number[] = convertRollStringToArrayOfInt(location.calc!.roll_range)
+			if (x.includes(rollTotal)) {
+				console.log(`Roll = ${rollTotal}, location id = ${location.id}`)
+				return location.id
+			}
+		}
+
+		return "Default"
 	}
 
 	get title() {

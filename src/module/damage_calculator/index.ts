@@ -113,12 +113,20 @@ class DamageRollAdapter implements DamageRoll {
 	}
 
 	get locationId(): string {
-		if (this._locationId === "Default" || !this._locationId) {
-			// Set to default value from world settings.
-			this._locationId =
-				(this._game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"
+		switch (this._locationId) {
+			case undefined:
+			case "Default":
+				// Set to default value from world settings.
+				this._locationId =
+					(this._game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"
+				break
 		}
+
 		return this._locationId
+	}
+
+	set locationId(id: string) {
+		this._locationId = id
 	}
 
 	attacker: DamageAttacker

@@ -464,6 +464,9 @@ function getSuccess(level: number, rollTotal: number): RollSuccess {
 	return RollSuccess.Failure
 }
 /**
+ * Determine Hit Location. In the future, the Attack roll (above) should be able to determine if there is a modifier
+ * for hit location. If there is, use that. Otherwise go to the world settings to determine the default damage
+ * location. (Or, eventually, we could ask the target for it's default hit location...).
  *
  * @param actor
  */
