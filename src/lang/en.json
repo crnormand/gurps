@@ -1272,7 +1272,9 @@
 		},
 		"damage_calculator": {
 			"injury": "Injury",
-			"hit_location": "Hit Location"
+			"hit_location": "Hit Location",
+			"random_location_roll": "Rolling Hit Location",
+			"location": "Location"
 		}
 	}
 }

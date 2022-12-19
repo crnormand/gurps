@@ -21,7 +21,8 @@
 		},
 		"damage_calculator": {
 			"injury": "Blessure",
-			"hit_location": "Localisation"
+			"hit_location": "Localisation",
+			"location": "Emplacement"
 		}
 	}
 }

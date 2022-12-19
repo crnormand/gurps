@@ -3,9 +3,10 @@ import { HitLocation } from "@actor/character/hit_location"
 import { DamageCalculator } from "./damage_calculator"
 import { DamageRoll, DamageTarget } from "."
 import { DamageType } from "./damage_type"
-import { getHitLocation, getHitLocationDR } from "./hitlocation_utils"
 import { DiceGURPS } from "@module/dice"
 import { convertRollStringToArrayOfInt } from "../../util/static"
+import { toWord } from "@util/misc"
+import { HitLocationUtil } from "./hitlocation_utils"
 
 class ApplyDamageDialog extends Application {
 	private calculator: DamageCalculator
@@ -73,21 +74,33 @@ class ApplyDamageDialog extends Application {
 	}
 
 	async _rollRandomLocation(): Promise<string> {
-		const dice = new DiceGURPS(this.target.hitLocationTable.roll)
-		const roll = Roll.create(dice.toString(true))
-		await roll.evaluate({ async: true })
+		let result = await HitLocationUtil.rollRandomLocation(this.target.hitLocationTable)
 
-		const rollTotal = roll.total!
+		// Get localized version of the location id, if necessary.
+		const location = result.location?.choice_name ?? "Torso"
 
-		for (const location of this.target.hitLocationTable.locations) {
-			const x: number[] = convertRollStringToArrayOfInt(location.calc!.roll_range)
-			if (x.includes(rollTotal)) {
-				console.log(`Roll = ${rollTotal}, location id = ${location.id}`)
-				return location.id
-			}
+		// Create an array suitable for drawing the dice on the ChatMessage.
+		const rolls = result.roll.dice[0].results.map(e => {
+			return { result: e.result, word: toWord(e.result) }
+		})
+
+		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/random-location-roll.hbs`, {
+			location: location,
+			rolls: rolls,
+			total: result.roll.total,
+		})
+
+		let messageData = {
+			user: (game as Game).user,
+			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+			content: message,
+			roll: JSON.stringify(result.roll),
+			sound: CONFIG.sounds.dice,
 		}
 
-		return "Default"
+		ChatMessage.create(messageData, {})
+
+		return result.location?.id ?? "torso"
 	}
 
 	get title() {
@@ -120,11 +133,11 @@ class ApplyDamageDialog extends Application {
 	}
 
 	private get hitLocation(): HitLocation | undefined {
-		return getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
+		return HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
 	}
 
 	private get dr(): number | undefined {
-		return getHitLocationDR(this.hitLocation, this.roll.damageType)
+		return HitLocationUtil.getHitLocationDR(this.hitLocation, this.roll.damageType)
 	}
 
 	private get hitLocationChoice(): Record<string, string> {

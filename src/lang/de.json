@@ -21,7 +21,8 @@
 		},
 		"damage_calculator": {
 			"injury": "Verletzung",
-			"hit_location": "Trefferzone"
+			"hit_location": "Trefferzone",
+			"location": "Zone"
 		}
 	}
 }

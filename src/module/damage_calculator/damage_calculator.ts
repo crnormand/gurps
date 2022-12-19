@@ -10,8 +10,8 @@ import {
 	RollModifier,
 } from "./injury_effect"
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
-import { getHitLocation, getHitLocationDR, isFlexibleArmor } from "./hitlocation_utils"
 import { DamageTarget, DamageRoll, DefaultHitLocations } from "."
+import { HitLocationUtil } from "./hitlocation_utils"
 
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
@@ -114,7 +114,9 @@ class DamageCalculator {
 
 		if (
 			this.penetratingDamage > 0 ||
-			!isFlexibleArmor(getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId))
+			!HitLocationUtil.isFlexibleArmor(
+				HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId)
+			)
 		)
 			return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
@@ -322,16 +324,16 @@ class DamageCalculator {
 	private get _basicDR() {
 		let basicDr = 0
 		if (this._isLargeAreaInjury) {
-			let torso = getHitLocation(this.target.hitLocationTable, Torso)
+			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
 
 			let allDR: number[] = this.target.hitLocationTable.locations
-				.map(it => getHitLocationDR(it, this.damageRoll.damageType))
+				.map(it => HitLocationUtil.getHitLocationDR(it, this.damageRoll.damageType))
 				.filter(it => it !== -1)
 
-			basicDr = (getHitLocationDR(torso, this.damageRoll.damageType) + Math.min(...allDR)) / 2
+			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageRoll.damageType) + Math.min(...allDR)) / 2
 		} else {
-			basicDr = getHitLocationDR(
-				getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
+			basicDr = HitLocationUtil.getHitLocationDR(
+				HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
 				this.damageRoll.damageType
 			)
 		}

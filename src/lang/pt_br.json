@@ -21,7 +21,8 @@
 		},
 		"damage_calculator": {
 			"injury": "Lesão",
-			"hit_location": "Ponto de Impacto"
+			"hit_location": "Ponto de Impacto",
+			"location": "Ponto"
 		}
 	}
 }
