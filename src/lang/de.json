@@ -19,10 +19,11 @@
 			"apply": "Anwenden",
 			"apply-to": "Wende an auf"
 		},
-		"damage_calculator": {
+		"damage": {
 			"injury": "Verletzung",
 			"hit_location": "Trefferzone",
-			"location": "Zone"
+			"location": "Zone",
+			"target": "Ziel"
 		}
 	}
 }

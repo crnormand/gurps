@@ -91,23 +91,33 @@
 	</div>
 
 	<div id="target">
-		<div class="header">Target</div>
+		<div class="header">{{localize "gurps.damage.target"}}</div>
 		<div class="content">
 
-			<div class="label">Target</div>
+			<div class="label">{{localize "gurps.character.name"}}</div>
 			<div class="field">
 				{{this.target.name}}
 			</div>
 			<div></div>
 
-			<div class="label">{{localize "gurps.damage_calculator.hit_location"}}</div>
+			<div class="label">{{localize "gurps.damage.hit_location"}}</div>
 			<div class="field no-stretch location">
-				<select name="hitLocation">
+				<select name="hitLocation" class="apply-control" data-action="location-select">
 					{{selectOptions hitLocationChoices selected=roll.locationId localize=false}}
 				</select>
-				<button type="button" class="apply-control" data-action="random-location"><i class="fa-light fa-dice"></i></button>
-				<div class="label">DR</div>
-				<input type="number" value="{{dr}}" step="any" name="dr" size="6" />
+				<button type="button" class="apply-control" data-action="location-random"><i
+						class="fa-light fa-dice"
+					></i></button>
+				<div class="label">{{localize "gurps.character.body_type.dr"}}</div>
+				<input
+					type="number"
+					class="apply-control"
+					data-action="location-dr"
+					value="{{dr}}"
+					step="any"
+					name="dr"
+					size="6"
+				/>
 			</div>
 			<div class="label pdf">B398</div>
 
@@ -183,7 +193,7 @@
 				<div class="descr">= 4 × 1</div>
 			</div>
 			<div class="apply">
-				<div class="label">{{localize "gurps.damage_calculator.injury"}}</div>
+				<div class="label">{{localize "gurps.damage.injury"}}</div>
 				<input type="number" value="{{roll.injury}}" step="any" name="injury" size="4" />
 				<button type="button" class="apply-button gcs-checkmark">{{localize "gurps.misc.apply"}}</button>
 			</div>

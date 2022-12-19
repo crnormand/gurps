@@ -3,7 +3,7 @@ import { DefaultHitLocations } from "@module/damage_calculator"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { i18n_f, toWord } from "./misc"
+import { i18n_f, toWord, stringCompare } from "./misc"
 
 /**
  * Master function to handle various types of roll
@@ -352,6 +352,8 @@ async function rollDamage(
 	const rolls = roll.dice[0].results.map(e => {
 		return { result: e.result, word: toWord(e.result) }
 	})
+
+	// Create an array of Modifiers suitable for display.
 	const modifiers: Array<RollModifier & { class?: string }> = [
 		...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
 	]
@@ -366,17 +368,9 @@ async function rollDamage(
 	const damage = rollTotal + modifierTotal
 	const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
-	const speaker = ChatMessage.getSpeaker({ actor: actor })
-
-	// Determine Hit Location. In the future, the Attack roll (above) should be able to determine if there is a modifier
-	// for hit location. If there is, use that. Otherwise go to the world settings to determine the default damage
-	// location. (Or, eventually, we could ask the target for it's default hit location...).
-	let hitlocation = getHitLocationFromLastAttackRoll(actor)
-
 	const chatData: DamagePayload = {
-		hitlocation: DefaultHitLocations.Default,
-		// Data: data,
-		attacker: speaker,
+		hitlocation: getHitLocationFromLastAttackRoll(actor),
+		attacker: ChatMessage.getSpeaker({ actor: actor }),
 		weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },
 		name: `${data.weapon.name}${data.weapon.usage ? ` – ${data.weapon.usage}` : ""}`,
 		dice: dice,
@@ -397,7 +391,7 @@ async function rollDamage(
 
 	let messageData = {
 		user: user,
-		speaker: speaker,
+		speaker: chatData.attacker,
 		type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 		content: message,
 		roll: JSON.stringify(roll),
@@ -412,16 +406,6 @@ async function rollDamage(
 	messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
 
 	ChatMessage.create(messageData, {})
-	// Await resetMods(user);
-	// if ([RollSuccess.CriticalSuccess, RollSuccess.Success].includes(success)) {
-	// 	marginMod.modifier = margin;
-	// 	marginMod.name = i18n_f("gurps.roll.success_from", { from: name });
-	// 	marginClass = "pos";
-	// } else {
-	// 	marginMod.modifier = margin;
-	// 	marginMod.name = i18n_f("gurps.roll.failure_from", { from: name });
-	// 	marginClass = "neg";
-	// }
 }
 
 enum RollSuccess {
@@ -470,6 +454,6 @@ function getSuccess(level: number, rollTotal: number): RollSuccess {
  *
  * @param actor
  */
-function getHitLocationFromLastAttackRoll(actor: ActorGURPS) {
-	return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION)
+function getHitLocationFromLastAttackRoll(actor: ActorGURPS): string {
+	return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string
 }

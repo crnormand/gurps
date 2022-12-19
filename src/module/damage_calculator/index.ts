@@ -96,6 +96,7 @@ class DamageRollAdapter implements DamageRoll {
 		this._payload = payload
 
 		this._locationId = payload.hitlocation
+		console.log(`location = ${this._locationId}`)
 		this.internalExplosion = false
 		this.basicDamage = 0
 		this.damageType = DamageType.cr
@@ -115,7 +116,7 @@ class DamageRollAdapter implements DamageRoll {
 	get locationId(): string {
 		switch (this._locationId) {
 			case undefined:
-			case "Default":
+			case DefaultHitLocations.Default:
 				// Set to default value from world settings.
 				this._locationId =
 					(this._game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"

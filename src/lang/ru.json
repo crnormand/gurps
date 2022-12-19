@@ -10,7 +10,7 @@
 			"apply": "Принять",
 			"apply-to": "Apply to"
 		},
-		"damage_calculator": {
+		"damage": {
 			"injury": "Повреждения",
 			"hit_location": "Зона попадания",
 			"location": "Зона"

@@ -14,7 +14,7 @@ class ApplyDamageDialog extends Application {
 	constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
 		super(options)
 		this.calculator = new DamageCalculator(roll, target)
-		if (this.calculator.damageRoll.locationId === "Random") {
+		if (this.calculator.damageRoll.locationId.toLowerCase() === "random") {
 			this._rollRandomLocation().then(id => {
 				this.calculator.damageRoll.locationId = id
 				this.render(true)
@@ -35,7 +35,7 @@ class ApplyDamageDialog extends Application {
 	}
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object {
-		return mergeObject(super.getData(options), {
+		const data = mergeObject(super.getData(options), {
 			roll: this.roll,
 			target: this.target,
 			source: this.damageRollText,
@@ -52,20 +52,41 @@ class ApplyDamageDialog extends Application {
 			damageReductionChoices: damageReductionChoices,
 			poolChoices: poolChoices,
 		})
+		return data
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.find(".apply-control").on("click", this._onApplyControl.bind(this))
+
+		html.find(".apply-control").on("change", this._onApplyControlChange.bind(this))
+		html.find(".apply-control").on("click", this._onApplyControlClick.bind(this))
 	}
 
-	async _onApplyControl(event: JQuery.ClickEvent): Promise<void> {
+	async _onApplyControlChange(event: JQuery.ChangeEvent): Promise<void> {
 		event.preventDefault()
 
 		const target = event.currentTarget
 
 		switch (target.dataset.action) {
-			case "random-location": {
+			case "location-select": {
+				this.calculator.damageRoll.locationId = target.value
+				this.render(true)
+				break
+			}
+
+			case "location-dr": {
+				// Need to override target.dr in the calculator.
+			}
+		}
+	}
+
+	async _onApplyControlClick(event: JQuery.ClickEvent): Promise<void> {
+		event.preventDefault()
+
+		const target = event.currentTarget
+
+		switch (target.dataset.action) {
+			case "location-random": {
 				this.calculator.damageRoll.locationId = await this._rollRandomLocation()
 				this.render(true)
 				break

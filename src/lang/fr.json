@@ -19,10 +19,11 @@
 			"apply": "Appliquer",
 			"apply-to": "Appliquer à"
 		},
-		"damage_calculator": {
+		"damage": {
 			"injury": "Blessure",
 			"hit_location": "Localisation",
-			"location": "Emplacement"
+			"location": "Emplacement",
+			"target": "Cible"
 		}
 	}
 }

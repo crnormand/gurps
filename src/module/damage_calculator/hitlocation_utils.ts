@@ -17,12 +17,12 @@ export const HitLocationUtil = {
 
 	getHitLocationDR: function (location: HitLocation | undefined, damageType: DamageType): number {
 		if (!location || !location.calc) return 0
-		return location.calc.dr[`${damageType}`]?.value ?? location.calc.dr.all.value
+		return location.calc.dr[`${damageType}`] ?? location.calc.dr.all
 	},
 
 	isFlexibleArmor: function (location: HitLocation | undefined): boolean {
 		if (!location || !location.calc) return false
-		return location.calc.dr?.all.flags?.flexible ?? false
+		return location.calc.dr?.flexible > 0 ?? false
 	},
 
 	rollRandomLocation: async function (hitLocationTable: HitLocationTable): Promise<HitLocationRollResult> {

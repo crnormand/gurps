@@ -1,4 +1,5 @@
 import { CharacterProfile } from "@actor/character/data"
+import { DefaultHitLocations } from "@module/damage_calculator"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
@@ -195,7 +196,7 @@ export function registerSettings(): void {
 		// @ts-ignore
 		choices: {
 			torso: "gurps.static.hit_location.Torso",
-			random: "gurps.static.hit_location.Random",
+			Random: "gurps.static.hit_location.Random",
 		},
 		default: "torso",
 		onChange: value => console.log(`Default damage location: ${value}`),
