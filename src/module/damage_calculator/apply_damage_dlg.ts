@@ -1,25 +1,28 @@
-import { SYSTEM_NAME } from "@module/data"
 import { HitLocation } from "@actor/character/hit_location"
-import { DamageCalculator } from "./damage_calculator"
-import { DamageRoll, DamageTarget } from "."
-import { DamageType } from "./damage_type"
-import { DiceGURPS } from "@module/dice"
-import { convertRollStringToArrayOfInt } from "../../util/static"
+import { SYSTEM_NAME } from "@module/data"
 import { toWord } from "@util/misc"
+import { DamageRoll, DamageTarget } from "."
+import { DamageCalculator } from "./damage_calculator"
+import { DamageType } from "./damage_type"
 import { HitLocationUtil } from "./hitlocation_utils"
 
 class ApplyDamageDialog extends Application {
+	static async create(roll: DamageRoll, target: DamageTarget, options = {}): Promise<ApplyDamageDialog> {
+		const dialog = new ApplyDamageDialog(roll, target, options)
+
+		if (dialog.calculator.damageRoll.locationId === "Random") {
+			dialog.calculator.damageRoll.locationId = await dialog._rollRandomLocation()
+		}
+
+		return dialog
+	}
+
 	private calculator: DamageCalculator
 
-	constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
+	private constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
 		super(options)
+
 		this.calculator = new DamageCalculator(roll, target)
-		if (this.calculator.damageRoll.locationId.toLowerCase() === "random") {
-			this._rollRandomLocation().then(id => {
-				this.calculator.damageRoll.locationId = id
-				this.render(true)
-			})
-		}
 	}
 
 	static get defaultOptions(): ApplicationOptions {
