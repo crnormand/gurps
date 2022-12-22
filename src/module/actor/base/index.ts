@@ -120,7 +120,7 @@ class BaseActorGURPS extends Actor {
 	handleDamageDrop(payload: DamagePayload): void {
 		let roll: DamageRoll = new DamageRollAdapter(payload)
 		let target: DamageTarget = new DamageTargetActor(this)
-		new ApplyDamageDialog(roll, target).render(true)
+		ApplyDamageDialog.create(roll, target).then(dialog => dialog.render(true))
 	}
 
 	createDamageTargetAdapter(): DamageTarget {
