@@ -2,22 +2,30 @@
 	<div class="placeholder"> </div>
 	<select name="{{path}}.sub_type">
 		{{#select this.sub_type}}
-		{{#each config.select.spell_sub_type as |v k|}}
-		<option value="{{k}}">{{localize v}}</option>
-		{{/each}}
+			{{#each config.select.spell_sub_type as |v k|}}
+				<option value="{{k}}">{{localize v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
-	<select name="{{path}}.qualifier.compare" {{input_lock (and (neq this.sub_type 'college_count' ) (neq
-		this.sub_type 'any' ))}}>
+	<select
+		name="{{path}}.qualifier.compare"
+		{{input_lock (and (neq this.sub_type "college_count") (neq this.sub_type "any"))}}
+	>
 		{{#select this.qualifier.compare}}
-		{{!-- {{#unless (or (eq this.sub_type "college_count") (eq this.sub_type "any"))}} --}}
-		{{#each config.select.string_compare as |v k|}}
-		<option value="{{k}}">{{localize v}}</option>
-		{{/each}}
-		{{!-- {{/unless}} --}}
+			{{!-- {{#unless (or (eq this.sub_type "college_count") (eq this.sub_type "any"))}} --}}
+			{{#each config.select.string_compare as |v k|}}
+				<option value="{{k}}">{{localize v}}</option>
+			{{/each}}
+			{{!-- {{/unless}} --}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat path ".qualifier.qualifier") data=this.qualifier.qualifier type="String"
-	class=(input_lock (and (neq this.sub_type 'college_count') (neq this.sub_type 'any') (neq this.qualifier.compare
-	'none')))}}
+	<div class="field">
+		<input
+			type="text"
+			name="{{path}}.qualifier.qualifier"
+			value="{{this.qualifier.qualifier}}"
+			data-dtype="String"
+			{{input_lock (neq this.qualifier.compare "none")}}
+		/>
+	</div>
 </div>
