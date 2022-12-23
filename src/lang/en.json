@@ -1271,10 +1271,12 @@
 			"apply-to": "Apply to"
 		},
 		"damage": {
-			"injury": "Injury",
+			"flexible": "Flexible Armor",
+			"hardened_dr": "Hardened DR",
 			"hit_location": "Hit Location",
-			"random_location_roll": "Rolling Hit Location",
+			"injury": "Injury",
 			"location": "Location",
+			"random_location_roll": "Rolling Hit Location",
 			"target": "Target"
 		}
 	}

@@ -32,6 +32,10 @@ class DamageCalculator {
 
 	private _rawDROverride: number | undefined
 
+	private _flexibleOverride: boolean | undefined
+
+	private _hardenedDROverride: number | undefined
+
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this.damageRoll = damageRoll
@@ -114,14 +118,21 @@ class DamageCalculator {
 	get bluntTrauma(): number {
 		if (this.damageRoll.damageType === DamageType.fat) return 0
 
-		if (
-			this.penetratingDamage > 0 ||
-			!HitLocationUtil.isFlexibleArmor(
+		if (this.penetratingDamage > 0 || !this.isFlexibleArmor) return 0
+		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
+	}
+
+	get isFlexibleArmor(): boolean {
+		return (
+			this._flexibleOverride ??
+			HitLocationUtil.isFlexibleArmor(
 				HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId)
 			)
 		)
-			return 0
-		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
+	}
+
+	overrideFlexible(value: boolean | undefined): void {
+		this._flexibleOverride = value
 	}
 
 	/**
@@ -379,14 +390,25 @@ class DamageCalculator {
 		const armorDivisors = [0, 100, 10, 5, 3, 2, 1]
 		let index = armorDivisors.indexOf(ad)
 
-		let damageResistance = this.target.getTrait("Damage Resistance")
-		if (damageResistance) {
-			let level = damageResistance.getModifier("Hardened")?.levels ?? 0
+		// Let damageResistance = this.target.getTrait("Damage Resistance")
+		// if (damageResistance) {
+		// 	let level = damageResistance.getModifier("Hardened")?.levels ?? 0
+		// 	index += level
+		index += this.hardenedDRLevel
+		if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
+		// }
 
-			index += level
-			if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
-		}
 		return armorDivisors[index]
+	}
+
+	overrideHardenedDR(level: number | undefined) {
+		this._hardenedDROverride = level
+	}
+
+	get hardenedDRLevel(): number {
+		return (
+			this._hardenedDROverride ?? this.target.getTrait("Damage Resistance")?.getModifier("Hardened")?.levels ?? 0
+		)
 	}
 
 	private get _isCollateralDamage(): boolean {

@@ -20,8 +20,10 @@
 			"apply-to": "Aplicar em"
 		},
 		"damage": {
-			"injury": "Lesão",
+			"flexible": "Armadura Flexível",
+			"hardened_dr": "RD Endurecido",
 			"hit_location": "Ponto de Impacto",
+			"injury": "Lesão",
 			"location": "Ponto",
 			"target": "Alvo"
 		}

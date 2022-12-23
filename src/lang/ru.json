@@ -11,8 +11,10 @@
 			"apply-to": "Apply to"
 		},
 		"damage": {
-			"injury": "Повреждения",
+			"flexible": "Гибкая броня",
+			"hardened_dr": "Укрепленный SP",
 			"hit_location": "Зона попадания",
+			"injury": "Повреждения",
 			"location": "Зона"
 		}
 	}
