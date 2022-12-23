@@ -19,6 +19,14 @@ class ApplyDamageDialog extends Application {
 
 	private calculator: DamageCalculator
 
+	/**
+	 * Use the static create() method, above, so that we can properly defer returning an instance until after we resolve
+	 * a "Random" hit location.
+	 *
+	 * @param roll
+	 * @param target
+	 * @param options
+	 */
 	private constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
 		super(options)
 
@@ -45,6 +53,7 @@ class ApplyDamageDialog extends Application {
 		const data = mergeObject(super.getData(options), {
 			roll: this.roll,
 			target: this.target,
+			calculator: this.calculator,
 			source: this.damageRollText,
 			type: this.damageTypeAbbreviation,
 			isExplosion: this.isExplosion,
@@ -52,7 +61,6 @@ class ApplyDamageDialog extends Application {
 			damageTypeChoices: DamageType,
 			hitLocation: this.hitLocation,
 			hitLocationChoices: this.hitLocationChoice,
-			dr: this.calculator.rawDR,
 			hardenedChoices: hardenedChoices,
 			vulnerabilityChoices: vulnerabilityChoices,
 			injuryToleranceChoices: injuryToleranceChoices,
@@ -65,43 +73,61 @@ class ApplyDamageDialog extends Application {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
-		html.find(".apply-control").on("change", this._onApplyControlChange.bind(this))
-		html.find(".apply-control").on("click", this._onApplyControlClick.bind(this))
+		html.find(".apply-control").on("change", "click", this._onApplyControl.bind(this))
 	}
 
-	async _onApplyControlChange(event: JQuery.ChangeEvent): Promise<void> {
-		event.preventDefault()
-
+	async _onApplyControl(event: JQuery.ChangeEvent | JQuery.ClickEvent): Promise<void> {
 		const target = event.currentTarget
+
+		if (event.type === "click" && ["button", "checkbox"].includes(target.type)) {
+			this._onApplyControlClick(event, target)
+		}
+
+		if (event.type === "change" && ["number", "select-one"].includes(target.type)) {
+			this._onApplyControlChange(event, target)
+		}
+	}
+
+	async _onApplyControlChange(event: JQuery.ChangeEvent, target: any): Promise<void> {
+		event.preventDefault()
 
 		switch (target.dataset.action) {
 			case "location-select": {
 				this.calculator.damageRoll.locationId = target.value
-				this.render(true)
+				break
+			}
+
+			case "hardened-select": {
+				this.calculator.overrideHardenedDR(target.value)
 				break
 			}
 
 			case "location-dr": {
 				// Need to override target.dr in the calculator.
-				this.overrideDR(target.value)
-				this.render(true)
+				this.calculator.overrideRawDr(target.value)
 				break
 			}
 		}
+
+		this.render(true)
 	}
 
-	async _onApplyControlClick(event: JQuery.ClickEvent): Promise<void> {
+	async _onApplyControlClick(event: JQuery.ClickEvent, target: any): Promise<void> {
 		event.preventDefault()
-
-		const target = event.currentTarget
 
 		switch (target.dataset.action) {
 			case "location-random": {
 				this.calculator.damageRoll.locationId = await this._rollRandomLocation()
-				this.render(true)
+				break
+			}
+
+			case "location-flexible": {
+				this.calculator.overrideFlexible(!this.calculator.isFlexibleArmor)
 				break
 			}
 		}
+
+		this.render(true)
 	}
 
 	async _rollRandomLocation(): Promise<string> {

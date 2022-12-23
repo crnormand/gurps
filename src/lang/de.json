@@ -20,8 +20,10 @@
 			"apply-to": "Wende an auf"
 		},
 		"damage": {
-			"injury": "Verletzung",
+			"flexible": "Flexible Rüstung",
+			"hardened_dr": "Gehärteter DR",
 			"hit_location": "Trefferzone",
+			"injury": "Verletzung",
 			"location": "Zone",
 			"target": "Ziel"
 		}

@@ -430,7 +430,6 @@ describe("Damage calculator", () => {
 
 	describe("B379: Flexible Armor and Blunt Trauma. An attack that does crushing, cutting, impaling, or piercing damage may inflict “blunt trauma” if it fails to penetrate flexible DR.", () => {
 		beforeEach(() => {
-			_torso.calc!.dr.flexible = 1
 			_torso.calc!.dr.all = 20
 		})
 
@@ -440,21 +439,25 @@ describe("Damage calculator", () => {
 
 				_roll.basicDamage = 9
 				let calc = _create(_roll, _target)
+				calc.overrideFlexible(true)
 				expect(calc.injury).toBe(0)
 				expect(calc.bluntTrauma).toBe(0)
 
 				_roll.basicDamage = 10
 				calc = _create(_roll, _target)
+				calc.overrideFlexible(true)
 				expect(calc.injury).toBe(0)
 				expect(calc.bluntTrauma).toBe(1)
 
 				_roll.basicDamage = 19
 				calc = _create(_roll, _target)
+				calc.overrideFlexible(true)
 				expect(calc.injury).toBe(0)
 				expect(calc.bluntTrauma).toBe(1)
 
 				_roll.basicDamage = 20
 				calc = _create(_roll, _target)
+				calc.overrideFlexible(true)
 				expect(calc.injury).toBe(0)
 				expect(calc.bluntTrauma).toBe(2)
 			}
@@ -465,21 +468,25 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 4
 			let calc = _create(_roll, _target)
+			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(0)
 			expect(calc.bluntTrauma).toBe(0)
 
 			_roll.basicDamage = 5
 			calc = _create(_roll, _target)
+			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(0)
 			expect(calc.bluntTrauma).toBe(1)
 
 			_roll.basicDamage = 19
 			calc = _create(_roll, _target)
+			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(0)
 			expect(calc.bluntTrauma).toBe(3)
 
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
+			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(0)
 			expect(calc.bluntTrauma).toBe(4)
 		})
@@ -488,12 +495,14 @@ describe("Damage calculator", () => {
 			_roll.damageType = DamageType.cr
 			_roll.basicDamage = 21
 			let calc = _create(_roll, _target)
+			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(1)
 			expect(calc.bluntTrauma).toBe(0)
 
 			_roll.damageType = DamageType["pi-"]
 			_roll.basicDamage = 21
 			calc = _create(_roll, _target)
+			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(1)
 			expect(calc.bluntTrauma).toBe(0)
 		})
@@ -2260,6 +2269,7 @@ interface IDamageCalculator {
 	bluntTrauma: number
 	knockback: number
 	injuryEffects: InjuryEffect[]
+	overrideFlexible(arg: boolean | undefined): void
 }
 
 const _create = function (roll: DamageRoll, target: DamageTarget): IDamageCalculator {

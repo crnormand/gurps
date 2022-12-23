@@ -20,8 +20,10 @@
 			"apply-to": "Appliquer à"
 		},
 		"damage": {
-			"injury": "Blessure",
+			"flexible": "Armure Flexible",
+			"hardened_dr": "Renforcé DR",
 			"hit_location": "Localisation",
+			"injury": "Blessure",
 			"location": "Emplacement",
 			"target": "Cible"
 		}
