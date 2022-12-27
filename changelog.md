@@ -2,7 +2,7 @@
 
 Release 0.15.8
 
-- Fix editing of Will and Per attributes.
+- Fix editing of Will and Per attributes (thanks @JT314!)
 
 Release 0.15.17 12/15/2022
 
