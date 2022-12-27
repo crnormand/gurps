@@ -1,5 +1,8 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.8
+
+- Fix editing of Will and Per attributes.
 
 Release 0.15.17 12/15/2022
 
