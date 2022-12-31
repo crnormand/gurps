@@ -1322,14 +1322,15 @@ if (!globalThis.GURPS) {
       }
       return
     } else if ('path' in element.dataset) {
+      let srcid = !!actor ? "@" + actor.id + "@" : ''
       prefix = 'Roll vs '
       thing = GURPS._mapAttributePath(element.dataset.path)
       formula = '3d6'
       target = parseInt(element.innerText)
       if ('otf' in element.dataset)
         if (thing.toUpperCase() != element.dataset.otf.toUpperCase())
-          chatthing = thing + '/[' + element.dataset.otf + ']'
-        else chatthing = '[' + element.dataset.otf + ']'
+          chatthing = thing + '/[' + srcid + element.dataset.otf + ']'
+        else chatthing = '[' + srcid + element.dataset.otf + ']'
     } else if ('otf' in element.dataset) {
       // strip out any inner OtFs when coming from the UI.   Mainly attack names
       let otf = element.dataset.otf.trim()

@@ -2,8 +2,10 @@
 
 Release 0.15.8
 
+- Update to JB2a 0.5.3
 - Fix editing of Will and Per attributes (thanks @JT314!)
 - (Hopefully) fix the display of the rollable attribute on the GCS actor sheet.
+- Include src ID for attributes rolled directly from the charactersheet.
 
 Release 0.15.17 12/15/2022
 

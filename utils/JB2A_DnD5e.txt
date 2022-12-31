@@ -121,6 +121,7 @@
 ./Library/2nd_Level/Gust_Of_Wind/Nametag/GustOfWind_01_White_Nametag_1200x200.webm,width=1200
 ./Library/2nd_Level/Misty_Step/MistyStep_01_Regular_Blue_400x400.webm,width=400
 ./Library/2nd_Level/Misty_Step/MistyStep_02_Regular_Blue_400x400.webm,width=400
+./Library/2nd_Level/Moonbeam/MoonbeamComplete_01_Regular_Blue_400x400.webm,width=400
 ./Library/2nd_Level/Moonbeam/MoonbeamIntro_01_Regular_Blue_400x400.webm,width=400
 ./Library/2nd_Level/Moonbeam/MoonbeamNoPulse_01_Regular_Blue_400x400.webm,width=400
 ./Library/2nd_Level/Moonbeam/MoonbeamOutro_01_Regular_Blue_400x400.webm,width=400
@@ -630,6 +631,7 @@
 ./Library/Generic/Marker/EnergyStrands02_01_Regular_BluePurple_400x400.webm,width=400
 ./Library/Generic/Marker/EnergyStrandsOverlay_01_Regular_Blue_600x600.webm,width=600
 ./Library/Generic/Marker/EnergyStrands_01_Regular_Blue_600x600.webm,width=600
+./Library/Generic/Marker/MarkerBubbleComplete_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerBubbleIntro_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerBubbleOutro_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerBubble_01_Regular_Blue_400x400.webm,width=400
@@ -649,6 +651,7 @@
 ./Library/Generic/Marker/MarkerHorror_01_Regular_Purple_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerHorror_02_Regular_Purple_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerHorror_03_Regular_Purple_400x400.webm,width=400
+./Library/Generic/Marker/MarkerLightComplete_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerLightIntro_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerLightNoPulse_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerLightOutro_01_Regular_Blue_400x400.webm,width=400
@@ -680,6 +683,8 @@
 ./Library/Generic/Marker/MarkerShieldCracked_01_Regular_Purple_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerShieldCracked_02_Regular_Purple_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerShieldCracked_03_Regular_Purple_400x400.webm,width=400
+./Library/Generic/Marker/MarkerShieldRampart01_01_Regular_Orange_400x400.webm,width=400
+./Library/Generic/Marker/MarkerShieldRampartLoop01_01_Regular_Orange_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerShield_01_Regular_Green_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerShield_02_Regular_Green_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerShield_03_Regular_Green_400x400.webm,width=400
@@ -689,6 +694,7 @@
 ./Library/Generic/Marker/MarkerSkull_02_Regular_Purple_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerSkull_03_Dark_Orange_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerSkull_03_Regular_Purple_400x400.webm,width=400
+./Library/Generic/Marker/MarkerSmokeRingLoop01_Regular_BluePurple_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerSnowflake_01_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerSnowflake_02_Regular_Blue_400x400.webm,width=400
 ./Library/Generic/Marker/MarkerSnowflake_03_Regular_Blue_400x400.webm,width=400
@@ -725,6 +731,9 @@
 ./Library/Generic/Nature/PlantGrowthSquare03_01_Regular_GreenYellow_500x500.webm,width=500
 ./Library/Generic/Nature/PlantGrowthSquareLoop03_01_Regular_GreenYellow_300x300.webm,width=300
 ./Library/Generic/Nature/PlantGrowthSquareLoop03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/SwirlingFeathersOutburst01_01_Regular_Textured_400x400.webm,width=400
+./Library/Generic/Nature/SwirlingFeathersOutburst02_01_Regular_Textured_400x400.webm,width=400
+./Library/Generic/Nature/SwirlingFeathersOutburst03_01_Regular_Textured_400x400.webm,width=400
 ./Library/Generic/Nature/SwirlingLeaves01_01_Regular_GreenOrange_05ft_600x400.webm,width=600
 ./Library/Generic/Nature/SwirlingLeaves01_01_Regular_GreenOrange_15ft_1000x400.webm,width=1000
 ./Library/Generic/Nature/SwirlingLeaves01_01_Regular_GreenOrange_30ft_1600x400.webm,width=1600
@@ -792,6 +801,9 @@
 ./Library/Generic/Smoke/SmokeLine_01_Regular_LightBlue_10x05ft_800x400.webm,width=800
 ./Library/Generic/Smoke/SmokeLine_01_Regular_LightBlue_15x05ft_1000x400.webm,width=1000
 ./Library/Generic/Smoke/SmokeLine_01_Regular_LightBlue_25x05ft_1400x400.webm,width=1400
+./Library/Generic/Smoke/SmokePlumes01_01_Regular_Grey_400x400.webm,width=400
+./Library/Generic/Smoke/SmokePlumes01_02_Regular_Grey_400x400.webm,width=400
+./Library/Generic/Smoke/SmokePlumes01_03_Regular_Grey_400x400.webm,width=400
 ./Library/Generic/Smoke/SmokePuff01_01_Regular_Grey_400x400.webm,width=400
 ./Library/Generic/Smoke/SmokePuff01_02_Regular_Grey_400x400.webm,width=400
 ./Library/Generic/Smoke/SmokePuff01_03_Regular_Grey_400x400.webm,width=400
