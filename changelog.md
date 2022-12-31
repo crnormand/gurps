@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.15.8
+Release 0.15.8 12/31/2022
 
 - Update to JB2a 0.5.3
 - Fix editing of Will and Per attributes (thanks @JT314!)
