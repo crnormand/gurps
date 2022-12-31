@@ -3,17 +3,18 @@
 Release 0.15.8
 
 - Fix editing of Will and Per attributes (thanks @JT314!)
+- (Hopefully) fix the display of the rollable attribute on the GCS actor sheet.
 
 Release 0.15.17 12/15/2022
 
 - Allow attribute rolls (IQ, DX, etc.) to remember which character they came from using OtF sourceId (for GMs with multiple NPCs)
 - Add support for RcL < 1 (0.5), to support a weapon that shoots 2 rounds per attempt
 - Fix /st ... @self to work with /sr command
-- Workaround for UI blowing up (if player clicked on damage chat window to see rolls).   Rolls are now always shown for damage chat msgs
+- Workaround for UI blowing up (if player clicked on damage chat window to see rolls). Rolls are now always shown for damage chat msgs
 
 Release 0.15.16 12/08/2022
 
-- Added support for list of files using /sound chat command.   /sound /dir/somefile.txt read text file (list of file names) and randomly picks one
+- Added support for list of files using /sound chat command. /sound /dir/somefile.txt read text file (list of file names) and randomly picks one
 - Prevent /anim error if no token or actor selected
 - Fixed parsing of attacks with single quotes in name
 
@@ -27,7 +28,7 @@ Release 0.15.14 12/06/2022
 
 Release 0.15.13 12/06/2022
 
-- Added support for Warpgate module (in animations).   HIGHLY RECOMMENDED!
+- Added support for Warpgate module (in animations). HIGHLY RECOMMENDED!
 - Shortened "Roll Damage" to "Damage" in successful hit msg
 - Show error if PDF book code not found
 - Allow case insensitive OTF for PDF
@@ -43,7 +44,7 @@ Release 0.15.12 11/17/2022
 Release 0.15.11 11/10/2022
 
 - Change Github release.yml to include 'utils'
-- Fixed more Item issues caused by the v9->v10 upgrade.   Items will now split and combine by name.
+- Fixed more Item issues caused by the v9->v10 upgrade. Items will now split and combine by name.
 
 Release 0.15.10 11/10/2022
 

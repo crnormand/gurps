@@ -257,7 +257,7 @@
 .rollable {
   color: black;
   background-color: rgb(255, 255, 190) !important;
-  min-width: fit-content;
+  min-width: max-content;
 }
 
 .dodge span,
