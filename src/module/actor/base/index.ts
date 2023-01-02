@@ -120,7 +120,7 @@ class BaseActorGURPS extends Actor {
 	handleDamageDrop(payload: DamagePayload): void {
 		let roll: DamageRoll = new DamageRollAdapter(payload)
 		let target: DamageTarget = new DamageTargetActor(this)
-		new ApplyDamageDialog(roll, target).render(true)
+		ApplyDamageDialog.create(roll, target).then(dialog => dialog.render(true))
 	}
 
 	createDamageTargetAdapter(): DamageTarget {
@@ -161,14 +161,18 @@ class DamageTargetActor implements DamageTarget {
 
 	/**
 	 * This is where we would add special handling to look for traits under different names.
+	 *  Actor
+	 *  .traits.contents.find(it => it.name === 'Damage Resistance')
+	 *	 .modifiers.contents.filter(it => it.enabled === true).find(it => it.name === 'Hardened')
 	 * @param name
 	 */
 	getTrait(name: string): TargetTrait | undefined {
 		if (this.actor instanceof BaseActorGURPS) {
 			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
 			let found = traits.find(it => it.name === name)
-			return new TraitAdapter(found as TraitGURPS)
+			return found ? new TraitAdapter(found as TraitGURPS) : undefined
 		}
+		return undefined
 	}
 
 	hasTrait(name: string): boolean {
@@ -204,8 +208,12 @@ class DamageTargetActor implements DamageTarget {
 class TraitAdapter implements TargetTrait {
 	private trait: TraitGURPS
 
+	// Actor
+	//  .traits.contents.find(it => it.name === 'Damage Resistance')
+	//  .modifiers.contents.filter(it => it.enabled === true).find(it => it.name === 'Hardened')
+
 	getModifier(name: string): TraitModifierAdapter | undefined {
-		return this.modifiers.find(it => it.name === name)
+		return this.modifiers?.find(it => it.name === name)
 	}
 
 	get levels() {
@@ -219,6 +227,7 @@ class TraitAdapter implements TargetTrait {
 	get modifiers(): TraitModifierAdapter[] {
 		return this.trait.modifiers.contents
 			.filter(it => it instanceof TraitModifierGURPS)
+			.filter(it => it.enabled === true)
 			.map(it => new TraitModifierAdapter(it as TraitModifierGURPS))
 	}
 
@@ -237,7 +246,9 @@ class TraitModifierAdapter implements TargetTraitModifier {
 		return this.modifier.levels
 	}
 
-	name = ""
+	get name(): string {
+		return this.modifier.name!
+	}
 
 	constructor(modifier: TraitModifierGURPS) {
 		this.modifier = modifier

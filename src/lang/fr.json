@@ -1,22 +1,31 @@
 {
 	"gurps": {
-		"static": {
-			"hit_location": {
-				"Torso": "Torse",
-				"Random": "Aléatoire"
-			}
-		},
 		"settings": {
 			"default_damage_location": {
 				"name": "Dégât: Localisation par défaut",
 				"hint": "Définit la localisation par défaut pour appliquer les dégâts."
 			}
 		},
+		"static": {
+			"hit_location": {
+				"Torso": "Torse",
+				"Random": "Aléatoire"
+			}
+		},
 		"token": {
 			"select": "Sélectionner Token"
 		},
 		"misc": {
+			"apply": "Appliquer",
 			"apply-to": "Appliquer à"
+		},
+		"damage": {
+			"flexible": "Armure Flexible",
+			"hardened_dr": "Renforcé DR",
+			"hit_location": "Localisation",
+			"injury": "Blessure",
+			"location": "Emplacement",
+			"target": "Cible"
 		}
 	}
 }

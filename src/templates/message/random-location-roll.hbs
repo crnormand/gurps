@@ -1,0 +1,13 @@
+<div class="message-roll skill">
+	<div class="static-name">
+		{{localize "gurps.damage.random_location_roll"}}</div>
+	<div class="result success">{{localize "gurps.damage.location"}}: {{location}}</div>
+	<hr />
+	<div class="total">{{#each rolls}}
+			{{#unless (eq @index 0)}} + {{/unless}}
+			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
+		{{/each}}
+		=
+		{{total}}
+	</div>
+</div>

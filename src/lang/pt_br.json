@@ -16,7 +16,16 @@
 			"select": "Selecionar Miniatura"
 		},
 		"misc": {
+			"apply": "Aplicar",
 			"apply-to": "Aplicar em"
+		},
+		"damage": {
+			"flexible": "Armadura Flexível",
+			"hardened_dr": "RD Endurecido",
+			"hit_location": "Ponto de Impacto",
+			"injury": "Lesão",
+			"location": "Ponto",
+			"target": "Alvo"
 		}
 	}
 }
