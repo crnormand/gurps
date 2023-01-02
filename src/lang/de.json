@@ -1,16 +1,31 @@
 {
 	"gurps": {
+		"settings": {
+			"default_damage_location": {
+				"name": "Schaden: Standard Trefferzone",
+				"hint": "Legt den Standard-Trefferzone fest, die für die Anwendung von Schaden verwendet wird."
+			}
+		},
 		"static": {
 			"hit_location": {
-				"Torso": "Торс",
-				"Random": "Случайная зона"
+				"Torso": "Rumpf",
+				"Random": "Zufällig"
 			}
 		},
 		"token": {
 			"select": "Wähle Token"
 		},
 		"misc": {
+			"apply": "Anwenden",
 			"apply-to": "Wende an auf"
+		},
+		"damage": {
+			"flexible": "Flexible Rüstung",
+			"hardened_dr": "Gehärteter DR",
+			"hit_location": "Trefferzone",
+			"injury": "Verletzung",
+			"location": "Zone",
+			"target": "Ziel"
 		}
 	}
 }

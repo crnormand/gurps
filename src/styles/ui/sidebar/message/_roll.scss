@@ -37,6 +37,20 @@
 			}
 		}
 
+		.static-name {
+			font-size: var(--font-size-18);
+			font-weight: bold;
+			margin: auto;
+			width: min-content;
+			white-space: nowrap;
+			padding: 0 5px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			text-align: center;
+			color: rgb(var(--color-skill));
+			background-color: transparent;
+		}
+
 		.mod {
 			margin: auto;
 			border: 2px solid;

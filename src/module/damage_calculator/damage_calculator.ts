@@ -10,8 +10,8 @@ import {
 	RollModifier,
 } from "./injury_effect"
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
-import { getHitLocation, getHitLocationDR, isFlexibleArmor } from "./hitlocation_utils"
 import { DamageTarget, DamageRoll, DefaultHitLocations } from "."
+import { HitLocationUtil } from "./hitlocation_utils"
 
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
@@ -29,6 +29,12 @@ class DamageCalculator {
 	target: DamageTarget
 
 	damageRoll: DamageRoll
+
+	private _rawDROverride: number | undefined
+
+	private _flexibleOverride: boolean | undefined
+
+	private _hardenedDROverride: number | undefined
 
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
@@ -112,12 +118,21 @@ class DamageCalculator {
 	get bluntTrauma(): number {
 		if (this.damageRoll.damageType === DamageType.fat) return 0
 
-		if (
-			this.penetratingDamage > 0 ||
-			!isFlexibleArmor(getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId))
-		)
-			return 0
+		if (this.penetratingDamage > 0 || !this.isFlexibleArmor) return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
+	}
+
+	get isFlexibleArmor(): boolean {
+		return (
+			this._flexibleOverride ??
+			HitLocationUtil.isFlexibleArmor(
+				HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId)
+			)
+		)
+	}
+
+	overrideFlexible(value: boolean | undefined): void {
+		this._flexibleOverride = value
 	}
 
 	/**
@@ -320,23 +335,35 @@ class DamageCalculator {
 	}
 
 	private get _basicDR() {
+		if (this._rawDROverride) return this._rawDROverride
+
 		let basicDr = 0
 		if (this._isLargeAreaInjury) {
-			let torso = getHitLocation(this.target.hitLocationTable, Torso)
+			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
 
 			let allDR: number[] = this.target.hitLocationTable.locations
-				.map(it => getHitLocationDR(it, this.damageRoll.damageType))
+				.map(it => HitLocationUtil.getHitLocationDR(it, this.damageRoll.damageType))
 				.filter(it => it !== -1)
 
-			basicDr = (getHitLocationDR(torso, this.damageRoll.damageType) + Math.min(...allDR)) / 2
+			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageRoll.damageType) + Math.min(...allDR)) / 2
 		} else {
-			basicDr = getHitLocationDR(
-				getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
-				this.damageRoll.damageType
-			)
+			basicDr = this.rawDR
 		}
 
 		return basicDr * this._multiplierForShotgunExtremelyClose
+	}
+
+	overrideRawDr(dr: number | undefined) {
+		this._rawDROverride = dr
+	}
+
+	get rawDR(): number {
+		return this._rawDROverride
+			? this._rawDROverride
+			: HitLocationUtil.getHitLocationDR(
+					HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
+					this.damageRoll.damageType
+			  )
 	}
 
 	private get _isLargeAreaInjury() {
@@ -363,14 +390,25 @@ class DamageCalculator {
 		const armorDivisors = [0, 100, 10, 5, 3, 2, 1]
 		let index = armorDivisors.indexOf(ad)
 
-		let damageResistance = this.target.getTrait("Damage Resistance")
-		if (damageResistance) {
-			let level = damageResistance.getModifier("Hardened")?.levels ?? 0
+		// Let damageResistance = this.target.getTrait("Damage Resistance")
+		// if (damageResistance) {
+		// 	let level = damageResistance.getModifier("Hardened")?.levels ?? 0
+		// 	index += level
+		index += this.hardenedDRLevel
+		if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
+		// }
 
-			index += level
-			if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
-		}
 		return armorDivisors[index]
+	}
+
+	overrideHardenedDR(level: number | undefined) {
+		this._hardenedDROverride = level
+	}
+
+	get hardenedDRLevel(): number {
+		return (
+			this._hardenedDROverride ?? this.target.getTrait("Damage Resistance")?.getModifier("Hardened")?.levels ?? 0
+		)
 	}
 
 	private get _isCollateralDamage(): boolean {

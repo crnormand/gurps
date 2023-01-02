@@ -25,7 +25,7 @@
 					{{selectOptions poolChoices value="hp"}}
 				</select>
 			</div>
-			<button type="button" class="apply-button gcs-checkmark">Apply</button>
+			<button type="button" class="apply-button gcs-checkmark">{{localize "gurps.misc.apply"}}</button>
 		</div>
 		<div></div>
 
@@ -91,37 +91,53 @@
 	</div>
 
 	<div id="target">
-		<div class="header">Target</div>
+		<div class="header">{{localize "gurps.damage.target"}}</div>
 		<div class="content">
 
-			<div class="label">Target</div>
+			<div class="label">{{localize "gurps.character.name"}}</div>
 			<div class="field">
-				{{this.target.name}}
+				{{calculator.target.name}}
 			</div>
 			<div></div>
 
-			<div class="label">Hit Location</div>
+			<div class="label">{{localize "gurps.damage.hit_location"}}</div>
 			<div class="field no-stretch location">
-				<select name="hitLocation">
-					{{selectOptions hitLocationChoices value=roll.locationId localize=false}}
+				<select name="hitLocation" class="apply-control" data-action="location-select">
+					{{selectOptions hitLocationChoices selected=calculator.damageRoll.locationId localize=false}}
 				</select>
-				<button type="button" class=""><i class="fa-light fa-dice"></i></button>
-				<div class="label">DR</div>
-				<input type="number" value="{{dr}}" step="any" name="dr" size="6" />
+				<button type="button" class="apply-control" data-action="location-random"><i
+						class="fa-light fa-dice"
+					></i></button>
+				<div class="label">{{localize "gurps.character.body_type.dr"}}</div>
+				<input
+					type="number"
+					class="apply-control"
+					data-action="location-dr"
+					value="{{calculator.rawDR}}"
+					step="any"
+					name="dr"
+					size="6"
+				/>
 			</div>
 			<div class="label pdf">B398</div>
 
 			<div class="label"></div>
 			<div class="field">
 				<label for="flexible" class="checkbox-label">
-					<input id="flexible" type="checkbox" />Flexible armor</label>
+					<input
+						id="flexible"
+						type="checkbox"
+						class="apply-control"
+						data-action="location-flexible"
+						{{checked calculator.isFlexibleArmor}}
+					/>{{localize "gurps.damage.flexible"}}</label>
 			</div>
 			<div class="label pdf">B378</div>
 
-			<div class="label">Hardened DR</div>
+			<div class="label">{{localize "gurps.damage.hardened_dr"}}</div>
 			<div class="field">
-				<select name="hardened">
-					{{selectOptions hardenedChoices value=0}}
+				<select name="hardened" class="apply-control" data-action="hardened-select">
+					{{selectOptions hardenedChoices selected=calculator.hardenedDRLevel}}
 				</select>
 			</div>
 			<div class="label pdf">B47</div>
@@ -183,9 +199,9 @@
 				<div class="descr">= 4 × 1</div>
 			</div>
 			<div class="apply">
-				<div class="label">Injury</div>
+				<div class="label">{{localize "gurps.damage.injury"}}</div>
 				<input type="number" value="{{roll.injury}}" step="any" name="injury" size="4" />
-				<button type="button" class="apply-button gcs-checkmark">Apply</button>
+				<button type="button" class="apply-button gcs-checkmark">{{localize "gurps.misc.apply"}}</button>
 			</div>
 		</div>
 	</div>
