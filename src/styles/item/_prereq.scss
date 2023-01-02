@@ -1,11 +1,15 @@
 #prerequisites {
 	margin: 2px 16px;
 	.content {
+		overflow-x: scroll;
 		border: 1px solid rgb(var(--color-header));
 		background-color: rgb(var(--color-content));
 		display: grid;
 		> div {
 			padding: 5px;
+		}
+		&::-webkit-scrollbar {
+			display: none;
 		}
 	}
 }

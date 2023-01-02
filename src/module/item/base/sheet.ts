@@ -93,6 +93,7 @@ export class ItemSheetGURPS extends ItemSheet {
 			{ name: i18n("gurps.context_menu.new_ranged_weapon"), icon: "", callback: () => this._addRanged() },
 		])
 
+		html.find(".add")
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
 		html.find(".prereq .add-list").on("click", event => this._addPrereqList(event))
 		html.find(".prereq .remove").on("click", event => this._removePrereq(event))
@@ -100,6 +101,7 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find("#features .add").on("click", event => this._addFeature(event))
 		html.find(".feature .remove").on("click", event => this._removeFeature(event))
 		html.find(".feature .type").on("change", event => this._onFeatureTypeChange(event))
+		html.find("#defaults .add").on("click", event => this._addDefault(event))
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
 		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
@@ -220,7 +222,7 @@ export class ItemSheetGURPS extends ItemSheet {
 		event.preventDefault()
 		const features = (this.item.system as any).features
 		features.push({
-			type: "attribute_bonus",
+			type: FeatureType.AttributeBonus,
 			attribute: "st",
 			limitation: "none",
 			amount: 1,
@@ -238,6 +240,29 @@ export class ItemSheetGURPS extends ItemSheet {
 		features.splice(index, 1)
 		const update: any = {}
 		update["system.features"] = features
+		return this.item.update(update)
+	}
+
+	protected async _addDefault(event: JQuery.ClickEvent): Promise<any> {
+		event.preventDefault()
+		const defaults = (this.item.system as any).defaults
+		defaults.push({
+			type: "skill",
+			name: "",
+			specialization: "",
+			modifier: 0,
+		})
+		const update: any = {}
+		update["system.defaults"] = defaults
+		return this.item.update(update)
+	}
+
+	protected async _removeDefault(event: JQuery.ClickEvent): Promise<any> {
+		const index = $(event.currentTarget).data("index")
+		const defaults = (this.item.system as any).defaults
+		defaults.splice(index, 1)
+		const update: any = {}
+		update["system.defaults"] = defaults
 		return this.item.update(update)
 	}
 

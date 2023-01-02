@@ -27,7 +27,7 @@
                     {{/select}}
                 </select>
                 {{#if (eq this.type "cost_reduction") }}
-                    {{>cost-reduction config=../config attributes=../attributes}}
+                    {{>item/sections/feature/cost-reduction config=../config attributes=../attributes}}
                 {{else}}
 					<div class="field">
 						<input type="text" name="array.system.features.{{@index}}.amount" value="{{signed this.amount}}" data-dtype="Number" />

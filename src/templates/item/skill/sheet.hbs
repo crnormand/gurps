@@ -12,9 +12,15 @@
 			<div class="label">{{localize "gurps.item.tech_level"}}</div>
 			<div class="field no-stretch">
 				{{#if system.tech_level_required}}
-					<input name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
+					<input type="text" name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
 				{{else}}
-					<input name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" disabled />
+					<input
+						type="text"
+						name="system.tech_level"
+						value="{{system.tech_level}}"
+						data-dtype="String"
+						disabled
+					/>
 				{{/if}}
 				<label class="label checkbox-label">
 					<input
@@ -28,11 +34,13 @@
 			</div>
 			<div class="label">{{localize "gurps.item.notes"}}</div>
 			<div class="field">
-				<textarea name="system.notes" data-dtype="String">{{textareaFormat system.notes}}</textarea>
+				<textarea type="text" name="system.notes" data-dtype="String">{{textareaFormat system.notes}}</textarea>
 			</div>
 			<div class="label">{{localize "gurps.item.vtt_notes"}}</div>
 			<div class="field">
-				<textarea name="system.vtt_notes" data-dtype="String">{{textareaFormat system.vtt_notes}}</textarea>
+				<textarea type="text" name="system.vtt_notes" data-dtype="String">{{textareaFormat
+						system.vtt_notes
+					}}</textarea>
 			</div>
 			<div class="label">{{localize "gurps.item.tags"}}</div>
 			<div class="field">
@@ -59,6 +67,7 @@
 			<div class="label">{{localize "gurps.item.epm_before"}}</div>
 			<div class="field no-stretch">
 				<input
+					type="text"
 					name="system.encumbrance_penalty_multiplier"
 					value="{{system.encumbrance_penalty_multiplier}}"
 					data-dtype="Number"
@@ -69,7 +78,7 @@
 				<div class="label">{{localize "gurps.item.points"}}</div>
 				<div class="field no-stretch">
 					<input type="text" name="system.points" value="{{system.points}}" data-dtype="Number" />
-					<input value="{{document.skillLevel}}/{{document.relativeLevel}}" readonly tabIndex="-1" />
+					<input type="text" value="{{document.skillLevel}}/{{document.relativeLevel}}" readonly tabIndex="-1" />
 				</div>
 			{{/if}}
 			<div class="label">{{localize "gurps.item.reference"}}</div>
@@ -77,11 +86,11 @@
 				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 			</div>
 		</div>
-		{{>item/sections/prerequisites}}
-		{{>item/sections/defaults attributes=attributes sysPrefix=sysPrefix}}
-		{{>item/sections/features}}
-		{{>item/sections/melee}}
-		{{>item/sections/ranged}}
-		{{>item/sections/study}}
+	{{>item/sections/prerequisites}}
+	{{>item/sections/defaults attributes=attributes sysPrefix=sysPrefix}}
+	{{>item/sections/features}}
+	{{>item/sections/melee}}
+	{{>item/sections/ranged}}
+	{{>item/sections/study}}
 	</div>
 </form>

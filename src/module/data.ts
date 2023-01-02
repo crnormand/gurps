@@ -1,3 +1,15 @@
+import {
+	AttributeBonus,
+	CostReduction,
+	DRBonus,
+	SkillBonus,
+	SkillPointBonus,
+	SpellBonus,
+	SpellPointBonus,
+	WeaponDamageBonus,
+	WeaponDRDivisorBonus,
+} from "@feature"
+
 /*
  * I had to move SETTINGS here as well, because it fixed the weird error that leads to the code not recognizing standard
  * foundry classes and methods.
@@ -305,4 +317,15 @@ export enum UserFlags {
 	ModifierTotal = "modifierTotal",
 	ModifierSticky = "modifierSticky",
 	ModifierPinned = "pinnedMods",
+}
+
+export type featureMap = {
+	attributeBonuses: AttributeBonus[]
+	costReductions: CostReduction[]
+	drBonuses: DRBonus[]
+	skillBonuses: SkillBonus[]
+	skillPointBonuses: SkillPointBonus[]
+	spellBonuses: SpellBonus[]
+	spellPointBonuses: SpellPointBonus[]
+	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
 }

@@ -1,11 +1,11 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 
 export class ReactionBonus extends BaseFeature {
 	sources: string[] = []
 
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "reaction_bonus",
+			type: FeatureType.ReactionBonus,
 			situation: "from others",
 		})
 	}

@@ -1,10 +1,10 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
 
 export class WeaponDamageBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "weapon_bonus",
+			type: FeatureType.WeaponBonus,
 			percent: false,
 			selection_type: "weapons_with_required_skill",
 			name: { compare: StringComparison.Is, qualifier: "" },

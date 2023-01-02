@@ -41,24 +41,28 @@ export class PrereqList extends BasePrereq {
 		}
 	}
 
-	override satisfied(character: CharacterGURPS, exclude: any, buffer: TooltipGURPS, prefix: string): boolean {
+	// Override satisfied(character: CharacterGURPS, exclude: any, buffer: TooltipGURPS, prefix: string): boolean {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		if (this.when_tl?.compare !== "none") {
-			let tl = extractTechLevel(character.profile?.tech_level)
+			let tl = extractTechLevel(actor.profile?.tech_level)
 			if (tl < 0) tl = 0
-			if (!numberCompare(tl, this.when_tl)) return true
+			if (!numberCompare(tl, this.when_tl)) return [true, false]
 		}
 		let count = 0
+		let eqpPenalty = false
 		const local = new TooltipGURPS()
 		if (this.prereqs.length)
 			for (const p of this.prereqs) {
-				if (p.satisfied(character, exclude, local, prefix)) count++
+				const ps = p.satisfied(actor, exclude, local, prefix)
+				if (ps[0]) count++
+				eqpPenalty == eqpPenalty || ps[1]
 			}
 		const satisfied = count === this.prereqs.length || (!this.all && count > 0)
 		if (!satisfied) {
-			if (this.all) buffer.push(i18n("gurps.prereqs.requires_all"))
-			else buffer.push(i18n("gurps.prereqs.requires_all"))
-			buffer.push(local)
+			if (this.all) tooltip.push(i18n("gurps.prereqs.requires_all"))
+			else tooltip.push(i18n("gurps.prereqs.requires_all"))
+			tooltip.push(local)
 		}
-		return satisfied
+		return [satisfied, eqpPenalty]
 	}
 }

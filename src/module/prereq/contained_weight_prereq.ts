@@ -22,13 +22,13 @@ export class ContainedWeightPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
 		const eqp = exclude as EquipmentGURPS | EquipmentContainerGURPS
 		if (eqp) {
 			satisfied = !(eqp instanceof EquipmentContainerGURPS)
 			if (!satisfied) {
-				const units = character.settings.default_weight_units
+				const units = actor.settings.default_weight_units
 				const weight = eqp.extendedWeight(false, units) - eqp.adjustedWeight(false, units)
 				satisfied = numberCompare(weight, this.qualifier)
 			}
@@ -41,6 +41,6 @@ export class ContainedWeightPrereq extends BasePrereq {
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.qualifier?.compare}`))
 			tooltip.push((this.qualifier ? this.qualifier.qualifier : 0).toString())
 		}
-		return satisfied
+		return [satisfied, false]
 	}
 }

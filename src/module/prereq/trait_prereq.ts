@@ -19,14 +19,14 @@ export class TraitPrereq extends BasePrereq {
 		})
 	}
 
-	override satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
 		for (const t of actor.traits) {
-			if (exclude === t || !stringCompare(t.name, this.name)) return false
+			if (exclude === t || !stringCompare(t.name, this.name)) return [false, false]
 			let notes = t.notes
 			const mod_notes = t.modifierNotes
 			if (mod_notes) notes += `\n${mod_notes}`
-			if (!stringCompare(notes, this.notes)) return false
+			if (!stringCompare(notes, this.notes)) return [false, false]
 			satisfied = numberCompare(Math.max(0, t.levels), this.level)
 			// Return satisfied;
 		}
@@ -47,7 +47,7 @@ export class TraitPrereq extends BasePrereq {
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.level?.compare}`))
 			tooltip.push(((this.level ? this.level.qualifier : 0) ?? 0).toString())
 		}
-		return satisfied
+		return [satisfied, false]
 	}
 }
 

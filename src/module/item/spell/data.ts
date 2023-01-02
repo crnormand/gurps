@@ -1,5 +1,5 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { Study } from "@module/data"
+import { Difficulty, Study } from "@module/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
@@ -16,7 +16,7 @@ export interface SpellData extends Omit<SpellSource, "effects">, SpellSystemData
 
 export interface SpellSystemData extends ItemSystemData {
 	prereqs: PrereqList
-	difficulty: string
+	difficulty: Difficulty
 	tech_level: string
 	college: Array<string>
 	power_source: string

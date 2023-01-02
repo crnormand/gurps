@@ -21,7 +21,7 @@ export class ContainedQuantityPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(_: Actor, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(_actor: Actor, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
 		const eqp = exclude instanceof EquipmentGURPS || exclude instanceof EquipmentContainerGURPS ? exclude : null
 		if (eqp) {
@@ -43,6 +43,6 @@ export class ContainedQuantityPrereq extends BasePrereq {
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.quantity?.compare}`))
 			tooltip.push(this.quantity.qualifier.toString())
 		}
-		return satisfied
+		return [satisfied, false]
 	}
 }

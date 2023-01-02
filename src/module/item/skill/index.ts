@@ -1,4 +1,3 @@
-import { CharacterGURPS } from "@actor"
 import { ContainerGURPS } from "@item/container"
 import { Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
@@ -100,13 +99,7 @@ export class SkillGURPS extends ContainerGURPS {
 			if (this.difficulty !== "w" && def && level < def.adjustedLevel) {
 				level = def.adjustedLevel
 			}
-			let bonus = this.actor.skillComparedBonusFor(
-				"skill_bonus",
-				this.name ?? "",
-				this.specialization,
-				this.tags,
-				tooltip
-			)
+			let bonus = this.actor.skillBonusFor(this.name!, this.specialization, this.tags, tooltip)
 			level += bonus
 			relative_level += bonus
 			bonus = this.actor.encumbranceLevel(true).penalty * this.encumbrancePenaltyMultiplier
@@ -126,14 +119,8 @@ export class SkillGURPS extends ContainerGURPS {
 	adjustedPoints(tooltip?: TooltipGURPS): number {
 		let points = this.points
 		if (this.actor) {
-			points += this.actor.skillPointComparedBonusFor(
-				"skill.points",
-				this.name!,
-				this.specialization,
-				this.tags,
-				tooltip
-			)
-			points += this.actor.bonusFor(`skills.points/${this.name}`, tooltip)
+			points += this.actor.skillPointBonusFor(this.name!, this.specialization, this.tags, tooltip)
+			// Points += this.actor.bonusFor(`skills.points/${this.name}`, tooltip)
 			points = Math.max(points, 0)
 		}
 		return points
@@ -154,7 +141,7 @@ export class SkillGURPS extends ContainerGURPS {
 
 	updateLevel(): boolean {
 		const saved = this.level
-		this.defaultedFrom = this.bestDefaultWithPoints(null)
+		this.defaultedFrom = this.bestDefaultWithPoints()
 		this.level = this.calculateLevel
 		if (this.defaultedFrom) {
 			const def = this.defaultedFrom
@@ -169,9 +156,9 @@ export class SkillGURPS extends ContainerGURPS {
 		return saved.level !== this.level.level
 	}
 
-	bestDefaultWithPoints(excluded: SkillDefault | null): SkillDefault | undefined {
+	bestDefaultWithPoints(excluded?: SkillDefault): SkillDefault | undefined {
 		if (!this.actor) return
-		const best = this.bestDefault(excluded)
+		const best = this.bestDefault()
 		if (best) {
 			const baseline = this.actor.resolveAttributeCurrent(this.attribute) + baseRelativeLevel(this.difficulty)
 			const level = best.level
@@ -184,28 +171,15 @@ export class SkillGURPS extends ContainerGURPS {
 		return best
 	}
 
-	bestDefault(excluded: SkillDefault | null): SkillDefault | undefined {
+	bestDefault(excluded?: SkillDefault): SkillDefault | undefined {
 		if (!this.actor || !this.defaults) return
 		const excludes = new Map()
 		excludes.set(this.name!, true)
 		let bestDef = new SkillDefault()
 		let best = -Infinity
-		for (const def of this.defaults) {
-			if (this.equivalent(def, excluded) || this.inDefaultChain(this.actor, def, new Map())) continue
-			let level = def.skillLevel(this.actor, true, excludes, this.type.startsWith("skill"))
-			if (def.type === "skill") {
-				const other = this.actor.bestSkillNamed(def.name ?? "", def.specialization ?? "", true, excludes)
-				if (other) {
-					level -= this.actor.skillComparedBonusFor(
-						"skill.name",
-						def.name ?? "",
-						def.specialization ?? "",
-						this.tags,
-						undefined
-					)
-					level -= this.actor.bonusFor(`skill.name/${def.name?.toLowerCase()}`, undefined)
-				}
-			}
+		for (const def of this.resolveToSpecificDefaults()) {
+			if (def.equivalent(excluded) || this.inDefaultChain(def, new Map())) continue
+			let level = this.calcSkillDefaultLevel(def, excludes)
 			if (best < level) {
 				best = level
 				bestDef = def.noLevelOrPoints
@@ -213,6 +187,35 @@ export class SkillGURPS extends ContainerGURPS {
 			}
 		}
 		return bestDef
+	}
+
+	calcSkillDefaultLevel(def: SkillDefault, excludes: Map<string, boolean>): number {
+		let level = def.skillLevel(this.actor!, true, excludes, this.type.startsWith("skill"))
+		if (def.skillBased) {
+			const other = this.actor?.bestSkillNamed(def.name!, def.specialization!, true, excludes)
+			if (other) {
+				level -= this.actor!.skillBonusFor(def.name!, def.specialization!, this.tags, undefined)
+			}
+		}
+		return level
+	}
+
+	resolveToSpecificDefaults(): SkillDefault[] {
+		const result: SkillDefault[] = []
+		for (const def of this.defaults) {
+			if (!this.actor || !def || !def.skillBased) {
+				result.push(def)
+			} else {
+				const m: Map<string, boolean> = new Map()
+				m.set(this.formattedName, true)
+				for (const s of this.actor.skillNamed(def.name!, def.specialization!, true, m)) {
+					const local = new SkillDefault(duplicate(def))
+					local.specialization = s.specialization
+					result.push(local)
+				}
+			}
+		}
+		return result
 	}
 
 	equivalent(def: SkillDefault, other: SkillDefault | null): boolean {
@@ -225,16 +228,16 @@ export class SkillGURPS extends ContainerGURPS {
 		)
 	}
 
-	inDefaultChain(actor: CharacterGURPS, def: SkillDefault | undefined, lookedAt: Map<string, boolean>): boolean {
-		if (!actor || !def || !def.name) return false
+	inDefaultChain(def: SkillDefault | undefined, lookedAt: Map<string, boolean>): boolean {
+		if (!this.actor || !def || !def.name) return false
 		let hadOne = false
-		for (const one of (actor.skills as Collection<SkillGURPS>).filter(
+		for (const one of (this.actor.skills as Collection<SkillGURPS>).filter(
 			s => s.name === def.name && s.specialization === def.specialization
 		)) {
 			if (one === this) return true
 			if (typeof one.id === "string" && lookedAt.get(one.id)) {
 				lookedAt.set(one.id, true)
-				if (this.inDefaultChain(actor, one.defaultedFrom, lookedAt)) return true
+				if (this.inDefaultChain(one.defaultedFrom, lookedAt)) return true
 			}
 			hadOne = true
 		}

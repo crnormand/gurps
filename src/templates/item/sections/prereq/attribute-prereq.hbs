@@ -2,28 +2,34 @@
 	<div class="placeholder"> </div>
 	<select name="{{path}}.which">
 		{{#select this.which}}
-		<option value=""></option>
-		{{#each attributes as |v k|}}
-		<option value="{{k}}">{{v}}</option>
-		{{/each}}
+			<option value=""></option>
+			{{#each attributes as |v k|}}
+				<option value="{{k}}">{{v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
 	<select name="{{path}}.combined_with">
 		{{#select this.combined_with}}
-		<option value=""></option>
-		{{#each attributes as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.combined_with"}} {{v}}</option>
-		{{/each}}
+			<option value=""></option>
+			{{#each attributes as |v k|}}
+				<option value="{{k}}">{{localize "gurps.field_prefix.combined_with"}} {{v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
 	<select name="{{path}}.qualifier.compare">
 		{{#select this.qualifier.compare}}
-		{{#each config.select.number_compare as |v k|}}
-		<option value="{{k}}">{{localize "gurps.field_prefix.attribute_level"}} {{localize v}}</option>
-		{{/each}}
+			{{#each config.select.number_compare as |v k|}}
+				<option value="{{k}}">{{localize "gurps.field_prefix.attribute_level"}} {{localize v}}</option>
+			{{/each}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat "NUMBER." path ".qualifier.qualifier") data=this.levels.qualifier
-	type="String"
-	class=(input_lock (neq this.qualifier.compare "none"))}}
+	<div class="field">
+		<input
+			type="text"
+			name="{{path}}.qualifier.qualifier"
+			value="{{this.qualifier.qualifier}}"
+			data-dtype="Number"
+			{{input_lock (neq this.qualifier.compare "none")}}
+		/>
+	</div>
 </div>

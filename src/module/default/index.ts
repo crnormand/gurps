@@ -7,10 +7,10 @@ skill_based_default_types.set(gid.Skill, true)
 skill_based_default_types.set(gid.Parry, true)
 skill_based_default_types.set(gid.Block, true)
 
-export type SkillDefaultType = "block" | "parry" | "skill" | "10" | string
+export type SkillDefaultType = gid.Block | gid.Parry | gid.Skill | gid.Ten | string
 
 export class SkillDefault {
-	type = "skill"
+	type: SkillDefaultType = gid.Skill
 
 	name?: string
 
@@ -37,9 +37,9 @@ export class SkillDefault {
 		return skill_based_default_types.get(this.type) ?? false
 	}
 
-	equivalent(other: SkillDefault): boolean {
+	equivalent(other?: SkillDefault): boolean {
 		return (
-			other &&
+			!!other &&
 			this.type === other.type &&
 			this.modifier === other.modifier &&
 			this.name === other.name &&
@@ -68,15 +68,15 @@ export class SkillDefault {
 	): number {
 		let best = -Infinity
 		switch (this.type) {
-			case "parry":
+			case gid.Parry:
 				best = this.best(actor, require_points, excludes)
 				if (best !== -Infinity) best = best / 2 + 3 + actor.calc.parry_bonus
 				return this.finalLevel(best)
-			case "block":
+			case gid.Block:
 				best = this.best(actor, require_points, excludes)
 				if (best !== -Infinity) best = best / 2 + 3 + actor.calc.block_bonus
 				return this.finalLevel(best)
-			case "skill":
+			case gid.Skill:
 				return this.finalLevel(this.best(actor, require_points, excludes))
 			default:
 				return this.skillLevelFast(actor, require_points, rule_of_20, excludes)
