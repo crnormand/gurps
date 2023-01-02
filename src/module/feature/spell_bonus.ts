@@ -1,10 +1,11 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 import { StringCompare, StringComparison } from "@module/data"
+import { stringCompare } from "@util"
 
 export class SpellBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "spell_bonus",
+			type: FeatureType.SpellBonus,
 			match: "all_colleges",
 			name: { compare: StringComparison.Is, qualifier: "" },
 			tags: { compare: StringComparison.None, qualifier: "" },
@@ -35,6 +36,19 @@ export class SpellBonus extends BaseFeature {
 			return `${prefix}/${this.name.qualifier}`
 		}
 		return `${prefix}*`
+	}
+
+	matchForType(name: string, powerSource: string, colleges: string[]): boolean {
+		switch (this.match) {
+			case "all_colleges":
+				return true
+			case "spell_name":
+				return stringCompare(name, this.name)
+			case "college_name":
+				return stringCompare(colleges, this.name)
+			case "power_source_name":
+				return stringCompare(powerSource, this.name)
+		}
 	}
 }
 

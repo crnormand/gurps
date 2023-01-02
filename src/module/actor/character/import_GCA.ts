@@ -1,6 +1,6 @@
 import { ItemGURPS } from "@item"
 import { ItemFlagsGURPS, ItemSystemDataGURPS, ItemType, NoteData } from "@item/data"
-import { SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
+import { gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
 import { BasePrereq } from "@prereq"
@@ -557,7 +557,7 @@ export class GCAImporter {
 				const def: Partial<SkillDefault> = {}
 				e = e.trim().replaceAll("\\", "").replaceAll('"', "")
 				if (e.startsWith("SK:")) {
-					def.type = "skill"
+					def.type = gid.Skill
 					const arName: string[] = []
 					const arSpecialization: string[] = []
 					const arModifier: string[] = []
@@ -613,7 +613,7 @@ export class GCAImporter {
 				const def: Partial<SkillDefault> = {}
 				e = e.trim().replaceAll("\\", "").replaceAll('"', "")
 				if (e.startsWith("SK:")) {
-					def.type = "skill"
+					def.type = gid.Skill
 					const arName: string[] = []
 					const arSpecialization: string[] = []
 					const arModifier: string[] = []

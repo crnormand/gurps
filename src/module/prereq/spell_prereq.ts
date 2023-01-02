@@ -34,12 +34,12 @@ export class SpellPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let tech_level = ""
 		if (exclude instanceof SpellGURPS || exclude instanceof RitualMagicSpellGURPS) tech_level = exclude.techLevel
 		let count = 0
 		const colleges: Map<string, boolean> = new Map()
-		for (let sp of character.spells) {
+		for (let sp of actor.spells) {
 			if (sp instanceof SpellContainerGURPS) continue
 			sp = sp as SpellGURPS | RitualMagicSpellGURPS
 			if (exclude === sp || sp.points === 0) continue
@@ -88,6 +88,6 @@ export class SpellPrereq extends BasePrereq {
 				}
 			}
 		}
-		return satisfied
+		return [satisfied, false]
 	}
 }

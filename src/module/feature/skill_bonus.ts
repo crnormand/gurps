@@ -1,10 +1,10 @@
 import { StringCompare, StringComparison } from "@module/data"
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 
 export class SkillBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "skill_bonus",
+			type: FeatureType.SkillBonus,
 			selection_type: "skills_with_name",
 			name: { compare: StringComparison.Is, qualifier: "" },
 			specialization: { compare: StringComparison.None, qualifier: "" },

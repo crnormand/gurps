@@ -236,7 +236,7 @@ Hooks.once("init", async () => {
 	// 	types: ["pdf"],
 	// 	makeDefault: true,
 	// 	label: i18n("gurps.system.sheet.pdf"),
-	// });
+	// })
 
 	// @ts-ignore
 	DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDFEditorSheet, {
@@ -275,7 +275,8 @@ Hooks.once("ready", async () => {
 			actor.prepareData()
 		})
 	)
-	;(game as Game).socket?.on(SYSTEM_NAME, async response => {
+	;(game as Game).socket?.on("system.gcsga", async response => {
+		console.log("receive socket")
 		switch (response.type) {
 			case "updateBucket":
 				console.log("test?")

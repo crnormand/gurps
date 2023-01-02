@@ -1,9 +1,9 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 
 export class ContainedWeightReduction extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "contained_weight_reduction",
+			type: FeatureType.ContaiedWeightReduction,
 			reduction: "0%",
 		})
 	}

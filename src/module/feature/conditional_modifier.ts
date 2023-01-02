@@ -1,4 +1,4 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 
 export class ConditionalModifier extends BaseFeature {
 	static get defaults(): Record<string, any> {
@@ -9,7 +9,7 @@ export class ConditionalModifier extends BaseFeature {
 	}
 
 	get featureMapKey(): string {
-		return "conditional_modifier"
+		return FeatureType.ConditionalModifier
 	}
 
 	get adjustedAmount(): number {

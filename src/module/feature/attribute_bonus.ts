@@ -1,9 +1,9 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 
 export class AttributeBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "attribute_bonus",
+			type: FeatureType.AttributeBonus,
 			attribute: "st",
 			limitation: "none",
 		})
@@ -23,4 +23,9 @@ export interface AttributeBonus extends BaseFeature {
 	limitation: AttributeBonusLimitation
 }
 
-type AttributeBonusLimitation = "none" | "striking_only" | "lifting_only" | "throwing_only"
+export enum AttributeBonusLimitation {
+	None = "none",
+	Striking = "striking_only",
+	Lifting = "lifting_only",
+	Throwing = "throwing_only",
+}

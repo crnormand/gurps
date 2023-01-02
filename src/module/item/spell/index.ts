@@ -1,7 +1,8 @@
 import { ContainerGURPS } from "@item/container"
-import { baseRelativeLevel, SkillLevel } from "@item/skill/data"
+import { SkillLevel } from "@item/skill/data"
 import { Difficulty, gid } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
+import { difficultyRelativeLevel } from "@util"
 import { SpellData } from "./data"
 
 export class SpellGURPS extends ContainerGURPS {
@@ -44,9 +45,7 @@ export class SpellGURPS extends ContainerGURPS {
 	adjustedPoints(tooltip?: TooltipGURPS): number {
 		let points = this.points
 		if (this.actor) {
-			points += this.actor.bestCollegeSpellPointBonus(this.college, this.tags, tooltip)
-			points += this.actor.spellPointBonusesFor("spell.power_source.points", this.powerSource, this.tags, tooltip)
-			points += this.actor.spellPointBonusesFor("spell.points", this.name ?? "", this.tags, tooltip)
+			points += this.actor.spellPointBonusesFor(this.name!, this.powerSource, this.college, this.tags, tooltip)
 			points = Math.max(points, 0)
 		}
 		return points
@@ -74,29 +73,37 @@ export class SpellGURPS extends ContainerGURPS {
 
 	get calculateLevel(): SkillLevel {
 		const tooltip = new TooltipGURPS()
-		let relative_level = baseRelativeLevel(this.difficulty)
+		let relativeLevel = difficultyRelativeLevel(this.system.difficulty)
 		let level = -Infinity
 		if (this.actor) {
 			let points = Math.trunc(this.points)
 			level = this.actor.resolveAttributeCurrent(this.attribute)
-			if (this.difficulty === Difficulty.Wildcard) points = Math.trunc(points / 3)
+			if (this.system.difficulty === Difficulty.Wildcard) points = Math.trunc(points / 3)
 			if (points < 1) {
 				level = -Infinity
-				relative_level = 0
-			} else if (points < 4) relative_level += 1
-			else relative_level += 1 + Math.trunc(points / 4)
-
+				relativeLevel = 0
+			} else if (points === 0) {
+				// Do nothing
+			} else if (points < 4) {
+				relativeLevel += 1
+			} else {
+				relativeLevel += 1 + Math.trunc(points / 4)
+			}
 			if (level !== -Infinity) {
-				relative_level += this.actor.bestCollegeSpellBonus(this.college, this.tags, tooltip)
-				relative_level += this.actor.spellBonusesFor("spell.power_source", this.powerSource, this.tags, tooltip)
-				relative_level += this.actor.spellBonusesFor("spell.name", this.name ?? "", this.tags, tooltip)
-				relative_level = Math.trunc(relative_level)
-				level += relative_level
+				relativeLevel += this.actor.spellBonusFor(
+					this.name!,
+					this.powerSource,
+					this.college,
+					this.tags,
+					tooltip
+				)
+				relativeLevel = Math.trunc(relativeLevel)
+				level += relativeLevel
 			}
 		}
 		return {
 			level: level,
-			relative_level: relative_level,
+			relative_level: relativeLevel,
 			tooltip: tooltip.toString(),
 		}
 	}

@@ -95,22 +95,10 @@ class BaseWeapon {
 		const minST = this.resolvedMinimumStrength - (actor.strengthOrZero + actor.striking_st_bonus)
 		if (minST > 0) adj -= minST
 		const nameQualifier = this.parent.name
-		for (const bonus of actor.namedWeaponSkillBonusesFor(
-			"weapon_named.*",
-			nameQualifier ?? "",
-			this.usage,
-			this.parent.tags,
-			tooltip
-		)) {
+		for (const bonus of actor.namedWeaponSkillBonusesFor(nameQualifier!, this.usage, this.parent.tags, tooltip)) {
 			adj += bonus.adjustedAmount
 		}
-		for (const bonus of actor.namedWeaponSkillBonusesFor(
-			`weapon_named./${nameQualifier}`,
-			nameQualifier ?? "",
-			this.usage,
-			this.parent.tags,
-			tooltip
-		)) {
+		for (const bonus of actor.namedWeaponSkillBonusesFor(nameQualifier!, this.usage, this.parent.tags, tooltip)) {
 			adj += bonus.adjustedAmount
 		}
 		for (const f of this.parent.features) {

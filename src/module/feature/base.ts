@@ -1,21 +1,36 @@
 import { Feature } from "@feature"
+import { ItemGURPS } from "@item"
 // Import { ItemGURPS, TraitGURPS } from "@item"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
 
-export type FeatureType =
-	| "attribute_bonus"
-	| "conditional_modifier"
-	| "dr_bonus"
-	| "reaction_bonus"
-	| "skill_bonus"
-	| "skill_point_bonus"
-	| "spell_bonus"
-	| "spell_point_bonus"
-	| "weapon_bonus"
-	| "weapon_dr_divisor_bonus"
-	| "cost_reduction"
-	| "contained_weight_reduction"
+export enum FeatureType {
+	AttributeBonus = "attribute_bonus",
+	ConditionalModifier = "conditional_modifier",
+	DRBonus = "dr_bonus",
+	ReactionBonus = "reaction_bonus",
+	SkillBonus = "skill_bonus",
+	SkillPointBonus = "skill_point_bonus",
+	SpellBonus = "spell_bonus",
+	SpellPointBonus = "spell_point_bonus",
+	WeaponBonus = "weapon_bonus",
+	WeaponDRDivisorBonus = "weapon_dr_divisor_bonus",
+	CostReduction = "cost_reduction",
+	ContaiedWeightReduction = "contained_weight_reduction",
+}
+// Export type FeatureType =
+// 	| "attribute_bonus"
+// 	| "conditional_modifier"
+// 	| "dr_bonus"
+// 	| "reaction_bonus"
+// 	| "skill_bonus"
+// 	| "skill_point_bonus"
+// 	| "spell_bonus"
+// 	| "spell_point_bonus"
+// 	| "weapon_bonus"
+// 	| "weapon_dr_divisor_bonus"
+// 	| "cost_reduction"
+// 	| "contained_weight_reduction"
 
 export interface FeatureConstructionContext {
 	ready?: boolean
@@ -63,7 +78,7 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	setParent(parent: Item): void {
+	setParent(parent: ItemGURPS): void {
 		this.parent = parent.uuid
 	}
 

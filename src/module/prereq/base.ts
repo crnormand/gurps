@@ -51,7 +51,7 @@ export class BasePrereq {
 }
 
 export interface BasePrereq {
-	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean
+	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean]
 	type: PrereqType
 	has: boolean
 }

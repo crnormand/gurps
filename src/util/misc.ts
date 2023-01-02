@@ -1,5 +1,13 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
-import { NumberCompare, NumberComparison, StringCompare, StringComparison, Study, StudyType } from "@module/data"
+import {
+	Difficulty,
+	NumberCompare,
+	NumberComparison,
+	StringCompare,
+	StringComparison,
+	Study,
+	StudyType,
+} from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { v4 as uuidv4 } from "uuid"
 
@@ -420,4 +428,24 @@ export function getHitLocations(body: HitLocationTable): HitLocation[] {
 	if (!body) return []
 	updateRollRanges(body)
 	return body.locations
+}
+
+/**
+ *
+ * @param d
+ */
+export function difficultyRelativeLevel(d: Difficulty): number {
+	switch (d) {
+		case Difficulty.Easy:
+			return 0
+		case Difficulty.Average:
+			return -1
+		case Difficulty.Hard:
+			return -2
+		case Difficulty.VeryHard:
+		case Difficulty.Wildcard:
+			return -3
+		default:
+			return difficultyRelativeLevel(Difficulty.Easy)
+	}
 }

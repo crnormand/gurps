@@ -20,11 +20,11 @@ export class SkillPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
 		let tech_level = ""
 		if (exclude instanceof SkillGURPS) tech_level = exclude.techLevel
-		for (let sk of character.skills) {
+		for (let sk of actor.skills) {
 			if (sk instanceof SkillContainerGURPS) continue
 			sk = sk as SkillGURPS | TechniqueGURPS
 			if (
@@ -32,7 +32,7 @@ export class SkillPrereq extends BasePrereq {
 				!stringCompare(sk.name, this.name) ||
 				!stringCompare(sk.specialization, this.specialization)
 			)
-				return false
+				return [false, false]
 			satisfied = numberCompare(sk.level.level, this.level)
 			if (satisfied && tech_level) satisfied = !sk.techLevel || tech_level === sk.techLevel
 		}
@@ -63,7 +63,7 @@ export class SkillPrereq extends BasePrereq {
 				tooltip.push(i18n("gurps.prereqs.skill.tech_level"))
 			}
 		}
-		return satisfied
+		return [satisfied, false]
 	}
 }
 

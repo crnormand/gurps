@@ -1,9 +1,9 @@
-import { BaseFeature } from "./base"
+import { BaseFeature, FeatureType } from "./base"
 
 export class DRBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "dr_bonus",
+			type: FeatureType.DRBonus,
 			location: "torso",
 			specialization: "all",
 		})

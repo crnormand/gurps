@@ -118,44 +118,27 @@ export class WeaponDamage {
 		let bonusSet: Map<WeaponDamageBonus, boolean> = new Map()
 		let tags = this.parent.parent.tags
 		if (bestDefault) {
-			actor.addWeaponComparedBonusesFor(
-				"skill.name*",
-				bestDefault.name ?? "",
-				bestDefault.specialization ?? "",
+			actor.addWeaponWithSkillBonusesFor(
+				bestDefault.name!,
+				bestDefault.specialization!,
 				tags,
 				base.count,
+				levels,
 				tooltip,
 				bonusSet
 			)
-			actor.addWeaponComparedBonusesFor(
-				`skill.name/${bestDefault.name}`,
-				bestDefault.name ?? "",
-				bestDefault.specialization ?? "",
-				tags,
-				base.count,
-				tooltip,
-				bonusSet
-			)
+			// Actor.addNamedWeaponBonusesFor(
+			// 	bestDefault.name!,
+			// 	bestDefault.specialization!,
+			// 	tags,
+			// 	base.count,
+			// 	levels,
+			// 	tooltip,
+			// 	bonusSet
+			// )
 		}
 		const nameQualifier = this.parent.name
-		actor.addNamedWeaponBonusesFor(
-			"weapon_named.*",
-			nameQualifier,
-			this.parent.usage,
-			tags,
-			base.count,
-			tooltip,
-			bonusSet
-		)
-		actor.addNamedWeaponBonusesFor(
-			`weapon_named./${nameQualifier}`,
-			nameQualifier,
-			this.parent.usage,
-			tags,
-			base.count,
-			tooltip,
-			bonusSet
-		)
+		actor.addNamedWeaponBonusesFor(nameQualifier, this.parent.usage, tags, base.count, levels, tooltip, bonusSet)
 		for (const f of this.parent.parent.features) {
 			this.extractWeaponBonus(f, bonusSet, base.count, levels, tooltip)
 		}

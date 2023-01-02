@@ -7,7 +7,8 @@ export class PDFEditorSheet extends JournalPDFPageSheet {
 	}
 
 	get template(): string {
-		return `systems/${SYSTEM_NAME}/templates/app/pdf-edit.hbs`
+		// @ts-ignore
+		return `systems/${SYSTEM_NAME}/templates/app/pdf-${this.isEditable ? "edit" : "view"}.hbs`
 	}
 
 	getData(options?: Partial<DocumentSheetOptions> | undefined): any {

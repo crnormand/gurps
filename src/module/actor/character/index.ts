@@ -1,11 +1,9 @@
 import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
 import { Feature, WeaponDRDivisorBonus } from "@feature"
 import { ConditionalModifier } from "@feature/conditional_modifier"
-import { CostReduction } from "@feature/cost_reduction"
 import { ReactionBonus } from "@feature/reaction_bonus"
 import { SkillBonus } from "@feature/skill_bonus"
 import { SkillPointBonus } from "@feature/skill_point_bonus"
-import { SpellBonus } from "@feature/spell_bonus"
 import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import {
 	EquipmentContainerGURPS,
@@ -30,7 +28,7 @@ import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeDef, AttributeType } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
-import { attrPrefix, gid, SETTINGS, SYSTEM_NAME } from "@module/data"
+import { attrPrefix, featureMap, gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
@@ -54,6 +52,8 @@ import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import { CharacterImporter } from "./import"
 import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
 import { HitLocation, HitLocationTable } from "./hit_location"
+import { AttributeBonusLimitation } from "@feature/attribute_bonus"
+import { FeatureType } from "@feature/base"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -64,13 +64,22 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	skillResolverExclusions: Map<string, boolean> = new Map()
 
-	featureMap: Map<string, Feature[]>
+	features: featureMap
 
 	constructor(data: CharacterSource, context: ActorConstructorContextGURPS = {}) {
 		super(data, context)
 		if (this.system.attributes) this.attributes = this.getAttributes()
 		if (this.system.resource_trackers) this.resource_trackers = this.getResourceTrackers()
-		this.featureMap = new Map()
+		this.features = {
+			attributeBonuses: [],
+			costReductions: [],
+			drBonuses: [],
+			skillBonuses: [],
+			skillPointBonuses: [],
+			spellBonuses: [],
+			spellPointBonuses: [],
+			weaponBonuses: [],
+		}
 	}
 
 	SizeModBonus = 0
@@ -545,7 +554,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Bonuses
 	get size_modifier_bonus(): number {
-		return this.bonusFor(attrPrefix + gid.SizeModifier, undefined)
+		return this.attributeBonusFor(attrPrefix + gid.SizeModifier, AttributeBonusLimitation.None)
 	}
 
 	get striking_st_bonus(): number {
@@ -913,45 +922,63 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	processFeatures() {
-		this.featureMap = new Map()
+		this.features = {
+			attributeBonuses: [],
+			costReductions: [],
+			drBonuses: [],
+			skillBonuses: [],
+			skillPointBonuses: [],
+			spellBonuses: [],
+			spellPointBonuses: [],
+			weaponBonuses: [],
+		}
 		for (const t of this.traits) {
 			if (t instanceof TraitGURPS) {
 				if (t.features)
 					for (const f of t.features) {
-						processFeature(t, this.featureMap, f, Math.max(t.levels, 0))
+						processFeature(t, this.features, f, Math.max(t.levels, 0))
 					}
 			}
 			if (CR_Features.has(t.crAdj))
 				for (const f of CR_Features?.get(t.crAdj) || []) {
-					processFeature(t, this.featureMap, f, Math.max(t.levels, 0))
+					processFeature(t, this.features, f, Math.max(t.levels, 0))
 				}
 			for (const m of t.deepModifiers) {
 				for (const f of m.features) {
-					processFeature(t, this.featureMap, f, m.levels)
+					processFeature(t, this.features, f, m.levels)
 				}
 			}
 		}
 		for (const s of this.skills) {
 			if (!(s instanceof SkillContainerGURPS))
 				for (const f of s.features) {
-					processFeature(s, this.featureMap, f, 0)
+					processFeature(s, this.features, f, 0)
 				}
 		}
 		for (const e of this.equipment) {
 			for (const f of e.features) {
-				processFeature(e, this.featureMap, f, 0)
+				processFeature(e, this.features, f, 0)
 			}
 			for (const m of e.deepModifiers) {
 				for (const f of m.features) {
-					processFeature(e, this.featureMap, f, 0)
+					processFeature(e, this.features, f, 0)
 				}
 			}
 		}
 		// This.featureMap = featureMap;
 		if (!this.calc) this.calc = {}
-		this.calc.lifting_st_bonus = this.bonusFor(`${attrPrefix}${gid.Strength}.lifting_only`, undefined)
-		this.calc.striking_st_bonus = this.bonusFor(`${attrPrefix}${gid.Strength}.striking_only`, undefined)
-		this.calc.throwing_st_bonus = this.bonusFor(`${attrPrefix}${gid.Strength}.throwing_only`, undefined)
+		this.calc.lifting_st_bonus = this.attributeBonusFor(
+			`${attrPrefix}${gid.Strength}.lifting_only`,
+			AttributeBonusLimitation.Lifting
+		)
+		this.calc.striking_st_bonus = this.attributeBonusFor(
+			`${attrPrefix}${gid.Strength}.striking_only`,
+			AttributeBonusLimitation.Striking
+		)
+		this.calc.throwing_st_bonus = this.attributeBonusFor(
+			`${attrPrefix}${gid.Strength}.throwing_only`,
+			AttributeBonusLimitation.Throwing
+		)
 		this.attributes = this.getAttributes()
 		if (this.attributes)
 			this.attributes.forEach(attr => {
@@ -959,7 +986,10 @@ class CharacterGURPS extends BaseActorGURPS {
 				const def = attr.attribute_def
 				if (def) {
 					const attrID = attrPrefix + attr.attr_id
-					this.system.attributes[attr.order].bonus = this.bonusFor(attrID, undefined)
+					this.system.attributes[attr.order].bonus = this.attributeBonusFor(
+						attrID,
+						AttributeBonusLimitation.None
+					)
 					if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type))
 						attr.bonus = Math.floor(attr.bonus)
 					this.system.attributes[attr.order].cost_reduction = this.costReductionFor(attrID)
@@ -971,9 +1001,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.attributes = this.getAttributes()
 		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
-		this.calc.dodge_bonus = this.bonusFor(`${attrPrefix}${gid.Dodge}`, undefined)
-		this.calc.parry_bonus = this.bonusFor(`${attrPrefix}${gid.Parry}`, undefined)
-		this.calc.block_bonus = this.bonusFor(`${attrPrefix}${gid.Block}`, undefined)
+		this.calc.dodge_bonus = this.attributeBonusFor(`${attrPrefix}${gid.Dodge}`, AttributeBonusLimitation.None)
+		this.calc.parry_bonus = this.attributeBonusFor(`${attrPrefix}${gid.Parry}`, AttributeBonusLimitation.None)
+		this.calc.block_bonus = this.attributeBonusFor(`${attrPrefix}${gid.Block}`, AttributeBonusLimitation.None)
 	}
 
 	processPrereqs(): void {
@@ -983,7 +1013,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			t.unsatisfied_reason = ""
 			if (t instanceof TraitGURPS && !t.prereqsEmpty) {
 				const tooltip = new TooltipGURPS()
-				if (!t.prereqs.satisfied(this, t, tooltip, prefix)) {
+				if (!t.prereqs.satisfied(this, t, tooltip, prefix)[0]) {
 					t.unsatisfied_reason = not_met + tooltip.toString()
 				}
 			}
@@ -993,8 +1023,22 @@ class CharacterGURPS extends BaseActorGURPS {
 			k.unsatisfied_reason = ""
 			const tooltip = new TooltipGURPS()
 			let satisfied = true
-			if (!k.prereqsEmpty) satisfied = k.prereqs.satisfied(this, k, tooltip, prefix)
+			let eqpPenalty = false
+			if (!k.prereqsEmpty) [satisfied, eqpPenalty] = k.prereqs.satisfied(this, k, tooltip, prefix)
 			if (satisfied && k instanceof TechniqueGURPS) satisfied = k.satisfied(tooltip, prefix)
+			if (eqpPenalty) {
+				const penalty = new SkillBonus(SkillBonus.defaults)
+				penalty.name!.qualifier = k.name!
+				penalty.specialization!.compare = StringComparison.Is
+				penalty.specialization!.qualifier = k.specialization
+				if (k.techLevel && k.techLevel !== "") {
+					penalty.amount = -10
+				} else {
+					penalty.amount = -5
+				}
+				penalty.setParent(k)
+				this.features.skillBonuses.push(penalty)
+			}
 			if (!satisfied) {
 				k.unsatisfied_reason = not_met + tooltip.toString()
 			}
@@ -1004,8 +1048,20 @@ class CharacterGURPS extends BaseActorGURPS {
 			b.unsatisfied_reason = ""
 			const tooltip = new TooltipGURPS()
 			let satisfied = true
-			if (!b.prereqsEmpty) satisfied = b.prereqs.satisfied(this, b, tooltip, prefix)
+			let eqpPenalty = false
+			if (!b.prereqsEmpty) [satisfied, eqpPenalty] = b.prereqs.satisfied(this, b, tooltip, prefix)
 			if (satisfied && b instanceof RitualMagicSpellGURPS) satisfied = b.satisfied(tooltip, prefix)
+			if (eqpPenalty) {
+				const penalty = new SkillBonus(SkillBonus.defaults)
+				penalty.name!.qualifier = b.name!
+				if (b.techLevel && b.techLevel !== "") {
+					penalty.amount = -10
+				} else {
+					penalty.amount = -5
+				}
+				penalty.setParent(b)
+				this.features.skillBonuses.push(penalty)
+			}
 			if (!satisfied) b.unsatisfied_reason = not_met + tooltip.toString()
 		}
 		for (const e of this.equipment) {
@@ -1124,10 +1180,21 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// Feature Processing
-	bonusFor(featureID: string, tooltip: TooltipGURPS | undefined): number {
+	// bonusFor(featureID: string, tooltip: TooltipGURPS | undefined): number {
+	// 	let total = 0
+	// 	for (const feature of this.featureMap?.get(featureID.toLowerCase()) ?? []) {
+
+	// 		if (!(feature instanceof WeaponDamageBonus)) {
+	// 			total += feature.adjustedAmount
+	// 			feature.addToTooltip(tooltip)
+	// 		}
+	// 	}
+	// 	return total
+	// }
+	attributeBonusFor(attributeId: string, limitation: AttributeBonusLimitation, tooltip?: TooltipGURPS): number {
 		let total = 0
-		for (const feature of this.featureMap?.get(featureID.toLowerCase()) ?? []) {
-			if (!(feature instanceof WeaponDamageBonus)) {
+		for (const feature of this.features.attributeBonuses) {
+			if (feature.limitation === limitation && feature.attribute === attributeId) {
 				total += feature.adjustedAmount
 				feature.addToTooltip(tooltip)
 			}
@@ -1135,15 +1202,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		return total
 	}
 
-	skillComparedBonusFor(
-		featureID: string,
-		name: string,
-		specialization: string,
-		tags: string[],
-		tooltip: TooltipGURPS | undefined
-	): number {
+	skillBonusFor(name: string, specialization: string, tags: string[], tooltip: TooltipGURPS | undefined): number {
 		let total = 0
-		for (const f of this.featureMap.get(featureID) ?? []) {
+		for (const f of this.features.skillBonuses) {
 			if (!(f instanceof SkillBonus)) continue
 			if (
 				stringCompare(name, f.name) &&
@@ -1157,15 +1218,14 @@ class CharacterGURPS extends BaseActorGURPS {
 		return total
 	}
 
-	skillPointComparedBonusFor(
-		featureID: string,
+	skillPointBonusFor(
 		name: string,
 		specialization: string,
 		tags: string[],
 		tooltip: TooltipGURPS | undefined
 	): number {
 		let total = 0
-		for (const f of this.featureMap?.get(featureID) ?? []) {
+		for (const f of this.features.skillPointBonuses) {
 			if (!(f instanceof SkillPointBonus)) continue
 			if (
 				stringCompare(name, f.name) &&
@@ -1179,212 +1239,269 @@ class CharacterGURPS extends BaseActorGURPS {
 		return total
 	}
 
-	spellBonusesFor(featureID: string, qualifier: string, tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let level = this.bonusFor(featureID, tooltip)
-		level += this.bonusFor(`${featureID}/${qualifier.toLowerCase()}`, tooltip)
-		level += this.spellComparedBonusFor(`${featureID}*`, qualifier, tags, tooltip)
-		return level
-	}
-
-	spellPointBonusesFor(
-		featureID: string,
-		qualifier: string,
+	spellBonusFor(
+		name: string,
+		powerSource: string,
+		colleges: string[],
 		tags: string[],
 		tooltip: TooltipGURPS | undefined
 	): number {
-		let level = this.bonusFor(featureID, tooltip)
-		level += this.bonusFor(`${featureID}/${qualifier.toLowerCase()}`, tooltip)
-		level += this.spellComparedBonusFor(`${featureID}*`, qualifier, tags, tooltip)
-		return level
-	}
-
-	spellComparedBonusFor(featureID: string, name: string, tags: string[], tooltip: TooltipGURPS | undefined): number {
 		let total = 0
-		for (const feature of this.featureMap.get(featureID.toLowerCase()) ?? []) {
-			if (
-				feature instanceof SpellBonus &&
-				stringCompare(name, feature.name) &&
-				stringCompare(tags, feature.tags)
-			) {
-				total += feature.adjustedAmount
-				feature.addToTooltip(tooltip)
+		for (let f of this.features.spellBonuses) {
+			if (stringCompare(tags, f.tags)) {
+				if (f.matchForType(name, powerSource, colleges)) {
+					total += f.adjustedAmount
+					f.addToTooltip(tooltip)
+				}
 			}
 		}
 		return total
 	}
 
-	bestCollegeSpellBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let best = -Infinity
-		let bestTooltip = ""
-		for (const c of colleges) {
-			const buffer = new TooltipGURPS()
-			if (!tooltip) tooltip = new TooltipGURPS()
-			const points = this.spellPointBonusesFor("spell.college.points", c, tags, buffer)
-			if (best < points) {
-				best = points
-				if (buffer) bestTooltip = buffer.toString()
+	spellPointBonusesFor(
+		name: string,
+		powerSource: string,
+		colleges: string[],
+		tags: string[],
+		tooltip: TooltipGURPS | undefined
+	): number {
+		let total = 0
+		for (let f of this.features.spellPointBonuses) {
+			if (stringCompare(tags, f.tags)) {
+				if (f.matchForType(name, powerSource, colleges)) {
+					total += f.adjustedAmount
+					f.addToTooltip(tooltip)
+				}
 			}
 		}
-		if (tooltip) tooltip.push(bestTooltip)
-		if (best === -Infinity) best = 0
-		return best
+		return total
 	}
 
-	bestCollegeSpellPointBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let best = -Infinity
-		let bestTooltip = ""
-		for (const c of colleges) {
-			const buffer = new TooltipGURPS()
-			if (!tooltip) tooltip = new TooltipGURPS()
-			const points = this.spellBonusesFor("spell.college", c, tags, buffer)
-			if (best < points) {
-				best = points
-				if (buffer) bestTooltip = buffer.toString()
-			}
-		}
-		if (tooltip) tooltip.push(bestTooltip)
-		if (best === -Infinity) best = 0
-		return best
-	}
+	// SpellComparedBonusFor(featureID: string, name: string, tags: string[], tooltip: TooltipGURPS | undefined): number {
+	// 	let total = 0
+	// 	for (const feature of this.featureMap.get(featureID.toLowerCase()) ?? []) {
+	// 		if (
+	// 			feature instanceof SpellBonus &&
+	// 			stringCompare(name, feature.name) &&
+	// 			stringCompare(tags, feature.tags)
+	// 		) {
+	// 			total += feature.adjustedAmount
+	// 			feature.addToTooltip(tooltip)
+	// 		}
+	// 	}
+	// 	return total
+	// }
 
-	addWeaponComparedBonusesFor(
-		featureID: string,
-		nameQualifier: string,
-		specializationQualifier: string,
-		tagsQualifier: string[],
+	// bestCollegeSpellBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
+	// 	let best = -Infinity
+	// 	let bestTooltip = ""
+	// 	for (const c of colleges) {
+	// 		const buffer = new TooltipGURPS()
+	// 		if (!tooltip) tooltip = new TooltipGURPS()
+	// 		const points = this.spellPointBonusesFor("spell.college.points", c, tags, buffer)
+	// 		if (best < points) {
+	// 			best = points
+	// 			if (buffer) bestTooltip = buffer.toString()
+	// 		}
+	// 	}
+	// 	if (tooltip) tooltip.push(bestTooltip)
+	// 	if (best === -Infinity) best = 0
+	// 	return best
+	// }
+
+	// bestCollegeSpellPointBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
+	// 	let best = -Infinity
+	// 	let bestTooltip = ""
+	// 	for (const c of colleges) {
+	// 		const buffer = new TooltipGURPS()
+	// 		if (!tooltip) tooltip = new TooltipGURPS()
+	// 		const points = this.spellBonusesFor("spell.college", c, tags, buffer)
+	// 		if (best < points) {
+	// 			best = points
+	// 			if (buffer) bestTooltip = buffer.toString()
+	// 		}
+	// 	}
+	// 	if (tooltip) tooltip.push(bestTooltip)
+	// 	if (best === -Infinity) best = 0
+	// 	return best
+	// }
+	//
+
+	addWeaponWithSkillBonusesFor(
+		name: string,
+		specialization: string,
+		tags: string[],
 		dieCount: number,
-		tooltip: TooltipGURPS | undefined,
-		m: Map<WeaponDamageBonus, boolean>
+		levels: number,
+		tooltip?: TooltipGURPS,
+		m?: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>
 	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
-		if (!m) m = new Map()
-		for (const one of this.weaponComparedBonusesFor(
-			featureID,
-			nameQualifier,
-			specializationQualifier,
-			tagsQualifier,
-			dieCount,
-			tooltip
-		)) {
-			m.set(one, true)
+		m ??= new Map()
+		let rsl = -Infinity
+		for (const sk of this.skillNamed(name, specialization, true, null)) {
+			if (rsl < sk.level.relative_level) rsl = sk.level.relative_level
+		}
+		if (rsl !== -Infinity) {
+			for (const f of this.features.weaponBonuses) {
+				if (
+					f.selection_type === "weapons_with_required_skill" &&
+					stringCompare(name, f.name) &&
+					stringCompare(specialization, f.specialization) &&
+					numberCompare(rsl, f.level) &&
+					stringCompare(tags, f.tags)
+				) {
+					const level = f.levels
+					if (f.type === FeatureType.WeaponBonus) {
+						f.levels = dieCount
+					} else {
+						f.levels = levels
+					}
+					f.addToTooltip(tooltip)
+					f.levels = level
+					m.set(f, true)
+				}
+			}
 		}
 		return m
 	}
 
 	addNamedWeaponBonusesFor(
-		featureID: string,
-		nameQualifier: string,
-		usageQualifier: string,
-		tagsQualifier: string[],
+		name: string,
+		usage: string,
+		tags: string[],
 		dieCount: number,
-		tooltip: TooltipGURPS | undefined,
-		m: Map<WeaponDamageBonus, boolean>
+		levels: number,
+		tooltip?: TooltipGURPS,
+		m?: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>
 	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
-		if (!m) m = new Map()
-		for (const one of this.namedWeaponBonusesFor(
-			featureID,
-			nameQualifier,
-			usageQualifier,
-			tagsQualifier,
-			dieCount,
-			tooltip
-		)) {
-			m.set(one, true)
+		m ??= new Map()
+		for (const f of this.features.weaponBonuses) {
+			if (
+				f.selection_type === "weapons_with_name" &&
+				stringCompare(name, f.name) &&
+				stringCompare(usage, f.specialization) &&
+				stringCompare(tags, f.tags)
+			) {
+				const level = f.levels
+				if (f.type === FeatureType.WeaponBonus) {
+					f.levels = dieCount
+				} else {
+					f.levels = levels
+				}
+				f.addToTooltip(tooltip)
+				f.levels = level
+				m.set(f, true)
+			}
 		}
 		return m
 	}
 
-	namedWeaponBonusesFor(
-		featureID: string,
-		nameQualifier: string,
-		usageQualifier: string,
-		tagsQualifier: string[],
-		dieCount: number,
-		tooltip: TooltipGURPS | undefined
-	): Array<WeaponDamageBonus | WeaponDRDivisorBonus> {
-		const list = this.featureMap.get(featureID.toLowerCase())
-		if (!list || list.length === 0) return []
-		const bonuses: WeaponDamageBonus[] = []
-		for (const f of list) {
+	// AddNamedWeaponBonusesFor(
+	// 	featureID: string,
+	// 	nameQualifier: string,
+	// 	usageQualifier: string,
+	// 	tagsQualifier: string[],
+	// 	dieCount: number,
+	// 	tooltip: TooltipGURPS | undefined,
+	// 	m: Map<WeaponDamageBonus, boolean>
+	// ): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
+	// 	if (!m) m = new Map()
+	// 	for (const one of this.namedWeaponBonusesFor(
+	// 		featureID,
+	// 		nameQualifier,
+	// 		usageQualifier,
+	// 		tagsQualifier,
+	// 		dieCount,
+	// 		tooltip
+	// 	)) {
+	// 		m.set(one, true)
+	// 	}
+	// 	return m
+	// }
+
+	// namedWeaponBonusesFor(
+	// 	featureID: string,
+	// 	nameQualifier: string,
+	// 	usageQualifier: string,
+	// 	tagsQualifier: string[],
+	// 	dieCount: number,
+	// 	tooltip: TooltipGURPS | undefined
+	// ): Array<WeaponDamageBonus | WeaponDRDivisorBonus> {
+	// 	const list = this.featureMap.get(featureID.toLowerCase())
+	// 	if (!list || list.length === 0) return []
+	// 	const bonuses: WeaponDamageBonus[] = []
+	// 	for (const f of list) {
+	// 		if (
+	// 			(f instanceof WeaponDamageBonus || f instanceof WeaponDRDivisorBonus) &&
+	// 			f.selection_type === "weapons_with_name" &&
+	// 			stringCompare(nameQualifier, f.name) &&
+	// 			stringCompare(usageQualifier, f.specialization) &&
+	// 			stringCompare(tagsQualifier, f.tags)
+	// 		) {
+	// 			bonuses.push(f)
+	// 			const level = f instanceof WeaponDamageBonus ? dieCount : f.levels
+	// 			f.levels = dieCount
+	// 			f.addToTooltip(tooltip)
+	// 			f.levels = level
+	// 		}
+	// 	}
+	// 	return bonuses
+	// }
+
+	namedWeaponSkillBonusesFor(name: string, usage: string, tags: string[], tooltip: TooltipGURPS): SkillBonus[] {
+		const bonuses: SkillBonus[] = []
+		for (const f of this.features.skillBonuses) {
 			if (
-				(f instanceof WeaponDamageBonus || f instanceof WeaponDRDivisorBonus) &&
 				f.selection_type === "weapons_with_name" &&
-				stringCompare(nameQualifier, f.name) &&
-				stringCompare(usageQualifier, f.specialization) &&
-				stringCompare(tagsQualifier, f.tags)
+				stringCompare(name, f.name) &&
+				stringCompare(usage, f.specialization) &&
+				stringCompare(tags, f.tags)
 			) {
 				bonuses.push(f)
-				const level = f instanceof WeaponDamageBonus ? dieCount : f.levels
-				f.levels = dieCount
-				f.addToTooltip(tooltip)
-				f.levels = level
-			}
-		}
-		return bonuses
-	}
-
-	namedWeaponSkillBonusesFor(
-		featureID: string,
-		nameQualifier: string,
-		usageQualifier: string,
-		tagsQualifier: string[],
-		tooltip: TooltipGURPS
-	): Feature[] {
-		const list = this.featureMap.get(featureID.toLowerCase()) ?? []
-		if (list.length === 0) return []
-		let bonuses: SkillBonus[] = []
-		for (const f of list) {
-			if (
-				f instanceof SkillBonus &&
-				f.selection_type === "weapons_with_name" &&
-				stringCompare(nameQualifier, f.name) &&
-				stringCompare(usageQualifier, f.specialization) &&
-				stringCompare(tagsQualifier, f.tags)
-			) {
-				bonuses.push(f)
 				f.addToTooltip(tooltip)
 			}
 		}
 		return bonuses
 	}
 
-	weaponComparedBonusesFor(
-		featureID: string,
-		nameQualifier: string,
-		specializationQualifier: string,
-		tagsQualifier: string[],
-		dieCount: number,
-		tooltip: TooltipGURPS | undefined
-	): WeaponDamageBonus[] {
-		let rsl = -Infinity
-		for (const sk of this.skillNamed(nameQualifier, specializationQualifier, true, null)) {
-			if (rsl < sk.level.relative_level) rsl = sk.level.relative_level
-		}
-		if (rsl === -Infinity) return []
-		let bonuses: WeaponDamageBonus[] = []
-		for (const f of this.featureMap.get(featureID.toLowerCase()) ?? []) {
-			if (f instanceof WeaponDamageBonus) {
-				if (
-					stringCompare(nameQualifier, f.name) &&
-					stringCompare(specializationQualifier, f.specialization) &&
-					numberCompare(rsl, f.level) &&
-					stringCompare(tagsQualifier, f.tags)
-				) {
-					bonuses.push(f)
-					let level = f.levels
-					f.levels = dieCount
-					f.addToTooltip(tooltip)
-					f.levels = level
-				}
-			}
-		}
-		return bonuses
-	}
+	// WeaponComparedBonusesFor(
+	// 	featureID: string,
+	// 	nameQualifier: string,
+	// 	specializationQualifier: string,
+	// 	tagsQualifier: string[],
+	// 	dieCount: number,
+	// 	tooltip: TooltipGURPS | undefined
+	// ): WeaponDamageBonus[] {
+	// 	let rsl = -Infinity
+	// 	for (const sk of this.skillNamed(nameQualifier, specializationQualifier, true, null)) {
+	// 		if (rsl < sk.level.relative_level) rsl = sk.level.relative_level
+	// 	}
+	// 	if (rsl === -Infinity) return []
+	// 	let bonuses: WeaponDamageBonus[] = []
+	// 	for (const f of this.featureMap.get(featureID.toLowerCase()) ?? []) {
+	// 		if (f instanceof WeaponDamageBonus) {
+	// 			if (
+	// 				stringCompare(nameQualifier, f.name) &&
+	// 				stringCompare(specializationQualifier, f.specialization) &&
+	// 				numberCompare(rsl, f.level) &&
+	// 				stringCompare(tagsQualifier, f.tags)
+	// 			) {
+	// 				bonuses.push(f)
+	// 				let level = f.levels
+	// 				f.levels = dieCount
+	// 				f.addToTooltip(tooltip)
+	// 				f.levels = level
+	// 			}
+	// 		}
+	// 	}
+	// 	return bonuses
+	// }
 
-	costReductionFor(featureID: string): number {
+	costReductionFor(attributeID: string): number {
 		let total = 0
-		for (const feature of this.featureMap.get(featureID.toLowerCase()) ?? []) {
-			if (feature instanceof CostReduction) {
-				total += feature.percentage
+		for (const f of this.features.costReductions) {
+			if (f.attribute === attributeID) {
+				total += f.percentage
 			}
 		}
 		if (total > 80) total = 80
@@ -1604,15 +1721,17 @@ class CharacterGURPS extends BaseActorGURPS {
  * @param f
  * @param levels
  */
-export function processFeature(_parent: ItemGURPS, m: Map<string, Feature[]>, f: Feature, levels: number): void {
+export function processFeature(_parent: ItemGURPS, m: featureMap, f: Feature, levels: number): void {
 	// Const key = f.type;
-	const key = f.featureMapKey.toLowerCase()
-	const list = m.get(key) ?? []
+	const key = f.featureMapKey.toLowerCase() as keyof featureMap
+	const list = m[key] ?? []
+	// Const list = m.get(key) ?? []
 	// F.setParent(parent);
 	// f.setLevel(levels);
 	f.levels = levels // ?
-	list.push(f)
-	m.set(key, list!)
+	list.push(f as any)
+	m[key] = list as any
+	// M.set(key, list!)
 }
 
 interface CharacterGURPS extends BaseActorGURPS {

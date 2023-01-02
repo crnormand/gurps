@@ -17,8 +17,8 @@ export const TokenUtil = {
 		// Create a rectangle the size of a grid element centered on the point.
 		const gridSize = (canvas!.scene as any).grid!.size
 		const rectangle = {
-			x: point.x - (gridSize / 2),
-			y: point.y - (gridSize / 2),
+			x: point.x - gridSize / 2,
+			y: point.y - gridSize / 2,
 			height: gridSize,
 			width: gridSize,
 		}

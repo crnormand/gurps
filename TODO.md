@@ -12,8 +12,6 @@
 
 ## 1.0.0
 
--   add skill default functionality
--   make add button generic function
 -   range ruler
 -   dice roller button
 -   send modifiers from prompt

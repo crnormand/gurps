@@ -50,9 +50,10 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 	adjustedPoints(tooltip?: TooltipGURPS): number {
 		let points = this.points
 		if (this.actor) {
-			points += this.actor.bestCollegeSpellPointBonus(this.college, this.tags, tooltip)
-			points += this.actor.spellPointBonusesFor("spell.power_source.points", this.powerSource, this.tags, tooltip)
-			points += this.actor.spellPointBonusesFor("spell.points", this.name ?? "", this.tags, tooltip)
+			points += this.actor.spellPointBonusesFor(this.name!, this.powerSource, this.college, this.tags, tooltip)
+			// Points += this.actor.bestCollegeSpellPointBonus(this.college, this.tags, tooltip)
+			// points += this.actor.spellPointBonusesFor("spell.power_source.points", this.powerSource, this.tags, tooltip)
+			// points += this.actor.spellPointBonusesFor("spell.points", this.name ?? "", this.tags, tooltip)
 			points = Math.max(points, 0)
 		}
 		return points
@@ -103,10 +104,38 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 	}
 
 	get calculateLevel(): SkillLevel {
-		let skillLevel = {
+		// Const tooltip = new TooltipGURPS()
+		// let relativeLevel = difficultyRelativeLevel(this.system.difficulty)
+		// let level = -Infinity
+		// if (this.actor) {
+		// 	let points = Math.trunc(this.points)
+		// 	level = this.actor.resolveAttributeCurrent(this.attribute)
+		// 	if (this.system.difficulty === Difficulty.Wildcard) points = Math.trunc(points / 3)
+		// 	if (points < 1) {
+		// 		level = -Infinity
+		// 		relativeLevel = 0
+		// 	} else if (points === 0) {
+		// 		// do nothing
+		// 	} else if (points < 4) {
+		// 		relativeLevel += 1
+		// 	} else {
+		// 		relativeLevel += 1 + Math.trunc(points/4)
+		// 	}
+		// 	if (level !== -Infinity) {
+		// 		relativeLevel += this.actor.spellBonusFor(this.name!, this.powerSource, this.college, this.tags, tooltip)
+		// 		relativeLevel = Math.trunc(relativeLevel)
+		// 		level += relativeLevel
+		// 	}
+		// }
+		// return  {
+		// 	level: level,
+		// 	relative_level: relativeLevel,
+		// 	tooltip: tooltip.toString()
+		// }
+		let skillLevel: SkillLevel = {
 			level: -Infinity,
 			relative_level: 0,
-			tooltip: new TooltipGURPS() as TooltipGURPS | string,
+			tooltip: new TooltipGURPS(),
 		}
 		if (this.college.length === 0) skillLevel = this.determineLevelForCollege("")
 		else {
@@ -118,10 +147,13 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 		if (this.actor) {
 			const tooltip = new TooltipGURPS()
 			tooltip.push(skillLevel.tooltip)
-			let levels = this.actor.bestCollegeSpellBonus(this.college, this.tags, tooltip)
-			levels += this.actor.spellBonusesFor("spell.power_source", this.powerSource, this.tags, tooltip)
-			levels += this.actor.spellBonusesFor("spell.name", this.name ?? "", this.tags, tooltip)
-			levels = Math.trunc(levels)
+			let levels = Math.trunc(
+				this.actor.spellBonusFor(this.name!, this.powerSource, this.college, this.tags, tooltip)
+			)
+			// Let levels = this.actor.bestCollegeSpellBonus(this.college, this.tags, tooltip)
+			// levels += this.actor.spellBonusesFor("spell.power_source", this.powerSource, this.tags, tooltip)
+			// levels += this.actor.spellBonusesFor("spell.name", this.name ?? "", this.tags, tooltip)
+			// levels = Math.trunc(levels)
 			skillLevel.level += levels
 			skillLevel.relative_level += levels
 			skillLevel.tooltip = tooltip
@@ -170,14 +202,8 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 				if (this.difficulty === "h") points -= 1
 				if (points > 0) relative_level = points
 				if (level !== -Infinity) {
-					relative_level += this.actor.bonusFor(`skill.name/${this.name}`, tooltip)
-					relative_level += this.actor.skillComparedBonusFor(
-						"skill.name*",
-						this.name ?? "",
-						college,
-						this.tags,
-						tooltip
-					)
+					// Relative_level += this.actor.bonusFor(`skill.name/${this.name}`, tooltip)
+					relative_level += this.actor.skillBonusFor(this.name!, college, this.tags, tooltip)
 					level += relative_level
 				}
 				if (limit) {

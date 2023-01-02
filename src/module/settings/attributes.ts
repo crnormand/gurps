@@ -87,11 +87,6 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						cost_adj_percent_per_sm: 0,
 					},
 					{
-						id: "senses",
-						type: "secondary_separator",
-						name: "Senses",
-					},
-					{
 						id: "per",
 						type: AttributeType.Integer,
 						name: "Per",
@@ -133,11 +128,6 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						cost_adj_percent_per_sm: 0,
 					},
 					{
-						id: "movement",
-						type: "secondary_separator",
-						name: "Movement",
-					},
-					{
 						id: "basic_speed",
 						type: AttributeType.Decimal,
 						name: "Basic Speed",
@@ -152,34 +142,6 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 						attribute_base: "floor($basic_speed)",
 						cost_per_point: 5,
 						cost_adj_percent_per_sm: 0,
-					},
-					{
-						id: "highjump",
-						type: "integer_ref",
-						name: "High Jump (inches)",
-						attribute_base:
-							"(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) - 10) * enc(false, true) * (2 ^ max(0, trait_level(super jump)))",
-					},
-					{
-						id: "running_highjump",
-						type: "integer_ref",
-						name: "when running",
-						attribute_base:
-							'(6 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 10) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))',
-					},
-					{
-						id: "broadjump",
-						type: "integer_ref",
-						name: "Broad Jump (ft)",
-						attribute_base:
-							"(2 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) - 3) * enc(false, true) * (2 ^ max(0, trait_level(super jump)))",
-					},
-					{
-						id: "running_broadjump",
-						type: "intefer_ref",
-						name: "when running",
-						attribute_base:
-							'(2 * max(max($basic_move, floor(skill_level(jumping) / 2)), $st / 4) * (1 + max(0, trait_level("enhanced move (ground)"))) - 3) * enc(false, true) * if(trait_level("enhanced move (ground)")<1,2,1) * (2 ^ max(0, trait_level(super jump)))',
 					},
 					{
 						id: "fp",
