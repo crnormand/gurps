@@ -1,4 +1,3 @@
-import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import {
 	Difficulty,
 	NumberCompare,
@@ -8,7 +7,6 @@ import {
 	Study,
 	StudyType,
 } from "@module/data"
-import { DiceGURPS } from "@module/dice"
 import { v4 as uuidv4 } from "uuid"
 
 /**
@@ -88,7 +86,7 @@ export function getCurrentTime(): string {
  */
 export function stringCompare(value?: string | string[] | null, base?: StringCompare): boolean {
 	if (!base) return true
-	if (!value) return false
+	if (!value) value = ""
 	if (typeof value === "string") value = [value]
 	value = value.map(e => {
 		return e.toLowerCase()
@@ -386,49 +384,49 @@ export function equalFold(s: string, t: string): boolean {
  * @param {string | null} flavor
  * @returns {string}
  */
-export function d6ify(str: string, flavor = ""): string {
+export function d6ify(str: string, flavor: string | null = ""): string {
 	let w = str.replace(/d([^6])/g, `d6${flavor || ""}$1`) // Find 'd's without a 6 behind it, and add it.
 	return w.replace(/d$/g, `d6${flavor || ""}`) // And do the same for the end of the line.
 }
 
-/**
- *
- * @param body
- */
-export function getHitLocations(body: HitLocationTable): HitLocation[] {
-	/**
-	 *
-	 * @param b
-	 */
-	function updateRollRanges(b: HitLocationTable) {
-		let start = new DiceGURPS(b.roll).minimum(false)
-		for (const i of b.locations) {
-			start = updateRollRange(i, start)
-		}
-	}
-	/**
-	 *
-	 * @param h
-	 * @param start
-	 */
-	function updateRollRange(h: HitLocation, start: number): number {
-		h.calc ??= { roll_range: "", dr: {} }
-		h.slots ??= 0
-		if (h.slots === 0) h.calc.roll_range = "-"
-		else if (h.slots === 1) h.calc.roll_range = start.toString()
-		else {
-			h.calc.roll_range = `${start}-${start + h.slots - 1}`
-		}
-		if (h.sub_table) {
-			updateRollRanges(h.sub_table)
-		}
-		return start + h.slots
-	}
+// /**
+//  *
+//  * @param body
+//  */
+// export function getHitLocations(body: HitLocationTable): HitLocation[] {
+// 	/**
+// 	 *
+// 	 * @param b
+// 	 */
+// 	function updateRollRanges(b: HitLocationTable) {
+// 		let start = new DiceGURPS(b.roll).minimum(false)
+// 		for (const i of b.locations) {
+// 			start = updateRollRange(i, start)
+// 		}
+// 	}
+// 	/**
+// 	 *
+// 	 * @param h
+// 	 * @param start
+// 	 */
+// 	function updateRollRange(h: HitLocation, start: number): number {
+// 		h.calc ??= { roll_range: "", dr: {} }
+// 		h.slots ??= 0
+// 		if (h.slots === 0) h.calc.roll_range = "-"
+// 		else if (h.slots === 1) h.calc.roll_range = start.toString()
+// 		else {
+// 			h.calc.roll_range = `${start}-${start + h.slots - 1}`
+// 		}
+// 		if (h.sub_table) {
+// 			updateRollRanges(h.sub_table)
+// 		}
+// 		return start + h.slots
+// 	}
 
-	if (!body) return []
-	updateRollRanges(body)
-	return body.locations
-}
+// 	if (!body) return []
+// 	updateRollRanges(body)
+// 	return body.locations
+// }
 
 /**
  *

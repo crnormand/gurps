@@ -29,6 +29,10 @@ export class TraitContainerGURPS extends ContainerGURPS {
 		return this.system.container_type
 	}
 
+	get isLeveled(): boolean {
+		return false
+	}
+
 	get levels(): number {
 		return 0
 	}

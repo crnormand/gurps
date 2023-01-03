@@ -5,7 +5,7 @@ import { Attribute, AttributeObj } from "@module/attribute"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
-import { HitLocationTable } from "./hit_location"
+import { HitLocationTableData } from "./hit_location"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -75,7 +75,7 @@ export interface CharacterSettings {
 		orientation: string
 	}
 	block_layout: Array<string>
-	body_type: HitLocationTable
+	body_type: HitLocationTableData
 	attributes: AttributeDefObj[]
 	resource_trackers: ResourceTrackerDefObj[]
 }

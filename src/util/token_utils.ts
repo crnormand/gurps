@@ -1,13 +1,12 @@
 import { SYSTEM_NAME } from "@module/data"
 
 export const TokenUtil = {
-
 	/**
 	 * Displays a popup dialog asking which token from an array the user wants.
 	 * @param tokens Token[]
 	 * @returns Promise<Token | undefined>
 	 */
-	askWhichToken: async function(tokens: Token[]): Promise<Token | undefined> {
+	askWhichToken: async function (tokens: Token[]): Promise<Token | undefined> {
 		const g = game as Game
 
 		const d = await new Promise<Token | undefined>(async (resolve, reject) => {

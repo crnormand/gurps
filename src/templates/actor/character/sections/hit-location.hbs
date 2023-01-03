@@ -1,8 +1,9 @@
-<div class="roll" {{{indent tab "text" 0 6}}}>{{this.calc.roll_range}}</div>
+{{print this.displayDR}}
+<div class="roll" {{{indent tab "text" 0 6}}}>{{this.roll_range}}</div>
 <div class="location" {{{indent tab "text" 0 6}}}>{{this.table_name}}</div>
 <div data-modifier="{{ror this.hit_penalty 0}}" data-comment="{{localize 'gurps.character.body_type.penalty_for' name=this.table_name}}"
 	data-type="modifier" class="penalty rollable">{{signed (ror this.hit_penalty 0)}}</div>
-<div class="dr">{{splitDR this.calc.dr}}</div>
+<div class="dr">{{this.displayDR}}</div>
 {{#if this.sub_table}}
 {{#each this.sub_table.locations}}
 {{>actor/character/sections/hit-location tab=(sum ../tab 1)}}

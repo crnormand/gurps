@@ -278,6 +278,16 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const encumbrance = this.prepareEncumbrance()
 		const lifts = this.prepareLifts()
 		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)
+		// Const hit_locations = this.actor.HitLocations.map(e => {
+		// 	return {
+		// 		...e,
+		// 		...{
+		// 			displayDR: e.displayDR
+		// 		}
+		// 	}
+		// })
+		const hit_locations = this.actor.HitLocations
+		console.log(hit_locations)
 		const sheetData = {
 			...super.getData(options),
 			...{
@@ -296,6 +306,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				postures: (CONFIG as any).GURPS.select.postures,
 				move_types: (CONFIG as any).GURPS.select.move_types,
 				overencumbered: overencumbered,
+				hit_locations: hit_locations,
 			},
 		}
 		this.prepareItems(sheetData)

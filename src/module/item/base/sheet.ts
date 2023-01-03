@@ -3,11 +3,11 @@ import { HitLocationTable } from "@actor/character/hit_location"
 import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@item"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
-import { NumberComparison, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
+import { gid, NumberComparison, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { WeaponSheet } from "@module/weapon/sheet"
 import { PrereqType } from "@prereq"
-import { getHitLocations, i18n, prepareFormData } from "@util"
+import { i18n, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
 // @ts-ignore
@@ -39,7 +39,7 @@ export class ItemSheetGURPS extends ItemSheet {
 				if (e.type.includes("_separator")) return
 				attributes[e.id] = e.name
 			})
-			getHitLocations(default_locations).forEach(e => {
+			default_locations.locations.forEach(e => {
 				locations[e.id] = e.choice_name
 			})
 		}
@@ -102,6 +102,7 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".feature .remove").on("click", event => this._removeFeature(event))
 		html.find(".feature .type").on("change", event => this._onFeatureTypeChange(event))
 		html.find("#defaults .add").on("click", event => this._addDefault(event))
+		html.find(".default .remove").on("click", event => this._removeDefault(event))
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
 		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
@@ -245,9 +246,9 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	protected async _addDefault(event: JQuery.ClickEvent): Promise<any> {
 		event.preventDefault()
-		const defaults = (this.item.system as any).defaults
+		const defaults = (this.item.system as any).defaults ?? []
 		defaults.push({
-			type: "skill",
+			type: gid.Skill,
 			name: "",
 			specialization: "",
 			modifier: 0,
@@ -259,7 +260,7 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	protected async _removeDefault(event: JQuery.ClickEvent): Promise<any> {
 		const index = $(event.currentTarget).data("index")
-		const defaults = (this.item.system as any).defaults
+		const defaults = (this.item.system as any).defaults ?? []
 		defaults.splice(index, 1)
 		const update: any = {}
 		update["system.defaults"] = defaults

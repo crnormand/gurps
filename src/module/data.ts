@@ -132,6 +132,7 @@ export enum gid {
 	TraitModifier = "trait_modifier",
 	Vision = "vision",
 	Will = "will",
+	Flexible = "flexible",
 }
 
 export const attrPrefix = "attr."
