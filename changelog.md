@@ -1,6 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.15.8 12/31/2022
+Release 0.15.19 
+
+- Add /mod command to allow setting of condition modifiers
+- Change modifier tooltip to use condition modifiers
+
+Release 0.15.18 12/31/2022
 
 - Update to JB2a 0.5.3
 - Fix editing of Will and Per attributes (thanks @JT314!)

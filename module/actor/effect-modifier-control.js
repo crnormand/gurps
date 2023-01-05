@@ -7,7 +7,7 @@ export class EffectModifierControl {
   static EffectModName = 'GURPSEffectsMod'
 
   constructor() {
-    this._showPopup = false
+    this._showPopup = true
     this.token = null
 
     Hooks.once('init', this._registerSetting.bind(this))
@@ -16,7 +16,10 @@ export class EffectModifierControl {
     Hooks.on('updateToken', this._updateToken.bind(this))
     Hooks.on('createActiveEffect', this._createActiveEffect.bind(this))
     Hooks.on('targetToken', this._targetToken.bind(this))
-    Hooks.once('ready', () => (this._ui = new EffectModifierPopout(null, this)))
+    Hooks.once('ready', () => {
+      this._ui = new EffectModifierPopout(null, this)
+      this.refresh()
+    })
     Hooks.on('closeEffectModifierPopout', () => (this.showPopup = false))
   }
 
@@ -116,5 +119,9 @@ export class EffectModifierControl {
     } else {
       this._ui.closeApp(closeOptions)
     }
+  }
+  
+  refresh() {
+    this._ui?.render(true)
   }
 }
