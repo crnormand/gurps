@@ -67,6 +67,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ManeuverChatProcessor())
   ChatProcessors.registerProcessor(new RepeatChatProcessor())
   ChatProcessors.registerProcessor(new StopChatProcessor())
+  ChatProcessors.registerProcessor(new ModChatProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -1153,5 +1154,45 @@ class StopChatProcessor extends ChatProcessor {
       return false
     }
     GURPS.LastActor.RepeatAnimation = false
+  }
+}
+
+class ModChatProcessor extends ChatProcessor {
+  help() {
+    return '/mod c|clear|&lt;OtF modifier&gt;'
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/mod *(clear|c)?(.*)/i)
+    return !!this.match
+  }
+
+  async process(line) {
+    if (!GURPS.LastActor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return false
+    }
+    let actor = GURPS.LastActor
+    let uc = "(" + i18n("GURPS.equipmentUserCreated") + ")"
+    if (!!this.match[1]) {
+      let m = actor.system.conditions.self.modifiers.filter(i => !i.endsWith(uc))
+      await actor.update({ 'system.conditions.self.modifiers' : m })
+      actor.system.conditions.self.modifiers = m      
+      GURPS.EffectModifierControl.refresh()
+      return true 
+    }
+    let action = parselink(this.match[2].trim())
+    if (action.action?.type == 'modifier') {
+      let m = actor.system.conditions.self.modifiers
+      m.push(action.action.orig + " " + uc)
+      //GURPS.LastActor.system.conditions.self.modifiers = m
+      //await actor.internalUpdate({ 'system.conditions.self.-=modifiers' : null })
+      await actor.update({ 'system.conditions.self.modifiers' : m })
+      actor.system.conditions.self.modifiers = m      
+      GURPS.EffectModifierControl.refresh()
+      return true
+    } else
+      ui.notifications.warn(i18n("GURPS.chatUnrecognizedFormat"))
+      return false
   }
 }
