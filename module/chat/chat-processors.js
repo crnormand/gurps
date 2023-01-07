@@ -1011,12 +1011,12 @@ class DevChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/dev +(.*)/i)
+    this.match = line.match(/^\/dev *(.*)/i)
     return !!this.match
   }
   async process(line) {
     let m = this.match[1].match(/(\w+)(.*)/)
-    switch (m[1]) {
+    switch (m ? m[1] : '') {
       case 'open': {
         // Open the full character sheet for an Actor
         let a = game.actors.getName(m[2].trim())
@@ -1027,10 +1027,6 @@ class DevChatProcessor extends ChatProcessor {
       case 'clear': {
         // flush the chat log without confirming
         game.messages.documentClass.deleteDocuments([], { deleteAll: true })
-        break
-      }
-      case 'reset': {
-        GURPS.executeOTF('/sel *\\\\/sr [/hp reset]\\\\/sr [/fp reset]\\\\/sr [/st clear]')
         break
       }
       case 'resetstatus': {
@@ -1051,6 +1047,11 @@ class DevChatProcessor extends ChatProcessor {
             }
           } 
         }  
+      }
+      default: {
+        this.prnt('open &lt;name&gt;')
+        this.prnt('clear')
+        this.prnt('resetstatus')
       }
     }
   }
@@ -1175,24 +1176,22 @@ class ModChatProcessor extends ChatProcessor {
     let actor = GURPS.LastActor
     let uc = "(" + i18n("GURPS.equipmentUserCreated") + ")"
     if (!!this.match[1]) {
-      let m = actor.system.conditions.self.modifiers.filter(i => !i.endsWith(uc))
-      await actor.update({ 'system.conditions.self.modifiers' : m })
-      actor.system.conditions.self.modifiers = m      
-      GURPS.EffectModifierControl.refresh()
+      if (actor.system.conditions.usermods) {
+        let m = actor.system.conditions.usermods.filter(i => !i.endsWith(uc))
+        actor.update({ 'system.conditions.usermods' : m }).then(() => GURPS.EffectModifierControl.refresh())
+      }
       return true 
     }
     let action = parselink(this.match[2].trim())
     if (action.action?.type == 'modifier') {
-      let m = actor.system.conditions.self.modifiers
-      m.push(action.action.orig + " " + uc)
-      //GURPS.LastActor.system.conditions.self.modifiers = m
-      //await actor.internalUpdate({ 'system.conditions.self.-=modifiers' : null })
-      await actor.update({ 'system.conditions.self.modifiers' : m })
-      actor.system.conditions.self.modifiers = m      
-      GURPS.EffectModifierControl.refresh()
-      return true
-    } else
-      ui.notifications.warn(i18n("GURPS.chatUnrecognizedFormat"))
-      return false
+      let mods = actor.system.conditions.usermods ? [...actor.system.conditions.usermods] : []
+      mods.push(action.action.orig + " " + uc)
+      actor.update({"system.conditions.usermods": mods}).then(() => GURPS.EffectModifierControl.refresh())
+    } else {
+      this.prnt(actor.name + " => " + i18n("GURPS.modifier") )
+      actor.system.conditions.usermods?.forEach(m => this.prnt(m))
+      //ui.notifications.warn(i18n("GURPS.chatUnrecognizedFormat"))
+    }
+    return true
   }
 }

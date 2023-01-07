@@ -82,7 +82,7 @@ export class GurpsActor extends Actor {
   getOwners() {
     return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER)
   }
-
+  
   // 0.8.x added steps necessary to switch sheets
   /**
    * @param {Application} newSheet
