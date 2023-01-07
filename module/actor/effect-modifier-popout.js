@@ -113,7 +113,7 @@ export class EffectModifierPopout extends Application {
     if (t && t.actor) {
       let umods = t.actor.system.conditions.usermods
       if (umods) {
-        let m = umods.filter(i => i != text)
+        let m = umods.filter(i => sanitize(i) != text)
         if (umods.length != m.length)
           t.actor.update({'system.conditions.usermods' : m}).then(() => this.render(true))
       }
