@@ -4,6 +4,9 @@ Release 0.15.19
 
 - Add /mod command to allow setting of condition modifiers
 - Change modifier tooltip to use condition modifiers
+- Added drag and drop to Effect Modifier panel
+- Default to opening Effects Modifier panel to left of the sidebar
+- Added modifiers to Basic Abstract Difficulty icons
 
 Release 0.15.18 12/31/2022
 
@@ -79,7 +82,7 @@ Release 0.15.6 10/02/2022
 
 - Fixed GCS 5 import when melee attack has no level.
 - Fixed GCS 5 disad calculations.
-- Added support for /st + standing to allow you to clear other postures (to help supoprt TAH feature)
+- Added support for /st + standing to allow you to clear other postures (to help support TAH feature)
 - Update to JB2A 0.5.0
 
 Release 0.15.5 9/28/2022

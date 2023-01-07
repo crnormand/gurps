@@ -46,6 +46,10 @@ export class StatusEffect {
       default: false,
       onChange: value => console.log(`${StatusEffect.SETTING_USE_ACTIVE_EFFECTS} : ${value}`),
     })
+    
+    Hooks.on('createActiveEffect', (args) => {
+      console.log(args)
+    })
   }
 
   effects() {
@@ -536,52 +540,122 @@ export class StatusEffect {
       'bad+1': {
         icon: 'systems/gurps/icons/statuses/BAD+1.webp',
         id: 'bad+1',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad+1',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad+1',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad+2': {
         icon: 'systems/gurps/icons/statuses/BAD+2.webp',
         id: 'bad+2',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad+2',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad+2',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad+3': {
         icon: 'systems/gurps/icons/statuses/BAD+3.webp',
         id: 'bad+3',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad+3',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad+3',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad+4': {
         icon: 'systems/gurps/icons/statuses/BAD+4.webp',
         id: 'bad+4',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad+4',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad+4',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad+5': {
         icon: 'systems/gurps/icons/statuses/BAD+5.webp',
         id: 'bad+5',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad+5',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad+5',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad-1': {
         icon: 'systems/gurps/icons/statuses/BAD-1.webp',
         id: 'bad-1',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad-1',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad-1',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad-2': {
         icon: 'systems/gurps/icons/statuses/BAD-2.webp',
         id: 'bad-2',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad-2',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad-2',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad-3': {
         icon: 'systems/gurps/icons/statuses/BAD-3.webp',
         id: 'bad-3',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad-3',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad-3',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad-4': {
         icon: 'systems/gurps/icons/statuses/BAD-4.webp',
         id: 'bad-4',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad-4',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad-4',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       'bad-5': {
         icon: 'systems/gurps/icons/statuses/BAD-5.webp',
         id: 'bad-5',
-        label: 'GURPS.STATUSBad',
+        label: 'GURPS.STATUSBad-5',
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.STATUSBad-5',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          }
+        ]
       },
       disarmed: {
         icon: 'systems/gurps/icons/statuses/disarmed.webp',
