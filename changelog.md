@@ -2,11 +2,12 @@
 
 Release 0.15.19 
 
-- Add /mod command to allow setting of condition modifiers
-- Change modifier tooltip to use condition modifiers
+- Add /mod command to allow setting of effects modifiers
+- Change modifier tooltip to use effects modifiers
 - Added drag and drop to Effect Modifier panel
 - Default to opening Effects Modifier panel to left of the sidebar
 - Added modifiers to Basic Abstract Difficulty icons
+- Fixed drag and drop into Journal Entries
 
 Release 0.15.18 12/31/2022
 
