@@ -103,6 +103,55 @@ export class EffectModifierPopout extends Application {
       }
     }, 1)   // This needs to be calculated later... so it's width is correctly set first
   }
+  
+   _getHeaderButtons() {
+    let buttons = super._getHeaderButtons()
+    buttons.unshift({
+      class: 'trash',
+      icon: 'fas fa-trash',
+      onclick: (ev) => this.clearUserMods(ev),
+    })
+    buttons.unshift({
+      class: 'add',
+      icon: 'fas fa-plus',
+      onclick: (ev) => this.addUserMod(ev),
+    })
+    return buttons
+  }
+  
+  clearUserMods(event) {
+    let t = this.getToken()
+    if (t && t.actor) {
+      let umods = t.actor.system.conditions.usermods
+      if (umods) {
+        t.actor.update({'system.conditions.usermods' : []}).then(() => this.render(true))
+      }
+    }    
+  }
+  
+  addUserMod(event) {
+    if (this.getToken()) {
+      setTimeout(() => $.find('#GURPS-user-mod-input')[0].focus(), 200)
+      Dialog.prompt({
+        title: 'Enter new modifier:',
+        content: "<input type='text' id='GURPS-user-mod-input' style='text-align: left;' placeholder ='+1 bonus'>'",
+        label: 'Add (or press Enter)',
+        callback: html => {
+          let mod = html.find("#GURPS-user-mod-input").val()
+          if (!!mod) {
+            let action = parselink(mod)
+            if (action.action?.type == 'modifier')
+              this._addUserMod(mod)
+            else
+              ui.notifications.warn(i18n("GURPS.chatUnrecognizedFormat"))
+          }
+        },
+        rejectClose: false
+      })
+    }
+    else  
+      ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
+  }
  
   onRightClick(event) {
     event.preventDefault()
@@ -125,12 +174,11 @@ export class EffectModifierPopout extends Application {
     ev.stopImmediatePropagation()
     if (!!ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
-    let uc = " (" + i18n("GURPS.equipmentUserCreated") + ")"
     let add = ''
     if (!!dragData.otf) {
       let action = parselink(dragData.otf)
       if (action.action?.type == 'modifier')
-        add = dragData.otf + uc
+        add = dragData.otf
     }
     if (!!dragData.bucket) {
       let sep = ''
@@ -138,13 +186,17 @@ export class EffectModifierPopout extends Application {
         add += sep + otf
         sep = ' & '
       })
-      add += uc
     }
     if (add.length == 0) return
+    this._addUserMod(add)
+  }
+  
+  _addUserMod(mod) {
     let t = this.getToken()
     if (t && t.actor) {
+      mod += " (" + i18n("GURPS.equipmentUserCreated") + ")"
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
-      m.push(add)
+      m.push(mod)
       t.actor.update({'system.conditions.usermods' : m}).then(() => this.render(true))
     } else
       ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))

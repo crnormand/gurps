@@ -2476,7 +2476,7 @@ if (!globalThis.GURPS) {
 
     GurpsToken.ready()
     TriggerHappySupport.init()
-
+   
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })

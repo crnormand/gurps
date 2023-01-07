@@ -39,17 +39,15 @@ export default class GurpsJournalEntry {
               cmd = "'" + data.displayname + "'" + cmd
             }
             cmd = '[' + cmd + ']'
-            let pid = app.pages[app.pageIndex]._id
-            let jp = app.document.pages.get(pid)
-            let content = jp.text.content
-            if (content) cmd = ' ' + cmd
-            jp.update({ 'text.content': content + cmd })
-            app.render(true)
+            let content = app.document.text.content
+            if (content) cmd = '<br>' + cmd
+            app.document.update({ 'text.content': content + cmd })
+
           }
         }
 
-        html.find('.journal-entry-pages').on('drop', event => dropHandler(event, app, _options))
+        html.parent().parent().on('drop', event => dropHandler(event, app, options))
       }
-    }, 100)
+    }, 10)
   }
 }
