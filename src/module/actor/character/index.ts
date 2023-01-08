@@ -917,6 +917,16 @@ class CharacterGURPS extends BaseActorGURPS {
 			return
 		}
 		super.prepareEmbeddedDocuments()
+		// This.features = {
+		// 	attributeBonuses: [],
+		// 	costReductions: [],
+		// 	drBonuses: [],
+		// 	skillBonuses: [],
+		// 	skillPointBonuses: [],
+		// 	spellBonuses: [],
+		// 	spellPointBonuses: [],
+		// 	weaponBonuses: [],
+		// }
 		this.updateSkills()
 		this.updateSpells()
 		for (let i = 0; i < 5; i++) {
@@ -1075,15 +1085,20 @@ class CharacterGURPS extends BaseActorGURPS {
 			if (!k.prereqsEmpty) [satisfied, eqpPenalty] = k.prereqs.satisfied(this, k, tooltip, prefix)
 			if (satisfied && k instanceof TechniqueGURPS) satisfied = k.satisfied(tooltip, prefix)
 			if (eqpPenalty) {
-				const penalty = new SkillBonus(SkillBonus.defaults)
-				penalty.name!.qualifier = k.name!
-				penalty.specialization!.compare = StringComparison.Is
-				penalty.specialization!.qualifier = k.specialization
-				if (k.techLevel && k.techLevel !== "") {
-					penalty.amount = -10
-				} else {
-					penalty.amount = -5
-				}
+				const penalty = new SkillBonus({
+					type: FeatureType.SkillBonus,
+					selection_type: "skills_with_name",
+					name: {
+						compare: StringComparison.Is,
+						qualifier: k.name!,
+					},
+					specialization: {
+						compare: StringComparison.Is,
+						qualifier: k.specialization,
+					},
+					amount: k.techLevel && k.techLevel !== "" ? -10 : -5,
+					levels: 0,
+				})
 				penalty.setParent(k)
 				this.features.skillBonuses.push(penalty)
 			}

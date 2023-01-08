@@ -24,8 +24,8 @@ export class EquippedEquipmentPrereq extends BasePrereq {
 		}
 		if (!satisfied) {
 			tooltip.push(i18n_f("gurps.prereqs.equipment.criteria", { prefix: prefix, name: this.name }))
+			return [satisfied, true]
 		}
-		if (!satisfied) return [satisfied, true]
 		return [satisfied, false]
 	}
 }

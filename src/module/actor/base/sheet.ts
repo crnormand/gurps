@@ -39,11 +39,16 @@ export class ActorSheetGURPS extends ActorSheet {
 		event: DragEvent,
 		data: ActorSheet.DropData.Item & { actor: BaseActorGURPS; _uuid?: string }
 	): Promise<unknown> {
-		const element = $(event.currentTarget!)
-		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
+		// Const element = $(event.currentTarget!)
+		// const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
 		const top = Boolean($(".border-top").length)
+		const inContainer = Boolean($(".border-in").length)
+
 		$(".border-bottom").removeClass("border-bottom")
 		$(".border-top").removeClass("border-top")
+		$(".border-in").removeClass("border-in")
+
+		// Return super._onDropItem(event, data)
 
 		if (!this.actor.isOwner) return false
 
@@ -61,8 +66,11 @@ export class ActorSheetGURPS extends ActorSheet {
 		const itemData = item.toObject()
 
 		// Handle item sorting within the same Actor
-		if (this.actor.uuid === item.actor?.uuid)
-			return this._onSortItem(event, itemData, { top: top, in: widthAcross > 0.3 })
+		console.log(itemData, top, inContainer)
+		if (this.actor.uuid === item.actor?.uuid) {
+			console.log(top, inContainer)
+			return this._onSortItem(event, itemData, { top: top, in: inContainer })
+		}
 
 		return this._onDropItemCreate(itemData)
 	}
@@ -77,11 +85,14 @@ export class ActorSheetGURPS extends ActorSheet {
 		// Owned Items
 		if ($(list as HTMLElement).data("uuid")) {
 			const uuid = $(list as HTMLElement).data("uuid")
+			const item = await fromUuid(uuid)
+			console.log(item)
 			itemData = (await fromUuid(uuid))?.toObject()
 			itemData._id = null
 			// Adding both uuid and itemData here. Foundry default functions don't read _uuid, but they do read uuid
 			// this prevents Foundry from attempting to get the object from uuid, which would cause it to complain
 			// e.g. in cases where an item inside a container is dragged into the items tab
+			console.log(itemData)
 			dragData = {
 				type: "Item",
 				_uuid: uuid,
@@ -121,8 +132,16 @@ export class ActorSheetGURPS extends ActorSheet {
 	): Promise<Item[]> {
 		const source: any = this.actor.deepItems.get(itemData._id!)
 		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
-		if (!options?.top) dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
-		let target: any = this.actor.deepItems.get(dropTarget.data("uuid").split(".").at(-1))
+		// Console.log(dropTarget)
+		// console.log("top", options.top, "inContainer", options.in)
+		// if (dropTarget && !options?.top) {
+		// 	const oldDropTarget = dropTarget
+		// 	dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
+		// 	if (!dropTarget) {
+		// 		dropTarget = oldDropTarget
+		// 	}
+		// }
+		let target: any = this.actor.deepItems.get(dropTarget?.data("uuid")?.split(".").at(-1))
 		if (!target) return []
 		let parent: any = target?.parent
 		let parents = target?.parents
@@ -137,7 +156,8 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		const sortUpdates = SortingHelpers.performIntegerSort(source, {
 			target: target,
-			siblings,
+			siblings: siblings,
+			sortBefore: options.top,
 		})
 		const updateData = sortUpdates.map(u => {
 			const update = u.update
@@ -147,6 +167,7 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		if (source && source.parent !== parent) {
 			if (source.items && parents.includes(source)) return []
+			console.log(source.name, "going in", parent.name)
 			await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
 			return parent?.createEmbeddedDocuments(
 				"Item",

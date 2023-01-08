@@ -11,10 +11,6 @@ export class ContainedWeightReduction extends BaseFeature {
 	get is_percentage_reduction(): boolean {
 		return this.reduction.endsWith("%")
 	}
-
-	get featureMapKey(): string {
-		return "equipment.weight.sum"
-	}
 }
 
 export interface ContainedWeightReduction extends BaseFeature {

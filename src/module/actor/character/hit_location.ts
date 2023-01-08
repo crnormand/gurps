@@ -90,7 +90,6 @@ export class HitLocation {
 	}
 
 	get displayDR(): string {
-		console.log("check", this.id)
 		const dr = this.DR()
 		if (!dr.has(gid.All)) dr.set(gid.All, 0)
 		let buffer = ""

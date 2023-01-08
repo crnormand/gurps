@@ -55,7 +55,7 @@ export class PrereqList extends BasePrereq {
 			for (const p of this.prereqs) {
 				const ps = p.satisfied(actor, exclude, local, prefix)
 				if (ps[0]) count++
-				eqpPenalty == eqpPenalty || ps[1]
+				eqpPenalty = eqpPenalty || ps[1]
 			}
 		const satisfied = count === this.prereqs.length || (!this.all && count > 0)
 		if (!satisfied) {

@@ -79,6 +79,16 @@
 				}
 			}
 		}
+		&.border-in {
+			border-top: 2px dashed rgb(var(--color-drop-area));
+			border-bottom: 2px dashed rgb(var(--color-drop-area));
+			&.desc {
+				border-left: 2px dashed rgb(var(--color-drop-area));
+			}
+			&.reference {
+				border-right: 2px dashed rgb(var(--color-drop-area));
+			}
+		}
 	}
 
 	.desc.header {

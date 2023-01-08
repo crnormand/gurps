@@ -201,11 +201,12 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 				;(currentItem as any).system = item.system
 				;(currentItem as any).img = item.img
 				;(currentItem as any).sort = item.sort
-				// SetProperty(currentItem._source, "name", item.name)
-				// setProperty(currentItem._source, "flags", item.flags)
-				// setProperty(currentItem._source, "system", item.system)
-				// setProperty(currentItem._source, "sort", item.sort)
-				// setProperty(currentItem, "name", item.name)
+				// ; (currentItem as any)._source = item._source
+				setProperty((currentItem as any)._source, "name", item.name)
+				setProperty((currentItem as any)._source, "flags", item.flags)
+				setProperty((currentItem as any)._source, "system", item.system)
+				setProperty((currentItem as any)._source, "sort", item.sort)
+				// SetProperty(currentItem, "name", item.name)
 				// setProperty(currentItem, "flags", item.flags)
 				// setProperty(currentItem, "system", item.system)
 				// setProperty(currentItem, "sort", item.sort)

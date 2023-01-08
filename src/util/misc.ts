@@ -96,9 +96,9 @@ export function stringCompare(value?: string | string[] | null, base?: StringCom
 		case StringComparison.None:
 			return true
 		case StringComparison.Is:
-			return !!base.qualifier && value.includes(base.qualifier)
+			return base.qualifier !== undefined && value.includes(base.qualifier)
 		case StringComparison.IsNot:
-			return !!base.qualifier && !value.includes(base.qualifier)
+			return base.qualifier !== undefined && !value.includes(base.qualifier)
 		case StringComparison.Contains:
 			for (const v of value) if (base.qualifier && v.includes(base.qualifier)) return true
 			return false

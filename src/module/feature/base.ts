@@ -82,10 +82,6 @@ export class BaseFeature {
 		this.parent = parent.uuid
 	}
 
-	get featureMapKey(): string {
-		return "null"
-	}
-
 	addToTooltip(buffer?: TooltipGURPS): void {
 		if (buffer) {
 			buffer.push("\n")

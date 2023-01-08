@@ -13,32 +13,6 @@ export class SpellPointBonus extends BaseFeature {
 		})
 	}
 
-	get featureMapKey(): string {
-		if (this.tags?.compare !== "none") {
-			return "spell.points*"
-		}
-		switch (this.match) {
-			case "all_colleges":
-				return "spell.college.points"
-			case "college_name":
-				return this.buildKey("spell.college.points")
-			case "power_source_name":
-				return this.buildKey("spell.power_source.points")
-			case "spell_name":
-				return this.buildKey("spell.points")
-			default:
-				console.error("Invalid match type: ", this.match)
-				return ""
-		}
-	}
-
-	buildKey(prefix: string): string {
-		if (this.name?.compare === StringComparison.Is) {
-			return `${prefix}/${this.name.qualifier}`
-		}
-		return `${prefix}*`
-	}
-
 	matchForType(name: string, powerSource: string, colleges: string[]): boolean {
 		switch (this.match) {
 			case "all_colleges":

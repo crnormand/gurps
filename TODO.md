@@ -6,9 +6,6 @@
     -   premade lists
     -   pinned appears as category always (for awareness)
     -   modifier bucket journals
--   bug: features etc. added during session are not saved, and therefore not transferred when going from charsheet to item list
-    -   features not updated in dragdata for some reason
-    -   only happens with toObject function, features not updated
 
 ## 1.0.0
 

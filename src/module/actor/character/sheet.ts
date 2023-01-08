@@ -45,7 +45,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	protected _onDrop(event: DragEvent): void {
-		console.log(event)
+		// Console.log(event)
 		super._onDrop(event)
 	}
 
@@ -240,7 +240,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		if (heightAcross > 0.5 && element.hasClass("border-bottom")) return
 		if (heightAcross < 0.5 && element.hasClass("border-top")) return
 		if (inContainer && element.hasClass("border-in")) return
+
 		$(".border-bottom").removeClass("border-bottom")
+		$(".border-top").removeClass("border-top")
+		$(".border-in").removeClass("border-in")
+
 		const selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
 		selection.unshift(element)
 		if (inContainer) {
@@ -278,16 +282,15 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const encumbrance = this.prepareEncumbrance()
 		const lifts = this.prepareLifts()
 		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)
-		// Const hit_locations = this.actor.HitLocations.map(e => {
-		// 	return {
-		// 		...e,
-		// 		...{
-		// 			displayDR: e.displayDR
-		// 		}
-		// 	}
-		// })
-		const hit_locations = this.actor.HitLocations
-		console.log(hit_locations)
+		const hit_locations = this.actor.HitLocations.map(e => {
+			return {
+				...e,
+				...{
+					displayDR: e.displayDR,
+				},
+			}
+		})
+		// Const hit_locations = this.actor.HitLocations
 		const sheetData = {
 			...super.getData(options),
 			...{
