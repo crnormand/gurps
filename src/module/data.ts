@@ -1,14 +1,14 @@
-import {
-	AttributeBonus,
-	CostReduction,
-	DRBonus,
-	SkillBonus,
-	SkillPointBonus,
-	SpellBonus,
-	SpellPointBonus,
-	WeaponDamageBonus,
-	WeaponDRDivisorBonus,
-} from "@feature"
+// Import {
+// 	AttributeBonus,
+// 	CostReduction,
+// 	DRBonus,
+// 	SkillBonus,
+// 	SkillPointBonus,
+// 	SpellBonus,
+// 	SpellPointBonus,
+// 	WeaponDamageBonus,
+// 	WeaponDRDivisorBonus,
+// } from "@feature"
 
 /*
  * I had to move SETTINGS here as well, because it fixed the weird error that leads to the code not recognizing standard
@@ -320,13 +320,13 @@ export enum UserFlags {
 	ModifierPinned = "pinnedMods",
 }
 
-export type featureMap = {
-	attributeBonuses: AttributeBonus[]
-	costReductions: CostReduction[]
-	drBonuses: DRBonus[]
-	skillBonuses: SkillBonus[]
-	skillPointBonuses: SkillPointBonus[]
-	spellBonuses: SpellBonus[]
-	spellPointBonuses: SpellPointBonus[]
-	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
-}
+// Export type featureMap = {
+// 	attributeBonuses: AttributeBonus[]
+// 	costReductions: CostReduction[]
+// 	drBonuses: DRBonus[]
+// 	skillBonuses: SkillBonus[]
+// 	skillPointBonuses: SkillPointBonus[]
+// 	spellBonuses: SpellBonus[]
+// 	spellPointBonuses: SpellPointBonus[]
+// 	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
+// }

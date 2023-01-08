@@ -16,12 +16,12 @@ export const HitLocationUtil = {
 
 	getHitLocationDR: function (location: HitLocation | undefined, damageType: DamageType): number {
 		if (!location) return 0
-		return location.fastDR.get(damageType) ?? location.fastDR.get(gid.All) ?? 0
+		return location.DR.get(damageType) ?? location.DR.get(gid.All) ?? 0
 	},
 
 	isFlexibleArmor: function (location: HitLocation | undefined): boolean {
 		if (!location) return false
-		if (location.fastDR.has(gid.Flexible)) return location.fastDR.get(gid.Flexible)! > 0
+		if (location.DR.has(gid.Flexible)) return location.DR.get(gid.Flexible)! > 0
 		return false
 	},
 

@@ -1,5 +1,4 @@
 /* eslint-disable jest/no-disabled-tests */
-
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { DamageCalculator, Extremity, Head, Limb } from "@module/damage_calculator/damage_calculator"
 import {
@@ -46,7 +45,7 @@ describe("Damage calculator", () => {
 		_roll.dice = new DiceGURPS("2d")
 		_roll.locationId = "torso"
 
-		_torso = {
+		_torso = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Torso",
 			description: "",
 			dr_bonus: 0,
@@ -54,21 +53,9 @@ describe("Damage calculator", () => {
 			hit_penalty: 0,
 			id: "torso",
 			slots: 2,
-			calc: {
-				roll_range: "",
-				dr: {
-					all: 0,
-				},
-			},
-		}
+		})
 
-		_vitals = {
-			calc: {
-				dr: {
-					all: 0,
-				},
-				roll_range: "-",
-			},
+		_vitals = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Vitals",
 			description: "",
 			dr_bonus: 0,
@@ -76,13 +63,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -3,
 			id: "vitals",
 			slots: 0,
-		}
+		})
 
-		_skull = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "3-4",
-			},
+		_skull = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Skull",
 			description: "",
 			dr_bonus: 2,
@@ -90,13 +73,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -7,
 			id: "skull",
 			slots: 0,
-		}
+		})
 
-		_eye = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "-",
-			},
+		_eye = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Eye",
 			description: "",
 			dr_bonus: 0,
@@ -104,13 +83,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -9,
 			id: "eye",
 			slots: 0,
-		}
+		})
 
-		_face = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "5",
-			},
+		_face = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Face",
 			description: "",
 			dr_bonus: 0,
@@ -118,13 +93,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -5,
 			id: "face",
 			slots: 1,
-		}
+		})
 
-		_neck = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "5",
-			},
+		_neck = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Face",
 			description: "",
 			dr_bonus: 0,
@@ -132,13 +103,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -5,
 			id: "face",
 			slots: 1,
-		}
+		})
 
-		_groin = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "5",
-			},
+		_groin = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Face",
 			description: "",
 			dr_bonus: 0,
@@ -146,13 +113,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -5,
 			id: "face",
 			slots: 1,
-		}
+		})
 
-		_arm = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "8",
-			},
+		_arm = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Right Arm",
 			description: "",
 			dr_bonus: 0,
@@ -160,13 +123,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -2,
 			id: "arm",
 			slots: 1,
-		}
+		})
 
-		_leg = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "6-7",
-			},
+		_leg = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Right Leg",
 			description: "",
 			dr_bonus: 0,
@@ -174,13 +133,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -2,
 			id: "leg",
 			slots: 2,
-		}
+		})
 
-		_hand = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "15",
-			},
+		_hand = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Hand",
 			description: "",
 			dr_bonus: 0,
@@ -188,13 +143,9 @@ describe("Damage calculator", () => {
 			hit_penalty: -4,
 			id: "hand",
 			slots: 1,
-		}
+		})
 
-		_foot = {
-			calc: {
-				dr: { all: 0 },
-				roll_range: "16",
-			},
+		_foot = new HitLocation(_target, _target.hitLocationTable, {
 			choice_name: "Foot",
 			description: "",
 			dr_bonus: 0,
@@ -202,8 +153,19 @@ describe("Damage calculator", () => {
 			hit_penalty: -4,
 			id: "foot",
 			slots: 1,
-		}
+		})
 
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _torso))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _vitals))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _skull))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _eye))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _face))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _neck))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _groin))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _arm))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _leg))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _hand))
+		// _target.hitLocationTable.locations.push(new HitLocation(_target, _target.hitLocationTable, _foot))
 		_target.hitLocationTable.locations.push(_torso)
 		_target.hitLocationTable.locations.push(_vitals)
 		_target.hitLocationTable.locations.push(_skull)

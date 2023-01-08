@@ -27,6 +27,17 @@ export type Feature =
 	| CostReduction
 	| ContainedWeightReduction
 
+export type featureMap = {
+	attributeBonuses: AttributeBonus[]
+	costReductions: CostReduction[]
+	drBonuses: DRBonus[]
+	skillBonuses: SkillBonus[]
+	skillPointBonuses: SkillPointBonus[]
+	spellBonuses: SpellBonus[]
+	spellPointBonuses: SpellPointBonus[]
+	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
+}
+
 export { BaseFeature } from "./base"
 export { AttributeBonus } from "./attribute_bonus"
 export { ConditionalModifier } from "./conditional_modifier"

@@ -43,10 +43,18 @@ export class HitLocation {
 
 	roll_range: string
 
-	constructor(actor: CharacterGURPS, owningTable: HitLocationTable, data?: HitLocationData) {
+	calc: any
+
+	// TODO: change "any" to something accepting both CharacterGURPS and other (for testing?)
+	constructor(actor: any, owningTable: HitLocationTable, data?: HitLocationData) {
 		this.id = "id"
-		this.choice_name = i18n("gurps.placeholder.hit_location.choice_name")
-		this.table_name = i18n("gurps.placeholder.hit_location.table_name")
+		if (typeof game !== "undefined") {
+			this.choice_name = i18n("gurps.placeholder.hit_location.choice_name")
+			this.table_name = i18n("gurps.placeholder.hit_location.table_name")
+		} else {
+			this.choice_name = "untitled choice"
+			this.table_name = "untitled location"
+		}
 		this.slots = 0
 		this.hit_penalty = 0
 		this.dr_bonus = 0
@@ -54,9 +62,9 @@ export class HitLocation {
 		this.actor = actor
 		this.owningTable = owningTable
 		this.roll_range = "-"
+		this.calc = { roll_range: "-", dr: {} }
 
 		if (data) {
-			delete data.calc
 			Object.assign(this, data)
 			if (this.sub_table)
 				for (let i = 0; i < this.sub_table?.locations.length; i++) {
@@ -65,11 +73,11 @@ export class HitLocation {
 		}
 	}
 
-	get fastDR(): Map<string, number> {
-		return this.DR()
+	get DR(): Map<string, number> {
+		return this._DR()
 	}
 
-	DR(tooltip?: TooltipGURPS, drMap?: Map<string, number>): Map<string, number> {
+	_DR(tooltip?: TooltipGURPS, drMap?: Map<string, number>): Map<string, number> {
 		drMap ??= new Map()
 		if (this.dr_bonus !== 0) {
 			drMap.set(gid.All, this.dr_bonus)
@@ -77,20 +85,21 @@ export class HitLocation {
 				i18n_f("gurps.tooltip.dr_bonus", { item: this.choice_name, bonus: this.dr_bonus, type: gid.All })
 			)
 		}
-		drMap = this.actor.addDRBonusesFor(this.id, tooltip, drMap)
+		if (this.actor instanceof CharacterGURPS) drMap = this.actor.addDRBonusesFor(this.id, tooltip, drMap)
 		if (this.owningTable?.owningLocation) {
-			drMap = this.owningTable.owningLocation.DR(tooltip, drMap)
+			drMap = this.owningTable.owningLocation._DR(tooltip, drMap)
 		}
 		if (tooltip && drMap?.entries.length !== 0) {
 			drMap?.forEach(e => {
 				tooltip.push(`TODO: ${e}`)
 			})
 		}
+		this.calc.dr = Object.fromEntries(drMap)
 		return drMap
 	}
 
 	get displayDR(): string {
-		const dr = this.DR()
+		const dr = this.DR
 		if (!dr.has(gid.All)) dr.set(gid.All, 0)
 		let buffer = ""
 		buffer += dr.get(gid.All)
@@ -115,6 +124,7 @@ export class HitLocation {
 				nested_start = l.updateRollRange(nested_start)
 			}
 		}
+		this.calc.roll_range = this.roll_range
 		return start + this.slots
 	}
 }
@@ -128,7 +138,6 @@ export interface HitLocationData {
 	dr_bonus: number
 	description: string
 	sub_table?: HitLocationTableData
-	roll_range?: string
 	calc?: {
 		roll_range: string
 		dr: Record<string, number>
