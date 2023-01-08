@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.15.19 
+Release 0.15.19 01/08/2023
 
 - Add /mod command to allow setting of effects modifiers
 - Change modifier tooltip to use effects modifiers
