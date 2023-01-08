@@ -12,6 +12,7 @@ import { SETTINGS, Study, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import * as Static from "./static"
 import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
+import { HitLocation } from "@actor/character/hit_location"
 
 /**
  *
@@ -249,14 +250,17 @@ export function registerHandlebarsHelpers() {
 		return JSON.stringify(o)
 	})
 
-	Handlebars.registerHelper("splitDR", function (a: { [key: string]: number }): string {
-		let DR = ""
-		for (const i of Object.values(a)) {
-			DR += `${i}/`
-		}
-		DR = DR.substring(0, DR.length - 1)
-		return DR
-	})
+	// Handlebars.registerHelper("splitDR", function(a: HitLocation): string {
+	// 	let DR = a.fastDR
+	// 	console.log(DR)
+	// 	return "woo"
+	// 	// let DR = ""
+	// 	// for (const i of Object.values(a)) {
+	// 	// 	DR += `${i}/`
+	// 	// }
+	// 	// DR = DR.substring(0, DR.length - 1)
+	// 	// return DR
+	// })
 
 	Handlebars.registerHelper("textareaFormat", function (s: string | string[]): string {
 		// If (!s) return ""

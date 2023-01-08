@@ -1,8 +1,6 @@
-import { BaseActorGURPS } from "@actor/base"
 import { SYSTEM_NAME } from "@module/data"
 
 export const TokenUtil = {
-
 	/**
 	 * Displays a popup dialog asking which token from an array the user wants.
 	 * @param tokens Token[]

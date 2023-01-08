@@ -8,7 +8,7 @@ import { capitalize, i18n, i18n_f, newUUID } from "@util"
 import { XMLtoJS } from "@util/xml_js"
 import { CharacterGURPS } from "."
 import { CharacterDataGURPS } from "./data"
-import { HitLocationTable } from "./hit_location"
+import { HitLocationTableData } from "./hit_location"
 import { CharacterImportedData } from "./import"
 
 export class GCAImporter {
@@ -203,7 +203,7 @@ export class GCAImporter {
 	}
 
 	importSettings(data: any) {
-		const body: Partial<HitLocationTable> = {
+		const body: Partial<HitLocationTableData> = {
 			roll: new DiceGURPS("3d"),
 			locations: [],
 		}

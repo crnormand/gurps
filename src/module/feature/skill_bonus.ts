@@ -12,20 +12,6 @@ export class SkillBonus extends BaseFeature {
 		})
 	}
 
-	get featureMapKey(): string {
-		switch (this.selection_type) {
-			case "skills_with_name":
-				return this.buildKey("skill.name")
-			case "this_weapon":
-				return "\u0001"
-			case "weapons_with_name":
-				return this.buildKey("weapon_named.")
-			default:
-				console.error("Invalid selection type: ", this.selection_type)
-				return ""
-		}
-	}
-
 	buildKey(prefix: string): string {
 		if (
 			this.name?.compare === StringComparison.Is &&

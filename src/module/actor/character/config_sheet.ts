@@ -28,7 +28,7 @@ export class CharacterSheetConfig extends FormApplication {
 		this.filename = ""
 		this.attributes = this.object.system.settings.attributes
 		this.resource_trackers = this.object.system.settings.resource_trackers
-		this.body_type = this.object.system.settings.body_type
+		this.body_type = this.object.BodyType
 	}
 
 	static get defaultOptions(): FormApplicationOptions {

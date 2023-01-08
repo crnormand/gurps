@@ -9,10 +9,6 @@ export class ReactionBonus extends BaseFeature {
 			situation: "from others",
 		})
 	}
-
-	get featureMapKey(): string {
-		return "reaction"
-	}
 }
 
 export interface ReactionBonus extends BaseFeature {
