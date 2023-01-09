@@ -8,16 +8,19 @@ export class EffectModifierPopout extends Application {
     super(options)
     this._token = token
     this._callback = callback
-  }
+   }
 
   /** @override */
   static get defaultOptions() {
+    let x = $('#sidebar')
+    let sidebarLeft = x.parent().position().left
     return mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/actor/effect-modifier-popout.hbs',
       classes: ['sidebar-popout effect-modifiers-app'],
       popOut: true,
       top: 0,
       width: 400,
+      left: sidebarLeft - 405,
       height: 'auto',
       minimizable: true,
       jQuery: true,
@@ -88,20 +91,6 @@ export class EffectModifierPopout extends Application {
       .closest('div.effect-modifiers-app')
       .find('.window-title')
       .text(i18n_f('GURPS.effectModifierPopout', { name: this.selectedToken }, 'Effect Modifiers: {name}'))
-    
-    // Place the effect mod window just to the left of sidebar  
-    setTimeout( ()=> {
-      let x = $('#sidebar')
-      let sidebarLeft = x.parent().position().left
-  
-      let width = parseFloat(html.parent().parent().width())
-      if (!isNaN(width)) {
-        // ensure that left is not negative
-        let left = sidebarLeft - width
-        //console.log("SB:" + sidebarLeft + " w:" + width + " left:" + left)
-        html.parent().parent().css('left', `${left}px`)
-      }
-    }, 1)   // This needs to be calculated later... so it's width is correctly set first
   }
   
    _getHeaderButtons() {
