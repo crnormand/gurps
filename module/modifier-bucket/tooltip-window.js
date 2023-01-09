@@ -115,7 +115,7 @@ export default class ModifierBucketEditor extends Application {
         data.currentmods.push(horiz(i18n("GURPS.targetedModifiers")))
         target.forEach(e => data.currentmods.push(e))
       }
-      let user = this.convertModifiers(GURPS.LastActor.system.conditions.usermods)
+      let user = this.convertModifiers(GURPS.LastActor.system.conditions.usermods ? GURPS.LastActor.system.conditions.usermods : [])
       if (user.length > 0) {
       let uc = "(" + i18n("GURPS.equipmentUserCreated") + ")"
         data.currentmods.push(horiz(i18n("GURPS.equipmentUserCreated")))
