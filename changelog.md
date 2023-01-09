@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.21 01/09/2023
+
+- Fixed removing effect updates modifier window immediately
+
 Release 0.15.20 01/09/2023
 
 - Fixed error when tooltip opens on actor without any user modifiers
