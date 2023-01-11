@@ -2023,13 +2023,21 @@ if (!globalThis.GURPS) {
         event.preventDefault()
         if (event.originalEvent) event = event.originalEvent
         const data = JSON.parse(event.dataTransfer.getData('text/plain'))
-        if (!!data && !!data.otf) {
+        if (!!data && (!!data.otf || !!data.bucket)) {
           let cmd = ''
           if (!!data.encodedAction) {
             let action = JSON.parse(atou(data.encodedAction))
             if (action.quiet) cmd += '!'
           }
-          cmd += data.otf
+          if (data.otf)
+            cmd += data.otf
+          else {
+            let sep = ''
+            data.bucket.forEach(otf => {
+              cmd += sep + otf
+               sep = ' & '
+            })
+          }
           if (!!data.displayname) {
             let q = '"'
             if (data.displayname.includes('"')) q = "'"

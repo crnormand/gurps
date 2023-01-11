@@ -4,6 +4,7 @@ Release 0.15.22 01/10/2023
 
 - Allow Tracker conditions to contain OtFs (useful for mods)
 - Fixed reveal/hide buttons for secret sections on Journals
+- Allow Drag bucket to chat log
 
 Release 0.15.21 01/09/2023
 
