@@ -571,7 +571,7 @@ export class ModifierBucket extends Application {
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
-            displayname: 'Modifier Bucket',
+            //displayname: 'Modifier Bucket',
             type: 'modifierbucket',
             bucket: bucket,
           })
