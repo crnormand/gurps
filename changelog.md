@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.21 01/10/2023
+
+- Allow Tracker conditions to contain OtFs (useful for mods)
+- Fixed reveal/hide buttons for secret sections on Journals
+
 Release 0.15.21 01/09/2023
 
 - Fixed removing effect updates modifier window immediately

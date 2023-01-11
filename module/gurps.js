@@ -2476,6 +2476,17 @@ if (!globalThis.GURPS) {
 
     GurpsToken.ready()
     TriggerHappySupport.init()
+    
+    CONFIG.TextEditor.enrichers = CONFIG.TextEditor.enrichers.concat([
+    {
+        pattern : /\[.*\]/gm,
+        enricher : async (match, options) => {
+            let s = gurpslink(match[0])
+            const doc = document.createElement("span");
+            doc.innerHTML = s;
+            return doc;
+        }
+    }])
    
     // End of system "READY" hook.
     Hooks.call('gurpsready')
