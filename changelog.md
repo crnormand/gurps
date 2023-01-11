@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.23 01/11/2023
+
+- Fixed system.json to point to correct files.
+
 Release 0.15.22 01/10/2023
 
 - Allow Tracker conditions to contain OtFs (useful for mods)
