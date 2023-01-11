@@ -12,7 +12,7 @@
                   {{#unless (eq @index 0)}}
                   <div class="field condensed noedit">{{! threshold.comparison}}</div>
                   <div class="field condensed noedit">{{breakpoint}}</div>
-                  <div class="label">{{threshold.condition}}</div>
+                  <div class="label">{{{gurpslink threshold.condition}}}</div>
                   {{/unless}}
                 {{/each}}
               </div>
@@ -25,7 +25,7 @@
         {{/with}}
       {{else}}
         {{#with (lookup thresholds (threshold-of thresholds max value))}}
-          <div class='tooltip condition' style='background-color: {{concat color "80"}};'>{{condition}}
+          <div class='tooltip condition' style='background-color: {{concat color "80"}};'>{{{gurpslink condition}}}
             <span class="tooltiptext">
               <div style="display: grid; grid-template-columns: min-content min-content auto;">
                 {{#each (thresholdBreakpoints ../this)}}

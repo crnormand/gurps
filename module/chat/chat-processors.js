@@ -1047,6 +1047,7 @@ class DevChatProcessor extends ChatProcessor {
             }
           } 
         }  
+        break;
       }
       default: {
         this.prnt('open &lt;name&gt;')

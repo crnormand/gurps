@@ -309,7 +309,7 @@ class ModifierStack {
   _add(list, mod, reason, replace = false) {
     /** @type {Modifier|undefined} */
     var oldmod
-    reason = reason.replace(" (" + i18n("GURPS.equipmentUserCreated") + ")", '')    // Remove User Created tag
+    reason = reason.replace("(" + i18n("GURPS.equipmentUserCreated") + ")", '').trim()   // Remove User Created tag
     let i = list.findIndex(e => e.desc == reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
       if (replace) list.splice(i, 1) // only used by range modifier
