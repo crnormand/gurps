@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.24
+
+- Remove the leading + from Accuracy bonus on the characte sheets. (In preparation to handle accuracy mods like "5+2"..."+5+2" just looks too weird.)
+
 Release 0.15.23 01/11/2023
 
 - Fixed system.json to point to correct files.
