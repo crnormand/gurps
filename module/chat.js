@@ -394,17 +394,6 @@ export default function addChatHooks() {
 
     Hooks.on('renderChatMessage', (_app, html, _msg) => {
       GurpsWiring.hookupAllEvents(html)
-      // html.find('[data-otf]').each((_, li) => {
-      //   li.setAttribute('draggable', 'true')
-      //   li.addEventListener('dragstart', ev => {
-      //     return ev.dataTransfer?.setData(
-      //       'text/plain',
-      //       JSON.stringify({
-      //         otf: li.getAttribute('data-otf'),
-      //       })
-      //     )
-      //   })
-      // })
     })
 
     Hooks.on(
