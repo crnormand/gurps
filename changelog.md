@@ -2,7 +2,10 @@
 
 Release 0.15.24
 
-- Remove the leading + from Accuracy bonus on the characte sheets. (In preparation to handle accuracy mods like "5+2"..."+5+2" just looks too weird.)
+- Remove the leading + from Accuracy bonus on the character sheets. (In preparation to handle accuracy mods like "5+2"..."+5+2" just looks too weird.)
+- Add OTF support for GM Notes module
+- Support usage note on melee/ranged weapons
+- Fixed Skill/Spell search if it contains ^
 
 Release 0.15.23 01/11/2023
 
