@@ -75,8 +75,12 @@ class SlamCalculatorForm extends FormApplication {
 
     this._targetHp = !!target ? target.actor.system.HP.max : 10
     this._targetSpeed = 0
+    
+    this._attackerThr = !!attacker ? attacker.actor.system.thrust : '1d-5'
+    this._targetThr = !!target ? target.actor.system.thrust : '1d-5'
 
     this._isAoAStrong = false
+    this._useDFRPGRules = true
     this._shieldDB = 0
   }
 
@@ -104,12 +108,15 @@ class SlamCalculatorForm extends FormApplication {
 
     data.targetHp = this._targetHp
     data.targetSpeed = this._targetSpeed
+    
+    data.attackerThr = this._attackerThr
+    data.targetThr = this._targetThr
 
     data.relativeSpeed = this.relativeSpeed
 
     data.isAoAStrong = this._isAoAStrong
     data.shieldDB = this._shieldDB
-
+    data.useDFRPGRules = this._useDFRPGRules
     return data
   }
 
@@ -127,6 +134,11 @@ class SlamCalculatorForm extends FormApplication {
 
     html.find('#aoa').click(ev => {
       this._isAoAStrong = $(ev.currentTarget).is(':checked')
+    })
+
+    html.find('#dfrpgrules').click(ev => {
+      this._useDFRPGRules = $(ev.currentTarget).is(':checked')
+      setTimeout(() => this.render(true), 10)
     })
 
     html.find('#db').change(ev => {
@@ -149,6 +161,14 @@ class SlamCalculatorForm extends FormApplication {
 
     html.find('#target-hp').change(ev => {
       this._targetHp = parseInt(ev.currentTarget.value)
+    })
+    
+    html.find('#attacker-thr').change(ev => {
+      this._attackerThr = ev.currentTarget.value
+    })
+
+    html.find('#target-thr').change(ev => {
+      this._targetThr = ev.currentTarget.value
     })
   }
 }

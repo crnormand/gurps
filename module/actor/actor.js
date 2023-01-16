@@ -2922,28 +2922,35 @@ export class GurpsActor extends Actor {
   // Looking for OTFs in text.  ex:   c:[/qty -1] during:[/anim healing c]
   _removeOtf(key, text) {
     if (!text) return [text, null]
-    var start
-    let patstart = text.toLowerCase().lastIndexOf(key[0] + ':[')
-    if (patstart < 0) {
-      patstart = text.toLowerCase().lastIndexOf(key + ':[')
-      if (patstart < 0) return [text, null]
-      else start = patstart + key.length + 2
-    } else start = patstart + 3
-    let cnt = 1
-    let i = start
-    if (i >= text.length) return [text, null]
-    do {
-      let ch = text[i++]
-      if (ch == '[') cnt++
-      if (ch == ']') cnt--
-    } while (i < text.length && cnt > 0)
-    if (cnt == 0) {
-      let otf = text.substring(start, i - 1)
-      let front = text.substring(0, patstart)
-      let end = text.substr(i)
-      if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
-      return [front + end, otf]
-    } else return [text, null]
+    let otf = null
+    let found = true 
+    while (found) {
+      found = false
+      var start
+      let patstart = text.toLowerCase().indexOf(key[0] + ':[')
+      if (patstart < 0) {
+        patstart = text.toLowerCase().indexOf(key + ':[')
+        if (patstart < 0) return [text, otf]
+        else start = patstart + key.length + 2
+      } else start = patstart + 3
+      let cnt = 1
+      let i = start
+      if (i >= text.length) return [text, otf]
+      do {
+        let ch = text[i++]
+        if (ch == '[') cnt++
+        if (ch == ']') cnt--
+      } while (i < text.length && cnt > 0)
+      if (cnt == 0) {
+        found = true
+        otf = text.substring(start, i - 1)
+        let front = text.substring(0, patstart)
+        let end = text.substr(i)
+        if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
+        text = front + end
+      } else return [text, otf]
+    }
+    return [text, otf]
   }
 
   /**
