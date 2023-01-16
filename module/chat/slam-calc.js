@@ -60,15 +60,51 @@ export class SlamCalculator {
     let rawDamageTarget = (data.targetHp * data.relativeSpeed) / 100
     let targetDice = this._getDicePlusAdds(rawDamageTarget)
 
+    let attackerAdds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
+    let targetAdds = -(data.shieldDB || 0)
+    
+    let velocityAdd = 0
+
+    if (data.useDFRPGRules) {
+      let thr = data.attackerThr
+      let diceMatch = thr.match(/(\d+)d(.*)/i)
+      if (!diceMatch) {
+        ui.notifications.warn("Attacker Thrust damage (" + thr + ") does not include 'd'")
+        return 
+      }
+      attackerDice = { dice: +diceMatch[1], adds: +diceMatch[2] || 0 }
+      thr = data.targetThr
+      diceMatch = thr.match(/(\d+)d(.*)/i)
+      if (!diceMatch) {
+        ui.notifications.warn("Target Thrust damage (" + thr + ") does not include 'd'")
+        return 
+      }
+      targetDice = { dice: +diceMatch[1], adds: +diceMatch[2] || 0 }
+      velocityAdd = -2 // combined speed 1
+      if (data.relativeSpeed >= 2)
+        velocityAdd = -GURPS.SSRT.getModifier(data.relativeSpeed)  // convert range mod to size mod
+      attackerAdds += velocityAdd * attackerDice.dice
+      targetAdds += velocityAdd * targetDice.dice
+    }
+
     let attackerRoll = Roll.create(diceToFormula(attackerDice, `[Slam Attacker's roll]`, true))
     await attackerRoll.evaluate({ async: true })
 
-    let adds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
-    let attackerResult = Math.max(attackerRoll.total + adds, 1)
+    let attackerMin = false
+    let attackerResult = attackerRoll.total + attackerAdds
+    if (attackerResult < 1) {
+      attackerResult = 1
+      attackerMin = true
+    }
 
     let targetRoll = Roll.create(diceToFormula(targetDice, `[Slam Defender's roll]`, true))
     await targetRoll.evaluate({ async: true })
-    let targetResult = Math.max(targetRoll.total, 1)
+    let targetMin = false
+    let targetResult = targetRoll.total + targetAdds
+    if (targetResult < 1) {
+      targetResult = 1
+      targetMin = true
+    }
 
     let resultData = {
       effect: effects.unaffected,
@@ -102,20 +138,21 @@ export class SlamCalculator {
       attackerRaw: rawDamageAttacker,
       attackerDice: attackerDice,
       attackerResult: attackerResult,
-      attackerExplain: this.explainDieRoll(attackerRoll, data.isAoAStrong, data.shieldDB),
+      attackerExplain: this.explainDieRoll(attackerRoll, data.isAoAStrong, data.shieldDB, velocityAdd * attackerDice.dice, attackerMin),
       // ---
       target: data.targetToken.name,
       targetHp: data.targetHp,
       targetRaw: rawDamageTarget,
       targetDice: targetDice,
       targetResult: targetResult,
-      targetExplain: this.explainDieRoll(targetRoll),
+      targetExplain: this.explainDieRoll(targetRoll, false, -data.shieldDB, velocityAdd * targetDice.dice, targetMin),
       // ---
       effect: resultData.effect,
       isAoAStrong: data.isAoAStrong,
       relativeSpeed: data.relativeSpeed,
       result: result,
       shieldDB: data.shieldDB,
+      useDFRPGRules: data.useDFRPGRules
     })
 
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
@@ -128,7 +165,16 @@ export class SlamCalculator {
       sound: this.rollThemBones([targetRoll]),
     }
 
-    ChatMessage.create(messageData)
+    ChatMessage.create(messageData).then(async () => {
+      let targets = []
+      game.user.targets.forEach(t => targets.push(t))
+      game.user.targets.clear()
+      await GURPS.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name}]`)
+      GURPS.LastActor = data.targetToken.actor
+      await GURPS.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name}]`)
+      GURPS.LastActor = data.attackerToken.actor
+      targets.forEach(t => game.user.targets.add(t))
+    })   
   }
 
   targetFallsDown(attackerResult, targetResult) {
@@ -140,7 +186,7 @@ export class SlamCalculator {
   }
 
   targetDXCheck(attackerResult, targetResult) {
-    return attackerResult >= targetResult && !this.targetFallsDown(attackerResult, targetResult)
+    return attackerResult > targetResult && !this.targetFallsDown(attackerResult, targetResult)
   }
 
   /**
@@ -201,17 +247,20 @@ export class SlamCalculator {
     }
   }
 
-  explainDieRoll(roll, isAoAStrong = false, shieldDB = 0) {
+  explainDieRoll(roll, isAoAStrong = false, shieldDB = 0, velocity = 0, min = false) {
     let diceArray = roll.dice
     let resultsArray = diceArray.flatMap(it => it.results)
     let results = resultsArray.map(it => it.result)
 
     let explanation =
       roll.terms.length > 1 ? `${i18n('GURPS.rolled')} (${results})` : `${i18n('GURPS.rolled')} ${results}`
-    if (roll.terms[2] !== '0') explanation += `${roll.terms[1].formula}${roll.terms[2].formula}`
+    if (roll.terms[2]?.number !== '0') explanation += `${roll.terms[1].formula}${roll.terms[2].formula}`
 
     if (!!isAoAStrong) explanation += ` + 2 (${i18n('GURPS.slamAOAStrong')})`
-    if (!!shieldDB) explanation += ` + ${shieldDB} (${i18n('GURPS.slamShieldDB')})`
+    let sign = shieldDB >= 0 ? '+' : '-'
+    if (!!shieldDB) explanation += ` ${sign} ${math.abs(shieldDB)} (${i18n('GURPS.slamShieldDB')})`
+    if (!!velocity) explanation += ` + ${velocity} ${i18n('GURPS.slamRelativeVelocity')}`
+    if (min) explanation += ` (${i18n('GURPS.minimum')} 1)`
     return explanation
   }
 }

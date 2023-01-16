@@ -1,6 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.15.24
+Release 0.15.25 01/16/2023
+
+- Fix Add OTF support for GM Notes module ;-)
+- Added (and defaulted to) DFRPG Slam calculation 
+
+Release 0.15.24 01/11/2023
 
 - Remove the leading + from Accuracy bonus on the character sheets. (In preparation to handle accuracy mods like "5+2"..."+5+2" just looks too weird.)
 - Add OTF support for GM Notes module
