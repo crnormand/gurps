@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.26
+
+- Fixed multiple maneuver icons if you have Nordland or GURPS Instant Defaults loaded.
+- Fixed multi-distance range calc
+
 Release 0.15.25 01/16/2023
 
 - Fix Add OTF support for GM Notes module ;-)
