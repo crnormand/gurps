@@ -36,6 +36,7 @@
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
+-	negative value stat support for tokens
 
 ## 1.1.0 and beyond
 

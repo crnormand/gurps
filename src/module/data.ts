@@ -49,6 +49,7 @@ export enum SETTINGS {
 	ROLL_MODIFIERS = "roll_modifiers",
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
 	DISPLAY_DICE = "display_dice",
+	SSRT = "ssrt",
 }
 
 export enum DisplayMode {

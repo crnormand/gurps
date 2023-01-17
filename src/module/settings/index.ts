@@ -1,5 +1,4 @@
 import { CharacterProfile } from "@actor/character/data"
-import { DefaultHitLocations } from "@module/damage_calculator"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
@@ -91,7 +90,7 @@ export function registerSettings(): void {
 			prompt: "gurps.settings.modifier_mode.choices.prompt",
 			bucket: "gurps.settings.modifier_mode.choices.bucket",
 		},
-		default: "prompt",
+		default: "bucket",
 		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
 	})
 
@@ -145,6 +144,21 @@ export function registerSettings(): void {
 		onChange: () => {
 			;(game as any).CompendiumBrowser.loadSettings()
 		},
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.SSRT, {
+		name: "gurps.settings.ssrt.name",
+		hint: "gurps.settings.ssrt.hint",
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			standard: "gurps.settings.ssrt.choices.standard",
+			simplified: "gurps.settings.ssrt.choices.simplified",
+			tens: "gurps.settings.ssrt.choices.tens",
+		},
+		default: "standard",
+		onChange: (value: string) => console.log(`Range Table Strategy : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP, {

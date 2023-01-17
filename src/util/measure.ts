@@ -44,6 +44,33 @@ export function lengthFormat(n: Length, units: LengthUnits, u = 0): string {
 
 /**
  *
+ * @param n
+ * @param units
+ */
+export function fromInches(n: Length, units: LengthUnits): number {
+	let inches = n
+	switch (units) {
+		case LengthUnits.FeetAndInches:
+		case LengthUnits.Inch:
+			return inches
+		case LengthUnits.Feet:
+			return inches / 12
+		case LengthUnits.Yard:
+		case LengthUnits.Meter:
+			return inches / 36
+		case LengthUnits.Mile:
+			return inches / 63360
+		case LengthUnits.Centimeter:
+			return (inches / 36) * 100
+		case LengthUnits.Kilometer:
+			return inches / 36000
+		default:
+			return fromInches(n, LengthUnits.Yard)
+	}
+}
+
+/**
+ *
  * @param u
  */
 function f(u: LengthUnits) {
@@ -57,6 +84,16 @@ function f(u: LengthUnits) {
  */
 export function lengthFromNumber(value: number, unit: LengthUnits): Length {
 	return toInches(value, unit) as Length
+}
+
+/**
+ *
+ * @param value
+ * @param fromUnit
+ * @param toUnit
+ */
+export function getLength(value: number, fromUnit: LengthUnits, toUnit: LengthUnits): Length {
+	return fromInches(toInches(value, fromUnit), toUnit)
 }
 
 /**

@@ -67,6 +67,7 @@ import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { StaticItemSheet } from "@item/static/sheet"
 import { ColorSettings } from "./settings/colors"
 import { DamageChat } from "./damage_calculator/damage_chat_message"
+import { RangeGURPS } from "@util/range"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -123,6 +124,7 @@ Hooks.once("init", async () => {
 	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
 
 	StaticHitLocation.init()
+	GURPS.rangeObject = new RangeGURPS()
 
 	// Register custom system settings
 	registerSettings()
