@@ -1839,7 +1839,6 @@ export class GurpsActor extends Actor {
             m.techlevel = i.tech_level || ''
             m.cost = i.value || ''
             m.notes = i.notes || ''
-            if (!!m.notes && w.usage_notes) m.notes += '\n' + w.usage_notes
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
@@ -1848,7 +1847,7 @@ export class GurpsActor extends Actor {
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
             let old = this._findElementIn('melee', false, m.name, m.mode)
-            this._migrateOtfsAndNotes(old, m, i.vtt_notes)
+            this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
 
             GURPS.put(melee, m, m_index++)
           } else if (w.type == 'ranged_weapon') {
@@ -1859,7 +1858,6 @@ export class GurpsActor extends Actor {
             r.legalityclass = i.legality_class || '4'
             r.ammo = 0
             r.notes = i.notes || ''
-            if (!!r.notes && w.usage_notes) r.notes += '\n' + w.usage_notes
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
@@ -1870,7 +1868,7 @@ export class GurpsActor extends Actor {
             r.rcl = w.recoil || ''
             r.range = w.calc?.range || ''
             let old = this._findElementIn('ranged', false, r.name, r.mode)
-            this._migrateOtfsAndNotes(old, r, i.vtt_notes)
+            this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
             GURPS.put(ranged, r, r_index++)
           }
@@ -2894,8 +2892,9 @@ export class GurpsActor extends Actor {
    * @param {Skill|Spell|Ranged|Melee} oldobj
    * @param {Skill|Spell|Ranged|Melee} newobj
    */
-  _migrateOtfsAndNotes(oldobj = {}, newobj, importvttnotes = '') {
+  _migrateOtfsAndNotes(oldobj = {}, newobj, importvttnotes = '', usagenotes = '') {
     if (!!importvttnotes) newobj.notes += (!!newobj.notes ? ' ' : '') + importvttnotes
+    if (!!usagenotes) newobj.notes += (!!newobj.notes ? ' ' : '') + usagenotes
     this._updateOtf('check', oldobj, newobj)
     this._updateOtf('during', oldobj, newobj)
     this._updateOtf('pass', oldobj, newobj)
@@ -2923,28 +2922,35 @@ export class GurpsActor extends Actor {
   // Looking for OTFs in text.  ex:   c:[/qty -1] during:[/anim healing c]
   _removeOtf(key, text) {
     if (!text) return [text, null]
-    var start
-    let patstart = text.toLowerCase().indexOf(key[0] + ':[')
-    if (patstart < 0) {
-      patstart = text.toLowerCase().indexOf(key + ':[')
-      if (patstart < 0) return [text, null]
-      else start = patstart + key.length + 2
-    } else start = patstart + 3
-    let cnt = 1
-    let i = start
-    if (i >= text.length) return [text, null]
-    do {
-      let ch = text[i++]
-      if (ch == '[') cnt++
-      if (ch == ']') cnt--
-    } while (i < text.length && cnt > 0)
-    if (cnt == 0) {
-      let otf = text.substring(start, i - 1)
-      let front = text.substring(0, patstart)
-      let end = text.substr(i)
-      if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
-      return [front + end, otf]
-    } else return [text, null]
+    let otf = null
+    let found = true 
+    while (found) {
+      found = false
+      var start
+      let patstart = text.toLowerCase().indexOf(key[0] + ':[')
+      if (patstart < 0) {
+        patstart = text.toLowerCase().indexOf(key + ':[')
+        if (patstart < 0) return [text, otf]
+        else start = patstart + key.length + 2
+      } else start = patstart + 3
+      let cnt = 1
+      let i = start
+      if (i >= text.length) return [text, otf]
+      do {
+        let ch = text[i++]
+        if (ch == '[') cnt++
+        if (ch == ']') cnt--
+      } while (i < text.length && cnt > 0)
+      if (cnt == 0) {
+        found = true
+        otf = text.substring(start, i - 1)
+        let front = text.substring(0, patstart)
+        let end = text.substr(i)
+        if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
+        text = front + end
+      } else return [text, otf]
+    }
+    return [text, otf]
   }
 
   /**

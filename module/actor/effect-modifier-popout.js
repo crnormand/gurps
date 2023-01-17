@@ -166,7 +166,7 @@ export class EffectModifierPopout extends Application {
     let add = ''
     if (!!dragData.otf) {
       let action = parselink(dragData.otf)
-      if (action.action?.type == 'modifier')
+      if (action.action?.type == 'modifier' || action.action?.type == 'damage')
         add = dragData.otf
     }
     if (!!dragData.bucket) {

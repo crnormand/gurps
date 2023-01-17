@@ -2495,6 +2495,12 @@ if (!globalThis.GURPS) {
             return doc;
         }
     }])
+    
+    Hooks.on('renderGMNote', (app, html, options) => {
+      let h = html.find('[data-edit')
+      h[0].innerHTML = gurpslink(h[0].innerHTML)
+      GurpsWiring.hookupAllEvents(html)  
+    })
    
     // End of system "READY" hook.
     Hooks.call('gurpsready')
