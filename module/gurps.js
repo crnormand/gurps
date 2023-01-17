@@ -2501,6 +2501,16 @@ if (!globalThis.GURPS) {
       h[0].innerHTML = gurpslink(h[0].innerHTML)
       GurpsWiring.hookupAllEvents(html)  
     })
+    
+      // Hack to clean up multiple maneuver icons.   This will be fixed in future releaseds of the Bestiaries.
+   setTimeout(() => {
+      [ 'createCombatant', 'deleteCombatant', 'deleteCombat'].forEach(h => {
+        let t = Hooks.events[h].reduce((total, value) => {
+          return (value.fn.toString().includes('Maneuver(')) ? total + 1 : total
+        }, 0)
+        while (t-- > 1) Hooks.events[h].pop()
+      })
+    }, 1000)
    
     // End of system "READY" hook.
     Hooks.call('gurpsready')
