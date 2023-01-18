@@ -185,6 +185,8 @@ export class AnimChatProcessor extends ChatProcessor {
       console.log("Duplicate request for click: " + line)
       return
     }
+    ui.notifications.warn('Please click target')
+    this.send()
     GURPS.IgnoreTokenSelect = true
     
     try {
@@ -385,15 +387,11 @@ export class AnimChatProcessor extends ChatProcessor {
         ui.notifications.error('No token or actor selected')
         return false
       }
-      ui.notifications.warn('Please click the target location')
-      this.send()
       await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/, ''))
       return true
     }
     if (!srcToken) srcToken = destTokens[0] // centered anims should show on target (or selection)
     if ((!centered || move) && destTokens.length == 1 && destTokens[0] == srcToken) {
-      ui.notifications.warn('Please click the target location')
-      this.send()
       await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/, ''))
       return true
       //return this.errorExit('Source and Destination cannot be the same token with using a moving animation')

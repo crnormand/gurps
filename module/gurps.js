@@ -387,17 +387,22 @@ if (!globalThis.GURPS) {
    * @param {JQuery.Event|null} event
    * @returns {Promise<boolean>}
    */
-  async function executeOTF(string, priv = false, event = null, actor = null) {
-    if (!string) return false
-    string = string.trim()
-    if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
-    let action = parselink(string)
+  async function executeOTF(inputstring, priv = false, event = null, actor = null) {
+    if (!inputstring) return false
+    inputstring = inputstring.trim()
+    if (inputstring[0] == '[' && inputstring[inputstring.length - 1] == ']') inputstring = inputstring.substring(1, inputstring.length - 1)
+    let strings = inputstring.split('\\\\')
     let answer = false
-    if (!!action.action) {
-      if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
-      let result = await GURPS.performAction(action.action, actor || GURPS.LastActor, event)
-      answer = !!result
-    } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+    for (let string of strings) {
+      string = string.trim()
+      let action = parselink(string)
+      answer = false
+      if (!!action.action) {
+        if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
+        let result = await GURPS.performAction(action.action, actor || GURPS.LastActor, event)
+        answer = !!result
+      } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+    }
     return answer
   }
   GURPS.executeOTF = executeOTF

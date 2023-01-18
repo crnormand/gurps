@@ -6,13 +6,13 @@
     <div>
       <ul class='modifier-list'>
         {{#each targetmods}}
-          <li>{{{displayNumber mod}}}{{#if desc}} : {{desc}}{{/if}}</li>
+          <li>[{{{displayNumber mod}}}{{#if desc}} : {{desc}}{{/if}}]</li>
         {{/each}}
       </ul>
     </div>
     New Target: ({{finaltarget}})
     {{#if ruleOf14}}
-      <div class='aside'>(Cannot be greater than 13. See <i>The Rule of 14</i>, [PDF:PDF:B360].)</div>
+      <div class='aside'>(Cannot be greater than 13. See <i>The Rule of 14</i>, [PDF:B360].)</div>
     {{/if}}
   {{/if}}
 
