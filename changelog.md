@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.27 01/18/2023
+
+- Allow multiple commands on check/during OTF commands.   Check uses the last OTF to determine success
+- Update FrightCheck message to display OTF modifiers
+- Fix FrightCheck message PDF reference
+
 Release 0.15.26 01/16/2023
 
 - Fixed multiple maneuver icons if you have Nordland or GURPS Instant Defaults loaded.
