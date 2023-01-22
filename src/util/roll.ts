@@ -1,9 +1,8 @@
 import { ActorGURPS, CharacterGURPS } from "@actor"
-import { DefaultHitLocations } from "@module/damage_calculator"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { i18n_f, toWord, stringCompare } from "./misc"
+import { i18n_f, toWord } from "./misc"
 
 /**
  * Master function to handle various types of roll
@@ -21,7 +20,7 @@ export async function handleRoll(
 	await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
 	let name = ""
 	let rollData: any = {}
-	if (actor.type === "character") return staticHandleRoll(user, actor, data)
+	if (actor?.type === "character") return staticHandleRoll(user, actor, data)
 	switch (data.type) {
 		case RollType.Modifier:
 			return addModifier(user, actor, data)
@@ -45,6 +44,8 @@ export async function handleRoll(
 			name = `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`
 			// RollData = await getRollData(user, actor, data, name, "3d6")
 			return rollDamage(user, actor, data)
+		case RollType.Generic:
+			return rollGeneric(user, data)
 	}
 }
 
@@ -52,11 +53,12 @@ export async function handleRoll(
  *
  * @param user
  * @param actor
+ * @param data
  */
 export async function staticHandleRoll(
 	user: StoredDocument<User> | null,
 	actor: ActorGURPS | any,
-	data: { [key: string]: any }
+	data: Record<string, any>
 ): Promise<void> {
 	switch (data.type) {
 		case RollType.Modifier:
@@ -406,6 +408,58 @@ async function rollDamage(
 	messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
 
 	ChatMessage.create(messageData, {})
+}
+
+/**
+ *
+ * @param user
+ * @param data
+ */
+async function rollGeneric(user: StoredDocument<User> | null, data: Record<string, any>): Promise<void> {
+	const dice = new DiceGURPS(data.formula)
+	const roll = Roll.create(dice.toString(true))
+	await roll.evaluate({ async: true })
+
+	// Create an array suitable for drawing the dice on the ChatMessage.
+	const rolls = roll.dice[0].results.map(e => {
+		return { result: e.result, word: toWord(e.result) }
+	})
+
+	// Create an array of Modifiers suitable for display.
+	const modifiers: Array<RollModifier & { class?: string }> = [
+		...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
+	]
+	modifiers.forEach(m => {
+		m.class = "zero"
+		if (m.modifier > 0) m.class = "pos"
+		if (m.modifier < 0) m.class = "neg"
+	})
+
+	const rollTotal = roll.total!
+	const modifierTotal = applyMods(0, user)
+	const finalTotal = rollTotal + modifierTotal
+
+	const chatData: any = {
+		dice: dice,
+		modifiers: modifiers,
+		total: finalTotal,
+		rolls: rolls,
+		modifierTotal: modifierTotal,
+	}
+
+	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/generic-roll.hbs`, chatData)
+
+	let messageData = {
+		user: user,
+		speaker: chatData.attacker,
+		type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+		content: message,
+		roll: JSON.stringify(roll),
+		sound: CONFIG.sounds.dice,
+	}
+
+	ChatMessage.create(messageData, {})
+	await resetMods(user)
 }
 
 enum RollSuccess {

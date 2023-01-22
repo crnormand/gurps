@@ -593,6 +593,10 @@ class CharacterGURPS extends BaseActorGURPS {
 		return this.system.profile.SM + this.SizeModBonus
 	}
 
+	get hitLocationTable(): HitLocationTable {
+		return this.BodyType
+	}
+
 	get BodyType(): HitLocationTable {
 		let b = this.system.settings.body_type
 		const body: HitLocationTable = {
@@ -1287,16 +1291,17 @@ class CharacterGURPS extends BaseActorGURPS {
 		tooltip: TooltipGURPS | undefined
 	): number {
 		let total = 0
-		for (const f of this.features.skillPointBonuses) {
-			if (
-				stringCompare(name, f.name) &&
-				stringCompare(specialization, f.specialization) &&
-				stringCompare(tags, f.tags)
-			) {
-				total += f.adjustedAmount
-				f.addToTooltip(tooltip)
+		if (this.features)
+			for (const f of this.features.skillPointBonuses) {
+				if (
+					stringCompare(name, f.name) &&
+					stringCompare(specialization, f.specialization) &&
+					stringCompare(tags, f.tags)
+				) {
+					total += f.adjustedAmount
+					f.addToTooltip(tooltip)
+				}
 			}
-		}
 		return total
 	}
 

@@ -29,7 +29,7 @@ class ApplyDamageDialog extends Application {
 	 */
 	private constructor(roll: DamageRoll, target: DamageTarget, options = {}) {
 		super(options)
-
+		console.log(target)
 		this.calculator = new DamageCalculator(roll, target)
 	}
 

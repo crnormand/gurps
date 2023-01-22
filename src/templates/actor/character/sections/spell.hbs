@@ -1,4 +1,5 @@
-<div class="desc item {{#if (in this.type '_container')}}container {{/if}}" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+<div class="desc item {{#if (in this.type '_container')}}container {{/if}}" data-uuid="{{this.uuid}}" {{{indent
+	this.parents.length}}}>
 	<div class="dropdown">
 		{{#if (eq this.type "spell_container")}}
 		{{#if this.open}}
@@ -14,17 +15,10 @@
 	</div>
 	{{>actor/character/sections/item-notes}}
 </div>
-<!-- <div class="college">{{join this.college ", "}}</div> -->
-{{!-- <div class="resist">{{this.data.resist}}</div> --}}
-{{!-- <div class="class">{{this.data.class}}</div> --}}
-{{!-- <div class="casting-cost">{{this.data.casting_cost}}</div> --}}
-{{!-- <div class="maintenance-cost">{{this.data.maintenance_cost}}</div> --}}
-{{!-- <div class="casting-time">{{this.data.casting_time}}</div> --}}
-{{!-- <div class="duration">{{this.data.duration}}</div> --}}
 <div data-uuid="{{this.uuid}}" data-type="spell" class="level rollable">{{this.skillLevel}}</div>
 <div data-uuid="{{this.uuid}}" data-type="spell_rsl" class="rsl rollable">{{this.relativeLevel}}</div>
 <div class="points">{{this.adjustedPoints}}</div>
-<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+<div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}
 {{>actor/character/sections/spell}}

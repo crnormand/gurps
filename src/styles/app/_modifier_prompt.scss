@@ -267,3 +267,13 @@
 	/* 	left: 500px; */
 	/* } */
 }
+
+#dice-roller {
+	height: 52px;
+	pointer-events: auto;
+	cursor: pointer;
+	img {
+		height: 52px;
+		border: none;
+	}
+}

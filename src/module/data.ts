@@ -187,6 +187,7 @@ export enum RollType {
 	Damage = "damage",
 	Modifier = "modifier",
 	ControlRoll = "control_roll",
+	Generic = "generic",
 }
 
 export type ModifierItem = RollModifier | ModifierHeader

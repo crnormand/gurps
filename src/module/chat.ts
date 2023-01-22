@@ -1,6 +1,6 @@
 import { ActorGURPS } from "@actor"
 import { SkillGURPS } from "@item"
-import { RollGURPS } from "@util"
+import { LastActor, RollGURPS } from "@util"
 import { RollModifier, RollType } from "./data"
 // Import { GURPS } from "./gurps"
 
@@ -47,7 +47,7 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 	event.preventDefault()
 	const type: RollType = $(event.currentTarget).data("type")
 	const data: { [key: string]: any } = { type: type }
-	const character: any = (game as Game).user?.character as ActorGURPS
+	const character: any = await LastActor.get()
 	if (
 		[
 			// RollType.Damage,

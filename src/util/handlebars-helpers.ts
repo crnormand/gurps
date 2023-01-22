@@ -215,19 +215,20 @@ export function registerHandlebarsHelpers() {
 
 	Handlebars.registerHelper("ref", function (a: string): string {
 		if (!a) return ""
-		if (a.includes("http")) return i18n("gurps.character.link")
-		return a
+		const references = a.split(",").map(e => {
+			if (e.includes("http")) return [e, i18n("gurps.character.link")]
+			return [e, e]
+		})
+		const buffer: string[] = []
+		references.forEach(e => {
+			buffer.push(`<div class="ref" data-pdf="${e[1]}">${e[0]}</div>`)
+		})
+		return buffer.join(",")
 	})
 
 	Handlebars.registerHelper("adjustedStudyHours", function (entry: Study): number {
 		return getAdjustedStudyHours(entry)
 	})
-
-	// Handlebars.registerHelper("selected", function (list: any[], item: string): string {
-	// 	console.warn(list);
-	// 	if (list.includes(item)) return "selected";
-	// 	return "";
-	// });
 
 	Handlebars.registerHelper("in", function (total: string | any[] | any, sub: string): boolean {
 		if (!total) total = ""
@@ -250,20 +251,7 @@ export function registerHandlebarsHelpers() {
 		return JSON.stringify(o)
 	})
 
-	// Handlebars.registerHelper("splitDR", function(a: HitLocation): string {
-	// 	let DR = a.fastDR
-	// 	console.log(DR)
-	// 	return "woo"
-	// 	// let DR = ""
-	// 	// for (const i of Object.values(a)) {
-	// 	// 	DR += `${i}/`
-	// 	// }
-	// 	// DR = DR.substring(0, DR.length - 1)
-	// 	// return DR
-	// })
-
 	Handlebars.registerHelper("textareaFormat", function (s: string | string[]): string {
-		// If (!s) return ""
 		if (typeof s === "string") return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
 		else {
 			return s?.join("\r") || ""
@@ -469,15 +457,15 @@ export function registerHandlebarsHelpers() {
 		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
 	})
 
-	Handlebars.registerHelper("displayRolls", function (rolls: any[]): string {
+	Handlebars.registerHelper("displayRolls", function (rolls: any[], modTotal: number): string {
 		const dice: boolean = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DISPLAY_DICE) as boolean
-		console.log(rolls)
 		let buffer = ""
 		rolls.forEach((roll, index) => {
 			if (index !== 0) buffer += " + "
 			if (dice) buffer += `<i class="fas fa-dice-${roll.word}"></i>`
 			else buffer += `<i class="fas fa-square-${roll.result}"></i>`
 		})
+		if (modTotal) buffer += ` + ${modTotal}`
 		return buffer
 	})
 }

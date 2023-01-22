@@ -319,14 +319,10 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
 	for (let aKey of Object.keys(formData)) {
 		if (aKey.startsWith("array.") && aKey.match(/\d/)) {
 			const key = aKey.replace(/^array./g, "")
-			// Console.log(key)
 			const arrayKey = key.split(/.\d+./)[0]
 			const array: any[] = getProperty(object, arrayKey)
-			// Console.log(object, arrayKey, array)
 			const index = parseInt(key.match(/.(\d+)./)![1])
-			// Console.log(index)
 			const prop = key.replace(new RegExp(`^${arrayKey}.${index}.`), "")
-			// Console.log(prop)
 			setArrayProperty(array, index, prop, formData[aKey])
 			formData[arrayKey] = array
 			delete formData[aKey]
@@ -356,7 +352,6 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
  * @param value
  */
 function setArrayProperty(a: any[], index: number, prop: string, value: any): any[] {
-	// Console.log(a, index, prop, value)
 	if (prop.match(/.\d+./)) {
 		const inArrayKey = prop.split(/.\d+./)[0]
 		const inArrayArray = getProperty(a[index], inArrayKey)

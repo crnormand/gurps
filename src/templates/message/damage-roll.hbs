@@ -5,8 +5,8 @@
 	</div>
 	<div class="modifiers">
 		{{#each modifiers}}
-			<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
-					{{this.name}}{{/if}}</div>
+		<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
+			{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
 	<div class="result failure" draggable="true">{{total}}
@@ -14,16 +14,5 @@
 		{{damageType}}
 		damage</div>
 	<hr />
-	<div class="total">{{#each rolls}}
-			{{#unless (eq @index 0)}} + {{/unless}}
-			<i data-result={{this.result}} class="rollable fas fa-dice-{{this.word}}"></i>
-		{{/each}}
-		{{#if dice.modifier}}
-			{{modifierString dice.modifier}}
-		{{/if}}
-		{{#if modifierTotal}}
-			{{modifierString modifierTotal}}
-		{{/if}}
-		=
-		{{total}}
-	</div></div>
+	<div class="total">{{{displayRolls rolls modifierTotal}}} = {{total}}</div>
+</div>

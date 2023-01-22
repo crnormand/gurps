@@ -65,7 +65,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		super.activateListeners(html)
 		// Html.find(".input").on("change", event => this._resizeInput(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
-		html.find(".reference").on("click", event => this._handlePDF(event))
+		html.find(".ref").on("click", event => this._handlePDF(event))
 		// Html.find(".item").on("dblclick", event => this._openItemSheet(event))
 		// html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
