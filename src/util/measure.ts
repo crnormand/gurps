@@ -25,20 +25,54 @@ export function lengthFormat(n: Length, units: LengthUnits, u = 0): string {
 			if (inches > 0) buffer += `${inches.toString()}"`
 			return buffer
 		case LengthUnits.Inch:
-			return `${inches} ${f(units)}`
 		case LengthUnits.Feet:
-			return `${(inches / 12).toFixed(u)} ${f(units)}`
 		case LengthUnits.Yard:
 		case LengthUnits.Meter:
-			return `${(inches / 36).toFixed(u)} ${f(units)}`
 		case LengthUnits.Mile:
-			return `${(inches / 63360).toFixed(u)} ${f(units)}`
 		case LengthUnits.Centimeter:
-			return `${((inches / 36) * 100).toFixed(u)} ${f(units)}`
 		case LengthUnits.Kilometer:
-			return `${(inches / 36000).toFixed(u)} ${f(units)}`
+		case LengthUnits.AstronomicalUnit:
+		case LengthUnits.Lightyear:
+		case LengthUnits.Parsec:
+			return `${Math.round(fromInches(inches, units) * 100) / 100} ${f(units)}`
 		default:
 			return lengthFormat(n, LengthUnits.FeetAndInches)
+	}
+}
+
+/**
+ *
+ * @param n
+ * @param units
+ */
+export function fromInches(n: Length, units: LengthUnits): number {
+	let inches = n
+	switch (units) {
+		case LengthUnits.FeetAndInches:
+		case LengthUnits.Inch:
+			return inches
+		case LengthUnits.Feet:
+			return inches / 12
+		case LengthUnits.Yard:
+		case LengthUnits.Meter:
+			return inches / 36
+		case LengthUnits.Mile:
+			return inches / 63360
+		case LengthUnits.Centimeter:
+			return (inches / 36) * 100
+		case LengthUnits.Kilometer:
+			return inches / 36000
+		case LengthUnits.AstronomicalUnit:
+			// 93 million miles
+			return inches / 63360 / 93000000
+		case LengthUnits.Lightyear:
+			// 5.865 trillion miles
+			return inches / 63360 / (5.865 * 10 ** 12)
+		case LengthUnits.Parsec:
+			// 3.26 lightyears
+			return inches / 63360 / (3.26 * 5.865 * 10 ** 12)
+		default:
+			return fromInches(n, LengthUnits.Yard)
 	}
 }
 
@@ -57,6 +91,16 @@ function f(u: LengthUnits) {
  */
 export function lengthFromNumber(value: number, unit: LengthUnits): Length {
 	return toInches(value, unit) as Length
+}
+
+/**
+ *
+ * @param value
+ * @param fromUnit
+ * @param toUnit
+ */
+export function getLength(value: number, fromUnit: LengthUnits, toUnit: LengthUnits): Length {
+	return fromInches(toInches(value, fromUnit), toUnit)
 }
 
 /**
@@ -122,6 +166,15 @@ function toInches(length: number, unit: LengthUnits): Length {
 			return (length * 36000) as Length
 		case LengthUnits.Meter:
 			return (length * 36) as Length
+		case LengthUnits.AstronomicalUnit:
+			// 93 million miles
+			return length * 63360 * 93000000
+		case LengthUnits.Lightyear:
+			// 5.865 trillion miles
+			return length * 63360 * (5.865 * 10 ** 12)
+		case LengthUnits.Parsec:
+			// 3.26 lightyears
+			return length * 63360 * (3.26 * 5.865 * 10 ** 12)
 		default:
 			return toInches(length, LengthUnits.FeetAndInches)
 	}
@@ -202,6 +255,9 @@ export enum LengthUnits {
 	Centimeter = "cm",
 	Kilometer = "km",
 	Meter = "m",
+	AstronomicalUnit = "au",
+	Lightyear = "ly",
+	Parsec = "pc",
 }
 
 export const allLengthUnits = [
@@ -213,7 +269,24 @@ export const allLengthUnits = [
 	LengthUnits.Centimeter,
 	LengthUnits.Kilometer,
 	LengthUnits.Meter,
+	LengthUnits.AstronomicalUnit,
+	LengthUnits.Lightyear,
+	LengthUnits.Parsec,
 ]
+
+export const lengthSymbols: Record<LengthUnits, string[]> = {
+	[LengthUnits.FeetAndInches]: [],
+	[LengthUnits.Inch]: ["in", "inch", "inches"],
+	[LengthUnits.Feet]: ["ft", "foot", "feet"],
+	[LengthUnits.Yard]: ["yd", "yard", "yards"],
+	[LengthUnits.Mile]: ["mi", "mile", "miles"],
+	[LengthUnits.Centimeter]: ["cm", "centimeter", "centimeters", "centimetre", "centimetres"],
+	[LengthUnits.Kilometer]: ["km", "kilometer", "kilometers", "kilometre", "kilometres"],
+	[LengthUnits.Meter]: ["m", "meter", "meters", "metre", "metres"],
+	[LengthUnits.AstronomicalUnit]: ["au", "astronomical unit", "astronomical units"],
+	[LengthUnits.Lightyear]: ["ly", "lightyear", "lightyears"],
+	[LengthUnits.Parsec]: ["pc", "parsec", "parsecs"],
+}
 
 export enum WeightUnits {
 	Pound = "lb",

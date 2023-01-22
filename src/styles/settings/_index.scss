@@ -1,3 +1,8 @@
+.button-parent {
+	display: grid;
+	grid-auto-flow: column;
+}
+
 .window-app.settings-menu {
 	&#colors-settings,
 	&#default_sheet_settings-settings {

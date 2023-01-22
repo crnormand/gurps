@@ -358,6 +358,7 @@ class DamageCalculator {
 	}
 
 	get rawDR(): number {
+		console.log(this.target)
 		return this._rawDROverride
 			? this._rawDROverride
 			: HitLocationUtil.getHitLocationDR(

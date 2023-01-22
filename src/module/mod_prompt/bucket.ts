@@ -1,4 +1,4 @@
-import { ModifierItem, RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
+import { ModifierItem, RollModifier, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { i18n, i18n_f, Measure } from "@util"
 // Import { common_modifiers } from "./data"
 
@@ -87,7 +87,7 @@ class ModifierBucket extends Application {
 		]
 
 		// TODO: get default length units, use that for string, current values are in yards
-		const modifiersSpeed: ModifierItem[] = [
+		const modifiersSpeedStandard: ModifierItem[] = [
 			...[
 				[-1, 3],
 				[-2, 5],
@@ -120,6 +120,22 @@ class ModifierBucket extends Application {
 				}),
 			},
 		]
+
+		const modifiersSpeedSimple: ModifierItem[] = [
+			{ name: i18n("gurps.modifier.speed.close"), modifier: 0 },
+			{ name: i18n("gurps.modifier.speed.short"), modifier: -3 },
+			{ name: i18n("gurps.modifier.speed.medium"), modifier: -7 },
+			{ name: i18n("gurps.modifier.speed.long"), modifier: -11 },
+			{ name: i18n("gurps.modifier.speed.extreme"), modifier: -15 },
+		]
+
+		const modifiersSpeedTens: ModifierItem[] = [...Array(50).keys()].map(e => {
+			const adjDistance = Measure.lengthFormat(
+				Measure.lengthFromNumber((e + 1) * 10, Measure.LengthUnits.Yard),
+				Measure.LengthUnits.Yard
+			)
+			return { modifier: -(e + 1), name: i18n_f("gurps.modifier.speed.range", { distance: adjDistance }) }
+		})
 
 		const modifiersSize: ModifierItem[] = [
 			{ name: i18n("gurps.modifier.size.melee_ranged"), title: true },
@@ -269,6 +285,12 @@ class ModifierBucket extends Application {
 				return { name: i18n_f("gurps.modifier.rof.rof", { rof: l }), modifier: Number(m) }
 			}),
 		]
+
+		let modifiersSpeed: ModifierItem[] = []
+		const modifierSetting = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SSRT)
+		if (modifierSetting === "standard") modifiersSpeed = modifiersSpeedStandard
+		else if (modifierSetting === "simplified") modifiersSpeed = modifiersSpeedSimple
+		else if (modifierSetting === "tens") modifiersSpeed = modifiersSpeedTens
 
 		const common_modifiers: { title: string; items: ModifierItem[]; open?: boolean }[] = [
 			{

@@ -22,7 +22,7 @@
 <div class="weight">{{this.adjustedWeightFast}}</div>
 <div class="extended-value">{{this.extendedValue}}</div>
 <div class="extended-weight">{{this.extendedWeightFast}}</div>
-<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+<div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}
 {{>actor/character/sections/equipment}}

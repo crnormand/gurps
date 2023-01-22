@@ -21,6 +21,7 @@ import {
 } from "@module/damage_calculator"
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
+import { DiceGURPS } from "@module/dice"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -69,6 +70,14 @@ class BaseActorGURPS extends Actor {
 			}
 		}
 		await super._preUpdate(changed, options, user)
+	}
+
+	get hitLocationTable(): HitLocationTable {
+		return {
+			name: "",
+			roll: new DiceGURPS("3d6"),
+			locations: [],
+		}
 	}
 
 	get deepItems(): Collection<Item> {
@@ -155,8 +164,9 @@ class DamageTargetActor implements DamageTarget {
 	}
 
 	get hitLocationTable(): HitLocationTable {
+		return this.actor.hitLocationTable
 		// @ts-ignore
-		return this.actor.system.settings.body_type
+		// return this.actor.system.settings.body_type
 	}
 
 	/**

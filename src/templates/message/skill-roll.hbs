@@ -4,25 +4,25 @@
 		({{level}})</div>
 	<div class="modifiers">
 		{{#each modifiers}}
-			<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
-					{{this.name}}{{/if}}</div>
+		<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
+			{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
 	{{#if (neq level effectiveLevel)}}
-		<div class="effective">{{localize "gurps.roll.effective_skill" level=effectiveLevel}}</div>
+	<div class="effective">{{localize "gurps.roll.effective_skill" level=effectiveLevel}}</div>
 	{{/if}}
 	<div class="result {{success}}">{{total}}: {{localize (concat "gurps.roll.success." success)}}</div>
 	<div class="margin mod mod-{{marginClass}}" data-mod="{{json marginMod}}">
 		{{#if (in success "success")}}
-			{{#if (eq margin 0)}}
-				{{localize "gurps.roll.just_made_it"}}
-			{{else}}
-				{{localize "gurps.roll.success_margin" margin=margin}}
-			{{/if}}
+		{{#if (eq margin 0)}}
+		{{localize "gurps.roll.just_made_it"}}
 		{{else}}
-			{{localize "gurps.roll.failure_margin" margin=margin}}
+		{{localize "gurps.roll.success_margin" margin=margin}}
+		{{/if}}
+		{{else}}
+		{{localize "gurps.roll.failure_margin" margin=margin}}
 		{{/if}}
 	</div>
 	<hr />
-	<div class="total">{{{displayRolls rolls}}} = {{total}}</div>
+	<div class="total">{{{displayRolls rolls modifierTotal}}} = {{total}}</div>
 </div>

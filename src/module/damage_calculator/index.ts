@@ -179,7 +179,7 @@ export interface DamageTarget {
 	ST: number
 	// CharacterGURPS.attributes.get(gid.HitPoints).calc
 	hitPoints: HitPointsCalc
-	// CharacterGURPS.system.settings.body_type
+	// CharacterGURPS.BodyType
 	hitLocationTable: HitLocationTable
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
 	getTrait(name: string): TargetTrait | undefined

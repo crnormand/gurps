@@ -6,19 +6,16 @@
     -   premade lists
     -   pinned appears as category always (for awareness)
     -   modifier bucket journals
+-   Finish the Damage Calculator conversion
+-   Convert OTFs and chat commands
+    -   roll chat command
 
 ## 1.0.0
 
--   range ruler
--   dice roller button
 -   send modifiers from prompt
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
--   change skill level when prereqs not satisfied
 -   Drag rollable buttons to hotbar or message box for macros
--   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility
--   Convert OTFs and chat commands
-    -   roll chat command
 -   Implement "static" items (0.15 and older) compatibility
     -   add deprecation warning to static items
 -   Add conversion from "static" to newer "dynamic" characters
@@ -36,6 +33,7 @@
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
+-	negative value stat support for tokens
 
 ## 1.1.0 and beyond
 

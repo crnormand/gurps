@@ -1,9 +1,12 @@
-import { RollModifier, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
-import { i18n } from "@util"
+import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
+import { i18n, RollGURPS } from "@util"
+import { handleRoll } from "@util/roll"
 import { ModifierBucket } from "./bucket"
 import { ModifierWindow } from "./window"
 
 export class ModifierButton extends Application {
+	_tempRangeMod: RollModifier = { name: "", modifier: 0 }
+
 	constructor(options = {}) {
 		super(options)
 		this.showing = false
@@ -43,12 +46,23 @@ export class ModifierButton extends Application {
 		let buttonColor = "total-white"
 		if (total > 0) buttonColor = "total-green"
 		if (total < 0) buttonColor = "total-red"
+		const showDice = true
 
 		return mergeObject(super.getData(options), {
 			total: total,
 			buttonColor: buttonColor,
 			buttonMagnet: buttonMagnet,
+			imgDice: `systems/${SYSTEM_NAME}/assets/3d6.webp`,
+			showDice,
 		})
+	}
+
+	setRangeMod(mod: RollModifier) {
+		this._tempRangeMod = mod
+	}
+
+	addRangeMod() {
+		;(game as any).ModifierButton.window.addModifier(this._tempRangeMod)
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
@@ -62,10 +76,13 @@ export class ModifierButton extends Application {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.on("click", event => this._onClick(event))
+		html.find("#modifier-app").on("click", event => this._onClick(event))
 		html.on("wheel", event => this._onMouseWheel(event))
 		html.find(".magnet").on("click", event => this._onMagnetClick(event))
 		html.find(".trash").on("click", event => this.resetMods(event))
+
+		html.find("#dice-roller").on("click", event => this._onDiceClick(event))
+		html.find("#dice-roller").on("contextmenu", event => this._onDiceContextMenu(event))
 	}
 
 	async _onClick(event: JQuery.ClickEvent): Promise<void> {
@@ -75,6 +92,16 @@ export class ModifierButton extends Application {
 		} else {
 			await this.window.render(true)
 		}
+	}
+
+	async _onDiceClick(event: JQuery.ClickEvent): Promise<void> {
+		event.preventDefault()
+		return handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "3d6" })
+	}
+
+	async _onDiceContextMenu(event: JQuery.ContextMenuEvent): Promise<void> {
+		event.preventDefault()
+		return handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "1d6" })
 	}
 
 	async _onMagnetClick(event: JQuery.ClickEvent): Promise<unknown> {

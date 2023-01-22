@@ -1,3 +1,4 @@
+<div class="button-parent">
 <div id="modifier-app" class="{{cssClass}}" autocomplete="off">
 	<div class="total {{buttonColor}}">{{signed total}}</div>
 	<div class="buttons">
@@ -5,4 +6,10 @@
 		<hr />
 		<a class="trash fas fa-trash"></a>
 	</div>
+</div>
+{{#if showDice}}
+<div id="dice-roller">
+	<img class="dice-icon" src="{{imgDice}}"></img>
+</div>
+{{/if}}
 </div>

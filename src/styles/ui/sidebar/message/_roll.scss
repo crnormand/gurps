@@ -2,7 +2,8 @@
 	&.attack,
 	&.attribute,
 	&.damage,
-	&.skill {
+	&.skill,
+	&.generic {
 		display: grid;
 		grid-auto-flow: row;
 		align-items: center;
@@ -85,9 +86,14 @@
 			}
 
 			&.mod-zero {
-				border-color: yellow;
-				background-color: yellow;
+				border-color: rgb(var(--color-skill));
+				background-color: (rgb(var(--color-skill)));
 				color: white;
+
+				&:hover {
+					color: rgb(var(--color-skill));
+					background-color: white;
+				}
 			}
 		}
 
@@ -95,6 +101,9 @@
 			display: grid;
 			grid-auto-flow: rows;
 			grid-gap: 2px;
+			&.generic {
+				margin-top: 5px;
+			}
 		}
 
 		.result {
@@ -114,27 +123,29 @@
 			border-radius: 5px;
 
 			&.critical_success {
-				/* background-color: rgb(var(--color-critical-success)); */
 				color: rgb(var(--color-critical-success));
 				border-color: rgb(var(--color-critical-success));
 			}
 
 			&.critical_failure {
-				/* background-color: rgb(var(--color-critical-failure)); */
 				color: rgb(var(--color-critical-failure));
 				border-color: rgb(var(--color-critical-failure));
 			}
 
 			&.success {
-				/* background-color: rgb(var(--color-success)); */
 				color: rgb(var(--color-success));
 				border-color: rgb(var(--color-success));
 			}
 
 			&.failure {
-				/* background-color: rgb(var(--color-failure)); */
 				color: rgb(var(--color-failure));
 				border-color: rgb(var(--color-failure));
+			}
+
+			&.generic {
+				margin-top: 5px;
+				color: rgb(var(--color-skill));
+				border-color: rgb(var(--color-skill));
 			}
 		}
 

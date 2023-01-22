@@ -1,5 +1,5 @@
 import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
-import { Feature, WeaponDRDivisorBonus } from "@feature"
+import { Feature, featureMap, WeaponDRDivisorBonus } from "@feature"
 import { ConditionalModifier } from "@feature/conditional_modifier"
 import { ReactionBonus } from "@feature/reaction_bonus"
 import { SkillBonus } from "@feature/skill_bonus"
@@ -27,7 +27,7 @@ import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeDef, AttributeType } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
-import { attrPrefix, featureMap, gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
+import { attrPrefix, gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
@@ -591,6 +591,10 @@ class CharacterGURPS extends BaseActorGURPS {
 	override get sizeMod(): number {
 		if (!this.system?.profile) return 0
 		return this.system.profile.SM + this.SizeModBonus
+	}
+
+	get hitLocationTable(): HitLocationTable {
+		return this.BodyType
 	}
 
 	get BodyType(): HitLocationTable {
@@ -1287,16 +1291,17 @@ class CharacterGURPS extends BaseActorGURPS {
 		tooltip: TooltipGURPS | undefined
 	): number {
 		let total = 0
-		for (const f of this.features.skillPointBonuses) {
-			if (
-				stringCompare(name, f.name) &&
-				stringCompare(specialization, f.specialization) &&
-				stringCompare(tags, f.tags)
-			) {
-				total += f.adjustedAmount
-				f.addToTooltip(tooltip)
+		if (this.features)
+			for (const f of this.features.skillPointBonuses) {
+				if (
+					stringCompare(name, f.name) &&
+					stringCompare(specialization, f.specialization) &&
+					stringCompare(tags, f.tags)
+				) {
+					total += f.adjustedAmount
+					f.addToTooltip(tooltip)
+				}
 			}
-		}
 		return total
 	}
 

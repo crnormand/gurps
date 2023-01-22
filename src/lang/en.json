@@ -56,7 +56,12 @@
 			},
 			"speed": {
 				"title": "Speed / Range",
-				"range": "for range/speed {distance}"
+				"range": "for range/speed {distance}",
+				"close": "Close Range (5 yds)",
+				"short": "Short Range (20 yds)",
+				"medium": "Medium Range (100 yds)",
+				"long": "Long Range (500 yds)",
+				"extreme": "Extreme Range (500+ yds)"
 			},
 			"size": {
 				"title": "Size Modifier",
@@ -1072,7 +1077,10 @@
 			"mi": "mi",
 			"cm": "cm",
 			"km": "km",
-			"m": "m"
+			"m": "m",
+			"au": "AU",
+			"ly": "ly",
+			"pc": "pc"
 		},
 		"placeholder": {
 			"hit_location": {
@@ -1125,6 +1133,37 @@
 				"choices": {
 					"bucket": "Modifier Bucket",
 					"prompt": "Modifier Prompt"
+				}
+			},
+			"ssrt": {
+				"name": "Range Modifier Formula",
+				"hint": "Sets the formula used to calculate range penalties.",
+				"choices": {
+					"standard": "Size / Speed Range Table (B550)",
+					"simplified": "Range Bands Table (Monster Hunters 2, p. 21)",
+					"tens": "-1 per 10 yards"
+				}
+			},
+			"import_body_plan": {
+				"name": "Legacy: Import Body Plan",
+				"hint": "Choose whether to overwrite character body plans for Legacy Characters.",
+				"choices": {
+					"yes": "Overwrite with imported body plan",
+					"no": "Do not overwrite with imported body plan",
+					"ask": "Ask before overwriting with imported body plan"
+				}
+			},
+			"import_name": {
+				"name": "Legacy: Import Name",
+				"hint": "Choose whether the character's name is overwritten on import. This is useful if the character name used in GCS/GCA is different from that used in Foundry."
+			},
+			"import_hp_fp": {
+				"name": "Legacy: Import HP & FP",
+				"hint": "Choose whether to overwrite HP & FP when importing Legacy Characters.",
+				"choices": {
+					"yes": "Overwrite with imported HP & FP",
+					"no": "Do not overwrite with imported HP & FP",
+					"ask": "Ask before overwriting with imported HP & FP"
 				}
 			},
 			"colors": {

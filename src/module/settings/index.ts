@@ -1,5 +1,4 @@
 import { CharacterProfile } from "@actor/character/data"
-import { DefaultHitLocations } from "@module/damage_calculator"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
@@ -91,7 +90,7 @@ export function registerSettings(): void {
 			prompt: "gurps.settings.modifier_mode.choices.prompt",
 			bucket: "gurps.settings.modifier_mode.choices.bucket",
 		},
-		default: "prompt",
+		default: "bucket",
 		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
 	})
 
@@ -147,6 +146,21 @@ export function registerSettings(): void {
 		},
 	})
 
+	g.settings.register(SYSTEM_NAME, SETTINGS.SSRT, {
+		name: "gurps.settings.ssrt.name",
+		hint: "gurps.settings.ssrt.hint",
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			standard: "gurps.settings.ssrt.choices.standard",
+			simplified: "gurps.settings.ssrt.choices.simplified",
+			tens: "gurps.settings.ssrt.choices.tens",
+		},
+		default: "standard",
+		onChange: (value: string) => console.log(`Range Modifier Formula : ${value}`),
+	})
+
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP, {
 		name: "gurps.settings.import_hp_fp.name",
 		hint: "gurps.settings.import_hp_fp.hint",
@@ -154,12 +168,12 @@ export function registerSettings(): void {
 		config: true,
 		type: String,
 		choices: {
-			yes: "GURPS.settingImportHPAndFPUseFile",
-			no: "GURPS.settingImportHPAndFPIgnore",
-			ask: "GURPS.settingImportHPAndFPAsk",
+			yes: "gurps.settings.import_hp_fp.choices.yes",
+			no: "gurps.settings.import_hp_fp.choices.no",
+			ask: "gurps.settings.import_hp_fp.choices.ask",
 		},
 		default: "ask",
-		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
+		onChange: (value: string) => console.log(`Import HP & FP : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN, {
@@ -169,22 +183,22 @@ export function registerSettings(): void {
 		config: true,
 		type: String,
 		choices: {
-			yes: "GURPS.settingImportHPAndFPUseFile",
-			no: "GURPS.settingImportHPAndFPIgnore",
-			ask: "GURPS.settingImportHPAndFPAsk",
+			yes: "gurps.settings.import_body_plan.choices.yes",
+			no: "gurps.settings.import_body_plan.choices.no",
+			ask: "gurps.settings.import_body_plan.choices.ask",
 		},
 		default: "ask",
-		onChange: (value: string) => console.log(`Import of Body Plan : ${value}`),
+		onChange: (value: string) => console.log(`Import Body Plan : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME, {
-		name: "GURPS.settingImportIgnoreName",
-		hint: "GURPS.settingHintImportIgnoreName",
+		name: "GURPS.settings.import_name.name",
+		hint: "GURPS.settings.import_name.name",
 		scope: "world",
 		config: true,
 		type: Boolean,
 		default: false,
-		onChange: value => console.log(`Ignore import name : ${value}`),
+		onChange: value => console.log(`Import Name : ${value}`),
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION, {

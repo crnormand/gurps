@@ -1,4 +1,5 @@
-<div class="desc item {{#if (in this.type '_container')}}container {{/if}}{{disabled (not this.enabled)}}" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+<div class="desc item {{#if (in this.type '_container')}}container {{/if}}{{disabled (not this.enabled)}}"
+	data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
 	<div class="dropdown">
 		{{!-- {{#if (eq this.type "trait_container")}} --}}
 		{{#if (or (eq this.type "trait_container") this.children.size)}}
@@ -15,7 +16,7 @@
 	{{>actor/character/sections/item-notes}}
 </div>
 <div class="points {{disabled (not this.enabled)}}">{{this.adjustedPoints}}</div>
-<div class="reference" data-pdf="{{this.reference}}" {{disabled (not this.enabled)}}>{{ref this.reference}}</div>
+<div class="reference" {{disabled (not this.enabled)}}>{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}
 {{>actor/character/sections/trait}}

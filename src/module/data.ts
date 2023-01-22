@@ -1,14 +1,14 @@
-import {
-	AttributeBonus,
-	CostReduction,
-	DRBonus,
-	SkillBonus,
-	SkillPointBonus,
-	SpellBonus,
-	SpellPointBonus,
-	WeaponDamageBonus,
-	WeaponDRDivisorBonus,
-} from "@feature"
+// Import {
+// 	AttributeBonus,
+// 	CostReduction,
+// 	DRBonus,
+// 	SkillBonus,
+// 	SkillPointBonus,
+// 	SpellBonus,
+// 	SpellPointBonus,
+// 	WeaponDamageBonus,
+// 	WeaponDRDivisorBonus,
+// } from "@feature"
 
 /*
  * I had to move SETTINGS here as well, because it fixed the weird error that leads to the code not recognizing standard
@@ -49,6 +49,7 @@ export enum SETTINGS {
 	ROLL_MODIFIERS = "roll_modifiers",
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
 	DISPLAY_DICE = "display_dice",
+	SSRT = "ssrt",
 }
 
 export enum DisplayMode {
@@ -186,6 +187,7 @@ export enum RollType {
 	Damage = "damage",
 	Modifier = "modifier",
 	ControlRoll = "control_roll",
+	Generic = "generic",
 }
 
 export type ModifierItem = RollModifier | ModifierHeader
@@ -320,13 +322,13 @@ export enum UserFlags {
 	ModifierPinned = "pinnedMods",
 }
 
-export type featureMap = {
-	attributeBonuses: AttributeBonus[]
-	costReductions: CostReduction[]
-	drBonuses: DRBonus[]
-	skillBonuses: SkillBonus[]
-	skillPointBonuses: SkillPointBonus[]
-	spellBonuses: SpellBonus[]
-	spellPointBonuses: SpellPointBonus[]
-	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
-}
+// Export type featureMap = {
+// 	attributeBonuses: AttributeBonus[]
+// 	costReductions: CostReduction[]
+// 	drBonuses: DRBonus[]
+// 	skillBonuses: SkillBonus[]
+// 	skillPointBonuses: SkillPointBonus[]
+// 	spellBonuses: SpellBonus[]
+// 	spellPointBonuses: SpellPointBonus[]
+// 	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
+// }
