@@ -70,24 +70,43 @@ export type ItemSystemDataGURPS =
 	| NoteSystemData
 	| NoteContainerSystemData
 
-export type ItemType =
-	| "trait"
-	| "trait_container"
-	| "modifier"
-	| "modifier_container"
-	| "skill"
-	| "technique"
-	| "skill_container"
-	| "spell"
-	| "ritual_magic_spell"
-	| "spell_container"
-	| "equipment"
-	| "equipment_container"
-	| "eqp_modifier"
-	| "eqp_modifier_container"
-	| "note"
-	| "note_container"
-	| "static_equipment"
+export enum ItemType {
+	Trait = "trait",
+	TraitContainer = "trait_container",
+	TraitModifier = "modifier",
+	TraitModifierContainer = "modifier_container",
+	Skill = "skill",
+	Technique = "technique",
+	SkillContainer = "skill_container",
+	Spell = "spell",
+	RitualMagicSpell = "ritual_magic_spell",
+	SpellContainer = "spell_container",
+	Equipment = "equipment_gcs",
+	EquipmentContainer = "equipment_container",
+	EquipmentModifier = "eqp_modifier",
+	EquipmentModifierContainer = "eqp_modifier_container",
+	Note = "note",
+	NoteContainer = "note_container",
+	LegacyEquipment = "equipment"
+}
+// Export type ItemType =
+// 	| "trait"
+// 	| "trait_container"
+// 	| "modifier"
+// 	| "modifier_container"
+// 	| "skill"
+// 	| "technique"
+// 	| "skill_container"
+// 	| "spell"
+// 	| "ritual_magic_spell"
+// 	| "spell_container"
+// 	| "equipment"
+// 	| "equipment_container"
+// 	| "eqp_modifier"
+// 	| "eqp_modifier_container"
+// 	| "note"
+// 	| "note_container"
+// 	| "static_equipment"
 
 // Export type ContainerType =
 // 	| "trait"

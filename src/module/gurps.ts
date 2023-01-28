@@ -68,6 +68,9 @@ import { StaticItemSheet } from "@item/static/sheet"
 import { ColorSettings } from "./settings/colors"
 import { DamageChat } from "./damage_calculator/damage_chat_message"
 import { RangeGURPS } from "@util/range"
+import { ItemType } from "@item/data"
+import { ActorType } from "@actor/data"
+import { RollGURPS } from "@module/roll";
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -76,7 +79,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	;(globalThis as any).GURPS = GURPS
+	; (globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -115,13 +118,15 @@ Hooks.once("init", async () => {
 
 	const src = `systems/${SYSTEM_NAME}/assets/gurps4e.svg`
 	$("#logo").attr("src", src)
-	// $("#logo").attr("width", "100px");
+		// $("#logo").attr("width", "100px");
 
-	// Assign custom classes and constants hereby
-	;(CONFIG as any).GURPS = GURPSCONFIG
-	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
+		// Assign custom classes and constants hereby
+		; (CONFIG as any).GURPS = GURPSCONFIG
+		; (CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
-	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+		; (CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+
+	CONFIG.Dice.rolls.unshift(RollGURPS)
 
 	StaticHitLocation.init()
 	GURPS.rangeObject = new RangeGURPS()
@@ -141,94 +146,94 @@ Hooks.once("init", async () => {
 	DocumentSheetConfig.unregisterSheet(JournalEntryPage, "core", JournalPDFPageSheet)
 
 	Items.registerSheet(SYSTEM_NAME, TraitSheet, {
-		types: ["trait"],
+		types: [ItemType.Trait],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.trait"),
 	})
 	Items.registerSheet(SYSTEM_NAME, TraitContainerSheet, {
-		types: ["trait_container"],
+		types: [ItemType.TraitContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.trait_container"),
 	})
 	Items.registerSheet(SYSTEM_NAME, TraitModifierSheet, {
-		types: ["modifier"],
+		types: [ItemType.TraitModifier],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.modifier"),
 	})
 	Items.registerSheet(SYSTEM_NAME, TraitModifierContainerSheet, {
-		types: ["modifier_container"],
+		types: [ItemType.TraitModifierContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.modifier_container"),
 	})
 	Items.registerSheet(SYSTEM_NAME, SkillSheet, {
-		types: ["skill"],
+		types: [ItemType.Skill],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.skill"),
 	})
 	Items.registerSheet(SYSTEM_NAME, TechniqueSheet, {
-		types: ["technique"],
+		types: [ItemType.Technique],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.technique"),
 	})
 	Items.registerSheet(SYSTEM_NAME, SkillContainerSheet, {
-		types: ["skill_container"],
+		types: [ItemType.SkillContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.skill_container"),
 	})
 	Items.registerSheet(SYSTEM_NAME, SpellSheet, {
-		types: ["spell"],
+		types: [ItemType.Spell],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.spell"),
 	})
 	Items.registerSheet(SYSTEM_NAME, RitualMagicSpellSheet, {
-		types: ["ritual_magic_spell"],
+		types: [ItemType.RitualMagicSpell],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.ritual_magic_spell"),
 	})
 	Items.registerSheet(SYSTEM_NAME, SpellContainerSheet, {
-		types: ["spell_container"],
+		types: [ItemType.SpellContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.spell_container"),
 	})
 	Items.registerSheet(SYSTEM_NAME, EquipmentSheet, {
-		types: ["equipment", "equipment_container"],
+		types: [ItemType.Equipment, ItemType.EquipmentContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.equipment"),
 	})
 	Items.registerSheet(SYSTEM_NAME, EquipmentModifierSheet, {
-		types: ["eqp_modifier"],
+		types: [ItemType.EquipmentModifier],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.eqp_modifier"),
 	})
 	Items.registerSheet(SYSTEM_NAME, EquipmentModifierContainerSheet, {
-		types: ["eqp_modifier_container"],
+		types: [ItemType.EquipmentModifierContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.eqp_modifier_container"),
 	})
 	Items.registerSheet(SYSTEM_NAME, NoteSheet, {
-		types: ["note"],
+		types: [ItemType.Note],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.note"),
 	})
 	Items.registerSheet(SYSTEM_NAME, NoteContainerSheet, {
-		types: ["note_container"],
+		types: [ItemType.NoteContainer],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.note_container"),
 	})
 	Items.registerSheet(SYSTEM_NAME, StaticItemSheet, {
-		types: ["static_equipment"],
+		types: [ItemType.LegacyEquipment],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.static_equipment"),
 	})
 
 	Actors.registerSheet(SYSTEM_NAME, CharacterSheetGURPS, {
-		types: ["character_gcs"],
+		types: [ActorType.Character],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.character"),
 	})
 
 	Actors.registerSheet(SYSTEM_NAME, StaticCharacterSheetGURPS, {
-		types: ["character"],
+		types: [ActorType.LegacyCharacter],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.static_character"),
 	})
@@ -267,26 +272,26 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-	;(game as any).ModifierButton = new ModifierButton()
-	;(game as any).ModifierButton.render(true)
-	;(game as any).CompendiumBrowser = new CompendiumBrowser()
+		; (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+		; (game as any).ModifierButton = new ModifierButton()
+		; (game as any).ModifierButton.render(true)
+		; (game as any).CompendiumBrowser = new CompendiumBrowser()
 
 	await Promise.all(
 		(game as Game).actors!.map(async actor => {
 			actor.prepareData()
 		})
 	)
-	;(game as Game).socket?.on("system.gcsga", async response => {
-		console.log("receive socket")
-		switch (response.type) {
-			case "updateBucket":
-				console.log("test?")
-				return (game as any).ModifierButton.render(true)
-			default:
-				return console.error("Unknown socket:", response.type)
-		}
-	})
+		; (game as Game).socket?.on("system.gcsga", async response => {
+			console.log("receive socket")
+			switch (response.type) {
+				case "updateBucket":
+					console.log("test?")
+					return (game as any).ModifierButton.render(true)
+				default:
+					return console.error("Unknown socket:", response.type)
+			}
+		})
 
 	// Render modifier app after user object loaded to avoid old data
 })

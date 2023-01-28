@@ -1,11 +1,12 @@
 import { Feature } from "@feature"
 import { SkillBonus } from "@feature/skill_bonus"
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 import { CRAdjustment, Study } from "@module/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type TraitSource = BaseContainerSource<"trait", TraitSystemData>
+export type TraitSource = BaseContainerSource<ItemType.Trait, TraitSystemData>
 
 // Export class TraitData extends BaseContainerData<TraitGURPS> {}
 

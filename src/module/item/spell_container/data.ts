@@ -1,6 +1,7 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 
-export type SpellContainerSource = BaseContainerSource<"spell_container", SpellContainerSystemData>
+export type SpellContainerSource = BaseContainerSource<ItemType.SpellContainer, SpellContainerSystemData>
 
 // Export class SpellContainerData extends BaseContainerData<SpellContainerGURPS> {}
 

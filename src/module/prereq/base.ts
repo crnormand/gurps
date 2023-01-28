@@ -30,7 +30,7 @@ export class BasePrereq {
 	static get default() {
 		return new TraitPrereq(
 			{
-				type: "trait_prereq",
+				type: PrereqType.Trait,
 				name: { compare: StringComparison.Is, qualifier: "" },
 				notes: { compare: StringComparison.None, qualifier: "" },
 				levels: { compare: NumberComparison.AtLeast, qualifier: 0 },
@@ -42,7 +42,7 @@ export class BasePrereq {
 
 	static get list() {
 		return new PrereqList({
-			type: "prereq_list",
+			type: PrereqType.List,
 			all: true,
 			when_tl: { compare: NumberComparison.None, qualifier: 0 },
 			prereqs: [],

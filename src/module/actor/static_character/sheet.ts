@@ -1,7 +1,8 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { i18n, RollGURPS, Static } from "@util"
+import { RollGURPS } from "@module/roll"
+import { i18n, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
@@ -191,13 +192,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-					{
-						label: "",
-						class: "gmenu",
-						icon: "gcs-all-seeing-eye",
-						onclick: event => this._onGMenu(event),
-					},
-			  ]
+				{
+					label: "",
+					class: "gmenu",
+					icon: "gcs-all-seeing-eye",
+					onclick: event => this._onGMenu(event),
+				},
+			]
 			: []
 		const show_import = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath

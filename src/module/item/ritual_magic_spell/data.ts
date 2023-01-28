@@ -1,9 +1,10 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { ItemType } from "@item/data"
 import { Difficulty, Study } from "@module/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type RitualMagicSpellSource = BaseItemSourceGURPS<"ritual_magic_spell", RitualMagicSpellSystemData>
+export type RitualMagicSpellSource = BaseItemSourceGURPS<ItemType.RitualMagicSpell, RitualMagicSpellSystemData>
 
 // Export class RitualMagicSpellData extends BaseItemDataGURPS<RitualMagicSpellGURPS> {}
 

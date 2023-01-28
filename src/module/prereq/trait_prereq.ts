@@ -1,6 +1,7 @@
 import { CharacterGURPS } from "@actor"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
+import { PrereqType } from "@prereq"
 import { i18n, numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -12,7 +13,7 @@ export class TraitPrereq extends BasePrereq {
 
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "trait_prereq",
+			type: PrereqType.Trait,
 			name: { compare: StringComparison.Is, qualifier: "" },
 			notes: { compare: StringComparison.None, qualifier: "" },
 			level: { compare: NumberComparison.None, qualifier: 0 },

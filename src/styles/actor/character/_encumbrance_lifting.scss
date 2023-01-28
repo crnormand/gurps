@@ -20,7 +20,8 @@
 		white-space: nowrap;
 		font: var(--font-page-primary-fields);
 		background-color: rgba(var(--color-content), 1);
-		color: rgba(var(--color-on-editable), 0.6);
+		// color: rgba(var(--color-on-editable), 0.6);
+		color: rgb(var(--color-on-content));
 		text-align: right;
 		.encumbrance-marker {
 			color: rgb(var(--color-on-content));
@@ -55,27 +56,35 @@
 		.level-number:nth-child(12n + 1),
 		.level:nth-child(12n + 2),
 		.max-load:nth-child(12n + 3),
-		.move:nth-child(12n + 4),
+		.move:nth-child(12n + 4) {
+			&:not(.header):not(.active) {
+				background-color: rgb(var(--color-banding));
+			}
+		}
 		.dodge:nth-child(12n + 5) {
 			&:not(.header) {
-				background-color: rgba(var(--color-banding), 1);
+				background-color: rgb(var(--color-banding));
+				&.rollable:not(.noroll) {
+					background: var(--background-roll-banding);
+					color: rgb(var(--color-on-button-roll));
+				}
+				&.noroll {
+					background-color: rgb(var(--color-marker));
+					color: rgb(var(--color-on-marker));
+				}
 			}
 		}
-
+		.dodge.rollable:not(.noroll) {
+			background: var(--background-roll);
+			color: rgb(var(--color-on-button-roll));
+		}
 		.active {
-			background-color: rgba(var(--color-marker), 1) !important;
-			&.dodge:hover {
-				color: rgba(var(--color-link-pressed), 1) !important;
-			}
+			background-color: rgb(var(--color-marker));
+			color: rgb(var(--color-on-marker));
 		}
 		.overencumbered {
-			background-color: rgba(var(--color-overloaded), 1) !important;
-			&.level {
-				color: rgb(var(--color-on-overloaded)) !important;
-			}
-			&.dodge:hover {
-				color: rgba(var(--color-link-rollover), 1) !important;
-			}
+			background-color: rgb(var(--color-overloaded));
+			color: rgb(var(--color-on-overloaded));
 		}
 	}
 
@@ -136,7 +145,7 @@
 
 			.lift:nth-child(4n + 1),
 			.label:nth-child(4n + 2) {
-				background-color: rgba(var(--color-banding), 1);
+				background-color: rgb(var(--color-banding));
 			}
 		}
 	}

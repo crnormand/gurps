@@ -2,6 +2,7 @@ import { CharacterGURPS } from "@actor"
 import { RitualMagicSpellGURPS, SpellContainerGURPS, SpellGURPS } from "@item"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
+import { PrereqType } from "@prereq"
 import { numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -27,7 +28,7 @@ export class SpellPrereq extends BasePrereq {
 
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "spell_prereq",
+			type: PrereqType.Spell,
 			quantity: { compare: NumberComparison.AtLeast, qualifier: 1 },
 			sub_type: SpellPrereqSubType.Name,
 			qualifier: { compare: StringComparison.Is, qualifier: "" },

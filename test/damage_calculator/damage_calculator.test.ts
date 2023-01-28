@@ -491,7 +491,7 @@ describe("Damage calculator", () => {
 			_torso.calc!.dr.all = 2
 		})
 
-		let verify: any = function (hp: number, noShockValues: number[], shockValues: DamageShock[]) {
+		let verify: any = function(hp: number, noShockValues: number[], shockValues: DamageShock[]) {
 			_target.hitPoints.value = hp
 
 			for (const damage of noShockValues) {
@@ -1150,7 +1150,7 @@ describe("Damage calculator", () => {
 				for (const damage of [1, 2, 3, 4]) {
 					_roll.basicDamage = damage
 					let calc = _create(_roll, _target)
-					const injuryEffects = calc.injuryEffects
+					// Const injuryEffects = calc.injuryEffects
 
 					let modifiers = calc.injuryEffects.find(it => it.id === InjuryEffectType.shock)?.modifiers
 					expect(modifiers).toContainEqual(
@@ -1193,7 +1193,7 @@ describe("Damage calculator", () => {
 				for (const id of Limb) {
 					_roll.locationId = id
 					_roll.damageType = DamageType["pi-"]
-					let calc = _create(_roll, _target)
+					// Let calc = _create(_roll, _target)
 					for (const type of [DamageType.imp, DamageType["pi++"], DamageType["pi+"]]) {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
@@ -1285,7 +1285,7 @@ describe("Damage calculator", () => {
 				for (const id of Extremity) {
 					_roll.locationId = id
 					_roll.damageType = DamageType["pi-"]
-					let calc = _create(_roll, _target)
+					// Let calc = _create(_roll, _target)
 					for (const type of [DamageType.imp, DamageType["pi++"], DamageType["pi+"]]) {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
@@ -2234,7 +2234,7 @@ interface IDamageCalculator {
 	overrideFlexible(arg: boolean | undefined): void
 }
 
-const _create = function (roll: DamageRoll, target: DamageTarget): IDamageCalculator {
+const _create = function(roll: DamageRoll, target: DamageTarget): IDamageCalculator {
 	return new DamageCalculator(roll, target)
 }
 

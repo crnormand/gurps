@@ -1,6 +1,7 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 
-export type NoteContainerSource = BaseContainerSource<"note_container", NoteContainerSystemData>
+export type NoteContainerSource = BaseContainerSource<ItemType.NoteContainer, NoteContainerSystemData>
 
 // Export class NoteContainerData extends BaseContainerData<NoteContainerGURPS> {}
 

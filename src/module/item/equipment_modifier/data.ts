@@ -1,7 +1,8 @@
 import { Feature } from "@feature"
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { ItemType } from "@item/data"
 
-export type EquipmentModifierSource = BaseItemSourceGURPS<"eqp_modifier", EquipmentModifierSystemData>
+export type EquipmentModifierSource = BaseItemSourceGURPS<ItemType.EquipmentModifier, EquipmentModifierSystemData>
 
 // Export class EquipmentModifierData extends BaseItemDataGURPS<EquipmentModifierGURPS> {}
 

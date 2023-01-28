@@ -1,18 +1,19 @@
 import { DamageProgression, DisplayMode } from "@module/data"
-import { ActorFlagsGURPS, ActorSystemData, ActorType, BaseActorSourceGURPS } from "@actor/base/data"
+import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { Attribute, AttributeObj } from "@module/attribute"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
 import { HitLocationTableData } from "./hit_location"
+import { ActorType } from "@actor/data"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-		CharacterSystemData {
+	CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags

@@ -279,7 +279,7 @@ export class GCAImporter {
 				{
 					_id: randomID(),
 					name: readableData[1],
-					type: "note",
+					type: ItemType.Note,
 					flags: { [SYSTEM_NAME]: { contentsData: [] } },
 					system: {
 						name: readableData[1],
@@ -288,7 +288,7 @@ export class GCAImporter {
 						id: newUUID(),
 						notes: "",
 						tags: [],
-						type: "note",
+						type: ItemType.Note,
 						vtt_notes: "",
 					},
 				},
@@ -304,7 +304,7 @@ export class GCAImporter {
 		for (const item of list) {
 			if (item.parentkey && !context.container) continue
 			const id = randomID()
-			const [itemData, itemFlags, itemType]: [ItemSystemDataGURPS, ItemFlagsGURPS, string] = this.getItemData(
+			const [itemData, itemFlags, itemType]: [ItemSystemDataGURPS, ItemFlagsGURPS, ItemType] = this.getItemData(
 				item,
 				context
 			)
@@ -334,7 +334,7 @@ export class GCAImporter {
 		return items
 	}
 
-	getItemData(item: any, context: any = {}): [any, any, string] {
+	getItemData(item: any, context: any = {}): [any, any, ItemType] {
 		let itemData: Partial<ItemSystemDataGURPS> = {}
 		this.importFeatures(item, itemData, context)
 		this.importPrereqs(item, itemData, context)
@@ -357,28 +357,28 @@ export class GCAImporter {
 			case "Quirks":
 				itemData = { ...itemData, ...this.getTraitData(item) }
 				// Flags[SYSTEM_NAME]!.contentsData = this.getNestedItems(item, data, context);
-				return [itemData, flags, "trait"]
+				return [itemData, flags, ItemType.Trait]
 			case "Skills":
 				if (item.type.includes("Tech")) {
 					itemData = this.getTechniqueData(item, context)
-					return [itemData, flags, "technique"]
+					return [itemData, flags, ItemType.Technique]
 				} else {
 					itemData = this.getSkillData(item, context)
-					return [itemData, flags, "skill"]
+					return [itemData, flags, ItemType.Skill]
 				}
 			case "Spells":
 				if (item.type.includes("Tech")) {
 					itemData = this.getRitualMagicSpellData(item, context)
-					return [itemData, flags, "ritual_magic_spell"]
+					return [itemData, flags, ItemType.RitualMagicSpell]
 				} else {
 					itemData = this.getSpellData(item)
-					return [itemData, flags, "spell"]
+					return [itemData, flags, ItemType.Spell]
 				}
 			case "Equipment":
 				itemData = this.getEquipmentData(item, context)
-				return [itemData, flags, "equipment"]
+				return [itemData, flags, ItemType.Equipment]
 			default:
-				return [null, null, "error"]
+				return [null, null, ItemType.Note]
 		}
 	}
 

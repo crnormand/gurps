@@ -234,6 +234,15 @@ export function floatingMul(...args: number[]): number {
 /**
  *
  * @param n
+ * @param p
+ */
+export function round(n: number, p = 2): number {
+	return Math.round(n * (10 ** p)) / (10 ** p)
+}
+
+/**
+ *
+ * @param n
  */
 export function toWord(n: number): string {
 	switch (n) {

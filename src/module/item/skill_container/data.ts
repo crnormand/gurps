@@ -1,6 +1,7 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 
-export type SkillContainerSource = BaseContainerSource<"skill_container", SkillContainerSystemData>
+export type SkillContainerSource = BaseContainerSource<ItemType.SkillContainer, SkillContainerSystemData>
 
 // Export class SkillContainerData extends BaseContainerData<SkillContainerGURPS> {}
 

@@ -361,6 +361,15 @@ class CharacterGURPS extends BaseActorGURPS {
 		return this.dodge(this.encumbranceLevel(true))
 	}
 
+	get dodgeAttribute() {
+		return {
+			attribute_def: {
+				combinedName: i18n("gurps.attributes.dodge"),
+			},
+			current: this.currentDodge,
+		}
+	}
+
 	move(enc: Encumbrance): number {
 		let initialMove = Math.max(0, this.resolveAttributeCurrent(gid.BasicMove))
 		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_move", this.attributes), 2)

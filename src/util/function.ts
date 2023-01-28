@@ -2,6 +2,7 @@
 import { DiceGURPS } from "@module/dice"
 import { equalFold } from "./misc"
 import * as Measure from "./measure"
+import { ItemType } from "@item/data"
 
 export interface VariableResolver {
 	resolveVariable: (variableName: string) => string
@@ -124,7 +125,7 @@ function evalFloor(e: Evaluator, args: string): any {
  */
 function evalIf(e: Evaluator, args: string): any {
 	let arg: string
-	;[arg, args] = nextArg(args)
+		;[arg, args] = nextArg(args)
 	const evaluated = e.evaluateNew(arg)
 	const value = evalFrom(evaluated)
 	if (value === 0) {
@@ -143,7 +144,7 @@ function evalMaximum(e: Evaluator, args: string): any {
 	let max = -Infinity
 	while (args) {
 		let arg: string
-		;[arg, args] = nextArg(args)
+			;[arg, args] = nextArg(args)
 		const value = evalToNumber(e, arg)
 		max = Math.max(max, value)
 	}
@@ -159,7 +160,7 @@ function evalMinimum(e: Evaluator, args: string): any {
 	let min: number = Math.min()
 	while (args) {
 		let arg: string
-		;[arg, args] = nextArg(args)
+			;[arg, args] = nextArg(args)
 		const value = evalToNumber(e, arg)
 		min = Math.min(min, value)
 	}
@@ -299,11 +300,11 @@ function evalSkillLevel(e: Evaluator, arg: string): any {
 	if (!name) return 0
 	name = name.trim()
 	let specialization: string
-	;[specialization, remaining] = nextArg(remaining)
+		;[specialization, remaining] = nextArg(remaining)
 	specialization = specialization.trim()
 	if (!specialization || !evalToString(e, specialization)) return 0
 	specialization = specialization.replaceAll('"', "")
-	;[arg] = nextArg(remaining)
+		;[arg] = nextArg(remaining)
 	arg = arg.trim()
 	let relative = false
 	if (arg) relative = evalToBool(e, arg)
@@ -357,7 +358,7 @@ export function evalEncumbrance(e: Evaluator, a: string): any {
 	let [arg, remaining] = nextArg(a)
 	const forSkills = evalToBool(e, arg)
 	let returnFactor = false
-	;[arg] = nextArg(remaining)
+		;[arg] = nextArg(remaining)
 	if (arg.trim()) {
 		returnFactor = evalToBool(e, remaining)
 	}
@@ -378,12 +379,12 @@ export function evalTraitLevel(e: Evaluator, a: string): any {
 	if (!entity) return -1
 	const arg = a.replaceAll(/^['"]|[']$/g, "")
 	let levels = -1
-	;(entity as any).traits
-		.filter((t: Item) => t.name === arg && t.type === "trait")
-		.every((t: Item | any) => {
-			if (t.isLeveled) levels = t.levels
-			return true
-		})
+		; (entity as any).traits
+			.filter((t: Item) => t.name === arg && t.type === ItemType.Trait)
+			.every((t: Item | any) => {
+				if (t.isLeveled) levels = t.levels
+				return true
+			})
 	return levels
 }
 
@@ -394,11 +395,11 @@ export function evalTraitLevel(e: Evaluator, a: string): any {
  */
 export function evalSSRT(e: Evaluator, a: string): any {
 	let arg: string
-	;[arg, a] = nextArg(a)
+		;[arg, a] = nextArg(a)
 	const n = evalToString(e, arg)
-	;[arg, a] = nextArg(a)
+		;[arg, a] = nextArg(a)
 	const units = evalToString(e, arg)
-	;[arg, a] = nextArg(a)
+		;[arg, a] = nextArg(a)
 	const wantSize = evalToBool(e, arg)
 	const length = Measure.lengthFromString(`${n} ${units}`, Measure.LengthUnits.Yard)
 	let result = yardsToValue(length, wantSize)

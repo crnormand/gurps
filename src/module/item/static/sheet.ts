@@ -1,11 +1,13 @@
 import { StaticAdvantage, StaticMelee, StaticSkill, StaticSpell } from "@actor/static_character/components"
-import { ItemSheetGURPS } from "@item/base/sheet"
+// Import { ItemSheetGURPS } from "@item/base/sheet"
+import { SYSTEM_NAME } from "@module/data"
 import { Static } from "@util"
 import { DnD } from "@util/drag_drop"
 import { StaticItemGURPS } from "."
 import { StaticItemSystemData } from "./data"
 
-export class StaticItemSheet extends ItemSheetGURPS {
+// @ts-ignore
+export class StaticItemSheet extends ItemSheet {
 	static get defaultOptions(): DocumentSheetOptions {
 		const options = super.defaultOptions
 		mergeObject(options, {
@@ -14,8 +16,15 @@ export class StaticItemSheet extends ItemSheetGURPS {
 		return options
 	}
 
-	getData(_options?: Partial<DocumentSheetOptions> | undefined) {
-		const sheetData = super.getData()
+	get template(): string {
+		return `/systems/${SYSTEM_NAME}/templates/item/legacy_equipment/sheet.hbs`
+	}
+
+	getData(options?: Partial<DocumentSheetOptions> | undefined) {
+		// Const sheetData = super.getData()
+		const sheetData = {
+			...super.getData(options) as any,
+		}
 		sheetData.data = this.item.system
 		sheetData.system = this.item.system
 		sheetData.data.eqt.f_count = this.item.system.eqt.count // Hack for Furnace module
@@ -157,6 +166,7 @@ export class StaticItemSheet extends ItemSheetGURPS {
 	// }
 }
 
+// @ts-ignore
 export interface StaticItemSheet {
 	object: StaticItemGURPS
 }

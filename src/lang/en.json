@@ -14,13 +14,13 @@
 		"TypeSpell": "Spell",
 		"TypeRitual_magic_spell": "Ritual Magic Spell",
 		"TypeSpell_container": "Spell Container",
-		"TypeEquipment": "Equipment",
+		"TypeEquipment_gcs": "Equipment",
 		"TypeEquipment_container": "Equipment Container",
 		"TypeEqp_modifier": "Equipment Modifier",
 		"TypeEqp_modifier_container": "Equipment Modifier Container",
 		"TypeNote": "Note",
 		"TypeNote_container": "Note Container",
-		"TypeStatic_equipment": "Equipment (Legacy)"
+		"TypeEquipment": "Equipment (Legacy)"
 	},
 	"gurps": {
 		"pdf": {

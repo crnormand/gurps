@@ -240,13 +240,13 @@
 			"spell",
 			"ritual_magic_spell",
 			"spell_container",
-			"equipment",
+			"equipment_gcs",
 			"equipment_container",
 			"eqp_modifier",
 			"eqp_modifier_container",
 			"note",
 			"note_container",
-			"static_equipment"
+			"equipment"
 		],
 		"templates": {
 			"common": {
@@ -361,7 +361,7 @@
 			"templates": ["common"],
 			"open": false
 		},
-		"equipment": {
+		"equipment_gcs": {
 			"templates": ["common", "prereqs"],
 			"weight": "0 lb",
 			"value": 0,
@@ -404,7 +404,7 @@
 			"templates": ["common"],
 			"open": false
 		},
-		"static_equipment": {
+		"equipment": {
 			"eqt": {
 				"name": "",
 				"notes": "",

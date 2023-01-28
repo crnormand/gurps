@@ -1,7 +1,8 @@
 import { Feature } from "@feature"
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { ItemType } from "@item/data"
 
-export type TraitModifierSource = BaseItemSourceGURPS<"modifier", TraitModifierSystemData>
+export type TraitModifierSource = BaseItemSourceGURPS<ItemType.TraitModifier, TraitModifierSystemData>
 
 // Export class TraitModifierData extends BaseItemDataGURPS<TraitModifierGURPS> {}
 
