@@ -1,0 +1,14 @@
+<div class="dice-roll generic">
+	<div class="modifiers generic">
+		{{#if usingMod}}
+		{{#each mods}}
+		<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
+			{{this.name}}{{/if}}</div>
+		{{/each}}
+		{{/if}}
+	</div>
+	<div class="dice-result">
+		<h4 class="dice-total generic">{{total}}</h4>
+		{{{tooltip}}}
+	</div>
+</div>

@@ -1,6 +1,7 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { ItemType } from "@item/data"
 
-export type NoteSource = BaseItemSourceGURPS<"note", NoteSystemData>
+export type NoteSource = BaseItemSourceGURPS<ItemType.Note, NoteSystemData>
 
 // Export class NoteData extends BaseItemDataGURPS<NoteGURPS> {}
 

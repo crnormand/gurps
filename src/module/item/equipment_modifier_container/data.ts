@@ -1,7 +1,8 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 
 export type EquipmentModifierContainerSource = BaseContainerSource<
-	"eqp_modifier_container",
+	ItemType.EquipmentModifierContainer,
 	EquipmentModifierContainerSystemData
 >
 
@@ -9,7 +10,7 @@ export type EquipmentModifierContainerSource = BaseContainerSource<
 
 export interface EquipmentModifierContainerData
 	extends Omit<EquipmentModifierContainerSource, "effects" | "items">,
-		EquipmentModifierContainerSystemData {
+	EquipmentModifierContainerSystemData {
 	readonly type: EquipmentModifierContainerSource["type"]
 	data: EquipmentModifierContainerSystemData
 	readonly _source: EquipmentModifierContainerSource

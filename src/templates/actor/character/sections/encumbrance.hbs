@@ -12,14 +12,14 @@
 		<div class="level overencumbered">{{this.name}}</div>
 		<div class="max-load overencumbered">{{this.carry}}</div>
 		<div class="move overencumbered">{{getMove ../actor this}}</div>
-		<div class="dodge overencumbered">{{getDodge ../actor this}}</div>
+		<div data-id="dodge" data-type="attribute" class="dodge overencumbered rollable">{{getDodge ../actor this}}</div>
 		{{else}}
 		<div class="encumbrance-marker active"><i class="gcs-weight"></i></div>
 		<div class="level-number active">{{this.level}}</div>
 		<div class="level active">{{this.name}}</div>
 		<div class="max-load active">{{this.carry}}</div>
 		<div class="move active">{{getMove ../actor this}}</div>
-		<div class="dodge active">{{getDodge ../actor this}}</div>
+		<div data-id="dodge" data-type="attribute" class="dodge active rollable">{{getDodge ../actor this}}</div>
 		{{/if}}
 	{{else}}
 	<div class="encumbrance-marker"></div>

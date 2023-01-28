@@ -1,12 +1,13 @@
 import { Feature } from "@feature"
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { ItemType } from "@item/data"
 import { EncumbrancePenaltyMultiplier } from "@item/skill/data"
 import { Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type TechniqueSource = BaseItemSourceGURPS<"technique", TechniqueSystemData>
+export type TechniqueSource = BaseItemSourceGURPS<ItemType.Technique, TechniqueSystemData>
 
 // Export class TechniqueData extends BaseItemDataGURPS<TechniqueGURPS> {}
 

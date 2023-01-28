@@ -17,11 +17,12 @@ import {
 import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
-import { RollType, SYSTEM_NAME } from "@module/data"
+import { gid, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
+import { RollGURPS } from "@module/roll"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
-import { dollarFormat, RollGURPS } from "@util"
+import { dollarFormat } from "@util"
 import { weightFormat } from "@util/measure"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
@@ -204,7 +205,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const type: RollType = $(event.currentTarget).data("type")
 		const data: { [key: string]: any } = { type: type }
 		if (type === RollType.Attribute) {
-			data.attribute = this.actor.attributes.get($(event.currentTarget).data("id"))
+			// Data.attribute = this.actor.attributes.get($(event.currentTarget).data("id"))
+			const id = $(event.currentTarget).data("id")
+			if (id === gid.Dodge) data.attribute = this.actor.dodgeAttribute
+			else data.attribute = this.actor.attributes.get(id)
 		}
 		if (
 			[
@@ -385,7 +389,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const carried_value = this.actor.wealthCarried()
 		let carried_weight = this.actor.weightCarried(true)
 
-		data.carried_weight = `${carried_weight} lb`
+		// Data.carried_weight = `${carried_weight} lb`
+		data.carried_weight = weightFormat(carried_weight, this.actor.settings.default_weight_units)
 		data.carried_value = dollarFormat(carried_value)
 
 		data.traits = traits
@@ -428,21 +433,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-					edit_button,
-					// {
-					// 	label: "",
-					// 	// Label: "Import",
-					// 	class: "import",
-					// 	icon: "fas fa-file-import",
-					// 	onclick: event => this._onFileImport(event),
-					// },
-					{
-						label: "",
-						class: "gmenu",
-						icon: "gcs-all-seeing-eye",
-						onclick: event => this._openGMenu(event),
-					},
-			  ]
+				edit_button,
+				// {
+				// 	label: "",
+				// 	// Label: "Import",
+				// 	class: "import",
+				// 	icon: "fas fa-file-import",
+				// 	onclick: event => this._onFileImport(event),
+				// },
+				{
+					label: "",
+					class: "gmenu",
+					icon: "gcs-all-seeing-eye",
+					onclick: event => this._openGMenu(event),
+				},
+			]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

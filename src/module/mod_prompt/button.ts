@@ -1,6 +1,6 @@
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
-import { i18n, RollGURPS } from "@util"
-import { handleRoll } from "@util/roll"
+import { RollGURPS } from "@module/roll"
+import { i18n } from "@util"
 import { ModifierBucket } from "./bucket"
 import { ModifierWindow } from "./window"
 
@@ -62,7 +62,7 @@ export class ModifierButton extends Application {
 	}
 
 	addRangeMod() {
-		;(game as any).ModifierButton.window.addModifier(this._tempRangeMod)
+		; (game as any).ModifierButton.window.addModifier(this._tempRangeMod)
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
@@ -96,12 +96,14 @@ export class ModifierButton extends Application {
 
 	async _onDiceClick(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
-		return handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "3d6" })
+		console.log(event.ctrlKey)
+		return RollGURPS.handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "3d6", hidden: event.ctrlKey })
 	}
 
 	async _onDiceContextMenu(event: JQuery.ContextMenuEvent): Promise<void> {
 		event.preventDefault()
-		return handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "1d6" })
+		console.log(event.ctrlKey)
+		return RollGURPS.handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "1d6", hidden: event.ctrlKey })
 	}
 
 	async _onMagnetClick(event: JQuery.ClickEvent): Promise<unknown> {
@@ -112,11 +114,16 @@ export class ModifierButton extends Application {
 		return this.render()
 	}
 
+	async clear() {
+		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
+		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+		return this.render(true)
+	}
+
 	async resetMods(event: JQuery.ClickEvent): Promise<unknown> {
 		event.preventDefault()
 		event.stopPropagation()
-		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
-		return this.render()
+		return this.clear()
 	}
 
 	async _onMouseWheel(event: JQuery.TriggeredEvent) {

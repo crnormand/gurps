@@ -1,7 +1,8 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 import { CRAdjustment } from "@module/data"
 
-export type TraitContainerSource = BaseContainerSource<"trait_container", TraitContainerSystemData>
+export type TraitContainerSource = BaseContainerSource<ItemType.TraitContainer, TraitContainerSystemData>
 
 // Export class TraitContainerData extends BaseContainerData<TraitContainerGURPS> {}
 

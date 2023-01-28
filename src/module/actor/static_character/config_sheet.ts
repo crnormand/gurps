@@ -1,6 +1,6 @@
-import { ActorType } from "@actor/base/data"
 import { CharacterGURPS } from "@actor/character"
 import { CharacterImporter } from "@actor/character/import"
+import { ActorType } from "@actor/data"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { i18n_f, prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"
@@ -92,11 +92,11 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-							(this.file = {
-								text: text,
-								name: files[0].name,
-								path: files[0].path,
-							})
+						(this.file = {
+							text: text,
+							name: files[0].name,
+							path: files[0].path,
+						})
 					)
 				}
 				this.render()
@@ -287,7 +287,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				parent_index: parent_index,
 			})
 		)
-		;(event as any).dragType = type
+			; (event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

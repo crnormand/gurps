@@ -45,4 +45,7 @@
 			}
 		}
 	}
+	&.whisper .message-content {
+		background-color: rgb(var(--color-banding));
+	}
 }

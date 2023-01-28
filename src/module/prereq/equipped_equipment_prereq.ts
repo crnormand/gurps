@@ -1,10 +1,11 @@
 import { CharacterGURPS } from "@actor"
 import { StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
+import { PrereqType } from "@prereq"
 import { i18n_f, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
-export class EquippedEquipmentPrereq extends BasePrereq {
+class EquippedEquipmentPrereq extends BasePrereq {
 	constructor(data: EquippedEquipmentPrereq, context: PrereqConstructionContext = {}) {
 		super(data, context)
 		Object.assign(this, mergeObject(EquippedEquipmentPrereq.defaults, data))
@@ -12,7 +13,7 @@ export class EquippedEquipmentPrereq extends BasePrereq {
 
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "equipped_equipment_prereq",
+			type: PrereqType.Equipment,
 			name: { compare: StringComparison.Is, qualifier: "" },
 		})
 	}
@@ -30,6 +31,8 @@ export class EquippedEquipmentPrereq extends BasePrereq {
 	}
 }
 
-export interface EquippedEquipmentPrereq extends BasePrereq {
+interface EquippedEquipmentPrereq extends BasePrereq {
 	name: StringCompare
 }
+
+export { EquippedEquipmentPrereq }

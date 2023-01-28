@@ -2,7 +2,7 @@ import { CharacterGURPS, StaticCharacterGURPS } from "@actor"
 import { Feature } from "@feature"
 import { BaseFeature } from "@feature/base"
 import { ItemGURPS } from "@item"
-import { ItemFlagsGURPS, ItemSystemDataGURPS } from "@item/data"
+import { ItemFlagsGURPS, ItemSystemDataGURPS, ItemType } from "@item/data"
 import { EquipmentSystemData } from "@item/equipment/data"
 import { EquipmentContainerSystemData } from "@item/equipment_container/data"
 import { EquipmentModifierSystemData } from "@item/equipment_modifier/data"
@@ -28,7 +28,7 @@ import { i18n, i18n_f, newUUID } from "@util"
 import { CharacterSystemData } from "./data"
 import { CharacterSheetGURPS } from "./sheet"
 import { LengthUnits, WeightUnits } from "@util/measure"
-import { ActorType } from "@actor/base/data"
+import { ActorType } from "@actor/data"
 
 export interface CharacterImportedData extends Omit<CharacterSystemData, "attributes"> {
 	traits: Array<TraitSystemData | TraitContainerSystemData>
@@ -116,7 +116,7 @@ export class CharacterImporter {
 				recursive: false,
 			})
 			if ((this.document.sheet as unknown as CharacterSheetGURPS)?.config !== null) {
-				;(this.document.sheet as unknown as CharacterSheetGURPS)?.config?.render(true)
+				; (this.document.sheet as unknown as CharacterSheetGURPS)?.config?.render(true)
 			}
 		} catch (err) {
 			console.error(err)
@@ -220,18 +220,11 @@ export class CharacterImporter {
 			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context)
 			const newItem = {
 				name: item.name ?? "ERROR",
-				type: item.type,
+				type: itemData.type,
 				system: itemData,
 				flags: itemFlags,
 				_id: id,
 			}
-			// Const newItem = new BaseItemGURPS({
-			// 	name: item.name ?? "ERROR",
-			// 	type: item.type,
-			// 	system: itemData,
-			// 	flags: itemFlags,
-			// 	// _id: id,
-			// });
 			if (context?.container) {
 				items.push({
 					name: item.name,
@@ -241,7 +234,7 @@ export class CharacterImporter {
 					// Folder: newItem.folder as Folder,
 					// img: newItem.img,
 					// permission: newItem.permission,
-					type: item.type,
+					type: itemData.type,
 					_id: id,
 				})
 			} else {
@@ -330,7 +323,7 @@ export class CharacterImporter {
 	getTraitData(data: TraitSystemData): TraitSystemData {
 		return {
 			name: data.name ?? "Trait",
-			type: data.type ?? "trait",
+			type: ItemType.Trait,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -354,7 +347,7 @@ export class CharacterImporter {
 	getTraitContainerData(data: TraitContainerSystemData): TraitContainerSystemData {
 		return {
 			name: data.name ?? "Trait Container",
-			type: data.type ?? "trait_container",
+			type: ItemType.TraitContainer,
 			container_type: data.container_type ?? "group",
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
@@ -371,7 +364,7 @@ export class CharacterImporter {
 	getTraitModifierData(data: TraitModifierSystemData): TraitModifierSystemData {
 		return {
 			name: data.name ?? "Trait Modifier",
-			type: data.type ?? "modifier",
+			type: ItemType.TraitModifier,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -389,7 +382,7 @@ export class CharacterImporter {
 	getTraitModifierContainerData(data: TraitModifierContainerSystemData): TraitModifierContainerSystemData {
 		return {
 			name: data.name ?? "Trait Modifier Container",
-			type: data.type ?? "modifier_container",
+			type: ItemType.TraitModifierContainer,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -402,7 +395,7 @@ export class CharacterImporter {
 	getSkillData(data: SkillSystemData): SkillSystemData {
 		return {
 			name: data.name ?? "Skill",
-			type: data.type ?? "skill",
+			type: ItemType.Skill,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -425,7 +418,7 @@ export class CharacterImporter {
 	getTechniqueData(data: TechniqueSystemData): TechniqueSystemData {
 		return {
 			name: data.name ?? "Technique",
-			type: data.type ?? "technique",
+			type: ItemType.Technique,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -449,7 +442,7 @@ export class CharacterImporter {
 	getSkillContainerData(data: SkillContainerSystemData): SkillContainerSystemData {
 		return {
 			name: data.name ?? "Skill Container",
-			type: data.type ?? "skill_container",
+			type: ItemType.SkillContainer,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -462,7 +455,7 @@ export class CharacterImporter {
 	getSpellData(data: SpellSystemData): SpellSystemData {
 		return {
 			name: data.name ?? "Spell",
-			type: data.type ?? "spell",
+			type: ItemType.Spell,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -488,7 +481,7 @@ export class CharacterImporter {
 	getRitualMagicSpellData(data: RitualMagicSpellSystemData): RitualMagicSpellSystemData {
 		return {
 			name: data.name ?? "Spell",
-			type: data.type ?? "ritual_magic_spell",
+			type: ItemType.RitualMagicSpell,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -516,7 +509,7 @@ export class CharacterImporter {
 	getSpellContainerData(data: SpellContainerSystemData): SpellContainerSystemData {
 		return {
 			name: data.name ?? "Spell Container",
-			type: data.type ?? "spell_container",
+			type: ItemType.SpellContainer,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -529,7 +522,7 @@ export class CharacterImporter {
 	getEquipmentData(data: EquipmentSystemData, other = false): EquipmentSystemData {
 		return {
 			name: data.name ?? "Equipment",
-			type: data.type ?? "equipment",
+			type: ItemType.Equipment,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -555,7 +548,7 @@ export class CharacterImporter {
 	getEquipmentContainerData(data: EquipmentContainerSystemData, other = false): EquipmentContainerSystemData {
 		return {
 			name: data.name ?? "Equipment",
-			type: data.type ?? "equipment",
+			type: ItemType.EquipmentContainer,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -582,7 +575,7 @@ export class CharacterImporter {
 	getEquipmentModifierData(data: EquipmentModifierSystemData): EquipmentModifierSystemData {
 		return {
 			name: data.name ?? "Equipment Modifier",
-			type: data.type ?? "eqp_modifier",
+			type: ItemType.EquipmentModifier,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -603,7 +596,7 @@ export class CharacterImporter {
 	): EquipmentModifierContainerSystemData {
 		return {
 			name: data.name ?? "Equipment Modifier Container",
-			type: data.type ?? "eqp_modifier_container",
+			type: ItemType.EquipmentModifierContainer,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -616,7 +609,7 @@ export class CharacterImporter {
 	getNoteData(data: NoteSystemData): NoteSystemData {
 		return {
 			name: data.text ?? "Note",
-			type: data.type ?? "note",
+			type: ItemType.Note,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
@@ -629,7 +622,7 @@ export class CharacterImporter {
 	getNoteContainerData(data: NoteContainerSystemData): NoteContainerSystemData {
 		return {
 			name: data.name ?? "Note",
-			type: data.type ?? "note_container",
+			type: ItemType.NoteContainer,
 			id: data.id ?? newUUID(),
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",

@@ -2,6 +2,7 @@ import { CharacterGURPS } from "@actor"
 import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS } from "@item"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
+import { PrereqType } from "@prereq"
 import { i18n, numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -13,7 +14,7 @@ export class SkillPrereq extends BasePrereq {
 
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "skill_prereq",
+			type: PrereqType.Skill,
 			name: { compare: StringComparison.Is, qualifier: "" },
 			specialization: { compare: StringComparison.None, qualifier: "" },
 			level: { compare: NumberComparison.AtLeast, qualifier: 0 },

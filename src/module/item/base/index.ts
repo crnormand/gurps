@@ -56,8 +56,10 @@ class BaseItemGURPS extends Item {
 		user: BaseUser
 	): Promise<void> {
 		let type = data.type.replace("_container", "")
-		if (type === "technique") type = "skill"
-		if (type === "ritual_magic_spell") type = "spell"
+		if (type === ItemType.Technique) type = ItemType.Skill
+		if (type === ItemType.RitualMagicSpell) type = ItemType.Spell
+		if (type === ItemType.Equipment) type = "equipment"
+		if (type === ItemType.LegacyEquipment) type = "legacy_equipment"
 		// TODO: remove any
 		if (this._source.img === (foundry.documents.BaseItem as any).DEFAULT_ICON)
 			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${type}.svg`
@@ -171,15 +173,15 @@ class BaseItemGURPS extends Item {
 		)
 			return new Map()
 		const weapons: Map<string, Weapon> = new Map()
-		;(this.system as any).weapons.forEach((w: any, index: number) => {
-			weapons.set(
-				w.id,
-				new BaseWeapon({
-					...w,
-					...{ parent: this, actor: this.actor, index: index },
-				})
-			)
-		})
+			; (this.system as any).weapons.forEach((w: any, index: number) => {
+				weapons.set(
+					w.id,
+					new BaseWeapon({
+						...w,
+						...{ parent: this, actor: this.actor, index: index },
+					})
+				)
+			})
 		return weapons
 	}
 
@@ -226,7 +228,7 @@ class BaseItemGURPS extends Item {
 		if ((this as any).modifiers)
 			system.modifiers = (this as any).modifiers.map((e: BaseItemGURPS) => e.exportSystemData())
 		if (system.weapons)
-			system.weapons = system.weapons.map(function (e: BaseWeapon) {
+			system.weapons = system.weapons.map(function(e: BaseWeapon) {
 				const f: any = { ...e }
 				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
 				return f

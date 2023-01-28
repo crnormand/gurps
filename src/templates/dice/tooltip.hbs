@@ -1,0 +1,18 @@
+<div class="dice-tooltip">
+	{{#each parts}}
+		<section class="tooltip-part">
+			<div class="dice">
+				<header class="part-header flexrow">
+					<span class="part-formula">{{this.formula}}</span>
+					{{#if this.flavor}}<span class="part-flavor">{{this.flavor}}</span>{{/if}}
+					<span class="part-total">{{this.total}}</span>
+				</header>
+				<ol class="dice-rolls">
+					{{#each this.rolls}}
+						<li class="roll {{this.classes}}">{{{this.result}}}</li>
+					{{/each}}
+				</ol>
+			</div>
+		</section>
+	{{/each}}
+</div>

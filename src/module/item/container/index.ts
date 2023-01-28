@@ -1,6 +1,6 @@
 import { BaseItemGURPS, ItemGURPS } from "@item"
 import { ItemConstructionContextGURPS } from "@item/base"
-import { ContainerDataGURPS, ItemDataGURPS } from "@item/data"
+import { ContainerDataGURPS, ItemDataGURPS, ItemType } from "@item/data"
 import { AnyDocumentData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/data.mjs"
 import {
 	Context,
@@ -185,7 +185,7 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 
 		this.items = new Collection()
 		for (const item of containedItems) {
-			if (this.type === "equipment_container" && item.type === "equipment") {
+			if (this.type === ItemType.EquipmentContainer && item.type === ItemType.Equipment) {
 				item.system.other = (this.system as any).other
 			}
 			if (!oldItems.has(item._id!)) {
@@ -196,11 +196,11 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 				this.items.set(item._id!, theItem)
 			} else {
 				const currentItem = oldItems.get(item._id!)!
-				;(currentItem as any).name = item.name
-				;(currentItem as any).flags = item.flags
-				;(currentItem as any).system = item.system
-				;(currentItem as any).img = item.img
-				;(currentItem as any).sort = item.sort
+					; (currentItem as any).name = item.name
+					; (currentItem as any).flags = item.flags
+					; (currentItem as any).system = item.system
+					; (currentItem as any).img = item.img
+					; (currentItem as any).sort = item.sort
 				// ; (currentItem as any)._source = item._source
 				setProperty((currentItem as any)._source, "name", item.name)
 				setProperty((currentItem as any)._source, "flags", item.flags)

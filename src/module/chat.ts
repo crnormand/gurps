@@ -1,8 +1,39 @@
 import { ActorGURPS } from "@actor"
 import { SkillGURPS } from "@item"
-import { LastActor, RollGURPS } from "@util"
-import { RollModifier, RollType } from "./data"
-// Import { GURPS } from "./gurps"
+import { LastActor } from "@util"
+import { gid, RollModifier, RollType } from "./data"
+import { RollGURPS } from "@module/roll";
+
+/**
+ *
+ * @param command
+ * @param matches
+ * @param chatData
+ * @param createOptions
+ */
+export async function _processDiceCommand(
+	command: string,
+	matches: RegExpMatchArray[],
+	chatData: any,
+	createOptions: any
+): Promise<void> {
+	const actor = ChatMessage.getSpeakerActor(chatData.speaker) || (game as Game).user?.character;
+	const rollData: any = actor ? actor.getRollData() : {};
+	const rolls = [];
+	for (const match of matches) {
+		if (!match) continue;
+		const [formula, flavor] = match.slice(2, 4);
+		if (flavor && !chatData.flavor) chatData.flavor = flavor;
+		const roll = Roll.create(formula, rollData);
+		await roll.evaluate({ async: true });
+		rolls.push(roll);
+	}
+	chatData.type = CONST.CHAT_MESSAGE_TYPES.ROLL;
+	chatData.rolls = rolls;
+	chatData.sound = CONFIG.sounds.dice;
+	chatData.content = rolls.reduce((t, r) => t + r.total!, 0);
+	createOptions.rollMode = command;
+}
 
 /**
  *
@@ -70,7 +101,10 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		data.weapon = character.bestWeaponNamed(item?.name, weapon.usage, weapon.type, null)
 	}
 	if ([RollType.Attribute].includes(type)) {
-		const attribute = character.attributes.get($(event.currentTarget).data("id"))
+		const id = $(event.currentTarget).data("id")
+		let attribute: any = null
+		if (id === gid.Dodge) attribute = character.dodgeAttribute
+		else attribute = character.attributes.get(id)
 		data.attribute = attribute
 	}
 	// If (type === RollType.Modifier) {
@@ -79,7 +113,6 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 	// }
 
 	// TODO: change to GURPS.LastActor
-
 	return RollGURPS.handleRoll((game as Game).user, character, data)
 }
 

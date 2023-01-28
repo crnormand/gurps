@@ -2,6 +2,7 @@ import { CharacterGURPS } from "@actor"
 import { EquipmentContainerGURPS, EquipmentGURPS } from "@item"
 import { NumberCompare, NumberComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
+import { PrereqType } from "@prereq"
 import { i18n, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -17,7 +18,7 @@ export class ContainedWeightPrereq extends BasePrereq {
 
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
-			type: "contained_weight_prereq",
+			type: PrereqType.ContainedWeight,
 			qualifier: { compare: NumberComparison.AtMost, qualifier: 5 },
 		})
 	}

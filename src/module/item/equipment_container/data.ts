@@ -1,15 +1,16 @@
 import { Feature } from "@feature"
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemType } from "@item/data"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type EquipmentContainerSource = BaseContainerSource<"equipment_container", EquipmentContainerSystemData>
+export type EquipmentContainerSource = BaseContainerSource<ItemType.EquipmentContainer, EquipmentContainerSystemData>
 
 // Export class EquipmentContainerData extends BaseContainerData<EquipmentContainerGURPS> {}
 
 export interface EquipmentContainerData
 	extends Omit<EquipmentContainerSource, "effects" | "items">,
-		EquipmentContainerSystemData {
+	EquipmentContainerSystemData {
 	readonly type: EquipmentContainerSource["type"]
 	data: EquipmentContainerSystemData
 

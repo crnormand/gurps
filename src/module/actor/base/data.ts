@@ -1,13 +1,7 @@
 // Import { BaseActorGURPS } from "@actor";
+import { ActorType } from "@actor/data"
 import { ActorDataSource } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 
-export enum ActorType {
-	Character = "character_gcs",
-	StaticCharacter = "character",
-	// MassCombatElement = "element",
-	// Vehicle = "vehicle",
-	// Merchant = "merchant",
-}
 
 export interface ActorFlagsGURPS extends Record<string, unknown> {
 	gurps?: Record<ActorFlags, unknown>

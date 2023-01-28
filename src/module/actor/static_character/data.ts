@@ -1,4 +1,5 @@
-import { ActorFlagsGURPS, ActorSystemData, ActorType, BaseActorSourceGURPS } from "@actor/base/data"
+import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
+import { ActorType } from "@actor/data"
 
 export const MoveModeTypes = {
 	Ground: "gurps.character.move_modes.ground",
@@ -24,12 +25,12 @@ export interface MoveMode {
 }
 
 export interface StaticCharacterSource
-	extends BaseActorSourceGURPS<ActorType.StaticCharacter, StaticCharacterSystemData> {
+	extends BaseActorSourceGURPS<ActorType.LegacyCharacter, StaticCharacterSystemData> {
 	flags: DeepPartial<StaticCharacterFlags>
 }
 export interface StaticCharacterDataGURPS
 	extends Omit<StaticCharacterSource, "effects" | "flags" | "items" | "token">,
-		StaticCharacterSystemData {
+	StaticCharacterSystemData {
 	readonly type: StaticCharacterSource["type"]
 	data: StaticCharacterSystemData
 	flags: StaticCharacterFlags

@@ -1,12 +1,13 @@
 import { Feature } from "@feature"
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
+import { ItemType } from "@item/data"
 import { Difficulty, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type SkillSource = BaseItemSourceGURPS<"skill", SkillSystemData>
+export type SkillSource = BaseItemSourceGURPS<ItemType.Skill, SkillSystemData>
 
 // Export class SkillData extends BaseItemDataGURPS<SkillGURPS> {}
 

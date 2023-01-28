@@ -1,4 +1,4 @@
-import { i18n } from "./misc"
+import { i18n, round } from "./misc"
 
 export type Length = number
 
@@ -189,16 +189,16 @@ export function weightFormat(weight: Weight, unit: WeightUnits): string {
 	switch (unit) {
 		case WeightUnits.Pound:
 		case WeightUnits.PoundAlt:
-			return `${weight} ${unit}`
+			return `${round(weight, 4)} ${unit}`
 		case WeightUnits.Ounce:
-			return `${weight * 16} ${unit}`
+			return `${round(weight * 16, 4)} ${unit}`
 		case WeightUnits.Ton:
 		case WeightUnits.TonAlt:
-			return `${weight * 2000} ${unit}`
+			return `${round(weight * 2000, 4)} ${unit}`
 		case WeightUnits.Kilogram:
-			return `${weight / 2} ${unit}`
+			return `${round(weight / 2, 4)} ${unit}`
 		case WeightUnits.Gram:
-			return `${weight * 500} ${unit}`
+			return `${round(weight * 500, 4)} ${unit}`
 		default:
 			return weightFormat(weight, WeightUnits.Pound)
 	}

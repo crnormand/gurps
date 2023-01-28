@@ -9,15 +9,14 @@
 -   Finish the Damage Calculator conversion
 -   Convert OTFs and chat commands
     -   roll chat command
+-   Implement "static" items (0.15 and older) compatibility
+    -   add deprecation warning to static items
 
 ## 1.0.0
 
--   send modifiers from prompt
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   Drag rollable buttons to hotbar or message box for macros
 -   Finish "static" character (0.15 and older) compatibility
--   Implement "static" items (0.15 and older) compatibility
-    -   add deprecation warning to static items
 -   Add conversion from "static" to newer "dynamic" characters
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
@@ -37,6 +36,7 @@
 
 ## 1.1.0 and beyond
 
+-   send modifiers from prompt
 -   Tech Level Modifiers (B168)
 -   Dynamic Character changes
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".

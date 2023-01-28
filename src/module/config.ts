@@ -1,7 +1,9 @@
 import { CharacterGURPS } from "@actor/character"
+import { ActorType } from "@actor/data"
 import { StaticCharacterGURPS } from "@actor/static_character"
 import { StaticThresholdComparison, StaticThresholdOperator } from "@actor/static_character/data"
 import { AttributeBonus } from "@feature/attribute_bonus"
+import { FeatureType } from "@feature/base"
 import { ConditionalModifier } from "@feature/conditional_modifier"
 import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
 import { CostReduction } from "@feature/cost_reduction"
@@ -33,7 +35,9 @@ import {
 	TraitModifierContainerGURPS,
 	TraitModifierGURPS,
 } from "@item"
+import { ItemType } from "@item/data"
 import { StaticItemGURPS } from "@item/static"
+import { PrereqType } from "@prereq"
 import { AttributePrereq } from "@prereq/attribute_prereq"
 import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
 import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
@@ -43,7 +47,7 @@ import { SkillPrereq } from "@prereq/skill_prereq"
 import { SpellPrereq } from "@prereq/spell_prereq"
 import { TraitPrereq } from "@prereq/trait_prereq"
 import { rollModifiers, StudyType } from "./data"
-import { MeleeWeapon, RangedWeapon } from "./weapon"
+import { MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: any = {
@@ -52,107 +56,120 @@ const GURPSCONFIG: any = {
 		documentClasses: {
 			base: BaseItemGURPS,
 			container: ContainerGURPS,
-			trait: TraitGURPS,
-			trait_container: TraitContainerGURPS,
-			modifier: TraitModifierGURPS,
-			modifier_container: TraitModifierContainerGURPS,
-			skill: SkillGURPS,
-			technique: TechniqueGURPS,
-			skill_container: SkillContainerGURPS,
-			spell: SpellGURPS,
-			ritual_magic_spell: RitualMagicSpellGURPS,
-			spell_container: SpellContainerGURPS,
-			equipment: EquipmentGURPS,
-			equipment_container: EquipmentContainerGURPS,
-			eqp_modifier: EquipmentModifierGURPS,
-			eqp_modifier_container: EquipmentModifierContainerGURPS,
-			note: NoteGURPS,
-			note_container: NoteContainerGURPS,
-			static_equipment: StaticItemGURPS,
+			[ItemType.Trait]: TraitGURPS,
+			[ItemType.TraitContainer]: TraitContainerGURPS,
+			[ItemType.TraitModifier]: TraitModifierGURPS,
+			[ItemType.TraitModifierContainer]: TraitModifierContainerGURPS,
+			[ItemType.Skill]: SkillGURPS,
+			[ItemType.Technique]: TechniqueGURPS,
+			[ItemType.SkillContainer]: SkillContainerGURPS,
+			[ItemType.Spell]: SpellGURPS,
+			[ItemType.RitualMagicSpell]: RitualMagicSpellGURPS,
+			[ItemType.SpellContainer]: SpellContainerGURPS,
+			[ItemType.Equipment]: EquipmentGURPS,
+			[ItemType.EquipmentContainer]: EquipmentContainerGURPS,
+			[ItemType.EquipmentModifier]: EquipmentModifierGURPS,
+			[ItemType.EquipmentModifierContainer]: EquipmentModifierContainerGURPS,
+			[ItemType.Note]: NoteGURPS,
+			[ItemType.NoteContainer]: NoteContainerGURPS,
+			[ItemType.LegacyEquipment]: StaticItemGURPS,
 		},
 		allowedContents: {
-			trait: ["modifier", "modifier_container"],
-			trait_container: ["modifier", "modifier_container", "trait", "trait_container"],
-			modifier_container: ["modifier", "modifier_container"],
-			skill_container: ["skill", "technique", "skill_container"],
-			spell_container: ["spell", "ritual_magic_spell", "spell_container"],
-			equipment: ["eqp_modifier", "eqp_modifier_container"],
-			equipment_container: ["equipment", "equipment_container", "eqp_modifier", "eqp_modifier_container"],
-			eqp_modifier_container: ["eqp_modifier", "eqp_modifier_container"],
-			note_container: ["note", "note_container"],
+			[ItemType.Trait]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.TraitContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer, ItemType.Trait, ItemType.TraitContainer],
+			[ItemType.TraitModifierContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.SkillContainer]: [ItemType.Skill, ItemType.Technique, ItemType.SkillContainer],
+			[ItemType.SpellContainer]: [ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer],
+			[ItemType.Equipment]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.EquipmentContainer]: [ItemType.Equipment, ItemType.EquipmentContainer, ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.EquipmentModifierContainer]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.NoteContainer]: [ItemType.Note, ItemType.NoteContainer],
 		},
 		childTypes: {
-			trait: ["trait", "trait_container"],
-			trait_container: ["trait", "trait_container"],
-			modifier_container: ["modifier", "modifier_container"],
-			skill: ["skill", "technique", "skill_container"],
-			technique: ["skill", "technique", "skill_container"],
-			skill_container: ["skill", "technique", "skill_container"],
-			spell: ["spell", "ritual_magic_spell", "spell_container"],
-			ritual_magic_spell: ["spell", "ritual_magic_spell", "spell_container"],
-			spell_container: ["spell", "ritual_magic_spell", "spell_container"],
-			equipment: ["equipment", "equipment_container"],
-			equipment_container: ["equipment", "equipment_container"],
-			eqp_modifier_container: ["eqp_modifier", "eqp_modifier_container"],
-			note: ["note", "note_container"],
-			note_container: ["note", "note_container"],
+			// Trait: ["trait", "trait_container"],
+			// skill: ["skill", "technique", "skill_container"],
+			// technique: ["skill", "technique", "skill_container"],
+			// spell: ["spell", "ritual_magic_spell", "spell_container"],
+			// ritual_magic_spell: ["spell", "ritual_magic_spell", "spell_container"],
+			// equipment: ["equipment", "equipment_container"],
+			// equipment_container: ["equipment", "equipment_container"],
+			// note: ["note", "note_container"],
+			[ItemType.Trait]: [],
+			[ItemType.TraitContainer]: [ItemType.Trait, ItemType.TraitContainer],
+			[ItemType.TraitModifier]: [],
+			[ItemType.TraitModifierContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.Skill]: [],
+			[ItemType.Technique]: [],
+			[ItemType.SkillContainer]: [ItemType.Skill, ItemType.Technique, ItemType.SkillContainer],
+			[ItemType.Spell]: [],
+			[ItemType.RitualMagicSpell]: [],
+			[ItemType.SpellContainer]: [ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer],
+			[ItemType.Equipment]: [],
+			[ItemType.EquipmentContainer]: [ItemType.Equipment, ItemType.EquipmentContainer],
+			[ItemType.EquipmentModifier]: [],
+			[ItemType.EquipmentModifierContainer]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.Note]: [],
+			[ItemType.NoteContainer]: [ItemType.Note, ItemType.NoteContainer],
 		},
 	},
 	Actor: {
 		documentClasses: {
-			character_gcs: CharacterGURPS,
+			[ActorType.Character]: CharacterGURPS,
 			// TODO: change to static charsheet
-			character: StaticCharacterGURPS,
+			[ActorType.LegacyCharacter]: StaticCharacterGURPS,
 		},
 		allowedContents: {
-			character: [
-				"trait",
-				"trait_container",
-				"skill",
-				"technique",
-				"skill_container",
-				"spell",
-				"ritual_magic_spell",
-				"spell_container",
-				"equipment",
-				"equipment_container",
-				"note",
-				"note_container",
+			[ActorType.Character]: [
+				ItemType.Trait,
+				ItemType.TraitContainer,
+				ItemType.Skill,
+				ItemType.Technique,
+				ItemType.SkillContainer,
+				ItemType.Spell,
+				ItemType.RitualMagicSpell,
+				ItemType.SpellContainer,
+				ItemType.Equipment,
+				ItemType.EquipmentContainer,
+				ItemType.Note,
+				ItemType.NoteContainer,
 			],
+			[ActorType.LegacyCharacter]: [
+				ItemType.LegacyEquipment
+			]
 		},
 	},
 	Feature: {
 		classes: {
-			attribute_bonus: AttributeBonus,
-			conditional_modifier: ConditionalModifier,
-			dr_bonus: DRBonus,
-			reaction_bonus: ReactionBonus,
-			skill_bonus: SkillBonus,
-			skill_point_bonus: SkillPointBonus,
-			spell_bonus: SpellBonus,
-			spell_point_bonus: SpellPointBonus,
-			weapon_bonus: WeaponDamageBonus,
-			weapon_dr_divisor_bonus: WeaponDRDivisorBonus,
-			cost_reduction: CostReduction,
-			contained_weight_reduction: ContainedWeightReduction,
+			[FeatureType.AttributeBonus]: AttributeBonus,
+			[FeatureType.ConditionalModifier]: ConditionalModifier,
+			[FeatureType.DRBonus]: DRBonus,
+			[FeatureType.ReactionBonus]: ReactionBonus,
+			[FeatureType.SkillBonus]: SkillBonus,
+			[FeatureType.SkillPointBonus]: SkillPointBonus,
+			[FeatureType.SpellBonus]: SpellBonus,
+			[FeatureType.SpellPointBonus]: SpellPointBonus,
+			[FeatureType.WeaponBonus]: WeaponDamageBonus,
+			[FeatureType.WeaponDRDivisorBonus]: WeaponDRDivisorBonus,
+			[FeatureType.CostReduction]: CostReduction,
+			[FeatureType.ContaiedWeightReduction]: ContainedWeightReduction,
 		},
 	},
 	Prereq: {
 		classes: {
-			prereq_list: PrereqList,
-			trait_prereq: TraitPrereq,
-			attribute_prereq: AttributePrereq,
-			contained_quantity_prereq: ContainedQuantityPrereq,
-			contained_weight_prereq: ContainedWeightPrereq,
-			equipped_equipment_prereq: EquippedEquipmentPrereq,
-			skill_prereq: SkillPrereq,
-			spell_prereq: SpellPrereq,
+			[PrereqType.List]: PrereqList,
+			[PrereqType.Trait]: TraitPrereq,
+			[PrereqType.Attribute]: AttributePrereq,
+			[PrereqType.ContainedQuantity]: ContainedQuantityPrereq,
+			[PrereqType.ContainedWeight]: ContainedWeightPrereq,
+			[PrereqType.Equipment]: EquippedEquipmentPrereq,
+			[PrereqType.Skill]: SkillPrereq,
+			[PrereqType.Spell]: SpellPrereq,
 		},
 	},
 	Weapon: {
 		classes: {
-			melee_weapon: MeleeWeapon,
-			ranged_weapon: RangedWeapon,
+			[WeaponType.MeleeWeapon]: MeleeWeapon,
+			[WeaponType.RangedWeapon]: RangedWeapon,
 		},
 	},
 	select: {
