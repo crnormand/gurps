@@ -116,7 +116,7 @@ export class CharacterImporter {
 				recursive: false,
 			})
 			if ((this.document.sheet as unknown as CharacterSheetGURPS)?.config !== null) {
-				; (this.document.sheet as unknown as CharacterSheetGURPS)?.config?.render(true)
+				;(this.document.sheet as unknown as CharacterSheetGURPS)?.config?.render(true)
 			}
 		} catch (err) {
 			console.error(err)

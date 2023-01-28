@@ -5,7 +5,8 @@
 	&.skill,
 	&.generic {
 		// display: grid;
-		grid-auto-flow: row;
+		display: flex;
+		flex-direction: column;
 		align-items: center;
 		text-align: center;
 
@@ -13,9 +14,11 @@
 			border-color: rgb(var(--color-divider));
 			height: 1px;
 			width: 90%;
+			margin: 0;
 		}
 
 		.name {
+			min-width: 50%;
 			font-size: var(--font-size-18);
 			font-weight: bold;
 			margin: auto;
@@ -95,6 +98,10 @@
 					background-color: white;
 				}
 			}
+		}
+
+		.margin {
+			margin-bottom: 5px;
 		}
 
 		.modifiers {
@@ -179,8 +186,10 @@
 			font-size: var(--font-size-16);
 		}
 
-		.result {
+		.dice-total {
 			font-size: var(--font-size-18);
+			// transition: all 0.1s linear 0s;
+			cursor: pointer;
 
 			&:before {
 				content: "\e411";
@@ -190,9 +199,14 @@
 				margin-right: 4px;
 			}
 
-			&:hover {
-				box-shadow: 0 0 10px rgb(var(--color-failure));
-			}
+			// &:hover {
+			// 	background-color: rgb(var(--color-failure));
+			// 	color: white;
+			// }
+
+			// &:hover {
+			// 	box-shadow: 0 0 10px rgb(var(--color-failure));
+			// }
 		}
 	}
 }

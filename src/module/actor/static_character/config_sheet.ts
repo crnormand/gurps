@@ -92,11 +92,11 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-						(this.file = {
-							text: text,
-							name: files[0].name,
-							path: files[0].path,
-						})
+							(this.file = {
+								text: text,
+								name: files[0].name,
+								path: files[0].path,
+							})
 					)
 				}
 				this.render()
@@ -287,7 +287,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				parent_index: parent_index,
 			})
 		)
-			; (event as any).dragType = type
+		;(event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

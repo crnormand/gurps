@@ -196,11 +196,11 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 				this.items.set(item._id!, theItem)
 			} else {
 				const currentItem = oldItems.get(item._id!)!
-					; (currentItem as any).name = item.name
-					; (currentItem as any).flags = item.flags
-					; (currentItem as any).system = item.system
-					; (currentItem as any).img = item.img
-					; (currentItem as any).sort = item.sort
+				;(currentItem as any).name = item.name
+				;(currentItem as any).flags = item.flags
+				;(currentItem as any).system = item.system
+				;(currentItem as any).img = item.img
+				;(currentItem as any).sort = item.sort
 				// ; (currentItem as any)._source = item._source
 				setProperty((currentItem as any)._source, "name", item.name)
 				setProperty((currentItem as any)._source, "flags", item.flags)

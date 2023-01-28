@@ -62,7 +62,7 @@ export class ModifierButton extends Application {
 	}
 
 	addRangeMod() {
-		; (game as any).ModifierButton.window.addModifier(this._tempRangeMod)
+		;(game as any).ModifierButton.window.addModifier(this._tempRangeMod)
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
@@ -97,13 +97,21 @@ export class ModifierButton extends Application {
 	async _onDiceClick(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
 		console.log(event.ctrlKey)
-		return RollGURPS.handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "3d6", hidden: event.ctrlKey })
+		return RollGURPS.handleRoll((game as Game).user, null, {
+			type: RollType.Generic,
+			formula: "3d6",
+			hidden: event.ctrlKey,
+		})
 	}
 
 	async _onDiceContextMenu(event: JQuery.ContextMenuEvent): Promise<void> {
 		event.preventDefault()
 		console.log(event.ctrlKey)
-		return RollGURPS.handleRoll((game as Game).user, null, { type: RollType.Generic, formula: "1d6", hidden: event.ctrlKey })
+		return RollGURPS.handleRoll((game as Game).user, null, {
+			type: RollType.Generic,
+			formula: "1d6",
+			hidden: event.ctrlKey,
+		})
 	}
 
 	async _onMagnetClick(event: JQuery.ClickEvent): Promise<unknown> {

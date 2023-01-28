@@ -21,6 +21,7 @@ export type DamagePayload = {
 	damageType: string
 	rolls: { result: number; word: string }[]
 	modifierTotal: number
+	tooltip: any
 }
 
 type DropData = { type: string; x: number; y: number; payload: DamagePayload }

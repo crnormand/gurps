@@ -1,11 +1,16 @@
-<div class="message-roll generic">
+<div class="dice-roll generic">
+	<div data-formula="{{formula}}" data-type="generic" class="name rollable">{{formula}}</div>
+	{{#if modifiers.length}}
 	<div class="modifiers generic">
 		{{#each modifiers}}
 		<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
 			{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
-	<div class="result generic">{{total}}</div>
-	<hr />
-	<div class="total">{{{displayRolls rolls modifierTotal}}} = {{total}}</div>
+	{{/if}}
+	<hr>
+	<div class="dice-result">
+		<h4 class="dice-total generic">{{total}}</h4>
+		{{{tooltip}}}
+	</div>
 </div>

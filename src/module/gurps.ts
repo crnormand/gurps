@@ -70,7 +70,7 @@ import { DamageChat } from "./damage_calculator/damage_chat_message"
 import { RangeGURPS } from "@util/range"
 import { ItemType } from "@item/data"
 import { ActorType } from "@actor/data"
-import { RollGURPS } from "@module/roll";
+import { RollGURPS } from "@module/roll"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -79,7 +79,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	; (globalThis as any).GURPS = GURPS
+	;(globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -118,13 +118,13 @@ Hooks.once("init", async () => {
 
 	const src = `systems/${SYSTEM_NAME}/assets/gurps4e.svg`
 	$("#logo").attr("src", src)
-		// $("#logo").attr("width", "100px");
+	// $("#logo").attr("width", "100px");
 
-		// Assign custom classes and constants hereby
-		; (CONFIG as any).GURPS = GURPSCONFIG
-		; (CONFIG.Item.documentClass as any) = BaseItemGURPS
+	// Assign custom classes and constants hereby
+	;(CONFIG as any).GURPS = GURPSCONFIG
+	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
-		; (CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
 
 	CONFIG.Dice.rolls.unshift(RollGURPS)
 
@@ -272,26 +272,26 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-		; (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-		; (game as any).ModifierButton = new ModifierButton()
-		; (game as any).ModifierButton.render(true)
-		; (game as any).CompendiumBrowser = new CompendiumBrowser()
+	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	;(game as any).ModifierButton = new ModifierButton()
+	;(game as any).ModifierButton.render(true)
+	;(game as any).CompendiumBrowser = new CompendiumBrowser()
 
 	await Promise.all(
 		(game as Game).actors!.map(async actor => {
 			actor.prepareData()
 		})
 	)
-		; (game as Game).socket?.on("system.gcsga", async response => {
-			console.log("receive socket")
-			switch (response.type) {
-				case "updateBucket":
-					console.log("test?")
-					return (game as any).ModifierButton.render(true)
-				default:
-					return console.error("Unknown socket:", response.type)
-			}
-		})
+	;(game as Game).socket?.on("system.gcsga", async response => {
+		console.log("receive socket")
+		switch (response.type) {
+			case "updateBucket":
+				console.log("test?")
+				return (game as any).ModifierButton.render(true)
+			default:
+				return console.error("Unknown socket:", response.type)
+		}
+	})
 
 	// Render modifier app after user object loaded to avoid old data
 })

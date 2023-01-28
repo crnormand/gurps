@@ -23,7 +23,7 @@ export class StaticItemSheet extends ItemSheet {
 	getData(options?: Partial<DocumentSheetOptions> | undefined) {
 		// Const sheetData = super.getData()
 		const sheetData = {
-			...super.getData(options) as any,
+			...(super.getData(options) as any),
 		}
 		sheetData.data = this.item.system
 		sheetData.system = this.item.system

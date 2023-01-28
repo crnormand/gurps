@@ -1,8 +1,8 @@
 import { ActorGURPS } from "@actor"
 import { SkillGURPS } from "@item"
 import { LastActor } from "@util"
-import { gid, RollModifier, RollType } from "./data"
-import { RollGURPS } from "@module/roll";
+import { gid, RollModifier, RollType, SYSTEM_NAME, UserFlags } from "./data"
+import { RollGURPS } from "@module/roll"
 
 /**
  *
@@ -17,22 +17,22 @@ export async function _processDiceCommand(
 	chatData: any,
 	createOptions: any
 ): Promise<void> {
-	const actor = ChatMessage.getSpeakerActor(chatData.speaker) || (game as Game).user?.character;
-	const rollData: any = actor ? actor.getRollData() : {};
-	const rolls = [];
+	const actor = ChatMessage.getSpeakerActor(chatData.speaker) || (game as Game).user?.character
+	const rollData: any = actor ? actor.getRollData() : {}
+	const rolls = []
 	for (const match of matches) {
-		if (!match) continue;
-		const [formula, flavor] = match.slice(2, 4);
-		if (flavor && !chatData.flavor) chatData.flavor = flavor;
-		const roll = Roll.create(formula, rollData);
-		await roll.evaluate({ async: true });
-		rolls.push(roll);
+		if (!match) continue
+		const [formula, flavor] = match.slice(2, 4)
+		if (flavor && !chatData.flavor) chatData.flavor = flavor
+		const roll = Roll.create(formula, rollData)
+		await roll.evaluate({ async: true })
+		rolls.push(roll)
 	}
-	chatData.type = CONST.CHAT_MESSAGE_TYPES.ROLL;
-	chatData.rolls = rolls;
-	chatData.sound = CONFIG.sounds.dice;
-	chatData.content = rolls.reduce((t, r) => t + r.total!, 0);
-	createOptions.rollMode = command;
+	chatData.type = CONST.CHAT_MESSAGE_TYPES.ROLL
+	chatData.rolls = rolls
+	chatData.sound = CONFIG.sounds.dice
+	chatData.content = rolls.reduce((t, r) => t + r.total!, 0)
+	createOptions.rollMode = command
 }
 
 /**
@@ -54,6 +54,7 @@ export function addChatListeners(html: JQuery<HTMLElement>): void {
  */
 async function _onModClick(event: JQuery.ClickEvent): Promise<void> {
 	event.preventDefault()
+	event.stopPropagation()
 	const mod: RollModifier = $(event.currentTarget).data("mod")
 	return (game as any).ModifierButton.window.addModifier(mod)
 }
@@ -76,6 +77,7 @@ async function _onModRClick(event: JQuery.ContextMenuEvent): Promise<void> {
  */
 async function _onRollClick(event: JQuery.ClickEvent) {
 	event.preventDefault()
+	event.stopPropagation()
 	const type: RollType = $(event.currentTarget).data("type")
 	const data: { [key: string]: any } = { type: type }
 	const character: any = await LastActor.get()
@@ -107,6 +109,11 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		else attribute = character.attributes.get(id)
 		data.attribute = attribute
 	}
+	if ([RollType.Generic].includes(type)) {
+		data.formula = $(event.currentTarget).data("formula")
+		// Const mods = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as any[]
+		// if (mods.length) data.formula += "+ @gmd"
+	}
 	// If (type === RollType.Modifier) {
 	// 	data.modifier = $(event.currentTarget).data("modifier");
 	// 	data.comment = $(event.currentTarget).data("comment");
@@ -122,6 +129,7 @@ async function _onRollClick(event: JQuery.ClickEvent) {
  */
 async function _onDamageRoll(event: JQuery.ClickEvent) {
 	event.preventDefault()
+	event.stopPropagation()
 	const actor = (game as Game).actors!.get($(event.currentTarget).data("actorId")) as ActorGURPS
 	const type: RollType = $(event.currentTarget).data("type")
 	const data: { [key: string]: any } = { type: type }

@@ -1,18 +1,20 @@
-<div class="message-roll damage">
+<div class="dice-roll damage">
 	<div data-uuid="{{data.item.uuid}}" data-weapon="{{data.weapon.id}}" data-type="damage" class="name rollable">
 		{{name}}
 		({{diceString dice}})
 	</div>
+	{{#if modifiers.length}}
 	<div class="modifiers">
 		{{#each modifiers}}
 		<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
 			{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
-	<div class="result failure" draggable="true">{{total}}
-		points of
-		{{damageType}}
-		damage</div>
-	<hr />
-	<div class="total">{{{displayRolls rolls modifierTotal}}} = {{total}}</div>
+	{{/if}}
+	<hr>
+	<div class="dice-result">
+		<div class="dice-total failure" draggable="true">{{localize "gurps.roll.damage"total=total type=damageType}}</div>
+		{{{margin}}}
+		{{{tooltip}}}
+	</div>
 </div>

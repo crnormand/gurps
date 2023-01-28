@@ -677,6 +677,7 @@
 			"success_from": "Margin of Success | {from}",
 			"failure_from": "Margin of Failure | {from}",
 			"cr_level": "CR: {level}",
+			"damage": "{total} {type} damage",
 			"success": {
 				"success": "Success!",
 				"failure": "Failure!",

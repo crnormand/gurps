@@ -12,7 +12,6 @@ import { SETTINGS, Study, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import * as Static from "./static"
 import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
-import { HitLocation } from "@actor/character/hit_location"
 
 /**
  *

@@ -87,7 +87,7 @@ export enum ItemType {
 	EquipmentModifierContainer = "eqp_modifier_container",
 	Note = "note",
 	NoteContainer = "note_container",
-	LegacyEquipment = "equipment"
+	LegacyEquipment = "equipment",
 }
 // Export type ItemType =
 // 	| "trait"
