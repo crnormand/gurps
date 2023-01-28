@@ -77,7 +77,7 @@ interface DamageAttacker {
  * An adapter on BaseWeapon and its subclasses that gives the DamageCalculator an easy interface to use.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface DamageWeapon { }
+interface DamageWeapon {}
 
 enum DefaultHitLocations {
 	Default = "Default",

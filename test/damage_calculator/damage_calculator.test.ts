@@ -491,7 +491,7 @@ describe("Damage calculator", () => {
 			_torso.calc!.dr.all = 2
 		})
 
-		let verify: any = function(hp: number, noShockValues: number[], shockValues: DamageShock[]) {
+		let verify: any = function (hp: number, noShockValues: number[], shockValues: DamageShock[]) {
 			_target.hitPoints.value = hp
 
 			for (const damage of noShockValues) {
@@ -2234,7 +2234,7 @@ interface IDamageCalculator {
 	overrideFlexible(arg: boolean | undefined): void
 }
 
-const _create = function(roll: DamageRoll, target: DamageTarget): IDamageCalculator {
+const _create = function (roll: DamageRoll, target: DamageTarget): IDamageCalculator {
 	return new DamageCalculator(roll, target)
 }
 

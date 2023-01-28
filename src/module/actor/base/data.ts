@@ -2,7 +2,6 @@
 import { ActorType } from "@actor/data"
 import { ActorDataSource } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 
-
 export interface ActorFlagsGURPS extends Record<string, unknown> {
 	gurps?: Record<ActorFlags, unknown>
 }

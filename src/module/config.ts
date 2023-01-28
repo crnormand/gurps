@@ -76,12 +76,22 @@ const GURPSCONFIG: any = {
 		},
 		allowedContents: {
 			[ItemType.Trait]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
-			[ItemType.TraitContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer, ItemType.Trait, ItemType.TraitContainer],
+			[ItemType.TraitContainer]: [
+				ItemType.TraitModifier,
+				ItemType.TraitModifierContainer,
+				ItemType.Trait,
+				ItemType.TraitContainer,
+			],
 			[ItemType.TraitModifierContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
 			[ItemType.SkillContainer]: [ItemType.Skill, ItemType.Technique, ItemType.SkillContainer],
 			[ItemType.SpellContainer]: [ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer],
 			[ItemType.Equipment]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
-			[ItemType.EquipmentContainer]: [ItemType.Equipment, ItemType.EquipmentContainer, ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.EquipmentContainer]: [
+				ItemType.Equipment,
+				ItemType.EquipmentContainer,
+				ItemType.EquipmentModifier,
+				ItemType.EquipmentModifierContainer,
+			],
 			[ItemType.EquipmentModifierContainer]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
 			[ItemType.NoteContainer]: [ItemType.Note, ItemType.NoteContainer],
 		},
@@ -133,9 +143,7 @@ const GURPSCONFIG: any = {
 				ItemType.Note,
 				ItemType.NoteContainer,
 			],
-			[ActorType.LegacyCharacter]: [
-				ItemType.LegacyEquipment
-			]
+			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment],
 		},
 	},
 	Feature: {

@@ -173,15 +173,15 @@ class BaseItemGURPS extends Item {
 		)
 			return new Map()
 		const weapons: Map<string, Weapon> = new Map()
-			; (this.system as any).weapons.forEach((w: any, index: number) => {
-				weapons.set(
-					w.id,
-					new BaseWeapon({
-						...w,
-						...{ parent: this, actor: this.actor, index: index },
-					})
-				)
-			})
+		;(this.system as any).weapons.forEach((w: any, index: number) => {
+			weapons.set(
+				w.id,
+				new BaseWeapon({
+					...w,
+					...{ parent: this, actor: this.actor, index: index },
+				})
+			)
+		})
 		return weapons
 	}
 
@@ -228,7 +228,7 @@ class BaseItemGURPS extends Item {
 		if ((this as any).modifiers)
 			system.modifiers = (this as any).modifiers.map((e: BaseItemGURPS) => e.exportSystemData())
 		if (system.weapons)
-			system.weapons = system.weapons.map(function(e: BaseWeapon) {
+			system.weapons = system.weapons.map(function (e: BaseWeapon) {
 				const f: any = { ...e }
 				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
 				return f

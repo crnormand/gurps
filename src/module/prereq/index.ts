@@ -15,7 +15,7 @@ export enum PrereqType {
 	ContainedWeight = "contained_weight_prereq",
 	Skill = "skill_prereq",
 	Spell = "spell_prereq",
-	Equipment = "equipped_equipment_prereq"
+	Equipment = "equipped_equipment_prereq",
 }
 
 export type Prereq =

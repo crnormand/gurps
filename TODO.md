@@ -14,10 +14,8 @@
 
 ## 1.0.0
 
--   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -   Drag rollable buttons to hotbar or message box for macros
 -   Finish "static" character (0.15 and older) compatibility
--   Add conversion from "static" to newer "dynamic" characters
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
 -   Dynamic Character changes
@@ -26,8 +24,6 @@
     -   add posture to dynamic character
     -   add maneuver to dynamic character
 -   Active Effects with Features
--   Incorporate v10 tooltip API
--   Skill Defaults from compendium
 -   @X@ notation dialog box for items
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
@@ -36,6 +32,12 @@
 
 ## 1.1.0 and beyond
 
+-   Skill Defaults from compendium
+-   Incorporate v10 tooltip API
+-   Drag items to chat, get item chat entry with name, notes, rollables, etc.
+-	completely redo the way roll messages are handled
+	-	default roll templates are re-rendered when opening the world, while ours are static
+		changing this so the templates are dynamic would improve the way they are handled in the future
 -   send modifiers from prompt
 -   Tech Level Modifiers (B168)
 -   Dynamic Character changes

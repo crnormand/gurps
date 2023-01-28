@@ -237,7 +237,7 @@ export function floatingMul(...args: number[]): number {
  * @param p
  */
 export function round(n: number, p = 2): number {
-	return Math.round(n * (10 ** p)) / (10 ** p)
+	return Math.round(n * 10 ** p) / 10 ** p
 }
 
 /**

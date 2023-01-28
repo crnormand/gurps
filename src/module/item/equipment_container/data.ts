@@ -10,7 +10,7 @@ export type EquipmentContainerSource = BaseContainerSource<ItemType.EquipmentCon
 
 export interface EquipmentContainerData
 	extends Omit<EquipmentContainerSource, "effects" | "items">,
-	EquipmentContainerSystemData {
+		EquipmentContainerSystemData {
 	readonly type: EquipmentContainerSource["type"]
 	data: EquipmentContainerSystemData
 
