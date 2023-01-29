@@ -48,7 +48,6 @@ export enum SETTINGS {
 	DEFAULT_SHEET_SETTINGS = "default_sheet_settings",
 	ROLL_MODIFIERS = "roll_modifiers",
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
-	DISPLAY_DICE = "display_dice",
 	SSRT = "ssrt",
 }
 

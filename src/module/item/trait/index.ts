@@ -47,6 +47,10 @@ export class TraitGURPS extends ContainerGURPS {
 		return this.system.points_per_level ?? 0
 	}
 
+	get skillLevel(): number {
+		return this.cr
+	}
+
 	get cr(): CR {
 		return this.system.cr
 	}

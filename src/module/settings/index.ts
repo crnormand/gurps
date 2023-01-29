@@ -215,16 +215,6 @@ export function registerSettings(): void {
 		default: "torso",
 		onChange: value => console.log(`Default damage location: ${value}`),
 	})
-
-	g.settings.register(SYSTEM_NAME, SETTINGS.DISPLAY_DICE, {
-		name: "gurps.settings.display_dice.name",
-		hint: "gurps.settings.display_dice.hint",
-		scope: "world",
-		config: true,
-		type: Boolean,
-		default: true,
-		// OnChange: value => applyDiceCSS(value)
-	})
 }
 
 /**
@@ -246,12 +236,6 @@ function autoFillProfile(): CharacterProfile {
 	p.birthday = "January 1"
 	return p
 }
-
-// Export function applyDiceCSS(value?: Boolean) {
-// 	value ??= (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DISPLAY_DICE) as Boolean
-// 	if (value) $("[class^='fas dice-']").removeClass("num")
-// 	else $("[class^='fas dice-']").addClass("num")
-// }
 
 interface provider {
 	general: {

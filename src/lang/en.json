@@ -676,7 +676,9 @@
 			"failure_margin": "Missed it by {margin}.",
 			"success_from": "Margin of Success | {from}",
 			"failure_from": "Margin of Failure | {from}",
-			"cr_level": "CR: {level}",
+			"skill_level": "{name} ({level})",
+			"attack_level": "{name} ({level})",
+			"cr_level": "{name} (CR: {level})",
 			"damage": "{total} {type} damage",
 			"success": {
 				"success": "Success!",
@@ -1264,10 +1266,6 @@
 				"name": "Default Body Type",
 				"label": "Edit Default Body Type",
 				"hint": "The Body Type assigned when creating new Characters."
-			},
-			"display_dice": {
-				"name": "Display Dice Pips",
-				"hint": "If enabled, diceroll results in messages will display as pips instead of numbers."
 			},
 			"roll_modifiers": {
 				"name": "Custom Modifiers",

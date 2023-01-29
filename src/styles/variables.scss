@@ -144,6 +144,11 @@
 	--background-roll-banding: linear-gradient(rgba(var(--color-button-roll), 0.3), rgba(var(--color-button-roll), 0.3)),
 		linear-gradient(rgb(var(--color-banding)), rgb(var(--color-banding)));
 
+	--background-roll-neg: linear-gradient(rgba(var(--color-failure), 0.3), rgba(var(--color-failure), 0.3)),
+		linear-gradient(rgb(var(--color-content)), rgb(var(--color-content)));
+	--background-roll-pos: linear-gradient(rgba(var(--color-success), 0.3), rgba(var(--color-success), 0.3)),
+		linear-gradient(rgb(var(--color-content)), rgb(var(--color-content)));
+
 	--background-mod: linear-gradient(rgba(var(--color-button-mod), 0.3), rgba(var(--color-button-mod), 0.3)),
 		linear-gradient(rgb(var(--color-content)), rgb(var(--color-content)));
 	--background-mod-banding: linear-gradient(rgba(var(--color-button-mod), 0.3), rgba(var(--color-button-mod), 0.3)),

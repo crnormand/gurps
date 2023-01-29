@@ -215,7 +215,7 @@ export class CharacterImporter {
 		if (!list) return []
 		const items: Array<any> = []
 		for (const item of list) {
-			item.name = item.name ?? (item as any).description ?? (item as any).text
+			item.name ??= (item as any).description ?? (item as any).text
 			const id = randomID()
 			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context)
 			const newItem = {

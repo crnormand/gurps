@@ -126,6 +126,7 @@ Hooks.once("init", async () => {
 	CONFIG.Actor.documentClass = BaseActorGURPS
 	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
 
+	// @ts-ignore until v10
 	CONFIG.Dice.rolls.unshift(RollGURPS)
 
 	StaticHitLocation.init()

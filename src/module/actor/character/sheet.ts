@@ -203,11 +203,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		event.preventDefault()
 		if (this.actor.editing) return
 		const type: RollType = $(event.currentTarget).data("type")
-		const data: { [key: string]: any } = { type: type }
+		const data: Record<string, any> = { type: type, hidden: event.ctrlKey }
 		if (type === RollType.Attribute) {
-			// Data.attribute = this.actor.attributes.get($(event.currentTarget).data("id"))
 			const id = $(event.currentTarget).data("id")
 			if (id === gid.Dodge) data.attribute = this.actor.dodgeAttribute
+			else if (id === gid.SizeModifier) data.attribute = this.actor.sizeModAttribute
 			else data.attribute = this.actor.attributes.get(id)
 		}
 		if (
@@ -222,11 +222,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			].includes(type)
 		)
 			data.item = await fromUuid($(event.currentTarget).data("uuid"))
-		// Data.item = this.actor.deepItems.get($(event.currentTarget).data("item-id"));
 		if ([RollType.Damage, RollType.Attack].includes(type))
 			data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
-
-		// Array.from(game.users.get("zyTvt0jv0VqeYANd").targets)[0]
 
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")

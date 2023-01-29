@@ -15,12 +15,13 @@
             </div>
             <div class="label">{{localize "gurps.item.user_description"}}</div>
             <div class="field">
-                <input type="text" name="system.user_description" value="{{system.user_description}}"
-                    data-dtype="String" />
+				<textarea type="text" name="system.vtt_notes" data-dtype="String">{{textareaFormat
+						system.vtt_notes
+					}}</textarea>
             </div>
             <div class="label">{{localize "gurps.item.tags"}}</div>
             <div class="field">
-                <input type="text" name="system.tags" value="{{join system.tags " , "}}" data-dtype="String" />
+				<input type="text" name="system.tags" value="{{join system.tags ', '}}" data-dtype="String" />
             </div>
             <label class="label"></label>
             <div class="field">

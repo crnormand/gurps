@@ -12,6 +12,7 @@ import { SETTINGS, Study, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import * as Static from "./static"
 import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
+import { Attribute } from "@module/attribute"
 
 /**
  *
@@ -456,15 +457,9 @@ export function registerHandlebarsHelpers() {
 		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
 	})
 
-	Handlebars.registerHelper("displayRolls", function (rolls: any[], modTotal: number): string {
-		const dice: boolean = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DISPLAY_DICE) as boolean
-		let buffer = ""
-		rolls.forEach((roll, index) => {
-			if (index !== 0) buffer += " + "
-			if (dice) buffer += `<i class="fas fa-dice-${roll.word}"></i>`
-			else buffer += `<i class="fas fa-square-${roll.result}"></i>`
-		})
-		if (modTotal) buffer += ` + ${modTotal}`
-		return buffer
+	Handlebars.registerHelper("effective", function (a: Attribute): string {
+		if (a.effective > a.current) return "pos"
+		if (a.effective < a.current) return "neg"
+		return ""
 	})
 }

@@ -1,4 +1,5 @@
 import { CharacterGURPS } from "@actor"
+import { gid } from "@module/data"
 import { sanitize } from "@util"
 import { AttributeDef, AttributeType, reserved_ids } from "./attribute_def"
 import { PoolThreshold } from "./pool_threshold"
@@ -36,11 +37,14 @@ export class Attribute {
 
 	apply_ops?: boolean
 
-	constructor(actor: CharacterGURPS, attr_id: string, order: number, data?: any) {
+	constructor(actor: CharacterGURPS, attr_id: string, order: number, data?: Partial<AttributeObj>) {
 		if (data) Object.assign(this, data)
 		this.actor = actor
 		this.attr_id = attr_id
 		this.order = order
+		if (this.attribute_def.type === AttributeType.Pool) {
+			this.apply_ops ??= true
+		}
 	}
 
 	get id(): string {
@@ -69,6 +73,11 @@ export class Attribute {
 		if (this.max === v) return
 		const def = this.attribute_def
 		if (def) this.adj = v - (def.baseValue(this.actor) + this.bonus)
+	}
+
+	get effective(): number {
+		if (this.attr_id === gid.Strength) return this.actor.effectiveST(0)
+		return this.current
 	}
 
 	get current(): number {

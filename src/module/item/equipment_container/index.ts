@@ -191,6 +191,12 @@ export class EquipmentContainerGURPS extends ContainerGURPS {
 		this.system.weight = this.weightString
 		super.prepareBaseData()
 	}
+
+	override exportSystemData(keepOther: boolean): any {
+		const system: any = super.exportSystemData(keepOther)
+		delete system.name
+		return system
+	}
 }
 
 export interface EquipmentContainerGURPS {

@@ -114,7 +114,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		event.preventDefault()
 		if (this.actor.editing) return
 		const type: RollType = $(event.currentTarget).data("type")
-		const data: { [key: string]: any } = { type: type }
+		const data: Record<string, any> = { type: type, hidden: event.ctrlKey }
 		if (type === RollType.Attribute) {
 			const attribute = {
 				current: 0,
