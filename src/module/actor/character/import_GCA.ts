@@ -193,7 +193,7 @@ export class GCAImporter {
 		if (data.vitals.portraitimage) {
 			const portrait = data.vitals.portraitimage.replaceAll(/\n/g, "")
 			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
-				p.img = `data:imdage/png;base64,${portrait}.png`
+				p.img = `data:image/png;base64,${portrait}.png`
 			} else {
 				console.error(i18n("gurps.error.import.portait_permissions"))
 				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))

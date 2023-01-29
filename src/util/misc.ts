@@ -451,3 +451,19 @@ export function difficultyRelativeLevel(d: Difficulty): number {
 			return difficultyRelativeLevel(Difficulty.Easy)
 	}
 }
+
+/**
+ *
+ * @param imageUrl
+ */
+export async function urlToBase64(imageUrl: string) {
+	let img: any = await fetch(imageUrl)
+	img = await img.blob()
+	let bitmap = await createImageBitmap(img)
+	let canvas = document.createElement("canvas")
+	let ctx = canvas.getContext("2d")
+	canvas.width = bitmap.width
+	canvas.height = bitmap.height
+	ctx?.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height)
+	return canvas.toDataURL("image/png").replace("data:image/png;base64,", "")
+}

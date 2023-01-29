@@ -94,6 +94,20 @@
 		input {
 			color: inherit;
 		}
+		&.neg {
+			background: var(--background-roll-neg);
+			&.hover {
+				background: rgb(var(--color-failure)) !important;
+				color: rgb(var(--color-on-button-roll-rollover)) !important;
+			}
+		}
+		&.pos {
+			background: var(--background-roll-pos);
+			&.hover {
+				background: rgb(var(--color-success)) !important;
+				color: rgb(var(--color-on-button-roll-rollover)) !important;
+			}
+		}
 	}
 
 	.rollable[data-type="modifier"]:not(.noroll) {

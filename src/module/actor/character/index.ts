@@ -44,6 +44,7 @@ import {
 	numberCompare,
 	SelfControl,
 	stringCompare,
+	urlToBase64,
 } from "@util"
 import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
@@ -366,8 +367,26 @@ class CharacterGURPS extends BaseActorGURPS {
 			attribute_def: {
 				combinedName: i18n("gurps.attributes.dodge"),
 			},
-			current: this.currentDodge,
+			effective: this.currentDodge,
 		}
+	}
+
+	get sizeModAttribute() {
+		return {
+			attribute_def: {
+				combinedName: i18n("gurps.character.SM"),
+			},
+			effective: this.sizeMod,
+		}
+	}
+
+	effectiveST(bonus = 0): number {
+		let initialST = Math.max(0, this.resolveAttributeCurrent(gid.Strength)) + bonus
+		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_st", this.attributes), 2)
+		let ST = initialST
+		if (divisor > 0) ST = Math.ceil(initialST / divisor)
+		if (ST < 1 && initialST > 0) return 1
+		return ST
 	}
 
 	move(enc: Encumbrance): number {
@@ -427,7 +446,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Returns Basic Lift in pounds
 	get basicLift(): number {
-		const basicLift = (this.resolveAttributeCurrent(gid.Strength) + (this.calc?.lifting_st_bonus ?? 0)) ** 2 / 5
+		const basicLift = this.effectiveST(this.calc?.lifting_st_bonus ?? 0) ** 2 / 5
 		if (basicLift === Infinity || basicLift === -Infinity) return 0
 		if (basicLift >= 10) return Math.round(basicLift)
 		return basicLift
@@ -1665,16 +1684,15 @@ class CharacterGURPS extends BaseActorGURPS {
 	// 	await FilePicker.upload("data", json.name, file)
 	// }
 
-	saveLocal(): void {
-		const json = this.exportSystemData()
-		json.name = this.name!
+	async saveLocal(): Promise<void> {
+		const json = await this.exportSystemData()
 		return saveDataToFile(json.text, "gcs", json.name)
 	}
 
-	protected exportSystemData() {
+	protected async exportSystemData() {
 		const system: any = duplicate(this.system)
 		system.type = "character"
-		const items = this.items.map((e: any) => e.exportSystemData())
+		const items = this.items.map((e: any) => e.exportSystemData(true))
 		const third_party: any = {}
 
 		third_party.settings = { resource_trackers: system.settings.resource_trackers }
@@ -1682,13 +1700,29 @@ class CharacterGURPS extends BaseActorGURPS {
 		third_party.import = system.import
 		third_party.move = system.move
 		system.third_party = third_party
-		system.traits = items.filter(e => e.type.includes("trait")) ?? []
-		system.skills = items.filter(e => ["skill", "skill_container", "technique"].includes(e.type)) ?? []
-		system.spells = items.filter(e => ["spell", "spell_container", "ritual_magic_spell"].includes(e.type)) ?? []
-		system.equipment = items.filter(e => ["equipment", "equipment_container"].includes(e.type) && !e.other) ?? []
+		system.traits = items.filter(e => e.type.includes(ItemType.Trait)) ?? []
+		system.skills =
+			items.filter(e => [ItemType.Skill, ItemType.SkillContainer, ItemType.Technique].includes(e.type)) ?? []
+		system.spells =
+			items.filter(e => [ItemType.Spell, ItemType.SpellContainer, ItemType.RitualMagicSpell].includes(e.type)) ??
+			[]
+		system.equipment =
+			items
+				.filter(
+					e => [ItemType.Equipment, "equipment", ItemType.EquipmentContainer].includes(e.type) && !e.other
+				)
+				.map(e => {
+					delete e.other
+					return e
+				}) ?? []
 		system.other_equipment =
-			items.filter(e => ["equipment", "equipment_container"].includes(e.type) && e.other) ?? []
-		system.notes = items.filter(e => ["note", "note_container"].includes(e.type)) ?? []
+			items
+				.filter(e => [ItemType.Equipment, "equipment", ItemType.EquipmentContainer].includes(e.type) && e.other)
+				.map(e => {
+					delete e.other
+					return e
+				}) ?? []
+		system.notes = items.filter(e => [ItemType.Note, ItemType.NoteContainer].includes(e.type)) ?? []
 		system.settings.attributes = system.settings.attributes.map((e: Partial<AttributeDef>) => {
 			const f = { ...e }
 			f.id = e.def_id
@@ -1704,12 +1738,16 @@ class CharacterGURPS extends BaseActorGURPS {
 			delete f.order
 			return f
 		})
+		if (this.img) system.profile.portrait = await urlToBase64(this.img)
 
 		delete system.resource_trackers
 		delete system.settings.resource_trackers
 		delete system.import
 		delete system.move
 		delete system.pools
+		delete system.editing
+
+		// Console.log(system.equipment)
 
 		const json = JSON.stringify(system, null, "\t")
 		const filename = `${this.name}.gcs`

@@ -125,17 +125,20 @@ export class ItemSheetGURPS extends ItemSheet {
 		return super._onSubmit(event, context)
 	}
 
+	private splitArray(s: string): string[] {
+		const a: string[] = s.split(",").map(e => e.trim())
+		if (a.length === 1 && a[0] === "") return []
+		return a
+	}
+
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
 		// FormApplicationGURPS.updateObject(event, formData)
 		formData = prepareFormData(event, formData, this.object)
-		if (formData["system.tags"] && typeof formData["system.tags"] === "string") {
-			const tags = formData["system.tags"].split(",").map(e => e.trim())
-			formData["system.tags"] = tags
-		}
-		if (formData["system.college"] && typeof formData["system.college"] === "string") {
-			const college = formData["system.college"].split(",").map(e => e.trim())
-			formData["system.college"] = college
-		}
+		console.log(formData)
+		if (typeof formData["system.tags"] === "string")
+			formData["system.tags"] = this.splitArray(formData["system.tags"])
+		if (typeof formData["system.college"] === "string")
+			formData["system.college"] = this.splitArray(formData["system.college"])
 		return super._updateObject(event, formData)
 	}
 

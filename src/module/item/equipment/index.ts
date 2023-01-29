@@ -5,6 +5,8 @@ import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
+import { DiceGURPS } from "@module/dice"
+import { Weapon } from "@module/weapon"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
 import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentData } from "./data"
@@ -195,6 +197,13 @@ export class EquipmentGURPS extends ContainerGURPS {
 		w = processMultiplyAddWeightStep("to_final_weight", w, units, this.deepModifiers)
 
 		return Math.max(w, 0)
+	}
+
+	override exportSystemData(keepOther: boolean): any {
+		const system: any = super.exportSystemData(keepOther)
+		system.type = "equipment"
+		delete system.name
+		return system
 	}
 }
 

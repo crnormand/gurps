@@ -221,18 +221,19 @@ class BaseItemGURPS extends Item {
 		return false
 	}
 
-	exportSystemData(): any {
+	exportSystemData(keepOther: boolean): any {
 		const system: any = this.system
 		if ((this as any).children)
-			system.children = (this as any).children.map((e: BaseItemGURPS) => e.exportSystemData())
+			system.children = (this as any).children.map((e: BaseItemGURPS) => e.exportSystemData(false))
 		if ((this as any).modifiers)
-			system.modifiers = (this as any).modifiers.map((e: BaseItemGURPS) => e.exportSystemData())
+			system.modifiers = (this as any).modifiers.map((e: BaseItemGURPS) => e.exportSystemData(false))
 		if (system.weapons)
 			system.weapons = system.weapons.map(function (e: BaseWeapon) {
 				const f: any = { ...e }
 				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
 				return f
 			})
+		if (!keepOther) delete system.other
 		return system
 	}
 }

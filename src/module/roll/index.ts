@@ -1,22 +1,14 @@
-import { ActorGURPS, CharacterGURPS } from "@actor"
-import { ActorType } from "@actor/data"
+import { ActorGURPS } from "@actor"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { i18n_f, toWord } from "@util"
+import { i18n_f } from "@util"
 
 enum RollSuccess {
 	Success = "success",
 	Failure = "failure",
 	CriticalSuccess = "critical_success",
 	CriticalFailure = "critical_failure",
-}
-
-const RollTemplate = {
-	Skill: `systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`,
-	Attack: `systems/${SYSTEM_NAME}/templates/message/attack-roll.hbs`,
-	Damage: `systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`,
-	Generic: `systems/${SYSTEM_NAME}/templates/message/generic-roll.hbs`,
 }
 
 export class RollGURPS extends Roll {
@@ -49,17 +41,19 @@ export class RollGURPS extends Roll {
 	}
 
 	override async render(options: { flavor?: string; template?: string; isPrivate?: boolean }): Promise<string> {
-		const template = options?.template ?? RollGURPS.CHAT_TEMPLATE
-		const chatData = {
-			formula: options.isPrivate ? "????" : this.formula,
-			flavor: options.isPrivate ? null : options.flavor,
-			user: (game as Game).userId,
-			tooltip: options.isPrivate ? "" : await this.getTooltip(),
-			total: options.isPrivate ? "?" : Math.round(this.total! * 100) / 100,
-			usingMod: this.usingMod,
-			modifiers: (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack),
-			...this.system,
-		}
+		const template = options.template ?? RollGURPS.CHAT_TEMPLATE
+		console.log(this.system)
+		const chatData = mergeObject(
+			{
+				formula: options.isPrivate ? "????" : this.formula,
+				flavor: options.isPrivate ? null : options.flavor,
+				user: (game as Game).userId,
+				tooltip: options.isPrivate ? "" : await this.getTooltip(),
+				total: options.isPrivate ? "?" : Math.round(this.total! * 100) / 100,
+			},
+			this.system
+		)
+		console.log(chatData)
 		return renderTemplate(template, chatData)
 	}
 
@@ -83,43 +77,67 @@ export class RollGURPS extends Roll {
 	 * @param {ActorGURPS} actor
 	 * @param data
 	 */
-	static async handleRoll(
-		user: StoredDocument<User> | null,
-		actor: ActorGURPS | any,
-		data: Record<string, any>
-	): Promise<void> {
-		const lastStack = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
-		const lastTotal = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
-		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, lastStack)
-		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
-		let name = ""
-		let rollData: any = {}
-		if (actor?.type === ActorType.LegacyCharacter) return this.staticHandleRoll(user, actor, data)
+	static async handleRoll(user: StoredDocument<User> | null, actor: ActorGURPS | any, data: any): Promise<void> {
+		const lastStack = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
+		const lastTotal = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
+		await user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, lastStack)
+		await user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
 		switch (data.type) {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
 			case RollType.Attribute:
-				// Name = `${data.item.formattedName}`;
-				// rollData = await getRollData(user, actor, data, name, "3d6");
-				return this.rollAttribute(user, actor, data, "3d6")
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.attribute.effective,
+					"3d6",
+					data.attribute.attribute_def.combinedName,
+					RollType.Attribute,
+					data.hidden
+				)
 			case RollType.Skill:
 			case RollType.SkillRelative:
 			case RollType.Spell:
 			case RollType.SpellRelative:
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.skillLevel,
+					"3d6",
+					data.item.formattedName,
+					RollType.Skill,
+					data.hidden
+				)
 			case RollType.ControlRoll:
-				name = `${data.item.formattedName}`
-				rollData = await this.getRollData(user, actor, data, name, "3d6")
-				return this.rollSkill(rollData)
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.skillLevel,
+					"3d6",
+					data.item.formattedName,
+					RollType.ControlRoll,
+					data.hidden
+				)
 			case RollType.Attack:
-				name = `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`
-				rollData = await this.getRollData(user, actor, data, name, "3d6")
-				return this.rollAttack(rollData)
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.weapon.skillLevel(null),
+					"3d6",
+					`${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+					RollType.Attack,
+					data.hidden
+				)
 			case RollType.Damage:
-				name = `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`
-				// RollData = await getRollData(user, actor, data, name, "3d6")
-				return this.rollDamage(user, actor, data)
+				return this.rollDamage(
+					user,
+					actor,
+					data,
+					`${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+					data.hidden
+				)
 			case RollType.Generic:
-				return this.rollGeneric(user, data)
+				return this.rollGeneric(user, actor, data.formula, RollType.Generic, data.hidden)
 		}
 	}
 
@@ -138,54 +156,54 @@ export class RollGURPS extends Roll {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
 			case RollType.Attribute:
-				return this.rollAttribute(user, actor, data, "3d6")
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.attribute.current,
+					"3d6",
+					data.attribute.attribute_def.combinedName,
+					RollType.Attribute,
+					data.hidden
+				)
 		}
 	}
 
-	/**
-	 *
-	 * @param user
-	 * @param actor
-	 * @param data
-	 * @param name
-	 * @param formula
-	 */
-	static async getRollData(
-		user: StoredDocument<User> | null,
-		actor: CharacterGURPS,
-		data: { [key: string]: any },
-		name: string,
-		formula: string
-	): Promise<any> {
-		const roll = Roll.create(formula)
-		await roll.evaluate({ async: true })
-		const rolls = roll.dice[0].results.map(e => {
-			return { result: e.result, word: toWord(e.result) }
-		})
-		let rollTotal = roll.total!
-		const speaker = ChatMessage.getSpeaker({ actor: actor })
-
-		/**
-		 *
-		 * @param data
-		 */
-		function getLevel(data: any): number {
-			switch (data.type) {
-				case RollType.Spell:
-				case RollType.SpellRelative:
-				case RollType.Skill:
-				case RollType.SkillRelative:
-					return parseInt(data.item.skillLevel) ?? 0
-				case RollType.Attack:
-					return data.weapon.skillLevel(false)
-				case RollType.ControlRoll:
-					return data.item.cr
-				default:
-					return 0
-			}
+	static getMargin(name: string, level: number, roll: number): [RollSuccess, string] {
+		const success = this.getSuccess(level, roll)
+		const margin = Math.abs(level - roll)
+		const marginMod: Partial<RollModifier> = { modifier: margin }
+		marginMod.name = i18n_f("gurps.roll.success_from", { from: name })
+		let marginClass = "zero"
+		let marginTemplate = "gurps.roll.just_made_it"
+		if ([RollSuccess.Failure, RollSuccess.CriticalFailure].includes(success)) {
+			marginTemplate = "gurps.roll.failure_margin"
+			marginClass = "neg"
+			marginMod.name = i18n_f("gurps.roll.failure_from", { from: name })
+			marginMod.modifier = -margin
+		} else if (margin > 0) {
+			marginTemplate = "gurps.roll.success_margin"
+			marginClass = "pos"
 		}
-		const level = getLevel(data)
+		console.log(marginMod)
+		return [
+			success,
+			`<div
+			class="margin mod mod-${marginClass}"
+			data-mod='${JSON.stringify(marginMod)}'
+			>${i18n_f(marginTemplate, { margin: margin })}</div>`,
+		]
+	}
 
+	static async rollAgainst(
+		user: StoredDocument<User> | null,
+		actor: ActorGURPS,
+		level: number,
+		formula: string,
+		name: string,
+		type: RollType,
+		hidden = false
+	): Promise<any> {
+		// Create an array of Modifiers suitable for display.
 		const modifiers: Array<RollModifier & { class?: string }> = [
 			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
 		]
@@ -194,51 +212,89 @@ export class RollGURPS extends Roll {
 			if (m.modifier > 0) m.class = "pos"
 			if (m.modifier < 0) m.class = "neg"
 		})
-		let effective = ""
-		const effectiveLevel = this.applyMods(level, user)
-		if (effectiveLevel !== level)
-			effective = `<div class="effective">${i18n_f("gurps.roll.effective_target", {
-				level: effectiveLevel,
-			})}</div>`
-		const success = this.getSuccess(effectiveLevel, rollTotal)
-		const margin = Math.abs(effectiveLevel - rollTotal)
-		const marginMod: Partial<RollModifier> = {}
-		let marginClass = ""
-		let marginTemplate = "gurps.roll.just_made_it"
-		if (margin > 0) marginTemplate = "gurps.roll.success_margin"
-		else if (margin < 0) marginTemplate = "gurps.roll.failure_margin"
-		if ([RollSuccess.CriticalSuccess, RollSuccess.Success].includes(success)) {
-			marginMod.modifier = margin
-			marginMod.name = i18n_f("gurps.roll.success_from", { from: name })
-			marginClass = "pos"
-		} else {
-			marginMod.modifier = margin
-			marginMod.name = i18n_f("gurps.roll.failure_from", { from: name })
-			marginClass = "neg"
-		}
-		const marginText = `<div class="margin mod mod-${marginClass}" data-mod="${JSON.stringify(marginMod)}>${i18n_f(
-			marginTemplate,
-			{ margin: margin }
-		)}</div>`
 
-		return {
-			user,
-			actor,
-			data,
+		const effectiveLevel = this.applyMods(level, modifiers)
+
+		const roll = Roll.create(formula) as RollGURPS
+		await roll.evaluate({ async: true })
+		const [success, margin] = this.getMargin(name, effectiveLevel, roll.total!)
+
+		let effectiveTemplate = "gurps.roll.effective_skill"
+		if (type === RollType.Attribute) effectiveTemplate = "gurps.roll.effective_target"
+
+		let displayName = i18n_f("gurps.roll.skill_level", { name, level })
+		if (type === RollType.ControlRoll) displayName = i18n_f("gurps.roll.cr_level", { name, level })
+
+		const chatData = {
 			name,
-			formula,
-			roll,
-			rollTotal,
-			rolls,
-			speaker,
+			displayName,
 			level,
-			effective,
 			modifiers,
-			margin: marginText,
+			success,
+			margin,
+			type,
+			total: roll.total!,
 			tooltip: await roll.getTooltip(),
-			// Margin,
-			// marginMod,
-			// marginClass,
+			effective: `<div class="effective">${i18n_f(effectiveTemplate, {
+				level: effectiveLevel,
+			})}</div>`,
+		}
+
+		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/roll-against.hbs`, chatData)
+
+		const messageData: any = {
+			user: user,
+			speaker: actor.id,
+			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+			content: message,
+			roll: JSON.stringify(roll),
+			sound: CONFIG.sounds.dice,
+		}
+		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
+
+		await ChatMessage.create(messageData, {})
+		await this.resetMods(user)
+	}
+
+	// @ts-ignore
+	async toMessage(
+		messageData?: any,
+		options?: {
+			rollMode?: any
+			create?: boolean
+		}
+	) {
+		const rollMode = options?.rollMode
+		const create = options?.create ?? true
+		// Perform the roll, if it has not yet been rolled
+		if (!this._evaluated) await this.evaluate({ async: true })
+		console.log(this.system)
+
+		console.log(messageData)
+
+		// Prepare chat data
+		messageData = mergeObject(
+			{
+				user: (game as Game).user?.id,
+				type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+				content: String(this.total),
+				sound: CONFIG.sounds.dice,
+			},
+			messageData
+		)
+		messageData.rolls = [this]
+
+		console.log(messageData)
+
+		// Either create the message or just return the chat data
+		const cls = getDocumentClass("ChatMessage")
+		const msg = new cls(messageData)
+
+		// Either create or return the data
+		if (create) return cls.create(msg.toObject(), { rollMode: rollMode } as any)
+		else {
+			if (rollMode) msg.applyRollMode(rollMode)
+			return msg.toObject()
 		}
 	}
 
@@ -272,191 +328,23 @@ export class RollGURPS extends Roll {
 	}
 
 	/**
-	 * Handles Skill Rolls
-	 * @param user
-	 * @param actor
-	 * @param data
-	 * @param formula
-	 */
-	static async rollAttribute(
-		user: StoredDocument<User> | null,
-		actor: ActorGURPS,
-		data: any,
-		formula: string
-	): Promise<void> {
-		const name = data.attribute.attribute_def.combinedName
-		const roll = Roll.create(formula)
-		await roll.evaluate({ async: true })
-		const tooltip = await roll.getTooltip()
-		const rolls = roll.dice[0].results.map(e => {
-			return { result: e.result, word: toWord(e.result) }
-		})
-		let rollTotal = roll.total!
-		const speaker = ChatMessage.getSpeaker({ actor: actor })
-
-		const level = data.attribute.current
-
-		const modifiers: Array<RollModifier & { class?: string }> = [
-			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
-		]
-		modifiers.forEach(m => {
-			m.class = "zero"
-			if (m.modifier > 0) m.class = "pos"
-			if (m.modifier < 0) m.class = "neg"
-		})
-		let effective = ""
-		const effectiveLevel = this.applyMods(level, user)
-		if (effectiveLevel !== level)
-			effective = `<div class="effective">${i18n_f("gurps.roll.effective_target", {
-				level: effectiveLevel,
-			})}</div>`
-		const success = this.getSuccess(effectiveLevel, rollTotal)
-		const margin = Math.abs(effectiveLevel - rollTotal)
-		const marginMod: Partial<RollModifier> = {}
-		let marginClass = ""
-		let marginTemplate = "gurps.roll.just_made_it"
-		if (margin > 0) marginTemplate = "gurps.roll.success_margin"
-		else if (margin < 0) marginTemplate = "gurps.roll.failure_margin"
-		if ([RollSuccess.CriticalSuccess, RollSuccess.Success].includes(success)) {
-			marginMod.modifier = margin
-			marginMod.name = i18n_f("gurps.roll.success_from", { from: name })
-			marginClass = "pos"
-		} else {
-			marginMod.modifier = margin
-			marginMod.name = i18n_f("gurps.roll.failure_from", { from: name })
-			marginClass = "neg"
-		}
-		const marginText = `<div class="margin mod mod-${marginClass}" data-mod="${JSON.stringify(marginMod)}>${i18n_f(
-			marginTemplate,
-			{ margin: margin }
-		)}</div>`
-
-		const chatData: { [key: string]: any } = {
-			data: data,
-			name: name,
-			success: this.getSuccess(effectiveLevel, rollTotal),
-			total: rollTotal,
-			level: level,
-			effective: effective,
-			margin: marginText,
-			actor: actor,
-			rolls: rolls,
-			modifiers: modifiers,
-			tooltip: tooltip,
-		}
-
-		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/attribute-roll.hbs`, chatData)
-
-		const messageData = {
-			user: user,
-			speaker: speaker,
-			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-			content: message,
-			roll: JSON.stringify(roll),
-			sound: CONFIG.sounds.dice,
-		}
-		ChatMessage.create(messageData, {})
-		await this.resetMods(user)
-	}
-
-	/**
-	 * Handles Skill Rolls
-	 * @param {any} rollData
-	 */
-	static async rollSkill(rollData: any): Promise<void> {
-		const chatData: { [key: string]: any } = {
-			data: rollData.data,
-			name: rollData.name,
-			success: this.getSuccess(rollData.effectiveLevel, rollData.rollTotal),
-			total: rollData.rollTotal,
-			level: rollData.level,
-			effective: rollData.effective,
-			margin: rollData.margin,
-			// MarginMod: rollData.marginMod,
-			// marginClass: rollData.marginClass,
-			actor: rollData.actor,
-			item: rollData.data.item,
-			rolls: rollData.rolls,
-			modifiers: rollData.modifiers,
-			tooltip: rollData.tooltip,
-		}
-
-		const message =
-			chatData.data.type === RollType.ControlRoll
-				? await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/cr-roll.hbs`, chatData)
-				: await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`, chatData)
-
-		const messageData = {
-			user: rollData.user,
-			speaker: rollData.speaker,
-			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-			content: message,
-			roll: JSON.stringify(rollData.roll),
-			sound: CONFIG.sounds.dice,
-		}
-		ChatMessage.create(messageData, {})
-		await this.resetMods(rollData.user)
-	}
-
-	/**
-	 * Handle Attack Rolls.
-	 * @param {any} rollData
-	 */
-	static async rollAttack(rollData: any): Promise<void> {
-		// Set up Chat Data
-		const chatData: { [key: string]: any } = {
-			data: rollData.data,
-			name: rollData.name,
-			success: this.getSuccess(rollData.effectiveLevel, rollData.rollTotal),
-			total: rollData.rollTotal,
-			level: rollData.level,
-			effective: rollData.effective,
-			margin: rollData.margin,
-			marginMod: rollData.marginMod,
-			marginClass: rollData.marginClass,
-			actor: rollData.actor,
-			item: rollData.data.item,
-			weapon: rollData.data.weapon,
-			rolls: rollData.rolls,
-			modifiers: rollData.modifiers,
-			tooltip: rollData.tooltip,
-			// Modifier: modifier,
-		}
-
-		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/attack-roll.hbs`, chatData)
-
-		const messageData = {
-			user: rollData.user,
-			speaker: rollData.speaker,
-			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-			content: message,
-			roll: JSON.stringify(rollData.roll),
-			sound: CONFIG.sounds.dice,
-		}
-		ChatMessage.create(messageData, {})
-		await this.resetMods(rollData.user)
-	}
-
-	/**
 	 * Handle Damage Rolls.
 	 * @param {StoredDocument<User>} user
 	 * @param {ActorGURPS} actor
+	 * @param name
+	 * @param hidden
 	 */
 	static async rollDamage(
 		user: StoredDocument<User> | null,
 		actor: ActorGURPS,
-		data: { [key: string]: any }
+		data: { [key: string]: any },
+		name: string,
+		hidden = false
 	): Promise<void> {
 		// Roll the damage for the weapon.
 		const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
 		const roll = Roll.create(dice.toString(true))
 		await roll.evaluate({ async: true })
-		const tooltip = await roll.getTooltip()
-
-		// Create an array suitable for drawing the dice on the ChatMessage.
-		const rolls = roll.dice[0].results.map(e => {
-			return { result: e.result, word: toWord(e.result) }
-		})
 
 		// Create an array of Modifiers suitable for display.
 		const modifiers: Array<RollModifier & { class?: string }> = [
@@ -469,33 +357,27 @@ export class RollGURPS extends Roll {
 		})
 
 		const rollTotal = roll.total!
-		const modifierTotal = this.applyMods(0, user)
+		const modifierTotal = this.applyMods(0, modifiers)
 		const damage = rollTotal + modifierTotal
 		const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
+		// @ts-ignore
 		const chatData: DamagePayload = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
 			weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },
-			name: `${data.weapon.name}${data.weapon.usage ? ` – ${data.weapon.usage}` : ""}`,
+			name,
 			dice: dice,
 			modifiers: modifiers,
 			total: damage,
+			tooltip: await roll.getTooltip(),
 			damageType: damageType,
-			rolls: rolls,
 			modifierTotal: modifierTotal,
-			tooltip: tooltip,
-			// User,
-			// actor,
-			// data,
-			// rolls,
-			// damage,
-			// damageType,
 		}
 
 		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData)
 
-		let messageData = {
+		let messageData: any = {
 			user: user,
 			speaker: chatData.attacker,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -503,6 +385,7 @@ export class RollGURPS extends Roll {
 			roll: JSON.stringify(roll),
 			sound: CONFIG.sounds.dice,
 		}
+		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
 
 		let userTarget = ""
 		if ((game as Game).user?.targets.size) {
@@ -518,17 +401,18 @@ export class RollGURPS extends Roll {
 	 *
 	 * @param user
 	 * @param data
+	 * @param actor
+	 * @param formula
+	 * @param type
+	 * @param hidden
 	 */
-	static async rollGeneric(user: StoredDocument<User> | null, data: Record<string, any>): Promise<any> {
-		// Const roll = Roll.create(data.formula)
-		const dice = new DiceGURPS(data.formula)
-		const roll = Roll.create(dice.toString(true))
-		await roll.evaluate({ async: true })
-		console.log(roll)
-
-		// Create an array suitable for drawing the dice on the ChatMessage.
-		const tooltip = await roll.getTooltip()
-
+	static async rollGeneric(
+		user: StoredDocument<User> | null,
+		actor: ActorGURPS,
+		formula: string,
+		type: RollType,
+		hidden = false
+	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
 		const modifiers: Array<RollModifier & { class?: string }> = [
 			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
@@ -539,77 +423,38 @@ export class RollGURPS extends Roll {
 			if (m.modifier < 0) m.class = "neg"
 		})
 
-		const rollTotal = roll.total!
-		const modifierTotal = this.applyMods(0, user)
-		const finalTotal = rollTotal + modifierTotal
+		const roll = Roll.create(formula) as RollGURPS
+		await roll.evaluate({ async: true })
 
-		console.log(rollTotal, modifierTotal, finalTotal)
-
-		// ; (roll as RollGURPS).total += modifierTotal
+		const total = this.applyMods(roll.total!, modifiers)
 
 		const chatData = {
-			formula: roll.formula,
-			dice: dice,
-			modifiers: modifiers,
-			total: finalTotal,
-			// Rolls: rolls,
-			// modifierTotal: modifierTotal,
-			tooltip: tooltip,
+			formula,
+			name: roll.formula,
+			total,
+			modifiers,
+			type,
+			tooltip: await roll.getTooltip(),
 		}
 
-		// Const message = renderTemplate(`systems/${SYSTEM_NAME}/templates/message/generic-roll.hbs`, chatData)
+		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/generic-roll.hbs`, chatData)
 
-		// let messageData: any = {
-		// 	// user: user,
-		// 	// name: roll.formula,
-		// 	// speaker: chatData.attacker,
-		// 	// type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-		// 	content: message,
-		// 	// roll: JSON.stringify(roll),
-		// 	// sound: CONFIG.sounds.dice,
-		// }
-		// if (data.hidden) {
-		// 	messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
-		// 	messageData.whisper = [(game as Game).userId]
-		// }
-
-		const options: any = {}
-		if (data.hidden) {
-			options.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
-		}
-
-		const messageData = {
+		const messageData: any = {
 			user: user,
-			// Speaker: chatData.attacker,
+			speaker: actor.id,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+			content: message,
+			roll: JSON.stringify(roll),
 			sound: CONFIG.sounds.dice,
-			content: await renderTemplate(RollTemplate.Generic, chatData),
 		}
-		// Const messageData = {
-		// 	user: rollData.user,
-		// 	speaker: rollData.speaker,
-		// 	type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-		// 	content: message,
-		// 	roll: JSON.stringify(rollData.roll),
-		// 	sound: CONFIG.sounds.dice,
-		// }
+		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
 
-		// roll.toMessage({ content: roll.render({ template: RollTemplate.Generic }) }, options)
-		// const cls = getDocumentClass("ChatMessage")
-		// const msg = new cls(messageData)
+		await ChatMessage.create(messageData, {})
 		await this.resetMods(user)
-		return ChatMessage.create(messageData, options)
-		// Return cls.create(msg.toObject(), options)
 	}
 
-	/**
-	 * Apply all modifiers to the level to get the effective level
-	 * @param {number} level
-	 * @param {StoredDocument<User>} user
-	 * @returns {number}
-	 */
-	static applyMods(level: number, user: StoredDocument<User> | null): number {
-		const modStack: RollModifier[] = (user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+	static applyMods(level: number, modStack: RollModifier[]): number {
+		// Const modStack: RollModifier[] = (user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		let effectiveLevel = level
 		modStack.forEach(m => {
 			effectiveLevel += m.modifier
