@@ -210,3 +210,35 @@
 		}
 	}
 }
+
+.table-draw {
+	.table-result {
+		display: flex;
+		flex-direction: row;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+		width: fit-content;
+		background: white;
+		border: 2px solid;
+		border-radius: 5px;
+		border-color: rgb(var(--color-skill));
+		padding: 5px;
+
+		.result-image {
+			border: none;
+		}
+		.result-text {
+			width: min-content;
+			.content-link {
+				background: rgb(var(--color-control));
+				color: rgb(var(--color-on-control));
+				border: 2px solid rgb(var(--color-control-edge));
+				border-radius: 5px;
+				&:hover {
+					text-shadow: none;
+				}
+			}
+		}
+	}
+}

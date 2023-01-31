@@ -126,4 +126,19 @@
 		vertical-align: middle;
 		padding: 2px 16px;
 	}
+
+	.deprecation {
+		padding: 5px;
+		display: flex;
+		justify-content: space-between;
+		background-color: rgb(var(--color-warning));
+		color: rgb(var(--color-on-warning));
+		font-weight: bold;
+		a {
+			align-self: center;
+			&:hover {
+				text-shadow: none;
+			}
+		}
+	}
 }

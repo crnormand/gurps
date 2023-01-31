@@ -1,4 +1,10 @@
-<form class="{{ cssClass }} gurps" autocomplete="off">
+<form class="{{ cssClass }}" autocomplete="off">
+    {{#unless (eq deprecation "acknowledged")}}
+    <div class="deprecation">
+		<p>{{{localize "gurps.static.deprecated_item" type=(localize "ITEM.TypeEquipment")}}}</p>
+        <a class="gcs-circled-x"></a>
+    </div>
+	{{/unless}}
     <div id="sheet">
         <div id="details">
 			<div class="label">{{localize "gurps.item.name"}}</div>
@@ -43,6 +49,36 @@
 			<div class="field">
 				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 			</div>
-        </div>
-    </div>
+		</div>
+		<div id="melee" class="weapon-list table">
+			<div class="header usage">{{localize "gurps.character.melee.usage"}}</div>
+			<div class="header level">{{localize "gurps.character.melee.level"}}</div>
+			<div class="header parry">{{localize "gurps.character.melee.parry"}}</div>
+			<div class="header block">{{localize "gurps.character.melee.block"}}</div>
+			<div class="header damage">{{localize "gurps.character.melee.damage"}}</div>
+			<div class="header reach">{{localize "gurps.character.melee.reach"}}</div>
+			<div class="header st">{{localize "gurps.character.melee.st"}}</div>
+			{{#each meleeWeapons}}
+			<div class="usage" data-uuid="{{this.id}}">
+				<div class="name">
+					{{this.usage}}
+				</div>
+			</div>
+			<div data-uuid="{{this.id}}" class="level">{{this.level}}</div>
+			<div data-uuid="{{this.id}}" class="parry rollable">{{this.fastResolvedParry}}</div>
+			<div data-uuid="{{this.id}}" class="block rollable">{{this.fastResolvedBlock}}</div>
+			<div data-uuid="{{this.id}}" class="damage rollable"> {{this.fastResolvedDamage}}</div>
+			<div data-uuid="{{this.id}}" class="reach">{{this.reach}}</div>
+			<div data-uuid="{{this.id}}" class="st">{{this.strength}}</div>
+			{{else}}
+			<div class="usage"></div>
+			<div class="level filler"></div>
+			<div class="parry rollable"></div>
+			<div class="block rollable"></div>
+			<div class="damage rollable"></div>
+			<div class="reach"></div>
+			<div class="st"></div>
+			{{/each}}
+		</div>
+	</div>
 </form>

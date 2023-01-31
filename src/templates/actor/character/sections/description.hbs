@@ -64,7 +64,12 @@
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.sm"}}</div>
-		<div class="field">
+		<div
+			class="field rollable"
+			data-type="modifier"
+			data-comment="{{localize 'gurps.modifier.size.size' size=(signed actor.adjustedSizeModifier)}}"
+			data-modifier="{{system.profile.SM}}"
+		>
 			<input
 				type="text"
 				name="system.profile.SM"

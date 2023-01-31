@@ -133,6 +133,8 @@ export enum gid {
 	Vision = "vision",
 	Will = "will",
 	Flexible = "flexible",
+	Thrust = "thrust",
+	Swing = "swing"
 }
 
 export const attrPrefix = "attr."

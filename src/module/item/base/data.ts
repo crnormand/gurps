@@ -12,6 +12,10 @@ export interface BaseItemSourceGURPS<
 	flags: DeepPartial<ItemFlagsGURPS>
 }
 
+export enum ItemFlags {
+	Deprecation = "deprecation"
+}
+
 // Export abstract class BaseItemDataGURPS<TItem extends BaseItemGURPS = BaseItemGURPS> extends foundry.data.ItemData {
 // 	enabled?: boolean;
 // }

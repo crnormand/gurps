@@ -10,7 +10,7 @@
 -   Convert OTFs and chat commands
     -   roll chat command
 -   Implement "static" items (0.15 and older) compatibility
-    -   add deprecation warning to static items
+	-	add interface for accessing old bonuses
 
 ## 1.0.0
 
