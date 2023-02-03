@@ -1,6 +1,12 @@
-<form class="{{ cssClass }} gurps" autocomplete="off">
-    <div id="sheet">
-        <div id="details">
+<form class="{{ cssClass }}" autocomplete="off">
+	{{#unless (eq deprecation "acknowledged")}}
+	<div class="deprecation">
+		<p>{{{localize "gurps.static.deprecated_item" type=(localize "ITEM.TypeEquipment")}}}</p>
+		<a class="gcs-circled-x"></a>
+	</div>
+	{{/unless}}
+	<div id="sheet">
+		<div id="details">
 			<div class="label">{{localize "gurps.item.name"}}</div>
 			<div class="field">
 				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
@@ -13,36 +19,42 @@
 			<div class="field">
 				<input type="text" name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
 			</div>
-            <div class="label">{{ localize "gurps.item.quantity" }}</div>
-            <div class="field no-stretch">
-			<input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number"/>
-                {{#if document.actor }}
-                    <label class="label checkbox-label">
-                        <input type="checkbox" {{ checked system.equipped }} />
-                        {{ localize "gurps.item.equipped" }}
-                    </label>
-                {{/if }}
-            </div>
-            <div class="label">{{ localize "gurps.item.value" }}</div>
-            <div class="field no-stretch">
-				<input type="text" name="system.eqt.cost" value="{{system.eqt.cost}}" data-dtype="Number"/>
-                <div class="label">{{ localize "gurps.item.extended_value" }}</div>
-				<input type="text" name="system.eqt.costsum" value="{{system.eqt.costsum}}" data-dtype="Number"/>
-            </div>
-            <div class="label">{{ localize "gurps.item.weight" }}</div>
-            <div class="field no-stretch">
+			<div class="label">{{ localize "gurps.item.quantity" }}</div>
+			<div class="field no-stretch">
+				<input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number" />
+				{{#if document.actor }}
+				<label class="label checkbox-label">
+					<input type="checkbox" {{ checked system.equipped }} />
+					{{ localize "gurps.item.equipped" }}
+				</label>
+				{{/if }}
+			</div>
+			<div class="label">{{ localize "gurps.item.value" }}</div>
+			<div class="field no-stretch">
+				<input type="text" name="system.eqt.cost" value="{{system.eqt.cost}}" data-dtype="Number" />
+				<div class="label">{{ localize "gurps.item.extended_value" }}</div>
+				<input type="text" name="system.eqt.costsum" value="{{system.eqt.costsum}}" data-dtype="Number" />
+			</div>
+			<div class="label">{{ localize "gurps.item.weight" }}</div>
+			<div class="field no-stretch">
 				<input type="text" name="system.weight" value="{{document.weightString}}" data-dtype="String" />
-                <div class="label">{{ localize "gurps.item.extended_weight" }}</div>
-				<input type="text" value="{{system.eqt.weightsum}}" data-dtype="String" readonly tabIndex="-1"/>
-            </div>
-            <div class="label">{{ localize "gurps.item.uses" }}</div>
-            <div class="field no-stretch">
+				<div class="label">{{ localize "gurps.item.extended_weight" }}</div>
+				<input type="text" value="{{system.eqt.weightsum}}" data-dtype="String" readonly tabIndex="-1" />
+			</div>
+			<div class="label">{{ localize "gurps.item.uses" }}</div>
+			<div class="field no-stretch">
 				<input type="text" name="system.eqt.uses" value="{{system.eqt.uses}}" data-dtype="Number" />
-            </div>
+			</div>
 			<div class="label">{{localize "gurps.item.reference"}}</div>
 			<div class="field">
 				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 			</div>
-        </div>
-    </div>
+		</div>
+		{{>item/legacy_equipment/melee}}
+		{{>item/legacy_equipment/ranged}}
+		{{>item/legacy_equipment/spells}}
+		{{>item/legacy_equipment/advantages}}
+		{{>item/legacy_equipment/skills}}
+		{{>item/legacy_equipment/bonuses}}
+	</div>
 </form>

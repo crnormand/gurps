@@ -2,7 +2,6 @@ import { ActorSheetGURPS } from "@actor/base/sheet"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
-	ItemGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RitualMagicSpellGURPS,
@@ -17,12 +16,13 @@ import {
 import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
+import { ItemGURPS } from "@module/config"
 import { gid, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
-import { dollarFormat } from "@util"
+import { dollarFormat, i18n } from "@util"
 import { weightFormat } from "@util/measure"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
@@ -207,7 +207,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		if (type === RollType.Attribute) {
 			const id = $(event.currentTarget).data("id")
 			if (id === gid.Dodge) data.attribute = this.actor.dodgeAttribute
-			else if (id === gid.SizeModifier) data.attribute = this.actor.sizeModAttribute
+			// Else if (id === gid.SizeModifier) data.attribute = this.actor.sizeModAttribute
 			else data.attribute = this.actor.attributes.get(id)
 		}
 		if (
@@ -220,10 +220,25 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				RollType.SpellRelative,
 				RollType.ControlRoll,
 			].includes(type)
-		)
-			data.item = await fromUuid($(event.currentTarget).data("uuid"))
-		if ([RollType.Damage, RollType.Attack].includes(type))
-			data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
+		) {
+			const attack_id = $(event.currentTarget).data("attack-id")
+			if (![gid.Thrust, gid.Swing].includes(attack_id)) {
+				data.item = await fromUuid($(event.currentTarget).data("uuid"))
+			}
+		}
+
+		if ([RollType.Damage, RollType.Attack].includes(type)) {
+			const attack_id = $(event.currentTarget).data("attack-id")
+			if ([gid.Thrust, gid.Swing].includes(attack_id)) {
+				data.item = { id: attack_id, uuid: attack_id }
+				data.weapon = {
+					name: i18n(`gurps.character.basic_${attack_id}`),
+					fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string,
+				}
+			} else {
+				data.weapon = data.item.weapons.get(attack_id)
+			}
+		}
 
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
@@ -332,10 +347,20 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareEncumbrance() {
-		const encumbrance: Array<Encumbrance & { active?: boolean; carry?: string }> = [...this.actor.allEncumbrance]
+		const encumbrance: Array<Encumbrance & { active?: boolean; carry?: string; move?: any; dodge?: any }> = [
+			...this.actor.allEncumbrance,
+		]
 		for (const e of encumbrance) {
 			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
 			e.carry = weightFormat(e.maximum_carry, this.actor.weightUnits)
+			e.move = {
+				current: this.actor.move(e),
+				effective: this.actor.eMove(e),
+			}
+			e.dodge = {
+				current: this.actor.dodge(e),
+				effective: this.actor.eDodge(e),
+			}
 		}
 		return encumbrance
 	}

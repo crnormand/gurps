@@ -5,7 +5,7 @@ import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { RitualMagicSpellData } from "./data"
 
-export class RitualMagicSpellGURPS extends BaseItemGURPS {
+class RitualMagicSpellGURPS extends BaseItemGURPS {
 	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
 
 	unsatisfied_reason = ""
@@ -223,6 +223,8 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 	}
 }
 
-export interface RitualMagicSpellGURPS {
+interface RitualMagicSpellGURPS {
 	readonly system: RitualMagicSpellData
 }
+
+export { RitualMagicSpellGURPS }

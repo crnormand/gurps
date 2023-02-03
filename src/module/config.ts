@@ -37,7 +37,6 @@ import {
 } from "@item"
 import { ItemType } from "@item/data"
 import { StaticItemGURPS } from "@item/static"
-import { PrereqType } from "@prereq"
 import { AttributePrereq } from "@prereq/attribute_prereq"
 import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
 import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
@@ -46,12 +45,11 @@ import { PrereqList } from "@prereq/prereq_list"
 import { SkillPrereq } from "@prereq/skill_prereq"
 import { SpellPrereq } from "@prereq/spell_prereq"
 import { TraitPrereq } from "@prereq/trait_prereq"
-import { rollModifiers, StudyType } from "./data"
+import { PrereqType, StudyType } from "./data"
 import { MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: any = {
-	modifiers: rollModifiers,
 	Item: {
 		documentClasses: {
 			base: BaseItemGURPS,
@@ -452,3 +450,33 @@ const GURPSCONFIG: any = {
 // 	character: CharacterGURPS,
 // };
 export { GURPSCONFIG }
+
+export type ItemGURPS =
+	| TraitGURPS
+	| TraitContainerGURPS
+	| TraitModifierGURPS
+	| TraitModifierContainerGURPS
+	| SkillGURPS
+	| TechniqueGURPS
+	| SkillContainerGURPS
+	| SpellGURPS
+	| RitualMagicSpellGURPS
+	| SpellContainerGURPS
+	| EquipmentGURPS
+	| EquipmentContainerGURPS
+	| EquipmentModifierGURPS
+	| EquipmentModifierContainerGURPS
+	| NoteGURPS
+	| NoteContainerGURPS
+
+export type ActorGURPS = CharacterGURPS | StaticCharacterGURPS
+
+export type Prereq =
+	| PrereqList
+	| TraitPrereq
+	| AttributePrereq
+	| ContainedWeightPrereq
+	| ContainedQuantityPrereq
+	| SkillPrereq
+	| SpellPrereq
+	| EquippedEquipmentPrereq

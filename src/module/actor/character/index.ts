@@ -7,7 +7,6 @@ import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
-	ItemGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RitualMagicSpellGURPS,
@@ -54,6 +53,7 @@ import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { FeatureType } from "@feature/base"
+import { ItemGURPS } from "@module/config"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -358,8 +358,16 @@ class CharacterGURPS extends BaseActorGURPS {
 		return this.move(this.encumbranceLevel(true))
 	}
 
+	get effectiveMove() {
+		return this.eMove(this.encumbranceLevel(true))
+	}
+
 	get currentDodge() {
 		return this.dodge(this.encumbranceLevel(true))
+	}
+
+	get effectiveDodge() {
+		return this.eDodge(this.encumbranceLevel(true))
 	}
 
 	get dodgeAttribute() {
@@ -367,7 +375,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			attribute_def: {
 				combinedName: i18n("gurps.attributes.dodge"),
 			},
-			effective: this.currentDodge,
+			effective: this.effectiveDodge,
+			current: this.currentDodge,
 		}
 	}
 
@@ -391,6 +400,17 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	move(enc: Encumbrance): number {
 		let initialMove = Math.max(0, this.resolveAttributeCurrent(gid.BasicMove))
+		const move = Math.trunc((initialMove * (10 + 2 * enc.penalty)) / 10)
+		if (move < 1) {
+			if (initialMove > 0) return 1
+			return 0
+		}
+		return move
+	}
+
+	// Move accounting for pool thresholds
+	eMove(enc: Encumbrance): number {
+		let initialMove = Math.max(0, this.resolveAttributeCurrent(gid.BasicMove))
 		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_move", this.attributes), 2)
 		if (divisor > 0) initialMove = Math.ceil(initialMove / divisor)
 		const move = Math.trunc((initialMove * (10 + 2 * enc.penalty)) / 10)
@@ -402,6 +422,12 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	dodge(enc: Encumbrance): number {
+		let dodge = 3 + (this.calc?.dodge_bonus ?? 0) + Math.max(this.resolveAttributeCurrent(gid.BasicSpeed), 0)
+		return Math.floor(Math.max(dodge + enc.penalty, 1))
+	}
+
+	// Dodge accounting for pool thresholds
+	eDodge(enc: Encumbrance): number {
 		let dodge = 3 + (this.calc?.dodge_bonus ?? 0) + Math.max(this.resolveAttributeCurrent(gid.BasicSpeed), 0)
 		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_dodge", this.attributes), 2)
 		if (divisor > 0) {

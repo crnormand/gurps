@@ -3,7 +3,7 @@ import { SkillGURPS } from "@item/skill"
 import { TechniqueGURPS } from "@item/technique"
 import { SkillContainerData } from "./data"
 
-export class SkillContainerGURPS extends ContainerGURPS {
+class SkillContainerGURPS extends ContainerGURPS {
 	// Static override get schema(): typeof SkillContainerData {
 	// 	return SkillContainerData;
 	// }
@@ -24,6 +24,8 @@ export class SkillContainerGURPS extends ContainerGURPS {
 	}
 }
 
-export interface SkillContainerGURPS {
+interface SkillContainerGURPS {
 	readonly system: SkillContainerData
 }
+
+export { SkillContainerGURPS }

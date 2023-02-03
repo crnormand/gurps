@@ -1,4 +1,5 @@
 import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
+import { GURPS } from "@module/gurps"
 import { i18n } from "@util"
 import { ModifierWindow } from "./window"
 
@@ -8,12 +9,11 @@ interface ModCategory {
 	showing: boolean
 }
 
-export class ModifierBrowse extends Application {
+class ModifierBrowse extends Application {
 	constructor(window: ModifierWindow, options = {}) {
 		super(options)
-
 		this.window = window
-		this.mods = (CONFIG as any).GURPS.modifiers
+		this.mods = GURPS.allMods
 		this.selection = [-1, -1, -1]
 		this.catShowing = -1
 		this.showing = false
@@ -68,8 +68,32 @@ export class ModifierBrowse extends Application {
 
 	_onBrowseClick(event: JQuery.ClickEvent) {
 		event.preventDefault()
+		return this.show()
+	}
+
+	show() {
 		this.showing = true
-		this.render()
+		return this.render()
+	}
+
+	hide() {
+		this.showing = false
+		return this.render()
+	}
+
+	up() {
+		const k = this.catShowing !== -1 ? 1 : 0
+		const list = this.catShowing ? this.mods : this.categories[this.selection[0]].mods
+		this.selection[k] += 1
+		if (this.selection[k] >= list.length) this.selection[k] = 0
+		return this.render()
+	}
+
+	down() {
+		const k = this.catShowing !== -1 ? 1 : 0
+		this.selection[k] -= 1
+		if (this.selection[k] < 0) this.selection[k] = 0
+		return this.render()
 	}
 
 	// _onCategoryMouseEnter(event: JQuery.MouseEnterEvent) {
@@ -134,7 +158,7 @@ export class ModifierBrowse extends Application {
 	}
 }
 
-export interface ModifierBrowse extends Application {
+interface ModifierBrowse extends Application {
 	mods: RollModifier[]
 	categories: ModCategory[]
 	selection: [number, number, number]
@@ -142,3 +166,5 @@ export interface ModifierBrowse extends Application {
 	window: ModifierWindow
 	catShowing: number
 }
+
+export { ModifierBrowse }

@@ -1,17 +1,12 @@
 import { ContainerGURPS } from "@item/container"
-// Import { TraitContainerGURPS } from "@item/trait_container"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
 import { CR, CRAdjustment } from "@module/data"
 import { i18n, i18n_f, SelfControl } from "@util"
 import { TraitData } from "./data"
 
-export class TraitGURPS extends ContainerGURPS {
+class TraitGURPS extends ContainerGURPS {
 	unsatisfied_reason = ""
-
-	// Static override get schema(): TraitData {
-	// 	return TraitData;
-	// }
 
 	// Getters
 	get formattedName(): string {
@@ -228,6 +223,8 @@ export function calculateModifierPoints(points: number, modifier: number): numbe
 	return (points * modifier) / 100
 }
 
-export interface TraitGURPS {
+interface TraitGURPS {
 	readonly system: TraitData
 }
+
+export { TraitGURPS }

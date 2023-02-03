@@ -1,3 +1,4 @@
+import { ActorFlags } from "@actor/base/data"
 import { ActorSheetGURPS } from "@actor/base/sheet"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
@@ -32,9 +33,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
 
-		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, "deprecation_acknowledged")
-			? "acknowledged"
-			: "manual"
+		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, ActorFlags.Deprecation) ? "acknowledged" : "manual"
 		// Don't show deprecation warning if character is not imported
 		if (deprecation === "manual") {
 			if (this.actor.system.additionalresources.importpath.includes(".gcs")) deprecation = "easy"
@@ -75,7 +74,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".equipped").on("click", event => this._onClickEquip(event))
 		html.find(".deprecation a").on("click", event => {
 			event.preventDefault()
-			this.actor.setFlag(SYSTEM_NAME, "deprecation_acknowledged", true)
+			this.actor.setFlag(SYSTEM_NAME, ActorFlags.Deprecation, true)
 		})
 
 		// Hover Over

@@ -6,7 +6,7 @@ import { CR, CRAdjustment } from "@module/data"
 import { i18n, i18n_f, SelfControl } from "@util"
 import { TraitContainerData, TraitContainerType } from "./data"
 
-export class TraitContainerGURPS extends ContainerGURPS {
+class TraitContainerGURPS extends ContainerGURPS {
 	unsatisfied_reason = ""
 
 	// Static override get schema(): typeof TraitContainerData {
@@ -159,6 +159,8 @@ export class TraitContainerGURPS extends ContainerGURPS {
 	}
 }
 
-export interface TraitContainerGURPS {
+interface TraitContainerGURPS {
 	readonly system: TraitContainerData
 }
+
+export { TraitContainerGURPS }

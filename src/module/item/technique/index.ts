@@ -5,7 +5,7 @@ import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { TechniqueData } from "./data"
 
-export class TechniqueGURPS extends BaseItemGURPS {
+class TechniqueGURPS extends BaseItemGURPS {
 	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
 
 	unsatisfied_reason = ""
@@ -138,6 +138,8 @@ export class TechniqueGURPS extends BaseItemGURPS {
 	}
 }
 
-export interface TechniqueGURPS {
+interface TechniqueGURPS {
 	readonly system: TechniqueData
 }
+
+export { TechniqueGURPS }

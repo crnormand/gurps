@@ -215,7 +215,8 @@
 			color: rgb(var(--color-on-banding));
 		}
 
-		.hidden &:hover {
+		// .hidden:hover,
+		.hidden.selected {
 			background-color: rgba(var(--color-selection), 0.8);
 			color: rgb(var(--color-on-selection));
 		}
@@ -232,7 +233,8 @@
 			justify-content: left;
 		}
 
-		> :hover {
+		// > :hover,
+		> .selected {
 			background-color: rgba(var(--color-selection), 0.8) !important;
 			color: rgb(var(--color-on-selection)) !important;
 		}

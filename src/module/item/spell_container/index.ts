@@ -3,7 +3,7 @@ import { RitualMagicSpellGURPS } from "@item/ritual_magic_spell"
 import { SpellGURPS } from "@item/spell"
 import { SpellContainerData } from "./data"
 
-export class SpellContainerGURPS extends ContainerGURPS {
+class SpellContainerGURPS extends ContainerGURPS {
 	// Static override get schema(): typeof SpellContainerData {
 	// 	return SpellContainerData;
 	// }
@@ -24,6 +24,8 @@ export class SpellContainerGURPS extends ContainerGURPS {
 	}
 }
 
-export interface SpellContainerGURPS {
+interface SpellContainerGURPS {
 	readonly system: SpellContainerData
 }
+
+export { SpellContainerGURPS }

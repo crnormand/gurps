@@ -1,4 +1,3 @@
-import { ItemGURPS } from "@item"
 import { ContainerSheetGURPS } from "@item/container/sheet"
 import { SYSTEM_NAME } from "@module/data"
 
@@ -24,17 +23,5 @@ export class EquipmentSheet extends ContainerSheetGURPS {
 			},
 		}
 		return sheetData
-	}
-
-	activateListeners(html: JQuery<HTMLElement>): void {
-		super.activateListeners(html)
-		html.find(".item").on("dblclick", event => this._openItemSheet(event))
-	}
-
-	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
-		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = (await fromUuid(uuid)) as ItemGURPS
-		item?.sheet?.render(true)
 	}
 }

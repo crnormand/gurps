@@ -178,14 +178,6 @@ export function registerHandlebarsHelpers() {
 		return ""
 	})
 
-	Handlebars.registerHelper("getMove", function (c: CharacterGURPS, level: Encumbrance): number {
-		return c.move(level)
-	})
-
-	Handlebars.registerHelper("getDodge", function (c: CharacterGURPS, level: Encumbrance): number {
-		return c.dodge(level)
-	})
-
 	Handlebars.registerHelper("date", function (str: string): string {
 		const date = new Date(str)
 		const options: any = {

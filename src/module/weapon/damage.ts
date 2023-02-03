@@ -1,12 +1,12 @@
 import { Feature, WeaponDRDivisorBonus } from "@feature"
 import { WeaponDamageBonus } from "@feature/weapon_bonus"
-import { EquipmentContainerGURPS, EquipmentGURPS, TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { stringCompare } from "@util"
 import { Weapon } from "."
 import { CharacterGURPS } from "@actor"
+import { ItemType } from "@item/data"
 
 export class WeaponDamage {
 	constructor(data?: (WeaponDamage & { parent: Weapon }) | any) {
@@ -82,7 +82,7 @@ export class WeaponDamage {
 		if (this.base) base = this.base
 		const t = this.parent.parent
 		let levels = 0
-		if (t instanceof TraitGURPS && t.isLeveled) {
+		if (t.type === ItemType.Trait && t.isLeveled) {
 			levels = t.levels
 			multiplyDice(t.levels, base)
 		}
@@ -93,7 +93,7 @@ export class WeaponDamage {
 				break
 			case "thr_leveled":
 				let thrust = actor.thrustFor(intST)
-				if (t instanceof TraitGURPS && t.isLeveled) multiplyDice(Math.trunc(t.levels), thrust)
+				if (t.type === ItemType.Trait && t.isLeveled) multiplyDice(Math.trunc(t.levels), thrust)
 				base = addDice(base, thrust)
 				break
 			case "sw":
@@ -101,7 +101,7 @@ export class WeaponDamage {
 				break
 			case "sw_leveled":
 				let swing = actor.swingFor(intST)
-				if (t instanceof TraitGURPS && t.isLeveled) multiplyDice(Math.trunc(t.levels), swing)
+				if (t.type === ItemType.Trait && t.isLeveled) multiplyDice(Math.trunc(t.levels), swing)
 				base = addDice(base, swing)
 		}
 		let bestDefault: SkillDefault | null = null
@@ -142,7 +142,7 @@ export class WeaponDamage {
 		for (const f of this.parent.parent.features) {
 			this.extractWeaponBonus(f, bonusSet, base.count, levels, tooltip)
 		}
-		if (t instanceof TraitGURPS || t instanceof EquipmentGURPS || t instanceof EquipmentContainerGURPS) {
+		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(t.type)) {
 			for (const mod of t.modifiers) {
 				for (const f of mod.features) {
 					this.extractWeaponBonus(f, bonusSet, base.count, levels, tooltip)

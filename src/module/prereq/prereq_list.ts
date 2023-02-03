@@ -1,9 +1,9 @@
 import { CharacterGURPS } from "@actor"
-import { NumberCompare, NumberComparison } from "@module/data"
+import { Prereq } from "@module/config"
+import { NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { BasePrereq, Prereq, PrereqType } from "@prereq"
 import { extractTechLevel, i18n, numberCompare } from "@util"
-import { PrereqConstructionContext } from "./base"
+import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export interface PrereqList extends Omit<BasePrereq, "has"> {
 	prereqs: Prereq[]

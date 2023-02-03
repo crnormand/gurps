@@ -5,13 +5,11 @@ import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
-import { DiceGURPS } from "@module/dice"
-import { Weapon } from "@module/weapon"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
 import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentData } from "./data"
 
-export class EquipmentGURPS extends ContainerGURPS {
+class EquipmentGURPS extends ContainerGURPS {
 	unsatisfied_reason = ""
 
 	// Static override get schema(): typeof EquipmentData {
@@ -338,6 +336,8 @@ export function processMultiplyAddWeightStep(
 	return weight + sum
 }
 
-export interface EquipmentGURPS {
+interface EquipmentGURPS {
 	readonly system: EquipmentData
 }
+
+export { EquipmentGURPS }

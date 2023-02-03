@@ -1,5 +1,5 @@
 import { StaticAdvantage, StaticMelee, StaticSkill, StaticSpell } from "@actor/static_character/components"
-// Import { ItemSheetGURPS } from "@item/base/sheet"
+import { ItemFlags } from "@item/base/data"
 import { SYSTEM_NAME } from "@module/data"
 import { Static } from "@util"
 import { DnD } from "@util/drag_drop"
@@ -11,7 +11,7 @@ export class StaticItemSheet extends ItemSheet {
 	static get defaultOptions(): DocumentSheetOptions {
 		const options = super.defaultOptions
 		mergeObject(options, {
-			classes: options.classes.concat(["skill"]),
+			classes: options.classes.concat(["gurps", "item", "legacy-equipment"]),
 		})
 		return options
 	}
@@ -21,7 +21,7 @@ export class StaticItemSheet extends ItemSheet {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions> | undefined) {
-		// Const sheetData = super.getData()
+		let deprecation: string = this.item.getFlag(SYSTEM_NAME, ItemFlags.Deprecation) ? "acknowledged" : "manual"
 		const sheetData = {
 			...(super.getData(options) as any),
 		}
@@ -29,6 +29,7 @@ export class StaticItemSheet extends ItemSheet {
 		sheetData.system = this.item.system
 		sheetData.data.eqt.f_count = this.item.system.eqt.count // Hack for Furnace module
 		sheetData.name = this.item.name
+		sheetData.deprecation = deprecation
 		if (!this.item.system.globalid && !this.item.parent)
 			this.item.update({ "system.globalid": this.item.id, _id: this.item.id })
 		return sheetData
@@ -96,6 +97,10 @@ export class StaticItemSheet extends ItemSheet {
 					})
 				)
 			})
+		})
+		html.find(".deprecation a").on("click", event => {
+			event.preventDefault()
+			this.item.setFlag(SYSTEM_NAME, ItemFlags.Deprecation, true)
 		})
 	}
 

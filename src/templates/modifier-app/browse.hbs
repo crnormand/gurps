@@ -5,7 +5,7 @@
 	<div class="categories">
 		{{#each categories}}
 		<div data-index="{{@index}}" class="category{{#if (eq ../selection.[1] @index)}} selected{{/if}}">
-			<i class="fas fa-caret-left"></i>{{this.name}}
+			<i class="fas fa-caret-left"></i>{{{this.name}}}
 		</div>
 		{{/each}}
 	</div>

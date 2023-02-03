@@ -95,14 +95,14 @@
 			color: inherit;
 		}
 		&.neg {
-			background: var(--background-roll-neg);
+			background: var(--background-roll-neg) !important;
 			&.hover {
 				background: rgb(var(--color-failure)) !important;
 				color: rgb(var(--color-on-button-roll-rollover)) !important;
 			}
 		}
 		&.pos {
-			background: var(--background-roll-pos);
+			background: var(--background-roll-pos) !important;
 			&.hover {
 				background: rgb(var(--color-success)) !important;
 				color: rgb(var(--color-on-button-roll-rollover)) !important;
@@ -122,7 +122,7 @@
 		}
 	}
 
-	.rollable.hover {
+	.rollable:not(.noroll) {
 		cursor: pointer;
 	}
 

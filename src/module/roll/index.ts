@@ -1,4 +1,4 @@
-import { ActorGURPS } from "@actor"
+import { ActorGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
@@ -40,8 +40,16 @@ export class RollGURPS extends Roll {
 			.trim()
 	}
 
-	override async render(options: { flavor?: string; template?: string; isPrivate?: boolean }): Promise<string> {
-		const template = options.template ?? RollGURPS.CHAT_TEMPLATE
+	override async render(
+		options: {
+			flavor?: string
+			template: string
+			isPrivate: boolean
+		} = {
+			template: RollGURPS.CHAT_TEMPLATE,
+			isPrivate: false,
+		}
+	): Promise<string> {
 		console.log(this.system)
 		const chatData = mergeObject(
 			{
@@ -54,7 +62,7 @@ export class RollGURPS extends Roll {
 			this.system
 		)
 		console.log(chatData)
-		return renderTemplate(template, chatData)
+		return renderTemplate(options.template, chatData)
 	}
 
 	override _prepareData(data: any) {
@@ -256,48 +264,6 @@ export class RollGURPS extends Roll {
 		await this.resetMods(user)
 	}
 
-	// @ts-ignore
-	async toMessage(
-		messageData?: any,
-		options?: {
-			rollMode?: any
-			create?: boolean
-		}
-	) {
-		const rollMode = options?.rollMode
-		const create = options?.create ?? true
-		// Perform the roll, if it has not yet been rolled
-		if (!this._evaluated) await this.evaluate({ async: true })
-		console.log(this.system)
-
-		console.log(messageData)
-
-		// Prepare chat data
-		messageData = mergeObject(
-			{
-				user: (game as Game).user?.id,
-				type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-				content: String(this.total),
-				sound: CONFIG.sounds.dice,
-			},
-			messageData
-		)
-		messageData.rolls = [this]
-
-		console.log(messageData)
-
-		// Either create the message or just return the chat data
-		const cls = getDocumentClass("ChatMessage")
-		const msg = new cls(messageData)
-
-		// Either create or return the data
-		if (create) return cls.create(msg.toObject(), { rollMode: rollMode } as any)
-		else {
-			if (rollMode) msg.applyRollMode(rollMode)
-			return msg.toObject()
-		}
-	}
-
 	/**
 	 *
 	 * @param user
@@ -331,13 +297,14 @@ export class RollGURPS extends Roll {
 	 * Handle Damage Rolls.
 	 * @param {StoredDocument<User>} user
 	 * @param {ActorGURPS} actor
+	 * @param data
 	 * @param name
 	 * @param hidden
 	 */
 	static async rollDamage(
 		user: StoredDocument<User> | null,
 		actor: ActorGURPS,
-		data: { [key: string]: any },
+		data: Record<string, any>,
 		name: string,
 		hidden = false
 	): Promise<void> {
@@ -394,7 +361,8 @@ export class RollGURPS extends Roll {
 
 		messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
 
-		ChatMessage.create(messageData, {})
+		await ChatMessage.create(messageData, {})
+		await this.resetMods(user)
 	}
 
 	/**
@@ -441,12 +409,12 @@ export class RollGURPS extends Roll {
 
 		const messageData: any = {
 			user: user,
-			speaker: actor.id,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			content: message,
 			roll: JSON.stringify(roll),
 			sound: CONFIG.sounds.dice,
 		}
+		if (actor) messageData.speaker.actor = actor
 		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
 
 		await ChatMessage.create(messageData, {})

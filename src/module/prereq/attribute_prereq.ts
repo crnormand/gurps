@@ -1,7 +1,6 @@
 import { CharacterGURPS } from "@actor"
-import { gid, NumberCompare, NumberComparison } from "@module/data"
+import { gid, NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { PrereqType } from "@prereq"
 import { i18n, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 

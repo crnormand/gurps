@@ -1,10 +1,15 @@
 import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
+import { GURPS } from "@module/gurps"
 import { fSearch } from "@util/fuse"
 import { ModifierBrowse } from "./browse"
 import { ModifierButton } from "./button"
 import { ModifierList } from "./list"
 
+type WindowSelected = "browse" | "current" | "none"
+
 export class ModifierWindow extends Application {
+	selected: WindowSelected
+
 	constructor(button: ModifierButton, options = {}) {
 		super(options)
 
@@ -12,6 +17,7 @@ export class ModifierWindow extends Application {
 		this.button = button
 		this.list = new ModifierList(this, [])
 		this.browse = new ModifierBrowse(this)
+		this.selected = "none"
 	}
 
 	static get defaultOptions(): ApplicationOptions {
@@ -54,12 +60,9 @@ export class ModifierWindow extends Application {
 
 		// Get position
 		const button = $("#modifier-app")
-		// Const buttonTop = button.offset()?.top ?? 0; // might use position() depending on as yet unencountered issues
-		// const buttonLeft = button.offset()?.left ?? 0;
 		const buttonTop = button.position()?.top ?? 0
 		const buttonLeft = (button.position()?.left || 0) + 220 ?? 0
 		let buttonWidth = parseFloat(button.css("width").replace("px", ""))
-		// Let width = parseFloat(html.find(".searchbar").css("width").replace("px", ""));
 		const width = 180
 		let height = parseFloat(html.css("height").replace("px", ""))
 
@@ -83,7 +86,7 @@ export class ModifierWindow extends Application {
 		const input = String($(event.currentTarget).val())
 		html.css("min-width", `max(${input.length}ch, 180px)`)
 		this.value = input
-		this.list.mods = fSearch((CONFIG as any).GURPS.modifiers, input, {
+		this.list.mods = fSearch(GURPS.allMods, input, {
 			includeMatches: true,
 			includeScore: true,
 			keys: ["name", "modifier", "tags"],
@@ -93,7 +96,7 @@ export class ModifierWindow extends Application {
 
 		// Set custom mod
 		const customMod: RollModifier = { name: "", modifier: 0, tags: [] }
-		const modifierMatch = input.match(/[-+]?[0-9]+\s*/)
+		const modifierMatch = input.match(/^[-+]?[0-9]+\s*/)
 		if (modifierMatch) {
 			customMod.modifier = parseInt(modifierMatch[0]) ?? 0
 			customMod.name = input.replace(modifierMatch[0], "")
@@ -105,25 +108,65 @@ export class ModifierWindow extends Application {
 
 	_keyDown(event: JQuery.KeyDownEvent) {
 		if (
-			["ArrowUp", "ArrowDown", "Enter", "Escape"].includes(event.key) ||
+			["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter", "Escape"].includes(event.key) ||
 			// Vim keys
-			(["j", "k"].includes(event.key) && event.ctrlKey)
+			(["h", "j", "k", "l"].includes(event.key) && event.ctrlKey)
 		) {
 			event.preventDefault()
 			switch (event.key) {
+				case "h":
+				case "ArrowLeft":
+					switch (this.selected) {
+						case "current":
+							this.selected = "none"
+							return
+						case "none":
+							this.selected = "browse"
+							return this.browse.show()
+						case "browse":
+							return
+					}
+				case "l":
+				case "ArrowRight":
+					switch (this.selected) {
+						case "browse":
+							this.selected = "none"
+							return this.browse.hide()
+						case "none":
+							this.selected = "current"
+							return this.browse.show()
+						case "current":
+							return
+					}
 				case "k":
 				case "ArrowUp":
-					if (this.list.mods.length === 0) return this.getPinnedMods()
-					this.list.selection += 1
-					if (this.list.selection >= this.list.mods.length) this.list.selection = 0
-					return this.list.render()
+					switch (this.selected) {
+						case "current":
+							return
+						// Return this.currentUp()
+						case "browse":
+							return this.browse.up()
+						case "none":
+							if (this.list.mods.length === 0) return this.getPinnedMods()
+							this.list.selection += 1
+							if (this.list.selection >= this.list.mods.length) this.list.selection = 0
+							return this.list.render()
+					}
 				case "j":
 				case "ArrowDown":
-					this.list.selection -= 1
-					if (this.list.selection < 0) this.list.selection = this.list.mods.length - 1
-					return this.list.render()
+					switch (this.selected) {
+						case "current":
+							return
+						// Return this.currentUp()
+						case "browse":
+							return this.browse.down()
+						case "none":
+							this.list.selection -= 1
+							if (this.list.selection < 0) this.list.selection = this.list.mods.length - 1
+							return this.list.render()
+					}
 				case "Enter":
-					if (event.shiftKey) return this.togglePin()
+					if (event.ctrlKey) return this.togglePin()
 					return this.addModFromList()
 				case "Escape":
 					return this.close()
@@ -156,7 +199,7 @@ export class ModifierWindow extends Application {
 	addModFromList() {
 		const newMod: RollModifier = this.list.mods[this.list.selection]
 		if (!newMod) return
-		return this.addModifier(newMod)
+		return this.button.addModifier(newMod)
 	}
 
 	addModFromBrowse() {
@@ -165,22 +208,7 @@ export class ModifierWindow extends Application {
 		const cat = this.browse.categories[this.browse.selection[1]]
 		if (cat) newMod = cat.mods[this.browse.selection[2]]
 		if (!newMod) return
-		return this.addModifier(newMod)
-	}
-
-	addModifier(mod: RollModifier) {
-		const modList: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
-		const oldMod = modList.find(e => e.name === mod.name)
-		if (oldMod) oldMod.modifier += mod.modifier
-		else modList.push(mod)
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
-		this.list.customMod = null
-		this.list.mods = []
-		this.list.selection = -1
-		this.value = ""
-		this.render()
-		this.button.render()
+		return this.button.addModifier(newMod)
 	}
 
 	removeModifier(event: JQuery.ClickEvent) {

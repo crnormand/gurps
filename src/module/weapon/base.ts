@@ -1,5 +1,4 @@
 import { SkillDefault } from "@module/default"
-import { EquipmentContainerGURPS, EquipmentGURPS, ItemGURPS, TraitGURPS } from "@item"
 import { TooltipGURPS } from "@module/tooltip"
 import { CharacterGURPS } from "@actor"
 import { i18n, newUUID, stringCompare } from "@util"
@@ -7,6 +6,8 @@ import { Feature } from "@feature"
 import { SkillBonus } from "@feature/skill_bonus"
 import { gid } from "@module/data"
 import { WeaponDamage } from "./damage"
+import { ItemGURPS } from "@module/config"
+import { ItemType } from "@item/data"
 
 export interface WeaponConstructionContext {
 	ready?: boolean
@@ -104,12 +105,8 @@ class BaseWeapon {
 		for (const f of this.parent.features) {
 			adj += this.extractSkillBonusForThisWeapon(f, tooltip)
 		}
-		if (
-			this.parent instanceof TraitGURPS ||
-			this.parent instanceof EquipmentGURPS ||
-			this.parent instanceof EquipmentContainerGURPS
-		) {
-			for (const mod of this.parent.modifiers) {
+		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(this.parent.type as any)) {
+			for (const mod of (this.parent as any).modifiers) {
 				for (const f of mod.features) {
 					adj += this.extractSkillBonusForThisWeapon(f, tooltip)
 				}

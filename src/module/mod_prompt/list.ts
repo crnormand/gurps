@@ -60,12 +60,13 @@ export class ModifierList extends Application {
 			this.selection = 0
 		}
 
-		const mods: any[] = this.mods
+		const mods: any[] = [...this.mods]
 		const pinnedMods: any[] = ((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as []) ?? []
 		for (const m of mods) {
 			if (pinnedMods.find(e => e.name === m.name && e.modifier && m.modifier)) m.pinned = true
 			else m.pinned = false
 		}
+		mods.splice(10)
 
 		return mergeObject(super.getData(options), {
 			mods: mods,

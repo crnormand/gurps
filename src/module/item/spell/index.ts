@@ -5,7 +5,7 @@ import { TooltipGURPS } from "@module/tooltip"
 import { difficultyRelativeLevel } from "@util"
 import { SpellData } from "./data"
 
-export class SpellGURPS extends ContainerGURPS {
+class SpellGURPS extends ContainerGURPS {
 	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
 
 	unsatisfied_reason = ""
@@ -109,6 +109,8 @@ export class SpellGURPS extends ContainerGURPS {
 	}
 }
 
-export interface SpellGURPS {
+interface SpellGURPS {
 	readonly system: SpellData
 }
+
+export { SpellGURPS }

@@ -8,13 +8,13 @@
 		</div>
 		{{else if (or (eq this.attribute_def.type "integer_ref") (eq this.attribte_def.type "decimal_ref"))}}
 		<div class="points"> </div>
-		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">
+		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable {{effective this}}">
 			<input class="number" type="text" value="{{this.current}}" disabled/>
 		</div>
 		<div class="label">{{this.attribute_def.combinedName}}</div>
 		{{else}}
 		<div class="points">[{{this.points}}]</div>
-		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">
+		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable {{effective this}}">
 			<input name="attributes.{{this.id}}.adj" class="input number" type="text" data-dtype="Number"
 				value="{{this.current}}" {{{input_lock ../editing}}} />
 		</div>

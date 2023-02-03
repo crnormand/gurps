@@ -28,6 +28,33 @@
 			"code": "PDF Book Code"
 		},
 		"modifier": {
+			"melee": {
+				"determined": "to hit (Determined Attack)",
+				"telegraphic": "to hit (Telegraphic Attack)",
+				"deceptive": "to hit (Deceptive Attack)",
+				"move": "to hit (Move and Attack)",
+				"strong": "damage (Strong Attack)",
+				"mighty_blow": "damage (Might Blow)",
+				"heroic_charge": "Heroic Charge"
+			},
+			"ranged": {
+				"aim": "Aim",
+				"determined": "to hit (Determined Attack)"
+			},
+			"defense": {
+				"all_out_defense": "All-Out Defense",
+				"shield": "to Dodge (Shield DB)",
+				"acrobatics_success": "to Dodge (Acrobatics, success)",
+				"dodge_and_drop": "to Dodge (Dodge and Drop)",
+				"dodge_retreat": "to Dodge (Retreat)",
+				"block_parry_retreat": "to Block/Parry (Retreat)",
+				"acrobatics_fail": "to Dodge (Acrobatics, failed)",
+				"dodge_side": "to Dodge (attacked from side)",
+				"dodge_rear": "to Dodge (attacked from reat)",
+				"deceptive": "to defenses due to Deceptive attack",
+				"will": "to Will Check, to maintain concentration",
+				"feverish_defense": "Feverish Defense"
+			},
 			"status": {
 				"title": "Status and Afflictions",
 				"status": "Status",
@@ -47,11 +74,11 @@
 				"nausea": "to all attributes (Nauseated)",
 				"nausea_def": "to active defenses (Nauseated)",
 				"moderate_pain": "to IQ/DX/CR checks (Moderate Pain)",
-				"moderate_pain_hpt": "to IQ/DX/CR checks (Modreate Pain w/ HPT)",
+				"moderate_pain_hpt": "to IQ/DX/CR checks (Moderate Pain w/ HPT)",
 				"severe_pain": "to IQ/DX/CR checks (Severe Pain)",
-				"severe_pain_hpt": "to IQ/DX/CR checks (Modreate Pain w/ HPT)",
+				"severe_pain_hpt": "to IQ/DX/CR checks (Severe Pain w/ HPT)",
 				"terrible_pain": "to IQ/DX/CR checks (Terrible Pain)",
-				"terrible_pain_hpt": "to IQ/DX/CR checks (Modreate Pain w/ HPT)",
+				"terrible_pain_hpt": "to IQ/DX/CR checks (Terrible Pain w/ HPT)",
 				"retching": "to IQ/DX/CR checks (Retching)"
 			},
 			"speed": {
@@ -84,7 +111,7 @@
 				"torso": "to hit Torso",
 				"vitals": "to hit Vitals [imp or pi(any) only]",
 				"heart": "to hit Vitals, Heart [imp or pi(any) only]",
-				"groin": "to hit Groing",
+				"groin": "to hit Groin",
 				"leg": "to hit Leg",
 				"hand": "to hit Hand",
 				"foot": "to hit Foot",
@@ -282,7 +309,8 @@
 				"Wing": "Wing"
 			},
 			"deprecated": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is elegible for <i>Easy Update</i>.<br>Please update your document by pressing the \"Easy Update\" button in the <i class=\"gcs-all-seeing-eye\"></i> settings above.",
-			"deprecated_xml": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is NOT elegible for Easy-Update. Please update your document."
+			"deprecated_xml": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is NOT elegible for Easy-Update. Please update your document.",
+			"deprecated_item": "The document type \"{type}\" is deprecated and will be removed in version 2.0."
 		},
 		"character": {
 			"portrait": "Portrait",
@@ -1038,9 +1066,9 @@
 				"no_mods": "No modifiers currently active.",
 				"active_title": "Active Modifiers",
 				"pin_prompt": "Press Up for Pinned Modifiers",
-				"make_pin_prompt": "<b>Tip:</b>&nbsp;Press Shift+Enter to Pin Modifiers",
+				"make_pin_prompt": "<b>Tip:</b>&nbsp;Press Ctrl+Enter to Pin Modifiers",
 				"browse": "Browse All",
-				"pinned_category": "Pinned"
+				"pinned_category": "Pinned <i class='fas fa-thumbtack'></i>"
 			},
 			"modifier_bucket": {
 				"current_effects": "Current Effects",
@@ -1132,7 +1160,7 @@
 			},
 			"modifier_mode": {
 				"name": "Modifier Application",
-				"hint": "Choose between using the Modifier Bucket and Modifier Prompt. Note: Change will only be applied after a refresh.",
+				"hint": "Choose between using the Modifier Bucket and Modifier Prompt.",
 				"choices": {
 					"bucket": "Modifier Bucket",
 					"prompt": "Modifier Prompt"

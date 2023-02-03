@@ -1,12 +1,11 @@
 import { CharacterGURPS } from "@actor"
 import { HitLocationTable } from "@actor/character/hit_location"
 import { FeatureType } from "@feature/base"
-import { ItemGURPS } from "@item"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
-import { gid, NumberComparison, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
+import { ItemGURPS } from "@module/config"
+import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { WeaponSheet } from "@module/weapon/sheet"
-import { PrereqType } from "@prereq"
 import { i18n, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
@@ -119,6 +118,7 @@ export class ItemSheetGURPS extends ItemSheet {
 			})
 
 		// Html.find("span.input").on("blur", event => this._onSubmit(event as any));
+		html.find(".item").on("dblclick", event => this._openItemSheet(event))
 	}
 
 	protected _onSubmit(event: Event, context?: any): Promise<Partial<Record<string, unknown>>> {
@@ -134,7 +134,6 @@ export class ItemSheetGURPS extends ItemSheet {
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
 		// FormApplicationGURPS.updateObject(event, formData)
 		formData = prepareFormData(event, formData, this.object)
-		console.log(formData)
 		if (typeof formData["system.tags"] === "string")
 			formData["system.tags"] = this.splitArray(formData["system.tags"])
 		if (typeof formData["system.college"] === "string")
@@ -321,6 +320,13 @@ export class ItemSheetGURPS extends ItemSheet {
 		all_buttons.at(-1)!.label = ""
 		all_buttons.at(-1)!.icon = "gcs-circled-x"
 		return all_buttons
+	}
+
+	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
+		event.preventDefault()
+		const uuid = $(event.currentTarget).data("uuid")
+		const item = (await fromUuid(uuid)) as ItemGURPS
+		item?.sheet?.render(true)
 	}
 }
 

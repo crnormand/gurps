@@ -1,6 +1,5 @@
 import { Feature } from "@feature"
-import { ItemGURPS } from "@item"
-// Import { ItemGURPS, TraitGURPS } from "@item"
+import { ItemGURPS } from "@module/config"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
 
@@ -18,19 +17,6 @@ export enum FeatureType {
 	CostReduction = "cost_reduction",
 	ContaiedWeightReduction = "contained_weight_reduction",
 }
-// Export type FeatureType =
-// 	| "attribute_bonus"
-// 	| "conditional_modifier"
-// 	| "dr_bonus"
-// 	| "reaction_bonus"
-// 	| "skill_bonus"
-// 	| "skill_point_bonus"
-// 	| "spell_bonus"
-// 	| "spell_point_bonus"
-// 	| "weapon_bonus"
-// 	| "weapon_dr_divisor_bonus"
-// 	| "cost_reduction"
-// 	| "contained_weight_reduction"
 
 export interface FeatureConstructionContext {
 	ready?: boolean
