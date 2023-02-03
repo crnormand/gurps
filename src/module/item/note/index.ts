@@ -1,7 +1,7 @@
 import { BaseItemGURPS } from "@item/base"
 import { NoteData } from "./data"
 
-export class NoteGURPS extends BaseItemGURPS {
+class NoteGURPS extends BaseItemGURPS {
 	// Static get schema(): typeof NoteData {
 	// 	return NoteData;
 	// }
@@ -28,6 +28,8 @@ export class NoteGURPS extends BaseItemGURPS {
 	}
 }
 
-export interface NoteGURPS {
+interface NoteGURPS {
 	readonly system: NoteData
 }
+
+export { NoteGURPS }

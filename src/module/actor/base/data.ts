@@ -9,7 +9,7 @@ export interface ActorFlagsGURPS extends Record<string, unknown> {
 export enum ActorFlags {
 	TargetModifiers = "targetModifiers",
 	SelfModifiers = "selfModifiers",
-	Deprecation = "deprecation"
+	Deprecation = "deprecation",
 }
 
 export interface BaseActorSourceGURPS<

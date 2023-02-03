@@ -1,21 +1,19 @@
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { RollGURPS } from "@module/roll"
-import { i18n } from "@util"
 import { ModifierBucket } from "./bucket"
 import { ModifierWindow } from "./window"
 
-export class ModifierButton extends Application {
+class ModifierButton extends Application {
 	_tempRangeMod: RollModifier = { name: "", modifier: 0 }
+
+	modifierMode: "prompt" | "bucket" = "prompt"
+
+	private _window?: ModifierWindow | ModifierBucket
 
 	constructor(options = {}) {
 		super(options)
 		this.showing = false
-		const modifierMode = ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as string) || "prompt"
-		if (modifierMode === "prompt") {
-			this.window = new ModifierWindow(this, {})
-		} else {
-			this.window = new ModifierBucket(this, {})
-		}
+		this.modifierMode = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
 	}
 
 	async render(
@@ -23,8 +21,23 @@ export class ModifierButton extends Application {
 		options?: Application.RenderOptions<ApplicationOptions> | undefined
 	): Promise<unknown> {
 		await this.recalculateModTotal((game as Game).user)
-		if (this.window.rendered) await this.window.render()
+		this.modifierMode = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
+		if (this.window?.rendered) await this.window.render()
 		return super.render(force, options)
+	}
+
+	get window(): ModifierWindow | ModifierBucket {
+		this.modifierMode = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
+		if (this._window) {
+			if (this._window instanceof ModifierWindow && this.modifierMode === "bucket")
+				this._window = new ModifierBucket(this, {})
+			else if (this._window instanceof ModifierBucket && this.modifierMode === "prompt")
+				this._window = new ModifierWindow(this, {})
+			return this._window
+		}
+		if (this.modifierMode === "bucket") this._window = new ModifierBucket(this, {})
+		else this._window = new ModifierWindow(this, {})
+		return this._window
 	}
 
 	static get defaultOptions(): ApplicationOptions {
@@ -70,7 +83,7 @@ export class ModifierButton extends Application {
 			html.insertAfter($("body").find("#hotbar"))
 			this._element = html
 		} else {
-			throw new Error(i18n("gurps.error.modifier_app_load_failed"))
+			throw new Error("gurps.error.modifier_app_load_failed")
 		}
 	}
 
@@ -96,7 +109,6 @@ export class ModifierButton extends Application {
 
 	async _onDiceClick(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
-		console.log(event.ctrlKey)
 		return RollGURPS.handleRoll((game as Game).user, null, {
 			type: RollType.Generic,
 			formula: "3d6",
@@ -138,12 +150,28 @@ export class ModifierButton extends Application {
 		const originalEvent = event.originalEvent
 		if (originalEvent instanceof WheelEvent) {
 			const delta = Math.round(originalEvent.deltaY / -100)
-			return this.window.addModifier({
+			return this.addModifier({
 				name: "",
 				modifier: delta,
 				tags: [],
 			})
 		}
+	}
+
+	addModifier(mod: RollModifier) {
+		const modList: RollModifier[] =
+			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+		const oldMod = modList.find(e => e.name === mod.name)
+		if (oldMod) oldMod.modifier += mod.modifier
+		else modList.push(mod)
+		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
+		// This.list.customMod = null
+		// this.list.mods = []
+		// this.list.selection = -1
+		// this.value = ""
+		this.render()
+		Hooks.call("addModifier")
+		// This.button.render()
 	}
 
 	async recalculateModTotal(user: StoredDocument<User> | null): Promise<unknown> {
@@ -158,7 +186,9 @@ export class ModifierButton extends Application {
 	}
 }
 
-export interface ModifierButton extends Application {
+interface ModifierButton extends Application {
 	showing: boolean
 	window: ModifierWindow | ModifierBucket
 }
+
+export { ModifierButton }

@@ -11,7 +11,7 @@ import {
 import { WeightUnits } from "@util/measure"
 import { EquipmentCostType, EquipmentModifierData, EquipmentWeightType } from "./data"
 
-export class EquipmentModifierGURPS extends BaseItemGURPS {
+class EquipmentModifierGURPS extends BaseItemGURPS {
 	// Static get schema(): typeof EquipmentModifierData {
 	// 	return EquipmentModifierData;
 	// }
@@ -91,6 +91,8 @@ export class EquipmentModifierGURPS extends BaseItemGURPS {
 	}
 }
 
-export interface EquipmentModifierGURPS {
+interface EquipmentModifierGURPS {
 	readonly system: EquipmentModifierData
 }
+
+export { EquipmentModifierGURPS }

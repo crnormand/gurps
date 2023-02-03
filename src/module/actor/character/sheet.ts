@@ -2,7 +2,6 @@ import { ActorSheetGURPS } from "@actor/base/sheet"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
-	ItemGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RitualMagicSpellGURPS,
@@ -17,8 +16,8 @@ import {
 import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
+import { ItemGURPS } from "@module/config"
 import { gid, RollType, SYSTEM_NAME } from "@module/data"
-import { DiceGURPS } from "@module/dice"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
@@ -234,7 +233,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				data.item = { id: attack_id, uuid: attack_id }
 				data.weapon = {
 					name: i18n(`gurps.character.basic_${attack_id}`),
-					fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string
+					fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string,
 				}
 			} else {
 				data.weapon = data.item.weapons.get(attack_id)
@@ -348,18 +347,19 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareEncumbrance() {
-		const encumbrance: Array<Encumbrance & { active?: boolean; carry?: string, move?: any, dodge?: any }> =
-			[...this.actor.allEncumbrance]
+		const encumbrance: Array<Encumbrance & { active?: boolean; carry?: string; move?: any; dodge?: any }> = [
+			...this.actor.allEncumbrance,
+		]
 		for (const e of encumbrance) {
 			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
 			e.carry = weightFormat(e.maximum_carry, this.actor.weightUnits)
 			e.move = {
 				current: this.actor.move(e),
-				effective: this.actor.eMove(e)
+				effective: this.actor.eMove(e),
 			}
 			e.dodge = {
 				current: this.actor.dodge(e),
-				effective: this.actor.eDodge(e)
+				effective: this.actor.eDodge(e),
 			}
 		}
 		return encumbrance
@@ -455,21 +455,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-				edit_button,
-				// {
-				// 	label: "",
-				// 	// Label: "Import",
-				// 	class: "import",
-				// 	icon: "fas fa-file-import",
-				// 	onclick: event => this._onFileImport(event),
-				// },
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._openGMenu(event),
-				},
-			]
+					edit_button,
+					// {
+					// 	label: "",
+					// 	// Label: "Import",
+					// 	class: "import",
+					// 	icon: "fas fa-file-import",
+					// 	onclick: event => this._onFileImport(event),
+					// },
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._openGMenu(event),
+					},
+			  ]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

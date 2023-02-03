@@ -33,9 +33,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
 
-		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, ActorFlags.Deprecation)
-			? "acknowledged"
-			: "manual"
+		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, ActorFlags.Deprecation) ? "acknowledged" : "manual"
 		// Don't show deprecation warning if character is not imported
 		if (deprecation === "manual") {
 			if (this.actor.system.additionalresources.importpath.includes(".gcs")) deprecation = "easy"
@@ -193,13 +191,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._onGMenu(event),
-				},
-			]
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._onGMenu(event),
+					},
+			  ]
 			: []
 		const show_import = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath

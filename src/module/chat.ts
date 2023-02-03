@@ -1,8 +1,8 @@
-import { ActorGURPS } from "@actor"
 import { SkillGURPS } from "@item"
 import { LastActor } from "@util"
-import { gid, RollModifier, RollType, SYSTEM_NAME, UserFlags } from "./data"
+import { gid, RollModifier, RollType } from "./data"
 import { RollGURPS } from "@module/roll"
+import { ActorGURPS } from "./config"
 
 /**
  *

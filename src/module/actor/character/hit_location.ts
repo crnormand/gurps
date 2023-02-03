@@ -7,6 +7,7 @@ import { i18n, i18n_f } from "@util"
 /**
  * Breaking these out into their own file so as to not be dependent on any other types.
  */
+
 export interface HitLocationTable {
 	name: string
 	roll: DiceGURPS

@@ -1,4 +1,4 @@
-import { ItemGURPS } from "@item"
+import { ItemGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
 import { EquipmentData, EquipmentSystemData } from "./equipment/data"
 import { EquipmentContainerData, EquipmentContainerSystemData } from "./equipment_container/data"

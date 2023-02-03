@@ -1,4 +1,4 @@
-import { ActorGURPS } from "@actor"
+import { ActorGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
 
 export class LastActor {

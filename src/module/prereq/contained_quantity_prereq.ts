@@ -1,7 +1,6 @@
-import { EquipmentContainerGURPS, EquipmentGURPS } from "@item"
-import { NumberCompare, NumberComparison } from "@module/data"
+import { ItemType } from "@item/data"
+import { NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { PrereqType } from "@prereq"
 import { i18n, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -24,12 +23,11 @@ export class ContainedQuantityPrereq extends BasePrereq {
 
 	satisfied(_actor: Actor, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
-		const eqp = exclude instanceof EquipmentGURPS || exclude instanceof EquipmentContainerGURPS ? exclude : null
-		if (eqp) {
-			satisfied = !(eqp instanceof EquipmentContainerGURPS)
+		if (exclude) {
+			satisfied = exclude.type !== ItemType.EquipmentContainer
 			if (!satisfied) {
 				let quantity = 0
-				for (const ch of (eqp as EquipmentContainerGURPS).children) {
+				for (const ch of exclude.children) {
 					quantity += ch.quantity
 				}
 				satisfied = numberCompare(quantity, this.quantity)

@@ -7,7 +7,6 @@ import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
-	ItemGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RitualMagicSpellGURPS,
@@ -54,6 +53,7 @@ import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { FeatureType } from "@feature/base"
+import { ItemGURPS } from "@module/config"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -376,7 +376,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				combinedName: i18n("gurps.attributes.dodge"),
 			},
 			effective: this.effectiveDodge,
-			current: this.currentDodge
+			current: this.currentDodge,
 		}
 	}
 
@@ -420,7 +420,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 		return move
 	}
-
 
 	dodge(enc: Encumbrance): number {
 		let dodge = 3 + (this.calc?.dodge_bonus ?? 0) + Math.max(this.resolveAttributeCurrent(gid.BasicSpeed), 0)

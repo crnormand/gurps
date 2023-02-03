@@ -1,4 +1,4 @@
-import { ActorGURPS } from "@actor"
+import { ActorGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
@@ -42,14 +42,14 @@ export class RollGURPS extends Roll {
 
 	override async render(
 		options: {
-			flavor?: string,
-			template: string,
+			flavor?: string
+			template: string
 			isPrivate: boolean
 		} = {
-				template: RollGURPS.CHAT_TEMPLATE,
-				isPrivate: false
-
-			}): Promise<string> {
+			template: RollGURPS.CHAT_TEMPLATE,
+			isPrivate: false,
+		}
+	): Promise<string> {
 		console.log(this.system)
 		const chatData = mergeObject(
 			{
@@ -72,7 +72,7 @@ export class RollGURPS extends Roll {
 			Object.defineProperty(d, "gmodc", {
 				get() {
 					const mod = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) as number
-						; (game as any).ModifierButton.clear()
+					;(game as any).ModifierButton.clear()
 					return mod
 				},
 			})
@@ -409,12 +409,12 @@ export class RollGURPS extends Roll {
 
 		const messageData: any = {
 			user: user,
-			speaker: actor.id,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			content: message,
 			roll: JSON.stringify(roll),
 			sound: CONFIG.sounds.dice,
 		}
+		if (actor) messageData.speaker.actor = actor
 		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
 
 		await ChatMessage.create(messageData, {})

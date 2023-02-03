@@ -1,7 +1,7 @@
 import { BaseItemGURPS } from "@item/base"
 import { TraitModifierAffects, TraitModifierCostType, TraitModifierData } from "./data"
 
-export class TraitModifierGURPS extends BaseItemGURPS {
+class TraitModifierGURPS extends BaseItemGURPS {
 	// Static get schema(): typeof TraitModifierData {
 	// 	return TraitModifierData;
 	// }
@@ -64,6 +64,8 @@ export class TraitModifierGURPS extends BaseItemGURPS {
 		return this.costType === "percentage" && this.levels > 0
 	}
 }
-export interface TraitModifierGURPS {
+interface TraitModifierGURPS {
 	readonly system: TraitModifierData
 }
+
+export { TraitModifierGURPS }

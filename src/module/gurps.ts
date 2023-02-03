@@ -38,7 +38,7 @@ import { BaseItemGURPS } from "@item"
 import { GURPSCONFIG } from "./config"
 import { TraitSheet } from "@item/trait/sheet"
 import { fSearch } from "@util/fuse"
-import { DiceGURPS } from "./dice"
+import { DiceGURPS } from "@module/dice"
 import * as Chat from "@module/chat"
 import { TraitContainerSheet } from "@item/trait_container/sheet"
 import { SkillSheet } from "@item/skill/sheet"
@@ -54,7 +54,6 @@ import { EquipmentSheet } from "@item/equipment/sheet"
 import { RitualMagicSpellSheet } from "@item/ritual_magic_spell/sheet"
 import { SpellSheet } from "@item/spell/sheet"
 import { EquipmentModifierSheet } from "@item/equipment_modifier/sheet"
-import { ModifierButton } from "./mod_prompt/button"
 import { ItemImporter } from "@item/import"
 import { CompendiumBrowser } from "./compendium"
 import { PDFViewerSheet } from "@module/pdf/sheet"
@@ -71,8 +70,8 @@ import { RangeGURPS } from "@util/range"
 import { ItemType } from "@item/data"
 import { ActorType } from "@actor/data"
 import { RollGURPS } from "@module/roll"
-// Import { XMLtoJS } from "@util/xml_js";
-// import { GCAImporter } from "@actor/character/import_GCA";
+import { ModifierButton } from "./mod_prompt/button"
+import { loadModifiers } from "./mod_prompt/data"
 
 Error.stackTraceLimit = Infinity
 
@@ -106,8 +105,6 @@ if (!(globalThis as any).GURPS) {
 	GURPS.LastToken = null
 	GURPS.setLastActor = LastActor.set
 }
-// GURPS.XMLtoJS = XMLtoJS;
-// GURPS.GCAImport = GCAImporter;
 
 // Initialize system
 Hooks.once("init", async () => {
@@ -263,6 +260,8 @@ Hooks.once("setup", async () => {
 Hooks.once("ready", async () => {
 	// Do anything once the system is ready
 	ColorSettings.applyColors()
+	loadModifiers(GURPS)
+
 	// ApplyDiceCSS()
 
 	// Enable drag image
@@ -278,21 +277,20 @@ Hooks.once("ready", async () => {
 	;(game as any).ModifierButton.render(true)
 	;(game as any).CompendiumBrowser = new CompendiumBrowser()
 
-	await Promise.all(
-		(game as Game).actors!.map(async actor => {
-			actor.prepareData()
-		})
-	)
-	;(game as Game).socket?.on("system.gcsga", async response => {
-		console.log("receive socket")
-		switch (response.type) {
-			case "updateBucket":
-				console.log("test?")
-				return (game as any).ModifierButton.render(true)
-			default:
-				return console.error("Unknown socket:", response.type)
-		}
-	})
+	// Await Promise.all(
+	// 	(game as Game).actors!.map(async actor => {
+	// 		actor.prepareData()
+	// 	})
+	// )
+	// 	; (game as Game).socket?.on(`system.${SYSTEM_NAME}}`, async response => {
+	// 		console.log("receive socket")
+	// 		switch (response.type) {
+	// 			case "updateBucket":
+	// 				return GURPS.ModifierButton.render(true)
+	// 			default:
+	// 				return console.error("Unknown socket:", response.type)
+	// 		}
+	// 	})
 
 	// Render modifier app after user object loaded to avoid old data
 })
@@ -354,8 +352,3 @@ Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
 		}
 	}
 })
-
-// Hooks.on("renderChatMessage", () => {
-// 	console.log("lag?")
-// 	applyDiceCSS()
-// })

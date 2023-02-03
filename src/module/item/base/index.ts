@@ -3,7 +3,6 @@ import {
 	DocumentModificationOptions,
 } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs"
 import { ItemDataGURPS, ItemFlagsGURPS, ItemType } from "@item/data"
-import { CharacterGURPS } from "@actor/character"
 import { BaseWeapon, MeleeWeapon, RangedWeapon, Weapon } from "@module/weapon"
 import { Study, SYSTEM_NAME } from "@module/data"
 import { Feature } from "@feature"
@@ -15,8 +14,8 @@ import { BaseFeature } from "@feature/base"
 import { PrereqList } from "@prereq"
 import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 import { ContainerGURPS } from "@item/container"
-import { ItemGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
+import { CharacterGURPS } from "@actor"
 
 export interface ItemConstructionContextGURPS extends Context<Actor | Item> {
 	gurps?: {
@@ -57,9 +56,9 @@ class BaseItemGURPS extends Item {
 	): Promise<void> {
 		let type = data.type.replace("_container", "")
 		if (type === ItemType.Technique) type = ItemType.Skill
-		if (type === ItemType.RitualMagicSpell) type = ItemType.Spell
-		if (type === ItemType.Equipment) type = "equipment"
-		if (type === ItemType.LegacyEquipment) type = "legacy_equipment"
+		else if (type === ItemType.RitualMagicSpell) type = ItemType.Spell
+		else if (type === ItemType.Equipment) type = "equipment"
+		else if (type === ItemType.LegacyEquipment) type = "legacy_equipment"
 		// TODO: remove any
 		if (this._source.img === (foundry.documents.BaseItem as any).DEFAULT_ICON)
 			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${type}.svg`
@@ -112,7 +111,7 @@ class BaseItemGURPS extends Item {
 	}
 
 	get actor(): CharacterGURPS | null {
-		if (this.parent) return this.parent instanceof CharacterGURPS ? this.parent : this.parent.actor
+		if (this.parent) return this.parent instanceof Actor ? this.parent : this.parent.actor
 		return null
 	}
 
@@ -194,7 +193,7 @@ class BaseItemGURPS extends Item {
 
 	get parents(): Array<any> {
 		if (!this.parent) return []
-		const grandparents = !(this.parent instanceof CharacterGURPS) ? this.parent.parents : []
+		const grandparents = !(this.parent instanceof Actor) ? this.parent.parents : []
 		return [this.parent, ...grandparents]
 	}
 
@@ -208,7 +207,7 @@ class BaseItemGURPS extends Item {
 		return i
 	}
 
-	sameSection(compare: ItemGURPS): boolean {
+	sameSection(compare: Item): boolean {
 		const traits = ["trait", "trait_container"]
 		const skills = ["skill", "technique", "skill_container"]
 		const spells = ["spell", "ritual_magic_spell", "spell_container"]

@@ -1,4 +1,4 @@
-import { BaseItemGURPS, ItemGURPS } from "@item"
+import { BaseItemGURPS } from "@item"
 import { ItemConstructionContextGURPS } from "@item/base"
 import { ContainerDataGURPS, ItemDataGURPS, ItemType } from "@item/data"
 import { AnyDocumentData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/data.mjs"
@@ -9,10 +9,11 @@ import {
 import EmbeddedCollection from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs"
 import { Document } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/module.mjs"
 import { DocumentConstructor } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
+import { ItemGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
 import { BaseContainerSystemData } from "./data"
 
-export abstract class ContainerGURPS extends BaseItemGURPS {
+abstract class ContainerGURPS extends BaseItemGURPS {
 	// Items?: EmbeddedCollection<ConfiguredDocumentClass<typeof BaseItemGURPS>, any>;
 	items: foundry.utils.Collection<Item> = new Collection()
 
@@ -226,8 +227,10 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 	}
 }
 
-export interface ContainerGURPS extends BaseItemGURPS {
+interface ContainerGURPS extends BaseItemGURPS {
 	readonly system: BaseContainerSystemData
 	// Items: foundry.utils.Collection<ItemGURPS>;
 	// items?: EmbeddedCollection<ConfiguredDocumentClass<typeof BaseItemGURPS>, any>;
 }
+
+export { ContainerGURPS }

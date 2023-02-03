@@ -134,7 +134,7 @@ export enum gid {
 	Will = "will",
 	Flexible = "flexible",
 	Thrust = "thrust",
-	Swing = "swing"
+	Swing = "swing",
 }
 
 export const attrPrefix = "attr."
@@ -207,108 +207,108 @@ export interface ModifierHeader {
 	title: true
 }
 
-export const rollModifiers: RollModifier[] = [
-	{
-		name: "Eye",
-		modifier: -9,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Skull",
-		modifier: -7,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Face",
-		modifier: -5,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Right Leg",
-		modifier: -2,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Right Leg",
-		modifier: -2,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Torso",
-		modifier: 0,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Groin",
-		modifier: -3,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Left Arm",
-		modifier: -2,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Left Leg",
-		modifier: -2,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Hand",
-		modifier: -4,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Foot",
-		modifier: -4,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Neck",
-		modifier: -5,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Vitals",
-		modifier: -3,
-		tags: ["Hit Location"],
-	},
-	{
-		name: "Shooting through light cover",
-		modifier: -2,
-		tags: ["Ranged Combat"],
-	},
-	{
-		name: "Target behind someone else (per intervening figure)",
-		modifier: -4,
-		tags: ["Ranged Combat"],
-	},
-	{
-		name: "Target crouching, kneeling, sitting, or lying down",
-		modifier: -2,
-		tags: ["Ranged Combat"],
-	},
-	{
-		name: "Target only partly exposed",
-		modifier: -2,
-		tags: ["Ranged Combat"],
-	},
-	{
-		name: "Laser sight",
-		modifier: +1,
-		tags: ["Ranged Combat"],
-	},
-	{
-		name: "Scope (per second of Aim, Max: Scope Acc)",
-		modifier: +1,
-		tags: ["Ranged Combat"],
-	},
-	{
-		name: "Unfamiliar weapon or targeting system",
-		modifier: -2,
-		tags: ["Ranged Combat"],
-	},
-]
+// Export const rollModifiers: RollModifier[] = [
+// 	{
+// 		name: "Eye",
+// 		modifier: -9,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Skull",
+// 		modifier: -7,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Face",
+// 		modifier: -5,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Right Leg",
+// 		modifier: -2,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Right Leg",
+// 		modifier: -2,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Torso",
+// 		modifier: 0,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Groin",
+// 		modifier: -3,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Left Arm",
+// 		modifier: -2,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Left Leg",
+// 		modifier: -2,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Hand",
+// 		modifier: -4,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Foot",
+// 		modifier: -4,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Neck",
+// 		modifier: -5,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Vitals",
+// 		modifier: -3,
+// 		tags: ["Hit Location"],
+// 	},
+// 	{
+// 		name: "Shooting through light cover",
+// 		modifier: -2,
+// 		tags: ["Ranged Combat"],
+// 	},
+// 	{
+// 		name: "Target behind someone else (per intervening figure)",
+// 		modifier: -4,
+// 		tags: ["Ranged Combat"],
+// 	},
+// 	{
+// 		name: "Target crouching, kneeling, sitting, or lying down",
+// 		modifier: -2,
+// 		tags: ["Ranged Combat"],
+// 	},
+// 	{
+// 		name: "Target only partly exposed",
+// 		modifier: -2,
+// 		tags: ["Ranged Combat"],
+// 	},
+// 	{
+// 		name: "Laser sight",
+// 		modifier: +1,
+// 		tags: ["Ranged Combat"],
+// 	},
+// 	{
+// 		name: "Scope (per second of Aim, Max: Scope Acc)",
+// 		modifier: +1,
+// 		tags: ["Ranged Combat"],
+// 	},
+// 	{
+// 		name: "Unfamiliar weapon or targeting system",
+// 		modifier: -2,
+// 		tags: ["Ranged Combat"],
+// 	},
+// ]
 
 export type ImagePath = `${string}.${ImageFileExtension}`
 type ImageFileExtension = "jpg" | "jpeg" | "png" | "svg" | "webp"
@@ -321,6 +321,17 @@ export enum UserFlags {
 	ModifierTotal = "modifierTotal",
 	ModifierSticky = "modifierSticky",
 	ModifierPinned = "pinnedMods",
+}
+
+export enum PrereqType {
+	List = "prereq_list",
+	Trait = "trait_prereq",
+	Attribute = "attribute_prereq",
+	ContainedQuantity = "contained_quantity_prereq",
+	ContainedWeight = "contained_weight_prereq",
+	Skill = "skill_prereq",
+	Spell = "spell_prereq",
+	Equipment = "equipped_equipment_prereq",
 }
 
 // Export type featureMap = {

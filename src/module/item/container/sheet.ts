@@ -1,11 +1,11 @@
 import { ItemSheetGURPS } from "@item/base/sheet"
-import { ItemGURPS } from "@item"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
 import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
 import { ContainerGURPS } from "."
 import { SYSTEM_NAME } from "@module/data"
 import { DnD } from "@util/drag_drop"
+import { ItemGURPS } from "@module/config"
 
 export class ContainerSheetGURPS extends ItemSheetGURPS {
 	static get defaultOptions(): DocumentSheetOptions {

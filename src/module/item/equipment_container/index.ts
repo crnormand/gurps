@@ -8,7 +8,7 @@ import { determineModWeightValueTypeFromString, extractFraction, floatingMul } f
 import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentContainerData } from "./data"
 
-export class EquipmentContainerGURPS extends ContainerGURPS {
+class EquipmentContainerGURPS extends ContainerGURPS {
 	unsatisfied_reason = ""
 
 	// Getters
@@ -199,6 +199,8 @@ export class EquipmentContainerGURPS extends ContainerGURPS {
 	}
 }
 
-export interface EquipmentContainerGURPS {
+interface EquipmentContainerGURPS {
 	readonly system: EquipmentContainerData
 }
+
+export { EquipmentContainerGURPS }

@@ -20,7 +20,7 @@ import { TraitModifierContainerSystemData } from "@item/trait_modifier_container
 import { CR, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon, Weapon } from "@module/weapon"
-import { BasePrereq, PrereqList } from "@prereq"
+import { PrereqList } from "@prereq"
 import { i18n, i18n_f, newUUID } from "@util"
 // Import { GURPS } from "@module/gurps"
 
@@ -265,7 +265,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			round_down: data.round_down ?? false,
 			disabled: data.disabled ?? false,
 			can_level: data.can_level ?? false,
@@ -337,7 +337,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			points: data.points ?? 1,
 			specialization: data.specialization ?? "",
 			tech_level: data.tech_level ?? "",
@@ -360,7 +360,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			points: data.points ?? 1,
 			limit: data.limit ?? 0,
 			limited: !!data.limit ?? false,
@@ -397,7 +397,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			points: data.points ?? 1,
 			tech_level: data.tech_level ?? "",
 			difficulty: data.difficulty ?? "dx/a",
@@ -423,7 +423,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			points: data.points ?? 1,
 			tech_level: data.tech_level ?? "",
 			difficulty: data.difficulty ?? "dx/a",
@@ -464,7 +464,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			tech_level: data.tech_level ?? "",
@@ -490,7 +490,7 @@ export class ItemImporter {
 			reference: data.reference ?? "",
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
-			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
+			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
 			tech_level: data.tech_level ?? "",

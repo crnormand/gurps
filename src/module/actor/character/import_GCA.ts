@@ -1,5 +1,5 @@
-import { ItemGURPS } from "@item"
 import { ItemFlagsGURPS, ItemSystemDataGURPS, ItemType, NoteData } from "@item/data"
+import { ItemGURPS } from "@module/config"
 import { gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"

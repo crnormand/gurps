@@ -38,17 +38,17 @@ class DiceGURPS {
 		}
 		let i = 0
 		let ch: string
-			;[dice.count, i] = extractValue(str, 0)
+		;[dice.count, i] = extractValue(str, 0)
 		const hadCount = i !== 0
-			;[ch, i] = nextChar(str, i)
+		;[ch, i] = nextChar(str, i)
 		let hadSides = false
 		let hadD = false
 		if (ch.toLowerCase() === "d") {
 			hadD = true
 			const j = i
-				;[dice.sides] = extractValue(str, i)
+			;[dice.sides] = extractValue(str, i)
 			hadSides = i !== j
-				;[ch, i] = nextChar(str, i)
+			;[ch, i] = nextChar(str, i)
 		}
 		if (hadSides && !hadCount) {
 			dice.count = 1
@@ -57,9 +57,9 @@ class DiceGURPS {
 		}
 		if (["+", ...negative].includes(ch)) {
 			const neg = negative.includes(ch)
-				;[dice.modifier, i] = extractValue(str, i)
+			;[dice.modifier, i] = extractValue(str, i)
 			if (neg) dice.modifier = -dice.modifier
-				;[ch, i] = nextChar(str, i)
+			;[ch, i] = nextChar(str, i)
 		}
 		if (!hadD) {
 			dice.modifier! += dice.count

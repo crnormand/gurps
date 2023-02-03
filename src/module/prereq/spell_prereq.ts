@@ -1,8 +1,7 @@
 import { CharacterGURPS } from "@actor"
-import { RitualMagicSpellGURPS, SpellContainerGURPS, SpellGURPS } from "@item"
-import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
+import { ItemType } from "@item/data"
+import { NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { PrereqType } from "@prereq"
 import { numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -37,14 +36,13 @@ export class SpellPrereq extends BasePrereq {
 
 	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let tech_level = ""
-		if (exclude instanceof SpellGURPS || exclude instanceof RitualMagicSpellGURPS) tech_level = exclude.techLevel
+		if ([ItemType.Spell, ItemType.RitualMagicSpell].includes(exclude.type)) tech_level = exclude.techLevel
 		let count = 0
 		const colleges: Map<string, boolean> = new Map()
 		for (let sp of actor.spells) {
-			if (sp instanceof SpellContainerGURPS) continue
-			sp = sp as SpellGURPS | RitualMagicSpellGURPS
+			if (sp.type === ItemType.SpellContainer) continue
 			if (exclude === sp || sp.points === 0) continue
-			if (tech_level && sp.techLevel && tech_level !== sp.techLevel) continue
+			if (tech_level && (sp as any).techLevel && tech_level !== (sp as any).techLevel) continue
 			switch (this.sub_type) {
 				case "name":
 					if (stringCompare(sp.name, this.qualifier)) count++
@@ -53,10 +51,10 @@ export class SpellPrereq extends BasePrereq {
 					if (stringCompare(sp.tags, this.qualifier)) count++
 					break
 				case "college":
-					if (stringCompare(sp.college, this.qualifier)) count++
+					if (stringCompare((sp as any).college, this.qualifier)) count++
 					break
 				case "college_count":
-					for (const c of sp.college) colleges.set(c, true)
+					for (const c of (sp as any).college) colleges.set(c, true)
 					break
 				case "any":
 					count++

@@ -1,8 +1,7 @@
 import { CharacterGURPS } from "@actor"
-import { EquipmentContainerGURPS, EquipmentGURPS } from "@item"
-import { NumberCompare, NumberComparison } from "@module/data"
+import { ItemType } from "@item/data"
+import { NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { PrereqType } from "@prereq"
 import { i18n, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -25,9 +24,9 @@ export class ContainedWeightPrereq extends BasePrereq {
 
 	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
-		const eqp = exclude as EquipmentGURPS | EquipmentContainerGURPS
+		const eqp = exclude
 		if (eqp) {
-			satisfied = !(eqp instanceof EquipmentContainerGURPS)
+			satisfied = eqp.type !== ItemType.EquipmentContainer
 			if (!satisfied) {
 				const units = actor.settings.default_weight_units
 				const weight = eqp.extendedWeight(false, units) - eqp.adjustedWeight(false, units)

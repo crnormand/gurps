@@ -1,4 +1,3 @@
-import { ItemGURPS } from "@item"
 import { ContainerSheetGURPS } from "@item/container/sheet"
 
 export class TraitContainerSheet extends ContainerSheetGURPS {
@@ -19,18 +18,6 @@ export class TraitContainerSheet extends ContainerSheetGURPS {
 			},
 		}
 		return sheetData
-	}
-
-	activateListeners(html: JQuery<HTMLElement>): void {
-		super.activateListeners(html)
-		html.find(".item").on("dblclick", event => this._openItemSheet(event))
-	}
-
-	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
-		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = (await fromUuid(uuid)) as ItemGURPS
-		item?.sheet?.render(true)
 	}
 
 	protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {

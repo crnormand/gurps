@@ -13,7 +13,7 @@ export interface BaseItemSourceGURPS<
 }
 
 export enum ItemFlags {
-	Deprecation = "deprecation"
+	Deprecation = "deprecation",
 }
 
 // Export abstract class BaseItemDataGURPS<TItem extends BaseItemGURPS = BaseItemGURPS> extends foundry.data.ItemData {

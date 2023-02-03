@@ -1,8 +1,7 @@
 import { CharacterGURPS } from "@actor"
-import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS } from "@item"
-import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
+import { ItemType } from "@item/data"
+import { NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { PrereqType } from "@prereq"
 import { i18n, numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
@@ -24,18 +23,17 @@ export class SkillPrereq extends BasePrereq {
 	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
 		let satisfied = false
 		let tech_level = ""
-		if (exclude instanceof SkillGURPS) tech_level = exclude.techLevel
+		if (exclude.type === ItemType.Skill) tech_level = exclude.techLevel
 		for (let sk of actor.skills) {
-			if (sk instanceof SkillContainerGURPS) continue
-			sk = sk as SkillGURPS | TechniqueGURPS
+			if (sk.type === ItemType.SkillContainer) continue
 			if (
 				exclude === sk ||
 				!stringCompare(sk.name, this.name) ||
-				!stringCompare(sk.specialization, this.specialization)
+				!stringCompare((sk as any).specialization, this.specialization)
 			)
 				return [false, false]
-			satisfied = numberCompare(sk.level.level, this.level)
-			if (satisfied && tech_level) satisfied = !sk.techLevel || tech_level === sk.techLevel
+			satisfied = numberCompare((sk as any).level.level, this.level)
+			if (satisfied && tech_level) satisfied = !(sk as any).techLevel || tech_level === (sk as any).techLevel
 		}
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
