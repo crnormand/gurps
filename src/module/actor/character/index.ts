@@ -54,6 +54,7 @@ import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { FeatureType } from "@feature/base"
 import { ItemGURPS } from "@module/config"
+import { ActiveEffectGURPS } from "@module/effect"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -389,8 +390,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 	}
 
-	effectiveST(bonus = 0): number {
-		let initialST = Math.max(0, this.resolveAttributeCurrent(gid.Strength)) + bonus
+	effectiveST(initialST: number): number {
 		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_st", this.attributes), 2)
 		let ST = initialST
 		if (divisor > 0) ST = Math.ceil(initialST / divisor)
@@ -472,7 +472,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Returns Basic Lift in pounds
 	get basicLift(): number {
-		const basicLift = this.effectiveST(this.calc?.lifting_st_bonus ?? 0) ** 2 / 5
+		const basicLift = this.attributes.get(gid.Strength)!._effective(this.calc?.lifting_st_bonus ?? 0) ** 2 / 5
 		if (basicLift === Infinity || basicLift === -Infinity) return 0
 		if (basicLift >= 10) return Math.round(basicLift)
 		return basicLift
@@ -1050,30 +1050,31 @@ class CharacterGURPS extends BaseActorGURPS {
 				}
 			}
 		}
-		// This.featureMap = featureMap;
-		if (!this.calc) this.calc = {}
-		this.calc.lifting_st_bonus = this.attributeBonusFor(
-			`${attrPrefix}${gid.Strength}.lifting_only`,
-			AttributeBonusLimitation.Lifting
-		)
-		this.calc.striking_st_bonus = this.attributeBonusFor(
-			`${attrPrefix}${gid.Strength}.striking_only`,
-			AttributeBonusLimitation.Striking
-		)
-		this.calc.throwing_st_bonus = this.attributeBonusFor(
-			`${attrPrefix}${gid.Strength}.throwing_only`,
-			AttributeBonusLimitation.Throwing
-		)
+		for (const e of this.effects) {
+			if (!(e instanceof ActiveEffectGURPS)) continue
+			for (const f of e.features) {
+				this.processFeature(e, f, 0)
+			}
+		}
+
+		this.calc ??= {}
+		this.calc.lifting_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Lifting)
+		this.calc.striking_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Striking)
+		this.calc.throwing_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Throwing)
 		this.attributes = this.getAttributes()
 		if (this.attributes)
 			this.attributes.forEach(attr => {
 				if (!this.system.attributes[attr.order]) return
 				const def = attr.attribute_def
 				if (def) {
-					// Const attrID = attrPrefix + attr.attr_id
 					this.system.attributes[attr.order].bonus = this.attributeBonusFor(
 						attr.id,
 						AttributeBonusLimitation.None
+					)
+					this.system.attributes[attr.order].effectiveBonus = this.attributeBonusFor(
+						attr.id,
+						AttributeBonusLimitation.None,
+						true
 					)
 					if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type))
 						attr.bonus = Math.floor(attr.bonus)
@@ -1086,12 +1087,12 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.attributes = this.getAttributes()
 		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
-		this.calc.dodge_bonus = this.attributeBonusFor(`${attrPrefix}${gid.Dodge}`, AttributeBonusLimitation.None)
-		this.calc.parry_bonus = this.attributeBonusFor(`${attrPrefix}${gid.Parry}`, AttributeBonusLimitation.None)
-		this.calc.block_bonus = this.attributeBonusFor(`${attrPrefix}${gid.Block}`, AttributeBonusLimitation.None)
+		this.calc.dodge_bonus = this.attributeBonusFor(gid.Dodge, AttributeBonusLimitation.None)
+		this.calc.parry_bonus = this.attributeBonusFor(gid.Parry, AttributeBonusLimitation.None)
+		this.calc.block_bonus = this.attributeBonusFor(gid.Block, AttributeBonusLimitation.None)
 	}
 
-	processFeature(parent: ItemGURPS, f: Feature, levels: number) {
+	processFeature(parent: ItemGURPS | ActiveEffectGURPS, f: Feature, levels: number) {
 		f.setParent(parent)
 		f.levels = levels
 
@@ -1116,9 +1117,6 @@ class CharacterGURPS extends BaseActorGURPS {
 			case FeatureType.ConditionalModifier:
 			case FeatureType.ReactionBonus:
 			case FeatureType.ContaiedWeightReduction:
-				return
-			default:
-				console.error("Unhandled feature type: ", f.type)
 		}
 	}
 
@@ -1312,10 +1310,19 @@ class CharacterGURPS extends BaseActorGURPS {
 	// 	}
 	// 	return total
 	// }
-	attributeBonusFor(attributeId: string, limitation: AttributeBonusLimitation, tooltip?: TooltipGURPS): number {
+	attributeBonusFor(
+		attributeId: string,
+		limitation: AttributeBonusLimitation,
+		effective = false,
+		tooltip?: TooltipGURPS
+	): number {
 		let total = 0
 		for (const feature of this.features.attributeBonuses) {
-			if (feature.limitation === limitation && feature.attribute === attributeId) {
+			if (
+				feature.limitation === limitation &&
+				feature.attribute === attributeId &&
+				feature.effective === effective
+			) {
 				total += feature.adjustedAmount
 				feature.addToTooltip(tooltip)
 			}

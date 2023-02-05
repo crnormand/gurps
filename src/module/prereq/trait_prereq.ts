@@ -6,8 +6,8 @@ import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export class TraitPrereq extends BasePrereq {
 	constructor(data: TraitPrereq | any, context: PrereqConstructionContext = {}) {
+		data = mergeObject(TraitPrereq.defaults, data)
 		super(data, context)
-		Object.assign(this, mergeObject(TraitPrereq.defaults, data))
 	}
 
 	static get defaults(): Record<string, any> {

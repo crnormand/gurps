@@ -1,5 +1,6 @@
 import { Feature } from "@feature"
 import { ItemGURPS } from "@module/config"
+import { ActiveEffectGURPS } from "@module/effect"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
 
@@ -39,6 +40,7 @@ export class BaseFeature {
 			amount: 1,
 			per_level: false,
 			levels: 0,
+			effective: false,
 		}
 	}
 
@@ -64,7 +66,7 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	setParent(parent: ItemGURPS): void {
+	setParent(parent: ItemGURPS | ActiveEffectGURPS): void {
 		this.parent = parent.uuid
 	}
 
@@ -90,4 +92,5 @@ export interface BaseFeature {
 	amount: number
 	per_level: boolean
 	_levels: number
+	effective?: boolean
 }

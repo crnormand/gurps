@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2022 Johannes Loher
-// SPDX-FileCopyrightText: 2022 David Archibald
+// SPDX-FileCopyrightText: 2023 Johannes Loher
+// SPDX-FileCopyrightText: 2023 David Archibald
 //
 // SPDX-License-Identifier: MIT
 

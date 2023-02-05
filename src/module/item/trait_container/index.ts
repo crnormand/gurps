@@ -157,6 +157,10 @@ class TraitContainerGURPS extends ContainerGURPS {
 		else if (pts < 0) disad += pts
 		return [ad, disad, race, quirk]
 	}
+
+	toggleState(): void {
+		this.enabled = !this.enabled
+	}
 }
 
 interface TraitContainerGURPS {

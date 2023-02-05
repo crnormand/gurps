@@ -5,9 +5,9 @@ import { i18n_f, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 class EquippedEquipmentPrereq extends BasePrereq {
-	constructor(data: EquippedEquipmentPrereq, context: PrereqConstructionContext = {}) {
+	constructor(data: EquippedEquipmentPrereq | any, context: PrereqConstructionContext = {}) {
+		data = mergeObject(EquippedEquipmentPrereq.defaults, data)
 		super(data, context)
-		Object.assign(this, mergeObject(EquippedEquipmentPrereq.defaults, data))
 	}
 
 	static get defaults(): Record<string, any> {

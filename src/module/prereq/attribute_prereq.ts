@@ -5,9 +5,9 @@ import { i18n, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export class AttributePrereq extends BasePrereq {
-	constructor(data: AttributePrereq, context: PrereqConstructionContext = {}) {
+	constructor(data: AttributePrereq | any, context: PrereqConstructionContext = {}) {
+		data = mergeObject(AttributePrereq.defaults, data)
 		super(data, context)
-		Object.assign(this, mergeObject(AttributePrereq.defaults, data))
 	}
 
 	static get defaults(): Record<string, any> {

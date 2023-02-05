@@ -46,10 +46,10 @@
                 {{ localize "gurps.item.levels" }}
             </div>
             <div class="field no-stretch">
-                <input type="text" name="system.levels" value="{{system.levels}}" data-dtype="String" {{input_lock system.can_level}} />
+                <input type="text" name="system.levels" value="{{system.levels}}" data-dtype="Number" {{input_lock system.can_level}} />
                 <div class="label">{{ localize "gurps.item.points_per_level" }}</div>
                 <input type="text" name="system.points_per_level" value="{{system.points_per_level}}"
-                    data-dtype="String" {{input_lock system.can_level}} />
+                    data-dtype="Number" {{input_lock system.can_level}} />
             </div>
             <div class="label">{{ localize "gurps.item.cr" }}</div>
             <div class="field">

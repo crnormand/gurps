@@ -6,6 +6,7 @@ import { PoolThreshold } from "./pool_threshold"
 
 export interface AttributeObj {
 	bonus?: number
+	effectiveBonus?: number
 	cost_reduction?: number
 	order: number
 	attr_id: string
@@ -23,9 +24,11 @@ export interface AttributeObj {
 export class Attribute {
 	actor: CharacterGURPS
 
-	bonus = 0 // ?
+	bonus = 0
 
-	cost_reduction = 0 // ?
+	effectiveBonus = 0 // Used for active effects
+
+	cost_reduction = 0
 
 	order: number
 
@@ -64,7 +67,7 @@ export class Attribute {
 		if (!def) return 0
 		let max = def.baseValue(this.actor) + this.adj + this.bonus
 		if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type)) {
-			max = Math.floor(max)
+			return Math.floor(max)
 		}
 		return max
 	}
@@ -76,8 +79,18 @@ export class Attribute {
 	}
 
 	get effective(): number {
-		if (this.attr_id === gid.Strength) return this.actor.effectiveST(0)
-		return this.current
+		return this._effective()
+	}
+
+	_effective(bonus = 0): number {
+		const def = this.attribute_def
+		if (!def) return 0
+		let effective = this.max + this.effectiveBonus + bonus
+		if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type)) {
+			effective = Math.floor(effective)
+		}
+		if (this.id === gid.Strength) return this.actor.effectiveST(effective)
+		return effective
 	}
 
 	get current(): number {

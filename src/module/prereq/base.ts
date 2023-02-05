@@ -10,7 +10,7 @@ export interface PrereqConstructionContext {
 export class BasePrereq {
 	constructor(data: Prereq | any, context: PrereqConstructionContext = {}) {
 		if (context.ready) {
-			// Do nothing
+			Object.assign(this, data)
 		} else {
 			mergeObject(context, {
 				ready: true,

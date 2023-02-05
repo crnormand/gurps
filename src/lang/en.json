@@ -1344,6 +1344,16 @@
 			"location": "Location",
 			"random_location_roll": "Rolling Hit Location",
 			"target": "Target"
+		},
+		"context": {
+			"toggle_state": "Toggle State",
+			"delete": "Delete",
+			"increment": "Increment",
+			"decrement": "Decrement",
+			"increase_level": "Increase Skill Level",
+			"decrease_level": "Decrease Skill Level",
+			"increase_tech_level": "Increase Tech Level",
+			"decrease_tech_level": "Decrease Tech Level"
 		}
 	}
 }

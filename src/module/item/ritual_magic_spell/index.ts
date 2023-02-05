@@ -221,6 +221,49 @@ class RitualMagicSpellGURPS extends BaseItemGURPS {
 			tooltip: tooltip.toString(),
 		}
 	}
+
+	incrementSkillLevel() {
+		const basePoints = this.points + 1
+		let maxPoints = basePoints
+		if (this.difficulty === Difficulty.Wildcard) maxPoints += 12
+		else maxPoints += 4
+
+		const oldLevel = this.calculateLevel.level
+		for (let points = basePoints; points < maxPoints; points++) {
+			this.system.points = points
+			if (this.calculateLevel.level > oldLevel) {
+				return this.update({ "system.points": points })
+			}
+		}
+	}
+
+	decrementSkillLevel() {
+		if (this.points <= 0) return
+		const basePoints = this.points
+		let minPoints = basePoints
+		if (this.difficulty === Difficulty.Wildcard) minPoints -= 12
+		else minPoints -= 4
+		minPoints = Math.max(minPoints, 0)
+
+		let oldLevel = this.calculateLevel.level
+		for (let points = basePoints; points >= minPoints; points--) {
+			this.system.points = points
+			if (this.calculateLevel.level < oldLevel) {
+				break
+			}
+		}
+
+		if (this.points > 0) {
+			let oldLevel = this.calculateLevel.level
+			while (this.points > 0) {
+				this.system.points = Math.max(this.points - 1, 0)
+				if (this.calculateLevel.level != oldLevel) {
+					this.system.points++
+					return this.update({ "system.points": this.points })
+				}
+			}
+		}
+	}
 }
 
 interface RitualMagicSpellGURPS {
