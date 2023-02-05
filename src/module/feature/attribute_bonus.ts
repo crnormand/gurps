@@ -11,6 +11,7 @@ export class AttributeBonus extends BaseFeature {
 }
 
 export interface AttributeBonus extends BaseFeature {
+	type: FeatureType.AttributeBonus
 	attribute: string
 	limitation: AttributeBonusLimitation
 }

@@ -22,6 +22,7 @@ import {
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { DiceGURPS } from "@module/dice"
+import { ItemGURPS } from "@module/config"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -80,9 +81,9 @@ class BaseActorGURPS extends Actor {
 		}
 	}
 
-	get deepItems(): Collection<Item> {
-		const deepItems: Item[] = []
-		for (const item of this.items as any as Collection<Item>) {
+	get deepItems(): Collection<ItemGURPS> {
+		const deepItems: ItemGURPS[] = []
+		for (const item of this.items as any as Collection<ItemGURPS>) {
 			deepItems.push(item)
 			if ((item as any).items)
 				for (const i of (item as any).deepItems) {
@@ -268,7 +269,7 @@ class TraitModifierAdapter implements TargetTraitModifier {
 interface BaseActorGURPS extends Actor {
 	// Readonly data: BaseActorDataGURPS;
 	noPrepare: boolean
-	deepItems: Collection<Item>
+	deepItems: Collection<ItemGURPS>
 	attributes: Map<string, Attribute>
 	traits: Collection<TraitGURPS | TraitContainerGURPS>
 	// Temp

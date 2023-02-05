@@ -6,9 +6,9 @@ import { i18n, numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export class SkillPrereq extends BasePrereq {
-	constructor(data: SkillPrereq, context: PrereqConstructionContext = {}) {
+	constructor(data: SkillPrereq | any, context: PrereqConstructionContext = {}) {
+		data = mergeObject(SkillPrereq.defaults, data)
 		super(data, context)
-		Object.assign(this, mergeObject(SkillPrereq.defaults, data))
 	}
 
 	static get defaults(): Record<string, any> {

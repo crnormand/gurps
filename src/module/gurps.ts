@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2022 Chris Normand
+ * Copyright (c) 2023 Chris Normand
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -71,7 +71,9 @@ import { ItemType } from "@item/data"
 import { ActorType } from "@actor/data"
 import { RollGURPS } from "@module/roll"
 import { ModifierButton } from "./mod_prompt/button"
-import { loadModifiers } from "./mod_prompt/data"
+import { loadModifiers } from "@module/mod_prompt/data"
+import { ActiveEffectGURPS } from "@module/effect"
+import { effectsList } from "./effect/data"
 
 Error.stackTraceLimit = Infinity
 
@@ -121,7 +123,9 @@ Hooks.once("init", async () => {
 	;(CONFIG as any).GURPS = GURPSCONFIG
 	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
+	CONFIG.ActiveEffect.documentClass = ActiveEffectGURPS
 	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+	CONFIG.statusEffects = effectsList
 
 	// @ts-ignore until v10
 	CONFIG.Dice.rolls.unshift(RollGURPS)
@@ -324,14 +328,20 @@ Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
 	}
 })
 
-Hooks.on("controlToken", (...args: any[]) => {
+Hooks.on("controlToken", async (...args: any[]) => {
+	/**
+	 *
+	 */
+	async function updateLastActor() {
+		GURPS.LastActor = await LastActor.get()
+		GURPS.LastToken = await LastActor.getToken()
+	}
 	if (args.length > 1) {
-		let a = args[0]?.actor
+		const a = args[0]?.actor
 		if (a) {
 			if (args[1]) LastActor.set(a, args[0].document)
 			else LastActor.clear(a)
-			GURPS.LastActor = LastActor.get()
-			GURPS.LastToken = LastActor.getToken()
+			updateLastActor()
 		}
 	}
 })

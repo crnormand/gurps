@@ -8,6 +8,7 @@
 	border: 1ps solid rgb(var(--color-header));
 	border-radius: 0;
 	font: var(--font-page-primary-labels);
+	background: rgb(var(--color-content));
 	.message-header {
 		grid-area: header;
 		background-color: rgb(var(--color-header));
@@ -16,18 +17,18 @@
 		padding-bottom: 2px;
 		.message-metadata {
 			font-size: var(--fontsize-7);
-		}
-		.message-delete {
-			color: rgb(var(--color-icon-button));
-			&:hover {
-				color: rgb(var(--color-icon-button-rollover));
-				text-shadow: none;
+			a {
+				color: rgb(var(--color-icon-button));
+				&:hover {
+					color: rgb(var(--color-icon-button-rollover));
+					text-shadow: none;
+				}
 			}
 		}
 	}
 	.message-content {
 		grid-area: content;
-		background-color: rgb(var(--color-content));
+		padding: 5px;
 		color: rgb(var(--color-on-content));
 
 		@import "roll";

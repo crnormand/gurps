@@ -104,6 +104,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
 		html.find(".ref").on("click", event => this._handlePDF(event))
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
+		html.find(".item").on("contextmenu", event => this._getItemContextMenu(event, html))
 		html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
@@ -140,6 +141,147 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		])
 		await ctx.render($(event.currentTarget))
 		// $(event.currentTarget).trigger("contextmenu")
+	}
+
+	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
+		event.preventDefault()
+		const uuid = $(event.currentTarget).data("uuid")
+		const item = this.actor.deepItems.get(uuid.split(".").at(-1))
+		if (!item) return
+		const ctx = new ContextMenu(html, ".menu", [])
+		if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) {
+			ctx.menuItems.push({
+				name: i18n("gurps.context.toggle_state"),
+				icon: "<i class='fas fa-sliders-simple'></i>",
+				callback: () => {
+					return item.update({ "system.disabled": item.enabled })
+				},
+			})
+		}
+		if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) {
+			ctx.menuItems.push({
+				name: i18n("gurps.context.toggle_state"),
+				icon: "<i class='fas fa-sliders-simple'></i>",
+				callback: () => {
+					return item.update({ "system.equipped": !item.equipped })
+				},
+			})
+		}
+		if (item instanceof TraitGURPS && item.isLeveled) {
+			ctx.menuItems.push({
+				name: i18n("gurps.context.increment"),
+				icon: "<i class='fas fa-up'></i>",
+				callback: () => {
+					let level = item.system.levels + 1
+					if (level % 1) level = Math.floor(level)
+					return item.update({ "system.levels": level })
+				},
+			})
+			if (item.levels > 0)
+				ctx.menuItems.push({
+					name: i18n("gurps.context.decrement"),
+					icon: "<i class='fas fa-down'></i>",
+					callback: () => {
+						let level = item.system.levels - 1
+						if (level % 1) level = Math.ceil(level)
+						return item.update({ "system.levels": level })
+					},
+				})
+		}
+		if (
+			item instanceof SkillGURPS ||
+			item instanceof TechniqueGURPS ||
+			item instanceof SpellGURPS ||
+			item instanceof RitualMagicSpellGURPS
+		) {
+			ctx.menuItems.push({
+				name: i18n("gurps.context.increment"),
+				icon: "<i class='fas fa-up'></i>",
+				callback: () => {
+					return item.update({ "system.points": item.system.points + 1 })
+				},
+			})
+			if (item.points > 0)
+				ctx.menuItems.push({
+					name: i18n("gurps.context.decrement"),
+					icon: "<i class='fas fa-down'></i>",
+					callback: () => {
+						return item.update({ "system.points": item.system.points - 1 })
+					},
+				})
+			ctx.menuItems.push({
+				name: i18n("gurps.context.increase_level"),
+				icon: "<i class='fas fa-up-long'></i>",
+				callback: () => {
+					return item.incrementSkillLevel()
+				},
+			})
+			if (item.points > 0)
+				ctx.menuItems.push({
+					name: i18n("gurps.context.decrease_level"),
+					icon: "<i class='fas fa-down-long'></i>",
+					callback: () => {
+						return item.decrementSkillLevel()
+					},
+				})
+		}
+		if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) {
+			ctx.menuItems.push({
+				name: i18n("gurps.context.increment"),
+				icon: "<i class='fas fa-up'></i>",
+				callback: () => {
+					return item.update({ "system.quantity": item.system.quantity + 1 })
+				},
+			})
+			if (item.quantity > 0)
+				ctx.menuItems.push({
+					name: i18n("gurps.context.decrement"),
+					icon: "<i class='fas fa-down'></i>",
+					callback: () => {
+						return item.update({ "system.quantity": item.system.quantity - 1 })
+					},
+				})
+		}
+		if (
+			item instanceof EquipmentGURPS ||
+			item instanceof EquipmentContainerGURPS ||
+			((item instanceof SkillGURPS || item instanceof SpellGURPS || item instanceof RitualMagicSpellGURPS) &&
+				item.system.tech_level_required)
+		) {
+			ctx.menuItems.push({
+				name: i18n("gurps.context.increase_tech_level"),
+				icon: "<i class='fas fa-gear'></i><i class='fas fa-up'></i>",
+				callback: () => {
+					let tl = item.techLevel
+					let tlNumber = tl.match(/\d+/)?.[0]
+					if (!tlNumber) return
+					const newTLNumber = parseInt(tlNumber) + 1
+					tl = tl.replace(tlNumber, `${newTLNumber}`)
+					return item.update({ "system.tech_level": tl })
+				},
+			})
+			if (parseInt(item.techLevel) > 0)
+				ctx.menuItems.push({
+					name: i18n("gurps.context.decrease_tech_level"),
+					icon: "<i class='fas fa-gear'></i><i class='fas fa-down'></i>",
+					callback: () => {
+						let tl = item.techLevel
+						let tlNumber = tl.match(/\d+/)?.[0]
+						if (!tlNumber) return
+						const newTLNumber = parseInt(tlNumber) - 1
+						tl = tl.replace(tlNumber, `${newTLNumber}`)
+						return item.update({ "system.tech_level": tl })
+					},
+				})
+		}
+		ctx.menuItems.push({
+			name: i18n("gurps.context.delete"),
+			icon: "<i class='gcs-trash'></i>",
+			callback: () => {
+				return item.delete()
+			},
+		})
+		await ctx.render($(event.currentTarget))
 	}
 
 	protected _resizeInput(event: JQuery.ChangeEvent) {

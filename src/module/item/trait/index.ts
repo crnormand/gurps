@@ -203,6 +203,10 @@ class TraitGURPS extends ContainerGURPS {
 				return this.crMultiplier(CR.None)
 		}
 	}
+
+	toggleState(): void {
+		this.enabled = !this.enabled
+	}
 }
 
 /**

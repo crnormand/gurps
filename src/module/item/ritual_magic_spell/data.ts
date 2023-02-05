@@ -19,6 +19,7 @@ export interface RitualMagicSpellSystemData extends ItemSystemData {
 	prereqs: PrereqList
 	difficulty: Difficulty
 	tech_level: string
+	tech_level_required: boolean
 	college: Array<string>
 	power_source: string
 	spell_class: string

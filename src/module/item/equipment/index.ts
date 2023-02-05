@@ -57,6 +57,10 @@ class EquipmentGURPS extends ContainerGURPS {
 		return this.system.equipped
 	}
 
+	set equipped(equipped: boolean) {
+		this.system.equipped = equipped
+	}
+
 	get techLevel(): string {
 		return this.system.tech_level
 	}
@@ -202,6 +206,10 @@ class EquipmentGURPS extends ContainerGURPS {
 		system.type = "equipment"
 		delete system.name
 		return system
+	}
+
+	toggleState(): void {
+		this.equipped = !this.equipped
 	}
 }
 

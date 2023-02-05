@@ -52,6 +52,10 @@ class EquipmentContainerGURPS extends ContainerGURPS {
 		return this.system.equipped
 	}
 
+	set equipped(equipped: boolean) {
+		this.system.equipped = equipped
+	}
+
 	get techLevel(): string {
 		return this.system.tech_level
 	}
@@ -196,6 +200,10 @@ class EquipmentContainerGURPS extends ContainerGURPS {
 		const system: any = super.exportSystemData(keepOther)
 		delete system.name
 		return system
+	}
+
+	toggleState(): void {
+		this.equipped = !this.equipped
 	}
 }
 

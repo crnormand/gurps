@@ -19,9 +19,10 @@ export interface PrereqListObj {
 }
 
 export class PrereqList extends BasePrereq {
-	constructor(data?: PrereqListObj, context: PrereqConstructionContext = {}) {
+	constructor(data?: PrereqList | any, context: PrereqConstructionContext = {}) {
+		data = mergeObject(PrereqList.defaults, data)
 		super(data, context)
-		Object.assign(this, mergeObject(PrereqList.defaults, data))
+		// Object.assign(this, mergeObject(PrereqList.defaults, data))
 		if ((data as PrereqList).prereqs) {
 			const list = (data as PrereqList).prereqs
 			this.prereqs = []
