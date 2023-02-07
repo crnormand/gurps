@@ -49,7 +49,15 @@ export enum SETTINGS {
 	ROLL_MODIFIERS = "roll_modifiers",
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
 	SSRT = "ssrt",
+	INITIATIVE_FORMULA = "initiative_formula",
 }
+
+export enum SOCKET {
+	INITIATIVE_CHANGED = "initiative_changed",
+	UPDATE_BUCKET = "update_bucket",
+}
+
+export const DEFAULT_INITIATIVE_FORMULA = "$basic_speed+($dx/10000)+(1d6/100000)"
 
 export enum DisplayMode {
 	NotShown = "not_shown",

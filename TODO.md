@@ -11,9 +11,22 @@
     -   roll chat command
 -   Implement "static" items (0.15 and older) compatibility
 	-	add interface for accessing old bonuses
+-   Active Effects with Features
+	-	implement active effect list
+	-	add levels to active effects
+	-	match CSS to PF2e's (that title is nice)
+	-	separate maneuvers from active effects
+	-	hide maneuver panel when effects panel shown and vice versa
+	-	effects as items
+	-	status as subset of effect class
+	-	maneuver as subset of status or effect class
+	-	allow for levels
+
 
 ## 1.0.0
 
+-	Make "weapon" into an item type but do not allow it to be created
+	-	will probably make things easier in the long run
 -   Drag rollable buttons to hotbar or message box for macros
 -   Finish "static" character (0.15 and older) compatibility
 -   Convert over the Active Effects implementation and add to it
@@ -23,7 +36,6 @@
     -   add optional encumbrance to dynamic character
     -   add posture to dynamic character
     -   add maneuver to dynamic character
--   Active Effects with Features
 -   @X@ notation dialog box for items
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization

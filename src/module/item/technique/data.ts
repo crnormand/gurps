@@ -1,13 +1,12 @@
-import { Feature } from "@feature"
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
 import { ItemType } from "@item/data"
-import { EncumbrancePenaltyMultiplier } from "@item/skill/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { EncumbrancePenaltyMultiplier } from "@item/skill"
+import { Feature, Weapon } from "@module/config"
 import { Study } from "@module/data"
 import { SkillDefault } from "@module/default"
-import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type TechniqueSource = BaseItemSourceGURPS<ItemType.Technique, TechniqueSystemData>
+export type TechniqueSource = ItemGCSSource<ItemType.Technique, TechniqueSystemData>
 
 // Export class TechniqueData extends BaseItemDataGURPS<TechniqueGURPS> {}
 
@@ -18,7 +17,7 @@ export interface TechniqueData extends Omit<TechniqueSource, "effects">, Techniq
 	readonly _source: TechniqueSource
 }
 
-export interface TechniqueSystemData extends ItemSystemData {
+export interface TechniqueSystemData extends ItemGCSSystemData {
 	prereqs: PrereqList
 	tech_level: string
 	encumbrance_penalty_multiplier: EncumbrancePenaltyMultiplier

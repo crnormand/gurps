@@ -1,20 +1,8 @@
-import { PoolThreshold, PoolThresholdDef } from "./pool_threshold"
-import { DamageProgression, gid } from "@module/data"
+import { PoolThreshold } from "./pool_threshold"
+import { DamageProgression } from "@module/data"
 import { VariableResolver, evaluateToNumber, sanitize } from "@util"
+import { AttributeDefObj, AttributeType, reserved_ids } from "./data"
 import { CharacterGURPS } from "@actor"
-
-export enum AttributeType {
-	Integer = "integer",
-	IntegerRef = "integer_ref",
-	Decimal = "decimal",
-	DecimalRef = "decimal_ref",
-	Pool = "pool",
-	PrimarySeparator = "primary_separator",
-	SecondarySeparator = "secondary_separator",
-	PoolSeparator = "pool_separator",
-}
-
-export const reserved_ids: string[] = [gid.Skill, gid.Parry, gid.Block, gid.Dodge, gid.SizeModifier, gid.Ten]
 
 export class AttributeDef {
 	constructor(data?: AttributeDefObj) {
@@ -72,18 +60,6 @@ export class AttributeDef {
 		}
 		return Math.round(cost)
 	}
-}
-
-export interface AttributeDefObj {
-	id: string
-	type: AttributeType
-	name: string
-	full_name?: string
-	attribute_base: string
-	cost_per_point?: number
-	cost_adj_percent_per_sm?: number
-	thresholds?: PoolThresholdDef[]
-	order?: number
 }
 
 export interface AttributeDef {

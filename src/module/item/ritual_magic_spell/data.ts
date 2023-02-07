@@ -1,10 +1,10 @@
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
 import { ItemType } from "@item/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { Weapon } from "@module/config"
 import { Difficulty, Study } from "@module/data"
-import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type RitualMagicSpellSource = BaseItemSourceGURPS<ItemType.RitualMagicSpell, RitualMagicSpellSystemData>
+export type RitualMagicSpellSource = ItemGCSSource<ItemType.RitualMagicSpell, RitualMagicSpellSystemData>
 
 // Export class RitualMagicSpellData extends BaseItemDataGURPS<RitualMagicSpellGURPS> {}
 
@@ -15,7 +15,7 @@ export interface RitualMagicSpellData extends Omit<RitualMagicSpellSource, "effe
 	readonly _source: RitualMagicSpellSource
 }
 
-export interface RitualMagicSpellSystemData extends ItemSystemData {
+export interface RitualMagicSpellSystemData extends ItemGCSSystemData {
 	prereqs: PrereqList
 	difficulty: Difficulty
 	tech_level: string

@@ -1,5 +1,6 @@
 import { StringCompare, StringComparison } from "@module/data"
-import { BaseFeature, FeatureType } from "./base"
+import { BaseFeature } from "./base"
+import { FeatureType } from "./data"
 
 export class SkillBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {

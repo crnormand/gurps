@@ -1,8 +1,9 @@
 {
 	"compilerOptions": {
 		"target": "ES2021",
-		"lib": ["DOM", "ES2021"],
-		"types": ["@league-of-foundry-developers/foundry-vtt-types"],
+		"lib": ["DOM", "ES2021", "DOM.Iterable"],
+		"types": ["jquery", "jest", "node", "handlebars"],
+		"typeRoots": ["node_modules/@types", "node_modules/handlebars", "types"],
 		"esModuleInterop": true,
 		"moduleResolution": "node",
 		"forceConsistentCasingInFileNames": true,
@@ -25,6 +26,5 @@
 			"@util": ["src/util"],
 			"@util/*": ["src/util/*"]
 		}
-	},
-	"include": ["src"]
+	}
 }

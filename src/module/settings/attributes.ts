@@ -1,4 +1,4 @@
-import { AttributeType } from "@module/attribute/attribute_def"
+import { AttributeType } from "@module/attribute"
 import { SYSTEM_NAME } from "@module/data"
 import { prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"

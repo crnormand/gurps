@@ -1,6 +1,6 @@
 import { SYSTEM_NAME } from "@module/data"
 
-export class PDFViewerSheet extends DocumentSheet {
+export class PDFViewerSheet extends DocumentSheet<DocumentSheetOptions<JournalEntry>, JournalEntry> {
 	pageNumber = 1
 
 	constructor(object: any, options: any = { pageNumber: 1 }) {
@@ -32,7 +32,7 @@ export class PDFViewerSheet extends DocumentSheet {
 		return params
 	}
 
-	getData(options?: Partial<DocumentSheetOptions> | undefined): any {
+	getData(options?: DocumentSheetOptions<JournalEntry>): any {
 		return mergeObject(super.getData(options), {
 			pageNumber: this.pageNumber,
 			params: this._getPDFData(),

@@ -97,6 +97,7 @@ abstract class SettingsMenuGURPS extends FormApplication {
 
 interface SettingsMenuGURPS extends FormApplication {
 	constructor: typeof SettingsMenuGURPS
+	object: object
 }
 
 export { SettingsMenuGURPS }

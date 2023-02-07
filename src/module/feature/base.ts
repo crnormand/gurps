@@ -1,23 +1,8 @@
-import { Feature } from "@feature"
-import { ItemGURPS } from "@module/config"
-import { ActiveEffectGURPS } from "@module/effect"
+import { ItemType } from "@item/data"
+import { Feature, ItemGURPS } from "@module/config"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
-
-export enum FeatureType {
-	AttributeBonus = "attribute_bonus",
-	ConditionalModifier = "conditional_modifier",
-	DRBonus = "dr_bonus",
-	ReactionBonus = "reaction_bonus",
-	SkillBonus = "skill_bonus",
-	SkillPointBonus = "skill_point_bonus",
-	SpellBonus = "spell_bonus",
-	SpellPointBonus = "spell_point_bonus",
-	WeaponBonus = "weapon_bonus",
-	WeaponDRDivisorBonus = "weapon_dr_divisor_bonus",
-	CostReduction = "cost_reduction",
-	ContaiedWeightReduction = "contained_weight_reduction",
-}
+import { FeatureType } from "./data"
 
 export interface FeatureConstructionContext {
 	ready?: boolean
@@ -56,7 +41,9 @@ export class BaseFeature {
 
 	get levels(): number {
 		if (this.item) {
-			if (this.item.type === "trait") return (this.item as any).levels
+			if (this.item.type === ItemType.Trait) return (this.item as any).levels
+			if (this.item.type === ItemType.Condition) return (this.item as any).level
+			if (this.item.type === ItemType.Effect) return (this.item as any).level
 			return 1
 		}
 		return this._levels
@@ -66,11 +53,11 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	setParent(parent: ItemGURPS | ActiveEffectGURPS): void {
+	setParent(parent: ItemGURPS): void {
 		this.parent = parent.uuid
 	}
 
-	addToTooltip(buffer?: TooltipGURPS): void {
+	addToTooltip(buffer: TooltipGURPS | null): void {
 		if (buffer) {
 			buffer.push("\n")
 			buffer.push(this.parent)

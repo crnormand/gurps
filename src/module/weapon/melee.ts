@@ -1,6 +1,7 @@
 import { gid } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { BaseWeapon, WeaponConstructionContext } from "./base"
+import { BaseWeapon } from "./base"
+import { WeaponConstructionContext } from "./data"
 
 class MeleeWeapon extends BaseWeapon {
 	constructor(data?: MeleeWeapon | any, context: WeaponConstructionContext = {}) {

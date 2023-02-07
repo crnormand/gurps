@@ -1,20 +1,22 @@
-import { CharacterGURPS } from "@actor/character"
+import { CharacterGURPS, StaticCharacterGURPS, StaticThresholdComparison, StaticThresholdOperator } from "@actor"
 import { ActorType } from "@actor/data"
-import { StaticCharacterGURPS } from "@actor/static_character"
-import { StaticThresholdComparison, StaticThresholdOperator } from "@actor/static_character/data"
-import { AttributeBonus } from "@feature/attribute_bonus"
-import { FeatureType } from "@feature/base"
-import { ConditionalModifier } from "@feature/conditional_modifier"
-import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
-import { CostReduction } from "@feature/cost_reduction"
-import { DRBonus } from "@feature/dr_bonus"
-import { ReactionBonus } from "@feature/reaction_bonus"
-import { SkillBonus } from "@feature/skill_bonus"
-import { SkillPointBonus } from "@feature/skill_point_bonus"
-import { SpellBonus } from "@feature/spell_bonus"
-import { SpellPointBonus } from "@feature/spell_point_bonus"
-import { WeaponDamageBonus } from "@feature/weapon_bonus"
-import { WeaponDRDivisorBonus } from "@feature/weapon_dr_divisor_bonus"
+import {
+	AttributeBonus,
+	BaseFeature,
+	ConditionalModifier,
+	ContainedWeightReduction,
+	CostReduction,
+	DRBonus,
+	FeatureType,
+	ReactionBonus,
+	SkillBonus,
+	SkillPointBonus,
+	SpellBonus,
+	SpellPointBonus,
+	ThresholdBonus,
+	WeaponDamageBonus,
+	WeaponDRDivisorBonus,
+} from "@feature"
 import {
 	BaseItemGURPS,
 	ContainerGURPS,
@@ -35,18 +37,22 @@ import {
 	TraitModifierContainerGURPS,
 	TraitModifierGURPS,
 } from "@item"
+import { ConditionGURPS } from "@item/condition"
 import { ItemType } from "@item/data"
+import { EffectGURPS } from "@item/effect"
 import { StaticItemGURPS } from "@item/static"
-import { AttributePrereq } from "@prereq/attribute_prereq"
-import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
-import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
-import { EquippedEquipmentPrereq } from "@prereq/equipped_equipment_prereq"
-import { PrereqList } from "@prereq/prereq_list"
-import { SkillPrereq } from "@prereq/skill_prereq"
-import { SpellPrereq } from "@prereq/spell_prereq"
-import { TraitPrereq } from "@prereq/trait_prereq"
+import {
+	AttributePrereq,
+	ContainedQuantityPrereq,
+	ContainedWeightPrereq,
+	EquippedEquipmentPrereq,
+	PrereqList,
+	SkillPrereq,
+	SpellPrereq,
+	TraitPrereq,
+} from "@prereq"
 import { PrereqType, StudyType } from "./data"
-import { MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
+import { BaseWeapon, MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: any = {
@@ -70,6 +76,7 @@ const GURPSCONFIG: any = {
 			[ItemType.EquipmentModifierContainer]: EquipmentModifierContainerGURPS,
 			[ItemType.Note]: NoteGURPS,
 			[ItemType.NoteContainer]: NoteContainerGURPS,
+			[ItemType.Condition]: ConditionGURPS,
 			[ItemType.LegacyEquipment]: StaticItemGURPS,
 		},
 		allowedContents: {
@@ -140,6 +147,7 @@ const GURPSCONFIG: any = {
 				ItemType.EquipmentContainer,
 				ItemType.Note,
 				ItemType.NoteContainer,
+				ItemType.Condition,
 			],
 			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment],
 		},
@@ -451,7 +459,7 @@ const GURPSCONFIG: any = {
 // };
 export { GURPSCONFIG }
 
-export type ItemGURPS =
+export type CharItemGURPS =
 	| TraitGURPS
 	| TraitContainerGURPS
 	| TraitModifierGURPS
@@ -469,6 +477,8 @@ export type ItemGURPS =
 	| NoteGURPS
 	| NoteContainerGURPS
 
+export type ItemGURPS = CharItemGURPS | EffectGURPS | ConditionGURPS
+
 export type ActorGURPS = CharacterGURPS | StaticCharacterGURPS
 
 export type Prereq =
@@ -480,3 +490,36 @@ export type Prereq =
 	| SkillPrereq
 	| SpellPrereq
 	| EquippedEquipmentPrereq
+
+export type Bonus = Feature | ThresholdBonus
+
+export type Feature =
+	| BaseFeature
+	| AttributeBonus
+	| ConditionalModifier
+	| DRBonus
+	| ReactionBonus
+	| SkillBonus
+	| SkillPointBonus
+	| SpellBonus
+	| SpellPointBonus
+	| WeaponDamageBonus
+	| WeaponDRDivisorBonus
+	| CostReduction
+	| ContainedWeightReduction
+
+export type featureMap = {
+	attributeBonuses: AttributeBonus[]
+	costReductions: CostReduction[]
+	drBonuses: DRBonus[]
+	skillBonuses: SkillBonus[]
+	skillPointBonuses: SkillPointBonus[]
+	spellBonuses: SpellBonus[]
+	spellPointBonuses: SpellPointBonus[]
+	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
+	thresholdBonuses: ThresholdBonus[]
+}
+
+export type FeatureConstructor = Partial<Bonus>
+
+export type Weapon = BaseWeapon | MeleeWeapon | RangedWeapon

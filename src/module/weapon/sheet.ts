@@ -1,14 +1,13 @@
 import { CharacterGURPS } from "@actor"
 import { Attribute } from "@module/attribute"
-import { ItemGURPS } from "@module/config"
+import { CharItemGURPS, Weapon } from "@module/config"
 import { gid, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
 import { i18n } from "@util"
-import { Weapon } from "."
 
 export class WeaponSheet extends FormApplication {
-	constructor(object: ItemGURPS, uuid: string, options: any = {}) {
+	constructor(object: CharItemGURPS, uuid: string, options: any = {}) {
 		super(object, options)
 		this.uuid = uuid
 		this.weapon = object.weapons.get(this.uuid)!
@@ -123,7 +122,7 @@ export class WeaponSheet extends FormApplication {
 }
 
 export interface WeaponSheet extends FormApplication {
-	object: ItemGURPS
+	object: CharItemGURPS
 	uuid: string
 	weapon: Weapon
 	index: number

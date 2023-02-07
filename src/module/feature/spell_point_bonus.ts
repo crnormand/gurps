@@ -1,7 +1,7 @@
-import { BaseFeature, FeatureType } from "./base"
+import { BaseFeature } from "./base"
 import { StringCompare, StringComparison } from "@module/data"
-import { SpellBonusMatch } from "./spell_bonus"
 import { stringCompare } from "@util"
+import { FeatureType, SpellBonusMatch } from "./data"
 
 export class SpellPointBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {

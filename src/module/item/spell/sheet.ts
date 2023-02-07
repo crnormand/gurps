@@ -1,8 +1,8 @@
-import { ItemSheetGURPS } from "@item/base/sheet"
+import { ItemSheetGCS } from "@item/gcs"
 import { SpellGURPS } from "."
 
-export class SpellSheet extends ItemSheetGURPS {
-	static get defaultOptions(): DocumentSheetOptions {
+export class SpellSheet extends ItemSheetGCS {
+	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {
 			classes: options.classes.concat(["spell"]),
@@ -10,7 +10,7 @@ export class SpellSheet extends ItemSheetGURPS {
 		return options
 	}
 
-	getData(options?: Partial<DocumentSheetOptions> | undefined) {
+	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
 		const sheetData = {
 			...super.getData(options),
 			...{
@@ -33,6 +33,6 @@ export class SpellSheet extends ItemSheetGURPS {
 	}
 }
 
-export interface SpellSheet extends ItemSheetGURPS {
+export interface SpellSheet extends ItemSheetGCS {
 	object: SpellGURPS
 }

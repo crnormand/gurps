@@ -65,7 +65,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 						request.open("GET", path)
 						new Promise(resolve => {
 							request.onload = () => {
-								if (request.status == 200) {
+								if (request.status === 200) {
 									const text = request.response
 									this.file = {
 										text: text,

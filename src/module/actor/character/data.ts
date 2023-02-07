@@ -1,12 +1,10 @@
 import { DamageProgression, DisplayMode } from "@module/data"
 import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
-import { AttributeDefObj } from "@module/attribute/attribute_def"
-import { Attribute, AttributeObj } from "@module/attribute"
-import { ResourceTrackerObj } from "@module/resource_tracker"
-import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
 import { HitLocationTableData } from "./hit_location"
 import { ActorType } from "@actor/data"
+import { AttributeDefObj, AttributeObj } from "@module/attribute"
+import { ResourceTrackerDefObj, ResourceTrackerObj } from "@module/resource_tracker"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -42,7 +40,7 @@ export interface CharacterSystemData extends ActorSystemData {
 	calc: CharacterCalc
 	editing: boolean
 	// TODO: check if this fits
-	pools: { [key: string]: Partial<Attribute> }
+	pools: Record<string, any>
 	third_party?: any
 }
 

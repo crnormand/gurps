@@ -1,23 +1,13 @@
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { CharacterGURPS } from "@actor"
 import { i18n, newUUID, stringCompare } from "@util"
-import { Feature } from "@feature"
-import { SkillBonus } from "@feature/skill_bonus"
 import { gid } from "@module/data"
 import { WeaponDamage } from "./damage"
-import { ItemGURPS } from "@module/config"
+import { CharItemGURPS, Feature } from "@module/config"
 import { ItemType } from "@item/data"
-
-export interface WeaponConstructionContext {
-	ready?: boolean
-	recursive?: boolean
-}
-
-export enum WeaponType {
-	MeleeWeapon = "melee_weapon",
-	RangedWeapon = "ranged_weapon",
-}
+import { CharacterGURPS } from "@actor"
+import { SkillBonus } from "@feature"
+import { WeaponConstructionContext, WeaponType } from "./data"
 
 class BaseWeapon {
 	type: WeaponType = WeaponType.MeleeWeapon
@@ -148,7 +138,7 @@ class BaseWeapon {
 		let started = false
 		let value = 0
 		for (const ch of this.strength) {
-			if (ch.match("d")) {
+			if (ch.match(/[0-9]/)) {
 				value *= 10
 				value += parseInt(ch)
 				started = true
@@ -243,7 +233,7 @@ class BaseWeapon {
 
 interface BaseWeapon {
 	actor: CharacterGURPS | null
-	parent: ItemGURPS
+	parent: CharItemGURPS
 	id: string
 	type: WeaponType
 	damage: WeaponDamage

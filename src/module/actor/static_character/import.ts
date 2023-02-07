@@ -303,7 +303,7 @@ export class StaticCharacterImporter {
 
 		if (p.portrait) {
 			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
-				r.img = `data:imdage/png;base64,${p.portrait}.png`
+				r.img = `data:image/png;base64,${p.portrait}.png`
 			} else {
 				console.error(i18n("gurps.error.import.portait_permissions"))
 				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
