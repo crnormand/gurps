@@ -1,18 +1,6 @@
-import { reserved_ids } from "@module/attribute/attribute_def"
-import { PoolThreshold, PoolThresholdDef } from "@module/attribute/pool_threshold"
+import { PoolThreshold, reserved_ids } from "@module/attribute"
 import { sanitize, VariableResolver } from "@util"
-
-export interface ResourceTrackerDefObj {
-	id: string
-	name: string
-	full_name: string
-	max: number
-	min: number
-	isMaxEnforced: boolean
-	isMinEnforced: boolean
-	thresholds?: PoolThresholdDef[]
-	order: number
-}
+import { ResourceTrackerDefObj } from "./data"
 
 export class ResourceTrackerDef {
 	def_id = ""

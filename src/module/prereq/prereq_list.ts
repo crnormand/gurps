@@ -54,6 +54,7 @@ export class PrereqList extends BasePrereq {
 		const local = new TooltipGURPS()
 		if (this.prereqs.length)
 			for (const p of this.prereqs) {
+				// @ts-ignore
 				const ps = p.satisfied(actor, exclude, local, prefix)
 				if (ps[0]) count++
 				eqpPenalty = eqpPenalty || ps[1]

@@ -1,8 +1,8 @@
-import { ContainerSheetGURPS } from "@item/container/sheet"
+import { ContainerSheetGURPS } from "@item/container"
 import { SYSTEM_NAME } from "@module/data"
 
 export class EquipmentSheet extends ContainerSheetGURPS {
-	static get defaultOptions(): DocumentSheetOptions {
+	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {
 			classes: options.classes.concat(["equipment"]),
@@ -14,7 +14,7 @@ export class EquipmentSheet extends ContainerSheetGURPS {
 		return `/systems/${SYSTEM_NAME}/templates/item/equipment/sheet.hbs`
 	}
 
-	getData(options?: Partial<DocumentSheetOptions> | undefined) {
+	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
 		const items = this.items
 		const sheetData = {
 			...super.getData(options),

@@ -1,10 +1,10 @@
 import { BaseActorGURPS } from "@actor"
-import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
-import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
 import { SYSTEM_NAME } from "@module/data"
 import { DamageChat } from "@module/damage_calculator/damage_chat_message"
 import { DnD } from "@util/drag_drop"
 import { ActorGURPS } from "@module/config"
+import { PropertiesToSource } from "types/types/helperTypes"
+import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
 
 type DispatchFunctions = Record<string, (arg: any) => void>
 

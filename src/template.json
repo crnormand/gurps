@@ -246,6 +246,7 @@
 			"eqp_modifier_container",
 			"note",
 			"note_container",
+			"condition",
 			"equipment"
 		],
 		"templates": {
@@ -403,6 +404,10 @@
 		"note_container": {
 			"templates": ["common"],
 			"open": false
+		},
+		"condition": {
+			"features": [],
+			"canLevel": false
 		},
 		"equipment": {
 			"eqt": {

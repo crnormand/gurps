@@ -1,5 +1,6 @@
 import { ItemGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
+import { ConditionData } from "./condition"
 import { EquipmentData, EquipmentSystemData } from "./equipment/data"
 import { EquipmentContainerData, EquipmentContainerSystemData } from "./equipment_container/data"
 import { EquipmentModifierData, EquipmentModifierSystemData } from "./equipment_modifier/data"
@@ -37,6 +38,7 @@ export type ItemDataGURPS =
 	| EquipmentModifierContainerData
 	| NoteData
 	| NoteContainerData
+	| ConditionData
 
 export type ItemSourceGURPS = ItemDataGURPS["_source"]
 
@@ -88,6 +90,9 @@ export enum ItemType {
 	Note = "note",
 	NoteContainer = "note_container",
 	LegacyEquipment = "equipment",
+	Effect = "efffect",
+	Condition = "condition",
+	GCS = "gcs",
 }
 // Export type ItemType =
 // 	| "trait"

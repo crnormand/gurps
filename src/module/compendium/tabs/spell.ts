@@ -1,5 +1,6 @@
 import { SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
+import { TabName } from "../data"
 import { CompendiumTab } from "./base"
 
 export class CompendiumSpellTab extends CompendiumTab {
@@ -19,7 +20,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 	}
 
 	constructor(browser: CompendiumBrowser) {
-		super(browser, "spell")
+		super(browser, TabName.Spell)
 	}
 
 	protected override async loadData(): Promise<void> {
@@ -28,7 +29,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 
 		for await (const { pack, index } of this.browser.packLoader.loadPacks(
 			"Item",
-			this.browser.loadedPacks("spell"),
+			this.browser.loadedPacks(TabName.Spell),
 			indexFields
 		)) {
 			const collection = (game as Game).packs.get(pack.collection)

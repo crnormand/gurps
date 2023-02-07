@@ -1,12 +1,12 @@
-import { Feature, WeaponDRDivisorBonus } from "@feature"
 import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import { DiceGURPS } from "@module/dice"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { stringCompare } from "@util"
-import { Weapon } from "."
-import { CharacterGURPS } from "@actor"
 import { ItemType } from "@item/data"
+import { CharacterGURPS } from "@actor"
+import { Feature, Weapon } from "@module/config"
+import { WeaponDRDivisorBonus } from "@feature"
 
 export class WeaponDamage {
 	constructor(data?: (WeaponDamage & { parent: Weapon }) | any) {
@@ -205,7 +205,7 @@ export class WeaponDamage {
 		set: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>,
 		dieCount: number,
 		levels: number,
-		tooltip?: TooltipGURPS
+		tooltip: TooltipGURPS | null = null
 	): void {
 		if (f instanceof WeaponDamageBonus || f instanceof WeaponDRDivisorBonus) {
 			const level = f.levels

@@ -1,14 +1,15 @@
-import { ItemSheetGURPS } from "@item/base/sheet"
-import { TraitModifierGURPS } from "@item/trait_modifier"
-import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
-import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
-import { ContainerGURPS } from "."
 import { SYSTEM_NAME } from "@module/data"
 import { DnD } from "@util/drag_drop"
 import { ItemGURPS } from "@module/config"
+import { ItemSheetGCS } from "@item/gcs"
+import { PropertiesToSource } from "types/types/helperTypes"
+import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
+import { ItemSheetGURPS } from "@item/base"
+import { TraitModifierGURPS } from "@item/trait_modifier"
+import { ContainerGURPS } from "./document"
 
-export class ContainerSheetGURPS extends ItemSheetGURPS {
-	static get defaultOptions(): DocumentSheetOptions {
+export class ContainerSheetGURPS extends ItemSheetGCS {
+	static get defaultOptions(): DocumentSheetOptions<Item> {
 		return mergeObject(ItemSheetGURPS.defaultOptions, {
 			template: `/systems/${SYSTEM_NAME}/templates/item/container-sheet.hbs`,
 			dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }],

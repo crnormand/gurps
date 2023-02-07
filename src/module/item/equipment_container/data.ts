@@ -1,7 +1,6 @@
-import { Feature } from "@feature"
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
 import { ItemType } from "@item/data"
-import { Weapon } from "@module/weapon"
+import { Feature, Weapon } from "@module/config"
 import { PrereqList } from "@prereq"
 
 export type EquipmentContainerSource = BaseContainerSource<ItemType.EquipmentContainer, EquipmentContainerSystemData>

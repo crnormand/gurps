@@ -1,4 +1,4 @@
-import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
+import { RollModifier, SOCKET, SYSTEM_NAME, UserFlags } from "@module/data"
 import { GURPS } from "@module/gurps"
 
 class ModifierBucket extends Application {
@@ -176,7 +176,7 @@ class ModifierBucket extends Application {
 		const modStack = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
 		await player.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modStack)
 		console.log(player, player.id)
-		;(game as Game).socket?.emit("system.gcsga", { type: "updateBucket", users: [player.id] })
+		;(game as Game).socket?.emit(`system.${SYSTEM_NAME}`, { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
 	}
 }
 

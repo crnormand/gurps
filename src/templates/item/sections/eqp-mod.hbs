@@ -18,7 +18,7 @@
 <div class="value">{{this.value}}</div>
 <div class="weight">{{this.weight}}</div>
 <div class="tags">{{join this.tags ", "}}</div>
-<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+<div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}
 {{>compendium-browser/eqp_modifier}}

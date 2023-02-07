@@ -328,11 +328,10 @@ export class CompendiumBrowser extends Application {
 	hookTab(): void {
 		this.navigationTab = this._tabs[0]
 		const tabCallback = this.navigationTab.callback
-		// @ts-ignore
-		this.navigationTab.callback = async (event: JQuery.TriggeredEvent | null, tabs: Tabs, active: TabName) => {
-			// @ts-ignore
+		// This.navigationTab.callback = async (event: JQuery.TriggeredEvent | null, tabs: Tabs, active: TabName) => {
+		this.navigationTab.callback = async (event: any | null, tabs: Tabs, active: string) => {
 			tabCallback?.(event, tabs, active)
-			await this.loadTab(active)
+			await this.loadTab(active as TabName)
 		}
 	}
 

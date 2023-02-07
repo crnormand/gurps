@@ -1,11 +1,14 @@
 import {
+	DEFAULT_INITIATIVE_FORMULA,
 	Difficulty,
 	NumberCompare,
 	NumberComparison,
+	SETTINGS,
 	StringCompare,
 	StringComparison,
 	Study,
 	StudyType,
+	SYSTEM_NAME,
 } from "@module/data"
 import { v4 as uuidv4 } from "uuid"
 
@@ -466,4 +469,41 @@ export async function urlToBase64(imageUrl: string) {
 	canvas.height = bitmap.height
 	ctx?.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height)
 	return canvas.toDataURL("image/png").replace("data:image/png;base64,", "")
+}
+
+/**
+ *
+ */
+export function setInitiative() {
+	let formula: string = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.INITIATIVE_FORMULA) as string
+	if (!formula) formula = DEFAULT_INITIATIVE_FORMULA
+	if ((game as Game).user?.isGM) (game as Game).settings.set(SYSTEM_NAME, SETTINGS.INITIATIVE_FORMULA, formula)
+	// Const formulaMatch = formula.match(/([^:]*):?(\d)?/)
+	// console.log(formulaMatch)
+	// let minDigits = formulaMatch && !!formulaMatch[2] ? parseInt(formulaMatch[2]) : 5
+	CONFIG.Combat.initiative.formula = formula
+	// If (broadcast) {
+	// 	(game as Game).socket?.emit(`system.${SYSTEM_NAME}`, {
+	// 		type: SOCKET.INITIATIVE_CHANGED,
+	// 		formula: formula
+	// 	})
+	// }
+	// CONFIG.Combat.initiative = {
+	// 	formula: formulaMatch?.[1] ?? DEFAULT_INITIATIVE_FORMULA,
+	// 	decimals: minDigits
+	// }
+}
+
+/**
+ *
+ * @param obj
+ * @param keys
+ */
+export function pick<T extends object, K extends keyof T>(obj: T, keys: Iterable<K>): Pick<T, K> {
+	return [...keys].reduce((result, key) => {
+		if (key in obj) {
+			result[key] = obj[key]
+		}
+		return result
+	}, {} as Pick<T, K>)
 }

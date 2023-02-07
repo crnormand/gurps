@@ -20,7 +20,7 @@ export class StaticItemSheet extends ItemSheet {
 		return `/systems/${SYSTEM_NAME}/templates/item/legacy_equipment/sheet.hbs`
 	}
 
-	getData(options?: Partial<DocumentSheetOptions> | undefined) {
+	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
 		let deprecation: string = this.item.getFlag(SYSTEM_NAME, ItemFlags.Deprecation) ? "acknowledged" : "manual"
 		const sheetData = {
 			...(super.getData(options) as any),

@@ -50,6 +50,22 @@
 		&.reference {
 			border-right: none;
 		}
+
+		&.reference:not(.header) {
+			display: flex;
+			flex-direction: row;
+			color: rgba(var(--color-link), 1) !important;
+			.ref {
+				background-color: transparent;
+				cursor: pointer;
+				&:hover {
+					color: rgba(var(--color-link-rollover), 1) !important;
+				}
+				&:active {
+					color: rgba(var(--color-link-pressed), 1) !important;
+				}
+			}
+		}
 	}
 
 	:nth-last-child(-n + 5) {

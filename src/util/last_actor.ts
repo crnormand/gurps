@@ -9,14 +9,15 @@ export class LastActor {
 
 	static async get(): Promise<ActorGURPS | null> {
 		const uuid: string = String((game as Game).user?.getFlag(SYSTEM_NAME, "last_actor")) || ""
-		const actor = fromUuid(uuid) as unknown as ActorGURPS
+		let actor: any = await fromUuid(uuid)
+		if (actor instanceof TokenDocument) actor = actor.actor
 		if (actor) return actor
 		return null
 	}
 
 	static async getToken(): Promise<TokenDocument | null> {
 		const uuid: string = String((game as Game).user?.getFlag(SYSTEM_NAME, "last_token")) || ""
-		const token = fromUuid(uuid) as unknown as TokenDocument
+		const token: any = await fromUuid(uuid)
 		if (token) return token
 		return null
 	}

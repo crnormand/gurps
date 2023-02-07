@@ -1,12 +1,12 @@
+import { ActorSheetGURPS } from "@actor/base"
 import { ActorFlags } from "@actor/base/data"
-import { ActorSheetGURPS } from "@actor/base/sheet"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { RollGURPS } from "@module/roll"
 import { i18n, Static } from "@util"
-import { StaticCharacterGURPS } from "."
 import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
+import { StaticCharacterGURPS } from "./document"
 
 export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	config: StaticCharacterSheetConfig | null = null

@@ -16,7 +16,7 @@
 </div>
 <div class="cost">{{this.costDescription}}</div>
 <div class="tags">{{join this.tags ", "}}</div>
-<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+<div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}
 {{>item/sections/trait-mod}}

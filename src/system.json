@@ -45,7 +45,6 @@
 	"readme": "README.md",
 	"bugs": "https://github.com/crnormand/gurps/issues",
 	"changelog": "",
-	"initiative": "",
 	"gridDistance": 1,
 	"gridUnits": "yd",
 	"primaryTokenAttribute": "pools.HP",

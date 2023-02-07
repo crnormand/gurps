@@ -1,4 +1,4 @@
-import { ActorSheetGURPS } from "@actor/base/sheet"
+import { ActorSheetGURPS } from "@actor/base"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
@@ -13,8 +13,7 @@ import {
 	TraitContainerGURPS,
 	TraitGURPS,
 } from "@item"
-import { Attribute, AttributeObj } from "@module/attribute"
-import { AttributeType } from "@module/attribute/attribute_def"
+import { Attribute, AttributeObj, AttributeType } from "@module/attribute"
 import { CondMod } from "@module/conditional-modifier"
 import { ItemGURPS } from "@module/config"
 import { gid, RollType, SYSTEM_NAME } from "@module/data"
@@ -24,9 +23,9 @@ import { RollGURPS } from "@module/roll"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, i18n } from "@util"
 import { weightFormat } from "@util/measure"
-import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
 import { Encumbrance } from "./data"
+import { CharacterGURPS } from "./document"
 import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {

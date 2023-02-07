@@ -1,6 +1,7 @@
-import { BaseFeature, FeatureType } from "./base"
 import { StringCompare, StringComparison } from "@module/data"
 import { stringCompare } from "@util"
+import { BaseFeature } from "./base"
+import { FeatureType, SpellBonusMatch } from "./data"
 
 export class SpellBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
@@ -31,5 +32,3 @@ export interface SpellBonus extends BaseFeature {
 	name?: StringCompare
 	tags?: StringCompare
 }
-
-export type SpellBonusMatch = "all_colleges" | "college_name" | "spell_name" | "power_source_name"

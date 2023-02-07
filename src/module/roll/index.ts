@@ -1,3 +1,4 @@
+import { CharacterGURPS } from "@actor"
 import { ActorGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
@@ -40,29 +41,28 @@ export class RollGURPS extends Roll {
 			.trim()
 	}
 
-	override async render(
-		options: {
-			flavor?: string
-			template: string
-			isPrivate: boolean
-		} = {
-			template: RollGURPS.CHAT_TEMPLATE,
-			isPrivate: false,
+	static override replaceFormulaData(
+		formula: string,
+		data: any,
+		options?: {
+			missing: string
+			warn: boolean
 		}
-	): Promise<string> {
-		console.log(this.system)
-		const chatData = mergeObject(
-			{
-				formula: options.isPrivate ? "????" : this.formula,
-				flavor: options.isPrivate ? null : options.flavor,
-				user: (game as Game).userId,
-				tooltip: options.isPrivate ? "" : await this.getTooltip(),
-				total: options.isPrivate ? "?" : Math.round(this.total! * 100) / 100,
-			},
-			this.system
-		)
-		console.log(chatData)
-		return renderTemplate(options.template, chatData)
+	): string {
+		let dataRgx = new RegExp(/\$([a-z.0-9_-]+)/gi)
+		const newFormula = formula.replace(dataRgx, (match, term) => {
+			if (data.actor) {
+				let value: any = (data.actor as CharacterGURPS).resolveVariable(term.replace("$", "")) ?? null
+				if (value === null) {
+					if (options?.warn && ui.notifications)
+						ui.notifications.warn((game as Game).i18n.format("DICE.WarnMissingData", { match }))
+					return options?.missing !== undefined ? String(options.missing) : match
+				}
+				return String(value).trim()
+			}
+			return ""
+		})
+		return super.replaceFormulaData(newFormula, data, options)
 	}
 
 	override _prepareData(data: any) {
@@ -110,7 +110,7 @@ export class RollGURPS extends Roll {
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
-					data.item.skillLevel,
+					data.item.effectiveLevel,
 					"3d6",
 					data.item.formattedName,
 					RollType.Skill,
@@ -328,8 +328,7 @@ export class RollGURPS extends Roll {
 		const damage = rollTotal + modifierTotal
 		const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
-		// @ts-ignore
-		const chatData: DamagePayload = {
+		const chatData: Partial<DamagePayload> = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
 			weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },
@@ -365,15 +364,6 @@ export class RollGURPS extends Roll {
 		await this.resetMods(user)
 	}
 
-	/**
-	 *
-	 * @param user
-	 * @param data
-	 * @param actor
-	 * @param formula
-	 * @param type
-	 * @param hidden
-	 */
 	static async rollGeneric(
 		user: StoredDocument<User> | null,
 		actor: ActorGURPS,
@@ -422,7 +412,6 @@ export class RollGURPS extends Roll {
 	}
 
 	static applyMods(level: number, modStack: RollModifier[]): number {
-		// Const modStack: RollModifier[] = (user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		let effectiveLevel = level
 		modStack.forEach(m => {
 			effectiveLevel += m.modifier
@@ -453,7 +442,6 @@ export class RollGURPS extends Roll {
 	 * for hit location. If there is, use that. Otherwise go to the world settings to determine the default damage
 	 * location. (Or, eventually, we could ask the target for it's default hit location...).
 	 *
-	 * @param actor
 	 * @param _actor
 	 */
 	static getHitLocationFromLastAttackRoll(_actor: ActorGURPS): string {
