@@ -26,6 +26,7 @@ import Document, { DocumentModificationOptions, Metadata } from "types/foundry/c
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
 
+// @ts-ignore
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
@@ -39,7 +40,7 @@ class BaseActorGURPS extends Actor {
 	}
 
 	protected async _preCreate(
-		data: ActorDataGURPS,
+		data: any,
 		options: DocumentModificationOptions,
 		user: BaseUser
 	): Promise<void> {
@@ -313,8 +314,8 @@ class TraitModifierAdapter implements TargetTraitModifier {
 	}
 }
 
+// @ts-ignore
 interface BaseActorGURPS extends Actor {
-	// Readonly data: BaseActorDataGURPS;
 	flags: ActorFlagsGURPS
 	noPrepare: boolean
 	deepItems: Collection<ItemGURPS>

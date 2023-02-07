@@ -1,2 +1,2 @@
-import "../types/foundry"
+import "../types"
 import "handlebars"
