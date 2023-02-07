@@ -4,7 +4,6 @@ import { Context, DocumentModificationOptions } from "types/foundry/common/abstr
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { BaseItemSourceGURPS, ItemConstructionContextGURPS } from "./data"
 
-// @ts-ignore
 class BaseItemGURPS extends Item {
 	constructor(data: ItemDataGURPS | any, context: Context<Actor> & ItemConstructionContextGURPS = {}) {
 		if (context.gurps?.ready) {
@@ -37,7 +36,6 @@ class BaseItemGURPS extends Item {
 	}
 }
 
-// @ts-ignore
 interface BaseItemGURPS extends Item {
 	// System: ItemSystemData
 	// Temporary
