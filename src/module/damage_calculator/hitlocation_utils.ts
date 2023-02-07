@@ -1,12 +1,31 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { convertRollStringToArrayOfInt } from "@util/static"
 import { DamageType } from "./damage_type"
 
 export type HitLocationRollResult = {
 	location: HitLocation | undefined
 	roll: Roll
+}
+
+/**
+ *
+ * @param text
+ */
+function convertRollStringToArrayOfInt(text: string) {
+	let elements = text.split("-")
+	let range = elements.map(it => parseInt(it))
+
+	if (range.length === 0) return []
+
+	for (let i = 0; i < range.length; i++) {
+		if (typeof range[i] === "undefined" || isNaN(range[i])) return []
+	}
+
+	let results = []
+	for (let i = range[0]; i <= range[range.length - 1]; i++) results.push(i)
+
+	return results
 }
 
 export const HitLocationUtil = {
