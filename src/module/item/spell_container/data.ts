@@ -1,9 +1,7 @@
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { ItemType } from "@module/data"
 
-export type SpellContainerSource = BaseContainerSource<ItemType.SpellContainer, SpellContainerSystemData>
-
-// Export class SpellContainerData extends BaseContainerData<SpellContainerGURPS> {}
+export type SpellContainerSource = ItemGCSSource<ItemType.SpellContainer, SpellContainerSystemData>
 
 export interface SpellContainerData extends Omit<SpellContainerSource, "effects" | "items">, SpellContainerSystemData {
 	readonly type: SpellContainerSource["type"]
@@ -12,4 +10,4 @@ export interface SpellContainerData extends Omit<SpellContainerSource, "effects"
 	readonly _source: SpellContainerSource
 }
 
-export type SpellContainerSystemData = BaseContainerSystemData
+export type SpellContainerSystemData = ItemGCSSystemData

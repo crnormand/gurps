@@ -38,12 +38,14 @@ import {
 	EquipmentModifierGURPS,
 	EquipmentModifierSystemData,
 	EquipmentSystemData,
+	MeleeWeaponGURPS,
 	NoteContainerData,
 	NoteContainerGURPS,
 	NoteContainerSystemData,
 	NoteData,
 	NoteGURPS,
 	NoteSystemData,
+	RangedWeaponGURPS,
 	RitualMagicSpellData,
 	RitualMagicSpellGURPS,
 	RitualMagicSpellSystemData,
@@ -89,7 +91,6 @@ import {
 	TraitPrereq,
 } from "@prereq"
 import { ActorType, ItemType, PrereqType, StudyType } from "./data"
-import { BaseWeapon, MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: CONFIG["GURPS"] = {
@@ -115,6 +116,8 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[ItemType.NoteContainer]: NoteContainerGURPS,
 			[ItemType.Condition]: ConditionGURPS,
 			[ItemType.LegacyEquipment]: StaticItemGURPS,
+			[ItemType.MeleeWeapon]: MeleeWeaponGURPS,
+			[ItemType.RangedWeapon]: RangedWeaponGURPS,
 		},
 		allowedContents: {
 			[ItemType.Trait]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
@@ -215,12 +218,6 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[PrereqType.Equipment]: EquippedEquipmentPrereq,
 			[PrereqType.Skill]: SkillPrereq,
 			[PrereqType.Spell]: SpellPrereq,
-		},
-	},
-	Weapon: {
-		classes: {
-			[WeaponType.MeleeWeapon]: MeleeWeapon,
-			[WeaponType.RangedWeapon]: RangedWeapon,
 		},
 	},
 	select: {
@@ -501,7 +498,10 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 // };
 export { GURPSCONFIG }
 
-export type CharItemGURPS =
+export type CharItemGURPS = CharContainerGCS | NoteGURPS | NoteContainerGURPS
+
+// These classes extend the ItemGCS class
+export type CharContainerGCS =
 	| TraitGURPS
 	| TraitContainerGURPS
 	| TraitModifierGURPS
@@ -516,10 +516,10 @@ export type CharItemGURPS =
 	| EquipmentContainerGURPS
 	| EquipmentModifierGURPS
 	| EquipmentModifierContainerGURPS
-	| NoteGURPS
-	| NoteContainerGURPS
 
-export type ItemGURPS = CharItemGURPS | EffectGURPS | ConditionGURPS
+export type ItemGURPS = CharItemGURPS | EffectGURPS | ConditionGURPS | WeaponGURPS
+
+export type WeaponGURPS = MeleeWeaponGURPS | RangedWeaponGURPS
 
 export type ActorGURPS = CharacterGURPS | StaticCharacterGURPS
 
@@ -563,8 +563,6 @@ export type featureMap = {
 }
 
 export type FeatureConstructor = Partial<Bonus>
-
-export type Weapon = BaseWeapon | MeleeWeapon | RangedWeapon
 
 export type ItemDataGURPS =
 	| TraitData

@@ -1,10 +1,10 @@
-import { ContainerGURPS } from "@item/container"
+import { ItemGCS } from "@item/gcs"
 import { Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { baseRelativeLevel, SkillData, SkillLevel } from "./data"
 
-class SkillGURPS extends ContainerGURPS {
+class SkillGURPS extends ItemGCS {
 	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
 
 	unsatisfied_reason = ""
@@ -291,7 +291,7 @@ class SkillGURPS extends ContainerGURPS {
 	}
 }
 
-interface SkillGURPS {
+interface SkillGURPS extends ItemGCS {
 	readonly system: SkillData
 }
 

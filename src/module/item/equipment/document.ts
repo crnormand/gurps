@@ -1,15 +1,15 @@
 import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
-import { ContainerGURPS } from "@item/container"
 import { EquipmentContainerGURPS } from "@item/equipment_container"
 import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
+import { ItemGCS } from "@item/gcs"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
 import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { CostValueType, EquipmentData } from "./data"
 
-class EquipmentGURPS extends ContainerGURPS {
+class EquipmentGURPS extends ItemGCS {
 	unsatisfied_reason = ""
 
 	// Static override get schema(): typeof EquipmentData {

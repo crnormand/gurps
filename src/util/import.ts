@@ -19,10 +19,9 @@ import {
 	TraitModifierSystemData,
 	TraitSystemData,
 } from "@item"
-import { Feature, ItemSystemDataGURPS, Weapon } from "@module/config"
+import { Feature, ItemSystemDataGURPS } from "@module/config"
 import { CR, ItemType, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
-import { BaseWeapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 import { i18n_f, newUUID } from "./misc"
 
@@ -151,7 +150,6 @@ class ImportUtils {
 			cr: data.cr ?? CR.None,
 			cr_adj: data.cr_adj ?? "none",
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
 		}
@@ -224,7 +222,6 @@ class ImportUtils {
 			difficulty: data.difficulty ?? "dx/a",
 			defaults: data.defaults ? ImportUtils.importDefaults(data.defaults) : [],
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
 		}
@@ -248,7 +245,6 @@ class ImportUtils {
 			default: data.default ? new SkillDefault(data.default) : new SkillDefault(),
 			defaults: data.defaults ? ImportUtils.importDefaults(data.defaults) : [],
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
 		}
@@ -280,7 +276,6 @@ class ImportUtils {
 			tech_level: data.tech_level ?? "",
 			tech_level_required: !!data.tech_level,
 			difficulty: data.difficulty ?? "dx/a",
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			college: data.college ?? [],
 			power_source: data.power_source ?? "",
 			spell_class: data.spell_class ?? "",
@@ -307,7 +302,6 @@ class ImportUtils {
 			tech_level: data.tech_level ?? "",
 			tech_level_required: !!data.tech_level,
 			difficulty: data.difficulty ?? "dx/a",
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			college: data.college ?? [],
 			power_source: data.power_source ?? "",
 			spell_class: data.spell_class ?? "",
@@ -346,7 +340,6 @@ class ImportUtils {
 			tags: data.tags ?? [],
 			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			tech_level: data.tech_level ?? "",
 			value: data.value ?? 0,
 			weight: data.weight ?? "0 lb",
@@ -375,7 +368,6 @@ class ImportUtils {
 			tags: data.tags ?? [],
 			prereqs: data.prereqs ? new PrereqList(data.prereqs) : new PrereqList(),
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
-			weapons: data.weapons ? ImportUtils.importWeapons(data.weapons) : [],
 			tech_level: data.tech_level ?? "",
 			value: data.value ?? 0,
 			weight: data.weight ?? "0 lb",
@@ -457,14 +449,6 @@ class ImportUtils {
 		const list: Feature[] = []
 		for (const f of features) {
 			list.push(new BaseFeature(f, {}))
-		}
-		return list
-	}
-
-	private static importWeapons(features: Weapon[]): Weapon[] {
-		const list: Weapon[] = []
-		for (const w of features) {
-			list.push(new BaseWeapon(w))
 		}
 		return list
 	}

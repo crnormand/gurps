@@ -1,7 +1,7 @@
-import { ItemGCS } from "@item/gcs"
+import { BaseItemGURPS } from "@item/base"
 import { NoteData } from "./data"
 
-class NoteGURPS extends ItemGCS {
+class NoteGURPS extends BaseItemGURPS {
 	get formattedName(): string {
 		return this.formattedText
 	}
@@ -20,7 +20,7 @@ class NoteGURPS extends ItemGCS {
 	}
 }
 
-interface NoteGURPS extends ItemGCS {
+interface NoteGURPS extends BaseItemGURPS {
 	readonly system: NoteData
 }
 

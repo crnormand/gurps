@@ -1,12 +1,10 @@
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { ItemType } from "@module/data"
 
-export type EquipmentModifierContainerSource = BaseContainerSource<
+export type EquipmentModifierContainerSource = ItemGCSSource<
 	ItemType.EquipmentModifierContainer,
 	EquipmentModifierContainerSystemData
 >
-
-// Export class EquipmentModifierContainerData extends BaseContainerData<EquipmentModifierContainerGURPS> {}
 
 export interface EquipmentModifierContainerData
 	extends Omit<EquipmentModifierContainerSource, "effects" | "items">,
@@ -16,4 +14,4 @@ export interface EquipmentModifierContainerData
 	readonly _source: EquipmentModifierContainerSource
 }
 
-export type EquipmentModifierContainerSystemData = BaseContainerSystemData
+export type EquipmentModifierContainerSystemData = ItemGCSSystemData

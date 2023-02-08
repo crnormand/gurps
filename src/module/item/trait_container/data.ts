@@ -1,9 +1,7 @@
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { CRAdjustment, ItemType } from "@module/data"
 
-export type TraitContainerSource = BaseContainerSource<ItemType.TraitContainer, TraitContainerSystemData>
-
-// Export class TraitContainerData extends BaseContainerData<TraitContainerGURPS> {}
+export type TraitContainerSource = ItemGCSSource<ItemType.TraitContainer, TraitContainerSystemData>
 
 export interface TraitContainerData extends Omit<TraitContainerSource, "effects" | "items">, TraitContainerSystemData {
 	readonly type: TraitContainerSource["type"]
@@ -11,13 +9,9 @@ export interface TraitContainerData extends Omit<TraitContainerSource, "effects"
 	readonly _source: TraitContainerSource
 }
 
-export interface TraitContainerSystemData extends BaseContainerSystemData {
-	// Modifiers: Array<any>;
+export interface TraitContainerSystemData extends ItemGCSSystemData {
 	disabled: boolean
 	container_type: TraitContainerType
-	// Calc: {
-	// 	points: number;
-	// };
 	cr: number
 	cr_adj: CRAdjustment
 }

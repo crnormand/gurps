@@ -1,9 +1,7 @@
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { ItemType } from "@module/data"
 
-export type NoteContainerSource = BaseContainerSource<ItemType.NoteContainer, NoteContainerSystemData>
-
-// Export class NoteContainerData extends BaseContainerData<NoteContainerGURPS> {}
+export type NoteContainerSource = ItemGCSSource<ItemType.NoteContainer, NoteContainerSystemData>
 
 export interface NoteContainerData extends Omit<NoteContainerSource, "effects" | "items">, NoteContainerSystemData {
 	readonly type: NoteContainerSource["type"]
@@ -12,6 +10,6 @@ export interface NoteContainerData extends Omit<NoteContainerSource, "effects" |
 	readonly _source: NoteContainerSource
 }
 
-export interface NoteContainerSystemData extends BaseContainerSystemData {
+export interface NoteContainerSystemData extends ItemGCSSystemData {
 	text: string
 }

@@ -1,11 +1,9 @@
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { Feature, Weapon } from "@module/config"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { Feature } from "@module/config"
 import { ItemType } from "@module/data"
 import { PrereqList } from "@prereq"
 
-export type EquipmentContainerSource = BaseContainerSource<ItemType.EquipmentContainer, EquipmentContainerSystemData>
-
-// Export class EquipmentContainerData extends BaseContainerData<EquipmentContainerGURPS> {}
+export type EquipmentContainerSource = ItemGCSSource<ItemType.EquipmentContainer, EquipmentContainerSystemData>
 
 export interface EquipmentContainerData
 	extends Omit<EquipmentContainerSource, "effects" | "items">,
@@ -16,7 +14,7 @@ export interface EquipmentContainerData
 	readonly _source: EquipmentContainerSource
 }
 
-export interface EquipmentContainerSystemData extends BaseContainerSystemData {
+export interface EquipmentContainerSystemData extends ItemGCSSystemData {
 	description: string
 	prereqs: PrereqList
 	equipped: boolean
@@ -28,13 +26,6 @@ export interface EquipmentContainerSystemData extends BaseContainerSystemData {
 	weight: string
 	uses: number
 	max_uses: number
-	weapons: Weapon[]
 	features: Feature[]
-	// Calc: {
-	// 	extended_value: string;
-	// 	extended_weight: string;
-	// 	extended_weight_for_skills: string;
-	// };
-	// modifiers: Array<any>;
 	other: boolean
 }

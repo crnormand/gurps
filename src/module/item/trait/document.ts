@@ -1,11 +1,11 @@
-import { ContainerGURPS } from "@item/container"
+import { ItemGCS } from "@item/gcs"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
 import { CR, CRAdjustment } from "@module/data"
 import { i18n, i18n_f, SelfControl } from "@util"
 import { TraitData } from "./data"
 
-class TraitGURPS extends ContainerGURPS {
+class TraitGURPS extends ItemGCS {
 	unsatisfied_reason = ""
 
 	// Getters

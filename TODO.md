@@ -42,6 +42,7 @@
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -	negative value stat support for tokens
 -	convert mook generator
+-	support rollable bonuses
 
 ## 1.1.0 and beyond
 

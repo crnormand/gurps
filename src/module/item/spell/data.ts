@@ -1,5 +1,4 @@
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
-import { Weapon } from "@module/config"
 import { Difficulty, ItemType, Study } from "@module/data"
 import { PrereqList } from "@prereq"
 
@@ -28,11 +27,5 @@ export interface SpellSystemData extends ItemGCSSystemData {
 	casting_time: string
 	duration: string
 	points: number
-	weapons: Weapon[]
 	study: Study[]
-	// Calc: {
-	// 	level: number;
-	// 	rsl: string;
-	// 	points: number;
-	// };
 }

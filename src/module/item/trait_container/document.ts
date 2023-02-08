@@ -1,4 +1,5 @@
 import { ContainerGURPS } from "@item/container"
+import { ItemGCS } from "@item/gcs"
 import { TraitGURPS } from "@item/trait"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
@@ -6,7 +7,7 @@ import { CR, CRAdjustment } from "@module/data"
 import { i18n, i18n_f, SelfControl } from "@util"
 import { TraitContainerData, TraitContainerType } from "./data"
 
-class TraitContainerGURPS extends ContainerGURPS {
+class TraitContainerGURPS extends ItemGCS {
 	unsatisfied_reason = ""
 
 	// Static override get schema(): typeof TraitContainerData {

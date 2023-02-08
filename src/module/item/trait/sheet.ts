@@ -1,4 +1,5 @@
 import { ContainerSheetGURPS } from "@item/container"
+import { ItemType } from "@module/data"
 
 export class TraitSheet extends ContainerSheetGURPS {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
@@ -14,7 +15,9 @@ export class TraitSheet extends ContainerSheetGURPS {
 		const sheetData = {
 			...super.getData(options),
 			...{
-				modifiers: items.filter(e => e.type.includes("modifier")),
+				modifiers: items.filter(e =>
+					[ItemType.TraitModifier, ItemType.TraitModifierContainer].includes(e.type as ItemType)
+				),
 			},
 		}
 		return sheetData
