@@ -1,4 +1,4 @@
-import { ItemFlagsGURPS, NoteData } from "@item"
+import { ItemFlagsGURPS, ItemGCSSystemData, NoteData } from "@item"
 import { ItemGURPS, ItemSystemDataGURPS } from "@module/config"
 import { gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
@@ -332,7 +332,7 @@ export class GCAImporter {
 	}
 
 	getItemData(item: any, context: any = {}): [any, any, ItemType] {
-		let itemData: Partial<ItemSystemDataGURPS> = {}
+		let itemData: Partial<ItemGCSSystemData> = {}
 		this.importFeatures(item, itemData, context)
 		this.importPrereqs(item, itemData, context)
 		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { contentsData: [] } }
@@ -353,7 +353,6 @@ export class GCAImporter {
 			case "Perks":
 			case "Quirks":
 				itemData = { ...itemData, ...this.getTraitData(item) }
-				// Flags[SYSTEM_NAME]!.contentsData = this.getNestedItems(item, data, context);
 				return [itemData, flags, ItemType.Trait]
 			case "Skills":
 				if (item.type.includes("Tech")) {

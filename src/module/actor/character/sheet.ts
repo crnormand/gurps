@@ -2,8 +2,10 @@ import { ActorSheetGURPS } from "@actor/base"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	MeleeWeaponGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
+	RangedWeaponGURPS,
 	RitualMagicSpellGURPS,
 	SkillContainerGURPS,
 	SkillGURPS,
@@ -20,7 +22,6 @@ import { gid, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
-import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, i18n } from "@util"
 import { weightFormat } from "@util/measure"
 import { CharacterSheetConfig } from "./config_sheet"
@@ -544,8 +545,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			[[], [], [], [], [], []]
 		)
 
-		const melee: MeleeWeapon[] = this.actor.meleeWeapons
-		const ranged: RangedWeapon[] = this.actor.rangedWeapons
+		const melee: Collection<MeleeWeaponGURPS> = this.actor.meleeWeapons
+		const ranged: Collection<RangedWeaponGURPS> = this.actor.rangedWeapons
 		const reactions: CondMod[] = this.actor.reactions
 		const conditionalModifiers: CondMod[] = this.actor.conditionalModifiers
 

@@ -1,14 +1,14 @@
 import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
-import { ContainerGURPS } from "@item/container"
 import { EquipmentGURPS } from "@item/equipment"
 import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
+import { ItemGCS } from "@item/gcs"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
 import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
 import { EquipmentContainerData } from "./data"
 
-class EquipmentContainerGURPS extends ContainerGURPS {
+class EquipmentContainerGURPS extends ItemGCS {
 	unsatisfied_reason = ""
 
 	// Getters

@@ -1,17 +1,25 @@
 import { CharacterGURPS } from "@actor"
 import { HitLocationTable } from "@actor/character/hit_location"
 import { FeatureType } from "@feature"
-import { ItemSheetGURPS } from "@item/base"
+import { BaseItemGURPS } from "@item/base"
+import { ContainerSheetGURPS } from "@item/container"
 import { AttributeDefObj } from "@module/attribute"
-import { CharItemGURPS, ItemGURPS } from "@module/config"
-import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
-import { MeleeWeapon, RangedWeapon } from "@module/weapon"
-import { WeaponSheet } from "@module/weapon/sheet"
+import { ItemGURPS } from "@module/config"
+import {
+	gid,
+	ItemType,
+	NumberComparison,
+	PrereqType,
+	SETTINGS,
+	StringComparison,
+	StudyType,
+	SYSTEM_NAME,
+} from "@module/data"
 import { i18n, prepareFormData } from "@util"
 import { ItemGCS } from "./document"
 
 // @ts-ignore
-export class ItemSheetGCS extends ItemSheetGURPS {
+export class ItemSheetGCS extends ContainerSheetGURPS {
 	getData(options?: Partial<DocumentSheetOptions<Item>>): any {
 		const itemData = this.object.toObject(false)
 		const attributes: Record<string, string> = {}
@@ -47,15 +55,14 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 		attributes.parry = i18n("gurps.attributes.parry")
 		attributes.block = i18n("gurps.attributes.block")
 		const item = this.item as ItemGCS
-		const meleeWeapons = [...item.meleeWeapons].map(e => mergeObject(e[1], { index: e[0] }))
-		const rangedWeapons = [...item.rangedWeapons].map(e => mergeObject(e[1], { index: e[0] }))
+		const items = this.items
 
 		const sheetData = {
 			...super.getData(options),
 			...{
 				document: item,
-				meleeWeapons: meleeWeapons,
-				rangedWeapons: rangedWeapons,
+				meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
+				rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),
 				item: itemData,
 				system: (itemData as any).system,
 				config: CONFIG.GURPS,
@@ -90,7 +97,6 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 		html.find(".default .remove").on("click", event => this._removeDefault(event))
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
-		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
 		html.find("textarea")
 			.each(function () {
 				const height = this.scrollHeight - 2
@@ -191,7 +197,7 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 
 	_addMelee() {
 		const weapons = (this.item.system as any).weapons
-		const newMelee = new MeleeWeapon({ type: "melee_weapon" })
+		const newMelee = new BaseItemGURPS({ type: ItemType.MeleeWeapon })
 		weapons.push(newMelee)
 		const update: any = {}
 		update["system.weapons"] = weapons
@@ -200,7 +206,7 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 
 	_addRanged() {
 		const weapons = (this.item.system as any).weapons
-		const newRanged = new RangedWeapon({ type: "ranged_weapon" })
+		const newRanged = new BaseItemGURPS({ type: ItemType.RangedWeapon })
 		weapons.push(newRanged)
 		const update: any = {}
 		update["system.weapons"] = weapons
@@ -294,12 +300,6 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 		return this.item.update(update)
 	}
 
-	protected async _onWeaponEdit(event: JQuery.DoubleClickEvent): Promise<any> {
-		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		new WeaponSheet(this.item as CharItemGURPS, uuid, {}).render(true)
-	}
-
 	protected override _getHeaderButtons(): Application.HeaderButton[] {
 		const buttons: Application.HeaderButton[] = []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
@@ -317,6 +317,6 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 }
 
 // @ts-ignore
-export interface ItemSheetGCS extends ItemSheetGURPS {
+export interface ItemSheetGCS extends ContainerSheetGURPS {
 	object: ItemGCS
 }

@@ -1,10 +1,13 @@
 import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
 import {
+	BaseWeaponGURPS,
 	CR_Features,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	MeleeWeaponGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
+	RangedWeaponGURPS,
 	RitualMagicSpellGURPS,
 	SkillContainerGURPS,
 	SkillGURPS,
@@ -13,6 +16,7 @@ import {
 	TechniqueGURPS,
 	TraitContainerGURPS,
 	TraitGURPS,
+	WeaponType,
 } from "@item"
 import { CondMod } from "@module/conditional-modifier"
 import { attrPrefix, gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
@@ -20,7 +24,6 @@ import { DiceGURPS } from "@module/dice"
 import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { MeleeWeapon, RangedWeapon, WeaponType } from "@module/weapon"
 import {
 	damageProgression,
 	equalFold,
@@ -40,7 +43,7 @@ import { CharacterImporter } from "./import"
 import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
-import { Feature, featureMap, ItemGURPS, Weapon } from "@module/config"
+import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
 import { ConditionGURPS } from "@item/condition"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
@@ -737,43 +740,67 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// Weapons
-	get meleeWeapons(): MeleeWeapon[] {
-		return this.weapons(WeaponType.MeleeWeapon) as MeleeWeapon[]
+	get meleeWeapons(): Collection<MeleeWeaponGURPS> {
+		const meleeWeapons: Collection<MeleeWeaponGURPS> = new Collection()
+		for (const item of this.deepItems) {
+			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item._id!, item)
+		}
+		return meleeWeapons
 	}
 
-	get rangedWeapons(): RangedWeapon[] {
-		return this.weapons(WeaponType.RangedWeapon) as RangedWeapon[]
+	get rangedWeapons(): Collection<RangedWeaponGURPS> {
+		const rangedWeapons: Collection<RangedWeaponGURPS> = new Collection()
+		for (const item of this.deepItems) {
+			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item._id!, item)
+		}
+		return rangedWeapons
 	}
 
-	weapons(type: WeaponType): Weapon[] {
-		return this.equippedWeapons(type)
+	get weapons(): Collection<WeaponGURPS> {
+		const weapons: Collection<WeaponGURPS> = new Collection()
+		for (const item of this.deepItems) {
+			if (item instanceof BaseWeaponGURPS) weapons.set(item._id!, item)
+		}
+		return weapons
 	}
 
-	equippedWeapons(type: WeaponType): Weapon[] {
-		let weaponList: Weapon[] = []
-		for (const t of this.traits) {
-			t.weapons.forEach(w => {
-				if (w.type === type) weaponList.push(w)
-			})
+	equippedWeapons(type: WeaponType): WeaponGURPS[] {
+		switch (type) {
+			case ItemType.MeleeWeapon:
+				return this.meleeWeapons
+					.filter(e => e.equipped)
+					.sort((a, b) => (a.usage > b.usage ? 1 : b.usage > a.usage ? -1 : 0))
+			case ItemType.RangedWeapon:
+				return this.rangedWeapons
+					.filter(e => e.equipped)
+					.sort((a, b) => (a.usage > b.usage ? 1 : b.usage > a.usage ? -1 : 0))
 		}
-		for (const sk of this.skills) {
-			sk.weapons.forEach(w => {
-				if (w.type === type) weaponList.push(w)
-			})
-		}
-		for (const sp of this.spells) {
-			sp.weapons.forEach(w => {
-				if (w.type === type) weaponList.push(w)
-			})
-		}
-		for (const e of this.carried_equipment) {
-			e.weapons.forEach(w => {
-				if (w.type === type) weaponList.push(w)
-			})
-		}
-		weaponList.sort((a, b) => (a.usage > b.usage ? 1 : b.usage > a.usage ? -1 : 0))
-		return weaponList
 	}
+	// EquippedWeapons(type: WeaponType): Weapon[] {
+	// 	let weaponList: Weapon[] = []
+	// 	for (const t of this.traits) {
+	// 		t.weapons.forEach(w => {
+	// 			if (w.type === type) weaponList.push(w)
+	// 		})
+	// 	}
+	// 	for (const sk of this.skills) {
+	// 		sk.weapons.forEach(w => {
+	// 			if (w.type === type) weaponList.push(w)
+	// 		})
+	// 	}
+	// 	for (const sp of this.spells) {
+	// 		sp.weapons.forEach(w => {
+	// 			if (w.type === type) weaponList.push(w)
+	// 		})
+	// 	}
+	// 	for (const e of this.carried_equipment) {
+	// 		e.weapons.forEach(w => {
+	// 			if (w.type === type) weaponList.push(w)
+	// 		})
+	// 	}
+	// 	weaponList.sort((a, b) => (a.usage > b.usage ? 1 : b.usage > a.usage ? -1 : 0))
+	// 	return weaponList
+	// }
 
 	// TODO: changed
 	// get reactions(): Collection<any> {
@@ -1243,8 +1270,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		usage: string,
 		type: WeaponType,
 		excludes: Map<string, boolean> | null
-	): Weapon | null {
-		let best: Weapon | null = null
+	): WeaponGURPS | null {
+		let best: WeaponGURPS | null = null
 		let level = -Infinity
 		for (const w of this.weaponNamed(name, usage, type, excludes)) {
 			const skill_level = w.level
@@ -1261,8 +1288,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		usage: string,
 		type: WeaponType,
 		excludes: Map<string, boolean> | null
-	): Collection<Weapon> {
-		const weapons: Collection<Weapon> = new Collection()
+	): Collection<WeaponGURPS> {
+		const weapons: Collection<WeaponGURPS> = new Collection()
 		for (const wep of this.equippedWeapons(type)) {
 			if (
 				(excludes === null || !excludes.get(wep.name!)) &&

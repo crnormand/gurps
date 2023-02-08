@@ -1,5 +1,5 @@
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
-import { Feature, Weapon } from "@module/config"
+import { Feature } from "@module/config"
 import { Difficulty, ItemType, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
@@ -29,7 +29,6 @@ export interface SkillSystemData extends ItemGCSSystemData {
 	points: number
 	// To change later
 	defaulted_from?: SkillDefault
-	weapons: Weapon[]
 	defaults: SkillDefault[]
 	features: Feature[]
 	study: Study[]

@@ -1,9 +1,9 @@
-import { ContainerGURPS } from "@item/container"
+import { ItemGCS } from "@item/gcs"
 import { SkillGURPS } from "@item/skill"
 import { TechniqueGURPS } from "@item/technique"
 import { SkillContainerData } from "./data"
 
-class SkillContainerGURPS extends ContainerGURPS {
+class SkillContainerGURPS extends ItemGCS {
 	// Static override get schema(): typeof SkillContainerData {
 	// 	return SkillContainerData;
 	// }

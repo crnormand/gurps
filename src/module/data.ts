@@ -372,7 +372,8 @@ export enum ItemType {
 	LegacyEquipment = "equipment",
 	Effect = "efffect",
 	Condition = "condition",
-	GCS = "gcs",
+	MeleeWeapon = "melee_weapon",
+	RangedWeapon = "ranged_weapon",
 }
 
 export enum ActorType {

@@ -1,5 +1,4 @@
-import { ItemConstructionContextGURPS } from "@item/base"
-import { ItemGCS } from "@item/gcs"
+import { BaseItemGURPS, ItemConstructionContextGURPS } from "@item/base"
 import { ContainerDataGURPS, ItemDataGURPS, ItemGURPS } from "@module/config"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { AnyDocumentData } from "types/foundry/common/abstract/data.mjs"
@@ -8,7 +7,7 @@ import EmbeddedCollection from "types/foundry/common/abstract/embedded-collectio
 import { DocumentConstructor } from "types/types/helperTypes"
 import { BaseContainerSystemData } from "./data"
 
-abstract class ContainerGURPS extends ItemGCS {
+abstract class ContainerGURPS extends BaseItemGURPS {
 	// Items?: EmbeddedCollection<ConfiguredDocumentClass<typeof BaseItemGURPS>, any>;
 	items: foundry.utils.Collection<Item> = new Collection()
 
@@ -222,7 +221,7 @@ abstract class ContainerGURPS extends ItemGCS {
 	}
 }
 
-interface ContainerGURPS extends ItemGCS {
+interface ContainerGURPS extends BaseItemGURPS {
 	readonly system: BaseContainerSystemData
 	// Items: foundry.utils.Collection<ItemGURPS>;
 	// items?: EmbeddedCollection<ConfiguredDocumentClass<typeof BaseItemGURPS>, any>;

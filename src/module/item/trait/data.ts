@@ -1,39 +1,27 @@
 import { SkillBonus } from "@feature/skill_bonus"
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { Feature, Weapon } from "@module/config"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { Feature } from "@module/config"
 import { CRAdjustment, ItemType, Study } from "@module/data"
 import { PrereqList } from "@prereq"
 
-export type TraitSource = BaseContainerSource<ItemType.Trait, TraitSystemData>
-
-// Export class TraitData extends BaseContainerData<TraitGURPS> {}
+export type TraitSource = ItemGCSSource<ItemType.Trait, TraitSystemData>
 
 export interface TraitData extends Omit<TraitSource, "effects" | "items">, TraitSystemData {
 	readonly type: TraitSource["type"]
-	// Data: TraitSystemData;
 	readonly _source: TraitSource
 }
 
-export interface TraitSystemData extends BaseContainerSystemData {
+export interface TraitSystemData extends ItemGCSSystemData {
 	prereqs: PrereqList
 	round_down: boolean
 	disabled: boolean
-	// Mental: boolean;
-	// physical: boolean;
-	// social: boolean;
-	// exotic: boolean;
-	// supernatural: boolean;
 	levels: number
 	can_level: boolean
 	base_points: number
 	points_per_level: number
-	// Calc: {
-	// 	points: number;
-	// };
 	cr: number
 	cr_adj: CRAdjustment
 	features?: Feature[]
-	weapons?: Weapon[]
 	study: Study[]
 }
 

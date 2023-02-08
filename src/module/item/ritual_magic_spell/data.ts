@@ -1,5 +1,4 @@
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
-import { Weapon } from "@module/config"
 import { Difficulty, ItemType, Study } from "@module/data"
 import { PrereqList } from "@prereq"
 
@@ -28,11 +27,6 @@ export interface RitualMagicSpellSystemData extends ItemGCSSystemData {
 	casting_time: string
 	duration: string
 	points: number
-	weapons: Weapon[]
-	// Calc: {
-	// 	level: number;
-	// 	rsl: string;
-	// };
 	base_skill: string
 	prereq_count: number
 	study: Study[]

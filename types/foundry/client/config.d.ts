@@ -77,9 +77,6 @@ declare global {
 			Prereq: {
 				classes: Record<string, Prereq.ConstructorOf>
 			}
-			Weapon: {
-				classes: Record<string, Weapon.ConstructorOf>
-			}
 			select: Record<string, Record<string, string>>
 			meleeMods: Record<string, RollModifier>
 			rangedMods: Record<string, RollModifier>

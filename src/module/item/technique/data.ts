@@ -1,6 +1,6 @@
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { EncumbrancePenaltyMultiplier } from "@item/skill"
-import { Feature, Weapon } from "@module/config"
+import { Feature } from "@module/config"
 import { ItemType, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { PrereqList } from "@prereq"
@@ -20,18 +20,11 @@ export interface TechniqueSystemData extends ItemGCSSystemData {
 	prereqs: PrereqList
 	tech_level: string
 	encumbrance_penalty_multiplier: EncumbrancePenaltyMultiplier
-	// May change to object type
 	difficulty: string
 	points: number
-	// To change later
 	defaulted_from?: SkillDefault
-	weapons: Weapon[]
 	defaults: SkillDefault[]
 	features: Feature[]
-	// Calc: {
-	// 	level: number;
-	// 	rsl: string;
-	// };
 	default: SkillDefault
 	limit: number
 	limited: boolean

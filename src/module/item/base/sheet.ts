@@ -28,6 +28,10 @@ export class ItemSheetGURPS extends ItemSheet {
 		const pdf = $(event.currentTarget).data("pdf")
 		if (pdf) return openPDF(pdf)
 	}
+
+	get item(): this["object"] {
+		return this.object
+	}
 }
 
 export interface ItemSheetGURPS extends ItemSheet {

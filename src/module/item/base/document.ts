@@ -1,3 +1,4 @@
+import { BaseActorGURPS } from "@actor"
 import { ItemDataGURPS } from "@module/config"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { Context, DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
@@ -5,6 +6,9 @@ import { BaseUser } from "types/foundry/common/documents.mjs"
 import { BaseItemSourceGURPS, ItemConstructionContextGURPS } from "./data"
 
 class BaseItemGURPS extends Item {
+	// @ts-ignore
+	parent: CharacterGURPS | ContainerGURPS | null
+
 	constructor(data: ItemDataGURPS | any, context: Context<Actor> & ItemConstructionContextGURPS = {}) {
 		if (context.gurps?.ready) {
 			super(data, context)
@@ -15,8 +19,22 @@ class BaseItemGURPS extends Item {
 				},
 			})
 			const ItemConstructor = CONFIG.GURPS.Item.documentClasses[data.type as ItemType]
-			return ItemConstructor ? new ItemConstructor(data, context) : new BaseItemGURPS(data, context)
+			if (ItemConstructor) new ItemConstructor(data, context)
+			throw Error("Invalid item type")
 		}
+	}
+
+	override delete(context?: DocumentModificationContext | undefined): Promise<any> {
+		if (!(this.parent instanceof Item)) return super.delete(context)
+		return this.parent.deleteEmbeddedDocuments("Item", [this.id!])
+	}
+
+	static override async updateDocuments(
+		updates: any[],
+		context: DocumentModificationContext & { options: any }
+	): Promise<any[]> {
+		if (!(parent instanceof Item)) return super.updateDocuments(updates, context)
+		return parent.updateEmbeddedDocuments("Item", updates, context.options)
 	}
 
 	protected async _preCreate(
@@ -33,6 +51,27 @@ class BaseItemGURPS extends Item {
 		if (this._source.img === (foundry.documents.BaseItem as any).DEFAULT_ICON)
 			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${type}.svg`
 		await super._preCreate(data, options, user)
+	}
+
+	get actor(): BaseActorGURPS | null {
+		if (this.parent) return this.parent instanceof Actor ? this.parent : this.parent.actor
+		return null
+	}
+
+	get parents(): Array<any> {
+		if (!this.parent) return []
+		const grandparents = !(this.parent instanceof Actor) ? this.parent.parents : []
+		return [this.parent, ...grandparents]
+	}
+
+	get parentCount(): number {
+		let i = 0
+		let p: any = this.parent
+		while (p) {
+			i++
+			p = p.parent
+		}
+		return i
 	}
 }
 

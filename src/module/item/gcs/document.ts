@@ -1,11 +1,11 @@
-import { CharacterGURPS } from "@actor"
 import { BaseFeature } from "@feature"
-import { BaseItemGURPS } from "@item/base"
 import { ContainerGURPS } from "@item/container"
-import { Feature, ItemDataGURPS, Weapon } from "@module/config"
-import { ItemType, Study, SYSTEM_NAME } from "@module/data"
+import { MeleeWeaponGURPS } from "@item/melee_weapon"
+import { RangedWeaponGURPS } from "@item/ranged_weapon"
+import { BaseWeaponGURPS } from "@item/weapon"
+import { Feature, ItemDataGURPS } from "@module/config"
+import { ActorType, ItemType, Study, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { BaseWeapon, MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 import { getAdjustedStudyHours } from "@util"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
@@ -14,18 +14,7 @@ import { BaseUser } from "types/foundry/common/documents.mjs"
 import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
 import { ItemGCSSystemData } from "./data"
 
-class ItemGCS extends BaseItemGURPS {
-	// @ts-ignore
-	parent: CharacterGURPS | ContainerGURPS | null
-
-	static override async updateDocuments(
-		updates: any[],
-		context: DocumentModificationContext & { options: any }
-	): Promise<any[]> {
-		if (!(parent instanceof Item)) return super.updateDocuments(updates, context)
-		return parent.updateEmbeddedDocuments("Item", updates, context.options)
-	}
-
+abstract class ItemGCS extends ContainerGURPS {
 	protected async _preCreate(
 		data: ItemDataGURPS,
 		options: DocumentModificationOptions,
@@ -46,7 +35,7 @@ class ItemGCS extends BaseItemGURPS {
 		data: DeepPartial<ItemDataConstructorData | (ItemDataConstructorData & Record<string, unknown>)>,
 		context?: DocumentModificationContext & MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
-		if (this.actor && context?.noPrepare) this.actor.noPrepare = true
+		if (this.actor && context?.noPrepare) (this.actor as any).noPrepare = true
 		if (!(this.parent instanceof Item)) return super.update(data, context)
 		data._id = this.id
 		await this.parent.updateEmbeddedDocuments("Item", [data])
@@ -54,42 +43,14 @@ class ItemGCS extends BaseItemGURPS {
 		this.render(false, { action: "update", data: data })
 	}
 
-	override delete(context?: DocumentModificationContext | undefined): Promise<any> {
-		if (!(this.parent instanceof Item)) return super.delete(context)
-		return this.parent.deleteEmbeddedDocuments("Item", [this.id!])
+	override get actor(): (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null {
+		const actor = super.actor
+		if (actor?.type === ActorType.Character) return actor
+		return null
 	}
-
-	prepareData(): void {
-		super.prepareData()
-	}
-
-	// Should not be necessary
-	// override prepareBaseData(): void {
-	// mergeObject(this.system, this._source.system)
-	// mergeObject(this.flags, this._source.flags)
-	// setProperty(this, "name", this._source.name)
-	// setProperty(this, "sort", this._source.sort)
-	// if (getProperty(this, "system.features"))
-	// 	setProperty(this, "system.features", {
-	// 		...getProperty(this, "system.features"),
-	// 	})
-	// if (getProperty(this, "system.prereqs.prereqs"))
-	// 	setProperty(this, "system.prereqs.prereqs", {
-	// 		...getProperty(this, "system.prereqs.prereqs"),
-	// 	})
-	// if (getProperty(this, "system.weapons"))
-	// 	setProperty(this, "system.weapons", {
-	// 		...getProperty(this, "system.weapons"),
-	// 	})
-	// }
 
 	get formattedName(): string {
 		return this.name ?? ""
-	}
-
-	get actor(): CharacterGURPS | null {
-		if (this.parent) return this.parent instanceof Actor ? this.parent : this.parent.actor
-		return null
 	}
 
 	get enabled(): boolean | undefined {
@@ -127,37 +88,27 @@ class ItemGCS extends BaseItemGURPS {
 		return this.prereqs?.prereqs.length === 0
 	}
 
-	get meleeWeapons(): Map<string, MeleeWeapon> {
-		return new Map([...this.weapons].filter(([_k, v]) => v instanceof MeleeWeapon)) as Map<string, MeleeWeapon>
+	get meleeWeapons(): Collection<MeleeWeaponGURPS> {
+		const meleeWeapons: Collection<MeleeWeaponGURPS> = new Collection()
+		for (const item of this.items) {
+			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item._id!, item)
+		}
+		return meleeWeapons
 	}
 
-	get rangedWeapons(): Map<string, RangedWeapon> {
-		return new Map([...this.weapons].filter(([_k, v]) => v instanceof RangedWeapon)) as Map<string, RangedWeapon>
+	get rangedWeapons(): Collection<RangedWeaponGURPS> {
+		const rangedWeapons: Collection<RangedWeaponGURPS> = new Collection()
+		for (const item of this.items) {
+			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item._id!, item)
+		}
+		return rangedWeapons
 	}
 
-	get weapons(): Map<string, Weapon> {
-		if (
-			![
-				"trait",
-				"skill",
-				"technique",
-				"spell",
-				"ritual_magic_spell",
-				"equipment",
-				"equipment_container",
-			].includes(this.type)
-		)
-			return new Map()
-		const weapons: Map<string, Weapon> = new Map()
-		;(this.system as any).weapons.forEach((w: any, index: number) => {
-			weapons.set(
-				w.id,
-				new BaseWeapon({
-					...w,
-					...{ parent: this, actor: this.actor, index: index },
-				})
-			)
-		})
+	get weapons(): Collection<BaseWeaponGURPS> {
+		const weapons: Collection<BaseWeaponGURPS> = new Collection()
+		for (const item of this.items) {
+			if (item instanceof BaseWeaponGURPS) weapons.set(item._id!, item)
+		}
 		return weapons
 	}
 
@@ -166,22 +117,6 @@ class ItemGCS extends BaseItemGURPS {
 		return (this.system as any).study
 			.map((e: Study) => getAdjustedStudyHours(e))
 			.reduce((partialSum: number, a: number) => partialSum + a, 0)
-	}
-
-	get parents(): Array<any> {
-		if (!this.parent) return []
-		const grandparents = !(this.parent instanceof Actor) ? this.parent.parents : []
-		return [this.parent, ...grandparents]
-	}
-
-	get parentCount(): number {
-		let i = 0
-		let p: any = this.parent
-		while (p) {
-			i++
-			p = p.parent
-		}
-		return i
 	}
 
 	sameSection(compare: Item): boolean {
@@ -204,7 +139,7 @@ class ItemGCS extends BaseItemGURPS {
 		if ((this as any).modifiers)
 			system.modifiers = (this as any).modifiers.map((e: ItemGCS) => e.exportSystemData(false))
 		if (system.weapons)
-			system.weapons = system.weapons.map(function (e: BaseWeapon) {
+			system.weapons = system.weapons.map(function (e: BaseWeaponGURPS) {
 				const f: any = { ...e }
 				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
 				return f
@@ -214,9 +149,7 @@ class ItemGCS extends BaseItemGURPS {
 	}
 }
 
-// @ts-ignore
-interface ItemGCS extends BaseItemGURPS {
-	parent: CharacterGURPS | ContainerGURPS | null
+interface ItemGCS extends ContainerGURPS {
 	readonly system: ItemGCSSystemData
 }
 
