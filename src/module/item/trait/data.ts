@@ -1,8 +1,7 @@
 import { SkillBonus } from "@feature/skill_bonus"
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { ItemType } from "@item/data"
 import { Feature, Weapon } from "@module/config"
-import { CRAdjustment, Study } from "@module/data"
+import { CRAdjustment, ItemType, Study } from "@module/data"
 import { PrereqList } from "@prereq"
 
 export type TraitSource = BaseContainerSource<ItemType.Trait, TraitSystemData>

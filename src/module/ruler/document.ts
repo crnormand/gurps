@@ -38,7 +38,7 @@ class RulerGURPS extends Ruler {
 
 	static getRangeMod(yards: number): number {
 		yards = Math.round(yards * 100) / 100
-		const tableChoice = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SSRT) as any
+		const tableChoice = game.settings.get(SYSTEM_NAME, SETTINGS.SSRT) as any
 		switch (tableChoice) {
 			case "standard":
 				return RulerGURPS._getRangeModStandard(yards)

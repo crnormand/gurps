@@ -378,7 +378,7 @@ declare global {
 	namespace PlaceablesLayer {
 		type HistoryEventType = "create" | "update" | "delete"
 
-		type CreationState = ValueOf<typeof PlaceablesLayer["CREATION_STATES"]>
+		type CreationState = ValueOf<(typeof PlaceablesLayer)["CREATION_STATES"]>
 
 		/**
 		 * @typeParam DocumentName - The key of the configuration which defines the object and document class.

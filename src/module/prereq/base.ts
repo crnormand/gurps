@@ -15,7 +15,7 @@ export class BasePrereq {
 			mergeObject(context, {
 				ready: true,
 			})
-			const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[data?.type as PrereqType]
+			const PrereqConstructor = CONFIG.GURPS.Prereq.classes[data?.type as PrereqType]
 			if (PrereqConstructor) return new PrereqConstructor(data as any, context)
 			throw new Error("No PrereqConstructor provided")
 		}

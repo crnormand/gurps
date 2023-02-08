@@ -129,6 +129,6 @@ declare global {
 		/**
 		 * The directions in which a tooltip can extend, relative to its tool-tipped element.
 		 */
-		type TOOLTIP_DIRECTIONS = ValueOf<typeof TooltipManager["TOOLTIP_DIRECTIONS"]>
+		type TOOLTIP_DIRECTIONS = ValueOf<(typeof TooltipManager)["TOOLTIP_DIRECTIONS"]>
 	}
 }

@@ -32,7 +32,7 @@ class DiceGURPS {
 		str = str.trim()
 		let dice: DiceGURPSDef = {
 			sides: 6,
-			count: 1,
+			count: 0,
 			modifier: 0,
 			multiplier: 1,
 		}

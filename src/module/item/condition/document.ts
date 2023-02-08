@@ -1,6 +1,5 @@
-import { ItemType } from "@item/data"
 import { DurationType, EffectGURPS } from "@item/effect"
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
 import { ConditionID, ConditionSource, ConditionSystemData } from "./data"
 import { ConditionList } from "./list"

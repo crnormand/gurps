@@ -26,7 +26,7 @@ interface MacroDataSchema extends DocumentSchema {
 	scope: DocumentField<foundry.CONST.MACRO_SCOPES> & {
 		type: string
 		required: true
-		default: typeof foundry.CONST.MACRO_SCOPES[0]
+		default: (typeof foundry.CONST.MACRO_SCOPES)[0]
 		validate: (t: unknown) => t is foundry.CONST.MACRO_SCOPES
 		validationError: "The provided Macro scope must be in CONST.MACRO_SCOPES"
 	}

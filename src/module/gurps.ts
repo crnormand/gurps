@@ -42,13 +42,11 @@ import { CompendiumBrowser } from "./compendium"
 import { PDFViewerSheet } from "@module/pdf/sheet"
 import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
-import { SYSTEM_NAME, UserFlags } from "./data"
+import { ActorType, ItemType, SYSTEM_NAME, UserFlags } from "./data"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { ColorSettings } from "./settings/colors"
 import { DamageChat } from "./damage_calculator/damage_chat_message"
-import { ItemType } from "@item/data"
-import { ActorType } from "@actor/data"
 import { RollGURPS } from "@module/roll"
 import { ModifierButton } from "./mod_prompt/button"
 import { loadModifiers } from "@module/mod_prompt/data"
@@ -78,6 +76,7 @@ import {
 	TraitSheet,
 } from "@item"
 import { CharacterSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
+import { DamageCalculator } from "./damage_calculator/damage_calculator"
 
 Error.stackTraceLimit = Infinity
 
@@ -108,6 +107,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.TokenModifierControl = new TokenModifierControl()
 	GURPS.recurseList = Static.recurseList
 	GURPS.setLastActor = LastActor.set
+	GURPS.DamageCalculator = DamageCalculator
 }
 
 // Initialize system
@@ -122,12 +122,14 @@ Hooks.once("init", async () => {
 	// $("#logo").attr("width", "100px");
 
 	// Assign custom classes and constants hereby
-	;(CONFIG as any).GURPS = GURPSCONFIG
-	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
+	CONFIG.GURPS = GURPSCONFIG
+	// @ts-ignore
+	CONFIG.Item.documentClass = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
 	CONFIG.Token.documentClass = TokenDocumentGURPS
 	CONFIG.Token.objectClass = TokenGURPS
-	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+	// @ts-ignore
+	CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
 	CONFIG.Combat.documentClass = CombatGURPS
 	CONFIG.statusEffects = StatusEffectsGURPS
 	CONFIG.Canvas.rulerClass = RulerGURPS
@@ -266,7 +268,7 @@ Hooks.once("setup", async () => {
 Hooks.once("ready", async () => {
 	// Do anything once the system is ready
 	ColorSettings.applyColors()
-	loadModifiers(GURPS)
+	loadModifiers()
 
 	// ApplyDiceCSS()
 
@@ -278,7 +280,7 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	game.user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
 	;(game as any).ModifierButton = new ModifierButton()
 	;(game as any).ModifierButton.render(true)
 	;(game as any).CompendiumBrowser = new CompendiumBrowser()
@@ -292,12 +294,12 @@ Hooks.once("ready", async () => {
 	setInitiative()
 
 	// Await Promise.all(
-	// 	(game as Game).actors!.map(async actor => {
+	// 	game.actors!.map(async actor => {
 	// 		actor.prepareData()
 	// 	})
 	// )
 
-	// ; (game as Game).socket?.on(SYSTEM_NAME, async response => {
+	// ; game.socket?.on(SYSTEM_NAME, async response => {
 	// 	switch (response.type as SOCKET) {
 	// 		case SOCKET.UPDATE_BUCKET:
 	// 			ui.notifications?.info(response.users)

@@ -1,4 +1,3 @@
-import { ActorDataGURPS, ActorSourceGURPS } from "@actor/data"
 import { SYSTEM_NAME } from "@module/data"
 import { EffectGURPS, TraitContainerGURPS, TraitGURPS, TraitModifierGURPS } from "@item"
 import {
@@ -20,12 +19,13 @@ import {
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { DiceGURPS } from "@module/dice"
-import { ItemGURPS } from "@module/config"
+import { ActorDataGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
 import { ConditionGURPS, ConditionID } from "@item/condition"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
 
+// @ts-ignore
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
@@ -33,16 +33,12 @@ class BaseActorGURPS extends Actor {
 			this.noPrepare = false
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
-			const ActorConstructor = (CONFIG as any).GURPS.Actor.documentClasses[data.type]
+			const ActorConstructor = CONFIG.GURPS.Actor.documentClasses[data.type]
 			return ActorConstructor ? new ActorConstructor(data, context) : new BaseActorGURPS(data, context)
 		}
 	}
 
-	protected async _preCreate(
-		data: ActorDataGURPS,
-		options: DocumentModificationOptions,
-		user: BaseUser
-	): Promise<void> {
+	protected async _preCreate(data: any, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
 		// @ts-ignore
 		if (this._source.img === ActorData.DEFAULT_ICON)
 			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${data.type}.svg`
@@ -313,8 +309,8 @@ class TraitModifierAdapter implements TargetTraitModifier {
 	}
 }
 
+// @ts-ignore
 interface BaseActorGURPS extends Actor {
-	// Readonly data: BaseActorDataGURPS;
 	flags: ActorFlagsGURPS
 	noPrepare: boolean
 	deepItems: Collection<ItemGURPS>

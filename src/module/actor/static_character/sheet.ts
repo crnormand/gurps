@@ -25,7 +25,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	get template(): string {
-		if (!(game as Game).user?.isGM && this.actor.limited)
+		if (!game.user?.isGM && this.actor.limited)
 			return `systems${SYSTEM_NAME}/templates/actor/static_character/sheet_limited.hbs`
 		return `/systems/${SYSTEM_NAME}/templates/actor/static_character/sheet.hbs`
 	}
@@ -48,13 +48,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			// useCI: GURPS.ConditionalInjury.isInUse(),
 			// conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable(),
 			eqtsummary: this.actor.system.eqtsummary,
-			isGM: (game as Game).user?.isGM,
+			isGM: game.user?.isGM,
 			effects: this.actor.getEmbeddedCollection("ActiveEffect").contents,
-			// UseQN: (game as Game).settings.get(SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE),
+			// UseQN: game.settings.get(SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE),
 			current_year: new Date().getFullYear(),
-			maneuvers: (CONFIG as any).GURPS.select.maneuvers,
-			postures: (CONFIG as any).GURPS.select.postures,
-			move_types: (CONFIG as any).GURPS.select.move_types,
+			maneuvers: CONFIG.GURPS.select.maneuvers,
+			postures: CONFIG.GURPS.select.postures,
+			move_types: CONFIG.GURPS.select.move_types,
 			deprecation: deprecation,
 		}
 
@@ -162,7 +162,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
 		}
-		return RollGURPS.handleRoll((game as Game).user, this.actor, data)
+		return RollGURPS.handleRoll(game.user, this.actor, data)
 	}
 
 	protected async _onRollableHover(event: JQuery.MouseOverEvent | JQuery.MouseOutEvent, hover: boolean) {
@@ -189,7 +189,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
+		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
 					{
 						label: "",
@@ -199,7 +199,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 					},
 			  ]
 			: []
-		const show_import = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
+		const show_import = game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath
 		let label = i18n("gurps.character.header.import")
 		if (import_path) label = i18n("gurps.character.header.reimport")

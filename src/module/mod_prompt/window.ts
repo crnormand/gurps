@@ -1,5 +1,4 @@
 import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
-import { GURPS } from "@module/gurps"
 import { fSearch } from "@util/fuse"
 import { ModifierBrowse } from "./browse"
 import { ModifierButton } from "./button"
@@ -46,7 +45,7 @@ export class ModifierWindow extends Application {
 	}
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object | Promise<object> {
-		const user = (game as Game).user
+		const user = game.user
 		let modStack = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) ?? []
 
 		return mergeObject(super.getData(options), {
@@ -86,7 +85,7 @@ export class ModifierWindow extends Application {
 		const input = String($(event.currentTarget).val())
 		html.css("min-width", `max(${input.length}ch, 180px)`)
 		this.value = input
-		this.list.mods = fSearch(GURPS.allMods, input, {
+		this.list.mods = fSearch(CONFIG.GURPS.allMods, input, {
 			includeMatches: true,
 			includeScore: true,
 			keys: ["name", "modifier", "tags"],
@@ -177,7 +176,7 @@ export class ModifierWindow extends Application {
 	togglePin() {
 		if (this.list.selection === -1) return
 		const pinnedMods: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as RollModifier[]) ?? []
 		const selectedMod: RollModifier = this.list.mods[this.list.selection]
 		const matchingMod = pinnedMods.find(e => e.name === selectedMod.name)
 		if (matchingMod) {
@@ -185,13 +184,13 @@ export class ModifierWindow extends Application {
 		} else {
 			pinnedMods.push(selectedMod)
 		}
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
 		this.list.render()
 	}
 
 	getPinnedMods() {
 		const pinnedMods: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as RollModifier[]) ?? []
 		this.list.mods = pinnedMods
 		this.list.render()
 	}
@@ -214,10 +213,10 @@ export class ModifierWindow extends Application {
 	removeModifier(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const modList: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		const index = $(event.currentTarget).data("index")
 		modList.splice(index, 1)
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
 		this.button.render()
 	}

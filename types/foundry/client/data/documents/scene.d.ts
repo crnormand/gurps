@@ -447,7 +447,7 @@ declare global {
 		 * @param data - (default: `{}`)
 		 * @returns The created thumbnail data.
 		 */
-		createThumbnail(data?: Partial<ThumbnailCreationData>): ReturnType<typeof ImageHelper["createThumbnail"]>
+		createThumbnail(data?: Partial<ThumbnailCreationData>): ReturnType<(typeof ImageHelper)["createThumbnail"]>
 	}
 
 	interface SceneDimensions {

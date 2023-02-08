@@ -523,7 +523,7 @@ type Flavor = Record<`%F${number}%`, string>
 
 type MessageData<T extends DeepPartial<ConstructorParameters<typeof ChatMessage>[0]>> = {
 	user: string
-	type: typeof foundry.CONST.CHAT_MESSAGE_TYPES["ROLL"]
+	type: (typeof foundry.CONST.CHAT_MESSAGE_TYPES)["ROLL"]
 	content: number
 	sound: typeof CONFIG.sounds.dice
 } & T

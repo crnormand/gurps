@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from "uuid"
  * @param fallback
  */
 export function i18n(value: string, fallback?: string): string {
-	const result = (game as Game).i18n.localize(value)
+	const result = game.i18n.localize(value)
 	if (fallback) return value === result ? fallback : result
 	return result
 }
@@ -30,9 +30,9 @@ export function i18n(value: string, fallback?: string): string {
  * @returns {string}
  */
 export function i18n_f(value: string, data: Record<string, unknown>, fallback?: string): string {
-	const template = (game as Game).i18n.has(value) ? value : fallback
+	const template = game.i18n.has(value) ? value : fallback
 	if (!template) return value
-	const result = (game as Game).i18n.format(template, data)
+	const result = game.i18n.format(template, data)
 	if (fallback) return value === result ? fallback : result
 	return result
 }
@@ -475,15 +475,15 @@ export async function urlToBase64(imageUrl: string) {
  *
  */
 export function setInitiative() {
-	let formula: string = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.INITIATIVE_FORMULA) as string
+	let formula: string = game.settings.get(SYSTEM_NAME, SETTINGS.INITIATIVE_FORMULA) as string
 	if (!formula) formula = DEFAULT_INITIATIVE_FORMULA
-	if ((game as Game).user?.isGM) (game as Game).settings.set(SYSTEM_NAME, SETTINGS.INITIATIVE_FORMULA, formula)
+	if (game.user?.isGM) game.settings.set(SYSTEM_NAME, SETTINGS.INITIATIVE_FORMULA, formula)
 	// Const formulaMatch = formula.match(/([^:]*):?(\d)?/)
 	// console.log(formulaMatch)
 	// let minDigits = formulaMatch && !!formulaMatch[2] ? parseInt(formulaMatch[2]) : 5
 	CONFIG.Combat.initiative.formula = formula
 	// If (broadcast) {
-	// 	(game as Game).socket?.emit(`system.${SYSTEM_NAME}`, {
+	// 	game.socket?.emit(`system.${SYSTEM_NAME}`, {
 	// 		type: SOCKET.INITIATIVE_CHANGED,
 	// 		formula: formula
 	// 	})

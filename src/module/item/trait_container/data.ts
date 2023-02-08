@@ -1,6 +1,5 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { ItemType } from "@item/data"
-import { CRAdjustment } from "@module/data"
+import { CRAdjustment, ItemType } from "@module/data"
 
 export type TraitContainerSource = BaseContainerSource<ItemType.TraitContainer, TraitContainerSystemData>
 

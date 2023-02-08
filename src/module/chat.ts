@@ -17,7 +17,7 @@ export async function _processDiceCommand(
 	chatData: any,
 	createOptions: any
 ): Promise<void> {
-	const actor = ChatMessage.getSpeakerActor(chatData.speaker) || (game as Game).user?.character
+	const actor = ChatMessage.getSpeakerActor(chatData.speaker) || game.user?.character
 	const rollData: any = actor ? actor.getRollData() : {}
 	const rolls = []
 	for (const match of matches) {
@@ -111,7 +111,7 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 	}
 	if ([RollType.Generic].includes(type)) {
 		data.formula = $(event.currentTarget).data("formula")
-		// Const mods = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as any[]
+		// Const mods = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as any[]
 		// if (mods.length) data.formula += "+ @gmd"
 	}
 	// If (type === RollType.Modifier) {
@@ -120,7 +120,7 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 	// }
 
 	// TODO: change to GURPS.LastActor
-	return RollGURPS.handleRoll((game as Game).user, character, data)
+	return RollGURPS.handleRoll(game.user, character, data)
 }
 
 /**
@@ -130,7 +130,7 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 async function _onDamageRoll(event: JQuery.ClickEvent) {
 	event.preventDefault()
 	event.stopPropagation()
-	const actor = (game as Game).actors!.get($(event.currentTarget).data("actorId")) as ActorGURPS
+	const actor = game.actors!.get($(event.currentTarget).data("actorId")) as ActorGURPS
 	const type: RollType = $(event.currentTarget).data("type")
 	const data: { [key: string]: any } = { type: type }
 	if (
@@ -150,7 +150,7 @@ async function _onDamageRoll(event: JQuery.ClickEvent) {
 		data.modifier = $(event.currentTarget).data("modifier")
 		data.comment = $(event.currentTarget).data("comment")
 	}
-	return RollGURPS.handleRoll((game as Game).user, actor, data)
+	return RollGURPS.handleRoll(game.user, actor, data)
 }
 
 /**

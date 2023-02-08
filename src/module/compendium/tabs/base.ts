@@ -81,11 +81,7 @@ export abstract class CompendiumTab {
 		if (searchQuery) {
 			for (const i of this.searchFields) {
 				const term = String(getProperty(entry, i))
-				if (
-					term
-						.toLocaleLowerCase((game as Game).i18n.lang)
-						.includes(searchQuery.toLocaleLowerCase((game as Game).i18n.lang))
-				)
+				if (term.toLocaleLowerCase(game.i18n.lang).includes(searchQuery.toLocaleLowerCase(game.i18n.lang)))
 					return true
 			}
 			return false
@@ -102,7 +98,7 @@ export abstract class CompendiumTab {
 
 	protected sortResult(result: CompendiumIndexData[]): CompendiumIndexData[] {
 		const { order } = this.filterData
-		const lang = (game as Game).i18n.lang
+		const lang = game.i18n.lang
 		const sorted = result.sort((entryA, entryB) => {
 			switch (order.by) {
 				case "name":

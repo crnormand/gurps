@@ -23,7 +23,7 @@ export class CompendiumTraitTab extends CompendiumTab {
 			this.browser.loadedPacks(TabName.Trait),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((trait: any) => {
 				if (!["trait", "trait_container"].includes(trait.type)) return
 				trait.prepareData()

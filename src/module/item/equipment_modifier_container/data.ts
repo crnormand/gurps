@@ -1,5 +1,5 @@
 import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { ItemType } from "@item/data"
+import { ItemType } from "@module/data"
 
 export type EquipmentModifierContainerSource = BaseContainerSource<
 	ItemType.EquipmentModifierContainer,

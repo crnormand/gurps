@@ -25,7 +25,7 @@ export class TokenModifierControl {
 	}
 
 	getWindowEnabled(): boolean {
-		return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS) as boolean
+		return game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS) as boolean
 	}
 
 	toggleWindow(closeOptions: Application.CloseOptions): void {
@@ -40,7 +40,7 @@ export class TokenModifierControl {
 	}
 
 	_registerSetting() {
-		;(game as Game).settings.register(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS, {
+		game.settings.register(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS, {
 			name: "gurps.settings.show_token_modifiers.name",
 			hint: "gurps.settings.show_token_modifiers.hint",
 			scope: "client",

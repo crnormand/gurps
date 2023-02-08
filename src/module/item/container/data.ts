@@ -1,5 +1,5 @@
-import { ItemType } from "@item/data"
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { ItemType } from "@module/data"
 
 export type BaseContainerSource<
 	TItemType extends ItemType = ItemType,

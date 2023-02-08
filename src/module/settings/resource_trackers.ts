@@ -48,10 +48,7 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const resource_trackers: any[] = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${this.namespace}.resource_trackers`
-		) as any[]
+		const resource_trackers: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`) as any[]
 		const type: "resource_trackers" | "tracker_thresholds" = $(event.currentTarget).data("type")
 		let new_id = ""
 		if (type === "resource_trackers")
@@ -75,7 +72,7 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 					isMinEnforced: false,
 					thresholds: [],
 				})
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
 				return this.render()
 			case "tracker_thresholds":
 				resource_trackers[$(event.currentTarget).data("id")].thresholds ??= []
@@ -85,7 +82,7 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 					expression: "",
 					ops: [],
 				})
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
 				return this.render()
 		}
 	}
@@ -93,21 +90,18 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 	private async _onDeleteItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const resource_trackers: any[] = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${this.namespace}.resource_trackers`
-		) as any[]
+		const resource_trackers: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`) as any[]
 		const type: "resource_trackers" | "tracker_thresholds" = $(event.currentTarget).data("type")
 		const index = Number($(event.currentTarget).data("index")) || 0
 		const parent_index = Number($(event.currentTarget).data("pindex")) || 0
 		switch (type) {
 			case "resource_trackers":
 				resource_trackers.splice(index, 1)
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
 				return this.render()
 			case "tracker_thresholds":
 				resource_trackers[parent_index].thresholds?.splice(index, 1)
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
 				return this.render()
 		}
 	}
@@ -147,10 +141,7 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
 
-		const resource_trackers = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${this.namespace}.resource_trackers`
-		) as any[]
+		const resource_trackers = game.settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`) as any[]
 		const target_index = element.data("index")
 		const above = element.hasClass("border-top")
 		if (dragData.order === target_index) return this.render()
@@ -174,23 +165,23 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 			v.order = k
 		})
 
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.resource_trackers`, resource_trackers)
 		return this.render()
 	}
 
 	override async getData(): Promise<any> {
-		const resource_trackers = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`)
+		const resource_trackers = game.settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`)
 		return {
 			resourceTrackers: resource_trackers,
 			actor: null,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		}
 	}
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
-		const resource_trackers = await (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`)
+		const resource_trackers = await game.settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`)
 		formData = prepareFormData(_event, formData, { system: { settings: { resource_trackers } } })
-		await (game as Game).settings.set(
+		await game.settings.set(
 			SYSTEM_NAME,
 			`${this.namespace}.resource_trackers`,
 			formData["system.settings.resource_trackers"]

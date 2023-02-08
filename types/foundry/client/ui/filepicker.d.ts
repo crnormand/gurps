@@ -426,7 +426,7 @@ declare namespace FilePicker {
 		private: boolean
 	}
 
-	type DisplayMode = ValueOf<typeof FilePicker["DISPLAY_MODES"]>
+	type DisplayMode = ValueOf<(typeof FilePicker)["DISPLAY_MODES"]>
 
 	interface ManageFilesDataBase {
 		source: string

@@ -55,7 +55,7 @@ export class RollGURPS extends Roll {
 				let value: any = (data.actor as CharacterGURPS).resolveVariable(term.replace("$", "")) ?? null
 				if (value === null) {
 					if (options?.warn && ui.notifications)
-						ui.notifications.warn((game as Game).i18n.format("DICE.WarnMissingData", { match }))
+						ui.notifications.warn(game.i18n.format("DICE.WarnMissingData", { match }))
 					return options?.missing !== undefined ? String(options.missing) : match
 				}
 				return String(value).trim()
@@ -67,11 +67,11 @@ export class RollGURPS extends Roll {
 
 	override _prepareData(data: any) {
 		let d: any = super._prepareData(data) ?? {}
-		d.gmod = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
+		d.gmod = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
 		if (!d.hasOwnProperty("gmodc"))
 			Object.defineProperty(d, "gmodc", {
 				get() {
-					const mod = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) as number
+					const mod = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) as number
 					;(game as any).ModifierButton.clear()
 					return mod
 				},
@@ -354,8 +354,8 @@ export class RollGURPS extends Roll {
 		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
 
 		let userTarget = ""
-		if ((game as Game).user?.targets.size) {
-			userTarget = (game as Game).user?.targets.values().next().value
+		if (game.user?.targets.size) {
+			userTarget = game.user?.targets.values().next().value
 		}
 
 		messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
@@ -445,6 +445,6 @@ export class RollGURPS extends Roll {
 	 * @param _actor
 	 */
 	static getHitLocationFromLastAttackRoll(_actor: ActorGURPS): string {
-		return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string
+		return game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string
 	}
 }

@@ -47,7 +47,7 @@ declare global {
 		 * but {@link RollTables} overrides this, so we need to allow a wider return type.
 		 */
 		get directory(): Lowercase<Name> extends keyof typeof ui
-			? typeof ui[Lowercase<Name>]
+			? (typeof ui)[Lowercase<Name>]
 			:
 					| (ConfiguredDocumentClass<T>["metadata"]["name"] extends DOCUMENT_TYPES
 							? SidebarDirectory<ConfiguredDocumentClass<T>["metadata"]["name"]>

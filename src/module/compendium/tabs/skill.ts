@@ -23,7 +23,7 @@ export class CompendiumSkillTab extends CompendiumTab {
 			this.browser.loadedPacks(TabName.Skill),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((skill: any) => {
 				if (!["skill", "technique", "skill_container"].includes(skill.type)) return
 				let difficulty = ""

@@ -1,6 +1,6 @@
 import { BaseItemSourceGURPS } from "@item/base/data"
-import { ItemType } from "@item/data"
 import { EffectSystemData } from "@item/effect"
+import { ItemType } from "@module/data"
 
 export enum ConditionID {
 	// Posture

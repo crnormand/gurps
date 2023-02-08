@@ -6,10 +6,8 @@ export const CanvasUtil = {
 	 * @returns {Token[]} the Set of tokens found.
 	 */
 	getCanvasTokensAtPosition: function (point: { x: number; y: number }): Token[] {
-		const g = game as Game
-
 		// Remember the user's current targets (so we can restore them afterwards).
-		const oldTargets = [...g.user!.targets]
+		const oldTargets = [...game.user!.targets]
 
 		// Create a rectangle the size of a grid element centered on the point.
 		const gridSize = (canvas!.scene as any).grid!.size
@@ -22,7 +20,7 @@ export const CanvasUtil = {
 
 		// Target all Tokens that fall inside the rectangle.
 		canvas!.tokens!.targetObjects(rectangle, { releaseOthers: true })
-		const newTargets = [...g.user!.targets]
+		const newTargets = [...game.user!.targets]
 
 		// Now that we have the list of targets, reset the target selection back to whatever the user previously had.
 		// First, remove the newTargets...

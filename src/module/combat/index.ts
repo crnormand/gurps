@@ -3,7 +3,7 @@ import { DocumentModificationOptions } from "types/foundry/common/abstract/docum
 // The whole point of this class is to not send messages when you roll initiative
 class CombatGURPS extends Combat {
 	protected _onDelete(options: DocumentModificationOptions, userId: string): void {
-		;(game as Game).messages
+		game.messages
 			?.filter(e => Boolean(e.getFlag("core", "initiativeRoll")))
 			.forEach(e => {
 				e.delete()

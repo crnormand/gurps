@@ -61,6 +61,33 @@ declare global {
 			gamepad: boolean
 		}
 
+		GURPS: {
+			Item: {
+				documentClasses: Record<string, Item.ConstructorOf>
+				allowedContents: Record<string, string[]>
+				childTypes: Record<string, string[]>
+			}
+			Actor: {
+				documentClasses: Record<string, Actor.ConstructorOf>
+				allowedContents: Record<string, string[]>
+			}
+			Feature: {
+				classes: Record<string, Feature.ConstructorOf>
+			}
+			Prereq: {
+				classes: Record<string, Prereq.ConstructorOf>
+			}
+			Weapon: {
+				classes: Record<string, Weapon.ConstructorOf>
+			}
+			select: Record<string, Record<string, string>>
+			meleeMods: Record<string, RollModifier>
+			rangedMods: Record<string, RollModifier>
+			defenseMods: Record<string, RollModifier>
+			commonMods: Record<string, RollModifier>
+			allMods: RollModifier[]
+		}
+
 		/**
 		 * Configure the verbosity of compatibility warnings generated throughout the software.
 		 * The compatibility mode defines the logging level of any displayed warnings.

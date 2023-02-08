@@ -6,11 +6,10 @@ import {
 	StaticThresholdComparison,
 } from "@actor/static_character/data"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
-import { Study } from "@module/data"
+import { ItemType, Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import * as Static from "./static"
 import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
-import { ItemType } from "@item/data"
 
 /**
  *
@@ -348,10 +347,9 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("inCombat", function (data) {
-		if (data.actor && (game as Game).combats?.active) {
-			return (game as Game).combats?.active?.combatants.contents
-				.map(it => it.actor?.id)
-				.filter(e => !!e)
+		if (data.actor && game.combats?.active) {
+			return game.combats?.active?.combatants.contents
+				.map((it: Combatant) => it.actor?.id)
 				.includes(data?.actor?.id)
 		}
 		return false

@@ -44,7 +44,7 @@ export class WeaponSheet extends FormApplication {
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {
 		const attributes: Record<string, string> = {}
-		const defaultAttributes = (game as Game).settings.get(
+		const defaultAttributes = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
 		) as Attribute[]
@@ -65,7 +65,7 @@ export class WeaponSheet extends FormApplication {
 		return {
 			...super.getData(options),
 			weapon: this.weapon,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 			attributes: attributes,
 			sysPrefix: "",
 		}

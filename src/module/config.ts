@@ -1,5 +1,11 @@
-import { CharacterGURPS, StaticCharacterGURPS, StaticThresholdComparison, StaticThresholdOperator } from "@actor"
-import { ActorType } from "@actor/data"
+import {
+	CharacterDataGURPS,
+	CharacterGURPS,
+	StaticCharacterDataGURPS,
+	StaticCharacterGURPS,
+	StaticThresholdComparison,
+	StaticThresholdOperator,
+} from "@actor"
 import {
 	AttributeBonus,
 	BaseFeature,
@@ -20,25 +26,56 @@ import {
 import {
 	BaseItemGURPS,
 	ContainerGURPS,
+	EquipmentContainerData,
 	EquipmentContainerGURPS,
+	EquipmentContainerSystemData,
+	EquipmentData,
 	EquipmentGURPS,
+	EquipmentModifierContainerData,
 	EquipmentModifierContainerGURPS,
+	EquipmentModifierContainerSystemData,
+	EquipmentModifierData,
 	EquipmentModifierGURPS,
+	EquipmentModifierSystemData,
+	EquipmentSystemData,
+	NoteContainerData,
 	NoteContainerGURPS,
+	NoteContainerSystemData,
+	NoteData,
 	NoteGURPS,
+	NoteSystemData,
+	RitualMagicSpellData,
 	RitualMagicSpellGURPS,
+	RitualMagicSpellSystemData,
+	SkillContainerData,
 	SkillContainerGURPS,
+	SkillContainerSystemData,
+	SkillData,
 	SkillGURPS,
+	SkillSystemData,
+	SpellContainerData,
 	SpellContainerGURPS,
+	SpellContainerSystemData,
+	SpellData,
 	SpellGURPS,
+	SpellSystemData,
+	TechniqueData,
 	TechniqueGURPS,
+	TechniqueSystemData,
+	TraitContainerData,
 	TraitContainerGURPS,
+	TraitContainerSystemData,
+	TraitData,
 	TraitGURPS,
+	TraitModifierContainerData,
 	TraitModifierContainerGURPS,
+	TraitModifierContainerSystemData,
+	TraitModifierData,
 	TraitModifierGURPS,
+	TraitModifierSystemData,
+	TraitSystemData,
 } from "@item"
-import { ConditionGURPS } from "@item/condition"
-import { ItemType } from "@item/data"
+import { ConditionData, ConditionGURPS } from "@item/condition"
 import { EffectGURPS } from "@item/effect"
 import { StaticItemGURPS } from "@item/static"
 import {
@@ -51,11 +88,11 @@ import {
 	SpellPrereq,
 	TraitPrereq,
 } from "@prereq"
-import { PrereqType, StudyType } from "./data"
+import { ActorType, ItemType, PrereqType, StudyType } from "./data"
 import { BaseWeapon, MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
-const GURPSCONFIG: any = {
+const GURPSCONFIG: CONFIG["GURPS"] = {
 	Item: {
 		documentClasses: {
 			base: BaseItemGURPS,
@@ -452,6 +489,11 @@ const GURPSCONFIG: any = {
 			[StaticThresholdOperator.Divide]: "gurps.select.srt_operator.divide",
 		},
 	},
+	meleeMods: {},
+	rangedMods: {},
+	defenseMods: {},
+	commonMods: {},
+	allMods: [],
 }
 // GURPSCONFIG.Item.documentClasses = {};
 // GURPSCONFIG.Actor.documentClasses = {
@@ -523,3 +565,58 @@ export type featureMap = {
 export type FeatureConstructor = Partial<Bonus>
 
 export type Weapon = BaseWeapon | MeleeWeapon | RangedWeapon
+
+export type ItemDataGURPS =
+	| TraitData
+	| TraitContainerData
+	| TraitModifierData
+	| TraitModifierContainerData
+	| SkillData
+	| TechniqueData
+	| SkillContainerData
+	| SpellData
+	| RitualMagicSpellData
+	| SpellContainerData
+	| EquipmentData
+	| EquipmentContainerData
+	| EquipmentModifierData
+	| EquipmentModifierContainerData
+	| NoteData
+	| NoteContainerData
+	| ConditionData
+
+export type ItemSourceGURPS = ItemDataGURPS["_source"]
+
+export type ContainerDataGURPS =
+	| TraitData
+	| TraitContainerData
+	| TraitModifierContainerData
+	| SkillContainerData
+	| SpellContainerData
+	| EquipmentData
+	| EquipmentContainerData
+	| EquipmentModifierContainerData
+	| NoteData
+	| NoteContainerData
+
+export type ItemSystemDataGURPS =
+	| TraitSystemData
+	| TraitContainerSystemData
+	| TraitModifierSystemData
+	| TraitModifierContainerSystemData
+	| SkillSystemData
+	| TechniqueSystemData
+	| SkillContainerSystemData
+	| SpellSystemData
+	| RitualMagicSpellSystemData
+	| SpellContainerSystemData
+	| EquipmentSystemData
+	| EquipmentContainerSystemData
+	| EquipmentModifierSystemData
+	| EquipmentModifierContainerSystemData
+	| NoteSystemData
+	| NoteContainerSystemData
+
+export type ActorDataGURPS = CharacterDataGURPS | StaticCharacterDataGURPS
+
+export type ActorSourceGURPS = ActorDataGURPS["_source"]

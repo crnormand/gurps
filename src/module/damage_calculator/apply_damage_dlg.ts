@@ -148,7 +148,7 @@ class ApplyDamageDialog extends Application {
 		})
 
 		let messageData = {
-			user: (game as Game).user,
+			user: game.user,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			content: message,
 			roll: JSON.stringify(result.roll),

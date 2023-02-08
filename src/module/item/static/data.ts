@@ -1,5 +1,5 @@
 import { BaseItemSourceGURPS } from "@item/base/data"
-import { ItemType } from "@item/data"
+import { ItemType } from "@module/data"
 
 export type StaticItemSource = BaseItemSourceGURPS<ItemType.LegacyEquipment, StaticItemSystemData>
 
