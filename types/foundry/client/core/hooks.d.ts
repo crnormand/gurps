@@ -48,9 +48,9 @@ declare global {
 		static once<K extends keyof Hooks.StaticCallbacks>(
 			hook: K,
 			fn: Hooks.StaticCallbacks[K]
-		): ReturnType<typeof Hooks["on"]>
-		static once<H extends Hooks.DynamicCallbacks>(hook: string, fn: H): ReturnType<typeof Hooks["on"]>
-		static once<H extends (...args: any) => any>(hook: string, fn: H): ReturnType<typeof Hooks["on"]>
+		): ReturnType<(typeof Hooks)["on"]>
+		static once<H extends Hooks.DynamicCallbacks>(hook: string, fn: H): ReturnType<(typeof Hooks)["on"]>
+		static once<H extends (...args: any) => any>(hook: string, fn: H): ReturnType<(typeof Hooks)["on"]>
 
 		/**
 		 * Unregister a callback handler for a particular hook event
@@ -124,7 +124,7 @@ declare global {
 				 * The level at which to log the error to console (if at all).
 				 * @defaultValue `null`
 				 */
-				notify?: keyof NonNullable<typeof ui["notifications"]> | null | undefined
+				notify?: keyof NonNullable<(typeof ui)["notifications"]> | null | undefined
 
 				/**
 				 * The level at which to spawn a notification in the UI (if at all).

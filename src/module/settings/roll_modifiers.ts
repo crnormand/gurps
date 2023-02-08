@@ -47,7 +47,7 @@ export class RollModifierSettings extends SettingsMenuGURPS {
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const modifiers: RollModifier[] = (game as Game).settings.get(
+		const modifiers: RollModifier[] = game.settings.get(
 			SYSTEM_NAME,
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
@@ -55,20 +55,20 @@ export class RollModifierSettings extends SettingsMenuGURPS {
 			name: i18n("gurps.setting.roll_modifiers.default"),
 			modifier: 0,
 		})
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)
 		return this.render()
 	}
 
 	private async _onDeleteItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const modifiers: RollModifier[] = (game as Game).settings.get(
+		const modifiers: RollModifier[] = game.settings.get(
 			SYSTEM_NAME,
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
 		const index = Number($(event.currentTarget).data("index")) || 0
 		modifiers.splice(index, 1)
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)
 		return this.render()
 	}
 
@@ -102,7 +102,7 @@ export class RollModifierSettings extends SettingsMenuGURPS {
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
 
-		const modifiers: RollModifier[] = (game as Game).settings.get(
+		const modifiers: RollModifier[] = game.settings.get(
 			SYSTEM_NAME,
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
@@ -115,27 +115,27 @@ export class RollModifierSettings extends SettingsMenuGURPS {
 		let item
 		item = modifiers.splice(dragData.index, 1)[0]
 		modifiers.splice(target_index, 0, item)
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)
 		return this.render()
 	}
 
 	override async getData(): Promise<any> {
-		const modifiers: RollModifier[] = (game as Game).settings.get(
+		const modifiers: RollModifier[] = game.settings.get(
 			SYSTEM_NAME,
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
 		return {
 			modifiers: modifiers,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		}
 	}
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
-		const modifiers: RollModifier[] = (game as Game).settings.get(
+		const modifiers: RollModifier[] = game.settings.get(
 			SYSTEM_NAME,
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
 		formData = prepareFormData(_event, formData, { modifiers: modifiers })
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, formData.modifiers)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, formData.modifiers)
 	}
 }

@@ -33,10 +33,7 @@ class EquipmentContainerGURPS extends ContainerGURPS {
 
 	get weightUnits(): WeightUnits {
 		if (this.actor) return this.actor.weightUnits
-		const default_settings = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
-		) as any
+		const default_settings = game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`) as any
 		return default_settings.default_weight_units
 	}
 

@@ -105,7 +105,7 @@ declare global {
 
 		static benchmark(
 			iterations: number,
-			...args: Parameters<typeof ClockwiseSweepPolygon["create"]>
+			...args: Parameters<(typeof ClockwiseSweepPolygon)["create"]>
 		): ReturnType<typeof foundry.utils.benchmark>
 
 		static create(

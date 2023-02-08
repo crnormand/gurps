@@ -35,7 +35,7 @@ abstract class SettingsMenuGURPS extends FormApplication {
 	static registerSettings(): void {
 		const settings = this.settings
 		for (const setting of this.SETTINGS) {
-			;(game as Game).settings.register(SYSTEM_NAME, `${this.namespace}.${setting}`, {
+			game.settings.register(SYSTEM_NAME, `${this.namespace}.${setting}`, {
 				...settings[setting],
 				config: false,
 			})
@@ -46,7 +46,7 @@ abstract class SettingsMenuGURPS extends FormApplication {
 		const settings = (this.constructor as typeof SettingsMenuGURPS).settings
 		// Console.log(settings)
 		const templateData: any[] = Object.entries(settings).map(([key, setting]) => {
-			const value = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.${key}`)
+			const value = game.settings.get(SYSTEM_NAME, `${this.namespace}.${key}`)
 			return {
 				...setting,
 				key,
@@ -64,7 +64,7 @@ abstract class SettingsMenuGURPS extends FormApplication {
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
 		for await (const key of (this.constructor as typeof SettingsMenuGURPS).SETTINGS) {
 			const settingKey = `${this.namespace}.${key}`
-			await (game as Game).settings.set(SYSTEM_NAME, settingKey, formData[key])
+			await game.settings.set(SYSTEM_NAME, settingKey, formData[key])
 		}
 	}
 
@@ -72,9 +72,8 @@ abstract class SettingsMenuGURPS extends FormApplication {
 		event.preventDefault()
 		const constructor = this.constructor
 		for (const setting of constructor.SETTINGS) {
-			const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${setting}`)
-				?.default as any
-			await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.${setting}`, defaults)
+			const defaults = game.settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${setting}`)?.default as any
+			await game.settings.set(SYSTEM_NAME, `${this.namespace}.${setting}`, defaults)
 		}
 		this.render()
 	}

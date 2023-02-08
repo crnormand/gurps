@@ -1,6 +1,4 @@
-// Import { BaseActorGURPS } from "@actor";
-import { ActorType } from "@actor/data"
-import { RollModifier, SYSTEM_NAME } from "@module/data"
+import { ActorType, RollModifier, SYSTEM_NAME } from "@module/data"
 import { Context } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataSource } from "types/foundry/common/data/data.mjs/actorData"
 

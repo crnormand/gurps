@@ -80,7 +80,7 @@ export class CompendiumBrowser extends Application {
 							pack.load = formData.has(`${t}-${key}`)
 						}
 					}
-					await (game as Game).settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
+					await game.settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
 					this.loadSettings()
 					this.initCompendiumList()
 					for (const tab of Object.values(this.tabs)) {
@@ -153,7 +153,7 @@ export class CompendiumBrowser extends Application {
 		if (activeTab === "settings") {
 			this.initCompendiumList()
 			return {
-				user: (game as Game).user,
+				user: game.user,
 				settings: this.settings,
 			}
 		}
@@ -170,7 +170,7 @@ export class CompendiumBrowser extends Application {
 			)
 			const tagList = Array.from(tagSet).sort()
 			return {
-				user: (game as Game).user,
+				user: game.user,
 				[activeTab]: {
 					filterData: tab.filterData,
 					indexData: indexData,
@@ -180,7 +180,7 @@ export class CompendiumBrowser extends Application {
 			}
 		}
 		return {
-			user: (game as Game).user,
+			user: game.user,
 		}
 	}
 
@@ -189,14 +189,14 @@ export class CompendiumBrowser extends Application {
 		const li = event.currentTarget
 		const uuid = $(li!).data("uuid")
 		const pack: string = this.loadedPacks(this.activeTab).find((e: string) => uuid.includes(e)) ?? ""
-		// Const item = await (game as Game).packs.get(pack)?.getDocument(uuid.split(".").at(-1));
+		// Const item = await game.packs.get(pack)?.getDocument(uuid.split(".").at(-1));
 		const item = await fromUuid(uuid)
 		if (!item) return
 		const sheet = (item as any).sheet
 		if (sheet._minimized) return sheet.maximize()
 		else
 			return sheet?.render(true, {
-				editable: (game as Game).user?.isGM && !(game as Game).packs.get(pack)?.locked,
+				editable: game.user?.isGM && !game.packs.get(pack)?.locked,
 			})
 	}
 
@@ -217,7 +217,7 @@ export class CompendiumBrowser extends Application {
 			note: {},
 		}
 
-		for (const pack of (game as Game).packs) {
+		for (const pack of game.packs) {
 			// @ts-ignore
 			const types = new Set(pack.index.map(entry => entry.type))
 			if (types.size === 0) continue
@@ -285,7 +285,7 @@ export class CompendiumBrowser extends Application {
 	}
 
 	loadSettings(): void {
-		const settings: string | any = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS)
+		const settings: string | any = game.settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS)
 		if (typeof settings === "string") this.settings = JSON.parse(settings)
 		else this.settings = settings
 	}
@@ -394,7 +394,7 @@ class PackLoader {
 				// Pack already loaded
 				// const pack = data;
 			} else {
-				const pack = (game as Game).packs.get(packId)
+				const pack = game.packs.get(packId)
 				if (!pack) continue
 				if (pack.documentName === documentType) {
 					// TODO: fix

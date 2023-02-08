@@ -27,7 +27,7 @@ export class PrereqList extends BasePrereq {
 			const list = (data as PrereqList).prereqs
 			this.prereqs = []
 			for (const e of list) {
-				const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[e.type as PrereqType]
+				const PrereqConstructor = CONFIG.GURPS.Prereq.classes[e.type as PrereqType]
 				if (PrereqConstructor) this.prereqs.push(new PrereqConstructor(e as any, context))
 			}
 		}

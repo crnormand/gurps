@@ -124,10 +124,10 @@ export class ColorSettings extends SettingsMenuGURPS {
 	async _onReset(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const id = $(event.currentTarget).data("id")
-		const colors = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.colors`) as any
-		const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.colors`)?.default as any
+		const colors = game.settings.get(SYSTEM_NAME, `${this.namespace}.colors`) as any
+		const defaults = game.settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.colors`)?.default as any
 		colors[id] = defaults[id]
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.colors`, colors)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.colors`, colors)
 		ColorSettings.applyColors()
 		this.render()
 	}
@@ -136,9 +136,8 @@ export class ColorSettings extends SettingsMenuGURPS {
 		event.preventDefault()
 		const constructor = this.constructor
 		for (const setting of constructor.SETTINGS) {
-			const defaults = (game as Game).settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${setting}`)
-				?.default as any
-			await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.${setting}`, defaults)
+			const defaults = game.settings.settings.get(`${SYSTEM_NAME}.${this.namespace}.${setting}`)?.default as any
+			await game.settings.set(SYSTEM_NAME, `${this.namespace}.${setting}`, defaults)
 		}
 		ColorSettings.applyColors()
 		this.render()
@@ -146,8 +145,8 @@ export class ColorSettings extends SettingsMenuGURPS {
 
 	override async getData(): Promise<any> {
 		const options = await super.getData()
-		const modePreference = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.modePreference`)
-		const colors = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.colors`) as any
+		const modePreference = game.settings.get(SYSTEM_NAME, `${this.namespace}.modePreference`)
+		const colors = game.settings.get(SYSTEM_NAME, `${this.namespace}.colors`) as any
 		const colorSettings: any = {}
 		for (const e of Object.keys(colors)) {
 			colorSettings[e] = {
@@ -158,7 +157,7 @@ export class ColorSettings extends SettingsMenuGURPS {
 		return mergeObject(options, {
 			modePreference: modePreference,
 			colorSettings: colorSettings,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		})
 	}
 
@@ -174,14 +173,14 @@ export class ColorSettings extends SettingsMenuGURPS {
 		}
 		for await (const key of (this.constructor as typeof SettingsMenuGURPS).SETTINGS) {
 			const settingKey = `${this.namespace}.${key}`
-			await (game as Game).settings.set(SYSTEM_NAME, settingKey, formData[key])
+			await game.settings.set(SYSTEM_NAME, settingKey, formData[key])
 		}
 		ColorSettings.applyColors()
 	}
 
 	static applyColors() {
-		const modePreference = (game as Game).settings.get(SYSTEM_NAME, "colors.modePreference")
-		const colors: any = (game as Game).settings.get(SYSTEM_NAME, "colors.colors")
+		const modePreference = game.settings.get(SYSTEM_NAME, "colors.modePreference")
+		const colors: any = game.settings.get(SYSTEM_NAME, "colors.colors")
 		Object.keys(colors).forEach(e => {
 			if (!e.startsWith("color")) return
 			const name = `--${e.replace(/(\w)([A-Z])/g, "$1-$2").toLowerCase()}`

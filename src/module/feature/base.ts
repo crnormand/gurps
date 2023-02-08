@@ -1,5 +1,5 @@
-import { ItemType } from "@item/data"
 import { Feature, ItemGURPS } from "@module/config"
+import { ItemType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
 import { FeatureType } from "./data"
@@ -15,7 +15,7 @@ export class BaseFeature {
 			Object.assign(this, data)
 		} else {
 			mergeObject(context, { ready: true })
-			const FeatureConstructor = (CONFIG as any).GURPS.Feature.classes[data.type as FeatureType]
+			const FeatureConstructor = CONFIG.GURPS.Feature.classes[data.type as FeatureType]
 			return FeatureConstructor ? new FeatureConstructor(data, context) : new BaseFeature(data, context)
 		}
 	}

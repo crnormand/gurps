@@ -432,7 +432,7 @@ export type USER_ROLES = ValueOf<typeof USER_ROLES>
 /**
  * Invert the User Role mapping to recover role names from a role integer
  */
-export const USER_ROLE_NAMES: Readonly<{ [Key in keyof typeof USER_ROLES as typeof USER_ROLES[Key]]: Key }>
+export const USER_ROLE_NAMES: Readonly<{ [Key in keyof typeof USER_ROLES as (typeof USER_ROLES)[Key]]: Key }>
 export type USER_ROLE_NAMES = ValueOf<typeof USER_ROLE_NAMES>
 
 /**

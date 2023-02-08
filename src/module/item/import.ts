@@ -1,4 +1,4 @@
-import { ItemSystemDataGURPS } from "@item/data"
+import { ItemSystemDataGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
 import { i18n, i18n_f } from "@util"
 import { ImportUtils } from "@util/import"
@@ -100,7 +100,7 @@ export class ItemImporter {
 			items.push(...ImportUtils.importItems(r.rows))
 			// Commit = { ...commit, ...{ rows: items } };
 
-			let pack = (game as Game).packs.find(p => p.metadata.name === name)
+			let pack = game.packs.find(p => p.metadata.name === name)
 			if (!pack) {
 				pack = await CompendiumCollection.createCompendium({
 					type: "Item",
@@ -137,9 +137,9 @@ export class ItemImporter {
 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/chat/character-import-error.hbs`, {
 				lines: msg,
 			}),
-			user: (game as Game).user!.id,
+			user: game.user!.id,
 			type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-			whisper: [(game as Game).user!.id],
+			whisper: [game.user!.id],
 		})
 		return false
 	}

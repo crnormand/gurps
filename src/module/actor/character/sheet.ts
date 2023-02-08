@@ -385,7 +385,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
 		}
-		return RollGURPS.handleRoll((game as Game).user, this.actor, data)
+		return RollGURPS.handleRoll(game.user, this.actor, data)
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
@@ -462,9 +462,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				encumbrance: encumbrance,
 				lifting: lifts,
 				current_year: new Date().getFullYear(),
-				maneuvers: (CONFIG as any).GURPS.select.maneuvers,
-				postures: (CONFIG as any).GURPS.select.postures,
-				move_types: (CONFIG as any).GURPS.select.move_types,
+				maneuvers: CONFIG.GURPS.select.maneuvers,
+				postures: CONFIG.GURPS.select.postures,
+				move_types: CONFIG.GURPS.select.move_types,
 				overencumbered: overencumbered,
 				hit_locations: hit_locations,
 			},
@@ -594,7 +594,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
+		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
 					edit_button,
 					// {

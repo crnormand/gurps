@@ -1,7 +1,6 @@
-import { ItemType } from "@item/data"
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { Feature, Weapon } from "@module/config"
-import { Difficulty, Study } from "@module/data"
+import { Difficulty, ItemType, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { PrereqList } from "@prereq"

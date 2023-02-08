@@ -2,7 +2,7 @@
 import { DiceGURPS } from "@module/dice"
 import { equalFold } from "./misc"
 import * as Measure from "./measure"
-import { ItemType } from "@item/data"
+import { ItemType } from "@module/data"
 
 export interface VariableResolver {
 	resolveVariable: (variableName: string) => string
@@ -349,11 +349,6 @@ export function evalToString(e: Evaluator, a: string): string {
 	return String(evaluated)
 }
 
-/**
- *
- * @param e
- * @param a
- */
 export function evalEncumbrance(e: Evaluator, a: string): any {
 	let [arg, remaining] = nextArg(a)
 	const forSkills = evalToBool(e, arg)
@@ -369,11 +364,6 @@ export function evalEncumbrance(e: Evaluator, a: string): any {
 	return level
 }
 
-/**
- *
- * @param e
- * @param a
- */
 export function evalTraitLevel(e: Evaluator, a: string): any {
 	const entity: VariableResolver | undefined = e.resolver
 	if (!entity) return -1
@@ -388,11 +378,6 @@ export function evalTraitLevel(e: Evaluator, a: string): any {
 	return levels
 }
 
-/**
- *
- * @param e
- * @param a
- */
 export function evalSSRT(e: Evaluator, a: string): any {
 	let arg: string
 	;[arg, a] = nextArg(a)
@@ -409,21 +394,11 @@ export function evalSSRT(e: Evaluator, a: string): any {
 	return result
 }
 
-/**
- *
- * @param e
- * @param a
- */
 export function evalSSRTYards(e: Evaluator, a: string): any {
 	const v = evalToNumber(e, a)
 	return valueToYards(v)
 }
 
-/**
- *
- * @param length
- * @param allowNegative
- */
 function yardsToValue(length: Measure.Length, allowNegative: boolean): number {
 	const inches = Number(length)
 	const feet = inches / 12

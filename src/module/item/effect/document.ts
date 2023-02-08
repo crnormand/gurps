@@ -22,7 +22,7 @@ class EffectGURPS extends BaseItemGURPS {
 
 	get combat(): Combat | null {
 		if (!this.system.duration?.combat) return null
-		return (game as Game).combats?.get(this.system.duration!.combat) || null
+		return game.combats?.get(this.system.duration!.combat) || null
 	}
 
 	get duration(): { remaining: number; type: DurationType; total: number } {
@@ -70,9 +70,8 @@ class EffectGURPS extends BaseItemGURPS {
 	}
 
 	protected async _preCreate(data: any, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
-		if (!data.system.duration.combat && (game as Game).combat)
-			data.system.duration.combat = (game as Game).combat!.id
-		const combat = (game as Game).combat
+		if (!data.system.duration.combat && game.combat) data.system.duration.combat = game.combat!.id
+		const combat = game.combat
 		if (data.system.duration.combat) {
 			if (data.system.duration.combat !== DurationType.None) {
 				data.system.duration.startRound = combat?.round
@@ -85,8 +84,8 @@ class EffectGURPS extends BaseItemGURPS {
 	protected override _onCreate(data: this["_source"], options: DocumentModificationContext, userId: string): void {
 		super._onCreate(data, options, userId)
 
-		// If (!this.flags[SYSTEM_NAME]?.aura || (game as Game).combat?.started) {
-		// if ((game as Game).combat?.started) {
+		// If (!this.flags[SYSTEM_NAME]?.aura || game.combat?.started) {
+		// if (game.combat?.started) {
 		;(this.actor?.getActiveTokens().shift() as TokenGURPS)?.showFloatyText({ create: this })
 		// }
 	}
@@ -98,7 +97,7 @@ class EffectGURPS extends BaseItemGURPS {
 	 */
 	protected override _onDelete(options: DocumentModificationContext, userId: string): void {
 		super._onDelete(options, userId)
-		// If ((game as Game).combat?.started) {
+		// If (game.combat?.started) {
 		if (this.canLevel) this.system.levels!.current = 0
 		;(this.actor?.getActiveTokens().shift() as TokenGURPS)?.showFloatyText({ delete: this })
 		// }

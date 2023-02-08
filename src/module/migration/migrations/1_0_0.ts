@@ -1,6 +1,6 @@
 import { CharacterSource } from "@actor/character/data"
-import { ActorType } from "@actor/data"
 import { StaticCharacterSource } from "@actor/static_character/data"
+import { ActorType } from "@module/data"
 import { MigrationBase } from "../base"
 
 export class Migration_1_0_0 extends MigrationBase {

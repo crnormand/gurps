@@ -1,10 +1,9 @@
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { i18n, newUUID, stringCompare } from "@util"
-import { gid } from "@module/data"
+import { gid, ItemType } from "@module/data"
 import { WeaponDamage } from "./damage"
 import { CharItemGURPS, Feature } from "@module/config"
-import { ItemType } from "@item/data"
 import { CharacterGURPS } from "@actor"
 import { SkillBonus } from "@feature"
 import { WeaponConstructionContext, WeaponType } from "./data"
@@ -33,7 +32,7 @@ class BaseWeapon {
 				this.damage.parent = new BaseWeapon({ ...this }, { ...context, ...{ recursive: true } })
 		} else {
 			mergeObject(context, { ready: true })
-			const WeaponConstructor = (CONFIG as any).GURPS.Weapon.classes[data.type as WeaponType]
+			const WeaponConstructor = CONFIG.GURPS.Weapon.classes[data.type as WeaponType]
 			return WeaponConstructor ? new WeaponConstructor(data, context) : new BaseWeapon(data, context)
 		}
 	}

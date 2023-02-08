@@ -13,21 +13,21 @@ class ModifierButton extends Application {
 	constructor(options = {}) {
 		super(options)
 		this.showing = false
-		this.modifierMode = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
+		this.modifierMode = game.settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
 	}
 
 	async render(
 		force?: boolean | undefined,
 		options?: Application.RenderOptions<ApplicationOptions> | undefined
 	): Promise<unknown> {
-		await this.recalculateModTotal((game as Game).user)
-		this.modifierMode = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
+		await this.recalculateModTotal(game.user)
+		this.modifierMode = game.settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
 		if (this.window?.rendered) await this.window.render()
 		return super.render(force, options)
 	}
 
 	get window(): ModifierWindow | ModifierBucket {
-		this.modifierMode = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
+		this.modifierMode = game.settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_MODE) as "prompt" | "bucket"
 		if (this._window) {
 			if (this._window instanceof ModifierWindow && this.modifierMode === "bucket")
 				this._window = new ModifierBucket(this, {})
@@ -52,7 +52,7 @@ class ModifierButton extends Application {
 	}
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object {
-		const user = (game as Game).user
+		const user = game.user
 		let total = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) ?? 0
 		let buttonMagnet = ""
 		if (user?.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky) === true) buttonMagnet = "sticky"
@@ -109,7 +109,7 @@ class ModifierButton extends Application {
 
 	async _onDiceClick(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
-		return RollGURPS.handleRoll((game as Game).user, null, {
+		return RollGURPS.handleRoll(game.user, null, {
 			type: RollType.Generic,
 			formula: "3d6",
 			hidden: event.ctrlKey,
@@ -119,7 +119,7 @@ class ModifierButton extends Application {
 	async _onDiceContextMenu(event: JQuery.ContextMenuEvent): Promise<void> {
 		event.preventDefault()
 		console.log(event.ctrlKey)
-		return RollGURPS.handleRoll((game as Game).user, null, {
+		return RollGURPS.handleRoll(game.user, null, {
 			type: RollType.Generic,
 			formula: "1d6",
 			hidden: event.ctrlKey,
@@ -129,14 +129,14 @@ class ModifierButton extends Application {
 	async _onMagnetClick(event: JQuery.ClickEvent): Promise<unknown> {
 		event.preventDefault()
 		event.stopPropagation()
-		const sticky = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky) ?? false
-		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierSticky, !sticky)
+		const sticky = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky) ?? false
+		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierSticky, !sticky)
 		return this.render()
 	}
 
 	async clear() {
-		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
-		await (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
+		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
 		return this.render(true)
 	}
 
@@ -160,11 +160,11 @@ class ModifierButton extends Application {
 
 	addModifier(mod: RollModifier) {
 		const modList: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		const oldMod = modList.find(e => e.name === mod.name)
 		if (oldMod) oldMod.modifier += mod.modifier
 		else modList.push(mod)
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		// This.list.customMod = null
 		// this.list.mods = []
 		// this.list.selection = -1

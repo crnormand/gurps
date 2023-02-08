@@ -236,8 +236,8 @@ declare global {
 				remove: boolean
 			}
 		): {
-			menu: ReturnType<typeof ProseMirrorMenu["build"]>
-			keyMaps: ReturnType<typeof ProseMirrorKeyMaps["build"]>
+			menu: ReturnType<(typeof ProseMirrorMenu)["build"]>
+			keyMaps: ReturnType<(typeof ProseMirrorKeyMaps)["build"]>
 		}
 
 		/**
@@ -277,8 +277,8 @@ declare global {
 			target: string
 			button: HTMLElement
 			hasButton: boolean
-			instance: Awaited<ReturnType<typeof TextEditor["create"]>> | null
-			mce: Awaited<ReturnType<typeof TextEditor["create"]>> | null
+			instance: Awaited<ReturnType<(typeof TextEditor)["create"]>> | null
+			mce: Awaited<ReturnType<(typeof TextEditor)["create"]>> | null
 			active: boolean
 			changed: boolean
 			options: TextEditor.Options

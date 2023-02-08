@@ -1,6 +1,6 @@
-import { ItemType } from "@item/data"
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { Feature } from "@module/config"
+import { ItemType } from "@module/data"
 
 export type EquipmentModifierSource = ItemGCSSource<ItemType.EquipmentModifier, EquipmentModifierSystemData>
 

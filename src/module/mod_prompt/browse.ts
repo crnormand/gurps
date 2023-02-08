@@ -1,5 +1,4 @@
 import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
-import { GURPS } from "@module/gurps"
 import { i18n } from "@util"
 import { ModifierWindow } from "./window"
 
@@ -13,7 +12,7 @@ class ModifierBrowse extends Application {
 	constructor(window: ModifierWindow, options = {}) {
 		super(options)
 		this.window = window
-		this.mods = GURPS.allMods
+		this.mods = CONFIG.GURPS.allMods
 		this.selection = [-1, -1, -1]
 		this.catShowing = -1
 		this.showing = false
@@ -139,8 +138,7 @@ class ModifierBrowse extends Application {
 				}
 		}
 		categories.sort((a: ModCategory, b: ModCategory) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
-		const pinnedMods: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as []) ?? []
+		const pinnedMods: RollModifier[] = (game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as []) ?? []
 		categories.push({
 			name: i18n("gurps.system.modifier_stack.pinned_category"),
 			showing: false,

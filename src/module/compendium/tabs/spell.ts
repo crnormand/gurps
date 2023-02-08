@@ -32,7 +32,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 			this.browser.loadedPacks(TabName.Spell),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((spell: any) => {
 				if (!["spell", "spell_container"].includes(spell.type)) return
 				spell.prepareData()

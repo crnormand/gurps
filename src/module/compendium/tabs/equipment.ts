@@ -24,7 +24,7 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 			this.browser.loadedPacks(TabName.Equipment),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((equipment: any) => {
 				if (!["equipment", "equipment_container"].includes(equipment.type)) return
 				equipment.prepareData()

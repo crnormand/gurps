@@ -16,14 +16,14 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 		const itemData = this.object.toObject(false)
 		const attributes: Record<string, string> = {}
 		const locations: Record<string, string> = {}
-		const default_attributes = (game as Game).settings.get(
+		const default_attributes = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
 		) as AttributeDefObj[]
 		const default_locations = {
-			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
-			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
-			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+			name: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
 		} as HitLocationTable
 		const actor = this.item.actor as unknown as CharacterGURPS
 		if (actor) {
@@ -58,7 +58,7 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 				rangedWeapons: rangedWeapons,
 				item: itemData,
 				system: (itemData as any).system,
-				config: (CONFIG as any).GURPS,
+				config: CONFIG.GURPS,
 				attributes: attributes,
 				locations: locations,
 				sysPrefix: "array.system.",
@@ -173,7 +173,7 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 	protected async _onPrereqTypeChange(event: JQuery.ChangeEvent): Promise<any> {
 		event.preventDefault()
 		const value = event.currentTarget.value
-		const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[value as PrereqType]
+		const PrereqConstructor = CONFIG.GURPS.Prereq.classes[value as PrereqType]
 		let path = $(event.currentTarget).data("path").replace("array.", "")
 		const items = path.split(".")
 		const index = items.pop()
@@ -280,7 +280,7 @@ export class ItemSheetGCS extends ItemSheetGURPS {
 	protected async _onFeatureTypeChange(event: JQuery.ChangeEvent): Promise<any> {
 		const value = event.currentTarget.value
 		const index = $(event.currentTarget).data("index")
-		const FeatureConstructor = (CONFIG as any).GURPS.Feature.classes[value as FeatureType]
+		const FeatureConstructor = CONFIG.GURPS.Feature.classes[value as FeatureType]
 		const features = (this.item.system as any).features
 		features[index] = {
 			type: value,

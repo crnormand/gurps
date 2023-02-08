@@ -27,7 +27,7 @@ interface NoteDataSchema extends DocumentSchema {
 	fontFamily: FieldReturnType<
 		fields.RequiredString,
 		{
-			default: () => typeof CONFIG["defaultFontFamily"]
+			default: () => (typeof CONFIG)["defaultFontFamily"]
 		}
 	>
 	fontSize: FieldReturnType<

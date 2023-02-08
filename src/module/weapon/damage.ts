@@ -3,10 +3,10 @@ import { DiceGURPS } from "@module/dice"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { stringCompare } from "@util"
-import { ItemType } from "@item/data"
 import { CharacterGURPS } from "@actor"
 import { Feature, Weapon } from "@module/config"
 import { WeaponDRDivisorBonus } from "@feature"
+import { ItemType } from "@module/data"
 
 export class WeaponDamage {
 	constructor(data?: (WeaponDamage & { parent: Weapon }) | any) {

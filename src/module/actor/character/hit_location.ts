@@ -1,5 +1,4 @@
-import { CharacterGURPS } from "@actor"
-import { gid } from "@module/data"
+import { ActorType, gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { TooltipGURPS } from "@module/tooltip"
 import { i18n, i18n_f } from "@util"
@@ -22,7 +21,7 @@ export interface HitLocationTableData {
 }
 
 export class HitLocation {
-	actor: CharacterGURPS
+	actor: Actor
 
 	owningTable: HitLocationTable
 
@@ -78,15 +77,15 @@ export class HitLocation {
 		return this._DR()
 	}
 
-	_DR(tooltip?: TooltipGURPS, drMap?: Map<string, number>): Map<string, number> {
-		drMap ??= new Map()
+	_DR(tooltip?: TooltipGURPS, drMap: Map<string, number> = new Map()): Map<string, number> {
 		if (this.dr_bonus !== 0) {
 			drMap.set(gid.All, this.dr_bonus)
 			tooltip?.push(
 				i18n_f("gurps.tooltip.dr_bonus", { item: this.choice_name, bonus: this.dr_bonus, type: gid.All })
 			)
 		}
-		if (this.actor instanceof CharacterGURPS) drMap = this.actor.addDRBonusesFor(this.id, tooltip, drMap)
+		if (this.actor.type === ActorType.Character)
+			drMap = (this.actor as any).addDRBonusesFor(this.id, tooltip, drMap)
 		if (this.owningTable?.owningLocation) {
 			drMap = this.owningTable.owningLocation._DR(tooltip, drMap)
 		}
@@ -96,6 +95,7 @@ export class HitLocation {
 			})
 		}
 		this.calc.dr = Object.fromEntries(drMap)
+		console.log(drMap)
 		return drMap
 	}
 

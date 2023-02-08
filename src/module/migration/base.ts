@@ -1,5 +1,4 @@
-import { ActorSourceGURPS } from "@actor/data"
-import { ItemSourceGURPS } from "@item/data"
+import { ActorSourceGURPS, ItemSourceGURPS } from "@module/config"
 
 abstract class MigrationBase {
 	static readonly version: number

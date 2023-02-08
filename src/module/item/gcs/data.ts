@@ -1,5 +1,5 @@
 import { BaseItemSourceGURPS } from "@item/base"
-import { ItemType } from "@item/data"
+import { ItemType } from "@module/data"
 
 export type ItemGCSSource<
 	TItemType extends ItemType = ItemType,

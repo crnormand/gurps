@@ -16,5 +16,5 @@ export enum TabName {
 	Note = "note",
 	Settings = "settings",
 }
-export type BrowserTab = InstanceType<typeof browserTabs[keyof typeof browserTabs]>
+export type BrowserTab = InstanceType<(typeof browserTabs)[keyof typeof browserTabs]>
 export type TabData<T> = Record<TabName, T | null>

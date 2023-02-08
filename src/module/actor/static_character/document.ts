@@ -39,9 +39,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	}
 
 	getOwners() {
-		return (game as Game).users?.contents.filter(
-			u => this.getUserLevel(u) ?? 0 >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
-		)
+		return game.users?.contents.filter(u => this.getUserLevel(u) ?? 0 >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
 	}
 
 	// Getters
@@ -508,7 +506,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	 */
 	async updateEqtCount(eqtkey: string, count: number) {
 		let update: { [key: string]: any } = { [`${eqtkey}.count`]: count }
-		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.STATIC_AUTOMATICALLY_SET_IGNOREQTY))
+		if (game.settings.get(SYSTEM_NAME, SETTINGS.STATIC_AUTOMATICALLY_SET_IGNOREQTY))
 			update[`${eqtkey}.ignoreImportQty`] = true
 		await this.update(update)
 		let eqt = getProperty(this, eqtkey)
@@ -825,7 +823,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 
 	_openImportDialog() {
 		let file: any = null
-		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+		if (game.settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
 			const filepicker = new FilePicker({
 				callback: (path: string) => {
 					const request = new XMLHttpRequest()

@@ -14,9 +14,8 @@ import {
 	TraitContainerGURPS,
 	TraitGURPS,
 } from "@item"
-import { ItemType } from "@item/data"
 import { CondMod } from "@module/conditional-modifier"
-import { attrPrefix, gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
+import { attrPrefix, gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
@@ -91,28 +90,28 @@ class CharacterGURPS extends BaseActorGURPS {
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
 		) as CharacterSettings
-		const default_attributes = (game as Game).settings.get(
+		const default_attributes = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
 		) as CharacterSettings["attributes"]
-		const default_resource_trackers = (game as Game).settings.get(
+		const default_resource_trackers = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
 		) as CharacterSettings["resource_trackers"]
 		const default_hit_locations = {
-			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
-			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
-			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+			name: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
 		} as HitLocationTable
-		const populate_description = (game as Game).settings.get(
+		const populate_description = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.populate_description`
 		) as boolean
-		const initial_points = (game as Game).settings.get(
+		const initial_points = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.initial_points`
 		) as number
-		const default_tech_level = (game as Game).settings.get(
+		const default_tech_level = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.tech_level`
 		) as string
@@ -946,7 +945,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		context: DocumentModificationContext & { temporary: boolean }
 	): Promise<Array<any>> {
 		if (embeddedName === "Item")
-			data = data.filter(e => (CONFIG as any).GURPS.Actor.allowedContents[this.type].includes(e.type))
+			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
 		return super.createEmbeddedDocuments(embeddedName, data, context)
 	}
 
@@ -1817,7 +1816,7 @@ class CharacterGURPS extends BaseActorGURPS {
 					label: i18n("gurps.character.import_prompt.import"),
 					callback: _html => {
 						let file: any = null
-						if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+						if (game.settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
 							const filepicker = new FilePicker({
 								callback: (path: string) => {
 									const request = new XMLHttpRequest()
@@ -1896,21 +1895,17 @@ class CharacterGURPS extends BaseActorGURPS {
 			actor: this,
 			system: this.system,
 		}
-		// Const data = super.getRollData()
-		// console.log(data)
-		// return data
-		// return mergeObject(super.getRollData(), {
-		// 	actor: this,
-		// 	attributes: this.attributes,
-		// })
 	}
 
-	// RollInitiative(
-	// 	_options?: Actor.RollInitiativeOptions | undefined
-	// ): Promise<any> {
-	// 	console.log("test")
-	// 	return new Promise(() => evaluateToNumber("($basic_speed*100)+($dx/100)+(1d6/1000)/100", this))
-	// }
+	getTrait(name: string): TraitGURPS {
+		return this.traits
+			.filter(e => e instanceof TraitGURPS)
+			?.filter(e => e.name === name && e.enabled)[0] as TraitGURPS
+	}
+
+	hasTrait(name: string): boolean {
+		return this.traits.some(e => e instanceof TraitGURPS && e.name === name && e.enabled)
+	}
 }
 
 interface CharacterGURPS extends BaseActorGURPS {

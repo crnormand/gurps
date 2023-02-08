@@ -1,8 +1,7 @@
 import { ItemConstructionContextGURPS } from "@item/base"
-import { ContainerDataGURPS, ItemDataGURPS, ItemType } from "@item/data"
 import { ItemGCS } from "@item/gcs"
-import { ItemGURPS } from "@module/config"
-import { SYSTEM_NAME } from "@module/data"
+import { ContainerDataGURPS, ItemDataGURPS, ItemGURPS } from "@module/config"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { AnyDocumentData } from "types/foundry/common/abstract/data.mjs"
 import Document, { Context, Metadata } from "types/foundry/common/abstract/document.mjs"
 import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
@@ -35,7 +34,7 @@ abstract class ContainerGURPS extends ItemGCS {
 
 	// Embedded Items
 	get children(): Collection<ItemGURPS> {
-		const childTypes = (CONFIG as any).GURPS.Item.childTypes[this.type]
+		const childTypes = CONFIG.GURPS.Item.childTypes[this.type]
 		return new Collection(
 			this.items
 				.filter(item => childTypes.includes(item.type))
@@ -58,7 +57,7 @@ abstract class ContainerGURPS extends ItemGCS {
 		if (!Array.isArray(data)) data = [data]
 
 		// Prevent creating embeded documents which this type of container shouldn't contain
-		data = data.filter(e => (CONFIG as any).GURPS.Item.allowedContents[this.type].includes(e.type))
+		data = data.filter(e => CONFIG.GURPS.Item.allowedContents[this.type].includes(e.type))
 
 		const currentItems: any[] = duplicate((this.getFlag(SYSTEM_NAME, "contentsData") as any[]) ?? [])
 		if (data.length) {

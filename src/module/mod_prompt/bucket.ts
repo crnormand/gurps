@@ -1,5 +1,4 @@
 import { RollModifier, SOCKET, SYSTEM_NAME, UserFlags } from "@module/data"
-import { GURPS } from "@module/gurps"
 
 class ModifierBucket extends Application {
 	categoriesOpen: boolean[] = [false, false, false, false, false, false, false, false, false, false]
@@ -31,10 +30,10 @@ class ModifierBucket extends Application {
 	}
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object | Promise<object> {
-		const user = (game as Game).user
+		const user = game.user
 		let modStack = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) ?? []
 
-		const commonMods = GURPS.commonMods
+		const commonMods = CONFIG.GURPS.commonMods
 
 		commonMods.forEach((e: any, i: number) => {
 			e.open = this.categoriesOpen[i]
@@ -44,15 +43,15 @@ class ModifierBucket extends Application {
 			return { modifier: e }
 		})
 
-		const players = (game as Game).users ?? []
+		const players = game.users ?? []
 
 		// Const commonMods: any[] = []
 		return mergeObject(super.getData(options), {
 			value: this.value,
 			players: players,
-			meleeMods: GURPS.meleeMods,
-			rangedMods: GURPS.rangedMods,
-			defenseMods: GURPS.defenseMods,
+			meleeMods: CONFIG.GURPS.meleeMods,
+			rangedMods: CONFIG.GURPS.rangedMods,
+			defenseMods: CONFIG.GURPS.defenseMods,
 			currentMods: modStack,
 			commonMods: commonMods,
 			genericMods: genericMods,
@@ -133,34 +132,34 @@ class ModifierBucket extends Application {
 	removeModifier(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const modList: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		const index = $(event.currentTarget).data("index")
 		modList.splice(index, 1)
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
 		this.button.render()
 	}
 
 	togglePin(customMod: RollModifier) {
 		const pinnedMods: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as RollModifier[]) ?? []
 		const matchingMod = pinnedMods.find(e => e.name === customMod.name)
 		if (matchingMod) {
 			pinnedMods.splice(pinnedMods.indexOf(matchingMod), 1)
 		} else {
 			pinnedMods.push(customMod)
 		}
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
 		this.render()
 	}
 
 	addModifier(mod: RollModifier) {
 		const modList: RollModifier[] =
-			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		const oldMod = modList.find(e => e.name === mod.name)
 		if (oldMod) oldMod.modifier += mod.modifier
 		else modList.push(mod)
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.value = ""
 		this.render()
 		this.button.render()
@@ -170,13 +169,13 @@ class ModifierBucket extends Application {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
 		const player = (await fromUuid(uuid)) as User
-		// Const player = (game as Game).users?.get(uuid)
+		// Const player = game.users?.get(uuid)
 		console.log(player)
 		if (!player) return
-		const modStack = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
+		const modStack = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
 		await player.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modStack)
 		console.log(player, player.id)
-		;(game as Game).socket?.emit(`system.${SYSTEM_NAME}`, { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
+		game.socket?.emit(`system.${SYSTEM_NAME}`, { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
 	}
 }
 

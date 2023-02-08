@@ -1,8 +1,7 @@
-import { DamageProgression, DisplayMode } from "@module/data"
+import { ActorType, DamageProgression, DisplayMode } from "@module/data"
 import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
 import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
 import { HitLocationTableData } from "./hit_location"
-import { ActorType } from "@actor/data"
 import { AttributeDefObj, AttributeObj } from "@module/attribute"
 import { ResourceTrackerDefObj, ResourceTrackerObj } from "@module/resource_tracker"
 

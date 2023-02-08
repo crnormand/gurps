@@ -73,7 +73,7 @@ export class CharacterSheetConfig extends FormApplication {
 			resourceTrackers: resourceTrackers,
 			locations: actor.system.settings.body_type,
 			filename: this.filename,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		}
 	}
 
@@ -100,7 +100,7 @@ export class CharacterSheetConfig extends FormApplication {
 		html.find(".quick-import").on("click", event => this._reimport(event))
 
 		// Uploading new character
-		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+		if (game.settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
 			html.find("input[type='file']").on("click", event => {
 				event.preventDefault()
 				const filepicker = new FilePicker({
@@ -168,18 +168,18 @@ export class CharacterSheetConfig extends FormApplication {
 	async _onReset(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const type = $(event.currentTarget).data("type")
-		const default_attributes = (game as Game).settings.get(
+		const default_attributes = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
 		) as CharacterSettings["attributes"]
-		const default_resource_trackers = (game as Game).settings.get(
+		const default_resource_trackers = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_RESOURCE_TRACKERS}.resource_trackers`
 		) as CharacterSettings["resource_trackers"]
 		const default_hit_locations = {
-			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
-			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
-			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+			name: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
 		} as HitLocationTable
 		const update: any = {}
 		if (type === "attributes") update["system.settings.attributes"] = default_attributes

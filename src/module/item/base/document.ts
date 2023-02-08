@@ -1,5 +1,5 @@
-import { ItemDataGURPS, ItemType } from "@item/data"
-import { SYSTEM_NAME } from "@module/data"
+import { ItemDataGURPS } from "@module/config"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { Context, DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { BaseItemSourceGURPS, ItemConstructionContextGURPS } from "./data"
@@ -14,7 +14,7 @@ class BaseItemGURPS extends Item {
 					ready: true,
 				},
 			})
-			const ItemConstructor = (CONFIG as any).GURPS.Item.documentClasses[data.type as ItemType]
+			const ItemConstructor = CONFIG.GURPS.Item.documentClasses[data.type as ItemType]
 			return ItemConstructor ? new ItemConstructor(data, context) : new BaseItemGURPS(data, context)
 		}
 	}

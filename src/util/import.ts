@@ -4,6 +4,7 @@ import {
 	EquipmentModifierContainerSystemData,
 	EquipmentModifierSystemData,
 	EquipmentSystemData,
+	ItemFlagsGURPS,
 	ItemGCSSystemData,
 	NoteContainerSystemData,
 	NoteSystemData,
@@ -18,9 +19,8 @@ import {
 	TraitModifierSystemData,
 	TraitSystemData,
 } from "@item"
-import { ItemFlagsGURPS, ItemSystemDataGURPS, ItemType } from "@item/data"
-import { Feature, Weapon } from "@module/config"
-import { CR, SYSTEM_NAME } from "@module/data"
+import { Feature, ItemSystemDataGURPS, Weapon } from "@module/config"
+import { CR, ItemType, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon } from "@module/weapon"
 import { PrereqList } from "@prereq"

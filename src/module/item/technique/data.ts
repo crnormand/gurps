@@ -1,8 +1,7 @@
-import { ItemType } from "@item/data"
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { EncumbrancePenaltyMultiplier } from "@item/skill"
 import { Feature, Weapon } from "@module/config"
-import { Study } from "@module/data"
+import { ItemType, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { PrereqList } from "@prereq"
 

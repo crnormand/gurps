@@ -1,6 +1,6 @@
 import { BaseItemSourceGURPS } from "@item/base/data"
-import { ItemType } from "@item/data"
 import { FeatureConstructor } from "@module/config"
+import { ItemType } from "@module/data"
 
 export type EffectSource = BaseItemSourceGURPS<ItemType.Effect, EffectSystemData>
 

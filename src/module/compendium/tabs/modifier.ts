@@ -23,7 +23,7 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 			this.browser.loadedPacks(TabName.TraitModifier),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((modifier: any) => {
 				if (!["modifier", "modifier_container"].includes(modifier.type)) return
 				modifier.prepareData()

@@ -1,7 +1,6 @@
-import { ItemType } from "@item/data"
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { Weapon } from "@module/config"
-import { Difficulty, Study } from "@module/data"
+import { Difficulty, ItemType, Study } from "@module/data"
 import { PrereqList } from "@prereq"
 
 export type SpellSource = ItemGCSSource<ItemType.Spell, SpellSystemData>

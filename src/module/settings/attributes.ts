@@ -261,7 +261,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const attributes: any[] = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
+		const attributes: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
 		const type: "attributes" | "attribute_thresholds" = $(event.currentTarget).data("type")
 		let new_id = ""
 		if (type === "attributes")
@@ -283,7 +283,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 					cost_per_point: 0,
 					cost_adj_percent_per_sm: 0,
 				})
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
 			case "attribute_thresholds":
 				attributes[$(event.currentTarget).data("id")].thresholds ??= []
@@ -293,7 +293,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 					expression: "",
 					ops: [],
 				})
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
 		}
 	}
@@ -301,18 +301,18 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 	private async _onDeleteItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const attributes: any[] = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
+		const attributes: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
 		const type: "attributes" | "attribute_thresholds" = $(event.currentTarget).data("type")
 		const index = Number($(event.currentTarget).data("index")) || 0
 		const parent_index = Number($(event.currentTarget).data("pindex")) || 0
 		switch (type) {
 			case "attributes":
 				attributes.splice(index, 1)
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
 			case "attribute_thresholds":
 				attributes[parent_index].thresholds?.splice(index, 1)
-				await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
 		}
 	}
@@ -352,7 +352,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
 
-		const attributes = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
+		const attributes = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
 		const target_index = element.data("index")
 		const above = element.hasClass("border-top")
 		if (dragData.order === target_index) return this.render()
@@ -376,26 +376,22 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 			v.order = k
 		})
 
-		await (game as Game).settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 		return this.render()
 	}
 
 	override async getData(): Promise<any> {
-		const attributes = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
+		const attributes = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
 		return {
 			attributes: attributes,
 			actor: null,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		}
 	}
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
-		const attributes = await (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
+		const attributes = await game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
 		formData = prepareFormData(_event, formData, { system: { settings: { attributes } } })
-		await (game as Game).settings.set(
-			SYSTEM_NAME,
-			`${this.namespace}.attributes`,
-			formData["system.settings.attributes"]
-		)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, formData["system.settings.attributes"])
 	}
 }

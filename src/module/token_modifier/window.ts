@@ -51,7 +51,7 @@ export class TokenModifierWindow extends Application {
 
 	get targets(): ModifierTarget[] {
 		const results = []
-		for (const target of Array.from((game as Game).user!.targets)) {
+		for (const target of Array.from(game.user!.targets)) {
 			const result: ModifierTarget = {
 				name: target.name,
 				targetModifiers:

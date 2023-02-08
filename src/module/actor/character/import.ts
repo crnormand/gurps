@@ -1,4 +1,3 @@
-import { CharacterGURPS, StaticCharacterGURPS } from "@actor"
 import { EquipmentSystemData } from "@item/equipment/data"
 import { EquipmentContainerSystemData } from "@item/equipment_container/data"
 import { NoteSystemData } from "@item/note/data"
@@ -12,12 +11,11 @@ import { TechniqueSystemData } from "@item/technique/data"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { AttributeObj } from "@module/attribute"
-import { DamageProgression, DisplayMode, SYSTEM_NAME } from "@module/data"
+import { ActorType, DamageProgression, DisplayMode, SYSTEM_NAME } from "@module/data"
 import { i18n, i18n_f } from "@util"
 import { CharacterSystemData } from "./data"
 import { CharacterSheetGURPS } from "./sheet"
 import { LengthUnits, WeightUnits } from "@util/measure"
-import { ActorType } from "@actor/data"
 import { ItemGURPS } from "@module/config"
 import { ImportUtils } from "@util/import"
 
@@ -35,20 +33,20 @@ export interface CharacterImportedData extends Omit<CharacterSystemData, "attrib
 export class CharacterImporter {
 	version: number
 
-	document: CharacterGURPS | StaticCharacterGURPS
+	document: Actor
 
-	constructor(document: CharacterGURPS | StaticCharacterGURPS) {
+	constructor(document: Actor) {
 		this.version = 4
 		this.document = document
 	}
 
-	static import(document: CharacterGURPS | StaticCharacterGURPS, file: { text: string; name: string; path: string }) {
+	static import(document: Actor, file: { text: string; name: string; path: string }) {
 		// If (file.name.includes(".gca5")) return GCAImporter.import(document, file)
 		const importer = new CharacterImporter(document)
 		importer._import(document, file)
 	}
 
-	async _import(document: CharacterGURPS | StaticCharacterGURPS, file: { text: string; name: string; path: string }) {
+	async _import(document: Actor, file: { text: string; name: string; path: string }) {
 		const json = file.text
 		let r: CharacterImportedData
 		const errorMessages: string[] = []
@@ -61,7 +59,7 @@ export class CharacterImporter {
 		}
 
 		let commit: Partial<CharacterSystemData> = {}
-		const imp = document.importData
+		const imp = (document as any).importData
 		imp.name = file.name ?? imp.name
 		imp.path = file.path ?? imp.path
 		imp.last_import = new Date().toISOString()
@@ -70,7 +68,7 @@ export class CharacterImporter {
 				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_old")])
 			else if (r.version > this.version)
 				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_new")])
-			if (this.document instanceof StaticCharacterGURPS) {
+			if (this.document.type === ActorType.LegacyCharacter) {
 				commit = { ...commit, ...{ type: ActorType.Character } }
 			}
 			commit = { ...commit, ...{ "system.import": imp } }
@@ -154,7 +152,7 @@ export class CharacterImporter {
 		}
 
 		if (profile.portrait) {
-			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
+			if (game.user?.hasPermission("FILES_UPLOAD")) {
 				r.img = `data:image/png;base64,${profile.portrait}.png`
 			} else {
 				console.error(i18n("gurps.error.import.portait_permissions"))
@@ -209,9 +207,9 @@ export class CharacterImporter {
 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/chat/character-import-error.hbs`, {
 				lines: msg,
 			}),
-			user: (game as Game).user!.id,
+			user: game.user!.id,
 			type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-			whisper: [(game as Game).user!.id],
+			whisper: [game.user!.id],
 		})
 		return false
 	}
