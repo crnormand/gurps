@@ -39,6 +39,7 @@ import {
 	EquipmentModifierSystemData,
 	EquipmentSystemData,
 	MeleeWeaponGURPS,
+	MeleeWeaponSystemData,
 	NoteContainerData,
 	NoteContainerGURPS,
 	NoteContainerSystemData,
@@ -46,6 +47,7 @@ import {
 	NoteGURPS,
 	NoteSystemData,
 	RangedWeaponGURPS,
+	RangedWeaponSystemData,
 	RitualMagicSpellData,
 	RitualMagicSpellGURPS,
 	RitualMagicSpellSystemData,
@@ -120,22 +122,40 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[ItemType.RangedWeapon]: RangedWeaponGURPS,
 		},
 		allowedContents: {
-			[ItemType.Trait]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.Trait]: [
+				ItemType.TraitModifier,
+				ItemType.TraitModifierContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
+			],
 			[ItemType.TraitContainer]: [
 				ItemType.TraitModifier,
 				ItemType.TraitModifierContainer,
 				ItemType.Trait,
 				ItemType.TraitContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
 			],
 			[ItemType.TraitModifierContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.Skill]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
+			[ItemType.Technique]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
 			[ItemType.SkillContainer]: [ItemType.Skill, ItemType.Technique, ItemType.SkillContainer],
+			[ItemType.Spell]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
+			[ItemType.RitualMagicSpell]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
 			[ItemType.SpellContainer]: [ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer],
-			[ItemType.Equipment]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.Equipment]: [
+				ItemType.EquipmentModifier,
+				ItemType.EquipmentModifierContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
+			],
 			[ItemType.EquipmentContainer]: [
 				ItemType.Equipment,
 				ItemType.EquipmentContainer,
 				ItemType.EquipmentModifier,
 				ItemType.EquipmentModifierContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
 			],
 			[ItemType.EquipmentModifierContainer]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
 			[ItemType.NoteContainer]: [ItemType.Note, ItemType.NoteContainer],
@@ -492,10 +512,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 	commonMods: {},
 	allMods: [],
 }
-// GURPSCONFIG.Item.documentClasses = {};
-// GURPSCONFIG.Actor.documentClasses = {
-// 	character: CharacterGURPS,
-// };
+
 export { GURPSCONFIG }
 
 export type CharItemGURPS = CharContainerGCS | NoteGURPS | NoteContainerGURPS
@@ -614,6 +631,8 @@ export type ItemSystemDataGURPS =
 	| EquipmentModifierContainerSystemData
 	| NoteSystemData
 	| NoteContainerSystemData
+	| MeleeWeaponSystemData
+	| RangedWeaponSystemData
 
 export type ActorDataGURPS = CharacterDataGURPS | StaticCharacterDataGURPS
 

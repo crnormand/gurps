@@ -34,13 +34,13 @@ class BaseActorGURPS extends Actor {
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = CONFIG.GURPS.Actor.documentClasses[data.type]
-			return ActorConstructor ? new ActorConstructor(data, context) : new BaseActorGURPS(data, context)
+			if (ActorConstructor) return new ActorConstructor(data, context)
+			throw Error(`Invalid Actor Type "${data.type}"`)
 		}
 	}
 
 	protected async _preCreate(data: any, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
-		// @ts-ignore
-		if (this._source.img === ActorData.DEFAULT_ICON)
+		if (this._source.img === foundry.CONST.DEFAULT_TOKEN)
 			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${data.type}.svg`
 		await super._preCreate(data, options, user)
 	}
@@ -152,6 +152,7 @@ class BaseActorGURPS extends Actor {
 
 	async increaseCondition(id: ConditionID): Promise<ConditionGURPS | null> {
 		const existing = this.conditions.find(e => e.cid === id)
+		console.log(existing)
 		if (existing) {
 			if (existing.canLevel) {
 				const newLevel = existing.level + 1

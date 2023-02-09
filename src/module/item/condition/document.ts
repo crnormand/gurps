@@ -1,16 +1,20 @@
 import { DurationType, EffectGURPS } from "@item/effect"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
-import { ConditionID, ConditionSource, ConditionSystemData } from "./data"
-import { ConditionList } from "./list"
+import { ConditionID, ConditionSource, ConditionSystemData, ManeuverID } from "./data"
+import { getConditionList } from "./list"
+import { getManeuverList } from "./maneuver"
 
 class ConditionGURPS extends EffectGURPS {
-	static getData(id: ConditionID): Partial<ConditionSource> {
+	static getData(id: ConditionID | ManeuverID): Partial<ConditionSource> {
+		const [data, folder] = Object.values(ConditionID).includes(id as any)
+			? [getConditionList()[id as ConditionID], "status"]
+			: [getManeuverList()[id as ManeuverID], "maneuver"]
 		return {
 			name: i18n(`gurps.status.${id}`),
 			type: ItemType.Condition,
-			img: `systems/${SYSTEM_NAME}/assets/status/${id}.png`,
-			system: mergeObject(ConditionGURPS.defaults, ConditionList[id]) as ConditionSystemData,
+			img: `systems/${SYSTEM_NAME}/assets/${folder}/${id}.png`,
+			system: mergeObject(ConditionGURPS.defaults, data) as ConditionSystemData,
 		}
 	}
 
@@ -31,7 +35,7 @@ class ConditionGURPS extends EffectGURPS {
 		}
 	}
 
-	get cid(): ConditionID | null {
+	get cid(): ConditionID | ManeuverID | null {
 		return this.system.id
 	}
 }

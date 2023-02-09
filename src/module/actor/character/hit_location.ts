@@ -95,7 +95,6 @@ export class HitLocation {
 			})
 		}
 		this.calc.dr = Object.fromEntries(drMap)
-		console.log(drMap)
 		return drMap
 	}
 

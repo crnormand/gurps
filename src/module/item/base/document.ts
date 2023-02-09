@@ -19,8 +19,8 @@ class BaseItemGURPS extends Item {
 				},
 			})
 			const ItemConstructor = CONFIG.GURPS.Item.documentClasses[data.type as ItemType]
-			if (ItemConstructor) new ItemConstructor(data, context)
-			throw Error("Invalid item type")
+			if (ItemConstructor) return new ItemConstructor(data, context)
+			throw Error(`Invalid Item Type "${data.type}"`)
 		}
 	}
 
@@ -33,8 +33,8 @@ class BaseItemGURPS extends Item {
 		updates: any[],
 		context: DocumentModificationContext & { options: any }
 	): Promise<any[]> {
-		if (!(parent instanceof Item)) return super.updateDocuments(updates, context)
-		return parent.updateEmbeddedDocuments("Item", updates, context.options)
+		if (!(context.parent instanceof Item)) return super.updateDocuments(updates, context)
+		return context.parent.updateEmbeddedDocuments("Item", updates, context.options)
 	}
 
 	protected async _preCreate(
@@ -73,11 +73,15 @@ class BaseItemGURPS extends Item {
 		}
 		return i
 	}
+
+	prepareData(): void {
+		if (this.actor?.noPrepare) return
+		super.prepareData()
+	}
 }
 
 interface BaseItemGURPS extends Item {
-	// System: ItemSystemData
-	// Temporary
+	system: any
 	_id: string
 	_source: BaseItemSourceGURPS
 }

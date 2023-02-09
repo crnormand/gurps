@@ -47,11 +47,43 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 		return (this.system as any).open
 	}
 
+	// Async createEmbeddedDocuments(
+	// 	embeddedName: string,
+	// 	data: Array<{ name: string; type: string } & Record<string, unknown>>,
+	// 	context: DocumentModificationContext & any
+	// ): Promise<Array<StoredDocument<Document<any, this>>>> {
+	// 	if (embeddedName !== "Item") return super.createEmbeddedDocuments(embeddedName, data, context)
+	// 	if (!Array.isArray(data)) data = [data]
+
+	// 	// Prevent creating embeded documents which this type of container shouldn't contain
+	// 	data = data.filter(e => CONFIG.GURPS.Item.allowedContents[this.type].includes(e.type))
+
+	// 	const currentItems: any[] = duplicate((this.getFlag(SYSTEM_NAME, "contentsData") as any[]) ?? [])
+	// 	if (data.length) {
+	// 		for (const item of data) {
+	// 			let theItem = item
+	// 			theItem._id = randomID()
+	// 			theItem = new CONFIG.Item.documentClass(theItem, {
+	// 				parent: this as any,
+	// 			}).toJSON()
+	// 			currentItems.push(theItem)
+	// 		}
+	// 		if (this.parent)
+	// 			return this.parent.updateEmbeddedDocuments("Item", [
+	// 				{
+	// 					_id: this.id,
+	// 					[`flags.${SYSTEM_NAME}.contentsData`]: currentItems,
+	// 				},
+	// 			])
+	// 		else this.setCollection(currentItems)
+	// 	}
+	// }
+	//
 	async createEmbeddedDocuments(
 		embeddedName: string,
 		data: Array<{ name: string; type: string } & Record<string, unknown>>,
 		context: DocumentModificationContext & any
-	): Promise<any> {
+	): Promise<Array<any>> {
 		if (embeddedName !== "Item") return super.createEmbeddedDocuments(embeddedName, data, context)
 		if (!Array.isArray(data)) data = [data]
 
@@ -59,24 +91,25 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 		data = data.filter(e => CONFIG.GURPS.Item.allowedContents[this.type].includes(e.type))
 
 		const currentItems: any[] = duplicate((this.getFlag(SYSTEM_NAME, "contentsData") as any[]) ?? [])
+		const newItems = []
+
 		if (data.length) {
-			for (const item of data) {
-				let theItem = item
-				theItem._id = randomID()
-				theItem = new CONFIG.Item.documentClass(theItem, {
-					parent: this as any,
-				}).toJSON()
-				currentItems.push(theItem)
+			for (const itemData of data) {
+				let theData = itemData
+				theData._id = randomID()
+				const theItem = new CONFIG.Item.documentClass(theData, { parent: this as any })
+				theData = theItem.toJSON()
+				console.log(theItem.id, theItem.uuid, theData._id)
+				currentItems.push(theData)
+				newItems.push(theItem)
 			}
 			if (this.parent)
-				return this.parent.updateEmbeddedDocuments("Item", [
-					{
-						_id: this.id,
-						[`flags.${SYSTEM_NAME}.contentsData`]: currentItems,
-					},
+				await this.parent.updateEmbeddedDocuments("Item", [
+					{ _id: this.id, [`flags.${SYSTEM_NAME}.contentsData`]: currentItems },
 				])
 			else this.setCollection(currentItems)
 		}
+		return newItems
 	}
 
 	getEmbeddedDocument(
@@ -165,11 +198,6 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 	getEmbeddedCollection(embeddedName: string): EmbeddedCollection<DocumentConstructor, AnyDocumentData> {
 		if (embeddedName === "Item") return this.items as any
 		return super.getEmbeddedCollection(embeddedName)
-	}
-
-	prepareData(): void {
-		if (this.actor?.noPrepare) return
-		super.prepareData()
 	}
 
 	prepareEmbeddedDocuments(): void {

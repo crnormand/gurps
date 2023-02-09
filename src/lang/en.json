@@ -20,7 +20,9 @@
 		"TypeEqp_modifier_container": "Equipment Modifier Container",
 		"TypeNote": "Note",
 		"TypeNote_container": "Note Container",
-		"TypeEquipment": "Equipment (Legacy)"
+		"TypeEquipment": "Equipment (Legacy)",
+		"TypeMelee_weapon": "Melee Weapon",
+		"TypeRanged_weapon": "Ranged Weapon"
 	},
 	"gurps": {
 		"pdf": {

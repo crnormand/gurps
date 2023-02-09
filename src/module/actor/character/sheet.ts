@@ -368,20 +368,18 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				data.item = await fromUuid($(event.currentTarget).data("uuid"))
 			}
 		}
-
-		if ([RollType.Damage, RollType.Attack].includes(type)) {
-			const attack_id = $(event.currentTarget).data("attack-id")
-			if ([gid.Thrust, gid.Swing].includes(attack_id)) {
-				data.item = { id: attack_id, uuid: attack_id }
-				data.weapon = {
-					name: i18n(`gurps.character.basic_${attack_id}`),
-					fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string,
-				}
-			} else {
-				data.weapon = data.item.weapons.get(attack_id)
-			}
-		}
-
+		// If ([RollType.Damage, RollType.Attack].includes(type)) {
+		// 	const attack_id = $(event.currentTarget).data("attack-id")
+		// 	if ([gid.Thrust, gid.Swing].includes(attack_id)) {
+		// 		data.item = { id: attack_id, uuid: attack_id }
+		// 		data.weapon = {
+		// 			name: i18n(`gurps.character.basic_${attack_id}`),
+		// 			fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string,
+		// 		}
+		// 	} else {
+		// 		data.weapon = data.item.weapons.get(attack_id)
+		// 	}
+		// }
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
@@ -545,8 +543,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			[[], [], [], [], [], []]
 		)
 
-		const melee: Collection<MeleeWeaponGURPS> = this.actor.meleeWeapons
-		const ranged: Collection<RangedWeaponGURPS> = this.actor.rangedWeapons
+		const melee: MeleeWeaponGURPS[] = [...this.actor.meleeWeapons]
+		const ranged: RangedWeaponGURPS[] = [...this.actor.rangedWeapons]
 		const reactions: CondMod[] = this.actor.reactions
 		const conditionalModifiers: CondMod[] = this.actor.conditionalModifiers
 

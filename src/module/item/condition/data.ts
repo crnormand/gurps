@@ -12,7 +12,7 @@ export enum ConditionID {
 	Reeling = "reeling",
 	Fatigued = "fatigued",
 	Bleeding = "bleeding",
-	Posioned = "poisoned",
+	Poisoned = "poisoned",
 	// Shock / Pain / Crippling
 	Shock = "shock",
 	Pain = "pain",
@@ -55,6 +55,11 @@ export enum ConditionID {
 	Choking = "choking",
 }
 
+export enum ManeuverID {
+	DoNothing = "do_nothing",
+	Move = "move",
+}
+
 export type ConditionSource = BaseItemSourceGURPS<ItemType.Condition, ConditionSystemData>
 
 export interface ConditionData extends Omit<ConditionSource, "effects">, ConditionSystemData {
@@ -63,5 +68,5 @@ export interface ConditionData extends Omit<ConditionSource, "effects">, Conditi
 }
 
 export interface ConditionSystemData extends EffectSystemData {
-	id: ConditionID | null
+	id: ConditionID | ManeuverID | null
 }

@@ -247,7 +247,9 @@
 			"note",
 			"note_container",
 			"condition",
-			"equipment"
+			"equipment",
+			"melee_weapon",
+			"ranged_weapon"
 		],
 		"templates": {
 			"common": {
@@ -264,6 +266,23 @@
 						"compare": "none"
 					},
 					"prereqs": []
+				}
+			},
+			"weapon": {
+				"id": "",
+				"strength": "",
+				"usage": "",
+				"usage_notes": "",
+				"defaults": [],
+				"damage": {
+					"type": "",
+					"st": "none",
+					"base": "",
+					"armor_divisor": 1,
+					"fragmentation": "",
+					"fragmentation_armor_divisor": 1,
+					"fragmentation_type": "",
+					"modifier_per_die": 0
 				}
 			}
 		},
@@ -408,6 +427,21 @@
 		"condition": {
 			"features": [],
 			"canLevel": false
+		},
+		"melee_weapon": {
+			"templates": ["weapon"],
+			"reach": "",
+			"parry": "",
+			"block": ""
+		},
+		"ranged_weapon": {
+			"templates": ["weapon"],
+			"accuracy": "",
+			"range": "",
+			"rate_of_fire": "",
+			"shots": "",
+			"bulk": "",
+			"recoil": ""
 		},
 		"equipment": {
 			"eqt": {

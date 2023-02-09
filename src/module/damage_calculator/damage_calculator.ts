@@ -7,7 +7,7 @@ import {
 	InjuryEffect,
 	InjuryEffectType,
 	KnockdownCheck,
-	RollModifier,
+	_RollModifier,
 } from "./injury_effect"
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 import { DamageTarget, DamageRoll, DefaultHitLocations } from "."
@@ -184,8 +184,8 @@ class DamageCalculator {
 				modifier *= 2
 
 			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
-				new RollModifier("dx", RollType.Attribute, modifier),
-				new RollModifier("iq", RollType.Attribute, modifier),
+				new _RollModifier("dx", RollType.Attribute, modifier),
+				new _RollModifier("iq", RollType.Attribute, modifier),
 			])
 			return [shockEffect]
 		}
@@ -268,9 +268,9 @@ class DamageCalculator {
 			[
 				new EffectCheck(
 					[
-						new RollModifier("dx", RollType.Attribute, penalty),
-						new RollModifier("Acrobatics", RollType.Skill, penalty),
-						new RollModifier("Judo", RollType.Skill, penalty),
+						new _RollModifier("dx", RollType.Attribute, penalty),
+						new _RollModifier("Acrobatics", RollType.Skill, penalty),
+						new _RollModifier("Judo", RollType.Skill, penalty),
 					],
 					[new CheckFailureConsequence("fall prone", 0)]
 				),

@@ -130,9 +130,9 @@ export class RollGURPS extends Roll {
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
-					data.weapon.skillLevel(null),
+					data.item.skillLevel(null),
 					"3d6",
-					`${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
 					RollType.Attack,
 					data.hidden
 				)
@@ -141,7 +141,7 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data,
-					`${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
 					data.hidden
 				)
 			case RollType.Generic:
@@ -192,7 +192,6 @@ export class RollGURPS extends Roll {
 			marginTemplate = "gurps.roll.success_margin"
 			marginClass = "pos"
 		}
-		console.log(marginMod)
 		return [
 			success,
 			`<div
@@ -273,6 +272,7 @@ export class RollGURPS extends Roll {
 		const sticky = user.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky)
 		if (sticky === false) {
 			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
+			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
 			const button = (game as any).ModifierButton
 			return button.render()
 		}
@@ -309,7 +309,7 @@ export class RollGURPS extends Roll {
 		hidden = false
 	): Promise<void> {
 		// Roll the damage for the weapon.
-		const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
+		const dice = new DiceGURPS(data.item.fastResolvedDamage)
 		const roll = Roll.create(dice.toString(true))
 		await roll.evaluate({ async: true })
 
@@ -326,12 +326,12 @@ export class RollGURPS extends Roll {
 		const rollTotal = roll.total!
 		const modifierTotal = this.applyMods(0, modifiers)
 		const damage = rollTotal + modifierTotal
-		const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
+		const damageType = data.item.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
 		const chatData: Partial<DamagePayload> = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
-			weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },
+			weaponUUID: `${data.item.uuid}`,
 			name,
 			dice: dice,
 			modifiers: modifiers,

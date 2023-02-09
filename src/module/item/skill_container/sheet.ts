@@ -1,6 +1,6 @@
-import { ContainerSheetGURPS } from "@item/container"
+import { ItemSheetGCS } from "@item/gcs"
 
-export class SkillContainerSheet extends ContainerSheetGURPS {
+export class SkillContainerSheet extends ItemSheetGCS {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {
