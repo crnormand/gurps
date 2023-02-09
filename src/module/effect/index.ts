@@ -1,0 +1,1 @@
+export { ActiveEffectGURPS } from "./document"

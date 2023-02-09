@@ -51,13 +51,41 @@ export enum ConditionID {
 	// Disabled Function
 	Silenced = "silenced",
 	Deafened = "deafened",
-	Blinded = "blinded",
+	Blinded = "blind", // Inconsistency here between "blinded" and "blind" to match foundry default name
 	Choking = "choking",
 }
 
 export enum ManeuverID {
+	// Row 1
 	DoNothing = "do_nothing",
+	Attack = "attack",
+	AOA = "aoa",
+	AOD = "aod",
+	// Row 2
 	Move = "move",
+	MoveAndAttack = "move_attack",
+	AOADouble = "aoa_double",
+	AODDouble = "aod_double",
+	// Row 3
+	ChangePosture = "change_posture",
+	Feint = "feint",
+	AOAFeint = "aoa_feint",
+	AODDodge = "aod_dodge",
+	// Row 4
+	Ready = "ready",
+	Evaluate = "evaluate",
+	AOADetermined = "aoa_determined",
+	AODParry = "aod_parry",
+	// Row 5
+	Concentrate = "concentrate",
+	Aiming = "aiming",
+	AOAStrong = "aoa_strong",
+	AODBlock = "aod_block",
+	// Row 6
+	Wait = "wait",
+	BLANK_1 = "blank_1",
+	AOASF = "aoa_suppressing_fire",
+	BLANK_2 = "blank_2",
 }
 
 export type ConditionSource = BaseItemSourceGURPS<ItemType.Condition, ConditionSystemData>

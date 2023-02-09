@@ -11,6 +11,8 @@ import { PropertiesToSource } from "types/types/helperTypes"
 import { DurationType, EffectSystemData } from "./data"
 
 class EffectGURPS extends BaseItemGURPS {
+	_statusId: string | null = null
+
 	get features(): Feature[] {
 		if (this.system.hasOwnProperty("features")) {
 			return (this.system as any).features.map(
@@ -83,24 +85,19 @@ class EffectGURPS extends BaseItemGURPS {
 
 	protected override _onCreate(data: this["_source"], options: DocumentModificationContext, userId: string): void {
 		super._onCreate(data, options, userId)
-
-		// If (!this.flags[SYSTEM_NAME]?.aura || game.combat?.started) {
-		// if (game.combat?.started) {
-		;(this.actor?.getActiveTokens().shift() as TokenGURPS)?.showFloatyText({ create: this })
-		// }
+		this._displayScrollingStatus(true)
+		this._statusId = Object.values(CONFIG.specialStatusEffects).includes(this.system.id ?? "")
+			? this.system.id
+			: null
+		if (this._statusId) this.#dispatchTokenStatusChange(this._statusId, true)
 	}
 
-	/**
-	 * Show floaty text when this effect is deleted from an actor
-	 * @param options
-	 * @param userId
-	 */
 	protected override _onDelete(options: DocumentModificationContext, userId: string): void {
 		super._onDelete(options, userId)
 		// If (game.combat?.started) {
 		if (this.canLevel) this.system.levels!.current = 0
-		;(this.actor?.getActiveTokens().shift() as TokenGURPS)?.showFloatyText({ delete: this })
-		// }
+		this._displayScrollingStatus(false)
+		if (this._statusId) this.#dispatchTokenStatusChange(this._statusId, false)
 	}
 
 	protected _preUpdate(
@@ -118,14 +115,37 @@ class EffectGURPS extends BaseItemGURPS {
 		userId: string
 	): void {
 		super._onUpdate(changed, options, userId)
-
 		const [priorValue, newValue] = [options.previousLevel, this.level]
 		const valueChanged = !!priorValue && !!newValue && priorValue !== newValue
-		// Suppress floaty text on "linked" conditions
 		if (valueChanged) {
-			const change = newValue > priorValue ? { create: this } : { delete: this }
-			;(this.actor?.getActiveTokens().shift() as TokenGURPS)?.showFloatyText(change)
+			const change = newValue > priorValue
+			this._displayScrollingStatus(change)
+			// If (this._statusId) this.#dispatchTokenStatusChange(this._statusId, false);
 		}
+	}
+
+	protected _displayScrollingStatus(enabled: boolean) {
+		const actor = this.parent
+		const tokens = actor.isToken ? [actor.token?.object] : actor.getActiveTokens(true)
+		let label = `${enabled ? "+" : "-"} ${this.name}`
+		if (this.canLevel && this.level) label += ` ${this.level}`
+		for (let t of tokens) {
+			if (!t.visible || !t.renderable) continue
+			;(canvas as any).interface.createScrollingText(t.center, label, {
+				anchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
+				direction: enabled ? CONST.TEXT_ANCHOR_POINTS.TOP : CONST.TEXT_ANCHOR_POINTS.BOTTOM,
+				distance: 2 * t.h,
+				fontSize: 28,
+				stroke: 0x000000,
+				strokeThickness: 4,
+				jitter: 0.25,
+			})
+		}
+	}
+
+	#dispatchTokenStatusChange(statusId: string, active: boolean) {
+		const tokens = this.parent.getActiveTokens()
+		for (const token of tokens) token._onApplyStatusEffect(statusId, active)
 	}
 
 	static async updateCombat(combat: Combat, _data: CombatData, _options: any, _userId: string) {

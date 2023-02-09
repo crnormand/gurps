@@ -175,7 +175,7 @@ class ModifierBucket extends Application {
 		const modStack = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
 		await player.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modStack)
 		console.log(player, player.id)
-		game.socket?.emit(`system.${SYSTEM_NAME}`, { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
+		game.socket?.emit("system.gcsga", { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
 	}
 }
 

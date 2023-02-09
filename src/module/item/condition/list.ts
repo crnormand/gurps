@@ -4,7 +4,7 @@ import { DurationType } from "@item/effect"
 import { gid, SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
 import { StatusEffect } from "types/foundry/client/data/documents/token"
-import { ConditionID, ConditionSystemData } from "./data"
+import { ConditionID, ConditionSystemData, ManeuverID } from "./data"
 
 export function getConditionList(): Record<ConditionID, Partial<ConditionSystemData>> {
 	const ConditionList: Record<ConditionID, Partial<ConditionSystemData>> = {
@@ -136,12 +136,21 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 	return ConditionList
 }
 
-export const StatusEffectsGURPS: StatusEffect[] = [...Object.values(ConditionID)].map(e => {
-	const effect: StatusEffect = {
-		id: e,
-		icon: `systems/${SYSTEM_NAME}/assets/status/${e}.png`,
-		label: `gurps.status.${e}`,
-	}
-	if (e.includes("shock")) effect.duration = { turns: 1 }
-	return effect
-})
+export const StatusEffectsGURPS: StatusEffect[] = [
+	...[...Object.values(ConditionID)].map(e => {
+		const effect: StatusEffect = {
+			id: e,
+			icon: `systems/${SYSTEM_NAME}/assets/status/${e}.png`,
+			label: `gurps.status.${e}`,
+		}
+		return effect
+	}),
+	...[...Object.values(ManeuverID)].map(e => {
+		const effect: StatusEffect = {
+			id: e,
+			icon: `systems/${SYSTEM_NAME}/assets/maneuver/${e}.png`,
+			label: `gurps.status.${e}`,
+		}
+		return effect
+	}),
+]

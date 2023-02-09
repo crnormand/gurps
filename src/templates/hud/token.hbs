@@ -49,6 +49,14 @@
             </div>
         </div>
 
+
+        {{#if canToggleCombat}}
+        <div class="control-icon {{combatClass}}" data-action="combat">
+            <img src="{{icons.combat}}" width="36" height="36" title="{{localize "HUD.ToggleCombatState"}}"/>
+        </div>
+        {{/if}}
+
+        {{#if inCombat}}
         <div class="control-icon {{maneuversClass}}" data-action="maneuvers">
             <i class="fas fa-person-running"></i>
             <div class="maneuvers icon-grid">
@@ -59,11 +67,7 @@
 				<div class="title-bar"></div>
             </div>
         </div>
-
-        {{#if canToggleCombat}}
-        <div class="control-icon {{combatClass}}" data-action="combat">
-            <img src="{{icons.combat}}" width="36" height="36" title="{{localize "HUD.ToggleCombatState"}}"/>
-        </div>
         {{/if}}
+
     </div>
 </form>

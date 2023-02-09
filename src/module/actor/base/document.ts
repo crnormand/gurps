@@ -152,7 +152,6 @@ class BaseActorGURPS extends Actor {
 
 	async increaseCondition(id: ConditionID): Promise<ConditionGURPS | null> {
 		const existing = this.conditions.find(e => e.cid === id)
-		console.log(existing)
 		if (existing) {
 			if (existing.canLevel) {
 				const newLevel = existing.level + 1

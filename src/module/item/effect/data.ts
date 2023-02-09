@@ -21,6 +21,7 @@ export interface EffectData extends Omit<EffectSource, "effects">, EffectSystemD
 }
 
 export interface EffectSystemData {
+	id: string | null
 	features?: FeatureConstructor[]
 	modifiers?: RollModifier[]
 	can_level: boolean

@@ -1,6 +1,5 @@
-import { ConditionID, ManeuverID } from "@item/condition"
+import { ConditionID } from "@item"
 import { SYSTEM_NAME } from "@module/data"
-import { i18n } from "@util"
 import { TokenGURPS } from "./object"
 
 export class TokenHUDGURPS extends TokenHUD {
@@ -30,28 +29,48 @@ export class TokenHUDGURPS extends TokenHUD {
 		}
 	}
 
-	getData(options?: Partial<ApplicationOptions> | undefined): MaybePromise<object> {
-		const maneuvers: any = {}
-		const maneuverList: Array<[string, any]> = [...Object.values(ManeuverID)].map(e => {
-			const icon = `systems/${SYSTEM_NAME}/assets/maneuver/${e}.png`
-			return [icon, { id: e, title: i18n(`gurps.status.${e}`), src: icon }]
-		})
-		console.log(maneuverList)
-		for (const k of maneuverList) {
-			maneuvers[k[0]] = k[1]
-		}
-		console.log(maneuvers)
-		return {
-			...super.getData(options),
-			...{
-				maneuvers,
-			},
-		}
+	activateListeners(html: JQuery<HTMLElement>) {
+		super.activateListeners(html)
+		this._toggleManeuvers(this._maneuvers)
 	}
 
-	// Geteffs() {
-	// 	return this._getStatusEffectChoices()
-	// }
+	getData(options?: Partial<ApplicationOptions> | undefined): MaybePromise<object> {
+		const data: any = mergeObject(super.getData(options), {
+			inCombat: this.object?.inCombat,
+		})
+		data.maneuvers = this._getManeuverChoices()
+		return data
+	}
+
+	_getManeuverChoices() {
+		const effects = super._getStatusEffectChoices()
+		const filteredEffects = Object.keys(effects)
+			.filter((key: string) => key.includes("/maneuver/"))
+			.reduce((obj: any, key: string) => {
+				return Object.assign(obj, {
+					[key]: effects[key],
+				})
+			}, {})
+		return filteredEffects
+	}
+
+	override _getStatusEffectChoices() {
+		const effects = super._getStatusEffectChoices()
+		const filteredEffects = Object.keys(effects)
+			.filter((key: string) => key.includes("/status/"))
+			.reduce((obj: any, key: string) => {
+				return Object.assign(obj, {
+					[key]: effects[key],
+				})
+			}, {})
+		return filteredEffects
+	}
+
+	protected async _onToggleCombat(event: JQuery.ClickEvent<any, any, any, any>): Promise<void> {
+		event.preventDefault()
+		await super._onToggleCombat(event)
+		await this.render(true)
+	}
 
 	protected _onClickControl(event: JQuery.ClickEvent) {
 		super._onClickControl(event)
@@ -78,15 +97,14 @@ export class TokenHUDGURPS extends TokenHUD {
 	_toggleManeuvers(active: boolean) {
 		this._maneuvers = active
 		const button = this.element.find('.control-icon[data-action="maneuvers"]')[0]
+		if (!button) return
 		button.classList.toggle("active", active)
 		const palette = button.querySelector(".maneuvers")
 		palette?.classList.toggle("active", active)
 	}
 
 	static #showStatusLabel(icon: HTMLPictureElement): void {
-		let titleBar = icon.closest(".icon-grid")?.querySelector<HTMLElement>(".title-bar")
-		// Let titleBar = icon.closest(".status-effects")?.querySelector<HTMLElement>(".title-bar")
-		// if (!titleBar) icon.closest(".maneuvers")?.querySelector<HTMLElement>(".title-bar")
+		const titleBar = icon.closest(".status-effects")?.querySelector<HTMLElement>(".title-bar")
 		if (titleBar && icon.title) {
 			titleBar.innerText = icon.title
 			titleBar.classList.toggle("active")
@@ -101,33 +119,31 @@ export class TokenHUDGURPS extends TokenHUD {
 		if (!(icon instanceof HTMLPictureElement)) return
 
 		const id: ConditionID = icon.dataset.statusId as ConditionID
-		const deadIcon = `systems/${SYSTEM_NAME}/assets/status/dead.png`
 		const { actor } = token
 		if (!(actor && id)) return
+		const combatant = token.combatant
 
+		if (id === "dead") {
+			if (combatant) {
+				const isDefeated = !combatant.isDefeated
+				await combatant.update({ defeated: isDefeated })
+				const status = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED)
+				const effect = token.actor && status ? status : CONFIG.controlIcons.defeated
+				token.toggleEffect(effect, { overlay: true, active: isDefeated })
+			}
+			return
+		}
 		if (event.type === "click") {
-			if (id === "dead") {
-				if (token.combatant?.isDefeated) {
-					await token.combatant?.update({ defeated: false })
-					await token.toggleEffect(deadIcon, { overlay: true, active: false })
-				} else {
-					await token.combatant?.update({ defeated: true })
-					await token.toggleEffect(deadIcon, { overlay: true, active: true })
-				}
-			} else await actor?.increaseCondition(id)
+			await actor?.increaseCondition(id)
 		} else if (event.type === "contextmenu") {
-			if (token.document.overlayEffect === deadIcon) {
-				await token.combatant?.update({ defeated: false })
-				await token.toggleEffect(deadIcon, { overlay: true, active: false })
-			} else await actor.decreaseCondition(id)
+			await actor?.decreaseCondition(id)
 		}
 	}
 
-	static async setActiveEffects(token: TokenGURPS, icons: NodeListOf<HTMLImageElement>) {
+	static async #setActiveEffects(token: TokenGURPS, icons: NodeListOf<HTMLImageElement>) {
 		const affectingConditions = token.actor?.conditions
 
 		for (const icon of icons) {
-			// Replace the img element with a picture element, which can display ::after content
 			const picture = document.createElement("picture")
 			picture.classList.add("effect-control")
 			picture.dataset.statusId = icon.dataset.statusId
@@ -167,54 +183,27 @@ export class TokenHUDGURPS extends TokenHUD {
 		const iconGrid = html.querySelector<HTMLElement>(".status-effects")
 		const maneuverGrid = html.querySelector<HTMLElement>(".maneuvers")
 		if (!iconGrid) throw Error("Unexpected error retrieving status effects grid")
-		if (!maneuverGrid) throw Error("Unexpected error retrieving maneuver grid")
-
-		// Const affectingConditions = token.actor?.conditions
-
-		// const titleBar = document.createElement("div")
-		// titleBar.className = "title-bar"
-		// iconGrid.append(titleBar)
-		// maneuverGrid.append(titleBar)
-
 		const statusIcons = iconGrid.querySelectorAll<HTMLImageElement>(".effect-control")
-		const maneuverIcons = maneuverGrid.querySelectorAll<HTMLImageElement>(".effect-control")
+		const maneuverIcons = maneuverGrid?.querySelectorAll<HTMLImageElement>(".effect-control")
 
-		// For (const icon of statusIcons) {
-		// 	// Replace the img element with a picture element, which can display ::after content
-		// 	const picture = document.createElement("picture")
-		// 	picture.classList.add("effect-control")
-		// 	picture.dataset.statusId = icon.dataset.statusId
-		// 	picture.title = icon.title
-		// 	const iconSrc = icon.getAttribute("src")!
-		// 	picture.setAttribute("src", iconSrc)
-		// 	const newIcon = document.createElement("img")
-		// 	newIcon.src = iconSrc
-		// 	picture.append(newIcon)
-		// 	icon.replaceWith(picture)
-
-		// 	const id = picture.dataset.statusId ?? ""
-		// 	const affecting = affectingConditions.filter(c => c.cid === id)
-		// 	if (affecting.length > 0 || iconSrc === (token.document as any).overlayEffect) {
-		// 		picture.classList.add("active")
-		// 	}
-
-		// 	if (affecting.length > 0) {
-		// 		// Show a badge icon if the condition has a value or is locked
-		// 		const hasValue = affecting.some(c => c.canLevel)
-
-		// 		if (hasValue) {
-		// 			const badge = document.createElement("i")
-		// 			badge.classList.add("badge")
-		// 			const value = Math.max(...affecting.map(c => c.level ?? 1))
-		// 			badge.innerText = value.toString()
-		// 			picture.append(badge)
-		// 		}
-		// 	}
-		// }
-		await this.setActiveEffects(token, statusIcons)
-		await this.setActiveEffects(token, maneuverIcons)
-
+		await this.#setActiveEffects(token, statusIcons)
 		this.#activateListeners(iconGrid, token)
-		this.#activateListeners(maneuverGrid, token)
+
+		if (maneuverGrid && maneuverIcons) {
+			await this.#setActiveEffects(token, maneuverIcons)
+			this.#activateListeners(maneuverGrid, token)
+		}
+	}
+
+	_onToggleEffect(event: JQuery.ClickEvent | JQuery.ContextMenuEvent, { overlay = false } = {}): Promise<boolean> {
+		event.preventDefault()
+		event.stopPropagation()
+		let img = event.currentTarget
+		const effect =
+			img.dataset.statusId && this.object?.actor
+				? CONFIG.statusEffects.find(e => e.id === img.dataset.statusId)
+				: img.getAttribute("src")
+		// Console.log(img, effect)
+		return this.object!.toggleEffect(effect, { overlay })
 	}
 }
