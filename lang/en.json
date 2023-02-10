@@ -1114,6 +1114,7 @@
 	"GURPS.pdfOffset": "Page Offset",
 	"GURPS.pdfCode": "PDF Book Code",
 	"__Rolling__": "=========",
+	"GURPS.rollVs": "Roll vs",
 	"GURPS.rollNewTarget": "New Target: ({target})",
 	"GURPS.rollCriticalSuccess": "Critical Success!",
 	"GURPS.rollSuccess": "Success!",
