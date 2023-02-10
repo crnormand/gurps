@@ -1124,6 +1124,5 @@
 	"GURPS.rollMadeBy": "Made it by {margin}.",
 	"GURPS.rollMissedBy": "Missed it by {margin}.",
 	"GURPS.rollTotalHits": "Total possible hits ({link})<br/>due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>.",
-	"GURPS.rollROF": "due to RoF ({rof}) & Rcl ({rcl}) is <b>{rofrcl}</b>",
 	"GURPS.rollTotal": "Rolled ({rolls}) = {rtotal}."
 }
