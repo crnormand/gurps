@@ -1001,9 +1001,9 @@ if (!globalThis.GURPS) {
 			}
 			let target = parseInt(action.target) // is it pre-targeted (ST12)
 			if (!target && !!actor) {
-				if (!!action.isMelee) {
+				if (!!action.melee) {
 					// Is it trying to match to an attack name (should only occur with Parry: & Block:
-					let meleeAttack = GURPS.findAttack(actor.system, action.isMelee)
+					let meleeAttack = GURPS.findAttack(actor.system, action.melee)
 					if (!!meleeAttack) {
 						target = parseInt(meleeAttack[action.attribute.toLowerCase()]) // should only occur with parry & block
 					}
@@ -1041,7 +1041,7 @@ if (!globalThis.GURPS) {
 			return doRoll({
 				actor,
 				targetmods,
-				prefix: 'Roll vs ',
+				prefix: i18n("GURPS.rollVs"),
 				thing,
 				chatthing,
 				origtarget: target,
@@ -1066,7 +1066,7 @@ if (!globalThis.GURPS) {
 		 */
 		async ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
 			if (!actor && (!action || !action.target)) {
-				ui.notifications?.warn('You must have a character selected')
+				ui.notifications?.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
 				return false
 			}
 			const target = processSkillSpell({ action, actor })
@@ -1331,7 +1331,7 @@ if (!globalThis.GURPS) {
 			return
 		} else if ('path' in element.dataset) {
 			let srcid = !!actor ? '@' + actor.id + '@' : ''
-			prefix = 'Roll vs '
+			prefix = i18n("GURPS.rollVs")
 			thing = GURPS._mapAttributePath(element.dataset.path)
 			formula = '3d6'
 			target = parseInt(element.innerText)
@@ -1633,6 +1633,7 @@ if (!globalThis.GURPS) {
 		if (!eqts) return ''
 		let ret = ''
 		// let i = 0
+
 		for (let key in eqts) {
 			let eqt = eqts[key]
 			if (data) {
@@ -2095,8 +2096,7 @@ if (!globalThis.GURPS) {
 		// Set up SSRT
 		GURPS.SSRT = setupRanges()
 		GURPS.rangeObject = new GURPSRange()
-		// Hooks.on('ready', () => GURPS.SSRT = SSRT)
-
+    
 		// reset the TokenHUD to our version
 		// @ts-ignore
 		canvas.hud.token = new GURPSTokenHUD()
