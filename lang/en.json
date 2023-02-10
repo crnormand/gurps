@@ -1084,6 +1084,7 @@
 	"GURPS.effectChatRangedModifier": "{displayName} is<br>[-2 to be hit with ranged combat ({posture})].",
 	"GURPS.tokenToolsTitle": "Open Effect Modifier Popup",
 	"GURPS.effectModNoTokenSelected": "No token selected",
+	"GURPS.effectModifierPopout": "Effect Modifiers",
 	"GURPS.targetedModifiers": "Targeted Modifiers",
 	"GURPS.settingActiveEffects": "Turn on Active Effects",
 	"GURPS.targetModifiers": "Target:",
