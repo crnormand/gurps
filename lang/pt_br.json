@@ -1138,5 +1138,20 @@
   "GURPS.quicknotes": "Notas Rápidas",
   "GURPS.language": "Idioma",
   "GURPS.spoken": "Falado",
-  "GURPS.written": "Escrito"
+  "GURPS.written": "Escrito",
+  "GURPS.pdfOffset": "Ajuste de página",
+  "GURPS.pdfCode": "Código do PDF",
+  "__Rolling__": "=========",
+  "GURPS.rollVs": "Rolagem contra",
+  "GURPS.rollNewTarget": "Novo alvo: ({target})",
+  "GURPS.rollCriticalSuccess": "Sucesso decisivo!",
+  "GURPS.rollSuccess": "Sucesso!",
+  "GURPS.rollFailure": "Falha!",
+  "GURPS.rollCriticalFailure": "Falha crítica!",
+  "GURPS.rollFail17": "17 e 18 sempre falham.",
+  "GURPS.rollJustMadeIt": "Por um triz",
+  "GURPS.rollMadeBy": "Margem de acerto {margin}.",
+  "GURPS.rollMissedBy": "Margem de fracasso {margin}.",
+  "GURPS.rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis ({link})<br/>devido à CdT ({rof}) e o RCO ({rcl}).",
+  "GURPS.rollTotal": "Resultado da rolagem ({rolls}) = {rtotal}."
 }
