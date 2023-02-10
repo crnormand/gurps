@@ -34,7 +34,8 @@
   "GURPS.descriptionHand": "Mão Hábil",
   "GURPS.descriptionHeight": "Altura",
   "GURPS.descriptionReligion": "Religião",
-  "GURPS.descriptionSizeModifier": "Mod. de Tamanho (MT)",
+  "GURPS.descriptionSize
+  Modifier": "Mod. de Tamanho (MT)",
   "GURPS.descriptionSkin": "Pele",
   "GURPS.descriptionTechLevel": "Nível Tecnológico (NT)",
   "GURPS.weight": "Peso",
@@ -1105,7 +1106,7 @@
   "GURPS.effectChatModifiedToHit": "{displayName} :<br>[{modifier}]",
   "GURPS.effectChatRangedModifier": "{displayName} :<br>[-2 nas jogadas de ataque feitas contra você com armas de combate à distância ({posture})].",
 
-  "GURPS.tokenToolsTitle": "Abrir Janela de Moficiador de Efeitos",
+  "GURPS.tokenToolsTitle": "Abrir Janela de Modificador de Efeitos",
 
   "GURPS.effectModNoTokenSelected": "Nenhuma miniatura selecionada",
   "GURPS.targetedModifiers": "Modificadores Escolhidos",
