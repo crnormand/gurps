@@ -1,4 +1,4 @@
-import { Feature, ItemGURPS } from "@module/config"
+import { Feature } from "@module/config"
 import { ItemType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
@@ -16,7 +16,11 @@ export class BaseFeature {
 		} else {
 			mergeObject(context, { ready: true })
 			const FeatureConstructor = CONFIG.GURPS.Feature.classes[data.type as FeatureType]
-			return FeatureConstructor ? new FeatureConstructor(data, context) : new BaseFeature(data, context)
+			if (FeatureConstructor) {
+				data = mergeObject(FeatureConstructor.defaults, data)
+				return new FeatureConstructor(data, context)
+			}
+			return new BaseFeature(data, context)
 		}
 	}
 
@@ -53,14 +57,14 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	setParent(parent: ItemGURPS): void {
-		this.parent = parent.uuid
-	}
+	// SetParent(parent: ItemGURPS): void {
+	// 	this.parent = parent.uuid
+	// }
 
 	addToTooltip(buffer: TooltipGURPS | null): void {
 		if (buffer) {
 			buffer.push("\n")
-			buffer.push(this.parent)
+			buffer.push(this.item?.name || "")
 			buffer.push(
 				` [${new LeveledAmount({
 					level: this.levels,
@@ -73,7 +77,7 @@ export class BaseFeature {
 }
 
 export interface BaseFeature {
-	parent: string
+	// Parent: string
 	type: FeatureType
 	item?: Item
 	amount: number

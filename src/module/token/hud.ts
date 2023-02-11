@@ -1,4 +1,4 @@
-import { ConditionID } from "@item"
+import { EffectID, ManeuverID } from "@item"
 import { SYSTEM_NAME } from "@module/data"
 import { TokenGURPS } from "./object"
 
@@ -69,6 +69,11 @@ export class TokenHUDGURPS extends TokenHUD {
 	protected async _onToggleCombat(event: JQuery.ClickEvent<any, any, any, any>): Promise<void> {
 		event.preventDefault()
 		await super._onToggleCombat(event)
+		const { actor } = this.object as TokenGURPS
+		if (actor) {
+			if (this.object?.inCombat) await actor.changeManeuver(ManeuverID.DoNothing)
+			else actor.resetManeuvers()
+		}
 		await this.render(true)
 	}
 
@@ -104,7 +109,7 @@ export class TokenHUDGURPS extends TokenHUD {
 	}
 
 	static #showStatusLabel(icon: HTMLPictureElement): void {
-		const titleBar = icon.closest(".status-effects")?.querySelector<HTMLElement>(".title-bar")
+		const titleBar = icon.closest(".icon-grid")?.querySelector<HTMLElement>(".title-bar")
 		if (titleBar && icon.title) {
 			titleBar.innerText = icon.title
 			titleBar.classList.toggle("active")
@@ -117,8 +122,7 @@ export class TokenHUDGURPS extends TokenHUD {
 
 		const icon = event.currentTarget
 		if (!(icon instanceof HTMLPictureElement)) return
-
-		const id: ConditionID = icon.dataset.statusId as ConditionID
+		const id: EffectID = icon.dataset.statusId as EffectID
 		const { actor } = token
 		if (!(actor && id)) return
 		const combatant = token.combatant
@@ -147,7 +151,8 @@ export class TokenHUDGURPS extends TokenHUD {
 			const picture = document.createElement("picture")
 			picture.classList.add("effect-control")
 			picture.dataset.statusId = icon.dataset.statusId
-			picture.title = icon.title
+			if (icon.title) picture.title = icon.title
+			else picture.setAttribute("style", "cursor: default;")
 			const iconSrc = icon.getAttribute("src")!
 			picture.setAttribute("src", iconSrc)
 			const newIcon = document.createElement("img")

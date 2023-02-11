@@ -28,6 +28,13 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 			id: ConditionID.PostureSit,
 			modifiers: [{ name: i18n("gurps.modifier.cover.ranged_sitting"), modifier: -2 }],
 		},
+		[ConditionID.PostureCrawl]: {
+			id: ConditionID.PostureCrawl,
+			modifiers: [
+				{ name: i18n("gurps.modifier.cover.melee_crawling"), modifier: -4 },
+				{ name: i18n("gurps.modifier.cover.defense_crawling"), modifier: -3 },
+			],
+		},
 		[ConditionID.PostureProne]: {
 			id: ConditionID.PostureProne,
 			modifiers: [
@@ -54,8 +61,9 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 				},
 			],
 		},
+		[ConditionID.Crippled]: { id: ConditionID.Crippled },
 		[ConditionID.Bleeding]: { id: ConditionID.Bleeding },
-		[ConditionID.Poisoned]: { id: ConditionID.Poisoned },
+		[ConditionID.Dead]: { id: ConditionID.Dead },
 		[ConditionID.Shock]: {
 			id: ConditionID.Shock,
 			can_level: true,
@@ -94,28 +102,34 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 				max: 12,
 			},
 		},
-		[ConditionID.Agony]: { id: ConditionID.Agony },
-		[ConditionID.Crippled]: { id: ConditionID.Crippled },
-		[ConditionID.Sprinting]: { id: ConditionID.Sprinting },
-		[ConditionID.Flying]: { id: ConditionID.Flying },
-		[ConditionID.Falling]: { id: ConditionID.Falling },
-		[ConditionID.Disarmed]: { id: ConditionID.Disarmed },
-		[ConditionID.Stun]: { id: ConditionID.Stun },
-		[ConditionID.MentalStun]: { id: ConditionID.MentalStun },
-		[ConditionID.Daze]: { id: ConditionID.Daze },
-		[ConditionID.Seizure]: { id: ConditionID.Seizure },
-		[ConditionID.Grappled]: { id: ConditionID.Grappled },
-		[ConditionID.Restrained]: { id: ConditionID.Restrained },
-		[ConditionID.Pinned]: { id: ConditionID.Pinned },
-		[ConditionID.Paralysis]: { id: ConditionID.Paralysis },
 		[ConditionID.Unconscious]: { id: ConditionID.Unconscious },
 		[ConditionID.Sleeping]: { id: ConditionID.Sleeping },
 		[ConditionID.Coma]: { id: ConditionID.Coma },
-		[ConditionID.Dead]: { id: ConditionID.Dead },
+		[ConditionID.Stun]: { id: ConditionID.Stun },
+		[ConditionID.MentalStun]: { id: ConditionID.MentalStun },
+		[ConditionID.Poisoned]: { id: ConditionID.Poisoned },
+		[ConditionID.Burning]: { id: ConditionID.Burning },
+		[ConditionID.Cold]: { id: ConditionID.Cold },
+		[ConditionID.Disarmed]: { id: ConditionID.Disarmed },
+		[ConditionID.Falling]: { id: ConditionID.Falling },
+		[ConditionID.Grappled]: { id: ConditionID.Grappled },
+		[ConditionID.Restrained]: { id: ConditionID.Restrained },
+		[ConditionID.Pinned]: { id: ConditionID.Pinned },
+		[ConditionID.Sprinting]: { id: ConditionID.Sprinting },
+		[ConditionID.Flying]: { id: ConditionID.Flying },
 		[ConditionID.Stealth]: { id: ConditionID.Stealth },
-		[ConditionID.Invisible]: { id: ConditionID.Invisible },
-		[ConditionID.Incorporeal]: { id: ConditionID.Incorporeal },
 		[ConditionID.Waiting]: { id: ConditionID.Waiting },
+		[ConditionID.Invisible]: { id: ConditionID.Invisible },
+		[ConditionID.Coughing]: { id: ConditionID.Coughing },
+		[ConditionID.Retching]: { id: ConditionID.Retching },
+		[ConditionID.Nausea]: { id: ConditionID.Nausea },
+		[ConditionID.Agony]: { id: ConditionID.Agony },
+		[ConditionID.Seizure]: { id: ConditionID.Seizure },
+		[ConditionID.Blinded]: { id: ConditionID.Blinded },
+		[ConditionID.Deafened]: { id: ConditionID.Deafened },
+		[ConditionID.Silenced]: { id: ConditionID.Silenced },
+		[ConditionID.Choking]: { id: ConditionID.Choking },
+		[ConditionID.HeartAttack]: { id: ConditionID.HeartAttack },
 		[ConditionID.Euphoria]: { id: ConditionID.Euphoria },
 		[ConditionID.Hallucinating]: { id: ConditionID.Hallucinating },
 		[ConditionID.Drunk]: {
@@ -127,10 +141,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 			},
 		},
 		[ConditionID.Drowsy]: { id: ConditionID.Drowsy },
-		[ConditionID.Silenced]: { id: ConditionID.Silenced },
-		[ConditionID.Deafened]: { id: ConditionID.Deafened },
-		[ConditionID.Blinded]: { id: ConditionID.Blinded },
-		[ConditionID.Choking]: { id: ConditionID.Choking },
+		[ConditionID.Daze]: { id: ConditionID.Daze },
 	}
 
 	return ConditionList
@@ -140,7 +151,7 @@ export const StatusEffectsGURPS: StatusEffect[] = [
 	...[...Object.values(ConditionID)].map(e => {
 		const effect: StatusEffect = {
 			id: e,
-			icon: `systems/${SYSTEM_NAME}/assets/status/${e}.png`,
+			icon: `systems/${SYSTEM_NAME}/assets/status/${e}.webp`,
 			label: `gurps.status.${e}`,
 		}
 		return effect
@@ -148,8 +159,8 @@ export const StatusEffectsGURPS: StatusEffect[] = [
 	...[...Object.values(ManeuverID)].map(e => {
 		const effect: StatusEffect = {
 			id: e,
-			icon: `systems/${SYSTEM_NAME}/assets/maneuver/${e}.png`,
-			label: `gurps.status.${e}`,
+			icon: `systems/${SYSTEM_NAME}/assets/maneuver/${e}.webp`,
+			label: `gurps.maneuver.${e}`,
 		}
 		return effect
 	}),

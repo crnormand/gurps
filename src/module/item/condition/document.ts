@@ -11,9 +11,9 @@ class ConditionGURPS extends EffectGURPS {
 			? [getConditionList()[id as ConditionID], "status"]
 			: [getManeuverList()[id as ManeuverID], "maneuver"]
 		return {
-			name: i18n(`gurps.status.${id}`),
+			name: i18n(`gurps.${folder}.${id}`),
 			type: ItemType.Condition,
-			img: `systems/${SYSTEM_NAME}/assets/${folder}/${id}.png`,
+			img: `systems/${SYSTEM_NAME}/assets/${folder}/${id}.webp`,
 			system: mergeObject(ConditionGURPS.defaults, data) as ConditionSystemData,
 		}
 	}

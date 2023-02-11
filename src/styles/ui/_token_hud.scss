@@ -1,7 +1,14 @@
 #token-hud {
+	.maneuvers {
+		grid-template-columns: repeat(4, 1fr);
+	}
+
+	.status-effects {
+		grid-template-columns: repeat(5, 1fr);
+	}
+
 	.maneuvers,
 	.status-effects {
-		grid-template-columns: repeat(4, 1fr);
 		width: auto;
 		visibility: hidden;
 		position: absolute;
@@ -83,7 +90,7 @@
 			padding: 3px 0;
 			position: absolute;
 			text-align: center;
-			top: -30px;
+			bottom: calc(100% + 5px);
 			visibility: hidden;
 			width: 100%;
 			z-index: 1;

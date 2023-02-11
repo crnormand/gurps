@@ -92,6 +92,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				formData["system.resource_trackers"] = resource_trackers
 				delete formData[i]
 			}
+			if (i === "system.move.posture")
+				if (getProperty(this.actor, i) !== formData[i]) this.actor.changePosture(formData[i] as any)
+			if (i === "system.move.maneuver")
+				if (getProperty(this.actor, i) !== formData[i]) this.actor.changeManeuver(formData[i] as any)
 		}
 		return super._updateObject(event, formData)
 	}
@@ -110,6 +114,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
 		html.find(":not(.disabled) > > .rollable").on("click", event => this._onClickRoll(event))
 
+		// Maneuver / Posture Selection
+		html.find(".move-select").on("change", event => this._onMoveChange(event))
+
 		// Hover Over
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		// Html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
@@ -119,6 +126,19 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 		// Points Record
 		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
+	}
+
+	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
+		const element = $(event.currentTarget)
+		const type = element.data("name")
+		switch (type) {
+			case "maneuver":
+				return this.actor.changeManeuver(element.val() as any)
+			case "posture":
+				return this.actor.changePosture(element.val() as any)
+			default:
+				console.error("Not implemented yet")
+		}
 	}
 
 	async _getPoolContextMenu(event: JQuery.ClickEvent, html: JQuery<HTMLElement>): Promise<void> {

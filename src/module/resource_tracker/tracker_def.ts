@@ -3,7 +3,8 @@ import { sanitize, VariableResolver } from "@util"
 import { ResourceTrackerDefObj } from "./data"
 
 export class ResourceTrackerDef {
-	def_id = ""
+	// Def_id = ""
+	_id = ""
 
 	name = ""
 
@@ -34,11 +35,11 @@ export class ResourceTrackerDef {
 	}
 
 	get id(): string {
-		return this.def_id
+		return this._id
 	}
 
 	set id(v: string) {
-		this.def_id = sanitize(v, false, reserved_ids)
+		this._id = sanitize(v, false, reserved_ids)
 	}
 
 	get resolveFullName(): string {

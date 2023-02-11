@@ -7,53 +7,64 @@ export enum ConditionID {
 	PostureCrouch = "posture_crouch",
 	PostureKneel = "posture_kneel",
 	PostureSit = "posture_sit",
+	PostureCrawl = "posture_crawl",
 	PostureProne = "posture_prone",
 	// Serious Damage
 	Reeling = "reeling",
 	Fatigued = "fatigued",
+	Crippled = "crippled",
 	Bleeding = "bleeding",
-	Poisoned = "poisoned",
-	// Shock / Pain / Crippling
+	Dead = "dead",
+	// Shock / Unconsciousness
 	Shock = "shock",
 	Pain = "pain",
-	Agony = "agony",
-	Crippled = "crippled",
-	// Movement ?
-	Sprinting = "sprinting",
-	Flying = "flying",
-	Falling = "falling",
-	Disarmed = "disarmed",
-	// Confusion ?
-	Stun = "stun",
-	MentalStun = "mental_stun",
-	Daze = "daze",
-	Seizure = "seizure",
-	// Movement Restriction
-	Grappled = "grappled",
-	Restrained = "restrained",
-	Pinned = "pinned",
-	Paralysis = "paralysis",
-	// Unconsciousness
 	Unconscious = "unconscious",
 	Sleeping = "sleeping",
 	Coma = "coma",
-	Dead = "dead",
-	// Stealth
+	// Confusion ?
+	Stun = "stun",
+	MentalStun = "mental_stun",
+	Poisoned = "poisoned",
+	Burning = "burning",
+	Cold = "cold",
+	// Movement Bad
+	Disarmed = "disarmed",
+	Falling = "falling",
+	Grappled = "grappled",
+	Restrained = "restrained",
+	Pinned = "pinned",
+	// Stealth / Movement Good
+	Sprinting = "sprinting",
+	Flying = "flying",
 	Stealth = "stealth",
-	Invisible = "invisible",
-	Incorporeal = "incorporeal",
 	Waiting = "waiting",
+	Invisible = "invisible",
+	// Afflictions
+	Coughing = "coughing",
+	Retching = "retching",
+	Nausea = "nausea",
+	Agony = "agony",
+	Seizure = "seizure",
+	// Disabled Function
+	Blinded = "blind", // Inconsistency here between "blinded" and "blind" to match foundry default name
+	Deafened = "deafened",
+	Silenced = "silenced",
+	Choking = "choking",
+	HeartAttack = "heart_attack",
 	// Drunk-adjacent
 	Euphoria = "euphoria",
 	Hallucinating = "hallucinating",
 	Drunk = "drunk",
 	Drowsy = "drowsy",
-	// Disabled Function
-	Silenced = "silenced",
-	Deafened = "deafened",
-	Blinded = "blind", // Inconsistency here between "blinded" and "blind" to match foundry default name
-	Choking = "choking",
+	Daze = "daze",
 }
+
+export const Postures = [
+	ConditionID.PostureCrouch,
+	ConditionID.PostureSit,
+	ConditionID.PostureKneel,
+	ConditionID.PostureProne,
+]
 
 export enum ManeuverID {
 	// Row 1
@@ -87,6 +98,8 @@ export enum ManeuverID {
 	AOASF = "aoa_suppressing_fire",
 	BLANK_2 = "blank_2",
 }
+
+export type EffectID = ConditionID | ManeuverID
 
 export type ConditionSource = BaseItemSourceGURPS<ItemType.Condition, ConditionSystemData>
 
