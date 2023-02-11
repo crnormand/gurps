@@ -1,6 +1,6 @@
 import { BaseItemSourceGURPS } from "@item/base/data"
 import { FeatureConstructor } from "@module/config"
-import { ItemType } from "@module/data"
+import { ItemType, RollModifier } from "@module/data"
 
 export type EffectSource = BaseItemSourceGURPS<ItemType.Effect, EffectSystemData>
 
@@ -21,7 +21,9 @@ export interface EffectData extends Omit<EffectSource, "effects">, EffectSystemD
 }
 
 export interface EffectSystemData {
+	id: string | null
 	features?: FeatureConstructor[]
+	modifiers?: RollModifier[]
 	can_level: boolean
 	levels?: {
 		max: number

@@ -1,4 +1,5 @@
 import { CharacterGURPS } from "@actor"
+import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { gid } from "@module/data"
 import { sanitize } from "@util"
 import { AttributeDef } from "./attribute_def"
@@ -8,11 +9,11 @@ import { PoolThreshold } from "./pool_threshold"
 export class Attribute {
 	actor: CharacterGURPS
 
-	bonus = 0
+	// Bonus = 0
 
-	effectiveBonus = 0 // Used for active effects
-
-	cost_reduction = 0
+	// private bonus = 0
+	// private effectiveBonus = 0 // Used for active effects
+	// private cost_reduction = 0
 
 	order: number
 
@@ -32,6 +33,21 @@ export class Attribute {
 		if (this.attribute_def.type === AttributeType.Pool) {
 			this.apply_ops ??= true
 		}
+	}
+
+	get bonus(): number {
+		if (!this.actor) return 0
+		return this.actor.attributeBonusFor(this.id, AttributeBonusLimitation.None)
+	}
+
+	get effectiveBonus(): number {
+		if (!this.actor) return 0
+		return this.actor.attributeBonusFor(this.id, AttributeBonusLimitation.None, true, null)
+	}
+
+	get cost_reduction(): number {
+		if (!this.actor) return 0
+		return this.actor.costReductionFor(this.id)
 	}
 
 	get id(): string {
@@ -118,9 +134,9 @@ export class Attribute {
 
 	toObj(): AttributeObj {
 		const obj: AttributeObj = {
-			bonus: this.bonus,
-			cost_reduction: this.cost_reduction,
-			order: this.order,
+			// Bonus: this.bonus,
+			// cost_reduction: this.costReduction,
+			// order: this.order,
 			attr_id: this.attr_id,
 			adj: this.adj,
 		}

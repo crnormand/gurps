@@ -5,9 +5,10 @@ import {
 	EquipmentModifierSystemData,
 	EquipmentSystemData,
 	ItemFlagsGURPS,
-	ItemGCSSystemData,
+	MeleeWeaponSystemData,
 	NoteContainerSystemData,
 	NoteSystemData,
+	RangedWeaponSystemData,
 	RitualMagicSpellSystemData,
 	SkillContainerSystemData,
 	SkillSystemData,
@@ -23,31 +24,38 @@ import { Feature, ItemSystemDataGURPS } from "@module/config"
 import { CR, ItemType, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { PrereqList } from "@prereq"
-import { i18n_f, newUUID } from "./misc"
+import { i18n, i18n_f, newUUID } from "./misc"
 
 class ImportUtils {
-	static importItems(list: Array<ItemGCSSystemData>, context?: { container?: boolean; other?: boolean }): Array<any> {
+	static importItems(
+		list: Array<ItemSystemDataGURPS | any>,
+		context?: { container?: boolean; other?: boolean }
+	): Array<any> {
 		if (!list) return []
 		const items: Array<any> = []
 		for (const item of list) {
-			item.name ??= (item as any).description ?? (item as any).text
+			item.name ??= (item as any).description ?? (item as any).text ?? (item as any).usage
 			const id = randomID()
-			const [itemData, itemFlags]: [ItemGCSSystemData, ItemFlagsGURPS] = ImportUtils.getItemData(item, context)
+			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = ImportUtils.getItemData(item, context)
 			const newItem = {
-				name: item.name ?? "ERROR",
+				name: item.name,
 				type: itemData.type,
 				system: itemData,
 				flags: itemFlags,
 				_id: id,
 			}
+			if (!newItem.name) {
+				const defaultName = i18n(
+					`ITEM.Type${newItem.system.type.charAt(0).toUpperCase()}${newItem.system.type.slice(1)}`
+				)
+				newItem.name = defaultName
+			}
 			if (context?.container) {
 				items.push({
-					name: item.name,
-					system: itemData,
-					effects: [],
-					flags: itemFlags,
-					type: itemData.type,
-					_id: id,
+					...newItem,
+					...{
+						effects: [],
+					},
 				})
 			} else {
 				items.push(newItem)
@@ -60,73 +68,77 @@ class ImportUtils {
 		item: ItemSystemDataGURPS,
 		context?: { container?: boolean; other?: boolean }
 	): [ItemSystemDataGURPS, ItemFlagsGURPS] {
-		let data: ItemSystemDataGURPS
 		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { contentsData: [] } }
 		switch (item.type) {
 			case "trait":
-				data = ImportUtils.getTraitData(item as TraitSystemData)
-				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).modifiers, { container: true })
-				return [data, flags]
+				flags[SYSTEM_NAME]!.contentsData = [
+					...ImportUtils.importItems((item as any).modifiers, { container: true }),
+					...ImportUtils.importItems((item as any).weapons, { container: true }),
+				]
+				return [ImportUtils.getTraitData(item as TraitSystemData), flags]
 			case "trait_container":
-				data = ImportUtils.getTraitContainerData(item as TraitContainerSystemData)
-				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-				flags[SYSTEM_NAME]!.contentsData!.concat(
-					ImportUtils.importItems((item as any).modifiers, {
-						container: true,
-					})
-				)
-				return [data, flags]
+				flags[SYSTEM_NAME]!.contentsData = [
+					...ImportUtils.importItems((item as any).children, { container: true }),
+					...ImportUtils.importItems((item as any).modifiers, { container: true }),
+					...ImportUtils.importItems((item as any).weapons, { container: true }),
+				]
+				return [ImportUtils.getTraitContainerData(item as TraitContainerSystemData), flags]
 			case "modifier":
 				return [ImportUtils.getTraitModifierData(item as TraitModifierSystemData), flags]
 			case "modifier_container":
-				data = ImportUtils.getTraitModifierContainerData(item as TraitModifierContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-				return [data, flags]
+				return [ImportUtils.getTraitModifierContainerData(item as TraitModifierContainerSystemData), flags]
 			case "skill":
+				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getSkillData(item as SkillSystemData), flags]
 			case "technique":
+				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getTechniqueData(item as TechniqueSystemData), flags]
 			case "skill_container":
-				data = ImportUtils.getSkillContainerData(item as SkillContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-				return [data, flags]
+				return [ImportUtils.getSkillContainerData(item as SkillContainerSystemData), flags]
 			case "spell":
+				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getSpellData(item as SpellSystemData), flags]
 			case "ritual_magic_spell":
+				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getRitualMagicSpellData(item as RitualMagicSpellSystemData), flags]
 			case "spell_container":
-				data = ImportUtils.getSpellContainerData(item as SpellContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-				return [data, flags]
+				return [ImportUtils.getSpellContainerData(item as SpellContainerSystemData), flags]
 			case "equipment":
-				data = ImportUtils.getEquipmentData(item as EquipmentSystemData, context?.other)
-				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).modifiers, { container: true })
-				return [data, flags]
+				flags[SYSTEM_NAME]!.contentsData = [
+					...ImportUtils.importItems((item as any).modifiers, { container: true }),
+					...ImportUtils.importItems((item as any).weapons, { container: true }),
+				]
+				return [ImportUtils.getEquipmentData(item as EquipmentSystemData, context?.other), flags]
 			case "equipment_container":
-				data = ImportUtils.getEquipmentContainerData(item as EquipmentContainerSystemData, context?.other)
-				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, {
-					container: true,
-					other: context?.other,
-				})
-				flags[SYSTEM_NAME]!.contentsData!.concat(
-					ImportUtils.importItems((item as any).modifiers, {
-						container: true,
-						other: context?.other,
-					})
-				)
-				return [data, flags]
+				flags[SYSTEM_NAME]!.contentsData = [
+					...ImportUtils.importItems((item as any).children, { container: true }),
+					...ImportUtils.importItems((item as any).modifiers, { container: true }),
+					...ImportUtils.importItems((item as any).weapons, { container: true }),
+				]
+				return [
+					ImportUtils.getEquipmentContainerData(item as EquipmentContainerSystemData, context?.other),
+					flags,
+				]
 			case "eqp_modifier":
 				return [ImportUtils.getEquipmentModifierData(item as EquipmentModifierSystemData), flags]
 			case "eqp_modifier_container":
-				data = ImportUtils.getEquipmentModifierContainerData(item as EquipmentModifierContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-				return [data, flags]
+				return [
+					ImportUtils.getEquipmentModifierContainerData(item as EquipmentModifierContainerSystemData),
+					flags,
+				]
 			case "note":
 				return [ImportUtils.getNoteData(item as NoteSystemData), flags]
 			case "note_container":
-				data = ImportUtils.getNoteContainerData(item as NoteContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-				return [data, flags]
+				return [ImportUtils.getNoteContainerData(item as NoteContainerSystemData), flags]
+			case "melee_weapon":
+				return [ImportUtils.getMeleeWeaponData(item as MeleeWeaponSystemData), flags]
+			case "ranged_weapon":
+				return [ImportUtils.getRangedWeaponData(item as RangedWeaponSystemData), flags]
 			default:
 				throw new Error(i18n_f("gcsga.error.import.invalid_item_type", { type: item.type }))
 		}
@@ -442,6 +454,57 @@ class ImportUtils {
 			text: data.text ?? "",
 			open: data.open ?? false,
 			vtt_notes: data.vtt_notes ?? "",
+		}
+	}
+
+	private static getMeleeWeaponData(data: MeleeWeaponSystemData): MeleeWeaponSystemData {
+		return {
+			id: data.id ?? newUUID(),
+			type: ItemType.MeleeWeapon,
+			strength: data.strength ?? "",
+			usage: data.usage ?? "",
+			usage_notes: data.usage_notes ?? "",
+			defaults: data.defaults ? ImportUtils.importDefaults(data.defaults) : [],
+			reach: data.reach ?? "",
+			parry: data.parry ?? "",
+			block: data.block ?? "",
+			damage: {
+				type: data.damage.type ?? "",
+				st: data.damage.st ?? "none",
+				base: data.damage.base ?? "",
+				armor_divisor: data.damage.armor_divisor ?? 1,
+				fragmentation: data.damage.fragmentation ?? "",
+				fragmentation_armor_divisor: data.damage.fragmentation_armor_divisor ?? 1,
+				fragmentation_type: data.damage.fragmentation_type ?? "",
+				modifier_per_die: data.damage.modifier_per_die ?? 0,
+			},
+		}
+	}
+
+	private static getRangedWeaponData(data: RangedWeaponSystemData): RangedWeaponSystemData {
+		return {
+			id: data.id ?? newUUID(),
+			type: ItemType.RangedWeapon,
+			strength: data.strength ?? "",
+			usage: data.usage ?? "",
+			usage_notes: data.usage_notes ?? "",
+			defaults: data.defaults ? ImportUtils.importDefaults(data.defaults) : [],
+			accuracy: data.accuracy ?? "",
+			range: data.range ?? "",
+			rate_of_fire: data.rate_of_fire ?? "",
+			shots: data.shots ?? "",
+			bulk: data.bulk ?? "",
+			recoil: data.recoil ?? "",
+			damage: {
+				type: data.damage.type ?? "",
+				st: data.damage.st ?? "none",
+				base: data.damage.base ?? "",
+				armor_divisor: data.damage.armor_divisor ?? 1,
+				fragmentation: data.damage.fragmentation ?? "",
+				fragmentation_armor_divisor: data.damage.fragmentation_armor_divisor ?? 1,
+				fragmentation_type: data.damage.fragmentation_type ?? "",
+				modifier_per_die: data.damage.modifier_per_die ?? 0,
+			},
 		}
 	}
 

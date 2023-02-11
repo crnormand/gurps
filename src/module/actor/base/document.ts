@@ -1,5 +1,15 @@
 import { SYSTEM_NAME } from "@module/data"
-import { EffectGURPS, TraitContainerGURPS, TraitGURPS, TraitModifierGURPS } from "@item"
+import {
+	ConditionGURPS,
+	ConditionID,
+	EffectGURPS,
+	EffectID,
+	ManeuverID,
+	Postures,
+	TraitContainerGURPS,
+	TraitGURPS,
+	TraitModifierGURPS,
+} from "@item"
 import {
 	ActorConstructorContextGURPS,
 	ActorFlags,
@@ -20,7 +30,6 @@ import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { DiceGURPS } from "@module/dice"
 import { ActorDataGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
-import { ConditionGURPS, ConditionID } from "@item/condition"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
@@ -34,13 +43,13 @@ class BaseActorGURPS extends Actor {
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = CONFIG.GURPS.Actor.documentClasses[data.type]
-			return ActorConstructor ? new ActorConstructor(data, context) : new BaseActorGURPS(data, context)
+			if (ActorConstructor) return new ActorConstructor(data, context)
+			throw Error(`Invalid Actor Type "${data.type}"`)
 		}
 	}
 
 	protected async _preCreate(data: any, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
-		// @ts-ignore
-		if (this._source.img === ActorData.DEFAULT_ICON)
+		if (this._source.img === foundry.CONST.DEFAULT_TOKEN)
 			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${data.type}.svg`
 		await super._preCreate(data, options, user)
 	}
@@ -150,7 +159,8 @@ class BaseActorGURPS extends Actor {
 		return this.conditions.some(e => e.cid === id)
 	}
 
-	async increaseCondition(id: ConditionID): Promise<ConditionGURPS | null> {
+	async increaseCondition(id: EffectID): Promise<ConditionGURPS | null> {
+		if (Object.values(ManeuverID).includes(id as any)) return this.changeManeuver(id as ManeuverID)
 		const existing = this.conditions.find(e => e.cid === id)
 		if (existing) {
 			if (existing.canLevel) {
@@ -170,7 +180,7 @@ class BaseActorGURPS extends Actor {
 		return items[0]
 	}
 
-	async decreaseCondition(id: ConditionID, { forceRemove } = { forceRemove: false }): Promise<void> {
+	async decreaseCondition(id: EffectID, { forceRemove } = { forceRemove: false }): Promise<void> {
 		const condition = this.conditions.find(e => e.cid === id)
 		if (!condition) return
 
@@ -180,6 +190,49 @@ class BaseActorGURPS extends Actor {
 		} else {
 			await condition.delete()
 		}
+	}
+
+	async changeManeuver(id: ManeuverID | "none"): Promise<ConditionGURPS | null> {
+		if ([ManeuverID.BLANK_1, ManeuverID.BLANK_2].includes(id as any)) return null
+		if (id === "none") return this.resetManeuvers()
+		const existing = this.conditions.find(e => e.cid === id)
+		const maneuvers = this.conditions.filter(e => Object.values(ManeuverID).includes(e.cid as any))
+		if (existing && maneuvers.includes(existing)) maneuvers.splice(maneuvers.indexOf(existing), 1)
+		await this.deleteEmbeddedDocuments(
+			"Item",
+			maneuvers.map(e => e.id!)
+		)
+		if (!existing) {
+			const newCondition = duplicate(ConditionGURPS.getData(id))
+			const items = (await this.createEmbeddedDocuments("Item", [newCondition])) as ConditionGURPS[]
+			return items[0]
+		}
+		return null
+	}
+
+	async resetManeuvers(): Promise<null> {
+		const maneuvers = this.conditions.filter(e => Object.values(ManeuverID).includes(e.cid as any))
+		await this.deleteEmbeddedDocuments(
+			"Item",
+			maneuvers.map(e => e.id!)
+		)
+		return null
+	}
+
+	async changePosture(id: ConditionID | "standing"): Promise<ConditionGURPS | null> {
+		const existing = this.conditions.find(e => e.cid === id)
+		const postures = this.conditions.filter(e => Postures.includes(e.cid as any))
+		if (existing && postures.includes(existing)) postures.splice(postures.indexOf(existing), 1)
+		await this.deleteEmbeddedDocuments(
+			"Item",
+			postures.map(e => e.id!)
+		)
+		if (!existing && id !== "standing") {
+			const newCondition = duplicate(ConditionGURPS.getData(id))
+			const items = (await this.createEmbeddedDocuments("Item", [newCondition])) as ConditionGURPS[]
+			return items[0]
+		}
+		return null
 	}
 }
 

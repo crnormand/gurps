@@ -184,6 +184,30 @@ class ModifierButton extends Application {
 			}
 		await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, total)
 	}
+
+	// Async showText() {
+	// 	const args = [
+	// 		{
+	// 			x: 1890,
+	// 			y: 1100
+	// 		},
+	// 		"checkem",
+	// 		{
+	// 			anchor: 2,
+	// 			direction: 2,
+	// 			fill: "#FFFFFF",
+	// 			fontSize: 24,
+	// 			jitter: 0.25,
+	// 			stroke: "#111111",
+	// 			strokeThickness: 1,
+	// 			textStyle: {
+	// 				"z-index": 2
+	// 			}
+	// 		}
+	// 	]
+	// 	console.log(args)
+	// 	await (canvas as any).interface.createScrollingText(...args)
+	// }
 }
 
 interface ModifierButton extends Application {

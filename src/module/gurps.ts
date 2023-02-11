@@ -42,7 +42,7 @@ import { CompendiumBrowser } from "./compendium"
 import { PDFViewerSheet } from "@module/pdf/sheet"
 import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
-import { ActorType, ItemType, SYSTEM_NAME, UserFlags } from "./data"
+import { ActorType, ItemType, SOCKET, SYSTEM_NAME, UserFlags } from "./data"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import { ColorSettings } from "./settings/colors"
@@ -74,9 +74,11 @@ import {
 	TraitModifierContainerSheet,
 	TraitModifierSheet,
 	TraitSheet,
+	WeaponSheet,
 } from "@item"
 import { CharacterSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
 import { DamageCalculator } from "./damage_calculator/damage_calculator"
+import { ActiveEffectGURPS } from "@module/effect"
 
 Error.stackTraceLimit = Infinity
 
@@ -120,14 +122,15 @@ Hooks.once("init", async () => {
 	const src = `systems/${SYSTEM_NAME}/assets/gurps4e.svg`
 	$("#logo").attr("src", src)
 	// $("#logo").attr("width", "100px");
+	//
+	CONFIG.GURPS = GURPSCONFIG
 
 	// Assign custom classes and constants hereby
-	CONFIG.GURPS = GURPSCONFIG
-	// @ts-ignore
 	CONFIG.Item.documentClass = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
 	CONFIG.Token.documentClass = TokenDocumentGURPS
 	CONFIG.Token.objectClass = TokenGURPS
+	CONFIG.ActiveEffect.documentClass = ActiveEffectGURPS
 	// @ts-ignore
 	CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
 	CONFIG.Combat.documentClass = CombatGURPS
@@ -227,6 +230,11 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.note_container"),
 	})
+	Items.registerSheet(SYSTEM_NAME, WeaponSheet, {
+		types: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
+		makeDefault: true,
+		label: i18n("gurps.system.sheet.weapon"),
+	})
 	Items.registerSheet(SYSTEM_NAME, StaticItemSheet, {
 		types: [ItemType.LegacyEquipment],
 		makeDefault: true,
@@ -280,7 +288,19 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-	game.user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+
+	// Set default user flag state
+	if (!game.user?.getFlag(SYSTEM_NAME, UserFlags.Init)) {
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, [])
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, 0)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierSticky, false)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	}
+	if (canvas && canvas.hud) {
+		canvas.hud.token = new TokenHUDGURPS()
+	}
 	;(game as any).ModifierButton = new ModifierButton()
 	;(game as any).ModifierButton.render(true)
 	;(game as any).CompendiumBrowser = new CompendiumBrowser()
@@ -299,17 +319,18 @@ Hooks.once("ready", async () => {
 	// 	})
 	// )
 
-	// ; game.socket?.on(SYSTEM_NAME, async response => {
-	// 	switch (response.type as SOCKET) {
-	// 		case SOCKET.UPDATE_BUCKET:
-	// 			ui.notifications?.info(response.users)
-	// 			return GURPS.ModifierButton.render(true)
-	// 		case SOCKET.INITIATIVE_CHANGED:
-	// 			CONFIG.Combat.initiative.formula = response.formula
-	// 		default:
-	// 			return console.error("Unknown socket:", response.type)
-	// 	}
-	// })
+	game.socket?.on("system.gcsga", async (response: any) => {
+		console.log(response)
+		switch (response.type as SOCKET) {
+			case SOCKET.UPDATE_BUCKET:
+				// Ui.notifications?.info(response.users)
+				return (game as any).ModifierButton.render(true)
+			case SOCKET.INITIATIVE_CHANGED:
+				CONFIG.Combat.initiative.formula = response.formula
+			default:
+				return console.error("Unknown socket:", response.type)
+		}
+	})
 
 	// Render modifier app after user object loaded to avoid old data
 })

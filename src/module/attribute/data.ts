@@ -1,10 +1,10 @@
 import { gid } from "@module/data"
 
 export interface AttributeObj {
-	bonus?: number
-	effectiveBonus?: number
-	cost_reduction?: number
-	order: number
+	// Bonus?: number
+	// effectiveBonus?: number
+	// cost_reduction?: number
+	// order: number
 	attr_id: string
 	adj: number
 	damage?: number

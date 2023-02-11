@@ -1,7 +1,7 @@
-import { ContainerSheetGURPS } from "@item/container"
+import { ItemSheetGCS } from "@item/gcs"
 import { ItemType } from "@module/data"
 
-export class TraitSheet extends ContainerSheetGURPS {
+export class TraitSheet extends ItemSheetGCS {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {

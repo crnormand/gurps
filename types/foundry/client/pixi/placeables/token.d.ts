@@ -496,6 +496,14 @@ declare global {
 		}
 
 		/**
+		 * Handle changes to Token behavior when a significant status effect is applied
+		 * @param {string} statusId       The status effect ID being applied, from CONFIG.specialStatusEffects
+		 * @param {boolean} active        Is the special status effect now active?
+		 * @internal
+		 */
+		_onApplyStatusEffect(statusId: string, active: boolean): void
+
+		/**
 		 * A generic transformation to turn a certain number of grid units into a radius in canvas pixels.
 		 * This function adds additional padding to the light radius equal to half the token width.
 		 * This causes light to be measured from the outer token edge, rather than from the center-point.

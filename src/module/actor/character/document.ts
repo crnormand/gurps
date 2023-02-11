@@ -900,14 +900,14 @@ class CharacterGURPS extends BaseActorGURPS {
 			if (attribute_def.type.includes("separator")) {
 				a.push({
 					attr_id: attr.attr_id,
-					order: attr.order,
+					// Order: attr.order,
 					adj: attr.adj,
 				})
 			} else {
 				a.push({
-					bonus: attr.bonus,
-					cost_reduction: attr.cost_reduction,
-					order: attr.order,
+					// Bonus: attr.bonus,
+					// cost_reduction: attr.costReduction,
+					// order: attr.order,
 					attr_id: attr.attr_id,
 					adj: attr.adj,
 				})
@@ -1099,30 +1099,42 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.calc.lifting_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Lifting)
 		this.calc.striking_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Striking)
 		this.calc.throwing_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Throwing)
-		this.attributes = this.getAttributes()
-		if (this.attributes)
-			this.attributes.forEach(attr => {
-				if (!this.system.attributes[attr.order]) return
-				const def = attr.attribute_def
-				if (def) {
-					this.system.attributes[attr.order].bonus = this.attributeBonusFor(
-						attr.id,
-						AttributeBonusLimitation.None
-					)
-					this.system.attributes[attr.order].effectiveBonus = this.attributeBonusFor(
-						attr.id,
-						AttributeBonusLimitation.None,
-						true,
-						null
-					)
-					if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type))
-						attr.bonus = Math.floor(attr.bonus)
-					this.system.attributes[attr.order].cost_reduction = this.costReductionFor(attr.id)
-				} else {
-					this.system.attributes[attr.order].bonus = 0
-					this.system.attributes[attr.order].cost_reduction = 0
-				}
-			})
+		// This.attributes = this.getAttributes()
+		// if (this.attributes)
+		// 	this.attributes.forEach(attr => {
+		// 		console.log(attr)
+		// 		const sysAttr = this.system.attributes.find(e => e.attr_id === attr.id)
+		// 		console.log(sysAttr)
+		// 		if (!sysAttr) return
+		// 		const index = this.system.attributes.indexOf(sysAttr)
+		// 		// if (!this.system.attributes[attr.order]) return
+		// 		const def = attr.attribute_def
+		// 		console.log(def)
+		// 		if (def) {
+		// 			this.system.attributes[index].bonus = this.attributeBonusFor(
+		// 				attr.id,
+		// 				AttributeBonusLimitation.None
+		// 			)
+		// 			this.system.attributes[index].effectiveBonus = this.attributeBonusFor(
+		// 				attr.id,
+		// 				AttributeBonusLimitation.None,
+		// 				true,
+		// 				null
+		// 			)
+		// 			if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type)) {
+		// 				this.system.attributes[index].bonus =
+		// 					Math.floor(this.system.attributes[index].bonus ?? 0)
+		// 				this.system.attributes[index].effectiveBonus =
+		// 					Math.floor(this.system.attributes[index].effectiveBonus ?? 0)
+		// 			}
+		// 			this.system.attributes[index].cost_reduction = this.costReductionFor(attr.id)
+		// 			console.log(this.system.attributes)
+		// 		} else {
+		// 			this.system.attributes[index].bonus = 0
+		// 			this.system.attributes[index].effectiveBonus = 0
+		// 			this.system.attributes[index].cost_reduction = 0
+		// 		}
+		// 	})
 		this.attributes = this.getAttributes()
 		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
@@ -1131,8 +1143,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.calc.block_bonus = this.attributeBonusFor(gid.Block, AttributeBonusLimitation.None)
 	}
 
-	processFeature(parent: ItemGURPS, f: Feature, levels: number) {
-		f.setParent(parent)
+	processFeature(_parent: ItemGURPS, f: Feature, levels: number) {
+		// F.setParent(parent)
 		f.levels = levels
 
 		switch (f.type) {
@@ -1196,7 +1208,7 @@ class CharacterGURPS extends BaseActorGURPS {
 					amount: k.techLevel && k.techLevel !== "" ? -10 : -5,
 					levels: 0,
 				})
-				penalty.setParent(k)
+				// Penalty.setParent(k)
 				this.features.skillBonuses.push(penalty)
 			}
 			if (!satisfied) {
@@ -1219,7 +1231,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				} else {
 					penalty.amount = -5
 				}
-				penalty.setParent(b)
+				// Penalty.setParent(b)
 				this.features.skillBonuses.push(penalty)
 			}
 			if (!satisfied) b.unsatisfied_reason = not_met + tooltip.toString()
@@ -1353,10 +1365,12 @@ class CharacterGURPS extends BaseActorGURPS {
 				feature.attribute === attributeId &&
 				feature.effective === effective
 			) {
+				// Console.log("add", feature.adjustedAmount)
 				total += feature.adjustedAmount
 				feature.addToTooltip(tooltip)
 			}
 		}
+		// Console.log(attributeId, total)
 		return total
 	}
 
@@ -1811,9 +1825,10 @@ class CharacterGURPS extends BaseActorGURPS {
 		})
 		system.attributes = system.attributes.map((e: Partial<AttributeObj>) => {
 			const f = { ...e }
-			delete f.bonus
-			delete f.cost_reduction
-			delete f.order
+			// Delete f.bonus
+			// delete f.effectiveBonus
+			// delete f.cost_reduction
+			// delete f.order
 			return f
 		})
 		if (this.img) system.profile.portrait = await urlToBase64(this.img)

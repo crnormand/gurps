@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { DnD } from "@util/drag_drop"
 import { ItemGURPS } from "@module/config"
 import { PropertiesToSource } from "types/types/helperTypes"
@@ -69,6 +69,19 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 		// Set data transfer
 		event.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
+	}
+
+	getData(options?: Partial<DocumentSheetOptions<Item>>): any {
+		const items = this.items
+		const sheetData = {
+			...super.getData(options),
+			...{
+				items: items,
+				meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
+				rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),
+			},
+		}
+		return sheetData
 	}
 
 	protected _onDrop(event: DragEvent): any {
