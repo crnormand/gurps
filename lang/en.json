@@ -419,7 +419,7 @@
 	"GURPS.modifierRange": "for range/speed {range} yds",
 	"GURPS.modifierRangeMHClose": "Close range (5 yds)",
 	"GURPS.modifierRangeMHCloseDesc": "Can touch or strike foe",
-	"GURPS.modifierRangeMHShort": "Short range (20 yrds)",
+	"GURPS.modifierRangeMHShort": "Short range (20 yds)",
 	"GURPS.modifierRangeMHShortDesc": "Can talk to foe; pistol or muscle-powered missile range",
 	"GURPS.modifierRangeMHMedium": "Medium range (100 yds)",
 	"GURPS.modifierRangeMHMediumDesc": "Can only shout to foe; shotgun or SMG range",
