@@ -1,10 +1,11 @@
 import { CharacterGURPS } from "@actor"
+import { SkillGURPS, TechniqueGURPS } from "@item"
 import { Attribute } from "@module/attribute"
-import { ActorGURPS } from "@module/config"
+import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { i18n_f } from "@util"
+import { i18n, i18n_f } from "@util"
 
 enum RollSuccess {
 	Success = "success",
@@ -209,18 +210,25 @@ export class RollGURPS extends Roll {
 
 	static async rollAgainst(
 		user: StoredDocument<User> | null,
-		actor: ActorGURPS,
+		actor: CharacterGURPS,
 		level: number,
 		formula: string,
 		name: string,
 		type: RollType,
-		item?: Item | Attribute | null,
+		item?: ItemGURPS | Attribute | null,
 		hidden = false
 	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
 		const modifiers: Array<RollModifier & { class?: string }> = [
 			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
 		]
+		const encumbrance = actor.encumbranceLevel(true)
+		if (item instanceof SkillGURPS && item.encumbrancePenaltyMultiplier && encumbrance.level > 0) {
+			modifiers.unshift({
+				name: i18n_f("gurps.roll.encumbrance", { name: encumbrance.name }),
+				modifier: encumbrance.penalty,
+			})
+		}
 		modifiers.forEach(m => {
 			m.class = "zero"
 			if (m.modifier > 0) m.class = "pos"
@@ -239,9 +247,15 @@ export class RollGURPS extends Roll {
 		let displayName = i18n_f("gurps.roll.skill_level", { name, level })
 		if (type === RollType.ControlRoll) displayName = i18n_f("gurps.roll.cr_level", { name, level })
 
-		let itemObject: any = {}
-		if (item instanceof Item) {
-			itemObject = item.toObject()
+		let itemData: any = {}
+		if (item instanceof SkillGURPS || item instanceof TechniqueGURPS) {
+			itemData = { name: item.name, specialization: item.specialization }
+			if (item.dummyActor && item.defaultedFrom) {
+				itemData.default = `${item.defaultedFrom.fullName(actor as any)}`
+				const modifier =
+					(item.defaultedFrom.modifier < 0 ? " - " : " + ") + Math.abs(item.defaultedFrom.modifier)
+				itemData.default += modifier
+			}
 		}
 
 		const chatData = {
@@ -252,7 +266,8 @@ export class RollGURPS extends Roll {
 			success,
 			margin,
 			type,
-			item: itemObject,
+			encumbrance,
+			item: itemData,
 			total: roll.total!,
 			tooltip: await roll.getTooltip(),
 			effective: `<div class="effective">${i18n_f(effectiveTemplate, {

@@ -100,11 +100,11 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		].includes(type)
 	) {
 		if (actor instanceof CharacterGURPS) {
-			const json = $(event.currentTarget).data("json")
-			const skill = new BaseItemGURPS(json) as SkillGURPS | TechniqueGURPS
+			const itemData = $(event.currentTarget).data("json")
+			// Const skill = new BaseItemGURPS(json) as SkillGURPS | TechniqueGURPS
 
 			// Grab best skill or default
-			data.item = actor.bestSkillNamed(skill.name!, skill.specialization || "", false, null)
+			data.item = actor.bestSkillNamed(itemData.name!, itemData.specialization || "", false, null)
 
 			// Update level at least once to calculate default level
 			data.item?.updateLevel()
