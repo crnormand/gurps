@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.28
+
+- Removed hack to prevent multiple maneuver icons.
+
+
 Release 0.15.27 01/18/2023
 
 - Allow multiple commands on check/during OTF commands.   Check uses the last OTF to determine success
