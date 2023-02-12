@@ -1,4 +1,5 @@
 import { CharacterGURPS } from "@actor"
+import { Attribute } from "@module/attribute"
 import { ActorGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
@@ -72,7 +73,7 @@ export class RollGURPS extends Roll {
 			Object.defineProperty(d, "gmodc", {
 				get() {
 					const mod = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) as number
-					;(game as any).ModifierButton.clear()
+					game.ModifierButton.clear()
 					return mod
 				},
 			})
@@ -90,6 +91,7 @@ export class RollGURPS extends Roll {
 		const lastTotal = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
 		await user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, lastStack)
 		await user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
+
 		switch (data.type) {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
@@ -101,6 +103,7 @@ export class RollGURPS extends Roll {
 					"3d6",
 					data.attribute.attribute_def.combinedName,
 					RollType.Attribute,
+					data.attribute,
 					data.hidden
 				)
 			case RollType.Skill:
@@ -114,6 +117,7 @@ export class RollGURPS extends Roll {
 					"3d6",
 					data.item.formattedName,
 					RollType.Skill,
+					data.item,
 					data.hidden
 				)
 			case RollType.ControlRoll:
@@ -124,6 +128,7 @@ export class RollGURPS extends Roll {
 					"3d6",
 					data.item.formattedName,
 					RollType.ControlRoll,
+					data.item,
 					data.hidden
 				)
 			case RollType.Attack:
@@ -134,6 +139,7 @@ export class RollGURPS extends Roll {
 					"3d6",
 					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
 					RollType.Attack,
+					data.item,
 					data.hidden
 				)
 			case RollType.Damage:
@@ -208,6 +214,7 @@ export class RollGURPS extends Roll {
 		formula: string,
 		name: string,
 		type: RollType,
+		item?: Item | Attribute | null,
 		hidden = false
 	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
@@ -232,6 +239,11 @@ export class RollGURPS extends Roll {
 		let displayName = i18n_f("gurps.roll.skill_level", { name, level })
 		if (type === RollType.ControlRoll) displayName = i18n_f("gurps.roll.cr_level", { name, level })
 
+		let itemObject: any = {}
+		if (item instanceof Item) {
+			itemObject = item.toObject()
+		}
+
 		const chatData = {
 			name,
 			displayName,
@@ -240,6 +252,7 @@ export class RollGURPS extends Roll {
 			success,
 			margin,
 			type,
+			item: itemObject,
 			total: roll.total!,
 			tooltip: await roll.getTooltip(),
 			effective: `<div class="effective">${i18n_f(effectiveTemplate, {
@@ -251,7 +264,7 @@ export class RollGURPS extends Roll {
 
 		const messageData: any = {
 			user: user,
-			speaker: actor.id,
+			speaker: { actor: actor.id },
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			content: message,
 			roll: JSON.stringify(roll),
@@ -273,7 +286,7 @@ export class RollGURPS extends Roll {
 		if (sticky === false) {
 			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
 			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
-			const button = (game as any).ModifierButton
+			const button = game.ModifierButton
 			return button.render()
 		}
 	}
@@ -290,7 +303,7 @@ export class RollGURPS extends Roll {
 			modifier: data.modifier,
 			tags: [],
 		}
-		return (game as any).ModifierButton.window.addModifier(mod)
+		return game.ModifierButton.window.addModifier(mod)
 	}
 
 	/**

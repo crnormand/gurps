@@ -1275,6 +1275,10 @@
 			"default_damage_location": {
 				"name": "Default Damage Location",
 				"hint": "Set the default hit location used to apply damage."
+			},
+			"compendium_browser_packs": {
+				"name": "Compendium Browser Packs",
+				"hint": "Choose which packs are included in the compendium browser."
 			}
 		},
 		"context_menu": {
@@ -1401,6 +1405,9 @@
 			"blank_1": "",
 			"aoa_suppressing_fire": "All-out Attack (Suppressing Fire)",
 			"blank_2": ""
+		},
+		"notification": {
+			"no_default_skill": "Cannot Roll: No applicable skill defaults found."
 		}
 	}
 }

@@ -102,6 +102,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		if (this.actor.editing) html.find(".rollable").addClass("noroll")
 
 		html.find(".menu").on("click", event => this._getPoolContextMenu(event, html))
 		html.find("input").on("change", event => this._resizeInput(event))
@@ -121,8 +122,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		// Html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
 		// html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
-
-		if (this.actor.editing) html.find(".rollable").addClass("noroll")
 
 		// Points Record
 		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
@@ -388,18 +387,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				data.item = await fromUuid($(event.currentTarget).data("uuid"))
 			}
 		}
-		// If ([RollType.Damage, RollType.Attack].includes(type)) {
-		// 	const attack_id = $(event.currentTarget).data("attack-id")
-		// 	if ([gid.Thrust, gid.Swing].includes(attack_id)) {
-		// 		data.item = { id: attack_id, uuid: attack_id }
-		// 		data.weapon = {
-		// 			name: i18n(`gurps.character.basic_${attack_id}`),
-		// 			fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string,
-		// 		}
-		// 	} else {
-		// 		data.weapon = data.item.weapons.get(attack_id)
-		// 	}
-		// }
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
@@ -431,19 +418,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			for (const e of selection) $(e).addClass("border-top")
 		}
 	}
-
-	// Protected async _onDragItem(event: JQuery.DragEnterEvent) {
-	// 	event.preventDefault()
-	// 	$(".border-top").removeClass("border-top")
-	// 	const item = $(event.currentTarget).closest(".item.desc")
-	// 	const selection = Array.prototype.slice.call(item.nextUntil(".item.desc"))
-	// 	selection.unshift(item)
-	// 	for (const e of selection) $(e).addClass("border-top")
-	// }
-
-	// protected async _onItemDragLeave(event: JQuery.DragLeaveEvent) {
-	// 	event.preventDefault()
-	// }
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any

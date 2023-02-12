@@ -9,19 +9,13 @@
 -   Finish the Damage Calculator conversion
 -   Convert OTFs and chat commands
     -   roll chat command
+	-   Drag rollable buttons to hotbar or message box for macros
 -   Implement "static" items (0.15 and older) compatibility
 	-	add interface for accessing old bonuses
--   Active Effects with Features
-	-	separate maneuvers from active effects
-	-	hide maneuver panel when effects panel shown and vice versa
-	-	maneuver as subset of status or effect class
-
 
 ## 1.0.0
 
--   Drag rollable buttons to hotbar or message box for macros
 -   Finish "static" character (0.15 and older) compatibility
--   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
 -   Dynamic Character changes
     -   add move modes to dynamic character
@@ -38,7 +32,8 @@
 
 ## 1.1.0 and beyond
 
--   Skill Defaults from compendium
+-	Skill Defaults from compendium
+	-	account for any skill bonuses which should not apply to defaults
 -   Incorporate v10 tooltip API
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -	completely redo the way roll messages are handled
@@ -93,4 +88,7 @@
 -   Add native "drag ruler" type support
     -   Color green within maneuver range
     -   Color yellow for one hex (1FP extra effort?/extra step) maybe toggleable
-    -   Color red beyond limit
+-	GURPS Token Settings
+	 - A small grid is presented in the window, with your image in the middle. You can manipulate the size of the image to match your aesthetic needs.
+	- There is also a "hex-side" choosing option on this grid, wherein you choose which sides of which hexes should count as Front, Side, or Back. Whether or not this has any mechanical difference will remain to be seen, but it's a possibility.
+	- There is a checkbox allowing you to toggle a "hex frame" for your token, which may be rendered as part of the token image.   -   Color red beyond limit

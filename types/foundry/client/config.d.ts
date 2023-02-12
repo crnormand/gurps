@@ -83,6 +83,7 @@ declare global {
 			defenseMods: Record<string, RollModifier>
 			commonMods: Record<string, RollModifier>
 			allMods: RollModifier[]
+			skillDefaults: SkillGURPS[]
 		}
 
 		/**

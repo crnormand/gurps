@@ -1,6 +1,6 @@
 import { CharacterProfile } from "@actor/character/data"
 import { DEFAULT_INITIATIVE_FORMULA, SETTINGS, SYSTEM_NAME } from "@module/data"
-import { setInitiative } from "@util"
+import { getDefaultSkills, setInitiative } from "@util"
 import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
 import { DefaultHitLocationSettings } from "./hit_locations"
@@ -130,13 +130,14 @@ export function registerSettings(): void {
 	})
 
 	game.settings.register(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, {
-		name: "placeholder",
-		hint: "placeholder",
+		name: "gurps.settings.compendium_browser_packs.name",
+		hint: "gurps.settings.compendium_browser_packs.hint",
 		default: "{}",
 		type: Object,
 		scope: "world",
 		onChange: () => {
-			;(game as any).CompendiumBrowser.loadSettings()
+			game.CompendiumBrowser.loadSettings()
+			getDefaultSkills()
 		},
 	})
 

@@ -118,6 +118,11 @@
 			border: 1px solid rgb(var(--color-header));
 			background-color: rgb(var(--color-content));
 			color: rgb(var(--color-on-content));
+			.entry {
+				display: flex;
+				flex-direction: row;
+				gap: 5px;
+			}
 		}
 	}
 }
