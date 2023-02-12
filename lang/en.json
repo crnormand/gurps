@@ -860,6 +860,8 @@
 	"GURPS.settingDefaultADDAction": "Set default action for Damage Dialog",
 	"GURPS.settingHintefaultADDAction": "When set to 'Target' it will choose 'Apply' for Player Characters and 'Apply Quietly' for NPCs.",
 	"GURPS.settingApplyBasedOnTarget": "'Target'",
+	"GURPS.settingTokenOverrideRefresh": "Override Token scaling",
+	"GURPS.settingHintTokenOverrideRefresh": "If \"on\", try to draw tokens to properly fit the hex grid. Overrides Foundry drawing functionality -- turn this off if there\'s any odd Foundry drawing behavior. Requires reloading the world.",
 	"__Color Settings__": "=========",
 	"GURPS.settingColorSheetMenuTitle": "Color Character Sheet",
 	"GURPS.settingColorSheetMenuHint": "Color Character Sheet Settings",
