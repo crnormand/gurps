@@ -17,7 +17,8 @@
 			margin: 0;
 		}
 
-		.name {
+		.name,
+		.default {
 			min-width: 50%;
 			font-size: var(--font-size-18);
 			font-weight: bold;

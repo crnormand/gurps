@@ -699,6 +699,8 @@
 			"bulk_for": "Bulk ({name})"
 		},
 		"roll": {
+			"default": "Default: {default}",
+			"encumbrance": "Encumbrance: {name}",
 			"effective_skill": "Effective Skill: {level}",
 			"effective_target": "New Target: {level}",
 			"just_made_it": "Just made it.",
