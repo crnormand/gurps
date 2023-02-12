@@ -1105,7 +1105,7 @@
   "GURPS.effectChatModifiedToHit": "{displayName} :<br>[{modifier}]",
   "GURPS.effectChatRangedModifier": "{displayName} :<br>[-2 nas jogadas de ataque feitas contra você com armas de combate à distância ({posture})].",
 
-  "GURPS.tokenToolsTitle": "Abrir Janela de Moficiador de Efeitos",
+  "GURPS.tokenToolsTitle": "Abrir Janela de Modificador de Efeitos",
 
   "GURPS.effectModNoTokenSelected": "Nenhuma miniatura selecionada",
   "GURPS.targetedModifiers": "Modificadores Escolhidos",
