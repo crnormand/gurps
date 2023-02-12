@@ -876,8 +876,8 @@
   "GURPS.settingHintShowChatReeling": "Quando marcado, quaisquer mudanças no status de algum ator em relação ao estado de Cambaleando ou Cansado será exibida como mensagem de chat.",
   "GURPS.settingDefaultADDAction": "Definir ação padrão para a Janela de Dano",
   "GURPS.settingHintefaultADDAction": "Quando configurado para 'Alvo' o sistema vai escolher 'Aplicar' para PdJs e 'Aplicar Discretamente' para PdMs.",
-  "GURPS.settingApplyBasedOnTarget": "'Alvo'",
-
+  "GURPS.settingApplyBasedOnTarget": "'Alvo'",  	"GURPS.settingTokenOverrideRefresh": "Desconsiderar dimensionamento de miniatura",
+  "GURPS.settingHintTokenOverrideRefresh": "Se estiver \"ativado\", tentará desenhar as miniaturas para que se encaixem adequadamente na grade hexagonal. Ignora as funções de desenho do Foundry -- desative esta opção se houver qualquer comportamento inadequado nos desenhos do Foundry. Será necessário recarregar o mundo.",
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Cor da Planilha de Personagem",
   "GURPS.settingColorSheetMenuHint": "Configuração de Cor da Planilha de Personagem",
