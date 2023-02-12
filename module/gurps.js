@@ -717,7 +717,7 @@ if (!globalThis.GURPS) {
 			// const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${
 			//   !!action.desc ? ' ' + action.desc : ''
 			// }]`
-			const prefix = i18n_f("GURPs.chatRolling", {
+			const prefix = i18n_f("GURPS.chatRolling", {
 				dice: !!action.displayformula ? action.displayformula : action.formula,
 				desc: !!action.desc ? " " + action.desc : ""
 			})

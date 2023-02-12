@@ -263,7 +263,7 @@
 	"GURPS.chatResultBelowZero": "Result below zero",
 	"GURPS.chatRolling": "Rolling [{dice}{desc}]",
 	"GURPS.chatRollingDamage": "Rolling [{dice} {damageTypeText}] damage{numtimes}.",
-	"GURPS.chatRollignCR": "Control Roll",
+	"GURPS.chatRollingCR": "Control Roll",
 	"GURPS.chatSetTo": "set to",
 	"GURPS.chatSelectSelfOrNameTokens": "You must select tokens, use '{self}', or use ':&lt;<i>token-name</i>&gt;' to apply status effects.",
 	"GURPS.chatShock": "{name} takes {modifier} points of Shock ",
