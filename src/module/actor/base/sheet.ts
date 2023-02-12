@@ -5,6 +5,7 @@ import { DnD } from "@util/drag_drop"
 import { ActorGURPS } from "@module/config"
 import { PropertiesToSource } from "types/types/helperTypes"
 import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
+import { LastActor } from "@util"
 
 type DispatchFunctions = Record<string, (arg: any) => void>
 
@@ -23,6 +24,7 @@ export class ActorSheetGURPS extends ActorSheet {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		html.on("click", () => LastActor.set(this.actor))
 	}
 
 	protected override _onDrop(event: DragEvent): void {

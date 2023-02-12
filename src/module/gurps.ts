@@ -31,7 +31,15 @@
 // Import TypeScript modules
 import { registerSettings } from "./settings"
 import { preloadTemplates } from "./preload-templates"
-import { evaluateToNumber, i18n, LastActor, registerHandlebarsHelpers, setInitiative, Static } from "@util"
+import {
+	evaluateToNumber,
+	getDefaultSkills,
+	i18n,
+	LastActor,
+	registerHandlebarsHelpers,
+	setInitiative,
+	Static,
+} from "@util"
 import { BaseActorGURPS } from "@actor/base"
 import { GURPSCONFIG } from "./config"
 import { fSearch } from "@util/fuse"
@@ -110,6 +118,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.recurseList = Static.recurseList
 	GURPS.setLastActor = LastActor.set
 	GURPS.DamageCalculator = DamageCalculator
+	GURPS.getDefaultSkills = getDefaultSkills
 }
 
 // Initialize system
@@ -253,12 +262,6 @@ Hooks.once("init", async () => {
 		label: i18n("gurps.system.sheet.static_character"),
 	})
 
-	// DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDFViewerSheet, {
-	// 	types: ["pdf"],
-	// 	makeDefault: true,
-	// 	label: i18n("gurps.system.sheet.pdf"),
-	// })
-
 	// @ts-ignore
 	DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDFEditorSheet, {
 		types: ["pdf"],
@@ -277,6 +280,7 @@ Hooks.once("ready", async () => {
 	// Do anything once the system is ready
 	ColorSettings.applyColors()
 	loadModifiers()
+	getDefaultSkills()
 
 	// ApplyDiceCSS()
 
@@ -301,30 +305,23 @@ Hooks.once("ready", async () => {
 	if (canvas && canvas.hud) {
 		canvas.hud.token = new TokenHUDGURPS()
 	}
-	;(game as any).ModifierButton = new ModifierButton()
-	;(game as any).ModifierButton.render(true)
-	;(game as any).CompendiumBrowser = new CompendiumBrowser()
+	game.ModifierButton = new ModifierButton()
+	game.ModifierButton.render(true)
+	game.CompendiumBrowser = new CompendiumBrowser()
 
 	// Set initial LastActor values
 	GURPS.LastActor = await LastActor.get()
 	GURPS.LastToken = await LastActor.getToken()
 
-	// CONFIG.Combat.initiative.formula = "(($basic_speed*100)+($dx/100)+(1d6/1000))/100"
 	CONFIG.Combat.initiative.decimals = 5
 	setInitiative()
-
-	// Await Promise.all(
-	// 	game.actors!.map(async actor => {
-	// 		actor.prepareData()
-	// 	})
-	// )
 
 	game.socket?.on("system.gcsga", async (response: any) => {
 		console.log(response)
 		switch (response.type as SOCKET) {
 			case SOCKET.UPDATE_BUCKET:
 				// Ui.notifications?.info(response.users)
-				return (game as any).ModifierButton.render(true)
+				return game.ModifierButton.render(true)
 			case SOCKET.INITIATIVE_CHANGED:
 				CONFIG.Combat.initiative.formula = response.formula
 			default:
@@ -351,13 +348,13 @@ Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) 
 		const browseButton = $(
 			`<button><i class='fas fa-book-open-cover'></i>${i18n("gurps.compendium_browser.button")}</button>`
 		)
-		browseButton.on("click", _event => (game as any).CompendiumBrowser.render(true))
+		browseButton.on("click", _event => game.CompendiumBrowser.render(true))
 		html.find(".directory-footer").append(browseButton)
 	}
 })
 
 Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
-	const cb = (game as any).CompendiumBrowser
+	const cb = game.CompendiumBrowser
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()
@@ -365,9 +362,6 @@ Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
 })
 
 Hooks.on("controlToken", async (...args: any[]) => {
-	/**
-	 *
-	 */
 	async function updateLastActor() {
 		GURPS.LastActor = await LastActor.get()
 		GURPS.LastToken = await LastActor.getToken()
@@ -383,9 +377,6 @@ Hooks.on("controlToken", async (...args: any[]) => {
 })
 
 Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
-	/**
-	 *
-	 */
 	async function updateLastActor() {
 		GURPS.LastActor = await LastActor.get()
 		GURPS.LastToken = await LastActor.getToken()

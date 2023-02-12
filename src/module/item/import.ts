@@ -115,7 +115,7 @@ export class ItemImporter {
 			let counter = items.length
 			Item.create(items as any, { pack: `world.${name}` })
 			ui.notifications?.info(i18n_f("gurps.system.library_import.finished", { number: counter }))
-			const cb = (game as any).CompendiumBrowser
+			const cb = game.CompendiumBrowser
 			// Const cb = GURPS.CompendiumBrowser
 			if (cb.rendered) cb.render(true)
 		} catch (err) {

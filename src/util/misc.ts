@@ -507,3 +507,16 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: Iterable
 		return result
 	}, {} as Pick<T, K>)
 }
+
+export async function getDefaultSkills() {
+	const skills: Item[] = []
+	const skillPacks = (game.settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS) as any).skill
+	for (const s in skillPacks)
+		if (skillPacks[s].skillDefault) {
+			const pack = game.packs.get(s) as CompendiumCollection<any>
+			;(await pack.getDocuments()).forEach(e => {
+				skills.push(e)
+			})
+		}
+	CONFIG.GURPS.skillDefaults = skills
+}

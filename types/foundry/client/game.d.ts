@@ -14,6 +14,12 @@ declare global {
 	 */
 	class Game {
 		/**
+		 * GURPS specific definitions
+		 */
+		CompendiumBrowser: CompendiumBrowser
+		ModifierButton: ModifierButton
+
+		/**
 		 * @param view      - The named view which is active for this game instance.
 		 * @param data      - An object of all the World data vended by the server when the client first connects
 		 * @param sessionId - The ID of the currently active client session retrieved from the browser cookie

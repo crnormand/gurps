@@ -1338,6 +1338,19 @@ class CharacterGURPS extends BaseActorGURPS {
 		excludes: Map<string, boolean> | null
 	): Collection<SkillGURPS | TechniqueGURPS> {
 		const skills: Collection<SkillGURPS | TechniqueGURPS> = new Collection()
+		const defaultSkills = CONFIG.GURPS.skillDefaults
+		for (const item of defaultSkills) {
+			if (
+				(excludes === null || !excludes.get(item.name!)) &&
+				(item instanceof SkillGURPS || item instanceof TechniqueGURPS) &&
+				item.name === name &&
+				(specialization === "" || specialization === item.specialization)
+			) {
+				item.dummyActor = this
+				item.points = 0
+				skills.set(item._id!, item)
+			}
+		}
 		for (const item of this.skills) {
 			if (
 				(excludes === null || !excludes.get(item.name!)) &&
@@ -1365,12 +1378,10 @@ class CharacterGURPS extends BaseActorGURPS {
 				feature.attribute === attributeId &&
 				feature.effective === effective
 			) {
-				// Console.log("add", feature.adjustedAmount)
 				total += feature.adjustedAmount
 				feature.addToTooltip(tooltip)
 			}
 		}
-		// Console.log(attributeId, total)
 		return total
 	}
 
@@ -1839,8 +1850,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		delete system.move
 		delete system.pools
 		delete system.editing
-
-		// Console.log(system.equipment)
 
 		const json = JSON.stringify(system, null, "\t")
 		const filename = `${this.name}.gcs`

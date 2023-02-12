@@ -75,7 +75,7 @@ class ModifierButton extends Application {
 	}
 
 	addRangeMod() {
-		;(game as any).ModifierButton.window.addModifier(this._tempRangeMod)
+		game.ModifierButton.window.addModifier(this._tempRangeMod)
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {

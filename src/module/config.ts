@@ -533,6 +533,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 	defenseMods: {},
 	commonMods: {},
 	allMods: [],
+	skillDefaults: [],
 }
 
 export { GURPSCONFIG }

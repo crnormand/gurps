@@ -2,6 +2,7 @@ import * as browserTabs from "./tabs"
 
 export interface PackInfo {
 	load: boolean
+	skillDefault?: boolean
 	name: string
 }
 

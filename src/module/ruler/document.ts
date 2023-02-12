@@ -17,7 +17,7 @@ class RulerGURPS extends Ruler {
 		const yards = getLength(totalDistance, units, LengthUnits.Yard)
 		const mod = RulerGURPS.getRangeMod(yards)
 
-		;(game as any).ModifierButton.setRangeMod({
+		game.ModifierButton.setRangeMod({
 			name: i18n_f("gurps.modifier.speed.range", {
 				distance: `${Math.round(totalDistance * 100) / 100} ${units}`,
 			}),
@@ -32,7 +32,7 @@ class RulerGURPS extends Ruler {
 		let addRangeMod = !(this as any).draggedEntity
 		super._endMeasurement()
 		if (addRangeMod) {
-			;(game as any).ModifierButton.addRangeMod()
+			game.ModifierButton.addRangeMod()
 		}
 	}
 

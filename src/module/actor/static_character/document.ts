@@ -70,6 +70,16 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		return atts
 	}
 
+	get dodgeAttribute() {
+		return {
+			attribute_def: {
+				combinedName: i18n("gurps.attributes.dodge"),
+			},
+			effective: this.system.dodge,
+			current: this.system.dodge,
+		}
+	}
+
 	get trackers(): StaticResourceTracker[] {
 		/**
 		 *

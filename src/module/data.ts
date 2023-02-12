@@ -34,6 +34,7 @@ export enum SETTINGS {
 	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
 	PORTRAIT_OVERWRITE = "portrait_overwrite",
 	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
+	COMPENDIUM_SKILL_DEFAULTS = "compendium_skill_defaults",
 	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
 	IGNORE_IMPORT_NAME = "ignore_import_name",
 	STATIC_IMPORT_HP_FP = "import_hp_fp",

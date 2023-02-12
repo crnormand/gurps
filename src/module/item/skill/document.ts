@@ -1,5 +1,5 @@
 import { ItemGCS } from "@item/gcs"
-import { Difficulty, gid } from "@module/data"
+import { ActorType, Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { baseRelativeLevel, SkillData, SkillLevel } from "./data"
@@ -8,6 +8,8 @@ class SkillGURPS extends ItemGCS {
 	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
 
 	unsatisfied_reason = ""
+
+	private _dummyActor: (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null = null
 
 	// Getters
 	get formattedName(): string {
@@ -19,6 +21,10 @@ class SkillGURPS extends ItemGCS {
 
 	get points(): number {
 		return this.system.points
+	}
+
+	set points(n: number) {
+		this.system.points = n
 	}
 
 	get techLevel(): string {
@@ -62,21 +68,32 @@ class SkillGURPS extends ItemGCS {
 	}
 
 	get effectiveLevel(): number {
-		if (!this.actor) return -Infinity
-		let att = this.actor.resolveAttributeCurrent(this.attribute)
-		let effectiveAtt = this.actor.resolveAttributeEffective(this.attribute)
+		const actor = this.actor || this.dummyActor
+		if (!actor) return -Infinity
+		let att = actor.resolveAttributeCurrent(this.attribute)
+		let effectiveAtt = actor.resolveAttributeEffective(this.attribute)
 		return this.calculateLevel.level - att + effectiveAtt
+	}
+
+	// Used for defaults
+	get dummyActor(): (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null {
+		return this._dummyActor
+	}
+
+	set dummyActor(actor: (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null) {
+		this._dummyActor = actor
 	}
 
 	// Point & Level Manipulation
 	get calculateLevel(): SkillLevel {
-		if (!this.actor) return { level: -Infinity, relative_level: 0, tooltip: "" }
+		const actor = this.actor || this.dummyActor
+		if (!actor) return { level: -Infinity, relative_level: 0, tooltip: "" }
 		const tooltip = new TooltipGURPS()
 		let points = this.adjustedPoints(tooltip)
 		const def = this.defaultedFrom
 		if (!points) points = this.points ?? 0
 		let relative_level = baseRelativeLevel(this.difficulty)
-		let level = this.actor.resolveAttributeCurrent(this.attribute)
+		let level = actor.resolveAttributeCurrent(this.attribute)
 		if (level !== -Infinity) {
 			if (this.difficulty === Difficulty.Wildcard) {
 				points /= 3
@@ -102,10 +119,10 @@ class SkillGURPS extends ItemGCS {
 			if (this.difficulty !== "w" && def && level < def.adjustedLevel) {
 				level = def.adjustedLevel
 			}
-			let bonus = this.actor.skillBonusFor(this.name!, this.specialization, this.tags, tooltip)
+			let bonus = actor.skillBonusFor(this.name!, this.specialization, this.tags, tooltip)
 			level += bonus
 			relative_level += bonus
-			bonus = this.actor.encumbranceLevel(true).penalty * this.encumbrancePenaltyMultiplier
+			bonus = actor.encumbranceLevel(true).penalty * this.encumbrancePenaltyMultiplier
 			level += bonus
 			relative_level += bonus
 			if (bonus !== 0) {
@@ -160,10 +177,11 @@ class SkillGURPS extends ItemGCS {
 	}
 
 	bestDefaultWithPoints(_excluded?: SkillDefault): SkillDefault | undefined {
-		if (!this.actor) return
+		const actor = this.actor || this.dummyActor
+		if (!actor) return
 		const best = this.bestDefault()
 		if (best) {
-			const baseline = this.actor.resolveAttributeCurrent(this.attribute) + baseRelativeLevel(this.difficulty)
+			const baseline = actor.resolveAttributeCurrent(this.attribute) + baseRelativeLevel(this.difficulty)
 			const level = best.level
 			best.adjusted_level = level
 			if (level === baseline) best.points = 1
@@ -175,7 +193,8 @@ class SkillGURPS extends ItemGCS {
 	}
 
 	bestDefault(excluded?: SkillDefault): SkillDefault | undefined {
-		if (!this.actor || !this.defaults) return
+		const actor = this.actor || this.dummyActor
+		if (!actor || !this.defaults) return
 		const excludes = new Map()
 		excludes.set(this.name!, true)
 		let bestDef = new SkillDefault()
@@ -193,11 +212,12 @@ class SkillGURPS extends ItemGCS {
 	}
 
 	calcSkillDefaultLevel(def: SkillDefault, excludes: Map<string, boolean>): number {
-		let level = def.skillLevel(this.actor!, true, excludes, this.type.startsWith("skill"))
+		const actor = this.actor || this.dummyActor
+		let level = def.skillLevel(actor!, true, excludes, this.type.startsWith("skill"))
 		if (def.skillBased) {
-			const other = this.actor?.bestSkillNamed(def.name!, def.specialization!, true, excludes)
+			const other = actor?.bestSkillNamed(def.name!, def.specialization!, true, excludes)
 			if (other) {
-				level -= this.actor!.skillBonusFor(def.name!, def.specialization!, this.tags, undefined)
+				level -= actor!.skillBonusFor(def.name!, def.specialization!, this.tags, undefined)
 			}
 		}
 		return level

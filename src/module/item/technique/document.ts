@@ -1,6 +1,6 @@
 import { ItemGCS } from "@item/gcs"
 import { SkillLevel } from "@item/skill/data"
-import { Difficulty, gid } from "@module/data"
+import { ActorType, Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { TechniqueData } from "./data"
@@ -10,6 +10,8 @@ class TechniqueGURPS extends ItemGCS {
 
 	unsatisfied_reason = ""
 
+	private _dummyActor: (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null = null
+
 	// Static get schema(): typeof TechniqueData {
 	// 	return TechniqueData;
 	// }
@@ -17,6 +19,10 @@ class TechniqueGURPS extends ItemGCS {
 	// Getters
 	get points(): number {
 		return this.system.points
+	}
+
+	set points(n: number) {
+		this.system.points = n
 	}
 
 	get techLevel(): string {
@@ -102,18 +108,27 @@ class TechniqueGURPS extends ItemGCS {
 		return this.calculateLevel.level
 	}
 
+	// Used for defaults
+	get dummyActor(): (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null {
+		return this._dummyActor
+	}
+
+	set dummyActor(actor: (typeof CONFIG.GURPS.Actor.documentClasses)[ActorType.Character] | null) {
+		this._dummyActor = actor
+	}
+
 	get calculateLevel(): SkillLevel {
+		const actor = this.actor || this.dummyActor
 		const tooltip = new TooltipGURPS()
 		let relative_level = 0
 		let points = this.adjustedPoints()
 		let level = -Infinity
-		if (this.actor) {
+		if (actor) {
 			if (this.default?.type === gid.Skill) {
-				const sk = this.actor.baseSkill(this.default!, true)
+				const sk = actor.baseSkill(this.default!, true)
 				if (sk) level = sk.calculateLevel.level
 			} else if (this.default) {
-				level =
-					(this.default?.skillLevelFast(this.actor, true, false, null) ?? 0) - (this.default?.modifier ?? 0)
+				level = (this.default?.skillLevelFast(actor, true, false, null) ?? 0) - (this.default?.modifier ?? 0)
 			}
 			if (level !== -Infinity) {
 				const base_level = level
@@ -121,8 +136,8 @@ class TechniqueGURPS extends ItemGCS {
 				if (this.difficulty === Difficulty.Hard) points -= 1
 				if (points > 0) relative_level = points
 				if (level !== -Infinity) {
-					// Relative_level += this.actor.bonusFor(`skill.name/${this.name}`, tooltip)
-					relative_level += this.actor.skillBonusFor(this.name!, this.specialization, this.tags, tooltip)
+					// Relative_level += actor.bonusFor(`skill.name/${this.name}`, tooltip)
+					relative_level += actor.skillBonusFor(this.name!, this.specialization, this.tags, tooltip)
 					level += relative_level
 				}
 				if (this.limit) {

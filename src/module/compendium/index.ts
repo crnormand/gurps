@@ -1,6 +1,6 @@
 import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { i18n } from "@util"
+import { getDefaultSkills, i18n } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
 
@@ -30,7 +30,6 @@ export class CompendiumBrowser extends Application {
 			eqp_modifier: new browserTabs.EquipmentModifier(this),
 			note: new browserTabs.Note(this),
 		}
-
 		this.loadSettings()
 		this.initCompendiumList()
 		this.hookTab()
@@ -38,6 +37,15 @@ export class CompendiumBrowser extends Application {
 
 	override get title(): string {
 		return i18n("gurps.compendium_browser.title")
+	}
+
+	get skillDefaults(): string[] {
+		const skillPacks: string[] = []
+		// Console.log(this.settings)
+		for (const id in this.settings.skill) {
+			if (this.settings.skill[id]?.skillDefault) skillPacks.push(id)
+		}
+		return skillPacks
 	}
 
 	static override get defaultOptions(): ApplicationOptions {
@@ -75,14 +83,16 @@ export class CompendiumBrowser extends Application {
 			if (form) {
 				form.querySelector("button.save-settings")?.addEventListener("click", async () => {
 					const formData = new FormData(form)
-					for (const [t, packs] of Object.entries(this.settings) as [string, { [key: string]: PackInfo }][]) {
+					for (const [t, packs] of Object.entries(this.settings) as [string, Record<string, PackInfo>][]) {
 						for (const [key, pack] of Object.entries(packs) as [string, PackInfo][]) {
 							pack.load = formData.has(`${t}-${key}`)
+							pack.skillDefault = formData.has(`default-${t}-${key}`)
 						}
 					}
 					await game.settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
 					this.loadSettings()
 					this.initCompendiumList()
+					getDefaultSkills()
 					for (const tab of Object.values(this.tabs)) {
 						if (tab.isInitialized) {
 							await tab.init()
@@ -238,7 +248,9 @@ export class CompendiumBrowser extends Application {
 			}
 			if (["skill", "technique", "skill_container"].some(type => types.has(type))) {
 				const load = this.settings.skill?.[pack.collection]?.load ?? false
+				const skillDefault = this.settings.skill?.[pack.collection]?.skillDefault ?? false
 				settings.skill![pack.collection] = {
+					skillDefault,
 					load,
 					name: pack.metadata.label,
 				}
