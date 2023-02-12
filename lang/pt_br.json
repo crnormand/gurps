@@ -435,7 +435,20 @@
 
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Mod.",
-  "GURPS.modifierAddRangeRuler": "Balde: Adicionar modificador de Régua",
+  "GURPS.modifierTitle": "Modificadores",
+  "GURPS.modifierRangeTitle": "Velocidade/Distância",
+  "GURPS.modifierRange": "para veloc/dist de {range} m",
+  "GURPS.modifierRangeMHClose": "Próximo (5 m)",
+  "GURPS.modifierRangeMHCloseDesc": "É possível encostar ou atingir o oponente",
+  "GURPS.modifierRangeMHShort": "Distância curta (20 m)",
+  "GURPS.modifierRangeMHShortDesc": "É possível falar com o oponente; alcance de pistolas ou armas/projéteis lançados a mão",
+  "GURPS.modifierRangeMHMedium": "Distância média (100 m)",
+  "GURPS.modifierRangeMHMediumDesc": "Só é possível se comunicar gritando; alcance de espingardas ou submetralhadoras",
+  "GURPS.modifierRangeMHLong": "Distância longa (500 m)",
+  "GURPS.modifierRangeMHLongDesc": "Oponente longe demais para escutar; alcance de rifles",
+  "GURPS.modifierRangeMHExtreme": "Distância extrema (500+ m)",
+  "GURPS.modifierRangeMHExtremeDesc": "Difícil de sequer ver o oponente; alcance de rifles de atirador",
+  "GURPS.modifierAddRangeRuler": "Balde: Adicionar modificador da Régua",
   "GURPS.modifierAddRangeRulerHint": "Se selecionado, o sistema automaticamente vai adicionar o último modificador medido pela Régua ao Balde de Modificadores.",
   "GURPS.modifierAffliction": "Atribulações",
   "GURPS.modifierAfflictionCough": "-3 para testes de DX (Tossindo)",
@@ -1105,12 +1118,13 @@
   "GURPS.effectChatModifiedToHit": "{displayName} :<br>[{modifier}]",
   "GURPS.effectChatRangedModifier": "{displayName} :<br>[-2 nas jogadas de ataque feitas contra você com armas de combate à distância ({posture})].",
 
-  "GURPS.tokenToolsTitle": "Abrir Janela de Modificador de Efeitos",
+  "GURPS.tokenToolsTitle": "Abrir Janela de Modificadores de Efeitos",
+  "GURPS.effectModifierPopout": "Modificadores de Efeitos",
 
   "GURPS.effectModNoTokenSelected": "Nenhuma miniatura selecionada",
   "GURPS.targetedModifiers": "Modificadores Escolhidos",
   "GURPS.settingActiveEffects": "Acionar Efeitos Ativos",
-  "GURPS.targetModifiers": "Target:",
+  "GURPS.targetModifiers": "Alvo:",
 
   "GURPS.settingHintActiveEffects": "Permitir ao Mestre criar e aplicar Efeitos Ativos",
 
@@ -1154,4 +1168,5 @@
   "GURPS.rollMissedBy": "Margem de fracasso {margin}.",
   "GURPS.rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis ({link})<br/>devido à CdT ({rof}) e o RCO ({rcl}).",
   "GURPS.rollTotal": "Resultado da rolagem ({rolls}) = {rtotal}."
+
 }
