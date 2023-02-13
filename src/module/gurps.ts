@@ -87,6 +87,7 @@ import {
 import { CharacterSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
 import { DamageCalculator } from "./damage_calculator/damage_calculator"
 import { ActiveEffectGURPS } from "@module/effect"
+import { ModifierList } from "./mod_list"
 
 Error.stackTraceLimit = Infinity
 
@@ -307,6 +308,8 @@ Hooks.once("ready", async () => {
 	}
 	game.ModifierButton = new ModifierButton()
 	game.ModifierButton.render(true)
+	game.ModifierList = new ModifierList()
+	game.ModifierList.render(true)
 	game.CompendiumBrowser = new CompendiumBrowser()
 
 	// Set initial LastActor values
@@ -321,6 +324,7 @@ Hooks.once("ready", async () => {
 		switch (response.type as SOCKET) {
 			case SOCKET.UPDATE_BUCKET:
 				// Ui.notifications?.info(response.users)
+				await game.ModifierList.render(true)
 				return game.ModifierButton.render(true)
 			case SOCKET.INITIATIVE_CHANGED:
 				CONFIG.Combat.initiative.formula = response.formula
@@ -388,6 +392,13 @@ Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
 			updateLastActor()
 		}
 	}
+})
+
+Hooks.on("targetToken", async () => {
+	if (game.ModifierList) await game.ModifierList?.render(true)
+})
+Hooks.on("userConnected", async () => {
+	if (game.ModifierList) await game.ModifierList?.render(true)
 })
 
 Hooks.on("updateCombat", EffectGURPS.updateCombat)

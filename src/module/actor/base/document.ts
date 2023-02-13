@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
+import { RollModifier, SYSTEM_NAME } from "@module/data"
 import {
 	ConditionGURPS,
 	ConditionID,
@@ -111,6 +111,14 @@ class BaseActorGURPS extends Actor {
 			if (item instanceof ConditionGURPS) conditions.set(item._id, item)
 		}
 		return conditions
+	}
+
+	get modifiers(): RollModifier[] {
+		let modifiers: RollModifier[] = []
+		this.gEffects.forEach(e => {
+			modifiers = modifiers.concat(e.system.modifiers || [])
+		})
+		return modifiers
 	}
 
 	override get temporaryEffects(): any {

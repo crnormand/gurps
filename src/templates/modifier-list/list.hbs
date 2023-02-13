@@ -1,0 +1,40 @@
+<aside id="modifier-list" class="app gurps {{hover}}">
+	{{#if currentMods}}
+	<div class="header">Current Modifiers</div>
+	<div class="content">
+	{{#each currentMods}}
+	<button class="active {{#if (gt this.modifier 0)}}pos{{else if (eq this.modifier 0)}}zero{{else}}neg{{/if}}" data-index="{{@index}}">
+		<div>
+			{{signed this.modifier}}{{#if this.name}}:{{/if}}
+			{{this.name}}{{#if this.max}}{{localize "gurps.system.modifier_bucket.max" max=this.max}}{{/if}}{{#if
+				this.cost
+			}}{{modifierCost this.cost}}{{/if}}
+		</div>
+		<i class="gcs-trash"></i>
+	</button>
+	{{/each}}
+	</div>
+	{{/if}}
+	{{#if targetMods}}
+	<div class="header">Current Target Modifiers</div>
+	<div class="content">
+	{{#each targetMods}}
+	<button class="modifier {{#if (gt this.modifier 0)}}pos{{else if (eq this.modifier 0)}}zero{{else}}neg{{/if}}" data-modifier="{{this.modifier}}" , data-name="{{this.name}}">
+		{{signed this.modifier}}{{#if this.name}}:{{/if}}
+		{{this.name}}{{#if this.max}}{{localize "gurps.system.modifier_bucket.max" max=this.max}}{{/if}}
+	</button>
+	{{/each}}
+	</div>
+	{{/if}}
+	{{#if actorMods}}
+	<div class="header">Current Character Modifiers</div>
+	<div class="content">
+	{{#each actorMods}}
+	<button class="modifier {{#if (gt this.modifier 0)}}pos{{else if (eq this.modifier 0)}}zero{{else}}neg{{/if}}" data-modifier="{{this.modifier}}" , data-name="{{this.name}}">
+		{{signed this.modifier}}{{#if this.name}}:{{/if}}
+		{{this.name}}{{#if this.max}}{{localize "gurps.system.modifier_bucket.max" max=this.max}}{{/if}}
+	</button>
+	{{/each}}
+	</div>
+	{{/if}}
+</aside>

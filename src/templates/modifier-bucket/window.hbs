@@ -1,31 +1,5 @@
 <div id="modifier-bucket-window" class="gurps">
 	<div class="column">
-		<div id="current-effects" class="section">
-			<div class="header">{{localize "gurps.system.modifier_bucket.current_effects"}}</div>
-			<div class="content">
-				{{#each currentEffects}}
-				{{>modifier-bucket/modifier}}
-				{{/each}}
-			</div>
-		</div>
-		<div id="send-modifiers" class="section">
-			<div class="header">{{localize "gurps.system.modifier_bucket.send"}}</div>
-			<div class="content">
-				{{#each players}}
-				{{>modifier-bucket/player}}
-				{{/each}}
-			</div>
-		</div>
-		<div id="current-modifiers" class="section">
-			<div class="header">{{localize "gurps.system.modifier_bucket.current_mods"}}</div>
-			<div class="content">
-				{{#each currentMods}}
-				{{>modifier-bucket/active}}
-				{{/each}}
-			</div>
-		</div>
-	</div>
-	<div class="column">
 		<div id="melee" class="section">
 			<div class="header">{{localize "gurps.system.modifier_bucket.melee"}}</div>
 			<div class="content">
@@ -57,6 +31,14 @@
 			<div class="content" style="gap: 0;">
 				{{#each commonMods}}
 				{{>modifier-bucket/collapsible}}
+				{{/each}}
+			</div>
+		</div>
+		<div id="send-modifiers" class="section">
+			<div class="header">{{localize "gurps.system.modifier_bucket.send"}}</div>
+			<div class="content">
+				{{#each players}}
+				{{>modifier-bucket/player}}
 				{{/each}}
 			</div>
 		</div>

@@ -5,7 +5,7 @@ import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { i18n, i18n_f } from "@util"
+import { i18n_f } from "@util"
 
 enum RollSuccess {
 	Success = "success",
@@ -228,6 +228,7 @@ export class RollGURPS extends Roll {
 				name: i18n_f("gurps.roll.encumbrance", { name: encumbrance.name }),
 				modifier: encumbrance.penalty,
 			})
+			level -= encumbrance.penalty
 		}
 		modifiers.forEach(m => {
 			m.class = "zero"
@@ -258,6 +259,12 @@ export class RollGURPS extends Roll {
 			}
 		}
 
+		const effective = `<div class="effective">${i18n_f(effectiveTemplate, {
+			level: effectiveLevel,
+		})}</div>`
+
+		console.log(effective)
+
 		const chatData = {
 			name,
 			displayName,
@@ -270,7 +277,7 @@ export class RollGURPS extends Roll {
 			item: itemData,
 			total: roll.total!,
 			tooltip: await roll.getTooltip(),
-			effective: `<div class="effective">${i18n_f(effectiveTemplate, {
+			eff: `<div class="effective">${i18n_f(effectiveTemplate, {
 				level: effectiveLevel,
 			})}</div>`,
 		}

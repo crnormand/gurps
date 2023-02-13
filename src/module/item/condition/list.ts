@@ -96,7 +96,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		},
 		[ConditionID.Pain]: {
 			id: ConditionID.Pain,
-			can_level: false,
+			can_level: true,
 			levels: {
 				current: 0,
 				max: 12,

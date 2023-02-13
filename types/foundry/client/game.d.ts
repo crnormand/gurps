@@ -18,6 +18,7 @@ declare global {
 		 */
 		CompendiumBrowser: CompendiumBrowser
 		ModifierButton: ModifierButton
+		ModifierList: ModList
 
 		/**
 		 * @param view      - The named view which is active for this game instance.

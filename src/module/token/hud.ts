@@ -1,5 +1,5 @@
 import { EffectID, ManeuverID } from "@item"
-import { SYSTEM_NAME } from "@module/data"
+import { SOCKET, SYSTEM_NAME } from "@module/data"
 import { TokenGURPS } from "./object"
 
 export class TokenHUDGURPS extends TokenHUD {
@@ -142,6 +142,7 @@ export class TokenHUDGURPS extends TokenHUD {
 		} else if (event.type === "contextmenu") {
 			await actor?.decreaseCondition(id)
 		}
+		game.socket?.emit("system.gcsga", { type: SOCKET.UPDATE_BUCKET, users: [] })
 	}
 
 	static async #setActiveEffects(token: TokenGURPS, icons: NodeListOf<HTMLImageElement>) {

@@ -1,7 +1,7 @@
 <div class="dice-roll skill">
 	<div data-json="{{json item}}" data-type="skill" class="name rollable">{{displayName}}</div>
 	{{#if item.default}}	
-	<div class="default rollable">
+	<div class="default">
 		{{localize "gurps.roll.default" default=item.default}}
 	</div>
 	{{/if}}
@@ -15,7 +15,7 @@
 	{{/if}}
 	<hr>
 	<div class="dice-result">
-		{{{effective}}}
+		{{{eff}}}
 		<div class="dice-total generic">{{total}}</div>
 		{{{margin}}}
 		{{{tooltip}}}

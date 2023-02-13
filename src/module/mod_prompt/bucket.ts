@@ -26,6 +26,7 @@ class ModifierBucket extends Application {
 
 	close(options?: Application.CloseOptions | undefined): Promise<void> {
 		this.button.showing = false
+		game.ModifierList.fadeOut()
 		return super.close(options)
 	}
 
@@ -85,7 +86,7 @@ class ModifierBucket extends Application {
 		searchbar.on("keydown", event => this._keyDown(event))
 
 		// Modifier Deleting
-		html.find(".active").on("click", event => this.removeModifier(event))
+		// html.find(".active").on("click", event => this.removeModifier(event))
 		html.find(".player").on("click", event => this.sendToPlayer(event))
 		html.find(".modifier").on("click", event => this._onClickModifier(event))
 		html.find(".collapsible").on("click", event => this._onCollapseToggle(event))
@@ -138,6 +139,7 @@ class ModifierBucket extends Application {
 		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
 		this.button.render()
+		game.ModifierList.render(true)
 	}
 
 	togglePin(customMod: RollModifier) {
@@ -163,6 +165,7 @@ class ModifierBucket extends Application {
 		this.value = ""
 		this.render()
 		this.button.render()
+		game.ModifierList.render(true)
 	}
 
 	async sendToPlayer(event: JQuery.ClickEvent) {

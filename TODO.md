@@ -15,6 +15,7 @@
 
 ## 1.0.0
 
+-	fix GURPS.LastActor setting, 
 -   Finish "static" character (0.15 and older) compatibility
 -   Convert over module compatibility
 -   Dynamic Character changes
@@ -25,13 +26,12 @@
 -   @X@ notation dialog box for items
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
--   automatically pop out effect mod window when choosing maneuver / posture / effect
 -	negative value stat support for tokens
 -	convert mook generator
--	support rollable bonuses
 
 ## 1.1.0 and beyond
 
+-	support rollable bonuses
 -	Skill Defaults from compendium
 	-	account for any skill bonuses which should not apply to defaults
 -   Incorporate v10 tooltip API
@@ -74,10 +74,8 @@
     -   Affects clicked on tokens / current map / current character
 -   Support rolling on custom hit location tables (e.g. grand unified hit location table)
 -   Tours implementation for UI
--   metric system conversion
 -   Roll20 style notes about character in place of character sheet (for players with limited access?)
--   fully customizable sheet layout wit dragging around elements
--   Different attribute based skill rolls
+-   fully customizable sheet layout with dragging around elements
 -   Library Import
     -   Overwrite items instead of appending
     -   When importing to world items, overwrite items with the same GCS UUID

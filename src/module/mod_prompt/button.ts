@@ -79,12 +79,12 @@ class ModifierButton extends Application {
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
-		if ($("body").find("#modifier-app").length === 0) {
-			html.insertAfter($("body").find("#hotbar"))
-			this._element = html
-		} else {
-			throw new Error("gurps.error.modifier_app_load_failed")
-		}
+		// If ($("body").find("#modifier-app").length === 0) {
+		html.insertAfter($("body").find("#hotbar"))
+		this._element = html
+		// } else {
+		// throw new Error("gurps.error.modifier_app_load_failed")
+		// }
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
@@ -101,8 +101,10 @@ class ModifierButton extends Application {
 	async _onClick(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
 		if (this.showing) {
+			game.ModifierList.fadeOut()
 			this.window.close()
 		} else {
+			game.ModifierList.fadeIn()
 			await this.window.render(true)
 		}
 	}
@@ -137,6 +139,7 @@ class ModifierButton extends Application {
 	async clear() {
 		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
 		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+		game.ModifierList.render(true)
 		return this.render(true)
 	}
 
@@ -170,6 +173,7 @@ class ModifierButton extends Application {
 		// this.list.selection = -1
 		// this.value = ""
 		this.render()
+		game.ModifierList.render(true)
 		Hooks.call("addModifier")
 		// This.button.render()
 	}

@@ -41,6 +41,7 @@ export class ModifierWindow extends Application {
 		this.list.mods = []
 		this.list.close(options)
 		this.browse.close(options)
+		game.ModifierList.fadeOut()
 		return super.close(options)
 	}
 

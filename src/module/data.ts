@@ -209,6 +209,7 @@ export interface RollModifier {
 	tags?: string[]
 	cost?: { id: string; value: number }
 	reference?: string
+	target?: boolean
 }
 
 export interface ModifierHeader {
