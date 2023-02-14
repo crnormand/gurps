@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.29 02/14/2023
+
+- Fixed range ruler not workig
+
 Release 0.15.28 02/12/2023
 
 - Removed hack to prevent multiple maneuver icons.
