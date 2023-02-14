@@ -49,7 +49,7 @@ import TriggerHappySupport from './effects/triggerhappy.js'
 import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
 import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
 
-import GURPSRange, { setupRanges } from '../lib/ranges.js'
+import { GURPSRange, RulerGURPS, setupRanges } from '../lib/ranges.js'
 import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
 import DamageChat from './damage/damagechat.js'
@@ -1884,6 +1884,7 @@ if (!globalThis.GURPS) {
 		CONFIG.Actor.documentClass = GurpsActor
 		CONFIG.Item.documentClass = GurpsItem
 		CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
+		CONFIG.Canvas.rulerClass = RulerGURPS
 
 		// add custom ActiveEffectConfig sheet class
 		CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
