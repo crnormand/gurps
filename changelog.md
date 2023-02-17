@@ -1,8 +1,12 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.29 02/17/2023
+
+- Fixed range ruler causing errors with range strategies other than the SSRT
+
 Release 0.15.29 02/14/2023
 
-- Fixed range ruler not workig
+- Fixed range ruler not working
 
 Release 0.15.28 02/12/2023
 
