@@ -1,9 +1,7 @@
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
-import { ItemType } from "@item/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { ItemType } from "@module/data"
 
-export type SkillContainerSource = BaseContainerSource<ItemType.SkillContainer, SkillContainerSystemData>
-
-// Export class SkillContainerData extends BaseContainerData<SkillContainerGURPS> {}
+export type SkillContainerSource = ItemGCSSource<ItemType.SkillContainer, SkillContainerSystemData>
 
 export interface SkillContainerData extends Omit<SkillContainerSource, "effects" | "items">, SkillContainerSystemData {
 	readonly type: SkillContainerSource["type"]
@@ -11,4 +9,4 @@ export interface SkillContainerData extends Omit<SkillContainerSource, "effects"
 	readonly _source: SkillContainerSource
 }
 
-export type SkillContainerSystemData = BaseContainerSystemData
+export type SkillContainerSystemData = ItemGCSSystemData

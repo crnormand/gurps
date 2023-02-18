@@ -1,8 +1,8 @@
-import { Feature } from "@feature"
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { ItemType } from "@item/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { Feature } from "@module/config"
+import { ItemType } from "@module/data"
 
-export type TraitModifierSource = BaseItemSourceGURPS<ItemType.TraitModifier, TraitModifierSystemData>
+export type TraitModifierSource = ItemGCSSource<ItemType.TraitModifier, TraitModifierSystemData>
 
 // Export class TraitModifierData extends BaseItemDataGURPS<TraitModifierGURPS> {}
 
@@ -13,7 +13,7 @@ export interface TraitModifierData extends Omit<TraitModifierSource, "effects">,
 	readonly _source: TraitModifierSource
 }
 
-export interface TraitModifierSystemData extends ItemSystemData {
+export interface TraitModifierSystemData extends ItemGCSSystemData {
 	disabled: boolean
 	cost_type: TraitModifierCostType
 	cost: number

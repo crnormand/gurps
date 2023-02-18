@@ -1,10 +1,10 @@
 import { RollModifier, SYSTEM_NAME } from "@module/data"
 import { DnD } from "@util/drag_drop"
 import { DiceGURPS } from "@module/dice"
-import { ChatMessageData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs"
 import { TokenUtil } from "../../util/token_utils"
 import { BaseActorGURPS } from "@actor/base"
 import { CanvasUtil } from "@util/canvas"
+import { ChatMessageData } from "types/foundry/common/data/module.mjs"
 
 export enum DamageChatFlags {
 	Transfer = "transfer",
@@ -13,7 +13,7 @@ export enum DamageChatFlags {
 export type DamagePayload = {
 	hitlocation: string
 	attacker: ChatMessageData["speaker"]["_source"]
-	weapon: { itemUuid: string; weaponId: string }
+	weaponUUID: string
 	name: string
 	dice: DiceGURPS
 	modifiers: Array<RollModifier & { class?: string }>
@@ -54,7 +54,7 @@ export class DamageChat {
 		return getProperty(object, `flags.${SYSTEM_NAME}.${DamageChatFlags.Transfer}`)
 	}
 
-	static setTransferFlag(object: any, payload: DamagePayload, userTarget: string) {
+	static setTransferFlag(object: any, payload: Partial<DamagePayload>, userTarget: string) {
 		let transfer = JSON.stringify({ type: DamageChat.TYPE, payload: payload, userTarget: userTarget })
 		setProperty(object, `flags.${SYSTEM_NAME}.${DamageChatFlags.Transfer}`, transfer)
 		return object

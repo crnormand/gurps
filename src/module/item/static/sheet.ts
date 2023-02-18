@@ -20,7 +20,7 @@ export class StaticItemSheet extends ItemSheet {
 		return `/systems/${SYSTEM_NAME}/templates/item/legacy_equipment/sheet.hbs`
 	}
 
-	getData(options?: Partial<DocumentSheetOptions> | undefined) {
+	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
 		let deprecation: string = this.item.getFlag(SYSTEM_NAME, ItemFlags.Deprecation) ? "acknowledged" : "manual"
 		const sheetData = {
 			...(super.getData(options) as any),
@@ -109,16 +109,16 @@ export class StaticItemSheet extends ItemSheet {
 		let dragData = JSON.parse(ev.dataTransfer.getData("text/plain"))
 		let n
 		if (dragData.type === "JournalEntry") {
-			n = (game as Game).journal?.get(dragData.id)?.name
+			n = game.journal?.get(dragData.id)?.name
 		}
 		if (dragData.type === "Actor") {
-			n = (game as Game).actors?.get(dragData.id)?.name
+			n = game.actors?.get(dragData.id)?.name
 		}
 		if (dragData.type === "RollTable") {
-			n = (game as Game).tables?.get(dragData.id)?.name
+			n = game.tables?.get(dragData.id)?.name
 		}
 		if (dragData.type === "Item") {
-			n = (game as Game).items?.get(dragData.id)?.name
+			n = game.items?.get(dragData.id)?.name
 		}
 		if (n) {
 			let add = ` [${dragData.type}[${dragData.id}]{${n}}]`
@@ -135,7 +135,7 @@ export class StaticItemSheet extends ItemSheet {
 	async _onDrop(event: any) {
 		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
 		if (!["melee", "ranged", "skills", "spells", "ads", "equipment"].includes(dragData.type)) return
-		let srcActor = (game as Game).actors?.get(dragData.actorid)
+		let srcActor = game.actors?.get(dragData.actorid)
 		let srcData = getProperty(srcActor!, dragData.key)
 		srcData.contains = {} // Don't include any contained/collapsed items from source
 		srcData.collapsed = {}

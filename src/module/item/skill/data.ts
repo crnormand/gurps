@@ -1,13 +1,11 @@
-import { Feature } from "@feature"
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { ItemType } from "@item/data"
-import { Difficulty, Study } from "@module/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { Feature } from "@module/config"
+import { Difficulty, ItemType, Study } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { Weapon } from "@module/weapon"
 import { PrereqList } from "@prereq"
 
-export type SkillSource = BaseItemSourceGURPS<ItemType.Skill, SkillSystemData>
+export type SkillSource = ItemGCSSource<ItemType.Skill, SkillSystemData>
 
 // Export class SkillData extends BaseItemDataGURPS<SkillGURPS> {}
 
@@ -18,7 +16,7 @@ export interface SkillData extends Omit<SkillSource, "effects">, SkillSystemData
 	readonly _source: SkillSource
 }
 
-export interface SkillSystemData extends ItemSystemData {
+export interface SkillSystemData extends ItemGCSSystemData {
 	prereqs: PrereqList
 	specialization: string
 	tech_level: string
@@ -31,7 +29,6 @@ export interface SkillSystemData extends ItemSystemData {
 	points: number
 	// To change later
 	defaulted_from?: SkillDefault
-	weapons: Weapon[]
 	defaults: SkillDefault[]
 	features: Feature[]
 	study: Study[]

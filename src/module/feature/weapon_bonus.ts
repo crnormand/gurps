@@ -1,5 +1,6 @@
-import { BaseFeature, FeatureType } from "./base"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
+import { BaseFeature } from "./base"
+import { FeatureType, WeaponBonusSelectionType } from "./data"
 
 export class WeaponDamageBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
@@ -22,5 +23,3 @@ export interface WeaponDamageBonus extends BaseFeature {
 	level?: NumberCompare
 	percent: boolean
 }
-
-export type WeaponBonusSelectionType = "weapons_with_required_skill" | "weapons_with_name" | "this_weapon"

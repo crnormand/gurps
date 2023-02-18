@@ -1,9 +1,13 @@
-import { ActorSheetGURPS } from "@actor/base/sheet"
+import { ActorSheetGURPS } from "@actor/base"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ManeuverID,
+	MeleeWeaponGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
+	Postures,
+	RangedWeaponGURPS,
 	RitualMagicSpellGURPS,
 	SkillContainerGURPS,
 	SkillGURPS,
@@ -13,20 +17,18 @@ import {
 	TraitContainerGURPS,
 	TraitGURPS,
 } from "@item"
-import { Attribute, AttributeObj } from "@module/attribute"
-import { AttributeType } from "@module/attribute/attribute_def"
+import { Attribute, AttributeObj, AttributeType } from "@module/attribute"
 import { CondMod } from "@module/conditional-modifier"
 import { ItemGURPS } from "@module/config"
 import { gid, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
-import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, i18n } from "@util"
 import { weightFormat } from "@util/measure"
-import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
-import { Encumbrance } from "./data"
+import { CharacterMove, Encumbrance } from "./data"
+import { CharacterGURPS } from "./document"
 import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
@@ -46,12 +48,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	protected _onDrop(event: DragEvent): void {
-		// Console.log(event)
 		super._onDrop(event)
 	}
 
 	protected async _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
 		// Edit total points when unspent points are edited
+
 		if (Object.keys(formData).includes("actor.unspentPoints")) {
 			formData["system.total_points"] = (formData["actor.unspentPoints"] as number) + this.actor.spentPoints
 			delete formData["actor.unspentPoints"]
@@ -92,12 +94,17 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				formData["system.resource_trackers"] = resource_trackers
 				delete formData[i]
 			}
+			// If (i === "system.move.posture")
+			// 	if (getProperty(this.actor, i) !== formData[i]) this.actor.changePosture(formData[i] as any)
+			// if (i === "system.move.maneuver")
+			// 	if (getProperty(this.actor, i) !== formData[i]) this.actor.changeManeuver(formData[i] as any)
 		}
 		return super._updateObject(event, formData)
 	}
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		if (this.actor.editing) html.find(".rollable").addClass("noroll")
 
 		html.find(".menu").on("click", event => this._getPoolContextMenu(event, html))
 		html.find("input").on("change", event => this._resizeInput(event))
@@ -110,15 +117,31 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
 		html.find(":not(.disabled) > > .rollable").on("click", event => this._onClickRoll(event))
 
+		// Maneuver / Posture Selection
+		html.find(".move-select").on("change", event => this._onMoveChange(event))
+
 		// Hover Over
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		// Html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
 		// html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
 
-		if (this.actor.editing) html.find(".rollable").addClass("noroll")
-
 		// Points Record
 		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
+	}
+
+	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
+		event.preventDefault()
+		event.stopPropagation()
+		const element = $(event.currentTarget)
+		const type = element.data("name")
+		switch (type) {
+			case "maneuver":
+				return this.actor.changeManeuver(element.val() as any)
+			case "posture":
+				return this.actor.changePosture(element.val() as any)
+			default:
+				console.error("Not implemented yet")
+		}
 	}
 
 	async _getPoolContextMenu(event: JQuery.ClickEvent, html: JQuery<HTMLElement>): Promise<void> {
@@ -368,25 +391,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				data.item = await fromUuid($(event.currentTarget).data("uuid"))
 			}
 		}
-
-		if ([RollType.Damage, RollType.Attack].includes(type)) {
-			const attack_id = $(event.currentTarget).data("attack-id")
-			if ([gid.Thrust, gid.Swing].includes(attack_id)) {
-				data.item = { id: attack_id, uuid: attack_id }
-				data.weapon = {
-					name: i18n(`gurps.character.basic_${attack_id}`),
-					fastResolvedDamage: this.actor[attack_id as gid.Thrust | gid.Swing].string,
-				}
-			} else {
-				data.weapon = data.item.weapons.get(attack_id)
-			}
-		}
-
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
 		}
-		return RollGURPS.handleRoll((game as Game).user, this.actor, data)
+		return RollGURPS.handleRoll(game.user, this.actor, data)
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
@@ -414,19 +423,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 	}
 
-	// Protected async _onDragItem(event: JQuery.DragEnterEvent) {
-	// 	event.preventDefault()
-	// 	$(".border-top").removeClass("border-top")
-	// 	const item = $(event.currentTarget).closest(".item.desc")
-	// 	const selection = Array.prototype.slice.call(item.nextUntil(".item.desc"))
-	// 	selection.unshift(item)
-	// 	for (const e of selection) $(e).addClass("border-top")
-	// }
-
-	// protected async _onItemDragLeave(event: JQuery.DragLeaveEvent) {
-	// 	event.preventDefault()
-	// }
-
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
 		const items = deepClone(
@@ -438,7 +434,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
 		const resource_trackers = Array.from(this.actor.resource_trackers.values())
 		const encumbrance = this.prepareEncumbrance()
-		const lifts = this.prepareLifts()
+		const lifting = this.prepareLifts()
+		const moveData = this.prepareMoveData()
 		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)
 		const hit_locations = this.actor.HitLocations.map(e => {
 			return {
@@ -453,21 +450,22 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			...super.getData(options),
 			...{
 				system: actorData.system,
-				items: items,
+				items,
 				settings: (actorData.system as any).settings,
 				editing: this.actor.editing,
-				primary_attributes: primary_attributes,
-				secondary_attributes: secondary_attributes,
-				point_pools: point_pools,
-				resource_trackers: resource_trackers,
-				encumbrance: encumbrance,
-				lifting: lifts,
+				primary_attributes,
+				secondary_attributes,
+				point_pools,
+				resource_trackers,
+				encumbrance,
+				lifting,
+				moveData,
 				current_year: new Date().getFullYear(),
-				maneuvers: (CONFIG as any).GURPS.select.maneuvers,
-				postures: (CONFIG as any).GURPS.select.postures,
-				move_types: (CONFIG as any).GURPS.select.move_types,
-				overencumbered: overencumbered,
-				hit_locations: hit_locations,
+				maneuvers: CONFIG.GURPS.select.maneuvers,
+				postures: CONFIG.GURPS.select.postures,
+				move_types: CONFIG.GURPS.select.move_types,
+				overencumbered,
+				hit_locations,
 			},
 		}
 		this.prepareItems(sheetData)
@@ -520,6 +518,22 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		return lifts
 	}
 
+	prepareMoveData(): CharacterMove {
+		let maneuver: any = "none"
+		const currentManeuver = this.actor.conditions.find(e => Object.values(ManeuverID).includes(e.cid as any))
+
+		if (currentManeuver) maneuver = currentManeuver.cid
+		let posture: any = "standing"
+		const currentPosture = this.actor.conditions.find(e => Postures.includes(e.cid as any))
+		if (currentPosture) posture = currentPosture.cid
+		const type = "ground"
+		return {
+			maneuver,
+			posture,
+			type,
+		}
+	}
+
 	prepareItems(data: any) {
 		const [traits, skills, spells, equipment, other_equipment, notes] = data.items.reduce(
 			(arr: ItemGURPS[][], item: ItemGURPS) => {
@@ -545,8 +559,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			[[], [], [], [], [], []]
 		)
 
-		const melee: MeleeWeapon[] = this.actor.meleeWeapons
-		const ranged: RangedWeapon[] = this.actor.rangedWeapons
+		const melee: MeleeWeaponGURPS[] = [...this.actor.meleeWeapons]
+		const ranged: RangedWeaponGURPS[] = [...this.actor.rangedWeapons]
 		const reactions: CondMod[] = this.actor.reactions
 		const conditionalModifiers: CondMod[] = this.actor.conditionalModifiers
 
@@ -595,7 +609,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
+		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
 					edit_button,
 					// {

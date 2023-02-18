@@ -1,6 +1,6 @@
-import { ItemFlagsGURPS, ItemSystemDataGURPS, ItemType, NoteData } from "@item/data"
-import { ItemGURPS } from "@module/config"
-import { gid, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
+import { ItemFlagsGURPS, ItemGCSSystemData, NoteData } from "@item"
+import { ItemGURPS, ItemSystemDataGURPS } from "@module/config"
+import { gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
 import { BasePrereq } from "@prereq"
@@ -192,7 +192,7 @@ export class GCAImporter {
 
 		if (data.vitals.portraitimage) {
 			const portrait = data.vitals.portraitimage.replaceAll(/\n/g, "")
-			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
+			if (game.user?.hasPermission("FILES_UPLOAD")) {
 				p.img = `data:image/png;base64,${portrait}.png`
 			} else {
 				console.error(i18n("gurps.error.import.portait_permissions"))
@@ -241,10 +241,7 @@ export class GCAImporter {
 				description: description,
 			})
 		}
-		const default_sheet = (game as Game).settings.get(
-			SYSTEM_NAME,
-			`${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`
-		) as any
+		const default_sheet = game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_SHEET_SETTINGS}.settings`) as any
 		return {
 			"system.settings": mergeObject(default_sheet, {
 				body_type: body,
@@ -335,7 +332,7 @@ export class GCAImporter {
 	}
 
 	getItemData(item: any, context: any = {}): [any, any, ItemType] {
-		let itemData: Partial<ItemSystemDataGURPS> = {}
+		let itemData: Partial<ItemGCSSystemData> = {}
 		this.importFeatures(item, itemData, context)
 		this.importPrereqs(item, itemData, context)
 		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { contentsData: [] } }
@@ -356,7 +353,6 @@ export class GCAImporter {
 			case "Perks":
 			case "Quirks":
 				itemData = { ...itemData, ...this.getTraitData(item) }
-				// Flags[SYSTEM_NAME]!.contentsData = this.getNestedItems(item, data, context);
 				return [itemData, flags, ItemType.Trait]
 			case "Skills":
 				if (item.type.includes("Tech")) {
@@ -779,9 +775,9 @@ export class GCAImporter {
 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/chat/character-import-error.hbs`, {
 				lines: msg,
 			}),
-			user: (game as Game).user!.id,
+			user: game.user!.id,
 			type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-			whisper: [(game as Game).user!.id],
+			whisper: [game.user!.id],
 		})
 		return false
 	}

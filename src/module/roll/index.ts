@@ -1,4 +1,7 @@
-import { ActorGURPS } from "@module/config"
+import { CharacterGURPS } from "@actor"
+import { SkillGURPS, TechniqueGURPS } from "@item"
+import { Attribute } from "@module/attribute"
+import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { DiceGURPS } from "@module/dice"
@@ -40,39 +43,38 @@ export class RollGURPS extends Roll {
 			.trim()
 	}
 
-	override async render(
-		options: {
-			flavor?: string
-			template: string
-			isPrivate: boolean
-		} = {
-			template: RollGURPS.CHAT_TEMPLATE,
-			isPrivate: false,
+	static override replaceFormulaData(
+		formula: string,
+		data: any,
+		options?: {
+			missing: string
+			warn: boolean
 		}
-	): Promise<string> {
-		console.log(this.system)
-		const chatData = mergeObject(
-			{
-				formula: options.isPrivate ? "????" : this.formula,
-				flavor: options.isPrivate ? null : options.flavor,
-				user: (game as Game).userId,
-				tooltip: options.isPrivate ? "" : await this.getTooltip(),
-				total: options.isPrivate ? "?" : Math.round(this.total! * 100) / 100,
-			},
-			this.system
-		)
-		console.log(chatData)
-		return renderTemplate(options.template, chatData)
+	): string {
+		let dataRgx = new RegExp(/\$([a-z.0-9_-]+)/gi)
+		const newFormula = formula.replace(dataRgx, (match, term) => {
+			if (data.actor) {
+				let value: any = (data.actor as CharacterGURPS).resolveVariable(term.replace("$", "")) ?? null
+				if (value === null) {
+					if (options?.warn && ui.notifications)
+						ui.notifications.warn(game.i18n.format("DICE.WarnMissingData", { match }))
+					return options?.missing !== undefined ? String(options.missing) : match
+				}
+				return String(value).trim()
+			}
+			return ""
+		})
+		return super.replaceFormulaData(newFormula, data, options)
 	}
 
 	override _prepareData(data: any) {
 		let d: any = super._prepareData(data) ?? {}
-		d.gmod = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
+		d.gmod = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
 		if (!d.hasOwnProperty("gmodc"))
 			Object.defineProperty(d, "gmodc", {
 				get() {
-					const mod = (game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) as number
-					;(game as any).ModifierButton.clear()
+					const mod = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) as number
+					game.ModifierButton.clear()
 					return mod
 				},
 			})
@@ -90,6 +92,7 @@ export class RollGURPS extends Roll {
 		const lastTotal = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal)
 		await user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, lastStack)
 		await user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
+
 		switch (data.type) {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
@@ -101,6 +104,7 @@ export class RollGURPS extends Roll {
 					"3d6",
 					data.attribute.attribute_def.combinedName,
 					RollType.Attribute,
+					data.attribute,
 					data.hidden
 				)
 			case RollType.Skill:
@@ -110,10 +114,11 @@ export class RollGURPS extends Roll {
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
-					data.item.skillLevel,
+					data.item.effectiveLevel,
 					"3d6",
 					data.item.formattedName,
 					RollType.Skill,
+					data.item,
 					data.hidden
 				)
 			case RollType.ControlRoll:
@@ -124,16 +129,18 @@ export class RollGURPS extends Roll {
 					"3d6",
 					data.item.formattedName,
 					RollType.ControlRoll,
+					data.item,
 					data.hidden
 				)
 			case RollType.Attack:
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
-					data.weapon.skillLevel(null),
+					data.item.skillLevel(null),
 					"3d6",
-					`${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
 					RollType.Attack,
+					data.item,
 					data.hidden
 				)
 			case RollType.Damage:
@@ -141,7 +148,7 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data,
-					`${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`,
+					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
 					data.hidden
 				)
 			case RollType.Generic:
@@ -192,7 +199,6 @@ export class RollGURPS extends Roll {
 			marginTemplate = "gurps.roll.success_margin"
 			marginClass = "pos"
 		}
-		console.log(marginMod)
 		return [
 			success,
 			`<div
@@ -204,17 +210,26 @@ export class RollGURPS extends Roll {
 
 	static async rollAgainst(
 		user: StoredDocument<User> | null,
-		actor: ActorGURPS,
+		actor: CharacterGURPS,
 		level: number,
 		formula: string,
 		name: string,
 		type: RollType,
+		item?: ItemGURPS | Attribute | null,
 		hidden = false
 	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
 		const modifiers: Array<RollModifier & { class?: string }> = [
 			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
 		]
+		const encumbrance = actor.encumbranceLevel(true)
+		if (item instanceof SkillGURPS && item.encumbrancePenaltyMultiplier && encumbrance.level > 0) {
+			modifiers.unshift({
+				name: i18n_f("gurps.roll.encumbrance", { name: encumbrance.name }),
+				modifier: encumbrance.penalty,
+			})
+			level -= encumbrance.penalty
+		}
 		modifiers.forEach(m => {
 			m.class = "zero"
 			if (m.modifier > 0) m.class = "pos"
@@ -233,6 +248,23 @@ export class RollGURPS extends Roll {
 		let displayName = i18n_f("gurps.roll.skill_level", { name, level })
 		if (type === RollType.ControlRoll) displayName = i18n_f("gurps.roll.cr_level", { name, level })
 
+		let itemData: any = {}
+		if (item instanceof SkillGURPS || item instanceof TechniqueGURPS) {
+			itemData = { name: item.name, specialization: item.specialization }
+			if (item.dummyActor && item.defaultedFrom) {
+				itemData.default = `${item.defaultedFrom.fullName(actor as any)}`
+				const modifier =
+					(item.defaultedFrom.modifier < 0 ? " - " : " + ") + Math.abs(item.defaultedFrom.modifier)
+				itemData.default += modifier
+			}
+		}
+
+		const effective = `<div class="effective">${i18n_f(effectiveTemplate, {
+			level: effectiveLevel,
+		})}</div>`
+
+		console.log(effective)
+
 		const chatData = {
 			name,
 			displayName,
@@ -241,9 +273,11 @@ export class RollGURPS extends Roll {
 			success,
 			margin,
 			type,
+			encumbrance,
+			item: itemData,
 			total: roll.total!,
 			tooltip: await roll.getTooltip(),
-			effective: `<div class="effective">${i18n_f(effectiveTemplate, {
+			eff: `<div class="effective">${i18n_f(effectiveTemplate, {
 				level: effectiveLevel,
 			})}</div>`,
 		}
@@ -252,7 +286,7 @@ export class RollGURPS extends Roll {
 
 		const messageData: any = {
 			user: user,
-			speaker: actor.id,
+			speaker: { actor: actor.id },
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			content: message,
 			roll: JSON.stringify(roll),
@@ -273,7 +307,8 @@ export class RollGURPS extends Roll {
 		const sticky = user.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky)
 		if (sticky === false) {
 			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
-			const button = (game as any).ModifierButton
+			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+			const button = game.ModifierButton
 			return button.render()
 		}
 	}
@@ -290,7 +325,7 @@ export class RollGURPS extends Roll {
 			modifier: data.modifier,
 			tags: [],
 		}
-		return (game as any).ModifierButton.window.addModifier(mod)
+		return game.ModifierButton.window.addModifier(mod)
 	}
 
 	/**
@@ -309,7 +344,7 @@ export class RollGURPS extends Roll {
 		hidden = false
 	): Promise<void> {
 		// Roll the damage for the weapon.
-		const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
+		const dice = new DiceGURPS(data.item.fastResolvedDamage)
 		const roll = Roll.create(dice.toString(true))
 		await roll.evaluate({ async: true })
 
@@ -326,13 +361,12 @@ export class RollGURPS extends Roll {
 		const rollTotal = roll.total!
 		const modifierTotal = this.applyMods(0, modifiers)
 		const damage = rollTotal + modifierTotal
-		const damageType = data.weapon.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
+		const damageType = data.item.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
 
-		// @ts-ignore
-		const chatData: DamagePayload = {
+		const chatData: Partial<DamagePayload> = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
-			weapon: { itemUuid: `${data.item.uuid}`, weaponId: `${data.weapon.id}` },
+			weaponUUID: `${data.item.uuid}`,
 			name,
 			dice: dice,
 			modifiers: modifiers,
@@ -355,8 +389,8 @@ export class RollGURPS extends Roll {
 		if (hidden) messageData.rollMode = CONST.DICE_ROLL_MODES.PRIVATE
 
 		let userTarget = ""
-		if ((game as Game).user?.targets.size) {
-			userTarget = (game as Game).user?.targets.values().next().value
+		if (game.user?.targets.size) {
+			userTarget = game.user?.targets.values().next().value
 		}
 
 		messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
@@ -365,15 +399,6 @@ export class RollGURPS extends Roll {
 		await this.resetMods(user)
 	}
 
-	/**
-	 *
-	 * @param user
-	 * @param data
-	 * @param actor
-	 * @param formula
-	 * @param type
-	 * @param hidden
-	 */
 	static async rollGeneric(
 		user: StoredDocument<User> | null,
 		actor: ActorGURPS,
@@ -422,7 +447,6 @@ export class RollGURPS extends Roll {
 	}
 
 	static applyMods(level: number, modStack: RollModifier[]): number {
-		// Const modStack: RollModifier[] = (user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
 		let effectiveLevel = level
 		modStack.forEach(m => {
 			effectiveLevel += m.modifier
@@ -453,10 +477,9 @@ export class RollGURPS extends Roll {
 	 * for hit location. If there is, use that. Otherwise go to the world settings to determine the default damage
 	 * location. (Or, eventually, we could ask the target for it's default hit location...).
 	 *
-	 * @param actor
 	 * @param _actor
 	 */
 	static getHitLocationFromLastAttackRoll(_actor: ActorGURPS): string {
-		return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string
+		return game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string
 	}
 }

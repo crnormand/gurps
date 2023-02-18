@@ -1,6 +1,7 @@
 import { EquipmentContainerGURPS } from "@item"
 import { SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
+import { TabName } from "../data"
 import { CompendiumTab } from "./base"
 
 export class CompendiumEquipmentTab extends CompendiumTab {
@@ -11,7 +12,7 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 	}
 
 	constructor(browser: CompendiumBrowser) {
-		super(browser, "equipment")
+		super(browser, TabName.Equipment)
 	}
 
 	protected override async loadData(): Promise<void> {
@@ -20,10 +21,10 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 
 		for await (const { pack, index } of this.browser.packLoader.loadPacks(
 			"Item",
-			this.browser.loadedPacks("equipment"),
+			this.browser.loadedPacks(TabName.Equipment),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((equipment: any) => {
 				if (!["equipment", "equipment_container"].includes(equipment.type)) return
 				equipment.prepareData()

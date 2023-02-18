@@ -1,7 +1,6 @@
 import { CharacterGURPS } from "@actor/character"
 import { CharacterImporter } from "@actor/character/import"
-import { ActorType } from "@actor/data"
-import { SETTINGS, SYSTEM_NAME } from "@module/data"
+import { ActorType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { i18n_f, prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"
 import { StaticCharacterGURPS } from "."
@@ -56,7 +55,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".delete").on("click", event => this._onDeleteItem(event))
 		html.find(".quick-import").on("click", event => this._reimport(event))
-		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+		if (game.settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
 			html.find("input[type='file']").on("click", event => {
 				event.preventDefault()
 				const filepicker = new FilePicker({
@@ -65,7 +64,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 						request.open("GET", path)
 						new Promise(resolve => {
 							request.onload = () => {
-								if (request.status == 200) {
+								if (request.status === 200) {
 									const text = request.response
 									this.file = {
 										text: text,
@@ -359,7 +358,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 			resourceTrackers: resourceTrackers,
 
 			filename: this.filename,
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		}
 	}
 

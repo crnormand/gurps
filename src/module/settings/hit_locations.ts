@@ -241,9 +241,9 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 	}
 
 	override async getData(): Promise<any> {
-		const name = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.name`)
-		const roll = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.roll`)
-		const locations = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.locations`)
+		const name = game.settings.get(SYSTEM_NAME, `${this.namespace}.name`)
+		const roll = game.settings.get(SYSTEM_NAME, `${this.namespace}.roll`)
+		const locations = game.settings.get(SYSTEM_NAME, `${this.namespace}.locations`)
 		return {
 			body_type: {
 				name: name,
@@ -252,7 +252,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 			},
 			actor: null,
 			path: "array.body_type",
-			config: (CONFIG as any).GURPS,
+			config: CONFIG.GURPS,
 		}
 	}
 
@@ -267,7 +267,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 		event.preventDefault()
 		event.stopPropagation()
 		let path = ""
-		let locations = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.locations`) as any[]
+		let locations = game.settings.get(SYSTEM_NAME, `${this.namespace}.locations`) as any[]
 		const type: "locations" | "sub_table" = $(event.currentTarget).data("type")
 		let formData: any = {}
 		switch (type) {
@@ -316,7 +316,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 		event.preventDefault()
 		event.stopPropagation()
 		const path = $(event.currentTarget).data("path")?.replace("array.", "")
-		let locations = (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.locations`) as HitLocation[]
+		let locations = game.settings.get(SYSTEM_NAME, `${this.namespace}.locations`) as HitLocation[]
 		let formData: any = {}
 		const type: "locations" | "sub_table" = $(event.currentTarget).data("type")
 		const index = Number($(event.currentTarget).data("index")) || 0
@@ -393,9 +393,9 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 
 	protected override async _updateObject(event: Event, formData: any): Promise<void> {
 		const body_type = {
-			name: (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.name`),
-			roll: (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.roll`),
-			locations: (game as Game).settings.get(SYSTEM_NAME, `${this.namespace}.locations`),
+			name: game.settings.get(SYSTEM_NAME, `${this.namespace}.name`),
+			roll: game.settings.get(SYSTEM_NAME, `${this.namespace}.roll`),
+			locations: game.settings.get(SYSTEM_NAME, `${this.namespace}.locations`),
 		} as HitLocationTable
 		formData = prepareFormData(event, formData, { body_type: body_type })
 		Object.keys(formData).forEach(k => {

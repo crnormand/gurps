@@ -1,4 +1,4 @@
-@import "sidebar";
+@import "sidebar", "token_hud";
 
 .app {
 	box-shadow: none;
@@ -60,7 +60,7 @@ aside#players {
 		border-bottom: none;
 		padding: var(--padding-header);
 		margin: 0;
-		font: var(--font-page-primary-labels);
+		font: var(--font-primary);
 		justify-content: space-evenly;
 		> a {
 			translate: 0 3px;

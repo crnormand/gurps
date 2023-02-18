@@ -75,7 +75,7 @@ export function openPDF(pdfs: string) {
 		}
 
 		if (book === "B") {
-			const s = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF)
+			const s = game.settings.get(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF)
 			if (page > 336) {
 				if (s === "separate") {
 					book = "BX"
@@ -91,7 +91,7 @@ export function openPDF(pdfs: string) {
 		}
 		// Window.open(url, "_blank")
 		const pdfPages: any[] = []
-		;(game as Game).journal?.forEach(j => {
+		game.journal?.forEach(j => {
 			;(j as any).pages.forEach((p: any) => {
 				if (p.type === "pdf") pdfPages.push(p)
 			})

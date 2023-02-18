@@ -1,55 +1,101 @@
-import { CharacterGURPS } from "@actor/character"
-import { ActorType } from "@actor/data"
-import { StaticCharacterGURPS } from "@actor/static_character"
-import { StaticThresholdComparison, StaticThresholdOperator } from "@actor/static_character/data"
-import { AttributeBonus } from "@feature/attribute_bonus"
-import { FeatureType } from "@feature/base"
-import { ConditionalModifier } from "@feature/conditional_modifier"
-import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
-import { CostReduction } from "@feature/cost_reduction"
-import { DRBonus } from "@feature/dr_bonus"
-import { ReactionBonus } from "@feature/reaction_bonus"
-import { SkillBonus } from "@feature/skill_bonus"
-import { SkillPointBonus } from "@feature/skill_point_bonus"
-import { SpellBonus } from "@feature/spell_bonus"
-import { SpellPointBonus } from "@feature/spell_point_bonus"
-import { WeaponDamageBonus } from "@feature/weapon_bonus"
-import { WeaponDRDivisorBonus } from "@feature/weapon_dr_divisor_bonus"
+import {
+	CharacterDataGURPS,
+	CharacterGURPS,
+	StaticCharacterDataGURPS,
+	StaticCharacterGURPS,
+	StaticThresholdComparison,
+	StaticThresholdOperator,
+} from "@actor"
+import {
+	AttributeBonus,
+	BaseFeature,
+	ConditionalModifier,
+	ContainedWeightReduction,
+	CostReduction,
+	DRBonus,
+	FeatureType,
+	ReactionBonus,
+	SkillBonus,
+	SkillPointBonus,
+	SpellBonus,
+	SpellPointBonus,
+	ThresholdBonus,
+	WeaponDamageBonus,
+	WeaponDRDivisorBonus,
+} from "@feature"
 import {
 	BaseItemGURPS,
 	ContainerGURPS,
+	EquipmentContainerData,
 	EquipmentContainerGURPS,
+	EquipmentContainerSystemData,
+	EquipmentData,
 	EquipmentGURPS,
+	EquipmentModifierContainerData,
 	EquipmentModifierContainerGURPS,
+	EquipmentModifierContainerSystemData,
+	EquipmentModifierData,
 	EquipmentModifierGURPS,
+	EquipmentModifierSystemData,
+	EquipmentSystemData,
+	MeleeWeaponGURPS,
+	MeleeWeaponSystemData,
+	NoteContainerData,
 	NoteContainerGURPS,
+	NoteContainerSystemData,
+	NoteData,
 	NoteGURPS,
+	NoteSystemData,
+	RangedWeaponGURPS,
+	RangedWeaponSystemData,
+	RitualMagicSpellData,
 	RitualMagicSpellGURPS,
+	RitualMagicSpellSystemData,
+	SkillContainerData,
 	SkillContainerGURPS,
+	SkillContainerSystemData,
+	SkillData,
 	SkillGURPS,
+	SkillSystemData,
+	SpellContainerData,
 	SpellContainerGURPS,
+	SpellContainerSystemData,
+	SpellData,
 	SpellGURPS,
+	SpellSystemData,
+	TechniqueData,
 	TechniqueGURPS,
+	TechniqueSystemData,
+	TraitContainerData,
 	TraitContainerGURPS,
+	TraitContainerSystemData,
+	TraitData,
 	TraitGURPS,
+	TraitModifierContainerData,
 	TraitModifierContainerGURPS,
+	TraitModifierContainerSystemData,
+	TraitModifierData,
 	TraitModifierGURPS,
+	TraitModifierSystemData,
+	TraitSystemData,
 } from "@item"
-import { ItemType } from "@item/data"
+import { ConditionData, ConditionGURPS, ConditionID, ManeuverID } from "@item/condition"
+import { EffectGURPS } from "@item/effect"
 import { StaticItemGURPS } from "@item/static"
-import { AttributePrereq } from "@prereq/attribute_prereq"
-import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
-import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
-import { EquippedEquipmentPrereq } from "@prereq/equipped_equipment_prereq"
-import { PrereqList } from "@prereq/prereq_list"
-import { SkillPrereq } from "@prereq/skill_prereq"
-import { SpellPrereq } from "@prereq/spell_prereq"
-import { TraitPrereq } from "@prereq/trait_prereq"
-import { PrereqType, StudyType } from "./data"
-import { MeleeWeapon, RangedWeapon, WeaponType } from "./weapon"
+import {
+	AttributePrereq,
+	ContainedQuantityPrereq,
+	ContainedWeightPrereq,
+	EquippedEquipmentPrereq,
+	PrereqList,
+	SkillPrereq,
+	SpellPrereq,
+	TraitPrereq,
+} from "@prereq"
+import { ActorType, ItemType, PrereqType, StudyType } from "./data"
 
 // Const GURPSCONFIG: any = CONFIG;
-const GURPSCONFIG: any = {
+const GURPSCONFIG: CONFIG["GURPS"] = {
 	Item: {
 		documentClasses: {
 			base: BaseItemGURPS,
@@ -70,25 +116,46 @@ const GURPSCONFIG: any = {
 			[ItemType.EquipmentModifierContainer]: EquipmentModifierContainerGURPS,
 			[ItemType.Note]: NoteGURPS,
 			[ItemType.NoteContainer]: NoteContainerGURPS,
+			[ItemType.Condition]: ConditionGURPS,
 			[ItemType.LegacyEquipment]: StaticItemGURPS,
+			[ItemType.MeleeWeapon]: MeleeWeaponGURPS,
+			[ItemType.RangedWeapon]: RangedWeaponGURPS,
 		},
 		allowedContents: {
-			[ItemType.Trait]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.Trait]: [
+				ItemType.TraitModifier,
+				ItemType.TraitModifierContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
+			],
 			[ItemType.TraitContainer]: [
 				ItemType.TraitModifier,
 				ItemType.TraitModifierContainer,
 				ItemType.Trait,
 				ItemType.TraitContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
 			],
 			[ItemType.TraitModifierContainer]: [ItemType.TraitModifier, ItemType.TraitModifierContainer],
+			[ItemType.Skill]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
+			[ItemType.Technique]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
 			[ItemType.SkillContainer]: [ItemType.Skill, ItemType.Technique, ItemType.SkillContainer],
+			[ItemType.Spell]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
+			[ItemType.RitualMagicSpell]: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
 			[ItemType.SpellContainer]: [ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer],
-			[ItemType.Equipment]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
+			[ItemType.Equipment]: [
+				ItemType.EquipmentModifier,
+				ItemType.EquipmentModifierContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
+			],
 			[ItemType.EquipmentContainer]: [
 				ItemType.Equipment,
 				ItemType.EquipmentContainer,
 				ItemType.EquipmentModifier,
 				ItemType.EquipmentModifierContainer,
+				ItemType.MeleeWeapon,
+				ItemType.RangedWeapon,
 			],
 			[ItemType.EquipmentModifierContainer]: [ItemType.EquipmentModifier, ItemType.EquipmentModifierContainer],
 			[ItemType.NoteContainer]: [ItemType.Note, ItemType.NoteContainer],
@@ -140,6 +207,7 @@ const GURPSCONFIG: any = {
 				ItemType.EquipmentContainer,
 				ItemType.Note,
 				ItemType.NoteContainer,
+				ItemType.Condition,
 			],
 			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment],
 		},
@@ -170,12 +238,6 @@ const GURPSCONFIG: any = {
 			[PrereqType.Equipment]: EquippedEquipmentPrereq,
 			[PrereqType.Skill]: SkillPrereq,
 			[PrereqType.Spell]: SpellPrereq,
-		},
-	},
-	Weapon: {
-		classes: {
-			[WeaponType.MeleeWeapon]: MeleeWeapon,
-			[WeaponType.RangedWeapon]: RangedWeapon,
 		},
 	},
 	select: {
@@ -221,6 +283,10 @@ const GURPSCONFIG: any = {
 		has: {
 			true: "gurps.select.has.true",
 			false: "gurps.select.has.false",
+		},
+		all: {
+			true: "gurps.select.all.true",
+			false: "gurps.select.all.false",
 		},
 		prereqs: {
 			trait_prereq: "gurps.select.prereqs.trait_prereq",
@@ -338,29 +404,51 @@ const GURPSCONFIG: any = {
 			to_final_weight: "gurps.select.eqp_mod_weight_type.to_final_weight",
 		},
 		maneuvers: {
-			none: "gurps.select.maneuvers.none",
-			do_nothing: "gurps.select.maneuvers.do_nothing",
-			move: "gurps.select.maneuvers.move",
-			aim: "gurps.select.maneuvers.aim",
-			change_posture: "gurps.select.maneuvers.change_posture",
-			evaluate: "gurps.select.maneuvers.evaluate",
-			attack: "gurps.select.maneuvers.attack",
-			feint: "gurps.select.maneuvers.feint",
-			all_out_attack: "gurps.select.maneuvers.all_out_attack",
-			all_out_attack_determined: "gurps.select.maneuvers.all_out_attack_determined",
-			all_out_attack_double: "gurps.select.maneuvers.all_out_attack_double",
-			all_out_attack_feint: "gurps.select.maneuvers.all_out_attack_feint",
-			all_out_attack_strong: "gurps.select.maneuvers.all_out_attack_strong",
-			all_out_attack_suppressing_fire: "gurps.select.maneuvers.all_out_attack_suppressing_fire",
-			move_and_attack: "gurps.select.maneuvers.move_and_attack",
-			all_out_defense: "gurps.select.maneuvers.all_out_defense",
-			all_out_defense_dodge: "gurps.select.maneuvers.all_out_defense_dodge",
-			all_out_defense_parry: "gurps.select.maneuvers.all_out_defense_parry",
-			all_out_defense_block: "gurps.select.maneuvers.all_out_defense_block",
-			all_out_defense_double: "gurps.select.maneuvers.all_out_defense_double",
-			ready: "gurps.select.maneuvers.ready",
-			concentrate: "gurps.select.maneuvers.concentrate",
-			wait: "gurps.select.maneuvers.wait",
+			none: "gurps.maneuver.none",
+			// Do_nothing: "gurps.select.maneuvers.do_nothing",
+			// move: "gurps.select.maneuvers.move",
+			// aim: "gurps.select.maneuvers.aim",
+			// change_posture: "gurps.select.maneuvers.change_posture",
+			// evaluate: "gurps.select.maneuvers.evaluate",
+			// attack: "gurps.select.maneuvers.attack",
+			// feint: "gurps.select.maneuvers.feint",
+			// all_out_attack: "gurps.select.maneuvers.all_out_attack",
+			// all_out_attack_determined: "gurps.select.maneuvers.all_out_attack_determined",
+			// all_out_attack_double: "gurps.select.maneuvers.all_out_attack_double",
+			// all_out_attack_feint: "gurps.select.maneuvers.all_out_attack_feint",
+			// all_out_attack_strong: "gurps.select.maneuvers.all_out_attack_strong",
+			// all_out_attack_suppressing_fire: "gurps.select.maneuvers.all_out_attack_suppressing_fire",
+			// move_and_attack: "gurps.select.maneuvers.move_and_attack",
+			// all_out_defense: "gurps.select.maneuvers.all_out_defense",
+			// all_out_defense_dodge: "gurps.select.maneuvers.all_out_defense_dodge",
+			// all_out_defense_parry: "gurps.select.maneuvers.all_out_defense_parry",
+			// all_out_defense_block: "gurps.select.maneuvers.all_out_defense_block",
+			// all_out_defense_double: "gurps.select.maneuvers.all_out_defense_double",
+			// ready: "gurps.select.maneuvers.ready",
+			// concentrate: "gurps.select.maneuvers.concentrate",
+			// wait: "gurps.select.maneuvers.wait",
+			[ManeuverID.DoNothing]: `gurps.maneuver.${ManeuverID.DoNothing}`,
+			[ManeuverID.Move]: `gurps.maneuver.${ManeuverID.Move}`,
+			[ManeuverID.ChangePosture]: `gurps.maneuver.${ManeuverID.ChangePosture}`,
+			[ManeuverID.Aiming]: `gurps.maneuver.${ManeuverID.Aiming}`,
+			[ManeuverID.Evaluate]: `gurps.maneuver.${ManeuverID.Evaluate}`,
+			[ManeuverID.Attack]: `gurps.maneuver.${ManeuverID.Attack}`,
+			[ManeuverID.Feint]: `gurps.maneuver.${ManeuverID.Feint}`,
+			[ManeuverID.MoveAndAttack]: `gurps.maneuver.${ManeuverID.MoveAndAttack}`,
+			[ManeuverID.Ready]: `gurps.maneuver.${ManeuverID.Ready}`,
+			[ManeuverID.Concentrate]: `gurps.maneuver.${ManeuverID.Concentrate}`,
+			[ManeuverID.Wait]: `gurps.maneuver.${ManeuverID.Wait}`,
+			[ManeuverID.AOA]: `gurps.maneuver.${ManeuverID.AOA}`,
+			[ManeuverID.AOADetermined]: `gurps.maneuver.${ManeuverID.AOADetermined}`,
+			[ManeuverID.AOADouble]: `gurps.maneuver.${ManeuverID.AOADouble}`,
+			[ManeuverID.AOAFeint]: `gurps.maneuver.${ManeuverID.AOAFeint}`,
+			[ManeuverID.AOAStrong]: `gurps.maneuver.${ManeuverID.AOAStrong}`,
+			[ManeuverID.AOASF]: `gurps.maneuver.${ManeuverID.AOASF}`,
+			[ManeuverID.AOD]: `gurps.maneuver.${ManeuverID.AOD}`,
+			[ManeuverID.AODDodge]: `gurps.maneuver.${ManeuverID.AODDodge}`,
+			[ManeuverID.AODParry]: `gurps.maneuver.${ManeuverID.AODParry}`,
+			[ManeuverID.AODBlock]: `gurps.maneuver.${ManeuverID.AODBlock}`,
+			[ManeuverID.AODDouble]: `gurps.maneuver.${ManeuverID.AODDouble}`,
 		},
 		move_types: {
 			ground: "gurps.select.move_type.ground",
@@ -369,12 +457,12 @@ const GURPSCONFIG: any = {
 			space: "gurps.select.move_type.space",
 		},
 		postures: {
-			standing: "gurps.select.postures.standing",
-			lying: "gurps.select.postures.lying",
-			kneeling: "gurps.select.postures.kneeling",
-			crouching: "gurps.select.postures.crouching",
-			sitting: "gurps.select.postures.sitting",
-			crawling: "gurps.select.postures.crawling",
+			standing: "gurps.status.posture_standing",
+			[ConditionID.PostureProne]: `gurps.status.${ConditionID.PostureProne}`,
+			[ConditionID.PostureCrouch]: `gurps.status.${ConditionID.PostureCrouch}`,
+			[ConditionID.PostureKneel]: `gurps.status.${ConditionID.PostureKneel}`,
+			[ConditionID.PostureSit]: `gurps.status.${ConditionID.PostureSit}`,
+			[ConditionID.PostureCrawl]: `gurps.status.${ConditionID.PostureCrawl}`,
 		},
 		damage_progression: {
 			basic_set: "gurps.select.damage_progression.basic_set",
@@ -444,14 +532,20 @@ const GURPSCONFIG: any = {
 			[StaticThresholdOperator.Divide]: "gurps.select.srt_operator.divide",
 		},
 	},
+	meleeMods: {},
+	rangedMods: {},
+	defenseMods: {},
+	commonMods: {},
+	allMods: [],
+	skillDefaults: [],
 }
-// GURPSCONFIG.Item.documentClasses = {};
-// GURPSCONFIG.Actor.documentClasses = {
-// 	character: CharacterGURPS,
-// };
+
 export { GURPSCONFIG }
 
-export type ItemGURPS =
+export type CharItemGURPS = CharContainerGCS | NoteGURPS | NoteContainerGURPS
+
+// These classes extend the ItemGCS class
+export type CharContainerGCS =
 	| TraitGURPS
 	| TraitContainerGURPS
 	| TraitModifierGURPS
@@ -466,8 +560,10 @@ export type ItemGURPS =
 	| EquipmentContainerGURPS
 	| EquipmentModifierGURPS
 	| EquipmentModifierContainerGURPS
-	| NoteGURPS
-	| NoteContainerGURPS
+
+export type ItemGURPS = CharItemGURPS | EffectGURPS | ConditionGURPS | WeaponGURPS
+
+export type WeaponGURPS = MeleeWeaponGURPS | RangedWeaponGURPS
 
 export type ActorGURPS = CharacterGURPS | StaticCharacterGURPS
 
@@ -480,3 +576,91 @@ export type Prereq =
 	| SkillPrereq
 	| SpellPrereq
 	| EquippedEquipmentPrereq
+
+export type Bonus = Feature | ThresholdBonus
+
+export type Feature =
+	| BaseFeature
+	| AttributeBonus
+	| ConditionalModifier
+	| DRBonus
+	| ReactionBonus
+	| SkillBonus
+	| SkillPointBonus
+	| SpellBonus
+	| SpellPointBonus
+	| WeaponDamageBonus
+	| WeaponDRDivisorBonus
+	| CostReduction
+	| ContainedWeightReduction
+
+export type featureMap = {
+	attributeBonuses: AttributeBonus[]
+	costReductions: CostReduction[]
+	drBonuses: DRBonus[]
+	skillBonuses: SkillBonus[]
+	skillPointBonuses: SkillPointBonus[]
+	spellBonuses: SpellBonus[]
+	spellPointBonuses: SpellPointBonus[]
+	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
+	thresholdBonuses: ThresholdBonus[]
+}
+
+export type FeatureConstructor = Partial<Bonus>
+
+export type ItemDataGURPS =
+	| TraitData
+	| TraitContainerData
+	| TraitModifierData
+	| TraitModifierContainerData
+	| SkillData
+	| TechniqueData
+	| SkillContainerData
+	| SpellData
+	| RitualMagicSpellData
+	| SpellContainerData
+	| EquipmentData
+	| EquipmentContainerData
+	| EquipmentModifierData
+	| EquipmentModifierContainerData
+	| NoteData
+	| NoteContainerData
+	| ConditionData
+
+export type ItemSourceGURPS = ItemDataGURPS["_source"]
+
+export type ContainerDataGURPS =
+	| TraitData
+	| TraitContainerData
+	| TraitModifierContainerData
+	| SkillContainerData
+	| SpellContainerData
+	| EquipmentData
+	| EquipmentContainerData
+	| EquipmentModifierContainerData
+	| NoteData
+	| NoteContainerData
+
+export type ItemSystemDataGURPS =
+	| TraitSystemData
+	| TraitContainerSystemData
+	| TraitModifierSystemData
+	| TraitModifierContainerSystemData
+	| SkillSystemData
+	| TechniqueSystemData
+	| SkillContainerSystemData
+	| SpellSystemData
+	| RitualMagicSpellSystemData
+	| SpellContainerSystemData
+	| EquipmentSystemData
+	| EquipmentContainerSystemData
+	| EquipmentModifierSystemData
+	| EquipmentModifierContainerSystemData
+	| NoteSystemData
+	| NoteContainerSystemData
+	| MeleeWeaponSystemData
+	| RangedWeaponSystemData
+
+export type ActorDataGURPS = CharacterDataGURPS | StaticCharacterDataGURPS
+
+export type ActorSourceGURPS = ActorDataGURPS["_source"]

@@ -1,5 +1,5 @@
 <div id="melee" class="weapon-list table">
-	<div class="header usage">{{localize "gurps.weapons.melee_header"}}</div>
+	<div class="header usage">{{localize "gurps.weapon.melee_header"}}</div>
 	<div class="header level">{{localize "gurps.character.melee.level"}}</div>
 	<div class="header parry">{{localize "gurps.character.melee.parry"}}</div>
 	<div class="header block">{{localize "gurps.character.melee.block"}}</div>
@@ -7,18 +7,18 @@
 	<div class="header reach">{{localize "gurps.character.melee.reach"}}</div>
 	<div class="header st">{{localize "gurps.character.melee.st"}}</div>
 	{{#each meleeWeapons}}
-	<div class="usage" data-uuid="{{this.id}}">
+	<div class="usage item" data-uuid="{{this.uuid}}" data-type="Item">
 		<div class="name">
 			{{this.usage}}
 		</div>
 		{{>actor/character/sections/item-notes}}
 	</div>
-	<div data-uuid="{{this.id}}" class="level">{{this.level}}</div>
-	<div data-uuid="{{this.id}}" class="parry rollable">{{this.fastResolvedParry}}</div>
-	<div data-uuid="{{this.id}}" class="block rollable">{{this.fastResolvedBlock}}</div>
-	<div data-uuid="{{this.id}}" class="damage rollable"> {{this.fastResolvedDamage}}</div>
-	<div data-uuid="{{this.id}}" class="reach">{{this.reach}}</div>
-	<div data-uuid="{{this.id}}" class="st">{{this.strength}}</div>
+	<div data-uuid="{{this.uuid}}" class="level">{{this.level}}</div>
+	<div data-uuid="{{this.uuid}}" class="parry rollable">{{this.fastResolvedParry}}</div>
+	<div data-uuid="{{this.uuid}}" class="block rollable">{{this.fastResolvedBlock}}</div>
+	<div data-uuid="{{this.uuid}}" class="damage rollable"> {{this.fastResolvedDamage}}</div>
+	<div data-uuid="{{this.uuid}}" class="reach">{{this.reach}}</div>
+	<div data-uuid="{{this.uuid}}" class="st">{{this.strength}}</div>
 	{{else}}
 	<div class="usage"></div>
 	<div class="level filler"></div>

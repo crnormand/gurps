@@ -1,6 +1,5 @@
 import { CharacterGURPS } from "@actor"
-import { ItemType } from "@item/data"
-import { NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
+import { ItemType, NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
@@ -34,7 +33,7 @@ export class SpellPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let tech_level = ""
 		if ([ItemType.Spell, ItemType.RitualMagicSpell].includes(exclude.type)) tech_level = exclude.techLevel
 		let count = 0
@@ -65,7 +64,7 @@ export class SpellPrereq extends BasePrereq {
 		let satisfied = numberCompare(count, this.quantity)
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(prefix)
+			// Tooltip.push(prefix)
 			tooltip.push(`gurps.prereqs.has.${this.has}`)
 			if (this.sub_type === "college_count") {
 				tooltip.push("gurps.prereqs.spell.college_count")

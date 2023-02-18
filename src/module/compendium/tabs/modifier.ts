@@ -1,5 +1,6 @@
 import { SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
+import { TabName } from "../data"
 import { CompendiumTab } from "./base"
 
 export class CompendiumTraitModifierTab extends CompendiumTab {
@@ -10,7 +11,7 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 	}
 
 	constructor(browser: CompendiumBrowser) {
-		super(browser, "modifier")
+		super(browser, TabName.TraitModifier)
 	}
 
 	protected override async loadData(): Promise<void> {
@@ -19,10 +20,10 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 
 		for await (const { pack, index } of this.browser.packLoader.loadPacks(
 			"Item",
-			this.browser.loadedPacks("modifier"),
+			this.browser.loadedPacks(TabName.TraitModifier),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection)
+			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((modifier: any) => {
 				if (!["modifier", "modifier_container"].includes(modifier.type)) return
 				modifier.prepareData()

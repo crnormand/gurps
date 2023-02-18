@@ -10,12 +10,12 @@ class InjuryEffect {
 	id: InjuryEffectType
 
 	/* An array of RollModifiers that is a direct consequence of the effect. */
-	modifiers: RollModifier[]
+	modifiers: _RollModifier[]
 
 	/* An array of EffectChecks. */
 	checks: EffectCheck[]
 
-	constructor(id: InjuryEffectType, modifiers: RollModifier[] = [], checks: EffectCheck[] = []) {
+	constructor(id: InjuryEffectType, modifiers: _RollModifier[] = [], checks: EffectCheck[] = []) {
 		this.id = id
 		this.modifiers = modifiers
 		this.checks = checks
@@ -29,7 +29,7 @@ class InjuryEffect {
  * rollType - the type of the roll/check modified.
  * id - either the id of an attribute or name of the thing (skill, spell, etc).
  */
-class RollModifier {
+class _RollModifier {
 	id: string
 
 	rollType: RollType
@@ -51,12 +51,12 @@ class EffectCheck {
 	 * An array of modified rolls which, if failed, triggers the failures listed below.
 	 * Resolution of the check requires selecting the *best* of the following rolls.
 	 */
-	checks: RollModifier[]
+	checks: _RollModifier[]
 
 	/* An array of consequences if the check fails. */
 	failures: CheckFailureConsequence[]
 
-	constructor(checks: RollModifier[], failures: CheckFailureConsequence[]) {
+	constructor(checks: _RollModifier[], failures: CheckFailureConsequence[]) {
 		this.checks = checks
 		this.failures = failures
 	}
@@ -98,7 +98,7 @@ enum InjuryEffectType {
 class KnockdownCheck extends EffectCheck {
 	constructor(modifier = 0) {
 		super(
-			[new RollModifier("ht", RollType.Attribute, modifier)],
+			[new _RollModifier("ht", RollType.Attribute, modifier)],
 			[
 				new CheckFailureConsequence("stun", 0),
 				new CheckFailureConsequence("fall prone", 0),
@@ -108,4 +108,4 @@ class KnockdownCheck extends EffectCheck {
 	}
 }
 
-export { InjuryEffect, RollModifier, InjuryEffectType, CheckFailureConsequence, EffectCheck, KnockdownCheck }
+export { InjuryEffect, _RollModifier, InjuryEffectType, CheckFailureConsequence, EffectCheck, KnockdownCheck }

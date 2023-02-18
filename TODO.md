@@ -9,31 +9,31 @@
 -   Finish the Damage Calculator conversion
 -   Convert OTFs and chat commands
     -   roll chat command
+	-   Drag rollable buttons to hotbar or message box for macros
 -   Implement "static" items (0.15 and older) compatibility
 	-	add interface for accessing old bonuses
 
 ## 1.0.0
 
--   Drag rollable buttons to hotbar or message box for macros
+-	fix GURPS.LastActor setting, 
 -   Finish "static" character (0.15 and older) compatibility
--   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
 -   Dynamic Character changes
     -   add move modes to dynamic character
     -   add optional encumbrance to dynamic character
     -   add posture to dynamic character
     -   add maneuver to dynamic character
--   Active Effects with Features
 -   @X@ notation dialog box for items
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
--   automatically pop out effect mod window when choosing maneuver / posture / effect
 -	negative value stat support for tokens
 -	convert mook generator
 
 ## 1.1.0 and beyond
 
--   Skill Defaults from compendium
+-	support rollable bonuses
+-	Skill Defaults from compendium
+	-	account for any skill bonuses which should not apply to defaults
 -   Incorporate v10 tooltip API
 -   Drag items to chat, get item chat entry with name, notes, rollables, etc.
 -	completely redo the way roll messages are handled
@@ -74,10 +74,8 @@
     -   Affects clicked on tokens / current map / current character
 -   Support rolling on custom hit location tables (e.g. grand unified hit location table)
 -   Tours implementation for UI
--   metric system conversion
 -   Roll20 style notes about character in place of character sheet (for players with limited access?)
--   fully customizable sheet layout wit dragging around elements
--   Different attribute based skill rolls
+-   fully customizable sheet layout with dragging around elements
 -   Library Import
     -   Overwrite items instead of appending
     -   When importing to world items, overwrite items with the same GCS UUID
@@ -88,4 +86,7 @@
 -   Add native "drag ruler" type support
     -   Color green within maneuver range
     -   Color yellow for one hex (1FP extra effort?/extra step) maybe toggleable
-    -   Color red beyond limit
+-	GURPS Token Settings
+	 - A small grid is presented in the window, with your image in the middle. You can manipulate the size of the image to match your aesthetic needs.
+	- There is also a "hex-side" choosing option on this grid, wherein you choose which sides of which hexes should count as Front, Side, or Back. Whether or not this has any mechanical difference will remain to be seen, but it's a possibility.
+	- There is a checkbox allowing you to toggle a "hex frame" for your token, which may be rendered as part of the token image.   -   Color red beyond limit

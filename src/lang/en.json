@@ -20,7 +20,9 @@
 		"TypeEqp_modifier_container": "Equipment Modifier Container",
 		"TypeNote": "Note",
 		"TypeNote_container": "Note Container",
-		"TypeEquipment": "Equipment (Legacy)"
+		"TypeEquipment": "Equipment (Legacy)",
+		"TypeMelee_weapon": "Melee Weapon",
+		"TypeRanged_weapon": "Ranged Weapon"
 	},
 	"gurps": {
 		"pdf": {
@@ -139,7 +141,7 @@
 				"melee_crouching": "to hit with melee combat (Crouching)",
 				"ranged_crouching": "to hit with ranged combat (Crouching/Kneeling)",
 				"hit_ranged_crouching": "to be hit with ranged combat (Crouching/Kneeling)",
-				"melee_kneeling": "to hit with mnelee combat (Kneeling/Sitting)",
+				"melee_kneeling": "to hit with melee combat (Kneeling/Sitting)",
 				"defense_kneeling": "to active defenses (Kneeling/Sitting)"
 			},
 			"task_difficulty": {
@@ -653,9 +655,6 @@
 			"min_enforced": "Enforce",
 			"current": "Current"
 		},
-		"prereq": {
-			"header": "Prerequisites"
-		},
 		"feature": {
 			"header": "Features",
 			"per_level": "per level",
@@ -697,6 +696,8 @@
 			"bulk_for": "Bulk ({name})"
 		},
 		"roll": {
+			"default": "Default: {default}",
+			"encumbrance": "Encumbrance: {name}",
 			"effective_skill": "Effective Skill: {level}",
 			"effective_target": "New Target: {level}",
 			"just_made_it": "Just made it.",
@@ -870,44 +871,11 @@
 				"very_hard": "VH",
 				"wildcard": "W"
 			},
-			"maneuvers": {
-				"none": "None",
-				"do_nothing": "Do Nothing",
-				"move": "Move",
-				"aim": "Aim",
-				"change_posture": "Change Posture",
-				"evaluate": "Evaluate",
-				"attack": "Attack",
-				"feint": "Feint",
-				"all_out_attack": "All-out Attack",
-				"all_out_attack_determined": "All-out Attack (Determined)",
-				"all_out_attack_double": "All-out Attack (Double)",
-				"all_out_attack_feint": "All-out Attack (Feint)",
-				"all_out_attack_strong": "All-out Attack (Strong)",
-				"all_out_attack_suppressing_fire": "All-out Attack (Suppressing Fire)",
-				"move_and_attack": "Move and Attack",
-				"all_out_defense": "All-out Defense",
-				"all_out_defense_dodge": "All-out Defense (Dodge)",
-				"all_out_defense_parry": "All-out Defense (Parry)",
-				"all_out_defense_block": "All-out Defense (Block)",
-				"all_out_defense_double": "All-out Defense (Double)",
-				"ready": "Ready",
-				"concentrate": "Concentrate",
-				"wait": "Wait"
-			},
 			"move_type": {
 				"ground": "Ground",
 				"air": "Air",
 				"water": "Water",
 				"space": "Space"
-			},
-			"postures": {
-				"standing": "Standing",
-				"lying": "Lying Down",
-				"kneeling": "Kneeling",
-				"crouching": "Crouching",
-				"sitting": "Sitting",
-				"crawling": "Crawling"
 			},
 			"damage_progression": {
 				"basic_set": "Basic Set",
@@ -1306,6 +1274,10 @@
 			"default_damage_location": {
 				"name": "Default Damage Location",
 				"hint": "Set the default hit location used to apply damage."
+			},
+			"compendium_browser_packs": {
+				"name": "Compendium Browser Packs",
+				"hint": "Choose which packs are included in the compendium browser."
 			}
 		},
 		"context_menu": {
@@ -1354,6 +1326,119 @@
 			"decrease_level": "Decrease Skill Level",
 			"increase_tech_level": "Increase Tech Level",
 			"decrease_tech_level": "Decrease Tech Level"
+		},
+		"combat": {
+			"effect_expired": "Effect Expired: {effect}"
+		},
+		"status": {
+			"posture_standing": "Standing",
+			"posture_crouch": "Crouching",
+			"posture_kneel": "Kneeling",
+			"posture_sit": "Sitting",
+			"posture_crawl": "Crawling",
+			"posture_prone": "Prone",
+			"reeling": "Reeling",
+			"fatigued": "Fatigued",
+			"crippled": "Crippled",
+			"bleeding": "Bleeding",
+			"dead": "Dead",
+			"shock": "Shock",
+			"pain": "Pain",
+			"unconscious": "Unconscious",
+			"sleeping": "Sleeping",
+			"coma": "Comatose",
+			"stun": "Stun",
+			"mental_stun": "Mental",
+			"poisoned": "Poisoned",
+			"burning": "Burning",
+			"cold": "Cold",
+			"disarmed": "Disarmed",
+			"falling": "Falling",
+			"grappled": "Grappled",
+			"restrained": "Restrained",
+			"pinned": "Pinned",
+			"sprinting": "Sprinting",
+			"flying": "Flying",
+			"stealth": "Stealthy",
+			"waiting": "Waiting",
+			"invisible": "Invisible",
+			"coughing": "Coughing",
+			"retching": "Retching",
+			"nausea": "Nausea",
+			"agony": "Agony",
+			"seizure": "Seizure",
+			"blind": "Blinded",
+			"deafened": "Deafened",
+			"silenced": "Silenced",
+			"choking": "Choking",
+			"heart_attack": "Heart Attack",
+			"euphoria": "Euphoric",
+			"hallucinating": "Hallucinating",
+			"drunk": "Drunk",
+			"drowsy": "Drowsy",
+			"daze": "Dazed"
+		},
+		"maneuver": {
+			"none": "None",
+			"do_nothing": "Do Nothing",
+			"attack": "Attack",
+			"aoa": "All-out Attack",
+			"aod": "All-out Defense",
+			"move": "Move",
+			"move_attack": "Move and Attack",
+			"aoa_double": "All-out Attack (Double)",
+			"aod_double": "All-out Defense (Double)",
+			"change_posture": "Change Posture",
+			"feint": "Feint",
+			"aoa_feint": "All-out Attack (Feint)",
+			"aod_dodge": "All-out Defense (Dodge)",
+			"ready": "Ready",
+			"evaluate": "Evaluate",
+			"aoa_determined": "All-out Attack (Determined)",
+			"aod_parry": "All-out Defense (Parry)",
+			"concentrate": "Concentrate",
+			"aiming": "Aim",
+			"aoa_strong": "All-out Attack (Strong)",
+			"aod_block": "All-out Defense (Block)",
+			"wait": "Wait",
+			"blank_1": "",
+			"aoa_suppressing_fire": "All-out Attack (Suppressing Fire)",
+			"blank_2": ""
+		},
+		"notification": {
+			"no_default_skill": "Cannot Roll: No applicable skill defaults found."
+		},
+		"prereqs": {
+			"header": "Prerequisites",
+			"not_met": "Prerequisites have not been met:<br>",
+			"requires_all": "Requires all of:<br>",
+			"requires_one": "Requires at least one of:<br>",
+			"has": {
+				"true": "- Has",
+				"false": "- Does not have"
+			},
+			"trait": {
+				"name": " a trait whose name ",
+				"notes": ", notes ",
+				"level": " and level "
+			},
+			"attribute": {
+				"which": " which ",
+				"plus": "+"
+			},
+			"criteria": {
+				"none": "is anything ",
+				"is": "is ",
+				"is_not": "is not ",
+				"contains": "contains ",
+				"does_not_contain": "does not contain ",
+				"starts_with": "starts with ",
+				"does_not_start_with": "does not start with ",
+				"ends_with": "ends with ",
+				"does_not_end_with": "does not end with ",
+				"at_least": "is at least ",
+				"at_most": "is at most "
+			}
 		}
 	}
 }

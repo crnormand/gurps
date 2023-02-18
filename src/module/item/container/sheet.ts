@@ -1,14 +1,14 @@
-import { ItemSheetGURPS } from "@item/base/sheet"
-import { TraitModifierGURPS } from "@item/trait_modifier"
-import { ItemDataBaseProperties } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData"
-import { PropertiesToSource } from "@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes"
-import { ContainerGURPS } from "."
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { DnD } from "@util/drag_drop"
 import { ItemGURPS } from "@module/config"
+import { PropertiesToSource } from "types/types/helperTypes"
+import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
+import { ItemSheetGURPS } from "@item/base"
+import { TraitModifierGURPS } from "@item/trait_modifier"
+import { ContainerGURPS } from "./document"
 
 export class ContainerSheetGURPS extends ItemSheetGURPS {
-	static get defaultOptions(): DocumentSheetOptions {
+	static get defaultOptions(): DocumentSheetOptions<Item> {
 		return mergeObject(ItemSheetGURPS.defaultOptions, {
 			template: `/systems/${SYSTEM_NAME}/templates/item/container-sheet.hbs`,
 			dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }],
@@ -69,6 +69,19 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 		// Set data transfer
 		event.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
+	}
+
+	getData(options?: Partial<DocumentSheetOptions<Item>>): any {
+		const items = this.items
+		const sheetData = {
+			...super.getData(options),
+			...{
+				items: items,
+				meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
+				rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),
+			},
+		}
+		return sheetData
 	}
 
 	protected _onDrop(event: DragEvent): any {

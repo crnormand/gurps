@@ -1,28 +1,36 @@
 import { CharacterGURPS } from "@actor"
 import { HitLocationTable } from "@actor/character/hit_location"
-import { FeatureType } from "@feature/base"
-import { AttributeDefObj } from "@module/attribute/attribute_def"
-import { ItemGURPS } from "@module/config"
+import { FeatureType } from "@feature"
+import { AttributeDefObj } from "@module/attribute"
 import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
-import { MeleeWeapon, RangedWeapon } from "@module/weapon"
-import { WeaponSheet } from "@module/weapon/sheet"
+import { openPDF } from "@module/pdf"
 import { i18n, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
-// @ts-ignore
 export class ItemSheetGURPS extends ItemSheet {
-	getData(options?: Partial<ItemSheet.Options>): any {
+	static override get defaultOptions(): DocumentSheetOptions<Item> {
+		const options = super.defaultOptions
+		mergeObject(options, {
+			width: 620,
+			min_width: 620,
+			height: 800,
+			classes: options.classes.concat(["item", "gurps"]),
+		})
+		return options
+	}
+
+	getData(options?: Partial<DocumentSheetOptions<Item>>): any {
 		const itemData = this.object.toObject(false)
 		const attributes: Record<string, string> = {}
 		const locations: Record<string, string> = {}
-		const default_attributes = (game as Game).settings.get(
+		const default_attributes = game.settings.get(
 			SYSTEM_NAME,
 			`${SETTINGS.DEFAULT_ATTRIBUTES}.attributes`
 		) as AttributeDefObj[]
 		const default_locations = {
-			name: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
-			roll: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
-			locations: (game as Game).settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
+			name: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.name`),
+			roll: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.roll`),
+			locations: game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_HIT_LOCATIONS}.locations`),
 		} as HitLocationTable
 		const actor = this.item.actor as unknown as CharacterGURPS
 		if (actor) {
@@ -45,19 +53,15 @@ export class ItemSheetGURPS extends ItemSheet {
 		attributes.dodge = i18n("gurps.attributes.dodge")
 		attributes.parry = i18n("gurps.attributes.parry")
 		attributes.block = i18n("gurps.attributes.block")
-		const item = this.item as BaseItemGURPS
-		const meleeWeapons = [...item.meleeWeapons].map(e => mergeObject(e[1], { index: e[0] }))
-		const rangedWeapons = [...item.rangedWeapons].map(e => mergeObject(e[1], { index: e[0] }))
+		const item = this.item
 
 		const sheetData = {
 			...super.getData(options),
 			...{
 				document: item,
-				meleeWeapons: meleeWeapons,
-				rangedWeapons: rangedWeapons,
 				item: itemData,
 				system: (itemData as any).system,
-				config: (CONFIG as any).GURPS,
+				config: CONFIG.GURPS,
 				attributes: attributes,
 				locations: locations,
 				sysPrefix: "array.system.",
@@ -68,31 +72,14 @@ export class ItemSheetGURPS extends ItemSheet {
 		return sheetData
 	}
 
-	static get defaultOptions(): DocumentSheetOptions {
-		const options = super.defaultOptions
-		mergeObject(options, {
-			width: 620,
-			min_width: 620,
-			height: 800,
-			classes: options.classes.concat(["item", "gurps"]),
-		})
-		return options
-	}
-
-	get template(): string {
+	override get template(): string {
 		return `/systems/${SYSTEM_NAME}/templates/item/${this.item.type}/sheet.hbs`
 	}
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		ContextMenu.create(this, html, "#melee div", [
-			{ name: i18n("gurps.context_menu.new_melee_weapon"), icon: "", callback: () => this._addMelee() },
-		])
-		ContextMenu.create(this, html, "#ranged div", [
-			{ name: i18n("gurps.context_menu.new_ranged_weapon"), icon: "", callback: () => this._addRanged() },
-		])
 
-		html.find(".add")
+		html.find(".ref").on("click", event => this._handlePDF(event))
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
 		html.find(".prereq .add-list").on("click", event => this._addPrereqList(event))
 		html.find(".prereq .remove").on("click", event => this._removePrereq(event))
@@ -104,7 +91,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".default .remove").on("click", event => this._removeDefault(event))
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
-		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
 		html.find("textarea")
 			.each(function () {
 				const height = this.scrollHeight - 2
@@ -116,13 +102,6 @@ export class ItemSheetGURPS extends ItemSheet {
 				this.style.height = "0"
 				this.style.height = `${height}px`
 			})
-
-		// Html.find("span.input").on("blur", event => this._onSubmit(event as any));
-		html.find(".item").on("dblclick", event => this._openItemSheet(event))
-	}
-
-	protected _onSubmit(event: Event, context?: any): Promise<Partial<Record<string, unknown>>> {
-		return super._onSubmit(event, context)
 	}
 
 	private splitArray(s: string): string[] {
@@ -132,7 +111,6 @@ export class ItemSheetGURPS extends ItemSheet {
 	}
 
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
-		// FormApplicationGURPS.updateObject(event, formData)
 		formData = prepareFormData(event, formData, this.object)
 		if (typeof formData["system.tags"] === "string")
 			formData["system.tags"] = this.splitArray(formData["system.tags"])
@@ -187,7 +165,7 @@ export class ItemSheetGURPS extends ItemSheet {
 	protected async _onPrereqTypeChange(event: JQuery.ChangeEvent): Promise<any> {
 		event.preventDefault()
 		const value = event.currentTarget.value
-		const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[value as PrereqType]
+		const PrereqConstructor = CONFIG.GURPS.Prereq.classes[value as PrereqType]
 		let path = $(event.currentTarget).data("path").replace("array.", "")
 		const items = path.split(".")
 		const index = items.pop()
@@ -201,24 +179,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		const formData: any = {}
 		formData[`array.${path}`] = prereqs
 		return this._updateObject(null as unknown as Event, formData)
-	}
-
-	_addMelee() {
-		const weapons = (this.item.system as any).weapons
-		const newMelee = new MeleeWeapon({ type: "melee_weapon" })
-		weapons.push(newMelee)
-		const update: any = {}
-		update["system.weapons"] = weapons
-		return this.item.update(update)
-	}
-
-	_addRanged() {
-		const weapons = (this.item.system as any).weapons
-		const newRanged = new RangedWeapon({ type: "ranged_weapon" })
-		weapons.push(newRanged)
-		const update: any = {}
-		update["system.weapons"] = weapons
-		return this.item.update(update)
 	}
 
 	protected async _addFeature(event: JQuery.ClickEvent): Promise<any> {
@@ -257,7 +217,8 @@ export class ItemSheetGURPS extends ItemSheet {
 		})
 		const update: any = {}
 		update["system.defaults"] = defaults
-		return this.item.update(update)
+		await this.item.update(update)
+		this.render()
 	}
 
 	protected async _removeDefault(event: JQuery.ClickEvent): Promise<any> {
@@ -266,7 +227,8 @@ export class ItemSheetGURPS extends ItemSheet {
 		defaults.splice(index, 1)
 		const update: any = {}
 		update["system.defaults"] = defaults
-		return this.item.update(update)
+		await this.item.update(update)
+		this.render()
 	}
 
 	protected async _addStudy(event: JQuery.ClickEvent): Promise<any> {
@@ -294,7 +256,7 @@ export class ItemSheetGURPS extends ItemSheet {
 	protected async _onFeatureTypeChange(event: JQuery.ChangeEvent): Promise<any> {
 		const value = event.currentTarget.value
 		const index = $(event.currentTarget).data("index")
-		const FeatureConstructor = (CONFIG as any).GURPS.Feature.classes[value as FeatureType]
+		const FeatureConstructor = CONFIG.GURPS.Feature.classes[value as FeatureType]
 		const features = (this.item.system as any).features
 		features[index] = {
 			type: value,
@@ -308,29 +270,17 @@ export class ItemSheetGURPS extends ItemSheet {
 		return this.item.update(update)
 	}
 
-	protected async _onWeaponEdit(event: JQuery.DoubleClickEvent): Promise<any> {
+	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		new WeaponSheet(this.item as ItemGURPS, uuid, {}).render(true)
+		const pdf = $(event.currentTarget).data("pdf")
+		if (pdf) return openPDF(pdf)
 	}
 
-	protected override _getHeaderButtons(): Application.HeaderButton[] {
-		const buttons: Application.HeaderButton[] = []
-		const all_buttons = [...buttons, ...super._getHeaderButtons()]
-		all_buttons.at(-1)!.label = ""
-		all_buttons.at(-1)!.icon = "gcs-circled-x"
-		return all_buttons
-	}
-
-	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
-		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = (await fromUuid(uuid)) as ItemGURPS
-		item?.sheet?.render(true)
+	get item(): this["object"] {
+		return this.object
 	}
 }
 
-// @ts-ignore
 export interface ItemSheetGURPS extends ItemSheet {
 	object: BaseItemGURPS
 }

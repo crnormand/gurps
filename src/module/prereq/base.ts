@@ -15,7 +15,7 @@ export class BasePrereq {
 			mergeObject(context, {
 				ready: true,
 			})
-			const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[data?.type as PrereqType]
+			const PrereqConstructor = CONFIG.GURPS.Prereq.classes[data?.type as PrereqType]
 			if (PrereqConstructor) return new PrereqConstructor(data as any, context)
 			throw new Error("No PrereqConstructor provided")
 		}
@@ -51,7 +51,7 @@ export class BasePrereq {
 }
 
 export interface BasePrereq {
-	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean]
+	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean]
 	type: PrereqType
 	has: boolean
 }

@@ -43,9 +43,18 @@
 			overflow-y: scroll;
 		}
 	}
-	#custom {
+
+	#custom,
+	#send-modifiers {
+		max-width: 430px;
 		height: min-content;
 	}
+
+	#send-modifiers .content {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
 	.generic {
 		display: flex;
 		gap: 4px;

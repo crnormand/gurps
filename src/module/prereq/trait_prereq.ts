@@ -19,33 +19,32 @@ export class TraitPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let satisfied = false
-		for (const t of actor.traits) {
-			if (exclude === t || !stringCompare(t.name, this.name)) return [false, false]
+		actor.traits.forEach(t => {
+			if (exclude === t || !stringCompare(t.name, this.name)) return // [false, false]
 			let notes = t.notes
 			const mod_notes = t.modifierNotes
 			if (mod_notes) notes += `\n${mod_notes}`
-			if (!stringCompare(notes, this.notes)) return [false, false]
+			if (!stringCompare(notes, this.notes)) return // [false, false]
 			satisfied = numberCompare(Math.max(0, t.levels), this.level)
-			// Return satisfied;
-		}
-		if (this.has) satisfied = !satisfied
+		})
+		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(prefix)
 			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
 			tooltip.push(i18n("gurps.prereqs.trait.name"))
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.name?.compare}`))
-			if (this.name?.compare !== "none") tooltip.push(this.name!.qualifier!)
+			if (this.name?.compare !== "none") tooltip.push(`"${this.name!.qualifier!}"`)
 			if (this.notes?.compare !== "none") {
 				tooltip.push(i18n("gurps.prereqs.trait.notes"))
 				tooltip.push(i18n(`gurps.prereqs.criteria.${this.notes?.compare}`))
-				tooltip.push(this.notes ? this.notes.qualifier! : "")
+				tooltip.push(this.notes.qualifier ? `"${this.notes.qualifier!}"` : '""')
 				tooltip.push(",")
 			}
+
 			tooltip.push(i18n("gurps.prereqs.trait.level"))
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.level?.compare}`))
-			tooltip.push(((this.level ? this.level.qualifier : 0) ?? 0).toString())
+			if (this.level?.compare !== "none") tooltip.push(((this.level ? this.level.qualifier : 0) ?? 0).toString())
 		}
 		return [satisfied, false]
 	}

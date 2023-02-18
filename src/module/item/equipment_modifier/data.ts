@@ -1,8 +1,8 @@
-import { Feature } from "@feature"
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { ItemType } from "@item/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { Feature } from "@module/config"
+import { ItemType } from "@module/data"
 
-export type EquipmentModifierSource = BaseItemSourceGURPS<ItemType.EquipmentModifier, EquipmentModifierSystemData>
+export type EquipmentModifierSource = ItemGCSSource<ItemType.EquipmentModifier, EquipmentModifierSystemData>
 
 // Export class EquipmentModifierData extends BaseItemDataGURPS<EquipmentModifierGURPS> {}
 
@@ -13,7 +13,7 @@ export interface EquipmentModifierData extends Omit<EquipmentModifierSource, "ef
 	readonly _source: EquipmentModifierSource
 }
 
-export interface EquipmentModifierSystemData extends ItemSystemData {
+export interface EquipmentModifierSystemData extends ItemGCSSystemData {
 	cost_type: EquipmentCostType
 	cost: string
 	weight_type: EquipmentWeightType

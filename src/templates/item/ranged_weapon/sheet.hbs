@@ -1,0 +1,126 @@
+<form class="{{cssClass}}" autocomplete="off">
+	<div id="sheet">
+		<div id="details">
+			<div class="label">{{localize "gurps.weapon.usage"}}</div>
+			<div class="field">
+				<input type="text" name="system.usage" value="{{system.usage}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.weapon.notes"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.usage_notes"
+					value="{{system.usage_notes}}"
+					data-dtype="String"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.strength"}}</div>
+			<div class="field">
+				<input type="text" name="system.strength" value="{{system.strength}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.st"}}</div>
+			<div class="field">
+				<select name="system.damage.st" data-dtype="String">
+					{{#select system.damage.st}}
+						{{#each config.select.damage_st as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.base"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.base"
+					value="{{diceString weapon.damage.base}}"
+					data-dtype="String"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.modifier_per_die"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.modifier_per_die"
+					value="{{system.damage.modifier_per_die}}"
+					data-dtype="Number"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.armor_divisor"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.armor_divisor"
+					value="{{system.damage.armor_divisor}}"
+					data-dtype="Number"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.type"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.type"
+					value="{{system.damage.type}}"
+					data-dtype="String"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.fragmentation"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.fragmentation"
+					value="{{diceString weapon.damage.fragmentation}}"
+					data-dtype="String"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.fragmentation_armor_divisor"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.fragmentation_armor_divisor"
+					value="{{system.damage.fragmentation_armor_divisor}}"
+					data-dtype="Number"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.damage.fragmentation_type"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.damage.fragmentation_type"
+					value="{{system.damage.fragmentation_type}}"
+					data-dtype="String"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.accuracy"}}</div>
+			<div class="field">
+				<input type="text" name="system.accuracy" value="{{system.accuracy}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.weapon.rate_of_fire"}}</div>
+			<div class="field">
+				<input
+					type="text"
+					name="system.rate_of_fire"
+					value="{{system.rate_of_fire}}"
+					data-dtype="String"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.weapon.range"}}</div>
+			<div class="field">
+				<input type="text" name="system.range" value="{{system.range}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.weapon.recoil"}}</div>
+			<div class="field">
+				<input type="text" name="system.recoil" value="{{system.recoil}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.weapon.shots"}}</div>
+			<div class="field">
+				<input type="text" name="system.shots" value="{{system.shots}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.weapon.bulk"}}</div>
+			<div class="field">
+				<input type="text" name="system.bulk" value="{{system.bulk}}" data-dtype="String" />
+			</div>
+		</div>
+		{{>item/sections/defaults attributes=attributes sysPrefix=sysPrefix}}
+	</div>
+</form>

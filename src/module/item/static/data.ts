@@ -1,5 +1,5 @@
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { ItemType } from "@item/data"
+import { BaseItemSourceGURPS } from "@item/base/data"
+import { ItemType } from "@module/data"
 
 export type StaticItemSource = BaseItemSourceGURPS<ItemType.LegacyEquipment, StaticItemSystemData>
 
@@ -12,7 +12,7 @@ export interface StaticItemData extends Omit<StaticItemSource, "effects">, Stati
 	readonly _source: StaticItemSource
 }
 
-export interface StaticItemSystemData extends ItemSystemData {
+export interface StaticItemSystemData {
 	eqt: {
 		name: string
 		notes: string

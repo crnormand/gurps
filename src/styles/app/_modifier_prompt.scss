@@ -176,6 +176,7 @@
 	/* border: 2px solid rgb(var(--color-header)); */
 	/* border-bottom: none; */
 	/* min-width: 180px; */
+	z-index: 2;
 	width: max-content;
 	display: grid;
 	grid-template:
@@ -193,6 +194,7 @@
 
 	.entries {
 		grid-area: entries;
+		z-index: 2;
 	}
 
 	.categories > div,

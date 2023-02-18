@@ -34,6 +34,7 @@ export enum SETTINGS {
 	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
 	PORTRAIT_OVERWRITE = "portrait_overwrite",
 	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
+	COMPENDIUM_SKILL_DEFAULTS = "compendium_skill_defaults",
 	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
 	IGNORE_IMPORT_NAME = "ignore_import_name",
 	STATIC_IMPORT_HP_FP = "import_hp_fp",
@@ -49,7 +50,15 @@ export enum SETTINGS {
 	ROLL_MODIFIERS = "roll_modifiers",
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
 	SSRT = "ssrt",
+	INITIATIVE_FORMULA = "initiative_formula",
 }
+
+export enum SOCKET {
+	INITIATIVE_CHANGED = "initiative_changed",
+	UPDATE_BUCKET = "update_bucket",
+}
+
+export const DEFAULT_INITIATIVE_FORMULA = "$basic_speed+($dx/10000)+(1d6/100000)"
 
 export enum DisplayMode {
 	NotShown = "not_shown",
@@ -200,6 +209,7 @@ export interface RollModifier {
 	tags?: string[]
 	cost?: { id: string; value: number }
 	reference?: string
+	target?: boolean
 }
 
 export interface ModifierHeader {
@@ -344,3 +354,34 @@ export enum PrereqType {
 // 	spellPointBonuses: SpellPointBonus[]
 // 	weaponBonuses: Array<WeaponDamageBonus | WeaponDRDivisorBonus>
 // }
+export enum ItemType {
+	Trait = "trait",
+	TraitContainer = "trait_container",
+	TraitModifier = "modifier",
+	TraitModifierContainer = "modifier_container",
+	Skill = "skill",
+	Technique = "technique",
+	SkillContainer = "skill_container",
+	Spell = "spell",
+	RitualMagicSpell = "ritual_magic_spell",
+	SpellContainer = "spell_container",
+	Equipment = "equipment_gcs",
+	EquipmentContainer = "equipment_container",
+	EquipmentModifier = "eqp_modifier",
+	EquipmentModifierContainer = "eqp_modifier_container",
+	Note = "note",
+	NoteContainer = "note_container",
+	LegacyEquipment = "equipment",
+	Effect = "efffect",
+	Condition = "condition",
+	MeleeWeapon = "melee_weapon",
+	RangedWeapon = "ranged_weapon",
+}
+
+export enum ActorType {
+	Character = "character_gcs",
+	LegacyCharacter = "character",
+	// MassCombatElement = "element",
+	// Vehicle = "vehicle",
+	// Merchant = "merchant",
+}

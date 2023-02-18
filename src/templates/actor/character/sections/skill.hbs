@@ -14,8 +14,8 @@
 	</div>
 	{{>actor/character/sections/item-notes}}
 </div>
-<div data-uuid="{{this.uuid}}" data-type="skill" class="level rollable">{{this.skillLevel}}</div>
-<div data-uuid="{{this.uuid}}" data-type="skill_rsl" class="rsl rollable">{{this.relativeLevel}}</div>
+<div data-uuid="{{this.uuid}}" data-type="skill" class="level rollable {{effective this}}">{{this.effectiveLevel}}</div>
+<div data-uuid="{{this.uuid}}" data-type="skill_rsl" class="rsl rollable {{effective this}}">{{this.relativeLevel}}</div>
 <div class="points">{{this.adjustedPoints}}</div>
 <div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open}}

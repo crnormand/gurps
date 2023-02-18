@@ -1,6 +1,6 @@
 import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { i18n } from "@util"
+import { getDefaultSkills, i18n } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
 
@@ -30,7 +30,6 @@ export class CompendiumBrowser extends Application {
 			eqp_modifier: new browserTabs.EquipmentModifier(this),
 			note: new browserTabs.Note(this),
 		}
-
 		this.loadSettings()
 		this.initCompendiumList()
 		this.hookTab()
@@ -38,6 +37,15 @@ export class CompendiumBrowser extends Application {
 
 	override get title(): string {
 		return i18n("gurps.compendium_browser.title")
+	}
+
+	get skillDefaults(): string[] {
+		const skillPacks: string[] = []
+		// Console.log(this.settings)
+		for (const id in this.settings.skill) {
+			if (this.settings.skill[id]?.skillDefault) skillPacks.push(id)
+		}
+		return skillPacks
 	}
 
 	static override get defaultOptions(): ApplicationOptions {
@@ -75,14 +83,16 @@ export class CompendiumBrowser extends Application {
 			if (form) {
 				form.querySelector("button.save-settings")?.addEventListener("click", async () => {
 					const formData = new FormData(form)
-					for (const [t, packs] of Object.entries(this.settings) as [string, { [key: string]: PackInfo }][]) {
+					for (const [t, packs] of Object.entries(this.settings) as [string, Record<string, PackInfo>][]) {
 						for (const [key, pack] of Object.entries(packs) as [string, PackInfo][]) {
 							pack.load = formData.has(`${t}-${key}`)
+							pack.skillDefault = formData.has(`default-${t}-${key}`)
 						}
 					}
-					await (game as Game).settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
+					await game.settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
 					this.loadSettings()
 					this.initCompendiumList()
+					getDefaultSkills()
 					for (const tab of Object.values(this.tabs)) {
 						if (tab.isInitialized) {
 							await tab.init()
@@ -153,7 +163,7 @@ export class CompendiumBrowser extends Application {
 		if (activeTab === "settings") {
 			this.initCompendiumList()
 			return {
-				user: (game as Game).user,
+				user: game.user,
 				settings: this.settings,
 			}
 		}
@@ -170,7 +180,7 @@ export class CompendiumBrowser extends Application {
 			)
 			const tagList = Array.from(tagSet).sort()
 			return {
-				user: (game as Game).user,
+				user: game.user,
 				[activeTab]: {
 					filterData: tab.filterData,
 					indexData: indexData,
@@ -180,7 +190,7 @@ export class CompendiumBrowser extends Application {
 			}
 		}
 		return {
-			user: (game as Game).user,
+			user: game.user,
 		}
 	}
 
@@ -189,14 +199,14 @@ export class CompendiumBrowser extends Application {
 		const li = event.currentTarget
 		const uuid = $(li!).data("uuid")
 		const pack: string = this.loadedPacks(this.activeTab).find((e: string) => uuid.includes(e)) ?? ""
-		// Const item = await (game as Game).packs.get(pack)?.getDocument(uuid.split(".").at(-1));
+		// Const item = await game.packs.get(pack)?.getDocument(uuid.split(".").at(-1));
 		const item = await fromUuid(uuid)
 		if (!item) return
 		const sheet = (item as any).sheet
 		if (sheet._minimized) return sheet.maximize()
 		else
 			return sheet?.render(true, {
-				editable: (game as Game).user?.isGM && !(game as Game).packs.get(pack)?.locked,
+				editable: game.user?.isGM && !game.packs.get(pack)?.locked,
 			})
 	}
 
@@ -217,7 +227,7 @@ export class CompendiumBrowser extends Application {
 			note: {},
 		}
 
-		for (const pack of (game as Game).packs) {
+		for (const pack of game.packs) {
 			// @ts-ignore
 			const types = new Set(pack.index.map(entry => entry.type))
 			if (types.size === 0) continue
@@ -238,7 +248,9 @@ export class CompendiumBrowser extends Application {
 			}
 			if (["skill", "technique", "skill_container"].some(type => types.has(type))) {
 				const load = this.settings.skill?.[pack.collection]?.load ?? false
+				const skillDefault = this.settings.skill?.[pack.collection]?.skillDefault ?? false
 				settings.skill![pack.collection] = {
+					skillDefault,
 					load,
 					name: pack.metadata.label,
 				}
@@ -285,7 +297,7 @@ export class CompendiumBrowser extends Application {
 	}
 
 	loadSettings(): void {
-		const settings: string | any = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS)
+		const settings: string | any = game.settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS)
 		if (typeof settings === "string") this.settings = JSON.parse(settings)
 		else this.settings = settings
 	}
@@ -328,11 +340,10 @@ export class CompendiumBrowser extends Application {
 	hookTab(): void {
 		this.navigationTab = this._tabs[0]
 		const tabCallback = this.navigationTab.callback
-		// @ts-ignore
-		this.navigationTab.callback = async (event: JQuery.TriggeredEvent | null, tabs: Tabs, active: TabName) => {
-			// @ts-ignore
+		// This.navigationTab.callback = async (event: JQuery.TriggeredEvent | null, tabs: Tabs, active: TabName) => {
+		this.navigationTab.callback = async (event: any | null, tabs: Tabs, active: string) => {
 			tabCallback?.(event, tabs, active)
-			await this.loadTab(active)
+			await this.loadTab(active as TabName)
 		}
 	}
 
@@ -395,7 +406,7 @@ class PackLoader {
 				// Pack already loaded
 				// const pack = data;
 			} else {
-				const pack = (game as Game).packs.get(packId)
+				const pack = game.packs.get(packId)
 				if (!pack) continue
 				if (pack.documentName === documentType) {
 					// TODO: fix

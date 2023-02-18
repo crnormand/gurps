@@ -1,7 +1,7 @@
 import { ContainerSheetGURPS } from "@item/container/sheet"
 
 export class TraitContainerSheet extends ContainerSheetGURPS {
-	static get defaultOptions(): DocumentSheetOptions {
+	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {
 			classes: options.classes.concat(["trait_container"]),
@@ -9,7 +9,7 @@ export class TraitContainerSheet extends ContainerSheetGURPS {
 		return options
 	}
 
-	getData(options?: Partial<DocumentSheetOptions> | undefined) {
+	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
 		const items = this.items
 		const sheetData = {
 			...super.getData(options),

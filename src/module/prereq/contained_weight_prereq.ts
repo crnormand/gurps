@@ -1,6 +1,5 @@
 import { CharacterGURPS } from "@actor"
-import { ItemType } from "@item/data"
-import { NumberCompare, NumberComparison, PrereqType } from "@module/data"
+import { ItemType, NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { i18n, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
@@ -22,7 +21,7 @@ export class ContainedWeightPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let satisfied = false
 		const eqp = exclude
 		if (eqp) {
@@ -35,8 +34,8 @@ export class ContainedWeightPrereq extends BasePrereq {
 		}
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(prefix)
-			tooltip.push(i18n(`gurps.prerqs.has.${this.has}`))
+			// Tooltip.push(prefix)
+			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
 			tooltip.push(i18n("gurps.prereqs.weight"))
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.qualifier?.compare}`))
 			tooltip.push((this.qualifier ? this.qualifier.qualifier : 0).toString())

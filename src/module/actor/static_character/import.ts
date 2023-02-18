@@ -51,7 +51,7 @@ export class StaticCharacterImporter {
 		commit = { ...commit, ...{ "system.lastImport": new Date().toString().split(" ").splice(1, 4).join(" ") } }
 		try {
 			let nm = r.profile.name
-			if (!(game as Game).settings.get(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME)) {
+			if (!game.settings.get(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME)) {
 				commit = { ...commit, ...{ name: nm, "token.name": nm } }
 			}
 			commit = { ...commit, ...{ "system.additionalresources": imp } }
@@ -149,7 +149,7 @@ export class StaticCharacterImporter {
 		let saveCurrent = false
 
 		if (data.lastImport && (data.HP.value !== hp || data.FP.value !== fp)) {
-			let option = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP)
+			let option = game.settings.get(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP)
 			if (option === 0) {
 				saveCurrent = true
 			}
@@ -302,8 +302,8 @@ export class StaticCharacterImporter {
 		}
 
 		if (p.portrait) {
-			if ((game as Game).user?.hasPermission("FILES_UPLOAD")) {
-				r.img = `data:imdage/png;base64,${p.portrait}.png`
+			if (game.user?.hasPermission("FILES_UPLOAD")) {
+				r.img = `data:image/png;base64,${p.portrait}.png`
 			} else {
 				console.error(i18n("gurps.error.import.portait_permissions"))
 				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
@@ -716,7 +716,7 @@ export class StaticCharacterImporter {
 			(data.lastImport && data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) ||
 			!Object.keys(data.hitlocations).length
 		) {
-			const option = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN)
+			const option = game.settings.get(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN)
 			if (option === "no") {
 				saveprot = false
 			}
@@ -974,9 +974,9 @@ export class StaticCharacterImporter {
 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/chat/character-import-error.hbs`, {
 				lines: msg,
 			}),
-			user: (game as Game).user!.id,
+			user: game.user!.id,
 			type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-			whisper: [(game as Game).user!.id],
+			whisper: [game.user!.id],
 		})
 		return false
 	}

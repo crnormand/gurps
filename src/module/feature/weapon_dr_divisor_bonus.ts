@@ -1,6 +1,6 @@
-import { BaseFeature, FeatureType } from "./base"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
-import { WeaponBonusSelectionType } from "./weapon_bonus"
+import { BaseFeature } from "./base"
+import { FeatureType, WeaponBonusSelectionType } from "./data"
 
 export class WeaponDRDivisorBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {

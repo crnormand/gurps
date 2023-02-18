@@ -1,14 +1,14 @@
 import { ModifierItem, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { i18n, i18n_f, Measure } from "@util"
 
-// Const i18n = (game as Game).i18n ? (game as Game).i18n?.localize : (name: string) => { return name }
-// const i18n_f = (game as Game).i18n ? (game as Game).i18n?.format : (name: string) => { return name }
+// Const i18n = game.i18n ? game.i18n?.localize : (name: string) => { return name }
+// const i18n_f = game.i18n ? game.i18n?.format : (name: string) => { return name }
 
 /**
  *
  * @param GURPS
  */
-export function loadModifiers(GURPS: any) {
+export function loadModifiers() {
 	const meleeMods: ModifierItem[] = [
 		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.determined"), modifier: 4, reference: "B365" },
 		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.telegraphic"), modifier: 4, reference: "MA113" },
@@ -30,12 +30,12 @@ export function loadModifiers(GURPS: any) {
 			reference: "MA131",
 		},
 	]
-	GURPS.meleeMods = meleeMods
+	CONFIG.GURPS.meleeMods = meleeMods
 	const rangedMods: ModifierItem[] = [
 		{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.aim"), modifier: 1 },
 		{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.determined"), modifier: 1, reference: "B365" },
 	]
-	GURPS.rangedMods = rangedMods
+	CONFIG.GURPS.rangedMods = rangedMods
 	const defenseMods: ModifierItem[] = [
 		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.all_out_defense"), modifier: 2, reference: "B365" },
 		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.shield"), modifier: 1, reference: "B374" },
@@ -55,7 +55,7 @@ export function loadModifiers(GURPS: any) {
 			cost: { id: "fp", value: 1 },
 		},
 	]
-	GURPS.defenseMods = defenseMods
+	CONFIG.GURPS.defenseMods = defenseMods
 
 	const modifiersStatus: ModifierItem[] = [
 		{ tags: ["Status"], name: i18n("gurps.modifier.status.status"), title: true },
@@ -292,7 +292,7 @@ export function loadModifiers(GURPS: any) {
 	]
 
 	let modifiersSpeed: ModifierItem[] = []
-	const modifierSetting = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SSRT)
+	const modifierSetting = game.settings.get(SYSTEM_NAME, SETTINGS.SSRT)
 	if (modifierSetting === "standard") modifiersSpeed = modifiersSpeedStandard
 	else if (modifierSetting === "simplified") modifiersSpeed = modifiersSpeedSimple
 	else if (modifierSetting === "tens") modifiersSpeed = modifiersSpeedTens
@@ -335,8 +335,8 @@ export function loadModifiers(GURPS: any) {
 			items: modifiersRof,
 		},
 	]
-	GURPS.commonMods = commonMods
-	GURPS.allMods = [
+	CONFIG.GURPS.commonMods = commonMods
+	CONFIG.GURPS.allMods = [
 		...meleeMods,
 		...rangedMods,
 		...defenseMods,

@@ -17,13 +17,13 @@ class EquippedEquipmentPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let satisfied = false
 		for (let eqp of actor.carried_equipment) {
 			satisfied = exclude !== eqp && eqp.equipped && eqp.quantity > 0 && stringCompare(eqp.name, this.name)
 		}
 		if (!satisfied) {
-			tooltip.push(i18n_f("gurps.prereqs.equipment.criteria", { prefix: prefix, name: this.name }))
+			tooltip.push(i18n_f("gurps.prereqs.equipment.criteria", { name: this.name }))
 			return [satisfied, true]
 		}
 		return [satisfied, false]

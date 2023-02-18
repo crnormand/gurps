@@ -1,7 +1,7 @@
-import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
-import { ItemType } from "@item/data"
+import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
+import { ItemType } from "@module/data"
 
-export type NoteSource = BaseItemSourceGURPS<ItemType.Note, NoteSystemData>
+export type NoteSource = ItemGCSSource<ItemType.Note, NoteSystemData>
 
 // Export class NoteData extends BaseItemDataGURPS<NoteGURPS> {}
 
@@ -12,6 +12,6 @@ export interface NoteData extends Omit<NoteSource, "effects">, NoteSystemData {
 	readonly _source: NoteSource
 }
 
-export interface NoteSystemData extends ItemSystemData {
+export interface NoteSystemData extends ItemGCSSystemData {
 	text: string
 }

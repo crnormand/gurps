@@ -1,23 +1,8 @@
-import { Feature } from "@feature"
-import { ItemGURPS } from "@module/config"
-import { ActiveEffectGURPS } from "@module/effect"
+import { Feature } from "@module/config"
+import { ItemType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { LeveledAmount } from "@util/leveled_amount"
-
-export enum FeatureType {
-	AttributeBonus = "attribute_bonus",
-	ConditionalModifier = "conditional_modifier",
-	DRBonus = "dr_bonus",
-	ReactionBonus = "reaction_bonus",
-	SkillBonus = "skill_bonus",
-	SkillPointBonus = "skill_point_bonus",
-	SpellBonus = "spell_bonus",
-	SpellPointBonus = "spell_point_bonus",
-	WeaponBonus = "weapon_bonus",
-	WeaponDRDivisorBonus = "weapon_dr_divisor_bonus",
-	CostReduction = "cost_reduction",
-	ContaiedWeightReduction = "contained_weight_reduction",
-}
+import { FeatureType } from "./data"
 
 export interface FeatureConstructionContext {
 	ready?: boolean
@@ -30,8 +15,12 @@ export class BaseFeature {
 			Object.assign(this, data)
 		} else {
 			mergeObject(context, { ready: true })
-			const FeatureConstructor = (CONFIG as any).GURPS.Feature.classes[data.type as FeatureType]
-			return FeatureConstructor ? new FeatureConstructor(data, context) : new BaseFeature(data, context)
+			const FeatureConstructor = CONFIG.GURPS.Feature.classes[data.type as FeatureType]
+			if (FeatureConstructor) {
+				data = mergeObject(FeatureConstructor.defaults, data)
+				return new FeatureConstructor(data, context)
+			}
+			return new BaseFeature(data, context)
 		}
 	}
 
@@ -56,7 +45,9 @@ export class BaseFeature {
 
 	get levels(): number {
 		if (this.item) {
-			if (this.item.type === "trait") return (this.item as any).levels
+			if (this.item.type === ItemType.Trait) return (this.item as any).levels
+			if (this.item.type === ItemType.Condition) return (this.item as any).level
+			if (this.item.type === ItemType.Effect) return (this.item as any).level
 			return 1
 		}
 		return this._levels
@@ -66,14 +57,14 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	setParent(parent: ItemGURPS | ActiveEffectGURPS): void {
-		this.parent = parent.uuid
-	}
+	// SetParent(parent: ItemGURPS): void {
+	// 	this.parent = parent.uuid
+	// }
 
-	addToTooltip(buffer?: TooltipGURPS): void {
+	addToTooltip(buffer: TooltipGURPS | null): void {
 		if (buffer) {
 			buffer.push("\n")
-			buffer.push(this.parent)
+			buffer.push(this.item?.name || "")
 			buffer.push(
 				` [${new LeveledAmount({
 					level: this.levels,
@@ -86,7 +77,7 @@ export class BaseFeature {
 }
 
 export interface BaseFeature {
-	parent: string
+	// Parent: string
 	type: FeatureType
 	item?: Item
 	amount: number

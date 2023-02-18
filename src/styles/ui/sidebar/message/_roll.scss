@@ -15,9 +15,12 @@
 			height: 1px;
 			width: 90%;
 			margin: 0;
+			margin-top: 4px;
+			margin-bottom: 5px;
 		}
 
-		.name {
+		.name,
+		.default {
 			min-width: 50%;
 			font-size: var(--font-size-18);
 			font-weight: bold;
@@ -25,20 +28,24 @@
 			width: min-content;
 			white-space: nowrap;
 			padding: 0 5px;
-			margin-top: 5px;
-			margin-bottom: 5px;
 			text-align: center;
 			border: 2px solid rgb(var(--color-skill));
 			border-radius: 5px;
 			background-color: rgb(var(--color-skill));
 			color: white;
+		}
+
+		.name {
 			cursor: pointer;
 			transition: all 0.1s linear 0s;
-
 			&:hover {
 				color: rgb(var(--color-skill));
 				background-color: white;
 			}
+		}
+
+		.default {
+			margin-top: 4px;
 		}
 
 		.static-name {
@@ -48,7 +55,7 @@
 			width: min-content;
 			white-space: nowrap;
 			padding: 0 5px;
-			margin-top: 5px;
+			margin-top: 4px;
 			margin-bottom: 5px;
 			text-align: center;
 			color: rgb(var(--color-skill));
@@ -57,9 +64,10 @@
 
 		.mod {
 			margin: auto;
+			margin-top: 4px;
 			border: 2px solid;
 			border-radius: 4px;
-			max-width: 80%;
+			max-width: 100%;
 			min-width: 150px;
 			padding: var(--padding-standard);
 			cursor: pointer;
@@ -106,10 +114,10 @@
 
 		.modifiers {
 			display: grid;
-			grid-auto-flow: rows;
-			grid-gap: 2px;
+			grid-auto-flow: row;
+			// grid-gap: 2px;
 			&.generic {
-				margin-top: 5px;
+				margin-top: 4px;
 			}
 		}
 
@@ -154,7 +162,7 @@
 			}
 
 			&.generic {
-				margin-top: 5px;
+				margin-top: 4px;
 				color: rgb(var(--color-skill));
 				border-color: rgb(var(--color-skill));
 			}

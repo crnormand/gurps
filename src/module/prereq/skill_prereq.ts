@@ -1,6 +1,5 @@
 import { CharacterGURPS } from "@actor"
-import { ItemType } from "@item/data"
-import { NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
+import { ItemType, NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { i18n, numberCompare, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
@@ -20,7 +19,7 @@ export class SkillPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let satisfied = false
 		let tech_level = ""
 		if (exclude.type === ItemType.Skill) tech_level = exclude.techLevel
@@ -37,7 +36,7 @@ export class SkillPrereq extends BasePrereq {
 		}
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(prefix)
+			// Tooltip.push(prefix)
 			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
 			tooltip.push(i18n("gurps.prereqs.skill.name"))
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.name?.compare}`))

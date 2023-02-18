@@ -31,49 +31,64 @@
 // Import TypeScript modules
 import { registerSettings } from "./settings"
 import { preloadTemplates } from "./preload-templates"
-import { evaluateToNumber, i18n, LastActor, registerHandlebarsHelpers, Static } from "@util"
-import { CharacterSheetGURPS } from "@actor/sheet"
+import {
+	evaluateToNumber,
+	getDefaultSkills,
+	i18n,
+	LastActor,
+	registerHandlebarsHelpers,
+	setInitiative,
+	Static,
+} from "@util"
 import { BaseActorGURPS } from "@actor/base"
-import { BaseItemGURPS } from "@item"
 import { GURPSCONFIG } from "./config"
-import { TraitSheet } from "@item/trait/sheet"
 import { fSearch } from "@util/fuse"
 import { DiceGURPS } from "@module/dice"
 import * as Chat from "@module/chat"
-import { TraitContainerSheet } from "@item/trait_container/sheet"
-import { SkillSheet } from "@item/skill/sheet"
-import { TraitModifierSheet } from "@item/trait_modifier/sheet"
-import { TraitModifierContainerSheet } from "@item/trait_modifier_container/sheet"
-import { EquipmentModifierContainerSheet } from "@item/equipment_modifier_container/sheet"
-import { SpellContainerSheet } from "@item/spell_container/sheet"
-import { SkillContainerSheet } from "@item/skill_container/sheet"
-import { NoteContainerSheet } from "@item/note_container/sheet"
-import { NoteSheet } from "@item/note/sheet"
-import { TechniqueSheet } from "@item/technique/sheet"
-import { EquipmentSheet } from "@item/equipment/sheet"
-import { RitualMagicSpellSheet } from "@item/ritual_magic_spell/sheet"
-import { SpellSheet } from "@item/spell/sheet"
-import { EquipmentModifierSheet } from "@item/equipment_modifier/sheet"
 import { ItemImporter } from "@item/import"
 import { CompendiumBrowser } from "./compendium"
 import { PDFViewerSheet } from "@module/pdf/sheet"
 import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
-import { SYSTEM_NAME, UserFlags } from "./data"
-import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
+import { ActorType, ItemType, SOCKET, SYSTEM_NAME, UserFlags } from "./data"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
-import { StaticItemSheet } from "@item/static/sheet"
+import * as SpeedProviderGURPS from "./modules/drag_ruler"
 import { ColorSettings } from "./settings/colors"
 import { DamageChat } from "./damage_calculator/damage_chat_message"
-import { RangeGURPS } from "@util/range"
-import { ItemType } from "@item/data"
-import { ActorType } from "@actor/data"
 import { RollGURPS } from "@module/roll"
 import { ModifierButton } from "./mod_prompt/button"
 import { loadModifiers } from "@module/mod_prompt/data"
+import { CombatGURPS } from "@module/combat"
+import { TokenHUDGURPS } from "./token/hud"
+import { TokenDocumentGURPS, TokenGURPS } from "@module/token"
+import { RulerGURPS } from "./ruler"
+import {
+	BaseItemGURPS,
+	EffectGURPS,
+	EquipmentModifierContainerSheet,
+	EquipmentModifierSheet,
+	EquipmentSheet,
+	NoteContainerSheet,
+	NoteSheet,
+	RitualMagicSpellSheet,
+	SkillContainerSheet,
+	SkillSheet,
+	SpellContainerSheet,
+	SpellSheet,
+	StaticItemSheet,
+	StatusEffectsGURPS,
+	TechniqueSheet,
+	TraitContainerSheet,
+	TraitModifierContainerSheet,
+	TraitModifierSheet,
+	TraitSheet,
+	WeaponSheet,
+} from "@item"
+import { CharacterSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
+import { DamageCalculator } from "./damage_calculator/damage_calculator"
 import { ActiveEffectGURPS } from "@module/effect"
-import { effectsList } from "./effect/data"
+import { ModifierList } from "./mod_list"
 
 Error.stackTraceLimit = Infinity
 
@@ -103,14 +118,14 @@ if (!(globalThis as any).GURPS) {
 	GURPS.pdf = PDFViewerSheet
 	GURPS.TokenModifierControl = new TokenModifierControl()
 	GURPS.recurseList = Static.recurseList
-	GURPS.LastActor = null
-	GURPS.LastToken = null
 	GURPS.setLastActor = LastActor.set
+	GURPS.DamageCalculator = DamageCalculator
+	GURPS.getDefaultSkills = getDefaultSkills
 }
 
 // Initialize system
 Hooks.once("init", async () => {
-	// CONFIG.debug.hooks = true;
+	// CONFIG.debug.hooks = true
 	console.log(`${SYSTEM_NAME} | Initializing ${SYSTEM_NAME}`)
 	console.log(`%c${GURPS.BANNER}`, "color:limegreen")
 	console.log(`%c${GURPS.LEGAL}`, "color:yellow")
@@ -118,20 +133,25 @@ Hooks.once("init", async () => {
 	const src = `systems/${SYSTEM_NAME}/assets/gurps4e.svg`
 	$("#logo").attr("src", src)
 	// $("#logo").attr("width", "100px");
+	//
+	CONFIG.GURPS = GURPSCONFIG
 
 	// Assign custom classes and constants hereby
-	;(CONFIG as any).GURPS = GURPSCONFIG
-	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
+	CONFIG.Item.documentClass = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
+	CONFIG.Token.documentClass = TokenDocumentGURPS
+	CONFIG.Token.objectClass = TokenGURPS
 	CONFIG.ActiveEffect.documentClass = ActiveEffectGURPS
-	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
-	CONFIG.statusEffects = effectsList
+	// @ts-ignore
+	CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
+	CONFIG.Combat.documentClass = CombatGURPS
+	CONFIG.statusEffects = StatusEffectsGURPS
+	CONFIG.Canvas.rulerClass = RulerGURPS
 
-	// @ts-ignore until v10
 	CONFIG.Dice.rolls.unshift(RollGURPS)
 
 	StaticHitLocation.init()
-	GURPS.rangeObject = new RangeGURPS()
+	SpeedProviderGURPS.init()
 
 	// Register custom system settings
 	registerSettings()
@@ -222,6 +242,11 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.note_container"),
 	})
+	Items.registerSheet(SYSTEM_NAME, WeaponSheet, {
+		types: [ItemType.MeleeWeapon, ItemType.RangedWeapon],
+		makeDefault: true,
+		label: i18n("gurps.system.sheet.weapon"),
+	})
 	Items.registerSheet(SYSTEM_NAME, StaticItemSheet, {
 		types: [ItemType.LegacyEquipment],
 		makeDefault: true,
@@ -240,13 +265,6 @@ Hooks.once("init", async () => {
 		label: i18n("gurps.system.sheet.static_character"),
 	})
 
-	// //@ts-ignore
-	// DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDFViewerSheet, {
-	// 	types: ["pdf"],
-	// 	makeDefault: true,
-	// 	label: i18n("gurps.system.sheet.pdf"),
-	// })
-
 	// @ts-ignore
 	DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDFEditorSheet, {
 		types: ["pdf"],
@@ -264,7 +282,8 @@ Hooks.once("setup", async () => {
 Hooks.once("ready", async () => {
 	// Do anything once the system is ready
 	ColorSettings.applyColors()
-	loadModifiers(GURPS)
+	loadModifiers()
+	getDefaultSkills()
 
 	// ApplyDiceCSS()
 
@@ -276,25 +295,45 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-	;(game as any).ModifierButton = new ModifierButton()
-	;(game as any).ModifierButton.render(true)
-	;(game as any).CompendiumBrowser = new CompendiumBrowser()
 
-	// Await Promise.all(
-	// 	(game as Game).actors!.map(async actor => {
-	// 		actor.prepareData()
-	// 	})
-	// )
-	// 	; (game as Game).socket?.on(`system.${SYSTEM_NAME}}`, async response => {
-	// 		console.log("receive socket")
-	// 		switch (response.type) {
-	// 			case "updateBucket":
-	// 				return GURPS.ModifierButton.render(true)
-	// 			default:
-	// 				return console.error("Unknown socket:", response.type)
-	// 		}
-	// 	})
+	// Set default user flag state
+	if (!game.user?.getFlag(SYSTEM_NAME, UserFlags.Init)) {
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, [])
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, 0)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierSticky, false)
+		game.user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	}
+	if (canvas && canvas.hud) {
+		canvas.hud.token = new TokenHUDGURPS()
+	}
+	game.ModifierButton = new ModifierButton()
+	game.ModifierButton.render(true)
+	game.ModifierList = new ModifierList()
+	game.ModifierList.render(true)
+	game.CompendiumBrowser = new CompendiumBrowser()
+
+	// Set initial LastActor values
+	GURPS.LastActor = await LastActor.get()
+	GURPS.LastToken = await LastActor.getToken()
+
+	CONFIG.Combat.initiative.decimals = 5
+	setInitiative()
+
+	game.socket?.on("system.gcsga", async (response: any) => {
+		console.log(response)
+		switch (response.type as SOCKET) {
+			case SOCKET.UPDATE_BUCKET:
+				// Ui.notifications?.info(response.users)
+				await game.ModifierList.render(true)
+				return game.ModifierButton.render(true)
+			case SOCKET.INITIATIVE_CHANGED:
+				CONFIG.Combat.initiative.formula = response.formula
+			default:
+				return console.error("Unknown socket:", response.type)
+		}
+	})
 
 	// Render modifier app after user object loaded to avoid old data
 })
@@ -315,13 +354,13 @@ Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) 
 		const browseButton = $(
 			`<button><i class='fas fa-book-open-cover'></i>${i18n("gurps.compendium_browser.button")}</button>`
 		)
-		browseButton.on("click", _event => (game as any).CompendiumBrowser.render(true))
+		browseButton.on("click", _event => game.CompendiumBrowser.render(true))
 		html.find(".directory-footer").append(browseButton)
 	}
 })
 
 Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
-	const cb = (game as any).CompendiumBrowser
+	const cb = game.CompendiumBrowser
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()
@@ -329,9 +368,6 @@ Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
 })
 
 Hooks.on("controlToken", async (...args: any[]) => {
-	/**
-	 *
-	 */
 	async function updateLastActor() {
 		GURPS.LastActor = await LastActor.get()
 		GURPS.LastToken = await LastActor.getToken()
@@ -339,7 +375,7 @@ Hooks.on("controlToken", async (...args: any[]) => {
 	if (args.length > 1) {
 		const a = args[0]?.actor
 		if (a) {
-			if (args[1]) LastActor.set(a, args[0].document)
+			if (args[1]) LastActor.set(a, args[0].actor)
 			else LastActor.clear(a)
 			updateLastActor()
 		}
@@ -347,9 +383,6 @@ Hooks.on("controlToken", async (...args: any[]) => {
 })
 
 Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
-	/**
-	 *
-	 */
 	async function updateLastActor() {
 		GURPS.LastActor = await LastActor.get()
 		GURPS.LastToken = await LastActor.getToken()
@@ -361,4 +394,16 @@ Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
 			updateLastActor()
 		}
 	}
+})
+
+Hooks.on("targetToken", async () => {
+	if (game.ModifierList) await game.ModifierList?.render(true)
+})
+Hooks.on("userConnected", async () => {
+	if (game.ModifierList) await game.ModifierList?.render(true)
+})
+
+Hooks.on("updateCombat", EffectGURPS.updateCombat)
+Hooks.on("renderTokenHUD", (_app: any, $html: JQuery<HTMLElement>, data: any) => {
+	TokenHUDGURPS.onRenderTokenHUD($html[0]!, data)
 })

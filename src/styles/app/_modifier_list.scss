@@ -1,0 +1,93 @@
+#modifier-list {
+	background: rgb(var(--color-content));
+	// background: rgba(var(--color-content), 0.6);
+	border: 1px solid rgb(var(--color-header));
+	border-radius: 5px;
+	margin: 0 5px 5px 15px;
+	padding: 0;
+	pointer-events: all;
+	opacity: 0.2;
+	transition: all 0.1s linear 0s;
+	width: fit-content;
+	position: absolute;
+	min-width: var(--players-width);
+
+	&.collapsed {
+		background: rgba(var(--color-content), 0.6);
+		opacity: 1;
+		position: relative;
+		bottom: 0;
+		margin: 0 5px 5px 15px;
+		.header {
+			background: rgba(var(--color-header), 0.6);
+		}
+	}
+
+	.collapse-toggle {
+		cursor: pointer;
+	}
+
+	&:hover,
+	&.hover {
+		opacity: 1;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 4px;
+	}
+
+	.header {
+		display: flex;
+		justify-content: center;
+		gap: 5px;
+	}
+
+	button {
+		display: flex;
+		gap: 5px;
+		border: 2px solid;
+		border-radius: 4px;
+		padding: var(--padding-standard);
+		cursor: pointer;
+		transition: all 0.1s linear 0s;
+		font-weight: bold;
+
+		&:hover {
+			box-shadow: none;
+		}
+
+		&.pos {
+			border-color: rgb(var(--color-success));
+			background-color: rgb(var(--color-success));
+			color: white;
+
+			&:hover {
+				color: rgb(var(--color-success));
+				background-color: white;
+			}
+		}
+
+		&.neg {
+			border-color: rgb(var(--color-failure));
+			background-color: rgb(var(--color-failure));
+			color: white;
+			&:hover {
+				color: rgb(var(--color-failure));
+				background-color: white;
+			}
+		}
+
+		&.zero {
+			border-color: rgb(var(--color-skill));
+			background-color: rgb(var(--color-skill));
+			color: white;
+			&:hover {
+				color: rgb(var(--color-skill));
+				background-color: white;
+			}
+		}
+	}
+}

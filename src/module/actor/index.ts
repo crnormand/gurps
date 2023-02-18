@@ -1,3 +1,3 @@
-export { BaseActorGURPS } from "./base"
-export { CharacterGURPS } from "./character"
-export { StaticCharacterGURPS } from "./static_character"
+export * from "./base"
+export * from "./character"
+export * from "./static_character"

@@ -1,6 +1,7 @@
-import { Context } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs"
+import { Context } from "types/foundry/common/abstract/document.mjs"
 
-export interface EntryPageConstructorContextGURPS extends Context<JournalEntry> {
+// @ts-ignore
+export interface EntryPageConstructorContextGURPS extends Context<JournalEntryPage> {
 	gurps?: {
 		ready?: boolean
 	}

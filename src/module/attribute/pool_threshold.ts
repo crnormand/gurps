@@ -1,13 +1,5 @@
 import { evaluateToNumber, VariableResolver } from "@util"
-
-export type ThresholdOp = "halve_move" | "halve_dodge" | "halve_st"
-
-export interface PoolThresholdDef {
-	state: string
-	explanation?: string
-	expression?: string
-	ops?: ThresholdOp[]
-}
+import { PoolThresholdDef, ThresholdOp } from "./data"
 
 export class PoolThreshold {
 	state = ""

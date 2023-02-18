@@ -27,7 +27,7 @@ export class PrereqList extends BasePrereq {
 			const list = (data as PrereqList).prereqs
 			this.prereqs = []
 			for (const e of list) {
-				const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[e.type as PrereqType]
+				const PrereqConstructor = CONFIG.GURPS.Prereq.classes[e.type as PrereqType]
 				if (PrereqConstructor) this.prereqs.push(new PrereqConstructor(e as any, context))
 			}
 		}
@@ -42,8 +42,8 @@ export class PrereqList extends BasePrereq {
 		}
 	}
 
-	// Override satisfied(character: CharacterGURPS, exclude: any, buffer: TooltipGURPS, prefix: string): boolean {
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	// Override satisfied(character: CharacterGURPS, exclude: any, buffer: TooltipGURPS: string): boolean {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		if (this.when_tl?.compare !== "none") {
 			let tl = extractTechLevel(actor.profile?.tech_level)
 			if (tl < 0) tl = 0
@@ -54,14 +54,16 @@ export class PrereqList extends BasePrereq {
 		const local = new TooltipGURPS()
 		if (this.prereqs.length)
 			for (const p of this.prereqs) {
-				const ps = p.satisfied(actor, exclude, local, prefix)
+				// @ts-ignore
+				const ps = p.satisfied(actor, exclude, local)
 				if (ps[0]) count++
 				eqpPenalty = eqpPenalty || ps[1]
 			}
 		const satisfied = count === this.prereqs.length || (!this.all && count > 0)
 		if (!satisfied) {
 			if (this.all) tooltip.push(i18n("gurps.prereqs.requires_all"))
-			else tooltip.push(i18n("gurps.prereqs.requires_all"))
+			else tooltip.push(i18n("gurps.prereqs.requires_one"))
+
 			tooltip.push(local)
 		}
 		return [satisfied, eqpPenalty]

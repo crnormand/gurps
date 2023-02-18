@@ -2,22 +2,4 @@
      class="{{cssClass}} gurps"
      autocomplete="off">
     <input class="searchbar" type="text" value="{{value}}" />
-    {{#if applied_mods }}
-        <div id="applied-mods"
-             style="height: calc(24px * {{applied_mods.length}} + 24px)">
-            <div class="title">{{localize "gurps.system.modifier_stack.active_title"}}</div>
-            {{#each applied_mods }}
-                <div class="click-delete" data-index="{{@index}}">
-                    {{signed this.modifier}}:
-                    {{this.name}}
-                    <i class="gcs-trash"></i>
-                </div>
-            {{/each}}
-        </div>
-    {{else}}
-        <div id="applied-mods" style="height: 48px">
-            <div class="title">{{localize "gurps.system.modifier_stack.active_title"}}</div>
-            <div>{{localize "gurps.system.modifier_stack.no_mods"}}</div>
-        </div>
-    {{/if}}
 </div>

@@ -1,18 +1,15 @@
 import { CharacterGURPS } from "@actor"
-import { Encumbrance } from "@actor/character/data"
 import { StaticSpell } from "@actor/static_character/components"
 import {
 	StaticCharacterSystemData,
 	StaticResourceTracker,
 	StaticThresholdComparison,
 } from "@actor/static_character/data"
-import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
-import { SETTINGS, Study, SYSTEM_NAME } from "@module/data"
+import { ItemType, Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import * as Static from "./static"
 import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
-import { Attribute } from "@module/attribute"
 
 /**
  *
@@ -156,15 +153,16 @@ export function registerHandlebarsHelpers() {
 		}
 	)
 
-	Handlebars.registerHelper("spellValues", function (i: SpellGURPS): string {
+	Handlebars.registerHelper("spellValues", function (i: Item): string {
+		const sp = i as any
 		const values = {
-			resist: i.system.resist,
-			spell_class: i.system.spell_class,
-			casting_cost: i.system.casting_cost,
-			maintenance_cost: i.system.maintenance_cost,
-			casting_time: i.system.casting_time,
-			duration: i.system.duration,
-			college: i.system.college,
+			resist: sp.system.resist,
+			spell_class: sp.system.spell_class,
+			casting_cost: sp.system.casting_cost,
+			maintenance_cost: sp.system.maintenance_cost,
+			casting_time: sp.system.casting_time,
+			duration: sp.system.duration,
+			college: sp.system.college,
 		}
 		const list = []
 		for (const [k, v] of Object.entries(values)) {
@@ -349,10 +347,9 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("inCombat", function (data) {
-		if (data.actor && (game as Game).combats?.active) {
-			return (game as Game).combats?.active?.combatants.contents
-				.map(it => it.actor?.id)
-				.filter(e => !!e)
+		if (data.actor && game.combats?.active) {
+			return game.combats?.active?.combatants.contents
+				.map((it: Combatant) => it.actor?.id)
 				.includes(data?.actor?.id)
 		}
 		return false
@@ -449,9 +446,18 @@ export function registerHandlebarsHelpers() {
 		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
 	})
 
-	Handlebars.registerHelper("effective", function (a: Attribute): string {
-		if (a.effective > a.current) return "pos"
-		if (a.effective < a.current) return "neg"
+	Handlebars.registerHelper("effective", function (a: Item | any): string {
+		if (a instanceof Item) {
+			if (a.type === ItemType.Skill) {
+				const sk = a as any
+				if (sk.effectiveLevel > sk.level.level) return "pos"
+				if (sk.effectiveLevel < sk.level.level) return "neg"
+			}
+		}
+		if (a.effective && a.current) {
+			if (a.effective > a.current) return "pos"
+			if (a.effective < a.current) return "neg"
+		}
 		return ""
 	})
 }

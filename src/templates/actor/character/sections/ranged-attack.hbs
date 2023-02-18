@@ -1,22 +1,20 @@
-<div class="desc">
+<div class="item desc" data-uuid="{{this.uuid}}">
 	<div class="name">
-		{{this.name}}
+		{{this.itemName}}
 	</div>
 	{{>actor/character/sections/item-notes}}
 </div>
-<div class="usage">{{this.usage}}</div>
-<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="attack" class="level rollable">
-	{{this.level}}
-</div>
-<div data-modifier="{{this.accuracy}}" data-comment="{{localize 'gurps.weapon.accuracy_for' name=this.name}}"
+<div data-uuid="{{this.uuid}}" data-type="attack" class="usage rollable">{{this.usage}}</div>
+<div data-uuid="{{this.uuid}}" data-type="attack" class="level rollable">{{this.level}}</div>
+<div data-modifier="{{this.accuracy}}" data-comment="{{localize 'gurps.weapon.accuracy_for' name=this.itemName}}"
 	data-type="modifier" class="accuracy rollable">{{signed this.accuracy}}</div>
-<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="damage" class="damage rollable">
+<div data-uuid="{{this.uuid}}" data-type="damage" class="damage rollable">
 	{{this.damage}}
 </div>
 <div class="range">{{this.range}}</div>
 <div class="rate-of-fire">{{this.rate_of_fire}}</div>
 <div class="shots">{{this.shots}}</div>
-<div data-modifier="{{this.bulk}}" data-comment="{{localize 'gurps.weapon.bulk_for' name=this.name}}"
+<div data-modifier="{{this.bulk}}" data-comment="{{localize 'gurps.weapon.bulk_for' name=this.itemName}}"
 	data-type="modifier" class="bulk rollable">{{this.bulk}}</div>
 <div class="recoil">{{this.recoil}}</div>
 <div class="st">{{this.strength}}</div>

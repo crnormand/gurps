@@ -90,8 +90,6 @@ class DamageRollAdapter implements DamageRoll {
 
 	private _locationId: string
 
-	private _game = game as Game
-
 	constructor(payload: DamagePayload) {
 		this._payload = payload
 
@@ -119,7 +117,7 @@ class DamageRollAdapter implements DamageRoll {
 			case DefaultHitLocations.Default:
 				// Set to default value from world settings.
 				this._locationId =
-					(this._game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"
+					(game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string) ?? "torso"
 				break
 		}
 
