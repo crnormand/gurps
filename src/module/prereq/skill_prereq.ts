@@ -19,7 +19,7 @@ export class SkillPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let satisfied = false
 		let tech_level = ""
 		if (exclude.type === ItemType.Skill) tech_level = exclude.techLevel
@@ -36,7 +36,7 @@ export class SkillPrereq extends BasePrereq {
 		}
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(prefix)
+			// Tooltip.push(prefix)
 			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
 			tooltip.push(i18n("gurps.prereqs.skill.name"))
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.name?.compare}`))

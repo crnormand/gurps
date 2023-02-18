@@ -56,9 +56,9 @@ class RitualMagicSpellGURPS extends ItemGCS {
 		return points
 	}
 
-	satisfied(tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(tooltip: TooltipGURPS): boolean {
 		if (this.college.length === 0) {
-			tooltip.push(prefix)
+			// Tooltip.push(prefix)
 			tooltip.push("gurps.ritual_magic_spell.must_assign_college")
 			return false
 		}
@@ -66,7 +66,7 @@ class RitualMagicSpellGURPS extends ItemGCS {
 			if (this.actor?.bestSkillNamed(this.baseSkill, c, false, null)) return true
 		}
 		if (this.actor?.bestSkillNamed(this.baseSkill, "", false, null)) return true
-		tooltip.push(prefix)
+		// Tooltip.push(prefix)
 		tooltip.push("gurps.prereqs.ritual_magic.skill.name")
 		tooltip.push(this.baseSkill)
 		tooltip.push(` (${this.college[0]})`)

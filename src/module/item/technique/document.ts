@@ -63,12 +63,12 @@ class TechniqueGURPS extends ItemGCS {
 		return points
 	}
 
-	satisfied(tooltip: TooltipGURPS, prefix: string): boolean {
+	satisfied(tooltip: TooltipGURPS): boolean {
 		if (this.default.type !== "skill") return true
 		const sk = this.actor?.bestSkillNamed(this.default.name ?? "", this.default.specialization ?? "", false, null)
 		const satisfied = (sk && (sk instanceof TechniqueGURPS || sk.points > 0)) || false
 		if (!satisfied) {
-			tooltip.push(prefix)
+			// Tooltip.push(prefix)
 			if (!sk) tooltip.push("gurps.prereqs.technique.skill")
 			else tooltip.push("gurps.prereqs.technique.point")
 			tooltip.push(this.default.fullName(this.actor!))

@@ -201,21 +201,20 @@ class BaseActorGURPS extends Actor {
 	}
 
 	async changeManeuver(id: ManeuverID | "none"): Promise<ConditionGURPS | null> {
-		if ([ManeuverID.BLANK_1, ManeuverID.BLANK_2].includes(id as any)) return null
-		if (id === "none") return this.resetManeuvers()
 		const existing = this.conditions.find(e => e.cid === id)
+		if (existing) return null
+		if (id === "none") return this.resetManeuvers()
+		if ([ManeuverID.BLANK_1, ManeuverID.BLANK_2].includes(id as any)) return null
 		const maneuvers = this.conditions.filter(e => Object.values(ManeuverID).includes(e.cid as any))
-		if (existing && maneuvers.includes(existing)) maneuvers.splice(maneuvers.indexOf(existing), 1)
-		await this.deleteEmbeddedDocuments(
-			"Item",
-			maneuvers.map(e => e.id!)
-		)
-		if (!existing) {
-			const newCondition = duplicate(ConditionGURPS.getData(id))
-			const items = (await this.createEmbeddedDocuments("Item", [newCondition])) as ConditionGURPS[]
+		const newCondition = duplicate(ConditionGURPS.getData(id))
+		if (maneuvers.length) {
+			const items = (await this.updateEmbeddedDocuments("Item", [
+				{ _id: maneuvers[0]._id, ...newCondition },
+			])) as unknown as ConditionGURPS[]
 			return items[0]
 		}
-		return null
+		const items = (await this.createEmbeddedDocuments("Item", [newCondition])) as ConditionGURPS[]
+		return items[0]
 	}
 
 	async resetManeuvers(): Promise<null> {
@@ -229,17 +228,26 @@ class BaseActorGURPS extends Actor {
 
 	async changePosture(id: ConditionID | "standing"): Promise<ConditionGURPS | null> {
 		const existing = this.conditions.find(e => e.cid === id)
+		if (existing) return null
+		if (id === "standing") return this.resetPosture()
 		const postures = this.conditions.filter(e => Postures.includes(e.cid as any))
-		if (existing && postures.includes(existing)) postures.splice(postures.indexOf(existing), 1)
-		await this.deleteEmbeddedDocuments(
-			"Item",
-			postures.map(e => e.id!)
-		)
-		if (!existing && id !== "standing") {
-			const newCondition = duplicate(ConditionGURPS.getData(id))
-			const items = (await this.createEmbeddedDocuments("Item", [newCondition])) as ConditionGURPS[]
+		const newCondition = duplicate(ConditionGURPS.getData(id))
+		if (postures.length) {
+			const items = this.updateEmbeddedDocuments("Item", [
+				{ _id: postures[0]._id, ...newCondition },
+			]) as unknown as ConditionGURPS[]
 			return items[0]
 		}
+		const items = (await this.createEmbeddedDocuments("Item", [newCondition])) as ConditionGURPS[]
+		return items[0]
+	}
+
+	async resetPosture(): Promise<null> {
+		const maneuvers = this.conditions.filter(e => Object.values(Postures).includes(e.cid as any))
+		await this.deleteEmbeddedDocuments(
+			"Item",
+			maneuvers.map(e => e.id!)
+		)
 		return null
 	}
 }

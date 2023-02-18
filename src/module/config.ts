@@ -284,6 +284,10 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			true: "gurps.select.has.true",
 			false: "gurps.select.has.false",
 		},
+		all: {
+			true: "gurps.select.all.true",
+			false: "gurps.select.all.false",
+		},
 		prereqs: {
 			trait_prereq: "gurps.select.prereqs.trait_prereq",
 			attribute_prereq: "gurps.select.prereqs.attribute_prereq",

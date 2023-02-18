@@ -80,6 +80,14 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		}
 	}
 
+	get effectiveMove() {
+		return this.system.currentmove
+	}
+
+	get effectiveSprint() {
+		return this.system.currentmove * 1.2
+	}
+
 	get trackers(): StaticResourceTracker[] {
 		/**
 		 *

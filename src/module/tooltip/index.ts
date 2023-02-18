@@ -8,14 +8,13 @@ export class TooltipGURPS {
 		return this.list.length
 	}
 
-	toString(nl = "\n"): string {
-		const tab = "\t"
+	toString(nl = "<br>", tab = 1): string {
 		let final = ""
 		for (const i of this.list) {
-			if (i instanceof TooltipGURPS) final += i.toString(nl + tab)
-			else final += nl + i
+			if (i instanceof TooltipGURPS) final += i.toString(nl, tab + 1) + nl
+			else final += i
 		}
-		return final
+		return "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(tab) + final
 	}
 
 	get length(): number {

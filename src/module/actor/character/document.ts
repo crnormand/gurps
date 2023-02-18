@@ -69,6 +69,8 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	features: featureMap
 
+	// MoveData?: CharacterMove
+
 	constructor(data: CharacterSource, context: ActorConstructorContextGURPS = {}) {
 		super(data, context)
 		if (this.system.attributes) this.attributes = this.getAttributes()
@@ -84,6 +86,11 @@ class CharacterGURPS extends BaseActorGURPS {
 			weaponBonuses: [],
 			thresholdBonuses: [],
 		}
+		// This.moveData ??= {
+		// 	maneuver: "none",
+		// 	posture: "standing",
+		// 	type: "ground"
+		// }
 	}
 
 	SizeModBonus = 0
@@ -187,6 +194,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
+		console.log(data, context)
 		if (context?.noPrepare) this.noPrepare = true
 		this.updateAttributes(data)
 		this.checkImport(data)
@@ -356,6 +364,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get effectiveMove() {
 		return this.eMove(this.encumbranceLevel(true))
+	}
+
+	get effectiveSprint() {
+		return this.currentMove * 1.2
 	}
 
 	get currentDodge() {
@@ -1041,6 +1053,24 @@ class CharacterGURPS extends BaseActorGURPS {
 		// }
 	}
 
+	// PrepareDerivedData(): void {
+	// 	super.prepareDerivedData()
+	// 	let maneuver: any = "none"
+	// 	console.log(Object.values(ManeuverID))
+	// 	const currentManeuver = this.conditions.find(e => Object.values(ManeuverID).includes(e as any))
+	// 	console.log(currentManeuver)
+	// 	if (currentManeuver) maneuver = currentManeuver.cid
+	// 	let posture: any = "standing"
+	// 	const currentPosture = this.conditions.find(e => Postures.includes(e.cid as any))
+	// 	if (currentPosture) posture = currentPosture.cid
+	// 	const type = "ground"
+	// 	this.moveData = {
+	// 		maneuver,
+	// 		posture,
+	// 		type
+	// 	}
+	// }
+
 	processFeatures() {
 		this.features = {
 			attributeBonuses: [],
@@ -1174,13 +1204,12 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	processPrereqs(): void {
-		const prefix = "\n● "
-		const not_met = i18n("gurps.prerqs.not_met")
+		const not_met = i18n("gurps.prereqs.not_met")
 		for (const t of this.traits.filter(e => e instanceof TraitGURPS)) {
 			t.unsatisfied_reason = ""
 			if (t instanceof TraitGURPS && !t.prereqsEmpty) {
 				const tooltip = new TooltipGURPS()
-				if (!t.prereqs.satisfied(this, t, tooltip, prefix)[0]) {
+				if (!t.prereqs.satisfied(this, t, tooltip)[0]) {
 					t.unsatisfied_reason = not_met + tooltip.toString()
 				}
 			}
@@ -1191,8 +1220,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			const tooltip = new TooltipGURPS()
 			let satisfied = true
 			let eqpPenalty = false
-			if (!k.prereqsEmpty) [satisfied, eqpPenalty] = k.prereqs.satisfied(this, k, tooltip, prefix)
-			if (satisfied && k instanceof TechniqueGURPS) satisfied = k.satisfied(tooltip, prefix)
+			if (!k.prereqsEmpty) [satisfied, eqpPenalty] = k.prereqs.satisfied(this, k, tooltip)
+			if (satisfied && k instanceof TechniqueGURPS) satisfied = k.satisfied(tooltip)
 			if (eqpPenalty) {
 				const penalty = new SkillBonus({
 					type: FeatureType.SkillBonus,
@@ -1221,8 +1250,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			const tooltip = new TooltipGURPS()
 			let satisfied = true
 			let eqpPenalty = false
-			if (!b.prereqsEmpty) [satisfied, eqpPenalty] = b.prereqs.satisfied(this, b, tooltip, prefix)
-			if (satisfied && b instanceof RitualMagicSpellGURPS) satisfied = b.satisfied(tooltip, prefix)
+			if (!b.prereqsEmpty) [satisfied, eqpPenalty] = b.prereqs.satisfied(this, b, tooltip)
+			if (satisfied && b instanceof RitualMagicSpellGURPS) satisfied = b.satisfied(tooltip)
 			if (eqpPenalty) {
 				const penalty = new SkillBonus(SkillBonus.defaults)
 				penalty.name!.qualifier = b.name!
@@ -1240,7 +1269,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			e.unsatisfied_reason = ""
 			if (!e.prereqsEmpty) {
 				const tooltip = new TooltipGURPS()
-				if (!e.prereqs.satisfied(this, e, tooltip, prefix)) {
+				if (!e.prereqs.satisfied(this, e, tooltip)) {
 					e.unsatisfied_reason = not_met + tooltip.toString()
 				}
 			}

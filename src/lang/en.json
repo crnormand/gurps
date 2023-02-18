@@ -141,7 +141,7 @@
 				"melee_crouching": "to hit with melee combat (Crouching)",
 				"ranged_crouching": "to hit with ranged combat (Crouching/Kneeling)",
 				"hit_ranged_crouching": "to be hit with ranged combat (Crouching/Kneeling)",
-				"melee_kneeling": "to hit with mnelee combat (Kneeling/Sitting)",
+				"melee_kneeling": "to hit with melee combat (Kneeling/Sitting)",
 				"defense_kneeling": "to active defenses (Kneeling/Sitting)"
 			},
 			"task_difficulty": {
@@ -654,9 +654,6 @@
 			"min": "Min",
 			"min_enforced": "Enforce",
 			"current": "Current"
-		},
-		"prereq": {
-			"header": "Prerequisites"
 		},
 		"feature": {
 			"header": "Features",
@@ -1410,6 +1407,38 @@
 		},
 		"notification": {
 			"no_default_skill": "Cannot Roll: No applicable skill defaults found."
+		},
+		"prereqs": {
+			"header": "Prerequisites",
+			"not_met": "Prerequisites have not been met:<br>",
+			"requires_all": "Requires all of:<br>",
+			"requires_one": "Requires at least one of:<br>",
+			"has": {
+				"true": "- Has",
+				"false": "- Does not have"
+			},
+			"trait": {
+				"name": " a trait whose name ",
+				"notes": ", notes ",
+				"level": " and level "
+			},
+			"attribute": {
+				"which": " which ",
+				"plus": "+"
+			},
+			"criteria": {
+				"none": "is anything ",
+				"is": "is ",
+				"is_not": "is not ",
+				"contains": "contains ",
+				"does_not_contain": "does not contain ",
+				"starts_with": "starts with ",
+				"does_not_start_with": "does not start with ",
+				"ends_with": "ends with ",
+				"does_not_end_with": "does not end with ",
+				"at_least": "is at least ",
+				"at_most": "is at most "
+			}
 		}
 	}
 }
