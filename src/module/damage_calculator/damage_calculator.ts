@@ -1,4 +1,3 @@
-import { HitLocation } from "@actor/character/hit_location"
 import { RollType } from "../data"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
 import {
@@ -358,13 +357,10 @@ class DamageCalculator {
 	}
 
 	get rawDR(): number {
-		console.log(this.target)
+		const location = this.target.hitLocationTable.locations.find(it => it.id === this.damageRoll.locationId)
 		return this._rawDROverride
 			? this._rawDROverride
-			: HitLocationUtil.getHitLocationDR(
-					HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
-					this.damageRoll.damageType
-			  )
+			: HitLocationUtil.getHitLocationDR(location, this.damageRoll.damageType)
 	}
 
 	private get _isLargeAreaInjury() {
@@ -478,9 +474,9 @@ class DamageCalculator {
 		return this.damageRoll.damageType === DamageType.burn && this.damageRoll.damageModifier === "tbb"
 	}
 
-	private get _defenderHitLocations(): Array<HitLocation> {
-		return this.target.hitLocationTable.locations
-	}
+	// private get _defenderHitLocations(): Array<HitLocation> {
+	// 	return this.target.hitLocationTable.locations
+	// }
 }
 
 export { DamageCalculator, Head, Limb, Extremity }

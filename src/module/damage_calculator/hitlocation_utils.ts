@@ -1,12 +1,31 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { convertRollStringToArrayOfInt } from "@util/static"
 import { DamageType } from "./damage_type"
 
 export type HitLocationRollResult = {
 	location: HitLocation | undefined
 	roll: Roll
+}
+
+/**
+ *
+ * @param text
+ */
+function convertRollStringToArrayOfInt(text: string) {
+	let elements = text.split("-")
+	let range = elements.map(it => parseInt(it))
+
+	if (range.length === 0) return []
+
+	for (let i = 0; i < range.length; i++) {
+		if (typeof range[i] === "undefined" || isNaN(range[i])) return []
+	}
+
+	let results = []
+	for (let i = range[0]; i <= range[range.length - 1]; i++) results.push(i)
+
+	return results
 }
 
 export const HitLocationUtil = {
@@ -16,7 +35,9 @@ export const HitLocationUtil = {
 
 	getHitLocationDR: function (location: HitLocation | undefined, damageType: DamageType): number {
 		if (!location) return 0
-		return location.DR.get(damageType) ?? location.DR.get(gid.All) ?? 0
+		return location.calc.dr[damageType] ?? location.calc.dr.all ?? 0
+		// TODO Remove until I can figure out what to do:
+		//    location.DR.get(damageType) ?? location.DR.get(gid.All) ?? 0
 	},
 
 	isFlexibleArmor: function (location: HitLocation | undefined): boolean {
