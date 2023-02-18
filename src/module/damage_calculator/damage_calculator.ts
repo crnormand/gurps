@@ -357,13 +357,10 @@ class DamageCalculator {
 	}
 
 	get rawDR(): number {
-		console.log(this.target)
+		const location = this.target.hitLocationTable.locations.find(it => it.id === this.damageRoll.locationId)
 		return this._rawDROverride
 			? this._rawDROverride
-			: HitLocationUtil.getHitLocationDR(
-					HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId),
-					this.damageRoll.damageType
-			  )
+			: HitLocationUtil.getHitLocationDR(location, this.damageRoll.damageType)
 	}
 
 	private get _isLargeAreaInjury() {
