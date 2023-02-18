@@ -34,7 +34,6 @@ import Document, { DocumentModificationOptions, Metadata } from "types/foundry/c
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
 
-// @ts-ignore
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
@@ -43,6 +42,7 @@ class BaseActorGURPS extends Actor {
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = CONFIG.GURPS.Actor.documentClasses[data.type]
+			// eslint-disable-next-line no-constructor-return
 			if (ActorConstructor) return new ActorConstructor(data, context)
 			throw Error(`Invalid Actor Type "${data.type}"`)
 		}
@@ -378,7 +378,6 @@ class TraitModifierAdapter implements TargetTraitModifier {
 	}
 }
 
-// @ts-ignore
 interface BaseActorGURPS extends Actor {
 	flags: ActorFlagsGURPS
 	noPrepare: boolean

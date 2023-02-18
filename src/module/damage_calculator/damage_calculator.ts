@@ -474,7 +474,7 @@ class DamageCalculator {
 		return this.damageRoll.damageType === DamageType.burn && this.damageRoll.damageModifier === "tbb"
 	}
 
-	// private get _defenderHitLocations(): Array<HitLocation> {
+	// Private get _defenderHitLocations(): Array<HitLocation> {
 	// 	return this.target.hitLocationTable.locations
 	// }
 }

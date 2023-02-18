@@ -36,12 +36,12 @@ export class DamageChat {
 	 * object.
 	 */
 	static async renderChatMessage(app: ChatMessage, html: JQuery<HTMLElement>, msg: any) {
-		if (!html.find(".message-roll.damage").length) return true
+		if (!html.find(".dice-roll.damage").length) return true
 
 		let transfer = JSON.parse(DamageChat.getTransferFlag(app))
 		let payload = transfer.payload as DamagePayload
 
-		const dragSections = html.find(".result")
+		const dragSections = html.find(".dice-result")
 		for (const section of dragSections) {
 			// Section.setAttribute("draggable", "true")
 			section.addEventListener("dragstart", DamageChat._dragStart.bind(this, payload))
