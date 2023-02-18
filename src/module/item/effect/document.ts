@@ -8,7 +8,7 @@ import { ItemDataBaseProperties, ItemDataConstructorData } from "types/foundry/c
 import { CombatData } from "types/foundry/common/data/module.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { PropertiesToSource } from "types/types/helperTypes"
-import { DurationType, EffectSystemData } from "./data"
+import { DurationType, EffectModificationOptions, EffectSystemData } from "./data"
 
 class EffectGURPS extends BaseItemGURPS {
 	_statusId: string | null = null
@@ -124,7 +124,7 @@ class EffectGURPS extends BaseItemGURPS {
 		}
 	}
 
-	protected _displayScrollingStatus(enabled: boolean) {
+	_displayScrollingStatus(enabled: boolean) {
 		const actor = this.parent
 		const tokens = actor.isToken ? [actor.token?.object] : actor.getActiveTokens(true)
 		let label = `${enabled ? "+" : "-"} ${this.name}`
@@ -167,10 +167,6 @@ class EffectGURPS extends BaseItemGURPS {
 
 interface EffectGURPS extends BaseItemGURPS {
 	readonly system: EffectSystemData
-}
-
-interface EffectModificationOptions extends DocumentModificationOptions {
-	previousLevel: number
 }
 
 export { EffectGURPS }

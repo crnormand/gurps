@@ -18,7 +18,7 @@
 		</div>
 		<select name="{{path}}.all" data-dtype="Boolean">
 			{{#select this.all}}
-			{{#each config.select.has as |v k|}}
+			{{#each config.select.all as |v k|}}
 			<option value="{{k}}">{{localize v}}</option>
 			{{/each}}
 			{{/select}}

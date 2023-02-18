@@ -1,6 +1,7 @@
 import { BaseItemSourceGURPS } from "@item/base/data"
 import { FeatureConstructor } from "@module/config"
 import { ItemType, RollModifier } from "@module/data"
+import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 
 export type EffectSource = BaseItemSourceGURPS<ItemType.Effect, EffectSystemData>
 
@@ -40,4 +41,9 @@ export interface EffectSystemData {
 		turns?: number
 		combat?: string | null
 	}
+}
+
+export interface EffectModificationOptions extends DocumentModificationOptions {
+	previousLevel: number
+	previousID?: any
 }

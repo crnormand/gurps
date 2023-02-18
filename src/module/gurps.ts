@@ -53,6 +53,7 @@ import { PDFEditorSheet } from "./pdf/edit"
 import { ActorType, ItemType, SOCKET, SYSTEM_NAME, UserFlags } from "./data"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
+import * as SpeedProviderGURPS from "./modules/drag_ruler"
 import { ColorSettings } from "./settings/colors"
 import { DamageChat } from "./damage_calculator/damage_chat_message"
 import { RollGURPS } from "@module/roll"
@@ -150,6 +151,7 @@ Hooks.once("init", async () => {
 	CONFIG.Dice.rolls.unshift(RollGURPS)
 
 	StaticHitLocation.init()
+	SpeedProviderGURPS.init()
 
 	// Register custom system settings
 	registerSettings()

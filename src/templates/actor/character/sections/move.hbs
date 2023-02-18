@@ -3,7 +3,7 @@
 	<div class="label">{{localize "gurps.character.move.maneuver"}}</div>
 	<div class="field">
 		<select class="move-select" data-name="maneuver">
-			{{#select system.move.maneuver}}
+			{{#select moveData.maneuver}}
 				{{#each maneuvers as |v k|}}
 					<option value="{{k}}">{{localize v}}</option>
 				{{/each}}
@@ -14,7 +14,7 @@
 	<div class="label">{{localize "gurps.character.move.posture"}}</div>
 	<div class="field">
 		<select class="move-select" data-name="posture">
-			{{#select system.move.posture}}
+			{{#select moveData.posture}}
 				{{#each postures as |v k|}}
 					<option value="{{k}}">{{localize v}}</option>
 				{{/each}}
@@ -25,7 +25,7 @@
 	<div class="label">{{localize "gurps.character.move.type"}}</div>
 	<div class="field">
 		<select class="move-select" data-name="move">
-			{{#select system.move.type}}
+			{{#select moveData.type}}
 				{{#each move_types as |v k|}}
 					<option value="{{k}}">{{localize v}}</option>
 				{{/each}}

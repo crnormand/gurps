@@ -19,14 +19,14 @@ export class AttributePrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(character: CharacterGURPS, _: any, tooltip: TooltipGURPS, prefix: string): [boolean, boolean] {
+	satisfied(character: CharacterGURPS, _: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let value = character.resolveAttributeCurrent(this.which)
 		if (this.combined_with !== "") value += character.resolveAttributeCurrent(this.combined_with)
 		let satisfied = numberCompare(value, this.qualifier)
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(prefix)
-			tooltip.push(i18n(`gurps.prerqs.has.${this.has}`))
+			// Tooltip.push(prefix)
+			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
 			tooltip.push(" ")
 			tooltip.push(character.resolveAttributeName(this.which))
 			if (this.combined_with !== "") {

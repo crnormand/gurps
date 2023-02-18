@@ -64,6 +64,7 @@ export const Postures = [
 	ConditionID.PostureSit,
 	ConditionID.PostureKneel,
 	ConditionID.PostureProne,
+	ConditionID.PostureCrawl,
 ]
 
 export enum ManeuverID {

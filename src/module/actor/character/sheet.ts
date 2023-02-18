@@ -2,9 +2,11 @@ import { ActorSheetGURPS } from "@actor/base"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ManeuverID,
 	MeleeWeaponGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
+	Postures,
 	RangedWeaponGURPS,
 	RitualMagicSpellGURPS,
 	SkillContainerGURPS,
@@ -25,7 +27,7 @@ import { RollGURPS } from "@module/roll"
 import { dollarFormat, i18n } from "@util"
 import { weightFormat } from "@util/measure"
 import { CharacterSheetConfig } from "./config_sheet"
-import { Encumbrance } from "./data"
+import { CharacterMove, Encumbrance } from "./data"
 import { CharacterGURPS } from "./document"
 import { PointRecordSheet } from "./points_sheet"
 
@@ -46,12 +48,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	protected _onDrop(event: DragEvent): void {
-		// Console.log(event)
 		super._onDrop(event)
 	}
 
 	protected async _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
 		// Edit total points when unspent points are edited
+
 		if (Object.keys(formData).includes("actor.unspentPoints")) {
 			formData["system.total_points"] = (formData["actor.unspentPoints"] as number) + this.actor.spentPoints
 			delete formData["actor.unspentPoints"]
@@ -92,10 +94,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				formData["system.resource_trackers"] = resource_trackers
 				delete formData[i]
 			}
-			if (i === "system.move.posture")
-				if (getProperty(this.actor, i) !== formData[i]) this.actor.changePosture(formData[i] as any)
-			if (i === "system.move.maneuver")
-				if (getProperty(this.actor, i) !== formData[i]) this.actor.changeManeuver(formData[i] as any)
+			// If (i === "system.move.posture")
+			// 	if (getProperty(this.actor, i) !== formData[i]) this.actor.changePosture(formData[i] as any)
+			// if (i === "system.move.maneuver")
+			// 	if (getProperty(this.actor, i) !== formData[i]) this.actor.changeManeuver(formData[i] as any)
 		}
 		return super._updateObject(event, formData)
 	}
@@ -128,6 +130,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
+		event.preventDefault()
+		event.stopPropagation()
 		const element = $(event.currentTarget)
 		const type = element.data("name")
 		switch (type) {
@@ -430,7 +434,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
 		const resource_trackers = Array.from(this.actor.resource_trackers.values())
 		const encumbrance = this.prepareEncumbrance()
-		const lifts = this.prepareLifts()
+		const lifting = this.prepareLifts()
+		const moveData = this.prepareMoveData()
 		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)
 		const hit_locations = this.actor.HitLocations.map(e => {
 			return {
@@ -445,21 +450,22 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			...super.getData(options),
 			...{
 				system: actorData.system,
-				items: items,
+				items,
 				settings: (actorData.system as any).settings,
 				editing: this.actor.editing,
-				primary_attributes: primary_attributes,
-				secondary_attributes: secondary_attributes,
-				point_pools: point_pools,
-				resource_trackers: resource_trackers,
-				encumbrance: encumbrance,
-				lifting: lifts,
+				primary_attributes,
+				secondary_attributes,
+				point_pools,
+				resource_trackers,
+				encumbrance,
+				lifting,
+				moveData,
 				current_year: new Date().getFullYear(),
 				maneuvers: CONFIG.GURPS.select.maneuvers,
 				postures: CONFIG.GURPS.select.postures,
 				move_types: CONFIG.GURPS.select.move_types,
-				overencumbered: overencumbered,
-				hit_locations: hit_locations,
+				overencumbered,
+				hit_locations,
 			},
 		}
 		this.prepareItems(sheetData)
@@ -510,6 +516,22 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			shift_slightly: weightFormat(this.actor.shiftSlightly, this.actor.weightUnits),
 		}
 		return lifts
+	}
+
+	prepareMoveData(): CharacterMove {
+		let maneuver: any = "none"
+		const currentManeuver = this.actor.conditions.find(e => Object.values(ManeuverID).includes(e.cid as any))
+
+		if (currentManeuver) maneuver = currentManeuver.cid
+		let posture: any = "standing"
+		const currentPosture = this.actor.conditions.find(e => Postures.includes(e.cid as any))
+		if (currentPosture) posture = currentPosture.cid
+		const type = "ground"
+		return {
+			maneuver,
+			posture,
+			type,
+		}
 	}
 
 	prepareItems(data: any) {

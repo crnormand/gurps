@@ -1,6 +1,9 @@
-import { DurationType, EffectGURPS } from "@item/effect"
+import { DurationType, EffectGURPS, EffectModificationOptions } from "@item/effect"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { i18n } from "@util"
+import { ItemDataBaseProperties, ItemDataConstructorData } from "types/foundry/common/data/data.mjs/itemData"
+import { BaseUser } from "types/foundry/common/documents.mjs"
+import { PropertiesToSource } from "types/types/helperTypes"
 import { ConditionID, ConditionSource, ConditionSystemData, ManeuverID } from "./data"
 import { getConditionList } from "./list"
 import { getManeuverList } from "./maneuver"
@@ -32,6 +35,29 @@ class ConditionGURPS extends EffectGURPS {
 				startTime: 0,
 				combat: null,
 			},
+		}
+	}
+
+	protected _preUpdate(
+		changed: DeepPartial<ItemDataConstructorData>,
+		options: EffectModificationOptions,
+		user: BaseUser
+	): Promise<void> {
+		options.previousID = this.cid
+		if ((changed as any).system.id !== this.cid) this._displayScrollingStatus(false)
+		return super._preUpdate(changed, options, user)
+	}
+
+	protected _onUpdate(
+		changed: DeepPartial<PropertiesToSource<ItemDataBaseProperties>>,
+		options: EffectModificationOptions,
+		userId: string
+	): void {
+		super._onUpdate(changed, options, userId)
+		const [priorID, newID] = [options.previousID, this.cid]
+		const idChanged = !!priorID && !!newID && priorID !== newID
+		if (idChanged) {
+			this._displayScrollingStatus(true)
 		}
 	}
 

@@ -5,6 +5,8 @@ import { LastActor } from "@util"
 class ModifierList extends Application {
 	hover = false
 
+	collapse = true
+
 	static get defaultOptions(): ApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			popOut: false,
@@ -25,23 +27,23 @@ class ModifierList extends Application {
 		})
 		let actorMods = actor?.modifiers
 
-		// Console.log(actor, actorMods)
-
 		return mergeObject(super.getData(options), {
 			hover: this.hover ? "hover" : "",
 			currentMods,
 			targetMods,
 			actorMods,
+			collapse: this.collapse,
 		})
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		const bottom = Math.max($("body").height()! - $("#players").position().top, 64)
-		html.css("bottom", `${bottom}px`)
+		if (!this.collapse) html.css("bottom", `${bottom}px`)
 
 		super.activateListeners(html)
 		html.find(".active").on("click", event => this.removeModifier(event))
 		html.find(".modifier").on("click", event => this._onClickModifier(event))
+		html.find(".collapse-toggle").on("click", event => this._onCollapseToggle(event))
 		html.on("mouseleave", () => {
 			this.hover = false
 			this.render(true)
@@ -49,8 +51,6 @@ class ModifierList extends Application {
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
-		const element = $("#ui-left")
-		console.log(element)
 		html.insertBefore($("#ui-left").find("#players"))
 		this._element = html
 	}
@@ -63,6 +63,12 @@ class ModifierList extends Application {
 			modifier: $(event.currentTarget).data("modifier"),
 		}
 		return this.addModifier(modifier)
+	}
+
+	_onCollapseToggle(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		this.collapse = !this.collapse
+		return this.render(true)
 	}
 
 	protected addModifier(mod: RollModifier) {
@@ -96,11 +102,6 @@ class ModifierList extends Application {
 		this.hover = false
 		this.render(true)
 	}
-
-	// Render(force?: boolean | undefined, options?: Application.RenderOptions<ApplicationOptions> | undefined): unknown {
-	// 	console.log("what")
-	// 	return super.render(force, options)
-	// }
 }
 
 export { ModifierList }
