@@ -41,7 +41,7 @@ describe("Damage calculator", () => {
 		_roll.attacker = _attacker
 		_roll.basicDamage = 8
 		_roll.armorDivisor = 1
-		_roll.vulnerability = 1
+		// _roll.vulnerability = 1
 		_roll.damageType = DamageType.cr
 		_roll.dice = new DiceGURPS("2d")
 		_roll.locationId = "torso"
@@ -1924,11 +1924,11 @@ describe("Damage calculator", () => {
 			_roll.damageType = DamageType.cr
 			_torso._map.set("all", 5)
 
-			_roll.vulnerability = 3
+			_target.vulnerabilityLevel = 3
 			let calc = _create(_roll, _target)
 			expect(calc.injury).toBe(15)
 
-			_roll.vulnerability = 2
+			_target.vulnerabilityLevel = 2
 			expect(calc.injury).toBe(10)
 		})
 	})
@@ -2147,6 +2147,8 @@ class _Target implements DamageTarget {
 
 	isUnliving = false
 
+	vulnerabilityLevel = 1
+
 	ST = 12
 
 	hitPoints = { value: 15, current: 10 }
@@ -2201,7 +2203,7 @@ class _DamageRoll implements DamageRoll {
 
 	rofMultiplier = 1
 
-	vulnerability = 0
+	// vulnerability = 0
 
 	internalExplosion = false
 }

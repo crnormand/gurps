@@ -63,7 +63,7 @@ interface DamageRoll {
 	 * If greater than 1, this represents the level of the Vulnerability disadvantage to apply to the target of this
 	 * attack. This value should always be greater than or equal to 1.
 	 */
-	vulnerability: number
+	// vulnerability: number
 
 	internalExplosion: boolean
 }
@@ -189,6 +189,8 @@ export interface DamageTarget {
 	isHomogenous: boolean
 	// This.hasTrait("Injury Tolerance (Diffuse)").
 	isDiffuse: boolean
+	// Return this.hasTrait("Vulnerability").level.
+	vulnerabilityLevel: number
 }
 
 export interface TargetTrait {

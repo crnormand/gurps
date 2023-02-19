@@ -323,6 +323,14 @@ class DamageTargetActor implements DamageTarget {
 		let trait = this.getTrait("Injury Tolerance")
 		return !!trait?.getModifier("Diffuse")
 	}
+
+	get vulnerabilityLevel(): number {
+		let trait = this.getTrait("Vulnerability")
+		if (trait?.getModifier("Wounding x2")) return 2
+		if (trait?.getModifier("Wounding x3")) return 3
+		if (trait?.getModifier("Wounding x4")) return 4
+		return 1
+	}
 }
 
 /**

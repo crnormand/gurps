@@ -62,6 +62,7 @@ class ApplyDamageDialog extends Application {
 			hitLocation: this.hitLocation,
 			hitLocationChoices: this.hitLocationChoice,
 			hardenedChoices: hardenedChoices,
+			vulnerabilityNotes: this.vulnerabilityModifierNotes,
 			vulnerabilityChoices: vulnerabilityChoices,
 			injuryToleranceChoices: injuryToleranceChoices,
 			damageReductionChoices: damageReductionChoices,
@@ -197,6 +198,16 @@ class ApplyDamageDialog extends Application {
 		const choice: Record<string, string> = {}
 		this.target.hitLocationTable.locations.forEach(it => (choice[it.id] = it.choice_name))
 		return choice
+	}
+
+	private get vulnerabilityModifierNotes(): string {
+		const trait = this.target.getTrait("Vulnerability")
+		return (
+			trait?.modifiers
+				.filter(it => !it.name.startsWith("Wounding"))
+				.map(it => it.name.trim())
+				.join("; ") ?? ""
+		)
 	}
 }
 

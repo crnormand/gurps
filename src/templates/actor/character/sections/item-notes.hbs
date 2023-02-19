@@ -1,12 +1,12 @@
 <div class="item-notes">
-    {{#if (or (eq this.type "trait") (eq this.type "trait_container")) }}
-        {{#unless (eq this.cr 0)}}
+  {{#if (or (eq this.type "trait") (eq this.type "trait_container")) }}
+    {{#unless (eq this.cr 0)}}
         <div data-uuid="{{ this.uuid }}"
              data-type="control_roll"
              class="cr rollable">{{ this.formattedCR }}</div>
-    {{/unless }}
-{{/if }}
-{{#if (or (eq this.type "trait") (eq this.type "trait_container") (eq this.type "equipment_gcs") (eq this.type
+  	{{/unless }}
+	{{/if }}
+	{{#if (or (eq this.type "trait") (eq this.type "trait_container") (eq this.type "equipment_gcs") (eq this.type
     "equipment_container"))}}
     {{#if (in @root.settings.modifiers_display "inline") }}
         {{#each (enabledList this.modifiers) }}
