@@ -59,10 +59,12 @@
 		<div class="label pdf">B268</div>
 
 		<div class="label"></div>
-		<div class="field">
+		<div class="field no-stretch">
 			<label for="exp" class="checkbox-label">
 				<input id="exp" type="checkbox" {{checked isExplosion}} />Explosion
 			</label>
+			<label for="explosion" class="checkbox-label">
+				<input id="explosion" type="checkbox" />Internal</label>
 		</div>
 		<div class="label pdf">B414</div>
 
@@ -167,20 +169,23 @@
 			</div>
 			<div class="label pdf">B60</div>
 
-			<div class="label">Damage<br />Reduction</div>
-			<div class="field">
+			<div class="label">Damage Reduction</div>
+			<div class="field no-stretch">
 				<select name="reduction">
-					{{selectOptions damageReductionChoices value=0}}
+					{{selectOptions damageReductionChoices selected=damageReduction}}
 				</select>
+				<div class="label">Override</div>
+				<input
+					type="number"
+					class="apply-control"
+					data-action="override-reduction"
+					value=""
+					step="any"
+					name="override-reduction"
+					size="3"
+				/>
 			</div>
 			<div class="label pdf">P53</div>
-
-			<div class="label"></div>
-			<div class="field">
-				<label for="explosion" class="checkbox-label">
-					<input id="explosion" type="checkbox" />Internal explosion</label>
-			</div>
-			<div class="label pdf">B414</div>
 		</div>
 	</div>
 

@@ -8,6 +8,9 @@ import { HitLocationUtil } from "./hitlocation_utils"
 
 const Vulnerability = "Vulnerability"
 const Wounding = "Wounding"
+const Injury_Tolerance = "Injury Tolerance"
+const Damage_Reduction = "Damage Reduction"
+const InjuryTolerance_DamageReduction = "Injury Tolerance (Damage Reduction)"
 
 class ApplyDamageDialog extends Application {
 	static async create(roll: DamageRoll, target: DamageTarget, options = {}): Promise<ApplyDamageDialog> {
@@ -75,6 +78,7 @@ class ApplyDamageDialog extends Application {
 			injuryTolerance: this.injuryTolerance,
 
 			damageReductionChoices: damageReductionChoices,
+			damageReduction: this.damageReduction,
 
 			poolChoices: poolChoices,
 		})
@@ -235,6 +239,12 @@ class ApplyDamageDialog extends Application {
 		if (this.target.isUnliving) return 1
 		return 0
 	}
+
+	private get damageReduction(): number {
+		let trait = this.target.getTraits(Injury_Tolerance).find(it => !!it.getModifier(Damage_Reduction))
+		if (!trait) trait = this.target.getTrait(InjuryTolerance_DamageReduction)
+		return trait?.levels ?? 1
+	}
 }
 
 const hardenedChoices = {
@@ -255,6 +265,7 @@ const vulnerabilityChoices = {
 }
 
 const damageReductionChoices = {
+	0: "Custom",
 	1: "None",
 	2: "2",
 	3: "3",
