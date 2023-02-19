@@ -8,6 +8,7 @@ import { HitLocationUtil } from "./hitlocation_utils"
 
 const Vulnerability = "Vulnerability"
 const Wounding = "Wounding"
+
 class ApplyDamageDialog extends Application {
 	static async create(roll: DamageRoll, target: DamageTarget, options = {}): Promise<ApplyDamageDialog> {
 		const dialog = new ApplyDamageDialog(roll, target, options)
@@ -61,14 +62,17 @@ class ApplyDamageDialog extends Application {
 			isExplosion: this.isExplosion,
 			armorDivisorSelect: this.armorDivisorSelect,
 			damageTypeChoices: DamageType,
+
 			hitLocation: this.hitLocation,
 			hitLocationChoices: this.hitLocationChoice,
+
 			hardenedChoices: hardenedChoices,
 
 			vulnerabilityChoices: vulnerabilityChoices,
 			vulnerabilities: this.vulnerabilities,
 
 			injuryToleranceChoices: injuryToleranceChoices,
+			injuryTolerance: this.injuryTolerance,
 
 			damageReductionChoices: damageReductionChoices,
 
@@ -223,6 +227,13 @@ class ApplyDamageDialog extends Application {
 			results.push(trait.modifiers.map(it => it.name).join("; "))
 		}
 		return results
+	}
+
+	private get injuryTolerance(): number {
+		if (this.target.isDiffuse) return 3
+		if (this.target.isHomogenous) return 2
+		if (this.target.isUnliving) return 1
+		return 0
 	}
 }
 

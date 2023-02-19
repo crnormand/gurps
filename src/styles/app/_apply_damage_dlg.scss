@@ -36,6 +36,10 @@
 			button {
 				height: 100%;
 			}
+
+			* {
+				align-self: center;
+			}
 		}
 
 		input[name="basicDamage"],
@@ -82,10 +86,6 @@
 
 				.checkbox-label+.checkbox-label {
 					margin: 0;
-				}
-
-				#vulnerability select {
-					align-self: center;
 				}
 			}
 		}
