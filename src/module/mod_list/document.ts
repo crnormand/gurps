@@ -1,11 +1,9 @@
 import { ActorGURPS } from "@module/config"
-import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
+import { RollModifier, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { LastActor } from "@util"
 
 class ModifierList extends Application {
 	hover = false
-
-	collapse = true
 
 	static get defaultOptions(): ApplicationOptions {
 		return mergeObject(super.defaultOptions, {
@@ -16,6 +14,11 @@ class ModifierList extends Application {
 			template: `systems/${SYSTEM_NAME}/templates/modifier-list/list.hbs`,
 			classes: ["modifier-list"],
 		})
+	}
+
+	get collapse(): boolean {
+		const collapse = game.settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_LIST_COLLAPSE) as boolean
+		return collapse ?? true
 	}
 
 	async getData(options?: Partial<ApplicationOptions> | undefined): Promise<object> {
@@ -67,7 +70,7 @@ class ModifierList extends Application {
 
 	_onCollapseToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		this.collapse = !this.collapse
+		game.settings.set(SYSTEM_NAME, SETTINGS.MODIFIER_LIST_COLLAPSE, !this.collapse)
 		return this.render(true)
 	}
 
