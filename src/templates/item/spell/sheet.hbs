@@ -32,22 +32,28 @@
 			</div>
 			<div class="label">{{localize "gurps.item.difficulty"}}</div>
 			<div class="field no-stretch">
-				<select name="system.difficulty" data-dtype="String">
-					{{#select document.difficulty}}
-					{{#each config.select.difficulty as |v k|}}
-					<option value="{{k}}">{{localize v}}</option>
-					{{/each}}
+				<select name="attribute" data-dtype="String">
+					{{#select document.attribute}}
+						{{#each attributes as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
 					{{/select}}
 				</select>
-				<div class="label">{{localize "gurps.item.prereq_count"}}</div>
-				<input type="text" name="system.prereq_count" value="{{system.prereq_count}}" data-dtype="Number"/>
+				<div class="label">{{localize "gurps.item.slash"}}</div>
+				<select name="difficulty" data-dtype="String">
+					{{#select document.difficulty}}
+						{{#each config.select.difficulty as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
+					{{/select}}
+				</select>
 			</div>
 			{{#if document.actor}}
 			<div class="label">{{localize "gurps.item.points"}}</div>
 			<div class="field no-stretch">
 				<input type="text" name="system.points" value="{{system.points}}" data-dtype="Number" />
 				<div class="label">{{localize "gurps.item.level"}}</div>
-				<input type="text" value="{{concat document.skillLevel '/' docuemtn.relativeLevel}}" readonly tabIndex="-1"/>
+				<input type="text" value="{{concat document.skillLevel '/' document.relativeLevel}}" readonly tabIndex="-1"/>
 			<div class="field">
 				<input type="text" name="system.base_skill" value="{{system.base_skill}}" data-dtype="String" />
 			</div>

@@ -31,7 +31,7 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 	get notes(): string {
 		let buffer = ""
 		if (this.parent) buffer += this.parent.notes
-		if (this.system.usage_notes.trim() !== "") {
+		if ((this.system.usage_notes?.trim() ?? "") !== "") {
 			if (buffer.length !== 0) buffer += "\n"
 			buffer += this.system.usage_notes
 		}

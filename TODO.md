@@ -12,6 +12,7 @@
 	-   Drag rollable buttons to hotbar or message box for macros
 -   Implement "static" items (0.15 and older) compatibility
 	-	add interface for accessing old bonuses
+-   Change unsatisfied prerequisite messages for better formatting & localization
 
 ## 1.0.0
 
@@ -25,7 +26,6 @@
     -   add maneuver to dynamic character
 -   @X@ notation dialog box for items
 -   update Nordlond sheet & compendium entries with dynamic characters
--   Change unsatisfied prerequisite messages for better formatting & localization
 -	negative value stat support for tokens
 -	convert mook generator
 
