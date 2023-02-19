@@ -41,7 +41,6 @@ describe("Damage calculator", () => {
 		_roll.attacker = _attacker
 		_roll.basicDamage = 8
 		_roll.armorDivisor = 1
-		// _roll.vulnerability = 1
 		_roll.damageType = DamageType.cr
 		_roll.dice = new DiceGURPS("2d")
 		_roll.locationId = "torso"
@@ -2139,6 +2138,10 @@ class _Attacker implements DamageAttacker {
 }
 
 class _Target implements DamageTarget {
+	getTraits(name: string): TargetTrait[] {
+		return this._traits.filter(it => it.name === name)
+	}
+
 	name = "doesn't matter"
 
 	isDiffuse = false
@@ -2203,8 +2206,6 @@ class _DamageRoll implements DamageRoll {
 
 	rofMultiplier = 1
 
-	// vulnerability = 0
-
 	internalExplosion = false
 }
 
@@ -2261,7 +2262,7 @@ class _TargetTraitModifier implements TargetTraitModifier {
 class DamageHitLocation extends HitLocation {
 	_map: Map<string, number> = new Map()
 
-	_DR(tooltip?: TooltipGURPS, _drMap: Map<string, number> = new Map()): Map<string, number> {
+	_DR(_tooltip?: TooltipGURPS, _drMap: Map<string, number> = new Map()): Map<string, number> {
 		return this._map
 	}
 }

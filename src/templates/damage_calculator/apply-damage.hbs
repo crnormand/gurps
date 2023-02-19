@@ -143,11 +143,16 @@
 			<div class="label pdf">B47</div>
 
 			<div class="label">Vulnerability</div>
-			<div class="field no-stretch">
-				<select name="vulnerability">
-					{{selectOptions vulnerabilityChoices selected=calculator.vulnerabilityLevel}}
+			<div id="vulnerability" class="field no-stretch">
+				<div style="display: flex; flex-flow: column nowrap;">
+					{{#each vulnerabilities}}
+						<label for="vulnerability-{{@index}}" class="checkbox-label">
+							<input id="vulnerability-{{@index}}" type="checkbox" />{{this}}</label>
+					{{/each}}
+				</div>
+				<select name="vulnerable-override">
+					{{selectOptions vulnerabilityChoices}}
 				</select>
-				<span>{{vulnerabilityNotes}}</span>
 			</div>
 			<div class="label pdf">B161</div>
 

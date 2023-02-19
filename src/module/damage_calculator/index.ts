@@ -181,11 +181,13 @@ export interface DamageTarget {
 	hitLocationTable: HitLocationTable
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
 	getTrait(name: string): TargetTrait | undefined
+	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
+	getTraits(name: string): TargetTrait[]
 	//
 	hasTrait(name: string): boolean
 	// This.hasTrait("Injury Tolerance (Unliving)").
 	isUnliving: boolean
-	// This.hasTrait("Injury Tolerance (Homogenous)").
+	// This.hasTrait("Injury Torance (Homogenous)").
 	isHomogenous: boolean
 	// This.hasTrait("Injury Tolerance (Diffuse)").
 	isDiffuse: boolean

@@ -79,8 +79,18 @@
 				column-gap: 9px;
 				vertical-align: middle;
 				overflow: hidden;
+
+				.checkbox-label+.checkbox-label {
+					margin: 0;
+				}
+
+				#vulnerability select {
+					align-self: center;
+				}
 			}
 		}
+
+
 
 		#results {
 			display: grid;
@@ -102,14 +112,14 @@
 				display: grid;
 				grid-template-columns: max-content min-content 1fr;
 
-				> div:not(.header) {
+				>div:not(.header) {
 					background-color: rgb(var(--color-content));
 					color: rgb(var(--color-on-content));
 					border-right: 1px solid rgb(var(--color-interior-divider));
 					border-bottom: 1px solid rgb(var(--color-interior-divider));
 				}
 
-				> div {
+				>div {
 					padding: var(--padding-standard);
 				}
 

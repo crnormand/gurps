@@ -298,6 +298,14 @@ class DamageTargetActor implements DamageTarget {
 		return undefined
 	}
 
+	getTraits(name: string): TargetTrait[] {
+		if (this.actor instanceof BaseActorGURPS) {
+			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
+			return traits.filter(it => it.name === name).map(it => new TraitAdapter(it as TraitGURPS))
+		}
+		return []
+	}
+
 	hasTrait(name: string): boolean {
 		return !!this.getTrait(name)
 	}
