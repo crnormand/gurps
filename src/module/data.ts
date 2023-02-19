@@ -51,6 +51,7 @@ export enum SETTINGS {
 	DEFAULT_DAMAGE_LOCATION = "default_damage_location",
 	SSRT = "ssrt",
 	INITIATIVE_FORMULA = "initiative_formula",
+	MODIFIER_LIST_COLLAPSE = "modifier_list_collapse",
 }
 
 export enum SOCKET {

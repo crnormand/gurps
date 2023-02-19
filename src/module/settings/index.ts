@@ -219,6 +219,15 @@ export function registerSettings(): void {
 		default: "torso",
 		onChange: (value: string) => console.log(`Default Damage Location : ${value}`),
 	})
+
+	game.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_LIST_COLLAPSE, {
+		name: "",
+		hint: "",
+		scope: "client",
+		config: false,
+		type: Boolean,
+		default: true,
+	})
 }
 
 /**

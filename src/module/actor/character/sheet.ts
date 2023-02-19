@@ -20,7 +20,7 @@ import {
 import { Attribute, AttributeObj, AttributeType } from "@module/attribute"
 import { CondMod } from "@module/conditional-modifier"
 import { ItemGURPS } from "@module/config"
-import { gid, RollType, SYSTEM_NAME } from "@module/data"
+import { gid, ItemType, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
@@ -110,6 +110,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find("input").on("change", event => this._resizeInput(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
 		html.find(".ref").on("click", event => this._handlePDF(event))
+		html.find(".item-list .header.desc").on("contextmenu", event => this._getAddItemMenu(event, html))
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
 		html.find(".item").on("contextmenu", event => this._getItemContextMenu(event, html))
 		html.find(".equipped").on("click", event => this._onEquippedToggle(event))
@@ -164,6 +165,205 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		])
 		await ctx.render($(event.currentTarget))
 		// $(event.currentTarget).trigger("contextmenu")
+	}
+
+	async _getAddItemMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
+		event.preventDefault()
+		const element = $(event.currentTarget)
+		const type = element.parent(".item-list")[0].id
+		const ctx = new ContextMenu(html, ".menu", [])
+		ctx.menuItems = (function (self: CharacterSheetGURPS): ContextMenuEntry[] {
+			switch (type) {
+				case "traits":
+					return [
+						{
+							name: i18n("gurps.context.new_trait"),
+							icon: "<i class='gcs-trait'></i>",
+							callback: () => self._newItem(ItemType.Trait),
+						},
+						{
+							name: i18n("gurps.context.new_trait_container"),
+							icon: "<i class='gcs-trait'></i>",
+							callback: () => self._newItem(ItemType.TraitContainer),
+						},
+						{
+							name: i18n("gurps.context.new_natural_attacks"),
+							icon: "<i class='gcs-melee-weapon'></i>",
+							callback: () => self._newNaturalAttacks(),
+						},
+					]
+				case "skills":
+					return [
+						{
+							name: i18n("gurps.context.new_skill"),
+							icon: "<i class='gcs-skill'></i>",
+							callback: () => self._newItem(ItemType.Skill),
+						},
+						{
+							name: i18n("gurps.context.new_skill_container"),
+							icon: "<i class='gcs-skill'></i>",
+							callback: () => self._newItem(ItemType.SkillContainer),
+						},
+						{
+							name: i18n("gurps.context.new_technique"),
+							icon: "<i class='gcs-skill'></i>",
+							callback: () => self._newItem(ItemType.Technique),
+						},
+					]
+				case "spells":
+					return [
+						{
+							name: i18n("gurps.context.new_spell"),
+							icon: "<i class='gcs-spell'></i>",
+							callback: () => self._newItem(ItemType.Spell),
+						},
+						{
+							name: i18n("gurps.context.new_spell_container"),
+							icon: "<i class='gcs-spell'></i>",
+							callback: () => self._newItem(ItemType.SpellContainer),
+						},
+						{
+							name: i18n("gurps.context.new_ritual_magic_spell"),
+							icon: "<i class='gcs-spell'></i>",
+							callback: () => self._newItem(ItemType.RitualMagicSpell),
+						},
+					]
+				case "equipment":
+					return [
+						{
+							name: i18n("gurps.context.new_carried_equipment"),
+							icon: "<i class='gcs-equipment'></i>",
+							callback: () => self._newItem(ItemType.Equipment),
+						},
+						{
+							name: i18n("gurps.context.new_carried_equipment_container"),
+							icon: "<i class='gcs-equipment'></i>",
+							callback: () => self._newItem(ItemType.EquipmentContainer),
+						},
+					]
+				case "other-equipment":
+					return [
+						{
+							name: i18n("gurps.context.new_other_equipment"),
+							icon: "<i class='gcs-equipment'></i>",
+							callback: () => self._newItem(ItemType.Equipment, true),
+						},
+						{
+							name: i18n("gurps.context.new_other_equipment_container"),
+							icon: "<i class='gcs-equipment'></i>",
+							callback: () => self._newItem(ItemType.EquipmentContainer, true),
+						},
+					]
+				case "notes":
+					return [
+						{
+							name: i18n("gurps.context.new_note"),
+							icon: "<i class='gcs-note'></i>",
+							callback: () => self._newItem(ItemType.Note),
+						},
+						{
+							name: i18n("gurps.context.new_note_container"),
+							icon: "<i class='gcs-note'></i>",
+							callback: () => self._newItem(ItemType.NoteContainer),
+						},
+					]
+				default:
+					return []
+			}
+		})(this)
+		await ctx.render(element)
+	}
+
+	async _newItem(type: ItemType, other = false) {
+		const itemName = `ITEM.Type${type.charAt(0).toUpperCase()}${type.slice(1)}`
+		const itemData: any = {
+			type,
+			name: i18n(itemName),
+			system: {},
+		}
+		if (other) itemData.system.other = true
+		const item = (await this.actor.createEmbeddedDocuments("Item", [itemData], { temporary: false }))[0]
+		return item.sheet.render(true)
+	}
+
+	async _newNaturalAttacks() {
+		const itemName = i18n("gurps.item.natural_attacks")
+		const itemData = {
+			type: ItemType.Trait,
+			name: itemName,
+			system: {
+				reference: "B271",
+			},
+			flags: {
+				[SYSTEM_NAME]: {
+					contentsData: [
+						{
+							type: ItemType.MeleeWeapon,
+							name: "Bite",
+							_id: randomID(),
+							system: {
+								usage: "Bite",
+								reach: "C",
+								parry: "No",
+								block: "No",
+								strength: "",
+								damage: {
+									type: "cr",
+									st: "thr",
+									base: "-1",
+								},
+								defaults: [{ type: "dx" }, { type: "skill", name: "Brawling" }],
+							},
+						},
+						{
+							type: ItemType.MeleeWeapon,
+							name: "Punch",
+							_id: randomID(),
+							system: {
+								usage: "Punch",
+								reach: "C",
+								parry: "0",
+								strength: "",
+								damage: {
+									type: "cr",
+									st: "thr",
+									base: "-1",
+								},
+								defaults: [
+									{ type: "dx" },
+									{ type: "skill", name: "Boxing" },
+									{ type: "skill", name: "Brawling" },
+									{ type: "skill", name: "Karate" },
+								],
+							},
+						},
+						{
+							type: ItemType.MeleeWeapon,
+							name: "Kick",
+							_id: randomID(),
+							system: {
+								usage: "Kick",
+								reach: "C,1",
+								parry: "No",
+								strength: "",
+								damage: {
+									type: "cr",
+									st: "thr",
+								},
+								defaults: [
+									{ type: "dx", modifier: -2 },
+									{ type: "skill", name: "Brawling", modifier: -2 },
+									{ type: "skill", name: "Kicking" },
+									{ type: "skill", name: "Karate", modifier: -2 },
+								],
+							},
+						},
+					],
+				},
+			},
+		}
+		const item = (await this.actor.createEmbeddedDocuments("Item", [itemData], { temporary: false }))[0]
+		return item.sheet.render(true)
 	}
 
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {

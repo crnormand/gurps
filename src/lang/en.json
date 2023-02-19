@@ -620,7 +620,8 @@
 			"total": "Total",
 			"slash": "/",
 			"note": "Note",
-			"markdown_preview": "Markdown Preview"
+			"markdown_preview": "Markdown Preview",
+			"natural_attacks": "Natural Attacks"
 		},
 		"attributes": {
 			"dodge": "Dodge",
@@ -1325,7 +1326,22 @@
 			"increase_level": "Increase Skill Level",
 			"decrease_level": "Decrease Skill Level",
 			"increase_tech_level": "Increase Tech Level",
-			"decrease_tech_level": "Decrease Tech Level"
+			"decrease_tech_level": "Decrease Tech Level",
+			"new_trait": "New Trait",
+			"new_trait_container": "New Trait Container",
+			"new_natural_attacks": "Add Natural Attacks",
+			"new_skill": "New Skill",
+			"new_skill_container": "New Skill Container",
+			"new_technique": "New Technique",
+			"new_spell": "New Spell",
+			"new_spell_container": "New Spell Container",
+			"new_ritual_magic_spell": "New RItual Magic Spell",
+			"new_carried_equipment": "New Carried Equipment",
+			"new_carried_equipment_container": "New Carried Equipment Container",
+			"new_other_equipment": "New Other Equipment",
+			"new_other_equipment_container": "New Other Equipment Container",
+			"new_note": "New Note",
+			"new_note_container": "New Note Container"
 		},
 		"combat": {
 			"effect_expired": "Effect Expired: {effect}"

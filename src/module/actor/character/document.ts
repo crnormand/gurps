@@ -194,7 +194,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
-		console.log(data, context)
+		// Console.log(data, context)
 		if (context?.noPrepare) this.noPrepare = true
 		this.updateAttributes(data)
 		this.checkImport(data)
