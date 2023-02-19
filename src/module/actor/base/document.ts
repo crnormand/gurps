@@ -126,6 +126,10 @@ class BaseActorGURPS extends Actor {
 		return super.temporaryEffects.concat(conditions)
 	}
 
+	get inCombat(): boolean {
+		return game.combat?.combatants.some(c => c.actor?.id === this.id) || false
+	}
+
 	updateEmbeddedDocuments(
 		embeddedName: string,
 		updates?: Record<string, unknown>[] | undefined,
@@ -163,8 +167,9 @@ class BaseActorGURPS extends Actor {
 		return new DamageTargetActor(this)
 	}
 
-	hasCondition(id: ConditionID): boolean {
-		return this.conditions.some(e => e.cid === id)
+	hasCondition(id: ConditionID | ConditionID[]): boolean {
+		if (!Array.isArray(id)) id = [id]
+		return this.conditions.some(e => id.includes(e.cid as any))
 	}
 
 	async increaseCondition(id: EffectID): Promise<ConditionGURPS | null> {

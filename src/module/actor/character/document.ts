@@ -1,4 +1,4 @@
-import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
+import { BaseActorGURPS, ActorConstructorContextGURPS, ActorFlags } from "@actor/base"
 import {
 	BaseWeaponGURPS,
 	CR_Features,
@@ -19,7 +19,7 @@ import {
 	WeaponType,
 } from "@item"
 import { CondMod } from "@module/conditional-modifier"
-import { attrPrefix, gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
+import { attrPrefix, gid, ItemType, MoveType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
@@ -36,15 +36,17 @@ import {
 	SelfControl,
 	stringCompare,
 	urlToBase64,
+	Weight,
+	WeightUnits,
 } from "@util"
 import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
-import { LengthUnits, weightFormat, WeightUnits } from "@util/measure"
+import { LengthUnits } from "@util/measure"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
-import { ConditionGURPS } from "@item/condition"
+import { ConditionGURPS, ConditionID } from "@item/condition"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeDef, AttributeObj, AttributeType, ThresholdOp } from "@module/attribute"
@@ -144,7 +146,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				skin: "",
 				handedness: "",
 				height: 0,
-				weight: 0,
+				weight: "0 lb",
 				SM: 0,
 				gender: "",
 				tech_level: "",
@@ -417,8 +419,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Move accounting for pool thresholds
 	eMove(enc: Encumbrance): number {
-		let initialMove = Math.max(0, this.resolveAttributeCurrent(gid.BasicMove))
-		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_move", this.attributes), 2)
+		// Let initialMove = this.moveByType(Math.max(0, this.resolveAttributeCurrent(gid.BasicMove)))
+		let initialMove = this.moveByType()
+		let divisor = 2 * Math.min(this.countThresholdOpMet("halve_move", this.attributes), 2)
+		if (divisor === 0) divisor = 1
 		if (divisor > 0) initialMove = Math.ceil(initialMove / divisor)
 		const move = Math.trunc((initialMove * (10 + 2 * enc.penalty)) / 10)
 		if (move < 1) {
@@ -426,6 +430,34 @@ class CharacterGURPS extends BaseActorGURPS {
 			return 0
 		}
 		return move
+	}
+
+	// TODO: improve
+	moveByType(): number {
+		let move = Math.max(0, this.resolveAttributeCurrent(gid.BasicMove))
+		switch (this.moveType) {
+			case "ground":
+				if (this.hasCondition([ConditionID.PostureCrawl, ConditionID.PostureKneel])) move *= 1 / 3
+				if (this.hasCondition([ConditionID.PostureCrouch])) move *= 2 / 3
+				if (this.hasCondition([ConditionID.PostureProne])) move = 1
+				if (this.hasCondition([ConditionID.PostureSit])) move = 0
+				if (this.hasTrait("Aquatic")) return move
+				return move
+			case "water":
+				if (this.hasTrait("Amphibious")) return move
+				if (this.hasTrait("Aquatic")) return move
+				return Math.floor(move / 5)
+			case "air":
+				if (this.hasTrait("Flight")) return this.resolveAttributeCurrent(gid.BasicSpeed) * 2
+				return 0
+			case "space":
+				return 0
+		}
+		return 0
+	}
+
+	get moveType(): MoveType {
+		return this.getFlag(SYSTEM_NAME, ActorFlags.MoveType) as MoveType
 	}
 
 	dodge(enc: Encumbrance): number {
@@ -518,7 +550,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get fastWeightCarried(): string {
-		return weightFormat(this.weightCarried(false), this.weightUnits)
+		return Weight.format(this.weightCarried(false), this.weightUnits)
 	}
 
 	encumbranceLevel(for_skills = true): Encumbrance {
@@ -1181,7 +1213,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			case FeatureType.AttributeBonus:
 				return this.features.attributeBonuses.push(f as any)
 			case FeatureType.CostReduction:
-				return this.features.drBonuses.push(f as any)
+				return this.features.costReductions.push(f as any)
 			case FeatureType.DRBonus:
 				return this.features.drBonuses.push(f as any)
 			case FeatureType.SkillBonus:
@@ -1269,7 +1301,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			e.unsatisfied_reason = ""
 			if (!e.prereqsEmpty) {
 				const tooltip = new TooltipGURPS()
-				if (!e.prereqs.satisfied(this, e, tooltip)) {
+				if (!e.prereqs.satisfied(this, e, tooltip)[0]) {
 					e.unsatisfied_reason = not_met + tooltip.toString()
 				}
 			}

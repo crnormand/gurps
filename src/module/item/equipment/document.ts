@@ -5,8 +5,14 @@ import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
 import { ItemGCS } from "@item/gcs"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
-import { determineModWeightValueTypeFromString, extractFraction, floatingMul } from "@util"
-import { allWeightUnits, toPounds, weightFormat, WeightUnits } from "@util/measure"
+import {
+	allWeightUnits,
+	determineModWeightValueTypeFromString,
+	extractFraction,
+	floatingMul,
+	Weight,
+	WeightUnits,
+} from "@util"
 import { CostValueType, EquipmentData } from "./data"
 
 class EquipmentGURPS extends ItemGCS {
@@ -32,7 +38,7 @@ class EquipmentGURPS extends ItemGCS {
 	get weight(): number {
 		const baseWeight = parseFloat(this.system.weight)
 		const units = this.system.weight.replace(`${baseWeight}`, "").trim()
-		if (allWeightUnits.includes(units as any)) return toPounds(baseWeight, units as WeightUnits)
+		if (allWeightUnits.includes(units as any)) return Weight.toPounds(baseWeight, units as WeightUnits)
 		return baseWeight
 	}
 
@@ -43,7 +49,7 @@ class EquipmentGURPS extends ItemGCS {
 	}
 
 	get weightString(): string {
-		return weightFormat(this.weight, this.weightUnits)
+		return Weight.format(this.weight, this.weightUnits)
 	}
 
 	get enabled(): boolean {
@@ -118,7 +124,7 @@ class EquipmentGURPS extends ItemGCS {
 	}
 
 	get adjustedWeightFast(): string {
-		return weightFormat(this.adjustedWeight(false, this.weightUnits), this.weightUnits)
+		return Weight.format(this.adjustedWeight(false, this.weightUnits), this.weightUnits)
 	}
 
 	adjustedWeight(for_skills: boolean, units: WeightUnits): number {
@@ -131,7 +137,7 @@ class EquipmentGURPS extends ItemGCS {
 	}
 
 	get extendedWeightFast(): string {
-		return weightFormat(this.extendedWeight(false, this.weightUnits), this.weightUnits)
+		return Weight.format(this.extendedWeight(false, this.weightUnits), this.weightUnits)
 	}
 
 	prepareBaseData(): void {

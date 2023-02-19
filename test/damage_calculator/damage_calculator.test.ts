@@ -2203,7 +2203,7 @@ class _DamageRoll implements DamageRoll {
 
 	rofMultiplier = 1
 
-	// vulnerability = 0
+	// Vulnerability = 0
 
 	internalExplosion = false
 }

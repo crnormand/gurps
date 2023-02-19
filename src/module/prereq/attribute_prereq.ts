@@ -27,7 +27,6 @@ export class AttributePrereq extends BasePrereq {
 		if (!satisfied) {
 			// Tooltip.push(prefix)
 			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
-			tooltip.push(" ")
 			tooltip.push(character.resolveAttributeName(this.which))
 			if (this.combined_with !== "") {
 				tooltip.push(i18n("gurps.prereqs.attribute.plus"))

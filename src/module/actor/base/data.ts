@@ -14,6 +14,7 @@ export enum ActorFlags {
 	TargetModifiers = "targetModifiers",
 	SelfModifiers = "selfModifiers",
 	Deprecation = "deprecation",
+	MoveType = "move_type",
 }
 
 export interface BaseActorSourceGURPS<

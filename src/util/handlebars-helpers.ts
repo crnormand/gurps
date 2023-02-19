@@ -438,11 +438,6 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("modifierCost", function (c: { id: string; value: number }): string {
-		// Const actor = LastActor.get()
-		// if (actor) {
-		// 	const name = actor.attributes?.get(c.id)?.attribute_def.name ?? c.id.toUpperCase()
-		// 	return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, name })
-		// }
 		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
 	})
 
@@ -459,5 +454,13 @@ export function registerHandlebarsHelpers() {
 			if (a.effective < a.current) return "neg"
 		}
 		return ""
+	})
+
+	Handlebars.registerHelper("unsatisfied", function (reason: string): string {
+		return (
+			`<div class='unsatisfied' data-tooltip='${reason}' data-tooltip-direction='DOWN'>` +
+			`<i class='gcs-triangle-exclamation'></i>${i18n("gurps.prereqs.unsatisfied")}` +
+			"</div>"
+		)
 	})
 }

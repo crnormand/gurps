@@ -1,7 +1,7 @@
 import { ContainerSheetGURPS } from "@item/container"
 import { ItemGURPS } from "@module/config"
-import { ItemType } from "@module/data"
-import { i18n, prepareFormData } from "@util"
+import { ItemType, SETTINGS, SYSTEM_NAME } from "@module/data"
+import { i18n, Weight } from "@util"
 import { ItemGCS } from "./document"
 
 // @ts-ignore
@@ -109,7 +109,6 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 		)
 		this.render()
 		const uuid = newRanged[0].uuid
-		console.log(newRanged)
 		const item = (await fromUuid(uuid)) as ItemGURPS
 		item?.sheet?.render(true)
 	}
@@ -125,10 +124,22 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
-		// Console.log(uuid)
 		const item = (await fromUuid(uuid)) as ItemGURPS
-		// Console.log(item)
 		item?.sheet?.render(true)
+	}
+
+	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
+		for (const k in formData) {
+			if (k.endsWith("qualifier.qualifier_weight")) {
+				const units =
+					this.item.actor.settings.default_weight_units ??
+					(game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_SHEET_SETTINGS) as any).default_weight_units
+				const weight = Weight.format(Weight.fromString(formData[k]), units)
+				formData[k.replace("_weight", "")] = weight
+				delete formData[k]
+			}
+		}
+		return super._updateObject(event, formData)
 	}
 }
 

@@ -6,9 +6,9 @@ import {
 	Fraction,
 	Fractions,
 	i18n,
+	WeightUnits,
 	WeightValueType,
 } from "@util"
-import { WeightUnits } from "@util/measure"
 import { EquipmentCostType, EquipmentModifierData, EquipmentWeightType } from "./data"
 
 class EquipmentModifierGURPS extends ItemGCS {

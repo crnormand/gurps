@@ -38,8 +38,7 @@ export class TraitPrereq extends BasePrereq {
 			if (this.notes?.compare !== "none") {
 				tooltip.push(i18n("gurps.prereqs.trait.notes"))
 				tooltip.push(i18n(`gurps.prereqs.criteria.${this.notes?.compare}`))
-				tooltip.push(this.notes.qualifier ? `"${this.notes.qualifier!}"` : '""')
-				tooltip.push(",")
+				tooltip.push(`"${this.notes.qualifier!}"`)
 			}
 
 			tooltip.push(i18n("gurps.prereqs.trait.level"))

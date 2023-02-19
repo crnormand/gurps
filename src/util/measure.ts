@@ -1,16 +1,10 @@
-import { i18n, round } from "./misc"
+import { i18n } from "./misc"
 
 export type Length = number
 
-export type Weight = number
+// Export type Weight = number
 
-/**
- *
- * @param n
- * @param units
- * @param u
- */
-export function lengthFormat(n: Length, units: LengthUnits, u = 0): string {
+export function lengthFormat(n: Length, units: LengthUnits, _u = 0): string {
 	let inches = n
 	switch (units) {
 		case LengthUnits.FeetAndInches:
@@ -76,38 +70,29 @@ export function fromInches(n: Length, units: LengthUnits): number {
 	}
 }
 
-/**
- *
- * @param u
- */
+// Export function weightFromString(text: string, defaultUnits: WeightUnits): number {
+// 	text = text.trim()
+// 	let units = defaultUnits
+// 	for (const unit of allWeightUnits) {
+// 		if (text.endsWith(unit)) units = unit
+// 	}
+// 	const pounds = toPounds(parseFloat(text), units)
+// 	const final = fromPounds(pounds, defaultUnits)
+// 	return final
+// }
+
 function f(u: LengthUnits) {
 	return i18n(`gurps.length_units.${u}`)
 }
 
-/**
- *
- * @param value
- * @param unit
- */
 export function lengthFromNumber(value: number, unit: LengthUnits): Length {
 	return toInches(value, unit) as Length
 }
 
-/**
- *
- * @param value
- * @param fromUnit
- * @param toUnit
- */
 export function getLength(value: number, fromUnit: LengthUnits, toUnit: LengthUnits): Length {
 	return fromInches(toInches(value, fromUnit), toUnit)
 }
 
-/**
- *
- * @param text
- * @param defaultUnits
- */
 export function lengthFromString(text: string, defaultUnits: LengthUnits): Length {
 	text = text.replace(/^\+/g, "")
 	allLengthUnits.forEach(unit => {
@@ -180,31 +165,31 @@ function toInches(length: number, unit: LengthUnits): Length {
 	}
 }
 
-/**
- *
- * @param weight
- * @param unit
- */
-export function weightFormat(weight: Weight, unit: WeightUnits): string {
-	switch (unit) {
-		case WeightUnits.Pound:
-		case WeightUnits.PoundAlt:
-			return `${round(weight, 4)} ${unit}`
-		case WeightUnits.Ounce:
-			return `${round(weight * 16, 4)} ${unit}`
-		case WeightUnits.Ton:
-		case WeightUnits.TonAlt:
-			return `${round(weight * 2000, 4)} ${unit}`
-		case WeightUnits.Kilogram:
-			return `${round(weight / 2, 4)} ${unit}`
-		case WeightUnits.Gram:
-			return `${round(weight * 500, 4)} ${unit}`
-		default:
-			return weightFormat(weight, WeightUnits.Pound)
-	}
-}
+// /**
+//  *
+//  * @param weight
+//  * @param unit
+//  */
+// export function weightFormat(weight: Weight, unit: WeightUnits): string {
+// 	switch (unit) {
+// 		case WeightUnits.Pound:
+// 		case WeightUnits.PoundAlt:
+// 			return `${round(weight, 4)} ${unit}`
+// 		case WeightUnits.Ounce:
+// 			return `${round(weight * 16, 4)} ${unit}`
+// 		case WeightUnits.Ton:
+// 		case WeightUnits.TonAlt:
+// 			return `${round(weight * 2000, 4)} ${unit}`
+// 		case WeightUnits.Kilogram:
+// 			return `${round(weight / 2, 4)} ${unit}`
+// 		case WeightUnits.Gram:
+// 			return `${round(weight * 500, 4)} ${unit}`
+// 		default:
+// 			return weightFormat(weight, WeightUnits.Pound)
+// 	}
+// }
 
-// Export function fromPounds(weight: number, unit: WeightUnits): Weight {
+// export function fromPounds(weight: number, unit: WeightUnits): Weight {
 // 	switch (unit) {
 // 		case WeightUnits.Pound:
 // 		case WeightUnits.PoundAlt:
@@ -222,29 +207,24 @@ export function weightFormat(weight: Weight, unit: WeightUnits): string {
 // 			return fromPounds(weight, WeightUnits.Pound)
 // 	}
 // }
-/**
- *
- * @param weight
- * @param unit
- */
-export function toPounds(weight: number, unit: WeightUnits): Weight {
-	switch (unit) {
-		case WeightUnits.Pound:
-		case WeightUnits.PoundAlt:
-			return weight as Weight
-		case WeightUnits.Ounce:
-			return (weight / 16) as Weight
-		case WeightUnits.Ton:
-		case WeightUnits.TonAlt:
-			return (weight / 2000) as Weight
-		case WeightUnits.Kilogram:
-			return (weight * 2) as Weight
-		case WeightUnits.Gram:
-			return (weight / 500) as Weight
-		default:
-			return toPounds(weight, WeightUnits.Pound)
-	}
-}
+// export function toPounds(weight: number, unit: WeightUnits): Weight {
+// 	switch (unit) {
+// 		case WeightUnits.Pound:
+// 		case WeightUnits.PoundAlt:
+// 			return weight as Weight
+// 		case WeightUnits.Ounce:
+// 			return (weight / 16) as Weight
+// 		case WeightUnits.Ton:
+// 		case WeightUnits.TonAlt:
+// 			return (weight / 2000) as Weight
+// 		case WeightUnits.Kilogram:
+// 			return (weight * 2) as Weight
+// 		case WeightUnits.Gram:
+// 			return (weight / 500) as Weight
+// 		default:
+// 			return toPounds(weight, WeightUnits.Pound)
+// 	}
+// }
 
 export enum LengthUnits {
 	FeetAndInches = "ft_in",
@@ -287,23 +267,3 @@ export const lengthSymbols: Record<LengthUnits, string[]> = {
 	[LengthUnits.Lightyear]: ["ly", "lightyear", "lightyears"],
 	[LengthUnits.Parsec]: ["pc", "parsec", "parsecs"],
 }
-
-export enum WeightUnits {
-	Pound = "lb",
-	PoundAlt = "#",
-	Ounce = "oz",
-	Ton = "tn",
-	TonAlt = "t",
-	Kilogram = "kg",
-	Gram = "g",
-}
-
-export const allWeightUnits = [
-	WeightUnits.Pound,
-	WeightUnits.PoundAlt,
-	WeightUnits.Ounce,
-	WeightUnits.Ton,
-	WeightUnits.TonAlt,
-	WeightUnits.Kilogram,
-	WeightUnits.Gram,
-]

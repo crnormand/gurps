@@ -12,10 +12,10 @@ import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { AttributeObj } from "@module/attribute"
 import { ActorType, DamageProgression, DisplayMode, SYSTEM_NAME } from "@module/data"
-import { i18n, i18n_f } from "@util"
+import { i18n, i18n_f, Weight, WeightUnits } from "@util"
 import { CharacterSystemData } from "./data"
 import { CharacterSheetGURPS } from "./sheet"
-import { LengthUnits, WeightUnits } from "@util/measure"
+import { LengthUnits } from "@util/measure"
 import { ItemGURPS } from "@module/config"
 import { ImportUtils } from "@util/import"
 
@@ -144,7 +144,7 @@ export class CharacterImporter {
 			"system.profile.skin": profile.skin || "",
 			"system.profile.handedness": profile.handedness || "",
 			"system.profile.height": profile.height || "",
-			"system.profile.weight": profile.weight || "",
+			"system.profile.weight": profile.weight,
 			"system.profile.SM": profile.SM || 0,
 			"system.profile.gender": profile.gender || "",
 			"system.profile.tech_level": profile.tech_level || "",

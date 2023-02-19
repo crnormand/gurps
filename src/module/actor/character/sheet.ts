@@ -1,4 +1,4 @@
-import { ActorSheetGURPS } from "@actor/base"
+import { ActorFlags, ActorSheetGURPS } from "@actor/base"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
@@ -24,8 +24,7 @@ import { gid, ItemType, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
-import { dollarFormat, i18n } from "@util"
-import { weightFormat } from "@util/measure"
+import { dollarFormat, i18n, Weight } from "@util"
 import { CharacterSheetConfig } from "./config_sheet"
 import { CharacterMove, Encumbrance } from "./data"
 import { CharacterGURPS } from "./document"
@@ -141,7 +140,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			case "posture":
 				return this.actor.changePosture(element.val() as any)
 			default:
-				console.error("Not implemented yet")
+				return this.actor.setFlag(SYSTEM_NAME, ActorFlags.MoveType, element.val())
 		}
 	}
 
@@ -692,7 +691,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		]
 		for (const e of encumbrance) {
 			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
-			e.carry = weightFormat(e.maximum_carry, this.actor.weightUnits)
+			e.carry = Weight.format(e.maximum_carry, this.actor.weightUnits)
 			e.move = {
 				current: this.actor.move(e),
 				effective: this.actor.eMove(e),
@@ -707,13 +706,13 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	prepareLifts() {
 		const lifts = {
-			basic_lift: weightFormat(this.actor.basicLift, this.actor.weightUnits),
-			one_handed_lift: weightFormat(this.actor.oneHandedLift, this.actor.weightUnits),
-			two_handed_lift: weightFormat(this.actor.twoHandedLift, this.actor.weightUnits),
-			shove: weightFormat(this.actor.shove, this.actor.weightUnits),
-			running_shove: weightFormat(this.actor.runningShove, this.actor.weightUnits),
-			carry_on_back: weightFormat(this.actor.carryOnBack, this.actor.weightUnits),
-			shift_slightly: weightFormat(this.actor.shiftSlightly, this.actor.weightUnits),
+			basic_lift: Weight.format(this.actor.basicLift, this.actor.weightUnits),
+			one_handed_lift: Weight.format(this.actor.oneHandedLift, this.actor.weightUnits),
+			two_handed_lift: Weight.format(this.actor.twoHandedLift, this.actor.weightUnits),
+			shove: Weight.format(this.actor.shove, this.actor.weightUnits),
+			running_shove: Weight.format(this.actor.runningShove, this.actor.weightUnits),
+			carry_on_back: Weight.format(this.actor.carryOnBack, this.actor.weightUnits),
+			shift_slightly: Weight.format(this.actor.shiftSlightly, this.actor.weightUnits),
 		}
 		return lifts
 	}
@@ -726,7 +725,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		let posture: any = "standing"
 		const currentPosture = this.actor.conditions.find(e => Postures.includes(e.cid as any))
 		if (currentPosture) posture = currentPosture.cid
-		const type = "ground"
+		const type = this.actor.moveType
 		return {
 			maneuver,
 			posture,
@@ -768,7 +767,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		let carried_weight = this.actor.weightCarried(true)
 
 		// Data.carried_weight = `${carried_weight} lb`
-		data.carried_weight = weightFormat(carried_weight, this.actor.settings.default_weight_units)
+		data.carried_weight = Weight.format(carried_weight, this.actor.settings.default_weight_units)
 		data.carried_value = dollarFormat(carried_value)
 
 		data.traits = traits
