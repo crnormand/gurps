@@ -774,7 +774,7 @@
 			"prereqs": {
 				"trait_prereq": "a trait",
 				"attribute_prereq": "the attribute",
-				"contained_quantity_prereq": "a contained quantity",
+				"contained_quantity_prereq": "a contained quantity of",
 				"contained_weight_prereq": "a contained weight",
 				"equipped_equipment_prereq": "has equipped equipment",
 				"skill_prereq": "a skill",
@@ -1425,22 +1425,43 @@
 			"no_default_skill": "Cannot Roll: No applicable skill defaults found."
 		},
 		"prereqs": {
+			"unsatisfied": "Unsatisfied Prerequisite(s)",
 			"header": "Prerequisites",
 			"not_met": "Prerequisites have not been met:<br>",
-			"requires_all": "Requires all of:<br>",
-			"requires_one": "Requires at least one of:<br>",
+			"requires_all": "• Requires all of:<br>",
+			"requires_one": "• Requires at least one of:<br>",
+			"quantity": "a contained quantity which ",
+			"weight": "a contained weight which ",
 			"has": {
-				"true": "- Has",
-				"false": "- Does not have"
+				"true": "• Has ",
+				"false": "• Does not have"
 			},
 			"trait": {
-				"name": " a trait whose name ",
+				"name": "a trait whose name ",
 				"notes": ", notes ",
 				"level": " and level "
 			},
 			"attribute": {
 				"which": " which ",
 				"plus": "+"
+			},
+			"skill": {
+				"name": "a skill whose name ",
+				"specialization": ", specialization ",
+				"level": " and level ",
+				"tech_level": " and tech level matches"
+			},
+			"spell": {
+				"college_count": "college count which ",
+				"one": "spell ",
+				"many": "spells ",
+				"any": "of any kind",
+				"name": "whose name ",
+				"tag": "whose tag ",
+				"college": "whoe college ",
+				"at_least": "at least ",
+				"at_most": "at most ",
+				"is": ""
 			},
 			"criteria": {
 				"none": "is anything ",

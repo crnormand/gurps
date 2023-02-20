@@ -1,9 +1,10 @@
-import { ActorType, DamageProgression, DisplayMode } from "@module/data"
-import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
-import { Length, LengthUnits, Weight, WeightUnits } from "@util/measure"
+import { ActorType, DamageProgression, DisplayMode, MoveType, RollModifier, SYSTEM_NAME } from "@module/data"
+import { ActorFlags, ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
+import { Length, LengthUnits } from "@util/measure"
 import { HitLocationTableData } from "./hit_location"
 import { AttributeDefObj, AttributeObj } from "@module/attribute"
 import { ResourceTrackerDefObj, ResourceTrackerObj } from "@module/resource_tracker"
+import { Weight, WeightUnits } from "@util"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -18,10 +19,22 @@ export interface CharacterDataGURPS
 	readonly _source: CharacterSource
 }
 
-type CharacterFlags = ActorFlagsGURPS & {
-	gurps: {
-		// Empty
+export interface CharacterFlags extends ActorFlagsGURPS {
+	[SYSTEM_NAME]: {
+		[ActorFlags.TargetModifiers]: RollModifier[]
+		[ActorFlags.SelfModifiers]: RollModifier[]
+		[ActorFlags.MoveType]: MoveType
+		[ActorFlags.AutoEncumbrance]: { active: boolean; manual: number }
 	}
+}
+
+export const CharacterFlagDefaults: CharacterFlags = {
+	[SYSTEM_NAME]: {
+		[ActorFlags.TargetModifiers]: [],
+		[ActorFlags.SelfModifiers]: [],
+		[ActorFlags.MoveType]: MoveType.Ground,
+		[ActorFlags.AutoEncumbrance]: { active: true, manual: 0 },
+	},
 }
 
 export interface CharacterSystemData extends ActorSystemData {
@@ -41,6 +54,7 @@ export interface CharacterSystemData extends ActorSystemData {
 	// TODO: check if this fits
 	pools: Record<string, any>
 	third_party?: any
+	move_type: "ground" | "air" | "water" | "space"
 }
 
 export interface CharacterMove {
@@ -90,7 +104,7 @@ export interface CharacterProfile {
 	skin: string
 	handedness: string
 	height: Length
-	weight: Weight
+	weight: string
 	SM: number
 	gender: string
 	tech_level: string

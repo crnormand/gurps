@@ -32,15 +32,15 @@ export class ContainedQuantityPrereq extends BasePrereq {
 				satisfied = numberCompare(quantity, this.quantity)
 			}
 		}
+		console.log(satisfied)
 		if (!this.has) satisfied = !satisfied
-
 		if (!satisfied) {
-			// Tooltip.push(prefix)
 			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
 			tooltip.push(i18n("gurps.prereqs.quantity"))
 			tooltip.push(i18n(`gurps.prereqs.criteria.${this.quantity?.compare}`))
 			tooltip.push(this.quantity.qualifier.toString())
 		}
+		console.log(tooltip)
 		return [satisfied, false]
 	}
 }

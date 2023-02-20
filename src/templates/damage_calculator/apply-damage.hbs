@@ -143,10 +143,11 @@
 			<div class="label pdf">B47</div>
 
 			<div class="label">Vulnerability</div>
-			<div class="field">
+			<div class="field no-stretch">
 				<select name="vulnerability">
-					{{selectOptions vulnerabilityChoices value=1}}
+					{{selectOptions vulnerabilityChoices selected=calculator.vulnerabilityLevel}}
 				</select>
+				<span>{{vulnerabilityNotes}}</span>
 			</div>
 			<div class="label pdf">B161</div>
 

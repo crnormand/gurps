@@ -1,10 +1,17 @@
-<select name="{{path}}.qualifier.compare">
-	{{#select this.qualifier.compare}}
-		{{#each config.select.number_compare_strict as |v k|}}
-			<option value="{{k}}">{{localize v}}</option>
-		{{/each}}
-	{{/select}}
-</select>
-<div class="field">
-	<input type="text" name="{{path}}.qualifier.qualifier" value="{{this.qualifier.qualifier}}" data-dtype="Number" />
+<div>
+	<select name="{{path}}.qualifier.compare">
+		{{#select this.qualifier.compare}}
+			{{#each config.select.number_compare_strict as |v k|}}
+				<option value="{{k}}">{{localize v}}</option>
+			{{/each}}
+		{{/select}}
+	</select>
+	<div class="field">
+		<input
+			type="text"
+			name="{{path}}.qualifier.qualifier_weight"
+			value="{{this.qualifier.qualifier}}"
+			data-dtype="String"
+		/>
+	</div>
 </div>

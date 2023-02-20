@@ -535,3 +535,27 @@ nav.nav-tabs {
 		}
 	}
 }
+
+#tooltip {
+	display: inline;
+	align-items: beginning;
+	position: absolute;
+	width: max-content;
+	max-width: 600px;
+	padding: 6px 8px;
+	// background: rgba(0, 0, 0, 0.95);
+	background: rgb(var(--color-tooltip));
+	font-family: var(--font-primary);
+	font-size: var(--font-size-12);
+	line-height: var(--font-size-12);
+	// color: var(--color-text-light-highlight);
+	color: rgb(var(--color-on-tooltip));
+	// border: 1px solid var(--color-border-dark-secondary);
+	border: 1px solid rgb(var(--color-control-edge));
+	// border-radius: 3px;
+	border-radius: 0;
+	box-shadow: none;
+	// box-shadow: 0 0 4px #000;
+	visibility: hidden;
+	text-align: left !important;
+}

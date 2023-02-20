@@ -92,7 +92,7 @@ import {
 	SpellPrereq,
 	TraitPrereq,
 } from "@prereq"
-import { ActorType, ItemType, PrereqType, StudyType } from "./data"
+import { ActorType, ItemType, MoveType, PrereqType, StudyType } from "./data"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: CONFIG["GURPS"] = {
@@ -451,10 +451,10 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[ManeuverID.AODDouble]: `gurps.maneuver.${ManeuverID.AODDouble}`,
 		},
 		move_types: {
-			ground: "gurps.select.move_type.ground",
-			air: "gurps.select.move_type.air",
-			water: "gurps.select.move_type.water",
-			space: "gurps.select.move_type.space",
+			[MoveType.Ground]: "gurps.select.move_type.ground",
+			[MoveType.Air]: "gurps.select.move_type.air",
+			[MoveType.Water]: "gurps.select.move_type.water",
+			[MoveType.Space]: "gurps.select.move_type.space",
 		},
 		postures: {
 			standing: "gurps.status.posture_standing",

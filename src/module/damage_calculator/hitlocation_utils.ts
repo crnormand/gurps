@@ -35,9 +35,7 @@ export const HitLocationUtil = {
 
 	getHitLocationDR: function (location: HitLocation | undefined, damageType: DamageType): number {
 		if (!location) return 0
-		return location.calc.dr[damageType] ?? location.calc.dr.all ?? 0
-		// TODO Remove until I can figure out what to do:
-		//    location.DR.get(damageType) ?? location.DR.get(gid.All) ?? 0
+		return location.DR.get(damageType) ?? location.DR.get(gid.All) ?? 0
 	},
 
 	isFlexibleArmor: function (location: HitLocation | undefined): boolean {

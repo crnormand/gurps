@@ -99,6 +99,11 @@ export interface NumberCompare {
 	qualifier: number
 }
 
+export interface WeightCompare {
+	compare: NumberComparison
+	qualifier: string
+}
+
 export enum NumberComparison {
 	None = "none",
 	Is = "is",
@@ -385,4 +390,11 @@ export enum ActorType {
 	// MassCombatElement = "element",
 	// Vehicle = "vehicle",
 	// Merchant = "merchant",
+}
+
+export enum MoveType {
+	Ground = "ground",
+	Air = "air",
+	Water = "water",
+	Space = "space",
 }

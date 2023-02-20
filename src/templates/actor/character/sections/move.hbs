@@ -2,7 +2,7 @@
 <div class="fieldblock3">
 	<div class="label">{{localize "gurps.character.move.maneuver"}}</div>
 	<div class="field">
-		<select class="move-select" data-name="maneuver">
+		<select class="move-select" data-name="maneuver" {{disabled (not actor.inCombat)}}>
 			{{#select moveData.maneuver}}
 				{{#each maneuvers as |v k|}}
 					<option value="{{k}}">{{localize v}}</option>

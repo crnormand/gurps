@@ -25,6 +25,9 @@
 		text-align: right;
 		.encumbrance-marker {
 			color: rgb(var(--color-on-content));
+			&.manual {
+				cursor: pointer;
+			}
 		}
 		.level {
 			&:not(.header) {
@@ -39,6 +42,8 @@
 		}
 		.title {
 			grid-area: title;
+			display: flex;
+			justify-content: space-evenly;
 		}
 		.level.header {
 			grid-column: 1 / span 3;

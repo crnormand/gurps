@@ -35,6 +35,8 @@ class DamageCalculator {
 
 	private _hardenedDROverride: number | undefined
 
+	private _vulnerabilityOverride: number | undefined
+
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this.damageRoll = damageRoll
@@ -84,7 +86,7 @@ class DamageCalculator {
 	 */
 	get injury(): number {
 		let temp = Math.floor(this._woundingModifier(this.penetratingDamage))
-		temp = temp * this.damageRoll.vulnerability
+		temp = temp * this.vulnerabilityLevel
 		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 		candidateInjury = candidateInjury / this._damageReductionValue
 		return this._applyMaximum(candidateInjury)
@@ -406,6 +408,10 @@ class DamageCalculator {
 		return (
 			this._hardenedDROverride ?? this.target.getTrait("Damage Resistance")?.getModifier("Hardened")?.levels ?? 0
 		)
+	}
+
+	get vulnerabilityLevel(): number {
+		return this._vulnerabilityOverride ?? this.target.vulnerabilityLevel ?? 1
 	}
 
 	private get _isCollateralDamage(): boolean {

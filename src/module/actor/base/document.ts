@@ -34,7 +34,6 @@ import Document, { DocumentModificationOptions, Metadata } from "types/foundry/c
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
 
-// @ts-ignore
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
@@ -43,6 +42,7 @@ class BaseActorGURPS extends Actor {
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = CONFIG.GURPS.Actor.documentClasses[data.type]
+			// eslint-disable-next-line no-constructor-return
 			if (ActorConstructor) return new ActorConstructor(data, context)
 			throw Error(`Invalid Actor Type "${data.type}"`)
 		}
@@ -126,6 +126,10 @@ class BaseActorGURPS extends Actor {
 		return super.temporaryEffects.concat(conditions)
 	}
 
+	get inCombat(): boolean {
+		return game.combat?.combatants.some(c => c.actor?.id === this.id) || false
+	}
+
 	updateEmbeddedDocuments(
 		embeddedName: string,
 		updates?: Record<string, unknown>[] | undefined,
@@ -163,8 +167,9 @@ class BaseActorGURPS extends Actor {
 		return new DamageTargetActor(this)
 	}
 
-	hasCondition(id: ConditionID): boolean {
-		return this.conditions.some(e => e.cid === id)
+	hasCondition(id: ConditionID | ConditionID[]): boolean {
+		if (!Array.isArray(id)) id = [id]
+		return this.conditions.some(e => id.includes(e.cid as any))
 	}
 
 	async increaseCondition(id: EffectID): Promise<ConditionGURPS | null> {
@@ -323,6 +328,14 @@ class DamageTargetActor implements DamageTarget {
 		let trait = this.getTrait("Injury Tolerance")
 		return !!trait?.getModifier("Diffuse")
 	}
+
+	get vulnerabilityLevel(): number {
+		let trait = this.getTrait("Vulnerability")
+		if (trait?.getModifier("Wounding x2")) return 2
+		if (trait?.getModifier("Wounding x3")) return 3
+		if (trait?.getModifier("Wounding x4")) return 4
+		return 1
+	}
 }
 
 /**
@@ -378,7 +391,6 @@ class TraitModifierAdapter implements TargetTraitModifier {
 	}
 }
 
-// @ts-ignore
 interface BaseActorGURPS extends Actor {
 	flags: ActorFlagsGURPS
 	noPrepare: boolean

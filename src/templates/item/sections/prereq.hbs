@@ -14,7 +14,7 @@
 			{{/select}}
 		</select>
 		<div class="field">
-			<input type="text" name="{{path}}.when_tl.qualifier" data="{{this.when_tl.qualifier}}" data-dtype="String" {{disabled (eq this.when_tl.compare "none")}}/>
+			<input type="text" name="{{path}}.when_tl.qualifier" value="{{this.when_tl.qualifier}}" data-dtype="String" {{disabled (eq this.when_tl.compare "none")}}/>
 		</div>
 		<select name="{{path}}.all" data-dtype="Boolean">
 			{{#select this.all}}
@@ -26,7 +26,7 @@
 		{{else}}
 		<a class="remove button gcs-trash" data-path="{{path}}"></a>
 		{{#unless (eq this.type "equipped_equipment_prereq")}}
-		<select name="{{path}}.has" data-dtype="String">
+		<select name="{{path}}.has" data-dtype="Boolean">
 			{{#select this.has}}
 			{{#each config.select.has as |v k|}}
 			<option value="{{k}}">{{localize v}}</option>
@@ -43,7 +43,6 @@
 			{{/select}}
 		</select>
 		{{#if (eq this.type "contained_quantity_prereq")}}{{>item/sections/prereq/contained-quantity-prereq}}{{/if}}
-		{{#if (eq this.type "contained_weight_prereq")}}{{>item/sections/prereq/contained-weight-prereq}}{{/if}}
 		{{else}}
 		<select name="{{path}}.quantity.compare">
 			{{#select this.quantity.compare}}
@@ -53,7 +52,12 @@
 			{{/select}}
 		</select>
 		<div class="field">
-			<input type="text" name="{{path}}.quantity.qualifier" data="{{this.quantity.qualifier}}" data-dtype="String"/>
+			<input
+				type="text"
+				name="{{path}}.quantity.qualifier"
+				value="{{this.quantity.qualifier}}"
+				data-dtype="Number"
+			/>
 		</div>
 		<select class="type" name="{{path}}.type" data-path="{{path}}">
 			{{#select this.type}}
@@ -70,6 +74,7 @@
 	{{#if (eq this.type "attribute_prereq")}}{{>item/sections/prereq/attribute-prereq}}{{/if}}
 	{{#if (eq this.type "skill_prereq")}}{{>item/sections/prereq/skill-prereq}}{{/if}}
 	{{#if (eq this.type "spell_prereq")}}{{>item/sections/prereq/spell-prereq}}{{/if}}
+	{{#if (eq this.type "contained_weight_prereq")}}{{>item/sections/prereq/contained-weight-prereq}}{{/if}}
 </div>
 {{#if (eq this.type "prereq_list")}}
 {{#each this.prereqs}}

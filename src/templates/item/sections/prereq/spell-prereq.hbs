@@ -12,11 +12,9 @@
 		{{input_lock (and (neq this.sub_type "college_count") (neq this.sub_type "any"))}}
 	>
 		{{#select this.qualifier.compare}}
-			{{!-- {{#unless (or (eq this.sub_type "college_count") (eq this.sub_type "any"))}} --}}
 			{{#each config.select.string_compare as |v k|}}
 				<option value="{{k}}">{{localize v}}</option>
 			{{/each}}
-			{{!-- {{/unless}} --}}
 		{{/select}}
 	</select>
 	<div class="field">

@@ -136,6 +136,14 @@
 		font: var(--font-page-secondary-fields);
 		background-color: transparent;
 		overflow-x: hidden;
+		&.unsatisfied {
+			display: flex;
+			gap: 5px;
+			background-color: rgb(var(--color-error));
+			color: rgb(var(--color-on-error));
+			width: fit-content;
+			padding: 0 5px;
+		}
 	}
 	.reference:not(.header) {
 		display: flex;
