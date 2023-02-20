@@ -2192,7 +2192,7 @@ class _DamageRoll implements DamageRoll {
 
 	damageType = DamageType.cr
 
-	weapon = null
+	weapon = undefined
 
 	range = null
 

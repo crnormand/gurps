@@ -1,0 +1,21 @@
+{
+	"type": "damage",
+	"payload": {
+		"hitlocation": "Random",
+		"attacker": {
+			"scene": "1o871cqwYQHF1nHX",
+			"token": "69xoBvC9nWx3PaXz",
+			"actor": "NwZqioPFVD71P0Pp",
+			"alias": "Shae"
+		},
+		"weaponUUID": "Scene.1o871cqwYQHF1nHX.Token.69xoBvC9nWx3PaXz.Item.UuS216AySEgQPToz.Item.l73lRz6Zl2UG6n9G",
+		"name": "Great Axe - Swung",
+		"dice": { "sides": 6, "count": 3, "modifier": 5, "multiplier": 1 },
+		"modifiers": [],
+		"total": 14,
+		"tooltip": "<div class=\"dice-tooltip\">\r\n\t\t<section class=\"tooltip-part\">\r\n\t\t\t<div class=\"dice\">\r\n\t\t\t\t<header class=\"part-header flexrow\">\r\n\t\t\t\t\t<span class=\"part-formula\">3d6</span>\r\n\t\t\t\t\t\r\n\t\t\t\t\t<span class=\"part-total\">9</span>\r\n\t\t\t\t</header>\r\n\t\t\t\t<ol class=\"dice-rolls\">\r\n\t\t\t\t\t\t<li class=\"roll die d6\">2</li>\r\n\t\t\t\t\t\t<li class=\"roll die d6\">3</li>\r\n\t\t\t\t\t\t<li class=\"roll die d6\">4</li>\r\n\t\t\t\t</ol>\r\n\t\t\t</div>\r\n\t\t</section>\r\n</div>\r\n",
+		"damageType": "cut",
+		"modifierTotal": 0
+	},
+	"userTarget": ""
+}

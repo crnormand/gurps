@@ -343,7 +343,7 @@ export class RollGURPS extends Roll {
 		name: string,
 		hidden = false
 	): Promise<void> {
-		// Roll the damage for the weapon.
+		// Roll the damage for the attack.
 		const dice = new DiceGURPS(data.item.fastResolvedDamage)
 		const roll = Roll.create(dice.toString(true))
 		await roll.evaluate({ async: true })
@@ -366,7 +366,7 @@ export class RollGURPS extends Roll {
 		const chatData: Partial<DamagePayload> = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
-			weaponUUID: `${data.item.uuid}`,
+			weaponID: `${data.item.system.id}`,
 			name,
 			dice: dice,
 			modifiers: modifiers,

@@ -2,16 +2,16 @@
 	<div class="header">Damage Roll</div>
 	<div class="fieldblock">
 		<div class="label">Attacker</div>
-		<div class="field">{{this.roll.attacker.name}}</div>
+		<div class="field">{{roll.attacker.name}}</div>
 		<div></div>
 
 		<div class="label">Weapon</div>
-		<div class="field">—</div>
+		<div class="field">{{roll.weapon.name}}</div>
 		<div></div>
 
 		<div class="label">Source roll</div>
 		<div class="field">
-			{{source}}
+			{{roll.weapon.damageDice}}
 			{{type}}
 			{{roll.damageModifier}}
 		</div>

@@ -1,5 +1,6 @@
 import { RollModifier, SYSTEM_NAME } from "@module/data"
 import {
+	BaseWeaponGURPS,
 	ConditionGURPS,
 	ConditionID,
 	EffectGURPS,
@@ -19,9 +20,11 @@ import {
 } from "./data"
 import { HitLocationTable } from "@actor/character/hit_location"
 import {
+	DamageAttacker,
 	DamageRoll,
 	DamageRollAdapter,
 	DamageTarget,
+	DamageWeapon,
 	HitPointsCalc,
 	TargetTrait,
 	TargetTraitModifier,
@@ -154,7 +157,22 @@ class BaseActorGURPS extends Actor {
 	}
 
 	handleDamageDrop(payload: DamagePayload): void {
-		let roll: DamageRoll = new DamageRollAdapter(payload)
+		let attacker = undefined
+		if (payload.attacker.actor) {
+			const actor = game.actors?.get(payload.attacker.actor)
+			attacker = new DamageAttackerAdapter(actor as BaseActorGURPS)
+		}
+
+		let weapon = undefined
+		if (payload.weaponID && payload.attacker.actor) {
+			const actor = game.actors?.get(payload.attacker.actor) as BaseActorGURPS
+			let temp = actor!.deepItems
+				.filter(it => it instanceof BaseWeaponGURPS)
+				.find(it => it.system.id === payload.weaponID) as BaseWeaponGURPS
+			weapon = new DamageWeaponAdapter(temp)
+		}
+
+		let roll: DamageRoll = new DamageRollAdapter(payload, attacker, weapon)
 		let target: DamageTarget = new DamageTargetActor(this)
 		ApplyDamageDialog.create(roll, target).then(dialog => dialog.render(true))
 	}
@@ -391,6 +409,34 @@ class TraitModifierAdapter implements TargetTraitModifier {
 
 	constructor(modifier: TraitModifierGURPS) {
 		this.modifier = modifier
+	}
+}
+
+class DamageAttackerAdapter implements DamageAttacker {
+	private actor: BaseActorGURPS
+
+	constructor(actor: BaseActorGURPS) {
+		this.actor = actor
+	}
+
+	get name(): string | null {
+		return this.actor.name
+	}
+}
+
+class DamageWeaponAdapter implements DamageWeapon {
+	base: BaseWeaponGURPS | undefined
+
+	constructor(base: BaseWeaponGURPS) {
+		this.base = base
+	}
+
+	get name(): string {
+		return `${this.base?.parent.name} (${this.base?.name})`
+	}
+
+	get damageDice(): string {
+		return this.base?.fastResolvedDamage ?? ""
 	}
 }
 
