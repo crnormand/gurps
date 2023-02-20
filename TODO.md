@@ -2,35 +2,31 @@
 
 ## In Progress
 
--   Convert the modifier bucket over
-    -   premade lists
-    -   pinned appears as category always (for awareness)
-    -   modifier bucket journals
--   Finish the Damage Calculator conversion
--   Convert OTFs and chat commands
-    -   roll chat command
-	-   Drag rollable buttons to hotbar or message box for macros
 -   Implement "static" items (0.15 and older) compatibility
 	-	add interface for accessing old bonuses
--   Change unsatisfied prerequisite messages for better formatting & localization
+
+## Jeff and Chris
+-   Finish the Damage Calculator conversion
+-   Convert OTFs and chat commands
+	-   Drag rollable buttons to hotbar or message box for macros
 
 ## 1.0.0
 
 -	fix GURPS.LastActor setting, 
 -   Finish "static" character (0.15 and older) compatibility
 -   Convert over module compatibility
--   Dynamic Character changes
-    -   add move modes to dynamic character
-    -   add optional encumbrance to dynamic character
-    -   add posture to dynamic character
-    -   add maneuver to dynamic character
 -   @X@ notation dialog box for items
--   update Nordlond sheet & compendium entries with dynamic characters
 -	negative value stat support for tokens
 -	convert mook generator
+-   update Nordlond sheet & compendium entries with dynamic characters
+-   Convert the modifier bucket over
+    -   modifier bucket journals
 
 ## 1.1.0 and beyond
 
+-   Dynamic Character changes
+    -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
+        the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings
 -	support rollable bonuses
 -	Skill Defaults from compendium
 	-	account for any skill bonuses which should not apply to defaults
@@ -41,9 +37,6 @@
 		changing this so the templates are dynamic would improve the way they are handled in the future
 -   send modifiers from prompt
 -   Tech Level Modifiers (B168)
--   Dynamic Character changes
-    -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
-        the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings
 -   when skill is rolled from tree, show which skill is rolled
 -   (compact) NPC sheet
 -   roll skills based on other attributes

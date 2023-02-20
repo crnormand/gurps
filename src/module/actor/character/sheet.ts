@@ -127,6 +127,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 		// Points Record
 		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
+
+		// Manual Encumbrance
+		html.find(".enc-toggle").on("click", event => this._toggleAutoEncumbrance(event))
+		html.find(".encumbrance-marker.manual").on("click", event => this._setEncumbrance(event))
 	}
 
 	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
@@ -544,6 +548,37 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}).render(true)
 	}
 
+	_toggleAutoEncumbrance(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const autoEncumbrance = this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as {
+			active: boolean
+			manual: number
+		}
+		autoEncumbrance.active = !autoEncumbrance.active
+		autoEncumbrance.manual = -1
+		const carried = this.actor.weightCarried(false)
+		for (const e of this.actor.allEncumbrance) {
+			if (carried <= e.maximum_carry) {
+				autoEncumbrance.manual = e.level
+				break
+			}
+		}
+		if (autoEncumbrance.manual === -1)
+			autoEncumbrance.manual = this.actor.allEncumbrance[this.actor.allEncumbrance.length - 1].level
+		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance, autoEncumbrance)
+	}
+
+	_setEncumbrance(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const level = Number($(event.currentTarget).data("level"))
+		const autoEncumbrance = this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as {
+			active: boolean
+			manual: number
+		}
+		autoEncumbrance.manual = level
+		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance, autoEncumbrance)
+	}
+
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
@@ -663,6 +698,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				maneuvers: CONFIG.GURPS.select.maneuvers,
 				postures: CONFIG.GURPS.select.postures,
 				move_types: CONFIG.GURPS.select.move_types,
+				autoEncumbrance: (this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as any)?.active,
 				overencumbered,
 				hit_locations,
 			},

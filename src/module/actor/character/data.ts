@@ -24,7 +24,17 @@ export interface CharacterFlags extends ActorFlagsGURPS {
 		[ActorFlags.TargetModifiers]: RollModifier[]
 		[ActorFlags.SelfModifiers]: RollModifier[]
 		[ActorFlags.MoveType]: MoveType
+		[ActorFlags.AutoEncumbrance]: { active: boolean; manual: number }
 	}
+}
+
+export const CharacterFlagDefaults: CharacterFlags = {
+	[SYSTEM_NAME]: {
+		[ActorFlags.TargetModifiers]: [],
+		[ActorFlags.SelfModifiers]: [],
+		[ActorFlags.MoveType]: MoveType.Ground,
+		[ActorFlags.AutoEncumbrance]: { active: true, manual: 0 },
+	},
 }
 
 export interface CharacterSystemData extends ActorSystemData {

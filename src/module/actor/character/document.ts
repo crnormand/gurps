@@ -39,7 +39,7 @@ import {
 	Weight,
 	WeightUnits,
 } from "@util"
-import { CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
+import { CharacterFlagDefaults, CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
 import { LengthUnits } from "@util/measure"
@@ -185,7 +185,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.profile!.tech_level = default_tech_level
 		sd.attributes = this.newAttributes(sd.settings.attributes)
 		sd.resource_trackers = this.newTrackers(sd.settings.resource_trackers)
-		this.update({ _id: this._id, system: sd })
+		const flags = CharacterFlagDefaults
+		this.update({ _id: this._id, system: sd, flags: flags })
 		super._onCreate(data, options, userId)
 		if (options.promptImport) {
 			this.promptImport()
@@ -369,7 +370,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get effectiveSprint() {
-		return this.currentMove * 1.2
+		return Math.max(this.currentMove * 1.2, this.currentMove + 1)
 	}
 
 	get currentDodge() {
@@ -554,6 +555,11 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	encumbranceLevel(for_skills = true): Encumbrance {
+		const autoEncumbrance = this.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as {
+			active: boolean
+			manual: number
+		}
+		if (autoEncumbrance && !autoEncumbrance.active) return this.allEncumbrance[autoEncumbrance?.manual || 0]
 		const carried = this.weightCarried(for_skills)
 		for (const e of this.allEncumbrance) {
 			if (carried <= e.maximum_carry) return e
