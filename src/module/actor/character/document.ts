@@ -1028,6 +1028,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Prepare data
 	override prepareData(): void {
+		if (this.noPrepare) {
+			this.noPrepare = false
+			return
+		}
 		super.prepareData()
 		const pools: any = {}
 		this.attributes.forEach(e => {
@@ -1040,10 +1044,6 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareBaseData(): void {
 		super.prepareBaseData()
-		if (this.noPrepare) {
-			this.noPrepare = false
-			return
-		}
 		this.system.settings.attributes.forEach(e => (e.cost_adj_percent_per_sm ??= 0))
 		if (this.system.attributes.length === 0) {
 			this.system.attributes = this.newAttributes()
@@ -1056,21 +1056,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	override prepareEmbeddedDocuments(): void {
-		if (this.noPrepare) {
-			this.noPrepare = false
-			return
-		}
 		super.prepareEmbeddedDocuments()
-		// This.features = {
-		// 	attributeBonuses: [],
-		// 	costReductions: [],
-		// 	drBonuses: [],
-		// 	skillBonuses: [],
-		// 	skillPointBonuses: [],
-		// 	spellBonuses: [],
-		// 	spellPointBonuses: [],
-		// 	weaponBonuses: [],
-		// }
 		this.updateSkills()
 		this.updateSpells()
 		for (let i = 0; i < 5; i++) {
@@ -1080,34 +1066,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			let spellsChanged = this.updateSpells()
 			if (!skillsChanged && !spellsChanged) break
 		}
-		// This.pools = {}
-		// for (const a of Object.values(this.attributes)) {
-		// 	if (a.attribute_def.type === AttributeType.Pool)
-		// 		this.pools[a.attribute_def.name] = {
-		// 			id: a.id,
-		// 			max: a.max,
-		// 			value: a.current,
-		// 		}
-		// }
 	}
-
-	// PrepareDerivedData(): void {
-	// 	super.prepareDerivedData()
-	// 	let maneuver: any = "none"
-	// 	console.log(Object.values(ManeuverID))
-	// 	const currentManeuver = this.conditions.find(e => Object.values(ManeuverID).includes(e as any))
-	// 	console.log(currentManeuver)
-	// 	if (currentManeuver) maneuver = currentManeuver.cid
-	// 	let posture: any = "standing"
-	// 	const currentPosture = this.conditions.find(e => Postures.includes(e.cid as any))
-	// 	if (currentPosture) posture = currentPosture.cid
-	// 	const type = "ground"
-	// 	this.moveData = {
-	// 		maneuver,
-	// 		posture,
-	// 		type
-	// 	}
-	// }
 
 	processFeatures() {
 		this.features = {
@@ -1167,42 +1126,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.calc.lifting_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Lifting)
 		this.calc.striking_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Striking)
 		this.calc.throwing_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Throwing)
-		// This.attributes = this.getAttributes()
-		// if (this.attributes)
-		// 	this.attributes.forEach(attr => {
-		// 		console.log(attr)
-		// 		const sysAttr = this.system.attributes.find(e => e.attr_id === attr.id)
-		// 		console.log(sysAttr)
-		// 		if (!sysAttr) return
-		// 		const index = this.system.attributes.indexOf(sysAttr)
-		// 		// if (!this.system.attributes[attr.order]) return
-		// 		const def = attr.attribute_def
-		// 		console.log(def)
-		// 		if (def) {
-		// 			this.system.attributes[index].bonus = this.attributeBonusFor(
-		// 				attr.id,
-		// 				AttributeBonusLimitation.None
-		// 			)
-		// 			this.system.attributes[index].effectiveBonus = this.attributeBonusFor(
-		// 				attr.id,
-		// 				AttributeBonusLimitation.None,
-		// 				true,
-		// 				null
-		// 			)
-		// 			if (![AttributeType.Decimal, AttributeType.DecimalRef].includes(def.type)) {
-		// 				this.system.attributes[index].bonus =
-		// 					Math.floor(this.system.attributes[index].bonus ?? 0)
-		// 				this.system.attributes[index].effectiveBonus =
-		// 					Math.floor(this.system.attributes[index].effectiveBonus ?? 0)
-		// 			}
-		// 			this.system.attributes[index].cost_reduction = this.costReductionFor(attr.id)
-		// 			console.log(this.system.attributes)
-		// 		} else {
-		// 			this.system.attributes[index].bonus = 0
-		// 			this.system.attributes[index].effectiveBonus = 0
-		// 			this.system.attributes[index].cost_reduction = 0
-		// 		}
-		// 	})
 		this.attributes = this.getAttributes()
 		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
@@ -2023,6 +1946,23 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	hasTrait(name: string): boolean {
 		return this.traits.some(e => e instanceof TraitGURPS && e.name === name && e.enabled)
+	}
+
+	override async modifyTokenAttribute(attribute: string, value: number, isDelta = false, isBar = true) {
+		if (!attribute.startsWith("pools")) return super.modifyTokenAttribute(attribute, value, isDelta, isBar)
+
+		const current = getProperty(this.system, attribute)
+		const id = attribute.replace("pools.", "")
+		const index = this.system.attributes.findIndex(e => e.attr_id === id)
+		if (index === -1) return this
+		let updates
+		if (isDelta) value = Math.clamped(current.min, Number(current.value) + value, current.max)
+		const attributes = this.system.attributes
+		attributes[index].damage = Math.max(this.attributes.get(id)!.max - value, 0)
+		updates = { "system.attributes": attributes }
+
+		const allowed = Hooks.call("modifyTokenAttribute", { attribute, value, isDelta, isBar }, updates)
+		return allowed !== false ? this.update(updates) : this
 	}
 }
 

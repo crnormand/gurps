@@ -86,7 +86,7 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 	touch: number
 	// TODO: change
 	conditions: any
-	traits: any
+	traits: StaticCharacterTraits
 	encumbrance: any
 	move: any
 	reactions: any
@@ -115,6 +115,26 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 	notes: any
 	equippedparryisfencing?: boolean
 	block?: number
+}
+
+export interface StaticCharacterTraits {
+	title: string
+	race: string
+	height: string
+	weight: string
+	age: string
+	birthday: string
+	religion: string
+	gender: string
+	eyes: string
+	hair: string
+	hand: string
+	skin: string
+	sizemod: number
+	techlevel: string
+	createdon: string
+	modifiedon: string
+	player: string
 }
 
 export enum StaticAttributeName {

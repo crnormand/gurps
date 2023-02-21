@@ -43,6 +43,18 @@
 				{{{input_lock ../editing}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.touch"}}</div>
+		<div class="points">[{{system.basicspeed.points}}]</div>
+		<div data-id="touch" data-type="attribute" class="field rollable">
+			<input name="system.touch" class="input number" type="text" data-dtype="Number" value="{{system.basicspeed.value}}"
+				{{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.basicspeed"}}</div>
+		<div class="points">[{{system.basicmove.points}}]</div>
+		<div data-id="touch" data-type="attribute" class="field rollable">
+			<input name="system.touch" class="input number" type="text" data-dtype="Number" value="{{system.basicmove.value}}"
+				{{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.basicmove"}}</div>
 	</div>
 </div>
 {{!--

@@ -1,4 +1,5 @@
 import { BaseActorGURPS } from "@actor/base"
+import { ConditionGURPS, EffectID, ManeuverID, Postures } from "@item"
 // Import { ActorFlags } from "@actor/base/data"
 import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
@@ -1051,6 +1052,47 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		await Static.removeKey(this, path)
 		if (depth === 0) this.render()
 		return item
+	}
+
+	async increaseCondition(id: EffectID): Promise<ConditionGURPS | null> {
+		if (Postures.includes(id as any)) {
+			if (this.hasCondition(id as any)) await this.update({ "system.move.posture": "standing" })
+			else await this.update({ "system.move.posture": id })
+		}
+		return super.increaseCondition(id)
+	}
+
+	async decreaseCondition(id: EffectID, { forceRemove } = { forceRemove: false }): Promise<void> {
+		if (Postures.includes(id as any)) await this.update({ "system.move.posture": "standing" })
+		return super.decreaseCondition(id, { forceRemove })
+	}
+
+	async changeManeuver(id: ManeuverID | "none"): Promise<ConditionGURPS | null> {
+		await this.update({ "system.move.maneuver": id })
+		return super.changeManeuver(id)
+	}
+
+	async resetManeuvers(): Promise<null> {
+		await this.update({ "system.move.maneuver": "none" })
+		return super.resetManeuvers()
+	}
+
+	// All this changes is allowing delta values to decrease the bar below 0
+	override async modifyTokenAttribute(attribute: string, value: number, isDelta = false, isBar = true) {
+		const current = foundry.utils.getProperty(this.system, attribute)
+
+		// Determine the updates to make to the actor data
+		let updates
+		if (isBar) {
+			if (isDelta) value = Math.clamped(-Infinity, Number(current.value) + value, current.max)
+			updates = { [`system.${attribute}.value`]: value }
+		} else {
+			if (isDelta) value = Number(current) + value
+			updates = { [`system.${attribute}`]: value }
+		}
+
+		const allowed = Hooks.call("modifyTokenAttribute", { attribute, value, isDelta, isBar }, updates)
+		return allowed !== false ? this.update(updates) : this
 	}
 }
 

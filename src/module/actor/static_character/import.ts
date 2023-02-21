@@ -16,7 +16,7 @@ import {
 	StaticSkill,
 	StaticSpell,
 } from "./components"
-import { StaticCharacterSystemData, StaticEncumbrance } from "./data"
+import { StaticCharacterSystemData, StaticCharacterTraits, StaticEncumbrance } from "./data"
 import { StaticHitLocation, StaticHitLocationDictionary, StaticHitLocationRolls } from "./hit_location"
 
 export class StaticCharacterImporter {
@@ -273,9 +273,9 @@ export class StaticCharacterImporter {
 		return t
 	}
 
-	async importMisc(p: CharacterImportedData["profile"], cd: string, md: string) {
+	async importMisc(p: Partial<StaticCharacterTraits> | any, cd: string, md: string) {
 		if (!p) return
-		let ts: StaticCharacterSystemData["traits"] = {}
+		let ts: Partial<StaticCharacterTraits> = {}
 		ts.race = ""
 		ts.height = p.height || ""
 		ts.weight = p.weight || ""
@@ -333,7 +333,7 @@ export class StaticCharacterImporter {
 						final += f.amount * (i.levels ? parseFloat(i.levels) : 1)
 				}
 		}
-		ts.sizemod = final.signedString()
+		ts.sizemod = final
 		return {
 			"system.-=traits": null,
 			"system.traits": ts,

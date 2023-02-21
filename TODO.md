@@ -2,23 +2,26 @@
 
 ## In Progress
 
--   Implement "static" items (0.15 and older) compatibility
-	-	add interface for accessing old bonuses
+-   Finish "static" character (0.15 and older) compatibility
+	-	functional rolls
+	-	foundry item display
+	-	don't bother with editing features
 
 ## Jeff and Chris
+
 -   Finish the Damage Calculator conversion
 -   Convert OTFs and chat commands
 	-   Drag rollable buttons to hotbar or message box for macros
+-   update Nordlond sheet & compendium entries with dynamic characters
 
 ## 1.0.0
 
+-   Implement "static" items (0.15 and older) compatibility
+	-	add interface for accessing old bonuses
 -	fix GURPS.LastActor setting, 
--   Finish "static" character (0.15 and older) compatibility
 -   Convert over module compatibility
 -   @X@ notation dialog box for items
--	negative value stat support for tokens
 -	convert mook generator
--   update Nordlond sheet & compendium entries with dynamic characters
 -   Convert the modifier bucket over
     -   modifier bucket journals
 

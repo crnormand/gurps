@@ -77,9 +77,25 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			this.actor.setFlag(SYSTEM_NAME, ActorFlags.Deprecation, true)
 		})
 
-		// Hover Over
-		// html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
-		// html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
+		// Maneuver / Posture Selection
+		html.find(".move-select").on("change", event => this._onMoveChange(event))
+	}
+
+	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
+		event.preventDefault()
+		event.stopPropagation()
+		const element = $(event.currentTarget)
+		const type = element.data("name")
+		switch (type) {
+			case "maneuver":
+				await this.actor.update({ "system.move.maneuver": element.val() }, { render: false })
+				return this.actor.changeManeuver(element.val() as any)
+			case "posture":
+				await this.actor.update({ "system.move.posture": element.val() }, { render: false })
+				return this.actor.changePosture(element.val() as any)
+			default:
+				return this.actor.update({ "system.move.type": element.val() })
+		}
 	}
 
 	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
