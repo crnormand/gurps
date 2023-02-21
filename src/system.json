@@ -47,7 +47,7 @@
 	"changelog": "",
 	"gridDistance": 1,
 	"gridUnits": "yd",
-	"primaryTokenAttribute": "pools.HP",
+	"primaryTokenAttribute": "pools.hp",
 	"socket": true,
-	"secondaryTokenAttribute": "pools.FP"
+	"secondaryTokenAttribute": "pools.fp"
 }

@@ -208,6 +208,8 @@
 			"hp": "HP",
 			"fp": "FP",
 			"qp": "QP",
+			"basicspeed": "Basic Speed",
+			"basicmove": "Basic Move",
 			"status": {
 				"normal": "Normal",
 				"reeling": "Reeling",

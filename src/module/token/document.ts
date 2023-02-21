@@ -1,4 +1,4 @@
-import { BaseActorGURPS } from "@actor"
+import { BaseActorGURPS, CharacterGURPS } from "@actor"
 import { ConditionID } from "@item/condition"
 
 class TokenDocumentGURPS extends TokenDocument {
@@ -6,6 +6,46 @@ class TokenDocumentGURPS extends TokenDocument {
 		if (statusId === "dead") return this.overlayEffect === CONFIG.controlIcons.defeated
 		const { actor } = this
 		return (actor as BaseActorGURPS)?.hasCondition(statusId) || false
+	}
+
+	getBarAttribute(barName: string, { alternative }: any = {}): any {
+		const attr = alternative || (this as any)[barName]?.attribute
+		if (!attr || !this.actor) return null
+		let data = foundry.utils.getProperty((this.actor as any).system, attr)
+		if (data === null || data === undefined) return null
+		const model = game.model.Actor[this.actor.type]
+
+		// Single values
+		if (Number.isNumeric(data)) {
+			return {
+				type: "value",
+				attribute: attr,
+				value: Number(data),
+				editable: foundry.utils.hasProperty(model, attr),
+			}
+		}
+
+		// Attribute objects
+		else if ("value" in data && "max" in data) {
+			if (this.actor instanceof CharacterGURPS)
+				return {
+					type: "bar",
+					attribute: attr,
+					value: parseInt(data.value || 0),
+					max: parseInt(data.max || 0),
+					editable: true,
+				}
+			return {
+				type: "bar",
+				attribute: attr,
+				value: parseInt(data.value || 0),
+				max: parseInt(data.max || 0),
+				editable: foundry.utils.hasProperty(model, `${attr}.value`),
+			}
+		}
+
+		// Otherwise null
+		return null
 	}
 }
 

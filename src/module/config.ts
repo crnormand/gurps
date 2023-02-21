@@ -209,7 +209,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 				ItemType.NoteContainer,
 				ItemType.Condition,
 			],
-			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment],
+			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment, ItemType.Effect, ItemType.Condition],
 		},
 	},
 	Feature: {
