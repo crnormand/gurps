@@ -102,9 +102,10 @@ class DamageRollAdapter implements DamageRoll {
 		console.log(`location = ${this._locationId}`)
 
 		this.weapon = weapon
+		this.basicDamage = payload.total
+		this.dice = payload.dice
 
 		this.internalExplosion = false
-		this.basicDamage = 0
 		this.damageType = DamageType.cr
 		this.applyTo = ""
 		this.damageModifier = ""
@@ -114,7 +115,6 @@ class DamageRollAdapter implements DamageRoll {
 		this.isHalfDamage = false
 		this.isShotgunCloseRange = false
 		this.vulnerability = 1
-		this.dice = new DiceGURPS()
 	}
 
 	get locationId(): string {

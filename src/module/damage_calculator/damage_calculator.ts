@@ -19,7 +19,7 @@ const Torso = "torso"
 
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
- *
+ * 
  * This includes special damage effects such as Blunt Trauma, Shock Stun, Knockback, Major Wounds, etc.
  *
  * The DamageCalculator is immutable; you need to create a new one for every damage resolution.
