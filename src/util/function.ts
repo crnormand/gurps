@@ -1,8 +1,8 @@
 // Import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS, TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
 import { equalFold } from "./misc"
-import * as Measure from "./measure"
 import { ItemType } from "@module/data"
+import { Length } from "./length"
 
 export interface VariableResolver {
 	resolveVariable: (variableName: string) => string
@@ -386,7 +386,7 @@ export function evalSSRT(e: Evaluator, a: string): any {
 	const units = evalToString(e, arg)
 	;[arg, a] = nextArg(a)
 	const wantSize = evalToBool(e, arg)
-	const length = Measure.lengthFromString(`${n} ${units}`, Measure.LengthUnits.Yard)
+	const length = Length.fromString(`${n} ${units}`)
 	let result = yardsToValue(length, wantSize)
 	if (!wantSize) {
 		result = -result
@@ -399,7 +399,7 @@ export function evalSSRTYards(e: Evaluator, a: string): any {
 	return valueToYards(v)
 }
 
-function yardsToValue(length: Measure.Length, allowNegative: boolean): number {
+function yardsToValue(length: number, allowNegative: boolean): number {
 	const inches = Number(length)
 	const feet = inches / 12
 	let yards = inches / 36

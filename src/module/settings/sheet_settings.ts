@@ -1,6 +1,5 @@
 import { DamageProgression, DisplayMode, SYSTEM_NAME } from "@module/data"
-import { WeightUnits } from "@util"
-import { LengthUnits } from "@util/measure"
+import { LengthUnits, WeightUnits } from "@util"
 import { SettingsMenuGURPS } from "./menu"
 
 export class DefaultSheetSettings extends SettingsMenuGURPS {

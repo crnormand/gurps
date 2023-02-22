@@ -1,12 +1,35 @@
 <div id="identity">
 	<div class="header">{{localize "gurps.character.identity"}}</div>
 	<div class="fieldblock">
-		{{>sections/input-text label="gurps.character.name" field="field" name="name" type="String" data=actor.name
-		class=(input_lock editing)}}
-		{{>sections/input-text label="gurps.character.title" field="field" name="system.profile.title" type="String"
-		data=system.profile.title class=(input_lock editing)}}
-		{{>sections/input-text label="gurps.character.organization" field="field" name="system.profile.organization"
-		type="String"
-		data=system.profile.organization class=(input_lock editing)}}
+		<div class="label">{{localize "gurps.character.name"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="name"
+				value="{{actor.name}}"
+				data-dtype="String"
+				{{input_lock editing}}
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.title"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="system.profile.title"
+				value="{{system.profile.title}}"
+				data-dtype="String"
+				{{input_lock editing}}
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.organization"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="system.profile.organization"
+				value="{{system.profile.organization}}"
+				data-dtype="String"
+				{{input_lock editing}}
+			/>
+		</div>
 	</div>
 </div>

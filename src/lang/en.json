@@ -45,7 +45,7 @@
 			},
 			"defense": {
 				"all_out_defense": "All-Out Defense",
-				"shield": "to Dodge (Shield DB)",
+				"shield": "to Active Defense (Shield DB)",
 				"acrobatics_success": "to Dodge (Acrobatics, success)",
 				"dodge_and_drop": "to Dodge (Dodge and Drop)",
 				"dodge_retreat": "to Dodge (Retreat)",
@@ -1281,6 +1281,14 @@
 			"compendium_browser_packs": {
 				"name": "Compendium Browser Packs",
 				"hint": "Choose which packs are included in the compendium browser."
+			},
+			"base_books": {
+				"name": "Base Rulebooks",
+				"hint": "Choose which base rulebooks are used for in-built references",
+				"choices": {
+					"gurps": "GURPS Basic Set (B/BX)",
+					"dfrpg": "The Dungeon Fantasy Roleplaying Game (DFA/DFX)"
+				}
 			}
 		},
 		"context_menu": {
