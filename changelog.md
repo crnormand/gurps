@@ -1,6 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.15.29 02/17/2023
+Release 0.15.31 02/22/2023
+
+- Fixed gurpslink parsing, thanks SrAndros!
+
+Release 0.15.30 02/17/2023
 
 - Fixed range ruler causing errors with range strategies other than the SSRT
 
