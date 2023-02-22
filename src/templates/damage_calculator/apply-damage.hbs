@@ -2,18 +2,16 @@
 	<div class="header">Damage Roll</div>
 	<div class="fieldblock">
 		<div class="label">Attacker</div>
-		<div class="field">{{this.roll.attacker.name}}</div>
+		<div class="field">{{roll.attacker.name}}</div>
 		<div></div>
 
 		<div class="label">Weapon</div>
-		<div class="field">—</div>
+		<div class="field">{{roll.weapon.name}}</div>
 		<div></div>
 
 		<div class="label">Source roll</div>
 		<div class="field">
-			{{source}}
-			{{type}}
-			{{roll.damageModifier}}
+			{{roll.weapon.damageDice}}
 		</div>
 		<div></div>
 
@@ -59,10 +57,12 @@
 		<div class="label pdf">B268</div>
 
 		<div class="label"></div>
-		<div class="field">
+		<div class="field no-stretch">
 			<label for="exp" class="checkbox-label">
 				<input id="exp" type="checkbox" {{checked isExplosion}} />Explosion
 			</label>
+			<label for="explosion" class="checkbox-label">
+				<input id="explosion" type="checkbox" />Internal</label>
 		</div>
 		<div class="label pdf">B414</div>
 
@@ -143,36 +143,47 @@
 			<div class="label pdf">B47</div>
 
 			<div class="label">Vulnerability</div>
-			<div class="field no-stretch">
-				<select name="vulnerability">
-					{{selectOptions vulnerabilityChoices selected=calculator.vulnerabilityLevel}}
+			<div id="vulnerability" class="field no-stretch">
+				{{#if vulnerabilities}}
+					<div style="display: flex; flex-flow: column nowrap;">
+						{{#each vulnerabilities}}
+							<label for="vulnerability-{{@index}}" class="checkbox-label">
+								<input id="vulnerability-{{@index}}" type="checkbox" />{{this}}</label>
+						{{/each}}
+					</div>
+				{{/if}}
+
+				<select name="vulnerable-override">
+					{{selectOptions vulnerabilityChoices}}
 				</select>
-				<span>{{vulnerabilityNotes}}</span>
 			</div>
 			<div class="label pdf">B161</div>
 
 			<div class="label">Injury Tolerance</div>
 			<div class="field">
 				<select name="tolerance">
-					{{selectOptions injuryToleranceChoices value=0}}
+					{{selectOptions injuryToleranceChoices selected=injuryTolerance}}
 				</select>
 			</div>
 			<div class="label pdf">B60</div>
 
-			<div class="label">Damage<br />Reduction</div>
-			<div class="field">
+			<div class="label">Damage Reduction</div>
+			<div class="field no-stretch">
 				<select name="reduction">
-					{{selectOptions damageReductionChoices value=0}}
+					{{selectOptions damageReductionChoices selected=damageReduction}}
 				</select>
+				<div class="label">Override</div>
+				<input
+					type="number"
+					class="apply-control"
+					data-action="override-reduction"
+					value=""
+					step="any"
+					name="override-reduction"
+					size="3"
+				/>
 			</div>
 			<div class="label pdf">P53</div>
-
-			<div class="label"></div>
-			<div class="field">
-				<label for="explosion" class="checkbox-label">
-					<input id="explosion" type="checkbox" />Internal explosion</label>
-			</div>
-			<div class="label pdf">B414</div>
 		</div>
 	</div>
 

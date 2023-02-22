@@ -1686,7 +1686,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		drMap: Map<string, number> = new Map()
 	): Map<string, number> {
 		for (const f of this.features.drBonuses) {
-			if (equalFold(locationID, f.location)) {
+			if (f.type === "dr_bonus" && equalFold(locationID, f.location)) {
 				drMap.set(f.specialization!.toLowerCase(), f.adjustedAmount)
 				f.addToTooltip(tooltip)
 			}

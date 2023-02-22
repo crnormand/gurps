@@ -13,7 +13,7 @@ export enum DamageChatFlags {
 export type DamagePayload = {
 	hitlocation: string
 	attacker: ChatMessageData["speaker"]["_source"]
-	weaponUUID: string
+	weaponID: string
 	name: string
 	dice: DiceGURPS
 	modifiers: Array<RollModifier & { class?: string }>
@@ -36,6 +36,7 @@ export class DamageChat {
 	 * object.
 	 */
 	static async renderChatMessage(app: ChatMessage, html: JQuery<HTMLElement>, msg: any) {
+		// TODO use a way to identify elements not tied to their appearance (data attributes, for example).
 		if (!html.find(".dice-roll.damage").length) return true
 
 		let transfer = JSON.parse(DamageChat.getTransferFlag(app))

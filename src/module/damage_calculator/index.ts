@@ -14,7 +14,7 @@ interface DamageRoll {
 	 */
 	locationId: string | DefaultHitLocations
 
-	attacker: DamageAttacker
+	attacker: DamageAttacker | undefined
 	dice: DiceGURPS
 	basicDamage: number
 	damageType: DamageType
@@ -29,7 +29,7 @@ interface DamageRoll {
 	 * A reference to the weapon used in the attack. Might be used to determine 1/2D for Ranged weapons, for example.
 	 * Or DamageType, damageModifier, armorDivisor, rofMultiplier, ...
 	 */
-	weapon: DamageWeapon | null
+	weapon: DamageWeapon | undefined
 
 	/**
 	 * Value 1 = no Armor Divisor, 0 = Ignores DR; otherwise, it takes any non-negative value.
@@ -70,14 +70,18 @@ interface DamageRoll {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface DamageAttacker {
-	name: string
+	name: string | null
 }
 
 /**
  * An adapter on BaseWeapon and its subclasses that gives the DamageCalculator an easy interface to use.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface DamageWeapon {}
+interface DamageWeapon {
+	name: string
+
+	damageDice: string
+}
 
 enum DefaultHitLocations {
 	Default = "Default",
@@ -90,25 +94,27 @@ class DamageRollAdapter implements DamageRoll {
 
 	private _locationId: string
 
-	constructor(payload: DamagePayload) {
+	constructor(payload: DamagePayload, attacker: DamageAttacker | undefined, weapon: DamageWeapon | undefined) {
 		this._payload = payload
 
+		this.attacker = attacker
 		this._locationId = payload.hitlocation
 		console.log(`location = ${this._locationId}`)
+
+		this.weapon = weapon
+		this.basicDamage = payload.total
+		this.dice = payload.dice
+
 		this.internalExplosion = false
-		this.basicDamage = 0
 		this.damageType = DamageType.cr
 		this.applyTo = ""
 		this.damageModifier = ""
-		this.weapon = null
 		this.armorDivisor = 1
 		this.rofMultiplier = 1
 		this.range = null
 		this.isHalfDamage = false
 		this.isShotgunCloseRange = false
 		this.vulnerability = 1
-		this.dice = new DiceGURPS()
-		this.attacker = new DamageAttackerAdapter()
 	}
 
 	get locationId(): string {
@@ -128,7 +134,7 @@ class DamageRollAdapter implements DamageRoll {
 		this._locationId = id
 	}
 
-	attacker: DamageAttacker
+	attacker: DamageAttacker | undefined
 
 	dice: DiceGURPS
 
@@ -140,7 +146,7 @@ class DamageRollAdapter implements DamageRoll {
 
 	damageModifier: string
 
-	weapon: DamageWeapon | null
+	weapon: DamageWeapon | undefined
 
 	armorDivisor: number
 
@@ -155,10 +161,6 @@ class DamageRollAdapter implements DamageRoll {
 	vulnerability: number
 
 	internalExplosion: boolean
-}
-
-class DamageAttackerAdapter implements DamageAttacker {
-	name = ""
 }
 
 /**
@@ -181,11 +183,13 @@ export interface DamageTarget {
 	hitLocationTable: HitLocationTable
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
 	getTrait(name: string): TargetTrait | undefined
+	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
+	getTraits(name: string): TargetTrait[]
 	//
 	hasTrait(name: string): boolean
 	// This.hasTrait("Injury Tolerance (Unliving)").
 	isUnliving: boolean
-	// This.hasTrait("Injury Tolerance (Homogenous)").
+	// This.hasTrait("Injury Torance (Homogenous)").
 	isHomogenous: boolean
 	// This.hasTrait("Injury Tolerance (Diffuse)").
 	isDiffuse: boolean

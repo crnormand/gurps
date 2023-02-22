@@ -382,6 +382,7 @@ function setArrayProperty(a: any[], index: number, prop: string, value: any): an
  * @param t
  */
 export function equalFold(s: string, t: string): boolean {
+	if (!s && !t) return false
 	return s.toLowerCase() === t.toLowerCase()
 }
 

@@ -33,8 +33,18 @@
 				flex-flow: row nowrap;
 			}
 
+			&.no-stretch {
+				.checkbox-label + .checkbox-label {
+					margin: 0;
+				}
+			}
+
 			button {
 				height: 100%;
+			}
+
+			* {
+				align-self: center;
 			}
 		}
 
@@ -43,7 +53,8 @@
 		input[name="range"],
 		input[name="woundMod"],
 		input[name="injury"],
-		input[name="dr"] {
+		input[name="dr"],
+		input[name="override-reduction"] {
 			width: 6em;
 		}
 
@@ -79,6 +90,10 @@
 				column-gap: 9px;
 				vertical-align: middle;
 				overflow: hidden;
+
+				#vulnerability div label {
+					align-self: start;
+				}
 			}
 		}
 

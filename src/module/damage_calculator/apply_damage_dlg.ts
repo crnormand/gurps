@@ -6,6 +6,12 @@ import { DamageCalculator } from "./damage_calculator"
 import { DamageType } from "./damage_type"
 import { HitLocationUtil } from "./hitlocation_utils"
 
+const Vulnerability = "Vulnerability"
+const Wounding = "Wounding"
+const Injury_Tolerance = "Injury Tolerance"
+const Damage_Reduction = "Damage Reduction"
+const InjuryTolerance_DamageReduction = "Injury Tolerance (Damage Reduction)"
+
 class ApplyDamageDialog extends Application {
 	static async create(roll: DamageRoll, target: DamageTarget, options = {}): Promise<ApplyDamageDialog> {
 		const dialog = new ApplyDamageDialog(roll, target, options)
@@ -59,13 +65,21 @@ class ApplyDamageDialog extends Application {
 			isExplosion: this.isExplosion,
 			armorDivisorSelect: this.armorDivisorSelect,
 			damageTypeChoices: DamageType,
+
 			hitLocation: this.hitLocation,
 			hitLocationChoices: this.hitLocationChoice,
+
 			hardenedChoices: hardenedChoices,
-			vulnerabilityNotes: this.vulnerabilityModifierNotes,
+
 			vulnerabilityChoices: vulnerabilityChoices,
+			vulnerabilities: this.vulnerabilities,
+
 			injuryToleranceChoices: injuryToleranceChoices,
+			injuryTolerance: this.injuryTolerance,
+
 			damageReductionChoices: damageReductionChoices,
+			damageReduction: this.damageReduction,
+
 			poolChoices: poolChoices,
 		})
 		return data
@@ -201,13 +215,35 @@ class ApplyDamageDialog extends Application {
 	}
 
 	private get vulnerabilityModifierNotes(): string {
-		const trait = this.target.getTrait("Vulnerability")
+		const trait = this.target.getTrait(Vulnerability)
 		return (
 			trait?.modifiers
-				.filter(it => !it.name.startsWith("Wounding"))
+				.filter(it => !it.name.startsWith(Wounding))
 				.map(it => it.name.trim())
 				.join("; ") ?? ""
 		)
+	}
+
+	private get vulnerabilities(): string[] {
+		let results = []
+		const traits = this.target.getTraits(Vulnerability)
+		for (const trait of traits) {
+			results.push(trait.modifiers.map(it => it.name).join("; "))
+		}
+		return results
+	}
+
+	private get injuryTolerance(): number {
+		if (this.target.isDiffuse) return 3
+		if (this.target.isHomogenous) return 2
+		if (this.target.isUnliving) return 1
+		return 0
+	}
+
+	private get damageReduction(): number {
+		let trait = this.target.getTraits(Injury_Tolerance).find(it => !!it.getModifier(Damage_Reduction))
+		if (!trait) trait = this.target.getTrait(InjuryTolerance_DamageReduction)
+		return trait?.levels ?? 1
 	}
 }
 
@@ -229,6 +265,7 @@ const vulnerabilityChoices = {
 }
 
 const damageReductionChoices = {
+	0: "Custom",
 	1: "None",
 	2: "2",
 	3: "3",
