@@ -86,9 +86,6 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/character/sections/error",
 		"actor/drag-image",
 
-		"sections/input-text",
-		"sections/textarea",
-
 		"actor/import",
 
 		"item/sections/prerequisites",

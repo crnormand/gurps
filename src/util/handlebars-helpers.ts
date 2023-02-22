@@ -429,6 +429,7 @@ export function registerHandlebarsHelpers() {
 			maintenance_cost: i.maintain,
 			casting_time: i.casttime,
 			duration: i.duration,
+			college: i.college,
 		}
 		const list = []
 		for (const [k, v] of Object.entries(values)) {

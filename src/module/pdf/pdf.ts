@@ -18,7 +18,8 @@ export const SJG_links = {
 	DFA: "https://new.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	DFM: "https://new.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	DFS: "https://new.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
-	DFE: "https://new.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
+	DFX: "https://new.warehouse23.com/products/dungeon-fantasy-roleplaying-game", // GCS standard DFRPG Exploits
+	DFE: "https://new.warehouse23.com/products/dungeon-fantasy-roleplaying-game", // Old GCS standard DFRPG Exploits
 	DR: "https://new.warehouse23.com/products/gurps-dragons-1",
 	F: "https://new.warehouse23.com/products/gurps-fantasy",
 	FDG: "https://gaming-ballistic.myshopify.com/collections/all-products/products/fantastic-dungeon-grappling",

@@ -32,6 +32,27 @@
 			gap: 4px;
 			padding: 4px;
 			height: calc(100% - 18px);
+			> div.mod-container {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				gap: 5px;
+				.reference {
+					display: flex;
+					flex-direction: row;
+					color: rgba(var(--color-link), 1) !important;
+					.ref {
+						background-color: transparent;
+						cursor: pointer;
+						&:hover {
+							color: rgba(var(--color-link-rollover), 1) !important;
+						}
+						&:active {
+							color: rgba(var(--color-link-pressed), 1) !important;
+						}
+					}
+				}
+			}
 		}
 	}
 	#categories {

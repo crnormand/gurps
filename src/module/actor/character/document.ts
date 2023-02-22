@@ -31,6 +31,7 @@ import {
 	getCurrentTime,
 	i18n,
 	i18n_f,
+	LengthUnits,
 	newUUID,
 	numberCompare,
 	SelfControl,
@@ -42,7 +43,6 @@ import {
 import { CharacterFlagDefaults, CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
-import { LengthUnits } from "@util/measure"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
@@ -145,7 +145,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				hair: "",
 				skin: "",
 				handedness: "",
-				height: 0,
+				height: "6'",
 				weight: "0 lb",
 				SM: 0,
 				gender: "",

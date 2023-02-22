@@ -52,6 +52,7 @@ export enum SETTINGS {
 	SSRT = "ssrt",
 	INITIATIVE_FORMULA = "initiative_formula",
 	MODIFIER_LIST_COLLAPSE = "modifier_list_collapse",
+	BASE_BOOKS = "base_books",
 }
 
 export enum SOCKET {

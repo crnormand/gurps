@@ -24,7 +24,7 @@ import { gid, ItemType, RollType, SYSTEM_NAME } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
-import { dollarFormat, i18n, Weight } from "@util"
+import { dollarFormat, i18n, Length, Weight } from "@util"
 import { CharacterSheetConfig } from "./config_sheet"
 import { CharacterMove, Encumbrance } from "./data"
 import { CharacterGURPS } from "./document"
@@ -679,7 +679,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				},
 			}
 		})
-		// Const hit_locations = this.actor.HitLocations
+
+		const heightUnits = this.actor.settings.default_length_units
+		const weightUnits = this.actor.settings.default_weight_units
+		const height = Length.format(Length.fromString(this.actor.profile.height), heightUnits)
+		const weight = Weight.format(Weight.fromString(this.actor.profile.weight), weightUnits)
+
 		const sheetData = {
 			...super.getData(options),
 			...{
@@ -694,6 +699,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				encumbrance,
 				lifting,
 				moveData,
+				height,
+				weight,
 				current_year: new Date().getFullYear(),
 				maneuvers: CONFIG.GURPS.select.maneuvers,
 				postures: CONFIG.GURPS.select.postures,

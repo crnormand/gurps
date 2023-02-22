@@ -1,10 +1,9 @@
 import { ActorType, DamageProgression, DisplayMode, MoveType, RollModifier, SYSTEM_NAME } from "@module/data"
 import { ActorFlags, ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
-import { Length, LengthUnits } from "@util/measure"
 import { HitLocationTableData } from "./hit_location"
 import { AttributeDefObj, AttributeObj } from "@module/attribute"
 import { ResourceTrackerDefObj, ResourceTrackerObj } from "@module/resource_tracker"
-import { Weight, WeightUnits } from "@util"
+import { LengthUnits, Weight, WeightUnits } from "@util"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -103,7 +102,7 @@ export interface CharacterProfile {
 	hair: string
 	skin: string
 	handedness: string
-	height: Length
+	height: string
 	weight: string
 	SM: number
 	gender: string

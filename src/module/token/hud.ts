@@ -162,7 +162,7 @@ export class TokenHUDGURPS extends TokenHUD {
 			icon.replaceWith(picture)
 
 			const id = picture.dataset.statusId ?? ""
-			const affecting = affectingConditions.filter(c => c.cid === id)
+			const affecting = affectingConditions?.filter(c => c.cid === id) || []
 			if (affecting.length > 0 || iconSrc === (token.document as any).overlayEffect) {
 				picture.classList.add("active")
 			}

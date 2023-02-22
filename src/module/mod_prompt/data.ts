@@ -1,60 +1,156 @@
 import { ModifierItem, SETTINGS, SYSTEM_NAME } from "@module/data"
-import { i18n, i18n_f, Measure } from "@util"
+import { i18n, i18n_f, Length, LengthUnits } from "@util"
 
-// Const i18n = game.i18n ? game.i18n?.localize : (name: string) => { return name }
-// const i18n_f = game.i18n ? game.i18n?.format : (name: string) => { return name }
-
-/**
- *
- * @param GURPS
- */
 export function loadModifiers() {
-	const meleeMods: ModifierItem[] = [
-		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.determined"), modifier: 4, reference: "B365" },
-		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.telegraphic"), modifier: 4, reference: "MA113" },
-		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.deceptive"), modifier: -2, reference: "B369" },
-		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.move"), modifier: -2, max: 9, reference: "B365" },
-		{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.strong"), modifier: 2, reference: "B365" },
-		{
-			tags: ["Melee Combat"],
-			name: i18n("gurps.modifier.melee.mighty_blow"),
-			modifier: 2,
-			cost: { id: "fp", value: 1 },
-			reference: "MA131",
-		},
-		{
-			tags: ["Melee Combat"],
-			name: i18n("gurps.modifier.melee.heroic_charge"),
-			modifier: 0,
-			cost: { id: "fp", value: 1 },
-			reference: "MA131",
-		},
-	]
+	const books = game.settings.get(SYSTEM_NAME, SETTINGS.BASE_BOOKS) as "gurps" | "dfrpg"
+	let meleeMods: ModifierItem[] = []
+	let rangedMods: ModifierItem[] = []
+	let defenseMods: ModifierItem[] = []
+	if (books === "dfrpg") {
+		meleeMods = [
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.determined"), modifier: 4, reference: "DFX30" },
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.telegraphic"), modifier: 4, reference: "MA113" },
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.deceptive"), modifier: -2, reference: "B369" },
+			{
+				tags: ["Melee Combat"],
+				name: i18n("gurps.modifier.melee.move"),
+				modifier: -2,
+				max: 9,
+				reference: "DFX31",
+			},
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.strong"), modifier: 2, reference: "DFX30" },
+			{
+				tags: ["Melee Combat"],
+				name: i18n("gurps.modifier.melee.mighty_blow"),
+				modifier: 2,
+				cost: { id: "fp", value: 1 },
+				reference: "MA131",
+			},
+			{
+				tags: ["Melee Combat"],
+				name: i18n("gurps.modifier.melee.heroic_charge"),
+				modifier: 0,
+				cost: { id: "fp", value: 1 },
+				reference: "MA131",
+			},
+		]
+		rangedMods = [
+			{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.aim"), modifier: 1, reference: "DFX29" },
+			{
+				tags: ["Ranged Combat"],
+				name: i18n("gurps.modifier.ranged.determined"),
+				modifier: 1,
+				reference: "DFX30",
+			},
+		]
+		defenseMods = [
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.all_out_defense"),
+				modifier: 2,
+				reference: "DFX31",
+			},
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.shield"), modifier: 1, reference: "DFA107" },
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.acrobatics_success"),
+				modifier: 2,
+				reference: "DFX48",
+			},
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_and_drop"), modifier: 3, reference: "DFX50" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_retreat"), modifier: 3, reference: "DFX50" },
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.block_parry_retreat"),
+				modifier: 1,
+				reference: "DFX50",
+			},
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.acrobatics_fail"),
+				modifier: -2,
+				reference: "DFX48",
+			},
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_side"), modifier: -2, reference: "DFX47" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_rear"), modifier: -4, reference: "DFX47" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.deceptive"), modifier: -1, reference: "DFX38" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.will"), modifier: -1 },
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.feverish_defense"),
+				modifier: +2,
+				cost: { id: "fp", value: 1 },
+			},
+		]
+	} else {
+		meleeMods = [
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.determined"), modifier: 4, reference: "B365" },
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.telegraphic"), modifier: 4, reference: "MA113" },
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.deceptive"), modifier: -2, reference: "B369" },
+			{
+				tags: ["Melee Combat"],
+				name: i18n("gurps.modifier.melee.move"),
+				modifier: -2,
+				max: 9,
+				reference: "B365",
+			},
+			{ tags: ["Melee Combat"], name: i18n("gurps.modifier.melee.strong"), modifier: 2, reference: "B365" },
+			{
+				tags: ["Melee Combat"],
+				name: i18n("gurps.modifier.melee.mighty_blow"),
+				modifier: 2,
+				cost: { id: "fp", value: 1 },
+				reference: "MA131",
+			},
+			{
+				tags: ["Melee Combat"],
+				name: i18n("gurps.modifier.melee.heroic_charge"),
+				modifier: 0,
+				cost: { id: "fp", value: 1 },
+				reference: "MA131",
+			},
+		]
+		rangedMods = [
+			{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.aim"), modifier: 1 },
+			{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.determined"), modifier: 1, reference: "B365" },
+		]
+		defenseMods = [
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.all_out_defense"), modifier: 2, reference: "B365" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.shield"), modifier: 1, reference: "B374" },
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.acrobatics_success"),
+				modifier: 2,
+				reference: "B374",
+			},
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_and_drop"), modifier: 3, reference: "B377" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_retreat"), modifier: 3, reference: "B375" },
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.block_parry_retreat"),
+				modifier: 1,
+				reference: "B377",
+			},
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.acrobatics_fail"),
+				modifier: -2,
+				reference: "B375",
+			},
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_side"), modifier: -2, reference: "B390" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_rear"), modifier: -4, reference: "B391" },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.deceptive"), modifier: -1 },
+			{ tags: ["Defense"], name: i18n("gurps.modifier.defense.will"), modifier: -1 },
+			{
+				tags: ["Defense"],
+				name: i18n("gurps.modifier.defense.feverish_defense"),
+				modifier: +2,
+				cost: { id: "fp", value: 1 },
+			},
+		]
+	}
 	CONFIG.GURPS.meleeMods = meleeMods
-	const rangedMods: ModifierItem[] = [
-		{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.aim"), modifier: 1 },
-		{ tags: ["Ranged Combat"], name: i18n("gurps.modifier.ranged.determined"), modifier: 1, reference: "B365" },
-	]
 	CONFIG.GURPS.rangedMods = rangedMods
-	const defenseMods: ModifierItem[] = [
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.all_out_defense"), modifier: 2, reference: "B365" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.shield"), modifier: 1, reference: "B374" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.acrobatics_success"), modifier: 2, reference: "B374" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_and_drop"), modifier: 3, reference: "B377" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_retreat"), modifier: 3, reference: "B375" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.block_parry_retreat"), modifier: 1, reference: "B377" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.acrobatics_fail"), modifier: -2, reference: "B375" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_side"), modifier: -2, reference: "B390" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.dodge_rear"), modifier: -4, reference: "B391" },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.deceptive"), modifier: -1 },
-		{ tags: ["Defense"], name: i18n("gurps.modifier.defense.will"), modifier: -1 },
-		{
-			tags: ["Defense"],
-			name: i18n("gurps.modifier.defense.feverish_defense"),
-			modifier: +2,
-			cost: { id: "fp", value: 1 },
-		},
-	]
 	CONFIG.GURPS.defenseMods = defenseMods
 
 	const modifiersStatus: ModifierItem[] = [
@@ -100,10 +196,7 @@ export function loadModifiers() {
 			[-13, 300],
 			[-14, 500],
 		].map(([r, d]) => {
-			const adjDistance = Measure.lengthFormat(
-				Measure.lengthFromNumber(d, Measure.LengthUnits.Yard),
-				Measure.LengthUnits.Yard
-			)
+			const adjDistance = Length.format(Length.toInches(d, LengthUnits.Yard), LengthUnits.Yard)
 			return {
 				tags: ["Range"],
 				modifier: r,
@@ -114,10 +207,7 @@ export function loadModifiers() {
 			tags: ["Range"],
 			modifier: -15,
 			name: i18n_f("gurps.modifier.speed.range", {
-				distance: `${Measure.lengthFormat(
-					Measure.lengthFromNumber(500, Measure.LengthUnits.Yard),
-					Measure.LengthUnits.Yard
-				)}+`,
+				distance: `${Length.format(Length.toInches(500, LengthUnits.Yard), LengthUnits.Yard)}+`,
 			}),
 		},
 	]
@@ -130,10 +220,7 @@ export function loadModifiers() {
 	]
 
 	const modifiersSpeedTens: ModifierItem[] = [...Array(50).keys()].map(e => {
-		const adjDistance = Measure.lengthFormat(
-			Measure.lengthFromNumber((e + 1) * 10, Measure.LengthUnits.Yard),
-			Measure.LengthUnits.Yard
-		)
+		const adjDistance = Length.format(Length.toInches((e + 1) * 10, LengthUnits.Yard), LengthUnits.Yard)
 		return {
 			tags: ["Range"],
 			modifier: -(e + 1),
@@ -168,20 +255,14 @@ export function loadModifiers() {
 		].map(([m, l]) => {
 			let size = ""
 			if (l < 12) {
-				size = `${Measure.lengthFormat(l, Measure.LengthUnits.Inch)} (${Measure.lengthFormat(
-					l,
-					Measure.LengthUnits.Centimeter
-				)})`
+				size = `${Length.format(l, LengthUnits.Inch)} (${Length.format(l, LengthUnits.Centimeter)})`
 			} else if (l < 12 * 3) {
-				size = `${Measure.lengthFormat(l, Measure.LengthUnits.Feet)} (${Measure.lengthFormat(
-					l,
-					Measure.LengthUnits.Centimeter
-				)})`
+				size = `${Length.format(l, LengthUnits.Feet)} (${Length.format(l, LengthUnits.Centimeter)})`
 			} else {
-				size = `${Measure.lengthFormat(l, Measure.LengthUnits.Yard)}/${Measure.lengthFormat(
+				size = `${Length.format(l, LengthUnits.Yard)}/${Length.format(l, LengthUnits.Feet)} (${Length.format(
 					l,
-					Measure.LengthUnits.Feet
-				)} (${Measure.lengthFormat(l, Measure.LengthUnits.Meter)})`
+					LengthUnits.Meter
+				)})`
 			}
 			return {
 				tags: ["Size"],

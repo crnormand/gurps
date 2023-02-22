@@ -1,5 +1,6 @@
 import { CharacterProfile } from "@actor/character/data"
 import { DEFAULT_INITIATIVE_FORMULA, SETTINGS, SYSTEM_NAME } from "@module/data"
+import { loadModifiers } from "@module/mod_prompt/data"
 import { getDefaultSkills, setInitiative } from "@util"
 import { DefaultAttributeSettings } from "./attributes"
 import { ColorSettings } from "./colors"
@@ -100,6 +101,23 @@ export function registerSettings(): void {
 		},
 		default: "combined",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
+	})
+
+	game.settings.register(SYSTEM_NAME, SETTINGS.BASE_BOOKS, {
+		name: "gurps.settings.base_books.name",
+		hint: "gurps.settings.base_books.hint",
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			gurps: "gurps.settings.base_books.choices.gurps",
+			dfrpg: "gurps.settings.base_books.choices.dfrpg",
+		},
+		default: "gurps",
+		onChange: (value: string) => {
+			loadModifiers()
+			console.log(`Base books: ${value}`)
+		},
 	})
 
 	game.settings.register(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON, {

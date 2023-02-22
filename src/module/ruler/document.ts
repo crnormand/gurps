@@ -1,20 +1,19 @@
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
-import { i18n_f } from "@util"
-import { allLengthUnits, getLength, lengthSymbols, LengthUnits } from "@util/measure"
+import { allLengthUnits, i18n_f, Length, LengthSymbols, LengthUnits } from "@util"
 
 class RulerGURPS extends Ruler {
 	override _getSegmentLabel(segment: RulerMeasurementSegment, totalDistance: number): string {
 		// @ts-ignore
 		let units = canvas?.scene?.grid.units
-		Object.keys(lengthSymbols).forEach(k => {
-			if (lengthSymbols[k as LengthUnits].includes(units)) units = k
+		Object.keys(LengthSymbols).forEach(k => {
+			if (LengthSymbols[k as LengthUnits].includes(units)) units = k
 		})
 		if (!allLengthUnits.includes(units)) units = LengthUnits.Yard
 
 		let label = `${Math.round(segment.distance * 100) / 100} ${units}`
 		if (segment.last) label += ` [${Math.round(totalDistance * 100) / 100} ${units}]`
 
-		const yards = getLength(totalDistance, units, LengthUnits.Yard)
+		const yards = Length.fromInches(Length.toInches(totalDistance, units), LengthUnits.Yard)
 		const mod = RulerGURPS.getRangeMod(yards)
 
 		game.ModifierButton.setRangeMod({
