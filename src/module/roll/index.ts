@@ -219,9 +219,8 @@ export class RollGURPS extends Roll {
 		hidden = false
 	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
-		const modifiers: Array<RollModifier & { class?: string }> = [
-			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
-		]
+		const modifiers: Array<RollModifier & { class?: string }> = RollGURPS.getModifiers(user)
+
 		const encumbrance = actor.encumbranceLevel(true)
 		if (item instanceof SkillGURPS && item.encumbrancePenaltyMultiplier && encumbrance.level > 0) {
 			modifiers.unshift({
@@ -337,15 +336,13 @@ export class RollGURPS extends Roll {
 		name: string,
 		hidden = false
 	): Promise<void> {
-		// Roll the damage for the weapon.
+		// Roll the damage for the attack.
 		const dice = new DiceGURPS(data.item.fastResolvedDamage)
 		const roll = Roll.create(dice.toString(true))
 		await roll.evaluate({ async: true })
 
 		// Create an array of Modifiers suitable for display.
-		const modifiers: Array<RollModifier & { class?: string }> = [
-			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
-		]
+		const modifiers: Array<RollModifier & { class?: string }> = RollGURPS.getModifiers(user)
 		modifiers.forEach(m => {
 			m.class = "zero"
 			if (m.modifier > 0) m.class = "pos"
@@ -360,7 +357,7 @@ export class RollGURPS extends Roll {
 		const chatData: Partial<DamagePayload> = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
-			weaponUUID: `${data.item.uuid}`,
+			weaponID: `${data.item.system.id}`,
 			name,
 			dice: dice,
 			modifiers: modifiers,
@@ -401,9 +398,7 @@ export class RollGURPS extends Roll {
 		hidden = false
 	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
-		const modifiers: Array<RollModifier & { class?: string }> = [
-			...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
-		]
+		const modifiers: Array<RollModifier & { class?: string }> = RollGURPS.getModifiers(user)
 		modifiers.forEach(m => {
 			m.class = "zero"
 			if (m.modifier > 0) m.class = "pos"
@@ -475,5 +470,10 @@ export class RollGURPS extends Roll {
 	 */
 	static getHitLocationFromLastAttackRoll(_actor: ActorGURPS): string {
 		return game.settings.get(SYSTEM_NAME, SETTINGS.DEFAULT_DAMAGE_LOCATION) as string
+	}
+
+	static getModifiers(user: StoredDocument<User> | null): RollModifier[] {
+		const stack = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]
+		return stack ? [...stack] : []
 	}
 }
