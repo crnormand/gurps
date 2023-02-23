@@ -1,5 +1,6 @@
 import { HitLocation } from "@actor/character/hit_location"
-import { SYSTEM_NAME } from "@module/data"
+import { SETTINGS, SYSTEM_NAME } from "@module/data"
+import { openPDF } from "@module/pdf"
 import { toWord } from "@util/misc"
 import { DamageRoll, DamageTarget } from "."
 import { DamageCalculator } from "./damage_calculator"
@@ -56,6 +57,8 @@ class ApplyDamageDialog extends Application {
 	}
 
 	getData(options?: Partial<ApplicationOptions> | undefined): object {
+		const books = game.settings.get(SYSTEM_NAME, SETTINGS.BASE_BOOKS) as "gurps" | "dfrpg"
+
 		const data = mergeObject(super.getData(options), {
 			roll: this.roll,
 			target: this.target,
@@ -81,6 +84,7 @@ class ApplyDamageDialog extends Application {
 			damageReduction: this.damageReduction,
 
 			poolChoices: poolChoices,
+			books,
 		})
 		return data
 	}
@@ -89,6 +93,13 @@ class ApplyDamageDialog extends Application {
 		super.activateListeners(html)
 
 		html.find(".apply-control").on("change", "click", this._onApplyControl.bind(this))
+		html.find(".ref").on("click", event => this._handlePDF(event))
+	}
+
+	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
+		event.preventDefault()
+		const pdf = $(event.currentTarget).data("pdf")
+		if (pdf) return openPDF(pdf)
 	}
 
 	async _onApplyControl(event: JQuery.ChangeEvent | JQuery.ClickEvent): Promise<void> {

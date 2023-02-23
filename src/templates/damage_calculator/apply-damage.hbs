@@ -44,7 +44,11 @@
 				{{/select}}
 			</select>
 		</div>
-		<div class="label pdf">B378</div>
+		{{#if (eq books "dfrpg")}}
+		<div class="label ref" data-pdf="DFX52">DFX52</div>
+		{{else}}
+		<div class="label ref" data-pdf="B378">B378</div>
+		{{/if}}
 
 		<div class="label">Damage type</div>
 		<div class="field no-stretch type">
@@ -54,7 +58,11 @@
 			<div class="label">Modifier</div>
 			<input type="number" value="{{roll.woundMod}}" step="any" name="woundMod" size="3" />
 		</div>
-		<div class="label pdf">B268</div>
+		{{#if (eq books "dfrpg")}}
+		<div class="label ref" data-pdf="DFX53">DFX53</div>
+		{{else}}
+		<div class="label ref" data-pdf="B268">B268</div>
+		{{/if}}
 
 		<div class="label"></div>
 		<div class="field no-stretch">
@@ -64,7 +72,11 @@
 			<label for="explosion" class="checkbox-label">
 				<input id="explosion" type="checkbox" />Internal</label>
 		</div>
-		<div class="label pdf">B414</div>
+		{{#if (eq books "dfrpg")}}
+		<div class="label ref" data-pdf="DFX46">DFX46</div>
+		{{else}}
+		<div class="label ref" data-pdf="B414">B414</div>
+		{{/if}}
 
 		<div class="label">Range (yards)</div>
 		<div class="field no-stretch range">
@@ -73,14 +85,18 @@
 				<input id="1/2D" type="checkbox" />
 				Ranged, 1/2D</label>
 		</div>
-		<div class="label pdf">B378</div>
+		{{#if (eq books "dfrpg")}}
+		<div class="label ref" data-pdf="DFX43">DFX43</div>
+		{{else}}
+		<div class="label ref" data-pdf="B378">B378</div>
+		{{/if}}
 
 		<div class="label"></div>
 		<div class="field">
 			<label for="shotgun" class="checkbox-label">
 				<input id="shotgun" type="checkbox" />Shotgun, extremely close</label>
 		</div>
-		<div class="label pdf">B409</div>
+		<div class="label ref" data-pdf="B409">B409</div>
 
 		<div class="label"></div>
 		<div class="field no-stretch">
@@ -119,7 +135,11 @@
 					size="6"
 				/>
 			</div>
-			<div class="label pdf">B398</div>
+			{{#if (eq books "dfrpg")}}
+			<div class="label ref" data-pdf="DFX53">DFX53</div>
+			{{else}}
+			<div class="label ref" data-pdf="B398">B398</div>
+			{{/if}}
 
 			<div class="label"></div>
 			<div class="field">
@@ -132,7 +152,7 @@
 						{{checked calculator.isFlexibleArmor}}
 					/>{{localize "gurps.damage.flexible"}}</label>
 			</div>
-			<div class="label pdf">B378</div>
+			<div class="label ref" data-pdf="B378">B378</div>
 
 			<div class="label">{{localize "gurps.damage.hardened_dr"}}</div>
 			<div class="field">
@@ -140,7 +160,7 @@
 					{{selectOptions hardenedChoices selected=calculator.hardenedDRLevel}}
 				</select>
 			</div>
-			<div class="label pdf">B47</div>
+			<div class="label ref" data-pdf="B47">B47</div>
 
 			<div class="label">Vulnerability</div>
 			<div id="vulnerability" class="field no-stretch">
@@ -157,7 +177,11 @@
 					{{selectOptions vulnerabilityChoices}}
 				</select>
 			</div>
-			<div class="label pdf">B161</div>
+			{{#if (eq books "dfrpg")}}
+			<div class="label ref" data-pdf="DFX14">DFM14</div>
+			{{else}}
+			<div class="label ref" data-pdf="B161">B161</div>
+			{{/if}}
 
 			<div class="label">Injury Tolerance</div>
 			<div class="field">
@@ -165,7 +189,7 @@
 					{{selectOptions injuryToleranceChoices selected=injuryTolerance}}
 				</select>
 			</div>
-			<div class="label pdf">B60</div>
+			<div class="label ref" data-pdf="B60">B60</div>
 
 			<div class="label">Damage Reduction</div>
 			<div class="field no-stretch">
@@ -183,7 +207,7 @@
 					size="3"
 				/>
 			</div>
-			<div class="label pdf">P53</div>
+			<div class="label ref" data-pdf="P53">P53</div>
 		</div>
 	</div>
 

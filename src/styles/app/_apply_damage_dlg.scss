@@ -63,18 +63,31 @@
 			grid-column: span 3;
 		}
 
-		.pdf {
-			color: rgba(var(--color-text-dark-inactive), 1);
-			text-decoration: none;
+		.ref {
 			font-size: 80%;
 			text-align: left;
-
+			text-decoration: none;
+			color: rgba(var(--color-link), 1) !important;
+			cursor: pointer;
 			&:hover {
-				color: blue;
-				text-decoration: underline;
-				font-weight: 500;
+				color: rgba(var(--color-link-rollover), 1) !important;
+			}
+			&:active {
+				color: rgba(var(--color-link-pressed), 1) !important;
 			}
 		}
+		// .pdf {
+		// 	color: rgba(var(--color-text-dark-inactive), 1);
+		// 	text-decoration: none;
+		// 	font-size: 80%;
+		// 	text-align: left;
+
+		// 	&:hover {
+		// 		color: blue;
+		// 		text-decoration: underline;
+		// 		font-weight: 500;
+		// 	}
+		// }
 
 		#target {
 			padding: 2px 16px;
