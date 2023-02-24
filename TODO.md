@@ -8,6 +8,8 @@
 	-	don't bother with editing features
 -   @X@ notation dialog box for items
 	-	finish UI
+	-	handle children
+        -       pass through array and pop instead of single item
 -	item sheet styling
 	-	add item notes to display
 
