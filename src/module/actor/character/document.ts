@@ -4,7 +4,10 @@ import {
 	CR_Features,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ItemGCS,
+	ItemSubstitutionSheet,
 	MeleeWeaponGURPS,
+	ModifierChoiceSheet,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RangedWeaponGURPS,
@@ -47,7 +50,7 @@ import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
 import { ConditionGURPS, ConditionID } from "@item/condition"
-import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
+import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeDef, AttributeObj, AttributeType, ThresholdOp } from "@module/attribute"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
@@ -1024,6 +1027,25 @@ class CharacterGURPS extends BaseActorGURPS {
 		if (embeddedName === "Item")
 			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
 		return super.createEmbeddedDocuments(embeddedName, data, context)
+	}
+
+	protected override _onCreateEmbeddedDocuments(
+		embeddedName: string,
+		documents: Document<any, any, Metadata<any>>[],
+		result: Record<string, unknown>[],
+		options: DocumentModificationOptions,
+		userId: string
+	): void {
+		super._onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId)
+
+		// Replace @X@ notation fields with given text
+		if (embeddedName === "Item") {
+			for (const item of documents.filter(e => e instanceof ItemGCS)) {
+				if ((item as any).modifiers) ModifierChoiceSheet.new(item as ItemGCS)
+				else ItemSubstitutionSheet.new(item as ItemGCS)
+			}
+		}
+
 	}
 
 	// Prepare data

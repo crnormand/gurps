@@ -91,11 +91,11 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-							(this.file = {
-								text: text,
-								name: files[0].name,
-								path: files[0].path,
-							})
+						(this.file = {
+							text: text,
+							name: files[0].name,
+							path: files[0].path,
+						})
 					)
 				}
 				this.render()
@@ -286,7 +286,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 				parent_index: parent_index,
 			})
 		)
-		;(event as any).dragType = type
+			; (event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
@@ -362,8 +362,8 @@ export class StaticCharacterSheetConfig extends FormApplication {
 		}
 	}
 
-	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
-		formData = prepareFormData(event, formData, this.object)
+	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
+		formData = prepareFormData(formData, this.object)
 		console.log(formData)
 		await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
 		await this.object.update(formData)

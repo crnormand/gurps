@@ -12,6 +12,7 @@ export interface BaseItemSourceGURPS<TItemType extends ItemType = ItemType, TSys
 
 export enum ItemFlags {
 	Deprecation = "deprecation",
+	Contents = "contentsData",
 }
 
 export interface ItemFlagsGURPS extends Record<string, unknown> {

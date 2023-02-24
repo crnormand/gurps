@@ -6,6 +6,10 @@
 	-	functional rolls
 	-	foundry item display
 	-	don't bother with editing features
+-   @X@ notation dialog box for items
+	-	finish UI
+-	item sheet styling
+	-	add item notes to display
 
 ## Jeff and Chris
 
@@ -20,7 +24,6 @@
 	-	add interface for accessing old bonuses
 -	fix GURPS.LastActor setting, 
 -   Convert over module compatibility
--   @X@ notation dialog box for items
 -	convert mook generator
 -   Convert the modifier bucket over
     -   modifier bucket journals

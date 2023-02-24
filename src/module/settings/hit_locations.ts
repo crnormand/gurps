@@ -350,7 +350,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 				index: index,
 			})
 		)
-		;(event as any).dragType = type
+			; (event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
@@ -397,7 +397,7 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 			roll: game.settings.get(SYSTEM_NAME, `${this.namespace}.roll`),
 			locations: game.settings.get(SYSTEM_NAME, `${this.namespace}.locations`),
 		} as HitLocationTable
-		formData = prepareFormData(event, formData, { body_type: body_type })
+		formData = prepareFormData(formData, { body_type: body_type })
 		Object.keys(formData).forEach(k => {
 			formData[k.replace("body_type.", "")] = formData[k]
 			delete formData[k]
