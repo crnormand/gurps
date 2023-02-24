@@ -111,7 +111,7 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 		// Const item = await (BaseItemGURPS as any).implementation.fromDropData(data);
 		const item = await (Item.implementation as any).fromDropData(data)
-		const itemData = item.toObject()
+		const itemData = { ...item.toObject(), uuid: item.uuid }
 
 		// Handle item sorting within the same Actor
 		if (this.item.uuid === item.parent?.uuid) return this._onSortItem(event, itemData)
@@ -126,9 +126,10 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 	protected async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties>
+		itemData: PropertiesToSource<ItemDataBaseProperties> & { uuid: string }
 	): Promise<Item[]> {
-		const source = (this.item as any).deepItems.get(itemData._id!)
+		// Const source = (this.item as any).deepItems.get(itemData._id!)
+		const source = (this.item as any).deepItems.get(itemData.uuid)
 		const dropTarget = $(event.target!).closest("[data-item-id]")
 		const target = (this.item as any).deepItems.get(dropTarget.data("item-id"))
 		if (!target) return []

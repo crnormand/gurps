@@ -43,7 +43,14 @@ import {
 	Weight,
 	WeightUnits,
 } from "@util"
-import { CharacterFlagDefaults, CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
+import {
+	CharacterFlagDefaults,
+	CharacterSettings,
+	CharacterSource,
+	CharacterSystemData,
+	DocumentModificationOptionsGURPS,
+	Encumbrance,
+} from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
 import { HitLocation, HitLocationTable } from "./hit_location"
@@ -1022,7 +1029,12 @@ class CharacterGURPS extends BaseActorGURPS {
 	createEmbeddedDocuments(
 		embeddedName: string,
 		data: Array<Record<string, unknown>>,
-		context: DocumentModificationContext & { temporary: boolean }
+		context: DocumentModificationContext & { temporary: boolean; substitutions?: boolean } = {
+			temporary: false,
+			renderSheet: false,
+			render: true,
+			substitutions: true,
+		}
 	): Promise<Array<any>> {
 		if (embeddedName === "Item")
 			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
@@ -1033,19 +1045,19 @@ class CharacterGURPS extends BaseActorGURPS {
 		embeddedName: string,
 		documents: Document<any, any, Metadata<any>>[],
 		result: Record<string, unknown>[],
-		options: DocumentModificationOptions,
+		options: DocumentModificationOptionsGURPS,
 		userId: string
 	): void {
 		super._onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId)
+		console.log(options)
 
 		// Replace @X@ notation fields with given text
-		if (embeddedName === "Item") {
+		if (embeddedName === "Item" && options.substitutions) {
 			for (const item of documents.filter(e => e instanceof ItemGCS)) {
-				if ((item as any).modifiers) ModifierChoiceSheet.new(item as ItemGCS)
-				else ItemSubstitutionSheet.new(item as ItemGCS)
+				if ((item as any).modifiers) ModifierChoiceSheet.new([item as ItemGCS])
+				else ItemSubstitutionSheet.new([item as ItemGCS])
 			}
 		}
-
 	}
 
 	// Prepare data

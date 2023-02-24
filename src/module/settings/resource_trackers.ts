@@ -120,7 +120,7 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 				parent_index: parent_index,
 			})
 		)
-			; (event as any).dragType = type
+		;(event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

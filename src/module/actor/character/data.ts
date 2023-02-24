@@ -4,6 +4,12 @@ import { HitLocationTableData } from "./hit_location"
 import { AttributeDefObj, AttributeObj } from "@module/attribute"
 import { ResourceTrackerDefObj, ResourceTrackerObj } from "@module/resource_tracker"
 import { LengthUnits, Weight, WeightUnits } from "@util"
+import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
+
+export interface DocumentModificationOptionsGURPS extends DocumentModificationOptions {
+	temporary: boolean
+	substitutions: boolean
+}
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Character, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>

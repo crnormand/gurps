@@ -6,11 +6,15 @@ import { ItemSubstitutionSheet } from "./sub_sheet"
 export class ModifierChoiceSheet extends FormApplication {
 	object: ItemGCS & { modifiers?: Collection<ItemGCS & { enabled: boolean }> }
 
+	nextObjects: ItemGCS[]
+
 	choices: Record<string, boolean> = {}
 
-	constructor(object: ItemGCS, options?: any) {
-		super(object, options)
-		this.object = object
+	constructor(items: ItemGCS[], options?: any) {
+		const item = items.shift()!
+		super(item, options)
+		this.object = item
+		this.nextObjects = items
 	}
 
 	static get defaultOptions(): FormApplicationOptions {
@@ -23,7 +27,7 @@ export class ModifierChoiceSheet extends FormApplication {
 			resizable: true,
 			submitOnChange: true,
 			submitOnClose: false,
-			closeOnSubmit: false
+			closeOnSubmit: false,
 		})
 	}
 
@@ -37,7 +41,7 @@ export class ModifierChoiceSheet extends FormApplication {
 			choices[e._id] = e
 		})
 		return mergeObject(super.getData(options), {
-			choices
+			choices,
 		})
 	}
 
@@ -55,7 +59,7 @@ export class ModifierChoiceSheet extends FormApplication {
 		console.log(updates)
 		await this.object.updateEmbeddedDocuments("Item", updates)
 		await this.close()
-		await ItemSubstitutionSheet.new(this.object)
+		await ItemSubstitutionSheet.new([this.object])
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<any> {
@@ -65,8 +69,11 @@ export class ModifierChoiceSheet extends FormApplication {
 		}
 	}
 
-	static new(object: ItemGCS) {
-		const sheet = new ModifierChoiceSheet(object)
+	static new(items: ItemGCS[]) {
+		console.log(items)
+		if (items.length == 0) return
+		if ((items[0] as any).modifiers?.size === 0) return ItemSubstitutionSheet.new(items)
+		const sheet = new ModifierChoiceSheet(items)
 		return sheet.render(true)
 	}
 }

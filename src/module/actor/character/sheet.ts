@@ -175,7 +175,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const element = $(event.currentTarget)
 		const type = element.parent(".item-list")[0].id
 		const ctx = new ContextMenu(html, ".menu", [])
-		ctx.menuItems = (function(self: CharacterSheetGURPS): ContextMenuEntry[] {
+		ctx.menuItems = (function (self: CharacterSheetGURPS): ContextMenuEntry[] {
 			switch (type) {
 				case "traits":
 					return [
@@ -285,8 +285,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			system: {},
 		}
 		if (other) itemData.system.other = true
-		const item = (await this.actor.createEmbeddedDocuments("Item", [itemData], { temporary: false }))[0]
-		return item.sheet.render(true)
+		await this.actor.createEmbeddedDocuments("Item", [itemData], {
+			temporary: false,
+			renderSheet: true,
+			substitutions: false,
+		})
 	}
 
 	async _newNaturalAttacks() {
@@ -372,7 +375,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
-		const item = this.actor.deepItems.get(uuid.split(".").at(-1))
+		// Const item = this.actor.deepItems.get(uuid.split(".").at(-1))
+		const item = this.actor.deepItems.get(uuid)
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
 		if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) {
@@ -521,9 +525,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const uuid: string = $(event.currentTarget).data("uuid")
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
-		const item = this.actor.deepItems.get(id)
+		// Const item = this.actor.deepItems.get(id)
+		const item = this.actor.deepItems.get(uuid)
+		console.log(item)
 		// @ts-ignore
-		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
+		// item?.update({ _id: id, "system.open": open }, { noPrepare: true })
+		item?.update({ _id: id, "system.open": open })
 	}
 
 	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
@@ -535,8 +542,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		const id = uuid.split(".").at(-1) ?? ""
-		const item = this.actor.deepItems.get(id)
+		// Const id = uuid.split(".").at(-1) ?? ""
+		// const item = this.actor.deepItems.get(id)
+		const item = this.actor.deepItems.get(uuid)
 		item?.sheet?.render(true)
 	}
 
@@ -853,21 +861,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-				edit_button,
-				// {
-				// 	label: "",
-				// 	// Label: "Import",
-				// 	class: "import",
-				// 	icon: "fas fa-file-import",
-				// 	onclick: event => this._onFileImport(event),
-				// },
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._openGMenu(event),
-				},
-			]
+					edit_button,
+					// {
+					// 	label: "",
+					// 	// Label: "Import",
+					// 	class: "import",
+					// 	icon: "fas fa-file-import",
+					// 	onclick: event => this._onFileImport(event),
+					// },
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._openGMenu(event),
+					},
+			  ]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

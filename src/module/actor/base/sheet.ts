@@ -66,7 +66,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		} else {
 			item = await (Item.implementation as any).fromDropData(data)
 		}
-		const itemData = item.toObject()
+		const itemData = { ...item.toObject(), uuid: item.uuid }
 
 		// Handle item sorting within the same Actor
 		console.log(itemData, top, inContainer)
@@ -123,28 +123,18 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		// Set data transfer
 		event.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
-		// If (dragData.type === "Item") {
-		// 	await this.actor.deepItems.get(itemData._id)?.delete()
-		// }
 	}
 
 	protected override async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties>,
+		itemData: PropertiesToSource<ItemDataBaseProperties> & { uuid: string },
 		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
-		const source: any = this.actor.deepItems.get(itemData._id!)
+		// Const source: any = this.actor.deepItems.get(itemData._id!)
+		const source: any = this.actor.deepItems.get(itemData.uuid)
 		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
-		// Console.log(dropTarget)
-		// console.log("top", options.top, "inContainer", options.in)
-		// if (dropTarget && !options?.top) {
-		// 	const oldDropTarget = dropTarget
-		// 	dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
-		// 	if (!dropTarget) {
-		// 		dropTarget = oldDropTarget
-		// 	}
-		// }
-		let target: any = this.actor.deepItems.get(dropTarget?.data("uuid")?.split(".").at(-1))
+		// Let target: any = this.actor.deepItems.get(dropTarget?.data("uuid")?.split(".").at(-1))
+		let target: any = this.actor.deepItems.get(dropTarget?.data("uuid"))
 		if (!target) return []
 		let parent: any = target?.parent
 		let parents = target?.parents

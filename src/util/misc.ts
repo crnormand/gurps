@@ -504,9 +504,9 @@ export async function getDefaultSkills() {
 	for (const s in skillPacks)
 		if (skillPacks[s].skillDefault) {
 			const pack = game.packs.get(s) as CompendiumCollection<any>
-				; (await pack.getDocuments()).forEach(e => {
-					skills.push(e)
-				})
+			;(await pack.getDocuments()).forEach(e => {
+				skills.push(e)
+			})
 		}
 	CONFIG.GURPS.skillDefaults = skills
 }
@@ -514,12 +514,11 @@ export async function getDefaultSkills() {
 export function flatten(obj: any, flatObj: Record<string, any> = {}, key = ""): Record<string, any> | null {
 	if (obj === null) return null
 	for (const k of Object.keys(obj)) {
-		let valKey = (key === "") ? k : `${key}.${k}`
+		let valKey = key === "" ? k : `${key}.${k}`
 		if (typeof obj[k] === "object") {
 			if (Array.isArray(obj[k]) && !valKey.startsWith("array.")) valKey = `array.${valKey}`
 			flatten(obj[k], flatObj, valKey)
-		}
-		else flatObj[valKey] = obj[k]
+		} else flatObj[valKey] = obj[k]
 	}
 	return flatObj
 }

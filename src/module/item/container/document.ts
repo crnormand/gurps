@@ -38,7 +38,8 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 			this.items
 				.filter(item => childTypes.includes(item.type))
 				.map(item => {
-					return [item.id!, item]
+					// Return [item.id!, item]
+					return [item.uuid, item]
 				})
 		) as Collection<ItemGURPS>
 	}
@@ -47,38 +48,6 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 		return (this.system as any).open
 	}
 
-	// Async createEmbeddedDocuments(
-	// 	embeddedName: string,
-	// 	data: Array<{ name: string; type: string } & Record<string, unknown>>,
-	// 	context: DocumentModificationContext & any
-	// ): Promise<Array<StoredDocument<Document<any, this>>>> {
-	// 	if (embeddedName !== "Item") return super.createEmbeddedDocuments(embeddedName, data, context)
-	// 	if (!Array.isArray(data)) data = [data]
-
-	// 	// Prevent creating embeded documents which this type of container shouldn't contain
-	// 	data = data.filter(e => CONFIG.GURPS.Item.allowedContents[this.type].includes(e.type))
-
-	// 	const currentItems: any[] = duplicate((this.getFlag(SYSTEM_NAME, "contentsData") as any[]) ?? [])
-	// 	if (data.length) {
-	// 		for (const item of data) {
-	// 			let theItem = item
-	// 			theItem._id = randomID()
-	// 			theItem = new CONFIG.Item.documentClass(theItem, {
-	// 				parent: this as any,
-	// 			}).toJSON()
-	// 			currentItems.push(theItem)
-	// 		}
-	// 		if (this.parent)
-	// 			return this.parent.updateEmbeddedDocuments("Item", [
-	// 				{
-	// 					_id: this.id,
-	// 					[`flags.${SYSTEM_NAME}.contentsData`]: currentItems,
-	// 				},
-	// 			])
-	// 		else this.setCollection(currentItems)
-	// 	}
-	// }
-	//
 	async createEmbeddedDocuments(
 		embeddedName: string,
 		data: Array<{ name: string; type: string } & Record<string, unknown>>,
@@ -224,25 +193,15 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 				;(currentItem as any).system = item.system
 				;(currentItem as any).img = item.img
 				;(currentItem as any).sort = item.sort
-				// ; (currentItem as any)._source = item._source
 				setProperty((currentItem as any)._source, "name", item.name)
 				setProperty((currentItem as any)._source, "flags", item.flags)
 				setProperty((currentItem as any)._source, "system", item.system)
 				setProperty((currentItem as any)._source, "sort", item.sort)
-				// SetProperty(currentItem, "name", item.name)
-				// setProperty(currentItem, "flags", item.flags)
-				// setProperty(currentItem, "system", item.system)
-				// setProperty(currentItem, "sort", item.sort)
 				currentItem.prepareData()
 				this.items.set(item._id!, currentItem)
 				if (this.sheet?.rendered) {
 					// @ts-ignore
 					this.sheet.render(false, { action: "update" })
-					// CurrentItem.render(false, {
-					// 	// @ts-ignore
-					// 	action: "update",
-					// 	data: currentItem.toObject(),
-					// })
 				}
 			}
 		}
@@ -251,8 +210,6 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 
 interface ContainerGURPS extends BaseItemGURPS {
 	readonly system: BaseContainerSystemData
-	// Items: foundry.utils.Collection<ItemGURPS>;
-	// items?: EmbeddedCollection<ConfiguredDocumentClass<typeof BaseItemGURPS>, any>;
 }
 
 export { ContainerGURPS }

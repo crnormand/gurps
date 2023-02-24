@@ -92,11 +92,11 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
 		html.find("textarea")
-			.each(function() {
+			.each(function () {
 				const height = this.scrollHeight - 2
 				this.setAttribute("style", `height:${height}px;`)
 			})
-			.on("input", function() {
+			.on("input", function () {
 				const height = this.scrollHeight
 				// Const height = this.value.split("\r").length * 24;
 				this.style.height = "0"
