@@ -391,7 +391,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
 		const attributes = await game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
-		formData = prepareFormData(_event, formData, { system: { settings: { attributes } } })
+		formData = prepareFormData(formData, { system: { settings: { attributes } } })
 		await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, formData["system.settings.attributes"])
 	}
 }

@@ -135,7 +135,7 @@ export class RollModifierSettings extends SettingsMenuGURPS {
 			SYSTEM_NAME,
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
-		formData = prepareFormData(_event, formData, { modifiers: modifiers })
+		formData = prepareFormData(formData, { modifiers: modifiers })
 		await game.settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, formData.modifiers)
 	}
 }

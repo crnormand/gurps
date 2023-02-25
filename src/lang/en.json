@@ -623,7 +623,12 @@
 			"slash": "/",
 			"note": "Note",
 			"markdown_preview": "Markdown Preview",
-			"natural_attacks": "Natural Attacks"
+			"natural_attacks": "Natural Attacks",
+			"substitution": {
+				"title": "Substitution: {name}",
+				"apply": "OK",
+				"cancel": "Cancel"
+			}
 		},
 		"attributes": {
 			"dodge": "Dodge",

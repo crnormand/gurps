@@ -42,8 +42,6 @@ export class ActorSheetGURPS extends ActorSheet {
 		event: DragEvent,
 		data: ActorSheet.DropData.Item & { actor: BaseActorGURPS; _uuid?: string }
 	): Promise<unknown> {
-		// Const element = $(event.currentTarget!)
-		// const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
 		const top = Boolean($(".border-top").length)
 		const inContainer = Boolean($(".border-in").length)
 
@@ -55,7 +53,6 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		if (!this.actor.isOwner) return false
 
-		// Const item = await (BaseItemGURPS as any).implementation.fromDropData(data);
 		let item: Item
 		if (data._uuid) {
 			const importData = {
@@ -66,10 +63,10 @@ export class ActorSheetGURPS extends ActorSheet {
 		} else {
 			item = await (Item.implementation as any).fromDropData(data)
 		}
-		const itemData = item.toObject()
+		const itemData = { ...item.toObject(), uuid: item.uuid }
 
 		// Handle item sorting within the same Actor
-		console.log(itemData, top, inContainer)
+		// console.log(itemData, top, inContainer)
 		if (this.actor.uuid === item.actor?.uuid) {
 			console.log(top, inContainer)
 			return this._onSortItem(event, itemData, { top: top, in: inContainer })
@@ -123,28 +120,16 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		// Set data transfer
 		event.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
-		// If (dragData.type === "Item") {
-		// 	await this.actor.deepItems.get(itemData._id)?.delete()
-		// }
 	}
 
 	protected override async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties>,
+		itemData: PropertiesToSource<ItemDataBaseProperties> & { uuid: string },
 		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
-		const source: any = this.actor.deepItems.get(itemData._id!)
+		const source: any = this.actor.deepItems.get(itemData.uuid)
 		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
-		// Console.log(dropTarget)
-		// console.log("top", options.top, "inContainer", options.in)
-		// if (dropTarget && !options?.top) {
-		// 	const oldDropTarget = dropTarget
-		// 	dropTarget = dropTarget.nextAll(".desc[data-uuid]").first()
-		// 	if (!dropTarget) {
-		// 		dropTarget = oldDropTarget
-		// 	}
-		// }
-		let target: any = this.actor.deepItems.get(dropTarget?.data("uuid")?.split(".").at(-1))
+		let target: any = this.actor.deepItems.get(dropTarget?.data("uuid"))
 		if (!target) return []
 		let parent: any = target?.parent
 		let parents = target?.parents

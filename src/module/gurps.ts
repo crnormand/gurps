@@ -47,9 +47,6 @@ import { DiceGURPS } from "@module/dice"
 import * as Chat from "@module/chat"
 import { ItemImporter } from "@item/import"
 import { CompendiumBrowser } from "./compendium"
-import { PDFViewerSheet } from "@module/pdf/sheet"
-import { JournalEntryPageGURPS } from "./pdf"
-import { PDFEditorSheet } from "./pdf/edit"
 import { ActorType, ItemType, SOCKET, SYSTEM_NAME, UserFlags } from "./data"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
@@ -89,6 +86,7 @@ import { CharacterSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
 import { DamageCalculator } from "./damage_calculator/damage_calculator"
 import { ActiveEffectGURPS } from "@module/effect"
 import { ModifierList } from "./mod_list"
+import { PDF } from "@module/pdf"
 
 Error.stackTraceLimit = Infinity
 
@@ -115,7 +113,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.eval = evaluateToNumber
 	GURPS.search = fSearch
 	GURPS.dice = DiceGURPS
-	GURPS.pdf = PDFViewerSheet
+	GURPS.pdf = PDF.PDFViewerSheet
 	GURPS.TokenModifierControl = new TokenModifierControl()
 	GURPS.recurseList = Static.recurseList
 	GURPS.setLastActor = LastActor.set
@@ -142,8 +140,7 @@ Hooks.once("init", async () => {
 	CONFIG.Token.documentClass = TokenDocumentGURPS
 	CONFIG.Token.objectClass = TokenGURPS
 	CONFIG.ActiveEffect.documentClass = ActiveEffectGURPS
-	// @ts-ignore
-	CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
+	CONFIG.JournalEntryPage.documentClass = PDF.JournalEntryPageGURPS
 	CONFIG.Combat.documentClass = CombatGURPS
 	CONFIG.statusEffects = StatusEffectsGURPS
 	CONFIG.Canvas.rulerClass = RulerGURPS

@@ -4,7 +4,9 @@ import {
 	CR_Features,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ItemGCS,
 	MeleeWeaponGURPS,
+	ModifierChoiceSheet,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RangedWeaponGURPS,
@@ -40,14 +42,21 @@ import {
 	Weight,
 	WeightUnits,
 } from "@util"
-import { CharacterFlagDefaults, CharacterSettings, CharacterSource, CharacterSystemData, Encumbrance } from "./data"
+import {
+	CharacterFlagDefaults,
+	CharacterSettings,
+	CharacterSource,
+	CharacterSystemData,
+	DocumentModificationOptionsGURPS,
+	Encumbrance,
+} from "./data"
 import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
 import { ConditionGURPS, ConditionID } from "@item/condition"
-import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
+import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeDef, AttributeObj, AttributeType, ThresholdOp } from "@module/attribute"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
@@ -1019,11 +1028,36 @@ class CharacterGURPS extends BaseActorGURPS {
 	createEmbeddedDocuments(
 		embeddedName: string,
 		data: Array<Record<string, unknown>>,
-		context: DocumentModificationContext & { temporary: boolean }
+		context: DocumentModificationContext & { temporary: boolean; substitutions?: boolean } = {
+			temporary: false,
+			renderSheet: false,
+			render: true,
+			substitutions: true,
+		}
 	): Promise<Array<any>> {
 		if (embeddedName === "Item")
 			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
 		return super.createEmbeddedDocuments(embeddedName, data, context)
+	}
+
+	protected override _onCreateEmbeddedDocuments(
+		embeddedName: string,
+		documents: Document<any, any, Metadata<any>>[],
+		result: Record<string, unknown>[],
+		options: DocumentModificationOptionsGURPS,
+		userId: string
+	): void {
+		super._onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId)
+		console.log(options)
+
+		// Replace @X@ notation fields with given text
+		if (embeddedName === "Item" && options.substitutions) {
+			for (const item of documents.filter(e => e instanceof ItemGCS)) {
+				// If ((item as any).modifiers) ModifierChoiceSheet.new([item as ItemGCS])
+				ModifierChoiceSheet.new([item as ItemGCS])
+				// ItemSubstitutionSheet.new([item as ItemGCS])
+			}
+		}
 	}
 
 	// Prepare data

@@ -1,7 +1,7 @@
 import { ActorSheetGURPS } from "@actor/base"
 import { ActorFlags } from "@actor/base/data"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
-import { openPDF } from "@module/pdf"
+import { PDF } from "@module/pdf"
 import { RollGURPS } from "@module/roll"
 import { i18n, Static } from "@util"
 import { StaticCharacterSheetConfig } from "./config_sheet"
@@ -65,7 +65,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		super.activateListeners(html)
 		// Html.find(".input").on("change", event => this._resizeInput(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
-		html.find(".ref").on("click", event => this._handlePDF(event))
+		html.find(".ref").on("click", event => PDF.handle(event))
 		// Html.find(".item").on("dblclick", event => this._openItemSheet(event))
 		// html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
@@ -117,12 +117,6 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			"system.equippedparry": p,
 			"system.equippedblock": b,
 		})
-	}
-
-	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
-		event.preventDefault()
-		const pdf = $(event.currentTarget).data("pdf")
-		if (pdf) return openPDF(pdf)
 	}
 
 	protected async _onClickRoll(event: JQuery.ClickEvent) {

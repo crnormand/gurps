@@ -6,9 +6,8 @@ import { DnD } from "@util/drag_drop"
 import { StaticItemGURPS } from "."
 import { StaticItemSystemData } from "./data"
 
-// @ts-ignore
 export class StaticItemSheet extends ItemSheet {
-	static get defaultOptions(): DocumentSheetOptions {
+	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {
 			classes: options.classes.concat(["gurps", "item", "legacy-equipment"]),

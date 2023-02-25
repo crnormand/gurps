@@ -69,7 +69,6 @@ export function registerSettings(): void {
 		name: "gurps.settings.roll_modifiers.name",
 		label: "gurps.settings.roll_modifiers.label",
 		hint: "gurps.settings.roll_modifiers.hint",
-		// @ts-ignore
 		type: RollModifierSettings,
 		restricted: false,
 	})

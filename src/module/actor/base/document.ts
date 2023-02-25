@@ -94,8 +94,9 @@ class BaseActorGURPS extends Actor {
 				}
 		}
 		return new Collection(
-			deepItems.map(e => {
-				return [e.id!, e]
+			deepItems.map(item => {
+				// Return [item.id!, item]
+				return [item.uuid, item]
 			})
 		)
 	}

@@ -1,3 +1,7 @@
+#sub-sheet {
+	@import "sub";
+}
+
 .gurps.item {
 	@import "prereq", "feature", "trait_modifiers", "equipment_modifiers", "melee", "ranged";
 	&.trait {

@@ -37,13 +37,6 @@
                 </div>
             </div>
             <div id="resource-trackers">{{>actor/character/sections/resource-trackers }}</div>
-            {{!--
-            <div id="macros">
-                --}}
-                {{!-- {{>actor/character/sections/macros }} --}}
-                {{!--
-            </div>
-            --}}
             <div id="move">{{>actor/character/sections/move }}</div>
         </div>
         <div id="embeds" style="grid-template: {{ blockLayout settings.block_layout blocks }};">
@@ -108,7 +101,7 @@
                 {{/each }}
             </div>
             {{/if }}
-            {{#if traits.length }}
+			{{!-- {{#if traits.length }} --}}
             <div id="traits" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.traits.desc" }}
@@ -123,8 +116,8 @@
                 {{>actor/character/sections/trait }}
                 {{/each }}
             </div>
-            {{/if }}
-            {{#if skills.length }}
+            {{!-- {{/if }} --}}
+            {{!-- {{#if skills.length }} --}}
             <div id="skills" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.skills.desc" }}
@@ -145,8 +138,8 @@
                 {{>actor/character/sections/skill }}
                 {{/each }}
             </div>
-            {{/if }}
-            {{#if spells.length }}
+            {{!-- {{/if }} --}}
+            {{!-- {{#if spells.length }} --}}
             <div id="spells" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.spells.desc" }}
@@ -167,8 +160,8 @@
                 {{>actor/character/sections/spell }}
                 {{/each }}
             </div>
-            {{/if }}
-            {{#if equipment.length }}
+            {{!-- {{/if }} --}}
+            {{!-- {{#if equipment.length }} --}}
             <div id="equipment" class="item-list">
                 <div class="header equipped">
                     <i class="gcs-checkmark"></i>
@@ -208,8 +201,8 @@
                 {{>actor/character/sections/equipment }}
                 {{/each }}
             </div>
-            {{/if }}
-            {{#if other_equipment.length }}
+            {{!-- {{/if }} --}}
+            {{!-- {{#if other_equipment.length }} --}}
             <div id="other-equipment" class="item-list">
                 <div class="header quantity">
                     {{ localize "gurps.character.other_equipment.quantity" }}
@@ -245,8 +238,8 @@
                 {{>actor/character/sections/other-equipment }}
                 {{/each }}
             </div>
-            {{/if }}
-            {{#if notes.length }}
+            {{!-- {{/if }} --}}
+            {{!-- {{#if notes.length }} --}}
             <div id="notes" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.notes.desc" }}
@@ -258,7 +251,7 @@
                 {{>actor/character/sections/note }}
                 {{/each }}
             </div>
-            {{/if }}
+            {{!-- {{/if }} --}}
         </div>
         <div id="footer">
             <div class="left">

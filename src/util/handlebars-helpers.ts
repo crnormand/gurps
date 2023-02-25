@@ -109,7 +109,7 @@ export function registerHandlebarsHelpers() {
 		for (const value of a) {
 			let line = value.split(" ")
 			if (line.length > line_length) line_length = line.length
-			line = line.filter((e: string) => !!items[e]?.length)
+			// Line = line.filter((e: string) => !!items[e]?.length)
 			if (line.length) {
 				if (line_length > line.length) line = line.concat(Array(line_length - line.length).fill(line[0]))
 				outStr += `\n"${line.join(" ")}"`

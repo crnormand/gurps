@@ -1,0 +1,14 @@
+<form autocomplete="off">
+	<div class="fieldblock">
+	{{#each subs as |v k|}}
+	<div class="label">{{k}}</div>
+	<div class="field">
+		<input type="text" name="{{k}}" value="{{v}}" data-dtype="String"/>
+	</div>
+	{{/each}}
+	</div>
+	<div class="buttons">
+		<button id="apply">{{localize "gurps.item.substitution.apply"}}</button>
+		<button id="cancel">{{localize "gurps.item.substitution.cancel"}}</button>
+	</div>
+</form>
