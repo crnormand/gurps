@@ -221,8 +221,7 @@ export async function insertBeforeKey(actor: StaticCharacterGURPS, path: string,
 	object[key] = newobj
 	let sorted = Object.keys(object)
 		.sort()
-		.reduce((a, v) => {
-			// @ts-ignore
+		.reduce((a: any, v) => {
 			a[v] = object[v]
 			return a
 		}, {}) // Enforced key order

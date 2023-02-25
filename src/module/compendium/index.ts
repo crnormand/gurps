@@ -1,5 +1,5 @@
 import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
-import { openPDF } from "@module/pdf"
+import { PDF } from "@module/pdf"
 import { getDefaultSkills, i18n } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
@@ -73,7 +73,7 @@ export class CompendiumBrowser extends Application {
 		super.activateListeners(html)
 		html.find(".item").on("dblclick", event => this._onClickEntry(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
-		html.find(".reference").on("click", event => this._handlePDF(event))
+		html.find(".reference").on("click", event => PDF.handle(event))
 
 		const activeTabName = this.activeTab
 
@@ -208,12 +208,6 @@ export class CompendiumBrowser extends Application {
 			return sheet?.render(true, {
 				editable: game.user?.isGM && !game.packs.get(pack)?.locked,
 			})
-	}
-
-	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
-		event.preventDefault()
-		const pdf = $(event.currentTarget).data("pdf")
-		if (pdf) return openPDF(pdf)
 	}
 
 	private initCompendiumList(): void {

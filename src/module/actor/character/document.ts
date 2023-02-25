@@ -5,7 +5,6 @@ import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
 	ItemGCS,
-	ItemSubstitutionSheet,
 	MeleeWeaponGURPS,
 	ModifierChoiceSheet,
 	NoteContainerGURPS,
@@ -1054,8 +1053,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		// Replace @X@ notation fields with given text
 		if (embeddedName === "Item" && options.substitutions) {
 			for (const item of documents.filter(e => e instanceof ItemGCS)) {
-				if ((item as any).modifiers) ModifierChoiceSheet.new([item as ItemGCS])
-				else ItemSubstitutionSheet.new([item as ItemGCS])
+				// If ((item as any).modifiers) ModifierChoiceSheet.new([item as ItemGCS])
+				ModifierChoiceSheet.new([item as ItemGCS])
+				// ItemSubstitutionSheet.new([item as ItemGCS])
 			}
 		}
 	}

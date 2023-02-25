@@ -52,7 +52,7 @@ export class ItemSubstitutionSheet extends FormApplication {
 		return mergeObject(super.defaultOptions, {
 			id: "sub-sheet",
 			classes: ["gurps"],
-			template: `systems/${SYSTEM_NAME}/templates/item/substitution_sheet.hbs`,
+			template: `systems/${SYSTEM_NAME}/templates/item/sub-sheet.hbs`,
 			width: 400,
 			height: 400,
 			resizable: true,
@@ -75,7 +75,7 @@ export class ItemSubstitutionSheet extends FormApplication {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 		html.find("#apply").on("click", event => this._onApply(event))
-		html.find("#cancel").on("click", () => this.close())
+		html.find("#cancel").on("click", event => this._onCancel(event))
 	}
 
 	protected async _onApply(event: JQuery.ClickEvent) {
@@ -91,9 +91,16 @@ export class ItemSubstitutionSheet extends FormApplication {
 		console.log(duplicate(update))
 		update = prepareFormData(update, { ...this.object })
 		this.object.update(update)
-		const items = this.nextObjects
+		// Const items = this.nextObjects
 		await this.close()
-		ItemSubstitutionSheet.new(items)
+		// ModifierChoiceSheet.new(items {puuid: this.puuid})
+	}
+
+	protected async _onCancel(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		// Const items = this.nextObjects
+		await this.close()
+		// ModifierChoiceSheet.new(items)
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<any> {
@@ -105,7 +112,7 @@ export class ItemSubstitutionSheet extends FormApplication {
 
 	static new(items: ItemGCS[]) {
 		console.log(items)
-		if (items.length == 0) return
+		if (items.length === 0) return
 		const sheet = new ItemSubstitutionSheet(items)
 		if (Object.keys(sheet.subs).length === 0) return
 		return sheet.render(true)

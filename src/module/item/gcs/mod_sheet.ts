@@ -8,6 +8,8 @@ export class ModifierChoiceSheet extends FormApplication {
 
 	nextObjects: ItemGCS[]
 
+	puuid: string
+
 	choices: Record<string, boolean> = {}
 
 	constructor(items: ItemGCS[], options?: any) {
@@ -15,13 +17,21 @@ export class ModifierChoiceSheet extends FormApplication {
 		super(item, options)
 		this.object = item
 		this.nextObjects = items
+		this._init()
+		this.puuid = options?.puuid || item.uuid
+	}
+
+	private _init() {
+		if ((this.object as any).children) {
+			this.nextObjects = [...this.nextObjects, ...(this.object as any).children]
+		}
 	}
 
 	static get defaultOptions(): FormApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			id: "sub-sheet",
 			classes: ["gurps"],
-			template: `systems/${SYSTEM_NAME}/templates/item/modifier_choice_sheet.hbs`,
+			template: `systems/${SYSTEM_NAME}/templates/item/mod-choice-sheet.hbs`,
 			width: 400,
 			height: 400,
 			resizable: true,
@@ -48,7 +58,7 @@ export class ModifierChoiceSheet extends FormApplication {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 		html.find("#apply").on("click", event => this._onApply(event))
-		html.find("#cancel").on("click", () => this.close())
+		html.find("#cancel").on("click", event => this._onCancel(event))
 	}
 
 	protected async _onApply(event: JQuery.ClickEvent) {
@@ -58,8 +68,16 @@ export class ModifierChoiceSheet extends FormApplication {
 		})
 		console.log(updates)
 		await this.object.updateEmbeddedDocuments("Item", updates)
+		const items = this.nextObjects
 		await this.close()
-		await ItemSubstitutionSheet.new([this.object])
+		ModifierChoiceSheet.new(items, { puuid: this.puuid })
+	}
+
+	protected async _onCancel(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const items = this.nextObjects
+		await this.close()
+		ModifierChoiceSheet.new(items, { puuid: this.puuid })
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<any> {
@@ -69,11 +87,13 @@ export class ModifierChoiceSheet extends FormApplication {
 		}
 	}
 
-	static new(items: ItemGCS[]) {
+	static new(items: ItemGCS[], options?: any) {
 		console.log(items)
-		if (items.length == 0) return
-		if ((items[0] as any).modifiers?.size === 0) return ItemSubstitutionSheet.new(items)
-		const sheet = new ModifierChoiceSheet(items)
-		return sheet.render(true)
+		if (items.length === 0) {
+			const item = fromUuidSync(options?.puuid)
+			return ItemSubstitutionSheet.new([item as any])
+		}
+		const sheet = new ModifierChoiceSheet(items, options)
+		return sheet?.render(true)
 	}
 }

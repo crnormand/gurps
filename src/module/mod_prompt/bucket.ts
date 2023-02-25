@@ -1,5 +1,5 @@
 import { RollModifier, SOCKET, SYSTEM_NAME, UserFlags } from "@module/data"
-import { openPDF } from "@module/pdf"
+import { PDF } from "@module/pdf"
 
 class ModifierBucket extends Application {
 	categoriesOpen: boolean[] = [false, false, false, false, false, false, false, false, false, false]
@@ -91,7 +91,7 @@ class ModifierBucket extends Application {
 		html.find(".player").on("click", event => this.sendToPlayer(event))
 		html.find(".modifier").on("click", event => this._onClickModifier(event))
 		html.find(".collapsible").on("click", event => this._onCollapseToggle(event))
-		html.find(".ref").on("click", event => this._handlePDF(event))
+		html.find(".ref").on("click", event => PDF.handle(event))
 	}
 
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<void> {
@@ -99,12 +99,6 @@ class ModifierBucket extends Application {
 		const index = parseInt($(event.currentTarget).find(".dropdown-toggle").data("index"))
 		this.categoriesOpen[index] = !this.categoriesOpen[index]
 		return this.render()
-	}
-
-	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
-		event.preventDefault()
-		const pdf = $(event.currentTarget).data("pdf")
-		if (pdf) return openPDF(pdf)
 	}
 
 	_keyDown(event: JQuery.KeyDownEvent) {
