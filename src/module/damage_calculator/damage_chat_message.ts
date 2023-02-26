@@ -19,6 +19,8 @@ export type DamagePayload = {
 	modifiers: Array<RollModifier & { class?: string }>
 	total: number
 	damageType: string
+	armorDivisor: number
+	damageModifier: string
 	rolls: { result: number; word: string }[]
 	modifierTotal: number
 	tooltip: any

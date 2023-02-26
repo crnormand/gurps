@@ -104,12 +104,14 @@ class DamageRollAdapter implements DamageRoll {
 		this.weapon = weapon
 		this.basicDamage = payload.total
 		this.dice = payload.dice
+		this.damageType = (DamageType as any)[payload.damageType]
+
+		this.armorDivisor = payload.armorDivisor
 
 		this.internalExplosion = false
-		this.damageType = DamageType.cr
 		this.applyTo = ""
 		this.damageModifier = ""
-		this.armorDivisor = 1
+
 		this.rofMultiplier = 1
 		this.range = null
 		this.isHalfDamage = false

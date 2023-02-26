@@ -4,8 +4,8 @@ import { Attribute } from "@module/attribute"
 import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
-import { DiceGURPS } from "@module/dice"
 import { i18n, i18n_f } from "@util"
+import { DamageRollGURPS } from "./damage_roll"
 
 enum RollSuccess {
 	Success = "success",
@@ -13,6 +13,10 @@ enum RollSuccess {
 	CriticalSuccess = "critical_success",
 	CriticalFailure = "critical_failure",
 }
+
+const MODIFIER_CLASS_ZERO = "zero"
+const MODIFIER_CLASS_NEGATIVE = "neg"
+const MODIFIER_CLASS_POSITIVE = "pos"
 
 export class RollGURPS extends Roll {
 	originalFormula = ""
@@ -188,16 +192,16 @@ export class RollGURPS extends Roll {
 		const margin = Math.abs(level - roll)
 		const marginMod: Partial<RollModifier> = { modifier: margin }
 		marginMod.name = i18n_f("gurps.roll.success_from", { from: name })
-		let marginClass = "zero"
+		let marginClass = MODIFIER_CLASS_ZERO
 		let marginTemplate = "gurps.roll.just_made_it"
 		if ([RollSuccess.Failure, RollSuccess.CriticalFailure].includes(success)) {
 			marginTemplate = "gurps.roll.failure_margin"
-			marginClass = "neg"
+			marginClass = MODIFIER_CLASS_NEGATIVE
 			marginMod.name = i18n_f("gurps.roll.failure_from", { from: name })
 			marginMod.modifier = -margin
 		} else if (margin > 0) {
 			marginTemplate = "gurps.roll.success_margin"
-			marginClass = "pos"
+			marginClass = MODIFIER_CLASS_POSITIVE
 		}
 		return [
 			success,
@@ -229,11 +233,7 @@ export class RollGURPS extends Roll {
 			})
 			level -= encumbrance.penalty
 		}
-		modifiers.forEach(m => {
-			m.class = "zero"
-			if (m.modifier > 0) m.class = "pos"
-			if (m.modifier < 0) m.class = "neg"
-		})
+		RollGURPS.addModsDisplayClass(modifiers)
 
 		const effectiveLevel = this.applyMods(level, modifiers)
 
@@ -292,36 +292,6 @@ export class RollGURPS extends Roll {
 	}
 
 	/**
-	 *
-	 * @param user
-	 */
-	static async resetMods(user: StoredDocument<User> | null) {
-		if (!user) return
-		const sticky = user.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky)
-		if (sticky === false) {
-			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
-			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
-			const button = game.ModifierButton
-			return button.render()
-		}
-	}
-
-	/**
-	 * Handle adding modifiers via OTF
-	 * @param {StoredDocument<User>} user
-	 * @param {ActorGURPS} _actor
-	 */
-	static addModifier(user: StoredDocument<User> | null, _actor: ActorGURPS, data: { [key: string]: any }) {
-		if (!user) return
-		const mod: RollModifier = {
-			name: data.comment,
-			modifier: data.modifier,
-			tags: [],
-		}
-		return game.ModifierButton.window.addModifier(mod)
-	}
-
-	/**
 	 * Handle Damage Rolls.
 	 * @param {StoredDocument<User>} user
 	 * @param {ActorGURPS} actor
@@ -336,35 +306,27 @@ export class RollGURPS extends Roll {
 		name: string,
 		hidden = false
 	): Promise<void> {
+		const damageRoll = new DamageRollGURPS(data.item.fastResolvedDamage)
+
 		// Roll the damage for the attack.
-		const dice = new DiceGURPS(data.item.fastResolvedDamage)
-		const roll = Roll.create(dice.toString(true))
-		await roll.evaluate({ async: true })
-
-		// Create an array of Modifiers suitable for display.
-		const modifiers: Array<RollModifier & { class?: string }> = RollGURPS.getModifiers(user)
-		modifiers.forEach(m => {
-			m.class = "zero"
-			if (m.modifier > 0) m.class = "pos"
-			if (m.modifier < 0) m.class = "neg"
-		})
-
-		const rollTotal = roll.total!
-		const modifierTotal = this.applyMods(0, modifiers)
-		const damage = rollTotal + modifierTotal
-		const damageType = data.item.fastResolvedDamage.match(/\d*d?[+-]?\d*\s*(.*)/)[1] ?? ""
+		const roll = await damageRoll.roll.evaluate({ async: true })
+		const modifierTotal = this.applyMods(0, RollGURPS.getModifiers(user))
+		const total = roll.total! + modifierTotal
 
 		const chatData: Partial<DamagePayload> = {
 			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			attacker: ChatMessage.getSpeaker({ actor: actor }),
 			weaponID: `${data.item.system.id}`,
 			name,
-			dice: dice,
-			modifiers: modifiers,
-			total: damage,
-			tooltip: await roll.getTooltip(),
-			damageType: damageType,
+			dice: damageRoll.dice,
+			damageType: damageRoll.damageType,
+			armorDivisor: damageRoll.armorDivisorAsInt,
+			damageModifier: damageRoll.damageModifier,
+			total: total,
+			// Create an array of Modifiers suitable for display.
+			modifiers: RollGURPS.addModsDisplayClass(RollGURPS.getModifiers(user)),
 			modifierTotal: modifierTotal,
+			tooltip: await roll.getTooltip(),
 		}
 
 		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData)
@@ -399,11 +361,7 @@ export class RollGURPS extends Roll {
 	): Promise<any> {
 		// Create an array of Modifiers suitable for display.
 		const modifiers: Array<RollModifier & { class?: string }> = RollGURPS.getModifiers(user)
-		modifiers.forEach(m => {
-			m.class = "zero"
-			if (m.modifier > 0) m.class = "pos"
-			if (m.modifier < 0) m.class = "neg"
-		})
+		RollGURPS.addModsDisplayClass(modifiers)
 
 		const roll = Roll.create(formula) as RollGURPS
 		await roll.evaluate({ async: true })
@@ -433,6 +391,47 @@ export class RollGURPS extends Roll {
 
 		await ChatMessage.create(messageData, {})
 		await this.resetMods(user)
+	}
+
+	/**
+	 *
+	 * @param user
+	 */
+	static async resetMods(user: StoredDocument<User> | null) {
+		if (!user) return
+		const sticky = user.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky)
+		if (sticky === false) {
+			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
+			await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
+			const button = game.ModifierButton
+			return button.render()
+		}
+	}
+
+	static addModsDisplayClass(
+		modifiers: Array<RollModifier & { class?: string }>
+	): Array<RollModifier & { class?: string }> {
+		modifiers.forEach(m => {
+			m.class = MODIFIER_CLASS_ZERO
+			if (m.modifier > 0) m.class = MODIFIER_CLASS_POSITIVE
+			if (m.modifier < 0) m.class = MODIFIER_CLASS_NEGATIVE
+		})
+		return modifiers
+	}
+
+	/**
+	 * Handle adding modifiers via OTF
+	 * @param {StoredDocument<User>} user
+	 * @param {ActorGURPS} _actor
+	 */
+	static addModifier(user: StoredDocument<User> | null, _actor: ActorGURPS, data: { [key: string]: any }) {
+		if (!user) return
+		const mod: RollModifier = {
+			name: data.comment,
+			modifier: data.modifier,
+			tags: [],
+		}
+		return game.ModifierButton.window.addModifier(mod)
 	}
 
 	static applyMods(level: number, modStack: RollModifier[]): number {

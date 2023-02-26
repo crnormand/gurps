@@ -64,9 +64,11 @@ class ApplyDamageDialog extends Application {
 			target: this.target,
 			calculator: this.calculator,
 			source: this.damageRollText,
-			type: this.damageTypeAbbreviation,
 			isExplosion: this.isExplosion,
+
 			armorDivisorSelect: this.armorDivisorSelect,
+
+			type: this.damageTypeAbbreviation,
 			damageTypeChoices: DamageType,
 
 			hitLocation: this.hitLocation,
@@ -208,7 +210,8 @@ class ApplyDamageDialog extends Application {
 	}
 
 	private get armorDivisorSelect(): string {
-		return this.roll.armorDivisor.toString()
+		let x = this.roll.armorDivisor?.toString() ?? "1"
+		return x
 	}
 
 	private get hitLocation(): HitLocation | undefined {
