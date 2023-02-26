@@ -21,10 +21,11 @@ import { Attribute, AttributeObj, AttributeType } from "@module/attribute"
 import { CondMod } from "@module/conditional-modifier"
 import { ItemGURPS } from "@module/config"
 import { gid, ItemType, RollType, SYSTEM_NAME } from "@module/data"
-import { openPDF } from "@module/pdf"
+import { PDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
 import { dollarFormat, i18n, Length, Weight } from "@util"
+import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { CharacterSheetConfig } from "./config_sheet"
 import { CharacterMove, Encumbrance } from "./data"
 import { CharacterGURPS } from "./document"
@@ -108,7 +109,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".menu").on("click", event => this._getPoolContextMenu(event, html))
 		html.find("input").on("change", event => this._resizeInput(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
-		html.find(".ref").on("click", event => this._handlePDF(event))
+		html.find(".ref").on("click", event => PDF.handle(event))
 		html.find(".item-list .header.desc").on("contextmenu", event => this._getAddItemMenu(event, html))
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
 		html.find(".item").on("contextmenu", event => this._getItemContextMenu(event, html))
@@ -285,8 +286,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			system: {},
 		}
 		if (other) itemData.system.other = true
-		const item = (await this.actor.createEmbeddedDocuments("Item", [itemData], { temporary: false }))[0]
-		return item.sheet.render(true)
+		await this.actor.createEmbeddedDocuments("Item", [itemData], {
+			temporary: false,
+			renderSheet: true,
+			substitutions: false,
+		})
 	}
 
 	async _newNaturalAttacks() {
@@ -372,7 +376,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
-		const item = this.actor.deepItems.get(uuid.split(".").at(-1))
+		// Const item = this.actor.deepItems.get(uuid.split(".").at(-1))
+		const item = this.actor.deepItems.get(uuid)
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
 		if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) {
@@ -521,22 +526,15 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const uuid: string = $(event.currentTarget).data("uuid")
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
-		const item = this.actor.deepItems.get(id)
-		// @ts-ignore
-		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
-	}
-
-	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
-		event.preventDefault()
-		const pdf = $(event.currentTarget).data("pdf")
-		if (pdf) return openPDF(pdf)
+		const item = this.actor.deepItems.get(uuid)
+		console.log(item)
+		item?.update({ _id: id, "system.open": open })
 	}
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		const id = uuid.split(".").at(-1) ?? ""
-		const item = this.actor.deepItems.get(id)
+		const item = this.actor.deepItems.get(uuid)
 		item?.sheet?.render(true)
 	}
 
@@ -660,10 +658,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
 		const items = deepClone(
-			this.actor.items
-				.map(item => item as Item)
-				// @ts-ignore
-				.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
+			(this.actor.items as EmbeddedCollection<any, any>)
+				.map(item => item)
+				.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 		)
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
 		const resource_trackers = Array.from(this.actor.resource_trackers.values())
@@ -682,8 +679,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 		const heightUnits = this.actor.settings.default_length_units
 		const weightUnits = this.actor.settings.default_weight_units
-		const height = Length.format(Length.fromString(this.actor.profile.height), heightUnits)
-		const weight = Weight.format(Weight.fromString(this.actor.profile.weight), weightUnits)
+		const height = Length.format(Length.fromString(this.actor.profile?.height || ""), heightUnits)
+		const weight = Weight.format(Weight.fromString(this.actor.profile?.weight || ""), weightUnits)
 
 		const sheetData = {
 			...super.getData(options),

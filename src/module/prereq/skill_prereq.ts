@@ -56,6 +56,7 @@ export class SkillPrereq extends BasePrereq {
 					tooltip.push(((this.level ? this.level.qualifier : 0) ?? 0).toString())
 			} else {
 				if (this.specialization.compare !== "none") {
+					tooltip.push(",")
 				}
 				tooltip.push(i18n("gurps.prereqs.skill.level"))
 				tooltip.push(i18n(`gurps.prereqs.criteria.${this.level.compare}`))

@@ -1,6 +1,6 @@
 import { HitLocation } from "@actor/character/hit_location"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
-import { openPDF } from "@module/pdf"
+import { PDF } from "@module/pdf"
 import { toWord } from "@util/misc"
 import { DamageRoll, DamageTarget } from "."
 import { DamageCalculator } from "./damage_calculator"
@@ -95,13 +95,7 @@ class ApplyDamageDialog extends Application {
 		super.activateListeners(html)
 
 		html.find(".apply-control").on("change", "click", this._onApplyControl.bind(this))
-		html.find(".ref").on("click", event => this._handlePDF(event))
-	}
-
-	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
-		event.preventDefault()
-		const pdf = $(event.currentTarget).data("pdf")
-		if (pdf) return openPDF(pdf)
+		html.find(".ref").on("click", event => PDF.handle(event))
 	}
 
 	async _onApplyControl(event: JQuery.ChangeEvent | JQuery.ClickEvent): Promise<void> {

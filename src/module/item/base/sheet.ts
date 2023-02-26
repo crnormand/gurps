@@ -3,7 +3,7 @@ import { HitLocationTable } from "@actor/character/hit_location"
 import { FeatureType } from "@feature"
 import { AttributeDefObj } from "@module/attribute"
 import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
-import { openPDF } from "@module/pdf"
+import { PDF } from "@module/pdf"
 import { i18n, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
@@ -79,7 +79,7 @@ export class ItemSheetGURPS extends ItemSheet {
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
-		html.find(".ref").on("click", event => this._handlePDF(event))
+		html.find(".ref").on("click", event => PDF.handle(event))
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
 		html.find(".prereq .add-list").on("click", event => this._addPrereqList(event))
 		html.find(".prereq .remove").on("click", event => this._removePrereq(event))
@@ -111,7 +111,7 @@ export class ItemSheetGURPS extends ItemSheet {
 	}
 
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
-		formData = prepareFormData(event, formData, this.object)
+		formData = prepareFormData(formData, this.object)
 		if (typeof formData["system.tags"] === "string")
 			formData["system.tags"] = this.splitArray(formData["system.tags"])
 		if (typeof formData["system.college"] === "string")
@@ -268,12 +268,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		update["system.features"] = features
 		// Await this.item.update(preUpdate, { render: false })
 		return this.item.update(update)
-	}
-
-	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
-		event.preventDefault()
-		const pdf = $(event.currentTarget).data("pdf")
-		if (pdf) return openPDF(pdf)
 	}
 
 	get item(): this["object"] {

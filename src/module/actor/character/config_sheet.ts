@@ -404,7 +404,7 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
-		formData = prepareFormData(event, formData, this.object)
+		formData = prepareFormData(formData, this.object)
 		const element = $(event.currentTarget!)
 		if (element.hasClass("invalid")) delete formData[element.prop("name")]
 		if (!this.object.id) return

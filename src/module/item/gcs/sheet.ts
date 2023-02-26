@@ -70,6 +70,7 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 		ContextMenu.create(this, html, "#ranged div", [
 			{ name: i18n("gurps.context_menu.new_ranged_weapon"), icon: "", callback: () => this._addRanged() },
 		])
+		console.log("epic")
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
 	}
 
@@ -123,8 +124,10 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
+		console.log("what")
 		const uuid = $(event.currentTarget).data("uuid")
 		const item = (await fromUuid(uuid)) as ItemGURPS
+		console.log(item)
 		item?.sheet?.render(true)
 	}
 

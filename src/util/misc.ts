@@ -311,13 +311,7 @@ export function getAdjustedStudyHours(s: Study): number {
 	}
 }
 
-/**
- *
- * @param _event
- * @param formData
- * @param object
- */
-export function prepareFormData(_event: Event, formData: any, object: any): any {
+export function prepareFormData(formData: any, object: any): any {
 	for (let aKey of Object.keys(formData)) {
 		if (formData[aKey] === null) formData[aKey] = "0"
 		if (aKey.includes(".halve_")) {
@@ -332,10 +326,10 @@ export function prepareFormData(_event: Event, formData: any, object: any): any 
 		if (aKey.startsWith("array.") && aKey.match(/\d/)) {
 			const key = aKey.replace(/^array./g, "")
 			const arrayKey = key.split(/.\d+./)[0]
-			const array: any[] = getProperty(object, arrayKey)
+			let array: any[] = formData[arrayKey] || getProperty(object, arrayKey)
 			const index = parseInt(key.match(/.(\d+)./)![1])
 			const prop = key.replace(new RegExp(`^${arrayKey}.${index}.`), "")
-			setArrayProperty(array, index, prop, formData[aKey])
+			array = setArrayProperty(array, index, prop, formData[aKey])
 			formData[arrayKey] = array
 			delete formData[aKey]
 		} else if (aKey.startsWith("array.")) {
@@ -495,11 +489,6 @@ export function setInitiative() {
 	// }
 }
 
-/**
- *
- * @param obj
- * @param keys
- */
 export function pick<T extends object, K extends keyof T>(obj: T, keys: Iterable<K>): Pick<T, K> {
 	return [...keys].reduce((result, key) => {
 		if (key in obj) {
@@ -520,4 +509,16 @@ export async function getDefaultSkills() {
 			})
 		}
 	CONFIG.GURPS.skillDefaults = skills
+}
+
+export function flatten(obj: any, flatObj: Record<string, any> = {}, key = ""): Record<string, any> | null {
+	if (obj === null) return null
+	for (const k of Object.keys(obj)) {
+		let valKey = key === "" ? k : `${key}.${k}`
+		if (typeof obj[k] === "object") {
+			if (Array.isArray(obj[k]) && !valKey.startsWith("array.")) valKey = `array.${valKey}`
+			flatten(obj[k], flatObj, valKey)
+		} else flatObj[valKey] = obj[k]
+	}
+	return flatObj
 }

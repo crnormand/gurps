@@ -180,7 +180,7 @@ export class DefaultResourceTrackerSettings extends SettingsMenuGURPS {
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
 		const resource_trackers = await game.settings.get(SYSTEM_NAME, `${this.namespace}.resource_trackers`)
-		formData = prepareFormData(_event, formData, { system: { settings: { resource_trackers } } })
+		formData = prepareFormData(formData, { system: { settings: { resource_trackers } } })
 		await game.settings.set(
 			SYSTEM_NAME,
 			`${this.namespace}.resource_trackers`,

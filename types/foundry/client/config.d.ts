@@ -458,6 +458,14 @@ declare global {
 		}
 
 		/**
+		 * Configuration for the JournalEntry entity
+		 */
+		JournalEntryPage: {
+			/** @defaultValue `JournalEntryPage` */
+			documentClass: ConfiguredDocumentClassOrDefault<typeof JournalEntryPage>
+		}
+
+		/**
 		 * Configuration for the Macro entity
 		 */
 		Macro: {

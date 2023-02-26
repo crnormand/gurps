@@ -362,8 +362,8 @@ export class StaticCharacterSheetConfig extends FormApplication {
 		}
 	}
 
-	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
-		formData = prepareFormData(event, formData, this.object)
+	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
+		formData = prepareFormData(formData, this.object)
 		console.log(formData)
 		await this.object.update({ "system.additionalresources.-=tracker": null }, { render: false })
 		await this.object.update(formData)

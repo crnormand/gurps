@@ -1,3 +1,5 @@
 export { ItemGCS } from "./document"
 export { ItemSheetGCS } from "./sheet"
+export { ItemSubstitutionSheet } from "./sub_sheet"
+export { ModifierChoiceSheet } from "./mod_sheet"
 export * from "./data"
