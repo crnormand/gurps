@@ -16,8 +16,10 @@ interface DamageRoll {
 
 	attacker: DamageAttacker | undefined
 	dice: DiceGURPS
+	damageText: string
 	basicDamage: number
 	damageType: DamageType
+	damageTypeKey: string
 	applyTo: "HP" | "FP" | string
 
 	/**
@@ -59,16 +61,9 @@ interface DamageRoll {
 	 */
 	isShotgunCloseRange: boolean
 
-	/**
-	 * If greater than 1, this represents the level of the Vulnerability disadvantage to apply to the target of this
-	 * attack. This value should always be greater than or equal to 1.
-	 */
-	// vulnerability: number
-
 	internalExplosion: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface DamageAttacker {
 	name: string | null
 }
@@ -76,7 +71,6 @@ interface DamageAttacker {
 /**
  * An adapter on BaseWeapon and its subclasses that gives the DamageCalculator an easy interface to use.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface DamageWeapon {
 	name: string
 
@@ -102,15 +96,9 @@ class DamageRollAdapter implements DamageRoll {
 		console.log(`location = ${this._locationId}`)
 
 		this.weapon = weapon
-		this.basicDamage = payload.total
-		this.dice = payload.dice
-		this.damageType = (DamageType as any)[payload.damageType]
-
-		this.armorDivisor = payload.armorDivisor
 
 		this.internalExplosion = false
 		this.applyTo = ""
-		this.damageModifier = ""
 
 		this.rofMultiplier = 1
 		this.range = null
@@ -138,19 +126,38 @@ class DamageRollAdapter implements DamageRoll {
 
 	attacker: DamageAttacker | undefined
 
-	dice: DiceGURPS
+	get dice(): DiceGURPS {
+		return this._payload.dice
+	}
 
-	basicDamage: number
+	get damageText(): string {
+		return this._payload.damage
+	}
 
-	damageType: DamageType
+	get basicDamage(): number {
+		return this._payload.total
+	}
+
+	get armorDivisor(): number {
+		return this._payload.armorDivisor ?? 1
+	}
+
+	get damageType(): DamageType {
+		return (DamageType as any)[this._payload.damageType]
+	}
+
+	get damageTypeKey(): string {
+		let index = Object.values(DamageType).indexOf(this.damageType)
+		return Object.keys(DamageType)[index]
+	}
+
+	get damageModifier(): string {
+		return this._payload.damageModifier
+	}
 
 	applyTo: string
 
-	damageModifier: string
-
 	weapon: DamageWeapon | undefined
-
-	armorDivisor: number
 
 	rofMultiplier: number
 

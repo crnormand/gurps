@@ -314,10 +314,10 @@ export class RollGURPS extends Roll {
 		const total = roll.total! + modifierTotal
 
 		const chatData: Partial<DamagePayload> = {
-			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
-			attacker: ChatMessage.getSpeaker({ actor: actor }),
-			weaponID: `${data.item.system.id}`,
 			name,
+			attacker: actor.uuid,
+			weaponID: `${data.item.uuid}`,
+			damage: damageRoll.displayString,
 			dice: damageRoll.dice,
 			damageType: damageRoll.damageType,
 			armorDivisor: damageRoll.armorDivisorAsInt,
@@ -326,8 +326,11 @@ export class RollGURPS extends Roll {
 			// Create an array of Modifiers suitable for display.
 			modifiers: RollGURPS.addModsDisplayClass(RollGURPS.getModifiers(user)),
 			modifierTotal: modifierTotal,
+			hitlocation: this.getHitLocationFromLastAttackRoll(actor),
 			tooltip: await roll.getTooltip(),
 		}
+
+		console.log(chatData)
 
 		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData)
 

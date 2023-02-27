@@ -12,9 +12,10 @@ export enum DamageChatFlags {
 
 export type DamagePayload = {
 	hitlocation: string
-	attacker: ChatMessageData["speaker"]["_source"]
+	attacker: string
 	weaponID: string
 	name: string
+	damage: string
 	dice: DiceGURPS
 	modifiers: Array<RollModifier & { class?: string }>
 	total: number
