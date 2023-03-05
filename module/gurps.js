@@ -74,6 +74,7 @@ import GurpsWiring from './gurps-wiring.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { PDFEditorSheet } from './pdf/edit.js'
 import { JournalEntryPageGURPS } from './pdf/index.js'
+import ApplyDamageDialog from './damage/applydamage.js'
 
 let GURPS = undefined
 
@@ -2098,6 +2099,7 @@ if (!globalThis.GURPS) {
 
 		GURPS.ActorSheets = { character: GurpsActorSheet }
 		GURPS.handlePdf = handlePdf
+    GURPS.ApplyDamageDialog = ApplyDamageDialog
 		Hooks.call('gurpsinit', GURPS)
 	})
 

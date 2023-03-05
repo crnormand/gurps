@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.15.32
+
+- Expose the ApplyDamageDialog via the GURPS global object ()
+
 Release 0.15.31 02/22/2023
 
 - Fixed gurpslink parsing, thanks SrAndros!
