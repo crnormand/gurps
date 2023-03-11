@@ -1,7 +1,7 @@
 import { ContainerSheetGURPS } from "@item/container"
 import { ItemGURPS } from "@module/config"
 import { ItemType, SETTINGS, SYSTEM_NAME } from "@module/data"
-import { i18n, Weight } from "@util"
+import { LocalizeGURPS, Weight } from "@util"
 import { ItemGCS } from "./document"
 
 // @ts-ignore
@@ -22,12 +22,12 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 				case "trait-modifiers":
 					return [
 						{
-							name: i18n("gurps.context.new_trait_modifier"),
+							name: LocalizeGURPS.translations.gurps.context.new_trait_modifier,
 							icon: "<i class='gcs-modifier'></i>",
 							callback: () => self._newItem(ItemType.TraitModifier),
 						},
 						{
-							name: i18n("gurps.context.new_trait_modifier_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_trait_modifier_container,
 							icon: "<i class='gcs-modifier'></i>",
 							callback: () => self._newItem(ItemType.TraitModifierContainer),
 						},
@@ -35,12 +35,12 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 				case "equipment-modifiers":
 					return [
 						{
-							name: i18n("gurps.context.new_equipment_modifier"),
+							name: LocalizeGURPS.translations.gurps.context.new_equipment_modifier,
 							icon: "<i class='gcs-eqp-modifier'></i>",
 							callback: () => self._newItem(ItemType.EquipmentModifier),
 						},
 						{
-							name: i18n("gurps.context.new_equipment_modifier_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_equipment_modifier_container,
 							icon: "<i class='gcs-eqp-modifier'></i>",
 							callback: () => self._newItem(ItemType.EquipmentModifierContainer),
 						},
@@ -48,7 +48,7 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 				case "melee":
 					return [
 						{
-							name: i18n("gurps.context.new_melee_weapon"),
+							name: LocalizeGURPS.translations.gurps.context.new_melee_weapon,
 							icon: "<i class='gcs-melee-weapon'></i>",
 							callback: () => self._newItem(ItemType.MeleeWeapon),
 						},
@@ -56,7 +56,7 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 				case "ranged":
 					return [
 						{
-							name: i18n("gurps.context.new_ranged_weapon"),
+							name: LocalizeGURPS.translations.gurps.context.new_ranged_weapon,
 							icon: "<i class='gcs-ranged-weapon'></i>",
 							callback: () => self._newItem(ItemType.RangedWeapon),
 						},
@@ -72,7 +72,7 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 		const itemName = `ITEM.Type${type.charAt(0).toUpperCase()}${type.slice(1)}`
 		const itemData: any = {
 			type,
-			name: i18n(itemName),
+			name: game.i18n.localize(itemName),
 			system: {},
 		}
 		if (other) itemData.system.other = true

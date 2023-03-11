@@ -1,6 +1,6 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { SYSTEM_NAME } from "@module/data"
-import { i18n, prepareFormData } from "@util"
+import { LocalizeGURPS, prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"
 import { SettingsMenuGURPS } from "./menu"
 
@@ -274,9 +274,9 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 			case "locations":
 				path = $(event.currentTarget).data("path").replace("array.", "")
 				locations.push({
-					id: i18n("gurps.placeholder.hit_location.id"),
-					choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
-					table_name: i18n("gurps.placeholder.hit_location.table_name"),
+					id: LocalizeGURPS.translations.gurps.placeholder.hit_location.id,
+					choice_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.choice_name,
+					table_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.table_name,
 					slots: 0,
 					hit_penalty: 0,
 					dr_bonus: 0,
@@ -295,9 +295,9 @@ export class DefaultHitLocationSettings extends SettingsMenuGURPS {
 					roll: "1d",
 					locations: [
 						{
-							id: i18n("gurps.placeholder.hit_location.id"),
-							choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
-							table_name: i18n("gurps.placeholder.hit_location.table_name"),
+							id: LocalizeGURPS.translations.gurps.placeholder.hit_location.id,
+							choice_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.choice_name,
+							table_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.table_name,
 							slots: 0,
 							hit_penalty: 0,
 							dr_bonus: 0,

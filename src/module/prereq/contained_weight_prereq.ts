@@ -1,7 +1,7 @@
 import { CharacterGURPS } from "@actor"
 import { ItemType, NumberComparison, PrereqType, WeightCompare } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { i18n, numberCompare, Weight } from "@util"
+import { LocalizeGURPS, numberCompare, Weight } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export interface ContainedWeightPrereq extends BasePrereq {
@@ -38,9 +38,9 @@ export class ContainedWeightPrereq extends BasePrereq {
 		}
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
-			tooltip.push(i18n("gurps.prereqs.weight"))
-			tooltip.push(i18n(`gurps.prereqs.criteria.${this.qualifier?.compare}`))
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.has[this.has ? "true" : "false"])
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.weight)
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.criteria[this.qualifier?.compare])
 			tooltip.push((this.qualifier ? this.qualifier.qualifier : 0).toString())
 		}
 		return [satisfied, false]

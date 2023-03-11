@@ -1,5 +1,5 @@
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
-import { allLengthUnits, i18n_f, Length, LengthSymbols, LengthUnits } from "@util"
+import { allLengthUnits, Length, LengthSymbols, LengthUnits, LocalizeGURPS } from "@util"
 
 class RulerGURPS extends Ruler {
 	override _getSegmentLabel(segment: RulerMeasurementSegment, totalDistance: number): string {
@@ -17,7 +17,7 @@ class RulerGURPS extends Ruler {
 		const mod = RulerGURPS.getRangeMod(yards)
 
 		game.ModifierButton.setRangeMod({
-			name: i18n_f("gurps.modifier.speed.range", {
+			name: LocalizeGURPS.format(LocalizeGURPS.translations.gurps.modifier.speed.range, {
 				distance: `${Math.round(totalDistance * 100) / 100} ${units}`,
 			}),
 			modifier: mod,

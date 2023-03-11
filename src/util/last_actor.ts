@@ -2,10 +2,10 @@ import { ActorGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
 
 export class LastActor {
-	static set(actor: ActorGURPS, token?: TokenDocument): void {
-		game.user?.setFlag(SYSTEM_NAME, "last_actor", actor.uuid)
-		if (token) game.user?.setFlag(SYSTEM_NAME, "last_token", token.uuid)
-		game.ModifierButton.render(true)
+	static async set(actor: ActorGURPS, token?: TokenDocument): Promise<void> {
+		await game.user?.setFlag(SYSTEM_NAME, "last_actor", actor.uuid)
+		if (token) await game.user?.setFlag(SYSTEM_NAME, "last_token", token.uuid)
+		await game.ModifierButton.render(true)
 	}
 
 	static async get(): Promise<ActorGURPS | null> {

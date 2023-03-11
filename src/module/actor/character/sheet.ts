@@ -24,7 +24,7 @@ import { gid, ItemType, RollType, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
-import { dollarFormat, i18n, Length, Weight } from "@util"
+import { dollarFormat, Length, LocalizeGURPS, Weight } from "@util"
 import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { CharacterSheetConfig } from "./config_sheet"
 import { CharacterMove, Encumbrance } from "./data"
@@ -181,17 +181,17 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				case "traits":
 					return [
 						{
-							name: i18n("gurps.context.new_trait"),
+							name: LocalizeGURPS.translations.gurps.context.new_trait,
 							icon: "<i class='gcs-trait'></i>",
 							callback: () => self._newItem(ItemType.Trait),
 						},
 						{
-							name: i18n("gurps.context.new_trait_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_trait_container,
 							icon: "<i class='gcs-trait'></i>",
 							callback: () => self._newItem(ItemType.TraitContainer),
 						},
 						{
-							name: i18n("gurps.context.new_natural_attacks"),
+							name: LocalizeGURPS.translations.gurps.context.new_natural_attacks,
 							icon: "<i class='gcs-melee-weapon'></i>",
 							callback: () => self._newNaturalAttacks(),
 						},
@@ -199,17 +199,17 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				case "skills":
 					return [
 						{
-							name: i18n("gurps.context.new_skill"),
+							name: LocalizeGURPS.translations.gurps.context.new_skill,
 							icon: "<i class='gcs-skill'></i>",
 							callback: () => self._newItem(ItemType.Skill),
 						},
 						{
-							name: i18n("gurps.context.new_skill_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_skill_container,
 							icon: "<i class='gcs-skill'></i>",
 							callback: () => self._newItem(ItemType.SkillContainer),
 						},
 						{
-							name: i18n("gurps.context.new_technique"),
+							name: LocalizeGURPS.translations.gurps.context.new_technique,
 							icon: "<i class='gcs-skill'></i>",
 							callback: () => self._newItem(ItemType.Technique),
 						},
@@ -217,17 +217,17 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				case "spells":
 					return [
 						{
-							name: i18n("gurps.context.new_spell"),
+							name: LocalizeGURPS.translations.gurps.context.new_spell,
 							icon: "<i class='gcs-spell'></i>",
 							callback: () => self._newItem(ItemType.Spell),
 						},
 						{
-							name: i18n("gurps.context.new_spell_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_spell_container,
 							icon: "<i class='gcs-spell'></i>",
 							callback: () => self._newItem(ItemType.SpellContainer),
 						},
 						{
-							name: i18n("gurps.context.new_ritual_magic_spell"),
+							name: LocalizeGURPS.translations.gurps.context.new_ritual_magic_spell,
 							icon: "<i class='gcs-spell'></i>",
 							callback: () => self._newItem(ItemType.RitualMagicSpell),
 						},
@@ -235,12 +235,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				case "equipment":
 					return [
 						{
-							name: i18n("gurps.context.new_carried_equipment"),
+							name: LocalizeGURPS.translations.gurps.context.new_carried_equipment,
 							icon: "<i class='gcs-equipment'></i>",
 							callback: () => self._newItem(ItemType.Equipment),
 						},
 						{
-							name: i18n("gurps.context.new_carried_equipment_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_carried_equipment_container,
 							icon: "<i class='gcs-equipment'></i>",
 							callback: () => self._newItem(ItemType.EquipmentContainer),
 						},
@@ -248,12 +248,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				case "other-equipment":
 					return [
 						{
-							name: i18n("gurps.context.new_other_equipment"),
+							name: LocalizeGURPS.translations.gurps.context.new_other_equipment,
 							icon: "<i class='gcs-equipment'></i>",
 							callback: () => self._newItem(ItemType.Equipment, true),
 						},
 						{
-							name: i18n("gurps.context.new_other_equipment_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_other_equipment_container,
 							icon: "<i class='gcs-equipment'></i>",
 							callback: () => self._newItem(ItemType.EquipmentContainer, true),
 						},
@@ -261,12 +261,12 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				case "notes":
 					return [
 						{
-							name: i18n("gurps.context.new_note"),
+							name: LocalizeGURPS.translations.gurps.context.new_note,
 							icon: "<i class='gcs-note'></i>",
 							callback: () => self._newItem(ItemType.Note),
 						},
 						{
-							name: i18n("gurps.context.new_note_container"),
+							name: LocalizeGURPS.translations.gurps.context.new_note_container,
 							icon: "<i class='gcs-note'></i>",
 							callback: () => self._newItem(ItemType.NoteContainer),
 						},
@@ -282,7 +282,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const itemName = `ITEM.Type${type.charAt(0).toUpperCase()}${type.slice(1)}`
 		const itemData: any = {
 			type,
-			name: i18n(itemName),
+			name: game.i18n.localize(itemName),
 			system: {},
 		}
 		if (other) itemData.system.other = true
@@ -294,7 +294,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	async _newNaturalAttacks() {
-		const itemName = i18n("gurps.item.natural_attacks")
+		const itemName = LocalizeGURPS.translations.gurps.item.natural_attacks
 		const itemData = {
 			type: ItemType.Trait,
 			name: itemName,
@@ -382,7 +382,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const ctx = new ContextMenu(html, ".menu", [])
 		if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) {
 			ctx.menuItems.push({
-				name: i18n("gurps.context.toggle_state"),
+				name: LocalizeGURPS.translations.gurps.context.toggle_state,
 				icon: "<i class='fas fa-sliders-simple'></i>",
 				callback: () => {
 					return item.update({ "system.disabled": item.enabled })
@@ -391,7 +391,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) {
 			ctx.menuItems.push({
-				name: i18n("gurps.context.toggle_state"),
+				name: LocalizeGURPS.translations.gurps.context.toggle_state,
 				icon: "<i class='fas fa-sliders-simple'></i>",
 				callback: () => {
 					return item.update({ "system.equipped": !item.equipped })
@@ -400,7 +400,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if (item instanceof TraitGURPS && item.isLeveled) {
 			ctx.menuItems.push({
-				name: i18n("gurps.context.increment"),
+				name: LocalizeGURPS.translations.gurps.context.increment,
 				icon: "<i class='fas fa-up'></i>",
 				callback: () => {
 					let level = item.system.levels + 1
@@ -410,7 +410,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			})
 			if (item.levels > 0)
 				ctx.menuItems.push({
-					name: i18n("gurps.context.decrement"),
+					name: LocalizeGURPS.translations.gurps.context.decrement,
 					icon: "<i class='fas fa-down'></i>",
 					callback: () => {
 						let level = item.system.levels - 1
@@ -426,7 +426,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			item instanceof RitualMagicSpellGURPS
 		) {
 			ctx.menuItems.push({
-				name: i18n("gurps.context.increment"),
+				name: LocalizeGURPS.translations.gurps.context.increment,
 				icon: "<i class='fas fa-up'></i>",
 				callback: () => {
 					return item.update({ "system.points": item.system.points + 1 })
@@ -434,14 +434,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			})
 			if (item.points > 0)
 				ctx.menuItems.push({
-					name: i18n("gurps.context.decrement"),
+					name: LocalizeGURPS.translations.gurps.context.decrement,
 					icon: "<i class='fas fa-down'></i>",
 					callback: () => {
 						return item.update({ "system.points": item.system.points - 1 })
 					},
 				})
 			ctx.menuItems.push({
-				name: i18n("gurps.context.increase_level"),
+				name: LocalizeGURPS.translations.gurps.context.increase_level,
 				icon: "<i class='fas fa-up-long'></i>",
 				callback: () => {
 					return item.incrementSkillLevel()
@@ -449,7 +449,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			})
 			if (item.points > 0)
 				ctx.menuItems.push({
-					name: i18n("gurps.context.decrease_level"),
+					name: LocalizeGURPS.translations.gurps.context.decrease_level,
 					icon: "<i class='fas fa-down-long'></i>",
 					callback: () => {
 						return item.decrementSkillLevel()
@@ -458,7 +458,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) {
 			ctx.menuItems.push({
-				name: i18n("gurps.context.increment"),
+				name: LocalizeGURPS.translations.gurps.context.increment,
 				icon: "<i class='fas fa-up'></i>",
 				callback: () => {
 					return item.update({ "system.quantity": item.system.quantity + 1 })
@@ -466,7 +466,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			})
 			if (item.quantity > 0)
 				ctx.menuItems.push({
-					name: i18n("gurps.context.decrement"),
+					name: LocalizeGURPS.translations.gurps.context.decrement,
 					icon: "<i class='fas fa-down'></i>",
 					callback: () => {
 						return item.update({ "system.quantity": item.system.quantity - 1 })
@@ -480,7 +480,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				item.system.tech_level_required)
 		) {
 			ctx.menuItems.push({
-				name: i18n("gurps.context.increase_tech_level"),
+				name: LocalizeGURPS.translations.gurps.context.increase_tech_level,
 				icon: "<i class='fas fa-gear'></i><i class='fas fa-up'></i>",
 				callback: () => {
 					let tl = item.techLevel
@@ -493,7 +493,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			})
 			if (parseInt(item.techLevel) > 0)
 				ctx.menuItems.push({
-					name: i18n("gurps.context.decrease_tech_level"),
+					name: LocalizeGURPS.translations.gurps.context.decrease_tech_level,
 					icon: "<i class='fas fa-gear'></i><i class='fas fa-down'></i>",
 					callback: () => {
 						let tl = item.techLevel
@@ -506,7 +506,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				})
 		}
 		ctx.menuItems.push({
-			name: i18n("gurps.context.delete"),
+			name: LocalizeGURPS.translations.gurps.context.delete,
 			icon: "<i class='gcs-trash'></i>",
 			callback: () => {
 				return item.delete()

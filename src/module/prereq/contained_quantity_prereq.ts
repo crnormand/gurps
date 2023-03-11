@@ -1,6 +1,6 @@
 import { ItemType, NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { i18n, numberCompare } from "@util"
+import { LocalizeGURPS, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export interface ContainedQuantityPrereq extends BasePrereq {
@@ -35,9 +35,9 @@ export class ContainedQuantityPrereq extends BasePrereq {
 		console.log(satisfied)
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
-			tooltip.push(i18n(`gurps.prereqs.has.${this.has}`))
-			tooltip.push(i18n("gurps.prereqs.quantity"))
-			tooltip.push(i18n(`gurps.prereqs.criteria.${this.quantity?.compare}`))
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.has[this.has ? "true" : "false"])
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.quantity)
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.criteria[this.quantity?.compare])
 			tooltip.push(this.quantity.qualifier.toString())
 		}
 		console.log(tooltip)

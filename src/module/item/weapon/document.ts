@@ -4,7 +4,7 @@ import { Feature } from "@module/config"
 import { ActorType, gid, ItemType } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { i18n, stringCompare } from "@util"
+import { LocalizeGURPS, stringCompare } from "@util"
 import { WeaponDamage } from "./damage"
 import { BaseWeaponSystemData } from "./data"
 
@@ -120,8 +120,11 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 		const penalty = actor.encumbranceLevel(true).penalty
 		if (penalty !== 0 && tooltip) {
 			tooltip.push("\n")
-			tooltip.push(i18n("gurps.tooltip.encumbrance"))
-			tooltip.push(` [${penalty.signedString()}]`)
+			tooltip.push(
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.encumbrance, {
+					bonus: penalty.signedString(),
+				})
+			)
 		}
 		return penalty
 	}

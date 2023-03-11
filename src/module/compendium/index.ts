@@ -1,6 +1,6 @@
 import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
-import { getDefaultSkills, i18n } from "@util"
+import { getDefaultSkills, LocalizeGURPS } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
 
@@ -36,7 +36,7 @@ export class CompendiumBrowser extends Application {
 	}
 
 	override get title(): string {
-		return i18n("gurps.compendium_browser.title")
+		return LocalizeGURPS.translations.gurps.compendium_browser.title
 	}
 
 	get skillDefaults(): string[] {

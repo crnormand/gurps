@@ -3,7 +3,7 @@ import { CharacterImportedData } from "@actor/character/import"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { SYSTEM_NAME, SETTINGS } from "@module/data"
-import { floatingMul, i18n, i18n_f, Static } from "@util"
+import { floatingMul, LocalizeGURPS, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import {
 	StaticAdvantage,
@@ -40,7 +40,7 @@ export class StaticCharacterImporter {
 			r = JSON.parse(json)
 		} catch (err) {
 			console.error(err)
-			errorMessages.push(i18n("gurps.error.import.no_json_detected"))
+			errorMessages.push(LocalizeGURPS.translations.gurps.error.import.no_json_detected)
 			return this.throwImportError(errorMessages)
 		}
 
@@ -79,7 +79,7 @@ export class StaticCharacterImporter {
 		} catch (err: any) {
 			console.error(err.stack)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
@@ -97,7 +97,7 @@ export class StaticCharacterImporter {
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
@@ -305,8 +305,8 @@ export class StaticCharacterImporter {
 			if (game.user?.hasPermission("FILES_UPLOAD")) {
 				r.img = `data:image/png;base64,${p.portrait}.png`
 			} else {
-				console.error(i18n("gurps.error.import.portait_permissions"))
-				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
+				console.error(LocalizeGURPS.translations.gurps.error.import.portrait_permissions)
+				ui.notifications?.error(LocalizeGURPS.translations.gurps.error.import.portrait_permissions)
 			}
 		}
 		return r
@@ -361,7 +361,7 @@ export class StaticCharacterImporter {
 		a.notes = ""
 
 		if (i.cr) {
-			a.notes = `[${i18n(`gurps.select.cr_level.${i.cr}`)}: ${a.name}]`
+			a.notes = `[${game.i18n.localize(`gurps.select.cr_level.${i.cr}`)}: ${a.name}]`
 		}
 		if (i.modifiers?.length) {
 			for (let j of i.modifiers)
@@ -725,10 +725,10 @@ export class StaticCharacterImporter {
 					let d = new Dialog({
 						title: "Hit Location Body Plan",
 						content:
-							`Do you want to <br><br><b>Save</b> the current Body Plan (${i18n(
+							`Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
 								`gurps.static.body_plan.${data.additionalresources.bodyplan}`
 							)}) or ` +
-							`<br><br><b>Overwrite</b> it with the Body Plan from the import: (${i18n(
+							`<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
 								`gurps.static.body_plan.${data.additionalresources.bodyplan}`
 							)})?<br><br>&nbsp;`,
 						buttons: {

@@ -32,11 +32,10 @@ import {
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { DiceGURPS } from "@module/dice"
-import { ActorDataGURPS, ActorGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
+import { ActorDataGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
-import { CharacterGURPS } from "@actor/character"
 
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {

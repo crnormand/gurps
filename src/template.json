@@ -246,10 +246,11 @@
 			"eqp_modifier_container",
 			"note",
 			"note_container",
-			"condition",
-			"equipment",
 			"melee_weapon",
-			"ranged_weapon"
+			"ranged_weapon",
+			"effect",
+			"condition",
+			"equipment"
 		],
 		"templates": {
 			"common": {
@@ -424,10 +425,6 @@
 			"templates": ["common"],
 			"open": false
 		},
-		"condition": {
-			"features": [],
-			"canLevel": false
-		},
 		"melee_weapon": {
 			"templates": ["weapon"],
 			"reach": "",
@@ -442,6 +439,16 @@
 			"shots": "",
 			"bulk": "",
 			"recoil": ""
+		},
+		"effect": {
+			"features": [],
+			"modifiers": [],
+			"can_level": false
+		},
+		"condition": {
+			"features": [],
+			"modifiers": [],
+			"can_level": false
 		},
 		"equipment": {
 			"eqt": {

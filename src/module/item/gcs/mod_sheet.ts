@@ -1,5 +1,5 @@
 import { SYSTEM_NAME } from "@module/data"
-import { i18n_f } from "@util"
+import { LocalizeGURPS } from "@util"
 import { ItemGCS } from "./document"
 import { ItemSubstitutionSheet } from "./sub_sheet"
 
@@ -42,7 +42,9 @@ export class ModifierChoiceSheet extends FormApplication {
 	}
 
 	get title() {
-		return i18n_f("gurps.item.substitution.modifiers", { name: this.object.name })
+		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.item.substitution.modifiers, {
+			name: this.object.name,
+		})
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): MaybePromise<object> {

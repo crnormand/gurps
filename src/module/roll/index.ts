@@ -4,7 +4,7 @@ import { Attribute } from "@module/attribute"
 import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
-import { i18n, i18n_f } from "@util"
+import { LocalizeGURPS } from "@util"
 import { DamageRollGURPS } from "./damage_roll"
 
 enum RollSuccess {
@@ -191,13 +191,13 @@ export class RollGURPS extends Roll {
 		const success = this.getSuccess(level, roll)
 		const margin = Math.abs(level - roll)
 		const marginMod: Partial<RollModifier> = { modifier: margin }
-		marginMod.name = i18n_f("gurps.roll.success_from", { from: name })
+		marginMod.name = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.roll.success_from, { from: name })
 		let marginClass = MODIFIER_CLASS_ZERO
 		let marginTemplate = "gurps.roll.just_made_it"
 		if ([RollSuccess.Failure, RollSuccess.CriticalFailure].includes(success)) {
 			marginTemplate = "gurps.roll.failure_margin"
 			marginClass = MODIFIER_CLASS_NEGATIVE
-			marginMod.name = i18n_f("gurps.roll.failure_from", { from: name })
+			marginMod.name = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.roll.failure_from, { from: name })
 			marginMod.modifier = -margin
 		} else if (margin > 0) {
 			marginTemplate = "gurps.roll.success_margin"
@@ -208,7 +208,7 @@ export class RollGURPS extends Roll {
 			`<div
 			class="margin mod mod-${marginClass}"
 			data-mod='${JSON.stringify(marginMod)}'
-			>${i18n_f(marginTemplate, { margin: margin })}</div>`,
+			>${game.i18n.format(marginTemplate, { margin: margin })}</div>`,
 		]
 	}
 
@@ -228,7 +228,9 @@ export class RollGURPS extends Roll {
 		const encumbrance = actor.encumbranceLevel(true)
 		if (item instanceof SkillGURPS && item.encumbrancePenaltyMultiplier && encumbrance.level > 0) {
 			modifiers.unshift({
-				name: i18n_f("gurps.roll.encumbrance", { name: encumbrance.name }),
+				name: LocalizeGURPS.format(LocalizeGURPS.translations.gurps.roll.encumbrance, {
+					name: encumbrance.name,
+				}),
 				modifier: encumbrance.penalty,
 			})
 			level -= encumbrance.penalty
@@ -244,8 +246,9 @@ export class RollGURPS extends Roll {
 		let effectiveTemplate = "gurps.roll.effective_skill"
 		if (type === RollType.Attribute) effectiveTemplate = "gurps.roll.effective_target"
 
-		let displayName = i18n_f("gurps.roll.skill_level", { name, level })
-		if (type === RollType.ControlRoll) displayName = i18n_f("gurps.roll.cr_level", { name, level })
+		let displayName = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.roll.skill_level, { name, level })
+		if (type === RollType.ControlRoll)
+			displayName = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.roll.cr_level, { name, level })
 
 		let itemData: any = {}
 		if (item instanceof SkillGURPS || item instanceof TechniqueGURPS) {
@@ -268,9 +271,9 @@ export class RollGURPS extends Roll {
 			type,
 			encumbrance,
 			item: itemData,
-			total: `${roll.total!}: ${i18n(`gurps.roll.success.${success}`)}`,
+			total: `${roll.total!}: ${LocalizeGURPS.translations.gurps.roll.success[success]}`,
 			tooltip: await roll.getTooltip(),
-			eff: `<div class="effective">${i18n_f(effectiveTemplate, {
+			eff: `<div class="effective">${game.i18n.format(effectiveTemplate, {
 				level: effectiveLevel,
 			})}</div>`,
 		}

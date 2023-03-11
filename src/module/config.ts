@@ -116,6 +116,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[ItemType.EquipmentModifierContainer]: EquipmentModifierContainerGURPS,
 			[ItemType.Note]: NoteGURPS,
 			[ItemType.NoteContainer]: NoteContainerGURPS,
+			[ItemType.Effect]: EffectGURPS,
 			[ItemType.Condition]: ConditionGURPS,
 			[ItemType.LegacyEquipment]: StaticItemGURPS,
 			[ItemType.MeleeWeapon]: MeleeWeaponGURPS,

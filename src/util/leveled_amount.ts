@@ -1,4 +1,4 @@
-import { i18n, i18n_f } from "./misc"
+import { LocalizeGURPS } from "./localize"
 
 export class LeveledAmount {
 	level = 0
@@ -11,13 +11,17 @@ export class LeveledAmount {
 		if (data) Object.assign(this, data)
 	}
 
-	formatWithLevel(asPercentage: boolean, what: string = i18n("gurps.feature.level")): string {
+	formatWithLevel(asPercentage: boolean, what: string = LocalizeGURPS.translations.gurps.feature.level): string {
 		let amt = this.amount.signedString()
 		if (asPercentage) amt += "%"
 		if (this.per_level) {
 			let leveled = this.adjustedAmount.signedString()
 			if (asPercentage) leveled += "%"
-			return i18n_f("gurps.feature.per_level_text", { leveled: leveled, amt: amt, what: what })
+			return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.feature.per_level_text, {
+				leveled: leveled,
+				amt: amt,
+				what: what,
+			})
 		}
 		return amt
 	}
@@ -25,7 +29,7 @@ export class LeveledAmount {
 	format(what: string): string {
 		const per_level = this.amount.signedString()
 		if (this.per_level)
-			return i18n_f("gurps.feature.format", {
+			return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.feature.per_level_text, {
 				total: this.adjustedAmount.signedString(),
 				per_level,
 				what,

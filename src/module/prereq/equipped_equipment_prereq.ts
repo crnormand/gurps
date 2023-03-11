@@ -1,7 +1,7 @@
 import { CharacterGURPS } from "@actor"
 import { PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { i18n_f, stringCompare } from "@util"
+import { LocalizeGURPS, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 class EquippedEquipmentPrereq extends BasePrereq {
@@ -23,7 +23,10 @@ class EquippedEquipmentPrereq extends BasePrereq {
 			satisfied = exclude !== eqp && eqp.equipped && eqp.quantity > 0 && stringCompare(eqp.name, this.name)
 		}
 		if (!satisfied) {
-			tooltip.push(i18n_f("gurps.prereqs.equipment.criteria", { name: this.name }))
+			// Tooltip.push(i18n_f("gurps.prereqs.equipment.criteria", { name: this.name }))
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.equipment)
+			tooltip.push(LocalizeGURPS.format(LocalizeGURPS.translations.gurps.prereqs.criteria[this.name.compare]))
+			if (this.name.compare !== StringComparison.None) tooltip.push(this.name.qualifier!)
 			return [satisfied, true]
 		}
 		return [satisfied, false]

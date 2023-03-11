@@ -1,5 +1,5 @@
 import { RollModifier, SYSTEM_NAME, UserFlags } from "@module/data"
-import { i18n } from "@util"
+import { LocalizeGURPS } from "@util"
 import { ModifierWindow } from "./window"
 
 interface ModCategory {
@@ -140,7 +140,7 @@ class ModifierBrowse extends Application {
 		categories.sort((a: ModCategory, b: ModCategory) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
 		const pinnedMods: RollModifier[] = (game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as []) ?? []
 		categories.push({
-			name: i18n("gurps.system.modifier_stack.pinned_category"),
+			name: LocalizeGURPS.translations.gurps.system.modifier_stack.pinned_category,
 			showing: false,
 			mods: pinnedMods,
 		})

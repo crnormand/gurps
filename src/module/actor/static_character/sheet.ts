@@ -3,7 +3,7 @@ import { ActorFlags } from "@actor/base/data"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
 import { RollGURPS } from "@module/roll"
-import { i18n, Static } from "@util"
+import { LocalizeGURPS, Static } from "@util"
 import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
 import { StaticCharacterGURPS } from "./document"
@@ -140,7 +140,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 				attribute.current =
 					this.actor.system.attributes[$(event.currentTarget).data("id") as StaticAttributeName].value
 			}
-			attribute.attribute_def.combinedName = i18n(
+			attribute.attribute_def.combinedName = game.i18n.localize(
 				`gurps.static.${$(event.currentTarget).data("id").toLowerCase()}`
 			)
 			attribute.attr_id = $(event.currentTarget).data("id").toLowerCase()
@@ -211,8 +211,8 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			: []
 		const show_import = game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath
-		let label = i18n("gurps.character.header.import")
-		if (import_path) label = i18n("gurps.character.header.reimport")
+		let label = LocalizeGURPS.translations.gurps.character.header.import
+		if (import_path) label = LocalizeGURPS.translations.gurps.character.header.reimport
 		if (show_import)
 			buttons.unshift({
 				label: label,

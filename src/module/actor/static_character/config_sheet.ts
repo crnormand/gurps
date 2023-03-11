@@ -1,7 +1,7 @@
 import { CharacterGURPS } from "@actor/character"
 import { CharacterImporter } from "@actor/character/import"
 import { ActorType, SETTINGS, SYSTEM_NAME } from "@module/data"
-import { i18n_f, prepareFormData } from "@util"
+import { LocalizeGURPS, prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"
 import { StaticCharacterGURPS } from "."
 import { StaticResourceTracker, StaticThresholdComparison, StaticThresholdOperator } from "./data"
@@ -46,7 +46,9 @@ export class StaticCharacterSheetConfig extends FormApplication {
 	}
 
 	get title() {
-		return i18n_f("gurps.character.settings.header", { name: this.object.name })
+		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.character.settings.header, {
+			name: this.object.name,
+		})
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
@@ -173,7 +175,11 @@ export class StaticCharacterSheetConfig extends FormApplication {
 		request.send(null)
 		await this.object.delete()
 		await new_actor.sheet?.render(true)
-		return ui.notifications?.info(i18n_f("gurps.character.settings.import.success", { actor: this.object.name! }))
+		return ui.notifications?.info(
+			LocalizeGURPS.format(LocalizeGURPS.translations.gurps.character.settings.import.success, {
+				actor: this.object.name!,
+			})
+		)
 	}
 
 	async _onAddItem(event: JQuery.ClickEvent) {

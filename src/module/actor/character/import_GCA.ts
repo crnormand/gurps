@@ -4,7 +4,7 @@ import { gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
 import { BasePrereq } from "@prereq"
-import { capitalize, i18n, i18n_f, newUUID } from "@util"
+import { capitalize, LocalizeGURPS, newUUID } from "@util"
 import { XMLtoJS } from "@util/xml_js"
 import { CharacterGURPS } from "."
 import { CharacterDataGURPS } from "./data"
@@ -36,7 +36,7 @@ export class GCAImporter {
 			// R = XMLtoJS(xml);
 		} catch (err) {
 			console.error(err)
-			errorMessages.push(i18n("gurps.error.import.no_json_detected"))
+			errorMessages.push(LocalizeGURPS.translations.gurps.error.import.no_json_detected)
 			return this.throwImportError(errorMessages)
 		}
 		console.log("raw data:", r)
@@ -46,18 +46,18 @@ export class GCAImporter {
 		imp.path = file.path ?? imp.path
 		imp.last_import = new Date().toISOString()
 		try {
-			const version: any[] | null = r.author?.version.match(/\d.\d+.\d+.\d+/) ?? null
-			if (version === null)
-				return this.throwImportError([...errorMessages, i18n("gurps.error.import_gca.version_unknown")])
+			// Const version: any[] | null = r.author?.version.match(/\d.\d+.\d+.\d+/) ?? null
+			// if (version === null)
+			// return this.throwImportError([...errorMessages, LocalizeGURPS.translations.gurps.error.import_gca.version_unknown])
 			// If (version[0] > this.version)
 			// 	return this.throwImportError([
 			// 		...errorMessages,
-			// 		i18n("gurps.error.import_gca.version_new"),
+			// 		LocalizeGURPS.translations.gurps.error.import_gca.version_new,
 			// 	]);
 			// if (version[0] < this.version)
 			// 	return this.throwImportError([
 			// 		...errorMessages,
-			// 		i18n("gurps.error.import_gca.version_old"),
+			// 		LocalizeGURPS.translations.gurps.error.import_gca.version_old,
 			// 	]);
 			commit = { ...commit, ...{ "system.import": imp } }
 			commit = { ...commit, ...{ name: r.name } }
@@ -122,13 +122,13 @@ export class GCAImporter {
 			items.push(...(this.importNotes(r.notes) as any))
 
 			if (items.filter(e => e.type === "ritual_magic_spell").length > 0)
-				errorMessages.push(i18n("gurps.error.import.ritual_magic_gca"))
+				errorMessages.push(LocalizeGURPS.translations.gurps.error.import.ritual_magic_gca)
 
 			commit = { ...commit, ...{ items: items } }
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
@@ -144,7 +144,7 @@ export class GCAImporter {
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
@@ -195,8 +195,8 @@ export class GCAImporter {
 			if (game.user?.hasPermission("FILES_UPLOAD")) {
 				p.img = `data:image/png;base64,${portrait}.png`
 			} else {
-				console.error(i18n("gurps.error.import.portait_permissions"))
-				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
+				console.error(LocalizeGURPS.translations.gurps.error.import.portrait_permissions)
+				ui.notifications?.error(LocalizeGURPS.translations.gurps.error.import.portrait_permissions)
 			}
 		}
 		return p
@@ -732,7 +732,7 @@ export class GCAImporter {
 		return spellData
 	}
 
-	getEquipmentData(item: any, context: any) {
+	getEquipmentData(item: any, _context: any) {
 		let tags: string[] = item.cat.split(", ") ?? []
 		tags = tags.filter(e => !e.startsWith("_"))
 		const lc = item.attackmodes?.attackmode?.find((e: any) => Object.keys(e).includes("lc"))?.lc ?? "4"

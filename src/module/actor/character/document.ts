@@ -31,9 +31,8 @@ import {
 	equalFold,
 	floatingMul,
 	getCurrentTime,
-	i18n,
-	i18n_f,
 	LengthUnits,
+	LocalizeGURPS,
 	newUUID,
 	numberCompare,
 	SelfControl,
@@ -182,7 +181,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			{
 				when: sd.created_date!,
 				points: initial_points,
-				reason: i18n("gurps.character.points_record.initial_points"),
+				reason: LocalizeGURPS.translations.gurps.character.points_record.initial_points,
 			},
 		]
 		sd.settings = default_settings
@@ -393,7 +392,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get dodgeAttribute() {
 		return {
 			attribute_def: {
-				combinedName: i18n("gurps.attributes.dodge"),
+				combinedName: LocalizeGURPS.translations.gurps.attributes.dodge,
 			},
 			effective: this.effectiveDodge,
 			current: this.currentDodge,
@@ -403,7 +402,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get sizeModAttribute() {
 		return {
 			attribute_def: {
-				combinedName: i18n("gurps.character.SM"),
+				combinedName: LocalizeGURPS.translations.gurps.character.sm,
 			},
 			effective: this.sizeMod,
 		}
@@ -633,31 +632,31 @@ class CharacterGURPS extends BaseActorGURPS {
 				level: 0,
 				maximum_carry: floatingMul(bl),
 				penalty: 0,
-				name: i18n("gurps.character.encumbrance.0"),
+				name: LocalizeGURPS.translations.gurps.character.encumbrance[0],
 			},
 			{
 				level: 1,
 				maximum_carry: floatingMul(bl * 2),
 				penalty: -1,
-				name: i18n("gurps.character.encumbrance.1"),
+				name: LocalizeGURPS.translations.gurps.character.encumbrance[1],
 			},
 			{
 				level: 2,
 				maximum_carry: floatingMul(bl * 3),
 				penalty: -2,
-				name: i18n("gurps.character.encumbrance.2"),
+				name: LocalizeGURPS.translations.gurps.character.encumbrance[2],
 			},
 			{
 				level: 3,
 				maximum_carry: floatingMul(bl * 6),
 				penalty: -3,
-				name: i18n("gurps.character.encumbrance.3"),
+				name: LocalizeGURPS.translations.gurps.character.encumbrance[3],
 			},
 			{
 				level: 4,
 				maximum_carry: floatingMul(bl * 10),
 				penalty: -4,
-				name: i18n("gurps.character.encumbrance.4"),
+				name: LocalizeGURPS.translations.gurps.character.encumbrance[4],
 			},
 		]
 		return ae
@@ -868,14 +867,16 @@ class CharacterGURPS extends BaseActorGURPS {
 	get reactions(): CondMod[] {
 		let reactionMap: Map<string, CondMod> = new Map()
 		for (const t of this.traits) {
-			let source = i18n_f("gurps.reaction.from_trait", { name: t.name ?? "" })
+			let source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_trait, {
+				name: t.name ?? "",
+			})
 			this.reactionsFromFeatureList(source, t.features, reactionMap)
 			for (const mod of t.deepModifiers) {
 				this.reactionsFromFeatureList(source, mod.features, reactionMap)
 			}
 			if (t.cr !== -1 && t.crAdj === "reaction_penalty") {
 				let amount = SelfControl.adjustment(t.cr, t.crAdj)
-				let situation = i18n_f("gurps.reaction.cr", {
+				let situation = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.cr, {
 					trait: t.name ?? "",
 				})
 				if (reactionMap.has(situation)) reactionMap.get(situation)!.add(source, amount)
@@ -884,7 +885,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 		for (const e of this.carried_equipment) {
 			if (e.equipped && e.quantity > 0) {
-				let source = i18n("gurps.reaction.from_equipment") + (e.name ?? "")
+				let source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_equipment, {
+					name: e.name ?? "",
+				})
 				this.reactionsFromFeatureList(source, e.features, reactionMap)
 				for (const mod of e.deepModifiers) {
 					this.reactionsFromFeatureList(source, mod.features, reactionMap)
@@ -892,8 +895,13 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		for (const sk of this.skills) {
-			let source = i18n_f("gurps.reaction.from_skill", { name: sk.name ?? "" })
-			if (sk instanceof TechniqueGURPS) source = i18n("gurps.reaction.from_technique") + (sk.name ?? "")
+			let source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_skill, {
+				name: sk.name ?? "",
+			})
+			if (sk instanceof TechniqueGURPS)
+				source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_technique, {
+					name: sk.name ?? "",
+				})
 			this.reactionsFromFeatureList(source, sk.features, reactionMap)
 		}
 		let reactionList = Array.from(reactionMap.values())
@@ -912,7 +920,9 @@ class CharacterGURPS extends BaseActorGURPS {
 	get conditionalModifiers(): CondMod[] {
 		let reactionMap: Map<string, CondMod> = new Map()
 		this.traits.forEach(t => {
-			let source = i18n_f("gurps.reaction.from_trait", { name: t.name ?? "" })
+			let source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_trait, {
+				name: t.name ?? "",
+			})
 			this.conditionalModifiersFromFeatureList(source, t.features, reactionMap)
 			for (const mod of t.deepModifiers) {
 				this.conditionalModifiersFromFeatureList(source, mod.features, reactionMap)
@@ -920,7 +930,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		})
 		for (const e of this.carried_equipment) {
 			if (e.equipped && e.quantity > 0) {
-				let source = i18n_f("gurps.reaction.from_equipment", { name: e.name ?? "" })
+				let source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_equipment, {
+					name: e.name ?? "",
+				})
 				this.conditionalModifiersFromFeatureList(source, e.features, reactionMap)
 				for (const mod of e.deepModifiers) {
 					this.conditionalModifiersFromFeatureList(source, mod.features, reactionMap)
@@ -928,8 +940,13 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		for (const sk of this.skills) {
-			let source = i18n_f("gurps.reaction.from_skill", { name: sk.name ?? "" })
-			if (sk instanceof TechniqueGURPS) source = i18n_f("gurps.reaction.from_technique", { name: sk.name ?? "" })
+			let source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_skill, {
+				name: sk.name ?? "",
+			})
+			if (sk instanceof TechniqueGURPS)
+				source = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.from_technique, {
+					name: sk.name ?? "",
+				})
 			this.conditionalModifiersFromFeatureList(source, sk.features, reactionMap)
 		}
 		let reactionList = Array.from(reactionMap.values())
@@ -1198,7 +1215,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	processPrereqs(): void {
-		const not_met = i18n("gurps.prereqs.not_met")
+		const not_met = LocalizeGURPS.translations.gurps.prereqs.not_met
 		for (const t of this.traits.filter(e => e instanceof TraitGURPS)) {
 			t.unsatisfied_reason = ""
 			if (t instanceof TraitGURPS && !t.prereqsEmpty) {
@@ -1410,16 +1427,17 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	skillBonusFor(name: string, specialization: string, tags: string[], tooltip: TooltipGURPS | null = null): number {
 		let total = 0
-		for (const f of this.features.skillBonuses) {
-			if (
-				stringCompare(name, f.name) &&
-				stringCompare(specialization, f.specialization) &&
-				stringCompare(tags, f.tags)
-			) {
-				total += f.adjustedAmount
-				f.addToTooltip(tooltip)
+		if (this.features)
+			for (const f of this.features.skillBonuses) {
+				if (
+					stringCompare(name, f.name) &&
+					stringCompare(specialization, f.specialization) &&
+					stringCompare(tags, f.tags)
+				) {
+					total += f.adjustedAmount
+					f.addToTooltip(tooltip)
+				}
 			}
-		}
 		return total
 	}
 
@@ -1452,14 +1470,15 @@ class CharacterGURPS extends BaseActorGURPS {
 		tooltip: TooltipGURPS | null = null
 	): number {
 		let total = 0
-		for (let f of this.features.spellBonuses) {
-			if (stringCompare(tags, f.tags)) {
-				if (f.matchForType(name, powerSource, colleges)) {
-					total += f.adjustedAmount
-					f.addToTooltip(tooltip)
+		if (this.features)
+			for (const f of this.features?.spellBonuses) {
+				if (stringCompare(tags, f.tags)) {
+					if (f.matchForType(name, powerSource, colleges)) {
+						total += f.adjustedAmount
+						f.addToTooltip(tooltip)
+					}
 				}
 			}
-		}
 		return total
 	}
 
@@ -1471,14 +1490,15 @@ class CharacterGURPS extends BaseActorGURPS {
 		tooltip: TooltipGURPS | null = null
 	): number {
 		let total = 0
-		for (let f of this.features.spellPointBonuses) {
-			if (stringCompare(tags, f.tags)) {
-				if (f.matchForType(name, powerSource, colleges)) {
-					total += f.adjustedAmount
-					f.addToTooltip(tooltip)
+		if (this.features)
+			for (const f of this.features?.spellPointBonuses) {
+				if (stringCompare(tags, f.tags)) {
+					if (f.matchForType(name, powerSource, colleges)) {
+						total += f.adjustedAmount
+						f.addToTooltip(tooltip)
+					}
 				}
 			}
-		}
 		return total
 	}
 
@@ -1546,8 +1566,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const sk of this.skillNamed(name, specialization, true, null)) {
 			if (rsl < sk.level.relative_level) rsl = sk.level.relative_level
 		}
-		if (rsl !== -Infinity) {
-			for (const f of this.features.weaponBonuses) {
+		if (rsl !== -Infinity)
+			for (const f of this.features?.weaponBonuses) {
 				if (
 					f.selection_type === "weapons_with_required_skill" &&
 					stringCompare(name, f.name) &&
@@ -1566,7 +1586,6 @@ class CharacterGURPS extends BaseActorGURPS {
 					m.set(f, true)
 				}
 			}
-		}
 		return m
 	}
 
@@ -1580,7 +1599,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		m?: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>
 	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
 		m ??= new Map()
-		for (const f of this.features.weaponBonuses) {
+		for (const f of this.features?.weaponBonuses) {
 			if (
 				f.selection_type === "weapons_with_name" &&
 				stringCompare(name, f.name) &&
@@ -1655,7 +1674,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	namedWeaponSkillBonusesFor(name: string, usage: string, tags: string[], tooltip: TooltipGURPS): SkillBonus[] {
 		const bonuses: SkillBonus[] = []
-		for (const f of this.features.skillBonuses) {
+		for (const f of this.features?.skillBonuses) {
 			if (
 				f.selection_type === "weapons_with_name" &&
 				stringCompare(name, f.name) &&
@@ -1704,11 +1723,12 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	costReductionFor(attributeID: string): number {
 		let total = 0
-		for (const f of this.features.costReductions) {
-			if (f.attribute === attributeID) {
-				total += f.percentage
+		if (this.features)
+			for (const f of this.features.costReductions) {
+				if (f.attribute === attributeID) {
+					total += f.percentage
+				}
 			}
-		}
 		if (total > 80) total = 80
 		return Math.max(total, 0)
 	}
@@ -1718,7 +1738,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		tooltip: TooltipGURPS | null = null,
 		drMap: Map<string, number> = new Map()
 	): Map<string, number> {
-		for (const f of this.features.drBonuses) {
+		for (const f of this.features?.drBonuses) {
 			if (f.type === "dr_bonus" && equalFold(locationID, f.location)) {
 				drMap.set(f.specialization!.toLowerCase(), f.adjustedAmount)
 				f.addToTooltip(tooltip)
@@ -1882,12 +1902,12 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	async promptImport() {
 		let dialog = new Dialog({
-			title: i18n("gurps.character.import_prompt.title"),
+			title: LocalizeGURPS.translations.gurps.character.import_prompt.title,
 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import-prompt.hbs`, { object: this }),
 			buttons: {
 				import: {
 					icon: '<i class="fas fa-file-import"></i>',
-					label: i18n("gurps.character.import_prompt.import"),
+					label: LocalizeGURPS.translations.gurps.character.import_prompt.import,
 					callback: _html => {
 						let file: any = null
 						if (game.settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {

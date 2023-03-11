@@ -1,6 +1,6 @@
 import { ItemSystemDataGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
-import { i18n, i18n_f } from "@util"
+import { LocalizeGURPS } from "@util"
 import { ImportUtils } from "@util/import"
 
 interface ItemLibraryData {
@@ -30,16 +30,19 @@ export class ItemImporter {
 		setTimeout(async () => {
 			new Dialog(
 				{
-					title: i18n("gurps.system.library_import.title"),
+					title: LocalizeGURPS.translations.gurps.system.library_import.title,
 					content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/library-import.hbs`, {}),
 					buttons: {
 						import: {
 							icon: '<i class="fas fa-file-import"></i>',
-							label: i18n("gurps.system.library_import.import"),
+							label: LocalizeGURPS.translations.gurps.system.library_import.import,
 							callback: (html: HTMLElement | JQuery<HTMLElement>) => {
 								const form = $(html).find("form")[0]
 								const files = form.data.files
-								if (!files.length) return ui.notifications?.error(i18n("gurps.error.import.no_file"))
+								if (!files.length)
+									return ui.notifications?.error(
+										LocalizeGURPS.translations.gurps.error.import.no_file
+									)
 								else {
 									const file = files[0]
 									readTextFromFile(file).then(text =>
@@ -54,7 +57,7 @@ export class ItemImporter {
 						},
 						no: {
 							icon: '<i class="fas fa-times"></i>',
-							label: i18n("gurps.system.library_import.cancel"),
+							label: LocalizeGURPS.translations.gurps.system.library_import.cancel,
 						},
 					},
 					default: "import",
@@ -82,16 +85,20 @@ export class ItemImporter {
 			r = JSON.parse(json)
 		} catch (err) {
 			console.error(err)
-			errorMessages.push(i18n("gurps.error.import.no_json_detected"))
+			errorMessages.push(LocalizeGURPS.translations.gurps.error.import.no_json_detected)
 			return this.throwImportError(errorMessages)
 		}
 
 		// Let commit: ItemLibraryData | any = {};
 		try {
 			if (r.version < this.version)
-				return this.throwImportError(errorMessages.concat(i18n("gurps.error.import.format_old")))
+				return this.throwImportError(
+					errorMessages.concat(LocalizeGURPS.translations.gurps.error.import.format_old)
+				)
 			if (r.version > this.version)
-				return this.throwImportError(errorMessages.concat(i18n("gurps.error.import.format_new")))
+				return this.throwImportError(
+					errorMessages.concat(LocalizeGURPS.translations.gurps.error.import.format_new)
+				)
 
 			// Commit = { ...commit, ...{ type: r.type } };
 			// commit = { ...commit, ...{ version: r.version } };
@@ -111,17 +118,23 @@ export class ItemImporter {
 					private: true,
 				})
 			}
-			ui.notifications?.info(i18n_f("gurps.system.library_import.start", { name: name }))
+			ui.notifications?.info(
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.library_import.start, { name: name })
+			)
 			let counter = items.length
 			Item.create(items as any, { pack: `world.${name}` })
-			ui.notifications?.info(i18n_f("gurps.system.library_import.finished", { number: counter }))
+			ui.notifications?.info(
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.library_import.finished, {
+					number: counter,
+				})
+			)
 			const cb = game.CompendiumBrowser
 			// Const cb = GURPS.CompendiumBrowser
 			if (cb.rendered) cb.render(true)
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: name,
 					message: (err as Error).message,
 				})

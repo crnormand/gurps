@@ -1,5 +1,4 @@
-import { BaseItemGURPS, SkillGURPS, TechniqueGURPS } from "@item"
-import { i18n, LastActor } from "@util"
+import { LastActor, LocalizeGURPS } from "@util"
 import { gid, RollModifier, RollType } from "./data"
 import { RollGURPS } from "@module/roll"
 import { ActorGURPS } from "./config"
@@ -109,7 +108,7 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 			// Update level at least once to calculate default level
 			data.item?.updateLevel()
 			if (!data.item || data.item.effectiveLevel === -Infinity) {
-				ui.notifications?.warn(i18n("gurps.notification.no_default_skill"))
+				ui.notifications?.warn(LocalizeGURPS.translations.gurps.notification.no_default_skill)
 				return
 			}
 		}

@@ -1,5 +1,5 @@
 import { SYSTEM_NAME } from "@module/data"
-import { i18n_f } from "@util"
+import { LocalizeGURPS } from "@util"
 import { CharacterGURPS } from "."
 import { PointsRecord } from "./data"
 
@@ -24,7 +24,9 @@ export class PointRecordSheet extends FormApplication {
 	}
 
 	get title() {
-		return i18n_f("gurps.character.points_record.title", { name: this.object.name })
+		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.character.points_record.title, {
+			name: this.object.name,
+		})
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {
@@ -68,7 +70,7 @@ export class PointRecordSheet extends FormApplication {
 		return deleted[0]
 	}
 
-	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
+	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
 		// FormData = await FormApplicationGURPS.updateObject(event, formData)
 		if (!this.object.id) return
 		const data: any = {}

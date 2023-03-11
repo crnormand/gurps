@@ -1,6 +1,6 @@
 import { ItemFlags } from "@item/base"
 import { SYSTEM_NAME } from "@module/data"
-import { flatten, i18n_f, prepareFormData } from "@util"
+import { flatten, LocalizeGURPS, prepareFormData } from "@util"
 import { ItemGCS } from "./document"
 
 export class ItemSubstitutionSheet extends FormApplication {
@@ -63,7 +63,9 @@ export class ItemSubstitutionSheet extends FormApplication {
 	}
 
 	get title() {
-		return i18n_f("gurps.item.substitution.title", { name: this.object.name })
+		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.item.substitution.title, {
+			name: this.object.name,
+		})
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): MaybePromise<object> {

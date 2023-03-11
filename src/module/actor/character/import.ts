@@ -12,7 +12,7 @@ import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { AttributeObj } from "@module/attribute"
 import { ActorType, DamageProgression, DisplayMode, SYSTEM_NAME } from "@module/data"
-import { i18n, i18n_f, LengthUnits, WeightUnits } from "@util"
+import { LengthUnits, LocalizeGURPS, WeightUnits } from "@util"
 import { CharacterSystemData } from "./data"
 import { CharacterSheetGURPS } from "./sheet"
 import { ItemGURPS } from "@module/config"
@@ -53,7 +53,7 @@ export class CharacterImporter {
 			r = JSON.parse(json)
 		} catch (err) {
 			console.error(err)
-			errorMessages.push(i18n("gurps.error.import.no_json_detected"))
+			errorMessages.push(LocalizeGURPS.translations.gurps.error.import.no_json_detected)
 			return this.throwImportError(errorMessages)
 		}
 
@@ -64,9 +64,15 @@ export class CharacterImporter {
 		imp.last_import = new Date().toISOString()
 		try {
 			if (r.version < this.version)
-				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_old")])
+				return this.throwImportError([
+					...errorMessages,
+					LocalizeGURPS.translations.gurps.error.import.format_old,
+				])
 			else if (r.version > this.version)
-				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_new")])
+				return this.throwImportError([
+					...errorMessages,
+					LocalizeGURPS.translations.gurps.error.import.format_new,
+				])
 			if (this.document.type === ActorType.LegacyCharacter) {
 				commit = { ...commit, ...{ type: ActorType.Character } }
 			}
@@ -90,7 +96,7 @@ export class CharacterImporter {
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
@@ -109,7 +115,7 @@ export class CharacterImporter {
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
-				i18n_f("gurps.error.import.generic", {
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.generic, {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
@@ -154,8 +160,8 @@ export class CharacterImporter {
 			if (game.user?.hasPermission("FILES_UPLOAD")) {
 				r.img = `data:image/png;base64,${profile.portrait}.png`
 			} else {
-				console.error(i18n("gurps.error.import.portait_permissions"))
-				ui.notifications?.error(i18n("gurps.error.import.portait_permissions"))
+				console.error(LocalizeGURPS.translations.gurps.error.import.portrait_permissions)
+				ui.notifications?.error(LocalizeGURPS.translations.gurps.error.import.portrait_permissions)
 			}
 		}
 		return r

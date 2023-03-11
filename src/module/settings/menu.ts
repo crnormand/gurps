@@ -1,5 +1,5 @@
 import { SYSTEM_NAME } from "@module/data"
-import { i18n } from "@util"
+import { LocalizeGURPS } from "@util"
 
 abstract class SettingsMenuGURPS extends FormApplication {
 	static readonly namespace: string
@@ -81,7 +81,7 @@ abstract class SettingsMenuGURPS extends FormApplication {
 	protected override _getHeaderButtons(): Application.HeaderButton[] {
 		const buttons: Application.HeaderButton[] = [
 			{
-				label: i18n("gurps.settings.reset_all"),
+				label: LocalizeGURPS.translations.gurps.settings.reset_all,
 				icon: "gcs-reset",
 				class: "reset-all",
 				onclick: event => this._onResetAll(event),

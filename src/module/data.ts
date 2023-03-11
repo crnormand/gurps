@@ -379,7 +379,7 @@ export enum ItemType {
 	Note = "note",
 	NoteContainer = "note_container",
 	LegacyEquipment = "equipment",
-	Effect = "efffect",
+	Effect = "effect",
 	Condition = "condition",
 	MeleeWeapon = "melee_weapon",
 	RangedWeapon = "ranged_weapon",
@@ -398,4 +398,12 @@ export enum MoveType {
 	Air = "air",
 	Water = "water",
 	Space = "space",
+}
+
+export enum SpellSubType {
+	NAME = "name",
+	TAG = "tag",
+	COLLEGE = "college",
+	COLLEGE_COUNT = "college_count",
+	ANY = "any",
 }

@@ -5,7 +5,7 @@ import {
 	extractFraction,
 	Fraction,
 	Fractions,
-	i18n,
+	LocalizeGURPS,
 	WeightUnits,
 	WeightValueType,
 } from "@util"
@@ -44,39 +44,44 @@ class EquipmentModifierGURPS extends ItemGCS {
 			(this.weightAmount === "" || this.weightAmount.startsWith("+0"))
 		)
 			return ""
-		return this.formatWeight(this.system.weight, this.weightUnits) + i18n(this.weightType)
+		return (
+			this.formatWeight(this.system.weight, this.weightUnits) +
+			LocalizeGURPS.translations.gurps.select.eqp_mod_weight_type[this.weightType]
+		)
 	}
 
 	formatWeight(weight: string, unit: string): string {
 		const t = determineModWeightValueTypeFromString(weight)
 		let result = this._formatWeight(t, extractFraction(weight))
 		if (t === "weight_addition") {
-			result += ` ${i18n(unit)}`
+			result += ` ${game.i18n.localize(unit)}`
 		}
 		return result
 	}
 
+	// TODO: fix
 	private _formatWeight(t: WeightValueType, fraction: Fraction): string {
-		switch (t) {
-			case "weight_addition":
-				return Fractions.stringWithSign(fraction)
-			case "weight_percentage_addition":
-				return Fractions.stringWithSign(fraction) + i18n(t)
-			case "weight_percentage_multiplier":
-				if (fraction.numerator <= 0) {
-					fraction.numerator = 100
-					fraction.denominator = 1
-				}
-				return `x${Fractions.string(fraction)}${i18n(t)}`
-			case "weight_multiplier":
-				if (fraction.numerator <= 0) {
-					fraction.numerator = 1
-					fraction.denominator = 1
-				}
-				return i18n(t) + Fractions.string(fraction)
-			default:
-				return this._formatWeight("weight_addition", fraction)
-		}
+		return "FIX ME"
+		// Switch (t) {
+		// 	case "weight_addition":
+		// 		return Fractions.stringWithSign(fraction)
+		// 	case "weight_percentage_addition":
+		// 		return Fractions.stringWithSign(fraction) + game.i18n.localize(t)
+		// 	case "weight_percentage_multiplier":
+		// 		if (fraction.numerator <= 0) {
+		// 			fraction.numerator = 100
+		// 			fraction.denominator = 1
+		// 		}
+		// 		return `x${Fractions.string(fraction)}`
+		// 	case "weight_multiplier":
+		// 		if (fraction.numerator <= 0) {
+		// 			fraction.numerator = 1
+		// 			fraction.denominator = 1
+		// 		}
+		// 		return i18n(t) + Fractions.string(fraction)
+		// 	default:
+		// 		return this._formatWeight("weight_addition", fraction)
+		// }
 	}
 
 	get weightType(): EquipmentWeightType {
