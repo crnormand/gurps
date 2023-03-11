@@ -11,17 +11,14 @@ export class SkillSheet extends ItemSheetGCS {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
-		const sheetData = {
-			...super.getData(options),
-			...{
-				attributes: {
-					...{ 10: "10" },
-					...super.getData(options).attributes,
-				},
-				defaults: (this.item as any).defaults,
+		const data = super.getData(options)
+		return mergeObject(data, {
+			attributes: {
+				...{ 10: "10" },
+				...super.getData(options).attributes,
 			},
-		}
-		return sheetData
+			defaults: (this.item as any).defaults,
+		})
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {

@@ -111,7 +111,6 @@ export class ItemSubstitutionSheet extends FormApplication {
 	}
 
 	static new(items: ItemGCS[]) {
-		console.log(items)
 		if (items.length === 0) return
 		const sheet = new ItemSubstitutionSheet(items)
 		if (Object.keys(sheet.subs).length === 0) return

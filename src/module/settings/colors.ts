@@ -110,6 +110,9 @@ export class ColorSettings extends SettingsMenuGURPS {
 					colorFailure: { light: "#a02010", dark: "#a02010" },
 					colorCriticalSuccess: { light: "#00a010", dark: "#00a010" },
 					colorCriticalFailure: { light: "#a01000", dark: "#a01000" },
+					colorChatPublic: { light: "#ffffff", dark: "#202020" },
+					colorChatWhisper: { light: "#e8e8ef", dark: "#6e6e7e" },
+					colorChatBlind: { light: "#f5eaf5", dark: "#846c84" },
 				},
 			},
 		}

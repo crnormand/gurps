@@ -42,7 +42,7 @@ export class ModifierChoiceSheet extends FormApplication {
 	}
 
 	get title() {
-		return i18n_f("gurps.item.substitution.title", { name: this.object.name })
+		return i18n_f("gurps.item.substitution.modifiers", { name: this.object.name })
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): MaybePromise<object> {
@@ -87,13 +87,18 @@ export class ModifierChoiceSheet extends FormApplication {
 		}
 	}
 
-	static new(items: ItemGCS[], options?: any) {
-		console.log(items)
+	static new(items: ItemGCS[], options?: any): any {
 		if (items.length === 0) {
 			const item = fromUuidSync(options?.puuid)
 			return ItemSubstitutionSheet.new([item as any])
 		}
 		const sheet = new ModifierChoiceSheet(items, options)
-		return sheet?.render(true)
+		console.log(sheet.object.modifiers)
+		if (sheet.object.modifiers && sheet.object.modifiers?.size !== 0) {
+			console.log("HAS MODIFIERS")
+			return sheet?.render(true)
+		}
+		const newItems = sheet.nextObjects
+		return ModifierChoiceSheet.new(newItems, { puuid: sheet.puuid })
 	}
 }

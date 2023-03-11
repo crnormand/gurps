@@ -186,6 +186,20 @@
 			"rof": {
 				"title": "Rate of Fire",
 				"rof": "Rof: {rof}"
+			},
+			"attribute": {
+				"all": "to all attribute rolls",
+				"one": "to {att} rolls"
+			},
+			"skill": {
+				"all": "to all skill rolls",
+				"one": "to {skill} rolls"
+			},
+			"active_defense": {
+				"all": "to all active defense rolls",
+				"dodge": "to dodge rolls",
+				"parry": "to parry rolls",
+				"block": "to block rolls"
 			}
 		},
 		"language": {
@@ -626,6 +640,7 @@
 			"natural_attacks": "Natural Attacks",
 			"substitution": {
 				"title": "Substitution: {name}",
+				"modifiers": "Modifiers: {name}",
 				"apply": "OK",
 				"cancel": "Cancel"
 			}
@@ -1296,14 +1311,6 @@
 				}
 			}
 		},
-		"context_menu": {
-			"new_equipment_modifier": "New Equipment Modifier",
-			"new_equipment_modifier_container": "New Equipment Modifier Container",
-			"new_trait_modifier": "New Trait Modifier",
-			"new_trait_modifier_container": "New Trait Modifier Container",
-			"new_melee_weapon": "New Melee Weapon",
-			"new_ranged_weapon": "New Ranged Weapon"
-		},
 		"error": {
 			"header": "Error!",
 			"import": {
@@ -1356,7 +1363,13 @@
 			"new_other_equipment": "New Other Equipment",
 			"new_other_equipment_container": "New Other Equipment Container",
 			"new_note": "New Note",
-			"new_note_container": "New Note Container"
+			"new_note_container": "New Note Container",
+			"new_equipment_modifier": "New Equipment Modifier",
+			"new_equipment_modifier_container": "New Equipment Modifier Container",
+			"new_trait_modifier": "New Trait Modifier",
+			"new_trait_modifier_container": "New Trait Modifier Container",
+			"new_melee_weapon": "New Melee Weapon",
+			"new_ranged_weapon": "New Ranged Weapon"
 		},
 		"combat": {
 			"effect_expired": "Effect Expired: {effect}"

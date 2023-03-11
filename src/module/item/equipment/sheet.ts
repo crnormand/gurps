@@ -1,5 +1,7 @@
+import { EquipmentContainerGURPS } from "@item/equipment_container"
 import { ItemSheetGCS } from "@item/gcs"
 import { SYSTEM_NAME } from "@module/data"
+import { EquipmentGURPS } from "./document"
 
 export class EquipmentSheet extends ItemSheetGCS {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
@@ -15,13 +17,14 @@ export class EquipmentSheet extends ItemSheetGCS {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
-		const items = this.items
-		const sheetData = {
-			...super.getData(options),
-			...{
-				modifiers: items.filter(e => e.type.includes("modifier")),
-			},
-		}
-		return sheetData
+		const data = super.getData(options)
+		const modifiers = this.object.modifiers
+		return mergeObject(data, {
+			modifiers,
+		})
 	}
+}
+
+export interface EquipmentSheet extends ItemSheetGCS {
+	object: EquipmentGURPS | EquipmentContainerGURPS
 }

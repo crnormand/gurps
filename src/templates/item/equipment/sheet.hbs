@@ -75,7 +75,7 @@
 			<div class="header tags">{{localize "gurps.item.tags"}}</div>
 			<div class="header reference"><i class="gcs-bookmark"></i></div>
 			{{#each (sort modifiers "sort")}}
-			{{>eqp-mod}}
+			{{>item/sections/eqp-mod}}
 			{{else}}
 				<div class="enabled"></div>
 				<div class="desc filler"></div>

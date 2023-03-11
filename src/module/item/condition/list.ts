@@ -122,7 +122,14 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		[ConditionID.Invisible]: { id: ConditionID.Invisible },
 		[ConditionID.Coughing]: { id: ConditionID.Coughing },
 		[ConditionID.Retching]: { id: ConditionID.Retching },
-		[ConditionID.Nausea]: { id: ConditionID.Nausea },
+		[ConditionID.Nausea]: {
+			id: ConditionID.Nausea,
+			modifiers: [
+				{ name: i18n("gurps.modifier.attribute.all"), modifier: -2 },
+				{ name: i18n("gurps.modifier.skill.all"), modifier: -2 },
+				{ name: i18n("gurps.modifier.active_defense.all"), modifier: -1 },
+			],
+		},
 		[ConditionID.Agony]: { id: ConditionID.Agony },
 		[ConditionID.Seizure]: { id: ConditionID.Seizure },
 		[ConditionID.Blinded]: { id: ConditionID.Blinded },

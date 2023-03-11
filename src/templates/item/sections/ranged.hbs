@@ -1,5 +1,5 @@
 <div id="ranged" class="item-list table">
-	<div class="header usage">{{localize "gurps.weapon.ranged_header"}}</div>
+	<div class="header usage desc">{{localize "gurps.weapon.ranged_header"}}</div>
 	<div class="header level">{{localize "gurps.character.ranged.level"}}</div>
 	<div class="header accuracy">{{localize "gurps.character.ranged.accuracy"}}</div>
 	<div class="header damage">{{localize "gurps.character.ranged.damage"}}</div>
@@ -10,7 +10,7 @@
 	<div class="header recoil">{{localize "gurps.character.ranged.recoil"}}</div>
 	<div class="header st">{{localize "gurps.character.ranged.st"}}</div>
 	{{#each rangedWeapons}}
-	<div class="usage item" data-uuid="{{this.uuid}}" data-type="Item">
+	<div class="usage desc item" data-uuid="{{this.uuid}}" data-type="Item">
 		<div class="name">
 			{{this.usage}}
 		</div>
@@ -30,7 +30,7 @@
 	<div data-uuid="{{this.uuid}}" class="recoil">{{this.recoil}}</div>
 	<div data-uuid="{{this.uuid}}" class="st">{{this.strength}}</div>
 	{{else}}
-	<div class="usage filler"></div>
+	<div class="usage desc filler"></div>
 	<div class="level"></div>
 	<div class="accuracy"></div>
 	<div class="damage"></div>

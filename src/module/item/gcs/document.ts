@@ -91,7 +91,7 @@ abstract class ItemGCS extends ContainerGURPS {
 	get meleeWeapons(): Collection<MeleeWeaponGURPS> {
 		const meleeWeapons: Collection<MeleeWeaponGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item._id!, item)
+			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item.uuid, item)
 		}
 		return meleeWeapons
 	}
@@ -99,7 +99,7 @@ abstract class ItemGCS extends ContainerGURPS {
 	get rangedWeapons(): Collection<RangedWeaponGURPS> {
 		const rangedWeapons: Collection<RangedWeaponGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item._id!, item)
+			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item.uuid, item)
 		}
 		return rangedWeapons
 	}
@@ -107,7 +107,7 @@ abstract class ItemGCS extends ContainerGURPS {
 	get weapons(): Collection<BaseWeaponGURPS> {
 		const weapons: Collection<BaseWeaponGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof BaseWeaponGURPS) weapons.set(item._id!, item)
+			if (item instanceof BaseWeaponGURPS) weapons.set(item.uuid, item)
 		}
 		return weapons
 	}

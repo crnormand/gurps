@@ -18,6 +18,10 @@ class NoteGURPS extends BaseItemGURPS {
 		const text = this.system.text
 		return converter.makeHtml(text)?.replace(/\s\+/g, "\r")
 	}
+
+	get reference(): string {
+		return this.system.reference
+	}
 }
 
 interface NoteGURPS extends BaseItemGURPS {

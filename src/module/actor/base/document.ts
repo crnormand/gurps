@@ -188,6 +188,7 @@ class BaseActorGURPS extends Actor {
 
 	hasCondition(id: ConditionID | ConditionID[]): boolean {
 		if (!Array.isArray(id)) id = [id]
+		if (id.includes(ConditionID.Dead)) return this.effects.some(e => e.getFlag("core", "statusId") === "dead")
 		return this.conditions.some(e => id.includes(e.cid as any))
 	}
 

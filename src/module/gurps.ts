@@ -263,7 +263,7 @@ Hooks.once("init", async () => {
 	})
 
 	// @ts-ignore
-	DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDFEditorSheet, {
+	DocumentSheetConfig.registerSheet(JournalEntryPage, SYSTEM_NAME, PDF.PDFEditorSheet, {
 		types: ["pdf"],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.pdf_edit"),
@@ -379,7 +379,7 @@ Hooks.on("controlToken", async (...args: any[]) => {
 	}
 })
 
-Hooks.on("renderActorSheetGURPS", (...args: any[]) => {
+Hooks.on("renderActorSheet", (...args: any[]) => {
 	async function updateLastActor() {
 		GURPS.LastActor = await LastActor.get()
 		GURPS.LastToken = await LastActor.getToken()

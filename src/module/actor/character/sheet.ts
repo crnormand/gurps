@@ -527,7 +527,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = this.actor.deepItems.get(uuid)
-		console.log(item)
 		item?.update({ _id: id, "system.open": open })
 	}
 

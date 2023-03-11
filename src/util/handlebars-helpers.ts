@@ -211,7 +211,7 @@ export function registerHandlebarsHelpers() {
 		})
 		const buffer: string[] = []
 		references.forEach(e => {
-			buffer.push(`<div class="ref" data-pdf="${e[1]}">${e[0]}</div>`)
+			buffer.push(`<div class="ref" data-pdf="${e[0]}">${e[1]}</div>`)
 		})
 		return buffer.join(",")
 	})

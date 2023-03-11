@@ -11,16 +11,14 @@ export class SpellSheet extends ItemSheetGCS {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
-		const sheetData = {
-			...super.getData(options),
-			...{
-				attributes: {
-					...{ 10: "10" },
-					...super.getData(options).attributes,
-				},
+		const data = super.getData(options)
+		return mergeObject(data, {
+			attributes: {
+				...{ 10: "10" },
+				...super.getData(options).attributes,
 			},
-		}
-		return sheetData
+			defaults: (this.item as any).defaults,
+		})
 	}
 
 	protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {

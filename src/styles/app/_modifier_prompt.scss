@@ -5,6 +5,18 @@
 	}
 }
 
+#current-actor {
+	position: fixed;
+	transform: translateY(-35px);
+	width: inherit;
+	background: red;
+	background: rgba(var(--color-control), 0.8);
+	color: rgb(var(--color-on-control));
+	padding: 5px;
+	border: 2px solid rgb(var(--color-control-edge));
+	border-radius: 5px;
+}
+
 #modifier-app {
 	display: grid;
 	grid-auto-flow: column;
