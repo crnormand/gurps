@@ -32,10 +32,11 @@ import {
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { DiceGURPS } from "@module/dice"
-import { ActorDataGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
+import { ActorDataGURPS, ActorGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
+import { CharacterGURPS } from "@actor/character"
 
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
@@ -163,17 +164,14 @@ class BaseActorGURPS extends Actor {
 
 	handleDamageDrop(payload: DamagePayload): void {
 		let attacker = undefined
-		if (payload.attacker.actor) {
-			const actor = game.actors?.get(payload.attacker.actor)
-			attacker = new DamageAttackerAdapter(actor as BaseActorGURPS)
+		if (payload.attacker) {
+			const actor = fromUuidSync(payload.attacker) as BaseActorGURPS
+			attacker = new DamageAttackerAdapter(actor)
 		}
 
 		let weapon = undefined
-		if (payload.weaponID && payload.attacker.actor) {
-			const actor = game.actors?.get(payload.attacker.actor) as BaseActorGURPS
-			let temp = actor!.deepItems
-				.filter(it => it instanceof BaseWeaponGURPS)
-				.find(it => it.system.id === payload.weaponID) as BaseWeaponGURPS
+		if (payload.weaponID) {
+			const temp = fromUuidSync(payload.weaponID) as BaseWeaponGURPS
 			weapon = new DamageWeaponAdapter(temp)
 		}
 
