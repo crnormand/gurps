@@ -2,7 +2,7 @@ import { ItemGCS } from "@item/gcs"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
 import { CR, CRAdjustment } from "@module/data"
-import { i18n, i18n_f, SelfControl } from "@util"
+import { SelfControl } from "@util"
 import { TraitData } from "./data"
 
 class TraitGURPS extends ItemGCS {
@@ -56,9 +56,9 @@ class TraitGURPS extends ItemGCS {
 
 	get formattedCR(): string {
 		let cr = ""
-		if (this.cr !== CR.None) cr += i18n(`gurps.select.cr_level.${this.cr}`)
+		if (this.cr !== CR.None) cr += game.i18n.localize(`gurps.select.cr_level.${this.cr}`)
 		if (this.crAdj !== "none")
-			cr += `, ${i18n_f(`gurps.select.cr_adj.${this.crAdj}`, {
+			cr += `, ${game.i18n.format(`gurps.select.cr_adj.${this.crAdj}`, {
 				penalty: SelfControl.adjustment(this.cr, this.crAdj),
 			})}`
 		return cr
@@ -71,9 +71,9 @@ class TraitGURPS extends ItemGCS {
 	get modifierNotes(): string {
 		let n = ""
 		if (this.cr !== CR.None) {
-			n += i18n(`gurps.select.cr_level.${this.cr}`)
+			n += game.i18n.localize(`gurps.select.cr_level.${this.cr}`)
 			if (this.crAdj !== "none") {
-				n += `, ${i18n_f(`gurps.item.cr_adj_display.${this.crAdj}`, {
+				n += `, ${game.i18n.format(`gurps.item.cr_adj_display.${this.crAdj}`, {
 					penalty: "TODO",
 				})}`
 			}

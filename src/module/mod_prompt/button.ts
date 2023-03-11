@@ -1,5 +1,6 @@
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { RollGURPS } from "@module/roll"
+import { LastActor } from "@util"
 import { ModifierBucket } from "./bucket"
 import { ModifierWindow } from "./window"
 
@@ -51,7 +52,7 @@ class ModifierButton extends Application {
 		})
 	}
 
-	getData(options?: Partial<ApplicationOptions> | undefined): object {
+	async getData(options?: Partial<ApplicationOptions> | undefined): Promise<object> {
 		const user = game.user
 		let total = user?.getFlag(SYSTEM_NAME, UserFlags.ModifierTotal) ?? 0
 		let buttonMagnet = ""
@@ -60,12 +61,14 @@ class ModifierButton extends Application {
 		if (total > 0) buttonColor = "total-green"
 		if (total < 0) buttonColor = "total-red"
 		const showDice = true
+		const currentActor = user?.isGM ? await LastActor.get() : null
 
 		return mergeObject(super.getData(options), {
 			total: total,
 			buttonColor: buttonColor,
 			buttonMagnet: buttonMagnet,
 			imgDice: `systems/${SYSTEM_NAME}/assets/3d6.webp`,
+			currentActor: currentActor ? currentActor.name : null,
 			showDice,
 		})
 	}

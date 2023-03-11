@@ -29,6 +29,20 @@ class BaseItemGURPS extends Item {
 		return this.parent.deleteEmbeddedDocuments("Item", [this.id!])
 	}
 
+	static override async createDialog(
+		data: { folder?: string } = {},
+		options: Partial<FormApplicationOptions> = {}
+	): Promise<any | undefined> {
+		const original = game.system.documentTypes.Item
+		game.system.documentTypes.Item = original.filter(
+			(itemType: string) => ![ItemType.Condition].includes(itemType as any)
+		)
+		options = { ...options, classes: [...(options.classes ?? []), "dialog-item-create"] }
+		const newItem = super.createDialog(data, options) as Promise<BaseItemGURPS | undefined>
+		game.system.documentTypes.Item = original
+		return newItem
+	}
+
 	static override async updateDocuments(
 		updates: any[],
 		context: DocumentModificationContext & { options: any }

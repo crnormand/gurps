@@ -37,6 +37,7 @@
 		"esModuleInterop": true,
 		"moduleResolution": "node",
 		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
 		"baseUrl": ".",
@@ -53,7 +54,8 @@
 			"@module/*": ["src/module/*"],
 			"@scripts/*": ["src/scripts/*"],
 			"@util": ["src/util"],
-			"@util/*": ["src/util/*"]
+			"@util/*": ["src/util/*"],
+			"@lang/*": ["src/lang/*"]
 		}
 	},
 	"include": ["src"]

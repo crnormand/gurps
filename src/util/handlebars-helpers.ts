@@ -9,7 +9,8 @@ import { staticFpConditions, staticHpConditions } from "@module/constants"
 import { ItemType, Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import * as Static from "./static"
-import { getAdjustedStudyHours, i18n, i18n_f } from "./misc"
+import { getAdjustedStudyHours } from "./misc"
+import { LocalizeGURPS } from "./localize"
 
 /**
  *
@@ -102,7 +103,7 @@ export function registerHandlebarsHelpers() {
 		return a ? Object.values(a).length > 0 : false
 	})
 
-	Handlebars.registerHelper("blockLayout", function (a: Array<string>, items: any) {
+	Handlebars.registerHelper("blockLayout", function (a: Array<string>, _items: any) {
 		if (!a) return ""
 		let outStr = ""
 		let line_length = 2
@@ -166,7 +167,7 @@ export function registerHandlebarsHelpers() {
 		}
 		const list = []
 		for (const [k, v] of Object.entries(values)) {
-			if (v && v !== "-") list.push(`${i18n(`gurps.character.spells.${k}`)}: ${v}`)
+			if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
 		}
 		return list.join("; ")
 	})
@@ -206,12 +207,12 @@ export function registerHandlebarsHelpers() {
 	Handlebars.registerHelper("ref", function (a: string): string {
 		if (!a) return ""
 		const references = a.split(",").map(e => {
-			if (e.includes("http")) return [e, i18n("gurps.character.link")]
+			if (e.includes("http")) return [e, LocalizeGURPS.translations.gurps.character.link]
 			return [e, e]
 		})
 		const buffer: string[] = []
 		references.forEach(e => {
-			buffer.push(`<div class="ref" data-pdf="${e[1]}">${e[0]}</div>`)
+			buffer.push(`<div class="ref" data-pdf="${e[0]}">${e[1]}</div>`)
 		})
 		return buffer.join(",")
 	})
@@ -342,7 +343,7 @@ export function registerHandlebarsHelpers() {
 		return boolean ? "buttonpulsatingred" : "buttongrey"
 	})
 
-	Handlebars.registerHelper("hpFpBreakpoints", function (type: "HP" | "FP", value: any, options: any) {
+	Handlebars.registerHelper("hpFpBreakpoints", function (_type: "HP" | "FP", _value: any, _options: any) {
 		return []
 	})
 
@@ -433,13 +434,16 @@ export function registerHandlebarsHelpers() {
 		}
 		const list = []
 		for (const [k, v] of Object.entries(values)) {
-			if (v && v !== "-") list.push(`${i18n(`gurps.character.spells.${k}`)}: ${v}`)
+			if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
 		}
 		return list.join("; ")
 	})
 
 	Handlebars.registerHelper("modifierCost", function (c: { id: string; value: number }): string {
-		return i18n_f("gurps.system.modifier_bucket.cost", { value: c.value, id: c.id.toUpperCase() })
+		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.modifier_bucket.cost, {
+			value: c.value,
+			id: c.id.toUpperCase(),
+		})
 	})
 
 	Handlebars.registerHelper("effective", function (a: Item | any): string {
@@ -460,7 +464,7 @@ export function registerHandlebarsHelpers() {
 	Handlebars.registerHelper("unsatisfied", function (reason: string): string {
 		return (
 			`<div class='unsatisfied' data-tooltip='${reason}' data-tooltip-direction='DOWN'>` +
-			`<i class='gcs-triangle-exclamation'></i>${i18n("gurps.prereqs.unsatisfied")}` +
+			`<i class='gcs-triangle-exclamation'></i>${LocalizeGURPS.translations.gurps.prereqs.unsatisfied}` +
 			"</div>"
 		)
 	})

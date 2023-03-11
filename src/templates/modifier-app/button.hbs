@@ -1,15 +1,18 @@
 <div class="button-parent">
-<div id="modifier-app" class="{{cssClass}}" autocomplete="off">
-	<div class="total {{buttonColor}}">{{signed total}}</div>
-	<div class="buttons">
-		<a class="magnet {{buttonMagnet}} fad fa-magnet"></a>
-		<hr />
-		<a class="trash fas fa-trash"></a>
+	{{#if currentActor}}
+	<div id="current-actor">{{currentActor}}</div>
+	{{/if}}
+	<div id="modifier-app" class="{{cssClass}}" autocomplete="off">
+		<div class="total {{buttonColor}}">{{signed total}}</div>
+		<div class="buttons">
+			<a class="magnet {{buttonMagnet}} fad fa-magnet"></a>
+			<hr />
+			<a class="trash fas fa-trash"></a>
+		</div>
 	</div>
-</div>
-{{#if showDice}}
-<div id="dice-roller">
-	<img class="dice-icon" src="{{imgDice}}"></img>
-</div>
-{{/if}}
+	{{#if showDice}}
+	<div id="dice-roller">
+		<img class="dice-icon" src="{{imgDice}}"></img>
+	</div>
+	{{/if}}
 </div>

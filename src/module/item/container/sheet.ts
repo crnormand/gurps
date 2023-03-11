@@ -15,15 +15,6 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		})
 	}
 
-	get items() {
-		return deepClone(
-			(this.item as ContainerGURPS).items
-				.map(item => item as Item)
-				// @ts-ignore sort not in Item type yet
-				.sort((a: Item, b: Item) => (a.sort || 0) - (b.sort || 0))
-		)
-	}
-
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
@@ -64,16 +55,14 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions<Item>>): any {
-		const items = this.items
-		const sheetData = {
-			...super.getData(options),
-			...{
-				items: items,
-				meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
-				rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),
-			},
-		}
-		return sheetData
+		const data = super.getData(options)
+		this.object.prepareData()
+		const items = this.object.items
+		return mergeObject(data, {
+			items: items,
+			meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
+			rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),
+		})
 	}
 
 	protected _onDrop(event: DragEvent): any {

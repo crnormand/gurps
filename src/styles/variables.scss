@@ -140,6 +140,10 @@
 	--color-button-mod-rollover: 245, 108, 0;
 	--color-on-button-mod-rollover: 0, 0, 0;
 
+	--color-chat-public: 255, 255, 255;
+	--color-chat-whisper: 232, 232, 239;
+	--color-chat-blind: 245, 234, 245;
+
 	--background-roll: linear-gradient(rgba(var(--color-button-roll), 0.3), rgba(var(--color-button-roll), 0.3)),
 		linear-gradient(rgb(var(--color-content)), rgb(var(--color-content)));
 	--background-roll-banding: linear-gradient(rgba(var(--color-button-roll), 0.3), rgba(var(--color-button-roll), 0.3)),
@@ -252,5 +256,9 @@
 		--color-on-button-mod: 221, 221, 221;
 		--color-button-mod-rollover: 94, 166, 0;
 		--color-on-button-mod-rollover: 221, 221, 221;
+
+		--color-chat-public: 32, 32, 32;
+		--color-chat-whisper: 110, 110, 126;
+		--color-chat-blind: 132, 108, 132;
 	}
 }

@@ -8,7 +8,13 @@
 	border: 1ps solid rgb(var(--color-header));
 	border-radius: 0;
 	font: var(--font-page-primary-labels);
-	background: rgb(var(--color-content));
+	background: rgb(var(--color-chat-public));
+	&.whisper {
+		background: rgb(var(--color-chat-whisper));
+	}
+	&.blind {
+		background: rgb(var(--color-chat-blind));
+	}
 	.message-header {
 		grid-area: header;
 		background-color: rgb(var(--color-header));
@@ -45,8 +51,5 @@
 				font: var(--font-page-secondary-fields);
 			}
 		}
-	}
-	&.whisper .message-content {
-		background-color: rgb(var(--color-banding));
 	}
 }

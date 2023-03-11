@@ -10,6 +10,8 @@
 	-	finish UI
 -	item sheet styling
 	-	add item notes to display
+-	Styling for private & blind rolls
+	-	tweak colors
 
 ## Jeff and Chris
 
@@ -27,6 +29,10 @@
 -	convert mook generator
 -   Convert the modifier bucket over
     -   modifier bucket journals
+-	Compendium Browser
+	-	Parity with character sheet item menus
+		-	Collapsing, dragdrop, dragdrop preview
+	-	Multiple tags option to match GCS
 
 ## 1.1.0 and beyond
 

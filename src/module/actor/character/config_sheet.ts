@@ -1,5 +1,5 @@
 import { CharacterImporter } from "./import"
-import { i18n, i18n_f, prepareFormData } from "@util"
+import { LocalizeGURPS, prepareFormData } from "@util"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { CharacterSettings } from "./data"
 import { HitLocationTable } from "./hit_location"
@@ -53,7 +53,9 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	get title() {
-		return i18n_f("gurps.character.settings.header", { name: this.object.name })
+		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.character.settings.header, {
+			name: this.object.name,
+		})
 	}
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): any {
@@ -267,9 +269,9 @@ export class CharacterSheetConfig extends FormApplication {
 				path = $(event.currentTarget).data("path").replace("array.", "")
 				locations = getProperty(this.object, `${path}.locations`) ?? []
 				locations.push({
-					id: i18n("gurps.placeholder.hit_location.id"),
-					choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
-					table_name: i18n("gurps.placeholder.hit_location.table_name"),
+					id: LocalizeGURPS.translations.gurps.placeholder.hit_location.id,
+					choice_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.choice_name,
+					table_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.table_name,
 					slots: 0,
 					hit_penalty: 0,
 					dr_bonus: 0,
@@ -288,9 +290,9 @@ export class CharacterSheetConfig extends FormApplication {
 					roll: "1d",
 					locations: [
 						{
-							id: i18n("gurps.placeholder.hit_location.id"),
-							choice_name: i18n("gurps.placeholder.hit_location.choice_name"),
-							table_name: i18n("gurps.placeholder.hit_location.table_name"),
+							id: LocalizeGURPS.translations.gurps.placeholder.hit_location.id,
+							choice_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.choice_name,
+							table_name: LocalizeGURPS.translations.gurps.placeholder.hit_location.table_name,
 							slots: 0,
 							hit_penalty: 0,
 							dr_bonus: 0,

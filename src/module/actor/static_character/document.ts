@@ -5,7 +5,7 @@ import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 // Import { RollModifier } from "@module/data"
-import { i18n, newUUID, Static } from "@util"
+import { LocalizeGURPS, newUUID, Static } from "@util"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
 import { StaticAdvantage, StaticEquipment } from "./components"
@@ -64,7 +64,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 				current: value.value,
 				points: value.points,
 				attribute_def: {
-					combinedName: i18n(`gurps.static.${key.toLowerCase()}`),
+					combinedName: game.i18n.localize(`gurps.static.${key.toLowerCase()}`),
 				},
 			})
 		}
@@ -74,7 +74,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	get dodgeAttribute() {
 		return {
 			attribute_def: {
-				combinedName: i18n("gurps.attributes.dodge"),
+				combinedName: LocalizeGURPS.translations.gurps.attributes.dodge,
 			},
 			effective: this.system.dodge,
 			current: this.system.dodge,
@@ -210,24 +210,24 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			let updated = false
 			let newads = { ...this.system.ads }
 			let langn = /Language:?/i
-			let langt = new RegExp(i18n("gurps.language.language"))
+			let langt = new RegExp(LocalizeGURPS.translations.gurps.language.language)
 			Static.recurseList(this.system.languages, (e, _k, _d) => {
 				let a = Static.findAdDisad(this, `*${e.name}`)
 				if (a) {
 					if (!a.name.match(langn) && !a.name.match(langt)) {
 						// GCA4 / GCS style
-						a.name = `${i18n("gurps.language.language")}: ${a.name}`
+						a.name = `${LocalizeGURPS.translations.gurps.language.language}: ${a.name}`
 						updated = true
 					}
 				} else {
 					// GCA5 style (Language without Adv)
-					let n = `${i18n("gurps.language.language")}: ${e.name}`
+					let n = `${LocalizeGURPS.translations.gurps.language.language}: ${e.name}`
 					// If equal, then just report single level
 					if (e.spoken === e.written) n += ` (${e.spoken})`
 					// Otherwise, report ttpy eand level (like GCA4)
 					else {
-						if (e.spoken) n += ` (${i18n("gurps.language.spoken")})(${e.spoken})`
-						if (e.written) n += ` (${i18n("gurps.language.written")})(${e.written})`
+						if (e.spoken) n += ` (${LocalizeGURPS.translations.gurps.language.spoken})(${e.spoken})`
+						if (e.written) n += ` (${LocalizeGURPS.translations.gurps.language.written})(${e.written})`
 					}
 					let a = new StaticAdvantage()
 					a.name = n
@@ -491,7 +491,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			(count = parseInt(html.find("#qty").val()?.toString() || "0"))
 		await Dialog.prompt({
 			title: "Split stack",
-			label: i18n("Static.ok"),
+			label: LocalizeGURPS.translations.gurps.static.ok,
 			content: content,
 			callback: callback,
 		})

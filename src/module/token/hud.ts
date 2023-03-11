@@ -1,4 +1,4 @@
-import { EffectID, ManeuverID } from "@item"
+import { ConditionID, EffectID, ManeuverID } from "@item"
 import { SOCKET, SYSTEM_NAME } from "@module/data"
 import { TokenGURPS } from "./object"
 
@@ -128,13 +128,11 @@ export class TokenHUDGURPS extends TokenHUD {
 		const combatant = token.combatant
 
 		if (id === "dead") {
-			if (combatant) {
-				const isDefeated = !combatant.isDefeated
-				await combatant.update({ defeated: isDefeated })
-				const status = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED)
-				const effect = token.actor && status ? status : CONFIG.controlIcons.defeated
-				token.toggleEffect(effect, { overlay: true, active: isDefeated })
-			}
+			const isDefeated = combatant ? !combatant.isDefeated : !actor.hasCondition([ConditionID.Dead])
+			if (combatant) await combatant.update({ defeated: isDefeated })
+			const status = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED)
+			const effect = token.actor && status ? status : CONFIG.controlIcons.defeated
+			token.toggleEffect(effect, { overlay: true, active: isDefeated })
 			return
 		}
 		if (event.type === "click") {

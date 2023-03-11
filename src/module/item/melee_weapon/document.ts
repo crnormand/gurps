@@ -9,7 +9,7 @@ class MeleeWeaponGURPS extends BaseWeaponGURPS {
 	}
 
 	resolvedParry(tooltip?: TooltipGURPS): string {
-		return this.resolvedValue(this.parry, gid.Parry, tooltip)
+		return this.resolvedValue(this.system.parry, gid.Parry, tooltip)
 	}
 
 	get fastResolvedBlock(): string {
@@ -17,15 +17,17 @@ class MeleeWeaponGURPS extends BaseWeaponGURPS {
 	}
 
 	resolvedBlock(tooltip?: TooltipGURPS): string {
-		return this.resolvedValue(this.block, gid.Block, tooltip)
+		return this.resolvedValue(this.system.block, gid.Block, tooltip)
 	}
 
 	get parry(): string {
-		return this.system.parry
+		// Return this.system.parry
+		return this.resolvedParry()
 	}
 
 	get block(): string {
-		return this.system.block
+		// Return this.system.block
+		return this.resolvedBlock()
 	}
 
 	get reach(): string {

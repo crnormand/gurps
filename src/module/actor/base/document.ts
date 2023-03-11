@@ -163,17 +163,14 @@ class BaseActorGURPS extends Actor {
 
 	handleDamageDrop(payload: DamagePayload): void {
 		let attacker = undefined
-		if (payload.attacker.actor) {
-			const actor = game.actors?.get(payload.attacker.actor)
-			attacker = new DamageAttackerAdapter(actor as BaseActorGURPS)
+		if (payload.attacker) {
+			const actor = fromUuidSync(payload.attacker) as BaseActorGURPS
+			attacker = new DamageAttackerAdapter(actor)
 		}
 
 		let weapon = undefined
-		if (payload.weaponID && payload.attacker.actor) {
-			const actor = game.actors?.get(payload.attacker.actor) as BaseActorGURPS
-			let temp = actor!.deepItems
-				.filter(it => it instanceof BaseWeaponGURPS)
-				.find(it => it.system.id === payload.weaponID) as BaseWeaponGURPS
+		if (payload.weaponID) {
+			const temp = fromUuidSync(payload.weaponID) as BaseWeaponGURPS
 			weapon = new DamageWeaponAdapter(temp)
 		}
 
@@ -188,6 +185,7 @@ class BaseActorGURPS extends Actor {
 
 	hasCondition(id: ConditionID | ConditionID[]): boolean {
 		if (!Array.isArray(id)) id = [id]
+		if (id.includes(ConditionID.Dead)) return this.effects.some(e => e.getFlag("core", "statusId") === "dead")
 		return this.conditions.some(e => id.includes(e.cid as any))
 	}
 

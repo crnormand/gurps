@@ -2,7 +2,7 @@ import { BaseFeature } from "@feature"
 import { BaseItemGURPS } from "@item/base"
 import { Feature } from "@module/config"
 import { TokenGURPS } from "@module/token"
-import { i18n } from "@util"
+import { LocalizeGURPS } from "@util"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 import { ItemDataBaseProperties, ItemDataConstructorData } from "types/foundry/common/data/data.mjs/itemData"
 import { CombatData } from "types/foundry/common/data/module.mjs"
@@ -72,9 +72,10 @@ class EffectGURPS extends BaseItemGURPS {
 	}
 
 	protected async _preCreate(data: any, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
-		if (!data.system.duration.combat && game.combat) data.system.duration.combat = game.combat!.id
+		if (!data.system) return super._preCreate(data, options, user)
+		if (!data.system?.duration?.combat && game.combat) data.system.duration.combat = game.combat!.id
 		const combat = game.combat
-		if (data.system.duration.combat) {
+		if (data.system?.duration?.combat) {
 			if (data.system.duration.combat !== DurationType.None) {
 				data.system.duration.startRound = combat?.round
 				data.system.duration.startTurn = combat?.turn
@@ -126,6 +127,7 @@ class EffectGURPS extends BaseItemGURPS {
 
 	_displayScrollingStatus(enabled: boolean) {
 		const actor = this.parent
+		if (!actor) return
 		const tokens = actor.isToken ? [actor.token?.object] : actor.getActiveTokens(true)
 		let label = `${enabled ? "+" : "-"} ${this.name}`
 		if (this.canLevel && this.level) label += ` ${this.level}`
@@ -157,7 +159,9 @@ class EffectGURPS extends BaseItemGURPS {
 				if (effect.isExpired) {
 					await effect.delete()
 					ui?.notifications?.info(
-						`${i18n("GURPS.effectExpired", "Effect has expired: ")} '[${i18n(effect.name!)}]'`
+						LocalizeGURPS.format(LocalizeGURPS.translations.gurps.combat.effect_expired, {
+							effect: effect.name!,
+						})
 					)
 				}
 			}

@@ -1,6 +1,5 @@
 import { DurationType, EffectGURPS, EffectModificationOptions } from "@item/effect"
 import { ItemType, SYSTEM_NAME } from "@module/data"
-import { i18n } from "@util"
 import { ItemDataBaseProperties, ItemDataConstructorData } from "types/foundry/common/data/data.mjs/itemData"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { PropertiesToSource } from "types/types/helperTypes"
@@ -14,7 +13,7 @@ class ConditionGURPS extends EffectGURPS {
 			? [getConditionList()[id as ConditionID], "status"]
 			: [getManeuverList()[id as ManeuverID], "maneuver"]
 		return {
-			name: i18n(`gurps.${folder}.${id}`),
+			name: game.i18n.localize(`gurps.${folder}.${id}`),
 			type: ItemType.Condition,
 			img: `systems/${SYSTEM_NAME}/assets/${folder}/${id}.webp`,
 			system: mergeObject(ConditionGURPS.defaults, data) as ConditionSystemData,

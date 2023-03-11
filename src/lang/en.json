@@ -20,9 +20,10 @@
 		"TypeEqp_modifier_container": "Equipment Modifier Container",
 		"TypeNote": "Note",
 		"TypeNote_container": "Note Container",
-		"TypeEquipment": "Equipment (Legacy)",
 		"TypeMelee_weapon": "Melee Weapon",
-		"TypeRanged_weapon": "Ranged Weapon"
+		"TypeRanged_weapon": "Ranged Weapon",
+		"TypeEffect": "Active Effect",
+		"TypeEquipment": "Equipment (Legacy)"
 	},
 	"gurps": {
 		"pdf": {
@@ -186,6 +187,20 @@
 			"rof": {
 				"title": "Rate of Fire",
 				"rof": "Rof: {rof}"
+			},
+			"attribute": {
+				"all": "to all attribute rolls",
+				"one": "to {att} rolls"
+			},
+			"skill": {
+				"all": "to all skill rolls",
+				"one": "to {skill} rolls"
+			},
+			"active_defense": {
+				"all": "to all active defense rolls",
+				"dodge": "to dodge rolls",
+				"parry": "to parry rolls",
+				"block": "to block rolls"
 			}
 		},
 		"language": {
@@ -210,6 +225,7 @@
 			"qp": "QP",
 			"basicspeed": "Basic Speed",
 			"basicmove": "Basic Move",
+			"ok": "Ok",
 			"status": {
 				"normal": "Normal",
 				"reeling": "Reeling",
@@ -626,8 +642,27 @@
 			"natural_attacks": "Natural Attacks",
 			"substitution": {
 				"title": "Substitution: {name}",
+				"modifiers": "Modifiers: {name}",
 				"apply": "OK",
 				"cancel": "Cancel"
+			},
+			"weight_value": {
+				"weight_addition": "+{value}",
+				"weight_percentage_addition": "+{value}%",
+				"weight_percentage_multiplier": "x{value}%",
+				"weight_multiplier": "x{value}"
+			},
+			"creation_dialog": {
+				"categories": {
+					"trait": "Traits",
+					"skill": "Skills",
+					"spell": "Spells",
+					"equipment": "Equipment",
+					"note": "Notes",
+					"weapon": "Weapons",
+					"effect": "Effects",
+					"legacy": "Legacy"
+				}
 			}
 		},
 		"attributes": {
@@ -729,6 +764,13 @@
 				"critical_success": "Critical Hit!",
 				"critical_failure": "Critical Miss!"
 			}
+		},
+		"reaction": {
+			"cr": "from others when {trait} is triggered",
+			"from_trait": "from trait {name}",
+			"from_skill": "from skill {name}",
+			"from_technique": "from technique {name}",
+			"from_equipment": "from equipment {name}"
 		},
 		"select": {
 			"cr_level": {
@@ -1036,7 +1078,10 @@
 				"eqp_modifier_container": "Equipment Modifier Container Sheet",
 				"note": "Note Sheet",
 				"note_container": "Note Container Sheet",
-				"static_equipment": "Legacy Item Sheet"
+				"weapon": "Weapon Sheet",
+				"effect": "Active Effect Sheet",
+				"static_equipment": "Legacy Item Sheet",
+				"pdf_edit": "PDF Editor Sheet"
 			},
 			"modifier_stack": {
 				"no_mods": "No modifiers currently active.",
@@ -1296,17 +1341,10 @@
 				}
 			}
 		},
-		"context_menu": {
-			"new_equipment_modifier": "New Equipment Modifier",
-			"new_equipment_modifier_container": "New Equipment Modifier Container",
-			"new_trait_modifier": "New Trait Modifier",
-			"new_trait_modifier_container": "New Trait Modifier Container",
-			"new_melee_weapon": "New Melee Weapon",
-			"new_ranged_weapon": "New Ranged Weapon"
-		},
 		"error": {
 			"header": "Error!",
 			"import": {
+				"no_file": "No file provided",
 				"no_json_detected": "File is corrupted or not a JSON file",
 				"format_old": "File format is too old. Please save your file in the most up to date version of GCS",
 				"format_new": "File format it too new, and is not yet supported.",
@@ -1356,7 +1394,13 @@
 			"new_other_equipment": "New Other Equipment",
 			"new_other_equipment_container": "New Other Equipment Container",
 			"new_note": "New Note",
-			"new_note_container": "New Note Container"
+			"new_note_container": "New Note Container",
+			"new_equipment_modifier": "New Equipment Modifier",
+			"new_equipment_modifier_container": "New Equipment Modifier Container",
+			"new_trait_modifier": "New Trait Modifier",
+			"new_trait_modifier_container": "New Trait Modifier Container",
+			"new_melee_weapon": "New Melee Weapon",
+			"new_ranged_weapon": "New Ranged Weapon"
 		},
 		"combat": {
 			"effect_expired": "Effect Expired: {effect}"
@@ -1439,6 +1483,10 @@
 		"notification": {
 			"no_default_skill": "Cannot Roll: No applicable skill defaults found."
 		},
+		"tooltip": {
+			"dr_bonus": "{item} [{bonus} against {type} attacks]",
+			"encumbrance": "Encumbrance [{bonus}]"
+		},
 		"prereqs": {
 			"unsatisfied": "Unsatisfied Prerequisite(s)",
 			"header": "Prerequisites",
@@ -1478,6 +1526,7 @@
 				"at_most": "at most ",
 				"is": ""
 			},
+			"equipment": "Has equipment which is equipped and whose name ",
 			"criteria": {
 				"none": "is anything ",
 				"is": "is ",

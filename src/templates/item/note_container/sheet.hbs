@@ -1,18 +1,21 @@
 <form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
+			<div class="label">{{localize "gurps.item.name"}}</div>
+			<div class="field">
+				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
+			</div>
 			<div class="label">{{localize "gurps.item.notes"}}</div>
 			<div class="field">
-				<input type="text" name="system.text" value="{{system.text}}" data-dtype="String" />
+				<textarea type="text" name="system.text" data-dtype="String">{{{system.text}}}</textarea>
 			</div>
 			<div class="label">{{localize "gurps.item.reference"}}</div>
 			<div class="field">
 				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 			</div>
-		</div>
-		<div class="label">{{localize "gurps.item.markdown_preview"}}</div>
-		<div class="markdown">
-			{{{document.formattedText}}}
+			<div class="title">{{localize "gurps.item.markdown_preview"}}</div>
+			<hr />
+			<div class="md">{{{document.formattedText}}}</div>
 		</div>
 	</div>
 </form>

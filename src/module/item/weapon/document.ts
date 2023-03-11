@@ -4,7 +4,7 @@ import { Feature } from "@module/config"
 import { ActorType, gid, ItemType } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { i18n, stringCompare } from "@util"
+import { LocalizeGURPS, stringCompare } from "@util"
 import { WeaponDamage } from "./damage"
 import { BaseWeaponSystemData } from "./data"
 
@@ -111,7 +111,7 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 
 	skillLevelPostAdjustment(actor: this["actor"], tooltip: TooltipGURPS): number {
 		if (this.type === ItemType.MeleeWeapon)
-			if ((this as any).parry?.toLowerCase().includes("f")) return this.encumbrancePenalty(actor, tooltip)
+			if ((this.system as any).parry?.includes("F")) return this.encumbrancePenalty(actor, tooltip)
 		return 0
 	}
 
@@ -120,8 +120,11 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 		const penalty = actor.encumbranceLevel(true).penalty
 		if (penalty !== 0 && tooltip) {
 			tooltip.push("\n")
-			tooltip.push(i18n("gurps.tooltip.encumbrance"))
-			tooltip.push(` [${penalty.signedString()}]`)
+			tooltip.push(
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.encumbrance, {
+					bonus: penalty.signedString(),
+				})
+			)
 		}
 		return penalty
 	}
@@ -161,82 +164,133 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 
 	resolvedValue(input: string, baseDefaultType: string, tooltip?: TooltipGURPS): string {
 		const actor = this.actor
-		input = input ?? ""
+		input ??= ""
+		input = input.trim()
+		if (!input.match(/^[+-]?[0-9]+/)) return input
 		if (!actor) return input
-		let buffer = ""
 		let skillLevel = -Infinity
-		let line = input
-		let max = line.length
-		if (input !== "")
-			for (let i = 0; i < max; i++) {
-				max = line.length
-				while (i < max && input[i] === " ") i++
-				let ch = line[i]
-				let neg = false
-				let modifier = 0
-				let found = false
-				if (ch === "+" || ch === "-") {
-					neg = ch === "-"
-					i++
-					if (i < max) ch = line[i]
-				}
-				while (i < max && ch.match("[0-9]")) {
-					found = true
-					modifier *= 10
-					modifier += parseInt(ch)
-					i++
-					if (i < max) ch = line[i]
-				}
-				if (found) {
-					if (skillLevel === -Infinity) {
-						let primaryTooltip = new TooltipGURPS()
-						let secondaryTooltip = new TooltipGURPS()
-						if (tooltip) primaryTooltip = tooltip
-						let preAdj = this.skillLevelBaseAdjustment(actor, primaryTooltip)
-						let postAdj = this.skillLevelPostAdjustment(actor, primaryTooltip)
-						let adj = 3
-						if (baseDefaultType === gid.Parry) adj += actor.parryBonus
-						else adj += actor.blockBonus
-						let best = -Infinity
-						for (const def of this.defaults) {
-							let level = def.skillLevelFast(actor, false, true, null)
-							if (level === -Infinity) continue
-							level += preAdj
-							if (baseDefaultType !== def.type) Math.trunc((level = level / 2 + adj))
-							level === postAdj
-							let possibleTooltip = new TooltipGURPS()
-							if (def.type === gid.Skill && def.name === "Karate") {
-								if (tooltip) possibleTooltip = tooltip
-								level += this.encumbrancePenalty(actor, possibleTooltip)
-							}
-							if (best < level) {
-								best = level
-								secondaryTooltip = possibleTooltip
-							}
-						}
-						if (best !== -Infinity && tooltip) {
-							if (primaryTooltip && primaryTooltip.length !== 0) {
-								if (tooltip.length !== 0) tooltip.push("\n")
-								tooltip.push(primaryTooltip)
-							}
-							if (secondaryTooltip && primaryTooltip.length !== 0) {
-								if (tooltip.length !== 0) tooltip.push("\n")
-								tooltip.push(secondaryTooltip)
-							}
-						}
-						skillLevel = Math.max(best, 0)
-					}
-					if (neg) modifier = -modifier
-					const num = Math.trunc(skillLevel + modifier).toString()
-					if (i < max) {
-						buffer += num
-						line = line.substring(i)
-					} else line = num
+		let modifier = parseInt(input) || 0
+		const re = new RegExp(`^${modifier >= 0 ? "\\+?" : ""}${modifier}`)
+		let buffer = input.replace(re, "")
+		while (skillLevel === -Infinity) {
+			let primaryTooltip = new TooltipGURPS()
+			let secondaryTooltip = new TooltipGURPS()
+			let preAdj = this.skillLevelBaseAdjustment(actor, primaryTooltip)
+			let postAdj = this.skillLevelPostAdjustment(actor, primaryTooltip)
+			let adj = 3
+			if (baseDefaultType === gid.Parry) adj += this.actor.parryBonus
+			else adj += this.actor.blockBonus
+			let best = -Infinity
+			for (const def of this.defaults) {
+				let level = def.skillLevelFast(actor, false, true, null)
+				if (level === -Infinity) continue
+				level += preAdj
+				if (baseDefaultType !== def.type) level = Math.trunc(level / 2 + adj)
+				level += postAdj
+				let possibleTooltip = new TooltipGURPS()
+				// TODO: localization
+				if (def.type === gid.Skill && def.name === "Karate")
+					level += this.encumbrancePenalty(actor, possibleTooltip)
+				if (best < level) {
+					best = level
+					secondaryTooltip = possibleTooltip
 				}
 			}
-		buffer += line
+			if (best !== -Infinity && tooltip) {
+				if (primaryTooltip && primaryTooltip.length !== 0) {
+					if (tooltip.length !== 0) tooltip.push("\n")
+					tooltip.push(primaryTooltip)
+				}
+				if (secondaryTooltip && secondaryTooltip.length !== 0) {
+					if (tooltip.length !== 0) tooltip.push("\n")
+					tooltip.push(secondaryTooltip)
+				}
+			}
+			skillLevel = Math.max(best, 0)
+		}
+		const num = String(Math.trunc(skillLevel + modifier))
+		buffer = num + buffer
 		return buffer
 	}
+	// ResolvedValue(input: string, baseDefaultType: string, tooltip?: TooltipGURPS): string {
+	// 	const actor = this.actor
+	// 	input = input ?? ""
+	// 	if (!actor) return input
+	// 	let buffer = ""
+	// 	let skillLevel = -Infinity
+	// 	let line = input
+	// 	let max = line.length
+	// 	if (input !== "")
+	// 		for (let i = 0; i < max; i++) {
+	// 			max = line.length
+	// 			while (i < max && input[i] === " ") i++
+	// 			let ch = line[i]
+	// 			let neg = false
+	// 			let modifier = 0
+	// 			let found = false
+	// 			if (ch === "+" || ch === "-") {
+	// 				neg = ch === "-"
+	// 				i++
+	// 				if (i < max) ch = line[i]
+	// 			}
+	// 			while (i < max && ch.match("[0-9]")) {
+	// 				found = true
+	// 				modifier *= 10
+	// 				modifier += parseInt(ch)
+	// 				i++
+	// 				if (i < max) ch = line[i]
+	// 			}
+	// 			if (found) {
+	// 				if (skillLevel === -Infinity) {
+	// 					let primaryTooltip = new TooltipGURPS()
+	// 					let secondaryTooltip = new TooltipGURPS()
+	// 					if (tooltip) primaryTooltip = tooltip
+	// 					let preAdj = this.skillLevelBaseAdjustment(actor, primaryTooltip)
+	// 					let postAdj = this.skillLevelPostAdjustment(actor, primaryTooltip)
+	// 					let adj = 3
+	// 					if (baseDefaultType === gid.Parry) adj += actor.parryBonus
+	// 					else adj += actor.blockBonus
+	// 					let best = -Infinity
+	// 					for (const def of this.defaults) {
+	// 						let level = def.skillLevelFast(actor, false, true, null)
+	// 						if (level === -Infinity) continue
+	// 						level += preAdj
+	// 						if (baseDefaultType !== def.type) Math.trunc((level = level / 2 + adj))
+	// 						level === postAdj
+	// 						let possibleTooltip = new TooltipGURPS()
+	// 						if (def.type === gid.Skill && def.name === "Karate") {
+	// 							if (tooltip) possibleTooltip = tooltip
+	// 							level += this.encumbrancePenalty(actor, possibleTooltip)
+	// 						}
+	// 						if (best < level) {
+	// 							best = level
+	// 							secondaryTooltip = possibleTooltip
+	// 						}
+	// 					}
+	// 					if (best !== -Infinity && tooltip) {
+	// 						if (primaryTooltip && primaryTooltip.length !== 0) {
+	// 							if (tooltip.length !== 0) tooltip.push("\n")
+	// 							tooltip.push(primaryTooltip)
+	// 						}
+	// 						if (secondaryTooltip && primaryTooltip.length !== 0) {
+	// 							if (tooltip.length !== 0) tooltip.push("\n")
+	// 							tooltip.push(secondaryTooltip)
+	// 						}
+	// 					}
+	// 					skillLevel = Math.max(best, 0)
+	// 				}
+	// 				if (neg) modifier = -modifier
+	// 				const num = Math.trunc(skillLevel + modifier).toString()
+	// 				if (i < max) {
+	// 					buffer += num
+	// 					line = line.substring(i)
+	// 				} else line = num
+	// 			}
+	// 		}
+	// 	buffer += line
+	// 	console.log(baseDefaultType, buffer)
+	// 	return buffer
+	// }
 }
 
 interface BaseWeaponGURPS extends BaseItemGURPS {

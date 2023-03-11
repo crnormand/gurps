@@ -2,7 +2,7 @@ import { CharacterGURPS } from "@actor"
 import { Prereq } from "@module/config"
 import { NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
-import { extractTechLevel, i18n, numberCompare } from "@util"
+import { extractTechLevel, LocalizeGURPS, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
 export interface PrereqList extends Omit<BasePrereq, "has"> {
@@ -60,8 +60,8 @@ export class PrereqList extends BasePrereq {
 			}
 		const satisfied = count === this.prereqs.length || (!this.all && count > 0)
 		if (!satisfied) {
-			if (this.all) tooltip.push(i18n("gurps.prereqs.requires_all"))
-			else tooltip.push(i18n("gurps.prereqs.requires_one"))
+			if (this.all) tooltip.push(LocalizeGURPS.translations.gurps.prereqs.requires_all)
+			else tooltip.push(LocalizeGURPS.translations.gurps.prereqs.requires_one)
 
 			tooltip.push(local)
 		}

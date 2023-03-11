@@ -1,5 +1,5 @@
 import { RollModifier, SYSTEM_NAME } from "@module/data"
-import { i18n, prepareFormData } from "@util"
+import { LocalizeGURPS, prepareFormData } from "@util"
 import { SettingsMenuGURPS } from "./menu"
 
 export class RollModifierSettings extends SettingsMenuGURPS {
@@ -52,7 +52,7 @@ export class RollModifierSettings extends SettingsMenuGURPS {
 			`${this.namespace}.modifiers`
 		) as RollModifier[]
 		modifiers.push({
-			name: i18n("gurps.setting.roll_modifiers.default"),
+			name: LocalizeGURPS.translations.gurps.settings.roll_modifiers.default,
 			modifier: 0,
 		})
 		await game.settings.set(SYSTEM_NAME, `${this.namespace}.modifiers`, modifiers)

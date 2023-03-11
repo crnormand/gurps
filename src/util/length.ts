@@ -1,4 +1,4 @@
-import { i18n } from "./misc"
+import { LocalizeGURPS } from "./localize"
 
 // Export type Length = number
 
@@ -129,7 +129,7 @@ export class Length {
 	}
 
 	private static f(u: LengthUnits) {
-		return i18n(`gurps.length_units.${u}`)
+		return LocalizeGURPS.translations.gurps.length_units[u]
 	}
 }
 

@@ -24,7 +24,8 @@ import { Feature, ItemSystemDataGURPS } from "@module/config"
 import { CR, ItemType, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { PrereqList } from "@prereq"
-import { i18n, i18n_f, newUUID } from "./misc"
+import { LocalizeGURPS } from "./localize"
+import { newUUID } from "./misc"
 
 class ImportUtils {
 	static importItems(
@@ -45,7 +46,7 @@ class ImportUtils {
 				_id: id,
 			}
 			if (!newItem.name) {
-				const defaultName = i18n(
+				const defaultName = game.i18n.localize(
 					`ITEM.Type${newItem.system.type.charAt(0).toUpperCase()}${newItem.system.type.slice(1)}`
 				)
 				newItem.name = defaultName
@@ -140,7 +141,11 @@ class ImportUtils {
 			case "ranged_weapon":
 				return [ImportUtils.getRangedWeaponData(item as RangedWeaponSystemData), flags]
 			default:
-				throw new Error(i18n_f("gcsga.error.import.invalid_item_type", { type: item.type }))
+				throw new Error(
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.invalid_item_type, {
+						type: item.type,
+					})
+				)
 		}
 	}
 

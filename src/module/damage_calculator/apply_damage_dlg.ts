@@ -60,13 +60,14 @@ class ApplyDamageDialog extends Application {
 		const books = game.settings.get(SYSTEM_NAME, SETTINGS.BASE_BOOKS) as "gurps" | "dfrpg"
 
 		const data = mergeObject(super.getData(options), {
+			calculator: this.calculator,
 			roll: this.roll,
 			target: this.target,
-			calculator: this.calculator,
-			source: this.damageRollText,
-			type: this.damageTypeAbbreviation,
+			armorDivisorSelect: this.roll.armorDivisor,
+			type: this.roll.damageTypeKey,
+
 			isExplosion: this.isExplosion,
-			armorDivisorSelect: this.armorDivisorSelect,
+
 			damageTypeChoices: DamageType,
 
 			hitLocation: this.hitLocation,
@@ -188,21 +189,8 @@ class ApplyDamageDialog extends Application {
 		return this.calculator.damageRoll
 	}
 
-	private get damageRollText(): string {
-		return `${this.roll.dice}${this.roll.armorDivisor ? ` (${this.roll.armorDivisor})` : ""}`
-	}
-
-	private get damageTypeAbbreviation(): string {
-		let index = Object.values(DamageType).indexOf(this.roll.damageType)
-		return Object.keys(DamageType)[index]
-	}
-
 	private get isExplosion(): boolean {
 		return this.roll.damageModifier === "ex"
-	}
-
-	private get armorDivisorSelect(): string {
-		return this.roll.armorDivisor.toString()
 	}
 
 	private get hitLocation(): HitLocation | undefined {
@@ -217,16 +205,6 @@ class ApplyDamageDialog extends Application {
 		const choice: Record<string, string> = {}
 		this.target.hitLocationTable.locations.forEach(it => (choice[it.id] = it.choice_name))
 		return choice
-	}
-
-	private get vulnerabilityModifierNotes(): string {
-		const trait = this.target.getTrait(Vulnerability)
-		return (
-			trait?.modifiers
-				.filter(it => !it.name.startsWith(Wounding))
-				.map(it => it.name.trim())
-				.join("; ") ?? ""
-		)
 	}
 
 	private get vulnerabilities(): string[] {

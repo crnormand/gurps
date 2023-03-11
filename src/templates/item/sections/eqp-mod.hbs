@@ -1,4 +1,5 @@
-<div class="desc item" data-uuid="Compendium.{{this.compendium}}.{{this._id}}" data-type="Item" {{{indent
+<div class="enabled" data-uuid="{{this.uuid}}">{{#if this.enabled}}<i class="gcs-checkmark"></i>{{/if}}</div>
+<div class="desc item" data-uuid="{{this.uuid}}" data-type="Item" {{{indent
 	this.parents.length}}}>
 	<div class="dropdown">
 		{{#if (eq this.type "eqp_modifier_container")}}

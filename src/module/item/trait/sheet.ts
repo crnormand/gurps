@@ -1,5 +1,5 @@
 import { ItemSheetGCS } from "@item/gcs"
-import { ItemType } from "@module/data"
+import { TraitGURPS } from "./document"
 
 export class TraitSheet extends ItemSheetGCS {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
@@ -11,16 +11,11 @@ export class TraitSheet extends ItemSheetGCS {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
-		const items = this.items
-		const sheetData = {
-			...super.getData(options),
-			...{
-				modifiers: items.filter(e =>
-					[ItemType.TraitModifier, ItemType.TraitModifierContainer].includes(e.type as ItemType)
-				),
-			},
-		}
-		return sheetData
+		const data = super.getData(options)
+		const modifiers = this.object.modifiers
+		return mergeObject(data, {
+			modifiers,
+		})
 	}
 
 	protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
@@ -28,4 +23,8 @@ export class TraitSheet extends ItemSheetGCS {
 			formData["system.disabled"] = !formData["system.disabled"]
 		return super._updateObject(event, formData)
 	}
+}
+
+export interface TraitSheet extends ItemSheetGCS {
+	object: TraitGURPS
 }

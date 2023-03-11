@@ -1,7 +1,7 @@
 import { ActorType, gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { TooltipGURPS } from "@module/tooltip"
-import { i18n, i18n_f } from "@util"
+import { LocalizeGURPS } from "@util"
 
 /**
  * Breaking these out into their own file so as to not be dependent on any other types.
@@ -49,8 +49,8 @@ export class HitLocation {
 	constructor(actor: any, owningTable: HitLocationTable, data?: HitLocationData) {
 		this.id = "id"
 		if (typeof game !== "undefined") {
-			this.choice_name = i18n("gurps.placeholder.hit_location.choice_name")
-			this.table_name = i18n("gurps.placeholder.hit_location.table_name")
+			this.choice_name = LocalizeGURPS.translations.gurps.placeholder.hit_location.choice_name
+			this.table_name = LocalizeGURPS.translations.gurps.placeholder.hit_location.table_name
 		} else {
 			this.choice_name = "untitled choice"
 			this.table_name = "untitled location"
@@ -81,7 +81,11 @@ export class HitLocation {
 		if (this.dr_bonus !== 0) {
 			drMap.set(gid.All, this.dr_bonus)
 			tooltip?.push(
-				i18n_f("gurps.tooltip.dr_bonus", { item: this.choice_name, bonus: this.dr_bonus, type: gid.All })
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.dr_bonus, {
+					item: this.choice_name,
+					bonus: this.dr_bonus,
+					type: gid.All,
+				})
 			)
 		}
 		if (this.actor.type === ActorType.Character)

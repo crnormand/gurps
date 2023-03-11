@@ -4,7 +4,7 @@ import { FeatureType } from "@feature"
 import { AttributeDefObj } from "@module/attribute"
 import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
-import { i18n, prepareFormData } from "@util"
+import { LocalizeGURPS, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
 export class ItemSheetGURPS extends ItemSheet {
@@ -50,9 +50,9 @@ export class ItemSheetGURPS extends ItemSheet {
 				locations[e.id] = e.choice_name
 			})
 		}
-		attributes.dodge = i18n("gurps.attributes.dodge")
-		attributes.parry = i18n("gurps.attributes.parry")
-		attributes.block = i18n("gurps.attributes.block")
+		attributes.dodge = LocalizeGURPS.translations.gurps.attributes.dodge
+		attributes.parry = LocalizeGURPS.translations.gurps.attributes.parry
+		attributes.block = LocalizeGURPS.translations.gurps.attributes.block
 		const item = this.item
 
 		const sheetData = {

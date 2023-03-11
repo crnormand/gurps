@@ -1,6 +1,6 @@
 import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
-import { getDefaultSkills, i18n } from "@util"
+import { getDefaultSkills, LocalizeGURPS } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
 
@@ -36,7 +36,7 @@ export class CompendiumBrowser extends Application {
 	}
 
 	override get title(): string {
-		return i18n("gurps.compendium_browser.title")
+		return LocalizeGURPS.translations.gurps.compendium_browser.title
 	}
 
 	get skillDefaults(): string[] {
@@ -104,34 +104,8 @@ export class CompendiumBrowser extends Application {
 			}
 		}
 
-		// Const currentTab = this.tabs[activeTabName];
-		// const controlArea =
-		// 	_html.querySelector<HTMLDivElement>("div.control-area");
-		// if (!controlArea) return;
-
-		// const list = _html.querySelector<HTMLUListElement>(
-		// 	".tab.active ul.item-list",
-		// );
-		// console.warn(list);
-		// if (!list) return;
-		// list.addEventListener("scroll", () => {
-		// 	if (list.scrollTop + list.clientHeight >= list.scrollHeight - 5) {
-		// 		const currentValue = currentTab.scrollLimit;
-		// 		const maxValue = currentTab.totalItemCount ?? 0;
-		// 		if (currentValue < maxValue) {
-		// 			currentTab.scrollLimit = Math.clamped(
-		// 				currentValue + 100,
-		// 				100,
-		// 				maxValue,
-		// 			);
-		// 			this.renderReultsList(_html, list, currentValue);
-		// 		}
-		// 	}
-		// });
-		html.find("input.input").on("change", event => this._updateQuery(event))
+		html.find("input[name='searchQuery']").on("change", event => this._updateQuery(event))
 		html.find("select").on("change", event => this._updateFilter(event))
-
-		// This.renderReultsList(_html, list);
 	}
 
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<unknown> {
@@ -145,13 +119,13 @@ export class CompendiumBrowser extends Application {
 	}
 
 	_updateQuery(event: JQuery.TriggeredEvent): void {
-		if (this.activeTab === "settings") return
+		if (this.activeTab === TabName.Settings) return
 		this.tabs[this.activeTab].filterData.searchQuery = String($(event.currentTarget).val())
 		this.render()
 	}
 
 	_updateFilter(event: JQuery.TriggeredEvent): void {
-		if (this.activeTab === "settings") return
+		if (this.activeTab === TabName.Settings) return
 		this.tabs[this.activeTab].filterData.tagFilter = String($(event.currentTarget).val())
 		this.render()
 	}

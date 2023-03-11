@@ -81,19 +81,25 @@
 	<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 </div>
 </div>
-<div id="trait-modifiers" class="item-list table">
-    <div class="header enabled">
-        <i class="gcs-checkmark"></i>
-    </div>
-    <div class="header desc">{{ localize "gurps.item.modifier_desc" }}</div>
-    <div class="header cost">{{ localize "gurps.item.modifier_point_cost" }}</div>
-    <div class="header tags">{{ localize "gurps.item.tags" }}</div>
-    <div class="header reference">
-        <i class="gcs-bookmark"></i>
-    </div>
-    {{#each (sort modifiers "sort")}}
+    <div id="trait-modifiers" class="item-list table">
+        <div class="header enabled">
+            <i class="gcs-checkmark"></i>
+        </div>
+        <div class="header desc">{{ localize "gurps.item.modifier_desc" }}</div>
+        <div class="header cost">{{ localize "gurps.item.modifier_point_cost" }}</div>
+        <div class="header tags">{{ localize "gurps.item.tags" }}</div>
+        <div class="header reference">
+            <i class="gcs-bookmark"></i>
+        </div>
+        {{#each (sort modifiers "sort") }}
         {{>item/sections/trait-mod }}
-    {{/each }}
-</div>
-</div>
+		{{else}}
+			<div class="enabled"></div>
+			<div class="desc filler"></div>
+			<div class="cost"></div>
+			<div class="tags"></div>
+			<div class="reference"></div>
+        {{/each }}
+    </div>
+	</div>
 </form>

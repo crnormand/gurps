@@ -11,7 +11,7 @@
 
 		<div class="label">Source roll</div>
 		<div class="field">
-			{{roll.weapon.damageDice}}
+			{{roll.damageText}}
 		</div>
 		<div></div>
 
@@ -29,7 +29,7 @@
 
 		<div class="label">Armor Divisor</div>
 		<div class="field">
-			<select name="armorDivsor">
+			<select name="armorDivsor" value="{{roll.armorDivisor}}">
 				{{#select armorDivisorSelect}}
 					<option value="-1">Ignores DR</option>
 					<option value="100">(100)</option>
@@ -45,23 +45,23 @@
 			</select>
 		</div>
 		{{#if (eq books "dfrpg")}}
-		<div class="label ref" data-pdf="DFX52">DFX52</div>
+			<div class="label ref" data-pdf="DFX52">DFX52</div>
 		{{else}}
-		<div class="label ref" data-pdf="B378">B378</div>
+			<div class="label ref" data-pdf="B378">B378</div>
 		{{/if}}
 
 		<div class="label">Damage type</div>
 		<div class="field no-stretch type">
 			<select name="damageType">
-				{{selectOptions damageTypeChoices value=roll.damageType localize=false}}
+				{{selectOptions damageTypeChoices selected=roll.damageTypeKey localize=false}}
 			</select>
 			<div class="label">Modifier</div>
 			<input type="number" value="{{roll.woundMod}}" step="any" name="woundMod" size="3" />
 		</div>
 		{{#if (eq books "dfrpg")}}
-		<div class="label ref" data-pdf="DFX53">DFX53</div>
+			<div class="label ref" data-pdf="DFX53">DFX53</div>
 		{{else}}
-		<div class="label ref" data-pdf="B268">B268</div>
+			<div class="label ref" data-pdf="B268">B268</div>
 		{{/if}}
 
 		<div class="label"></div>
@@ -73,9 +73,9 @@
 				<input id="explosion" type="checkbox" />Internal</label>
 		</div>
 		{{#if (eq books "dfrpg")}}
-		<div class="label ref" data-pdf="DFX46">DFX46</div>
+			<div class="label ref" data-pdf="DFX46">DFX46</div>
 		{{else}}
-		<div class="label ref" data-pdf="B414">B414</div>
+			<div class="label ref" data-pdf="B414">B414</div>
 		{{/if}}
 
 		<div class="label">Range (yards)</div>
@@ -86,9 +86,9 @@
 				Ranged, 1/2D</label>
 		</div>
 		{{#if (eq books "dfrpg")}}
-		<div class="label ref" data-pdf="DFX43">DFX43</div>
+			<div class="label ref" data-pdf="DFX43">DFX43</div>
 		{{else}}
-		<div class="label ref" data-pdf="B378">B378</div>
+			<div class="label ref" data-pdf="B378">B378</div>
 		{{/if}}
 
 		<div class="label"></div>
@@ -136,9 +136,9 @@
 				/>
 			</div>
 			{{#if (eq books "dfrpg")}}
-			<div class="label ref" data-pdf="DFX53">DFX53</div>
+				<div class="label ref" data-pdf="DFX53">DFX53</div>
 			{{else}}
-			<div class="label ref" data-pdf="B398">B398</div>
+				<div class="label ref" data-pdf="B398">B398</div>
 			{{/if}}
 
 			<div class="label"></div>
@@ -178,9 +178,9 @@
 				</select>
 			</div>
 			{{#if (eq books "dfrpg")}}
-			<div class="label ref" data-pdf="DFX14">DFM14</div>
+				<div class="label ref" data-pdf="DFX14">DFM14</div>
 			{{else}}
-			<div class="label ref" data-pdf="B161">B161</div>
+				<div class="label ref" data-pdf="B161">B161</div>
 			{{/if}}
 
 			<div class="label">Injury Tolerance</div>

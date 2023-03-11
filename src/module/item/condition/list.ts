@@ -2,7 +2,7 @@ import { FeatureType } from "@feature"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { DurationType } from "@item/effect"
 import { gid, SYSTEM_NAME } from "@module/data"
-import { i18n } from "@util"
+import { LocalizeGURPS } from "@util"
 import { StatusEffect } from "types/foundry/client/data/documents/token"
 import { ConditionID, ConditionSystemData, ManeuverID } from "./data"
 
@@ -11,36 +11,36 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		[ConditionID.PostureCrouch]: {
 			id: ConditionID.PostureCrouch,
 			modifiers: [
-				{ name: i18n("gurps.modifier.cover.crouching_no_cover"), modifier: -2 },
-				{ name: i18n("gurps.modifier.cover.melee_crouching"), modifier: -2 },
-				{ name: i18n("gurps.modifier.cover.ranged_crouching"), modifier: -2 },
-				{ name: i18n("gurps.modifier.cover.hit_ranged_crouching"), modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.crouching_no_cover, modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.melee_crouching, modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.ranged_crouching, modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.hit_ranged_crouching, modifier: -2 },
 			],
 		},
 		[ConditionID.PostureKneel]: {
 			id: ConditionID.PostureKneel,
 			modifiers: [
-				{ name: i18n("gurps.modifier.cover.melee_kneeling"), modifier: -2 },
-				{ name: i18n("gurps.modifier.cover.defense_kneeling"), modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.melee_kneeling, modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.defense_kneeling, modifier: -2 },
 			],
 		},
 		[ConditionID.PostureSit]: {
 			id: ConditionID.PostureSit,
-			modifiers: [{ name: i18n("gurps.modifier.cover.ranged_sitting"), modifier: -2 }],
+			modifiers: [{ name: LocalizeGURPS.translations.gurps.modifier.cover.ranged_sitting, modifier: -2 }],
 		},
 		[ConditionID.PostureCrawl]: {
 			id: ConditionID.PostureCrawl,
 			modifiers: [
-				{ name: i18n("gurps.modifier.cover.melee_crawling"), modifier: -4 },
-				{ name: i18n("gurps.modifier.cover.defense_crawling"), modifier: -3 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.melee_crawling, modifier: -4 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.defense_crawling, modifier: -3 },
 			],
 		},
 		[ConditionID.PostureProne]: {
 			id: ConditionID.PostureProne,
 			modifiers: [
-				{ name: i18n("gurps.modifier.cover.prone_no_cover"), modifier: -4 },
-				{ name: i18n("gurps.modifier.cover.prone_head_up"), modifier: -5 },
-				{ name: i18n("gurps.modifier.cover.prone_head_down"), modifier: -7 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.prone_no_cover, modifier: -4 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.prone_head_up, modifier: -5 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.cover.prone_head_down, modifier: -7 },
 			],
 		},
 		[ConditionID.Reeling]: {
@@ -122,7 +122,14 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		[ConditionID.Invisible]: { id: ConditionID.Invisible },
 		[ConditionID.Coughing]: { id: ConditionID.Coughing },
 		[ConditionID.Retching]: { id: ConditionID.Retching },
-		[ConditionID.Nausea]: { id: ConditionID.Nausea },
+		[ConditionID.Nausea]: {
+			id: ConditionID.Nausea,
+			modifiers: [
+				{ name: LocalizeGURPS.translations.gurps.modifier.attribute.all, modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.skill.all, modifier: -2 },
+				{ name: LocalizeGURPS.translations.gurps.modifier.active_defense.all, modifier: -1 },
+			],
+		},
 		[ConditionID.Agony]: { id: ConditionID.Agony },
 		[ConditionID.Seizure]: { id: ConditionID.Seizure },
 		[ConditionID.Blinded]: { id: ConditionID.Blinded },
