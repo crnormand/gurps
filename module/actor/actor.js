@@ -2348,11 +2348,11 @@ export class GurpsActor extends Actor {
    */
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
-    let l = getProperty(this, list)
+    let l = getProperty(this, 'system.' + list)
     recurselist(l, (e, k, d) => {
       if ((uuid && e.uuid == uuid) || (!!e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
     })
-    return foundkey == null ? foundkey : getProperty(this, list + '.' + foundkey)
+    return foundkey == null ? foundkey : getProperty(this, 'system.' + list + '.' + foundkey)
   }
 
   /**
