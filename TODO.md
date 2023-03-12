@@ -8,10 +8,10 @@
 	-	don't bother with editing features
 -   @X@ notation dialog box for items
 	-	finish UI
--	item sheet styling
-	-	add item notes to display
--	Styling for private & blind rolls
-	-	tweak colors
+-	Active Effects
+	-	finish active effect sheet
+	-	active effect side panel (for removing effects)
+	-	active effect tab on charsheet (for removing/editing effects)
 
 ## Jeff and Chris
 

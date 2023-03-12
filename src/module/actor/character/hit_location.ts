@@ -73,6 +73,12 @@ export class HitLocation {
 		}
 	}
 
+	get tooltip(): string {
+		const tooltip = new TooltipGURPS()
+		this._DR(tooltip)
+		return tooltip.toString("<br>", 0)
+	}
+
 	get DR(): Map<string, number> {
 		return this._DR()
 	}
@@ -83,21 +89,50 @@ export class HitLocation {
 			tooltip?.push(
 				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.dr_bonus, {
 					item: this.choice_name,
-					bonus: this.dr_bonus,
+					bonus: this.dr_bonus.signedString(),
 					type: gid.All,
-				})
+				}),
+				"<br>"
 			)
 		}
 		if (this.actor.type === ActorType.Character)
 			drMap = (this.actor as any).addDRBonusesFor(this.id, tooltip, drMap)
+		for (const k of drMap.keys()) {
+			if (k === gid.All) continue
+			drMap.set(k, drMap.get(k)! + (drMap.get(gid.All) ?? 0))
+		}
+		if (drMap.size !== 0) tooltip?.unshift("<br><br>")
+		for (const k of drMap.keys()) {
+			if (k === gid.All) continue
+			tooltip?.unshift(
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.dr_total, {
+					amount: String(drMap.get(k)),
+					type: k,
+				}),
+				"<br>"
+			)
+		}
+		if (drMap.has(gid.All))
+			tooltip?.unshift(
+				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.dr_total, {
+					amount: String(drMap.get(gid.All)),
+					type: gid.All,
+				}),
+				"<br>"
+			)
+		if (drMap.size !== 0) tooltip?.unshift("<br>")
+		tooltip?.unshift(
+			LocalizeGURPS.format(LocalizeGURPS.translations.gurps.tooltip.dr_name, { name: this.table_name })
+		)
+
 		if (this.owningTable?.owningLocation) {
 			drMap = this.owningTable.owningLocation._DR(tooltip, drMap)
 		}
-		if (tooltip && drMap?.entries.length !== 0) {
-			drMap?.forEach(e => {
-				tooltip.push(`TODO: ${e}`)
-			})
-		}
+		// If (tooltip && drMap?.entries.length !== 0) {
+		// 	drMap?.forEach(e => {
+		// 		tooltip.push(`TODO: ${e}`)
+		// 	})
+		// }
 		this.calc.dr = Object.fromEntries(drMap)
 		return drMap
 	}

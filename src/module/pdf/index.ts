@@ -38,6 +38,7 @@ const SJG_links = {
 	ACT1: "https://new.warehouse23.com/products/gurps-action-1-heroes",
 	ACT3: "https://new.warehouse23.com/products/gurps-action-3-furious-fists",
 	B: "https://new.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
+	BX: "https://new.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
 	BS: "https://new.warehouse23.com/products/gurps-banestorm",
 	DF1: "https://new.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1",
 	DF3: "https://new.warehouse23.com/products/gurps-dungeon-fantasy-3-the-next-level-1",
@@ -110,14 +111,17 @@ function open(pdfs: string) {
 			page = parseInt(link.replaceAll(/\D/g, ""))
 		}
 
+		const s = game.settings.get(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF)
 		if (book === "B") {
-			const s = game.settings.get(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF)
 			if (page > 336) {
 				if (s === "separate") {
 					book = "BX"
 					page = page - 335
 				} else page += 2
 			}
+		}
+		if (book === "BX") {
+			if (s === "combined") book = "B"
 		}
 
 		let url = (SJG_links as any)[book]

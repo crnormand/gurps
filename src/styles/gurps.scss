@@ -484,25 +484,6 @@
 	}
 }
 
-.tooltip {
-	position: relative;
-	.tooltiptext {
-		visibility: hidden;
-		background-color: rgb(var(--color-tooltip));
-		color: rgb(var(--color-on-tooltip));
-		text-align: center;
-		padding: 4px;
-		border: 1px solid rgb(var(--color-control-edge));
-		font-size: var(--font-size-14);
-
-		position: absolute;
-		z-index: 1;
-	}
-	&:hover .tooltiptext {
-		visibility: visible;
-	}
-}
-
 .button {
 	color: rgb(var(--color-icon-button));
 	&:hover {

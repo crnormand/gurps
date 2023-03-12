@@ -1,6 +1,7 @@
 import { BaseFeature } from "@feature"
 import { BaseItemGURPS } from "@item/base"
 import { Feature } from "@module/config"
+import { RollModifier } from "@module/data"
 import { TokenGURPS } from "@module/token"
 import { LocalizeGURPS } from "@util"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
@@ -20,6 +21,10 @@ class EffectGURPS extends BaseItemGURPS {
 			)
 		}
 		return []
+	}
+
+	get modifiers(): RollModifier[] {
+		return this.system.modifiers || []
 	}
 
 	get combat(): Combat | null {

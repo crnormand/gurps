@@ -29,12 +29,12 @@ import { TooltipGURPS } from "@module/tooltip"
 import {
 	damageProgression,
 	equalFold,
-	floatingMul,
 	getCurrentTime,
 	LengthUnits,
 	LocalizeGURPS,
 	newUUID,
 	numberCompare,
+	round,
 	SelfControl,
 	stringCompare,
 	urlToBase64,
@@ -54,7 +54,7 @@ import { CharacterImporter } from "./import"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
-import { ConditionGURPS, ConditionID } from "@item/condition"
+import { ConditionID } from "@item/condition"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeDef, AttributeObj, AttributeType, ThresholdOp } from "@module/attribute"
@@ -531,27 +531,27 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get oneHandedLift(): number {
-		return floatingMul(this.basicLift * 2)
+		return round(this.basicLift * 2, 4)
 	}
 
 	get twoHandedLift(): number {
-		return floatingMul(this.basicLift * 8)
+		return round(this.basicLift * 8, 4)
 	}
 
 	get shove(): number {
-		return floatingMul(this.basicLift * 12)
+		return round(this.basicLift * 12, 4)
 	}
 
 	get runningShove(): number {
-		return floatingMul(this.basicLift * 24)
+		return round(this.basicLift * 24, 4)
 	}
 
 	get carryOnBack(): number {
-		return floatingMul(this.basicLift * 15)
+		return round(this.basicLift * 15, 4)
 	}
 
 	get shiftSlightly(): number {
-		return floatingMul(this.basicLift * 50)
+		return round(this.basicLift * 50, 4)
 	}
 
 	get fastWealthCarried(): string {
@@ -582,7 +582,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				total += e.extendedWeight(for_skills, this.settings.default_weight_units)
 			}
 		})
-		return floatingMul(total)
+		return round(total, 4)
 	}
 
 	wealthCarried(): number {
@@ -590,7 +590,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const e of this.carried_equipment) {
 			if (e.parent === this) value += e.extendedValue
 		}
-		return floatingMul(value)
+		return round(value, 4)
 	}
 
 	get fastWealthNotCarried(): string {
@@ -602,7 +602,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.other_equipment.forEach(e => {
 			if (e.parent === this) value += e.extendedValue
 		})
-		return floatingMul(value)
+		return round(value, 4)
 	}
 
 	get strengthOrZero(): number {
@@ -630,31 +630,31 @@ class CharacterGURPS extends BaseActorGURPS {
 		const ae: Encumbrance[] = [
 			{
 				level: 0,
-				maximum_carry: floatingMul(bl),
+				maximum_carry: round(bl, 4),
 				penalty: 0,
 				name: LocalizeGURPS.translations.gurps.character.encumbrance[0],
 			},
 			{
 				level: 1,
-				maximum_carry: floatingMul(bl * 2),
+				maximum_carry: round(bl * 2, 4),
 				penalty: -1,
 				name: LocalizeGURPS.translations.gurps.character.encumbrance[1],
 			},
 			{
 				level: 2,
-				maximum_carry: floatingMul(bl * 3),
+				maximum_carry: round(bl * 3, 4),
 				penalty: -2,
 				name: LocalizeGURPS.translations.gurps.character.encumbrance[2],
 			},
 			{
 				level: 3,
-				maximum_carry: floatingMul(bl * 6),
+				maximum_carry: round(bl * 6, 4),
 				penalty: -3,
 				name: LocalizeGURPS.translations.gurps.character.encumbrance[3],
 			},
 			{
 				level: 4,
-				maximum_carry: floatingMul(bl * 10),
+				maximum_carry: round(bl * 10, 4),
 				penalty: -4,
 				name: LocalizeGURPS.translations.gurps.character.encumbrance[4],
 			},
@@ -1132,6 +1132,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 		for (const t of this.traits) {
 			let levels = 0
+			if (!t.enabled) continue
 			if (t.isLeveled) levels = Math.max(t.levels, 0)
 			if (t instanceof TraitGURPS) {
 				if (t.features)
@@ -1156,17 +1157,19 @@ class CharacterGURPS extends BaseActorGURPS {
 				}
 		}
 		for (const e of this.equipment) {
+			if (!e.enabled) continue
 			for (const f of e.features) {
 				this.processFeature(e, f, 0)
 			}
 			for (const m of e.deepModifiers) {
+				if (!m.enabled) continue
 				for (const f of m.features) {
 					this.processFeature(e, f, 0)
 				}
 			}
 		}
-		for (const e of this.conditions) {
-			if (!(e instanceof ConditionGURPS)) continue
+		for (const e of this.gEffects) {
+			// If (!(e instanceof ConditionGURPS)) continue
 			for (const f of e.features) {
 				this.processFeature(e, f, 0)
 			}
@@ -1740,7 +1743,10 @@ class CharacterGURPS extends BaseActorGURPS {
 	): Map<string, number> {
 		for (const f of this.features?.drBonuses) {
 			if (f.type === "dr_bonus" && equalFold(locationID, f.location)) {
-				drMap.set(f.specialization!.toLowerCase(), f.adjustedAmount)
+				const current = drMap.has(f.specialization!.toLowerCase())
+					? drMap.get(f.specialization!.toLowerCase()) || 0
+					: 0
+				drMap.set(f.specialization!.toLowerCase(), current + f.adjustedAmount)
 				f.addToTooltip(tooltip)
 			}
 		}

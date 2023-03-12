@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { CompendiumTab } from "./base"
@@ -34,7 +34,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 		)) {
 			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((spell: any) => {
-				if (!["spell", "spell_container"].includes(spell.type)) return
+				if (![ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer].includes(spell.type)) return
 				spell.prepareData()
 				// TODO: hasAllIndexFields
 				spell_list.push({
@@ -48,7 +48,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 					open: spell.open,
 					uuid: spell.uuid,
 					id: spell._id,
-					children: spell.type === "spell_container" ? spell.children : [],
+					children: spell.type === ItemType.SpellContainer ? spell.children : [],
 					adjustedPoints: spell.adjustedPoints,
 					tags: spell.tags,
 					reference: spell.reference,

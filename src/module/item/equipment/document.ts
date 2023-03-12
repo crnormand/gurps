@@ -9,7 +9,7 @@ import {
 	allWeightUnits,
 	determineModWeightValueTypeFromString,
 	extractFraction,
-	floatingMul,
+	round,
 	Weight,
 	WeightUnits,
 } from "@util"
@@ -110,7 +110,13 @@ class EquipmentGURPS extends ItemGCS {
 	}
 
 	get adjustedValue(): number {
-		return EquipmentGURPS.valueAdjustedForModifiers(this.value, this.deepModifiers)
+		return round(
+			EquipmentGURPS.valueAdjustedForModifiers(
+				this.value,
+				this.deepModifiers.filter(e => e.enabled)
+			),
+			4
+		)
 	}
 
 	// Value Calculator
@@ -120,7 +126,7 @@ class EquipmentGURPS extends ItemGCS {
 		for (const ch of this.children) {
 			value += ch.extendedValue
 		}
-		return floatingMul(value * this.quantity)
+		return round(value * this.quantity, 4)
 	}
 
 	get adjustedWeightFast(): string {
@@ -133,7 +139,7 @@ class EquipmentGURPS extends ItemGCS {
 	}
 
 	extendedWeight(for_skills: boolean, units: WeightUnits): number {
-		return this.extendedWeightAdjustForMods(units, for_skills)
+		return round(this.extendedWeightAdjustForMods(units, for_skills), 4)
 	}
 
 	get extendedWeightFast(): string {
@@ -162,7 +168,7 @@ class EquipmentGURPS extends ItemGCS {
 					else reduction += parseFloat(f.reduction)
 				}
 			}
-			for (const mod of this.deepModifiers) {
+			for (const mod of this.deepModifiers.filter(e => e.enabled)) {
 				for (const f of mod.features) {
 					if (f instanceof ContainedWeightReduction) {
 						if (f.is_percentage_reduction) percentage += parseFloat(f.reduction)
@@ -174,14 +180,15 @@ class EquipmentGURPS extends ItemGCS {
 			else if (percentage > 0) contained -= (contained * percentage) / 100
 			base += Math.max(contained - reduction, 0)
 		}
-		return floatingMul(base * this.quantity)
+		return round(base * this.quantity, 4)
 	}
 
 	weightAdjustedForMods(units: WeightUnits): number {
 		let percentages = 0
 		let w = this.weight
+		const modifiers = this.deepModifiers.filter(e => e.enabled)
 
-		for (const mod of this.deepModifiers) {
+		for (const mod of modifiers) {
 			if (mod.weightType === "to_original_weight") {
 				const t = determineModWeightValueTypeFromString(mod.weightAmount)
 				const f = extractFraction(mod.weightAmount)
@@ -195,11 +202,11 @@ class EquipmentGURPS extends ItemGCS {
 		}
 		if (percentages !== 0) w += (this.weight * percentages) / 100
 
-		w = EquipmentGURPS.processMultiplyAddWeightStep("to_base_weight", w, units, this.deepModifiers)
+		w = EquipmentGURPS.processMultiplyAddWeightStep("to_base_weight", w, units, modifiers)
 
-		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_base_weight", w, units, this.deepModifiers)
+		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_base_weight", w, units, modifiers)
 
-		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_weight", w, units, this.deepModifiers)
+		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_weight", w, units, modifiers)
 
 		return Math.max(w, 0)
 	}
@@ -215,7 +222,7 @@ class EquipmentGURPS extends ItemGCS {
 		this.equipped = !this.equipped
 	}
 
-	static valueAdjustedForModifiers(value: number, modifiers: Collection<EquipmentModifierGURPS>): number {
+	static valueAdjustedForModifiers(value: number, modifiers: EquipmentModifierGURPS[]): number {
 		let cost = EquipmentGURPS.processNonCFStep("to_original_cost", value, modifiers)
 
 		let cf = 0
@@ -236,11 +243,7 @@ class EquipmentGURPS extends ItemGCS {
 		return Math.max(cost, 0)
 	}
 
-	static processNonCFStep(
-		costType: EquipmentCostType,
-		value: number,
-		modifiers: Collection<EquipmentModifierGURPS>
-	): number {
+	static processNonCFStep(costType: EquipmentCostType, value: number, modifiers: EquipmentModifierGURPS[]): number {
 		let cost = value
 		let percentages = 0
 		let additions = 0
@@ -299,7 +302,7 @@ class EquipmentGURPS extends ItemGCS {
 		type: EquipmentWeightType,
 		weight: number,
 		_units: WeightUnits,
-		modifiers: Collection<EquipmentModifierGURPS>
+		modifiers: EquipmentModifierGURPS[]
 	): number {
 		let sum = 0
 		for (const mod of modifiers) {

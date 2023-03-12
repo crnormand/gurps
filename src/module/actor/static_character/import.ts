@@ -3,7 +3,7 @@ import { CharacterImportedData } from "@actor/character/import"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { SYSTEM_NAME, SETTINGS } from "@module/data"
-import { floatingMul, LocalizeGURPS, Static } from "@util"
+import { LocalizeGURPS, round, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import {
 	StaticAdvantage,
@@ -534,7 +534,7 @@ export class StaticCharacterImporter {
 		let e = new StaticEquipment()
 		e.name = i.description || "Equipment"
 		e.count = i.type === "equipment_container" ? "1" : i.quantity || "0"
-		e.cost = floatingMul(parseFloat(i.calc.extended_value) ?? 0) / (i.quantity || 1)
+		e.cost = round(parseFloat(i.calc.extended_value) ?? 0) / (i.quantity || 1, 4)
 		e.carried = carried
 		e.equipped = i.equipped
 		e.techlevel = i.tech_level || ""
@@ -551,7 +551,7 @@ export class StaticCharacterImporter {
 				if (!j.disabled) e.notes += `${e.notes ? "; " : ""}${j.name}${j.notes ? ` (${j.notes})` : ""}`
 		}
 		if (e.note) e.notes += (e.notes ? "\n" : "") + e.note
-		e.weight = floatingMul(parseFloat(i.calc.extended_weight) ?? 0) / (i.quantity || 1)
+		e.weight = round(parseFloat(i.calc.extended_weight) ?? 0) / (i.quantity || 1, 4)
 		e.pageref = i.reference || ""
 		let old = this.document._findElementIn("system.equipment.carried", e.uuid)
 		if (!old) old = this.document._findElementIn("system.equipment.other", e.uuid)

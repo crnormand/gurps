@@ -32,12 +32,9 @@
 					/>
 				</div>
 				<div class="label">{{this.attribute_def.name}}</div>
-				<div class="label tooltip">
+				<div class="label" data-tooltip="{{{this.currentThreshold.explanation}}}" data-tooltip-direction="DOWN">
 					{{#if this.currentThreshold.state}}
 						[{{this.currentThreshold.state}}]
-						{{#if this.currentThreshold.explanation}}
-							<span class="tooltiptext">{{{this.currentThreshold.explanation}}}</span>
-						{{/if}}
 					{{/if}}
 				</div>
 			{{/if}}

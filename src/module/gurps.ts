@@ -120,6 +120,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.setLastActor = LastActor.set
 	GURPS.DamageCalculator = DamageCalculator
 	GURPS.getDefaultSkills = getDefaultSkills
+	GURPS.roll = RollGURPS
 }
 
 // Initialize system

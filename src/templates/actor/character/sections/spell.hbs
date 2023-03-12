@@ -15,9 +15,21 @@
 	</div>
 	{{>actor/character/sections/item-notes}}
 </div>
+{{#if @root/inCompendium}}
+<div class="college">{{join this.college ", "}}</div>
+<div class="resist">{{this.resist}}</div>
+<div class="class">{{this.class}}</div>
+<div class="casting-cost">{{this.casting_cost}}</div>
+<div class="maintenance-cost">{{this.maintenance_cost}}</div>
+<div class="casting-time">{{this.casting_time}}</div>
+<div class="duration">{{this.duration}}</div>
+<div class="difficulty">{{this.difficulty}}</div>
+<div class="tags">{{join this.tags ", "}}</div>
+{{else}}
 <div data-uuid="{{this.uuid}}" data-type="spell" class="level rollable">{{this.skillLevel}}</div>
 <div data-uuid="{{this.uuid}}" data-type="spell_rsl" class="rsl rollable">{{this.relativeLevel}}</div>
 <div class="points">{{this.adjustedPoints}}</div>
+{{/if}}
 <div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}

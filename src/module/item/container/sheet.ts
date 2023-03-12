@@ -59,6 +59,7 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		this.object.prepareData()
 		const items = this.object.items
 		return mergeObject(data, {
+			settings: { notes_display: "inline" },
 			items: items,
 			meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
 			rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),

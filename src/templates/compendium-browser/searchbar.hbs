@@ -6,6 +6,7 @@
 		data-dtype="String"
 		placeholder={{localize "gurps.compendium_browser.search"}}
 	/>
+	{{#unless (eq tab "note")}}
 	<select name="tagFilter" data-dtype="String">
 		{{#select filterData.tagFilter}}
 			<option value="any_tag">
@@ -18,4 +19,5 @@
 			{{/each}}
 		{{/select}}
 	</select>
+	{{/unless}}
 </div>

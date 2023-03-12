@@ -672,6 +672,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				...e,
 				...{
 					displayDR: e.displayDR,
+					tooltip: e.tooltip,
 				},
 			}
 		})

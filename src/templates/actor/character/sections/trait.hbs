@@ -15,6 +15,9 @@
 	{{>actor/character/sections/item-notes}}
 </div>
 <div class="points {{disabled (not this.enabled)}}">{{this.adjustedPoints}}</div>
+{{#if @root/inCompendium}}
+<div class="tags">{{join this.tags ", "}}</div>
+{{/if}}
 <div class="reference" {{disabled (not this.enabled)}}>{{{ref this.reference}}}</div>
 {{#if this.open}}
 {{#each (sort this.children "sort")}}

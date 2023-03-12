@@ -1,4 +1,6 @@
+{{#unless @root/inCompendium}}
 <div class="quantity">{{ this.quantity }}</div>
+{{/unless}}
 <div class="desc item{{#if (in this.type '_container')}} container{{/if}}" data-uuid="{{ this.uuid }}" {{{ indent
 	this.parents.length }}}>
 	<div class="dropdown">
@@ -13,6 +15,14 @@
 	<div class="name">{{ this.name }}</div>
 	{{>actor/character/sections/item-notes }}
 </div>
+{{#if @root/inCompendium}}
+<div class="uses">{{ this.maxUses }}</div>
+<div class="tech-level">{{ this.techLevel }}</div>
+<div class="legality-class">{{ this.legalityClass }}</div>
+<div class="value">{{ this.adjustedValue }}</div>
+<div class="weight">{{ this.adjustedWeightFast }}</div>
+<div class="tags">{{join this.tags ", "}}</div>
+{{else}}
 <div class="uses">
 	{{#if (and this.uses this.maxUses) }}
 	{{ this.uses }}
@@ -24,6 +34,7 @@
 <div class="weight">{{ this.adjustedWeightFast }}</div>
 <div class="extended-value">{{ this.extendedValue }}</div>
 <div class="extended-weight">{{ this.extendedWeightFast }}</div>
+{{/if}}
 <div class="reference">{{{ref this.reference}}}</div>
 {{#if this.open }}
 {{#each (sort this.children "sort") }}

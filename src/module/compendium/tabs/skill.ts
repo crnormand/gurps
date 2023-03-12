@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { CompendiumTab } from "./base"
@@ -25,11 +25,11 @@ export class CompendiumSkillTab extends CompendiumTab {
 		)) {
 			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((skill: any) => {
-				if (!["skill", "technique", "skill_container"].includes(skill.type)) return
+				if (![ItemType.Skill, ItemType.Technique, ItemType.SkillContainer].includes(skill.type)) return
 				let difficulty = ""
-				if (skill.type === "skill")
+				if (skill.type === ItemType.Skill)
 					difficulty = `${skill.attribute.toUpperCase()}/${skill.difficulty.toUpperCase()}`
-				if (skill.type === "technique") difficulty = `Tech/${skill.difficulty.toUpperCase()}`
+				if (skill.type === ItemType.Technique) difficulty = `Tech/${skill.difficulty.toUpperCase()}`
 				skill.prepareData()
 				skill_list.push({
 					_id: skill._id,
@@ -42,7 +42,7 @@ export class CompendiumSkillTab extends CompendiumTab {
 					open: skill.open,
 					uuid: skill.uuid,
 					id: skill._id,
-					children: skill.type === "skill_container" ? skill.children : [],
+					children: skill.type === ItemType.SkillContainer ? skill.children : [],
 					tags: skill.tags,
 					reference: skill.reference,
 					parents: skill.parents,

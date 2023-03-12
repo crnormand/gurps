@@ -982,6 +982,12 @@
 				"subtract": "Max -",
 				"multiply": "Max ×",
 				"divide": "Max ÷"
+			},
+			"duration_type": {
+				"none": "None",
+				"turns": "Turns",
+				"rounds": "Rounds",
+				"seconds": "Seconds"
 			}
 		},
 		"study": {
@@ -1196,6 +1202,10 @@
 					"tens": "-1 per 10 yards"
 				}
 			},
+			"roll_formula": {
+				"name": "Default Roll-Against Formula",
+				"hint": "Set the die roll performed when rolling against a Skill, Attribute, etc."
+			},
 			"import_body_plan": {
 				"name": "Legacy: Import Body Plan",
 				"hint": "Choose whether to overwrite character body plans for Legacy Characters.",
@@ -1217,6 +1227,10 @@
 					"no": "Do not overwrite with imported HP & FP",
 					"ask": "Ask before overwriting with imported HP & FP"
 				}
+			},
+			"initiative_formula": {
+				"name": "Initiative Formula",
+				"hint": "Sets formula to roll to decide on combat turn order"
 			},
 			"colors": {
 				"name": "Colors",
@@ -1423,7 +1437,7 @@
 			"sleeping": "Sleeping",
 			"coma": "Comatose",
 			"stun": "Stun",
-			"mental_stun": "Mental",
+			"mental_stun": "Mental Stun",
 			"poisoned": "Poisoned",
 			"burning": "Burning",
 			"cold": "Cold",
@@ -1484,8 +1498,12 @@
 			"no_default_skill": "Cannot Roll: No applicable skill defaults found."
 		},
 		"tooltip": {
+			"dr_name": "The DR covering the {name} hit location",
+			"dr_total": "{amount} against {type} attacks",
 			"dr_bonus": "{item} [{bonus} against {type} attacks]",
-			"encumbrance": "Encumbrance [{bonus}]"
+			"dr_bonus_leveled": "{item} [{bonus} ({per_level} per level) against {type} attacks]",
+			"encumbrance": "Encumbrance [{bonus}]",
+			"auto_encumbrance": "Toggle automatic encumbrance calculation"
 		},
 		"prereqs": {
 			"unsatisfied": "Unsatisfied Prerequisite(s)",

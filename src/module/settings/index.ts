@@ -158,6 +158,16 @@ export function registerSettings(): void {
 		},
 	})
 
+	game.settings.register(SYSTEM_NAME, SETTINGS.ROLL_FORMULA, {
+		name: "gurps.settings.roll_formula.name",
+		hint: "gurps.settings.roll_formula.hint",
+		scope: "world",
+		config: true,
+		type: String,
+		default: "3d6",
+		onChange: (value: string) => console.log(`Roll Formula : ${value}`),
+	})
+
 	game.settings.register(SYSTEM_NAME, SETTINGS.SSRT, {
 		name: "gurps.settings.ssrt.name",
 		hint: "gurps.settings.ssrt.hint",

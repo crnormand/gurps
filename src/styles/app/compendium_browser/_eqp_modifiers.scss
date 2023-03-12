@@ -2,7 +2,7 @@
 	grid-template-columns: 1fr repeat(5, auto);
 
 	.desc:nth-child(12n + 1),
-	.tech-level:nth-child(12n + 2),
+	.tl:nth-child(12n + 2),
 	.value:nth-child(12n + 3),
 	.weight:nth-child(12n + 4),
 	.tags:nth-child(12n + 5),

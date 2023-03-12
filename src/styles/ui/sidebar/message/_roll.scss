@@ -38,6 +38,7 @@
 		.name {
 			cursor: pointer;
 			transition: all 0.1s linear 0s;
+			margin-top: 4px;
 			&:hover {
 				color: rgb(var(--color-skill));
 				background-color: white;

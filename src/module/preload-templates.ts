@@ -112,6 +112,8 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"item/sections/feature/cost-reduction",
 		"item/sections/feature/contained-weight-reduction",
 
+		"item/sections/modifiers",
+
 		"item/sections/study",
 
 		"item/sections/trait-mod",

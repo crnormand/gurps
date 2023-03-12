@@ -1,9 +1,17 @@
 <div id="encumbrance">
 	<div class="header title">{{localize "gurps.character.encumbrance.title"}}
 		{{#if autoEncumbrance}}
-		<a class="enc-toggle fas fa-toggle-on"></a>
+		<a
+			class="enc-toggle fas fa-toggle-on"
+			data-tooltip="{{localize 'gurps.tooltip.auto_encumbrance'}}"
+			data-tooltip-direction="DOWN"
+		></a>
 		{{else}}
-		<a class="enc-toggle fas fa-toggle-off"></a>
+		<a
+			class="enc-toggle fas fa-toggle-off"
+			data-tooltip="{{localize 'gurps.tooltip.auto_encumbrance'}}"
+			data-tooltip-direction="DOWN"
+		></a>
 		{{/if}}
 	</div>
 	<div class="header level">{{localize "gurps.character.encumbrance.level"}}</div>

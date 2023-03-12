@@ -1,0 +1,12 @@
+#mod-choice-sheet {
+	.fieldblock {
+		background: rgb(var(--color-content));
+		color: rgb(var(--color-on-content));
+		border: 2px solid rgb(var(--color-control-edge));
+		display: grid;
+		gap: 5px;
+		grid-template-columns: min-content auto;
+		padding: 5px;
+		margin: 10px;
+	}
+}

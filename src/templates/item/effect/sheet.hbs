@@ -5,17 +5,29 @@
 			<div class="field">
 				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
 			</div>
-			<div class="label">{{localize "gurps.item.notes"}}</div>
-			<div class="field">
-				<textarea type="text" name="system.text" data-dtype="String">{{{system.text}}}</textarea>
+			<div class="label">{{localize "gurps.item.duration"}}</div>
+			<div class="field no-stretch">
+				<input
+					type="text"
+					name="duration"
+					value="{{duration}}"
+					data-dtype="String"
+					{{input_lock (neq system.duration.type "none")}}
+				/>
+                <select name="system.duration.type" data-dtype="String">
+                    {{#select system.duration.type }}
+                    {{#each config.select.duration_type as |v k| }}
+                    <option value="{{k}}">
+                        {{ localize v }}
+                    </option>
+                    {{/each }}
+                    {{/select }}
+                </select>
 			</div>
-			<div class="label">{{localize "gurps.item.reference"}}</div>
-			<div class="field">
-				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
-			</div>
-			<div class="title">{{localize "gurps.item.markdown_preview"}}</div>
-			<hr />
-			<div class="md">{{{document.formattedText}}}</div>
 		</div>
 	</div>
-</form>
+    {{>item/sections/features }}
+    {{>item/sections/modifiers }}
+</form
+
+
