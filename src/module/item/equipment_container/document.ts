@@ -8,7 +8,7 @@ import {
 	allWeightUnits,
 	determineModWeightValueTypeFromString,
 	extractFraction,
-	floatingMul,
+	round,
 	Weight,
 	WeightUnits,
 } from "@util"
@@ -105,7 +105,10 @@ class EquipmentContainerGURPS extends ItemGCS {
 	}
 
 	get adjustedValue(): number {
-		return EquipmentGURPS.valueAdjustedForModifiers(this.value, this.deepModifiers)
+		return EquipmentGURPS.valueAdjustedForModifiers(
+			this.value,
+			this.deepModifiers.filter(e => e.enabled)
+		)
 	}
 
 	// Value Calculator
@@ -115,7 +118,7 @@ class EquipmentContainerGURPS extends ItemGCS {
 		for (const ch of this.children) {
 			value += ch.extendedValue
 		}
-		return floatingMul(value * this.quantity)
+		return round(value * this.quantity, 4)
 	}
 
 	adjustedWeight(for_skills: boolean, units: WeightUnits): number {
@@ -130,8 +133,9 @@ class EquipmentContainerGURPS extends ItemGCS {
 	weightAdjustedForMods(units: WeightUnits): number {
 		let percentages = 0
 		let w = this.weight
+		const modifiers = this.deepModifiers.filter(e => e.enabled)
 
-		for (const mod of this.deepModifiers) {
+		for (const mod of modifiers) {
 			if (mod.weightType === "to_original_weight") {
 				const t = determineModWeightValueTypeFromString(mod.weightAmount)
 				const f = extractFraction(mod.weightAmount)
@@ -145,11 +149,11 @@ class EquipmentContainerGURPS extends ItemGCS {
 		}
 		if (percentages !== 0) w += (this.weight * percentages) / 100
 
-		w = EquipmentGURPS.processMultiplyAddWeightStep("to_base_weight", w, units, this.deepModifiers)
+		w = EquipmentGURPS.processMultiplyAddWeightStep("to_base_weight", w, units, modifiers)
 
-		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_base_weight", w, units, this.deepModifiers)
+		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_base_weight", w, units, modifiers)
 
-		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_weight", w, units, this.deepModifiers)
+		w = EquipmentGURPS.processMultiplyAddWeightStep("to_final_weight", w, units, modifiers)
 
 		return w
 	}
@@ -179,7 +183,7 @@ class EquipmentContainerGURPS extends ItemGCS {
 					else reduction += parseFloat(f.reduction)
 				}
 			}
-			for (const mod of this.deepModifiers) {
+			for (const mod of this.deepModifiers.filter(e => e.enabled)) {
 				for (const f of mod.features) {
 					if (f instanceof ContainedWeightReduction) {
 						if (f.is_percentage_reduction) percentage += parseFloat(f.reduction)
@@ -191,7 +195,7 @@ class EquipmentContainerGURPS extends ItemGCS {
 			else if (percentage > 0) contained -= (contained * percentage) / 100
 			base += Math.max(contained - reduction, 0)
 		}
-		return floatingMul(base * this.quantity)
+		return round(base * this.quantity, 4)
 	}
 
 	prepareBaseData(): void {

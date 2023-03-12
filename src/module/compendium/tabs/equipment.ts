@@ -1,5 +1,5 @@
 import { EquipmentContainerGURPS } from "@item"
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { CompendiumTab } from "./base"
@@ -26,7 +26,7 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 		)) {
 			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((equipment: any) => {
-				if (!["equipment", "equipment_container"].includes(equipment.type)) return
+				if (![ItemType.Equipment, ItemType.EquipmentContainer].includes(equipment.type)) return
 				equipment.prepareData()
 				equipment_list.push({
 					_id: equipment._id,

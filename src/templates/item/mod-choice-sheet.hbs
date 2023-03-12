@@ -1,16 +1,14 @@
 <form autocomplete="off">
 	<div class="fieldblock">
 	{{#each choices as |v k|}}
-	<div class="label">{{v.name}}
-		<div class=item-notes">{{v.notes}}</div>
-	</div>
 	<div class="field">
 		<input type="checkbox" name="{{k}}" value="{{v.enabled}}" data-dtype="String"/>
 	</div>
+	<div class="label">{{v.name}}{{#if v.notes}} ({{v.notes}}){{/if}}</div>
 	{{/each}}
 	</div>
 	<div class="buttons">
 		<button id="apply">{{localize "gurps.item.substitution.apply"}}</button>
-		<button id="canel">{{localize "gurps.item.substitution.cancel"}}</button>
+		<button id="cancel">{{localize "gurps.item.substitution.cancel"}}</button>
 	</div>
 </form>

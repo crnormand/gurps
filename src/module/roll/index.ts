@@ -4,7 +4,7 @@ import { Attribute } from "@module/attribute"
 import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
-import { LocalizeGURPS } from "@util"
+import { LastActor, LocalizeGURPS } from "@util"
 import { DamageRollGURPS } from "./damage_roll"
 
 enum RollSuccess {
@@ -31,8 +31,8 @@ export class RollGURPS extends Roll {
 
 	constructor(formula: string, data: any, options?: any) {
 		const originalFormula = formula
-		formula = formula.replace(/([0-9]+)[dD]([\D])/g, "$1d6$2")
-		formula = formula.replace(/([0-9]+)[dD]$/g, "$1d6")
+		// Formula = formula.replace(/([0-9]+)[dD]([\D])/g, "$1d6$2")
+		// formula = formula.replace(/([0-9]+)[dD]$/g, "$1d6")
 		super(formula, data, options)
 
 		this.usingMod = formula.includes("@gmod")
@@ -97,6 +97,8 @@ export class RollGURPS extends Roll {
 		await user?.setFlag(SYSTEM_NAME, UserFlags.LastStack, lastStack)
 		await user?.setFlag(SYSTEM_NAME, UserFlags.LastTotal, lastTotal)
 
+		const raFormula = (game.settings.get(SYSTEM_NAME, SETTINGS.ROLL_FORMULA) as string) || "3d6"
+
 		switch (data.type) {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
@@ -105,7 +107,7 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data.attribute.effective,
-					"3d6",
+					raFormula,
 					data.attribute.attribute_def.combinedName,
 					RollType.Attribute,
 					data.attribute,
@@ -119,7 +121,7 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data.item.effectiveLevel,
-					"3d6",
+					raFormula,
 					data.item.formattedName,
 					RollType.Skill,
 					data.item,
@@ -130,7 +132,7 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data.item.skillLevel,
-					"3d6",
+					raFormula,
 					data.item.formattedName,
 					RollType.ControlRoll,
 					data.item,
@@ -141,7 +143,7 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data.item.skillLevel(null),
-					"3d6",
+					raFormula,
 					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
 					RollType.Attack,
 					data.item,
@@ -187,7 +189,7 @@ export class RollGURPS extends Roll {
 		}
 	}
 
-	static getMargin(name: string, level: number, roll: number): [RollSuccess, string] {
+	private static getMargin(name: string, level: number, roll: number): [RollSuccess, string] {
 		const success = this.getSuccess(level, roll)
 		const margin = Math.abs(level - roll)
 		const marginMod: Partial<RollModifier> = { modifier: margin }
@@ -212,7 +214,35 @@ export class RollGURPS extends Roll {
 		]
 	}
 
-	static async rollAgainst(
+	// Used to roll an arbitrary formula against the skill level of a Skill or Attribute
+	// Might be useful for something
+	static async against(formula = "3d6", item?: ItemGURPS | Attribute | null, hidden = false): Promise<any> {
+		let level = 0
+		let name = ""
+		let type = RollType.Generic
+		if (item instanceof SkillGURPS) {
+			level = item.level.level
+			name = item.formattedName
+			type = RollType.Skill
+		}
+		if (item instanceof Attribute) {
+			level = item.effective
+			name = item.attribute_def.resolveFullName
+			type = RollType.Attribute
+		}
+		return RollGURPS.rollAgainst(
+			game.user,
+			(await LastActor.get()) as CharacterGURPS,
+			level,
+			formula,
+			name,
+			type,
+			item,
+			hidden
+		)
+	}
+
+	private static async rollAgainst(
 		user: StoredDocument<User> | null,
 		actor: CharacterGURPS,
 		level: number,
@@ -302,7 +332,7 @@ export class RollGURPS extends Roll {
 	 * @param name
 	 * @param hidden
 	 */
-	static async rollDamage(
+	private static async rollDamage(
 		user: StoredDocument<User> | null,
 		actor: ActorGURPS,
 		data: Record<string, any>,
@@ -349,7 +379,7 @@ export class RollGURPS extends Roll {
 
 		let userTarget = ""
 		if (game.user?.targets.size) {
-			userTarget = game.user?.targets.values().next().value
+			userTarget = game.user?.targets.values().next().value.id
 		}
 
 		messageData = DamageChat.setTransferFlag(messageData, chatData, userTarget)
@@ -358,7 +388,7 @@ export class RollGURPS extends Roll {
 		await this.resetMods(user)
 	}
 
-	static async rollGeneric(
+	private static async rollGeneric(
 		user: StoredDocument<User> | null,
 		actor: ActorGURPS,
 		formula: string,
@@ -399,11 +429,7 @@ export class RollGURPS extends Roll {
 		await this.resetMods(user)
 	}
 
-	/**
-	 *
-	 * @param user
-	 */
-	static async resetMods(user: StoredDocument<User> | null) {
+	private static async resetMods(user: StoredDocument<User> | null) {
 		if (!user) return
 		const sticky = user.getFlag(SYSTEM_NAME, UserFlags.ModifierSticky)
 		if (sticky === false) {
@@ -414,7 +440,7 @@ export class RollGURPS extends Roll {
 		}
 	}
 
-	static addModsDisplayClass(
+	private static addModsDisplayClass(
 		modifiers: Array<RollModifier & { class?: string }>
 	): Array<RollModifier & { class?: string }> {
 		modifiers.forEach(m => {
@@ -430,7 +456,7 @@ export class RollGURPS extends Roll {
 	 * @param {StoredDocument<User>} user
 	 * @param {ActorGURPS} _actor
 	 */
-	static addModifier(user: StoredDocument<User> | null, _actor: ActorGURPS, data: { [key: string]: any }) {
+	private static addModifier(user: StoredDocument<User> | null, _actor: ActorGURPS, data: { [key: string]: any }) {
 		if (!user) return
 		const mod: RollModifier = {
 			name: data.comment,

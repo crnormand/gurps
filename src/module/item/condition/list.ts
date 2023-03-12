@@ -69,7 +69,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 			can_level: true,
 			levels: {
 				current: 0,
-				max: 4,
+				max: 8,
 			},
 			duration: {
 				type: DurationType.Rounds,

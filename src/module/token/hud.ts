@@ -138,7 +138,8 @@ export class TokenHUDGURPS extends TokenHUD {
 		if (event.type === "click") {
 			await actor?.increaseCondition(id)
 		} else if (event.type === "contextmenu") {
-			await actor?.decreaseCondition(id)
+			if (event.ctrlKey) await actor?.decreaseCondition(id, { forceRemove: true })
+			else await actor?.decreaseCondition(id)
 		}
 		game.socket?.emit("system.gcsga", { type: SOCKET.UPDATE_BUCKET, users: [] })
 	}

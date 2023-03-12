@@ -29,7 +29,7 @@ export class ModifierChoiceSheet extends FormApplication {
 
 	static get defaultOptions(): FormApplicationOptions {
 		return mergeObject(super.defaultOptions, {
-			id: "sub-sheet",
+			id: "mod-choice-sheet",
 			classes: ["gurps"],
 			template: `systems/${SYSTEM_NAME}/templates/item/mod-choice-sheet.hbs`,
 			width: 400,

@@ -23,7 +23,7 @@
 	{{localize "gurps.study.studied" hours=this.studyHours}}
 	{{/if}}
 {{/if}}
-{{#if (or (eq this.type "spell") (eq this.type "ritual_magic_spell")) }}
+{{#if (and (or (eq this.type "spell") (eq this.type "ritual_magic_spell")) (not @root/inCompendium)) }}
     {{#if (and this.notes (spellValues this)) }}
         <br>
     {{/if }}

@@ -28,9 +28,11 @@ export class ActorSheetGURPS extends ActorSheet {
 	}
 
 	protected override _onDrop(event: DragEvent): void {
+		console.log("_onDrop")
 		if (!event?.dataTransfer) return
 
 		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
+		console.log(dragData)
 
 		if (this.dropDispatch[dragData.type]) this.dropDispatch[dragData.type](dragData.payload)
 
@@ -54,6 +56,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		if (!this.actor.isOwner) return false
 
 		let item: Item
+		console.log(data)
 		if (data._uuid) {
 			const importData = {
 				type: data.type,

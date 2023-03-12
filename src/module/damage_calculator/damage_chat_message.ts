@@ -59,6 +59,7 @@ export class DamageChat {
 	}
 
 	static setTransferFlag(object: any, payload: Partial<DamagePayload>, userTarget: string) {
+		console.log({ type: DamageChat.TYPE, payload: payload, userTarget: userTarget })
 		let transfer = JSON.stringify({ type: DamageChat.TYPE, payload: payload, userTarget: userTarget })
 		setProperty(object, `flags.${SYSTEM_NAME}.${DamageChatFlags.Transfer}`, transfer)
 		return object

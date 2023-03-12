@@ -219,26 +219,6 @@ export function dollarFormat(i: number): string {
 	return formatter.format(i)
 }
 
-/**
- *
- * @param {...any} args
- */
-export function floatingMul(...args: number[]): number {
-	let multiplier = 100
-	let x = args.length
-	let result = multiplier
-	for (const arg of args) {
-		const newArg = arg * multiplier
-		result *= newArg
-	}
-	return parseFloat((result / multiplier ** (x + 1)).toPrecision(12))
-}
-
-/**
- *
- * @param n
- * @param p
- */
 export function round(n: number, p = 2): number {
 	return Math.round(n * 10 ** p) / 10 ** p
 }

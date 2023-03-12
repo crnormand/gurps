@@ -80,7 +80,7 @@ import {
 	TraitSystemData,
 } from "@item"
 import { ConditionData, ConditionGURPS, ConditionID, ManeuverID } from "@item/condition"
-import { EffectGURPS } from "@item/effect"
+import { DurationType, EffectGURPS } from "@item/effect"
 import { StaticItemGURPS } from "@item/static"
 import {
 	AttributePrereq,
@@ -208,6 +208,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 				ItemType.EquipmentContainer,
 				ItemType.Note,
 				ItemType.NoteContainer,
+				ItemType.Effect,
 				ItemType.Condition,
 			],
 			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment, ItemType.Effect, ItemType.Condition],
@@ -531,6 +532,12 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[StaticThresholdOperator.Subtract]: "gurps.select.srt_operator.subtract",
 			[StaticThresholdOperator.Multiply]: "gurps.select.srt_operator.multiply",
 			[StaticThresholdOperator.Divide]: "gurps.select.srt_operator.divide",
+		},
+		duration_type: {
+			[DurationType.None]: "gurps.select.duration_type.none",
+			[DurationType.Turns]: "gurps.select.duration_type.turns",
+			[DurationType.Rounds]: "gurps.select.duration_type.rounds",
+			[DurationType.Seconds]: "gurps.select.duration_type.seconds",
 		},
 	},
 	meleeMods: {},

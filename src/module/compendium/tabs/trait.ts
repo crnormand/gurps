@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { CompendiumTab } from "./base"
@@ -25,9 +25,9 @@ export class CompendiumTraitTab extends CompendiumTab {
 		)) {
 			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((trait: any) => {
-				if (!["trait", "trait_container"].includes(trait.type)) return
+				if (![ItemType.Trait, ItemType.TraitContainer].includes(trait.type)) return
 				trait.prepareData()
-				const children = trait.type === "trait_container" ? trait.children : []
+				const children = trait.type === ItemType.TraitContainer ? trait.children : []
 				children.forEach((c: Item) => c.prepareData())
 				// TODO: hasAllIndexFields
 				trait_list.push({
@@ -41,7 +41,7 @@ export class CompendiumTraitTab extends CompendiumTab {
 					open: trait.open,
 					id: trait._id,
 					uuid: trait.uuid,
-					children: trait.type === "trait_container" ? children : [],
+					children: trait.type === ItemType.TraitContainer ? children : [],
 					adjustedPoints: trait.adjustedPoints,
 					tags: trait.tags,
 					reference: trait.reference,

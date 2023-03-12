@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { CompendiumTab } from "./base"
@@ -25,7 +25,7 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 		)) {
 			const collection = game.packs.get(pack.collection)
 			;((await collection?.getDocuments()) as any).forEach((modifier: any) => {
-				if (!["modifier", "modifier_container"].includes(modifier.type)) return
+				if (![ItemType.TraitModifier, ItemType.TraitModifierContainer].includes(modifier.type)) return
 				modifier.prepareData()
 				// TODO: hasAllIndexFields
 				modifier_list.push({
@@ -39,7 +39,7 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 					open: modifier.open,
 					uuid: modifier.uuid,
 					id: modifier._id,
-					children: modifier.type === "modifier_container" ? modifier.children : [],
+					children: modifier.type === ItemType.TraitModifierContainer ? modifier.children : [],
 					tags: modifier.tags,
 					reference: modifier.reference,
 					cost: modifier.costDescription,

@@ -73,7 +73,7 @@ export class CompendiumBrowser extends Application {
 		super.activateListeners(html)
 		html.find(".item").on("dblclick", event => this._onClickEntry(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
-		html.find(".reference").on("click", event => PDF.handle(event))
+		html.find(".ref").on("click", event => PDF.handle(event))
 
 		const activeTabName = this.activeTab
 
@@ -121,13 +121,13 @@ export class CompendiumBrowser extends Application {
 	_updateQuery(event: JQuery.TriggeredEvent): void {
 		if (this.activeTab === TabName.Settings) return
 		this.tabs[this.activeTab].filterData.searchQuery = String($(event.currentTarget).val())
+		console.log(this.tabs[this.activeTab].filterData.searchQuery)
 		this.render()
 	}
 
 	_updateFilter(event: JQuery.TriggeredEvent): void {
 		if (this.activeTab === TabName.Settings) return
 		this.tabs[this.activeTab].filterData.tagFilter = String($(event.currentTarget).val())
-		this.render()
 	}
 
 	override getData(): object | Promise<object> {
@@ -148,14 +148,17 @@ export class CompendiumBrowser extends Application {
 			const indexData = tab.getIndexData(0)
 			const tagSet: Set<string> = new Set()
 			tab.indexData.map(e =>
-				e.tags.forEach((t: string) => {
+				e.tags?.forEach((t: string) => {
 					tagSet.add(t)
 				})
 			)
 			const tagList = Array.from(tagSet).sort()
 			return {
 				user: game.user,
+				inCompendium: true,
+				settings: { notes_display: "inline" },
 				[activeTab]: {
+					tab: activeTab,
 					filterData: tab.filterData,
 					indexData: indexData,
 					tagList: tagList,
@@ -324,7 +327,8 @@ export class CompendiumBrowser extends Application {
 
 	async _onDragStart(event: DragEvent) {
 		const li = event.currentTarget
-		const type: "Item" | "Actor" = $(li!).data("type")
+		// Const type: "Item" | "Actor" = $(li!).data("type")
+		const type = "Item"
 		const uuid = $(li!).data("uuid")
 		// Const pack: string = this.loadedPacks(this.activeTab).find((e: string) => uuid.includes(e)) ?? "";
 		const item = (await fromUuid(uuid)) as Item | Actor

@@ -126,8 +126,8 @@ class BaseActorGURPS extends Actor {
 	}
 
 	override get temporaryEffects(): any {
-		const conditions = this.conditions.map(e => new ActiveEffect({ icon: e.img || "" }))
-		return super.temporaryEffects.concat(conditions)
+		const effects = this.gEffects.map(e => new ActiveEffect({ icon: e.img || "" }))
+		return super.temporaryEffects.concat(effects)
 	}
 
 	get inCombat(): boolean {
