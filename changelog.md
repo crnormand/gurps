@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.15.32
+Release 0.15.32 03/13/2023
 
 - Expose the ApplyDamageDialog via the GURPS global object ()
 - Update for JB2a 0.5.5.1
