@@ -2295,13 +2295,17 @@ if (!globalThis.GURPS) {
 						target.actor.handleDamageDrop(dropData.payload)
 					}
 					if (dropData.type === 'initiative') {
-						let target = game.combat.data.combatants.get(combatant)
-						let src = game.combat.data.combatants.get(dropData.combatant)
+						let target = game.combat.combatants.get(combatant)
+						let src = game.combat.combatants.get(dropData.combatant)
 						let updates = []
 						if (!!target && !!src) {
-							if (target.initiative < src.initiative)
+							if (target.initiative < src.initiative) {
 								updates.push({ _id: dropData.combatant, initiative: target.initiative - 0.00001 })
-							else updates.push({ _id: dropData.combatant, initiative: target.initiative + 0.00001 })
+								console.log("Moving " + src.name + " below " + target.name)
+							} else {
+                updates.push({ _id: dropData.combatant, initiative: target.initiative + 0.00001 })
+                console.log("Moving " + src.name + " above " + target.name)
+              }
 							game.combat.updateEmbeddedDocuments('Combatant', updates)
 						}
 					}

@@ -4,7 +4,8 @@ Release 0.15.32
 
 - Expose the ApplyDamageDialog via the GURPS global object ()
 - Update for JB2a 0.5.5.1
-- fixed issue where QTYs were not being saved
+- fixed issue where QTYs and user edits were not being saved for various GCS imported items
+- fixed combat tracker reorder
 
 Release 0.15.31 02/22/2023
 
