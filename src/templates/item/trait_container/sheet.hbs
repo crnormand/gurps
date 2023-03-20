@@ -1,6 +1,12 @@
 <form class="{{cssClass}}" autocomplete="off">
     <div id="sheet">
         <div id="details">
+			<div class="label">{{localize "gurps.item.img"}}</div>
+			<div class="field">
+				<div class="img-display" style="background-image: url({{document.img}});">
+					<img src="{{document.img}}" data-edit="img" title="{{document.name}}" />
+				</div>
+			</div>
 			<div class="label">{{localize "gurps.item.name"}}</div>
 			<div class="field">
 			<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
@@ -42,7 +48,7 @@
         </div>
         <div class="label">{{ localize "gurps.item.cr_adj" }}</div>
         <div class="field">
-            <select name="system.cr_adj" data-dtype="String" {{ input_lock (neq system.cr 0 )}}>
+            <select name="system.cr_adj" data-dtype="String" {{disabled (eq system.cr 0 )}}>
                 {{#select system.cr_adj }}
                 {{#each config.select.cr_adj as |v k | }}
                     <option value="{{k}}">
@@ -66,7 +72,7 @@
 </div>
 <div class="label">{{ localize "gurps.item.ancestry" }}</div>
 <div class="field">
-    <select name="system.ancestry" data-dtype="String" {{ input_lock (eq system.container_type "race" )}}>
+    <select name="system.ancestry" data-dtype="String" {{disabled (ne system.container_type "race" )}}>
         {{#select system.ancestry}}
         {{#each config.select.ancestry as |v k |}}
             <option value="{{k}}">

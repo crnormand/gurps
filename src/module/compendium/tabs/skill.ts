@@ -46,6 +46,7 @@ export class CompendiumSkillTab extends CompendiumTab {
 					tags: skill.tags,
 					reference: skill.reference,
 					parents: skill.parents,
+					indent: skill.indent,
 					difficulty: difficulty,
 				})
 			})

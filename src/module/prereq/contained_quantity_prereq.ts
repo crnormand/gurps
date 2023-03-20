@@ -3,11 +3,7 @@ import { TooltipGURPS } from "@module/tooltip"
 import { LocalizeGURPS, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
 
-export interface ContainedQuantityPrereq extends BasePrereq {
-	quantity: NumberCompare
-}
-
-export class ContainedQuantityPrereq extends BasePrereq {
+class ContainedQuantityPrereq extends BasePrereq {
 	constructor(data: ContainedQuantityPrereq | any, context: PrereqConstructionContext = {}) {
 		data = mergeObject(ContainedQuantityPrereq.defaults, data)
 		super(data, context)
@@ -16,7 +12,7 @@ export class ContainedQuantityPrereq extends BasePrereq {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
 			type: PrereqType.ContainedQuantity,
-			quantity: { compare: NumberComparison.AtMost, qualifier: 1 },
+			qualifier: { compare: NumberComparison.AtMost, qualifier: 1 },
 		})
 	}
 
@@ -29,18 +25,22 @@ export class ContainedQuantityPrereq extends BasePrereq {
 				for (const ch of exclude.children) {
 					quantity += ch.quantity
 				}
-				satisfied = numberCompare(quantity, this.quantity)
+				satisfied = numberCompare(quantity, this.qualifier)
 			}
 		}
-		console.log(satisfied)
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
 			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.has[this.has ? "true" : "false"])
 			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.quantity)
-			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.criteria[this.quantity?.compare])
-			tooltip.push(this.quantity.qualifier.toString())
+			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.criteria[this.qualifier?.compare])
+			tooltip.push(this.qualifier.qualifier.toString())
 		}
-		console.log(tooltip)
 		return [satisfied, false]
 	}
 }
+
+interface ContainedQuantityPrereq extends BasePrereq {
+	qualifier: NumberCompare
+}
+
+export { ContainedQuantityPrereq }

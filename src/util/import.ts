@@ -34,15 +34,22 @@ class ImportUtils {
 	): Array<any> {
 		if (!list) return []
 		const items: Array<any> = []
+		let sort = 0
 		for (const item of list) {
 			item.name ??= (item as any).description ?? (item as any).text ?? (item as any).usage
 			const id = randomID()
 			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = ImportUtils.getItemData(item, context)
+			let type = itemData.type.replace("_container", "")
+			if (type === ItemType.Technique) type = ItemType.Skill
+			else if (type === ItemType.RitualMagicSpell) type = ItemType.Spell
+			else if (type === ItemType.Equipment) type = "equipment"
 			const newItem = {
 				name: item.name,
+				img: `systems/${SYSTEM_NAME}/assets/icons/${type}.svg`,
 				type: itemData.type,
 				system: itemData,
 				flags: itemFlags,
+				sort,
 				_id: id,
 			}
 			if (!newItem.name) {
@@ -61,6 +68,7 @@ class ImportUtils {
 			} else {
 				items.push(newItem)
 			}
+			sort += 1
 		}
 		return items
 	}

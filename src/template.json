@@ -1,6 +1,6 @@
 {
 	"Actor": {
-		"types": ["character_gcs", "character"],
+		"types": ["character_gcs", "character", "loot"],
 		"templates": {
 			"common": {}
 		},
@@ -33,6 +33,15 @@
 				"block_bonus": 0,
 				"parry_bonus": 0
 			}
+		},
+		"loot": {
+			"description": "",
+			"import": {
+				"name": "",
+				"path": "",
+				"last_import": ""
+			},
+			"settings": {}
 		},
 		"character": {
 			"attributes": {

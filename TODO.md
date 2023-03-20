@@ -6,12 +6,11 @@
 	-	functional rolls
 	-	foundry item display
 	-	don't bother with editing features
--   @X@ notation dialog box for items
-	-	finish UI
 -	Active Effects
-	-	finish active effect sheet
 	-	active effect side panel (for removing effects)
 	-	active effect tab on charsheet (for removing/editing effects)
+-	Substitution prompt
+	-	Shows up for all players but should not
 
 ## Jeff and Chris
 

@@ -134,6 +134,22 @@ class BaseActorGURPS extends Actor {
 		return game.combat?.combatants.some(c => c.actor?.id === this.id) || false
 	}
 
+	createEmbeddedDocuments(
+		embeddedName: string,
+		data: Array<Record<string, unknown>>,
+		context: DocumentModificationContext & { temporary: boolean; substitutions?: boolean } = {
+			temporary: false,
+			renderSheet: false,
+			render: true,
+			substitutions: true,
+		}
+	): Promise<Array<any>> {
+		console.log("createEmbeddedDocuments", data)
+		if (embeddedName === "Item")
+			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
+		return super.createEmbeddedDocuments(embeddedName, data, context)
+	}
+
 	updateEmbeddedDocuments(
 		embeddedName: string,
 		updates?: Record<string, unknown>[] | undefined,

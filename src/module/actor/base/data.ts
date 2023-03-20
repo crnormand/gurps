@@ -1,13 +1,13 @@
-import { ActorType, RollModifier, SYSTEM_NAME } from "@module/data"
+import { ActorType, SYSTEM_NAME } from "@module/data"
 import { Context } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataSource } from "types/foundry/common/data/data.mjs/actorData"
 
 export interface ActorFlagsGURPS extends Record<string, unknown> {
 	[SYSTEM_NAME]: {
-		[ActorFlags.TargetModifiers]: RollModifier[]
-		[ActorFlags.SelfModifiers]: RollModifier[]
+		// [ActorFlags.TargetModifiers]: RollModifier[]
+		// [ActorFlags.SelfModifiers]: RollModifier[]
 		[ActorFlags.Deprecation]?: string
-	}
+	} & Record<string, any>
 }
 
 export enum ActorFlags {

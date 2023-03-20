@@ -1,6 +1,12 @@
 <form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
+			<div class="label">{{localize "gurps.item.img"}}</div>
+			<div class="field">
+			<div class="img-display" style="background-image: url({{document.img}});">
+				<img src="{{document.img}}" data-edit="img" title="{{document.name}}" />
+			</div>
+			</div>
 			<div class="label">{{localize "gurps.item.name"}}</div>
 			<div class="field">
 				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
@@ -11,8 +17,8 @@
 					type="text"
 					name="duration"
 					value="{{duration}}"
-					data-dtype="String"
-					{{input_lock (neq system.duration.type "none")}}
+					data-dtype="Number"
+					{{disabled (eq system.duration.type "none")}}
 				/>
                 <select name="system.duration.type" data-dtype="String">
                     {{#select system.duration.type }}

@@ -9,7 +9,7 @@
         {{/each}}
     {{/select}}
 </select>
-<select name="array.system.features.{{@index}}.name.compare" {{input_lock (neq this.selection_type "this_weapon" )}}>
+<select name="array.system.features.{{@index}}.name.compare" {{disabled (eq this.selection_type "this_weapon" )}}>
     {{#select this.name.compare}}
     {{#each config.select.string_compare as |v k| }}
         <option value="{{k}}">
@@ -24,7 +24,7 @@
 			name="array.system.features.{{@index}}.name.qualifier"
 			value="{{this.name.qualifier}}"
 			data-dtype="String"
-			{{input_lock (and (neq this.selection_type "this_weapon") (neq this.name.compare "none"))}}
+			{{disabled (or (eq this.selection_type "this_weapon") (eq this.name.compare "none"))}}
 		/>
 	</div>
 </div>
@@ -51,7 +51,7 @@
 		name="array.system.features.{{@index}}.specialization.qualifier"
 		value="{{this.specialization.qualifier}}"
 		data-dtype="String"
-		{{input_lock (neq this.specialization.compare "none")}}
+		{{disabled (eq this.specialization.compare "none")}}
 	/>
 </div>
 </div>
@@ -73,7 +73,7 @@
 		name="array.system.features.{{@index}}.tags.qualifier"
 		value="{{this.tags.qualifier}}"
 		data-dtype="String"
-		{{input_lock (neq this.tags.compare "none")}}
+		{{disabled (eq this.tags.compare "none")}}
 	/>
 </div>
 </div>
@@ -96,7 +96,7 @@
 			name="array.system.features.{{@index}}.level.qualifier"
 			value="{{this.level.qualifier}}"
 			data-dtype="Number"
-			{{input_lock (neq this.tags.compare "none")}}
+			{{disabled (eq this.tags.compare "none")}}
 		/>
 	</div>
 </div>

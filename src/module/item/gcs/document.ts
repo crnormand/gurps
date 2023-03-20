@@ -120,14 +120,14 @@ abstract class ItemGCS extends ContainerGURPS {
 	}
 
 	sameSection(compare: Item): boolean {
-		const traits = ["trait", "trait_container"]
-		const skills = ["skill", "technique", "skill_container"]
-		const spells = ["spell", "ritual_magic_spell", "spell_container"]
-		const equipment = ["equipment", "equipment_container"]
-		const notes = ["note", "note_container"]
+		const traits = [ItemType.Trait, ItemType.TraitContainer]
+		const skills = [ItemType.Skill, ItemType.Technique, ItemType.SkillContainer]
+		const spells = [ItemType.Spell, ItemType.RitualMagicSpell, ItemType.SpellContainer]
+		const equipment = [ItemType.Equipment, ItemType.EquipmentContainer]
+		const notes = [ItemType.Note, ItemType.NoteContainer]
 		const sections = [traits, skills, spells, equipment, notes]
 		for (const i of sections) {
-			if (i.includes(this.type) && i.includes(compare.type)) return true
+			if (i.includes(this.type as any) && i.includes(compare.type as any)) return true
 		}
 		return false
 	}

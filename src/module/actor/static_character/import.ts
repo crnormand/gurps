@@ -183,8 +183,8 @@ export class StaticCharacterImporter {
 		}
 		data.QP.value = qp
 
-		let bl_value = parseFloat(calc?.basic_lift.toString().match(/[\d.]+/g)?.[0] || "")
-		let bl_unit = (calc?.basic_lift).toString().replace(`${bl_value} `, "")
+		let bl_value = parseFloat(calc.basic_lift.toString().match(/[\d.]+/g)?.[0] || "")
+		let bl_unit = calc.basic_lift.toString().replace(`${bl_value} `, "")
 
 		let lm: Partial<StaticCharacterSystemData["liftingmoving"]> = {}
 		lm.basiclift = `${Number(bl_value).toString()} ${bl_unit}`

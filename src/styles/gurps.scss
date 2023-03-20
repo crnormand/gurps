@@ -166,11 +166,13 @@
 		font-family: var(--font-markdown);
 		*:not(hr) {
 			margin: 0;
-			// padding: 0;
 			border: 0;
 			font-size: 100%;
 			vertical-align: baseline;
 			font-weight: normal;
+		}
+		p {
+			margin-bottom: 0.5em;
 		}
 		h1,
 		h2,

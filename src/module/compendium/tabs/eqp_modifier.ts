@@ -42,6 +42,7 @@ export class CompendiumEquipmentModifierTab extends CompendiumTab {
 					uuid: modifier.uuid,
 					id: modifier._id,
 					parents: modifier.parents,
+					indent: modifier.indent,
 					children: modifier.type === ItemType.EquipmentModifierContainer ? children : [],
 					adjustedPoints: modifier.adjustedPoints,
 					tags: modifier.tags,

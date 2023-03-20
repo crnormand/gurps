@@ -1,5 +1,5 @@
-import { CharacterGURPS } from "@actor"
-import { PrereqType, StringCompare, StringComparison } from "@module/data"
+import { ActorGURPS } from "@module/config"
+import { ActorType, PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { LocalizeGURPS, stringCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
@@ -17,13 +17,13 @@ class EquippedEquipmentPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
+	satisfied(actor: ActorGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
+		if (actor.type === ActorType.LegacyCharacter) return [true, false]
 		let satisfied = false
-		for (let eqp of actor.carried_equipment) {
+		for (let eqp of (actor as any).carried_equipment) {
 			satisfied = exclude !== eqp && eqp.equipped && eqp.quantity > 0 && stringCompare(eqp.name, this.name)
 		}
 		if (!satisfied) {
-			// Tooltip.push(i18n_f("gurps.prereqs.equipment.criteria", { name: this.name }))
 			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.equipment)
 			tooltip.push(LocalizeGURPS.format(LocalizeGURPS.translations.gurps.prereqs.criteria[this.name.compare]))
 			if (this.name.compare !== StringComparison.None) tooltip.push(this.name.qualifier!)

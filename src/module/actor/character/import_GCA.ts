@@ -33,7 +33,6 @@ export class GCAImporter {
 		const errorMessages: string[] = []
 		try {
 			r = XMLtoJS(xml).gca5.character
-			// R = XMLtoJS(xml);
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(LocalizeGURPS.translations.gurps.error.import.no_json_detected)
@@ -46,19 +45,6 @@ export class GCAImporter {
 		imp.path = file.path ?? imp.path
 		imp.last_import = new Date().toISOString()
 		try {
-			// Const version: any[] | null = r.author?.version.match(/\d.\d+.\d+.\d+/) ?? null
-			// if (version === null)
-			// return this.throwImportError([...errorMessages, LocalizeGURPS.translations.gurps.error.import_gca.version_unknown])
-			// If (version[0] > this.version)
-			// 	return this.throwImportError([
-			// 		...errorMessages,
-			// 		LocalizeGURPS.translations.gurps.error.import_gca.version_new,
-			// 	]);
-			// if (version[0] < this.version)
-			// 	return this.throwImportError([
-			// 		...errorMessages,
-			// 		LocalizeGURPS.translations.gurps.error.import_gca.version_old,
-			// 	]);
 			commit = { ...commit, ...{ "system.import": imp } }
 			commit = { ...commit, ...{ name: r.name } }
 			commit = { ...commit, ...this.importMiscData(r) }
@@ -68,7 +54,6 @@ export class GCAImporter {
 
 			// Begin item impoprt
 			const items: Array<ItemGURPS> = []
-			// Items.push(...this.importItems(r.traits.templates, { data: r, js: commit }));
 			items.push(
 				...this.importItems(r.traits.advantages, {
 					data: r,

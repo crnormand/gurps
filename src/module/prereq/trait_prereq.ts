@@ -1,4 +1,4 @@
-import { CharacterGURPS } from "@actor"
+import { ActorGURPS } from "@module/config"
 import { NumberCompare, NumberComparison, PrereqType, StringCompare, StringComparison } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { LocalizeGURPS, numberCompare, stringCompare } from "@util"
@@ -19,9 +19,10 @@ export class TraitPrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
+	satisfied(actor: ActorGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
 		let satisfied = false
-		actor.traits.forEach(t => {
+		if (!actor.traits) return [true, false]
+		actor.traits.forEach((t: any) => {
 			if (exclude === t || !stringCompare(t.name, this.name)) return // [false, false]
 			let notes = t.notes
 			const mod_notes = t.modifierNotes

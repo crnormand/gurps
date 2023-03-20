@@ -4,7 +4,7 @@ import { Attribute } from "@module/attribute"
 import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
-import { LastActor, LocalizeGURPS } from "@util"
+import { LocalizeGURPS } from "@util"
 import { DamageRollGURPS } from "./damage_roll"
 
 enum RollSuccess {
@@ -212,34 +212,6 @@ export class RollGURPS extends Roll {
 			data-mod='${JSON.stringify(marginMod)}'
 			>${game.i18n.format(marginTemplate, { margin: margin })}</div>`,
 		]
-	}
-
-	// Used to roll an arbitrary formula against the skill level of a Skill or Attribute
-	// Might be useful for something
-	static async against(formula = "3d6", item?: ItemGURPS | Attribute | null, hidden = false): Promise<any> {
-		let level = 0
-		let name = ""
-		let type = RollType.Generic
-		if (item instanceof SkillGURPS) {
-			level = item.level.level
-			name = item.formattedName
-			type = RollType.Skill
-		}
-		if (item instanceof Attribute) {
-			level = item.effective
-			name = item.attribute_def.resolveFullName
-			type = RollType.Attribute
-		}
-		return RollGURPS.rollAgainst(
-			game.user,
-			(await LastActor.get()) as CharacterGURPS,
-			level,
-			formula,
-			name,
-			type,
-			item,
-			hidden
-		)
 	}
 
 	private static async rollAgainst(

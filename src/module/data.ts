@@ -389,6 +389,7 @@ export enum ItemType {
 export enum ActorType {
 	Character = "character_gcs",
 	LegacyCharacter = "character",
+	Loot = "loot",
 	// MassCombatElement = "element",
 	// Vehicle = "vehicle",
 	// Merchant = "merchant",

@@ -13,7 +13,7 @@
 			name="{{path}}.name.qualifier"
 			value="{{this.name.qualifier}}"
 			data-dtype="String"
-			{{input_lock (neq this.name.compare "none")}}
+			{{disabled (eq this.name.compare "none")}}
 		/>
 	</div>
 </div>
@@ -32,7 +32,7 @@
 			name="{{path}}.notes.qualifier"
 			value="{{this.notes.qualifier}}"
 			data-dtype="String"
-			{{input_lock (neq this.notes.compare "none")}}
+			{{disabled (eq this.notes.compare "none")}}
 		/>
 	</div>
 </div>
@@ -51,7 +51,7 @@
 			name="{{path}}.level.qualifier"
 			value="{{this.level.qualifier}}"
 			data-dtype="Number"
-			{{input_lock (neq this.level.compare "none")}}
+			{{disabled (eq this.level.compare "none")}}
 		/>
 	</div>
 </div>

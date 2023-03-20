@@ -380,6 +380,27 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const item = this.actor.deepItems.get(uuid)
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
+		ctx.menuItems.push({
+			name: LocalizeGURPS.translations.gurps.context.duplicate,
+			icon: "",
+			callback: async () => {
+				const itemData = {
+					type: item.type,
+					name: item.name,
+					system: item.system,
+					flags: (item as any).flags,
+					sort: ((item as any).sort ?? 0) + 1,
+				}
+				await item.parent.createEmbeddedDocuments("Item", [itemData])
+			},
+		})
+		ctx.menuItems.push({
+			name: LocalizeGURPS.translations.gurps.context.delete,
+			icon: "<i class='gcs-trash'></i>",
+			callback: () => {
+				return item.delete()
+			},
+		})
 		if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) {
 			ctx.menuItems.push({
 				name: LocalizeGURPS.translations.gurps.context.toggle_state,
@@ -505,13 +526,45 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 					},
 				})
 		}
-		ctx.menuItems.push({
-			name: LocalizeGURPS.translations.gurps.context.delete,
-			icon: "<i class='gcs-trash'></i>",
-			callback: () => {
-				return item.delete()
-			},
-		})
+		if (item instanceof TraitGURPS || item instanceof EquipmentGURPS)
+			ctx.menuItems.push({
+				name: LocalizeGURPS.translations.gurps.context.convert_to_container,
+				icon: "",
+				callback: async () => {
+					const type = item.type === ItemType.Trait ? ItemType.TraitContainer : ItemType.EquipmentContainer
+					const itemData = {
+						type: type,
+						name: item.name,
+						system: item.system,
+						flags: (item as any).flags,
+						sort: ((item as any).sort ?? 0) + 1,
+						_id: item._id,
+					}
+					await item.delete()
+					await item.parent.createEmbeddedDocuments("Item", [itemData])
+				},
+			})
+		if (
+			(item instanceof TraitContainerGURPS || item instanceof EquipmentContainerGURPS) &&
+			item.children.size === 0
+		)
+			ctx.menuItems.push({
+				name: LocalizeGURPS.translations.gurps.context.convert_to_non_container,
+				icon: "",
+				callback: async () => {
+					const type = item.type === ItemType.TraitContainer ? ItemType.Trait : ItemType.Equipment
+					const itemData = {
+						type: type,
+						name: item.name,
+						system: item.system,
+						flags: (item as any).flags,
+						sort: ((item as any).sort ?? 0) + 1,
+						_id: item._id,
+					}
+					await item.delete()
+					await item.parent.createEmbeddedDocuments("Item", [itemData])
+				},
+			})
 		await ctx.render($(event.currentTarget))
 	}
 
@@ -643,7 +696,19 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		$(".border-top").removeClass("border-top")
 		$(".border-in").removeClass("border-in")
 
-		const selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
+		const parent = element.parent(".item-list")
+		let selection = []
+		if (parent.attr("id") === "equipment") {
+			selection = [
+				...Array.prototype.slice.call(element.prevUntil(".reference")),
+				...Array.prototype.slice.call(element.nextUntil(".equipped")),
+			]
+		} else if (parent.attr("id") === "other-equipment") {
+			selection = [
+				...Array.prototype.slice.call(element.prevUntil(".reference")),
+				...Array.prototype.slice.call(element.nextUntil(".quantity")),
+			]
+		} else selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
 		selection.unshift(element)
 		if (inContainer) {
 			for (const e of selection) $(e).addClass("border-in")

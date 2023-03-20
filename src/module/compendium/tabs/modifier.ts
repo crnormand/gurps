@@ -43,6 +43,8 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 					tags: modifier.tags,
 					reference: modifier.reference,
 					cost: modifier.costDescription,
+					parents: modifier.parents,
+					indent: modifier.indent,
 				})
 			})
 

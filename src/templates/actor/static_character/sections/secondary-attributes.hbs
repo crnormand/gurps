@@ -4,55 +4,55 @@
 		<div class="points">[{{system.attributes.WILL.points}}]</div>
 		<div data-id="WILL" data-type="attribute" class="field rollable">
 			<input name="system.attributes.WILL.import" class="input number" type="text" data-dtype="Number"
-				value="{{system.attributes.WILL.import}}" {{{input_lock ../editing}}} />
+				value="{{system.attributes.WILL.import}}" {{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.will"}}</div>
 		<div class="points"></div>
 		<div data-id="frightcheck" data-type="attribute" class="field rollable">
 			<input name="system.frightcheck" class="input number" type="text" data-dtype="Number"
-				value="{{system.frightcheck}}" {{{input_lock ../editing}}} />
+				value="{{system.frightcheck}}" {{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.frightcheck"}}</div>
 		<div class="points">[{{system.attributes.PER.points}}]</div>
 		<div data-id="PER" data-type="attribute" class="field rollable">
 			<input name="system.attributes.PER.import" class="input number" type="text" data-dtype="Number"
-				value="{{system.attributes.PER.import}}" {{{input_lock ../editing}}} />
+				value="{{system.attributes.PER.import}}" {{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.per"}}</div>
 		<div class="points"></div>
 		<div data-id="vision" data-type="attribute" class="field rollable">
 			<input name="system.vision" class="input number" type="text" data-dtype="Number" value="{{system.vision}}"
-				{{{input_lock ../editing}}} />
+				{{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.vision"}}</div>
 		<div class="points"></div>
 		<div data-id="hearing" data-type="attribute" class="field rollable">
 			<input name="system.hearing" class="input number" type="text" data-dtype="Number" value="{{system.hearing}}"
-				{{{input_lock ../editing}}} />
+				{{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.hearing"}}</div>
 		<div class="points"></div>
 		<div data-id="tastesmell" data-type="attribute" class="field rollable">
 			<input name="system.tastesmell" class="input number" type="text" data-dtype="Number"
-				value="{{system.tastesmell}}" {{{input_lock ../editing}}} />
+				value="{{system.tastesmell}}" {{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.tastesmell"}}</div>
 		<div class="points"></div>
 		<div data-id="touch" data-type="attribute" class="field rollable">
 			<input name="system.touch" class="input number" type="text" data-dtype="Number" value="{{system.touch}}"
-				{{{input_lock ../editing}}} />
+				{{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.touch"}}</div>
 		<div class="points">[{{system.basicspeed.points}}]</div>
 		<div data-id="touch" data-type="attribute" class="field rollable">
 			<input name="system.touch" class="input number" type="text" data-dtype="Number" value="{{system.basicspeed.value}}"
-				{{{input_lock ../editing}}} />
+				{{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.basicspeed"}}</div>
 		<div class="points">[{{system.basicmove.points}}]</div>
 		<div data-id="touch" data-type="attribute" class="field rollable">
 			<input name="system.touch" class="input number" type="text" data-dtype="Number" value="{{system.basicmove.value}}"
-				{{{input_lock ../editing}}} />
+				{{{disabled (not ../editing)}}} />
 		</div>
 		<div class="label">{{localize "gurps.static.basicmove"}}</div>
 	</div>

@@ -1,5 +1,5 @@
 import { BaseActorGURPS } from "@actor"
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { DamageChat } from "@module/damage_calculator/damage_chat_message"
 import { DnD } from "@util/drag_drop"
 import { ActorGURPS } from "@module/config"
@@ -28,11 +28,9 @@ export class ActorSheetGURPS extends ActorSheet {
 	}
 
 	protected override _onDrop(event: DragEvent): void {
-		console.log("_onDrop")
 		if (!event?.dataTransfer) return
 
 		let dragData = DnD.getDragData(event, DnD.TEXT_PLAIN)
-		console.log(dragData)
 
 		if (this.dropDispatch[dragData.type]) this.dropDispatch[dragData.type](dragData.payload)
 
@@ -56,7 +54,6 @@ export class ActorSheetGURPS extends ActorSheet {
 		if (!this.actor.isOwner) return false
 
 		let item: Item
-		console.log(data)
 		if (data._uuid) {
 			const importData = {
 				type: data.type,
@@ -69,9 +66,7 @@ export class ActorSheetGURPS extends ActorSheet {
 		const itemData = { ...item.toObject(), uuid: item.uuid }
 
 		// Handle item sorting within the same Actor
-		// console.log(itemData, top, inContainer)
 		if (this.actor.uuid === item.actor?.uuid) {
-			console.log(top, inContainer)
 			return this._onSortItem(event, itemData, { top: top, in: inContainer })
 		}
 
@@ -88,14 +83,11 @@ export class ActorSheetGURPS extends ActorSheet {
 		// Owned Items
 		if ($(list as HTMLElement).data("uuid")) {
 			const uuid = $(list as HTMLElement).data("uuid")
-			const item = await fromUuid(uuid)
-			console.log(item)
 			itemData = (await fromUuid(uuid))?.toObject()
 			itemData._id = null
 			// Adding both uuid and itemData here. Foundry default functions don't read _uuid, but they do read uuid
 			// this prevents Foundry from attempting to get the object from uuid, which would cause it to complain
 			// e.g. in cases where an item inside a container is dragged into the items tab
-			console.log(itemData)
 			dragData = {
 				type: "Item",
 				_uuid: uuid,
@@ -158,14 +150,17 @@ export class ActorSheetGURPS extends ActorSheet {
 
 		if (source && source.parent !== parent) {
 			if (source.items && parents.includes(source)) return []
-			console.log(source.name, "going in", parent.name)
+			if ([ItemType.Equipment, ItemType.EquipmentContainer].includes(source.type)) {
+				if (dropTarget.hasClass("other")) source.system.other = true
+				else source.system.other = false
+			}
 			await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
 			return parent?.createEmbeddedDocuments(
 				"Item",
 				[
 					{
 						name: source.name!,
-						data: source.system,
+						system: source.system,
 						type: source.type,
 						flags: source.flags,
 						sort: updateData[0].sort,

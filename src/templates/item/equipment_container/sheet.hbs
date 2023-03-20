@@ -48,7 +48,7 @@
 					name="system.uses"
 					value="{{system.uses}}"
 					data-dtype="Number"
-					{{input_lock (neq system.max_uses 0)}}
+					{{disabled (eq system.max_uses 0)}}
 				/>
 				<div class="label">{{localize "gurps.item.max_uses"}}</div>
 				<input type="text" name="system.max_uses" value="{{system.max_uses}}" data-dtype="Number" />

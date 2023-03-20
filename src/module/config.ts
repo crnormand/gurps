@@ -1,6 +1,8 @@
 import {
 	CharacterDataGURPS,
 	CharacterGURPS,
+	LootDataGURPS,
+	LootGURPS,
 	StaticCharacterDataGURPS,
 	StaticCharacterGURPS,
 	StaticThresholdComparison,
@@ -24,8 +26,8 @@ import {
 	WeaponDRDivisorBonus,
 } from "@feature"
 import {
-	BaseItemGURPS,
-	ContainerGURPS,
+	// BaseItemGURPS,
+	// ContainerGURPS,
 	EquipmentContainerData,
 	EquipmentContainerGURPS,
 	EquipmentContainerSystemData,
@@ -98,8 +100,8 @@ import { ActorType, ItemType, MoveType, PrereqType, StudyType } from "./data"
 const GURPSCONFIG: CONFIG["GURPS"] = {
 	Item: {
 		documentClasses: {
-			base: BaseItemGURPS,
-			container: ContainerGURPS,
+			// Base: BaseItemGURPS,
+			// container: ContainerGURPS,
 			[ItemType.Trait]: TraitGURPS,
 			[ItemType.TraitContainer]: TraitContainerGURPS,
 			[ItemType.TraitModifier]: TraitModifierGURPS,
@@ -162,14 +164,6 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[ItemType.NoteContainer]: [ItemType.Note, ItemType.NoteContainer],
 		},
 		childTypes: {
-			// Trait: ["trait", "trait_container"],
-			// skill: ["skill", "technique", "skill_container"],
-			// technique: ["skill", "technique", "skill_container"],
-			// spell: ["spell", "ritual_magic_spell", "spell_container"],
-			// ritual_magic_spell: ["spell", "ritual_magic_spell", "spell_container"],
-			// equipment: ["equipment", "equipment_container"],
-			// equipment_container: ["equipment", "equipment_container"],
-			// note: ["note", "note_container"],
 			[ItemType.Trait]: [],
 			[ItemType.TraitContainer]: [ItemType.Trait, ItemType.TraitContainer],
 			[ItemType.TraitModifier]: [],
@@ -193,6 +187,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[ActorType.Character]: CharacterGURPS,
 			// TODO: change to static charsheet
 			[ActorType.LegacyCharacter]: StaticCharacterGURPS,
+			[ActorType.Loot]: LootGURPS,
 		},
 		allowedContents: {
 			[ActorType.Character]: [
@@ -212,6 +207,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 				ItemType.Condition,
 			],
 			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment, ItemType.Effect, ItemType.Condition],
+			[ActorType.Loot]: [ItemType.Equipment, ItemType.EquipmentContainer],
 		},
 	},
 	Feature: {
@@ -573,7 +569,7 @@ export type ItemGURPS = CharItemGURPS | EffectGURPS | ConditionGURPS | WeaponGUR
 
 export type WeaponGURPS = MeleeWeaponGURPS | RangedWeaponGURPS
 
-export type ActorGURPS = CharacterGURPS | StaticCharacterGURPS
+export type ActorGURPS = CharacterGURPS | StaticCharacterGURPS | LootGURPS
 
 export type Prereq =
 	| PrereqList
@@ -669,6 +665,6 @@ export type ItemSystemDataGURPS =
 	| MeleeWeaponSystemData
 	| RangedWeaponSystemData
 
-export type ActorDataGURPS = CharacterDataGURPS | StaticCharacterDataGURPS
+export type ActorDataGURPS = CharacterDataGURPS | StaticCharacterDataGURPS | LootDataGURPS
 
 export type ActorSourceGURPS = ActorDataGURPS["_source"]

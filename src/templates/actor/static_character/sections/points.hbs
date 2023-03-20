@@ -7,7 +7,7 @@
 				name="system.totalpoints.unspent"
 				value="{{system.totalpoints.unspent}}"
 				data-dtype="Number"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.points.unspent"}}</div>

@@ -16,24 +16,12 @@ import { LocalizeGURPS } from "./localize"
  *
  */
 export function registerHandlebarsHelpers() {
-	Handlebars.registerHelper("concat", function (...args) {
-		let outStr = ""
-		for (const arg of args) {
-			if (typeof arg !== "object") outStr += arg
-		}
-		return outStr
-	})
-
 	Handlebars.registerHelper("camelcase", function (s) {
 		let n = ""
 		for (const word of s.split(" ")) {
 			n = `${n}<span class="first-letter">${word.substring(0, 1)}</span>${word.substring(1)} `
 		}
 		return n
-	})
-
-	Handlebars.registerHelper("input_lock", function (b: boolean) {
-		return b ? "" : "disabled"
 	})
 
 	Handlebars.registerHelper("signed", function (n: number, replaceMinus = true) {
@@ -49,41 +37,12 @@ export function registerHandlebarsHelpers() {
 		return Math.abs(n)
 	})
 
-	Handlebars.registerHelper("or", function (...args) {
-		let val = false
-		for (const arg of args) {
-			if (arg && typeof arg !== "object") val = true
-			if (Array.isArray(arg) && arg.length) val = true
-		}
-		return val
-	})
-
 	// Return first argument which has a value
 	Handlebars.registerHelper("ror", function (...args) {
 		for (const arg of args) {
 			if (arg !== undefined) return arg
 		}
 		return ""
-	})
-
-	Handlebars.registerHelper("and", function (...args) {
-		let val = true
-		for (const arg of args) {
-			if (!arg && typeof arg !== "object") val = false
-		}
-		return val
-	})
-
-	Handlebars.registerHelper("eq", function (a, b) {
-		return a === b
-	})
-
-	Handlebars.registerHelper("neq", function (a, b) {
-		return a !== b
-	})
-
-	Handlebars.registerHelper("gt", function (a, b) {
-		return a > b
 	})
 
 	Handlebars.registerHelper("sum", function (...args) {
@@ -121,10 +80,6 @@ export function registerHandlebarsHelpers() {
 
 	Handlebars.registerHelper("json", function (a: any) {
 		return JSON.stringify(a)
-	})
-
-	Handlebars.registerHelper("not", function (a: any) {
-		return !a
 	})
 
 	Handlebars.registerHelper("join", function (a: any[], s: string): string {
@@ -170,11 +125,6 @@ export function registerHandlebarsHelpers() {
 			if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
 		}
 		return list.join("; ")
-	})
-
-	Handlebars.registerHelper("disabled", function (a: boolean): string {
-		if (a) return "disabled"
-		return ""
 	})
 
 	Handlebars.registerHelper("date", function (str: string): string {

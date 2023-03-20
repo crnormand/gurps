@@ -273,6 +273,14 @@ export class ItemSheetGURPS extends ItemSheet {
 	get item(): this["object"] {
 		return this.object
 	}
+
+	protected override _getHeaderButtons(): Application.HeaderButton[] {
+		const buttons: Application.HeaderButton[] = []
+		const all_buttons = [...buttons, ...super._getHeaderButtons()]
+		all_buttons.at(-1)!.label = ""
+		all_buttons.at(-1)!.icon = "gcs-circled-x"
+		return all_buttons
+	}
 }
 
 export interface ItemSheetGURPS extends ItemSheet {

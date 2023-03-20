@@ -1,6 +1,6 @@
 <div id="details">
 	<div>
-		{{#if (neq system.additionalresources.importname "")}}
+		{{#if (ne system.additionalresources.importname "")}}
 			<button class="quick-import">
 				<i class="fas fa-arrows-rotate"></i>
 				{{localize "gurps.character.settings.import.reimport" file=system.additionalresources.importname}}
@@ -21,7 +21,7 @@
 			{{localize "gurps.character.settings.import.file"}}
 			<input id="file-upload" type="file" accept=".gcs" style="display: none;" />
 		</label>
-		{{#if (neq filename "")}}
+		{{#if (ne filename "")}}
 			<button class="import-confirm">
 				<i class="fas fa-file-import"></i>
 				{{localize "gurps.character.settings.import.import" file=filename}}

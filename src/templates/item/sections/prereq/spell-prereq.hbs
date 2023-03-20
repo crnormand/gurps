@@ -9,7 +9,7 @@
 	</select>
 	<select
 		name="{{path}}.qualifier.compare"
-		{{input_lock (and (neq this.sub_type "college_count") (neq this.sub_type "any"))}}
+		{{disabled (or (eq this.sub_type "college_count") (eq this.sub_type "any"))}}
 	>
 		{{#select this.qualifier.compare}}
 			{{#each config.select.string_compare as |v k|}}
@@ -23,7 +23,7 @@
 			name="{{path}}.qualifier.qualifier"
 			value="{{this.qualifier.qualifier}}"
 			data-dtype="String"
-			{{input_lock (neq this.qualifier.compare "none")}}
+			{{disabled (eq this.qualifier.compare "none")}}
 		/>
 	</div>
 </div>

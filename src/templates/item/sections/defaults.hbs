@@ -17,10 +17,10 @@
 				{{/select}}
 			</select>
 			<div class="field">
-				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}.name" value="{{this.name}}" data-dtype="String" {{input_lock (eq this.type "skill")}} />
+				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}.name" value="{{this.name}}" data-dtype="String" {{disabled (ne this.type "skill")}} />
 			</div>
 			<div class="field">
-				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}.specialization" value="{{this.specialization}}" data-dtype="String" {{input_lock (eq this.type "skill")}} />
+				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}.specialization" value="{{this.specialization}}" data-dtype="String" {{disabled (ne this.type "skill")}} />
 			</div>
 			<div class="field">
 				<input type="text" name="{{../sysPrefix}}defaults.{{@index}}modifier" value="{{signed this.modifier}}" data-dtype="String"/>

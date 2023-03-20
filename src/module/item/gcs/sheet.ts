@@ -83,14 +83,6 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 		})
 	}
 
-	protected override _getHeaderButtons(): Application.HeaderButton[] {
-		const buttons: Application.HeaderButton[] = []
-		const all_buttons = [...buttons, ...super._getHeaderButtons()]
-		all_buttons.at(-1)!.label = ""
-		all_buttons.at(-1)!.icon = "gcs-circled-x"
-		return all_buttons
-	}
-
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")

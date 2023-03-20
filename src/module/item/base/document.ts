@@ -73,8 +73,9 @@ class BaseItemGURPS extends Item {
 	}
 
 	get parents(): Array<any> {
-		if (!this.parent) return []
-		const grandparents = !(this.parent instanceof Actor) ? this.parent.parents : []
+		if (!this.parent && !this.compendium) return []
+		const grandparents = this.parent instanceof BaseItemGURPS ? this.parent.parents : []
+		if (!this.parent) return [this.compendium, ...grandparents]
 		return [this.parent, ...grandparents]
 	}
 

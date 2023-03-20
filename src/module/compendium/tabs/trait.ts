@@ -47,6 +47,7 @@ export class CompendiumTraitTab extends CompendiumTab {
 					reference: trait.reference,
 					enabled: true,
 					parents: trait.parents,
+					indent: trait.indent,
 					modifiers: trait.modifiers,
 					cr: trait.cr,
 					formattedCR: trait.formattedCR,
