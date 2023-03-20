@@ -144,7 +144,6 @@ class BaseActorGURPS extends Actor {
 			substitutions: true,
 		}
 	): Promise<Array<any>> {
-		console.log("createEmbeddedDocuments", data)
 		if (embeddedName === "Item")
 			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
 		return super.createEmbeddedDocuments(embeddedName, data, context)

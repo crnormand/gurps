@@ -89,16 +89,15 @@ export class ModifierChoiceSheet extends FormApplication {
 		}
 	}
 
-	static new(items: ItemGCS[], options?: any): any {
+	static new(items: ItemGCS[], options?: any): ModifierChoiceSheet | ItemSubstitutionSheet | null {
 		if (items.length === 0) {
 			const item = fromUuidSync(options?.puuid)
 			return ItemSubstitutionSheet.new([item as any])
 		}
 		const sheet = new ModifierChoiceSheet(items, options)
-		console.log(sheet.object.modifiers)
 		if (sheet.object.modifiers && sheet.object.modifiers?.size !== 0) {
-			console.log("HAS MODIFIERS")
-			return sheet?.render(true)
+			return sheet
+			// Return sheet?.render(true)
 		}
 		const newItems = sheet.nextObjects
 		return ModifierChoiceSheet.new(newItems, { puuid: sheet.puuid })

@@ -112,10 +112,11 @@ export class ItemSubstitutionSheet extends FormApplication {
 		}
 	}
 
-	static new(items: ItemGCS[]) {
-		if (items.length === 0) return
+	static new(items: ItemGCS[]): ItemSubstitutionSheet | null {
+		if (items.length === 0) return null
 		const sheet = new ItemSubstitutionSheet(items)
-		if (Object.keys(sheet.subs).length === 0) return
-		return sheet.render(true)
+		if (Object.keys(sheet.subs).length === 0) return null
+		// Return sheet.render(true)
+		return sheet
 	}
 }

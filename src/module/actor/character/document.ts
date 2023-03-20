@@ -1044,7 +1044,6 @@ class CharacterGURPS extends BaseActorGURPS {
 			substitutions: true,
 		}
 	): Promise<Array<any>> {
-		console.log("createEmbeddedDocuments", data)
 		if (embeddedName === "Item")
 			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
 		return super.createEmbeddedDocuments(embeddedName, data, context)
@@ -1063,7 +1062,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		if (embeddedName === "Item" && options.substitutions) {
 			for (const item of documents.filter(e => e instanceof ItemGCS)) {
 				// If ((item as any).modifiers) ModifierChoiceSheet.new([item as ItemGCS])
-				ModifierChoiceSheet.new([item as ItemGCS])
+				const sheet = ModifierChoiceSheet.new([item as ItemGCS])
+				if (game.userId === userId) sheet?.render(true)
 				// ItemSubstitutionSheet.new([item as ItemGCS])
 			}
 		}
