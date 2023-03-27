@@ -82,6 +82,10 @@ export function registerHandlebarsHelpers() {
 		return JSON.stringify(a)
 	})
 
+	Handlebars.registerHelper("concat", function (...args): string {
+		return HandlebarsHelpers.concat(...(args as any)).toString()
+	})
+
 	Handlebars.registerHelper("join", function (a: any[], s: string): string {
 		if (!a || !a.length) return ""
 		return a.join(s)
@@ -152,6 +156,18 @@ export function registerHandlebarsHelpers() {
 
 	Handlebars.registerHelper("format", function (a: string): string {
 		return (a ? a : "").replace(/\n/g, "<br>")
+	})
+
+	Handlebars.registerHelper("md", function (s: string): string {
+		const showdown_options = {
+			// @ts-ignore until v10 types
+			...CONST.SHOWDOWN_OPTIONS,
+		}
+		// @ts-ignore until v10 types
+		Object.entries(showdown_options).forEach(([k, v]) => showdown.setOption(k, v))
+		// @ts-ignore until v10 types
+		const converter = new showdown.Converter()
+		return converter.makeHtml(s)?.replace(/\s\+/g, "\r")
 	})
 
 	Handlebars.registerHelper("ref", function (a: string): string {

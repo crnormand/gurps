@@ -86,7 +86,7 @@ export class SkillDefault {
 	best(actor: CharacterGURPS, require_points: boolean, excludes: Map<string, boolean>): number {
 		let best = -Infinity
 		for (const s of actor.skillNamed(this.name!, this.specialization || "", require_points, excludes)) {
-			const level = s.calculateLevel.level
+			const level = s.calculateLevel().level
 			if (best < level) best = level
 		}
 		return best

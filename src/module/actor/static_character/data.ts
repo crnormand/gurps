@@ -87,7 +87,16 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 	// TODO: change
 	conditions: any
 	traits: StaticCharacterTraits
-	encumbrance: any
+	encumbrance: {
+		[key: string]: {
+			key: string
+			level: number
+			dodge: number
+			weight: string
+			move: number
+			current: boolean
+		}
+	}
 	move: any
 	reactions: any
 	conditionalmods: any

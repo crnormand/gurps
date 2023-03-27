@@ -90,7 +90,6 @@ class BaseItemGURPS extends Item {
 	}
 
 	prepareData(): void {
-		if (this.actor?.noPrepare) return
 		super.prepareData()
 	}
 }

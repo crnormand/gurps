@@ -3,7 +3,7 @@ import { SkillGURPS, TechniqueGURPS } from "@item"
 import { Attribute } from "@module/attribute"
 import { ActorGURPS, ItemGURPS } from "@module/config"
 import { DamageChat, DamagePayload } from "@module/damage_calculator/damage_chat_message"
-import { RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
+import { gid, RollModifier, RollType, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { LocalizeGURPS } from "@util"
 import { DamageRollGURPS } from "./damage_roll"
 
@@ -99,6 +99,8 @@ export class RollGURPS extends Roll {
 
 		const raFormula = (game.settings.get(SYSTEM_NAME, SETTINGS.ROLL_FORMULA) as string) || "3d6"
 
+		console.log(data)
+
 		switch (data.type) {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
@@ -173,6 +175,10 @@ export class RollGURPS extends Roll {
 		actor: ActorGURPS | any,
 		data: Record<string, any>
 	): Promise<void> {
+		const raFormula = (game.settings.get(SYSTEM_NAME, SETTINGS.ROLL_FORMULA) as string) || "3d6"
+
+		console.log(data)
+
 		switch (data.type) {
 			case RollType.Modifier:
 				return this.addModifier(user, actor, data)
@@ -181,11 +187,58 @@ export class RollGURPS extends Roll {
 					user,
 					actor,
 					data.attribute.current,
-					"3d6",
+					raFormula,
 					data.attribute.attribute_def.combinedName,
 					RollType.Attribute,
+					data.attribute,
 					data.hidden
 				)
+			case RollType.Skill:
+			case RollType.SkillRelative:
+			case RollType.Spell:
+			case RollType.SpellRelative:
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.effectiveLevel,
+					raFormula,
+					data.item.formattedName,
+					RollType.Skill,
+					data.item,
+					data.hidden
+				)
+			case RollType.ControlRoll:
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.skillLevel,
+					raFormula,
+					data.item.formattedName,
+					RollType.ControlRoll,
+					data.item,
+					data.hidden
+				)
+			case RollType.Attack:
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.skillLevel(null),
+					raFormula,
+					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
+					RollType.Attack,
+					data.item,
+					data.hidden
+				)
+			case RollType.Damage:
+				return this.rollDamage(
+					user,
+					actor,
+					data,
+					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
+					data.hidden
+				)
+			case RollType.Generic:
+				return this.rollGeneric(user, actor, data.formula, RollType.Generic, data.hidden)
 		}
 	}
 
@@ -261,6 +314,8 @@ export class RollGURPS extends Roll {
 					(item.defaultedFrom.modifier < 0 ? " - " : " + ") + Math.abs(item.defaultedFrom.modifier)
 				itemData.default += modifier
 			}
+		} else if (item instanceof Attribute || item?.id === gid.Dodge) {
+			itemData = { id: item.id }
 		}
 
 		const chatData = {

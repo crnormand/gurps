@@ -371,6 +371,8 @@
 			"basic_damage": "Basic Damage",
 			"basic_thrust": "Basic Thrust",
 			"basic_swing": "Basic Swing",
+			"thrust": "Thrust",
+			"swing": "Swing",
 			"secondary_attributes": "Secondary Attributes",
 			"point_pools": "Point Pools",
 			"pool_of": "of",

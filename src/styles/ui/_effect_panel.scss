@@ -1,0 +1,136 @@
+#ui-middle {
+	position: relative; // The panel is positioned relative to this element
+}
+
+.effect-panel {
+	pointer-events: initial;
+	position: absolute;
+	top: 5px;
+	right: 0;
+
+	.effect-item {
+		display: flex;
+		justify-content: flex-end;
+		height: 52px;
+
+		&:hover {
+			.effect-info {
+				display: block;
+			}
+		}
+
+		.effect-info {
+			display: none;
+			height: min-content;
+			margin-right: 0.5em;
+			padding: 0.25em;
+			background-color: rgba(0, 0, 0, 0.75);
+			color: white;
+
+			h1 {
+				font-size: var(--font-size-12);
+				text-align: right;
+				border: none;
+				margin: 0;
+				padding: 0;
+			}
+
+			.tags {
+				justify-content: flex-end;
+
+				.tag {
+					margin-bottom: 0;
+					& + .tag,
+					&:first-child {
+						margin-left: 3px;
+						margin-right: -2px;
+					}
+				}
+			}
+
+			a {
+				display: block;
+				font-size: var(--font-size-11);
+				margin-top: 0.1rem;
+				text-align: right;
+			}
+
+			.instructions {
+				font-size: 0.75em;
+				text-align: right;
+			}
+		}
+
+		.icon {
+			border: 1px solid rgba(0, 0, 0, 0.5);
+			/* prettier-ignore */
+			align-items: center;
+			background-repeat: no-repeat;
+			background-size: contain;
+			box-shadow: 0 0 0 1px #c0c0c0, 0 0 0 2px #808080, inset 0 0 4px rgba(0, 0, 0, 0.5);
+			color: transparent;
+			display: flex;
+			justify-content: center;
+			position: relative;
+			margin: 2px 0;
+			height: 48px;
+			width: 48px;
+
+			.expired {
+				position: absolute;
+				left: 0;
+				bottom: -1px;
+				width: 100%;
+				padding: 2px 1px;
+				font-family: var(--sans-serif);
+				font-size: var(--font-size-10);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				text-rendering: optimizeLegibility;
+				color: white;
+				background-color: var(--primary);
+			}
+			.linked {
+				position: absolute;
+				display: inline-block;
+				bottom: -1px;
+				right: -1px;
+				padding: 0px 2px;
+				color: white;
+				background-color: rgba(0, 0, 0, 0.75);
+			}
+			.value-wrapper {
+				position: absolute;
+				bottom: -1px;
+				left: -1px;
+				max-width: calc(100% + 2px);
+				padding: 0px 2px;
+
+				color: white;
+				background-color: rgba(0, 0, 0, 0.75);
+				font-size: var(--font-size-13);
+				letter-spacing: -0.05em;
+				white-space: nowrap;
+				overflow: hidden;
+
+				.value {
+					overflow: hidden;
+					text-overflow: ellipsis;
+					strong {
+						display: inline-block;
+						padding-right: 1px; // prevent clipping
+					}
+				}
+			}
+
+			&.unidentified {
+				filter: drop-shadow(0 0 8px var(--visibility-gm-bg));
+			}
+		}
+	}
+
+	hr {
+		margin-right: 0;
+		width: 40px;
+	}
+}

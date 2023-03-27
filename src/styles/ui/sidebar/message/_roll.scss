@@ -22,11 +22,12 @@
 		.name,
 		.default {
 			min-width: 50%;
-			font-size: var(--font-size-18);
+			max-width: 100%;
+			font-size: var(--font-size-16);
 			font-weight: bold;
 			margin: auto;
-			width: min-content;
-			white-space: nowrap;
+			width: fit-content;
+			// white-space: nowrap;
 			padding: 0 5px;
 			text-align: center;
 			border: 2px solid rgb(var(--color-skill));

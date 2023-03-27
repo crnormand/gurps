@@ -63,6 +63,7 @@ import { RulerGURPS } from "./ruler"
 import {
 	BaseItemGURPS,
 	EffectGURPS,
+	EffectPanel,
 	EffectSheet,
 	EquipmentModifierContainerSheet,
 	EquipmentModifierSheet,
@@ -158,6 +159,8 @@ Hooks.once("init", async () => {
 	// Preload Handlebars templates
 	await preloadTemplates()
 	registerHandlebarsHelpers()
+
+	game.EffectPanel = new EffectPanel()
 
 	// Register custom sheets (if any)
 	Items.unregisterSheet("core", ItemSheet)
@@ -352,6 +355,10 @@ Hooks.on("renderChatMessage", (_app, html, _data) => Chat.addChatListeners(html)
 Hooks.on("renderChatMessage", DamageChat.renderChatMessage)
 Hooks.on("dropCanvasData", DamageChat.handleDropOnCanvas)
 
+Hooks.on("canvasReady", () => {
+	game.EffectPanel.render(true)
+})
+
 Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) => {
 	if (app.options.id === "compendium") {
 		const importButton = $(
@@ -460,6 +467,10 @@ Hooks.on("renderDialog", (_dialog: any, html: JQuery<HTMLElement>) => {
 			select.append(extractOptGroup(select, categories.legacy, [ItemType.LegacyEquipment]))
 		}
 	}
+})
+
+Hooks.on("updateToken", function () {
+	game.ModifierList.render(true)
 })
 
 Hooks.once("item-piles-ready", async function () {

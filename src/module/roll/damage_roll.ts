@@ -2,7 +2,7 @@ import { DiceGURPS } from "@module/dice"
 
 export const DamageRegEx =
 	// eslint-disable-next-line max-len
-	/^(?<amount>(?<roll>(?<dice>\d+)d(?<sides>\d+)?|(?<flat>\d+))((?<sign>[+\-–])(?<adds>\d+))?(?<mult>[×*x]\d+)?)\s*(?<divisor>\(\d+(\.\d+)?\))?\s*(?<type>burn|cor|cr|ctrl|cut|dmg|fat|imp|injury|pi\+\+|pi\+|pi|pi-|toxic|tox|kbo)\s*(?<ex>\w+?)?$/
+	/^(?<amount>(?<roll>(?<dice>\d+)d(?<sides>\d+)?|(?<flat>\d+))((?<sign>[+\-–])(?<adds>\d+))?(?<mult>[×*x]\d+)?)\s*(?<divisor>\(\d+(\.\d+)?\))?\s*(?<type>burn|cor|cr|ctrl|cut|dmg|fat|imp|injury|pi\+\+|pi\+|pi|pi-|toxic|tox|kbo|)\s*(?<ex>\w+?)?$/
 
 export class DamageRollGURPS {
 	dieRoll: DiceGURPS | undefined

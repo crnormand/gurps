@@ -116,7 +116,7 @@ class ModifierBucket extends Application {
 			event.preventDefault()
 			switch (event.key) {
 				case "Enter":
-					return this.addModifier(customMod)
+					this.addModifier(customMod)
 				case "Escape":
 					return this.close()
 			}
@@ -125,10 +125,7 @@ class ModifierBucket extends Application {
 
 	_onClickModifier(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const modifier: RollModifier = {
-			name: $(event.currentTarget).data("name"),
-			modifier: $(event.currentTarget).data("modifier"),
-		}
+		const modifier = $(event.currentTarget).data("modifier")
 		return this.addModifier(modifier)
 	}
 
@@ -158,15 +155,8 @@ class ModifierBucket extends Application {
 	}
 
 	addModifier(mod: RollModifier) {
-		const modList: RollModifier[] =
-			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
-		const oldMod = modList.find(e => e.name === mod.name)
-		if (oldMod) oldMod.modifier += mod.modifier
-		else modList.push(mod)
-		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.value = ""
-		this.render()
-		this.button.render()
+		game.ModifierList.addModifier(mod)
 		game.ModifierList.render(true)
 	}
 

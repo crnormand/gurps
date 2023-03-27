@@ -120,7 +120,12 @@
             {{!-- {{#if skills.length }} --}}
             <div id="skills" class="item-list">
                 <div class="header desc">
+					{{#if skillDefaultsOpen}}
+					<input type="text" class="defaults" />
+					{{else}}
                     {{ localize "gurps.character.skills.desc" }}
+					<!-- <a class="gcs-skill defaults"></a> -->
+					{{/if}}
                 </div>
                 <div class="header level">
                     {{ localize "gurps.character.skills.level" }}
@@ -139,7 +144,7 @@
                 {{/each }}
             </div>
             {{!-- {{/if }} --}}
-            {{!-- {{#if spells.length }} --}}
+            {{#if spells.length }}
             <div id="spells" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.spells.desc" }}
@@ -160,7 +165,7 @@
                 {{>actor/character/sections/spell }}
                 {{/each }}
             </div>
-            {{!-- {{/if }} --}}
+            {{/if }}
             {{!-- {{#if equipment.length }} --}}
             <div id="equipment" class="item-list">
                 <div class="header equipped">

@@ -25,6 +25,7 @@ import { PDF } from "@module/pdf"
 import { ResourceTrackerObj } from "@module/resource_tracker"
 import { RollGURPS } from "@module/roll"
 import { dollarFormat, Length, LocalizeGURPS, Weight } from "@util"
+import { fSearch } from "@util/fuse"
 import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { CharacterSheetConfig } from "./config_sheet"
 import { CharacterMove, Encumbrance } from "./data"
@@ -33,6 +34,10 @@ import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
 	config: CharacterSheetConfig | null = null
+
+	skillDefaultsOpen = false
+
+	searchValue = ""
 
 	static override get defaultOptions(): ActorSheet.Options {
 		return mergeObject(super.defaultOptions, {
@@ -117,6 +122,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
 		html.find(":not(.disabled) > > .rollable").on("click", event => this._onClickRoll(event))
+		html.find(":not(.disabled) > > .rollable").on("contextmenu", event => this._onClickRoll(event))
 
 		// Maneuver / Posture Selection
 		html.find(".move-select").on("change", event => this._onMoveChange(event))
@@ -132,6 +138,13 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		// Manual Encumbrance
 		html.find(".enc-toggle").on("click", event => this._toggleAutoEncumbrance(event))
 		html.find(".encumbrance-marker.manual").on("click", event => this._setEncumbrance(event))
+
+		// // Skill Defaults
+		// html.find("a.defaults").on("click", event => this._openDefaultLookup(event))
+
+		// const searchbar = html.find("input.defaults")
+		// searchbar.on("input", event => this._updateQuery(event, searchbar))
+		// searchbar.on("keydown", event => this._keyDown(event))
 	}
 
 	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
@@ -580,7 +593,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = this.actor.deepItems.get(uuid)
-		item?.update({ _id: id, "system.open": open })
+		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
 	}
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
@@ -629,6 +642,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance, autoEncumbrance)
 	}
 
+	protected _openDefaultLookup(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const defaultSkills = CONFIG.GURPS.skillDefaults
+		const list = fSearch(defaultSkills, "serv", {
+			includeMatches: true,
+			includeScore: true,
+			keys: ["name", "specialization", "tags"],
+		}).map(e => e.item)
+		console.log(list)
+		this.skillDefaultsOpen = true
+		this.render()
+		const searchbar = this._element?.find("input.defaults")
+		searchbar?.trigger("focus")
+	}
+
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
@@ -648,7 +676,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		else event.currentTarget.classList.remove("hover")
 	}
 
-	protected async _onClickRoll(event: JQuery.ClickEvent) {
+	protected async _onClickRoll(event: JQuery.ClickEvent | JQuery.ContextMenuEvent) {
 		event.preventDefault()
 		if (this.actor.editing) return
 		const type: RollType = $(event.currentTarget).data("type")
@@ -670,14 +698,20 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				RollType.ControlRoll,
 			].includes(type)
 		) {
-			const attack_id = $(event.currentTarget).data("attack-id")
-			if (![gid.Thrust, gid.Swing].includes(attack_id)) {
-				data.item = await fromUuid($(event.currentTarget).data("uuid"))
-			}
+			const uuid = $(event.currentTarget).data("uuid")
+			if ([gid.Thrust, gid.Swing].includes(uuid)) {
+				const id = uuid as gid.Thrust | gid.Swing
+				data.item = {
+					itemName: LocalizeGURPS.translations.gurps.character[id],
+					uuid: uuid,
+					fastResolvedDamage: this.actor[id].string,
+				}
+			} else data.item = await fromUuid($(event.currentTarget).data("uuid"))
 		}
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
+			if (event.type === "contextmenu") data.modifier = -data.modifier
 		}
 		return RollGURPS.handleRoll(game.user, this.actor, data)
 	}
@@ -770,6 +804,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				autoEncumbrance: (this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as any)?.active,
 				overencumbered,
 				hit_locations,
+				skillDefaultsOpen: this.skillDefaultsOpen,
 			},
 		}
 		this.prepareItems(sheetData)
@@ -794,8 +829,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const encumbrance: Array<Encumbrance & { active?: boolean; carry?: string; move?: any; dodge?: any }> = [
 			...this.actor.allEncumbrance,
 		]
+		const current = this.actor.encumbranceLevel(true).level
 		for (const e of encumbrance) {
-			if (e.level === this.actor.encumbranceLevel(true).level) e.active = true
+			if (e.level === current) e.active = true
 			e.carry = Weight.format(e.maximum_carry, this.actor.weightUnits)
 			e.move = {
 				current: this.actor.move(e),

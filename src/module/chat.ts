@@ -84,9 +84,8 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 	if (actor instanceof LootGURPS) return
 
 	if (type === RollType.Attribute) {
-		const id = $(event.currentTarget).data("id")
+		const id = $(event.currentTarget).data("json").id
 		if (id === gid.Dodge) data.attribute = actor?.dodgeAttribute
-		// Else if (id === gid.SizeModifier) data.attribute = this.actor.sizeModAttribute
 		else data.attribute = actor?.attributes.get(id)
 	} else if (
 		[

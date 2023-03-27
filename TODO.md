@@ -9,8 +9,6 @@
 -	Active Effects
 	-	active effect side panel (for removing effects)
 	-	active effect tab on charsheet (for removing/editing effects)
--	Substitution prompt
-	-	Shows up for all players but should not
 
 ## Jeff and Chris
 
@@ -35,6 +33,7 @@
 
 ## 1.1.0 and beyond
 
+-	Add makeshift static to dynamic character conversion
 -   Dynamic Character changes
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
         the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings

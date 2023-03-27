@@ -205,7 +205,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
-		// Console.log(data, context)
 		if (context?.noPrepare) this.noPrepare = true
 		this.updateAttributes(data)
 		this.checkImport(data)
@@ -391,6 +390,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get dodgeAttribute() {
 		return {
+			id: gid.Dodge,
 			attribute_def: {
 				combinedName: LocalizeGURPS.translations.gurps.attributes.dodge,
 			},
@@ -409,7 +409,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	effectiveST(initialST: number): number {
-		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_st", this.attributes), 2)
+		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_st"), 2)
 		let ST = initialST
 		if (divisor > 0) ST = Math.ceil(initialST / divisor)
 		if (ST < 1 && initialST > 0) return 1
@@ -430,7 +430,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	eMove(enc: Encumbrance): number {
 		// Let initialMove = this.moveByType(Math.max(0, this.resolveAttributeCurrent(gid.BasicMove)))
 		let initialMove = this.moveByType()
-		let divisor = 2 * Math.min(this.countThresholdOpMet("halve_move", this.attributes), 2)
+		let divisor = 2 * Math.min(this.countThresholdOpMet("halve_move"), 2)
 		if (divisor === 0) divisor = 1
 		if (divisor > 0) initialMove = Math.ceil(initialMove / divisor)
 		const move = Math.trunc((initialMove * (10 + 2 * enc.penalty)) / 10)
@@ -477,16 +477,16 @@ class CharacterGURPS extends BaseActorGURPS {
 	// Dodge accounting for pool thresholds
 	eDodge(enc: Encumbrance): number {
 		let dodge = 3 + (this.calc?.dodge_bonus ?? 0) + Math.max(this.resolveAttributeCurrent(gid.BasicSpeed), 0)
-		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_dodge", this.attributes), 2)
+		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_dodge"), 2)
 		if (divisor > 0) {
 			dodge = Math.ceil(dodge / divisor)
 		}
 		return Math.floor(Math.max(dodge + enc.penalty, 1))
 	}
 
-	countThresholdOpMet(op: ThresholdOp, attributes: Map<string, Attribute>) {
+	countThresholdOpMet(op: ThresholdOp) {
 		let total = 0
-		attributes.forEach(a => {
+		Object.values(this.poolAttributes).forEach(a => {
 			if (!a.apply_ops) return
 			const threshold = a.currentThreshold
 			if (threshold && threshold.ops?.includes(op)) total++
@@ -562,17 +562,18 @@ class CharacterGURPS extends BaseActorGURPS {
 		return Weight.format(this.weightCarried(false), this.weightUnits)
 	}
 
-	encumbranceLevel(for_skills = true): Encumbrance {
+	encumbranceLevel(for_skills = true, carried = this.weightCarried(for_skills)): Encumbrance {
 		const autoEncumbrance = this.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as {
 			active: boolean
 			manual: number
 		}
-		if (autoEncumbrance && !autoEncumbrance.active) return this.allEncumbrance[autoEncumbrance?.manual || 0]
-		const carried = this.weightCarried(for_skills)
-		for (const e of this.allEncumbrance) {
+		const allEncumbrance = this.allEncumbrance
+		if (autoEncumbrance && !autoEncumbrance.active) return allEncumbrance[autoEncumbrance?.manual || 0]
+		// Const carried = this.weightCarried(for_skills)
+		for (const e of allEncumbrance) {
 			if (carried <= e.maximum_carry) return e
 		}
-		return this.allEncumbrance[this.allEncumbrance.length - 1]
+		return allEncumbrance[allEncumbrance.length - 1]
 	}
 
 	weightCarried(for_skills: boolean): number {
@@ -668,7 +669,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get striking_st_bonus(): number {
-		return this.system.calc.striking_st_bonus
+		return this.system.calc?.striking_st_bonus ?? 0
 	}
 
 	set striking_st_bonus(v: number) {
@@ -676,7 +677,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get lifting_st_bonus(): number {
-		return this.calc.lifting_st_bonus
+		return this.calc?.lifting_st_bonus ?? 0
 	}
 
 	set lifting_st_bonus(v: number) {
@@ -684,7 +685,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get throwing_st_bonus(): number {
-		return this.system.calc.throwing_st_bonus
+		return this.system?.calc.throwing_st_bonus ?? 0
 	}
 
 	set throwing_st_bonus(v: number) {
@@ -1071,10 +1072,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	// Prepare data
 	override prepareData(): void {
-		if (this.noPrepare) {
-			this.noPrepare = false
-			return
-		}
+		// If (this.noPrepare) {
+		// 	this.noPrepare = false
+		// 	return
+		// }
 		super.prepareData()
 		const pools: any = {}
 		this.attributes.forEach(e => {
@@ -1100,6 +1101,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareEmbeddedDocuments(): void {
 		super.prepareEmbeddedDocuments()
+		if (this.noPrepare) {
+			this.noPrepare = false
+			return
+		}
 		this.updateSkills()
 		this.updateSpells()
 		for (let i = 0; i < 5; i++) {
@@ -1108,6 +1113,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			let skillsChanged = this.updateSkills()
 			let spellsChanged = this.updateSpells()
 			if (!skillsChanged && !spellsChanged) break
+			break
 		}
 	}
 
@@ -1285,7 +1291,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	updateSkills(): boolean {
 		let changed = false
-		for (const k of this.skills.filter(e => !(e instanceof SkillContainerGURPS)) as Array<
+		for (const k of this.skills.filter(e => e.type !== ItemType.SkillContainer) as Array<
 			SkillGURPS | TechniqueGURPS
 		>) {
 			if (k.updateLevel()) {
@@ -1358,7 +1364,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		let best: SkillGURPS | TechniqueGURPS | null = null
 		let level = -Infinity
 		for (const sk of this.skillNamed(name, specialization, require_points, excludes)) {
-			const skill_level = sk.calculateLevel.level
+			const skill_level = sk.calculateLevel().level
 			if (!best || level < skill_level) {
 				best = sk
 				level = skill_level

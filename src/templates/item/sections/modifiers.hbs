@@ -53,9 +53,7 @@
 							name="array.system.modifiers.{{@index}}.cost.id"
 							value="{{this.cost.id}}"
 							data-dtype="String"
-							{{#if (eq this.cost.value "0")}}
-							disabled
-							{{/if}}
+							{{disabled (eq this.cost.value 0)}}
 						/>
 					</div>
 				</div>

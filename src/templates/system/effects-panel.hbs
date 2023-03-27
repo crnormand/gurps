@@ -1,0 +1,63 @@
+<section class="effect-panel">
+    {{#each conditions as |condition|}}
+        {{> effect effect=condition}}
+    {{/each}}
+
+    {{#each effects as |effect|}}
+        {{> effect effect=effect}}
+    {{/each}}
+</section>
+
+{{#*inline "effect"}}
+{{#if (or (not effect.unidentified) @root.user.isGM)}}
+<div class="effect-item" data-item-id="{{effect.id}}">
+    <div class="effect-info">
+        <h1>{{effect.name}}</h1>
+        {{#if (or (eq effect.type "effect") effect.breakdown)}}
+            <div class="tags">
+                {{#if (and effect.system.duration.sustained (not effect.system.expired))}}
+                    <div class="tag tag_secondary">{{localize "gurps.effect.sustained"}}</div>
+                {{/if}}
+                {{#if effect.unidentified}}
+                    <div class="tag tag_secondary">{{localize "gurps.effect.unidentified"}}</div>
+                {{/if}}
+                {{#if effect.breakdown}}
+                    <div class="tag tag_secondary">{{effect.breakdown}}</div>
+                {{/if}}
+                {{#if effect.system.remaining}}
+                    <div class="tag tag_secondary">{{effect.system.remaining}}</div>
+                {{/if}}
+            </div>
+        {{/if}}
+        {{#if (eq effect.slug "persistent-damage")}}
+            <a data-action="recover-persistent-damage">
+                <i class="fas fa-dice-d20"></i> {{localize "PF2E.Item.Condition.PersistentDamage.Chat.Recover"}}
+            </a>
+        {{/if}}
+        <div class="instructions">
+            {{#if (not effect.locked)}}
+                {{#if (eq effect.badge.type "counter")}}
+                    <p>{{localize "PF2E.EffectPanel.IncrementToolTip"}}</p>
+                    <p>{{localize "PF2E.EffectPanel.DecrementToolTip"}}</p>
+                {{else}}
+                    <p>{{localize "PF2E.EffectPanel.RemoveToolTip"}}</p>
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+    <div class="icon{{#if effect.unidentified}} unidentified{{/if}}" data-locked="{{#if effect.locked}}true{{/if}}" style="background-image: url({{effect.img}})">
+        {{#if effect.locked}}
+            <div class="linked"><i class="fas fa-link"></i></div>
+        {{/if}}
+        {{#if effect.system.expired}}
+            <span class="expired">{{localize "PF2E.EffectPanel.Expired"}}</span>
+        {{else if effect.badge}}
+            <div class="value-wrapper">
+                <div class="value"><strong>{{ror effect.badge.label effect.badge.value}}</strong></div>
+            </div>
+
+        {{/if}}
+    </div>
+</div>
+{{/if}}
+{{/inline}}

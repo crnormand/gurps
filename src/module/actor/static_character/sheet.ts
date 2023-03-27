@@ -40,6 +40,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			if (this.actor.system.additionalresources.importpath.includes(".gca5")) deprecation = "easy"
 		}
 
+		console.log(actorData.system)
 		const sheetData = {
 			...super.getData(options),
 			system: actorData.system,
@@ -71,6 +72,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
 		html.find(".rollable").on("click", event => this._onClickRoll(event))
+		html.find(".rollable").on("contextmenu", event => this._onClickRoll(event))
 		html.find(".equipped").on("click", event => this._onClickEquip(event))
 		html.find(".deprecation a").on("click", event => {
 			event.preventDefault()
@@ -119,7 +121,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		})
 	}
 
-	protected async _onClickRoll(event: JQuery.ClickEvent) {
+	protected async _onClickRoll(event: JQuery.ClickEvent | JQuery.ContextMenuEvent) {
 		event.preventDefault()
 		if (this.actor.editing) return
 		const type: RollType = $(event.currentTarget).data("type")
@@ -171,8 +173,9 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
+			if (event.type === "contextmenu") data.modifier = -data.modifier
 		}
-		return RollGURPS.handleRoll(game.user, this.actor, data)
+		return RollGURPS.staticHandleRoll(game.user, this.actor, data)
 	}
 
 	protected async _onRollableHover(event: JQuery.MouseOverEvent | JQuery.MouseOutEvent, hover: boolean) {

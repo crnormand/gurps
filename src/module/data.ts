@@ -220,6 +220,10 @@ export interface RollModifier {
 	target?: boolean
 }
 
+export enum RollModifierTags {
+	Range = "range",
+}
+
 export interface ModifierHeader {
 	name: string
 	title: true
