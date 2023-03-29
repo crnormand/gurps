@@ -25,8 +25,8 @@
 	}
 
 	.searchbar {
-		display: grid;
-		grid-template-columns: auto min-content;
+		display: flex;
+		// grid-template-columns: auto min-content;
 		input {
 			font: var(--font-field);
 			height: 24px;
@@ -43,8 +43,32 @@
 				padding: 0 2px;
 			}
 		}
-		select {
-			margin-right: 5px;
+		button.tags {
+			margin: 5px;
+			padding: 1px 3px;
+			height: 24px;
+		}
+		div.options {
+			visibility: hidden;
+			z-index: var(--z-index-tooltip);
+			position: absolute;
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+			white-space: nowrap;
+
+			.option.pad {
+				padding-left: 19px;
+			}
+			.option:hover {
+				background-color: rgb(var(--color-pressed-control));
+				color: rgb(var(--color-on-pressed-control));
+			}
+
+			&.visible {
+				visibility: visible;
+				display: block;
+			}
 		}
 	}
 

@@ -14,6 +14,38 @@
 	color: rgb(var(--color-on-content));
 	font: var(--font-field);
 
+	> :not(.header) {
+		padding: var(--padding-standard);
+		&.border-top {
+			border-top: 2px dashed rgb(var(--color-drop-area));
+			&.desc {
+				border-top: none;
+				.name {
+					border-top: 2px dashed rgb(var(--color-drop-area));
+				}
+			}
+		}
+		&.border-bottom {
+			border-bottom: 2px dashed rgb(var(--color-drop-area));
+			&.desc {
+				border-bottom: none;
+				.item-notes {
+					border-bottom: 2px dashed rgb(var(--color-drop-area));
+				}
+			}
+		}
+		&.border-in {
+			border-top: 2px dashed rgb(var(--color-drop-area));
+			border-bottom: 2px dashed rgb(var(--color-drop-area));
+			&.desc {
+				border-left: 2px dashed rgb(var(--color-drop-area));
+			}
+			&.reference {
+				border-right: 2px dashed rgb(var(--color-drop-area));
+			}
+		}
+	}
+
 	.header {
 		font: var(--font-label);
 		justify-content: center;

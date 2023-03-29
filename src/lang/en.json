@@ -1052,6 +1052,7 @@
 			"search": "Search",
 			"tags": "Tags",
 			"any_tag": "Any Tag",
+			"multi_tag": "Multiple",
 			"settings": "Settings",
 			"item": {
 				"trait": "Trait",

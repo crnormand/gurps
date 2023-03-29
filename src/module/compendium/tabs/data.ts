@@ -10,5 +10,5 @@ export interface OrderData {
 export interface FilterData {
 	order: OrderData
 	searchQuery: string
-	tagFilter: string
+	tagFilter: string[]
 }

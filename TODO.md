@@ -29,11 +29,10 @@
 -	Compendium Browser
 	-	Parity with character sheet item menus
 		-	Collapsing, dragdrop, dragdrop preview
-	-	Multiple tags option to match GCS
+-	Add makeshift static to dynamic character conversion
 
 ## 1.1.0 and beyond
 
--	Add makeshift static to dynamic character conversion
 -   Dynamic Character changes
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
         the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings
