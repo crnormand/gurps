@@ -26,9 +26,6 @@
 -	convert mook generator
 -   Convert the modifier bucket over
     -   modifier bucket journals
--	Compendium Browser
-	-	Parity with character sheet item menus
-		-	Collapsing, dragdrop, dragdrop preview
 -	Add makeshift static to dynamic character conversion
 
 ## 1.1.0 and beyond
