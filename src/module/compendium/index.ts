@@ -71,11 +71,20 @@ export class CompendiumBrowser extends Application {
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		const _html = html[0]
 		super.activateListeners(html)
+		// Html.find(".item").on("dragover", event => this._onDragItem(event))
 		html.find(".item").on("dblclick", event => this._onClickEntry(event))
 		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
 		html.find(".ref").on("click", event => PDF.handle(event))
 
 		const activeTabName = this.activeTab
+
+		const tags = html.find(".tags")
+		const options = html.find(".options")
+		options.css("top", `${90}px`)
+		options.css("left", `${630}px`)
+		console.log(tags.position())
+		// Options.css("top", `${tags.position()?.top}px`)
+		// options.css("left", `${tags.position()?.left}px`)
 
 		// Settings Tab
 		if (activeTabName === "settings") {
@@ -105,7 +114,46 @@ export class CompendiumBrowser extends Application {
 		}
 
 		html.find("input[name='searchQuery']").on("change", event => this._updateQuery(event))
-		html.find("select").on("change", event => this._updateFilter(event))
+		html.find("button.tags").on("click", event => this._toggleList(event))
+		html.find("div.option").on("click", event => this._updateFilter(event))
+	}
+
+	protected _onDragItem(event: JQuery.DragOverEvent): void {
+		let element = $(event.currentTarget!).closest(".item.desc")
+		if (!element.length) return
+		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
+		const widthAcross = (event.pageX! - element.offset()!.left) / element.width()!
+		const inContainer = widthAcross > 0.3 && element.hasClass("container")
+		if (heightAcross > 0.5 && element.hasClass("border-bottom")) return
+		if (heightAcross < 0.5 && element.hasClass("border-top")) return
+		if (inContainer && element.hasClass("border-in")) return
+
+		$(".border-bottom").removeClass("border-bottom")
+		$(".border-top").removeClass("border-top")
+		$(".border-in").removeClass("border-in")
+
+		// Const parent = element.parent(".item-list")
+		let selection = []
+		// If (parent.attr("id") === "equipment") {
+		// 	selection = [
+		// 		...Array.prototype.slice.call(element.prevUntil(".reference")),
+		// 		...Array.prototype.slice.call(element.nextUntil(".equipped")),
+		// 	]
+		// } else if (parent.attr("id") === "other-equipment") {
+		// 	selection = [
+		// 		...Array.prototype.slice.call(element.prevUntil(".reference")),
+		// 		...Array.prototype.slice.call(element.nextUntil(".quantity")),
+		// 	]
+		// } else selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
+		selection = Array.prototype.slice.call(element.nextUntil(".item.desc"))
+		selection.unshift(element)
+		if (inContainer) {
+			for (const e of selection) $(e).addClass("border-in")
+		} else if (heightAcross > 0.5) {
+			for (const e of selection) $(e).addClass("border-bottom")
+		} else {
+			for (const e of selection) $(e).addClass("border-top")
+		}
 	}
 
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<unknown> {
@@ -125,9 +173,43 @@ export class CompendiumBrowser extends Application {
 		this.render()
 	}
 
-	_updateFilter(event: JQuery.TriggeredEvent): void {
+	_toggleList(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const button = $(event.currentTarget)
+		const options = $(event.currentTarget).parent().children(".options")
+		const x = button.position().left
+		const y = button.position().top + 28
+		// Const options = button.children(".options")
+		options.css("left", `${x}px`)
+		options.css("top", `${y}px`)
+		// Options.css("left", `${0}px`)
+		// options.css("top", `${0}px`)
+		console.log(options)
+		return options.toggleClass("visible")
+	}
+
+	_updateFilter(event: JQuery.ClickEvent) {
+		event.preventDefault()
 		if (this.activeTab === TabName.Settings) return
-		this.tabs[this.activeTab].filterData.tagFilter = String($(event.currentTarget).val())
+		const value = $(event.currentTarget).data("value") as string
+		console.log(value)
+		if (value === "any") {
+			this.tabs[this.activeTab].filterData.tagFilter = []
+			return this.render()
+		}
+		let tags = this.tabs[this.activeTab].filterData.tagFilter
+		if (event.shiftKey) {
+			if (tags.includes(value)) tags.splice(tags.indexOf(value), 1)
+			else tags.push(value)
+		} else {
+			tags = [value]
+		}
+
+		this.tabs[this.activeTab].filterData.tagFilter = tags
+		this.render()
+		// Console.log(event.currentTarget)
+		// console.log($(event.currentTarget).val())
+		// this.tabs[this.activeTab].filterData.tagFilter = String($(event.currentTarget).val())
 	}
 
 	override getData(): object | Promise<object> {
@@ -153,12 +235,18 @@ export class CompendiumBrowser extends Application {
 				})
 			)
 			const tagList = Array.from(tagSet).sort()
+			let tags = tab.filterData.tagFilter[0]
+			if (tab.filterData.tagFilter.length === 0)
+				tags = LocalizeGURPS.translations.gurps.compendium_browser.any_tag
+			else if (tab.filterData.tagFilter.length > 1)
+				tags = LocalizeGURPS.translations.gurps.compendium_browser.multi_tag
 			return {
 				user: game.user,
 				inCompendium: true,
 				settings: { notes_display: "inline" },
 				[activeTab]: {
 					tab: activeTab,
+					tags: tags,
 					filterData: tab.filterData,
 					indexData: indexData,
 					tagList: tagList,

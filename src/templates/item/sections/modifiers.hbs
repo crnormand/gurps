@@ -6,7 +6,57 @@
         </div>
         {{#each system.modifiers }}
             <div class="modifier">
-				checkem
+				<div class="top">
+					<a class="remove button gcs-trash" data-index="{{@index}}"></a>
+					<div class="label">{{localize "gurps.modifier.sheet.modifier"}}</div>
+					<div class="field">
+						<input
+							type="text"
+							name="array.system.modifiers.{{@index}}.modifier"
+							value="{{this.modifier}}"
+							data-dtype="Number"
+						/>
+					</div>
+					<div class="label">{{localize "gurps.modifier.sheet.name"}}</div>
+					<div class="field">
+						<input
+							type="text"
+							name="array.system.modifiers.{{@index}}.name"
+							value="{{this.name}}"
+							data-dtype="String"
+						/>
+					</div>
+					<div class="label">{{localize "gurps.modifier.sheet.max"}}</div>
+					<div class="field">
+						<input
+							type="text"
+							name="array.system.modifiers.{{@index}}.max"
+							value="{{this.max}}"
+							data-dtype="Number"
+						/>
+					</div>
+				</div>
+				<div>
+					<div class="label">{{localize "gurps.modifier.sheet.cost"}}</div>
+					<div class="field">
+						<input
+							type="text"
+							name="array.system.modifiers.{{@index}}.cost.value"
+							value="{{this.cost.value}}"
+							data-dtype="Number"
+						/>
+					</div>
+					<div class="label">{{localize "gurps.modifier.sheet.id"}}</div>
+					<div class="field">
+						<input
+							type="text"
+							name="array.system.modifiers.{{@index}}.cost.id"
+							value="{{this.cost.id}}"
+							data-dtype="String"
+							{{disabled (eq this.cost.value 0)}}
+						/>
+					</div>
+				</div>
 			</div>
 		{{/each}}
 	</div>

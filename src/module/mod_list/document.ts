@@ -1,8 +1,10 @@
 import { ActorGURPS } from "@module/config"
-import { RollModifier, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
+import { RollModifier, RollModifierTags, SETTINGS, SYSTEM_NAME, UserFlags } from "@module/data"
 import { LastActor } from "@util"
 
 class ModifierList extends Application {
+	_tempRangeMod: RollModifier = { name: "", modifier: 0, tags: [RollModifierTags.Range] }
+
 	hover = false
 
 	static get defaultOptions(): ApplicationOptions {
@@ -74,15 +76,32 @@ class ModifierList extends Application {
 		return this.render(true)
 	}
 
-	protected addModifier(mod: RollModifier) {
+	setRangeMod(mod: RollModifier) {
+		this._tempRangeMod = mod
+	}
+
+	addRangeMod() {
+		this.addModifier(this._tempRangeMod)
+	}
+
+	addModifier(mod: RollModifier) {
 		const modList: RollModifier[] =
 			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
-		const oldMod = modList.find(e => e.name === mod.name)
-		if (oldMod) oldMod.modifier += mod.modifier
-		else modList.push(mod)
+		if (mod.tags?.includes(RollModifierTags.Range)) {
+			const oldMod = modList.find(e => e.tags?.includes(RollModifierTags.Range))
+			if (oldMod) {
+				oldMod.modifier = mod.modifier
+				oldMod.name = mod.name
+			} else modList.push(mod)
+		} else {
+			const oldMod = modList.find(e => e.name === mod.name)
+			if (oldMod) oldMod.modifier += mod.modifier
+			else modList.push(mod)
+		}
 		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
 		game.ModifierButton.render(true)
+		Hooks.call("addModifier")
 	}
 
 	removeModifier(event: JQuery.ClickEvent) {

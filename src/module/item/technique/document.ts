@@ -77,35 +77,24 @@ class TechniqueGURPS extends ItemGCS {
 	}
 
 	get skillLevel(): string {
-		if (this.calculateLevel.level === -Infinity) return "-"
-		return this.calculateLevel.level.toString()
+		if (this.calculateLevel().level === -Infinity) return "-"
+		return this.calculateLevel().level.toString()
 	}
 
 	get relativeLevel(): string {
-		if (this.calculateLevel.level === -Infinity) return "-"
-		return this.calculateLevel.relative_level.signedString()
+		if (this.calculateLevel().level === -Infinity) return "-"
+		return this.calculateLevel().relative_level.signedString()
 	}
 
 	// Point & Level Manipulation
 	updateLevel(): boolean {
 		const saved = this.level
-		this.defaultedFrom = undefined
-		this.level = this.calculateLevel
-		if (this.defaultedFrom) {
-			const def = this.defaultedFrom
-			const previous = this.level
-			this.defaultedFrom = undefined
-			this.level = this.calculateLevel
-			if (this.level.level < previous.level) {
-				this.defaultedFrom = def
-				this.level = previous
-			}
-		}
+		this.level = this.calculateLevel()
 		return saved !== this.level
 	}
 
 	get effectiveLevel(): number {
-		return this.calculateLevel.level
+		return this.calculateLevel().level
 	}
 
 	// Used for defaults
@@ -117,7 +106,7 @@ class TechniqueGURPS extends ItemGCS {
 		this._dummyActor = actor
 	}
 
-	get calculateLevel(): SkillLevel {
+	calculateLevel(): SkillLevel {
 		const actor = this.actor || this.dummyActor
 		const tooltip = new TooltipGURPS()
 		let relative_level = 0
@@ -162,10 +151,10 @@ class TechniqueGURPS extends ItemGCS {
 		if (this.difficulty === Difficulty.Wildcard) maxPoints += 12
 		else maxPoints += 4
 
-		const oldLevel = this.calculateLevel.level
+		const oldLevel = this.calculateLevel().level
 		for (let points = basePoints; points < maxPoints; points++) {
 			this.system.points = points
-			if (this.calculateLevel.level > oldLevel) {
+			if (this.calculateLevel().level > oldLevel) {
 				return this.update({ "system.points": points })
 			}
 		}
@@ -179,19 +168,19 @@ class TechniqueGURPS extends ItemGCS {
 		else minPoints -= 4
 		minPoints = Math.max(minPoints, 0)
 
-		let oldLevel = this.calculateLevel.level
+		let oldLevel = this.calculateLevel().level
 		for (let points = basePoints; points >= minPoints; points--) {
 			this.system.points = points
-			if (this.calculateLevel.level < oldLevel) {
+			if (this.calculateLevel().level < oldLevel) {
 				break
 			}
 		}
 
 		if (this.points > 0) {
-			let oldLevel = this.calculateLevel.level
+			let oldLevel = this.calculateLevel().level
 			while (this.points > 0) {
 				this.system.points = Math.max(this.points - 1, 0)
-				if (this.calculateLevel.level !== oldLevel) {
+				if (this.calculateLevel().level !== oldLevel) {
 					this.system.points++
 					return this.update({ "system.points": this.points })
 				}

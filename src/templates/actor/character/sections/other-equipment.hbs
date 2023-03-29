@@ -1,8 +1,11 @@
 {{#unless @root/inCompendium}}
 <div class="quantity">{{ this.quantity }}</div>
 {{/unless}}
-<div class="desc item{{#if (in this.type '_container')}} container{{/if}}" data-uuid="{{ this.uuid }}" {{{ indent
-	this.parents.length }}}>
+<div
+	class="desc item{{#if (in this.type '_container')}} container{{/if}} other"
+	data-uuid="{{ this.uuid }}"
+	{{{indent this.parents.length}}}
+>
 	<div class="dropdown">
 		{{#if (eq this.type "equipment_container") }}
 		{{#if this.open }}

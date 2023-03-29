@@ -48,6 +48,7 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 					tags: equipment.tags,
 					reference: equipment.reference,
 					parents: equipment.parents,
+					indent: equipment.indent,
 					modifiers: equipment.modifiers,
 				})
 			})

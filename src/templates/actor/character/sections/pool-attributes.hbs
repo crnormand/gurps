@@ -28,7 +28,7 @@
 						name="attributes.{{this.id}}.adj"
 						value="{{this.max}}"
 						data-dtype="Number"
-						{{input_lock ../editing}}
+						{{disabled (not ../editing)}}
 					/>
 				</div>
 				<div class="label">{{this.attribute_def.name}}</div>

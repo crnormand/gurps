@@ -63,6 +63,7 @@ import { RulerGURPS } from "./ruler"
 import {
 	BaseItemGURPS,
 	EffectGURPS,
+	EffectPanel,
 	EffectSheet,
 	EquipmentModifierContainerSheet,
 	EquipmentModifierSheet,
@@ -83,7 +84,7 @@ import {
 	TraitSheet,
 	WeaponSheet,
 } from "@item"
-import { CharacterSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
+import { CharacterSheetGURPS, LootSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
 import { DamageCalculator } from "./damage_calculator/damage_calculator"
 import { ActiveEffectGURPS } from "@module/effect"
 import { ModifierList } from "./mod_list"
@@ -158,6 +159,8 @@ Hooks.once("init", async () => {
 	// Preload Handlebars templates
 	await preloadTemplates()
 	registerHandlebarsHelpers()
+
+	game.EffectPanel = new EffectPanel()
 
 	// Register custom sheets (if any)
 	Items.unregisterSheet("core", ItemSheet)
@@ -262,7 +265,11 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.character_gcs"),
 	})
-
+	Actors.registerSheet(SYSTEM_NAME, LootSheetGURPS, {
+		types: [ActorType.Loot],
+		makeDefault: true,
+		label: game.i18n.localize("gurps.system.sheet.loot"),
+	})
 	Actors.registerSheet(SYSTEM_NAME, StaticCharacterSheetGURPS, {
 		types: [ActorType.LegacyCharacter],
 		makeDefault: true,
@@ -347,6 +354,10 @@ Hooks.once("ready", async () => {
 Hooks.on("renderChatMessage", (_app, html, _data) => Chat.addChatListeners(html))
 Hooks.on("renderChatMessage", DamageChat.renderChatMessage)
 Hooks.on("dropCanvasData", DamageChat.handleDropOnCanvas)
+
+Hooks.on("canvasReady", () => {
+	game.EffectPanel.render(true)
+})
 
 Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) => {
 	if (app.options.id === "compendium") {
@@ -456,4 +467,68 @@ Hooks.on("renderDialog", (_dialog: any, html: JQuery<HTMLElement>) => {
 			select.append(extractOptGroup(select, categories.legacy, [ItemType.LegacyEquipment]))
 		}
 	}
+})
+
+Hooks.on("updateToken", function () {
+	game.ModifierList.render(true)
+})
+
+Hooks.once("item-piles-ready", async function () {
+	;(game as any).itempiles.API.addSystemIntegration({
+		VERSION: "1.0.0",
+
+		// The actor class type is the type of actor that will be used for the default
+		// item pile actor that is created on first item drop.
+		ACTOR_CLASS_TYPE: ActorType.Loot,
+
+		// The item quantity attribute is the path to the attribute
+		// on items that denote how many of that item that exists
+		ITEM_QUANTITY_ATTRIBUTE: "system.quantity",
+
+		// The item price attribute is the path to the attribute
+		// on each item that determine how much it costs
+		ITEM_PRICE_ATTRIBUTE: "system.value",
+
+		// Item types and the filters actively remove items from the item
+		// pile inventory UI that users cannot loot, such as spells, feats, and classes
+		ITEM_FILTERS: [
+			{
+				path: "type",
+				filters: [
+					ItemType.Trait,
+					ItemType.TraitContainer,
+					ItemType.TraitModifier,
+					ItemType.TraitModifierContainer,
+					ItemType.Skill,
+					ItemType.Technique,
+					ItemType.SkillContainer,
+					ItemType.Spell,
+					ItemType.RitualMagicSpell,
+					ItemType.SpellContainer,
+					ItemType.EquipmentModifier,
+					ItemType.EquipmentModifierContainer,
+					ItemType.Note,
+					ItemType.NoteContainer,
+					ItemType.LegacyEquipment,
+					ItemType.Effect,
+					ItemType.Condition,
+					ItemType.MeleeWeapon,
+					ItemType.RangedWeapon,
+				].join(","),
+			},
+		],
+
+		UNSTACKABLE_ITEM_TYPES: [ItemType.EquipmentContainer],
+
+		// Item similarities determines how item piles detect similarities and differences in the system
+		ITEM_SIMILARITIES: ["name", "type"],
+
+		// Currencies in item piles is a versatile system that can
+		// accept actor attributes (a number field on the actor's sheet)
+		// or items (actual items in their inventory)
+		// In the case of attributes, the path is relative to the "actor.system"
+		// In the case of items, it is recommended you export the item
+		// with `.toObject()` and strip out any module data
+		CURRENCIES: [],
+	})
 })

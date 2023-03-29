@@ -53,6 +53,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 					tags: spell.tags,
 					reference: spell.reference,
 					parents: spell.parents,
+					indent: spell.indent,
 					college: spell.system.college,
 					resist: spell.system.resist,
 					spell_class: spell.system.spell_class,

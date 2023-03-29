@@ -29,7 +29,7 @@
 			name="array.system.features.{{@index}}.qualifier.qualifier"
 			value="{{this.qualifier.qualifier}}"
 			data-dtype="String"
-			{{input_lock (neq this.qualifier.compare "none")}}
+			{{disabled (eq this.qualifier.compare "none")}}
 		/>
 	</div>
 </div>

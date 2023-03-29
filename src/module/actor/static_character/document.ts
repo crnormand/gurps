@@ -132,6 +132,24 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		return this.system.traits?.sizemod ?? 0
 	}
 
+	encumbranceLevel(_: any) {
+		for (const e of Object.values(this.system.encumbrance)) {
+			if (e.current)
+				return {
+					level: e.level,
+					maximum_carry: parseFloat(e.weight),
+					penalty: -e.level,
+					name: LocalizeGURPS.translations.gurps.character.encumbrance[e.level as 0 | 1 | 2 | 3 | 4],
+				}
+		}
+		return {
+			level: 0,
+			maximum_carry: 20,
+			penalty: 0,
+			name: LocalizeGURPS.translations.gurps.character.encumbrance[0],
+		}
+	}
+
 	override prepareBaseData(): void {
 		// NOTE: why not set flags after sizemod calculation?
 		super.prepareBaseData()

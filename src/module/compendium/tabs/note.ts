@@ -44,6 +44,7 @@ export class CompendiumNoteTab extends CompendiumTab {
 					children: note.type === ItemType.NoteContainer ? children : [],
 					reference: note.reference,
 					parents: note.parents,
+					indent: note.indent,
 				})
 			})
 

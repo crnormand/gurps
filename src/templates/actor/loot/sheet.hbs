@@ -1,0 +1,96 @@
+
+<form class="{{cssClass}}" autocomplete="off">
+    <div id="sheet">
+		<div id="personal">
+            {{>actor/character/sections/portrait }}
+            {{>actor/character/sections/identity }}
+            {{>actor/character/sections/miscellaneous }}
+            {{>actor/character/sections/description }}
+            {{>actor/character/sections/points }}
+		</div>
+        <div id="embeds" style="grid-template: 'equipment''other_equipment';">
+            <div id="equipment" class="item-list">
+                <div class="header equipped">
+                    <i class="gcs-checkmark"></i>
+                </div>
+                <div class="header quantity">
+                    {{ localize "gurps.character.equipment.quantity" }}
+                </div>
+                <div class="header desc">
+                    {{localize "gurps.character.equipment.desc" weight=actor.fastWeightCarried
+                    value=actor.fastWealthCarried}}
+                </div>
+                <div class="header uses">
+                    {{ localize "gurps.character.equipment.uses" }}
+                </div>
+                <div class="header tech-level">
+                    {{ localize "gurps.character.equipment.tech_level" }}
+                </div>
+                <div class="header legality-class">
+                    {{ localize "gurps.character.equipment.legality_class" }}
+                </div>
+                <div class="header value">
+                    <i class="gcs-coins"></i>
+                </div>
+                <div class="header weight">
+                    <i class="gcs-weight"></i>
+                </div>
+                <div class="header extended-value">
+                    <i class="gcs-stack"></i><i class="gcs-coins"></i>
+                </div>
+                <div class="header extended-weight">
+                    <i class="gcs-stack"></i><i class="gcs-weight"></i>
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each equipment }}
+                {{>actor/character/sections/equipment }}
+                {{/each }}
+            </div>
+            <div id="other-equipment" class="item-list">
+                <div class="header quantity">
+                    {{ localize "gurps.character.other_equipment.quantity" }}
+                </div>
+                <div class="header desc">
+                    {{ localize "gurps.character.other_equipment.desc" value=actor.fastWealthNotCarried }}
+                </div>
+                <div class="header uses">
+                    {{ localize "gurps.character.other_equipment.uses" }}
+                </div>
+                <div class="header tech-level">
+                    {{ localize "gurps.character.other_equipment.tech_level" }}
+                </div>
+                <div class="header legality-class">
+                    {{ localize "gurps.character.other_equipment.legality_class" }}
+                </div>
+                <div class="header value">
+                    <i class="gcs-coins"></i>
+                </div>
+                <div class="header weight">
+                    <i class="gcs-weight"></i>
+                </div>
+                <div class="header extended-value">
+                    <i class="gcs-stack"></i><i class="gcs-coins"></i>
+                </div>
+                <div class="header extended-weight">
+                    <i class="gcs-stack"></i><i class="gcs-weight"></i>
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each other_equipment }}
+                {{>actor/character/sections/other-equipment }}
+                {{/each }}
+            </div>
+        </div>
+        <div id="footer">
+            <div class="left">
+                {{{ localize "gurps.character.copyright" current_year=current_year }}}
+            </div>
+            <div class="right">
+                <a tabindex="-1" href="https://gurpscharactersheet.com/">gurpscharactersheet.com</a>
+            </div>
+        </div>
+    </div>
+</form>

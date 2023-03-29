@@ -1,4 +1,4 @@
-import { SETTINGS, SYSTEM_NAME } from "@module/data"
+import { RollModifierTags, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { allLengthUnits, Length, LengthSymbols, LengthUnits, LocalizeGURPS } from "@util"
 
 class RulerGURPS extends Ruler {
@@ -16,11 +16,12 @@ class RulerGURPS extends Ruler {
 		const yards = Length.fromInches(Length.toInches(totalDistance, units), LengthUnits.Yard)
 		const mod = RulerGURPS.getRangeMod(yards)
 
-		game.ModifierButton.setRangeMod({
+		game.ModifierList.setRangeMod({
 			name: LocalizeGURPS.format(LocalizeGURPS.translations.gurps.modifier.speed.range, {
 				distance: `${Math.round(totalDistance * 100) / 100} ${units}`,
 			}),
 			modifier: mod,
+			tags: [RollModifierTags.Range],
 		})
 
 		label += ` (${mod})`
@@ -31,7 +32,7 @@ class RulerGURPS extends Ruler {
 		let addRangeMod = !(this as any).draggedEntity
 		super._endMeasurement()
 		if (addRangeMod) {
-			game.ModifierButton.addRangeMod()
+			game.ModifierList.addRangeMod()
 		}
 	}
 

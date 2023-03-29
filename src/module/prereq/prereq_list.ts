@@ -1,6 +1,5 @@
-import { CharacterGURPS } from "@actor"
-import { Prereq } from "@module/config"
-import { NumberCompare, NumberComparison, PrereqType } from "@module/data"
+import { ActorGURPS, Prereq } from "@module/config"
+import { ActorType, NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { extractTechLevel, LocalizeGURPS, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
@@ -43,9 +42,10 @@ export class PrereqList extends BasePrereq {
 	}
 
 	// Override satisfied(character: CharacterGURPS, exclude: any, buffer: TooltipGURPS: string): boolean {
-	satisfied(actor: CharacterGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
+	satisfied(actor: ActorGURPS, exclude: any, tooltip: TooltipGURPS): [boolean, boolean] {
+		if (actor.type !== ActorType.Character) return [true, false]
 		if (this.when_tl?.compare !== "none") {
-			let tl = extractTechLevel(actor.profile?.tech_level)
+			let tl = extractTechLevel((actor as any).profile?.tech_level)
 			if (tl < 0) tl = 0
 			if (!numberCompare(tl, this.when_tl)) return [true, false]
 		}

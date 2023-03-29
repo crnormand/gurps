@@ -8,7 +8,7 @@
 				name="name"
 				value="{{actor.name}}"
 				data-dtype="String"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.title"}}</div>
@@ -18,7 +18,7 @@
 				name="system.profile.title"
 				value="{{system.profile.title}}"
 				data-dtype="String"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.organization"}}</div>
@@ -28,7 +28,7 @@
 				name="system.profile.organization"
 				value="{{system.profile.organization}}"
 				data-dtype="String"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 	</div>

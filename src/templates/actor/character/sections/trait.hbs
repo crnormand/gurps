@@ -1,5 +1,8 @@
-<div class="desc item {{#if (in this.type '_container')}}container {{/if}}{{disabled (not this.enabled)}}"
-	data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+<div
+	class="desc item{{#if (in this.type '_container')}} container{{/if}} other {{disabled (not this.enabled)}}"
+	data-uuid="{{ this.uuid }}"
+	{{{indent this.parents.length}}}
+>
 	<div class="dropdown">
 		{{#if (or (eq this.type "trait_container") this.children.size)}}
 		{{#if this.open}}

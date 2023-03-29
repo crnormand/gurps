@@ -125,18 +125,9 @@ export class WeaponDamage {
 				tags,
 				base.count,
 				levels,
-				tooltip,
-				bonusSet
+				bonusSet,
+				tooltip
 			)
-			// Actor.addNamedWeaponBonusesFor(
-			// 	bestDefault.name!,
-			// 	bestDefault.specialization!,
-			// 	tags,
-			// 	base.count,
-			// 	levels,
-			// 	tooltip,
-			// 	bonusSet
-			// )
 		}
 		const nameQualifier = this.parent.name
 		actor.addNamedWeaponBonusesFor(nameQualifier, this.parent.usage, tags, base.count, levels, tooltip, bonusSet)

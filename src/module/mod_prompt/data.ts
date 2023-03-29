@@ -1,4 +1,4 @@
-import { ModifierItem, SETTINGS, SYSTEM_NAME } from "@module/data"
+import { ModifierItem, RollModifierTags, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { Length, LengthUnits, LocalizeGURPS } from "@util"
 
 export function loadModifiers() {
@@ -308,7 +308,7 @@ export function loadModifiers() {
 		].map(([r, d]) => {
 			const adjDistance = Length.format(Length.toInches(d, LengthUnits.Yard), LengthUnits.Yard)
 			return {
-				tags: ["Range"],
+				tags: [RollModifierTags.Range],
 				modifier: r,
 				name: LocalizeGURPS.format(LocalizeGURPS.translations.gurps.modifier.speed.range, {
 					distance: adjDistance,
@@ -316,7 +316,7 @@ export function loadModifiers() {
 			}
 		}),
 		{
-			tags: ["Range"],
+			tags: [RollModifierTags.Range],
 			modifier: -15,
 			name: LocalizeGURPS.format(LocalizeGURPS.translations.gurps.modifier.speed.range, {
 				distance: `${Length.format(Length.toInches(500, LengthUnits.Yard), LengthUnits.Yard)}+`,
@@ -324,17 +324,37 @@ export function loadModifiers() {
 		},
 	]
 	const modifiersSpeedSimple: ModifierItem[] = [
-		{ tags: ["Range"], name: LocalizeGURPS.translations.gurps.modifier.speed.close, modifier: 0 },
-		{ tags: ["Range"], name: LocalizeGURPS.translations.gurps.modifier.speed.short, modifier: -3 },
-		{ tags: ["Range"], name: LocalizeGURPS.translations.gurps.modifier.speed.medium, modifier: -7 },
-		{ tags: ["Range"], name: LocalizeGURPS.translations.gurps.modifier.speed.long, modifier: -11 },
-		{ tags: ["Range"], name: LocalizeGURPS.translations.gurps.modifier.speed.extreme, modifier: -15 },
+		{
+			tags: [RollModifierTags.Range],
+			name: LocalizeGURPS.translations.gurps.modifier.speed.close,
+			modifier: 0,
+		},
+		{
+			tags: [RollModifierTags.Range],
+			name: LocalizeGURPS.translations.gurps.modifier.speed.short,
+			modifier: -3,
+		},
+		{
+			tags: [RollModifierTags.Range],
+			name: LocalizeGURPS.translations.gurps.modifier.speed.medium,
+			modifier: -7,
+		},
+		{
+			tags: [RollModifierTags.Range],
+			name: LocalizeGURPS.translations.gurps.modifier.speed.long,
+			modifier: -11,
+		},
+		{
+			tags: [RollModifierTags.Range],
+			name: LocalizeGURPS.translations.gurps.modifier.speed.extreme,
+			modifier: -15,
+		},
 	]
 
 	const modifiersSpeedTens: ModifierItem[] = [...Array(50).keys()].map(e => {
 		const adjDistance = Length.format(Length.toInches((e + 1) * 10, LengthUnits.Yard), LengthUnits.Yard)
 		return {
-			tags: ["Range"],
+			tags: [RollModifierTags.Range],
 			modifier: -(e + 1),
 			name: LocalizeGURPS.format(LocalizeGURPS.translations.gurps.modifier.speed.range, {
 				distance: adjDistance,

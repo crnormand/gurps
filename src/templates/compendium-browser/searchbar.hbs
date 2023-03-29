@@ -7,17 +7,23 @@
 		placeholder={{localize "gurps.compendium_browser.search"}}
 	/>
 	{{#unless (eq tab "note")}}
-	<select name="tagFilter" data-dtype="String">
-		{{#select filterData.tagFilter}}
-			<option value="any_tag">
-				{{localize "gurps.compendium_browser.any_tag"}}
-			</option>
-			{{#each tagList}}
-				<option value="{{this}}">
-					{{this}}
-				</option>
-			{{/each}}
-		{{/select}}
-	</select>
+	<button class="tags">{{tags}}</button>
+	<div class="options">
+	{{#if (eq filterData.tagFilter.length 0)}}
+		<div class="option" data-value="any">
+			<i class="gcs-checkmark"></i>
+			{{localize "gurps.compendium_browser.any_tag"}}
+		</div>
+		{{else}}
+		<div class="option pad" data-value="any">{{localize "gurps.compendium_browser.any_tag"}}</div>
+	{{/if}}
+	{{#each tagList}}
+		{{#if (in ../filterData.tagFilter this)}}
+		<div class="option" data-value="{{this}}"><i class="gcs-checkmark"></i> {{this}}</div>
+		{{else}}
+		<div class="option pad" data-value="{{this}}">{{this}}</div>
+		{{/if}}
+	{{/each}}
+	</div>
 	{{/unless}}
 </div>

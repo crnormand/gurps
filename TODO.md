@@ -6,10 +6,7 @@
 	-	functional rolls
 	-	foundry item display
 	-	don't bother with editing features
--   @X@ notation dialog box for items
-	-	finish UI
 -	Active Effects
-	-	finish active effect sheet
 	-	active effect side panel (for removing effects)
 	-	active effect tab on charsheet (for removing/editing effects)
 
@@ -29,10 +26,7 @@
 -	convert mook generator
 -   Convert the modifier bucket over
     -   modifier bucket journals
--	Compendium Browser
-	-	Parity with character sheet item menus
-		-	Collapsing, dragdrop, dragdrop preview
-	-	Multiple tags option to match GCS
+-	Add makeshift static to dynamic character conversion
 
 ## 1.1.0 and beyond
 

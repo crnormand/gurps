@@ -3,6 +3,10 @@
 	grid-template-columns: 1fr repeat(4, auto);
 	.header {
 		grid-area: auto;
+		&.desc {
+			display: flex;
+			justify-content: space-evenly;
+		}
 	}
 
 	.desc:nth-child(10n + 1),

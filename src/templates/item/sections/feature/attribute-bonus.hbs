@@ -13,7 +13,7 @@
 			{{/each}}
 		{{/select}}
 	</select>
-	<select name="array.system.features.{{@index}}.limitation" {{input_lock (eq this.attribute "st")}}>
+	<select name="array.system.features.{{@index}}.limitation" {{disabled (ne this.attribute "st")}}>
 		{{#select this.limitation}}
 			{{#each config.select.st_limitation as |v k|}}
 				<option value="{{k}}">{{localize v}}</option>

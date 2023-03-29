@@ -1,5 +1,5 @@
-import { CharacterGURPS } from "@actor"
-import { gid, NumberCompare, NumberComparison, PrereqType } from "@module/data"
+import { ActorGURPS } from "@module/config"
+import { ActorType, gid, NumberCompare, NumberComparison, PrereqType } from "@module/data"
 import { TooltipGURPS } from "@module/tooltip"
 import { LocalizeGURPS, numberCompare } from "@util"
 import { BasePrereq, PrereqConstructionContext } from "./base"
@@ -19,18 +19,19 @@ export class AttributePrereq extends BasePrereq {
 		})
 	}
 
-	satisfied(character: CharacterGURPS, _: any, tooltip: TooltipGURPS): [boolean, boolean] {
-		let value = character.resolveAttributeCurrent(this.which)
-		if (this.combined_with !== "") value += character.resolveAttributeCurrent(this.combined_with)
+	satisfied(actor: ActorGURPS, _: any, tooltip: TooltipGURPS): [boolean, boolean] {
+		if (actor.type !== ActorType.Character) return [true, false]
+		let value = (actor as any).resolveAttributeCurrent(this.which)
+		if (this.combined_with !== "") value += (actor as any).resolveAttributeCurrent(this.combined_with)
 		let satisfied = numberCompare(value, this.qualifier)
 		if (!this.has) satisfied = !satisfied
 		if (!satisfied) {
 			// Tooltip.push(prefix)
 			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.has[this.has ? "true" : "false"])
-			tooltip.push(character.resolveAttributeName(this.which))
+			tooltip.push((actor as any).resolveAttributeName(this.which))
 			if (this.combined_with !== "") {
 				tooltip.push(LocalizeGURPS.translations.gurps.prereqs.attribute.plus)
-				tooltip.push(character.resolveAttributeName(this.combined_with))
+				tooltip.push((actor as any).resolveAttributeName(this.combined_with))
 			}
 			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.attribute.which)
 			tooltip.push(LocalizeGURPS.translations.gurps.prereqs.criteria[this.qualifier?.compare])

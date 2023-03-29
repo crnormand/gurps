@@ -1,7 +1,8 @@
 {
 	"ACTOR": {
 		"TypeCharacter_gcs": "Character",
-		"TypeCharacter": "Character (Legacy)"
+		"TypeCharacter": "Character (Legacy)",
+		"TypeLoot": "Loot"
 	},
 	"ITEM": {
 		"TypeTrait": "Trait",
@@ -28,9 +29,20 @@
 	"gurps": {
 		"pdf": {
 			"offset": "Page Offset",
-			"code": "PDF Book Code"
+			"offset_placeholder": "Offset (e.g. -5, 0, 2)",
+			"offset_hint": "When saving changes, the PDF should open to page 5 based on this offset.",
+			"code": "PDF Book Code",
+			"code_placeholder": "PDF Code (e.g. 'B')"
 		},
 		"modifier": {
+			"header": "Roll Modifiers",
+			"sheet": {
+				"modifier": "Modifier",
+				"name": "Description",
+				"max": "Max",
+				"cost": "Cost",
+				"id": "Attribute ID"
+			},
 			"melee": {
 				"determined": "to hit (Determined Attack)",
 				"telegraphic": "to hit (Telegraphic Attack)",
@@ -359,6 +371,8 @@
 			"basic_damage": "Basic Damage",
 			"basic_thrust": "Basic Thrust",
 			"basic_swing": "Basic Swing",
+			"thrust": "Thrust",
+			"swing": "Swing",
 			"secondary_attributes": "Secondary Attributes",
 			"point_pools": "Point Pools",
 			"pool_of": "of",
@@ -580,6 +594,7 @@
 			}
 		},
 		"item": {
+			"img": "Image",
 			"name": "Name",
 			"enabled": "Enabled",
 			"notes": "Notes",
@@ -1037,6 +1052,7 @@
 			"search": "Search",
 			"tags": "Tags",
 			"any_tag": "Any Tag",
+			"multi_tag": "Multiple",
 			"settings": "Settings",
 			"item": {
 				"trait": "Trait",
@@ -1068,6 +1084,7 @@
 			"sheet": {
 				"character_gcs": "GURPS Dynamic Character Sheet",
 				"character": "GURPS Static Character Sheet",
+				"loot": "Loot Sheet",
 				"trait": "Trait Sheet",
 				"trait_container": "Trait Container Sheet",
 				"modifier": "Trait Modifier Sheet",
@@ -1367,7 +1384,9 @@
 				"invalid_item_type": "Invalid Item Type: {type}",
 				"portrait_permissions": "Portrait upload failed. You do not have \"FILES_UPLOAD\" permissions. Ask your GM to import your portrait, or acquire the appropriate permissions."
 			},
-			"modifier_app_load_failed": "Failed to initialize the Modifier Stack App."
+			"modifier_app_load_failed": "Failed to initialize the Modifier Stack App.",
+			"no_last_actor": "No actor selected!",
+			"no_last_token": "No token selected!"
 		},
 		"token": {
 			"select": "Select Token"
@@ -1387,6 +1406,7 @@
 		},
 		"context": {
 			"toggle_state": "Toggle State",
+			"duplicate": "Duplicate",
 			"delete": "Delete",
 			"increment": "Increment",
 			"decrement": "Decrement",
@@ -1394,6 +1414,8 @@
 			"decrease_level": "Decrease Skill Level",
 			"increase_tech_level": "Increase Tech Level",
 			"decrease_tech_level": "Decrease Tech Level",
+			"convert_to_container": "Convert to Container",
+			"convert_to_non_container": "Convert to Non-Container",
 			"new_trait": "New Trait",
 			"new_trait_container": "New Trait Container",
 			"new_natural_attacks": "Add Natural Attacks",

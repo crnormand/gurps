@@ -34,7 +34,7 @@ class EffectGURPS extends BaseItemGURPS {
 
 	get duration(): { remaining: number; type: DurationType; total: number } {
 		if (!this.combat || !this.system.duration || this.system.duration.type === DurationType.None)
-			return { remaining: 0, type: DurationType.None, total: 0 }
+			return { remaining: Infinity, type: DurationType.None, total: Infinity }
 		let total = 0
 		let remaining = 0
 		if (this.system.duration.type === DurationType.Turns) {
@@ -54,7 +54,7 @@ class EffectGURPS extends BaseItemGURPS {
 
 	get isExpired(): boolean {
 		if (this.duration.type === DurationType.None) return false
-		return this.duration.remaining >= 0
+		return this.duration.remaining <= 0
 	}
 
 	get level(): number {

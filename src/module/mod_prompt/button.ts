@@ -5,8 +5,6 @@ import { ModifierBucket } from "./bucket"
 import { ModifierWindow } from "./window"
 
 class ModifierButton extends Application {
-	_tempRangeMod: RollModifier = { name: "", modifier: 0 }
-
 	modifierMode: "prompt" | "bucket" = "prompt"
 
 	private _window?: ModifierWindow | ModifierBucket
@@ -71,14 +69,6 @@ class ModifierButton extends Application {
 			currentActor: currentActor ? currentActor.name : null,
 			showDice,
 		})
-	}
-
-	setRangeMod(mod: RollModifier) {
-		this._tempRangeMod = mod
-	}
-
-	addRangeMod() {
-		game.ModifierButton.window.addModifier(this._tempRangeMod)
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
@@ -156,7 +146,7 @@ class ModifierButton extends Application {
 		const originalEvent = event.originalEvent
 		if (originalEvent instanceof WheelEvent) {
 			const delta = Math.round(originalEvent.deltaY / -100)
-			return this.addModifier({
+			return game.ModifierList.addModifier({
 				name: "",
 				modifier: delta,
 				tags: [],
@@ -164,22 +154,24 @@ class ModifierButton extends Application {
 		}
 	}
 
-	addModifier(mod: RollModifier) {
-		const modList: RollModifier[] =
-			(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
-		const oldMod = modList.find(e => e.name === mod.name)
-		if (oldMod) oldMod.modifier += mod.modifier
-		else modList.push(mod)
-		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
-		// This.list.customMod = null
-		// this.list.mods = []
-		// this.list.selection = -1
-		// this.value = ""
-		this.render()
-		game.ModifierList.render(true)
-		Hooks.call("addModifier")
-		// This.button.render()
-	}
+	// AddModifier(mod: RollModifier) {
+	// 	const modList: RollModifier[] =
+	// 		(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
+	// 	const oldMod = modList.find(e => e.name === mod.name)
+	// 	if (oldMod) oldMod.modifier += mod.modifier
+	// 	else modList.push(mod)
+	// 	game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
+	// 	game.ModifierList.addModifier(mod)
+	// 	game.ModifierList.render(true)
+	// 	// This.list.customMod = null
+	// 	// this.list.mods = []
+	// 	// this.list.selection = -1
+	// 	// this.value = ""
+	// 	this.render()
+	// 	game.ModifierList.render(true)
+	// 	Hooks.call("addModifier")
+	// 	// This.button.render()
+	// }
 
 	async recalculateModTotal(user: StoredDocument<User> | null): Promise<unknown> {
 		if (!user) return

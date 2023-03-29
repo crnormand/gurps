@@ -8,7 +8,7 @@
 				name="system.profile.gender"
 				data-dtype="String"
 				value="{{system.profile.gender}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.age"}}</div>
@@ -18,7 +18,7 @@
 				name="system.profile.age"
 				data-dtype="String"
 				value="{{system.profile.age}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.birthday"}}</div>
@@ -28,7 +28,7 @@
 				name="system.profile.birthday"
 				data-dtype="String"
 				value="{{system.profile.birthday}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.religion"}}</div>
@@ -38,7 +38,7 @@
 				name="system.profile.religion"
 				data-dtype="String"
 				value="{{system.profile.religion}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 	</div>
@@ -50,7 +50,7 @@
 				name="system.profile.height"
 				data-dtype="String"
 				value="{{height}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.weight"}}</div>
@@ -60,7 +60,7 @@
 				name="system.profile.weight"
 				data-dtype="String"
 				value="{{weight}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.sm"}}</div>
@@ -75,7 +75,7 @@
 				name="system.profile.SM"
 				data-dtype="Number"
 				value="{{signed actor.adjustedSizeModifier}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.tech_level"}}</div>
@@ -85,7 +85,7 @@
 				name="system.profile.tech_level"
 				data-dtype="String"
 				value="{{system.profile.tech_level}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 	</div>
@@ -97,7 +97,7 @@
 				name="system.profile.hair"
 				data-dtype="String"
 				value="{{system.profile.hair}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.eyes"}}</div>
@@ -107,7 +107,7 @@
 				name="system.profile.eyes"
 				data-dtype="String"
 				value="{{system.profile.eyes}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.skin"}}</div>
@@ -117,7 +117,7 @@
 				name="system.profile.skin"
 				data-dtype="String"
 				value="{{system.profile.skin}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 		<div class="label">{{localize "gurps.character.handedness"}}</div>
@@ -127,7 +127,7 @@
 				name="system.profile.handedness"
 				data-dtype="String"
 				value="{{system.profile.handedness}}"
-				{{input_lock editing}}
+				{{disabled (not editing)}}
 			/>
 		</div>
 	</div>

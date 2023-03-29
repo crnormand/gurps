@@ -1,3 +1,4 @@
+import { CharacterGURPS, StaticCharacterGURPS } from "@actor"
 import { SYSTEM_NAME } from "@module/data"
 import { TokenGURPS } from "@module/token"
 
@@ -13,7 +14,7 @@ export const init = function () {
 			}
 
 			getRanges(token: TokenGURPS) {
-				const actor = token.actor
+				const actor = token.actor as CharacterGURPS | StaticCharacterGURPS
 				const ranges = [
 					{ range: actor.effectiveMove, color: "walk" },
 					{ range: actor.effectiveSprint, color: "sprint" },

@@ -1,18 +1,37 @@
 <form class="{{cssClass}}" autocomplete="off">
 	<div id="sheet">
 		<div id="details">
+			<div class="label">{{localize "gurps.item.img"}}</div>
+			<div class="field">
+			<div class="img-display" style="background-image: url({{document.img}});">
+				<img src="{{document.img}}" data-edit="img" title="{{document.name}}" />
+			</div>
+			</div>
 			<div class="label">{{localize "gurps.item.name"}}</div>
 			<div class="field">
 				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
 			</div>
+            <div class="label checkbox-label" style="justify-self: end;">
+                <input type="checkbox" name="system.can_level" data-dtype="Boolean" {{checked system.can_level}} />
+                {{ localize "gurps.item.levels" }}
+            </div>
+            <div class="field">
+                <input
+				type="text"
+				name="system.levels"
+				value="{{system.levels}}"
+				data-dtype="Number"
+				{{disabled (not system.can_level)}}
+				/>
+            </div>
 			<div class="label">{{localize "gurps.item.duration"}}</div>
 			<div class="field no-stretch">
 				<input
 					type="text"
 					name="duration"
 					value="{{duration}}"
-					data-dtype="String"
-					{{input_lock (neq system.duration.type "none")}}
+					data-dtype="Number"
+					{{disabled (eq system.duration.type "none")}}
 				/>
                 <select name="system.duration.type" data-dtype="String">
                     {{#select system.duration.type }}

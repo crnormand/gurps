@@ -112,7 +112,18 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		[ConditionID.Cold]: { id: ConditionID.Cold },
 		[ConditionID.Disarmed]: { id: ConditionID.Disarmed },
 		[ConditionID.Falling]: { id: ConditionID.Falling },
-		[ConditionID.Grappled]: { id: ConditionID.Grappled },
+		[ConditionID.Grappled]: {
+			id: ConditionID.Grappled,
+			features: [
+				{
+					type: FeatureType.AttributeBonus,
+					amount: -4,
+					attribute: "dx",
+					limitation: AttributeBonusLimitation.None,
+					per_level: false,
+				},
+			],
+		},
 		[ConditionID.Restrained]: { id: ConditionID.Restrained },
 		[ConditionID.Pinned]: { id: ConditionID.Pinned },
 		[ConditionID.Sprinting]: { id: ConditionID.Sprinting },

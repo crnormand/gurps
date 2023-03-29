@@ -170,7 +170,7 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 	}
 
 	prepareEmbeddedDocuments(): void {
-		if (this.actor?.noPrepare) return
+		// If (this.actor?.noPrepare) return
 		super.prepareEmbeddedDocuments()
 		const containedItems = (this.getFlag(SYSTEM_NAME, "contentsData") as ItemDataGURPS[]) ?? []
 		const oldItems = this.items ?? new Collection()

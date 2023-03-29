@@ -2,7 +2,7 @@ import { LastActor, LocalizeGURPS } from "@util"
 import { gid, RollModifier, RollType } from "./data"
 import { RollGURPS } from "@module/roll"
 import { ActorGURPS } from "./config"
-import { CharacterGURPS } from "@actor"
+import { CharacterGURPS, LootGURPS } from "@actor"
 
 /**
  *
@@ -81,11 +81,11 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 	const type: RollType = $(event.currentTarget).data("type")
 	const data: Record<string, any> = { type: type, hidden: event.ctrlKey }
 	const actor: ActorGURPS | null = await LastActor.get()
+	if (actor instanceof LootGURPS) return
 
 	if (type === RollType.Attribute) {
-		const id = $(event.currentTarget).data("id")
+		const id = $(event.currentTarget).data("json").id
 		if (id === gid.Dodge) data.attribute = actor?.dodgeAttribute
-		// Else if (id === gid.SizeModifier) data.attribute = this.actor.sizeModAttribute
 		else data.attribute = actor?.attributes.get(id)
 	} else if (
 		[
