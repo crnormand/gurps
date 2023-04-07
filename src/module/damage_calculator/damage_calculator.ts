@@ -78,18 +78,22 @@ class DamageCalculator {
 	 * @returns {number} - The amount of damage that penetrates any DR.
 	 */
 	get penetratingDamage(): number {
-		return Math.max(this.basicDamage - this._effectiveDR, 0)
+		return Math.max(this.basicDamage - this.effectiveDR, 0)
 	}
 
 	/**
 	 * @returns {number} - The final amount of damage inflicted on the defender (does not consider blunt trauma).
 	 */
 	get injury(): number {
-		let temp = Math.floor(this._woundingModifier(this.penetratingDamage))
+		let temp = Math.floor(this.woundingModifier.function(this.penetratingDamage))
 		temp = temp * this.vulnerabilityLevel
 		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 		candidateInjury = candidateInjury / this._damageReductionValue
 		return this._applyMaximum(candidateInjury)
+	}
+
+	get woundingModifier(): ModifierFunction {
+		return this._woundingModifier
 	}
 
 	/**
@@ -315,7 +319,7 @@ class DamageCalculator {
 			: 0
 	}
 
-	private get _effectiveDR() {
+	get effectiveDR() {
 		if (this._isIgnoreDR || this._isInternalExplosion) return 0
 
 		let dr =
@@ -446,12 +450,15 @@ class DamageCalculator {
 
 		switch (this.damageRoll.locationId) {
 			case "vitals":
-				if ([DamageType.imp, ...AnyPiercingType].includes(this.damageRoll.damageType)) return x => x * 3
+				if ([DamageType.imp, ...AnyPiercingType].includes(this.damageRoll.damageType))
+					return { name: "3", function: x => x * 3 }
 				return this.isTightBeamBurning() ? double : multiplier.theDefault
 
 			case "skull":
 			case "eye":
-				return this.damageRoll.damageType !== DamageType.tox ? x => x * 4 : multiplier.theDefault
+				return this.damageRoll.damageType !== DamageType.tox
+					? { name: "4", function: x => x * 4 }
+					: multiplier.theDefault
 
 			case "face":
 				return this.damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity

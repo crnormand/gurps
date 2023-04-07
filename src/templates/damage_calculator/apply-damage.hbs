@@ -219,24 +219,24 @@
 			<div class="table">
 				<div class="header">Calculation</div>
 				<div class="step">Basic Damage</div>
-				<div class="value">4</div>
-				<div class="descr">HP</div>
+				<div class="value" data-role="basicdamage">{{calculator.basicDamage}}</div>
+				<div class="descr" data-role="targetresource">{{calculator.damageRoll.applyTo}}</div>
 				<div class="step">DR</div>
-				<div class="value">0</div>
-				<div class="descr">torso</div>
+				<div class="value" data-role="dr">{{calculator.effectiveDR}}</div>
+				<div class="descr" data-role="hitlocation">{{hitLocation.choice_name}}</div>
 				<div class="step">Penetrating</div>
-				<div class="value">4</div>
-				<div class="descr">4 − 0</div>
+				<div class="value" data-role="penetrating">{{calculator.penetratingDamage}}</div>
+				<div class="descr">{{calculator.basicDamage}} − {{calculator.effectiveDR}}</div>
 				<div class="step">Modifier</div>
-				<div class="value">×1</div>
-				<div class="descr">cr</div>
+				<div class="value" data-role="multiplier">×{{calculator.woundingModifier.name}}</div>
+				<div class="descr" data-role="damagetype">{{calculator.damageRoll.damageType}}</div>
 				<div class="step">Injury</div>
-				<div class="value">4</div>
-				<div class="descr">= 4 × 1</div>
+				<div class="value" data-role="injury">{{calculator.injury}}</div>
+				<div class="descr">= {{calculator.penetratingDamage}} × {{calculator.woundingModifier.name}}</div>
 			</div>
 			<div class="apply">
-				<div class="label">{{localize "gurps.damage.injury"}}</div>
-				<input type="number" value="{{roll.injury}}" step="any" name="injury" size="4" />
+				<div class="label">{{localize "gurps.damage.injury"}}&nbsp;({{localize "gurps.static.hp"}})</div>
+				<input type="number" value="{{calculator.injury}}" step="any" name="injury" size="4" />
 				<button type="button" class="apply-button gcs-checkmark">{{localize "gurps.misc.apply"}}</button>
 			</div>
 		</div>

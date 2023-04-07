@@ -34,7 +34,7 @@
 			}
 
 			&.no-stretch {
-				.checkbox-label + .checkbox-label {
+				.checkbox-label+.checkbox-label {
 					margin: 0;
 				}
 			}
@@ -58,6 +58,10 @@
 			width: 6em;
 		}
 
+		input[name="injury"] {
+			text-align: right;
+		}
+
 		.header {
 			text-align: center;
 			grid-column: span 3;
@@ -69,13 +73,16 @@
 			text-decoration: none;
 			color: rgba(var(--color-link), 1) !important;
 			cursor: pointer;
+
 			&:hover {
 				color: rgba(var(--color-link-rollover), 1) !important;
 			}
+
 			&:active {
 				color: rgba(var(--color-link-pressed), 1) !important;
 			}
 		}
+
 		// .pdf {
 		// 	color: rgba(var(--color-text-dark-inactive), 1);
 		// 	text-decoration: none;
@@ -130,14 +137,14 @@
 				display: grid;
 				grid-template-columns: max-content min-content 1fr;
 
-				> div:not(.header) {
+				>div:not(.header) {
 					background-color: rgb(var(--color-content));
 					color: rgb(var(--color-on-content));
 					border-right: 1px solid rgb(var(--color-interior-divider));
 					border-bottom: 1px solid rgb(var(--color-interior-divider));
 				}
 
-				> div {
+				>div {
 					padding: var(--padding-standard);
 				}
 
