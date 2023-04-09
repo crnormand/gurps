@@ -204,6 +204,8 @@ export interface DamageTarget {
 	isDiffuse: boolean
 	// Return this.hasTrait("Vulnerability").level.
 	vulnerabilityLevel: number
+	// Subtract value from HitPoints
+	incrementDamage(delta: number): void
 }
 
 export interface TargetTrait {

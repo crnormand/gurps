@@ -61,31 +61,19 @@ class ApplyDamageDialog extends Application {
 
 		const data = mergeObject(super.getData(options), {
 			calculator: this.calculator,
+			choices: this.choices,
+			effectiveDRReason: this.showEffectiveDRReason,
+			books,
+
 			roll: this.roll,
 			target: this.target,
-			armorDivisorSelect: this.roll.armorDivisor,
+			armorDivisorSelect: this.armorDivisorText,
 			type: this.roll.damageTypeKey,
-
 			isExplosion: this.isExplosion,
-
-			damageTypeChoices: DamageType,
-
 			hitLocation: this.hitLocation,
-			hitLocationChoices: this.hitLocationChoice,
-
-			hardenedChoices: hardenedChoices,
-
-			vulnerabilityChoices: vulnerabilityChoices,
 			vulnerabilities: this.vulnerabilities,
-
-			injuryToleranceChoices: injuryToleranceChoices,
 			injuryTolerance: this.injuryTolerance,
-
-			damageReductionChoices: damageReductionChoices,
 			damageReduction: this.damageReduction,
-
-			poolChoices: poolChoices,
-			books,
 		})
 		return data
 	}
@@ -93,19 +81,23 @@ class ApplyDamageDialog extends Application {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
-		html.find(".apply-control").on("change", "click", this._onApplyControl.bind(this))
+		html.find("[data-control]").on("change click", event => this._onApplyControl(event))
 		html.find(".ref").on("click", event => PDF.handle(event))
 	}
 
-	async _onApplyControl(event: JQuery.ChangeEvent | JQuery.ClickEvent): Promise<void> {
-		const target = event.currentTarget
-
-		if (event.type === "click" && ["button", "checkbox"].includes(target.type)) {
-			this._onApplyControlClick(event, target)
+	_onApplyControl(event: JQuery.Event) {
+		if (event.type === "click") {
+			const e = event as JQuery.ClickEvent
+			if (["button", "checkbox"].includes(e.currentTarget.type)) {
+				this._onApplyControlClick(e, e.currentTarget)
+			}
 		}
 
-		if (event.type === "change" && ["number", "select-one"].includes(target.type)) {
-			this._onApplyControlChange(event, target)
+		if (event.type === "change") {
+			const e = event as JQuery.ChangeEvent
+			if (["number", "select-one"].includes(e.currentTarget.type)) {
+				this._onApplyControlChange(e, e.currentTarget)
+			}
 		}
 	}
 
@@ -113,19 +105,29 @@ class ApplyDamageDialog extends Application {
 		event.preventDefault()
 
 		switch (target.dataset.action) {
-			case "location-select": {
+			case "location-select":
 				this.calculator.damageRoll.locationId = target.value
 				break
-			}
 
-			case "hardened-select": {
+			case "hardened-select":
 				this.calculator.overrideHardenedDR(target.value)
+				break
+
+			case "override-dr": {
+				const value = parseInt(target.value)
+				this.calculator.overrideRawDr(isNaN(value) ? undefined : value)
 				break
 			}
 
-			case "location-dr": {
-				// Need to override target.dr in the calculator.
-				this.calculator.overrideRawDr(target.value)
+			case "override-basic": {
+				const value = parseInt(target.value)
+				this.calculator.overrideBasicDamage(isNaN(value) ? undefined : value)
+				break
+			}
+
+			case "armordivisor-select": {
+				const value = parseFloat(target.value)
+				this.calculator.overrideArmorDivisor(value)
 				break
 			}
 		}
@@ -144,6 +146,11 @@ class ApplyDamageDialog extends Application {
 
 			case "location-flexible": {
 				this.calculator.overrideFlexible(!this.calculator.isFlexibleArmor)
+				break
+			}
+
+			case "apply-basic": {
+				this.calculator.target.incrementDamage(this.calculator.adjustedBasicDamage)
 				break
 			}
 		}
@@ -197,14 +204,12 @@ class ApplyDamageDialog extends Application {
 		return HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
 	}
 
-	private overrideDR(dr: number | undefined) {
-		this.calculator.overrideRawDr(dr)
-	}
-
-	private get hitLocationChoice(): Record<string, string> {
-		const choice: Record<string, string> = {}
-		this.target.hitLocationTable.locations.forEach(it => (choice[it.id] = it.choice_name))
-		return choice
+	private get showEffectiveDRReason(): string | undefined {
+		// TODO localize reason here, or return language key only
+		if (this.calculator.isInternalExplosion) return "Internal Explosion"
+		if (this.calculator.effectiveArmorDivisor !== 1) return `Armor Divisor ${this.armorDivisorText}`
+		if (this.calculator.damageType === DamageType.injury) return "Ignores DR"
+		return undefined
 	}
 
 	private get vulnerabilities(): string[] {
@@ -228,6 +233,42 @@ class ApplyDamageDialog extends Application {
 		if (!trait) trait = this.target.getTrait(InjuryTolerance_DamageReduction)
 		return trait?.levels ?? 1
 	}
+
+	private get choices() {
+		return {
+			hardened: hardenedChoices,
+			vulnerability: vulnerabilityChoices,
+			damageReduction: damageReductionChoices,
+			injuryTolerance: injuryToleranceChoices,
+			pool: poolChoices,
+			damageType: DamageType,
+			hitlocation: this.hitLocationChoice,
+		}
+	}
+
+	private get hitLocationChoice(): Record<string, string> {
+		const choice: Record<string, string> = {}
+		this.target.hitLocationTable.locations.forEach(it => (choice[it.id] = it.choice_name))
+		return choice
+	}
+
+	private get armorDivisorText() {
+		const key = this.calculator.armorDivisor === -1 ? "-1" : this.calculator.armorDivisor
+		return armorDivisorChoices[key]
+	}
+}
+
+const armorDivisorChoices: Record<number, string> = {
+	0: "Ignores DR",
+	100: "(100)",
+	10: "(10)",
+	5: "(5)",
+	3: "(3)",
+	2: "(2)",
+	1: "No Divisor",
+	0.5: "(0.5)",
+	0.2: "(0.2)",
+	0.1: "(0.1)",
 }
 
 const hardenedChoices = {

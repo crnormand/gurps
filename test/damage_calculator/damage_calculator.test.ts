@@ -173,18 +173,18 @@ describe("Damage calculator", () => {
 		it("The result of the damage roll is the hit’s “basic damage.”", () => {
 			_roll.basicDamage = 8
 			let calc = _create(_roll, _target)
-			expect(calc.basicDamage).toBe(8)
+			expect(calc.adjustedBasicDamage).toBe(8)
 
 			_roll.basicDamage = 4
 			calc = _create(_roll, _target)
-			expect(calc.basicDamage).toBe(4)
+			expect(calc.adjustedBasicDamage).toBe(4)
 		})
 
 		it("(Knockback Only does no damage.)", () => {
 			_roll.basicDamage = 8
 			_roll.damageType = DamageType.kb
 			let calc = _create(_roll, _target)
-			expect(calc.basicDamage).toBe(0)
+			expect(calc.adjustedBasicDamage).toBe(0)
 		})
 	})
 
@@ -1986,11 +1986,11 @@ describe("Damage calculator", () => {
 
 			const calc = _create(_roll, _target)
 			// It would be 9 ÷ (3 × 3) = 1; except the range is too far.
-			expect(calc.basicDamage).toBe(0)
+			expect(calc.adjustedBasicDamage).toBe(0)
 
 			_roll.range = 2
 			// It should be 9 ÷ (3 × 2) = 1.
-			expect(calc.basicDamage).toBe(1)
+			expect(calc.adjustedBasicDamage).toBe(1)
 		})
 
 		it("Roll this damage but divide it by (3 × yards from the center of the blast), rounding down.", () => {
@@ -1999,15 +1999,15 @@ describe("Damage calculator", () => {
 			_torso._map.set("all", 1)
 
 			const calc = _create(_roll, _target)
-			expect(calc.basicDamage).toBe(2) // 13 ÷ (3 × 2) = 2
+			expect(calc.adjustedBasicDamage).toBe(2) // 13 ÷ (3 × 2) = 2
 			expect(calc.injury).toBe(1)
 
 			_roll.range = 1
-			expect(calc.basicDamage).toBe(4) // 13 ÷ (3 × 1) = 4
+			expect(calc.adjustedBasicDamage).toBe(4) // 13 ÷ (3 × 1) = 4
 			expect(calc.injury).toBe(3)
 
 			_roll.range = 3
-			expect(calc.basicDamage).toBe(1) // 13 ÷ (3 × 3) = 1
+			expect(calc.adjustedBasicDamage).toBe(1) // 13 ÷ (3 × 3) = 1
 			expect(calc.injury).toBe(0)
 		})
 
@@ -2019,15 +2019,15 @@ describe("Damage calculator", () => {
 
 			_roll.range = 2
 			const calc = _create(_roll, _target)
-			expect(calc.basicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
+			expect(calc.adjustedBasicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
 			expect(calc.injury).toBe(1)
 
 			_roll.range = 1
-			expect(calc.basicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
+			expect(calc.adjustedBasicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
 			expect(calc.injury).toBe(5)
 
 			_roll.range = 3
-			expect(calc.basicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
+			expect(calc.adjustedBasicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
 			expect(calc.injury).toBe(0)
 		})
 
@@ -2049,15 +2049,15 @@ describe("Damage calculator", () => {
 
 			_roll.range = 2
 			const calc = _create(_roll, _target)
-			expect(calc.basicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
+			expect(calc.adjustedBasicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
 			expect(calc.injury).toBe(4)
 
 			_roll.range = 1
-			expect(calc.basicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
+			expect(calc.adjustedBasicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
 			expect(calc.injury).toBe(8)
 
 			_roll.range = 3
-			expect(calc.basicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
+			expect(calc.adjustedBasicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
 			expect(calc.injury).toBe(2)
 		})
 	})
@@ -2176,6 +2176,9 @@ class _Target implements DamageTarget {
 	get hitLocationTable(): HitLocationTable {
 		return this._dummyHitLocationTable
 	}
+
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	incrementDamage(delta: number): void {}
 }
 
 class _DamageRoll implements DamageRoll {
@@ -2222,7 +2225,7 @@ const Knockdown = [
 type DamageShock = { damage: number; shock: number }
 
 interface IDamageCalculator {
-	basicDamage: number
+	adjustedBasicDamage: number
 	penetratingDamage: number
 	injury: number
 	bluntTrauma: number

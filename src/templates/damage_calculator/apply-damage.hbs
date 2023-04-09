@@ -2,36 +2,51 @@
 	<div class="header">Damage Roll</div>
 	<div class="fieldblock">
 		<div class="label">Attacker</div>
-		<div class="field">{{roll.attacker.name}}</div>
+		<div class="field">{{calculator.damageRoll.attacker.name}}</div>
 		<div></div>
 
 		<div class="label">Weapon</div>
-		<div class="field">{{roll.weapon.name}}</div>
+		<div class="field">{{calculator.damageRoll.weapon.name}}</div>
 		<div></div>
 
 		<div class="label">Source roll</div>
 		<div class="field">
-			{{roll.damageText}}
+			{{calculator.damageRoll.damageText}}
 		</div>
 		<div></div>
 
 		<div class="label">Basic Damage</div>
 		<div class="field no-stretch direct-damage">
-			<input type="number" value="{{roll.basicDamage}}" step="any" name="basicDamage" size="4" />
+			<input
+				type="number"
+				value="{{calculator.basicDamage}}"
+				step="any"
+				data-control
+				data-action="override-basic"
+				name="basicDamage"
+				size="4"
+			/>
 			<div class="label">
 				<select name="pool">
-					{{selectOptions poolChoices value="hp"}}
+					{{selectOptions choices.pool value="hp"}}
 				</select>
 			</div>
-			<button type="button" class="apply-button gcs-checkmark">{{localize "gurps.misc.apply"}}</button>
+			<button type="button" class="gcs-checkmark" data-control data-action="apply-basic">{{localize
+					"gurps.misc.apply"
+				}}</button>
 		</div>
 		<div></div>
 
 		<div class="label">Armor Divisor</div>
 		<div class="field">
-			<select name="armorDivsor" value="{{roll.armorDivisor}}">
-				{{#select armorDivisorSelect}}
-					<option value="-1">Ignores DR</option>
+			<select
+				name="armorDivisor"
+				data-control
+				data-action="armordivisor-select"
+				value="{{calculator.armorDivisor}}"
+			>
+				{{#select calculator.armorDivisor}}
+					<option value="0">Ignores DR</option>
 					<option value="100">(100)</option>
 					<option value="10">(10)</option>
 					<option value="5">(5)</option>
@@ -53,7 +68,7 @@
 		<div class="label">Damage type</div>
 		<div class="field no-stretch type">
 			<select name="damageType">
-				{{selectOptions damageTypeChoices selected=roll.damageTypeKey localize=false}}
+				{{selectOptions choices.damageType selected=roll.damageTypeKey localize=false}}
 			</select>
 			<div class="label">Modifier</div>
 			<input type="number" value="{{roll.woundMod}}" step="any" name="woundMod" size="3" />
@@ -118,17 +133,17 @@
 
 			<div class="label">{{localize "gurps.damage.hit_location"}}</div>
 			<div class="field no-stretch location">
-				<select name="hitLocation" class="apply-control" data-action="location-select">
-					{{selectOptions hitLocationChoices selected=calculator.damageRoll.locationId localize=false}}
+				<select name="hitLocation" data-control data-action="location-select">
+					{{selectOptions choices.hitlocation selected=calculator.damageRoll.locationId localize=false}}
 				</select>
-				<button type="button" class="apply-control" data-action="location-random"><i
+				<button type="button" data-control data-action="location-random"><i
 						class="fa-light fa-dice"
 					></i></button>
 				<div class="label">{{localize "gurps.character.body_type.dr"}}</div>
 				<input
 					type="number"
-					class="apply-control"
-					data-action="location-dr"
+					data-control
+					data-action="override-dr"
 					value="{{calculator.rawDR}}"
 					step="any"
 					name="dr"
@@ -147,7 +162,7 @@
 					<input
 						id="flexible"
 						type="checkbox"
-						class="apply-control"
+						data-control
 						data-action="location-flexible"
 						{{checked calculator.isFlexibleArmor}}
 					/>{{localize "gurps.damage.flexible"}}</label>
@@ -156,8 +171,8 @@
 
 			<div class="label">{{localize "gurps.damage.hardened_dr"}}</div>
 			<div class="field">
-				<select name="hardened" class="apply-control" data-action="hardened-select">
-					{{selectOptions hardenedChoices selected=calculator.hardenedDRLevel}}
+				<select name="hardened" data-control data-action="hardened-select">
+					{{selectOptions choices.hardened selected=calculator.hardenedDRLevel}}
 				</select>
 			</div>
 			<div class="label ref" data-pdf="B47">B47</div>
@@ -174,7 +189,7 @@
 				{{/if}}
 
 				<select name="vulnerable-override">
-					{{selectOptions vulnerabilityChoices}}
+					{{selectOptions choices.vulnerability}}
 				</select>
 			</div>
 			{{#if (eq books "dfrpg")}}
@@ -186,7 +201,7 @@
 			<div class="label">Injury Tolerance</div>
 			<div class="field">
 				<select name="tolerance">
-					{{selectOptions injuryToleranceChoices selected=injuryTolerance}}
+					{{selectOptions choices.injuryTolerance selected=injuryTolerance}}
 				</select>
 			</div>
 			<div class="label ref" data-pdf="B60">B60</div>
@@ -194,12 +209,12 @@
 			<div class="label">Damage Reduction</div>
 			<div class="field no-stretch">
 				<select name="reduction">
-					{{selectOptions damageReductionChoices selected=damageReduction}}
+					{{selectOptions choices.damageReduction selected=damageReduction}}
 				</select>
 				<div class="label">Override</div>
 				<input
 					type="number"
-					class="apply-control"
+					data-control
 					data-action="override-reduction"
 					value=""
 					step="any"
@@ -221,9 +236,17 @@
 				<div class="step">Basic Damage</div>
 				<div class="value" data-role="basicdamage">{{calculator.basicDamage}}</div>
 				<div class="descr" data-role="targetresource">{{calculator.damageRoll.applyTo}}</div>
+
 				<div class="step">DR</div>
-				<div class="value" data-role="dr">{{calculator.effectiveDR}}</div>
+				<div class="value" data-role="dr">{{calculator.rawDR}}</div>
 				<div class="descr" data-role="hitlocation">{{hitLocation.choice_name}}</div>
+
+				{{#if effectiveDRReason}}
+					<div class="step">Effective DR</div>
+					<div class="value" data-role="dr">{{calculator.effectiveDR}}</div>
+					<div class="descr">{{effectiveDRReason}}</div>
+				{{/if}}
+
 				<div class="step">Penetrating</div>
 				<div class="value" data-role="penetrating">{{calculator.penetratingDamage}}</div>
 				<div class="descr">{{calculator.basicDamage}} − {{calculator.effectiveDR}}</div>
