@@ -4,7 +4,7 @@ import { PDF } from "@module/pdf"
 import { toWord } from "@util/misc"
 import { DamageRoll, DamageTarget } from "."
 import { DamageCalculator } from "./damage_calculator"
-import { DamageType } from "./damage_type"
+import { _DamageType, _DamageTypes } from "./damage_type"
 import { HitLocationUtil } from "./hitlocation_utils"
 
 const Vulnerability = "Vulnerability"
@@ -68,7 +68,6 @@ class ApplyDamageDialog extends Application {
 			roll: this.roll,
 			target: this.target,
 			armorDivisorSelect: this.armorDivisorText,
-			type: this.roll.damageTypeKey,
 			isExplosion: this.isExplosion,
 			hitLocation: this.hitLocation,
 			vulnerabilities: this.vulnerabilities,
@@ -128,6 +127,11 @@ class ApplyDamageDialog extends Application {
 			case "armordivisor-select": {
 				const value = parseFloat(target.value)
 				this.calculator.overrideArmorDivisor(value)
+				break
+			}
+
+			case "damagetype-select": {
+				this.calculator.overrideDamageType(target.value)
 				break
 			}
 		}
@@ -208,7 +212,7 @@ class ApplyDamageDialog extends Application {
 		// TODO localize reason here, or return language key only
 		if (this.calculator.isInternalExplosion) return "Internal Explosion"
 		if (this.calculator.effectiveArmorDivisor !== 1) return `Armor Divisor ${this.armorDivisorText}`
-		if (this.calculator.damageType === DamageType.injury) return "Ignores DR"
+		if (this.calculator.damageType === _DamageTypes.injury) return "Ignores DR"
 		return undefined
 	}
 
@@ -241,9 +245,15 @@ class ApplyDamageDialog extends Application {
 			damageReduction: damageReductionChoices,
 			injuryTolerance: injuryToleranceChoices,
 			pool: poolChoices,
-			damageType: DamageType,
+			damageType: this.damageTypeChoice,
 			hitlocation: this.hitLocationChoice,
 		}
+	}
+
+	private get damageTypeChoice(): Record<string, string> {
+		let results: Record<string, string> = {}
+		Object.entries(_DamageTypes).map(e => (results[e[0]] = e[1].label))
+		return results
 	}
 
 	private get hitLocationChoice(): Record<string, string> {

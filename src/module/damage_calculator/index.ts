@@ -1,5 +1,5 @@
 import { DiceGURPS } from "../dice"
-import { DamageType } from "./damage_type"
+import { _DamageType, _DamageTypes } from "./damage_type"
 import { HitLocationTable } from "@actor/character/hit_location"
 import { DamagePayload } from "./damage_chat_message"
 import { SETTINGS, SYSTEM_NAME } from "../data"
@@ -18,8 +18,7 @@ interface DamageRoll {
 	dice: DiceGURPS
 	damageText: string
 	basicDamage: number
-	damageType: DamageType
-	damageTypeKey: string
+	damageType: _DamageType
 	applyTo: "HP" | "FP" | string
 
 	/**
@@ -142,13 +141,8 @@ class DamageRollAdapter implements DamageRoll {
 		return this._payload.armorDivisor ?? 1
 	}
 
-	get damageType(): DamageType {
-		return (DamageType as any)[this._payload.damageType]
-	}
-
-	get damageTypeKey(): string {
-		let index = Object.values(DamageType).indexOf(this.damageType)
-		return Object.keys(DamageType)[index]
+	get damageType(): _DamageType {
+		return (_DamageTypes as any)[this._payload.damageType]
 	}
 
 	get damageModifier(): string {
