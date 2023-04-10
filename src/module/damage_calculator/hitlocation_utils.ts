@@ -1,7 +1,7 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { _DamageType } from "./damage_type"
+import { DamageType } from "./damage_type"
 
 export type HitLocationRollResult = {
 	location: HitLocation | undefined
@@ -33,7 +33,7 @@ export const HitLocationUtil = {
 		return table.locations.find(it => it.id === location)
 	},
 
-	getHitLocationDR: function (location: HitLocation | undefined, damageType: _DamageType): number {
+	getHitLocationDR: function (location: HitLocation | undefined, damageType: DamageType): number {
 		if (!location) return 0
 		return location.DR.get(damageType.key) ?? location.DR.get(gid.All) ?? 0
 	},

@@ -4,7 +4,7 @@ import { PDF } from "@module/pdf"
 import { toWord } from "@util/misc"
 import { DamageRoll, DamageTarget } from "."
 import { DamageCalculator } from "./damage_calculator"
-import { _DamageType, _DamageTypes } from "./damage_type"
+import { DamageType, DamageTypes } from "./damage_type"
 import { HitLocationUtil } from "./hitlocation_utils"
 
 const Vulnerability = "Vulnerability"
@@ -212,7 +212,7 @@ class ApplyDamageDialog extends Application {
 		// TODO localize reason here, or return language key only
 		if (this.calculator.isInternalExplosion) return "Internal Explosion"
 		if (this.calculator.effectiveArmorDivisor !== 1) return `Armor Divisor ${this.armorDivisorText}`
-		if (this.calculator.damageType === _DamageTypes.injury) return "Ignores DR"
+		if (this.calculator.damageType === DamageTypes.injury) return "Ignores DR"
 		return undefined
 	}
 
@@ -252,7 +252,7 @@ class ApplyDamageDialog extends Application {
 
 	private get damageTypeChoice(): Record<string, string> {
 		let results: Record<string, string> = {}
-		Object.entries(_DamageTypes).map(e => (results[e[0]] = e[1].label))
+		Object.entries(DamageTypes).map(e => (results[e[0]] = e[1].label))
 		return results
 	}
 

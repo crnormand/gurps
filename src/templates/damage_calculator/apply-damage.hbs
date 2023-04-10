@@ -3,7 +3,7 @@
 	<div class="fieldblock">
 		<div class="label">{{localize "gurps.damage.attacker"}}</div>
 		<div class="field">{{calculator.damageRoll.attacker.name}}</div>
-		<div></div>
+		<div><button>Reset</button></div>
 
 		<div class="label">{{localize "gurps.damage.weapon"}}</div>
 		<div class="field">{{calculator.damageRoll.weapon.name}}</div>
@@ -71,7 +71,15 @@
 				{{selectOptions choices.damageType selected=calculator.damageTypeKey localize=true}}
 			</select>
 			<div class="label">{{localize "gurps.damage.wounding_modifier"}}</div>
-			<input type="number" value="{{roll.woundMod}}" step="any" name="woundMod" size="3" />
+			<span class="input-wrapper multiply">
+				<input
+					type="number"
+					class="multiply"
+					value="{{calculator.woundingModifier.name}}"
+					step="any"
+					name="woundMod"
+					size="3"
+				/></span>
 		</div>
 		{{#if (eq books "dfrpg")}}
 			<div class="label ref" data-pdf="DFX53">DFX53</div>
@@ -136,9 +144,9 @@
 				<select name="hitLocation" data-control data-action="location-select">
 					{{selectOptions choices.hitlocation selected=calculator.damageRoll.locationId localize=false}}
 				</select>
-				<button type="button" data-control data-action="location-random"><i
-						class="fa-light fa-dice"
-					></i></button>
+				<button type="button" data-control data-action="location-random">
+					<i class="fa-light fa-dice"></i>
+				</button>
 				<div class="label">{{localize "gurps.character.body_type.dr"}}</div>
 				<input
 					type="number"
