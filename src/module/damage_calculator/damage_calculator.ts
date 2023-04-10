@@ -43,10 +43,23 @@ class DamageCalculator {
 
 	private _overrideArmorDivisor: number | undefined
 
+	private _overrideWoundingModifier: ModifierFunction | undefined
+
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this.damageRoll = damageRoll
 		this.target = defender
+	}
+
+	reset() {
+		this._overrideArmorDivisor = undefined
+		this._overrideBasicDamage = undefined
+		this._overrideDamageType = undefined
+		this._overrideFlexible = undefined
+		this._overrideHardenedDR = undefined
+		this._overrideRawDR = undefined
+		this._overrideVulnerability = undefined
+		this._overrideWoundingModifier = undefined
 	}
 
 	get basicDamage(): number {
@@ -115,7 +128,21 @@ class DamageCalculator {
 	}
 
 	get woundingModifier(): ModifierFunction {
-		return this._woundingModifier
+		return this._overrideWoundingModifier ?? this._woundingModifier
+	}
+
+	overrideWoundingModifier(value: number | undefined) {
+		this._overrideWoundingModifier = value
+			? {
+					name: `${value}`,
+					function: x => x * value,
+			  }
+			: undefined
+	}
+
+	get woundingModifierReason(): string {
+		if (this._overrideWoundingModifier) return "Overriden"
+		return this.damageType.label
 	}
 
 	/**

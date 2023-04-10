@@ -130,8 +130,13 @@ class ApplyDamageDialog extends Application {
 				break
 			}
 
-			case "damagetype-select": {
+			case "damagetype-select":
 				this.calculator.overrideDamageType(target.value)
+				break
+
+			case "override-woundingmod": {
+				const value = parseFloat(target.value)
+				this.calculator.overrideWoundingModifier(isNaN(value) ? undefined : value)
 				break
 			}
 		}
@@ -143,20 +148,21 @@ class ApplyDamageDialog extends Application {
 		event.preventDefault()
 
 		switch (target.dataset.action) {
-			case "location-random": {
+			case "location-random":
 				this.calculator.damageRoll.locationId = await this._rollRandomLocation()
 				break
-			}
 
-			case "location-flexible": {
+			case "location-flexible":
 				this.calculator.overrideFlexible(!this.calculator.isFlexibleArmor)
 				break
-			}
 
-			case "apply-basic": {
+			case "apply-basic":
 				this.calculator.target.incrementDamage(this.calculator.adjustedBasicDamage)
 				break
-			}
+
+			case "reset-form":
+				this.calculator.reset()
+				break
 		}
 
 		this.render(true)
