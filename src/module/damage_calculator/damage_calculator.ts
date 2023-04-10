@@ -73,7 +73,11 @@ class DamageCalculator {
 	}
 
 	get damageType(): _DamageType {
-		return this.damageRoll.damageType
+		return this._overrideDamageType ?? this.damageRoll.damageType
+	}
+
+	get damageTypeKey(): string {
+		return this.damageType.key
 	}
 
 	overrideDamageType(key: string) {

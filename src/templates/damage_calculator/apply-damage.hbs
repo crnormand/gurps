@@ -68,7 +68,7 @@
 		<div class="label">{{localize "gurps.weapon.damage.type"}}</div>
 		<div class="field no-stretch type">
 			<select name="damageType" data-control data-action="damagetype-select">
-				{{selectOptions choices.damageType selected=calculator.damageType localize=false}}
+				{{selectOptions choices.damageType selected=calculator.damageTypeKey localize=true}}
 			</select>
 			<div class="label">{{localize "gurps.damage.wounding_modifier"}}</div>
 			<input type="number" value="{{roll.woundMod}}" step="any" name="woundMod" size="3" />
@@ -252,7 +252,7 @@
 				<div class="descr">= {{calculator.basicDamage}} − {{calculator.effectiveDR}}</div>
 				<div class="step">Modifier</div>
 				<div class="value" data-role="multiplier">×{{calculator.woundingModifier.name}}</div>
-				<div class="descr" data-role="damagetype">{{calculator.damageRoll.damageType}}</div>
+				<div class="descr" data-role="damagetype">{{localize calculator.damageType.label}}</div>
 				<div class="step">Injury</div>
 				<div class="value" data-role="injury">{{calculator.injury}}</div>
 				<div class="descr">= {{calculator.penetratingDamage}} × {{calculator.woundingModifier.name}}</div>
