@@ -81,6 +81,7 @@ class ApplyDamageDialog extends Application {
 		super.activateListeners(html)
 
 		html.find("[data-control]").on("change click", event => this._onApplyControl(event))
+		html.find("[data-action]").on("change click", event => this._onApplyControl(event))
 		html.find(".ref").on("click", event => PDF.handle(event))
 	}
 
@@ -105,6 +106,7 @@ class ApplyDamageDialog extends Application {
 
 		switch (target.dataset.action) {
 			case "location-select":
+				const value = parseInt(target.value)
 				this.calculator.damageRoll.locationId = target.value
 				break
 
@@ -114,29 +116,29 @@ class ApplyDamageDialog extends Application {
 
 			case "override-dr": {
 				const value = parseInt(target.value)
-				this.calculator.overrideRawDr(isNaN(value) ? undefined : value)
+				this.calculator.overrideRawDr = isNaN(value) ? undefined : value
 				break
 			}
 
 			case "override-basic": {
 				const value = parseInt(target.value)
-				this.calculator.overrideBasicDamage(isNaN(value) ? undefined : value)
+				this.calculator.overrideBasicDamage = isNaN(value) ? undefined : value
 				break
 			}
 
 			case "armordivisor-select": {
 				const value = parseFloat(target.value)
-				this.calculator.overrideArmorDivisor(value)
+				this.calculator.overrideArmorDivisor = isNaN(value) ? undefined : value
 				break
 			}
 
 			case "damagetype-select":
-				this.calculator.overrideDamageType(target.value)
+				this.calculator.overrideDamageType = target.value
 				break
 
 			case "override-woundingmod": {
 				const value = parseFloat(target.value)
-				this.calculator.overrideWoundingModifier(isNaN(value) ? undefined : value)
+				this.calculator.overrideWoundingModifier = isNaN(value) ? undefined : value
 				break
 			}
 		}

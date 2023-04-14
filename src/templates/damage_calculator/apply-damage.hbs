@@ -3,7 +3,11 @@
 	<div class="fieldblock">
 		<div class="label">{{localize "gurps.damage.attacker"}}</div>
 		<div class="field">{{calculator.damageRoll.attacker.name}}</div>
-		<div><button type="button" data-control data-action="reset-form">Reset</button></div>
+		<div><button
+				type="button"
+				data-action="reset-form"
+				{{disabled (not calculator.isOverridden)}}
+			>Reset</button></div>
 
 		<div class="label">{{localize "gurps.damage.weapon"}}</div>
 		<div class="field">{{calculator.damageRoll.weapon.name}}</div>
@@ -21,17 +25,16 @@
 				type="number"
 				value="{{calculator.basicDamage}}"
 				step="any"
-				data-control
 				data-action="override-basic"
-				name="basicDamage"
 				size="4"
+				class="{{overridden calculator.overrideBasicDamage}}"
 			/>
 			<div class="label">
 				<select name="pool">
 					{{selectOptions choices.pool value="hp"}}
 				</select>
 			</div>
-			<button type="button" class="gcs-checkmark" data-control data-action="apply-basic">{{localize
+			<button type="button" class="gcs-checkmark" data-action="apply-basic">{{localize
 					"gurps.misc.apply"
 				}}</button>
 		</div>
@@ -40,10 +43,9 @@
 		<div class="label">{{localize "gurps.weapon.damage.armor_divisor"}}</div>
 		<div class="field">
 			<select
-				name="armorDivisor"
-				data-control
 				data-action="armordivisor-select"
 				value="{{calculator.armorDivisor}}"
+				class="{{overridden calculator.overrideArmorDivisor}}"
 			>
 				{{#select calculator.armorDivisor}}
 					<option value="0">Ignores DR</option>
@@ -67,18 +69,17 @@
 
 		<div class="label">{{localize "gurps.weapon.damage.type"}}</div>
 		<div class="field no-stretch type">
-			<select name="damageType" data-control data-action="damagetype-select">
+			<select data-action="damagetype-select" class="{{overridden calculator.overrideDamageType}}">
 				{{selectOptions choices.damageType selected=calculator.damageTypeKey localize=true}}
 			</select>
 			<div class="label">{{localize "gurps.damage.wounding_modifier"}}</div>
 			<span class="input-wrapper multiply">
 				<input
 					type="number"
-					data-control
 					data-action="override-woundingmod"
 					value="{{calculator.woundingModifier.name}}"
+					class="{{overridden calculator.overrideWoundingModifier}}"
 					step="any"
-					name="woundMod"
 					size="3"
 				/></span>
 		</div>
@@ -142,21 +143,20 @@
 
 			<div class="label">{{localize "gurps.damage.hit_location"}}</div>
 			<div class="field no-stretch location">
-				<select name="hitLocation" data-control data-action="location-select">
+				<select name="hitLocation" data-action="location-select">
 					{{selectOptions choices.hitlocation selected=calculator.damageRoll.locationId localize=false}}
 				</select>
-				<button type="button" data-control data-action="location-random">
+				<button type="button" data-action="location-random">
 					<i class="fa-light fa-dice"></i>
 				</button>
 				<div class="label">{{localize "gurps.character.body_type.dr"}}</div>
 				<input
 					type="number"
-					data-control
 					data-action="override-dr"
 					value="{{calculator.rawDR}}"
 					step="any"
-					name="dr"
 					size="6"
+					class="{{overridden calculator.overrideRawDR}}"
 				/>
 			</div>
 			{{#if (eq books "dfrpg")}}
@@ -171,7 +171,6 @@
 					<input
 						id="flexible"
 						type="checkbox"
-						data-control
 						data-action="location-flexible"
 						{{checked calculator.isFlexibleArmor}}
 					/>{{localize "gurps.damage.flexible"}}</label>
@@ -180,7 +179,7 @@
 
 			<div class="label">{{localize "gurps.damage.hardened_dr"}}</div>
 			<div class="field">
-				<select name="hardened" data-control data-action="hardened-select">
+				<select name="hardened" data-action="hardened-select">
 					{{selectOptions choices.hardened selected=calculator.hardenedDRLevel}}
 				</select>
 			</div>
@@ -221,15 +220,7 @@
 					{{selectOptions choices.damageReduction selected=damageReduction}}
 				</select>
 				<div class="label">Override</div>
-				<input
-					type="number"
-					data-control
-					data-action="override-reduction"
-					value=""
-					step="any"
-					name="override-reduction"
-					size="3"
-				/>
+				<input type="number" data-action="override-reduction" value="" step="any" size="3" />
 			</div>
 			<div class="label ref" data-pdf="P53">P53</div>
 		</div>

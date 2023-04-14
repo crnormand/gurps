@@ -51,23 +51,37 @@ class DamageCalculator {
 		this.target = defender
 	}
 
+	private get overrides() {
+		return [
+			this._overrideArmorDivisor,
+			this._overrideBasicDamage,
+			this._overrideDamageType,
+			this._overrideFlexible,
+			this._overrideHardenedDR,
+			this._overrideRawDR,
+			this._overrideVulnerability,
+			this._overrideWoundingModifier,
+		]
+	}
+
 	reset() {
-		this._overrideArmorDivisor = undefined
-		this._overrideBasicDamage = undefined
-		this._overrideDamageType = undefined
-		this._overrideFlexible = undefined
-		this._overrideHardenedDR = undefined
-		this._overrideRawDR = undefined
-		this._overrideVulnerability = undefined
-		this._overrideWoundingModifier = undefined
+		this.overrides.forEach(it => (it = undefined))
+	}
+
+	get isOverridden(): boolean {
+		return this.overrides.some(it => it !== undefined)
 	}
 
 	get basicDamage(): number {
 		return this._overrideBasicDamage ?? this.damageRoll.basicDamage
 	}
 
-	overrideBasicDamage(value: number | undefined) {
-		this._overrideBasicDamage = value
+	get overrideBasicDamage(): number | undefined {
+		return this._overrideBasicDamage
+	}
+
+	set overrideBasicDamage(value: number | undefined) {
+		this._overrideBasicDamage = this.damageRoll.basicDamage === value ? undefined : value
 	}
 
 	/**
@@ -93,8 +107,16 @@ class DamageCalculator {
 		return this.damageType.key
 	}
 
-	overrideDamageType(key: string) {
-		this._overrideDamageType = (DamageTypes as any)[key]
+	set overrideDamageType(key: string | undefined) {
+		if (key === undefined) this._overrideDamageType = undefined
+		else {
+			const value = getProperty(DamageTypes, key) as DamageType
+			this._overrideDamageType = this.damageRoll.damageType === value ? undefined : value
+		}
+	}
+
+	get overrideDamageType(): string | undefined {
+		return this._overrideDamageType?.key
 	}
 
 	private get _isKnockbackOnly() {
@@ -131,7 +153,7 @@ class DamageCalculator {
 		return this._overrideWoundingModifier ?? this._woundingModifier
 	}
 
-	overrideWoundingModifier(value: number | undefined) {
+	set overrideWoundingModifier(value: number | undefined) {
 		this._overrideWoundingModifier = value
 			? {
 					name: `${value}`,
@@ -408,8 +430,13 @@ class DamageCalculator {
 		return this._overrideRawDR ?? HitLocationUtil.getHitLocationDR(location, this.damageType)
 	}
 
-	overrideRawDr(dr: number | undefined) {
-		this._overrideRawDR = dr
+	set overrideRawDr(dr: number | undefined) {
+		const location = this.target.hitLocationTable.locations.find(it => it.id === this.damageRoll.locationId)
+		this._overrideRawDR = HitLocationUtil.getHitLocationDR(location, this.damageType) === dr ? undefined : dr
+	}
+
+	get overrideRawDR() {
+		return this._overrideRawDR
 	}
 
 	private get _isLargeAreaInjury() {
@@ -427,8 +454,12 @@ class DamageCalculator {
 		return this._overrideArmorDivisor ?? this.damageRoll.armorDivisor
 	}
 
-	overrideArmorDivisor(value: number | undefined) {
-		this._overrideArmorDivisor = value
+	get overrideArmorDivisor(): number | undefined {
+		return this._overrideArmorDivisor
+	}
+
+	set overrideArmorDivisor(value: number | undefined) {
+		this._overrideArmorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
 	}
 
 	get effectiveArmorDivisor() {

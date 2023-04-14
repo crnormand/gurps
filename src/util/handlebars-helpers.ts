@@ -404,6 +404,10 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		)
 	}
 
+	static overridden(check: any): string {
+		return check ? "overridden" : ""
+	}
+
 	// Static multiselect(selected: string[], options: any) {
 	// 	let html = options.fn(this)
 	// 	if (selected.length === 0) {
@@ -467,6 +471,7 @@ export function registerHandlebarsHelpers() {
 		modifierCost: HandlebarsHelpersGURPS.modifierCost,
 		effective: HandlebarsHelpersGURPS.effective,
 		unsatisfied: HandlebarsHelpersGURPS.unsatisfied,
+		overridden: HandlebarsHelpersGURPS.overridden,
 		// Multiselect: HandlebarsHelpersGURPS.multiselect
 	})
 }
