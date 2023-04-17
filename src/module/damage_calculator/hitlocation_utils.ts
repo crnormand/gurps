@@ -35,7 +35,7 @@ export const HitLocationUtil = {
 
 	getHitLocationDR: function (location: HitLocation | undefined, damageType: DamageType): number {
 		if (!location) return 0
-		return location.DR.get(damageType) ?? location.DR.get(gid.All) ?? 0
+		return location.DR.get(damageType.key) ?? location.DR.get(gid.All) ?? 0
 	},
 
 	isFlexibleArmor: function (location: HitLocation | undefined): boolean {

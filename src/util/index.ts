@@ -1,6 +1,6 @@
 export * from "./misc"
 export * from "./eval"
-export * from "./handlebars-helpers"
+// Remove to allow unit tests to work -- export * from "./handlebars-helpers"
 export * as damageProgression from "./damage_progression"
 export * as SelfControl from "./cr"
 // Export * as RollGURPS from "./roll"

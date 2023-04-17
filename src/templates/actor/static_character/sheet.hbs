@@ -52,7 +52,7 @@
         <div id="move">{{>actor/static_character/sections/move }}</div>
     </div>
     <div id="embeds"
-         style="grid-template: {{ staticBlockLayout this.system }};">
+         style="grid-template: {{ layout }};">
         {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods)) }}
             {{#if (notEmpty system.reactions) }}
                 <div id="reactions">

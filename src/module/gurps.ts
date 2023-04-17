@@ -31,15 +31,8 @@
 // Import TypeScript modules
 import { registerSettings } from "./settings"
 import { preloadTemplates } from "./preload-templates"
-import {
-	evaluateToNumber,
-	getDefaultSkills,
-	LastActor,
-	LocalizeGURPS,
-	registerHandlebarsHelpers,
-	setInitiative,
-	Static,
-} from "@util"
+import { evaluateToNumber, getDefaultSkills, LastActor, LocalizeGURPS, setInitiative, Static } from "@util"
+import { registerHandlebarsHelpers } from "@util/handlebars-helpers"
 import { BaseActorGURPS } from "@actor/base"
 import { GURPSCONFIG } from "./config"
 import { fSearch } from "@util/fuse"

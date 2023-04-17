@@ -55,7 +55,28 @@
 		input[name="injury"],
 		input[name="dr"],
 		input[name="override-reduction"] {
-			width: 6em;
+			width: 4em;
+		}
+
+		input[name="injury"] {
+			text-align: right;
+		}
+
+		.input-wrapper {
+			border: 1px solid rgba(var(--color-control-edge));
+			padding: 1px 3px;
+			display: inline-block;
+		}
+
+		.input-wrapper.multiply:before {
+			content: "×";
+		}
+
+		.input-wrapper > input {
+			border: 0;
+			margin: 0;
+			padding: 0;
+			outline: none;
 		}
 
 		.header {
@@ -65,17 +86,20 @@
 
 		.ref {
 			font-size: 80%;
-			text-align: left;
+			text-align: right;
 			text-decoration: none;
 			color: rgba(var(--color-link), 1) !important;
 			cursor: pointer;
+
 			&:hover {
 				color: rgba(var(--color-link-rollover), 1) !important;
 			}
+
 			&:active {
 				color: rgba(var(--color-link-pressed), 1) !important;
 			}
 		}
+
 		// .pdf {
 		// 	color: rgba(var(--color-text-dark-inactive), 1);
 		// 	text-decoration: none;

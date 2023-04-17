@@ -1068,6 +1068,14 @@ class CharacterGURPS extends BaseActorGURPS {
 				// ItemSubstitutionSheet.new([item as ItemGCS])
 			}
 		}
+		if (this.system.profile.tech_level !== "" && embeddedName === "Item") {
+			for (const item of documents.filter(
+				e => e instanceof SkillGURPS || e instanceof SpellGURPS || e instanceof RitualMagicSpellGURPS
+			)) {
+				if ((item as SkillGURPS).system.tech_level_required && !(item as SkillGURPS).system.tech_level)
+					(item as SkillGURPS).system.tech_level = this.system.profile.tech_level
+			}
+		}
 	}
 
 	// Prepare data

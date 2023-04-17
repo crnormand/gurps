@@ -36,6 +36,9 @@ import { ActorDataGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
+import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
+import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
+import { CharacterGURPS } from "@actor/character"
 
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
@@ -82,6 +85,13 @@ class BaseActorGURPS extends Actor {
 			roll: new DiceGURPS("3d6"),
 			locations: [],
 		}
+	}
+
+	update(
+		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
+		context?: (DocumentModificationContext & MergeObjectOptions) | undefined
+	): Promise<this | undefined> {
+		return super.update(data, context)
 	}
 
 	get deepItems(): Collection<ItemGURPS> {
@@ -299,6 +309,16 @@ class DamageTargetActor implements DamageTarget {
 
 	constructor(actor: BaseActorGURPS) {
 		this.actor = actor
+	}
+
+	incrementDamage(delta: number): void {
+		console.log(`Reduce HP by ${delta}`)
+		const attributes = [...(this.actor as CharacterGURPS).system.attributes]
+		const index = attributes.findIndex(it => it.attr_id === "hp")
+		attributes[index].damage = attributes[index].damage! + delta
+		this.actor.update({
+			"system.attributes": attributes,
+		})
 	}
 
 	get name(): string {

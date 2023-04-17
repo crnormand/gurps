@@ -1,5 +1,5 @@
 import { DiceGURPS } from "../dice"
-import { DamageType } from "./damage_type"
+import { DamageType, DamageTypes } from "./damage_type"
 import { HitLocationTable } from "@actor/character/hit_location"
 import { DamagePayload } from "./damage_chat_message"
 import { SETTINGS, SYSTEM_NAME } from "../data"
@@ -19,7 +19,6 @@ interface DamageRoll {
 	damageText: string
 	basicDamage: number
 	damageType: DamageType
-	damageTypeKey: string
 	applyTo: "HP" | "FP" | string
 
 	/**
@@ -143,12 +142,7 @@ class DamageRollAdapter implements DamageRoll {
 	}
 
 	get damageType(): DamageType {
-		return (DamageType as any)[this._payload.damageType]
-	}
-
-	get damageTypeKey(): string {
-		let index = Object.values(DamageType).indexOf(this.damageType)
-		return Object.keys(DamageType)[index]
+		return (DamageTypes as any)[this._payload.damageType]
 	}
 
 	get damageModifier(): string {
@@ -204,6 +198,8 @@ export interface DamageTarget {
 	isDiffuse: boolean
 	// Return this.hasTrait("Vulnerability").level.
 	vulnerabilityLevel: number
+	// Subtract value from HitPoints
+	incrementDamage(delta: number): void
 }
 
 export interface TargetTrait {
