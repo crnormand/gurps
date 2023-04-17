@@ -104,10 +104,7 @@ class DamageCalculator {
 		results.push({
 			step: "Injury",
 			value: `${this.injury}`,
-			notes:
-				this._bluntTraumaDivisor === 1
-					? `= ${this.penetratingDamage} × ${this.woundingModifier.name}`
-					: "Blunt Trauma",
+			notes: this._isBluntTrauma ? "Blunt Trauma" : `= ${this.penetratingDamage} × ${this.woundingModifier.name}`,
 		})
 
 		return results
@@ -183,10 +180,16 @@ class DamageCalculator {
 	 * @returns {number} - The final amount of damage inflicted on the defender (does not consider blunt trauma).
 	 */
 	get injury(): number {
+		return this._isBluntTrauma ? this.bluntTrauma : this._adjustedInjury
+	}
+
+	get _adjustedInjury(): number {
 		let candidateInjury = this.candidateInjury / this._damageReductionValue
-		candidateInjury = this._applyMaximum(candidateInjury)
-		if (candidateInjury === 0 && this._bluntTraumaDivisor > 1) return this.bluntTrauma
-		return candidateInjury
+		return this._applyMaximum(candidateInjury)
+	}
+
+	get _isBluntTrauma(): boolean {
+		return this._adjustedInjury === 0 && this.bluntTrauma > 0
 	}
 
 	get candidateInjury(): number {
@@ -426,6 +429,7 @@ class DamageCalculator {
 	}
 
 	private get _bluntTraumaDivisor() {
+		if (!this.isFlexibleArmor) return 1
 		if (this.damageType === DamageTypes.cr) return 5
 		return [
 			DamageTypes.cut,

@@ -348,89 +348,180 @@ describe("Damage calculator", () => {
 				{ step: "Injury", value: "1", notes: "Blunt Trauma" },
 			])
 
-			// for (let type of [DamageTypes.cut, DamageTypes.imp, ...AnyPiercingType]) {
-			// 	calc.overrideFlexible(true)
-			// 	expect(calc.injury).toBe(0)
-			// 	expect(calc.bluntTrauma).toBe(0)
-
-			// 	_roll.basicDamage = 10
-			// 	calc = _create(_roll, _target)
-			// 	calc.overrideFlexible(true)
-			// 	expect(calc.injury).toBe(0)
-			// 	expect(calc.bluntTrauma).toBe(1)
-
-			// 	_roll.basicDamage = 19
-			// 	calc = _create(_roll, _target)
-			// 	calc.overrideFlexible(true)
-			// 	expect(calc.injury).toBe(0)
-			// 	expect(calc.bluntTrauma).toBe(1)
-
-			// 	_roll.basicDamage = 20
-			// 	calc = _create(_roll, _target)
-			// 	calc.overrideFlexible(true)
-			// 	expect(calc.injury).toBe(0)
-			// 	expect(calc.bluntTrauma).toBe(2)
-			// }
-		})
-
-		it.skip("For every full 5 points of crushing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
-			_roll.damageType = DamageTypes.cr
-
-			_roll.basicDamage = 4
-			let calc = _create(_roll, _target)
-			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(0)
-
-			_roll.basicDamage = 5
-			calc = _create(_roll, _target)
-			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(1)
-
-			_roll.basicDamage = 19
-			calc = _create(_roll, _target)
-			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(3)
-
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(4)
+			expect(calc.description).toEqual([
+				{ step: "Basic Damage", value: "20", notes: "HP" },
+				{ step: "DR", value: "20", notes: "Torso" },
+				{ step: "Penetrating", value: "0", notes: "= 20 – 20" },
+				{ step: "Modifier", value: "×1.5", notes: "gurps.damage.type.cut" },
+				{ step: "Injury", value: "2", notes: "Blunt Trauma" },
+			])
 		})
 
-		it.skip("If even one point of damage penetrates your flexible DR, however, you do not suffer blunt trauma.", () => {
-			_roll.damageType = DamageTypes.cr
+		it("If even one point of damage penetrates your flexible DR, however, you do not suffer blunt trauma.", () => {
+			_roll.damageType = DamageTypes["pi-"]
 			_roll.basicDamage = 21
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(1)
-			expect(calc.bluntTrauma).toBe(0)
+			expect(calc.description).toEqual([
+				{ step: "Basic Damage", value: "21", notes: "HP" },
+				{ step: "DR", value: "20", notes: "Torso" },
+				{ step: "Penetrating", value: "1", notes: "= 21 – 20" },
+				{ step: "Modifier", value: "×0.5", notes: "gurps.damage.type.pi-" },
+				{ step: "Injury", value: "1", notes: "= 1 × 0.5" },
+			])
+		})
+	})
 
-			_roll.damageType = DamageTypes["pi-"]
-			_roll.basicDamage = 21
-			calc = _create(_roll, _target)
-			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(1)
-			expect(calc.bluntTrauma).toBe(0)
+	describe("B380: Injury to Unliving, Homogenous, and Diffuse Targets.", () => {
+		describe("Unliving.", () => {
+			beforeEach(() => {
+				_torso._map.set("all", 5)
+				_target.isUnliving = true
+			})
+
+			it.skip("This gives impaling and huge piercing a wounding modifier of ×1; ...", () => {
+				_roll.damageType = DamageTypes.imp
+				_roll.basicDamage = 11
+				let calc = _create(_roll, _target)
+				expect(calc.penetratingDamage).toBe(6)
+				expect(calc.injury).toBe(6)
+				expect(calc.description).toEqual([
+					{ step: "Basic Damage", value: "11", notes: "HP" },
+					{ step: "DR", value: "5", notes: "Torso" },
+					{ step: "Penetrating", value: "6", notes: "= 11 – 5" },
+					{ step: "Modifier", value: "×2", notes: "gurps.damage.type.imp" },
+					{step: "Effective Modifier", value: "×2", notes: "Unliving"}
+					{ step: "Injury", value: "1", notes: "= 1 × 0.5" },
+				])
+			})
+
+			it.skip("... large piercing, ×1/2;", () => {
+				let types = [DamageTypes["pi+"]]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(6)
+				}
+			})
+
+			it.skip("... piercing, ×1/3;", () => {
+				let types = [DamageTypes.pi]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(2)
+				}
+			})
+
+			it.skip("... and small piercing, ×1/5.", () => {
+				let types = [DamageTypes["pi-"]]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 15
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(2)
+				}
+			})
 		})
 
-		it.skip("(Injury, Burning, Corrosive, Fatigue, Toxic, and Knockback don't do blunt trauma.)", () => {
-			for (let type of [
-				DamageTypes.injury,
-				DamageTypes.burn,
-				DamageTypes.cor,
-				DamageTypes.fat,
-				DamageTypes.tox,
-				DamageTypes.kb,
-			]) {
-				_roll.damageType = type
-				_roll.basicDamage = 20
-				let calc = _create(_roll, _target)
-				expect(calc.bluntTrauma).toBe(0)
-			}
+		describe("Homogenous.", () => {
+			beforeEach(() => {
+				_torso._map.set("all", 5)
+				_target.isHomogenous = true
+			})
+
+			it.skip("This gives impaling and huge piercing a wounding modifier of ×1/2; ...", () => {
+				let types = [DamageTypes.imp, DamageTypes["pi++"]]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(3)
+				}
+			})
+
+			it.skip("... large piercing, ×1/3;", () => {
+				let types = [DamageTypes["pi+"]]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(2)
+				}
+			})
+
+			it.skip("... piercing, ×1/5;", () => {
+				let types = [DamageTypes.pi]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 15
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(2)
+				}
+			})
+
+			it.skip("... and small piercing, ×1/10.", () => {
+				let types = [DamageTypes["pi-"]]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 15
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(1)
+				}
+			})
+		})
+
+		describe("Diffuse.", () => {
+			beforeEach(() => {
+				_torso._map.set("all", 5)
+				_target.isDiffuse = true
+				_roll.basicDamage = 100
+			})
+
+			it.skip("Impaling and piercing attacks (of any size) never do more than 1 HP of injury.", () => {
+				let types = [
+					DamageTypes.imp,
+					DamageTypes["pi++"],
+					DamageTypes["pi+"],
+					DamageTypes.pi,
+					DamageTypes["pi-"],
+				]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = _create(_roll, _target)
+					expect(calc.penetratingDamage).toBe(95)
+					expect(calc.injury).toBe(1)
+				}
+			})
+
+			it.skip("Other attacks can never do more than 2 HP of injury.", () => {
+				let types = [
+					DamageTypes.burn,
+					DamageTypes.cor,
+					DamageTypes.cr,
+					DamageTypes.cut,
+					DamageTypes.fat,
+					DamageTypes.injury,
+					DamageTypes.tox,
+				]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = _create(_roll, _target)
+					expect(calc.injury).toBe(2)
+				}
+			})
 		})
 	})
 })
