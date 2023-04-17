@@ -21,7 +21,7 @@
 
 -   Implement "static" items (0.15 and older) compatibility
 	-	add interface for accessing old bonuses
--	fix GURPS.LastActor setting, 
+-	fix GURPS.LastActor setting,
 -   Convert over module compatibility
 -	convert mook generator
 -   Convert the modifier bucket over
@@ -30,6 +30,7 @@
 
 ## 1.1.0 and beyond
 
+-   Editable maneuver grid, editable condition grid
 -   Dynamic Character changes
     -   add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
         the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings

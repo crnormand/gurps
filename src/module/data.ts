@@ -77,6 +77,10 @@ export enum DamageProgression {
 	ThrustEqualsSwingMinus2 = "thrust_equals_swing_minus_2",
 	SwingEqualsThrustPlus2 = "swing_equals_thrust_plus_2",
 	PhoenixFlameD3 = "phoenix_flame_d3",
+	Tbone1 = "tbone_1",
+	Tbone1Clean = "tbone_1_clean",
+	Tbone2 = "tbone_2",
+	Tbone2Clean = "tbone_2_clean",
 }
 
 export interface StringCompare {

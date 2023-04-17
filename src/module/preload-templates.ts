@@ -54,8 +54,6 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/static_character/sections/equipment",
 		"actor/static_character/sections/footer",
 		"actor/static_character/sections/hit-location",
-		"actor/static_character/sections/hpfp-editor",
-		"actor/static_character/sections/hpfp-tracker",
 		"actor/static_character/sections/identity",
 		"actor/static_character/sections/lifting",
 		"actor/static_character/sections/macros",

@@ -2,7 +2,7 @@ import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import { DiceGURPS } from "@module/dice"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { stringCompare } from "@util"
+import { LocalizeGURPS, stringCompare } from "@util"
 import { CharacterGURPS } from "@actor"
 import { Feature } from "@module/config"
 import { WeaponDRDivisorBonus } from "@feature"
@@ -27,7 +27,7 @@ export class WeaponDamage {
 
 	toString(): string {
 		let buffer = ""
-		if (this.st !== "none") buffer += this.resolveST(this.st)
+		if (this.st !== "none") buffer += LocalizeGURPS.translations.gurps.select.damage_st[this.st]
 		let convertMods = false
 		if (this.parent && this.parent.actor) convertMods = this.parent.actor.settings.use_modifying_dice_plus_adds
 		if (this.base) {
@@ -56,20 +56,20 @@ export class WeaponDamage {
 		return buffer
 	}
 
-	resolveST(st: StrengthDamage): string {
-		switch (st) {
-			case "none":
-				return "None"
-			case "thr":
-				return "thr"
-			case "thr_leveled":
-				return "thr (leveled)"
-			case "sw":
-				return "sw"
-			case "sw_leveled":
-				return "sw_leveled"
-		}
-	}
+	// ResolveST(st: StrengthDamage): string {
+	// 	switch (st) {
+	// 		case "none":
+	// 			return "None"
+	// 		case "thr":
+	// 			return "thr"
+	// 		case "thr_leveled":
+	// 			return "thr (leveled)"
+	// 		case "sw":
+	// 			return "sw"
+	// 		case "sw_leveled":
+	// 			return "sw_leveled"
+	// 	}
+	// }
 
 	resolvedDamage(tooltip?: TooltipGURPS): string {
 		const parent = this.parent
