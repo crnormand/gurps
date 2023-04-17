@@ -17,6 +17,12 @@ const Limb = ["arm", "leg"]
 const Extremity = ["hand", "foot"]
 const Torso = "torso"
 
+type Descriptor = {
+	step: string
+	value: string
+	notes: string
+}
+
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
  *
@@ -70,6 +76,41 @@ class DamageCalculator {
 
 	get isOverridden(): boolean {
 		return this.overrides.some(it => it !== undefined)
+	}
+
+	get description(): Descriptor[] {
+		let results = []
+		results.push({ step: "Basic Damage", value: `${this.basicDamage}`, notes: `${this.damageRoll.applyTo}` })
+		results.push({ step: "DR", value: `${this.rawDR}`, notes: `${this._hitLocation?.choice_name}` })
+
+		if (this.rawDR !== this.effectiveDR) {
+			results.push({
+				step: "Effective DR",
+				value: `${this.effectiveDR}`,
+				notes: `${this.effectiveDRReason}`,
+			})
+		}
+
+		results.push({
+			step: "Penetrating",
+			value: `${this.penetratingDamage}`,
+			notes: `= ${this.basicDamage} – ${this.effectiveDR}`,
+		})
+		results.push({
+			step: "Modifier",
+			value: `×${this.woundingModifier.name}`,
+			notes: `${this.woundingModifierReason}`,
+		})
+		results.push({
+			step: "Injury",
+			value: `${this.injury}`,
+			notes:
+				this._bluntTraumaDivisor === 1
+					? `= ${this.penetratingDamage} × ${this.woundingModifier.name}`
+					: "Blunt Trauma",
+		})
+
+		return results
 	}
 
 	get basicDamage(): number {
@@ -142,11 +183,16 @@ class DamageCalculator {
 	 * @returns {number} - The final amount of damage inflicted on the defender (does not consider blunt trauma).
 	 */
 	get injury(): number {
+		let candidateInjury = this.candidateInjury / this._damageReductionValue
+		candidateInjury = this._applyMaximum(candidateInjury)
+		if (candidateInjury === 0 && this._bluntTraumaDivisor > 1) return this.bluntTrauma
+		return candidateInjury
+	}
+
+	get candidateInjury(): number {
 		let temp = Math.floor(this.woundingModifier.function(this.penetratingDamage))
 		temp = temp * this.vulnerabilityLevel
-		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
-		candidateInjury = candidateInjury / this._damageReductionValue
-		return this._applyMaximum(candidateInjury)
+		return this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 	}
 
 	get woundingModifier(): ModifierFunction {
@@ -181,6 +227,10 @@ class DamageCalculator {
 		}
 
 		return candidateInjury
+	}
+
+	get _hitLocation() {
+		return HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId)
 	}
 
 	private get _damageReductionValue() {
@@ -386,7 +436,7 @@ class DamageCalculator {
 			DamageTypes["pi++"],
 		].includes(this.damageType)
 			? 10
-			: 0
+			: 1
 	}
 
 	get effectiveDR() {
@@ -396,6 +446,14 @@ class DamageCalculator {
 
 		// If the AD is a fraction, minimum DR is 1.
 		return this.effectiveArmorDivisor < 1 ? Math.max(dr, 1) : dr
+	}
+
+	private get effectiveDRReason(): string | undefined {
+		// TODO localize reason here, or return language key only
+		if (this.isInternalExplosion) return "Internal Explosion"
+		if (this.damageType === DamageTypes.injury || this.effectiveArmorDivisor === 0) return "Ignores DR"
+		if (this.effectiveArmorDivisor !== 1) return `Armor Divisor (${this.armorDivisor})`
+		return undefined
 	}
 
 	private get _isIgnoreDR(): boolean {
@@ -572,4 +630,4 @@ class DamageCalculator {
 	// }
 }
 
-export { DamageCalculator, Head, Limb, Extremity }
+export { DamageCalculator, Head, Limb, Extremity, Descriptor }

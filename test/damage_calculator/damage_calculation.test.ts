@@ -1,19 +1,21 @@
 /* eslint-disable jest/no-disabled-tests */
-import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
-import { DamageCalculator, Extremity, Head, Limb } from "@module/damage_calculator/damage_calculator"
-import {
-	DamageAttacker,
-	DamageRoll,
-	DamageTarget,
-	DefaultHitLocations,
-	TargetTrait,
-	TargetTraitModifier,
-} from "@module/damage_calculator"
+import { Extremity, Head, Limb } from "@module/damage_calculator/damage_calculator"
+import { DamageAttacker, DamageRoll, DefaultHitLocations } from "@module/damage_calculator"
 import { DamageTypes, AnyPiercingType } from "@module/damage_calculator/damage_type"
 import { InjuryEffectType, InjuryEffect } from "@module/damage_calculator/injury_effect"
 import { RollType } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { TooltipGURPS } from "@module/tooltip"
+import {
+	DamageHitLocation,
+	DamageShock,
+	Knockdown,
+	_Attacker,
+	_DamageRoll,
+	_Target,
+	_TargetTrait,
+	_TargetTraitModifier,
+	_create,
+} from "./common"
 
 // Add real tests here.
 describe("Damage calculator", () => {
@@ -398,26 +400,26 @@ describe("Damage calculator", () => {
 				_roll.basicDamage = 9
 				let calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
+				expect(calc.penetratingDamage).toBe(0)
 				expect(calc.injury).toBe(0)
-				expect(calc.bluntTrauma).toBe(0)
 
 				_roll.basicDamage = 10
 				calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
-				expect(calc.injury).toBe(0)
-				expect(calc.bluntTrauma).toBe(1)
+				expect(calc.penetratingDamage).toBe(0)
+				expect(calc.injury).toBe(1)
 
 				_roll.basicDamage = 19
 				calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
-				expect(calc.injury).toBe(0)
-				expect(calc.bluntTrauma).toBe(1)
+				expect(calc.injury).toBe(1)
+				expect(calc.penetratingDamage).toBe(0)
 
 				_roll.basicDamage = 20
 				calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
-				expect(calc.injury).toBe(0)
-				expect(calc.bluntTrauma).toBe(2)
+				expect(calc.injury).toBe(2)
+				expect(calc.penetratingDamage).toBe(0)
 			}
 		})
 
@@ -427,26 +429,26 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 4
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
+			expect(calc.penetratingDamage).toBe(0)
 			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(0)
 
 			_roll.basicDamage = 5
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(1)
+			expect(calc.penetratingDamage).toBe(0)
+			expect(calc.injury).toBe(1)
 
 			_roll.basicDamage = 19
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(3)
+			expect(calc.penetratingDamage).toBe(0)
+			expect(calc.injury).toBe(3)
 
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(0)
-			expect(calc.bluntTrauma).toBe(4)
+			expect(calc.penetratingDamage).toBe(0)
+			expect(calc.injury).toBe(4)
 		})
 
 		it("If even one point of damage penetrates your flexible DR, however, you do not suffer blunt trauma.", () => {
@@ -2145,144 +2147,3 @@ describe("Damage calculator", () => {
 		})
 	})
 })
-
-class _Attacker implements DamageAttacker {
-	name = "Arnold"
-}
-
-class _Target implements DamageTarget {
-	getTraits(name: string): TargetTrait[] {
-		return this._traits.filter(it => it.name === name)
-	}
-
-	name = "doesn't matter"
-
-	isDiffuse = false
-
-	isHomogenous = false
-
-	isUnliving = false
-
-	vulnerabilityLevel = 1
-
-	ST = 12
-
-	hitPoints = { value: 15, current: 10 }
-
-	_traits: TargetTrait[] = []
-
-	getTrait(name: string) {
-		return this._traits.find(it => it.name === name)
-	}
-
-	hasTrait(name: string): boolean {
-		return !!this.getTrait(name)
-	}
-
-	_dummyHitLocationTable = {
-		name: "humanoid",
-		roll: new DiceGURPS("3d"),
-		// eslint-disable-next-line no-array-constructor
-		locations: new Array<HitLocation>(),
-	}
-
-	get hitLocationTable(): HitLocationTable {
-		return this._dummyHitLocationTable
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	incrementDamage(delta: number): void {}
-}
-
-class _DamageRoll implements DamageRoll {
-	damageText = ""
-
-	damageTypeKey = ""
-
-	applyTo = "HP"
-
-	// Not a real location id, which should be something like "torso".
-	locationId = "dummy"
-
-	attacker = new _Attacker()
-
-	dice = new DiceGURPS("2d")
-
-	basicDamage = 0
-
-	damageType = DamageTypes.cr
-
-	weapon = undefined
-
-	range = null
-
-	damageModifier = ""
-
-	armorDivisor = 1
-
-	isHalfDamage = false
-
-	isShotgunCloseRange = false
-
-	rofMultiplier = 1
-
-	internalExplosion = false
-}
-
-const Knockdown = [
-	{ id: "stun", margin: 0 },
-	{ id: "fall prone", margin: 0 },
-	{ id: "unconscious", margin: 5 },
-]
-
-type DamageShock = { damage: number; shock: number }
-
-interface IDamageCalculator {
-	adjustedBasicDamage: number
-	penetratingDamage: number
-	injury: number
-	bluntTrauma: number
-	knockback: number
-	injuryEffects: InjuryEffect[]
-	overrideFlexible(arg: boolean | undefined): void
-}
-
-const _create = function (roll: DamageRoll, target: DamageTarget): IDamageCalculator {
-	return new DamageCalculator(roll, target)
-}
-
-class _TargetTrait implements TargetTrait {
-	name: string
-
-	levels: number
-
-	constructor(name: string, levels: number) {
-		this.name = name
-		this.levels = levels
-	}
-
-	getModifier(name: string): TargetTraitModifier | undefined {
-		return this.modifiers.find(it => it.name === name)
-	}
-
-	modifiers: TargetTraitModifier[] = []
-}
-
-class _TargetTraitModifier implements TargetTraitModifier {
-	levels: number
-
-	name: string
-
-	constructor(name: string, levels: number) {
-		this.name = name
-		this.levels = levels
-	}
-}
-
-class DamageHitLocation extends HitLocation {
-	_map: Map<string, number> = new Map()
-
-	_DR(_tooltip?: TooltipGURPS, _drMap: Map<string, number> = new Map()): Map<string, number> {
-		return this._map
-	}
-}

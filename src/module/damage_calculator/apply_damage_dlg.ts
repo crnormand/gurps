@@ -62,7 +62,6 @@ class ApplyDamageDialog extends Application {
 		const data = mergeObject(super.getData(options), {
 			calculator: this.calculator,
 			choices: this.choices,
-			effectiveDRReason: this.showEffectiveDRReason,
 			books,
 
 			roll: this.roll,
@@ -214,14 +213,6 @@ class ApplyDamageDialog extends Application {
 
 	private get hitLocation(): HitLocation | undefined {
 		return HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
-	}
-
-	private get showEffectiveDRReason(): string | undefined {
-		// TODO localize reason here, or return language key only
-		if (this.calculator.isInternalExplosion) return "Internal Explosion"
-		if (this.calculator.effectiveArmorDivisor !== 1) return `Armor Divisor ${this.armorDivisorText}`
-		if (this.calculator.damageType === DamageTypes.injury) return "Ignores DR"
-		return undefined
 	}
 
 	private get vulnerabilities(): string[] {
