@@ -7,11 +7,11 @@
 		</div>
 		<div class="label">{{localize "gurps.character.pool_of"}}</div>
 		<div class="field">
-			<input type="text" value="{{system.HP.value}}" disabled />
+			<input type="text" value="{{system.HP.max}}" disabled />
 		</div>
 		<div class="label">{{localize "gurps.static.hp"}}</div>
 		<div class="label tooltip">
-			[{{localize (hpFpCondition "HP" system.HP "label")}}]
+			[{{localize conditions.HP}}]
 		</div>
 		<div class="points">[{{system.FP.points}}]</div>
 		<div class="field">
@@ -19,11 +19,11 @@
 		</div>
 		<div class="label">{{localize "gurps.character.pool_of"}}</div>
 		<div class="field">
-			<input type="text" value="{{system.FP.value}}" disabled />
+			<input type="text" value="{{system.FP.max}}" disabled />
 		</div>
 		<div class="label">{{localize "gurps.static.fp"}}</div>
 		<div class="label tooltip" as |this index|>
-			[{{localize (hpFpCondition "FP" system.FP "label")}}]
+			[{{localize conditions.FP}}]
 		</div>
 	</div>
 </div>

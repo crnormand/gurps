@@ -3,6 +3,7 @@ import { DiceGURPS } from "@module/dice"
 import { getAdjustedStudyHours } from "./misc"
 import { LocalizeGURPS } from "./localize"
 import { CharacterGURPS } from "@actor"
+import { Static } from "@util"
 
 class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 	static camelcase(s: string) {
@@ -351,13 +352,13 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 	// 	return `"${outAr.join('" "')}";`
 	// }
 
-	// static flatlist(context) {
-	// 	let data = {}
-	// 	Static.flatList(context, 0, "", data, false)
-	// 	return data
-	// }
+	static flatlist(context: any) {
+		let data = {}
+		Static.flatList(context, 0, "", data, false)
+		return data
+	}
 
-	// static staticSpellValues(i: StaticSpell): string {
+	// Static staticSpellValues(i: StaticSpell): string {
 	// 	const values = {
 	// 		resist: i.resist,
 	// 		spell_class: i.class,
@@ -466,12 +467,13 @@ export function registerHandlebarsHelpers() {
 		in: HandlebarsHelpersGURPS.in,
 		diceString: HandlebarsHelpersGURPS.diceString,
 		sort: HandlebarsHelpersGURPS.sort,
-		textareaFormat: HandlebarsHelpersGURPS.format,
+		textareaFormat: HandlebarsHelpersGURPS.textareaFormat,
 		overspent: HandlebarsHelpersGURPS.overspent,
 		modifierCost: HandlebarsHelpersGURPS.modifierCost,
 		effective: HandlebarsHelpersGURPS.effective,
 		unsatisfied: HandlebarsHelpersGURPS.unsatisfied,
 		overridden: HandlebarsHelpersGURPS.overridden,
+		flatlist: HandlebarsHelpersGURPS.flatlist,
 		// Multiselect: HandlebarsHelpersGURPS.multiselect
 	})
 }

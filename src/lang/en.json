@@ -889,10 +889,10 @@
 			},
 			"damage_st": {
 				"none": "None",
-				"thr": "thr",
-				"thr_leveled": "thr (leveled)",
-				"sw": "sw",
-				"sw_leveled": "sw (leveled)"
+				"thr": "Thrust",
+				"thr_leveled": "Thrust (leveled)",
+				"sw": "Swing",
+				"sw_leveled": "Swing (leveled)"
 			},
 			"defaults": {
 				"ten": "10",
@@ -948,7 +948,11 @@
 				"no_school_grognard_damage": "No School Grognard Damage",
 				"thrust_equals_swing_minus_2": "Thrust = Swing - 2",
 				"swing_equals_thrust_plus_2": "Swing = Thrust + 2",
-				"phoenix_flame_d3": "Phoenix Flame D3"
+				"phoenix_flame_d3": "Phoenix Flame D3",
+				"tbone_1": "T Bone's New Damage for ST (option 1)",
+				"tbone_1_clean": "T Bone's New Damage for ST (option 1, cleaned)",
+				"tbone_2": "T Bone's New Damage for ST (option 2)",
+				"tbone_2_clean": "T Bone's New Damage for ST (option 2, cleaned)"
 			},
 			"display": {
 				"not_shown": "Not Shown",

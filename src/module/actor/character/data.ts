@@ -145,3 +145,39 @@ export interface Encumbrance {
 	penalty: number
 	name: string
 }
+
+export const CharacterDefaultData: Partial<CharacterSystemData> = {
+	profile: {
+		player_name: "",
+		name: "",
+		title: "",
+		organization: "",
+		age: "",
+		birthday: "",
+		eyes: "",
+		hair: "",
+		skin: "",
+		handedness: "",
+		height: "6'",
+		weight: "0 lb",
+		SM: 0,
+		gender: "",
+		tech_level: "",
+		religion: "",
+		portrait: "",
+	},
+	editing: true,
+	calc: {
+		swing: "",
+		thrust: "",
+		basic_lift: 0,
+		lifting_st_bonus: 0,
+		striking_st_bonus: 0,
+		throwing_st_bonus: 0,
+		move: [0, 0, 0, 0, 0],
+		dodge: [0, 0, 0, 0, 0],
+		dodge_bonus: 0,
+		block_bonus: 0,
+		parry_bonus: 0,
+	},
+}

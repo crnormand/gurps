@@ -13,6 +13,11 @@ class SpellGURPS extends ItemGCS {
 	// Static get schema(): typeof SpellData {
 	// 	return SpellData;
 	// }
+	get formattedName(): string {
+		const name: string = this.name ?? ""
+		const TL = this.techLevel
+		return `${name}${this.system.tech_level_required ? `/TL${TL ?? ""}` : ""}`
+	}
 
 	get points(): number {
 		return this.system.points

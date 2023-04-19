@@ -5,7 +5,7 @@ import { PDF } from "@module/pdf"
 import { RollGURPS } from "@module/roll"
 import { LocalizeGURPS, Static } from "@util"
 import { StaticCharacterSheetConfig } from "./config_sheet"
-import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
+import { StaticAttributeName, staticFpConditions, staticHpConditions, StaticSecondaryAttributeName } from "./data"
 import { StaticCharacterGURPS } from "./document"
 
 export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
@@ -57,6 +57,8 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			postures: CONFIG.GURPS.select.postures,
 			move_types: CONFIG.GURPS.select.move_types,
 			deprecation: deprecation,
+			conditions: this._prepareTrackers(),
+			layout: this._prepareBlockLayout(),
 		}
 
 		return sheetData
@@ -81,6 +83,58 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 		// Maneuver / Posture Selection
 		html.find(".move-select").on("change", event => this._onMoveChange(event))
+	}
+
+	private _prepareTrackers(): any {
+		function _getConditionKey(pts: any, conditions: Record<string, any>) {
+			let found = "NORMAL"
+			for (const [key, value] of Object.entries(conditions)) {
+				if (pts && pts.value > value.breakpoint(pts)) {
+					return found
+				}
+				found = key
+			}
+			return found
+		}
+		function hpCondition(HP: any, member: string) {
+			let key = _getConditionKey(HP, staticHpConditions)
+			return (staticHpConditions as any)[key][member]
+		}
+		function fpCondition(FP: any, member: string) {
+			let key = _getConditionKey(FP, staticFpConditions)
+			return (staticFpConditions as any)[key][member]
+		}
+
+		return {
+			HP: hpCondition(this.actor.system.HP, "label"),
+			FP: fpCondition(this.actor.system.FP, "label"),
+		}
+	}
+
+	private _prepareBlockLayout(): string {
+		const system = this.actor.system
+		function notEmpty(o: any) {
+			return o ? Object.values(o).length > 0 : false
+		}
+		const outAr = []
+		if (notEmpty(system.reactions) || notEmpty(system.conditionalmods)) {
+			if (!notEmpty(system.reactions)) outAr.push("conditional_modifiers conditional_modifiers")
+			else if (!notEmpty(system.conditionalmods)) outAr.push("reactions reactions")
+			else outAr.push("reactions conditional_modifiers")
+		}
+		if (notEmpty(system.melee)) outAr.push("melee melee")
+		if (notEmpty(system.ranged)) outAr.push("ranged ranged")
+		if (notEmpty(system.ads) || notEmpty(system.skills)) {
+			if (!notEmpty(system.ads)) outAr.push("skills skills")
+			else if (!notEmpty(system.skills)) outAr.push("traits traits")
+			else outAr.push("traits skills")
+		}
+		if (notEmpty(system.spells)) outAr.push("spells spells")
+
+		if (notEmpty(system.equipment?.carried)) outAr.push("equipment equipment")
+		if (notEmpty(system.equipment?.other)) outAr.push("other_equipment other_equipment")
+		if (notEmpty(system.notes)) outAr.push("notes notes")
+		return `"${outAr.join('" "')}";`
 	}
 
 	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
