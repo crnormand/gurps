@@ -165,7 +165,7 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "8", notes: "HP" },
-				{ step: "DR", value: "0", notes: "Torso" },
+				{ step: "Damage Resistance", value: "0", notes: "Torso" },
 				{ step: "Penetrating", value: "8", notes: "= 8 – 0" },
 				{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
 				{ step: "Injury", value: "8", notes: "= 8 × 1" },
@@ -178,7 +178,7 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "8", notes: "HP" },
-				{ step: "DR", value: "0", notes: "Knockback only" },
+				{ step: "Damage Resistance", value: "0", notes: "Knockback only" },
 				{ step: "Penetrating", value: "8", notes: "= 8 – 0" },
 				{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
 				{ step: "Injury", value: "0", notes: "Knockback only" },
@@ -194,7 +194,7 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "8", notes: "HP" },
-				{ step: "DR", value: "2", notes: "Torso" },
+				{ step: "Damage Resistance", value: "2", notes: "Torso" },
 				{ step: "Penetrating", value: "6", notes: "= 8 – 2" },
 				{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
 				{ step: "Injury", value: "6", notes: "= 6 × 1" },
@@ -208,7 +208,7 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "5", notes: "HP" },
-				{ step: "DR", value: "9", notes: "Torso" },
+				{ step: "Damage Resistance", value: "9", notes: "Torso" },
 				{ step: "Penetrating", value: "0", notes: "= 5 – 9" },
 				{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
 				{ step: "Injury", value: "0", notes: "= 0 × 1" },
@@ -223,7 +223,7 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "8", notes: "HP" },
-				{ step: "DR", value: "9", notes: "Torso" },
+				{ step: "Damage Resistance", value: "9", notes: "Torso" },
 				{ step: "Effective DR", value: "0", notes: "Ignores DR" },
 				{ step: "Penetrating", value: "8", notes: "= 8 – 0" },
 				{ step: "Modifier", value: "×1", notes: "gurps.damage.type.injury" },
@@ -244,7 +244,7 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 				expect(calc.description).toEqual([
 					{ step: "Basic Damage", value: "20", notes: "HP" },
-					{ step: "DR", value: "20", notes: "Torso" },
+					{ step: "Damage Resistance", value: "20", notes: "Torso" },
 					{ step: "Effective DR", value: "10", notes: "Armor Divisor (2)" },
 					{ step: "Penetrating", value: "10", notes: "= 20 – 10" },
 					{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
@@ -258,7 +258,7 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 				expect(calc.description).toEqual([
 					{ step: "Basic Damage", value: "20", notes: "HP" },
-					{ step: "DR", value: "20", notes: "Torso" },
+					{ step: "Damage Resistance", value: "20", notes: "Torso" },
 					{ step: "Effective DR", value: "0", notes: "Ignores DR" },
 					{ step: "Penetrating", value: "20", notes: "= 20 – 0" },
 					{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
@@ -275,7 +275,7 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 				expect(calc.description).toEqual([
 					{ step: "Basic Damage", value: "20", notes: "HP" },
-					{ step: "DR", value: "5", notes: "Torso" },
+					{ step: "Damage Resistance", value: "5", notes: "Torso" },
 					{ step: "Effective DR", value: "10", notes: "Armor Divisor (0.5)" },
 					{ step: "Penetrating", value: "10", notes: "= 20 – 10" },
 					{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
@@ -290,7 +290,7 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 				expect(calc.description).toEqual([
 					{ step: "Basic Damage", value: "20", notes: "HP" },
-					{ step: "DR", value: "0", notes: "Torso" },
+					{ step: "Damage Resistance", value: "0", notes: "Torso" },
 					{ step: "Effective DR", value: "1", notes: "Armor Divisor (0.5)" },
 					{ step: "Penetrating", value: "19", notes: "= 20 – 1" },
 					{ step: "Modifier", value: "×1", notes: "gurps.damage.type.cr" },
@@ -311,7 +311,7 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "11", notes: "HP" },
-				{ step: "DR", value: "5", notes: "Torso" },
+				{ step: "Damage Resistance", value: "5", notes: "Torso" },
 				{ step: "Penetrating", value: "6", notes: "= 11 – 5" },
 				{ step: "Modifier", value: "×0.5", notes: "gurps.damage.type.pi-" },
 				{ step: "Injury", value: "3", notes: "= 6 × 0.5" },
@@ -331,7 +331,7 @@ describe("Damage calculator", () => {
 			calc.overrideFlexible(true)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "9", notes: "HP" },
-				{ step: "DR", value: "20", notes: "Torso" },
+				{ step: "Damage Resistance", value: "20", notes: "Torso" },
 				{ step: "Penetrating", value: "0", notes: "= 9 – 20" },
 				{ step: "Modifier", value: "×1.5", notes: "gurps.damage.type.cut" },
 				{ step: "Injury", value: "0", notes: "= 0 × 1.5" },
@@ -342,7 +342,7 @@ describe("Damage calculator", () => {
 			calc.overrideFlexible(true)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "10", notes: "HP" },
-				{ step: "DR", value: "20", notes: "Torso" },
+				{ step: "Damage Resistance", value: "20", notes: "Torso" },
 				{ step: "Penetrating", value: "0", notes: "= 10 – 20" },
 				{ step: "Modifier", value: "×1.5", notes: "gurps.damage.type.cut" },
 				{ step: "Injury", value: "1", notes: "Blunt Trauma" },
@@ -353,7 +353,7 @@ describe("Damage calculator", () => {
 			calc.overrideFlexible(true)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "20", notes: "HP" },
-				{ step: "DR", value: "20", notes: "Torso" },
+				{ step: "Damage Resistance", value: "20", notes: "Torso" },
 				{ step: "Penetrating", value: "0", notes: "= 20 – 20" },
 				{ step: "Modifier", value: "×1.5", notes: "gurps.damage.type.cut" },
 				{ step: "Injury", value: "2", notes: "Blunt Trauma" },
@@ -367,7 +367,7 @@ describe("Damage calculator", () => {
 			calc.overrideFlexible(true)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "21", notes: "HP" },
-				{ step: "DR", value: "20", notes: "Torso" },
+				{ step: "Damage Resistance", value: "20", notes: "Torso" },
 				{ step: "Penetrating", value: "1", notes: "= 21 – 20" },
 				{ step: "Modifier", value: "×0.5", notes: "gurps.damage.type.pi-" },
 				{ step: "Injury", value: "1", notes: "= 1 × 0.5" },
@@ -390,11 +390,11 @@ describe("Damage calculator", () => {
 				expect(calc.injury).toBe(6)
 				expect(calc.description).toEqual([
 					{ step: "Basic Damage", value: "11", notes: "HP" },
-					{ step: "DR", value: "5", notes: "Torso" },
+					{ step: "Damage Resistance", value: "5", notes: "Torso" },
 					{ step: "Penetrating", value: "6", notes: "= 11 – 5" },
 					{ step: "Modifier", value: "×2", notes: "gurps.damage.type.imp" },
-					{step: "Effective Modifier", value: "×2", notes: "Unliving"}
-					{ step: "Injury", value: "1", notes: "= 1 × 0.5" },
+					{ step: "Effective Modifier", value: "×1", notes: "Unliving" },
+					{ step: "Injury", value: "6", notes: "= 6 × 1" },
 				])
 			})
 
