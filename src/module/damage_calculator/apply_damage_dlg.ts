@@ -162,7 +162,7 @@ class ApplyDamageDialog extends Application {
 				break
 
 			case "reset-form":
-				this.calculator.reset()
+				this.calculator.resetOverrides()
 				break
 		}
 

@@ -102,7 +102,6 @@ interface IDamageCalculator {
 	adjustedBasicDamage: number
 	penetratingDamage: number
 	injury: number
-	bluntTrauma: number
 	knockback: number
 	injuryEffects: InjuryEffect[]
 	overrideFlexible(arg: boolean | undefined): void

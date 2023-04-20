@@ -457,29 +457,20 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(1)
-			expect(calc.bluntTrauma).toBe(0)
 
 			_roll.damageType = DamageTypes["pi-"]
 			_roll.basicDamage = 21
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
 			expect(calc.injury).toBe(1)
-			expect(calc.bluntTrauma).toBe(0)
 		})
 
-		it("(Injury, Burning, Corrosive, Fatigue, Toxic, and Knockback don't do blunt trauma.)", () => {
-			for (let type of [
-				DamageTypes.injury,
-				DamageTypes.burn,
-				DamageTypes.cor,
-				DamageTypes.fat,
-				DamageTypes.tox,
-				DamageTypes.kb,
-			]) {
+		it("(Burning, Corrosive, Fatigue, Toxic, and Knockback don't do blunt trauma.)", () => {
+			for (let type of [DamageTypes.burn, DamageTypes.cor, DamageTypes.fat, DamageTypes.tox, DamageTypes.kb]) {
 				_roll.damageType = type
 				_roll.basicDamage = 20
 				let calc = _create(_roll, _target)
-				expect(calc.bluntTrauma).toBe(0)
+				expect(calc.injury).toBe(0)
 			}
 		})
 	})
@@ -1008,7 +999,32 @@ describe("Damage calculator", () => {
 				expect(calc.penetratingDamage).toBe(10)
 				expect(calc.injury).toBe(15)
 
-				let types = [DamageTypes.imp, ...AnyPiercingType, DamageTypes.burn, DamageTypes.cr, DamageTypes.cut]
+				_roll.damageType = DamageTypes.imp
+				calc = _create(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(20)
+
+				_roll.damageType = DamageTypes["pi++"]
+				calc = _create(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(20)
+
+				_roll.damageType = DamageTypes["pi-"]
+				calc = _create(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(5)
+
+				_roll.damageType = DamageTypes["pi+"]
+				calc = _create(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(15)
+
+				_roll.damageType = DamageTypes.cut
+				calc = _create(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(15)
+
+				let types = [DamageTypes.pi, DamageTypes.burn, DamageTypes.cr]
 				for (const type of types) {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
@@ -1391,7 +1407,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(6)
+					expect(calc.injury).toBe(3)
 				}
 			})
 
