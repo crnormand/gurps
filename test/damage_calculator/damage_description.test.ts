@@ -357,7 +357,8 @@ describe("Damage calculator", () => {
 				{ step: "Damage Resistance", value: "20", notes: "Torso" },
 				{ step: "Penetrating", value: "0", notes: "= 10 – 20" },
 				{ step: "Wounding Modifier", value: "×1.5", notes: "cut, torso" },
-				{ step: "Injury", value: "1", notes: "Blunt Trauma" },
+				{ step: "Injury", value: "0", notes: "= 0 × 1.5" },
+				{ step: "Adjusted Injury", value: "1", notes: "Blunt Trauma" },
 			])
 
 			_roll.basicDamage = 20
@@ -368,7 +369,8 @@ describe("Damage calculator", () => {
 				{ step: "Damage Resistance", value: "20", notes: "Torso" },
 				{ step: "Penetrating", value: "0", notes: "= 20 – 20" },
 				{ step: "Wounding Modifier", value: "×1.5", notes: "cut, torso" },
-				{ step: "Injury", value: "2", notes: "Blunt Trauma" },
+				{ step: "Injury", value: "0", notes: "= 0 × 1.5" },
+				{ step: "Adjusted Injury", value: "2", notes: "Blunt Trauma" },
 			])
 		})
 
@@ -544,27 +546,61 @@ describe("Damage calculator", () => {
 					[DamageTypes.pi, "1"],
 					[DamageTypes["pi-"], "1/2"],
 				]
-				for (const type of types) {
+				for (const type of [types[0], types[1]]) {
 					_roll.damageType = type[0]
 					let calc = _create(_roll, _target)
 					expect(calc.description).toEqual([
 						{ step: "Basic Damage", value: "100", notes: "HP" },
 						{ step: "Damage Resistance", value: "5", notes: "Torso" },
 						{ step: "Penetrating", value: "95", notes: "= 100 – 5" },
-						{ step: "Wounding Modifier", value: `×${type[1]}`, notes: `${type[0].key}, torso` },
-						{ step: "Injury", value: "1", notes: `= 95 × ${type[1]}, Maximum 1 (Diffuse)` },
+						{ step: "Wounding Modifier", value: "×2", notes: `${type[0].key}, torso` },
+						{ step: "Injury", value: "190", notes: "= 95 × 2" },
+						{ step: "Adjusted Injury", value: "1", notes: "Maximum 1 (Diffuse)" },
 					])
 				}
+
+				_roll.damageType = DamageTypes["pi+"]
+				let calc = _create(_roll, _target)
+				expect(calc.description).toEqual([
+					{ step: "Basic Damage", value: "100", notes: "HP" },
+					{ step: "Damage Resistance", value: "5", notes: "Torso" },
+					{ step: "Penetrating", value: "95", notes: "= 100 – 5" },
+					{ step: "Wounding Modifier", value: "×1.5", notes: "pi+, torso" },
+					{ step: "Injury", value: "142", notes: "= 95 × 1.5" },
+					{ step: "Adjusted Injury", value: "1", notes: "Maximum 1 (Diffuse)" },
+				])
+
+				_roll.damageType = DamageTypes.pi
+				calc = _create(_roll, _target)
+				expect(calc.description).toEqual([
+					{ step: "Basic Damage", value: "100", notes: "HP" },
+					{ step: "Damage Resistance", value: "5", notes: "Torso" },
+					{ step: "Penetrating", value: "95", notes: "= 100 – 5" },
+					{ step: "Wounding Modifier", value: "×1", notes: "pi, torso" },
+					{ step: "Injury", value: "95", notes: "= 95 × 1" },
+					{ step: "Adjusted Injury", value: "1", notes: "Maximum 1 (Diffuse)" },
+				])
+
+				_roll.damageType = DamageTypes["pi-"]
+				calc = _create(_roll, _target)
+				expect(calc.description).toEqual([
+					{ step: "Basic Damage", value: "100", notes: "HP" },
+					{ step: "Damage Resistance", value: "5", notes: "Torso" },
+					{ step: "Penetrating", value: "95", notes: "= 100 – 5" },
+					{ step: "Wounding Modifier", value: "×1/2", notes: "pi-, torso" },
+					{ step: "Injury", value: "47", notes: "= 95 × 1/2" },
+					{ step: "Adjusted Injury", value: "1", notes: "Maximum 1 (Diffuse)" },
+				])
 			})
 
 			it("Other attacks can never do more than 2 HP of injury.", () => {
-				let types: Array<[DamageType, string]> = [
-					[DamageTypes.burn, "1"],
-					[DamageTypes.cor, "1"],
-					[DamageTypes.cr, "1"],
-					[DamageTypes.cut, "1.5"],
-					[DamageTypes.fat, "1"],
-					[DamageTypes.tox, "1"],
+				let types: Array<[DamageType, number]> = [
+					[DamageTypes.burn, 1],
+					[DamageTypes.cor, 1],
+					[DamageTypes.cr, 1],
+					[DamageTypes.cut, 1.5],
+					[DamageTypes.fat, 1],
+					[DamageTypes.tox, 1],
 				]
 				for (const type of types) {
 					_roll.damageType = type[0]
@@ -574,7 +610,8 @@ describe("Damage calculator", () => {
 						{ step: "Damage Resistance", value: "5", notes: "Torso" },
 						{ step: "Penetrating", value: "95", notes: "= 100 – 5" },
 						{ step: "Wounding Modifier", value: `×${type[1]}`, notes: `${type[0].key}, torso` },
-						{ step: "Injury", value: "2", notes: `= 95 × ${type[1]}, Maximum 2 (Diffuse)` },
+						{ step: "Injury", value: `${Math.floor(95 * type[1])}`, notes: `= 95 × ${type[1]}` },
+						{ step: "Adjusted Injury", value: "2", notes: "Maximum 2 (Diffuse)" },
 					])
 				}
 			})
@@ -592,15 +629,13 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 10
 			_roll.damageType = DamageTypes.cr
 			let calc = _create(_roll, _target)
-			expect(calc.penetratingDamage).toBe(10)
-			// Math.floor(_target.hitPoints.value / 2) + 1
-			expect(calc.injury).toBe(8)
 			expect(calc.description).toEqual([
 				{ step: "Basic Damage", value: "10", notes: "HP" },
 				{ step: "Damage Resistance", value: "0", notes: "Right Arm" },
 				{ step: "Penetrating", value: "10", notes: "= 10 – 0" },
 				{ step: "Wounding Modifier", value: "×1", notes: "cr, arm" },
-				{ step: "Injury", value: "8", notes: "= 10 × 1, Maximum 8 for arm" },
+				{ step: "Injury", value: "10", notes: "= 10 × 1" },
+				{ step: "Adjusted Injury", value: "8", notes: "Maximum 8 (arm)" },
 			])
 		})
 	})

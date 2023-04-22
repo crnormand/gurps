@@ -83,7 +83,7 @@ class DamageCalculator {
 	get _injuryValueAndReason(): [number, string] {
 		if (this._isBluntTrauma) return [this.bluntTrauma, "Blunt Trauma"]
 		const injury = this._adjustedInjury
-		return [injury[0], injury[1]]
+		return injury
 	}
 
 	/**
@@ -102,15 +102,15 @@ class DamageCalculator {
 
 		const adjustedForDamageReduction = this.candidateInjury / this._damageReductionValue
 		// If (this._damageReductionValue !== 1)
-		// 	reason = `= (${candidateInjuryReason}) ÷ ${this._damageReductionValue} Damage Reduction`
+		// 	reason = `= ${candidateInjury} ÷ ${this._damageReductionValue} (Damage Reduction)`
 
 		const maxHitLocation = this._maximumForHitLocation
 		const adjustedForHitLocationMax = Math.min(adjustedForDamageReduction, maxHitLocation[0])
-		if (maxHitLocation[0] !== Infinity) reason = `= ${candidateInjuryReason}, ${maxHitLocation[1]}`
+		if (maxHitLocation[0] !== Infinity) reason = `${maxHitLocation[1]}`
 
 		const maxInjuryTolerance = this._maximumForInjuryTolerance
 		const adjustedForInjuryTolerance = Math.min(adjustedForHitLocationMax, maxInjuryTolerance[0])
-		if (maxInjuryTolerance[0] !== Infinity) reason = `= ${candidateInjuryReason}, ${maxInjuryTolerance[1]}`
+		if (maxInjuryTolerance[0] !== Infinity) reason = `${maxInjuryTolerance[1]}`
 
 		return [adjustedForInjuryTolerance, reason]
 	}
@@ -121,12 +121,12 @@ class DamageCalculator {
 	private get _maximumForHitLocation(): [number, string] {
 		if (Limb.includes(this.damageRoll.locationId)) {
 			const max = Math.floor(this.target.hitPoints.value / 2) + 1
-			return [max, `Maximum ${max} for ${this.damageRoll.locationId}`]
+			return [max, `Maximum ${max} (${this.damageRoll.locationId})`]
 		}
 
 		if (Extremity.includes(this.damageRoll.locationId)) {
 			const max = Math.floor(this.target.hitPoints.value / 3) + 1
-			return [max, `Maximum ${max} for ${this.damageRoll.locationId}`]
+			return [max, `Maximum ${max} (${this.damageRoll.locationId})`]
 		}
 
 		return [Infinity, ""]
@@ -378,9 +378,17 @@ class DamageCalculator {
 
 		results.push({
 			step: "Injury",
-			value: `${this.injury}`,
-			notes: this._injuryValueAndReason[1],
+			value: `${this.candidateInjury}`,
+			notes: `= ${this.penetratingDamage} × ${this.formatFraction(this.woundingModifier)}`,
 		})
+
+		if (this.candidateInjury !== this.injury) {
+			results.push({
+				step: "Adjusted Injury",
+				value: `${this.injury}`,
+				notes: this._injuryValueAndReason[1],
+			})
+		}
 
 		return results
 	}

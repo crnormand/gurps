@@ -46,6 +46,7 @@ class ApplyDamageDialog extends Application {
 			minimizable: false,
 			resizable: true,
 			width: 0,
+			height: 0,
 			id: "ApplyDamageDialog",
 			template: `systems/${SYSTEM_NAME}/templates/damage_calculator/apply-damage.hbs`,
 			classes: ["apply-damage", "gurps"],
