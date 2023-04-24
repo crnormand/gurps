@@ -204,22 +204,51 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if ([RollType.Skill, RollType.SkillRelative, RollType.Spell, RollType.SpellRelative].includes(type)) {
 			Static.recurseList(this.actor.system.skills, e => {
-				if (e.uuid === $(event.currentTarget).data("uuid"))
+				if (e.uuid === $(event.currentTarget).data("uuid")) {
+					console.log(e)
 					data.item = {
 						formattedName: e.name,
 						skillLevel: e.level,
 					}
+				}
 			})
 		}
-		if ([RollType.Damage, RollType.Attack].includes(type)) {
+		if (type === RollType.Attack) {
 			Static.recurseList(
 				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
 				(e, k) => {
 					if (k === $(event.currentTarget).data("uuid"))
-						data.weapon = {
-							name: e.name,
+						data.item = {
+							itemName: e.name,
 							usage: e.mode,
 							skillLevel: parseInt(e.import) || 0,
+						}
+				}
+			)
+		}
+		if ([RollType.Parry, RollType.Block].includes(type)) {
+			Static.recurseList(
+				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
+				(e, k) => {
+					if (k === $(event.currentTarget).data("uuid")) {
+						data.item = {
+							itemName: e.name,
+							usage: e.mode,
+							skillLevel: parseInt(e[type]),
+						}
+					}
+				}
+			)
+		}
+		if (type === RollType.Damage) {
+			Static.recurseList(
+				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
+				(e, k) => {
+					if (k === $(event.currentTarget).data("uuid"))
+						data.item = {
+							itemName: e.name,
+							usage: e.mode,
+							fastResolvedDamage: e.damage,
 						}
 				}
 			)

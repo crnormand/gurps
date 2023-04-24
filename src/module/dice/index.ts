@@ -18,7 +18,7 @@ class DiceGURPS {
 		this.modifier = 0
 		this.multiplier = 0
 		if (data) {
-			if (typeof data === "string") Object.assign(this, this.fromString(data))
+			if (typeof data === "string") Object.assign(this, DiceGURPS.fromString(data))
 			else Object.assign(this, data)
 			this.sides = Math.floor(this.sides)
 			this.count = Math.floor(this.count)
@@ -28,7 +28,7 @@ class DiceGURPS {
 		}
 	}
 
-	fromString(str: string): DiceGURPSDef {
+	static fromString(str: string): DiceGURPSDef {
 		str = str.trim()
 		let dice: DiceGURPSDef = {
 			sides: 6,
@@ -55,6 +55,7 @@ class DiceGURPS {
 		} else if (hadD && !hadSides && hadCount) {
 			dice.sides = 6
 		}
+		;[ch, i] = nextChar(str, i)
 		if (["+", ...negative].includes(ch)) {
 			const neg = negative.includes(ch)
 			;[dice.modifier, i] = extractValue(str, i)

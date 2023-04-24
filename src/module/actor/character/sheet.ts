@@ -691,6 +691,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			[
 				RollType.Damage,
 				RollType.Attack,
+				RollType.Parry,
+				RollType.Block,
 				RollType.Skill,
 				RollType.SkillRelative,
 				RollType.Spell,
