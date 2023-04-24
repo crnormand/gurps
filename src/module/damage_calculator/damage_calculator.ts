@@ -221,9 +221,9 @@ class DamageCalculator {
 		}
 
 		if (this.effectiveArmorDivisor !== 1) {
-			let x = Math.floor(dr.value / this.effectiveArmorDivisor)
-			x = this.effectiveArmorDivisor < 1 ? Math.max(x, 1) : x
-			return this._updateResult(STEP, x, `Armor Divisor (${this.effectiveArmorDivisor})`, dr)
+			let result = Math.floor(dr.value / this.effectiveArmorDivisor)
+			result = this.effectiveArmorDivisor < 1 ? Math.max(result, 1) : result
+			return this._updateResult(STEP, result, `Armor Divisor (${this.effectiveArmorDivisor})`, dr)
 		}
 
 		return dr
@@ -250,23 +250,35 @@ class DamageCalculator {
 			return {
 				value: modifier[0],
 				description: [
-					{ step: "Wounding Modifier", value: `x${this.formatFraction(modifier[0])}`, notes: modifier[1] },
+					{ step: "Wounding Modifier", value: `×${this.formatFraction(modifier[0])}`, notes: modifier[1] },
 				],
 			}
 		}
 
 		// Calculate Wounding Modifier for Hit Location
 		const modifier = this._woundingModifierByHitLocation
+		if (modifier)
+			return {
+				value: modifier[0],
+				description: [{ step: STEP, value: `×${this.formatFraction(modifier[0])}`, notes: modifier[1] }],
+			}
+
 		return {
-			value: modifier[0],
-			description: [{ step: STEP, value: `x${this.formatFraction(modifier[0])}`, notes: modifier[1] }],
+			value: this.damageType.theDefault,
+			description: [
+				{
+					step: STEP,
+					value: `×${this.formatFraction(this.damageType.theDefault)}`,
+					notes: `${this.damageType.key}, ${this.damageRoll.locationId}`,
+				},
+			],
 		}
 	}
 
 	/**
 	 * @returns {number} wounding modifier only based on hit location.
 	 */
-	private get _woundingModifierByHitLocation(): [number, string] {
+	private get _woundingModifierByHitLocation(): [number, string] | undefined {
 		const standardMessage = `${this.damageType.key}, ${this.damageRoll.locationId}`
 
 		switch (this.damageRoll.locationId) {
@@ -297,14 +309,14 @@ class DamageCalculator {
 					return [1, standardMessage]
 				break
 		}
-		return [this.damageType.theDefault, standardMessage]
+		return undefined // [this.damageType.theDefault, standardMessage]
 	}
 
 	private adjustWoundingModifier(modifier: DamageResult): DamageResult {
 		const mod = this._modifierByInjuryTolerance
-		if (mod) {
-			const x = Math.floor(mod[0] * modifier.value)
-			return this._updateResult("Effective Modifier", x, mod[1], modifier, "×")
+		if (mod && mod[0] !== modifier.value) {
+			const newValue = mod[0]
+			return this._updateResult("Effective Modifier", newValue, mod[1], modifier, "×")
 		}
 
 		return modifier
@@ -324,6 +336,10 @@ class DamageCalculator {
 		if (this.target.hasTrait("No Brain") && ["skull", "eye"].includes(this.damageRoll.locationId))
 			return [this.damageType.theDefault, "No Brain"]
 
+		if (this.target.isDiffuse && this._woundingModifierByHitLocation) {
+			return [this.damageType.theDefault, "Diffuse (ignores hit location)"]
+		}
+
 		return undefined
 	}
 
@@ -331,9 +347,38 @@ class DamageCalculator {
 		// Adjust for Vulnerability
 		if (this.vulnerabilityLevel !== 1) {
 			let temp = injury.value * this.vulnerabilityLevel
-			return this._updateResult("Adjusted Injury", temp, `Vulnerability x${this.vulnerabilityLevel}`, injury)
+			return this._updateResult(
+				"Adjusted Injury",
+				temp,
+				`= ${injury.value} × ${this.vulnerabilityLevel} (Vulnerability)`,
+				injury
+			)
 		}
 
+		// Adjust for Damage Reduction.
+		if (this._damageReductionValue !== 1) {
+			const newValue = injury.value / this._damageReductionValue
+			return this._updateResult(
+				"Adjusted Injury",
+				newValue,
+				`= ${injury.value} ÷ ${this._damageReductionValue} (Damage Reduction)`,
+				injury
+			)
+		}
+
+		// Adjust for Injury Tolerance. This must be before Hit Location or Trauma.
+		if (this._maximumForInjuryTolerance[0] !== Infinity) {
+			const newValue = Math.min(injury.value, this._maximumForInjuryTolerance[0])
+			return this._updateResult("Adjusted Injury", newValue, this._maximumForInjuryTolerance[1], injury)
+		}
+
+		// Adjust for hit location.
+		const newValue = Math.min(injury.value, this._maximumForHitLocation[0])
+		if (newValue < injury.value) {
+			return this._updateResult("Adjusted Injury", newValue, this._maximumForHitLocation[1], injury)
+		}
+
+		// Adjust for blunt trauma.
 		if (this.__isBluntTrauma(penetratingDamage)) {
 			return this._updateResult("Adjusted Injury", this.bluntTrauma, "Blunt Trauma", injury)
 		}
@@ -482,7 +527,7 @@ class DamageCalculator {
 		if (this._woundingModifierByDamageType) return this._woundingModifierByDamageType[0]
 
 		// Calculate Wounding Modifier for Hit Location
-		return this._woundingModifierByHitLocation[0]
+		return this._woundingModifierByHitLocation?.[0] ?? this.damageType.theDefault
 	}
 
 	private get _woundingModifierByDamageType(): [number, string] | undefined {
@@ -610,13 +655,19 @@ class DamageCalculator {
 			value: `${this.penetratingDamage}`,
 			notes: `= ${this.basicDamage} – ${this.effectiveDR}`,
 		})
+
+		const mod = this._woundingModifierByHitLocation ?? [
+			this.damageType.theDefault,
+			`${this.damageType.key}, ${this.damageRoll.locationId}`,
+		]
+
 		results.push({
 			step: "Wounding Modifier",
-			value: `×${this.formatFraction(this._woundingModifierByHitLocation[0])}`,
-			notes: `${this._woundingModifierByHitLocation[1]}`,
+			value: `×${this.formatFraction(mod[0])}`,
+			notes: `${mod[1]}`,
 		})
 
-		if (this.woundingModifier !== this._woundingModifierByHitLocation[0]) {
+		if (this.woundingModifier !== mod[0]) {
 			results.push({
 				step: "Effective Modifier",
 				value: `×${this.formatFraction(this.woundingModifier)}`,
@@ -656,7 +707,7 @@ class DamageCalculator {
 
 		if (this._woundingModifierByDamageType) return this._woundingModifierByDamageType[1]
 
-		return this._woundingModifierByHitLocation[1]
+		return this._woundingModifierByHitLocation?.[1] ?? `${this.damageType.key}, ${this.damageRoll.locationId}`
 	}
 
 	private get effectiveDRReason(): string | undefined {

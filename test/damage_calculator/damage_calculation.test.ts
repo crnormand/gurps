@@ -2,7 +2,7 @@
 import { Extremity, Head, Limb } from "@module/damage_calculator/damage_calculator"
 import { DamageAttacker, DamageRoll, DefaultHitLocations } from "@module/damage_calculator"
 import { DamageTypes, AnyPiercingType } from "@module/damage_calculator/damage_type"
-import { InjuryEffectType, InjuryEffect } from "@module/damage_calculator/injury_effect"
+import { InjuryEffectType } from "@module/damage_calculator/injury_effect"
 import { RollType } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import {
@@ -839,7 +839,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(30)
+					expect(calc.injuryResult.value).toBe(30)
 				}
 			})
 
@@ -848,7 +848,7 @@ describe("Damage calculator", () => {
 				_roll.damageModifier = "tbb"
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(20)
+				expect(calc.injuryResult.value).toBe(20)
 			})
 
 			it("B420: Whenever you are struck in the vitals for enough injury to cause a shock penalty, you must make an immediate HT roll to avoid knockdown.", () => {
@@ -856,7 +856,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(1)
-				expect(calc.injury).toBe(1)
+				expect(calc.injuryResult.value).toBe(1)
 
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.shock }))
 
@@ -887,7 +887,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(10)
-						expect(calc.injury).toBe(40)
+						expect(calc.injuryResult.value).toBe(40)
 					}
 				}
 			})
@@ -927,7 +927,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(1)
-					expect(calc.injury).toBe(4)
+					expect(calc.injuryResult.value).toBe(4)
 
 					expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "shock" }))
 
@@ -949,7 +949,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.tox
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(8)
-					expect(calc.injury).toBe(8)
+					expect(calc.injuryResult.value).toBe(8)
 
 					expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
 				}
@@ -962,7 +962,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.fat
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(10)
+					expect(calc.injuryResult.value).toBe(10)
 				}
 			})
 
@@ -974,7 +974,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(1)
-				expect(calc.injury).toBe(4)
+				expect(calc.injuryResult.value).toBe(4)
 
 				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
@@ -982,7 +982,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(2)
-				expect(calc.injury).toBe(8)
+				expect(calc.injuryResult.value).toBe(8)
 
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
 			})
@@ -997,39 +997,39 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cor
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(15)
+				expect(calc.injuryResult.value).toBe(15)
 
 				_roll.damageType = DamageTypes.imp
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(20)
+				expect(calc.injuryResult.value).toBe(20)
 
 				_roll.damageType = DamageTypes["pi++"]
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(20)
+				expect(calc.injuryResult.value).toBe(20)
 
 				_roll.damageType = DamageTypes["pi-"]
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(5)
+				expect(calc.injuryResult.value).toBe(5)
 
 				_roll.damageType = DamageTypes["pi+"]
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(15)
+				expect(calc.injuryResult.value).toBe(15)
 
 				_roll.damageType = DamageTypes.cut
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(15)
+				expect(calc.injuryResult.value).toBe(15)
 
 				let types = [DamageTypes.pi, DamageTypes.burn, DamageTypes.cr]
 				for (const type of types) {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(10)
+					expect(calc.injuryResult.value).toBe(10)
 				}
 			})
 
@@ -1051,8 +1051,8 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cor
 				let calc = _create(_roll, _target)
 
-				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 2)
-				expect(calc.injury).toBeLessThan(_target.hitPoints.value)
+				expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 2)
+				expect(calc.injuryResult.value).toBeLessThan(_target.hitPoints.value)
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
 			})
@@ -1063,7 +1063,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cor
 				let calc = _create(_roll, _target)
 
-				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value)
+				expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value)
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.blinded }))
 			})
@@ -1080,7 +1080,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(15)
+					expect(calc.injuryResult.value).toBe(15)
 				}
 			})
 
@@ -1088,32 +1088,32 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cut
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(20)
+				expect(calc.injuryResult.value).toBe(20)
 			})
 
 			it("(Other damage types are unchanged.)", () => {
 				_roll.damageType = DamageTypes["pi-"]
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(5)
+				expect(calc.injuryResult.value).toBe(5)
 
 				for (const type of [DamageTypes.burn, DamageTypes.fat, DamageTypes.pi, DamageTypes.tox]) {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(10)
+					expect(calc.injuryResult.value).toBe(10)
 				}
 
 				_roll.damageType = DamageTypes["pi+"]
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(15)
+				expect(calc.injuryResult.value).toBe(15)
 
 				for (const type of [DamageTypes.imp, DamageTypes["pi++"]]) {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(20)
+					expect(calc.injuryResult.value).toBe(20)
 				}
 			})
 		})
@@ -1127,7 +1127,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes["pi-"]
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
-				expect(calc.injury).toBe(5)
+				expect(calc.injuryResult.value).toBe(5)
 
 				for (const type of [
 					DamageTypes.burn,
@@ -1140,21 +1140,21 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(10)
+					expect(calc.injuryResult.value).toBe(10)
 				}
 
 				for (const type of [DamageTypes.cut, DamageTypes["pi+"]]) {
 					_roll.damageType = type
 					calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(15)
+					expect(calc.injuryResult.value).toBe(15)
 				}
 
 				for (const type of [DamageTypes.imp, DamageTypes["pi++"]]) {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(20)
+					expect(calc.injuryResult.value).toBe(20)
 				}
 			})
 
@@ -1212,7 +1212,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(6)
-						expect(calc.injury).toBe(6)
+						expect(calc.injuryResult.value).toBe(6)
 					}
 				}
 			})
@@ -1225,7 +1225,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes["pi-"]
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(3)
+					expect(calc.injuryResult.value).toBe(3)
 
 					for (const type of [
 						DamageTypes.burn,
@@ -1238,7 +1238,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(6)
-						expect(calc.injury).toBe(6)
+						expect(calc.injuryResult.value).toBe(6)
 					}
 
 					for (const type of [DamageTypes.cut]) {
@@ -1246,7 +1246,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(4)
-						expect(calc.injury).toBe(6)
+						expect(calc.injuryResult.value).toBe(6)
 					}
 				}
 			})
@@ -1258,7 +1258,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 10
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 2)
+					expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 2)
 
 					let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
 					expect(checks).toContainEqual(
@@ -1284,7 +1284,7 @@ describe("Damage calculator", () => {
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
 					// Math.floor(_target.hitPoints.value / 2) + 1
-					expect(calc.injury).toBe(8)
+					expect(calc.injuryResult.value).toBe(8)
 				}
 			})
 		})
@@ -1298,13 +1298,11 @@ describe("Damage calculator", () => {
 			it("Reduce the wounding multiplier of large piercing, huge piercing, and impaling damage to ×1.", () => {
 				for (const id of Extremity) {
 					_roll.locationId = id
-					_roll.damageType = DamageTypes["pi-"]
-					// Let calc = _create(_roll, _target)
 					for (const type of [DamageTypes.imp, DamageTypes["pi++"], DamageTypes["pi+"]]) {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(6)
-						expect(calc.injury).toBe(6)
+						expect(calc.injuryResult.value).toBe(6)
 					}
 				}
 			})
@@ -1317,7 +1315,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes["pi-"]
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(3)
+					expect(calc.injuryResult.value).toBe(3)
 
 					for (const type of [
 						DamageTypes.burn,
@@ -1330,7 +1328,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(6)
-						expect(calc.injury).toBe(6)
+						expect(calc.injuryResult.value).toBe(6)
 					}
 
 					for (const type of [DamageTypes.cut]) {
@@ -1338,7 +1336,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(4)
-						expect(calc.injury).toBe(6)
+						expect(calc.injuryResult.value).toBe(6)
 					}
 				}
 			})
@@ -1350,7 +1348,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 8
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 3)
+					expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 3)
 
 					let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
 					expect(checks).toContainEqual(
@@ -1376,7 +1374,7 @@ describe("Damage calculator", () => {
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
 					// Math.floor(_target.hitPoints.value / 3) + 1
-					expect(calc.injury).toBe(6)
+					expect(calc.injuryResult.value).toBe(6)
 				}
 			})
 		})
@@ -1396,7 +1394,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(6)
+					expect(calc.injuryResult.value).toBe(6)
 				}
 			})
 
@@ -1407,7 +1405,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(3)
+					expect(calc.injuryResult.value).toBe(3)
 				}
 			})
 
@@ -1418,7 +1416,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(2)
+					expect(calc.injuryResult.value).toBe(2)
 				}
 			})
 
@@ -1429,7 +1427,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 15
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(2)
+					expect(calc.injuryResult.value).toBe(2)
 				}
 			})
 		})
@@ -1447,7 +1445,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(3)
+					expect(calc.injuryResult.value).toBe(3)
 				}
 			})
 
@@ -1458,7 +1456,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(2)
+					expect(calc.injuryResult.value).toBe(2)
 				}
 			})
 
@@ -1469,7 +1467,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 15
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(2)
+					expect(calc.injuryResult.value).toBe(2)
 				}
 			})
 
@@ -1480,7 +1478,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 15
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(1)
+					expect(calc.injuryResult.value).toBe(1)
 				}
 			})
 		})
@@ -1504,7 +1502,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(95)
-					expect(calc.injury).toBe(1)
+					expect(calc.injuryResult.value).toBe(1)
 				}
 			})
 
@@ -1521,7 +1519,7 @@ describe("Damage calculator", () => {
 				for (const type of types) {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBe(2)
+					expect(calc.injuryResult.value).toBe(2)
 				}
 			})
 		})
@@ -1541,7 +1539,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(40)
+					expect(calc.injuryResult.value).toBe(40)
 				}
 			})
 		})
@@ -1561,26 +1559,26 @@ describe("Damage calculator", () => {
 						_roll.basicDamage = 11
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(11)
-						expect(calc.injury).toBe(5)
+						expect(calc.injuryResult.value).toBe(5)
 					}
 
 					_roll.damageType = DamageTypes["pi+"]
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(11)
-					expect(calc.injury).toBe(3)
+					expect(calc.injuryResult.value).toBe(3)
 
 					_roll.damageType = DamageTypes.pi
 					_roll.basicDamage = 15
 					calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(15)
-					expect(calc.injury).toBe(3)
+					expect(calc.injuryResult.value).toBe(3)
 
 					_roll.damageType = DamageTypes["pi-"]
 					_roll.basicDamage = 20
 					calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(20)
-					expect(calc.injury).toBe(2)
+					expect(calc.injuryResult.value).toBe(2)
 				}
 			})
 
@@ -1607,13 +1605,13 @@ describe("Damage calculator", () => {
 				_roll.basicDamage = 5
 				_roll.damageType = DamageTypes.cr
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBeLessThanOrEqual(_target.hitPoints.value / 10)
+				expect(calc.injuryResult.value).toBeLessThanOrEqual(_target.hitPoints.value / 10)
 				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 6
 				_roll.damageType = DamageTypes.cr
 				calc = _create(_roll, _target)
-				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 10)
+				expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 10)
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
 			})
 
@@ -1624,7 +1622,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 10
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 2)
+					expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 2)
 					expect(calc.injuryEffects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
@@ -1638,7 +1636,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 10
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 3)
+					expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 3)
 					expect(calc.injuryEffects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
@@ -1661,8 +1659,9 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						_roll.basicDamage = 11
 						let calc = _create(_roll, _target)
+						if (calc.injuryResult.value === 8) console.debug(`${type.key}:${location}`)
 						expect(calc.penetratingDamage).toBe(11)
-						expect(calc.injury).toBe(1)
+						expect(calc.injuryResult.value).toBe(1)
 					}
 
 					let types = [
@@ -1677,7 +1676,7 @@ describe("Damage calculator", () => {
 					for (const type of types) {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
-						expect(calc.injury).toBe(2)
+						expect(calc.injuryResult.value).toBe(2)
 					}
 				}
 			})
@@ -1706,13 +1705,13 @@ describe("Damage calculator", () => {
 				_roll.basicDamage = 5
 				_roll.damageType = DamageTypes.imp
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBeLessThanOrEqual(_target.hitPoints.value / 10)
+				expect(calc.injuryResult.value).toBeLessThanOrEqual(_target.hitPoints.value / 10)
 				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 6
 				_roll.damageType = DamageTypes.cr
 				calc = _create(_roll, _target)
-				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 10)
+				expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 10)
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
 			})
 
@@ -1723,7 +1722,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 10
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 2)
+					expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 2)
 					expect(calc.injuryEffects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
@@ -1737,7 +1736,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 10
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 3)
+					expect(calc.injuryResult.value).toBeGreaterThan(_target.hitPoints.value / 3)
 					expect(calc.injuryEffects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
@@ -1792,27 +1791,27 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(10)
-						expect(calc.injury).toBe(10)
+						expect(calc.injuryResult.value).toBe(10)
 					}
 
 					for (const type of [DamageTypes.cut, DamageTypes["pi+"]]) {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(10)
-						expect(calc.injury).toBe(15)
+						expect(calc.injuryResult.value).toBe(15)
 					}
 
 					for (const type of [DamageTypes.imp, DamageTypes["pi++"]]) {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 						expect(calc.penetratingDamage).toBe(10)
-						expect(calc.injury).toBe(20)
+						expect(calc.injuryResult.value).toBe(20)
 					}
 
 					_roll.damageType = DamageTypes["pi-"]
 					let calc = _create(_roll, _target)
 					expect(calc.penetratingDamage).toBe(10)
-					expect(calc.injury).toBe(5)
+					expect(calc.injuryResult.value).toBe(5)
 				}
 			})
 
@@ -1824,7 +1823,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(1)
-				expect(calc.injury).toBe(1)
+				expect(calc.injuryResult.value).toBe(1)
 
 				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
@@ -1832,7 +1831,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(3)
-				expect(calc.injury).toBe(3)
+				expect(calc.injuryResult.value).toBe(3)
 
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
 			})
@@ -1853,7 +1852,7 @@ describe("Damage calculator", () => {
 					const calc = _create(_roll, _target)
 					const injuryEffects = calc.injuryEffects
 
-					expect(calc.injury).toBe(7)
+					expect(calc.injuryResult.value).toBe(7)
 
 					let checks = injuryEffects.find(it => it.id === "majorWound")?.checks
 					expect(checks).toContainEqual(
@@ -1890,20 +1889,20 @@ describe("Damage calculator", () => {
 				_roll.basicDamage = 16
 
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(24)
+				expect(calc.injuryResult.value).toBe(24)
 
 				const damageReduction = new _TargetTrait("Damage Reduction", 2)
 				_target._traits.push(damageReduction)
 				calc = _create(_roll, _target)
-				expect(calc.injury).toBe(12)
+				expect(calc.injuryResult.value).toBe(12)
 
 				damageReduction.levels = 3
 				calc = _create(_roll, _target)
-				expect(calc.injury).toBe(8)
+				expect(calc.injuryResult.value).toBe(8)
 
 				damageReduction.levels = 4
 				calc = _create(_roll, _target)
-				expect(calc.injury).toBe(6)
+				expect(calc.injuryResult.value).toBe(6)
 			})
 		})
 	})
@@ -1929,7 +1928,7 @@ describe("Damage calculator", () => {
 			_roll.locationId = DefaultHitLocations.LargeArea
 			_roll.basicDamage = 10
 			const calc = _create(_roll, _target)
-			expect(calc.injury).toBe(3)
+			expect(calc.injuryResult.value).toBe(3)
 		})
 	})
 
@@ -1940,11 +1939,11 @@ describe("Damage calculator", () => {
 			_torso._map.set("all", 5)
 
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(22)
+			expect(calc.injuryResult.value).toBe(22)
 
 			_roll.isHalfDamage = true
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(6)
+			expect(calc.injuryResult.value).toBe(6)
 		})
 	})
 
@@ -1956,10 +1955,10 @@ describe("Damage calculator", () => {
 
 			_target.vulnerabilityLevel = 3
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(15)
+			expect(calc.injuryResult.value).toBe(15)
 
 			_target.vulnerabilityLevel = 2
-			expect(calc.injury).toBe(10)
+			expect(calc.injuryResult.value).toBe(10)
 		})
 	})
 
@@ -1970,17 +1969,17 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 20
 			_roll.armorDivisor = 10
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(18)
+			expect(calc.injuryResult.value).toBe(18)
 
 			const trait = new _TargetTrait("Damage Resistance", 0)
 			trait.modifiers.push(new _TargetTraitModifier("Hardened", 2))
 			_target._traits.push(trait)
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(14)
+			expect(calc.injuryResult.value).toBe(14)
 
 			_roll.armorDivisor = 2
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(0)
+			expect(calc.injuryResult.value).toBe(0)
 		})
 	})
 
@@ -2000,7 +1999,7 @@ describe("Damage calculator", () => {
 			_roll.rofMultiplier = 9
 
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(16)
+			expect(calc.injuryResult.value).toBe(16)
 		})
 	})
 
