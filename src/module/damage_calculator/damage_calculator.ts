@@ -18,8 +18,13 @@ const Torso = "torso"
 
 type Descriptor = {
 	step: string
-	value: string
-	notes: string
+	value?: string
+	notes?: string
+}
+
+type DamageResult = {
+	value: number
+	description: Descriptor[]
 }
 
 type Overrides = {
@@ -73,6 +78,288 @@ class DamageCalculator {
 		return Object.values(this._overrides).some(it => it !== undefined)
 	}
 
+	get injuryResult(): DamageResult {
+		// Basic Damage
+		let basicDamage = this.basicDamageResult
+		basicDamage = this.adjustBasicDamage(basicDamage)
+
+		// Damage Resistance
+		let effectiveDr = this.basicDamageResistance
+		effectiveDr = this.adjustDamageResistance(effectiveDr)
+
+		// Peentrating Damge = Basic Damage - Damage Resistance
+		const penetratingDamage = {
+			value: Math.max(basicDamage.value - effectiveDr.value, 0),
+			description: [
+				...basicDamage.description,
+				...effectiveDr.description,
+				{
+					step: "Penetrating",
+					value: `${basicDamage.value - effectiveDr.value}`,
+					notes: `= ${basicDamage.value} – ${effectiveDr.value}`,
+				},
+			],
+		}
+
+		// Wounding Modifier
+		let woundingModifier = this.basicWoundingModifier
+		woundingModifier = this.adjustWoundingModifier(woundingModifier)
+
+		// Injury = Penetrating Damage * Wounding Modifier
+		let value = Math.floor(woundingModifier.value * penetratingDamage.value)
+		if (woundingModifier.value !== 0 && value === 0 && penetratingDamage.value > 0) value = 1
+
+		let injury = <DamageResult>{
+			value: value,
+			description: [
+				...penetratingDamage.description,
+				...woundingModifier.description,
+				{
+					step: "Injury",
+					value: `${value}`,
+					notes: `= ${woundingModifier.value} × ${penetratingDamage.value}`,
+				},
+			],
+		}
+
+		injury = this._adjustInjury(penetratingDamage.value, injury)
+		return injury
+	}
+
+	private get basicDamageResult(): DamageResult {
+		const basic = this._overrides.basicDamage ?? this.damageRoll.basicDamage
+		return {
+			value: basic,
+			description: [{ step: "Basic Damage", value: `${basic}` }],
+		}
+	}
+
+	private adjustBasicDamage(basic: DamageResult): DamageResult {
+		const STEP = "Adjusted Damage"
+
+		if (this._isExplosion && this.damageRoll.range) {
+			if (this.damageRoll.range > this._diceOfDamage * 2) {
+				return this._updateResult(STEP, 0, "Explosion; Out of range", basic)
+			} else {
+				return this._updateResult(
+					STEP,
+					Math.floor(basic.value / (3 * this.damageRoll.range)),
+					`Explosion; ${this.damageRoll.range} yards`,
+					basic
+				)
+			}
+		}
+
+		if (this._isKnockbackOnly) return this._updateResult(STEP, 0, "Knockback only", basic)
+
+		if (this.damageRoll.isHalfDamage)
+			return this._updateResult(STEP, Math.floor(basic.value * 0.5), "Ranged, 1/2D", basic)
+
+		if (this._multiplierForShotgunExtremelyClose !== 1) {
+			return this._updateResult(
+				STEP,
+				basic.value * this._multiplierForShotgunExtremelyClose,
+				"Shotgun (extremely close)",
+				basic
+			)
+		}
+
+		return basic
+	}
+
+	private get basicDamageResistance(): DamageResult {
+		const STEP = "Damage Resistance"
+
+		if (this._overrides.rawDR)
+			return {
+				value: this._overrides.rawDR,
+				description: [{ step: STEP, value: `${this._overrides.rawDR}`, notes: "Override" }],
+			}
+
+		let basicDr = 0
+		if (this._isLargeAreaInjury) {
+			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
+
+			let allDR: number[] = this.target.hitLocationTable.locations
+				.map(it => HitLocationUtil.getHitLocationDR(it, this.damageType))
+				.filter(it => it !== -1)
+
+			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2
+
+			return {
+				value: basicDr,
+				description: [{ step: STEP, value: `${basicDr}`, notes: "Large Area Injury" }],
+			}
+		} else {
+			basicDr = this.drForHitLocation
+			return {
+				value: this.drForHitLocation,
+				description: [
+					{ step: STEP, value: `${this.drForHitLocation}`, notes: `${this._hitLocation?.choice_name}` },
+				],
+			}
+		}
+	}
+
+	private adjustDamageResistance(dr: DamageResult): DamageResult {
+		const STEP = "Effective DR"
+
+		// Armor Divisor is "Ignores DR"
+		if (this._isIgnoreDRArmorDivisor) return this._updateResult(STEP, 0, "Armor Divisor (Ignores DR)", dr)
+
+		if (this.isInternalExplosion) return this._updateResult(STEP, 0, "Explosion (Internal)", dr)
+
+		if (this.damageType === DamageTypes.injury) return this._updateResult(STEP, 0, "Ignores DR", dr)
+
+		if (this._multiplierForShotgunExtremelyClose > 1) {
+			dr = this._updateResult(
+				STEP,
+				dr.value * this._multiplierForShotgunExtremelyClose,
+				`Shotgun, extremely close (×${this._multiplierForShotgunExtremelyClose})`,
+				dr
+			)
+		}
+
+		if (this.effectiveArmorDivisor !== 1) {
+			let x = Math.floor(dr.value / this.effectiveArmorDivisor)
+			x = this.effectiveArmorDivisor < 1 ? Math.max(x, 1) : x
+			return this._updateResult(STEP, x, `Armor Divisor (${this.effectiveArmorDivisor})`, dr)
+		}
+
+		return dr
+	}
+
+	private get basicWoundingModifier(): DamageResult {
+		const STEP = "Wounding Modifier"
+
+		if (this._overrides.woundingModifier)
+			return {
+				value: this._overrides.woundingModifier,
+				description: [
+					{
+						step: STEP,
+						value: `×${this.formatFraction(this._overrides.woundingModifier)}`,
+						notes: "Override",
+					},
+				],
+			}
+
+		// Fatigue damage always ignores hit location.
+		if (this._woundingModifierByDamageType) {
+			const modifier = this._woundingModifierByDamageType
+			return {
+				value: modifier[0],
+				description: [
+					{ step: "Wounding Modifier", value: `x${this.formatFraction(modifier[0])}`, notes: modifier[1] },
+				],
+			}
+		}
+
+		// Calculate Wounding Modifier for Hit Location
+		const modifier = this._woundingModifierByHitLocation
+		return {
+			value: modifier[0],
+			description: [{ step: STEP, value: `x${this.formatFraction(modifier[0])}`, notes: modifier[1] }],
+		}
+	}
+
+	/**
+	 * @returns {number} wounding modifier only based on hit location.
+	 */
+	private get _woundingModifierByHitLocation(): [number, string] {
+		const standardMessage = `${this.damageType.key}, ${this.damageRoll.locationId}`
+
+		switch (this.damageRoll.locationId) {
+			case "vitals":
+				if ([DamageTypes.imp, ...AnyPiercingType].includes(this.damageType)) return [3, standardMessage]
+				if (this.isTightBeamBurning()) return [2, `Tight beam burning, ${this.damageRoll.locationId}`]
+				break
+
+			case "skull":
+			case "eye":
+				if (this.damageType !== DamageTypes.tox) return [4, standardMessage]
+				break
+
+			case "face":
+				if (this.damageType === DamageTypes.cor) return [1.5, standardMessage]
+				break
+
+			case "neck":
+				if ([DamageTypes.cor, DamageTypes.cr].includes(this.damageType)) return [1.5, standardMessage]
+				if (this.damageType === DamageTypes.cut) return [2, standardMessage]
+				break
+
+			case "hand":
+			case "foot":
+			case "arm":
+			case "leg":
+				if ([DamageTypes["pi+"], DamageTypes["pi++"], DamageTypes.imp].includes(this.damageType))
+					return [1, standardMessage]
+				break
+		}
+		return [this.damageType.theDefault, standardMessage]
+	}
+
+	private adjustWoundingModifier(modifier: DamageResult): DamageResult {
+		const mod = this._modifierByInjuryTolerance
+		if (mod) {
+			const x = Math.floor(mod[0] * modifier.value)
+			return this._updateResult("Effective Modifier", x, mod[1], modifier, "×")
+		}
+
+		return modifier
+	}
+
+	private get _modifierByInjuryTolerance(): [number, string] | undefined {
+		/**
+		 * TODO Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
+		 */
+		if (this.target.isHomogenous) return [this.damageType.homogenous, "Homogenous"]
+
+		// Unliving uses unliving modifiers unless the hit location is skull, eye, or vitals.
+		if (this.target.isUnliving && !["skull", "eye", "vitals"].includes(this.damageRoll.locationId))
+			return [this.damageType.unliving, "Unliving"]
+
+		// No Brain has no extra wounding modifier if hit location is skull or eye.
+		if (this.target.hasTrait("No Brain") && ["skull", "eye"].includes(this.damageRoll.locationId))
+			return [this.damageType.theDefault, "No Brain"]
+
+		return undefined
+	}
+
+	private _adjustInjury(penetratingDamage: number, injury: DamageResult): DamageResult {
+		// Adjust for Vulnerability
+		if (this.vulnerabilityLevel !== 1) {
+			let temp = injury.value * this.vulnerabilityLevel
+			return this._updateResult("Adjusted Injury", temp, `Vulnerability x${this.vulnerabilityLevel}`, injury)
+		}
+
+		if (this.__isBluntTrauma(penetratingDamage)) {
+			return this._updateResult("Adjusted Injury", this.bluntTrauma, "Blunt Trauma", injury)
+		}
+		return injury
+	}
+
+	__isBluntTrauma(penetratingDamage: number): boolean {
+		return this.isFlexibleArmor && penetratingDamage === 0 && this.isBluntTraumaDamageType && this.bluntTrauma > 0
+	}
+
+	get isBluntTraumaDamageType(): boolean {
+		return [DamageTypes.cr, DamageTypes.cut, DamageTypes.imp, ...AnyPiercingType].includes(this.damageType)
+	}
+
+	private _updateResult(
+		step: string,
+		value: number,
+		notes: string,
+		result: DamageResult,
+		prefix?: string
+	): DamageResult {
+		result.value = value
+		result.description.push({ step: step, value: `${prefix ?? ""}${this.formatFraction(value)}`, notes: notes })
+		return result
+	}
+
 	/**
 	 * @returns {number} the final amount of adjusted injury OR any Blunt Trauma (if adjusted injury is 0).
 	 */
@@ -82,8 +369,7 @@ class DamageCalculator {
 
 	get _injuryValueAndReason(): [number, string] {
 		if (this._isBluntTrauma) return [this.bluntTrauma, "Blunt Trauma"]
-		const injury = this._adjustedInjury
-		return injury
+		return this._adjustedInjury
 	}
 
 	/**
@@ -223,43 +509,6 @@ class DamageCalculator {
 	}
 
 	/**
-	 * @returns {number} wounding modifier only based on hit location.
-	 */
-	private get _woundingModifierByHitLocation(): [number, string] {
-		const standardMessage = `${this.damageType.key}, ${this.damageRoll.locationId}`
-
-		switch (this.damageRoll.locationId) {
-			case "vitals":
-				if ([DamageTypes.imp, ...AnyPiercingType].includes(this.damageType)) return [3, standardMessage]
-				if (this.isTightBeamBurning()) return [2, `Tight beam burning, ${this.damageRoll.locationId}`]
-				break
-
-			case "skull":
-			case "eye":
-				if (this.damageType !== DamageTypes.tox) return [4, standardMessage]
-				break
-
-			case "face":
-				if (this.damageType === DamageTypes.cor) return [1.5, standardMessage]
-				break
-
-			case "neck":
-				if ([DamageTypes.cor, DamageTypes.cr].includes(this.damageType)) return [1.5, standardMessage]
-				if (this.damageType === DamageTypes.cut) return [2, standardMessage]
-				break
-
-			case "hand":
-			case "foot":
-			case "arm":
-			case "leg":
-				if ([DamageTypes["pi+"], DamageTypes["pi++"], DamageTypes.imp].includes(this.damageType))
-					return [1, standardMessage]
-				break
-		}
-		return [this.damageType.theDefault, standardMessage]
-	}
-
-	/**
 	 * @returns {number} - The amount of damage that penetrates any DR.
 	 */
 	get penetratingDamage(): number {
@@ -287,7 +536,7 @@ class DamageCalculator {
 	}
 
 	private get effectiveDR() {
-		if (this._isIgnoreDR || this.isInternalExplosion) return 0
+		if (this._isIgnoreDRArmorDivisor || this.isInternalExplosion) return 0
 
 		let dr = this.damageType === DamageTypes.injury ? 0 : Math.floor(this._basicDR / this.effectiveArmorDivisor)
 
@@ -295,7 +544,7 @@ class DamageCalculator {
 		return this.effectiveArmorDivisor < 1 ? Math.max(dr, 1) : dr
 	}
 
-	private get _isIgnoreDR(): boolean {
+	private get _isIgnoreDRArmorDivisor(): boolean {
 		return this.effectiveArmorDivisor === 0
 	}
 
@@ -312,7 +561,7 @@ class DamageCalculator {
 
 			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2
 		} else {
-			basicDr = this.rawDR
+			basicDr = this.drForHitLocation
 		}
 
 		return basicDr * this._multiplierForShotgunExtremelyClose
@@ -331,13 +580,8 @@ class DamageCalculator {
 		const armorDivisors = [0, 100, 10, 5, 3, 2, 1]
 		let index = armorDivisors.indexOf(ad)
 
-		// Let damageResistance = this.target.getTrait("Damage Resistance")
-		// if (damageResistance) {
-		// 	let level = damageResistance.getModifier("Hardened")?.levels ?? 0
-		// 	index += level
 		index += this.hardenedDRLevel
 		if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
-		// }
 
 		return armorDivisors[index]
 	}
@@ -347,9 +591,13 @@ class DamageCalculator {
 	get description(): Descriptor[] {
 		let results = []
 		results.push({ step: "Basic Damage", value: `${this.basicDamage}`, notes: `${this.damageRoll.applyTo}` })
-		results.push({ step: "Damage Resistance", value: `${this.rawDR}`, notes: `${this._hitLocation?.choice_name}` })
+		results.push({
+			step: "Damage Resistance",
+			value: `${this.drForHitLocation}`,
+			notes: `${this._hitLocation?.choice_name}`,
+		})
 
-		if (this.rawDR !== this.effectiveDR) {
+		if (this.drForHitLocation !== this.effectiveDR) {
 			results.push({
 				step: "Effective DR",
 				value: `${this.effectiveDR}`,
@@ -659,14 +907,13 @@ class DamageCalculator {
 		return this._isExplosion && this.damageRoll.internalExplosion
 	}
 
-	get rawDR(): number {
-		const location = this.target.hitLocationTable.locations.find(it => it.id === this.damageRoll.locationId)
-		return this._overrides.rawDR ?? HitLocationUtil.getHitLocationDR(location, this.damageType)
+	get drForHitLocation(): number {
+		return this._overrides.rawDR ?? HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType)
 	}
 
 	set overrideRawDr(dr: number | undefined) {
-		const location = this.target.hitLocationTable.locations.find(it => it.id === this.damageRoll.locationId)
-		this._overrides.rawDR = HitLocationUtil.getHitLocationDR(location, this.damageType) === dr ? undefined : dr
+		this._overrides.rawDR =
+			HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType) === dr ? undefined : dr
 	}
 
 	get overrideRawDR() {
@@ -718,4 +965,4 @@ class DamageCalculator {
 	}
 }
 
-export { DamageCalculator, Head, Limb, Extremity, Descriptor }
+export { DamageCalculator, Head, Limb, Extremity, Descriptor, DamageResult }

@@ -175,18 +175,18 @@ describe("Damage calculator", () => {
 		it("The result of the damage roll is the hit’s “basic damage.”", () => {
 			_roll.basicDamage = 8
 			let calc = _create(_roll, _target)
-			expect(calc.adjustedBasicDamage).toBe(8)
+			expect(calc.injuryResult.value).toBe(8)
 
 			_roll.basicDamage = 4
 			calc = _create(_roll, _target)
-			expect(calc.adjustedBasicDamage).toBe(4)
+			expect(calc.injuryResult.value).toBe(4)
 		})
 
 		it("(Knockback Only does no damage.)", () => {
 			_roll.basicDamage = 8
 			_roll.damageType = DamageTypes.kb
 			let calc = _create(_roll, _target)
-			expect(calc.adjustedBasicDamage).toBe(0)
+			expect(calc.injuryResult.value).toBe(0)
 		})
 	})
 
@@ -194,13 +194,13 @@ describe("Damage calculator", () => {
 		it("If your foe has no DR, the entire damage roll is penetrating damage.", () => {
 			_roll.basicDamage = 8
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(8)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(8)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 
 			_roll.basicDamage = 15
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(15)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(15)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 		})
 
 		it("If your target has any Damage Resistance (DR) he subtracts this from your damage roll.", () => {
@@ -208,13 +208,13 @@ describe("Damage calculator", () => {
 			_torso._map.set("all", 2)
 
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(6)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(6)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 
 			_roll.basicDamage = 11
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(9)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(9)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 		})
 
 		it("If your damage roll is less than or equal to your target’s effective DR, your attack failed to penetrate.", () => {
@@ -223,13 +223,13 @@ describe("Damage calculator", () => {
 
 			let calc = _create(_roll, _target)
 
-			expect(calc.injury).toBe(0)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(0)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 
 			_roll.basicDamage = 9
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(0)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(0)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 		})
 
 		it("(Direct Injury ignores DR.)", () => {
@@ -238,13 +238,13 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 8
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(8)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(8)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 
 			_roll.basicDamage = 11
 			calc = _create(_roll, _target)
-			expect(calc.injury).toBe(11)
-			expect(calc.injury).toBe(calc.penetratingDamage)
+			expect(calc.injuryResult.value).toBe(11)
+			expect(calc.injuryResult.value).toBe(calc.penetratingDamage)
 		})
 	})
 
@@ -262,7 +262,7 @@ describe("Damage calculator", () => {
 				for (let i = 0; i < divisors.length; i++) {
 					_roll.armorDivisor = divisors[i]
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBe(expected[i])
+					expect(calc.injuryResult.value).toBe(expected[i])
 				}
 			})
 
@@ -274,7 +274,7 @@ describe("Damage calculator", () => {
 				for (let i = 0; i < divisors.length; i++) {
 					_roll.armorDivisor = divisors[i]
 					let calc = _create(_roll, _target)
-					expect(calc.injury).toBe(expected[i])
+					expect(calc.injuryResult.value).toBe(expected[i])
 				}
 			})
 
@@ -282,7 +282,7 @@ describe("Damage calculator", () => {
 				_torso._map.set("all", 20)
 				_roll.armorDivisor = 0
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(20)
+				expect(calc.injuryResult.value).toBe(20)
 			})
 		})
 
@@ -292,7 +292,7 @@ describe("Damage calculator", () => {
 
 				_roll.armorDivisor = 0.5
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(10)
+				expect(calc.injuryResult.value).toBe(10)
 			})
 
 			it("... by 5 for (0.2),", () => {
@@ -300,7 +300,7 @@ describe("Damage calculator", () => {
 
 				_roll.armorDivisor = 0.2
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(5)
+				expect(calc.injuryResult.value).toBe(5)
 			})
 
 			it("... and by 10 for (0.1).", () => {
@@ -309,14 +309,14 @@ describe("Damage calculator", () => {
 
 				_roll.armorDivisor = 0.1
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(1)
+				expect(calc.injuryResult.value).toBe(1)
 			})
 
 			it("In addition, if you have any level of this limitation, targets that have DR 0 get DR 1 against your attack.", () => {
 				_torso._map.set("all", 0)
 				_roll.armorDivisor = 0.5
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(19)
+				expect(calc.injuryResult.value).toBe(19)
 			})
 		})
 	})
@@ -331,7 +331,7 @@ describe("Damage calculator", () => {
 			_roll.damageType = DamageTypes["pi-"]
 			let calc = _create(_roll, _target)
 			expect(calc.penetratingDamage).toBe(6)
-			expect(calc.injury).toBe(3)
+			expect(calc.injuryResult.value).toBe(3)
 		})
 
 		it("Burning (burn), corrosion (cor), crushing (cr), fatigue (fat), piercing (pi), and toxic (tox): ×1.", () => {
@@ -347,7 +347,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = type
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(6)
-				expect(calc.injury).toBe(6)
+				expect(calc.injuryResult.value).toBe(6)
 			}
 		})
 
@@ -357,7 +357,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = type
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(6)
-				expect(calc.injury).toBe(9)
+				expect(calc.injuryResult.value).toBe(9)
 			}
 		})
 
@@ -367,7 +367,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = type
 				let calc = _create(_roll, _target)
 				expect(calc.penetratingDamage).toBe(6)
-				expect(calc.injury).toBe(12)
+				expect(calc.injuryResult.value).toBe(12)
 			}
 		})
 
@@ -375,7 +375,7 @@ describe("Damage calculator", () => {
 			_roll.damageType = DamageTypes["pi-"]
 			_roll.basicDamage = 12
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(3)
+			expect(calc.injuryResult.value).toBe(3)
 		})
 
 		it("...but the minimum injury is 1 HP for any attack that penetrates DR at all.", () => {
@@ -384,7 +384,7 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 12
 			let calc = _create(_roll, _target)
-			expect(calc.injury).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 		})
 	})
 
@@ -401,24 +401,24 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
 				expect(calc.penetratingDamage).toBe(0)
-				expect(calc.injury).toBe(0)
+				expect(calc.injuryResult.value).toBe(0)
 
 				_roll.basicDamage = 10
 				calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
 				expect(calc.penetratingDamage).toBe(0)
-				expect(calc.injury).toBe(1)
+				expect(calc.injuryResult.value).toBe(1)
 
 				_roll.basicDamage = 19
 				calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
-				expect(calc.injury).toBe(1)
+				expect(calc.injuryResult.value).toBe(1)
 				expect(calc.penetratingDamage).toBe(0)
 
 				_roll.basicDamage = 20
 				calc = _create(_roll, _target)
 				calc.overrideFlexible(true)
-				expect(calc.injury).toBe(2)
+				expect(calc.injuryResult.value).toBe(2)
 				expect(calc.penetratingDamage).toBe(0)
 			}
 		})
@@ -430,25 +430,25 @@ describe("Damage calculator", () => {
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
 			expect(calc.penetratingDamage).toBe(0)
-			expect(calc.injury).toBe(0)
+			expect(calc.injuryResult.value).toBe(0)
 
 			_roll.basicDamage = 5
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
 			expect(calc.penetratingDamage).toBe(0)
-			expect(calc.injury).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 
 			_roll.basicDamage = 19
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
 			expect(calc.penetratingDamage).toBe(0)
-			expect(calc.injury).toBe(3)
+			expect(calc.injuryResult.value).toBe(3)
 
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
 			expect(calc.penetratingDamage).toBe(0)
-			expect(calc.injury).toBe(4)
+			expect(calc.injuryResult.value).toBe(4)
 		})
 
 		it("If even one point of damage penetrates your flexible DR, however, you do not suffer blunt trauma.", () => {
@@ -456,13 +456,13 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 21
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 
 			_roll.damageType = DamageTypes["pi-"]
 			_roll.basicDamage = 21
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injury).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 		})
 
 		it("(Burning, Corrosive, Fatigue, Toxic, and Knockback don't do blunt trauma.)", () => {
@@ -470,7 +470,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = type
 				_roll.basicDamage = 20
 				let calc = _create(_roll, _target)
-				expect(calc.injury).toBe(0)
+				expect(calc.injuryResult.value).toBe(0)
 			}
 		})
 	})
@@ -2017,11 +2017,11 @@ describe("Damage calculator", () => {
 
 			const calc = _create(_roll, _target)
 			// It would be 9 ÷ (3 × 3) = 1; except the range is too far.
-			expect(calc.adjustedBasicDamage).toBe(0)
+			expect(calc.injuryResult.value).toBe(0)
 
 			_roll.range = 2
 			// It should be 9 ÷ (3 × 2) = 1.
-			expect(calc.adjustedBasicDamage).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 		})
 
 		it("Roll this damage but divide it by (3 × yards from the center of the blast), rounding down.", () => {
@@ -2031,15 +2031,15 @@ describe("Damage calculator", () => {
 
 			const calc = _create(_roll, _target)
 			expect(calc.adjustedBasicDamage).toBe(2) // 13 ÷ (3 × 2) = 2
-			expect(calc.injury).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 
 			_roll.range = 1
 			expect(calc.adjustedBasicDamage).toBe(4) // 13 ÷ (3 × 1) = 4
-			expect(calc.injury).toBe(3)
+			expect(calc.injuryResult.value).toBe(3)
 
 			_roll.range = 3
 			expect(calc.adjustedBasicDamage).toBe(1) // 13 ÷ (3 × 3) = 1
-			expect(calc.injury).toBe(0)
+			expect(calc.injuryResult.value).toBe(0)
 		})
 
 		it("If an explosive attack has an armor divisor, it does not apply to the collateral damage.", () => {
@@ -2051,15 +2051,15 @@ describe("Damage calculator", () => {
 			_roll.range = 2
 			const calc = _create(_roll, _target)
 			expect(calc.adjustedBasicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
-			expect(calc.injury).toBe(1)
+			expect(calc.injuryResult.value).toBe(1)
 
 			_roll.range = 1
 			expect(calc.adjustedBasicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
-			expect(calc.injury).toBe(5)
+			expect(calc.injuryResult.value).toBe(5)
 
 			_roll.range = 3
 			expect(calc.adjustedBasicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
-			expect(calc.injury).toBe(0)
+			expect(calc.injuryResult.value).toBe(0)
 		})
 
 		describe.skip("Contact Explosions. A person can throw himself on a grenade, etc.", () => {
@@ -2081,15 +2081,15 @@ describe("Damage calculator", () => {
 			_roll.range = 2
 			const calc = _create(_roll, _target)
 			expect(calc.adjustedBasicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
-			expect(calc.injury).toBe(4)
+			expect(calc.injuryResult.value).toBe(4)
 
 			_roll.range = 1
 			expect(calc.adjustedBasicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
-			expect(calc.injury).toBe(8)
+			expect(calc.injuryResult.value).toBe(8)
 
 			_roll.range = 3
 			expect(calc.adjustedBasicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
-			expect(calc.injury).toBe(2)
+			expect(calc.injuryResult.value).toBe(2)
 		})
 	})
 
