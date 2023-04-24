@@ -81,7 +81,6 @@ enum DefaultHitLocations {
 	Random = "Random",
 	LargeArea = "LargeArea",
 }
-
 class DamageRollAdapter implements DamageRoll {
 	private _payload: DamagePayload
 

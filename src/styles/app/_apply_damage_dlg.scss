@@ -34,7 +34,7 @@
 			}
 
 			&.no-stretch {
-				.checkbox-label + .checkbox-label {
+				.checkbox-label+.checkbox-label {
 					margin: 0;
 				}
 			}
@@ -48,13 +48,17 @@
 			}
 		}
 
-		input[name="basicDamage"],
+		input[type=number] {
+			text-align: center;
+		}
+
+		input[data-action=override-basic],
 		input[name="rofMultiplier"],
 		input[name="range"],
-		input[name="woundMod"],
+		input[data-action=override-woundingmod],
 		input[name="injury"],
-		input[name="dr"],
-		input[name="override-reduction"] {
+		input[data-action=override-dr],
+		input[data-action=override-reduction] {
 			width: 4em;
 		}
 
@@ -72,7 +76,7 @@
 			content: "×";
 		}
 
-		.input-wrapper > input {
+		.input-wrapper>input {
 			border: 0;
 			margin: 0;
 			padding: 0;
@@ -98,6 +102,11 @@
 			&:active {
 				color: rgba(var(--color-link-pressed), 1) !important;
 			}
+		}
+
+		.overridden {
+			background-color: rgb(var(--color-warning)) !important;
+			color: rgb(var(--color-on-warning)) !important;
 		}
 
 		// .pdf {
@@ -136,7 +145,7 @@
 
 		#results {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: 1fr 2fr;
 			row-gap: 4px;
 			column-gap: 9px;
 			vertical-align: middle;
@@ -154,14 +163,14 @@
 				display: grid;
 				grid-template-columns: max-content min-content 1fr;
 
-				> div:not(.header) {
+				>div:not(.header) {
 					background-color: rgb(var(--color-content));
 					color: rgb(var(--color-on-content));
 					border-right: 1px solid rgb(var(--color-interior-divider));
 					border-bottom: 1px solid rgb(var(--color-interior-divider));
 				}
 
-				> div {
+				>div {
 					padding: var(--padding-standard);
 				}
 

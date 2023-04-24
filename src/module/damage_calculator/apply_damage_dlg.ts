@@ -46,6 +46,7 @@ class ApplyDamageDialog extends Application {
 			minimizable: false,
 			resizable: true,
 			width: 0,
+			height: 0,
 			id: "ApplyDamageDialog",
 			template: `systems/${SYSTEM_NAME}/templates/damage_calculator/apply-damage.hbs`,
 			classes: ["apply-damage", "gurps"],
@@ -62,7 +63,6 @@ class ApplyDamageDialog extends Application {
 		const data = mergeObject(super.getData(options), {
 			calculator: this.calculator,
 			choices: this.choices,
-			effectiveDRReason: this.showEffectiveDRReason,
 			books,
 
 			roll: this.roll,
@@ -81,6 +81,7 @@ class ApplyDamageDialog extends Application {
 		super.activateListeners(html)
 
 		html.find("[data-control]").on("change click", event => this._onApplyControl(event))
+		html.find("[data-action]").on("change click", event => this._onApplyControl(event))
 		html.find(".ref").on("click", event => PDF.handle(event))
 	}
 
@@ -105,6 +106,7 @@ class ApplyDamageDialog extends Application {
 
 		switch (target.dataset.action) {
 			case "location-select":
+				const value = parseInt(target.value)
 				this.calculator.damageRoll.locationId = target.value
 				break
 
@@ -114,29 +116,29 @@ class ApplyDamageDialog extends Application {
 
 			case "override-dr": {
 				const value = parseInt(target.value)
-				this.calculator.overrideRawDr(isNaN(value) ? undefined : value)
+				this.calculator.overrideRawDr = isNaN(value) ? undefined : value
 				break
 			}
 
 			case "override-basic": {
 				const value = parseInt(target.value)
-				this.calculator.overrideBasicDamage(isNaN(value) ? undefined : value)
+				this.calculator.overrideBasicDamage = isNaN(value) ? undefined : value
 				break
 			}
 
 			case "armordivisor-select": {
 				const value = parseFloat(target.value)
-				this.calculator.overrideArmorDivisor(value)
+				this.calculator.overrideArmorDivisor = isNaN(value) ? undefined : value
 				break
 			}
 
 			case "damagetype-select":
-				this.calculator.overrideDamageType(target.value)
+				this.calculator.overrideDamageType = target.value
 				break
 
 			case "override-woundingmod": {
 				const value = parseFloat(target.value)
-				this.calculator.overrideWoundingModifier(isNaN(value) ? undefined : value)
+				this.calculator.overrideWoundingModifier = isNaN(value) ? undefined : value
 				break
 			}
 		}
@@ -161,7 +163,7 @@ class ApplyDamageDialog extends Application {
 				break
 
 			case "reset-form":
-				this.calculator.reset()
+				this.calculator.resetOverrides()
 				break
 		}
 
@@ -212,14 +214,6 @@ class ApplyDamageDialog extends Application {
 
 	private get hitLocation(): HitLocation | undefined {
 		return HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.calculator.damageRoll.locationId)
-	}
-
-	private get showEffectiveDRReason(): string | undefined {
-		// TODO localize reason here, or return language key only
-		if (this.calculator.isInternalExplosion) return "Internal Explosion"
-		if (this.calculator.effectiveArmorDivisor !== 1) return `Armor Divisor ${this.armorDivisorText}`
-		if (this.calculator.damageType === DamageTypes.injury) return "Ignores DR"
-		return undefined
 	}
 
 	private get vulnerabilities(): string[] {
