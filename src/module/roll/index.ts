@@ -151,6 +151,30 @@ export class RollGURPS extends Roll {
 					data.item,
 					data.hidden
 				)
+			case RollType.Parry:
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.parry,
+					raFormula,
+					// `${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
+					`${data.item.itemName} - Parry`,
+					RollType.Attack,
+					data.item,
+					data.hidden
+				)
+			case RollType.Block:
+				return RollGURPS.rollAgainst(
+					user,
+					actor,
+					data.item.block,
+					raFormula,
+					// `${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
+					`${data.item.itemName} - Block`,
+					RollType.Attack,
+					data.item,
+					data.hidden
+				)
 			case RollType.Damage:
 				return this.rollDamage(
 					user,
@@ -200,7 +224,7 @@ export class RollGURPS extends Roll {
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
-					data.item.effectiveLevel,
+					data.item.skillLevel,
 					raFormula,
 					data.item.formattedName,
 					RollType.Skill,
@@ -219,12 +243,18 @@ export class RollGURPS extends Roll {
 					data.hidden
 				)
 			case RollType.Attack:
+			case RollType.Parry:
+			case RollType.Block:
+				let name = `${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`
+				if (data.type === RollType.Parry) name = `${data.item.itemName} - Parry`
+				if (data.type === RollType.Block) name = `${data.item.itemName} - Block`
+				if (isNaN(data.item.skillLevel)) return
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
-					data.item.skillLevel(null),
+					data.item.skillLevel,
 					raFormula,
-					`${data.item.itemName}${data.item.usage ? ` - ${data.item.usage}` : ""}`,
+					name,
 					RollType.Attack,
 					data.item,
 					data.hidden
@@ -373,6 +403,8 @@ export class RollGURPS extends Roll {
 		const modifierTotal = this.applyMods(0, RollGURPS.getModifiers(user))
 		const total = roll.total! + modifierTotal
 
+		// Console.log(damageRoll)
+
 		const chatData: Partial<DamagePayload> = {
 			name,
 			attacker: actor.uuid,
@@ -390,7 +422,7 @@ export class RollGURPS extends Roll {
 			tooltip: await roll.getTooltip(),
 		}
 
-		console.log(chatData)
+		// Console.log(chatData)
 
 		const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData)
 

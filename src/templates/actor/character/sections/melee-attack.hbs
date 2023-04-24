@@ -8,8 +8,10 @@
 	{{this.usage}}</div>
 <div data-uuid="{{this.uuid}}" data-type="attack" class="level rollable">
 	{{this.level}}</div>
-<div class="parry rollable">{{this.fastResolvedParry}}</div>
-<div class="block rollable">{{this.fastResolvedBlock}}</div>
+<div data-uuid="{{this.uuid}}" data-type="parry" class="parry rollable">
+	{{this.fastResolvedParry}}</div>
+<div data-uuid="{{this.uuid}}" data-type="block" class="block rollable">
+	{{this.fastResolvedBlock}}</div>
 <div data-uuid="{{this.uuid}}" data-type="damage" class="damage rollable">
 	{{this.fastResolvedDamage}}</div>
 <div class="reach">{{this.reach}}</div>

@@ -6,8 +6,9 @@
 		</div>
 	</div>
 </div>
-<div class="usage">{{this.mode}}</div>
-<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="attack" class="level rollable">
+<div data-uuid="{{@key}}" data-weapon="ranged" data-type="attack" class="usage rollable">
+	{{this.mode}}</div>
+<div data-uuid="{{@key}}" data-weapon="ranged" data-type="attack" class="level rollable">
 	{{this.import}}</div>
 <div
 	data-modifier="{{this.acc}}"
@@ -15,7 +16,7 @@
 	data-type="modifier"
 	class="accuracy rollable"
 >{{signed this.acc}}</div>
-<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="damage" class="damage rollable">
+<div data-uuid="{{@key}}" data-weapon="ranged" data-type="damage" class="damage rollable">
 	{{this.damage}}</div>
 <div class="range">{{this.range}}</div>
 <div class="rate-of-fire">{{this.rof}}</div>

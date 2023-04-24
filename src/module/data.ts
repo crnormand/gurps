@@ -206,6 +206,8 @@ export enum RollType {
 	Spell = "spell",
 	SpellRelative = "spell_rsl",
 	Attack = "attack",
+	Parry = "parry",
+	Block = "block",
 	Damage = "damage",
 	Modifier = "modifier",
 	ControlRoll = "control_roll",
