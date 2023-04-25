@@ -39,14 +39,14 @@ class CalculatorStep {
 }
 
 class DamageResults {
-	results = <Array<CalculatorStep>>[]
+	steps = <Array<CalculatorStep>>[]
 
 	knockback = 0
 
 	effects = <Array<InjuryEffect>>[]
 
 	addResult(result: CalculatorStep | undefined) {
-		if (result) this.results.push(result)
+		if (result) this.steps.push(result)
 	}
 
 	addEffects(effects: InjuryEffect[]) {
@@ -74,7 +74,17 @@ class DamageResults {
 	}
 
 	get rawDamage() {
-		return this.results.find(it => it.name === "Basic Damage" && it.substep === "Basic Damage")
+		return this.steps.find(it => it.name === "Basic Damage" && it.substep === "Basic Damage")
+	}
+
+	get miscellaneousEffects(): InjuryEffect[] {
+		return this.effects.filter(
+			it => ![InjuryEffectType.knockback, InjuryEffectType.majorWound, InjuryEffectType.shock].includes(it.id)
+		)
+	}
+
+	get knockbackEffects(): InjuryEffect[] {
+		return this.effects.filter(it => it.id === InjuryEffectType.knockback)
 	}
 
 	get shockEffects(): InjuryEffect[] {
@@ -86,7 +96,7 @@ class DamageResults {
 	}
 
 	private get reverseList(): CalculatorStep[] {
-		const temp = [...this.results]
+		const temp = [...this.steps]
 		return temp.reverse()
 	}
 }
@@ -114,7 +124,7 @@ class DamageCalculator {
 
 	damageRoll: DamageRoll
 
-	private _overrides: Overrides = {
+	private overrides: Overrides = {
 		rawDR: undefined,
 		flexible: undefined,
 		hardenedDR: undefined,
@@ -133,13 +143,13 @@ class DamageCalculator {
 
 	resetOverrides() {
 		let key: keyof Overrides
-		for (key in this._overrides) {
-			this._overrides[key] = undefined
+		for (key in this.overrides) {
+			this.overrides[key] = undefined
 		}
 	}
 
 	get isOverridden(): boolean {
-		return Object.values(this._overrides).some(it => it !== undefined)
+		return Object.values(this.overrides).some(it => it !== undefined)
 	}
 
 	get injuryResult(): DamageResults {
@@ -173,7 +183,7 @@ class DamageCalculator {
 	}
 
 	private get basicDamageResult(): CalculatorStep {
-		const basic = this._overrides.basicDamage ?? this.damageRoll.basicDamage
+		const basic = this.overrides.basicDamage ?? this.damageRoll.basicDamage
 		return new CalculatorStep("Basic Damage", "Basic Damage", basic, undefined, "HP")
 	}
 
@@ -216,11 +226,11 @@ class DamageCalculator {
 	private get basicDamageResistance(): CalculatorStep {
 		const STEP = "Damage Resistance"
 
-		if (this._overrides.rawDR)
-			return new CalculatorStep("Damage Resistance", STEP, this._overrides.rawDR, undefined, "Override")
+		if (this.overrides.rawDR)
+			return new CalculatorStep("Damage Resistance", STEP, this.overrides.rawDR, undefined, "Override")
 
 		let basicDr = 0
-		if (this._isLargeAreaInjury) {
+		if (this.isLargeAreaInjury) {
 			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
 
 			let allDR: number[] = this.target.hitLocationTable.locations
@@ -291,12 +301,12 @@ class DamageCalculator {
 	private get basicWoundingModifier(): CalculatorStep {
 		const STEP = "Wounding Modifier"
 
-		if (this._overrides.woundingModifier)
+		if (this.overrides.woundingModifier)
 			return new CalculatorStep(
 				"Wounding Modifier",
 				STEP,
-				this._overrides.woundingModifier,
-				`×${this.formatFraction(this._overrides.woundingModifier)}`,
+				this.overrides.woundingModifier,
+				`×${this.formatFraction(this.overrides.woundingModifier)}`,
 				"Override"
 			)
 
@@ -519,20 +529,20 @@ class DamageCalculator {
 	 * @returns {number} yards of knockback, if any.
 	 */
 	private knockback(results: DamageResults): number {
-		if (this._isDamageTypeKnockbackEligible) {
+		if (this.isDamageTypeKnockbackEligible) {
 			if (this.damageType === DamageTypes.cut && results.penetratingDamage!.value > 0) return 0
 
-			const knockbackYards = Math.floor(results.rawDamage!.value / (this._knockbackResistance - 2))
+			const knockbackYards = Math.floor(results.rawDamage!.value / (this.knockbackResistance - 2))
 			return knockbackYards
 		}
 		return 0
 	}
 
-	private get _isDamageTypeKnockbackEligible() {
+	private get isDamageTypeKnockbackEligible() {
 		return [DamageTypes.cr, DamageTypes.cut, DamageTypes.kb].includes(this.damageType)
 	}
 
-	private get _knockbackResistance() {
+	private get knockbackResistance() {
 		return this.target.ST
 	}
 
@@ -561,7 +571,7 @@ class DamageCalculator {
 	}
 
 	private shockEffects(results: DamageResults): InjuryEffect[] {
-		let rawModifier = Math.floor(results.injury!.value / this._shockFactor)
+		let rawModifier = Math.floor(results.injury!.value / this.shockFactor)
 		if (rawModifier > 0) {
 			let modifier = Math.min(4, rawModifier) * -1
 
@@ -583,7 +593,7 @@ class DamageCalculator {
 		return []
 	}
 
-	private get _shockFactor(): number {
+	private get shockFactor(): number {
 		return Math.floor(this.target.hitPoints.value / 10)
 	}
 
@@ -735,21 +745,21 @@ class DamageCalculator {
 	// --- Basic Damage ---
 
 	get basicDamage(): number {
-		return this._overrides.basicDamage ?? this.damageRoll.basicDamage
+		return this.overrides.basicDamage ?? this.damageRoll.basicDamage
 	}
 
 	get overrideBasicDamage(): number | undefined {
-		return this._overrides.basicDamage
+		return this.overrides.basicDamage
 	}
 
 	set overrideBasicDamage(value: number | undefined) {
-		this._overrides.basicDamage = this.damageRoll.basicDamage === value ? undefined : value
+		this.overrides.basicDamage = this.damageRoll.basicDamage === value ? undefined : value
 	}
 
 	// --- Damage Type ---
 
 	private get damageType(): DamageType {
-		return this._overrides.damageType ?? this.damageRoll.damageType
+		return this.overrides.damageType ?? this.damageRoll.damageType
 	}
 
 	get damageTypeKey(): string {
@@ -757,15 +767,15 @@ class DamageCalculator {
 	}
 
 	set overrideDamageType(key: string | undefined) {
-		if (key === undefined) this._overrides.damageType = undefined
+		if (key === undefined) this.overrides.damageType = undefined
 		else {
 			const value = getProperty(DamageTypes, key) as DamageType
-			this._overrides.damageType = this.damageRoll.damageType === value ? undefined : value
+			this.overrides.damageType = this.damageRoll.damageType === value ? undefined : value
 		}
 	}
 
 	get overrideDamageType(): string | undefined {
-		return this._overrides.damageType?.key
+		return this.overrides.damageType?.key
 	}
 
 	private get isKnockbackOnly() {
@@ -791,7 +801,7 @@ class DamageCalculator {
 
 	get isFlexibleArmor(): boolean {
 		return (
-			this._overrides.flexible ??
+			this.overrides.flexible ??
 			HitLocationUtil.isFlexibleArmor(
 				HitLocationUtil.getHitLocation(this.target.hitLocationTable, this.damageRoll.locationId)
 			)
@@ -799,7 +809,7 @@ class DamageCalculator {
 	}
 
 	overrideFlexible(value: boolean | undefined): void {
-		this._overrides.flexible = value
+		this.overrides.flexible = value
 	}
 
 	get isInternalExplosion(): boolean {
@@ -807,48 +817,46 @@ class DamageCalculator {
 	}
 
 	get drForHitLocation(): number {
-		return this._overrides.rawDR ?? HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType)
+		return this.overrides.rawDR ?? HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType)
 	}
 
 	set overrideRawDr(dr: number | undefined) {
-		this._overrides.rawDR =
+		this.overrides.rawDR =
 			HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType) === dr ? undefined : dr
 	}
 
 	get overrideRawDR() {
-		return this._overrides.rawDR
+		return this.overrides.rawDR
 	}
 
-	private get _isLargeAreaInjury() {
+	private get isLargeAreaInjury() {
 		return this.damageRoll.locationId === DefaultHitLocations.LargeArea
 	}
 
 	get armorDivisor() {
-		return this._overrides.armorDivisor ?? this.damageRoll.armorDivisor
+		return this.overrides.armorDivisor ?? this.damageRoll.armorDivisor
 	}
 
 	get overrideArmorDivisor(): number | undefined {
-		return this._overrides.armorDivisor
+		return this.overrides.armorDivisor
 	}
 
 	set overrideArmorDivisor(value: number | undefined) {
-		this._overrides.armorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
+		this.overrides.armorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
 	}
 
 	overrideHardenedDR(level: number | undefined) {
-		this._overrides.hardenedDR = level
+		this.overrides.hardenedDR = level
 	}
 
 	get hardenedDRLevel(): number {
 		return (
-			this._overrides.hardenedDR ??
-			this.target.getTrait("Damage Resistance")?.getModifier("Hardened")?.levels ??
-			0
+			this.overrides.hardenedDR ?? this.target.getTrait("Damage Resistance")?.getModifier("Hardened")?.levels ?? 0
 		)
 	}
 
 	get vulnerabilityLevel(): number {
-		return this._overrides.vulnerability ?? this.target.vulnerabilityLevel ?? 1
+		return this.overrides.vulnerability ?? this.target.vulnerabilityLevel ?? 1
 	}
 
 	private get _isCollateralDamage(): boolean {

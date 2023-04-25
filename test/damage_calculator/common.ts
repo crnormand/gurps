@@ -98,7 +98,7 @@ export const Knockdown = [
 export type DamageShock = { damage: number; shock: number }
 
 interface IDamageCalculator {
-	injuryResult: DamageResults
+	results: DamageResults
 	overrideFlexible(arg: boolean | undefined): void
 }
 

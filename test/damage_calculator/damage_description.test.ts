@@ -165,7 +165,7 @@ describe("Damage calculator", () => {
 			_roll.locationId = "torso"
 			let calc = _create(_roll, _target)
 
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "8", notes: "HP" },
 				{ substep: "Damage Resistance", text: "0", notes: "Torso" },
 				{ substep: "Penetrating", text: "8", notes: "= 8 – 0" },
@@ -178,7 +178,7 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 8
 			_roll.damageType = DamageTypes.kb
 			let calc = _create(_roll, _target)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "8", notes: "HP" },
 				{ substep: "Damage Resistance", text: "0", notes: "Knockback only" },
 				{ substep: "Penetrating", text: "8", notes: "= 8 – 0" },
@@ -194,7 +194,7 @@ describe("Damage calculator", () => {
 			_torso._map.set("all", 2)
 
 			let calc = _create(_roll, _target)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "8", notes: "HP" },
 				{ substep: "Damage Resistance", text: "2", notes: "Torso" },
 				{ substep: "Penetrating", text: "6", notes: "= 8 – 2" },
@@ -208,7 +208,7 @@ describe("Damage calculator", () => {
 			_torso._map.set("all", 9)
 
 			let calc = _create(_roll, _target)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "5", notes: "HP" },
 				{ substep: "Damage Resistance", text: "9", notes: "Torso" },
 				{ substep: "Penetrating", text: "0", notes: "= 5 – 9" },
@@ -223,7 +223,7 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 8
 			let calc = _create(_roll, _target)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "8", notes: "HP" },
 				{ substep: "Damage Resistance", text: "9", notes: "Torso" },
 				{ substep: "Effective DR", text: "0", notes: "Ignores DR" },
@@ -244,7 +244,7 @@ describe("Damage calculator", () => {
 				_torso._map.set("all", 20)
 				_roll.armorDivisor = 2
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "20", notes: "HP" },
 					{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 					{ substep: "Effective DR", text: "10", notes: "Armor Divisor (2)" },
@@ -255,7 +255,7 @@ describe("Damage calculator", () => {
 
 				_roll.armorDivisor = 0.5
 				calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "20", notes: "HP" },
 					{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 					{ substep: "Effective DR", text: "40", notes: "Armor Divisor (0.5)" },
@@ -269,7 +269,7 @@ describe("Damage calculator", () => {
 				_torso._map.set("all", 20)
 				_roll.armorDivisor = 0
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "20", notes: "HP" },
 					{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 					{ substep: "Effective DR", text: "0", notes: "Armor Divisor (Ignores DR)" },
@@ -286,7 +286,7 @@ describe("Damage calculator", () => {
 
 				_roll.armorDivisor = 0.5
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "20", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Effective DR", text: "10", notes: "Armor Divisor (0.5)" },
@@ -300,7 +300,7 @@ describe("Damage calculator", () => {
 				_torso._map.set("all", 0)
 				_roll.armorDivisor = 0.5
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "20", notes: "HP" },
 					{ substep: "Damage Resistance", text: "0", notes: "Torso" },
 					{ substep: "Effective DR", text: "1", notes: "Armor Divisor (0.5)" },
@@ -321,7 +321,7 @@ describe("Damage calculator", () => {
 		it("Small piercing (pi-): ×0.5.", () => {
 			_roll.damageType = DamageTypes["pi-"]
 			let calc = _create(_roll, _target)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "11", notes: "HP" },
 				{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 				{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -341,7 +341,7 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 9
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "9", notes: "HP" },
 				{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 				{ substep: "Penetrating", text: "0", notes: "= 9 – 20" },
@@ -352,7 +352,7 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 10
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "10", notes: "HP" },
 				{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 				{ substep: "Penetrating", text: "0", notes: "= 10 – 20" },
@@ -364,7 +364,7 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "20", notes: "HP" },
 				{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 				{ substep: "Penetrating", text: "0", notes: "= 20 – 20" },
@@ -379,7 +379,7 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 21
 			let calc = _create(_roll, _target)
 			calc.overrideFlexible(true)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "21", notes: "HP" },
 				{ substep: "Damage Resistance", text: "20", notes: "Torso" },
 				{ substep: "Penetrating", text: "1", notes: "= 21 – 20" },
@@ -401,7 +401,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.imp
 				_roll.basicDamage = 11
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "11", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -412,7 +412,7 @@ describe("Damage calculator", () => {
 
 				_roll.damageType = DamageTypes["pi++"]
 				calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "11", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -426,7 +426,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes["pi+"]
 				_roll.basicDamage = 11
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "11", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -440,7 +440,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.pi
 				_roll.basicDamage = 11
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "11", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -454,7 +454,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes["pi-"]
 				_roll.basicDamage = 15
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "15", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "10", notes: "= 15 – 5" },
@@ -477,7 +477,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					_roll.basicDamage = 11
 					let calc = _create(_roll, _target)
-					expect(calc.injuryResult.results).toMatchObject([
+					expect(calc.results.steps).toMatchObject([
 						{ substep: "Basic Damage", text: "11", notes: "HP" },
 						{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 						{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -492,7 +492,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes["pi+"]
 				_roll.basicDamage = 11
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "11", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "6", notes: "= 11 – 5" },
@@ -506,7 +506,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.pi
 				_roll.basicDamage = 15
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "15", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "10", notes: "= 15 – 5" },
@@ -520,7 +520,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes["pi-"]
 				_roll.basicDamage = 15
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "15", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "10", notes: "= 15 – 5" },
@@ -549,7 +549,7 @@ describe("Damage calculator", () => {
 				for (const type of [types[0], types[1]]) {
 					_roll.damageType = type[0]
 					let calc = _create(_roll, _target)
-					expect(calc.injuryResult.results).toMatchObject([
+					expect(calc.results.steps).toMatchObject([
 						{ substep: "Basic Damage", text: "100", notes: "HP" },
 						{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 						{ substep: "Penetrating", text: "95", notes: "= 100 – 5" },
@@ -561,7 +561,7 @@ describe("Damage calculator", () => {
 
 				_roll.damageType = DamageTypes["pi+"]
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "100", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "95", notes: "= 100 – 5" },
@@ -572,7 +572,7 @@ describe("Damage calculator", () => {
 
 				_roll.damageType = DamageTypes.pi
 				calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "100", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "95", notes: "= 100 – 5" },
@@ -583,7 +583,7 @@ describe("Damage calculator", () => {
 
 				_roll.damageType = DamageTypes["pi-"]
 				calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "100", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "95", notes: "= 100 – 5" },
@@ -605,7 +605,7 @@ describe("Damage calculator", () => {
 				for (const type of types) {
 					_roll.damageType = type[0]
 					let calc = _create(_roll, _target)
-					expect(calc.injuryResult.results).toMatchObject([
+					expect(calc.results.steps).toMatchObject([
 						{ substep: "Basic Damage", text: "100", notes: "HP" },
 						{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 						{ substep: "Penetrating", text: "95", notes: "= 100 – 5" },
@@ -617,7 +617,7 @@ describe("Damage calculator", () => {
 
 				_roll.damageType = DamageTypes.fat
 				let calc = _create(_roll, _target)
-				expect(calc.injuryResult.results).toMatchObject([
+				expect(calc.results.steps).toMatchObject([
 					{ substep: "Basic Damage", text: "100", notes: "HP" },
 					{ substep: "Damage Resistance", text: "5", notes: "Torso" },
 					{ substep: "Penetrating", text: "95", notes: "= 100 – 5" },
@@ -640,7 +640,7 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 10
 			_roll.damageType = DamageTypes.cr
 			let calc = _create(_roll, _target)
-			expect(calc.injuryResult.results).toMatchObject([
+			expect(calc.results.steps).toMatchObject([
 				{ substep: "Basic Damage", text: "10", notes: "HP" },
 				{ substep: "Damage Resistance", text: "0", notes: "Right Arm" },
 				{ substep: "Penetrating", text: "10", notes: "= 10 – 0" },
