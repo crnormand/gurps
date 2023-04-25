@@ -1,6 +1,6 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
 import { DamageAttacker, DamageRoll, DamageTarget, TargetTrait, TargetTraitModifier } from "@module/damage_calculator"
-import { DamageCalculator, DamageResults, Descriptor } from "@module/damage_calculator/damage_calculator"
+import { DamageCalculator, DamageResults } from "@module/damage_calculator/damage_calculator"
 import { DamageTypes } from "@module/damage_calculator/damage_type"
 import { InjuryEffect } from "@module/damage_calculator/injury_effect"
 import { DiceGURPS } from "@module/dice"

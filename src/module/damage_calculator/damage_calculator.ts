@@ -1,5 +1,7 @@
+import { DamageRoll, DamageTarget, DefaultHitLocations } from "."
 import { RollType } from "../data"
 import { AnyPiercingType, DamageType, DamageTypes } from "./damage_type"
+import { HitLocationUtil } from "./hitlocation_utils"
 import {
 	CheckFailureConsequence,
 	EffectCheck,
@@ -8,8 +10,6 @@ import {
 	KnockdownCheck,
 	RollModifier,
 } from "./injury_effect"
-import { DamageTarget, DamageRoll, DefaultHitLocations } from "."
-import { HitLocationUtil } from "./hitlocation_utils"
 
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
@@ -152,7 +152,7 @@ class DamageCalculator {
 		return Object.values(this.overrides).some(it => it !== undefined)
 	}
 
-	get injuryResult(): DamageResults {
+	get results(): DamageResults {
 		const results = new DamageResults()
 
 		// Basic Damage
@@ -868,4 +868,4 @@ class DamageCalculator {
 	}
 }
 
-export { DamageCalculator, Head, Limb, Extremity, CalculatorStep as Descriptor, DamageResults }
+export { DamageCalculator, Head, Limb, Extremity, DamageResults }
