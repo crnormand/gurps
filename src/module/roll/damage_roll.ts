@@ -14,6 +14,7 @@ export class DamageRollGURPS {
 	readonly groups: { [key: string]: string }
 
 	constructor(text: string) {
+		console.log(text)
 		const groups = text.match(DamageRegEx)?.groups
 		if (!groups) throw new Error("Bad damage term")
 		this.text = text

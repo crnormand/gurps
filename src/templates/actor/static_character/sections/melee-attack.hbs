@@ -8,11 +8,13 @@
 </div>
 <div data-uuid="{{@key}}" data-weapon="melee" data-type="attack" class="usage rollable">
 	{{this.mode}}</div>
-<div data-uuid="{{@key}}" data-attack-id="melee" data-type="attack" class="level rollable">
+<div data-uuid="{{@key}}" data-weapon="melee" data-type="attack" class="level rollable">
 	{{this.import}}</div>
-<div class="parry rollable">{{this.parry}}</div>
-<div class="block rollable">{{this.block}}</div>
-<div data-uuid="{{@key}}" data-attack-id="melee" data-type="damage" class="damage rollable">
+<div data-uuid="{{@key}}" data-weapon="melee" data-type="parry" class="parry rollable">
+	{{this.parry}}</div>
+<div data-uuid="{{@key}}" data-weapon="melee" data-type="block" class="block rollable">
+	{{this.block}}</div>
+<div data-uuid="{{@key}}" data-weapon="melee" data-type="damage" class="damage rollable">
 	{{this.damage}}</div>
 <div class="reach">{{this.reach}}</div>
 <div class="st">{{this.st}}</div>
