@@ -99,12 +99,6 @@ export type DamageShock = { damage: number; shock: number }
 
 interface IDamageCalculator {
 	injuryResult: DamageResults
-	description: Descriptor[]
-	adjustedBasicDamage: number
-	penetratingDamage: number
-	injury: number
-	knockback: number
-	injuryEffects: InjuryEffect[]
 	overrideFlexible(arg: boolean | undefined): void
 }
 

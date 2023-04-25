@@ -486,21 +486,21 @@ describe("Damage calculator", () => {
 			for (const damage of noShockValues) {
 				_roll.basicDamage = damage
 				let calc = _create(_roll, _target)
-				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ name: "Shock" }))
+				expect(calc.injuryResult.shockEffects).toHaveLength(0)
 			}
 
 			for (let entry of shockValues) {
 				_roll.basicDamage = entry.damage
 				let calc = _create(_roll, _target)
 
-				const injuryEffects = calc.injuryEffects
+				const injuryEffects = calc.injuryResult.shockEffects
 				expect(injuryEffects).toContainEqual(
 					expect.objectContaining({
 						id: InjuryEffectType.shock,
 					})
 				)
 
-				let modifiers = calc.injuryEffects.find(it => it.id === InjuryEffectType.shock)?.modifiers
+				let modifiers = calc.injuryResult.shockEffects.find(it => it.id === InjuryEffectType.shock)?.modifiers
 				expect(modifiers).toContainEqual(
 					expect.objectContaining({
 						id: "dx",
@@ -591,12 +591,13 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 6
 			let calc = _create(_roll, _target)
-			expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "majorWound" }))
+			expect(calc.injuryResult.effects).not.toContainEqual(expect.objectContaining({ id: "majorWound" }))
+			expect(calc.injuryResult.majorWoundEffects).toHaveLength(0)
 
 			_roll.basicDamage = 7
 			calc = _create(_roll, _target)
-			expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
-			let wound = calc.injuryEffects.find(it => it.id === "majorWound")
+			expect(calc.injuryResult.effects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
+			let wound = calc.injuryResult.effects.find(it => it.id === "majorWound")
 			expect(wound?.modifiers.length).toBe(0)
 		})
 
@@ -607,7 +608,7 @@ describe("Damage calculator", () => {
 
 			const calc = _create(_roll, _target)
 
-			let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+			let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
 					checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
@@ -632,7 +633,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes[type]
 
 				let calc = _create(_roll, _target)
-				expect(calc.knockback).toBe(0)
+				expect(calc.injuryResult.knockback).toBe(0)
 			}
 		})
 
@@ -641,37 +642,37 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 9
 			let calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(0)
+			expect(calc.injuryResult.knockback).toBe(0)
 
 			_roll.basicDamage = 10
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 19
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(2)
+			expect(calc.injuryResult.knockback).toBe(2)
 
 			_roll.damageType = DamageTypes.kb
 
 			_roll.basicDamage = 9
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(0)
+			expect(calc.injuryResult.knockback).toBe(0)
 
 			_roll.basicDamage = 10
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 19
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(2)
+			expect(calc.injuryResult.knockback).toBe(2)
 		})
 
 		it("A cutting attack can cause knockback only if it fails to penetrate DR.", () => {
@@ -680,15 +681,15 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 9
 			let calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(0)
+			expect(calc.injuryResult.knockback).toBe(0)
 
 			_roll.basicDamage = 15
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 16
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(0)
+			expect(calc.injuryResult.knockback).toBe(0)
 		})
 
 		it("For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker.", () => {
@@ -696,19 +697,19 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 9
 			let calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(0)
+			expect(calc.injuryResult.knockback).toBe(0)
 
 			_roll.basicDamage = 10
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 19
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
 			_roll.basicDamage = 20
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(2)
+			expect(calc.injuryResult.knockback).toBe(2)
 		})
 
 		it("Anyone who suffers knockback must attempt a roll against the highest of DX, Acrobatics, or Judo. On a failure, he falls down.", () => {
@@ -716,16 +717,16 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 10
 			let calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
-			const injuryEffects = calc.injuryEffects
+			const injuryEffects = calc.injuryResult.effects
 			expect(injuryEffects).toContainEqual(
 				expect.objectContaining({
 					id: "knockback",
 				})
 			)
 
-			let checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			let checks = calc.injuryResult.effects.find(it => it.id === "knockback")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
 					checks: [
@@ -743,16 +744,16 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 20
 			let calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(2)
+			expect(calc.injuryResult.knockback).toBe(2)
 
-			const injuryEffects = calc.injuryEffects
+			const injuryEffects = calc.injuryResult.effects
 			expect(injuryEffects).toContainEqual(
 				expect.objectContaining({
 					id: "knockback",
 				})
 			)
 
-			let checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			let checks = calc.injuryResult.effects.find(it => it.id === "knockback")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
 					checks: [
@@ -766,9 +767,9 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 50
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(5)
+			expect(calc.injuryResult.knockback).toBe(5)
 
-			checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			checks = calc.injuryResult.effects.find(it => it.id === "knockback")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
 					checks: [
@@ -788,16 +789,16 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 10
 			let calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(1)
+			expect(calc.injuryResult.knockback).toBe(1)
 
-			const injuryEffects = calc.injuryEffects
+			const injuryEffects = calc.injuryResult.effects
 			expect(injuryEffects).toContainEqual(
 				expect.objectContaining({
 					id: "knockback",
 				})
 			)
 
-			let checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			let checks = calc.injuryResult.effects.find(it => it.id === "knockback")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
 					checks: [
@@ -811,9 +812,9 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 30
 			calc = _create(_roll, _target)
-			expect(calc.knockback).toBe(3)
+			expect(calc.injuryResult.knockback).toBe(3)
 
-			checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			checks = calc.injuryResult.effects.find(it => it.id === "knockback")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
 					checks: [
@@ -858,9 +859,11 @@ describe("Damage calculator", () => {
 				expect(calc.injuryResult.penetratingDamage!.value).toBe(1)
 				expect(calc.injuryResult.injury!.value).toBe(1)
 
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.shock }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.shock })
+				)
 
-				let checks = calc.injuryEffects.find(it => it.id === InjuryEffectType.majorWound)?.checks
+				let checks = calc.injuryResult.effects.find(it => it.id === InjuryEffectType.majorWound)?.checks
 				expect(checks).toContainEqual(
 					expect.objectContaining({
 						checks: [{ id: "ht", modifier: -5, rollType: RollType.Attribute }],
@@ -908,7 +911,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 
-						let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+						let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 						expect(checks).toContainEqual(
 							expect.objectContaining({
 								checks: [{ id: "ht", modifier: -10, rollType: RollType.Attribute }],
@@ -929,9 +932,9 @@ describe("Damage calculator", () => {
 					expect(calc.injuryResult.penetratingDamage!.value).toBe(1)
 					expect(calc.injuryResult.injury!.value).toBe(4)
 
-					expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "shock" }))
+					expect(calc.injuryResult.effects).toContainEqual(expect.objectContaining({ id: "shock" }))
 
-					let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+					let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 					expect(checks).toContainEqual(
 						expect.objectContaining({
 							checks: [{ id: "ht", modifier: -10, rollType: RollType.Attribute }],
@@ -951,7 +954,7 @@ describe("Damage calculator", () => {
 					expect(calc.injuryResult.penetratingDamage!.value).toBe(8)
 					expect(calc.injuryResult.injury!.value).toBe(8)
 
-					expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
+					expect(calc.injuryResult.effects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
 				}
 			})
 
@@ -976,7 +979,7 @@ describe("Damage calculator", () => {
 				expect(calc.injuryResult.penetratingDamage!.value).toBe(1)
 				expect(calc.injuryResult.injury!.value).toBe(4)
 
-				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
+				expect(calc.injuryResult.effects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 2
 				_roll.damageType = DamageTypes.cr
@@ -984,7 +987,9 @@ describe("Damage calculator", () => {
 				expect(calc.injuryResult.penetratingDamage!.value).toBe(2)
 				expect(calc.injuryResult.injury!.value).toBe(8)
 
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.eyeBlinded })
+				)
 			})
 		})
 
@@ -1036,7 +1041,7 @@ describe("Damage calculator", () => {
 			it("Knockdown (stun) rolls are at -5.", () => {
 				let calc = _create(_roll, _target)
 
-				let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+				let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 				expect(checks).toContainEqual(
 					expect.objectContaining({
 						checks: [{ id: "ht", modifier: -5, rollType: RollType.Attribute }],
@@ -1053,8 +1058,12 @@ describe("Damage calculator", () => {
 
 				expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 2)
 				expect(calc.injuryResult.injury!.value).toBeLessThan(_target.hitPoints.value)
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.majorWound })
+				)
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.eyeBlinded })
+				)
 			})
 
 			it("...(both eyes on damage greater than full HP).", () => {
@@ -1064,8 +1073,12 @@ describe("Damage calculator", () => {
 				let calc = _create(_roll, _target)
 
 				expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value)
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.blinded }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.majorWound })
+				)
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.blinded })
+				)
 			})
 		})
 
@@ -1166,7 +1179,7 @@ describe("Damage calculator", () => {
 					let calc = _create(_roll, _target)
 					// Const injuryEffects = calc.injuryEffects
 
-					let modifiers = calc.injuryEffects.find(it => it.id === InjuryEffectType.shock)?.modifiers
+					let modifiers = calc.injuryResult.effects.find(it => it.id === InjuryEffectType.shock)?.modifiers
 					expect(modifiers).toContainEqual(
 						expect.objectContaining({
 							id: "dx",
@@ -1188,7 +1201,7 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				let calc = _create(_roll, _target)
 
-				let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+				let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 				expect(checks).toContainEqual(
 					expect.objectContaining({
 						checks: [{ id: "ht", modifier: -5, rollType: RollType.Attribute }],
@@ -1260,7 +1273,7 @@ describe("Damage calculator", () => {
 					let calc = _create(_roll, _target)
 					expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 2)
 
-					let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+					let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 					expect(checks).toContainEqual(
 						expect.objectContaining({
 							checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
@@ -1268,7 +1281,7 @@ describe("Damage calculator", () => {
 						})
 					)
 
-					expect(calc.injuryEffects).toContainEqual(
+					expect(calc.injuryResult.effects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
 				}
@@ -1350,7 +1363,7 @@ describe("Damage calculator", () => {
 					let calc = _create(_roll, _target)
 					expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 3)
 
-					let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+					let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 					expect(checks).toContainEqual(
 						expect.objectContaining({
 							checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
@@ -1358,7 +1371,7 @@ describe("Damage calculator", () => {
 						})
 					)
 
-					expect(calc.injuryEffects).toContainEqual(
+					expect(calc.injuryResult.effects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
 				}
@@ -1588,7 +1601,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 
-					let checks = calc.injuryEffects.find(it => it.id === InjuryEffectType.majorWound)?.checks
+					let checks = calc.injuryResult.effects.find(it => it.id === InjuryEffectType.majorWound)?.checks
 					expect(checks).toContainEqual(
 						expect.objectContaining({
 							checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
@@ -1606,13 +1619,15 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.cr
 				let calc = _create(_roll, _target)
 				expect(calc.injuryResult.injury!.value).toBeLessThanOrEqual(_target.hitPoints.value / 10)
-				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
+				expect(calc.injuryResult.effects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 6
 				_roll.damageType = DamageTypes.cr
 				calc = _create(_roll, _target)
 				expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 10)
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.eyeBlinded })
+				)
 			})
 
 			it("(Limbs can still be crippled.)", () => {
@@ -1623,7 +1638,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 					expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 2)
-					expect(calc.injuryEffects).toContainEqual(
+					expect(calc.injuryResult.effects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
 				}
@@ -1637,7 +1652,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 					expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 3)
-					expect(calc.injuryEffects).toContainEqual(
+					expect(calc.injuryResult.effects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
 				}
@@ -1688,7 +1703,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 
-					let checks = calc.injuryEffects.find(it => it.id === InjuryEffectType.majorWound)?.checks
+					let checks = calc.injuryResult.effects.find(it => it.id === InjuryEffectType.majorWound)?.checks
 					expect(checks).toContainEqual(
 						expect.objectContaining({
 							checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
@@ -1706,13 +1721,15 @@ describe("Damage calculator", () => {
 				_roll.damageType = DamageTypes.imp
 				let calc = _create(_roll, _target)
 				expect(calc.injuryResult.injury!.value).toBeLessThanOrEqual(_target.hitPoints.value / 10)
-				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
+				expect(calc.injuryResult.effects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 6
 				_roll.damageType = DamageTypes.cr
 				calc = _create(_roll, _target)
 				expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 10)
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.eyeBlinded })
+				)
 			})
 
 			it("(Limbs can still be crippled.)", () => {
@@ -1723,7 +1740,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 					expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 2)
-					expect(calc.injuryEffects).toContainEqual(
+					expect(calc.injuryResult.effects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
 				}
@@ -1737,7 +1754,7 @@ describe("Damage calculator", () => {
 					_roll.damageType = DamageTypes.cr
 					let calc = _create(_roll, _target)
 					expect(calc.injuryResult.injury!.value).toBeGreaterThan(_target.hitPoints.value / 3)
-					expect(calc.injuryEffects).toContainEqual(
+					expect(calc.injuryResult.effects).toContainEqual(
 						expect.objectContaining({ id: InjuryEffectType.limbCrippled })
 					)
 				}
@@ -1766,7 +1783,7 @@ describe("Damage calculator", () => {
 						_roll.damageType = type
 						let calc = _create(_roll, _target)
 
-						let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+						let checks = calc.injuryResult.effects.find(it => it.id === "majorWound")?.checks
 						expect(checks).toContainEqual(
 							expect.objectContaining({
 								checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
@@ -1825,7 +1842,7 @@ describe("Damage calculator", () => {
 				expect(calc.injuryResult.penetratingDamage!.value).toBe(1)
 				expect(calc.injuryResult.injury!.value).toBe(1)
 
-				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
+				expect(calc.injuryResult.effects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 3
 				_roll.damageType = DamageTypes.cr
@@ -1833,7 +1850,9 @@ describe("Damage calculator", () => {
 				expect(calc.injuryResult.penetratingDamage!.value).toBe(3)
 				expect(calc.injuryResult.injury!.value).toBe(3)
 
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
+				expect(calc.injuryResult.effects).toContainEqual(
+					expect.objectContaining({ id: InjuryEffectType.eyeBlinded })
+				)
 			})
 		})
 
@@ -1850,7 +1869,7 @@ describe("Damage calculator", () => {
 					_roll.basicDamage = 7
 
 					const calc = _create(_roll, _target)
-					const injuryEffects = calc.injuryEffects
+					const injuryEffects = calc.injuryResult.effects
 
 					expect(calc.injuryResult.injury!.value).toBe(7)
 
@@ -2029,15 +2048,15 @@ describe("Damage calculator", () => {
 			_torso._map.set("all", 1)
 
 			const calc = _create(_roll, _target)
-			expect(calc.adjustedBasicDamage).toBe(2) // 13 ÷ (3 × 2) = 2
+			expect(calc.injuryResult.basicDamage!.value).toBe(2) // 13 ÷ (3 × 2) = 2
 			expect(calc.injuryResult.injury!.value).toBe(1)
 
 			_roll.range = 1
-			expect(calc.adjustedBasicDamage).toBe(4) // 13 ÷ (3 × 1) = 4
+			expect(calc.injuryResult.basicDamage!.value).toBe(4) // 13 ÷ (3 × 1) = 4
 			expect(calc.injuryResult.injury!.value).toBe(3)
 
 			_roll.range = 3
-			expect(calc.adjustedBasicDamage).toBe(1) // 13 ÷ (3 × 3) = 1
+			expect(calc.injuryResult.basicDamage!.value).toBe(1) // 13 ÷ (3 × 3) = 1
 			expect(calc.injuryResult.injury!.value).toBe(0)
 		})
 
@@ -2049,15 +2068,15 @@ describe("Damage calculator", () => {
 
 			_roll.range = 2
 			const calc = _create(_roll, _target)
-			expect(calc.adjustedBasicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
+			expect(calc.injuryResult.basicDamage!.value).toBe(4) // 24 ÷ (3 × 2) = 4
 			expect(calc.injuryResult.injury!.value).toBe(1)
 
 			_roll.range = 1
-			expect(calc.adjustedBasicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
+			expect(calc.injuryResult.basicDamage!.value).toBe(8) // 24 ÷ (3 × 1) = 8
 			expect(calc.injuryResult.injury!.value).toBe(5)
 
 			_roll.range = 3
-			expect(calc.adjustedBasicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
+			expect(calc.injuryResult.basicDamage!.value).toBe(2) // 24 ÷ (3 × 3) = 2
 			expect(calc.injuryResult.injury!.value).toBe(0)
 		})
 
@@ -2079,15 +2098,15 @@ describe("Damage calculator", () => {
 
 			_roll.range = 2
 			const calc = _create(_roll, _target)
-			expect(calc.adjustedBasicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
+			expect(calc.injuryResult.basicDamage!.value).toBe(4) // 24 ÷ (3 × 2) = 4
 			expect(calc.injuryResult.injury!.value).toBe(4)
 
 			_roll.range = 1
-			expect(calc.adjustedBasicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
+			expect(calc.injuryResult.basicDamage!.value).toBe(8) // 24 ÷ (3 × 1) = 8
 			expect(calc.injuryResult.injury!.value).toBe(8)
 
 			_roll.range = 3
-			expect(calc.adjustedBasicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
+			expect(calc.injuryResult.basicDamage!.value).toBe(2) // 24 ÷ (3 × 3) = 2
 			expect(calc.injuryResult.injury!.value).toBe(2)
 		})
 	})
