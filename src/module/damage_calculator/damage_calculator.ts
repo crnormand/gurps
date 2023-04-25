@@ -16,15 +16,89 @@ const Limb = ["arm", "leg"]
 const Extremity = ["hand", "foot"]
 const Torso = "torso"
 
-type Descriptor = {
+class Descriptor {
+	constructor(
+		name: CalculationStep,
+		step: string,
+		value: number,
+		text: string | undefined,
+		notes: string | undefined
+	) {
+		this.name = name
+		this.step = step
+		this.value = value
+		this.text = text ?? `${value}`
+		this.notes = notes
+	}
+
+	name: CalculationStep
+
 	step: string
-	value?: string
+
+	value: number
+
+	text: string
+
 	notes?: string
 }
 
+type CalculationStep = "Basic Damage" | "Damage Resistance" | "Penetrating Damage" | "Wounding Modifier" | "Injury"
+
 type DamageResult = {
+	name: CalculationStep
 	value: number
 	description: Descriptor[]
+}
+
+class DamageResults {
+	results = <Array<Descriptor>>[]
+
+	addResult(result: Descriptor | undefined) {
+		if (result) this.results.push(result)
+	}
+
+	add(
+		name: CalculationStep,
+		step: string,
+		value: number,
+		text: string | undefined,
+		notes: string | undefined
+	): DamageResults {
+		const result = {
+			name: name,
+			step: step,
+			value: value,
+			text: text ?? `${value}`,
+			notes: notes,
+		}
+		this.results.push(result)
+		return this
+	}
+
+	get injury() {
+		return this.reverseList.find(it => it.name === "Injury")
+	}
+
+	get woundingModifier() {
+		return this.reverseList.find(it => it.name === "Wounding Modifier")
+	}
+
+	get penetratingDamage() {
+		return this.reverseList.find(it => it.name === "Penetrating Damage")
+	}
+
+	get damageResistance() {
+		return this.reverseList.find(it => it.name === "Damage Resistance")
+	}
+
+	get basicDamage() {
+		return this.reverseList.find(it => it.name === "Basic Damage")
+	}
+
+	private get reverseList(): Descriptor[] {
+		const temp = [...this.results]
+		return temp.reverse()
+	}
 }
 
 type Overrides = {
@@ -78,103 +152,77 @@ class DamageCalculator {
 		return Object.values(this._overrides).some(it => it !== undefined)
 	}
 
-	get injuryResult(): DamageResult {
+	get injuryResult(): DamageResults {
+		const results = new DamageResults()
+
 		// Basic Damage
-		let basicDamage = this.basicDamageResult
-		basicDamage = this.adjustBasicDamage(basicDamage)
+		results.addResult(this.basicDamageResult)
+		results.addResult(this.adjustBasicDamage(results))
 
 		// Damage Resistance
-		let effectiveDr = this.basicDamageResistance
-		effectiveDr = this.adjustDamageResistance(effectiveDr)
+		results.addResult(this.basicDamageResistance)
+		results.addResult(this.adjustDamageResistance(results))
 
 		// Peentrating Damge = Basic Damage - Damage Resistance
-		const penetratingDamage = {
-			value: Math.max(basicDamage.value - effectiveDr.value, 0),
-			description: [
-				...basicDamage.description,
-				...effectiveDr.description,
-				{
-					step: "Penetrating",
-					value: `${basicDamage.value - effectiveDr.value}`,
-					notes: `= ${basicDamage.value} – ${effectiveDr.value}`,
-				},
-			],
-		}
+		results.addResult(this.penetratingDamage_(results))
 
 		// Wounding Modifier
-		let woundingModifier = this.basicWoundingModifier
-		woundingModifier = this.adjustWoundingModifier(woundingModifier)
+		results.addResult(this.basicWoundingModifier)
+		results.addResult(this.adjustWoundingModifier(results))
 
 		// Injury = Penetrating Damage * Wounding Modifier
-		let value = Math.floor(woundingModifier.value * penetratingDamage.value)
-		if (woundingModifier.value !== 0 && value === 0 && penetratingDamage.value > 0) value = 1
+		results.addResult(this.injury_(results))
+		results.addResult(this._adjustInjury(results))
 
-		let injury = <DamageResult>{
-			value: value,
-			description: [
-				...penetratingDamage.description,
-				...woundingModifier.description,
-				{
-					step: "Injury",
-					value: `${value}`,
-					notes: `= ${woundingModifier.value} × ${penetratingDamage.value}`,
-				},
-			],
-		}
-
-		injury = this._adjustInjury(penetratingDamage.value, injury)
-		return injury
+		return results
 	}
 
-	private get basicDamageResult(): DamageResult {
+	private get basicDamageResult(): Descriptor {
 		const basic = this._overrides.basicDamage ?? this.damageRoll.basicDamage
-		return {
-			value: basic,
-			description: [{ step: "Basic Damage", value: `${basic}` }],
-		}
+		return new Descriptor("Basic Damage", "Basic Damage", basic, undefined, undefined)
 	}
 
-	private adjustBasicDamage(basic: DamageResult): DamageResult {
+	private adjustBasicDamage(results: DamageResults): Descriptor | undefined {
 		const STEP = "Adjusted Damage"
 
 		if (this._isExplosion && this.damageRoll.range) {
 			if (this.damageRoll.range > this._diceOfDamage * 2) {
-				return this._updateResult(STEP, 0, "Explosion; Out of range", basic)
+				return new Descriptor("Basic Damage", STEP, 0, undefined, "Explosion; Out of range")
 			} else {
-				return this._updateResult(
+				return new Descriptor(
+					"Basic Damage",
 					STEP,
-					Math.floor(basic.value / (3 * this.damageRoll.range)),
-					`Explosion; ${this.damageRoll.range} yards`,
-					basic
+					Math.floor(results.basicDamage!.value / (3 * this.damageRoll.range)),
+					undefined,
+					`Explosion; ${this.damageRoll.range} yards`
 				)
 			}
 		}
 
-		if (this._isKnockbackOnly) return this._updateResult(STEP, 0, "Knockback only", basic)
+		if (this._isKnockbackOnly) return new Descriptor("Basic Damage", STEP, 0, undefined, "Knockback only")
 
-		if (this.damageRoll.isHalfDamage)
-			return this._updateResult(STEP, Math.floor(basic.value * 0.5), "Ranged, 1/2D", basic)
+		if (this.damageRoll.isHalfDamage) {
+			return new Descriptor("Basic Damage", STEP, results.basicDamage!.value * 0.5, undefined, "Ranged, 1/2D")
+		}
 
 		if (this._multiplierForShotgunExtremelyClose !== 1) {
-			return this._updateResult(
+			return new Descriptor(
+				"Basic Damage",
 				STEP,
-				basic.value * this._multiplierForShotgunExtremelyClose,
-				"Shotgun (extremely close)",
-				basic
+				results.basicDamage!.value * this._multiplierForShotgunExtremelyClose,
+				undefined,
+				`Shotgun, extremely close (×${this._multiplierForShotgunExtremelyClose})`
 			)
 		}
 
-		return basic
+		return undefined
 	}
 
-	private get basicDamageResistance(): DamageResult {
+	private get basicDamageResistance(): Descriptor {
 		const STEP = "Damage Resistance"
 
 		if (this._overrides.rawDR)
-			return {
-				value: this._overrides.rawDR,
-				description: [{ step: STEP, value: `${this._overrides.rawDR}`, notes: "Override" }],
-			}
+			return new Descriptor("Damage Resistance", STEP, this._overrides.rawDR, undefined, "Override")
 
 		let basicDr = 0
 		if (this._isLargeAreaInjury) {
@@ -185,94 +233,108 @@ class DamageCalculator {
 				.filter(it => it !== -1)
 
 			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2
-
-			return {
-				value: basicDr,
-				description: [{ step: STEP, value: `${basicDr}`, notes: "Large Area Injury" }],
-			}
-		} else {
-			basicDr = this.drForHitLocation
-			return {
-				value: this.drForHitLocation,
-				description: [
-					{ step: STEP, value: `${this.drForHitLocation}`, notes: `${this._hitLocation?.choice_name}` },
-				],
-			}
+			return new Descriptor("Damage Resistance", STEP, basicDr, undefined, "Large Area Injury")
 		}
+
+		return new Descriptor(
+			"Damage Resistance",
+			STEP,
+			this.drForHitLocation,
+			undefined,
+			`${this._hitLocation?.choice_name}`
+		)
 	}
 
-	private adjustDamageResistance(dr: DamageResult): DamageResult {
+	private adjustDamageResistance(dr: DamageResults): Descriptor | undefined {
 		const STEP = "Effective DR"
 
 		// Armor Divisor is "Ignores DR"
-		if (this._isIgnoreDRArmorDivisor) return this._updateResult(STEP, 0, "Armor Divisor (Ignores DR)", dr)
+		if (this._isIgnoreDRArmorDivisor)
+			return new Descriptor("Damage Resistance", STEP, 0, undefined, "Armor Divisor (Ignores DR)")
 
-		if (this.isInternalExplosion) return this._updateResult(STEP, 0, "Explosion (Internal)", dr)
+		if (this.isInternalExplosion)
+			return new Descriptor("Damage Resistance", STEP, 0, undefined, "Explosion (Internal)")
 
-		if (this.damageType === DamageTypes.injury) return this._updateResult(STEP, 0, "Ignores DR", dr)
+		if (this.damageType === DamageTypes.injury)
+			return new Descriptor("Damage Resistance", STEP, 0, undefined, "Ignores DR")
 
 		if (this._multiplierForShotgunExtremelyClose > 1) {
-			dr = this._updateResult(
+			return new Descriptor(
+				"Damage Resistance",
 				STEP,
-				dr.value * this._multiplierForShotgunExtremelyClose,
-				`Shotgun, extremely close (×${this._multiplierForShotgunExtremelyClose})`,
-				dr
+				dr.damageResistance!.value * this._multiplierForShotgunExtremelyClose,
+				undefined,
+				`Shotgun, extremely close (×${this._multiplierForShotgunExtremelyClose})`
 			)
 		}
 
 		if (this.effectiveArmorDivisor !== 1) {
-			let result = Math.floor(dr.value / this.effectiveArmorDivisor)
+			let result = Math.floor(dr.damageResistance!.value / this.effectiveArmorDivisor)
 			result = this.effectiveArmorDivisor < 1 ? Math.max(result, 1) : result
-			return this._updateResult(STEP, result, `Armor Divisor (${this.effectiveArmorDivisor})`, dr)
+			return new Descriptor(
+				"Damage Resistance",
+				STEP,
+				result,
+				undefined,
+				`Armor Divisor (${this.effectiveArmorDivisor})`
+			)
 		}
 
-		return dr
+		return undefined
 	}
 
-	private get basicWoundingModifier(): DamageResult {
+	penetratingDamage_(results: DamageResults): Descriptor {
+		return new Descriptor(
+			"Penetrating Damage",
+			"Penetrating",
+			Math.max(results.basicDamage!.value - results.damageResistance!.value, 0),
+			undefined,
+			`= ${results.basicDamage!.value} – ${results.damageResistance!.value}`
+		)
+	}
+
+	private get basicWoundingModifier(): Descriptor {
 		const STEP = "Wounding Modifier"
 
 		if (this._overrides.woundingModifier)
-			return {
-				value: this._overrides.woundingModifier,
-				description: [
-					{
-						step: STEP,
-						value: `×${this.formatFraction(this._overrides.woundingModifier)}`,
-						notes: "Override",
-					},
-				],
-			}
+			return new Descriptor(
+				"Wounding Modifier",
+				STEP,
+				this._overrides.woundingModifier,
+				`×${this.formatFraction(this._overrides.woundingModifier)}`,
+				"Override"
+			)
 
 		// Fatigue damage always ignores hit location.
 		if (this._woundingModifierByDamageType) {
 			const modifier = this._woundingModifierByDamageType
-			return {
-				value: modifier[0],
-				description: [
-					{ step: "Wounding Modifier", value: `×${this.formatFraction(modifier[0])}`, notes: modifier[1] },
-				],
-			}
+			return new Descriptor(
+				"Wounding Modifier",
+				STEP,
+				modifier[0],
+				`×${this.formatFraction(modifier[0])}`,
+				modifier[1]
+			)
 		}
 
 		// Calculate Wounding Modifier for Hit Location
 		const modifier = this._woundingModifierByHitLocation
 		if (modifier)
-			return {
-				value: modifier[0],
-				description: [{ step: STEP, value: `×${this.formatFraction(modifier[0])}`, notes: modifier[1] }],
-			}
+			return new Descriptor(
+				"Wounding Modifier",
+				STEP,
+				modifier[0],
+				`×${this.formatFraction(modifier[0])}`,
+				modifier[1]
+			)
 
-		return {
-			value: this.damageType.theDefault,
-			description: [
-				{
-					step: STEP,
-					value: `×${this.formatFraction(this.damageType.theDefault)}`,
-					notes: `${this.damageType.key}, ${this.damageRoll.locationId}`,
-				},
-			],
-		}
+		return new Descriptor(
+			"Wounding Modifier",
+			STEP,
+			this.damageType.theDefault,
+			`×${this.formatFraction(this.damageType.theDefault)}`,
+			`${this.damageType.key}, ${this.damageRoll.locationId}`
+		)
 	}
 
 	/**
@@ -312,14 +374,14 @@ class DamageCalculator {
 		return undefined // [this.damageType.theDefault, standardMessage]
 	}
 
-	private adjustWoundingModifier(modifier: DamageResult): DamageResult {
+	private adjustWoundingModifier(results: DamageResults): Descriptor | undefined {
 		const mod = this._modifierByInjuryTolerance
-		if (mod && mod[0] !== modifier.value) {
+		if (mod && mod[0] !== results.woundingModifier!.value) {
 			const newValue = mod[0]
-			return this._updateResult("Effective Modifier", newValue, mod[1], modifier, "×")
+			return new Descriptor("Wounding Modifier", "Effective Modifier", newValue, `×${newValue}`, mod[1])
 		}
 
-		return modifier
+		return undefined
 	}
 
 	private get _modifierByInjuryTolerance(): [number, string] | undefined {
@@ -343,46 +405,61 @@ class DamageCalculator {
 		return undefined
 	}
 
-	private _adjustInjury(penetratingDamage: number, injury: DamageResult): DamageResult {
+	private injury_(results: DamageResults): Descriptor {
+		let value = Math.floor(results.woundingModifier!.value * results.penetratingDamage!.value)
+		if (results.woundingModifier!.value !== 0 && value === 0 && results.penetratingDamage!.value > 0) value = 1
+		return new Descriptor(
+			"Injury",
+			"Injury",
+			value,
+			undefined,
+			`= ${results.woundingModifier!.value} × ${results.penetratingDamage!.value}`
+		)
+	}
+
+	private _adjustInjury(results: DamageResults): Descriptor | undefined {
 		// Adjust for Vulnerability
 		if (this.vulnerabilityLevel !== 1) {
-			let temp = injury.value * this.vulnerabilityLevel
-			return this._updateResult(
+			let temp = results.injury!.value * this.vulnerabilityLevel
+			return new Descriptor(
+				"Injury",
 				"Adjusted Injury",
 				temp,
-				`= ${injury.value} × ${this.vulnerabilityLevel} (Vulnerability)`,
-				injury
+				undefined,
+				`= ${results.injury!.value} × ${this.vulnerabilityLevel} (Vulnerability)`
 			)
 		}
 
 		// Adjust for Damage Reduction.
 		if (this._damageReductionValue !== 1) {
-			const newValue = injury.value / this._damageReductionValue
-			return this._updateResult(
+			const newValue = results.injury!.value / this._damageReductionValue
+			return new Descriptor(
+				"Injury",
 				"Adjusted Injury",
 				newValue,
-				`= ${injury.value} ÷ ${this._damageReductionValue} (Damage Reduction)`,
-				injury
+				undefined,
+				`= ${results.injury!.value} ÷ ${this._damageReductionValue} (Damage Reduction)`
 			)
 		}
 
 		// Adjust for Injury Tolerance. This must be before Hit Location or Trauma.
-		if (this._maximumForInjuryTolerance[0] !== Infinity) {
-			const newValue = Math.min(injury.value, this._maximumForInjuryTolerance[0])
-			return this._updateResult("Adjusted Injury", newValue, this._maximumForInjuryTolerance[1], injury)
+		let newValue = Math.min(results.injury!.value, this._maximumForInjuryTolerance[0])
+		if (newValue < results.injury!.value) {
+			return new Descriptor("Injury", "Adjusted Injury", newValue, undefined, this._maximumForInjuryTolerance[1])
 		}
 
 		// Adjust for hit location.
-		const newValue = Math.min(injury.value, this._maximumForHitLocation[0])
-		if (newValue < injury.value) {
-			return this._updateResult("Adjusted Injury", newValue, this._maximumForHitLocation[1], injury)
+		newValue = Math.min(results.injury!.value, this._maximumForHitLocation[0])
+		if (newValue < results.injury!.value) {
+			return new Descriptor("Injury", "Adjusted Injury", newValue, undefined, this._maximumForHitLocation[1])
 		}
 
 		// Adjust for blunt trauma.
-		if (this.__isBluntTrauma(penetratingDamage)) {
-			return this._updateResult("Adjusted Injury", this.bluntTrauma, "Blunt Trauma", injury)
+		if (this.__isBluntTrauma(results.penetratingDamage!.value)) {
+			return new Descriptor("Injury", "Adjusted Injury", this.bluntTrauma, undefined, "Blunt Trauma")
 		}
-		return injury
+
+		return undefined
 	}
 
 	__isBluntTrauma(penetratingDamage: number): boolean {
@@ -391,18 +468,6 @@ class DamageCalculator {
 
 	get isBluntTraumaDamageType(): boolean {
 		return [DamageTypes.cr, DamageTypes.cut, DamageTypes.imp, ...AnyPiercingType].includes(this.damageType)
-	}
-
-	private _updateResult(
-		step: string,
-		value: number,
-		notes: string,
-		result: DamageResult,
-		prefix?: string
-	): DamageResult {
-		result.value = value
-		result.description.push({ step: step, value: `${prefix ?? ""}${this.formatFraction(value)}`, notes: notes })
-		return result
 	}
 
 	/**
@@ -635,24 +700,36 @@ class DamageCalculator {
 
 	get description(): Descriptor[] {
 		let results = []
-		results.push({ step: "Basic Damage", value: `${this.basicDamage}`, notes: `${this.damageRoll.applyTo}` })
-		results.push({
+		results.push(<Descriptor>{
+			name: "Basic Damage",
+			step: "Basic Damage",
+			value: this.basicDamage,
+			text: `${this.basicDamage}`,
+			notes: `${this.damageRoll.applyTo}`,
+		})
+		results.push(<Descriptor>{
+			name: "Damage Resistance",
 			step: "Damage Resistance",
-			value: `${this.drForHitLocation}`,
+			value: this.drForHitLocation,
+			text: `${this.drForHitLocation}`,
 			notes: `${this._hitLocation?.choice_name}`,
 		})
 
 		if (this.drForHitLocation !== this.effectiveDR) {
-			results.push({
+			results.push(<Descriptor>{
+				name: "Damage Resistance",
 				step: "Effective DR",
-				value: `${this.effectiveDR}`,
+				value: this.effectiveDR,
+				text: `${this.effectiveDR}`,
 				notes: `${this.effectiveDRReason}`,
 			})
 		}
 
-		results.push({
+		results.push(<Descriptor>{
+			name: "Penetrating Damage",
 			step: "Penetrating",
-			value: `${this.penetratingDamage}`,
+			value: this.penetratingDamage,
+			text: `${this.penetratingDamage}`,
 			notes: `= ${this.basicDamage} – ${this.effectiveDR}`,
 		})
 
@@ -661,30 +738,38 @@ class DamageCalculator {
 			`${this.damageType.key}, ${this.damageRoll.locationId}`,
 		]
 
-		results.push({
+		results.push(<Descriptor>{
+			name: "Wounding Modifier",
 			step: "Wounding Modifier",
-			value: `×${this.formatFraction(mod[0])}`,
+			value: mod[0],
+			text: `×${this.formatFraction(mod[0])}`,
 			notes: `${mod[1]}`,
 		})
 
 		if (this.woundingModifier !== mod[0]) {
-			results.push({
+			results.push(<Descriptor>{
+				name: "Wounding Modifier",
 				step: "Effective Modifier",
-				value: `×${this.formatFraction(this.woundingModifier)}`,
+				value: this.woundingModifier,
+				text: `×${this.formatFraction(this.woundingModifier)}`,
 				notes: `${this.woundingModifierReason}`,
 			})
 		}
 
-		results.push({
+		results.push(<Descriptor>{
+			name: "Injury",
 			step: "Injury",
-			value: `${this.candidateInjury}`,
+			value: this.candidateInjury,
+			text: `${this.candidateInjury}`,
 			notes: `= ${this.penetratingDamage} × ${this.formatFraction(this.woundingModifier)}`,
 		})
 
 		if (this.candidateInjury !== this.injury) {
-			results.push({
+			results.push(<Descriptor>{
+				name: "Injury",
 				step: "Adjusted Injury",
-				value: `${this.injury}`,
+				value: this.injury,
+				text: `${this.injury}`,
 				notes: this._injuryValueAndReason[1],
 			})
 		}
@@ -1016,4 +1101,4 @@ class DamageCalculator {
 	}
 }
 
-export { DamageCalculator, Head, Limb, Extremity, Descriptor, DamageResult }
+export { DamageCalculator, Head, Limb, Extremity, Descriptor, DamageResults }
