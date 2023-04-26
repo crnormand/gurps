@@ -183,14 +183,14 @@ class DamageCalculator {
 	}
 
 	private get basicDamageResult(): CalculatorStep {
-		const basic = this.overrides.basicDamage ?? this.damageRoll.basicDamage
+		const basic = this.basicDamage
 		return new CalculatorStep("Basic Damage", "Basic Damage", basic, undefined, "HP")
 	}
 
 	private adjustBasicDamage(results: DamageResults): CalculatorStep | undefined {
 		const STEP = "Adjusted Damage"
 
-		if (this._isExplosion && this.damageRoll.range) {
+		if (this.isExplosion && this.damageRoll.range) {
 			if (this.damageRoll.range > this._diceOfDamage * 2) {
 				return new CalculatorStep("Basic Damage", STEP, 0, undefined, "Explosion; Out of range")
 			} else {
@@ -226,10 +226,12 @@ class DamageCalculator {
 	private get basicDamageResistance(): CalculatorStep {
 		const STEP = "Damage Resistance"
 
-		if (this.overrides.rawDR)
-			return new CalculatorStep("Damage Resistance", STEP, this.overrides.rawDR, undefined, "Override")
+		const modifier = this.damageResistance
+		return new CalculatorStep("Damage Resistance", STEP, modifier[0], undefined, modifier[1])
+	}
 
-		let basicDr = 0
+	get damageResistance(): [number, string] {
+		if (this.overrides.rawDR) return [this.overrides.rawDR, "Override"]
 		if (this.isLargeAreaInjury) {
 			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
 
@@ -237,17 +239,12 @@ class DamageCalculator {
 				.map(it => HitLocationUtil.getHitLocationDR(it, this.damageType))
 				.filter(it => it !== -1)
 
-			basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2
-			return new CalculatorStep("Damage Resistance", STEP, basicDr, undefined, "Large Area Injury")
+			return [
+				(HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2,
+				"Large Area Injury",
+			]
 		}
-
-		return new CalculatorStep(
-			"Damage Resistance",
-			STEP,
-			this.drForHitLocation,
-			undefined,
-			`${this._hitLocation?.choice_name}`
-		)
+		return [this.drForHitLocation, `${this._hitLocation?.choice_name}`]
 	}
 
 	private adjustDamageResistance(dr: DamageResults): CalculatorStep | undefined {
@@ -299,47 +296,37 @@ class DamageCalculator {
 	}
 
 	private get basicWoundingModifier(): CalculatorStep {
-		const STEP = "Wounding Modifier"
-
-		if (this.overrides.woundingModifier)
-			return new CalculatorStep(
-				"Wounding Modifier",
-				STEP,
-				this.overrides.woundingModifier,
-				`×${this.formatFraction(this.overrides.woundingModifier)}`,
-				"Override"
-			)
-
-		// Fatigue damage always ignores hit location.
-		if (this._woundingModifierByDamageType) {
-			const modifier = this._woundingModifierByDamageType
-			return new CalculatorStep(
-				"Wounding Modifier",
-				STEP,
-				modifier[0],
-				`×${this.formatFraction(modifier[0])}`,
-				modifier[1]
-			)
-		}
-
-		// Calculate Wounding Modifier for Hit Location
-		const modifier = this.woundingModifierByHitLocation
-		if (modifier)
-			return new CalculatorStep(
-				"Wounding Modifier",
-				STEP,
-				modifier[0],
-				`×${this.formatFraction(modifier[0])}`,
-				modifier[1]
-			)
+		const modifier = this.woundingModifier
 
 		return new CalculatorStep(
 			"Wounding Modifier",
-			STEP,
-			this.damageType.theDefault,
-			`×${this.formatFraction(this.damageType.theDefault)}`,
-			`${this.damageType.key}, ${this.damageRoll.locationId}`
+			"Wounding Modifier",
+			modifier[0],
+			`×${this.formatFraction(modifier[0])}`,
+			modifier[1]
 		)
+	}
+
+	get woundingModifier(): [number, string] {
+		let woundingModifier = 1
+		let reason = undefined
+
+		if (this.overrides.woundingModifier) {
+			woundingModifier = this.overrides.woundingModifier
+			reason = "Override"
+		} else if (this.woundingModifierByDamageType) {
+			const modifier = this.woundingModifierByDamageType
+			woundingModifier = modifier[0]
+			reason = modifier[1]
+		} else if (this.woundingModifierByHitLocation) {
+			const modifier = this.woundingModifierByHitLocation
+			woundingModifier = modifier[0]
+			reason = modifier[1]
+		} else {
+			woundingModifier = this.damageType.theDefault
+			reason = `${this.damageType.key}, ${this.damageRoll.locationId}`
+		}
+		return [woundingModifier, reason]
 	}
 
 	/**
@@ -701,7 +688,7 @@ class DamageCalculator {
 		return [Infinity, ""]
 	}
 
-	private get _woundingModifierByDamageType(): [number, string] | undefined {
+	private get woundingModifierByDamageType(): [number, string] | undefined {
 		// Fatigue damage always ignores hit location.
 		if (this.damageType === DamageTypes.fat) return [1, "Fatigue ignores Hit Location"]
 		return undefined
@@ -756,6 +743,20 @@ class DamageCalculator {
 		this.overrides.basicDamage = this.damageRoll.basicDamage === value ? undefined : value
 	}
 
+	// -- Armor Divisor ---
+
+	get armorDivisor() {
+		return this.overrides.armorDivisor ?? this.damageRoll.armorDivisor
+	}
+
+	get overrideArmorDivisor(): number | undefined {
+		return this.overrides.armorDivisor
+	}
+
+	set overrideArmorDivisor(value: number | undefined) {
+		this.overrides.armorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
+	}
+
 	// --- Damage Type ---
 
 	private get damageType(): DamageType {
@@ -778,11 +779,34 @@ class DamageCalculator {
 		return this.overrides.damageType?.key
 	}
 
+	// --- Wounding Modifier ---
+
+	get overrideWoundingModifier(): number | undefined {
+		return this.overrides.woundingModifier
+	}
+
+	set overrideWoundingModifier(value: number | undefined) {
+		this.overrides.woundingModifier = value
+	}
+
+	// --- Damage Resistance ---
+
+	set overrideRawDr(dr: number | undefined) {
+		this.overrides.rawDR =
+			HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType) === dr ? undefined : dr
+	}
+
+	get overrideRawDR() {
+		return this.overrides.rawDR
+	}
+
+	// --- ---
+
 	private get isKnockbackOnly() {
 		return this.damageType === DamageTypes.kb
 	}
 
-	private get _isExplosion(): boolean {
+	get isExplosion(): boolean {
 		return this.damageRoll.damageModifier === "ex"
 	}
 
@@ -813,36 +837,15 @@ class DamageCalculator {
 	}
 
 	get isInternalExplosion(): boolean {
-		return this._isExplosion && this.damageRoll.internalExplosion
+		return this.isExplosion && this.damageRoll.internalExplosion
 	}
 
 	get drForHitLocation(): number {
 		return this.overrides.rawDR ?? HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType)
 	}
 
-	set overrideRawDr(dr: number | undefined) {
-		this.overrides.rawDR =
-			HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType) === dr ? undefined : dr
-	}
-
-	get overrideRawDR() {
-		return this.overrides.rawDR
-	}
-
 	private get isLargeAreaInjury() {
 		return this.damageRoll.locationId === DefaultHitLocations.LargeArea
-	}
-
-	get armorDivisor() {
-		return this.overrides.armorDivisor ?? this.damageRoll.armorDivisor
-	}
-
-	get overrideArmorDivisor(): number | undefined {
-		return this.overrides.armorDivisor
-	}
-
-	set overrideArmorDivisor(value: number | undefined) {
-		this.overrides.armorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
 	}
 
 	overrideHardenedDR(level: number | undefined) {
@@ -860,7 +863,7 @@ class DamageCalculator {
 	}
 
 	private get _isCollateralDamage(): boolean {
-		return this._isExplosion && this._isAtRange
+		return this.isExplosion && this._isAtRange
 	}
 
 	private get _isAtRange(): boolean {

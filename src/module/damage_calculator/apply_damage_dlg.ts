@@ -4,11 +4,10 @@ import { PDF } from "@module/pdf"
 import { toWord } from "@util/misc"
 import { DamageRoll, DamageTarget } from "."
 import { DamageCalculator } from "./damage_calculator"
-import { DamageType, DamageTypes } from "./damage_type"
+import { DamageTypes } from "./damage_type"
 import { HitLocationUtil } from "./hitlocation_utils"
 
 const Vulnerability = "Vulnerability"
-const Wounding = "Wounding"
 const Injury_Tolerance = "Injury Tolerance"
 const Damage_Reduction = "Damage Reduction"
 const InjuryTolerance_DamageReduction = "Injury Tolerance (Damage Reduction)"
@@ -62,13 +61,12 @@ class ApplyDamageDialog extends Application {
 
 		const data = mergeObject(super.getData(options), {
 			calculator: this.calculator,
+			results: this.calculator.results,
 			choices: this.choices,
 			books,
 
-			roll: this.roll,
 			target: this.target,
 			armorDivisorSelect: this.armorDivisorText,
-			isExplosion: this.isExplosion,
 			hitLocation: this.hitLocation,
 			vulnerabilities: this.vulnerabilities,
 			injuryTolerance: this.injuryTolerance,
@@ -159,7 +157,7 @@ class ApplyDamageDialog extends Application {
 				break
 
 			case "apply-basic":
-				this.calculator.target.incrementDamage(this.calculator.adjustedBasicDamage)
+				this.calculator.target.incrementDamage(this.calculator.results.rawDamage!.value)
 				break
 
 			case "reset-form":
@@ -202,14 +200,6 @@ class ApplyDamageDialog extends Application {
 
 	private get target(): DamageTarget {
 		return this.calculator.target
-	}
-
-	private get roll(): DamageRoll {
-		return this.calculator.damageRoll
-	}
-
-	private get isExplosion(): boolean {
-		return this.roll.damageModifier === "ex"
 	}
 
 	private get hitLocation(): HitLocation | undefined {

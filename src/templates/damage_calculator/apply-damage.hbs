@@ -92,7 +92,7 @@
 		<div class="label"></div>
 		<div class="field no-stretch">
 			<label for="exp" class="checkbox-label">
-				<input id="exp" type="checkbox" {{checked isExplosion}} />Explosion
+				<input id="exp" type="checkbox" {{checked calculator.isExplosion}} />Explosion
 			</label>
 			<label for="explosion" class="checkbox-label">
 				<input id="explosion" type="checkbox" />Internal</label>
@@ -105,7 +105,7 @@
 
 		<div class="label">Range (yards)</div>
 		<div class="field no-stretch range">
-			<input type="number" value="{{roll.range}}" step="any" name="range" />
+			<input type="number" value="{{calculator.roll.range}}" step="any" name="range" />
 			<label for="1/2D" class="checkbox-label">
 				<input id="1/2D" type="checkbox" />
 				Ranged, 1/2D</label>
@@ -126,7 +126,7 @@
 		<div class="label"></div>
 		<div class="field no-stretch">
 			<div class="label">RoF Multiplier</div>
-			<input type="number" value="{{roll.rofMultiplier}}" step="any" name="rofMultiplier" size="3" />
+			<input type="number" value="{{calculator.roll.rofMultiplier}}" step="any" name="rofMultiplier" size="3" />
 		</div>
 		<div> </div>
 	</div>
@@ -153,7 +153,7 @@
 				<input
 					type="number"
 					data-action="override-dr"
-					value="{{calculator.rawDR}}"
+					value="{{calculator.damageResistance}}"
 					step="any"
 					size="6"
 					class="{{overridden calculator.overrideRawDR}}"
