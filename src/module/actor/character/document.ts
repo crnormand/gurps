@@ -693,11 +693,11 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get parryBonus(): number {
-		return this.calc.parry_bonus ?? 0
+		return this.calc?.parry_bonus ?? 0
 	}
 
 	get blockBonus(): number {
-		return this.calc.block_bonus ?? 0
+		return this.calc?.block_bonus ?? 0
 	}
 
 	override get sizeMod(): number {

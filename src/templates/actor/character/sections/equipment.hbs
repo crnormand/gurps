@@ -1,7 +1,7 @@
 <div class="equipped" data-uuid="{{this.uuid}}">{{#if this.equipped}}<i class="gcs-checkmark"></i>{{/if}}</div>
 <div class="quantity">{{this.quantity}}</div>
 <div
-	class="desc item{{#if (in this.type '_container')}} container{{/if}} other"
+	class="desc item{{#if this.isContainer}} container{{/if}} other"
 	data-uuid="{{ this.uuid }}"
 	{{{indent this.parents.length}}}
 >

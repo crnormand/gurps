@@ -119,6 +119,7 @@ export class RollGURPS extends Roll {
 			case RollType.SkillRelative:
 			case RollType.Spell:
 			case RollType.SpellRelative:
+				if (isNaN(data.item.effectiveLevel)) return
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
@@ -141,6 +142,7 @@ export class RollGURPS extends Roll {
 					data.hidden
 				)
 			case RollType.Attack:
+				if (isNaN(data.item.skillLevel(null))) return
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
@@ -152,6 +154,7 @@ export class RollGURPS extends Roll {
 					data.hidden
 				)
 			case RollType.Parry:
+				if (isNaN(data.item.parry) || data.item.parry === "") return
 				return RollGURPS.rollAgainst(
 					user,
 					actor,
@@ -164,6 +167,7 @@ export class RollGURPS extends Roll {
 					data.hidden
 				)
 			case RollType.Block:
+				if (isNaN(data.item.block) || data.item.block === "") return
 				return RollGURPS.rollAgainst(
 					user,
 					actor,

@@ -49,6 +49,18 @@ abstract class ItemGCS extends ContainerGURPS {
 		return null
 	}
 
+	get isContainer(): boolean {
+		return [
+			ItemType.TraitContainer,
+			ItemType.SkillContainer,
+			ItemType.SpellContainer,
+			ItemType.EquipmentContainer,
+			ItemType.TraitModifierContainer,
+			ItemType.EquipmentModifierContainer,
+			ItemType.NoteContainer,
+		].includes(this.type as any)
+	}
+
 	get formattedName(): string {
 		return this.name ?? ""
 	}

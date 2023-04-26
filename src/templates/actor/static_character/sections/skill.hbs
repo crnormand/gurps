@@ -11,8 +11,13 @@
 	<div class="name">{{this.name}}</div>
 	<div class="item-notes">{{this.notes}}</div>
 </div>
+{{#if (or this.hasContains this.hasCollapsed)}}
+<div  class="level"></div>
+<div class="rsl"></div>
+{{else}}
 <div data-uuid="{{this.uuid}}" data-type="skill" class="level rollable">{{this.import}}</div>
 <div data-uuid="{{this.uuid}}" data-type="skill_rsl" class="rsl rollable">{{this.relativelevel}}</div>
+{{/if}}
 <div class="points">{{this.points}}</div>
 <div class="reference">{{{ref this.pageref}}}</div>
 {{/unless}}
