@@ -2,7 +2,7 @@
 <div class="quantity">{{ this.quantity }}</div>
 {{/unless}}
 <div
-	class="desc item{{#if (in this.type '_container')}} container{{/if}} other"
+	class="desc item{{#if this.isContainer}} container{{/if}} other"
 	data-uuid="{{ this.uuid }}"
 	{{{indent this.parents.length}}}
 >

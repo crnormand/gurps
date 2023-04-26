@@ -187,7 +187,7 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 
 	// May be temporary
 	static diceString(d: DiceGURPS): string {
-		console.log(d)
+		// Console.log(d)
 		return new DiceGURPS(d).stringExtra(false)
 	}
 
@@ -406,6 +406,10 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		)
 	}
 
+	static overridden(check: any): string {
+		return check ? "overridden" : ""
+	}
+
 	// Static multiselect(selected: string[], options: any) {
 	// 	let html = options.fn(this)
 	// 	if (selected.length === 0) {
@@ -469,6 +473,7 @@ export function registerHandlebarsHelpers() {
 		modifierCost: HandlebarsHelpersGURPS.modifierCost,
 		effective: HandlebarsHelpersGURPS.effective,
 		unsatisfied: HandlebarsHelpersGURPS.unsatisfied,
+		overridden: HandlebarsHelpersGURPS.overridden,
 		flatlist: HandlebarsHelpersGURPS.flatlist,
 		// Multiselect: HandlebarsHelpersGURPS.multiselect
 	})
