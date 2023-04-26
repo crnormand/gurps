@@ -1,5 +1,5 @@
 <div
-	class="desc item{{#if (in this.type '_container')}} container{{/if}} other"
+	class="desc item{{#if this.isContainer}} container{{/if}} other"
 	data-uuid="{{ this.uuid }}"
 	{{{indent this.parents.length}}}
 >
@@ -29,8 +29,13 @@
 <div class="difficulty">{{this.difficulty}}</div>
 <div class="tags">{{join this.tags ", "}}</div>
 {{else}}
-<div data-uuid="{{this.uuid}}" data-type="spell" class="level rollable">{{this.skillLevel}}</div>
-<div data-uuid="{{this.uuid}}" data-type="spell_rsl" class="rsl rollable">{{this.relativeLevel}}</div>
+{{#if this.isContainer}}
+<div class="level"></div>
+<div class="rsl"></div>
+{{else}}
+<div data-uuid="{{this.uuid}}" data-type="spell" class="level rollable {{effective this}}">{{this.effectiveLevel}}</div>
+<div data-uuid="{{this.uuid}}" data-type="spell_rsl" class="rsl rollable {{effective this}}">{{this.relativeLevel}}</div>
+{{/if}}
 <div class="points">{{this.adjustedPoints}}</div>
 {{/if}}
 <div class="reference">{{{ref this.reference}}}</div>

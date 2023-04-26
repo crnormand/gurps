@@ -1,5 +1,5 @@
 <div
-	class="desc item{{#if (in this.type '_container')}} container{{/if}} other {{disabled (not this.enabled)}}"
+	class="desc item{{#if this.isContainer}} container{{/if}} other {{disabled (not this.enabled)}}"
 	data-uuid="{{ this.uuid }}"
 	{{{indent this.parents.length}}}
 >

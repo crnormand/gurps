@@ -6,6 +6,7 @@
 	}
 
 	.desc:nth-child(4n + 1),
+	.desc:nth-child(4n + 1) .md,
 	.reference:nth-child(4n + 2) {
 		&:not(.header) {
 			background-color: rgba(var(--color-banding), 1);
@@ -29,7 +30,7 @@
 	}
 
 	.desc,
-	.refrence {
+	.reference {
 		border-right: 1px solid rgb(var(--color-divider));
 		&.refernce,
 		&.reference {
