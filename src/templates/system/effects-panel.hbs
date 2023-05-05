@@ -29,11 +29,6 @@
                 {{/if}}
             </div>
         {{/if}}
-        {{#if (eq effect.slug "persistent-damage")}}
-            <a data-action="recover-persistent-damage">
-                <i class="fas fa-dice-d20"></i> {{localize "PF2E.Item.Condition.PersistentDamage.Chat.Recover"}}
-            </a>
-        {{/if}}
         <div class="instructions">
             {{#if (not effect.locked)}}
                 {{#if (eq effect.badge.type "counter")}}

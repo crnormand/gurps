@@ -13,6 +13,11 @@ export class EffectPanel extends Application {
 		return canvas?.tokens?.controlled[0]?.actor ?? game.user?.character ?? null
 	}
 
+	protected _injectHTML(html: JQuery<HTMLElement>): void {
+		html.insertBefore($("#ui-middle").find("#ui-bottom"))
+		this._element = html
+	}
+
 	static override get defaultOptions(): ApplicationOptions {
 		return {
 			...super.defaultOptions,
@@ -49,4 +54,8 @@ export class EffectPanel extends Application {
 			user: { isGM: game.user?.isGM },
 		}
 	}
+
+	// Override	activateListeners(html: JQuery<HTMLElement>): void {
+
+	// }
 }
