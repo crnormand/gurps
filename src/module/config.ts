@@ -185,8 +185,8 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 	Actor: {
 		documentClasses: {
 			[ActorType.Character]: CharacterGURPS,
-			// TODO: change to static charsheet
 			[ActorType.LegacyCharacter]: StaticCharacterGURPS,
+			[ActorType.LegacyEnemy]: StaticCharacterGURPS,
 			[ActorType.Loot]: LootGURPS,
 		},
 		allowedContents: {
@@ -207,6 +207,7 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 				ItemType.Condition,
 			],
 			[ActorType.LegacyCharacter]: [ItemType.LegacyEquipment, ItemType.Effect, ItemType.Condition],
+			[ActorType.LegacyEnemy]: [ItemType.LegacyEquipment, ItemType.Effect, ItemType.Condition],
 			[ActorType.Loot]: [ItemType.Equipment, ItemType.EquipmentContainer],
 		},
 	},

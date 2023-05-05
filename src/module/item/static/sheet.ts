@@ -10,6 +10,9 @@ export class StaticItemSheet extends ItemSheet {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
 		const options = super.defaultOptions
 		mergeObject(options, {
+			width: 620,
+			min_width: 620,
+			height: 800,
 			classes: options.classes.concat(["gurps", "item", "legacy-equipment"]),
 		})
 		return options

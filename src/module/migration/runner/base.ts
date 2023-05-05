@@ -13,5 +13,9 @@ export class MigrationRunnerBase {
 		this.migrations = migrations.sort((a, b) => a.version - b.version)
 	}
 
+	needsMigration(currentVersion: number): boolean {
+		return currentVersion < (this.constructor as typeof MigrationRunnerBase).LATEST_SCHEMA_VERSION
+	}
+
 	// TODO: implement
 }

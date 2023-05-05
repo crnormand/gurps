@@ -88,7 +88,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	;(globalThis as any).GURPS = GURPS
+	; (globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -264,7 +264,7 @@ Hooks.once("init", async () => {
 		label: game.i18n.localize("gurps.system.sheet.loot"),
 	})
 	Actors.registerSheet(SYSTEM_NAME, StaticCharacterSheetGURPS, {
-		types: [ActorType.LegacyCharacter],
+		types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.character"),
 	})
@@ -462,12 +462,12 @@ Hooks.on("renderDialog", (_dialog: any, html: JQuery<HTMLElement>) => {
 	}
 })
 
-Hooks.on("updateToken", function () {
+Hooks.on("updateToken", function() {
 	game.ModifierList.render(true)
 })
 
-Hooks.once("item-piles-ready", async function () {
-	;(game as any).itempiles.API.addSystemIntegration({
+Hooks.once("item-piles-ready", async function() {
+	; (game as any).itempiles.API.addSystemIntegration({
 		VERSION: "1.0.0",
 
 		// The actor class type is the type of actor that will be used for the default

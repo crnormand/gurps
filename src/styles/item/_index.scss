@@ -4,6 +4,10 @@
 		@import "trait";
 	}
 
+	&.legacy-equipment {
+		@import "legacy";
+	}
+
 	min-width: 600px;
 	.window-content {
 		background: rgb(var(--color-background));

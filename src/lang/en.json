@@ -2,6 +2,7 @@
 	"ACTOR": {
 		"TypeCharacter_gcs": "Character",
 		"TypeCharacter": "Character (Legacy)",
+		"TypeEnemy": "Enemy (Legacy)",
 		"TypeLoot": "Loot"
 	},
 	"ITEM": {

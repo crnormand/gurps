@@ -1,4 +1,4 @@
-import { RollModifier, SYSTEM_NAME } from "@module/data"
+import { ActorType, RollModifier, SYSTEM_NAME } from "@module/data"
 import {
 	BaseWeaponGURPS,
 	ConditionGURPS,
@@ -85,6 +85,20 @@ class BaseActorGURPS extends Actor {
 			roll: new DiceGURPS("3d6"),
 			locations: [],
 		}
+	}
+
+	static override async createDialog(
+		data: { folder?: string } = {},
+		options: Partial<FormApplicationOptions> = {}
+	): Promise<any | undefined> {
+		const original = game.system.documentTypes.Actor
+		game.system.documentTypes.Actor = original.filter(
+			(actorType: string) => ![ActorType.LegacyEnemy].includes(actorType as any)
+		)
+		options = { ...options, classes: [...(options.classes ?? []), "dialog-actor-create"] }
+		const newActor = super.createDialog(data, options) as Promise<BaseActorGURPS | undefined>
+		game.system.documentTypes.Actor = original
+		return newActor
 	}
 
 	update(
