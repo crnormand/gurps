@@ -12,6 +12,7 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/character/sections/description",
 		"actor/character/sections/dropdown-closed",
 		"actor/character/sections/dropdown-open",
+		"actor/character/sections/effect",
 		"actor/character/sections/encumbrance",
 		"actor/character/sections/equipment",
 		"actor/character/sections/hit-location",

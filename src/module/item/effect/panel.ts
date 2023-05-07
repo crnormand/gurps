@@ -39,7 +39,7 @@ export class EffectPanel extends Application {
 			}
 
 		const effects = (actor.itemTypes[ItemType.Effect] as any).map((effect: EffectGURPS) => {
-			// Const duration = effect.duration.total
+			// const duration = effect.duration.total
 			// const { system } = effect
 			return effect
 		})
@@ -55,7 +55,24 @@ export class EffectPanel extends Application {
 		}
 	}
 
-	// Override	activateListeners(html: JQuery<HTMLElement>): void {
+	override activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
 
-	// }
+		html.find(".effect-item[data-uuid]").on("click", event => this._onEffectClick(event))
+		html.find(".effect-item[data-uuid]").on("contextmenu", event => this._onEffectContextMenu(event))
+	}
+
+	private async _onEffectClick(event: JQuery.ClickEvent): Promise<any> {
+		const effect: EffectGURPS = (await fromUuid($(event.currentTarget).data("uuid"))) as any
+		if (!effect) return
+
+		if (effect.canLevel) return effect.increaseLevel()
+	}
+
+	private async _onEffectContextMenu(event: JQuery.ContextMenuEvent): Promise<any> {
+		const effect: EffectGURPS = (await fromUuid($(event.currentTarget).data("uuid"))) as any
+		if (!effect) return
+		if (effect.canLevel) return effect.decreaseLevel()
+		else return effect.delete()
+	}
 }

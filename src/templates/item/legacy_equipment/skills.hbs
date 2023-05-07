@@ -1,0 +1,11 @@
+<div id="skills" class="item-list">
+	<div class="header desc">
+	</div>
+	<div class="header level">{{ localize "gurps.character.skills.level" }}</div>
+	<div class="header rsl">{{ localize "gurps.character.skills.rsl" }}</div>
+	<div class="header points">{{ localize "gurps.character.skills.points" }}</div>
+	<div class="header reference"><i class="gcs-bookmark"></i></div>
+	{{#each skills }}
+		{{>actor/character/sections/skill }}
+	{{/each }}
+</div>

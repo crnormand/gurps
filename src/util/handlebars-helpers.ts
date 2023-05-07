@@ -65,6 +65,7 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 				outStr += `\n"${line.join(" ")}"`
 			}
 		}
+		outStr += '\n"effects effects"'
 		return outStr
 	}
 

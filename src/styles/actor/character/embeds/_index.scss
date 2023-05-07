@@ -1,6 +1,6 @@
 #embeds {
 	@import "reactions", "conditional_modifiers", "melee", "ranged", "traits", "skills", "spells", "equipment",
-		"other_equipment", "notes";
+		"other_equipment", "notes", "effects";
 
 	display: grid;
 	grid-auto-columns: 1fr 1fr;

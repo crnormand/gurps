@@ -5,9 +5,6 @@
 -	Finish "static" character (0.15 and older) compatibility
 	-	foundry item display
 	-	don't bother with editing features
--	Active Effects
-	-	active effect side panel (for removing effects)
-	-	active effect tab on charsheet (for removing/editing effects)
 
 ## Jeff and Chris
 

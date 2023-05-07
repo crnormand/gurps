@@ -1,0 +1,50 @@
+#effects {
+	grid-area: effects;
+	grid-template-columns: 1fr auto;
+	.header {
+		grid-area: auto;
+	}
+
+	.desc:nth-child(4n + 1),
+	.desc:nth-child(4n + 1) .md,
+	.reference:nth-child(4n + 2) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+		}
+	}
+
+	.md,
+	.md * {
+		font-family: var(--font-markdown);
+		pre {
+			margin: 4px 0;
+			white-space: pre-line;
+		}
+		code,
+		blockquote {
+			font-family: var(--font-monospace);
+			background-color: rgb(var(--color-page-standout));
+			color: rgb(var(--color-on-page-standout));
+		}
+	}
+
+	.desc,
+	.reference {
+		border-right: 1px solid rgb(var(--color-divider));
+		&.refernce,
+		&.reference {
+			border-right: none;
+		}
+		&:not(.header) {
+			border-bottom: 1px solid rgb(var(--color-header));
+			border-right: 1px solid rgb(var(--color-header));
+			&.dropdown {
+				border-right: none;
+			}
+			&:nth-last-child(-n + 2) {
+				border-bottom: none;
+			}
+		}
+	}
+}

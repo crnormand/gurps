@@ -130,14 +130,14 @@ module.exports = {
 		"wrap-iife": ["warn", "inside"],
 
 		"arrow-parens": ["warn", "as-needed", { requireForBlockBody: false }],
-		"capitalized-comments": [
-			"warn",
-			"always",
-			{
-				ignoreConsecutiveComments: true,
-				ignorePattern: "noinspection",
-			},
-		],
+		// "capitalized-comments": [
+		// 	"warn",
+		// 	"always",
+		// 	{
+		// 		ignoreConsecutiveComments: true,
+		// 		ignorePattern: "noinspection",
+		// 	},
+		// ],
 		"comma-spacing": "warn",
 		"dot-notation": "warn",
 		// Indent: ["warn", 2, { SwitchCase: 1 }],

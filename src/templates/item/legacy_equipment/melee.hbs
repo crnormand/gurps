@@ -1,0 +1,28 @@
+<div id="melee" class="item-list table">
+	<div class="header usage desc">{{localize "gurps.weapon.melee_header"}}</div>
+	<div class="header parry">{{localize "gurps.character.melee.parry"}}</div>
+	<div class="header block">{{localize "gurps.character.melee.block"}}</div>
+	<div class="header damage">{{localize "gurps.character.melee.damage"}}</div>
+	<div class="header reach">{{localize "gurps.character.melee.reach"}}</div>
+	<div class="header st">{{localize "gurps.character.melee.st"}}</div>
+	{{#each data.melee as |this id|}}
+	<div class="usage desc item" data-uuid="{{this.uuid}}" data-type="Item">
+		<div class="name">
+			{{this.usage}}
+		</div>
+		{{>actor/character/sections/item-notes}}
+	</div>
+	<div data-uuid="{{id}}" class="parry rollable">{{this.fastResolvedParry}}</div>
+	<div data-uuid="{{id}}" class="block rollable">{{this.fastResolvedBlock}}</div>
+	<div data-uuid="{{id}}" class="damage rollable"> {{this.fastResolvedDamage}}</div>
+	<div data-uuid="{{id}}" class="reach">{{this.reach}}</div>
+	<div data-uuid="{{id}}" class="st">{{this.strength}}</div>
+	{{else}}
+	<div class="usage desc"></div>
+	<div class="parry rollable"></div>
+	<div class="block rollable"></div>
+	<div class="damage rollable"></div>
+	<div class="reach"></div>
+	<div class="st"></div>
+	{{/each}}
+</div>

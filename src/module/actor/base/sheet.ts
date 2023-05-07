@@ -37,6 +37,12 @@ export class ActorSheetGURPS extends ActorSheet {
 		super._onDrop(event)
 	}
 
+	emulateItemDrop(data: any) {
+		const item = fromUuidSync(data.uuid) as Item
+		if (!item) return
+		return this._onDropItemCreate({ ...item.toObject(), uuid: data.uuid } as any)
+	}
+
 	// DragData handling
 	protected override async _onDropItem(
 		event: DragEvent,

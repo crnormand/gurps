@@ -1,5 +1,6 @@
 import { ActorFlags, ActorSheetGURPS } from "@actor/base"
 import {
+	EffectGURPS,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
 	ManeuverID,
@@ -877,7 +878,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareItems(data: any) {
-		const [traits, skills, spells, equipment, other_equipment, notes] = data.items.reduce(
+		const [traits, skills, spells, equipment, other_equipment, notes, effects] = data.items.reduce(
 			(arr: ItemGURPS[][], item: ItemGURPS) => {
 				if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) arr[0].push(item)
 				else if (
@@ -896,9 +897,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 					if (item.other) arr[4].push(item)
 					else arr[3].push(item)
 				} else if (item instanceof NoteGURPS || item instanceof NoteContainerGURPS) arr[5].push(item)
+				else if (item instanceof EffectGURPS) arr[6].push(item)
 				return arr
 			},
-			[[], [], [], [], [], []]
+			[[], [], [], [], [], [], []]
 		)
 
 		const melee: MeleeWeaponGURPS[] = [...this.actor.meleeWeapons]
@@ -923,6 +925,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		data.ranged = ranged
 		data.reactions = reactions
 		data.conditionalModifiers = conditionalModifiers
+		data.effects = effects
 		data.blocks = {
 			traits: traits,
 			skills: skills,
@@ -934,6 +937,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			ranged: ranged,
 			reactions: reactions,
 			conditional_modifiers: conditionalModifiers,
+			effects: effects,
 		}
 	}
 

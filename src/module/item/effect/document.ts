@@ -23,6 +23,10 @@ class EffectGURPS extends BaseItemGURPS {
 		return []
 	}
 
+	get reference(): string {
+		return this.system.reference
+	}
+
 	get modifiers(): RollModifier[] {
 		return this.system.modifiers || []
 	}
@@ -69,11 +73,20 @@ class EffectGURPS extends BaseItemGURPS {
 		return this.system.can_level
 	}
 
+	async increaseLevel(): Promise<this | undefined> {
+		return await this.updateLevel(this.level + 1)
+	}
+
+	async decreaseLevel(): Promise<this | undefined> {
+		if (this.canLevel && this.level - 1 <= 0) return this.delete()
+		return await this.updateLevel(this.level - 1)
+	}
+
 	async updateLevel(level: number): Promise<this | undefined> {
 		if (!this.canLevel) return
 		if (level > this.maxLevel) return
 		if (level < 0) return
-		return this.update({ "system.level.current": level })
+		return this.update({ "system.levels.current": level })
 	}
 
 	protected async _preCreate(data: any, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
@@ -96,6 +109,7 @@ class EffectGURPS extends BaseItemGURPS {
 			? this.system.id
 			: null
 		if (this._statusId) this.#dispatchTokenStatusChange(this._statusId, true)
+		game.EffectPanel.refresh()
 	}
 
 	protected override _onDelete(options: DocumentModificationContext, userId: string): void {
@@ -104,6 +118,7 @@ class EffectGURPS extends BaseItemGURPS {
 		if (this.canLevel) this.system.levels!.current = 0
 		this._displayScrollingStatus(false)
 		if (this._statusId) this.#dispatchTokenStatusChange(this._statusId, false)
+		game.EffectPanel.refresh()
 	}
 
 	protected _preUpdate(
@@ -128,6 +143,7 @@ class EffectGURPS extends BaseItemGURPS {
 			this._displayScrollingStatus(change)
 			// If (this._statusId) this.#dispatchTokenStatusChange(this._statusId, false);
 		}
+		game.EffectPanel.refresh()
 	}
 
 	_displayScrollingStatus(enabled: boolean) {

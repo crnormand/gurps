@@ -592,6 +592,9 @@
 			},
 			"notes": {
 				"desc": "Note"
+			},
+			"effects": {
+				"desc": "Active Effects"
 			}
 		},
 		"item": {
@@ -1428,6 +1431,14 @@
 			},
 			"weapon": "Weapon",
 			"wounding_modifier": "Modifier"
+		},
+		"effect": {
+			"increment": "[Left Click] Increase Level",
+			"decrement": "[Right Click] Decrease Level",
+			"remove": "[Right Click] Remove Effect",
+			"expired": "Expired",
+			"sustained": "Sustained",
+			"unidentified": "Unidentified"
 		},
 		"context": {
 			"toggle_state": "Toggle State",

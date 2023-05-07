@@ -457,7 +457,17 @@
 		"effect": {
 			"features": [],
 			"modifiers": [],
-			"can_level": false
+			"can_level": false,
+			"duration": {
+				"type": "none",
+				"startRound": 0,
+				"startTime": 0,
+				"startTurn": 0,
+				"rounds": 0,
+				"seconds": 0,
+				"turns": 0,
+				"combat": null
+			}
 		},
 		"condition": {
 			"features": [],

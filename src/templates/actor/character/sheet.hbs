@@ -257,6 +257,19 @@
 				{{/each }}
 			</div>
 			{{!-- {{/if }} --}}
+			{{#if effects.length }}
+			<div id="effects" class="item-list">
+				<div class="header desc">
+					{{ localize "gurps.character.effects.desc" }}
+				</div>
+				<div class="header reference">
+					<i class="gcs-bookmark"></i>
+				</div>
+				{{#each effects}}
+				{{>actor/character/sections/effect }}
+				{{/each }}
+			</div>
+			{{/if }}
 		</div>
 		<div id="footer">
 			<div class="left">

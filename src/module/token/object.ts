@@ -24,6 +24,10 @@ interface TokenGURPS extends Token {
 	document: TokenDocumentGURPS
 	/** A reference to an animation that is currently in progress for this Token, if any */
 	_animation: Promise<unknown> | null
+	// TODO: fix
+	x: number
+	y: number
+	hitArea: any
 }
 
 export { TokenGURPS }
