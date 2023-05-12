@@ -31,12 +31,12 @@ export class DamageRollGURPS {
 	}
 
 	get rollFormula(): string {
+		// Let result = this.groups.flat ?? `${this.groups.dice}d${this.groups.sides ?? "6"}`
 		let result = this.groups.flat ?? `${this.groups.dice}d${this.groups.sides ?? "6"}`
 		result += this.groups.sign
 			? `${this.groups.sign.replace(String.fromCharCode(8211), "-")}${this.groups.adds}`
 			: ""
 		result += this.groups.mult ? `${this.groups.mult.replace("×", "*").replace("x", "*")}` : ""
-
 		return result
 	}
 

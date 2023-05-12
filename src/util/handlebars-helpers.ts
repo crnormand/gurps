@@ -187,7 +187,7 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 
 	// May be temporary
 	static diceString(d: DiceGURPS): string {
-		console.log(d)
+		// Console.log(d)
 		return new DiceGURPS(d).stringExtra(false)
 	}
 
