@@ -156,23 +156,19 @@ class DamageCalculator {
 		const results = new DamageResults()
 
 		// Basic Damage
-		results.addResult(this.basicDamageResult)
-		results.addResult(this.adjustBasicDamage(results))
+		this.addBasicDamageSteps(results)
 
 		// Damage Resistance
-		results.addResult(this.basicDamageResistance)
-		results.addResult(this.adjustDamageResistance(results))
+		this.addDamageResistanceSteps(results)
 
-		// Peentrating Damge = Basic Damage - Damage Resistance
-		results.addResult(this.penetratingDamage(results))
+		// Penetrating Damge = Basic Damage - Damage Resistance
+		this.addPenetratingDamageSteps(results)
 
 		// Wounding Modifier
-		results.addResult(this.basicWoundingModifier)
-		results.addResult(this.adjustWoundingModifier(results))
+		this.addWoundingModifierSteps(results)
 
 		// Injury = Penetrating Damage * Wounding Modifier
-		results.addResult(this.injury(results))
-		results.addResult(this.adjustInjury(results))
+		this.addInjurySteps(results)
 
 		results.knockback = this.knockback(results)
 		results.addEffects(this.knockbackEffects(results.knockback))
@@ -182,12 +178,13 @@ class DamageCalculator {
 		return results
 	}
 
-	private get basicDamageResult(): CalculatorStep {
+	private addBasicDamageSteps(results: DamageResults): void {
 		const basic = this.basicDamage
-		return new CalculatorStep("Basic Damage", "Basic Damage", basic, undefined, "HP")
+		results.addResult(new CalculatorStep("Basic Damage", "Basic Damage", basic, undefined, "HP"))
+		results.addResult(this.adjustBasicDamage(basic))
 	}
 
-	private adjustBasicDamage(results: DamageResults): CalculatorStep | undefined {
+	private adjustBasicDamage(basicDamage: number): CalculatorStep | undefined {
 		const STEP = "Adjusted Damage"
 
 		if (this.isExplosion && this.damageRoll.range) {
@@ -197,7 +194,7 @@ class DamageCalculator {
 				return new CalculatorStep(
 					"Basic Damage",
 					STEP,
-					Math.floor(results.basicDamage!.value / (3 * this.damageRoll.range)),
+					Math.floor(basicDamage / (3 * this.damageRoll.range)),
 					undefined,
 					`Explosion; ${this.damageRoll.range} yards`
 				)
@@ -207,14 +204,14 @@ class DamageCalculator {
 		if (this.isKnockbackOnly) return new CalculatorStep("Basic Damage", STEP, 0, undefined, "Knockback only")
 
 		if (this.damageRoll.isHalfDamage) {
-			return new CalculatorStep("Basic Damage", STEP, results.basicDamage!.value * 0.5, undefined, "Ranged, 1/2D")
+			return new CalculatorStep("Basic Damage", STEP, basicDamage * 0.5, undefined, "Ranged, 1/2D")
 		}
 
 		if (this.multiplierForShotgunExtremelyClose !== 1) {
 			return new CalculatorStep(
 				"Basic Damage",
 				STEP,
-				results.basicDamage!.value * this.multiplierForShotgunExtremelyClose,
+				basicDamage * this.multiplierForShotgunExtremelyClose,
 				undefined,
 				`Shotgun, extremely close (×${this.multiplierForShotgunExtremelyClose})`
 			)
@@ -223,15 +220,16 @@ class DamageCalculator {
 		return undefined
 	}
 
-	private get basicDamageResistance(): CalculatorStep {
+	private addDamageResistanceSteps(results: DamageResults): void {
 		const STEP = "Damage Resistance"
 
-		const modifier = this.damageResistance
-		return new CalculatorStep("Damage Resistance", STEP, modifier[0], undefined, modifier[1])
+		const dr = this.damageResistanceAndReason
+		results.addResult(new CalculatorStep("Damage Resistance", STEP, dr[0], undefined, dr[1]))
+		results.addResult(this.adjustDamageResistance(results.damageResistance!.value))
 	}
 
-	get damageResistance(): [number, string] {
-		if (this.overrides.rawDR) return [this.overrides.rawDR, "Override"]
+	private get damageResistanceAndReason(): [number, string] {
+		if (this.overrides.rawDR) return <[number, string]>[this.overrides.rawDR, "Override"]
 		if (this.isLargeAreaInjury) {
 			let torso = HitLocationUtil.getHitLocation(this.target.hitLocationTable, Torso)
 
@@ -239,15 +237,17 @@ class DamageCalculator {
 				.map(it => HitLocationUtil.getHitLocationDR(it, this.damageType))
 				.filter(it => it !== -1)
 
-			return [
-				(HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2,
-				"Large Area Injury",
-			]
+			const basicDr = (HitLocationUtil.getHitLocationDR(torso, this.damageType) + Math.min(...allDR)) / 2
+			return <[number, string]>[basicDr, "Large Area Injury"]
 		}
 		return [this.drForHitLocation, `${this._hitLocation?.choice_name}`]
 	}
 
-	private adjustDamageResistance(dr: DamageResults): CalculatorStep | undefined {
+	get drForHitLocation(): number {
+		return this.overrides.rawDR ?? HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType)
+	}
+
+	private adjustDamageResistance(dr: number): CalculatorStep | undefined {
 		const STEP = "Effective DR"
 
 		// Armor Divisor is "Ignores DR"
@@ -264,14 +264,14 @@ class DamageCalculator {
 			return new CalculatorStep(
 				"Damage Resistance",
 				STEP,
-				dr.damageResistance!.value * this.multiplierForShotgunExtremelyClose,
+				dr * this.multiplierForShotgunExtremelyClose,
 				undefined,
 				`Shotgun, extremely close (×${this.multiplierForShotgunExtremelyClose})`
 			)
 		}
 
 		if (this.effectiveArmorDivisor !== 1) {
-			let result = Math.floor(dr.damageResistance!.value / this.effectiveArmorDivisor)
+			let result = Math.floor(dr / this.effectiveArmorDivisor)
 			result = this.effectiveArmorDivisor < 1 ? Math.max(result, 1) : result
 			return new CalculatorStep(
 				"Damage Resistance",
@@ -285,26 +285,46 @@ class DamageCalculator {
 		return undefined
 	}
 
-	private penetratingDamage(results: DamageResults): CalculatorStep {
-		return new CalculatorStep(
-			"Penetrating Damage",
-			"Penetrating",
-			Math.max(results.basicDamage!.value - results.damageResistance!.value, 0),
-			undefined,
-			`= ${results.basicDamage!.value} – ${results.damageResistance!.value}`
+	private addPenetratingDamageSteps(results: DamageResults): void {
+		results.addResult(
+			new CalculatorStep(
+				"Penetrating Damage",
+				"Penetrating",
+				Math.max(results.basicDamage!.value - results.damageResistance!.value, 0),
+				undefined,
+				`= ${results.basicDamage!.value} – ${results.damageResistance!.value}`
+			)
 		)
 	}
 
-	private get basicWoundingModifier(): CalculatorStep {
-		const modifier = this.woundingModifier
+	private addWoundingModifierSteps(results: DamageResults): void {
+		const STEP = "Wounding Modifier"
 
-		return new CalculatorStep(
-			"Wounding Modifier",
-			"Wounding Modifier",
-			modifier[0],
-			`×${this.formatFraction(modifier[0])}`,
-			modifier[1]
+		const modifier = this.woundingModifierAndReason
+		results.addResult(
+			new CalculatorStep(
+				"Wounding Modifier",
+				STEP,
+				modifier[0],
+				`×${this.formatFraction(modifier[0])}`,
+				modifier[1]
+			)
 		)
+
+		results.addResult(this.adjustWoundingModifier(results.woundingModifier!.value))
+	}
+
+	get woundingModifierAndReason() {
+		if (this.overrides.woundingModifier) return <[number, string]>[this.overrides.woundingModifier, "Override"]
+		if (this.woundingModifierByDamageType) return this.woundingModifierByDamageType
+		if (this.woundingModifierByHitLocation) return this.woundingModifierByHitLocation
+		return <[number, string]>[this.damageType.theDefault, `${this.damageType.key}, ${this.damageRoll.locationId}`]
+	}
+
+	private get woundingModifierByDamageType(): [number, string] | undefined {
+		// Fatigue damage always ignores hit location.
+		if (this.damageType === DamageTypes.fat) return [1, "Fatigue ignores Hit Location"]
+		return undefined
 	}
 
 	get woundingModifier(): [number, string] {
@@ -370,9 +390,9 @@ class DamageCalculator {
 		return this.damageType === DamageTypes.burn && this.damageRoll.damageModifier === "tbb"
 	}
 
-	private adjustWoundingModifier(results: DamageResults): CalculatorStep | undefined {
+	private adjustWoundingModifier(woundingModifier: number): CalculatorStep | undefined {
 		const mod = this.modifierByInjuryTolerance
-		if (mod && mod[0] !== results.woundingModifier!.value) {
+		if (mod && mod[0] !== woundingModifier) {
 			const newValue = mod[0]
 			return new CalculatorStep(
 				"Wounding Modifier",
@@ -407,16 +427,19 @@ class DamageCalculator {
 		return undefined
 	}
 
-	private injury(results: DamageResults): CalculatorStep {
+	private addInjurySteps(results: DamageResults): void {
 		let value = Math.floor(results.woundingModifier!.value * results.penetratingDamage!.value)
 		if (results.woundingModifier!.value !== 0 && value === 0 && results.penetratingDamage!.value > 0) value = 1
-		return new CalculatorStep(
-			"Injury",
-			"Injury",
-			value,
-			undefined,
-			`= ${results.penetratingDamage!.value} × ${this.formatFraction(results.woundingModifier!.value)}`
+		results.addResult(
+			new CalculatorStep(
+				"Injury",
+				"Injury",
+				value,
+				undefined,
+				`= ${results.penetratingDamage!.value} × ${this.formatFraction(results.woundingModifier!.value)}`
+			)
 		)
+		results.addResult(this.adjustInjury(results))
 	}
 
 	private adjustInjury(results: DamageResults): CalculatorStep | undefined {
@@ -519,8 +542,7 @@ class DamageCalculator {
 		if (this.isDamageTypeKnockbackEligible) {
 			if (this.damageType === DamageTypes.cut && results.penetratingDamage!.value > 0) return 0
 
-			const knockbackYards = Math.floor(results.rawDamage!.value / (this.knockbackResistance - 2))
-			return knockbackYards
+			return Math.floor(results.rawDamage!.value / (this.knockbackResistance - 2))
 		}
 		return 0
 	}
@@ -688,12 +710,6 @@ class DamageCalculator {
 		return [Infinity, ""]
 	}
 
-	private get woundingModifierByDamageType(): [number, string] | undefined {
-		// Fatigue damage always ignores hit location.
-		if (this.damageType === DamageTypes.fat) return [1, "Fatigue ignores Hit Location"]
-		return undefined
-	}
-
 	private get multiplierForShotgunExtremelyClose() {
 		return this.damageRoll.isShotgunCloseRange ? Math.floor(this.damageRoll.rofMultiplier / 2) : 1
 	}
@@ -743,20 +759,6 @@ class DamageCalculator {
 		this.overrides.basicDamage = this.damageRoll.basicDamage === value ? undefined : value
 	}
 
-	// -- Armor Divisor ---
-
-	get armorDivisor() {
-		return this.overrides.armorDivisor ?? this.damageRoll.armorDivisor
-	}
-
-	get overrideArmorDivisor(): number | undefined {
-		return this.overrides.armorDivisor
-	}
-
-	set overrideArmorDivisor(value: number | undefined) {
-		this.overrides.armorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
-	}
-
 	// --- Damage Type ---
 
 	private get damageType(): DamageType {
@@ -779,6 +781,20 @@ class DamageCalculator {
 		return this.overrides.damageType?.key
 	}
 
+	// --- Armor Divisor ---
+
+	get armorDivisor() {
+		return this.overrides.armorDivisor ?? this.damageRoll.armorDivisor
+	}
+
+	get overrideArmorDivisor(): number | undefined {
+		return this.overrides.armorDivisor
+	}
+
+	set overrideArmorDivisor(value: number | undefined) {
+		this.overrides.armorDivisor = this.damageRoll.armorDivisor === value ? undefined : value
+	}
+
 	// --- Wounding Modifier ---
 
 	get overrideWoundingModifier(): number | undefined {
@@ -786,21 +802,22 @@ class DamageCalculator {
 	}
 
 	set overrideWoundingModifier(value: number | undefined) {
-		this.overrides.woundingModifier = value
+		this.overrides.woundingModifier = this.woundingModifierAndReason[0] === value ? undefined : value
 	}
 
 	// --- Damage Resistance ---
+	get damageResistance(): number {
+		return this.damageResistanceAndReason[0]
+	}
 
-	set overrideRawDr(dr: number | undefined) {
+	set overrideDamageResistance(dr: number | undefined) {
 		this.overrides.rawDR =
 			HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType) === dr ? undefined : dr
 	}
 
-	get overrideRawDR() {
+	get overrideDamageResistance() {
 		return this.overrides.rawDR
 	}
-
-	// --- ---
 
 	private get isKnockbackOnly() {
 		return this.damageType === DamageTypes.kb
@@ -838,10 +855,6 @@ class DamageCalculator {
 
 	get isInternalExplosion(): boolean {
 		return this.isExplosion && this.damageRoll.internalExplosion
-	}
-
-	get drForHitLocation(): number {
-		return this.overrides.rawDR ?? HitLocationUtil.getHitLocationDR(this._hitLocation, this.damageType)
 	}
 
 	private get isLargeAreaInjury() {
