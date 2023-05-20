@@ -73,7 +73,7 @@
                 </div>
             {{/if }}
         {{/if }}
-        {{#if (notEmpty system.melee) }}
+        {{#if (notEmpty melee) }}
             <div id="melee">
                 <div class="header desc">{{ localize "gurps.character.melee.desc" }}</div>
                 <div class="header usage">{{ localize "gurps.character.melee.usage" }}</div>
@@ -83,12 +83,12 @@
                 <div class="header damage">{{ localize "gurps.character.melee.damage" }}</div>
                 <div class="header reach">{{ localize "gurps.character.melee.reach" }}</div>
                 <div class="header st">{{ localize "gurps.character.melee.st" }}</div>
-                {{#each system.melee }}
+                {{#each melee }}
                     {{>actor/static_character/sections/melee-attack }}
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.ranged) }}
+        {{#if (notEmpty ranged) }}
             <div id="ranged">
                 <div class="header desc">{{ localize "gurps.character.ranged.desc" }}</div>
                 <div class="header usage">{{ localize "gurps.character.ranged.usage" }}</div>
@@ -117,12 +117,12 @@
                 <div class="header st">
                     {{ localize "gurps.character.ranged.st" }}
                 </div>
-                {{#each system.ranged }}
+                {{#each ranged }}
                     {{>actor/static_character/sections/ranged-attack }}
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.ads) }}
+        {{#if (notEmpty traits) }}
             <div id="traits" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.traits.desc" }}
@@ -133,12 +133,12 @@
                 <div class="header reference">
                     <i class="gcs-bookmark"></i>
                 </div>
-                {{#each (flatlist system.ads) }}
+                {{#each traits }}
                     {{>actor/static_character/sections/trait }}
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.skills) }}
+        {{#if (notEmpty skills) }}
             <div id="skills" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.skills.desc" }}
@@ -155,12 +155,12 @@
                 <div class="header reference">
                     <i class="gcs-bookmark"></i>
                 </div>
-                {{#each (flatlist system.skills) }}
+                {{#each skills }}
                     {{>actor/static_character/sections/skill }}
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.spells) }}
+        {{#if (notEmpty spells) }}
             <div id="spells" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.spells.desc" }}
@@ -177,12 +177,12 @@
                 <div class="header reference">
                     <i class="gcs-bookmark"></i>
                 </div>
-                {{#each (flatlist system.spells) }}
+                {{#each spells }}
                     {{>actor/static_character/sections/spell }}
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.equipment.carried) }}
+        {{#if (notEmpty equipment) }}
             <div id="equipment" class="item-list">
                 <div class="header equipped">
                     <i class="gcs-checkmark"></i>
@@ -223,7 +223,7 @@
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.equipment.other) }}
+        {{#if (notEmpty other_equipment) }}
             <div id="other-equipment" class="item-list">
                 <div class="header quantity">
                     {{ localize "gurps.character.other_equipment.quantity" }}
@@ -255,12 +255,12 @@
                 <div class="header reference">
                     <i class="gcs-bookmark"></i>
                 </div>
-                {{#each (flatlist system.equipment.other) }}
+                {{#each other_equipment }}
                     {{>actor/static_character/sections/other-equipment }}
                 {{/each }}
             </div>
         {{/if }}
-        {{#if (notEmpty system.notes) }}
+        {{#if (notEmpty notes) }}
             <div id="notes" class="item-list">
                 <div class="header desc">
                     {{ localize "gurps.character.notes.desc" }}
@@ -268,7 +268,7 @@
                 <div class="header reference">
                     <i class="gcs-bookmark"></i>
                 </div>
-                {{#each (flatlist system.notes) }}
+                {{#each notes }}
                     {{>actor/static_character/sections/note }}
                 {{/each }}
             </div>

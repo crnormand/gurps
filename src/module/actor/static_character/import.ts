@@ -1,5 +1,6 @@
 import { HitLocationTable } from "@actor/character/hit_location"
 import { CharacterImportedData } from "@actor/character/import"
+import { EquipmentContainerSystemData, EquipmentSystemData } from "@item"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { SYSTEM_NAME, SETTINGS } from "@module/data"
@@ -261,12 +262,13 @@ export class StaticCharacterImporter {
 		}
 	}
 
-	calcTotalCarried(eqp: StaticCharacterSystemData["equipment"]["carried"]) {
+	calcTotalCarried(eqp: (EquipmentSystemData | EquipmentContainerSystemData)[]) {
 		let t = 0
 		if (!eqp) return t
 		for (let i of eqp) {
 			let w = 0
 			w += parseFloat(i.weight || "0") * (i.type === "equipment_container" ? 1 : i.quantity || 0)
+			// @ts-ignore
 			if (i.children?.length) w += this.calcTotalCarried(i.children)
 			t += w
 		}
@@ -999,8 +1001,8 @@ export class StaticCharacterImporter {
 		tableNames.forEach(it => (tableScores[it] = 0))
 
 		// Increment the count for a tableScore if it contains the same hit location as "prot"
-		locations.forEach(function (hitLocation) {
-			tableNames.forEach(function (tableName) {
+		locations.forEach(function(hitLocation) {
+			tableNames.forEach(function(tableName) {
 				if (StaticHitLocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
 					tableScores[tableName] = tableScores[tableName] + 1
 				}
@@ -1010,7 +1012,7 @@ export class StaticCharacterImporter {
 		// Select the tableScore with the highest score.
 		let match = -1
 		let name = StaticHitLocation.HUMANOID
-		Object.keys(tableScores).forEach(function (score) {
+		Object.keys(tableScores).forEach(function(score) {
 			if (tableScores[score] > match) {
 				match = tableScores[score]
 				name = score

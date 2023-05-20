@@ -23,7 +23,7 @@ import {
 } from "./data"
 import { StaticCharacterImporter } from "./import"
 
-Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			"_stats.systemVersion": game.system.version,
@@ -292,7 +292,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	_initializeStartingValues() {
 		const data = this.system
 		data.currentdodge = 0
-		data.equipment ??= {}
+		data.equipment ??= { carried: {}, other: {} }
 		data.equipment.carried ??= {}
 		data.equipment.other ??= {}
 
@@ -816,10 +816,12 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		key: keyof StaticCharacterSystemData & keyof StaticItemSystemData
 	) {
 		let found = false
+		// @ts-ignore
 		Static.recurseList(this.system[key], (e, _k, _d) => {
 			if (e.itemid === itemData._id) found = true
 		})
 		if (found) return
+		// @ts-ignore
 		let list = { ...this.system[key] }
 		let i = 0
 		for (const k in itemData.system[key]) {
@@ -974,7 +976,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		newobj[objkey] = oldotf
 		let notes
 		let newotf
-		;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
+			;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
 		if (newotf) newobj[objkey] = newotf
 		newobj.notes = notes?.trim()
 	}

@@ -192,6 +192,7 @@ export function flatList(
 			if (newItem.hasCollapsed) flatList(item.collapsed, level + 1, `${newKey}.collapsed.`, data, true)
 		}
 	}
+	return data
 }
 
 /**

@@ -1,11 +1,13 @@
 import { ActorSheetGURPS } from "@actor/base"
 import { ActorFlags } from "@actor/base/data"
+import { StaticItemGURPS } from "@item"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
 import { RollGURPS } from "@module/roll"
 import { LocalizeGURPS, Static } from "@util"
+import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { StaticCharacterSheetConfig } from "./config_sheet"
-import { StaticAttributeName, staticFpConditions, staticHpConditions, StaticSecondaryAttributeName } from "./data"
+import { StaticAttributeName, StaticCharacterSystemData, staticFpConditions, staticHpConditions, StaticSecondaryAttributeName } from "./data"
 import { StaticCharacterGURPS } from "./document"
 
 export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
@@ -32,6 +34,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
+		const items = deepClone(
+			(this.actor.items as EmbeddedCollection<any, any>)
+				.map(item => item)
+				.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+		)
 
 		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, ActorFlags.Deprecation) ? "acknowledged" : "manual"
 		// Don't show deprecation warning if character is not imported
@@ -43,6 +50,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		console.log(actorData.system)
 		const sheetData = {
 			...super.getData(options),
+			items,
 			system: actorData.system,
 			editing: this.actor.editing,
 			// Ranges: Static.rangeObject.ranges,
@@ -60,6 +68,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			conditions: this._prepareTrackers(),
 			layout: this._prepareBlockLayout(),
 		}
+		this.prepareItems(sheetData)
 
 		return sheetData
 	}
@@ -83,6 +92,42 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 		// Maneuver / Posture Selection
 		html.find(".move-select").on("change", event => this._onMoveChange(event))
+	}
+
+	private prepareItems(data: { items: StaticItemGURPS[], system: StaticCharacterSystemData } & any) {
+		console.log(data)
+		console.log(data.system.ads)
+		console.log(Static.flatList(data.system.ads, 0, "", {}, false))
+		const [traits, skills, spells, equipment, other_equipment, notes, melee, ranged] = [
+			Object.values(Static.flatList((data.system.ads ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.skills ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.spells ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.equipment.carried ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.equipment.other ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.notes ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.melee ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList((data.system.ranged ?? {}), 0, "", {}, false)),
+		]
+		data.items.forEach((e: StaticItemGURPS) => {
+			Object.values(Static.flatList(e.system.ads, 0, "", {}, false)).forEach(f => traits.push(f))
+			Object.values(Static.flatList(e.system.skills, 0, "", {}, false)).forEach(f => skills.push(f))
+			Object.values(Static.flatList(e.system.spells, 0, "", {}, false)).forEach(f => spells.push(f))
+			Object.values(Static.flatList(e.system.melee, 0, "", {}, false)).forEach(f => melee.push(f))
+			Object.values(Static.flatList(e.system.ranged, 0, "", {}, false)).forEach(f => ranged.push(f))
+			if (e.system.equipped) equipment.push(e.system.eqt)
+			else other_equipment.push(e.system.eqt)
+		})
+
+		data.traits = traits
+		data.skills = skills
+		data.spells = spells
+		data.equipment = equipment
+		data.other_equipment = other_equipment
+		data.notes = notes
+		data.melee = melee
+		data.ranged = ranged
+
+		console.log(data)
 	}
 
 	private _prepareTrackers(): any {
@@ -287,13 +332,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-					{
-						label: "",
-						class: "gmenu",
-						icon: "gcs-all-seeing-eye",
-						onclick: event => this._onGMenu(event),
-					},
-			  ]
+				{
+					label: "",
+					class: "gmenu",
+					icon: "gcs-all-seeing-eye",
+					onclick: event => this._onGMenu(event),
+				},
+			]
 			: []
 		const show_import = game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath

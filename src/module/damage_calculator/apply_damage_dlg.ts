@@ -4,7 +4,7 @@ import { PDF } from "@module/pdf"
 import { toWord } from "@util/misc"
 import { DamageRoll, DamageTarget } from "."
 import { DamageCalculator } from "./damage_calculator"
-import { DamageType, DamageTypes } from "./damage_type"
+import { DamageTypes } from "./damage_type"
 import { HitLocationUtil } from "./hitlocation_utils"
 
 const Vulnerability = "Vulnerability"
@@ -116,6 +116,7 @@ class ApplyDamageDialog extends Application {
 
 			case "override-dr": {
 				const value = parseInt(target.value)
+				// @ts-ignore
 				this.calculator.overrideRawDr = isNaN(value) ? undefined : value
 				break
 			}
@@ -159,6 +160,7 @@ class ApplyDamageDialog extends Application {
 				break
 
 			case "apply-basic":
+				// @ts-ignore
 				this.calculator.target.incrementDamage(this.calculator.adjustedBasicDamage)
 				break
 
