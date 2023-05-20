@@ -179,7 +179,7 @@ class DamageCalculator {
 	}
 
 	private addBasicDamageSteps(results: DamageResults): void {
-		const basic = this.overrides.basicDamage ?? this.damageRoll.basicDamage
+		const basic = this.basicDamage
 		results.addResult(new CalculatorStep("Basic Damage", "Basic Damage", basic, undefined, "HP"))
 		results.addResult(this.adjustBasicDamage(basic))
 	}
@@ -187,7 +187,7 @@ class DamageCalculator {
 	private adjustBasicDamage(basicDamage: number): CalculatorStep | undefined {
 		const STEP = "Adjusted Damage"
 
-		if (this._isExplosion && this.damageRoll.range) {
+		if (this.isExplosion && this.damageRoll.range) {
 			if (this.damageRoll.range > this._diceOfDamage * 2) {
 				return new CalculatorStep("Basic Damage", STEP, 0, undefined, "Explosion; Out of range")
 			} else {
@@ -325,6 +325,28 @@ class DamageCalculator {
 		// Fatigue damage always ignores hit location.
 		if (this.damageType === DamageTypes.fat) return [1, "Fatigue ignores Hit Location"]
 		return undefined
+	}
+
+	get woundingModifier(): [number, string] {
+		let woundingModifier = 1
+		let reason = undefined
+
+		if (this.overrides.woundingModifier) {
+			woundingModifier = this.overrides.woundingModifier
+			reason = "Override"
+		} else if (this.woundingModifierByDamageType) {
+			const modifier = this.woundingModifierByDamageType
+			woundingModifier = modifier[0]
+			reason = modifier[1]
+		} else if (this.woundingModifierByHitLocation) {
+			const modifier = this.woundingModifierByHitLocation
+			woundingModifier = modifier[0]
+			reason = modifier[1]
+		} else {
+			woundingModifier = this.damageType.theDefault
+			reason = `${this.damageType.key}, ${this.damageRoll.locationId}`
+		}
+		return [woundingModifier, reason]
 	}
 
 	/**
@@ -775,10 +797,6 @@ class DamageCalculator {
 
 	// --- Wounding Modifier ---
 
-	get woundingModifier() {
-		return this.woundingModifierAndReason[0]
-	}
-
 	get overrideWoundingModifier(): number | undefined {
 		return this.overrides.woundingModifier
 	}
@@ -805,7 +823,7 @@ class DamageCalculator {
 		return this.damageType === DamageTypes.kb
 	}
 
-	private get _isExplosion(): boolean {
+	get isExplosion(): boolean {
 		return this.damageRoll.damageModifier === "ex"
 	}
 
@@ -836,7 +854,7 @@ class DamageCalculator {
 	}
 
 	get isInternalExplosion(): boolean {
-		return this._isExplosion && this.damageRoll.internalExplosion
+		return this.isExplosion && this.damageRoll.internalExplosion
 	}
 
 	private get isLargeAreaInjury() {
@@ -858,7 +876,7 @@ class DamageCalculator {
 	}
 
 	private get _isCollateralDamage(): boolean {
-		return this._isExplosion && this._isAtRange
+		return this.isExplosion && this._isAtRange
 	}
 
 	private get _isAtRange(): boolean {
