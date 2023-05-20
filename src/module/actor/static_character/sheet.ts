@@ -1,9 +1,11 @@
 import { ActorSheetGURPS } from "@actor/base"
 import { ActorFlags } from "@actor/base/data"
+import { StaticItemGURPS } from "@item"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
 import { RollGURPS } from "@module/roll"
 import { LocalizeGURPS, Static } from "@util"
+import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { StaticCharacterSheetConfig } from "./config_sheet"
 import { StaticAttributeName, staticFpConditions, staticHpConditions, StaticSecondaryAttributeName } from "./data"
 import { StaticCharacterGURPS } from "./document"
@@ -32,6 +34,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
+		const items = deepClone(
+			(this.actor.items as EmbeddedCollection<any, any>)
+				.map(item => item)
+				.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+		)
 
 		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, ActorFlags.Deprecation) ? "acknowledged" : "manual"
 		// Don't show deprecation warning if character is not imported
@@ -61,6 +68,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			layout: this._prepareBlockLayout(),
 		}
 
+		this._prepareItems(sheetData, items)
 		return sheetData
 	}
 
@@ -110,6 +118,42 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			FP: fpCondition(this.actor.system.FP, "label"),
 		}
 	}
+
+	private _prepareItems(
+		sheetData: any,
+		items: StaticItemGURPS[]
+	) {
+		const tempItems = {
+			melee: [...Object.values(sheetData.system.melee)],
+			ranged: [...Object.values(sheetData.system.ranged)],
+			traits: [...Object.values(sheetData.system.ads)],
+			skills: [...Object.values(sheetData.system.skills)],
+			spells: [...Object.values(sheetData.system.spells)],
+			equipment: [...Object.values(sheetData.system.equipment.carried)],
+			other_equipment: [...Object.values(sheetData.system.equipment.other)],
+			notes: [...Object.values(sheetData.system.notes)],
+		}
+
+		items.forEach(e => {
+			Object.values(e.system.melee).forEach(a => { tempItems.melee.push(a) })
+			Object.values(e.system.ranged).forEach(a => { tempItems.ranged.push(a) })
+			Object.values(e.system.ads).forEach(a => { tempItems.traits.push(a) })
+			Object.values(e.system.skills).forEach(a => { tempItems.skills.push(a) })
+			Object.values(e.system.spells).forEach(a => { tempItems.spells.push(a) })
+			tempItems[e.system.carried ? "equipment" : "other_equipment"].push(e.system.eqt)
+		})
+
+		sheetData.items = {
+			melee: Object.fromEntries(tempItems.melee.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			ranged: Object.fromEntries(tempItems.ranged.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			traits: Object.fromEntries(tempItems.traits.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			skills: Object.fromEntries(tempItems.skills.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			spells: Object.fromEntries(tempItems.spells.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			equipment: Object.fromEntries(tempItems.equipment.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			other_equipment: Object.fromEntries(tempItems.other_equipment.map((v, k) => [k.toString().padStart(5, "0"), v])),
+		}
+	}
+
 
 	private _prepareBlockLayout(): string {
 		const system = this.actor.system
@@ -287,13 +331,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-					{
-						label: "",
-						class: "gmenu",
-						icon: "gcs-all-seeing-eye",
-						onclick: event => this._onGMenu(event),
-					},
-			  ]
+				{
+					label: "",
+					class: "gmenu",
+					icon: "gcs-all-seeing-eye",
+					onclick: event => this._onGMenu(event),
+				},
+			]
 			: []
 		const show_import = game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath
