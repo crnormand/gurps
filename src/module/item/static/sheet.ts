@@ -26,6 +26,21 @@ export class StaticItemSheet extends ItemSheet {
 		let deprecation: string = this.item.getFlag(SYSTEM_NAME, ItemFlags.Deprecation) ? "acknowledged" : "manual"
 		const sheetData = {
 			...(super.getData(options) as any),
+			traits: Object.entries(this.item.system.ads).map(([k, v]) => {
+				return { key: k, data: v }
+			}),
+			skills: Object.entries(this.item.system.skills).map(([k, v]) => {
+				return { key: k, data: v }
+			}),
+			spells: Object.entries(this.item.system.spells).map(([k, v]) => {
+				return { key: k, data: v }
+			}),
+			melee: Object.entries(this.item.system.melee).map(([k, v]) => {
+				return { key: k, data: v }
+			}),
+			ranged: Object.entries(this.item.system.ranged).map(([k, v]) => {
+				return { key: k, data: v }
+			}),
 		}
 		sheetData.data = this.item.system
 		sheetData.system = this.item.system
@@ -104,6 +119,14 @@ export class StaticItemSheet extends ItemSheet {
 			event.preventDefault()
 			this.item.setFlag(SYSTEM_NAME, ItemFlags.Deprecation, true)
 		})
+
+		html.find(".item").on("click", event => this._openPopout(event))
+	}
+
+	private _openPopout(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const type = $(event.currentTarget).parent(".item-list").attr("id")
+		console.log(type)
 	}
 
 	dropFoundryLinks(ev: any) {

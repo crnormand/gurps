@@ -70,6 +70,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		this.prepareItems(sheetData)
 
+		this._prepareItems(sheetData, items)
 		return sheetData
 	}
 
@@ -153,6 +154,50 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		return {
 			HP: hpCondition(this.actor.system.HP, "label"),
 			FP: fpCondition(this.actor.system.FP, "label"),
+		}
+	}
+
+	private _prepareItems(sheetData: any, items: StaticItemGURPS[]) {
+		const tempItems = {
+			melee: [...Object.values(sheetData.system.melee)],
+			ranged: [...Object.values(sheetData.system.ranged)],
+			traits: [...Object.values(sheetData.system.ads)],
+			skills: [...Object.values(sheetData.system.skills)],
+			spells: [...Object.values(sheetData.system.spells)],
+			equipment: [...Object.values(sheetData.system.equipment.carried)],
+			other_equipment: [...Object.values(sheetData.system.equipment.other)],
+			notes: [...Object.values(sheetData.system.notes)],
+		}
+
+		items.forEach(e => {
+			Object.values(e.system.melee).forEach(a => {
+				tempItems.melee.push(a)
+			})
+			Object.values(e.system.ranged).forEach(a => {
+				tempItems.ranged.push(a)
+			})
+			Object.values(e.system.ads).forEach(a => {
+				tempItems.traits.push(a)
+			})
+			Object.values(e.system.skills).forEach(a => {
+				tempItems.skills.push(a)
+			})
+			Object.values(e.system.spells).forEach(a => {
+				tempItems.spells.push(a)
+			})
+			tempItems[e.system.carried ? "equipment" : "other_equipment"].push(e.system.eqt)
+		})
+
+		sheetData.items = {
+			melee: Object.fromEntries(tempItems.melee.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			ranged: Object.fromEntries(tempItems.ranged.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			traits: Object.fromEntries(tempItems.traits.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			skills: Object.fromEntries(tempItems.skills.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			spells: Object.fromEntries(tempItems.spells.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			equipment: Object.fromEntries(tempItems.equipment.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			other_equipment: Object.fromEntries(
+				tempItems.other_equipment.map((v, k) => [k.toString().padStart(5, "0"), v])
+			),
 		}
 	}
 

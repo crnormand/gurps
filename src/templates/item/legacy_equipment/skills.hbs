@@ -1,11 +1,18 @@
 <div id="skills" class="item-list">
-	<div class="header desc">
-	</div>
-	<div class="header level">{{ localize "gurps.character.skills.level" }}</div>
-	<div class="header rsl">{{ localize "gurps.character.skills.rsl" }}</div>
-	<div class="header points">{{ localize "gurps.character.skills.points" }}</div>
-	<div class="header reference"><i class="gcs-bookmark"></i></div>
+	<div class="header desc">{{ localize "gurps.character.skills.desc" }}</div>
 	{{#each skills }}
-		{{>actor/character/sections/skill }}
+		<div
+			class="desc item"
+			data-uuid="{{ this.uuid }}"
+		>
+			<div class="dropdown">
+			</div>
+			<div class="name">
+				{{this.formattedName}}
+			</div>
+			{{>actor/character/sections/item-notes}}
+		</div>
+	{{else}}
+	<div class="desc item filler"></div>
 	{{/each }}
 </div>

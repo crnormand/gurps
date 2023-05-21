@@ -123,9 +123,9 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 
 		"item/legacy_equipment/melee",
 		"item/legacy_equipment/ranged",
-		"item/legacy_equipment/spells",
 		"item/legacy_equipment/traits",
 		"item/legacy_equipment/skills",
+		"item/legacy_equipment/spells",
 		"item/legacy_equipment/bonuses",
 
 		"chat/import-character-error",

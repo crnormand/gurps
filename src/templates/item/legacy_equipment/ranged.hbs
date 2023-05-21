@@ -8,32 +8,33 @@
 	<div class="header bulk">{{localize "gurps.character.ranged.bulk"}}</div>
 	<div class="header recoil">{{localize "gurps.character.ranged.recoil"}}</div>
 	<div class="header st">{{localize "gurps.character.ranged.st"}}</div>
-	{{#each data.ranged as |this id|}}
-	{{print this}}
-	{{print id}}
-		<div class="usage desc item" data-uuid="{{id}}" data-type="Item">
-			<div class="name">{{this.mode}}</div>
-			<div class="item-notes">{{this.notes}}</div>
+	{{#each rangedWeapons}}
+	<div class="usage desc item" data-uuid="{{this.uuid}}" data-type="Item">
+		<div class="name">
+			{{this.usage}}
 		</div>
-		<div data-uuid="{{id}}" class="accuracy">
-		{{signed this.acc}}</div>
-		<div data-uuid="{{id}}" class="damage">{{this.damage}}</div>
-		<div data-uuid="{{id}}" class="range">{{this.range}}</div>
-		<div data-uuid="{{id}}" class="rate-of-fire">{{this.rof}}</div>
-		<div data-uuid="{{id}}" class="shots">{{this.shots}}</div>
-		<div data-uuid="{{id}}" class="bulk">{{this.bulk}}
-		</div>
-		<div data-uuid="{{id}}" class="recoil">{{this.rcl}}</div>
-		<div data-uuid="{{id}}" class="st">{{this.st}}</div>
-		{{else}}
-		<div class="usage desc filler"></div>
-		<div class="accuracy"></div>
-		<div class="damage"></div>
-		<div class="range"></div>
-		<div class="rate-of-fire"></div>
-		<div class="shots"></div>
-		<div class="bulk"></div>
-		<div class="recoil"></div>
-		<div class="st"></div>
+		{{>actor/character/sections/item-notes}}
+	</div>
+	<div data-uuid="{{this.uuid}}" class="accuracy">
+		{{signed this.accuracy}}</div>
+	<div data-uuid="{{this.uuid}}" class="damage">
+		{{this.damage}}</div>
+	<div data-uuid="{{this.uuid}}" class="range">{{this.range}}</div>
+	<div data-uuid="{{this.uuid}}" class="rate-of-fire">{{this.rate_of_fire}}</div>
+	<div data-uuid="{{this.uuid}}" class="shots">{{this.shots}}</div>
+	<div data-uuid="{{this.uuid}}" class="bulk">{{this.bulk}}
+	</div>
+	<div data-uuid="{{this.uuid}}" class="recoil">{{this.recoil}}</div>
+	<div data-uuid="{{this.uuid}}" class="st">{{this.strength}}</div>
+	{{else}}
+	<div class="usage desc filler item"></div>
+	<div class="accuracy"></div>
+	<div class="damage"></div>
+	<div class="range"></div>
+	<div class="rate-of-fire"></div>
+	<div class="shots"></div>
+	<div class="bulk"></div>
+	<div class="recoil"></div>
+	<div class="st"></div>
 	{{/each}}
 </div>

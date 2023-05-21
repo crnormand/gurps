@@ -103,15 +103,9 @@
 			{{!-- {{/if }} --}}
 	{{!-- {{#if traits.length }} --}}
 			<div id="traits" class="item-list">
-				<div class="header desc">
-					{{ localize "gurps.character.traits.desc" }}
-				</div>
-				<div class="header points">
-					{{ localize "gurps.character.traits.points" }}
-				</div>
-				<div class="header reference">
-					<i class="gcs-bookmark"></i>
-				</div>
+				<div class="header desc">{{ localize "gurps.character.traits.desc" }}</div>
+				<div class="header points">{{ localize "gurps.character.traits.points" }}</div>
+				<div class="header reference"><i class="gcs-bookmark"></i></div>
 				{{#each traits }}
 				{{>actor/character/sections/trait }}
 				{{/each }}
@@ -146,24 +140,24 @@
 			{{!-- {{/if }} --}}
 			{{#if spells.length }}
 			<div id="spells" class="item-list">
-		<div class="header desc">
-			{{ localize "gurps.character.spells.desc" }}
-		</div>
-		<div class="header level">
-			{{ localize "gurps.character.spells.level" }}
-		</div>
-		<div class="header rsl">
-			{{ localize "gurps.character.spells.rsl" }}
-		</div>
-		<div class="header points">
-			{{ localize "gurps.character.spells.points" }}
-		</div>
-		<div class="header reference">
-			<i class="gcs-bookmark"></i>
-		</div>
-		{{#each spells }}
-		{{>actor/character/sections/spell }}
-		{{/each }}
+				<div class="header desc">
+					{{ localize "gurps.character.spells.desc" }}
+				</div>
+				<div class="header level">
+					{{ localize "gurps.character.spells.level" }}
+				</div>
+				<div class="header rsl">
+					{{ localize "gurps.character.spells.rsl" }}
+				</div>
+				<div class="header points">
+					{{ localize "gurps.character.spells.points" }}
+				</div>
+				<div class="header reference">
+					<i class="gcs-bookmark"></i>
+				</div>
+				{{#each spells }}
+				{{>actor/character/sections/spell }}
+				{{/each }}
 			</div>
 			{{/if }}
 			{{!-- {{#if equipment.length }} --}}

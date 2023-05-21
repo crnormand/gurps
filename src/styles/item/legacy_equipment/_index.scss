@@ -1,0 +1,30 @@
+.item-list {
+	margin: 2px 16px;
+	border: 1px solid rgb(var(--color-header));
+	display: grid;
+
+	.item > div {
+		background-color: rgb(var(--color-content));
+		color: rgb(var(--color-on-content));
+		padding: var(--padding-standard);
+	}
+}
+
+#melee {
+	grid-template-columns: 1fr repeat(5, auto);
+}
+#ranged {
+	grid-template-columns: 1fr repeat(8, auto);
+}
+#spells {
+	grid-template-columns: 1fr;
+}
+#traits {
+	grid-template-columns: 1fr;
+}
+#skills {
+	grid-template-columns: 1fr;
+}
+#bonuses {
+	grid-template-columns: 1fr;
+}
