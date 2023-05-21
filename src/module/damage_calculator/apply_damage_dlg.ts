@@ -114,6 +114,7 @@ class ApplyDamageDialog extends Application {
 
 			case "override-dr": {
 				const value = parseInt(target.value)
+				// @ts-ignore
 				this.calculator.overrideRawDr = isNaN(value) ? undefined : value
 				break
 			}

@@ -119,10 +119,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 	}
 
-	private _prepareItems(
-		sheetData: any,
-		items: StaticItemGURPS[]
-	) {
+	private _prepareItems(sheetData: any, items: StaticItemGURPS[]) {
 		const tempItems = {
 			melee: [...Object.values(sheetData.system.melee)],
 			ranged: [...Object.values(sheetData.system.ranged)],
@@ -135,11 +132,21 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 
 		items.forEach(e => {
-			Object.values(e.system.melee).forEach(a => { tempItems.melee.push(a) })
-			Object.values(e.system.ranged).forEach(a => { tempItems.ranged.push(a) })
-			Object.values(e.system.ads).forEach(a => { tempItems.traits.push(a) })
-			Object.values(e.system.skills).forEach(a => { tempItems.skills.push(a) })
-			Object.values(e.system.spells).forEach(a => { tempItems.spells.push(a) })
+			Object.values(e.system.melee).forEach(a => {
+				tempItems.melee.push(a)
+			})
+			Object.values(e.system.ranged).forEach(a => {
+				tempItems.ranged.push(a)
+			})
+			Object.values(e.system.ads).forEach(a => {
+				tempItems.traits.push(a)
+			})
+			Object.values(e.system.skills).forEach(a => {
+				tempItems.skills.push(a)
+			})
+			Object.values(e.system.spells).forEach(a => {
+				tempItems.spells.push(a)
+			})
 			tempItems[e.system.carried ? "equipment" : "other_equipment"].push(e.system.eqt)
 		})
 
@@ -150,10 +157,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			skills: Object.fromEntries(tempItems.skills.map((v, k) => [k.toString().padStart(5, "0"), v])),
 			spells: Object.fromEntries(tempItems.spells.map((v, k) => [k.toString().padStart(5, "0"), v])),
 			equipment: Object.fromEntries(tempItems.equipment.map((v, k) => [k.toString().padStart(5, "0"), v])),
-			other_equipment: Object.fromEntries(tempItems.other_equipment.map((v, k) => [k.toString().padStart(5, "0"), v])),
+			other_equipment: Object.fromEntries(
+				tempItems.other_equipment.map((v, k) => [k.toString().padStart(5, "0"), v])
+			),
 		}
 	}
-
 
 	private _prepareBlockLayout(): string {
 		const system = this.actor.system
@@ -331,13 +339,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._onGMenu(event),
-				},
-			]
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._onGMenu(event),
+					},
+			  ]
 			: []
 		const show_import = game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath
