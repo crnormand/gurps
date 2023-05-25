@@ -1,4 +1,11 @@
-import { StaticAdvantage, StaticEquipment, StaticMelee, StaticRanged, StaticSkill, StaticSpell } from "@actor/static_character/components"
+import {
+	StaticAdvantage,
+	StaticEquipment,
+	StaticMelee,
+	StaticRanged,
+	StaticSkill,
+	StaticSpell,
+} from "@actor/static_character/components"
 import { BaseItemSourceGURPS } from "@item/base/data"
 import { ItemType } from "@module/data"
 

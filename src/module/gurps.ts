@@ -88,7 +88,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	; (globalThis as any).GURPS = GURPS
+	;(globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -277,11 +277,13 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.pdf_edit"),
 	})
+
+	LocalizeGURPS.ready = true
 })
 
 // Setup system
 Hooks.once("setup", async () => {
-	LocalizeGURPS.ready = true
+	// LocalizeGURPS.ready = true
 	// Do anything after initialization but before ready
 })
 
@@ -464,12 +466,12 @@ Hooks.on("renderDialog", (_dialog: any, html: JQuery<HTMLElement>) => {
 	}
 })
 
-Hooks.on("updateToken", function() {
+Hooks.on("updateToken", function () {
 	game.ModifierList.render(true)
 })
 
-Hooks.once("item-piles-ready", async function() {
-	; (game as any).itempiles.API.addSystemIntegration({
+Hooks.once("item-piles-ready", async function () {
+	;(game as any).itempiles.API.addSystemIntegration({
 		VERSION: "1.0.0",
 
 		// The actor class type is the type of actor that will be used for the default
@@ -528,7 +530,7 @@ Hooks.once("item-piles-ready", async function() {
 	})
 })
 
-Hooks.on("dropCanvasData", function(_canvas, data: any) {
+Hooks.on("dropCanvasData", function (_canvas, data: any) {
 	const dropTarget = [...(canvas!.tokens!.placeables as TokenGURPS[])]
 		.sort((a, b) => b.document.sort - a.document.sort)
 		.find(token => {
@@ -539,7 +541,7 @@ Hooks.on("dropCanvasData", function(_canvas, data: any) {
 
 	const actor = dropTarget?.actor
 	if (actor && data.type === "Item") {
-		; (actor.sheet as ActorSheetGURPS).emulateItemDrop(data as any)
+		;(actor.sheet as ActorSheetGURPS).emulateItemDrop(data as any)
 		return false
 	}
 })

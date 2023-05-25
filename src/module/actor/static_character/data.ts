@@ -1,6 +1,15 @@
 import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
 import { ActorType } from "@module/data"
-import { StaticAdvantage, StaticEquipment, StaticMelee, StaticNote, StaticRanged, StaticReaction, StaticSkill, StaticSpell } from "./components"
+import {
+	StaticAdvantage,
+	StaticEquipment,
+	StaticMelee,
+	StaticNote,
+	StaticRanged,
+	StaticReaction,
+	StaticSkill,
+	StaticSpell,
+} from "./components"
 
 export const MoveModeTypes = {
 	Ground: "gurps.character.move_modes.ground",
@@ -31,7 +40,7 @@ export interface StaticCharacterSource
 }
 export interface StaticCharacterDataGURPS
 	extends Omit<StaticCharacterSource, "effects" | "flags" | "items" | "token">,
-	StaticCharacterSystemData {
+		StaticCharacterSystemData {
 	readonly type: StaticCharacterSource["type"]
 	data: StaticCharacterSystemData
 	flags: StaticCharacterFlags
@@ -45,13 +54,7 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 	}
 }
 
-export type StaticCharacterItems =
-	| StaticAdvantage
-	| StaticSkill
-	| StaticSpell
-	| StaticEquipment
-	| StaticNote
-
+export type StaticCharacterItems = StaticAdvantage | StaticSkill | StaticSpell | StaticEquipment | StaticNote
 
 export interface StaticCharacterSystemData extends ActorSystemData {
 	editing: boolean

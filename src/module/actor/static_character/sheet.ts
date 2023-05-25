@@ -7,7 +7,13 @@ import { RollGURPS } from "@module/roll"
 import { LocalizeGURPS, Static } from "@util"
 import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { StaticCharacterSheetConfig } from "./config_sheet"
-import { StaticAttributeName, StaticCharacterSystemData, staticFpConditions, staticHpConditions, StaticSecondaryAttributeName } from "./data"
+import {
+	StaticAttributeName,
+	StaticCharacterSystemData,
+	staticFpConditions,
+	staticHpConditions,
+	StaticSecondaryAttributeName,
+} from "./data"
 import { StaticCharacterGURPS } from "./document"
 
 export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
@@ -95,19 +101,19 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".move-select").on("change", event => this._onMoveChange(event))
 	}
 
-	private prepareItems(data: { items: StaticItemGURPS[], system: StaticCharacterSystemData } & any) {
+	private prepareItems(data: { items: StaticItemGURPS[]; system: StaticCharacterSystemData } & any) {
 		console.log(data)
 		console.log(data.system.ads)
 		console.log(Static.flatList(data.system.ads, 0, "", {}, false))
 		const [traits, skills, spells, equipment, other_equipment, notes, melee, ranged] = [
-			Object.values(Static.flatList((data.system.ads ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.skills ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.spells ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.equipment.carried ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.equipment.other ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.notes ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.melee ?? {}), 0, "", {}, false)),
-			Object.values(Static.flatList((data.system.ranged ?? {}), 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.ads ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.skills ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.spells ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.equipment.carried ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.equipment.other ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.notes ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.melee ?? {}, 0, "", {}, false)),
+			Object.values(Static.flatList(data.system.ranged ?? {}, 0, "", {}, false)),
 		]
 		data.items.forEach((e: StaticItemGURPS) => {
 			Object.values(Static.flatList(e.system.ads, 0, "", {}, false)).forEach(f => traits.push(f))
@@ -377,13 +383,13 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._onGMenu(event),
-				},
-			]
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._onGMenu(event),
+					},
+			  ]
 			: []
 		const show_import = game.settings.get(SYSTEM_NAME, SETTINGS.SHOW_IMPORT_BUTTON) ?? false
 		const import_path = this.actor.system.additionalresources.importpath

@@ -1001,8 +1001,8 @@ export class StaticCharacterImporter {
 		tableNames.forEach(it => (tableScores[it] = 0))
 
 		// Increment the count for a tableScore if it contains the same hit location as "prot"
-		locations.forEach(function(hitLocation) {
-			tableNames.forEach(function(tableName) {
+		locations.forEach(function (hitLocation) {
+			tableNames.forEach(function (tableName) {
 				if (StaticHitLocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
 					tableScores[tableName] = tableScores[tableName] + 1
 				}
@@ -1012,7 +1012,7 @@ export class StaticCharacterImporter {
 		// Select the tableScore with the highest score.
 		let match = -1
 		let name = StaticHitLocation.HUMANOID
-		Object.keys(tableScores).forEach(function(score) {
+		Object.keys(tableScores).forEach(function (score) {
 			if (tableScores[score] > match) {
 				match = tableScores[score]
 				name = score

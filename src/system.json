@@ -22,8 +22,8 @@
 	],
 	"compatibility": {
 		"minimum": 10,
-		"verified": "10.291",
-		"maximum": 10
+		"verified": "11.299",
+		"maximum": 11
 	},
 	"scripts": [],
 	"esmodules": ["module/gurps.js"],
