@@ -120,7 +120,7 @@ if (!(globalThis as any).GURPS) {
 
 // Initialize system
 Hooks.once("init", async () => {
-	// CONFIG.debug.hooks = true
+	CONFIG.debug.hooks = true
 	console.log(`${SYSTEM_NAME} | Initializing ${SYSTEM_NAME}`)
 	console.log(`%c${GURPS.BANNER}`, "color:limegreen")
 	console.log(`%c${GURPS.LEGAL}`, "color:yellow")
@@ -285,6 +285,12 @@ Hooks.once("init", async () => {
 Hooks.once("setup", async () => {
 	// LocalizeGURPS.ready = true
 	// Do anything after initialization but before ready
+
+	game.ModifierButton = new ModifierButton()
+	game.ModifierButton.render(true)
+	game.ModifierList = new ModifierList()
+	game.ModifierList.render(true)
+	game.CompendiumBrowser = new CompendiumBrowser()
 })
 
 // When ready
@@ -317,11 +323,6 @@ Hooks.once("ready", async () => {
 	if (canvas && canvas.hud) {
 		canvas.hud.token = new TokenHUDGURPS()
 	}
-	game.ModifierButton = new ModifierButton()
-	game.ModifierButton.render(true)
-	game.ModifierList = new ModifierList()
-	game.ModifierList.render(true)
-	game.CompendiumBrowser = new CompendiumBrowser()
 
 	// Set initial LastActor values
 	GURPS.LastActor = await LastActor.get()
@@ -335,8 +336,8 @@ Hooks.once("ready", async () => {
 		switch (response.type as SOCKET) {
 			case SOCKET.UPDATE_BUCKET:
 				// Ui.notifications?.info(response.users)
-				await game.ModifierList.render(true)
-				return game.ModifierButton.render(true)
+				await game.ModifierList.render()
+				return game.ModifierButton.render()
 			case SOCKET.INITIATIVE_CHANGED:
 				CONFIG.Combat.initiative.formula = response.formula
 			default:
@@ -544,4 +545,16 @@ Hooks.on("dropCanvasData", function (_canvas, data: any) {
 		;(actor.sheet as ActorSheetGURPS).emulateItemDrop(data as any)
 		return false
 	}
+})
+
+Hooks.on("renderPlayerList", function (_hotbar: any, element: JQuery<HTMLElement>, _options: any) {
+	if (!game.ModifierList) return
+	game.ModifierButton._injectHTML(element.parent("#interface"))
+	game.ModifierList.render()
+})
+
+Hooks.on("renderHotbar", function (_hotbar: any, element: JQuery<HTMLElement>, _options: any) {
+	if (!game.ModifierButton) return
+	game.ModifierButton._injectHTML(element.parent("#ui-bottom"))
+	game.ModifierButton.render()
 })

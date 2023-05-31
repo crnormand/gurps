@@ -71,13 +71,11 @@ class ModifierButton extends Application {
 		})
 	}
 
-	protected _injectHTML(html: JQuery<HTMLElement>): void {
-		// If ($("body").find("#modifier-app").length === 0) {
-		html.insertAfter($("body").find("#hotbar"))
-		this._element = html
-		// } else {
-		// throw new Error("gurps.error.modifier_app_load_failed")
-		// }
+	_injectHTML(html: JQuery<HTMLElement>): void {
+		if ($("body").find("#modifier-app").length === 0) {
+			html.insertAfter($("body").find("#hotbar-page-controls"))
+			this._element = html
+		}
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
@@ -94,11 +92,11 @@ class ModifierButton extends Application {
 	async _onClick(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
 		if (this.showing) {
+			await this.window.close()
 			game.ModifierList.fadeOut()
-			this.window.close()
 		} else {
-			game.ModifierList.fadeIn()
 			await this.window.render(true)
+			game.ModifierList.fadeIn()
 		}
 	}
 
@@ -132,7 +130,7 @@ class ModifierButton extends Application {
 	async clear() {
 		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, [])
 		await game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, 0)
-		game.ModifierList.render(true)
+		game.ModifierList.render()
 		return this.render(true)
 	}
 
@@ -154,25 +152,6 @@ class ModifierButton extends Application {
 		}
 	}
 
-	// AddModifier(mod: RollModifier) {
-	// 	const modList: RollModifier[] =
-	// 		(game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]) ?? []
-	// 	const oldMod = modList.find(e => e.name === mod.name)
-	// 	if (oldMod) oldMod.modifier += mod.modifier
-	// 	else modList.push(mod)
-	// 	game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
-	// 	game.ModifierList.addModifier(mod)
-	// 	game.ModifierList.render(true)
-	// 	// This.list.customMod = null
-	// 	// this.list.mods = []
-	// 	// this.list.selection = -1
-	// 	// this.value = ""
-	// 	this.render()
-	// 	game.ModifierList.render(true)
-	// 	Hooks.call("addModifier")
-	// 	// This.button.render()
-	// }
-
 	async recalculateModTotal(user: StoredDocument<User> | null): Promise<unknown> {
 		if (!user) return
 		let total = 0
@@ -183,30 +162,6 @@ class ModifierButton extends Application {
 			}
 		await user.setFlag(SYSTEM_NAME, UserFlags.ModifierTotal, total)
 	}
-
-	// Async showText() {
-	// 	const args = [
-	// 		{
-	// 			x: 1890,
-	// 			y: 1100
-	// 		},
-	// 		"checkem",
-	// 		{
-	// 			anchor: 2,
-	// 			direction: 2,
-	// 			fill: "#FFFFFF",
-	// 			fontSize: 24,
-	// 			jitter: 0.25,
-	// 			stroke: "#111111",
-	// 			strokeThickness: 1,
-	// 			textStyle: {
-	// 				"z-index": 2
-	// 			}
-	// 		}
-	// 	]
-	// 	console.log(args)
-	// 	await (canvas as any).interface.createScrollingText(...args)
-	// }
 }
 
 interface ModifierButton extends Application {

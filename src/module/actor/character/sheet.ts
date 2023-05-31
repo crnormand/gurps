@@ -293,7 +293,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	async _newItem(type: ItemType, other = false) {
-		const itemName = `ITEM.Type${type.charAt(0).toUpperCase()}${type.slice(1)}`
+		const itemName = `TYPES.Item.${type}`
 		const itemData: any = {
 			type,
 			name: game.i18n.localize(itemName),

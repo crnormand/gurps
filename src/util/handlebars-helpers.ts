@@ -4,6 +4,7 @@ import { getAdjustedStudyHours } from "./misc"
 import { LocalizeGURPS } from "./localize"
 import { CharacterGURPS } from "@actor"
 import { Static } from "@util"
+import { StaticSpell } from "@actor/static_character/components"
 
 class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 	static camelcase(s: string) {
@@ -360,22 +361,22 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		return data
 	}
 
-	// Static staticSpellValues(i: StaticSpell): string {
-	// 	const values = {
-	// 		resist: i.resist,
-	// 		spell_class: i.class,
-	// 		casting_cost: i.cost,
-	// 		maintenance_cost: i.maintain,
-	// 		casting_time: i.casttime,
-	// 		duration: i.duration,
-	// 		college: i.college,
-	// 	}
-	// 	const list = []
-	// 	for (const [k, v] of Object.entries(values)) {
-	// 		if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
-	// 	}
-	// 	return list.join("; ")
-	// }
+	static staticSpellValues(i: StaticSpell): string {
+		const values = {
+			resist: i.resist,
+			spell_class: i.class,
+			casting_cost: i.cost,
+			maintenance_cost: i.maintain,
+			casting_time: i.casttime,
+			duration: i.duration,
+			college: i.college,
+		}
+		const list = []
+		for (const [k, v] of Object.entries(values)) {
+			if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
+		}
+		return list.join("; ")
+	}
 
 	static modifierCost(c: { id: string; value: number }): string {
 		return LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.modifier_bucket.cost, {
@@ -476,6 +477,7 @@ export function registerHandlebarsHelpers() {
 		unsatisfied: HandlebarsHelpersGURPS.unsatisfied,
 		overridden: HandlebarsHelpersGURPS.overridden,
 		flatlist: HandlebarsHelpersGURPS.flatlist,
+		staticSpellValues: HandlebarsHelpersGURPS.staticSpellValues,
 		// Multiselect: HandlebarsHelpersGURPS.multiselect
 	})
 }

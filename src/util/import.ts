@@ -53,9 +53,7 @@ class ImportUtils {
 				_id: id,
 			}
 			if (!newItem.name) {
-				const defaultName = game.i18n.localize(
-					`ITEM.Type${newItem.system.type.charAt(0).toUpperCase()}${newItem.system.type.slice(1)}`
-				)
+				const defaultName = game.i18n.localize(`TYPES.Item.${newItem.system.type}`)
 				newItem.name = defaultName
 			}
 			if (context?.container) {

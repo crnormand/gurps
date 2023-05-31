@@ -1,7 +1,7 @@
 <form class="{{ cssClass }}" autocomplete="off">
 	{{#unless (eq deprecation "acknowledged")}}
 	<div class="deprecation">
-		<p>{{{localize "gurps.static.deprecated_item" type=(localize "ITEM.TypeEquipment")}}}</p>
+		<p>{{{localize "gurps.static.deprecated_item" type=(localize "TYPES.Item.equipment")}}}</p>
 		<a class="gcs-circled-x"></a>
 	</div>
 	{{/unless}}

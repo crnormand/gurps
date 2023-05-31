@@ -7,13 +7,7 @@ import { RollGURPS } from "@module/roll"
 import { LocalizeGURPS, Static } from "@util"
 import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { StaticCharacterSheetConfig } from "./config_sheet"
-import {
-	StaticAttributeName,
-	StaticCharacterSystemData,
-	staticFpConditions,
-	staticHpConditions,
-	StaticSecondaryAttributeName,
-} from "./data"
+import { StaticAttributeName, staticFpConditions, staticHpConditions, StaticSecondaryAttributeName } from "./data"
 import { StaticCharacterGURPS } from "./document"
 
 export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
@@ -72,11 +66,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			move_types: CONFIG.GURPS.select.move_types,
 			deprecation: deprecation,
 			conditions: this._prepareTrackers(),
-			layout: this._prepareBlockLayout(),
 		}
-		this.prepareItems(sheetData)
+		// this.prepareItems(sheetData)
 
 		this._prepareItems(sheetData, items)
+		this._prepareBlockLayout(sheetData)
 		return sheetData
 	}
 
@@ -97,45 +91,47 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			this.actor.setFlag(SYSTEM_NAME, ActorFlags.Deprecation, true)
 		})
 
+		html.find(".item").on("dblclick", event => this._openItemSheet(event))
+
 		// Maneuver / Posture Selection
 		html.find(".move-select").on("change", event => this._onMoveChange(event))
 	}
 
-	private prepareItems(data: { items: StaticItemGURPS[]; system: StaticCharacterSystemData } & any) {
-		console.log(data)
-		console.log(data.system.ads)
-		console.log(Static.flatList(data.system.ads, 0, "", {}, false))
-		const [traits, skills, spells, equipment, other_equipment, notes, melee, ranged] = [
-			Object.values(Static.flatList(data.system.ads ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.skills ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.spells ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.equipment.carried ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.equipment.other ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.notes ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.melee ?? {}, 0, "", {}, false)),
-			Object.values(Static.flatList(data.system.ranged ?? {}, 0, "", {}, false)),
-		]
-		data.items.forEach((e: StaticItemGURPS) => {
-			Object.values(Static.flatList(e.system.ads, 0, "", {}, false)).forEach(f => traits.push(f))
-			Object.values(Static.flatList(e.system.skills, 0, "", {}, false)).forEach(f => skills.push(f))
-			Object.values(Static.flatList(e.system.spells, 0, "", {}, false)).forEach(f => spells.push(f))
-			Object.values(Static.flatList(e.system.melee, 0, "", {}, false)).forEach(f => melee.push(f))
-			Object.values(Static.flatList(e.system.ranged, 0, "", {}, false)).forEach(f => ranged.push(f))
-			if (e.system.equipped) equipment.push(e.system.eqt)
-			else other_equipment.push(e.system.eqt)
-		})
+	// private prepareItems(data: { items: StaticItemGURPS[]; system: StaticCharacterSystemData } & any) {
+	// 	console.log(data)
+	// 	console.log(data.system.ads)
+	// 	console.log(Static.flatList(data.system.ads, 0, "", {}, false))
+	// 	const [traits, skills, spells, equipment, other_equipment, notes, melee, ranged] = [
+	// 		Object.values(Static.flatList(data.system.ads ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.skills ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.spells ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.equipment.carried ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.equipment.other ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.notes ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.melee ?? {}, 0, "", {}, false)),
+	// 		Object.values(Static.flatList(data.system.ranged ?? {}, 0, "", {}, false)),
+	// 	]
+	// 	data.items.forEach((e: StaticItemGURPS) => {
+	// 		Object.values(Static.flatList(e.system.ads, 0, "", {}, false)).forEach(f => traits.push(f))
+	// 		Object.values(Static.flatList(e.system.skills, 0, "", {}, false)).forEach(f => skills.push(f))
+	// 		Object.values(Static.flatList(e.system.spells, 0, "", {}, false)).forEach(f => spells.push(f))
+	// 		Object.values(Static.flatList(e.system.melee, 0, "", {}, false)).forEach(f => melee.push(f))
+	// 		Object.values(Static.flatList(e.system.ranged, 0, "", {}, false)).forEach(f => ranged.push(f))
+	// 		if (e.system.equipped) equipment.push(e.system.eqt)
+	// 		else other_equipment.push(e.system.eqt)
+	// 	})
 
-		data.traits = traits
-		data.skills = skills
-		data.spells = spells
-		data.equipment = equipment
-		data.other_equipment = other_equipment
-		data.notes = notes
-		data.melee = melee
-		data.ranged = ranged
+	// 	data.traits = traits
+	// 	data.skills = skills
+	// 	data.spells = spells
+	// 	data.equipment = equipment
+	// 	data.other_equipment = other_equipment
+	// 	data.notes = notes
+	// 	data.melee = melee
+	// 	data.ranged = ranged
 
-		console.log(data)
-	}
+	// 	console.log(data)
+	// }
 
 	private _prepareTrackers(): any {
 		function _getConditionKey(pts: any, conditions: Record<string, any>) {
@@ -176,22 +172,23 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 
 		items.forEach(e => {
+			console.log(e.uuid)
 			Object.values(e.system.melee).forEach(a => {
-				tempItems.melee.push(a)
+				tempItems.melee.push({ ...a, itemid: e.uuid })
 			})
 			Object.values(e.system.ranged).forEach(a => {
-				tempItems.ranged.push(a)
+				tempItems.ranged.push({ ...a, itemid: e.uuid })
 			})
 			Object.values(e.system.ads).forEach(a => {
-				tempItems.traits.push(a)
+				tempItems.traits.push({ ...a, itemid: e.uuid })
 			})
 			Object.values(e.system.skills).forEach(a => {
-				tempItems.skills.push(a)
+				tempItems.skills.push({ ...a, itemid: e.uuid })
 			})
 			Object.values(e.system.spells).forEach(a => {
-				tempItems.spells.push(a)
+				tempItems.spells.push({ ...a, itemid: e.uuid })
 			})
-			tempItems[e.system.carried ? "equipment" : "other_equipment"].push(e.system.eqt)
+			tempItems[e.system.carried ? "equipment" : "other_equipment"].push({ ...e.system.eqt, itemid: e.uuid })
 		})
 
 		sheetData.items = {
@@ -207,8 +204,12 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 	}
 
-	private _prepareBlockLayout(): string {
-		const system = this.actor.system
+	private _prepareBlockLayout(data: any): void {
+		const system = {
+			...data.items,
+			reactions: this.actor.system.reactions,
+			conditionalmods: this.actor.system.conditionalmods,
+		}
 		function notEmpty(o: any) {
 			return o ? Object.values(o).length > 0 : false
 		}
@@ -220,17 +221,18 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if (notEmpty(system.melee)) outAr.push("melee melee")
 		if (notEmpty(system.ranged)) outAr.push("ranged ranged")
-		if (notEmpty(system.ads) || notEmpty(system.skills)) {
-			if (!notEmpty(system.ads)) outAr.push("skills skills")
+		if (notEmpty(system.traits) || notEmpty(system.skills)) {
+			if (!notEmpty(system.traits)) outAr.push("skills skills")
 			else if (!notEmpty(system.skills)) outAr.push("traits traits")
 			else outAr.push("traits skills")
 		}
 		if (notEmpty(system.spells)) outAr.push("spells spells")
 
-		if (notEmpty(system.equipment?.carried)) outAr.push("equipment equipment")
-		if (notEmpty(system.equipment?.other)) outAr.push("other_equipment other_equipment")
+		if (notEmpty(system.equipment)) outAr.push("equipment equipment")
+		if (notEmpty(system.other_equipment)) outAr.push("other_equipment other_equipment")
 		if (notEmpty(system.notes)) outAr.push("notes notes")
-		return `"${outAr.join('" "')}";`
+
+		data.layout = `"${outAr.join('" "')}";`
 	}
 
 	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
@@ -443,6 +445,14 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	async close(options?: FormApplication.CloseOptions | undefined): Promise<void> {
 		await this.config?.close(options)
 		return super.close(options)
+	}
+
+	protected _openItemSheet(event: JQuery.DoubleClickEvent) {
+		event.preventDefault()
+		const uuid = $(event.currentTarget).data("uuid")
+		if (!uuid) return
+		const item = fromUuidSync(uuid) as StaticItemGURPS
+		return item.sheet?.render(true)
 	}
 }
 

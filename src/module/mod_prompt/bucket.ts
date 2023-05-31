@@ -138,7 +138,7 @@ class ModifierBucket extends Application {
 		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
 		this.button.render()
-		game.ModifierList.render(true)
+		game.ModifierList.render()
 	}
 
 	togglePin(customMod: RollModifier) {
@@ -157,7 +157,7 @@ class ModifierBucket extends Application {
 	addModifier(mod: RollModifier) {
 		this.value = ""
 		game.ModifierList.addModifier(mod)
-		game.ModifierList.render(true)
+		game.ModifierList.render()
 	}
 
 	async sendToPlayer(event: JQuery.ClickEvent) {
