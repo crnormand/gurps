@@ -612,6 +612,7 @@
 			"round_down": "Round Down",
 			"points_per_level": "Cost Per Level",
 			"levels": "Levels",
+			"max_levels": "Max",
 			"level": "Level",
 			"cr": "Self-Control Roll",
 			"cr_adj": "CR Adjustment",
