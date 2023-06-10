@@ -1,3 +1,5 @@
+import { StaticItemSystemData } from "@item"
+import { ItemType } from "@module/data"
 import { round, Static } from "@util"
 import { convertRollStringToArrayOfInt } from "@util/static"
 import { StaticCharacterGURPS } from "."
@@ -147,7 +149,7 @@ export class StaticSpell extends LeveledComponent {
 	}
 }
 
-export class StaticAdvantage extends NamedCostComponent {
+export class StaticTrait extends NamedCostComponent {
 	userdesc: string
 
 	note: string
@@ -528,4 +530,12 @@ const _AnimationMixin = {
 	set failotf(value: string) {
 		this._failotf = value
 	},
+}
+
+export const StaticItem: Record<string, ConstructorOf<_BaseComponent>> = {
+	[ItemType.Trait]: StaticTrait,
+	[ItemType.Skill]: StaticSkill,
+	[ItemType.Spell]: StaticSpell,
+	[ItemType.MeleeWeapon]: StaticMelee,
+	[ItemType.RangedWeapon]: StaticRanged,
 }

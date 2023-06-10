@@ -1,7 +1,7 @@
 import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
 import { ActorType } from "@module/data"
 import {
-	StaticAdvantage,
+	StaticTrait,
 	StaticEquipment,
 	StaticMelee,
 	StaticNote,
@@ -54,7 +54,7 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 	}
 }
 
-export type StaticCharacterItems = StaticAdvantage | StaticSkill | StaticSpell | StaticEquipment | StaticNote
+export type StaticCharacterItems = StaticTrait | StaticSkill | StaticSpell | StaticEquipment | StaticNote
 
 export interface StaticCharacterSystemData extends ActorSystemData {
 	editing: boolean
@@ -112,7 +112,7 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 	move: any
 	reactions: { [key: string]: StaticReaction }
 	conditionalmods: { [key: string]: StaticReaction }
-	ads: { [key: string]: StaticAdvantage }
+	ads: { [key: string]: StaticTrait }
 	skills: { [key: string]: StaticSkill }
 	spells: { [key: string]: StaticSpell }
 	equipment: {

@@ -1,5 +1,5 @@
 import { StaticCharacterGURPS } from "@actor"
-import { StaticAdvantage } from "@actor/static_character/components"
+import { StaticTrait } from "@actor/static_character/components"
 import { StaticItemGURPS } from "@item"
 
 /**
@@ -29,8 +29,8 @@ export function recurseList(
  * @param actor
  * @param sname
  */
-export function findAdDisad(actor: StaticCharacterGURPS, sname: string): StaticAdvantage | null {
-	let t: StaticAdvantage | null = null
+export function findAdDisad(actor: StaticCharacterGURPS, sname: string): StaticTrait | null {
+	let t: StaticTrait | null = null
 	if (!actor) return t
 	sname = makeRegexPatternFrom(sname, false)
 	let regex = new RegExp(sname, "i")
@@ -112,7 +112,7 @@ export function convertRollStringToArrayOfInt(text: string) {
  * @param value
  * @param index
  */
-export function put(obj: any, value: any, index = -1) {
+export function put(obj: any, value: any, index = -1): string {
 	if (index === -1) {
 		index = 0
 		while (obj.hasOwnProperty(zeroFill(index))) index++

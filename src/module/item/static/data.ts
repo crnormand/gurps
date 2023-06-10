@@ -1,5 +1,5 @@
 import {
-	StaticAdvantage,
+	StaticTrait,
 	StaticEquipment,
 	StaticMelee,
 	StaticRanged,
@@ -46,7 +46,7 @@ export interface StaticItemSystemData {
 	// 	contains: any
 	// 	img: string | null
 	// }
-	ads: { [key: string]: StaticAdvantage }
+	ads: { [key: string]: StaticTrait }
 	skills: { [key: string]: StaticSkill }
 	spells: { [key: string]: StaticSpell }
 	eqtsummary: number

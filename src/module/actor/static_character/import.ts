@@ -7,7 +7,7 @@ import { SYSTEM_NAME, SETTINGS } from "@module/data"
 import { LocalizeGURPS, round, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import {
-	StaticAdvantage,
+	StaticTrait,
 	StaticEquipment,
 	StaticMelee,
 	StaticModifier,
@@ -355,7 +355,7 @@ export class StaticCharacterImporter {
 	}
 
 	importTrait(i: TraitSystemData | TraitContainerSystemData | any, p: string) {
-		let a = new StaticAdvantage()
+		let a = new StaticTrait()
 		a.name = i.name + (i.levels ? ` ${i.levels.toString()}` : "") || "Trait"
 		a.points = i.calc?.points
 		a.note = i.notes

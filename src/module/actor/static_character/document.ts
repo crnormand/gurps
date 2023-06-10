@@ -8,7 +8,7 @@ import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS, newUUID, Static } from "@util"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
-import { StaticAdvantage, StaticEquipment } from "./components"
+import { StaticTrait, StaticEquipment } from "./components"
 import {
 	MoveMode,
 	MoveModeTypes,
@@ -247,7 +247,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 						if (e.spoken) n += ` (${LocalizeGURPS.translations.gurps.language.spoken})(${e.spoken})`
 						if (e.written) n += ` (${LocalizeGURPS.translations.gurps.language.written})(${e.written})`
 					}
-					let a = new StaticAdvantage()
+					let a = new StaticTrait()
 					a.name = n
 					a.points = e.points
 					Static.put(newads, a)

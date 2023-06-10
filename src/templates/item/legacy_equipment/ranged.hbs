@@ -8,7 +8,7 @@
 	<div class="header bulk">{{localize "gurps.character.ranged.bulk"}}</div>
 	<div class="header recoil">{{localize "gurps.character.ranged.recoil"}}</div>
 	<div class="header st">{{localize "gurps.character.ranged.st"}}</div>
-	{{#each rangedWeapons}}
+	{{#each ranged}}
 	<div class="usage desc item" data-uuid="{{this.uuid}}" data-type="Item">
 		<div class="name">
 			{{this.usage}}
@@ -26,15 +26,5 @@
 	</div>
 	<div data-uuid="{{this.uuid}}" class="recoil">{{this.recoil}}</div>
 	<div data-uuid="{{this.uuid}}" class="st">{{this.strength}}</div>
-	{{else}}
-	<div class="usage desc filler item"></div>
-	<div class="accuracy"></div>
-	<div class="damage"></div>
-	<div class="range"></div>
-	<div class="rate-of-fire"></div>
-	<div class="shots"></div>
-	<div class="bulk"></div>
-	<div class="recoil"></div>
-	<div class="st"></div>
 	{{/each}}
 </div>

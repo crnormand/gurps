@@ -1,11 +1,12 @@
 import { evalOperators, Operator } from "./operator"
 import { eFunction, evalFunctions } from "./function"
-import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS } from "@item"
+import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS, TraitContainerGURPS, TraitGURPS } from "@item"
 
 // VariableResolver is used to resolve variables in expressions into their values.
 export interface VariableResolver {
 	resolveVariable: (variableName: string) => string
 	skills: Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS>
+	traits: Collection<TraitGURPS | TraitContainerGURPS>
 	isSkillLevelResolutionExcluded: (name: string, specialization: string) => boolean
 	registerSkillLevelResolutionExclusion: (name: string, specialization: string) => void
 	unregisterSkillLevelResolutionExclusion: (name: string, specialization: string) => void

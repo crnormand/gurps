@@ -5,7 +5,7 @@
 	<div class="header damage">{{localize "gurps.character.melee.damage"}}</div>
 	<div class="header reach">{{localize "gurps.character.melee.reach"}}</div>
 	<div class="header st">{{localize "gurps.character.melee.st"}}</div>
-	{{#each meleeWeapons}}
+	{{#each melee}}
 	<div class="usage desc item" data-uuid="{{this.key}}" data-type="Item">
 		<div class="name">
 			{{this.data.mode}}
@@ -13,16 +13,9 @@
 		{{>actor/character/sections/item-notes}}
 	</div>
 	<div data-uuid="{{this.key}}" class="parry rollable">{{this.data.parry}}</div>
-	<div data-uuid="{{this.key}}" class="block rollable">{{this.data.parry}}</div>
+	<div data-uuid="{{this.key}}" class="block rollable">{{this.data.block}}</div>
 	<div data-uuid="{{this.key}}" class="damage rollable"> {{this.data.damage}}</div>
 	<div data-uuid="{{this.key}}" class="reach">{{this.data.reach}}</div>
 	<div data-uuid="{{this.key}}" class="st">{{this.data.st}}</div>
-	{{else}}
-	<div class="usage item desc"></div>
-	<div class="parry rollable"></div>
-	<div class="block rollable"></div>
-	<div class="damage rollable"></div>
-	<div class="reach"></div>
-	<div class="st"></div>
 	{{/each}}
 </div>
