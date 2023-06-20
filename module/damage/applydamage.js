@@ -12,7 +12,7 @@ import {
   locateToken,
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
+import { digitsAndDecimalOnly, digitsOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor/actor.js'
 import { handleOnPdf } from '../pdf-refs.js'
 
@@ -88,7 +88,7 @@ export default class ApplyDamageDialog extends Application {
 
     // Activate all PDF links
     html.find('.pdflink').on('click', handleOnPdf)
-    html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
+    html.find('.digits-only').inputFilter(value => digitsAndNegOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
     // ==== Multiple Dice ====

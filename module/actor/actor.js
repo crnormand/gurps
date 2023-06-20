@@ -1863,6 +1863,11 @@ export class GurpsActor extends Actor {
             r.import = w.calc?.level || '0'
             r.damage = w.calc?.damage || ''
             r.acc = w.accuracy || ''
+            let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+            if (m) {
+              r.acc = m[1]
+              r.notes += ' [' + m[2] + ' ' + i18n("GURPS.acc") + ']'
+            }
             r.rof = w.rate_of_fire || ''
             r.shots = w.shots || ''
             r.rcl = w.recoil || ''
@@ -3043,6 +3048,11 @@ export class GurpsActor extends Actor {
             r.import = t(j2.level)
             r.damage = t(j2.damage)
             r.acc = t(j2.acc)
+            let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+            if (m) {
+              r.acc = m[1]
+              r.notes += ' [' + m[2] + ' ' + i18n("GURPS.acc") + ']'
+            }
             r.rof = t(j2.rof)
             r.shots = t(j2.shots)
             r.rcl = t(j2.rcl)
