@@ -1,5 +1,15 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.0  07/20/2023
+
+- Update system.json Foundry v11
+- Move MOD bucket +50 to the right to fit hotbar
+- Allow negative input in apply damage dialog
+- Remove duplicate range info from range ruler
+- Update for JB2a 0.5.8
+- Fixed Mook parser for ST based ranges (ex: ange x1.5/x2.5)
+- Fixed ability to remove generic modifier from effects window
+
 Release 0.15.32 03/13/2023
 
 - Expose the ApplyDamageDialog via the GURPS global object ()

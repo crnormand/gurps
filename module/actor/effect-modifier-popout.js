@@ -172,7 +172,7 @@ export class EffectModifierPopout extends Application {
     if (!!dragData.bucket) {
       let sep = ''
       dragData.bucket.forEach(otf => {
-        add += sep + otf
+        add += sep + otf.trim()
         sep = ' & '
       })
     }
