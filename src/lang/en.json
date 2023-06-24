@@ -241,6 +241,13 @@
 			"basicspeed": "Basic Speed",
 			"basicmove": "Basic Move",
 			"ok": "Ok",
+			"level_otf": "Level",
+			"check_otf": "Check",
+			"during_otf": "During",
+			"pass_otf": "Pass",
+			"fail_otf": "Fail",
+			"damage": "Damage",
+			"rsl": "RSL",
 			"status": {
 				"normal": "Normal",
 				"reeling": "Reeling",

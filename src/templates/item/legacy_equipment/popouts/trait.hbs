@@ -1,0 +1,22 @@
+<form class="{{cssClass}}" autocomplete="off">
+	<div id="sheet" class="gcs_melee_sheet">
+		<div id="details">
+			<div class="label">{{localize "gurps.item.name"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.name" value="{{data.name}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.notes"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.notes" value="{{data.notes}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.points"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.points" value="{{data.points}}" data-dtype="Number" />
+			</div>
+			<div class="label">{{localize "gurps.item.reference"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.pageref" value="{{data.pageref}}" data-dtype="String" />
+			</div>
+		</div>
+	</div>
+</form>

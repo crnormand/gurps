@@ -80,8 +80,21 @@ class ModifierButton extends Application {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		html.find("#modifier-app").on("click", event => this._onClick(event))
+
+		// window.addEventListener("wheel", event => {
+		// 	event.stopPropagation()
+		// 	// console.log(event.deltaY)
+		// 	const delta = (event.deltaY < 0) ? -1 : 1
+		// 	const element = $(event.currentTarget!)
+		// 	if (
+		// 		element.attr("id") === "modifier-app" ||
+		// 		element.parent("#modifier-app")
+		// 	) this._onMouseWheel(delta)
+		// }, { passive: false })
+
 		html.on("wheel", event => this._onMouseWheel(event))
+
+		html.find("#modifier-app").on("click", event => this._onClick(event))
 		html.find(".magnet").on("click", event => this._onMagnetClick(event))
 		html.find(".trash").on("click", event => this.resetMods(event))
 
@@ -140,16 +153,24 @@ class ModifierButton extends Application {
 		return this.clear()
 	}
 
+	// async _onMouseWheel(delta: number) {
+	// 	return game.ModifierList.addModifier({
+	// 		name: "",
+	// 		modifier: delta,
+	// 		tags: [],
+	// 	})
+	// }
+
 	async _onMouseWheel(event: JQuery.TriggeredEvent) {
 		const originalEvent = event.originalEvent
-		if (originalEvent instanceof WheelEvent) {
-			const delta = Math.round(originalEvent.deltaY / -100)
-			return game.ModifierList.addModifier({
-				name: "",
-				modifier: delta,
-				tags: [],
-			})
-		}
+		if (!(originalEvent instanceof WheelEvent)) return
+
+		const delta = Math.round(originalEvent.deltaY / -100)
+		return game.ModifierList.addModifier({
+			name: "",
+			modifier: delta,
+			tags: [],
+		})
 	}
 
 	async recalculateModTotal(user: StoredDocument<User> | null): Promise<unknown> {

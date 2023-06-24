@@ -3,7 +3,6 @@
 ## In Progress
 
 -	Finish "static" character (0.15 and older) compatibility
-	-	foundry item display
 	-	don't bother with editing features
 
 ## Jeff and Chris

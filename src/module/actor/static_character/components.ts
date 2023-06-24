@@ -1,6 +1,5 @@
-import { StaticItemSystemData } from "@item"
 import { ItemType } from "@module/data"
-import { round, Static } from "@util"
+import { LocalizeGURPS, round, Static } from "@util"
 import { convertRollStringToArrayOfInt } from "@util/static"
 import { StaticCharacterGURPS } from "."
 
@@ -109,7 +108,7 @@ export class StaticSkill extends LeveledComponent {
 
 	relativelevel = ""
 
-	constructor(name = "Skill", level = 0) {
+	constructor(name = LocalizeGURPS.translations.TYPES.Item.skill, level = 0) {
 		super(name, level)
 		this.type = ""
 		this.relativelevel = ""
@@ -135,7 +134,7 @@ export class StaticSpell extends LeveledComponent {
 
 	relativelevel: string // "IQ+1"
 
-	constructor(name = "Spell", level = 0) {
+	constructor(name = LocalizeGURPS.translations.TYPES.Item.spell, level = 0) {
 		super(name, level)
 		this.class = ""
 		this.college = ""
@@ -158,7 +157,7 @@ export class StaticTrait extends NamedCostComponent {
 
 	written?: string
 
-	constructor(name?: string) {
+	constructor(name = LocalizeGURPS.translations.TYPES.Item.trait) {
 		super(name)
 		this.userdesc = ""
 		this.note = ""
@@ -205,7 +204,7 @@ export class StaticMelee extends StaticAttack {
 
 	block: string
 
-	constructor(name = "Weapon", level = 0, damage = "") {
+	constructor(name = LocalizeGURPS.translations.TYPES.Item.melee_weapon, level = 0, damage = "") {
 		super(name, level, damage)
 
 		this.weight = ""
@@ -238,7 +237,7 @@ export class StaticRanged extends StaticAttack {
 
 	max: string
 
-	constructor(name = "Weapon", level = 0, damage = "") {
+	constructor(name = LocalizeGURPS.translations.TYPES.Item.ranged_weapon, level = 0, damage = "") {
 		super(name, level, damage)
 		this.bulk = ""
 		this.legalityclass = ""
@@ -300,8 +299,8 @@ export class StaticEquipment extends NamedComponent {
 
 	contains: { [key: string]: any }
 
-	constructor(nm = "Equipment", ue = false) {
-		super(nm)
+	constructor(name = LocalizeGURPS.translations.TYPES.Item.equipment, ue = false) {
+		super(name)
 		this.save = ue
 		this.equipped = false
 		this.carried = false

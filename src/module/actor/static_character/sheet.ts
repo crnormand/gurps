@@ -47,7 +47,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			if (this.actor.system.additionalresources.importpath.includes(".gca5")) deprecation = "easy"
 		}
 
-		console.log(actorData.system)
+		// console.log(actorData.system)
 		const sheetData = {
 			...super.getData(options),
 			items,
@@ -172,7 +172,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 
 		items.forEach(e => {
-			console.log(e.uuid)
+			// console.log(e.uuid)
 			Object.values(e.system.melee).forEach(a => {
 				tempItems.melee.push({ ...a, itemid: e.uuid })
 			})
@@ -275,9 +275,11 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _onClickRoll(event: JQuery.ClickEvent | JQuery.ContextMenuEvent) {
 		event.preventDefault()
+		const element = $(event.currentTarget)
 		if (this.actor.editing) return
 		const type: RollType = $(event.currentTarget).data("type")
 		const data: Record<string, any> = { type: type, hidden: event.ctrlKey }
+		const items = this.getData().items
 		if (type === RollType.Attribute) {
 			const attribute = {
 				current: 0,
@@ -286,77 +288,64 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 					combinedName: "",
 				},
 			}
-			if (
-				["frightcheck", "vision", "hearing", "tastesmell", "touch"].includes($(event.currentTarget).data("id"))
-			) {
-				attribute.current = this.actor.system[$(event.currentTarget).data("id") as StaticSecondaryAttributeName]
+			if (["frightcheck", "vision", "hearing", "tastesmell", "touch"].includes(element.data("id"))) {
+				attribute.current = this.actor.system[element.data("id") as StaticSecondaryAttributeName]
 			} else {
-				attribute.current =
-					this.actor.system.attributes[$(event.currentTarget).data("id") as StaticAttributeName].value
+				attribute.current = this.actor.system.attributes[element.data("id") as StaticAttributeName].value
 			}
 			attribute.attribute_def.combinedName = game.i18n.localize(
-				`gurps.static.${$(event.currentTarget).data("id").toLowerCase()}`
+				`gurps.static.${element.data("id").toLowerCase()}`
 			)
-			attribute.attr_id = $(event.currentTarget).data("id").toLowerCase()
+			attribute.attr_id = element.data("id").toLowerCase()
 			data.attribute = attribute
+			return RollGURPS.staticHandleRoll(game.user, this.actor, data)
 		}
-		if ([RollType.Skill, RollType.SkillRelative, RollType.Spell, RollType.SpellRelative].includes(type)) {
-			Static.recurseList(this.actor.system.skills, e => {
-				if (e.uuid === $(event.currentTarget).data("uuid")) {
-					console.log(e)
-					data.item = {
-						formattedName: e.name,
-						skillLevel: e.level,
-					}
+		console.log(items)
+		console.log(element.data("uuid"))
+		const key = element.data("uuid")
+		switch (type) {
+			case RollType.Skill:
+			case RollType.SkillRelative:
+				data.item = {
+					formattedName: getProperty(items, `skills.${key}.name`),
+					skillLevel: getProperty(items, `skills.${key}.import`),
 				}
-			})
-		}
-		if (type === RollType.Attack) {
-			Static.recurseList(
-				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
-				(e, k) => {
-					if (k === $(event.currentTarget).data("uuid"))
-						data.item = {
-							itemName: e.name,
-							usage: e.mode,
-							skillLevel: parseInt(e.import) || 0,
-						}
+				return RollGURPS.staticHandleRoll(game.user, this.actor, data)
+			case RollType.Spell:
+			case RollType.SpellRelative:
+				data.item = {
+					formattedName: getProperty(items, `spells.${key}.name`),
+					skillLevel: getProperty(items, `spells.${key}.import`),
 				}
-			)
-		}
-		if ([RollType.Parry, RollType.Block].includes(type)) {
-			Static.recurseList(
-				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
-				(e, k) => {
-					if (k === $(event.currentTarget).data("uuid")) {
-						data.item = {
-							itemName: e.name,
-							usage: e.mode,
-							skillLevel: parseInt(e[type]),
-						}
-					}
+				return RollGURPS.staticHandleRoll(game.user, this.actor, data)
+			case RollType.Attack:
+				data.item = {
+					formattedName: getProperty(items, `${element.data("weapon")}.${key}.name`),
+					usage: getProperty(items, `${element.data("weapon")}.${key}.mode`),
+					skillLevel: getProperty(items, `${element.data("weapon")}.${key}.import`),
 				}
-			)
-		}
-		if (type === RollType.Damage) {
-			Static.recurseList(
-				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
-				(e, k) => {
-					if (k === $(event.currentTarget).data("uuid"))
-						data.item = {
-							itemName: e.name,
-							usage: e.mode,
-							fastResolvedDamage: e.damage,
-						}
+				return RollGURPS.staticHandleRoll(game.user, this.actor, data)
+			case RollType.Parry:
+			case RollType.Block:
+				data.item = {
+					formattedName: getProperty(items, `${element.data("weapon")}.${key}.name`),
+					usage: getProperty(items, `${element.data("weapon")}.${key}.mode`),
+					skillLevel: getProperty(items, `${element.data("weapon")}.${key}.${type}`),
 				}
-			)
+				return RollGURPS.staticHandleRoll(game.user, this.actor, data)
+			case RollType.Damage:
+				data.item = {
+					formattedName: getProperty(items, `${element.data("weapon")}.${key}.name`),
+					usage: getProperty(items, `${element.data("weapon")}.${key}.mode`),
+					fastResolvedDamage: getProperty(items, `${element.data("weapon")}.${key}.damage`),
+				}
+				return RollGURPS.staticHandleRoll(game.user, this.actor, data)
+			case RollType.Modifier:
+				data.modifier = element.data("modifier")
+				data.comment = element.data("comment")
+				if (event.type === "contextmenu") data.modifier = -data.modifier
+				return RollGURPS.staticHandleRoll(game.user, this.actor, data)
 		}
-		if (type === RollType.Modifier) {
-			data.modifier = $(event.currentTarget).data("modifier")
-			data.comment = $(event.currentTarget).data("comment")
-			if (event.type === "contextmenu") data.modifier = -data.modifier
-		}
-		return RollGURPS.staticHandleRoll(game.user, this.actor, data)
 	}
 
 	protected async _onRollableHover(event: JQuery.MouseOverEvent | JQuery.MouseOutEvent, hover: boolean) {

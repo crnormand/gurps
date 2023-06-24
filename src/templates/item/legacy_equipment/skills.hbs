@@ -1,18 +1,11 @@
 <div id="skills" class="item-list">
 	<div class="header desc">{{ localize "gurps.character.skills.desc" }}</div>
 	{{#each skills }}
-		<div
-			class="desc item"
-			data-uuid="{{ this.uuid }}"
-		>
-			<div class="dropdown">
-			</div>
-			<div class="name">
-				{{this.formattedName}}
-			</div>
-			{{>actor/character/sections/item-notes}}
+	<div class="usage desc item" data-uuid="{{this.key}}" data-type="Item">
+		<div class="name">
+			{{this.data.name}}
 		</div>
-	{{else}}
-	<div class="desc item filler"></div>
+		{{>actor/character/sections/item-notes}}
+	</div>
 	{{/each }}
 </div>

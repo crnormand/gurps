@@ -15,8 +15,8 @@
 <div  class="level"></div>
 <div class="rsl"></div>
 {{else}}
-<div data-uuid="{{this.itemid}}" data-type="skill" class="level rollable">{{this.import}}</div>
-<div data-uuid="{{this.itemid}}" data-type="skill_rsl" class="rsl rollable">{{this.relativelevel}}</div>
+<div data-uuid="{{@key}}" data-type="skill" class="level rollable">{{this.import}}</div>
+<div data-uuid="{{@key}}" data-type="skill_rsl" class="rsl rollable">{{this.relativelevel}}</div>
 {{/if}}
 <div class="points">{{this.points}}</div>
 <div class="reference">{{{ref this.pageref}}}</div>

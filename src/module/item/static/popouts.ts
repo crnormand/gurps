@@ -1,18 +1,25 @@
 import { _BaseComponent } from "@actor/static_character/components"
 import { SYSTEM_NAME } from "@module/data"
-import { StaticItemSystemData } from "./data"
 import { StaticItemGURPS } from "./document"
+
+export enum StaticPopoutType {
+	Melee = "melee",
+	Ranged = "ranged",
+	Spell = "spells",
+	Trait = "ads",
+	Skill = "skills",
+}
 
 export class StaticPopout extends FormApplication {
 	object!: StaticItemGURPS
 
-	key!: keyof StaticItemSystemData
+	key!: StaticPopoutType
 
 	uuid!: string
 
 	static get defaultOptions(): FormApplicationOptions {
 		return mergeObject(super.defaultOptions, {
-			classes: ["form", "gurps"],
+			classes: ["form", "gurps", "item"],
 			width: 620,
 			min_width: 620,
 			height: 800,
@@ -23,7 +30,19 @@ export class StaticPopout extends FormApplication {
 		})
 	}
 
-	constructor(object: StaticItemGURPS, key: keyof StaticItemSystemData, uuid: string, options?: any) {
+	get title(): string {
+		switch (this.key) {
+			case StaticPopoutType.Melee:
+			case StaticPopoutType.Ranged:
+				return this.object.system[this.key][this.uuid].mode
+			case StaticPopoutType.Skill:
+			case StaticPopoutType.Trait:
+			case StaticPopoutType.Spell:
+				return this.object.system[this.key][this.uuid].name
+		}
+	}
+
+	constructor(object: StaticItemGURPS, key: StaticPopoutType, uuid: string, options?: any) {
 		options ??= {}
 		if (options.ready && options.ready === true) {
 			super(object)
@@ -33,15 +52,15 @@ export class StaticPopout extends FormApplication {
 		} else {
 			mergeObject(options, { ready: true })
 			switch (key) {
-				case "melee":
+				case StaticPopoutType.Melee:
 					return new StaticMeleePopout(object, key, uuid, options)
-				case "ranged":
+				case StaticPopoutType.Ranged:
 					return new StaticRangedPopout(object, key, uuid, options)
-				case "spells":
+				case StaticPopoutType.Spell:
 					return new StaticSpellPopout(object, key, uuid, options)
-				case "ads":
+				case StaticPopoutType.Trait:
 					return new StaticTraitPopout(object, key, uuid, options)
-				case "skills":
+				case StaticPopoutType.Skill:
 					return new StaticSkillPopout(object, key, uuid, options)
 				default:
 					return new StaticPopout(object, key, uuid, options)
@@ -51,6 +70,7 @@ export class StaticPopout extends FormApplication {
 
 	getData(options?: Partial<FormApplicationOptions> | undefined): MaybePromise<object> {
 		return mergeObject(super.getData(options), {
+			list: this.key,
 			key: this.uuid,
 			data: (this.object.system[this.key] as any)[this.uuid],
 		})
@@ -58,7 +78,6 @@ export class StaticPopout extends FormApplication {
 
 	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
 		if (!this.object.uuid) return
-		console.log(formData)
 		await this.object.update(formData)
 		return this.render()
 	}

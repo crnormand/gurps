@@ -236,6 +236,7 @@ export async function insertBeforeKey(actor: StaticCharacterGURPS, path: string,
  * @param {string} path
  */
 export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, path: string) {
+	console.log(actor, path)
 	let i = path.lastIndexOf(".")
 	let objpath = path.substring(0, i)
 	let key = path.substring(i + 1)
@@ -244,7 +245,7 @@ export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, p
 	let objkey = objpath.substring(i + 1)
 	let object = decode(actor, objpath)
 	let t = `${parentpath}.-=${objkey}`
-	await actor.update({ [t]: null }) // Delete the whole object
+	await actor.update({ [t]: null }, { render: false }) // Delete the whole object
 	delete object[key]
 	i = parseInt(key)
 
@@ -262,7 +263,7 @@ export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, p
 			a[v] = object[v]
 			return a
 		}, {}) // Enforced key order
-	await actor.update({ [objpath]: sorted }, { diff: false, render: false })
+	await actor.update({ [objpath]: sorted }, { diff: false, render: true })
 }
 
 /**

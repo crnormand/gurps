@@ -26,7 +26,7 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 			}
 		return new Collection(
 			deepItems.map(e => {
-				return [e.id!, e]
+				return [e.uuid, e]
 			})
 		)
 	}

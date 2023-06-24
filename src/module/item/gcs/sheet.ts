@@ -9,7 +9,39 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 		html.find(".item").on("dblclick", event => this._openItemSheet(event))
+		html.find(".item").on("contextmenu", event => this._getItemContextMenu(event, html))
 		html.find(".item-list .header.desc").on("contextmenu", event => this._getAddItemMenu(event, html))
+	}
+
+	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
+		event.preventDefault()
+		const uuid = $(event.currentTarget).data("uuid")
+		const item = this.item.deepItems.get(uuid) as ItemGURPS
+		console.log(uuid, item)
+		if (!item) return
+		const ctx = new ContextMenu(html, ".menu", [])
+		ctx.menuItems.push({
+			name: LocalizeGURPS.translations.gurps.context.duplicate,
+			icon: "",
+			callback: async () => {
+				const itemData = {
+					type: item.type,
+					name: item.name,
+					system: item.system,
+					flags: (item as any).flags,
+					sort: ((item as any).sort ?? 0) + 1,
+				}
+				await item.parent.createEmbeddedDocuments("Item", [itemData])
+			},
+		})
+		ctx.menuItems.push({
+			name: LocalizeGURPS.translations.gurps.context.delete,
+			icon: "<i class='gcs-trash'></i>",
+			callback: () => {
+				return item.delete()
+			},
+		})
+		await ctx.render($(event.currentTarget))
 	}
 
 	async _getAddItemMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {

@@ -574,7 +574,7 @@ export function evalRandomWeight(e: Evaluator, a: string): any {
 		else if (equalFold(t.name, "very fat")) veryFat = true
 	})
 	let shiftAmt = Math.round(shift)
-	if (shiftAmt != 0) {
+	if (shiftAmt !== 0) {
 		if (skinny) shiftAmt -= 1
 		else if (overweight) shiftAmt += 1
 		else if (fat) shiftAmt += 2

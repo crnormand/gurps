@@ -8,14 +8,14 @@
 		<i class="dropdown-toggle closed gcs-circled-chevron-right" data-key="system.spells.{{@key}}"></i>
 		{{/if}}
 	</div>
-	<div class="name">{{ this.name }} {{#if this.itemid}}<i class="fas fa-star tooltip gga-item"></i>{{/if}}</div>
+	<div class="name">{{this.name}}</div>
 	<div class="item-notes">
 		{{this.notes}}
 		{{staticSpellValues this}}
 	</div>
 </div>
-<div data-uuid="{{this.itemid}}" data-type="spell" class="level rollable">{{this.import}}</div>
-<div data-uuid="{{this.itemid}}" data-type="spell_rsl" class="rsl rollable">{{this.relativelevel}}</div>
+<div data-uuid="{{@key}}" data-type="spell" class="level rollable">{{this.import}}</div>
+<div data-uuid="{{@key}}" data-type="spell_rsl" class="rsl rollable">{{this.relativelevel}}</div>
 <div class="points">{{this.points}}</div>
 <div class="reference">{{{ref this.pageref}}}</div>
 {{/unless}}

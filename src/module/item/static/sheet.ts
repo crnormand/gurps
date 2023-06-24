@@ -1,18 +1,10 @@
-import {
-	StaticTrait,
-	StaticMelee,
-	StaticSkill,
-	StaticSpell,
-	StaticItem,
-	_BaseComponent,
-} from "@actor/static_character/components"
+import { StaticItem, _BaseComponent } from "@actor/static_character/components"
 import { ItemFlags } from "@item/base/data"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS, Static } from "@util"
-import { DnD } from "@util/drag_drop"
 import { StaticItemGURPS } from "."
 import { StaticItemSystemData } from "./data"
-import { StaticPopout } from "./popouts"
+import { StaticPopout, StaticPopoutType } from "./popouts"
 
 export class StaticItemSheet extends ItemSheet {
 	static get defaultOptions(): DocumentSheetOptions<Item> {
@@ -32,6 +24,7 @@ export class StaticItemSheet extends ItemSheet {
 
 	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
 		let deprecation: string = this.item.getFlag(SYSTEM_NAME, ItemFlags.Deprecation) ? "acknowledged" : "manual"
+		console.log(this.item)
 		const sheetData = {
 			...(super.getData(options) as any),
 			traits: Object.entries(this.item.system.ads).map(([k, v]) => {
@@ -73,6 +66,7 @@ export class StaticItemSheet extends ItemSheet {
 		// 	this.item.update(commit)
 		// })
 		html.find(".item-list .header.desc").on("contextmenu", event => this._getAddItemMenu(event, html))
+		html.find(".item").on("contextmenu", event => this._getItemContextMenu(event, html))
 
 		// html.find("#add-melee").on("click", ev => {
 		// 	ev.preventDefault()
@@ -131,6 +125,23 @@ export class StaticItemSheet extends ItemSheet {
 		html.find(".item").on("click", event => this._openPopout(event))
 	}
 
+	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
+		event.preventDefault()
+		const type = $(event.currentTarget).parent(".item-list")[0].id as StaticPopoutType
+		const uuid = $(event.currentTarget).data("uuid")
+		const item = this.item.system[type][uuid]
+		if (!item) return
+		const ctx = new ContextMenu(html, ".menu", [])
+		ctx.menuItems.push({
+			name: LocalizeGURPS.translations.gurps.context.delete,
+			icon: "<i class='gcs-trash'></i>",
+			callback: () => {
+				return Static.removeKey(this.item, `system.${type}.${uuid}`)
+			},
+		})
+		await ctx.render($(event.currentTarget))
+	}
+
 	private async _getAddItemMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
 		const element = $(event.currentTarget)
@@ -138,44 +149,44 @@ export class StaticItemSheet extends ItemSheet {
 		const ctx = new ContextMenu(html, ".menu", [])
 		ctx.menuItems = (function (self: StaticItemSheet): ContextMenuEntry[] {
 			switch (type) {
-				case "melee":
+				case StaticPopoutType.Melee:
 					return [
 						{
 							name: LocalizeGURPS.translations.gurps.context.new_melee_weapon,
 							icon: "<i class='gcs-melee'></i>",
-							callback: () => self._newItem("melee", StaticItem[ItemType.MeleeWeapon]),
+							callback: () => self._newItem(StaticPopoutType.Melee, StaticItem[ItemType.MeleeWeapon]),
 						},
 					]
-				case "ranged":
+				case StaticPopoutType.Ranged:
 					return [
 						{
 							name: LocalizeGURPS.translations.gurps.context.new_ranged_weapon,
 							icon: "<i class='gcs-ranged'></i>",
-							callback: () => self._newItem("ranged", StaticItem[ItemType.RangedWeapon]),
+							callback: () => self._newItem(StaticPopoutType.Ranged, StaticItem[ItemType.RangedWeapon]),
 						},
 					]
-				case "spells":
+				case StaticPopoutType.Spell:
 					return [
 						{
 							name: LocalizeGURPS.translations.gurps.context.new_spell,
 							icon: "<i class='gcs-spell'></i>",
-							callback: () => self._newItem("spells", StaticItem[ItemType.Spell]),
+							callback: () => self._newItem(StaticPopoutType.Spell, StaticItem[ItemType.Spell]),
 						},
 					]
-				case "traits":
+				case StaticPopoutType.Trait:
 					return [
 						{
 							name: LocalizeGURPS.translations.gurps.context.new_trait,
 							icon: "<i class='gcs-trait'></i>",
-							callback: () => self._newItem("ads", StaticItem[ItemType.Trait]),
+							callback: () => self._newItem(StaticPopoutType.Trait, StaticItem[ItemType.Trait]),
 						},
 					]
-				case "skills":
+				case StaticPopoutType.Skill:
 					return [
 						{
 							name: LocalizeGURPS.translations.gurps.context.new_skill,
 							icon: "<i class='gcs-skill'></i>",
-							callback: () => self._newItem("skills", StaticItem[ItemType.Skill]),
+							callback: () => self._newItem(StaticPopoutType.Skill, StaticItem[ItemType.Skill]),
 						},
 					]
 				default:
@@ -185,7 +196,7 @@ export class StaticItemSheet extends ItemSheet {
 		await ctx.render(element)
 	}
 
-	private _newItem(key: keyof StaticItemSystemData, itemConstructor: ConstructorOf<_BaseComponent>) {
+	private _newItem(key: StaticPopoutType, itemConstructor: ConstructorOf<_BaseComponent>) {
 		const item = new itemConstructor()
 		const list = this.object.system[key]
 		const uuid = Static.put(list, item)
@@ -197,7 +208,7 @@ export class StaticItemSheet extends ItemSheet {
 
 	private _openPopout(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const key = $(event.currentTarget).parent(".item-list").attr("id") as keyof StaticItemSystemData
+		const key = $(event.currentTarget).parent(".item-list").attr("id") as StaticPopoutType
 		const uuid = $(event.currentTarget).data("uuid") as string
 		if (!uuid) return
 		const sheet = new StaticPopout(this.object, key, uuid)
