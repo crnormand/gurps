@@ -26,8 +26,12 @@ Object.defineProperty(Actor.prototype, 'temporaryEffects', {
 
     if (!!results && results.length > 1) {
       // get the active temporary effects that are also maneuvers
-      const maneuvers = results.filter((/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') === MANEUVER)
-      const notManeuvers = results.filter((/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') !== MANEUVER)
+      // const maneuvers = results.filter((/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') === MANEUVER)
+      // const notManeuvers = results.filter((/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') !== MANEUVER)
+
+      const maneuvers = results.filter(e => e.statuses.find(s => s === 'maneuver'))
+      const notManeuvers = results.filter(e => !maneuvers.includes(e))
+
       results = [...maneuvers, ...notManeuvers]
     }
     return results
@@ -325,7 +329,8 @@ export default class Maneuvers {
    * @returns {boolean}
    */
   static isActiveEffectManeuver(activeEffect) {
-    return activeEffect.getFlag ? activeEffect.getFlag('core', 'statusId') === MANEUVER : false
+    return activeEffect.statuses.find(s => s === 'maneuver')
+    // return activeEffect.getFlag ? activeEffect.getFlag('core', 'statusId') === MANEUVER : false
   }
 
   /**

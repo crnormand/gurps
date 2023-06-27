@@ -82,7 +82,7 @@ export class GurpsActor extends Actor {
   getOwners() {
     return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER)
   }
-  
+
   // 0.8.x added steps necessary to switch sheets
   /**
    * @param {Application} newSheet
@@ -256,7 +256,7 @@ export class GurpsActor extends Actor {
     // Must be done at end
     this._calculateWeights()
 
-    let maneuver = this.effects.contents.find(it => it.flags?.core?.statusId === 'maneuver')
+    let maneuver = this.effects.contents.find(it => it.statuses.find(s => s === 'maneuver'))
     this.system.conditions.maneuver = !!maneuver ? maneuver.flags.gurps.name : 'undefined'
     this.ignoreRender = saved
     if (!saved) setTimeout(() => this._forceRender(), 333)
@@ -462,7 +462,7 @@ export class GurpsActor extends Actor {
       })
     return eqtkey
   }
-  
+
   /**
    * @param {{ [key: string]: any }} dict
    * @param {string} type
@@ -865,8 +865,9 @@ export class GurpsActor extends Actor {
    */
   isEffectActive(effect) {
     for (const it of this.effects) {
-      let statusId = it.getFlag('core', 'statusId')
-      if (statusId === effect.id) return true
+      if (it.statuses.find(s => s === effect.id)) return true
+      // let statusId = it.getFlag('core', 'statusId')
+      // if (statusId === effect.id) return true
     }
 
     return false
@@ -1866,7 +1867,7 @@ export class GurpsActor extends Actor {
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
               r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + i18n("GURPS.acc") + ']'
+              r.notes += ' [' + m[2] + ' ' + i18n('GURPS.acc') + ']'
             }
             r.rof = w.rate_of_fire || ''
             r.shots = w.shots || ''
@@ -2928,7 +2929,7 @@ export class GurpsActor extends Actor {
   _removeOtf(key, text) {
     if (!text) return [text, null]
     let otf = null
-    let found = true 
+    let found = true
     while (found) {
       found = false
       var start
@@ -3051,7 +3052,7 @@ export class GurpsActor extends Actor {
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
               r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + i18n("GURPS.acc") + ']'
+              r.notes += ' [' + m[2] + ' ' + i18n('GURPS.acc') + ']'
             }
             r.rof = t(j2.rof)
             r.shots = t(j2.shots)
@@ -3730,7 +3731,7 @@ export class GurpsActor extends Actor {
     // @ts-ignore
     if (typeof itemData.toObject === 'function') {
       d = itemData.toObject()
-      d.system.eqt.count = itemData.system.eqt.count    // For some reason the count isn't deepcopied correctly.
+      d.system.eqt.count = itemData.system.eqt.count // For some reason the count isn't deepcopied correctly.
     }
     // @ts-ignore
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
