@@ -10,3 +10,4 @@ node_modules
 coverage
 .npmrc
 data/monsters.csv
+.history
