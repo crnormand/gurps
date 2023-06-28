@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.1
+
+- Fix for the maneuver and posture active effects.
+
 Release 0.16.0 07/20/2023
 
 - Update system.json Foundry v11
@@ -36,7 +40,7 @@ Release 0.15.28 02/12/2023
 
 Release 0.15.27 01/18/2023
 
-- Allow multiple commands on check/during OTF commands.   Check uses the last OTF to determine success
+- Allow multiple commands on check/during OTF commands. Check uses the last OTF to determine success
 - Update FrightCheck message to display OTF modifiers
 - Fix FrightCheck message PDF reference
 
@@ -48,7 +52,7 @@ Release 0.15.26 01/16/2023
 Release 0.15.25 01/16/2023
 
 - Fix Add OTF support for GM Notes module ;-)
-- Added (and defaulted to) DFRPG Slam calculation 
+- Added (and defaulted to) DFRPG Slam calculation
 
 Release 0.15.24 01/11/2023
 
