@@ -150,7 +150,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   getSelfTokens() {
     let list = canvas.tokens?.placeables.filter(it => it.owner)
     if (list && list.length === 1) return list
-    
+
     list = canvas.tokens?.placeables.filter(it => it.actor == GURPS.LastActor)
     if (list && list.length === 1) return list
 
@@ -223,9 +223,13 @@ export default class StatusChatProcessor extends ChatProcessor {
   async unset(tokens, effect) {
     for (const token of tokens) {
       for (const actorEffect of token.actor?.effects || []) {
-        if (effect.id == actorEffect.getFlag('core', 'statusId')) {
+        if (actorEffect.statuses.includes(effect.id)) {
           await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
         }
+
+        // if (effect.id == actorEffect.getFlag('core', 'statusId')) {
+        //   await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
+        // }
       }
     }
   }
@@ -255,7 +259,8 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   getStatusEffect(actorEffect) {
     for (const status of Object.values(CONFIG.statusEffects))
-      if (status.id == actorEffect.getFlag('core', 'statusId')) return status
+      if (actorEffect.statuses.includes(status.id)) return status
+    // if (status.id == actorEffect.getFlag('core', 'statusId')) return status
 
     return null
   }

@@ -141,6 +141,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   set endCondition(otf) {
     this.setFlag('gurps', 'endCondition', otf)
     if (!!otf) {
+      // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
       this.setFlag('core', 'statusId', `${this.name}-endCondition`)
     }
   }
@@ -206,6 +207,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     })
   }
 
+  // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
   // TODO Any ActiveEffect with a status.core.statusId is by default a temporary effect and will be added as an icon to the token.
 
   async isExpired() {
