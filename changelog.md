@@ -1,10 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.16.1
+Release 0.16.1 06/29/2023
 
 - Fix for the maneuver and posture active effects.
 
-Release 0.16.0 07/20/2023
+Release 0.16.0 06/20/2023
 
 - Update system.json Foundry v11
 - Move MOD bucket +50 to the right to fit hotbar
