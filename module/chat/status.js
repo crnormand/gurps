@@ -223,7 +223,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   async unset(tokens, effect) {
     for (const token of tokens) {
       for (const actorEffect of token.actor?.effects || []) {
-        if (actorEffect.statuses.includes(effect.id)) {
+        if (actorEffect.statuses.has(effect.id)) {
           await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
         }
 
@@ -258,8 +258,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    * @returns {EffectData|null}
    */
   getStatusEffect(actorEffect) {
-    for (const status of Object.values(CONFIG.statusEffects))
-      if (actorEffect.statuses.includes(status.id)) return status
+    for (const status of Object.values(CONFIG.statusEffects)) if (actorEffect.statuses.has(status.id)) return status
     // if (status.id == actorEffect.getFlag('core', 'statusId')) return status
 
     return null

@@ -1,5 +1,12 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.2
+
+- Fix for context menus in the editor sheet.
+- Update Nordlond Bestiary and Nightmare Fuel sheets for v11.
+- Restore the functionality to turn maneuvers on and off, and set their visibililty.
+- Fix for setting Standing posture from Token Action HUD Classic.
+
 Release 0.16.1 06/29/2023
 
 - Fix for the maneuver and posture active effects.

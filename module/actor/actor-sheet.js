@@ -578,20 +578,22 @@ export class GurpsActorSheet extends ActorSheet {
     }
 
     let trackermenu = html.find('#combat-trackers')
-    this._makeHeaderMenu(
-      $(trackermenu[0]),
-      '.headermenu',
-      [
-        {
-          name: i18n('GURPS.addTracker'),
-          icon: '<i class="fas fa-plus"></i>',
-          callback: e => {
-            this._addTracker()
+    if (!!trackermenu.length) {
+      this._makeHeaderMenu(
+        $(trackermenu[0]),
+        '.headermenu',
+        [
+          {
+            name: i18n('GURPS.addTracker'),
+            icon: '<i class="fas fa-plus"></i>',
+            callback: e => {
+              this._addTracker()
+            },
           },
-        },
-      ],
-      ClickAndContextMenu
-    )
+        ],
+        ClickAndContextMenu
+      )
+    }
   }
 
   _createEquipmentItemMenus(html) {
@@ -760,8 +762,7 @@ export class GurpsActorSheet extends ActorSheet {
         if (!!eqt.itemid) {
           itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
           let img = new Image()
-          if (itemData)
-            img.src = itemData.img
+          if (itemData) img.src = itemData.img
           const w = 50
           const h = 50
           const preview = DragDrop.createDragImage(img, w, h)
@@ -1148,7 +1149,9 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, menuitems, { eventName: eventname })
+    eventname.split(' ').forEach(function (e) {
+      new ContextMenu(html, cssclass, menuitems, { eventName: e })
+    })
   }
 
   sortAscendingMenu(key) {
