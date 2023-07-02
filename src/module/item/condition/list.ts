@@ -45,6 +45,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		},
 		[ConditionID.Reeling]: {
 			id: ConditionID.Reeling,
+			reference: "B419",
 			features: [
 				{
 					type: FeatureType.ThresholdBonus,
@@ -54,6 +55,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		},
 		[ConditionID.Fatigued]: {
 			id: ConditionID.Fatigued,
+			reference: "B426",
 			features: [
 				{
 					type: FeatureType.ThresholdBonus,
@@ -61,11 +63,15 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 				},
 			],
 		},
-		[ConditionID.Crippled]: { id: ConditionID.Crippled },
-		[ConditionID.Bleeding]: { id: ConditionID.Bleeding },
-		[ConditionID.Dead]: { id: ConditionID.Dead },
+		[ConditionID.Crippled]: { id: ConditionID.Crippled, reference: "B420" },
+		[ConditionID.Bleeding]: { id: ConditionID.Bleeding, reference: "B420" },
+		[ConditionID.Dead]: {
+			id: ConditionID.Dead,
+			reference: "B423",
+		},
 		[ConditionID.Shock]: {
 			id: ConditionID.Shock,
+			reference: "B419",
 			can_level: true,
 			levels: {
 				current: 0,
@@ -96,6 +102,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		},
 		[ConditionID.Pain]: {
 			id: ConditionID.Pain,
+			reference: "B428",
 			can_level: true,
 			levels: {
 				current: 0,
@@ -104,16 +111,17 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		},
 		[ConditionID.Unconscious]: { id: ConditionID.Unconscious },
 		[ConditionID.Sleeping]: { id: ConditionID.Sleeping },
-		[ConditionID.Coma]: { id: ConditionID.Coma },
-		[ConditionID.Stun]: { id: ConditionID.Stun },
-		[ConditionID.MentalStun]: { id: ConditionID.MentalStun },
+		[ConditionID.Coma]: { id: ConditionID.Coma, reference: "B429" },
+		[ConditionID.Stun]: { id: ConditionID.Stun, reference: "B420" },
+		[ConditionID.MentalStun]: { id: ConditionID.MentalStun, reference: "B420" },
 		[ConditionID.Poisoned]: { id: ConditionID.Poisoned },
-		[ConditionID.Burning]: { id: ConditionID.Burning },
-		[ConditionID.Cold]: { id: ConditionID.Cold },
+		[ConditionID.Burning]: { id: ConditionID.Burning, reference: "B434" },
+		[ConditionID.Cold]: { id: ConditionID.Cold, reference: "B430" },
 		[ConditionID.Disarmed]: { id: ConditionID.Disarmed },
-		[ConditionID.Falling]: { id: ConditionID.Falling },
+		[ConditionID.Falling]: { id: ConditionID.Falling, reference: "B431" },
 		[ConditionID.Grappled]: {
 			id: ConditionID.Grappled,
+			reference: "B371",
 			features: [
 				{
 					type: FeatureType.AttributeBonus,
@@ -126,40 +134,42 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 		},
 		[ConditionID.Restrained]: { id: ConditionID.Restrained },
 		[ConditionID.Pinned]: { id: ConditionID.Pinned },
-		[ConditionID.Sprinting]: { id: ConditionID.Sprinting },
+		[ConditionID.Sprinting]: { id: ConditionID.Sprinting, reference: "B354" },
 		[ConditionID.Flying]: { id: ConditionID.Flying },
-		[ConditionID.Stealth]: { id: ConditionID.Stealth },
+		[ConditionID.Stealth]: { id: ConditionID.Stealth, reference: "B222" },
 		[ConditionID.Waiting]: { id: ConditionID.Waiting },
 		[ConditionID.Invisible]: { id: ConditionID.Invisible },
-		[ConditionID.Coughing]: { id: ConditionID.Coughing },
-		[ConditionID.Retching]: { id: ConditionID.Retching },
+		[ConditionID.Coughing]: { id: ConditionID.Coughing, reference: "B428" },
+		[ConditionID.Retching]: { id: ConditionID.Retching, reference: "B429" },
 		[ConditionID.Nausea]: {
 			id: ConditionID.Nausea,
+			reference: "B428",
 			modifiers: [
 				{ name: LocalizeGURPS.translations.gurps.modifier.attribute.all, modifier: -2 },
 				{ name: LocalizeGURPS.translations.gurps.modifier.skill.all, modifier: -2 },
 				{ name: LocalizeGURPS.translations.gurps.modifier.active_defense.all, modifier: -1 },
 			],
 		},
-		[ConditionID.Agony]: { id: ConditionID.Agony },
-		[ConditionID.Seizure]: { id: ConditionID.Seizure },
+		[ConditionID.Agony]: { id: ConditionID.Agony, reference: "B428" },
+		[ConditionID.Seizure]: { id: ConditionID.Seizure, reference: "B429" },
 		[ConditionID.Blinded]: { id: ConditionID.Blinded },
 		[ConditionID.Deafened]: { id: ConditionID.Deafened },
 		[ConditionID.Silenced]: { id: ConditionID.Silenced },
-		[ConditionID.Choking]: { id: ConditionID.Choking },
-		[ConditionID.HeartAttack]: { id: ConditionID.HeartAttack },
-		[ConditionID.Euphoria]: { id: ConditionID.Euphoria },
-		[ConditionID.Hallucinating]: { id: ConditionID.Hallucinating },
+		[ConditionID.Choking]: { id: ConditionID.Choking, reference: "B428" },
+		[ConditionID.HeartAttack]: { id: ConditionID.HeartAttack, reference: "B429" },
+		[ConditionID.Euphoria]: { id: ConditionID.Euphoria, reference: "B428" },
+		[ConditionID.Hallucinating]: { id: ConditionID.Hallucinating, reference: "B429" },
 		[ConditionID.Drunk]: {
 			id: ConditionID.Drunk,
+			reference: "B428",
 			can_level: true,
 			levels: {
 				current: 0,
 				max: 2,
 			},
 		},
-		[ConditionID.Drowsy]: { id: ConditionID.Drowsy },
-		[ConditionID.Daze]: { id: ConditionID.Daze },
+		[ConditionID.Drowsy]: { id: ConditionID.Drowsy, reference: "B428" },
+		[ConditionID.Daze]: { id: ConditionID.Daze, reference: "B428" },
 	}
 
 	return ConditionList

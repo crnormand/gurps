@@ -7,7 +7,7 @@ export class LastActor {
 		if (actor.type === ActorType.Loot) return
 		await game.user?.setFlag(SYSTEM_NAME, "last_actor", actor.uuid)
 		if (token) await game.user?.setFlag(SYSTEM_NAME, "last_token", token.uuid)
-		await game.ModifierButton.render(true)
+		await game.ModifierButton.render()
 	}
 
 	static async get(): Promise<ActorGURPS | null> {

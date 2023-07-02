@@ -1,5 +1,15 @@
 import { ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
 import { ActorType } from "@module/data"
+import {
+	StaticTrait,
+	StaticEquipment,
+	StaticMelee,
+	StaticNote,
+	StaticRanged,
+	StaticReaction,
+	StaticSkill,
+	StaticSpell,
+} from "./components"
 
 export const MoveModeTypes = {
 	Ground: "gurps.character.move_modes.ground",
@@ -43,6 +53,8 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 		// Empty
 	}
 }
+
+export type StaticCharacterItems = StaticTrait | StaticSkill | StaticSpell | StaticEquipment | StaticNote
 
 export interface StaticCharacterSystemData extends ActorSystemData {
 	editing: boolean
@@ -98,18 +110,18 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 		}
 	}
 	move: any
-	reactions: any
-	conditionalmods: any
-	ads: any
-	skills: any
-	spells: any
+	reactions: { [key: string]: StaticReaction }
+	conditionalmods: { [key: string]: StaticReaction }
+	ads: { [key: string]: StaticTrait }
+	skills: { [key: string]: StaticSkill }
+	spells: { [key: string]: StaticSpell }
 	equipment: {
-		carried?: any
-		other?: any
+		carried: { [key: string]: StaticEquipment }
+		other: { [key: string]: StaticEquipment }
 	}
 	eqtsummary: number
-	melee: any
-	ranged: any
+	melee: { [key: string]: StaticMelee }
+	ranged: { [key: string]: StaticRanged }
 	currentdodge: any
 	languages: any
 	liftingmoving: {
@@ -121,7 +133,7 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 		shove: string
 		twohandedlift: string
 	}
-	notes: any
+	notes: { [key: string]: StaticNote }
 	equippedparryisfencing?: boolean
 	block?: number
 }

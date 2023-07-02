@@ -2,21 +2,21 @@
 
 .app {
 	box-shadow: none;
-	background: rgba(var(--color-background), 0.6);
+	background: rgba(var(--color-background), 0.8);
 	border: 1px solid rgb(var(--color-header));
 }
 
 #ui-left > #controls {
 	li {
-		background: rgba(var(--color-control), 0.6);
+		background: rgba(var(--color-control), 0.8);
 		color: rgb(var(--color-on-control));
 		border: 1px solid rgb(var(--color-control-edge));
 		box-shadow: none;
 		&.toggle {
-			background-color: rgba(var(--color-pressed-control), 0.6);
+			background-color: rgba(var(--color-pressed-control), 0.8);
 			color: rgb(var(--color-on-pressed-control));
 			&.active {
-				background-color: rgba(var(--color-pressed-control), 0.6);
+				background-color: rgba(var(--color-pressed-control), 0.8);
 				color: rgb(var(--color-on-pressed-control));
 				border-color: rgb(var(--color-on-pressed-control));
 				box-shadow: 0 0 10px rgb(var(--color-on-pressed-control));
@@ -32,7 +32,7 @@
 
 #navigation {
 	.nav-item {
-		background: rgba(var(--color-control), 0.6);
+		background: rgba(var(--color-control), 0.8);
 		color: rgb(var(--color-on-control));
 		border: 1px solid rgb(var(--color-control-edge));
 	}
@@ -44,7 +44,7 @@
 				}
 			}
 			/* &.gm { */
-			/* 	background: rgba(var(--color-current-tab), 0.6); */
+			/* 	background: rgba(var(--color-current-tab), 0.8); */
 			/* 	color: rgb(var(--color-on-current-tab)); */
 			/* } */
 		}
@@ -52,10 +52,11 @@
 }
 
 aside#players {
+	background: transparent;
 	border: 1px solid rgb(var(--color-header));
 	> h3 {
 		display: flex;
-		background: rgba(var(--color-header), 0.6);
+		background: rgba(var(--color-header), 0.8);
 		color: rgb(var(--color-on-header));
 		border-bottom: none;
 		padding: var(--padding-header);
@@ -70,7 +71,7 @@ aside#players {
 		display: grid;
 		margin: 0px;
 		> li {
-			background-color: rgba(var(--color-content), 0.6);
+			background-color: rgba(var(--color-content), 0.8);
 			color: rgb(var(--color-on-content));
 			padding: var(--padding-standard);
 			border-bottom: 1px solid rgb(var(--color-header));
@@ -80,7 +81,7 @@ aside#players {
 			}
 		}
 		> li:nth-child(2n + 1) {
-			background-color: rgba(var(--color-banding), 0.6);
+			background-color: rgba(var(--color-banding), 0.8);
 			color: rgb(var(--color-on-banding));
 		}
 	}
@@ -88,6 +89,7 @@ aside#players {
 
 #hotbar {
 	#hotbar-directory-controls,
+	#hotbar-lock,
 	#hotbar-page-controls {
 		background: rgba(var(--color-control), 0.8);
 		color: rgb(var(--color-on-control));

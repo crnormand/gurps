@@ -17,7 +17,7 @@ class TraitContainerGURPS extends ItemGCS {
 	get enabled(): boolean {
 		if (this.system.disabled) return false
 		let enabled = !this.system.disabled
-		if (this.parent instanceof TraitContainerGURPS) enabled = enabled && this.parent.enabled
+		if (this.container instanceof TraitContainerGURPS) enabled = enabled && this.container.enabled
 		return enabled
 	}
 

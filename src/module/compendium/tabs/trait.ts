@@ -51,6 +51,7 @@ export class CompendiumTraitTab extends CompendiumTab {
 					modifiers: trait.modifiers,
 					cr: trait.cr,
 					formattedCR: trait.formattedCR,
+					flags: trait.flags,
 				})
 			})
 

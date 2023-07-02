@@ -57,10 +57,6 @@ export class BaseFeature {
 		this._levels = levels
 	}
 
-	// SetParent(parent: ItemGURPS): void {
-	// 	this.parent = parent.uuid
-	// }
-
 	addToTooltip(buffer: TooltipGURPS | null): void {
 		if (buffer) {
 			buffer.push("\n")

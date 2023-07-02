@@ -1,12 +1,13 @@
 import { HitLocationTable } from "@actor/character/hit_location"
 import { CharacterImportedData } from "@actor/character/import"
+import { EquipmentContainerSystemData, EquipmentSystemData } from "@item"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { SYSTEM_NAME, SETTINGS } from "@module/data"
 import { LocalizeGURPS, round, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import {
-	StaticAdvantage,
+	StaticTrait,
 	StaticEquipment,
 	StaticMelee,
 	StaticModifier,
@@ -261,12 +262,13 @@ export class StaticCharacterImporter {
 		}
 	}
 
-	calcTotalCarried(eqp: StaticCharacterSystemData["equipment"]["carried"]) {
+	calcTotalCarried(eqp: (EquipmentSystemData | EquipmentContainerSystemData)[]) {
 		let t = 0
 		if (!eqp) return t
 		for (let i of eqp) {
 			let w = 0
 			w += parseFloat(i.weight || "0") * (i.type === "equipment_container" ? 1 : i.quantity || 0)
+			// @ts-ignore
 			if (i.children?.length) w += this.calcTotalCarried(i.children)
 			t += w
 		}
@@ -353,7 +355,7 @@ export class StaticCharacterImporter {
 	}
 
 	importTrait(i: TraitSystemData | TraitContainerSystemData | any, p: string) {
-		let a = new StaticAdvantage()
+		let a = new StaticTrait()
 		a.name = i.name + (i.levels ? ` ${i.levels.toString()}` : "") || "Trait"
 		a.points = i.calc?.points
 		a.note = i.notes

@@ -1,10 +1,6 @@
 <div class="desc">
-	<div class="name">
-		{{this.name}}
-	</div>
-	<div class="item-notes">
-		{{{this.notes}}}
-	</div>
+	<div data-uuid="{{this.itemid}}" class="name">{{ this.name }} {{#if this.itemid}}<i class="fas fa-star tooltip gga-item"></i>{{/if}}</div>
+	<div class="item-notes">{{{this.notes}}}</div>
 </div>
 <div data-uuid="{{@key}}" data-weapon="melee" data-type="attack" class="usage rollable">
 	{{this.mode}}</div>

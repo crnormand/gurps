@@ -152,7 +152,7 @@ declare global {
 			isBar: boolean
 		): Promise<this | undefined>
 
-		override prepareEmbeddedDocuments(): void
+		override prepareDescendantDocuments(): void
 
 		/**
 		 * Roll initiative for all Combatants in the currently active Combat encounter which are associated with this Actor.
@@ -180,7 +180,7 @@ declare global {
 			user: string
 		): void
 
-		protected override _onCreateEmbeddedDocuments(
+		protected override _onCreateDescendantDocuments(
 			embeddedName: string,
 			documents: foundry.abstract.Document<any, any>[],
 			result: Record<string, unknown>[],
@@ -188,7 +188,7 @@ declare global {
 			userId: string
 		): void
 
-		protected override _onUpdateEmbeddedDocuments(
+		protected override _onUpdateDescendantDocuments(
 			embeddedName: string,
 			documents: foundry.abstract.Document<any, any>[],
 			result: Record<string, unknown>[],
@@ -196,7 +196,7 @@ declare global {
 			userId: string
 		): void
 
-		protected override _onDeleteEmbeddedDocuments(
+		protected override _onDeleteDescendantDocuments(
 			embeddedName: string,
 			documents: foundry.abstract.Document<any, any>[],
 			result: string[],

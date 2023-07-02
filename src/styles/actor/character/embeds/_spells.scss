@@ -5,11 +5,11 @@
 		grid-area: auto;
 	}
 
-	.desc:nth-child(11n + 1),
-	.level:nth-child(11n + 2),
-	.rsl:nth-child(11n + 3),
-	.points:nth-child(11n + 4),
-	.reference:nth-child(11n + 5) {
+	.desc:nth-child(10n + 1),
+	.level:nth-child(10n + 2),
+	.rsl:nth-child(10n + 3),
+	.points:nth-child(10n + 4),
+	.reference:nth-child(10n + 5) {
 		&:not(.header) {
 			background-color: rgba(var(--color-banding), 1);
 			color: rgba(var(--color-on-banding), 1);

@@ -50,6 +50,7 @@ export class CompendiumEquipmentModifierTab extends CompendiumTab {
 					techLevel: modifier.techLevel,
 					value: modifier.costDescription,
 					weight: modifier.weightDescription,
+					flags: modifier.flags,
 				})
 			})
 

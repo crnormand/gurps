@@ -1,4 +1,5 @@
 import { ItemSheetGURPS } from "@item/base"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { DurationType } from "./data"
 
 export class EffectSheet extends ItemSheetGURPS {
@@ -8,6 +9,15 @@ export class EffectSheet extends ItemSheetGURPS {
 			classes: options.classes.concat(["effect"]),
 		})
 		return options
+	}
+
+	override get template(): string {
+		return `/systems/${SYSTEM_NAME}/templates/item/${ItemType.Effect}/sheet.hbs`
+	}
+
+	override get isEditable(): boolean {
+		if (this.item.type === ItemType.Condition) return false
+		return super.isEditable
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {

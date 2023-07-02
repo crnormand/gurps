@@ -1,0 +1,21 @@
+<div id="melee" class="item-list table static">
+	<div class="header usage desc">{{localize "gurps.weapon.melee_header"}}</div>
+	<div class="header parry">{{localize "gurps.character.melee.parry"}}</div>
+	<div class="header block">{{localize "gurps.character.melee.block"}}</div>
+	<div class="header damage">{{localize "gurps.character.melee.damage"}}</div>
+	<div class="header reach">{{localize "gurps.character.melee.reach"}}</div>
+	<div class="header st">{{localize "gurps.character.melee.st"}}</div>
+	{{#each melee}}
+	<div class="usage desc item" data-uuid="{{this.key}}" data-type="Item">
+		<div class="name">
+			{{this.data.mode}}
+		</div>
+		{{>actor/character/sections/item-notes}}
+	</div>
+	<div data-uuid="{{this.key}}" class="parry rollable">{{this.data.parry}}</div>
+	<div data-uuid="{{this.key}}" class="block rollable">{{this.data.block}}</div>
+	<div data-uuid="{{this.key}}" class="damage rollable"> {{this.data.damage}}</div>
+	<div data-uuid="{{this.key}}" class="reach">{{this.data.reach}}</div>
+	<div data-uuid="{{this.key}}" class="st">{{this.data.st}}</div>
+	{{/each}}
+</div>

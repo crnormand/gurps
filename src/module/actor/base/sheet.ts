@@ -6,6 +6,7 @@ import { ActorGURPS } from "@module/config"
 import { PropertiesToSource } from "types/types/helperTypes"
 import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
 import { LastActor } from "@util"
+import { ContainerGURPS, ItemFlags } from "@item"
 
 type DispatchFunctions = Record<string, (arg: any) => void>
 
@@ -37,6 +38,12 @@ export class ActorSheetGURPS extends ActorSheet {
 		super._onDrop(event)
 	}
 
+	emulateItemDrop(data: any) {
+		const item = fromUuidSync(data.uuid) as Item
+		if (!item) return
+		return this._onDropItemCreate({ ...item.toObject(), uuid: data.uuid } as any)
+	}
+
 	// DragData handling
 	protected override async _onDropItem(
 		event: DragEvent,
@@ -63,14 +70,49 @@ export class ActorSheetGURPS extends ActorSheet {
 		} else {
 			item = await (Item.implementation as any).fromDropData(data)
 		}
-		const itemData = { ...item.toObject(), uuid: item.uuid }
+		const itemData = { ...item.toObject(), id: item.id }
 
 		// Handle item sorting within the same Actor
 		if (this.actor.uuid === item.actor?.uuid) {
 			return this._onSortItem(event, itemData, { top: top, in: inContainer })
 		}
 
-		return this._onDropItemCreate(itemData)
+		// const updates = await this._onDropItemCreate(itemData)
+		// if (!updates.length) return
+		// const rootID = updates[0].id
+
+		// if (item instanceof ContainerGURPS) {
+		// 	const itemList =
+		// 		item.items.contents.map(e =>
+		// 			mergeObject(e.toObject(), {
+		// 				[`flags.${SYSTEM_NAME}.${ItemFlags.Container}`]: rootID
+		// 			})
+		// 		)
+		// 	await this._onDropItemCreate(itemList)
+		// }
+		return this._onDropNestedItemCreate([item], { id: null })
+		// return this._onDropItemCreate(itemList)
+	}
+
+	async _onDropNestedItemCreate(items: Item[], context: { id: string | null } = { id: null }) {
+		items = items instanceof Array ? items : [items]
+		const itemData = items.map(e =>
+			mergeObject(e.toObject(), { [`flags.${SYSTEM_NAME}.${ItemFlags.Container}`]: context.id })
+		)
+		const newItems = await this._onDropItemCreate(itemData as any)
+		let totalItems = newItems
+		for (let i = 0; i < items.length; i++) {
+			if (items[i] instanceof ContainerGURPS) {
+				const parent = items[i] as ContainerGURPS
+				const childItems = await this._onDropNestedItemCreate(parent.items.contents, { id: newItems[i].id })
+				totalItems = totalItems.concat(childItems)
+			}
+		}
+		return totalItems
+	}
+
+	async _onDropItemCreate(itemData: any) {
+		return super._onDropItemCreate(itemData)
 	}
 
 	protected override async _onDragStart(event: DragEvent): Promise<void> {
@@ -119,14 +161,15 @@ export class ActorSheetGURPS extends ActorSheet {
 
 	protected override async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties> & { uuid: string },
+		itemData: PropertiesToSource<ItemDataBaseProperties> & { id: string | null },
 		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
-		const source: any = this.actor.deepItems.get(itemData.uuid)
+		const source: any = this.actor.items.get(itemData.id!)
 		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
-		let target: any = this.actor.deepItems.get(dropTarget?.data("uuid"))
+		const id = dropTarget?.data("uuid").split(".").at(-1)
+		let target: any = this.actor.items.get(id)
 		if (!target) return []
-		let parent: any = target?.parent
+		let parent: any = target?.container
 		let parents = target?.parents
 		if (options.in) {
 			parent = target
@@ -146,30 +189,35 @@ export class ActorSheetGURPS extends ActorSheet {
 			const update = u.update
 			;(update as any)._id = u.target!._id
 			return update
-		})
+		}) as { _id: string; sort: number; [key: string]: any }[]
 
-		if (source && source.parent !== parent) {
+		console.log(source, source.container, parent)
+		if (source && source.container !== parent) {
+			const id = updateData.findIndex(e => (e._id = source._id))
 			if (source.items && parents.includes(source)) return []
+			console.log(updateData)
+			updateData[id][`flags.${SYSTEM_NAME}.${ItemFlags.Container}`] = parent instanceof Item ? parent.id : null
 			if ([ItemType.Equipment, ItemType.EquipmentContainer].includes(source.type)) {
-				if (dropTarget.hasClass("other")) source.system.other = true
-				else source.system.other = false
+				if (dropTarget.hasClass("other")) updateData[id]["system.other"] = true
+				else updateData[id]["system.other"] = false
 			}
-			await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
-			return parent?.createEmbeddedDocuments(
-				"Item",
-				[
-					{
-						name: source.name!,
-						system: source.system,
-						type: source.type,
-						flags: source.flags,
-						sort: updateData[0].sort,
-					},
-				],
-				{ temporary: false }
-			)
+			console.log(updateData)
+			// await source.parent!.deleteEmbeddedDocuments("Item", [source!._id!], { render: false })
+			// return parent?.createEmbeddedDocuments(
+			// 	"Item",
+			// 	[
+			// 		{
+			// 			name: source.name!,
+			// 			system: source.system,
+			// 			type: source.type,
+			// 			flags: source.flags,
+			// 			sort: updateData[0].sort,
+			// 		},
+			// 	],
+			// 	{ temporary: false }
+			// )
 		}
-		return parent!.updateEmbeddedDocuments("Item", updateData) as unknown as Item[]
+		return this.actor!.updateEmbeddedDocuments("Item", updateData) as unknown as Item[]
 	}
 
 	protected _getHeaderButtons(): Application.HeaderButton[] {

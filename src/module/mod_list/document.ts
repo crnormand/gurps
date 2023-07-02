@@ -20,7 +20,14 @@ class ModifierList extends Application {
 
 	get collapse(): boolean {
 		const collapse = game.settings.get(SYSTEM_NAME, SETTINGS.MODIFIER_LIST_COLLAPSE) as boolean
-		return collapse ?? true
+		const button_open = game.ModifierButton.window.rendered
+		if (collapse && !button_open) return true
+		return false
+	}
+
+	private get _bottom(): string {
+		const bottom = Math.max($("body").height()! - $("#players").position().top, 64)
+		return `bottom: ${bottom}px`
 	}
 
 	async getData(options?: Partial<ApplicationOptions> | undefined): Promise<object> {
@@ -38,12 +45,13 @@ class ModifierList extends Application {
 			targetMods,
 			actorMods,
 			collapse: this.collapse,
+			bottom: this._bottom,
 		})
 	}
 
 	activateListeners(html: JQuery<HTMLElement>): void {
-		const bottom = Math.max($("body").height()! - $("#players").position().top, 64)
-		if (!this.collapse) html.css("bottom", `${bottom}px`)
+		// const bottom = Math.max($("body").height()! - $("#players").position().top, 64)
+		// if (!this.collapse) html.css("bottom", `${bottom}px`)
 
 		super.activateListeners(html)
 		html.find(".active").on("click", event => this.removeModifier(event))
@@ -56,8 +64,10 @@ class ModifierList extends Application {
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
-		html.insertBefore($("#ui-left").find("#players"))
-		this._element = html
+		if ($("body").find("#modifier-list").length === 0) {
+			html.insertBefore($("body").find("#players"))
+			this._element = html
+		}
 	}
 
 	_onClickModifier(event: JQuery.ClickEvent) {
@@ -100,7 +110,7 @@ class ModifierList extends Application {
 		}
 		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
-		game.ModifierButton.render(true)
+		game.ModifierButton.render()
 		Hooks.call("addModifier")
 	}
 
@@ -112,7 +122,7 @@ class ModifierList extends Application {
 		modList.splice(index, 1)
 		game.user?.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modList)
 		this.render()
-		game.ModifierButton.render(true)
+		game.ModifierButton.render()
 	}
 
 	fadeIn() {

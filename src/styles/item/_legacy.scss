@@ -1,0 +1,137 @@
+#sheet {
+	.item-list {
+		display: grid;
+		margin: 2px 16px;
+	}
+
+	#melee {
+		grid-template-columns: 1fr repeat(5, min-content);
+
+		:nth-last-child(-n + 6) {
+			border-bottom: none;
+		}
+
+		.usage:nth-child(12n + 1),
+		.parry:nth-child(12n + 2),
+		.block:nth-child(12n + 3),
+		.damage:nth-child(12n + 4),
+		.reach:nth-child(12n + 5),
+		.st:nth-child(12n + 6) {
+			&:not(.header) {
+				background-color: rgb(var(--color-banding));
+				color: rgb(var(--color-on-banding));
+			}
+		}
+	}
+
+	#ranged {
+		grid-template-columns: 1fr repeat(8, auto);
+
+		:nth-last-child(-n + 9) {
+			border-bottom: none;
+		}
+
+		.usage:nth-child(18n + 1),
+		.accuracy:nth-child(18n + 2),
+		.damage:nth-child(18n + 3),
+		.range:nth-child(18n + 4),
+		.rate-of-fire:nth-child(18n + 5),
+		.shots:nth-child(18n + 6),
+		.bulk:nth-child(18n + 7),
+		.recoil:nth-child(18n + 8),
+		.st:nth-child(18n + 9) {
+			&:not(.header) {
+				background-color: rgb(var(--color-banding));
+				color: rgb(var(--color-on-banding));
+			}
+		}
+	}
+
+	#traits {
+		grid-area: traits;
+
+		grid-template-columns: 1fr repeat(2, auto);
+		.header {
+			grid-area: auto;
+		}
+
+		.desc:nth-child(6n + 1),
+		.points:nth-child(6n + 2),
+		.reference:nth-child(6n + 3) {
+			&:not(.header) {
+				background-color: rgba(var(--color-banding), 1);
+				color: rgba(var(--color-on-banding), 1);
+				@import "roll_banding";
+				&.disabled {
+					.name,
+					.item-notes,
+					&.points,
+					&.reference {
+						color: rgba(var(--color-on-banding), 0.3);
+						.rollable,
+						.rollable.hover {
+							color: rgba(var(--color-on-banding), 0.3) !important;
+							background: transparent !important;
+							cursor: default;
+						}
+					}
+				}
+			}
+		}
+
+		.disabled {
+			.name {
+				text-decoration: line-through;
+			}
+			.name,
+			.item-notes,
+			&.points,
+			&.reference {
+				color: rgba(var(--color-on-content), 0.3);
+			}
+		}
+	}
+	#spells {
+		grid-area: spells;
+		grid-template-columns: 1fr repeat(4, auto);
+		.header {
+			grid-area: auto;
+		}
+
+		.desc:nth-child(11n + 1),
+		.level:nth-child(11n + 2),
+		.rsl:nth-child(11n + 3),
+		.points:nth-child(11n + 4),
+		.reference:nth-child(11n + 5) {
+			&:not(.header) {
+				background-color: rgba(var(--color-banding), 1);
+				color: rgba(var(--color-on-banding), 1);
+				@import "roll_banding";
+			}
+		}
+	}
+
+	#skills {
+		grid-area: skills;
+		grid-template-columns: 1fr repeat(4, auto);
+		.header {
+			grid-area: auto;
+			&.desc {
+				display: flex;
+				justify-content: space-evenly;
+			}
+		}
+
+		.desc:nth-child(10n + 1),
+		.level:nth-child(10n + 2),
+		.rsl:nth-child(10n + 3),
+		.points:nth-child(10n + 4),
+		.reference:nth-child(10n + 5) {
+			&:not(.header) {
+				background-color: rgba(var(--color-banding), 1);
+				color: rgba(var(--color-on-banding), 1);
+				@import "roll_banding";
+			}
+		}
+	}
+}

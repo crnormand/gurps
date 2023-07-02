@@ -1,0 +1,25 @@
+&.rollable:not([data-type="modifier"]):not(.noroll),
+.rollable:not([data-type="modifier"]):not(.noroll) {
+	background: var(--background-roll-banding);
+	color: rgb(var(--color-on-button-roll)) !important;
+	&.hover {
+		background: rgb(var(--color-button-roll-rollover)) !important;
+		color: rgb(var(--color-on-button-roll-rollover)) !important;
+	}
+	input {
+		color: inherit;
+	}
+}
+
+&.rollable[data-type="modifier"]:not(.noroll),
+.rollable[data-type="modifier"]:not(.noroll) {
+	background: var(--background-mod-banding);
+	color: rgb(var(--color-on-button-mod)) !important;
+	&.hover {
+		background: rgb(var(--color-button-mod-rollover)) !important;
+		color: rgb(var(--color-on-button-mod-rollover)) !important;
+	}
+	input {
+		color: inherit;
+	}
+}

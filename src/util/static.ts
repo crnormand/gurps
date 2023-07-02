@@ -1,5 +1,5 @@
 import { StaticCharacterGURPS } from "@actor"
-import { StaticAdvantage } from "@actor/static_character/components"
+import { StaticTrait } from "@actor/static_character/components"
 import { StaticItemGURPS } from "@item"
 
 /**
@@ -29,8 +29,8 @@ export function recurseList(
  * @param actor
  * @param sname
  */
-export function findAdDisad(actor: StaticCharacterGURPS, sname: string): StaticAdvantage | null {
-	let t: StaticAdvantage | null = null
+export function findAdDisad(actor: StaticCharacterGURPS, sname: string): StaticTrait | null {
+	let t: StaticTrait | null = null
 	if (!actor) return t
 	sname = makeRegexPatternFrom(sname, false)
 	let regex = new RegExp(sname, "i")
@@ -112,7 +112,7 @@ export function convertRollStringToArrayOfInt(text: string) {
  * @param value
  * @param index
  */
-export function put(obj: any, value: any, index = -1) {
+export function put(obj: any, value: any, index = -1): string {
 	if (index === -1) {
 		index = 0
 		while (obj.hasOwnProperty(zeroFill(index))) index++
@@ -192,6 +192,7 @@ export function flatList(
 			if (newItem.hasCollapsed) flatList(item.collapsed, level + 1, `${newKey}.collapsed.`, data, true)
 		}
 	}
+	return data
 }
 
 /**
@@ -235,6 +236,7 @@ export async function insertBeforeKey(actor: StaticCharacterGURPS, path: string,
  * @param {string} path
  */
 export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, path: string) {
+	console.log(actor, path)
 	let i = path.lastIndexOf(".")
 	let objpath = path.substring(0, i)
 	let key = path.substring(i + 1)
@@ -243,7 +245,7 @@ export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, p
 	let objkey = objpath.substring(i + 1)
 	let object = decode(actor, objpath)
 	let t = `${parentpath}.-=${objkey}`
-	await actor.update({ [t]: null }) // Delete the whole object
+	await actor.update({ [t]: null }, { render: false }) // Delete the whole object
 	delete object[key]
 	i = parseInt(key)
 
@@ -261,7 +263,7 @@ export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, p
 			a[v] = object[v]
 			return a
 		}, {}) // Enforced key order
-	await actor.update({ [objpath]: sorted }, { diff: false, render: false })
+	await actor.update({ [objpath]: sorted }, { diff: false, render: true })
 }
 
 /**

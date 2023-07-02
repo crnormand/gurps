@@ -12,12 +12,14 @@ export interface BaseItemSourceGURPS<TItemType extends ItemType = ItemType, TSys
 
 export enum ItemFlags {
 	Deprecation = "deprecation",
-	Contents = "contentsData",
+	Container = "container",
+	// Contents = "contentsData",
 }
 
 export interface ItemFlagsGURPS extends Record<string, unknown> {
 	[SYSTEM_NAME]?: {
-		contentsData?: Array<any>
+		// contentsData?: Array<any>
+		[ItemFlags.Container]?: string | null
 	}
 }
 

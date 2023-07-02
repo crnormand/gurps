@@ -41,6 +41,7 @@ export interface EffectSystemData {
 		turns?: number
 		combat?: string | null
 	}
+	reference: string
 }
 
 export interface EffectModificationOptions extends DocumentModificationOptions {

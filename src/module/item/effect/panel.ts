@@ -13,6 +13,11 @@ export class EffectPanel extends Application {
 		return canvas?.tokens?.controlled[0]?.actor ?? game.user?.character ?? null
 	}
 
+	protected _injectHTML(html: JQuery<HTMLElement>): void {
+		html.insertBefore($("#ui-middle").find("#ui-bottom"))
+		this._element = html
+	}
+
 	static override get defaultOptions(): ApplicationOptions {
 		return {
 			...super.defaultOptions,
@@ -34,7 +39,7 @@ export class EffectPanel extends Application {
 			}
 
 		const effects = (actor.itemTypes[ItemType.Effect] as any).map((effect: EffectGURPS) => {
-			// Const duration = effect.duration.total
+			// const duration = effect.duration.total
 			// const { system } = effect
 			return effect
 		})
@@ -48,5 +53,26 @@ export class EffectPanel extends Application {
 			conditions,
 			user: { isGM: game.user?.isGM },
 		}
+	}
+
+	override activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
+
+		html.find(".effect-item[data-uuid]").on("click", event => this._onEffectClick(event))
+		html.find(".effect-item[data-uuid]").on("contextmenu", event => this._onEffectContextMenu(event))
+	}
+
+	private async _onEffectClick(event: JQuery.ClickEvent): Promise<any> {
+		const effect: EffectGURPS = (await fromUuid($(event.currentTarget).data("uuid"))) as any
+		if (!effect) return
+
+		if (effect.canLevel) return effect.increaseLevel()
+	}
+
+	private async _onEffectContextMenu(event: JQuery.ContextMenuEvent): Promise<any> {
+		const effect: EffectGURPS = (await fromUuid($(event.currentTarget).data("uuid"))) as any
+		if (!effect) return
+		if (effect.canLevel) return effect.decreaseLevel()
+		else return effect.delete()
 	}
 }

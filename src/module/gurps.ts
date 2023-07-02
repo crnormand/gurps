@@ -33,7 +33,6 @@ import { registerSettings } from "./settings"
 import { preloadTemplates } from "./preload-templates"
 import { evaluateToNumber, getDefaultSkills, LastActor, LocalizeGURPS, setInitiative, Static } from "@util"
 import { registerHandlebarsHelpers } from "@util/handlebars-helpers"
-import { BaseActorGURPS } from "@actor/base"
 import { GURPSCONFIG } from "./config"
 import { fSearch } from "@util/fuse"
 import { DiceGURPS } from "@module/dice"
@@ -77,11 +76,12 @@ import {
 	TraitSheet,
 	WeaponSheet,
 } from "@item"
-import { CharacterSheetGURPS, LootSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
+import { ActorSheetGURPS, BaseActorGURPS, CharacterSheetGURPS, LootSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
 import { DamageCalculator } from "./damage_calculator/damage_calculator"
 import { ActiveEffectGURPS } from "@module/effect"
 import { ModifierList } from "./mod_list"
 import { PDF } from "@module/pdf"
+import { UserGURPS } from "./user/document"
 
 Error.stackTraceLimit = Infinity
 
@@ -115,6 +115,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.DamageCalculator = DamageCalculator
 	GURPS.getDefaultSkills = getDefaultSkills
 	GURPS.roll = RollGURPS
+	GURPS.static = Static
 }
 
 // Initialize system
@@ -131,6 +132,7 @@ Hooks.once("init", async () => {
 	CONFIG.GURPS = GURPSCONFIG
 
 	// Assign custom classes and constants hereby
+	CONFIG.User.documentClass = UserGURPS
 	CONFIG.Item.documentClass = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
 	CONFIG.Token.documentClass = TokenDocumentGURPS
@@ -243,7 +245,7 @@ Hooks.once("init", async () => {
 		label: game.i18n.localize("gurps.system.sheet.weapon"),
 	})
 	Items.registerSheet(SYSTEM_NAME, EffectSheet, {
-		types: [ItemType.Effect],
+		types: [ItemType.Effect, ItemType.Condition],
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.effect"),
 	})
@@ -264,7 +266,7 @@ Hooks.once("init", async () => {
 		label: game.i18n.localize("gurps.system.sheet.loot"),
 	})
 	Actors.registerSheet(SYSTEM_NAME, StaticCharacterSheetGURPS, {
-		types: [ActorType.LegacyCharacter],
+		types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.character"),
 	})
@@ -275,12 +277,20 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.pdf_edit"),
 	})
+
+	LocalizeGURPS.ready = true
 })
 
 // Setup system
 Hooks.once("setup", async () => {
-	LocalizeGURPS.ready = true
+	// LocalizeGURPS.ready = true
 	// Do anything after initialization but before ready
+
+	game.ModifierButton = new ModifierButton()
+	game.ModifierButton.render(true)
+	game.ModifierList = new ModifierList()
+	game.ModifierList.render(true)
+	game.CompendiumBrowser = new CompendiumBrowser()
 })
 
 // When ready
@@ -313,11 +323,6 @@ Hooks.once("ready", async () => {
 	if (canvas && canvas.hud) {
 		canvas.hud.token = new TokenHUDGURPS()
 	}
-	game.ModifierButton = new ModifierButton()
-	game.ModifierButton.render(true)
-	game.ModifierList = new ModifierList()
-	game.ModifierList.render(true)
-	game.CompendiumBrowser = new CompendiumBrowser()
 
 	// Set initial LastActor values
 	GURPS.LastActor = await LastActor.get()
@@ -331,8 +336,8 @@ Hooks.once("ready", async () => {
 		switch (response.type as SOCKET) {
 			case SOCKET.UPDATE_BUCKET:
 				// Ui.notifications?.info(response.users)
-				await game.ModifierList.render(true)
-				return game.ModifierButton.render(true)
+				await game.ModifierList.render()
+				return game.ModifierButton.render()
 			case SOCKET.INITIATIVE_CHANGED:
 				CONFIG.Combat.initiative.formula = response.formula
 			default:
@@ -524,4 +529,32 @@ Hooks.once("item-piles-ready", async function () {
 		// with `.toObject()` and strip out any module data
 		CURRENCIES: [],
 	})
+})
+
+Hooks.on("dropCanvasData", function (_canvas, data: any) {
+	const dropTarget = [...(canvas!.tokens!.placeables as TokenGURPS[])]
+		.sort((a, b) => b.document.sort - a.document.sort)
+		.find(token => {
+			const maximumX = token.x + (token.hitArea?.right ?? 0)
+			const maximumY = token.y + (token.hitArea?.bottom ?? 0)
+			return data.x >= token.x && data.y >= token.y && data.x <= maximumX && data.y <= maximumY
+		})
+
+	const actor = dropTarget?.actor
+	if (actor && data.type === "Item") {
+		;(actor.sheet as ActorSheetGURPS).emulateItemDrop(data as any)
+		return false
+	}
+})
+
+Hooks.on("renderPlayerList", function (_hotbar: any, element: JQuery<HTMLElement>, _options: any) {
+	if (!game.ModifierList) return
+	game.ModifierButton._injectHTML(element.parent("#interface"))
+	game.ModifierList.render()
+})
+
+Hooks.on("renderHotbar", function (_hotbar: any, element: JQuery<HTMLElement>, _options: any) {
+	if (!game.ModifierButton) return
+	game.ModifierButton._injectHTML(element.parent("#ui-bottom"))
+	game.ModifierButton.render()
 })

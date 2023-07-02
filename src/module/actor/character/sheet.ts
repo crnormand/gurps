@@ -1,7 +1,9 @@
 import { ActorFlags, ActorSheetGURPS } from "@actor/base"
 import {
+	EffectGURPS,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ItemFlags,
 	ManeuverID,
 	MeleeWeaponGURPS,
 	NoteContainerGURPS,
@@ -292,7 +294,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	async _newItem(type: ItemType, other = false) {
-		const itemName = `ITEM.Type${type.charAt(0).toUpperCase()}${type.slice(1)}`
+		const itemName = `TYPES.Item.${type}`
 		const itemData: any = {
 			type,
 			name: game.i18n.localize(itemName),
@@ -389,8 +391,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
 		const uuid = $(event.currentTarget).data("uuid")
-		// Const item = this.actor.deepItems.get(uuid.split(".").at(-1))
-		const item = this.actor.deepItems.get(uuid)
+		const id = uuid.split(".").at(-1)
+		const item = this.actor.items.get(id) as ItemGURPS
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
 		ctx.menuItems.push({
@@ -404,14 +406,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 					flags: (item as any).flags,
 					sort: ((item as any).sort ?? 0) + 1,
 				}
-				await item.parent.createEmbeddedDocuments("Item", [itemData])
+				await item.container?.createEmbeddedDocuments("Item", [itemData])
 			},
 		})
 		ctx.menuItems.push({
 			name: LocalizeGURPS.translations.gurps.context.delete,
 			icon: "<i class='gcs-trash'></i>",
 			callback: () => {
-				return item.delete()
+				return this.actor.deleteEmbeddedDocuments("Item", [item.id!])
 			},
 		})
 		if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) {
@@ -554,7 +556,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 						_id: item._id,
 					}
 					await item.delete()
-					await item.parent.createEmbeddedDocuments("Item", [itemData])
+					await item.container?.createEmbeddedDocuments("Item", [itemData])
 				},
 			})
 		if (
@@ -575,7 +577,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 						_id: item._id,
 					}
 					await item.delete()
-					await item.parent.createEmbeddedDocuments("Item", [itemData])
+					await item.container?.createEmbeddedDocuments("Item", [itemData])
 				},
 			})
 		await ctx.render($(event.currentTarget))
@@ -588,18 +590,23 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
+		console.time("toggle")
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
-		const item = this.actor.deepItems.get(uuid)
-		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
+		// const item = this.actor.deepItems.get(uuid)
+		const item = this.actor.items.get(id)
+		// item?.update({ _id: id, "system.open": open }, { noPrepare: true })
+		item?.update({ _id: id, "system.open": open })
+		console.timeEnd("toggle")
 	}
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		const item = this.actor.deepItems.get(uuid)
+		const id = uuid.split(".").at(-1) ?? ""
+		const item = this.actor.items.get(id)
 		item?.sheet?.render(true)
 	}
 
@@ -759,6 +766,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const actorData = this.actor.toObject(false) as any
 		const items = deepClone(
 			(this.actor.items as EmbeddedCollection<any, any>)
+				.filter(e => e.getFlag(SYSTEM_NAME, ItemFlags.Container) === null)
 				.map(item => item)
 				.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 		)
@@ -877,7 +885,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	}
 
 	prepareItems(data: any) {
-		const [traits, skills, spells, equipment, other_equipment, notes] = data.items.reduce(
+		const [traits, skills, spells, equipment, other_equipment, notes, effects] = data.items.reduce(
 			(arr: ItemGURPS[][], item: ItemGURPS) => {
 				if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) arr[0].push(item)
 				else if (
@@ -896,9 +904,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 					if (item.other) arr[4].push(item)
 					else arr[3].push(item)
 				} else if (item instanceof NoteGURPS || item instanceof NoteContainerGURPS) arr[5].push(item)
+				else if (item instanceof EffectGURPS) arr[6].push(item)
 				return arr
 			},
-			[[], [], [], [], [], []]
+			[[], [], [], [], [], [], []]
 		)
 
 		const melee: MeleeWeaponGURPS[] = [...this.actor.meleeWeapons]
@@ -923,6 +932,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		data.ranged = ranged
 		data.reactions = reactions
 		data.conditionalModifiers = conditionalModifiers
+		data.effects = effects
 		data.blocks = {
 			traits: traits,
 			skills: skills,
@@ -934,6 +944,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			ranged: ranged,
 			reactions: reactions,
 			conditional_modifiers: conditionalModifiers,
+			effects: effects,
 		}
 	}
 

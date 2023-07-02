@@ -1,5 +1,5 @@
 {{#unless this.isCollapsed}}
-<div class="desc item" data-uuid="{{this.uuid}}" style="padding-left: calc({{this.indent}} * 12px + 6px)">
+<div class="desc item" data-uuid="{{this.itemid}}" style="padding-left: calc({{this.indent}} * 12px + 6px)">
 	<div class="dropdown">
 		{{#if this.hasContains }}
 		<i class="dropdown-toggle open gcs-circled-chevron-down" data-key="system.skills.{{@key}}"></i>
@@ -8,15 +8,15 @@
 		<i class="dropdown-toggle closed gcs-circled-chevron-right" data-key="system.skills.{{@key}}"></i>
 		{{/if}}
 	</div>
-	<div class="name">{{this.name}}</div>
+	<div class="name">{{ this.name }} {{#if this.itemid}}<i class="fas fa-star tooltip gga-item"></i>{{/if}}</div>
 	<div class="item-notes">{{this.notes}}</div>
 </div>
 {{#if (or this.hasContains this.hasCollapsed)}}
 <div  class="level"></div>
 <div class="rsl"></div>
 {{else}}
-<div data-uuid="{{this.uuid}}" data-type="skill" class="level rollable">{{this.import}}</div>
-<div data-uuid="{{this.uuid}}" data-type="skill_rsl" class="rsl rollable">{{this.relativelevel}}</div>
+<div data-uuid="{{@key}}" data-type="skill" class="level rollable">{{this.import}}</div>
+<div data-uuid="{{@key}}" data-type="skill_rsl" class="rsl rollable">{{this.relativelevel}}</div>
 {{/if}}
 <div class="points">{{this.points}}</div>
 <div class="reference">{{{ref this.pageref}}}</div>

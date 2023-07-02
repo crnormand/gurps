@@ -33,7 +33,8 @@
 		}
 	}
 
-	:nth-last-child(-n + 7) {
+	// TODO: remove when static removed
+	&:not(.static) :nth-last-child(-n + 7) {
 		border-bottom: none;
 	}
 

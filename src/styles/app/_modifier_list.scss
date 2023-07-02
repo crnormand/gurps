@@ -1,6 +1,6 @@
 #modifier-list {
-	background: rgb(var(--color-content));
-	// background: rgba(var(--color-content), 0.6);
+	background: transparent;
+	/* background: rgb(var(--color-content)); */
 	border: 1px solid rgb(var(--color-header));
 	border-radius: 5px;
 	margin: 0 5px 5px 15px;
@@ -13,13 +13,12 @@
 	min-width: var(--players-width);
 
 	&.collapsed {
-		background: rgba(var(--color-content), 0.6);
 		opacity: 1;
 		position: relative;
 		bottom: 0;
 		margin: 0 5px 5px 15px;
 		.header {
-			background: rgba(var(--color-header), 0.6);
+			background: rgba(var(--color-header), 0.8);
 		}
 	}
 
@@ -37,12 +36,16 @@
 		flex-direction: column;
 		gap: 4px;
 		padding: 4px;
+		background-color: rgba(var(--color-content), 0.8);
+		color: rgb(var(--color-on-content));
 	}
 
 	.header {
 		display: flex;
 		justify-content: center;
 		gap: 5px;
+		background: rgba(var(--color-header), 0.8);
+		color: rgb(var(--color-on-header));
 	}
 
 	button {

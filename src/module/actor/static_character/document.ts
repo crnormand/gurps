@@ -8,7 +8,7 @@ import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS, newUUID, Static } from "@util"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
-import { StaticAdvantage, StaticEquipment } from "./components"
+import { StaticTrait, StaticEquipment } from "./components"
 import {
 	MoveMode,
 	MoveModeTypes,
@@ -247,7 +247,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 						if (e.spoken) n += ` (${LocalizeGURPS.translations.gurps.language.spoken})(${e.spoken})`
 						if (e.written) n += ` (${LocalizeGURPS.translations.gurps.language.written})(${e.written})`
 					}
-					let a = new StaticAdvantage()
+					let a = new StaticTrait()
 					a.name = n
 					a.points = e.points
 					Static.put(newads, a)
@@ -292,7 +292,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	_initializeStartingValues() {
 		const data = this.system
 		data.currentdodge = 0
-		data.equipment ??= {}
+		data.equipment ??= { carried: {}, other: {} }
 		data.equipment.carried ??= {}
 		data.equipment.other ??= {}
 
@@ -753,8 +753,10 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			return ["", false]
 		}
 		eqt.itemid = itemData._id
+		// @ts-ignore
 		eqt.gloablid = _data.uuid
 		eqt.equipped = !!_data.equipped ?? true
+		// @ts-ignore
 		eqt.img = itemData.img
 		eqt.carried = !!_data.carried ?? true
 		await Static.insertBeforeKey(this, targetKey, eqt)
@@ -816,13 +818,17 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		key: keyof StaticCharacterSystemData & keyof StaticItemSystemData
 	) {
 		let found = false
+		// @ts-ignore
 		Static.recurseList(this.system[key], (e, _k, _d) => {
 			if (e.itemid === itemData._id) found = true
 		})
 		if (found) return
+		// @ts-ignore
 		let list = { ...this.system[key] }
 		let i = 0
+		// @ts-ignore
 		for (const k in itemData.system[key]) {
+			// @ts-ignore
 			let e = duplicate(itemData.system[key][k])
 			e.itemid = itemData._id
 			e.uuid = `${key}-${i++}-${e.itemid}`

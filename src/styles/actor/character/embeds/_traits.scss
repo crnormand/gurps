@@ -1,6 +1,4 @@
 #traits {
-	grid-area: traits;
-
 	grid-template-columns: 1fr repeat(2, auto);
 	.header {
 		grid-area: auto;

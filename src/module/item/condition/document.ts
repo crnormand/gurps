@@ -24,6 +24,7 @@ class ConditionGURPS extends EffectGURPS {
 		return {
 			id: null,
 			can_level: false,
+			reference: "",
 			duration: {
 				type: DurationType.None,
 				rounds: 0,

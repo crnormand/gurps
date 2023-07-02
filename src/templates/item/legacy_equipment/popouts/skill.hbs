@@ -1,0 +1,38 @@
+<form class="{{cssClass}}" autocomplete="off">
+	<div id="sheet" class="gcs_melee_sheet">
+		<div id="details">
+			<div class="label">{{localize "gurps.item.name"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.name" value="{{data.name}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.level"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.import" value="{{data.import}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.static.rsl"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.relativelevel" value="{{data.relativelevel}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.points"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.points" value="{{data.points}}" data-dtype="Number" />
+			</div>
+			<div class="label">{{localize "gurps.static.check_otf"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.checkotf" value="{{data.checkotf}}" data-dtype="string" />
+			</div>
+			<div class="label">{{localize "gurps.static.during_otf"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.duringotf" value="{{data.duringotf}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.static.pass_otf"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.passotf" value="{{data.passotf}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.static.fail_otf"}}</div>
+			<div class="field">
+				<input type="text" name="system.{{list}}.{{key}}.failotf" value="{{data.failotf}}" data-dtype="String" />
+			</div>
+		</div>
+	</div>
+</form>

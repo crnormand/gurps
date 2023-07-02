@@ -1,8 +1,9 @@
-import { RollModifier, SYSTEM_NAME } from "@module/data"
+import { ActorType, RollModifier, SYSTEM_NAME } from "@module/data"
 import {
 	BaseWeaponGURPS,
 	ConditionGURPS,
 	ConditionID,
+	ContainerGURPS,
 	EffectGURPS,
 	EffectID,
 	ManeuverID,
@@ -87,6 +88,20 @@ class BaseActorGURPS extends Actor {
 		}
 	}
 
+	static override async createDialog(
+		data: { folder?: string } = {},
+		options: Partial<FormApplicationOptions> = {}
+	): Promise<any | undefined> {
+		const original = game.system.documentTypes.Actor
+		game.system.documentTypes.Actor = original.filter(
+			(actorType: string) => ![ActorType.LegacyEnemy].includes(actorType as any)
+		)
+		options = { ...options, classes: [...(options.classes ?? []), "dialog-actor-create"] }
+		const newActor = super.createDialog(data, options) as Promise<BaseActorGURPS | undefined>
+		game.system.documentTypes.Actor = original
+		return newActor
+	}
+
 	update(
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
 		context?: (DocumentModificationContext & MergeObjectOptions) | undefined
@@ -94,26 +109,26 @@ class BaseActorGURPS extends Actor {
 		return super.update(data, context)
 	}
 
-	get deepItems(): Collection<ItemGURPS> {
-		const deepItems: ItemGURPS[] = []
-		for (const item of this.items as any as Collection<ItemGURPS>) {
-			deepItems.push(item)
-			if ((item as any).items)
-				for (const i of (item as any).deepItems) {
-					deepItems.push(i)
-				}
-		}
-		return new Collection(
-			deepItems.map(item => {
-				// Return [item.id!, item]
-				return [item.uuid, item]
-			})
-		)
-	}
+	// get deepItems(): Collection<ItemGURPS> {
+	// 	const deepItems: ItemGURPS[] = []
+	// 	for (const item of this.items as any as Collection<ItemGURPS>) {
+	// 		deepItems.push(item)
+	// 		if ((item as any).items)
+	// 			for (const i of (item as any).deepItems) {
+	// 				deepItems.push(i)
+	// 			}
+	// 	}
+	// 	return new Collection(
+	// 		deepItems.map(item => {
+	// 			// Return [item.id!, item]
+	// 			return [item.uuid, item]
+	// 		})
+	// 	)
+	// }
 
 	get gEffects(): Collection<EffectGURPS> {
 		const effects: Collection<EffectGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof EffectGURPS) effects.set(item._id, item)
 		}
 		return effects
@@ -121,7 +136,7 @@ class BaseActorGURPS extends Actor {
 
 	get conditions(): Collection<ConditionGURPS> {
 		const conditions: Collection<ConditionGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof ConditionGURPS) conditions.set(item._id, item)
 		}
 		return conditions
@@ -136,7 +151,7 @@ class BaseActorGURPS extends Actor {
 	}
 
 	override get temporaryEffects(): any {
-		const effects = this.gEffects.map(e => new ActiveEffect({ icon: e.img || "" }))
+		const effects = this.gEffects.map(e => new ActiveEffect({ name: e.name, icon: e.img || "" } as any))
 		return super.temporaryEffects.concat(effects)
 	}
 
@@ -165,6 +180,24 @@ class BaseActorGURPS extends Actor {
 		context?: DocumentModificationContext | undefined
 	): Promise<Document<any, this, Metadata<any>>[]> {
 		return super.updateEmbeddedDocuments(embeddedName, updates, context)
+	}
+
+	deleteEmbeddedDocuments(
+		embeddedName: string,
+		ids: string[],
+		context?: DocumentModificationContext | undefined
+	): Promise<Document<any, this, Metadata<any>>[]> {
+		if (embeddedName !== "Item") return super.deleteEmbeddedDocuments(embeddedName, ids, context)
+
+		const newIds = ids
+		ids.forEach(id => {
+			const item = this.items.get(id)
+			if (item instanceof ContainerGURPS)
+				for (const i of item.deepItems) {
+					if (!newIds.includes(i.id!)) newIds.push(i.id!)
+				}
+		})
+		return super.deleteEmbeddedDocuments(embeddedName, newIds, context)
 	}
 
 	get sizeMod(): number {
@@ -471,7 +504,7 @@ class DamageWeaponAdapter implements DamageWeapon {
 	}
 
 	get name(): string {
-		return `${this.base?.parent.name} (${this.base?.name})`
+		return `${this.base?.container?.name} (${this.base?.name})`
 	}
 
 	get damageDice(): string {
@@ -482,7 +515,7 @@ class DamageWeaponAdapter implements DamageWeapon {
 interface BaseActorGURPS extends Actor {
 	flags: ActorFlagsGURPS
 	noPrepare: boolean
-	deepItems: Collection<ItemGURPS>
+	// deepItems: Collection<ItemGURPS>
 	attributes: Map<string, Attribute>
 	traits: Collection<TraitGURPS | TraitContainerGURPS>
 	// Temp

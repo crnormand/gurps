@@ -11,18 +11,26 @@
 			<div class="field">
 				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
 			</div>
-            <div class="label checkbox-label" style="justify-self: end;">
-                <input type="checkbox" name="system.can_level" data-dtype="Boolean" {{checked system.can_level}} />
-                {{ localize "gurps.item.levels" }}
-            </div>
-            <div class="field">
-                <input
-				type="text"
-				name="system.levels"
-				value="{{system.levels}}"
-				data-dtype="Number"
-				{{disabled (not system.can_level)}}
-				/>
+				<div class="label checkbox-label" style="justify-self: end;">
+						<input type="checkbox" name="system.can_level" data-dtype="Boolean" {{checked system.can_level}} />
+						{{ localize "gurps.item.levels" }}
+				</div>
+				<div class="field no-stretch">
+					<input
+						type="text"
+						name="system.levels.current"
+						value="{{system.levels.current}}"
+						data-dtype="Number"
+						{{disabled (not system.can_level)}}
+					/>
+					<div class="label">{{localize "gurps.item.max_levels"}}</div>
+					<input
+						type="text"
+						name="system.levels.max"
+						value="{{system.levels.max}}"
+						data-dtype="Number"
+						{{disabled (not system.can_level)}}
+					/>
             </div>
 			<div class="label">{{localize "gurps.item.duration"}}</div>
 			<div class="field no-stretch">
@@ -33,15 +41,19 @@
 					data-dtype="Number"
 					{{disabled (eq system.duration.type "none")}}
 				/>
-                <select name="system.duration.type" data-dtype="String">
-                    {{#select system.duration.type }}
-                    {{#each config.select.duration_type as |v k| }}
-                    <option value="{{k}}">
-                        {{ localize v }}
-                    </option>
-                    {{/each }}
-                    {{/select }}
-                </select>
+				<select name="system.duration.type" data-dtype="String">
+						{{#select system.duration.type }}
+						{{#each config.select.duration_type as |v k| }}
+						<option value="{{k}}">
+								{{ localize v }}
+						</option>
+						{{/each }}
+						{{/select }}
+				</select>
+			</div>
+			<div class="label">{{localize "gurps.item.reference"}}</div>
+			<div class="field">
+					<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
 			</div>
 		</div>
 	</div>

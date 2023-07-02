@@ -89,7 +89,7 @@
 		// }
 		&:disabled {
 			// background-color: rgb(var(--color-background));
-			color: rgba(var(--color-on-editable), 0); // Invisible Text
+			/* color: rgba(var(--color-on-editable), 0); // Invisible Text */
 			pointer-events: none;
 		}
 	}
@@ -383,7 +383,7 @@
 		// }
 		&:disabled {
 			// background-color: rgb(var(--color-background));
-			color: rgba(var(--color-on-editable), 0); // Invisible Text
+			/* color: rgba(var(--color-on-editable), 0); // Invisible Text */
 			pointer-events: none;
 		}
 		&.invalid {
@@ -457,7 +457,7 @@
 		}
 		&:disabled {
 			// background-color: rgb(var(--color-background));
-			color: rgba(var(--color-on-editable), 0); // Invisible Text
+			/* color: rgba(var(--color-on-editable), 0); // Invisible Text */
 			pointer-events: none;
 		}
 		&[data-dtype="Number"] {

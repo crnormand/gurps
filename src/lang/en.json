@@ -1,30 +1,33 @@
 {
-	"ACTOR": {
-		"TypeCharacter_gcs": "Character",
-		"TypeCharacter": "Character (Legacy)",
-		"TypeLoot": "Loot"
-	},
-	"ITEM": {
-		"TypeTrait": "Trait",
-		"TypeTrait_container": "Trait Container",
-		"TypeModifier": "Trait Modifier",
-		"TypeModifier_container": "Trait Modifier Container",
-		"TypeSkill": "Skill",
-		"TypeTechnique": "Technique",
-		"TypeSkill_container": "Skill Container",
-		"TypeSpell": "Spell",
-		"TypeRitual_magic_spell": "Ritual Magic Spell",
-		"TypeSpell_container": "Spell Container",
-		"TypeEquipment_gcs": "Equipment",
-		"TypeEquipment_container": "Equipment Container",
-		"TypeEqp_modifier": "Equipment Modifier",
-		"TypeEqp_modifier_container": "Equipment Modifier Container",
-		"TypeNote": "Note",
-		"TypeNote_container": "Note Container",
-		"TypeMelee_weapon": "Melee Weapon",
-		"TypeRanged_weapon": "Ranged Weapon",
-		"TypeEffect": "Active Effect",
-		"TypeEquipment": "Equipment (Legacy)"
+	"TYPES": {
+		"Actor": {
+			"character_gcs": "Character",
+			"character": "Character (Legacy)",
+			"enemy": "Enemy (Legacy)",
+			"loot": "Loot"
+		},
+		"Item": {
+			"trait": "Trait",
+			"trait_container": "Trait Container",
+			"modifier": "Trait Modifier",
+			"modifier_container": "Trait Modifier Container",
+			"skill": "Skill",
+			"technique": "Technique",
+			"skill_container": "Skill Container",
+			"spell": "Spell",
+			"ritual_magic_spell": "Ritual Magic Spell",
+			"spell_container": "Spell Container",
+			"equipment_gcs": "Equipment",
+			"equipment_container": "Equipment Container",
+			"eqp_modifier": "Equipment Modifier",
+			"eqp_modifier_container": "Equipment Modifier Container",
+			"note": "Note",
+			"note_container": "Note Container",
+			"melee_weapon": "Melee Weapon",
+			"ranged_weapon": "Ranged Weapon",
+			"effect": "Active Effect",
+			"equipment": "Equipment (Legacy)"
+		}
 	},
 	"gurps": {
 		"pdf": {
@@ -238,6 +241,13 @@
 			"basicspeed": "Basic Speed",
 			"basicmove": "Basic Move",
 			"ok": "Ok",
+			"level_otf": "Level",
+			"check_otf": "Check",
+			"during_otf": "During",
+			"pass_otf": "Pass",
+			"fail_otf": "Fail",
+			"damage": "Damage",
+			"rsl": "RSL",
 			"status": {
 				"normal": "Normal",
 				"reeling": "Reeling",
@@ -591,6 +601,9 @@
 			},
 			"notes": {
 				"desc": "Note"
+			},
+			"effects": {
+				"desc": "Active Effects"
 			}
 		},
 		"item": {
@@ -606,6 +619,7 @@
 			"round_down": "Round Down",
 			"points_per_level": "Cost Per Level",
 			"levels": "Levels",
+			"max_levels": "Max",
 			"level": "Level",
 			"cr": "Self-Control Roll",
 			"cr_adj": "CR Adjustment",
@@ -1427,6 +1441,14 @@
 			},
 			"weapon": "Weapon",
 			"wounding_modifier": "Modifier"
+		},
+		"effect": {
+			"increment": "[Left Click] Increase Level",
+			"decrement": "[Right Click] Decrease Level",
+			"remove": "[Right Click] Remove Effect",
+			"expired": "Expired",
+			"sustained": "Sustained",
+			"unidentified": "Unidentified"
 		},
 		"context": {
 			"toggle_state": "Toggle State",

@@ -1,4 +1,4 @@
-import { ItemFlagsGURPS, ItemGCSSystemData, NoteData } from "@item"
+import { ItemFlags, ItemFlagsGURPS, ItemGCSSystemData, NoteData } from "@item"
 import { ItemGURPS, ItemSystemDataGURPS } from "@module/config"
 import { gid, ItemType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
 import { SkillDefault } from "@module/default"
@@ -262,7 +262,7 @@ export class GCAImporter {
 					_id: randomID(),
 					name: readableData[1],
 					type: ItemType.Note,
-					flags: { [SYSTEM_NAME]: { contentsData: [] } },
+					// flags: { [SYSTEM_NAME]: { : [] } },
 					system: {
 						name: readableData[1],
 						text: readableData[1],
@@ -320,17 +320,17 @@ export class GCAImporter {
 		let itemData: Partial<ItemGCSSystemData> = {}
 		this.importFeatures(item, itemData, context)
 		this.importPrereqs(item, itemData, context)
-		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { contentsData: [] } }
+		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { [ItemFlags.Container]: null } }
 		if (item.childkeylist) {
-			const childKeys = item.childkeylist.split(", ")
-			flags[SYSTEM_NAME]!.contentsData = this.importItems(
-				{
-					trait: context.data.traits[context.type].trait.filter((e: any) =>
-						childKeys.includes(`k${e["@idkey"]}`)
-					),
-				},
-				{ ...context, container: true }
-			)
+			// const childKeys = item.childkeylist.split(", ")
+			// flags[SYSTEM_NAME]!.contentsData = this.importItems(
+			// 	{
+			// 		trait: context.data.traits[context.type].trait.filter((e: any) =>
+			// 			childKeys.includes(`k${e["@idkey"]}`)
+			// 		),
+			// 	},
+			// 	{ ...context, container: true }
+			// )
 		}
 		switch (item["@type"]) {
 			case "Advantages":
@@ -749,9 +749,9 @@ export class GCAImporter {
 		return equipmentData
 	}
 
-	getNestedItems(item: any, data: any, context?: { container?: boolean }) {
-		return []
-	}
+	// getNestedItems(item: any, data: any, context?: { container?: boolean }) {
+	// 	return []
+	// }
 
 	async throwImportError(msg: string[]) {
 		ui.notifications?.error(msg.join("<br>"))

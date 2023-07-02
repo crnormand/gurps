@@ -142,6 +142,7 @@ export class TokenHUDGURPS extends TokenHUD {
 			else await actor?.decreaseCondition(id)
 		}
 		game.socket?.emit("system.gcsga", { type: SOCKET.UPDATE_BUCKET, users: [] })
+		game.EffectPanel.refresh()
 	}
 
 	static async #setActiveEffects(token: TokenGURPS, icons: NodeListOf<HTMLImageElement>) {

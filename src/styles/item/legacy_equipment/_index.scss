@@ -1,0 +1,50 @@
+.item-list {
+	margin: 2px 16px;
+	border: 1px solid rgb(var(--color-header));
+	display: grid;
+
+	> :not(.header) {
+		border-right: 1px solid rgb(var(--color-interior-divider));
+		border-bottom: 1px solid rgb(var(--color-interior-divider));
+	}
+
+	.item > div {
+		background-color: rgb(var(--color-content));
+		color: rgb(var(--color-on-content));
+		padding: var(--padding-standard);
+	}
+}
+
+#melee {
+	grid-template-columns: 1fr repeat(5, auto);
+	:nth-last-child(-n + 6) {
+		border-bottom: none;
+	}
+}
+#ranged {
+	grid-template-columns: 1fr repeat(8, auto);
+	:nth-last-child(-n + 9) {
+		border-bottom: none;
+	}
+}
+#spells {
+	grid-template-columns: 1fr;
+	> div {
+		border-right: none;
+	}
+}
+#ads {
+	grid-template-columns: 1fr;
+	> div {
+		border-right: none;
+	}
+}
+#skills {
+	grid-template-columns: 1fr;
+	> div {
+		border-right: none;
+	}
+}
+#bonuses {
+	grid-template-columns: 1fr;
+}

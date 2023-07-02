@@ -12,6 +12,7 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/character/sections/description",
 		"actor/character/sections/dropdown-closed",
 		"actor/character/sections/dropdown-open",
+		"actor/character/sections/effect",
 		"actor/character/sections/encumbrance",
 		"actor/character/sections/equipment",
 		"actor/character/sections/hit-location",
@@ -119,6 +120,13 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"item/sections/melee",
 		"item/sections/ranged",
 		"item/sections/defaults",
+
+		"item/legacy_equipment/melee",
+		"item/legacy_equipment/ranged",
+		"item/legacy_equipment/traits",
+		"item/legacy_equipment/skills",
+		"item/legacy_equipment/spells",
+		"item/legacy_equipment/bonuses",
 
 		"chat/import-character-error",
 

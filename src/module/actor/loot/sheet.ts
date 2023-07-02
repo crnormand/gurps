@@ -64,7 +64,7 @@ export class LootSheetGURPS extends ActorSheetGURPS {
 	}
 
 	async _newItem(type: ItemType, other = false) {
-		const itemName = `ITEM.Type${type.charAt(0).toUpperCase()}${type.slice(1)}`
+		const itemName = `TYPES.Item.${type}`
 		const itemData: any = {
 			type,
 			name: game.i18n.localize(itemName),
@@ -176,7 +176,7 @@ export class LootSheetGURPS extends ActorSheetGURPS {
 					flags: (item as any).flags,
 					sort: ((item as any).sort ?? 0) + 1,
 				}
-				await item.parent.createEmbeddedDocuments("Item", [itemData])
+				await item.container?.createEmbeddedDocuments("Item", [itemData as any], {})
 			},
 		})
 		ctx.menuItems.push({
@@ -247,7 +247,7 @@ export class LootSheetGURPS extends ActorSheetGURPS {
 						_id: item._id,
 					}
 					await item.delete()
-					await item.parent.createEmbeddedDocuments("Item", [itemData])
+					await item.container?.createEmbeddedDocuments("Item", [itemData])
 				},
 			})
 		if (item instanceof EquipmentContainerGURPS && item.children.size === 0)
@@ -264,7 +264,7 @@ export class LootSheetGURPS extends ActorSheetGURPS {
 						_id: item._id,
 					}
 					await item.delete()
-					await item.parent.createEmbeddedDocuments("Item", [itemData])
+					await item.container?.createEmbeddedDocuments("Item", [itemData])
 				},
 			})
 		await ctx.render($(event.currentTarget))
@@ -281,14 +281,15 @@ export class LootSheetGURPS extends ActorSheetGURPS {
 		const uuid: string = $(event.currentTarget).data("uuid")
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
-		const item = this.actor.deepItems.get(uuid)
+		const item = this.actor.items.get(id)
 		item?.update({ _id: id, "system.open": open })
 	}
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		const item = this.actor.deepItems.get(uuid)
+		const id = uuid.split(".").at(-1) ?? ""
+		const item = this.actor.items.get(id)
 		item?.sheet?.render(true)
 	}
 

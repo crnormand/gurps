@@ -53,6 +53,7 @@ class TokenDocumentGURPS extends TokenDocument {
 
 interface TokenDocumentGURPS extends TokenDocument {
 	overlayEffect: any
+	sort: number
 }
 
 export { TokenDocumentGURPS }
