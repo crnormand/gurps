@@ -81,7 +81,7 @@ export class WeaponDamage {
 		if (maxST > 0 && maxST < st) st = maxST
 		let base = new DiceGURPS({ sides: 6, multiplier: 1 })
 		if (this.base) base = this.base
-		const t = this.parent.parent
+		const t = this.parent.container
 		let levels = 0
 		if (t.type === ItemType.Trait && t.isLeveled) {
 			levels = t.levels
@@ -117,7 +117,7 @@ export class WeaponDamage {
 			}
 		}
 		let bonusSet: Map<WeaponDamageBonus, boolean> = new Map()
-		let tags = this.parent.parent.tags
+		let tags = this.parent.container.tags
 		if (bestDefault) {
 			actor.addWeaponWithSkillBonusesFor(
 				bestDefault.name!,
@@ -131,7 +131,7 @@ export class WeaponDamage {
 		}
 		const nameQualifier = this.parent.name
 		actor.addNamedWeaponBonusesFor(nameQualifier, this.parent.usage, tags, base.count, levels, tooltip, bonusSet)
-		for (const f of this.parent.parent.features) {
+		for (const f of this.parent.container.features) {
 			this.extractWeaponBonus(f, bonusSet, base.count, levels, tooltip)
 		}
 		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(t.type)) {
@@ -217,7 +217,7 @@ export class WeaponDamage {
 					if (
 						stringCompare(this.parent.name, f.name) &&
 						stringCompare(this.parent.usage, f.specialization) &&
-						stringCompare(this.parent.parent.tags, f.tags)
+						stringCompare(this.parent.container.tags, f.tags)
 					) {
 						if (!set.has(f)) {
 							set.set(f, true)

@@ -90,7 +90,7 @@ export class CharacterImporter {
 			items.push(...ImportUtils.importItems(r.skills))
 			items.push(...ImportUtils.importItems(r.spells))
 			items.push(...ImportUtils.importItems(r.equipment))
-			items.push(...ImportUtils.importItems(r.other_equipment, { other: true }))
+			items.push(...ImportUtils.importItems(r.other_equipment, { container: null, other: true, sort: 0 }))
 			items.push(...ImportUtils.importItems(r.notes))
 			commit = { ...commit, ...{ items: items } }
 		} catch (err) {
@@ -105,6 +105,7 @@ export class CharacterImporter {
 		}
 
 		try {
+			console.log(commit)
 			await this.document.update(commit, {
 				diff: false,
 				recursive: false,

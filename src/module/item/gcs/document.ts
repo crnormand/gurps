@@ -38,7 +38,7 @@ abstract class ItemGCS extends ContainerGURPS {
 		if (this.actor && context?.noPrepare) (this.actor as any).noPrepare = true
 		if (!(this.parent instanceof Item)) return super.update(data, context)
 		data._id = this.id
-		await this.parent.updateEmbeddedDocuments("Item", [data])
+		await this.container?.updateEmbeddedDocuments("Item", [data])
 		// @ts-ignore
 		this.render(false, { action: "update", data: data })
 	}

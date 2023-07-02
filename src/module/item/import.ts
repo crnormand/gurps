@@ -105,6 +105,7 @@ export class ItemImporter {
 
 			const items: Array<ItemSystemDataGURPS> = []
 			items.push(...ImportUtils.importItems(r.rows))
+			console.log(items)
 			// Commit = { ...commit, ...{ rows: items } };
 
 			let pack = game.packs.find(p => p.metadata.name === name)

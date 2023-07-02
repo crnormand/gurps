@@ -1,3 +1,5 @@
+import { ItemFlags } from "@item"
+import { SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { FilterData } from "./data"
@@ -94,7 +96,14 @@ export abstract class CompendiumTab {
 	}
 
 	getIndexData(start: number): CompendiumIndexData[] {
-		const currentIndex = this.sortResult(this.indexData.filter(this.filterIndexData.bind(this)))
+		const currentIndex = this.sortResult(
+			this.indexData
+				// .filter(e => e.flags[SYSTEM_NAME][ItemFlags.Container] === null)
+				.filter(this.filterIndexData.bind(this))
+		)
+		// const currentIndex = this.sortResult(this.indexData.filter(this.filterIndexData.bind(this) && e => e.flags[SYSTEM_NAME][ItemFlags.Container] === null
+
+		// ))
 		this.totalItemCount = currentIndex.length
 		return currentIndex.slice(start, this.scrollLimit)
 	}

@@ -31,7 +31,7 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 					flags: (item as any).flags,
 					sort: ((item as any).sort ?? 0) + 1,
 				}
-				await item.parent.createEmbeddedDocuments("Item", [itemData])
+				await item.container?.createEmbeddedDocuments("Item", [itemData])
 			},
 		})
 		ctx.menuItems.push({

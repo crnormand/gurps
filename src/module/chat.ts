@@ -180,7 +180,7 @@ async function _onDamageRoll(event: JQuery.ClickEvent) {
 			RollType.SpellRelative,
 		].includes(type)
 	)
-		data.item = actor!.deepItems.get($(event.currentTarget).data("item-id"))
+		data.item = actor!.items.get($(event.currentTarget).data("item-id"))
 	if ([RollType.Damage, RollType.Attack].includes(type))
 		data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
 	if (type === RollType.Modifier) {

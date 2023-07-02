@@ -80,7 +80,7 @@ class LootGURPS extends BaseActorGURPS {
 
 	get equipment(): Collection<EquipmentGURPS | EquipmentContainerGURPS> {
 		const equipment: Collection<EquipmentGURPS | EquipmentContainerGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS)
 				equipment.set(item.uuid, item)
 		}
@@ -91,14 +91,14 @@ class LootGURPS extends BaseActorGURPS {
 		return this.equipment
 	}
 
-	protected override _onCreateEmbeddedDocuments(
+	protected override _onCreateDescendantDocuments(
 		embeddedName: string,
 		documents: Document<any, any, Metadata<any>>[],
 		result: Record<string, unknown>[],
 		options: DocumentModificationOptionsGURPS,
 		userId: string
 	): void {
-		super._onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId)
+		super._onCreateDescendantDocuments(embeddedName, documents, result, options, userId)
 
 		// Replace @X@ notation fields with given text
 		if (embeddedName === "Item" && options.substitutions) {

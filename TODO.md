@@ -22,9 +22,12 @@
 -	Convert the modifier bucket over
 		-	modifier bucket journals
 -	Add makeshift static to dynamic character conversion
+- Fix reeling etc. not affecting move/dodge
+- Delete compendium pack entries in settings when compendium pack is removed
 
 ## 1.1.0 and beyond
 
+-	Stop flattening compendiums on import
 -	Proper hex size support with rotation
 -	Editable maneuver grid, editable condition grid
 -	Dynamic Character changes

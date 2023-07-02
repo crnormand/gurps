@@ -1,7 +1,7 @@
 import { ItemGCS } from "@item/gcs"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
-import { CR, CRAdjustment } from "@module/data"
+import { CR, CRAdjustment, ItemType } from "@module/data"
 import { SelfControl } from "@util"
 import { TraitData } from "./data"
 
@@ -18,7 +18,8 @@ class TraitGURPS extends ItemGCS {
 	get enabled(): boolean {
 		if (this.system.disabled) return false
 		let enabled = !this.system.disabled
-		if (this.parent && this.parent.type === "trait_container") enabled = enabled && (this.parent as any).enabled
+		if (this.container && this.container.type === ItemType.TraitContainer)
+			enabled = enabled && (this.container as any).enabled
 		return enabled
 	}
 

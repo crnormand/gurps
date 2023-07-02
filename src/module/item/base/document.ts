@@ -1,13 +1,13 @@
-import { BaseActorGURPS } from "@actor"
+import { ContainerGURPS } from "@item/container"
 import { ItemDataGURPS } from "@module/config"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { Context, DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
-import { BaseItemSourceGURPS, ItemConstructionContextGURPS } from "./data"
+import { BaseItemSourceGURPS, ItemConstructionContextGURPS, ItemFlags } from "./data"
 
 class BaseItemGURPS extends Item {
 	// @ts-ignore
-	parent: CharacterGURPS | ContainerGURPS | null
+	// parent: CharacterGURPS | ContainerGURPS | null
 
 	constructor(data: ItemDataGURPS | any, context: Context<Actor> & ItemConstructionContextGURPS = {}) {
 		if (context.gurps?.ready) {
@@ -24,10 +24,10 @@ class BaseItemGURPS extends Item {
 		}
 	}
 
-	override delete(context?: DocumentModificationContext | undefined): Promise<any> {
-		if (!(this.parent instanceof Item)) return super.delete(context)
-		return this.parent.deleteEmbeddedDocuments("Item", [this.id!])
-	}
+	// override delete(context?: DocumentModificationContext | undefined): Promise<any> {
+	// 	if (!(this.parent instanceof Item)) return super.delete(context)
+	// 	return this.container?.deleteEmbeddedDocuments("Item", [this.id!])
+	// }
 
 	static override async createDialog(
 		data: { folder?: string } = {},
@@ -67,27 +67,34 @@ class BaseItemGURPS extends Item {
 		await super._preCreate(data, options, user)
 	}
 
-	get actor(): BaseActorGURPS | null {
-		if (this.parent) return this.parent instanceof Actor ? this.parent : this.parent.actor
-		return null
+	// get actor(): BaseActorGURPS | null {
+	// 	if (this.parent) return this.parent instanceof Actor ? this.parent : this.parent.actor
+	// 	return null
+	// }
+
+	get container(): Actor | ContainerGURPS | null {
+		if (!this.actor) return null
+		const id = this.getFlag(SYSTEM_NAME, ItemFlags.Container) as string | null
+		if (id === null) return this.actor
+		else return (this.actor.items.get(id) as ContainerGURPS) ?? null
 	}
 
 	get parents(): Array<any> {
-		if (!this.parent && !this.compendium) return []
-		const grandparents = this.parent instanceof BaseItemGURPS ? this.parent.parents : []
-		if (!this.parent) return [this.compendium, ...grandparents]
-		return [this.parent, ...grandparents]
+		if (!this.container && !this.compendium) return []
+		const grandparents = this.container instanceof BaseItemGURPS ? this.container.parents : []
+		if (!this.container) return [this.compendium, ...grandparents]
+		return [this.container, ...grandparents]
 	}
 
-	get parentCount(): number {
-		let i = 0
-		let p: any = this.parent
-		while (p) {
-			i++
-			p = p.parent
-		}
-		return i
-	}
+	// get parentCount(): number {
+	// 	let i = 0
+	// 	let p: any = this.container
+	// 	while (p) {
+	// 		i++
+	// 		p = p.container
+	// 	}
+	// 	return i
+	// }
 
 	prepareData(): void {
 		super.prepareData()

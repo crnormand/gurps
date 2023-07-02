@@ -1,6 +1,5 @@
 import { BaseActorGURPS, ActorConstructorContextGURPS, ActorFlags } from "@actor/base"
 import {
-	BaseWeaponGURPS,
 	CR_Features,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
@@ -733,7 +732,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	// Item Types
 	get traits(): Collection<TraitGURPS | TraitContainerGURPS> {
 		const traits: Collection<TraitGURPS | TraitContainerGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) traits.set(item.uuid, item)
 		}
 		return traits
@@ -741,7 +740,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get skills(): Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS> {
 		const skills: Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof SkillGURPS || item instanceof TechniqueGURPS || item instanceof SkillContainerGURPS)
 				skills.set(item.uuid, item)
 		}
@@ -750,7 +749,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get spells(): Collection<SpellGURPS | RitualMagicSpellGURPS | SpellContainerGURPS> {
 		const spells: Collection<SpellGURPS | RitualMagicSpellGURPS | SpellContainerGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (
 				item instanceof SpellGURPS ||
 				item instanceof RitualMagicSpellGURPS ||
@@ -763,7 +762,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get equipment(): Collection<EquipmentGURPS | EquipmentContainerGURPS> {
 		const equipment: Collection<EquipmentGURPS | EquipmentContainerGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS)
 				equipment.set(item.uuid, item)
 		}
@@ -792,7 +791,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get notes(): Collection<NoteGURPS | NoteContainerGURPS> {
 		const notes: Collection<NoteGURPS | NoteContainerGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof NoteGURPS || item instanceof NoteContainerGURPS) notes.set(item.uuid, item)
 		}
 		return notes
@@ -801,7 +800,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	// Weapons
 	get meleeWeapons(): Collection<MeleeWeaponGURPS> {
 		const meleeWeapons: Collection<MeleeWeaponGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item.uuid, item)
 		}
 		return meleeWeapons
@@ -809,7 +808,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get rangedWeapons(): Collection<RangedWeaponGURPS> {
 		const rangedWeapons: Collection<RangedWeaponGURPS> = new Collection()
-		for (const item of this.deepItems) {
+		for (const item of this.items) {
 			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item.uuid, item)
 		}
 		return rangedWeapons
@@ -817,8 +816,9 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get weapons(): Collection<WeaponGURPS> {
 		const weapons: Collection<WeaponGURPS> = new Collection()
-		for (const item of this.deepItems) {
-			if (item instanceof BaseWeaponGURPS) weapons.set(item.uuid, item)
+		for (const item of this.items) {
+			if (item instanceof MeleeWeaponGURPS) weapons.set(item.uuid, item)
+			if (item instanceof RangedWeaponGURPS) weapons.set(item.uuid, item)
 		}
 		return weapons
 	}
@@ -1355,10 +1355,10 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const wep of this.equippedWeapons(type)) {
 			if (
 				(excludes === null || !excludes.get(wep.name!)) &&
-				wep.parent.name === name &&
+				wep.container?.name === name &&
 				(usage === "" || usage === wep.usage)
 			)
-				weapons.set(`${wep.parent._id}-${wep.id}`, wep)
+				weapons.set(`${wep.container?.id}-${wep.id}`, wep)
 		}
 		return weapons
 	}

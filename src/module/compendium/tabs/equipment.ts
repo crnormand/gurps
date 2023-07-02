@@ -50,6 +50,7 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 					parents: equipment.parents,
 					indent: equipment.indent,
 					modifiers: equipment.modifiers,
+					flags: equipment.flags,
 				})
 			})
 		}

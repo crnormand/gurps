@@ -45,6 +45,7 @@ export class CompendiumNoteTab extends CompendiumTab {
 					reference: note.reference,
 					parents: note.parents,
 					indent: note.indent,
+					flags: note.flags,
 				})
 			})
 

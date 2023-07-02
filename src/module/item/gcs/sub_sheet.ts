@@ -1,4 +1,3 @@
-import { ItemFlags } from "@item/base"
 import { SYSTEM_NAME } from "@module/data"
 import { flatten, LocalizeGURPS, prepareFormData } from "@util"
 import { ItemGCS } from "./document"
@@ -24,12 +23,12 @@ export class ItemSubstitutionSheet extends FormApplication {
 		const obj = { ...duplicate(this.object) } as any
 		if ((this.object as any).modifiers) {
 			const objList: any = {}
-			const list = obj.flags[SYSTEM_NAME][ItemFlags.Contents]
-			for (let i = 0; i < list.length; i++) {
-				const e = list[i]
+			const list = this.object.items
+			for (let i = 0; i < list.size; i++) {
+				const e = list.contents[i]
 				if (
-					((this.object as any).modifiers.has(e._id) && (this.object as any).modifiers.get(e._id).enabled) ||
-					!(this.object as any).modifiers.has(e._id)
+					((this.object as any).modifiers.has(e.id) && (this.object as any).modifiers.get(e.id).enabled) ||
+					!(this.object as any).modifiers.has(e.id)
 				)
 					objList[i] = e
 			}

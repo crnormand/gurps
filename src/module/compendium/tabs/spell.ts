@@ -62,6 +62,7 @@ export class CompendiumSpellTab extends CompendiumTab {
 					casting_time: spell.system.casting_time,
 					duration: spell.system.duration,
 					difficulty: `${spell.attribute.toUpperCase()}/${spell.difficulty.toUpperCase()}`,
+					flags: spell.flags,
 				})
 			})
 

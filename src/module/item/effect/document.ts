@@ -149,7 +149,7 @@ class EffectGURPS extends BaseItemGURPS {
 	_displayScrollingStatus(enabled: boolean) {
 		const actor = this.parent
 		if (!actor) return
-		const tokens = actor.isToken ? [actor.token?.object] : actor.getActiveTokens(true)
+		const tokens = actor.isToken ? [actor.token?.object] : (actor.getActiveTokens(true) as any[])
 		let label = `${enabled ? "+" : "-"} ${this.name}`
 		if (this.canLevel && this.level) label += ` ${this.level}`
 		for (let t of tokens) {
@@ -167,7 +167,7 @@ class EffectGURPS extends BaseItemGURPS {
 	}
 
 	#dispatchTokenStatusChange(statusId: string, active: boolean) {
-		const tokens = this.parent.getActiveTokens()
+		const tokens = this.parent?.getActiveTokens() as any[]
 		for (const token of tokens) token._onApplyStatusEffect(statusId, active)
 	}
 

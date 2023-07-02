@@ -1,5 +1,6 @@
 import { SkillBonus } from "@feature"
 import { BaseItemGURPS } from "@item/base"
+import { ContainerGURPS } from "@item/container"
 import { Feature } from "@module/config"
 import { ActorType, gid, ItemType } from "@module/data"
 import { SkillDefault } from "@module/default"
@@ -10,7 +11,7 @@ import { BaseWeaponSystemData } from "./data"
 
 class BaseWeaponGURPS extends BaseItemGURPS {
 	get itemName(): string {
-		if (this.parent instanceof Item) return this.parent.name ?? ""
+		if (this.parent instanceof Item) return this.container?.name ?? ""
 		return ""
 	}
 
@@ -30,7 +31,7 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 
 	get notes(): string {
 		let buffer = ""
-		if (this.parent) buffer += this.parent.notes
+		if (this.container) buffer += (this.container as any)?.notes
 		if ((this.system.usage_notes?.trim() ?? "") !== "") {
 			if (buffer.length !== 0) buffer += "\n"
 			buffer += this.system.usage_notes
@@ -44,8 +45,10 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 
 	get equipped(): boolean {
 		if (!this.actor) return false
-		if ([ItemType.Equipment, ItemType.EquipmentContainer].includes(this.parent.type)) return this.parent.equipped
-		if ([ItemType.Trait, ItemType.TraitContainer].includes(this.parent.type)) return this.parent.enabled
+		if ([ItemType.Equipment, ItemType.EquipmentContainer].includes((this.container as any)?.type))
+			return (this.container as any).equipped
+		if ([ItemType.Trait, ItemType.TraitContainer].includes((this.container as any)?.type))
+			return (this.container as any).enabled
 		return true
 	}
 
@@ -87,19 +90,30 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 
 	skillLevelBaseAdjustment(actor: this["actor"], tooltip: TooltipGURPS): number {
 		let adj = 0
+		if (!(this.container instanceof ContainerGURPS)) return 0
 		const minST = this.resolvedMinimumStrength - (actor.strengthOrZero + actor.striking_st_bonus)
 		if (minST > 0) adj -= minST
-		const nameQualifier = this.parent.name
-		for (const bonus of actor.namedWeaponSkillBonusesFor(nameQualifier!, this.usage, this.parent.tags, tooltip)) {
+		const nameQualifier = this.container?.name
+		for (const bonus of actor.namedWeaponSkillBonusesFor(
+			nameQualifier!,
+			this.usage,
+			(this.container as any)?.tags,
+			tooltip
+		)) {
 			adj += bonus.adjustedAmount
 		}
-		for (const bonus of actor.namedWeaponSkillBonusesFor(nameQualifier!, this.usage, this.parent.tags, tooltip)) {
+		for (const bonus of actor.namedWeaponSkillBonusesFor(
+			nameQualifier!,
+			this.usage,
+			(this.container as any)?.tags,
+			tooltip
+		)) {
 			adj += bonus.adjustedAmount
 		}
-		for (const f of this.parent.features) {
+		for (const f of (this.container as any)?.features) {
 			adj += this.extractSkillBonusForThisWeapon(f, tooltip)
 		}
-		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(this.parent.type as any)) {
+		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(this.container?.type as any)) {
 			for (const mod of (this.parent as any).modifiers) {
 				for (const f of mod.features) {
 					adj += this.extractSkillBonusForThisWeapon(f, tooltip)

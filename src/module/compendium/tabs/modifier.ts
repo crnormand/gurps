@@ -45,6 +45,7 @@ export class CompendiumTraitModifierTab extends CompendiumTab {
 					cost: modifier.costDescription,
 					parents: modifier.parents,
 					indent: modifier.indent,
+					flags: modifier.flags,
 				})
 			})
 
