@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.3  07/02/2023
+
+- Restrict GGA to Foundry V11
+
 Release 0.16.2  07/02/2023
 
 - Fix for context menus in the editor sheet.
