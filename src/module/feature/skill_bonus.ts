@@ -12,17 +12,6 @@ export class SkillBonus extends BaseFeature {
 			tags: { compare: StringComparison.None, qualifier: "" },
 		})
 	}
-
-	buildKey(prefix: string): string {
-		if (
-			this.name?.compare === StringComparison.Is &&
-			this.specialization?.compare === StringComparison.None &&
-			this.tags?.compare === StringComparison.None
-		) {
-			return `${prefix}/${this.name?.qualifier}`
-		}
-		return `${prefix}*`
-	}
 }
 
 export interface SkillBonus extends BaseFeature {

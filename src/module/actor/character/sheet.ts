@@ -299,6 +299,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			type,
 			name: game.i18n.localize(itemName),
 			system: {},
+			flags: {
+				[SYSTEM_NAME]: {
+					[ItemFlags.Container]: null,
+				},
+			},
 		}
 		if (other) itemData.system.other = true
 		await this.actor.createEmbeddedDocuments("Item", [itemData], {
@@ -766,7 +771,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const actorData = this.actor.toObject(false) as any
 		const items = deepClone(
 			(this.actor.items as EmbeddedCollection<any, any>)
-				.filter(e => e.getFlag(SYSTEM_NAME, ItemFlags.Container) === null)
+				.filter(e => !e.getFlag(SYSTEM_NAME, ItemFlags.Container))
 				.map(item => item)
 				.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 		)

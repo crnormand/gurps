@@ -1,5 +1,3 @@
-import { ItemFlags } from "@item"
-import { SYSTEM_NAME } from "@module/data"
 import { CompendiumBrowser, CompendiumIndexData } from ".."
 import { TabName } from "../data"
 import { FilterData } from "./data"

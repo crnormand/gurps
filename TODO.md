@@ -4,7 +4,6 @@
 
 -	Finish "static" character (0.15 and older) compatibility
 	-	don't bother with editing features
-- Fix character sheet export to account for new flat item structure
 
 ## Jeff and Chris
 

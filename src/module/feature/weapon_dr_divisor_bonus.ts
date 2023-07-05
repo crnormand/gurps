@@ -11,15 +11,8 @@ export class WeaponDRDivisorBonus extends BaseFeature {
 			name: { compare: StringComparison.Is, qualifier: "" },
 			specialization: { compare: StringComparison.None, qualifier: "" },
 			tags: { compare: StringComparison.None, qualifier: "" },
-			level: { compare: NumberComparison.None, qualifier: "" },
+			level: { compare: NumberComparison.None, qualifier: 0 },
 		})
-	}
-
-	buildKey(prefix: string): string {
-		if (this.name?.compare === "is" && this.specialization?.compare === "none" && this.tags?.compare === "none") {
-			return `${prefix}/${this.name?.qualifier}`
-		}
-		return `${prefix}*`
 	}
 }
 export interface WeaponDRDivisorBonus extends BaseFeature {

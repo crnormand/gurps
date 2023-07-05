@@ -86,6 +86,10 @@ class BaseItemGURPS extends Item {
 		return [this.container, ...grandparents]
 	}
 
+	exportSystemData(_keepOther: boolean): any {
+		return {}
+	}
+
 	// get parentCount(): number {
 	// 	let i = 0
 	// 	let p: any = this.container

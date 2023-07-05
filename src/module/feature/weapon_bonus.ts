@@ -11,7 +11,7 @@ export class WeaponDamageBonus extends BaseFeature {
 			name: { compare: StringComparison.Is, qualifier: "" },
 			specialization: { compare: StringComparison.None, qualifier: "" },
 			tags: { compare: StringComparison.None, qualifier: "" },
-			level: { compare: NumberComparison.None, qualifier: "" },
+			level: { compare: NumberComparison.None, qualifier: 0 },
 		})
 	}
 }

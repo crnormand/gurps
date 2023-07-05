@@ -441,7 +441,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		const uuid = $(event.currentTarget).data("uuid")
 		if (!uuid) return
 		const item = fromUuidSync(uuid) as StaticItemGURPS
-		return item.sheet?.render(true)
+		return item?.sheet?.render(true)
 	}
 }
 

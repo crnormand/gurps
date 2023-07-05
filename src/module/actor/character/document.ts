@@ -1,8 +1,10 @@
 import { BaseActorGURPS, ActorConstructorContextGURPS, ActorFlags } from "@actor/base"
 import {
+	BaseItemGURPS,
 	CR_Features,
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ItemFlags,
 	ItemGCS,
 	MeleeWeaponGURPS,
 	ModifierChoiceSheet,
@@ -337,7 +339,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get traitPoints(): { advantages: number; disadvantages: number; race: number; quirks: number } {
 		let [advantages, disadvantages, race, quirks] = [0, 0, 0, 0]
 		for (const t of this.traits) {
-			if (t.parent !== t.actor) continue
+			if (t.container !== t.actor) continue
 			let [a, d, r, q] = t.calculatePoints()
 			advantages += a
 			disadvantages += d
@@ -697,6 +699,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get blockBonus(): number {
 		return this.calc?.block_bonus ?? 0
+	}
+
+	get dodgeBonus(): number {
+		return this.calc?.dodge_bonus ?? 0
 	}
 
 	override get sizeMod(): number {
@@ -1707,7 +1713,19 @@ class CharacterGURPS extends BaseActorGURPS {
 	protected async exportSystemData() {
 		const system: any = duplicate(this.system)
 		system.type = "character"
-		const items = this.items.map((e: any) => e.exportSystemData(true))
+		system.calc = {
+			thrust: this.thrust.string,
+			swing: this.swing.string,
+			basic_lift: Weight.format(this.basicLift, this.settings.default_weight_units),
+			dodge: [0, 1, 2, 3, 4].map(e => this.dodge(this.allEncumbrance[e])),
+			move: [0, 1, 2, 3, 4].map(e => this.move(this.allEncumbrance[e])),
+			parry_bonus: this.parryBonus,
+			block_bous: this.blockBonus,
+			dodge_bonus: this.dodgeBonus,
+		}
+		const items = (this.items as unknown as Collection<BaseItemGURPS>)
+			.filter(e => !e.getFlag(SYSTEM_NAME, ItemFlags.Container))
+			.map((e: BaseItemGURPS) => e.exportSystemData(true))
 		const third_party: any = {}
 
 		third_party.settings = { resource_trackers: system.settings.resource_trackers }
@@ -1715,7 +1733,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		third_party.import = system.import
 		third_party.move = system.move
 		system.third_party = third_party
-		system.traits = items.filter(e => e.type.includes(ItemType.Trait)) ?? []
+		system.traits = items.filter(e => [ItemType.Trait, ItemType.TraitContainer].includes(e.type)) ?? []
 		system.skills =
 			items.filter(e => [ItemType.Skill, ItemType.SkillContainer, ItemType.Technique].includes(e.type)) ?? []
 		system.spells =

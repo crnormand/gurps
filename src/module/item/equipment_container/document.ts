@@ -206,6 +206,10 @@ class EquipmentContainerGURPS extends ItemGCS {
 	override exportSystemData(keepOther: boolean): any {
 		const system: any = super.exportSystemData(keepOther)
 		delete system.name
+		system.calc = {
+			extended_value: this.extendedValue,
+			extended_weight: this.extendedWeightFast,
+		}
 		return system
 	}
 

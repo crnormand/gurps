@@ -146,6 +146,11 @@ abstract class ItemGCS extends ContainerGURPS {
 
 	exportSystemData(keepOther: boolean): any {
 		const system: any = this.system
+		if (system.features)
+			system.features = system.features.map((e: Feature) => {
+				const { _levels: _, effective: __, ...rest } = e
+				return rest
+			})
 		if ((this as any).children)
 			system.children = (this as any).children.map((e: ItemGCS) => e.exportSystemData(false))
 		if ((this as any).modifiers)
