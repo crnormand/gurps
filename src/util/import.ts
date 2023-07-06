@@ -77,10 +77,6 @@ class ImportUtils {
 					...ImportUtils.importItems((item as any).modifiers, { container: id, sort: context.sort }),
 					...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort }),
 				]
-				// flags[SYSTEM_NAME]!.contentsData = [
-				// 	...ImportUtils.importItems((item as any).modifiers, { container: true }),
-				// 	...ImportUtils.importItems((item as any).weapons, { container: true }),
-				// ]
 				return [ImportUtils.getTraitData(item as TraitSystemData), flags, items, id]
 			case "trait_container":
 				items = [
@@ -88,17 +84,11 @@ class ImportUtils {
 					...ImportUtils.importItems((item as any).modifiers, { container: id, sort: context.sort }),
 					...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort }),
 				]
-				// flags[SYSTEM_NAME]!.contentsData = [
-				// 	...ImportUtils.importItems((item as any).children, { container: true }),
-				// 	...ImportUtils.importItems((item as any).modifiers, { container: true }),
-				// 	...ImportUtils.importItems((item as any).weapons, { container: true }),
-				// ]
 				return [ImportUtils.getTraitContainerData(item as TraitContainerSystemData), flags, items, id]
 			case "modifier":
 				return [ImportUtils.getTraitModifierData(item as TraitModifierSystemData), flags, items, id]
 			case "modifier_container":
 				items = [...ImportUtils.importItems((item as any).children, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
 				return [
 					ImportUtils.getTraitModifierContainerData(item as TraitModifierContainerSystemData),
 					flags,
@@ -107,43 +97,29 @@ class ImportUtils {
 				]
 			case "skill":
 				items = [...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getSkillData(item as SkillSystemData), flags, items, id]
 			case "technique":
 				items = [...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort })]
 				return [ImportUtils.getTechniqueData(item as TechniqueSystemData), flags, items, id]
 			case "skill_container":
 				items = [...ImportUtils.importItems((item as any).children, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
 				return [ImportUtils.getSkillContainerData(item as SkillContainerSystemData), flags, items, id]
 			case "spell":
 				items = [...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getSpellData(item as SpellSystemData), flags, items, id]
 			case "ritual_magic_spell":
 				items = [...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
 				return [ImportUtils.getRitualMagicSpellData(item as RitualMagicSpellSystemData), flags, items, id]
 			case "spell_container":
 				items = [...ImportUtils.importItems((item as any).children, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
 				return [ImportUtils.getSpellContainerData(item as SpellContainerSystemData), flags, items, id]
 			case "equipment":
 				items = [
 					...ImportUtils.importItems((item as any).modifiers, { container: id, sort: context.sort }),
 					...ImportUtils.importItems((item as any).weapons, { container: id, sort: context.sort }),
 				]
-				// flags[SYSTEM_NAME]!.contentsData = [
-				// 	...ImportUtils.importItems((item as any).modifiers, { container: true }),
-				// 	...ImportUtils.importItems((item as any).weapons, { container: true }),
-				// ]
 				return [ImportUtils.getEquipmentData(item as EquipmentSystemData, context?.other), flags, items, id]
 			case "equipment_container":
-				// flags[SYSTEM_NAME]!.contentsData = [
-				// 	...ImportUtils.importItems((item as any).children, { container: true }),
-				// 	...ImportUtils.importItems((item as any).modifiers, { container: true }),
-				// 	...ImportUtils.importItems((item as any).weapons, { container: true }),
-				// ]
 				items = [
 					...ImportUtils.importItems((item as any).children, { container: id, sort: context.sort }),
 					...ImportUtils.importItems((item as any).modifiers, { container: id, sort: context.sort }),
@@ -159,7 +135,6 @@ class ImportUtils {
 				return [ImportUtils.getEquipmentModifierData(item as EquipmentModifierSystemData), flags, items, id]
 			case "eqp_modifier_container":
 				items = [...ImportUtils.importItems((item as any).children, { container: id, sort: context.sort })]
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
 				return [
 					ImportUtils.getEquipmentModifierContainerData(item as EquipmentModifierContainerSystemData),
 					flags,
@@ -169,7 +144,6 @@ class ImportUtils {
 			case "note":
 				return [ImportUtils.getNoteData(item as NoteSystemData), flags, items, id]
 			case "note_container":
-				// flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
 				items = [...ImportUtils.importItems((item as any).children, { container: id, sort: context.sort })]
 				return [ImportUtils.getNoteContainerData(item as NoteContainerSystemData), flags, items, id]
 			case "melee_weapon":
@@ -184,132 +158,6 @@ class ImportUtils {
 				)
 		}
 	}
-	// static importItems(
-	// 	list: Array<ItemSystemDataGURPS | any>,
-	// 	context?: { container?: boolean; other?: boolean }
-	// ): Array<any> {
-	// 	if (!list) return []
-	// 	const items: Array<any> = []
-	// 	let sort = 0
-	// 	for (const item of list) {
-	// 		item.name ??= (item as any).description ?? (item as any).text ?? (item as any).usage
-	// 		const id = randomID()
-	// 		const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = ImportUtils.getItemData(item, context)
-	// 		let type = itemData.type.replace("_container", "")
-	// 		if (type === ItemType.Technique) type = ItemType.Skill
-	// 		else if (type === ItemType.RitualMagicSpell) type = ItemType.Spell
-	// 		else if (type === ItemType.Equipment) type = "equipment"
-	// 		const newItem = {
-	// 			name: item.name,
-	// 			img: `systems/${SYSTEM_NAME}/assets/icons/${type}.svg`,
-	// 			type: itemData.type,
-	// 			system: itemData,
-	// 			flags: itemFlags,
-	// 			sort,
-	// 			_id: id,
-	// 		}
-	// 		if (!newItem.name) {
-	// 			const defaultName = game.i18n.localize(`TYPES.Item.${newItem.system.type}`)
-	// 			newItem.name = defaultName
-	// 		}
-	// 		if (context?.container) {
-	// 			items.push({
-	// 				...newItem,
-	// 				...{
-	// 					effects: [],
-	// 				},
-	// 			})
-	// 		} else {
-	// 			items.push(newItem)
-	// 		}
-	// 		sort += 1
-	// 	}
-	// 	return items
-	// }
-
-	// private static getItemData(
-	// 	item: ItemSystemDataGURPS,
-	// 	context?: { container?: boolean; other?: boolean }
-	// ): [ItemSystemDataGURPS, ItemFlagsGURPS] {
-	// 	const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { [ItemFlags.Container]: null } }
-	// 	switch (item.type) {
-	// 		case "trait":
-	// 			flags[SYSTEM_NAME]!.contentsData = [
-	// 				...ImportUtils.importItems((item as any).modifiers, { container: true }),
-	// 				...ImportUtils.importItems((item as any).weapons, { container: true }),
-	// 			]
-	// 			return [ImportUtils.getTraitData(item as TraitSystemData), flags]
-	// 		case "trait_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = [
-	// 				...ImportUtils.importItems((item as any).children, { container: true }),
-	// 				...ImportUtils.importItems((item as any).modifiers, { container: true }),
-	// 				...ImportUtils.importItems((item as any).weapons, { container: true }),
-	// 			]
-	// 			return [ImportUtils.getTraitContainerData(item as TraitContainerSystemData), flags]
-	// 		case "modifier":
-	// 			return [ImportUtils.getTraitModifierData(item as TraitModifierSystemData), flags]
-	// 		case "modifier_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-	// 			return [ImportUtils.getTraitModifierContainerData(item as TraitModifierContainerSystemData), flags]
-	// 		case "skill":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
-	// 			return [ImportUtils.getSkillData(item as SkillSystemData), flags]
-	// 		case "technique":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
-	// 			return [ImportUtils.getTechniqueData(item as TechniqueSystemData), flags]
-	// 		case "skill_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-	// 			return [ImportUtils.getSkillContainerData(item as SkillContainerSystemData), flags]
-	// 		case "spell":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
-	// 			return [ImportUtils.getSpellData(item as SpellSystemData), flags]
-	// 		case "ritual_magic_spell":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).weapons, { container: true })
-	// 			return [ImportUtils.getRitualMagicSpellData(item as RitualMagicSpellSystemData), flags]
-	// 		case "spell_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-	// 			return [ImportUtils.getSpellContainerData(item as SpellContainerSystemData), flags]
-	// 		case "equipment":
-	// 			flags[SYSTEM_NAME]!.contentsData = [
-	// 				...ImportUtils.importItems((item as any).modifiers, { container: true }),
-	// 				...ImportUtils.importItems((item as any).weapons, { container: true }),
-	// 			]
-	// 			return [ImportUtils.getEquipmentData(item as EquipmentSystemData, context?.other), flags]
-	// 		case "equipment_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = [
-	// 				...ImportUtils.importItems((item as any).children, { container: true }),
-	// 				...ImportUtils.importItems((item as any).modifiers, { container: true }),
-	// 				...ImportUtils.importItems((item as any).weapons, { container: true }),
-	// 			]
-	// 			return [
-	// 				ImportUtils.getEquipmentContainerData(item as EquipmentContainerSystemData, context?.other),
-	// 				flags,
-	// 			]
-	// 		case "eqp_modifier":
-	// 			return [ImportUtils.getEquipmentModifierData(item as EquipmentModifierSystemData), flags]
-	// 		case "eqp_modifier_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-	// 			return [
-	// 				ImportUtils.getEquipmentModifierContainerData(item as EquipmentModifierContainerSystemData),
-	// 				flags,
-	// 			]
-	// 		case "note":
-	// 			return [ImportUtils.getNoteData(item as NoteSystemData), flags]
-	// 		case "note_container":
-	// 			flags[SYSTEM_NAME]!.contentsData = ImportUtils.importItems((item as any).children, { container: true })
-	// 			return [ImportUtils.getNoteContainerData(item as NoteContainerSystemData), flags]
-	// 		case "melee_weapon":
-	// 			return [ImportUtils.getMeleeWeaponData(item as MeleeWeaponSystemData), flags]
-	// 		case "ranged_weapon":
-	// 			return [ImportUtils.getRangedWeaponData(item as RangedWeaponSystemData), flags]
-	// 		default:
-	// 			throw new Error(
-	// 				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.error.import.invalid_item_type, {
-	// 					type: item.type,
-	// 				})
-	// 			)
-	// 	}
-	// }
 
 	private static getTraitData(data: TraitSystemData): TraitSystemData {
 		return {

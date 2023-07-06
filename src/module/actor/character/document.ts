@@ -410,7 +410,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	effectiveST(initialST: number): number {
-		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_st"), 2)
+		const divisor = 2 * Math.min(this.countThresholdOpMet(ThresholdOp.HalveST), 2)
 		let ST = initialST
 		if (divisor > 0) ST = Math.ceil(initialST / divisor)
 		if (ST < 1 && initialST > 0) return 1
@@ -431,7 +431,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	eMove(enc: Encumbrance): number {
 		// Let initialMove = this.moveByType(Math.max(0, this.resolveAttributeCurrent(gid.BasicMove)))
 		let initialMove = this.moveByType()
-		let divisor = 2 * Math.min(this.countThresholdOpMet("halve_move"), 2)
+		let divisor = 2 * Math.min(this.countThresholdOpMet(ThresholdOp.HalveMove), 2)
 		if (divisor === 0) divisor = 1
 		if (divisor > 0) initialMove = Math.ceil(initialMove / divisor)
 		const move = Math.trunc((initialMove * (10 + 2 * enc.penalty)) / 10)
@@ -478,7 +478,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	// Dodge accounting for pool thresholds
 	eDodge(enc: Encumbrance): number {
 		let dodge = 3 + (this.calc?.dodge_bonus ?? 0) + Math.max(this.resolveAttributeCurrent(gid.BasicSpeed), 0)
-		const divisor = 2 * Math.min(this.countThresholdOpMet("halve_dodge"), 2)
+		const divisor = 2 * Math.min(this.countThresholdOpMet(ThresholdOp.HalveDodge), 2)
 		if (divisor > 0) {
 			dodge = Math.ceil(dodge / divisor)
 		}
@@ -487,7 +487,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	countThresholdOpMet(op: ThresholdOp) {
 		let total = 0
-		Object.values(this.poolAttributes).forEach(a => {
+		this.poolAttributes().forEach((a: Attribute) => {
 			if (!a.apply_ops) return
 			const threshold = a.currentThreshold
 			if (threshold && threshold.ops?.includes(op)) total++

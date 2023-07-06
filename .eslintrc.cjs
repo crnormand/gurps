@@ -51,7 +51,7 @@ module.exports = {
 		"no-cond-assign": "warn",
 		"no-const-assign": "error",
 		"no-constant-condition": "warn",
-		"no-constructor-return": "warn",
+		"no-constructor-return": "off",
 		"no-delete-var": "warn",
 		"no-dupe-args": "warn",
 		"no-dupe-class-members": "warn",

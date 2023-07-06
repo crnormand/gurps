@@ -943,3 +943,12 @@ export const DRAWING_TYPES: Readonly<{
  * @deprecated since v10.
  */
 export type DRAWING_TYPES = ValueOf<typeof DRAWING_TYPES>
+
+export const SHOWDOWN_OPTIONS = {
+	disableForced4SpacesIndentedSublists: true,
+	noHeaderId: true,
+	parseImgDimensions: true,
+	strikethrough: true,
+	tables: true,
+	tablesHeaderId: true,
+}

@@ -1,6 +1,7 @@
 import { FeatureType } from "@feature"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { DurationType } from "@item/effect"
+import { ThresholdOp } from "@module/attribute"
 import { gid, SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS } from "@util"
 import { StatusEffect } from "types/foundry/client/data/documents/token"
@@ -49,7 +50,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 			features: [
 				{
 					type: FeatureType.ThresholdBonus,
-					ops: ["halve_move", "halve_dodge"],
+					ops: [ThresholdOp.HalveMove, ThresholdOp.HalveDodge],
 				},
 			],
 		},
@@ -59,7 +60,7 @@ export function getConditionList(): Record<ConditionID, Partial<ConditionSystemD
 			features: [
 				{
 					type: FeatureType.ThresholdBonus,
-					ops: ["halve_move", "halve_dodge", "halve_st"],
+					ops: [ThresholdOp.HalveMove, ThresholdOp.HalveDodge, ThresholdOp.HalveST],
 				},
 			],
 		},

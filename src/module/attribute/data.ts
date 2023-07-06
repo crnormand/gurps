@@ -40,7 +40,11 @@ export enum AttributeType {
 	PoolSeparator = "pool_separator",
 }
 
-export type ThresholdOp = "halve_move" | "halve_dodge" | "halve_st"
+export enum ThresholdOp {
+	HalveMove = "halve_move",
+	HalveDodge = "halve_dodge",
+	HalveST = "halve_st",
+}
 
 export interface PoolThresholdDef {
 	state: string

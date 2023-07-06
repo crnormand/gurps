@@ -31,7 +31,7 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 
 	get notes(): string {
 		let buffer = ""
-		if (this.container) buffer += (this.container as any)?.notes
+		if (this.container) buffer += (this.container as any).notes
 		if ((this.system.usage_notes?.trim() ?? "") !== "") {
 			if (buffer.length !== 0) buffer += "\n"
 			buffer += this.system.usage_notes
@@ -110,9 +110,10 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 		)) {
 			adj += bonus.adjustedAmount
 		}
-		for (const f of (this.container as any)?.features) {
-			adj += this.extractSkillBonusForThisWeapon(f, tooltip)
-		}
+		if (this.container)
+			for (const f of (this.container as any).features) {
+				adj += this.extractSkillBonusForThisWeapon(f, tooltip)
+			}
 		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(this.container?.type as any)) {
 			for (const mod of (this.parent as any).modifiers) {
 				for (const f of mod.features) {

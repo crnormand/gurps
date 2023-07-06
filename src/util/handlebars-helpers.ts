@@ -152,7 +152,6 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 
 	static md(s: string): string {
 		const showdown_options = {
-			// @ts-ignore until v10 types
 			...CONST.SHOWDOWN_OPTIONS,
 		}
 		// @ts-ignore until v10 types

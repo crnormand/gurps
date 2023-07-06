@@ -39,6 +39,8 @@ export class StaticPopout extends FormApplication {
 			case StaticPopoutType.Trait:
 			case StaticPopoutType.Spell:
 				return this.object.system[this.key][this.uuid].name
+			default:
+				return ""
 		}
 	}
 
