@@ -11,7 +11,7 @@ export enum FeatureType {
 	WeaponDRDivisorBonus = "weapon_dr_divisor_bonus",
 	CostReduction = "cost_reduction",
 	ContaiedWeightReduction = "contained_weight_reduction",
-	ThresholdBonus = "threshold_bonus",
+	// ThresholdBonus = "threshold_bonus",
 }
 
 export type SpellBonusMatch = "all_colleges" | "college_name" | "spell_name" | "power_source_name"

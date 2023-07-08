@@ -1,3 +1,14 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
-	{{>actor/character/config/attributes}}
+	<nav class="nav-tabs" data-group="primary">
+			<a data-tab="attributes"><i class="gcs-attribute"></i>{{localize "gurps.character.settings.attributes.button"}}</a>
+			<a data-tab="effects"><i class="fas fa-star-sharp"></i>{{localize "gurps.character.settings.attributes.effects"}}</a>
+	</nav>
+	<section class="content">
+		<div class="tab browser" dagr-group="primary" data-tab="attributes">
+			{{>actor/character/config/attributes}}
+		</div>
+		<div class="tab browser" dagr-group="primary" data-tab="effects">
+			{{>system/settings/attribute-effects}}
+		</div>
+	</section>
 </form>

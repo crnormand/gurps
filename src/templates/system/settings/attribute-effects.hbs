@@ -1,0 +1,35 @@
+<div class="add">
+	<a class="gcs-circled-add add" data-type="effects"></a>
+</div>
+<div class="item-list">
+	{{#each effects}}
+		<div class="item" data-index="{{@index}}" data-type="effects">
+			<div class="controls">
+				<a class="gcs-grip drag" data-index="{{@index}}" data-type="effects"></a>
+				<a class="gcs-trash delete" data-index="{{@index}}" data-type="effects"></a>
+					<a class="fas fa-right-to-bracket add" data-id="{{@index}}" data-type="enter"></a>
+					<a class="fas fa-right-from-bracket add" data-id="{{@index}}" data-type="leave"></a>
+			</div>
+			<div class="fieldblock">
+				<div class="label">{{localize "gurps.attribute_def.id"}}</div>
+				<div class="field">
+					<input type="text" name="array.effects.{{@index}}.attribute" value="{{this.attribute}}" data-dtype="String" />
+				</div>
+				<div class="label">{{localize "gurps.attribute_def.state"}}</div>
+				<div class="field">
+					<input type="text" name="array.effects.{{@index}}.state" value="{{this.state}}" data-dtype="String" />
+				</div>
+			<div class="item-list enter">
+			{{#each this.enter}}
+				{{>system/settings/attribute-condition pid=@../index parent="array.effects" list="enter"}}
+			{{/each}}
+			</div>
+			<div class="item-list leave">
+			{{#each this.leave}}
+				{{>system/settings/attribute-condition pid=@../index parent="array.effects" list="leave"}}
+			{{/each}}
+			</div>
+			</div>
+		</div>
+	{{/each}}
+</div>

@@ -214,6 +214,8 @@
 			height: 20px;
 			align-items: center;
 		}
+		.enter,
+		.leave,
 		.thresholds {
 			grid-column: 1 / span 2;
 			border: 1px solid rgb(var(--color-divider));

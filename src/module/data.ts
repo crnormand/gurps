@@ -56,6 +56,11 @@ export enum SETTINGS {
 	BASE_BOOKS = "base_books",
 }
 
+export enum EFFECT_ACTION {
+	ADD = "add",
+	REMOVE = "remove",
+}
+
 export enum SOCKET {
 	INITIATIVE_CHANGED = "initiative_changed",
 	UPDATE_BUCKET = "update_bucket",

@@ -449,7 +449,8 @@
 					"button": "Sheet Settings"
 				},
 				"attributes": {
-					"button": "Attributes"
+					"button": "Attributes",
+					"effects": "Effects"
 				},
 				"body_type": {
 					"button": "Body Type",
@@ -1021,6 +1022,10 @@
 				"turns": "Turns",
 				"rounds": "Rounds",
 				"seconds": "Seconds"
+			},
+			"effect_action": {
+				"add": "Add",
+				"remove": "Remove"
 			}
 		},
 		"study": {
@@ -1353,7 +1358,9 @@
 			"default_attributes": {
 				"name": "Default Attributes",
 				"label": "Edit Default Attributes",
-				"hint": "Attributes assigned when creating new Characters."
+				"hint": "Attributes assigned when creating new Characters.",
+				"condition": "Condition",
+				"action": "Action"
 			},
 			"default_resource_trackers": {
 				"name": "Default Resource Trackers",

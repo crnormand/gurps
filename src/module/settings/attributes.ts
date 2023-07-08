@@ -1,13 +1,22 @@
+import { ConditionID } from "@item/condition/data"
 import { AttributeType } from "@module/attribute"
-import { SYSTEM_NAME } from "@module/data"
+import { EFFECT_ACTION, SYSTEM_NAME } from "@module/data"
 import { prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"
 import { SettingsMenuGURPS } from "./menu"
 
+enum ListType {
+	Attribute = "attributes",
+	Thresholds = "attribute_thresholds",
+	Effect = "effects",
+	Enter = "enter",
+	Leave = "leave",
+}
+
 export class DefaultAttributeSettings extends SettingsMenuGURPS {
 	static override readonly namespace = "default_attributes"
 
-	static override readonly SETTINGS = ["attributes"] as const
+	static override readonly SETTINGS = ["attributes", "effects"] as const
 
 	static override get defaultOptions(): FormApplicationOptions {
 		const options = super.defaultOptions
@@ -24,7 +33,14 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 			submitOnChange: true,
 			closeOnSubmit: false,
 			resizable: true,
-		} as FormApplicationOptions)
+			tabs: [
+				{
+					navSelector: "nav",
+					contentSelector: "section.content",
+					initital: "attributes",
+				},
+			],
+		})
 	}
 
 	protected static override get settings(): Record<string, any> {
@@ -247,6 +263,73 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 					},
 				],
 			},
+			effects: {
+				name: "",
+				hint: "",
+				type: Array,
+				default: [
+					{
+						attribute: "fp",
+						state: "Unconscious",
+						enter: [{ id: ConditionID.Fatigued, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Fatigued, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "fp",
+						state: "Collapse",
+						enter: [{ id: ConditionID.Fatigued, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Fatigued, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "fp",
+						state: "Tired",
+						enter: [{ id: ConditionID.Fatigued, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Fatigued, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Dead",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Dying #4",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Dying #3",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Dying #2",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Dying #1",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Collapse",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+					{
+						attribute: "hp",
+						state: "Reeling",
+						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
+						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+					},
+				],
+			},
 		}
 	}
 
@@ -262,9 +345,10 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 		event.preventDefault()
 		event.stopPropagation()
 		const attributes: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
-		const type: "attributes" | "attribute_thresholds" = $(event.currentTarget).data("type")
+		const effects: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.effects`) as any[]
+		const type: ListType = $(event.currentTarget).data("type")
 		let new_id = ""
-		if (type === "attributes")
+		if (type === ListType.Attribute)
 			for (let n = 0; n < 26; n++) {
 				const char = String.fromCharCode(97 + n)
 				if (![...attributes].find(e => e.id === char)) {
@@ -273,7 +357,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				}
 			}
 		switch (type) {
-			case "attributes":
+			case ListType.Attribute:
 				// TODO: account for possibility of all letters being taken
 				attributes.push({
 					type: AttributeType.Integer,
@@ -285,7 +369,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				})
 				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
-			case "attribute_thresholds":
+			case ListType.Thresholds:
 				attributes[$(event.currentTarget).data("id")].thresholds ??= []
 				attributes[$(event.currentTarget).data("id")].thresholds!.push({
 					state: "",
@@ -295,6 +379,24 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				})
 				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
+			case ListType.Effect:
+				effects.push({
+					attribute: "",
+					state: "",
+					enter: [],
+					leave: [],
+				})
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.effects`, effects)
+				return this.render()
+			case ListType.Enter:
+			case ListType.Leave:
+				effects[$(event.currentTarget).data("id")][type] ??= []
+				effects[$(event.currentTarget).data("id")][type].push({
+					id: ConditionID.Reeling,
+					action: EFFECT_ACTION.ADD,
+				})
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.effects`, effects)
+				return this.render()
 		}
 	}
 
@@ -302,17 +404,27 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 		event.preventDefault()
 		event.stopPropagation()
 		const attributes: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
-		const type: "attributes" | "attribute_thresholds" = $(event.currentTarget).data("type")
+		const effects: any[] = game.settings.get(SYSTEM_NAME, `${this.namespace}.effects`) as any[]
+		const type: ListType = $(event.currentTarget).data("type")
 		const index = Number($(event.currentTarget).data("index")) || 0
 		const parent_index = Number($(event.currentTarget).data("pindex")) || 0
 		switch (type) {
-			case "attributes":
+			case ListType.Attribute:
 				attributes.splice(index, 1)
 				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
 				return this.render()
-			case "attribute_thresholds":
+			case ListType.Thresholds:
 				attributes[parent_index].thresholds?.splice(index, 1)
 				await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+				return this.render()
+			case ListType.Effect:
+				effects.splice(index, 1)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.effects`, effects)
+				return this.render()
+			case ListType.Enter:
+			case ListType.Leave:
+				effects[parent_index][type]?.splice(index, 1)
+				await game.settings.set(SYSTEM_NAME, `${this.namespace}.effects`, effects)
 				return this.render()
 		}
 	}
@@ -320,7 +432,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 	async _onDragStart(event: DragEvent) {
 		// TODO:update
 		const item = $(event.currentTarget!)
-		const type: "attributes" | "attribute_thresholds" = item.data("type")
+		const type: Omit<ListType, ListType.Enter | ListType.Leave> = item.data("type")
 		const index = Number(item.data("index"))
 		const parent_index = Number(item.data("pindex")) || 0
 		event.dataTransfer?.setData(
@@ -353,6 +465,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 		if (!element.hasClass("item")) element = element.parent(".item")
 
 		const attributes = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`) as any[]
+		const effects = game.settings.get(SYSTEM_NAME, `${this.namespace}.effects`) as any[]
 		const target_index = element.data("index")
 		const above = element.hasClass("border-top")
 		if (dragData.order === target_index) return this.render()
@@ -360,12 +473,13 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 		if (!above && dragData.order === target_index + 1) return this.render()
 
 		let container: any[] = []
-		if (dragData.type === "attributes") container = attributes
-		else if (dragData.type === "attribute_thresholds") container = attributes
+		if (dragData.type === ListType.Attribute) container = attributes
+		else if (dragData.type === ListType.Thresholds) container = attributes
+		else if (dragData.type === ListType.Effect) container = effects
 		if (!container) return
 
 		let item
-		if (dragData.type.includes("_thresholds")) {
+		if (dragData.type === ListType.Thresholds) {
 			item = container[dragData.parent_index].thresholds.splice(dragData.index, 1)[0]
 			container[dragData.parent_index].thresholds.splice(target_index, 0, item as any)
 		} else {
@@ -377,13 +491,16 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 		})
 
 		await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, attributes)
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.effects`, effects)
 		return this.render()
 	}
 
 	override async getData(): Promise<any> {
 		const attributes = game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
+		const effects = game.settings.get(SYSTEM_NAME, `${this.namespace}.effects`)
 		return {
 			attributes: attributes,
+			effects: effects,
 			actor: null,
 			config: CONFIG.GURPS,
 		}
@@ -391,7 +508,9 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 
 	protected override async _updateObject(_event: Event, formData: any): Promise<void> {
 		const attributes = await game.settings.get(SYSTEM_NAME, `${this.namespace}.attributes`)
-		formData = prepareFormData(formData, { system: { settings: { attributes } } })
+		const effects = await game.settings.get(SYSTEM_NAME, `${this.namespace}.effects`)
+		formData = prepareFormData(formData, { system: { settings: { attributes } }, effects })
 		await game.settings.set(SYSTEM_NAME, `${this.namespace}.attributes`, formData["system.settings.attributes"])
+		await game.settings.set(SYSTEM_NAME, `${this.namespace}.effects`, formData.effects)
 	}
 }

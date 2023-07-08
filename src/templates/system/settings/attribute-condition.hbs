@@ -1,0 +1,31 @@
+<div class="item" data-index="{{@index}}" data-type="{{list}}">
+	<div class="controls">
+		<a class="gcs-trash delete" data-pindex="{{pid}}" data-index="{{@index}}" data-type="{{list}}"></a>
+	</div>
+	<div class="fieldblock">
+		<div class="label">{{localize "gurps.settings.default_attributes.condition"}}</div>
+		<div class="field">
+			<select name="{{parent}}.{{pid}}.{{list}}.{{@index}}.id" data-dtype="String">
+				{{#select this.id}}
+					{{#each @root.config.select.conditions as |v k|}}
+						<option value="{{k}}">
+							{{localize v}}
+						</option>
+					{{/each}}
+				{{/select}}
+			</select>
+		</div>
+		<div class="label">{{localize "gurps.settings.default_attributes.action"}}</div>
+		<div class="field">
+			<select name="{{parent}}.{{pid}}.{{list}}.{{@index}}.action" data-dtype="String">
+				{{#select this.action}}
+					{{#each @root.config.select.effect_action as |v k|}}
+						<option value="{{k}}">
+							{{localize v}}
+						</option>
+					{{/each}}
+				{{/select}}
+			</select>
+		</div>
+	</div>
+</div>

@@ -115,7 +115,7 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 				adj += this.extractSkillBonusForThisWeapon(f, tooltip)
 			}
 		if ([ItemType.Trait, ItemType.Equipment, ItemType.EquipmentContainer].includes(this.container?.type as any)) {
-			for (const mod of (this.parent as any).modifiers) {
+			for (const mod of (this.container as any).modifiers) {
 				for (const f of mod.features) {
 					adj += this.extractSkillBonusForThisWeapon(f, tooltip)
 				}

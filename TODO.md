@@ -22,8 +22,8 @@
 -	Convert the modifier bucket over
 		-	modifier bucket journals
 -	Add makeshift static to dynamic character conversion
-- Fix reeling etc. not affecting move/dodge
 - Delete compendium pack entries in settings when compendium pack is removed
+-	Move type editor (in triangle settings)
 
 ## 1.1.0 and beyond
 

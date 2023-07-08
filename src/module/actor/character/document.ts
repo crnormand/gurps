@@ -22,7 +22,16 @@ import {
 	WeaponType,
 } from "@item"
 import { CondMod } from "@module/conditional-modifier"
-import { attrPrefix, gid, ItemType, MoveType, SETTINGS, StringComparison, SYSTEM_NAME } from "@module/data"
+import {
+	attrPrefix,
+	EFFECT_ACTION,
+	gid,
+	ItemType,
+	MoveType,
+	SETTINGS,
+	StringComparison,
+	SYSTEM_NAME,
+} from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
@@ -54,8 +63,8 @@ import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
-import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
-import { ConditionID } from "@item/condition"
+import { ActorDataGURPS, Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
+import { ConditionGURPS, ConditionID } from "@item/condition"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeDef, AttributeObj, AttributeType, ThresholdOp } from "@module/attribute"
@@ -68,9 +77,14 @@ import {
 	WeaponDamageBonus,
 	WeaponDRDivisorBonus,
 } from "@feature"
+import { BaseUser } from "types/foundry/common/documents.mjs"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
+
+	private _prevAttributes: Map<string, Attribute> = new Map()
+
+	private _processingThresholds = false
 
 	resource_trackers: Map<string, ResourceTracker> = new Map()
 
@@ -85,6 +99,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	constructor(data: CharacterSource, context: ActorConstructorContextGURPS = {}) {
 		super(data, context)
 		if (this.system.attributes) this.attributes = this.getAttributes()
+		// this._prevAttributes = this.attributes
 		if (this.system.resource_trackers) this.resource_trackers = this.getResourceTrackers()
 		this.features = {
 			attributeBonuses: [],
@@ -95,7 +110,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			spellBonuses: [],
 			spellPointBonuses: [],
 			weaponBonuses: [],
-			thresholdBonuses: [],
+			// thresholdBonuses: [],
 		}
 		// This.moveData ??= {
 		// 	maneuver: "none",
@@ -200,6 +215,15 @@ class CharacterGURPS extends BaseActorGURPS {
 		if (options.promptImport) {
 			this.promptImport()
 		}
+	}
+
+	protected _preUpdate(
+		changed: DeepPartial<ActorDataGURPS>,
+		options: DocumentModificationOptions,
+		user: BaseUser
+	): Promise<void> {
+		this._prevAttributes = this.attributes
+		return super._preUpdate(changed, options, user)
 	}
 
 	override update(
@@ -492,9 +516,9 @@ class CharacterGURPS extends BaseActorGURPS {
 			const threshold = a.currentThreshold
 			if (threshold && threshold.ops?.includes(op)) total++
 		})
-		this.features.thresholdBonuses.forEach(a => {
-			if (a.ops.includes(op)) total++
-		})
+		// this.features.thresholdBonuses.forEach(a => {
+		// 	if (a.ops.includes(op)) total++
+		// })
 		return total
 	}
 
@@ -995,6 +1019,8 @@ class CharacterGURPS extends BaseActorGURPS {
 				const prev_attr = prev.find(e => e.attr_id === attr.attr_id)
 				Object.assign(attr, prev_attr)
 			})
+		} else {
+			this._prevAttributes = new Map()
 		}
 		return a
 	}
@@ -1020,9 +1046,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		return t
 	}
 
-	getAttributes(): Map<string, Attribute> {
+	getAttributes(att_array = this.system.attributes): Map<string, Attribute> {
 		const attributes: Map<string, Attribute> = new Map()
-		const att_array = this.system.attributes
 		if (!att_array.length) return attributes
 		att_array.forEach((v, k) => {
 			attributes.set(v.attr_id, new Attribute(this, v.attr_id, k, v))
@@ -1141,7 +1166,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			spellBonuses: [],
 			spellPointBonuses: [],
 			weaponBonuses: [],
-			thresholdBonuses: [],
+			// thresholdBonuses: [],
 		}
 		for (const t of this.traits) {
 			let levels = 0
@@ -1193,12 +1218,77 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.calc.lifting_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Lifting)
 		this.calc.striking_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Striking)
 		this.calc.throwing_st_bonus = this.attributeBonusFor(gid.Strength, AttributeBonusLimitation.Throwing)
+
 		this.attributes = this.getAttributes()
+		this.processThresholds()
+
 		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
 		this.calc.dodge_bonus = this.attributeBonusFor(gid.Dodge, AttributeBonusLimitation.None)
 		this.calc.parry_bonus = this.attributeBonusFor(gid.Parry, AttributeBonusLimitation.None)
 		this.calc.block_bonus = this.attributeBonusFor(gid.Block, AttributeBonusLimitation.None)
+	}
+
+	processThresholds() {
+		if (this._processingThresholds || !this._prevAttributes || this.attributes === this._prevAttributes) return
+
+		this._processingThresholds = true
+
+		const effects = game.settings.get(SYSTEM_NAME, `${SETTINGS.DEFAULT_ATTRIBUTES}.effects`) as any
+
+		this.poolAttributes(false).forEach(e => {
+			if (!this._prevAttributes.has(e.id)) return
+
+			const prevState = this._prevAttributes.get(e.id)?.currentThreshold?.state
+			const currentState = e.currentThreshold?.state
+
+			if (prevState === currentState) return
+
+			const enterActions = effects
+				.filter((f: { attribute: string; state: string }) => f.attribute === e.id && f.state === currentState)
+				.reduce((acc: any[], e: any) => {
+					return [...acc, ...e.enter]
+				}, [])
+			const leaveActions = effects
+				.filter((f: { attribute: string; state: string }) => f.attribute === e.id && f.state === prevState)
+				.reduce((acc: any[], e: any) => {
+					return [...acc, ...e.leave]
+				}, [])
+
+			let actions = [...enterActions, ...leaveActions]
+			actions = actions.filter(a => {
+				if (
+					a.action === EFFECT_ACTION.REMOVE &&
+					actions.some(x => x.id === a.id && x.action === EFFECT_ACTION.ADD)
+				)
+					return false
+				// if (
+				// 	a.action === EFFECT_ACTION.ADD &&
+				// 	actions.some(x => x.id === a.id && x.action === EFFECT_ACTION.REMOVE)
+				// ) return false
+				return true
+			})
+
+			actions = actions.filter((item, index) => actions.indexOf(item) === index)
+			const addActions = actions.filter(item => item.action === EFFECT_ACTION.ADD && !this.hasCondition(item.id))
+			const removeActions = actions.filter(
+				item => item.action === EFFECT_ACTION.REMOVE && this.hasCondition(item.id)
+			)
+
+			if (addActions.length)
+				this.createEmbeddedDocuments(
+					"Item",
+					addActions.map(e => duplicate(ConditionGURPS.getData(e.id)))
+				)
+			if (removeActions.length)
+				this.deleteEmbeddedDocuments(
+					"Item",
+					removeActions.map(e => this.conditions?.find(c => c.cid === e.id)!._id)
+				)
+		})
+
+		this._prevAttributes = this.attributes
+		this._processingThresholds = false
 	}
 
 	processFeature(_parent: ItemGURPS, f: Feature, levels: number) {
@@ -1222,8 +1312,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			case FeatureType.WeaponBonus:
 			case FeatureType.WeaponDRDivisorBonus:
 				return this.features.weaponBonuses.push(f as any)
-			case FeatureType.ThresholdBonus:
-				return this.features.thresholdBonuses.push(f as any)
+			// case FeatureType.ThresholdBonus:
+			// 	return this.features.thresholdBonuses.push(f as any)
 			case FeatureType.ConditionalModifier:
 			case FeatureType.ReactionBonus:
 			case FeatureType.ContaiedWeightReduction:

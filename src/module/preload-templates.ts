@@ -137,6 +137,9 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"modifier-bucket/collapsible",
 		"modifier-bucket/modifier",
 		"modifier-bucket/player",
+
+		"system/settings/attribute-effects",
+		"system/settings/attribute-condition",
 	]
 	const formattedPaths: string[] = []
 	for (let filename of templatePaths) {
