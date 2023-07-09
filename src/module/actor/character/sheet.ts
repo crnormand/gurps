@@ -160,7 +160,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const name = element.data("name")
 		const autoThreshold = this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) as any
 
-		autoThreshold.manual[name] = this.actor.poolAttributes(false)?.get(name)
+		autoThreshold.manual[name] = this.actor
+			.poolAttributes(false)
+			?.get(name)
 			?.attribute_def.thresholds?.find(e => e.state === element.val())
 
 		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoThreshold, autoThreshold)
@@ -208,7 +210,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const element = $(event.currentTarget)
 		const type = element.parent(".item-list")[0].id
 		const ctx = new ContextMenu(html, ".menu", [])
-		ctx.menuItems = (function(self: CharacterSheetGURPS): ContextMenuEntry[] {
+		ctx.menuItems = (function (self: CharacterSheetGURPS): ContextMenuEntry[] {
 			switch (type) {
 				case "traits":
 					return [
@@ -648,9 +650,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 		autoThreshold.active = !autoThreshold.active
 
-		if (!autoThreshold.active) this.actor.poolAttributes(false).forEach(a => {
-			autoThreshold.manual[a.id] = a.currentThreshold
-		})
+		if (!autoThreshold.active)
+			this.actor.poolAttributes(false).forEach(a => {
+				autoThreshold.manual[a.id] = a.currentThreshold
+			})
 
 		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoThreshold, autoThreshold)
 	}
@@ -1002,21 +1005,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-				edit_button,
-				// {
-				// 	label: "",
-				// 	// Label: "Import",
-				// 	class: "import",
-				// 	icon: "fas fa-file-import",
-				// 	onclick: event => this._onFileImport(event),
-				// },
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._openGMenu(event),
-				},
-			]
+					edit_button,
+					// {
+					// 	label: "",
+					// 	// Label: "Import",
+					// 	class: "import",
+					// 	icon: "fas fa-file-import",
+					// 	onclick: event => this._onFileImport(event),
+					// },
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._openGMenu(event),
+					},
+			  ]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

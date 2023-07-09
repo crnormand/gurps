@@ -1266,7 +1266,6 @@ class CharacterGURPS extends BaseActorGURPS {
 				return true
 			})
 
-
 			actions = actions.filter((item, index) => actions.indexOf(item) === index)
 
 			const addActions = actions.filter(item => item.action === EFFECT_ACTION.ADD && !this.hasCondition(item.id))
@@ -1274,14 +1273,12 @@ class CharacterGURPS extends BaseActorGURPS {
 				item => item.action === EFFECT_ACTION.REMOVE && this.hasCondition(item.id)
 			)
 
-			if (addActions.length)
-				this.addConditions(addActions.map(e => e.id))
+			if (addActions.length) this.addConditions(addActions.map(e => e.id))
 			// this.createEmbeddedDocuments(
 			// 	"Item",
 			// 	addActions.map(e => duplicate(ConditionGURPS.getData(e.id)))
 			// )
-			if (removeActions.length)
-				this.removeConditions(addActions.map(e => e.id))
+			if (removeActions.length) this.removeConditions(removeActions.map(e => e.id))
 			// this.deleteEmbeddedDocuments(
 			// 	"Item",
 			// 	removeActions.map(e => this.conditions?.find(c => c.cid === e.id)!._id)
@@ -1293,7 +1290,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.attributes.forEach((e, k) => {
 			if (e.attribute_def.type === AttributeType.Pool) {
 				e._overridenThreshold = new PoolThreshold({ ...e.currentThreshold } as any)
-				e._overrideThreshold = true
 			}
 			this._prevAttributes.set(k, e)
 		})

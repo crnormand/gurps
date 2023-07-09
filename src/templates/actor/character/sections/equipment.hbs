@@ -1,8 +1,8 @@
-<div class="equipped" data-uuid="{{this.uuid}}">{{#if this.equipped}}<i class="gcs-checkmark"></i>{{/if}}</div>
+<div class="equipped" data-uuid="{{this.id}}">{{#if this.equipped}}<i class="gcs-checkmark"></i>{{/if}}</div>
 <div class="quantity">{{this.quantity}}</div>
 <div
 	class="desc item{{#if this.isContainer}} container{{/if}} other"
-	data-uuid="{{ this.uuid }}"
+	data-uuid="{{ this.id }}"
 	{{{indent this.parents.length}}}
 >
 	<div class="dropdown">

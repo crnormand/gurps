@@ -289,8 +289,11 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 					{
 						attribute: "hp",
 						state: "Dead",
-						enter: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD }],
-						leave: [{ id: ConditionID.Reeling, action: EFFECT_ACTION.REMOVE }],
+						enter: [
+							{ id: ConditionID.Reeling, action: EFFECT_ACTION.ADD },
+							{ id: ConditionID.Dead, action: EFFECT_ACTION.ADD },
+						],
+						leave: [],
 					},
 					{
 						attribute: "hp",
@@ -443,7 +446,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				parent_index: parent_index,
 			})
 		)
-			; (event as any).dragType = type
+		;(event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

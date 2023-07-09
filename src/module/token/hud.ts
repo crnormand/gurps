@@ -127,21 +127,24 @@ export class TokenHUDGURPS extends TokenHUD {
 		if (!(actor && id)) return
 		const combatant = token.combatant
 
-		if (id === "dead") {
-			const isDefeated = combatant ? !combatant.isDefeated : !actor.hasCondition([ConditionID.Dead])
-			if (combatant) await combatant.update({ defeated: isDefeated })
-			const status = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED)
-			const effect = token.actor && status ? status : CONFIG.controlIcons.defeated
-			token.toggleEffect(effect, { overlay: true, active: isDefeated })
-			return
-		}
+		// if (id === ConditionID.Dead) {
+		// 	actor.toggleDefeated()
+		// }
+		// if (id === "dead") {
+		// 	const isDefeated = combatant ? !combatant.isDefeated : !actor.hasCondition([ConditionID.Dead])
+		// 	if (combatant) await combatant.update({ defeated: isDefeated })
+		// 	const status = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED)
+		// const effect = token.actor && status ? status : CONFIG.controlIcons.defeated
+		// token.toggleEffect(effect, { overlay: true, active: isDefeated })
+		// 	return
+		// }
 		if (event.type === "click") {
 			await actor?.increaseCondition(id)
 		} else if (event.type === "contextmenu") {
 			if (event.ctrlKey) await actor?.decreaseCondition(id, { forceRemove: true })
 			else await actor?.decreaseCondition(id)
 		}
-		game.socket?.emit("system.gcsga", { type: SOCKET.UPDATE_BUCKET, users: [] })
+		game.socket?.emit(`system.${SYSTEM_NAME}`, { type: SOCKET.UPDATE_BUCKET, users: [] })
 		game.EffectPanel.refresh()
 	}
 

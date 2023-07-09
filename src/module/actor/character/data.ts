@@ -16,7 +16,7 @@ export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Characte
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-	CharacterSystemData {
+		CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags
@@ -40,7 +40,7 @@ export const CharacterFlagDefaults: CharacterFlags = {
 		[ActorFlags.SelfModifiers]: [],
 		[ActorFlags.MoveType]: MoveType.Ground,
 		[ActorFlags.AutoEncumbrance]: { active: true, manual: 0 },
-		[ActorFlags.AutoThreshold]: { active: true, manual: {} }
+		[ActorFlags.AutoThreshold]: { active: true, manual: {} },
 	},
 }
 

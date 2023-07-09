@@ -40,6 +40,7 @@ import { Attribute } from "@module/attribute"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
 import { CharacterGURPS } from "@actor/character"
+import { TokenGURPS } from "@module/token"
 
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
@@ -150,8 +151,20 @@ class BaseActorGURPS extends Actor {
 		return modifiers
 	}
 
+	// override get temporaryEffects(): any {
+	// 	const effects = this.gEffects
+	// 		// .filter(e => !(e instanceof ConditionGURPS && e.cid === ConditionID.Dead))
+	// 		.map(e => new ActiveEffect({ name: e.name, icon: e.img || "" } as any))
+	// 	return super.temporaryEffects.concat(effects)
+	// }
 	override get temporaryEffects(): any {
-		const effects = this.gEffects.map(e => new ActiveEffect({ name: e.name, icon: e.img || "" } as any))
+		const effects = this.gEffects.map(e => {
+			const overlay = e instanceof ConditionGURPS && e.cid === ConditionID.Dead
+			const a = new ActiveEffect({ name: e.name, icon: e.img || "" } as any)
+			// a.setFlag("core", "overlay", overlay)
+			;(a as any).flags = { core: { overlay: overlay } }
+			return a
+		})
 		return super.temporaryEffects.concat(effects)
 	}
 
@@ -243,16 +256,28 @@ class BaseActorGURPS extends Actor {
 
 	hasCondition(id: ConditionID | ConditionID[]): boolean {
 		if (!Array.isArray(id)) id = [id]
-		if (id.includes(ConditionID.Dead)) return this.effects.some(e => e.getFlag("core", "statusId") === "dead")
+		// if (id.includes(ConditionID.Dead)) return this.effects.some(e => e.getFlag("core", "statusId") === "dead")
 		return this.conditions.some(e => id.includes(e.cid as any))
 	}
 
+	// toggleDefeated() {
+	// 	const token = this.token?.object as TokenGURPS
+	// 	const isDefeated = !this.hasCondition(ConditionID.Dead)
+	// 	const effect = CONFIG.specialStatusEffects.DEFEATED
+	// 	// if (token) token.toggleEffect(effect, { overlay: true, active: isDefeated })
+	// 	if (token) {
+	// 		token.document.overlayEffect = isDefeated ? effect : undefined
+	// 		// const combatant = token.combatant
+	// 		// if (combatant) combatant.update(defea)
+	// 	}
+	// }
+
 	async addConditions(ids: ConditionID[]): Promise<ConditionGURPS[] | null> {
 		ids = ids.filter(id => !this.hasCondition(id))
-		if (ids.includes(ConditionID.Dead)) {
-			ids = ids.filter(e => e !== ConditionID.Dead)
-			// await this.toggleDefeated()
-		}
+		// if (ids.includes(ConditionID.Dead)) {
+		// 	ids = ids.filter(e => e !== ConditionID.Dead)
+		// 	this.toggleDefeated()
+		// }
 		return this.createEmbeddedDocuments(
 			"Item",
 			ids.map(id => duplicate(ConditionGURPS.getData(id)))
@@ -260,13 +285,11 @@ class BaseActorGURPS extends Actor {
 	}
 
 	async removeConditions(ids: ConditionID[]): Promise<Document<any, this, Metadata<any>>[] | null> {
-		const items: string[] = this.conditions
-			.filter(e => ids.includes(e.cid as any))
-			.map(e => e._id)
-		if (ids.includes(ConditionID.Dead)) {
-			ids = ids.filter(e => e !== ConditionID.Dead)
-			// await this.toggleDefeated()
-		}
+		const items: string[] = this.conditions.filter(e => ids.includes(e.cid as any)).map(e => e._id)
+		// if (ids.includes(ConditionID.Dead)) {
+		// 	ids = ids.filter(e => e !== ConditionID.Dead)
+		// 	await this.toggleDefeated()
+		// }
 		return this.deleteEmbeddedDocuments("Item", items)
 	}
 
