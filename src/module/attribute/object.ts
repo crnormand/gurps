@@ -20,9 +20,7 @@ export class Attribute {
 
 	apply_ops?: boolean
 
-	_overridenThreshold?: PoolThreshold
-
-	_overrideThreshold = false
+	_overridenThreshold?: PoolThreshold | null = null
 
 	constructor(actor: CharacterGURPS, attr_id: string, order: number, data?: Partial<AttributeObj>) {
 		if (data) Object.assign(this, data)
@@ -118,7 +116,7 @@ export class Attribute {
 			)
 		)
 			return null
-		if (this._overrideThreshold) return this._overridenThreshold || null
+		if (this._overridenThreshold) return this._overridenThreshold
 		if (!(this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) as any).active) return this._manualThreshold
 		const cur = this.current
 		if (def.thresholds) {
