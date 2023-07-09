@@ -1,14 +1,15 @@
 <div id="basic-damage">
 	<div class="header">{{localize "gurps.character.basic_damage"}}</div>
-	<div class="fieldblock3">
-		{{! TODO: change to longest point value for primary_attributes }}
+	<div class="fieldblock3" style="grid-template-columns: 0 0fr 1fr;">
 		<div class="points" readonly></div>
 		<div
 			class="field rollable"
 			data-type="damage"
 			data-attack-id="thrust"
 		>
-			<input type="text" value="{{system.thrust}}" disabled />
+			<input type="text" value="{{system.thrust}}" disabled
+			stlye="min-width: {{length system.thrust}}ch;"
+		/>
 		</div>
 		<div class="label">{{localize "gurps.character.basic_thrust"}}</div>
 		<div class="points" readonly></div>
@@ -17,7 +18,9 @@
 			data-type="damage"
 			data-attack-id="swing"
 		>
-			<input type="text" value="{{system.swing}}" disabled />
+			<input type="text" value="{{system.swing}}" disabled
+				stlye="min-width: {{length system.thrust}}ch;"
+		 />
 		</div>
 		<div class="label">{{localize "gurps.character.basic_swing"}}</div>
 	</div>

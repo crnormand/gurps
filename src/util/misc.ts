@@ -435,6 +435,8 @@ export function difficultyRelativeLevel(d: Difficulty): number {
  * @param imageUrl
  */
 export async function urlToBase64(imageUrl: string) {
+	const format = imageUrl.split(".").at(-1) || ""
+	if (!["png", "webp", "jpg", "jpeg"].includes(format)) return ""
 	let img: any = await fetch(imageUrl)
 	img = await img.blob()
 	let bitmap = await createImageBitmap(img)
@@ -443,7 +445,15 @@ export async function urlToBase64(imageUrl: string) {
 	canvas.width = bitmap.width
 	canvas.height = bitmap.height
 	ctx?.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height)
-	return canvas.toDataURL("image/png").replace("data:image/png;base64,", "")
+	switch (format) {
+		case "webp":
+			return canvas.toDataURL("image/webp").replace("data:image/webp;base64,", "")
+		case "png":
+			return canvas.toDataURL("image/png").replace("data:image/png;base64,", "")
+		case "jpeg":
+		case "jpg":
+			return canvas.toDataURL("image/jpeg").replace("data:image/png;base64,", "")
+	}
 }
 
 /**
@@ -484,9 +494,9 @@ export async function getDefaultSkills() {
 	for (const s in skillPacks)
 		if (skillPacks[s].skillDefault) {
 			const pack = game.packs.get(s) as CompendiumCollection<any>
-			;(await pack.getDocuments()).forEach(e => {
-				skills.push(e)
-			})
+				; (await pack.getDocuments()).forEach(e => {
+					skills.push(e)
+				})
 		}
 	CONFIG.GURPS.skillDefaults = skills
 }

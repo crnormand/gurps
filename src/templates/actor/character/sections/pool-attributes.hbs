@@ -1,5 +1,19 @@
 <div id="pool-attributes">
-	<div class="header">{{localize "gurps.character.point_pools"}}</div>
+	<div class="header">{{localize "gurps.character.point_pools"}}
+		{{#if autoThreshold}}
+		<a
+			class="threshold-toggle fas fa-toggle-on"
+			data-tooltip="{{localize 'gurps.tooltip.auto_threshold'}}"
+			data-tooltip-direction="DOWN"
+		></a>
+		{{else}}
+		<a
+			class="threshold-toggle fas fa-toggle-off"
+			data-tooltip="{{localize 'gurps.tooltip.auto_threshold'}}"
+			data-tooltip-direction="DOWN"
+		></a>
+		{{/if}}
+	</div>
 	<div class="fieldblock7">
 		{{#each point_pools}}
 			{{#if (eq this.attribute_def.type "pool_separator")}}
@@ -32,11 +46,21 @@
 					/>
 				</div>
 				<div class="label">{{this.attribute_def.name}}</div>
+				{{#if ../autoThreshold}}
 				<div class="label" data-tooltip="{{{this.currentThreshold.explanation}}}" data-tooltip-direction="DOWN">
 					{{#if this.currentThreshold.state}}
 						[{{this.currentThreshold.state}}]
 					{{/if}}
 				</div>
+				{{else}}
+				<select class="threshold-select" data-name="{{this.id}}">
+					{{#select this._manualThreshold.state}}
+						{{#each this.attribute_def.thresholds}}
+						<option value="{{this.state}}">[{{this.state}}]</option>
+						{{/each}}
+					{{/select}}
+				</select>
+				{{/if}}
 			{{/if}}
 		{{/each}}
 	</div>

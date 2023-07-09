@@ -1,5 +1,5 @@
 import { ConditionID } from "@item/condition/data"
-import { AttributeType } from "@module/attribute"
+import { AttributeType } from "@module/attribute/data"
 import { EFFECT_ACTION, SYSTEM_NAME } from "@module/data"
 import { prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"
@@ -443,7 +443,7 @@ export class DefaultAttributeSettings extends SettingsMenuGURPS {
 				parent_index: parent_index,
 			})
 		)
-		;(event as any).dragType = type
+			; (event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {

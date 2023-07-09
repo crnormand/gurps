@@ -2,9 +2,9 @@
     {{#unless (eq deprecation "acknowledged")}}
     <div class="deprecation">
         {{#if (eq deprecation "manual") }}
-            <p>{{{localize "gurps.static.deprecated_xml" type=(localize "ACTOR.TypeCharacter")}}}</p>
+            <p>{{{localize "gurps.static.deprecated_xml" type=(localize "TYPES.Actor.character")}}}</p>
         {{else}}
-            <p>{{{localize "gurps.static.deprecated" type=(localize "ACTOR.TypeCharacter")}}}</p>
+            <p>{{{localize "gurps.static.deprecated" type=(localize "TYPES.Actor.character")}}}</p>
         {{/if}}
         <a class="gcs-circled-x"></a>
     </div>

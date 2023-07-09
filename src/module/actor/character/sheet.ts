@@ -30,7 +30,7 @@ import { dollarFormat, Length, LocalizeGURPS, Weight } from "@util"
 import { fSearch } from "@util/fuse"
 import EmbeddedCollection from "types/foundry/common/abstract/embedded-collection.mjs"
 import { CharacterSheetConfig } from "./config_sheet"
-import { CharacterMove, Encumbrance } from "./data"
+import { CharacterFlagDefaults, CharacterMove, Encumbrance } from "./data"
 import { CharacterGURPS } from "./document"
 import { PointRecordSheet } from "./points_sheet"
 
@@ -137,6 +137,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		// Points Record
 		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
 
+		// Manual Attribute Threshold
+		html.find(".threshold-toggle").on("click", event => this._toggleAutoThreshold(event))
+		html.find(".threshold-select").on("change", event => this._onThresholdChange(event))
+
 		// Manual Encumbrance
 		html.find(".enc-toggle").on("click", event => this._toggleAutoEncumbrance(event))
 		html.find(".encumbrance-marker.manual").on("click", event => this._setEncumbrance(event))
@@ -147,6 +151,19 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		// const searchbar = html.find("input.defaults")
 		// searchbar.on("input", event => this._updateQuery(event, searchbar))
 		// searchbar.on("keydown", event => this._keyDown(event))
+	}
+
+	async _onThresholdChange(event: JQuery.ChangeEvent): Promise<any> {
+		event.preventDefault()
+		event.stopPropagation()
+		const element = $(event.currentTarget)
+		const name = element.data("name")
+		const autoThreshold = this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) as any
+
+		autoThreshold.manual[name] = this.actor.poolAttributes(false)?.get(name)
+			?.attribute_def.thresholds?.find(e => e.state === element.val())
+
+		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoThreshold, autoThreshold)
 	}
 
 	async _onMoveChange(event: JQuery.ChangeEvent): Promise<any> {
@@ -191,7 +208,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const element = $(event.currentTarget)
 		const type = element.parent(".item-list")[0].id
 		const ctx = new ContextMenu(html, ".menu", [])
-		ctx.menuItems = (function (self: CharacterSheetGURPS): ContextMenuEntry[] {
+		ctx.menuItems = (function(self: CharacterSheetGURPS): ContextMenuEntry[] {
 			switch (type) {
 				case "traits":
 					return [
@@ -623,6 +640,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}).render(true)
 	}
 
+	_toggleAutoThreshold(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const autoThreshold: any =
+			this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) ??
+			CharacterFlagDefaults[SYSTEM_NAME][ActorFlags.AutoThreshold]
+
+		autoThreshold.active = !autoThreshold.active
+
+		if (!autoThreshold.active) this.actor.poolAttributes(false).forEach(a => {
+			autoThreshold.manual[a.id] = a.currentThreshold
+		})
+
+		return this.actor.setFlag(SYSTEM_NAME, ActorFlags.AutoThreshold, autoThreshold)
+	}
+
 	_toggleAutoEncumbrance(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const autoEncumbrance = this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as {
@@ -817,6 +849,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				postures: CONFIG.GURPS.select.postures,
 				move_types: CONFIG.GURPS.select.move_types,
 				autoEncumbrance: (this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoEncumbrance) as any)?.active,
+				autoThreshold: (this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) as any)?.active,
 				overencumbered,
 				hit_locations,
 				skillDefaultsOpen: this.skillDefaultsOpen,
@@ -969,21 +1002,21 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify(game.user!, "update")
 			? [
-					edit_button,
-					// {
-					// 	label: "",
-					// 	// Label: "Import",
-					// 	class: "import",
-					// 	icon: "fas fa-file-import",
-					// 	onclick: event => this._onFileImport(event),
-					// },
-					{
-						label: "",
-						class: "gmenu",
-						icon: "gcs-all-seeing-eye",
-						onclick: event => this._openGMenu(event),
-					},
-			  ]
+				edit_button,
+				// {
+				// 	label: "",
+				// 	// Label: "Import",
+				// 	class: "import",
+				// 	icon: "fas fa-file-import",
+				// 	onclick: event => this._onFileImport(event),
+				// },
+				{
+					label: "",
+					class: "gmenu",
+					icon: "gcs-all-seeing-eye",
+					onclick: event => this._openGMenu(event),
+				},
+			]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

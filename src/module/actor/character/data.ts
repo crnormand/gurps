@@ -1,7 +1,7 @@
 import { ActorType, DamageProgression, DisplayMode, MoveType, RollModifier, SYSTEM_NAME } from "@module/data"
 import { ActorFlags, ActorFlagsGURPS, ActorSystemData, BaseActorSourceGURPS } from "@actor/base/data"
 import { HitLocationTableData } from "./hit_location"
-import { AttributeDefObj, AttributeObj } from "@module/attribute"
+import { AttributeDefObj, AttributeObj, PoolThreshold } from "@module/attribute"
 import { ResourceTrackerDefObj, ResourceTrackerObj } from "@module/resource_tracker"
 import { LengthUnits, Weight, WeightUnits } from "@util"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
@@ -16,7 +16,7 @@ export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Characte
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-		CharacterSystemData {
+	CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags
@@ -30,6 +30,7 @@ export interface CharacterFlags extends ActorFlagsGURPS {
 		[ActorFlags.SelfModifiers]: RollModifier[]
 		[ActorFlags.MoveType]: MoveType
 		[ActorFlags.AutoEncumbrance]: { active: boolean; manual: number }
+		[ActorFlags.AutoThreshold]: { active: boolean; manual: Record<string, PoolThreshold | null> }
 	}
 }
 
@@ -39,6 +40,7 @@ export const CharacterFlagDefaults: CharacterFlags = {
 		[ActorFlags.SelfModifiers]: [],
 		[ActorFlags.MoveType]: MoveType.Ground,
 		[ActorFlags.AutoEncumbrance]: { active: true, manual: 0 },
+		[ActorFlags.AutoThreshold]: { active: true, manual: {} }
 	},
 }
 

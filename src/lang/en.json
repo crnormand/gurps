@@ -1578,7 +1578,8 @@
 			"dr_bonus": "{item} [{bonus} against {type} attacks]",
 			"dr_bonus_leveled": "{item} [{bonus} ({per_level} per level) against {type} attacks]",
 			"encumbrance": "Encumbrance [{bonus}]",
-			"auto_encumbrance": "Toggle automatic encumbrance calculation"
+			"auto_encumbrance": "Toggle automatic encumbrance calculation",
+			"auto_threshold": "Toggle automatic attribute threshold calculation"
 		},
 		"prereqs": {
 			"unsatisfied": "Unsatisfied Prerequisite(s)",

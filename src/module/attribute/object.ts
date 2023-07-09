@@ -1,6 +1,7 @@
 import { CharacterGURPS } from "@actor"
+import { ActorFlags } from "@actor/base/data"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
-import { gid } from "@module/data"
+import { gid, SYSTEM_NAME } from "@module/data"
 import { sanitize } from "@util"
 import { AttributeDef } from "./attribute_def"
 import { AttributeObj, AttributeType, reserved_ids } from "./data"
@@ -8,12 +9,6 @@ import { PoolThreshold } from "./pool_threshold"
 
 export class Attribute {
 	actor: CharacterGURPS
-
-	// Bonus = 0
-
-	// private bonus = 0
-	// private effectiveBonus = 0 // Used for active effects
-	// private cost_reduction = 0
 
 	order: number
 
@@ -24,6 +19,10 @@ export class Attribute {
 	damage?: number
 
 	apply_ops?: boolean
+
+	_overridenThreshold?: PoolThreshold
+
+	_overrideThreshold = false
 
 	constructor(actor: CharacterGURPS, attr_id: string, order: number, data?: Partial<AttributeObj>) {
 		if (data) Object.assign(this, data)
@@ -106,6 +105,10 @@ export class Attribute {
 		this.max = v
 	}
 
+	private get _manualThreshold(): PoolThreshold | null {
+		return (this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) as any).manual[this.id] || null
+	}
+
 	get currentThreshold(): Partial<PoolThreshold> | null {
 		const def = this.attribute_def
 		if (!def) return null
@@ -115,6 +118,8 @@ export class Attribute {
 			)
 		)
 			return null
+		if (this._overrideThreshold) return this._overridenThreshold || null
+		if (!(this.actor.getFlag(SYSTEM_NAME, ActorFlags.AutoThreshold) as any).active) return this._manualThreshold
 		const cur = this.current
 		if (def.thresholds) {
 			for (const t of def.thresholds) {

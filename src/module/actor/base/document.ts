@@ -33,7 +33,7 @@ import {
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
 import { DiceGURPS } from "@module/dice"
-import { ActorDataGURPS, ActorSourceGURPS, ItemGURPS } from "@module/config"
+import { ActorDataGURPS, ActorSourceGURPS } from "@module/config"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { BaseUser } from "types/foundry/common/documents.mjs"
 import { Attribute } from "@module/attribute"
@@ -245,6 +245,29 @@ class BaseActorGURPS extends Actor {
 		if (!Array.isArray(id)) id = [id]
 		if (id.includes(ConditionID.Dead)) return this.effects.some(e => e.getFlag("core", "statusId") === "dead")
 		return this.conditions.some(e => id.includes(e.cid as any))
+	}
+
+	async addConditions(ids: ConditionID[]): Promise<ConditionGURPS[] | null> {
+		ids = ids.filter(id => !this.hasCondition(id))
+		if (ids.includes(ConditionID.Dead)) {
+			ids = ids.filter(e => e !== ConditionID.Dead)
+			// await this.toggleDefeated()
+		}
+		return this.createEmbeddedDocuments(
+			"Item",
+			ids.map(id => duplicate(ConditionGURPS.getData(id)))
+		)
+	}
+
+	async removeConditions(ids: ConditionID[]): Promise<Document<any, this, Metadata<any>>[] | null> {
+		const items: string[] = this.conditions
+			.filter(e => ids.includes(e.cid as any))
+			.map(e => e._id)
+		if (ids.includes(ConditionID.Dead)) {
+			ids = ids.filter(e => e !== ConditionID.Dead)
+			// await this.toggleDefeated()
+		}
+		return this.deleteEmbeddedDocuments("Item", items)
 	}
 
 	async increaseCondition(id: EffectID): Promise<ConditionGURPS | null> {

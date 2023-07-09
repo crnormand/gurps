@@ -16,6 +16,7 @@ export enum ActorFlags {
 	Deprecation = "deprecation",
 	MoveType = "move_type",
 	AutoEncumbrance = "auto_encumbrance",
+	AutoThreshold = "auto_threshold"
 }
 
 export interface BaseActorSourceGURPS<

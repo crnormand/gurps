@@ -63,11 +63,11 @@ import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
-import { ActorDataGURPS, Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
-import { ConditionGURPS, ConditionID } from "@item/condition"
+import { Feature, featureMap, ItemGURPS, WeaponGURPS } from "@module/config"
+import { ConditionID } from "@item/condition"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
-import { Attribute, AttributeDef, AttributeObj, AttributeType, ThresholdOp } from "@module/attribute"
+import { Attribute, AttributeDef, AttributeObj, AttributeType, PoolThreshold, ThresholdOp } from "@module/attribute"
 import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 import {
 	ConditionalModifier,
@@ -77,7 +77,6 @@ import {
 	WeaponDamageBonus,
 	WeaponDRDivisorBonus,
 } from "@feature"
-import { BaseUser } from "types/foundry/common/documents.mjs"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -217,14 +216,13 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 	}
 
-	protected _preUpdate(
-		changed: DeepPartial<ActorDataGURPS>,
-		options: DocumentModificationOptions,
-		user: BaseUser
-	): Promise<void> {
-		this._prevAttributes = this.attributes
-		return super._preUpdate(changed, options, user)
-	}
+	// protected _preUpdate(
+	// 	changed: DeepPartial<ActorDataGURPS>,
+	// 	options: DocumentModificationOptions,
+	// 	user: BaseUser
+	// ): Promise<void> {
+	// 	return super._preUpdate(changed, options, user)
+	// }
 
 	override update(
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
@@ -275,6 +273,9 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// Getters
+	get isDefeated(): boolean {
+		return this.hasCondition(ConditionID.Dead)
+	}
 
 	get weightUnits(): WeightUnits {
 		return this.settings.default_weight_units
@@ -1081,14 +1082,14 @@ class CharacterGURPS extends BaseActorGURPS {
 		return super.createEmbeddedDocuments(embeddedName, data, context)
 	}
 
-	protected override _onCreateEmbeddedDocuments(
+	protected override _onCreateDescendantDocuments(
 		embeddedName: string,
 		documents: Document<any, any, Metadata<any>>[],
 		result: Record<string, unknown>[],
 		options: DocumentModificationOptionsGURPS,
 		userId: string
 	): void {
-		super._onCreateEmbeddedDocuments(embeddedName, documents, result, options, userId)
+		super._onCreateDescendantDocuments(embeddedName, documents, result, options, userId)
 
 		// Replace @X@ notation fields with given text
 		if (embeddedName === "Item" && options.substitutions) {
@@ -1262,32 +1263,40 @@ class CharacterGURPS extends BaseActorGURPS {
 					actions.some(x => x.id === a.id && x.action === EFFECT_ACTION.ADD)
 				)
 					return false
-				// if (
-				// 	a.action === EFFECT_ACTION.ADD &&
-				// 	actions.some(x => x.id === a.id && x.action === EFFECT_ACTION.REMOVE)
-				// ) return false
 				return true
 			})
 
+
 			actions = actions.filter((item, index) => actions.indexOf(item) === index)
+
 			const addActions = actions.filter(item => item.action === EFFECT_ACTION.ADD && !this.hasCondition(item.id))
 			const removeActions = actions.filter(
 				item => item.action === EFFECT_ACTION.REMOVE && this.hasCondition(item.id)
 			)
 
 			if (addActions.length)
-				this.createEmbeddedDocuments(
-					"Item",
-					addActions.map(e => duplicate(ConditionGURPS.getData(e.id)))
-				)
+				this.addConditions(addActions.map(e => e.id))
+			// this.createEmbeddedDocuments(
+			// 	"Item",
+			// 	addActions.map(e => duplicate(ConditionGURPS.getData(e.id)))
+			// )
 			if (removeActions.length)
-				this.deleteEmbeddedDocuments(
-					"Item",
-					removeActions.map(e => this.conditions?.find(c => c.cid === e.id)!._id)
-				)
+				this.removeConditions(addActions.map(e => e.id))
+			// this.deleteEmbeddedDocuments(
+			// 	"Item",
+			// 	removeActions.map(e => this.conditions?.find(c => c.cid === e.id)!._id)
+			// )
 		})
 
 		this._prevAttributes = this.attributes
+		this._prevAttributes = new Map()
+		this.attributes.forEach((e, k) => {
+			if (e.attribute_def.type === AttributeType.Pool) {
+				e._overridenThreshold = new PoolThreshold({ ...e.currentThreshold } as any)
+				e._overrideThreshold = true
+			}
+			this._prevAttributes.set(k, e)
+		})
 		this._processingThresholds = false
 	}
 
@@ -1858,7 +1867,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			const f = { ...e }
 			return f
 		})
-		if (this.img) system.profile.portrait = await urlToBase64(this.img)
+		if (this.img && !this.img.endsWith(".svg")) system.profile.portrait = await urlToBase64(this.img)
 
 		delete system.resource_trackers
 		delete system.settings.resource_trackers

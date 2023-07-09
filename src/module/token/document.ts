@@ -3,7 +3,7 @@ import { ConditionID } from "@item/condition"
 
 class TokenDocumentGURPS extends TokenDocument {
 	hasStatusEffect(statusId: ConditionID): boolean {
-		if (statusId === "dead") return this.overlayEffect === CONFIG.controlIcons.defeated
+		if (statusId === ConditionID.Dead) return this.overlayEffect === CONFIG.controlIcons.defeated
 		const { actor } = this
 		const hasCondition = (actor as BaseActorGURPS)?.hasCondition(statusId) || false
 		const hasEffect = (actor as BaseActorGURPS).gEffects.some(e => e.name === statusId)

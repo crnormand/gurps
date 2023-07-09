@@ -44,7 +44,7 @@ class ConditionGURPS extends EffectGURPS {
 		user: BaseUser
 	): Promise<void> {
 		options.previousID = this.cid
-		if ((changed as any).system.id !== this.cid) this._displayScrollingStatus(false)
+		if ((changed as any).system?.id !== this.cid) this._displayScrollingStatus(false)
 		return super._preUpdate(changed, options, user)
 	}
 
