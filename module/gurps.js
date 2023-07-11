@@ -1174,7 +1174,10 @@ if (!globalThis.GURPS) {
 			actions.map(a => GURPS.actionFuncs[a.type]({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
 		)
 		const levels = calculations.map(result => (result ? result.target : 0))
-		if (!levels.some(level => level > 0)) return null // actor does not have any of these skills
+		if (!levels.some(level => level > 0)) {
+      ui.notifications.warn(i18n("GURPS.noViableSkill"))
+      return null // actor does not have any of these skills
+    }
 		const bestLevel = Math.max(...levels)
 		return actions[levels.indexOf(bestLevel)]
 	}

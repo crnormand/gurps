@@ -1133,6 +1133,7 @@
 	"GURPS.written": "Written",
 	"GURPS.pdfOffset": "Page Offset",
 	"GURPS.pdfCode": "PDF Book Code",
+	"GURPS.noViableSkill": "This character does not have a viable skill (effective level 3 or higher) that can be rolled",
 	"__Rolling__": "=========",
 	"GURPS.rollVs": "Roll vs",
 	"GURPS.rollNewTarget": "New Target: ({target})",
