@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.4  07/10/2023
+
+- Provide warning if no skill applicable
+- Fix for PDF render
+
 Release 0.16.3  07/02/2023
 
 - Restrict GGA to Foundry V11
@@ -886,7 +891,7 @@ Release 0.9.5 - 5/19/2021
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
 - Item editor UI ver 1 is complete.
-- Added chat command /light (thanks Boifubá!)
+- Added chat command /light (thanks BoifubÃ¡!)
 - Fixed import on bad actor (used to have to delete actor and then reimport)
 - Less "flashing" during imports/updates
 - Added support for /if [/qty -?] /hp +1d]
@@ -977,7 +982,7 @@ Release 0.8.22 - 3/31/2021
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
 - Drag and drop now works for any OTF on character sheet
 - Added sanity check on Resource Tracker alias input.
-- Added initial Russian/ÑÑÑÑÐºÐ¸Ð¹ translation (thanks to Discord user @Weirdy)!
+- Added initial Russian/Ã‘Â€Ã‘ÂƒÃ‘Â�Ã‘Â�Ã�ÂºÃ�Â¸Ã�Â¹ translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
 - OtF damage types are now case-insensitive (e.g., 'Cut' and 'CUT' become 'cut').
 - Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.
