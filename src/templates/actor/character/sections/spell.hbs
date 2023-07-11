@@ -1,6 +1,6 @@
 <div
 	class="desc item{{#if this.isContainer}} container{{/if}} other"
-	data-uuid="{{ this.id }}"
+	data-item-id="{{ this.id }}"
 	{{{indent this.parents.length}}}
 >
 	<div class="dropdown">
@@ -33,8 +33,8 @@
 <div class="level"></div>
 <div class="rsl"></div>
 {{else}}
-<div data-uuid="{{this.id}}" data-type="spell" class="level rollable {{effective this}}">{{this.effectiveLevel}}</div>
-<div data-uuid="{{this.id}}" data-type="spell_rsl" class="rsl rollable {{effective this}}">{{this.relativeLevel}}</div>
+<div data-item-id="{{this.id}}" data-type="spell" class="level rollable {{effective this}}">{{this.effectiveLevel}}</div>
+<div data-item-id="{{this.id}}" data-type="spell_rsl" class="rsl rollable {{effective this}}">{{this.relativeLevel}}</div>
 {{/if}}
 <div class="points">{{this.adjustedPoints}}</div>
 {{/if}}

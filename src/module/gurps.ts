@@ -31,16 +31,13 @@
 // Import TypeScript modules
 import { registerSettings } from "./settings"
 import { preloadTemplates } from "./preload-templates"
-import { evaluateToNumber, getDefaultSkills, LastActor, LocalizeGURPS, setInitiative, Static } from "@util"
+import { getDefaultSkills, LastActor, LocalizeGURPS, setInitiative } from "@util"
 import { registerHandlebarsHelpers } from "@util/handlebars-helpers"
 import { GURPSCONFIG } from "./config"
-import { fSearch } from "@util/fuse"
-import { DiceGURPS } from "@module/dice"
 import * as Chat from "@module/chat"
 import { ItemImporter } from "@item/import"
 import { CompendiumBrowser } from "./compendium"
 import { ActorType, ItemType, SOCKET, SYSTEM_NAME, UserFlags } from "./data"
-// Import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
 import * as SpeedProviderGURPS from "./modules/drag_ruler"
 import { ColorSettings } from "./settings/colors"
@@ -77,13 +74,13 @@ import {
 	WeaponSheet,
 } from "@item"
 import { ActorSheetGURPS, BaseActorGURPS, CharacterSheetGURPS, LootSheetGURPS, StaticCharacterSheetGURPS } from "@actor"
-import { DamageCalculator } from "./damage_calculator/damage_calculator"
 import { ActiveEffectGURPS } from "@module/effect"
 import { ModifierList } from "./mod_list"
 import { PDF } from "@module/pdf"
 import { UserGURPS } from "./user/document"
-import { CombatTrackerGURPS } from "./combat_tracker"
 import { CombatantGURPS } from "./combatant"
+import { parselink } from "./otf"
+import { CombatTrackerGURPS } from "@ui"
 
 Error.stackTraceLimit = Infinity
 
@@ -107,17 +104,19 @@ if (!(globalThis as any).GURPS) {
     7#@@&P?!~&@@G    !&@@@#GPP@@@#    5@@@.    !@@@P.  .&@@Y          .5@@@B5JYG@@@&~
       .^?5GBBBGG5.     .~?JYY5YJJJ^  .JJJJ~     :JJY7  ~JJJJ.           .~YB#&&BP7:
                                                                                        `
-	GURPS.eval = evaluateToNumber
-	GURPS.search = fSearch
-	GURPS.dice = DiceGURPS
-	GURPS.pdf = PDF.PDFViewerSheet
+	// GURPS.eval = evaluateToNumber
+	// GURPS.search = fSearch
+	// GURPS.dice = DiceGURPS
+	// GURPS.pdf = PDF.PDFViewerSheet
 	// GURPS.TokenModifierControl = new TokenModifierControl()
-	GURPS.recurseList = Static.recurseList
-	GURPS.setLastActor = LastActor.set
-	GURPS.DamageCalculator = DamageCalculator
-	GURPS.getDefaultSkills = getDefaultSkills
-	GURPS.roll = RollGURPS
-	GURPS.static = Static
+	// GURPS.recurseList = Static.recurseList
+	// GURPS.setLastActor = LastActor.set
+	// GURPS.DamageCalculator = DamageCalculator
+	// GURPS.getDefaultSkills = getDefaultSkills
+	// GURPS.roll = RollGURPS
+	// GURPS.static = Static
+	GURPS.parseLink = parselink
+	GURPS.chat = Chat
 }
 
 // Initialize system
@@ -535,7 +534,7 @@ Hooks.once("item-piles-ready", async function () {
 	})
 })
 
-Hooks.on("dropCanvasData", function (_canvas, data: any) {
+Hooks.on("dropCanvasData", async function (_canvas, data: any) {
 	const dropTarget = [...(canvas!.tokens!.placeables as TokenGURPS[])]
 		.sort((a, b) => b.document.sort - a.document.sort)
 		.find(token => {
@@ -546,7 +545,7 @@ Hooks.on("dropCanvasData", function (_canvas, data: any) {
 
 	const actor = dropTarget?.actor
 	if (actor && data.type === "Item") {
-		;(actor.sheet as ActorSheetGURPS).emulateItemDrop(data as any)
+		await (actor.sheet as ActorSheetGURPS).emulateItemDrop(data as any)
 		return false
 	}
 })
@@ -561,4 +560,10 @@ Hooks.on("renderHotbar", function (_hotbar: any, element: JQuery<HTMLElement>, _
 	if (!game.ModifierButton) return
 	game.ModifierButton._injectHTML(element.parent("#ui-bottom"))
 	game.ModifierButton.render()
+})
+
+Hooks.on("chatMessage", function (_chatlog: ChatLog, message: string, _data: any) {
+	console.log("checkem")
+	Chat.procesMessage(message)
+	return false
 })

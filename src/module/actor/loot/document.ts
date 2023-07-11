@@ -81,8 +81,7 @@ class LootGURPS extends BaseActorGURPS {
 	get equipment(): Collection<EquipmentGURPS | EquipmentContainerGURPS> {
 		const equipment: Collection<EquipmentGURPS | EquipmentContainerGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS)
-				equipment.set(item.uuid, item)
+			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) equipment.set(item.id!, item)
 		}
 		return equipment
 	}

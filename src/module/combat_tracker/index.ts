@@ -1,1 +1,0 @@
-export { CombatTrackerGURPS } from "./document"

@@ -184,12 +184,12 @@ declare global {
 		 * @param createOptions - Options used to create the message
 		 * @internal
 		 */
-		protected _processDiceCommand(
+		protected async _processDiceCommand(
 			command: string,
 			match: RegExpMatchArray,
 			chatData: ChatMessageDataConstructorData,
 			createOptions: DocumentModificationContext
-		): void
+		): Promise<void>
 
 		/**
 		 * Process messages which are posted using a chat whisper command
@@ -305,6 +305,8 @@ declare global {
 		 * @internal
 		 */
 		protected static _setRollMode(mode: keyof CONFIG.Dice.RollModes): void
+
+		static MESSAGE_PATTERNS: enum<RegExp>
 	}
 
 	namespace ChatLog {

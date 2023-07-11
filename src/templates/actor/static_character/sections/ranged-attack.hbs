@@ -1,10 +1,10 @@
 <div class="desc">
-	<div data-uuid="{{this.itemid}}" class="name">{{ this.name }} {{#if this.itemid}}<i class="fas fa-star tooltip gga-item"></i>{{/if}}</div>
+	<div data-item-id="{{this.itemid}}" class="name">{{ this.name }} {{#if this.itemid}}<i class="fas fa-star tooltip gga-item"></i>{{/if}}</div>
 	<div class="item-notes">{{this.notes}}</div>
 </div>
-<div data-uuid="{{@key}}" data-weapon="ranged" data-type="attack" class="usage rollable">
+<div data-item-id="{{@key}}" data-weapon="ranged" data-type="attack" class="usage rollable">
 	{{this.mode}}</div>
-<div data-uuid="{{@key}}" data-weapon="ranged" data-type="attack" class="level rollable">
+<div data-item-id="{{@key}}" data-weapon="ranged" data-type="attack" class="level rollable">
 	{{this.import}}</div>
 <div
 	data-modifier="{{this.acc}}"
@@ -12,7 +12,7 @@
 	data-type="modifier"
 	class="accuracy rollable"
 >{{signed this.acc}}</div>
-<div data-uuid="{{@key}}" data-weapon="ranged" data-type="damage" class="damage rollable">
+<div data-item-id="{{@key}}" data-weapon="ranged" data-type="damage" class="damage rollable">
 	{{this.damage}}</div>
 <div class="range">{{this.range}}</div>
 <div class="rate-of-fire">{{this.rof}}</div>

@@ -1,4 +1,5 @@
 import { ManeuverID } from "@item/condition/data"
+import { ActorGURPS } from "@module/config"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { EffectGURPS } from "./document"
 
@@ -9,8 +10,8 @@ export class EffectPanel extends Application {
 	 */
 	refresh = foundry.utils.debounce(this.render, 100)
 
-	private get actor(): Actor | null {
-		return canvas?.tokens?.controlled[0]?.actor ?? game.user?.character ?? null
+	private get actor(): ActorGURPS | null {
+		return (canvas?.tokens?.controlled[0]?.actor as ActorGURPS) ?? (game.user?.character as ActorGURPS) ?? null
 	}
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
@@ -58,19 +59,19 @@ export class EffectPanel extends Application {
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
-		html.find(".effect-item[data-uuid]").on("click", event => this._onEffectClick(event))
-		html.find(".effect-item[data-uuid]").on("contextmenu", event => this._onEffectContextMenu(event))
+		html.find(".effect-item[data-item-id]").on("click", event => this._onEffectClick(event))
+		html.find(".effect-item[data-item-id]").on("contextmenu", event => this._onEffectContextMenu(event))
 	}
 
 	private async _onEffectClick(event: JQuery.ClickEvent): Promise<any> {
-		const effect: EffectGURPS = (await fromUuid($(event.currentTarget).data("uuid"))) as any
+		const effect = this.actor?.gEffects.get($(event.currentTarget).data("item-id"))
 		if (!effect) return
 
 		if (effect.canLevel) return effect.increaseLevel()
 	}
 
 	private async _onEffectContextMenu(event: JQuery.ContextMenuEvent): Promise<any> {
-		const effect: EffectGURPS = (await fromUuid($(event.currentTarget).data("uuid"))) as any
+		const effect = this.actor?.gEffects.get($(event.currentTarget).data("item-id"))
 		if (!effect) return
 		if (effect.canLevel) return effect.decreaseLevel()
 		else return effect.delete()

@@ -51,6 +51,8 @@
 			"@feature/*": ["src/module/feature/*"],
 			"@prereq": ["src/module/prereq"],
 			"@prereq/*": ["src/module/prereq/*"],
+			"@ui": ["src/module/ui"],
+			"@ui/*": ["src/module/ui/*"],
 			"@module/*": ["src/module/*"],
 			"@scripts/*": ["src/scripts/*"],
 			"@util": ["src/util"],

@@ -15,9 +15,8 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = this.item.deepItems.get(uuid) as ItemGURPS
-		console.log(uuid, item)
+		const id = $(event.currentTarget).data("item-id")
+		const item = this.item.deepItems.get(id) as ItemGURPS
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
 		ctx.menuItems.push({
@@ -117,8 +116,8 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = (await fromUuid(uuid)) as ItemGURPS
+		const id = $(event.currentTarget).data("item-id")
+		const item = this.item.deepItems.get(id)
 		item?.sheet?.render(true)
 	}
 

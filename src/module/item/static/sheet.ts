@@ -128,15 +128,15 @@ export class StaticItemSheet extends ItemSheet {
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
 		const type = $(event.currentTarget).parent(".item-list")[0].id as StaticPopoutType
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = this.item.system[type][uuid]
+		const id = $(event.currentTarget).data("item-id")
+		const item = this.item.system[type][id]
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
 		ctx.menuItems.push({
 			name: LocalizeGURPS.translations.gurps.context.delete,
 			icon: "<i class='gcs-trash'></i>",
 			callback: () => {
-				return Static.removeKey(this.item, `system.${type}.${uuid}`)
+				return Static.removeKey(this.item, `system.${type}.${id}`)
 			},
 		})
 		await ctx.render($(event.currentTarget))
@@ -199,9 +199,9 @@ export class StaticItemSheet extends ItemSheet {
 	private _newItem(key: StaticPopoutType, itemConstructor: ConstructorOf<_BaseComponent>) {
 		const item = new itemConstructor()
 		const list = this.object.system[key]
-		const uuid = Static.put(list, item)
+		const id = Static.put(list, item)
 		this.object.update({ [`system.${key}`]: list })
-		const sheet = new StaticPopout(this.object, key, uuid)
+		const sheet = new StaticPopout(this.object, key, id)
 		sheet.render(true)
 		return this.render()
 	}
@@ -209,9 +209,9 @@ export class StaticItemSheet extends ItemSheet {
 	private _openPopout(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const key = $(event.currentTarget).parent(".item-list").attr("id") as StaticPopoutType
-		const uuid = $(event.currentTarget).data("uuid") as string
-		if (!uuid) return
-		const sheet = new StaticPopout(this.object, key, uuid)
+		const id = $(event.currentTarget).data("item-id") as string
+		if (!id) return
+		const sheet = new StaticPopout(this.object, key, id)
 		sheet.render(true)
 		return this.render()
 	}

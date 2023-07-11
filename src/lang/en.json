@@ -1157,6 +1157,9 @@
 				"cancel": "Cancel",
 				"start": "Importing library: {name}",
 				"finished": "Finished importing {number} items."
+			},
+			"mook_generator": {
+				"title": "Mook Generator"
 			}
 		},
 		"token_modifier_window": {

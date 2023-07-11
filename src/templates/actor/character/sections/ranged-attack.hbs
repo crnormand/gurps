@@ -1,14 +1,14 @@
-<div class="item desc" data-uuid="{{this.id}}">
+<div class="item desc" data-item-id="{{this.id}}">
 	<div class="name">
 		{{this.itemName}}
 	</div>
 	{{>actor/character/sections/item-notes}}
 </div>
-<div data-uuid="{{this.id}}" data-type="attack" class="usage rollable">{{this.usage}}</div>
-<div data-uuid="{{this.id}}" data-type="attack" class="level rollable">{{this.level}}</div>
+<div data-item-id="{{this.id}}" data-type="attack" class="usage rollable">{{this.usage}}</div>
+<div data-item-id="{{this.id}}" data-type="attack" class="level rollable">{{this.level}}</div>
 <div data-modifier="{{this.accuracy}}" data-comment="{{localize 'gurps.weapon.accuracy_for' name=this.itemName}}"
 	data-type="modifier" class="accuracy rollable">{{signed this.accuracy}}</div>
-<div data-uuid="{{this.id}}" data-type="damage" class="damage rollable">
+<div data-item-id="{{this.id}}" data-type="damage" class="damage rollable">
 	{{this.damage}}
 </div>
 <div class="range">{{this.range}}</div>

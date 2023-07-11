@@ -162,15 +162,12 @@ class ModifierBucket extends Application {
 
 	async sendToPlayer(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const player = (await fromUuid(uuid)) as User
-		// Const player = game.users?.get(uuid)
-		console.log(player)
+		const id = $(event.currentTarget).data("user-id")
+		const player = game.users?.get(id)
 		if (!player) return
 		const modStack = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack)
 		await player.setFlag(SYSTEM_NAME, UserFlags.ModifierStack, modStack)
-		console.log(player, player.id)
-		game.socket?.emit("system.gcsga", { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
+		game.socket?.emit(`system.${SYSTEM_NAME}`, { type: SOCKET.UPDATE_BUCKET, users: [player.id] })
 	}
 }
 

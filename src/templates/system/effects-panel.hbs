@@ -10,7 +10,7 @@
 
 {{#*inline "effect"}}
 {{#if (or (not effect.unidentified) @root.user.isGM)}}
-<div class="effect-item" data-uuid="{{effect.uuid}}">
+<div class="effect-item" data-item-id="{{effect.id}}">
     <div class="effect-info">
         <h1>{{effect.name}}</h1>
         {{#if (or (eq effect.type "effect") effect.breakdown)}}

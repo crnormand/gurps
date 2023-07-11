@@ -17,5 +17,14 @@ export enum TabName {
 	Note = "note",
 	Settings = "settings",
 }
+
+export type ItemTabName =
+	| TabName.Trait
+	| TabName.TraitModifier
+	| TabName.Skill
+	| TabName.Spell
+	| TabName.Equipment
+	| TabName.EquipmentModifier
+	| TabName.Note
 export type BrowserTab = InstanceType<(typeof browserTabs)[keyof typeof browserTabs]>
 export type TabData<T> = Record<TabName, T | null>

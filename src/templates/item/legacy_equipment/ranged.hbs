@@ -9,22 +9,22 @@
 	<div class="header recoil">{{localize "gurps.character.ranged.recoil"}}</div>
 	<div class="header st">{{localize "gurps.character.ranged.st"}}</div>
 	{{#each ranged}}
-	<div class="usage desc item" data-uuid="{{this.key}}" data-type="Item">
+	<div class="usage desc item" data-item-id="{{this.key}}" data-type="Item">
 		<div class="name">
 			{{this.data.mode}}
 		</div>
 		{{>actor/character/sections/item-notes}}
 	</div>
-	<div data-uuid="{{this.key}}" class="accuracy">
+	<div data-item-id="{{this.key}}" class="accuracy">
 		{{signed this.data.acc}}</div>
-	<div data-uuid="{{this.key}}" class="damage">
+	<div data-item-id="{{this.key}}" class="damage">
 		{{this.data.damage}}</div>
-	<div data-uuid="{{this.key}}" class="range">{{this.data.range}}</div>
-	<div data-uuid="{{this.key}}" class="rate-of-fire">{{this.data.rof}}</div>
-	<div data-uuid="{{this.key}}" class="shots">{{this.data.shots}}</div>
-	<div data-uuid="{{this.key}}" class="bulk">{{this.data.bulk}}
+	<div data-item-id="{{this.key}}" class="range">{{this.data.range}}</div>
+	<div data-item-id="{{this.key}}" class="rate-of-fire">{{this.data.rof}}</div>
+	<div data-item-id="{{this.key}}" class="shots">{{this.data.shots}}</div>
+	<div data-item-id="{{this.key}}" class="bulk">{{this.data.bulk}}
 	</div>
-	<div data-uuid="{{this.key}}" class="recoil">{{this.data.rcl}}</div>
-	<div data-uuid="{{this.key}}" class="st">{{this.data.st}}</div>
+	<div data-item-id="{{this.key}}" class="recoil">{{this.data.rcl}}</div>
+	<div data-item-id="{{this.key}}" class="st">{{this.data.st}}</div>
 	{{/each}}
 </div>

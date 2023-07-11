@@ -1,7 +1,7 @@
 import { ImagePath, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
 import { getDefaultSkills, LocalizeGURPS } from "@util"
-import { BrowserTab, PackInfo, TabData, TabName } from "./data"
+import { BrowserTab, ItemTabName, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
 
 export class CompendiumBrowser extends Application {
@@ -158,10 +158,10 @@ export class CompendiumBrowser extends Application {
 
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<unknown> {
 		event.preventDefault()
-		const uuid: string = $(event.currentTarget).data("uuid")
+		const id: string = $(event.currentTarget).data("item-id")
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
-		const item = (await fromUuid(uuid)) as Item
-		await item?.update({ _id: uuid.split(".").at(-1), "system.open": open })
+		const item = this.tabs[this.activeTab as ItemTabName]?.indexData.find(e => e._id === id)
+		await item?.update({ _id: id, "system.open": open })
 		if (this.activeTab !== "settings") await this.tabs[this.activeTab].init()
 		return this.render()
 	}
@@ -262,10 +262,9 @@ export class CompendiumBrowser extends Application {
 	protected async _onClickEntry(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const li = event.currentTarget
-		const uuid = $(li!).data("uuid")
-		const pack: string = this.loadedPacks(this.activeTab).find((e: string) => uuid.includes(e)) ?? ""
-		// Const item = await game.packs.get(pack)?.getDocument(uuid.split(".").at(-1));
-		const item = await fromUuid(uuid)
+		const id = $(li!).data("item-id")
+		const pack: string = this.loadedPacks(this.activeTab).find((e: string) => id.includes(e)) ?? ""
+		const item = this.tabs[this.activeTab as ItemTabName].indexData.find(e => e._id === id)
 		if (!item) return
 		const sheet = (item as any).sheet
 		if (sheet._minimized) return sheet.maximize()
@@ -417,15 +416,15 @@ export class CompendiumBrowser extends Application {
 		const li = event.currentTarget
 		// Const type: "Item" | "Actor" = $(li!).data("type")
 		const type = "Item"
-		const uuid = $(li!).data("uuid")
-		// Const pack: string = this.loadedPacks(this.activeTab).find((e: string) => uuid.includes(e)) ?? "";
-		const item = (await fromUuid(uuid)) as Item | Actor
-		// Let item = this.packLoader.loadedPacks[type][pack]?.index.get(uuid.split(".").at(3));
+		const id = $(li!).data("item-id")
+		const item = this.tabs[this.activeTab as ItemTabName].indexData.find(e => e._id === id)
+		console.log(item)
 		event.dataTransfer?.setData(
 			"text/plain",
 			JSON.stringify({
 				type: type,
-				uuid: uuid,
+				uuid: item?.uuid,
+				// ...item
 			})
 		)
 

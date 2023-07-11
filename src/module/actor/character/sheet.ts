@@ -414,8 +414,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	async _getItemContextMenu(event: JQuery.ContextMenuEvent, html: JQuery<HTMLElement>) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const id = uuid.split(".").at(-1)
+		const id = $(event.currentTarget).data("item-id")
 		const item = this.actor.items.get(id) as ItemGURPS
 		if (!item) return
 		const ctx = new ContextMenu(html, ".menu", [])
@@ -616,10 +615,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
 		console.time("toggle")
 		event.preventDefault()
-		const uuid: string = $(event.currentTarget).data("uuid")
-		const id = uuid.split(".").at(-1) ?? ""
+		const id: string = $(event.currentTarget).data("item-id")
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
-		// const item = this.actor.deepItems.get(uuid)
 		const item = this.actor.items.get(id)
 		// item?.update({ _id: id, "system.open": open }, { noPrepare: true })
 		item?.update({ _id: id, "system.open": open })
@@ -628,8 +625,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
-		const uuid: string = $(event.currentTarget).data("uuid")
-		const id = uuid.split(".").at(-1) ?? ""
+		const id: string = $(event.currentTarget).data("item-id")
 		const item = this.actor.items.get(id)
 		item?.sheet?.render(true)
 	}
@@ -706,8 +702,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = await fromUuid(uuid)
+		const id = $(event.currentTarget).data("item-id")
+		const item = this.actor.items.get(id)
 		return item?.update({
 			"system.equipped": !(item as EquipmentGURPS).equipped,
 		})
@@ -747,15 +743,15 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				RollType.ControlRoll,
 			].includes(type)
 		) {
-			const uuid = $(event.currentTarget).data("uuid")
-			if ([gid.Thrust, gid.Swing].includes(uuid)) {
-				const id = uuid as gid.Thrust | gid.Swing
+			const id = $(event.currentTarget).data("id")
+			if ([gid.Thrust, gid.Swing].includes(id)) {
+				const attack_id = id as gid.Thrust | gid.Swing
 				data.item = {
-					itemName: LocalizeGURPS.translations.gurps.character[id],
-					uuid: uuid,
-					fastResolvedDamage: this.actor[id].string,
+					itemName: LocalizeGURPS.translations.gurps.character[attack_id],
+					uuid: attack_id,
+					fastResolvedDamage: this.actor[attack_id].string,
 				}
-			} else data.item = await fromUuid($(event.currentTarget).data("uuid"))
+			} else data.item = this.actor.items.get(id)
 		}
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")

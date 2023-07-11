@@ -1,7 +1,7 @@
 {{#unless @root/inCompendium}}
-<div class="enabled" data-uuid="{{this.uuid}}">{{#if this.enabled}}<i class="gcs-checkmark"></i>{{/if}}</div>
+<div class="enabled" data-item-id="{{this.id}}">{{#if this.enabled}}<i class="gcs-checkmark"></i>{{/if}}</div>
 {{/unless}}
-<div class="desc item" data-uuid="{{this.uuid}}" {{{indent i=this init=0 step=6}}}>
+<div class="desc item" data-item-id="{{this.id}}" {{{indent i=this init=0 step=6}}}>
 	<div class="dropdown">
 		{{#if (eq this.type "modifier_container")}}
 		{{#if this.open}}

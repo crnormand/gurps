@@ -4,6 +4,8 @@
 
 -	Finish "static" character (0.15 and older) compatibility
 	-	don't bother with editing features
+-	mook generator
+-	fix drag and drop functionality to comply with new nested item management system
 
 ## Jeff and Chris
 
@@ -18,9 +20,8 @@
 	-	add interface for accessing old bonuses
 -	fix GURPS.LastActor setting,
 -	Convert over module compatibility
--	convert mook generator
 -	Convert the modifier bucket over
-		-	modifier bucket journals
+		-	modifier bucket journals (waiting for OTFs)
 -	Add makeshift static to dynamic character conversion
 - Delete compendium pack entries in settings when compendium pack is removed
 -	Move type editor (in triangle settings)

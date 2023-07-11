@@ -1,6 +1,5 @@
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { DnD } from "@util/drag_drop"
-import { ItemGURPS } from "@module/config"
 import { PropertiesToSource } from "types/types/helperTypes"
 import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
 import { ItemSheetGURPS } from "@item/base"
@@ -97,7 +96,8 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 		// Const item = await (BaseItemGURPS as any).implementation.fromDropData(data);
 		const item = await (Item.implementation as any).fromDropData(data)
-		const itemData = { ...item.toObject(), uuid: item.uuid }
+		// const itemData = { ...item.toObject(), uuid: item.uuid }
+		const itemData = item.toObject()
 
 		// Handle item sorting within the same Actor
 		if (this.item.uuid === item.parent?.uuid)
@@ -113,12 +113,12 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 	protected async _onSortItem(
 		event: DragEvent,
-		itemData: PropertiesToSource<ItemDataBaseProperties> & { uuid: string },
+		itemData: PropertiesToSource<ItemDataBaseProperties>,
 		options: { top: boolean; in: boolean } = { top: false, in: false }
 	): Promise<Item[]> {
-		const source: any = this.object.deepItems.get(itemData.uuid)
-		let dropTarget = $(event.target!).closest(".desc[data-uuid]")
-		let target: any = this.object.deepItems.get(dropTarget?.data("uuid"))
+		const source: any = this.object.deepItems.get(itemData._id!)
+		let dropTarget = $(event.target!).closest(".desc[data-item-id]")
+		let target: any = this.object.deepItems.get(dropTarget?.data("item-id"))
 		if (!target) return []
 		let parent: any = target?.parent
 		let parents = target?.parents
@@ -165,16 +165,16 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<void> {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = (await fromUuid(uuid)) as ItemGURPS
+		const id = $(event.currentTarget).data("item-id")
+		const item = this.item.deepItems.get(id)
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		item?.update({ "system.open": open })
 	}
 
 	protected async _onEnabledToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		const item = (await fromUuid(uuid)) as ItemGURPS
+		const id = $(event.currentTarget).data("item-id")
+		const item = this.item.deepItems.get(id)
 		if (item?.type.includes("container")) return
 		await item?.update({
 			"system.disabled": (item as TraitModifierGURPS).enabled,

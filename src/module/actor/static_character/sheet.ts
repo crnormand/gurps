@@ -172,23 +172,22 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 
 		items.forEach(e => {
-			// console.log(e.uuid)
 			Object.values(e.system.melee).forEach(a => {
-				tempItems.melee.push({ ...a, itemid: e.uuid })
+				tempItems.melee.push({ ...a, itemid: e.id })
 			})
 			Object.values(e.system.ranged).forEach(a => {
-				tempItems.ranged.push({ ...a, itemid: e.uuid })
+				tempItems.ranged.push({ ...a, itemid: e.id })
 			})
 			Object.values(e.system.ads).forEach(a => {
-				tempItems.traits.push({ ...a, itemid: e.uuid })
+				tempItems.traits.push({ ...a, itemid: e.id })
 			})
 			Object.values(e.system.skills).forEach(a => {
-				tempItems.skills.push({ ...a, itemid: e.uuid })
+				tempItems.skills.push({ ...a, itemid: e.id })
 			})
 			Object.values(e.system.spells).forEach(a => {
-				tempItems.spells.push({ ...a, itemid: e.uuid })
+				tempItems.spells.push({ ...a, itemid: e.id })
 			})
-			tempItems[e.system.carried ? "equipment" : "other_equipment"].push({ ...e.system.eqt, itemid: e.uuid })
+			tempItems[e.system.carried ? "equipment" : "other_equipment"].push({ ...e.system.eqt, itemid: e.id })
 		})
 
 		sheetData.items = {
@@ -300,9 +299,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			data.attribute = attribute
 			return RollGURPS.staticHandleRoll(game.user, this.actor, data)
 		}
-		console.log(items)
-		console.log(element.data("uuid"))
-		const key = element.data("uuid")
+		const key = element.data("item-id")
 		switch (type) {
 			case RollType.Skill:
 			case RollType.SkillRelative:
@@ -438,9 +435,9 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
-		const uuid = $(event.currentTarget).data("uuid")
-		if (!uuid) return
-		const item = fromUuidSync(uuid) as StaticItemGURPS
+		const id = $(event.currentTarget).data("item-id")
+		if (!id) return
+		const item = this.actor.items.get(id)
 		return item?.sheet?.render(true)
 	}
 }

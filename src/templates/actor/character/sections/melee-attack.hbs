@@ -1,18 +1,18 @@
-<div class="item desc" data-uuid="{{this.id}}">
+<div class="item desc" data-item-id="{{this.id}}">
 	<div class="name">
 		{{this.itemName}}
 	</div>
 	{{>actor/character/sections/item-notes}}
 </div>
-<div data-uuid="{{this.id}}" data-type="attack" class="usage rollable">
+<div data-item-id="{{this.id}}" data-type="attack" class="usage rollable">
 	{{this.usage}}</div>
-<div data-uuid="{{this.id}}" data-type="attack" class="level rollable">
+<div data-item-id="{{this.id}}" data-type="attack" class="level rollable">
 	{{this.level}}</div>
-<div data-uuid="{{this.id}}" data-type="parry" class="parry rollable">
+<div data-item-id="{{this.id}}" data-type="parry" class="parry rollable">
 	{{this.fastResolvedParry}}</div>
-<div data-uuid="{{this.id}}" data-type="block" class="block rollable">
+<div data-item-id="{{this.id}}" data-type="block" class="block rollable">
 	{{this.fastResolvedBlock}}</div>
-<div data-uuid="{{this.id}}" data-type="damage" class="damage rollable">
+<div data-item-id="{{this.id}}" data-type="damage" class="damage rollable">
 	{{this.fastResolvedDamage}}</div>
 <div class="reach">{{this.reach}}</div>
 <div class="st">{{this.strength}}</div>

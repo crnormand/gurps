@@ -1,8 +1,28 @@
 import { LastActor, LocalizeGURPS } from "@util"
-import { gid, RollModifier, RollType } from "./data"
+import { gid, GURPS_COMMANDS, RollModifier, RollType } from "./data"
 import { RollGURPS } from "@module/roll"
 import { ActorGURPS } from "./config"
 import { CharacterGURPS, LootGURPS } from "@actor"
+import { MookGenerator } from "./mook_generator"
+
+export function parse(message: string): [string, string[]] {
+	for (const [rule, rgx] of Object.entries(GURPS_COMMANDS)) {
+		// For multi-line matches, the first line must match
+		const match = message.match(rgx)
+		if (match) return [rule, match]
+	}
+	return ["none", [message, "", message]]
+}
+
+export async function procesMessage(message: string) {
+	let [command, _match] = parse(message)
+	if (command === "none") return true
+	switch (command) {
+		case "mook":
+			await MookGenerator.init()
+			return false
+	}
+}
 
 /**
  *
@@ -118,46 +138,6 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		data.comment = $(event.currentTarget).data("comment")
 	}
 	return RollGURPS.handleRoll(game.user, actor, data)
-	// If (
-	// 	[
-	// 		// RollType.Damage,
-	// 		// RollType.Attack,
-	// 		RollType.Skill,
-	// 		// RollType.SkillRelative,
-	// 		// RollType.Spell,
-	// 		// RollType.SpellRelative,
-	// 	].includes(type)
-	// ) {
-	// 	const item = await fromUuid($(event.currentTarget).data("uuid"))
-	// 	const name = item?.name
-	// 	const specialization = item instanceof SkillGURPS ? item.specialization : ""
-	// 	data.item = character.bestSkillNamed(name, specialization, false, null)
-	// }
-	// // Data.item = this.actor.deepItems.get($(event.currentTarget).data("item-id"));
-	// if ([RollType.Damage, RollType.Attack].includes(type)) {
-	// 	const item = await fromUuid($(event.currentTarget).data("uuid"))
-	// 	const weapon = (item as any)?.weapons.get($(event.currentTarget).data("weapon"))
-	// 	data.weapon = character.bestWeaponNamed(item?.name, weapon.usage, weapon.type, null)
-	// }
-	// if ([RollType.Attribute].includes(type)) {
-	// 	const id = $(event.currentTarget).data("id")
-	// 	let attribute: any = null
-	// 	if (id === gid.Dodge) attribute = character.dodgeAttribute
-	// 	else attribute = character.attributes.get(id)
-	// 	data.attribute = attribute
-	// }
-	// if ([RollType.Generic].includes(type)) {
-	// 	data.formula = $(event.currentTarget).data("formula")
-	// 	// Const mods = game.user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as any[]
-	// 	// if (mods.length) data.formula += "+ @gmd"
-	// }
-	// // If (type === RollType.Modifier) {
-	// // 	data.modifier = $(event.currentTarget).data("modifier");
-	// // 	data.comment = $(event.currentTarget).data("comment");
-	// // }
-
-	// TODO: change to GURPS.LastActor
-	// return RollGURPS.handleRoll(game.user, character, data)
 }
 
 /**
