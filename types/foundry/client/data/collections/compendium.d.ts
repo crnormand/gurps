@@ -145,6 +145,14 @@ declare global {
 		): Promise<StoredDocument<DocumentInstanceForCompendiumMetadata<T>> | undefined>
 
 		/**
+	 * Instantiate a Document for inclusion in the Collection.
+	 * @param {object} data       The Document data.
+	 * @param {object} [context]  Document creation context.
+	 * @returns {Document}
+	 */
+		createDocument(data: object, context: object = {}): Document
+
+		/**
 		 * Fully import the contents of a Compendium pack into a World folder.
 		 * @param folderId   - An existing Folder _id to use.
 		 *                     (default: `null`)
@@ -232,8 +240,8 @@ declare global {
 			transformation:
 				| DeepPartial<DocumentInstanceForCompendiumMetadata<T>["data"]["_source"]>
 				| ((
-						doc: StoredDocument<DocumentInstanceForCompendiumMetadata<T>>
-				  ) => DeepPartial<DocumentInstanceForCompendiumMetadata<T>["data"]["_source"]>),
+					doc: StoredDocument<DocumentInstanceForCompendiumMetadata<T>>
+				) => DeepPartial<DocumentInstanceForCompendiumMetadata<T>["data"]["_source"]>),
 			condition?: ((obj: StoredDocument<DocumentInstanceForCompendiumMetadata<T>>) => boolean) | null,
 			options?: DocumentModificationContext
 		): ReturnType<this["documentClass"]["updateDocuments"]>

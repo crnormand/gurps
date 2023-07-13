@@ -216,7 +216,7 @@ export class CompendiumBrowser extends Application {
 		const activeTab = this.activeTab
 
 		// Settings
-		if (activeTab === "settings") {
+		if (activeTab === TabName.Settings) {
 			this.initCompendiumList()
 			return {
 				user: game.user,

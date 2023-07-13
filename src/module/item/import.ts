@@ -123,7 +123,9 @@ export class ItemImporter {
 				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.library_import.start, { name: name })
 			)
 			let counter = items.length
-			Item.create(items as any, { pack: `world.${name}` })
+			// Item.create(items as any, { pack: `world.${name}` })
+			console.log(items)
+			pack.createDocument(items)
 			ui.notifications?.info(
 				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.library_import.finished, {
 					number: counter,

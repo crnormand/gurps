@@ -5,7 +5,7 @@
 -	Finish "static" character (0.15 and older) compatibility
 	-	don't bother with editing features
 -	mook generator
--	fix drag and drop functionality to comply with new nested item management system
+-	fix nested items in compendia
 
 ## Jeff and Chris
 
