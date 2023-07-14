@@ -22,6 +22,7 @@ export const init = function () {
 				return ranges
 			}
 		}
+
 		// @ts-ignore
 		dragRuler.registerSystem(SYSTEM_NAME, SpeedProviderGURPS)
 	})

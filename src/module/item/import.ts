@@ -2,6 +2,7 @@ import { ItemSystemDataGURPS } from "@module/config"
 import { SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS } from "@util"
 import { ImportUtils } from "@util/import"
+import { BaseItemGURPS } from "./base"
 
 interface ItemLibraryData {
 	type: ItemLibraryType
@@ -77,7 +78,8 @@ export class ItemImporter {
 	async _import(file: { text: string; name: string; path: string }) {
 		const json = file.text
 		// Return;
-		const name = file.name.split(".")[0]
+		const label = file.name.split(".")[0]
+		const name = label.toLowerCase().replaceAll(" ", "-")
 		// Const name = "Library Test";
 		let r: ItemLibraryData | any
 		const errorMessages: string[] = []
@@ -105,14 +107,13 @@ export class ItemImporter {
 
 			const items: Array<ItemSystemDataGURPS> = []
 			items.push(...ImportUtils.importItems(r.rows))
-			console.log(items)
 			// Commit = { ...commit, ...{ rows: items } };
 
-			let pack = game.packs.find(p => p.metadata.name === name)
+			let pack = game.packs.find(p => p.metadata.name === name.toLowerCase().replaceAll(" ", "-"))
 			if (!pack) {
 				pack = await CompendiumCollection.createCompendium({
 					type: "Item",
-					label: name,
+					label: label,
 					name: name,
 					package: "world",
 					path: "",
@@ -123,9 +124,16 @@ export class ItemImporter {
 				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.library_import.start, { name: name })
 			)
 			let counter = items.length
+			const newItems = await BaseItemGURPS.createDocuments(items as any[], {
+				pack: pack.collection,
+				keepId: true,
+			})
+			console.log(newItems)
 			// Item.create(items as any, { pack: `world.${name}` })
-			console.log(items)
-			pack.createDocument(items)
+			// newItems.forEach((i: any) => {
+			// const item = new BaseItemGURPS(i)
+			// pack!.importDocument(i, { keepId: true })
+			// })
 			ui.notifications?.info(
 				LocalizeGURPS.format(LocalizeGURPS.translations.gurps.system.library_import.finished, {
 					number: counter,

@@ -568,7 +568,7 @@ export class GCAImporter {
 		}
 		const skillData = {
 			name: item.name ?? "Skill",
-			type: "skill" as ItemType,
+			type: ItemType.Skill,
 			id: item["@idkey"],
 			reference: item.ref.page ?? "",
 			tech_level: item.tl,
@@ -627,7 +627,7 @@ export class GCAImporter {
 		else limitStr = "0"
 		const skillData = {
 			name: item.name ?? "Skill",
-			type: "skill" as ItemType,
+			type: ItemType.Skill,
 			id: item["@idkey"],
 			reference: item.ref.page ?? "",
 			tech_level: item.tl,
@@ -655,7 +655,7 @@ export class GCAImporter {
 		for (const tag of tags) if (tag.includes("Clerical")) power_source = "Clerical"
 		if (item.ref.class.includes("/")) resist = item.ref.class.split("/")[1].replace("R-", "")
 		const spellData = {
-			type: "spell" as ItemType,
+			type: ItemType.Spell,
 			name: item.name,
 			id: item["@idkey"],
 			reference: item.ref.page ?? "",
@@ -692,7 +692,7 @@ export class GCAImporter {
 		if (firstdef)
 			seconddef = context.data.traits.skills.trait.find((e: any) => e["@idkey"] === firstdef.calcs.deffromid)
 		const spellData = {
-			type: "ritual_magic_spell" as ItemType,
+			type: ItemType.RitualMagicSpell,
 			name: item.name,
 			id: item["@idkey"],
 			reference: item.ref.page ?? "",
@@ -728,7 +728,7 @@ export class GCAImporter {
 		const equipped =
 			!(item.extended?.extendedtag?.find((e: any) => e.tagname === "inactive")?.tagvalue === "yes") ?? true
 		const equipmentData = {
-			type: "equipment" as ItemType,
+			type: ItemType.Equipment,
 			name: item.name,
 			id: item["@idkey"],
 			reference: item.ref.page ?? "",

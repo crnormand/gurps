@@ -60,8 +60,8 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		return mergeObject(data, {
 			settings: { notes_display: "inline" },
 			items: items,
-			meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as ItemType)),
-			rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as ItemType)),
+			meleeWeapons: items.filter(e => [ItemType.MeleeWeapon].includes(e.type as any)),
+			rangedWeapons: items.filter(e => [ItemType.RangedWeapon].includes(e.type as any)),
 		})
 	}
 
@@ -94,9 +94,7 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 
 		if (!this.item.isOwner) return false
 
-		// Const item = await (BaseItemGURPS as any).implementation.fromDropData(data);
 		const item = await (Item.implementation as any).fromDropData(data)
-		// const itemData = { ...item.toObject(), uuid: item.uuid }
 		const itemData = item.toObject()
 
 		// Handle item sorting within the same Actor

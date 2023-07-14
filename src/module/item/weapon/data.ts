@@ -31,4 +31,10 @@ export interface BaseWeaponSystemData {
 
 export type WeaponType = ItemType.MeleeWeapon | ItemType.RangedWeapon
 
-export type StrengthDamage = "none" | "thr" | "thr_leveled" | "sw" | "sw_leveled"
+export enum StrengthDamage {
+	None = "none",
+	Thrust = "thr",
+	ThrustLeveled = "thr_leveled",
+	Swing = "sw",
+	SwingLeveled = "sw_leveled",
+}

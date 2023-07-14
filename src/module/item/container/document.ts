@@ -8,7 +8,7 @@ import { DocumentConstructor } from "types/types/helperTypes"
 import { BaseContainerSystemData } from "./data"
 
 abstract class ContainerGURPS extends BaseItemGURPS {
-	items: foundry.utils.Collection<Item> = new Collection()
+	items: foundry.utils.Collection<BaseItemGURPS> = new Collection()
 
 	// Getters
 	get deepItems(): Collection<Item> {
@@ -32,7 +32,7 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 			this.items
 				.filter(item => childTypes.includes(item.type))
 				.map(item => {
-					return [item.uuid, item]
+					return [item.id!, item]
 				})
 		) as Collection<ItemGURPS>
 	}
@@ -90,18 +90,27 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 	prepareEmbeddedDocuments(): void {
 		// If (this.actor?.noPrepare) return
 		super.prepareEmbeddedDocuments()
+		let container = null
 		if (!this.actor && !this.pack) return
-		const container: Item[] | null = this.pack
-			? (game.packs?.get(this.pack)?.contents as Item[])
-			: this.actor?.items.contents ?? null
-		if (!container) return
-
 		this.items = new Collection()
-		for (const item of container.filter(e => e.getFlag(SYSTEM_NAME, ItemFlags.Container) === this.id)) {
-			if (this.type === ItemType.EquipmentContainer && item.type === ItemType.Equipment) {
-				;(item as any).system.other = (this.system as any).other
+		if (this.actor) {
+			container = this.actor.items as EmbeddedCollection<typeof BaseItemGURPS, any>
+			for (const item of container.filter(
+				(e: BaseItemGURPS) => e.getFlag(SYSTEM_NAME, ItemFlags.Container) === this.id
+			)) {
+				if (this.type === ItemType.EquipmentContainer && item.type === ItemType.Equipment) {
+					;(item as any).system.other = (this.system as any).other
+				}
+				this.items.set(item.id!, item)
 			}
-			this.items.set(item.id!, item)
+		} else if (this.pack) {
+			// container = await this.compendium.getIndex({ fields: ["flags"] })
+			container = this.compendium.index
+			for (const i of container.filter((e: any) => e.flags[SYSTEM_NAME][ItemFlags.Container] === this.id)) {
+				// const item = await this.compendium.getDocument(i._id)
+				const item = fromUuidSync(i.uuid) as BaseItemGURPS
+				this.items.set(item._id, item)
+			}
 		}
 	}
 }

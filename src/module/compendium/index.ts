@@ -262,16 +262,16 @@ export class CompendiumBrowser extends Application {
 	protected async _onClickEntry(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
 		const li = event.currentTarget
-		const id = $(li!).data("item-id")
-		const pack: string = this.loadedPacks(this.activeTab).find((e: string) => id.includes(e)) ?? ""
-		const item = this.tabs[this.activeTab as ItemTabName].indexData.find(e => e._id === id)
+		const id = $(event.currentTarget).data("item-id")
+		const entry = this.tabs[this.activeTab as ItemTabName].indexData.find(e => e._id === id)
+		if (!entry) return
+		const item = (await entry.compendium.getDocument(id)) as any
 		if (!item) return
 		const sheet = (item as any).sheet
-		if (sheet._minimized) return sheet.maximize()
-		else
-			return sheet?.render(true, {
-				editable: game.user?.isGM && !game.packs.get(pack)?.locked,
-			})
+		if (sheet?._minimized) return sheet.maximize()
+		return item?.sheet?.render(true, {
+			editable: game.user?.isGM && !entry.compendium.locked,
+		})
 	}
 
 	private initCompendiumList(): void {

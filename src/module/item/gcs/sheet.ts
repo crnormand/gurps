@@ -4,7 +4,6 @@ import { ItemType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS, Weight } from "@util"
 import { ItemGCS } from "./document"
 
-// @ts-ignore
 export class ItemSheetGCS extends ContainerSheetGURPS {
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
@@ -136,7 +135,6 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 	}
 }
 
-// @ts-ignore
 export interface ItemSheetGCS extends ContainerSheetGURPS {
 	object: ItemGCS
 }

@@ -110,23 +110,6 @@ class BaseActorGURPS extends Actor {
 		return super.update(data, context)
 	}
 
-	// get deepItems(): Collection<ItemGURPS> {
-	// 	const deepItems: ItemGURPS[] = []
-	// 	for (const item of this.items as any as Collection<ItemGURPS>) {
-	// 		deepItems.push(item)
-	// 		if ((item as any).items)
-	// 			for (const i of (item as any).deepItems) {
-	// 				deepItems.push(i)
-	// 			}
-	// 	}
-	// 	return new Collection(
-	// 		deepItems.map(item => {
-	// 			// Return [item.id!, item]
-	// 			return [item.uuid, item]
-	// 		})
-	// 	)
-	// }
-
 	get gEffects(): Collection<EffectGURPS> {
 		const effects: Collection<EffectGURPS> = new Collection()
 		for (const item of this.items) {

@@ -11,6 +11,7 @@ import {
 	checkForFoundryDrops,
 } from "./smaller_checks"
 import { checkForSelfControl } from "./self_control"
+import { checkForModifier } from "./check_modifier"
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
@@ -36,7 +37,7 @@ export interface OtFChecker {
 }
 const checkFunctions: Array<OtFChecker> = []
 // CheckFunctions.push(parseForRollOrDamage)   // This should be first!
-// checkFunctions.push(checkForModifier)
+checkFunctions.push(checkForModifier)
 checkFunctions.push(checkForChat)
 checkFunctions.push(checkForHtml)
 checkFunctions.push(checkForIf)

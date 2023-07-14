@@ -5,7 +5,7 @@
 -	Finish "static" character (0.15 and older) compatibility
 	-	don't bother with editing features
 -	mook generator
--	fix nested items in compendia
+-	fix circular link in OTFs
 
 ## Jeff and Chris
 

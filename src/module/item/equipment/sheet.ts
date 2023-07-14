@@ -1,6 +1,6 @@
 import { EquipmentContainerGURPS } from "@item/equipment_container"
 import { ItemSheetGCS } from "@item/gcs"
-import { SYSTEM_NAME } from "@module/data"
+import { ItemType, SYSTEM_NAME } from "@module/data"
 import { EquipmentGURPS } from "./document"
 
 export class EquipmentSheet extends ItemSheetGCS {
@@ -17,10 +17,13 @@ export class EquipmentSheet extends ItemSheetGCS {
 	}
 
 	getData(options?: Partial<DocumentSheetOptions<Item>> | undefined) {
+		this.object.prepareData()
 		const data = super.getData(options)
-		const modifiers = this.object.modifiers
 		return mergeObject(data, {
-			modifiers,
+			modifiers: this.object.modifiers,
+			meleeWeapons: data.items.filter((e: any) => e.type === ItemType.MeleeWeapon),
+			// meleeWeapons: this.object.meleeWeapons,
+			// rangedWeapons: this.object.rangedWeapons,
 		})
 	}
 }

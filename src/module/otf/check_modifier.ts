@@ -1,5 +1,5 @@
+import { parselink } from "."
 import { ParsedOtF, OptionalCheckParameters, OtFCostsAction } from "./base"
-import { parselink } from "./parse_otf"
 import { gmspan } from "./utils"
 
 /**

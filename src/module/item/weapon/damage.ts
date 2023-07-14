@@ -13,7 +13,7 @@ import { BaseWeaponGURPS } from "./document"
 export class WeaponDamage {
 	constructor(data?: WeaponDamage | any) {
 		this.type = ""
-		this.st = "none"
+		this.st = StrengthDamage.None
 		this.armor_divisor = 1
 		this.fragmentation_armor_divisor = 1
 		this.fragmentation_type = ""
@@ -27,7 +27,7 @@ export class WeaponDamage {
 
 	toString(): string {
 		let buffer = ""
-		if (this.st !== "none") buffer += LocalizeGURPS.translations.gurps.select.damage_st[this.st]
+		if (this.st !== StrengthDamage.None) buffer += LocalizeGURPS.translations.gurps.weapon.damage_display[this.st]
 		let convertMods = false
 		if (this.parent && this.parent.actor) convertMods = this.parent.actor.settings.use_modifying_dice_plus_adds
 		if (this.base) {
@@ -40,7 +40,9 @@ export class WeaponDamage {
 			if (this.modifier_per_die !== 0) {
 				if (buffer.length !== 0) buffer += " "
 				console.log(this.modifier_per_die)
-				buffer += `(${this.modifier_per_die.signedString()} per die)`
+				buffer += `(${this.modifier_per_die.signedString()} ${
+					LocalizeGURPS.translations.gurps.feature.per_die
+				})`
 			}
 			const t = this.type.trim()
 			if (t !== "") buffer += ` ${t}`

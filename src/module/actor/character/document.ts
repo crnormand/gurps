@@ -764,7 +764,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get traits(): Collection<TraitGURPS | TraitContainerGURPS> {
 		const traits: Collection<TraitGURPS | TraitContainerGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) traits.set(item.uuid, item)
+			if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) traits.set(item._id, item)
 		}
 		return traits
 	}
@@ -773,7 +773,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		const skills: Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS> = new Collection()
 		for (const item of this.items) {
 			if (item instanceof SkillGURPS || item instanceof TechniqueGURPS || item instanceof SkillContainerGURPS)
-				skills.set(item.uuid, item)
+				skills.set(item._id, item)
 		}
 		return skills
 	}
@@ -786,7 +786,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				item instanceof RitualMagicSpellGURPS ||
 				item instanceof SpellContainerGURPS
 			)
-				spells.set(item.uuid, item)
+				spells.set(item._id, item)
 		}
 		return spells
 	}
@@ -794,8 +794,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get equipment(): Collection<EquipmentGURPS | EquipmentContainerGURPS> {
 		const equipment: Collection<EquipmentGURPS | EquipmentContainerGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS)
-				equipment.set(item.uuid, item)
+			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) equipment.set(item._id, item)
 		}
 		return equipment
 	}
@@ -805,7 +804,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			this.equipment
 				.filter(item => !item.other)
 				.map(item => {
-					return [item.uuid, item]
+					return [item._id, item]
 				})
 		)
 	}
@@ -815,7 +814,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			this.equipment
 				.filter(item => item.other)
 				.map(item => {
-					return [item.uuid, item]
+					return [item._id, item]
 				})
 		)
 	}
@@ -823,7 +822,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get notes(): Collection<NoteGURPS | NoteContainerGURPS> {
 		const notes: Collection<NoteGURPS | NoteContainerGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof NoteGURPS || item instanceof NoteContainerGURPS) notes.set(item.uuid, item)
+			if (item instanceof NoteGURPS || item instanceof NoteContainerGURPS) notes.set(item._id, item)
 		}
 		return notes
 	}
@@ -832,7 +831,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get meleeWeapons(): Collection<MeleeWeaponGURPS> {
 		const meleeWeapons: Collection<MeleeWeaponGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item.uuid, item)
+			if (item instanceof MeleeWeaponGURPS) meleeWeapons.set(item._id, item)
 		}
 		return meleeWeapons
 	}
@@ -840,7 +839,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get rangedWeapons(): Collection<RangedWeaponGURPS> {
 		const rangedWeapons: Collection<RangedWeaponGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item.uuid, item)
+			if (item instanceof RangedWeaponGURPS) rangedWeapons.set(item._id, item)
 		}
 		return rangedWeapons
 	}
@@ -848,8 +847,8 @@ class CharacterGURPS extends BaseActorGURPS {
 	get weapons(): Collection<WeaponGURPS> {
 		const weapons: Collection<WeaponGURPS> = new Collection()
 		for (const item of this.items) {
-			if (item instanceof MeleeWeaponGURPS) weapons.set(item.uuid, item)
-			if (item instanceof RangedWeaponGURPS) weapons.set(item.uuid, item)
+			if (item instanceof MeleeWeaponGURPS) weapons.set(item._id, item)
+			if (item instanceof RangedWeaponGURPS) weapons.set(item._id, item)
 		}
 		return weapons
 	}
@@ -1499,7 +1498,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			) {
 				item.dummyActor = this
 				item.points = 0
-				skills.set(item.uuid, item)
+				skills.set(item._id, item)
 			}
 		}
 		for (const item of this.skills) {
@@ -1510,7 +1509,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				(!require_points || item instanceof TechniqueGURPS || item.adjustedPoints() > 0) &&
 				(specialization === "" || specialization === item.specialization)
 			)
-				skills.set(item.uuid, item)
+				skills.set(item._id, item)
 		}
 		return skills
 	}
@@ -1619,10 +1618,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		tags: string[],
 		dieCount: number,
 		levels: number,
-		m?: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>,
+		m: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> = new Map(),
 		tooltip: TooltipGURPS | null = null
 	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
-		m ??= new Map()
 		let rsl = -Infinity
 		for (const sk of this.skillNamed(name, specialization, true, null)) {
 			if (rsl < sk.level.relative_level) rsl = sk.level.relative_level
@@ -1657,9 +1655,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		dieCount: number,
 		levels: number,
 		tooltip: TooltipGURPS | null = null,
-		m?: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>
+		m: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> = new Map()
 	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
-		m ??= new Map()
 		for (const f of this.features.weaponBonuses) {
 			if (
 				f.selection_type === "weapons_with_name" &&

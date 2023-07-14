@@ -766,7 +766,13 @@
 			"recoil": "Recoil",
 			"shots": "Shots",
 			"bulk": "Bulk",
-			"bulk_for": "Bulk ({name})"
+			"bulk_for": "Bulk ({name})",
+			"damage_display": {
+				"thr": "thr",
+				"thr_leveled": "thr",
+				"sw": "sw",
+				"sw_leveled": "sw"
+			}
 		},
 		"roll": {
 			"default": "Default: {default}",

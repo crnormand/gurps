@@ -6,9 +6,6 @@ import { BaseUser } from "types/foundry/common/documents.mjs"
 import { BaseItemSourceGURPS, ItemConstructionContextGURPS, ItemFlags } from "./data"
 
 class BaseItemGURPS extends Item {
-	// @ts-ignore
-	// parent: CharacterGURPS | ContainerGURPS | null
-
 	constructor(data: ItemDataGURPS | any, context: Context<Actor> & ItemConstructionContextGURPS = {}) {
 		if (context.gurps?.ready) {
 			super(data, context)
@@ -28,6 +25,7 @@ class BaseItemGURPS extends Item {
 	// 	if (!(this.parent instanceof Item)) return super.delete(context)
 	// 	return this.container?.deleteEmbeddedDocuments("Item", [this.id!])
 	// }
+	//
 
 	static override async createDialog(
 		data: { folder?: string } = {},
@@ -73,10 +71,12 @@ class BaseItemGURPS extends Item {
 	// }
 
 	get container(): Actor | ContainerGURPS | null {
-		if (!this.actor) return null
+		if (!this.actor && !this.pack) return null
 		const id = this.getFlag(SYSTEM_NAME, ItemFlags.Container) as string | null
-		if (id === null) return this.actor
-		else return (this.actor.items.get(id) as ContainerGURPS) ?? null
+		if (id === null) return this.actor ?? this.compendium
+		if (this.actor) return (this.actor?.items.get(id) as ContainerGURPS) ?? null
+		if (this.compendium) return (fromUuidSync(`Compendium.${this.pack}.Item.${id}`) as ContainerGURPS) ?? null
+		return null
 	}
 
 	get parents(): Array<any> {
