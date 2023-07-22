@@ -6,6 +6,7 @@ import { PropertiesToSource } from "types/types/helperTypes"
 import { ItemDataBaseProperties } from "types/foundry/common/data/data.mjs/itemData"
 import { LastActor } from "@util"
 import { ContainerGURPS, ItemFlags } from "@item"
+import { DocumentSheetConfigGURPS } from "./config"
 
 type DispatchFunctions = Record<string, (arg: any) => void>
 
@@ -213,6 +214,14 @@ export class ActorSheetGURPS extends ActorSheet {
 		all_buttons.at(-1)!.label = ""
 		all_buttons.at(-1)!.icon = "gcs-circled-x"
 		return all_buttons
+	}
+
+	protected override _onConfigureSheet(event: JQuery.ClickEvent<any, any, any, any>): void {
+		event.preventDefault()
+		new DocumentSheetConfigGURPS(this.document, {
+			top: this.position.top! + 40,
+			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
+		}).render(true)
 	}
 }
 

@@ -1,5 +1,4 @@
-import { ActorSheetGURPS } from "@actor/base"
-import { ActorFlags } from "@actor/base/data"
+import { ActorFlags, ActorSheetGURPS } from "@actor/base"
 import { StaticItemGURPS } from "@item"
 import { RollType, SETTINGS, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
@@ -15,7 +14,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	static get defaultOptions(): ActorSheet.Options {
 		return mergeObject(super.defaultOptions, {
-			classes: super.defaultOptions.classes.concat(["character", "static"]),
+			classes: super.defaultOptions.classes.concat(["static"]),
 			width: 800,
 			height: 800,
 			tabs: [{ navSelector: ".tabs-navigation", contentSelector: ".tabs-content", initial: "lifting" }],
@@ -28,8 +27,8 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	get template(): string {
 		if (!game.user?.isGM && this.actor.limited)
-			return `systems${SYSTEM_NAME}/templates/actor/static_character/sheet_limited.hbs`
-		return `/systems/${SYSTEM_NAME}/templates/actor/static_character/sheet.hbs`
+			return `systems${SYSTEM_NAME}/templates/actor/static/sheet_limited.hbs`
+		return `/systems/${SYSTEM_NAME}/templates/actor/static/sheet.hbs`
 	}
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {

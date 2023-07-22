@@ -3,7 +3,7 @@ import { gid, GURPS_COMMANDS, RollModifier, RollType } from "./data"
 import { RollGURPS } from "@module/roll"
 import { ActorGURPS } from "./config"
 import { CharacterGURPS, LootGURPS } from "@actor"
-import { MookGenerator } from "./mook_generator"
+import { MookGeneratorSheet } from "./mook_generator"
 
 export function parse(message: string): [string, string[]] {
 	for (const [rule, rgx] of Object.entries(GURPS_COMMANDS)) {
@@ -19,7 +19,7 @@ export async function procesMessage(message: string) {
 	if (command === "none") return true
 	switch (command) {
 		case "mook":
-			await MookGenerator.init()
+			await MookGeneratorSheet.init()
 			return false
 	}
 }

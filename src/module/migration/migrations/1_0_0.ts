@@ -1,5 +1,5 @@
 import { BaseActorSourceGURPS } from "@actor"
-import { StaticCharacterSource } from "@actor/static_character/data"
+import { StaticCharacterSource } from "@actor/static/data"
 import { ActorType } from "@module/data"
 import { MigrationBase } from "../base"
 

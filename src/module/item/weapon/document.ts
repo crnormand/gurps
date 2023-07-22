@@ -11,7 +11,7 @@ import { BaseWeaponSystemData } from "./data"
 
 class BaseWeaponGURPS extends BaseItemGURPS {
 	get itemName(): string {
-		if (this.parent instanceof Item) return this.container?.name ?? ""
+		if (this.container instanceof Item) return this.container?.name ?? ""
 		return ""
 	}
 

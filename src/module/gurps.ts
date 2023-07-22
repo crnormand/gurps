@@ -30,15 +30,15 @@
 
 // Import TypeScript modules
 import { registerSettings } from "./settings"
-import { preloadTemplates } from "./preload-templates"
+import { preloadTemplates } from "./preload_templates"
 import { getDefaultSkills, LastActor, LocalizeGURPS, setInitiative } from "@util"
-import { registerHandlebarsHelpers } from "@util/handlebars-helpers"
+import { registerHandlebarsHelpers } from "@util/handlebars_helpers"
 import { GURPSCONFIG } from "./config"
 import * as Chat from "@module/chat"
 import { ItemImporter } from "@item/import"
 import { CompendiumBrowser } from "./compendium"
 import { ActorType, ItemType, SOCKET, SYSTEM_NAME, UserFlags } from "./data"
-import { StaticHitLocation } from "@actor/static_character/hit_location"
+import { StaticHitLocation } from "@actor/static/hit_location"
 import * as SpeedProviderGURPS from "./modules/drag_ruler"
 import { ColorSettings } from "./settings/colors"
 import { DamageChat } from "./damage_calculator/damage_chat_message"
@@ -81,6 +81,7 @@ import { UserGURPS } from "./user/document"
 import { CombatantGURPS } from "./combatant"
 import { parselink } from "./otf"
 import { CombatTrackerGURPS } from "@ui"
+import { MookGeneratorSheet } from "./mook_generator"
 
 Error.stackTraceLimit = Infinity
 
@@ -262,6 +263,11 @@ Hooks.once("init", async () => {
 		types: [ActorType.Character],
 		makeDefault: true,
 		label: game.i18n.localize("gurps.system.sheet.character_gcs"),
+	})
+	Actors.registerSheet(SYSTEM_NAME, MookGeneratorSheet, {
+		types: [ActorType.Character],
+		makeDefault: false,
+		label: "", // should not be displayed
 	})
 	Actors.registerSheet(SYSTEM_NAME, LootSheetGURPS, {
 		types: [ActorType.Loot],
@@ -566,4 +572,8 @@ Hooks.on("chatMessage", function (_chatlog: ChatLog, message: string, _data: any
 	console.log("checkem")
 	Chat.procesMessage(message)
 	return false
+})
+
+Hooks.on("createActor", function (...args: any[]) {
+	console.log(args)
 })

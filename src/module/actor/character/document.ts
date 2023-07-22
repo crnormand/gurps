@@ -21,7 +21,7 @@ import {
 	TraitGURPS,
 	WeaponType,
 } from "@item"
-import { CondMod } from "@module/conditional-modifier"
+import { CondMod } from "@module/conditional_modifier"
 import {
 	attrPrefix,
 	EFFECT_ACTION,

@@ -16,8 +16,9 @@ import {
 	StaticReaction,
 	StaticSkill,
 	StaticSpell,
+	StaticEncumbrance,
 } from "./components"
-import { StaticCharacterSystemData, StaticCharacterTraits, StaticEncumbrance } from "./data"
+import { StaticCharacterSystemData, StaticCharacterTraits } from "./data"
 import { StaticHitLocation, StaticHitLocationDictionary, StaticHitLocationRolls } from "./hit_location"
 
 export class StaticCharacterImporter {

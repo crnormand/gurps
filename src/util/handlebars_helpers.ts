@@ -2,9 +2,8 @@ import { ItemType, Study } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { getAdjustedStudyHours } from "./misc"
 import { LocalizeGURPS } from "./localize"
-import { CharacterGURPS } from "@actor"
+import { CharacterGURPS, StaticSpell } from "@actor"
 import { Static } from "@util"
-import { StaticSpell } from "@actor/static_character/components"
 
 class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 	static camelcase(s: string) {

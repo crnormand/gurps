@@ -1,4 +1,4 @@
-import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
+import { HitLocation, HitLocationTable } from "@actor"
 import { SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS, prepareFormData } from "@util"
 import { DnD } from "@util/drag_drop"

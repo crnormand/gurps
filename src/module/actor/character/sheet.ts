@@ -20,7 +20,7 @@ import {
 	TraitGURPS,
 } from "@item"
 import { Attribute, AttributeObj, AttributeType } from "@module/attribute"
-import { CondMod } from "@module/conditional-modifier"
+import { CondMod } from "@module/conditional_modifier"
 import { ItemGURPS } from "@module/config"
 import { gid, ItemType, RollType, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
@@ -743,7 +743,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				RollType.ControlRoll,
 			].includes(type)
 		) {
-			const id = $(event.currentTarget).data("id")
+			const id = $(event.currentTarget).data("item-id")
 			if ([gid.Thrust, gid.Swing].includes(id)) {
 				const attack_id = id as gid.Thrust | gid.Swing
 				data.item = {
@@ -1031,7 +1031,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _openGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		this.config ??= new CharacterSheetConfig(this.document as CharacterGURPS, {
+		this.config ??= new CharacterSheetConfig(this.object, {
 			top: this.position.top! + 40,
 			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
 		})
@@ -1042,6 +1042,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		await this.config?.close(options)
 		return super.close(options)
 	}
+
+	// protected override _onConfigureSheet(event: JQuery.ClickEvent<any, any, any, any>): void {
+	// 	event.preventDefault();
+	// 	new CharacterSheetConfig(this.object, {
+	// 		top: this.position.top! + 40,
+	// 		left: this.position.left! + ((this.position.width! - DocumentSheet.defaultOptions.width!) / 2)
+	// 	}).render(true);
+	// }
 }
 
 export interface CharacterSheetGURPS extends ActorSheetGURPS {

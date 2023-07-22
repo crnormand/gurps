@@ -412,6 +412,8 @@ export class CharacterSheetConfig extends FormApplication {
 		if (!this.object.id) return
 		if (formData["system.settings.block_layout"])
 			formData["system.settings.block_layout"] = formData["system.settings.block_layout"].split("\n")
+		console.log("checkem")
+		console.log(formData)
 		await this.object.update(formData)
 		return this.render()
 	}

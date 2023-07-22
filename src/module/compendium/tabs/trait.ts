@@ -1,6 +1,6 @@
 import { ItemType, SYSTEM_NAME } from "@module/data"
-import { CompendiumBrowser, CompendiumIndexData } from ".."
-import { TabName } from "../data"
+import { CompendiumBrowser } from "../browser"
+import { CompendiumIndexData, TabName } from "../data"
 import { CompendiumTab } from "./base"
 
 export class CompendiumTraitTab extends CompendiumTab {

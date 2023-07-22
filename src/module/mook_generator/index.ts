@@ -1,1 +1,2 @@
-export { MookGenerator } from "./document"
+export { MookGeneratorSheet } from "./sheet"
+export { Mook } from "./document"

@@ -1,0 +1,67 @@
+<form autocomplete="off">
+	<div id="identity" class="fieldblock">
+		<div class="label">{{localize "gurps.character.name"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="name"
+				value="{{actor.name}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.title"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="system.profile.title"
+				value="{{system.title}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.appearance"}}</div>
+		<div class="field">
+			<textarea
+				type="text"
+				name="system.user_description"
+				data-dtype="String"
+			>{{textareaFormat system.appearance }}</textarea>
+		</div>
+	</div>
+	<div id="attributes">
+		<div id="primary-attributes" class="fieldblock">
+		{{#each primary_attributes}}
+			{{>mook-generator/attribute}}
+		{{/each}}
+		{{#each point_pools}}
+			{{>mook-generator/attribute}}
+		{{/each}}
+			<div class="label">{{localize "gurps.character.basic_thrust"}}</div>
+			<div class="field">
+				<input
+					name="system.basic_thrust"
+					class="input number"
+					type="text"
+					data-dtype="String"
+					value="{{actor.thrust.string}}"
+					style="min-width: {{length basic_thrust}}ch;"
+				/>
+			</div>
+			<div class="label">{{localize "gurps.character.basic_swing"}}</div>
+			<div class="field">
+				<input
+					name="system.basic_swing"
+					class="input number"
+					type="text"
+					data-dtype="String"
+					value="{{actor.swing.string}}"
+					style="min-width: {{length basic_swing}}ch;"
+				/>
+			</div>
+		</div>
+		<div id="secondary-attributes" class="fieldblock">
+		{{#each secondary_attributes}}
+			{{>mook-generator/attribute}}
+		{{/each}}
+		</div>
+	</div>
+</form>

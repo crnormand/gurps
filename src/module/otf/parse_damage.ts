@@ -1,29 +1,29 @@
 import { ParsedOtF, OtFAction, OtFDamageAction, OptionalCheckParameters } from "./base"
 import { gspan } from "./utils"
 import { d6ify } from "@util/misc"
-import { StaticHitLocation } from "../actor/static_character/hit_location"
+import { StaticHitLocation } from "../actor/static/hit_location"
 // Import { GURPS } from "../gurps"
 let GURPS: any = {}
 // Let StaticHitLocation: any = {}
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
-  +N <desc>
-  -N <desc>
+	+N <desc>
+	-N <desc>
 	add a modifier to the stack, using text as the description
-  ST/IQ/DX[+-]N <desc>
+	ST/IQ/DX[+-]N <desc>
 	attribute roll with optional add/subtract
-  CR: N <desc>
+	CR: N <desc>
 	Self control roll
-  "Skill*" +/-N
+	"Skill*" +/-N
 	Roll vs skill (with option +/- mod)
-  "ST12"
-  "SW+1"/"THR-1"
-  "PDF:B102"
+	"ST12"
+	"SW+1"/"THR-1"
+	"PDF:B102"
 
-  "modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
+	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
 
-  (\(-?[\.\d]+\))? == (-.#)
+	(\(-?[\.\d]+\))? == (-.#)
 */
 
 export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d+) ?(?<type>[ \w()]+)/i

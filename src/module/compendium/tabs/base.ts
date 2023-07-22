@@ -1,5 +1,5 @@
-import { CompendiumBrowser, CompendiumIndexData } from ".."
-import { TabName } from "../data"
+import { CompendiumBrowser } from "../browser"
+import { CompendiumIndexData, TabName } from "../data"
 import { FilterData } from "./data"
 
 export abstract class CompendiumTab {

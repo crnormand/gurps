@@ -382,7 +382,7 @@ export class StaticNote extends _BaseComponent {
 	}
 }
 
-export class Encumbrance {
+export class StaticEncumbrance {
 	key: string
 
 	level: number

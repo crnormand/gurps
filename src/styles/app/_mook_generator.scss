@@ -1,0 +1,29 @@
+.mook-generator {
+	.window-content {
+		display: grid;
+		grid-template-columns: auto auto;
+		#attributes {
+			display: grid;
+			grid-template: "primary secondary";
+			#primary_attributes {
+				grid-area: "primary";
+			}
+			#secondary_attributes {
+				grid-area: "secondary";
+			}
+			> div {
+				background-color: rgb(var(--color-content));
+				border: 2px solid rbg(var(--color-header));
+			}
+		}
+		.fieldblock {
+			display: grid;
+			grid-template: "label field";
+			grid-template-columns: max-content 1fr;
+			row-gap: 4px;
+			column-gap: 9px;
+			vertical-align: middle;
+			padding: 2px 16px;
+		}
+	}
+}

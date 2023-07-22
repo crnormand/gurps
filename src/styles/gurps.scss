@@ -460,6 +460,7 @@
 			/* color: rgba(var(--color-on-editable), 0); // Invisible Text */
 			pointer-events: none;
 		}
+		&.number,
 		&[data-dtype="Number"] {
 			width: 93px;
 		}

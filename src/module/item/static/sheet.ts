@@ -1,5 +1,5 @@
-import { StaticItem, _BaseComponent } from "@actor/static_character/components"
-import { ItemFlags } from "@item/base/data"
+import { StaticItem, _BaseComponent } from "@actor/static/components"
+import { ItemFlags } from "@item/base"
 import { ItemType, SYSTEM_NAME } from "@module/data"
 import { LocalizeGURPS, Static } from "@util"
 import { StaticItemGURPS } from "."

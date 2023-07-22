@@ -1,0 +1,27 @@
+{{#if (in this.attribute_def.type "_separator")}}
+<div class="separator_parent">
+	<div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div>
+</div>
+{{else if (or (eq this.attribute_def.type "integer_ref") (eq this.attribte_def.type "decimal_ref"))}}
+<div class="field">
+	<input
+		class="number"
+		type="text"
+		value="{{this.max}}"
+		disabled style="min-width: {{length this.max}}ch;"
+	/>
+</div>
+<div class="label">{{this.attribute_def.resolveFullName}}</div>
+{{else}}
+<div class="label">{{this.attribute_def.resolveFullName}}</div>
+<div class="field">
+	<input
+		name="attributes.{{this.id}}.adj"
+		class="input number"
+		type="text"
+		data-dtype="Number"
+		value="{{this.max}}"
+		style="min-width: {{length this.max}}ch;"
+	/>
+</div>
+{{/if}}

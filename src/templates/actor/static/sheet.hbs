@@ -11,18 +11,18 @@
 	{{/unless}}
 <div id="sheet" class="gurpsactorsheet">
     <div id="personal">
-        {{>actor/static_character/sections/portrait }}
-        {{>actor/static_character/sections/identity }}
-        {{>actor/static_character/sections/miscellaneous }}
-        {{>actor/static_character/sections/description }}
-        {{>actor/static_character/sections/points }}
+        {{>actor/static/sections/portrait }}
+        {{>actor/static/sections/identity }}
+        {{>actor/static/sections/miscellaneous }}
+        {{>actor/static/sections/description }}
+        {{>actor/static/sections/points }}
     </div>
 	<div id="stats">
         <div id="attributes">
-			{{>actor/static_character/sections/primary-attributes }}
-            {{>actor/static_character/sections/basic-damage }}
-			{{>actor/static_character/sections/secondary-attributes }}
-			{{>actor/static_character/sections/pool-attributes }}
+			{{>actor/static/sections/primary-attributes }}
+            {{>actor/static/sections/basic-damage }}
+			{{>actor/static/sections/secondary-attributes }}
+			{{>actor/static/sections/pool-attributes }}
         </div>
         <div id="hit-locations">
             <div class="header body-plan">
@@ -32,24 +32,24 @@
             <div class="header location">{{ localize "gurps.character.body_type.location" }}</div>
             <div class="header dr">{{ localize "gurps.character.body_type.dr" }}</div>
             {{#each system.hitlocations }}
-                {{>actor/static_character/sections/hit-location tab="" }}
+                {{>actor/static/sections/hit-location tab="" }}
             {{/each }}
         </div>
         <div id="encumbrance-lifting">
-            {{>actor/static_character/sections/encumbrance }}
+            {{>actor/static/sections/encumbrance }}
             <div id="lifting-macros">
                 <nav class="header tabs-navigation" data-group="lifting">
                     <a class="item" data-tab="lifting">{{ localize "gurps.character.lifting.title" }}</a>
                     <a class="item" data-tab="macros">{{ localize "gurps.character.macros.title" }}</a>
                 </nav>
                 <section class="tabs-content">
-                    {{>actor/static_character/sections/lifting }}
-                    {{>actor/static_character/sections/macros }}
+                    {{>actor/static/sections/lifting }}
+                    {{>actor/static/sections/macros }}
                 </section>
             </div>
         </div>
-        <div id="resource-trackers">{{>actor/static_character/sections/resource-trackers }}</div>
-        <div id="move">{{>actor/static_character/sections/move }}</div>
+        <div id="resource-trackers">{{>actor/static/sections/resource-trackers }}</div>
+        <div id="move">{{>actor/static/sections/move }}</div>
     </div>
     <div id="embeds"
          style="grid-template: {{ layout }};">
@@ -59,7 +59,7 @@
                     <div class="header modifier">{{ localize "gurps.character.reactions.modifier" }}</div>
                     <div class="header condition">{{ localize "gurps.character.reactions.reaction" }}</div>
                     {{#each system.reactions }}
-                        {{>actor/static_character/sections/reaction }}
+                        {{>actor/static/sections/reaction }}
                     {{/each }}
                 </div>
             {{/if }}
@@ -68,7 +68,7 @@
                     <div class="header modifier">{{ localize "gurps.character.conditional_modifiers.modifier" }}</div>
                     <div class="header condition">{{ localize "gurps.character.conditional_modifiers.reaction" }}</div>
                     {{#each system.conditionalmods }}
-                        {{>actor/static_character/sections/reaction }}
+                        {{>actor/static/sections/reaction }}
                     {{/each }}
                 </div>
             {{/if }}
@@ -84,7 +84,7 @@
                 <div class="header reach">{{ localize "gurps.character.melee.reach" }}</div>
                 <div class="header st">{{ localize "gurps.character.melee.st" }}</div>
                 {{#each items.melee }}
-                    {{>actor/static_character/sections/melee-attack }}
+                    {{>actor/static/sections/melee-attack }}
                 {{/each }}
             </div>
         {{/if }}
@@ -118,7 +118,7 @@
                     {{ localize "gurps.character.ranged.st" }}
                 </div>
                 {{#each items.ranged }}
-                    {{>actor/static_character/sections/ranged-attack }}
+                    {{>actor/static/sections/ranged-attack }}
                 {{/each }}
             </div>
         {{/if }}
@@ -134,7 +134,7 @@
                     <i class="gcs-bookmark"></i>
                 </div>
                 {{#each (flatlist items.traits) }}
-                    {{>actor/static_character/sections/trait }}
+                    {{>actor/static/sections/trait }}
                 {{/each }}
             </div>
         {{/if }}
@@ -156,7 +156,7 @@
                     <i class="gcs-bookmark"></i>
                 </div>
                 {{#each (flatlist items.skills) }}
-                    {{>actor/static_character/sections/skill }}
+                    {{>actor/static/sections/skill }}
                 {{/each }}
             </div>
         {{/if }}
@@ -178,7 +178,7 @@
                     <i class="gcs-bookmark"></i>
                 </div>
                 {{#each (flatlist items.spells) }}
-                    {{>actor/static_character/sections/spell }}
+                    {{>actor/static/sections/spell }}
                 {{/each }}
             </div>
         {{/if }}
@@ -219,7 +219,7 @@
                     <i class="gcs-bookmark"></i>
                 </div>
                 {{#each (flatlist items.equipment) }}
-                    {{>actor/static_character/sections/equipment }}
+                    {{>actor/static/sections/equipment }}
                 {{/each }}
             </div>
         {{/if }}
@@ -256,7 +256,7 @@
                     <i class="gcs-bookmark"></i>
                 </div>
                 {{#each (flatlist items.other_equipment) }}
-                    {{>actor/static_character/sections/other-equipment }}
+                    {{>actor/static/sections/other-equipment }}
                 {{/each }}
             </div>
         {{/if }}
@@ -269,7 +269,7 @@
                     <i class="gcs-bookmark"></i>
                 </div>
                 {{#each (flatlist items.notes) }}
-                    {{>actor/static_character/sections/note }}
+                    {{>actor/static/sections/note }}
                 {{/each }}
             </div>
         {{/if }}

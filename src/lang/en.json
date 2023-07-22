@@ -373,6 +373,7 @@
 			"weight": "Weight",
 			"sm": "Size",
 			"tech_level": "TL",
+			"appearance": "Appearance",
 			"hair": "Hair",
 			"eyes": "Eyes",
 			"skin": "Skin",
@@ -1165,7 +1166,8 @@
 				"finished": "Finished importing {number} items."
 			},
 			"mook_generator": {
-				"title": "Mook Generator"
+				"title": "Mook Generator",
+				"name": "Mook"
 			}
 		},
 		"token_modifier_window": {

@@ -285,7 +285,7 @@ export class LootSheetGURPS extends ActorSheetGURPS {
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {
 		event.preventDefault()
-		const id: string = $(event.currentTarget).data("id")
+		const id: string = $(event.currentTarget).data("item-id")
 		const item = this.actor.items.get(id)
 		item?.sheet?.render(true)
 	}

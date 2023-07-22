@@ -1,3 +1,4 @@
+import { ImagePath } from "@module/data"
 import * as browserTabs from "./tabs"
 
 export interface PackInfo {
@@ -28,3 +29,14 @@ export type ItemTabName =
 	| TabName.Note
 export type BrowserTab = InstanceType<(typeof browserTabs)[keyof typeof browserTabs]>
 export type TabData<T> = Record<TabName, T | null>
+
+export interface CompendiumIndexData {
+	_id: string
+	type: string
+	name: string
+	img: ImagePath
+	// Img?: string | null;
+	[key: string]: any
+}
+
+export type CompendiumIndex = Collection<CompendiumIndexData>

@@ -26,7 +26,7 @@ export class StaticCharacterSheetConfig extends FormApplication {
 	static get defaultOptions(): FormApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			classes: ["form", "character-config", "gurps"],
-			template: `systems/${SYSTEM_NAME}/templates/actor/static_character/config/config.hbs`,
+			template: `systems/${SYSTEM_NAME}/templates/actor/static/config/config.hbs`,
 			width: 560,
 			height: 560,
 			resizable: true,

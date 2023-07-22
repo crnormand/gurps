@@ -1,5 +1,4 @@
-import { StaticCharacterGURPS } from "@actor"
-import { StaticTrait } from "@actor/static_character/components"
+import { StaticCharacterGURPS, StaticTrait } from "@actor"
 import { StaticItemGURPS } from "@item"
 
 /**

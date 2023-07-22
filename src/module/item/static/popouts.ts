@@ -1,4 +1,3 @@
-import { _BaseComponent } from "@actor/static_character/components"
 import { SYSTEM_NAME } from "@module/data"
 import { StaticItemGURPS } from "./document"
 

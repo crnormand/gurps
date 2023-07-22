@@ -5,7 +5,10 @@
 -	Finish "static" character (0.15 and older) compatibility
 	-	don't bother with editing features
 -	mook generator
--	fix circular link in OTFs
+	-	create object type/interface for Mook, acts as simplified actor model
+	-	grab simplified version of attributes from default settings (not editable in sheet)
+	-	keep simple textbox parsing as for previous version
+-	style cleanup
 
 ## Jeff and Chris
 

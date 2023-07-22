@@ -286,26 +286,3 @@ export const staticFpConditions = {
 		label: "gurps.static.status.unconscious",
 	},
 }
-
-export class StaticEncumbrance {
-	key: string
-
-	level: number
-
-	dodge: number
-
-	weight: string
-
-	move: number
-
-	current: boolean
-
-	constructor() {
-		this.key = ""
-		this.level = 0
-		this.dodge = 9
-		this.weight = ""
-		this.move = 0
-		this.current = false
-	}
-}
