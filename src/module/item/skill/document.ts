@@ -2,10 +2,11 @@ import { ItemGCS } from "@item/gcs"
 import { ActorType, Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
+import { inlineNote, LocalizeGURPS } from "@util"
 import { baseRelativeLevel, SkillData, SkillLevel } from "./data"
 
 class SkillGURPS extends ItemGCS {
-	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
+	level: SkillLevel = { level: 0, relative_level: 0, tooltip: new TooltipGURPS() }
 
 	unsatisfied_reason = ""
 
@@ -16,9 +17,42 @@ class SkillGURPS extends ItemGCS {
 		const name: string = this.name ?? ""
 		const specialization = this.specialization
 		const TL = this.techLevel
-		return `${name}${this.system.tech_level_required ? `/TL${TL ?? ""}` : ""}${
-			specialization ? ` (${specialization})` : ""
-		}`
+		return `${name}${this.system.tech_level_required ? `/TL${TL ?? ""}` : ""}${specialization ? ` (${specialization})` : ""
+			}`
+	}
+
+	override get notes(): string {
+		const out: string[] = []
+		if (inlineNote(this.actor, "modifiers_display")) {
+			if (this.difficulty !== Difficulty.Wildcard && this.defaultSkill) {
+				out.push(LocalizeGURPS.format(
+					LocalizeGURPS.translations.gurps.item.default, {
+					skill: this.defaultSkill.formattedName,
+					modifier: `${this.defaultedFrom!.modifier}`
+				}))
+			}
+		}
+		if (inlineNote(this.actor, "notes_display")) {
+			if (this.system.notes.trim()) {
+				if (out.length) out.push("<br>")
+				out.push(this.system.notes)
+			}
+			if (this.studyHours !== 0) {
+				if (out.length) out.push("<br>")
+				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
+					LocalizeGURPS.translations.gurps.study.studied, {
+					hours: this.studyHours,
+					total: (this.system as any).study_hours_needed
+				}))
+			}
+		}
+		if (inlineNote(this.actor, "skill_level_adj_display")) {
+			if (this.level.tooltip.length) {
+				if (out.length) out.push("<br>")
+				out.push(this.level.tooltip.toString())
+			}
+		}
+		return `<div class="item-notes">${out.join("")}</div>`
 	}
 
 	get points(): number {
@@ -43,6 +77,11 @@ class SkillGURPS extends ItemGCS {
 
 	get specialization(): string {
 		return this.system.specialization
+	}
+
+	get defaultSkill(): SkillGURPS | undefined {
+		if (!this.actor) return
+		return this.actor.baseSkill(this.defaultedFrom, true)
 	}
 
 	get defaultedFrom(): SkillDefault | undefined {
@@ -88,23 +127,22 @@ class SkillGURPS extends ItemGCS {
 
 	// Point & Level Manipulation
 	calculateLevel(): SkillLevel {
-		const none = { level: -Infinity, relative_level: 0, tooltip: "" }
+		const none = { level: -Infinity, relative_level: 0, tooltip: new TooltipGURPS() }
 		const actor = this.actor || this.dummyActor
 		if (!actor) return none
+		let relative_level = baseRelativeLevel(this.difficulty)
+		let level = actor.resolveAttributeCurrent(this.attribute)
 		const tooltip = new TooltipGURPS()
 		let points = this.adjustedPoints(tooltip)
 		const def = this.defaultedFrom
-		const { difficulty } = this
-		if (!points) points = this.points ?? 0
-		let relative_level = baseRelativeLevel(this.difficulty)
-		let level = actor.resolveAttributeCurrent(this.attribute)
 		if (level === -Infinity) return none
-		if (difficulty === Difficulty.Wildcard) {
-			points /= 3
-		} else if (def && def.points > 0) {
-			points += def.points
+		if (actor.settings.use_half_stat_defaults) {
+			level = Math.trunc(level / 2) + 5
 		}
-		points = Math.floor(points)
+		if (this.difficulty === Difficulty.Wildcard) points /= 3
+		else if (def && def.points > 0) points += def.points
+		points = Math.trunc(points)
+
 		switch (true) {
 			case points === 1:
 				// Relative_level is preset to this point value
@@ -115,7 +153,7 @@ class SkillGURPS extends ItemGCS {
 			case points >= 4:
 				relative_level += 1 + Math.floor(points / 4)
 				break
-			case difficulty !== Difficulty.Wildcard && def && def.points < 0:
+			case this.difficulty !== Difficulty.Wildcard && def && def.points < 0:
 				relative_level = def!.adjustedLevel - level
 				break
 			default:
@@ -124,7 +162,7 @@ class SkillGURPS extends ItemGCS {
 		}
 		if (level === -Infinity) return none
 		level += relative_level
-		if (difficulty !== Difficulty.Wildcard && def && level < def.adjustedLevel) {
+		if (this.difficulty !== Difficulty.Wildcard && def && level < def.adjustedLevel) {
 			level = def.adjustedLevel
 		}
 		let bonus = actor.skillBonusFor(this.name!, this.specialization, this.tags, tooltip)
@@ -137,7 +175,7 @@ class SkillGURPS extends ItemGCS {
 		return {
 			level: level,
 			relative_level: relative_level,
-			tooltip: tooltip.toString(),
+			tooltip: tooltip
 		}
 	}
 
@@ -152,8 +190,10 @@ class SkillGURPS extends ItemGCS {
 	}
 
 	get skillLevel(): string {
-		if (this.calculateLevel().level === -Infinity) return "-"
-		return this.calculateLevel().level.toString()
+		// if (this.calculateLevel().level === -Infinity) return "-"
+		// return this.calculateLevel().level.toString()
+		if (this.effectiveLevel === -Infinity) return "-"
+		return this.effectiveLevel.toString()
 	}
 
 	get relativeLevel(): string {

@@ -15,7 +15,7 @@
 	<div class="name">
 		{{this.formattedName}}
 	</div>
-	{{>actor/character/sections/item-notes}}
+	{{{this.notes}}}
 </div>
 {{#if @root/inCompendium}}
 <div class="difficulty">{{this.difficulty}}</div>
@@ -25,7 +25,7 @@
 <div class="level"></div>
 <div class="rsl"></div>
 {{else}}
-<div data-item-id="{{this.id}}" data-type="skill" class="level rollable {{effective this}}">{{this.effectiveLevel}}</div>
+<div data-item-id="{{this.id}}" data-type="skill" class="level rollable {{effective this}}">{{this.skillLevel}}</div>
 <div data-item-id="{{this.id}}" data-type="skill_rsl" class="rsl rollable {{effective this}}">{{this.relativeLevel}}</div>
 {{/if}}
 <div class="points">{{this.adjustedPoints}}</div>

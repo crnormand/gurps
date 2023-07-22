@@ -16,7 +16,7 @@ export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Characte
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-		CharacterSystemData {
+	CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags
@@ -79,6 +79,7 @@ export interface CharacterSettings {
 	skill_level_adj_display: DisplayMode
 	use_multiplicative_modifiers: boolean
 	use_modifying_dice_plus_adds: boolean
+	use_half_stat_defaults: boolean
 	damage_progression: DamageProgression
 	show_trait_modifier_adj: boolean
 	show_equipment_modifier_adj: boolean

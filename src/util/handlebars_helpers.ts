@@ -52,21 +52,26 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		return a ? Object.values(a).length > 0 : false
 	}
 
-	static blockLayout(a: Array<string>, _items: any) {
-		if (!a) return ""
-		let outStr = ""
-		let line_length = 2
-		for (const value of a) {
-			let line = value.split(" ")
-			if (line.length > line_length) line_length = line.length
-			// Line = line.filter((e: string) => !!items[e]?.length)
-			if (line.length) {
-				if (line_length > line.length) line = line.concat(Array(line_length - line.length).fill(line[0]))
-				outStr += `\n"${line.join(" ")}"`
-			}
+
+	static blockLayout(blocks: string[], items: Record<string, any[]>): string {
+		if (!blocks) return ""
+
+		let outString = ""
+		const line_length = 2
+
+		for (const value of blocks) {
+			let line = value.split(" ").slice(0, line_length) // Get only first N items
+				.filter(s =>
+					items[s].length ||
+					!(["reactions", "conditional_modifiers", "melee", "ranged"].includes(s))
+				)
+			if (!line.length) continue
+			if (line_length > line.length) line = line.concat(Array(line_length - line.length).fill(line[0]))
+			outString += `\n"${line.join(" ")}"`
 		}
-		outStr += '\n"effects effects"'
-		return outStr
+
+		outString += '\n"effects effects"'
+		return outString
 	}
 
 	static json(a: any) {
@@ -103,23 +108,23 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		// Return `style="padding-left: ${sum}px;"`
 	}
 
-	static spellValues(i: Item): string {
-		const sp = i as any
-		const values = {
-			resist: sp.system.resist,
-			spell_class: sp.system.spell_class,
-			casting_cost: sp.system.casting_cost,
-			maintenance_cost: sp.system.maintenance_cost,
-			casting_time: sp.system.casting_time,
-			duration: sp.system.duration,
-			college: sp.system.college,
-		}
-		const list = []
-		for (const [k, v] of Object.entries(values)) {
-			if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
-		}
-		return list.join("; ")
-	}
+	// static spellValues(i: Item): string {
+	// 	const sp = i as any
+	// 	const values = {
+	// 		resist: sp.system.resist,
+	// 		spell_class: sp.system.spell_class,
+	// 		casting_cost: sp.system.casting_cost,
+	// 		maintenance_cost: sp.system.maintenance_cost,
+	// 		casting_time: sp.system.casting_time,
+	// 		duration: sp.system.duration,
+	// 		college: sp.system.college,
+	// 	}
+	// 	const list = []
+	// 	for (const [k, v] of Object.entries(values)) {
+	// 		if (v && v !== "-") list.push(`${game.i18n.localize(`gurps.character.spells.${k}`)}: ${v}`)
+	// 	}
+	// 	return list.join("; ")
+	// }
 
 	static date(str: string): string {
 		const date = new Date(str)
@@ -458,7 +463,7 @@ export function registerHandlebarsHelpers() {
 		join: HandlebarsHelpersGURPS.join,
 		arr: HandlebarsHelpersGURPS.arr,
 		indent: HandlebarsHelpersGURPS.indent,
-		spellValues: HandlebarsHelpersGURPS.spellValues,
+		// spellValues: HandlebarsHelpersGURPS.spellValues,
 		date: HandlebarsHelpersGURPS.date,
 		length: HandlebarsHelpersGURPS.len,
 		print: HandlebarsHelpersGURPS.print,
@@ -476,6 +481,9 @@ export function registerHandlebarsHelpers() {
 		overridden: HandlebarsHelpersGURPS.overridden,
 		flatlist: HandlebarsHelpersGURPS.flatlist,
 		staticSpellValues: HandlebarsHelpersGURPS.staticSpellValues,
+		adjustedStudyHours: HandlebarsHelpersGURPS.adjustedStudyHours
 		// Multiselect: HandlebarsHelpersGURPS.multiselect
 	})
 }
+
+export { HandlebarsHelpersGURPS }

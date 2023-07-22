@@ -7,6 +7,10 @@ class EquipmentModifierContainerGURPS extends ItemGCS {
 	// 	return EquipmentModifierContainerData;
 	// }
 
+	get enabled(): boolean {
+		return true;
+	}
+
 	// Embedded Items
 	get children(): Collection<EquipmentModifierGURPS | EquipmentModifierContainerGURPS> {
 		return super.children as Collection<EquipmentModifierGURPS | EquipmentModifierContainerGURPS>

@@ -4,7 +4,7 @@ import { EquipmentModifierGURPS } from "@item/equipment_modifier"
 import { EquipmentCostType, EquipmentWeightType } from "@item/equipment_modifier/data"
 import { EquipmentModifierContainerGURPS } from "@item/equipment_modifier_container"
 import { ItemGCS } from "@item/gcs"
-import { SETTINGS, SYSTEM_NAME } from "@module/data"
+import { DisplayMode, SETTINGS, SYSTEM_NAME } from "@module/data"
 import {
 	allWeightUnits,
 	determineModWeightValueTypeFromString,
@@ -13,6 +13,7 @@ import {
 	Weight,
 	WeightUnits,
 } from "@util"
+import { HandlebarsHelpersGURPS } from "@util/handlebars_helpers"
 import { CostValueType, EquipmentData } from "./data"
 
 class EquipmentGURPS extends ItemGCS {
@@ -23,6 +24,22 @@ class EquipmentGURPS extends ItemGCS {
 	// }
 
 	// Getters
+
+	override get notes(): string {
+		let outString = "<div class=\"item-notes\">"
+		if ([DisplayMode.Inline, DisplayMode.InlineAndTooltip].includes(this.actor.settings.modifiers_display)) {
+			this.modifiers.filter(e => e.enabled).forEach((mod, i) => {
+				if (i !== 0) outString += "; "
+				outString += mod.name + (mod.system.notes ? ` (${mod.system.notes})` : "")
+			})
+		}
+		if (this.modifiers.some(e => e.enabled)) outString += "<br>"
+		if (this.system.notes) outString += HandlebarsHelpersGURPS.format(this.system.notes)
+		if (this.unsatisfied_reason) outString += HandlebarsHelpersGURPS.unsatisfied(this.unsatisfied_reason)
+		outString += "</div>"
+		return outString
+	}
+
 	get other(): boolean {
 		return this.system.other
 	}

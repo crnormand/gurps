@@ -7,7 +7,8 @@ import { Feature, ItemDataGURPS } from "@module/config"
 import { ActorType, ItemType, Study, SYSTEM_NAME } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { PrereqList } from "@prereq"
-import { getAdjustedStudyHours } from "@util"
+import { getAdjustedStudyHours, LocalizeGURPS } from "@util"
+import { HandlebarsHelpersGURPS } from "@util/handlebars_helpers"
 import { DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
 import { ItemDataConstructorData } from "types/foundry/common/data/data.mjs/itemData"
 import { BaseUser } from "types/foundry/common/documents.mjs"
@@ -15,6 +16,8 @@ import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
 import { ItemGCSSystemData } from "./data"
 
 abstract class ItemGCS extends ContainerGURPS {
+	unsatisfied_reason = "";
+
 	protected async _preCreate(
 		data: ItemDataGURPS,
 		options: DocumentModificationOptions,
@@ -74,7 +77,16 @@ abstract class ItemGCS extends ContainerGURPS {
 	}
 
 	get notes(): string {
-		return this.system.notes
+		let outString = "<div class=\"item-notes\">"
+		if (this.system.notes) outString += HandlebarsHelpersGURPS.format(this.system.notes)
+		if (this.studyHours !== 0) outString += LocalizeGURPS.format(
+			LocalizeGURPS.translations.gurps.study.studied, {
+			hours: this.studyHours,
+			total: (this.system as any).study_hours_needed
+		})
+		if (this.unsatisfied_reason) outString += HandlebarsHelpersGURPS.unsatisfied(this.unsatisfied_reason)
+		outString += "</div>"
+		return outString
 	}
 
 	get reference(): string {
@@ -125,7 +137,9 @@ abstract class ItemGCS extends ContainerGURPS {
 	}
 
 	get studyHours(): number {
-		if (!["trait", "skill", "technique", "spell", "ritual_magic_spell"].includes(this.type)) return 0
+		if (![
+			ItemType.Trait, ItemType.Skill, ItemType.Technique, ItemType.Spell, ItemType.RitualMagicSpell
+		].includes(this.type as ItemType)) return 0
 		return (this.system as any).study
 			.map((e: Study) => getAdjustedStudyHours(e))
 			.reduce((partialSum: number, a: number) => partialSum + a, 0)
@@ -156,7 +170,7 @@ abstract class ItemGCS extends ContainerGURPS {
 		if ((this as any).modifiers)
 			system.modifiers = (this as any).modifiers.map((e: ItemGCS) => e.exportSystemData(false))
 		if (system.weapons)
-			system.weapons = system.weapons.map(function (e: BaseWeaponGURPS) {
+			system.weapons = system.weapons.map(function(e: BaseWeaponGURPS) {
 				const f: any = { ...e }
 				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
 				return f

@@ -1066,20 +1066,26 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// Do not store modifiers directly on actors
-	createEmbeddedDocuments(
-		embeddedName: string,
-		data: Array<Record<string, unknown>>,
-		context: DocumentModificationContext & { temporary: boolean; substitutions?: boolean } = {
-			temporary: false,
-			renderSheet: false,
-			render: true,
-			substitutions: true,
-		}
-	): Promise<Array<any>> {
-		if (embeddedName === "Item")
-			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
-		return super.createEmbeddedDocuments(embeddedName, data, context)
-	}
+	// createEmbeddedDocuments(
+	// 	embeddedName: string,
+	// 	data: Array<Record<string, unknown>>,
+	// 	context: DocumentModificationContext & { temporary: boolean; substitutions?: boolean } = {
+	// 		temporary: false,
+	// 		renderSheet: false,
+	// 		render: true,
+	// 		substitutions: true,
+	// 	}
+	// ): Promise<Array<any>> {
+
+	// 	console.log("createEmbeddedDocuments", embeddedName, data, context)
+	// 	if (embeddedName === "Item")
+	// 		data = data.filter((e: any) =>
+	// 			e.flags[SYSTEM_NAME][ItemFlags.Container] !== this.id ||
+	// 			CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string)
+	// 		)
+	// 	console.log(data)
+	// 	return super.createEmbeddedDocuments(embeddedName, data, context)
+	// }
 
 	protected override _onCreateDescendantDocuments(
 		embeddedName: string,

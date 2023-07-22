@@ -8,7 +8,8 @@
 	-	create object type/interface for Mook, acts as simplified actor model
 	-	grab simplified version of attributes from default settings (not editable in sheet)
 	-	keep simple textbox parsing as for previous version
--	style cleanup
+-	item study
+	-	fix info tooltip
 
 ## Jeff and Chris
 
@@ -28,6 +29,7 @@
 -	Add makeshift static to dynamic character conversion
 - Delete compendium pack entries in settings when compendium pack is removed
 -	Move type editor (in triangle settings)
+-	style cleanup
 
 ## 1.1.0 and beyond
 

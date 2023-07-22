@@ -1,7 +1,7 @@
 import { SkillBonus } from "@feature/skill_bonus"
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { Feature } from "@module/config"
-import { CRAdjustment, ItemType, Study } from "@module/data"
+import { CRAdjustment, ItemType, Study, StudyHoursNeeded } from "@module/data"
 import { PrereqList } from "@prereq"
 
 export type TraitSource = ItemGCSSource<ItemType.Trait, TraitSystemData>
@@ -23,6 +23,8 @@ export interface TraitSystemData extends ItemGCSSystemData {
 	cr_adj: CRAdjustment
 	features?: Feature[]
 	study: Study[]
+	study_hours_needed: StudyHoursNeeded
+	userdesc: string
 }
 
 const CR_Features = new Map()

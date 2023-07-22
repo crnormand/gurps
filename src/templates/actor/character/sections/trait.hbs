@@ -15,7 +15,7 @@
 	<div class="name">
 		{{this.formattedName}}
 	</div>
-	{{>actor/character/sections/item-notes}}
+	{{{this.notes}}}
 </div>
 <div class="points {{disabled (not this.enabled)}}">{{this.adjustedPoints}}</div>
 {{#if @root/inCompendium}}

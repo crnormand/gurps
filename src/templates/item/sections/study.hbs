@@ -2,7 +2,19 @@
 	<div class="header">{{localize "gurps.study.header"}}</div>
 	<div class="content">
 		<div class="control">
-			<a class="add button gcs-circled-add"></a><div>{{#if document.studyHours}}{{localize "gurps.study.studied" hours=document.studyHours}}{{/if}}</div>
+<a class="add button gcs-circled-add"></a>
+			<div>{{#if document.studyHours}}
+				{{localize "gurps.study.studied_alt" hours=document.studyHours total=system.study_hours_needed}} (
+			<select name="system.study_hours_needed">
+				{{#select system.study_hours_needed}}
+					{{#each config.select.study_hours_needed as |v k|}}
+						<option value="{{k}}">
+							{{localize v}}
+						</option>
+					{{/each}}
+				{{/select}}
+				</select> ) {{localize "gurps.study.for"}}{{/if}}
+			</div>
 		</div>
 		{{#each system.study}}
 			<div class="study-entry">

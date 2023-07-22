@@ -3,10 +3,11 @@ import { SkillLevel } from "@item/skill/data"
 import { ActorType, Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
+import { inlineNote, LocalizeGURPS } from "@util"
 import { TechniqueData } from "./data"
 
 class TechniqueGURPS extends ItemGCS {
-	level: SkillLevel = { level: 0, relative_level: 0, tooltip: "" }
+	level: SkillLevel = { level: 0, relative_level: 0, tooltip: new TooltipGURPS() }
 
 	unsatisfied_reason = ""
 
@@ -17,6 +18,40 @@ class TechniqueGURPS extends ItemGCS {
 	// }
 
 	// Getters
+	override get notes(): string {
+		const out: string[] = []
+		if (inlineNote(this.actor, "modifiers_display")) {
+			if (this.difficulty !== Difficulty.Wildcard && this.default) {
+				out.push(LocalizeGURPS.format(
+					LocalizeGURPS.translations.gurps.item.default, {
+					skill: `${this.default.name}`,
+					modifier: `${this.default.modifier}`
+				}))
+			}
+		}
+		if (inlineNote(this.actor, "notes_display")) {
+			if (this.system.notes.trim()) {
+				if (out.length) out.push("<br>")
+				out.push(this.system.notes)
+			}
+			if (this.studyHours !== 0) {
+				if (out.length) out.push("<br>")
+				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
+					LocalizeGURPS.translations.gurps.study.studied, {
+					hours: this.studyHours,
+					total: (this.system as any).study_hours_needed
+				}))
+			}
+		}
+		if (inlineNote(this.actor, "skill_level_adj_display")) {
+			if (this.level.tooltip.length) {
+				if (out.length) out.push("<br>")
+				out.push(this.level.tooltip.toString())
+			}
+		}
+		return `<div class="item-notes">${out.join("")}</div>`
+	}
+
 	get points(): number {
 		return this.system.points
 	}
@@ -77,8 +112,10 @@ class TechniqueGURPS extends ItemGCS {
 	}
 
 	get skillLevel(): string {
-		if (this.calculateLevel().level === -Infinity) return "-"
-		return this.calculateLevel().level.toString()
+		// if (this.calculateLevel().level === -Infinity) return "-"
+		// return this.calculateLevel().level.toString()
+		if (this.effectiveLevel === -Infinity) return "-"
+		return this.effectiveLevel.toString()
 	}
 
 	get relativeLevel(): string {
@@ -141,7 +178,7 @@ class TechniqueGURPS extends ItemGCS {
 		return {
 			level: level,
 			relative_level: relative_level,
-			tooltip: tooltip.toString(),
+			tooltip: tooltip
 		}
 	}
 

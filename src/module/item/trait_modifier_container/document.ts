@@ -7,6 +7,10 @@ class TraitModifierContainerGURPS extends ItemGCS {
 	get children(): Collection<TraitModifierGURPS | TraitModifierContainerGURPS> {
 		return super.children as Collection<TraitModifierGURPS | TraitModifierContainerGURPS>
 	}
+
+	get enabled(): boolean {
+		return true
+	}
 }
 
 interface TraitModifierContainerGURPS {

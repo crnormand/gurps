@@ -55,7 +55,7 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 		if (data.length)
 			for (const itemData of data) {
 				itemData.flags ??= {}
-				itemData.flags[SYSTEM_NAME][ItemFlags.Container] = this.id
+				setProperty(itemData.flags, `${SYSTEM_NAME}.${ItemFlags.Container}`, this.id)
 			}
 
 		return this.actor?.createEmbeddedDocuments("Item", data)
@@ -99,14 +99,17 @@ abstract class ContainerGURPS extends BaseItemGURPS {
 				(e: BaseItemGURPS) => e.getFlag(SYSTEM_NAME, ItemFlags.Container) === this.id
 			)) {
 				if (this.type === ItemType.EquipmentContainer && item.type === ItemType.Equipment) {
-					;(item as any).system.other = (this.system as any).other
+					; (item as any).system.other = (this.system as any).other
 				}
 				this.items.set(item.id!, item)
 			}
 		} else if (this.pack) {
 			// container = await this.compendium.getIndex({ fields: ["flags"] })
 			container = this.compendium.index
-			for (const i of container.filter((e: any) => e.flags[SYSTEM_NAME][ItemFlags.Container] === this.id)) {
+			for (const i of container.filter((e: any) =>
+				!!e.flags?.[SYSTEM_NAME]?.[ItemFlags.Container] &&
+				e.flags[SYSTEM_NAME][ItemFlags.Container] === this.id
+			)) {
 				// const item = await this.compendium.getDocument(i._id)
 				const item = fromUuidSync(i.uuid) as BaseItemGURPS
 				this.items.set(item._id, item)

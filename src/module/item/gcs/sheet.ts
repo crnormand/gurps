@@ -35,8 +35,9 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 		ctx.menuItems.push({
 			name: LocalizeGURPS.translations.gurps.context.delete,
 			icon: "<i class='gcs-trash'></i>",
-			callback: () => {
-				return item.delete()
+			callback: async () => {
+				await item.delete()
+				return this.render()
 			},
 		})
 		await ctx.render($(event.currentTarget))
@@ -47,7 +48,7 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 		const element = $(event.currentTarget)
 		const type = element.parent(".item-list")[0].id
 		const ctx = new ContextMenu(html, ".menu", [])
-		ctx.menuItems = (function (self: ItemSheetGCS): ContextMenuEntry[] {
+		ctx.menuItems = (function(self: ItemSheetGCS): ContextMenuEntry[] {
 			switch (type) {
 				case "trait-modifiers":
 					return [
@@ -99,18 +100,20 @@ export class ItemSheetGCS extends ContainerSheetGURPS {
 	}
 
 	async _newItem(type: ItemType, other = false) {
-		const itemName = `TYPES.Item.${type}`
 		const itemData: any = {
 			type,
-			name: game.i18n.localize(itemName),
+			name: LocalizeGURPS.translations.TYPES.Item[type],
 			system: {},
 		}
 		if (other) itemData.system.other = true
+		if ([ItemType.MeleeWeapon, ItemType.RangedWeapon].includes(type))
+			itemData.system.usage = LocalizeGURPS.translations.TYPES.Item[type]
 		await this.object.createEmbeddedDocuments("Item", [itemData], {
 			temporary: false,
 			renderSheet: true,
 			substitutions: false,
 		})
+		return this.render()
 	}
 
 	protected async _openItemSheet(event: JQuery.DoubleClickEvent) {

@@ -26,6 +26,7 @@
 			"melee_weapon": "Melee Weapon",
 			"ranged_weapon": "Ranged Weapon",
 			"effect": "Active Effect",
+			"condition": "Condition",
 			"equipment": "Equipment (Legacy)"
 		}
 	},
@@ -642,6 +643,7 @@
 			"points": "Points",
 			"difficulty": "Difficulty",
 			"defaults_to": "Default To",
+			"default": "Default: {skill}{modifier}",
 			"college": "College",
 			"class": "Class",
 			"power_source": "Power Source",
@@ -1033,11 +1035,20 @@
 			"effect_action": {
 				"add": "Add",
 				"remove": "Remove"
+			},
+			"study_hours_needed": {
+				"200": "Standard",
+				"180": "Reduction for Talent level 1",
+				"160": "Reduction for Talent level 2",
+				"140": "Reduction for Talent level 3",
+				"120": "Reduction for Talent level 4"
 			}
 		},
 		"study": {
 			"header": "Study",
-			"studied": "Studied {hours}/200 hours",
+			"studied": "Studied {hours}/{total} hours",
+			"studied_alt": "Studied {hours} of {total} hours",
+			"for": "for 1 point",
 			"tooltip": {
 				"max": "Maximum of {hours} hours per day",
 				"max_no_job": "Maximum of {hours} hours per day with no job",
@@ -1645,6 +1656,14 @@
 				"at_least": "is at least ",
 				"at_most": "is at most "
 			}
+		},
+		"ritual": {
+			"sub_10": "Ritual: need both hands and feet free and must speak; Time: 2x",
+			"sub_15": "Ritual: speak quietly and make a gesture",
+			"sub_20": "Ritual: speak a word or two OR make a small gesture",
+			"cost": "; Cost: -{adj}",
+			"time": "; Time: x1/{adj}, rounded up, min 1 sec",
+			"none": "Ritual: none"
 		}
 	}
 }

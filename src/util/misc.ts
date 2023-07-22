@@ -1,6 +1,8 @@
+import { CharacterGURPS, CharacterSettings } from "@actor"
 import {
 	DEFAULT_INITIATIVE_FORMULA,
 	Difficulty,
+	DisplayMode,
 	NumberCompare,
 	NumberComparison,
 	SETTINGS,
@@ -494,9 +496,9 @@ export async function getDefaultSkills() {
 	for (const s in skillPacks)
 		if (skillPacks[s].skillDefault) {
 			const pack = game.packs.get(s) as CompendiumCollection<any>
-			;(await pack.getDocuments()).forEach(e => {
-				skills.push(e)
-			})
+				; (await pack.getDocuments()).forEach(e => {
+					skills.push(e)
+				})
 		}
 	CONFIG.GURPS.skillDefaults = skills
 }
@@ -511,4 +513,11 @@ export function flatten(obj: any, flatObj: Record<string, any> = {}, key = ""): 
 		} else flatObj[valKey] = obj[k]
 	}
 	return flatObj
+}
+
+export function inlineNote(
+	actor: CharacterGURPS,
+	option: "user_description_display" | "modifiers_display" | "notes_display" | "skill_level_adj_display"
+): boolean {
+	return [DisplayMode.Inline, DisplayMode.InlineAndTooltip].includes(actor.settings[option])
 }

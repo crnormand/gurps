@@ -2,7 +2,7 @@ import { ItemGCS } from "@item/gcs"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
 import { CR, CRAdjustment, ItemType } from "@module/data"
-import { SelfControl } from "@util"
+import { inlineNote, LocalizeGURPS, SelfControl } from "@util"
 import { TraitData } from "./data"
 
 class TraitGURPS extends ItemGCS {
@@ -13,6 +13,41 @@ class TraitGURPS extends ItemGCS {
 		const name: string = this.name ?? ""
 		const levels = this.levels
 		return `${name}${levels ? ` ${levels}` : ""}`
+	}
+
+	override get notes(): string {
+		const out: string[] = []
+		if (inlineNote(this.actor, "user_description_display")) {
+			if (this.system.userdesc) out.push(this.system.userdesc)
+		}
+		if (inlineNote(this.actor, "modifiers_display")) {
+			if (out.length) out.push("<br>")
+			if (this.cr !== 0) out.push(
+				`<div data-item-id="${this.id}" data-type="control_roll" class="cr rollable">${
+				 this.formattedCR
+				 }</div>`
+			)
+			if (out.length) out.push("<br>")
+			this.modifiers.filter(e => e.enabled).forEach((mod, i) => {
+				if (i !== 0) out.push("; ")
+				out.push(mod.name + (mod.system.notes ? `(${mod.system.notes})` : ""))
+			})
+		}
+		if (inlineNote(this.actor, "notes_display")) {
+			if (this.system.notes.trim()) {
+				if (out.length) out.push("<br>")
+				out.push(this.system.notes)
+			}
+			if (this.studyHours !== 0) {
+				if (out.length) out.push("<br>")
+				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
+					LocalizeGURPS.translations.gurps.study.studied, {
+					hours: this.studyHours,
+					total: (this.system as any).study_hours_needed
+				}))
+			}
+		}
+		return `<div class="item-notes">${out.join("")}</div>`
 	}
 
 	get enabled(): boolean {

@@ -27,4 +27,8 @@ export class TooltipGURPS {
 	get length(): number {
 		return this.list.length
 	}
+
+	get string(): string {
+		return this.toString()
+	}
 }

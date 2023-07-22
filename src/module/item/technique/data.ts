@@ -1,7 +1,7 @@
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
 import { EncumbrancePenaltyMultiplier } from "@item/skill"
 import { Feature } from "@module/config"
-import { ItemType, Study } from "@module/data"
+import { ItemType, Study, StudyHoursNeeded } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { PrereqList } from "@prereq"
 
@@ -29,4 +29,5 @@ export interface TechniqueSystemData extends ItemGCSSystemData {
 	limit: number
 	limited: boolean
 	study: Study[]
+	study_hours_needed: StudyHoursNeeded
 }

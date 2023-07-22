@@ -299,10 +299,15 @@
 					"fragmentation_type": "",
 					"modifier_per_die": 0
 				}
+			},
+			"study": {
+				"study": [],
+				"study_hours_needed": "200"
 			}
 		},
 		"trait": {
-			"templates": ["common", "prereqs"],
+			"templates": ["common", "prereqs", "study"],
+			"userdesc": "",
 			"round_down": false,
 			"disabled": false,
 			"can_level": false,
@@ -312,8 +317,7 @@
 			"cr": 0,
 			"cr_adj": "none",
 			"features": [],
-			"weapons": [],
-			"study": []
+			"weapons": []
 		},
 		"trait_container": {
 			"templates": ["common"],
@@ -335,16 +339,15 @@
 			"open": false
 		},
 		"skill": {
-			"templates": ["common", "prereqs"],
+			"templates": ["common", "prereqs", "study"],
 			"difficulty": "dx/a",
 			"points": 1,
 			"encumbrance_penalty_multiplier": 0,
 			"features": [],
-			"weapons": [],
-			"study": []
+			"weapons": []
 		},
 		"technique": {
-			"templates": ["common", "prereqs"],
+			"templates": ["common", "prereqs", "study"],
 			"difficulty": "a",
 			"points": 1,
 			"default": {
@@ -354,15 +357,14 @@
 				"modifier": 0
 			},
 			"features": [],
-			"weapons": [],
-			"study": []
+			"weapons": []
 		},
 		"skill_container": {
 			"templates": ["common"],
 			"open": false
 		},
 		"spell": {
-			"templates": ["common", "prereqs"],
+			"templates": ["common", "prereqs", "study"],
 			"spell_class": "Regular",
 			"power_source": "Arcane",
 			"points": 1,
@@ -373,11 +375,10 @@
 			"casting_time": "1 sec",
 			"duration": "Instant",
 			"weapons": [],
-			"college": [],
-			"study": []
+			"college": []
 		},
 		"ritual_magic_spell": {
-			"templates": ["common", "prereqs"],
+			"templates": ["common", "prereqs", "study"],
 			"spell_class": "Regular",
 			"power_source": "Arcane",
 			"points": 1,
@@ -389,8 +390,7 @@
 			"base_skill": "Ritual Magic",
 			"prereq_count": 0,
 			"weapons": [],
-			"college": [],
-			"study": []
+			"college": []
 		},
 		"spell_container": {
 			"templates": ["common"],

@@ -94,7 +94,7 @@ import {
 	SpellPrereq,
 	TraitPrereq,
 } from "@prereq"
-import { ActorType, EFFECT_ACTION, ItemType, MoveType, PrereqType, StudyType } from "./data"
+import { ActorType, EFFECT_ACTION, ItemType, MoveType, PrereqType, StudyHoursNeeded, StudyType } from "./data"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: CONFIG["GURPS"] = {
@@ -541,6 +541,11 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			[EFFECT_ACTION.REMOVE]: "gurps.select.effect_action.remove",
 		},
 		conditions: Object.values(ConditionID).reduce((acc, c) => {
+			return Object.assign(acc, {
+				[c]: `gurps.status.${c}`,
+			})
+		}, {}),
+		study_hours_needed: Object.values(ConditionID).reduce((acc, c) => {
 			return Object.assign(acc, {
 				[c]: `gurps.status.${c}`,
 			})

@@ -6,6 +6,7 @@ import {
 	ContainerGURPS,
 	EffectGURPS,
 	EffectID,
+	ItemFlags,
 	ManeuverID,
 	Postures,
 	TraitContainerGURPS,
@@ -40,7 +41,6 @@ import { Attribute } from "@module/attribute"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
 import { CharacterGURPS } from "@actor/character"
-import { TokenGURPS } from "@module/token"
 
 class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
@@ -144,8 +144,8 @@ class BaseActorGURPS extends Actor {
 		const effects = this.gEffects.map(e => {
 			const overlay = e instanceof ConditionGURPS && e.cid === ConditionID.Dead
 			const a = new ActiveEffect({ name: e.name, icon: e.img || "" } as any)
-			// a.setFlag("core", "overlay", overlay)
-			;(a as any).flags = { core: { overlay: overlay } }
+				// a.setFlag("core", "overlay", overlay)
+				; (a as any).flags = { core: { overlay: overlay } }
 			return a
 		})
 		return super.temporaryEffects.concat(effects)
@@ -166,7 +166,10 @@ class BaseActorGURPS extends Actor {
 		}
 	): Promise<Array<any>> {
 		if (embeddedName === "Item")
-			data = data.filter(e => CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string))
+			data = data.filter((e: any) =>
+				e.flags[SYSTEM_NAME][ItemFlags.Container] !== this.id ||
+				CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string)
+			)
 		return super.createEmbeddedDocuments(embeddedName, data, context)
 	}
 

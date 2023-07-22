@@ -197,6 +197,14 @@ export interface Study {
 	note: string
 }
 
+export enum StudyHoursNeeded {
+	Standard = "200",
+	Level1 = "180",
+	Level2 = "160",
+	Level3 = "140",
+	Level4 = "120"
+}
+
 export enum StudyType {
 	Self = "self",
 	Job = "job",

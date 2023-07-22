@@ -6,10 +6,12 @@ import { ActorType, gid, ItemType } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { LocalizeGURPS, stringCompare } from "@util"
+import { HandlebarsHelpersGURPS } from "@util/handlebars_helpers"
 import { WeaponDamage } from "./damage"
 import { BaseWeaponSystemData } from "./data"
 
 class BaseWeaponGURPS extends BaseItemGURPS {
+
 	get itemName(): string {
 		if (this.container instanceof Item) return this.container?.name ?? ""
 		return ""
@@ -30,13 +32,14 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 	}
 
 	get notes(): string {
-		let buffer = ""
-		if (this.container) buffer += (this.container as any).notes
-		if ((this.system.usage_notes?.trim() ?? "") !== "") {
-			if (buffer.length !== 0) buffer += "\n"
-			buffer += this.system.usage_notes
+		let outString = "<div class=\"item-notes\">"
+		if (this.container) {
+			outString += HandlebarsHelpersGURPS.format((this.container as any).notes)
+			if (this.system.usage_notes) outString += "<br>"
 		}
-		return buffer
+		if (this.system.usage_notes) outString += HandlebarsHelpersGURPS.format(this.system.usage_notes)
+		outString += "</div>"
+		return outString
 	}
 
 	get level(): number {

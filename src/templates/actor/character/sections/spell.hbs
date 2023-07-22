@@ -16,7 +16,7 @@
 	<div class="name">
 		{{this.name}}
 	</div>
-	{{>actor/character/sections/item-notes}}
+	{{{this.notes}}}
 </div>
 {{#if @root/inCompendium}}
 <div class="college">{{join this.college ", "}}</div>
@@ -33,7 +33,7 @@
 <div class="level"></div>
 <div class="rsl"></div>
 {{else}}
-<div data-item-id="{{this.id}}" data-type="spell" class="level rollable {{effective this}}">{{this.effectiveLevel}}</div>
+<div data-item-id="{{this.id}}" data-type="spell" class="level rollable {{effective this}}">{{this.skillLevel}}</div>
 <div data-item-id="{{this.id}}" data-type="spell_rsl" class="rsl rollable {{effective this}}">{{this.relativeLevel}}</div>
 {{/if}}
 <div class="points">{{this.adjustedPoints}}</div>
