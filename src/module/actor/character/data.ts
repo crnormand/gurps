@@ -16,7 +16,7 @@ export interface CharacterSource extends BaseActorSourceGURPS<ActorType.Characte
 }
 export interface CharacterDataGURPS
 	extends Omit<CharacterSource, "effects" | "flags" | "items" | "token">,
-	CharacterSystemData {
+		CharacterSystemData {
 	readonly type: CharacterSource["type"]
 	data: CharacterSystemData
 	flags: CharacterFlags

@@ -22,16 +22,17 @@ class TraitGURPS extends ItemGCS {
 		}
 		if (inlineNote(this.actor, "modifiers_display")) {
 			if (out.length) out.push("<br>")
-			if (this.cr !== 0) out.push(
-				`<div data-item-id="${this.id}" data-type="control_roll" class="cr rollable">${
-				 this.formattedCR
-				 }</div>`
-			)
+			if (this.cr !== 0)
+				out.push(
+					`<div data-item-id="${this.id}" data-type="control_roll" class="cr rollable">${this.formattedCR}</div>`
+				)
 			if (out.length) out.push("<br>")
-			this.modifiers.filter(e => e.enabled).forEach((mod, i) => {
-				if (i !== 0) out.push("; ")
-				out.push(mod.name + (mod.system.notes ? `(${mod.system.notes})` : ""))
-			})
+			this.modifiers
+				.filter(e => e.enabled)
+				.forEach((mod, i) => {
+					if (i !== 0) out.push("; ")
+					out.push(mod.name + (mod.system.notes ? `(${mod.system.notes})` : ""))
+				})
 		}
 		if (inlineNote(this.actor, "notes_display")) {
 			if (this.system.notes.trim()) {
@@ -40,11 +41,13 @@ class TraitGURPS extends ItemGCS {
 			}
 			if (this.studyHours !== 0) {
 				if (out.length) out.push("<br>")
-				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.study.studied, {
-					hours: this.studyHours,
-					total: (this.system as any).study_hours_needed
-				}))
+				if (this.studyHours !== 0)
+					out.push(
+						LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.studied, {
+							hours: this.studyHours,
+							total: (this.system as any).study_hours_needed,
+						})
+					)
 			}
 		}
 		return `<div class="item-notes">${out.join("")}</div>`

@@ -212,7 +212,6 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		}
 		// For (const item of good) await this.addItemData(item)
 
-		// @ts-ignore game.system.version until types v10
 		await this.update({ "_stats.systemVersion": game.system.version }, { diff: false, render: false })
 		await this.setResourceTrackers()
 		await this.syncLanguages()
@@ -753,10 +752,8 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			return ["", false]
 		}
 		eqt.itemid = itemData._id
-		// @ts-ignore
-		eqt.gloablid = _data.uuid
+		eqt.globalid = _data.uuid
 		eqt.equipped = !!_data.equipped ?? true
-		// @ts-ignore
 		eqt.img = itemData.img
 		eqt.carried = !!_data.carried ?? true
 		await Static.insertBeforeKey(this, targetKey, eqt)

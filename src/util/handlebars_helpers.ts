@@ -1,4 +1,4 @@
-import { ItemType, Study } from "@module/data"
+import { ItemType, Study, StudyType } from "@module/data"
 import { DiceGURPS } from "@module/dice"
 import { getAdjustedStudyHours } from "./misc"
 import { LocalizeGURPS } from "./localize"
@@ -52,7 +52,6 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		return a ? Object.values(a).length > 0 : false
 	}
 
-
 	static blockLayout(blocks: string[], items: Record<string, any[]>): string {
 		if (!blocks) return ""
 
@@ -60,11 +59,10 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		const line_length = 2
 
 		for (const value of blocks) {
-			let line = value.split(" ").slice(0, line_length) // Get only first N items
-				.filter(s =>
-					items[s].length ||
-					!(["reactions", "conditional_modifiers", "melee", "ranged"].includes(s))
-				)
+			let line = value
+				.split(" ")
+				.slice(0, line_length) // Get only first N items
+				.filter(s => items[s].length || !["reactions", "conditional_modifiers", "melee", "ranged"].includes(s))
 			if (!line.length) continue
 			if (line_length > line.length) line = line.concat(Array(line_length - line.length).fill(line[0]))
 			outString += `\n"${line.join(" ")}"`
@@ -415,6 +413,62 @@ class HandlebarsHelpersGURPS extends HandlebarsHelpers {
 		return check ? "overridden" : ""
 	}
 
+	static studyinfo(type: StudyType) {
+		const b = "• "
+		const nl = "<br>"
+		switch (type) {
+			case StudyType.Self:
+				return [
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max_no_job, { hours: 12 }),
+					nl,
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max_part_time_job, {
+						hours: 8,
+					}),
+					nl,
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max_full_time_job, {
+						hours: 4,
+					}),
+				].join("")
+			case StudyType.Job:
+				return [
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max_full_time_job, {
+						hours: 8,
+					}),
+					nl,
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max_part_time_job, {
+						hours: 4,
+					}),
+				].join("")
+			case StudyType.Teacher:
+				return [
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max, { hours: 8 }),
+					nl,
+					b,
+					LocalizeGURPS.translations.gurps.study.tooltip.teacher_prereq,
+					nl,
+					b,
+					LocalizeGURPS.translations.gurps.study.tooltip.teacher_teaching,
+				].join("")
+			case StudyType.Intensive:
+				return [
+					b,
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.tooltip.max, { hours: 12 }),
+					nl,
+					b,
+					LocalizeGURPS.translations.gurps.study.tooltip.teacher_prereq,
+					nl,
+					b,
+					LocalizeGURPS.translations.gurps.study.tooltip.teacher_teaching,
+				].join("")
+		}
+	}
+
 	// Static multiselect(selected: string[], options: any) {
 	// 	let html = options.fn(this)
 	// 	if (selected.length === 0) {
@@ -481,7 +535,8 @@ export function registerHandlebarsHelpers() {
 		overridden: HandlebarsHelpersGURPS.overridden,
 		flatlist: HandlebarsHelpersGURPS.flatlist,
 		staticSpellValues: HandlebarsHelpersGURPS.staticSpellValues,
-		adjustedStudyHours: HandlebarsHelpersGURPS.adjustedStudyHours
+		adjustedStudyHours: HandlebarsHelpersGURPS.adjustedStudyHours,
+		studyinfo: HandlebarsHelpersGURPS.studyinfo,
 		// Multiselect: HandlebarsHelpersGURPS.multiselect
 	})
 }

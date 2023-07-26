@@ -26,12 +26,14 @@ class EquipmentGURPS extends ItemGCS {
 	// Getters
 
 	override get notes(): string {
-		let outString = "<div class=\"item-notes\">"
+		let outString = '<div class="item-notes">'
 		if ([DisplayMode.Inline, DisplayMode.InlineAndTooltip].includes(this.actor.settings.modifiers_display)) {
-			this.modifiers.filter(e => e.enabled).forEach((mod, i) => {
-				if (i !== 0) outString += "; "
-				outString += mod.name + (mod.system.notes ? ` (${mod.system.notes})` : "")
-			})
+			this.modifiers
+				.filter(e => e.enabled)
+				.forEach((mod, i) => {
+					if (i !== 0) outString += "; "
+					outString += mod.name + (mod.system.notes ? ` (${mod.system.notes})` : "")
+				})
 		}
 		if (this.modifiers.some(e => e.enabled)) outString += "<br>"
 		if (this.system.notes) outString += HandlebarsHelpersGURPS.format(this.system.notes)

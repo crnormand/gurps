@@ -202,7 +202,7 @@ export enum StudyHoursNeeded {
 	Level1 = "180",
 	Level2 = "160",
 	Level3 = "140",
-	Level4 = "120"
+	Level4 = "120",
 }
 
 export enum StudyType {

@@ -17,19 +17,21 @@ class SkillGURPS extends ItemGCS {
 		const name: string = this.name ?? ""
 		const specialization = this.specialization
 		const TL = this.techLevel
-		return `${name}${this.system.tech_level_required ? `/TL${TL ?? ""}` : ""}${specialization ? ` (${specialization})` : ""
-			}`
+		return `${name}${this.system.tech_level_required ? `/TL${TL ?? ""}` : ""}${
+			specialization ? ` (${specialization})` : ""
+		}`
 	}
 
 	override get notes(): string {
 		const out: string[] = []
 		if (inlineNote(this.actor, "modifiers_display")) {
 			if (this.difficulty !== Difficulty.Wildcard && this.defaultSkill) {
-				out.push(LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.item.default, {
-					skill: this.defaultSkill.formattedName,
-					modifier: `${this.defaultedFrom!.modifier}`
-				}))
+				out.push(
+					LocalizeGURPS.format(LocalizeGURPS.translations.gurps.item.default, {
+						skill: this.defaultSkill.formattedName,
+						modifier: `${this.defaultedFrom!.modifier}`,
+					})
+				)
 			}
 		}
 		if (inlineNote(this.actor, "notes_display")) {
@@ -39,11 +41,13 @@ class SkillGURPS extends ItemGCS {
 			}
 			if (this.studyHours !== 0) {
 				if (out.length) out.push("<br>")
-				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.study.studied, {
-					hours: this.studyHours,
-					total: (this.system as any).study_hours_needed
-				}))
+				if (this.studyHours !== 0)
+					out.push(
+						LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.studied, {
+							hours: this.studyHours,
+							total: (this.system as any).study_hours_needed,
+						})
+					)
 			}
 		}
 		if (inlineNote(this.actor, "skill_level_adj_display")) {
@@ -80,7 +84,7 @@ class SkillGURPS extends ItemGCS {
 	}
 
 	get defaultSkill(): SkillGURPS | undefined {
-		if (!this.actor) return
+		if (!this.actor) return undefined
 		return this.actor.baseSkill(this.defaultedFrom, true)
 	}
 
@@ -175,7 +179,7 @@ class SkillGURPS extends ItemGCS {
 		return {
 			level: level,
 			relative_level: relative_level,
-			tooltip: tooltip
+			tooltip: tooltip,
 		}
 	}
 

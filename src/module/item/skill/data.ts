@@ -42,7 +42,6 @@ export interface SkillSystemData extends ItemGCSSystemData {
 
 export type EncumbrancePenaltyMultiplier = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
-
 export interface SkillLevel {
 	level: number
 	relative_level: number

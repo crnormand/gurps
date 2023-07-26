@@ -20,6 +20,11 @@
 		background-color: transparent;
 		color: rgba(var(--color-on-content), 0.5);
 	}
+
+	.gcs-info {
+		color: rgb(var(--color-icon-button));
+		align-self: center;
+	}
 }
 
 .feature,

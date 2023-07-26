@@ -3,8 +3,8 @@
 	<div class="content">
 		<div class="control">
 <a class="add button gcs-circled-add"></a>
-			<div>{{#if document.studyHours}}
-				{{localize "gurps.study.studied_alt" hours=document.studyHours total=system.study_hours_needed}} (
+			<div>
+				{{localize "gurps.study.studied_alt" hours=document.studyHours total=system.study_hours_needed}}
 			<select name="system.study_hours_needed">
 				{{#select system.study_hours_needed}}
 					{{#each config.select.study_hours_needed as |v k|}}
@@ -13,7 +13,7 @@
 						</option>
 					{{/each}}
 				{{/select}}
-				</select> ) {{localize "gurps.study.for"}}{{/if}}
+					</select>{{localize "gurps.study.for"}}
 			</div>
 		</div>
 		{{#each system.study}}
@@ -28,7 +28,7 @@
 					{{/each}}
 				{{/select}}
 				</select>
-				<a class="gcs-info" data-index="{{@index}}"></a>
+				<i class="gcs-info" tooltip-direction="DOWN" data-tooltip="{{{studyinfo this.type}}}"></i>
 				<input type="text" name="array.system.study.{{@index}}.hours" value="{{this.hours}}" data-dtype="Number" />
 				<input type="text" value="{{adjustedStudyHours this}}" readonly tabIndex="-1" />
 				<input type="text" name="array.system.study.{{@index}}.note" value="{{this.notes}}" data-dtype="String" placeholder="{{localize 'gurps.item.note'}}"/>

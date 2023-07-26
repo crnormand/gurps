@@ -22,19 +22,20 @@ class SpellGURPS extends ItemGCS {
 	override get notes(): string {
 		const out: string[] = []
 		if (inlineNote(this.actor, "notes_display")) {
-			if (this.system.notes.trim())
-				out.push(this.system.notes)
+			if (this.system.notes.trim()) out.push(this.system.notes)
 			if (this.rituals) {
 				if (out.length) out.push("<br>")
 				out.push(this.rituals)
 			}
 			if (this.studyHours !== 0) {
 				if (out.length) out.push("<br>")
-				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.study.studied, {
-					hours: this.studyHours,
-					total: (this.system as any).study_hours_needed
-				}))
+				if (this.studyHours !== 0)
+					out.push(
+						LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.studied, {
+							hours: this.studyHours,
+							total: (this.system as any).study_hours_needed,
+						})
+					)
 			}
 			if (inlineNote(this.actor, "skill_level_adj_display")) {
 				if (this.level.tooltip.length) {
@@ -65,39 +66,31 @@ class SpellGURPS extends ItemGCS {
 		if (!this.actor) return ""
 		const level = this.level.level
 		switch (true) {
-			case (level < 10):
+			case level < 10:
 				return LocalizeGURPS.translations.gurps.ritual.sub_10
-			case (level < 15):
+			case level < 15:
 				return LocalizeGURPS.translations.gurps.ritual.sub_15
-			case (level < 20):
+			case level < 20:
 				let ritual = LocalizeGURPS.translations.gurps.ritual.sub_20
 				// TODO:
 				if (this.system.spell_class.toLowerCase() === "blocking") return ritual
-				ritual += LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.ritual.cost,
-					{
-						adj: 1
-					}
-				)
+				ritual += LocalizeGURPS.format(LocalizeGURPS.translations.gurps.ritual.cost, {
+					adj: 1,
+				})
 				return ritual
 			default:
 				const adj = Math.trunc((level - 15) / 5)
 				const spell_class = this.system.spell_class.toLowerCase()
 				let time = ""
-				if (!spell_class.includes("missile")) time = LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.ritual.time,
-					{
-						adj: Math.pow(2, adj)
-					}
-				)
+				if (!spell_class.includes("missile"))
+					time = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.ritual.time, {
+						adj: Math.pow(2, adj),
+					})
 				let cost = ""
 				if (!spell_class.includes("blocking")) {
-					cost = LocalizeGURPS.format(
-						LocalizeGURPS.translations.gurps.ritual.cost,
-						{
-							adj: adj + 1
-						}
-					)
+					cost = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.ritual.cost, {
+						adj: adj + 1,
+					})
 				}
 				return LocalizeGURPS.translations.gurps.ritual.none + time + cost
 		}
@@ -202,7 +195,7 @@ class SpellGURPS extends ItemGCS {
 		return {
 			level: level,
 			relative_level: relativeLevel,
-			tooltip: tooltip
+			tooltip: tooltip,
 		}
 	}
 

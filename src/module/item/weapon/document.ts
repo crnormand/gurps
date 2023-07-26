@@ -11,7 +11,6 @@ import { WeaponDamage } from "./damage"
 import { BaseWeaponSystemData } from "./data"
 
 class BaseWeaponGURPS extends BaseItemGURPS {
-
 	get itemName(): string {
 		if (this.container instanceof Item) return this.container?.name ?? ""
 		return ""
@@ -32,7 +31,7 @@ class BaseWeaponGURPS extends BaseItemGURPS {
 	}
 
 	get notes(): string {
-		let outString = "<div class=\"item-notes\">"
+		let outString = '<div class="item-notes">'
 		if (this.container) {
 			outString += HandlebarsHelpersGURPS.format((this.container as any).notes)
 			if (this.system.usage_notes) outString += "<br>"

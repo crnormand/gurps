@@ -8,7 +8,7 @@ class EquipmentModifierContainerGURPS extends ItemGCS {
 	// }
 
 	get enabled(): boolean {
-		return true;
+		return true
 	}
 
 	// Embedded Items

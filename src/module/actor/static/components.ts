@@ -299,6 +299,10 @@ export class StaticEquipment extends NamedComponent {
 
 	contains: { [key: string]: any }
 
+	globalid?: string
+
+	img: string | null = null
+
 	constructor(name = LocalizeGURPS.translations.TYPES.Item.equipment, ue = false) {
 		super(name)
 		this.save = ue
@@ -351,7 +355,6 @@ export class StaticEquipment extends NamedComponent {
 		}
 		if (eqt.collapsed) {
 			for (let k in eqt.collapsed) {
-				// @ts-ignore
 				let e = eqt.collapsed[k]
 				await StaticEquipment.calcUpdate(actor, e, `${objkey}.collapsed.${k}`)
 				cs += e.costsum

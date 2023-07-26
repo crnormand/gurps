@@ -545,9 +545,9 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 				[c]: `gurps.status.${c}`,
 			})
 		}, {}),
-		study_hours_needed: Object.values(ConditionID).reduce((acc, c) => {
+		study_hours_needed: Object.values(StudyHoursNeeded).reduce((acc, c) => {
 			return Object.assign(acc, {
-				[c]: `gurps.status.${c}`,
+				[c]: `gurps.select.study_hours_needed.${c}`,
 			})
 		}, {}),
 	},

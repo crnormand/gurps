@@ -1158,7 +1158,6 @@ class CharacterGURPS extends BaseActorGURPS {
 			let skillsChanged = this.updateSkills()
 			let spellsChanged = this.updateSpells()
 			if (!skillsChanged && !spellsChanged) break
-			break
 		}
 	}
 

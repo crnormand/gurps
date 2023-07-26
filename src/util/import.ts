@@ -180,7 +180,7 @@ class ImportUtils {
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
 			study_hours_needed: data.study_hours_needed ?? "200",
-			userdesc: data.userdesc ?? ""
+			userdesc: data.userdesc ?? "",
 		}
 	}
 
@@ -253,7 +253,7 @@ class ImportUtils {
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
-			study_hours_needed: data.study_hours_needed ?? "200"
+			study_hours_needed: data.study_hours_needed ?? "200",
 		}
 	}
 
@@ -277,7 +277,7 @@ class ImportUtils {
 			features: data.features ? ImportUtils.importFeatures(data.features) : [],
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
-			study_hours_needed: data.study_hours_needed ?? "200"
+			study_hours_needed: data.study_hours_needed ?? "200",
 		}
 	}
 
@@ -317,7 +317,7 @@ class ImportUtils {
 			duration: data.duration ?? "",
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
-			study_hours_needed: data.study_hours_needed ?? "200"
+			study_hours_needed: data.study_hours_needed ?? "200",
 		}
 	}
 
@@ -346,7 +346,7 @@ class ImportUtils {
 			prereq_count: data.prereq_count ?? 0,
 			vtt_notes: data.vtt_notes ?? "",
 			study: data.study ?? [],
-			study_hours_needed: data.study_hours_needed ?? "200"
+			study_hours_needed: data.study_hours_needed ?? "200",
 		}
 	}
 

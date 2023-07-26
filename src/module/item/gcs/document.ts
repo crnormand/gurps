@@ -16,7 +16,7 @@ import { MergeObjectOptions } from "types/foundry/common/utils/helpers.mjs"
 import { ItemGCSSystemData } from "./data"
 
 abstract class ItemGCS extends ContainerGURPS {
-	unsatisfied_reason = "";
+	unsatisfied_reason = ""
 
 	protected async _preCreate(
 		data: ItemDataGURPS,
@@ -77,13 +77,13 @@ abstract class ItemGCS extends ContainerGURPS {
 	}
 
 	get notes(): string {
-		let outString = "<div class=\"item-notes\">"
+		let outString = '<div class="item-notes">'
 		if (this.system.notes) outString += HandlebarsHelpersGURPS.format(this.system.notes)
-		if (this.studyHours !== 0) outString += LocalizeGURPS.format(
-			LocalizeGURPS.translations.gurps.study.studied, {
-			hours: this.studyHours,
-			total: (this.system as any).study_hours_needed
-		})
+		if (this.studyHours !== 0)
+			outString += LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.studied, {
+				hours: this.studyHours,
+				total: (this.system as any).study_hours_needed,
+			})
 		if (this.unsatisfied_reason) outString += HandlebarsHelpersGURPS.unsatisfied(this.unsatisfied_reason)
 		outString += "</div>"
 		return outString
@@ -137,9 +137,12 @@ abstract class ItemGCS extends ContainerGURPS {
 	}
 
 	get studyHours(): number {
-		if (![
-			ItemType.Trait, ItemType.Skill, ItemType.Technique, ItemType.Spell, ItemType.RitualMagicSpell
-		].includes(this.type as ItemType)) return 0
+		if (
+			![ItemType.Trait, ItemType.Skill, ItemType.Technique, ItemType.Spell, ItemType.RitualMagicSpell].includes(
+				this.type as ItemType
+			)
+		)
+			return 0
 		return (this.system as any).study
 			.map((e: Study) => getAdjustedStudyHours(e))
 			.reduce((partialSum: number, a: number) => partialSum + a, 0)
@@ -170,7 +173,7 @@ abstract class ItemGCS extends ContainerGURPS {
 		if ((this as any).modifiers)
 			system.modifiers = (this as any).modifiers.map((e: ItemGCS) => e.exportSystemData(false))
 		if (system.weapons)
-			system.weapons = system.weapons.map(function(e: BaseWeaponGURPS) {
+			system.weapons = system.weapons.map(function (e: BaseWeaponGURPS) {
 				const f: any = { ...e }
 				f.damage.base = new DiceGURPS(e.damage.base).toString(false)
 				return f

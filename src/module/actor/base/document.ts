@@ -144,8 +144,8 @@ class BaseActorGURPS extends Actor {
 		const effects = this.gEffects.map(e => {
 			const overlay = e instanceof ConditionGURPS && e.cid === ConditionID.Dead
 			const a = new ActiveEffect({ name: e.name, icon: e.img || "" } as any)
-				// a.setFlag("core", "overlay", overlay)
-				; (a as any).flags = { core: { overlay: overlay } }
+			// a.setFlag("core", "overlay", overlay)
+			;(a as any).flags = { core: { overlay: overlay } }
 			return a
 		})
 		return super.temporaryEffects.concat(effects)
@@ -166,9 +166,10 @@ class BaseActorGURPS extends Actor {
 		}
 	): Promise<Array<any>> {
 		if (embeddedName === "Item")
-			data = data.filter((e: any) =>
-				e.flags[SYSTEM_NAME][ItemFlags.Container] !== this.id ||
-				CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string)
+			data = data.filter(
+				(e: any) =>
+					e.flags?.[SYSTEM_NAME]?.[ItemFlags.Container] !== this.id ||
+					CONFIG.GURPS.Actor.allowedContents[this.type].includes(e.type as string)
 			)
 		return super.createEmbeddedDocuments(embeddedName, data, context)
 	}
@@ -391,13 +392,11 @@ class DamageTargetActor implements DamageTarget {
 	}
 
 	get ST(): number {
-		// @ts-ignore
-		return this.actor.attributes.get("st")?.calc.value
+		return (this.actor.attributes.get("st") as any).calc.value
 	}
 
 	get hitPoints(): HitPointsCalc {
-		// @ts-ignore
-		return this.actor.attributes.get("hp")?.calc
+		return (this.actor.attributes.get("hp") as any).calc
 	}
 
 	get hitLocationTable(): HitLocationTable {

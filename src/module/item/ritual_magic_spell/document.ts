@@ -15,19 +15,20 @@ class RitualMagicSpellGURPS extends ItemGCS {
 	override get notes(): string {
 		const out: string[] = []
 		if (inlineNote(this.actor, "notes_display")) {
-			if (this.system.notes.trim())
-				out.push(this.system.notes)
+			if (this.system.notes.trim()) out.push(this.system.notes)
 			if (this.rituals) {
 				if (out.length) out.push("<br>")
 				out.push(this.rituals)
 			}
 			if (this.studyHours !== 0) {
 				if (out.length) out.push("<br>")
-				if (this.studyHours !== 0) out.push(LocalizeGURPS.format(
-					LocalizeGURPS.translations.gurps.study.studied, {
-					hours: this.studyHours,
-					total: (this.system as any).study_hours_needed
-				}))
+				if (this.studyHours !== 0)
+					out.push(
+						LocalizeGURPS.format(LocalizeGURPS.translations.gurps.study.studied, {
+							hours: this.studyHours,
+							total: (this.system as any).study_hours_needed,
+						})
+					)
 			}
 			if (inlineNote(this.actor, "skill_level_adj_display")) {
 				if (this.level.tooltip.length) {
@@ -178,7 +179,7 @@ class RitualMagicSpellGURPS extends ItemGCS {
 		return {
 			level: skillLevel.level,
 			relative_level: skillLevel.relative_level,
-			tooltip: skillLevel.tooltip
+			tooltip: skillLevel.tooltip,
 		}
 	}
 
@@ -235,7 +236,7 @@ class RitualMagicSpellGURPS extends ItemGCS {
 		return {
 			level: level,
 			relative_level: relative_level,
-			tooltip: tooltip
+			tooltip: tooltip,
 		}
 	}
 

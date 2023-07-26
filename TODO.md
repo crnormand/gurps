@@ -8,8 +8,6 @@
 	-	create object type/interface for Mook, acts as simplified actor model
 	-	grab simplified version of attributes from default settings (not editable in sheet)
 	-	keep simple textbox parsing as for previous version
--	item study
-	-	fix info tooltip
 
 ## Jeff and Chris
 
