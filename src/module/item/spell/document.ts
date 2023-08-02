@@ -108,8 +108,8 @@ class SpellGURPS extends ItemGCS {
 		return this.system.difficulty?.split("/")[0] ?? gid.Intelligence
 	}
 
-	get difficulty(): string {
-		return this.system.difficulty?.split("/")[1] ?? Difficulty.Hard
+	get difficulty(): Difficulty {
+		return (this.system.difficulty?.split("/")[1] as Difficulty) ?? Difficulty.Hard
 	}
 
 	get powerSource(): string {
@@ -164,12 +164,12 @@ class SpellGURPS extends ItemGCS {
 
 	calculateLevel(): SkillLevel {
 		const tooltip = new TooltipGURPS()
-		let relativeLevel = difficultyRelativeLevel(this.system.difficulty)
+		let relativeLevel = difficultyRelativeLevel(this.difficulty)
 		let level = -Infinity
 		if (this.actor) {
 			let points = Math.trunc(this.points)
 			level = this.actor.resolveAttributeCurrent(this.attribute)
-			if (this.system.difficulty === Difficulty.Wildcard) points = Math.trunc(points / 3)
+			if (this.difficulty === Difficulty.Wildcard) points = Math.trunc(points / 3)
 			if (points < 1) {
 				level = -Infinity
 				relativeLevel = 0

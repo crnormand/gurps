@@ -1,5 +1,5 @@
 import { ItemGCSSource, ItemGCSSystemData } from "@item/gcs"
-import { Difficulty, ItemType, Study, StudyHoursNeeded } from "@module/data"
+import { ItemType, Study, StudyHoursNeeded } from "@module/data"
 import { PrereqList } from "@prereq"
 
 export type SpellSource = ItemGCSSource<ItemType.Spell, SpellSystemData>
@@ -15,7 +15,7 @@ export interface SpellData extends Omit<SpellSource, "effects">, SpellSystemData
 
 export interface SpellSystemData extends ItemGCSSystemData {
 	prereqs: PrereqList
-	difficulty: Difficulty
+	difficulty: `${string}\${Difficulty}`
 	tech_level: string
 	tech_level_required: boolean
 	college: Array<string>

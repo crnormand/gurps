@@ -1,12 +1,31 @@
 import { evalOperators, Operator } from "./operator"
 import { eFunction, evalFunctions } from "./function"
 import { SkillContainerGURPS, SkillGURPS, TechniqueGURPS, TraitContainerGURPS, TraitGURPS } from "@item"
+import { AttributeBonusLimitation } from "@feature/attribute_bonus"
+import { TooltipGURPS } from "@module/tooltip"
+import { AttributeDefObj } from "@module/attribute"
+import { DamageProgression } from "@module/data"
+import { MookSkill, MookTrait } from "@module/mook_generator"
 
 // VariableResolver is used to resolve variables in expressions into their values.
 export interface VariableResolver {
+	adjustedSizeModifier: number
+	settings: {
+		attributes: AttributeDefObj[]
+		damage_progression: DamageProgression
+	}
 	resolveVariable: (variableName: string) => string
-	skills: Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS>
-	traits: Collection<TraitGURPS | TraitContainerGURPS>
+	skills: Collection<SkillGURPS | TechniqueGURPS | SkillContainerGURPS> | MookSkill[]
+	traits: Collection<TraitGURPS | TraitContainerGURPS> | MookTrait[]
+	attributeBonusFor: (
+		attributeId: string,
+		limitation: AttributeBonusLimitation,
+		effective?: boolean,
+		tooltip?: TooltipGURPS | null
+	) => number
+	effectiveST: (initialST: number) => number
+	getFlag: (scope: any, key: string) => unknown
+	costReductionFor: (attributeID: string) => number
 	isSkillLevelResolutionExcluded: (name: string, specialization: string) => boolean
 	registerSkillLevelResolutionExclusion: (name: string, specialization: string) => void
 	unregisterSkillLevelResolutionExclusion: (name: string, specialization: string) => void

@@ -1,14 +1,30 @@
-import { CharacterGURPS } from "@actor"
 import { ActorFlags } from "@actor/base/data"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
 import { gid, SYSTEM_NAME } from "@module/data"
-import { sanitize } from "@util"
+import { sanitize, VariableResolver } from "@util"
 import { AttributeDef } from "./attribute_def"
 import { AttributeObj, AttributeType, reserved_ids } from "./data"
 import { PoolThreshold } from "./pool_threshold"
 
+// interface Mook {
+// 	resolveVariable: (variableName: string) => string
+// 	skills:  MookSkill[]
+// 	traits:  MookTrait[]
+// 	attributeBonusFor
+// 	isSkillLevelResolutionExcluded: (name: string, specialization: string) => boolean
+// 	registerSkillLevelResolutionExclusion: (name: string, specialization: string) => void
+// 	unregisterSkillLevelResolutionExclusion: (name: string, specialization: string) => void
+// 	encumbranceLevel: (forSkills: boolean) => {
+// 		level: number
+// 		maximum_carry: number
+// 		penalty: number
+// 		name: string
+// 	}
+// }
+
 export class Attribute {
-	actor: CharacterGURPS
+	// actor: CharacterGURPS | Mook
+	actor: VariableResolver
 
 	order: number
 
@@ -22,7 +38,7 @@ export class Attribute {
 
 	_overridenThreshold?: PoolThreshold | null = null
 
-	constructor(actor: CharacterGURPS, attr_id: string, order: number, data?: Partial<AttributeObj>) {
+	constructor(actor: VariableResolver, attr_id: string, order: number, data?: Partial<AttributeObj>) {
 		if (data) Object.assign(this, data)
 		this.actor = actor
 		this.attr_id = attr_id

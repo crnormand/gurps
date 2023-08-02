@@ -2,8 +2,8 @@ import { ItemGCS } from "@item/gcs"
 import { ActorType, Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { inlineNote, LocalizeGURPS } from "@util"
-import { baseRelativeLevel, SkillData, SkillLevel } from "./data"
+import { difficultyRelativeLevel, inlineNote, LocalizeGURPS } from "@util"
+import { SkillData, SkillLevel } from "./data"
 
 class SkillGURPS extends ItemGCS {
 	level: SkillLevel = { level: 0, relative_level: 0, tooltip: new TooltipGURPS() }
@@ -75,8 +75,8 @@ class SkillGURPS extends ItemGCS {
 		return this.system.difficulty?.split("/")[0] ?? gid.Dexterity
 	}
 
-	get difficulty(): string {
-		return this.system.difficulty?.split("/")[1] ?? Difficulty.Average
+	get difficulty(): Difficulty {
+		return (this.system.difficulty?.split("/")[1] as Difficulty) ?? Difficulty.Average
 	}
 
 	get specialization(): string {
@@ -134,7 +134,7 @@ class SkillGURPS extends ItemGCS {
 		const none = { level: -Infinity, relative_level: 0, tooltip: new TooltipGURPS() }
 		const actor = this.actor || this.dummyActor
 		if (!actor) return none
-		let relative_level = baseRelativeLevel(this.difficulty)
+		let relative_level = difficultyRelativeLevel(this.difficulty)
 		let level = actor.resolveAttributeCurrent(this.attribute)
 		const tooltip = new TooltipGURPS()
 		let points = this.adjustedPoints(tooltip)
@@ -220,7 +220,7 @@ class SkillGURPS extends ItemGCS {
 		if (!actor) return
 		const best = this.bestDefault()
 		if (best) {
-			const baseline = actor.resolveAttributeCurrent(this.attribute) + baseRelativeLevel(this.difficulty)
+			const baseline = actor.resolveAttributeCurrent(this.attribute) + difficultyRelativeLevel(this.difficulty)
 			const level = best.level
 			best.adjusted_level = level
 			if (level === baseline) best.points = 1

@@ -2,7 +2,6 @@ import { PoolThreshold } from "./pool_threshold"
 import { DamageProgression } from "@module/data"
 import { VariableResolver, evaluateToNumber, sanitize } from "@util"
 import { AttributeDefObj, AttributeType, reserved_ids } from "./data"
-import { CharacterGURPS } from "@actor"
 
 export class AttributeDef {
 	constructor(data?: AttributeDefObj) {
@@ -46,7 +45,7 @@ export class AttributeDef {
 		return evaluateToNumber(this.attribute_base, resolver)
 	}
 
-	computeCost(actor: CharacterGURPS, value: number, cost_reduction: number, size_modifier: number): number {
+	computeCost(actor: VariableResolver, value: number, cost_reduction: number, size_modifier: number): number {
 		let cost = value * (this.cost_per_point || 0)
 		if (
 			size_modifier > 0 &&

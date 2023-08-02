@@ -25,7 +25,7 @@ export interface SkillSystemData extends ItemGCSSystemData {
 	tech_level_required: boolean
 	encumbrance_penalty_multiplier: EncumbrancePenaltyMultiplier
 	// May change to object type
-	difficulty: `${string}/${string}`
+	difficulty: `${string}/${Difficulty}`
 	points: number
 	// To change later
 	defaulted_from?: SkillDefault
@@ -46,24 +46,4 @@ export interface SkillLevel {
 	level: number
 	relative_level: number
 	tooltip: TooltipGURPS
-}
-
-/**
- *
- * @param d
- */
-export function baseRelativeLevel(d: string): number {
-	switch (d) {
-		case Difficulty.Easy:
-			return 0
-		case Difficulty.Average:
-			return -1
-		case Difficulty.Hard:
-			return -2
-		case Difficulty.VeryHard:
-		case Difficulty.Wildcard:
-			return -3
-		default:
-			return baseRelativeLevel(Difficulty.Easy)
-	}
 }

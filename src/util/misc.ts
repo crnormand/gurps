@@ -1,4 +1,4 @@
-import { CharacterGURPS, CharacterSettings } from "@actor"
+import { CharacterGURPS } from "@actor"
 import {
 	DEFAULT_INITIATIVE_FORMULA,
 	Difficulty,

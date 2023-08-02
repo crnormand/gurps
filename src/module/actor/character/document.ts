@@ -59,7 +59,6 @@ import {
 	DocumentModificationOptionsGURPS,
 	Encumbrance,
 } from "./data"
-import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
 import { CharacterImporter } from "./import"
 import { HitLocation, HitLocationTable } from "./hit_location"
 import { AttributeBonusLimitation } from "@feature/attribute_bonus"
@@ -68,7 +67,7 @@ import { ConditionID } from "@item/condition"
 import Document, { DocumentModificationOptions, Metadata } from "types/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "types/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeDef, AttributeObj, AttributeType, PoolThreshold, ThresholdOp } from "@module/attribute"
-import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
+import { ResourceTracker, ResourceTrackerDef, ResourceTrackerObj } from "@module/resource_tracker"
 import {
 	ConditionalModifier,
 	FeatureType,
@@ -991,38 +990,39 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	newAttributes(defs = this.system.settings.attributes, prev: AttributeObj[] = []): AttributeObj[] {
-		const a: AttributeObj[] = []
-		// Const a: Record<string, AttributeObj> = {}
+		const atts: AttributeObj[] = []
 		let i = 0
-		for (const attribute_def of defs) {
-			const attr = new Attribute(this, attribute_def.id, i)
-			if (attribute_def.type.includes("separator")) {
-				a.push({
+		for (const def of defs) {
+			const attr = new Attribute(this, def.id, i)
+			if (
+				[
+					AttributeType.PrimarySeparator,
+					AttributeType.SecondarySeparator,
+					AttributeType.PoolSeparator,
+				].includes(def.type)
+			) {
+				atts.push({
 					attr_id: attr.attr_id,
-					// Order: attr.order,
 					adj: attr.adj,
 				})
 			} else {
-				a.push({
-					// Bonus: attr.bonus,
-					// cost_reduction: attr.costReduction,
-					// order: attr.order,
+				atts.push({
 					attr_id: attr.attr_id,
 					adj: attr.adj,
 				})
 			}
-			if (attr.damage) a[i].damage = attr.damage
+			if (attr.damage) atts[i].damage = attr.damage
 			i++
 		}
 		if (prev) {
-			a.forEach(attr => {
+			atts.forEach(attr => {
 				const prev_attr = prev.find(e => e.attr_id === attr.attr_id)
 				Object.assign(attr, prev_attr)
 			})
 		} else {
 			this._prevAttributes = new Map()
 		}
-		return a
+		return atts
 	}
 
 	newTrackers(defs = this.system.settings.resource_trackers, prev: ResourceTrackerObj[] = []): ResourceTrackerObj[] {

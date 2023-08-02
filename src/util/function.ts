@@ -3,11 +3,12 @@ import { DiceGURPS } from "@module/dice"
 import { equalFold } from "./misc"
 import { ItemType } from "@module/data"
 import { Length } from "./length"
+import { MookSkill, MookTrait } from "@module/mook_generator"
 
 export interface VariableResolver {
 	resolveVariable: (variableName: string) => string
-	traits: Collection<Item | any>
-	skills: Collection<Item | any>
+	traits: Collection<Item | any> | MookTrait[]
+	skills: Collection<Item | any> | MookSkill[]
 	isSkillLevelResolutionExcluded: (name: string, specialization: string) => boolean
 	registerSkillLevelResolutionExclusion: (name: string, specialization: string) => void
 	unregisterSkillLevelResolutionExclusion: (name: string, specialization: string) => void
