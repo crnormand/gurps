@@ -327,7 +327,7 @@ class DamageCalculator {
 		return undefined
 	}
 
-	get woundingModifier(): [number, string] {
+	get woundingModifier(): number {
 		let woundingModifier = 1
 		let reason = undefined
 
@@ -346,7 +346,7 @@ class DamageCalculator {
 			woundingModifier = this.damageType.theDefault
 			reason = `${this.damageType.key}, ${this.damageRoll.locationId}`
 		}
-		return [woundingModifier, reason]
+		return woundingModifier
 	}
 
 	/**
