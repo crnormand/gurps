@@ -34,7 +34,7 @@
 			}
 
 			&.no-stretch {
-				.checkbox-label + .checkbox-label {
+				.checkbox-label+.checkbox-label {
 					margin: 0;
 				}
 			}
@@ -71,17 +71,20 @@
 			// padding: 1px 3px;
 			padding-left: 3px;
 			display: inline-block;
+			border-radius: 3px 0 0 3px;
+			background-color: rgb(var(--color-control));
 		}
 
 		.input-wrapper.multiply:before {
 			content: "×";
 		}
 
-		.input-wrapper > input {
+		.input-wrapper>input {
 			border: 0;
 			margin: 0;
 			padding: 0;
 			outline: none;
+			border-left: 1px solid lightgrey;
 		}
 
 		.header {
@@ -164,14 +167,14 @@
 				display: grid;
 				grid-template-columns: max-content min-content 1fr;
 
-				> div:not(.header) {
+				>div:not(.header) {
 					background-color: rgb(var(--color-content));
 					color: rgb(var(--color-on-content));
 					border-right: 1px solid rgb(var(--color-interior-divider));
 					border-bottom: 1px solid rgb(var(--color-interior-divider));
 				}
 
-				> div {
+				>div {
 					padding: var(--padding-standard);
 				}
 
