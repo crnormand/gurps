@@ -1631,6 +1631,21 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   }
 }
 
+export class GurpsActorSheetReduced extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return GurpsActorSheet.defaultOptions;
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/actor-sheet-gcs-reduced.hbs'
+  }
+}
+
 export class GurpsActorCombatSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {

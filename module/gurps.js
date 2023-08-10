@@ -7,6 +7,7 @@ import { GurpsItemSheet } from './item-sheet.js'
 import {
 	GurpsActorCombatSheet,
 	GurpsActorSheet,
+	GurpsActorSheetReduced,
 	GurpsActorEditorSheet,
 	GurpsActorSimplifiedSheet,
 	GurpsActorNpcSheet,
@@ -1938,6 +1939,11 @@ if (!globalThis.GURPS) {
 		// @ts-ignore
 		Actors.registerSheet('gurps', GurpsActorTabSheet, {
 			label: 'Tabbed Sheet',
+			makeDefault: false,
+		})
+		// @ts-ignore
+		Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+			label: 'Reduced Mode',
 			makeDefault: false,
 		})
 		// @ts-ignore
