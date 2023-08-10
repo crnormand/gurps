@@ -109,7 +109,7 @@ class ApplyDamageDialog extends Application {
 				break
 
 			case "hardened-select":
-				this.calculator.overrideHardenedDR(target.value)
+				this.calculator.overrideHardenedDR = target.value
 				break
 
 			case "override-dr": {

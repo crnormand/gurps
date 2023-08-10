@@ -861,7 +861,7 @@ class DamageCalculator {
 		return this.damageRoll.locationId === DefaultHitLocations.LargeArea
 	}
 
-	overrideHardenedDR(level: number | undefined) {
+	set overrideHardenedDR(level: number | undefined) {
 		this.overrides.hardenedDR = level
 	}
 
