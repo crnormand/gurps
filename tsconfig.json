@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "ES2021",
 		"lib": ["dom", "ES2021", "dom.Iterable"],
-		"types": ["jquery", "jest", "node", "handlebars"],
+		"types": ["jquery", "jest", "node"],
 		"typeRoots": ["node_modules/@types", "node_modules/handlebars/types", "types"],
 		"esModuleInterop": true,
 		"moduleResolution": "node",
