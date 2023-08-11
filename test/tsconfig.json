@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"types": ["jest", "node", "foundry", "handlebars"],
+		"types": ["jest", "node", "foundry"],
 		"typeRoots": ["../node_modules/@types", "../node_modules/handlebars/types", "../types"]
 	},
 	"include": ["../src", "./", "**/*.d.ts"]
