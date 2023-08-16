@@ -1,8 +1,8 @@
 import { ContainerGURPS } from "@item/container"
 import { ItemDataGURPS } from "@module/config"
 import { ItemType, SYSTEM_NAME } from "@module/data"
-import { Context, DocumentModificationOptions } from "types/foundry/common/abstract/document.mjs"
-import { BaseUser } from "types/foundry/common/documents.mjs"
+import { Context } from "types/foundry/common/abstract/document.mjs"
+import { ItemData } from "types/foundry/common/data/module.mjs"
 import { BaseItemSourceGURPS, ItemConstructionContextGURPS, ItemFlags } from "./data"
 
 class BaseItemGURPS extends Item {
@@ -49,26 +49,14 @@ class BaseItemGURPS extends Item {
 		return context.parent.updateEmbeddedDocuments("Item", updates, context.options)
 	}
 
-	protected async _preCreate(
-		data: ItemDataGURPS,
-		options: DocumentModificationOptions,
-		user: BaseUser
-	): Promise<void> {
-		let type = data.type.replace("_container", "")
+	static override getDefaultArtwork(itemData: ItemData): { img: string } {
+		let type = itemData.type.replace("_container", "")
 		if (type === ItemType.Technique) type = ItemType.Skill
 		else if (type === ItemType.RitualMagicSpell) type = ItemType.Spell
 		else if (type === ItemType.Equipment) type = "equipment"
 		else if (type === ItemType.LegacyEquipment) type = "legacy_equipment"
-		// TODO: remove any
-		if (this._source.img === (foundry.documents.BaseItem as any).DEFAULT_ICON)
-			this._source.img = data.img = `systems/${SYSTEM_NAME}/assets/icons/${type}.svg`
-		await super._preCreate(data, options, user)
+		return { img: `systems/${SYSTEM_NAME}/assets/icons/${type}.svg` }
 	}
-
-	// get actor(): BaseActorGURPS | null {
-	// 	if (this.parent) return this.parent instanceof Actor ? this.parent : this.parent.actor
-	// 	return null
-	// }
 
 	get container(): Actor | ContainerGURPS | null {
 		if (!this.actor && !this.pack) return null

@@ -28,9 +28,18 @@
 - Delete compendium pack entries in settings when compendium pack is removed
 -	Move type editor (in triangle settings)
 -	style cleanup
+-	test coverage
+	-	attribute resolution (?)
+	-	dice generation
+	-	mook generator
 
 ## 1.1.0 and beyond
 
+-	Optional ADD settings
+	-	id match attributes to be treated differently
+		-	HP, Ablative DR?, resource trackers too, to be used as HP
+		-	FP, Energy Reserve, Power Items as resource trackers, used as FP?
+		-	Radiation, Radiation Shielding would apply
 -	Stop flattening compendiums on import
 -	Proper hex size support with rotation
 -	Editable maneuver grid, editable condition grid

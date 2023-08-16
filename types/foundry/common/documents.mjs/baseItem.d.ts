@@ -37,6 +37,8 @@ export declare class BaseItem extends Document<
 
 	static override get metadata(): ItemMetadata
 
+	static getDefaultArtwork(itemData: data.ItemData): { img: string }
+
 	/**
 	 * A reference to the Collection of ActiveEffect instances in the Item document, indexed by _id.
 	 */
