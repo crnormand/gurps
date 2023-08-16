@@ -109,13 +109,12 @@ class ApplyDamageDialog extends Application {
 				break
 
 			case "hardened-select":
-				this.calculator.overrideHardenedDR(target.value)
+				this.calculator.overrideHardenedDR = target.value
 				break
 
 			case "override-dr": {
 				const value = parseInt(target.value)
-				// @ts-ignore
-				this.calculator.overrideRawDr = isNaN(value) ? undefined : value
+				this.calculator.overrideDamageResistance = isNaN(value) ? undefined : value
 				break
 			}
 

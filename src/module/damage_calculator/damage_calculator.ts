@@ -327,26 +327,26 @@ class DamageCalculator {
 		return undefined
 	}
 
-	get woundingModifier(): [number, string] {
+	get woundingModifier(): number {
 		let woundingModifier = 1
-		let reason = undefined
+		// let reason = undefined
 
 		if (this.overrides.woundingModifier) {
 			woundingModifier = this.overrides.woundingModifier
-			reason = "Override"
+			// reason = "Override"
 		} else if (this.woundingModifierByDamageType) {
 			const modifier = this.woundingModifierByDamageType
 			woundingModifier = modifier[0]
-			reason = modifier[1]
+			// reason = modifier[1]
 		} else if (this.woundingModifierByHitLocation) {
 			const modifier = this.woundingModifierByHitLocation
 			woundingModifier = modifier[0]
-			reason = modifier[1]
+			// reason = modifier[1]
 		} else {
 			woundingModifier = this.damageType.theDefault
-			reason = `${this.damageType.key}, ${this.damageRoll.locationId}`
+			// reason = `${this.damageType.key}, ${this.damageRoll.locationId}`
 		}
-		return [woundingModifier, reason]
+		return woundingModifier
 	}
 
 	/**
@@ -861,7 +861,7 @@ class DamageCalculator {
 		return this.damageRoll.locationId === DefaultHitLocations.LargeArea
 	}
 
-	overrideHardenedDR(level: number | undefined) {
+	set overrideHardenedDR(level: number | undefined) {
 		this.overrides.hardenedDR = level
 	}
 

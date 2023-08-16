@@ -71,6 +71,8 @@
 			// padding: 1px 3px;
 			padding-left: 3px;
 			display: inline-block;
+			border-radius: 3px 0 0 3px;
+			background-color: rgb(var(--color-control));
 		}
 
 		.input-wrapper.multiply:before {
@@ -82,6 +84,7 @@
 			margin: 0;
 			padding: 0;
 			outline: none;
+			border-left: 1px solid lightgrey;
 		}
 
 		.header {

@@ -234,15 +234,15 @@
 			<div class="table">
 				<div class="header">Calculation</div>
 
-				{{#each calculator.description}}
-					<div class="step">{{step}}</div>
-					<div class="value">{{value}}</div>
+				{{#each calculator.results.steps}}
+					<div class="step">{{name}}</div>
+					<div class="value">{{text}}</div>
 					<div class="descr">{{notes}}</div>
 				{{/each}}
 			</div>
 			<div class="apply">
 				<div class="label">{{localize "gurps.damage.injury"}}&nbsp;({{localize "gurps.static.hp"}})</div>
-				<input type="number" value="{{calculator.injury}}" step="any" name="injury" size="4" />
+				<input type="number" value="{{calculator.results.injury.value}}" step="any" name="injury" size="4" />
 				<button type="button" class="apply-button gcs-checkmark">{{localize "gurps.misc.apply"}}</button>
 			</div>
 		</div>
