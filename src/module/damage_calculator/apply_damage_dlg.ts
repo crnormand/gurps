@@ -160,6 +160,10 @@ class ApplyDamageDialog extends Application {
 				this.calculator.target.incrementDamage(this.calculator.results.rawDamage!.value)
 				break
 
+			case "apply-injury":
+				this.calculator.target.incrementDamage(this.calculator.results.injury!.value)
+				break
+
 			case "reset-form":
 				this.calculator.resetOverrides()
 				break
