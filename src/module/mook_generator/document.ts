@@ -1,5 +1,7 @@
 import { Attribute, AttributeDefObj, AttributeObj, AttributeType } from "@module/attribute"
 import { DamageProgression, gid, SETTINGS, SYSTEM_NAME } from "@module/data"
+import { DiceGURPS } from "@module/dice"
+import { damageProgression } from "@util"
 import { MookEquipment, MookMelee, MookNote, MookProfile, MookRanged, MookSkill, MookSpell, MookTrait } from "./data"
 class Mook {
 	protected variableResolverExclusions: Map<string, boolean> = new Map()
@@ -38,6 +40,12 @@ class Mook {
 			weight: "",
 			SM: 0,
 			portrait: foundry.CONST.DEFAULT_TOKEN,
+		}
+		if (this.attributes.has(gid.Strength)) {
+			this.thrust =
+				damageProgression.thrustFor(this.settings.damage_progression, this.attributes.get("st")!.max)
+			this.swing =
+				damageProgression.swingFor(this.settings.damage_progression, this.attributes.get("st")!.max)
 		}
 	}
 
@@ -173,6 +181,8 @@ interface Mook {
 	other_equipment: MookEquipment[]
 	notes: MookNote[]
 	profile: MookProfile
+	thrust: DiceGURPS
+	swing: DiceGURPS
 }
 
 export { Mook }

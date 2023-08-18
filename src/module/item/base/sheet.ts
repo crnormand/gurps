@@ -4,7 +4,7 @@ import { FeatureType } from "@feature"
 import { AttributeDefObj } from "@module/attribute"
 import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
-import { LocalizeGURPS, prepareFormData } from "@util"
+import { activateTextareaListeners, LocalizeGURPS, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
 export class ItemSheetGURPS extends ItemSheet {
@@ -78,6 +78,7 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		activateTextareaListeners(html)
 
 		html.find(".ref").on("click", event => PDF.handle(event))
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
@@ -91,17 +92,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".default .remove").on("click", event => this._removeDefault(event))
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
-		html.find("textarea")
-			.each(function () {
-				const height = this.scrollHeight - 2
-				this.setAttribute("style", `height:${height}px;`)
-			})
-			.on("input", function () {
-				const height = this.scrollHeight
-				// Const height = this.value.split("\r").length * 24;
-				this.style.height = "0"
-				this.style.height = `${height}px`
-			})
 	}
 
 	private splitArray(s: string): string[] {

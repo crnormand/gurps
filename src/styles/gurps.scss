@@ -425,7 +425,8 @@
 	textarea {
 		min-height: 24px;
 		padding: 1px 3px;
-		line-height: 24px;
+		/* line-height: 24px; */
+		line-height: 0;
 		resize: none;
 		overflow-y: hidden;
 		&:focus-visible {
@@ -436,7 +437,6 @@
 	input[type="text"],
 	input[type="number"] {
 		font: var(--font-field);
-		height: 24px;
 		width: 100%;
 		min-width: 40px;
 		border-radius: 0px;
@@ -467,6 +467,10 @@
 		&.calc {
 			width: 67px;
 		}
+	}
+	input[type="text"],
+	input[type="number"] {
+		height: 24px;
 	}
 	.checkbox-label {
 		display: grid;

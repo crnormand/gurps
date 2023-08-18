@@ -1,5 +1,5 @@
 import { CharacterImporter } from "./import"
-import { LocalizeGURPS, prepareFormData } from "@util"
+import { activateTextareaListeners, LocalizeGURPS, prepareFormData } from "@util"
 import { SETTINGS, SYSTEM_NAME } from "@module/data"
 import { CharacterSettings } from "./data"
 import { HitLocationTable } from "./hit_location"
@@ -81,6 +81,7 @@ export class CharacterSheetConfig extends FormApplication {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		activateTextareaListeners(html)
 
 		html.find("a.reset-all").on("click", event => this._onReset(event))
 		html.find("input[name$='.id']").on("input", event => {
@@ -138,29 +139,17 @@ export class CharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-							(this.file = {
-								text: text,
-								name: files[0].name,
-								path: files[0].path,
-							})
+						(this.file = {
+							text: text,
+							name: files[0].name,
+							path: files[0].path,
+						})
 					)
 				}
 				this.render()
 			})
 		}
 		html.find(".import-confirm").on("click", event => this._import(event))
-		html.find("textarea")
-			.each(function () {
-				// Const height = this.scrollHeight
-				this.setAttribute("style", "height:	auto;")
-			})
-			.on("input", function () {
-				const height = this.scrollHeight
-				// Const height = this.value.split("\r").length * 24;
-				this.style.height = "0"
-				this.style.height = `${height}px`
-			})
-
 		html.find(".item").on("dragover", event => this._onDragItem(event))
 		html.find(".add").on("click", event => this._onAddItem(event))
 		html.find(".delete").on("click", event => this._onDeleteItem(event))
@@ -433,7 +422,7 @@ export class CharacterSheetConfig extends FormApplication {
 				parent_index: parent_index,
 			})
 		)
-		;(event as any).dragType = type
+			; (event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
@@ -513,7 +502,7 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	close(options?: FormApplication.CloseOptions | undefined): Promise<void> {
-		;(this.object.sheet as unknown as CharacterSheetGURPS).config = null
+		; (this.object.sheet as unknown as CharacterSheetGURPS).config = null
 		return super.close(options)
 	}
 }

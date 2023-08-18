@@ -1178,7 +1178,15 @@
 			},
 			"mook_generator": {
 				"title": "Mook Generator",
-				"name": "Mook"
+				"name": "Mook",
+				"traits": "Traits",
+				"skills": "Skills/Techniques",
+				"spells": "Spells",
+				"melee": "Melee Attacks",
+				"equipment": "Equipment",
+				"ranged": "Ranged Attacks",
+				"notes": "Notes",
+				"catchall": "Input"
 			}
 		},
 		"token_modifier_window": {

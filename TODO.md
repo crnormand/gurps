@@ -32,6 +32,7 @@
 	-	attribute resolution (?)
 	-	dice generation
 	-	mook generator
+-   manual thrust and swing (?)
 
 ## 1.1.0 and beyond
 
