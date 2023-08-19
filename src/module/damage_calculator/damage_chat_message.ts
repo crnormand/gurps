@@ -45,6 +45,8 @@ export class DamageChat {
 		let transfer = JSON.parse(DamageChat.getTransferFlag(app))
 		let payload = transfer.payload as DamagePayload
 
+		payload.damageType = payload.damageType ? payload.damageType : "injury"
+
 		const dragSections = html.find(".dice-result")
 		for (const section of dragSections) {
 			// Section.setAttribute("draggable", "true")
