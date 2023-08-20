@@ -42,10 +42,8 @@ class Mook {
 			portrait: foundry.CONST.DEFAULT_TOKEN,
 		}
 		if (this.attributes.has(gid.Strength)) {
-			this.thrust =
-				damageProgression.thrustFor(this.settings.damage_progression, this.attributes.get("st")!.max)
-			this.swing =
-				damageProgression.swingFor(this.settings.damage_progression, this.attributes.get("st")!.max)
+			this.thrust = damageProgression.thrustFor(this.settings.damage_progression, this.attributes.get("st")!.max)
+			this.swing = damageProgression.swingFor(this.settings.damage_progression, this.attributes.get("st")!.max)
 		}
 	}
 

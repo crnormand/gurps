@@ -11,6 +11,7 @@ export interface ItemGCSSystemData extends BaseContainerSystemData {
 	id: string
 	name: string
 	reference: string
+	reference_highlight: string
 	notes: string
 	vtt_notes: string
 	tags: Array<string>

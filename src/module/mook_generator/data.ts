@@ -15,6 +15,7 @@ interface _MookItem {
 	name: string
 	notes: string
 	reference: string
+	reference_highlight: string
 }
 
 export interface MookTrait extends _MookItem {
@@ -61,6 +62,7 @@ export interface MookRanged extends MookWeapon {
 	bulk: string
 	recoil: string
 	reference: string
+	reference_highlight: string
 }
 
 export interface MookEquipment extends _MookItem {

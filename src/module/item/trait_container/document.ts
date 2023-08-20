@@ -3,7 +3,7 @@ import { TraitGURPS } from "@item/trait"
 import { TraitModifierGURPS } from "@item/trait_modifier"
 import { TraitModifierContainerGURPS } from "@item/trait_modifier_container"
 import { CR, CRAdjustment } from "@module/data"
-import { SelfControl } from "@util"
+import { LocalizeGURPS, SelfControl } from "@util"
 import { TraitContainerData, TraitContainerType } from "./data"
 
 class TraitContainerGURPS extends ItemGCS {
@@ -41,7 +41,7 @@ class TraitContainerGURPS extends ItemGCS {
 		return this.cr
 	}
 
-	get cr(): number {
+	get cr(): this["system"]["cr"] {
 		return this.system.cr
 	}
 
@@ -51,8 +51,8 @@ class TraitContainerGURPS extends ItemGCS {
 
 	get formattedCR(): string {
 		let cr = ""
-		if (this.cr !== CR.None) cr += game.i18n.localize(`gurps.select.cr_level.${this.cr}`)
-		if (this.crAdj !== "none")
+		if (this.cr !== CR.None) cr += LocalizeGURPS.translations.gurps.select.cr_level[`${this.cr}`]
+		if (this.crAdj !== CRAdjustment.None)
 			cr += `, ${game.i18n.format(`gurps.select.cr_adj.${this.crAdj}`, {
 				penalty: SelfControl.adjustment(this.cr, this.crAdj),
 			})}`
@@ -66,9 +66,9 @@ class TraitContainerGURPS extends ItemGCS {
 	get modifierNotes(): string {
 		let n = ""
 		if (this.cr !== CR.None) {
-			n += game.i18n.localize(`gurps.select.cr_level.${this.cr}`)
-			if (this.crAdj !== "none") {
-				n += `, ${game.i18n.format(`gurps.item.cr_adj_display.${this.crAdj}`, {
+			n += LocalizeGURPS.translations.gurps.select.cr_level[`${this.cr}`]
+			if (this.crAdj !== CRAdjustment.None) {
+				n += `, ${LocalizeGURPS.format(LocalizeGURPS.translations.gurps.character.cr_adj_display[this.crAdj], {
 					penalty: "TODO",
 				})}`
 			}
@@ -114,7 +114,7 @@ class TraitContainerGURPS extends ItemGCS {
 	get adjustedPoints(): number {
 		if (!this.enabled) return 0
 		let points = 0
-		if (this.containerType === "alternative_abilities") {
+		if (this.containerType === TraitContainerType.AlternativeAbilities) {
 			let values: number[] = []
 			for (const child of this.children) {
 				values.push(child.adjustedPoints)
@@ -138,7 +138,7 @@ class TraitContainerGURPS extends ItemGCS {
 	calculatePoints(): [number, number, number, number] {
 		let [ad, disad, race, quirk] = [0, 0, 0, 0]
 		switch (this.containerType) {
-			case "group":
+			case TraitContainerType.Group:
 				for (const child of this.children) {
 					const [a, d, r, q] = child.calculatePoints()
 					ad += a
@@ -147,7 +147,7 @@ class TraitContainerGURPS extends ItemGCS {
 					quirk += q
 				}
 				return [ad, disad, race, quirk]
-			case "race": {
+			case TraitContainerType.Ancestry: {
 				return [0, 0, this.adjustedPoints, 0]
 			}
 		}

@@ -270,6 +270,7 @@
 			"common": {
 				"id": "",
 				"reference": "",
+				"reference_highlight": "",
 				"notes": "",
 				"tags": []
 			},

@@ -47,6 +47,7 @@ export class CompendiumEquipmentTab extends CompendiumTab {
 					adjustedWeightFast: equipment.adjustedWeightFast,
 					tags: equipment.tags,
 					reference: equipment.reference,
+					reference_highlight: equipment.reference_highlight,
 					parents: equipment.parents,
 					indent: equipment.indent,
 					modifiers: equipment.modifiers,

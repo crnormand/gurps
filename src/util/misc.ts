@@ -496,9 +496,9 @@ export async function getDefaultSkills() {
 	for (const s in skillPacks)
 		if (skillPacks[s].skillDefault) {
 			const pack = game.packs.get(s) as CompendiumCollection<any>
-				; (await pack.getDocuments()).forEach(e => {
-					skills.push(e)
-				})
+			;(await pack.getDocuments()).forEach(e => {
+				skills.push(e)
+			})
 		}
 	CONFIG.GURPS.skillDefaults = skills
 }
@@ -523,14 +523,14 @@ export function inlineNote(
 }
 
 export function activateTextareaListeners(html: JQuery<HTMLElement>): void {
-	html.find("textarea").each(function() {
-		this.setAttribute(
-			"style", `height:${this.scrollHeight + 2}px;overflow-y:hidden;`
-		)
-	}).on("input", event => {
-		const e = event.currentTarget
-		e.style.height = "0px"
-		e.style.height = `${e.scrollHeight + 2}px`
-		console.log(e.style.height)
-	})
+	html.find("textarea")
+		.each(function () {
+			this.setAttribute("style", `height:${this.scrollHeight + 2}px;overflow-y:hidden;`)
+		})
+		.on("input", event => {
+			const e = event.currentTarget
+			e.style.height = "0px"
+			e.style.height = `${e.scrollHeight + 2}px`
+			console.log(e.style.height)
+		})
 }

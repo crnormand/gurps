@@ -71,6 +71,7 @@ import {
 	TraitContainerData,
 	TraitContainerGURPS,
 	TraitContainerSystemData,
+	TraitContainerType,
 	TraitData,
 	TraitGURPS,
 	TraitModifierContainerData,
@@ -367,10 +368,10 @@ const GURPSCONFIG: CONFIG["GURPS"] = {
 			sw_leveled: "gurps.select.damage_st.sw_leveled",
 		},
 		container_type: {
-			group: "gurps.select.container_type.group",
-			meta_trait: "gurps.select.container_type.meta_trait",
-			race: "gurps.select.container_type.race",
-			alternative_abilities: "gurps.select.container_type.alternative_abilities",
+			[TraitContainerType.Group]: "gurps.select.container_type.group",
+			[TraitContainerType.MetaTrait]: "gurps.select.container_type.meta_trait",
+			[TraitContainerType.Ancestry]: "gurps.select.container_type.ancestry",
+			[TraitContainerType.AlternativeAbilities]: "gurps.select.container_type.alternative_abilities",
 		},
 		difficulty: {
 			e: "gurps.select.difficulty.easy",

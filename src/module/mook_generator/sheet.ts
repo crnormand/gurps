@@ -13,7 +13,7 @@ class MookGeneratorSheet extends FormApplication {
 	constructor(options?: Partial<ApplicationOptions>) {
 		super(options)
 		this.object = new Mook()
-			; (game as any).mook = this.object
+		;(game as any).mook = this.object
 	}
 
 	static get defaultOptions(): FormApplicationOptions {
