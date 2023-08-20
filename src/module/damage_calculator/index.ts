@@ -174,6 +174,7 @@ class DamageRollAdapter implements DamageRoll {
  */
 
 export type HitPointsCalc = { value: number; current: number }
+export type Vulnerability = { name: string; value: number; apply: boolean }
 
 export interface DamageTarget {
 	name: string
@@ -195,8 +196,10 @@ export interface DamageTarget {
 	isHomogenous: boolean
 	// This.hasTrait("Injury Tolerance (Diffuse)").
 	isDiffuse: boolean
-	// Return this.hasTrait("Vulnerability").level.
-	vulnerabilityLevel: number
+	// Return a list of Vulnerabilities
+	vulnerabilities: Array<Vulnerability>
+	// Return sum of applicable vulnerabilities.
+	vulnerabilityLevel: number | undefined
 	// Subtract value from HitPoints
 	incrementDamage(delta: number): void
 }

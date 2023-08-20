@@ -5,6 +5,7 @@ import { DamageTypes, AnyPiercingType } from "@module/damage_calculator/damage_t
 import { InjuryEffectType } from "@module/damage_calculator/injury_effect"
 import { RollType } from "@module/data"
 import { DiceGURPS } from "@module/dice"
+import { Vulnerability } from "../../src/module/damage_calculator/index"
 import {
 	DamageHitLocation,
 	DamageShock,
@@ -1968,11 +1969,11 @@ describe("Damage calculator", () => {
 			_roll.damageType = DamageTypes.cr
 			_torso._map.set("all", 5)
 
-			_target.vulnerabilityLevel = 3
+			_target.vulnerabilities = [<Vulnerability>{ name: "Wounding", value: 3, apply: true }]
 			let calc = _create(_roll, _target)
 			expect(calc.results.injury!.value).toBe(15)
 
-			_target.vulnerabilityLevel = 2
+			_target.vulnerabilities = [<Vulnerability>{ name: "Wounding", value: 2, apply: true }]
 			expect(calc.results.injury!.value).toBe(10)
 		})
 	})

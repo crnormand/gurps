@@ -30,6 +30,7 @@ import {
 	HitPointsCalc,
 	TargetTrait,
 	TargetTraitModifier,
+	Vulnerability,
 } from "@module/damage_calculator"
 import { ApplyDamageDialog } from "@module/damage_calculator/apply_damage_dlg"
 import { DamagePayload } from "@module/damage_calculator/damage_chat_message"
@@ -404,6 +405,8 @@ class DamageTargetActor implements DamageTarget {
 	}
 
 	/**
+	 * @returns the FIRST trait we find with the given name.
+	 *
 	 * This is where we would add special handling to look for traits under different names.
 	 *  Actor
 	 *  .traits.contents.find(it => it.name === 'Damage Resistance')
@@ -419,6 +422,11 @@ class DamageTargetActor implements DamageTarget {
 		return undefined
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @returns all traits with the given name.
+	 */
 	getTraits(name: string): TargetTrait[] {
 		if (this.actor instanceof BaseActorGURPS) {
 			let traits = this.actor.traits.contents.filter(it => it instanceof TraitGURPS)
@@ -453,12 +461,31 @@ class DamageTargetActor implements DamageTarget {
 		return !!trait?.getModifier("Diffuse")
 	}
 
-	get vulnerabilityLevel(): number {
-		let trait = this.getTrait("Vulnerability")
+	private _vulnerabilityLevel(trait: TargetTrait): number {
 		if (trait?.getModifier("Wounding x2")) return 2
 		if (trait?.getModifier("Wounding x3")) return 3
 		if (trait?.getModifier("Wounding x4")) return 4
 		return 1
+	}
+
+	get vulnerabilities(): Vulnerability[] {
+		// Find all traits with name "Vulnerability".
+		// Convert to a Vulnerability object.
+		return this.getTraits("Vulnerability").map(
+			it =>
+				<Vulnerability>{
+					name: it.name,
+					value: this._vulnerabilityLevel(it),
+					apply: false,
+				}
+		)
+	}
+
+	get vulnerabilityLevel(): number {
+		return Math.max(
+			1,
+			this.vulnerabilities.filter(it => it.apply).reduce((acc, cur) => acc + cur.value, 0)
+		)
 	}
 }
 

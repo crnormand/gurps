@@ -1,5 +1,12 @@
 import { HitLocation, HitLocationTable } from "@actor/character/hit_location"
-import { DamageAttacker, DamageRoll, DamageTarget, TargetTrait, TargetTraitModifier } from "@module/damage_calculator"
+import {
+	DamageAttacker,
+	DamageRoll,
+	DamageTarget,
+	TargetTrait,
+	TargetTraitModifier,
+	Vulnerability,
+} from "@module/damage_calculator"
 import { DamageCalculator, DamageResults } from "@module/damage_calculator/damage_calculator"
 import { DamageTypes } from "@module/damage_calculator/damage_type"
 // import { InjuryEffect } from "@module/damage_calculator/injury_effect"
@@ -11,6 +18,15 @@ export class _Attacker implements DamageAttacker {
 }
 
 export class _Target implements DamageTarget {
+	vulnerabilities: Vulnerability[] = []
+
+	get vulnerabilityLevel(): number {
+		return Math.max(
+			1,
+			this.vulnerabilities.filter(it => it.apply).reduce((acc, cur) => acc + cur.value, 0)
+		)
+	}
+
 	getTraits(name: string): TargetTrait[] {
 		return this._traits.filter(it => it.name === name)
 	}
@@ -22,8 +38,6 @@ export class _Target implements DamageTarget {
 	isHomogenous = false
 
 	isUnliving = false
-
-	vulnerabilityLevel = 1
 
 	ST = 12
 
