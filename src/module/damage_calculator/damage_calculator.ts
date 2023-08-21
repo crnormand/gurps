@@ -875,6 +875,10 @@ class DamageCalculator {
 		return this.overrides.vulnerability ?? this.target.vulnerabilityLevel ?? 1
 	}
 
+	get overrideVulnerability(): number | undefined {
+		return this.overrides.vulnerability
+	}
+
 	private get _isCollateralDamage(): boolean {
 		return this.isExplosion && this._isAtRange
 	}

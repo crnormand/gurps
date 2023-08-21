@@ -474,7 +474,7 @@ class DamageTargetActor implements DamageTarget {
 		return this.getTraits("Vulnerability").map(
 			it =>
 				<Vulnerability>{
-					name: it.name,
+					name: it.modifiers.map(it => it.name).join("; "),
 					value: this._vulnerabilityLevel(it),
 					apply: false,
 				}

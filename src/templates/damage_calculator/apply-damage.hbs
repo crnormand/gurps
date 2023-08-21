@@ -187,24 +187,47 @@
 
 			<div class="label">Vulnerability</div>
 			<div id="vulnerability" class="field no-stretch">
-				{{#if vulnerabilities}}
-					<div style="display: flex; flex-flow: column nowrap;">
-						{{#each vulnerabilities}}
-							<label for="vulnerability-{{@index}}" class="checkbox-label">
-								<input id="vulnerability-{{@index}}" type="checkbox" />{{this}}</label>
-						{{/each}}
+				<div style="display: flex; flex-flow: column nowrap;">
+					{{#each calculator.target.vulnerabilities}}
+						<label for="vulnerability-{{@index}}" class="checkbox-label">
+							<input
+								id="vulnerability-{{@index}}"
+								type="checkbox"
+								data-action="apply-vulnerabilty"
+								{{checked apply}}
+							/>{{name}}</label>
+					{{/each}}
+					<div>
+						<label for="vulnerability-override" class="checkbox-label">
+							<input
+								id="vulnerability-override"
+								type="checkbox"
+								data-action="apply-vulnerabilty"
+								{{checked apply}}
+							/>Override</label>
+						<span class="label">Wounding</span>
+						<span class="input-wrapper multiply">
+							<input
+								type="number"
+								data-action="override-vulnerability"
+								value="{{calculator.vulnerabilityLevel}}"
+								class="{{overridden calculator.overrideVulnerability}}"
+								step="any"
+								size="3"
+							/></span>
 					</div>
-				{{/if}}
-
-				<select name="vulnerable-override">
-					{{selectOptions choices.vulnerability}}
-				</select>
+				</div>
 			</div>
 			{{#if (eq books "dfrpg")}}
 				<div class="label ref" data-pdf="DFX14">DFM14</div>
 			{{else}}
 				<div class="label ref" data-pdf="B161">B161</div>
 			{{/if}}
+
+			<div class="label"></div>
+			<div class="field no-stretch type">
+			</div>
+			<div class="label ref"></div>
 
 			<div class="label">Injury Tolerance</div>
 			<div class="field">

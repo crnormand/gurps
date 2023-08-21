@@ -34,7 +34,7 @@
 			}
 
 			&.no-stretch {
-				.checkbox-label + .checkbox-label {
+				.checkbox-label+.checkbox-label {
 					margin: 0;
 				}
 			}
@@ -56,6 +56,7 @@
 		input[name="rofMultiplier"],
 		input[name="range"],
 		input[data-action="override-woundingmod"],
+		input[data-action="override-vulnerability"],
 		input[name="injury"],
 		input[data-action="override-dr"],
 		input[data-action="override-reduction"] {
@@ -79,7 +80,7 @@
 			content: "×";
 		}
 
-		.input-wrapper > input {
+		.input-wrapper>input {
 			border: 0;
 			margin: 0;
 			padding: 0;
@@ -167,14 +168,14 @@
 				display: grid;
 				grid-template-columns: max-content min-content 1fr;
 
-				> div:not(.header) {
+				>div:not(.header) {
 					background-color: rgb(var(--color-content));
 					color: rgb(var(--color-on-content));
 					border-right: 1px solid rgb(var(--color-interior-divider));
 					border-bottom: 1px solid rgb(var(--color-interior-divider));
 				}
 
-				> div {
+				>div {
 					padding: var(--padding-standard);
 				}
 
