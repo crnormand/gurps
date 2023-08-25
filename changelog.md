@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.5 TBD
+
+- Fixed characters with SM +0 not importing in Foundry 11.308
+
 Release 0.16.4  07/10/2023
 
 - Provide warning if no skill applicable
