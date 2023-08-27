@@ -903,6 +903,10 @@ class DamageCalculator {
 		return this.overrides.vulnerability
 	}
 
+	set overrideVulnerability(value: number | undefined) {
+		this.overrides.vulnerability = value
+	}
+
 	applyVulnerability(index: number, checked: any) {
 		this.vulnerabilities[index].apply = checked
 	}

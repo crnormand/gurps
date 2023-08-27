@@ -103,14 +103,16 @@ class ApplyDamageDialog extends Application {
 		event.preventDefault()
 
 		switch (target.dataset.action) {
-			case "location-select":
+			case "location-select": {
 				const value = parseInt(target.value)
 				this.calculator.damageRoll.locationId = target.value
 				break
+			}
 
-			case "hardened-select":
+			case "hardened-select": {
 				this.calculator.overrideHardenedDR = target.value
 				break
+			}
 
 			case "override-dr": {
 				const value = parseInt(target.value)
@@ -130,13 +132,20 @@ class ApplyDamageDialog extends Application {
 				break
 			}
 
-			case "damagetype-select":
+			case "damagetype-select": {
 				this.calculator.overrideDamageType = target.value
 				break
+			}
 
 			case "override-woundingmod": {
 				const value = parseFloat(target.value)
 				this.calculator.overrideWoundingModifier = isNaN(value) ? undefined : value
+				break
+			}
+
+			case "override-vulnerability": {
+				const value = parseInt(target.value)
+				this.calculator.overrideVulnerability = isNaN(value) ? undefined : value
 				break
 			}
 		}
