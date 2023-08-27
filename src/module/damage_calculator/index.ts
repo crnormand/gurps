@@ -196,10 +196,6 @@ export interface DamageTarget {
 	isHomogenous: boolean
 	// This.hasTrait("Injury Tolerance (Diffuse)").
 	isDiffuse: boolean
-	// Return a list of Vulnerabilities
-	vulnerabilities: Array<Vulnerability>
-	// Return sum of applicable vulnerabilities.
-	vulnerabilityLevel: number | undefined
 	// Subtract value from HitPoints
 	incrementDamage(delta: number): void
 }

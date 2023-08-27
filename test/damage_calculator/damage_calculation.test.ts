@@ -1969,11 +1969,11 @@ describe("Damage calculator", () => {
 			_roll.damageType = DamageTypes.cr
 			_torso._map.set("all", 5)
 
-			_target.vulnerabilities = [<Vulnerability>{ name: "Wounding", value: 3, apply: true }]
 			let calc = _create(_roll, _target)
+			calc.vulnerabilities = [<Vulnerability>{ name: "Wounding", value: 3, apply: true }]
 			expect(calc.results.injury!.value).toBe(15)
 
-			_target.vulnerabilities = [<Vulnerability>{ name: "Wounding", value: 2, apply: true }]
+			calc.vulnerabilities = [<Vulnerability>{ name: "Wounding", value: 2, apply: true }]
 			expect(calc.results.injury!.value).toBe(10)
 		})
 	})

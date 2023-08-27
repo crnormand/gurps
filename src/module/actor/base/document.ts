@@ -460,33 +460,6 @@ class DamageTargetActor implements DamageTarget {
 		let trait = this.getTrait("Injury Tolerance")
 		return !!trait?.getModifier("Diffuse")
 	}
-
-	private _vulnerabilityLevel(trait: TargetTrait): number {
-		if (trait?.getModifier("Wounding x2")) return 2
-		if (trait?.getModifier("Wounding x3")) return 3
-		if (trait?.getModifier("Wounding x4")) return 4
-		return 1
-	}
-
-	get vulnerabilities(): Vulnerability[] {
-		// Find all traits with name "Vulnerability".
-		// Convert to a Vulnerability object.
-		return this.getTraits("Vulnerability").map(
-			it =>
-				<Vulnerability>{
-					name: it.modifiers.map(it => it.name).join("; "),
-					value: this._vulnerabilityLevel(it),
-					apply: false,
-				}
-		)
-	}
-
-	get vulnerabilityLevel(): number {
-		return Math.max(
-			1,
-			this.vulnerabilities.filter(it => it.apply).reduce((acc, cur) => acc + cur.value, 0)
-		)
-	}
 }
 
 /**

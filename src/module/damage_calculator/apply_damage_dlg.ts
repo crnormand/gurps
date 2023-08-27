@@ -75,7 +75,7 @@ class ApplyDamageDialog extends Application {
 		return data
 	}
 
-	activateListeners(html: JQuery<HTMLElement>): void {
+	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
 		html.find("[data-control]").on("change click", event => this._onApplyControl(event))
@@ -166,6 +166,11 @@ class ApplyDamageDialog extends Application {
 
 			case "reset-form":
 				this.calculator.resetOverrides()
+				break
+
+			case "apply-vulnerability":
+				const index = parseInt(target.dataset.index)
+				this.calculator.applyVulnerability(index, target.checked)
 				break
 		}
 

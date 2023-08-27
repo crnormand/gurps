@@ -18,15 +18,6 @@ export class _Attacker implements DamageAttacker {
 }
 
 export class _Target implements DamageTarget {
-	vulnerabilities: Vulnerability[] = []
-
-	get vulnerabilityLevel(): number {
-		return Math.max(
-			1,
-			this.vulnerabilities.filter(it => it.apply).reduce((acc, cur) => acc + cur.value, 0)
-		)
-	}
-
 	getTraits(name: string): TargetTrait[] {
 		return this._traits.filter(it => it.name === name)
 	}
@@ -114,6 +105,7 @@ export type DamageShock = { damage: number; shock: number }
 interface IDamageCalculator {
 	results: DamageResults
 	overrideFlexible(arg: boolean | undefined): void
+	vulnerabilities: Vulnerability[]
 }
 
 export const _create = function (roll: DamageRoll, target: DamageTarget): IDamageCalculator {
