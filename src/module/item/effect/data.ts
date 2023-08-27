@@ -42,6 +42,7 @@ export interface EffectSystemData {
 		combat?: string | null
 	}
 	reference: string
+	reference_highlight: string
 }
 
 export interface EffectModificationOptions extends DocumentModificationOptions {

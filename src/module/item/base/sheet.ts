@@ -78,6 +78,16 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		html.find("textarea")
+			.each(function() {
+				this.setAttribute("style", `height:${this.scrollHeight + 2}px;overflow-y:hidden;`)
+			})
+			.on("input", event => {
+				const e = event.currentTarget
+				e.style.height = "0px"
+				e.style.height = `${e.scrollHeight + 2}px`
+				console.log(e.style.height)
+			})
 
 		html.find(".ref").on("click", event => PDF.handle(event))
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
@@ -91,17 +101,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".default .remove").on("click", event => this._removeDefault(event))
 		html.find("#study .add").on("click", event => this._addStudy(event))
 		html.find(".study-entry .remove").on("click", event => this._removeStudy(event))
-		html.find("textarea")
-			.each(function () {
-				const height = this.scrollHeight - 2
-				this.setAttribute("style", `height:${height}px;`)
-			})
-			.on("input", function () {
-				const height = this.scrollHeight
-				// Const height = this.value.split("\r").length * 24;
-				this.style.height = "0"
-				this.style.height = `${height}px`
-			})
 	}
 
 	private splitArray(s: string): string[] {

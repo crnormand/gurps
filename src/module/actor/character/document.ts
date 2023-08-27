@@ -24,6 +24,7 @@ import {
 import { CondMod } from "@module/conditional_modifier"
 import {
 	attrPrefix,
+	CRAdjustment,
 	EFFECT_ACTION,
 	gid,
 	ItemType,
@@ -875,7 +876,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			for (const mod of t.deepModifiers) {
 				this.reactionsFromFeatureList(source, mod.features, reactionMap)
 			}
-			if (t.cr !== -1 && t.crAdj === "reaction_penalty") {
+			if (t.cr !== 0 && t.crAdj === CRAdjustment.ReactionPenalty) {
 				let amount = SelfControl.adjustment(t.cr, t.crAdj)
 				let situation = LocalizeGURPS.format(LocalizeGURPS.translations.gurps.reaction.cr, {
 					trait: t.name ?? "",

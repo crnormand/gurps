@@ -4,7 +4,7 @@
 	{{{indent this.parents.length}}}
 >
 	<div class="dropdown">
-		{{#if (or (eq this.type "trait_container") this.children.size)}}
+		{{#if (or this.isContainer this.children.size)}}
 		{{#if this.open}}
 		{{>actor/character/sections/dropdown-open}}
 		{{else}}
@@ -13,7 +13,9 @@
 		{{/if}}
 	</div>
 	<div class="name">
-		{{this.formattedName}}
+		<div class="name2">{{this.formattedName}}</div>
+		<div class="container-type">
+{{#if (and this.isContainer (ne this.system.container_type "group"))}}{{localize (concat "gurps.select.container_type." this.system.container_type)}}{{/if}}</div>
 	</div>
 	{{{this.notes}}}
 </div>

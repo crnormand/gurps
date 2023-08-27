@@ -139,7 +139,8 @@ function open(pdfs: string) {
 		let journalPage
 		if (pdfPages.length) journalPage = pdfPages.find((e: any) => e.type === "pdf" && e.system.code === book)
 		if (journalPage) {
-			const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
+			console.log(journalPage, page)
+			const viewer = new PDFViewerSheet(journalPage, { pageNumber: page, highlight: "Language" })
 			viewer.render(true)
 		} else {
 			window.open(url, "_blank")

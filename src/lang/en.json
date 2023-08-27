@@ -498,7 +498,7 @@
 				"title": "Points",
 				"unspent": "Unspent",
 				"overspent": "Overspent",
-				"race": "Race",
+				"ancestry": "Ancestry",
 				"attributes": "Attributes",
 				"advantages": "Advantages",
 				"disadvantages": "Disadvantages",
@@ -627,6 +627,7 @@
 			"cr": "Self-Control Roll",
 			"cr_adj": "CR Adjustment",
 			"reference": "Page Reference",
+			"reference_highlight": "Page Highlight",
 			"modifier_desc": "Trait Modifier",
 			"eqp_modifier_desc": "Equipment Modifier",
 			"modifier_point_cost": "Cost Modifier",
@@ -927,7 +928,7 @@
 			"container_type": {
 				"group": "Group",
 				"meta_trait": "Meta-Trait",
-				"race": "Race",
+				"ancestry": "Ancestry",
 				"alternative_abilities": "Alternative Abilities"
 			},
 			"trait_mod_cost_type": {
@@ -1178,7 +1179,15 @@
 			},
 			"mook_generator": {
 				"title": "Mook Generator",
-				"name": "Mook"
+				"name": "Mook",
+				"traits": "Traits",
+				"skills": "Skills/Techniques",
+				"spells": "Spells",
+				"melee": "Melee Attacks",
+				"equipment": "Equipment",
+				"ranged": "Ranged Attacks",
+				"notes": "Notes",
+				"catchall": "Input"
 			}
 		},
 		"token_modifier_window": {

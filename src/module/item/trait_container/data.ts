@@ -12,8 +12,13 @@ export interface TraitContainerData extends Omit<TraitContainerSource, "effects"
 export interface TraitContainerSystemData extends ItemGCSSystemData {
 	disabled: boolean
 	container_type: TraitContainerType
-	cr: number
+	cr: 0 | 6 | 9 | 12 | 15
 	cr_adj: CRAdjustment
 }
 
-export type TraitContainerType = "group" | "meta_trait" | "race" | "alternative_abilities"
+export enum TraitContainerType {
+	Group = "group",
+	MetaTrait = "meta_trait",
+	Ancestry = "ancestry",
+	AlternativeAbilities = "alternative_abilities",
+}

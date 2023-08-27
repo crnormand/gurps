@@ -45,6 +45,7 @@ export class CompendiumTraitTab extends CompendiumTab {
 					adjustedPoints: trait.adjustedPoints,
 					tags: trait.tags,
 					reference: trait.reference,
+					reference_highlight: trait.reference_highlight,
 					enabled: true,
 					parents: trait.parents,
 					indent: trait.indent,

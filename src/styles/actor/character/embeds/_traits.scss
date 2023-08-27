@@ -29,6 +29,21 @@
 		}
 	}
 
+	.name {
+		display: flex;
+		gap: 5px;
+	}
+	.container-type {
+		background-color: rgb(var(--color-on-content));
+		color: rgb(var(--color-content));
+		height: min-content;
+		padding: 0px 5px;
+		border-radius: 5px;
+		margin-top: 2px;
+		font-size: 80%;
+		white-space: nowrap;
+	}
+
 	.disabled {
 		.name {
 			text-decoration: line-through;

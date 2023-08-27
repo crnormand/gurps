@@ -108,7 +108,7 @@ if (!(globalThis as any).GURPS) {
 	// GURPS.eval = evaluateToNumber
 	// GURPS.search = fSearch
 	// GURPS.dice = DiceGURPS
-	// GURPS.pdf = PDF.PDFViewerSheet
+	GURPS.pdf = PDF.PDFViewerSheet
 	// GURPS.TokenModifierControl = new TokenModifierControl()
 	// GURPS.recurseList = Static.recurseList
 	// GURPS.setLastActor = LastActor.set

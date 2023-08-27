@@ -1,6 +1,7 @@
 import { CharacterSheetConfig } from "@actor/character/config_sheet"
 import { Attribute, AttributeObj, AttributeType } from "@module/attribute"
 import { SYSTEM_NAME } from "@module/data"
+import { DiceGURPS } from "@module/dice"
 import { LocalizeGURPS } from "@util"
 import { Mook } from "./document"
 
@@ -12,16 +13,16 @@ class MookGeneratorSheet extends FormApplication {
 	constructor(options?: Partial<ApplicationOptions>) {
 		super(options)
 		this.object = new Mook()
-		;(game as any).mook = this.object
+			; (game as any).mook = this.object
 	}
 
 	static get defaultOptions(): FormApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			popOut: true,
 			minimizable: true,
-			resizable: true,
+			resizable: false,
 			width: 800,
-			height: 800,
+			height: 960,
 			template: `systems/${SYSTEM_NAME}/templates/mook-generator/sheet.hbs`,
 			classes: ["mook-generator", "gurps"],
 			closeOnSubmit: false,
@@ -32,6 +33,10 @@ class MookGeneratorSheet extends FormApplication {
 
 	get title(): string {
 		return LocalizeGURPS.translations.gurps.system.mook_generator.title
+	}
+
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
 	}
 
 	static async init(): Promise<unknown> {
@@ -159,6 +164,8 @@ class MookGeneratorSheet extends FormApplication {
 				formData["system.attributes"] = attributes
 				delete formData[i]
 			}
+			if (i === "thrust") formData.thrust = new DiceGURPS(formData.thrust)
+			if (i === "swing") formData.swing = new DiceGURPS(formData.swing)
 		}
 		console.log("update", formData)
 		return this.object.update(formData)

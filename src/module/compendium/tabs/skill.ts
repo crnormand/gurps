@@ -45,6 +45,7 @@ export class CompendiumSkillTab extends CompendiumTab {
 					children: skill.type === ItemType.SkillContainer ? skill.children : [],
 					tags: skill.tags,
 					reference: skill.reference,
+					reference_highlight: skill.reference_highlight,
 					parents: skill.parents,
 					indent: skill.indent,
 					difficulty: difficulty,
