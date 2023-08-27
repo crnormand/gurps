@@ -124,6 +124,13 @@ class DamageCalculator {
 
 	damageRoll: DamageRoll
 
+	/*
+	 * TODO Sometime in the future, I want to save the overrides and vulnerabilities on the target in a map keyed by
+	 * Attacker and Weapon. Then, whenever we create a DamageCalculator, we can check to see if we have a cached set
+	 * of overrides and vulnerabilities for tthe current Attacker and Weapon, and restore the values from the cache.
+	 * This should make the use of the DamageCalculator much more efficient for the user. The cache would be cleared
+	 * when removing the actor from combat (or ending combat).
+	 */
 	private overrides: Overrides = {
 		rawDR: undefined,
 		flexible: undefined,
