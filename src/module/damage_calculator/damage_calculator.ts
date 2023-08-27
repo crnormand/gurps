@@ -305,18 +305,13 @@ class DamageCalculator {
 	private addWoundingModifierSteps(results: DamageResults): void {
 		const STEP = "Wounding Modifier"
 
-		const modifier = this.woundingModifierAndReason
+		const [value, reason] = this.woundingModifierAndReason
 		results.addResult(
-			new CalculatorStep(
-				"Wounding Modifier",
-				STEP,
-				modifier[0],
-				`×${this.formatFraction(modifier[0])}`,
-				modifier[1]
-			)
+			new CalculatorStep("Wounding Modifier", STEP, value, `×${this.formatFraction(value)}`, reason)
 		)
 
-		results.addResult(this.adjustWoundingModifier(results.woundingModifier!.value))
+		results.addResult(this.adjustWoundingModifierForInjuryTolerance(results.woundingModifier!.value))
+		results.addResult(this.adjustWoundingModifierForVulnerabilities(results.woundingModifier!.value))
 	}
 
 	get woundingModifierAndReason() {
@@ -395,7 +390,7 @@ class DamageCalculator {
 		return this.damageType === DamageTypes.burn && this.damageRoll.damageModifier === "tbb"
 	}
 
-	private adjustWoundingModifier(woundingModifier: number): CalculatorStep | undefined {
+	private adjustWoundingModifierForInjuryTolerance(woundingModifier: number): CalculatorStep | undefined {
 		const mod = this.modifierByInjuryTolerance
 		if (mod && mod[0] !== woundingModifier) {
 			const newValue = mod[0]
@@ -432,6 +427,22 @@ class DamageCalculator {
 		return undefined
 	}
 
+	private adjustWoundingModifierForVulnerabilities(woundingModifier: number): CalculatorStep | undefined {
+		// Adjust for Vulnerability
+		if (this.vulnerabilityLevel !== 1) {
+			let temp = woundingModifier * this.vulnerabilityLevel
+			return new CalculatorStep(
+				"Wounding Modifier",
+				"Effective Modifier",
+				temp,
+				undefined,
+				`= ${woundingModifier} × ${this.vulnerabilityLevel} (Vulnerability)`
+			)
+		}
+
+		return undefined
+	}
+
 	private addInjurySteps(results: DamageResults): void {
 		let value = Math.floor(results.woundingModifier!.value * results.penetratingDamage!.value)
 		if (results.woundingModifier!.value !== 0 && value === 0 && results.penetratingDamage!.value > 0) value = 1
@@ -449,16 +460,16 @@ class DamageCalculator {
 
 	private adjustInjury(results: DamageResults): CalculatorStep | undefined {
 		// Adjust for Vulnerability
-		if (this.vulnerabilityLevel !== 1) {
-			let temp = results.injury!.value * this.vulnerabilityLevel
-			return new CalculatorStep(
-				"Injury",
-				"Adjusted Injury",
-				temp,
-				undefined,
-				`= ${results.injury!.value} × ${this.vulnerabilityLevel} (Vulnerability)`
-			)
-		}
+		// if (this.vulnerabilityLevel !== 1) {
+		// 	let temp = results.injury!.value * this.vulnerabilityLevel
+		// 	return new CalculatorStep(
+		// 		"Injury",
+		// 		"Adjusted Injury",
+		// 		temp,
+		// 		undefined,
+		// 		`= ${results.injury!.value} × ${this.vulnerabilityLevel} (Vulnerability)`
+		// 	)
+		// }
 
 		// Adjust for Damage Reduction.
 		if (this._damageReductionValue !== 1) {
