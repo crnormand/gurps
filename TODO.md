@@ -1,5 +1,8 @@
 # TO DO
 
+## Bugs
+-	Token character skills are not behaving properly
+
 ## In Progress
 
 -	Finish "static" character (0.15 and older) compatibility
@@ -33,6 +36,7 @@
 	-	dice generation
 	-	mook generator
 -   manual thrust and swing (?)
+-	Globally visible modifier for rough terrain, darkness, etc.
 
 ## 1.1.0 and beyond
 

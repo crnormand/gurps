@@ -1,4 +1,17 @@
-#sheet {
+form {
+	&.limited {
+		#personal {
+			grid-template:
+				"portrait identity miscellaneous"
+				"portrait description description";
+			grid-template-rows: 0fr;
+			grid-template-columns: max-content auto;
+		}
+		#stats {
+			grid-template: "hit-locations";
+		}
+	}
+
 	@import "personal", "stats", "embeds";
 
 	div {
