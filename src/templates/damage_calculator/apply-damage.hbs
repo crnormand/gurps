@@ -29,11 +29,11 @@
 				size="4"
 				class="{{overridden calculator.overrideBasicDamage}}"
 			/>
-			<div class="label">
-				<select name="pool">
-					{{selectOptions choices.pool value="hp"}}
-				</select>
-			</div>
+
+			<select name="pool">
+				{{selectOptions choices.pool value="hp"}}
+			</select>
+
 			<button type="button" class="gcs-checkmark" data-action="apply-basic">{{localize
 					"gurps.misc.apply"
 				}}</button>
@@ -160,15 +160,18 @@
 				<button type="button" data-action="location-random">
 					<i class="fa-light fa-dice"></i>
 				</button>
-				<div class="label">{{localize "gurps.character.body_type.dr"}}</div>
-				<input
-					type="number"
-					data-action="override-dr"
-					value="{{calculator.damageResistance}}"
-					step="any"
-					size="6"
-					class="{{overridden calculator.overrideDamageResistance}}"
-				/>
+
+				<label for="override-dr" class="label">{{localize "gurps.character.body_type.dr"}}
+					<input
+						id="override-dr"
+						type="number"
+						data-action="override-dr"
+						value="{{calculator.damageResistance}}"
+						step="any"
+						size="6"
+						class="{{overridden calculator.overrideDamageResistance}}"
+					/>
+				</label>
 			</div>
 			{{#if (eq books "dfrpg")}}
 				<div class="label ref" data-pdf="DFX53">DFX53</div>

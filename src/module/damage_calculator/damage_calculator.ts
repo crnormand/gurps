@@ -894,7 +894,7 @@ class DamageCalculator {
 			this.overrides.vulnerability ??
 			Math.max(
 				1,
-				this.vulnerabilities.filter(it => it.apply).reduce((acc, cur) => acc + cur.value, 0)
+				this.vulnerabilities.filter(it => it.apply).reduce((acc, cur) => acc * cur.value, 1)
 			)
 		)
 	}
