@@ -9,6 +9,10 @@
   --standardborder: 1px solid black;
 }
 
+.reducedMode {
+  --headerfontsize: 110%;
+}
+
 .gurps {
   /* Sheet Tabs */
   /* Items List */
@@ -976,6 +980,13 @@ body {
   grid-gap: var(--sectiongap);
 }
 
+.reducedMode #personal {
+  grid-template:
+    'portrait identity identity points'
+    'portrait description description points';
+  grid-template-columns: 0fr 1fr 1fr 0fr;
+}
+
 #portrait {
   grid-area: portrait;
   display: grid;
@@ -1044,6 +1055,17 @@ body {
   border: var(--standardborder);
 }
 
+.reducedMode .hairEyesSkinHandBlock {
+  display: none;
+}
+
+.reducedMode #description {
+  grid-template:
+    'header header'
+    'block1 block2';
+  grid-template-rows: 0fr 1fr;
+}
+
 #description .header {
   grid-area: header;
 }
@@ -1085,6 +1107,13 @@ body {
   grid-gap: var(--sectiongap);
 }
 
+.reducedMode #stats {
+  display: grid;
+  grid-template:
+    'attributes      hp-fp';
+  grid-template-columns: min-content 1fr;
+}
+
 #qnotes {
   grid-area: qnotes;
   margin: 2px;
@@ -1097,6 +1126,10 @@ body {
   border: var(--standardborder);
 }
 
+.reducedMode #condition {
+  display: none;
+}
+
 .npc-sheet div#condition {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -1106,6 +1139,13 @@ body {
 
 #attributes {
   grid-area: attributes;
+}
+
+.reducedMode #attributes {
+  display: grid;
+  grid-template-rows: 1fr;
+  border: none;
+  grid-auto-flow: column;
 }
 
 #hitpoints {
