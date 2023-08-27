@@ -18,9 +18,14 @@
 			font: var(--font-label);
 			text-align: right;
 			display: inline-flex;
-			flex-flow: column nowrap;
-			justify-content: center;
+			flex-flow: row nowrap;
+			justify-content: right;
+			align-items: center;
 			height: 100%;
+
+			>* {
+				margin-left: 3px;
+			}
 		}
 
 		.field {
@@ -130,20 +135,21 @@
 		#target {
 			padding: 2px 16px;
 
-			.content {
+			.fieldblock {
 				border: 1px solid rgb(var(--color-header));
-				padding: 2px 16px;
-				color: rgba(var(--color-on-content), 1);
 				background-color: rgb(var(--color-content));
-				display: grid;
-				grid-template-columns: max-content 1fr min-content;
-				row-gap: 4px;
-				column-gap: 9px;
-				vertical-align: middle;
-				overflow: hidden;
+			}
 
-				#vulnerability div label {
-					align-self: start;
+			#vulnerability {
+				display: flex;
+				flex-flow: column nowrap;
+				width: max-content;
+
+				div {
+					display: flex;
+					flex-flow: row nowrap;
+					width: 100%;
+					column-gap: 9px;
 				}
 			}
 		}

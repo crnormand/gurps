@@ -72,16 +72,18 @@
 			<select data-action="damagetype-select" class="{{overridden calculator.overrideDamageType}}">
 				{{selectOptions choices.damageType selected=calculator.damageTypeKey localize=true}}
 			</select>
-			<div class="label">{{localize "gurps.damage.wounding_modifier"}}</div>
-			<span class="input-wrapper multiply">
-				<input
-					type="number"
-					data-action="override-woundingmod"
-					value="{{calculator.woundingModifier}}"
-					class="{{overridden calculator.overrideWoundingModifier}}"
-					step="any"
-					size="3"
-				/></span>
+			<label for="override-woundingmod" class="label">{{localize "gurps.damage.wounding_modifier"}}
+				<span class="input-wrapper multiply">
+					<input
+						id="override-woundingmod"
+						type="number"
+						data-action="override-woundingmod"
+						value="{{calculator.woundingModifier}}"
+						class="{{overridden calculator.overrideWoundingModifier}}"
+						step="any"
+						size="3"
+					/></span>
+			</label>
 		</div>
 		{{#if (eq books "dfrpg")}}
 			<div class="label ref" data-pdf="DFX53">DFX53</div>
@@ -124,16 +126,25 @@
 		<div class="label ref" data-pdf="B409">B409</div>
 
 		<div class="label"></div>
+
 		<div class="field no-stretch">
-			<div class="label">RoF Multiplier</div>
-			<input type="number" value="{{calculator.roll.rofMultiplier}}" step="any" name="rofMultiplier" size="3" />
+			<label class="label">RoF Multiplier
+				<input
+					type="number"
+					value="{{calculator.roll.rofMultiplier}}"
+					step="any"
+					name="rofMultiplier"
+					size="3"
+				/>
+			</label>
 		</div>
+
 		<div> </div>
 	</div>
 
 	<div id="target">
 		<div class="header">{{localize "gurps.damage.target"}}</div>
-		<div class="content">
+		<div class="fieldblock">
 
 			<div class="label">{{localize "gurps.character.name"}}</div>
 			<div class="field">
@@ -185,10 +196,18 @@
 			</div>
 			<div class="label ref" data-pdf="B47">B47</div>
 
+			<div class="label">Injury Tolerance</div>
+			<div class="field">
+				<select name="tolerance">
+					{{selectOptions choices.injuryTolerance selected=injuryTolerance}}
+				</select>
+			</div>
+			<div class="label ref" data-pdf="B60">B60</div>
+
 			<div class="label">Vulnerability</div>
-			<div id="vulnerability" class="field no-stretch">
-				<div style="display: flex; flex-flow: column nowrap;">
-					{{#each calculator.vulnerabilities}}
+			<div id="vulnerability" class="field">
+				{{#each calculator.vulnerabilities}}
+					<div>
 						<label for="vulnerability-{{@index}}" class="checkbox-label">
 							<input
 								id="vulnerability-{{@index}}"
@@ -197,18 +216,20 @@
 								data-index="{{@index}}"
 								{{checked apply}}
 							/>{{name}}</label>
-					{{/each}}
-					<div>
-						<label for="vulnerability-override" class="checkbox-label">
-							<input
-								id="vulnerability-override"
-								type="checkbox"
-								data-action="apply-vulnerabilty"
-								{{checked apply}}
-							/>Override</label>
-						<span class="label">Wounding</span>
+					</div>
+				{{/each}}
+				<div>
+					<label for="vulnerability-override" class="checkbox-label">
+						<input
+							id="vulnerability-override"
+							type="checkbox"
+							data-action="apply-vulnerabilty"
+							{{checked apply}}
+						/>Override</label>
+					<label for="override-vulnerability" class="label">Wounding
 						<span class="input-wrapper multiply">
 							<input
+								id="override-vulnerability"
 								type="number"
 								data-action="override-vulnerability"
 								value="{{calculator.vulnerabilityLevel}}"
@@ -216,9 +237,10 @@
 								step="any"
 								size="3"
 							/></span>
-					</div>
+					</label>
 				</div>
 			</div>
+
 			{{#if (eq books "dfrpg")}}
 				<div class="label ref" data-pdf="DFX14">DFM14</div>
 			{{else}}
@@ -229,14 +251,6 @@
 			<div class="field no-stretch type">
 			</div>
 			<div class="label ref"></div>
-
-			<div class="label">Injury Tolerance</div>
-			<div class="field">
-				<select name="tolerance">
-					{{selectOptions choices.injuryTolerance selected=injuryTolerance}}
-				</select>
-			</div>
-			<div class="label ref" data-pdf="B60">B60</div>
 
 			<div class="label">Damage Reduction</div>
 			<div class="field no-stretch">
