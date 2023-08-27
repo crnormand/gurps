@@ -4,7 +4,7 @@ import { FeatureType } from "@feature"
 import { AttributeDefObj } from "@module/attribute"
 import { gid, NumberComparison, PrereqType, SETTINGS, StringComparison, StudyType, SYSTEM_NAME } from "@module/data"
 import { PDF } from "@module/pdf"
-import { activateTextareaListeners, LocalizeGURPS, prepareFormData } from "@util"
+import { LocalizeGURPS, prepareFormData } from "@util"
 import { BaseItemGURPS } from "."
 
 export class ItemSheetGURPS extends ItemSheet {
@@ -78,7 +78,16 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
-		activateTextareaListeners(html)
+		html.find("textarea")
+			.each(function() {
+				this.setAttribute("style", `height:${this.scrollHeight + 2}px;overflow-y:hidden;`)
+			})
+			.on("input", event => {
+				const e = event.currentTarget
+				e.style.height = "0px"
+				e.style.height = `${e.scrollHeight + 2}px`
+				console.log(e.style.height)
+			})
 
 		html.find(".ref").on("click", event => PDF.handle(event))
 		html.find(".prereq .add-child").on("click", event => this._addPrereqChild(event))
