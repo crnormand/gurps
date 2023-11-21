@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.6
+
+- Added Exxar's "On Target" maneuvers as a option.
+
 Release 0.16.5 8/27/23
 
 - Fixed characters with SM +0 not importing in Foundry 11.308
