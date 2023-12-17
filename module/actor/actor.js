@@ -24,6 +24,7 @@ import {
 	MOVE_NONE,
 	MOVE_ONE,
 	MOVE_STEP,
+	MOVE_TWO_STEPS,
 	MOVE_ONETHIRD,
 	MOVE_HALF,
 	MOVE_TWOTHIRDS,
@@ -626,6 +627,9 @@ export class GurpsActor extends Actor {
 
 			case MOVE_STEP:
 				return { move: this._getStep(), text: i18n_f('GURPS.moveStep', { reason: reason }) }
+
+			case MOVE_TWO_STEPS:
+				return { move: this._getStep() * 2, text: i18n_f('GURPS.moveTwoSteps', { reason: reason }) }
 
 			case MOVE_ONETHIRD:
 				return {

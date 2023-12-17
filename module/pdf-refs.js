@@ -48,6 +48,7 @@ export const SJGProductMappings = {
   PU2: 'http://www.warehouse23.com/products/gurps-power-ups-2-perks',
   PU3: 'http://www.warehouse23.com/products/gurps-power-ups-3-talents',
   'PY#': 'http://www.warehouse23.com/products?utf8=%E2%9C%93&keywords=pyramid+magazine&x=0&y=0',
+  PY77: 'https://warehouse23.com/products/pyramid-number-3-77-combat',
   RSWL: 'http://www.warehouse23.com/products/gurps-reign-of-steel-will-to-live',
   SU: 'http://www.warehouse23.com/products/gurps-supers-3',
   TMS: 'http://www.warehouse23.com/products/gurps-thaumatology-magical-styles',

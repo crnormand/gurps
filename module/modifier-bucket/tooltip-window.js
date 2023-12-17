@@ -468,19 +468,31 @@ const ModifierLiterals = {
 	},
 
 	get RangedMods() {
+		const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET);
+
 		return `[+1 ${i18n('GURPS.aim')}]
-    [+1 ${i18n('GURPS.modifierDeterminedAttack')}] [PDF:${i18n('GURPS.pdfDeterminedAttack')}]
+	${useOnTarget ? `[+2 ${i18n('GURPS.modifierAllOutAttackRanged')}] [PDF:${i18n('GURPS.pdfAllOutAttackRanged')}]` : `[+1 ${i18n('GURPS.modifierDeterminedAttack')}] [PDF:${i18n('GURPS.pdfDeterminedAttack')}]`}
+	${useOnTarget ? `[+1 ${i18n('GURPS.modifierCommittedAttackRanged')}] [PDF:${i18n('GURPS.pdfCommittedAttackRanged')}]` : ''}
+    ${useOnTarget ? horiz(i18n('GURPS.aiming')) : ''}
+    ${useOnTarget ? `[+4 ${i18n('GURPS.modifierAimAllOutAim')}] [PDF:${i18n('GURPS.pdfAllOutAim')}]` : ''}
+	${useOnTarget ? `[+2 ${i18n('GURPS.modifierAimAllOutAimBraced')}] [PDF:${i18n('GURPS.pdfAllOutAim')}]` : ''}
+	${useOnTarget ? `[+2 ${i18n('GURPS.modifierAimCommittedAim')}] [PDF:${i18n('GURPS.pdfCommittedAim')}]` : ''}
+	${useOnTarget ? `[+1 ${i18n('GURPS.modifierAimCommittedAimBraced')}] [PDF:${i18n('GURPS.pdfCommittedAim')}]` : ''}
     ${horiz(i18n('GURPS.actions'))}
     [${i18n('GURPS.modifierWillCheck')}]`
 	},
 
 	get DefenseMods() {
+		const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET);
+
 		return `[+2 ${i18n('GURPS.allOutDefense')}] [PDF:${i18n('GURPS.pdfAllOutDefense')}]
     [+1 ${i18n('GURPS.modifierShieldDB')}] [PDF:${i18n('GURPS.pdfShieldDB')}]
     [+2 ${i18n('GURPS.modifierDodgeAcrobatic')}] [PDF:${i18n('GURPS.pdfDodgeAcrobatic')}]
     [+3 ${i18n('GURPS.modifierDodgeDive')}] [PDF:${i18n('GURPS.pdfDodgeDive')}]
     [+3 ${i18n('GURPS.modifierDodgeRetreat')}] [PDF:${i18n('GURPS.pdfDodgeRetreat')}]
     [+1 ${i18n('GURPS.modifierBlockRetreat')}] [PDF:${i18n('GURPS.pdfBlockRetreat')}]
+    ${useOnTarget ? `[-2 ${i18n('GURPS.modifierDefenseCommittedAim')}] [PDF:${i18n('GURPS.pdfCommittedAim')}]` : ''}
+    ${useOnTarget ? `[-2 ${i18n('GURPS.modifierDefenseCommittedAttackRanged')}] [PDF:${i18n('GURPS.pdfCommittedAttackRanged')}]` : ''}
     [-2 ${i18n('GURPS.modifierDodgeFailedAcro')}] [PDF:${i18n('GURPS.pdfDodgeFailedAcro')}]
     [-2 ${i18n('GURPS.modifierDodgeSide')}] [PDF:${i18n('GURPS.pdfDodgeSide')}]
     [-4 ${i18n('GURPS.modifierDodgeRear')}] [PDF:${i18n('GURPS.pdfDodgeRear')}]

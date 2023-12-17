@@ -1,4 +1,5 @@
 import GurpsToken from '../token.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -8,6 +9,7 @@ export const DEFENSE_DODGEBLOCK = 'dodge-block'
 export const MOVE_NONE = 'none'
 export const MOVE_ONE = '1'
 export const MOVE_STEP = 'step'
+export const MOVE_TWO_STEPS = 'two-steps'
 export const MOVE_ONETHIRD = '×1/3'
 export const MOVE_HALF = 'half'
 export const MOVE_TWOTHIRDS = '×2/3'
@@ -15,6 +17,10 @@ export const MOVE_FULL = 'full'
 
 export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'system.moveoverride.maneuver'
 export const PROPERTY_MOVEOVERRIDE_POSTURE = 'system.moveoverride.posture'
+
+const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target';
+
+const MANEUVER_NAME_AIM = 'aim';
 
 CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
@@ -43,7 +49,7 @@ Object.defineProperty(Actor.prototype, 'temporaryEffects', {
  * @typedef {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData').ActiveEffectDataConstructorData & ManeuverEffect} ManeuverData
  */
 
-/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string|null}} _data */
+/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string|null, introducedBy?: string|null}} _data */
 
 /**
  * The purpose of this class is to help generate data that can be used in an ActiveEffect.
@@ -59,6 +65,7 @@ class Maneuver {
     data.fullturn = !!data.fullturn
     data.icon = Maneuver.filepath + data.icon
     data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
+    data.introducedBy = data.introducedBy ?? null;
     this._data = data
   }
 
@@ -104,7 +111,25 @@ class Maneuver {
 
     return changes
   }
+
+  get introducedBy() {
+    return this._data.introducedBy
+  }
+
+  get name() {
+    return this._data.name
+  }
 }
+
+const maneuverDataAim = {
+  name: MANEUVER_NAME_AIM,
+  fullturn: true,
+  icon: 'man-aim.png',
+  label: 'GURPS.maneuverAim',
+};
+
+// On Target changes allowed move for the Aim maneuver from step to half move (with caveats we don't model here)
+const maneuverDataAimWithOnTarget = {...maneuverDataAim, move: MOVE_HALF};
 
 const maneuvers = {
   do_nothing: new Maneuver({
@@ -119,11 +144,23 @@ const maneuvers = {
     icon: 'man-move.png',
     move: MOVE_FULL,
   }),
-  aim: new Maneuver({
-    name: 'aim',
-    fullturn: true,
+  aim: new Maneuver({...maneuverDataAim}),
+  committed_aim: new Maneuver({
+    name: 'committed_aim',
+    label: 'GURPS.maneuverCommittedAim',
     icon: 'man-aim.png',
-    label: 'GURPS.maneuverAim',
+    fullturn: true,
+    move: MOVE_TWO_STEPS,
+    introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
+  }),
+  allout_aim: new Maneuver({
+    name: 'allout_aim',
+    label: 'GURPS.maneuverAllOutAim',
+    icon: 'man-aim.png',
+    fullturn: true,
+    move: MOVE_NONE,
+    defense: DEFENSE_NONE,
+    introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
   }),
   change_posture: new Maneuver({
     name: 'change_posture',
@@ -147,6 +184,13 @@ const maneuvers = {
     label: 'GURPS.maneuverFeint',
     alt: 'man-attack.png',
   }),
+  committed_attack_ranged: new Maneuver({
+    name: 'committed_attack_ranged',
+    move: MOVE_TWO_STEPS,
+    icon: 'man-aoa-suppress.png',
+    label: 'GURPS.maneuverCommittedAttackRanged',
+    introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
+  }),
   allout_attack: new Maneuver({
     name: 'allout_attack',
     move: MOVE_HALF,
@@ -161,6 +205,14 @@ const maneuvers = {
     icon: 'man-aoa-determined.png',
     label: 'GURPS.maneuverAllOutAttackDetermined',
     alt: 'man-allout-attack.png',
+  }),
+  aoa_ranged: new Maneuver({
+    name: 'aoa_ranged',
+    move: MOVE_NONE,
+    defense: DEFENSE_NONE,
+    icon: 'man-aoa-suppress.png',
+    label: 'GURPS.maneuverAllOutAttackRanged',
+    introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
   }),
   aoa_double: new Maneuver({
     name: 'aoa_double',
@@ -251,6 +303,25 @@ const maneuvers = {
   }),
 }
 
+const filterManeuvers = (introducedBy = []) => {
+  const result = {}
+
+  for (const key in maneuvers) {
+    let maneuver = maneuvers[key];
+
+    // Aim maneuver has different data with On Target than without
+    if (introducedBy.includes(MANEUVER_INTRODUCED_BY_ON_TARGET) && maneuver.name === MANEUVER_NAME_AIM) {
+      maneuver = new Maneuver({...maneuverDataAimWithOnTarget})
+    }
+
+    if (!maneuver.introducedBy || introducedBy.includes(maneuver.introducedBy)) {
+      result[key] = maneuver
+    }
+  }
+
+  return result;
+}
+
 export default class Maneuvers {
   /**
    * @param {string} id
@@ -258,7 +329,7 @@ export default class Maneuvers {
    */
   static get(id) {
     // @ts-ignore
-    return maneuvers[id]?.data
+    return Maneuvers.getAll()[id]?.data
   }
 
   /**
@@ -267,7 +338,7 @@ export default class Maneuvers {
    * @memberof Maneuvers
    */
   static isManeuverIcon(text) {
-    return Object.values(maneuvers)
+    return Object.values(Maneuvers.getAll())
       .map(m => m.icon)
       .includes(text)
   }
@@ -288,7 +359,7 @@ export default class Maneuvers {
    */
   static getManeuver(maneuverText) {
     // @ts-ignore
-    return maneuvers[maneuverText].data
+    return Maneuvers.getAll()[maneuverText].data
   }
 
   /**
@@ -300,14 +371,21 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    return maneuvers
+    const useOnTarget = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_ON_TARGET);
+
+    const filter = [];
+    if (useOnTarget) {
+      filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
+    }
+
+    return filterManeuvers(filter);
   }
 
   static getAllData() {
     let data = {}
-    for (const key in maneuvers) {
+    for (const key in Maneuvers.getAll()) {
       // @ts-ignore
-      data[key] = maneuvers[key].data
+      data[key] = Maneuvers.getAll()[key].data
     }
 
     return data
@@ -318,7 +396,7 @@ export default class Maneuvers {
    * @returns {ManeuverData[]|undefined}
    */
   static getByIcon(icon) {
-    return Object.values(maneuvers)
+    return Object.values(Maneuvers.getAll())
       .filter(it => it.icon === icon)
       .map(it => it.data)
   }
