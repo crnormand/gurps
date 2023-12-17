@@ -1307,7 +1307,7 @@ export class GurpsActor extends Actor {
 		let a = new Advantage()
 		a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
 		a.points = i.calc?.points
-		a.note = i.notes
+		a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
 		a.userdesc = i.userdesc
 		a.notes = ''
 
@@ -1368,7 +1368,7 @@ export class GurpsActor extends Actor {
 			if (s.level == 0) s.level = ''
 			s.points = i.points
 			s.relativelevel = i.calc?.rsl
-			s.notes = i.notes || ''
+			s.notes = i.calc?.resolved_notes ?? i.notes ?? ''
 		} else {
 			// Usually containers
 			s.level = ''
@@ -1408,7 +1408,7 @@ export class GurpsActor extends Actor {
 			s.maintain = i.maintenance_cost || ''
 			s.difficulty = i.difficulty.toUpperCase()
 			s.relativelevel = i.calc?.rsl
-			s.notes = i.notes || ''
+			s.notes = i.calc?.resolved_notes ?? i.notes ?? ''
 			s.duration = i.duration || ''
 			s.points = i.points || ''
 			s.casttime = i.casting_time || ''
@@ -1496,7 +1496,7 @@ export class GurpsActor extends Actor {
 		e.uuid = i.id
 		e.parentuuid = p
 		e.notes = ''
-		e.note = i.notes || ''
+		e.notes = i.calc?.resolved_notes ?? i.notes ?? ''
 		if (i.modifiers?.length) {
 			for (let j of i.modifiers)
 				if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
@@ -1561,7 +1561,7 @@ export class GurpsActor extends Actor {
 
 	importNote(i, p) {
 		let n = new Note()
-		n.notes = i.text || ''
+		n.notes = i.calc?.resolved_text ?? i.text ?? ""
 		n.uuid = i.id
 		n.parentuuid = p
 		n.pageRef(i.reference || '')
