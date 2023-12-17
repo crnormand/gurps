@@ -1,7 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.16.6
+Release 0.16.7 12/17/23
 
+- Added import of markdown resolved notes for characters
+- Updated GCA import script
 - Added Exxar's "On Target" maneuvers as a option.
 
 Release 0.16.5 8/27/23
