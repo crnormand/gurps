@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.8
+
+- Fixed "UI: Show 3D6" always shows the dice even if off
+
 Release 0.16.7 12/17/23
 
 - Added import of markdown resolved notes for characters
@@ -10,16 +14,16 @@ Release 0.16.5 8/27/23
 
 - Fixed characters with SM +0 not importing in Foundry 11.308
 
-Release 0.16.4  07/10/2023
+Release 0.16.4 07/10/2023
 
 - Provide warning if no skill applicable
 - Fix for PDF render
 
-Release 0.16.3  07/02/2023
+Release 0.16.3 07/02/2023
 
 - Restrict GGA to Foundry V11
 
-Release 0.16.2  07/02/2023
+Release 0.16.2 07/02/2023
 
 - Fix for context menus in the editor sheet.
 - Update Nordlond Bestiary and Nightmare Fuel sheets for v11.
