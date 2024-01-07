@@ -183,6 +183,9 @@ export class GurpsActorSheet extends ActorSheet {
       let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
+      if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+      if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+
       let json = `{ "system.${path}.value": ${value} }`
       this.actor.internalUpdate(JSON.parse(json))
     })
@@ -196,6 +199,9 @@ export class GurpsActorSheet extends ActorSheet {
       let tracker = getProperty(this.actor.system, path)
       let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
+
+      if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+      if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
       let json = `{ "system.${path}.value": ${value} }`
       this.actor.internalUpdate(JSON.parse(json))
@@ -316,6 +322,15 @@ export class GurpsActorSheet extends ActorSheet {
         let parent = ev.currentTarget.closest('[data-gurps-resource]')
         let path = $(parent).attr('data-gurps-resource')
         let value = parseInt(newValue)
+
+        // This is a hack to get the correct value for the tracker.
+        if (path.startsWith('additionalresources.tracker.')) {
+          let tracker = getProperty(this.actor.system, path)
+
+          if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+          if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+        }
+
         let json = `{ "system.${path}.value": ${value} }`
         this.actor.internalUpdate(JSON.parse(json))
 
@@ -1634,7 +1649,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
 export class GurpsActorSheetReduced extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return GurpsActorSheet.defaultOptions;
+    return GurpsActorSheet.defaultOptions
   }
 
   /* -------------------------------------------- */
