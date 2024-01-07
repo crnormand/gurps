@@ -162,17 +162,31 @@ export class ResourceTrackerManager extends FormApplication {
           let newTracker = dialog._tracker
           let match = this._templates
             .filter((_, i) => i !== index)
-            .find(
+            .some(
               t =>
                 (!!t.tracker.name && t.tracker.name === newTracker.name) ||
                 (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
             )
 
-          if (!!match) {
-            ui.notifications.warn(
-              game.i18n.format('GURPS.trackerNotUnique', { name: newTracker.name, alias: newTracker.alias })
-            )
-            resolve(this._templates[index].tracker)
+          while (!!match) {
+            if (this._templates.filter((_, i) => i !== index).some(t => t.tracker.name === newTracker.name)) {
+              newTracker.name += ' (copy)'
+            }
+            if (this._templates.filter((_, i) => i !== index).some(t => t.tracker.alias === newTracker.alias)) {
+              newTracker.alias += ' (copy)'
+            }
+            match = this._templates
+              .filter((_, i) => i !== index)
+              .some(
+                t =>
+                  (!!t.tracker.name && t.tracker.name === newTracker.name) ||
+                  (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
+              )
+
+            // ui.notifications.warn(
+            //   game.i18n.format('GURPS.trackerNotUnique', { name: newTracker.name, alias: newTracker.alias })
+            // )
+            // resolve(this._templates[index].tracker)
           }
 
           resolve(dialog._tracker)
