@@ -546,6 +546,7 @@ export class ModifierBucket extends Application {
       if (ca && ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
     data.currentActor = ca
+    data.diceVisible = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)
     return data
   }
 
