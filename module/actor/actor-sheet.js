@@ -1761,14 +1761,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       this.actor.update({ 'system.additionalresources.showflightmove': show })
     })
 
-    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.condmodmenu', new Modifier('+0', '???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.meleemenu', new Melee('???'), ClickAndContextMenu)
+    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), 'click')
+    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), 'click')
+    this.makeDeleteMenu(html, '.condmodmenu', new Modifier('+0', '???'), 'click')
+    this.makeDeleteMenu(html, '.meleemenu', new Melee('???'), 'click')
     this.makeDeleteMenu(html, '.rangedmenu', new Ranged('???'), 'click context')
-    this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.spellmenu', new Spell('???'), ClickAndContextMenu)
+    this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), 'click')
+    this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), 'click')
+    this.makeDeleteMenu(html, '.spellmenu', new Spell('???'), 'click')
     this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
     html.find('#body-plan').change(async e => {
