@@ -6,6 +6,7 @@ Release 0.16.8
 - Re-enabled OTF macros (stopped working because of a base FoundryVTT version change).
 - Automatically rename Resource Tracker names or aliases if another tracker has the same value.
 - Enforce Resource Tracker max and min.
+- Fixed the actor editor's ability to delete skills, traits, hit locations, etc. This involved making a change to GURPS.removeKey so I'm quite nervous about it!!
 
 Release 0.16.7 12/17/23
 
