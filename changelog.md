@@ -3,6 +3,7 @@
 Release 0.16.8
 
 - Fixed "UI: Show 3D6" always shows the dice even if off
+- Re-enabled OTF macros (stopped working because of a base FoundryVTT version change)
 
 Release 0.16.7 12/17/23
 
