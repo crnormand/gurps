@@ -281,7 +281,7 @@ export default class ApplyDamageDialog extends Application {
     // damage reduction level field
     html
       .find('#damage-reduction-field input')
-      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageReductionLevel', parseIntFrom))
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageReductionLevel', parseFloatFrom))
 
     // clear the damage reduction level field
     html.find('#damage-reduction-field button').click(() => {
