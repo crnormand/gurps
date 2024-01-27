@@ -386,12 +386,23 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     let m = game.macros.find(m => m.name.startsWith(args[0]))
     if (m) {
       this.send()
-      if (game.modules.get('advanced-macros')?.active) {
-        // if Advanced macros is loaded, take advantage of the return value
-        GURPS.chatreturn = (await m.execute({ args: [args] })) ?? GURPS.chatreturn
-      } else {
-        m.execute({ args: [args] })
-      }
+      // Old style macro arguments were just a list of strings, like ['foo', 'bar'].
+      // New style macro arguments are an object with a name property for each argument, like { title: 'foo', text: 'bar' }.
+      // Convert "x=a" style arguments to object style ({ x: 'a' }).
+      let newArgs = {}
+      args.slice(1).forEach(arg => {
+        arg.split('=').forEach((v, i, a) => {
+          if (i == 0) newArgs[v] = a[1]
+        })
+      })
+      GURPS.chatreturn = await m.execute(newArgs)
+
+      // if (game.modules.get('advanced-macros')?.active) {
+      //   // if Advanced macros is loaded, take advantage of the return value
+      //   GURPS.chatreturn = (await m.execute({ args: [args] })) ?? GURPS.chatreturn
+      // } else {
+      //   m.execute({ args: [args] })
+      // }
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro')} '${line.substr(2)}'`)
     console.log(GURPS.chatreturn)
     return GURPS.chatreturn

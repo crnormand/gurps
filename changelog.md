@@ -3,7 +3,7 @@
 Release 0.16.8
 
 - Fixed "UI: Show 3D6" always shows the dice even if off.
-- Re-enabled OTF macros (stopped working because of a base FoundryVTT version change).
+- Re-enabled OTF macros (stopped working because of a base FoundryVTT version change). The new version takes named arguments, like [/:SpellDamage title=Explosive_Fireball dice=1 adjust=-1].
 - Automatically rename Resource Tracker names or aliases if another tracker has the same value.
 - Enforce Resource Tracker max and min.
 - Fixed the actor editor's ability to delete skills, traits, hit locations, etc. This involved making a change to GURPS.removeKey so I'm quite nervous about it!!
