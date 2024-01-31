@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.8 1/31/24
+
+- Misc fixes
+
 Release 0.16.7 12/17/23
 
 - Added import of markdown resolved notes for characters
