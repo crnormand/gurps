@@ -1547,23 +1547,27 @@ if (!globalThis.GURPS) {
    * @param {string} path
    */
   async function removeKey(actor, path) {
-    let x = false
+    let oldversion = true
     let oldRender = actor.ignoreRender
     actor.ignoreRender = true
 
-    if (x) {
+    if (oldversion) {
       let i = path.lastIndexOf('.')
       let objpath = path.substring(0, i)
       let key = path.substring(i + 1)
       i = objpath.lastIndexOf('.')
       let parentpath = objpath.substring(0, i)
       let objkey = objpath.substring(i + 1)
-      let object = GURPS.decode(actor, objpath)
+      // Create shallow copy of object
+      let object = duplicate(GURPS.decode(actor, objpath))
       let t = parentpath + '.-=' + objkey
-      await actor.internalUpdate({ [t]: null }) // Delete the whole object
+      await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
+      
+      // Delete the key, ex: '00001'
       delete object[key]
       i = parseInt(key)
 
+      // Since keys are serial index, move up any items after the current index
       i = i + 1
       while (object.hasOwnProperty(zeroFill(i))) {
         let k = zeroFill(i)
@@ -1572,6 +1576,7 @@ if (!globalThis.GURPS) {
         key = k
         i++
       }
+/*    Since object is duplicated, no longer need to create a sorted copy
       let sorted = Object.keys(object)
         .sort()
         .reduce((a, v) => {
@@ -1579,8 +1584,12 @@ if (!globalThis.GURPS) {
           a[v] = object[v]
           return a
         }, {}) // Enforced key order
+*/
       actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
+      await actor.internalUpdate({ [objpath]: object }, { diff: false })
+      // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
+      if (Object.keys(object).length === 0)
+        GURPS.decode(actor, parentpath)[objkey] = {}
     } else {
       let i = path.lastIndexOf('.')
       let objpath = path.substring(0, i)
@@ -1589,7 +1598,7 @@ if (!globalThis.GURPS) {
       delete object[key]
 
       await actor.internalUpdate({ [objpath]: null }) // instead of using "x.y.-=z" to remove the key 'z' and all its data, just remove x.y.z's data.
-
+  
       let sorted = Object.keys(object)
         .sort()
         .reduce((_, value, index) => {
