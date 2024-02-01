@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.16.8
+Release 0.16.8 02/01/2024
 
 - Fixed "UI: Show 3D6" always shows the dice even if off.
 - Re-enabled OTF macros (stopped working because of a base FoundryVTT version change). The new version takes named arguments, like [/:SpellDamage title=Explosive_Fireball dice=1 adjust=-1].
