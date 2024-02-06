@@ -297,9 +297,22 @@ export class CompositeDamageCalculator {
     // if (this._hitLocation === 'User Entered') return this._userEnteredDR
     let entries = this._defender.hitLocationsWithDR
 
-    return this._hitLocation === 'Large-Area'
-      ? HitLocationEntry.getLargeAreaDR(entries)
-      : HitLocationEntry.findLocation(entries, this._hitLocation).getDR(this.damageType)
+    if (this._hitLocation === 'Large-Area') return HitLocationEntry.getLargeAreaDR(entries)
+
+    let hitlocation = HitLocationEntry.findLocation(entries, this._hitLocation)
+
+    // This condition happens because the actor sheet doesn't have a hit location named "Torso". He might have a hit
+    // location localized to his language, like "Tronco" in Portuguese. Do a last ditch effort to find the hit location
+    // using the localized name.
+    if (!hitlocation) {
+      const alternative = i18n(`GURPS.hitLocation${this._hitLocation}`)
+      hitlocation = HitLocationEntry.findLocation(entries, alternative)
+    }
+
+    return hitlocation.getDR(this.damageType)
+    // return this._hitLocation === 'Large-Area'
+    //   ? HitLocationEntry.getLargeAreaDR(entries)
+    //   : HitLocationEntry.findLocation(entries, this._hitLocation).getDR(this.damageType)
   }
 
   get effects() {

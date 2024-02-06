@@ -1,12 +1,16 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.16.9
+
+- Attempt to fix localization issues with hit locations in the ADD. If the hit location table on the character sheet is localized, it will not match the default hit location name 'Torso'. This fix attempts to localize the default hit location name if the location is not found, and try again with the localized name.
+
 Release 0.16.8 02/01/2024
 
 - Fixed "UI: Show 3D6" always shows the dice even if off.
 - Re-enabled OTF macros (stopped working because of a base FoundryVTT version change). The new version takes named arguments, like [/:SpellDamage title=Explosive_Fireball dice=1 adjust=-1].
 - Automatically rename Resource Tracker names or aliases if another tracker has the same value.
 - Enforce Resource Tracker max and min.
-- Possibly fixed the actor editor's ability to delete skills, traits, hit locations, etc. 
+- Possibly fixed the actor editor's ability to delete skills, traits, hit locations, etc.
 - Allow IT:DR on the ADD to include fractions.
 
 Release 0.16.7 12/17/23
