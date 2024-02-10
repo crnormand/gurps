@@ -72,7 +72,7 @@ export class GurpsActorSheet extends ActorSheet {
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
       hasSpells: !isEmptyObject(this.actor.system.spells),
-      hasOther: !isEmptyObject(this.actor.system.equipment.other),
+      hasOther: !isEmptyObject(this.actor.system?.equipment?.other),
     }
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
