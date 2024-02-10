@@ -1307,7 +1307,7 @@ body {
   grid-template-columns: min-content 1fr repeat(4, auto);
   grid-area: skills;
   align-content: start;
-  flex-grow: 2;
+  flex-grow: 3;
 }
 
 #spells {
