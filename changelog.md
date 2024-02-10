@@ -3,6 +3,7 @@
 Release 0.16.9
 
 - Attempt to fix localization issues with hit locations in the ADD. If the hit location table on the character sheet is localized, it will not match the default hit location name 'Torso'. This fix attempts to localize the default hit location name if the location is not found, and try again with the localized name.
+- Fixed PDFs not resizing vertically.
 
 Release 0.16.8 02/01/2024
 
