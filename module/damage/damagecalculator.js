@@ -724,11 +724,15 @@ export class CompositeDamageCalculator {
     return this._calculators.length
   }
 
+  get cripplingThreshold() {
+    if (this.hitLocationRole === hitlocation.LIMB) return this.HP.max / 2
+    if (this.hitLocationRole === hitlocation.EXTREMITY) return this.HP.max / 3
+    if (this.hitLocation === 'Eye') return this.HP.max / 10
+    return Infinity
+  }
+
   get locationMaxHP() {
-    if (this.hitLocationRole === hitlocation.LIMB) return this.HP.max / 2 + 1
-    if (this.hitLocationRole === hitlocation.EXTREMITY) return this.HP.max / 3 + 1
-    if (this.hitLocation === 'Eye') return this.HP.max / 10 + 1
-    return this.HP.max
+    return this.isCrippleableLocation ? this.cripplingThreshold + 1 : Infinity
   }
 
   get locationMaxHPAsInt() {
@@ -1119,7 +1123,7 @@ class DamageCalculator {
 
   get isCripplingInjury() {
     if (this._parent.useLocationModifiers && this._parent.isCrippleableLocation) {
-      return this.unmodifiedPointsToApply > this._parent.locationMaxHP
+      return this.unmodifiedPointsToApply > this._parent.cripplingThreshold
     }
     return false
   }
