@@ -6,6 +6,7 @@ Release 0.16.9
 - Fixed PDFs not resizing vertically.
 - Handled missing equipment data in actor when displaying navigation menu.
 - Made the skills section of the character sheet resize a bit bigger.
+- Fix the ADD calculation of "crippling injury" to limbs.
 
 Release 0.16.8 02/01/2024
 
