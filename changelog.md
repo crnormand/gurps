@@ -7,6 +7,7 @@ Release 0.16.9
 - Handled missing equipment data in actor when displaying navigation menu.
 - Made the skills section of the character sheet resize a bit bigger.
 - Fix the ADD calculation of "crippling injury" to limbs.
+- Add range to targeted tokens in Effect Modifiers panel.
 
 Release 0.16.8 02/01/2024
 
