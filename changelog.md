@@ -8,6 +8,7 @@ Release 0.16.9
 - Made the skills section of the character sheet resize a bit bigger.
 - Fix the ADD calculation of "crippling injury" to limbs.
 - Add range to targeted tokens in Effect Modifiers panel.
+- Update JB2A to 0.6.7
 
 Release 0.16.8 02/01/2024
 
