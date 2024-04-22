@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.16.9
+Release 0.16.9 04/21/2024
 
 - Attempt to fix localization issues with hit locations in the ADD. If the hit location table on the character sheet is localized, it will not match the default hit location name 'Torso'. This fix attempts to localize the default hit location name if the location is not found, and try again with the localized name.
 - Fixed PDFs not resizing vertically.
