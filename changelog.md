@@ -1,8 +1,8 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.16.10
+Release 0.16.10 4/23/2024
 
-- Update system.json to use new Github download link https://github.com/crnormand/gurps/releases/download/0.6.19/system.zip
+- Fix Foundry/Github release
 
 Release 0.16.9 04/21/2024
 
