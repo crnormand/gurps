@@ -55,7 +55,7 @@ import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
 import DamageChat from './damage/damagechat.js'
 
-import MoustacheWax from '../lib/moustachewax.js'
+import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import JQueryHelpers from '../lib/jquery-helper.js'
 import AddChatHooks from './chat.js'
@@ -263,6 +263,8 @@ if (!globalThis.GURPS) {
 
   GURPS.SJGProductMappings = SJGProductMappings
   GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
+
+  GURPS.findTracker = findTracker
 
   /**
    * @param {string} str
@@ -1115,16 +1117,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-									[AMRS][DPK]
-									A: ads & attack (melee & range)
-									AD: ads
-									AT: attack
-									M: melee
-									R: ranged
-									S: skills & spells 
-									SK: skills
-									SP: spells
-								  */
+                  [AMRS][DPK]
+                  A: ads & attack (melee & range)
+                  AD: ads
+                  AT: attack
+                  M: melee
+                  R: ranged
+                  S: skills & spells 
+                  SK: skills
+                  SP: spells
+                  */
     // ['test-exists']({ action, actor, _event, originalOtf, calcOnly }) {
     ['test-exists']({ action, actor }) {
       switch (action.prefix) {
@@ -1562,7 +1564,7 @@ if (!globalThis.GURPS) {
       let object = duplicate(GURPS.decode(actor, objpath))
       let t = parentpath + '.-=' + objkey
       await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
-      
+
       // Delete the key, ex: '00001'
       delete object[key]
       i = parseInt(key)
@@ -1576,15 +1578,15 @@ if (!globalThis.GURPS) {
         key = k
         i++
       }
-/*    Since object is duplicated, no longer need to create a sorted copy
-      let sorted = Object.keys(object)
-        .sort()
-        .reduce((a, v) => {
-          // @ts-ignore
-          a[v] = object[v]
-          return a
-        }, {}) // Enforced key order
-*/
+      /*    Since object is duplicated, no longer need to create a sorted copy
+            let sorted = Object.keys(object)
+              .sort()
+              .reduce((a, v) => {
+                // @ts-ignore
+                a[v] = object[v]
+                return a
+              }, {}) // Enforced key order
+      */
       actor.ignoreRender = oldRender
       await actor.internalUpdate({ [objpath]: object }, { diff: false })
       // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
@@ -1598,7 +1600,7 @@ if (!globalThis.GURPS) {
       delete object[key]
 
       await actor.internalUpdate({ [objpath]: null }) // instead of using "x.y.-=z" to remove the key 'z' and all its data, just remove x.y.z's data.
-  
+
       let sorted = Object.keys(object)
         .sort()
         .reduce((_, value, index) => {
@@ -2017,8 +2019,8 @@ if (!globalThis.GURPS) {
       if (app.options.id === 'compendium') {
         let button = $(
           '<button class="import-items"><i class="fas fa-file-import"></i>' +
-            game.i18n.localize('GURPS.itemImport') +
-            '</button>'
+          game.i18n.localize('GURPS.itemImport') +
+          '</button>'
         )
 
         button.click(function () {
@@ -2245,11 +2247,11 @@ if (!globalThis.GURPS) {
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-        (GURPS.DamageTables.woundModifiers[it.alias] = {
-          multiplier: 1,
-          label: it.name,
-          resource: true,
-        })
+      (GURPS.DamageTables.woundModifiers[it.alias] = {
+        multiplier: 1,
+        label: it.name,
+        resource: true,
+      })
     )
 
     // Sorry, removed the ts-ignores during editing.
@@ -2294,8 +2296,8 @@ if (!globalThis.GURPS) {
           content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-            .split('\n')
-            .join('<br>')}</mark><br>&nbsp;<br>`,
+              .split('\n')
+              .join('<br>')}</mark><br>&nbsp;<br>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-angle-double-down"></i>',

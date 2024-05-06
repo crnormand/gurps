@@ -53,7 +53,7 @@ import {
 import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
-Hooks.on('createActor', async function(/** @type {Actor} */ actor) {
+Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
 	await actor.internalUpdate({ '_stats.systemVersion': game.system.version })
 })
 
@@ -496,6 +496,7 @@ export class GurpsActor extends Actor {
 				game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)
 			),
 			othercost: this._sumeqt(eqt.other, 'cost'),
+			otherlbs: this._sumeqt(eqt.other, 'weight'),
 		}
 		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
 			this.checkEncumbance(eqtsummary.eqtlbs)
@@ -2697,8 +2698,8 @@ export class GurpsActor extends Actor {
 		tableNames.forEach(it => (tableScores[it] = 0))
 
 		// increment the count for a tableScore if it contains the same hit location as "prot"
-		locations.forEach(function(hitLocation) {
-			tableNames.forEach(function(tableName) {
+		locations.forEach(function (hitLocation) {
+			tableNames.forEach(function (tableName) {
 				if (HitLocations.hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
 					tableScores[tableName] = tableScores[tableName] + 1
 				}
@@ -2708,7 +2709,7 @@ export class GurpsActor extends Actor {
 		// Select the tableScore with the highest score.
 		let match = -1
 		let name = HitLocations.HitLocation.HUMANOID
-		Object.keys(tableScores).forEach(function(score) {
+		Object.keys(tableScores).forEach(function (score) {
 			if (tableScores[score] > match) {
 				match = tableScores[score]
 				name = score
