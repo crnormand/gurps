@@ -2215,8 +2215,8 @@ export class GurpsActor extends Actor {
 		let nm = this.textFrom(c.name)
 		console.log("Importing '" + nm + "'")
 		let starttime = performance.now()
-		let commit = {}
 
+		let commit = {}
 		commit = { ...commit, ...{ 'system.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
 		let ar = this.system.additionalresources || {}
 		ar.importname = importname || ar.importname

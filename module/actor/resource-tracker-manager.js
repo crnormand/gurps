@@ -34,6 +34,7 @@ export class ResourceTrackerManager extends FormApplication {
           value: 0,
           isDamageType: true,
           isDamageTracker: true,
+          breakpoints: true,
           thresholds: [
             {
               comparison: '<',
@@ -43,28 +44,28 @@ export class ResourceTrackerManager extends FormApplication {
               color: '#90ee90',
             },
             {
-              comparison: '<',
+              comparison: '≥',
               operator: '×',
               value: 0.5,
               condition: game.i18n.localize('GURPS.grapplingGrabbed'),
               color: '#eeee30',
             },
             {
-              comparison: '<',
+              comparison: '≥',
               operator: '×',
               value: 1,
               condition: game.i18n.localize('GURPS.grapplingGrappled'),
               color: '#eeaa30',
             },
             {
-              comparison: '<',
+              comparison: '≥',
               operator: '×',
               value: 1.5,
               condition: game.i18n.localize('GURPS.grapplingRestrained'),
               color: '#ee5000',
             },
             {
-              comparison: '<',
+              comparison: '≥',
               operator: '×',
               value: 2,
               condition: game.i18n.localize('GURPS.grapplingControlled'),

@@ -30,6 +30,8 @@ import {
   requestFpHp,
   sanitize,
   i18n_f,
+  arrayToObject,
+  objectToArray,
 } from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -1236,6 +1238,9 @@ if (!globalThis.GURPS) {
   }
   GURPS.findSkillSpell = findSkillSpell
 
+  GURPS.arrayToObject = arrayToObject
+  GURPS.objectToArray = objectToArray
+
   /**
    * @param {GurpsActor | GurpsActorData} actor
    * @param {string} sname
@@ -1562,7 +1567,7 @@ if (!globalThis.GURPS) {
       let object = duplicate(GURPS.decode(actor, objpath))
       let t = parentpath + '.-=' + objkey
       await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
-      
+
       // Delete the key, ex: '00001'
       delete object[key]
       i = parseInt(key)
@@ -1576,7 +1581,7 @@ if (!globalThis.GURPS) {
         key = k
         i++
       }
-/*    Since object is duplicated, no longer need to create a sorted copy
+      /*    Since object is duplicated, no longer need to create a sorted copy
       let sorted = Object.keys(object)
         .sort()
         .reduce((a, v) => {
@@ -1588,8 +1593,7 @@ if (!globalThis.GURPS) {
       actor.ignoreRender = oldRender
       await actor.internalUpdate({ [objpath]: object }, { diff: false })
       // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
-      if (Object.keys(object).length === 0)
-        GURPS.decode(actor, parentpath)[objkey] = {}
+      if (Object.keys(object).length === 0) GURPS.decode(actor, parentpath)[objkey] = {}
     } else {
       let i = path.lastIndexOf('.')
       let objpath = path.substring(0, i)
@@ -1598,7 +1602,7 @@ if (!globalThis.GURPS) {
       delete object[key]
 
       await actor.internalUpdate({ [objpath]: null }) // instead of using "x.y.-=z" to remove the key 'z' and all its data, just remove x.y.z's data.
-  
+
       let sorted = Object.keys(object)
         .sort()
         .reduce((_, value, index) => {
