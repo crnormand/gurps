@@ -57,7 +57,7 @@ import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
 import DamageChat from './damage/damagechat.js'
 
-import MoustacheWax from '../lib/moustachewax.js'
+import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import JQueryHelpers from '../lib/jquery-helper.js'
 import AddChatHooks from './chat.js'
@@ -265,6 +265,8 @@ if (!globalThis.GURPS) {
 
   GURPS.SJGProductMappings = SJGProductMappings
   GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
+
+  GURPS.findTracker = findTracker
 
   /**
    * @param {string} str
@@ -1117,16 +1119,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-									[AMRS][DPK]
-									A: ads & attack (melee & range)
-									AD: ads
-									AT: attack
-									M: melee
-									R: ranged
-									S: skills & spells 
-									SK: skills
-									SP: spells
-								  */
+                  [AMRS][DPK]
+                  A: ads & attack (melee & range)
+                  AD: ads
+                  AT: attack
+                  M: melee
+                  R: ranged
+                  S: skills & spells 
+                  SK: skills
+                  SP: spells
+                  */
     // ['test-exists']({ action, actor, _event, originalOtf, calcOnly }) {
     ['test-exists']({ action, actor }) {
       switch (action.prefix) {
