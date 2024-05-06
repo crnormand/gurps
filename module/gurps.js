@@ -30,6 +30,8 @@ import {
   requestFpHp,
   sanitize,
   i18n_f,
+  arrayToObject,
+  objectToArray,
 } from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -1238,6 +1240,9 @@ if (!globalThis.GURPS) {
   }
   GURPS.findSkillSpell = findSkillSpell
 
+  GURPS.arrayToObject = arrayToObject
+  GURPS.objectToArray = objectToArray
+
   /**
    * @param {GurpsActor | GurpsActorData} actor
    * @param {string} sname
@@ -1579,19 +1584,18 @@ if (!globalThis.GURPS) {
         i++
       }
       /*    Since object is duplicated, no longer need to create a sorted copy
-            let sorted = Object.keys(object)
-              .sort()
-              .reduce((a, v) => {
-                // @ts-ignore
-                a[v] = object[v]
-                return a
-              }, {}) // Enforced key order
-      */
+      let sorted = Object.keys(object)
+        .sort()
+        .reduce((a, v) => {
+          // @ts-ignore
+          a[v] = object[v]
+          return a
+        }, {}) // Enforced key order
+*/
       actor.ignoreRender = oldRender
       await actor.internalUpdate({ [objpath]: object }, { diff: false })
       // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
-      if (Object.keys(object).length === 0)
-        GURPS.decode(actor, parentpath)[objkey] = {}
+      if (Object.keys(object).length === 0) GURPS.decode(actor, parentpath)[objkey] = {}
     } else {
       let i = path.lastIndexOf('.')
       let objpath = path.substring(0, i)
@@ -2019,8 +2023,8 @@ if (!globalThis.GURPS) {
       if (app.options.id === 'compendium') {
         let button = $(
           '<button class="import-items"><i class="fas fa-file-import"></i>' +
-          game.i18n.localize('GURPS.itemImport') +
-          '</button>'
+            game.i18n.localize('GURPS.itemImport') +
+            '</button>'
         )
 
         button.click(function () {
@@ -2247,11 +2251,11 @@ if (!globalThis.GURPS) {
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-      (GURPS.DamageTables.woundModifiers[it.alias] = {
-        multiplier: 1,
-        label: it.name,
-        resource: true,
-      })
+        (GURPS.DamageTables.woundModifiers[it.alias] = {
+          multiplier: 1,
+          label: it.name,
+          resource: true,
+        })
     )
 
     // Sorry, removed the ts-ignores during editing.
@@ -2296,8 +2300,8 @@ if (!globalThis.GURPS) {
           content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-              .split('\n')
-              .join('<br>')}</mark><br>&nbsp;<br>`,
+            .split('\n')
+            .join('<br>')}</mark><br>&nbsp;<br>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-angle-double-down"></i>',
