@@ -1876,7 +1876,7 @@ export class GurpsActor extends Actor {
 						r.rof = w.rate_of_fire || ''
 						r.shots = w.shots || ''
 						r.rcl = w.recoil || ''
-						r.range = w.calc?.range || ''
+						r.range = w.calc?.range || w.range || ''
 						let old = this._findElementIn('ranged', false, r.name, r.mode)
 						this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
