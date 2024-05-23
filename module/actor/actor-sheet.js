@@ -210,7 +210,7 @@ export class GurpsActorSheet extends ActorSheet {
     // Handle resource tracker "reset" button.
     html.find('button[data-operation="resource-reset"]').click(ev => {
       ev.preventDefault()
-      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
+      let parent = $(ev.currentTarget).closest('[data-gurps-resource]') 
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.system, path)
@@ -526,7 +526,7 @@ export class GurpsActorSheet extends ActorSheet {
         if ($(this).hasClass('buttongrey')) msg = 'Enable&nbsp;' + opt
         $(this).append(
           $(
-            `<div style='font-family: Roboto, sans-serif; position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`
+            `<div style='font-family: Roboto, sans-serif; position: absolute;z-index: 10;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`
           )
         )
       },
