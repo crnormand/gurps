@@ -47,7 +47,6 @@ export async function doRoll({
   let messageData = {
     user: game.user.id,
     speaker: speaker,
-    type: CONST.CHAT_MESSAGE_STYLES.ROLL,
   }
   if (optionalArgs.event?.data?.private) {
     messageData.whisper = [game.user.id]
@@ -192,7 +191,6 @@ export async function doRoll({
     let users = actor.isSelf ? [] : actor.getOwners()
     let ids = users.map(it => it.id)
     let messageData = {
-      type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
       whisper: ids,
     }
     if (!failure && !!optionalArgs.action.truetext) messageData.content = optionalArgs.action.truetext
