@@ -2230,7 +2230,6 @@ if (!globalThis.GURPS) {
     <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
   </div>
 </div>`,
-          type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
           // @ts-ignore
           whisper: [game.user],
         })

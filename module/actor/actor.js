@@ -1960,7 +1960,6 @@ export class GurpsActor extends Actor {
       ChatMessage.create({
         content: content,
         user: game.user.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         whisper: [game.user.id],
       })
       if (exit) return false
@@ -2018,7 +2017,6 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn(msg)
       let chatData = {
         user: game.user.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         content: content,
         whisper: [game.user.id],
       }
@@ -2068,7 +2066,6 @@ export class GurpsActor extends Actor {
       let user = game.user
       let chatData = {
         user: game.user.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         content: content,
         whisper: [game.user.id],
       }
@@ -2208,7 +2205,6 @@ export class GurpsActor extends Actor {
       ChatMessage.create({
         content: content,
         user: game.user.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         whisper: [game.user.id],
       })
       if (exit) return false // Some errors cannot be forgiven ;-)
@@ -2263,7 +2259,6 @@ export class GurpsActor extends Actor {
       let user = game.user
       let chatData = {
         user: game.user.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         content: content,
         whisper: [game.user.id],
       }
@@ -2312,7 +2307,6 @@ export class GurpsActor extends Actor {
       let user = game.user
       let chatData = {
         user: game.user.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         content: content,
         whisper: [game.user.id],
       }

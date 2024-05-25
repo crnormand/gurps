@@ -230,7 +230,6 @@ class ChatProcessorRegistry {
         alreadyProcessed: true,
         content: content,
         user: game.user?.id,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
         whisper: [game.user?.id || ''],
       })
     })
