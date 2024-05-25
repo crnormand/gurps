@@ -151,7 +151,7 @@ export class GurpsActor extends Actor {
       if (!move) {
         let currentMove = this.system.encumbrance['00000'].move ?? this.system.basicmove.value
         let value = { mode: MoveModes.Ground, basic: currentMove, default: true }
-        setProperty(this.system, 'move.00000', value)
+        foundry.utils.setProperty(this.system, 'move.00000', value)
         move = this.system.move
       }
 

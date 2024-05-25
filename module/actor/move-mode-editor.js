@@ -115,7 +115,7 @@ export default class MoveModeEditor extends Application {
           // copy existing entries
           let move = {}
           for (const k in this.moveData)
-            setProperty(move, k, {
+            foundry.utils.setProperty(move, k, {
               mode: this.moveData[k].mode,
               basic: this.moveData[k].basic,
               enhanced: this.moveData[k].enhanced,

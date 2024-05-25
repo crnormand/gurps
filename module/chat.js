@@ -387,7 +387,7 @@ export default function addChatHooks() {
           }
         } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
         let newContent = gurpslink(c)
-        setProperty(chatMessage, '_source.content', newContent)
+        foundry.utils.setProperty(chatMessage, '_source.content', newContent)
         return true
       }
     )
