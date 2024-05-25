@@ -420,7 +420,7 @@ export class GurpsActorSheet extends ActorSheet {
 
       let path = parent[0].dataset.key
       let actor = this.actor
-      let obj = duplicate(getProperty(actor, path)) // must dup so difference can be detected when updated
+      let obj = duplicate(foundry.utils.getProperty(actor, path)) // must dup so difference can be detected when updated
       if (!!obj.itemid) {
         let item = this.actor.items.get(obj.itemid)
         item.editingActor = this.actor
@@ -806,7 +806,7 @@ export class GurpsActorSheet extends ActorSheet {
     let parent = $(event.currentTarget).closest('.header')
     let path = parent.attr('data-key')
     let actor = this.actor
-    let list = duplicate(getProperty(actor, path))
+    let list = duplicate(foundry.utils.getProperty(actor, path))
     let obj = new Note('', true)
     let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
 

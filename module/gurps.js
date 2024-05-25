@@ -1023,7 +1023,7 @@ if (!globalThis.GURPS) {
             target = parseInt(meleeAttack[action.attribute.toLowerCase()]) // should only occur with parry & block
           }
         } else {
-          target = parseInt(getProperty(actor.system, action.path))
+          target = parseInt(foundry.utils.getProperty(actor.system, action.path))
         }
       }
       const thing = action.name
