@@ -93,7 +93,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, tblname)
 
     let roll = Roll.create('3d6[Fright Check]')
-    await roll.evaluate({ async: true })
+    roll.evaluateSync()
 
     let margin = finaltarget - roll.total
     let failure = margin < 0
