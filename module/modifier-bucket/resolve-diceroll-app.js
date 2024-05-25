@@ -29,7 +29,7 @@ export default class ResolveDiceRoll extends Application {
    * @inheritdoc
    */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'resolve-dierolls',
       template: 'systems/gurps/templates/resolve-diceroll.hbs',
       resizeable: false,

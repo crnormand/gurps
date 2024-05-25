@@ -19,7 +19,7 @@ import SplitDREditor from './splitdr-editor.js'
 export class GurpsActorSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
       width: 800,
       height: 800,
@@ -210,7 +210,7 @@ export class GurpsActorSheet extends ActorSheet {
     // Handle resource tracker "reset" button.
     html.find('button[data-operation="resource-reset"]').click(ev => {
       ev.preventDefault()
-      let parent = $(ev.currentTarget).closest('[data-gurps-resource]') 
+      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.system, path)
@@ -793,7 +793,7 @@ export class GurpsActorSheet extends ActorSheet {
           itemid: eqt.itemid,
           itemData: itemData,
         }
-        if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
+        if (!!oldd) foundry.utils.mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
 
         let payload = JSON.stringify(newd)
         //console.log(payload)
@@ -984,7 +984,7 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
                 a => (obj[a] = html.find(`.${a}`).val())
               )
-                ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+              ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
               let v = html.find('.ignoreImportQty') // Should only find in equipment
@@ -1628,7 +1628,7 @@ export class GurpsActorSheet extends ActorSheet {
 export class GurpsActorTabSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
       width: 860,
       height: 600,
@@ -1664,7 +1664,7 @@ export class GurpsActorSheetReduced extends GurpsActorSheet {
 export class GurpsActorCombatSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
       width: 670,
       height: 'auto',
@@ -1707,7 +1707,7 @@ const ClickAndContextMenu = 'click contextmenu'
 export class GurpsActorEditorSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'gurpsactorsheet', 'sheet', 'actor'],
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
@@ -1879,7 +1879,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
       width: 820,
       height: 900,
@@ -1920,7 +1920,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
 export class GurpsActorNpcSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['npc-sheet', 'sheet', 'actor'],
       width: 750,
       height: 450,
@@ -1971,7 +1971,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
 export class GurpsInventorySheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
       width: 700,
       height: 400,

@@ -15,7 +15,7 @@ export class EffectModifierPopout extends Application {
   static get defaultOptions() {
     let x = $('#sidebar')
     let sidebarLeft = x.parent().position().left
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/actor/effect-modifier-popout.hbs',
       classes: ['sidebar-popout effect-modifiers-app'],
       popOut: true,
@@ -37,7 +37,7 @@ export class EffectModifierPopout extends Application {
       selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
       selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
     }
-    return mergeObject(super.getData(options), {
+    return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
       targetmodifiers: this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : [],

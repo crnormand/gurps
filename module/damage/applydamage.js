@@ -58,7 +58,7 @@ export default class ApplyDamageDialog extends Application {
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['boilerplate', 'sheet', 'actor'],
       id: 'apply-damage-dialog',
       template: 'systems/gurps/templates/apply-damage/apply-damage-dialog.html',

@@ -75,7 +75,7 @@ class SlamCalculatorForm extends FormApplication {
 
     this._targetHp = !!target ? target.actor.system.HP.max : 10
     this._targetSpeed = 0
-    
+
     this._attackerThr = !!attacker ? attacker.actor.system.thrust : '1d-5'
     this._targetThr = !!target ? target.actor.system.thrust : '1d-5'
 
@@ -86,7 +86,7 @@ class SlamCalculatorForm extends FormApplication {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/slam-calculator.html',
       popOut: true,
       minimizable: false,
@@ -108,7 +108,7 @@ class SlamCalculatorForm extends FormApplication {
 
     data.targetHp = this._targetHp
     data.targetSpeed = this._targetSpeed
-    
+
     data.attackerThr = this._attackerThr
     data.targetThr = this._targetThr
 
@@ -162,7 +162,7 @@ class SlamCalculatorForm extends FormApplication {
     html.find('#target-hp').change(ev => {
       this._targetHp = parseInt(ev.currentTarget.value)
     })
-    
+
     html.find('#attacker-thr').change(ev => {
       this._attackerThr = ev.currentTarget.value
     })

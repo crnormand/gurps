@@ -8,7 +8,7 @@ export default class MoveModeEditor extends Application {
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['sheet'],
       width: 400,
       height: 'auto',

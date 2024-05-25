@@ -7,7 +7,7 @@ export class PDFViewerSheet extends DocumentSheet {
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gcs', 'pdf'],
       width: 630,
       height: 900,
@@ -34,7 +34,7 @@ export class PDFViewerSheet extends DocumentSheet {
   }
 
   getData(options) {
-    return mergeObject(super.getData(options), {
+    return foundry.utils.mergeObject(super.getData(options), {
       pageNumber: this.pageNumber,
       params: this._getPDFData(),
     })

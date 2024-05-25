@@ -80,7 +80,11 @@ async function _createToken(data) {
   let targetScene = scenes.get(data.targetSceneId)
   //@ts-ignore
   return await targetScene.createEmbeddedDocuments('Token', [
-    mergeObject(duplicate(data.tokenData), { x: data.x, y: data.y, hidden: false }, { overwrite: true, inplace: true }),
+    foundry.utils.mergeObject(
+      duplicate(data.tokenData),
+      { x: data.x, y: data.y, hidden: false },
+      { overwrite: true, inplace: true }
+    ),
   ])
 }
 async function _deleteToken(data) {

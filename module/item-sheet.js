@@ -6,7 +6,7 @@ import { recurselist } from '../lib/utilities.js'
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['sheet', 'item'],
       template: 'systems/gurps/templates/item-sheet.html',
       width: 680,
