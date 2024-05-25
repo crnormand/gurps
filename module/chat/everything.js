@@ -107,7 +107,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             let d = dice.match(/[+-](\d+)d(\d*)/)
             let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/ev ${attr}]`
             let roll = Roll.create(r)
-            roll.evaluateSync()
+            await roll.evaluate()
             if (isNiceDiceEnabled()) {
               let throws = []
               let dc = []

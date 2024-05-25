@@ -321,7 +321,7 @@ export default class DamageChat {
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods, hitlocation) {
     let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
-    roll.evaluateSync()
+    await roll.evaluate()
 
     let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2

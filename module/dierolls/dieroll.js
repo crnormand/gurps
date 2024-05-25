@@ -66,7 +66,7 @@ export async function doRoll({
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll
-    roll.evaluateSync()
+    await roll.evaluate()
     let rtotal = roll.total
 
     chatdata['showPlus'] = true
@@ -137,7 +137,7 @@ export async function doRoll({
     if (max > 1) chatdata['chatthing'] = 'x' + max
     for (let i = 0; i < max; i++) {
       roll = Roll.create(formula + `+${modifier}`)
-      roll.evaluateSync()
+      await roll.evaluate()
 
       let rtotal = roll.total
       if (rtotal < min) {
