@@ -232,9 +232,7 @@ class WhisperChatProcessor extends ChatProcessor {
     if (destTokens.length == 0) return false
     let users = []
     for (const token of destTokens) {
-      let owners = game.users.contents.filter(
-        u => token.actor.getUserLevel(u) >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
-      )
+      let owners = game.users.contents.filter(u => token.actor.getUserLevel(u) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
       for (const user of owners) if (!user.isGM) users.push(user)
     }
     if (users.length == 0) return false
