@@ -727,7 +727,7 @@ class UsesChatProcessor extends ChatProcessor {
         // is equipment, apply to that equipment.
         if (!!k) {
           key = k
-          eqt = getProperty(actor, key)
+          eqt = foundry.utils.getProperty(actor, key)
           // if its not equipment, ignore.
           if (eqt.count == null) eqt = null
         }
@@ -805,7 +805,7 @@ class QtyChatProcessor extends ChatProcessor {
         // is equipment, apply to that equipment.
         if (!!k) {
           key = k
-          eqt = getProperty(actor, key)
+          eqt = foundry.utils.getProperty(actor, key)
           // if its not equipment, try to find equipment with that name
           if (eqt.count == null) [eqt, key] = actor.findEquipmentByName((pattern = eqt.name), !!m2[1])
         }

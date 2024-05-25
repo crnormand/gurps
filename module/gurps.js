@@ -440,7 +440,7 @@ if (!globalThis.GURPS) {
     // on a floating skill check, we want the skill with the highest relative skill level
     if (!!action.floatingAttribute) {
       if (!!actor) {
-        let value = getProperty(actordata, action.floatingAttribute)
+        let value = foundry.utils.getProperty(actordata, action.floatingAttribute)
         let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
         let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
         skillLevel = valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
@@ -1384,7 +1384,7 @@ if (!globalThis.GURPS) {
       let k = $(element).closest('[data-key]').attr('data-key')
       if (!k) k = element.dataset.key
       if (!!k) {
-        if (actor) opt.obj = getProperty(actor, k) // During the roll, we may want to extract something from the object
+        if (actor) opt.obj = foundry.utils.getProperty(actor, k) // During the roll, we may want to extract something from the object
         if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
         if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       }
@@ -2426,7 +2426,7 @@ if (!globalThis.GURPS) {
             if (!!destKey) {
               // already have some
               // @ts-ignore
-              let destEqt = getProperty(destactor, destKey)
+              let destEqt = foundry.utils.getProperty(destactor, destKey)
               // @ts-ignore
               destactor.updateEqtCount(destKey, +destEqt.count + resp.count)
             } else {
@@ -2461,7 +2461,7 @@ if (!globalThis.GURPS) {
         // @ts-ignore
         let srcActor = game.actors.get(resp.srcactorid)
         // @ts-ignore
-        let eqt = getProperty(srcActor, resp.srckey)
+        let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
           // @ts-ignore
           srcActor.deleteEquipment(resp.srckey)

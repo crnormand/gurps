@@ -179,7 +179,7 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = getProperty(this.actor.system, path)
+      let tracker = foundry.utils.getProperty(this.actor.system, path)
       let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
@@ -196,7 +196,7 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = getProperty(this.actor.system, path)
+      let tracker = foundry.utils.getProperty(this.actor.system, path)
       let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
@@ -213,7 +213,7 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = getProperty(this.actor.system, path)
+      let tracker = foundry.utils.getProperty(this.actor.system, path)
       let value = !!tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
       let json = `{ "system.${path}.value": ${value} }`
@@ -296,7 +296,7 @@ export class GurpsActorSheet extends ActorSheet {
         if (!details.open) {
           let parent = ev.currentTarget.closest('[data-gurps-resource]')
           let path = $(parent).attr('data-gurps-resource')
-          let tracker = getProperty(this.actor.system, path)
+          let tracker = foundry.utils.getProperty(this.actor.system, path)
 
           let restoreButton = $(details).find('button.restore')
           restoreButton.attr('data-value', `${tracker.value}`)
@@ -325,7 +325,7 @@ export class GurpsActorSheet extends ActorSheet {
 
         // This is a hack to get the correct value for the tracker.
         if (path.startsWith('additionalresources.tracker.')) {
-          let tracker = getProperty(this.actor.system, path)
+          let tracker = foundry.utils.getProperty(this.actor.system, path)
 
           if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
           if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
@@ -444,7 +444,7 @@ export class GurpsActorSheet extends ActorSheet {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
-      let eqt = getProperty(this.actor, path)
+      let eqt = foundry.utils.getProperty(this.actor, path)
       let value = parseInt(eqt.count) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = 0
       await this.actor.updateEqtCount(path, value)
@@ -454,7 +454,7 @@ export class GurpsActorSheet extends ActorSheet {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
-      let eqt = getProperty(this.actor, path)
+      let eqt = foundry.utils.getProperty(this.actor, path)
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       await this.actor.internalUpdate({ [path + '.uses']: value })
@@ -463,7 +463,7 @@ export class GurpsActorSheet extends ActorSheet {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
-      let eqt = getProperty(this.actor, path)
+      let eqt = foundry.utils.getProperty(this.actor, path)
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
@@ -476,7 +476,7 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
       let actor = this.actor
-      let eqt = getProperty(actor, path)
+      let eqt = foundry.utils.getProperty(actor, path)
       if (eqt.count == 0) {
         await Dialog.confirm({
           title: i18n('GURPS.removeItem'),
@@ -674,7 +674,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _sortContent(parentpath, objkey, reverse) {
     let key = parentpath + '.' + objkey
-    let list = getProperty(this.actor, key)
+    let list = foundry.utils.getProperty(this.actor, key)
     let t = parentpath + '.-=' + objkey
 
     await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
@@ -764,7 +764,7 @@ export class GurpsActorSheet extends ActorSheet {
       li.addEventListener('dragstart', ev => {
         let oldd = ev.dataTransfer.getData('text/plain')
         let eqtkey = ev.currentTarget.dataset.key
-        let eqt = getProperty(this.actor, eqtkey) // FYI, may not actually be Equipment
+        let eqt = foundry.utils.getProperty(this.actor, eqtkey) // FYI, may not actually be Equipment
 
         if (!eqt) return
         if (!!eqt.eqtkey) {
@@ -898,7 +898,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     if (!!add)
       if (!!modelkey) {
-        let t = getProperty(this.actor, modelkey) || ''
+        let t = foundry.utils.getProperty(this.actor, modelkey) || ''
         this.actor.internalUpdate({ [modelkey]: t + (t ? ' ' : '') + add })
       } else {
         let t = $(ev.currentTarget).val()

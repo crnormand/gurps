@@ -32,7 +32,7 @@ export default class SplitDREditor extends Application {
   }
 
   get location() {
-    return getProperty(this.actor, this.key)
+    return foundry.utils.getProperty(this.actor, this.key)
   }
 
   activateListeners(html) {

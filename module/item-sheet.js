@@ -149,7 +149,7 @@ export class GurpsItemSheet extends ItemSheet {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
     if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
     let srcActor = game.actors.get(dragData.actorid)
-    let srcData = getProperty(srcActor, dragData.key)
+    let srcData = foundry.utils.getProperty(srcActor, dragData.key)
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
     if (dragData.type == 'equipment') {

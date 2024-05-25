@@ -407,7 +407,7 @@ export class GurpsActor extends Actor {
               let paths = link.action.path.split('.')
               let last = paths.pop()
               let data = this.system
-              if (paths.length > 0) data = getProperty(data, paths.join('.'))
+              if (paths.length > 0) data = foundry.utils.getProperty(data, paths.join('.'))
               // regular attributes have a path
               else {
                 // only accept DODGE
@@ -2353,11 +2353,11 @@ export class GurpsActor extends Actor {
    */
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
-    let l = getProperty(this, 'system.' + list)
+    let l = foundry.utils.getProperty(this, 'system.' + list)
     recurselist(l, (e, k, d) => {
       if ((uuid && e.uuid == uuid) || (!!e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
     })
-    return foundkey == null ? foundkey : getProperty(this, 'system.' + list + '.' + foundkey)
+    return foundkey == null ? foundkey : foundry.utils.getProperty(this, 'system.' + list + '.' + foundkey)
   }
 
   /**
@@ -3406,11 +3406,11 @@ export class GurpsActor extends Actor {
       // find the matching data on this actor
       let index = zeroFill(template.slot, 4)
       let path = `additionalresources.tracker.${index}`
-      let tracker = getProperty(this, 'system.' + path)
+      let tracker = foundry.utils.getProperty(this, 'system.' + path)
 
       while (!tracker) {
         await this.addTracker()
-        tracker = getProperty(this, 'system.' + path)
+        tracker = foundry.utils.getProperty(this, 'system.' + path)
       }
 
       // skip if already set
@@ -3442,7 +3442,7 @@ export class GurpsActor extends Actor {
       value = parseInt(template.initialValue, 10)
       if (Number.isNaN(value)) {
         // try to use initialValue as a path to another value
-        value = getProperty(this, 'system.' + template.initialValue)
+        value = foundry.utils.getProperty(this, 'system.' + template.initialValue)
       }
     }
     template.tracker.max = value
@@ -3604,7 +3604,7 @@ export class GurpsActor extends Actor {
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
-    let eqt = getProperty(srcActor, dragData.key)
+    let eqt = foundry.utils.getProperty(srcActor, dragData.key)
     if (
       (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
       (!!eqt.collapsed && Object.keys(eqt.collapsed).length > 0)
@@ -3619,7 +3619,7 @@ export class GurpsActor extends Actor {
         let destKey = this._findEqtkeyForId('name', eqt.name)
         if (!!destKey) {
           // already have some
-          let destEqt = getProperty(this, destKey)
+          let destEqt = foundry.utils.getProperty(this, destKey)
           await this.updateEqtCount(destKey, +destEqt.count + +eqt.count)
           await srcActor.deleteEquipment(dragData.key)
         } else {
@@ -3634,7 +3634,7 @@ export class GurpsActor extends Actor {
           let destKey = this._findEqtkeyForId('name', eqt.name)
           if (!!destKey) {
             // already have some
-            let destEqt = getProperty(this, destKey)
+            let destEqt = foundry.utils.getProperty(this, destKey)
             await this.updateEqtCount(destKey, +destEqt.count + qty)
           } else {
             let item = /** @type {GurpsItem} */ (srcActor.items.get(eqt.itemid))
@@ -3699,7 +3699,7 @@ export class GurpsActor extends Actor {
     let _data = GurpsItem.asGurpsItem(item).system
     let oldkey = this._findEqtkeyForId('itemid', item.id)
     var oldeqt
-    if (!!oldkey) oldeqt = getProperty(this, oldkey)
+    if (!!oldkey) oldeqt = foundry.utils.getProperty(this, oldkey)
     let other = item.id ? await this._removeItemElement(item.id, 'equipment.other') : null // try to remove from other
     if (!other) {
       // if not in other, remove from carried, and then re-add everything
@@ -3760,7 +3760,7 @@ export class GurpsActor extends Actor {
     let existing = this._findEqtkeyForId('itemid', itemData._id)
     if (!!existing) {
       // it may already exist (due to qty updates), so don't add it again
-      let eqt = getProperty(this, existing)
+      let eqt = foundry.utils.getProperty(this, existing)
       return [existing, eqt.carried && eqt.equipped]
     }
     let _data = /** @type {GurpsItemData} */ (itemData)
@@ -3784,7 +3784,7 @@ export class GurpsActor extends Actor {
         // new carried items go at the end
         targetkey = 'system.equipment.carried'
         let index = 0
-        let list = getProperty(this, targetkey)
+        let list = foundry.utils.getProperty(this, targetkey)
         while (list.hasOwnProperty(zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
       } else targetkey = 'system.equipment.other'
@@ -3883,7 +3883,7 @@ export class GurpsActor extends Actor {
    * @param {string} path
    */
   async deleteEquipment(path, depth = 0) {
-    let eqt = getProperty(this, path)
+    let eqt = foundry.utils.getProperty(this, path)
     if (!eqt) return eqt
     if (depth == 0) this.ignoreRender = true
 
@@ -3933,7 +3933,7 @@ export class GurpsActor extends Actor {
     if (!key.startsWith('system.')) key = 'system.' + key
     while (!!found) {
       found = false
-      let list = getProperty(this, key)
+      let list = foundry.utils.getProperty(this, key)
       recurselist(list, (e, k, d) => {
         if (e.itemid == itemid) found = k
       })
@@ -3964,7 +3964,7 @@ export class GurpsActor extends Actor {
     for (let i = 0; i < max; i++) {
       if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
     }
-    let object = getProperty(this, srckey)
+    let object = foundry.utils.getProperty(this, srckey)
     if (targetkey.match(/^system\.equipment\.\w+$/)) {
       this.ignoreRender = true
       object.parentuuid = ''
@@ -4019,7 +4019,7 @@ export class GurpsActor extends Actor {
               await this.updateParentOf(srckey, false)
             }
             let k = targetkey + '.contains.' + zeroFill(0)
-            let targ = getProperty(this, targetkey)
+            let targ = foundry.utils.getProperty(this, targetkey)
 
             await this.updateItemAdditionsBasedOn(object, targetkey)
             await GURPS.insertBeforeKey(this, k, object)
@@ -4041,7 +4041,7 @@ export class GurpsActor extends Actor {
    * @param {string} path
    */
   async toggleExpand(path, expandOnly = false) {
-    let obj = getProperty(this, path)
+    let obj = foundry.utils.getProperty(this, path)
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
       let temp = { ...obj.contains, ...obj.collapsed }
       let update = {
@@ -4066,7 +4066,7 @@ export class GurpsActor extends Actor {
    * @param {string} targetkey
    */
   async _splitEquipment(srckey, targetkey) {
-    let srceqt = getProperty(this, srckey)
+    let srceqt = foundry.utils.getProperty(this, srckey)
     if (srceqt.count <= 1) return false // nothing to split
     let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: srceqt })
     let count = 0
@@ -4112,8 +4112,8 @@ export class GurpsActor extends Actor {
    * @param {string} targetkey
    */
   async _checkForMerging(srckey, targetkey) {
-    let srceqt = getProperty(this, srckey)
-    let desteqt = getProperty(this, targetkey)
+    let srceqt = foundry.utils.getProperty(this, srckey)
+    let desteqt = foundry.utils.getProperty(this, targetkey)
     if (
       (!!srceqt.globalid && srceqt.globalid == desteqt.globalid) ||
       (!srceqt.globalid && srceqt.name == desteqt.name)
@@ -4329,7 +4329,7 @@ export class GurpsActor extends Actor {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
       update[eqtkey + '.ignoreImportQty'] = true
     await this.update(update)
-    let eqt = getProperty(this, eqtkey)
+    let eqt = foundry.utils.getProperty(this, eqtkey)
     await this.updateParentOf(eqtkey, false)
     if (!!eqt.itemid) {
       let item = this.items.get(eqt.itemid)
@@ -4351,7 +4351,7 @@ export class GurpsActor extends Actor {
     let paths = srckey.split('.')
     let sp = paths.slice(0, pindex).join('.') // find the top level key in this list
     // But count may have changed... if (srckey == sp) return // no parent for this eqt
-    let parent = getProperty(this, sp)
+    let parent = foundry.utils.getProperty(this, sp)
     if (!!parent) {
       // data protection
       await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
@@ -4359,10 +4359,10 @@ export class GurpsActor extends Actor {
         let puuid = ''
         if (paths.length >= 6) {
           sp = paths.slice(0, -2).join('.')
-          puuid = getProperty(this, sp).uuid
+          puuid = foundry.utils.getProperty(this, sp).uuid
         }
         await this.internalUpdate({ [srckey + '.parentuuid']: puuid })
-        let eqt = getProperty(this, srckey)
+        let eqt = foundry.utils.getProperty(this, srckey)
         if (!!eqt.itemid) {
           let item = this.items.get(eqt.itemid)
           if (item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.parentuuid': puuid }])

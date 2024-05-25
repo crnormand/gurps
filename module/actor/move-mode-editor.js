@@ -137,7 +137,7 @@ export default class MoveModeEditor extends Application {
       // click:  action [default] key [00000] value [on|off]
       case 'default':
         {
-          let state = getProperty(this.moveData, `${key}.default`)
+          let state = foundry.utils.getProperty(this.moveData, `${key}.default`)
           if (getType(state) === 'string') state = state === 'true'
 
           // only handle changing from false to true
