@@ -728,7 +728,7 @@ export class ModifierBucket extends Application {
       if (!game.user?.isGM) {
         let messageData = {
           content: this.chatString(this.modifierStack),
-          type: CONST.CHAT_MESSAGE_TYPES.OOC,
+          type: CONST.CHAT_MESSAGE_STYLES.OOC,
         }
         ChatMessage.create(messageData, {})
       } else this.showOthers()
@@ -751,7 +751,7 @@ export class ModifierBucket extends Application {
 
     let chatData = {}
     chatData.user = game.user?.id || null
-    chatData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    chatData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
     chatData.content = content
     chatData.whisper = [game.user?.id || '']
 

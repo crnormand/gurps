@@ -570,12 +570,12 @@ export default class ApplyDamageDialog extends Application {
     let msgData = {
       content: message,
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC,
+      type: CONST.CHAT_MESSAGE_STYLES.OOC,
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getOwners()
       let ids = users.map(it => it.id)
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+      msgData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       msgData.whisper = ids
     }
 
@@ -655,14 +655,14 @@ export default class ApplyDamageDialog extends Application {
         user: game.user.id,
         speaker: speaker,
         content: html,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        type: CONST.CHAT_MESSAGE_STYLES.OTHER,
       }
 
       if (!publicly) {
         let users = this.actor.getOwners()
         let ids = users.map(it => it.id)
         messageData.whisper = ids
-        messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+        messageData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       }
 
       ChatMessage.create(messageData)

@@ -62,27 +62,26 @@ export class SlamCalculator {
 
     let attackerAdds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
     let targetAdds = -(data.shieldDB || 0)
-    
+
     let velocityAdd = 0
 
     if (data.useDFRPGRules) {
       let thr = data.attackerThr
       let diceMatch = thr.match(/(\d+)d(.*)/i)
       if (!diceMatch) {
-        ui.notifications.warn("Attacker Thrust damage (" + thr + ") does not include 'd'")
-        return 
+        ui.notifications.warn('Attacker Thrust damage (' + thr + ") does not include 'd'")
+        return
       }
       attackerDice = { dice: +diceMatch[1], adds: +diceMatch[2] || 0 }
       thr = data.targetThr
       diceMatch = thr.match(/(\d+)d(.*)/i)
       if (!diceMatch) {
-        ui.notifications.warn("Target Thrust damage (" + thr + ") does not include 'd'")
-        return 
+        ui.notifications.warn('Target Thrust damage (' + thr + ") does not include 'd'")
+        return
       }
       targetDice = { dice: +diceMatch[1], adds: +diceMatch[2] || 0 }
       velocityAdd = -2 // combined speed 1
-      if (data.relativeSpeed >= 2)
-        velocityAdd = -GURPS.SSRT.getModifier(data.relativeSpeed)  // convert range mod to size mod
+      if (data.relativeSpeed >= 2) velocityAdd = -GURPS.SSRT.getModifier(data.relativeSpeed) // convert range mod to size mod
       attackerAdds += velocityAdd * attackerDice.dice
       targetAdds += velocityAdd * targetDice.dice
     }
@@ -138,7 +137,13 @@ export class SlamCalculator {
       attackerRaw: rawDamageAttacker,
       attackerDice: attackerDice,
       attackerResult: attackerResult,
-      attackerExplain: this.explainDieRoll(attackerRoll, data.isAoAStrong, data.shieldDB, velocityAdd * attackerDice.dice, attackerMin),
+      attackerExplain: this.explainDieRoll(
+        attackerRoll,
+        data.isAoAStrong,
+        data.shieldDB,
+        velocityAdd * attackerDice.dice,
+        attackerMin
+      ),
       // ---
       target: data.targetToken.name,
       targetHp: data.targetHp,
@@ -152,7 +157,7 @@ export class SlamCalculator {
       relativeSpeed: data.relativeSpeed,
       result: result,
       shieldDB: data.shieldDB,
-      useDFRPGRules: data.useDFRPGRules
+      useDFRPGRules: data.useDFRPGRules,
     })
 
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
@@ -160,7 +165,7 @@ export class SlamCalculator {
       user: game.user.id,
       // speaker: speaker,
       content: html,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: JSON.stringify(attackerRoll),
       sound: this.rollThemBones([targetRoll]),
     }
@@ -174,7 +179,7 @@ export class SlamCalculator {
       await GURPS.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name}]`)
       GURPS.LastActor = data.attackerToken.actor
       targets.forEach(t => game.user.targets.add(t))
-    })   
+    })
   }
 
   targetFallsDown(attackerResult, targetResult) {

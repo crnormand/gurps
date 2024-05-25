@@ -1796,10 +1796,10 @@ if (!globalThis.GURPS) {
       blind: blindroll,
     }
     if (!!users) {
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+      msgData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       msgData.whisper = users.map(it => it.id || '')
     } else {
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC
+      msgData.type = CONST.CHAT_MESSAGE_STYLES.OOC
     }
     ChatMessage.create(msgData)
   }
@@ -2105,7 +2105,7 @@ if (!globalThis.GURPS) {
             let messageData = {
               user: game.user.id,
               //speaker: ChatMessage.getSpeaker({ actor: game.user }),
-              type: CONST.CHAT_MESSAGE_TYPES.OOC,
+              type: CONST.CHAT_MESSAGE_STYLES.OOC,
               content: cmd,
             }
             ChatMessage.create(messageData, {})
@@ -2230,7 +2230,7 @@ if (!globalThis.GURPS) {
     <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
   </div>
 </div>`,
-          type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+          type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
           // @ts-ignore
           whisper: [game.user],
         })

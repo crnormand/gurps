@@ -436,12 +436,12 @@ export default class DamageChat {
       user: game.user.id,
       speaker: speaker,
       content: html,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: JSON.stringify(draggableData[0].roll), // only need to stringify when sending to chat
     }
 
     if (event?.shiftKey) {
-      messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+      messageData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       if (game.user.isGM) {
         messageData.whisper = [game.user.id]
       } else messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)
