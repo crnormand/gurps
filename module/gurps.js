@@ -1796,7 +1796,6 @@ if (!globalThis.GURPS) {
       blind: blindroll,
     }
     if (!!users) {
-      msgData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       msgData.whisper = users.map(it => it.id || '')
     } else {
       msgData.type = CONST.CHAT_MESSAGE_STYLES.OOC
@@ -2219,7 +2218,7 @@ if (!globalThis.GURPS) {
         // If it isn't already in the chat log somewhere
         ChatMessage.create({
           content: `
-<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div>
+<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>
 <div style='font-size:70%'>
   <div>${game.i18n.localize('GURPS.copyrightGURPS')}</div>

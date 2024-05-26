@@ -441,7 +441,6 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       if (game.user.isGM) {
         messageData.whisper = [game.user.id]
       } else messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)

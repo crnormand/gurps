@@ -675,7 +675,6 @@ export class ModifierBucket extends Application {
 
     let chatData = {}
     chatData.user = game.user?.id || null
-    chatData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
     chatData.content = content
     chatData.whisper = [game.user?.id || '']
 
