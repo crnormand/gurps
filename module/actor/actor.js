@@ -823,7 +823,6 @@ export class GurpsActor extends Actor {
       let messageData = {
         content: content,
         whisper: ids || null,
-        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
       }
       ChatMessage.create(messageData)
     })

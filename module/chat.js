@@ -299,7 +299,6 @@ class ChatProcessorRegistry {
   setEventFlags(quiet, shift, ctrl) {
     this.msgs.quiet = quiet
     this.msgs.oldQuiet = quiet
-    this.msgs.data.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
     this.msgs.data.whisper = [game.user?.id]
     foundry.utils.mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
   }

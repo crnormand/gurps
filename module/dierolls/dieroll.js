@@ -50,7 +50,6 @@ export async function doRoll({
   }
   if (optionalArgs.event?.data?.private) {
     messageData.whisper = [game.user.id]
-    messageData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
   }
 
   let roll = null // Will be the Roll
