@@ -513,6 +513,7 @@ export class GurpsActorSheet extends ActorSheet {
     new ContextMenu(html, '.notesmenu', notesMenuItems)
 
     html.find('[data-onethird]').click(ev => {
+      ev.preventDefault()
       let el = ev.currentTarget
       let opt = el.dataset.onethird
       let active = !!this.actor.system.conditions[opt]
