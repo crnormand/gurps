@@ -47,11 +47,10 @@ export async function doRoll({
   let messageData = {
     user: game.user.id,
     speaker: speaker,
-    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
   }
   if (optionalArgs.event?.data?.private) {
     messageData.whisper = [game.user.id]
-    messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    messageData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
   }
 
   let roll = null // Will be the Roll
@@ -67,7 +66,7 @@ export async function doRoll({
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll
-    await roll.evaluate({ async: true })
+    await roll.evaluate()
     let rtotal = roll.total
 
     chatdata['showPlus'] = true
@@ -138,7 +137,7 @@ export async function doRoll({
     if (max > 1) chatdata['chatthing'] = 'x' + max
     for (let i = 0; i < max; i++) {
       roll = Roll.create(formula + `+${modifier}`)
-      await roll.evaluate({ async: true })
+      await roll.evaluate()
 
       let rtotal = roll.total
       if (rtotal < min) {
@@ -192,7 +191,6 @@ export async function doRoll({
     let users = actor.isSelf ? [] : actor.getOwners()
     let ids = users.map(it => it.id)
     let messageData = {
-      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       whisper: ids,
     }
     if (!failure && !!optionalArgs.action.truetext) messageData.content = optionalArgs.action.truetext

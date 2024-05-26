@@ -93,7 +93,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, tblname)
 
     let roll = Roll.create('3d6[Fright Check]')
-    await roll.evaluate({ async: true })
+    await roll.evaluate()
 
     let margin = finaltarget - roll.total
     let failure = margin < 0
@@ -112,7 +112,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     })
 
     await ChatMessage.create({
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       speaker: ChatMessage.getSpeaker(actor),
       content: content,
       roll: JSON.stringify(roll),

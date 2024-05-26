@@ -13,7 +13,7 @@ export default class ModifierBucketJournals extends FormApplication {
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'modifier-journals',
       template: 'systems/gurps/templates/modifier-bucket/select-journals.html',
       resizeable: true,

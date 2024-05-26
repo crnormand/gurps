@@ -232,9 +232,7 @@ class WhisperChatProcessor extends ChatProcessor {
     if (destTokens.length == 0) return false
     let users = []
     for (const token of destTokens) {
-      let owners = game.users.contents.filter(
-        u => token.actor.getUserLevel(u) >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
-      )
+      let owners = game.users.contents.filter(u => token.actor.getUserLevel(u) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
       for (const user of owners) if (!user.isGM) users.push(user)
     }
     if (users.length == 0) return false
@@ -525,7 +523,7 @@ class FpHpChatProcessor extends ChatProcessor {
         let d = dice.match(/[+-](\d+)d(\d*)/)
         let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/${attr}]`
         let roll = Roll.create(r)
-        await roll.evaluate({ async: true })
+        await roll.evaluate()
         if (isNiceDiceEnabled()) {
           let throws = []
           let dc = []
@@ -729,7 +727,7 @@ class UsesChatProcessor extends ChatProcessor {
         // is equipment, apply to that equipment.
         if (!!k) {
           key = k
-          eqt = getProperty(actor, key)
+          eqt = foundry.utils.getProperty(actor, key)
           // if its not equipment, ignore.
           if (eqt.count == null) eqt = null
         }
@@ -807,7 +805,7 @@ class QtyChatProcessor extends ChatProcessor {
         // is equipment, apply to that equipment.
         if (!!k) {
           key = k
-          eqt = getProperty(actor, key)
+          eqt = foundry.utils.getProperty(actor, key)
           // if its not equipment, try to find equipment with that name
           if (eqt.count == null) [eqt, key] = actor.findEquipmentByName((pattern = eqt.name), !!m2[1])
         }

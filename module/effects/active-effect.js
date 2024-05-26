@@ -199,7 +199,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       let messageData = {
         content: content,
         whisper: ids || null,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        type: CONST.CHAT_MESSAGE_STYLES.WHISPER,
       }
       ChatMessage.create(messageData)
       ui.combat?.render()

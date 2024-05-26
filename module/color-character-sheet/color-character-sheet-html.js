@@ -45,7 +45,7 @@ export default class ColorCharacterSheetSettings extends FormApplication {
 
   static get defaultOptions() {
     // eslint-disable-next-line no-undef
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'color-sheets',
       template: 'systems/gurps/templates/color-character-sheet/color-character-sheet.hbs',
       resizeable: true,

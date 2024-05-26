@@ -86,7 +86,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     if (this.match.groups?.data) {
       let data = JSON.parse(this.match.groups.data)
       data.duration.combat = game.combats?.active?.id
-      mergeObject(effect, data)
+      foundry.utils.mergeObject(effect, data)
     }
 
     if (isStanding) {

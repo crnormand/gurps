@@ -321,7 +321,7 @@ export default class DamageChat {
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods, hitlocation) {
     let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
-    await roll.evaluate({ async: true })
+    await roll.evaluate()
 
     let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
@@ -436,12 +436,12 @@ export default class DamageChat {
       user: game.user.id,
       speaker: speaker,
       content: html,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: JSON.stringify(draggableData[0].roll), // only need to stringify when sending to chat
     }
 
     if (event?.shiftKey) {
-      messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+      messageData.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
       if (game.user.isGM) {
         messageData.whisper = [game.user.id]
       } else messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)

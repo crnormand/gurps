@@ -8,7 +8,7 @@ export default class MoveModeEditor extends Application {
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['sheet'],
       width: 400,
       height: 'auto',
@@ -115,7 +115,7 @@ export default class MoveModeEditor extends Application {
           // copy existing entries
           let move = {}
           for (const k in this.moveData)
-            setProperty(move, k, {
+            foundry.utils.setProperty(move, k, {
               mode: this.moveData[k].mode,
               basic: this.moveData[k].basic,
               enhanced: this.moveData[k].enhanced,
@@ -137,8 +137,8 @@ export default class MoveModeEditor extends Application {
       // click:  action [default] key [00000] value [on|off]
       case 'default':
         {
-          let state = getProperty(this.moveData, `${key}.default`)
-          if (getType(state) === 'string') state = state === 'true'
+          let state = foundry.utils.getProperty(this.moveData, `${key}.default`)
+          if (foundry.utils.getType(state) === 'string') state = state === 'true'
 
           // only handle changing from false to true
           if (!state) {

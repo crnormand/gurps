@@ -19,7 +19,7 @@ export class ResourceTrackerEditor extends Application {
    * @param {*} options
    */
   static editForActor(actor, path, options) {
-    let tracker = getProperty(actor.system, path)
+    let tracker = foundry.utils.getProperty(actor.system, path)
     let temp = JSON.stringify(tracker)
     let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)
     dialog._updateTracker = async () => {
@@ -33,7 +33,7 @@ export class ResourceTrackerEditor extends Application {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/resource-editor-popup.hbs',
       width: 360,
       height: 472,

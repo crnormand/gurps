@@ -230,7 +230,6 @@ class ChatProcessorRegistry {
         alreadyProcessed: true,
         content: content,
         user: game.user?.id,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user?.id || ''],
       })
     })
@@ -300,9 +299,9 @@ class ChatProcessorRegistry {
   setEventFlags(quiet, shift, ctrl) {
     this.msgs.quiet = quiet
     this.msgs.oldQuiet = quiet
-    this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    this.msgs.data.type = CONST.CHAT_MESSAGE_STYLES.WHISPER
     this.msgs.data.whisper = [game.user?.id]
-    mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
+    foundry.utils.mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
   }
 }
 
@@ -387,7 +386,7 @@ export default function addChatHooks() {
           }
         } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
         let newContent = gurpslink(c)
-        setProperty(chatMessage, '_source.content', newContent)
+        foundry.utils.setProperty(chatMessage, '_source.content', newContent)
         return true
       }
     )
