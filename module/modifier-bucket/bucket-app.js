@@ -68,7 +68,7 @@ export class GurpsRoll extends Roll {
   }
 }
 
-export class GurpsDie extends Die {
+export class GurpsDie extends foundry.dice.terms.Die {
   /**
    * @param {Die} die
    */

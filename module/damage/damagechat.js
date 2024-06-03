@@ -436,7 +436,6 @@ export default class DamageChat {
       user: game.user.id,
       speaker: speaker,
       content: html,
-      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: JSON.stringify(draggableData[0].roll), // only need to stringify when sending to chat
     }
 

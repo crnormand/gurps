@@ -2,7 +2,11 @@
   "id": "gurps",
   "title": "GURPS 4e Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
+<<<<<<< HEAD
   "version": "0.17.1",
+=======
+  "version": "0.17.0",
+>>>>>>> c3ecb384d30dba2e99075ddb2c447da075fc6948
   "authors": [
     {
       "name": "Chris Normand",
