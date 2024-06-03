@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.0  6/02/2024
+
+- Update for Foundry V12
+- Update for JB2A v0.6.8
+
 Release 0.16.10 4/23/2024
 
 - Fix Foundry/Github release
