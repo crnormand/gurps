@@ -3867,7 +3867,7 @@ export class GurpsActor extends Actor {
     // @ts-ignore
     for (const k in itemData.system[key]) {
       // @ts-ignore
-      let e = duplicate(itemData.system[key][k])
+      let e = foundry.utils.duplicate(itemData.system[key][k])
       e.itemid = itemData._id
       e.uuid = key + '-' + i++ + '-' + e.itemid
       e.eqtkey = eqtkey
@@ -4094,7 +4094,7 @@ export class GurpsActor extends Actor {
       return true
     } else {
       // simple eqt
-      let neqt = duplicate(srceqt)
+      let neqt = foundry.utils.duplicate(srceqt)
       neqt.count = count
       this.ignoreRender = true
       await this.updateEqtCount(srckey, srceqt.count - count)

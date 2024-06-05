@@ -420,7 +420,7 @@ export class GurpsActorSheet extends ActorSheet {
 
       let path = parent[0].dataset.key
       let actor = this.actor
-      let obj = duplicate(foundry.utils.getProperty(actor, path)) // must dup so difference can be detected when updated
+      let obj = foundry.utils.duplicate(foundry.utils.getProperty(actor, path)) // must dup so difference can be detected when updated
       if (!!obj.itemid) {
         let item = this.actor.items.get(obj.itemid)
         item.editingActor = this.actor
@@ -498,7 +498,7 @@ export class GurpsActorSheet extends ActorSheet {
         icon: "<i class='fas fa-edit'></i>",
         callback: e => {
           let path = e[0].dataset.key
-          let o = duplicate(GURPS.decode(this.actor, path))
+          let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
           this.editNotes(this.actor, path, o)
         },
       },
@@ -649,7 +649,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   _editEquipment(target) {
     let path = target[0].dataset.key
-    let o = duplicate(GURPS.decode(this.actor, path))
+    let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
     this.editEquipment(this.actor, path, o)
   }
 
@@ -752,7 +752,7 @@ export class GurpsActorSheet extends ActorSheet {
       icon: '<i class="fas fa-plus"></i>',
       callback: e => {
         let o = GURPS.decode(this.actor, path) || {}
-        GURPS.put(o, duplicate(obj))
+        GURPS.put(o, foundry.utils.duplicate(obj))
         this.actor.internalUpdate({ [path]: o })
       },
     }
@@ -807,7 +807,7 @@ export class GurpsActorSheet extends ActorSheet {
     let parent = $(event.currentTarget).closest('.header')
     let path = parent.attr('data-key')
     let actor = this.actor
-    let list = duplicate(foundry.utils.getProperty(actor, path))
+    let list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path))
     let obj = new Note('', true)
     let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
 
@@ -1591,7 +1591,7 @@ export class GurpsActorSheet extends ActorSheet {
     ev.preventDefault()
     let element = ev.currentTarget
     let key = element.dataset.key
-    let eqt = duplicate(GURPS.decode(this.actor, key))
+    let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
     eqt.equipped = !eqt.equipped
     await this.actor.internalUpdate({ [key]: eqt })
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
