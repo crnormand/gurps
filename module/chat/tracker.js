@@ -54,7 +54,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
 
     if (!!m[6]) {
       // reset -- Damage Tracker's reset to zero
-      let value = !!theTracker.isDamageTracker ? theTracker.min : theTracker.max
+      let value = !!theTracker.isDamageTracker ? parseInt(theTracker.min) : parseInt(theTracker.max)
       //if (!!theTracker.isDamageTracker) max = 0
       await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(
@@ -79,8 +79,8 @@ export default class TrackerChatProcessor extends ChatProcessor {
         ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
         return false
       } else {
-        value = theTracker.isMaximumEnforced && value > theTracker.max ? theTracker.max : value
-        value = theTracker.isMinimumEnforced && value < theTracker.min ? theTracker.min : value
+        value = theTracker.isMaximumEnforced && value > parseInt(theTracker.max) ? parseInt(theTracker.max) : value
+        value = theTracker.isMinimumEnforced && value < parseInt(theTracker.min) ? parseInt(theTracker.min) : value
         await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
         this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} set to ${value}`)
         return true
@@ -88,7 +88,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     } else {
       let max = theTracker.max == 0 ? Number.MAX_SAFE_INTEGER : theTracker.max
       let min = theTracker.min
-      let value = theTracker.value + delta
+      let value = parseInt(theTracker.value) + delta
 
       if (value > max) {
         ui.notifications.warn(
@@ -104,7 +104,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
         )
         if (theTracker.isMinimumEnforced) return false
       }
-      await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
+      await actor.update({ ['system.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} ${m[5]} = ${value}`)
       return true
     }
