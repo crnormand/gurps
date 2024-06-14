@@ -4,6 +4,7 @@ Release 0.17.3
 
 - Update 'duplicate' method (deprecated) to 'foundry.utils.duplicate'.
 - Fix problem where Tracker value was being treated as a string.
+- Fix Resource Trackers not updating.
 
 Release 0.17.2  6/03/2024
 
