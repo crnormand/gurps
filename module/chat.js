@@ -243,7 +243,7 @@ class ChatProcessorRegistry {
   _sendPub(pub, chatData) {
     if (pub.length == 0) return
 
-    let d = duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
+    let d = foundry.utils.duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
     d.alreadyProcessed = true
     let lines = pub.slice()
     renderTemplate('systems/gurps/templates/chat-processing.html', {

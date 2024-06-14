@@ -212,8 +212,8 @@ export class ItemImporter {
     }
     let oi = await cachedItems.find(p => p.system.eqt.uuid === itemData.system.eqt.uuid)
     if (!!oi) {
-      let oldData = duplicate(oi)
-      let newData = duplicate(itemData)
+      let oldData = foundry.utils.duplicate(oi)
+      let newData = foundry.utils.duplicate(itemData)
       delete oldData.system.eqt.uuid
       delete newData.system.eqt.uuid
       if (oldData != newData) {

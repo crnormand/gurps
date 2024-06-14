@@ -81,7 +81,7 @@ async function _createToken(data) {
   //@ts-ignore
   return await targetScene.createEmbeddedDocuments('Token', [
     foundry.utils.mergeObject(
-      duplicate(data.tokenData),
+      foundry.utils.duplicate(data.tokenData),
       { x: data.x, y: data.y, hidden: false },
       { overwrite: true, inplace: true }
     ),

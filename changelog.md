@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.3
+
+- Update 'duplicate' method (deprecated) to 'foundry.utils.duplicate'.
+- Fix problem where Tracker value was being treated as a string.
+- Fix Resource Trackers not updating.
+
 Release 0.17.2  6/03/2024
 
 - Fix merge issue

@@ -738,7 +738,7 @@ class UsesChatProcessor extends ChatProcessor {
           // no +-= or reset
           ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
         } else {
-          eqt = duplicate(eqt)
+          eqt = foundry.utils.duplicate(eqt)
           let delta = parseInt(m[1])
           if (!!m[2]) {
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesReset')} (${eqt.maxuses})`)
@@ -812,7 +812,7 @@ class QtyChatProcessor extends ChatProcessor {
       }
       if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
       else {
-        eqt = duplicate(eqt)
+        eqt = foundry.utils.duplicate(eqt)
         let delta = parseInt(m[1].replace(/ /g, ''))
         if (isNaN(delta)) {
           // only happens with '='

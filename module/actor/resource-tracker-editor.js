@@ -24,7 +24,7 @@ export class ResourceTrackerEditor extends Application {
     let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)
     dialog._updateTracker = async () => {
       let update = {}
-      update[`data.${path}`] = dialog._tracker
+      update[`system.${path}`] = dialog._tracker
       actor.update(update)
       dialog.close()
     }
@@ -36,7 +36,7 @@ export class ResourceTrackerEditor extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/resource-editor-popup.hbs',
       width: 360,
-      height: 472,
+      height: 'auto',
       popOut: true,
       minimizable: false,
       jQuery: true,
@@ -57,7 +57,7 @@ export class ResourceTrackerEditor extends Application {
    * By default, do nothing. Each specific use will need its own update method.
    * @param {*} html
    */
-  async _updateTracker(html) {}
+  async _updateTracker(html) { }
 
   /** @override */
   activateListeners(html) {
