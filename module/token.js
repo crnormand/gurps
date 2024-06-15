@@ -37,7 +37,7 @@ export default class GurpsToken extends Token {
     console.log(`create Token`)
     let actor = /** @type {GurpsActor} */ (token.actor)
     // data protect against bad tokens
-    if (!!actor) {
+    if (actor) {
       let maneuverText = actor.system.conditions.maneuver
       actor.replaceManeuver(maneuverText)
     }
@@ -102,9 +102,9 @@ export default class GurpsToken extends Token {
    */
   async toggleEffect(effect, options) {
     // is this a Posture ActiveEffect?
-    if (effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture') {
+    if (this.isPostureEffect(effect)) {
       // see if there are other Posture ActiveEffects active
-      let existing = this.actor.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+      let existing = this.getAllActivePostureEffects()
 
       existing = existing.filter(e => e.statuses.find(s => s !== effect.id))
       // existing = existing.filter(e => e.getFlag('core', 'statusId') !== effect.id)
@@ -118,8 +118,16 @@ export default class GurpsToken extends Token {
         // await super.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
     }
-    
-    await this.actor.toggleStatusEffect(effect.id);
+
+    await this.actor.toggleStatusEffect(effect.flags.gurps.name);
+  }
+
+  getAllActivePostureEffects() {
+    return this.actor.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+  }
+
+  isPostureEffect(effect) {
+    return effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
   }
 
   async setEffectActive(name, active) {
