@@ -13,29 +13,29 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on('deleteActiveEffect', GurpsActiveEffect._delete)
     Hooks.on('updateCombat', GurpsActiveEffect._updateCombat)
 
-    Hooks.once('ready', function () {
-      // const oldDuration = Object.getOwnPropertyDescriptor(ActiveEffect.prototype, 'duration')
-      // Object.defineProperty(ActiveEffect.prototype, 'duration', {
-      // 	get: function() {
-      // 		let results = oldDuration?.get?.call(this)
-      // 		if (results.type === 'none') {
-      // 			// check if there is a termination condition
-      // 			const d = this.duration
-      // 			if (!!d?.termination) {
-      // 				// TODO add core statusId flag and fix up results to show there is a duration of sorts
-      // 				results = {
-      // 					type: 'condition',
-      // 					duration: null,
-      // 					remaining: null,
-      // 					termination: d.termination,
-      // 					label: d.termination,
-      // 				}
-      // 			}
-      // 		}
-      // 		return results
-      // 	},
-      // })
-    })
+    // Hooks.once('ready', function () {
+    // const oldDuration = Object.getOwnPropertyDescriptor(ActiveEffect.prototype, 'duration')
+    // Object.defineProperty(ActiveEffect.prototype, 'duration', {
+    // 	get: function() {
+    // 		let results = oldDuration?.get?.call(this)
+    // 		if (results.type === 'none') {
+    // 			// check if there is a termination condition
+    // 			const d = this.duration
+    // 			if (!!d?.termination) {
+    // 				// TODO add core statusId flag and fix up results to show there is a duration of sorts
+    // 				results = {
+    // 					type: 'condition',
+    // 					duration: null,
+    // 					remaining: null,
+    // 					termination: d.termination,
+    // 					label: d.termination,
+    // 				}
+    // 			}
+    // 		}
+    // 		return results
+    // 	},
+    // })
+    // })
   }
 
   /**
@@ -138,6 +138,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
     return this.getFlag('gurps', 'endCondition')
   }
 
+  get isManeuver() {
+    return this.getFlag('gurps', 'statusId') === 'maneuver'
+  }
+
   set endCondition(otf) {
     this.setFlag('gurps', 'endCondition', otf)
     if (!!otf) {
@@ -194,7 +198,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     let self = this
     renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
       let users = actor.getOwners()
-      let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+      let ids = users?.map(it => it.id)
 
       let messageData = {
         content: content,

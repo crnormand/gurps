@@ -3,6 +3,7 @@ import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { i18n } from '../lib/utilities.js'
+import { isCombatActive, isTokenInActiveCombat } from './game-utils.js'
 
 Hooks.once('init', async function () {
   game.settings.register(SYSTEM_NAME, 'token-override-refresh-icon', {
@@ -37,7 +38,7 @@ export default class GurpsToken extends Token {
     console.log(`create Token`)
     let actor = /** @type {GurpsActor} */ (token.actor)
     // data protect against bad tokens
-    if (!!actor) {
+    if (actor) {
       let maneuverText = actor.system.conditions.maneuver
       actor.replaceManeuver(maneuverText)
     }
@@ -101,25 +102,29 @@ export default class GurpsToken extends Token {
    * @param {*} options
    */
   async toggleEffect(effect, options) {
-    // is this a Posture ActiveEffect?
-    if (effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture') {
+    if (this.isPostureEffect(effect)) {
       // see if there are other Posture ActiveEffects active
-      let existing = this.actor.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+      let existing = this.getAllActivePostureEffects()
 
       existing = existing.filter(e => e.statuses.find(s => s !== effect.id))
-      // existing = existing.filter(e => e.getFlag('core', 'statusId') !== effect.id)
 
       // if so, toggle them off:
       for (let e of existing) {
         for (const statusId of e.statuses) {
           await super.toggleEffect(GURPS.StatusEffect.lookup(statusId))
         }
-        // let id = e.getFlag('core', 'statusId')
-        // await super.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
     }
-    
-    await this.actor.toggleStatusEffect(effect.id);
+
+    await this.actor.toggleStatusEffect(effect.flags.gurps.name)
+  }
+
+  getAllActivePostureEffects() {
+    return this.actor.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+  }
+
+  isPostureEffect(effect) {
+    return effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
   }
 
   async setEffectActive(name, active) {
@@ -146,12 +151,11 @@ export default class GurpsToken extends Token {
    */
   async setManeuver(maneuverName) {
     // if not in combat, do nothing
-    if (game.combats && game.combats.active) {
-      if (!game.combats.active.combatants.some(c => c.token?.id === this.id)) return
+    if (isCombatActive) {
+      if (!isTokenInActiveCombat(this)) return
 
       // get the new maneuver's data
       let maneuver = Maneuvers.get(maneuverName)
-
       if (!maneuver) {
         this.actor._renderAllApps()
         return
@@ -162,20 +166,28 @@ export default class GurpsToken extends Token {
 
       if (maneuvers && maneuvers.length === 1) {
         // if there is a single active effect maneuver, update its data
-        // @ts-ignore
         if (maneuvers[0].getFlag('gurps', 'name') !== maneuverName) maneuvers[0].update(maneuver)
       } else if (!maneuvers || maneuvers.length === 0) {
         // if there are no active effect maneuvers, add the new one
-        // @ts-ignore
-        await this.toggleEffect(maneuver, { active: true })
+        maneuver.name = game.i18n.localize(maneuver.name ?? /** @deprecated since v12 */ maneuver.label)
+        maneuver.img ??= /** @deprecated since v12 */ maneuver.icon
+        maneuver.statuses = Array.from(new Set([maneuver.id, ...(maneuver.statuses ?? [])]))
+
+        const effect = new GurpsActiveEffect(maneuver)
+        await GurpsActiveEffect.create(effect, { parent: this.actor, keepId: true })
       } else {
         // if there are more than one active effect maneuvers, that's a problem. Let's remove all of them and add the new one.
         console.warn(`More than one maneuver found -- try to fix...`)
         for (const existing of maneuvers) {
-          this._toggleManeuverActiveEffect(existing, { active: false })
+          await existing.delete()
         }
-        // @ts-ignore
-        await this.toggleEffect(maneuver, { active: true })
+
+        maneuver.name = game.i18n.localize(maneuver.name ?? /** @deprecated since v12 */ label)
+        maneuver.img ??= /** @deprecated since v12 */ icon
+        maneuver.statuses = Array.from(new Set([id, ...(maneuver.statuses ?? [])]))
+
+        const effect = new GurpsActiveEffect(maneuver.data)
+        await GurpsActiveEffect.create(effect, { parent: this.actor, keepId: true })
       }
     }
   }
@@ -186,12 +198,12 @@ export default class GurpsToken extends Token {
    * Maneuver.
    */
   async removeManeuver() {
-    let actor = /** @type {GurpsActor} */ (this.actor)
+    let actor = this.actor
 
     // get all Active Effects that are also Maneuvers
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
     for (const m of maneuvers) {
-      this._toggleManeuverActiveEffect(m, { active: false })
+      m.delete()
     }
   }
 

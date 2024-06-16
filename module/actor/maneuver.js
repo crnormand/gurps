@@ -18,31 +18,27 @@ export const MOVE_FULL = 'full'
 export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'system.moveoverride.maneuver'
 export const PROPERTY_MOVEOVERRIDE_POSTURE = 'system.moveoverride.posture'
 
-const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target';
+const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
-const MANEUVER_NAME_AIM = 'aim';
+const MANEUVER_NAME_AIM = 'aim'
 
 CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
 
 // Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
-Object.defineProperty(Actor.prototype, 'temporaryEffects', {
-  get: function () {
-    let results = oldTemporaryEffects?.get?.call(this)
+// Object.defineProperty(Actor.prototype, 'temporaryEffects', {
+//   get: function () {
+//     let results = oldTemporaryEffects?.get?.call(this)
 
-    if (!!results && results.length > 1) {
-      // get the active temporary effects that are also maneuvers
-      // const maneuvers = results.filter((/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') === MANEUVER)
-      // const notManeuvers = results.filter((/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') !== MANEUVER)
+//     if (!!results && results.length > 1) {
+//       const maneuvers = results.filter(e => e.statuses.find(s => s === 'maneuver'))
+//       const notManeuvers = results.filter(e => !maneuvers.includes(e))
 
-      const maneuvers = results.filter(e => e.statuses.find(s => s === 'maneuver'))
-      const notManeuvers = results.filter(e => !maneuvers.includes(e))
-
-      results = [...maneuvers, ...notManeuvers]
-    }
-    return results
-  },
-})
+//       results = [...maneuvers, ...notManeuvers]
+//     }
+//     return results
+//   },
+// })
 
 /**
  * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, icon: string, alt?: string|null} } }} ManeuverEffect
@@ -65,7 +61,7 @@ class Maneuver {
     data.fullturn = !!data.fullturn
     data.icon = Maneuver.filepath + data.icon
     data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
-    data.introducedBy = data.introducedBy ?? null;
+    data.introducedBy = data.introducedBy ?? null
     this._data = data
   }
 
@@ -91,8 +87,10 @@ class Maneuver {
           fullturn: this._data.fullturn,
           icon: this._data.icon,
           alt: this._data.alt,
+          statusId: MANEUVER,
         },
       },
+      statuses: [MANEUVER],
       changes: this.changes,
     }
   }
@@ -126,10 +124,10 @@ const maneuverDataAim = {
   fullturn: true,
   icon: 'man-aim.png',
   label: 'GURPS.maneuverAim',
-};
+}
 
 // On Target changes allowed move for the Aim maneuver from step to half move (with caveats we don't model here)
-const maneuverDataAimWithOnTarget = {...maneuverDataAim, move: MOVE_HALF};
+const maneuverDataAimWithOnTarget = { ...maneuverDataAim, move: MOVE_HALF }
 
 const maneuvers = {
   do_nothing: new Maneuver({
@@ -144,7 +142,7 @@ const maneuvers = {
     icon: 'man-move.png',
     move: MOVE_FULL,
   }),
-  aim: new Maneuver({...maneuverDataAim}),
+  aim: new Maneuver({ ...maneuverDataAim }),
   committed_aim: new Maneuver({
     name: 'committed_aim',
     label: 'GURPS.maneuverCommittedAim',
@@ -307,11 +305,11 @@ const filterManeuvers = (introducedBy = []) => {
   const result = {}
 
   for (const key in maneuvers) {
-    let maneuver = maneuvers[key];
+    let maneuver = maneuvers[key]
 
     // Aim maneuver has different data with On Target than without
     if (introducedBy.includes(MANEUVER_INTRODUCED_BY_ON_TARGET) && maneuver.name === MANEUVER_NAME_AIM) {
-      maneuver = new Maneuver({...maneuverDataAimWithOnTarget})
+      maneuver = new Maneuver({ ...maneuverDataAimWithOnTarget })
     }
 
     if (!maneuver.introducedBy || introducedBy.includes(maneuver.introducedBy)) {
@@ -319,7 +317,7 @@ const filterManeuvers = (introducedBy = []) => {
     }
   }
 
-  return result;
+  return result
 }
 
 export default class Maneuvers {
@@ -371,14 +369,14 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    const useOnTarget = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_ON_TARGET);
+    const useOnTarget = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_ON_TARGET)
 
-    const filter = [];
+    const filter = []
     if (useOnTarget) {
       filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
     }
 
-    return filterManeuvers(filter);
+    return filterManeuvers(filter)
   }
 
   static getAllData() {
