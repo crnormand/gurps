@@ -4221,6 +4221,17 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * @override Sort Maneuvers to the front of the temporary effects.
+   * @since Foundry v12
+   */
+  get temporaryEffects() {
+    const effects = super.temporaryEffects
+    const results = [...effects.filter(e => e.isManeuver), ...effects.filter(e => !e.isManeuver)]
+    console.log('temporaryEffects', results)
+    return results
+  }
+
+  /**
    *
    * @param {string} name of the status effect
    * @param {boolean} active (desired) state - true or false

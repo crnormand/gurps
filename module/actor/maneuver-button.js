@@ -77,7 +77,7 @@ export default class ManeuverHUDButton {
 
     html.find('.status-maneuvers .effect-control').click(ev => {
       let key = $(ev.currentTarget).attr('data-status-id') || ''
-      let token = /** @type {GurpsToken} */ (hud.object)
+      let token = hud.object
       token.setManeuver(key)
 
       html.find('.status-maneuvers .effect-control').removeClass('active')
