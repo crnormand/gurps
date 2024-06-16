@@ -6,6 +6,7 @@ Release 0.17.3
 - Fix problem where Tracker value was being treated as a string.
 - Fix Resource Trackers not updating.
 - Fix setting Maneuvers on actors in combat.
+- Fix right side truncation of default GCS sheet with PopOut! (It still opens the width of your monitor, though.)
 
 Release 0.17.2  6/03/2024
 
