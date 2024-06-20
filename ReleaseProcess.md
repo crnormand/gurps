@@ -45,6 +45,7 @@ Checkout "main" and update
 
     git checkout main
     git merge release
+    git push
 
 # On GitHub
 Click on "**Releases**"
