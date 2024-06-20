@@ -37,9 +37,17 @@ system.json -
   
     "download": "https://github.com/crnormand/gurps/archive/0.17.2.zip",
   
-Commit as the version "0.17.2" and push.
+Commit as the version "0.17.2" and push.   Although the commit tag isn't as important.
+If you messed up something, you can fix and recommit as a different tag.
+I usually go with something like "0.17.2b".
 
-On GitHub, click on "**Releases**"
+Checkout "main" and update
+
+    git checkout main
+    git merge release
+
+# On GitHub
+Click on "**Releases**"
 
 Then "**Draft a new release**"
 
