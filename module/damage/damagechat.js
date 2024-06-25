@@ -436,7 +436,7 @@ export default class DamageChat {
       user: game.user.id,
       speaker: speaker,
       content: html,
-      roll: JSON.stringify(draggableData[0].roll), // only need to stringify when sending to chat
+      rolls: [draggableData[0].roll], // only need to stringify when sending to chat
     }
 
     if (event?.shiftKey) {
@@ -486,10 +486,6 @@ export default class DamageChat {
       messageData.sound = CONFIG.sounds.dice
     }
     ChatMessage.create(messageData)
-    // ChatMessage.create(messageData).then(arg => {
-    //   let messageId = arg.id // 'qHz1QQuzpJiavH3V'
-    //   $(`[data-message-id='${messageId}']`).on('click', handleOnPdf)
-    // })
   }
 }
 
