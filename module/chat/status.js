@@ -168,7 +168,7 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     let effect = null
     Object.values(CONFIG.statusEffects).forEach(s => {
-      if (i18n(s.label).match(pattern)) effect = s // match on name or id (shock1, shock2, etc.)
+      if (i18n(s.name).match(pattern)) effect = s // match on name or id (shock1, shock2, etc.)
       if (s.id.match(pattern)) effect = s
     })
 
