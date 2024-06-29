@@ -116,7 +116,7 @@ export default class GurpsToken extends Token {
       }
     }
 
-    await this.actor.toggleStatusEffect(effect.flags.gurps.name)
+    await this.actor.toggleStatusEffect(effect.id)
   }
 
   getAllActivePostureEffects() {

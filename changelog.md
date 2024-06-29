@@ -1,5 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.4
+
+- Dice So Nice now works for most targetted rolls and damage. This appears to also fix the public/private/blind chat messages.
+- Fix Shock and Major Wound errors when clicked on in the chat.
+  
 Release 0.17.3  6/19/2024
 
 - Update 'duplicate' method (deprecated) to 'foundry.utils.duplicate'.
