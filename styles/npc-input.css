@@ -20,6 +20,7 @@
 .npc-sheet .window-content {
   padding: 5px;
   background: url(../../../ui/parchment-white.jpg) repeat !important;
+  overflow-x: scroll;
 }
 
 .npc-sheet .gga-app {

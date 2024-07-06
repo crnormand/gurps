@@ -518,6 +518,7 @@
   padding: 5px;
   scroll-behavior: smooth;
   background: white;
+  overflow-x: scroll;
 }
 
 .gurps .sheet-header {
@@ -1109,8 +1110,7 @@ body {
 
 .reducedMode #stats {
   display: grid;
-  grid-template:
-    'attributes      hp-fp';
+  grid-template: 'attributes      hp-fp';
   grid-template-columns: min-content 1fr;
 }
 
@@ -2087,7 +2087,7 @@ body {
 .roll-result .roll-value,
 .roll-result .roll-detail {
   /* font-family: var(--fontawesomefamily); */
-  font-family: inherit; 
+  font-family: inherit;
 }
 
 .roll-result .roll-detail {
@@ -2095,7 +2095,7 @@ body {
 }
 
 .roll-result .roll-detail .aside {
-  font-size: inherit; 
+  font-size: inherit;
 }
 
 .roll-result .roll-detail .crit {
