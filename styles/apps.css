@@ -15,6 +15,7 @@ Global Override body {
 .window-app.gcs.pdf .window-content {
   overflow: clip;
   padding: 0;
+  overflow-x: scroll;
 }
 
 .window-app.gcs.pdf .window-content iframe {

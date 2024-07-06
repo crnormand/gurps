@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.5
+
+- Add CSS to enable horizontal scrollbars if the width of the window is less than the width of the actor sheet.
+
 Release 0.17.4  6/29/2024
 
 - Dice So Nice now works for most targetted rolls and damage. This appears to also fix the public/private/blind chat messages.
