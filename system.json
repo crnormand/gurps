@@ -69,8 +69,10 @@
       "flags": {}
     }
   ],
-  "gridDistance": 1,
-  "gridUnits": "yd",
+  "grid": {
+    "distance": 1,
+    "units": "yd"
+  },
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
