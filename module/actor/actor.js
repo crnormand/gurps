@@ -3820,33 +3820,37 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
-  // called when equipment is being moved
   /**
-   * @param {Equipment} eqt
-   * @param {string} targetPath
+   * Called when equipment is being moved or equipped
+   * @param {Equipment} eqt equipment.
+   * @param {string} targetPath equipment target path.
    */
   async updateItemAdditionsBasedOn(eqt, targetPath) {
-    await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'))
+    await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'), eqt.equipped)
   }
 
-  // Equipment may carry other eqt, so we must adjust the carried status all the way down.
   /**
-   * @param {Equipment} eqt
-   * @param {string} eqtkey
-   * @param {boolean} carried
+   * Equipment may carry other eqt, so we must adjust the carried and equipped status all the way down.
+   * @param {Equipment} eqt equipment object.
+   * @param {string} eqtkey equipment key.
+   * @param {boolean} carried container item's carried status.
+   * @param {boolean} equipped container item's equipped status.
    */
-  async _updateEqtStatus(eqt, eqtkey, carried) {
+  async _updateEqtStatus(eqt, eqtkey, carried, equipped) {
     eqt.carried = carried
+    eqt.equipped = equipped
+
     if (!!eqt.itemid) {
       let item = /** @type {Item} */ (await this.items.get(eqt.itemid))
       await this.updateEmbeddedDocuments('Item', [
-        { _id: item.id, 'system.equipped': eqt.equipped, 'system.carried': carried },
+        { _id: item.id, 'system.equipped': equipped, 'system.carried': carried },
       ])
-      if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid)
-      if (carried && eqt.equipped) await this._addItemAdditions(item, eqtkey)
+      if (!carried || !equipped) await this._removeItemAdditions(eqt.itemid)
+      if (carried && equipped) await this._addItemAdditions(item, eqtkey)
     }
-    for (const k in eqt.contains) await this._updateEqtStatus(eqt.contains[k], eqtkey + '.contains.' + k, carried)
-    for (const k in eqt.collapsed) await this._updateEqtStatus(eqt.collapsed[k], eqtkey + '.collapsed.' + k, carried)
+
+    for (const k in eqt.contains) await this._updateEqtStatus(eqt.contains[k], eqtkey + '.contains.' + k, carried, equipped)
+    for (const k in eqt.collapsed) await this._updateEqtStatus(eqt.collapsed[k], eqtkey + '.collapsed.' + k, carried, equipped)
   }
 
   /**

@@ -1593,8 +1593,8 @@ export class GurpsActorSheet extends ActorSheet {
     let key = element.dataset.key
     let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
     eqt.equipped = !eqt.equipped
-    await this.actor.internalUpdate({ [key]: eqt })
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
+    await this.actor.internalUpdate({ [key]: eqt })
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.internalUpdate({
