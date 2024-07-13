@@ -3,6 +3,8 @@
 Release 0.17.6
 
 - JB2A update to 0.6.9
+- Fixed Physical Dice roll
+- Fixed Resource Tracker display (esp for Control Points)
 
 Release 0.17.5
 
