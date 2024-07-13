@@ -90,12 +90,12 @@ export class GurpsDie extends foundry.dice.terms.Die {
   }
 
   asDiceTerm() {
-    if (this instanceof DiceTerm) return this
+    if (this instanceof foundry.dice.terms.DiceTerm) return this
     throw new Error('Unexpected: GurpsDie is not a DiceTerm')
   }
 
   baseExpression() {
-    const x = Die.DENOMINATION === 'd' ? this.faces : Die.DENOMINATION
+    const x = foundry.dice.terms.Die.DENOMINATION === 'd' ? this.faces : foundry.dice.terms.Die.DENOMINATION
     return `${this.number}d${x}`
   }
 

@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.6
+
+- JB2A update to 0.6.9
+
 Release 0.17.5
 
 - Add CSS to enable horizontal scrollbars if the width of the window is less than the width of the actor sheet.
