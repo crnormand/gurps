@@ -1566,7 +1566,7 @@ if (!globalThis.GURPS) {
       let parentpath = objpath.substring(0, i)
       let objkey = objpath.substring(i + 1)
       // Create shallow copy of object
-      let object = foundry.utils.foundry.utils.duplicate(GURPS.decode(actor, objpath))
+      let object = foundry.utils.duplicate(GURPS.decode(actor, objpath))
       let t = parentpath + '.-=' + objkey
       await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
 
