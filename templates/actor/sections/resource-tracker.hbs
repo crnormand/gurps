@@ -5,14 +5,14 @@
     {{#if thresholds}}
       {{#if breakpoints}}
         {{#with (lookup thresholds (breakpointIndex-of thresholds max value))}}
-          <div class='tooltip condition' style='background-color: {{color}} {{! concat color "80"}};'>{{condition}}
+          <div class='tooltip condition' style='background-color: {{color}} {{! concat color "80"}};'>{{{gurpslink condition}}}
             <span class="tooltiptext">
               <div style="display: grid; grid-template-columns: min-content min-content auto;">
                 {{#each (controlBreakpoints ../this)}}
                   {{#unless (eq @index 0)}}
-                  <div class="field condensed noedit">{{! threshold.comparison}}</div>
+                  <div class="field condensed noedit">{{comparison}}</div>
                   <div class="field condensed noedit">{{breakpoint}}</div>
-                  <div class="label">{{{gurpslink threshold.condition}}}</div>
+                  <div class="label">{{label}}</div>
                   {{/unless}}
                 {{/each}}
               </div>

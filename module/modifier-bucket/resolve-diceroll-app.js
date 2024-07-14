@@ -119,7 +119,8 @@ export default class ResolveDiceRoll extends Application {
   _applyCallback() {
     for (const diceTerm of this.diceTerms) {
       let result = this.getValues(diceTerm)
-      diceTerm.term._loaded = result
+      result.forEach( n => diceTerm.term.results.push( { active: true, result: n} ))
+      // diceTerm.term._loaded = result
     }
     // @ts-ignore
     this.applyCallback(true)

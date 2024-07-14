@@ -31,6 +31,8 @@ export class StatusEffect {
       }
       this._statusEffects[key] = value
     }
+    // Hack to add back in 'dead' status (to allow dead icon to show on token)
+    this._statusEffects['dead'] = {id: 'dead', name: 'EFFECT.StatusDead', img: 'icons/svg/skull.svg'}
 
     // replace standard effects
     CONFIG.statusEffects = this.effects()
