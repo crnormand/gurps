@@ -5,6 +5,8 @@ Release 0.17.6
 - JB2A update to 0.6.9
 - Fixed Physical Dice roll
 - Fixed Resource Tracker display (esp for Control Points)
+- Fixed setting 'dead' status from combat tracker
+- Fixed Target Range (in Effects Modifier), when scene grid is NOT yards 
 
 Release 0.17.5
 

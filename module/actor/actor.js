@@ -1313,7 +1313,6 @@ export class GurpsActor extends Actor {
     a.points = i.calc?.points
     a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
     a.userdesc = i.userdesc
-    a.notes = ''
 
     if (i.cr != null) {
       a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
@@ -1322,7 +1321,9 @@ export class GurpsActor extends Actor {
       for (let j of i.modifiers)
         if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
     }
+    // Not certain if this is needed, or is it a type-o (note vs. notes)
     if (!!a.note) a.notes += (!!a.notes ? '\n' : '') + a.note
+    
     if (!!a.userdesc) a.notes += (!!a.notes ? '\n' : '') + a.userdesc
     a.pageRef(i.reference)
     a.uuid = i.id
