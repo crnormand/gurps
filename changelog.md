@@ -6,18 +6,18 @@ Release 0.17.6
 - Fixed Physical Dice roll
 - Fixed Resource Tracker display (esp for Control Points)
 - Fixed setting 'dead' status from combat tracker
-- Fixed Target Range (in Effects Modifier), when scene grid is NOT yards 
+- Fixed Target Range (in Effects Modifier), when scene grid is NOT yards
 
 Release 0.17.5
 
 - Add CSS to enable horizontal scrollbars if the width of the window is less than the width of the actor sheet.
 
-Release 0.17.4  6/29/2024
+Release 0.17.4 6/29/2024
 
 - Dice So Nice now works for most targetted rolls and damage. This appears to also fix the public/private/blind chat messages.
 - Fix Shock and Major Wound errors when clicked on in the chat.
-  
-Release 0.17.3  6/19/2024
+
+Release 0.17.3 6/19/2024
 
 - Update 'duplicate' method (deprecated) to 'foundry.utils.duplicate'.
 - Fix problem where Tracker value was being treated as a string.
@@ -25,15 +25,15 @@ Release 0.17.3  6/19/2024
 - Fix setting Maneuvers on actors in combat.
 - Fix right side truncation of default GCS sheet with PopOut! (It still opens the width of your monitor, though.)
 
-Release 0.17.2  6/03/2024
+Release 0.17.2 6/03/2024
 
 - Fix merge issue
 
-Release 0.17.1  6/03/2024
+Release 0.17.1 6/03/2024
 
 - Fix version number issue
 
-Release 0.17.0  6/02/2024
+Release 0.17.0 6/02/2024
 
 - Update for Foundry V12
 - Update for JB2A v0.6.8

@@ -34,14 +34,17 @@ Global Override body {
   left: 0;
 }
 
-.list_note>textarea {
+.list_note > textarea {
   min-height: 3em;
 }
 
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
+  background:
+    url(/systems/gurps/icons/hex2.webp) repeat,
+    url(/ui/parchment.jpg) repeat,
+    #dcdcd0;
   color: black;
 }
 
@@ -78,11 +81,11 @@ Global Override body {
   align-items: center;
 }
 
-.gga-app .icon-prefix>input {
+.gga-app .icon-prefix > input {
   padding-left: 2.2em;
 }
 
-.gga-app .icon-prefix>span {
+.gga-app .icon-prefix > span {
   position: absolute;
   left: 0;
   width: 2em;
@@ -106,7 +109,7 @@ Global Override body {
   height: 15em;
 }
 
-.gga-app .img-display>img {
+.gga-app .img-display > img {
   display: block;
   height: 100%;
   opacity: 0;
@@ -131,21 +134,21 @@ Global Override body {
 }
 
 .gga-group,
-#calculation-results>div {
+#calculation-results > div {
   border-right: 1px solid #999;
   height: 100%;
   padding: 0 0.5em;
 }
 
-#calculation-results>div:first-child {
+#calculation-results > div:first-child {
   padding-left: 0;
 }
 
-#calculation-results>div:last-child {
+#calculation-results > div:last-child {
   padding-right: 0;
 }
 
-#calculation-results>div:last-child,
+#calculation-results > div:last-child,
 .gga-group:last-child {
   border: none;
 }
@@ -203,8 +206,8 @@ Global Override body {
   padding-bottom: 0.5em;
 }
 
-.gga-group .shaded-group h4+aside,
-.gga-group h4+aside {
+.gga-group .shaded-group h4 + aside,
+.gga-group h4 + aside {
   margin-top: -0.5em;
 }
 
@@ -215,7 +218,7 @@ Global Override body {
 }
 
 /* striped table row appearance */
-.shaded-group>div:nth-child(odd),
+.shaded-group > div:nth-child(odd),
 .gga-group .shaded {
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -239,8 +242,8 @@ Global Override body {
   text-align: left;
 }
 
-.grid-2col>*,
-.gurps-3col>* {
+.grid-2col > *,
+.gurps-3col > * {
   align-self: center;
   height: 100%;
   display: flex;
@@ -252,9 +255,9 @@ Global Override body {
 /* striped table row appearance */
 /* .gurps-2col > *:nth-child(4n + 3),
 .gurps-2col > *:nth-child(4n + 4), */
-.gurps-3col>*:nth-of-type(6n + 4),
-.gurps-3col>*:nth-of-type(6n + 5),
-.gurps-3col>*:nth-of-type(6n + 6) {
+.gurps-3col > *:nth-of-type(6n + 4),
+.gurps-3col > *:nth-of-type(6n + 5),
+.gurps-3col > *:nth-of-type(6n + 6) {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -264,23 +267,23 @@ Global Override body {
   grid-template-columns: auto 1fr min-content;
 }
 
-.gurps-radio-col>*:nth-child(3n + 3) {
+.gurps-radio-col > *:nth-child(3n + 3) {
   text-align: end;
   padding-right: 0.5em;
   flex-flow: nowrap;
   justify-content: flex-end;
 }
 
-.gurps-radio-col>*:nth-child(3n + 2) {
+.gurps-radio-col > *:nth-child(3n + 2) {
   text-align: center;
 }
 
 /* Apply Damage Dialog: Apply buttons panel */
-.gga-group .apply-results>* {
+.gga-group .apply-results > * {
   margin-bottom: 0.2em;
 }
 
-.gga-group .apply-results>*:last-child {
+.gga-group .apply-results > *:last-child {
   margin-bottom: 0;
 }
 
@@ -298,23 +301,23 @@ Global Override body {
   font-size: 12px;
 }
 
-.gga-group .results-table>div:nth-child(3n + 1) {
+.gga-group .results-table > div:nth-child(3n + 1) {
   text-transform: uppercase;
   font-size: smaller;
 }
 
-.gga-group .results-table>div:nth-child(3n + 1),
-.gga-group .results-table>div:nth-child(3n + 2) {
+.gga-group .results-table > div:nth-child(3n + 1),
+.gga-group .results-table > div:nth-child(3n + 2) {
   text-align: end;
   padding-right: 0.5em;
 }
 
-.gga-group .results-table>div:nth-child(3n + 2) {
+.gga-group .results-table > div:nth-child(3n + 2) {
   font-weight: bolder;
   font-size: small;
 }
 
-.gga-group .results-table>div:nth-child(3n + 3) {
+.gga-group .results-table > div:nth-child(3n + 3) {
   text-align: start;
   justify-content: center;
   padding-left: 1em;
@@ -326,7 +329,7 @@ Global Override body {
   margin-top: 5px;
 } */
 
-.modtooltip .gga-group+.gga-group {
+.modtooltip .gga-group + .gga-group {
   margin: unset;
 }
 
@@ -356,8 +359,8 @@ Global Override body {
   grid-template-columns: 1fr 1fr;
 }
 
-.gga-group .label-value-row>*:nth-child(4n + 3),
-.gga-group .label-value-row>*:nth-child(4n + 4) {
+.gga-group .label-value-row > *:nth-child(4n + 3),
+.gga-group .label-value-row > *:nth-child(4n + 4) {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -417,12 +420,12 @@ ul#result-effects li {
   /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
 }
 
-[name='result-effect']>div {
+[name='result-effect'] > div {
   display: flex;
   align-items: center;
 }
 
-[name='result-effect']>div div:first-child {
+[name='result-effect'] > div div:first-child {
   flex-grow: 1;
 }
 
@@ -513,7 +516,7 @@ ul#result-effects li {
   /* transition: all 0.25s ease-in-out; */
 }
 
-.toggle:checked+.label-toggle+.collapsible-content {
+.toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
 }
 
@@ -530,7 +533,7 @@ ul#result-effects li {
   float: right;
 }
 
-.damage-message .toggle:checked+.label-toggle:after {
+.damage-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
   font-weight: 900;
   content: '\f077';
@@ -566,7 +569,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gga-chat-message .toggle:checked+.label-toggle:after {
+.gga-chat-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
   /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
@@ -590,8 +593,8 @@ ul#result-effects li {
   padding-right: 4px;
 }
 
-.gga-app .collapsible-wrapper .collapsible-content .content-inner>*:nth-child(even),
-.gga-group .collapsible-content>*:nth-child(even) {
+.gga-app .collapsible-wrapper .collapsible-content .content-inner > *:nth-child(even),
+.gga-group .collapsible-content > *:nth-child(even) {
   background: rgba(255, 255, 255, 0.25);
 }
 
@@ -604,13 +607,15 @@ ul#result-effects li {
   padding-top: 2px;
 }
 
-.gga-group .options-drawer .toggle:checked+.label-toggle+.collapsible-content,
+.gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
 .gga-app .collapsible-wrapper .collapsible-content {
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
+  box-shadow:
+    1px 1px 3px rgba(0, 0, 0, 0.3) inset,
+    0px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
-.gga-group .options-drawer .toggle:checked+.label-toggle+.collapsible-content {
+.gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
 }
 
@@ -628,7 +633,7 @@ ul#result-effects li {
   background: rgba(255, 255, 240, 0.3);
 }
 
-.gga-app button.with-icon>i>span {
+.gga-app button.with-icon > i > span {
   /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-weight: 400;
 }
@@ -657,7 +662,9 @@ ul#result-effects li {
 
 .dragging {
   outline: 5px auto -webkit-focus-ring-color;
-  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+  box-shadow:
+    0 0 2px 3px #78aeda,
+    0 0 2px #78aeda inset;
   border-radius: 3px;
   background-color: rgba(240, 128, 128, 0.6);
 }
@@ -698,7 +705,9 @@ ul#result-effects li {
   border-radius: 6px;
   font-weight: normal;
   text-shadow: none;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.5),
+    0 2px 4px -1px rgba(0, 0, 0, 0.3);
 
   /* Position the tooltip text */
   position: absolute;
@@ -776,13 +785,13 @@ ul#result-effects li {
   left: calc(100% - 35px);
 }
 
-#notes .tooltiptext.gga-manual>img,
-#ranged .tooltiptext.gga-manual>img,
-#melee .tooltiptext.gga-manual>img,
-#advantages .tooltiptext.gga-manual>img,
-#skills .tooltiptext.gga-manual>img,
-#spells .tooltiptext.gga-manual>img,
-.equipmentlist .tooltiptext.gga-manual>img {
+#notes .tooltiptext.gga-manual > img,
+#ranged .tooltiptext.gga-manual > img,
+#melee .tooltiptext.gga-manual > img,
+#advantages .tooltiptext.gga-manual > img,
+#skills .tooltiptext.gga-manual > img,
+#spells .tooltiptext.gga-manual > img,
+.equipmentlist .tooltiptext.gga-manual > img {
   border: none;
   max-height: 100px;
 }
@@ -862,7 +871,7 @@ ul#result-effects li {
   box-shadow: 0 0 5px red;
 }
 
-#resources>*:first-child {
+#resources > *:first-child {
   border-bottom: 1px solid white;
 }
 
@@ -902,8 +911,8 @@ ul#result-effects li {
   border-right: 1px solid black;
 }
 
-.resource-editor>*,
-.tracked-resource>* {
+.resource-editor > *,
+.tracked-resource > * {
   margin: 0 0.25rem 0.25rem 0.25rem;
 }
 
@@ -948,13 +957,13 @@ ul#result-effects li {
   text-align: center;
 }
 
-.tracked-resource .spinner>button:first-of-type {
+.tracked-resource .spinner > button:first-of-type {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: none;
 }
 
-.tracked-resource .spinner>button:nth-of-type(2) {
+.tracked-resource .spinner > button:nth-of-type(2) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-left: none;
@@ -964,7 +973,7 @@ ul#result-effects li {
   margin-bottom: 0.15rem;
 }
 
-.tracked-resource .spinner>button:last-of-type:not(.no-gap) {
+.tracked-resource .spinner > button:last-of-type:not(.no-gap) {
   margin-left: 0.15rem;
 }
 
@@ -1161,7 +1170,7 @@ active-effects-list .section h3 {
   cursor: pointer;
 }
 
-.tracked-resource.inactive .condition-block>* {
+.tracked-resource.inactive .condition-block > * {
   color: grey;
 }
 
@@ -1275,7 +1284,9 @@ select#maneuver option {
   font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.5),
+    0 2px 4px -1px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 3px;
 }
@@ -1429,7 +1440,7 @@ button.equipmentbutton:last-child {
   margin-left: 8px;
 }
 
-.navigation-view>span:before {
+.navigation-view > span:before {
   content: '\f101';
   /* this is your text. You can also use UTF-8 character codes as I do here */
   /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
@@ -1437,18 +1448,18 @@ button.equipmentbutton:last-child {
   color: white;
 }
 
-.navigate-area input:checked+.navigate-bar>.navigation-view>span:before {
+.navigate-area input:checked + .navigate-bar > .navigation-view > span:before {
   content: '\f100';
   /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-weight: 900;
   color: white;
 }
 
-.navigate-area input:checked+.navigate-bar {
+.navigate-area input:checked + .navigate-bar {
   width: fit-content;
 }
 
-.navigate-area input:checked+.navigate-bar>.navigate-container {
+.navigate-area input:checked + .navigate-bar > .navigate-container {
   width: 0;
   overflow: hidden;
 }
@@ -1584,7 +1595,7 @@ button.equipmentbutton:last-child {
   }
 }
 
-#ui-bottom>div {
+#ui-bottom > div {
   justify-content: unset;
 }
 
@@ -1680,7 +1691,7 @@ button.equipmentbutton:last-child {
   text-overflow: ellipsis;
 }
 
-.modifierbucket #current-actor>span {
+.modifierbucket #current-actor > span {
   color: gold;
   background-color: black;
 }
@@ -1783,7 +1794,7 @@ button.equipmentbutton:last-child {
   height: 100%;
 }
 
-#modtooltipleftbottom>h4 {
+#modtooltipleftbottom > h4 {
   background-color: darkred;
 }
 
@@ -1802,8 +1813,8 @@ button.equipmentbutton:last-child {
   padding: 0 5px;
 }
 
-#modtooltipright>div>*,
-#modtooltipcenter>div>* {
+#modtooltipright > div > *,
+#modtooltipcenter > div > * {
   margin-top: 5px;
 }
 
@@ -1824,7 +1835,7 @@ button.equipmentbutton:last-child {
   margin-bottom: 5px;
 }
 
-.modtooltipgroup>* {
+.modtooltipgroup > * {
   padding-left: 10px;
 }
 
@@ -1873,7 +1884,7 @@ button.equipmentbutton:last-child {
   align-items: center;
 }
 
-.modttlabel>div {
+.modttlabel > div {
   color: #f0f0e0;
   background-color: rgb(28, 32, 36);
   border: 0 solid rgb(28, 32, 36);
@@ -1915,7 +1926,9 @@ button.equipmentbutton:last-child {
 .modttt .modtooltip {
   padding: 0.35em;
   border-radius: 0.75em;
-  box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 4px 8px 4px rgba(0, 0, 0, 0.8),
+    0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .modtooltip .plus,
@@ -1932,12 +1945,12 @@ button.equipmentbutton:last-child {
   margin-top: 0.25em;
 }
 
-.modtooltip .collapsible-wrapper>input {
+.modtooltip .collapsible-wrapper > input {
   display: none;
 }
 
 .modtooltip .collapsible-wrapper .label-toggle,
-.modtooltip .collapsible-wrapper>label {
+.modtooltip .collapsible-wrapper > label {
   -webkit-appearance: menulist-button;
   border: 1px solid rgb(122, 121, 113);
   padding: 0.35em;
@@ -1946,7 +1959,7 @@ button.equipmentbutton:last-child {
   /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
 }
 
-.modtooltip .collapsible-wrapper>label:after {
+.modtooltip .collapsible-wrapper > label:after {
   font: normal normal normal 12px/1;
   /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
@@ -1954,12 +1967,12 @@ button.equipmentbutton:last-child {
   float: right;
 }
 
-.modtooltip .collapsible-wrapper>input:checked+label {
+.modtooltip .collapsible-wrapper > input:checked + label {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.modtooltip .collapsible-wrapper>input:checked+label:after {
+.modtooltip .collapsible-wrapper > input:checked + label:after {
   font: normal normal normal 12px/1;
   /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
@@ -2106,7 +2119,7 @@ button.equipmentbutton:last-child {
   font-size: 145%;
 }
 
-.modtooltip .modifier-row>div {
+.modtooltip .modifier-row > div {
   margin-bottom: 0.1m;
 }
 
@@ -2120,7 +2133,7 @@ button.equipmentbutton:last-child {
   justify-content: stretch;
 }
 
-.modtooltip .shaded-group>div {
+.modtooltip .shaded-group > div {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -2140,7 +2153,7 @@ button.equipmentbutton:last-child {
   max-height: 25vh;
 }
 
-.modifier-journals #entry-list>div:nth-child(3n + 3) {
+.modifier-journals #entry-list > div:nth-child(3n + 3) {
   color: #555;
   font-size: var(--font-size-smaller);
 }
@@ -2302,7 +2315,7 @@ button.equipmentbutton:last-child {
   align-items: center;
 }
 
-#spells>div,
+#spells > div,
 #notes .notesmenu {
   white-space: normal;
 }

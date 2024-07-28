@@ -13,7 +13,7 @@
       </ul>
     </div>
     {{#if (gt finaltarget 0)}}
-	{{localize "GURPS.rollNewTarget" target=finaltarget}}
+      {{localize 'GURPS.rollNewTarget' target=finaltarget}}
     {{/if}}
   {{/if}}
   <div class='roll-result'>
@@ -22,20 +22,21 @@
         <span class='roll-value'>{{rtotal}}</span>
         <span class='roll-detail'>
           {{#if isCritSuccess}}
-		  <span class='crit success'>{{localize "GURPS.rollCriticalSuccess"}}</span>
+            <span class='crit success'>{{localize 'GURPS.rollCriticalSuccess'}}</span>
           {{else if isCritFailure}}
-            <span class='crit failure'>{{localize "GURPS.rollCriticalFailure"}}</span>
+            <span class='crit failure'>{{localize 'GURPS.rollCriticalFailure'}}</span>
           {{else if failure}}
-            <span class='failure'>{{localize "GURPS.rollFailure"}}</span>
+            <span class='failure'>{{localize 'GURPS.rollFailure'}}</span>
           {{else if (not failure)}}
-            <span class='success'>{{localize "GURPS.rollSuccess"}}</span>
+            <span class='success'>{{localize 'GURPS.rollSuccess'}}</span>
           {{/if}}
           <span class='aside'>
-            {{#if seventeen}} {{localize "GURPS.rollFail17"}}
+            {{#if seventeen}}
+              {{localize 'GURPS.rollFail17'}}
             {{else}}
-			{{#if (eq margin 0)}}{{localize "GURPS.rollJustMadeIt"}}{{/if}}
-			  {{#if (gt margin 0)}}["{{localize "GURPS.rollMadeBy" margin=margin}}"{{otf}}]{{/if}}
-			  {{#if (lt margin 0)}}["{{localize "GURPS.rollMissedBy" margin=margin}}"{{otf}}]{{/if}}
+              {{#if (eq margin 0)}}{{localize 'GURPS.rollJustMadeIt'}}{{/if}}
+              {{#if (gt margin 0)}}["{{localize 'GURPS.rollMadeBy' margin=margin}}"{{otf}}]{{/if}}
+              {{#if (lt margin 0)}}["{{localize 'GURPS.rollMissedBy' margin=margin}}"{{otf}}]{{/if}}
             {{/if}}
           </span>
         </span>
@@ -47,7 +48,7 @@
         <div>
           <span class='fa fa-bullseye'></span>
           <span class='note'>
-			  {{{localize "GURPS.rollTotalHits" link=(gurpslink '[PDF:B373]') rof=rof rcl=rcl rofrcl=rofrcl}}}
+            {{{localize 'GURPS.rollTotalHits' link=(gurpslink '[PDF:B373]') rof=rof rcl=rcl rofrcl=rofrcl}}}
           </span>
         </div>
         <hr />
@@ -56,7 +57,7 @@
         <div class='aside'>
           {{#if loaded}}<i style='color:darkred' class='fas fa-user'></i>{{else}}<i class='fas fa-dice'></i>{{/if}}
           <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
-		  <span class='aside-text'>{{localize "GURPS.rollTotal" rolls=rolls rtotal=rtotal}}</span>
+          <span class='aside-text'>{{localize 'GURPS.rollTotal' rolls=rolls rtotal=rtotal}}</span>
         </div>
       {{/each}}
       {{#if followon}}{{#if (not failure)}}

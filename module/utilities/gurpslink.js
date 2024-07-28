@@ -29,7 +29,7 @@ export function gurpslink(str, clrdmods = true, returnActions = false) {
         i = -1
         found = -1
       }
-      if (depth == -1) depth = 0 // we reset to starting condition after second ']' from OTF parse 
+      if (depth == -1) depth = 0 // we reset to starting condition after second ']' from OTF parse
     }
   }
   if (returnActions === true) return actions

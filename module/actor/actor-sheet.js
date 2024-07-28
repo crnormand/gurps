@@ -11,6 +11,7 @@ import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import MoveModeEditor from './move-mode-editor.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import SplitDREditor from './splitdr-editor.js'
+import { ActorImporter } from './actor-importer.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1452,7 +1453,8 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onFileImport(event) {
     event.preventDefault()
-    this.actor.importCharacter()
+    new ActorImporter(this.actor).importActor()
+    // this.actor.importCharacter()
   }
 
   async _onToggleSheet(event, altsheet) {

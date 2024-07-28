@@ -182,24 +182,23 @@ export class AnimChatProcessor extends ChatProcessor {
 
   async awaitClick(line) {
     if (line.match(/@\d+,\d+/)) {
-      console.log("Duplicate request for click: " + line)
+      console.log('Duplicate request for click: ' + line)
       return
     }
     ui.notifications.warn('Please click target')
     this.send()
     GURPS.IgnoreTokenSelect = true
-    
+
     try {
-      const location = await warpgate.crosshairs.show(
-      {
-          interval: 0,
-          size: 1,
-          drawOutline: false,
-          lockSize: true,
-          labelOffset: { x:0, y:-150 },
-          icon: 'icons/skills/targeting/crosshair-bars-yellow.webp',
-          //icon: 'icons/magic/symbols/runes-triangle-blue.webp', 
-          label: 'Click to target',
+      const location = await warpgate.crosshairs.show({
+        interval: 0,
+        size: 1,
+        drawOutline: false,
+        lockSize: true,
+        labelOffset: { x: 0, y: -150 },
+        icon: 'icons/skills/targeting/crosshair-bars-yellow.webp',
+        //icon: 'icons/magic/symbols/runes-triangle-blue.webp',
+        label: 'Click to target',
       })
       let grid_size = canvas.scene.grid.size
       canvas.tokens.targetObjects({
@@ -213,7 +212,7 @@ export class AnimChatProcessor extends ChatProcessor {
       line = line + ' @' + parseInt(location.x) + ',' + parseInt(location.y)
       this.registry.processLine(line)
       return
-    } catch (error) { 
+    } catch (error) {
       GURPS.IgnoreTokenSelect = false
       console.log(error)
     }

@@ -124,7 +124,7 @@ export class EffectModifierControl {
       this._ui.closeApp(closeOptions)
     }
   }
-  
+
   refresh() {
     this._ui?.render(true)
   }

@@ -26,6 +26,7 @@ import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { AnimChatProcessor } from '../chat/anim.js'
 import Maneuvers from '../actor/maneuver.js'
+import { ActorImporter } from '../actor/actor-importer.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -261,7 +262,7 @@ class ReimportChatProcessor extends ChatProcessor {
       if (!!actor) actors.push(actor)
     }
     if (actornames.length == 0) actors = allPlayerActors
-    actors.forEach(e => e.importCharacter())
+    actors.forEach(e => new ActorImporter(e).importActor())
   }
 }
 

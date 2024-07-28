@@ -236,7 +236,8 @@ class ModifierStack {
     reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc == reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
-      if (replace) list.splice(i, 1) // only used by range modifier
+      if (replace)
+        list.splice(i, 1) // only used by range modifier
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
     let m = (mod + '').match(/([+-])?@margin/i)

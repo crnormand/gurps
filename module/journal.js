@@ -5,8 +5,8 @@ import { gurpslink } from '../module/utilities/gurpslink.js'
 export default class GurpsJournalEntry {
   static ready() {
     Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalPageSheet)
-//    Hooks.on('getJournalSheetEntryContext', GurpsJournalEntry._getJournalSheetEntryContext)
-//    Hooks.on('renderJournalSheet', GurpsJournalEntry._renderJournalSheet)
+    //    Hooks.on('getJournalSheetEntryContext', GurpsJournalEntry._getJournalSheetEntryContext)
+    //    Hooks.on('renderJournalSheet', GurpsJournalEntry._renderJournalSheet)
   }
 
   /**
@@ -22,7 +22,7 @@ export default class GurpsJournalEntry {
       if (!!h && h.length > 0) {
         //h.html(gurpslink(h[0].innerHTML))
         GurpsWiring.hookupAllEvents(html)
-        
+
         const dropHandler = function (event, app, options) {
           event.preventDefault()
           if (event.originalEvent) event = event.originalEvent
@@ -43,16 +43,18 @@ export default class GurpsJournalEntry {
             let content = app.document.text.content
             if (content) cmd = '<br>' + cmd
             app.document.update({ 'text.content': content + cmd })
-
           }
         }
 
-        html.parent().parent().on('drop', event => dropHandler(event, app, options))
+        html
+          .parent()
+          .parent()
+          .on('drop', event => dropHandler(event, app, options))
       }
     }, 10)
   }
-  
-/*  static _renderJournalSheet(app, html, options) {
+
+  /*  static _renderJournalSheet(app, html, options) {
     console.log(app)
     }
   

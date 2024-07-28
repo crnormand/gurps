@@ -56,7 +56,9 @@ export class EffectModifierPopout extends Application {
         : []
       let mod = this.calculateRange(this.getToken(), target)
       if (mod && mod.modifier !== 0)
-        result.targetmodifiers.push(gurpslink(`[${mod.modifier} range to target ${target.actor?.name} (${mod.yards} ${canvas.scene.grid.units})]`))
+        result.targetmodifiers.push(
+          gurpslink(`[${mod.modifier} range to target ${target.actor?.name} (${mod.yards} ${canvas.scene.grid.units})]`)
+        )
 
       // Add the range to the target
 
@@ -79,7 +81,7 @@ export class EffectModifierPopout extends Application {
 
     // const ruler = new Ruler() as Ruler & { totalDistance: number }
     const ruler = new RulerGURPS(game.user)
-    ruler._state = Ruler.STATES.MEASURING;
+    ruler._state = Ruler.STATES.MEASURING
     ruler.waypoints = [{ x: token1.x, y: token1.y }]
     ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
     const horizontalDistance = ruler.totalDistance
@@ -90,7 +92,7 @@ export class EffectModifierPopout extends Application {
     const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
     return {
       yards: Math.ceil(dist),
-      modifier: ruler.yardsToSpeedRangePenalty(yards)
+      modifier: ruler.yardsToSpeedRangePenalty(yards),
     }
   }
 
