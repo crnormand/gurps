@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.7
+
+- Fixed character importing for GCS file version 5 (GCS 5.24+)
+
 Release 0.17.6
 
 - JB2A update to 0.6.9
@@ -232,7 +236,7 @@ Release 0.15.10 11/10/2022
 Release 0.15.9 11/10/2022
 
 - Update to JB2A 0.5.1
-- Fix for https://github.com/crnormand/gurps/issues/1644 (Mod Bucket stops after one modifier is clicked if not using mouseover to open).
+- Fix for <https://github.com/crnormand/gurps/issues/1644> (Mod Bucket stops after one modifier is clicked if not using mouseover to open).
 - Fixed MANY issues with Items in Foundry v10
 - Fixed alternate attribute based OtFs, e.g. Sk:Brawling (Based:ST)
 
@@ -269,7 +273,7 @@ Release 0.15.3 9/19/2022
 - Fixed infinite tracker import loop
 - Removed duplicate handlebar helpers
 - Fixed /ra bug
-- Possible solution to funky damage chat issue (https://github.com/crnormand/gurps/issues/1587)
+- Possible solution to funky damage chat issue (<https://github.com/crnormand/gurps/issues/1587>)
 
 Release 0.15.2 9/15/2022
 
@@ -616,7 +620,7 @@ Release 0.12.10 12/1/2021
 
 Release 0.12.9 12/1/2021
 
-- Added OtF Drop into Journal (but not editor, sorry https://gitlab.com/foundrynet/foundryvtt/-/issues/6190)
+- Added OtF Drop into Journal (but not editor, sorry <https://gitlab.com/foundrynet/foundryvtt/-/issues/6190>)
 
 Release 0.12.8 12/1/2021
 
@@ -866,7 +870,7 @@ Release 0.10.0 - 6/4/2021
 
 - Foundry 0.8.x compatible!
 - Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
-- Added \*Costs X trN and \*Costs X tr(_name_)
+- Added \*Costs X trN and \*Costs X tr(*name*)
 - Added support for translated attributes in OtF formulas (Will == Vonte in Portuguese)
 - Added Ignore QTY/Count/Uses from import
 - Remember carried, parent and equipped status from previous import
@@ -1078,11 +1082,11 @@ Release 0.8.20 - 3/22/2021
 - Fixed description of modifier for Skill OtF
 - Fixed GM Send to allow blind rolls
 - Fixed OtF coloration on skills
-- Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
-- Allow the ADD to apply resource damage to the actors resource tracker (https://github.com/crnormand/gurps/issues/385)
+- Support adding Resources as a custom damage type (<https://github.com/crnormand/gurps/issues/386>)
+- Allow the ADD to apply resource damage to the actors resource tracker (<https://github.com/crnormand/gurps/issues/385>)
 - Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
-- Added Control Points (Fantastic Dungeon Grappling: https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/) as a default Resource Tracker.
-- Modified Resource Trackers to optionally _accumulate_ damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
+- Added Control Points (Fantastic Dungeon Grappling: <https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/>) as a default Resource Tracker.
+- Modified Resource Trackers to optionally *accumulate* damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
 - Fixed parsing for damage with extraneous text '1d-1 burn/2 points'
 - Added GURPS.executeOTF()
 
@@ -1098,7 +1102,7 @@ Release 0.8.19 - 3/17/2021
 - Support (-1) armor divisor (as "Ignores DR")
 - Support editing of skills/spells with '\*Costs xFP'
 - Fixed "\*Max: 9" if not the last modifier
-- Create and apply standard resource trackers across the world. Instructions: https://github.com/crnormand/gurps/issues/380#issuecomment-801357042
+- Create and apply standard resource trackers across the world. Instructions: <https://github.com/crnormand/gurps/issues/380#issuecomment-801357042>
 
 Release 0.8.18 - 3/14/2021
 
@@ -1115,7 +1119,7 @@ Release 0.8.18 - 3/14/2021
 - 'Grand' unification of attribute/skill parsing [Parry|Block:Shield|S:Skill|Fright Check|Dodge -2 slow|DX-4 ? "Ouch", "Close!"]
 - Skill checks can now cost FP (append '\*Costs 1FP')
 - Fixed bug with clearing a resource tracker.
-- Added custom thresholds and condition names for resource trackers. For a description and instructions, see this link: https://github.com/crnormand/gurps/issues/380
+- Added custom thresholds and condition names for resource trackers. For a description and instructions, see this link: <https://github.com/crnormand/gurps/issues/380>
 - Fixed Shotgun RoF (3x9)
 - Added system setting to make player chat commands private (GMs chat commands are already private)
 - Fixed Skill names that included '(' and ')'
@@ -1135,7 +1139,7 @@ Release 0.8.16 - 3/6/2021
 - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
 - Bug fix for GCA exports (with Armins help!) Block is calculated correctly for items with DB (shields)
 - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
-- Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be _over_ that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes _more than_ 5 points of damage (i.e., 6).
+- Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be *over* that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes *more than* 5 points of damage (i.e., 6).
 - High rate of fire weapons damage is supported directly. Right-click on a damage roll to get a menu to enter the number of hits. There will be a new "ALL THE DAMAGE" draggable section of the damage chat message. Dragging that onto a character will apply all damage rolls in the ADD. The ADD has been enhanced to allow each damage calculation to be displayed, while applying the total.
 - Updated GCS import to accept 'uses' and 'maxuses' columns for equipment (requires GCS 4.28 and Master Library 2.9)
 - Added Shotgun damage to Apply Damage Dialog.
