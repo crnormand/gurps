@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.8
+
+- Fixed trait and character importing for GCS file version 5 (GCS 5.24+)
+
 Release 0.17.7
 
 - Fixed character importing for GCS file version 5 (GCS 5.24+)

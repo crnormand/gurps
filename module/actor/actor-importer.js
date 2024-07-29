@@ -205,7 +205,7 @@ export class ActorImporter {
       )
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: [msg],
-        version: version,
+        version: this.GC,
         GCAVersion: GCAVersion,
         GCSVersion: this.GCSVersion,
         url: GURPS.USER_GUIDE_URL,
@@ -1485,6 +1485,7 @@ export class ActorImporter {
     a.pageRef(i.reference)
     a.uuid = i.id
     a.parentuuid = p
+    a = this._substituteItemReplacements(a, i)
 
     let old = this._findElementIn('ads', a.uuid)
     this._migrateOtfsAndNotes(old, a, i.vtt_notes)
@@ -1538,6 +1539,7 @@ export class ActorImporter {
       // Usually containers
       s.level = ''
     }
+    s = this._substituteItemReplacements(s, i)
     let old = this._findElementIn('skills', s.uuid)
     this._migrateOtfsAndNotes(old, s, i.vtt_notes)
 
@@ -1583,6 +1585,7 @@ export class ActorImporter {
       s.import = i.calc?.level || 0
     }
 
+    s = this._substituteItemReplacements(s, i)
     let old = this._findElementIn('spells', s.uuid)
     this._migrateOtfsAndNotes(old, s, i.vtt_notes)
 
@@ -1676,6 +1679,7 @@ export class ActorImporter {
     e.weight =
       (parseFloat(i.calc?.extended_weight) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || '0'
     e.pageRef(i.reference || '')
+    e = this._substituteItemReplacements(e, i)
     let old = this._findElementIn('equipment.carried', e.uuid)
     if (!old) old = this._findElementIn('equipment.other', e.uuid)
     this._migrateOtfsAndNotes(old, e, i.vtt_notes)
@@ -1725,6 +1729,7 @@ export class ActorImporter {
     n.uuid = i.id
     n.parentuuid = p
     n.pageRef(i.reference || '')
+    n = this._substituteItemReplacements(n, i)
     let old = this._findElementIn('notes', n.uuid)
     this._migrateOtfsAndNotes(old, n)
     let ch = []
@@ -2011,8 +2016,11 @@ export class ActorImporter {
       all = all.concat(this.recursiveGet(i))
     }
     for (let i of all) {
-      if (i.weapons?.length)
+      if (i.weapons?.length) {
         for (let w of i.weapons) {
+          if (this.GCSVersion === 5) {
+            w.type = w.id.startsWith('w') ? 'melee_weapon' : 'ranged_weapon'
+          }
           if (w.type == 'melee_weapon') {
             let m = new Melee()
             m.name = i.name || i.description || ''
@@ -2028,6 +2036,7 @@ export class ActorImporter {
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
+            m = this._substituteItemReplacements(m, i)
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
 
@@ -2054,12 +2063,14 @@ export class ActorImporter {
             r.shots = w.shots || ''
             r.rcl = w.recoil || ''
             r.range = w.calc?.range || w.range || ''
+            r = this._substituteItemReplacements(r, i)
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
             GURPS.put(ranged, r, r_index++)
           }
         }
+      }
     }
     return {
       'system.-=melee': null,
@@ -2310,5 +2321,18 @@ export class ActorImporter {
     }
 
     return name
+  }
+
+  _substituteItemReplacements(item, importedItem) {
+    if (importedItem.replacements) {
+      for (const [replacementKey, replacementValue] of Object.entries(importedItem.replacements)) {
+        for (const [key, value] of Object.entries(item)) {
+          if (typeof value === 'string' && value.includes(`@${replacementKey}@`)) {
+            item[key] = value.replaceAll(`@${replacementKey}@`, replacementValue)
+          }
+        }
+      }
+    }
+    return item
   }
 }
