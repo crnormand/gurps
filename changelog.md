@@ -2,7 +2,7 @@
 
 Release 0.17.8
 
-- Fixed trait and character importing for GCS file version 5 (GCS 5.24+)
+- Fixed trait and weapon importing for GCS file version 5 (GCS 5.24+)
 
 Release 0.17.7
 
