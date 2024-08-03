@@ -17,10 +17,8 @@ export class ItemImporter {
     } catch {
       return ui.notifications.error('The file you uploaded was not of the right format!')
     }
-    if (j.type !== 'equipment_list') {
-      return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
-    }
-    if (![2, 4].includes(j.version)) {
+    // Property "type" no longer exists on version 5
+    if (![2, 4, 5].includes(j.version)) { // Added version 5
       return ui.notifications.error('The file you uploaded is not of the right version!')
     }
     let pack = game.packs.find(p => p.metadata.name === filename)
@@ -104,7 +102,7 @@ export class ItemImporter {
               otf_list.push(d.type.replace('_', ' ') + mod)
             }
           }
-        if (w.type === 'melee_weapon') {
+        if (!!w.reach) { //Property "type" no longer exists on version 5, so checking for reach property instead
           let wep = {
             block: w.block || '',
             damage: w.calc.damage || '',
@@ -118,7 +116,7 @@ export class ItemImporter {
             otf: otf_list.join('|') || '',
           }
           itemData.system.melee[zeroFill(Object.keys(itemData.system.melee).length + 1)] = wep
-        } else if (w.type === 'ranged_weapon') {
+        } else if (!!w.range) { //Property "type" no longer exists on version 5, so checking for range property instead
           let wep = {
             acc: w.accuracy || '',
             ammo: '',
