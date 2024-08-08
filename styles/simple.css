@@ -518,7 +518,6 @@
   padding: 5px;
   scroll-behavior: smooth;
   background: white;
-  overflow-x: scroll;
 }
 
 .gurps .sheet-header {
