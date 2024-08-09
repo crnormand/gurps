@@ -114,7 +114,7 @@ export class ItemImporter {
               otf_list.push(d.type.replace('_', ' ') + mod)
             }
           }
-        if (w.type === 'melee_weapon') {
+        if (this.isMeleeWeapon(w)) {
           let wep = {
             block: w.block || '',
             damage: w.calc.damage || '',
@@ -128,7 +128,7 @@ export class ItemImporter {
             otf: otf_list.join('|') || '',
           }
           itemData.system.melee[zeroFill(Object.keys(itemData.system.melee).length + 1)] = wep
-        } else if (w.type === 'ranged_weapon') {
+        } else if (this.isRangedWeapon(w)) {
           let wep = {
             acc: w.accuracy || '',
             ammo: '',
@@ -232,5 +232,13 @@ export class ItemImporter {
     } else {
       return Item.create(itemData, { pack: `world.${filename}` })
     }
+  }
+
+  isRangedWeapon(w) {
+    return w.hasOwnProperty('range')
+  }
+
+  isMeleeWeapon(w) {
+    return !this.isRangedWeapon(w)
   }
 }
