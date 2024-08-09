@@ -17,24 +17,34 @@ export class ItemImporter {
     } catch {
       return ui.notifications.error('The file you uploaded was not of the right format!')
     }
-    if (j.type !== 'equipment_list') {
-      return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
-    }
-    if (![2, 4].includes(j.version)) {
+
+    if ([5].includes(j.version)) {
+      // Version 5 does not have a type field ... find some other way to validate the data.
+      // Verify that the contained objects has an 'equipped' field.
+      if (j.rows[0].hasOwnProperty('quantity') === false) {
+        return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
+      }
+    } else if ([2, 4].includes(j.version)) {
+      if (j.type !== 'equipment_list') {
+        return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
+      }
+    } else {
       return ui.notifications.error('The file you uploaded is not of the right version!')
     }
-    let pack = game.packs.find(p => p.metadata.name === filename)
+
+    const compendiumName = filename.replace(/ /g, '_')
+    let pack = game.packs.find(p => p.metadata.name === compendiumName)
     if (!pack)
       pack = await CompendiumCollection.createCompendium({
         type: 'Item',
         label: filename,
-        name: filename,
+        name: compendiumName,
         package: 'world',
       })
     let timestamp = new Date()
     ui.notifications.info('Importing Items from ' + filename + '...')
     for (let i of j.rows) {
-      await this._importItem(i, pack, filename, timestamp)
+      await this._importItem(i, pack, compendiumName, timestamp)
     }
     ui.notifications.info('Finished Importing ' + this.count + ' Items!')
   }
@@ -104,10 +114,10 @@ export class ItemImporter {
               otf_list.push(d.type.replace('_', ' ') + mod)
             }
           }
-        if (w.type === 'melee_weapon') {
+        if (this.isMeleeWeapon(w)) {
           let wep = {
             block: w.block || '',
-            damage: w.calc.damage || '',
+            damage: w.calc?.damage || '',
             mode: w.usage || '',
             name: itemData.name,
             notes: itemData.system.eqt.notes || '',
@@ -118,12 +128,12 @@ export class ItemImporter {
             otf: otf_list.join('|') || '',
           }
           itemData.system.melee[zeroFill(Object.keys(itemData.system.melee).length + 1)] = wep
-        } else if (w.type === 'ranged_weapon') {
+        } else if (this.isRangedWeapon(w)) {
           let wep = {
             acc: w.accuracy || '',
             ammo: '',
             bulk: w.bulk || '',
-            damage: w.calc.damage || '',
+            damage: w.calc?.damage || '',
             mode: w.usage,
             name: itemData.name,
             notes: itemData.system.eqt.notes || '',
@@ -222,5 +232,13 @@ export class ItemImporter {
     } else {
       return Item.create(itemData, { pack: `world.${filename}` })
     }
+  }
+
+  isRangedWeapon(w) {
+    return w.hasOwnProperty('range')
+  }
+
+  isMeleeWeapon(w) {
+    return !this.isRangedWeapon(w)
   }
 }

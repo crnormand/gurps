@@ -3,6 +3,9 @@
 Release 0.17.8
 
 - Fixed trait and weapon importing for GCS file version 5 (GCS 5.24+)
+- Fixed import of filenames with spaces by replacing space with underscore.
+- Import GCS v5 attacks from Equipment compendium.
+- Allow import of equipment weapon with blank damage.
 
 Release 0.17.7
 
