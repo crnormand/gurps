@@ -17,24 +17,34 @@ export class ItemImporter {
     } catch {
       return ui.notifications.error('The file you uploaded was not of the right format!')
     }
-    if (j.type !== 'equipment_list') {
-      return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
-    }
-    if (![2, 4].includes(j.version)) {
+
+    if ([5].includes(j.version)) {
+      // Version 5 does not have a type field ... find some other way to validate the data.
+      // Verify that the contained objects has an 'equipped' field.
+      if (j.rows[0].hasOwnProperty('equipped') === false) {
+        return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
+      }
+    } else if ([2, 4].includes(j.version)) {
+      if (j.type !== 'equipment_list') {
+        return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
+      }
+    } else {
       return ui.notifications.error('The file you uploaded is not of the right version!')
     }
-    let pack = game.packs.find(p => p.metadata.name === filename)
+
+    const compendiumName = filename.replace(/ /g, '_')
+    let pack = game.packs.find(p => p.metadata.name === compendiumName)
     if (!pack)
       pack = await CompendiumCollection.createCompendium({
         type: 'Item',
         label: filename,
-        name: filename,
+        name: compendiumName,
         package: 'world',
       })
     let timestamp = new Date()
     ui.notifications.info('Importing Items from ' + filename + '...')
     for (let i of j.rows) {
-      await this._importItem(i, pack, filename, timestamp)
+      await this._importItem(i, pack, compendiumName, timestamp)
     }
     ui.notifications.info('Finished Importing ' + this.count + ' Items!')
   }
