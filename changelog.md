@@ -1,11 +1,14 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.8
-
+Release 0.17.9
 - Fixed trait and weapon importing for GCS file version 5 (GCS 5.24+)
 - Fixed import of filenames with spaces by replacing space with underscore.
-- Import GCS v5 attacks from Equipment compendium.
 - Allow import of equipment weapon with blank damage.
+- Fix random horizontal scrollbar in character sheet (user Wilou1428).
+
+Release 0.17.8
+
+- Import GCS v5 attacks from Equipment compendium.
 
 Release 0.17.7
 
