@@ -26,7 +26,7 @@ Global Override body {
 .gurpsactorsheet #context-menu {
   width: max-content;
   left: calc(50% - 75px);
-  font-size: 12px;
+  font-size: var(--font-size-11);
   text-shadow: none;
 }
 
@@ -168,15 +168,15 @@ Global Override body {
 
 .gga-group .pdflink {
   margin-left: 3px;
-  font-size: var(--font-size-smaller);
+  font-size: var(--font-size-10);
 }
 
 .gga-chat-message .pdflink {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-10);
 }
 
 .gga-chat-message .aside {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-10);
 }
 
 .roll-message .aside .aside-text {
@@ -810,7 +810,7 @@ ul#result-effects li {
   height: min-content;
   margin: 0;
   width: 100%;
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-12);
   cursor: pointer;
 }
 
@@ -942,9 +942,9 @@ ul#result-effects li {
 }
 
 .tracked-resource button i {
-  font-size: 67%;
+  font-size: var(--font-size-10);
   margin: 0;
-  padding-bottom: 9px;
+  /* padding-bottom: 9px; */
 }
 
 .resource-editor input,

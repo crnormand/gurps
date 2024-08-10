@@ -229,8 +229,12 @@
   text-decoration: underline;
 }
 
+.gurps.sheet.actor .pdflink {
+    font-size: var(--font-size-10);
+}
+
 #sheet.gurpsactorsheet .pdflink {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 .pdflink:hover {
@@ -275,7 +279,7 @@
 .dodge span.bonus,
 .parry span.bonus,
 .block span.bonus {
-  font-size: 90%;
+  font-size: var(--font-size-11);
 }
 
 .rollable:active {
@@ -645,7 +649,7 @@
   color: white;
   justify-content: center;
   text-align: center;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 .npc-sheet #condition .npc-header {
@@ -829,6 +833,7 @@
 .gurps.sheet.actor {
   min-width: 800px;
   min-height: 375px;
+  font-size: var(--font-size-13);
 }
 
 .gurps.sheet.item {
@@ -890,8 +895,8 @@
 
 body {
   font-family: Verdana, sans-serif;
-  font-size: small;
-  font-weight: normal;
+  /* font-size: small; */
+  /* font-weight: normal; */
   padding: 0;
   /* margin: 0.25in; */
   /* margin-bottom: calc(0.25in - 1em); */
@@ -930,7 +935,7 @@ body {
 
 #footer {
   text-align: center;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
   flex-grow: 0;
 }
 
@@ -1000,7 +1005,7 @@ body {
 }
 
 #portrait .sharebutton {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
   line-height: normal;
   padding: 0;
   margin: 0;
@@ -1335,7 +1340,7 @@ body {
   text-align: right;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
   align-self: flex-end;
   white-space: nowrap;
 }
@@ -1344,14 +1349,14 @@ body {
   text-align: right;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 .label {
   text-align: left;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-13);
   white-space: nowrap;
 }
 
@@ -1370,7 +1375,7 @@ body {
 }
 
 .condensed {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 .desc .list_note textarea,
@@ -1508,7 +1513,7 @@ body {
   content: '\f142';
   font-family: var(--fontawesomefamily);
   color: var(--lightgrey);
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
   font-weight: 600;
   padding-left: var(--smallemgap);
   padding-right: calc(2 * var(--smallemgap));
@@ -1593,7 +1598,7 @@ body {
 }
 
 .list_note {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
   width: 100%;
   white-space: normal;
 }
@@ -1794,7 +1799,7 @@ body {
 }
 
 .gurps #combat-sheet .condition-block .basic-label {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 #hitpoints .selected {
@@ -1848,7 +1853,7 @@ body {
     'header header header header header'
     'encmarkerh ench loadh moveh dodgeh'
     'encmarker enc load move dodge';
-  /* font-size: var(--headerfontsize);; */
+  /* font-size: var(--font-size-10);; */
 }
 
 #combat-encumber-container .encmarkerh,
@@ -1861,7 +1866,7 @@ body {
 #combat-encumber-container .load,
 #combat-encumber-container .move,
 #combat-encumber-container .dodge {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 #combat-encumber .header:first-child,
@@ -1897,7 +1902,7 @@ body {
 #combat-location .where,
 #combat-location .penalty,
 #combat-location .dr {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 #combat-attrs {
@@ -1971,7 +1976,7 @@ body {
 #combat-weapons .shots,
 #combat-weapons .bulk,
 #combat-weapons .rcl {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 #combat-attrs-damage-sw {
@@ -2047,9 +2052,7 @@ body {
 
 .damage-all-message:hover,
 .damage-message:hover {
-  box-shadow:
-    0 4px 8px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .roll-message .modifier-list {
