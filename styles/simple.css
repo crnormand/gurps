@@ -518,6 +518,7 @@
   padding: 5px;
   scroll-behavior: smooth;
   background: white;
+  overflow-x: auto;
 }
 
 .gurps .sheet-header {
@@ -1271,6 +1272,7 @@ body {
 #notes {
   display: grid;
   border: var(--standardborder);
+  overflow: hidden;
 }
 
 #conditionalmods {
