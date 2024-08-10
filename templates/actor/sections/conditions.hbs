@@ -22,7 +22,7 @@
         </option>
         {{#each (listAllPostures) as |this key|}}
           <option value='{{key}}' {{select-if ../system.conditions.posture key}}>
-            {{i18n this.label}}
+            {{i18n this.name}}
           </option>
         {{/each}}
       </select>
