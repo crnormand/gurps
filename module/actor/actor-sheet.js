@@ -22,7 +22,7 @@ export class GurpsActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      width: 820,
+      width: 800,
       height: 800,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [

@@ -230,7 +230,7 @@
 }
 
 .gurps.sheet.actor .pdflink {
-    font-size: var(--font-size-10);
+  font-size: var(--font-size-10);
 }
 
 #sheet.gurpsactorsheet .pdflink {
@@ -1356,7 +1356,7 @@ body {
   text-align: left;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--font-size-13);
+  font-size: var(--font-size-12);
   white-space: nowrap;
 }
 
@@ -1464,6 +1464,10 @@ body {
 #notes .notedraggable:nth-child(4n + 3),
 #notes .ref:nth-child(4n + 4) {
   background-color: #e8ffe8;
+}
+
+.liftdesc {
+  font-size: var(--font-size-11);
 }
 
 #equipmentcarried .equipped {
