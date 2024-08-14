@@ -1645,7 +1645,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/actor-tab-sheet.hbs'
+    return 'systems/gurps/templates/actor/actor-tab-sheet-copy.hbs'
   }
 }
 

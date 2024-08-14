@@ -882,6 +882,11 @@
   align-self: stretch;
 }
 
+#combat-tab #condition .fieldblock {
+  display: inline-grid;
+  grid-template-columns: 0fr auto 0fr auto 0fr auto 0fr auto;
+}
+
 .gurps .fieldblock .field {
   margin-right: 0.2em;
   padding-left: 0.2em;
@@ -975,13 +980,15 @@ body {
   margin-bottom: 0.1em;
 }
 
-#personal {
+#personal,
+#personal-tab {
   flex-grow: 0;
   grid-area: personal;
   display: grid;
   grid-template:
-    'portrait identity miscellaneous points'
-    'portrait description description points';
+    'portrait identity    miscellaneous points'
+    'portrait description description   points'
+    'notes    notes       notes         notes';
   grid-template-columns: 0fr 1fr 1fr 0fr;
   grid-gap: var(--sectiongap);
 }
@@ -1041,6 +1048,12 @@ body {
   grid-template-rows: 1fr 1fr;
   border: none;
 }
+#attributes-tab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: none;
+  gap: 5px;
+}
 
 #points .field,
 #attributes .field,
@@ -1088,6 +1101,10 @@ body {
   align-content: stretch;
 }
 
+div#other {
+  grid-area: other;
+}
+
 #other > div {
   width: 100%;
   margin-right: var(--sectiongap);
@@ -1106,9 +1123,21 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    'attributes      hp-fp           location        encumbrance'
-    'attributes      condition       location        qnotes'
-    'attributes      condition       location        lifting';
+    'attributes hp-fp     location encumbrance'
+    'attributes condition location qnotes'
+    'attributes condition location lifting';
+  grid-template-columns: 0fr 1fr 1fr 1fr;
+  grid-gap: var(--sectiongap);
+}
+
+#stats-tab {
+  grid-area: stats;
+  display: grid;
+  grid-template:
+    'portrait attributes-tab  encumbrance     lifting'
+    'portrait qnotes          encumbrance     lifting'
+    'hp-fp    other           other           other'
+    'hp-fp    combat-trackers combat-trackers combat-trackers';
   grid-template-columns: 0fr 1fr 1fr 1fr;
   grid-gap: var(--sectiongap);
 }
@@ -1125,9 +1154,10 @@ body {
 }
 
 #condition {
+  /* display: grid; */
   grid-area: condition;
-  grid-template-rows: 0fr 1fr 1fr;
-  align-items: start;
+  /* grid-template-columns: 0fr 1fr 1fr; */
+  /* align-items: start; */
   border: var(--standardborder);
 }
 
@@ -1171,7 +1201,7 @@ body {
   grid-template:
     'header header'
     'desc lift';
-  grid-template-columns: 1fr 0fr;
+  grid-template-columns: 0fr 1fr;
   grid-template-rows: 0fr;
 }
 
@@ -1543,6 +1573,7 @@ body {
 
 .situation {
   white-space: normal !important;
+  font-size: var(--font-size-11);
 }
 
 .equipmentlist .ref,
@@ -1559,6 +1590,10 @@ body {
 #conditionalmods .situation,
 #reactions .situation {
   border-right: none;
+}
+
+#lifting .liftdesc {
+  text-wrap: wrap;
 }
 
 .indent1 {
@@ -1647,8 +1682,9 @@ body {
   display: grid;
   grid-gap: var(--sectiongap);
   grid-template-columns: 1fr min-content;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
   grid-template-areas:
+    'condition         condition'
     'melee             combat-sidebar'
     'speed-range-table combat-sidebar'
     'ranged            combat-sidebar';
@@ -1706,10 +1742,11 @@ body {
   /* white-space: nowrap; */
   /* overflow-y: hidden; */
   /* overflow-x: auto; */
+  background-color: #e8ffe8;
 }
 
 #tracker-scroller .tracked-resource {
-  margin: -2px 0 -2px -2px;
+  /* margin: -2px 0 -2px -2px; */
 }
 
 #tracker-scroller .header {
@@ -1721,11 +1758,12 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 0fr min-content;
-  border: var(--standardborder);
+  /* border: var(--standardborder); */
 }
 
 #combat-trackers .tracked-resource {
   width: min-content;
+  background-color: white;
 }
 
 #combat-trackers > .header {
