@@ -5,6 +5,7 @@ Release 0.17.9
 - Fixed import of filenames with spaces by replacing space with underscore.
 - Allow import of equipment weapon with blank damage.
 - Fix random horizontal scrollbar in character sheet (user Wilou1428).
+- Support Dungeon Fantasy page code conventions used in GCA (user chrismaille).
 
 Release 0.17.8
 
