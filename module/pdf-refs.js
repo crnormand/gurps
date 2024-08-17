@@ -57,9 +57,14 @@ export const SJGProductMappings = {
   TSOR: 'http://www.warehouse23.com/products/gurps-thaumatology-sorcery',
   UT: 'http://www.warehouse23.com/products/gurps-ultra-tech',
   VOR: 'http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game',
+  // Dungeon Fantasy Boxed Set code conventions used in GCA
+  'DFRPG:A': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
+  'DFRPG:M': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
+  'DFRPG:S': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
+  'DFRPG:E': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
 }
 
-// Convert GCS page refs into PDFoundry book & page.   Special handling for refs like "PU8:12"
+// Convert GCS page refs into PDFoundry book & page. Special handling for refs like "PU8:12" or "DFRPG:A12"
 /**
  * @param {JQuery.ClickEvent} event
  */
@@ -87,8 +92,18 @@ export function handlePdf(links) {
     let book = ''
     let page = 0
     if (i > 0) {
-      book = t.substring(0, i).trim()
-      page = parseInt(t.substr(i + 1))
+      // Special case for refs like "PU8:12" or "DFRPG:A12"
+      // First we need to check if after the colon is only numbers or has a letter
+        let afterColon = t.substring(i + 1).trim()
+        if (afterColon.match(/^[0-9]+$/)) {
+            book = t.substring(0, i).trim()
+            page = parseInt(afterColon)
+        } else {
+            let codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
+            let codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
+            book = `${codeBefore}:${codeAfter}` // e.g. "DFRPG:A"
+            page = parseInt(afterColon.replace(/[a-zA-Z]*/g, '')) // e.g. 12
+        }
     } else {
       book = t.replace(/(.*?)[0-9].*/g, '$1').trim()
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
