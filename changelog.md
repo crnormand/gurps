@@ -1,11 +1,14 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.9
+Release 0.17.10
+- Change Posture effect "label" to "name" to properly display in dropdown.
+
+Release 0.17.9 8/17/2024
 - Fixed trait and weapon importing for GCS file version 5 (GCS 5.24+)
 - Fixed import of filenames with spaces by replacing space with underscore.
 - Allow import of equipment weapon with blank damage.
 - Fix random horizontal scrollbar in character sheet (user Wilou1428).
-- Change Posture effect "label" to "name" to properly display in dropdown.
+- Support Dungeon Fantasy page code conventions used in GCA (user chrismaille).
 
 Release 0.17.8
 
@@ -881,7 +884,7 @@ Release 0.10.0 - 6/4/2021
 
 - Foundry 0.8.x compatible!
 - Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
-- Added \*Costs X trN and \*Costs X tr(*name*)
+- Added \*Costs X trN and \*Costs X tr(_name_)
 - Added support for translated attributes in OtF formulas (Will == Vonte in Portuguese)
 - Added Ignore QTY/Count/Uses from import
 - Remember carried, parent and equipped status from previous import
@@ -1097,7 +1100,7 @@ Release 0.8.20 - 3/22/2021
 - Allow the ADD to apply resource damage to the actors resource tracker (<https://github.com/crnormand/gurps/issues/385>)
 - Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
 - Added Control Points (Fantastic Dungeon Grappling: <https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/>) as a default Resource Tracker.
-- Modified Resource Trackers to optionally *accumulate* damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
+- Modified Resource Trackers to optionally _accumulate_ damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
 - Fixed parsing for damage with extraneous text '1d-1 burn/2 points'
 - Added GURPS.executeOTF()
 
@@ -1150,7 +1153,7 @@ Release 0.8.16 - 3/6/2021
 - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
 - Bug fix for GCA exports (with Armins help!) Block is calculated correctly for items with DB (shields)
 - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
-- Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be *over* that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes *more than* 5 points of damage (i.e., 6).
+- Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be _over_ that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes _more than_ 5 points of damage (i.e., 6).
 - High rate of fire weapons damage is supported directly. Right-click on a damage roll to get a menu to enter the number of hits. There will be a new "ALL THE DAMAGE" draggable section of the damage chat message. Dragging that onto a character will apply all damage rolls in the ADD. The ADD has been enhanced to allow each damage calculation to be displayed, while applying the total.
 - Updated GCS import to accept 'uses' and 'maxuses' columns for equipment (requires GCS 4.28 and Master Library 2.9)
 - Added Shotgun damage to Apply Damage Dialog.
