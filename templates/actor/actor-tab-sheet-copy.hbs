@@ -2,14 +2,10 @@
   <div id='sheet-tab' class='gurpsactorsheet'>
     <div id='stats-tab'>
       {{>portrait}}
-
       <div id='attributes-tab'>
         {{>basic-attributes}}
         {{>secondary-attributes}}
       </div>
-      {{>encumbrance}}
-      {{>quicknote}}
-      {{>lifting}}
       <div id='hp-fp-tab'>
         {{#if useCI}}
           {{>conditional-injury}}
@@ -32,18 +28,13 @@
           testcondition=system.conditions.exhausted
         }}
       </div>
-      {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}}
-        <div id='other' style='display: flex; flex-flow: row nowrap;'>
-          {{#if (notEmpty system.reactions)}}{{>reactions}}{{/if}}
-          {{#if (notEmpty system.conditionalmods)}}{{>conditionalmods}}{{/if}}
-        </div>
-      {{/if}}
-      {{>trackers}}
+      {{>encumbrance}}
+      {{>quicknote}}
     </div>
 
     <nav id='nav-tabs' class='gurps-sheet-tabs' data-group='primary-tabs'>
       <li><a class='tab-item' data-tab='personal'>{{i18n 'GURPS.pesonalTab' 'Personal'}}</a></li>
-      <li><a class='tab-item' data-tab='stats'>{{i18n 'GURPS.statsTab'}}</a></li>
+      <li><a class='tab-item' data-tab='stats'>{{i18n 'GURPS.resourcesModsTab' 'Resources and Modifiers'}}</a></li>
       <li><a class='tab-item' data-tab='combat'>{{i18n 'GURPS.combatTab'}}</a></li>
       <li><a class='tab-item' data-tab='advantages'>{{i18n 'GURPS.advantagesTab'}}</a></li>
       <li><a class='tab-item' data-tab='skills'>{{i18n 'GURPS.skillsTab'}}</a></li>
@@ -59,11 +50,13 @@
           {{>miscellaneous}}
           {{>description}}
           {{>points}}
+          {{>lifting}}
           {{>notes}}
         </div>
       </div>
  
       <div class='tab' data-tab='stats' data-group='primary-tabs'>
+        {{>trackers}}
         {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}}
           <div id='other' style='display: flex; flex-flow: row nowrap;'>
             {{#if (notEmpty system.reactions)}}{{>reactions}}{{/if}}

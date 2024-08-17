@@ -980,8 +980,7 @@ body {
   margin-bottom: 0.1em;
 }
 
-#personal,
-#personal-tab {
+#personal {
   flex-grow: 0;
   grid-area: personal;
   display: grid;
@@ -989,7 +988,19 @@ body {
     'portrait identity    miscellaneous points'
     'portrait description description   points'
     'notes    notes       notes         notes';
-  grid-template-columns: 0fr 1fr 1fr 0fr;
+  grid-template-columns: auto 1fr 1fr min-content;
+  grid-gap: var(--sectiongap);
+}
+
+#personal-tab {
+  flex-grow: 0;
+  grid-area: personal;
+  display: grid;
+  grid-template:
+    'identity    identity      miscellaneous points'
+    'description description   description   points'
+    'lifting     notes         notes         notes';
+  grid-template-columns: auto 1fr 1fr min-content;
   grid-gap: var(--sectiongap);
 }
 
@@ -1134,11 +1145,11 @@ div#other {
   grid-area: stats;
   display: grid;
   grid-template:
-    'portrait attributes-tab  encumbrance     lifting'
-    'portrait qnotes          encumbrance     lifting'
-    'hp-fp    other           other           other'
-    'hp-fp    combat-trackers combat-trackers combat-trackers';
-  grid-template-columns: 0fr 1fr 1fr 1fr;
+    'portrait        attributes-tab  hp-fp           encumbrance'
+    'portrait        qnotes          hp-fp           encumbrance'
+    'combat-trackers           combat-trackers           other           other'
+    'combat-trackers combat-trackers other other';
+  grid-template-columns: 0fr 1fr 0fr 1fr;
   grid-gap: var(--sectiongap);
 }
 
@@ -1247,6 +1258,10 @@ div#other {
 #location .header:first-child,
 #encumbrance .header:first-child {
   flex-flow: column nowrap;
+}
+
+#encumbrance > * {
+  font-size: var(--font-size-12);
 }
 
 #encumbrance.dodgeh {
@@ -1497,7 +1512,7 @@ div#other {
 }
 
 .liftdesc {
-  font-size: var(--font-size-11);
+  font-size: var(--font-size-12);
 }
 
 #equipmentcarried .equipped {
@@ -1742,7 +1757,7 @@ div#other {
   /* white-space: nowrap; */
   /* overflow-y: hidden; */
   /* overflow-x: auto; */
-  background-color: #e8ffe8;
+  background-color: #eeeeee;
 }
 
 #tracker-scroller .tracked-resource {
