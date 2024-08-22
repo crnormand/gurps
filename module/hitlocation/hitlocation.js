@@ -4,6 +4,8 @@ import { extractP, convertRollStringToArrayOfInt, i18n } from '../../lib/utiliti
 
 export const LIMB = 'limb'
 export const EXTREMITY = 'extremity'
+export const CHEST = 'chest'
+export const GROIN = 'groin'
 
 // This table is used to display dice rolls and penalties (if they are missing from the import
 // data) and to create the HitLocations pulldown menu (skipping any "skip:true" entries).
@@ -107,8 +109,8 @@ export class HitLocation {
       Face: { roll: '5', penalty: -5 },
       'Right Leg': { roll: '6-7', penalty: -2, role: LIMB },
       'Right Arm': { roll: '8', penalty: -2, role: LIMB },
-      Torso: { roll: '9-10', penalty: 0 },
-      Groin: { roll: '11', penalty: -3 },
+      Torso: { roll: '9-10', penalty: 0, role: CHEST },
+      Groin: { roll: '11', penalty: -3, role: GROIN },
       'Left Arm': { roll: '12', penalty: -2, role: LIMB },
       'Left Leg': { roll: '13-14', penalty: -2, role: LIMB },
       Hand: { roll: '15', penalty: -4, role: EXTREMITY },
