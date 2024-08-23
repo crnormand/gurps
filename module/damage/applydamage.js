@@ -663,7 +663,12 @@ export default class ApplyDamageDialog extends Application {
         messageData.whisper = ids
       }
 
-      ChatMessage.create(messageData)
+      ChatMessage.create(messageData).then((message) => {
+        GURPS.lastInjuryRoll = data
+        GURPS.lastInjuryRolls[this.actor.id] = data
+        GURPS.lastInjuryRolls[message.id] = data
+      })
+
       if (!keepOpen) this.close()
     })
   }
