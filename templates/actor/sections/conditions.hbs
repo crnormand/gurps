@@ -17,25 +17,25 @@
           {{/each}}
         </div>
       </details>
-      {{!--
-      <select id='maneuver' name='system.conditions.maneuver' style='font-size: 90%; max-width: 14em;' {{disabled (or
-        isEditing (not (inCombat this)))}}>
-        <option value='undefined' {{select-if ../system.conditions.maneuver 'undefined' }}>
-          {{i18n "GURPS.none"}}
-        </option>
-        {{#each (listAllManeuvers) as |this key|}}
-        <option value='{{key}}' {{select-if ../system.conditions.maneuver key}}>
-          {{i18n this.label}}
-        </option>
-        {{/each}}
-      </select>
-      --}}
     </div>
     {{/if}}
 
 
     <div class='label'>{{i18n 'GURPS.modifierPosture'}}:</div>
-    <div class='field' style="border: none;">
+    <div class="'field details">
+      <details>
+        <summary>
+          {{#with (getPosture system.conditions.posture) as |posture|}}
+          <img class="button" src='{{posture.icon}}' title="{{i18n posture.label}}" alt='{{posture.name}}' />
+          {{/with}}
+        </summary>
+        <div class="popup square5x4">
+          {{#each (listAllPostures) as |this key|}}
+          <img class="button" src='{{icon}}' title="{{i18n label}}" alt='{{key}}' />
+          {{/each}}
+      </details>
+    </div>
+    {{!-- <div class='field' style="border: none;">
       <select id='posture' name='system.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
         <option value='standing' {{select-if ../system.conditions.posture 'standing' }}>{{i18n 'GURPS.STATUSStanding'}}
         </option>
@@ -45,7 +45,8 @@
         </option>
         {{/each}}
       </select>
-    </div>
+    </div> --}}
+
     <div class='label' for='move-mode'>{{i18n 'GURPS.moveModeType'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' style='font-size: 90%; max-width: 14em;' {{disabled (or isEditing (lt (length system.move)
