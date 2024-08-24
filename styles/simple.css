@@ -601,7 +601,8 @@
 
 .gurps .sheet-body.tabbed-sheet {
   flex-grow: 1;
-  height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+  height: auto !important;
+  /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
   padding-top: 4px;
   border-top: 1px solid var(--lightgrey);
 }
@@ -885,6 +886,36 @@
 #combat-tab #condition .fieldblock {
   display: inline-grid;
   grid-template-columns: 0fr auto 0fr auto 0fr auto 0fr auto;
+  padding-top: 0.15em;
+}
+
+#combat-tab #condition .fieldblock .details {
+  border: none;
+  height: 100%;
+  align-self: end;
+}
+
+#combat-tab #condition .fieldblock details .button {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+}
+
+#combat-tab #condition .fieldblock details .button:hover {
+  box-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
+#combat-tab #condition .fieldblock details > summary {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#combat-tab #condition .fieldblock details[open] > summary {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  filter: grayscale(1) opacity(50%) hue-rotate(190deg) saturate(2);
 }
 
 .gurps .fieldblock .field {
@@ -900,11 +931,7 @@
 
 body {
   font-family: Verdana, sans-serif;
-  /* font-size: small; */
-  /* font-weight: normal; */
   padding: 0;
-  /* margin: 0.25in; */
-  /* margin-bottom: calc(0.25in - 1em); */
 }
 
 #sheet-tab,
@@ -1059,6 +1086,7 @@ body {
   grid-template-rows: 1fr 1fr;
   border: none;
 }
+
 #attributes-tab {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1658,7 +1686,8 @@ div#other {
 }
 
 .encmarker.current:after {
-  content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  content: '\f101';
+  /* this is your text. You can also use UTF-8 character codes as I do here */
   font-family: var(--fontawesomefamily);
   font-weight: 900;
   padding-right: 2px;
@@ -1697,7 +1726,7 @@ div#other {
   display: grid;
   grid-gap: var(--sectiongap);
   grid-template-columns: 1fr min-content;
-  grid-template-rows: auto auto auto 1fr;
+  grid-template-rows: 0fr auto auto 1fr;
   grid-template-areas:
     'condition         condition'
     'melee             combat-sidebar'
@@ -2180,6 +2209,7 @@ div#other {
   color: black;
   text-shadow: 0 0 3px #00ff00;
 }
+
 .roll-result .roll-detail .crit.failure {
   color: black;
   text-shadow: 0 0 3px #ff0000;
@@ -2236,7 +2266,8 @@ div#other {
 }
 
 .table-column span {
-  pointer-events: none; /* We need pointer events to know how to expand/collapse items */
+  pointer-events: none;
+  /* We need pointer events to know how to expand/collapse items */
 }
 
 /* .desc {

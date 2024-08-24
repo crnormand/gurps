@@ -852,6 +852,7 @@ ul#result-effects li {
   grid-template-columns: 1fr 1fr;
   grid-gap: 0.05in;
 }
+
 #hp-fp-tab {
   grid-area: hp-fp;
   display: grid;
@@ -1264,7 +1265,8 @@ select#maneuver option {
   margin-left: 8px;
 }
 
-.spinner details {
+.spinner details,
+#condition details {
   position: relative;
 }
 
@@ -1272,8 +1274,8 @@ select#maneuver option {
   width: 100%;
 }
 
-.spinner details .popup {
-  display: flex;
+details .popup {
+  display: inline-flex;
   flex-flow: row nowrap;
   position: absolute;
   z-index: 10;
@@ -1284,6 +1286,13 @@ select#maneuver option {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 3px;
+}
+
+details .popup.square5x4 {
+  flex-flow: row wrap;
+  margin-left: 0;
+  min-inline-size: calc(5 * 2rem);
+  background: grey;
 }
 
 .spinner .button-ribbon button {

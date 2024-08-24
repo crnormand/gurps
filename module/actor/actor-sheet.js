@@ -362,6 +362,23 @@ export class GurpsActorSheet extends ActorSheet {
       })
     } // end enhanced input
 
+    // Handle the "Maneuver" dropdown on the tabbed sheet.
+    html.find('#condition details').click(ev => {
+      ev.preventDefault()
+      const target = $(ev.currentTarget)[0]
+      target.open = !target.open
+    })
+
+    // Handle the "Maneuver" dropdown on the tabbed sheet.
+    html.find('#condition details .popup .button').click(ev => {
+      ev.preventDefault()
+      const details = $(ev.currentTarget).closest('details')
+      const target = $(ev.currentTarget)[0]
+      this.actor.replaceManeuver(target.alt)
+      details.open = !details.open
+
+    })
+
     // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
     // display the tooltip in the correct position.
     html.find('.tooltip.gga-manual').mouseover(ev => {
@@ -986,7 +1003,7 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
                 a => (obj[a] = html.find(`.${a}`).val())
               )
-              ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+                ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
               let v = html.find('.ignoreImportQty') // Should only find in equipment
