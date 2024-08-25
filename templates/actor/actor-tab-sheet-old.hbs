@@ -1,40 +1,14 @@
 <form class='{{cssClass}}' autocomplete='off' style='scroll-padding-top: 5px;'>
   <div id='sheet-tab' class='gurpsactorsheet'>
-    <div id='stats-tab'>
+    <div id='personal'>
       {{>portrait}}
-      <div id='attributes-tab'>
-        {{>basic-attributes}}
-        {{>secondary-attributes}}
-      </div>
-      <div id='hp-fp-tab'>
-        {{#if useCI}}
-          {{>conditional-injury}}
-        {{else}}
-          {{>hpfp-tracker
-            name='HP'
-            resource=system.HP
-            label='GURPS.attributesHPNAME'
-            editable=false
-            condition='reeling'
-            testcondition=system.conditions.reeling
-          }}
-        {{/if}}
-        {{>hpfp-tracker
-          name='FP'
-          resource=system.FP
-          label='GURPS.attributesFPNAME'
-          editable=false
-          condition='exhausted'
-          testcondition=system.conditions.exhausted
-        }}
-      </div>
-      {{>encumbrance}}
-      {{>quicknote}}
+      {{>identity}}
+      {{>miscellaneous}}
+      {{>description}}
+      {{>points}}
     </div>
-
     <nav id='nav-tabs' class='gurps-sheet-tabs' data-group='primary-tabs'>
-      <li><a class='tab-item' data-tab='personal'>{{i18n 'GURPS.pesonalTab' 'Personal'}}</a></li>
-      <li><a class='tab-item' data-tab='stats'>{{i18n 'GURPS.resourcesModsTab' 'Resources and Modifiers'}}</a></li>
+      <li><a class='tab-item' data-tab='stats'>{{i18n 'GURPS.statsTab'}}</a></li>
       <li><a class='tab-item' data-tab='combat'>{{i18n 'GURPS.combatTab'}}</a></li>
       <li><a class='tab-item' data-tab='advantages'>{{i18n 'GURPS.advantagesTab'}}</a></li>
       <li><a class='tab-item' data-tab='skills'>{{i18n 'GURPS.skillsTab'}}</a></li>
@@ -44,19 +18,41 @@
       <li><a class='tab-item' data-tab='equipment'>{{i18n 'GURPS.equipmentTab'}}</a></li>
     </nav>
     <section class='sheet-body tabbed-sheet'>
-      <div class='tab' data-tab='personal' data-group='primary-tabs'>
-        <div id='personal-tab'>
-          {{>identity}}
-          {{>miscellaneous}}
-          {{>description}}
-          {{>points}}
-          {{>lifting}}
-          {{>notes}}
-        </div>
-      </div>
- 
       <div class='tab' data-tab='stats' data-group='primary-tabs'>
-        {{>trackers}}
+        <div id='stats'>
+          <div id='attributes'>
+            {{>basic-attributes}}
+            {{>secondary-attributes}}
+          </div>
+          {{>encumbrance}}
+          {{>quicknote}}
+          {{>lifting}}
+          {{>locations parent=../data}}
+          <div id='hp-fp'>
+            {{#if useCI}}
+              {{>conditional-injury}}
+            {{else}}
+              {{>hpfp-tracker
+                name='HP'
+                resource=system.HP
+                label='GURPS.attributesHPNAME'
+                editable=false
+                condition='reeling'
+                testcondition=system.conditions.reeling
+              }}
+            {{/if}}
+            {{>hpfp-tracker
+              name='FP'
+              resource=system.FP
+              label='GURPS.attributesFPNAME'
+              editable=false
+              condition='exhausted'
+              testcondition=system.conditions.exhausted
+            }}
+          </div>
+          {{>conditions}}
+        </div>
+
         {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}}
           <div id='other' style='display: flex; flex-flow: row nowrap;'>
             {{#if (notEmpty system.reactions)}}{{>reactions}}{{/if}}
@@ -64,12 +60,12 @@
           </div>
         {{/if}}
 
+        {{>trackers}}
+        {{>notes}}
       </div>
 
       <div class='tab' data-tab='combat' data-group='primary-tabs'>
         <div id='combat-tab'>
-          {{>conditions view='condensed'}}
-
           {{#if (notEmpty system.melee)}}
             {{>melee}}
           {{/if}}
@@ -78,7 +74,9 @@
             {{>ranged}}
           {{/if}}
           <div id='combat-sidebar'>
-            {{>locations parent=../data}}
+            {{>encumbrance}}
+            {{>quicknote}}
+            {{>lifting}}
           </div>
         </div>
       </div>

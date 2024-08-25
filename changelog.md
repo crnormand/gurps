@@ -1,9 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
 Release 0.17.10
+
 - Change Posture effect "label" to "name" to properly display in dropdown.
+- Updated Tabbed sheet to make it more compact and usable.
+- Prevent multiple Postures from being selected.
 
 Release 0.17.9 8/17/2024
+
 - Fixed trait and weapon importing for GCS file version 5 (GCS 5.24+)
 - Fixed import of filenames with spaces by replacing space with underscore.
 - Allow import of equipment weapon with blank damage.
