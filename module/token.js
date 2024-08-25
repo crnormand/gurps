@@ -124,7 +124,7 @@ export default class GurpsToken extends Token {
   }
 
   isPostureEffect(effect) {
-    return effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
+    return effect.img && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
   }
 
   async setEffectActive(name, active) {

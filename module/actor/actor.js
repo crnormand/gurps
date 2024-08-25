@@ -596,7 +596,7 @@ export class GurpsActor extends Actor {
   }
 
   _adjustMove(move, threshold, value, reason) {
-    switch (value) {
+    switch (value.toString()) {
       case MOVE_NONE:
         return { move: 0, text: i18n_f('GURPS.moveNone', { reason: reason }) }
 
@@ -639,7 +639,7 @@ export class GurpsActor extends Actor {
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)
-      let reason = i18n(GURPS.StatusEffect.lookup(this.system.conditions.posture).label)
+      let reason = i18n(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
 

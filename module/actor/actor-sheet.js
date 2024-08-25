@@ -362,7 +362,7 @@ export class GurpsActorSheet extends ActorSheet {
       })
     } // end enhanced input
 
-    // Handle the "Maneuver" dropdown on the tabbed sheet.
+    // Handle the Maneuver and Posture dropdowns on the tabbed sheet.
     html.find('#condition details').click(ev => {
       ev.preventDefault()
       const target = $(ev.currentTarget)[0]
@@ -370,13 +370,21 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     // Handle the "Maneuver" dropdown on the tabbed sheet.
-    html.find('#condition details .popup .button').click(ev => {
+    html.find('#condition details#maneuver .popup .button').click(ev => {
       ev.preventDefault()
       const details = $(ev.currentTarget).closest('details')
       const target = $(ev.currentTarget)[0]
       this.actor.replaceManeuver(target.alt)
       details.open = !details.open
+    })
 
+    // Handle the "Posture" dropdown on the tabbed sheet.
+    html.find('#condition details#posture .popup .button').click(ev => {
+      ev.preventDefault()
+      const details = $(ev.currentTarget).closest('details')
+      const target = $(ev.currentTarget)[0]
+      this.actor.replacePosture(target.alt)
+      details.open = !details.open
     })
 
     // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
@@ -1003,7 +1011,7 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
                 a => (obj[a] = html.find(`.${a}`).val())
               )
-                ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+              ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
               let v = html.find('.ignoreImportQty') // Should only find in equipment
@@ -1650,7 +1658,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      width: 860,
+      width: 760,
       height: 600,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],

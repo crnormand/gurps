@@ -832,7 +832,7 @@
 }
 
 .gurps.sheet.actor {
-  min-width: 800px;
+  min-width: 760px;
   min-height: 375px;
   font-size: var(--font-size-13);
 }
@@ -1173,11 +1173,11 @@ div#other {
   grid-area: stats;
   display: grid;
   grid-template:
-    'portrait        attributes-tab  hp-fp           encumbrance'
-    'portrait        qnotes          hp-fp           encumbrance'
-    'combat-trackers           combat-trackers           other           other'
-    'combat-trackers combat-trackers other other';
-  grid-template-columns: 0fr 1fr 0fr 1fr;
+    'portrait        attributes-tab  encumbrance hp-fp'
+    'portrait        qnotes          qnotes      hp-fp'
+    'combat-trackers combat-trackers other       other'
+    'combat-trackers combat-trackers other       other';
+  grid-template-columns: 0fr 1fr 1fr 0fr;
   grid-gap: var(--sectiongap);
 }
 
@@ -1728,14 +1728,14 @@ div#other {
   grid-template-columns: 1fr min-content;
   grid-template-rows: 0fr auto auto 1fr;
   grid-template-areas:
-    'condition         condition'
+    'condition         combat-sidebar'
     'melee             combat-sidebar'
     'speed-range-table combat-sidebar'
     'ranged            combat-sidebar';
 }
 
 .sheet-body.tabbed-sheet #combat-sidebar {
-  grid-row: 1 / 4;
+  grid-area: combat-sidebar;
 }
 
 /* ----- combat sheet additions ----- */
