@@ -26,7 +26,7 @@ Global Override body {
 .gurpsactorsheet #context-menu {
   width: max-content;
   left: calc(50% - 75px);
-  font-size: 12px;
+  font-size: var(--font-size-11);
   text-shadow: none;
 }
 
@@ -41,10 +41,7 @@ Global Override body {
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  background:
-    url(/systems/gurps/icons/hex2.webp) repeat,
-    url(/ui/parchment.jpg) repeat,
-    #dcdcd0;
+  background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
 }
 
@@ -168,15 +165,15 @@ Global Override body {
 
 .gga-group .pdflink {
   margin-left: 3px;
-  font-size: var(--font-size-smaller);
+  font-size: var(--font-size-10);
 }
 
 .gga-chat-message .pdflink {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-10);
 }
 
 .gga-chat-message .aside {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-10);
 }
 
 .roll-message .aside .aside-text {
@@ -609,9 +606,7 @@ ul#result-effects li {
 
 .gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
 .gga-app .collapsible-wrapper .collapsible-content {
-  box-shadow:
-    1px 1px 3px rgba(0, 0, 0, 0.3) inset,
-    0px 1px 3px rgba(0, 0, 0, 0.3) inset,
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
@@ -662,9 +657,7 @@ ul#result-effects li {
 
 .dragging {
   outline: 5px auto -webkit-focus-ring-color;
-  box-shadow:
-    0 0 2px 3px #78aeda,
-    0 0 2px #78aeda inset;
+  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
   border-radius: 3px;
   background-color: rgba(240, 128, 128, 0.6);
 }
@@ -705,9 +698,7 @@ ul#result-effects li {
   border-radius: 6px;
   font-weight: normal;
   text-shadow: none;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.5),
-    0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 
   /* Position the tooltip text */
   position: absolute;
@@ -810,7 +801,7 @@ ul#result-effects li {
   height: min-content;
   margin: 0;
   width: 100%;
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-12);
   cursor: pointer;
 }
 
@@ -859,6 +850,13 @@ ul#result-effects li {
   grid-area: hp-fp;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-gap: 0.05in;
+}
+
+#hp-fp-tab {
+  grid-area: hp-fp;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   grid-gap: 0.05in;
 }
 
@@ -942,9 +940,9 @@ ul#result-effects li {
 }
 
 .tracked-resource button i {
-  font-size: 67%;
+  font-size: var(--font-size-10);
   margin: 0;
-  padding-bottom: 9px;
+  /* padding-bottom: 9px; */
 }
 
 .resource-editor input,
@@ -981,7 +979,7 @@ ul#result-effects li {
   display: flex;
   flex-flow: column nowrap;
   justify-content: stretch;
-  /* font-size: var(--font-size-smaller); */
+  font-size: var(--font-size-11);
 }
 
 /* #combat-trackers .tracked-resource .condition-block {
@@ -1267,7 +1265,8 @@ select#maneuver option {
   margin-left: 8px;
 }
 
-.spinner details {
+.spinner details,
+#condition details {
   position: relative;
 }
 
@@ -1275,8 +1274,8 @@ select#maneuver option {
   width: 100%;
 }
 
-.spinner details .popup {
-  display: flex;
+details .popup {
+  display: inline-flex;
   flex-flow: row nowrap;
   position: absolute;
   z-index: 10;
@@ -1284,11 +1283,16 @@ select#maneuver option {
   font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.5),
-    0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 3px;
+}
+
+details .popup.square5x4 {
+  flex-flow: row wrap;
+  margin-left: 0;
+  min-inline-size: calc(5 * 2rem);
+  background: grey;
 }
 
 .spinner .button-ribbon button {
@@ -1403,7 +1407,8 @@ button.equipmentbutton:last-child {
   display: flex;
   flex-flow: nowrap row;
   justify-content: flex-end;
-  font-family: 'Font Awesome 6 Pro', Helvetica, sans-serif;
+  text-transform: uppercase;
+  /* font-family: 'Font Awesome 6 Pro', Verdana, sans-serif; */
 }
 
 .navigate-bar {
@@ -1926,9 +1931,7 @@ button.equipmentbutton:last-child {
 .modttt .modtooltip {
   padding: 0.35em;
   border-radius: 0.75em;
-  box-shadow:
-    0 4px 8px 4px rgba(0, 0, 0, 0.8),
-    0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .modtooltip .plus,

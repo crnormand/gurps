@@ -121,7 +121,8 @@
 
   "__Character Encumbrance/Lift__": "=========",
   "GURPS.encumbranceMoveDodge": "Нагрузка, Движение и Уклонение",
-  "GURPS.maxload": "Максимальная нагрузка",
+  "GURPS.maxload": "Макс",
+  "GURPS.maxloadLong": "Максимальная нагрузка",
   "GURPS.move": "Движение",
   "GURPS.dodge": "Уклонение",
   "GURPS.liftingAndMovingThings": "Поднятие и перемещение предметов",
