@@ -50,17 +50,11 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
-    // this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
-    //temp variable to prevent body hits from looping a reroll
-    this.temp = 1
 
-    // console.log(this._resourceLabels)
-
-
-    this.adjustHitLocationIfNecessary()
+    this._adjustHitLocationIfNecessary()
   }
 
   static get defaultOptions() {
@@ -433,7 +427,7 @@ export default class ApplyDamageDialog extends Application {
     this.updateUI()
   }
 
-  async _displayDiceRolls(roll) {
+  async _displayDiceRolls(roll, options = {}) {
     if (!roll) return
 
     if (isNiceDiceEnabled()) {
@@ -447,7 +441,7 @@ export default class ApplyDamageDialog extends Application {
             resultLabel: s.result,
             type: type,
             vectors: [],
-            options: {},
+            options: options,
           })
         )
       })
@@ -460,40 +454,6 @@ export default class ApplyDamageDialog extends Application {
     }
   }
 
-  // async _bodyHitsVitals() {
-  //   const roll3d = Roll.create('1d6[Hit Location]')
-  //   await roll3d.roll({ async: true })
-
-  //   const total = roll3d.total
-  //   const throws = []
-  //   const dc = []
-
-  //   roll3d.dice.forEach(die => {
-  //     let type = 'd' + die.faces
-  //     die.results.forEach(s =>
-  //       dc.push({
-  //         result: s.result,
-  //         resultLabel: s.result,
-  //         type: type,
-  //         vectors: [],
-  //         options: {},
-  //       })
-  //     )
-  //   })
-
-  //   throws.push({ dice: dc })
-
-  //   if (dc.length > 0) {
-  //     // The user made a "multi-damage" roll... let them see the dice!
-  //     // @ts-ignore
-  //     game.dice3d.show({ throws: throws }).then(display => this.updateUI())
-  //   }
-  //   if (total === 1) {
-  //     this._calculator.hitLocation = 'Vitals'
-  //     display => this.updateUI()
-  //   } else this.temp = 0
-  // }
-
   /**
    * Ask the calculator to randomly select a hit location, and return the roll used.
    */
@@ -501,11 +461,18 @@ export default class ApplyDamageDialog extends Application {
     await this._displayDiceRolls(await this._calculator.randomizeHitLocation())
   }
 
-  async adjustHitLocationIfNecessary() {
-        // If the current hit location is Random, resolve the die roll and update the hit location.
+  async _adjustHitLocationIfNecessary() {
+    // If the current hit location is Random, resolve the die roll and update the hit location.
     if (this._calculator.hitLocation === 'Random') await this._randomizeHitLocation()
 
-    await this._displayDiceRolls(await this._calculator.adjustHitLocationIfNecessary())
+    const options = {
+      appearance: {
+        foreground: '#ffffff',
+        edge: '#bd6e00',
+        background: '#bd6e00',
+      },
+    }
+    await this._displayDiceRolls(await this._calculator.adjustHitLocationIfNecessary(), options)
   }
 
   _toggleVisibility(element, isVisible) {

@@ -988,6 +988,7 @@ export class CompositeDamageCalculator {
     ) {
       const vitalsRoll = Roll.create('1d6[Vitals]')
       await vitalsRoll.evaluate()
+
       const total = vitalsRoll.total
       if (total === 1) this._hitLocation = 'Vitals'
 
