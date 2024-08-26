@@ -43,6 +43,7 @@ export class CompositeDamageCalculator {
     this._useBluntTrauma = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLUNT_TRAUMA)
     this._useLocationModifiers = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_LOCATION_MODIFIERS)
     this._useArmorDivisor = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_APPLY_DIVISOR)
+    this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
 
     this._defender = defender
 
@@ -607,7 +608,7 @@ export class CompositeDamageCalculator {
   }
 
   get isCrippleableLocation() {
-    return [hitlocation.EXTREMITY, hitlocation.LIMB].includes(this.hitLocationRole) || this._hitLocation === 'Eye'
+    return [hitlocation.EXTREMITY, hitlocation.LIMB, hitlocation.CHEST, hitlocation.GROIN].includes(this.hitLocationRole) || this._hitLocation === 'Eye'
   }
 
   get isBluntTraumaInjury() {
@@ -725,8 +726,17 @@ export class CompositeDamageCalculator {
   }
 
   get cripplingThreshold() {
+    this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
     if (this.hitLocationRole === hitlocation.LIMB) return this.HP.max / 2
     if (this.hitLocationRole === hitlocation.EXTREMITY) return this.HP.max / 3
+    if (this._useBodyHits === true) {
+        if (this.hitLocationRole === hitlocation.CHEST) return this.HP.max * 2
+        if (this.hitLocationRole === hitlocation.GROIN) return this.HP.max * 2
+    }
+    else {
+        if (this.hitLocationRole === hitlocation.CHEST) return Infinity
+        if (this.hitLocationRole === hitlocation.GROIN) return Infinity
+     }
     if (this.hitLocation === 'Eye') return this.HP.max / 10
     return Infinity
   }
@@ -1076,14 +1086,18 @@ class DamageCalculator {
 
   /**
    * Actual number of HP to apply is the amount of injury, or the effective blunt trauma.
-   * Set a limit of the max needed to cripple the location.
+   * Set a limit of the max needed to cripple the location. markline
    */
   get pointsToApply() {
-    let pointsToApply = this.unmodifiedPointsToApply
-    if (this._parent.useLocationModifiers) {
-      if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
-        return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
-      }
+      let pointsToApply = this.unmodifiedPointsToApply
+      this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
+      if (this._parent.useLocationModifiers) {
+        if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
+            return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
+        }
+        else if ([hitlocation.GROIN, hitlocation.CHEST].includes(this._parent.hitLocationRole) && this._useBodyHits === true && ['burn', 'imp', ...piercing].includes(this._parent.damageType)) {
+            return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
+        }
     }
     return pointsToApply
   }

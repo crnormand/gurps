@@ -229,8 +229,12 @@
   text-decoration: underline;
 }
 
+.gurps.sheet.actor .pdflink {
+  font-size: var(--font-size-10);
+}
+
 #sheet.gurpsactorsheet .pdflink {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 .pdflink:hover {
@@ -275,7 +279,7 @@
 .dodge span.bonus,
 .parry span.bonus,
 .block span.bonus {
-  font-size: 90%;
+  font-size: var(--font-size-11);
 }
 
 .rollable:active {
@@ -597,7 +601,8 @@
 
 .gurps .sheet-body.tabbed-sheet {
   flex-grow: 1;
-  height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+  height: auto !important;
+  /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
   padding-top: 4px;
   border-top: 1px solid var(--lightgrey);
 }
@@ -645,7 +650,7 @@
   color: white;
   justify-content: center;
   text-align: center;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 .npc-sheet #condition .npc-header {
@@ -827,8 +832,9 @@
 }
 
 .gurps.sheet.actor {
-  min-width: 800px;
+  min-width: 760px;
   min-height: 375px;
+  font-size: var(--font-size-13);
 }
 
 .gurps.sheet.item {
@@ -877,6 +883,41 @@
   align-self: stretch;
 }
 
+#combat-tab #condition .fieldblock {
+  display: inline-grid;
+  grid-template-columns: 0fr auto 0fr auto 0fr auto 0fr auto;
+  padding-top: 0.15em;
+}
+
+#combat-tab #condition .fieldblock .details {
+  border: none;
+  height: 100%;
+  align-self: end;
+}
+
+#combat-tab #condition .fieldblock details .button {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+}
+
+#combat-tab #condition .fieldblock details .button:hover {
+  box-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
+#combat-tab #condition .fieldblock details > summary {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#combat-tab #condition .fieldblock details[open] > summary {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  filter: grayscale(1) opacity(50%) hue-rotate(190deg) saturate(2);
+}
+
 .gurps .fieldblock .field {
   margin-right: 0.2em;
   padding-left: 0.2em;
@@ -890,11 +931,7 @@
 
 body {
   font-family: Verdana, sans-serif;
-  font-size: small;
-  font-weight: normal;
   padding: 0;
-  /* margin: 0.25in; */
-  /* margin-bottom: calc(0.25in - 1em); */
 }
 
 #sheet-tab,
@@ -930,7 +967,7 @@ body {
 
 #footer {
   text-align: center;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
   flex-grow: 0;
 }
 
@@ -975,9 +1012,22 @@ body {
   grid-area: personal;
   display: grid;
   grid-template:
-    'portrait identity miscellaneous points'
-    'portrait description description points';
-  grid-template-columns: 0fr 1fr 1fr 0fr;
+    'portrait identity    miscellaneous points'
+    'portrait description description   points'
+    'notes    notes       notes         notes';
+  grid-template-columns: auto 1fr 1fr min-content;
+  grid-gap: var(--sectiongap);
+}
+
+#personal-tab {
+  flex-grow: 0;
+  grid-area: personal;
+  display: grid;
+  grid-template:
+    'identity    identity      miscellaneous points'
+    'description description   description   points'
+    'lifting     notes         notes         notes';
+  grid-template-columns: auto 1fr 1fr min-content;
   grid-gap: var(--sectiongap);
 }
 
@@ -1000,7 +1050,7 @@ body {
 }
 
 #portrait .sharebutton {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
   line-height: normal;
   padding: 0;
   margin: 0;
@@ -1035,6 +1085,13 @@ body {
   display: grid;
   grid-template-rows: 1fr 1fr;
   border: none;
+}
+
+#attributes-tab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: none;
+  gap: 5px;
 }
 
 #points .field,
@@ -1083,6 +1140,10 @@ body {
   align-content: stretch;
 }
 
+div#other {
+  grid-area: other;
+}
+
 #other > div {
   width: 100%;
   margin-right: var(--sectiongap);
@@ -1101,10 +1162,22 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    'attributes      hp-fp           location        encumbrance'
-    'attributes      condition       location        qnotes'
-    'attributes      condition       location        lifting';
+    'attributes hp-fp     location encumbrance'
+    'attributes condition location qnotes'
+    'attributes condition location lifting';
   grid-template-columns: 0fr 1fr 1fr 1fr;
+  grid-gap: var(--sectiongap);
+}
+
+#stats-tab {
+  grid-area: stats;
+  display: grid;
+  grid-template:
+    'portrait        attributes-tab  encumbrance hp-fp'
+    'portrait        qnotes          qnotes      hp-fp'
+    'combat-trackers combat-trackers other       other'
+    'combat-trackers combat-trackers other       other';
+  grid-template-columns: 0fr 1fr 1fr 0fr;
   grid-gap: var(--sectiongap);
 }
 
@@ -1120,9 +1193,10 @@ body {
 }
 
 #condition {
+  /* display: grid; */
   grid-area: condition;
-  grid-template-rows: 0fr 1fr 1fr;
-  align-items: start;
+  /* grid-template-columns: 0fr 1fr 1fr; */
+  /* align-items: start; */
   border: var(--standardborder);
 }
 
@@ -1166,7 +1240,7 @@ body {
   grid-template:
     'header header'
     'desc lift';
-  grid-template-columns: 1fr 0fr;
+  grid-template-columns: 0fr 1fr;
   grid-template-rows: 0fr;
 }
 
@@ -1212,6 +1286,10 @@ body {
 #location .header:first-child,
 #encumbrance .header:first-child {
   flex-flow: column nowrap;
+}
+
+#encumbrance > * {
+  font-size: var(--font-size-12);
 }
 
 #encumbrance.dodgeh {
@@ -1335,7 +1413,7 @@ body {
   text-align: right;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
   align-self: flex-end;
   white-space: nowrap;
 }
@@ -1344,14 +1422,14 @@ body {
   text-align: right;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 .label {
   text-align: left;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-12);
   white-space: nowrap;
 }
 
@@ -1370,7 +1448,7 @@ body {
 }
 
 .condensed {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 .desc .list_note textarea,
@@ -1461,6 +1539,10 @@ body {
   background-color: #e8ffe8;
 }
 
+.liftdesc {
+  font-size: var(--font-size-12);
+}
+
 #equipmentcarried .equipped {
   min-width: 1.4em;
   cursor: pointer;
@@ -1508,7 +1590,7 @@ body {
   content: '\f142';
   font-family: var(--fontawesomefamily);
   color: var(--lightgrey);
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
   font-weight: 600;
   padding-left: var(--smallemgap);
   padding-right: calc(2 * var(--smallemgap));
@@ -1534,6 +1616,7 @@ body {
 
 .situation {
   white-space: normal !important;
+  font-size: var(--font-size-11);
 }
 
 .equipmentlist .ref,
@@ -1550,6 +1633,10 @@ body {
 #conditionalmods .situation,
 #reactions .situation {
   border-right: none;
+}
+
+#lifting .liftdesc {
+  text-wrap: wrap;
 }
 
 .indent1 {
@@ -1593,13 +1680,14 @@ body {
 }
 
 .list_note {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
   width: 100%;
   white-space: normal;
 }
 
 .encmarker.current:after {
-  content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  content: '\f101';
+  /* this is your text. You can also use UTF-8 character codes as I do here */
   font-family: var(--fontawesomefamily);
   font-weight: 900;
   padding-right: 2px;
@@ -1638,15 +1726,16 @@ body {
   display: grid;
   grid-gap: var(--sectiongap);
   grid-template-columns: 1fr min-content;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: 0fr auto auto 1fr;
   grid-template-areas:
+    'condition         combat-sidebar'
     'melee             combat-sidebar'
     'speed-range-table combat-sidebar'
     'ranged            combat-sidebar';
 }
 
 .sheet-body.tabbed-sheet #combat-sidebar {
-  grid-row: 1 / 4;
+  grid-area: combat-sidebar;
 }
 
 /* ----- combat sheet additions ----- */
@@ -1697,10 +1786,11 @@ body {
   /* white-space: nowrap; */
   /* overflow-y: hidden; */
   /* overflow-x: auto; */
+  background-color: #eeeeee;
 }
 
 #tracker-scroller .tracked-resource {
-  margin: -2px 0 -2px -2px;
+  /* margin: -2px 0 -2px -2px; */
 }
 
 #tracker-scroller .header {
@@ -1712,11 +1802,12 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 0fr min-content;
-  border: var(--standardborder);
+  /* border: var(--standardborder); */
 }
 
 #combat-trackers .tracked-resource {
   width: min-content;
+  background-color: white;
 }
 
 #combat-trackers > .header {
@@ -1794,7 +1885,7 @@ body {
 }
 
 .gurps #combat-sheet .condition-block .basic-label {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 #hitpoints .selected {
@@ -1848,7 +1939,7 @@ body {
     'header header header header header'
     'encmarkerh ench loadh moveh dodgeh'
     'encmarker enc load move dodge';
-  /* font-size: var(--headerfontsize);; */
+  /* font-size: var(--font-size-10);; */
 }
 
 #combat-encumber-container .encmarkerh,
@@ -1861,7 +1952,7 @@ body {
 #combat-encumber-container .load,
 #combat-encumber-container .move,
 #combat-encumber-container .dodge {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-11);
 }
 
 #combat-encumber .header:first-child,
@@ -1897,7 +1988,7 @@ body {
 #combat-location .where,
 #combat-location .penalty,
 #combat-location .dr {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 #combat-attrs {
@@ -1971,7 +2062,7 @@ body {
 #combat-weapons .shots,
 #combat-weapons .bulk,
 #combat-weapons .rcl {
-  font-size: var(--headerfontsize);
+  font-size: var(--font-size-10);
 }
 
 #combat-attrs-damage-sw {
@@ -2047,9 +2138,7 @@ body {
 
 .damage-all-message:hover,
 .damage-message:hover {
-  box-shadow:
-    0 4px 8px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .roll-message .modifier-list {
@@ -2120,6 +2209,7 @@ body {
   color: black;
   text-shadow: 0 0 3px #00ff00;
 }
+
 .roll-result .roll-detail .crit.failure {
   color: black;
   text-shadow: 0 0 3px #ff0000;
@@ -2176,7 +2266,8 @@ body {
 }
 
 .table-column span {
-  pointer-events: none; /* We need pointer events to know how to expand/collapse items */
+  pointer-events: none;
+  /* We need pointer events to know how to expand/collapse items */
 }
 
 /* .desc {

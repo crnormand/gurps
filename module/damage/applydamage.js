@@ -50,9 +50,12 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
+    this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
+    //temp variable to prevent body hits from looping a reroll
+    this.temp = 1
 
     // console.log(this._resourceLabels)
   }
@@ -180,6 +183,9 @@ export default class ApplyDamageDialog extends Application {
 
     // If the current hit location is Random, resolve the die roll and update the hit location.
     if (this._calculator.hitLocation === 'Random') this._randomizeHitLocation()
+
+    //If body hits is enabled roll to see if torso hit is instead vitals
+    if (this.temp === 1 && this._calculator.hitLocation === 'Torso' && ['burn', 'imp', 'pi-', 'pi', 'pi+', 'pi++'].includes(this._calculator.damageType) && this._useBodyHits === true) this._bodyHitsVitals()
 
     // When the 'random' button is clicked, update the hit location.
     html.find('#random-location').on('click', async () => this._randomizeHitLocation())
@@ -418,6 +424,36 @@ export default class ApplyDamageDialog extends Application {
     this.updateUI()
   }
 
+    async _bodyHitsVitals() {
+        let roll3d = Roll.create('1d6[Hit Location]')
+        await roll3d.roll({ async: true })
+        let total = roll3d.total
+        let throws = []
+        let dc = []
+        roll3d.dice.forEach(die => {
+            let type = 'd' + die.faces
+            die.results.forEach(s =>
+                dc.push({
+                    result: s.result,
+                    resultLabel: s.result,
+                    type: type,
+                    vectors: [],
+                    options: {},
+                })
+            )
+        })
+        throws.push({ dice: dc })
+        if (dc.length > 0) {
+            // The user made a "multi-damage" roll... let them see the dice!
+            // @ts-ignore
+            game.dice3d.show({ throws: throws }).then(display => this.updateUI())
+        }
+        if (total === 1) {
+            this._calculator.hitLocation = 'Vitals'
+            display => this.updateUI()
+        }
+        else this.temp = 0
+  }
   /**
    * Ask the calculator to randomly select a hit location, and return the roll used.
    */

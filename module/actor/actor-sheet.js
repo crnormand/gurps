@@ -362,6 +362,31 @@ export class GurpsActorSheet extends ActorSheet {
       })
     } // end enhanced input
 
+    // Handle the Maneuver and Posture dropdowns on the tabbed sheet.
+    html.find('#condition details').click(ev => {
+      ev.preventDefault()
+      const target = $(ev.currentTarget)[0]
+      target.open = !target.open
+    })
+
+    // Handle the "Maneuver" dropdown on the tabbed sheet.
+    html.find('#condition details#maneuver .popup .button').click(ev => {
+      ev.preventDefault()
+      const details = $(ev.currentTarget).closest('details')
+      const target = $(ev.currentTarget)[0]
+      this.actor.replaceManeuver(target.alt)
+      details.open = !details.open
+    })
+
+    // Handle the "Posture" dropdown on the tabbed sheet.
+    html.find('#condition details#posture .popup .button').click(ev => {
+      ev.preventDefault()
+      const details = $(ev.currentTarget).closest('details')
+      const target = $(ev.currentTarget)[0]
+      this.actor.replacePosture(target.alt)
+      details.open = !details.open
+    })
+
     // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
     // display the tooltip in the correct position.
     html.find('.tooltip.gga-manual').mouseover(ev => {
@@ -1633,7 +1658,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      width: 860,
+      width: 760,
       height: 600,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],

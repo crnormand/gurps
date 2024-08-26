@@ -29,7 +29,7 @@ import {
 } from './maneuver.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
-import { _Base, Advantage, Equipment, HitLocationEntry } from './actor-components.js'
+import { Advantage, Equipment, HitLocationEntry } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
@@ -220,7 +220,7 @@ export class GurpsActor extends Actor {
     }
   }
 
-  // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
+  // This will ensure that every character at least starts with these new data values. actor-sheet.js may change them.
   calculateDerivedValues() {
     let saved = !!this.ignoreRender
     this.ignoreRender = true
@@ -238,7 +238,7 @@ export class GurpsActor extends Actor {
     this._calculateWeights()
 
     let maneuver = this.effects.contents.find(it => it.statuses.find(s => s === 'maneuver'))
-    this.system.conditions.maneuver = !!maneuver ? maneuver.flags.gurps.name : 'undefined'
+    this.system.conditions.maneuver = maneuver ? maneuver.flags.gurps.name : 'undefined'
     this.ignoreRender = saved
     if (!saved) setTimeout(() => this._forceRender(), 333)
   }
@@ -563,7 +563,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -590,13 +590,13 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _adjustMove(move, threshold, value, reason) {
-    switch (value) {
+    switch (value.toString()) {
       case MOVE_NONE:
         return { move: 0, text: i18n_f('GURPS.moveNone', { reason: reason }) }
 
@@ -639,16 +639,16 @@ export class GurpsActor extends Actor {
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)
-      let reason = i18n(GURPS.StatusEffect.lookup(this.system.conditions.posture).label)
+      let reason = i18n(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _calculateRangedRanges() {
@@ -841,7 +841,7 @@ export class GurpsActor extends Actor {
       let token = /** @type {GurpsToken} */ (this.token.object)
       return [token]
     }
-    return this.getActiveTokens().map(it => /** @type {GurpsToken} */ (it))
+    return this.getActiveTokens().map(it => /** @type {GurpsToken} */(it))
   }
 
   /**
