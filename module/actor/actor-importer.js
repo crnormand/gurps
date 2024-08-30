@@ -1,10 +1,9 @@
-import { xmlTextToJson, recurselist, i18n, i18n_f, arrayBuffertoBase64 } from '../../lib/utilities.js'
+import { xmlTextToJson, recurselist, i18n, i18n_f, arrayBuffertoBase64, aRecurselist } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { SmartImporter } from '../smart-importer.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import {
-  _Base,
   Skill,
   Spell,
   Advantage,
@@ -17,6 +16,7 @@ import {
   Melee,
   Language,
 } from './actor-components.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
@@ -47,21 +47,21 @@ export class ActorImporter {
           }
         })
         xhr.send(null)
-      } else this._openImportDialog()
-    } else this._openImportDialog()
+      } else await this._openImportDialog()
+    } else await this._openImportDialog()
   }
 
   async _openImportDialog() {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_BROWSER_IMPORTER))
-      this._openNonLocallyHostedImportDialog()
-    else this._openLocallyHostedImportDialog()
+      await this._openNonLocallyHostedImportDialog()
+    else await this._openLocallyHostedImportDialog()
   }
 
   async _openNonLocallyHostedImportDialog() {
     try {
-      const file = await SmartImporter.getFileForActor(this)
-      const res = await this.importActorFromExternalProgram(await file.text(), file.name)
-      if (res) SmartImporter.setFileForActor(this, file)
+      const file = await SmartImporter.getFileForActor(this.actor)
+      const res = await this.importActorFromExternalProgram(await file.text(), file.name, file.path)
+      if (res) SmartImporter.setFileForActor(this.actor, file)
     } catch (e) {
       ui.notifications?.error(e)
       throw e
@@ -80,7 +80,7 @@ export class ActorImporter {
             import: {
               icon: '<i class="fas fa-file-import"></i>',
               label: 'Import',
-              callback: html => {
+              callback: async html => {
                 const form = html.find('form')[0]
                 let files = form.data.files
                 let file = null
@@ -88,9 +88,8 @@ export class ActorImporter {
                   return ui.notifications.error('You did not upload a data file!')
                 } else {
                   file = files[0]
-                  GURPS.readTextFromFile(file).then(text =>
-                    this.importActorFromExternalProgram(text, file.name, file.path)
-                  )
+                  const text = await GURPS.readTextFromFile(file)
+                  await this.importActorFromExternalProgram(text, file.name, file.path)
                 }
               },
             },
@@ -122,6 +121,8 @@ export class ActorImporter {
     let r
     let msg = []
     let exit = false
+    let loadingDialog
+    let importResult = false
     try {
       r = JSON.parse(json)
     } catch (err) {
@@ -170,19 +171,16 @@ export class ActorImporter {
         ...commit,
         ...this.importSizeFromGCS(commit, r.profile, r.traits || r.advantages, r.skills, r.equipment),
       }
-      if (r.version === 4) {
-        commit = { ...commit, ...this.importAdsFromGCS(r.traits || r.advantages) }
-        commit = { ...commit, ...this.importSkillsFromGCS(r.skills) }
-        commit = { ...commit, ...this.importSpellsFromGCS(r.spells) }
-        commit = { ...commit, ...this.importEquipmentFromGCS(r.equipment, r.other_equipment) }
-        commit = { ...commit, ...this.importNotesFromGCS(r.notes) }
-      } else if (r.version === 5) {
-        commit = { ...commit, ...this.importAdsFromGCS(r.traits || r.advantages) }
-        commit = { ...commit, ...this.importSkillsFromGCS(r.skills) }
-        commit = { ...commit, ...this.importSpellsFromGCS(r.spells) }
-        commit = { ...commit, ...this.importEquipmentFromGCS(r.equipment, r.other_equipment) }
-        commit = { ...commit, ...this.importNotesFromGCS(r.notes) }
-      }
+      commit = { ...commit, ...this.importAdsFromGCS(r.traits || r.advantages) }
+      commit = { ...commit, ...this.importSkillsFromGCS(r.skills) }
+      commit = { ...commit, ...this.importSpellsFromGCS(r.spells) }
+      if (
+        !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS) ||
+        this.actor.items.filter(i => !!i.system.importid).length > 10
+      )
+        loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCS' })
+      commit = { ...commit, ...(await this.importEquipmentFromGCS(r.equipment, r.other_equipment)) }
+      commit = { ...commit, ...this.importNotesFromGCS(r.notes) }
 
       commit = {
         ...commit,
@@ -245,7 +243,7 @@ export class ActorImporter {
           'ms.)  You can inspect the character data below:'
       )
       console.log(this)
-      return true
+      importResult = true
     } catch (err) {
       console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
@@ -265,8 +263,30 @@ export class ActorImporter {
         whisper: [game.user.id],
       }
       ChatMessage.create(chatData, {})
-      return false
+    } finally {
+      if (!!loadingDialog) await loadingDialog.close()
     }
+    return importResult
+  }
+
+  async _showLoadingDialog(diagOps) {
+    const { name, generator } = diagOps
+    const dialog = new Dialog(
+      {
+        title: game.i18n.format('GURPS.importSheetTitle', { generator }),
+        content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
+        buttons: {},
+        close: () => {},
+      },
+      {
+        width: 400,
+        height: 200,
+        resizable: false,
+        closeOnSubmit: false,
+      }
+    )
+    await dialog.render(true)
+    return dialog
   }
 
   async importActorFromGCA(source, importName, importPath, suppressMessage) {
@@ -386,6 +406,8 @@ export class ActorImporter {
     ar.importversion = ra.version
     commit = { ...commit, ...{ 'system.additionalresources': ar } }
 
+    let loadingDialog
+    let importResult = false
     try {
       // This is going to get ugly, so break out various data into different methods
       commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
@@ -400,7 +422,9 @@ export class ActorImporter {
       commit = { ...commit, ...this.importEncumbranceFromGCA(c.encumbrance) }
       commit = { ...commit, ...this.importPointTotalsFromGCA(c.pointtotals) }
       commit = { ...commit, ...this.importNotesFromGCA(c.description, c.notelist) }
-      commit = { ...commit, ...this.importEquipmentFromGCA(c.inventorylist) }
+      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS))
+        loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
+      commit = { ...commit, ...(await this.importEquipmentFromGCA(c.inventorylist)) }
       commit = { ...commit, ...(await this.importProtectionFromGCA(c.combat?.protectionlist)) }
     } catch (err) {
       console.log(err.stack)
@@ -447,7 +471,7 @@ export class ActorImporter {
           'ms.)  You can inspect the character data below:'
       )
       console.log(this)
-      return true
+      importResult = true
     } catch (err) {
       console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
@@ -467,8 +491,10 @@ export class ActorImporter {
         whisper: [game.user.id],
       }
       ChatMessage.create(chatData, {})
-      return false
+    } finally {
+      if (!!loadingDialog) await loadingDialog.close()
     }
+    return importResult
   }
 
   // Import the <attributes> section of the GCS FG XML file.
@@ -888,13 +914,42 @@ export class ActorImporter {
     }
   }
 
+  async _preImport(generator) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // Before we import, we need to find all eligible items,
+      // and backup their exclusive info inside their equipments
+      const isEligibleItem = item =>
+        (!!item.system.importid && item.system.importFrom === generator) ||
+        !!foundry.utils.getProperty(this.actor, this.actor._findEqtkeyForId('itemid', item.id))?.save
+
+      let eligibleItems = this.actor.items
+        .filter(i => !!isEligibleItem(i))
+        .map(i => {
+          const itemInfo = i.getItemInfo()
+          // Update equipment
+          const eqtKey = this.actor._findEqtkeyForId('itemid', i.id)
+          if (!!eqtKey) {
+            let equip = foundry.utils.getProperty(this.actor, eqtKey)
+            equip.itemid = ''
+            equip.itemInfo = itemInfo
+            this.actor.internalUpdate({ [eqtKey]: equip })
+          }
+          return i.id
+        })
+      if (!!eligibleItems.length) await this.actor.deleteEmbeddedDocuments('Item', eligibleItems)
+    }
+  }
+
   /**
    * @param {{ [key: string]: any }} json
    */
-  importEquipmentFromGCA(json) {
+  async importEquipmentFromGCA(json) {
     if (!json) return
     let t = this.textFrom
     let i = this.intFrom
+
+    this.ignoreRender = true
+    await this._preImport('GCA')
 
     /**
      * @type {Equipment[]}
@@ -904,28 +959,31 @@ export class ActorImporter {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+        let { name, techLevel } = this.parseEquipmentNameAndTL(t, j)
+        let parentuuid = t(j.parentuuid)
         let eqt = new Equipment()
-        eqt.name = t(j.name)
+        eqt.name = name
         eqt.count = t(j.count)
-        eqt.cost = t(j.cost)
+        eqt.cost = !!parentuuid ? t(j.cost) : 0
         eqt.location = t(j.location)
         let cstatus = i(j.carried)
         eqt.carried = cstatus >= 1
         eqt.equipped = cstatus == 2
-        eqt.techlevel = t(j.tl)
+        eqt.techlevel = techLevel
         eqt.legalityclass = t(j.lc)
         eqt.categories = t(j.type)
         eqt.uses = t(j.uses)
         eqt.maxuses = t(j.maxuses)
         eqt.uuid = t(j.uuid)
-        eqt.parentuuid = t(j.parentuuid)
+        eqt.parentuuid = parentuuid
         eqt.setNotes(t(j.notes))
-        eqt.weight = t(j.weightsum) // GCA sends calculated weight in 'weightsum'
+        eqt.weight = !!parentuuid ? t(j.weightsum) : 0 // GCA sends calculated weight in 'weightsum'
         eqt.pageRef(t(j.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
         this._migrateOtfsAndNotes(old, eqt)
         if (!!old) {
+          eqt.name = old.name
           eqt.carried = old.carried
           eqt.equipped = old.equipped
           eqt.parentuuid = old.parentuuid
@@ -936,19 +994,36 @@ export class ActorImporter {
             eqt.ignoreImportQty = true
           }
         }
+        // Process Item here
+        eqt = await this._processItemFrom(eqt)
         temp.push(eqt)
       }
     }
 
     // Save the old User Entered Notes.
-    recurselist(this.actor.system.equipment?.carried, t => {
+    await aRecurselist(this.actor.system.equipment?.carried, async t => {
       t.carried = true
-      if (!!t.save) temp.push(t)
+      if (!!t.save) {
+        t = await this._processItemFrom(t)
+        temp.push(t)
+      }
     }) // Ensure carried eqt stays in carried
-    recurselist(this.actor.system.equipment?.other, t => {
+    await aRecurselist(this.actor.system.equipment?.other, async t => {
       t.carried = false
-      if (!!t.save) temp.push(t)
+      if (!!t.save) {
+        t = await this._processItemFrom(t)
+        temp.push(t)
+      }
     })
+
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // After retrieve all relevant data
+      // Lets remove equipments now
+      await this.actor.internalUpdate({
+        'system.equipment.-=carried': null,
+        'system.equipment.-=other': null,
+      })
+    }
 
     temp.forEach(eqt => {
       // Remove all entries from inside items because if they still exist, they will be added back in
@@ -957,14 +1032,15 @@ export class ActorImporter {
     })
 
     // Put everything in it container (if found), otherwise at the top level
-    temp.forEach(eqt => {
+    for (const eqt of temp) {
+      let parent = null
       if (!!eqt.parentuuid) {
-        let parent = null
         parent = temp.find(e => e.uuid === eqt.parentuuid)
         if (!!parent) GURPS.put(parent.contains, eqt)
         else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
       }
-    })
+      await this._updateItemContains(eqt, parent)
+    }
 
     let equipment = {
       carried: {},
@@ -973,17 +1049,41 @@ export class ActorImporter {
     let cindex = 0
     let oindex = 0
 
-    temp.forEach(eqt => {
-      Equipment.calc(eqt)
+    for (const eqt of temp) {
+      await Equipment.calc(eqt)
       if (!eqt.parentuuid) {
         if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
         else GURPS.put(equipment.other, eqt, oindex++)
       }
-    })
+    }
     return {
       'system.-=equipment': null,
       'system.equipment': equipment,
     }
+  }
+
+  /*
+   * Parse Name and TL for GCA data.
+   *
+   * Example: Backpack/TL8+3^
+   */
+  parseEquipmentNameAndTL(t, j) {
+    let name
+    let fullName = t(j.name)
+    let techLevel = t(j.tl)
+    const localizedTL = i18n('GURPS.TL')
+    let regex = new RegExp(`.+\/[TL|${localizedTL}].+`)
+    if (!!fullName.match(regex)) {
+      let i = fullName.lastIndexOf('/TL') || fullName.lastIndexOf(`/${localizedTL}`)
+      if (!!i) {
+        name = fullName.substring(0, i)
+        techLevel = fullName.substring(i + 3)
+      }
+    }
+    if (!name) {
+      name = fullName
+    }
+    return { name, techLevel }
   }
 
   /**
@@ -1393,7 +1493,6 @@ export class ActorImporter {
       'system.basicspeed': data.basicspeed,
       'system.thrust': data.thrust,
       'system.swing': data.swing,
-      'system.currentmove': data.currentmove,
       'system.frightcheck': data.frightcheck,
       'system.hearing': data.hearing,
       'system.tastesmell': data.tastesmell,
@@ -1596,40 +1695,59 @@ export class ActorImporter {
     return [s].concat(ch)
   }
 
-  importEquipmentFromGCS(eq, oeq) {
+  async importEquipmentFromGCS(eq, oeq) {
+    this.ignoreRender = true
+    await this._preImport('GCS')
+
     if (!eq && !oeq) return
     let temp = []
     if (!!eq)
       for (let i of eq) {
-        temp = temp.concat(this.importEq(i, '', true))
+        temp = temp.concat(await this.importEq(i, '', true))
       }
     if (!!oeq)
       for (let i of oeq) {
-        temp = temp.concat(this.importEq(i, '', false))
+        temp = temp.concat(await this.importEq(i, '', false))
       }
 
-    recurselist(this.actor.system.equipment?.carried, t => {
+    await aRecurselist(this.actor.system.equipment?.carried, async t => {
       t.carried = true
-      if (!!t.save) temp.push(t)
+      if (!!t.save) {
+        t = await this._processItemFrom(t)
+        temp.push(t)
+      }
     })
-    recurselist(this.actor.system.equipment?.other, t => {
+    await aRecurselist(this.actor.system.equipment?.other, async t => {
       t.carried = false
-      if (!!t.save) temp.push(t)
+      if (!!t.save) {
+        t = await this._processItemFrom(t)
+        temp.push(t)
+      }
     })
+
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // After retrieve all relevant data
+      // Lets remove equipments now
+      await this.actor.internalUpdate({
+        'system.equipment.-=carried': null,
+        'system.equipment.-=other': null,
+      })
+    }
 
     temp.forEach(e => {
       e.contains = {}
       e.collapsed = {}
     })
 
-    temp.forEach(e => {
+    for (const e of temp) {
       if (!!e.parentuuid) {
         let parent = null
         parent = temp.find(f => f.uuid === e.parentuuid)
         if (!!parent) GURPS.put(parent.contains, e)
         else e.parentuuid = ''
       }
-    })
+      await this._updateItemContains(e, parent)
+    }
 
     let equipment = {
       carried: {},
@@ -1638,20 +1756,20 @@ export class ActorImporter {
     let cindex = 0
     let oindex = 0
 
-    temp.forEach(eqt => {
-      Equipment.calc(eqt)
+    for (const eqt of temp) {
+      await Equipment.calc(eqt)
       if (!eqt.parentuuid) {
         if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
         else GURPS.put(equipment.other, eqt, oindex++)
       }
-    })
+    }
     return {
       'system.-=equipment': null,
       'system.equipment': equipment,
     }
   }
 
-  importEq(i, p, carried) {
+  async importEq(i, p, carried) {
     let e = new Equipment()
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('e') ? 'equipment' : 'equipment_container'
@@ -1684,6 +1802,7 @@ export class ActorImporter {
     if (!old) old = this._findElementIn('equipment.other', e.uuid)
     this._migrateOtfsAndNotes(old, e, i.vtt_notes)
     if (!!old) {
+      e.name = old.name
       e.carried = old.carried
       e.equipped = old.equipped
       e.parentuuid = old.parentuuid
@@ -1694,9 +1813,11 @@ export class ActorImporter {
         e.ignoreImportQty = true
       }
     }
+    // Process Item here
+    e = await this._processItemFrom(e)
     let ch = []
     if (i.children?.length) {
-      for (let j of i.children) ch = ch.concat(this.importEq(j, i.id, carried))
+      for (let j of i.children) ch = ch.concat(await this.importEq(j, i.id, carried))
       for (let j of ch) {
         e.cost -= j.cost * j.count
         e.weight -= j.weight * j.count
@@ -2334,5 +2455,41 @@ export class ActorImporter {
       }
     }
     return item
+  }
+
+  async _processItemFrom(eqt) {
+    // Non Equipment instance objects need to be converted to Equipment first.
+    let equip = Equipment.fromObject(eqt, this.actor)
+
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // Create or Update item
+      const existingItem = this.actor.items.find(i => i._id === equip.itemid)
+      const itemData = equip.toItemData()
+      const [item] = !!existingItem
+        ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, ...itemData }])
+        : await this.actor.createEmbeddedDocuments('Item', [equip.toItemData()])
+      // Update Equipment for new Items
+      if (!existingItem && !!item) {
+        equip.itemid = item._id
+        equip.itemInfo = item.getItemInfo()
+      }
+    }
+    return equip
+  }
+  async _updateItemContains(eqt, parent) {
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      const item = this.actor.items.get(eqt.itemid)
+      if (!!item) {
+        if (!eqt.parentuuid) {
+          await this.actor.updateEmbeddedDocuments('Item', [{ _id: item._id, 'system.eqt.contains': eqt.contains }])
+        } else {
+          const parentItem = this.actor.items.get(parent.itemid)
+          if (!!parentItem?.id)
+            await this.actor.updateEmbeddedDocuments('Item', [
+              { _id: item._id, 'system.eqt.parentuuid': parentItem.id },
+            ])
+        }
+      }
+    }
   }
 }

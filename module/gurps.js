@@ -78,6 +78,7 @@ import { gurpslink } from './utilities/gurpslink.js'
 import { PDFEditorSheet } from './pdf/edit.js'
 import { JournalEntryPageGURPS } from './pdf/index.js'
 import ApplyDamageDialog from './damage/applydamage.js'
+import { GGADebugger } from '../utils/debugger.js'
 
 let GURPS = undefined
 
@@ -1936,6 +1937,9 @@ if (!globalThis.GURPS) {
     RegisterChatProcessors()
     GurpsActiveEffect.init()
     GURPSSpeedProvider.init()
+
+    // Add Debugger info
+    GGADebugger.init()
 
     // Modifier Bucket must be defined after hit locations
     GURPS.ModifierBucket = new ModifierBucket()

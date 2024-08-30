@@ -27,6 +27,7 @@
   "GURPS.descriptionReligion": "Религия",
   "GURPS.descriptionHeight": "Рост",
   "GURPS.descriptionSizeModifier": "Модификатор размера (МР)",
+  "GURPS.TL": "ТУ",
   "GURPS.descriptionTechLevel": "Технологический уровень (ТУ)",
   "GURPS.descriptionBodyPlan": "Форма тела",
   "GURPS.descriptionHair": "Причёска",
@@ -434,7 +435,17 @@
   "GURPS.equipmentTab": "Снаряжение",
 
   "GURPS.itemImport": "Импортой Сбор Оборудования",
+  "GURPS.importSheetTitle": "Импорт листа {generator}",
+  "GURPS.importSheetHint": "Импорт данных для {name} с использованием {generator}. Пожалуйста, подождите...",
 
   "__System Settings__": "=========",
-  "GURPS.settingDamageLocationTorso": "Торс"
+  "GURPS.settingDamageLocationTorso": "Торс",
+  "GURPS.settingUseFoundryItems": "Использовать Foundry Items для снаряжения",
+  "GURPS.settingHintUseFoundryItems": "Если установлено, система будет создавать Foundry Items для снаряжения персонажа при импорте листов персонажей. При импорте листа персонажа из GCA/GCS в первый раз система будет создавать каждый предмет, пытаясь сохранить текущую информацию о снаряжении на листе персонажа, включая имя, изображение, количество, использование и заметки. Это может быть очень долгой операцией, особенно для листов GCS.",
+  "GURPS.settingNoEditAllowed": "Редактирование снаряжения запрещено",
+  "GURPS.settingNoEquipAllowedHint": "Предупреждение: Вы пытаетесь отредактировать снаряжение, которое не связано с Foundry item, когда активированы настройки 'Использовать Foundry Items для снаряжения'. Пожалуйста, перимпортируйте лист персонажа, чтобы создать Foundry item для этого актёра.",
+  "GURPS.settingNoItemAllowedHint": "Предупреждение: Вы пытаетесь отредактировать импортированный предмет, когда активированы настройки 'Использовать Foundry Items для снаряжения'. Пожалуйста, перимпортируйте лист персонажа, чтобы создать снаряжение для этого актёра.",
+  "GURPS.settingShowDebugInfo": "Показать отладочную информацию",
+  "GURPS.settingHintShowDebugInfo": "Для диалогов документов (Актёры, Предметы и т.д.) показывать значок отладки в заголовке окна. При нажатии он отобразит данные документа в диалоге.",
+  "GURPS.settingShowDebugTooltip": "Показать отладочную информацию"
 }

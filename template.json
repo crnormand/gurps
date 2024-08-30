@@ -233,7 +233,9 @@
       "bonuses": "",
       "equipped": true,
       "carried": true,
-      "globalid": ""
+      "globalid": "",
+      "importid": "",
+      "importFrom": ""
     }
   }
 }

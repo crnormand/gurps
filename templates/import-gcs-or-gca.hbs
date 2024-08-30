@@ -1,7 +1,13 @@
-<p class='notes'>Select a file exported from GCS or GCA.</p>
+<p class='notes'>{{title}}</p><hr>
 <div class='form-group'>
-  <label for='data'>Source Data</label>
+  <label for='data'>{{source}}:</label>
   {{{inputElement}}}
 </div>
-<p class='notes'><br />The import will overwrite the data for "{{name}}".</p>
-<br /><span class='fas fa-exclamation-triangle'>NOTE: This cannot be un-done.</span>
+<br>
+<p class='notes'>{{describeAction}}</p>
+<ul>
+  <li>{{overwriteAction}}</li>
+  <li>{{itemAction}}</li>
+</ul>
+<br>
+<p><span class='fas fa-exclamation-triangle' ></span>&nbsp;<b>{{note}}</b></p>

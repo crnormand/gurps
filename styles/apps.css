@@ -2326,3 +2326,16 @@ button.equipmentbutton:last-child {
 #spells .tooltip {
   min-width: 200px;
 }
+
+.window-app .window-header .window-title .document-debug-link {
+    margin-left: 0.25rem;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.debug-content {
+  max-height: 400px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

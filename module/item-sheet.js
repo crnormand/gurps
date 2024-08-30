@@ -2,6 +2,7 @@
 import { _Base, Melee, Skill, Spell, Advantage, Ranged } from './actor/actor-components.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
 import { recurselist } from '../lib/utilities.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
@@ -40,7 +41,7 @@ export class GurpsItemSheet extends ItemSheet {
 
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
-    html.find('#itemname').change(ev => {
+    html.find('#itemname').change(async ev => {
       let nm = ev.currentTarget.value
       let commit = {
         'system.eqt.name': nm,
@@ -52,44 +53,44 @@ export class GurpsItemSheet extends ItemSheet {
       recurselist(this.item.system.ranged, (e, k, d) => {
         commit = { ...commit, ...{ ['system.ranged.' + k + '.name']: nm } }
       })
-      this.item.update(commit)
+      await this.item.update(commit)
     })
     //    html.find('#quantity').change(ev => this.item.update({ 'system.eqt.count': parseInt(ev.currentTarget.value) }))
 
-    html.find('#add-melee').click(ev => {
+    html.find('#add-melee').click(async ev => {
       ev.preventDefault()
       let m = new Melee()
       m.name = this.item.name
-      this._addToList('melee', m)
+      await this._addToList('melee', m)
     })
 
     html.find('.delete.button').click(this._deleteKey.bind(this))
 
-    html.find('#add-ranged').click(ev => {
+    html.find('#add-ranged').click(async ev => {
       ev.preventDefault()
       let r = new Ranged()
       r.name = this.item.name
       r.legalityclass = 'lc'
-      this._addToList('ranged', r)
+      await this._addToList('ranged', r)
     })
 
-    html.find('#add-skill').click(ev => {
+    html.find('#add-skill').click(async ev => {
       ev.preventDefault()
       let r = new Skill()
       r.rsl = '-'
-      this._addToList('skills', r)
+      await this._addToList('skills', r)
     })
 
-    html.find('#add-spell').click(ev => {
+    html.find('#add-spell').click(async ev => {
       ev.preventDefault()
       let r = new Spell()
-      this._addToList('spells', r)
+      await this._addToList('spells', r)
     })
 
-    html.find('#add-ads').click(ev => {
+    html.find('#add-ads').click(async ev => {
       ev.preventDefault()
       let r = new Advantage()
-      this._addToList('ads', r)
+      await this._addToList('ads', r)
     })
 
     html.find('textarea').on('drop', this.dropFoundryLinks)
@@ -109,8 +110,9 @@ export class GurpsItemSheet extends ItemSheet {
           JSON.stringify({
             type: 'Item',
             id: this.item.id,
+            uuid: this.item.uuid,
             pack: this.item.pack,
-            data: this.item.data,
+            itemData: this.item.system,
           })
         )
       })
@@ -159,18 +161,25 @@ export class GurpsItemSheet extends ItemSheet {
       })
       return
     }
-    this._addToList(dragData.type, srcData)
+    await this._addToList(dragData.type, srcData)
   }
 
-  _addToList(key, data) {
+  async _addToList(key, data) {
     let list = this.item.system[key] || {}
     GURPS.put(list, data)
-    this.item.update({ ['system.' + key]: list })
+    await this.item.update({ ['system.' + key]: list })
   }
 
-  close() {
-    super.close()
-    this.item.update({ 'system.eqt.name': this.item.name })
-    if (!!this.object.editingActor) this.object.editingActor.updateItem(this.object)
+  async close() {
+    await super.close()
+    const equipKey = this.object.editingActor._findEqtkeyForId('itemid', this.item.id)
+    const equip = foundry.utils.getProperty(this.object.editingActor, equipKey)
+    if (!(await this.object.editingActor._sanityCheckItemSettings(equip))) return
+    await this.item.update({ 'system.eqt.name': this.item.name })
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (!!this.object.editingActor) await this.object.editingActor.updateItem(this.object)
+    } else {
+      await this.object.editingActor._updateItemFromForm(this.item)
+    }
   }
 }

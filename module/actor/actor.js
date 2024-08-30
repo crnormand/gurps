@@ -31,6 +31,7 @@ import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
 import { Advantage, Equipment, HitLocationEntry } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -510,6 +511,7 @@ export class GurpsActor extends Actor {
 
       for (let enckey in encs) {
         let enc = encs[enckey]
+        if (!enc.level) enc.level = parseInt(enckey) // FIXME: Why enc.level=NaN after GCA import?
         let threshold = 10 - 2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
@@ -1131,10 +1133,11 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
     }
-    const uuid =
-      typeof dragData.pack === 'string'
-        ? `Compendium.${dragData.pack}.${dragData.id}`
-        : `${dragData.type}.${dragData.id}`
+    // New item created in Foundry v12.331 dragData:
+    // {
+    //   "type": "Item",
+    //   "uuid": "Item.542YuRvzxVx83kL1"
+    // }
     let global = await fromUuid(dragData.uuid)
     let data = !!global ? global : dragData
     if (!data) {
@@ -1142,7 +1145,7 @@ export class GurpsActor extends Actor {
       return
     }
     ui.notifications?.info(data.name + ' => ' + this.name)
-    if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': uuid })
+    if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
     await this.addNewItemData(data)
     this._forceRender()
@@ -1165,7 +1168,7 @@ export class GurpsActor extends Actor {
       return
     }
     if (!dragData.isLinked) {
-      ui.notifications?.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
+      ui.notifications?.warn("You cannot drag from an un-linked token. The source must have 'Linked Actor Data'")
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
@@ -1302,6 +1305,10 @@ export class GurpsActor extends Actor {
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'system.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem, targetkey) // only created 1 item
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      const item = await this.items.get(localItem._id)
+      return this._updateItemFromForm(item)
+    }
   }
 
   // Once the Items has been added to our items list, add the equipment and any features
@@ -1365,6 +1372,7 @@ export class GurpsActor extends Actor {
       eqt.equipped = !!_data.equipped ?? true
       eqt.img = itemData.img
       eqt.carried = !!_data.carried ?? true
+      if (!!eqt.uuid.startsWith('GGA')) eqt.save = true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]
@@ -1906,19 +1914,30 @@ export class GurpsActor extends Actor {
    */
   async updateEqtCount(eqtkey, count) {
     /** @type {{ [key: string]: any }} */
-    let update = { [eqtkey + '.count']: count }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-      update[eqtkey + '.ignoreImportQty'] = true
-    await this.update(update)
     let eqt = foundry.utils.getProperty(this, eqtkey)
-    await this.updateParentOf(eqtkey, false)
-    if (!!eqt.itemid) {
-      let item = this.items.get(eqt.itemid)
-      if (!!item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.count': count }])
-      else {
-        ui.notifications?.warn('Invalid Item in Actor... removing all features')
-        this._removeItemAdditions(eqt.itemid)
+    if (!(await this._sanityCheckItemSettings(eqt))) return
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      let update = { [eqtkey + '.count']: count }
+      if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+        update[eqtkey + '.ignoreImportQty'] = true
+      await this.update(update)
+      eqt = foundry.utils.getProperty(this, eqtkey)
+      await this.updateParentOf(eqtkey, false)
+      if (!!eqt.itemid) {
+        let item = this.items.get(eqt.itemid)
+        if (!!item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.count': count }])
+        else {
+          ui.notifications?.warn('Invalid Item in Actor... removing all features')
+          await this._removeItemAdditions(eqt.itemid)
+        }
       }
+    } else {
+      let item = this.items.get(eqt.itemid)
+      if (!!item) {
+        item.system.eqt.count = count
+        await item.actor._updateItemFromForm(item)
+      }
+      await this.updateParentOf(eqtkey, false)
     }
   }
 
@@ -1970,5 +1989,81 @@ export class GurpsActor extends Actor {
     if (chkAttr('PER')) return false
 
     return true
+  }
+
+  async _updateEquipmentCalc(equipKey) {
+    const equip = foundry.utils.getProperty(this, equipKey)
+    await Equipment.calc(equip)
+    if (!!equip.parentuuid) {
+      const parentKey = this._findEqtkeyForId('itemid', equip.parentuuid)
+      if (parentKey) {
+        await this._updateEquipmentCalc(parentKey)
+      }
+    }
+  }
+
+  async _updateItemFromForm(item) {
+    const equipKey = this._findEqtkeyForId('itemid', item.id)
+    const equip = foundry.utils.getProperty(this, equipKey)
+    if (!(await this._sanityCheckItemSettings(equip))) return
+    // Update Item
+    if (!!item.editingActor) delete item.editingActor
+    await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+    // Update Equipment
+    const itemInfo = item.getItemInfo()
+    await this.internalUpdate({
+      [equipKey]: {
+        ...item.system.eqt,
+        uuid: equip.uuid,
+        parentuuid: equip.parentuuid,
+        itemInfo,
+      },
+    })
+    await this._updateEquipmentCalc(equipKey)
+    await this.updateParentOf(equipKey, true)
+    this.calculateDerivedValues()
+  }
+
+  async _sanityCheckItemSettings(eqt) {
+    let canEdit = false
+    let message
+
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      message = 'GURPS.settingNoEquipAllowedHint'
+      if (!!eqt.itemid) canEdit = true
+    } else {
+      message = 'GURPS.settingNoItemAllowedHint'
+      if (!eqt.itemid) {
+        canEdit = true
+      } else {
+        const item = this.items.get(eqt.itemid)
+        if (!!item && !item.system.importid) canEdit = true
+      }
+    }
+
+    if (!canEdit) {
+      const phrases = game.i18n
+        .localize(message)
+        .split('.')
+        .filter(p => !!p)
+        .map(p => `${p.trim()}.`)
+      const body = phrases.join('</p><p>')
+      const dialog = new Dialog(
+        {
+          title: game.i18n.localize('GURPS.settingNoEditAllowed'),
+          content: `<p>${body}</p>`,
+          buttons: {
+            ok: {
+              label: 'OK',
+            },
+          },
+        },
+        {
+          width: 400,
+        }
+      )
+      await dialog.render(true)
+    }
+    return canEdit
   }
 }

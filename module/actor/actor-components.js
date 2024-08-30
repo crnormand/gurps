@@ -7,6 +7,7 @@
  */
 
 import { convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 export class _Base {
   constructor() {
@@ -302,13 +303,14 @@ export class Equipment extends Named {
     this.collapsed = {}
     /** @type {{ [key: string]: any }} */
     this.contains = {}
+    this.itemInfo = {}
   }
 
   /**
    * @param {Equipment} eqt
    */
-  static calc(eqt) {
-    Equipment.calcUpdate(null, eqt, '')
+  static async calc(eqt) {
+    await Equipment.calcUpdate(null, eqt, '')
   }
 
   // OMG, do NOT fuck around with this method.   So many gotchas...
@@ -359,6 +361,106 @@ export class Equipment extends Named {
     // the local values 'should' be updated... but I need to force them anyway
     eqt.costsum = cs
     eqt.weightsum = ws
+  }
+
+  /**
+   * Create new GURPSItem payload using Equipment's data
+   */
+  toItemData() {
+    const timestamp = new Date()
+    const system = this.itemInfo?.system || {}
+    const importId = !this.save ? this.uuid : ''
+    const importFrom = this.importFrom || !!importId ? (importId.startsWith('k') ? 'GCA' : 'GCS') : ''
+    return {
+      name: this.name,
+      img: this.itemInfo?.img || this.findDefaultImage(),
+      type: 'equipment',
+      system: {
+        eqt: {
+          name: this.name,
+          notes: this.notes,
+          pageref: this.pageref,
+          count: this.count,
+          cost: this.cost,
+          weight: this.weight,
+          carried: this.carried,
+          equipped: this.equipped,
+          techlevel: this.techlevel,
+          categories: this.categories,
+          legalityclass: this.legalityclass,
+          costsum: this.costsum,
+          uses: this.uses,
+          maxuses: this.maxuses,
+          last_import: timestamp,
+          uuid: this.uuid || this._getGGAId(),
+          location: this.location,
+          parentuuid: this.parentuuid,
+        },
+        ads: system.ads || {},
+        skills: system.skills || {},
+        spells: system.spells || {},
+        melee: system.melee || {},
+        ranged: system.ranged || {},
+        bonuses: system.bonuses || '',
+        equipped: this.equipped,
+        carried: this.carried,
+        globalid: this.globalid || '',
+        importid: importId,
+        importFrom: importFrom,
+      },
+    }
+  }
+
+  /**
+   * For now, just return the first image found
+   * In the future, we can implement a better way to find the best image
+   *
+   * @return string
+   * @private
+   * @param name
+   */
+  findDefaultImage() {
+    return 'icons/svg/item-bag.svg'
+  }
+
+  _getGGAId() {
+    return `GGA${foundry.utils.randomID(13)}`
+  }
+
+  static fromObject(data, actor) {
+    let equip
+    if (data instanceof Equipment) {
+      equip = data
+    } else {
+      equip = new Equipment(data.name, data.save)
+      equip.count = data.count
+      equip.cost = data.cost
+      equip.weight = data.weight
+      equip.carried = data.carried
+      equip.equipped = data.equipped
+      equip.techlevel = data.techlevel
+      equip.categories = data.categories
+      equip.legalityclass = data.legalityclass
+      equip.costsum = data.costsum
+      equip.uses = data.uses
+      equip.maxuses = data.maxuses
+      equip.uuid = data.uuid
+      equip.parentuuid = data.parentuuid
+      equip.location = data.location
+      equip.notes = data.notes
+      equip.pageref = data.pageref
+      equip.ignoreImportQty = data.ignoreImportQty
+    }
+    // This equipment already exists in Actor?
+    const existingEquipmentKey = actor._findEqtkeyForId('uuid', equip.uuid)
+    if (!!existingEquipmentKey) {
+      const existingEquipment = foundry.utils.getProperty(actor, existingEquipmentKey)
+      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        equip.itemid = existingEquipment.itemid || ''
+      }
+      equip.itemInfo = existingEquipment.itemInfo || {}
+    }
+    return equip
   }
 }
 
