@@ -565,7 +565,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -592,9 +592,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -648,9 +648,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -843,7 +843,7 @@ export class GurpsActor extends Actor {
       let token = /** @type {GurpsToken} */ (this.token.object)
       return [token]
     }
-    return this.getActiveTokens().map(it => /** @type {GurpsToken} */(it))
+    return this.getActiveTokens().map(it => /** @type {GurpsToken} */ (it))
   }
 
   /**
@@ -2006,8 +2006,9 @@ export class GurpsActor extends Actor {
     const equipKey = this._findEqtkeyForId('itemid', item.id)
     const equip = foundry.utils.getProperty(this, equipKey)
     if (!(await this._sanityCheckItemSettings(equip))) return
-    // Update Item
     if (!!item.editingActor) delete item.editingActor
+    await this._removeItemAdditions(item.id)
+    // Update Item
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
     // Update Equipment
     const itemInfo = item.getItemInfo()
@@ -2019,6 +2020,7 @@ export class GurpsActor extends Actor {
         itemInfo,
       },
     })
+    await this._addItemAdditions(item, equipKey)
     await this._updateEquipmentCalc(equipKey)
     await this.updateParentOf(equipKey, true)
     this.calculateDerivedValues()
