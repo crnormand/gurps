@@ -1806,7 +1806,6 @@ export class GurpsActor extends Actor {
   get temporaryEffects() {
     const effects = super.temporaryEffects
     const results = [...effects.filter(e => e.isManeuver), ...effects.filter(e => !e.isManeuver)]
-    console.log('temporaryEffects', results)
     return results
   }
 
