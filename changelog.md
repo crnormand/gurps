@@ -1,6 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.10
+Release 0.17.11
+
+
+Release 0.17.10 9/1/2024
 
 - Change Posture effect "label" to "name" to properly display in dropdown.
 - Updated Tabbed sheet to make it more compact and usable.
