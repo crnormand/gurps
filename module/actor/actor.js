@@ -1390,7 +1390,7 @@ export class GurpsActor extends Actor {
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    await this.internalUpdate(commit, { diff: false })
+    if (!!commit) await this.internalUpdate(commit, { diff: false })
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
@@ -2023,7 +2023,6 @@ export class GurpsActor extends Actor {
     await this._addItemAdditions(item, equipKey)
     await this._updateEquipmentCalc(equipKey)
     await this.updateParentOf(equipKey, true)
-    this.calculateDerivedValues()
   }
 
   async _sanityCheckItemSettings(eqt) {
