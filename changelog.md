@@ -5,6 +5,7 @@ Release 0.17.10
 - Change Posture effect "label" to "name" to properly display in dropdown.
 - Updated Tabbed sheet to make it more compact and usable.
 - Prevent multiple Postures from being selected.
+- Support for High Tech hit locations -- if Torso is hit, there is a 1-in-6 chance of hitting the Vitals instead.  (Thanks, GitHub user NoOrangeSkitty!)
 
 Release 0.17.9 8/17/2024
 
