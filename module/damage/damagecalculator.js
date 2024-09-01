@@ -975,7 +975,7 @@ export class CompositeDamageCalculator {
   }
 
   async adjustHitLocationIfNecessary() {
-    if (this._hitLocationAdjusted) return
+    if (this._hitLocationAdjusted) return undefined
 
     this._hitLocationAdjusted = true
 

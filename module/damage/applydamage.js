@@ -427,27 +427,12 @@ export default class ApplyDamageDialog extends Application {
     this.updateUI()
   }
 
-  async _displayDiceRolls(roll, options = {}) {
+  async _sendDiceMessage(roll, options = {}) {
     if (!roll) return
 
+    roll.toMessage(options).then(() => this.updateUI())
+    
     if (isNiceDiceEnabled()) {
-      let throws = []
-      let dc = []
-      roll.dice.forEach(die => {
-        let type = 'd' + die.faces
-        die.results.forEach(s =>
-          dc.push({
-            result: s.result,
-            resultLabel: s.result,
-            type: type,
-            vectors: [],
-            options: options,
-          })
-        )
-      })
-      throws.push({ dice: dc })
-
-      if (dc.length > 0) game.dice3d.show({ throws: throws }).then(() => this.updateUI())
     } else {
       AudioHelper.play({ src: CONFIG.sounds.dice })
       this.updateUI()
@@ -458,7 +443,9 @@ export default class ApplyDamageDialog extends Application {
    * Ask the calculator to randomly select a hit location, and return the roll used.
    */
   async _randomizeHitLocation() {
-    await this._displayDiceRolls(await this._calculator.randomizeHitLocation())
+    this._sendDiceMessage(await this._calculator.randomizeHitLocation(), {
+      chatMessage: 'Rolling for Hit Location.',
+    })
   }
 
   async _adjustHitLocationIfNecessary() {
@@ -466,13 +453,14 @@ export default class ApplyDamageDialog extends Application {
     if (this._calculator.hitLocation === 'Random') await this._randomizeHitLocation()
 
     const options = {
+      chatMessage: 'Rolling for Potential Vitals Hit.',
       appearance: {
         foreground: '#ffffff',
         edge: '#bd6e00',
         background: '#bd6e00',
       },
     }
-    await this._displayDiceRolls(await this._calculator.adjustHitLocationIfNecessary(), options)
+    this._sendDiceMessage(await this._calculator.adjustHitLocationIfNecessary(), options)
   }
 
   _toggleVisibility(element, isVisible) {
