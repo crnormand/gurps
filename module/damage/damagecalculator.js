@@ -81,6 +81,8 @@ export class CompositeDamageCalculator {
       this._useArmorDivisor = false
     }
 
+    this._hitLocationAdjusted = false
+
     let hitlocations = objectToArray(this._defender.system.hitlocations)
     let wheres = hitlocations.map(it => it.where.toLowerCase())
     let damageLocation = !!damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
@@ -608,7 +610,10 @@ export class CompositeDamageCalculator {
   }
 
   get isCrippleableLocation() {
-    return [hitlocation.EXTREMITY, hitlocation.LIMB, hitlocation.CHEST, hitlocation.GROIN].includes(this.hitLocationRole) || this._hitLocation === 'Eye'
+    return (
+      [hitlocation.EXTREMITY, hitlocation.LIMB, hitlocation.CHEST, hitlocation.GROIN].includes(this.hitLocationRole) ||
+      this._hitLocation === 'Eye'
+    )
   }
 
   get isBluntTraumaInjury() {
@@ -726,17 +731,15 @@ export class CompositeDamageCalculator {
   }
 
   get cripplingThreshold() {
-    this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
     if (this.hitLocationRole === hitlocation.LIMB) return this.HP.max / 2
     if (this.hitLocationRole === hitlocation.EXTREMITY) return this.HP.max / 3
-    if (this._useBodyHits === true) {
-        if (this.hitLocationRole === hitlocation.CHEST) return this.HP.max * 2
-        if (this.hitLocationRole === hitlocation.GROIN) return this.HP.max * 2
+    if (this._useBodyHits) {
+      if (this.hitLocationRole === hitlocation.CHEST) return this.HP.max * 2
+      if (this.hitLocationRole === hitlocation.GROIN) return this.HP.max * 2
+    } else {
+      if (this.hitLocationRole === hitlocation.CHEST) return Infinity
+      if (this.hitLocationRole === hitlocation.GROIN) return Infinity
     }
-    else {
-        if (this.hitLocationRole === hitlocation.CHEST) return Infinity
-        if (this.hitLocationRole === hitlocation.GROIN) return Infinity
-     }
     if (this.hitLocation === 'Eye') return this.HP.max / 10
     return Infinity
   }
@@ -936,12 +939,16 @@ export class CompositeDamageCalculator {
       })
 
     // update for [burn tbb]
-    if (this._damageType === 'burn' && this._damageModifier === 'tbb') {
+    if (this._isTightBeamBurning) {
       results['burn'].multiplier = 2
       results['burn'].changed = 'damagemodifier'
     }
 
     return results
+  }
+
+  get _isTightBeamBurning() {
+    return this._damageType === 'burn' && this._damageModifier === 'tbb'
   }
 
   _modifyForInjuryTolerance(result, value) {
@@ -954,14 +961,40 @@ export class CompositeDamageCalculator {
   }
 
   async randomizeHitLocation() {
-    let roll3d = Roll.create('3d6[Hit Location]')
-    await roll3d.roll({ async: true })
-    let total = roll3d.total
+    const hitLocationRoll = Roll.create('3d6[Hit Location]')
 
-    let loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))
-    if (!!loc && loc.length > 0) this._hitLocation = loc[0].where
+    await hitLocationRoll.evaluate()
+    const total = hitLocationRoll.total
+
+    const loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))
+
+    if (loc?.length > 0) this._hitLocation = loc[0].where
     else ui.notifications.warn(`There are no hit locations defined for #${total}`)
-    return roll3d
+
+    return hitLocationRoll
+  }
+
+  async adjustHitLocationIfNecessary() {
+    if (this._hitLocationAdjusted) return undefined
+
+    this._hitLocationAdjusted = true
+
+    // If this._hitLocation === 'Torso' and we are using body hits from High Tech p163, then we need to see if the
+    // Vitals were hit.
+    if (
+      this._useBodyHits &&
+      ([...piercing, 'imp'].includes(this.damageType) || this._isTightBeamBurning) &&
+      this._hitLocation === 'Torso'
+    ) {
+      const vitalsRoll = Roll.create('1d6[Vitals]')
+      await vitalsRoll.evaluate()
+
+      const total = vitalsRoll.total
+      if (total === 1) this._hitLocation = 'Vitals'
+
+      return vitalsRoll
+    }
+    return undefined
   }
 }
 
@@ -1089,15 +1122,17 @@ class DamageCalculator {
    * Set a limit of the max needed to cripple the location. markline
    */
   get pointsToApply() {
-      let pointsToApply = this.unmodifiedPointsToApply
-      this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
-      if (this._parent.useLocationModifiers) {
-        if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
-            return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
-        }
-        else if ([hitlocation.GROIN, hitlocation.CHEST].includes(this._parent.hitLocationRole) && this._useBodyHits === true && ['burn', 'imp', ...piercing].includes(this._parent.damageType)) {
-            return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
-        }
+    let pointsToApply = this.unmodifiedPointsToApply
+    if (this._parent.useLocationModifiers) {
+      if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
+        return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
+      } else if (
+        [hitlocation.GROIN, hitlocation.CHEST].includes(this._parent.hitLocationRole) &&
+        this._useBodyHits &&
+        (['imp', ...piercing].includes(this._parent.damageType) || this._isTightBeamBurning)
+      ) {
+        return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
+      }
     }
     return pointsToApply
   }
