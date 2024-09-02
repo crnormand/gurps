@@ -172,14 +172,23 @@ export class GurpsItemSheet extends ItemSheet {
 
   async close() {
     await super.close()
-    const equipKey = this.object.editingActor._findEqtkeyForId('itemid', this.item.id)
-    const equip = foundry.utils.getProperty(this.object.editingActor, equipKey)
-    if (!(await this.object.editingActor._sanityCheckItemSettings(equip))) return
-    await this.item.update({ 'system.eqt.name': this.item.name })
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      if (!!this.object.editingActor) await this.object.editingActor.updateItem(this.object)
+    // When editing a Compendium Item, Actor does not exist, so we need to update the Item directly
+    if (!!this.item.editingActor) {
+      const equipKey = this.item.editingActor._findEqtkeyForId('itemid', this.item.id)
+      const equip = foundry.utils.getProperty(this.item.editingActor, equipKey)
+      if (!(await this.item.editingActor._sanityCheckItemSettings(equip))) return
+      await this.item.update({ 'system.eqt.name': this.item.name })
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        await this.item.editingActor.updateItem(this.object)
+      } else {
+        await this.item.editingActor._updateItemFromForm(this.item)
+      }
     } else {
-      await this.object.editingActor._updateItemFromForm(this.item)
+      await this.item.update({
+        name: this.item.name,
+        img: this.item.img,
+        system: this.item.system,
+      })
     }
   }
 }
