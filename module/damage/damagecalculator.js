@@ -1121,14 +1121,15 @@ class DamageCalculator {
    * Actual number of HP to apply is the amount of injury, or the effective blunt trauma.
    * Set a limit of the max needed to cripple the location. markline
    */
-  get pointsToApply() {
+   get pointsToApply() {
+    this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
     let pointsToApply = this.unmodifiedPointsToApply
     if (this._parent.useLocationModifiers) {
-      if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
+        if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
       } else if (
         [hitlocation.GROIN, hitlocation.CHEST].includes(this._parent.hitLocationRole) &&
-        this._useBodyHits &&
+        this._useBodyHits === true &&
         (['imp', ...piercing].includes(this._parent.damageType) || this._isTightBeamBurning)
       ) {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
