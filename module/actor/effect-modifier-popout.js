@@ -82,7 +82,7 @@ export class EffectModifierPopout extends Application {
     // const ruler = new Ruler() as Ruler & { totalDistance: number }
     const ruler = new RulerGURPS(game.user)
     ruler._state = Ruler.STATES.MEASURING
-    ruler.waypoints = [{ x: token1.x, y: token1.y }]
+    ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
     ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
     const horizontalDistance = ruler.totalDistance
     const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)

@@ -45,7 +45,7 @@ export class GGADebugger {
         event.preventDefault()
         const dialog = new Dialog({
           title: `Debug: ${name} (${label})`,
-          content: `<div class="debug-content"><pre>${JSON.stringify(this.object, null, 2)}</pre></div>`,
+          content: `<div class="debug-content" style="max-height: 500px; overflow-y: auto;"><pre>${JSON.stringify(this.object, null, 2)}</pre></div>`,
           buttons: {
             copy: {
               icon: '<i class="fas fa-copy"></i>',
