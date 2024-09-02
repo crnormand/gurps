@@ -710,6 +710,9 @@
   "GURPS.settingHintRemoveUnequipped": "Wenn diese Option aktiviert ist, werden die Namen der Nahkampf- und Fernkampfangriffe mit der Liste der getragenen Ausrüstung verglichen, und wenn eine Namensübereinstimmung gefunden wird, wird der Angriff nur aufgeführt, wenn die Ausrüstung ausgerüstet ist",
   "GURPS.settingImportBrowserImporter": "Nicht lokal gehosteten Importdialog verwenden",
   "GURPS.settingImportHintBrowserImporter": "Diese Option aktivieren, wenn die Foundry-Instanz nicht lokal gehosted wird (Z.B. über The Forge). Dieser Importdialog kann sich den Speicherort der Importdatei während der Sitzung merken (d. h., wenn die Figur in derselben Sitzung erneut importiert wird, muss der Dateidialog nicht aufgerufen werden).",
+  "GURPS.settingShowDebugInfo": "Dokument Debug Info anzeigen",
+  "GURPS.settingHintShowDebugInfo": "Für Dokumentdialogs (Akteure, Gegenstände, etc.) wird das Debug-Symbol im Fenstertitel angezeigt. Wenn es gedrückt wird, wird die Dokumentdaten in einem Dialog angezeigt.",
+  "GURPS.settingShowDebugTooltip": "Zeige Debug-Informationen",
 
   "GURPS.adDisad": "Vorteil/Nachteil",
   "GURPS.adDisadQuirkPerk": "Vorteil/Nachteil/Marotte/Minivorteil",

@@ -43,6 +43,7 @@ import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
+import { GGADebugger } from '../utils/debugger.js'
 
 /**
  * /dded to color the rollable parts of the character sheet.
@@ -1936,6 +1937,9 @@ if (!globalThis.GURPS) {
     RegisterChatProcessors()
     GurpsActiveEffect.init()
     GURPSSpeedProvider.init()
+
+    // Add Debugger info
+    GGADebugger.init()
 
     // Modifier Bucket must be defined after hit locations
     GURPS.ModifierBucket = new ModifierBucket()
