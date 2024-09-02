@@ -2,6 +2,7 @@
 
 Release 0.17.11
 - Correctly calculate max HP loss when using High Tech Optional Wounding Rules (HT p.162).
+- Use ruler._addWaypoint instead of modifying waypoints directly.
 
 Release 0.17.10 9/1/2024
 
