@@ -432,10 +432,8 @@ export default class ApplyDamageDialog extends Application {
 
     roll.toMessage(options).then(() => this.updateUI())
     
-    if (isNiceDiceEnabled()) {
-    } else {
+    if (!isNiceDiceEnabled()) {
       AudioHelper.play({ src: CONFIG.sounds.dice })
-      this.updateUI()
     }
   }
 
