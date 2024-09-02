@@ -797,15 +797,15 @@ export class GurpsActorSheet extends ActorSheet {
         if (path.includes('system.equipment')) {
           if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
             obj.save = true
-            let payload = obj.toItemData()
+            let payload = obj.toItemData('')
             const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
             obj.itemid = item._id
           }
-          if (!obj.uuid) obj.uuid = obj._getGGAId()
+          if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
         }
         let o = GURPS.decode(this.actor, path) || {}
         GURPS.put(o, foundry.utils.duplicate(obj))
-        this.actor.internalUpdate({ [path]: o })
+        await this.actor.internalUpdate({ [path]: o })
       },
     }
   }

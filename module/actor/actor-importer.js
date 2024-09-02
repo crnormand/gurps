@@ -995,7 +995,7 @@ export class ActorImporter {
           }
         }
         // Process Item here
-        eqt = await this._processItemFrom(eqt)
+        eqt = await this._processItemFrom(eqt, 'GCA')
         temp.push(eqt)
       }
     }
@@ -1004,14 +1004,14 @@ export class ActorImporter {
     await aRecurselist(this.actor.system.equipment?.carried, async t => {
       t.carried = true
       if (!!t.save) {
-        t = await this._processItemFrom(t)
+        t = await this._processItemFrom(t, 'GCA')
         temp.push(t)
       }
     }) // Ensure carried eqt stays in carried
     await aRecurselist(this.actor.system.equipment?.other, async t => {
       t.carried = false
       if (!!t.save) {
-        t = await this._processItemFrom(t)
+        t = await this._processItemFrom(t, 'GCA')
         temp.push(t)
       }
     })
@@ -1713,14 +1713,14 @@ export class ActorImporter {
     await aRecurselist(this.actor.system.equipment?.carried, async t => {
       t.carried = true
       if (!!t.save) {
-        t = await this._processItemFrom(t)
+        t = await this._processItemFrom(t, 'GCS')
         temp.push(t)
       }
     })
     await aRecurselist(this.actor.system.equipment?.other, async t => {
       t.carried = false
       if (!!t.save) {
-        t = await this._processItemFrom(t)
+        t = await this._processItemFrom(t, 'GCS')
         temp.push(t)
       }
     })
@@ -1814,7 +1814,7 @@ export class ActorImporter {
       }
     }
     // Process Item here
-    e = await this._processItemFrom(e)
+    e = await this._processItemFrom(e, 'GCS')
     let ch = []
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(await this.importEq(j, i.id, carried))
@@ -2457,17 +2457,17 @@ export class ActorImporter {
     return item
   }
 
-  async _processItemFrom(eqt) {
+  async _processItemFrom(eqt, fromProgram) {
     // Non Equipment instance objects need to be converted to Equipment first.
     let equip = Equipment.fromObject(eqt, this.actor)
 
     if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       // Create or Update item
       const existingItem = this.actor.items.find(i => i._id === equip.itemid)
-      const itemData = equip.toItemData()
+      const itemData = equip.toItemData(fromProgram)
       const [item] = !!existingItem
         ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, ...itemData }])
-        : await this.actor.createEmbeddedDocuments('Item', [equip.toItemData()])
+        : await this.actor.createEmbeddedDocuments('Item', [itemData])
       // Update Equipment for new Items
       if (!existingItem && !!item) {
         equip.itemid = item._id

@@ -366,11 +366,12 @@ export class Equipment extends Named {
   /**
    * Create new GURPSItem payload using Equipment's data
    */
-  toItemData() {
+  toItemData(fromProgram = '') {
     const timestamp = new Date()
     const system = this.itemInfo?.system || {}
-    const importId = !this.save ? this.uuid : ''
-    const importFrom = this.importFrom || !!importId ? (importId.startsWith('k') ? 'GCA' : 'GCS') : ''
+    const uniqueId = this._getGGAId({ name: this.name, type: 'equipment', generator: fromProgram })
+    const importId = !this.save ? uniqueId : ''
+    const importFrom = this.importFrom || fromProgram
     return {
       name: this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -392,7 +393,7 @@ export class Equipment extends Named {
           uses: this.uses,
           maxuses: this.maxuses,
           last_import: timestamp,
-          uuid: this.uuid || this._getGGAId(),
+          uuid: uniqueId,
           location: this.location,
           parentuuid: this.parentuuid,
         },
@@ -423,8 +424,31 @@ export class Equipment extends Named {
     return 'icons/svg/item-bag.svg'
   }
 
-  _getGGAId() {
-    return `GGA${foundry.utils.randomID(13)}`
+  /**
+   * Generates a unique GGA identifier based on the given system object properties.
+   *
+   * @param {Object} objProps - The properties of the object used for generating the unique ID.
+   * @param {string} objProps.name - The name of the System Object.
+   * @param {string} objProps.type - The system.<type> of the System Object: equipment, ads, etc.
+   * @param {string} objProps.generator - The generator of the item: GCS or GCA.
+   * @return {string} The generated unique GGA identifier.
+   */
+  _getGGAId(objProps) {
+    let uniqueId
+    if (!!this.uuid) {
+      // UUID from GCS/GCA
+      uniqueId = this.uuid
+    } else if (!!this.save) {
+      // User created System Object
+      uniqueId = `GGA${foundry.utils.randomID(13)}`
+    } else {
+      // System Object imported from GCS/GCA without a UUID
+      const { name, type, generator } = objProps
+      const hashKey = `${name}${type}${generator}`
+      const hash = crypto.createHash('md5').update(hashKey).digest('hex')
+      uniqueId = hash.substring(0, 16)
+    }
+    return uniqueId
   }
 
   static fromObject(data, actor) {
