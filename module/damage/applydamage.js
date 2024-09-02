@@ -190,7 +190,8 @@ export default class ApplyDamageDialog extends Application {
     // When the 'random' button is clicked, update the hit location.
     html.find('#random-location').on('click', async () => {
       this._calculator._hitLocationAdjusted = false
-      this._randomizeHitLocation()
+      await this._randomizeHitLocation()
+      await this._adjustHitLocationIfNecessary()
     })
 
     // When a new Hit Location is selected, calculate the new results and update the UI.
@@ -431,7 +432,7 @@ export default class ApplyDamageDialog extends Application {
     if (!roll) return
 
     roll.toMessage(options).then(() => this.updateUI())
-    
+
     if (!isNiceDiceEnabled()) {
       AudioHelper.play({ src: CONFIG.sounds.dice })
     }
