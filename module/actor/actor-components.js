@@ -8,6 +8,7 @@
 
 import { convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { simpleHash } from '../../lib/simple-hash.js'
 
 export class _Base {
   constructor() {
@@ -72,6 +73,36 @@ export class Named extends _Base {
         this.pageref = ''
       }
     }
+  }
+
+  findDefaultImage() {
+    return 'icons/svg/item-bag.svg'
+  }
+
+  /**
+   * Generates a unique GGA identifier based on the given system object properties.
+   *
+   * @param {Object} objProps - The properties of the object used for generating the unique ID.
+   * @param {string} objProps.name - The name of the System Object.
+   * @param {string} objProps.type - The system.<type> of the System Object: equipment, ads, etc.
+   * @param {string} objProps.generator - The generator of the item: GCS or GCA.
+   * @return {string} The generated unique GGA identifier.
+   */
+  _getGGAId(objProps) {
+    let uniqueId
+    if (!!this.uuid) {
+      // UUID from GCS/GCA
+      uniqueId = this.uuid
+    } else if (!!this.save) {
+      // User created System Object
+      uniqueId = `GGA${foundry.utils.randomID(13)}`
+    } else {
+      // System Object imported from GCS/GCA without a UUID
+      const { name, type, generator } = objProps
+      const hashKey = `${name}${type}${generator}`
+      uniqueId = simpleHash(hashKey)
+    }
+    return uniqueId
   }
 }
 
@@ -410,45 +441,6 @@ export class Equipment extends Named {
         importFrom: importFrom,
       },
     }
-  }
-
-  /**
-   * For now, just return the first image found
-   * In the future, we can implement a better way to find the best image
-   *
-   * @return string
-   * @private
-   * @param name
-   */
-  findDefaultImage() {
-    return 'icons/svg/item-bag.svg'
-  }
-
-  /**
-   * Generates a unique GGA identifier based on the given system object properties.
-   *
-   * @param {Object} objProps - The properties of the object used for generating the unique ID.
-   * @param {string} objProps.name - The name of the System Object.
-   * @param {string} objProps.type - The system.<type> of the System Object: equipment, ads, etc.
-   * @param {string} objProps.generator - The generator of the item: GCS or GCA.
-   * @return {string} The generated unique GGA identifier.
-   */
-  _getGGAId(objProps) {
-    let uniqueId
-    if (!!this.uuid) {
-      // UUID from GCS/GCA
-      uniqueId = this.uuid
-    } else if (!!this.save) {
-      // User created System Object
-      uniqueId = `GGA${foundry.utils.randomID(13)}`
-    } else {
-      // System Object imported from GCS/GCA without a UUID
-      const { name, type, generator } = objProps
-      const hashKey = `${name}${type}${generator}`
-      const hash = crypto.createHash('md5').update(hashKey).digest('hex')
-      uniqueId = hash.substring(0, 16)
-    }
-    return uniqueId
   }
 
   static fromObject(data, actor) {
