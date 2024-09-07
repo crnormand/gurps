@@ -9,6 +9,7 @@ Release 0.17.11
 - More global objects for external modules (added GURPS.lastInjuryRoll(s); modified GURPS.lastTargetRoll to include Chat message ID) (user chrismaille).
 - Correctly remember and display the file for the Smart Importer (user chrismaille).
 - Show debug info on document dialogs (user cchrismaille).
+- Add more Resource Tracker slots. Its now effectively unlimited.
 
 Release 0.17.10 9/1/2024
 
