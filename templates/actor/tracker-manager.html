@@ -23,14 +23,19 @@
               value='{{tracker.name}}' placeholder='{{i18n "GURPS.clickToEdit"}}' />
             <!-- tracker.alias -->
             <input name='alias' data='{{@index}}' class='gcs-input' type='text' readonly value='{{tracker.alias}}' />
+
             <!-- slot -->
             <select name='tracker-instance' data='{{@index}}'>
-              <option value='' {{select-if slot '' }}></option>
-              <option value='0' {{select-if slot '0' }}>{{i18n "GURPS.resourceTracker"}} 0</option>
-              <option value='1' {{select-if slot '1' }}>{{i18n "GURPS.resourceTracker"}} 1</option>
-              <option value='2' {{select-if slot '2' }}>{{i18n "GURPS.resourceTracker"}} 2</option>
-              <option value='3' {{select-if slot '3' }}>{{i18n "GURPS.resourceTracker"}} 3</option>
+              <option value='none' {{select-if slot 'none' }}></option>
+              {{#with @index as |current|}}
+                {{#each ../../templates}}
+                  {{debug ../this}}
+                  <option value='{{@index}}' {{select-if slot current }}>{{i18n "GURPS.resourceTracker"}} {{@index}}
+                  </option>
+                {{/each}}
+              {{/with}}
             </select>
+
             <!-- initialValue -->
             <input name='initial-value' data='{{@index}}' class='gcs-input' type='text' value='{{initialValue}}' />
 

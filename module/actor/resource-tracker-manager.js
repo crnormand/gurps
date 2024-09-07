@@ -183,11 +183,6 @@ export class ResourceTrackerManager extends FormApplication {
                   (!!t.tracker.name && t.tracker.name === newTracker.name) ||
                   (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
               )
-
-            // ui.notifications.warn(
-            //   game.i18n.format('GURPS.trackerNotUnique', { name: newTracker.name, alias: newTracker.alias })
-            // )
-            // resolve(this._templates[index].tracker)
           }
 
           resolve(dialog._tracker)
