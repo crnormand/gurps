@@ -740,6 +740,14 @@
   color: olivedrab;
 }
 
+.gga-child-item {
+  color: darkgoldenrod;
+}
+
+.gga-global-item {
+  color: mediumslateblue;
+}
+
 .gga-inactive {
   color: var(--lightgrey);
 }

@@ -9,7 +9,7 @@ export class GurpsItemSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['sheet', 'item'],
-      template: 'systems/gurps/templates/item-sheet.html',
+      template: 'systems/gurps/templates/item/item-sheet.hbs',
       width: 680,
       height: 'auto',
       resizable: false,
@@ -23,9 +23,10 @@ export class GurpsItemSheet extends ItemSheet {
   /** @override */
   getData() {
     const sheetData = super.getData()
+    sheetData.itemType = this.item.type
     sheetData.data = this.item.system
     sheetData.system = this.item.system
-    sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
+    if (!!this.item.system.eqt) sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
     sheetData.name = this.item.name
     if (!this.item.system.globalid && !this.item.parent)
       this.item.update({ 'system.globalid': this.item.id, _id: this.item.id })
@@ -154,14 +155,17 @@ export class GurpsItemSheet extends ItemSheet {
     let srcData = foundry.utils.getProperty(srcActor, dragData.key)
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
-    if (dragData.type == 'equipment') {
-      this.item.update({
-        name: srcData.name,
-        'system.eqt': srcData,
-      })
-      return
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // Scenario 1: Only works for Equipment
+      if (dragData.type === 'equipment') {
+        await this.item.update({
+          name: srcData.name,
+          'system.eqt': srcData,
+        })
+        return
+      }
+      await this._addToList(dragData.type, srcData)
     }
-    await this._addToList(dragData.type, srcData)
   }
 
   async _addToList(key, data) {
@@ -170,16 +174,35 @@ export class GurpsItemSheet extends ItemSheet {
     await this.item.update({ ['system.' + key]: list })
   }
 
+  /**
+   * A convenience reference to the Item document
+   * @return {GurpsItem}
+   */
+  get item() {
+    return this.object
+  }
+
   async close() {
     await super.close()
     // When editing a Compendium Item, Actor does not exist, so we need to update the Item directly
+    await this.item.update({ [`system.${this.item.itemSysKey}.name`]: this.item.name })
     if (!!this.item.editingActor) {
-      const equipKey = this.item.editingActor._findEqtkeyForId('itemid', this.item.id)
-      const equip = foundry.utils.getProperty(this.item.editingActor, equipKey)
-      if (!(await this.item.editingActor._sanityCheckItemSettings(equip))) return
-      await this.item.update({ 'system.eqt.name': this.item.name })
+      const actorCompKey =
+        this.item.type === 'equipment'
+          ? this.item.editingActor._findEqtkeyForId('itemid', this.item.id)
+          : this.item.editingActor._findSysKeyForId('itemid', this.item.id, this.item.actorComponentKey)
+      const actorComp = foundry.utils.getProperty(this.item.editingActor, actorCompKey)
+      if (!(await this.item.editingActor._sanityCheckItemSettings(actorComp))) return
       if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-        await this.item.editingActor.updateItem(this.object)
+        if (this.item.type === 'equipment') {
+          await this.item.editingActor.updateItem(this.item)
+        } else {
+          await this.item.update({
+            name: this.item.name,
+            img: this.item.img,
+            system: this.item.system,
+          })
+        }
       } else {
         await this.item.editingActor._updateItemFromForm(this.item)
       }

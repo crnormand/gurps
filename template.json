@@ -202,7 +202,7 @@
     }
   },
   "Item": {
-    "types": ["equipment"],
+    "types": ["equipment", "feature", "skill", "spell"],
     "equipment": {
       "eqt": {
         "name": "",
@@ -235,7 +235,102 @@
       "carried": true,
       "globalid": "",
       "importid": "",
-      "importFrom": ""
+      "importFrom": "",
+      "fromItem": ""
+    },
+    "feature": {
+      "fea": {
+        "notes": "",
+        "pageref": "",
+        "contains": {},
+        "uuid": "",
+        "parentuuid": "",
+        "points": 0,
+        "userdesc": "",
+        "note": "",
+        "name": ""
+      },
+      "melee": {},
+      "ranged": {},
+      "ads": {},
+      "skills": {},
+      "spells": {},
+      "bonuses": "",
+      "globalid": "",
+      "importid": "",
+      "importFrom": "",
+      "fromItem": "",
+      "checkotf": "",
+      "duringotf": "",
+      "passotf": "",
+      "failotf": ""
+    },
+    "skill": {
+      "ski": {
+        "name": "",
+        "notes": "",
+        "pageref": "",
+        "contains": {},
+        "uuid": "",
+        "parentuuid": "",
+        "points": 0,
+        "import": "",
+        "level": 0,
+        "type": "",
+        "relativelevel": 0,
+        "otf": "",
+        "checkotf": "",
+        "duringotf": "",
+        "passotf": "",
+        "failotf": ""
+      },
+      "melee": {},
+      "ranged": {},
+      "ads": {},
+      "skills": {},
+      "spells": {},
+      "bonuses": "",
+      "globalid": "",
+      "importid": "",
+      "importFrom": "",
+      "fromItem": ""
+    },
+    "spell": {
+      "spl": {
+        "name": "",
+        "notes": "",
+        "pageref": "",
+        "contains": {},
+        "uuid": "",
+        "parentuuid": "",
+        "points": 0,
+        "import": "",
+        "level": 0,
+        "class": "",
+        "college": "",
+        "cost": "",
+        "maintain": "",
+        "duration": "",
+        "resist": "",
+        "casttime": "",
+        "difficulty": "",
+        "relativelevel": 0,
+        "otf": "",
+        "checkotf": "",
+        "duringotf": "",
+        "passotf": "",
+        "failotf": ""
+      },
+      "melee": {},
+      "ranged": {},
+      "ads": {},
+      "skills": {},
+      "spells": {},
+      "bonuses": "",
+      "globalid": "",
+      "importid": "",
+      "importFrom": "",
+      "fromItem": ""
     }
   }
 }

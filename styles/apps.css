@@ -699,6 +699,7 @@ ul#result-effects li {
   font-weight: normal;
   text-shadow: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  font-family: "Roboto Condensed", Helvetica, sans-serif;
 
   /* Position the tooltip text */
   position: absolute;
@@ -2323,7 +2324,7 @@ button.equipmentbutton:last-child {
   white-space: normal;
 }
 
-#spells .tooltip {
+#spells .gga-manual {
   min-width: 200px;
 }
 
@@ -2338,4 +2339,40 @@ button.equipmentbutton:last-child {
   overflow-y: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+#itemname {
+  font-size: 1.5em;
+  text-align: center;
+  padding: 4px;
+}
+
+.gga-item-sheet-title {
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 4px;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.first-cap::first-letter {
+  font-size: 19px;
+  text-transform: uppercase;
+}
+
+.color-equipment {
+  background-color: #35713e;
+}
+.color-spell {
+  background-color: #91241e;
+}
+.color-skill {
+  background-color: #453c96;
+}
+.color-feature {
+  background-color: #3177b2;
 }

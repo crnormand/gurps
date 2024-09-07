@@ -138,6 +138,9 @@ export class GurpsActorSheet extends ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
+    if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      this._createGlobalItemMenus(html)
+    }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -456,13 +459,13 @@ export class GurpsActorSheet extends ActorSheet {
         return
       }
 
-      if (path.includes('equipment')) this.editEquipment(actor, path, obj)
-      if (path.includes('melee')) this.editMelee(actor, path, obj)
-      if (path.includes('ranged')) this.editRanged(actor, path, obj)
-      if (path.includes('ads')) this.editAds(actor, path, obj)
-      if (path.includes('skills')) this.editSkills(actor, path, obj)
-      if (path.includes('spells')) this.editSpells(actor, path, obj)
-      if (path.includes('notes')) this.editNotes(actor, path, obj)
+      if (path.includes('equipment')) await this.editEquipment(actor, path, obj)
+      if (path.includes('melee')) await this.editMelee(actor, path, obj)
+      if (path.includes('ranged')) await this.editRanged(actor, path, obj)
+      if (path.includes('ads')) await this.editAds(actor, path, obj)
+      if (path.includes('skills')) await this.editSkills(actor, path, obj)
+      if (path.includes('spells')) await this.editSpells(actor, path, obj)
+      if (path.includes('notes')) await this.editNotes(actor, path, obj)
     })
 
     html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
@@ -646,13 +649,27 @@ export class GurpsActorSheet extends ActorSheet {
             name: i18n('GURPS.addTracker'),
             icon: '<i class="fas fa-plus"></i>',
             callback: e => {
-              this._addTracker()
+              this._addTracker().then()
             },
           },
         ],
         ClickAndContextMenu
       )
     }
+  }
+
+  _createGlobalItemMenus(html) {
+    let opts = [
+      this._createMenu(
+        i18n('GURPS.delete'),
+        '<i class="fas fa-trash"></i>',
+        this._deleteItem.bind(this),
+        this._isRemovable.bind(this)
+      ),
+    ]
+    new ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu' })
+    new ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu' })
+    new ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu' })
   }
 
   _createEquipmentItemMenus(html) {
@@ -707,8 +724,19 @@ export class GurpsActorSheet extends ActorSheet {
 
   _deleteItem(target) {
     let key = target[0].dataset.key
-    if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-    else GURPS.removeKey(this.actor, key)
+    if (key.includes('.equipment.')) {
+      this.actor.deleteEquipment(key)
+    } else if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      GURPS.removeKey(this.actor, key)
+    } else {
+      let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
+      if (!!item) {
+        this.actor._removeItemAdditions(item.id).then(() => {
+          item.delete()
+          GURPS.removeKey(this.actor, key)
+        })
+      }
+    }
   }
 
   _sortContentAscending(target) {
@@ -758,6 +786,16 @@ export class GurpsActorSheet extends ActorSheet {
     if (x?.contains && Object.keys(x.contains).length > 1) return true
     if (includeCollapsed) return x?.collapsed && Object.keys(x.collapsed).length > 1
     return false
+  }
+
+  _isRemovable(target) {
+    let path = target[0].dataset.key
+    let ac = GURPS.decode(this.actor, path)
+    let item
+    if (ac.itemid) {
+      item = this.actor.items.get(ac.itemid)
+    }
+    return item?.system.globalid
   }
 
   getMenuItems(elementid) {
@@ -1292,19 +1330,19 @@ export class GurpsActorSheet extends ActorSheet {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
-    if (dragData.type === 'Item') this.actor.handleItemDrop(dragData)
+    if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
-    this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
-    this.handleDragFor(event, dragData, 'melee', 'meleedraggable')
-    this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
-    this.handleDragFor(event, dragData, 'skills', 'skldraggable')
-    this.handleDragFor(event, dragData, 'spells', 'spldraggable')
-    this.handleDragFor(event, dragData, 'note', 'notedraggable')
-    this.handleDragFor(event, dragData, 'reactions', 'reactdraggable')
-    this.handleDragFor(event, dragData, 'condmod', 'condmoddraggable')
+    await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
+    await this.handleDragFor(event, dragData, 'melee', 'meleedraggable')
+    await this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
+    await this.handleDragFor(event, dragData, 'skills', 'skldraggable')
+    await this.handleDragFor(event, dragData, 'spells', 'spldraggable')
+    await this.handleDragFor(event, dragData, 'note', 'notedraggable')
+    await this.handleDragFor(event, dragData, 'reactions', 'reactdraggable')
+    await this.handleDragFor(event, dragData, 'condmod', 'condmoddraggable')
 
     if (dragData.type === 'equipment') {
-      if ((await this.actor.handleEquipmentDrop(dragData)) != false) return // handle external drag/drop
+      if ((await this.actor.handleEquipmentDrop(dragData)) !== false) return // handle external drag/drop
 
       // drag/drop in same character sheet
       // Validate that the target is valid for the drop.
@@ -1317,7 +1355,7 @@ export class GurpsActorSheet extends ActorSheet {
       let targetkey = dropTarget.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-        this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
+        await this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
       }
     }
   }

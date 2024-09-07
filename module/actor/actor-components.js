@@ -6,10 +6,41 @@
  * to think really hard about potentially moving the class back to actor.js.
  */
 
-import { convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
+import { arraysEqual, compareColleges, convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { simpleHash } from '../../lib/simple-hash.js'
 
+/**
+ * ### Base Actor Component
+ *
+ * Originally, these entities are where Actor stores the GURPS data.
+ *
+ * But naming is hard, and let's try to make it easier to understand,
+ * especially now, when we will store these data not only on these components
+ * but also on new Foundry Items besides the original `Equipment` actor/item.
+ *
+ * The biggest trap at this point is the naming of GURPS Traits. In GURPS, **Traits**
+ * are the Advantages, Disadvantages, Quirks and Perks. And **Attributes**
+ * are the player attributes (ST, DX, IQ, HT, dodge, etc.).
+ *
+ * But on GGA, all Traits are stored inside actor in the _ads_ key. And the
+ * attributes are scattered in many keys inside the actor, especially
+ * _attributes_ and... _traits_ :)
+ *
+ * So, let's try to name things:
+ *
+ * | GURPS terms | actor.system.<key>         | Actor Component             | Foundry Item Type | item.system.<key> |
+ * |-------------|----------------------------|-----------------------------|-------------------|-------------------|
+ * | Inventory   | equipment                  | Equipment                   | equipment         | eqt               |
+ * | Attributes  | attributes, traits, etc.   | Encumbrance, Reaction, etc. | --                | --                |
+ * | Traits      | ads                        | Advantage                   | feature           | fea               |
+ * | Skills      | skills                     | Skill                       | skill             | ski               |
+ * | Spells      | spells                     | Spell                       | spell             | spl               |
+ * | Melee Att.  | melee                      | Melee                       | --                | --               |
+ * | Ranged Att. | ranged                     | Ranged                      | --                | --               |
+ *
+ *
+ */
 export class _Base {
   constructor() {
     this.notes = ''
@@ -75,8 +106,20 @@ export class Named extends _Base {
     }
   }
 
+  /**
+   * Retrieves the default image path for item.
+   *
+   * @return {string} The path to the default image.
+   */
   findDefaultImage() {
-    return 'icons/svg/item-bag.svg'
+    let item
+    if (!!this.itemid) {
+      item = game.items.get(this.itemid)
+      if (!!item?.system.globalid) {
+        item = game.items.get(item.system.globalid.split('.').pop())
+      }
+    }
+    return item?.img
   }
 
   /**
@@ -93,16 +136,99 @@ export class Named extends _Base {
     if (!!this.uuid) {
       // UUID from GCS/GCA
       uniqueId = this.uuid
-    } else if (!!this.save) {
+    }
+    if (!!this.save && !uniqueId) {
       // User created System Object
       uniqueId = `GGA${foundry.utils.randomID(13)}`
-    } else {
+    }
+    if (!uniqueId) {
       // System Object imported from GCS/GCA without a UUID
       const { name, type, generator } = objProps
       const hashKey = `${name}${type}${generator}`
       uniqueId = simpleHash(hashKey)
     }
     return uniqueId
+  }
+
+  /**
+   * Get Actor Component System Key.
+   *
+   * One of the **trickiest** parts of this project.
+   * Remember, actor component has a different key than his item.
+   *
+   * Examples:
+   * actor.system.equipment <-> item.system.eqt
+   * actor.system.ads <-> item.system.fea
+   *
+   * @return {string} the actor.system.<key> for the item class
+   */
+  static get actorSystemKey() {
+    throw new Error('Not implemented')
+  }
+
+  /**
+   * Converts Actor Component data into Foundry Item Data.
+   *
+   * @param {string} fromProgram - The Generator, CGA or GCS.
+   * @return {object} The converted item data.
+   */
+  toItemData(fromProgram = '') {
+    throw new Error('Not implemented')
+  }
+
+  /**
+   * Converts Received Data into Actor Component.
+   *
+   * The Object.assign is a very simple implementation
+   * To make sure we are not missing any property, we should
+   * implement a more robust method on each class.
+   *
+   * @param {object} data - The data to convert (from form, item data, drag info, etc.).
+   * @param {Actor} actor - The actor to use.
+   */
+  static fromObject(data, actor) {
+    // Just an example. Make sure you make a more robust method in the subclass.
+    let actorComp = new this(data.name)
+    Object.assign(actorComp, data)
+    return this._checkComponentInActor(actor, actorComp)
+  }
+
+  static _checkComponentInActor(actor, actorComp) {
+    // This actor component already exists in Actor?
+    const existingComponentKey =
+      actorComp instanceof Equipment
+        ? actor._findEqtkeyForId('uuid', actorComp.uuid)
+        : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
+    if (!!existingComponentKey) {
+      const existingComponentItem = actor.items.get(actorComp.itemid)
+      if (!!existingComponentItem) {
+        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          actorComp.itemid = existingComponentItem.itemid || ''
+        }
+        actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
+      } else {
+        actorComp.itemid = ''
+        actorComp.itemInfo = {}
+      }
+    }
+    return actorComp
+  }
+
+  /**
+   * Checks if the given item needs an update.
+   *
+   * Another trickier part, because payloads from GCA and GCS uses different
+   * formats for the same fields.
+   *
+   * Some examples: spell `college`, skill `import` and `level` etc.
+   *
+   * This must be implemented on each subclass.
+   *
+   * @param {Object} item - The item to check for an update.
+   * @return {boolean} - Returns true if the item needs an update, otherwise false.
+   */
+  _itemNeedsUpdate(item) {
+    throw new Error('Not implemented')
   }
 }
 
@@ -113,15 +239,26 @@ export class NamedCost extends Named {
   constructor(n1) {
     super(n1)
     this.points = 0
+    this.save = false
+    this.itemid = ''
+    this.itemInfo = {}
+    this.fromItem = ''
   }
 }
 
 const _AnimationMixin = {
+  _otf: '',
   _checkotf: '',
   _duringotf: '',
   _passotf: '',
   _failotf: '',
 
+  get otf() {
+    return this._otf
+  },
+  set otf(value) {
+    this._otf = value
+  },
   get checkotf() {
     return this._checkotf
   },
@@ -182,6 +319,93 @@ export class Skill extends Leveled {
     this.type = '' // "DX/E";
     this.relativelevel = '' // "DX+1";
   }
+
+  static get actorSystemKey() {
+    return 'skills'
+  }
+
+  toItemData(fromProgram = '') {
+    const system = this.itemInfo?.system || {}
+    const uniqueId = this._getGGAId({ name: this.name, type: 'skill', generator: fromProgram })
+    const importId = !this.save ? uniqueId : ''
+    const importFrom = this.importFrom || fromProgram
+    return {
+      name: this.name,
+      img: this.itemInfo?.img || this.findDefaultImage(),
+      type: 'skill',
+      system: {
+        ski: {
+          notes: this.notes || '',
+          pageref: this.pageref || '',
+          contains: this.contains || {},
+          uuid: uniqueId,
+          parentuuid: this.parentuuid || '',
+          points: this.points || 0,
+          ['import']: this['import'] || '',
+          level: this.level || 0,
+          relativelevel: this.relativelevel || '',
+          name: this.name,
+          ['type']: this['type'] || '',
+          otf: this.otf || '',
+          checkotf: this.checkotf || '',
+          duringotf: this.duringotf || '',
+          passotf: this.passotf || '',
+          failotf: this.failotf || '',
+        },
+        ads: system.ads || {},
+        skills: system.skills || {},
+        spells: system.spells || {},
+        melee: system.melee || {},
+        ranged: system.ranged || {},
+        bonuses: system.bonuses || '',
+        globalid: system.globalid || '',
+        importid: importId,
+        importFrom: importFrom,
+        fromItem: this.fromItem || '',
+      },
+    }
+  }
+  static fromObject(data, actor) {
+    let skill
+    if (data instanceof Skill) {
+      skill = data
+    } else {
+      skill = new Skill(data.name)
+      skill.notes = data.notes
+      skill.contains = data.contains || {}
+      skill.uuid = data.uuid
+      skill.parentuuid = data.parentuuid
+      skill.points = data.points
+      skill['import'] = data['import']
+      skill.level = data.level
+      skill.relativelevel = data.relativelevel
+      skill['type'] = data['type']
+    }
+    return this._checkComponentInActor(actor, skill)
+  }
+  _itemNeedsUpdate(item) {
+    let result = false
+    if (!item) {
+      result = true
+      console.log(`Foundry Item: ${this.name} does not exist`)
+    } else {
+      const itemData = item.system[item.itemSysKey]
+      result =
+        itemData.notes !== this.notes ||
+        itemData.pageref !== this.pageref ||
+        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
+        itemData.points !== this.points ||
+        itemData.import !== this['import'] ||
+        itemData.relativelevel !== this.relativelevel ||
+        itemData.name !== this.name ||
+        itemData['type'] !== this['type']
+      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+    }
+    return result
+  }
+  findDefaultImage() {
+    return super.findDefaultImage() || 'icons/svg/dice-target.svg'
+  }
 }
 
 export class Spell extends Leveled {
@@ -201,6 +425,115 @@ export class Spell extends Leveled {
     this.difficulty = ''
     this.relativelevel = '' // "IQ+1"
   }
+  static get actorSystemKey() {
+    return 'spells'
+  }
+  toItemData(fromProgram = '') {
+    const system = this.itemInfo?.system || {}
+    const uniqueId = this._getGGAId({ name: this.name, type: 'spell', generator: fromProgram })
+    const importId = !this.save ? uniqueId : ''
+    const importFrom = this.importFrom || fromProgram
+    return {
+      name: this.name,
+      img: this.itemInfo?.img || this.findDefaultImage(),
+      type: 'spell',
+      system: {
+        spl: {
+          notes: this.notes || '',
+          pageref: this.pageref || '',
+          contains: this.contains || {},
+          uuid: uniqueId,
+          parentuuid: this.parentuuid || '',
+          points: this.points || 0,
+          ['import']: this['import'] || '',
+          level: this.level || 0,
+          relativelevel: this.relativelevel || '',
+          name: this.name,
+          ['class']: this['class'] || '',
+          college: this.college || '',
+          cost: this.cost || '',
+          maintain: this.maintain || '',
+          duration: this.duration || '',
+          resist: this.resist || '',
+          casttime: this.casttime || '',
+          difficulty: this.difficulty || '',
+          otf: this.otf || '',
+          checkotf: this.checkotf || '',
+          duringotf: this.duringotf || '',
+          passotf: this.passotf || '',
+          failotf: this.failotf || '',
+        },
+        ads: system.ads || {},
+        skills: system.skills || {},
+        spells: system.spells || {},
+        melee: system.melee || {},
+        ranged: system.ranged || {},
+        bonuses: system.bonuses || '',
+        globalid: system.globalid || '',
+        importid: importId,
+        importFrom: importFrom,
+        fromItem: this.fromItem || '',
+      },
+    }
+  }
+  static fromObject(data, actor) {
+    let spell
+    if (data instanceof Spell) {
+      spell = data
+    } else {
+      spell = new Spell(data.name)
+      spell.notes = data.notes
+      spell.pageref = data.pageref
+      spell.contains = data.contains || {}
+      spell.uuid = data.uuid
+      spell.parentuuid = data.parentuuid
+      spell.points = data.points
+      spell['import'] = data['import'] || ''
+      spell.level = data.level
+      spell.relativelevel = data.relativelevel
+      spell['class'] = data['class']
+      spell.college = data.college
+      spell.cost = data.cost
+      spell.maintain = data.maintain
+      spell.duration = data.duration
+      spell.resist = data.resist
+      spell.casttime = data.casttime
+      spell.difficulty = data.difficulty
+    }
+    return this._checkComponentInActor(actor, spell)
+  }
+
+  _itemNeedsUpdate(item) {
+    let result = false
+    if (!item) {
+      result = true
+      console.log(`Foundry Item: ${this.name} does not exist`)
+    } else {
+      const itemData = item.system[item.itemSysKey]
+      result =
+        itemData.notes !== this.notes ||
+        itemData.pageref !== this.pageref ||
+        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
+        itemData.points !== this.points ||
+        parseInt(itemData['import'] || 0) !== parseInt(this['import'] || 0) ||
+        itemData.level !== this.level ||
+        itemData.relativelevel !== this.relativelevel ||
+        itemData.name !== this.name ||
+        itemData.class !== this.class ||
+        !compareColleges(itemData['college'], this['college']) ||
+        itemData.cost !== this.cost ||
+        itemData.maintain !== this.maintain ||
+        itemData.duration !== this.duration ||
+        itemData.resist !== this.resist ||
+        itemData.casttime !== this.casttime ||
+        itemData.difficulty !== this.difficulty
+      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+    }
+    return result
+  }
+  findDefaultImage() {
+    return super.findDefaultImage() || 'icons/svg/daze.svg'
+  }
 }
 
 export class Advantage extends NamedCost {
@@ -211,6 +544,91 @@ export class Advantage extends NamedCost {
     super(n1)
     this.userdesc = ''
     this.note = '' // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
+  }
+
+  static get actorSystemKey() {
+    return 'ads'
+  }
+
+  /**
+   * Create new Feature payload using Advantage's data.
+   */
+  toItemData(fromProgram = '') {
+    const system = this.itemInfo?.system || {}
+    const uniqueId = this._getGGAId({ name: this.name, type: 'feature', generator: fromProgram })
+    const importId = !this.save ? uniqueId : ''
+    const importFrom = this.importFrom || fromProgram
+    return {
+      name: this.name,
+      img: this.itemInfo?.img || this.findDefaultImage(),
+      type: 'feature',
+      system: {
+        fea: {
+          notes: this.notes || '',
+          pageref: this.pageref || '',
+          contains: this.contains || {},
+          uuid: uniqueId,
+          parentuuid: this.parentuuid || '',
+          points: this.points || 0,
+          userdesc: this.userdesc || '',
+          note: this.note || '',
+          name: this.name,
+          checkotf: this.checkotf || '',
+          duringotf: this.duringotf || '',
+          passotf: this.passotf || '',
+          failotf: this.failotf || '',
+        },
+        ads: system.ads || {},
+        skills: system.skills || {},
+        spells: system.spells || {},
+        melee: system.melee || {},
+        ranged: system.ranged || {},
+        bonuses: system.bonuses || '',
+        globalid: system.globalid || '',
+        importid: importId,
+        importFrom: importFrom,
+        fromItem: this.fromItem || '',
+      },
+    }
+  }
+  static fromObject(data, actor) {
+    let adv
+    if (data instanceof Advantage) {
+      adv = data
+    } else {
+      adv = new Advantage(data.name)
+      adv.notes = data.notes
+      adv.pageref = data.pageref
+      adv.contains = data.contains || {}
+      adv.uuid = data.uuid
+      adv.parentuuid = data.parentuuid
+      adv.points = data.points
+      adv.userdesc = data.userdesc
+      adv.note = data.note
+    }
+    return this._checkComponentInActor(actor, adv)
+  }
+  _itemNeedsUpdate(item) {
+    let result = false
+    if (!item) {
+      result = true
+      console.log(`Foundry Item: ${this.name} does not exist`)
+    } else {
+      const itemData = item.system[item.itemSysKey]
+      result =
+        itemData.notes !== this.notes ||
+        (itemData.pageref || '') !== (this.pageref || '') ||
+        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
+        itemData.points !== this.points ||
+        (itemData.userdesc || '') !== (this.userdesc || '') ||
+        itemData.note !== this.note ||
+        itemData.name !== this.name
+      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+    }
+    return result
+  }
+  findDefaultImage() {
+    return super.findDefaultImage() || 'icons/svg/book.svg'
   }
 }
 
@@ -436,9 +854,10 @@ export class Equipment extends Named {
         bonuses: system.bonuses || '',
         equipped: this.equipped,
         carried: this.carried,
-        globalid: this.globalid || '',
+        globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
+        fromItem: this.fromItem || '',
       },
     }
   }
@@ -466,17 +885,37 @@ export class Equipment extends Named {
       equip.notes = data.notes
       equip.pageref = data.pageref
       equip.ignoreImportQty = data.ignoreImportQty
+      equip.contains = data.contains || {}
     }
-    // This equipment already exists in Actor?
-    const existingEquipmentKey = actor._findEqtkeyForId('uuid', equip.uuid)
-    if (!!existingEquipmentKey) {
-      const existingEquipment = foundry.utils.getProperty(actor, existingEquipmentKey)
-      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-        equip.itemid = existingEquipment.itemid || ''
-      }
-      equip.itemInfo = existingEquipment.itemInfo || {}
+    return this._checkComponentInActor(actor, equip)
+  }
+  _itemNeedsUpdate(item) {
+    let result = false
+    if (!item) {
+      result = true
+      console.log(`Foundry Item: ${this.name} does not exist`)
+    } else {
+      const itemData = item.system[item.itemSysKey]
+      result =
+        itemData.notes !== this.notes ||
+        itemData.pageref !== this.pageref ||
+        itemData.cost !== this.cost ||
+        itemData.weight !== this.weight ||
+        itemData.techlevel !== this.techlevel ||
+        itemData.categories !== this.categories ||
+        itemData.legalityclass !== this.legalityclass ||
+        itemData.costsum !== this.costsum ||
+        itemData.maxuses !== this.maxuses ||
+        itemData.uuid !== this.uuid ||
+        itemData.parentuuid !== this.parentuuid ||
+        itemData.location !== this.location ||
+        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains))
+      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
-    return equip
+    return result
+  }
+  findDefaultImage() {
+    return super.findDefaultImage() || 'icons/svg/item-bag.svg'
   }
 }
 

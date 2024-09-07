@@ -839,8 +839,8 @@
   "GURPS.settingHintRemoveUnequipped": "Si coché, les noms des attaques de Mêlée et à Distance seront comparés à la liste des équipements portés, et si une correspondance est trouvée, l'attaque sera seulement listée si l'équipement est équipé",
   "GURPS.settingImportBrowserImporter": "Utiliser la fenêtre d'import pour hôte distant",
   "GURPS.settingImportHintBrowserImporter": "Cocher ceci si vous n'hébergez pas votre instance de Foundry localement (vous hébergez à distance, par ex. Forge). Cette fenêtre d'import peut mémoriser l'emplacement de vos fichiers d'import pendant la session (cela signifie que si vous importez de nouveau le personnage dans la même session, la fenêtre ne se rouvrira pas).",
-  "GURPS.settingUseFoundryItems": "Utiliser les Objets Foundry pour l'Equipement",
-  "GURPS.settingHintUseFoundryItems": "Si coché, le système créera des Objets Foundry pour l'équipement de l'acteur lors de l'importation des feuilles de personnage. Lorsque vous importez la feuille de personnage de GCA/GCS pour la première fois, le système créera chaque objet en essayant de préserver les informations d'équipement actuelles sur la feuille de personnage, y compris le nom, l'image, le compte, les utilisations et les notes. Cela peut être une opération très longue, surtout pour les feuilles GCS.",
+  "GURPS.settingUseFoundryItems": "Utiliser les Objets Foundry pour les Données Joueurs",
+  "GURPS.settingHintUseFoundryItems": "Si coché, le système créera des Objets Foundry pour l'inventaire, les traits, les compétences et les sorts des joueurs lors de l'importation des feuilles de personnage. Lorsque vous importez la feuille de personnage de GCA/GCS pour la première fois, le système créera chaque objet en essayant de préserver les informations actuelles des données des joueurs sur la feuille de personnage, y compris le nom, l'image, le compte, les utilisations et les notes. Cela peut être une opération très longue, surtout pour les feuilles GCS.",
   "GURPS.settingNoEditAllowed": "Pas d'édition d'équipement autorisée",
   "GURPS.settingNoEquipAllowedHint": "Attention: Vous essayez d'éditer un équipement qui n'est pas lié à un objet Foundry lorsque les paramètres 'Utiliser les Objets Foundry pour l'Equipement' sont actifs. Veuillez réimporter la feuille de personnage pour créer l'objet Foundry pour cet acteur.",
   "GURPS.settingNoItemAllowedHint": "Attention: Vous essayez d'éditer un équipement importé lorsque les paramètres 'Utiliser les Objets Foundry pour l'Equipement' sont désactivés. Veuillez réimporter la feuille de personnage pour recréer l'équipement pour cet acteur.",
@@ -1025,6 +1025,8 @@
   "GURPS.showQuestion": "Montrer?",
   "GURPS.skill": "Compétence",
   "GURPS.skillLevel": "Niveau Compétence",
+  "GURPS.skillType": "Type Compétence",
+  "GURPS.skillRelativeLevel": "Niveau Compétence Relatif",
   "GURPS.skillsTab": "Compétences",
   "GURPS.spell": "Sort",
   "GURPS.spellsTab": "Sorts",
@@ -1110,5 +1112,8 @@
   "GURPS.CR12": "PC: 12 (Résiste Très Souvent)",
   "GURPS.CR15": "PC: 15 (Résiste Quasi-Systématiquement)",
   "GURPS.modifiersBlindAttack": "-10 pour toucher (Aveugle)",
-  "GURPS.modifiersBlindDefend": "-4 aux Défenses Actives (Aveugle)"
+  "GURPS.modifiersBlindDefend": "-4 aux Défenses Actives (Aveugle)",
+  "GURPS.parentItemTooltip": "De {type}: {name}",
+  "GURPS.cannotDropItemAlreadyExists": "Vous avez déjà cet objet.",
+  "GURPS.droppingItemNotification": "{actorName} reçoit {itemName}"
 }

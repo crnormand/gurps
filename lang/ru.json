@@ -447,5 +447,8 @@
   "GURPS.settingNoItemAllowedHint": "Предупреждение: Вы пытаетесь отредактировать импортированный предмет, когда активированы настройки 'Использовать Foundry Items для снаряжения'. Пожалуйста, перимпортируйте лист персонажа, чтобы создать снаряжение для этого актёра.",
   "GURPS.settingShowDebugInfo": "Показать отладочную информацию",
   "GURPS.settingHintShowDebugInfo": "Для диалогов документов (Актёры, Предметы и т.д.) показывать значок отладки в заголовке окна. При нажатии он отобразит данные документа в диалоге.",
-  "GURPS.settingShowDebugTooltip": "Показать отладочную информацию"
+  "GURPS.settingShowDebugTooltip": "Показать отладочную информацию",
+  "GURPS.parentItemTooltip": "<div>Из {type}:<br>{name}</div>",
+  "GURPS.cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",
+  "GURPS.droppingItemNotification": "{actorName} получил {itemName}"
 }

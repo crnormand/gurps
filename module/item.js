@@ -17,15 +17,48 @@ export class GurpsItem extends Item {
     await this.update(data, ctx)
   }
 
-  /*
-   * Get Item's exclusive data not found in Equipment
+  /**
+   * Find Actor Component Key for this Item Type
    *
-   * @returns {object}
+   * @returns {string} actor.system.<key>
+   */
+  get actorComponentKey() {
+    const keys = {
+      equipment: 'equipment',
+      feature: 'ads',
+      skill: 'skills',
+      spell: 'spells',
+    }
+    const sysKey = keys[this.type]
+    if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
+    return sysKey
+  }
+
+  /**
+   * Find Item System Key for this Item Type
+   *
+   * @return {string} item.system.<key>
+   */
+  get itemSysKey() {
+    const keys = {
+      equipment: 'eqt',
+      feature: 'fea',
+      skill: 'ski',
+      spell: 'spl',
+    }
+    const sysKey = keys[this.type]
+    if (!sysKey) throw new Error(`No item system key found for ${this.type}`)
+    return sysKey
+  }
+
+  /**
+   * Backup Item's data in Actor Component
+   *
+   * @return {object}
    */
   getItemInfo() {
     let data = foundry.utils.duplicate(this)
     let itemSystem = data.system
-    delete itemSystem.eqt
     return {
       id: this._id,
       img: this.img,

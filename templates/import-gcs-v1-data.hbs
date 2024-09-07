@@ -1,0 +1,14 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+  <p class="notes">{{title}}</p>
+  <div class="form-group">
+    <label for="data">{{source}}</label>
+    <input type="file" accept=".xml,.txt,.gcs" name="data" />
+  </div>
+  <p class="notes"><br />{{describeAction}}</p>
+  <ul>
+    <li>{{overwriteAction}}</li>
+    <li>{{itemAction}}</li>
+  </ul>
+  <br>
+  <p><span class='fas fa-exclamation-triangle' ></span>&nbsp;<b>{{note}}</b></p>
+</form>

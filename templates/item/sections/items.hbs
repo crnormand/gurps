@@ -1,0 +1,73 @@
+<div class="gurps-2col no-gap">
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.quantity"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="quantity"
+        class="digits-only"
+        type="number"
+        value="{{system.eqt.count}}"
+        name="system.eqt.count"
+      />
+      <span><i class="fa fa-plus-minus"></i></span>
+    </div>
+    <label>{{i18n "GURPS.equipmentCost"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="cost"
+        type="number"
+        class="decimal-digits-only"
+        value="{{system.eqt.cost}}"
+        name="system.eqt.cost"
+      />
+      <span>$</span>
+    </div>
+    <label>{{i18n "GURPS.weight"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="weight"
+        type="number"
+        class="decimal-digits-only"
+        value="{{system.eqt.weight}}"
+        name="system.eqt.weight"
+      />
+      <span><i class="fas fa-weight-hanging"></i></span>
+    </div>
+  </div>
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.equipmentUses"}}</label>
+    <div class="icon-prefix">
+      <input id="uses" type="number" class="digits-only" value="{{system.eqt.uses}}" name="system.eqt.uses" />
+      <span><i class="fas fa-expand"></i></span>
+    </div>
+    <label>{{i18n "GURPS.equipmentMaxUses"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="maxuses"
+        type="number"
+        class="digits-only"
+        value="{{system.eqt.maxuses}}"
+        name="system.eqt.maxuses"
+      />
+      <span><i class="fa fa-arrows-up-to-line"></i></span>
+    </div>
+    <label>{{i18n "GURPS.equipmentTechlevel"}}</label>
+    <div class="icon-prefix">
+      <input id="techlevel" type="text" value="{{system.eqt.techlevel}}" name="system.eqt.techlevel" />
+      <span>{{i18n "GURPS.TL"}}</span>
+    </div>
+    <label>{{i18n "GURPS.pdfPageReference"}}</label>
+    <div class="icon-prefix">
+      <input id="pageref" type="text" value="{{system.eqt.pageref}}" name="system.eqt.pageref" />
+      <span><i class="fa fa-bookmark"></i></span>
+    </div>
+  </div>
+</div>
+<div class="label-value-row right-bias">
+  <div></div>
+  <div></div>
+  <label>{{i18n "GURPS.notes"}}</label>
+  <div>
+    <textarea class="notes" id="item-notes" rows="4" name="system.eqt.notes">{{system.eqt.notes}}</textarea>
+  </div>
+</div>
