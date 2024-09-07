@@ -346,6 +346,9 @@ export default function addChatHooks() {
     Hooks.on('renderChatMessage', (_app, html, _msg) => {
       // this is a fucking hack
       let wrapper = html.find('.collapsible-wrapper')
+      if (GURPS.lastTargetedRoll && !GURPS.lastTargetedRoll.msgId) {
+        GURPS.lastTargetedRoll.msgId = _msg.message._id
+      }
       if (wrapper.length > 0) {
         //console.log($(wrapper).html())
         let input = $(wrapper).find('input.toggle')[0]

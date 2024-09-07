@@ -43,6 +43,7 @@ import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
+import { GGADebugger } from '../utils/debugger.js'
 
 /**
  * /dded to color the rollable parts of the character sheet.
@@ -148,9 +149,12 @@ if (!globalThis.GURPS) {
    * This object literal holds the results of the last targeted roll by an actor.
    * The property key is the actor's ID. The value is literally the chatdata from
    * the doRoll() function, which has close to anything anyone would want.
+   * The same logic applies to actor injuries, but using the Actor Id and Message Id
    */
   GURPS.lastTargetedRoll = {}
   GURPS.lastTargetedRolls = {} // mapped by both actor and token id
+  GURPS.lastInjuryRoll = {}
+  GURPS.lastInjuryRolls = {} // mapped by actor and message id
 
   GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
     let tmp = { ...chatdata }
@@ -1316,6 +1320,26 @@ if (!globalThis.GURPS) {
   GURPS.findAttack = findAttack
 
   /**
+   * Find lastTargetedRoll using MessageId.
+   *
+   * This is intended to use in external modules outside GGA
+   * using Foundry's Message Hooks.
+   *
+   * Example in external module using dice so nice:
+   *  Hooks.on("diceSoNiceRollComplete", (msgId) => {
+   *    if (game.system === 'gurps') {
+   *      const lastTargetedRoll = GURPS.findTargetedRoll(msdId)
+   *      if lastTargetedRoll?.failure console.log('roll fail!')
+   *    }
+   *  })
+   */
+  function findTargetedRoll(messageId) {
+    const rolls = Object.values(GURPS.lastTargetedRolls).filter(roll => roll.msgId === messageId)
+    return !!rolls ? rolls[0] : null
+  }
+  GURPS.findTargetedRoll = findTargetedRoll
+
+  /**
    * The user clicked on a field that would allow a dice roll. Use the element
    * information to try to determine what type of roll.
    * @param {JQuery.MouseEventBase} event
@@ -1914,6 +1938,9 @@ if (!globalThis.GURPS) {
     GurpsActiveEffect.init()
     GURPSSpeedProvider.init()
 
+    // Add Debugger info
+    GGADebugger.init()
+
     // Modifier Bucket must be defined after hit locations
     GURPS.ModifierBucket = new ModifierBucket()
     GURPS.ModifierBucket.render(true)
@@ -2188,7 +2215,7 @@ if (!globalThis.GURPS) {
     // let quiet = false
     if (!mv) {
       mv = '0.0.1'
-      quiet = true
+      // quiet = true
     }
     // @ts-ignore
     console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + mv)
