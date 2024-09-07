@@ -59,9 +59,9 @@ export class ActorImporter {
 
   async _openNonLocallyHostedImportDialog() {
     try {
-      const file = await SmartImporter.getFileForActor(this)
-      const res = await this.importActorFromExternalProgram(await file.text(), file.name)
-      if (res) SmartImporter.setFileForActor(this, file)
+      const file = await SmartImporter.getFileForActor(this.actor)
+      const res = await this.importActorFromExternalProgram(await file.text(), file.name, file.path)
+      if (res) SmartImporter.setFileForActor(this.actor, file)
     } catch (e) {
       ui.notifications?.error(e)
       throw e
@@ -1393,7 +1393,6 @@ export class ActorImporter {
       'system.basicspeed': data.basicspeed,
       'system.thrust': data.thrust,
       'system.swing': data.swing,
-      'system.currentmove': data.currentmove,
       'system.frightcheck': data.frightcheck,
       'system.hearing': data.hearing,
       'system.tastesmell': data.tastesmell,

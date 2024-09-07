@@ -839,6 +839,9 @@
   "GURPS.settingHintRemoveUnequipped": "Si coché, les noms des attaques de Mêlée et à Distance seront comparés à la liste des équipements portés, et si une correspondance est trouvée, l'attaque sera seulement listée si l'équipement est équipé",
   "GURPS.settingImportBrowserImporter": "Utiliser la fenêtre d'import pour hôte distant",
   "GURPS.settingImportHintBrowserImporter": "Cocher ceci si vous n'hébergez pas votre instance de Foundry localement (vous hébergez à distance, par ex. Forge). Cette fenêtre d'import peut mémoriser l'emplacement de vos fichiers d'import pendant la session (cela signifie que si vous importez de nouveau le personnage dans la même session, la fenêtre ne se rouvrira pas).",
+  "GURPS.settingShowDebugInfo": "Montrer les infos de débogage",
+  "GURPS.settingHintShowDebugInfo": "Pour les dialogues de document (Acteurs, Objets, etc.), montre l'icône de débogage sur le titre de la fenêtre. Quand pressé, cela affichera les données du document dans un dialogue.",
+  "GURPS.settingShowDebugTooltip": "Montrer les infos de débogage",
 
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Coloration Feuille Personnage",
