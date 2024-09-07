@@ -1,8 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
 Release 0.17.11
+
 - Correctly calculate max HP loss when using High Tech Optional Wounding Rules (HT p.162).
-- Use ruler._addWaypoint instead of modifying waypoints directly.
+- Use ruler.\_addWaypoint instead of modifying waypoints directly.
+- Allow Foundry font size to be more consistently applied to character sheets.
 - Correctly parse skill names with a hyphen (such as "Fast-Talk") (user chrismaille).
 - More global objects for external modules (added GURPS.lastInjuryRoll(s); modified GURPS.lastTargetRoll to include Chat message ID) (user chrismaille).
 - Correctly remember and display the file for the Smart Importer (user chrismaille).
