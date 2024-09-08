@@ -10,6 +10,7 @@ Release 0.17.11
 - Correctly remember and display the file for the Smart Importer (user chrismaille).
 - Show debug info on document dialogs (user cchrismaille).
 - Add more Resource Tracker slots. Its now effectively unlimited.
+- Remove warning about accessing token.effect
 
 Release 0.17.10 9/1/2024
 
