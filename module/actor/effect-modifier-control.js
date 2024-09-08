@@ -7,7 +7,7 @@ export class EffectModifierControl {
   static EffectModName = 'GURPSEffectsMod'
 
   constructor() {
-    this._showPopup = false
+    this._showPopup = true
     this.token = null
 
     Hooks.once('init', this._registerSetting.bind(this))
@@ -20,8 +20,8 @@ export class EffectModifierControl {
     Hooks.once('ready', () => {
       if (this.shouldUseEffectModifierPopup()) {
         this._ui = new EffectModifierPopout(null, this)
+        this.showPopup = true
         this.refresh()
-        this.togglePopup()
       }
     })
     Hooks.on('closeEffectModifierPopout', () => (this.showPopup = false))
@@ -39,8 +39,10 @@ export class EffectModifierControl {
     this._showPopup = !this._showPopup
 
     // show the token control as active
-    let toggle = $.find('[data-control=token] ol > li[data-tool=GURPSEffectsMod]')
-    toggle[0]?.classList.toggle('active')
+    let toggle = $.find(`[data-tool=${EffectModifierControl.EffectModName}]`)
+    if (this._showPopup) toggle[0]?.classList.add('active')
+    else toggle[0]?.classList.remove('active')
+
     this.toggleEffectModifierPopup(closeOptions)
   }
 
@@ -69,7 +71,8 @@ export class EffectModifierControl {
           active: this.showPopup,
           visible: true,
           onClick: value => {
-            self.togglePopup()
+            console.log(value)
+            self.showPopup = value
           },
         })
       }

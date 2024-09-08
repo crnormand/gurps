@@ -6,10 +6,11 @@
       <div><a id='template-add' class='effect-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
       </div>
       {{#each effects}}
+        {{debug this}}
         <input
           name='effect-name'
           class='gcs-input clickable effect-control'
-          data-effect-id='{{id}}'
+          data-effect-id='{{@index}}'
           data-action='edit'
           type='text'
           readonly
@@ -19,7 +20,7 @@
         <div class='vertical-center'>
           <a
             class='effect-control'
-            data-effect-id='{{id}}'
+            data-effect-id='{{@index}}'
             data-action='delete'
             title='{{i18n "GURPS.delete"}}'
             style='padding: 6px 20px 0 10px;'

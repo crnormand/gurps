@@ -40,6 +40,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   usagematches(line) {
     return line.match(/^[\/\?](st|status)$/i)
   }
+
   usage() {
     return i18n('GURPS.chatHelpStatus')
   }
@@ -51,9 +52,9 @@ export default class StatusChatProcessor extends ChatProcessor {
     if (!this.match) throw new Error('match does not exist! Did you call ChatProcessor.matches()?')
 
     let commandText = this.match.groups?.command
-    // @ts-ignore
+
     let theCommand = Command[commandText]
-    if (theCommand == Command.list) return this.priv(this.list())
+    if (theCommand === Command.list) return this.priv(this.list())
 
     let self = this.match.groups?.target /* this.match[4] */ === '@self'
     let tokenName = !self && !!this.match.groups?.target ? this.match.groups.target.replace(/^:(.*)$/, '$1') : null
@@ -65,7 +66,7 @@ export default class StatusChatProcessor extends ChatProcessor {
       return
     }
 
-    if (theCommand == Command.clear) return await this.clear(tokens)
+    if (theCommand === Command.clear) return await this.clear(tokens)
 
     let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
     let effect = !!effectText ? this.findEffect(effectText) : null
