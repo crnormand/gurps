@@ -244,7 +244,8 @@ class ActiveEffectDataConfig extends FormApplication {
   async _updateObject(event, formData) {
     this.object = foundry.utils.mergeObject(this.object, formData)
 
-    const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)    
+    const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
+    activeEffectsData[this._index] = this.object
     game.settings.set(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
   }
 }
