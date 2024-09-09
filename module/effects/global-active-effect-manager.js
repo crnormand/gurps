@@ -1,6 +1,5 @@
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
-import GurpsActiveEffectConfig from './active-effect-config.js'
 
 /**
  * This class is responsible for showing the Active Effects Manager control button on the UI.
@@ -177,7 +176,7 @@ class ActiveEffectManagerPopout extends Application {
 
   _editEffect(effect, index) {
     console.log('Edit Effect:', effect)
-    new ActiveEffectDataConfig(effect, index).render(true, { parentWindow: this })
+    new ActiveEffectDataConfig(effect, index, this).render(true, { parentWindow: this })
   }
 
   /** @override */
@@ -207,9 +206,10 @@ class ActiveEffectManagerPopout extends Application {
 }
 */
 class ActiveEffectDataConfig extends FormApplication {
-  constructor(effect, index, options = {}) {
+  constructor(effect, index, callback, options = {}) {
     super(effect, options)
     this._index = index
+    this._callback = callback
   }
 
   /** @override */
@@ -247,5 +247,12 @@ class ActiveEffectDataConfig extends FormApplication {
     const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
     activeEffectsData[this._index] = this.object
     game.settings.set(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
+  }
+
+  /** @override */
+  async close(options) {
+    this._callback.render(true)
+
+    super.close(options)
   }
 }
