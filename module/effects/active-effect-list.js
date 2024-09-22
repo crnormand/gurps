@@ -24,6 +24,7 @@ export default class GurpsActiveEffectListSheet extends Application {
     const sheetData = super.getData()
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
     for (const effect of sheetData.effects) {
+      console.log("effect", effect)
     }
     return sheetData
   }

@@ -745,7 +745,8 @@ export class CompositeDamageCalculator {
   }
 
   get locationMaxHP() {
-    return this.isCrippleableLocation ? this.cripplingThreshold + 1 : Infinity
+    const adjustHp = [hitlocation.EXTREMITY, hitlocation.LIMB].includes(this.hitLocationRole) ? 1 : 0
+    return this.isCrippleableLocation ? this.cripplingThreshold + adjustHp : Infinity
   }
 
   get locationMaxHPAsInt() {
@@ -1128,7 +1129,7 @@ class DamageCalculator {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
       } else if (
         [hitlocation.GROIN, hitlocation.CHEST].includes(this._parent.hitLocationRole) &&
-        this._useBodyHits &&
+        this._parent._useBodyHits &&
         (['imp', ...piercing].includes(this._parent.damageType) || this._isTightBeamBurning)
       ) {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))

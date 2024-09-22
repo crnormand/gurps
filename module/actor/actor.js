@@ -821,7 +821,7 @@ export class GurpsActor extends Actor {
    */
   async replaceManeuver(maneuverText) {
     let tokens = this._findTokens()
-    if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
+    if (tokens && tokens.length) for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   async replacePosture(changeData) {
@@ -838,10 +838,10 @@ export class GurpsActor extends Actor {
    */
   _findTokens() {
     if (this.isToken && this.token?.layer) {
-      let token = /** @type {GurpsToken} */ (this.token.object)
-      return [token]
+      let token = (this.token.object)
+      return token ? [token] : null
     }
-    return this.getActiveTokens().map(it => /** @type {GurpsToken} */ (it))
+    return this.getActiveTokens()
   }
 
   /**

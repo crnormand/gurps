@@ -1,17 +1,23 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
 Release 0.17.11
-- Corectly parse skill names with a hyphen (such as "Fast-Talk") (user chrismaille).
+
+- Correctly calculate max HP loss when using High Tech Optional Wounding Rules (HT p.162).
+- Use ruler.\_addWaypoint instead of modifying waypoints directly (user caewok).
+- Allow Foundry font size to be more consistently applied to character sheets.
+- Correctly parse skill names with a hyphen (such as "Fast-Talk") (user chrismaille).
 - More global objects for external modules (added GURPS.lastInjuryRoll(s); modified GURPS.lastTargetRoll to include Chat message ID) (user chrismaille).
-- Correctly remember ande display the file for the Smart Importer (user chrismaille).
+- Correctly remember and display the file for the Smart Importer (user chrismaille).
 - Show debug info on document dialogs (user cchrismaille).
+- Add more Resource Tracker slots. Its now effectively unlimited.
+- Remove warning about accessing token.effect
 
 Release 0.17.10 9/1/2024
 
 - Change Posture effect "label" to "name" to properly display in dropdown.
 - Updated Tabbed sheet to make it more compact and usable.
 - Prevent multiple Postures from being selected.
-- Support for High Tech hit locations -- if Torso is hit, there is a 1-in-6 chance of hitting the Vitals instead.  (Thanks, GitHub user NoOrangeSkitty!)
+- Support for High Tech hit locations -- if Torso is hit, there is a 1-in-6 chance of hitting the Vitals instead. (Thanks, GitHub user NoOrangeSkitty!)
 
 Release 0.17.9 8/17/2024
 

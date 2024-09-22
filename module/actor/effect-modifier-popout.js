@@ -107,6 +107,8 @@ export class EffectModifierPopout extends Application {
 
   /** @override */
   activateListeners(html) {
+    super.activateListeners(html)
+
     GurpsWiring.hookupGurps(html)
 
     html.find('a.gurpslink').on('contextmenu', ev => this.onRightClick(ev))
