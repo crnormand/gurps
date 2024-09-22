@@ -114,6 +114,13 @@ export class GurpsActor extends Actor {
     let attributes = this.system.attributes
     if (foundry.utils.getType(attributes.ST.import) === 'string')
       this.system.attributes.ST.import = parseInt(attributes.ST.import)
+
+    this.system.hitlocationNames = this.hitLocationByWhere
+    for (const location in this.system.hitlocationNames) {
+      if (typeof this.system.hitlocationNames[location].import === 'string') {
+        this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
+      }
+    }
   }
 
   prepareEmbeddedEntities() {
@@ -563,7 +570,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -590,9 +597,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -646,9 +653,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -838,7 +845,7 @@ export class GurpsActor extends Actor {
    */
   _findTokens() {
     if (this.isToken && this.token?.layer) {
-      let token = (this.token.object)
+      let token = this.token.object
       return token ? [token] : null
     }
     return this.getActiveTokens()
@@ -1734,6 +1741,8 @@ export class GurpsActor extends Actor {
     // Convert this.system.hitlocations into an object keyed by location.where.
     const byWhere = {}
     for (const [_key, value] of Object.entries(this.system.hitlocations)) {
+      // Copilot: replace any spaces in the where string with underscores
+
       byWhere[`${value.where}`] = value
     }
     return byWhere

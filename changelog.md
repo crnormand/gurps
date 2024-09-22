@@ -1,5 +1,7 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.12
+
 Release 0.17.11 9/22/2024
 
 - Correctly calculate max HP loss when using High Tech Optional Wounding Rules (HT p.162).
