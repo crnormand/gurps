@@ -93,22 +93,7 @@ export class GlobalActiveEffectControl {
   }
 }
 
-/*
-// Registering a setting
-game.settings.register('myModule', 'customData', {
-  name: 'Custom Data',
-  scope: 'world', // or 'client'
-  config: false,
-  type: Object,
-  default: {}
-});
 
-// Setting a value
-game.settings.set('myModule', 'customData', { key: 'value' });
-
-// Getting a value
-const customData = game.settings.get('myModule', 'customData');
-*/
 class ActiveEffectManagerPopout extends Application {
   constructor(callback, options = {}) {
     super(options)
