@@ -563,7 +563,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -590,9 +590,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -646,9 +646,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _calculateRangedRanges() {
@@ -1725,6 +1725,18 @@ export class GurpsActor extends Actor {
       myhitlocations.push(entry)
     }
     return myhitlocations
+  }
+
+  /**
+   * @returns an object where each property is a hitlocation, keyed by location.where.
+   */
+  get hitLocationByWhere() {
+    // Convert this.system.hitlocations into an object keyed by location.where.
+    const byWhere = {}
+    for (const [_key, value] of Object.entries(this.system.hitlocations)) {
+      byWhere[`${value.where}`] = value
+    }
+    return byWhere
   }
 
   /**

@@ -19,10 +19,8 @@
     <div class='form-group'>
       <label>Icon Tint Color</label>
       <div class='form-fields'>
-        <color-picker name='tint' value='{{object.tint}}' placeholder='#ffffff'><input
-            type='text'
-            placeholder='#ffffff'
-          /><input type='color' /></color-picker>
+        <color-picker name='tint' value='{{object.tint}}' placeholder='#ffffff'><input type='text'
+            placeholder='#ffffff' /><input type='color' /></color-picker>
       </div>
     </div>
 
@@ -93,29 +91,29 @@
     </header>
     <ol class='changes-list'>
       {{#each system.changes as |change i|}}
-        <li class='effect-change flexrow' data-index='{{i}}'>
-          <div class='key'>
-            <select name='changes.{{i}}.key'>
-              {{!selectOptions ../changes selected=change.key localize=true}}
-            </select>
-          </div>
-          <div class='mode'>
-            <select name='changes.{{i}}.mode' data-dtype='Number'>
-              {{!selectOptions ../modes selected=change.mode}}
-            </select>
-          </div>
-          <div class='value'>
-            <input type='text' name='changes.{{i}}.value' value='{{change.value}}' />
-          </div>
-          <div class='effect-controls'>
-            <a class='effect-control' data-action='delete'><i class='fas fa-trash'></i></a>
-          </div>
-        </li>
+      <li class='effect-change flexrow' data-index='{{i}}'>
+        <div class='key'>
+          <select name='changes.{{i}}.key'>
+            {{!selectOptions ../changes selected=change.key localize=true}}
+          </select>
+        </div>
+        <div class='mode'>
+          <select name='changes.{{i}}.mode' data-dtype='Number'>
+            {{!selectOptions ../modes selected=change.mode}}
+          </select>
+        </div>
+        <div class='value'>
+          <input type='text' name='changes.{{i}}.value' value='{{change.value}}' />
+        </div>
+        <div class='effect-controls'>
+          <a class='effect-control' data-action='delete'><i class='fas fa-trash'></i></a>
+        </div>
+      </li>
       {{/each}}
     </ol>
   </section>
 
   <footer class='sheet-footer'>
-    <button type='submit'><i class='fas fa-save'></i> {{i18n submitText}}</button>
+    <button id='submit-button' type='submit'><i class='fas fa-save'></i>{{i18n submitText 'Submit'}}</button>
   </footer>
 </form>

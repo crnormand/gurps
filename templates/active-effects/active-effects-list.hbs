@@ -1,34 +1,27 @@
 <form class='{{cssClass}}' autocomplete='off'>
   <div class='active-effects-list' style='position: relative;'>
-    <div class='gga-effects-list table'>
+    <div id='gga-effects-data-list' class='gga-effects-list table'>
       <div class='label'>{{i18n 'GURPS.effectsEffect'}}</div>
       <div class='label'>?</div>
       <div><a id='template-add' class='effect-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
       </div>
       {{#each effects}}
-        {{debug this}}
-        <input
-          name='effect-name'
-          class='gcs-input clickable effect-control'
-          data-effect-id='{{@index}}'
-          data-action='edit'
-          type='text'
-          readonly
-          value='{{name}}'
-        />
-        <input type='checkbox' name='disabled' value='{{disabled}}' {{checked disabled}} />
-        <div class='vertical-center'>
-          <a
-            class='effect-control'
-            data-effect-id='{{@index}}'
-            data-action='delete'
-            title='{{i18n "GURPS.delete"}}'
-            style='padding: 6px 20px 0 10px;'
-          >
-            <i class='fas fa-trash'></i>
-          </a>
-        </div>
+      <input name='effect-name' class='gcs-input clickable effect-control' data-effect-id='{{@index}}'
+        data-action='edit' type='text' readonly value='{{name}}' />
+      <input type='checkbox' data-effect-id='{{@index}}' name='selected' />
+      <div class='vertical-center'>
+        <a class='effect-control' data-effect-id='{{@index}}' data-action='delete' title='{{i18n "GURPS.delete"}}'
+          style='padding: 6px 20px 0 10px;'>
+          <i class='fas fa-trash'></i>
+        </a>
+      </div>
       {{/each}}
     </div>
+
+    <footer class='sheet-footer'>
+      <button type='submit' class='effect-control' data-action='apply'><i class='fas fa-save'></i>{{i18n submitText
+        'Apply to Selected Tokens'}}</button>
+    </footer>
+
   </div>
 </form>

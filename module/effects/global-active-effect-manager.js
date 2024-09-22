@@ -113,6 +113,7 @@ class ActiveEffectManagerPopout extends Application {
   constructor(callback, options = {}) {
     super(options)
     this._callback = callback
+    this._checkboxes = []
   }
 
   /** @override */
@@ -132,6 +133,7 @@ class ActiveEffectManagerPopout extends Application {
 
   getData(options) {
     const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
+
     return foundry.utils.mergeObject(super.getData(options), {
       effects: activeEffectsData,
     })
@@ -141,21 +143,25 @@ class ActiveEffectManagerPopout extends Application {
     super.activateListeners(html)
 
     html.find('.effect-control').on('click', this._onEffectControl.bind(this))
+    this._checkboxes = html.find('#gga-effects-data-list input[type=checkbox]')
   }
 
   async _onEffectControl(event) {
     event.preventDefault()
-    const a = event.currentTarget
-    const index = parseInt(a.dataset.effectId)
+    const target = event.currentTarget
+    const index = parseInt(target.dataset.effectId)
     let activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
 
-    switch (a.dataset.action) {
+    let newEffect = {
+      name: i18n('GURPS.effectNew', 'New Effect'),
+      img: 'icons/svg/aura.svg',
+      disabled: true,
+    }
+
+    const indexes = this.getAllCheckedIndexes(target)
+
+    switch (target.dataset.action) {
       case 'create':
-        let newEffect = {
-          name: i18n('GURPS.effectNew', 'New Effect'),
-          img: 'icons/svg/aura.svg',
-          disabled: true,
-        }
         activeEffectsData.push(newEffect)
         this._saveActiveEffects(activeEffectsData)
         return this.render(true)
@@ -167,7 +173,20 @@ class ActiveEffectManagerPopout extends Application {
 
       case 'edit':
         return this._editEffect(activeEffectsData[index], index)
+
+      case 'apply':
+        this._apply(indexes)
+        return
     }
+  }
+
+  getAllCheckedIndexes(a) {
+    const indexes = []
+    const x = $(a.closest('.active-effects-list')).find('#gga-effects-data-list input[type=checkbox]')
+    for (let index = 0; index < x.length; index++) {
+      if ($(x[index]).is(':checked')) indexes.push(index)
+    }
+    return indexes
   }
 
   _saveActiveEffects(activeEffectsData) {
@@ -179,12 +198,16 @@ class ActiveEffectManagerPopout extends Application {
     new ActiveEffectDataConfig(effect, index, this).render(true, { parentWindow: this })
   }
 
+  _apply(indexes) {
+    const tokens = canvas.tokens.controlled
+
+    console.log('indexes', indexes)
+    console.log('tokens', tokens)
+  }
+
   /** @override */
   async close(options) {
     this._callback.close(options)
-  }
-
-  async closeApp(options) {
     super.close(options)
   }
 }
