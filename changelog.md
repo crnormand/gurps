@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.11
+Release 0.17.11 9/22/2024
 
 - Correctly calculate max HP loss when using High Tech Optional Wounding Rules (HT p.162).
 - Use ruler.\_addWaypoint instead of modifying waypoints directly (user caewok).
