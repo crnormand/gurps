@@ -71,7 +71,7 @@ import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
-import { GlobalActiveEffectControl } from './effects/global-active-effect-manager.js'
+import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import * as GURPSSpeedProvider from './speed-provider.js'
 import { multiplyDice } from './utilities/damage-utils.js'
@@ -110,7 +110,7 @@ if (!globalThis.GURPS) {
   MoustacheWax()
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
-  GURPS.GlobalActiveEffectControl = new GlobalActiveEffectControl()
+  GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
   //CONFIG.debug.hooks = true;
 

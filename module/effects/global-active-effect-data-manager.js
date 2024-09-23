@@ -4,7 +4,7 @@ import { i18n } from '../../lib/utilities.js'
 /**
  * This class is responsible for showing the Active Effects Manager control button on the UI.
  */
-export class GlobalActiveEffectControl {
+export class GlobalActiveEffectDataControl {
   static SETTING_SHOW_EFFECT_MANAGER = 'tokentools-show-effect-manager'
   static ACTIVE_EFFECTS_DATA = 'active-effects-data'
   static EFFECT_MANAGER_NAME = 'GURPSActiveEffects'
@@ -19,18 +19,18 @@ export class GlobalActiveEffectControl {
 
   _registerSetting() {
     // Register the setting to show the Active Effect Manager.
-    game.settings.register(SYSTEM_NAME, GlobalActiveEffectControl.SETTING_SHOW_EFFECT_MANAGER, {
+    game.settings.register(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER, {
       name: i18n('GURPS.settingTokenToolsShowEffectManager', 'Show Active Effect Manager'),
       hint: i18n('GURPS.settingHintTokenToolsShowEffectManaager', 'Show the Active Effect Manager.'),
       scope: 'client',
       config: true,
       type: Boolean,
       default: true,
-      onChange: value => console.log(`${GlobalActiveEffectControl.SETTING_SHOW_EFFECT_MANAGER} : ${value}`),
+      onChange: value => console.log(`${GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER} : ${value}`),
     })
 
     // Register the setting to STORE the Active Effects.
-    game.settings.register(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA, {
+    game.settings.register(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA, {
       name: 'Active Effects Data',
       scope: 'world',
       config: false,
@@ -45,7 +45,7 @@ export class GlobalActiveEffectControl {
       if (tokenButton) {
         let self = this
         tokenButton.tools.push({
-          name: GlobalActiveEffectControl.EFFECT_MANAGER_NAME,
+          name: GlobalActiveEffectDataControl.EFFECT_MANAGER_NAME,
           title: i18n('GURPS.tokenToolsActiveEffects', 'Active Effects Manager'),
           icon: 'fa-solid fa-person-rays',
           toggle: true,
@@ -58,7 +58,7 @@ export class GlobalActiveEffectControl {
   }
 
   _shouldUseActiveEffectManagerPopup() {
-    return game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.SETTING_SHOW_EFFECT_MANAGER)
+    return game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER)
   }
 
   get showPopup() {
@@ -73,7 +73,7 @@ export class GlobalActiveEffectControl {
     this._showPopup = !this._showPopup
 
     // show the token control as active
-    let toggle = $.find(`[data-tool=${GlobalActiveEffectControl.EFFECT_MANAGER_NAME}]`)
+    let toggle = $.find(`[data-tool=${GlobalActiveEffectDataControl.EFFECT_MANAGER_NAME}]`)
     if (this._showPopup) toggle[0]?.classList.add('active')
     else toggle[0]?.classList.remove('active')
 
@@ -92,7 +92,6 @@ export class GlobalActiveEffectControl {
     this.showPopup = false
   }
 }
-
 
 class ActiveEffectManagerPopout extends Application {
   constructor(callback, options = {}) {
@@ -117,7 +116,7 @@ class ActiveEffectManagerPopout extends Application {
   }
 
   getData(options) {
-    const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
+    const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA)
 
     return foundry.utils.mergeObject(super.getData(options), {
       effects: activeEffectsData,
@@ -135,7 +134,7 @@ class ActiveEffectManagerPopout extends Application {
     event.preventDefault()
     const target = event.currentTarget
     const index = parseInt(target.dataset.effectId)
-    let activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
+    let activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA)
 
     let newEffect = {
       name: i18n('GURPS.effectNew', 'New Effect'),
@@ -175,7 +174,7 @@ class ActiveEffectManagerPopout extends Application {
   }
 
   _saveActiveEffects(activeEffectsData) {
-    game.settings.set(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
+    game.settings.set(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
   }
 
   _editEffect(effect, index) {
@@ -246,15 +245,31 @@ class ActiveEffectDataConfig extends FormApplication {
 
   activateListeners(html) {
     super.activateListeners(html)
+
+    html.find('.effect-control').on('click', this._onEffectControl.bind(this))
+  }
+
+  async _onEffectControl(event) {
+    event.preventDefault()
+    const target = event.currentTarget
+
+    switch (target.dataset.action) {
+      case 'add':
+        this.object.changes.push({
+          key: '',
+          mode: 0,
+          value: '',
+        })
+    }
   }
 
   /** @override */
   async _updateObject(event, formData) {
     this.object = foundry.utils.mergeObject(this.object, formData)
 
-    const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA)
+    const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA)
     activeEffectsData[this._index] = this.object
-    game.settings.set(SYSTEM_NAME, GlobalActiveEffectControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
+    game.settings.set(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
   }
 
   /** @override */
