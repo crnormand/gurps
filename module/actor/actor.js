@@ -570,7 +570,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -597,44 +597,60 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _adjustMove(move, threshold, value, reason) {
     switch (value.toString()) {
       case MOVE_NONE:
-        return { move: 0, text: i18n_f('GURPS.moveNone', { reason: reason }) }
+        return {
+          move: 0,
+          // text: i18n_f('GURPS.moveNone', { reason: reason }) 
+          text: i18n_f('None')
+        }
 
       case MOVE_ONE:
         return {
           move: 1,
-          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
+          text: '1 yd/sec',
+          //          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
         }
 
       case MOVE_STEP:
-        return { move: this._getStep(), text: i18n_f('GURPS.moveStep', { reason: reason }) }
+        return {
+          move: this._getStep(),
+          text: 'Step'
+          //  text: i18n_f('GURPS.moveStep', { reason: reason }) 
+        }
 
       case MOVE_TWO_STEPS:
-        return { move: this._getStep() * 2, text: i18n_f('GURPS.moveTwoSteps', { reason: reason }) }
+        return {
+          move: this._getStep() * 2,
+          text: 'Step or Two'
+          //          text: i18n_f('GURPS.moveTwoSteps', { reason: reason }) 
+        }
 
       case MOVE_ONETHIRD:
         return {
           move: Math.max(1, Math.ceil((move / 3) * threshold)),
-          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
+          text: '×1/3'
+          //          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
-          text: i18n_f('GURPS.moveHalf', { reason: reason }),
+          text: 'Half'
+          //          text: i18n_f('GURPS.moveHalf', { reason: reason }),
         }
 
       case MOVE_TWOTHIRDS:
         return {
           move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
-          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
+          text: '×2/3'
+          //          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
         }
     }
 
@@ -653,9 +669,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _calculateRangedRanges() {

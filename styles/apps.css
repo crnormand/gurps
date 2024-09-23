@@ -1232,7 +1232,7 @@ active-effects-list .section h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-left: 8px;
+  /* margin-left: 8px; */
 }
 
 #combat-sheet .fieldblock .field[name='system.conditions.combatmove'] {
