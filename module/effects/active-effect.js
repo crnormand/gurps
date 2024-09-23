@@ -116,7 +116,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
         for (const effect of token.actor.effects) {
           if (await effect.isExpired()) {
             effect.delete()
-            ui.notifications.info(`${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.label)}]'`)
+            ui.notifications.info(`${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.name)}]'`)
           }
         }
       }
@@ -165,7 +165,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   static async clearEffectsOnSelectedToken() {
     const effect = _token.actor.effects.contents
     for (let i = 0; i < effect.length; i++) {
-      let condition = effect[i].label
+      let condition = effect[i].name
       let status = effect[i].disabled
       let effect_id = effect[i]._id
       console.debug(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)

@@ -892,8 +892,8 @@
 }
 
 #combat-tab #condition .fieldblock {
-  display: inline-grid;
-  grid-template-columns: 0fr auto 0fr auto 0fr auto 0fr auto;
+  display: inline-flex;
+  flex-flow: row wrap;
   padding-top: 0.15em;
 }
 
