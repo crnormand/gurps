@@ -727,6 +727,7 @@ export class ActorImporter {
         let j = json[key]
         let a = new Advantage()
         a.name = t(j.name)
+        a.originalName = t(j.name)
         a.points = this.intFrom(j.points)
         a.setNotes(t(j.text))
         a.pageRef(t(j.pageref) || a.pageref)
@@ -754,6 +755,7 @@ export class ActorImporter {
         let j = json[key]
         let sk = new Skill()
         sk.name = t(j.name)
+        sk.originalName = t(j.name)
         sk.type = t(j.type)
         sk.import = t(j.level)
         if (sk.level == 0) sk.level = ''
@@ -807,6 +809,7 @@ export class ActorImporter {
         let j = json[key]
         let sp = new Spell()
         sp.name = t(j.name)
+        sp.originalName = t(j.name)
         sp.class = t(j.class)
         sp.college = t(j.college)
         let cm = t(j.costmaintain)
@@ -869,6 +872,7 @@ export class ActorImporter {
             let j2 = j.meleemodelist[k2]
             let m = new Melee()
             m.name = t(j.name)
+            m.originalName = t(j.name)
             m.st = t(j.st)
             m.weight = t(j.weight)
             m.techlevel = t(j.tl)
@@ -916,6 +920,7 @@ export class ActorImporter {
             let j2 = j.rangedmodelist[k2]
             let r = new Ranged()
             r.name = t(j.name)
+            r.originalName = t(j.name)
             r.st = t(j.st)
             r.bulk = t(j.bulk)
             r.legalityclass = t(j.lc)
@@ -1057,6 +1062,7 @@ export class ActorImporter {
         let parentuuid = t(j.parentuuid)
         let eqt = new Equipment()
         eqt.name = name
+        eqt.originalName = t(j.name)
         eqt.count = t(j.count)
         eqt.cost = !!parentuuid ? t(j.cost) : 0
         eqt.location = t(j.location)
@@ -1678,6 +1684,7 @@ export class ActorImporter {
       i.type = i.id.startsWith('t') ? 'trait' : 'trait_container'
     }
     a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
+    a.originalName = i.name
     a.points = i.calc?.points
     a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
     a.userdesc = i.userdesc
@@ -1753,6 +1760,7 @@ export class ActorImporter {
       name += addition + ')'
     }
     let s = new Skill(name, '')
+    s.originalName = i.name
     s.pageRef(i.reference || '')
     s.uuid = i.id
     s.parentuuid = p
@@ -1811,6 +1819,7 @@ export class ActorImporter {
       i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
     }
     s.name = i.name || 'Spell'
+    s.originalName = i.name
     s.uuid = i.id
     s.parentuuid = p
     s.pageRef(i.reference || '')
@@ -1921,6 +1930,7 @@ export class ActorImporter {
       i.type = i.id.startsWith('e') ? 'equipment' : 'equipment_container'
     }
     e.name = i.description || 'Equipment'
+    e.originalName = i.description
     e.count = i.type == 'equipment_container' ? '1' : i.quantity || '0'
     e.cost =
       (parseFloat(i.calc?.extended_value) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || ''
@@ -2291,6 +2301,7 @@ export class ActorImporter {
           if (w.type == 'melee_weapon') {
             let m = new Melee()
             m.name = i.name || i.description || ''
+            m.originalName = i.name
             m.st = w.strength || ''
             m.weight = i.weight || ''
             m.techlevel = i.tech_level || ''
@@ -2311,6 +2322,7 @@ export class ActorImporter {
           } else if (w.type == 'ranged_weapon') {
             let r = new Ranged()
             r.name = i.name || i.description || ''
+            r.originalName = i.name
             r.st = w.strength || ''
             r.bulk = w.bulk || ''
             r.legalityclass = i.legality_class || '4'

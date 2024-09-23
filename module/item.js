@@ -1,3 +1,5 @@
+import { recurselist } from '../lib/utilities.js'
+
 export class GurpsItem extends Item {
   /**
    * @param {Item} item
@@ -9,6 +11,55 @@ export class GurpsItem extends Item {
 
   prepareData() {
     super.prepareData()
+  }
+
+  /**
+   * Return Item Attacks from melee and ranged Actor Components
+   *
+   * This is intended for external libraries like Argon Combat HUD,
+   * but can be used anytime you have only the Item UUID and need
+   * to know if this Item has any Melee or Ranged attacks registered
+   * on Actor System.
+   *
+   * Because GCA import did not populate the `uuid` field on these Actor Components
+   * we need to compare the Item original name for both Item and Component.
+   *
+   * @param getAttOptions
+   * @returns {*[]|boolean}
+   */
+  getItemAttacks(getAttOptions = {}) {
+    const { attackType = 'both', checkOnly = false } = getAttOptions
+    const originalName = this.system[this.itemSysKey].originalName
+    const currentName = this.system[this.itemSysKey].name
+    const actorComponentUUID = this.system[this.itemSysKey].uuid
+    // Look at Melee and Ranged attacks in actor.system
+    let attacks = []
+    let attackTypes = ['melee', 'ranged']
+    if (attackType !== 'both') attackTypes = [attackType]
+    for (let at of attackTypes) {
+      recurselist(this.actor.system[at], (e, _k, _d) => {
+        let key = undefined
+        if (!!actorComponentUUID && e.uuid === actorComponentUUID) {
+          key = this.actor._findSysKeyForId('uuid', e.uuid, at)
+        } else if (!!originalName && e.originalName === originalName) {
+          key = this.actor._findSysKeyForId('originalName', e.originalName, at)
+        } else if (!!currentName && e.name === currentName) {
+          key = this.actor._findSysKeyForId('name', e.name, at)
+        }
+        if (!!key) {
+          attacks.push({
+            component: e,
+            key,
+          })
+        }
+      })
+    }
+    if (!!checkOnly) return !!attacks.length > 0
+    return attacks
+  }
+
+  get hasAttacks() {
+    return !!this.getItemAttacks({ checkOnly: true })
   }
 
   async internalUpdate(data, context) {

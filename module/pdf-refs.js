@@ -86,7 +86,10 @@ export function handlePdf(links) {
   // }
 
   // Just in case we get sent multiple links separated by commas, we will open them all
-  links.split(',').forEach(link => {
+  // or just the first found, depending on SETTING_PDF_OPEN_FIRST
+  let success = false
+  for (let link of links.split(',')) {
+    if (!!success && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PDF_OPEN_FIRST)) continue
     let t = link.trim()
     let i = t.indexOf(':')
     let book = ''
@@ -94,16 +97,16 @@ export function handlePdf(links) {
     if (i > 0) {
       // Special case for refs like "PU8:12" or "DFRPG:A12"
       // First we need to check if after the colon is only numbers or has a letter
-        let afterColon = t.substring(i + 1).trim()
-        if (afterColon.match(/^[0-9]+$/)) {
-            book = t.substring(0, i).trim()
-            page = parseInt(afterColon)
-        } else {
-            let codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
-            let codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
-            book = `${codeBefore}:${codeAfter}` // e.g. "DFRPG:A"
-            page = parseInt(afterColon.replace(/[a-zA-Z]*/g, '')) // e.g. 12
-        }
+      let afterColon = t.substring(i + 1).trim()
+      if (afterColon.match(/^[0-9]+$/)) {
+        book = t.substring(0, i).trim()
+        page = parseInt(afterColon)
+      } else {
+        let codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
+        let codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
+        book = `${codeBefore}:${codeAfter}` // e.g. "DFRPG:A"
+        page = parseInt(afterColon.replace(/[a-zA-Z]*/g, '')) // e.g. 12
+      }
     } else {
       book = t.replace(/(.*?)[0-9].*/g, '$1').trim()
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
@@ -133,6 +136,7 @@ export function handlePdf(links) {
     if (journalPage) {
       const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
       viewer.render(true)
+      success = true
     } else {
       let url = GURPS.SJGProductMappings[book]
       if (url)
@@ -140,5 +144,5 @@ export function handlePdf(links) {
         window.open(url, '_blank')
       else ui.notifications?.warn("Unable to match book code '" + book + "'.")
     }
-  })
+  }
 }

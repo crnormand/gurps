@@ -223,7 +223,8 @@
         "maxuses": "",
         "parentuuid": "",
         "uuid": "",
-        "contains": {}
+        "contains": {},
+        "originalName": ""
       },
       "melee": {},
       "ranged": {},
@@ -248,7 +249,8 @@
         "points": 0,
         "userdesc": "",
         "note": "",
-        "name": ""
+        "name": "",
+        "originalName": ""
       },
       "melee": {},
       "ranged": {},
@@ -282,7 +284,8 @@
         "checkotf": "",
         "duringotf": "",
         "passotf": "",
-        "failotf": ""
+        "failotf": "",
+        "originalName": ""
       },
       "melee": {},
       "ranged": {},
@@ -319,7 +322,8 @@
         "checkotf": "",
         "duringotf": "",
         "passotf": "",
-        "failotf": ""
+        "failotf": "",
+        "originalName": ""
       },
       "melee": {},
       "ranged": {},

@@ -2314,4 +2314,28 @@ export class GurpsActor extends Actor {
     }
     return canEdit
   }
+
+  /**
+   * Executes a GURPS action parsed from a given OTF string.
+   *
+   * This is intended for external libraries like Argon Combat HUD.
+   *
+   * @param {string} otf - The On-The-Fly (OTF) string representing the action to be performed.
+   * @return {Promise<void>} A promise that resolves once the action has been performed.
+   */
+  async runOTF(otf) {
+    const action = parselink(otf)
+    await GURPS.performAction(action.action, this)
+  }
+
+  /**
+   * Retrieves the value of the 'usingQuintessence' setting from the game settings.
+   *
+   * This is intended for external libraries like Argon Combat HUD.
+   *
+   * @return {boolean} The value of the 'usingQuintessence' setting.
+   */
+  get usingQuintessence() {
+    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+  }
 }

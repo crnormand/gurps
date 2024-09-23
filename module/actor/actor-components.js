@@ -48,6 +48,7 @@ export class _Base {
     this.contains = {}
     this.uuid = ''
     this.parentuuid = ''
+    this.originalName = ''
   }
 
   /**
@@ -345,6 +346,7 @@ export class Skill extends Leveled {
           level: this.level || 0,
           relativelevel: this.relativelevel || '',
           name: this.name,
+          originalName: this.originalName || '',
           ['type']: this['type'] || '',
           otf: this.otf || '',
           checkotf: this.checkotf || '',
@@ -371,6 +373,7 @@ export class Skill extends Leveled {
       skill = data
     } else {
       skill = new Skill(data.name)
+      skill.originalName = data.originalName || ''
       skill.notes = data.notes
       skill.contains = data.contains || {}
       skill.uuid = data.uuid
@@ -391,6 +394,7 @@ export class Skill extends Leveled {
     } else {
       const itemData = item.system[item.itemSysKey]
       result =
+        itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
         itemData.pageref !== this.pageref ||
         !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
@@ -449,6 +453,7 @@ export class Spell extends Leveled {
           level: this.level || 0,
           relativelevel: this.relativelevel || '',
           name: this.name,
+          originalName: this.originalName || '',
           ['class']: this['class'] || '',
           college: this.college || '',
           cost: this.cost || '',
@@ -482,6 +487,7 @@ export class Spell extends Leveled {
       spell = data
     } else {
       spell = new Spell(data.name)
+      spell.originalName = data.originalName || ''
       spell.notes = data.notes
       spell.pageref = data.pageref
       spell.contains = data.contains || {}
@@ -511,6 +517,7 @@ export class Spell extends Leveled {
     } else {
       const itemData = item.system[item.itemSysKey]
       result =
+        itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
         itemData.pageref !== this.pageref ||
         !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
@@ -573,6 +580,7 @@ export class Advantage extends NamedCost {
           userdesc: this.userdesc || '',
           note: this.note || '',
           name: this.name,
+          originalName: this.originalName || '',
           checkotf: this.checkotf || '',
           duringotf: this.duringotf || '',
           passotf: this.passotf || '',
@@ -597,6 +605,7 @@ export class Advantage extends NamedCost {
       adv = data
     } else {
       adv = new Advantage(data.name)
+      adv.originalName = data.originalName || ''
       adv.notes = data.notes
       adv.pageref = data.pageref
       adv.contains = data.contains || {}
@@ -616,6 +625,7 @@ export class Advantage extends NamedCost {
     } else {
       const itemData = item.system[item.itemSysKey]
       result =
+        itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
         (itemData.pageref || '') !== (this.pageref || '') ||
         !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
@@ -828,6 +838,7 @@ export class Equipment extends Named {
       system: {
         eqt: {
           name: this.name,
+          originalName: this.originalName || '',
           notes: this.notes,
           pageref: this.pageref,
           count: this.count,
@@ -868,6 +879,7 @@ export class Equipment extends Named {
       equip = data
     } else {
       equip = new Equipment(data.name, data.save)
+      equip.originalName = data.originalName || ''
       equip.count = data.count
       equip.cost = data.cost
       equip.weight = data.weight
@@ -897,6 +909,7 @@ export class Equipment extends Named {
     } else {
       const itemData = item.system[item.itemSysKey]
       result =
+        itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
         itemData.pageref !== this.pageref ||
         itemData.cost !== this.cost ||

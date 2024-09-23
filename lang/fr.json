@@ -756,6 +756,8 @@
   "GURPS.settingHintBasicPDFs": "Sélectionnez 'Combiné' ou 'Separé' et utilisez les codes PDF associés lors de la configuration de PDFFoundry. Note: Si vous sélectionnez 'Separate', le PDF Basic Set Campaigns devrait s'ouvrir à la page 340 pendant le test de PDFoundry.",
   "GURPS.settingBasicPDFsCombined": "Basic Set Combiné (code 'B')",
   "GURPS.settingBasicPDFsSeparate": "Séparé (Personnages, 'B'; Campagnes, 'BX')",
+  "GURPS.settingPDFOpenFirst": "Ouvrir le premier PDF trouvé",
+  "GURPS.settingHintPDFOpenFirst": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs références de page sont indiquées. Si décoché, le système ouvrira tous les PDF trouvés.",
   "GURPS.settingImportIgnoreName": "Import: Ignorer l'attribut 'Nom'",
   "GURPS.settingHintImportIgnoreName": "Si coché, le système ignorera l'attribut 'Nom' de l'Acteur durant les imports. C'est utile si le nom sur Foundry est différent de GCA/GCS et que vous ne voulez pas écraser à chaque import.",
   "GURPS.settingBlockImport": "Seuls les joueurs de 'Trusted' peuvent Importer",
