@@ -1,12 +1,22 @@
 import { GURPSActiveEffectsChanges } from './effects.js'
 
 export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
+  constructor(object = {}) {
+    super(object)
+  }
+
+  /** @override */
+  async close(options) {
+    super.close(options)
+    this._parentWindow.render()
+  }
+
   get template() {
     return 'systems/gurps/templates/active-effects/active-effect-config.html'
   }
 
-  getData() {
-    const sheetData = super.getData()
+  async getData() {
+    const sheetData = await super.getData()
     sheetData.changes = GURPSActiveEffectsChanges
     return sheetData
   }
