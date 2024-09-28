@@ -122,6 +122,8 @@ export class GurpsActor extends Actor {
         this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
       }
     }
+
+    this.system.trackersByName = this.trackersByName
   }
 
   prepareEmbeddedEntities() {
@@ -594,7 +596,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -621,9 +623,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -631,8 +633,8 @@ export class GurpsActor extends Actor {
       case MOVE_NONE:
         return {
           move: 0,
-          // text: i18n_f('GURPS.moveNone', { reason: reason }) 
-          text: i18n_f('None')
+          // text: i18n_f('GURPS.moveNone', { reason: reason })
+          text: i18n_f('None'),
         }
 
       case MOVE_ONE:
@@ -645,35 +647,35 @@ export class GurpsActor extends Actor {
       case MOVE_STEP:
         return {
           move: this._getStep(),
-          text: 'Step'
-          //  text: i18n_f('GURPS.moveStep', { reason: reason }) 
+          text: 'Step',
+          //  text: i18n_f('GURPS.moveStep', { reason: reason })
         }
 
       case MOVE_TWO_STEPS:
         return {
           move: this._getStep() * 2,
-          text: 'Step or Two'
-          //          text: i18n_f('GURPS.moveTwoSteps', { reason: reason }) 
+          text: 'Step or Two',
+          //          text: i18n_f('GURPS.moveTwoSteps', { reason: reason })
         }
 
       case MOVE_ONETHIRD:
         return {
           move: Math.max(1, Math.ceil((move / 3) * threshold)),
-          text: '×1/3'
+          text: '×1/3',
           //          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
-          text: 'Half'
+          text: 'Half',
           //          text: i18n_f('GURPS.moveHalf', { reason: reason }),
         }
 
       case MOVE_TWOTHIRDS:
         return {
           move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
-          text: '×2/3'
+          text: '×2/3',
           //          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
         }
     }
@@ -693,9 +695,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -1144,6 +1146,15 @@ export class GurpsActor extends Actor {
     let trackerArray = data.additionalresources.tracker
     if (!trackerArray) trackerArray = {}
     return objectToArray(trackerArray)
+  }
+
+  get trackersByName() {
+    // Convert this.system.hitlocations into an object keyed by location.where.
+    const byName = {}
+    for (const [_key, value] of Object.entries(this.system.additionalresources.tracker)) {
+      byName[`${value.name}`] = value
+    }
+    return byName
   }
 
   async setMoveDefault(value) {

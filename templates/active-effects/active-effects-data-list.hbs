@@ -1,6 +1,6 @@
 <form class='{{cssClass}}' autocomplete='off'>
   <div class='active-effects-list' style='position: relative;'>
-    <div class='gga-effects-list table'>
+    <div id='gga-effects-data-list' class='gga-effects-list table'>
       <div class='label'>{{i18n 'GURPS.effectsEffect'}}</div>
       <div class='label'>?</div>
       <div><a id='template-add' class='effect-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
@@ -15,14 +15,7 @@
           readonly
           value='{{name}}'
         />
-        <input
-          class='effect-control'
-          data-action='disable'
-          data-effect-id='{{id}}'
-          type='checkbox'
-          name='disabled'
-          {{checked (not disabled)}}
-        />
+        <input class='effect-control' type='checkbox' data-action='disable' data-effect-id='{{id}}' name='disabled' />
         <div class='vertical-center'>
           <a
             class='effect-control'
@@ -36,5 +29,13 @@
         </div>
       {{/each}}
     </div>
+
+    <footer class='sheet-footer'>
+      <button type='submit' class='effect-control' data-action='apply'><i class='fas fa-save'></i>{{i18n
+          submitText
+          'Apply to Selected Tokens'
+        }}</button>
+    </footer>
+
   </div>
 </form>

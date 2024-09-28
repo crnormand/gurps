@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.13
+
+- Add in-memory only att
+
 Release 0.17.12 9/28/2024
 
 - EXPERIMENTAL: Import character data as Foundry Items. This was submitted by user chrismaille and is intended to leverage Foundry functionality that depends upon Items. Turning this feature on in the system settings affects any future imports and does not affect any existing actors. Please tag chrismaille on Discord for any questions or bugs.

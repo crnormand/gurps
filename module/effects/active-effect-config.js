@@ -33,6 +33,8 @@ export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
 
     // Tell the Active Effects List window to refresh its data.
     if (this._parentWindow) this._parentWindow.render(true)
+
+    console.log('effect', result)
     return result
   }
 

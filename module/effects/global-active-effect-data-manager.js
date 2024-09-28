@@ -103,7 +103,7 @@ class ActiveEffectManagerPopout extends Application {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/active-effects/active-effects-list.hbs',
+      template: 'systems/gurps/templates/active-effects/active-effects-data-list.hbs',
       classes: ['effect-manager-app'],
       popOut: true,
       width: 400,
