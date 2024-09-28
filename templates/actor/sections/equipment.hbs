@@ -107,7 +107,12 @@
 					{{/if}}
 				</div>
 				<div>
-					{{#if (isUserCreated this)}}
+					{{#if (isFoundryGlobalItem this)}}
+					<i class='fas fa-book tooltip gga-global-item'>
+						<span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
+					</i>
+					{{/if}}
+          {{#if (isUserCreated this)}}
 					<i class='fas fa-bookmark tooltip gga-usercreated'>
 						<span class='tooltiptext'>{{i18n "GURPS.equipmentUserCreated"}}</span>
 					</i>

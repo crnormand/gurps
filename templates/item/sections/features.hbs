@@ -1,0 +1,30 @@
+<div class="gurps-2col no-gap">
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.pdfPageReference"}}</label>
+    <div class="icon-prefix">
+      <input id="item-feature-pageref" type="text" value="{{system.fea.pageref}}" name="system.fea.pageref" />
+      <span><i class="fa fa-bookmark"></i></span>
+    </div>
+  </div>
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.points"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-feature-points"
+        class="digits-only"
+        type="number"
+        value="{{system.fea.points}}"
+        name="system.fea.points"
+      />
+      <span><i class="fa fa-pen-to-square"></i></span>
+    </div>
+  </div>
+</div>
+<div class="label-value-row right-bias">
+  <div></div>
+  <div></div>
+  <label>{{i18n "GURPS.notes"}}</label>
+  <div>
+    <textarea class="notes" id="item-feature-notes" rows="4" name="system.fea.notes">{{system.fea.notes}}</textarea>
+  </div>
+</div>

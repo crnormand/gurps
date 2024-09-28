@@ -132,6 +132,8 @@ import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
  *            parentuuid: string,
  *            img: string | null,
  *            globalid: string,
+ *            importid: string,
+ *            importFrom: string,
  *            uuid: string}} eqt
  * === End GurpsItemData
  *

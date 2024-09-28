@@ -28,9 +28,10 @@ import {
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
 import { GurpsItem } from '../item.js'
-import GurpsToken from '../token.js'
-import { Advantage, Equipment, HitLocationEntry } from './actor-components.js'
+import { Advantage, Equipment, HitLocationEntry, Skill, Spell } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { ActorImporter } from './actor-importer.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -151,7 +152,12 @@ export class GurpsActor extends Actor {
 
     // Convoluted code to add Items (and features) into the equipment list
     // @ts-ignore
-    let orig = /** @type {GurpsItem[]} */ (this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))) // in case items are in the same list... add them alphabetically
+    let orig = /** @type {GurpsItem[]} */ (
+      this.items.contents
+        .filter(i => i.type === 'equipment')
+        .slice()
+        .sort((a, b) => b.name.localeCompare(a.name))
+    ) // in case items are in the same list... add them alphabetically
     /**
      * @type {any[]}
      */
@@ -445,6 +451,23 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * Finds the actor component key corresponding to the given ID.
+   *
+   * @param {string} key - The key to search for in the trait objects.
+   * @param {string | number} id - The ID to match within the trait objects.
+   * @param {string} sysKey - The system.<key> to use for the search.
+   * @return {string | undefined} The trait key if found, otherwise undefined.
+   */
+  _findSysKeyForId(key, id, sysKey) {
+    let traitKey
+    let data = this.system
+    recurselist(data[sysKey], (e, k, _d) => {
+      if (e[key] === id) traitKey = `system.${sysKey}.` + k
+    })
+    return traitKey
+  }
+
+  /**
    * @param {{ [key: string]: any }} dict
    * @param {string} type
    * @returns {number}
@@ -510,6 +533,7 @@ export class GurpsActor extends Actor {
 
       for (let enckey in encs) {
         let enc = encs[enckey]
+        if (!enc.level) enc.level = parseInt(enckey) // FIXME: Why enc.level=NaN after GCA import?
         let threshold = 10 - 2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
@@ -1123,6 +1147,23 @@ export class GurpsActor extends Actor {
 
   // Drag and drop from Item colletion
   /**
+   * Handle Drag and Drop on Actor
+   *
+   * ### Scenario 1: Use Foundry Items is disabled
+   * We use the classic behavior: only works for equipment items
+   *
+   * ### Scenario 2: Use Foundry Items is enabled
+   * Far more trick. We can handle equipments, spells, skills and features.
+   * Current logic is:
+   * 1. Check if the global item was already dragged. If yes, do not import again.
+   * 2. Check if the Actor Component for this Item is already create. Same behavior.
+   * 3. Create a new Actor Component, manually adding global image and OTFs.
+   * 4. Create the correspondent Foundry Item.
+   * 5. Process Item Additions (Child Items)
+   *
+   * The biggest trap here is to add something to Actor Component but not Foundry Item
+   * and vice versa
+   *
    * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
    */
   async handleItemDrop(dragData) {
@@ -1131,20 +1172,114 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
     }
-    const uuid =
-      typeof dragData.pack === 'string'
-        ? `Compendium.${dragData.pack}.${dragData.id}`
-        : `${dragData.type}.${dragData.id}`
+    // New item created in Foundry v12.331 dragData:
+    // {
+    //   "type": "Item",
+    //   "uuid": "Item.542YuRvzxVx83kL1"
+    // }
     let global = await fromUuid(dragData.uuid)
     let data = !!global ? global : dragData
     if (!data) {
       ui.notifications?.warn('NO ITEM DATA!')
       return
     }
-    ui.notifications?.info(data.name + ' => ' + this.name)
-    if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': uuid })
+    if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
-    await this.addNewItemData(data)
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // Scenario 1: Work only for Equipment dropped
+      ui.notifications?.info(data.name + ' => ' + this.name)
+      await this.addNewItemData(data)
+    } else {
+      // Scenario 2: Process Actor Component, Parent (dropped) Item and Child Items
+
+      // 1. This global item was already dropped?
+      const found = this.items.find(it => it.system.globalid === data.system.globalid)
+      if (!!found) {
+        ui.notifications?.warn(i18n('GURPS.cannotDropItemAlreadyExists'))
+        return
+      }
+      ui.notifications?.info(
+        game.i18n.format('GURPS.droppingItemNotification', { actorName: this.name, itemName: data.name })
+      )
+
+      // 2. Check if Actor Component exists
+      const actorCompKey =
+        data.type === 'equipment'
+          ? this._findEqtkeyForId('globalid', data.system.globalid)
+          : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
+      const actorComp = foundry.utils.getProperty(this, actorCompKey)
+      if (!!actorComp) {
+        ui.notifications?.warn(i18n('GURPS.cannotDropItemAlreadyExists'))
+      } else {
+        // 3. Create Actor Component
+        let actorComp
+        let targetKey
+        switch (data.type) {
+          case 'equipment':
+            actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
+            targetKey = 'system.equipment.carried'
+            break
+          case 'feature':
+            actorComp = Advantage.fromObject({ name: data.name, ...data.system.fea }, this)
+            targetKey = 'system.ads'
+            break
+          case 'skill':
+            actorComp = Skill.fromObject({ name: data.name, ...data.system.ski }, this)
+            targetKey = 'system.skills'
+            break
+          case 'spell':
+            actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
+
+            targetKey = 'system.spells'
+            break
+        }
+        actorComp.itemInfo.img = data.img
+        actorComp.otf = data.system[data.itemSysKey].otf
+        actorComp.checkotf = data.system[data.itemSysKey].checkotf
+        actorComp.duringotf = data.system[data.itemSysKey].duringotf
+        actorComp.passotf = data.system[data.itemSysKey].passotf
+        actorComp.failotf = data.system[data.itemSysKey].failotf
+
+        // 4. Create Parent Item
+        const importer = new ActorImporter(this)
+        actorComp = await importer._processItemFrom(actorComp, '')
+        let parentItem = this.items.get(actorComp.itemid)
+        const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
+        for (const key of keys) {
+          recurselist(data.system[key], e => {
+            if (!e.uuid) e.uuid = foundry.utils.randomID(16)
+          })
+        }
+
+        await this.updateEmbeddedDocuments('Item', [
+          {
+            _id: parentItem.id,
+            'system.globalid': dragData.uuid,
+            'system.melee': data.system.melee,
+            'system.ranged': data.system.ranged,
+            'system.ads': data.system.ads,
+            'system.spells': data.system.spells,
+            'system.skills': data.system.skills,
+            'system.bonuses': data.system.bonuses,
+          },
+        ])
+
+        // 5. Update Actor System with new Component
+        const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
+        const removeKey = targetKey.replace(/(\w+)$/, '-=$1')
+        await this.internalUpdate({ [removeKey]: null })
+        await GURPS.put(systemObject, actorComp)
+        await this.internalUpdate({ [targetKey]: systemObject })
+        if (data.type === 'equipment') await Equipment.calc(actorComp)
+
+        // 6. Process Child Items for created Item
+        const actorCompKey =
+          data.type === 'equipment'
+            ? this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
+            : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
+        await this._addItemAdditions(parentItem, actorCompKey)
+      }
+    }
     this._forceRender()
   }
 
@@ -1165,7 +1300,7 @@ export class GurpsActor extends Actor {
       return
     }
     if (!dragData.isLinked) {
-      ui.notifications?.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
+      ui.notifications?.warn("You cannot drag from an un-linked token. The source must have 'Linked Actor Data'")
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
@@ -1302,6 +1437,10 @@ export class GurpsActor extends Actor {
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'system.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem, targetkey) // only created 1 item
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      const item = await this.items.get(localItem._id)
+      return this._updateItemFromForm(item)
+    }
   }
 
   // Once the Items has been added to our items list, add the equipment and any features
@@ -1372,17 +1511,40 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * Two scenarios here:
+   *
+   * ### Use Foundry Items is disabled.
+   * In this scenario if Actor Component has a itemId it's because this
+   * component is already a child item from a parent Equipment item.
+   *
+   * ### Use Foundry Items is enabled.
+   * In this scenario, the ItemData received is the Parent Item. We need to check
+   * for child items created with the `fromItem` equal to Parent itemId.
+   *
    * @param {GurpsItemData} itemData
    * @param {string} eqtkey
    */
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'melee')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ranged')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    await this.internalUpdate(commit, { diff: false })
+    const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      for (const subType of subTypes) {
+        commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, subType)) }
+      }
+    } else {
+      const parentItem = await this.items.get(itemData._id)
+      for (const subType of subTypes) {
+        if (!!parentItem.system[subType] && typeof parentItem.system[subType] === 'object') {
+          for (const key in parentItem.system[subType]) {
+            if (parentItem.system[subType].hasOwnProperty(key)) {
+              const childItemData = parentItem.system[subType][key]
+              commit = { ...commit, ...(await this._addChildItemElement(parentItem, childItemData, subType)) }
+            }
+          }
+        }
+      }
+    }
+    if (!!commit) await this.internalUpdate(commit, { diff: false })
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
@@ -1449,6 +1611,70 @@ export class GurpsActor extends Actor {
     return i == 0 ? {} : { ['system.' + key]: list }
   }
 
+  /**
+   *  Calculate Skill Level per OTF.
+   *
+   *  On Skills and Spells item sheets, if you define the `otf` field
+   *  and leave the `import` field blank, system will try to calculate
+   *  the skill level based on the OTF formula informed.
+   *
+   *  BTW, `import` is the name for the base skill level. I know, naming is hard.
+   *
+   * @param otf
+   * @returns {Promise<*>}
+   * @private
+   */
+  async _getSkillLevelFromOTF(otf) {
+    if (!otf) return
+    let skillAction = parselink(otf).action
+    if (!skillAction) return
+    skillAction.calcOnly = true
+    const results = await GURPS.performAction(skillAction, this)
+    return results?.target
+  }
+
+  /**
+   * Process Child Items from Parent Item.
+   *
+   * Why I did not use the original code? Too complex to add new scenarios.
+   *
+   * @param parentItem
+   * @param childItemData
+   * @param key
+   * @returns {Promise<{[p: string]: *}|{}>}
+   * @private
+   */
+  async _addChildItemElement(parentItem, childItemData, key) {
+    let found = false
+    let list = { ...this.system[key] } // shallow copy
+    if (found) {
+      // Use existing actor component uuid
+      let existingActorComponent = this.system[key].find(e => e.fromItem === parentItem._id)
+      childItemData.uuid = existingActorComponent?.uuid || ''
+    }
+    // Let's (re)create the child Item with updated Child Item information
+    let actorComp
+    switch (key) {
+      case 'ads':
+        actorComp = Advantage.fromObject(childItemData, this)
+        break
+      case 'skills':
+        actorComp = Skill.fromObject(childItemData, this)
+        actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
+        break
+      case 'spells':
+        actorComp = Spell.fromObject(childItemData, this)
+        actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
+        break
+    }
+    if (!actorComp) return {}
+    actorComp.fromItem = parentItem._id
+    const importer = new ActorImporter(this)
+    actorComp = await importer._processItemFrom(actorComp, '')
+    GURPS.put(list, actorComp)
+    return { ['system.' + key]: list }
+  }
+
   // return the item data that was deleted (since it might be transferred)
   /**
    * @param {string} path
@@ -1491,10 +1717,23 @@ export class GurpsActor extends Actor {
     this.ignoreRender = saved
   }
 
-  // We have to remove matching items after we searched through the list
-  // because we cannot safely modify the list why iterating over it
-  // and as such, we can only remove 1 key at a time and must use thw while loop to check again
   /**
+   * Remove Item Element
+   *
+   * This is the original comment (still valid):
+   *
+   *   `// We have to remove matching items after we searched through the list`
+   *
+   *   `// because we cannot safely modify the list why iterating over it`
+   *
+   *   `// and as such, we can only remove 1 key at a time and must use thw while loop to check again`
+   *
+   *  When Use Foundry Items is enabled, we just find the item using their `fromItem`
+   *  instead their `itemId`. This is because now every child item has the Id for their
+   *  parent item in that field.
+   *
+   *  The trick here: always remove Item before Actor Component.
+   *
    * @param {string} itemid
    * @param {string} key
    */
@@ -1506,11 +1745,22 @@ export class GurpsActor extends Actor {
       found = false
       let list = foundry.utils.getProperty(this, key)
       recurselist(list, (e, k, _d) => {
-        if (e.itemid == itemid) found = k
+        if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          if (e.itemid === itemid) found = k
+        } else {
+          if (e.fromItem === itemid) found = k
+        }
       })
       if (!!found) {
         any = true
-        await GURPS.removeKey(this, key + '.' + found)
+        const actorKey = key + '.' + found
+        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          // We need to remove the child item from the actor
+          const childActorComponent = foundry.utils.getProperty(this, actorKey)
+          const existingChildItem = await this.items.get(childActorComponent.itemid)
+          if (!!existingChildItem) await existingChildItem.delete()
+        }
+        await GURPS.removeKey(this, actorKey)
       }
     }
     return any
@@ -1905,19 +2155,30 @@ export class GurpsActor extends Actor {
    */
   async updateEqtCount(eqtkey, count) {
     /** @type {{ [key: string]: any }} */
-    let update = { [eqtkey + '.count']: count }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-      update[eqtkey + '.ignoreImportQty'] = true
-    await this.update(update)
     let eqt = foundry.utils.getProperty(this, eqtkey)
-    await this.updateParentOf(eqtkey, false)
-    if (!!eqt.itemid) {
-      let item = this.items.get(eqt.itemid)
-      if (!!item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.count': count }])
-      else {
-        ui.notifications?.warn('Invalid Item in Actor... removing all features')
-        this._removeItemAdditions(eqt.itemid)
+    if (!(await this._sanityCheckItemSettings(eqt))) return
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      let update = { [eqtkey + '.count']: count }
+      if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+        update[eqtkey + '.ignoreImportQty'] = true
+      await this.update(update)
+      eqt = foundry.utils.getProperty(this, eqtkey)
+      await this.updateParentOf(eqtkey, false)
+      if (!!eqt.itemid) {
+        let item = this.items.get(eqt.itemid)
+        if (!!item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.count': count }])
+        else {
+          ui.notifications?.warn('Invalid Item in Actor... removing all features')
+          await this._removeItemAdditions(eqt.itemid)
+        }
       }
+    } else {
+      let item = this.items.get(eqt.itemid)
+      if (!!item) {
+        item.system.eqt.count = count
+        await item.actor._updateItemFromForm(item)
+      }
+      await this.updateParentOf(eqtkey, false)
     }
   }
 
@@ -1969,5 +2230,112 @@ export class GurpsActor extends Actor {
     if (chkAttr('PER')) return false
 
     return true
+  }
+
+  async _updateEquipmentCalc(equipKey) {
+    if (!equipKey.includes('system.eqt.')) return
+    const equip = foundry.utils.getProperty(this, equipKey)
+    await Equipment.calc(equip)
+    if (!!equip.parentuuid) {
+      const parentKey = this._findEqtkeyForId('itemid', equip.parentuuid)
+      if (parentKey) {
+        await this._updateEquipmentCalc(parentKey)
+      }
+    }
+  }
+
+  async _updateItemFromForm(item) {
+    const sysKey =
+      item.type === 'equipment'
+        ? this._findEqtkeyForId('itemid', item.id)
+        : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+    const actorComp = foundry.utils.getProperty(this, sysKey)
+    if (!(await this._sanityCheckItemSettings(actorComp))) return
+    if (!!item.editingActor) delete item.editingActor
+    await this._removeItemAdditions(item.id)
+    // Update Item
+    await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+    // Update Actor Component
+    const itemInfo = item.getItemInfo()
+    await this.internalUpdate({
+      [sysKey]: {
+        ...item.system[item.itemSysKey],
+        uuid: actorComp.uuid,
+        parentuuid: actorComp.parentuuid,
+        itemInfo,
+      },
+    })
+    await this._addItemAdditions(item, sysKey)
+    if (item.type === 'equipment') {
+      await this.updateParentOf(sysKey, true)
+      await this._updateEquipmentCalc(sysKey)
+    }
+  }
+
+  async _sanityCheckItemSettings(actorComp) {
+    let canEdit = false
+    let message
+
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      message = 'GURPS.settingNoEquipAllowedHint'
+      if (!!actorComp.itemid) canEdit = true
+    } else {
+      message = 'GURPS.settingNoItemAllowedHint'
+      if (!actorComp.itemid) {
+        canEdit = true
+      } else {
+        const item = this.items.get(actorComp.itemid)
+        if (!!item && !item.system.importid) canEdit = true
+      }
+    }
+
+    if (!canEdit) {
+      const phrases = game.i18n
+        .localize(message)
+        .split('.')
+        .filter(p => !!p)
+        .map(p => `${p.trim()}.`)
+      const body = phrases.join('</p><p>')
+      const dialog = new Dialog(
+        {
+          title: game.i18n.localize('GURPS.settingNoEditAllowed'),
+          content: `<p>${body}</p>`,
+          buttons: {
+            ok: {
+              label: 'OK',
+            },
+          },
+        },
+        {
+          width: 400,
+        }
+      )
+      await dialog.render(true)
+    }
+    return canEdit
+  }
+
+  /**
+   * Executes a GURPS action parsed from a given OTF string.
+   *
+   * This is intended for external libraries like Argon Combat HUD.
+   *
+   * @param {string} otf - The On-The-Fly (OTF) string representing the action to be performed.
+   * @return {Promise<void>} A promise that resolves once the action has been performed.
+   */
+  async runOTF(otf) {
+    const action = parselink(otf)
+    await GURPS.performAction(action.action, this)
+  }
+
+  /**
+   * Retrieves the value of the 'usingQuintessence' setting from the game settings.
+   *
+   * This is intended for external libraries like Argon Combat HUD.
+   *
+   * @return {boolean} The value of the 'usingQuintessence' setting.
+   */
+  get usingQuintessence() {
+    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
   }
 }
