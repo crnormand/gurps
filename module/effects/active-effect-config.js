@@ -12,7 +12,7 @@ export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
   }
 
   get template() {
-    return 'systems/gurps/templates/active-effects/active-effect-config.html'
+    return 'systems/gurps/templates/active-effects/active-effect-config.hbs'
   }
 
   async getData() {
@@ -27,7 +27,7 @@ export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
     let newEndCondition = formData.flags?.gurps?.endCondition
 
     // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
-    formData.flags['core.statusId'] = !!newEndCondition ? this.object.label : null
+    // formData.flags['core.statusId'] = !!newEndCondition ? this.object.label : null
 
     let result = await super._updateObject(event, formData)
 
