@@ -31,7 +31,7 @@
 	<div class='itemmenu' readonly></div>
 
 	<div class='adsdraggable' data-key='system.ads.{{@key}}'>
-		<div class='desc dblclkedit indent{{indent}}'>
+		<div class='desc dblclkedit indent{{indent}}' data-key='system.ads.{{@key}}'>
 			<div class='gga-desc-text'>
 				<div>
 					{{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
@@ -43,7 +43,21 @@
 					<div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
 					{{/if}}
 				</div>
-				<div>
+        <div>
+					{{#if (isFoundryGlobalItem this)}}
+					<i class='fas fa-book tooltip gga-global-item'>
+						<span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
+					</i>
+					{{/if}}
+				</div>
+        <div>
+					{{#if (isImportedItem this)}}
+					<i class='fas fa-layer-group tooltip gga-child-item'>
+						<span class='tooltiptext'>{{{parentItemTooltip this}}}</span>
+					</i>
+					{{/if}}
+				</div>
+        <div>
 					{{#if (isFoundryItem this)}}
 					<i class='far fas fa-star tooltip gga-item'>
 						<span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>

@@ -43,7 +43,6 @@ import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
-import { GGADebugger } from '../utils/debugger.js'
 
 /**
  * /dded to color the rollable parts of the character sheet.
@@ -80,6 +79,7 @@ import { gurpslink } from './utilities/gurpslink.js'
 import { PDFEditorSheet } from './pdf/edit.js'
 import { JournalEntryPageGURPS } from './pdf/index.js'
 import ApplyDamageDialog from './damage/applydamage.js'
+import { GGADebugger } from '../utils/debugger.js'
 
 let GURPS = undefined
 

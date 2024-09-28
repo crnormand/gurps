@@ -12,6 +12,7 @@ import MoveModeEditor from './move-mode-editor.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import SplitDREditor from './splitdr-editor.js'
 import { ActorImporter } from './actor-importer.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -137,6 +138,9 @@ export class GurpsActorSheet extends ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
+    if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      this._createGlobalItemMenus(html)
+    }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -448,19 +452,20 @@ export class GurpsActorSheet extends ActorSheet {
       let actor = this.actor
       let obj = foundry.utils.duplicate(foundry.utils.getProperty(actor, path)) // must dup so difference can be detected when updated
       if (!!obj.itemid) {
+        if (!(await this.actor._sanityCheckItemSettings(obj))) return
         let item = this.actor.items.get(obj.itemid)
         item.editingActor = this.actor
         item.sheet.render(true)
         return
       }
 
-      if (path.includes('equipment')) this.editEquipment(actor, path, obj)
-      if (path.includes('melee')) this.editMelee(actor, path, obj)
-      if (path.includes('ranged')) this.editRanged(actor, path, obj)
-      if (path.includes('ads')) this.editAds(actor, path, obj)
-      if (path.includes('skills')) this.editSkills(actor, path, obj)
-      if (path.includes('spells')) this.editSpells(actor, path, obj)
-      if (path.includes('notes')) this.editNotes(actor, path, obj)
+      if (path.includes('equipment')) await this.editEquipment(actor, path, obj)
+      if (path.includes('melee')) await this.editMelee(actor, path, obj)
+      if (path.includes('ranged')) await this.editRanged(actor, path, obj)
+      if (path.includes('ads')) await this.editAds(actor, path, obj)
+      if (path.includes('skills')) await this.editSkills(actor, path, obj)
+      if (path.includes('spells')) await this.editSpells(actor, path, obj)
+      if (path.includes('notes')) await this.editNotes(actor, path, obj)
     })
 
     html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
@@ -481,19 +486,33 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
       let eqt = foundry.utils.getProperty(this.actor, path)
+      if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      await this.actor.internalUpdate({ [path + '.uses']: value })
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        await this.actor.internalUpdate({ [path + '.uses']: value })
+      } else {
+        let item = this.actor.items.get(eqt.itemid)
+        item.system.eqt.uses = value
+        await this.actor._updateItemFromForm(item)
+      }
     })
     html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
       let eqt = foundry.utils.getProperty(this.actor, path)
+      if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      await this.actor.internalUpdate({ [path + '.uses']: value })
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        await this.actor.internalUpdate({ [path + '.uses']: value })
+      } else {
+        let item = this.actor.items.get(eqt.itemid)
+        item.system.eqt.uses = value
+        await this.actor._updateItemFromForm(item)
+      }
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -503,6 +522,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-key')
       let actor = this.actor
       let eqt = foundry.utils.getProperty(actor, path)
+      if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       if (eqt.count == 0) {
         await Dialog.confirm({
           title: i18n('GURPS.removeItem'),
@@ -629,13 +649,27 @@ export class GurpsActorSheet extends ActorSheet {
             name: i18n('GURPS.addTracker'),
             icon: '<i class="fas fa-plus"></i>',
             callback: e => {
-              this._addTracker()
+              this._addTracker().then()
             },
           },
         ],
         ClickAndContextMenu
       )
     }
+  }
+
+  _createGlobalItemMenus(html) {
+    let opts = [
+      this._createMenu(
+        i18n('GURPS.delete'),
+        '<i class="fas fa-trash"></i>',
+        this._deleteItem.bind(this),
+        this._isRemovable.bind(this)
+      ),
+    ]
+    new ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu' })
+    new ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu' })
+    new ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu' })
   }
 
   _createEquipmentItemMenus(html) {
@@ -690,8 +724,19 @@ export class GurpsActorSheet extends ActorSheet {
 
   _deleteItem(target) {
     let key = target[0].dataset.key
-    if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-    else GURPS.removeKey(this.actor, key)
+    if (key.includes('.equipment.')) {
+      this.actor.deleteEquipment(key)
+    } else if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      GURPS.removeKey(this.actor, key)
+    } else {
+      let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
+      if (!!item) {
+        this.actor._removeItemAdditions(item.id).then(() => {
+          item.delete()
+          GURPS.removeKey(this.actor, key)
+        })
+      }
+    }
   }
 
   _sortContentAscending(target) {
@@ -743,6 +788,16 @@ export class GurpsActorSheet extends ActorSheet {
     return false
   }
 
+  _isRemovable(target) {
+    let path = target[0].dataset.key
+    let ac = GURPS.decode(this.actor, path)
+    let item
+    if (ac.itemid) {
+      item = this.actor.items.get(ac.itemid)
+    }
+    return item?.system.globalid
+  }
+
   getMenuItems(elementid) {
     const map = {
       '#ranged': [this.sortAscendingMenu('system.ranged'), this.sortDescendingMenu('system.ranged')],
@@ -776,10 +831,19 @@ export class GurpsActorSheet extends ActorSheet {
     return {
       name: i18n_f('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
       icon: '<i class="fas fa-plus"></i>',
-      callback: e => {
+      callback: async e => {
+        if (path.includes('system.equipment')) {
+          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+            obj.save = true
+            let payload = obj.toItemData('')
+            const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
+            obj.itemid = item._id
+          }
+          if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
+        }
         let o = GURPS.decode(this.actor, path) || {}
         GURPS.put(o, foundry.utils.duplicate(obj))
-        this.actor.internalUpdate({ [path]: o })
+        await this.actor.internalUpdate({ [path]: o })
       },
     }
   }
@@ -817,13 +881,14 @@ export class GurpsActorSheet extends ActorSheet {
           isLinked: !this.actor.isToken,
           type: type,
           key: eqtkey,
+          uuid: this.actor.items.get(eqt.itemid)?.uuid,
           itemid: eqt.itemid,
           itemData: itemData,
         }
         if (!!oldd) foundry.utils.mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
 
         let payload = JSON.stringify(newd)
-        //console.log(payload)
+        console.log('GGA DragDrop Payload: ', payload)
         return ev.dataTransfer.setData('text/plain', payload)
       })
     })
@@ -1000,6 +1065,8 @@ export class GurpsActorSheet extends ActorSheet {
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
     let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
 
+    if (!(await this.actor._sanityCheckItemSettings(obj))) return
+
     let d = new Dialog(
       {
         title: 'Equipment Editor',
@@ -1008,16 +1075,30 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                a => (obj[a] = html.find(`.${a}`).val())
-              )
-              ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
-              let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
-              let v = html.find('.ignoreImportQty') // Should only find in equipment
-              if (!!v) obj.ignoreImportQty = v.is(':checked')
-              await actor.internalUpdate({ [path]: obj })
-              await actor.updateParentOf(path, false)
+              if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
+                  a => (obj[a] = html.find(`.${a}`).val())
+                )
+                ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+                let u = html.find('.save') // Should only find in Note (or equipment)
+                if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
+                let v = html.find('.ignoreImportQty') // Should only find in equipment
+                if (!!v) obj.ignoreImportQty = v.is(':checked')
+                await actor.internalUpdate({ [path]: obj })
+                await actor.updateParentOf(path, false)
+              } else {
+                let item = actor.items.get(obj.itemid)
+                item.name = obj.name
+                item.system.eqt.count = obj.count
+                item.system.eqt.cost = obj.cost
+                item.system.eqt.uses = obj.uses
+                item.system.eqt.maxuses = obj.maxuses
+                item.system.eqt.techlevel = obj.techlevel
+                item.system.eqt.notes = obj.notes
+                item.system.eqt.pageref = obj.pageref
+                await actor._updateItemFromForm(item)
+                await actor.updateParentOf(path, false)
+              }
             },
           },
         },
@@ -1249,19 +1330,19 @@ export class GurpsActorSheet extends ActorSheet {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
-    if (dragData.type === 'Item') this.actor.handleItemDrop(dragData)
+    if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
-    this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
-    this.handleDragFor(event, dragData, 'melee', 'meleedraggable')
-    this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
-    this.handleDragFor(event, dragData, 'skills', 'skldraggable')
-    this.handleDragFor(event, dragData, 'spells', 'spldraggable')
-    this.handleDragFor(event, dragData, 'note', 'notedraggable')
-    this.handleDragFor(event, dragData, 'reactions', 'reactdraggable')
-    this.handleDragFor(event, dragData, 'condmod', 'condmoddraggable')
+    await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
+    await this.handleDragFor(event, dragData, 'melee', 'meleedraggable')
+    await this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
+    await this.handleDragFor(event, dragData, 'skills', 'skldraggable')
+    await this.handleDragFor(event, dragData, 'spells', 'spldraggable')
+    await this.handleDragFor(event, dragData, 'note', 'notedraggable')
+    await this.handleDragFor(event, dragData, 'reactions', 'reactdraggable')
+    await this.handleDragFor(event, dragData, 'condmod', 'condmoddraggable')
 
     if (dragData.type === 'equipment') {
-      if ((await this.actor.handleEquipmentDrop(dragData)) != false) return // handle external drag/drop
+      if ((await this.actor.handleEquipmentDrop(dragData)) !== false) return // handle external drag/drop
 
       // drag/drop in same character sheet
       // Validate that the target is valid for the drop.
@@ -1274,7 +1355,7 @@ export class GurpsActorSheet extends ActorSheet {
       let targetkey = dropTarget.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-        this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
+        await this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
       }
     }
   }
@@ -1618,10 +1699,17 @@ export class GurpsActorSheet extends ActorSheet {
     ev.preventDefault()
     let element = ev.currentTarget
     let key = element.dataset.key
+    if (!(await this.actor._sanityCheckItemSettings(GURPS.decode(this.actor, key)))) return
     let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      let item = this.actor.items.get(eqt.itemid)
+      item.system.equipped = eqt.equipped
+      item.system.eqt.equipped = eqt.equipped
+      await this.actor._updateItemFromForm(item)
+    }
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.internalUpdate({

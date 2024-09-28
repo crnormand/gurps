@@ -1,0 +1,162 @@
+<div class="gurps-2col no-gap">
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.roll"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-roll"
+        type="number"
+        class="decimal-digits-only"
+        value="{{system.spl.import}}"
+        name="system.spl.import"
+      />
+      <span><i class="fa fa-dice"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellTime"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-time"
+        type="text"
+        value="{{system.spl.casttime}}"
+        name="system.spl.casttime"
+      />
+      <span><i class="fa fa-hourglass-half"></i></span>
+    </div>
+    <label>{{i18n "GURPS.skillLevel"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-level"
+        type="number"
+        class="digits-only"
+        value="{{system.spl.level}}"
+        name="system.spl.level"
+      />
+      <span><i class="fa fa-pen-ruler"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellClass"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-class"
+        type="text"
+        value="{{system.spl.class}}"
+        name="system.spl.class"
+      />
+      <span><i class="fa fa-hat-wizard"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellCollege"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-college"
+        type="text"
+        value="{{system.spl.college}}"
+        name="system.spl.college"
+      />
+      <span><i class="fa fa-book"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellDifficulty"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-difficulty"
+        type="text"
+        value="{{system.spl.difficulty}}"
+        name="system.spl.difficulty" />
+      <span><i class="fa fa-up-right-and-down-left-from-center"></i></span>
+    </div>
+  </div>
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.spellCost"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-cost"
+        type="text"
+        value="{{system.spl.cost}}"
+        name="system.spl.cost"
+      />
+      <span><i class="fa fa-bolt"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellDuration"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-duration"
+        type="text"
+        value="{{system.spl.duration}}"
+        name="system.spl.duration" />
+      <span><i class="fa fa-stopwatch"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellMaintain"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-maintain"
+        type="text"
+        value="{{system.spl.maintain}}"
+        name="system.spl.maintain"
+      />
+      <span><i class="fa fa-battery-three-quarters"></i></span>
+    </div>
+    <label>{{i18n "GURPS.spellResist"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-resist"
+        type="text"
+        value="{{system.spl.resist}}"
+        name="system.spl.resist" />
+      <span><i class="fa fa-shield"></i></span>
+    </div>
+    <label>{{i18n "GURPS.skillRelativeLevel"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-relative"
+        type="text"
+        value="{{system.spl.relativelevel}}"
+        name="system.spl.relativelevel" />
+      <span><i class="fa fa-sliders"></i></span>
+    </div>
+    <label>{{i18n "GURPS.pdfPageReference"}}</label>
+    <div class="icon-prefix">
+      <input id="item-spell-pageref" type="text" value="{{system.spl.pageref}}" name="system.spl.pageref" />
+      <span><i class="fa fa-bookmark"></i></span>
+    </div>
+    <label>{{i18n "GURPS.points"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-cost"
+        type="number"
+        class="decimal-digits-only"
+        value="{{system.spl.points}}"
+        name="system.spl.points"
+      />
+      <span><i class="fa fa-pen-to-square"></i></span>
+    </div>
+  </div>
+</div>
+<div class="label-value-row right-bias">
+  <div></div>
+  <div></div>
+  <label>{{i18n "GURPS.notes"}}</label>
+  <div>
+    <textarea class="notes" id="item-spell-notes" rows="4" name="system.spl.notes">{{system.spl.notes}}</textarea>
+  </div>
+</div>
+<hr />
+<div>
+  <h3>{{i18n "GURPS.OTFormulasEvent"}}</h3>
+  <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.skillLevel"}}</label>
+    <div><input type="text" value="{{system.spl.otf}}" name="system.spl.otf" /></div>
+    <div></div>
+    <div></div>
+    <label>{{i18n "GURPS.check"}}</label>
+    <div><input type="text" value="{{system.spl.checkotf}}" name="system.spl.checkotf" /></div>
+    <div></div>
+    <div></div>
+    <label>{{i18n "GURPS.during"}}</label>
+    <div><input type="text" value="{{system.spl.duringotf}}" name="system.spl.duringotf" /></div>
+    <div></div>
+    <div></div>
+    <label>{{i18n "GURPS.pass"}}</label>
+    <div><input type="text" value="{{system.spl.passotf}}" name="system.spl.passotf" /></div>
+    <div></div>
+    <div></div>
+    <label>{{i18n "GURPS.fail"}}</label>
+    <div><input type="text" value="{{system.spl.failotf}}" name="system.spl.failotf" /></div>
+  </div>
+</div>
