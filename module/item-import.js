@@ -61,6 +61,7 @@ export class ItemImporter {
       system: {
         eqt: {
           name: i.description,
+          originalName: i.description,
           notes: i.notes,
           pageref: i.reference,
           count: i.quantity,
@@ -167,7 +168,18 @@ export class ItemImporter {
         if (f.type === 'attribute_bonus') {
           bonus_list.push(`${f.attribute} ${bonus}`)
         } else if (f.type === 'dr_bonus') {
-          bonus_list.push(`DR ${bonus} *${f.location}`)
+          const locations = f.locations.map(loc => {
+            if (/\s+/.test(loc)) {
+              return `"*${loc}"`
+            } else {
+              return `*${loc}`
+            }
+          })
+          if (!!locations.length > 0) {
+            bonus_list.push(`DR ${bonus} ${locations.join(' ')}`)
+          } else {
+            bonus_list.push(`DR ${bonus}`)
+          }
         } else if (f.type === 'skill_bonus') {
           if (f.selection_type === 'skills_with_name' && f.name?.compare === 'is') {
             if (f.specialization?.compare === 'is') {
