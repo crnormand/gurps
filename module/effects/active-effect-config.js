@@ -18,7 +18,24 @@ export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
   async getData() {
     const sheetData = await super.getData()
     sheetData.changes = GURPSActiveEffectsChanges
+    sheetData.worldTime = game.time.worldTime
     return sheetData
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html)
+
+    html.find('.effect-control').on('click', this._onEffectControl.bind(this))
+  }
+
+  async _onEffectControl(event) {
+    event.preventDefault()
+    const a = event.currentTarget
+    const effect = a.dataset.effectId ? this.actor.effects.get(a.dataset.effectId) : null
+
+    switch (a.dataset.action) {
+      case 'create':
+    }
   }
 
   /** @inheritdoc */
@@ -28,6 +45,9 @@ export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
 
     // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
     // formData.flags['core.statusId'] = !!newEndCondition ? this.object.label : null
+
+    // Flip the "Disabled" flag.
+    formData.disabled = !formData.disabled
 
     let result = await super._updateObject(event, formData)
 

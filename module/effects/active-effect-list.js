@@ -23,7 +23,6 @@ export default class GurpsActiveEffectListSheet extends Application {
   getData() {
     const sheetData = super.getData()
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
-
     return sheetData
   }
 
@@ -59,10 +58,7 @@ export default class GurpsActiveEffectListSheet extends Application {
       case 'edit':
         return effect.sheet.render(true, { parentWindow: this })
       case 'disable':
-        // Copilot, how do I update an ActiveEffect?
-        
         await effect.update({ disabled: !a.checked })
-        
         return this.render(true)
     }
   }
