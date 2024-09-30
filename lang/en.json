@@ -751,6 +751,8 @@
   "GURPS.importGCA5ImprovedBlock": "This file was created with an older version of the GCA5 export which does not correctly calculate block for melee weapons.",
   "GURPS.importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
   "GURPS.importErrorParsingXML": "Error parsing XML: {text}.",
+  "GURPS.settingImportExtendedValuesGCS": "Import Extended Values from GCS Compendiums",
+  "GURPS.settingImportHintExtendedValuesGCS": "If enabled, system will import the extended values for Cost and Weight when importing GCS Equipment Packs.",
   "GURPS.importFantasyGroundUnsupported": "We no longer support the Fantasy Grounds import.",
   "GURPS.importFileVersion": "The file version: '{version}'.",
   "GURPS.importGCABadBlockForDB": "This file was created with an older version of the GCA Export which incorrectly calculates Block value for items with DB (e.g. Shields).",

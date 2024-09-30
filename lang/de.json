@@ -595,6 +595,8 @@
   "GURPS.importCannotImportGCSDirectly": "GCS-Dateien können nicht direkt importiert werden. Bitte exportiere die Datei über das 'Foundry VTT' Ausgabe Template.",
   "GURPS.importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
   "GURPS.importErrorParsingXML": "Fehler beim Parsen von XML: {text}.",
+  "GURPS.settingImportExtendedValuesGCS": "Importiere erweiterte Werte aus GCS-Kompendien",
+  "GURPS.settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
   "GURPS.importFantasyGroundUnsupported": "Der Fantasy Grounds Import wird nicht länger unterstützt.",
   "GURPS.importFileVersion": "Dateiversion: '{version}'.",
   "GURPS.importGCABadBlockForDB": "Diese Datei wurde mit einer älteren Version des GCA-Exports erstellt, die den Blockwert für Gegenstände mit DB (z. B. Schilde) falsch berechnet..",

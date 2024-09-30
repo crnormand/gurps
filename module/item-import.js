@@ -1,4 +1,5 @@
 import { zeroFill } from '../lib/utilities.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 
 export class ItemImporter {
   constructor() {
@@ -49,6 +50,28 @@ export class ItemImporter {
     ui.notifications.info('Finished Importing ' + this.count + ' Items!')
   }
 
+  _getItemCost(i) {
+    if (!i.value) return 0
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+      return parseFloat(i.value)
+    }
+    let value
+    if (!!i.calc?.extended_value) value = parseFloat(i.calc.extended_value)
+    if (!value) value = parseFloat(i.value) || 0
+    return value
+  }
+
+  _getItemWeight(i) {
+    if (!i.weight) return 0
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+      return parseFloat(i.weight) || 0
+    }
+    let weight
+    if (!!i.calc?.extended_weight) weight = parseFloat(i.calc.extended_weight)
+    if (!weight) weight = parseFloat(i.weight) || 0
+    return weight
+  }
+
   async _importItem(i, pack, filename, timestamp) {
     this.count++
     if (i.children?.length)
@@ -65,8 +88,8 @@ export class ItemImporter {
           notes: i.notes,
           pageref: i.reference,
           count: i.quantity,
-          cost: !!i.value ? parseFloat(i.value) : 0,
-          weight: !!i.weight ? parseFloat(i.weight) : 0,
+          cost: this._getItemCost(i),
+          weight: this._getItemWeight(i),
           carried: true,
           equipped: true,
           techlevel: i.tech_level || '',

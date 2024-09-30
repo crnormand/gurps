@@ -437,6 +437,8 @@
   "GURPS.itemImport": "Импортой Сбор Оборудования",
   "GURPS.importSheetTitle": "Импорт листа {generator}",
   "GURPS.importSheetHint": "Импорт данных для {name} с использованием {generator}. Пожалуйста, подождите...",
+  "GURPS.settingImportExtendedValuesGCS": "Импорт расширенных значений из GCS",
+  "GURPS.settingImportHintExtendedValuesGCS": "Если включено, система будет импортировать расширенные значения для Стоимости и Веса при импорте пакетов снаряжения GCS.",
 
   "__System Settings__": "=========",
   "GURPS.settingDamageLocationTorso": "Торс",
