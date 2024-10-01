@@ -75,6 +75,14 @@
   "GURPS.highPainThreshold": "Schmerzunempfindlichkeit",
   "GURPS.lowPainThreshold": "Schmerzüberempfindlichkeit",
   "GURPS.perfectBalance": "Perfekte Balance",
+
+  "GURPS.encumbranceLevel-enc0": "Keine (0)",
+  "GURPS.encumbranceLevel-enc1": "Leicht (1)",
+  "GURPS.encumbranceLevel-enc2": "Mittel (2)",
+  "GURPS.encumbranceLevel-enc3": "Schwer (3)",
+  "GURPS.encumbranceLevel-enc4": "S-Schwer (4)",
+  "GURPS.autoEncumbrance": "Automatische Belastungsberechnung",
+
   "__ Character Skills__": "=========",
 
   "GURPS.skills": "Fertigkeiten",

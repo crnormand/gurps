@@ -144,6 +144,12 @@
   "GURPS.shiftSlightly": "Décaler Légèrement",
   "GURPS.shoveAndKnockOver": "Pousser & Renverser",
   "GURPS.twoHandLift": "Porter à deux mains",
+  "GURPS.encumbranceLevel-enc0": "Aucun (0)",
+  "GURPS.encumbranceLevel-enc1": "Léger (1)",
+  "GURPS.encumbranceLevel-enc2": "Moyen (2)",
+  "GURPS.encumbranceLevel-enc3": "Lourd (3)",
+  "GURPS.encumbranceLevel-enc4": "X-Lourd (4)",
+  "GURPS.autoEncumbrance": "Calcul de l'Encombrement Automatique",
 
   "__Character Weapons__": "=========",
   "GURPS.acc": "Préc",
