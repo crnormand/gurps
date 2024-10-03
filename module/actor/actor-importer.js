@@ -175,9 +175,9 @@ export class ActorImporter {
       commit = { ...commit, ...(await this.importTraitsFromGCS(r.profile, r.created_date, r.modified_date)) }
       commit = {
         ...commit,
-        ...this.importSizeFromGCS(commit, r.profile, r.traits || r.advantages, r.skills, r.equipment),
+        ...this.importSizeFromGCS(commit, r.profile, r.traits || r.advantages || [], r.skills, r.equipment),
       }
-      commit = { ...commit, ...(await this.importAdsFromGCS(r.traits || r.advantages)) }
+      commit = { ...commit, ...(await this.importAdsFromGCS(r.traits || r.advantages || [])) }
       commit = { ...commit, ...(await this.importSkillsFromGCS(r.skills)) }
       commit = { ...commit, ...(await this.importSpellsFromGCS(r.spells)) }
       commit = { ...commit, ...(await this.importEquipmentFromGCS(r.equipment, r.other_equipment)) }
@@ -189,10 +189,19 @@ export class ActorImporter {
       }
       commit = {
         ...commit,
-        ...this.importPointTotalsFromGCS(r.total_points, r.attributes, r.traits || r.advantages, r.skills, r.spells),
+        ...this.importPointTotalsFromGCS(
+          r.total_points,
+          r.attributes,
+          r.traits || r.advantages || [],
+          r.skills,
+          r.spells
+        ),
       }
-      commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages, r.skills, r.equipment) }
-      commit = { ...commit, ...this.importCombatFromGCS(r.traits || r.advantages, r.skills, r.spells, r.equipment) }
+      commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages || [], r.skills, r.equipment) }
+      commit = {
+        ...commit,
+        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment),
+      }
     } catch (err) {
       console.log(err.stack)
       msg.push(
