@@ -454,6 +454,9 @@ export class GurpsActorSheet extends ActorSheet {
       if (!!obj.itemid) {
         if (!(await this.actor._sanityCheckItemSettings(obj))) return
         let item = this.actor.items.get(obj.itemid)
+        if (!!item.system.fromItem) {
+          item = this.actor.items.get(item.system.fromItem)
+        }
         item.editingActor = this.actor
         item.sheet.render(true)
         return

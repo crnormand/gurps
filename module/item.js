@@ -79,6 +79,8 @@ export class GurpsItem extends Item {
       feature: 'ads',
       skill: 'skills',
       spell: 'spells',
+      meleeAtk: 'melee',
+      rangedAtk: 'ranged',
     }
     const sysKey = keys[this.type]
     if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
@@ -96,6 +98,8 @@ export class GurpsItem extends Item {
       feature: 'fea',
       skill: 'ski',
       spell: 'spl',
+      meleeAtk: 'mel',
+      rangedAtk: 'rng',
     }
     const sysKey = keys[this.type]
     if (!sysKey) throw new Error(`No item system key found for ${this.type}`)

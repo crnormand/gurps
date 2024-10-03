@@ -36,8 +36,8 @@ import { simpleHash } from '../../lib/simple-hash.js'
  * | Traits      | ads                        | Advantage                   | feature           | fea               |
  * | Skills      | skills                     | Skill                       | skill             | ski               |
  * | Spells      | spells                     | Spell                       | spell             | spl               |
- * | Melee Att.  | melee                      | Melee                       | --                | --               |
- * | Ranged Att. | ranged                     | Ranged                      | --                | --               |
+ * | Melee Att.  | melee                      | Melee                       | meleeAtk          | mel               |
+ * | Ranged Att. | ranged                     | Ranged                      | rangedAttack      | rng               |
  *
  *
  */
@@ -80,6 +80,26 @@ export class _Base {
         this.pageref = ''
       }
     }
+  }
+  static _checkComponentInActor(actor, actorComp) {
+    // This actor component already exists in Actor?
+    const existingComponentKey =
+      actorComp instanceof Equipment
+        ? actor._findEqtkeyForId('uuid', actorComp.uuid)
+        : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
+    if (!!existingComponentKey) {
+      const existingComponentItem = actor.items.get(actorComp.itemid)
+      if (!!existingComponentItem) {
+        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          actorComp.itemid = existingComponentItem.itemid || ''
+        }
+        actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
+      } else {
+        actorComp.itemid = ''
+        actorComp.itemInfo = {}
+      }
+    }
+    return actorComp
   }
 }
 
@@ -192,27 +212,6 @@ export class Named extends _Base {
     let actorComp = new this(data.name)
     Object.assign(actorComp, data)
     return this._checkComponentInActor(actor, actorComp)
-  }
-
-  static _checkComponentInActor(actor, actorComp) {
-    // This actor component already exists in Actor?
-    const existingComponentKey =
-      actorComp instanceof Equipment
-        ? actor._findEqtkeyForId('uuid', actorComp.uuid)
-        : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
-    if (!!existingComponentKey) {
-      const existingComponentItem = actor.items.get(actorComp.itemid)
-      if (!!existingComponentItem) {
-        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          actorComp.itemid = existingComponentItem.itemid || ''
-        }
-        actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
-      } else {
-        actorComp.itemid = ''
-        actorComp.itemInfo = {}
-      }
-    }
-    return actorComp
   }
 
   /**
@@ -680,6 +679,110 @@ export class Melee extends Attack {
     this.parry = ''
     this.block = ''
   }
+  static fromObject(data, actor) {
+    let melee
+    if (data instanceof Melee) {
+      melee = data
+    } else {
+      melee = new Melee(data.name, data.import, data.damage)
+      melee.originalName = data.originalName || ''
+      melee.notes = data.notes
+      melee.pageref = data.pageref
+      melee.contains = data.contains || {}
+      melee.uuid = data.uuid
+      melee.parentuuid = data.parentuuid
+      melee['import'] = data['import']
+      melee.damage = data.damage
+      melee.st = data.st
+      melee.mode = data.mode
+      melee.level = data.level
+      melee.weight = data.weight
+      melee.techlevel = data.techlevel
+      melee.cost = data.cost
+      melee.reach = data.reach
+      melee.parry = data.parry
+      melee.block = data.block
+    }
+    return this._checkComponentInActor(actor, melee)
+  }
+  static get actorSystemKey() {
+    return 'melee'
+  }
+  _itemNeedsUpdate(item) {
+    let result = false
+    if (!item) {
+      result = true
+      console.log(`Foundry Item: ${this.name} does not exist`)
+    } else {
+      const itemData = item.system[item.itemSysKey]
+      result =
+        itemData.originalName !== this.originalName ||
+        itemData.notes !== this.notes ||
+        itemData.pageref !== this.pageref ||
+        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
+        itemData.st !== this.st ||
+        itemData.mode !== this.mode ||
+        itemData.level !== this.level ||
+        itemData.weight !== this.weight ||
+        itemData.techlevel !== this.techlevel ||
+        itemData.cost !== this.cost ||
+        itemData.reach !== this.reach ||
+        itemData.parry !== this.parry ||
+        itemData.block !== this.block ||
+        itemData['import'].toString() !== this['import'].toString() ||
+        itemData.damage !== this.damage
+      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+    }
+    return result
+  }
+  toItemData(fromProgram = '') {
+    const system = this.itemInfo?.system || {}
+    const uniqueId = this._getGGAId({ name: this.name, type: 'melee', generator: fromProgram })
+    const importId = !this.save ? uniqueId : ''
+    const importFrom = this.importFrom || fromProgram
+    return {
+      name: this.name,
+      img: this.itemInfo?.img || this.findDefaultImage(),
+      type: 'meleeAtk',
+      system: {
+        mel: {
+          notes: this.notes || '',
+          pageref: this.pageref || '',
+          contains: this.contains || {},
+          uuid: uniqueId,
+          parentuuid: this.parentuuid || '',
+          points: this.points || 0,
+          ['import']: this['import'] || '',
+          level: this.level || 0,
+          weight: this.weight || '',
+          techlevel: this.techlevel || '',
+          cost: this.cost || '',
+          reach: this.reach || '',
+          parry: this.parry || '',
+          block: this.block || '',
+          name: this.name,
+          originalName: this.originalName || '',
+          st: this.st || '',
+          mode: this.mode || '',
+          otf: this.otf || '',
+          checkotf: this.checkotf || '',
+          duringotf: this.duringotf || '',
+          passotf: this.passotf || '',
+          failotf: this.failotf || '',
+        },
+        ads: system.ads || {},
+        skills: system.skills || {},
+        spells: system.spells || {},
+        melee: system.melee || {},
+        ranged: system.ranged || {},
+        bonuses: system.bonuses || '',
+        globalid: system.globalid || '',
+        importid: importId,
+        importFrom: importFrom,
+        fromItem: this.fromItem || '',
+      },
+    }
+  }
 }
 
 export class Ranged extends Attack {
@@ -706,6 +809,122 @@ export class Ranged extends Attack {
     if (!!this.halfd) this.range = this.halfd
     if (!!this.max) this.range = this.max
     if (!!this.halfd && !!this.max) this.range = this.halfd + '/' + this.max
+  }
+  static fromObject(data, actor) {
+    let ranged
+    if (data instanceof Ranged) {
+      ranged = data
+    } else {
+      ranged = new Ranged(data.name, data.import, data.damage)
+      ranged.originalName = data.originalName || ''
+      ranged.notes = data.notes
+      ranged.pageref = data.pageref
+      ranged.contains = data.contains || {}
+      ranged.uuid = data.uuid
+      ranged.parentuuid = data.parentuuid
+      ranged['import'] = data['import']
+      ranged.damage = data.damage
+      ranged.st = data.st
+      ranged.mode = data.mode
+      ranged.level = data.level
+      ranged.bulk = data.bulk
+      ranged.legalityclass = data.legalityclass
+      ranged.ammo = data.ammo
+      ranged.acc = data.acc
+      ranged.range = data.range
+      ranged.rof = data.rof
+      ranged.shots = data.shots
+      ranged.rcl = data.rcl
+      ranged.halfd = data.halfd
+      ranged.max = data.max
+    }
+    return this._checkComponentInActor(actor, ranged)
+  }
+  static get actorSystemKey() {
+    return 'ranged'
+  }
+  _itemNeedsUpdate(item) {
+    let result = false
+    if (!item) {
+      result = true
+      console.log(`Foundry Item: ${this.name} does not exist`)
+    } else {
+      const itemData = item.system[item.itemSysKey]
+      result =
+        itemData.originalName !== this.originalName ||
+        itemData.notes !== this.notes ||
+        itemData.pageref !== this.pageref ||
+        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
+        itemData.st !== this.st ||
+        itemData.mode !== this.mode ||
+        itemData.level !== this.level ||
+        itemData.bulk !== this.bulk ||
+        itemData.legalityclass !== this.legalityclass ||
+        itemData.ammo !== this.ammo ||
+        itemData.acc !== this.acc ||
+        itemData.range !== this.range ||
+        itemData.rof !== this.rof ||
+        itemData.shots !== this.shots ||
+        itemData.rcl !== this.rcl ||
+        itemData.halfd !== this.halfd ||
+        itemData.max !== this.max ||
+        itemData['import'].toString() !== this['import'].toString() ||
+        itemData.damage !== this.damage
+      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+    }
+    return result
+  }
+  toItemData(fromProgram = '') {
+    const system = this.itemInfo?.system || {}
+    const uniqueId = this._getGGAId({ name: this.name, type: 'ranged', generator: fromProgram })
+    const importId = !this.save ? uniqueId : ''
+    const importFrom = this.importFrom || fromProgram
+    return {
+      name: this.name,
+      img: this.itemInfo?.img || this.findDefaultImage(),
+      type: 'rangedAtk',
+      system: {
+        rng: {
+          notes: this.notes || '',
+          pageref: this.pageref || '',
+          contains: this.contains || {},
+          uuid: uniqueId,
+          parentuuid: this.parentuuid || '',
+          points: this.points || 0,
+          ['import']: this['import'] || '',
+          level: this.level || 0,
+          bulk: this.bulk || '',
+          legalityclass: this.legalityclass || '',
+          ammo: this.ammo || '',
+          acc: this.acc || '',
+          range: this.range || '',
+          rof: this.rof || '',
+          shots: this.shots || '',
+          rcl: this.rcl || '',
+          halfd: this.halfd || '',
+          max: this.max || '',
+          name: this.name,
+          originalName: this.originalName || '',
+          st: this.st || '',
+          mode: this.mode || '',
+          otf: this.otf || '',
+          checkotf: this.checkotf || '',
+          duringotf: this.duringotf || '',
+          passotf: this.passotf || '',
+          failotf: this.failotf || '',
+        },
+        ads: system.ads || {},
+        skills: system.skills || {},
+        spells: system.spells || {},
+        melee: system.melee || {},
+        ranged: system.ranged || {},
+        bonuses: system.bonuses || '',
+        globalid: system.globalid || '',
+        importid: importId,
+        importFrom: importFrom,
+        fromItem: this.fromItem || '',
+      },
+    }
   }
 }
 
