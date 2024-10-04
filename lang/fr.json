@@ -7,6 +7,8 @@
 
   "__Char Sheet__": "=========",
   "GURPS.portrait": "Portrait",
+  "GURPS.personalTab": "Personnel",
+  "GURPS.resourcesModsTab": "Ressources et Modificateurs",
 
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Identité",

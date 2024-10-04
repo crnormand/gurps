@@ -5,7 +5,8 @@
   "GURPS.DontShowAgain": "Zeige LIESMICH nicht noch einmal",
 
   "__Char Sheet__": "=========",
-
+  "GURPS.personalTab": "Persönlich",
+  "GURPS.resourcesModsTab": "Ressourcen und Modifikatoren",
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Identität",
   "GURPS.identityPlayer": "Spieler",

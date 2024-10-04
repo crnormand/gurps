@@ -6,6 +6,8 @@
   "GURPS.copyrightGCS": "GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved ",
   "__Char Sheet__": "=========",
   "GURPS.portrait": "Portrait",
+  "GURPS.personalTab": "Personal",
+  "GURPS.resourcesModsTab": "Resources and Modifiers",
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Identity",
   "GURPS.identityName": "Name",
