@@ -709,31 +709,7 @@ export class Melee extends Attack {
     return 'melee'
   }
   _itemNeedsUpdate(item) {
-    let result = false
-    if (!item) {
-      result = true
-      console.log(`Foundry Item: ${this.name} does not exist`)
-    } else {
-      const itemData = item.system[item.itemSysKey]
-      result =
-        itemData.originalName !== this.originalName ||
-        itemData.notes !== this.notes ||
-        itemData.pageref !== this.pageref ||
-        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
-        itemData.st !== this.st ||
-        itemData.mode !== this.mode ||
-        itemData.level !== this.level ||
-        itemData.weight !== this.weight ||
-        itemData.techlevel !== this.techlevel ||
-        itemData.cost !== this.cost ||
-        itemData.reach !== this.reach ||
-        itemData.parry !== this.parry ||
-        itemData.block !== this.block ||
-        itemData['import'].toString() !== this['import'].toString() ||
-        itemData.damage !== this.damage
-      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
-    }
-    return result
+    return !item
   }
   toItemData(fromProgram = '') {
     const system = this.itemInfo?.system || {}
@@ -844,35 +820,7 @@ export class Ranged extends Attack {
     return 'ranged'
   }
   _itemNeedsUpdate(item) {
-    let result = false
-    if (!item) {
-      result = true
-      console.log(`Foundry Item: ${this.name} does not exist`)
-    } else {
-      const itemData = item.system[item.itemSysKey]
-      result =
-        itemData.originalName !== this.originalName ||
-        itemData.notes !== this.notes ||
-        itemData.pageref !== this.pageref ||
-        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
-        itemData.st !== this.st ||
-        itemData.mode !== this.mode ||
-        itemData.level !== this.level ||
-        itemData.bulk !== this.bulk ||
-        itemData.legalityclass !== this.legalityclass ||
-        itemData.ammo !== this.ammo ||
-        itemData.acc !== this.acc ||
-        itemData.range !== this.range ||
-        itemData.rof !== this.rof ||
-        itemData.shots !== this.shots ||
-        itemData.rcl !== this.rcl ||
-        itemData.halfd !== this.halfd ||
-        itemData.max !== this.max ||
-        itemData['import'].toString() !== this['import'].toString() ||
-        itemData.damage !== this.damage
-      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
-    }
-    return result
+    return !item
   }
   toItemData(fromProgram = '') {
     const system = this.itemInfo?.system || {}

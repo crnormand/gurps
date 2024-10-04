@@ -120,4 +120,17 @@ export class GurpsItem extends Item {
       system: itemSystem,
     }
   }
+
+  /**
+   * Filter Available Items by Type
+   *
+   * We need to filter MeleeAtk and RangedAtk from the list of Items
+   * because they are subtypes of the other types.
+   *
+   * @returns {string[]}
+   * @constructor
+   */
+  static get TYPES() {
+    return Object.keys(game.model[this.metadata.name]).filter(k => !k.includes('Atk'))
+  }
 }
