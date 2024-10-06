@@ -185,17 +185,19 @@ export class ItemImporter {
       }
     if (feat_list.length)
       for (let f of feat_list) {
-        let bonus = !!f.amount ? (f.amount > -1 ? `+${f.amount}` : f.amount.toString()) : ''
+        let bonus = f.amount ? (f.amount > -1 ? `+${f.amount}` : f.amount.toString()) : ''
         if (f.type === 'attribute_bonus') {
           bonus_list.push(`${f.attribute} ${bonus}`)
         } else if (f.type === 'dr_bonus') {
           const locations = f.locations.map(loc => {
+            // If the string contains embedded spaces, wrap it in double quotes.
             if (/\s+/.test(loc)) {
               return `"*${loc}"`
             } else {
               return `*${loc}`
             }
           })
+
           if (!!locations.length > 0) {
             bonus_list.push(`DR ${bonus} ${locations.join(' ')}`)
           } else {
