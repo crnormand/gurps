@@ -5,7 +5,8 @@
   "GURPS.DontShowAgain": "Zeige LIESMICH nicht noch einmal",
 
   "__Char Sheet__": "=========",
-
+  "GURPS.personalTab": "Persönlich",
+  "GURPS.resourcesModsTab": "Ressourcen und Modifikatoren",
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Identität",
   "GURPS.identityPlayer": "Spieler",
@@ -75,6 +76,14 @@
   "GURPS.highPainThreshold": "Schmerzunempfindlichkeit",
   "GURPS.lowPainThreshold": "Schmerzüberempfindlichkeit",
   "GURPS.perfectBalance": "Perfekte Balance",
+
+  "GURPS.encumbranceLevel-enc0": "Keine (0)",
+  "GURPS.encumbranceLevel-enc1": "Leicht (1)",
+  "GURPS.encumbranceLevel-enc2": "Mittel (2)",
+  "GURPS.encumbranceLevel-enc3": "Schwer (3)",
+  "GURPS.encumbranceLevel-enc4": "S-Schwer (4)",
+  "GURPS.autoEncumbrance": "Automatische Belastungsberechnung",
+
   "__ Character Skills__": "=========",
 
   "GURPS.skills": "Fertigkeiten",
@@ -595,6 +604,8 @@
   "GURPS.importCannotImportGCSDirectly": "GCS-Dateien können nicht direkt importiert werden. Bitte exportiere die Datei über das 'Foundry VTT' Ausgabe Template.",
   "GURPS.importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
   "GURPS.importErrorParsingXML": "Fehler beim Parsen von XML: {text}.",
+  "GURPS.settingImportExtendedValuesGCS": "Importiere erweiterte Werte aus GCS-Kompendien",
+  "GURPS.settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
   "GURPS.importFantasyGroundUnsupported": "Der Fantasy Grounds Import wird nicht länger unterstützt.",
   "GURPS.importFileVersion": "Dateiversion: '{version}'.",
   "GURPS.importGCABadBlockForDB": "Diese Datei wurde mit einer älteren Version des GCA-Exports erstellt, die den Blockwert für Gegenstände mit DB (z. B. Schilde) falsch berechnet..",

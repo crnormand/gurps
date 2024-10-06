@@ -184,6 +184,10 @@ export class GurpsItemSheet extends ItemSheet {
 
   async close() {
     await super.close()
+    if (!!this.useFoundryItems) {
+      ui.notifications.info(`Saving Item ${this.item.name}... Please wait.`)
+    }
+
     // When editing a Compendium Item, Actor does not exist, so we need to update the Item directly
     await this.item.update({ [`system.${this.item.itemSysKey}.name`]: this.item.name })
     if (!!this.item.editingActor) {
@@ -193,7 +197,7 @@ export class GurpsItemSheet extends ItemSheet {
           : this.item.editingActor._findSysKeyForId('itemid', this.item.id, this.item.actorComponentKey)
       const actorComp = foundry.utils.getProperty(this.item.editingActor, actorCompKey)
       if (!(await this.item.editingActor._sanityCheckItemSettings(actorComp))) return
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (!this.useFoundryItems) {
         if (this.item.type === 'equipment') {
           await this.item.editingActor.updateItem(this.item)
         } else {
@@ -213,5 +217,12 @@ export class GurpsItemSheet extends ItemSheet {
         system: this.item.system,
       })
     }
+    if (!!this.useFoundryItems) {
+      ui.notifications.info(`Item ${this.item.name} saved!`)
+    }
+  }
+
+  get useFoundryItems() {
+    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
   }
 }

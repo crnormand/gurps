@@ -6,6 +6,8 @@
 
   "__Char Sheet__": "=========",
   "GURPS.portrait": "Изображение",
+  "GURPS.personalTab": "Личное",
+  "GURPS.resourcesModsTab": "Ресурсы и Модификаторы",
 
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Личность",
@@ -134,6 +136,12 @@
   "GURPS.runningShoveAndKnockOver": "Толчок и опрокидывание с разбега",
   "GURPS.carryOnBack": "Нести на спине",
   "GURPS.shiftSlightly": "Медленно двигать",
+  "GURPS.encumbranceLevel-enc0": "Нет (0)",
+  "GURPS.encumbranceLevel-enc1": "Лёгкая (1)",
+  "GURPS.encumbranceLevel-enc2": "Средняя (2)",
+  "GURPS.encumbranceLevel-enc3": "Тяжёлая (3)",
+  "GURPS.encumbranceLevel-enc4": "Очень тяжёлая (4)",
+  "GURPS.autoEncumbrance": "Автоматический расчёт нагрузки",
 
   "__Character Weapons__": "=========",
   "GURPS.acc": "Точ",
@@ -437,6 +445,8 @@
   "GURPS.itemImport": "Импортой Сбор Оборудования",
   "GURPS.importSheetTitle": "Импорт листа {generator}",
   "GURPS.importSheetHint": "Импорт данных для {name} с использованием {generator}. Пожалуйста, подождите...",
+  "GURPS.settingImportExtendedValuesGCS": "Импорт расширенных значений из GCS",
+  "GURPS.settingImportHintExtendedValuesGCS": "Если включено, система будет импортировать расширенные значения для Стоимости и Веса при импорте пакетов снаряжения GCS.",
 
   "__System Settings__": "=========",
   "GURPS.settingDamageLocationTorso": "Торс",

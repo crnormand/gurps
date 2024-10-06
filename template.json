@@ -1,6 +1,9 @@
 {
   "Actor": {
-    "types": ["character", "enemy"],
+    "types": [
+      "character",
+      "enemy"
+    ],
     "templates": {
       "base": {
         "attributes": {
@@ -195,14 +198,25 @@
       }
     },
     "character": {
-      "templates": ["base"]
+      "templates": [
+        "base"
+      ]
     },
     "enemy": {
-      "templates": ["base"]
+      "templates": [
+        "base"
+      ]
     }
   },
   "Item": {
-    "types": ["equipment", "feature", "skill", "spell"],
+    "types": [
+      "equipment",
+      "feature",
+      "skill",
+      "spell",
+      "meleeAtk",
+      "rangedAtk"
+    ],
     "equipment": {
       "eqt": {
         "name": "",
@@ -335,6 +349,64 @@
       "importid": "",
       "importFrom": "",
       "fromItem": ""
+    },
+    "meleeAtk": {
+      "mel": {
+        "name": "",
+        "notes": "",
+        "pageref": "",
+        "contains": {},
+        "uuid": "",
+        "parentuuid": "",
+        "import": "",
+        "damage": "",
+        "st": "",
+        "mode": "",
+        "level": 0,
+        "weight": "",
+        "techlevel": 0,
+        "cost": "",
+        "reach": "",
+        "parry": "",
+        "block": "",
+        "otf": "",
+        "checkotf": "",
+        "duringotf": "",
+        "passotf": "",
+        "failotf": "",
+        "originalName": ""
+      }
+    },
+    "rangedAtk": {
+      "rng": {
+        "name": "",
+        "notes": "",
+        "pageref": "",
+        "contains": {},
+        "uuid": "",
+        "parentuuid": "",
+        "import": "",
+        "damage": "",
+        "st": "",
+        "mode": "",
+        "level": 0,
+        "bulk": "",
+        "legalityclass": "",
+        "ammo": "",
+        "acc": "",
+        "range": "",
+        "rof": "",
+        "shots": "",
+        "rcl": "",
+        "halfd": "",
+        "max": "",
+        "otf": "",
+        "checkotf": "",
+        "duringotf": "",
+        "passotf": "",
+        "failotf": "",
+        "originalName": ""
+      }
     }
   }
 }

@@ -7,6 +7,8 @@
 
   "__Char Sheet__": "=========",
   "GURPS.portrait": "Portrait",
+  "GURPS.personalTab": "Personnel",
+  "GURPS.resourcesModsTab": "Ressources et Modificateurs",
 
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Identité",
@@ -144,6 +146,12 @@
   "GURPS.shiftSlightly": "Décaler Légèrement",
   "GURPS.shoveAndKnockOver": "Pousser & Renverser",
   "GURPS.twoHandLift": "Porter à deux mains",
+  "GURPS.encumbranceLevel-enc0": "Aucun (0)",
+  "GURPS.encumbranceLevel-enc1": "Léger (1)",
+  "GURPS.encumbranceLevel-enc2": "Moyen (2)",
+  "GURPS.encumbranceLevel-enc3": "Lourd (3)",
+  "GURPS.encumbranceLevel-enc4": "X-Lourd (4)",
+  "GURPS.autoEncumbrance": "Calcul de l'Encombrement Automatique",
 
   "__Character Weapons__": "=========",
   "GURPS.acc": "Préc",
@@ -719,6 +727,8 @@
   "GURPS.importCannotImportGCSDirectly": "Nous ne pouvons import un fichier GCS directement. Merci d'exporter le fichier avec le modèle d'export 'Foundry VTT'.",
   "GURPS.importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
   "GURPS.importErrorParsingXML": "Erreur d'analyse XML: {text}.",
+  "GURPS.settingImportExtendedValuesGCS": "Importer les valeurs étendues des Compendiums GCS",
+  "GURPS.settingImportHintExtendedValuesGCS": "If enabled, le système importera les valeurs étendues pour le Coût et le Poids lors de l'importation des Packs d'Equipement GCS.",
   "GURPS.importFantasyGroundUnsupported": "Nous ne gérons plus l'import de Fantasy Grounds.",
   "GURPS.importFileVersion": "La version du fichier: '{version}'.",
   "GURPS.importGCABadBlockForDB": "Ce fichier a été créé avec une ancienne version de l'Export GCA qui calcule de manière incorrecte les valeurs de Blocage pour les équipements avec RD(e.g. Boucliers).",
