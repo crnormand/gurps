@@ -1,5 +1,15 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.13
+
+- The following are all thanks to user @chrismaille:
+  - Bugfix: Missing DR location when import GCS Equipment Pack #1978
+  - Bugfix: When dragging an Item in a textarea of another Item, creates a link #1981
+  - Bugfix: When dragging an Equipment with Melee or Ranged Attacks, system did not add the attacks on character sheet #1982
+  - Bugfix: Importing GCS characters without advantages does not work #1984
+  - Feature Request: Add the ability to translate some elements #1975
+  - Feature Request: When import GCS Equipment Pack use extended values for Cost and Weight #1980
+
 Release 0.17.12 9/28/2024
 
 - EXPERIMENTAL: Import character data as Foundry Items. This was submitted by user chrismaille and is intended to leverage Foundry functionality that depends upon Items. Turning this feature on in the system settings affects any future imports and does not affect any existing actors. Please tag chrismaille on Discord for any questions or bugs.
