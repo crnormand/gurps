@@ -10,6 +10,8 @@ Release 0.17.13
   - Feature Request: Add the ability to translate some elements #1975
   - Feature Request: When import GCS Equipment Pack use extended values for Cost and Weight #1980
 
+- Correct NaN error using _getSegmentLabel with Elevation Ruler module #1987 (user @caewok)
+
 Release 0.17.12 9/28/2024
 
 - EXPERIMENTAL: Import character data as Foundry Items. This was submitted by user chrismaille and is intended to leverage Foundry functionality that depends upon Items. Turning this feature on in the system settings affects any future imports and does not affect any existing actors. Please tag chrismaille on Discord for any questions or bugs.
