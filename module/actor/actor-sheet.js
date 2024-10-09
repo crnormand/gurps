@@ -727,10 +727,9 @@ export class GurpsActorSheet extends ActorSheet {
 
   _deleteItem(target) {
     let key = target[0].dataset.key
-    if (key.includes('.equipment.')) {
-      this.actor.deleteEquipment(key)
-    } else if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      GURPS.removeKey(this.actor, key)
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+      else GURPS.removeKey(this.actor, key)
     } else {
       let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
       if (!!item) {
