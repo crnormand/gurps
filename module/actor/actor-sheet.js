@@ -730,12 +730,15 @@ export class GurpsActorSheet extends ActorSheet {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
       else GURPS.removeKey(this.actor, key)
+      this.actor.refreshDR().then()
     } else {
       let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
       if (!!item) {
         this.actor._removeItemAdditions(item.id).then(() => {
-          item.delete()
-          GURPS.removeKey(this.actor, key)
+          this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
+            GURPS.removeKey(this.actor, key)
+            this.actor.refreshDR().then()
+          })
         })
       }
     }
@@ -1355,6 +1358,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   /** @override */
   async _onDrop(event) {
+    this.actor.ignoreRender = true
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
@@ -1386,6 +1390,8 @@ export class GurpsActorSheet extends ActorSheet {
         await this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
       }
     }
+    this.actor.ignoreRender = false
+    await this.actor.refreshDR()
   }
 
   // Non-equipment list drags
@@ -1752,10 +1758,21 @@ export class GurpsActorSheet extends ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: e => {
+        callback: async e => {
           let key = e[0].dataset.key
-          if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-          else GURPS.removeKey(this.actor, key)
+          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+            // We need to remove linked item
+            const actorComponent = foundry.utils.getProperty(this, key)
+            const existingItem = await this.items.get(actorComponent.itemid)
+            if (!!existingItem) {
+              this.actor._removeItemAdditions(existingItem.id)
+              await existingItem.delete()
+            }
+          } else {
+            if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+          }
+          GURPS.removeKey(this.actor, key)
+          await this.actor.refreshDR()
         },
       },
     ]

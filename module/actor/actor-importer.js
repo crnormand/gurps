@@ -259,6 +259,8 @@ export class ActorImporter {
           })
         }
       }
+      // Recalculate DR
+      await this.actor.refreshDR()
 
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
@@ -505,6 +507,8 @@ export class ActorImporter {
           })
         }
       }
+      // Recalculate DR
+      await this.actor.refreshDR()
 
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(

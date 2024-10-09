@@ -266,6 +266,7 @@
   "GURPS.chatYouMustBeGM": "Du musst ein GM sein, um diesen Befehl auszuführen",
   "GURPS.chatYouMustHaveACharacterSelected": "Du musst einen Charakter ausgewählt haben",
   "GURPS.chatYouMustSelectTokens": "Du musst Token auswählen (oder nutze",
+  "GURPS.chatHelpDR": "Modifiziert die Schadensresistenz des Akteurs<hr>Parameter:\n&lt;Formel&gt;&lt;Trefferzonen&gt;: Verwende eine Formel (z.B. +2, -2, *2 oder /2) oder einen definierten Wert (z.B. 2, 100) und optional die betroffenen Trefferzonen (z.B. Rumpf, Arm, linkes Bein, etc.)\nreset: Setzt die SR auf den Startwert zurück<hr>Beispiele:\n/dr +1 (+1 zu allen Trefferzonen)\n/dr -2 Rumpf,Bein (-2 zu Rumpf und beiden Beinen)\n/dr 20 (setze SR 20 in allen Trefferzonen. Wird die Gegenstandboni nach der Summe berücksichtigen)\n/dr !20 (erzwinge SR 20 in allen Trefferzonen. Ignoriert die Gegenstandboni)\n/dr reset (auf die ursprünglichen Werte zurücksetzen)",
 
   "__Permissions__": "=========",
   "GURPS.youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
@@ -359,6 +360,10 @@
   "GURPS.hitLocationVitals": "lebensw. Organe",
   "GURPS.hitLocationWhere": "Wo",
   "GURPS.hitLocationWing": "Flügel",
+  "GURPS.hitLocationBaseDR": "Basis SR",
+  "GURPS.hitLocationDRFromItems": "Von Gegenständen",
+  "GURPS.hitLocationDRModifiers": "Von Modifikatoren",
+  "GURPS.hitLocationDRItems": "Gegenstände",
 
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Modifikator",
