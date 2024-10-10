@@ -1,5 +1,5 @@
 <div id='encumbrance' class='gga-tableheader'>
-  <div class='header'>
+  <div class='header encHeader'>
     {{#if isEditing}}
       <div class='enchead'>
         <span>{{i18n 'GURPS.encumbranceMoveDodge'}}</span>
@@ -9,8 +9,17 @@
         <label for='showflightmove'>{{i18n "GURPS.showFlightMove"}}</label>
       </div>
     {{else}}
-      {{i18n 'GURPS.encumbranceMoveDodge'}}
+      <div>
+        {{i18n 'GURPS.encumbranceMoveDodge'}}
+      </div>
     {{/if}}
+    <div style="margin-left: 5px">
+      {{#if (automaticEncumbrance)}}
+        <i class="fa fa-lock" title="{{localize 'GURPS.autoEncumbrance'}}: ON"></i>
+      {{else}}
+        <i class="fa fa-unlock" title="{{localize 'GURPS.autoEncumbrance'}}: OFF"></i>
+      {{/if}}
+    </div>
   </div>
 
   <div class='encmarker header'></div>
@@ -21,7 +30,9 @@
 
   {{#each system.encumbrance}}
     <div class='encmarker {{include-if current 'current'}}'></div>
-    <div class='enc {{include-if current 'current'}} {{key}} {{include-if (not (automaticEncumbrance)) 'clickable'}}' data-key='{{@key}}'></div>
+    <div class='enc {{include-if current 'current'}} {{key}} {{include-if (not (automaticEncumbrance)) 'clickable'}}' data-key='{{@key}}'>
+      {{{localizeKey (concat 'GURPS.encumbranceLevel-' key)}}}
+    </div>
     <div class='load gga-right {{include-if current 'current'}}'>
       {{#if ../isEditing}}
         <input name='system.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' />

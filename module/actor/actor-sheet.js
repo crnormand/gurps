@@ -454,6 +454,9 @@ export class GurpsActorSheet extends ActorSheet {
       if (!!obj.itemid) {
         if (!(await this.actor._sanityCheckItemSettings(obj))) return
         let item = this.actor.items.get(obj.itemid)
+        if (!!item.system.fromItem) {
+          item = this.actor.items.get(item.system.fromItem)
+        }
         item.editingActor = this.actor
         item.sheet.render(true)
         return
@@ -944,50 +947,76 @@ export class GurpsActorSheet extends ActorSheet {
     this.dropFoundryLinks(ev, 'system.additionalresources.qnotes')
   }
 
+  _getItemData(dragData) {
+    let item
+    switch (dragData.type) {
+      case 'JournalEntry':
+        item = game.journal.get(dragData.id)
+        break
+      case 'Actor':
+        item = game.actors.get(dragData.id)
+        break
+      case 'RollTable':
+        item = game.tables.get(dragData.id)
+        break
+      case 'Item':
+        item = game.items.get(dragData.id)
+        break
+      case 'JournalEntryPage':
+        let j = game.journal.get(dragData.id)
+        item = j.pages.get(dragData.uuid.split('.').at(-1))
+        break
+    }
+    const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+    if (!item) return {}
+    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem
+      ? {
+          n: item.name,
+          id: item.id,
+        }
+      : {}
+  }
+
+  /**
+   * Drop a foundry link into a text area
+   *
+   * FIXME: Not sure why this exists. Maybe is important to link the item
+   *    on another item?
+   *
+   * To resolve the drag and drop of Foundry Items when using Equipment as Item,
+   * we will add the link only for non equipment items
+   *
+   * @param ev
+   * @param modelkey
+   */
   dropFoundryLinks(ev, modelkey) {
     if (!!ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
     if (!!dragData.uuid) dragData.id = dragData.uuid.split('.').at(1)
     let add = ''
-    var n
-    if (dragData.type == 'JournalEntry') {
-      n = game.journal.get(dragData.id).name
-    }
-    if (dragData.type == 'Actor') {
-      n = game.actors.get(dragData.id).name
-    }
-    if (dragData.type == 'RollTable') {
-      n = game.tables.get(dragData.id).name
-    }
-    if (dragData.type == 'Item') {
-      n = game.items.get(dragData.id).name
-    }
-    if (dragData.type == 'JournalEntryPage') {
-      let j = game.journal.get(dragData.id)
-      n = j.pages.get(dragData.uuid.split('.').at(-1)).name
-      dragData.id = dragData.uuid
-    }
-    if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
-
-    if (!!dragData.otf) {
-      let prefix = ''
-      if (!!dragData.displayname) {
-        let q = '"'
-        if (dragData.displayname.includes(q)) q = "'"
-        prefix = q + dragData.displayname + q
+    const { n, id } = this._getItemData(dragData)
+    dragData.id = id
+    if (!!n) {
+      add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
+      if (!!dragData.otf) {
+        let prefix = ''
+        if (!!dragData.displayname) {
+          let q = '"'
+          if (dragData.displayname.includes(q)) q = "'"
+          prefix = q + dragData.displayname + q
+        }
+        add = '[' + prefix + dragData.otf + ']'
       }
-      add = '[' + prefix + dragData.otf + ']'
+      if (!!dragData.bucket) {
+        add = '["Modifier Bucket"'
+        let sep = ''
+        dragData.bucket.forEach(otf => {
+          add += sep + '/r [' + otf + ']'
+          sep = '\\\\'
+        })
+        add += ']'
+      }
     }
-    if (!!dragData.bucket) {
-      add = '["Modifier Bucket"'
-      let sep = ''
-      dragData.bucket.forEach(otf => {
-        add += sep + '/r [' + otf + ']'
-        sep = '\\\\'
-      })
-      add += ']'
-    }
-
     if (!!add)
       if (!!modelkey) {
         let t = foundry.utils.getProperty(this.actor, modelkey) || ''

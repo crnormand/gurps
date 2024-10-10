@@ -28,7 +28,7 @@ import {
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
 import { GurpsItem } from '../item.js'
-import { Advantage, Equipment, HitLocationEntry, Skill, Spell } from './actor-components.js'
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { ActorImporter } from './actor-importer.js'
@@ -1263,7 +1263,6 @@ export class GurpsActor extends Actor {
             break
           case 'spell':
             actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
-
             targetKey = 'system.spells'
             break
         }
@@ -1567,12 +1566,16 @@ export class GurpsActor extends Actor {
       }
     } else {
       const parentItem = await this.items.get(itemData._id)
+      let newList = {}
       for (const subType of subTypes) {
+        newList = { ...foundry.utils.getProperty(this, `system.${subType}`) }
         if (!!parentItem.system[subType] && typeof parentItem.system[subType] === 'object') {
           for (const key in parentItem.system[subType]) {
             if (parentItem.system[subType].hasOwnProperty(key)) {
               const childItemData = parentItem.system[subType][key]
-              commit = { ...commit, ...(await this._addChildItemElement(parentItem, childItemData, subType)) }
+              const commitData = await this._addChildItemElement(parentItem, childItemData, subType, newList)
+              commit = { ...commit, ...commitData }
+              newList = commitData[`system.${subType}`]
             }
           }
         }
@@ -1678,9 +1681,8 @@ export class GurpsActor extends Actor {
    * @returns {Promise<{[p: string]: *}|{}>}
    * @private
    */
-  async _addChildItemElement(parentItem, childItemData, key) {
+  async _addChildItemElement(parentItem, childItemData, key, list) {
     let found = false
-    let list = { ...this.system[key] } // shallow copy
     if (found) {
       // Use existing actor component uuid
       let existingActorComponent = this.system[key].find(e => e.fromItem === parentItem._id)
@@ -1699,6 +1701,16 @@ export class GurpsActor extends Actor {
       case 'spells':
         actorComp = Spell.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
+        break
+      case 'melee':
+        actorComp = Melee.fromObject(childItemData, this)
+        actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
+        actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        break
+      case 'ranged':
+        actorComp = Ranged.fromObject(childItemData, this)
+        actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
+        actorComp.name = `${parentItem.name} - ${actorComp.mode}`
         break
     }
     if (!actorComp) return {}

@@ -2,7 +2,17 @@
 
 Release 0.17.13
 
-- Add in-memory only att
+- Add easy OtF and macro access to hitlocations and resource trackers. 
+ 
+- The following are all thanks to user @chrismaille:
+  - Bugfix: Missing DR location when import GCS Equipment Pack #1978
+  - Bugfix: When dragging an Item in a textarea of another Item, creates a link #1981
+  - Bugfix: When dragging an Equipment with Melee or Ranged Attacks, system did not add the attacks on character sheet #1982
+  - Bugfix: Importing GCS characters without advantages does not work #1984
+  - Feature Request: Add the ability to translate some elements #1975
+  - Feature Request: When import GCS Equipment Pack use extended values for Cost and Weight #1980
+
+- Correct NaN error using _getSegmentLabel with Elevation Ruler module #1987 (user @caewok)
 
 Release 0.17.12 9/28/2024
 

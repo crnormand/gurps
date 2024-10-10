@@ -1695,24 +1695,12 @@ div#other {
   padding-right: 2px;
 }
 
-.enc0:after {
-  content: 'None (0)';
-}
-
-.enc1:after {
-  content: 'Light (1)';
-}
-
-.enc2:after {
-  content: 'Medium (2)';
-}
-
-.enc3:after {
-  content: 'Heavy (3)';
-}
-
-.enc4:after {
-  content: 'X-heavy (4)';
+.header.encHeader {
+  display: flex;
+  flex-flow: row nowrap !important;
+  justify-content: center;
+  padding: 0 4px;
+  align-items: center;
 }
 
 .overflowy {

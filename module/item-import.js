@@ -1,4 +1,5 @@
 import { zeroFill } from '../lib/utilities.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 
 export class ItemImporter {
   constructor() {
@@ -49,6 +50,26 @@ export class ItemImporter {
     ui.notifications.info('Finished Importing ' + this.count + ' Items!')
   }
 
+  _getItemCost(i) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+      return !!i.value ? parseFloat(i.value) || 0 : 0
+    }
+    let value
+    if (!!i.calc?.extended_value) value = parseFloat(i.calc.extended_value)
+    if (!value) value = parseFloat(i.value) || 0
+    return value
+  }
+
+  _getItemWeight(i) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+      return !!i.weight ? parseFloat(i.weight) || 0 : 0
+    }
+    let weight
+    if (!!i.calc?.extended_weight) weight = parseFloat(i.calc.extended_weight)
+    if (!weight) weight = parseFloat(i.weight) || 0
+    return weight
+  }
+
   async _importItem(i, pack, filename, timestamp) {
     this.count++
     if (i.children?.length)
@@ -61,11 +82,12 @@ export class ItemImporter {
       system: {
         eqt: {
           name: i.description,
+          originalName: i.description,
           notes: i.notes,
           pageref: i.reference,
           count: i.quantity,
-          cost: !!i.value ? parseFloat(i.value) : 0,
-          weight: !!i.weight ? parseFloat(i.weight) : 0,
+          cost: this._getItemCost(i),
+          weight: this._getItemWeight(i),
           carried: true,
           equipped: true,
           techlevel: i.tech_level || '',
@@ -163,11 +185,24 @@ export class ItemImporter {
       }
     if (feat_list.length)
       for (let f of feat_list) {
-        let bonus = !!f.amount ? (f.amount > -1 ? `+${f.amount}` : f.amount.toString()) : ''
+        let bonus = f.amount ? (f.amount > -1 ? `+${f.amount}` : f.amount.toString()) : ''
         if (f.type === 'attribute_bonus') {
           bonus_list.push(`${f.attribute} ${bonus}`)
         } else if (f.type === 'dr_bonus') {
-          bonus_list.push(`DR ${bonus} *${f.location}`)
+          const locations = f.locations.map(loc => {
+            // If the string contains embedded spaces, wrap it in double quotes.
+            if (/\s+/.test(loc)) {
+              return `"*${loc}"`
+            } else {
+              return `*${loc}`
+            }
+          })
+
+          if (!!locations.length > 0) {
+            bonus_list.push(`DR ${bonus} ${locations.join(' ')}`)
+          } else {
+            bonus_list.push(`DR ${bonus}`)
+          }
         } else if (f.type === 'skill_bonus') {
           if (f.selection_type === 'skills_with_name' && f.name?.compare === 'is') {
             if (f.specialization?.compare === 'is') {
