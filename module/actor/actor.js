@@ -1675,11 +1675,13 @@ export class GurpsActor extends Actor {
         actorComp = Melee.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
         actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.fromItem = parentItem.uuid
         break
       case 'ranged':
         actorComp = Ranged.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
         actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.fromItem = parentItem.uuid
         break
     }
     if (!actorComp) return {}

@@ -45,6 +45,8 @@ export class GurpsItem extends Item {
           key = this.actor._findSysKeyForId('originalName', e.originalName, at)
         } else if (!!currentName && e.name === currentName) {
           key = this.actor._findSysKeyForId('name', e.name, at)
+        } else if (this.id === e.fromItem) {
+          key = this.actor._findSysKeyForId('fromItem', e.fromItem, at)
         }
         if (!!key) {
           attacks.push({
