@@ -2302,3 +2302,8 @@ input.gcs-input:disabled {
 #attributes input.gcs-input {
   min-width: 2.5em;
 }
+
+.dr.gga-right.blue {
+  color: blueviolet;
+  font-weight: bold;
+}

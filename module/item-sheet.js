@@ -184,7 +184,7 @@ export class GurpsItemSheet extends ItemSheet {
 
   async close() {
     await super.close()
-    if (!!this.useFoundryItems) {
+    if (!!this.useFoundryItems && !!this.isContainer) {
       ui.notifications.info(`Saving Item ${this.item.name}... Please wait.`)
     }
 
@@ -217,12 +217,22 @@ export class GurpsItemSheet extends ItemSheet {
         system: this.item.system,
       })
     }
-    if (!!this.useFoundryItems) {
+    if (this.actor) await this.actor.refreshDR()
+    if (!!this.useFoundryItems && !!this.isContainer) {
       ui.notifications.info(`Item ${this.item.name} saved!`)
     }
   }
 
   get useFoundryItems() {
     return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  }
+  get isContainer() {
+    return (
+      !!Object.keys(this.item.system.melee).length ||
+      !!Object.keys(this.item.system.ranged).length ||
+      !!Object.keys(this.item.system.skills).length ||
+      !!Object.keys(this.item.system.spells).length ||
+      !!Object.keys(this.item.system.ads).length
+    )
   }
 }

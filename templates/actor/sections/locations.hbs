@@ -40,7 +40,7 @@
         {{hitlocationroll where roll parent}}
       {{/if}}
     </div>
-    <div class='where {{gurpstippable}}' data-tooltip='Eqt on {{where}}: {{equipment}}'>
+    <div class='where {{gurpstippable}}' data-tooltip='{{DRTooltip}}'>
       {{#if ../isEditing}}
         <input name='system.hitlocations.{{@key}}.where' class='gcs-input-5' type='text' value='{{where}}' />
       {{else}}
@@ -61,7 +61,7 @@
         {{{displayNumber (hitlocationpenalty where penalty parent)}}}
       </div>
     {{/if}}
-    <div class='dr gga-right'>
+    <div class='dr gga-right {{#if (DRisModified this)}}blue{{/if}}'>
       {{#if ../isEditing}}
         <div style="display: flex; flex-flow: row nowrap">
           <input class='gcs-input' type='text' name='system.hitlocations.{{@key}}.import' value='{{import}}' />
