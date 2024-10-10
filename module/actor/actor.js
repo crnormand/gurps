@@ -29,7 +29,7 @@ import {
 import { GurpsItem } from '../item.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
 import { ActorImporter } from './actor-importer.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 
@@ -590,7 +590,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -617,9 +617,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -673,9 +673,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -1439,7 +1439,7 @@ export class GurpsActor extends Actor {
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'system.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem, targetkey) // only created 1 item
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const item = await this.items.get(localItem._id)
       return this._updateItemFromForm(item)
     }
@@ -1529,7 +1529,7 @@ export class GurpsActor extends Actor {
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       for (const subType of subTypes) {
         commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, subType)) }
       }
@@ -1762,7 +1762,7 @@ export class GurpsActor extends Actor {
       found = false
       let list = foundry.utils.getProperty(this, key)
       recurselist(list, (e, k, _d) => {
-        if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
           if (e.itemid === itemid) found = k
         } else {
           if (e.fromItem === itemid) found = k
@@ -1771,7 +1771,7 @@ export class GurpsActor extends Actor {
       if (!!found) {
         any = true
         const actorKey = key + '.' + found
-        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
           // We need to remove the child item from the actor
           const childActorComponent = foundry.utils.getProperty(this, actorKey)
           const existingChildItem = await this.items.get(childActorComponent.itemid)
@@ -2174,7 +2174,7 @@ export class GurpsActor extends Actor {
     /** @type {{ [key: string]: any }} */
     let eqt = foundry.utils.getProperty(this, eqtkey)
     if (!(await this._sanityCheckItemSettings(eqt))) return
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       let update = { [eqtkey + '.count']: count }
       if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
         update[eqtkey + '.ignoreImportQty'] = true
@@ -2293,7 +2293,7 @@ export class GurpsActor extends Actor {
     let canEdit = false
     let message
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       message = 'GURPS.settingNoEquipAllowedHint'
       if (!!actorComp.itemid) canEdit = true
     } else {
@@ -2353,7 +2353,7 @@ export class GurpsActor extends Actor {
    * @return {boolean} The value of the 'usingQuintessence' setting.
    */
   get usingQuintessence() {
-    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+    return game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
   }
 
   // TODO review and refactor
