@@ -15,7 +15,6 @@ import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
 import {
   MOVE_NONE,
   MOVE_ONE,
@@ -72,7 +71,7 @@ export class GurpsActor extends Actor {
    */
   async openSheet(newSheet) {
     const sheet = this.sheet
-    if (!!sheet) {
+    if (sheet) {
       await sheet.close()
       this._sheet = null
       delete this.apps[sheet.appId]
@@ -194,7 +193,7 @@ export class GurpsActor extends Actor {
     if (this.system.languages) {
       let updated = false
       let newads = { ...this.system.ads }
-      let langn = new RegExp('Language:?', 'i')
+      let langn = /Language:?/i
       let langt = new RegExp(i18n('GURPS.language') + ':?', 'i')
       recurselist(this.system.languages, (e, _k, _d) => {
         let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
@@ -210,7 +209,7 @@ export class GurpsActor extends Actor {
           if (e.spoken == e.written)
             // If equal, then just report single level
             n += ' (' + e.spoken + ')'
-          else if (!!e.spoken)
+          else if (e.spoken)
             // Otherwise, report type and level (like GCA4)
             n += ' (' + i18n('GURPS.spoken') + ') (' + e.spoken + ')'
           else n += ' (' + i18n('GURPS.written') + ') (' + e.written + ')'
@@ -270,16 +269,16 @@ export class GurpsActor extends Actor {
     //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, _k, _d) => {
       // @ts-ignore
-      if (!!e.import) e.level = parseInt(+e.import)
+      if (e.import) e.level = parseInt(+e.import)
     })
     recurselist(data.spells, (e, _k, _d) => {
       // @ts-ignore
-      if (!!e.import) e.level = parseInt(+e.import)
+      if (e.import) e.level = parseInt(+e.import)
     })
 
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
     recurselist(data.melee, (e, _k, _d) => {
-      if (!!e.import) {
+      if (e.import) {
         e.level = parseInt(e.import)
         if (!isNaN(parseInt(e.parry))) {
           // allows for '14f' and 'no'
@@ -323,9 +322,9 @@ export class GurpsActor extends Actor {
         let bonuses = itemData.bonuses.split('\n')
         for (let bonus of bonuses) {
           let m = bonus.match(/\[(.*)\]/)
-          if (!!m) bonus = m[1] // remove extranious  [ ]
+          if (m) bonus = m[1] // remove extranious  [ ]
           let link = parselink(bonus) // ATM, we only support attribute and skill
-          if (!!link.action) {
+          if (link.action) {
             // start OTF
             recurselist(data.melee, (e, _k, _d) => {
               e.level = pi(e.level)
@@ -591,7 +590,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -618,9 +617,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -674,9 +673,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _calculateRangedRanges() {
@@ -2355,6 +2354,7 @@ export class GurpsActor extends Actor {
     return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
   }
 
+  // TODO review and refactor
   _getDRFromItems(actorLocations, update = true) {
     let itemMap = {}
     if (update) {
@@ -2362,16 +2362,20 @@ export class GurpsActor extends Actor {
         e.drItem = 0
       })
     }
+
     for (let item of this.items.filter(i => !!i.system.carried && !!i.system.equipped && !!i.system.bonuses)) {
       const bonusList = item.system.bonuses || ''
       let bonuses = bonusList.split('\n')
+
       for (let bonus of bonuses) {
         let m = bonus.match(/\[(.*)\]/)
         if (!!m) bonus = m[1] // remove extranious  [ ]
+
         m = bonus.match(/DR *([+-]\d+) *(.*)/)
         if (!!m) {
           let delta = parseInt(m[1])
           let locPatterns = null
+
           if (!!m[2]) {
             let locs = splitArgs(m[2])
             locPatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
@@ -2391,6 +2395,7 @@ export class GurpsActor extends Actor {
     return itemMap
   }
 
+  // TODO review and refactor
   _changeDR(drFormula, hitLocation) {
     if (drFormula === 'reset') {
       hitLocation.dr = hitLocation.import
@@ -2400,7 +2405,9 @@ export class GurpsActor extends Actor {
       return hitLocation
     }
     if (!hitLocation.drItem) hitLocation.drItem = 0
+
     if (typeof hitLocation.import === 'string') hitLocation.import = parseInt(hitLocation.import)
+
     if (drFormula.startsWith('+') || drFormula.startsWith('-')) {
       hitLocation.drMod += parseInt(drFormula)
       hitLocation.dr = Math.max(hitLocation.import + hitLocation.drMod + hitLocation.drItem, 0)
@@ -2431,6 +2438,7 @@ export class GurpsActor extends Actor {
     await this.changeDR('+0', [])
   }
 
+  // TODO review and refactor
   async changeDR(drFormula, drLocations) {
     let changed = false
     let actorLocations = { ...this.system.hitlocations }
@@ -2486,7 +2494,7 @@ export class GurpsActor extends Actor {
       }
       actorLocations[key] = this._changeDR(formula, actorLocations[key])
     }
-    if (!!changed) {
+    if (changed) {
       // Exclude than rewrite the hitlocations on Actor
       await this.internalUpdate({ 'system.-=hitlocations': null })
       await this.update({ 'system.hitlocations': actorLocations })
@@ -2494,6 +2502,8 @@ export class GurpsActor extends Actor {
       return { changed, msg, info: msg }
     }
   }
+
+  // TODO: maybe this belongs in actorsheet.js ?
   getDRTooltip(locationKey) {
     const hitLocation = this.system.hitlocations[locationKey]
     if (!hitLocation) return ''
