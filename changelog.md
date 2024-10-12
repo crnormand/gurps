@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.13
+Release 0.17.13 10/12/2024
 
 - Bugfix: fix switching target in the effect modifier window. #1992 (user @StefanLang)
 
@@ -16,8 +16,7 @@ Release 0.17.13
   - Feature Request: Add the ability to translate some elements #1975
   - Feature Request: When import GCS Equipment Pack use extended values for Cost and Weight #1980
   - Feature Feature Request: Add chat command to change Damage Resistance (/dr) #1991
-  
-- Correct NaN error using _getSegmentLabel with Elevation Ruler module #1987 (user @caewok)
+- Correct NaN error using \_getSegmentLabel with Elevation Ruler module #1987 (user @caewok)
 
 Release 0.17.12 9/28/2024
 
