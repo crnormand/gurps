@@ -1914,7 +1914,7 @@ button.equipmentbutton:last-child {
   bottom: 90px !important;
   left: 430px;
   position: fixed;
-  z-index: 100;
+  z-index: 999;
 }
 
 /* .modttt::after {

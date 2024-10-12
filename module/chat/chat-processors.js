@@ -13,13 +13,14 @@ import {
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
 import {
-  isNiceDiceEnabled,
+  escapeHtml,
   i18n,
   i18n_f,
-  splitArgs,
+  isNiceDiceEnabled,
   makeRegexPatternFrom,
-  wait,
   requestFpHp,
+  splitArgs,
+  wait,
 } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
@@ -66,6 +67,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RepeatChatProcessor())
   ChatProcessors.registerProcessor(new StopChatProcessor())
   ChatProcessors.registerProcessor(new ModChatProcessor())
+  ChatProcessors.registerProcessor(new DRChatProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -1172,6 +1174,80 @@ class StopChatProcessor extends ChatProcessor {
       return false
     }
     GURPS.LastActor.RepeatAnimation = false
+  }
+}
+
+class DRChatProcessor extends ChatProcessor {
+  help() {
+    return escapeHtml('/dr <formula>|reset <hit locations>')
+  }
+
+  /**
+   * Matches for the DR command.
+   *
+   * Basic use is `/dr <drFormula> <drLocations>` when:
+   * - `drFormula` is a number, a math operation or `reset`
+   * - `drLocations` is a comma separated list of hitlocations
+   *
+   * Examples:
+   * - `/dr 2 eye,skull` - Set DR 2 to Eye and Skull hitlocations. Will sum Item bonuses.
+   * - `/dr +2` - Add 2 to all hitlocations. Will sum Item bonuses.
+   * - `/dr !2` - Force DR 2 to all hitlocations`
+   * - `/dr *2 "left arm"` - Multiply 2 to Left Arm hitlocation
+   * - `/dr /2` - Divide 2 to all hitlocations
+   * - `/dr -2` - Subtract 2 to all hitlocations
+   * - `/dr reset` - Reset all hitlocations to their original DR
+   *
+   * @param line
+   * @returns {boolean}
+   */
+  matches(line) {
+    this.match = line.match(/^\/(dr) +(reset|[\+\-\*\/\!]?\d+) *([\S\s,]*)?/)
+    return !!this.match
+  }
+
+  usagematches(line) {
+    return line.match(/^[\/\?]dr$/i)
+  }
+
+  usage() {
+    return i18n('GURPS.chatHelpDR')
+  }
+
+  /**
+   * Process the DR command, updating the actor's hitlocations with the new DR value.
+   *
+   * `actor.system.hitlocations` example:
+   *  {
+   *   "00000": {
+   *      "where": "Eye",
+   *      "import": 0,  // DR from GCS/GCA import
+   *      "equipment": "",
+   *      "penalty": -9,
+   *      "roll": "-"
+   *    }
+   *  }
+   * One key per each hitlocation according to Actor's Body Plan
+   * Damage Resistance (DR) is stored in a dynamic property called `dr`.
+   *
+   *
+   * @param _line
+   * @returns {Promise<void>}
+   */
+  async process(_line) {
+    if (!GURPS.LastActor) {
+      ui.notifications.error('No actor selected.')
+      return
+    }
+
+    let drFormula = this.match[2]
+    let drLocations = this.match[3] ? this.match[3].split(',').map(l => l.toLowerCase()) : []
+    let actor = GURPS.LastActor
+
+    const { changed, msg = '', warn = '', info = '' } = await actor.changeDR(drFormula, drLocations)
+    if (msg) await actor.sendChatMessage(msg)
+    if (warn) ui.notifications.warn(warn)
+    if (info) ui.notifications.info(info)
   }
 }
 

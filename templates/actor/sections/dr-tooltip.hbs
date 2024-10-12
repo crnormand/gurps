@@ -1,0 +1,15 @@
+<div style="text-align: left !important; font-size: 0.85em;">
+  <ul>
+    <li>{{localize 'GURPS.hitLocationBaseDR'}}: {{drBase}}</li>
+    <li>{{localize 'GURPS.hitLocationDRFromItems'}}: {{drItem}}</li>
+    <li>{{localize 'GURPS.hitLocationDRModifiers'}}: {{drMod}}</li>
+  </ul>
+  {{#if drItemLines}}
+    <p>{{localize 'GURPS.hitLocationDRItems'}}:</p>
+    <ul>
+      {{#each drItemLines as |line|}}
+        <li>{{line}}</li>
+      {{/each}}
+    </ul>
+  {{/if}}
+</div>
