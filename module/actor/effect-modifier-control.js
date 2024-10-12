@@ -93,34 +93,32 @@ export class EffectModifierControl {
     if (tokenDocument.object === this.token) this._ui.render(false)
   }
 
-  _targetToken = () => this._targetTokenInner(true);
+  _targetToken = () => this._targetTokenInner(true)
 
-  _tokenTrageted = false; 
+  _tokenTargeted = false
 
-    /*
+  /*
     when an user switches targets, there are two calls to the targetToken hook, one for the old target and one for the new target
     if we rerender on the first call, we will miss the second call, because we are allready rerendering.
     Therefore we  need to wait and check  for the second call. 
   */
-  _targetTokenInner = (newEvent ) => {//needs to be an lambda to capture this in the clousure
-    if (this._tokenTrageted){//this is either a second call or we have waited 30 ms since the last call
-      if (this._ui?._state === Application.RENDER_STATES.RENDERING){
-        setTimeout(() => this._targetTokenInner(newEvent), 5); //wait if already rendering 
+  _targetTokenInner = newEvent => {
+    //needs to be an lambda to capture this in the clousure
+    if (this._tokenTargeted) {
+      //this is either a second call or we have waited 30 ms since the last call
+      if (this._ui?._state === Application.RENDER_STATES.RENDERING) {
+        setTimeout(() => this._targetTokenInner(newEvent), 5) //wait if already rendering
+      } else {
+        this._tokenTargeted = false
+        this._ui?.render(false)
       }
-      else
-      {
-
-        this._tokenTrageted = false;
-        this._ui?.render(false);
-      }
-    }
-    else if(newEvent)//this is the first call, we need to wait if ther is a second one
-    {
-      this._tokenTrageted = true;
-      setTimeout(() => this._targetTokenInner(false), 30);
+    } else if (newEvent) {
+      //this is the first call, we need to wait if ther is a second one
+      this._tokenTargeted = true
+      setTimeout(() => this._targetTokenInner(false), 30)
     }
   }
-  
+
   _controlToken(token, isControlled) {
     let sharedStateID = this.token?.id
     console.log(`controlToken: isControlled: ${isControlled}, token: ${token?.id}, current token: ${sharedStateID}`)

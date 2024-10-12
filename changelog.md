@@ -2,6 +2,8 @@
 
 Release 0.17.13
 
+- Bugfix: fix switching target in the effect modifier window. #1992 (user @StefanLang)
+
 - The following are all thanks to user @chrismaille:
   - Bugfix: Missing DR location when import GCS Equipment Pack #1978
   - Bugfix: When dragging an Item in a textarea of another Item, creates a link #1981
