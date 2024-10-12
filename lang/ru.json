@@ -238,6 +238,7 @@
   "GURPS.chatDamageResultShowMath": "Показать расчёты",
   "GURPS.chatDamageResultStart": "наносит повреждения {defender} в количестве{injury}",
   "GURPS.chatShock": "{name} получает {modifier} очков Шока ",
+  "GURPS.chatHelpDR": "Модификаторы Сопротивления Урону<hr>параметры:\n&lt;формула&gt;&lt;зоны&gt;: используйте формулу (например, +2, -2, *2 или /2) или определённое значение (например, 2, 100) и, при необходимости, зоны попадания (например, торс, рука, левая нога и т. д.)\nreset: Сбросить СП на начальное значение<hr>примеры:\n/dr +1 (+1 ко всем зонам попадания)\n/dr -2 торс,нога (-2 к торсу и обеим ногам)\n/dr 20 (установить СП 20 во всех зонах попадания. Будет суммировать бонусы предметов после)\n/dr !20 (установить СП 20 во всех зонах попадания. Будет игнорировать бонусы предметов)\n/dr reset (сбросить на исходные значения)",
 
   "__Permissions__": "=========",
 
@@ -322,6 +323,10 @@
   "GURPS.hitLocationVitals": "ЖВО",
   "GURPS.hitLocationWhere": "Куда",
   "GURPS.hitLocationWing": "Крыло",
+  "GURPS.hitLocationBaseDR": "Базовый СП",
+  "GURPS.hitLocationDRFromItems": "СП от предметов",
+  "GURPS.hitLocationDRModifiers": "Модификаторы СП",
+  "GURPS.hitLocationDRItems": "Предметы",
 
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Модификатор",

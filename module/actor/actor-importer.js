@@ -259,6 +259,8 @@ export class ActorImporter {
           })
         }
       }
+      // Recalculate DR
+      await this.actor.refreshDR()
 
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
@@ -505,6 +507,8 @@ export class ActorImporter {
           })
         }
       }
+      // Recalculate DR
+      await this.actor.refreshDR()
 
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
@@ -2641,7 +2645,12 @@ export class ActorImporter {
           'Invalid Actor Component. To process a Item it must be an Equipment, Skill, Spell, Ranged or Melee Attack or Advantage'
         )
       }
-      const existingItem = this.actor.items.find(i => i.system.importid === actorComp.uuid)
+      // When Item does not have uuid (some cases in GCA) we need to check against the originalName too
+      const existingItem = this.actor.items.find(
+        i =>
+          i.system.importid === actorComp.uuid ||
+          (!!i.system[i.itemSysKey]?.originalName && i.system[i.itemSysKey].originalName === actorComp.originalName)
+      )
 
       // Check if we need to update the Item
       if (!actorComp._itemNeedsUpdate(existingItem)) {

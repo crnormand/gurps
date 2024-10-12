@@ -15,7 +15,6 @@ import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
 import {
   MOVE_NONE,
   MOVE_ONE,
@@ -30,8 +29,9 @@ import {
 import { GurpsItem } from '../item.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
 import { ActorImporter } from './actor-importer.js'
+import { HitLocation } from '../hitlocation/hitlocation.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -71,7 +71,7 @@ export class GurpsActor extends Actor {
    */
   async openSheet(newSheet) {
     const sheet = this.sheet
-    if (!!sheet) {
+    if (sheet) {
       await sheet.close()
       this._sheet = null
       delete this.apps[sheet.appId]
@@ -202,7 +202,7 @@ export class GurpsActor extends Actor {
     if (this.system.languages) {
       let updated = false
       let newads = { ...this.system.ads }
-      let langn = new RegExp('Language:?', 'i')
+      let langn = /Language:?/i
       let langt = new RegExp(i18n('GURPS.language') + ':?', 'i')
       recurselist(this.system.languages, (e, _k, _d) => {
         let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
@@ -218,7 +218,7 @@ export class GurpsActor extends Actor {
           if (e.spoken == e.written)
             // If equal, then just report single level
             n += ' (' + e.spoken + ')'
-          else if (!!e.spoken)
+          else if (e.spoken)
             // Otherwise, report type and level (like GCA4)
             n += ' (' + i18n('GURPS.spoken') + ') (' + e.spoken + ')'
           else n += ' (' + i18n('GURPS.written') + ') (' + e.written + ')'
@@ -278,16 +278,16 @@ export class GurpsActor extends Actor {
     //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, _k, _d) => {
       // @ts-ignore
-      if (!!e.import) e.level = parseInt(+e.import)
+      if (e.import) e.level = parseInt(+e.import)
     })
     recurselist(data.spells, (e, _k, _d) => {
       // @ts-ignore
-      if (!!e.import) e.level = parseInt(+e.import)
+      if (e.import) e.level = parseInt(+e.import)
     })
 
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
     recurselist(data.melee, (e, _k, _d) => {
-      if (!!e.import) {
+      if (e.import) {
         e.level = parseInt(e.import)
         if (!isNaN(parseInt(e.parry))) {
           // allows for '14f' and 'no'
@@ -315,7 +315,7 @@ export class GurpsActor extends Actor {
     })
 
     recurselist(data.hitlocations, (e, _k, _d) => {
-      e.dr = e.import
+      if (!e.dr) e.dr = e.import
     })
   }
 
@@ -331,9 +331,9 @@ export class GurpsActor extends Actor {
         let bonuses = itemData.bonuses.split('\n')
         for (let bonus of bonuses) {
           let m = bonus.match(/\[(.*)\]/)
-          if (!!m) bonus = m[1] // remove extranious  [ ]
+          if (m) bonus = m[1] // remove extranious  [ ]
           let link = parselink(bonus) // ATM, we only support attribute and skill
-          if (!!link.action) {
+          if (link.action) {
             // start OTF
             recurselist(data.melee, (e, _k, _d) => {
               e.level = pi(e.level)
@@ -431,7 +431,10 @@ export class GurpsActor extends Actor {
                   dr = parseInt(m[1]) + delta
                   let dr2 = parseInt(m[3]) + delta
                   e.dr = dr + m[2] + dr2
-                } else if (!isNaN(parseInt(dr))) e.dr = parseInt(dr) + delta
+                } else if (!isNaN(parseInt(dr))) {
+                  e.dr = parseInt(dr) + delta
+                  if (!!e.drCap && e.dr > e.drCap) e.dr = e.drCap
+                }
                 //console.warn(e.where, e.dr)
               }
             })
@@ -1470,7 +1473,7 @@ export class GurpsActor extends Actor {
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'system.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem, targetkey) // only created 1 item
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const item = await this.items.get(localItem._id)
       return this._updateItemFromForm(item)
     }
@@ -1560,7 +1563,7 @@ export class GurpsActor extends Actor {
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       for (const subType of subTypes) {
         commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, subType)) }
       }
@@ -1706,11 +1709,13 @@ export class GurpsActor extends Actor {
         actorComp = Melee.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
         actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.fromItem = parentItem.uuid
         break
       case 'ranged':
         actorComp = Ranged.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
         actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.fromItem = parentItem.uuid
         break
     }
     if (!actorComp) return {}
@@ -1791,7 +1796,7 @@ export class GurpsActor extends Actor {
       found = false
       let list = foundry.utils.getProperty(this, key)
       recurselist(list, (e, k, _d) => {
-        if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
           if (e.itemid === itemid) found = k
         } else {
           if (e.fromItem === itemid) found = k
@@ -1800,7 +1805,7 @@ export class GurpsActor extends Actor {
       if (!!found) {
         any = true
         const actorKey = key + '.' + found
-        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
           // We need to remove the child item from the actor
           const childActorComponent = foundry.utils.getProperty(this, actorKey)
           const existingChildItem = await this.items.get(childActorComponent.itemid)
@@ -2217,7 +2222,7 @@ export class GurpsActor extends Actor {
     /** @type {{ [key: string]: any }} */
     let eqt = foundry.utils.getProperty(this, eqtkey)
     if (!(await this._sanityCheckItemSettings(eqt))) return
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       let update = { [eqtkey + '.count']: count }
       if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
         update[eqtkey + '.ignoreImportQty'] = true
@@ -2336,7 +2341,7 @@ export class GurpsActor extends Actor {
     let canEdit = false
     let message
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
       message = 'GURPS.settingNoEquipAllowedHint'
       if (!!actorComp.itemid) canEdit = true
     } else {
@@ -2396,6 +2401,172 @@ export class GurpsActor extends Actor {
    * @return {boolean} The value of the 'usingQuintessence' setting.
    */
   get usingQuintessence() {
-    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+    return game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
+  }
+
+  // TODO review and refactor
+  _getDRFromItems(actorLocations, update = true) {
+    let itemMap = {}
+    if (update) {
+      recurselist(actorLocations, (e, _k, _d) => {
+        e.drItem = 0
+      })
+    }
+
+    for (let item of this.items.filter(i => !!i.system.carried && !!i.system.equipped && !!i.system.bonuses)) {
+      const bonusList = item.system.bonuses || ''
+      let bonuses = bonusList.split('\n')
+
+      for (let bonus of bonuses) {
+        let m = bonus.match(/\[(.*)\]/)
+        if (!!m) bonus = m[1] // remove extranious  [ ]
+
+        m = bonus.match(/DR *([+-]\d+) *(.*)/)
+        if (!!m) {
+          let delta = parseInt(m[1])
+          let locPatterns = null
+
+          if (!!m[2]) {
+            let locs = splitArgs(m[2])
+            locPatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
+            recurselist(actorLocations, (e, _k, _d) => {
+              if (!locPatterns || locPatterns.find(p => !!e.where && e.where.match(p)) != null) {
+                if (update) e.drItem += delta
+                itemMap[e.where] = {
+                  ...itemMap[e.key],
+                  [item.name]: delta,
+                }
+              }
+            })
+          }
+        }
+      }
+    }
+    return itemMap
+  }
+
+  // TODO review and refactor
+  _changeDR(drFormula, hitLocation) {
+    if (drFormula === 'reset') {
+      hitLocation.dr = hitLocation.import
+      hitLocation.drMod = 0
+      hitLocation.drCap = 0
+      hitLocation.drItem = 0
+      return hitLocation
+    }
+    if (!hitLocation.drItem) hitLocation.drItem = 0
+
+    if (typeof hitLocation.import === 'string') hitLocation.import = parseInt(hitLocation.import)
+
+    if (drFormula.startsWith('+') || drFormula.startsWith('-')) {
+      hitLocation.drMod += parseInt(drFormula)
+      hitLocation.dr = Math.max(hitLocation.import + hitLocation.drMod + hitLocation.drItem, 0)
+      hitLocation.drCap = hitLocation.dr
+    } else if (drFormula.startsWith('*')) {
+      if (!hitLocation.drCap) hitLocation.drCap = Math.max(hitLocation.import + hitLocation.drItem, 0)
+      hitLocation.drCap = hitLocation.drCap * parseInt(drFormula.slice(1))
+      hitLocation.dr = hitLocation.drCap
+      hitLocation.drMod = hitLocation.drCap - hitLocation.drItem - hitLocation.import
+    } else if (drFormula.startsWith('/')) {
+      if (!hitLocation.drCap) hitLocation.drCap = Math.max(hitLocation.import + hitLocation.drItem, 0)
+      hitLocation.drCap = Math.max(Math.floor(hitLocation.drCap / parseInt(drFormula.slice(1))), 0)
+      hitLocation.dr = hitLocation.drCap
+      hitLocation.drMod = hitLocation.drCap - hitLocation.drItem - hitLocation.import
+    } else if (drFormula.startsWith('!')) {
+      hitLocation.drMod = parseInt(drFormula.slice(1))
+      hitLocation.dr = parseInt(drFormula.slice(1))
+      hitLocation.drCap = parseInt(drFormula.slice(1))
+    } else {
+      hitLocation.drMod = parseInt(drFormula)
+      hitLocation.dr = Math.max(hitLocation.import + hitLocation.drMod + hitLocation.drItem, 0)
+      hitLocation.drCap = hitLocation.dr
+    }
+    return hitLocation
+  }
+
+  async refreshDR() {
+    await this.changeDR('+0', [])
+  }
+
+  // TODO review and refactor
+  async changeDR(drFormula, drLocations) {
+    let changed = false
+    let actorLocations = { ...this.system.hitlocations }
+    let affectedLocations = []
+    let availableLocations = []
+
+    this._getDRFromItems(actorLocations)
+
+    if (drLocations.length > 0) {
+      // Get Actor Body Plan
+      let bodyPlan = this.system.additionalresources.bodyplan
+      if (!bodyPlan) {
+        return { changed, warn: 'No body plan found in actor.' }
+      }
+      const table = HitLocation.getHitLocationRolls(bodyPlan)
+
+      // Humanoid Body Plan example: [
+      //   "Eye",
+      //   "Skull",
+      //   "Face",
+      //   "Right Leg",
+      //   "Right Arm",
+      //   "Torso",
+      //   "Groin",
+      //   "Left Arm",
+      //   "Left Leg",
+      //   "Hand",
+      //   "Foot",
+      //   "Neck",
+      //   "Vitals"
+      // ]
+      availableLocations = Object.keys(table).map(l => l.toLowerCase())
+      affectedLocations = availableLocations.filter(l => {
+        for (let loc of drLocations) {
+          if (l.includes(loc)) return true
+        }
+        return false
+      })
+      if (!affectedLocations.length) {
+        let msg = `<p>No valid locations found using: <i>${drLocations.join(', ')}</i>.</p><p>Available locations are: <ul><li>${availableLocations.join('</li><li>')}</li></ul>`
+        let warn = 'No valid locations found. Available locations are: ' + availableLocations.join(', ')
+        return { changed, msg, warn }
+      }
+    }
+
+    for (let key in actorLocations) {
+      let formula
+      if (!drLocations.length || affectedLocations.includes(actorLocations[key].where.toLowerCase())) {
+        changed = true
+        formula = drFormula
+      } else {
+        formula = '+0'
+      }
+      actorLocations[key] = this._changeDR(formula, actorLocations[key])
+    }
+    if (changed) {
+      // Exclude than rewrite the hitlocations on Actor
+      await this.internalUpdate({ 'system.-=hitlocations': null })
+      await this.update({ 'system.hitlocations': actorLocations })
+      const msg = `${this.name}: DR ${drFormula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'}`
+      return { changed, msg, info: msg }
+    }
+  }
+
+  // TODO: maybe this belongs in actorsheet.js ?
+  getDRTooltip(locationKey) {
+    const hitLocation = this.system.hitlocations[locationKey]
+    if (!hitLocation) return ''
+    const drBase = hitLocation.import
+    const drMod = hitLocation.drMod || 0
+    const drItem = hitLocation.drItem || 0
+    const itemMap = this._getDRFromItems(this.system.hitlocations, false)
+    const drLoc = itemMap[hitLocation.where] || {}
+    const drItemLines = Object.keys(drLoc).map(k => `${k}: ${drLoc[k]}`)
+
+    const context = { drBase, drMod, drItem, drItemLines }
+    const template = Handlebars.partials['dr-tooltip']
+    const compiledTemplate = Handlebars.compile(template)
+    return new Handlebars.SafeString(compiledTemplate(context))
   }
 }

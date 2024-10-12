@@ -12,7 +12,6 @@
   --headerfontsize: 110%;
 }
 
-
 .gcs-input-ta {
   border-width: 0px !important;
   border: none !important;
@@ -2291,4 +2290,9 @@ input.gcs-input:disabled {
 
 #attributes input.gcs-input {
   min-width: 2.5em;
+}
+
+.dr.gga-right.blue {
+  color: blueviolet;
+  font-weight: bold;
 }
