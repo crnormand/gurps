@@ -9,9 +9,14 @@ Release 0.17.13
   - Bugfix: When dragging an Item in a textarea of another Item, creates a link #1981
   - Bugfix: When dragging an Equipment with Melee or Ranged Attacks, system did not add the attacks on character sheet #1982
   - Bugfix: Importing GCS characters without advantages does not work #1984
+  - Bugfix: Modifier Bucket hidden behind character sheets. #1986
+  - Bugfix: Duplicated items after import when character generator did not export uuid. #1989
+  - Bugfix: Items not deleted from Actor after use the "delete item" in actor sheet. #1990
+  - Bugfix: After drop an Item from a Compendium system can't find their added Attacks #1993
   - Feature Request: Add the ability to translate some elements #1975
   - Feature Request: When import GCS Equipment Pack use extended values for Cost and Weight #1980
-
+  - Feature Feature Request: Add chat command to change Damage Resistance (/dr) #1991
+  
 - Correct NaN error using _getSegmentLabel with Elevation Ruler module #1987 (user @caewok)
 
 Release 0.17.12 9/28/2024
