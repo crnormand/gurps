@@ -1,5 +1,7 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.14
+
 Release 0.17.13 10/12/2024
 
 - Bugfix: fix switching target in the effect modifier window. #1992 (user @StefanLang)
