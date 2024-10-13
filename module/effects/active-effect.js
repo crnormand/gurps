@@ -199,7 +199,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
   updateDuration() {
     const value = super.updateDuration()
-	if (this.name === 'New Effect') console.log('effective duration', this.id, value)
+    if (this.name === 'New Effect') console.log('effective duration', this.id, value)
     return value
   }
 
@@ -207,7 +207,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   // TODO Any ActiveEffect with a status.core.statusId is by default a temporary effect and will be added as an icon to the token.
 
   async isExpired() {
-    if (this.name === 'New Effect') console.log('duration',this.duration)
+    if (this.name === 'New Effect') console.log('duration', this.duration)
     if (this.duration && !!this.duration.duration) {
       if (this.duration.remaining <= 1) {
         return true

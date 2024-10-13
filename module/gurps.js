@@ -1962,10 +1962,8 @@ if (!globalThis.GURPS) {
     CONFIG.Canvas.rulerClass = RulerGURPS
 
     // add custom ActiveEffectConfig sheet class
-    DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", ActiveEffectConfig)
-    DocumentSheetConfig.registerSheet(ActiveEffect, "gurps", GurpsActiveEffectConfig, { makeDefault: true })
-    // CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
-    // ActiveEffectConfig.registerSheet(Document, 'ActiveEffect', GurpsActiveEffectConfig, { makeDefault: true })
+    DocumentSheetConfig.unregisterSheet(ActiveEffect, 'core', ActiveEffectConfig)
+    DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, { makeDefault: true })
 
     // preload drag-and-drop image
     {
@@ -2053,8 +2051,8 @@ if (!globalThis.GURPS) {
       if (app.options.id === 'compendium') {
         let button = $(
           '<button class="import-items"><i class="fas fa-file-import"></i>' +
-          game.i18n.localize('GURPS.itemImport') +
-          '</button>'
+            game.i18n.localize('GURPS.itemImport') +
+            '</button>'
         )
 
         button.click(function () {
@@ -2280,11 +2278,11 @@ if (!globalThis.GURPS) {
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-      (GURPS.DamageTables.woundModifiers[it.alias] = {
-        multiplier: 1,
-        label: it.name,
-        resource: true,
-      })
+        (GURPS.DamageTables.woundModifiers[it.alias] = {
+          multiplier: 1,
+          label: it.name,
+          resource: true,
+        })
     )
 
     // Sorry, removed the ts-ignores during editing.
@@ -2329,8 +2327,8 @@ if (!globalThis.GURPS) {
           content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-              .split('\n')
-              .join('<br>')}</mark><br>&nbsp;<br>`,
+            .split('\n')
+            .join('<br>')}</mark><br>&nbsp;<br>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-angle-double-down"></i>',

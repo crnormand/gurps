@@ -22,7 +22,9 @@ export default class GurpsActiveEffectListSheet extends Application {
 
   getData() {
     const sheetData = super.getData()
-    sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
+    sheetData.effects = this.actor
+      .getEmbeddedCollection('ActiveEffect')
+      .contents.filter(it => !it.isManeuver)
     return sheetData
   }
 
