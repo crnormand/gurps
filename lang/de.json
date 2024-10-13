@@ -77,6 +77,18 @@
   "GURPS.lowPainThreshold": "Schmerzüberempfindlichkeit",
   "GURPS.perfectBalance": "Perfekte Balance",
 
+  "GURPS.CR0": "KR: N/A (Kann Nicht Widerstehen)",
+  "GURPS.CR6": "KR: 6 (Widerstehen Sie selten)",
+  "GURPS.CR7": "KR: 7 (nicht standardisiert)",
+  "GURPS.CR8": "KR: 8 (nicht standardisiert)",
+  "GURPS.CR9": "KR: 9 (Widersteht oft)",
+  "GURPS.CR10": "KR: 10 (nicht standardisiert)",
+  "GURPS.CR11": "KR: 11 (nicht standardisiert)",
+  "GURPS.CR12": "KR: 12 (Widersteht sehr oft)",
+  "GURPS.CR13": "KR: 13 (nicht standardisiert)",
+  "GURPS.CR14": "KR: 14 (nicht standardisiert)",
+  "GURPS.CR15": "KR: 15 (Hält fast der Zeit stand)",
+
   "GURPS.encumbranceLevel-enc0": "Keine (0)",
   "GURPS.encumbranceLevel-enc1": "Leicht (1)",
   "GURPS.encumbranceLevel-enc2": "Mittel (2)",
