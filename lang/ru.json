@@ -330,6 +330,14 @@
 
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Модификатор",
+  "GURPS.modifier3d6Image": "Bucket: Изменить изображение 3d6",
+  "GURPS.modifier3d6ImageHint": "Выберите изображение для отображения в Bucket модификаторов для кнопки 3d6.",
+  "GURPS.modifierD6Image": "Bucket: Изменить изображение 1d6",
+  "GURPS.modifierD6ImageHint": "Выберите изображение для отображения в Bucket модификаторов для кнопки 1d6.",
+  "GURPS.modifierPosition": "Bucket: Изменить позицию",
+  "GURPS.modifierPositionHint": "Выберите позицию Bucket модификаторов.",
+  "GURPS.modifierPositionLeft": "Слева, рядом с панелью пользователя.",
+  "GURPS.modifierPositionRight": "Справа, рядом с окном чата.",
 
   "__PDF References__": "=========",
 

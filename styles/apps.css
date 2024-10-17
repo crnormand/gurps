@@ -1605,6 +1605,22 @@ button.equipmentbutton:last-child {
   justify-content: unset;
 }
 
+#bucket-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-left: 60px;
+  margin-right: 25px;
+}
+
+#bucket-container.force-left {
+  justify-content: flex-start;
+}
+
+#bucket-container.force-right {
+  justify-content: flex-end;
+}
+
 #bucket-app {
   pointer-events: auto;
   display: grid;
@@ -1613,7 +1629,6 @@ button.equipmentbutton:last-child {
   gap: 3px;
   width: 130px;
   margin-bottom: 10px;
-  margin-left: 35px;
 }
 
 .modifierbucket #modifierbucket {

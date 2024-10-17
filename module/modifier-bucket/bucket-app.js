@@ -462,6 +462,10 @@ export class ModifierBucket extends Application {
     const data = /** @type {ModifierBucket.Data} */ (/** @type {unknown} */ (super.getData(options)))
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
+    const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+    data.cssContainerClass = `force-${position}`
+    data.dice3dImagePath = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_3D6_IMAGE)
+    data.diceImagePath = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_D6_IMAGE)
 
     let ca = null
     if (!!GURPS.LastActor) {
