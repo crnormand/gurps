@@ -2313,3 +2313,53 @@ input.gcs-input:disabled {
   color: blueviolet;
   font-weight: bold;
 }
+
+.gga-line-description {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.gga-column-description {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.gga-item-image-thumb {
+  width: 28px !important;
+  height:28px !important;
+  min-width: 28px;
+  border: none;
+  margin: 3px 8px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* These are the colors used in GURPS Basic Set Chapters */
+.gga-item-image-thumb.traits {
+  background-color: #3176b1;
+}
+.gga-item-image-thumb.traits.top {
+  background-color: #3176b1;
+}
+.gga-item-image-thumb.skills {
+  background-color: #453c95;
+}
+.gga-item-image-thumb.spells {
+  background-color: #90241e;
+}
+.gga-item-image-thumb.equipments {
+  background-color: #34703e;
+}
+
+.gga-thumb-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.gga-tooltip-item-image {
+  max-height: 40px;
+  max-width: 40px !important;
+  height: 40px !important;
+  width: 40px !important;
+  z-index: 2;
+}

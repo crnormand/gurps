@@ -471,6 +471,9 @@
   "GURPS.settingShowDebugInfo": "Показать отладочную информацию",
   "GURPS.settingHintShowDebugInfo": "Для диалогов документов (Актёры, Предметы и т.д.) показывать значок отладки в заголовке окна. При нажатии он отобразит данные документа в диалоге.",
   "GURPS.settingShowDebugTooltip": "Показать отладочную информацию",
+  "GURPS.settingShowItemImage": "Показать изображение предмета в листе персонажа",
+  "GURPS.settingHintShowItemImage": "Система будет отображать изображение Foundry Item в листе актёра для выбранных черт.",
+  "GURPS.settingLabelShowItemImage": "Выберите черты для отображения изображений",
   "GURPS.parentItemTooltip": "<div>Из {type}:<br>{name}</div>",
   "GURPS.cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",
   "GURPS.droppingItemNotification": "{actorName} получил {itemName}"

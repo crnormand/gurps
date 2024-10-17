@@ -2150,3 +2150,25 @@ export class GurpsInventorySheet extends GurpsActorSheet {
     return 'systems/gurps/templates/inventory-sheet.html'
   }
 }
+
+export class ItemImageSettings extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      title: game.i18n.localize('GURPS.settingShowItemImage'),
+      id: 'item-image-settings',
+      template: 'systems/gurps/templates/actor/item-image-settings.hbs',
+      width: 400,
+      closeOnSubmit: true,
+    })
+  }
+
+  getData() {
+    return {
+      settings: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE),
+    }
+  }
+
+  async _updateObject(event, formData) {
+    await game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE, formData)
+  }
+}
