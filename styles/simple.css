@@ -2303,6 +2303,12 @@ input.gcs-input:disabled {
   min-width: 2.5em;
 }
 
+.gga-app.item-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .dr.gga-right.blue {
   color: blueviolet;
   font-weight: bold;
