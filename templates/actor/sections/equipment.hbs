@@ -100,37 +100,42 @@
 					{{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
 					{{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
 				</div>
-				<div class='tooltip gga-manual'>
-					{{{gurpslink this.name}}}
-					{{#if (displayItemHover this)}}
-					<div class='tooltiptext gga-manual'><img src='{{img}}' /></div>
-					{{/if}}
-				</div>
-				<div>
-					{{#if (isFoundryGlobalItem this)}}
-					<i class='fas fa-book tooltip gga-global-item'>
-						<span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
-					</i>
-					{{/if}}
-          {{#if (isUserCreated this)}}
-					<i class='fas fa-bookmark tooltip gga-usercreated'>
-						<span class='tooltiptext'>{{i18n "GURPS.equipmentUserCreated"}}</span>
-					</i>
-					{{/if}}
-					{{#if (isFoundryItem this)}}
-					<i class='fas fa-star tooltip gga-item'>
-						<span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
-					</i>
-					{{/if}}
-					{{#if (ignoreImportQty this)}}
-					<i class="fas fa-hashtag tooltip gga-ignoreimport">
-						<span class='tooltiptext'>{{i18n "GURPS.equipmentIgnoreQtyImport"}} </span>
-					</i>
-					{{/if}}
-				</div>
-			</div>
-			<div class='list_note'>
-				{{{gurpslinkbr this.notes}}}
+        {{#if (showItemImage this)}}<div class="gga-thumb-top"><img class="gga-item-image-thumb traits" src='{{getItemImage this}}' /></div>{{/if}}
+        <div class="gga-column-description">
+          <div class="gga-desc-text">
+            <div class='tooltip gga-manual'>
+              {{{gurpslink this.name}}}
+              {{#if (displayItemHover this)}}
+              <div class='tooltiptext gga-manual'><img class="gga-tooltip-item-image" src='{{getItemImage this}}' /></div>
+              {{/if}}
+            </div>
+            <div>
+            {{#if (isFoundryGlobalItem this)}}
+            <i class='fas fa-book tooltip gga-global-item'>
+              <span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
+            </i>
+            {{/if}}
+            {{#if (isUserCreated this)}}
+            <i class='fas fa-bookmark tooltip gga-usercreated'>
+              <span class='tooltiptext'>{{i18n "GURPS.equipmentUserCreated"}}</span>
+            </i>
+            {{/if}}
+            {{#if (isFoundryItem this)}}
+            <i class='fas fa-star tooltip gga-item'>
+              <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
+            </i>
+            {{/if}}
+            {{#if (ignoreImportQty this)}}
+            <i class="fas fa-hashtag tooltip gga-ignoreimport">
+              <span class='tooltiptext'>{{i18n "GURPS.equipmentIgnoreQtyImport"}} </span>
+            </i>
+            {{/if}}
+          </div>
+          </div>
+          <div class='list_note'>
+            {{{gurpslinkbr this.notes}}}
+          </div>
+        </div>
 			</div>
 		</div>
 	</div>

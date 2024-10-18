@@ -54,7 +54,9 @@
 	<div class='itemmenu' readonly></div>
 
 	<div class='spldraggable' data-key='system.spells.{{@key}}'>
-		<div class='desc dblclkedit indent{{indent}}'>
+    <div class="gga-line-description">
+      {{#if (showItemImage this)}}<div><img class="gga-item-image-thumb spells" src='{{getItemImage this}}' /></div>{{/if}}
+		  <div class='desc dblclkedit indent{{indent}}'>
 			<div class='gga-desc-text'>
 				<div>
 					{{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
@@ -63,7 +65,7 @@
 				<div class='tooltip gga-manual'>
 					{{{gurpslink this.name}}}
 					{{#if (displayItemHover this)}}
-					<div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
+					<div class='tooltiptext gga-manual'><img class="gga-tooltip-item-image" src='{{getItemImage this}}' /></div>
 					{{/if}}
 				</div>
         <div>
@@ -92,6 +94,7 @@
 				{{{gurpslink this.notes}}}
 			</div>
 		</div>
+    </div>
 	</div>
 
 	<div class='cls flex-center'>{{this.class}}</div>
