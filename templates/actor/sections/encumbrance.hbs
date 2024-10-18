@@ -17,7 +17,7 @@
       {{#if (automaticEncumbrance)}}
         <i class="fa fa-lock" title="{{localize 'GURPS.autoEncumbrance'}}: ON"></i>
       {{else}}
-        <i class="fa fa-unlock" title="{{localize 'GURPS.autoEncumbrance'}}: OFF"></i>
+        <i class="fa fa-unlock" style="color: coral" title="{{localize 'GURPS.autoEncumbrance'}}: OFF"></i>
       {{/if}}
     </div>
   </div>
@@ -31,7 +31,7 @@
   {{#each system.encumbrance}}
     <div class='encmarker {{include-if current 'current'}}'></div>
     <div class='enc {{include-if current 'current'}} {{key}} {{include-if (not (automaticEncumbrance)) 'clickable'}}' data-key='{{@key}}'>
-      {{{localizeKey (concat 'GURPS.encumbranceLevel-' key)}}}
+      {{{localizeKey (concat 'GURPS.encumbranceLevel-' @key)}}}
     </div>
     <div class='load gga-right {{include-if current 'current'}}'>
       {{#if ../isEditing}}

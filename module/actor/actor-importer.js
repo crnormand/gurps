@@ -1018,7 +1018,7 @@ export class ActorImporter {
   async _preImport(generator, itemType) {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       // Before we import, we need to find all eligible items,
-      // and backup their exclusive info inside their actor components (fea, eqt, etc.)
+      // and backup their exclusive info inside Actor system.itemInfo
       const isEligibleItem = item => {
         const sysKey =
           itemType === 'equipment'
@@ -1026,29 +1026,24 @@ export class ActorImporter {
             : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
         return (
           (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
-          !!foundry.utils.getProperty(this.actor, sysKey)?.save
+          !foundry.utils.getProperty(this.actor, sysKey)?.save
         )
       }
+      let backupItemData = foundry.utils.getProperty(this.actor, `system.backupItemInfo`) || {}
+      const eligibleItems = this.actor.items.filter(i => !!isEligibleItem(i))
+      backupItemData = eligibleItems.reduce((acc, i) => {
+        return {
+          ...acc,
+          [i.system.importid || i.system.originalName]: i.getItemInfo(),
+        }
+      }, backupItemData)
+      await this.actor.internalUpdate({ 'system.backupItemInfo': backupItemData })
 
-      let eligibleItemsPromises = this.actor.items
-        .filter(i => !!isEligibleItem(i))
-        .map(async i => {
-          // Update actor component with item exclusive info
-          const itemInfo = i.getItemInfo()
-          const sysKey =
-            itemType === 'equipment'
-              ? this.actor._findEqtkeyForId('itemid', i.id)
-              : this.actor._findSysKeyForId('itemid', i.id, i.actorComponentKey)
-          if (!!sysKey) {
-            let actorComp = foundry.utils.getProperty(this.actor, sysKey)
-            actorComp.itemid = ''
-            actorComp.itemInfo = itemInfo
-            await this.actor.internalUpdate({ [sysKey]: actorComp })
-          }
-          return i.id
-        })
-      let eligibleItems = await Promise.all(eligibleItemsPromises)
-      if (!!eligibleItems.length) await this.actor.deleteEmbeddedDocuments('Item', eligibleItems)
+      if (eligibleItems.length > 0)
+        await this.actor.deleteEmbeddedDocuments(
+          'Item',
+          eligibleItems.map(i => i.id)
+        )
     }
   }
 
@@ -1100,7 +1095,6 @@ export class ActorImporter {
           eqt.carried = old.carried
           eqt.equipped = old.equipped
           eqt.parentuuid = old.parentuuid
-          eqt.itemid = old.itemid
           if (old.ignoreImportQty) {
             eqt.count = old.count
             eqt.uses = old.uses
@@ -2654,6 +2648,7 @@ export class ActorImporter {
 
       // Check if we need to update the Item
       if (!actorComp._itemNeedsUpdate(existingItem)) {
+        actorComp.name = existingItem.name
         actorComp.itemid = existingItem._id
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
@@ -2661,16 +2656,18 @@ export class ActorImporter {
       }
 
       // Create or Update item
-      const itemData = actorComp.toItemData(fromProgram)
+      const itemData = actorComp.toItemData(this.actor, fromProgram)
       const [item] = !!existingItem
         ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
         : await this.actor.createEmbeddedDocuments('Item', [itemData])
       // Update Actor Component for new Items
       if (!!item) {
+        actorComp.name = item.name
         actorComp.itemid = item._id
         actorComp.itemInfo = item.getItemInfo()
         actorComp.uuid = item.system[item.itemSysKey].uuid
       } else if (!!existingItem) {
+        actorComp.name = existingItem.name
         actorComp.itemid = existingItem._id
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid

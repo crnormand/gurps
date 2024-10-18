@@ -738,7 +738,7 @@ ul#result-effects li {
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: whitesmoke transparent transparent transparent;
+  border-color: #555 transparent transparent transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
@@ -773,8 +773,9 @@ ul#result-effects li {
   padding: 0;
   top: auto;
   bottom: 100%;
-  background: whitesmoke;
+  background-color: #555;
   left: calc(100% - 35px);
+  min-width: unset;
 }
 
 #notes .tooltiptext.gga-manual > img,
@@ -1605,6 +1606,22 @@ button.equipmentbutton:last-child {
   justify-content: unset;
 }
 
+#bucket-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-left: 60px;
+  margin-right: 25px;
+}
+
+#bucket-container.force-left {
+  justify-content: flex-start;
+}
+
+#bucket-container.force-right {
+  justify-content: flex-end;
+}
+
 #bucket-app {
   pointer-events: auto;
   display: grid;
@@ -1613,7 +1630,6 @@ button.equipmentbutton:last-child {
   gap: 3px;
   width: 130px;
   margin-bottom: 10px;
-  margin-left: 35px;
 }
 
 .modifierbucket #modifierbucket {

@@ -1,4 +1,5 @@
 import { recurselist } from '../lib/utilities.js'
+import { parselink } from '../lib/parselink.js'
 
 export class GurpsItem extends Item {
   /**
@@ -64,6 +65,34 @@ export class GurpsItem extends Item {
     return !!this.getItemAttacks({ checkOnly: true })
   }
 
+  getItemOTFs(checkOnly = false) {
+    const { notes } = this.system[this.itemSysKey]
+    const action = parselink(notes || '')
+    if (!!checkOnly) return !!action.text
+    return action
+  }
+
+  get hasOTFs() {
+    !!this.getItemOTFs(true)
+  }
+
+  async toogleEquip(equipped) {
+    if (this.type !== 'equipment' || !this.system.carried || this.system.equipped === equipped) return
+
+    const key = this.actor._findEqtkeyForId('itemid', this._id)
+    let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
+    if (eqt) {
+      eqt.equipped = !eqt.equipped
+      await this.actor.updateItemAdditionsBasedOn(eqt, key)
+      await this.actor.internalUpdate({ [key]: eqt })
+    }
+    this.system.equipped = eqt.equipped
+    this.system.eqt.equipped = eqt.equipped
+    await this.actor._updateItemFromForm(this)
+
+    console.log(`Change Equipment ${this.name} equipped status to ${equipped}`)
+  }
+
   async internalUpdate(data, context) {
     let ctx = { render: !this.ignoreRender }
     if (!!context) ctx = { ...context, ...ctx }
@@ -119,6 +148,7 @@ export class GurpsItem extends Item {
     return {
       id: this._id,
       img: this.img,
+      name: this.name,
       system: itemSystem,
     }
   }

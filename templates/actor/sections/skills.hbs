@@ -42,44 +42,47 @@
 	<div class='itemmenu' readonly></div>
 
 	<div class='skldraggable' data-key='system.skills.{{@key}}'>
-		<div class='desc dblclkedit indent{{indent}}'>
-			<div class='gga-desc-text'>
-				<div>
-					{{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-					{{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-				</div>
-				<div class='tooltip gga-manual'>
-					{{{gurpslink this.name}}}
-					{{#if (displayItemHover this)}}
-					<div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
-					{{/if}}
-				</div>
-        <div>
-					{{#if (isFoundryGlobalItem this)}}
-					<i class='fas fa-book tooltip gga-global-item'>
-						<span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
-					</i>
-					{{/if}}
-				</div>
-        <div>
-					{{#if (isImportedItem this)}}
-					<i class='fas fa-layer-group tooltip gga-child-item'>
-						<span class='tooltiptext'>{{{parentItemTooltip this}}}</span>
-					</i>
-					{{/if}}
-				</div>
-				<div>
-					{{#if (isFoundryItem this)}}
-					<i class='fas fa-star tooltip gga-item'>
-						<span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
-					</i>
-					{{/if}}
-				</div>
-			</div>
-			<div class='list_note'>
-				{{{gurpslink this.notes @root}}}
-			</div>
-		</div>
+    <div class="gga-line-description">
+      {{#if (showItemImage this)}}<div><img class="gga-item-image-thumb skills" src='{{getItemImage this}}' /></div>{{/if}}
+      <div class='desc dblclkedit indent{{indent}}'>
+        <div class='gga-desc-text'>
+          <div>
+            {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          </div>
+          <div class='tooltip gga-manual'>
+            {{{gurpslink this.name}}}
+            {{#if (displayItemHover this)}}
+            <div class='tooltiptext gga-manual'><img class="gga-tooltip-item-image" src='{{getItemImage this}}' /></div>
+            {{/if}}
+          </div>
+          <div>
+            {{#if (isFoundryGlobalItem this)}}
+            <i class='fas fa-book tooltip gga-global-item'>
+              <span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
+            </i>
+            {{/if}}
+          </div>
+          <div>
+            {{#if (isImportedItem this)}}
+            <i class='fas fa-layer-group tooltip gga-child-item'>
+              <span class='tooltiptext'>{{{parentItemTooltip this}}}</span>
+            </i>
+            {{/if}}
+          </div>
+          <div>
+            {{#if (isFoundryItem this)}}
+            <i class='fas fa-star tooltip gga-item'>
+              <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
+            </i>
+            {{/if}}
+          </div>
+        </div>
+        <div class='list_note'>
+          {{{gurpslink this.notes @root}}}
+        </div>
+      </div>
+    </div>
 	</div>
 
 	<div class='sl {{rollable this.level}} flex-center' data-name='{{this.name}}' data-key='system.skills.{{@key}}'
