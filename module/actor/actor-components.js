@@ -191,9 +191,10 @@ export class Named extends _Base {
    * Converts Actor Component data into Foundry Item Data.
    *
    * @param {string} fromProgram - The Generator, CGA or GCS.
-   * @return {object} The converted item data.
+   * @param {Actor} actor - The actor to use.
+   * @return {*} The converted item data.
    */
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
     throw new Error('Not implemented')
   }
 
@@ -229,6 +230,27 @@ export class Named extends _Base {
    */
   _itemNeedsUpdate(item) {
     throw new Error('Not implemented')
+  }
+
+  /**
+   * Populate saved Item info stored on Actor.
+   *
+   * This actor.system.itemInfo is populated only if you
+   * disable the `Import Player data as Foundry Items` and
+   * import the actor again. The idea is to maintain on these data
+   * any changes the Item have which the Actor Component does not
+   * handle, like item image and OTF formulas.
+   *
+   * @param {Actor} actor
+   * @returns {*}
+   */
+  findSavedItemInfo(actor) {
+    const actorItemInfo = actor.system.backupItemInfo
+    const importId = this.uuid
+    const originalName = this.originalName
+    if (!!actorItemInfo) {
+      this.itemInfo = actorItemInfo[importId] || actorItemInfo[originalName]
+    }
   }
 }
 
@@ -324,18 +346,19 @@ export class Skill extends Leveled {
     return 'skills'
   }
 
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
+    this.findSavedItemInfo(actor)
     const system = this.itemInfo?.system || {}
     const uniqueId = this._getGGAId({ name: this.name, type: 'skill', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
     return {
-      name: this.name,
+      name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
       type: 'skill',
       system: {
         ski: {
-          notes: this.notes || '',
+          notes: this.notes || system.notes || '',
           pageref: this.pageref || '',
           contains: this.contains || {},
           uuid: uniqueId,
@@ -353,12 +376,12 @@ export class Skill extends Leveled {
           passotf: this.passotf || '',
           failotf: this.failotf || '',
         },
-        ads: system.ads || {},
-        skills: system.skills || {},
-        spells: system.spells || {},
-        melee: system.melee || {},
-        ranged: system.ranged || {},
-        bonuses: system.bonuses || '',
+        ads: this.ads || system.ads || {},
+        skills: this.skills || system.skills || {},
+        spells: this.spells || system.spells || {},
+        melee: this.melee || system.melee || {},
+        ranged: this.ranged || system.ranged || {},
+        bonuses: this.bonuses || system.bonuses || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
@@ -400,7 +423,6 @@ export class Skill extends Leveled {
         itemData.points !== this.points ||
         itemData.import !== this['import'] ||
         itemData.relativelevel !== this.relativelevel ||
-        itemData.name !== this.name ||
         itemData['type'] !== this['type']
       if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
@@ -431,18 +453,19 @@ export class Spell extends Leveled {
   static get actorSystemKey() {
     return 'spells'
   }
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
+    this.findSavedItemInfo(actor)
     const system = this.itemInfo?.system || {}
     const uniqueId = this._getGGAId({ name: this.name, type: 'spell', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
     return {
-      name: this.name,
+      name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
       type: 'spell',
       system: {
         spl: {
-          notes: this.notes || '',
+          notes: this.notes || system.notes || '',
           pageref: this.pageref || '',
           contains: this.contains || {},
           uuid: uniqueId,
@@ -467,12 +490,12 @@ export class Spell extends Leveled {
           passotf: this.passotf || '',
           failotf: this.failotf || '',
         },
-        ads: system.ads || {},
-        skills: system.skills || {},
-        spells: system.spells || {},
-        melee: system.melee || {},
-        ranged: system.ranged || {},
-        bonuses: system.bonuses || '',
+        ads: this.ads || system.ads || {},
+        skills: this.skills || system.skills || {},
+        spells: this.spells || system.spells || {},
+        melee: this.melee || system.melee || {},
+        ranged: this.ranged || system.ranged || {},
+        bonuses: this.bonuses || system.bonuses || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
@@ -524,7 +547,6 @@ export class Spell extends Leveled {
         parseInt(itemData['import'] || 0) !== parseInt(this['import'] || 0) ||
         itemData.level !== this.level ||
         itemData.relativelevel !== this.relativelevel ||
-        itemData.name !== this.name ||
         itemData.class !== this.class ||
         !compareColleges(itemData['college'], this['college']) ||
         itemData.cost !== this.cost ||
@@ -559,18 +581,19 @@ export class Advantage extends NamedCost {
   /**
    * Create new Feature payload using Advantage's data.
    */
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
+    this.findSavedItemInfo(actor)
     const system = this.itemInfo?.system || {}
     const uniqueId = this._getGGAId({ name: this.name, type: 'feature', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
     return {
-      name: this.name,
+      name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
       type: 'feature',
       system: {
         fea: {
-          notes: this.notes || '',
+          notes: this.notes || system.notes || '',
           pageref: this.pageref || '',
           contains: this.contains || {},
           uuid: uniqueId,
@@ -585,12 +608,12 @@ export class Advantage extends NamedCost {
           passotf: this.passotf || '',
           failotf: this.failotf || '',
         },
-        ads: system.ads || {},
-        skills: system.skills || {},
-        spells: system.spells || {},
-        melee: system.melee || {},
-        ranged: system.ranged || {},
-        bonuses: system.bonuses || '',
+        ads: this.ads || system.ads || {},
+        skills: this.skills || system.skills || {},
+        spells: this.spells || system.spells || {},
+        melee: this.melee || system.melee || {},
+        ranged: this.ranged || system.ranged || {},
+        bonuses: this.bonuses || system.bonuses || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
@@ -630,8 +653,7 @@ export class Advantage extends NamedCost {
         !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
         itemData.points !== this.points ||
         (itemData.userdesc || '') !== (this.userdesc || '') ||
-        itemData.note !== this.note ||
-        itemData.name !== this.name
+        itemData.note !== this.note
       if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
     return result
@@ -711,18 +733,19 @@ export class Melee extends Attack {
   _itemNeedsUpdate(item) {
     return !item
   }
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
+    this.findSavedItemInfo(actor)
     const system = this.itemInfo?.system || {}
     const uniqueId = this._getGGAId({ name: this.name, type: 'melee', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
     return {
-      name: this.name,
+      name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
       type: 'meleeAtk',
       system: {
         mel: {
-          notes: this.notes || '',
+          notes: this.notes || system.notes || '',
           pageref: this.pageref || '',
           contains: this.contains || {},
           uuid: uniqueId,
@@ -746,12 +769,12 @@ export class Melee extends Attack {
           passotf: this.passotf || '',
           failotf: this.failotf || '',
         },
-        ads: system.ads || {},
-        skills: system.skills || {},
-        spells: system.spells || {},
-        melee: system.melee || {},
-        ranged: system.ranged || {},
-        bonuses: system.bonuses || '',
+        ads: this.ads || system.ads || {},
+        skills: this.skills || system.skills || {},
+        spells: this.spells || system.spells || {},
+        melee: this.melee || system.melee || {},
+        ranged: this.ranged || system.ranged || {},
+        bonuses: this.bonuses || system.bonuses || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
@@ -822,18 +845,19 @@ export class Ranged extends Attack {
   _itemNeedsUpdate(item) {
     return !item
   }
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
+    this.findSavedItemInfo(actor)
     const system = this.itemInfo?.system || {}
     const uniqueId = this._getGGAId({ name: this.name, type: 'ranged', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
     return {
-      name: this.name,
+      name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
       type: 'rangedAtk',
       system: {
         rng: {
-          notes: this.notes || '',
+          notes: this.notes || system.notes || '',
           pageref: this.pageref || '',
           contains: this.contains || {},
           uuid: uniqueId,
@@ -861,12 +885,12 @@ export class Ranged extends Attack {
           passotf: this.passotf || '',
           failotf: this.failotf || '',
         },
-        ads: system.ads || {},
-        skills: system.skills || {},
-        spells: system.spells || {},
-        melee: system.melee || {},
-        ranged: system.ranged || {},
-        bonuses: system.bonuses || '',
+        ads: this.ads || system.ads || {},
+        skills: this.skills || system.skills || {},
+        spells: this.spells || system.spells || {},
+        melee: this.melee || system.melee || {},
+        ranged: this.ranged || system.ranged || {},
+        bonuses: this.bonuses || system.bonuses || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
@@ -992,21 +1016,22 @@ export class Equipment extends Named {
   /**
    * Create new GURPSItem payload using Equipment's data
    */
-  toItemData(fromProgram = '') {
+  toItemData(actor, fromProgram = '') {
+    this.findSavedItemInfo(actor)
     const timestamp = new Date()
     const system = this.itemInfo?.system || {}
     const uniqueId = this._getGGAId({ name: this.name, type: 'equipment', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
     return {
-      name: this.name,
+      name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
       type: 'equipment',
       system: {
         eqt: {
           name: this.name,
           originalName: this.originalName || '',
-          notes: this.notes,
+          notes: this.notes || system.notes || '',
           pageref: this.pageref,
           count: this.count,
           cost: this.cost,
@@ -1024,12 +1049,12 @@ export class Equipment extends Named {
           location: this.location,
           parentuuid: this.parentuuid,
         },
-        ads: system.ads || {},
-        skills: system.skills || {},
-        spells: system.spells || {},
-        melee: system.melee || {},
-        ranged: system.ranged || {},
-        bonuses: system.bonuses || '',
+        ads: this.ads || system.ads || {},
+        skills: this.skills || system.skills || {},
+        spells: this.spells || system.spells || {},
+        melee: this.melee || system.melee || {},
+        ranged: this.ranged || system.ranged || {},
+        bonuses: this.bonuses || system.bonuses || '',
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',

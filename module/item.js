@@ -148,6 +148,7 @@ export class GurpsItem extends Item {
     return {
       id: this._id,
       img: this.img,
+      name: this.name,
       system: itemSystem,
     }
   }

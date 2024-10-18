@@ -840,7 +840,7 @@ export class GurpsActorSheet extends ActorSheet {
         if (path.includes('system.equipment')) {
           if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
             obj.save = true
-            let payload = obj.toItemData('')
+            let payload = obj.toItemData(this.actor, '')
             const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
             obj.itemid = item._id
           }
