@@ -1088,8 +1088,7 @@ export class Equipment extends Named {
         itemData.maxuses !== this.maxuses ||
         itemData.uuid !== this.uuid ||
         itemData.parentuuid !== this.parentuuid ||
-        itemData.location !== this.location ||
-        !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains))
+        itemData.location !== this.location
       if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
     return result

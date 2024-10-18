@@ -893,7 +893,6 @@ export class GurpsActorSheet extends ActorSheet {
         if (!!oldd) foundry.utils.mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
 
         let payload = JSON.stringify(newd)
-        console.log('GGA DragDrop Payload: ', payload)
         return ev.dataTransfer.setData('text/plain', payload)
       })
     })
