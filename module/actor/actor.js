@@ -599,7 +599,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -626,9 +626,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -698,9 +698,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _calculateRangedRanges() {
@@ -1169,6 +1169,32 @@ export class GurpsActor extends Actor {
     await this.update({ 'system.-=move': null })
     await this.update({ 'system.move': move })
     this._forceRender()
+  }
+
+  async addMoveMode(mode, basic, enhanced = basic, isDefault = false) {
+    // copy existing entries
+    let move = {}
+    const moveData = this.system.move
+    for (const k in moveData)
+      foundry.utils.setProperty(move, k, {
+        mode: moveData[k].mode,
+        basic: moveData[k].basic,
+        enhanced: moveData[k].enhanced,
+        default: moveData[k].default,
+      })
+
+    // add a new entry at the end.
+    let empty = Object.values(moveData).length === 0
+    GURPS.put(move, {
+      mode: mode, basic: basic ?? this.system.basicmove.value * 2,
+      enhanced: enhanced, default: empty || isDefault
+    })
+
+    // remove existing entries
+    await this.update({ 'system.-=move': null })
+
+    // add the new entries
+    await this.update({ 'system.move': move })
   }
 
   // --- Functions to handle events on actor ---
