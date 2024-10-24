@@ -65,6 +65,14 @@ export class GurpsItem extends Item {
     return !!this.getItemAttacks({ checkOnly: true })
   }
 
+  /**
+   * Return Item OTFs from Item System
+   *
+   * This is intended for external libraries like Argon Combat HUD
+   *
+   * @param checkOnly
+   * @returns {{text: string, action?: Action}|boolean}
+   */
   getItemOTFs(checkOnly = false) {
     const { notes } = this.system[this.itemSysKey]
     const action = parselink(notes || '')
