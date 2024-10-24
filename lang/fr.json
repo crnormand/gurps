@@ -1065,6 +1065,9 @@
   "GURPS.swimmerFlyer": "Aquatique / Volant",
   "GURPS.swimmersOrFlyersSuffer": "Aquatique Volant",
   "GURPS.target": "Cible",
+  "GURPS.selectTargetForDamageWarning": "Vous devez sélectionner un jeton pour appliquer des dégâts.",
+  "GURPS.invalidUserForDamageWarning": "Seuls les MJ sont autorisés à Appliquer des Dégâts.",
+  "GURPS.noUserForDamageWarning": "Vous ne pouvez pas appliquer de dégâts à une cible en utilisant les dégâts d'un autre utilisateur.",
   "GURPS.targeting": "Cible {name}",
   "GURPS.tired": "Fatigué",
   "GURPS.toAllDXBasedRolls": "à tous les jets basés sur DX",
@@ -1133,6 +1136,8 @@
   "GURPS.effectModNoTokenSelected": "Aucun Token sélectionné",
   "GURPS.settingActiveEffects": "Activer Effets Actifs",
   "GURPS.settingHintActiveEffects": "Autoriser le MJ à créer et appliquer des Effets Actifs",
+  "GURPS.settingDragOnTokenDamage": "Glisser pour appliquer les dégâts au token sélectionné",
+  "GURPS.settingHintDragOnTokenDamage": "Si coché, glisser les dégâts du chat vers un token les appliquera au token. Si décoché, une boîte de dialogue demandera la cible.",
 
   "GURPS.CR0": "PC: N/A (Ne peut Résister)",
   "GURPS.CR6": "PC: 6 (Résiste Rarement)",

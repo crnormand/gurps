@@ -890,6 +890,9 @@
   "GURPS.swimmerFlyer": "Schwimmer / Flieger",
   "GURPS.swimmersOrFlyersSuffer": "Schwimmer Flieger",
   "GURPS.target": "Ziel",
+  "GURPS.selectTargetForDamageWarning": "Du musst ein Token auswählen, um Schaden zuzufügen.",
+  "GURPS.invalidUserForDamageWarning": "Nur SL dürfen Schaden zufügen.",
+  "GURPS.noUserForDamageWarning": "Du kannst keinen Schaden an einem Ziel verursachen, der von einem anderen Benutzer stammt.",
   "GURPS.targeting": "Zielt auf {name}",
   "GURPS.tired": "Ermüdet",
   "GURPS.toAllDXBasedRolls": "auf alle DX-basierten Würfe",
@@ -957,5 +960,7 @@
   "GURPS.tokenToolsTitle": "Öffne Effekt Modifikator Popup",
   "GURPS.effectModNoTokenSelected": "Kein Token ausgewählt",
   "GURPS.settingActiveEffects": "Aktive Effekte einschalten",
-  "GURPS.settingHintActiveEffects": "Erlaubt der SL, Aktive Effekte zu erstellen und anzuwenden"
+  "GURPS.settingHintActiveEffects": "Erlaubt der SL, Aktive Effekte zu erstellen und anzuwenden",
+  "GURPS.settingDragOnTokenDamage": "Ziehe, um Schaden auf ausgewähltes Token anzuwenden",
+  "GURPS.settingHintDragOnTokenDamage": "Wenn aktiviert, wird das Ziehen von Schaden aus dem Chatprotokoll auf ein Token den Schaden auf das Token anwenden. Wenn deaktiviert, wird ein Dialog angezeigt, um nach dem Ziel zu fragen.",
 }

@@ -1,49 +1,29 @@
 <div class='gga-app {{classes}}'>
-	<div classes='flexcol flex-between'>
+	<div class='flexcol flex-between'>
 
-		<h2>
-			<!-- TODO Consider adding hitlocation if passed to ADD -->
-			{{i18n "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=actor.name}}
-		</h2>
-
-		{{#if (gt CALC.length 1)}}
-		<div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
-			<nav class='pagination'>
-				<div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
-				<div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
-				{{#each CALC.calculators}}
-				<div id='pagination-{{@index}}' class='{{#if (eq ../CALC.viewId @index)}}active{{else}}{{/if}}'>
-					{{basicDamage}}
+		<div class="apply-damage-header">
+			<div class="apply-damage-column">
+				<div class="apply-damage-title">
+					<!-- TODO Consider adding hitlocation if passed to ADD -->
+					<div>{{i18n "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=tokenName}}</div>
 				</div>
-				{{/each}}
-				<div id='pagination-right'><i class="fas fa-angle-double-right"></i></div>
-			</nav>
+				<div class='flexrow flex-group-center flex-between' style='border: none; width: 100%'>
+					<div>{{i18n "GURPS.addDirectlyApply"}}:</div>
+					<input type='text' id='basicDamage' class='digits-only centered quick-input' value='{{CALC.totalBasicDamage}}'
+						{{disabled (eq CALC.viewId 'all' )}}>
+					<div>
+						<select id='apply-to' class="quick-input">
+							<option value='HP' {{select-if CALC.applyTo 'HP' }}>{{i18n "GURPS.attributesHPNAME"}}
+							</option>
+							<option value='FP' {{select-if CALC.applyTo 'FP' }}>{{i18n "GURPS.attributesFPNAME"}}
+							</option>
 
-			<aside id='pagination-single-select'
-				style='font-style: italic; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
-				{{i18n "GURPS.addSingleRollSelected"}}
-			</aside>
-		</div>
-		{{/if}}
-
-		<div class='flexrow flex-group-center flex-between' style='border: none'>
-			<h3>{{i18n "GURPS.addDirectlyApply"}}:</h3>
-			<input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}'
-				{{disabled (eq CALC.viewId 'all' )}}>
-			<div>
-				<select id='apply-to'>
-					<option value='HP' {{select-if CALC.applyTo 'HP' }}>{{i18n "GURPS.attributesHPNAME"}}
-					</option>
-					<option value='FP' {{select-if CALC.applyTo 'FP' }}>{{i18n "GURPS.attributesFPNAME"}}
-					</option>
-
-					{{#each resourceLabels}}
-					<option value='{{alias}}' {{select-if ../CALC.applyTo alias}}>{{name}}</option>
-					{{/each}}
-				</select>
-			</div>
-
-			<div style='display: grid; grid-template-columns: 1fr min-content;'>
+							{{#each resourceLabels}}
+							<option value='{{alias}}' {{select-if ../CALC.applyTo alias}}>{{name}}</option>
+							{{/each}}
+						</select>
+					</div>
+					<div style='display: grid; grid-template-columns: 1fr min-content;'>
 				{{#if CALC.showApplyAction}}
 				<button id='apply-publicly' class='split-button'>{{i18n "GURPS.addApply"}}</button>
 				<div class='dropdown'>
@@ -70,7 +50,33 @@
 				</div>
 				{{/if}}
 			</div>
+				</div>
+			</div>
+			<img src="{{tokenImage}}" alt="">
 		</div>
+
+
+		{{#if (gt CALC.length 1)}}
+		<div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
+			<nav class='pagination'>
+				<div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
+				<div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
+				{{#each CALC.calculators}}
+				<div id='pagination-{{@index}}' class='{{#if (eq ../CALC.viewId @index)}}active{{else}}{{/if}}'>
+					{{basicDamage}}
+				</div>
+				{{/each}}
+				<div id='pagination-right'><i class="fas fa-angle-double-right"></i></div>
+			</nav>
+
+			<aside id='pagination-single-select'
+				style='font-style: italic; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
+				{{i18n "GURPS.addSingleRollSelected"}}
+			</aside>
+		</div>
+		{{/if}}
+
+
 
 		{{#unless isSimpleDialog}}
 		<div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>

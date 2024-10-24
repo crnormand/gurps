@@ -16,7 +16,7 @@ import { digitsAndDecimalOnly, digitsOnly, digitsAndNegOnly } from '../../lib/jq
 import { GurpsActor } from '../actor/actor.js'
 import { handleOnPdf } from '../pdf-refs.js'
 
-const simpleDialogHeight = 130
+const simpleDialogHeight = 160
 
 /**
  * Displays the Apply Damage Dialog. Delegates all the logic behind calculating
@@ -50,6 +50,8 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
+    this.tokenImg = damageData[0].token.document.texture.src || actor.img
+    this.tokenName = damageData[0].token.name || actor.name
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
@@ -77,6 +79,8 @@ export default class ApplyDamageDialog extends Application {
     data.timesToApply = this.timesToApply
     data.isSimpleDialog = this.isSimpleDialog
     data.resourceLabels = this._resourceLabels
+    data.tokenImage = this.tokenImg
+    data.tokenName = this.tokenName
     return data
   }
 

@@ -347,6 +347,9 @@
   "GURPS.RESOLVEDAMAGEQuantity": "Количество бросков:",
   "GURPS.RESOLVEDAMAGESendTo": "Отправить OtF...",
   "GURPS.RESOLVEDAMAGETitle": "Вычислить нанесённые повреждения",
+  "GURPS.selectTargetForDamageWarning": "Вам нужно выбрать токен для нанесения урона.",
+  "GURPS.invalidUserForDamageWarning": "Только Мастера игры могут наносить урон.",
+  "GURPS.noUserForDamageWarning": "Вы не можете нанести урон цели, используя урон другого пользователя.",
 
   "__Resource Trackers__": "=========",
   "GURPS.resourceCurrentValue": "Текущее значение",
@@ -476,5 +479,7 @@
   "GURPS.settingLabelShowItemImage": "Выберите черты для отображения изображений",
   "GURPS.parentItemTooltip": "<div>Из {type}:<br>{name}</div>",
   "GURPS.cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",
-  "GURPS.droppingItemNotification": "{actorName} получил {itemName}"
+  "GURPS.droppingItemNotification": "{actorName} получил {itemName}",
+  "GURPS.settingDragOnTokenDamage": "При перетаскивании применять урон к выбранному токену",
+  "GURPS.settingHintDragOnTokenDamage": "Если установлено, перетаскивание урона из окна чата на токен применит урон к токену. Если не установлено, будет показан диалоговое окно для выбора цели."
 }

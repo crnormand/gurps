@@ -2,7 +2,7 @@
 
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
-import { handleOnPdf } from '../pdf-refs.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 /**
  * @typedef {{
@@ -82,6 +82,84 @@ export default class DamageChat {
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
   static async _dropCanvasData(canvas, dropData) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DRAG_ON_TOKEN_DAMAGE))
+      return await DamageChat._calculateAndSelectTargets(canvas, dropData)
+
+    const actor = game.users.get(dropData.actorid)
+
+    const isValidUser = (user, attackerActor) => {
+      if (game.user.isGM) return true
+      const userCanAdd = !game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ONLY_GMS_OPEN_ADD)
+      const userOwnsAttacker = attackerActor ? user.character === attackerActor : false
+      if (!userOwnsAttacker) ui.notifications?.warn(game.i18n.localize('GURPS.noUserForDamageWarning'))
+      return userCanAdd && userOwnsAttacker
+    }
+
+    switch (dropData.type) {
+      case 'damageItem':
+        // We need to know who is:
+        // 1. The Attacker Actor: The actor that rolled the damage
+        // 2. The Game User: The user which makes the drag
+        // 3. The User existing Targets or the Token which user dropped the damage on
+        let attackerActor = game.actors.get(dropData.payload.attacker)
+        const { user } = game
+        if (!isValidUser(user, attackerActor)) {
+          ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
+          return false
+        }
+        let userTargets = user?.targets
+        let oldTargets = [...userTargets]
+
+        if (!userTargets || userTargets.size === 0) {
+          // disable old Targets if exist and
+          // find token on dropped location
+          for (let target of oldTargets) {
+            target.setTarget(false, { user: user, releaseOthers: false })
+          }
+          const grid_size = canvas.scene?.grid.size
+          const dropX = dropData.x
+          const dropY = dropData.y
+
+          const targetToken = canvas.tokens?.placeables.find(token => {
+            const tokenX = token.x
+            const tokenY = token.y
+            return dropX >= tokenX && dropX < tokenX + grid_size && dropY >= tokenY && dropY < tokenY + grid_size
+          })
+          // If token found, target it
+          if (targetToken) {
+            targetToken.setTarget(true, { user: user, releaseOthers: false })
+            userTargets = new Set([targetToken])
+          }
+        }
+        if (!userTargets || userTargets.size === 0) {
+          ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForDamageWarning'))
+          return false
+        }
+        for (let target of userTargets) {
+          // Will open one Injury Dialog for each target
+          dropData.payload.token = target
+          if (target.actor) await target.actor.handleDamageDrop(dropData.payload)
+        }
+
+        // Disable target and re-enable old targets, if exist
+        for (let target of userTargets) {
+          target.setTarget(false, { user: user, releaseOthers: false })
+        }
+        for (let target of oldTargets) {
+          target.setTarget(true, { user: user, releaseOthers: false })
+        }
+        break
+      case 'Item':
+        await actor.handleItemDrop(dropData)
+        break
+      case 'equipment':
+        await actor.handleEquipmentDrop(dropData)
+        break
+    }
+    return false
+  }
+
+  static async _calculateAndSelectTargets(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
       let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene?.grid.size
