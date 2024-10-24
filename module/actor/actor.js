@@ -1183,6 +1183,13 @@ export class GurpsActor extends Actor {
         default: moveData[k].default,
       })
 
+    // if mode already exists, abandon update.
+    for (const k in move) {
+      if (move[k].mode === mode) {
+        return
+      }
+    }
+
     // add a new entry at the end.
     let empty = Object.values(moveData).length === 0
     GURPS.put(move, {
@@ -2616,9 +2623,8 @@ export class GurpsActor extends Actor {
       // Exclude than rewrite the hitlocations on Actor
       await this.internalUpdate({ 'system.-=hitlocations': null })
       await this.update({ 'system.hitlocations': actorLocations })
-      const msg = `${this.name}: DR ${drFormula} applied to ${
-        affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
-      }`
+      const msg = `${this.name}: DR ${drFormula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
+        }`
       return { changed, msg, info: msg }
     }
   }
