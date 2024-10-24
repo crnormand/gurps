@@ -115,6 +115,15 @@ export class GurpsActor extends Actor {
     let attributes = this.system.attributes
     if (foundry.utils.getType(attributes.ST.import) === 'string')
       this.system.attributes.ST.import = parseInt(attributes.ST.import)
+
+    this.system.hitlocationNames = this.hitLocationByWhere
+    for (const location in this.system.hitlocationNames) {
+      if (typeof this.system.hitlocationNames[location].import === 'string') {
+        this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
+      }
+    }
+
+    this.system.trackersByName = this.trackersByName
   }
 
   prepareEmbeddedEntities() {
@@ -625,36 +634,52 @@ export class GurpsActor extends Actor {
   _adjustMove(move, threshold, value, reason) {
     switch (value.toString()) {
       case MOVE_NONE:
-        return { move: 0, text: i18n_f('GURPS.moveNone', { reason: reason }) }
+        return {
+          move: 0,
+          // text: i18n_f('GURPS.moveNone', { reason: reason })
+          text: i18n_f('None'),
+        }
 
       case MOVE_ONE:
         return {
           move: 1,
-          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
+          text: '1 yd/sec',
+          //          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
         }
 
       case MOVE_STEP:
-        return { move: this._getStep(), text: i18n_f('GURPS.moveStep', { reason: reason }) }
+        return {
+          move: this._getStep(),
+          text: 'Step',
+          //  text: i18n_f('GURPS.moveStep', { reason: reason })
+        }
 
       case MOVE_TWO_STEPS:
-        return { move: this._getStep() * 2, text: i18n_f('GURPS.moveTwoSteps', { reason: reason }) }
+        return {
+          move: this._getStep() * 2,
+          text: 'Step or Two',
+          //          text: i18n_f('GURPS.moveTwoSteps', { reason: reason })
+        }
 
       case MOVE_ONETHIRD:
         return {
           move: Math.max(1, Math.ceil((move / 3) * threshold)),
-          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
+          text: '×1/3',
+          //          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
-          text: i18n_f('GURPS.moveHalf', { reason: reason }),
+          text: 'Half',
+          //          text: i18n_f('GURPS.moveHalf', { reason: reason }),
         }
 
       case MOVE_TWOTHIRDS:
         return {
           move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
-          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
+          text: '×2/3',
+          //          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
         }
     }
 
@@ -1124,6 +1149,15 @@ export class GurpsActor extends Actor {
     let trackerArray = data.additionalresources.tracker
     if (!trackerArray) trackerArray = {}
     return objectToArray(trackerArray)
+  }
+
+  get trackersByName() {
+    // Convert this.system.hitlocations into an object keyed by location.where.
+    const byName = {}
+    for (const [_key, value] of Object.entries(this.system.additionalresources.tracker)) {
+      byName[`${value.name}`] = value
+    }
+    return byName
   }
 
   async setMoveDefault(value) {
@@ -1995,6 +2029,20 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * @returns an object where each property is a hitlocation, keyed by location.where.
+   */
+  get hitLocationByWhere() {
+    // Convert this.system.hitlocations into an object keyed by location.where.
+    const byWhere = {}
+    for (const [_key, value] of Object.entries(this.system.hitlocations)) {
+      // Copilot: replace any spaces in the where string with underscores
+
+      byWhere[`${value.where}`] = value
+    }
+    return byWhere
+  }
+
+  /**
    * @returns the appropriate hitlocation table based on the actor's bodyplan
    */
   get _hitLocationRolls() {
@@ -2028,29 +2076,69 @@ export class GurpsActor extends Actor {
   getEquipped(key) {
     let val = 0
     let txt = ''
-    if (!!this.system.melee && !!this.system.equipment?.carried)
+
+    if (!!this.system.melee && !!this.system.equipment?.carried) {
+      // Go through each melee attack...
       Object.values(this.system.melee).forEach(melee => {
-        recurselist(this.system.equipment.carried, (e, _k, _d) => {
-          if (!!e && !val && e.equipped && !!melee.name.match(makeRegexPatternFrom(e.name, false))) {
+        // ...and see if there's a matching piece of carried equipment.
+        recurselist(this.system.equipment.carried, (equipment, _k, _d) => {
+          if (equipment?.equipped && !!namesMatch(melee, equipment)) {
             let t = parseInt(melee[key])
             if (!isNaN(t)) {
-              val = t
-              txt = '' + melee[key]
+              if (t > val) {
+                val = t
+                txt = '' + melee[key]
+              }
             }
           }
         })
       })
-    // @ts-ignore
+    }
+
+    // Find any parry/block in the melee attacks that do not match any equipment.
+    Object.values(this.system.melee).forEach(melee => {
+      // If the current melee attack has a defense (parry|block) ...
+      if (/\d+.*/.test(melee[key])) {
+        let matched = false
+
+        recurselist(this.system.equipment.carried, (equipment, _k, _d) => {
+          if (!matched && !equipment?.equipped && !!namesMatch(melee, equipment)) {
+            matched = true
+          }
+        })
+
+        recurselist(this.system.equipment.other, (equipment, _k, _d) => {
+          if (!matched && !!namesMatch(melee, equipment)) {
+            matched = true
+          }
+        })
+
+        if (!matched) {
+          let t = parseInt(melee[key])
+          if (!isNaN(t)) {
+            if (t > val) {
+              val = t
+              txt = '' + melee[key]
+            }
+          }
+        }
+      }
+    })
+
     if (!val && !!this.system[key]) {
       txt = '' + this.system[key]
       val = parseInt(txt)
     }
     return [txt, val]
+
+    function namesMatch(melee, equipment) {
+      return melee.name.match(makeRegexPatternFrom(equipment.name, false))
+    }
   }
 
   getEquippedParry() {
     let [txt, val] = this.getEquipped('parry')
-    this.system.equippedparryisfencing = !!txt && txt.match(/f$/i)
+    this.system.equippedparryisfencing = !!txt && /f$/i.test(txt)
     return val
   }
 
@@ -2480,7 +2568,9 @@ export class GurpsActor extends Actor {
         return false
       })
       if (!affectedLocations.length) {
-        let msg = `<p>No valid locations found using: <i>${drLocations.join(', ')}</i>.</p><p>Available locations are: <ul><li>${availableLocations.join('</li><li>')}</li></ul>`
+        let msg = `<p>No valid locations found using: <i>${drLocations.join(
+          ', '
+        )}</i>.</p><p>Available locations are: <ul><li>${availableLocations.join('</li><li>')}</li></ul>`
         let warn = 'No valid locations found. Available locations are: ' + availableLocations.join(', ')
         return { changed, msg, warn }
       }
@@ -2500,7 +2590,9 @@ export class GurpsActor extends Actor {
       // Exclude than rewrite the hitlocations on Actor
       await this.internalUpdate({ 'system.-=hitlocations': null })
       await this.update({ 'system.hitlocations': actorLocations })
-      const msg = `${this.name}: DR ${drFormula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'}`
+      const msg = `${this.name}: DR ${drFormula} applied to ${
+        affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
+      }`
       return { changed, msg, info: msg }
     }
   }
