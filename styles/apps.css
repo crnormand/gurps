@@ -2327,7 +2327,12 @@ button.equipmentbutton:last-child {
 }
 
 .gurps-invalid {
-  background-color: lightpink !important;
+  border: 2px solid red !important;
+  box-shadow: none !important;
+}
+.gurps-valid {
+  border: 2px solid green !important;
+  box-shadow: none !important;
 }
 
 #fright-check label {

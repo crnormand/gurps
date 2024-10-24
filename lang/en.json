@@ -1165,6 +1165,7 @@
   "GURPS.resolveDiceRoll": "What Did You Roll?",
   "GURPS.settingUsePhysicalDice": "Use Physical Dice",
   "GURPS.settingHintUsePhysicalDice": "If enabled, TRUSTED players will be prompted for all die roll values. This allows players to roll physical dice and enter the results into Foundry.",
+  "GURPS.physicalDiceTooltip": "ex: 1,2,3 or 6",
   "GURPS.settingUseQuintessence": "Use Quintessence",
   "GURPS.settingHintUseQuintessence": "If enabled, adds the Quintessence attribute, and Quintessence Points become available to use as a Resource Tracker.",
   "GURPS.STATUSStanding": "Standing",
