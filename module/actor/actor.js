@@ -566,10 +566,13 @@ export class GurpsActor extends Actor {
 
     if (!data.equippedparry) data.equippedparry = this.getEquippedParry()
     if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
-    // catch for older actors that may not have these values set
+    // Catch for older actors that may not have these values set.
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value.toString())
     if (!data.currentdodge && data.dodge.value) data.currentdodge = parseInt(data.dodge.value.toString())
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value.toString()) * 2
+
+    // Look for Defense bonuses.
+    if (!data.defenses) data.defenses = this.getEquippedDefenseBonuses()
   }
 
   _isEnhancedMove() {
@@ -1154,7 +1157,7 @@ export class GurpsActor extends Actor {
   get trackersByName() {
     // Convert this.system.hitlocations into an object keyed by location.where.
     const byName = {}
-    for (const [_key, value] of Object.entries(this.system.additionalresources.tracker)) {
+    for (const [_key, value] of Object.entries(this.system.additionalresources?.tracker ?? {})) {
       byName[`${value.name}`] = value
     }
     return byName
@@ -2065,12 +2068,12 @@ export class GurpsActor extends Actor {
    * @returns an object where each property is a hitlocation, keyed by location.where.
    */
   get hitLocationByWhere() {
-    // Convert this.system.hitlocations into an object keyed by location.where.
     const byWhere = {}
-    for (const [_key, value] of Object.entries(this.system.hitlocations)) {
-      // Copilot: replace any spaces in the where string with underscores
-
-      byWhere[`${value.where}`] = value
+    if (this.system.hitlocations) {
+      // Convert this.system.hitlocations into an object keyed by location.where.
+      for (const [_key, value] of Object.entries(this.system.hitlocations)) {
+        byWhere[`${value.where}`] = value
+      }
     }
     return byWhere
   }
@@ -2118,7 +2121,7 @@ export class GurpsActor extends Actor {
           if (equipment?.equipped && !!namesMatch(melee, equipment)) {
             let t = parseInt(melee[key])
             if (!isNaN(t)) {
-              if (t > val) {
+              if (t > val || (t === val && /f$/i.test(melee[key]))) {
                 val = t
                 txt = '' + melee[key]
               }
@@ -2128,20 +2131,21 @@ export class GurpsActor extends Actor {
       })
     }
 
-    // Find any parry/block in the melee attacks that do not match any equipment.
-    Object.values(this.system.melee).forEach(melee => {
+    // Find any parry/block in the melee attacks that do NOT match any equipment.
+    Object.values(this.system?.melee ?? {}).forEach(melee => {
       // If the current melee attack has a defense (parry|block) ...
       if (/\d+.*/.test(melee[key])) {
         let matched = false
+        const equipment = this.system.equipment
 
-        recurselist(this.system.equipment.carried, (equipment, _k, _d) => {
-          if (!matched && !equipment?.equipped && !!namesMatch(melee, equipment)) {
+        recurselist(equipment.carried, (item, _k, _d) => {
+          if (!matched && namesMatch(melee, item)) {
             matched = true
           }
         })
 
-        recurselist(this.system.equipment.other, (equipment, _k, _d) => {
-          if (!matched && !!namesMatch(melee, equipment)) {
+        recurselist(equipment.other, (item, _k, _d) => {
+          if (!matched && namesMatch(melee, item)) {
             matched = true
           }
         })
@@ -2177,6 +2181,27 @@ export class GurpsActor extends Actor {
 
   getEquippedBlock() {
     return this.getEquipped('block')[1]
+  }
+
+  getEquippedDefenseBonuses() {
+    let defenses = { parry: {}, block: {}, dodge: {} }
+    const carried = this.system.equipment?.carried
+
+    if (carried) {
+      recurselist(carried, (item, _k, _d) => {
+        if (item?.equipped) {
+          const match = item.notes.match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+          if (match) {
+            const bonus = parseInt(match.groups.bonus)
+            defenses.parry = { bonus: bonus }
+            defenses.block = { bonus: bonus }
+            defenses.dodge = { bonus: bonus }
+          }
+        }
+      })
+    }
+
+    return defenses
   }
 
   /**
