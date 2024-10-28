@@ -124,7 +124,7 @@ export default class MoveModeEditor extends Application {
 
           // add a new entry at the end.
           let empty = Object.values(this.moveData).length === 0
-          GURPS.put(move, { mode: 'other', basic: 0, default: empty ? true : false })
+          GURPS.put(move, { mode: 'other', basic: 0, default: !!empty })
 
           // remove existing entries
           await this.actor.update({ 'system.-=move': null })

@@ -2,6 +2,10 @@
 
 Release 0.17.14
 
+- Bugfix: Size modifier is not being imported.
+- Bugfix: `system.equippedparry` and `system.equippedblock` now return the *best* value, not the first.
+- Feature: Hit locations and trackers can be referenced by name (for macros). Eg. `system.hitlocationNames['Torso'].import` and `system.trackersByName['Control Points'].value`.
+
 Release 0.17.13 10/12/2024
 
 - Bugfix: fix switching target in the effect modifier window. #1992 (user @StefanLang)
