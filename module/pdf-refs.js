@@ -57,6 +57,7 @@ export const SJGProductMappings = {
   TSOR: 'http://www.warehouse23.com/products/gurps-thaumatology-sorcery',
   UT: 'http://www.warehouse23.com/products/gurps-ultra-tech',
   VOR: 'http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game',
+  WK: 'https://gaming-ballistic.myshopify.com/products/warlock-knight-vtt-module',
   // Dungeon Fantasy Boxed Set code conventions used in GCA
   'DFRPG:A': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
   'DFRPG:M': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',

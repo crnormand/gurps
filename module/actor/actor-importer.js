@@ -1638,7 +1638,7 @@ export class ActorImporter {
     ts.eyes = p.eyes || ''
     ts.hair = p.hair || ''
     ts.skin = p.skin || ''
-    ts.sizeod = p.SM || '+0'
+    ts.sizemod = p.SM || '+0'
 
     const r = {
       'system.-=traits': null,
