@@ -1,6 +1,8 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.14
+Release 0.17.14 10/28/2024
+
+This is a minor release in preparation for the release of the Warlock Knight VTT module by Gaming Ballistic.
 
 - Bugfix: Size modifier is not being imported.
 - Bugfix: `system.equippedparry` and `system.equippedblock` now return the *best* value, not the first.
