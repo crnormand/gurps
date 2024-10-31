@@ -254,6 +254,17 @@ export class GurpsActor extends Actor {
 
     let maneuver = this.effects.contents.find(it => it.statuses.find(s => s === 'maneuver'))
     this.system.conditions.maneuver = maneuver ? maneuver.flags.gurps.name : 'undefined'
+
+    if (!this.system.equippedparry) this.system.equippedparry = this.getEquippedParry()
+    if (!this.system.equippedblock) this.system.equippedblock = this.getEquippedBlock()
+    // Catch for older actors that may not have these values set.
+    if (!this.system.currentmove) this.system.currentmove = parseInt(this.system.basicmove.value.toString())
+    if (!this.system.currentdodge && this.system.dodge.value) this.system.currentdodge = parseInt(this.system.dodge.value.toString())
+    if (!this.system.currentflight) this.system.currentflight = parseFloat(this.system.basicspeed.value.toString()) * 2
+
+    // Look for Defense bonuses.
+    if (!this.system.defenses) this.system.defenses = this.getEquippedDefenseBonuses()
+
     this.ignoreRender = saved
     if (!saved) setTimeout(() => this._forceRender(), 333)
   }
@@ -563,16 +574,6 @@ export class GurpsActor extends Actor {
         }
       }
     }
-
-    if (!data.equippedparry) data.equippedparry = this.getEquippedParry()
-    if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
-    // Catch for older actors that may not have these values set.
-    if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value.toString())
-    if (!data.currentdodge && data.dodge.value) data.currentdodge = parseInt(data.dodge.value.toString())
-    if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value.toString()) * 2
-
-    // Look for Defense bonuses.
-    if (!data.defenses) data.defenses = this.getEquippedDefenseBonuses()
   }
 
   _isEnhancedMove() {
