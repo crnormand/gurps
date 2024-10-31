@@ -2458,7 +2458,7 @@ export class GurpsActor extends Actor {
         canEdit = true
       } else {
         const item = this.items.get(actorComp.itemid)
-        if (!!item && !item.system.importid) canEdit = true
+        if (!!item && item.type === 'equipment') canEdit = true
       }
     }
 
