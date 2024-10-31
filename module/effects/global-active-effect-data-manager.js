@@ -19,15 +19,15 @@ export class GlobalActiveEffectDataControl {
 
   _registerSetting() {
     // Register the setting to show the Active Effect Manager.
-    game.settings.register(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER, {
-      name: i18n('GURPS.settingTokenToolsShowEffectManager', 'Show Active Effect Manager'),
-      hint: i18n('GURPS.settingHintTokenToolsShowEffectManaager', 'Show the Active Effect Manager.'),
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: true,
-      onChange: value => console.log(`${GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER} : ${value}`),
-    })
+    // game.settings.register(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER, {
+    //   name: i18n('GURPS.settingTokenToolsShowEffectManager', 'Show Active Effect Manager'),
+    //   hint: i18n('GURPS.settingHintTokenToolsShowEffectManaager', 'Show the Active Effect Manager.'),
+    //   scope: 'client',
+    //   config: true,
+    //   type: Boolean,
+    //   default: true,
+    //   onChange: value => console.log(`${GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER} : ${value}`),
+    // })
 
     // Register the setting to STORE the Active Effects.
     game.settings.register(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA, {
