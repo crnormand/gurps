@@ -2,7 +2,6 @@
   --controlhover: 0 0 5px red;
   --sectiongap: 0.05in;
   --smallemgap: 0.2em;
-  /*  --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif; */
   --fontawesomefamily: 'fontawesome';
   --lightgrey: rgba(0, 0, 0, 0.3);
   --headerfontsize: 80%;
@@ -11,12 +10,6 @@
 
 .reducedMode {
   --headerfontsize: 110%;
-}
-
-.gurps {
-  /* Sheet Tabs */
-  /* Items List */
-  /* Attributes */
 }
 
 .gcs-input-ta {
@@ -853,8 +846,12 @@
 .gurps .fieldblock {
   display: grid;
   grid-template-columns: 0fr 1fr;
-  /* align-items: end; */
   padding-bottom: 0.15em;
+  text-align: left;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  white-space: nowrap;
+  align-self: stretch;
 }
 
 .gurps .fieldblock hr {
@@ -881,14 +878,6 @@
 
 .gurps #description .header {
   grid-area: header;
-}
-
-.gurps .fieldblock {
-  text-align: left;
-  padding-left: 0.2em;
-  padding-right: 0.2em;
-  white-space: nowrap;
-  align-self: stretch;
 }
 
 #combat-tab #condition .fieldblock {

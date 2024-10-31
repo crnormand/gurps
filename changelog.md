@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.15
+
+- Feature: Customizable/floating Roll3d6 button and modifier bucket.
+- Feature: Show Foundry Item images on Character sheet.
+- Bugfix: Broken CSS on Item Editor sheet.
+- Bugfix: Lost encumbrance levels after import.
+- Bugfix: Item data not backup after item removed.
+
 Release 0.17.14 10/28/2024
 
 This is a minor release in preparation for the release of the Warlock Knight VTT module by Gaming Ballistic.
@@ -8,9 +16,13 @@ This is a minor release in preparation for the release of the Warlock Knight VTT
 - Bugfix: `system.equippedparry` and `system.equippedblock` now return the *best* value, not the first.
 - Feature: Hit locations and trackers can be referenced by name (for macros). Eg. `system.hitlocationNames['Torso'].import` and `system.trackersByName['Control Points'].value`.
 
+- Add nonstandard values for Control Rolls to the language files.
+
 Release 0.17.13 10/12/2024
 
 - Bugfix: fix switching target in the effect modifier window. #1992 (user @StefanLang)
+
+- Add easy OtF and macro access to hitlocations and resource trackers.
 
 - The following are all thanks to user @chrismaille:
   - Bugfix: Missing DR location when import GCS Equipment Pack #1978

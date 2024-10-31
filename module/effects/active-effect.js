@@ -6,36 +6,13 @@ export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
-    Hooks.on('preCreateActiveEffect', GurpsActiveEffect._preCreate)
-    Hooks.on('createActiveEffect', GurpsActiveEffect._create)
+    // Hooks.on('preCreateActiveEffect', GurpsActiveEffect._preCreate)
+    // Hooks.on('createActiveEffect', GurpsActiveEffect._create)
     Hooks.on('applyActiveEffect', GurpsActiveEffect._apply)
     Hooks.on('updateActiveEffect', GurpsActiveEffect._update)
     Hooks.on('deleteActiveEffect', GurpsActiveEffect._delete)
     Hooks.on('updateCombat', GurpsActiveEffect._updateCombat)
-
-    // Hooks.once('ready', function () {
-    // const oldDuration = Object.getOwnPropertyDescriptor(ActiveEffect.prototype, 'duration')
-    // Object.defineProperty(ActiveEffect.prototype, 'duration', {
-    // 	get: function() {
-    // 		let results = oldDuration?.get?.call(this)
-    // 		if (results.type === 'none') {
-    // 			// check if there is a termination condition
-    // 			const d = this.duration
-    // 			if (!!d?.termination) {
-    // 				// TODO add core statusId flag and fix up results to show there is a duration of sorts
-    // 				results = {
-    // 					type: 'condition',
-    // 					duration: null,
-    // 					remaining: null,
-    // 					termination: d.termination,
-    // 					label: d.termination,
-    // 				}
-    // 			}
-    // 		}
-    // 		return results
-    // 	},
-    // })
-    // })
+    Hooks.on('updateWorldTime', GurpsActiveEffect._updateWorldTime)
   }
 
   /**
@@ -45,10 +22,11 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _options
    * @param {*} _userId
    */
-  static _preCreate(_effect, data, _options, _userId) {
-    console.debug(_effect, data, _options, _userId)
-    if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
-  }
+  // static _preCreate(_effect, data, _options, _userId) {
+  //   console.debug(_effect, data, _options, _userId)
+  //   // Add Delay Seconds to the duration object
+  //   if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
+  // }
 
   /**
    * After creation of the ActiveEffect.
@@ -56,12 +34,15 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {ActiveEffectData} _data
    * @param {*} _userId
    */
-  static async _create(effect, _data, _userId) {
-    if (effect.getFlag('gurps', 'requiresConfig') === true) {
-      let dialog = new ActiveEffectConfig(effect)
-      await dialog.render(true)
-    }
-  }
+  // static async _create(effect, _data, _userId) {
+  //   if (effect.getFlag('gurps', 'requiresConfig') === true) {
+  //     let dialog = new ActiveEffectConfig(effect)
+  //     await dialog.render(true)
+  //   }
+  //   if (!effect.getFlag('gurps', 'duration.delaySeconds')) {
+  //  	 effect.setFlag('gurps', 'duration.delaySeconds', null)
+  //   }
+  // }
 
   /**
    * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
@@ -112,15 +93,19 @@ export default class GurpsActiveEffect extends ActiveEffect {
       let token = canvas.tokens?.get(previous.tokenId)
 
       // go through all effects, removing those that have expired
-      if (token && token.actor) {
-        for (const effect of token.actor.effects) {
-          if (await effect.isExpired()) {
-            effect.delete()
-            ui.notifications.info(`${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.name)}]'`)
-          }
-        }
-      }
+      // if (token && token.actor) {
+      //   for (const effect of token.actor.effects) {
+      //     if (await effect.isExpired()) {
+      //       effect.update({ disabled: true })
+      //       ui.notifications.info(`${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.name)}]'`)
+      //     }
+      //   }
+      // }
     }
+  }
+
+  static async _updateWorldTime(_world, _worldTime, _options, _userId) {
+    // console.log('update world time', _world, _worldTime, _options, _userId)
   }
 
   /**
@@ -132,14 +117,12 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
     this.context = context
     this.chatmessages = []
+
+    if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
   }
 
   get endCondition() {
     return this.getFlag('gurps', 'endCondition')
-  }
-
-  get isManeuver() {
-    return this.getFlag('gurps', 'statusId') === 'maneuver'
   }
 
   set endCondition(otf) {
@@ -148,6 +131,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
       // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
       this.setFlag('core', 'statusId', `${this.name}-endCondition`)
     }
+  }
+
+  get isManeuver() {
+    return this.getFlag('gurps', 'statusId') === 'maneuver'
   }
 
   get terminateActions() {
@@ -210,10 +197,17 @@ export default class GurpsActiveEffect extends ActiveEffect {
     })
   }
 
+  updateDuration() {
+    const value = super.updateDuration()
+    if (this.name === 'New Effect') console.log('effective duration', this.id, value)
+    return value
+  }
+
   // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
   // TODO Any ActiveEffect with a status.core.statusId is by default a temporary effect and will be added as an icon to the token.
 
   async isExpired() {
+    if (this.name === 'New Effect') console.log('duration', this.duration)
     if (this.duration && !!this.duration.duration) {
       if (this.duration.remaining <= 1) {
         return true
