@@ -335,15 +335,19 @@ export class GurpsActor extends Actor {
     /** @type {string[]} */
     let gids = [] //only allow each global bonus to add once
     const data = this.system
+
     for (const item of this.items.contents) {
       let itemData = GurpsItem.asGurpsItem(item).system
+
       if (itemData.equipped && itemData.carried && !!itemData.bonuses && !gids.includes(itemData.globalid)) {
         gids.push(itemData.globalid)
         let bonuses = itemData.bonuses.split('\n')
+
         for (let bonus of bonuses) {
           let m = bonus.match(/\[(.*)\]/)
           if (m) bonus = m[1] // remove extranious  [ ]
           let link = parselink(bonus) // ATM, we only support attribute and skill
+
           if (link.action) {
             // start OTF
             recurselist(data.melee, (e, _k, _d) => {
@@ -358,6 +362,7 @@ export class GurpsActor extends Actor {
                   if (!!e.parrybonus) e.parry += pi(e.parrybonus)
                   if (!!m) e.parry += m[2]
                 }
+
                 if (!isNaN(parseInt(e.block))) {
                   // handles 'no'
                   e.block = 3 + Math.floor(e.level / 2)
@@ -382,6 +387,7 @@ export class GurpsActor extends Actor {
                 }
               }
             }) // end melee
+
             recurselist(data.ranged, (e, _k, _d) => {
               e.level = pi(e.level)
               if (link.action.type == 'attribute' && link.action.attrkey == 'DX') e.level += pi(link.action.mod)
@@ -389,6 +395,7 @@ export class GurpsActor extends Actor {
                 if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end ranged
+
             recurselist(data.skills, (e, _k, _d) => {
               e.level = pi(e.level)
               if (link.action.type == 'attribute') {
@@ -399,6 +406,7 @@ export class GurpsActor extends Actor {
                 if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end skills
+
             recurselist(data.spells, (e, _k, _d) => {
               e.level = pi(e.level)
               if (link.action.type == 'attribute') {
@@ -409,6 +417,7 @@ export class GurpsActor extends Actor {
                 if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end spells
+            
             if (link.action.type == 'attribute') {
               let paths = link.action.path.split('.')
               let last = paths.pop()
