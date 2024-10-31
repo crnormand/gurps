@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.15
+Release 0.17.15 10/31/2024
 
 - Feature: Customizable/floating Roll3d6 button and modifier bucket.
 - Feature: Show Foundry Item images on Character sheet.
