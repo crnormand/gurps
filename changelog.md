@@ -2,6 +2,12 @@
 
 Release 0.17.15
 
+- Feature: Customizable/floating Roll3d6 button and modifier bucket.
+- Feature: Show Foundry Item images on Character sheet.
+- Bugfix: Broken CSS on Item Editor sheet.
+- Bugfix: Lost encumbrance levels after import.
+- Bugfix: Item data not backup after item removed.
+
 Release 0.17.14 10/28/2024
 
 This is a minor release in preparation for the release of the Warlock Knight VTT module by Gaming Ballistic.
