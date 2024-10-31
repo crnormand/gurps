@@ -24,7 +24,7 @@ export class SmartImporter {
     const equipType = useFoundryItems
       ? game.i18n.localize('GURPS.importTraitToFoundryItem')
       : game.i18n.localize('GURPS.importTraitToClassicData')
-    const equipColor = useFoundryItems ? '#0b2e13' : '#2e0b0b'
+    const equipColor = useFoundryItems ? '#35713e' : '#337bb7'
     return {
       title: game.i18n.localize('GURPS.importSelectFileTitle'),
       source: game.i18n.localize('GURPS.importSelectFileSource'),

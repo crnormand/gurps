@@ -840,7 +840,7 @@ export class GurpsActorSheet extends ActorSheet {
         if (path.includes('system.equipment')) {
           if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
             obj.save = true
-            let payload = obj.toItemData('')
+            let payload = obj.toItemData(this.actor, '')
             const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
             obj.itemid = item._id
           }
@@ -893,7 +893,6 @@ export class GurpsActorSheet extends ActorSheet {
         if (!!oldd) foundry.utils.mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
 
         let payload = JSON.stringify(newd)
-        console.log('GGA DragDrop Payload: ', payload)
         return ev.dataTransfer.setData('text/plain', payload)
       })
     })
@@ -2148,5 +2147,27 @@ export class GurpsInventorySheet extends GurpsActorSheet {
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
     return 'systems/gurps/templates/inventory-sheet.html'
+  }
+}
+
+export class ItemImageSettings extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      title: game.i18n.localize('GURPS.settingShowItemImage'),
+      id: 'item-image-settings',
+      template: 'systems/gurps/templates/actor/item-image-settings.hbs',
+      width: 400,
+      closeOnSubmit: true,
+    })
+  }
+
+  getData() {
+    return {
+      settings: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE),
+    }
+  }
+
+  async _updateObject(event, formData) {
+    await game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE, formData)
   }
 }

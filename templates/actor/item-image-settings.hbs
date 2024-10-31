@@ -1,0 +1,21 @@
+<div>{{localize 'GURPS.settingHintShowItemImage'}}</div>
+<hr>
+<form>
+  <div class="form-group">
+    <label>{{localize 'GURPS.advantagesTab'}}</label>
+    <input type="checkbox" name="feature" {{#if settings.feature}}checked{{/if}}>
+  </div>
+  <div class="form-group">
+    <label>{{localize 'GURPS.skillsTab'}}</label>
+    <input type="checkbox" name="skill" {{#if settings.skill}}checked{{/if}}>
+  </div>
+  <div class="form-group">
+    <label>{{localize 'GURPS.spellsTab'}}</label>
+    <input type="checkbox" name="spell" {{#if settings.spell}}checked{{/if}}>
+  </div>
+  <div class="form-group">
+    <label>{{localize 'GURPS.equipment'}}</label>
+    <input type="checkbox" name="equipment" {{#if settings.equipment}}checked{{/if}}>
+  </div>
+  <button type="submit"><i class="fa fa-save"></i><span>{{localize 'GURPS.update'}}</span></button>
+</form>

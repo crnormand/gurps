@@ -136,11 +136,11 @@
   "GURPS.runningShoveAndKnockOver": "Толчок и опрокидывание с разбега",
   "GURPS.carryOnBack": "Нести на спине",
   "GURPS.shiftSlightly": "Медленно двигать",
-  "GURPS.encumbranceLevel-enc0": "Нет (0)",
-  "GURPS.encumbranceLevel-enc1": "Лёгкая (1)",
-  "GURPS.encumbranceLevel-enc2": "Средняя (2)",
-  "GURPS.encumbranceLevel-enc3": "Тяжёлая (3)",
-  "GURPS.encumbranceLevel-enc4": "Очень тяжёлая (4)",
+  "GURPS.encumbranceLevel-00000": "Нет (0)",
+  "GURPS.encumbranceLevel-00001": "Лёгкая (1)",
+  "GURPS.encumbranceLevel-00002": "Средняя (2)",
+  "GURPS.encumbranceLevel-00003": "Тяжёлая (3)",
+  "GURPS.encumbranceLevel-00004": "Очень тяжёлая (4)",
   "GURPS.autoEncumbrance": "Автоматический расчёт нагрузки",
 
   "__Character Weapons__": "=========",
@@ -330,6 +330,14 @@
 
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Модификатор",
+  "GURPS.modifier3d6Image": "Bucket: Изменить изображение 3d6",
+  "GURPS.modifier3d6ImageHint": "Выберите изображение для отображения в Bucket модификаторов для кнопки 3d6.",
+  "GURPS.modifierD6Image": "Bucket: Изменить изображение 1d6",
+  "GURPS.modifierD6ImageHint": "Выберите изображение для отображения в Bucket модификаторов для кнопки 1d6.",
+  "GURPS.modifierPosition": "Bucket: Изменить позицию",
+  "GURPS.modifierPositionHint": "Выберите позицию Bucket модификаторов.",
+  "GURPS.modifierPositionLeft": "Слева, рядом с панелью пользователя.",
+  "GURPS.modifierPositionRight": "Справа, рядом с окном чата.",
 
   "__PDF References__": "=========",
 
@@ -463,6 +471,9 @@
   "GURPS.settingShowDebugInfo": "Показать отладочную информацию",
   "GURPS.settingHintShowDebugInfo": "Для диалогов документов (Актёры, Предметы и т.д.) показывать значок отладки в заголовке окна. При нажатии он отобразит данные документа в диалоге.",
   "GURPS.settingShowDebugTooltip": "Показать отладочную информацию",
+  "GURPS.settingShowItemImage": "Показать изображение предмета в листе персонажа",
+  "GURPS.settingHintShowItemImage": "Система будет отображать изображение Foundry Item в листе актёра для выбранных черт.",
+  "GURPS.settingLabelShowItemImage": "Выберите черты для отображения изображений",
   "GURPS.parentItemTooltip": "<div>Из {type}:<br>{name}</div>",
   "GURPS.cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",
   "GURPS.droppingItemNotification": "{actorName} получил {itemName}"
