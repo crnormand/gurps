@@ -1,9 +1,7 @@
 {
   "__NOTE TO TRANSLATOR__": "If a given text is the same as the English (en.json), there is no need to include it here. It will fallback to en.json.",
-
   "GURPS.changelog": "LIESMICH",
   "GURPS.DontShowAgain": "Zeige LIESMICH nicht noch einmal",
-
   "__Char Sheet__": "=========",
   "GURPS.personalTab": "Persönlich",
   "GURPS.resourcesModsTab": "Ressourcen und Modifikatoren",
@@ -11,7 +9,6 @@
   "GURPS.identity": "Identität",
   "GURPS.identityPlayer": "Spieler",
   "GURPS.identityTitle": "Titel",
-
   "__Character Sheet Miscellaneous__": "=========",
   "GURPS.miscellaneous": "Sonstiges",
   "GURPS.miscellaneousCreated": "Erstellt",
@@ -46,19 +43,13 @@
   "GURPS.pointsUnspent": "Unverbrauchte",
   "__Character Attributes__": "=========",
   "GURPS.attributes": "Attribute",
-
   "GURPS.attributesDXNAME": "Geschicklichkeit",
   "GURPS.attributesFPNAME": "Ausdauerpunkte",
   "GURPS.attributesHPNAME": "Trefferpunkte",
-
   "GURPS.attributesHTNAME": "Konstitution",
-
   "GURPS.attributesIQNAME": "Intelligenz",
-
   "GURPS.attributesPERNAME": "Wahrnehmung",
-
   "GURPS.attributesSTNAME": "Stärke",
-
   "GURPS.attributesWILLNAME": "Wille",
   "GURPS.basicmove": "Basis Bewegung",
   "GURPS.basicspeed": "Basis Geschwindigkeit",
@@ -76,18 +67,36 @@
   "GURPS.highPainThreshold": "Schmerzunempfindlichkeit",
   "GURPS.lowPainThreshold": "Schmerzüberempfindlichkeit",
   "GURPS.perfectBalance": "Perfekte Balance",
-
+  "GURPS.CR0": "KR: N/A (Kann Nicht Widerstehen)",
+  "GURPS.CR6": "KR: 6 (Widerstehen Sie selten)",
+  "GURPS.CR7": "KR: 7 (nicht standardisiert)",
+  "GURPS.CR8": "KR: 8 (nicht standardisiert)",
+  "GURPS.CR9": "KR: 9 (Widersteht oft)",
+  "GURPS.CR10": "KR: 10 (nicht standardisiert)",
+  "GURPS.CR11": "KR: 11 (nicht standardisiert)",
+  "GURPS.CR12": "KR: 12 (Widersteht sehr oft)",
+  "GURPS.CR13": "KR: 13 (nicht standardisiert)",
+  "GURPS.CR14": "KR: 14 (nicht standardisiert)",
+  "GURPS.CR15": "KR: 15 (Hält fast der Zeit stand)",
+  "GURPS.CR0": "KR: N/A (Kann Nicht Widerstehen)",
+  "GURPS.CR6": "KR: 6 (Widerstehen Sie selten)",
+  "GURPS.CR7": "KR: 7 (nicht standardisiert)",
+  "GURPS.CR8": "KR: 8 (nicht standardisiert)",
+  "GURPS.CR9": "KR: 9 (Widersteht oft)",
+  "GURPS.CR10": "KR: 10 (nicht standardisiert)",
+  "GURPS.CR11": "KR: 11 (nicht standardisiert)",
+  "GURPS.CR12": "KR: 12 (Widersteht sehr oft)",
+  "GURPS.CR13": "KR: 13 (nicht standardisiert)",
+  "GURPS.CR14": "KR: 14 (nicht standardisiert)",
+  "GURPS.CR15": "KR: 15 (Hält fast der Zeit stand)",
   "GURPS.encumbranceLevel-00000": "Keine (0)",
   "GURPS.encumbranceLevel-00001": "Leicht (1)",
   "GURPS.encumbranceLevel-00002": "Mittel (2)",
   "GURPS.encumbranceLevel-00003": "Schwer (3)",
   "GURPS.encumbranceLevel-00004": "S-Schwer (4)",
   "GURPS.autoEncumbrance": "Automatische Belastungsberechnung",
-
   "__ Character Skills__": "=========",
-
   "GURPS.skills": "Fertigkeiten",
-
   "GURPS.sl": "FW",
   "__Character Spells__": "=========",
   "GURPS.spellClass": "Klasse",
@@ -108,7 +117,6 @@
   "GURPS.equipmentCost": "Preis",
   "GURPS.equipmentMaxUses": "Max Anwendungen",
   "GURPS.equipmentTechlevel": "Techlevel",
-
   "__Character Encumbrance/Lift__": "=========",
   "GURPS.basicLift": "Grund Tragkraft",
   "GURPS.carryOnBack": "Auf Dem Rücken Tragen",
@@ -164,11 +172,9 @@
   "GURPS.addDiffuseMax": "Diffus, max",
   "GURPS.addDirectlyApply": "DIREKT ANWENDEN",
   "GURPS.addEnterModifier": "Trage Modifikator ein",
-
   "GURPS.addExplosionHex": "{hex} Hex vom Zentrum",
   "GURPS.addExplosionHexes": "{hex} Hex vom Zentrum",
   "GURPS.addFlexibleArmor": "Flexible Rüstung",
-
   "GURPS.addHitLocationAndDR": "Trefferzone & SR",
   "GURPS.addHitLocationWoundModifiers": "Trefferzonen Wundmodifikator",
   "GURPS.addInjury": "Schaden",
@@ -205,7 +211,6 @@
   "GURPS.BODYPLANhexapod": "Sechsbeiner",
   "GURPS.BODYPLANhexapodWinged": "Sechsbeiner, Geflügelt",
   "GURPS.BODYPLANhumanoid expanded": "Humanoid, Erweitert (GCA)",
-
   "GURPS.BODYPLANichthyoid": "Fischform",
   "GURPS.BODYPLANoctopod": "Achtbeiner",
   "GURPS.BODYPLANquadruped": "Vierbeiner",
@@ -267,13 +272,10 @@
   "GURPS.chatYouMustHaveACharacterSelected": "Du musst einen Charakter ausgewählt haben",
   "GURPS.chatYouMustSelectTokens": "Du musst Token auswählen (oder nutze",
   "GURPS.chatHelpDR": "Modifiziert die Schadensresistenz des Akteurs<hr>Parameter:\n&lt;Formel&gt;&lt;Trefferzonen&gt;: Verwende eine Formel (z.B. +2, -2, *2 oder /2) oder einen definierten Wert (z.B. 2, 100) und optional die betroffenen Trefferzonen (z.B. Rumpf, Arm, linkes Bein, etc.)\nreset: Setzt die SR auf den Startwert zurück<hr>Beispiele:\n/dr +1 (+1 zu allen Trefferzonen)\n/dr -2 Rumpf,Bein (-2 zu Rumpf und beiden Beinen)\n/dr 20 (setze SR 20 in allen Trefferzonen. Wird die Gegenstandboni nach der Summe berücksichtigen)\n/dr !20 (erzwinge SR 20 in allen Trefferzonen. Ignoriert die Gegenstandboni)\n/dr reset (auf die ursprünglichen Werte zurücksetzen)",
-
   "__Permissions__": "=========",
   "GURPS.youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
   "GURPS.cannotDragNonFoundryEqt": "Du kannst keine Nicht-Foundry-Ausrüstung auf einen anderen Charakter ziehen.",
-
   "__Damage Types__": "=========",
-
   "GURPS.damageTypeBurning": "Feuer",
   "GURPS.damageTypeCorrosive": "Korrosion",
   "GURPS.damageTypeCrushing": "Quetsch",
@@ -286,27 +288,21 @@
   "GURPS.damageTypePiercing": "Durchstoß",
   "GURPS.damageTypeSmall Piercing": "Kleiner Durchstoß",
   "GURPS.damageTypeToxic": "Toxisch",
-
   "__Drag Ruler__": "=========",
   "GURPS.dragrulerFly": "Fliegen",
   "GURPS.dragrulerSprint": "Sprinten",
   "GURPS.dragrulerWalk": "Gehen",
-
   "__Fantastic Dungeon Grappling__": "=========",
   "GURPS.grapplingControlled": "Kontrolliert",
   "GURPS.grapplingControlPoints": "KontrollPunkte",
-
   "GURPS.grapplingGrabbed": "Ergriffen",
   "GURPS.grapplingGrappled": "Festgehalten",
   "GURPS.grapplingPinned": "Niedergehalten",
   "GURPS.grapplingRestrained": "Eingeschränkt",
   "GURPS.grapplingUnrestrained": "Uneingeschränkt",
-
   "__Hit Location__": "=========",
   "GURPS.hitLocation": "Trefferzone",
-
   "GURPS.hitLocationArm, holding shield": "Arm, Schild haltend",
-
   "GURPS.hitLocationBrain": "Gehirn",
   "GURPS.hitLocationChest": "Brust",
   "GURPS.hitLocationChinks in Other": "Rüstungslücke (andere)",
@@ -329,7 +325,6 @@
   "GURPS.hitLocationFoot": "Fuß",
   "GURPS.hitLocationForeleg": "Vorderlauf",
   "GURPS.hitLocationGroin": "Leiste",
-
   "GURPS.hitLocationHind Leg": "Hinterlauf",
   "GURPS.hitLocationJaw": "Kiefer",
   "GURPS.hitLocationLeft Arm, holding shield": "Linker Arm, Schild haltend",
@@ -364,7 +359,6 @@
   "GURPS.hitLocationDRFromItems": "Von Gegenständen",
   "GURPS.hitLocationDRModifiers": "Von Modifikatoren",
   "GURPS.hitLocationDRItems": "Gegenstände",
-
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Modifikator",
   "GURPS.modifierAddRangeRuler": "Bucket: EntfernungsLineal Modifikator hinzufügen",
@@ -433,7 +427,6 @@
   "GURPS.modifierGMDontTry": "GM versuch's nicht",
   "GURPS.modifierGMSaidSo": "GM sagt das",
   "GURPS.modifierHard": "Schwer",
-
   "GURPS.modifierHitLocation": "Trefferzone (falls um 1 verfehlt, dann *)",
   "GURPS.modifierImpossible": "Unmöglich",
   "GURPS.modifierJournalManager": "Modifier Bucket Notizbucheinträge",
@@ -469,7 +462,6 @@
   "GURPS.modifierQualityNone": "Keine",
   "GURPS.modifierQualityNoneTech": "Keine (technologisch)",
   "GURPS.modifierScaleLarge": "Groß (110%)",
-
   "GURPS.modifierScaleSmall": "Klein (90%)",
   "GURPS.modifierScaleVeryLarge": "Sehr groß (120%)",
   "GURPS.modifierScaleVerySmall": "Sehr klein (80%)",
@@ -497,7 +489,6 @@
   "GURPS.modifierTaskDifficulty": "Aufgaben Schwierigkeit",
   "GURPS.modifierTelegraphicAttack": "auf Angriff (Telegraphic Attack)",
   "GURPS.modifierToHit": "auf Angriff",
-
   "GURPS.modifierUnfavorable": "Unvorteilhaft",
   "GURPS.modifierUserEntered": "Oder füge Modifikator ein",
   "GURPS.modifierVeryEasy": "Sehr einfach",
@@ -507,9 +498,7 @@
   "GURPS.modifierViewScale": "Bucket: Skalierungsfaktor",
   "GURPS.modifierViewScaleHint": "Verwende dies, um die Größe des Modifier-Buckets zu vergrößern oder zu verkleinern.",
   "GURPS.modifierWillCheck": "WILL Wurf um weiter zu zielen",
-
   "__PDF References__": "=========",
-
   "__Resolve Damage Dialog__": "=========",
   "GURPS.RESOLVEDAMAGETitle": "Kläre Schadenswurf",
   "GURPS.RESOLVEDAMAGEPrompt": "Was möchtest du mit diesem Schadenswurf machen?",
@@ -524,7 +513,6 @@
   "GURPS.resourceDeleteTracker": "Lösche Anzeige",
   "GURPS.resourceEditTracker": "Bearbeite Anzeige",
   "GURPS.resourceInvalidAlias": "Unzulässiger Alias [{alias}].<br/>Nur Buchstaben und Zahlen, und ('+', '_', and '-'), sind zulässig.",
-
   "GURPS.resourceTemplateButton": "Ressourcen Anzeigen zeigen und bearbeiten",
   "GURPS.resourceTemplateClickToAdd": "Klicke die '+' Schaltfläche um eine Vorlage hinzuzufügen.",
   "GURPS.resourceTemplateHint": "Benutze dies, um Ressourcen Anzeigen zu erstellen, zu verwalten und automatisch in Charakterbögen anzuwenden.",
@@ -824,39 +812,31 @@
   "GURPS.highPainThresholdNoPenalty": "Schmerzunempfindlichkeit negiert Abzüge",
   "GURPS.hpIgnored": " HP ignoriert.",
   "GURPS.htCheck": "Würfle HT",
-
   "GURPS.itemBonusText": "Füge On-the-Fly 'Bonus' Formel ein (eine pro Reihe) um die Werte von Attributen, Fertigkeiten, etc. to modifizieren.",
   "GURPS.itemEditor": "Gegenstand Editor",
   "GURPS.itemFeatures": "Merkmal",
   "GURPS.itemImport": "Artikelsammlung Importieren",
   "GURPS.knockback": "Rückprall, {amount} {unit}",
   "GURPS.knockbackCheck": "{name}: Würfle {dx}, {acrobatics}, oder {judo} oder stürze!",
-
   "GURPS.lighting": "Beleuchtung",
   "GURPS.location": "Zone",
   "GURPS.lowPainThresholdDoubles": "Schmerzüberempfindlichkeit <i>verdoppelt</i> Abzüge",
   "GURPS.majorWound": "Schwere Wunde",
   "GURPS.majorWoundEffect": " um Zusammenbruch/Benommenheit zu verhindern.",
   "GURPS.majorWoundEffectLabel": "{name}: Würfle {htCheck} um Zusammenbruch/Benommenheit zu verhindern.",
-
   "GURPS.melee": "Nahkampf",
   "GURPS.meleeAttack": "Nahkampf Angriff",
   "GURPS.meters": " Meter",
-
   "GURPS.minimumDamageRule": "* — Minimum damage Regel angewandt.",
-
   "GURPS.noModifier": "Kein Modifikator",
-
   "GURPS.notAffected": "{name} ist nicht betroffen.",
   "GURPS.notes": "Notizen",
-
   "GURPS.overridden": "überschrieben",
   "GURPS.pass": "Passieren",
   "GURPS.pdfPageReference": "Seiten Ref",
   "GURPS.parentItemTooltip": "<div>Von {type}:<br>{name}</div>",
   "GURPS.cannotDropItemAlreadyExists": "Du hast diesen Gegenstand bereits.",
   "GURPS.droppingItemNotification": "{actorName} erhält {itemName}",
-
   "GURPS.pointDamage": "<span class='roll-value'>{damage}</span> Punkte Schaden",
   "GURPS.pointsDamage": "<span class='roll-value'>{damage}</span> Punkte Schaden.",
   "GURPS.quantity": "Anzahl",
@@ -902,7 +882,6 @@
   "GURPS.warning": "WARNUNG",
   "GURPS.yard": "Yard",
   "GURPS.yards": "Yards",
-
   "GURPS.addTracker": "Ressourcen Anzeige am Ende hinzufügen",
   "GURPS.edit": "Bearbeiten",
   "GURPS.moveToCarriedEquipment": "Bewege zu Getragene Ausrüstung",
@@ -910,9 +889,7 @@
   "GURPS.dropResolve": "Wohin soll der Gegenstand bewegt werden?",
   "GURPS.dropBefore": "VOR dem Ziel",
   "GURPS.dropInside": "IM Ziel",
-
   "GURPS.abbrevRef": "Ref",
-
   "GURPS.moveNone": "Keine ({reason})",
   "GURPS.moveConstant": "{value} {unit}/sek ({reason})",
   "GURPS.moveStep": "Schritt ({reason})",
@@ -920,7 +897,6 @@
   "GURPS.moveTwoThirds": "×2/3 ({reason})",
   "GURPS.moveHalf": "Halbe ({reason})",
   "GURPS.moveFull": "Volle",
-
   "GURPS.setManeuver": "Wähle Manöver",
   "GURPS.abbrevPoints": "Pkt",
   "GURPS.attributesSecondary": "Sekundäre Attribute",
@@ -938,7 +914,6 @@
   "GURPS.thresholds": "Schwellenwerte",
   "GURPS.conditionalMods": "Situative Modifikatoren",
   "GURPS.ignoreBodyPlan": "Ignoriere importierte Körperform",
-
   "GURPS.noteBlank": "Diese Notiz wurde absichtlich leer gelassen.",
   "GURPS.pointsTotal": "Gesamtpunkte",
   "GURPS.severities": "Schweregrade",
@@ -951,12 +926,9 @@
   "GURPS.STATUSStanding": "Stehend",
   "GURPS.STATUSCrawling": "Kriechend",
   "GURPS.STATUSProne": "Liegend",
-
   "GURPS.effectHintBlind": "-6 um zu treffen, wenn man daran gewöhnt ist, blind zu sein; erfolgreiche Hören-Probe-2 senkt den Abzug auf -4",
-
   "GURPS.effectChatModifiedToHit": "{displayName} ist<br>[{modifier}]",
   "GURPS.effectChatRangedModifier": "{displayName} ist<br>[-2 um mit Fernkampfwaffe getroffen zu werden ({posture})].",
-
   "GURPS.tokenToolsTitle": "Öffne Effekt Modifikator Popup",
   "GURPS.effectModNoTokenSelected": "Kein Token ausgewählt",
   "GURPS.settingActiveEffects": "Aktive Effekte einschalten",
