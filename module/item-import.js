@@ -1,6 +1,60 @@
 import { zeroFill } from '../lib/utilities.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 
+export const AddImportEquipmentButton = async function (html) {
+  let button = $(
+    '<button class="import-items"><i class="fas fa-file-import"></i>' +
+    game.i18n.localize('GURPS.itemImport') +
+    '</button>'
+  )
+
+  button.click(function () {
+    setTimeout(async () => {
+      new Dialog(
+        {
+          title: 'Import Item Compendium',
+          // @ts-ignore
+          content: await renderTemplate('systems/gurps/templates/item-import.html'),
+          buttons: {
+            import: {
+              icon: '<i class="fas fa-file-import"></i>',
+              label: 'Import',
+              callback: html => {
+                // @ts-ignore
+                const form = html.find('form')[0]
+                let files = form.data.files
+                // @ts-ignore
+                let file = null
+                if (!files.length) {
+                  // @ts-ignore
+                  return ui.notifications.error('You did not upload a data file!')
+                } else {
+                  file = files[0]
+                  console.log(file)
+                  GURPS.readTextFromFile(file).then(text =>
+                    ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
+                  )
+                }
+              },
+            },
+            no: {
+              icon: '<i class="fas fa-times"></i>',
+              label: 'Cancel',
+            },
+          },
+          default: 'import',
+        },
+        {
+          width: 400,
+        }
+      ).render(true)
+    }, 200)
+  })
+
+  html.find('.directory-footer').append(button)
+
+}
+
 export class ItemImporter {
   constructor() {
     this.count = 0

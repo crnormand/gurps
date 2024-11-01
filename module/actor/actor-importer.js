@@ -20,24 +20,6 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
 
-Hooks.on('renderSidebarTab', async (app, html) => {
-  if (app.options.id === 'actors') {
-    let button = createBulkImportButton(html, MODULE)
-    html.find('.directory-footer').append(button)
-  }
-})
-
-const createBulkImportButton = function (_, module) {
-  let button = $(`<button class="mass-import"><i class="fas fa-file-import"></i>${i18n(GURPS.importMultiple)}</button>`)
-
-  button.click(async () => {
-    const dirHandle = await window.showDirectoryPicker()
-    // new GcsImporter().importFrom(dirHandle)
-  })
-
-  return button
-}
-
 export class ActorImporter {
   GCSVersion = 0
 

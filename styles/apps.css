@@ -699,7 +699,7 @@ ul#result-effects li {
   font-weight: normal;
   text-shadow: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  font-family: "Roboto Condensed", Helvetica, sans-serif;
+  font-family: 'Roboto Condensed', Helvetica, sans-serif;
 
   /* Position the tooltip text */
   position: absolute;
@@ -878,7 +878,8 @@ ul#result-effects li {
 .resource-editor,
 .tracked-resource,
 .active-effects-list,
-.move-mode-editor {
+.move-mode-editor,
+.multiple-import-filelist {
   display: flex;
   flex-flow: column nowrap;
 }
@@ -2345,9 +2346,9 @@ button.equipmentbutton:last-child {
 }
 
 .window-app .window-header .window-title .document-debug-link {
-    margin-left: 0.25rem;
-    opacity: 0.5;
-    cursor: pointer;
+  margin-left: 0.25rem;
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 .debug-content {
@@ -2383,12 +2384,55 @@ button.equipmentbutton:last-child {
 .color-equipment {
   background-color: #35713e;
 }
+
 .color-spell {
   background-color: #91241e;
 }
+
 .color-skill {
   background-color: #453c96;
 }
+
 .color-feature {
   background-color: #3177b2;
+}
+
+.gga-file-list.table {
+  display: inline-grid;
+  grid-template-columns: min-content 1fr max-content min-content min-content;
+  grid-template-rows: 26px;
+  margin: 0 0 0.25em 0;
+  row-gap: 5px;
+  align-items: center;
+}
+
+.gga-file-list.table > :nth-child(10n + 6),
+.gga-file-list.table > :nth-child(10n + 7),
+.gga-file-list.table > :nth-child(10n + 8),
+.gga-file-list.table > :nth-child(10n + 9),
+.gga-file-list.table > :nth-child(10n + 10) {
+  background-color: rgb(0, 0, 0, 0.05);
+}
+
+.gga-file-list.table .label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.gga-file-list.table .value {
+  padding: 0 0.25rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.gga-button-bar {
+  padding-top: 0.5rem;
+  margin: 0 -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
 }
