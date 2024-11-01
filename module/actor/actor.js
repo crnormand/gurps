@@ -417,7 +417,7 @@ export class GurpsActor extends Actor {
                 if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end spells
-            
+
             if (link.action.type == 'attribute') {
               let paths = link.action.path.split('.')
               let last = paths.pop()
@@ -1167,7 +1167,7 @@ export class GurpsActor extends Actor {
   get trackersByName() {
     // Convert this.system.hitlocations into an object keyed by location.where.
     const byName = {}
-    for (const [_key, value] of Object.entries(this.system.additionalresources.tracker)) {
+    for (const [_key, value] of Object.entries(this.system.additionalresources.tracker ?? {})) {
       byName[`${value.name}`] = value
     }
     return byName

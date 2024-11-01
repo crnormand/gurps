@@ -1,6 +1,5 @@
 import { xmlTextToJson, recurselist, i18n, i18n_f, arrayBuffertoBase64, aRecurselist } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
 import { SmartImporter } from '../smart-importer.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import {
@@ -21,6 +20,24 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
 
+Hooks.on('renderSidebarTab', async (app, html) => {
+  if (app.options.id === 'actors') {
+    let button = createBulkImportButton(html, MODULE)
+    html.find('.directory-footer').append(button)
+  }
+})
+
+const createBulkImportButton = function (_, module) {
+  let button = $(`<button class="mass-import"><i class="fas fa-file-import"></i>${i18n(GURPS.importMultiple)}</button>`)
+
+  button.click(async () => {
+    const dirHandle = await window.showDirectoryPicker()
+    new GcsImporter().importFrom(dirHandle)
+  })
+
+  return button
+}
+
 export class ActorImporter {
   GCSVersion = 0
 
@@ -29,30 +46,28 @@ export class ActorImporter {
   }
 
   async importActor() {
-    let p = this.actor.system.additionalresources.importpath
-    if (!!p) {
-      let m = p.match(/.*[/\\]Data[/\\](.*)/)
-      if (!!m) {
-        let f = m[1].replace(/\\/g, '/')
+    let path = this.actor.system.additionalresources.importpath
+    if (path) {
+      let match = path.match(/.*[/\\]Data[/\\](.*)/)
+      // If the path is inside the Foundry Data directory, then we can read the file directly and import it.
+      if (match) {
+        let fileUrl = match[1].replace(/\\/g, '/')
         let xhr = new XMLHttpRequest()
         xhr.responseType = 'arraybuffer'
-        xhr.open('GET', f)
-        new Promise(resolve => {
-          xhr.onload = () => {
-            if (xhr.status === 200) {
-              let s = arrayBuffertoBase64(xhr.response)
-              this.importActorFromExternalProgram(s, m[1], p)
-            } else this._openImportDialog()
-            resolve(this)
-          }
-        })
+        xhr.open('GET', fileUrl)
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            let source = arrayBuffertoBase64(xhr.response)
+            this.importActorFromExternalProgram(source, match[1], path)
+          } else this._openImportDialog()
+        }
         xhr.send(null)
       } else await this._openImportDialog()
     } else await this._openImportDialog()
   }
 
   async _openImportDialog() {
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_BROWSER_IMPORTER))
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_BROWSER_IMPORTER))
       await this._openNonLocallyHostedImportDialog()
     else await this._openLocallyHostedImportDialog()
   }
@@ -242,7 +257,7 @@ export class ActorImporter {
       this.actor._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IGNORE_IMPORT_NAME)) {
         await this.actor.update({ name: nm, 'token.name': nm })
       }
 
@@ -265,8 +280,8 @@ export class ActorImporter {
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
-          Math.round(performance.now() - starttime) +
-          'ms.)  You can inspect the character data below:'
+        Math.round(performance.now() - starttime) +
+        'ms.)  You can inspect the character data below:'
       )
       console.log(this)
       importResult = true
@@ -302,7 +317,7 @@ export class ActorImporter {
         title: game.i18n.format('GURPS.importSheetTitle', { generator }),
         content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
         buttons: {},
-        close: () => {},
+        close: () => { },
       },
       {
         width: 400,
@@ -490,7 +505,7 @@ export class ActorImporter {
       this.actor._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IGNORE_IMPORT_NAME)) {
         await this.actor.update({ name: nm, 'token.name': nm })
       }
 
@@ -513,8 +528,8 @@ export class ActorImporter {
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
-          Math.round(performance.now() - starttime) +
-          'ms.)  You can inspect the character data below:'
+        Math.round(performance.now() - starttime) +
+        'ms.)  You can inspect the character data below:'
       )
       console.log(this)
       importResult = true
@@ -577,7 +592,7 @@ export class ActorImporter {
 
     let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
+      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
       if (option == 0) {
         saveCurrent = true
       }
@@ -1316,7 +1331,7 @@ export class ActorImporter {
 
     let saveprot = true
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN)
+      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
         saveprot = false
       }
@@ -1506,7 +1521,7 @@ export class ActorImporter {
     let saveCurrent = false
 
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
+      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
       if (option == 0) {
         saveCurrent = true
       }
@@ -2154,7 +2169,7 @@ export class ActorImporter {
 
     let saveprot = true
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN)
+      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
         saveprot = false
       }
@@ -2501,7 +2516,7 @@ export class ActorImporter {
     let oldotf = oldobj[objkey]
     newobj[objkey] = oldotf
     var notes, newotf
-    ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
+      ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
     if (!!newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
   }

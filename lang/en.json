@@ -809,6 +809,7 @@
   "GURPS.importSelectFileOverwriteAction": "Overwrite the data for: <b>{name}</b>.",
   "GURPS.importSelectFileItemAction": "Import Equipment as: <span style='color: {equipColor}'><b>{equipType}</b>.</span>",
   "GURPS.importSelectFileNote": "NOTE: This cannot be un-done.",
+  "GURPS.importMultiple": "Multiple Import",
   "__System Settings__": "=========",
   "GURPS.settingShowReadMe": "Show 'Read Me' on version change",
   "GURPS.settingHintShowReadMe": "If checked, the system will display the 'Read Me' file every time a version change is detected.",

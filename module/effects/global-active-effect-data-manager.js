@@ -58,7 +58,8 @@ export class GlobalActiveEffectDataControl {
   }
 
   _shouldUseActiveEffectManagerPopup() {
-    return game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER)
+    return false
+    // return game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER)
   }
 
   get showPopup() {

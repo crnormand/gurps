@@ -4,24 +4,20 @@
   "GURPS.DontShowAgain": "Ne plus montrer le Lisez-moi",
   "GURPS.copyrightGURPS": "GURPS est une marque déposée de Steve Jackson Games, et ses règles et illustrations sont protégées par leurs droits d'auteur. Tous les droits sont réservés à Steve Jackson Games. Cette aide de jeu est la création originale de Chris Normand/Nose66 et est distribuée gratuitement et non revendable, avec la permission gracieuse de http://www.sjgames.com/general/online_policy.html",
   "GURPS.copyrightGCS": "GCS is une marque déposée (1998-2020) par Richard A. Wilkes. Tous droits réservés",
-
   "__Char Sheet__": "=========",
   "GURPS.portrait": "Portrait",
   "GURPS.personalTab": "Personnel",
   "GURPS.resourcesModsTab": "Ressources et Modificateurs",
-
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Identité",
   "GURPS.identityName": "Nom",
   "GURPS.identityPlayer": "Joueur",
   "GURPS.identityTitle": "Titre",
-
   "__Character Sheet Miscellaneous__": "=========",
   "GURPS.miscellaneous": "Divers",
   "GURPS.miscellaneousCreated": "Créé",
   "GURPS.miscellaneousModified": "Modifié",
   "GURPS.miscellaneousOptions": "Options",
-
   "__Character Description__": "=========",
   "GURPS.description": "Description",
   "GURPS.descriptionAge": "Age",
@@ -38,7 +34,6 @@
   "GURPS.descriptionSkin": "Peau",
   "GURPS.descriptionTechLevel": "Niveau Technologique (NT)",
   "GURPS.weight": "Poids",
-
   "__Character Points__": "=========",
   "GURPS.point": "Point",
   "GURPS.points": "Points",
@@ -50,7 +45,6 @@
   "GURPS.pointsSkills": "Compétences",
   "GURPS.pointsSpells": "Sorts",
   "GURPS.pointsUnspent": "Restants",
-
   "__Character Attributes__": "=========",
   "GURPS.attributes": "Caractéristiques",
   "GURPS.attributesDX": "DX",
@@ -79,13 +73,11 @@
   "GURPS.thrust": "Dégâts d'Estoc",
   "GURPS.touch": "Toucher",
   "GURPS.vision": "Vision",
-
   "__ Character AddsDisadsPerksQuirks__": "=========",
   "GURPS.advDisadvPerkQuirks": "Avantages, Désavantages, Dons & Travers",
   "GURPS.highPainThreshold": "Résistance à la douleur",
   "GURPS.lowPainThreshold": "Sensible à la Douleur",
   "GURPS.perfectBalance": "Sens de l'équilibre",
-
   "__ Character Skills__": "=========",
   "GURPS.rsl": "NRC",
   "GURPS.SkillDXA": "DX/M",
@@ -110,7 +102,6 @@
   "GURPS.SkillWillH": "Vol/A",
   "GURPS.SkillWillVH": "Vol/TA",
   "GURPS.sl": "NC",
-
   "__Character Spells__": "=========",
   "GURPS.spellClass": "Classe",
   "GURPS.spellCollege": "Ecole",
@@ -121,7 +112,6 @@
   "GURPS.spellTime": "Temps",
   "GURPS.spellResist": "Résistance",
   "GURPS.spellDifficulty": "Difficulté",
-
   "__Character Equipment__": "=========",
   "GURPS.equipment": "Equipement",
   "GURPS.otherEquipment": "Autre Equipment",
@@ -132,7 +122,6 @@
   "GURPS.equipmentMaxUses": "Util. Max",
   "GURPS.equipmentTechlevel": "Niveau Technologique",
   "GURPS.equipmentFoundryItem": "Objet Foundry",
-
   "__Character Encumbrance/Lift__": "=========",
   "GURPS.basicLift": "Levage de Base",
   "GURPS.carryOnBack": "Porté sur le dos",
@@ -152,7 +141,6 @@
   "GURPS.encumbranceLevel-00003": "Lourd (3)",
   "GURPS.encumbranceLevel-00004": "X-Lourd (4)",
   "GURPS.autoEncumbrance": "Calcul de l'Encombrement Automatique",
-
   "__Character Weapons__": "=========",
   "GURPS.acc": "Préc",
   "GURPS.block": "Blocage",
@@ -169,7 +157,6 @@
   "GURPS.rof": "CdT",
   "GURPS.shots": "Coups",
   "GURPS.usage": "Utilisation",
-
   "__Apply Damage Dialog__": "=========",
   "GURPS.addAbbrev": "Abrev",
   "GURPS.addAdditionalStackingModifier": "Modificateur Additionel",
@@ -229,7 +216,6 @@
   "GURPS.addTypeAndWoundingModifiers": "Type & Modificateurs de Blessure",
   "GURPS.addVulnerability": "Vulnérabilité",
   "GURPS.addWHard": "a/Difficile",
-
   "__Body Plan__": "=========",
   "GURPS.BODYPLANarachnoid": "Arachnoïde",
   "GURPS.BODYPLANavian": "Aviaire",
@@ -249,7 +235,6 @@
   "GURPS.BODYPLANvermiform": "Vermiforme",
   "GURPS.BODYPLANvermiformWinged": "Serpent, Ailé",
   "GURPS.BODYPLANwinged humanoid": "Humanoïde, Ailé",
-
   "__Chat Messages__": "=========",
   "GURPS.chatClearing": "Effacer",
   "GURPS.chatClearingLastActor": "Effacer Dernier Acteur",
@@ -319,11 +304,9 @@
   "GURPS.chatHelpShow": "Show various values from tokens in the scene<hr>parameters:\n&lt;Attributes (primary and secondary)&gt;\n&lt;Skill names&gt;\nparry\nblock\nwill\nfright\nper\nvision\nhearing\ntaste\nsmell\nmove\nspeed<hr>examples:\n/show HP FP IQ\n/show Stealth PER\n/show per move speed\n/show vision hearing",
   "GURPS.chatHelpManeuver": "Définir les manœuvres suivantes sur le personnage actuel. Vous pouvez utiliser * pour faire correspondre les noms de manœuvre",
   "GURPS.chatHelpDR": "Modifie la Résistance aux Dégâts de l'Acteur<hr>paramètres:\n&lt;formule&gt;&lt;localisations&gt;: utilisez une formule (par exemple, +2, -2, *2 ou /2) ou une valeur définie (par exemple, 2, 100) et éventuellement les localisations touchées (par exemple, torse, bras, jambe gauche, etc.)\nreset: Réinitialiser la RD à la valeur de départ<hr>exemples:\n/dr +1 (+1 à toutes les localisations)\n/dr -2 torse,jambe (-2 au torse et aux deux jambes)\n/dr 20 (définir RD 20 dans toutes les localisations. Additionnera les bonus d'objets après)\n/dr !20 (forcer RD 20 dans toutes les localisations. Ignorera les bonus d'objets)\n/dr reset (réinitialiser aux valeurs originales)",
-
   "__Permissions__": "=========",
   "GURPS.cannotDragNonFoundryEqt": "Vous ne pouvez pas glisser-déposer de l'équipement non-Foundry sur un autre personnage",
   "GURPS.youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela.",
-
   "__Damage Types__": "=========",
   "GURPS.damageAbbrevburn": "brûl",
   "GURPS.damageAbbrevcor": "cor",
@@ -349,12 +332,10 @@
   "GURPS.damageTypePiercing": "Perforation",
   "GURPS.damageTypeSmall Piercing": "Petite Perforation",
   "GURPS.damageTypeToxic": "Toxique",
-
   "__Drag Ruler__": "=========",
   "GURPS.dragrulerFly": "Vol",
   "GURPS.dragrulerSprint": "Sprint",
   "GURPS.dragrulerWalk": "Marche",
-
   "__Fantastic Dungeon Grappling__": "=========",
   "GURPS.grapplingControlled": "Contrôlé",
   "GURPS.grapplingControlPoints": "Points de Contrôle",
@@ -364,7 +345,6 @@
   "GURPS.grapplingPinned": "Cloué",
   "GURPS.grapplingRestrained": "Contenu",
   "GURPS.grapplingUnrestrained": "Non Contenu",
-
   "__Hit Location__": "=========",
   "GURPS.hitLocation": "Localisation",
   "GURPS.hitLocationArm 1-2": "Bras 1-2",
@@ -431,7 +411,6 @@
   "GURPS.hitLocationDRFromItems": "De Objets",
   "GURPS.hitLocationDRModifiers": "De Modificateurs",
   "GURPS.hitLocationDRItems": "Objets",
-
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Modificateur",
   "GURPS.modifierAddRangeRuler": "Réserve: Ajouter un Modificateur de Règle de Portée",
@@ -577,7 +556,6 @@
   "GURPS.modifierViewScale": "Réserve: Facteur d'Echelle",
   "GURPS.modifierViewScaleHint": "Utiliser ceci pour augmenter ou diminuer la taille de la Réserve de Modificateurs.",
   "GURPS.modifierWillCheck": "Jet de VOL pour maintenir la Visée",
-
   "__PDF References__": "=========",
   "GURPS.pdfAllOutDefense": "B365",
   "GURPS.pdfBlockRetreat": "B377",
@@ -624,14 +602,12 @@
   "GURPS.pdfTelegraphicAttack": "MA113",
   "GURPS.pdfTempAttribPenalties": "B421",
   "GURPS.pdfVisibility": "B394",
-
   "__Resolve Damage Dialog__": "=========",
   "GURPS.RESOLVEDAMAGEMultiple": "Lancer Multiple",
   "GURPS.RESOLVEDAMAGEPrompt": "Que voulez-vous faire avec ces jets de Dégâts?",
   "GURPS.RESOLVEDAMAGEQuantity": "Nombre de jets:",
   "GURPS.RESOLVEDAMAGESendTo": "Envoyé à...",
   "GURPS.RESOLVEDAMAGETitle": "Résoudre les Jets de Dégâts",
-
   "__Resource Trackers__": "=========",
   "GURPS.resourceCopyTemplate": "Copier Modèle",
   "GURPS.resourceCurrentValue": "Valeur Actuelle",
@@ -658,11 +634,9 @@
   "GURPS.trackerNotUnique": "Nom Suivi ({name}) ou alias ({alias}) n'est pas unique.",
   "GURPS.resourceEnforceMinimum": "Imposer Minimum",
   "GURPS.resourceEnforceMaximum": "Imposer Maximum",
-
   "Skill Names__": "=========",
   "GURPS.skillAcrobatics": "Acrobatie",
   "GURPS.skillJudo": "Karate",
-
   "__Slam Calculator__": "=========",
   "GURPS.slamAOAStrong": "Attaque Massive (En Puissance)",
   "GURPS.slamCalculator": "Calculateur d'Ecrasement",
@@ -671,7 +645,6 @@
   "GURPS.slams": "Ecraser",
   "GURPS.slamShieldDB": "RD Bouclier",
   "GURPS.slamVelocity": "Vitesse",
-
   "__Status/Conditions__": "=========",
   "GURPS.STATUSAgony": "Agonie",
   "GURPS.STATUSAim": "Vise",
@@ -709,7 +682,6 @@
   "GURPS.STATUSTerriblePain": "Douleur Terrible",
   "GURPS.STATUSTipsy": "Pompette",
   "GURPS.STATUSWait": "En Attente",
-
   "__Maneuvers__": "=========",
   "GURPS.maneuver": "Manoeuvre",
   "GURPS.maneuverDoNothing": "Inactivité",
@@ -734,7 +706,6 @@
   "GURPS.maneuverReady": "Apprêt",
   "GURPS.maneuverConcentrate": "Concentration",
   "GURPS.maneuverWait": "Attendre",
-
   "__Import Messages__": "=========",
   "GURPS.importCannotImportGCADirectly": "Nous ne pouvons import un fichier GCA directement. Merci d'exporter le fichier avec la fonction 'Export to FoundryVTT.gce'.",
   "GURPS.importCannotImportGCSDirectly": "Nous ne pouvons import un fichier GCS directement. Merci d'exporter le fichier avec le modèle d'export 'Foundry VTT'.",
@@ -769,7 +740,7 @@
   "GURPS.importSuccessful": "{name} importé avec succès.",
   "GURPS.importSeeUsersGuide": "Vérifiez le guide d'utilisation pour savoir où trouver la dernière version.",
   "GURPS.importOldGCSFile": "Votre personnage a été enregistré avec une ancienne version de GCS, ce qui ne donne pas les attributs requis. Mettez au moins GCS à jour en version 4.36, ouvrez et enregistrer votre fichier personnage et ré-essayez.",
-
+  "GURPS.importMultiple": "Importation Multiple",
   "__System Settings__": "=========",
   "GURPS.settingShowReadMe": "Montrez le 'Lisez-Moi' sur le changement de version",
   "GURPS.settingHintShowReadMe": "Si coché, le system affichera le fichier 'Liez-Moi' chaque fois qu'un changement de version est détecté.",
@@ -921,7 +892,6 @@
   "GURPS.colorSheetMenuAreasAdsDisadsTextColor": "Av/Désav Couleur Texte",
   "GURPS.colorSheetMenuAreasAdsDisadsHoverColor": "Av/Désav Couleur Surlignage",
   "GURPS.colorSheetMenuAreasAdsDisadsHoverTextColor": "Av/Désav Couleur Surlignage Texte",
-
   "GURPS.adDisad": "Avantage/Désavantage",
   "GURPS.adDisadQuirkPerk": "Avantage/Désavantage/Trait/Don",
   "GURPS.conditionalModifier": "Modificateur Conditionnel",
@@ -1074,7 +1044,6 @@
   "GURPS.warning": "ATTENTION",
   "GURPS.yard": "mètre",
   "GURPS.yards": "mètres",
-
   "GURPS.addTracker": "Ajouter un Suivi de Ressource à la fin",
   "GURPS.edit": "Modifier",
   "GURPS.moveToCarriedEquipment": "Déplacer vers Equipement Porté",
@@ -1082,7 +1051,6 @@
   "GURPS.dropResolve": "Ou voulez-vous lâcher cet objet?",
   "GURPS.dropBefore": "Avant la cible",
   "GURPS.dropInside": "Après la cible",
-
   "GURPS.moveNone": "Aucun ({reason})",
   "GURPS.moveConstant": "{value} {unit}/sec ({reason})",
   "GURPS.moveStep": "Marche ({reason})",
@@ -1090,7 +1058,6 @@
   "GURPS.moveTwoThirds": "×2/3 ({reason})",
   "GURPS.moveHalf": "Moitié ({reason})",
   "GURPS.moveFull": "Complet",
-
   "GURPS.setManeuver": "Définir Manoeuvre",
   "GURPS.abbrevPoints": "Pts",
   "GURPS.abbrevReference": "Ref",
@@ -1119,21 +1086,16 @@
   "GURPS.resolveDiceRoll": "Jet obtenu?",
   "GURPS.settingUsePhysicalDice": "Utiliser Dé Physique",
   "GURPS.settingHintUsePhysicalDice": "Si activé, les joueurs TRUSTED recevront un invite pour chaque résultat. Cela permet aux joueurs de lancer les dés physiquement et d'entrer les résultats dans Foundry.",
-
   "GURPS.STATUSStanding": "Debout",
   "GURPS.STATUSCrawling": "Jet obtenu",
   "GURPS.STATUSProne": "Allongé",
-
   "GURPS.effectHintBlind": "-6 pour toucher si accoutumé à l'aveuglement; Une réussite sur un jet d'Ouïe à -2 réduit la pénalité à -4.",
-
   "GURPS.effectChatModifiedToHit": "{displayName} est<br>[{modifier}]",
   "GURPS.effectChatRangedModifier": "{displayName} est<br>[-2 pour être touché à distance ({posture})].",
-
   "GURPS.tokenToolsTitle": "Ouvrir Popup Modificateur d'Effets",
   "GURPS.effectModNoTokenSelected": "Aucun Token sélectionné",
   "GURPS.settingActiveEffects": "Activer Effets Actifs",
   "GURPS.settingHintActiveEffects": "Autoriser le MJ à créer et appliquer des Effets Actifs",
-
   "GURPS.CR0": "PC: N/A (Ne peut Résister)",
   "GURPS.CR6": "PC: 6 (Résiste Rarement)",
   "GURPS.CR7": "PC: 7 (non standard)",
