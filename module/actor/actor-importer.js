@@ -32,7 +32,7 @@ const createBulkImportButton = function (_, module) {
 
   button.click(async () => {
     const dirHandle = await window.showDirectoryPicker()
-    new GcsImporter().importFrom(dirHandle)
+    // new GcsImporter().importFrom(dirHandle)
   })
 
   return button
