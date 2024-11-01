@@ -779,6 +779,8 @@
   "GURPS.importSelectFileOverwriteAction": "Sobrescrever os dados de: <b>{name}</b>.",
   "GURPS.importSelectFileItemAction": "Importar Equipamento como: <span style='color: {equipColor}'><b>{equipType}</b>.</span>",
   "GURPS.importSelectFileNote": "NOTA: Esta ação não pode ser desfeita.",
+  "GURPS.importMultiple": "Importação Múltipla",
+
   "__System Settings__": "=========",
   "GURPS.settingShowReadMe": "Exibir 'Leia-Me' quando houver atualização",
   "GURPS.settingHintShowReadMe": "Se marcado, o sistema vai exibir o arquivo 'Leia-Me' sempre que uma mudança de versão for detectada.",

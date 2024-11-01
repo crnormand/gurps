@@ -639,6 +639,7 @@
   "GURPS.importSelectFileOverwriteAction": "Die Daten für: <b>{name}</b> überschreiben.",
   "GURPS.importSelectFileItemAction": "Ausrüstung importieren als: <span style='color: {equipColor}'><b>{equipType}</b>.</span>",
   "GURPS.importSelectFileNote": "HINWEIS: Dies kann nicht rückgängig gemacht werden.",
+  "GURPS.importMultiple": "Mehrfacher Import",
   "__System Settings__": "=========",
   "GURPS.settingShowReadMe": "Bei Versionswechsel 'Liesmich' anzeigen",
   "GURPS.settingHintShowReadMe": "Wenn diese Option aktiviert ist, zeigt das System bei jeder Versionsänderung die Datei 'Liesmich' an.",
