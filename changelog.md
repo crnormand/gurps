@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.16
+
+- Feature: Multiple actor import. Import multiple GCS and GCA files with one command.
+
 Release 0.17.15 10/31/2024
 
 - Feature: Customizable/floating Roll3d6 button and modifier bucket.
@@ -13,7 +17,7 @@ Release 0.17.14 10/28/2024
 This is a minor release in preparation for the release of the Warlock Knight VTT module by Gaming Ballistic.
 
 - Bugfix: Size modifier is not being imported.
-- Bugfix: `system.equippedparry` and `system.equippedblock` now return the *best* value, not the first.
+- Bugfix: `system.equippedparry` and `system.equippedblock` now return the _best_ value, not the first.
 - Feature: Hit locations and trackers can be referenced by name (for macros). Eg. `system.hitlocationNames['Torso'].import` and `system.trackersByName['Control Points'].value`.
 
 - Add nonstandard values for Control Rolls to the language files.
