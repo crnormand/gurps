@@ -1,4 +1,6 @@
 import { i18n } from '../../lib/utilities.js'
+import { ActorImporter } from './actor-importer.js'
+import { GurpsActor } from './actor.js'
 
 export const AddMultipleImportButton = function (html) {
   let button = $(
@@ -18,26 +20,23 @@ export const AddMultipleImportButton = function (html) {
       }
     }
 
-    // Log the list of files
-    console.log('Files in directory:', files)
-
     if (files.length === 0) {
       return ui.notifications.error(i18n('GURPS.importEmptyDirectory'))
     }
 
-    new MultipleImportForm(files).render(true)
+    new MultipleImportApp(dirHandle, files).render(true)
   })
 
   html.find('.directory-footer').append(button)
 }
 
-class MultipleImportForm extends Application {
+class MultipleImportApp extends Application {
   static getSource(filename) {
     if (filename.endsWith('.gcs')) return 'GCS'
     else return 'GCA'
   }
 
-  constructor(files, options = {}) {
+  constructor(dirHandle, files, options = {}) {
     super(options)
 
     this.data = {
@@ -51,13 +50,14 @@ class MultipleImportForm extends Application {
         selected: false,
         file: files[ii],
         actor: actor,
-        source: MultipleImportForm.getSource(files[ii]),
+        source: MultipleImportApp.getSource(files[ii]),
         version: null,
         onImport: actor ? 'update' : 'create',
       })
     }
 
     this.data.files.sort((a, b) => a.file.localeCompare(b.file))
+    this.dirHandle = dirHandle
   }
 
   /** @override */
@@ -90,21 +90,32 @@ class MultipleImportForm extends Application {
   async _onFilelistClick(event) {
     event.preventDefault()
     const target = event.currentTarget
+    const isChecked = target.checked
+    const index = parseInt(target.dataset.filelistId)
 
-    if (target.dataset.action === 'select-all') {
-      const isChecked = target.checked
-      this.data.selectAll = isChecked
-      for (const ii in this.data.files) {
-        this.data.files[ii].selected = isChecked
-      }
-      return this.render(true)
-    }
+    switch (target.dataset.action) {
+      case 'select-all':
+        this.data.selectAll = isChecked
+        for (const ii in this.data.files) {
+          this.data.files[ii].selected = isChecked
+        }
+        return this.render(true)
 
-    if (target.dataset.action === 'select') {
-      const isChecked = target.checked
-      const index = parseInt(target.dataset.filelistId)
-      this.data.files[index].selected = isChecked
-      return this.render(true)
+      case 'select':
+        this.data.files[index].selected = isChecked
+        return this.render(true)
+
+      case 'import':
+        // Import the selected files
+        const selectedFiles = this.data.files.filter(it => it.selected)
+        if (selectedFiles.length === 0) {
+          return ui.notifications.error(i18n('GURPS.importNoFilesSelected'))
+        }
+        this._importFiles(selectedFiles)
+        return this.close()
+
+      case 'cancel':
+        this.close()
     }
   }
 
@@ -112,18 +123,57 @@ class MultipleImportForm extends Application {
     event.preventDefault()
     const target = event.currentTarget
 
-    if (target.dataset.action === 'import') {
+    if (target.dataset.action === 'option') {
       const index = parseInt(target.dataset.filelistId)
+      const file = this.data.files[index]
+
       const value = target.value
-      this.data.files[index].onImport = value
+      file.onImport = file.actor ? value : 'create'
       return this.render(true)
     }
   }
 
-  /** @override */
-  async _updateObject(event, formData) {
-    // Handle form submission
-    console.log('Form submitted with data:', formData)
-    console.log('Selected files:', this.files)
+  async _importFiles(files) {
+    for (const file of files) {
+      let actor = file.actor
+      const onImport = file.onImport
+
+      // If Create or Replace, create a new actor.
+      if (onImport === 'replace' || onImport === 'create') {
+        actor = await GurpsActor.create(
+          {
+            name: file.file,
+            type: 'character',
+          },
+          { renderSheet: false }
+        )
+      }
+
+      // Load the file.
+      const fileHandle = await this.dirHandle.getFileHandle(file.file)
+      const fileObject = await fileHandle.getFile()
+      const text = await GURPS.readTextFromFile(fileObject)
+
+      // Import the actor.
+      const importer = new ActorImporter(actor)
+      await importer.importActorFromExternalProgram(text, fileObject.name, await this.getDirectoryPath(this.dirHandle))
+
+      // If Replace, delete the old actor.
+      if (onImport === 'replace') {
+        await file.actor.delete()
+      }
+    }
+  }
+
+  async getDirectoryPath(dirHandle) {
+    let path = dirHandle.name
+    let currentHandle = dirHandle
+
+    while (currentHandle.parent) {
+      currentHandle = await currentHandle.parent
+      path = `${currentHandle.name}/${path}`
+    }
+
+    return path
   }
 }
