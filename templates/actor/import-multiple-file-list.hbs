@@ -1,0 +1,50 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <div class='multiple-import-filelist' style='position: relative;'>
+    <div class='gga-file-list table'>
+      <div class='label'>
+        <input
+          class='filelist-control'
+          data-action='select-all'
+          type='checkbox'
+          name='selectAll'
+          {{checked selectAll}}
+        />
+      </div>
+      <div class='label'>{{i18n 'GURPS.importFile'}}</div>
+      <div class='label'>{{i18n 'GURPS.importCurrentActor'}}</div>
+      <div class='label'>{{i18n 'GURPS.importSource'}}</div>
+      <div class='label'>{{i18n 'GURPS.importOnImport'}}</div>
+
+      {{debug selectAll}}
+      {{debug choices}}
+      {{debug files}}
+
+      {{#each files}}
+        <div class='value'>
+          <input
+            class='filelist-control'
+            data-action='select'
+            data-filelist-id='{{@index}}'
+            type='checkbox'
+            name='selected'
+            {{checked selected}}
+          />
+        </div>
+        <div class='value'>{{file}}</div>
+        <div class='value'>{{actor.name}}</div>
+        <div class='value'>{{source}}</div>
+          {{#if actor}}
+          <select name='options' class='filelist-control value' data-action='option' data-filelist-id='{{@index}}'>
+            {{selectOptions ../choices selected=onImport localize=true}}
+          </select>
+          {{else}}
+          <div class='value'>{{i18n 'GURPS.importCreate'}}</div>          
+          {{/if}}
+      {{/each}}
+    </div>
+    <div class='gga-button-bar'>
+      <button class='filelist-control' data-action='cancel' id='cancel'><i class='fas fa-times'></i>{{i18n 'GURPS.importCancel'}}</button>
+      <button class='filelist-control' data-action='import' id='import'><i class='fas fa-file-import'></i>{{i18n 'GURPS.importSelected'}}</button>
+    </div>
+  </div>
+</form>

@@ -1,26 +1,21 @@
 {
   "__NOTE TO TRANSLATOR__": "If a given text is the same as the English (en.json), there is no need to include it here. It will fallback to en.json.",
-
   "GURPS.DontShowAgain": "Не показывать README снова",
   "GURPS.copyrightGCS": "Права на GCS принадлежат Richard A. Wilkes, 1998-2020. Все права защищены",
-
   "__Char Sheet__": "=========",
   "GURPS.portrait": "Изображение",
   "GURPS.personalTab": "Личное",
   "GURPS.resourcesModsTab": "Ресурсы и Модификаторы",
-
   "__Character Sheet Identity__": "=========",
   "GURPS.identity": "Личность",
   "GURPS.identityName": "Имя",
   "GURPS.identityTitle": "Статус",
   "GURPS.identityPlayer": "Игрок",
-
   "__Character Sheet Miscellaneous__": "=========",
   "GURPS.miscellaneous": "Разное",
   "GURPS.miscellaneousCreated": "Создан",
   "GURPS.miscellaneousModified": "Изменён",
   "GURPS.miscellaneousOptions": "Настройки",
-
   "__Character Description__": "=========",
   "GURPS.description": "Описание",
   "GURPS.descriptionGender": "Пол",
@@ -37,7 +32,6 @@
   "GURPS.descriptionSkin": "Кожа",
   "GURPS.descriptionHand": "Рука",
   "GURPS.descriptionAppearance": "Внешность",
-
   "__Character Points__": "=========",
   "GURPS.point": "Очки",
   "GURPS.points": "Очки",
@@ -49,7 +43,6 @@
   "GURPS.pointsQuirks": "Бзики",
   "GURPS.pointsSkills": "Навыки",
   "GURPS.pointsSpells": "Заклинания",
-
   "__Character Attributes__": "=========",
   "GURPS.attributes": "Атрибуты",
   "GURPS.attributesDX": "ЛВ",
@@ -77,13 +70,11 @@
   "GURPS.thrust": "Прямые повреждения",
   "GURPS.touch": "Осязание",
   "GURPS.vision": "Зрение",
-
   "__ Character AddsDisadsPerksQuirks__": "=========",
   "GURPS.advDisadvPerkQuirks": "Преимущества, Недостатки, Перки и Бзики",
   "GURPS.highPainThreshold": "Высокий болевой порог",
   "GURPS.lowPainThreshold": "Низкий болевой порог",
   "GURPS.perfectBalance": "Идеальное равновесие",
-
   "__ Character Skills__": "=========",
   "GURPS.rsl": "ОУН",
   "GURPS.SkillDXA": "ЛВ/С",
@@ -108,7 +99,6 @@
   "GURPS.SkillWillH": "Воля/Т",
   "GURPS.SkillWillVH": "Воля/ОТ",
   "GURPS.sl": "УН",
-
   "__Character Spells__": "=========",
   "GURPS.spells": "Заклинания",
   "GURPS.spellClass": "Класс",
@@ -117,11 +107,9 @@
   "GURPS.spellMaintain": "Поддержание",
   "GURPS.spellTime": "Время",
   "GURPS.spellDuration": "Длительность",
-
   "__Character Equipment__": "=========",
   "GURPS.equipment": "Снаряжение",
   "GURPS.otherEquipment": "Прочее снаряжение",
-
   "__Character Encumbrance/Lift__": "=========",
   "GURPS.encumbranceMoveDodge": "Нагрузка, Движение и Уклонение",
   "GURPS.maxload": "Макс",
@@ -142,7 +130,6 @@
   "GURPS.encumbranceLevel-00003": "Тяжёлая (3)",
   "GURPS.encumbranceLevel-00004": "Очень тяжёлая (4)",
   "GURPS.autoEncumbrance": "Автоматический расчёт нагрузки",
-
   "__Character Weapons__": "=========",
   "GURPS.acc": "Точ",
   "GURPS.block": "Блок",
@@ -157,7 +144,6 @@
   "GURPS.rof": "Сс",
   "GURPS.shots": "Бзс",
   "GURPS.usage": "Применение",
-
   "__Apply Damage Dialog__": "=========",
   "GURPS.addAbbrev": "Сокращение",
   "GURPS.addAdditionalStackingModifier": "Дополнительный модификатор",
@@ -211,7 +197,6 @@
   "GURPS.addTypeAndWoundingModifiers": "Модификаторы повреждения от типа урона",
   "GURPS.addVulnerability": "Уязвимость",
   "GURPS.addWHard": "с укрепленной",
-
   "__Body Plan__": "=========",
   "GURPS.BODYPLANarachnoid": "Арахнид",
   "GURPS.BODYPLANavian": "Летун",
@@ -231,7 +216,6 @@
   "GURPS.BODYPLANvermiform": "Червеобразный",
   "GURPS.BODYPLANvermiformWinged": "Червеобразный, крылатый",
   "GURPS.BODYPLANwinged humanoid": "Гуманоид, крылатый",
-
   "__Chat Messages__": "=========",
   "GURPS.chatDamageResultEnd": "по {location}",
   "GURPS.chatDamageResultMiddle": "{type} типа урона",
@@ -239,9 +223,7 @@
   "GURPS.chatDamageResultStart": "наносит повреждения {defender} в количестве{injury}",
   "GURPS.chatShock": "{name} получает {modifier} очков Шока ",
   "GURPS.chatHelpDR": "Модификаторы Сопротивления Урону<hr>параметры:\n&lt;формула&gt;&lt;зоны&gt;: используйте формулу (например, +2, -2, *2 или /2) или определённое значение (например, 2, 100) и, при необходимости, зоны попадания (например, торс, рука, левая нога и т. д.)\nreset: Сбросить СП на начальное значение<hr>примеры:\n/dr +1 (+1 ко всем зонам попадания)\n/dr -2 торс,нога (-2 к торсу и обеим ногам)\n/dr 20 (установить СП 20 во всех зонах попадания. Будет суммировать бонусы предметов после)\n/dr !20 (установить СП 20 во всех зонах попадания. Будет игнорировать бонусы предметов)\n/dr reset (сбросить на исходные значения)",
-
   "__Permissions__": "=========",
-
   "__Damage Types__": "=========",
   "GURPS.damageAbbrevburn": "обж",
   "GURPS.damageAbbrevcor": "рзед",
@@ -267,9 +249,7 @@
   "GURPS.damageTypePiercing": "Пробивающее",
   "GURPS.damageTypeSmall Piercing": "Малое пробивающее",
   "GURPS.damageTypeToxic": "Токсическое",
-
   "__Drag Ruler__": "=========",
-
   "__Fantastic Dungeon Grappling__": "=========",
   "GURPS.grapplingControlled": "Под контролем",
   "GURPS.grapplingControlPoints": "Очки контроля",
@@ -279,7 +259,6 @@
   "GURPS.grapplingPinned": "Удерживаемый",
   "GURPS.grapplingRestrained": "Сдерживаемый",
   "GURPS.grapplingUnrestrained": "Свободный",
-
   "__Hit Location__": "=========",
   "GURPS.hitLocation": "Зона попадания",
   "GURPS.hitLocationArm 1-2": "Рука 1-2",
@@ -327,7 +306,6 @@
   "GURPS.hitLocationDRFromItems": "СП от предметов",
   "GURPS.hitLocationDRModifiers": "Модификаторы СП",
   "GURPS.hitLocationDRItems": "Предметы",
-
   "__Modifier Bucket__": "=========",
   "GURPS.modifier": "Модификатор",
   "GURPS.modifier3d6Image": "Bucket: Изменить изображение 3d6",
@@ -338,9 +316,7 @@
   "GURPS.modifierPositionHint": "Выберите позицию Bucket модификаторов.",
   "GURPS.modifierPositionLeft": "Слева, рядом с панелью пользователя.",
   "GURPS.modifierPositionRight": "Справа, рядом с окном чата.",
-
   "__PDF References__": "=========",
-
   "__Resolve Damage Dialog__": "=========",
   "GURPS.RESOLVEDAMAGEMultiple": "Сделать несколько бросков",
   "GURPS.RESOLVEDAMAGEPrompt": "Что вы хотите сделать с этим броском урона?",
@@ -369,11 +345,8 @@
   "GURPS.resourceTrackers": "Счётчик ресурсов",
   "GURPS.slotNotUnique": "На слот {value}  уже назначен другой счётчик.",
   "GURPS.trackerNotUnique": "Название счётчика ({name}) или Алиас ({alias}) не уникальны.",
-
   "Skill Names__": "=========",
-
   "__Slam Calculator__": "=========",
-
   "__Status/Conditions__": "=========",
   "GURPS.STATUSAgony": "Агония",
   "GURPS.STATUSAim": "Целится",
@@ -410,7 +383,6 @@
   "GURPS.STATUSTerriblePain": "Ужасная боль",
   "GURPS.STATUSTipsy": "Поддатость",
   "GURPS.STATUSWait": "Ожидание",
-
   "GURPS.basic": "Базовый",
   "GURPS.bluntTrauma": "Тупая травма",
   "GURPS.clickToEdit": "Нажмите для редактирования",
@@ -450,7 +422,6 @@
   "GURPS.toAllDXBasedRolls": "Ко всем проверкам, основанным на ЛВ",
   "GURPS.update": "Обновить",
   "GURPS.yards": "ярды",
-
   "GURPS.CR0": "Кб: N/A (Не могу сопротивляться)",
   "GURPS.CR6": "Кб: 6 (Сопротивляется Редко)",
   "GURPS.CR7": "Кб: 7 (нестандартный)",
@@ -462,21 +433,31 @@
   "GURPS.CR13": "Кб: 13 (нестандартный)",
   "GURPS.CR14": "Кб: 14 (нестандартный)",
   "GURPS.CR15": "Кб: 15 (Почти все время сопротивляется)",
-
   "GURPS.statsTab": "Stats",
   "GURPS.combatTab": "Combat",
   "GURPS.advantagesTab": "Преимущества и Недостатки",
   "GURPS.skillsTab": "Навыки",
   "GURPS.spellsTab": "Заклинания",
   "GURPS.equipmentTab": "Снаряжение",
-
   "GURPS.itemImport": "Импортой Сбор Оборудования",
   "GURPS.importSheetTitle": "Импорт листа {generator}",
   "GURPS.importSheetHint": "Импорт данных для {name} с использованием {generator}. Пожалуйста, подождите...",
   "GURPS.settingImportExtendedValuesGCS": "Импорт расширенных значений из GCS",
   "GURPS.settingImportHintExtendedValuesGCS": "Если включено, система будет импортировать расширенные значения для Стоимости и Веса при импорте пакетов снаряжения GCS.",
   "GURPS.importMultiple": "Множественный импорт",
-
+  "GURPS.importMultipleActors": "Импортировать нескольких персонажей",
+  "GURPS.importFile": "Файл",
+  "GURPS.importCurrentActor": "Текущий персонаж",
+  "GURPS.importSource": "Источник",
+  "GURPS.importVersion": "Версия",
+  "GURPS.importOnImport": "При импорте",
+  "GURPS.importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
+  "GURPS.importCreate": "Создать",
+  "GURPS.importUpdate": "Обновить",
+  "GURPS.importReplace": "Заменить",
+  "GURPS.importCancel": "Отменить импорт",
+  "GURPS.importSelected": "Импортировать выбранное",
+  "GURPS.importNoFilesSelected": "Файлы для импорта не выбраны.",
   "__System Settings__": "=========",
   "GURPS.settingDamageLocationTorso": "Торс",
   "GURPS.settingUseFoundryItems": "Использовать Foundry Items для снаряжения",

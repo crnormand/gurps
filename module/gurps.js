@@ -39,7 +39,7 @@ import { DamageTable } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
-import { ItemImporter } from '../module/item-import.js'
+import { AddImportEquipmentButton, ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -80,6 +80,7 @@ import { PDFEditorSheet } from './pdf/edit.js'
 import { JournalEntryPageGURPS } from './pdf/index.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import { GGADebugger } from '../utils/debugger.js'
+import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 
 let GURPS = undefined
 
@@ -2047,59 +2048,62 @@ if (!globalThis.GURPS) {
 
     // @ts-ignore
     Hooks.on('renderSidebarTab', async (app, html) => {
-      // Add the import equipment button...
-      if (app.options.id === 'compendium') {
-        let button = $(
-          '<button class="import-items"><i class="fas fa-file-import"></i>' +
-            game.i18n.localize('GURPS.itemImport') +
-            '</button>'
-        )
+      // Add the Import Multiple Actors button to the Actors tab.
+      if (app.id === 'actors') AddMultipleImportButton(html)
+      // Add the import equipment button to the Compendiums tab.
+      if (app.id === 'compendium') AddImportEquipmentButton(html)
+      // if (app.options.id === 'compendium') {
+      //   let button = $(
+      //     '<button class="import-items"><i class="fas fa-file-import"></i>' +
+      //       game.i18n.localize('GURPS.itemImport') +
+      //       '</button>'
+      //   )
 
-        button.click(function () {
-          setTimeout(async () => {
-            new Dialog(
-              {
-                title: 'Import Item Compendium',
-                // @ts-ignore
-                content: await renderTemplate('systems/gurps/templates/item-import.html'),
-                buttons: {
-                  import: {
-                    icon: '<i class="fas fa-file-import"></i>',
-                    label: 'Import',
-                    callback: html => {
-                      // @ts-ignore
-                      const form = html.find('form')[0]
-                      let files = form.data.files
-                      // @ts-ignore
-                      let file = null
-                      if (!files.length) {
-                        // @ts-ignore
-                        return ui.notifications.error('You did not upload a data file!')
-                      } else {
-                        file = files[0]
-                        console.log(file)
-                        GURPS.readTextFromFile(file).then(text =>
-                          ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
-                        )
-                      }
-                    },
-                  },
-                  no: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: 'Cancel',
-                  },
-                },
-                default: 'import',
-              },
-              {
-                width: 400,
-              }
-            ).render(true)
-          }, 200)
-        })
+      //   button.click(function () {
+      //     setTimeout(async () => {
+      //       new Dialog(
+      //         {
+      //           title: 'Import Item Compendium',
+      //           // @ts-ignore
+      //           content: await renderTemplate('systems/gurps/templates/item-import.html'),
+      //           buttons: {
+      //             import: {
+      //               icon: '<i class="fas fa-file-import"></i>',
+      //               label: 'Import',
+      //               callback: html => {
+      //                 // @ts-ignore
+      //                 const form = html.find('form')[0]
+      //                 let files = form.data.files
+      //                 // @ts-ignore
+      //                 let file = null
+      //                 if (!files.length) {
+      //                   // @ts-ignore
+      //                   return ui.notifications.error('You did not upload a data file!')
+      //                 } else {
+      //                   file = files[0]
+      //                   console.log(file)
+      //                   GURPS.readTextFromFile(file).then(text =>
+      //                     ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
+      //                   )
+      //                 }
+      //               },
+      //             },
+      //             no: {
+      //               icon: '<i class="fas fa-times"></i>',
+      //               label: 'Cancel',
+      //             },
+      //           },
+      //           default: 'import',
+      //         },
+      //         {
+      //           width: 400,
+      //         }
+      //       ).render(true)
+      //     }, 200)
+      //   })
 
-        html.find('.directory-footer').append(button)
-      }
+      //   html.find('.directory-footer').append(button)
+
 
       // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
       const hasMeme = game.modules.get('markdown-editor')?.active
@@ -2278,11 +2282,11 @@ if (!globalThis.GURPS) {
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-        (GURPS.DamageTables.woundModifiers[it.alias] = {
-          multiplier: 1,
-          label: it.name,
-          resource: true,
-        })
+      (GURPS.DamageTables.woundModifiers[it.alias] = {
+        multiplier: 1,
+        label: it.name,
+        resource: true,
+      })
     )
 
     // Sorry, removed the ts-ignores during editing.
@@ -2327,8 +2331,8 @@ if (!globalThis.GURPS) {
           content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-            .split('\n')
-            .join('<br>')}</mark><br>&nbsp;<br>`,
+              .split('\n')
+              .join('<br>')}</mark><br>&nbsp;<br>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-angle-double-down"></i>',
