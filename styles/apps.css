@@ -2188,11 +2188,15 @@ button.equipmentbutton:last-child {
 }
 
 .sheet nav.gurps-tabs {
-  border-top: none;
+  border: none;
+  display: flex;
+  margin-bottom: 4px;
 }
 
 .sheet nav.gurps-tabs a {
   font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
 }
 
 .gurps-tabs .item {
@@ -2200,12 +2204,15 @@ button.equipmentbutton:last-child {
   text-overflow: clip;
   overflow: hidden;
   white-space: nowrap;
+  width: auto !important;
 }
 
 .gurps-tabs .item.active {
   color: unset;
   text-shadow: 0 0 10px red;
+  width: auto !important;
 }
+
 
 .label-value-row label {
   padding-left: 0.5em;
@@ -2481,4 +2488,552 @@ button.equipmentbutton:last-child {
   height: 30px !important;
   padding-bottom: 2px;
   margin-right: 6px !important;
+}
+#encumbrance > div:nth-child(8){
+  min-width: 85px;
+}
+
+/**
+    ***********************************
+    *                                 *
+    * Combat Tracker Maneuver Menu    *
+    *                                 *
+    ***********************************
+ */
+.token-effect.maneuver-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.combatant.actor.directory-item.flexrow.active {
+  display: flex;
+}
+
+.maneuver-combat-tracker-menu {
+  position: absolute;
+  top: 48px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border: 2px solid #337244;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 300;
+  display: none;
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+.maneuver-combat-tracker-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 350px;
+  overflow-y: auto;
+}
+.maneuver-combat-tracker-menu li {
+  cursor: pointer;
+  width: 100%;
+}
+.maneuver-combat-tracker-menu li:hover {
+  background-color: #261f1d;
+}
+.maneuver-select-icon {
+  max-width: 40px;
+  max-height: 40px;
+  margin: 5px;
+}
+.maneuver-select-line {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: row;
+  margin-right: 5px;
+  align-items: center;
+}
+.maneuver-select-choice {
+  text-transform: uppercase;
+  line-height: 1.2;
+  font-size: 0.95em;
+  margin-right: 5px;
+}
+.maneuver-select-hint {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 58px;
+  font-weight: lighter;
+}
+.cant-do-icon {
+    color: rgba(194, 193, 183, 0.5);
+}
+.can-do-icon {
+    color: rgba(250, 235, 215, 0.82);
+}
+.maneuver-select-info {
+  display: flex;
+  flex-direction: row;
+}
+
+.maneuver-tooltip {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  transition: opacity 0.3s;
+  width: 100px;
+  left: auto;
+  right: 0;
+  margin-left: 0;
+}
+.maneuver-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 75%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+
+.token-initiative:hover ~ .maneuver-tooltip {
+  visibility: visible;
+  z-index: 200;
+  font-size: 0.8em;
+  line-height: 1.1;
+}
+
+.maneuver-tooltip:first-child  {
+  bottom: -550% !important;
+}
+
+.mv-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-size: 1.3em;
+  margin-bottom: 4px;
+}
+
+/**
+    ***********************************
+    *                                 *
+    * Combat Tracker Quick Roll Menu  *
+    *                                 *
+    ***********************************
+ */
+.quick-roll-menu {
+  position: absolute;
+  top: 48px;
+  background-color: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+  display: none;
+  width: 100%;
+  padding: 15px 5px 5px 5px;
+  margin-bottom: 5px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.quick-roll-row {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.quick-roll-hor {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-grow: 1;
+}
+.quick-roll-col {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.quick-roll-dmg {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.quick-roll-button.lg,
+.quick-roll-button.sm {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 0;
+  color: whitesmoke;
+  width: auto;
+  flex-grow: 1;
+  margin-bottom: 3px;
+  justify-content: center;
+  align-items: center;
+}
+
+.w100 {
+    width: 100%;
+}
+.flex4 {
+    flex-grow: 4;
+    min-width: 33%;
+}
+.mw25 {
+    min-width: 25%;
+}
+.mw50 {
+    min-width: 49%;
+}
+
+.quick-roll-button {
+  position: relative;
+  display: inline-block;
+}
+
+.quick-roll-button .tooltip {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the button */
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  width: 100px;
+}
+
+.quick-roll-button.sm.dmg:first-child .tooltip,
+.quick-roll-button:last-child .tooltip {
+  left: auto;
+  right: 0;
+  margin-left: 0;
+}
+.quick-roll-button:first-child .tooltip {
+  left: 0;
+  margin-left: 0;
+}
+
+.quick-roll-button .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Arrow at the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.quick-roll-button.sm.dmg:first-child .tooltip::after,
+.quick-roll-button:last-child .tooltip::after {
+  left: auto;
+  right: 10px;
+  margin-left: 0;
+}
+.quick-roll-button:first-child .tooltip::after {
+  left: 10px;
+  margin-left: 0;
+}
+
+.quick-roll-button:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+  z-index: 200;
+  font-size: 0.8em;
+  line-height: 1.1;
+}
+
+.quick-roll-button:hover {
+  background-color: rgb(118, 47, 33);
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.quick-roll-section h4 {
+  text-transform: uppercase;
+  font-size: 0.82em;
+  padding: 15px 0 5px 0;
+  line-height: 1.1;
+  border-bottom: 1px solid #772e21;
+}
+.add-quick-roll-option {
+  display: flex;
+  margin-top: 5px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.qr-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-label,
+.qr-label span {
+  font-size: 0.9em;
+}
+
+.qr-label.hidden {
+  display: none;
+}
+.hr-notes {
+  border: none;
+  border-top: 1px solid rgba(194, 193, 183, 0.5);
+  margin: 8px 5px;
+}
+.qr-image img {
+  max-width: 20px;
+  max-height: 20px;
+  margin-bottom: -10px
+}
+.qr-sk-image {
+  max-width: 20px;
+  max-height: 20px;
+  margin-right: 6px;
+}
+.quick-roll-blind-toggle {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  margin-top: -5px;
+  font-size: 1.2em;
+}
+.qr-green {
+    color: #35713e;
+}
+.qr-blue {
+    color: #6f63d9;
+}
+.qr-blind {
+    display: none;
+}
+.active {
+    display: block;
+}
+.qr-otf {
+  color: #d7b921;
+  font-style: italic;
+}
+
+#combat-popout {
+  overflow-y: auto !important;
+  resize: vertical !important;
+}
+
+/**
+    ***********************************
+    *                                 *
+    * Modifier Effects Popout         *
+    *                                 *
+    ***********************************
+ */
+.me-info {
+  display: flex;
+  flex-direction: column;
+  border: unset;
+  font-size: 0.85em;
+}
+.me-line:nth-child(even) {
+    background-color: unset;
+}
+
+.me-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  margin-right: 10px;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.me-link {
+  flex: 2;
+  padding: 4px;
+}
+.me-tag,
+.me-at {
+  flex: 1.5;
+  padding: 4px;
+  text-align: left;
+}
+
+.me-tag span,
+.me-at span {
+  text-transform: uppercase;
+  font-size: 0.76em;
+  color: white;
+  border-radius: 4px;
+  padding: 3px 5px;
+}
+.me-tag span {
+  background-color: #772e21;
+  line-height: 220%;
+}
+.me-at.notfound span {
+  background-color: rgba(20, 119, 180, 0.5);
+}
+.me-at.combat span {
+  background-color: #772e21;
+}
+.me-at.custom span {
+  background-color: rgb(38, 31, 29);
+}
+.me-at.melee span {
+  background-color: orangered;
+}
+.me-at.ranged span {
+  background-color: #9a5f16;
+}
+.me-at.skill span {
+  background-color: #015401;
+}
+.me-at.spell span {
+  background-color: #772e21;
+}
+.me-at.feature span {
+  background-color: #6f63d9;
+}
+.me-at.equipment span {
+  background-color: #35713e;
+}
+.me-at.maneuver span {
+  background-color: #c5360b;
+}
+/**
+    ***********************************
+    *                                 *
+    * Confirmation Roll Dialog        *
+    *                                 *
+    ***********************************
+ */
+.cr-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+.cr-item-img,
+.cr-token-img {
+  max-width: 110px;
+  max-height: 110px;
+  border: none;
+}
+.cr-item-section,
+.cr-token-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.cr-item-roll,
+.cr-token-name {
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 4px;
+  text-align: center;
+}
+.cr-result-math {
+  padding: 8px 30px 0px 30px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.8em;
+  color: darkgrey;
+  line-height: 0.2;
+}
+.cr-result-total {
+  font-size: 5em;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 3px black;
+  text-align: center;
+  justify-content: center;
+}
+.cr-item-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4em;
+  padding: 10px;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  color: #bcbbb0;
+  text-shadow: 2px 4px 6px black;
+  border: 8px solid #bcbbb0;
+}
+.cr-item-img {
+  border-radius: 50%;
+  border: 8px solid #bcbbb0;
+  background-color: #242b65;
+}
+.cr-result-section {
+ padding-top: 20px;
+}
+
+.cr-result-section,
+.cr-item-section,
+.cr-token-section {
+  flex: 1;
+}
+.cr-damage-section {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+  margin-left: 10px;
+}
+.cr-damage-type {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(56, 37, 32, 0.82);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+.cr-damage-type span {
+  color: whitesmoke;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  text-align: center;
+  line-height: 0.8em;
+  font-weight: bold;
+}
+.cr-damage-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.cr-damage-formula {
+  font-size: 4.5em;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 3px black;
+  text-align: center;
+  justify-content: center;
 }
