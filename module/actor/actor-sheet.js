@@ -1126,6 +1126,7 @@ export class GurpsActorSheet extends ActorSheet {
                 item.system.eqt.techlevel = obj.techlevel
                 item.system.eqt.notes = obj.notes
                 item.system.eqt.pageref = obj.pageref
+                item.system.itemEffects = obj.itemEffects
                 await actor._updateItemFromForm(item)
                 await actor.updateParentOf(path, false)
               }
@@ -1169,6 +1170,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
+        'itemEffects',
+        'modEffectTags',
       ],
       []
     )
@@ -1196,6 +1199,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
+        'itemEffects',
+        'modEffectTags',
       ],
       ['acc', 'bulk']
     )
@@ -1220,7 +1225,19 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
+      [
+        'name',
+        'import',
+        'relativelevel',
+        'pageref',
+        'notes',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
+        'itemEffects',
+        'modEffectTags',
+      ],
       ['points']
     )
   }
@@ -1249,6 +1266,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
+        'itemEffects',
+        'modEffectTags',
       ],
       ['points']
     )
@@ -1280,9 +1299,20 @@ export class GurpsActorSheet extends ActorSheet {
               strprops.forEach(a => (obj[a] = html.find(`.${a}`).val()))
               numprops.forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
 
+              let q = html.find('.quick-roll')
               let u = html.find('.save') // Should only find in Note (or equipment)
+              if (!!q) obj.addToQuickRoll = q.is(':checked')
               if (!!u) obj.save = u.is(':checked')
-              actor.internalUpdate({ [path]: obj })
+              await actor.removeModEffectFor(path)
+              const commit = actor.applyItemModEffects({})
+              await actor.internalUpdate({ ...commit, [path]: obj })
+              if (canvas.tokens.controlled.length > 0) {
+                await canvas.tokens.controlled[0].document.setFlag(
+                  'gurps',
+                  'lastUpdate',
+                  new Date().getTime().toString()
+                )
+              }
             },
           },
         },

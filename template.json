@@ -246,12 +246,14 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemEffects": "",
       "equipped": true,
       "carried": true,
       "globalid": "",
       "importid": "",
       "importFrom": "",
-      "fromItem": ""
+      "fromItem": "",
+      "addToQuickRoll": false
     },
     "feature": {
       "fea": {
@@ -272,6 +274,7 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemEffects": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
@@ -307,10 +310,13 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemEffects": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
-      "fromItem": ""
+      "fromItem": "",
+      "addToQuickRoll": false,
+      "modEffectTags": ""
     },
     "spell": {
       "spl": {
@@ -345,10 +351,13 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemEffects": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
-      "fromItem": ""
+      "fromItem": "",
+      "addToQuickRoll": false,
+      "modEffectTags": ""
     },
     "meleeAtk": {
       "mel": {
@@ -374,7 +383,8 @@
         "duringotf": "",
         "passotf": "",
         "failotf": "",
-        "originalName": ""
+        "originalName": "",
+        "modEffectTags": ""
       }
     },
     "rangedAtk": {
@@ -405,7 +415,8 @@
         "duringotf": "",
         "passotf": "",
         "failotf": "",
-        "originalName": ""
+        "originalName": "",
+        "modEffectTags": ""
       }
     }
   }

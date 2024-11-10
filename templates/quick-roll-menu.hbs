@@ -1,0 +1,136 @@
+<div class="quick-roll-menu" data-actor-id="{{actor.id}}">
+  <div class="quick-roll-blind-toggle" data-combatant-id="{{combatant.id}}" title="{{localize "GURPS.quickRoll"}}">
+      <div class="qr-blind qr-blue {{#if blindRoll}}active{{/if}}">
+        <i class="fas fa-eye-slash" title="{{ i18n 'GURPS.blindRollAsDefault'}}"></i>
+      </div>
+      <div class="qr-blind qr-green {{#unless blindRoll}}active{{/unless}}">
+        <i class="fas fa-eye" title="{{i18n 'GURPS.publicRollAsDefault'}}"></i>
+      </div>
+  </div>
+  {{#if (gt otherChecks.size 0)}}
+    <div class="quick-roll-section">
+      <h4>{{localize "GURPS.otherTab"}}</h4>
+      <div class="quick-roll-row">
+        <div class="quick-roll-hor">
+          {{#each otherChecks.data.checks as |check|}}
+            <button class="quick-roll-button sm" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+              <div><i class="{{check.symbol}}"></i></div>
+              <div>{{check.value}}</div>
+              <span class="tooltip">{{check.label}}-{{check.value}}</span>
+            </button>
+          {{/each}}
+        </div>
+        <div class="quick-roll-col mw25">
+          {{#each otherChecks.data.dmg as |check|}}
+            <button class="quick-roll-button sm dmg" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+              <div class="quick-roll-dmg"><i class="{{check.symbol}}"></i><span
+                style="margin-left: 4px;">{{check.value}}</span></div>
+              <span class="tooltip">{{check.label}}-{{check.value}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+  {{#if (gt attackChecks.size 0)}}
+  <div class="quick-roll-section">
+    <h4>{{localize "GURPS.attackTab"}}</h4>
+    <div class="quick-roll-row">
+      {{#each attackChecks.data.melee as |check|}}
+        <button class="quick-roll-button sm atk" data-otf="{{check.otf}}" data-skill="{{check.value}}" data-otf-damage="{{check.otfDamage}}" data-combatant-id="{{../combatant.id}}">
+          <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
+            <i class="fa-solid fa-hand-fist"></i>{{/if}}</div>
+          <div class="qr-line">
+            <div class="qr-label {{#if (gt ../attackChecks.size 4)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
+            <span class="qr-attack-value">{{check.value}}</span>
+          </div>
+          <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
+            ({{check.mode}}){{/if}}-{{check.value}}<br>{{i18n 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
+            <hr class="hr-notes">{{check.notes}}{{/if}}</span>
+        </button>
+      {{/each}}
+      {{#each attackChecks.data.ranged as |check|}}
+        <button class="quick-roll-button sm atk" data-otf="{{check.otf}}" data-skill="{{check.value}}" data-otf-damage="{{check.otfDamage}}" data-combatant-id="{{../combatant.id}}">
+          <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
+            <i class="fa-solid fa-bow-arrow"></i>{{/if}}</div>
+          <div class="qr-line">
+            <div class="qr-label {{#if (gt ../attackChecks.size 4)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
+            <span>{{check.value}}</span></div>
+          <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
+            ({{check.mode}}){{/if}}-{{check.value}}<br>{{i18n 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
+            <hr class="hr-notes">{{check.notes}}{{/if}}</span>
+        </button>
+      {{/each}}
+    </div>
+  {{/if}}
+  {{#if (gt defenseChecks.size 0)}}
+    <div class="quick-roll-section">
+      <h4>{{localize "GURPS.defenseTab"}}</h4>
+      <div class="quick-roll-row">
+        <div class="quick-roll-col flex4">
+          <button class="quick-roll-button lg" data-otf="{{defenseChecks.data.dodge.otf}}" data-combatant-id="{{combatant.id}}">
+            <div><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+            <div>{{defenseChecks.data.dodge.label}}-{{defenseChecks.data.dodge.value}}</div>
+            <span class="tooltip">{{defenseChecks.data.dodge.label}}-{{defenseChecks.data.dodge.value}}</span>
+          </button>
+        </div>
+        {{#each defenseChecks.data.parry as |check|}}
+          <button class="quick-roll-button sm" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+            <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
+              <i class="fa-solid fa-swords"></i>{{/if}}</div>
+            <div class="qr-line">
+              <div class="qr-label {{#if (gt ../defenseChecks.size 4)}}hidden{{/if}}">{{check.label}}-</div>
+              <span>{{check.value}}</span></div>
+            <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
+              ({{check.mode}}){{/if}}-{{check.value}}{{#if check.notes}}
+              <hr class="hr-notes">{{check.notes}}{{/if}}</span>
+          </button>
+        {{/each}}
+        {{#each defenseChecks.data.block as |check|}}
+          <button class="quick-roll-button sm" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+            <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
+              <i class="fa-solid fa-shield-blank"></i>{{/if}}</div>
+            <div class="qr-line">
+              <div class="qr-label {{#if (gt ../defenseChecks.size 4)}}hidden{{/if}}">{{check.label}}-</div>
+              <span>{{check.value}}</span></div>
+            <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
+              ({{check.mode}}){{/if}}-{{check.value}}{{#if check.notes}}
+              <hr class="hr-notes">{{check.notes}}{{/if}}</span>
+          </button>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+  {{#if (gt markedChecks.size 0)}}
+    <div class="quick-roll-section">
+      <h4>{{localize "GURPS.markedTab"}}</h4>
+      <div class="quick-roll-row">
+        {{#each markedChecks.data as |check|}}
+          <button class="quick-roll-button sm" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+            <div style="display: flex; align-items: center;">
+              {{#if check.img}}<img class="qr-sk-image" src="{{check.img}}" alt="{{check.label}}" />{{/if}}
+            <span {{#if check.isOTF}}class="qr-otf"{{/if}}>{{check.label}}{{#unless check.isOTF}}-{{check.value}}{{/unless}}</span>
+            </div>
+            <span class="tooltip">{{check.symbol}}:<br>{{check.label}}-{{check.value}}{{#if check.notes}}
+              <hr class="hr-notes">{{check.notes}}{{/if}}</span>
+          </button>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+  {{#if (gt attributeChecks.size 0)}}
+    <div class="quick-roll-section">
+      <h4>{{localize "GURPS.attributeTab"}}</h4>
+      <div class="quick-roll-row">
+        {{#each attributeChecks.data as |check|}}
+          <button class="quick-roll-button sm" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+            <div>{{check.symbol}}</div>
+            <div>{{check.value}}</div>
+            <span class="tooltip">{{check.label}}-{{check.value}}</span>
+          </button>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+</div>
+</div>

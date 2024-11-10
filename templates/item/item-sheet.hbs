@@ -1,31 +1,33 @@
 <form class="gga-app item-editor" autocomplete="off">
   <div class="gga-item-sheet-title color-{{item.type}}">
-  {{#if (eq itemType "equipment")}}
-    <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.equipment"}}</span></div>
+    {{#if (eq itemType "equipment")}}
+      <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.equipment"}}</span></div>
     {{/if}}
     {{#if (eq itemType "feature")}}
-    <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.advDisadvPerkQuirks"}}</span></div>
+      <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.advDisadvPerkQuirks"}}</span>
+      </div>
     {{/if}}
     {{#if (eq itemType "skill")}}
-    <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.skillsTab"}}</span></div>
+      <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.skillsTab"}}</span></div>
     {{/if}}
     {{#if (eq itemType "spell")}}
-    <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.spellsTab"}}</span></div>
+      <div><i class="fa fa-cogs itemdraggable"></i> <span class="first-cap">{{i18n "GURPS.spellsTab"}}</span></div>
     {{/if}}
   </div>
 
-    <div class="gurps-2col right-bias">
-      <div class="full-width">
-        <input
-          id="itemname"
-          type="text"
-          value="{{name}}"
-          class="title"
-          placeholder='{{i18n "GURPS.name"}}'
-          name="system.eqt.name"
-        />
-      </div>
+  <div class="gurps-2col right-bias">
+    <div class="full-width">
+      <input
+        id="itemname"
+        type="text"
+        value="{{name}}"
+        class="title"
+        placeholder='{{i18n "GURPS.name"}}'
+        name="system.eqt.name"
+      />
+    </div>
 
+    <div>
       <div class="img-display itemdraggable" style="background-image: url({{item.img}}); border: solid 1px black;">
         <img
           class="profile-img itemdraggable"
@@ -34,72 +36,84 @@
           title="{{#if name}}{{name}}{{else}}Image{{/if}}"
         />
       </div>
-
-      <div class="gga-group">
-        <h2>{{i18n "GURPS.attributes"}}</h2>
-        {{#if (eq itemType "equipment")}}
-        {{>items}}
-        {{/if}}
-        {{#if (eq itemType "feature")}}
-        {{>features}}
-        {{/if}}
-        {{#if (eq itemType "skill")}}
-        {{>skill}}
-        {{/if}}
-        {{#if (eq itemType "spell")}}
-        {{>spell}}
-        {{/if}}
+      <div class="add-quick-roll-option">
+        <input class="quick-roll gcs-input-sm25" name="system.addToQuickRoll" type="checkbox"
+               {{#if system.addToQuickRoll}}checked{{/if}} />
+        <div class="label">{{i18n "GURPS.addToQuickRoll"}}</div>
       </div>
     </div>
-    <hr />
-    <div>
-      <h2>{{i18n "GURPS.itemFeatures"}}</h2>
-      <div class="flexcol">
-        <nav class="gurps-sheet-tabs tabs gurps-tabs" data-group="sections">
-          <a class="item" data-tab="melee-tab"
-            ><i class="fas fa-fist-raised"></i>&nbsp;{{i18n "GURPS.melee"}}&nbsp;<span style="font-size: 80%"
-              >{{#if (length system.melee)}}({{length system.melee}}){{/if}}</span
-            ></a
-          >
-          <a class="item" data-tab="range-tab"
-            ><i class="fas fa-fighter-jet"></i>&nbsp;{{i18n "GURPS.ranged"}}&nbsp;<span style="font-size: 80%"
-              >{{#if (length system.ranged)}}({{length system.ranged}}){{/if}}</span
-            ></a
-          >
-          <a class="item" data-tab="spell-tab"
-            ><i class="fas fa-magic"></i>&nbsp;{{i18n "GURPS.spells"}}&nbsp;<span style="font-size: 80%"
-              >{{#if (length system.spells)}}({{length system.spells}}){{/if}}</span
-            ></a
-          >
-          <a class="item" data-tab="ads-tab"
-            ><i class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages"}}&nbsp;<span style="font-size: 80%"
-              >{{#if (length system.ads)}}({{length system.ads}}){{/if}}</span
-            ></a
-          >
-          <a class="item" data-tab="skill-tab"
-            ><i class="fas fa-snowboarding"></i>&nbsp;{{i18n "GURPS.skills"}}&nbsp;<span style="font-size: 80%"
-              >{{#if (length system.skills)}}({{length system.skills}}){{/if}}</span
-            ></a
-          >
-          <a class="item" data-tab="bonus-tab"
-            ><i class="fas fa-plus"></i>&nbsp;{{i18n "GURPS.bonuses"}}&nbsp;<span style="font-size: 80%"
-              >{{#if (length system.bonuses)}}(&checkmark;){{/if}}</span
-            ></a
-          >
-        </nav>
 
-        <section id="config-tabs" class="content">
-          <!-- melee tab -->
-          <div class="tab" data-tab="melee-tab" data-group="sections">
-            {{#each system.melee as | this key |}}
+
+    <div class="gga-group">
+      <h2>{{i18n "GURPS.attributes"}}</h2>
+      {{#if (eq itemType "equipment")}}
+        {{>items}}
+      {{/if}}
+      {{#if (eq itemType "feature")}}
+        {{>features}}
+      {{/if}}
+      {{#if (eq itemType "skill")}}
+        {{>skill}}
+      {{/if}}
+      {{#if (eq itemType "spell")}}
+        {{>spell}}
+      {{/if}}
+    </div>
+  </div>
+  <hr />
+  <div>
+    <h2>{{i18n "GURPS.itemFeatures"}}</h2>
+    <div class="flexcol">
+      <nav class="gurps-sheet-tabs tabs gurps-tabs" data-group="sections">
+        <a class="item" data-tab="melee-tab"
+        ><i class="fas fa-fist-raised"></i>&nbsp;{{i18n "GURPS.melee"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.melee)}}({{length system.melee}}){{/if}}</span
+        ></a
+        >
+        <a class="item" data-tab="range-tab"
+        ><i class="fas fa-fighter-jet"></i>&nbsp;{{i18n "GURPS.ranged"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.ranged)}}({{length system.ranged}}){{/if}}</span
+        ></a
+        >
+        <a class="item" data-tab="spell-tab"
+        ><i class="fas fa-magic"></i>&nbsp;{{i18n "GURPS.spells"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.spells)}}({{length system.spells}}){{/if}}</span
+        ></a
+        >
+        <a class="item" data-tab="ads-tab"
+        ><i class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.ads)}}({{length system.ads}}){{/if}}</span
+        ></a
+        >
+        <a class="item" data-tab="skill-tab"
+        ><i class="fas fa-snowboarding"></i>&nbsp;{{i18n "GURPS.skills"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.skills)}}({{length system.skills}}){{/if}}</span
+        ></a
+        >
+        <a class="item" data-tab="bonus-tab"
+        ><i class="fas fa-plus-minus"></i>&nbsp;{{i18n "GURPS.bonuses"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.bonuses)}}(&checkmark;){{/if}}</span
+        ></a
+        >
+        <a class="item" data-tab="effect-tab"
+        ><i class="fas fa-dice"></i>&nbsp;{{i18n "GURPS.effects"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.itemEffects)}}(&checkmark;){{/if}}</span
+        ></a
+        >
+      </nav>
+
+      <section id="config-tabs" class="content">
+        <!-- melee tab -->
+        <div class="tab" data-tab="melee-tab" data-group="sections">
+          {{#each system.melee as | this key |}}
             <div class="gga-group inputs">
               <h4 class="with-button">
                 {{i18n "GURPS.meleeAttack"}} {{#if mode}}({{mode}}){{/if}}<span
-                  class="delete button"
-                  data-path="system.melee"
-                  name="{{key}}"
-                  ><i class="fas fa-trash"></i
-                ></span>
+                class="delete button"
+                data-path="system.melee"
+                name="{{key}}"
+              ><i class="fas fa-trash"></i
+              ></span>
               </h4>
 
               <div class="label-value-row right-bias">
@@ -158,23 +172,23 @@
               </div>
             </div>
             <div class="vertical-gap"></div>
-            {{/each}}
-            <div class="button-bar">
-              <button id="add-melee"><i class="fas fa-check"></i> {{i18n "GURPS.addMeleeAttack"}}</button>
-            </div>
+          {{/each}}
+          <div class="button-bar">
+            <button id="add-melee"><i class="fas fa-check"></i> {{i18n "GURPS.addMeleeAttack"}}</button>
           </div>
+        </div>
 
-          <!-- range tab -->
-          <div class="tab" data-tab="range-tab" data-group="sections">
-            {{#each system.ranged as | this key |}}
+        <!-- range tab -->
+        <div class="tab" data-tab="range-tab" data-group="sections">
+          {{#each system.ranged as | this key |}}
             <div class="gga-group inputs">
               <h4 class="with-button">
                 {{i18n "GURPS.rangedAttack"}} {{#if mode}}({{mode}}){{/if}}<span
-                  class="delete button"
-                  data-path="system.ranged"
-                  name="{{key}}"
-                  ><i class="fas fa-trash"></i
-                ></span>
+                class="delete button"
+                data-path="system.ranged"
+                name="{{key}}"
+              ><i class="fas fa-trash"></i
+              ></span>
               </h4>
 
               <div class="label-value-row right-bias">
@@ -239,29 +253,33 @@
               </div>
             </div>
             <div class="vertical-gap"></div>
-            {{/each}}
-            <div class="button-bar">
-              <button id="add-ranged"><i class="fas fa-check"></i> {{i18n "GURPS.addRangedAttack"}}</button>
-            </div>
+          {{/each}}
+          <div class="button-bar">
+            <button id="add-ranged"><i class="fas fa-check"></i> {{i18n "GURPS.addRangedAttack"}}</button>
           </div>
+        </div>
 
-          <!-- bonus -->
-          <div class="tab" data-tab="bonus-tab" data-group="sections">
-            <div>{{i18n "GURPS.itemBonusText"}}</div>
-            <div><textarea class="notes" rows="6" name="system.bonuses">{{system.bonuses}}</textarea></div>
-          </div>
+        <!-- item effects -->
+        <div class="tab" data-tab="effect-tab" data-group="sections">
+          <div><textarea class="notes" rows="6" name="system.itemEffects" placeholder="{{i18n "GURPS.itemEffectsText"}}">{{system.itemEffects}}</textarea></div>
+        </div>
 
-          <!-- Spells -->
-          <div class="tab" data-tab="spell-tab" data-group="sections">
-            {{#each system.spells as | this key |}}
+        <!-- bonus -->
+        <div class="tab" data-tab="bonus-tab" data-group="sections">
+          <div><textarea class="notes" rows="6" name="system.bonuses" placeholder="{{i18n "GURPS.itemBonusText"}}">{{system.bonuses}}</textarea></div>
+        </div>
+
+        <!-- Spells -->
+        <div class="tab" data-tab="spell-tab" data-group="sections">
+          {{#each system.spells as | this key |}}
             <div class="gga-group inputs">
               <h4 class="with-button">
                 {{i18n "GURPS.spell"}} {{#if name}}({{name}}){{/if}}<span
-                  class="delete button"
-                  data-path="system.spells"
-                  name="{{key}}"
-                  ><i class="fas fa-trash"></i
-                ></span>
+                class="delete button"
+                data-path="system.spells"
+                name="{{key}}"
+              ><i class="fas fa-trash"></i
+              ></span>
               </h4>
 
               <div class="gurps-3col">
@@ -333,23 +351,23 @@
               </div>
             </div>
             <div class="vertical-gap"></div>
-            {{/each}}
-            <div class="button-bar">
-              <button id="add-spell"><i class="fas fa-check"></i> {{i18n "GURPS.addSpell"}}</button>
-            </div>
+          {{/each}}
+          <div class="button-bar">
+            <button id="add-spell"><i class="fas fa-check"></i> {{i18n "GURPS.addSpell"}}</button>
           </div>
+        </div>
 
-          <!-- Skills -->
-          <div class="tab" data-tab="skill-tab" data-group="sections">
-            {{#each system.skills as | this key |}}
+        <!-- Skills -->
+        <div class="tab" data-tab="skill-tab" data-group="sections">
+          {{#each system.skills as | this key |}}
             <div class="gga-group inputs">
               <h4 class="with-button">
                 {{i18n "GURPS.skill"}} {{#if name}}({{name}}){{/if}}<span
-                  class="delete button"
-                  data-path="system.skills"
-                  name="{{key}}"
-                  ><i class="fas fa-trash"></i
-                ></span>
+                class="delete button"
+                data-path="system.skills"
+                name="{{key}}"
+              ><i class="fas fa-trash"></i
+              ></span>
               </h4>
 
               <div class="gurps-3col">
@@ -391,23 +409,23 @@
               </div>
             </div>
             <div class="vertical-gap"></div>
-            {{/each}}
-            <div class="button-bar">
-              <button id="add-skill"><i class="fas fa-check"></i> {{i18n "GURPS.addSkill"}}</button>
-            </div>
+          {{/each}}
+          <div class="button-bar">
+            <button id="add-skill"><i class="fas fa-check"></i> {{i18n "GURPS.addSkill"}}</button>
           </div>
+        </div>
 
-          <!-- Advantages -->
-          <div class="tab" data-tab="ads-tab" data-group="sections">
-            {{#each system.ads as | this key |}}
+        <!-- Advantages -->
+        <div class="tab" data-tab="ads-tab" data-group="sections">
+          {{#each system.ads as | this key |}}
             <div class="gga-group inputs">
               <h4 class="with-button">
                 {{i18n "GURPS.advantage"}} {{#if name}}({{name}}){{/if}}<span
-                  class="delete button"
-                  data-path="system.ads"
-                  name="{{key}}"
-                  ><i class="fas fa-trash"></i
-                ></span>
+                class="delete button"
+                data-path="system.ads"
+                name="{{key}}"
+              ><i class="fas fa-trash"></i
+              ></span>
               </h4>
 
               <div class="gurps-3col">
@@ -429,12 +447,12 @@
               </div>
             </div>
             <div class="vertical-gap"></div>
-            {{/each}}
-            <div class="button-bar">
-              <button id="add-ads"><i class="fas fa-check"></i> {{i18n "GURPS.addAdvantage"}}</button>
-            </div>
+          {{/each}}
+          <div class="button-bar">
+            <button id="add-ads"><i class="fas fa-check"></i> {{i18n "GURPS.addAdvantage"}}</button>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
+  </div>
 </form>

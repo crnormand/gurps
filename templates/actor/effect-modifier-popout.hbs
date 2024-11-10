@@ -1,9 +1,19 @@
 <div class='gga-popup-window'>
-  <ul class='modifier-list'>
+  <table class='modifier-list me-info'>
+    <tbody>
     {{#each selfmodifiers}}
-      <li>{{{this}}}</li>
+      <tr class="me-line">
+        <td class="me-link" data-item-id="{{this.itemId}}">{{{this.link}}}</td>
+        <td class="me-at {{{this.itemType}}}"><span>{{{this.itemName}}}</span></td>
+        <td class="me-tag {{{this.tag}}}">
+          {{#each tags}}
+              <span>{{this}}</span>
+          {{/each}}
+        </td>
+      </tr>
     {{/each}}
-  </ul>
+    </tbody>
+  </table>
   {{#if targetmodifiers}}
     <div class='heading' style='border: none;'>{{i18n 'GURPS.targetedModifiers'}}</div>
     <ul class='modifier-list'>
@@ -20,8 +30,6 @@
     <ul class='modifier-list'>
       {{#each targetmodifiers}}
         <li>{{{this}}}</li>
-      {{else}}
-        <li style='color: darkgrey;'>None</li>
       {{/each}}
     </ul>
   {{/each}}

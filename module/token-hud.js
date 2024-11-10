@@ -1,4 +1,5 @@
 import Maneuvers from './actor/maneuver.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
 
 // Our override of the TokenHUD; it removes the maneuver tokens from the list of status effects
 export default class GURPSTokenHUD extends TokenHUD {
@@ -15,5 +16,27 @@ export default class GURPSTokenHUD extends TokenHUD {
       }
     }
     return data
+  }
+}
+
+export class QuickRollSettings extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      title: game.i18n.localize('GURPS.settingUseQuickRolls'),
+      id: 'quick-roll-Settings',
+      template: 'systems/gurps/templates/quick-roll-Settings.hbs',
+      width: 400,
+      closeOnSubmit: true,
+    })
+  }
+
+  getData() {
+    return {
+      settings: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS),
+    }
+  }
+
+  async _updateObject(event, formData) {
+    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS, formData)
   }
 }

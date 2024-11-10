@@ -265,6 +265,7 @@ export class NamedCost extends Named {
     this.itemid = ''
     this.itemInfo = {}
     this.fromItem = ''
+    this.addToQuickRoll = false
   }
 }
 
@@ -340,6 +341,7 @@ export class Skill extends Leveled {
     super(n1, lvl)
     this.type = '' // "DX/E";
     this.relativelevel = '' // "DX+1";
+    this.modEffectTags = ''
   }
 
   static get actorSystemKey() {
@@ -382,10 +384,12 @@ export class Skill extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemEffects: this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.addToQuickRoll || false,
       },
     }
   }
@@ -449,6 +453,7 @@ export class Spell extends Leveled {
     this.casttime = ''
     this.difficulty = ''
     this.relativelevel = '' // "IQ+1"
+    this.modEffectTags = ''
   }
   static get actorSystemKey() {
     return 'spells'
@@ -496,10 +501,12 @@ export class Spell extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemEffects: this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.addToQuickRoll || false,
       },
     }
   }
@@ -614,10 +621,12 @@ export class Advantage extends NamedCost {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemEffects: this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.addToQuickRoll || false,
       },
     }
   }
@@ -676,6 +685,7 @@ export class Attack extends Named {
     this.st = ''
     this.mode = ''
     this.level = ''
+    this.modEffectTags = ''
 
     Object.assign(Leveled.prototype, _AnimationMixin)
   }
@@ -775,10 +785,12 @@ export class Melee extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemEffects: this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.addToQuickRoll || false,
       },
     }
   }
@@ -891,10 +903,12 @@ export class Ranged extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemEffects: this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.addToQuickRoll || false,
       },
     }
   }
@@ -1055,12 +1069,14 @@ export class Equipment extends Named {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemEffects: this.itemEffects || system.itemEffects || '',
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.addToQuickRoll || false,
       },
     }
   }
@@ -1131,6 +1147,7 @@ export class Reaction {
   constructor(m, s) {
     this.modifier = m || ''
     this.situation = s || ''
+    this.modEffectTags = ''
   }
 }
 

@@ -81,6 +81,9 @@ import { JournalEntryPageGURPS } from './pdf/index.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import { GGADebugger } from '../utils/debugger.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
+import { TokenActions } from './token-actions.js'
+import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
+import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 
 let GURPS = undefined
 
@@ -160,7 +163,7 @@ if (!globalThis.GURPS) {
   GURPS.lastInjuryRolls = {} // mapped by actor and message id
 
   GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
-    let tmp = { ...chatdata }
+    let tmp = { ...chatdata, actorid, tokenid }
     if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
     if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
     GURPS.lastTargetedRoll = tmp // keep the local copy
@@ -589,7 +592,7 @@ if (!globalThis.GURPS) {
      * @param {GurpsActor|null} data.actor
      * @param {string[]} data.targets
      */
-    damage({ action, event, actor, targets }) {
+    async damage({ action, event, actor, targets }) {
       // accumulate action fails if there's no selected actor
       if (action.accumulate && !actor) {
         ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -598,7 +601,7 @@ if (!globalThis.GURPS) {
 
       if (action.accumulate) {
         // store/increment value on GurpsActor
-        actor.accumulateDamageRoll(action)
+        await actor.accumulateDamageRoll(action)
         return true
       }
 
@@ -606,21 +609,71 @@ if (!globalThis.GURPS) {
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      DamageChat.create(
-        actor || game.user,
-        action.formula,
-        action.damagetype,
-        event,
-        null,
-        targets,
-        action.extdamagetype,
-        action.hitlocation
+      const canAddTaggedRollModifiers = game.settings.get(
+        Settings.SYSTEM_NAME,
+        Settings.SETTING_AUTO_ADD_TAGGED_MODIFIERS
       )
-      if (action.next) {
-        return GURPS.performAction(action.next, actor, event, targets)
-      }
+      if (actor && canAddTaggedRollModifiers) await actor.addTaggedRollModifiers('', {}, action.att)
 
-      return true
+      let canRoll = false
+      const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+      if (showRollDialog) {
+        // Get Actor Info
+        const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+        const tokenImg = token?.document.texture.src || actor?.img
+        const tokenName = token?.name || actor?.name
+        const damageRoll = action.formula
+        const damageType = action.damagetype
+
+        const dialog = new Dialog({
+          title: game.i18n.localize('GURPS.confirmRoll'),
+          content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
+            tokenImg,
+            tokenName,
+            damageRoll,
+            damageType,
+          }),
+          buttons: {
+            roll: {
+              icon: '<i class="fas fa-check"></i>',
+              label: 'Roll',
+              callback: () => {
+                canRoll = true
+              },
+            },
+            cancel: {
+              icon: '<i class="fas fa-times"></i>',
+              label: 'Cancel',
+              callback: async () => {
+                await GURPS.ModifierBucket.clear()
+              },
+            },
+          },
+          default: 'roll',
+          render: html => {
+            html.closest('.window-app').css('height', 'auto')
+          },
+        })
+        await dialog.render(true)
+      } else {
+        canRoll = true
+      }
+      if (canRoll) {
+        await DamageChat.create(
+          actor || game.user,
+          action.formula,
+          action.damagetype,
+          event,
+          null,
+          targets,
+          action.extdamagetype,
+          action.hitlocation
+        )
+        if (action.next) {
+          return GURPS.performAction(action.next, actor, event, targets)
+        }
+        return true
+      }
     },
     /**
      * @param {Object} data
@@ -711,6 +764,7 @@ if (!globalThis.GURPS) {
       dam.action.costs = action.costs
       dam.action.mod = action.mod
       dam.action.desc = action.desc
+      dam.action.att = att
       return performAction(dam.action, actor, event, targets)
     },
     /**
@@ -727,9 +781,10 @@ if (!globalThis.GURPS) {
      * @param {JQuery.Event|null} data.event
      */
     roll({ action, actor, event }) {
-      // const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${
-      //   !!action.desc ? ' ' + action.desc : ''
-      // }]`
+      let canRoll = true
+      actor.canRoll(action).then(r => (canRoll = r))
+      if (!canRoll) return false
+
       const prefix = i18n_f('GURPS.chatRolling', {
         dice: !!action.displayformula ? action.displayformula : action.formula,
         desc: !!action.desc ? ' ' + action.desc : '',
@@ -770,6 +825,7 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        action,
       })
     },
     /**
@@ -800,7 +856,7 @@ if (!globalThis.GURPS) {
       return doRoll({
         actor,
         formula: d6ify(df + action.formula),
-        prefix: i18n_f('GURPs.chatRolling', {
+        prefix: i18n_f('GURPS.chatRolling', {
           dice: action.derivedformula,
           desc: action.desc,
         }),
@@ -882,6 +938,7 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: opt,
+        action,
       })
     },
     /**
@@ -938,6 +995,7 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        action,
       })
     },
     /**
@@ -996,6 +1054,7 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        action,
       })
     },
     /**
@@ -1068,6 +1127,7 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: opt,
+        action,
       })
     },
     /**
@@ -1122,7 +1182,7 @@ if (!globalThis.GURPS) {
       else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt })
+      return doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
     },
 
     /*
@@ -1436,7 +1496,7 @@ if (!globalThis.GURPS) {
       formula = d6ify(formula)
     }
 
-    doRoll({ actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt })
+    await doRoll({ actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt })
   }
   GURPS.handleRoll = handleRoll
 
@@ -2104,7 +2164,6 @@ if (!globalThis.GURPS) {
 
       //   html.find('.directory-footer').append(button)
 
-
       // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
       const hasMeme = game.modules.get('markdown-editor')?.active
       const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
@@ -2282,11 +2341,11 @@ if (!globalThis.GURPS) {
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-      (GURPS.DamageTables.woundModifiers[it.alias] = {
-        multiplier: 1,
-        label: it.name,
-        resource: true,
-      })
+        (GURPS.DamageTables.woundModifiers[it.alias] = {
+          multiplier: 1,
+          label: it.name,
+          resource: true,
+        })
     )
 
     // Sorry, removed the ts-ignores during editing.
@@ -2331,8 +2390,8 @@ if (!globalThis.GURPS) {
           content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-              .split('\n')
-              .join('<br>')}</mark><br>&nbsp;<br>`,
+            .split('\n')
+            .join('<br>')}</mark><br>&nbsp;<br>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-angle-double-down"></i>',
@@ -2354,7 +2413,7 @@ if (!globalThis.GURPS) {
     })
 
     // @ts-ignore
-    Hooks.on('renderCombatTracker', function (_a, html, _c) {
+    Hooks.on('renderCombatTracker', async function (_a, html, _c) {
       // use class 'bound' to know if the drop event is already bound
       if (!html.hasClass('bound')) {
         html.addClass('bound')
@@ -2382,10 +2441,16 @@ if (!globalThis.GURPS) {
             let updates = []
             if (!!target && !!src) {
               if (target.initiative < src.initiative) {
-                updates.push({ _id: dropData.combatant, initiative: target.initiative - 0.00001 })
+                updates.push({
+                  _id: dropData.combatant,
+                  initiative: target.initiative - 0.00001,
+                })
                 console.log('Moving ' + src.name + ' below ' + target.name)
               } else {
-                updates.push({ _id: dropData.combatant, initiative: target.initiative + 0.00001 })
+                updates.push({
+                  _id: dropData.combatant,
+                  initiative: target.initiative + 0.00001,
+                })
                 console.log('Moving ' + src.name + ' above ' + target.name)
               }
               game.combat.updateEmbeddedDocuments('Combatant', updates)
@@ -2412,6 +2477,27 @@ if (!globalThis.GURPS) {
           })
         })
       }
+
+      // Resolve Quick Roll and Maneuver buttons
+      const combatants = html.find('.combatant')
+      for (let combatantElement of combatants) {
+        const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
+        const token = canvas.tokens.get(combatant.token.id)
+
+        // Get Combat Initiative
+        const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
+        // Add Quick Roll Menu
+        combatantElement = await addQuickRollButton(combatantElement, combatant, token)
+        // Add Maneuver Menu
+        combatantElement = await addManeuverMenu(combatantElement, combatant, token)
+
+        // Add Tooltip to Token Image
+        const tokenImage = $(combatantElement).find('.token-image')
+        tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
+      }
+      // Add Quick Roll and Maneuvers Menu Listeners
+      addQuickRollListeners()
+      addManeuverListeners()
     })
 
     // @ts-ignore
@@ -2615,4 +2701,37 @@ if (!globalThis.GURPS) {
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
+
+  Hooks.on('combatRound', async (combat, round) => {
+    if (round.round === 1 && round.turn === 0) {
+      console.log(`Combat started: ${combat.id} - resetting token actions`)
+      await resetTokenActions(combat)
+    }
+    await handleCombatTurn(combat, round)
+  })
+
+  Hooks.on('combatTurn', async (combat, turn, combatant) => {
+    await handleCombatTurn(combat, turn)
+  })
+
+  Hooks.on('deleteCombat', async combat => {
+    console.log(`Combat ended: ${combat.id} - restarting token actions`)
+    await resetTokenActions(combat)
+  })
+}
+
+const handleCombatTurn = async (combat, round) => {
+  const nextCombatant = combat.nextCombatant
+  console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
+  const token = canvas.tokens.get(nextCombatant.token.id)
+  const actions = await TokenActions.fromToken(token)
+  if (round.round > 1) await actions.newTurn()
+}
+
+const resetTokenActions = async combat => {
+  for (const combatant of combat.combatants) {
+    const token = canvas.tokens.get(combatant.token.id)
+    const actions = await TokenActions.fromToken(token)
+    await actions.clear()
+  }
 }

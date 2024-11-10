@@ -15,7 +15,7 @@ import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
-import {
+import Maneuvers, {
   MOVE_NONE,
   MOVE_ONE,
   MOVE_STEP,
@@ -32,6 +32,8 @@ import { multiplyDice } from '../utilities/damage-utils.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { ActorImporter } from './actor-importer.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { TokenActions } from '../token-actions.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -259,7 +261,8 @@ export class GurpsActor extends Actor {
     if (!this.system.equippedblock) this.system.equippedblock = this.getEquippedBlock()
     // Catch for older actors that may not have these values set.
     if (!this.system.currentmove) this.system.currentmove = parseInt(this.system.basicmove.value.toString())
-    if (!this.system.currentdodge && this.system.dodge.value) this.system.currentdodge = parseInt(this.system.dodge.value.toString())
+    if (!this.system.currentdodge && this.system.dodge.value)
+      this.system.currentdodge = parseInt(this.system.dodge.value.toString())
     if (!this.system.currentflight) this.system.currentflight = parseFloat(this.system.basicspeed.value.toString()) * 2
 
     // Look for Defense bonuses.
@@ -330,6 +333,77 @@ export class GurpsActor extends Actor {
     })
   }
 
+  /**
+   * Remove Item Effects for informed reference
+   * @param {string} reference - item.id or system.<path>
+   * @returns {Promise<void>}
+   */
+  async removeModEffectFor(reference) {
+    let userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
+    let newMods = userMods.filter(m => !m.includes(reference) || m.includes('@man:'))
+    await this.internalUpdate({ 'system.conditions.usermods': newMods })
+  }
+
+  /**
+   * Add Actor Modifier Effects from Character Sheet
+   * @param {object} commit
+   * @returns {object}
+   */
+  applyItemModEffects(commit) {
+    const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
+    let newMods = []
+
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // First Resolve Actor Items
+      for (const item of this.items.contents) {
+        const itemData = GurpsItem.asGurpsItem(item)
+        if (itemData.system.itemEffects?.length > 0) {
+          const allEffects = itemData.system.itemEffects.split('\n').map(m => m.trim())
+          for (const effect of allEffects) {
+            const fullDesc = `${effect} @${item.id}`
+            if (!userMods.includes(fullDesc)) {
+              newMods.push(fullDesc)
+            }
+          }
+        }
+      }
+      // Then Melee and Ranged Actor Components
+      const paths = ['melee', 'ranged']
+      for (const path of paths) {
+        recurselist(this.system[path], (e, _k, _d) => {
+          if (!!e.itemEffects) {
+            const allEffects = e.itemEffects.split('\n').map(m => m.trim())
+            for (const effect of allEffects) {
+              const fullDesc = `${effect} @system.${path}.${_k}`
+              if (!userMods.includes(fullDesc)) {
+                newMods.push(fullDesc)
+              }
+            }
+          }
+        })
+      }
+    } else {
+      const paths = ['melee', 'ranged', 'ads', 'skills', 'spells', 'equipment.carried', 'equipment.other']
+      for (const path of paths) {
+        recurselist(this.system[path], (e, _k, _d) => {
+          if (!!e.itemEffects) {
+            const allEffects = e.itemEffects.split('\n').map(m => m.trim())
+            for (const effect of allEffects) {
+              const fullDesc = `${effect} @system.${path}.${_k}`
+              if (!userMods.includes(fullDesc)) {
+                newMods.push(fullDesc)
+              }
+            }
+          }
+        })
+      }
+    }
+    return {
+      ...commit,
+      'system.conditions.usermods': [...userMods, ...newMods],
+    }
+  }
+
   _applyItemBonuses() {
     let pi = (/** @type {string | undefined} */ n) => (!!n ? parseInt(n) : 0)
     /** @type {string[]} */
@@ -339,7 +413,11 @@ export class GurpsActor extends Actor {
     for (const item of this.items.contents) {
       let itemData = GurpsItem.asGurpsItem(item).system
 
-      if (itemData.equipped && itemData.carried && !!itemData.bonuses && !gids.includes(itemData.globalid)) {
+      if (
+        (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
+        !!itemData.bonuses &&
+        !gids.includes(itemData.globalid)
+      ) {
         gids.push(itemData.globalid)
         let bonuses = itemData.bonuses.split('\n')
 
@@ -612,7 +690,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -639,9 +717,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -711,9 +789,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -855,6 +933,7 @@ export class GurpsActor extends Actor {
       }
     }
 
+    if (!Array.isArray(data) && !data._id) data._id = this.id
     return await super.update(data, context)
   }
 
@@ -1206,8 +1285,10 @@ export class GurpsActor extends Actor {
     // add a new entry at the end.
     let empty = Object.values(moveData).length === 0
     GURPS.put(move, {
-      mode: mode, basic: basic ?? this.system.basicmove.value * 2,
-      enhanced: enhanced, default: empty || isDefault
+      mode: mode,
+      basic: basic ?? this.system.basicmove.value * 2,
+      enhanced: enhanced,
+      default: empty || isDefault,
     })
 
     // remove existing entries
@@ -1630,7 +1711,8 @@ export class GurpsActor extends Actor {
         }
       }
     }
-    if (!!commit) await this.internalUpdate(commit, { diff: false })
+    commit = this.applyItemModEffects(commit)
+    if (!!commit) await this.update(commit, { diff: false })
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
@@ -1811,7 +1893,20 @@ export class GurpsActor extends Actor {
     await this._removeItemElement(itemid, 'ads')
     await this._removeItemElement(itemid, 'skills')
     await this._removeItemElement(itemid, 'spells')
+    await this._removeItemEffect(itemid)
     this.ignoreRender = saved
+  }
+
+  /**
+   * Remove Item Effect from Actor system.conditions.usermods
+   *
+   * @param {string} itemId
+   * @private
+   */
+  async _removeItemEffect(itemId) {
+    let userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
+    const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
+    await this.update({ 'system.conditions.usermods': mods })
   }
 
   /**
@@ -2436,6 +2531,7 @@ export class GurpsActor extends Actor {
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
         itemInfo,
+        addToQuickRoll: item.system.addToQuickRoll,
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -2658,8 +2754,9 @@ export class GurpsActor extends Actor {
       // Exclude than rewrite the hitlocations on Actor
       await this.internalUpdate({ 'system.-=hitlocations': null })
       await this.update({ 'system.hitlocations': actorLocations })
-      const msg = `${this.name}: DR ${drFormula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
-        }`
+      const msg = `${this.name}: DR ${drFormula} applied to ${
+        affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
+      }`
       return { changed, msg, info: msg }
     }
   }
@@ -2679,5 +2776,398 @@ export class GurpsActor extends Actor {
     const template = Handlebars.partials['dr-tooltip']
     const compiledTemplate = Handlebars.compile(template)
     return new Handlebars.SafeString(compiledTemplate(context))
+  }
+
+  findByOriginalName(name) {
+    let item = this.items.find(i => i.system.originalName === name)
+    if (!item) item = this.items.find(i => i.system.name === name)
+    if (!!item) return item
+
+    const actorSysKeys = ['ads', 'skills', 'spells']
+    for (let key of actorSysKeys) {
+      let sysKey = this._findSysKeyForId('originalName', name, key)
+      if (!sysKey) sysKey = this._findSysKeyForId('name', name, key)
+      if (sysKey) return foundry.utils.getProperty(this, sysKey)
+      const camelCaseName = name
+        .split(' ')
+        .map(word => word.toUpperCase())
+        .join('')
+      const localizedKey = `GURPS.trait${camelCaseName}`
+      const localizedName = game.i18n.localize(localizedKey)
+      if (localizedName && localizedName !== localizedKey) {
+        sysKey = this._findSysKeyForId('originalName', localizedName, key)
+        if (!sysKey) sysKey = this._findSysKeyForId('name', localizedName, key)
+        if (sysKey) return foundry.utils.getProperty(this, sysKey)
+      }
+    }
+  }
+
+  /**
+   * Return all Checks of the given type.
+   * @param {string} checkType
+   * @returns {object} result
+   * @returns {any[]} result.data - The checks
+   * @returns {{integer}} result.size - The number of checks
+   */
+  getChecks(checkType) {
+    const quickRollSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
+    if (!quickRollSettings[checkType]) {
+      return { data: [], size: 0 }
+    }
+    let result = {}
+    let checks = []
+    const data = {}
+    let size = 0
+    switch (checkType) {
+      case 'attributeChecks':
+        const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']
+        for (const key of keys) {
+          const attribute = this.system.attributes[key]
+          checks.push({
+            symbol: game.i18n.localize(`GURPS.attributes${key}`),
+            label: game.i18n.localize(`GURPS.attributes${key}NAME`),
+            value: attribute.import,
+            otf: key,
+          })
+        }
+        result.data = checks
+        result.size = checks.length
+        break
+      case 'otherChecks':
+        const icons = {
+          checks: {
+            vision: 'fa-solid fa-eye',
+            hearing: 'fa-solid fa-ear',
+            frightcheck: 'fa-solid fa-face-scream',
+            tastesmell: 'fa-regular fa-nose',
+            touch: 'fa-solid fa-hand-point-up',
+          },
+          dmg: {
+            thrust: 'fa-solid fa-sword',
+            swing: 'fa-solid fa-mace',
+          },
+        }
+        for (const key of Object.keys(icons)) {
+          let checks = []
+          for (const subKey of Object.keys(icons[key])) {
+            const value = this.system[subKey]
+            checks.push({
+              symbol: icons[key][subKey],
+              label: game.i18n.localize(`GURPS.${subKey}`),
+              value,
+              otf: subKey,
+            })
+            size += 1
+          }
+          data[key] = checks
+        }
+        result.data = data
+        result.size = size
+        break
+      case 'attackChecks':
+        const attacks = ['melee', 'ranged']
+        for (const key of attacks) {
+          let checks = []
+          recurselist(this.system[key], (attack, _k, _d) => {
+            if (attack.addToQuickRoll) {
+              let comp = this.findByOriginalName(attack.originalName || attack.name)
+              if (!comp) comp = this.findEquipmentByName(attack.name)[0]
+              const img = this.items.get(comp?.itemid)?.img
+              const symbol = game.i18n.localize(`GURPS.${key}`)
+              let otf = `${key.slice(0, 1)}:"${attack.name}"`
+              if (attack.mode) otf += ` (${attack.mode})`
+              let oftName = attack.name
+              if (attack.mode) oftName += ` (${attack.mode})`
+              checks.push({
+                symbol,
+                img,
+                label: attack.name,
+                value: attack.import,
+                damage: attack.damage,
+                mode: attack.mode,
+                otf: `${key.slice(0, 1)}:"${oftName}"`,
+                otfDamage: `d:${oftName}`,
+              })
+              size += 1
+            }
+          })
+          data[key] = checks
+        }
+        result.data = data
+        result.size = size
+        break
+      case 'defenseChecks':
+        recurselist(this.system.encumbrance, (enc, _k, _d) => {
+          if (enc.current) {
+            data.dodge = {
+              symbol: 'dodge',
+              label: game.i18n.localize(`GURPS.dodge`),
+              value: enc.dodge,
+              otf: `dodge`,
+            }
+          }
+        })
+        const defenses = ['parry', 'block']
+        for (const key of defenses) {
+          let checks = []
+          recurselist(this.system.melee, (defense, _k, _d) => {
+            if (parseInt(defense[key] || 0) > 0 && defense.addToQuickRoll) {
+              let comp = this.findByOriginalName(defense.originalName || defense.name)
+              if (!comp) comp = this.findEquipmentByName(defense.name)[0]
+              const img = this.items.get(comp?.itemid)?.img
+              const symbol = game.i18n.localize(`GURPS.${key}`)
+              let otf = `${key.slice(0, 1)}:"${defense.name}"`
+              if (defense.mode) otf += ` (${defense.mode})`
+              checks.push({
+                symbol,
+                img,
+                label: defense.name,
+                value: defense[key],
+                mode: defense.mode,
+                otf,
+              })
+              size += 1
+            }
+          })
+          data[key] = checks
+        }
+        result.data = data
+        result.size = size + 1
+        break
+      case 'markedChecks':
+        const traits = ['skills', 'spells', 'ads']
+
+        for (const traitType of traits) {
+          recurselist(this.system[traitType], (trait, _k, _d) => {
+            if (trait.addToQuickRoll) {
+              let comp = this.findByOriginalName(trait.originalName || trait.name)
+              const img = this.items.get(comp?.itemid)?.img
+              const symbol = game.i18n.localize(`GURPS.${traitType.slice(0, -1)}`)
+              if (trait.import) {
+                checks.push({
+                  symbol,
+                  img,
+                  label: trait.name,
+                  value: trait.import,
+                  notes: trait.notes,
+                  otf: `${traitType.slice(0, 2)}:"${trait.name}"`,
+                  isOTF: false,
+                })
+              }
+              const possibleOTFs = trait.notes.match(/\[.*?\]/g) || []
+              for (const otf of possibleOTFs) {
+                const parsed = parselink(otf)
+                if (parsed) {
+                  checks.push({
+                    symbol,
+                    img,
+                    label: parsed.text.replace(/[\[\]]/g, ''),
+                    value: '',
+                    notes: trait.notes,
+                    otf: `/r ${parsed.text}`,
+                    isOTF: true,
+                  })
+                }
+              }
+            }
+          })
+        }
+        result.data = checks
+        result.size = checks.length
+        break
+    }
+    return result
+  }
+
+  /**
+   * Resolve and add tagged Modifier Effects.
+   *
+   * System will lookup each roll modifiers inside system.conditions.usermods
+   * against the Items.modEffectTags and add the modifiers to the ModifierBucket.
+   *
+   * There is some special tags that can be used:
+   *
+   * #all - Apply to all rolls
+   * #combat - Only during combat
+   * #no-combat - Only outside of combat
+   * #hit - Added to all attack rolls
+   * #damage - Added to all damage rolls
+   * #check - Added to all attribute checks
+   *
+   * @param chatThing
+   * @param optionalArgs
+   * @returns {Promise<void>}
+   */
+  async addTaggedRollModifiers(chatThing, optionalArgs, attack) {
+    // First get Item or Attribute Effect Tags
+    let modEffectTags, itemRef
+    if (optionalArgs.obj) {
+      // Item or Actor Component
+      modEffectTags =
+        (optionalArgs.obj?.modEffectTags || '')
+          .split(',')
+          .map(it => it.trim())
+          .map(it => it.toLowerCase()) || []
+      modEffectTags = [...modEffectTags, ...['all', 'hit']]
+      itemRef = optionalArgs.obj.name || optionalArgs.obj.originalName
+    } else if (chatThing) {
+      // Targeted Roll or Attribute Check
+      modEffectTags = [
+        // Default tags
+        'all',
+        'check',
+        // Default tags from chatThing
+        chatThing.split('/[')[0].toLowerCase().replace(' ', '-'),
+        chatThing.split('@').pop().toLowerCase().replace(' ', '-').slice(0, -1),
+      ]
+    } else {
+      // Damage roll from OTF or Attack
+      modEffectTags = ['all', 'damage']
+      const attackMods = attack?.modEffectTags || []
+      modEffectTags = [...modEffectTags, ...attackMods]
+      itemRef = attack?.name || attack?.originalName
+    }
+
+    // Then get the modifiers from actor user mods
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
+    const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id)
+
+    for (const userMod of userMods) {
+      const userModsTags = (userMod.match(/#(\S+)/g) || []).map(it => it.slice(1).toLowerCase())
+      for (const tag of userModsTags) {
+        let canApply = modEffectTags.includes(tag)
+        if (userMod.includes('#maneuver')) {
+          canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
+        }
+        if (actorInCombat) {
+          canApply = canApply && !modEffectTags.includes('no-combat')
+        } else {
+          canApply = canApply && !modEffectTags.includes('combat')
+        }
+        if (canApply) {
+          const regex = userMod.includes('#maneuver')
+            ? new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+            : new RegExp(/^[+-]\d+(.*?)(?=[#@(])/)
+          const desc = userMod.match(regex)?.[1].trim() || ''
+          const mod = userMod.match(/[-+]\d+/)?.[0] || '0'
+          await GURPS.ModifierBucket.addModifier(mod, desc)
+        }
+      }
+    }
+  }
+
+  async canRoll(action) {
+    let result = {
+      canRoll: true,
+    }
+    let token
+    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === this.id)
+    if (actorTokens.length === 1) {
+      token = actorTokens[0]
+    } else {
+      token = canvas.tokens.controlled?.[0]
+    }
+    if (token && game.combat?.isActive) {
+      const actions = await TokenActions.fromToken(token)
+      const isAttack = action.type === 'attack'
+      const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
+      if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
+        const maneuver = Maneuvers.getManeuver(actions.currentManeuver)
+        const maneuverLabel = game.i18n.localize(maneuver.label)
+        const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
+        const message = game.i18n.format('GURPS.errorCannotRollWithManeuver', { roll, maneuver: maneuverLabel })
+        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTINGS_ALLOW_ROLL_BASED_ON_MANEUVER)) {
+          result = {
+            canRoll: false,
+            message,
+          }
+        }
+      }
+    }
+    return result
+  }
+
+  findUsingAction(action, chatting) {
+    const originType = action ? action.type : 'undefined'
+    let result = {}
+    let name, mode
+    switch (originType) {
+      case 'attack':
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+?)\)/)?.[1]
+        const path = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
+        recurselist(this.system[path], (obj, _k, _d) => {
+          if ((obj.originalName === name || obj.name === name) && (!mode || obj.mode === mode)) {
+            result = {
+              name: obj.name,
+              uuid: obj.uuid,
+              itemId: obj.itemid,
+              fromItem: obj.fromItem,
+              pageRef: obj.pageref,
+            }
+          }
+        })
+        break
+
+      case 'weapon-block':
+      case 'weapon-parry':
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+?)\)/)?.[1]
+        recurselist(this.system.melee, (melee, _k, _d) => {
+          if ((melee.originalName === name || melee.name === name) && (!mode || melee.mode === mode)) {
+            result = {
+              name: melee.name,
+              uuid: melee.uuid,
+              itemId: melee.itemid,
+              fromItem: melee.fromItem,
+              pageRef: melee.pageref,
+            }
+          }
+        })
+        break
+      case 'skill-spell':
+        const item = this.findByOriginalName(action.name)
+        result = {
+          name: item.name,
+          uuid: item.uuid,
+          itemId: item.itemid,
+          fromItem: item.fromItem,
+          pageRef: item.pageref,
+        }
+        break
+
+      case 'attribute':
+        let attrName = action?.overridetxt
+        if (!attrName) attrName = game.i18n.localize(`GURPS.${action.attrkey.toLowerCase()}`)
+        if (attrName.startsWith('GURPS')) name = game.i18n.localize(`GURPS.asttributes${action.attrkey}NAME`)
+        result = {
+          name: attrName,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+        break
+
+      case 'controlroll':
+        result = {
+          name: action.overridetxt || action.orig,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+        break
+
+      default:
+        result = {
+          name: chatting.split('/[')[0],
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+    }
+    return result
   }
 }
