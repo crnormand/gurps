@@ -56,7 +56,7 @@ export default class GurpsToken extends Token {
     if (effects && effects.length > 0) {
       // restore the original token effects in case we've changed them
       // @ts-ignore
-      effects.forEach(it => (it.icon = it.getFlag('gurps', 'icon')))
+      effects.forEach(it => (it.img = it.getFlag('gurps', 'icon')))
 
       // GM and Owner always see the exact maneuver.. Otherwise:
       if (!game.user?.isGM && !this.isOwner) {
@@ -97,6 +97,7 @@ export default class GurpsToken extends Token {
   }
 
   /**
+   * Deprecated -- in favor of Actor.toggleStatusEffect
    * @override
    * @param {*} effect
    * @param {*} options
@@ -124,7 +125,7 @@ export default class GurpsToken extends Token {
   }
 
   isPostureEffect(effect) {
-    return effect.img && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
+    return effect?.img && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
   }
 
   async setEffectActive(name, active) {

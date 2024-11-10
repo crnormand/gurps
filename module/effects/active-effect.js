@@ -51,10 +51,9 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _options
    * @param {*} _user
    */
-  static async _apply(actor, change, _options, _user) {
+  static _apply(actor, change, _options, _user) {
     if (change.key === 'system.conditions.maneuver') actor.replaceManeuver(change.value)
     else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
-    // else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
     else console.debug(change)
   }
 
@@ -76,7 +75,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _delete(_effect, _data, _userId) {
-    console.debug('delete ' + _effect)
+    // console.debug('delete ' + _effect)
   }
 
   /**
@@ -117,8 +116,21 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
     this.context = context
     this.chatmessages = []
+  }
 
-    if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
+  /** @inheritDoc */
+  _onCreate(data, options, userId) {
+    super._onCreate(data, options, userId)
+
+    if (game.users.get(userId).isSelf) {
+      if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
+    }
+  }
+
+  async _preCreate(data, options, user) {
+    if (user.isSelf) {
+      console.log('preCreate', data, options, user)
+    }
   }
 
   get endCondition() {
