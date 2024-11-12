@@ -24,7 +24,6 @@ export async function doRoll({
   if (actor && canAddTaggedRollModifiers) await actor.addTaggedRollModifiers(chatthing, optionalArgs)
 
   const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
-  let canRoll = false
   if (showRollDialog) {
     // Get Actor Info
     const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
@@ -38,42 +37,61 @@ export async function doRoll({
     totalMods = Math.abs(totalMods)
 
     // Get Target Info
-    const targetData = actor.findUsingAction(action, chatthing)
+    const targetData = actor.findUsingAction(action, chatthing, formula, thing)
     const itemId = targetData.fromItem || targetData.itemId
     const item = actor.items.get(itemId)
     const itemImage = item?.img || ''
-    let itemIcon, itemColor
+    let itemIcon, itemColor, rollType
     let targetRoll = `${targetData.name}-${origtarget}`
+
+    let template = 'confirmation-roll.hbs'
+
+    // Special Case: thrust and swing buttons are formula based, not targeted rolls
+    let damageRoll, damageType
+    if (!action && !chatthing && targetData.name === formula) {
+      const damage = prefix.match(/\[(.+)]/)?.[1] || ''
+      damageType = damage === 'thrust' ? 'thr' : 'sw'
+      damageRoll = formula
+      template = 'confirmation-damage-roll.hbs'
+    }
+
     switch (action?.type || 'undefined') {
       case 'attack':
         if (action.isMelee) {
           itemIcon = 'fas fa-sword'
           itemColor = 'rgba(12,79,119)'
+          rollType = game.i18n.localize('GURPS.melee')
         } else {
           itemIcon = 'fas fa-crosshairs'
           itemColor = 'rgba(12,79,119)'
+          rollType = game.i18n.localize('GURPS.ranged')
         }
         break
       case 'weapon-parry':
         itemIcon = 'fas fa-swords'
         itemColor = '#9a5f16'
+        rollType = game.i18n.localize('GURPS.parry')
         break
       case 'weapon-block':
         itemIcon = 'fas fa-shield-halved'
         itemColor = '#9a5f16'
+        rollType = game.i18n.localize('GURPS.block')
         break
       case 'skill-spell':
         if (chatthing.toLowerCase().includes('@sk:')) {
           itemIcon = 'fas fa-book'
           itemColor = '#015401'
+          rollType = game.i18n.localize('GURPS.skill')
         } else {
           itemIcon = 'fas fa-spell'
           itemColor = '#6f63d9'
+          rollType = game.i18n.localize('GURPS.spell')
         }
         break
       case 'controlroll':
         itemIcon = 'fas fa-head-side-gear'
         itemColor = '#c5360b'
+        rollType = game.i18n.localize('GURPS.ControlRoll')
         break
       case 'attribute':
         itemColor = '#620707'
@@ -81,51 +99,70 @@ export async function doRoll({
         switch (ref) {
           case 'ST':
             itemIcon = 'fas fa-dumbbell'
+            rollType = game.i18n.localize('GURPS.attributesSTNAME')
             break
           case 'DX':
             itemIcon = 'fas fa-running'
+            rollType = game.i18n.localize('GURPS.attributesDXNAME')
             break
           case 'HT':
             itemIcon = 'fas fa-heart'
+            rollType = game.i18n.localize('GURPS.attributesHTNAME')
             break
           case 'IQ':
+            itemIcon = 'fas fa-brain'
+            rollType = game.i18n.localize('GURPS.attributesIQNAME')
+            break
           case 'WILL':
             itemIcon = 'fas fa-brain'
+            rollType = game.i18n.localize('GURPS.attributesWILLNAME')
             break
           case 'Vision':
             itemIcon = 'fas fa-eye'
+            rollType = game.i18n.localize('GURPS.vision')
             break
           case 'PER':
             itemIcon = 'fas fa-signal-stream'
+            rollType = game.i18n.localize('GURPS.attributesPERNAME')
             break
           case 'Fright Check':
             itemIcon = 'fas fa-face-scream'
+            rollType = game.i18n.localize('GURPS.frightcheck')
             break
           case 'Hearing':
             itemIcon = 'fas fa-ear'
+            rollType = game.i18n.localize('GURPS.hearing')
             break
           case 'Taste Smell':
             itemIcon = 'fas fa-nose'
+            rollType = game.i18n.localize('GURPS.tastesmell')
             break
           case 'Touch':
             itemIcon = 'fa-solid fa-hand-point-up'
+            rollType = game.i18n.localize('GURPS.touch')
             break
           case 'Dodge':
             itemIcon = 'fas fa-person-running-fast'
+            rollType = game.i18n.localize('GURPS.dodge')
             break
           default:
             itemIcon = 'fas fa-dice'
+            rollType = !!targetData?.name
+              ? targetData.name
+              : thing
+                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+                : formula
         }
-        targetRoll = `${targetData.name}-${origtarget}`
         break
       default:
         itemIcon = 'fas fa-dice'
         itemColor = '#015401'
+        rollType = thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1) : formula
     }
 
     const dialog = new Dialog({
       title: game.i18n.localize('GURPS.confirmRoll'),
-      content: await renderTemplate('systems/gurps/templates/confirmation-roll.hbs', {
+      content: await renderTemplate(`systems/gurps/templates/${template}`, {
         formula: formula,
         thing: thing,
         target: origtarget,
@@ -142,13 +179,26 @@ export async function doRoll({
         itemIcon,
         targetRoll,
         itemColor,
+        damageRoll,
+        damageType,
+        rollType,
       }),
       buttons: {
         roll: {
           icon: '<i class="fas fa-check"></i>',
           label: 'Roll',
-          callback: () => {
-            canRoll = true
+          callback: async () => {
+            return await _doRoll({
+              actor,
+              formula,
+              targetmods,
+              prefix,
+              thing,
+              chatthing,
+              origtarget,
+              optionalArgs,
+              fromUser,
+            })
           },
         },
         cancel: {
@@ -161,12 +211,12 @@ export async function doRoll({
       },
       default: 'roll',
     })
+    // Before open a new dialog, we need to make sure
+    // all other dialogs are closed, because bucket must be reset
+    // before we start a new roll
+    await $(document).find('.dialog-button.cancel').click().promise()
     await dialog.render(true)
   } else {
-    canRoll = true
-  }
-
-  if (canRoll) {
     return await _doRoll({
       actor,
       formula,

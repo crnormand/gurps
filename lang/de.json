@@ -990,5 +990,7 @@
   "GURPS.settingAutoAddTaggedModifiers": "Automatisch Tagged Modifikatoren hinzufügen",
   "GURPS.settingHintAutoAddTaggedModifiers": "Wenn aktiviert, wird das System automatisch Tagged Modifikatoren zum Wurf hinzufügen.",
   "GURPS.itemEffectsText": "Gib Modifikator Effekt ein (einer pro Zeile) im Format: <modifier> <#tag> [<#tag>...].<br>Beispiele: -1 auf DX #DX #combat, +2 Per #resting, -1 auf alle DX-basierten Würfe #disease #combat.",
-  "GURPS.combatInitiative": "Kampf Initiative"
+  "GURPS.combatInitiative": "Kampf Initiative",
+  "GURPS.modEffectTags": "Modifikator Tags",
+  "GURPS.ControlRoll": "Kontrollwurf"
 }

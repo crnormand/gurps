@@ -60,10 +60,13 @@ export const addManeuverMenu = async (html, combatant, token) => {
   // Prepare tooltip
   const actions = await TokenActions.fromToken(token)
   const maxMove = actions.getMaxMove()
+  const label = Maneuvers.getManeuver(actions.currentManeuver).label
+  const allIcons = TokenActions.getManeuverIcons(actions.currentManeuver)
   const maneuverTooltip = $(
     await renderTemplate('systems/gurps/templates/maneuver-button-tooltip.hbs', {
-      actorManeuver,
+      label,
       maxMove,
+      allIcons,
     })
   )
   $(html).append(maneuverTooltip)

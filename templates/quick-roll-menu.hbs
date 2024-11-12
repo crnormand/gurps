@@ -41,7 +41,7 @@
           <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
             <i class="fa-solid fa-hand-fist"></i>{{/if}}</div>
           <div class="qr-line">
-            <div class="qr-label {{#if (gt ../attackChecks.size 4)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
+            <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
             <span class="qr-attack-value">{{check.value}}</span>
           </div>
           <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
@@ -54,7 +54,7 @@
           <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
             <i class="fa-solid fa-bow-arrow"></i>{{/if}}</div>
           <div class="qr-line">
-            <div class="qr-label {{#if (gt ../attackChecks.size 4)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
+            <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
             <span>{{check.value}}</span></div>
           <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
             ({{check.mode}}){{/if}}-{{check.value}}<br>{{i18n 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
@@ -79,7 +79,7 @@
             <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
               <i class="fa-solid fa-swords"></i>{{/if}}</div>
             <div class="qr-line">
-              <div class="qr-label {{#if (gt ../defenseChecks.size 4)}}hidden{{/if}}">{{check.label}}-</div>
+              <div class="qr-label {{#if (gt ../defenseChecks.size 6)}}hidden{{/if}}">{{check.label}}-</div>
               <span>{{check.value}}</span></div>
             <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
               ({{check.mode}}){{/if}}-{{check.value}}{{#if check.notes}}

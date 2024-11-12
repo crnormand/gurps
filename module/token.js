@@ -192,7 +192,7 @@ export default class GurpsToken extends Token {
       }
       // Finally update Token Actions
       const actions = await TokenActions.fromToken(this)
-      await actions.updateManeuver(maneuver)
+      await actions.selectManeuver(maneuver)
     }
   }
 

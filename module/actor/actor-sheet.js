@@ -1213,7 +1213,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
-      ['name', 'notes', 'pageref'],
+      ['name', 'notes', 'pageref', 'itemEffects'],
       ['points']
     )
   }
@@ -1304,14 +1304,17 @@ export class GurpsActorSheet extends ActorSheet {
               if (!!q) obj.addToQuickRoll = q.is(':checked')
               if (!!u) obj.save = u.is(':checked')
               await actor.removeModEffectFor(path)
+              await actor.internalUpdate({ [path]: obj })
               const commit = actor.applyItemModEffects({})
-              await actor.internalUpdate({ ...commit, [path]: obj })
-              if (canvas.tokens.controlled.length > 0) {
-                await canvas.tokens.controlled[0].document.setFlag(
-                  'gurps',
-                  'lastUpdate',
-                  new Date().getTime().toString()
-                )
+              if (commit) {
+                await actor.internalUpdate(commit)
+                if (canvas.tokens.controlled.length > 0) {
+                  await canvas.tokens.controlled[0].document.setFlag(
+                    'gurps',
+                    'lastUpdate',
+                    new Date().getTime().toString()
+                  )
+                }
               }
             },
           },

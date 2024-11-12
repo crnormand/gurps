@@ -615,7 +615,6 @@ if (!globalThis.GURPS) {
       )
       if (actor && canAddTaggedRollModifiers) await actor.addTaggedRollModifiers('', {}, action.att)
 
-      let canRoll = false
       const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
       if (showRollDialog) {
         // Get Actor Info
@@ -637,8 +636,21 @@ if (!globalThis.GURPS) {
             roll: {
               icon: '<i class="fas fa-check"></i>',
               label: 'Roll',
-              callback: () => {
-                canRoll = true
+              callback: async () => {
+                await DamageChat.create(
+                  actor || game.user,
+                  action.formula,
+                  action.damagetype,
+                  event,
+                  null,
+                  targets,
+                  action.extdamagetype,
+                  action.hitlocation
+                )
+                if (action.next) {
+                  return GURPS.performAction(action.next, actor, event, targets)
+                }
+                return true
               },
             },
             cancel: {
@@ -654,11 +666,12 @@ if (!globalThis.GURPS) {
             html.closest('.window-app').css('height', 'auto')
           },
         })
+        // Before open a new dialog, we need to make sure
+        // all other dialogs are closed, because bucket must be reset
+        // before we start a new roll
+        await $(document).find('.dialog-button.cancel').click().promise()
         await dialog.render(true)
       } else {
-        canRoll = true
-      }
-      if (canRoll) {
         await DamageChat.create(
           actor || game.user,
           action.formula,

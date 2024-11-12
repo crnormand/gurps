@@ -1173,5 +1173,7 @@
   "GURPS.settingAutoAddTaggedModifiers": "Ajouter Automatiquement les Modificateurs Étiquetés",
   "GURPS.settingHintAutoAddTaggedModifiers": "Si coché, le système ajoutera automatiquement les modificateurs étiquetés au jet.",
   "GURPS.itemEffectsText": "Entrez l'Effet du Modificateur (un par ligne) en utilisant le format : <modifier> <#tag> [<#tag>...].<br>Exemples : -1 à DX #DX #combat, +2 Per #repos, -1 à tous les jets basés sur DX #maladie #combat.",
-  "GURPS.combatInitiative": "Initiative de Combat"
+  "GURPS.combatInitiative": "Initiative de Combat",
+  "GURPS.modEffectTags": "Tags de Modificateurs",
+  "GURPS.ControlRoll": "Jet de Contrôle"
 }

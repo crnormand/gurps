@@ -235,7 +235,7 @@ export class Named extends _Base {
   /**
    * Populate saved Item info stored on Actor.
    *
-   * This actor.system.itemInfo is populated only if you
+   * This actor.system.backupItemInfo is populated only if you
    * disable the `Import Player data as Foundry Items` and
    * import the actor again. The idea is to maintain on these data
    * any changes the Item have which the Actor Component does not
@@ -384,12 +384,13 @@ export class Skill extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemEffects: this.itemEffects || system.itemEffects || '',
+        itemEffects: this.itemInfo?.itemEffects || this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
-        addToQuickRoll: this.addToQuickRoll || false,
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modEffectTags: this.itemInfo?.modEffectTags || this.modEffectTags || '',
       },
     }
   }
@@ -501,12 +502,13 @@ export class Spell extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemEffects: this.itemEffects || system.itemEffects || '',
+        itemEffects: this.itemInfo?.itemEffects || this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
-        addToQuickRoll: this.addToQuickRoll || false,
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modEffectTags: this.itemInfo?.modEffectTags || this.modEffectTags || '',
       },
     }
   }
@@ -621,12 +623,13 @@ export class Advantage extends NamedCost {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemEffects: this.itemEffects || system.itemEffects || '',
+        itemEffects: this.itemInfo?.itemEffects || this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
-        addToQuickRoll: this.addToQuickRoll || false,
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modEffectTags: this.itemInfo?.modEffectTags || this.modEffectTags || '',
       },
     }
   }
@@ -785,12 +788,13 @@ export class Melee extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemEffects: this.itemEffects || system.itemEffects || '',
+        itemEffects: this.itemInfo?.itemEffects || this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
-        addToQuickRoll: this.addToQuickRoll || false,
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modEffectTags: this.itemInfo?.modEffectTags || this.modEffectTags || '',
       },
     }
   }
@@ -903,12 +907,13 @@ export class Ranged extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemEffects: this.itemEffects || system.itemEffects || '',
+        itemEffects: this.itemInfo?.itemEffects || this.itemEffects || system.itemEffects || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
-        addToQuickRoll: this.addToQuickRoll || false,
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modEffectTags: this.itemInfo?.modEffectTags || this.modEffectTags || '',
       },
     }
   }
@@ -1069,14 +1074,15 @@ export class Equipment extends Named {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemEffects: this.itemEffects || system.itemEffects || '',
+        itemEffects: this.itemInfo?.itemEffects || this.itemEffects || system.itemEffects || '',
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
-        addToQuickRoll: this.addToQuickRoll || false,
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modEffectTags: this.itemInfo?.modEffectTags || this.modEffectTags || '',
       },
     }
   }

@@ -986,6 +986,8 @@
   "GURPS.settingHintAutoAddTaggedModifiers": "If checked, the system will automatically add tagged modifiers to the roll.",
   "GURPS.itemEffectsText": "Enter Modifier Effect (one per line) using format: <modifier> <#tag> [<#tag>...].<br>Examples: -1 to DX #DX #combat, +2 Per #resting, -1 to all DX-based rolls #disease #combat.",
   "GURPS.combatInitiative": "Combat Initiative",
+  "GURPS.modEffectTags": "Effect Mod. Tags",
+  "GURPS.ControlRoll": "Control Roll",
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Color Character Sheet",
   "GURPS.settingColorSheetMenuHint": "Color Character Sheet Settings",

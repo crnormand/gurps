@@ -2617,10 +2617,15 @@ button.equipmentbutton:last-child {
 .mv-icons {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  padding: 0 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 0 12px;
   font-size: 1.3em;
   margin-bottom: 4px;
+  width: 100%;
+}
+.mv-icons i {
+  flex-grow: 1
 }
 
 /**
@@ -2772,11 +2777,22 @@ button.equipmentbutton:last-child {
   line-height: 1.1;
   border-bottom: 1px solid #772e21;
 }
+.image-column {
+  display: flex;
+  flex-direction: column;
+  max-width: 138px;
+}
 .add-quick-roll-option {
   display: flex;
   margin-top: 5px;
   flex-direction: row;
   align-items: center;
+}
+
+.image-column .label {
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .qr-line {
@@ -2952,8 +2968,9 @@ button.equipmentbutton:last-child {
   padding: 4px;
   text-align: center;
 }
+
 .cr-result-math {
-  padding: 8px 30px 0px 30px;
+  padding: 0px 25px;
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -2961,6 +2978,18 @@ button.equipmentbutton:last-child {
   font-size: 1.8em;
   color: darkgrey;
   line-height: 0.2;
+}
+.cr-result-type {
+  margin-top: -5px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3em;
+  color: darkgrey;
+  line-height: 0.9;
 }
 .cr-result-total {
   font-size: 5em;
@@ -2989,7 +3018,7 @@ button.equipmentbutton:last-child {
   background-color: #242b65;
 }
 .cr-result-section {
- padding-top: 20px;
+ padding-top: 25px;
 }
 
 .cr-result-section,

@@ -1,5 +1,14 @@
 import { i18n, recurselist } from '../lib/utilities.js'
-import Maneuvers from './actor/maneuver.js'
+import Maneuvers, {
+  MOVE_FULL,
+  MOVE_HALF,
+  MOVE_NONE,
+  MOVE_ONE,
+  MOVE_ONETHIRD,
+  MOVE_STEP,
+  MOVE_TWO_STEPS,
+  MOVE_TWOTHIRDS,
+} from './actor/maneuver.js'
 
 /**
  * # Actor Actions Class
@@ -225,7 +234,31 @@ export class TokenActions {
   }
 
   getMaxMove() {
-    return this.actor.system.currentmove
+    let currentMove = this.actor.system.currentmove
+    const maneuver = Maneuvers.getManeuver(this.currentManeuver || 'do_nothing')
+    const move = maneuver.flags.gurps.move
+    switch (move) {
+      case MOVE_NONE:
+        return 0
+      case MOVE_ONE:
+        return 1
+      case MOVE_STEP:
+        return game.i18n.format('GURPS.moveStep', { reason: game.i18n.localize(maneuver.label) })
+      case MOVE_TWO_STEPS:
+        return game.i18n.format('GURPS.moveTwoSteps', { reason: game.i18n.localize(maneuver.label) })
+      case MOVE_ONETHIRD:
+        return Math.max(Math.floor(currentMove / 3), 1)
+      case MOVE_HALF:
+        return Math.max(Math.floor(currentMove / 2), 1)
+      case MOVE_TWOTHIRDS:
+        return Math.max(Math.floor((currentMove / 3) * 2), 1)
+      case MOVE_FULL:
+        if (this.currentManeuver === 'move' && this.lastManeuver === 'move') {
+          return currentMove + Math.max(Math.floor(currentMove * 0.2), 1)
+        }
+        return currentMove
+    }
+    return currentMove
   }
 
   /**
@@ -294,12 +327,12 @@ export class TokenActions {
   /**
    * Remove Effect Modifiers created by the Maneuver.
    *
-   * Currently, we need to implicit classify the modifiers by the '|' separator in effect description.
+   * We found the maneuver modifiers by the '#maneuver' tag in effect description.
    *
    * @returns {Promise<void>}
    */
   async removeModifiers() {
-    const allModifiers = await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
+    const allModifiers = (await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')) || []
     const nonManeuverModifiers = allModifiers.filter(m => !m.includes('#maneuver'))
     await this.actor.update({ 'system.conditions.usermods': nonManeuverModifiers })
   }
@@ -307,7 +340,8 @@ export class TokenActions {
   /**
    * Add Effect Modifiers created by the Maneuver.
    *
-   * We need to implicit classify the modifiers by the '|' separator in effect description.
+   * We mark the maneuver modifiers with the '#maneuver' tag in effect description.
+   * And to the source reference, we use the '@man:<maneuverName>' identifier.
    *
    * @returns {Promise<void>}
    */
@@ -367,7 +401,7 @@ export class TokenActions {
    * @param {Maneuver} maneuver
    * @returns {Promise<void>}
    */
-  async updateManeuver(maneuver) {
+  async selectManeuver(maneuver) {
     this.currentManeuver = maneuver.flags.gurps.name
     console.info(`Select Maneuver: '${this.currentManeuver}' for Token: ${this.token.name}`)
 
@@ -547,7 +581,7 @@ export class TokenActions {
     const half = `<i class="fa-solid fa-lg fa-person-running can-do-icon" title="Half Move"></i>`
     const full = `<i class="fa-solid fa-lg fa-rabbit-running can-do-icon" title="Full Move"></i>`
     const noMove = `<i class="fa-solid fa-ban cant-do-icon" title="No Move"></i>`
-    const canAttack = `<i class="fa-solid fa-swords can-do-icon" title="Can Attack"></i>`
+    const canAttack = `<i class="fa-solid fa-sword can-do-icon" title="Can Attack"></i>`
     const NoAttack = `<i class="fa-solid fa-ban cant-do-icon" title="Can Not Attack"></i>`
     const canDefend = `<i class="fa-solid fa-shield-check can-do-icon" title="Can Defend"></i>`
     const NoDefense = `<i class="fa-solid fa-ban cant-do-icon" title="Can Not Defend"></i>`

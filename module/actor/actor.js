@@ -197,6 +197,20 @@ export class GurpsActor extends Actor {
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
     await this.syncLanguages()
+
+    // If using Foundry Items we can remove Modifier Effects from Actor Components
+    const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      const validMods = userMods.filter(m => !m.includes('@system.'))
+      await this.update({ 'system.conditions.usermods': validMods })
+    } else {
+      // If not using Foundry Items, we can remove Modifier Effects from Item Effects
+      const validMods = userMods.filter(m => m.includes('@system.') || m.includes('@man:') || m.includes('@custom'))
+      await this.update({ 'system.conditions.usermods': validMods })
+    }
+    if (canvas.tokens.controlled.length > 0) {
+      await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
+    }
   }
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
@@ -385,7 +399,9 @@ export class GurpsActor extends Actor {
     } else {
       const paths = ['melee', 'ranged', 'ads', 'skills', 'spells', 'equipment.carried', 'equipment.other']
       for (const path of paths) {
-        recurselist(this.system[path], (e, _k, _d) => {
+        const fullPath = `system.${path}`
+        const data = foundry.utils.getProperty(this, fullPath)
+        recurselist(data, (e, _k, _d) => {
           if (!!e.itemEffects) {
             const allEffects = e.itemEffects.split('\n').map(m => m.trim())
             for (const effect of allEffects) {
@@ -2532,6 +2548,7 @@ export class GurpsActor extends Actor {
         parentuuid: actorComp.parentuuid,
         itemInfo,
         addToQuickRoll: item.system.addToQuickRoll,
+        modEffectTags: item.system.modEffectTags,
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -3087,7 +3104,21 @@ export class GurpsActor extends Actor {
     return result
   }
 
-  findUsingAction(action, chatting) {
+  /**
+   * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatting - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
+   */
+  findUsingAction(action, chatting, formula, thing) {
     const originType = action ? action.type : 'undefined'
     let result = {}
     let name, mode
@@ -3139,7 +3170,7 @@ export class GurpsActor extends Actor {
       case 'attribute':
         let attrName = action?.overridetxt
         if (!attrName) attrName = game.i18n.localize(`GURPS.${action.attrkey.toLowerCase()}`)
-        if (attrName.startsWith('GURPS')) name = game.i18n.localize(`GURPS.asttributes${action.attrkey}NAME`)
+        if (attrName.startsWith('GURPS')) attrName = game.i18n.localize(`GURPS.attributes${action.attrkey}NAME`)
         result = {
           name: attrName,
           uuid: null,
@@ -3161,7 +3192,7 @@ export class GurpsActor extends Actor {
 
       default:
         result = {
-          name: chatting.split('/[')[0],
+          name: thing ? thing : chatting ? chatting.split('/[')[0] : formula,
           uuid: null,
           itemId: null,
           fromItem: null,
