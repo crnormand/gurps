@@ -1,10 +1,11 @@
 import GurpsWiring from '../gurps-wiring.js'
-import { i18n, i18n_f, sanitize } from '../../lib/utilities.js'
+import { i18n, i18n_f, recurselist, sanitize } from '../../lib/utilities.js'
 import { gurpslink } from '../../module/utilities/gurpslink.js'
 import { parselink } from '../../lib/parselink.js'
 import { RulerGURPS } from '../../lib/ranges.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
@@ -82,7 +83,11 @@ export class EffectModifierPopout extends Application {
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
           let obj = {}
           if (itemReference.includes('system.')) {
-            obj = foundry.utils.getProperty(this._token.actor, itemReference)
+            if (itemReference.includes('.conditionalmods.')) {
+              obj.name = game.i18n.localize('GURPS.conditionalMods')
+            } else {
+              obj = foundry.utils.getProperty(this._token.actor, itemReference)
+            }
           } else if (itemReference.match(/\w{3}:/)) {
             const refType = itemReference.match(/(\w{3}):/)[1]
             const refValue = itemReference.match(/\w{3}:(\S+)/)[1]
@@ -195,11 +200,23 @@ export class EffectModifierPopout extends Application {
     if (actor) {
       const userMods = foundry.utils.getProperty(actor, 'system.conditions.usermods') || []
       const customMods = userMods.filter(it => it.includes('@custom'))
-      const commit = await actor.applyItemModEffects({})
-      const newMods = [...commit['system.conditions.usermods'], ...customMods]
+      const itemMods = actor.applyItemModEffects({})
+      let sheetMods = []
+
+      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      if (taggedSettings.checkConditionals) {
+        const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
+        recurselist(conditionalMods, (e, _k, _d) => {
+          const mod = parseInt(e.modifier) || 0
+          const signal = mod > 0 ? '+' : '-'
+          const source = `system.conditionalmods.${_k}`
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+        })
+      }
+      const newMods = [...itemMods['system.conditions.usermods'], ...customMods, ...sheetMods]
       await actor.internalUpdate({ 'system.conditions.usermods': newMods })
       // Check if combat
-      if (game.combat) {
+      if (!!game.combat.isActive) {
         const actions = await TokenActions.fromToken(this.getToken())
         await actions.addModifiers()
       }
@@ -265,6 +282,10 @@ export class EffectModifierPopout extends Application {
     let text = sanitize(el.innerHTML)
     if (text.includes('#maneuver')) return
     const itemId = $(el).closest('.me-link').data().itemId
+    if (itemId.includes('system.')) {
+      this._token.actor.sheet?.render(true)
+      return
+    }
     if (!!itemId && itemId !== 'custom') {
       const item = this._token.actor.items.get(itemId)
       if (item) {
@@ -308,7 +329,7 @@ export class EffectModifierPopout extends Application {
     if (t && t.actor) {
       mod += ' (' + i18n('GURPS.equipmentUserCreated') + ')'
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
-      m.push(mod)
+      m.push(`${mod} @custom`)
       t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
     } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
   }
@@ -320,5 +341,51 @@ export class EffectModifierPopout extends Application {
 
   async closeApp(options) {
     super.close(options)
+  }
+}
+
+export class TaggedModifierSettings extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      title: game.i18n.localize('GURPS.settingUseTaggedModifiers'),
+      id: 'use-tagged-modifiers',
+      template: 'systems/gurps/templates/tagged-modifier-settings.hbs',
+      width: 500,
+      closeOnSubmit: true,
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.content', initial: 'all-rolls-tab' }],
+    })
+  }
+
+  getData() {
+    return {
+      ...game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS),
+    }
+  }
+
+  async _updateObject(event, formData) {
+    const cleanData = Object.keys(formData).reduce((acc, key) => {
+      if (typeof formData[key] === 'string') {
+        if (key.toLowerCase().includes('combat')) {
+          acc[key] = formData[key]
+            .split(',')
+            .map(it => it.trim())
+            .filter(it => !!it)
+            .map(it => it.toLowerCase())
+            .map(it => it.replace(/\W/g, ''))[0]
+        } else {
+          acc[key] = formData[key]
+            .split(',')
+            .map(it => it.trim())
+            .filter(it => !!it)
+            .map(it => it.toLowerCase())
+            .map(it => it.replace(/\W/g, ''))
+            .join(', ')
+        }
+      } else {
+        acc[key] = formData[key]
+      }
+      return acc
+    }, {})
+    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
   }
 }

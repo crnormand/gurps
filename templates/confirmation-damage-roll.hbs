@@ -4,7 +4,13 @@
     <div class="cr-token-name">{{tokenName}}</div>
   </div>
   <div class="cr-damage-section">
-    <div class="cr-damage-formula">{{damageRoll}}</div>
+    <div>
+      <div id="cr-damage" class="cr-damage-formula">{{damageRoll}}</div>
+      <div class="cr-damage-section">
+        <div id="cr-formula" class="cr-damage-roll">{{targetRoll}}
+        <span id="cr-bucket" >{{bucketRoll}}</span></div>
+      </div>
+    </div>
     <div class="cr-damage-type"><span>{{damageType}}</span></div>
   </div>
 </div>

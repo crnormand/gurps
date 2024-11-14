@@ -2857,7 +2857,7 @@ button.equipmentbutton:last-child {
 /**
     ***********************************
     *                                 *
-    * Modifier Effects Popout         *
+    * Tagged Modifier Effects         *
     *                                 *
     ***********************************
  */
@@ -2907,6 +2907,9 @@ button.equipmentbutton:last-child {
 .me-at.notfound span {
   background-color: rgba(20, 119, 180, 0.5);
 }
+.me-at.conditionalmods span {
+  background-color: rgb(94, 110, 12);
+}
 .me-at.combat span {
   background-color: #772e21;
 }
@@ -2919,12 +2922,15 @@ button.equipmentbutton:last-child {
 .me-at.ranged span {
   background-color: #9a5f16;
 }
+.me-at.skills span,
 .me-at.skill span {
   background-color: #015401;
 }
+.me-at.spells span,
 .me-at.spell span {
   background-color: #772e21;
 }
+.me-at.ads span,
 .me-at.feature span {
   background-color: #6f63d9;
 }
@@ -2933,6 +2939,57 @@ button.equipmentbutton:last-child {
 }
 .me-at.maneuver span {
   background-color: #c5360b;
+}
+.me-mod-tips {
+  margin: 4px;
+  width: 100%;
+  color: rgba(38, 31, 29, 0.72);
+}
+.me-mod-tips span {
+  margin-left: 4px;
+  font-size: 0.9em;
+}
+#use-tagged-modifiers .flexcol {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 400px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.tm-content {
+  width: 100%;
+}
+#use-tagged-modifiers .flexcol .gurps-tabs {
+  display: flex;
+}
+#use-tagged-modifiers .flexcol .gurps-tabs a {
+  text-transform: uppercase;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+#use-tagged-modifiers .gurps-2col.right-bias {
+  grid-template-columns: 50% 50%;
+}
+#use-tagged-modifiers .gga-app button {
+  width: 100%;
+  max-height: 33px;
+}
+.tm-check {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 6px;
+}
+#use-tagged-modifiers .flexcol .content label {
+  font-size: 0.8em;
+  color: rgb(65, 64, 62);
+}
+#use-tagged-modifiers .flexcol .content label input {
+  font-size: 1.3em;
+  color: #191814;
 }
 /**
     ***********************************
@@ -2980,7 +3037,7 @@ button.equipmentbutton:last-child {
   line-height: 0.2;
 }
 .cr-result-type {
-  margin-top: -5px;
+  margin-top: 6px;
   display: flex;
   width: 100%;
   justify-content: center;
@@ -2992,6 +3049,7 @@ button.equipmentbutton:last-child {
   line-height: 0.9;
 }
 .cr-result-total {
+  margin-top: 14px;
   font-size: 5em;
   font-weight: bold;
   color: white;
@@ -3018,7 +3076,7 @@ button.equipmentbutton:last-child {
   background-color: #242b65;
 }
 .cr-result-section {
- padding-top: 25px;
+ padding: 15px 10px;
 }
 
 .cr-result-section,
@@ -3065,4 +3123,58 @@ button.equipmentbutton:last-child {
   text-shadow: 2px 2px 3px black;
   text-align: center;
   justify-content: center;
+}
+.cr-damage-roll {
+  display: flex;
+  width: 100%;
+  margin: -5px 0 0 -10px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: darkgrey;
+  line-height: 0.9;
+  border-top: darkgrey 2px solid;
+  padding-top: 6px;
+}
+#cr-bucket {
+  margin-left: 7px;
+}
+#cr-total {
+  position: relative;
+  border-top: darkgrey 2px solid;
+  border-bottom: darkgrey 2px solid;
+  line-height: 1.05;
+}
+.cr-tooltip {
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 110;
+  top: 20%; /* Position the tooltip above the button */
+  left: 38%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  width: 100px;
+}
+.cr-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Arrow at the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.5) transparent transparent transparent;
+}
+#cr-total:hover ~ .cr-tooltip {
+  visibility: visible;
+  opacity: 1;
+  z-index: 110;
+  font-size: 0.8em;
+  line-height: 1.1;
 }

@@ -361,10 +361,11 @@ export class GurpsActor extends Actor {
   /**
    * Add Actor Modifier Effects from Character Sheet
    * @param {object} commit
+   * @param {boolean} append
    * @returns {object}
    */
-  applyItemModEffects(commit) {
-    const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
+  applyItemModEffects(commit, append = false) {
+    const userMods = append ? foundry.utils.getProperty(this.system, 'conditions.usermods') || [] : []
     let newMods = []
 
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
@@ -1727,7 +1728,7 @@ export class GurpsActor extends Actor {
         }
       }
     }
-    commit = this.applyItemModEffects(commit)
+    commit = this.applyItemModEffects(commit, true)
     if (!!commit) await this.update(commit, { diff: false })
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
@@ -3013,41 +3014,100 @@ export class GurpsActor extends Actor {
    *
    * @param chatThing
    * @param optionalArgs
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async addTaggedRollModifiers(chatThing, optionalArgs, attack) {
+    let isDamageRoll = false
+    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
+
     // First get Item or Attribute Effect Tags
-    let modEffectTags, itemRef
+    let modEffectTags, itemRef, refTags
     if (optionalArgs.obj) {
+      const ref = chatThing
+        .split('@')
+        .pop()
+        .match(/(\S+):/)?.[1]
+        .toLowerCase()
+      switch (ref) {
+        case 'm':
+          refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allMeleeRolls.split(',').map(it => it.trim().toLowerCase()))
+          isDamageRoll = true
+          break
+        case 'r':
+          refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allRangedRolls.split(',').map(it => it.trim().toLowerCase()))
+          isDamageRoll = true
+          break
+        case 'p':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'b':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'd':
+          refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
+          isDamageRoll = true
+          break
+        default:
+          refTags = []
+      }
       // Item or Actor Component
       modEffectTags =
         (optionalArgs.obj?.modEffectTags || '')
           .split(',')
           .map(it => it.trim())
           .map(it => it.toLowerCase()) || []
-      modEffectTags = [...modEffectTags, ...['all', 'hit']]
+      modEffectTags = [...modEffectTags, ...allRollTags, ...refTags].filter(m => !!m)
       itemRef = optionalArgs.obj.name || optionalArgs.obj.originalName
     } else if (chatThing) {
       // Targeted Roll or Attribute Check
-      modEffectTags = [
-        // Default tags
-        'all',
-        'check',
-        // Default tags from chatThing
-        chatThing.split('/[')[0].toLowerCase().replace(' ', '-'),
-        chatThing.split('@').pop().toLowerCase().replace(' ', '-').slice(0, -1),
-      ]
+      const ref = chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
+      let refTags
+      switch (ref) {
+        case 'st':
+        case 'dx':
+        case 'iq':
+        case 'ht':
+        case 'will':
+        case 'per':
+        case 'frightcheck':
+        case 'vision':
+        case 'hearing':
+        case 'tastesmell':
+        case 'touch':
+        case 'cr':
+          refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+          break
+        case 'dodge':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(
+            taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+          )
+          break
+        default:
+          refTags = []
+      }
+      modEffectTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
-      modEffectTags = ['all', 'damage']
+      if (!attack) {
+        refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
+        isDamageRoll = true
+      } else {
+        refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+      }
       const attackMods = attack?.modEffectTags || []
-      modEffectTags = [...modEffectTags, ...attackMods]
+      modEffectTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name || attack?.originalName
     }
 
     // Then get the modifiers from actor user mods
     const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
-    const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id)
+    const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
 
     for (const userMod of userMods) {
       const userModsTags = (userMod.match(/#(\S+)/g) || []).map(it => it.slice(1).toLowerCase())
@@ -3057,9 +3117,11 @@ export class GurpsActor extends Actor {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
         if (actorInCombat) {
-          canApply = canApply && !modEffectTags.includes('no-combat')
+          canApply =
+            canApply && (!taggedSettings.nonCombatOnlyTag || !modEffectTags.includes(taggedSettings.nonCombatOnlyTag))
         } else {
-          canApply = canApply && !modEffectTags.includes('combat')
+          canApply =
+            canApply && (!taggedSettings.combatOnlyTag || !modEffectTags.includes(taggedSettings.combatOnlyTag))
         }
         if (canApply) {
           const regex = userMod.includes('#maneuver')
@@ -3071,6 +3133,7 @@ export class GurpsActor extends Actor {
         }
       }
     }
+    return isDamageRoll
   }
 
   async canRoll(action) {
@@ -3093,7 +3156,7 @@ export class GurpsActor extends Actor {
         const maneuverLabel = game.i18n.localize(maneuver.label)
         const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
         const message = game.i18n.format('GURPS.errorCannotRollWithManeuver', { roll, maneuver: maneuverLabel })
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTINGS_ALLOW_ROLL_BASED_ON_MANEUVER)) {
+        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER)) {
           result = {
             canRoll: false,
             message,

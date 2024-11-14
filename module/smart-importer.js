@@ -11,7 +11,7 @@ export class SmartImporter {
       (await UniversalFileHandler.getFile({
         template,
         templateOptions: this.getTemplateOptions(actor),
-        extensions: ['.xml', '.txt', '.gcs'],
+        extensions: ['.xml', '.txt', '.gcs', '.gca5'],
       }))
     )
   }

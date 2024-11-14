@@ -42,15 +42,14 @@
       />
       <span><i class="fa fa-hat-wizard"></i></span>
     </div>
-    <label>{{i18n "GURPS.spellCollege"}}</label>
+    <label>{{i18n "GURPS.skillRelativeLevel"}}</label>
     <div class="icon-prefix">
       <input
-        id="item-spell-college"
+        id="item-spell-relative"
         type="text"
-        value="{{system.spl.college}}"
-        name="system.spl.college"
-      />
-      <span><i class="fa fa-book"></i></span>
+        value="{{system.spl.relativelevel}}"
+        name="system.spl.relativelevel" />
+      <span><i class="fa fa-sliders"></i></span>
     </div>
     <label>{{i18n "GURPS.spellDifficulty"}}</label>
     <div class="icon-prefix">
@@ -101,15 +100,6 @@
         name="system.spl.resist" />
       <span><i class="fa fa-shield"></i></span>
     </div>
-    <label>{{i18n "GURPS.skillRelativeLevel"}}</label>
-    <div class="icon-prefix">
-      <input
-        id="item-spell-relative"
-        type="text"
-        value="{{system.spl.relativelevel}}"
-        name="system.spl.relativelevel" />
-      <span><i class="fa fa-sliders"></i></span>
-    </div>
     <label>{{i18n "GURPS.pdfPageReference"}}</label>
     <div class="icon-prefix">
       <input id="item-spell-pageref" type="text" value="{{system.spl.pageref}}" name="system.spl.pageref" />
@@ -128,7 +118,18 @@
     </div>
   </div>
 </div>
+<hr>
 <div class="label-value-row right-bias">
+    <label>{{i18n "GURPS.spellCollege"}}</label>
+    <div class="icon-prefix">
+      <input
+        id="item-spell-college"
+        type="text"
+        value="{{system.spl.college}}"
+        name="system.spl.college"
+      />
+      <span><i class="fa fa-book"></i></span>
+    </div>
   <label>{{i18n "GURPS.modEffectTags"}}</label>
   <div class="icon-prefix">
     <input
@@ -139,10 +140,6 @@
     />
     <span><i class="fa fa-tags"></i></span>
   </div>
-</div>
-<div class="label-value-row right-bias">
-  <div></div>
-  <div></div>
   <label>{{i18n "GURPS.notes"}}</label>
   <div>
     <textarea class="notes" id="item-spell-notes" rows="4" name="system.spl.notes">{{system.spl.notes}}</textarea>

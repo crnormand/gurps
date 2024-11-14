@@ -23,8 +23,8 @@ export class QuickRollSettings extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       title: game.i18n.localize('GURPS.settingUseQuickRolls'),
-      id: 'quick-roll-Settings',
-      template: 'systems/gurps/templates/quick-roll-Settings.hbs',
+      id: 'quick-roll-settings',
+      template: 'systems/gurps/templates/quick-roll-settings.hbs',
       width: 400,
       closeOnSubmit: true,
     })

@@ -5,11 +5,12 @@
   </div>
   <div class="cr-result-section">
     <div class="cr-result-math">
-      <span>{{target}}</span>
-      <span>{{operator}}</span>
-      <span>{{totalMods}}</span>
+      <span id="cr-target">{{target}}</span>
+      <span id="cr-operator">{{operator}}</span>
+      <span id="cr-totalmods">{{totalMods}}</span>
     </div>
-    <div class="cr-result-total">{{totalRoll}}</div>
+    <div id="cr-total" class="cr-result-total" style="color: {{targetColor}};">{{totalRoll}}</div>
+    <span class="cr-tooltip">{{rollChance}}</span>
     <div class="cr-result-type">{{rollType}}</div>
   </div>
   <div class="cr-item-section">

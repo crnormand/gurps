@@ -33,13 +33,13 @@ import {
   arrayToObject,
   objectToArray,
 } from '../lib/utilities.js'
-import { doRoll } from '../module/dierolls/dieroll.js'
+import { addBucketToDamage, doRoll, rollData } from './dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-import { DamageTable } from '../module/damage/damage-tables.js'
+import { DamageTable } from './damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
-import { AddImportEquipmentButton, ItemImporter } from '../module/item-import.js'
+import { AddImportEquipmentButton } from './item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -609,11 +609,12 @@ if (!globalThis.GURPS) {
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      const canAddTaggedRollModifiers = game.settings.get(
-        Settings.SYSTEM_NAME,
-        Settings.SETTING_AUTO_ADD_TAGGED_MODIFIERS
-      )
-      if (actor && canAddTaggedRollModifiers) await actor.addTaggedRollModifiers('', {}, action.att)
+      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      let displayFormula = action.formula
+      if (actor && taggedSettings.autoAdd) {
+        await actor.addTaggedRollModifiers('', {}, action.att)
+        displayFormula = addBucketToDamage(displayFormula, false)
+      }
 
       const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
       if (showRollDialog) {
@@ -621,8 +622,11 @@ if (!globalThis.GURPS) {
         const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
         const tokenImg = token?.document.texture.src || actor?.img
         const tokenName = token?.name || actor?.name
-        const damageRoll = action.formula
+        const damageRoll = displayFormula
         const damageType = action.damagetype
+        const targetRoll = action.orig
+        const bucketTotal = GURPS.ModifierBucket.currentSum()
+        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
 
         const dialog = new Dialog({
           title: game.i18n.localize('GURPS.confirmRoll'),
@@ -631,6 +635,8 @@ if (!globalThis.GURPS) {
             tokenName,
             damageRoll,
             damageType,
+            targetRoll,
+            bucketRoll,
           }),
           buttons: {
             roll: {
@@ -795,7 +801,13 @@ if (!globalThis.GURPS) {
      */
     roll({ action, actor, event }) {
       let canRoll = true
-      actor.canRoll(action).then(r => (canRoll = r))
+      if (!!actor) {
+        if (actor instanceof User) {
+          canRoll = true
+        } else {
+          actor.canRoll(action).then(r => (canRoll = r))
+        }
+      }
       if (!canRoll) return false
 
       const prefix = i18n_f('GURPS.chatRolling', {
@@ -2711,25 +2723,51 @@ if (!globalThis.GURPS) {
     //   })
     // }, 1000)
 
+    Hooks.on('combatRound', async (combat, round) => {
+      if (round.round === 1 && round.turn === 0) {
+        console.log(`Combat started: ${combat.id} - resetting token actions`)
+        await resetTokenActions(combat)
+      }
+      await handleCombatTurn(combat, round)
+    })
+
+    Hooks.on('combatTurn', async (combat, turn, combatant) => {
+      await handleCombatTurn(combat, turn)
+    })
+
+    Hooks.on('deleteCombat', async combat => {
+      console.log(`Combat ended: ${combat.id} - restarting token actions`)
+      await resetTokenActions(combat)
+    })
+
+    Hooks.on('modifierBucketSumUpdated', bucket => {
+      const signal = bucket.minus ? '-' : '+'
+      const target = $('#cr-target').text()
+      if (!!target && !isNaN(target)) {
+        const total = Math.max(3, parseInt(target) + bucket.currentSum)
+        const { targetColor, rollChance } = rollData(total)
+        setTimeout(() => {
+          $('#cr-operator').text(signal)
+          $('#cr-totalmods').text(Math.abs(bucket.currentSum))
+          $('#cr-total').text(total).css('color', targetColor)
+          $('.cr-tooltip').text(rollChance)
+        }, 200)
+      }
+      const damage = $('#cr-damage').text()
+      const formula = $('#cr-formula').text()
+      if (!!formula && !!damage) {
+        const newFormula = addBucketToDamage(formula, false)
+        const bucketTotal = GURPS.ModifierBucket.currentSum()
+        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+        setTimeout(() => {
+          $('#cr-damage').text(newFormula)
+          $('#cr-bucket').text(bucketRoll)
+        }, 200)
+      }
+    })
+
     // End of system "READY" hook.
     Hooks.call('gurpsready')
-  })
-
-  Hooks.on('combatRound', async (combat, round) => {
-    if (round.round === 1 && round.turn === 0) {
-      console.log(`Combat started: ${combat.id} - resetting token actions`)
-      await resetTokenActions(combat)
-    }
-    await handleCombatTurn(combat, round)
-  })
-
-  Hooks.on('combatTurn', async (combat, turn, combatant) => {
-    await handleCombatTurn(combat, turn)
-  })
-
-  Hooks.on('deleteCombat', async combat => {
-    console.log(`Combat ended: ${combat.id} - restarting token actions`)
-    await resetTokenActions(combat)
   })
 }
 

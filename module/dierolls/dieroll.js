@@ -1,5 +1,50 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 
+export const rollData = target => {
+  let targetColor, rollChance
+  if (target < 6) {
+    targetColor = '#b30000'
+    rollChance = game.i18n.localize('GURPS.veryHardRoll')
+  } else if (target < 11) {
+    targetColor = '#cc6600'
+    rollChance = game.i18n.localize('GURPS.hardRoll')
+  } else if (target < 14) {
+    targetColor = '#fdfdbd'
+    rollChance = game.i18n.localize('GURPS.fairRoll')
+  } else if (target < 17) {
+    targetColor = '#5cbd58'
+    rollChance = game.i18n.localize('GURPS.easyRoll')
+  } else {
+    targetColor = '#0a8d0a'
+    rollChance = game.i18n.localize('GURPS.veryEasyRoll')
+  }
+  return { targetColor, rollChance }
+}
+
+/**
+ * Recalculate the formula based on Modifier Bucket total.
+ *
+ * Formula examples: 2d+2, 1d-1, 3d6, 1d-2
+ * We will use the optional rule (B377) to round damage: +4 points = +1d
+ *
+ * @param {string} formula
+ * @param {boolean} addDamageType
+ * @returns {string}
+ */
+export const addBucketToDamage = (formula, addDamageType = true) => {
+  let dice = parseInt(formula.match(/(\d+)d/)?.[1] || 1)
+  const add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
+  const damageType = formula.match(/\d\s(.+)/)?.[1] || ''
+  const bucketMod = GURPS.ModifierBucket.currentSum()
+  let newAdd = add + bucketMod
+  while (newAdd >= 4) {
+    newAdd -= 4
+    dice += 1
+  }
+  const plus = newAdd > 0 ? '+' : ''
+  return `${dice}d${plus}${newAdd !== 0 ? newAdd : ''} ${addDamageType ? damageType : ''}`.trim()
+}
+
 export async function doRoll({
   actor,
   formula = '3d6',
@@ -14,17 +59,31 @@ export async function doRoll({
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 
-  const result = actor && action ? await actor.canRoll(action) : undefined
-  if (!!result && !result.canRoll) {
+  const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  let result = { canRoll: true }
+  if (actor instanceof Actor && action) {
+    result = await actor.canRoll(action)
+  }
+  if (!result.canRoll) {
     if (result.message) ui.notifications.warn(result.message)
     return false
   }
 
-  const canAddTaggedRollModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTO_ADD_TAGGED_MODIFIERS)
-  if (actor && canAddTaggedRollModifiers) await actor.addTaggedRollModifiers(chatthing, optionalArgs)
+  let bucketRoll
+  let displayFormula = formula
+
+  if (actor instanceof Actor && taggedSettings.autoAdd) {
+    const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
+    if (isDamageRoll) {
+      displayFormula = addBucketToDamage(formula)
+      const currentSum = GURPS.ModifierBucket.currentSum()
+      const signal = currentSum >= 0 ? '+' : ''
+      bucketRoll = `(${signal}${currentSum})`
+    }
+  }
 
   const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
-  if (showRollDialog) {
+  if (showRollDialog && actor instanceof Actor) {
     // Get Actor Info
     const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
     const tokenImg = token?.document.texture.src || actor?.img
@@ -42,7 +101,8 @@ export async function doRoll({
     const item = actor.items.get(itemId)
     const itemImage = item?.img || ''
     let itemIcon, itemColor, rollType
-    let targetRoll = `${targetData.name}-${origtarget}`
+    let targetRoll = targetData.name
+    if (origtarget > 0) targetRoll += `-${origtarget}`
 
     let template = 'confirmation-roll.hbs'
 
@@ -51,7 +111,7 @@ export async function doRoll({
     if (!action && !chatthing && targetData.name === formula) {
       const damage = prefix.match(/\[(.+)]/)?.[1] || ''
       damageType = damage === 'thrust' ? 'thr' : 'sw'
-      damageRoll = formula
+      damageRoll = displayFormula
       template = 'confirmation-damage-roll.hbs'
     }
 
@@ -83,7 +143,7 @@ export async function doRoll({
           itemColor = '#015401'
           rollType = game.i18n.localize('GURPS.skill')
         } else {
-          itemIcon = 'fas fa-spell'
+          itemIcon = 'fa fa-wand-magic-sparkles'
           itemColor = '#6f63d9'
           rollType = game.i18n.localize('GURPS.spell')
         }
@@ -160,6 +220,8 @@ export async function doRoll({
         rollType = thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1) : formula
     }
 
+    const { targetColor, rollChance } = rollData(origtarget)
+
     const dialog = new Dialog({
       title: game.i18n.localize('GURPS.confirmRoll'),
       content: await renderTemplate(`systems/gurps/templates/${template}`, {
@@ -182,6 +244,9 @@ export async function doRoll({
         damageRoll,
         damageType,
         rollType,
+        targetColor,
+        rollChance,
+        bucketRoll,
       }),
       buttons: {
         roll: {

@@ -199,6 +199,9 @@ class ModifierStack {
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
+
+    // Dispatch event
+    Hooks.call('modifierBucketSumUpdated', this)
   }
 
   /**

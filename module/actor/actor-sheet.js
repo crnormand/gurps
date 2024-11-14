@@ -1305,7 +1305,7 @@ export class GurpsActorSheet extends ActorSheet {
               if (!!u) obj.save = u.is(':checked')
               await actor.removeModEffectFor(path)
               await actor.internalUpdate({ [path]: obj })
-              const commit = actor.applyItemModEffects({})
+              const commit = actor.applyItemModEffects({}, true)
               if (commit) {
                 await actor.internalUpdate(commit)
                 if (canvas.tokens.controlled.length > 0) {

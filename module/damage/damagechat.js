@@ -3,6 +3,7 @@
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { addBucketToDamage } from '../dierolls/dieroll.js'
 
 /**
  * @typedef {{
@@ -253,9 +254,19 @@ export default class DamageChat {
   ) {
     let message = new DamageChat()
 
+    let diceFormula = addBucketToDamage(diceText, true) // run before applyMods()
     const targetmods = await GURPS.ModifierBucket.applyMods() // append any global mods
 
-    let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText, extdamagetype)
+    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    let diceMods
+    if (taggedSettings.autoAdd) {
+      diceMods = []
+    } else {
+      diceFormula = diceText
+      diceMods = targetmods
+    }
+
+    let dice = message._getDiceData(diceFormula, damageType, diceMods, overrideDiceText, extdamagetype)
     if (dice == null) return
 
     if (!tokenNames) tokenNames = []

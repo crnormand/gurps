@@ -297,16 +297,17 @@ export class TokenActions {
       'sw',
       'swing',
     ]
-    let dice = damage.match(/(\d+)d/)?.[0]
-    const add = damage.match(/d([+-]\d+)/)?.[0]
-    const damageType = damage.match(/\d\s(.+)/)?.[0]
+    let dice = parseInt(damage.match(/(\d+)d/)?.[1] || 1)
+    const add = damage.match(/d([+-]\d+)/)?.[1] || 0
+    const damageType = damage.match(/\d\s(.+)/)?.[0] || ''
     if (!validTypes.includes(damageType)) return damage
     let newAdd = parseInt(add) + Math.max(dice, 2)
     while (newAdd >= 4) {
       newAdd -= 4
       dice += 1
     }
-    return `${dice}d${newAdd} ${damageType}`
+    const plus = newAdd > 0 ? '+' : ''
+    return `${dice}d${plus}${newAdd !== 0 ? newAdd : ''} ${damageType}`.trim()
   }
 
   /**
