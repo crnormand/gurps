@@ -1241,7 +1241,7 @@
   "GURPS.toAimBonus": "Bônus para Mirar",
   "GURPS.toAimPenalty": "Penalidade para Mirar",
   "GURPS.effects": "Efeitos",
-  "GURPS.modEffectTags": "Etiquetas de Modif.",
+  "GURPS.modifierTags": "Etiquetas de Modif.",
   "GURPS.userModsRefreshed": "Modificações do Usuário do Ator atualizadas",
   "GURPS.settingAllowRollBasedOnManeuver": "Permitir Rolagem baseada na Manobra",
   "GURPS.settingHintAllowRollBasedOnManeuver": "Se marcado, o sistema permitirá ao jogador fazer uma rolagem baseada na manobra selecionada no token.",
@@ -1250,7 +1250,7 @@
   "GURPS.defenseRoll": "Rolagem de Defesa",
   "GURPS.settingAutoAddTaggedModifiers": "Adicionar Automaticamente Modificadores Marcados",
   "GURPS.settingHintAutoAddTaggedModifiers": "Se marcado, o sistema adicionará automaticamente os modificadores marcados à rolagem.",
-  "GURPS.itemEffectsText": "Insira o Efeito do Modificador (um por linha) usando o formato: <modifier> <#tag> [<#tag>...].<br>Exemplos: -1 para DX #DX #combate, +2 Per #descanso, -1 para todas as rolagens baseadas em DX #doença #combate.",
+  "GURPS.itemModifiersText": "Insira o Efeito do Modificador (um por linha) usando o formato: <modifier> <#tag> [<#tag>...].<br>Exemplos: -1 para DX #DX #combate, +2 Per #descanso, -1 para todas as rolagens baseadas em DX #doença #combate.",
   "GURPS.combatInitiative": "Iniciativa de Combate",
   "GURPS.ControlRoll": "Teste de Controle",
   "GURPS.veryHardRoll": "Chance muito difícil",
@@ -1302,5 +1302,6 @@
   "GURPS.settingHintCheckConditionalModifiers": "Se ativado, o sistema procurará modificadores condicionais na ficha do ator e os adicionará à janela pop-up de modificadores de efeito.",
   "GURPS.settingUseTaggedModifiers": "Usar modificadores marcados",
   "GURPS.settingLabelUseTaggedModifiers": "Configuração de modificadores marcados",
-  "GURPS.settingHintUseTaggedModifiers": "Se ativado, o sistema adicionará automaticamente os modificadores marcados ao teste."
+  "GURPS.settingHintUseTaggedModifiers": "Se ativado, o sistema adicionará automaticamente os modificadores marcados ao teste.",
+  "GURPS.modifiers": "Modificadores"
 }

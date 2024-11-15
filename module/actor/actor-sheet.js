@@ -1127,7 +1127,7 @@ export class GurpsActorSheet extends ActorSheet {
                 item.system.eqt.techlevel = obj.techlevel
                 item.system.eqt.notes = obj.notes
                 item.system.eqt.pageref = obj.pageref
-                item.system.itemEffects = obj.itemEffects
+                item.system.itemModifiers = obj.itemModifiers
                 await actor._updateItemFromForm(item)
                 await actor.updateParentOf(path, false)
               }
@@ -1171,8 +1171,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
-        'itemEffects',
-        'modEffectTags',
+        'itemModifiers',
+        'modifierTags',
       ],
       []
     )
@@ -1200,8 +1200,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
-        'itemEffects',
-        'modEffectTags',
+        'itemModifiers',
+        'modifierTags',
       ],
       ['acc', 'bulk']
     )
@@ -1214,7 +1214,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
-      ['name', 'notes', 'pageref', 'itemEffects'],
+      ['name', 'notes', 'pageref', 'itemModifiers'],
       ['points']
     )
   }
@@ -1236,8 +1236,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
-        'itemEffects',
-        'modEffectTags',
+        'itemModifiers',
+        'modifierTags',
       ],
       ['points']
     )
@@ -1267,8 +1267,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
-        'itemEffects',
-        'modEffectTags',
+        'itemModifiers',
+        'modifierTags',
       ],
       ['points']
     )
@@ -1304,7 +1304,7 @@ export class GurpsActorSheet extends ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!q) obj.addToQuickRoll = q.is(':checked')
               if (!!u) obj.save = u.is(':checked')
-              if (!!obj.modEffectTags) obj.modEffectTags = cleanTags(obj.modEffectTags).join(', ')
+              if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
               await actor.removeModEffectFor(path)
               await actor.internalUpdate({ [path]: obj })
               const commit = actor.applyItemModEffects({}, true)

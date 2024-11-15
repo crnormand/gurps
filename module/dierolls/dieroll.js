@@ -25,7 +25,7 @@ export const rollData = target => {
  * Recalculate the formula based on Modifier Bucket total.
  *
  * Formula examples: 2d+2, 1d-1, 3d6, 1d-2
- * We will use the optional rule (B377) to round damage: +4 points = +1d
+ * We will use the optional rule (B269) to round damage: +4 points = +1d
  *
  * @param {string} formula
  * @param {boolean} addDamageType

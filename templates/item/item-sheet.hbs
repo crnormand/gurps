@@ -96,8 +96,8 @@
         ></a
         >
         <a class="item" data-tab="effect-tab"
-        ><i class="fas fa-dice"></i>&nbsp;{{i18n "GURPS.effects"}}&nbsp;<span style="font-size: 80%"
-        >{{#if (length system.itemEffects)}}(&checkmark;){{/if}}</span
+        ><i class="fas fa-dice"></i>&nbsp;{{i18n "GURPS.modifiers"}}&nbsp;<span style="font-size: 80%"
+        >{{#if (length system.itemModifiers)}}(&checkmark;){{/if}}</span
         ></a
         >
       </nav>
@@ -261,7 +261,7 @@
 
         <!-- item effects -->
         <div class="tab" data-tab="effect-tab" data-group="sections">
-          <div><textarea class="notes" rows="6" name="system.itemEffects" placeholder="{{i18n "GURPS.itemEffectsText"}}">{{system.itemEffects}}</textarea></div>
+          <div><textarea class="notes" rows="6" name="system.itemModifiers" placeholder="{{i18n "GURPS.itemModifiersText"}}">{{system.itemModifiers}}</textarea></div>
         </div>
 
         <!-- bonus -->

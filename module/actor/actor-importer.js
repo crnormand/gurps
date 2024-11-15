@@ -2487,9 +2487,9 @@ export class ActorImporter {
     if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name
     // If notes have `\n  ` fix it
     newobj.notes = newobj.notes.replace(/\n\s\s+/g, ' ')
-    if (!newobj.itemEffects) newobj.itemEffects = oldobj.itemEffects || ''
+    if (!newobj.itemModifiers) newobj.itemModifiers = oldobj.itemModifiers || ''
     if (!newobj.addToQuickRoll) newobj.addToQuickRoll = oldobj.addToQuickRoll || false
-    if (!newobj.modEffectTags) newobj.modEffectTags = oldobj.modEffectTags || ''
+    if (!newobj.modifierTags) newobj.modifierTags = oldobj.modifierTags || ''
   }
 
   /**
@@ -2652,9 +2652,9 @@ export class ActorImporter {
         actorComp.itemid = existingItem._id
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
-        actorComp.itemEffects = existingItem.system.itemEffects
+        actorComp.itemModifiers = existingItem.system.itemModifiers
         actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
-        actorComp.modEffectTags = existingItem.system.modEffectTags
+        actorComp.modifierTags = existingItem.system.modifierTags
         return actorComp
       }
 
@@ -2674,9 +2674,9 @@ export class ActorImporter {
         actorComp.itemid = existingItem._id
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
-        actorComp.itemEffects = existingItem.system.itemEffects
+        actorComp.itemModifiers = existingItem.system.itemModifiers
         actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
-        actorComp.modEffectTags = existingItem.system.modEffectTags
+        actorComp.modifierTags = existingItem.system.modifierTags
       }
     }
     return actorComp

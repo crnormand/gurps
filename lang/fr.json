@@ -1173,9 +1173,9 @@
   "GURPS.defenseRoll": "Jet de Défense",
   "GURPS.settingAutoAddTaggedModifiers": "Ajouter Automatiquement les Modificateurs Étiquetés",
   "GURPS.settingHintAutoAddTaggedModifiers": "Si coché, le système ajoutera automatiquement les modificateurs étiquetés au jet.",
-  "GURPS.itemEffectsText": "Entrez l'Effet du Modificateur (un par ligne) en utilisant le format : <modifier> <#tag> [<#tag>...].<br>Exemples : -1 à DX #DX #combat, +2 Per #repos, -1 à tous les jets basés sur DX #maladie #combat.",
+  "GURPS.itemModifiersText": "Entrez l'Effet du Modificateur (un par ligne) en utilisant le format : <modifier> <#tag> [<#tag>...].<br>Exemples : -1 à DX #DX #combat, +2 Per #repos, -1 à tous les jets basés sur DX #maladie #combat.",
   "GURPS.combatInitiative": "Initiative de Combat",
-  "GURPS.modEffectTags": "Tags de Modificateurs",
+  "GURPS.modifierTags": "Tags de Modificateurs",
   "GURPS.ControlRoll": "Jet de Contrôle",
   "GURPS.veryHardRoll": "Chance très difficile",
   "GURPS.hardRoll": "Chance difficile",
@@ -1226,5 +1226,6 @@
   "GURPS.settingHintCheckConditionalModifiers": "Si activé, le système recherchera des modificateurs conditionnels sur la feuille de l'acteur et les ajoutera à la fenêtre contextuelle des modificateurs d'effet.",
   "GURPS.settingUseTaggedModifiers": "Utiliser les modificateurs marqués",
   "GURPS.settingLabelUseTaggedModifiers": "Configuration des modificateurs marqués",
-  "GURPS.settingHintUseTaggedModifiers": "Si activé, le système ajoutera automatiquement les modificateurs marqués au jet."
+  "GURPS.settingHintUseTaggedModifiers": "Si activé, le système ajoutera automatiquement les modificateurs marqués au jet.",
+  "GURPS.modifiers": "Modificateurs"
 }

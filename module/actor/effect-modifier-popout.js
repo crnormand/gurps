@@ -361,7 +361,7 @@ export class EffectModifierPopout extends Application {
  * @returns {string[]}
  */
 export const cleanTags = tags =>
-  tags
+  (tags || '')
     .split(',')
     .map(it => it.trim())
     .filter(it => !!it)

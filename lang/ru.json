@@ -516,9 +516,9 @@
   "GURPS.defenseRoll": "Бросок защиты",
   "GURPS.settingAutoAddTaggedModifiers": "Автоматически добавлять отмеченные модификаторы",
   "GURPS.settingHintAutoAddTaggedModifiers": "Если установлено, система автоматически добавит отмеченные модификаторы к броску.",
-  "GURPS.itemEffectsText": "Введите эффект модификатора (по одному на строку) в формате: <modifier> <#tag> [<#tag>...].<br>Примеры: -1 к ЛВ #ЛВ #бой, +2 Вос #отдых, -1 ко всем броскам на основе ЛВ #болезнь #бой.",
+  "GURPS.itemModifiersText": "Введите эффект модификатора (по одному на строку) в формате: <modifier> <#tag> [<#tag>...].<br>Примеры: -1 к ЛВ #ЛВ #бой, +2 Вос #отдых, -1 ко всем броскам на основе ЛВ #болезнь #бой.",
   "GURPS.combatInitiative": "Инициатива в бою",
-  "GURPS.modEffectTags": "Теги эффектов модификаторов",
+  "GURPS.modifierTags": "Теги эффектов модификаторов",
   "GURPS.ControlRoll": "Бросок контроля",
   "GURPS.veryHardRoll": "Очень сложный шанс",
   "GURPS.hardRoll": "Сложный шанс",
@@ -571,5 +571,6 @@
   "GURPS.settingHintCheckConditionalModifiers": "Если включено, система будет искать условные модификаторы на листе актера и добавлять их в всплывающее окно модификаторов эффектов.",
   "GURPS.settingUseTaggedModifiers": "Использовать отмеченные модификаторы",
   "GURPS.settingLabelUseTaggedModifiers": "Настройка отмеченных модификаторов",
-  "GURPS.settingHintUseTaggedModifiers": "Если включено, система автоматически добавит отмеченные модификаторы к броску."
+  "GURPS.settingHintUseTaggedModifiers": "Если включено, система автоматически добавит отмеченные модификаторы к броску.",
+  "GURPS.modifiers": "Модификаторы"
 }

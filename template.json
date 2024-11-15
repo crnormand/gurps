@@ -246,7 +246,7 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
-      "itemEffects": "",
+      "itemModifiers": "",
       "equipped": true,
       "carried": true,
       "globalid": "",
@@ -274,7 +274,7 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
-      "itemEffects": "",
+      "itemModifiers": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
@@ -310,13 +310,13 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
-      "itemEffects": "",
+      "itemModifiers": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
       "fromItem": "",
       "addToQuickRoll": false,
-      "modEffectTags": ""
+      "modifierTags": ""
     },
     "spell": {
       "spl": {
@@ -351,13 +351,13 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
-      "itemEffects": "",
+      "itemModifiers": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
       "fromItem": "",
       "addToQuickRoll": false,
-      "modEffectTags": ""
+      "modifierTags": ""
     },
     "meleeAtk": {
       "mel": {
@@ -384,7 +384,7 @@
         "passotf": "",
         "failotf": "",
         "originalName": "",
-        "modEffectTags": ""
+        "modifierTags": ""
       }
     },
     "rangedAtk": {
@@ -416,7 +416,7 @@
         "passotf": "",
         "failotf": "",
         "originalName": "",
-        "modEffectTags": ""
+        "modifierTags": ""
       }
     }
   }

@@ -373,8 +373,8 @@ export class GurpsActor extends Actor {
       // First Resolve Actor Items
       for (const item of this.items.contents) {
         const itemData = GurpsItem.asGurpsItem(item)
-        if (itemData.system.itemEffects?.length > 0) {
-          const allEffects = itemData.system.itemEffects.split('\n').map(m => m.trim())
+        if (itemData.system.itemModifiers?.length > 0) {
+          const allEffects = itemData.system.itemModifiers.split('\n').map(m => m.trim())
           for (const effect of allEffects) {
             const fullDesc = `${effect} @${item.id}`
             if (!userMods.includes(fullDesc)) {
@@ -387,8 +387,8 @@ export class GurpsActor extends Actor {
       const paths = ['melee', 'ranged']
       for (const path of paths) {
         recurselist(this.system[path], (e, _k, _d) => {
-          if (!!e.itemEffects) {
-            const allEffects = e.itemEffects.split('\n').map(m => m.trim())
+          if (!!e.itemModifiers) {
+            const allEffects = e.itemModifiers.split('\n').map(m => m.trim())
             for (const effect of allEffects) {
               const fullDesc = `${effect} @system.${path}.${_k}`
               if (!userMods.includes(fullDesc)) {
@@ -404,8 +404,8 @@ export class GurpsActor extends Actor {
         const fullPath = `system.${path}`
         const data = foundry.utils.getProperty(this, fullPath)
         recurselist(data, (e, _k, _d) => {
-          if (!!e.itemEffects) {
-            const allEffects = e.itemEffects.split('\n').map(m => m.trim())
+          if (!!e.itemModifiers) {
+            const allEffects = e.itemModifiers.split('\n').map(m => m.trim())
             for (const effect of allEffects) {
               const fullDesc = `${effect} @system.${path}.${_k}`
               if (!userMods.includes(fullDesc)) {
@@ -2540,7 +2540,7 @@ export class GurpsActor extends Actor {
     if (!!item.editingActor) delete item.editingActor
     await this._removeItemAdditions(item.id)
     // Update Item
-    item.system.modEffectTags = cleanTags(item.system.modEffectTags).join(', ')
+    item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
     // Update Actor Component
     const itemInfo = item.getItemInfo()
@@ -2551,7 +2551,8 @@ export class GurpsActor extends Actor {
         parentuuid: actorComp.parentuuid,
         itemInfo,
         addToQuickRoll: item.system.addToQuickRoll,
-        modEffectTags: item.system.modEffectTags,
+        modifierTags: item.system.modifierTags,
+        itemModifiers: item.system.itemModifiers,
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -3003,16 +3004,7 @@ export class GurpsActor extends Actor {
    * Resolve and add tagged Modifier Effects.
    *
    * System will lookup each roll modifiers inside system.conditions.usermods
-   * against the Items.modEffectTags and add the modifiers to the ModifierBucket.
-   *
-   * There is some special tags that can be used:
-   *
-   * #all - Apply to all rolls
-   * #combat - Only during combat
-   * #no-combat - Only outside of combat
-   * #hit - Added to all attack rolls
-   * #damage - Added to all damage rolls
-   * #check - Added to all attribute checks
+   * against the Items.modifierTags and add the modifiers to the ModifierBucket.
    *
    * @param chatThing
    * @param optionalArgs
@@ -3024,7 +3016,7 @@ export class GurpsActor extends Actor {
     const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
 
     // First get Item or Attribute Effect Tags
-    let modEffectTags, itemRef, refTags
+    let modifierTags, itemRef, refTags
     if (optionalArgs.obj) {
       const ref = chatThing
         .split('@')
@@ -3054,16 +3046,27 @@ export class GurpsActor extends Actor {
           refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
           isDamageRoll = true
           break
+        case 'sk':
+          refTags = taggedSettings.allSkillRolls.split(',').map(it => it.trim().toLowerCase())
+          break
+        case 'sp':
+          refTags = taggedSettings.allSpellRolls.split(',').map(it => it.trim().toLowerCase())
+          if (taggedSettings.useSpellCollegeAsTag) {
+            const spell = optionalArgs.obj
+            const collegeTags = cleanTags(spell.college)
+            refTags = refTags.concat(collegeTags)
+          }
+          break
         default:
           refTags = []
       }
       // Item or Actor Component
-      modEffectTags =
-        (optionalArgs.obj?.modEffectTags || '')
+      modifierTags =
+        (optionalArgs.obj?.modifierTags || '')
           .split(',')
           .map(it => it.trim())
           .map(it => it.toLowerCase()) || []
-      modEffectTags = [...modEffectTags, ...allRollTags, ...refTags].filter(m => !!m)
+      modifierTags = [...modifierTags, ...allRollTags, ...refTags].filter(m => !!m)
       itemRef = optionalArgs.obj.name || optionalArgs.obj.originalName
     } else if (chatThing) {
       // Targeted Roll or Attribute Check
@@ -3093,7 +3096,7 @@ export class GurpsActor extends Actor {
         default:
           refTags = []
       }
-      modEffectTags = [...allRollTags, ...refTags]
+      modifierTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
       if (!attack) {
@@ -3102,8 +3105,8 @@ export class GurpsActor extends Actor {
       } else {
         refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
       }
-      const attackMods = attack?.modEffectTags || []
-      modEffectTags = [...allRollTags, ...attackMods, ...refTags]
+      const attackMods = attack?.modifierTags || []
+      modifierTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name || attack?.originalName
     }
 
@@ -3114,16 +3117,15 @@ export class GurpsActor extends Actor {
     for (const userMod of userMods) {
       const userModsTags = (userMod.match(/#(\S+)/g) || []).map(it => it.slice(1).toLowerCase())
       for (const tag of userModsTags) {
-        let canApply = modEffectTags.includes(tag)
+        let canApply = modifierTags.includes(tag)
         if (userMod.includes('#maneuver')) {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
         if (actorInCombat) {
           canApply =
-            canApply && (!taggedSettings.nonCombatOnlyTag || !modEffectTags.includes(taggedSettings.nonCombatOnlyTag))
+            canApply && (!taggedSettings.nonCombatOnlyTag || !modifierTags.includes(taggedSettings.nonCombatOnlyTag))
         } else {
-          canApply =
-            canApply && (!taggedSettings.combatOnlyTag || !modEffectTags.includes(taggedSettings.combatOnlyTag))
+          canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
         }
         if (canApply) {
           const regex = userMod.includes('#maneuver')

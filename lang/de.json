@@ -990,9 +990,9 @@
   "GURPS.defenseRoll": "Verteidigungswurf",
   "GURPS.settingAutoAddTaggedModifiers": "Automatisch Tagged Modifikatoren hinzufügen",
   "GURPS.settingHintAutoAddTaggedModifiers": "Wenn aktiviert, wird das System automatisch Tagged Modifikatoren zum Wurf hinzufügen.",
-  "GURPS.itemEffectsText": "Gib Modifikator Effekt ein (einer pro Zeile) im Format: <modifier> <#tag> [<#tag>...].<br>Beispiele: -1 auf DX #DX #combat, +2 Per #resting, -1 auf alle DX-basierten Würfe #disease #combat.",
+  "GURPS.itemModifiersText": "Gib Modifikator Effekt ein (einer pro Zeile) im Format: <modifier> <#tag> [<#tag>...].<br>Beispiele: -1 auf DX #DX #combat, +2 Per #resting, -1 auf alle DX-basierten Würfe #disease #combat.",
   "GURPS.combatInitiative": "Kampf Initiative",
-  "GURPS.modEffectTags": "Modifikator Tags",
+  "GURPS.modifierTags": "Modifikator Tags",
   "GURPS.ControlRoll": "Kontrollwurf",
   "GURPS.veryHardRoll": "Sehr schwierige Chance",
   "GURPS.hardRoll": "Schwierige Chance",
@@ -1043,5 +1043,6 @@
   "GURPS.settingHintCheckConditionalModifiers": "Wenn aktiviert, sucht das System nach bedingten Modifikatoren im Schauspielerblatt und fügt sie dem Effektmodifikatoren-Popup hinzu.",
   "GURPS.settingUseTaggedModifiers": "Verwenden Sie markierte Modifikatoren",
   "GURPS.settingLabelUseTaggedModifiers": "Konfiguration der markierten Modifikatoren",
-  "GURPS.settingHintUseTaggedModifiers": "Wenn aktiviert, fügt das System automatisch markierte Modifikatoren zum Wurf hinzu."
+  "GURPS.settingHintUseTaggedModifiers": "Wenn aktiviert, fügt das System automatisch markierte Modifikatoren zum Wurf hinzu.",
+  "GURPS.modifiers": "Modifikatoren"
 }
