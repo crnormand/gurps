@@ -1,3 +1,12 @@
+{{#if messages}}
+<div class="cr-messages">
+  {{#each messages}}
+    <div class="cr-message">
+      <i class="fa fa-triangle-exclamation"></i><span>{{this}}</span>
+    </div>
+  {{/each}}
+</div>
+{{/if}}
 <div class="cr-container">
   <div class="cr-token-section">
     <img class="cr-token-img" src="{{tokenImg}}" alt="">
@@ -15,10 +24,10 @@
   </div>
   <div class="cr-item-section">
     {{#if itemImage}}
-    <img class="cr-item-img" src="{{itemImage}}" alt="">
+      <img class="cr-item-img" src="{{itemImage}}" alt="">
     {{else}}
-    <div class="cr-item-icon" style="background-color: {{itemColor}};"><i class="{{itemIcon}}"></i></div>
+      <div class="cr-item-icon" style="background-color: {{itemColor}};"><i class="{{itemIcon}}"></i></div>
     {{/if}}
-      <div class="cr-item-roll">{{targetRoll}}</div>
+    <div class="cr-item-roll">{{targetRoll}}</div>
   </div>
 </div>

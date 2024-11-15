@@ -3181,3 +3181,23 @@ button.equipmentbutton:last-child {
   font-size: 0.8em;
   line-height: 1.1;
 }
+.cr-messages {
+  height: auto;
+  width: 100%;
+  padding: 4px;
+  margin-bottom: 4px;
+}
+.cr-message {
+  margin-bottom: 2px;
+}
+.cr-message i {
+  color: #d7b921;
+  text-shadow: black 1px 1px 1px;
+}
+.cr-message span {
+  margin-left: 4px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #261f1d;
+  line-height: 1.1;
+}

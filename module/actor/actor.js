@@ -3140,6 +3140,12 @@ export class GurpsActor extends Actor {
     return isDamageRoll
   }
 
+  /**
+   * Check if Roll can be performed.
+   *
+   * @param {object} action
+   * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string }>}
+   */
   async canRoll(action) {
     let result = {
       canRoll: true,
@@ -3151,21 +3157,35 @@ export class GurpsActor extends Actor {
     } else {
       token = canvas.tokens.controlled?.[0]
     }
+    const isAttack = action.type === 'attack'
+    const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
     if (token && game.combat?.isActive) {
       const actions = await TokenActions.fromToken(token)
-      const isAttack = action.type === 'attack'
-      const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
       if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
         const maneuver = Maneuvers.getManeuver(actions.currentManeuver)
         const maneuverLabel = game.i18n.localize(maneuver.label)
         const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
-        const message = game.i18n.format('GURPS.errorCannotRollWithManeuver', { roll, maneuver: maneuverLabel })
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER)) {
-          result = {
-            canRoll: false,
-            message,
-          }
+        const checkManeuverSettings = game.settings.get(
+          Settings.SYSTEM_NAME,
+          Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER
+        )
+        const message = game.i18n.format(`GURPS.${checkManeuverSettings.toLowerCase()}CannotRollWithManeuver`, {
+          roll,
+          maneuver: maneuverLabel,
+        })
+        result = {
+          canRoll: checkManeuverSettings !== 'Forbid',
+          message,
         }
+      }
+    }
+    const needTarget = isAttack || action.isSpellOnly
+    const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
+    if (needTarget && game.user.targets.size === 0) {
+      result = {
+        ...result,
+        canRoll: result.canRoll && checkForTargetSettings !== 'Forbid',
+        targetMessage: game.i18n.localize(`GURPS.${checkForTargetSettings.toLowerCase()}NoTargetSelected`),
       }
     }
     return result

@@ -1,4 +1,5 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { i18n } from '../../lib/utilities.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -25,7 +26,7 @@ export const rollData = target => {
  * Recalculate the formula based on Modifier Bucket total.
  *
  * Formula examples: 2d+2, 1d-1, 3d6, 1d-2
- * We will use the optional rule (B269) to round damage: +4 points = +1d
+ * Can use the optional rule (B269) to round damage: +7 points = +2d and +4 points = +1d
  *
  * @param {string} formula
  * @param {boolean} addDamageType
@@ -37,9 +38,15 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
   const damageType = formula.match(/\d\s(.+)/)?.[1] || ''
   const bucketMod = GURPS.ModifierBucket.currentSum()
   let newAdd = add + bucketMod
-  while (newAdd >= 4) {
-    newAdd -= 4
-    dice += 1
+  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)) {
+    while (newAdd >= 7) {
+      newAdd -= 7
+      dice += 2
+    }
+    while (newAdd >= 4) {
+      newAdd -= 4
+      dice += 1
+    }
   }
   const plus = newAdd > 0 ? '+' : ''
   return `${dice}d${plus}${newAdd !== 0 ? newAdd : ''} ${addDamageType ? damageType : ''}`.trim()
@@ -66,6 +73,7 @@ export async function doRoll({
   }
   if (!result.canRoll) {
     if (result.message) ui.notifications.warn(result.message)
+    if (result.targetMessage) ui.notifications.warn(result.targetMessage)
     return false
   }
 
@@ -247,11 +255,12 @@ export async function doRoll({
         targetColor,
         rollChance,
         bucketRoll,
+        messages: [result.message || '', result.targetMessage || ''].filter(it => !!it),
       }),
       buttons: {
         roll: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Roll',
+          icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
+          label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
           callback: async () => {
             return await _doRoll({
               actor,
@@ -268,7 +277,7 @@ export async function doRoll({
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: 'Cancel',
+          label: i18n('GURPS.cancel'),
           callback: async () => {
             await GURPS.ModifierBucket.clear()
           },
