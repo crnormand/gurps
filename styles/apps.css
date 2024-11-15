@@ -2907,6 +2907,9 @@ button.equipmentbutton:last-child {
 .me-at.notfound span {
   background-color: rgba(20, 119, 180, 0.5);
 }
+.me-at.reactions span {
+  background-color: #8f7a12;
+}
 .me-at.conditionalmods span {
   background-color: rgb(94, 110, 12);
 }
@@ -2953,7 +2956,7 @@ button.equipmentbutton:last-child {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 400px;
+  min-height: 450px;
   justify-content: space-between;
   align-items: flex-start;
 }

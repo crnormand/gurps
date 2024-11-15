@@ -12,6 +12,10 @@
           <label>{{localize 'GURPS.checkConditionals'}}</label>
           <input type="checkbox" name="checkConditionals" {{#if checkConditionals}}checked{{/if}}>
         </div>
+        <div class="form-group">
+          <label>{{localize 'GURPS.checkReactions'}}</label>
+          <input type="checkbox" name="checkReactions" {{#if checkReactions}}checked{{/if}}>
+        </div>
       </div>
       <nav class="gurps-sheet-tabs tabs gurps-tabs" data-group="sections">
         <a class="item" data-tab="all-rolls-tab">{{i18n 'GURPS.AllRollsTab'}}</a>
@@ -22,7 +26,8 @@
         <a class="item" data-tab="all-skills-tab">{{i18n 'GURPS.AllSkillsTab'}}</a>
         <a class="item" data-tab="all-specials-tab">{{i18n 'GURPS.AllSpecialTab'}}</a>
       </nav>
-      <div class="me-mod-tips"><i class="fa fa-circle-info"></i><span>{{localize 'GURPS.taggedModifierTips'}}</span></div>
+      <div class="me-mod-tips"><i class="fa fa-circle-info"></i><span>{{localize 'GURPS.taggedModifierTips'}}</span>
+      </div>
       <section id="config-tabs" class="content">
         <div class="tab" data-tab="all-rolls-tab" data-group="sections">
           <div class="form-group">

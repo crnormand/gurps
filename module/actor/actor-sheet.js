@@ -13,6 +13,7 @@ import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, S
 import SplitDREditor from './splitdr-editor.js'
 import { ActorImporter } from './actor-importer.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { cleanTags } from './effect-modifier-popout.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1303,6 +1304,7 @@ export class GurpsActorSheet extends ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!q) obj.addToQuickRoll = q.is(':checked')
               if (!!u) obj.save = u.is(':checked')
+              if (!!obj.modEffectTags) obj.modEffectTags = cleanTags(obj.modEffectTags).join(', ')
               await actor.removeModEffectFor(path)
               await actor.internalUpdate({ [path]: obj })
               const commit = actor.applyItemModEffects({}, true)

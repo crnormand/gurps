@@ -34,6 +34,7 @@ import { ActorImporter } from './actor-importer.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
+import { cleanTags } from './effect-modifier-popout.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -2539,6 +2540,7 @@ export class GurpsActor extends Actor {
     if (!!item.editingActor) delete item.editingActor
     await this._removeItemAdditions(item.id)
     // Update Item
+    item.system.modEffectTags = cleanTags(item.system.modEffectTags).join(', ')
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
     // Update Actor Component
     const itemInfo = item.getItemInfo()
@@ -3141,7 +3143,7 @@ export class GurpsActor extends Actor {
       canRoll: true,
     }
     let token
-    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === this.id)
+    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === this.id) || []
     if (actorTokens.length === 1) {
       token = actorTokens[0]
     } else {

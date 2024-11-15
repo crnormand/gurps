@@ -85,6 +85,8 @@ export class EffectModifierPopout extends Application {
           if (itemReference.includes('system.')) {
             if (itemReference.includes('.conditionalmods.')) {
               obj.name = game.i18n.localize('GURPS.conditionalMods')
+            } else if (itemReference.includes('.reactions.')) {
+              obj.name = game.i18n.localize('GURPS.reactionMods')
             } else {
               obj = foundry.utils.getProperty(this._token.actor, itemReference)
             }
@@ -210,6 +212,15 @@ export class EffectModifierPopout extends Application {
           const mod = parseInt(e.modifier) || 0
           const signal = mod > 0 ? '+' : '-'
           const source = `system.conditionalmods.${_k}`
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+        })
+      }
+      if (taggedSettings.checkReactions) {
+        const reactionMods = foundry.utils.getProperty(actor, 'system.reactions') || {}
+        recurselist(reactionMods, (e, _k, _d) => {
+          const mod = parseInt(e.modifier) || 0
+          const signal = mod > 0 ? '+' : '-'
+          const source = `system.reactions.${_k}`
           if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
         })
       }
@@ -344,6 +355,19 @@ export class EffectModifierPopout extends Application {
   }
 }
 
+/**
+ * Cleans up tags to be used in the settings
+ * @param {string} tags
+ * @returns {string[]}
+ */
+export const cleanTags = tags =>
+  tags
+    .split(',')
+    .map(it => it.trim())
+    .filter(it => !!it)
+    .map(it => it.toLowerCase())
+    .map(it => it.replace(/\W/g, ''))
+
 export class TaggedModifierSettings extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -366,20 +390,9 @@ export class TaggedModifierSettings extends FormApplication {
     const cleanData = Object.keys(formData).reduce((acc, key) => {
       if (typeof formData[key] === 'string') {
         if (key.toLowerCase().includes('combat')) {
-          acc[key] = formData[key]
-            .split(',')
-            .map(it => it.trim())
-            .filter(it => !!it)
-            .map(it => it.toLowerCase())
-            .map(it => it.replace(/\W/g, ''))[0]
+          acc[key] = cleanTags(formData[key])[0]
         } else {
-          acc[key] = formData[key]
-            .split(',')
-            .map(it => it.trim())
-            .filter(it => !!it)
-            .map(it => it.toLowerCase())
-            .map(it => it.replace(/\W/g, ''))
-            .join(', ')
+          acc[key] = cleanTags(formData[key]).join(', ')
         }
       } else {
         acc[key] = formData[key]
