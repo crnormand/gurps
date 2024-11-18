@@ -1239,5 +1239,7 @@
   "GURPS.warn": "Avertir",
   "GURPS.forbid": "Interdire",
   "GURPS.forbidNoTargetSelected": "Vous devez sélectionner une cible avant de lancer le dé.",
-  "GURPS.warnNoTargetSelected": "Aucune cible sélectionnée."
+  "GURPS.warnNoTargetSelected": "Aucune cible sélectionnée.",
+  "GURPS.modifierSuffocate": "Perdu 1 FP par tour d'asphyxie.",
+  "GURPS.rangeToTarget": "{modifier} portée de la cible {name} ({distance} {unit})"
 }

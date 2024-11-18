@@ -584,5 +584,7 @@
   "GURPS.warn": "Предупреждение",
   "GURPS.forbid": "Запретить",
   "GURPS.forbidNoTargetSelected": "Вы должны выбрать цель перед броском.",
-  "GURPS.warnNoTargetSelected": "Цель не выбрана."
+  "GURPS.warnNoTargetSelected": "Цель не выбрана.",
+  "GURPS.modifierSuffocate": "Потеря 1 ОД за ход от удушья.",
+  "GURPS.rangeToTarget": "{modifier} дистанция до цели {name} ({distance} {unit})"
 }

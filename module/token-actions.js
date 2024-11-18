@@ -9,6 +9,7 @@ import Maneuvers, {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from './actor/maneuver.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
 
 /**
  * # Actor Actions Class
@@ -92,6 +93,7 @@ export class TokenActions {
   async clear() {
     this.initValues()
     await this.removeManeuverModifiers()
+    await this.removeCombatTempMods()
     await this.token.document.unsetFlag('gurps', 'tokenActions')
     await this.save()
   }
@@ -637,5 +639,19 @@ export class TokenActions {
         icon = `${noMove}${NoAttack}${canDefend}` // Do nothing
     }
     return icon
+  }
+  async removeCombatTempMods() {
+    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const combatTempTags = taggedSettings.combatTempTag
+      .split(',')
+      .map(it => it.trim().toLowerCase())
+      .filter(it => !!it)
+    if (!combatTempTags.length) return
+    const userMods = foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
+    const validMods = userMods.filter(m => {
+      const tags = m.match(/#(\S+)/g) || []
+      return tags.every(t => !combatTempTags.includes(t.toLowerCase()))
+    })
+    await this.actor.update({ 'system.conditions.usermods': validMods })
   }
 }

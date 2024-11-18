@@ -1356,5 +1356,7 @@
   "GURPS.warn": "Warn",
   "GURPS.forbid": "Forbid",
   "GURPS.forbidNoTargetSelected": "You need to select target(s) before rolling.",
-  "GURPS.warnNoTargetSelected": "No targets selected."
+  "GURPS.warnNoTargetSelected": "No targets selected.",
+  "GURPS.modifierSuffocate": "Lost 1 FP per turn from suffocation.",
+  "GURPS.rangeToTarget": "{modifier} range to target {name} ({distance} {unit})"
 }

@@ -1,11 +1,51 @@
 import GurpsWiring from '../gurps-wiring.js'
 import { i18n, i18n_f, recurselist, sanitize } from '../../lib/utilities.js'
-import { gurpslink } from '../../module/utilities/gurpslink.js'
+import { gurpslink } from '../utilities/gurpslink.js'
 import { parselink } from '../../lib/parselink.js'
 import { RulerGURPS } from '../../lib/ranges.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+
+export const calculateRange = (token1, token2) => {
+  if (!token1 || !token2) return undefined
+  if (token1 === token2) return undefined
+
+  // const ruler = new Ruler() as Ruler & { totalDistance: number }
+  const ruler = new RulerGURPS(game.user)
+  ruler._state = Ruler.STATES.MEASURING
+  ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
+  ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
+  const horizontalDistance = ruler.totalDistance
+  const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
+  ruler.clear()
+
+  const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
+  const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
+  return {
+    yards: Math.ceil(dist),
+    modifier: ruler.yardsToSpeedRangePenalty(yards),
+  }
+}
+
+export const getRangedModifier = (source, target) => {
+  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
+  const spellTag = taggedModifiersSetting.allSpellRolls.split(',')[0]
+  const baseTags = `#${rangedTag} #${spellTag}`
+  let rangeModifier
+  let mod = calculateRange(source, target)
+  if (mod && mod.modifier !== 0) {
+    rangeModifier = game.i18n.format('GURPS.rangeToTarget', {
+      modifier: mod.modifier,
+      name: target.actor?.name,
+      distance: mod.yards,
+      unit: canvas.scene.grid.units,
+    })
+    rangeModifier += ` ${baseTags} @combatmod`
+  }
+  return rangeModifier
+}
 
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
@@ -46,10 +86,13 @@ export class EffectModifierPopout extends Application {
       }
       return a.itemName.localeCompare(b.itemName)
     })
+    const targetModifiers = this._token
+      ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
+      : []
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
-      targetmodifiers: this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : [],
+      targetmodifiers: targetModifiers,
       targets: this.targets,
     })
   }
@@ -63,14 +106,12 @@ export class EffectModifierPopout extends Application {
       result.targetmodifiers = target.actor
         ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
         : []
-      let mod = this.calculateRange(this.getToken(), target)
-      if (mod && mod.modifier !== 0)
-        result.targetmodifiers.push(
-          gurpslink(`[${mod.modifier} range to target ${target.actor?.name} (${mod.yards} ${canvas.scene.grid.units})]`)
-        )
-
+      const rangeModifier = getRangedModifier(this.getToken(), target)
+      if (rangeModifier) {
+        const data = this.convertModifiers([rangeModifier])
+        result.targetmodifiers = [...result.targetmodifiers, ...data]
+      }
       // Add the range to the target
-
       results.push(result)
     }
     return results
@@ -112,7 +153,7 @@ export class EffectModifierPopout extends Application {
           const desc = this.getDescription(it, itemReference)
           return {
             link: gurpslink(`[${i18n(desc)}]`),
-            desc,
+            desc: i18n(desc),
             itemName,
             itemType,
             itemId: itemReference,
@@ -124,27 +165,6 @@ export class EffectModifierPopout extends Application {
 
   get selectedToken() {
     return this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
-  }
-
-  calculateRange(token1, token2) {
-    if (!token1 || !token2) return undefined
-    if (token1 == token2) return undefined
-
-    // const ruler = new Ruler() as Ruler & { totalDistance: number }
-    const ruler = new RulerGURPS(game.user)
-    ruler._state = Ruler.STATES.MEASURING
-    ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
-    ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
-    const horizontalDistance = ruler.totalDistance
-    const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
-    ruler.clear()
-
-    const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
-    const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
-    return {
-      yards: Math.ceil(dist),
-      modifier: ruler.yardsToSpeedRangePenalty(yards),
-    }
   }
 
   getToken() {

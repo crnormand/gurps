@@ -34,7 +34,7 @@ import { ActorImporter } from './actor-importer.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
-import { cleanTags } from './effect-modifier-popout.js'
+import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -1322,9 +1322,10 @@ export class GurpsActor extends Actor {
    * @param {any[]} damageData
    */
   handleDamageDrop(damageData) {
-    if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD))
-      new ApplyDamageDialog(this, damageData).render(true)
-    else ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
+    if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD)) {
+      const dialog = new ApplyDamageDialog(this, damageData)
+      dialog.render(true)
+    } else ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
   }
 
   // Drag and drop from Item colletion
@@ -3077,6 +3078,9 @@ export class GurpsActor extends Actor {
         case 'dx':
         case 'iq':
         case 'ht':
+          refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+          refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
         case 'will':
         case 'per':
         case 'frightcheck':
@@ -3110,11 +3114,34 @@ export class GurpsActor extends Actor {
       itemRef = attack?.name || attack?.originalName
     }
 
-    // Then get the modifiers from actor user mods
+    // Then get the modifiers from:
+    // Actor User Mods
     const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
+    // Actor Self Mods
+    const selfMods =
+      foundry.utils.getProperty(this, 'system.conditions.self.modifiers').map(mod => {
+        const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+        if (key) return game.i18n.localize(key) + mod.replace(key, '')
+        return mod
+      }) || []
+    // Actor Targeted Mods
+    let targetMods = []
+    for (const target of Array.from(game.user.targets)) {
+      const targetActor = target.actor
+      const mods = targetActor ? foundry.utils.getProperty(targetActor, 'system.conditions.target.modifiers') : []
+      for (const mod of mods) {
+        const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+        if (key) targetMods.push(game.i18n.localize(key) + mod.replace(key, ''))
+        else targetMods.push(mod)
+      }
+      const actorToken = this.getActiveTokens()[0]
+      const rangeMod = getRangedModifier(actorToken, target)
+      if (rangeMod) targetMods.push(rangeMod)
+    }
+    const allMods = [...userMods, ...selfMods, ...targetMods]
     const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
 
-    for (const userMod of userMods) {
+    for (const userMod of allMods) {
       const userModsTags = (userMod.match(/#(\S+)/g) || []).map(it => it.slice(1).toLowerCase())
       for (const tag of userModsTags) {
         let canApply = modifierTags.includes(tag)
@@ -3128,9 +3155,10 @@ export class GurpsActor extends Actor {
           canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
         }
         if (canApply) {
-          const regex = userMod.includes('#maneuver')
-            ? new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
-            : new RegExp(/^[+-]\d+(.*?)(?=[#@(])/)
+          const regex =
+            userMod.includes('#maneuver') || userMod.includes('@combatmod')
+              ? new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+              : new RegExp(/^[+-]\d+(.*?)(?=[#@(])/)
           const desc = userMod.match(regex)?.[1].trim() || ''
           const mod = userMod.match(/[-+]\d+/)?.[0] || '0'
           await GURPS.ModifierBucket.addModifier(mod, desc)
@@ -3144,18 +3172,12 @@ export class GurpsActor extends Actor {
    * Check if Roll can be performed.
    *
    * @param {object} action
+   * @param {GurpsToken|Token} token
    * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string }>}
    */
-  async canRoll(action) {
+  async canRoll(action, token) {
     let result = {
       canRoll: true,
-    }
-    let token
-    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === this.id) || []
-    if (actorTokens.length === 1) {
-      token = actorTokens[0]
-    } else {
-      token = canvas.tokens.controlled?.[0]
     }
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
@@ -3179,7 +3201,7 @@ export class GurpsActor extends Actor {
         }
       }
     }
-    const needTarget = isAttack || action.isSpellOnly
+    const needTarget = isAttack || action.isSpellOnly || action.type === 'damage'
     const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
     if (needTarget && game.user.targets.size === 0) {
       result = {

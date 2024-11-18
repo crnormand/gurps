@@ -1157,7 +1157,7 @@
   "GURPS.tokenToolsTitle": "Abrir Janela de Modificadores de Efeitos",
   "GURPS.effectModifierPopout": "Modificadores de Efeitos",
   "GURPS.effectModNoTokenSelected": "Nenhuma miniatura selecionada",
-  "GURPS.targetedModifiers": "Modificadores Escolhidos",
+  "GURPS.targetedModifiers": "Modificadores para quem mira",
   "GURPS.settingActiveEffects": "Acionar Efeitos Ativos",
   "GURPS.targetModifiers": "Alvo:",
   "GURPS.settingHintActiveEffects": "Permitir ao Mestre criar e aplicar Efeitos Ativos",
@@ -1315,5 +1315,7 @@
   "GURPS.warn": "Avisar",
   "GURPS.forbid": "Proibir",
   "GURPS.forbidNoTargetSelected": "Você precisa selecionar um alvo antes de rolar.",
-  "GURPS.warnNoTargetSelected": "Nenhum alvo selecionado."
+  "GURPS.warnNoTargetSelected": "Nenhum alvo selecionado.",
+  "GURPS.modifierSuffocate": "Perde 1 FP por turno de sufocamento.",
+  "GURPS.rangeToTarget": "{modifier} alcance para o alvo {name} ({distance} {unit})"
 }

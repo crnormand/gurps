@@ -50,8 +50,8 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
-    this.tokenImg = damageData[0].token.document.texture.src || actor.img
-    this.tokenName = damageData[0].token.name || actor.name
+    this.tokenImg = damageData[0].token?.document.texture.src || actor.img
+    this.tokenName = damageData[0].token?.name || actor.name
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)

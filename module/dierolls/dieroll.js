@@ -68,8 +68,15 @@ export async function doRoll({
 
   const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   let result = { canRoll: true }
+  let token
   if (actor instanceof Actor && action) {
-    result = await actor.canRoll(action)
+    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === actor.id) || []
+    if (actorTokens.length === 1) {
+      token = actorTokens[0]
+    } else {
+      token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+    }
+    result = await actor.canRoll(action, token)
   }
   if (!result.canRoll) {
     if (result.message) ui.notifications.warn(result.message)
@@ -93,7 +100,6 @@ export async function doRoll({
   const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
   if (showRollDialog && actor instanceof Actor) {
     // Get Actor Info
-    const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
     const tokenImg = token?.document.texture.src || actor?.img
     const tokenName = token?.name || actor?.name
 

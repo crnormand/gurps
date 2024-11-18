@@ -2885,13 +2885,16 @@ button.equipmentbutton:last-child {
   flex: 2;
   padding: 4px;
 }
+.me-link.sm {
+  font-size: 0.9em;
+}
 .me-tag,
 .me-at {
   flex: 1.5;
   padding: 4px;
   text-align: left;
 }
-
+.me-other-tags,
 .me-tag span,
 .me-at span {
   text-transform: uppercase;
@@ -2900,6 +2903,12 @@ button.equipmentbutton:last-child {
   border-radius: 4px;
   padding: 3px 5px;
 }
+
+.me-other-tags {
+  margin-left: 5px;
+}
+
+.me-other-tags,
 .me-tag span {
   background-color: #772e21;
   line-height: 220%;
@@ -2951,6 +2960,10 @@ button.equipmentbutton:last-child {
 .me-mod-tips span {
   margin-left: 4px;
   font-size: 0.9em;
+}
+.me-head {
+  text-transform: uppercase;
+  font-size: 0.8em;
 }
 #use-tagged-modifiers .flexcol {
   display: flex;

@@ -599,6 +599,14 @@ if (!globalThis.GURPS) {
         return false
       }
 
+      let canRoll = { result: true }
+      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      if (actor) canRoll = await actor.canRoll(action, token)
+      if (!canRoll.canRoll) {
+        if (canRoll.targetMessage) ui.notifications?.warn(canRoll.targetMessage)
+        return false
+      }
+
       if (action.accumulate) {
         // store/increment value on GurpsActor
         await actor.accumulateDamageRoll(action)
@@ -619,7 +627,6 @@ if (!globalThis.GURPS) {
       const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
       if (showRollDialog) {
         // Get Actor Info
-        const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
         const tokenImg = token?.document.texture.src || actor?.img
         const tokenName = token?.name || actor?.name
         const damageRoll = displayFormula
@@ -637,6 +644,7 @@ if (!globalThis.GURPS) {
             damageType,
             targetRoll,
             bucketRoll,
+            messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
           }),
           buttons: {
             roll: {
@@ -805,7 +813,8 @@ if (!globalThis.GURPS) {
         if (actor instanceof User) {
           canRoll = true
         } else {
-          actor.canRoll(action).then(r => (canRoll = r))
+          const token = actor.getActiveTokens()[0]
+          actor.canRoll(action, token).then(r => (canRoll = r.canRoll))
         }
       }
       if (!canRoll) return false

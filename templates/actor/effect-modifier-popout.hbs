@@ -7,7 +7,7 @@
         <td class="me-at {{{this.itemType}}}"><span>{{{this.itemName}}}</span></td>
         <td class="me-tag {{{this.tag}}}">
           {{#each tags}}
-              <span>{{this}}</span>
+              <span >{{this}}</span>
           {{/each}}
         </td>
       </tr>
@@ -15,21 +15,29 @@
     </tbody>
   </table>
   {{#if targetmodifiers}}
-    <div class='heading' style='border: none;'>{{i18n 'GURPS.targetedModifiers'}}</div>
+    <div class='heading me-head' style='border: none; margin-top: 8px;'>{{i18n 'GURPS.targetedModifiers'}}</div>
     <ul class='modifier-list'>
       {{#each targetmodifiers}}
-        <li>{{{this}}}</li>
+        <li class="me-link sm">{{{this.link}}}
+          {{#each tags}}
+          <span class="me-other-tags">{{{this}}}</span>
+          {{/each}}
+          </li>
       {{/each}}
     </ul>
   {{/if}}
   {{#each targets}}
-    <div class='heading' style='color: orange; border-top: 1px solid dimgrey; border-bottom: none;'>{{i18n
+    <div class='heading me-head' style='color: orange; border-top: 1px solid dimgrey; border-bottom: none; margin-top: 4px; padding-top: 4px;'>{{i18n
         'GURPS.targetModifiers'
         'Target:'
       }}&ensp;{{name}}</div>
     <ul class='modifier-list'>
       {{#each targetmodifiers}}
-        <li>{{{this}}}</li>
+        <li class="me-link sm">{{{this.link}}}
+        {{#each tags}}
+          <span class="me-other-tags">{{{this}}}</span>
+        {{/each}}
+        </li>
       {{/each}}
     </ul>
   {{/each}}

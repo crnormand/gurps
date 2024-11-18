@@ -1056,5 +1056,7 @@
   "GURPS.warn": "Warnen",
   "GURPS.forbid": "Verbieten",
   "GURPS.forbidNoTargetSelected": "Sie müssen vor dem Wurf ein Ziel auswählen.",
-  "GURPS.warnNoTargetSelected": "Keine Ziele ausgewählt."
+  "GURPS.warnNoTargetSelected": "Keine Ziele ausgewählt.",
+  "GURPS.modifierSuffocate": "Verliert 1 FP pro Runde durch Ersticken.",
+  "GURPS.rangeToTarget": "{modifier} Reichweite zum Ziel {name} ({distance} {unit})"
 }
