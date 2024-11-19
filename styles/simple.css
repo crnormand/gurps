@@ -2209,7 +2209,7 @@ div#other {
 .gurps-sheet-tabs {
   display: block;
   font-size: 110%;
-  height: 32px;
+  /* height: 32px; */
   border-bottom: 1px solid #333;
   flex-grow: 0;
 }
