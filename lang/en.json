@@ -1,23 +1,33 @@
 {
-  "GURPS.title": "GURPS",
-  "GURPS.changelog": "README",
-  "GURPS.DontShowAgain": "Don't show README again",
-  "GURPS.copyrightGURPS": "GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html",
-  "GURPS.copyrightGCS": "GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved ",
+  "gurps": {
+    "copyright": "GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html",
+    "changelog": {
+      "readme": "README",
+      "title": "GURPS",
+      "dontShowAgain": "Don't show README again"
+    },
+    "sheet": {
+      "personal": {
+        "tab": "Personal",
+        "portrait": "Portrait",
+        "identity": "Identity",
+        "name": "Name",
+        "player": "Player",
+        "title": "Title",
+        "miscellaneous": "Miscellaneous",
+        "created": "Created",
+        "modified": "Modified",
+        "options": "Options"
+      },
+      "gcs": {
+        "copyright": "GCS is copyrighted 1998-2024 by Richard A. Wilkes. All rights reserved."
+      }
+    }
+  },
   "__Char Sheet__": "=========",
-  "GURPS.portrait": "Portrait",
-  "GURPS.personalTab": "Personal",
   "GURPS.resourcesModsTab": "Resources and Modifiers",
   "__Character Sheet Identity__": "=========",
-  "GURPS.identity": "Identity",
-  "GURPS.identityName": "Name",
-  "GURPS.identityPlayer": "Player",
-  "GURPS.identityTitle": "Title",
   "__Character Sheet Miscellaneous__": "=========",
-  "GURPS.miscellaneous": "Miscellaneous",
-  "GURPS.miscellaneousCreated": "Created",
-  "GURPS.miscellaneousModified": "Modified",
-  "GURPS.miscellaneousOptions": "Options",
   "__Character Description__": "=========",
   "GURPS.description": "Description",
   "GURPS.descriptionAge": "Age",

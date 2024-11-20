@@ -2104,7 +2104,6 @@ if (!globalThis.GURPS) {
 
       //   html.find('.directory-footer').append(button)
 
-
       // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
       const hasMeme = game.modules.get('markdown-editor')?.active
       const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
@@ -2254,7 +2253,7 @@ if (!globalThis.GURPS) {
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>
 <div style='font-size:70%'>
-  <div>${game.i18n.localize('GURPS.copyrightGURPS')}</div>
+  <div>${game.i18n.localize('gurps.copyright')}</div>
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
@@ -2282,11 +2281,11 @@ if (!globalThis.GURPS) {
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-      (GURPS.DamageTables.woundModifiers[it.alias] = {
-        multiplier: 1,
-        label: it.name,
-        resource: true,
-      })
+        (GURPS.DamageTables.woundModifiers[it.alias] = {
+          multiplier: 1,
+          label: it.name,
+          resource: true,
+        })
     )
 
     // Sorry, removed the ts-ignores during editing.
@@ -2331,8 +2330,8 @@ if (!globalThis.GURPS) {
           content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-              .split('\n')
-              .join('<br>')}</mark><br>&nbsp;<br>`,
+            .split('\n')
+            .join('<br>')}</mark><br>&nbsp;<br>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-angle-double-down"></i>',

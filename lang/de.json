@@ -1,19 +1,29 @@
 {
   "__NOTE TO TRANSLATOR__": "If a given text is the same as the English (en.json), there is no need to include it here. It will fallback to en.json.",
-  "GURPS.changelog": "LIESMICH",
-  "GURPS.DontShowAgain": "Zeige LIESMICH nicht noch einmal",
+  "gurps": {
+    "changelog": {
+      "readme": "LIESMICH",
+      "dontShowAgain": "Zeige LIESMICH nicht noch einmal"
+    },
+    "sheet": {
+      "personal": {
+        "tab": "Persönlich",
+        "portrait": "Portrait",
+        "identity": "Identität",
+        "name": "Name",
+        "player": "Spieler",
+        "title": "Titel",
+        "miscellaneous": "Sonstiges",
+        "created": "Erstellt",
+        "modified": "Modifiziert",
+        "options": "Optionen"
+      }
+    }
+  },
   "__Char Sheet__": "=========",
-  "GURPS.personalTab": "Persönlich",
   "GURPS.resourcesModsTab": "Ressourcen und Modifikatoren",
   "__Character Sheet Identity__": "=========",
-  "GURPS.identity": "Identität",
-  "GURPS.identityPlayer": "Spieler",
-  "GURPS.identityTitle": "Titel",
   "__Character Sheet Miscellaneous__": "=========",
-  "GURPS.miscellaneous": "Sonstiges",
-  "GURPS.miscellaneousCreated": "Erstellt",
-  "GURPS.miscellaneousModified": "Modifiziert",
-  "GURPS.miscellaneousOptions": "Optionen",
   "__Character Description__": "=========",
   "GURPS.description": "Beschreibung",
   "GURPS.descriptionAge": "Alter",
