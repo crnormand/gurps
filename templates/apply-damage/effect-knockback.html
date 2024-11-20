@@ -4,8 +4,15 @@
       <header>{{i18n_f "GURPS.knockback" this}}</header>
       <aside>{{i18n_f "GURPS.dxJudoAcrobaticsCheckToRemainStanding" this}}</aside>
     </div>
+    <div id="test-knockback" class="with-send-button">
+      <button name="test-knockback" data-effect="{{jsonStringify this}}"><span class="fa fa-dice" title="{{testTitle}}"></span></button>
+    </div>
+    <div id="add-knockback" class="with-send-button">
+      <button name="add-knockback" data-effect="{{jsonStringify this}}"><span class="fa {{spanClass}}"
+                                                                           title="{{effectTitle}}"></span></button>
+    </div>
     <div class="with-send-button">
-      <button name="send-knockback" data-struct="{{jsonStringify this}}">
+      <button name="send-knockback" data-struct="{{jsonStringify this}}" title="Send to chat">
         <span class="fa fa-comment-alt"></span>
       </button>
     </div>

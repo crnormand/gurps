@@ -713,6 +713,7 @@ export class Melee extends Attack {
     this.reach = ''
     this.parry = ''
     this.block = ''
+    this.baseParryPenalty = -4
   }
   static fromObject(data, actor) {
     let melee
@@ -737,6 +738,7 @@ export class Melee extends Attack {
       melee.reach = data.reach
       melee.parry = data.parry
       melee.block = data.block
+      melee.baseParryPenalty = data.baseParryPenalty || -4
     }
     return this._checkComponentInActor(actor, melee)
   }
@@ -771,6 +773,7 @@ export class Melee extends Attack {
           cost: this.cost || '',
           reach: this.reach || '',
           parry: this.parry || '',
+          baseParryPenalty: this.baseParryPenalty || -4,
           block: this.block || '',
           name: this.name,
           originalName: this.originalName || '',

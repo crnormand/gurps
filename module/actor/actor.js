@@ -209,6 +209,16 @@ export class GurpsActor extends Actor {
       const validMods = userMods.filter(m => m.includes('@system.') || m.includes('@man:') || m.includes('@custom'))
       await this.update({ 'system.conditions.usermods': validMods })
     }
+    // If Actor does not have system.conditions.actions, create it
+    if (!this.system.conditions.actions) {
+      await this.internalUpdate({
+        'system.conditions.actions': {
+          maxActions: 1,
+          maxBlocks: 1,
+        },
+      })
+    }
+
     if (canvas.tokens.controlled.length > 0) {
       await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
@@ -584,13 +594,15 @@ export class GurpsActor extends Actor {
    * @param {string} key - The key to search for in the trait objects.
    * @param {string | number} id - The ID to match within the trait objects.
    * @param {string} sysKey - The system.<key> to use for the search.
+   * @param {boolean} include - Whether to check equal or include in the search
    * @return {string | undefined} The trait key if found, otherwise undefined.
    */
-  _findSysKeyForId(key, id, sysKey) {
+  _findSysKeyForId(key, id, sysKey, include = false) {
     let traitKey
     let data = this.system
     recurselist(data[sysKey], (e, k, _d) => {
-      if (e[key] === id) traitKey = `system.${sysKey}.` + k
+      const exists = include ? !!e[key]?.includes(id) : e[key] === id
+      if (exists) traitKey = `system.${sysKey}.` + k
     })
     return traitKey
   }
@@ -2800,15 +2812,15 @@ export class GurpsActor extends Actor {
     return new Handlebars.SafeString(compiledTemplate(context))
   }
 
-  findByOriginalName(name) {
+  findByOriginalName(name, include = false) {
     let item = this.items.find(i => i.system.originalName === name)
     if (!item) item = this.items.find(i => i.system.name === name)
     if (!!item) return item
 
     const actorSysKeys = ['ads', 'skills', 'spells']
     for (let key of actorSysKeys) {
-      let sysKey = this._findSysKeyForId('originalName', name, key)
-      if (!sysKey) sysKey = this._findSysKeyForId('name', name, key)
+      let sysKey = this._findSysKeyForId('originalName', name, key, include)
+      if (!sysKey) sysKey = this._findSysKeyForId('name', name, key, include)
       if (sysKey) return foundry.utils.getProperty(this, sysKey)
       const camelCaseName = name
         .split(' ')
@@ -2817,8 +2829,8 @@ export class GurpsActor extends Actor {
       const localizedKey = `GURPS.trait${camelCaseName}`
       const localizedName = game.i18n.localize(localizedKey)
       if (localizedName && localizedName !== localizedKey) {
-        sysKey = this._findSysKeyForId('originalName', localizedName, key)
-        if (!sysKey) sysKey = this._findSysKeyForId('name', localizedName, key)
+        sysKey = this._findSysKeyForId('originalName', localizedName, key, include)
+        if (!sysKey) sysKey = this._findSysKeyForId('name', localizedName, key, include)
         if (sysKey) return foundry.utils.getProperty(this, sysKey)
       }
     }
@@ -3058,6 +3070,14 @@ export class GurpsActor extends Actor {
             refTags = refTags.concat(collegeTags)
           }
           break
+        case 'p':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'b':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
         default:
           refTags = []
       }
@@ -3073,6 +3093,7 @@ export class GurpsActor extends Actor {
       // Targeted Roll or Attribute Check
       const ref = chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
       let refTags
+      let regex = /(?<="|:).+(?=\s\(|"|])/gm
       switch (ref) {
         case 'st':
         case 'dx':
@@ -3096,6 +3117,19 @@ export class GurpsActor extends Actor {
           refTags = refTags.concat(
             taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
           )
+          break
+        case 'p':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+          itemRef = chatThing.match(regex)?.[0]
+          if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
+          break
+        case 'b':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+
+          itemRef = chatThing.match(regex)?.[0]
+          if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
           break
         default:
           refTags = []
@@ -3155,10 +3189,7 @@ export class GurpsActor extends Actor {
           canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
         }
         if (canApply) {
-          const regex =
-            userMod.includes('#maneuver') || userMod.includes('@combatmod')
-              ? new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
-              : new RegExp(/^[+-]\d+(.*?)(?=[#@(])/)
+          const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = userMod.match(regex)?.[1].trim() || ''
           const mod = userMod.match(/[-+]\d+/)?.[0] || '0'
           await GURPS.ModifierBucket.addModifier(mod, desc)
@@ -3181,8 +3212,11 @@ export class GurpsActor extends Actor {
     }
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
+    const isAttribute = action.type === 'attribute'
     if (token && game.combat?.isActive) {
       const actions = await TokenActions.fromToken(token)
+
+      // Check Attack or Defense vs Maneuver
       if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
         const maneuver = Maneuvers.getManeuver(actions.currentManeuver)
         const maneuverLabel = game.i18n.localize(maneuver.label)
@@ -3200,7 +3234,28 @@ export class GurpsActor extends Actor {
           message,
         }
       }
+
+      // Check for Max Actions
+      const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
+      const maxActions = foundry.utils.getProperty(this, 'system.conditions.actions.maxActions') || 1
+      if (!isDefense && !isAttribute && actions.totalActions >= maxActions) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxActionMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxActionsReached`),
+        }
+      }
+      // Check for Max Blocks
+      const maxBlocks = foundry.utils.getProperty(this, 'system.conditions.actions.maxBlocks') || 1
+      if (isDefense && action.type === 'weapon-block' && actions.totalBlocks >= maxBlocks) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxBlockMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxBlocksReached`),
+        }
+      }
     }
+    // Check if roll need Target
     const needTarget = isAttack || action.isSpellOnly || action.type === 'damage'
     const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
     if (needTarget && game.user.targets.size === 0) {

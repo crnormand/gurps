@@ -78,6 +78,19 @@
     "distance": 1,
     "units": "yd"
   },
+    "media": [
+    {
+      "type": "cover",
+      "loop": false,
+      "flags": {}
+    },
+    {
+      "type": "setup",
+      "url": "systems/gurps/assets/gurps-thumbnail.jpg",
+      "thumbnail": "systems/gurps/assets/gurps-thumbnail.jpg"
+    }
+  ],
+  "background": "systems/gurps/assets/gurps-background.jpg",
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",

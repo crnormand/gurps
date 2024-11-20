@@ -377,6 +377,7 @@
         "cost": "",
         "reach": "",
         "parry": "",
+        "baseParryPenalty": -4,
         "block": "",
         "otf": "",
         "checkotf": "",

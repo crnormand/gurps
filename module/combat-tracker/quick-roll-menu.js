@@ -81,7 +81,7 @@ export const addQuickRollListeners = () => {
     buttons.each(function () {
       const attackValue = $(this).find('.qr-attack-value')
       if (event.ctrlKey) {
-        attackValue.text($(this).data('otf-damage'))
+        attackValue.text($(this).data('damage'))
       } else {
         attackValue.text($(this).data('skill'))
       }

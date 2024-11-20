@@ -63,6 +63,10 @@ export class GurpsActorSheet extends ActorSheet {
   getData() {
     const sheetData = super.getData()
     sheetData.olddata = sheetData.data
+    let actions = {}
+    if (!this.actor.system.conditions.actions?.maxActions) actions['maxActions'] = 1
+    if (!this.actor.system.conditions.actions?.maxBlocks) actions['maxBlocks'] = 1
+    if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
     sheetData.data = this.actor.system
     sheetData.system = this.actor.system
     sheetData.ranges = GURPS.rangeObject.ranges
@@ -1174,7 +1178,7 @@ export class GurpsActorSheet extends ActorSheet {
         'itemModifiers',
         'modifierTags',
       ],
-      []
+      ['baseParryPenalty']
     )
   }
 

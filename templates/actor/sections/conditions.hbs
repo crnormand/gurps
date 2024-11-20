@@ -71,7 +71,32 @@
 
     <div class='label'>{{i18n 'GURPS.conditionsCombatMove'}}:</div>
     <div class='field' name='system.conditions.combatmove'><span>{{system.conditions.move}}</span></div>
-
+    <div class="label">{{i18n 'GURPS.maxActionsPerTurn'}}:</div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input
+          name='system.conditions.actions.maxActions'
+          class='gcs-input'
+          type='number'
+          value='{{system.conditions.actions.maxActions}}'
+        />
+      </div>
+    {{else}}
+    <div class='field' name='system.conditions.actions.maxActions'><span>{{system.conditions.actions.maxActions}}</span></div>
+    {{/if}}
+    <div class="label">{{i18n 'GURPS.maxBlocksPerTurn'}}:</div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input
+          name='system.conditions.actions.maxBlocks'
+          class='gcs-input'
+          type='number'
+          value='{{system.conditions.actions.maxBlocks}}'
+        />
+      </div>
+    {{else}}
+    <div class='field' name='system.conditions.actions.maxBlocks'><span>{{system.conditions.actions.maxBlocks}}</span></div>
+    {{/if}}
     <div class='label' for='move-mode'>{{i18n 'GURPS.moveMode' 'Mode'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' style='font-size: 90%; max-width: 14em;' {{disabled (or isEditing (lt (length system.move)
@@ -85,7 +110,7 @@
       {{/if}}
     </div>
 
-    <div class='label'>Active Effects:</div>
+    <div class='label'>{{i18n 'GURPS.activeEffects'}}:</div>
     <div class='field' style='border: none;'>
       <button id='open-modifier-popup'><i class='fa-regular fa-sparkles'></i>{{!i18n 'GURPS.effects'
         'Effects'}}</button>

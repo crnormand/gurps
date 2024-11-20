@@ -57,13 +57,26 @@ export class TokenActions {
     return await tokenActions.init()
   }
 
+  _getNewLastManeuvers() {
+    return {
+      maneuver: 'do_nothing',
+      nextTurnEffects: [],
+    }
+  }
+
+  _getInitialLastManeuvers() {
+    return {
+      0: this._getNewLastManeuvers(),
+    }
+  }
+
   initValues() {
-    this.atrLevels = this._getATRLevels()
-    this.currentTurn = 1
-    this.lastManeuver = undefined
-    this.currentManeuver = undefined
+    this.maxActions = 1
+    this.currentTurn = 0
+    this.lastManeuvers = this._getInitialLastManeuvers()
 
     // Trackable resources per Turn
+    this.totalActions = 0
     this.totalBlocks = 0
     this.maxBlocks = 1
     this.totalParries = 0
@@ -90,12 +103,17 @@ export class TokenActions {
     this.lastAttack = {}
   }
 
+  get currentManeuver() {
+    return this.lastManeuvers[this.currentTurn]?.maneuver || 'do_nothing'
+  }
+
   async clear() {
     this.initValues()
     await this.removeManeuverModifiers()
     await this.removeCombatTempMods()
     await this.token.document.unsetFlag('gurps', 'tokenActions')
     await this.save()
+    await this.token.setManeuver('do_nothing')
   }
 
   async removeManeuverModifiers() {
@@ -106,12 +124,12 @@ export class TokenActions {
 
   async init() {
     const savedTokenData = (await this.token.document.getFlag('gurps', 'tokenActions')) || {}
-    this.currentTurn = savedTokenData.currentTurn || 1
-    this.lastManeuver = savedTokenData.lastManeuver
-    this.currentManeuver =
-      (await foundry.utils.getProperty(this.actor, 'system.conditions.maneuver')) || savedTokenData.currentManeuver
+    this.totalActions = savedTokenData.totalActions || 0
+    this.maxActions = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxActions') || 1
+    this.currentTurn = savedTokenData.currentTurn || 0
+    this.lastManeuvers = savedTokenData.lastManeuvers || this._getInitialLastManeuvers()
     this.totalBlocks = savedTokenData.totalBlocks || 0
-    this.maxBlocks = savedTokenData.maxBlocks || 1
+    this.maxBlocks = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxBlocks') || 1
     this.totalParries = savedTokenData.totalParries || 0
     this.maxParries = savedTokenData.maxParries || Infinity
     this.totalMoves = savedTokenData.totalMoves || 0
@@ -134,9 +152,9 @@ export class TokenActions {
 
   async save() {
     const newData = {
+      totalActions: this.totalActions,
       currentTurn: this.currentTurn,
-      lastManeuver: this.lastManeuver,
-      currentManeuver: this.currentManeuver,
+      lastManeuvers: this.lastManeuvers,
       totalBlocks: this.totalBlocks,
       maxBlocks: this.maxBlocks,
       totalParries: this.totalParries,
@@ -179,17 +197,6 @@ export class TokenActions {
   get currentEffects() {
     return this.actor.system.conditions.self?.modifiers
   }
-  get maxTurns() {
-    return 1 + this.atrLevels
-  }
-
-  _getATRLevels() {
-    const atr = this.actor.findByOriginalName('Altered Time Rate')
-    if (!atr) return 0
-    if (atr.levels) return atr.levels
-    const levels = atr.name.match(/\d+/)
-    return levels ? parseInt(levels[0]) : 1
-  }
 
   _getInitialAim() {
     let currentAim = {}
@@ -208,28 +215,19 @@ export class TokenActions {
     return currentAim
   }
 
-  _getBaseParryPenalty(originalName) {
-    let basePenalty = -4
-    if (
-      !!this.actor.findByOriginalName(`Weapon Master (${originalName})`) ||
-      !!this.actor.findByOriginalName(`Trained By a Master`)
-    ) {
-      basePenalty = -2
-    }
-    return basePenalty
-  }
-
   _getInitialParry() {
     let currentParry = {}
     recurselist(this.actor.system.melee, (e, _k, _d) => {
-      currentParry[_k] = {
-        currentPenalty: 0,
-        uuid: e.uuid,
-        name: e.name,
-        originalName: e.originalName,
-        startAt: undefined,
-        basePenalty: this._getBaseParryPenalty(e.originalName),
-        key: `system.melee.${_k}`,
+      if (!!e.parry) {
+        currentParry[_k] = {
+          currentPenalty: 0,
+          uuid: e.uuid,
+          name: e.name,
+          originalName: e.originalName,
+          startAt: undefined,
+          basePenalty: e.baseParryPenalty,
+          key: `system.melee.${_k}`,
+        }
       }
     })
     return currentParry
@@ -255,7 +253,7 @@ export class TokenActions {
       case MOVE_TWOTHIRDS:
         return Math.max(Math.floor((currentMove / 3) * 2), 1)
       case MOVE_FULL:
-        if (this.currentManeuver === 'move' && this.lastManeuver === 'move') {
+        if (this.currentManeuver === 'move' && this.lastManeuvers[this.currentTurn]?.maneuver === 'move') {
           return currentMove + Math.max(Math.floor(currentMove * 0.2), 1)
         }
         return currentMove
@@ -355,7 +353,9 @@ export class TokenActions {
       }
     }
 
-    const allModifiers = await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
+    const allModifiers = await foundry.utils
+      .getProperty(this.actor, 'system.conditions.usermods')
+      .filter(m => !m.includes('#maneuver'))
     const maneuverModifiers = []
     if (this.toHitBonus !== 0) {
       const signal = this.toHitBonus > 0 ? '+' : '-'
@@ -380,7 +380,9 @@ export class TokenActions {
       if (parry.currentPenalty !== 0) {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toParryBonus' : 'GURPS.toParryPenalty')
-        addModifier(`${signal}${parry.currentPenalty} ${signalLabel} ${parry.name} #parry #maneuver @${parry.key}`)
+        addModifier(
+          `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver @${parry.key}`
+        )
       }
     })
     Object.keys(this.currentAim).map(k => {
@@ -402,10 +404,15 @@ export class TokenActions {
    * Call this method every time a new maneuver is selected.
    *
    * @param {Maneuver} maneuver
+   * @param {integer} round
    * @returns {Promise<void>}
    */
-  async selectManeuver(maneuver) {
-    this.currentManeuver = maneuver.flags.gurps.name
+  async selectManeuver(maneuver, round) {
+    this.currentTurn = round
+    if (!this.lastManeuvers[round]) {
+      this.lastManeuvers[round] = this._getNewLastManeuvers()
+    }
+    this.lastManeuvers[round].maneuver = maneuver.flags.gurps.name
     console.info(`Select Maneuver: '${this.currentManeuver}' for Token: ${this.token.name}`)
 
     await this.removeModifiers()
@@ -508,20 +515,32 @@ export class TokenActions {
    *
    * Call this method every time a new player turn is started.
    *
+   * @param {integer} round
    * @returns {Promise<void>}
    */
-  async newTurn() {
-    console.info(`Starting New Turn for Token: ${this.token.name}`)
-    this.currentTurn += 1
-    this.lastManeuver = this.currentManeuver
+  async newTurn(round) {
+    // If lastManeuvers[round] exists, it means GM rolls back the turn.
+    if (!!this.lastManeuvers[round]) {
+      console.info(`Recovering Combat Turn (Foundry Round: ${round}) for Token: ${this.token.name}`)
+      await this.selectManeuver(Maneuvers.getManeuver(this.lastManeuvers[round].maneuver), round)
+      return
+    }
+    if (!this.lastManeuvers[round]) {
+      this.lastManeuvers[round] = this._getNewLastManeuvers()
+    }
+    console.info(`Starting New Combat Turn (Foundry Round: ${round}) for Token: ${this.token.name}`)
+    this.currentTurn = round
+    const lastManeuver = foundry.utils.getProperty(this.actor, 'system.conditions.maneuver')
+    this.lastManeuvers[round].maneuver = lastManeuver
     this.totalMoves = 0
     this.totalBlocks = 0
     this.totalParries = 0
+    this.totalActions = 0
     Object.keys(this.currentParry).map(k => {
       const p = this.currentParry[k]
       p.currentPenalty = 0
     })
-    switch (this.lastManeuver) {
+    switch (lastManeuver) {
       case 'concentrate':
         console.log(`Add +1 Concentrate bonus to ${this.token.name}`)
         this.concentrateTurns += 1
@@ -555,28 +574,33 @@ export class TokenActions {
         })
         break
     }
-    if (this.lastManeuver !== 'evaluate' && this.evaluateTurns > 0) {
+    if (lastManeuver !== 'evaluate' && this.evaluateTurns > 0) {
       this.evaluateTurns = 0
     }
-    if (this.lastManeuver !== 'aim') {
+    if (lastManeuver !== 'aim') {
       Object.keys(this.currentAim).map(k => {
         const a = this.currentAim[k]
         a.aimBonus = 0
         a.startAt = 0
       })
     }
-    if (this.lastManeuver !== 'move' && this.moveTurns > 0) {
+    if (lastManeuver !== 'move' && this.moveTurns > 0) {
       this.moveTurns = 0
     }
-    if (this.lastManeuver !== 'ready' && this.readyTurns > 0) {
+    if (lastManeuver !== 'ready' && this.readyTurns > 0) {
       this.readyTurns = 0
     }
-    if (this.lastManeuver !== 'concentrate' && this.concentrateTurns > 0) {
+    if (lastManeuver !== 'concentrate' && this.concentrateTurns > 0) {
       this.concentrateTurns = 0
     }
+    // Check for Effects marked for this turn
+    const effects = this.lastManeuvers[Math.max(round - 1, 0)].nextTurnEffects || []
+    for (const effect of effects) {
+      await this.token.setEffectActive(effect, true)
+    }
+
     await this.addModifiers()
     await this.save()
-    await this.token.setManeuver('do_nothing')
   }
 
   static getManeuverIcons(maneuverName) {
@@ -653,5 +677,76 @@ export class TokenActions {
       return tags.every(t => !combatTempTags.includes(t.toLowerCase()))
     })
     await this.actor.update({ 'system.conditions.usermods': validMods })
+  }
+
+  /**
+   * Consume Action in Token
+   *
+   * @param {object} [action]
+   * @param {string} chatThing
+   * @returns {Promise<void>}
+   */
+  async consumeAction(action, chatThing) {
+    if (action && !['skill', 'spell', 'melee', 'ranged'].includes(action.type)) return
+    const chatCode = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
+    switch (chatCode) {
+      case 'b':
+        this.totalBlocks += 1
+        break
+      case 'p':
+        this.totalParries += 1
+        const regex = /(?<="|:).+(?=\s\(|"|])/gm
+        let name = chatThing.match(regex)?.[0]
+        if (name) name = name.replace(/"/g, '').split('(')[0].trim()
+        this.currentParry = Object.keys(this.currentParry).reduce((acc, k) => {
+          let parry = this.currentParry[k]
+          if (name.includes(parry.name)) {
+            parry.currentPenalty += parry.basePenalty
+          }
+          acc[k] = parry
+          return acc
+        }, {})
+        break
+      default:
+        this.totalActions += 1
+        break
+    }
+    await this.addModifiers()
+    await this.save()
+  }
+
+  /**
+   * Include Effects for next turn
+   *
+   * @param {string[]} effectNames
+   * @returns {Promise<boolean>}
+   */
+  async addToNextTurn(effectNames) {
+    if (!this.lastManeuvers[this.currentTurn]?.nextTurnEffects) {
+      this.lastManeuvers[this.currentTurn].nextTurnEffects = effectNames
+    } else {
+      for (const effectName of effectNames) {
+        if (!this.lastManeuvers[this.currentTurn].nextTurnEffects.includes(effectName)) {
+          this.lastManeuvers[this.currentTurn].nextTurnEffects.push(effectName)
+        }
+      }
+    }
+    await this.save()
+  }
+
+  getNextTurnEffects() {
+    return this.lastManeuvers[this.currentTurn]?.nextTurnEffects || []
+  }
+
+  /**
+   * Remove Effects marked for next turn
+   *
+   * @param {string[]} effectNames
+   * @returns {Promise<void>}
+   */
+  async removeFromNextTurn(effectNames) {
+    const markedEffects = this.lastManeuvers[this.currentTurn]?.nextTurnEffects || []
+    this.lastManeuvers[this.currentTurn].nextTurnEffects = markedEffects.filter(e => !effectNames.includes(e))
+    await this.save()
   }
 }

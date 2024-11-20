@@ -1,5 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
+import { TokenActions } from '../token-actions.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -236,6 +237,10 @@ export async function doRoll({
 
     const { targetColor, rollChance } = rollData(origtarget)
 
+    const messages = [result.message, result.targetMessage, result.maxActionMessage, result.maxBlockMessage].filter(
+      it => !!it
+    )
+
     const dialog = new Dialog({
       title: game.i18n.localize('GURPS.confirmRoll'),
       content: await renderTemplate(`systems/gurps/templates/${template}`, {
@@ -261,7 +266,7 @@ export async function doRoll({
         targetColor,
         rollChance,
         bucketRoll,
-        messages: [result.message || '', result.targetMessage || ''].filter(it => !!it),
+        messages,
       }),
       buttons: {
         roll: {
@@ -467,6 +472,11 @@ async function _doRoll({
   }
   chatdata['isBlind'] = !!(optionalArgs.blind || optionalArgs.event?.blind)
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
+
+  // For last, let's consume this action in Token
+  const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
+  const actions = await TokenActions.fromToken(actorToken)
+  await actions.consumeAction(optionalArgs.action, chatthing)
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 

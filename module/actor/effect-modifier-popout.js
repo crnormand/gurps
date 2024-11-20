@@ -147,9 +147,11 @@ export class EffectModifierPopout extends Application {
           const itemName = obj?.name || itemReference
           const itemType = obj?.type
             ? obj.type
-            : itemReference.includes('system.')
-              ? itemReference.split('.')[1]
-              : 'notfound'
+            : it.includes('#maneuver')
+              ? 'maneuver'
+              : itemReference.includes('system.')
+                ? itemReference.split('.')[1]
+                : 'notfound'
           const desc = this.getDescription(it, itemReference)
           return {
             link: gurpslink(`[${i18n(desc)}]`),
@@ -247,7 +249,7 @@ export class EffectModifierPopout extends Application {
       const newMods = [...itemMods['system.conditions.usermods'], ...customMods, ...sheetMods]
       await actor.internalUpdate({ 'system.conditions.usermods': newMods })
       // Check if combat
-      if (!!game.combat.isActive) {
+      if (!!game.combat?.isActive) {
         const actions = await TokenActions.fromToken(this.getToken())
         await actions.addModifiers()
       }
@@ -311,13 +313,13 @@ export class EffectModifierPopout extends Application {
     event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
     let text = sanitize(el.innerHTML)
-    if (text.includes('#maneuver')) return
     const itemId = $(el).closest('.me-link').data().itemId
-    if (itemId.includes('system.')) {
+    const itemType = $(el).closest('.me-link').data().type
+    if (itemId.includes('system.') && itemType !== 'maneuver') {
       this._token.actor.sheet?.render(true)
       return
     }
-    if (!!itemId && itemId !== 'custom') {
+    if (!!itemId && itemId !== 'custom' && itemType !== 'maneuver') {
       const item = this._token.actor.items.get(itemId)
       if (item) {
         item.sheet.render(true)

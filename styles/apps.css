@@ -2471,12 +2471,12 @@ button.equipmentbutton:last-child {
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0 25px;
 }
 
 .apply-damage-header img {
   max-height: 100px !important;
   border: none;
-  margin-left: 15px
 }
 
 .apply-damage-quick {
@@ -2491,6 +2491,15 @@ button.equipmentbutton:last-child {
 }
 #encumbrance > div:nth-child(8){
   min-width: 85px;
+}
+#result-extrastuff {
+  min-width: 400px;
+}
+.fa.fa-check-circle.green {
+  color: green;
+}
+.fa.fa-check-circle.black {
+  color: black;
 }
 
 /**

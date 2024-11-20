@@ -3,11 +3,11 @@
     <tbody>
     {{#each selfmodifiers}}
       <tr class="me-line">
-        <td class="me-link" data-item-id="{{this.itemId}}">{{{this.link}}}</td>
+        <td class="me-link" data-item-id="{{this.itemId}}" data-type="{{this.itemType}}">{{{this.link}}}</td>
         <td class="me-at {{{this.itemType}}}"><span>{{{this.itemName}}}</span></td>
-        <td class="me-tag {{{this.tag}}}">
+        <td class="me-tag">
           {{#each tags}}
-              <span >{{this}}</span>
+              <span>{{this}}</span>
           {{/each}}
         </td>
       </tr>

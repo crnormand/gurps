@@ -2,10 +2,11 @@
 	<div class='flexcol flex-between'>
 
 		<div class="apply-damage-header">
+			<img src="{{sourceTokenImage}}" alt="">
 			<div class="apply-damage-column">
 				<div class="apply-damage-title">
 					<!-- TODO Consider adding hitlocation if passed to ADD -->
-					<div>{{i18n "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=tokenName}}</div>
+					<div>{{i18n "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=targetTokenName}}</div>
 				</div>
 				<div class='flexrow flex-group-center flex-between' style='border: none; width: 100%'>
 					<div>{{i18n "GURPS.addDirectlyApply"}}:</div>
@@ -52,7 +53,7 @@
 			</div>
 				</div>
 			</div>
-			<img src="{{tokenImage}}" alt="">
+			<img src="{{targetTokenImage}}" alt="">
 		</div>
 
 
@@ -528,7 +529,7 @@
 
 					<div id="result-extrastuff">
 						<ul id='result-effects'>
-							{{#each CALC.effects}}
+							{{#each contextEffects}}
 							{{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
 							{{/each}}
 						</ul>

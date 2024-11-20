@@ -2732,11 +2732,12 @@ if (!globalThis.GURPS) {
     //   })
     // }, 1000)
 
+    Hooks.on('combatStart', async combat => {
+      console.log(`Combat started: ${combat.id} - resetting token actions`)
+      await resetTokenActions(combat)
+    })
+
     Hooks.on('combatRound', async (combat, round) => {
-      if (round.round === 1 && round.turn === 0) {
-        console.log(`Combat started: ${combat.id} - resetting token actions`)
-        await resetTokenActions(combat)
-      }
       await handleCombatTurn(combat, round)
     })
 
@@ -2785,7 +2786,7 @@ const handleCombatTurn = async (combat, round) => {
   console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
   const token = canvas.tokens.get(nextCombatant.token.id)
   const actions = await TokenActions.fromToken(token)
-  if (round.round > 1) await actions.newTurn()
+  if (round.round > 1) await actions.newTurn(round.round)
 }
 
 const resetTokenActions = async combat => {
