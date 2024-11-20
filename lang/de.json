@@ -1078,5 +1078,9 @@
   "GURPS.addpronestunEffect": "Liegend/Betäubt-Effekt zum Ziel hinzufügen.",
   "GURPS.addproneEffect": "Liegend-Effekt zum Ziel hinzufügen.",
   "GURPS.removeproneEffect": "Liegend-Effekt vom Ziel entfernen.",
-  "GURPS.saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden."
+  "GURPS.saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden.",
+  "GURPS.toDefenseBonus": "zu Verteidigungsbonus",
+  "GURPS.toDefensePenalty": "zu Verteidigungsabzug",
+  "GURPS.removedShockEffect": "Schockeffekt in der nächsten Runde entfernt.",
+  "GURPS.addedShockEffect": "Schockeffekt in der nächsten Runde hinzugefügt."
 }

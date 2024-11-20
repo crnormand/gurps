@@ -55,8 +55,8 @@ export default class ApplyDamageDialog extends Application {
     this.sourceTokenImg =
       canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.document.texture.src || attacker.name
     this.sourceTokenName = canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.name || attacker.name
-    this.targetTokenImg = damageData[0].token?.document.texture.src || actor.img
-    this.targetTokenName = damageData[0].token?.name || actor.name
+    this.targetTokenImg = actor.token.texture.src || actor.img
+    this.targetTokenName = actor.token.name || actor.name
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
@@ -521,7 +521,7 @@ export default class ApplyDamageDialog extends Application {
     ev.stopPropagation()
     const button = $(ev.currentTarget)
     const effect = button.data('effect')
-    const token = canvas.tokens.placeables.find(t => t.actor.id === this.actor.id)
+    const token = canvas.tokens.get(this.actor.token.id)
     const actions = await TokenActions.fromToken(token)
     const buttonAddClass = `fa-plus-circle`
     const buttonAddedClass = `fa-check-circle`
@@ -534,14 +534,14 @@ export default class ApplyDamageDialog extends Application {
         for (let effect of effects) {
           await token.setEffectActive(effect, false)
         }
-        span.removeClass(buttonAddedClass, 'green').addClass(buttonAddClass, 'black')
+        span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
         span.attr('title', i18n(`GURPS.add${effects.join('')}Effect`))
       } else {
         // Add all effects to Token
         for (let effect of effects) {
           await token.setEffectActive(effect, true)
         }
-        span.removeClass(buttonAddClass, 'black').addClass(buttonAddedClass, 'green')
+        span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
         span.attr('title', i18n(`GURPS.remove${effects.join('')}Effect`))
       }
     }
@@ -555,8 +555,9 @@ export default class ApplyDamageDialog extends Application {
         const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
         if (!!allShocks) {
           await actions.removeFromNextTurn(allShocks)
-          span.removeClass(buttonAddedClass, 'green').addClass(buttonAddClass, 'black')
+          span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
           span.attr('title', i18n('GURPS.addShockEffect'))
+          ui.notifications.info(i18n('GURPS.removedShockEffect'))
         } else {
           const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
           if (!otherShocks) {
@@ -564,8 +565,9 @@ export default class ApplyDamageDialog extends Application {
           }
           // Add the effect to the next turn
           await actions.addToNextTurn([shockEffect])
-          span.removeClass(buttonAddClass, 'black').addClass(buttonAddedClass, 'green')
+          span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
           span.attr('title', i18n('GURPS.removeShockEffect'))
+          ui.notifications.info(i18n('GURPS.addedShockEffect'))
         }
         break
       case 'headvitalshit':

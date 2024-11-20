@@ -2786,7 +2786,7 @@ const handleCombatTurn = async (combat, round) => {
   console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
   const token = canvas.tokens.get(nextCombatant.token.id)
   const actions = await TokenActions.fromToken(token)
-  if (round.round > 1) await actions.newTurn(round.round)
+  await actions.newTurn(round.round)
 }
 
 const resetTokenActions = async combat => {

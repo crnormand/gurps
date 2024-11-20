@@ -3238,7 +3238,7 @@ export class GurpsActor extends Actor {
       // Check for Max Actions
       const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
       const maxActions = foundry.utils.getProperty(this, 'system.conditions.actions.maxActions') || 1
-      if (!isDefense && !isAttribute && actions.totalActions >= maxActions) {
+      if (!isDefense && !isAttribute && actions.totalActions >= maxActions + actions.extraActions) {
         result = {
           ...result,
           canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
@@ -3252,6 +3252,14 @@ export class GurpsActor extends Actor {
           ...result,
           canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
           maxBlockMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxBlocksReached`),
+        }
+      }
+      // Check for Max Parries
+      if (isDefense && action.type === 'weapon-parry' && actions.totalParries >= actions.maxParries) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxParryMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxParriesReached`),
         }
       }
     }

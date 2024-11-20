@@ -688,6 +688,7 @@ const _getActiveEffectsData = function (id) {
   const perTag = taggedModifiersSetting.allPERRolls.split(',')[0]
   const crTag = taggedModifiersSetting.allCRRolls.split(',')[0]
   const spellTag = taggedModifiersSetting.allSpellRolls.split(',')[0]
+  const skillTag = taggedModifiersSetting.allSkillRolls.split(',')[0]
 
   const activeEffectsData = {
     shock1: {
@@ -696,7 +697,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock1',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          tags: [dxTag, iqTag, hitTag, spellTag],
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -714,7 +715,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock2',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          tags: [dxTag, iqTag, hitTag, spellTag],
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -732,7 +733,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock3',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          tags: [dxTag, iqTag, hitTag, spellTag],
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -750,7 +751,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock4',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          tags: [dxTag, iqTag, hitTag, spellTag],
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {

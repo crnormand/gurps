@@ -1260,5 +1260,9 @@
   "GURPS.addpronestunEffect": "Ajouter l'effet Allongé/Étourdi sur la cible.",
   "GURPS.addproneEffect": "Ajouter l'effet Allongé sur la cible.",
   "GURPS.removeproneEffect": "Retirer l'effet Allongé sur la cible.",
-  "GURPS.saveRollforEffect": "Jet de sauvegarde pour éviter les effets."
+  "GURPS.saveRollforEffect": "Jet de sauvegarde pour éviter les effets.",
+  "GURPS.toDefenseBonus": "au Bonus de Défense",
+  "GURPS.toDefensePenalty": "à la Pénalité de Défense",
+  "GURPS.removedShockEffect": "Effet de choc retiré au tour suivant.",
+  "GURPS.addedShockEffect": "Effet de choc ajouté au tour suivant."
 }

@@ -1336,5 +1336,9 @@
   "GURPS.addpronestunEffect": "Adicionar efeito Caído/Atordoado no alvo.",
   "GURPS.addproneEffect": "Adicionar efeito Caído no alvo.",
   "GURPS.removeproneEffect": "Remover efeito Caído no alvo.",
-  "GURPS.saveRollforEffect": "Teste de resistência para evitar efeitos."
+  "GURPS.saveRollforEffect": "Teste de resistência para evitar efeitos.",
+  "GURPS.toDefenseBonus": "para bônus de defesa",
+  "GURPS.toDefensePenalty": "de penalidade de defesa",
+  "GURPS.removedShockEffect": "Efeito de Choque removido do próximo turno.",
+  "GURPS.addedShockEffect": "Efeito de Choque adicionado no próximo turno."
 }

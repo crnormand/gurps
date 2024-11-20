@@ -125,8 +125,9 @@ export class TokenActions {
   async init() {
     const savedTokenData = (await this.token.document.getFlag('gurps', 'tokenActions')) || {}
     this.totalActions = savedTokenData.totalActions || 0
+    this.extraActions = 0
     this.maxActions = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxActions') || 1
-    this.currentTurn = savedTokenData.currentTurn || 0
+    this.currentTurn = game.combat?.round || 0
     this.lastManeuvers = savedTokenData.lastManeuvers || this._getInitialLastManeuvers()
     this.totalBlocks = savedTokenData.totalBlocks || 0
     this.maxBlocks = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxBlocks') || 1
@@ -153,7 +154,7 @@ export class TokenActions {
   async save() {
     const newData = {
       totalActions: this.totalActions,
-      currentTurn: this.currentTurn,
+      extraActions: this.extraActions,
       lastManeuvers: this.lastManeuvers,
       totalBlocks: this.totalBlocks,
       maxBlocks: this.maxBlocks,
@@ -366,8 +367,8 @@ export class TokenActions {
       addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
     }
     if (this.defenseBonus !== 0) {
-      const signal = this.toHitBonus > 0 ? '+' : '-'
-      const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toDamageBonus' : 'GURPS.toDamagePenalty')
+      const signal = this.defenseBonus > 0 ? '+' : '-'
+      const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toDefenseBonus' : 'GURPS.toDefensePenalty')
       addModifier(
         `${signal}${this.defenseBonus} ${signalLabel} #parry #block #dodge #maneuver @man:${this.currentManeuver}`
       )
@@ -435,7 +436,6 @@ export class TokenActions {
       case 'move':
       case 'aim':
       case 'evaluate':
-      case 'feint':
       case 'aod_double':
         this.canAttack = false
         this.canDefend = true
@@ -443,6 +443,7 @@ export class TokenActions {
         break
       case 'attack':
       case 'wait':
+      case 'feint':
         this.canAttack = true
         this.canDefend = true
         this.canMove = true
@@ -455,6 +456,11 @@ export class TokenActions {
         break
       case 'aoa_double':
       case 'aoa_feint':
+        this.extraActions = 1
+        this.canAttack = true
+        this.canDefend = false
+        this.canMove = true
+        break
       case 'aoa_strong':
       case 'aoa_suppress':
       case 'allout_attack':
@@ -523,6 +529,11 @@ export class TokenActions {
     if (!!this.lastManeuvers[round]) {
       console.info(`Recovering Combat Turn (Foundry Round: ${round}) for Token: ${this.token.name}`)
       await this.selectManeuver(Maneuvers.getManeuver(this.lastManeuvers[round].maneuver), round)
+      // Check for Effects marked for this turn
+      const effects = this.lastManeuvers[Math.max(round - 1, 0)].nextTurnEffects || []
+      for (const effect of effects) {
+        await this.token.setEffectActive(effect, true)
+      }
       return
     }
     if (!this.lastManeuvers[round]) {
@@ -536,6 +547,8 @@ export class TokenActions {
     this.totalBlocks = 0
     this.totalParries = 0
     this.totalActions = 0
+    this.extraActions = 0
+    this.maxParries = Infinity
     Object.keys(this.currentParry).map(k => {
       const p = this.currentParry[k]
       p.currentPenalty = 0
@@ -722,12 +735,13 @@ export class TokenActions {
    * @returns {Promise<boolean>}
    */
   async addToNextTurn(effectNames) {
-    if (!this.lastManeuvers[this.currentTurn]?.nextTurnEffects) {
-      this.lastManeuvers[this.currentTurn].nextTurnEffects = effectNames
+    const index = Math.max(this.currentTurn - 1, 0)
+    if (!this.lastManeuvers[index]?.nextTurnEffects) {
+      this.lastManeuvers[index].nextTurnEffects = effectNames
     } else {
       for (const effectName of effectNames) {
-        if (!this.lastManeuvers[this.currentTurn].nextTurnEffects.includes(effectName)) {
-          this.lastManeuvers[this.currentTurn].nextTurnEffects.push(effectName)
+        if (!this.lastManeuvers[index].nextTurnEffects.includes(effectName)) {
+          this.lastManeuvers[index].nextTurnEffects.push(effectName)
         }
       }
     }
@@ -745,6 +759,7 @@ export class TokenActions {
    * @returns {Promise<void>}
    */
   async removeFromNextTurn(effectNames) {
+    if (!this.lastManeuvers[this.currentTurn]) this.lastManeuvers[this.currentTurn] = this._getNewLastManeuvers()
     const markedEffects = this.lastManeuvers[this.currentTurn]?.nextTurnEffects || []
     this.lastManeuvers[this.currentTurn].nextTurnEffects = markedEffects.filter(e => !effectNames.includes(e))
     await this.save()

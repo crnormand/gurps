@@ -320,7 +320,7 @@ export class CompositeDamageCalculator {
   }
 
   async addEffectsContext() {
-    const defenderToken = canvas.tokens.placeables.find(t => t.actor.id === this._defender._id)
+    const defenderToken = canvas.tokens.get(this._defender.token.id)
     const actions = await TokenActions.fromToken(defenderToken)
     let isReady
     const data = this.effects.map(effect => {

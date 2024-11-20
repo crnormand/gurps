@@ -605,5 +605,9 @@
   "GURPS.addpronestunEffect": "Добавить эффект Лежит/Оглушен на цель.",
   "GURPS.addproneEffect": "Добавить эффект Лежит на цель.",
   "GURPS.removeproneEffect": "Удалить эффект Лежит с цели.",
-  "GURPS.saveRollforEffect": "Сохранить бросок, чтобы избежать эффектов."
+  "GURPS.saveRollforEffect": "Сохранить бросок, чтобы избежать эффектов.",
+  "GURPS.toDefenseBonus": "Бонус к защите",
+  "GURPS.toDefensePenalty": "Штраф к защите",
+  "GURPS.removedShockEffect": "Эффект шока удален в следующем раунде.",
+  "GURPS.addedShockEffect": "Эффект шока добавлен в следующем раунде."
 }

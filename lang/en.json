@@ -1378,5 +1378,9 @@
   "GURPS.addpronestunEffect": "Add Prone/Stun effect on target.",
   "GURPS.addproneEffect": "Add Prone effect on target.",
   "GURPS.removeproneEffect": "Remove Prone effect on target.",
-  "GURPS.saveRollforEffect": "Save Roll to avoid effects"
+  "GURPS.saveRollforEffect": "Save Roll to avoid effects",
+  "GURPS.toDefenseBonus": "to Defense Bonus",
+  "GURPS.toDefensePenalty": "to Defense Penalty",
+  "GURPS.removedShockEffect": "Removed Shock effect on next round.",
+  "GURPS.addedShockEffect": "Added Shock effect on next round."
 }
