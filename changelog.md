@@ -5,6 +5,7 @@ Release 0.17.16
 - Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
 - Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024
 - Bugfix: Large fonts prevent Tabbed Sheet users from seeing the Skills tab.
+- Bugfix: Attack mixup if weapon name differs only in a postfix #2025
 
 Release 0.17.15 10/31/2024
 
