@@ -2427,9 +2427,13 @@ export class ActorImporter {
    */
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
+    let foundLength =  Number.MAX_VALUE
     let l = foundry.utils.getProperty(this.actor, 'system.' + list)
     recurselist(l, (e, k, _d) => {
-      if ((uuid && e.uuid == uuid) || (!!e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
+      if ((uuid && e.uuid == uuid) || (!!e.name && e.name.startsWith(name) && e.name.length < foundLength && e.mode == mode)) { 
+        foundkey = k
+        foundLength = !!e.name ? e.name.length : foundLength
+        }
     })
     return foundkey == null ? foundkey : foundry.utils.getProperty(this.actor, 'system.' + list + '.' + foundkey)
   }
