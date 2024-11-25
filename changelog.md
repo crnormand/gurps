@@ -7,6 +7,7 @@ Release 0.17.16
 - Bugfix: Large fonts prevent Tabbed Sheet users from seeing the Skills tab.
 - Bugfix: Attack mixup if weapon name differs only in a postfix #2025
 - Bugfix: Damage dropping not working as intended #2007
+- Bugfix: Duplicating the specialization name to other skills #2035
 
 Release 0.17.15 10/31/2024
 

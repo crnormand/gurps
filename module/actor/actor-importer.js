@@ -2644,7 +2644,7 @@ export class ActorImporter {
       const existingItem = this.actor.items.find(
         i =>
           i.system.importid === actorComp.uuid ||
-          (!!i.system[i.itemSysKey]?.originalName && i.system[i.itemSysKey].originalName === actorComp.originalName)
+          (!!i.system[i.itemSysKey]?.name && i.system[i.itemSysKey].name === actorComp.name)
       )
 
       // Check if we need to update the Item
