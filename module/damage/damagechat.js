@@ -97,7 +97,6 @@ export default class DamageChat {
       if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
       if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
 
-      // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
       if (targets.length === 1) {
         handle(targets[0].actor)
