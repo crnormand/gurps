@@ -6,6 +6,7 @@ Release 0.17.16
 - Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024
 - Bugfix: Large fonts prevent Tabbed Sheet users from seeing the Skills tab.
 - Bugfix: Attack mixup if weapon name differs only in a postfix #2025
+- Bugfix: Damage dropping not working as intended #2007
 
 Release 0.17.15 10/31/2024
 
