@@ -830,6 +830,13 @@ if (!globalThis.GURPS) {
         prefix,
         optionalArgs: { blind: action.blindroll, event },
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -861,6 +868,13 @@ if (!globalThis.GURPS) {
         optionalArgs: { blind: action.blindroll, event },
         action,
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -896,6 +910,13 @@ if (!globalThis.GURPS) {
         }),
         optionalArgs: { blind: action.blindroll, event },
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -965,7 +986,7 @@ if (!globalThis.GURPS) {
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return doRoll({
+      return await doRoll({
         actor,
         targetmods,
         thing,
@@ -1031,6 +1052,13 @@ if (!globalThis.GURPS) {
         optionalArgs: { blind: action.blindroll, event },
         action,
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -1090,6 +1118,13 @@ if (!globalThis.GURPS) {
         optionalArgs: { blind: action.blindroll, event },
         action,
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -1216,7 +1251,7 @@ if (!globalThis.GURPS) {
       else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
+      return await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
     },
 
     /*
@@ -1276,9 +1311,15 @@ if (!globalThis.GURPS) {
       actions.push(action)
       action = action.next
     }
-    const calculations = await Promise.all(
-      actions.map(a => GURPS.actionFuncs[a.type]({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
-    )
+    const calculations = []
+    for (const a of actions) {
+      const func = GURPS.actionFuncs[a.type]
+      if (func.constructor.name === 'AsyncFunction') {
+        calculations.push(await func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+      } else {
+        calculations.push(func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+      }
+    }
     const levels = calculations.map(result => (result ? result.target : 0))
     if (!levels.some(level => level > 0)) {
       ui.notifications.warn(i18n('GURPS.noViableSkill'))

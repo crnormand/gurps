@@ -2824,7 +2824,7 @@ export class GurpsActor extends Actor {
       if (sysKey) return foundry.utils.getProperty(this, sysKey)
       const camelCaseName = name
         .split(' ')
-        .map(word => word.toUpperCase())
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('')
       const localizedKey = `GURPS.trait${camelCaseName}`
       const localizedName = game.i18n.localize(localizedKey)
@@ -3330,12 +3330,22 @@ export class GurpsActor extends Actor {
         break
       case 'skill-spell':
         const item = this.findByOriginalName(action.name)
-        result = {
-          name: item.name,
-          uuid: item.uuid,
-          itemId: item.itemid,
-          fromItem: item.fromItem,
-          pageRef: item.pageref,
+        if (!!item) {
+          result = {
+            name: item.name,
+            uuid: item.uuid,
+            itemId: item.itemid,
+            fromItem: item.fromItem,
+            pageRef: item.pageref,
+          }
+        } else {
+          result = {
+            name: action.name,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
         }
         break
 

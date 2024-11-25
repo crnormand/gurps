@@ -241,66 +241,72 @@ export async function doRoll({
       it => !!it
     )
 
-    const dialog = new Dialog({
-      title: game.i18n.localize('GURPS.confirmRoll'),
-      content: await renderTemplate(`systems/gurps/templates/${template}`, {
-        formula: formula,
-        thing: thing,
-        target: origtarget,
-        targetmods: targetmods,
-        prefix: prefix,
-        chatthing: chatthing,
-        optionalArgs: optionalArgs,
-        tokenImg,
-        tokenName,
-        totalRoll,
-        totalMods,
-        operator,
-        itemImage,
-        itemIcon,
-        targetRoll,
-        itemColor,
-        damageRoll,
-        damageType,
-        rollType,
-        targetColor,
-        rollChance,
-        bucketRoll,
-        messages,
-      }),
-      buttons: {
-        roll: {
-          icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
-          label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
-          callback: async () => {
-            return await _doRoll({
-              actor,
-              formula,
-              targetmods,
-              prefix,
-              thing,
-              chatthing,
-              origtarget,
-              optionalArgs,
-              fromUser,
-            })
-          },
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: i18n('GURPS.cancel'),
-          callback: async () => {
-            await GURPS.ModifierBucket.clear()
-          },
-        },
-      },
-      default: 'roll',
-    })
+    let doRollResult
     // Before open a new dialog, we need to make sure
     // all other dialogs are closed, because bucket must be reset
     // before we start a new roll
     await $(document).find('.dialog-button.cancel').click().promise()
-    await dialog.render(true)
+    await new Promise(async resolve => {
+      const dialog = new Dialog({
+        title: game.i18n.localize('GURPS.confirmRoll'),
+        content: await renderTemplate(`systems/gurps/templates/${template}`, {
+          formula: formula,
+          thing: thing,
+          target: origtarget,
+          targetmods: targetmods,
+          prefix: prefix,
+          chatthing: chatthing,
+          optionalArgs: optionalArgs,
+          tokenImg,
+          tokenName,
+          totalRoll,
+          totalMods,
+          operator,
+          itemImage,
+          itemIcon,
+          targetRoll,
+          itemColor,
+          damageRoll,
+          damageType,
+          rollType,
+          targetColor,
+          rollChance,
+          bucketRoll,
+          messages,
+        }),
+        buttons: {
+          roll: {
+            icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
+            label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
+            callback: async () => {
+              doRollResult = await _doRoll({
+                actor,
+                formula,
+                targetmods,
+                prefix,
+                thing,
+                chatthing,
+                origtarget,
+                optionalArgs,
+                fromUser,
+              })
+              resolve(doRollResult)
+            },
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: i18n('GURPS.cancel'),
+            callback: async () => {
+              await GURPS.ModifierBucket.clear()
+              resolve(false)
+            },
+          },
+        },
+        default: 'roll',
+      })
+      dialog.render(true)
+    })
+    return doRollResult
   } else {
     return await _doRoll({
       actor,

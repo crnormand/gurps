@@ -298,7 +298,7 @@ export class EffectModifierPopout extends Application {
   }
 
   getDescription(text, itemRef) {
-    const regex = itemRef === 'maneuver' ? /^(.*?)(?=[#@])/ : /^(.*?)(?=[#@(])/
+    const regex = /^(.*?)(?=[#@])/
     const desc = text.match(regex)?.[1]
     return !!desc ? desc.trim() : text
   }
