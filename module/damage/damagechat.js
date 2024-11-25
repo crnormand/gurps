@@ -84,19 +84,14 @@ export default class DamageChat {
   static async _dropCanvasData(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
       // Find all tokens under the drop point.
-      const dropPoint = { x: dropData.x, y: dropData.y }
       const targets = canvas.tokens.placeables.filter(token => {
-        const tokenBounds = token.bounds
-        console.log('token left-right', tokenBounds.x, tokenBounds.width)
-        console.log('token top-bottom', tokenBounds.y, tokenBounds.height)
         return (
-          dropPoint.x >= tokenBounds.x &&
-          dropPoint.x <= tokenBounds.x + tokenBounds.width &&
-          dropPoint.y >= tokenBounds.y &&
-          dropPoint.y <= tokenBounds.y + tokenBounds.height
+          dropData.x >= token.bounds.x &&
+          dropData.x <= token.bounds.x + token.bounds.width &&
+          dropData.y >= token.bounds.y &&
+          dropData.y <= token.bounds.y + token.bounds.height
         )
       })
-      console.log(`tokensInHex: `, ...targets)
 
       let handle = (/** @type {GurpsActor} */ actor) => actor.handleDamageDrop(dropData.payload)
       if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
