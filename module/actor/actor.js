@@ -1052,7 +1052,9 @@ export class GurpsActor extends Actor {
    */
   async setResourceTrackers() {
     // find those with non-blank slots
-    let templates = ResourceTrackerManager.getAllTemplates().filter(it => !!it.slot)
+    let templates = ResourceTrackerManager.getAllTemplates()
+      .filter(it => !!it.slot)
+      .filter(it => it.slot !== 'none')
 
     for (const template of templates) {
       // find the matching data on this actor
