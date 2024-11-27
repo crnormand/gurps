@@ -79,9 +79,15 @@ export async function doRoll({
     }
     result = await actor.canRoll(action, token)
   }
+
+  const messages = Object.keys(result)
+    .filter(key => key.toLowerCase().includes('message') && !!result[key])
+    .map(key => result[key])
+
   if (!result.canRoll) {
-    if (result.message) ui.notifications.warn(result.message)
-    if (result.targetMessage) ui.notifications.warn(result.targetMessage)
+    for (const message of messages) {
+      ui.notifications.warn(message)
+    }
     return false
   }
 
@@ -236,10 +242,6 @@ export async function doRoll({
     }
 
     const { targetColor, rollChance } = rollData(origtarget)
-
-    const messages = [result.message, result.targetMessage, result.maxActionMessage, result.maxBlockMessage].filter(
-      it => !!it
-    )
 
     let doRollResult
     // Before open a new dialog, we need to make sure

@@ -3227,7 +3227,7 @@ export class GurpsActor extends Actor {
    *
    * @param {object} action
    * @param {GurpsToken|Token} token
-   * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string }>}
+   * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
    */
   async canRoll(action, token) {
     let result = {
