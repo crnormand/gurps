@@ -259,7 +259,8 @@ export class GurpsActor extends Actor {
     if (!this.system.equippedblock) this.system.equippedblock = this.getEquippedBlock()
     // Catch for older actors that may not have these values set.
     if (!this.system.currentmove) this.system.currentmove = parseInt(this.system.basicmove.value.toString())
-    if (!this.system.currentdodge && this.system.dodge.value) this.system.currentdodge = parseInt(this.system.dodge.value.toString())
+    if (!this.system.currentdodge && this.system.dodge.value)
+      this.system.currentdodge = parseInt(this.system.dodge.value.toString())
     if (!this.system.currentflight) this.system.currentflight = parseFloat(this.system.basicspeed.value.toString()) * 2
 
     // Look for Defense bonuses.
@@ -612,7 +613,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -639,9 +640,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -711,9 +712,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -880,6 +881,27 @@ export class GurpsActor extends Actor {
     await this.update(data, ctx)
   }
 
+  async toggleStatusEffect(statusId, { active, overlay = false } = {}) {
+    const status = CONFIG.statusEffects.find(e => e.id === statusId)
+    if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
+
+    if (foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture') {
+      let existing = this.getAllActivePostureEffects()
+      existing = existing.filter(e => e.statuses.find(s => s !== statusId))
+
+      for (const it of existing) {
+        console.log(it)
+        await super.toggleStatusEffect(it.statuses.first())
+      }
+    }
+
+    await super.toggleStatusEffect(statusId, { active, overlay })
+  }
+
+  getAllActivePostureEffects() {
+    return this.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+  }
+
   /**
    * This method is called when "system.conditions.maneuver" changes on the actor (via the update method)
    * @param {string} maneuverText
@@ -894,7 +916,7 @@ export class GurpsActor extends Actor {
     if (tokens)
       for (const t of tokens) {
         let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
-        await t.toggleEffect(GURPS.StatusEffect.lookup(id))
+        await this.toggleStatusEffect(id)
       }
   }
 
@@ -1030,7 +1052,9 @@ export class GurpsActor extends Actor {
    */
   async setResourceTrackers() {
     // find those with non-blank slots
-    let templates = ResourceTrackerManager.getAllTemplates().filter(it => !!it.slot)
+    let templates = ResourceTrackerManager.getAllTemplates()
+      .filter(it => !!it.slot)
+      .filter(it => it.slot !== 'none')
 
     for (const template of templates) {
       // find the matching data on this actor
@@ -1206,8 +1230,10 @@ export class GurpsActor extends Actor {
     // add a new entry at the end.
     let empty = Object.values(moveData).length === 0
     GURPS.put(move, {
-      mode: mode, basic: basic ?? this.system.basicmove.value * 2,
-      enhanced: enhanced, default: empty || isDefault
+      mode: mode,
+      basic: basic ?? this.system.basicmove.value * 2,
+      enhanced: enhanced,
+      default: empty || isDefault,
     })
 
     // remove existing entries
@@ -2658,8 +2684,9 @@ export class GurpsActor extends Actor {
       // Exclude than rewrite the hitlocations on Actor
       await this.internalUpdate({ 'system.-=hitlocations': null })
       await this.update({ 'system.hitlocations': actorLocations })
-      const msg = `${this.name}: DR ${drFormula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
-        }`
+      const msg = `${this.name}: DR ${drFormula} applied to ${
+        affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
+      }`
       return { changed, msg, info: msg }
     }
   }

@@ -105,7 +105,7 @@ class MultipleImportApp extends Application {
         this.data.files[index].selected = isChecked
         return this.render(true)
 
-      case 'import':
+      case 'import': {
         // Import the selected files
         const selectedFiles = this.data.files.filter(it => it.selected)
         if (selectedFiles.length === 0) {
@@ -113,6 +113,7 @@ class MultipleImportApp extends Application {
         }
         this._importFiles(selectedFiles)
         return this.close()
+      }
 
       case 'cancel':
         this.close()

@@ -83,32 +83,20 @@ export default class DamageChat {
    */
   static async _dropCanvasData(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
-      let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
-      let grid_size = canvas.scene?.grid.size
-      canvas.tokens?.targetObjects(
-        {
-          x: dropData.x - grid_size / 2,
-          y: dropData.y - grid_size / 2,
-          height: grid_size,
-          width: grid_size,
-        },
-        { releaseOthers: true }
-      )
-      let targets = [...game.user.targets]
-
-      // Now that we have the list of targets, reset the target selection back to whatever the user had
-      for (let t of game.user.targets) {
-        t.setTarget(false, { releaseOthers: false, groupSelection: true })
-      }
-      oldselection.forEach(t => {
-        t.setTarget(true, { releaseOthers: false, groupSelection: true })
+      // Find all tokens under the drop point.
+      const targets = canvas.tokens.placeables.filter(token => {
+        return (
+          dropData.x >= token.bounds.x &&
+          dropData.x <= token.bounds.x + token.bounds.width &&
+          dropData.y >= token.bounds.y &&
+          dropData.y <= token.bounds.y + token.bounds.height
+        )
       })
 
       let handle = (/** @type {GurpsActor} */ actor) => actor.handleDamageDrop(dropData.payload)
       if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
       if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
 
-      // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
       if (targets.length === 1) {
         handle(targets[0].actor)

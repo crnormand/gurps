@@ -262,8 +262,8 @@ export class ActorImporter {
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
-        Math.round(performance.now() - starttime) +
-        'ms.)  You can inspect the character data below:'
+          Math.round(performance.now() - starttime) +
+          'ms.)  You can inspect the character data below:'
       )
       console.log(this)
       importResult = true
@@ -299,7 +299,7 @@ export class ActorImporter {
         title: game.i18n.format('GURPS.importSheetTitle', { generator }),
         content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
         buttons: {},
-        close: () => { },
+        close: () => {},
       },
       {
         width: 400,
@@ -510,8 +510,8 @@ export class ActorImporter {
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
-        Math.round(performance.now() - starttime) +
-        'ms.)  You can inspect the character data below:'
+          Math.round(performance.now() - starttime) +
+          'ms.)  You can inspect the character data below:'
       )
       console.log(this)
       importResult = true
@@ -1764,7 +1764,7 @@ export class ActorImporter {
       name += addition + ')'
     }
     let s = new Skill(name, '')
-    s.originalName = i.name
+    s.originalName = name
     s.pageRef(i.reference || '')
     s.uuid = i.id
     s.parentuuid = p
@@ -2427,13 +2427,16 @@ export class ActorImporter {
    */
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
-    let foundLength =  Number.MAX_VALUE
+    let foundLength = Number.MAX_VALUE
     let l = foundry.utils.getProperty(this.actor, 'system.' + list)
     recurselist(l, (e, k, _d) => {
-      if ((uuid && e.uuid == uuid) || (!!e.name && e.name.startsWith(name) && e.name.length < foundLength && e.mode == mode)) { 
+      if (
+        (uuid && e.uuid == uuid) ||
+        (!!e.name && e.name.startsWith(name) && e.name.length < foundLength && e.mode == mode)
+      ) {
         foundkey = k
         foundLength = !!e.name ? e.name.length : foundLength
-        }
+      }
     })
     return foundkey == null ? foundkey : foundry.utils.getProperty(this.actor, 'system.' + list + '.' + foundkey)
   }
@@ -2502,7 +2505,7 @@ export class ActorImporter {
     let oldotf = oldobj[objkey]
     newobj[objkey] = oldotf
     var notes, newotf
-      ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
+    ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
     if (!!newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
   }

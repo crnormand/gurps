@@ -1,24 +1,33 @@
 {
   "__NOTE TO TRANSLATOR__": "If a given text is the same as the English (en.json), there is no need to include it here. It will fallback to en.json.",
-  "GURPS.title": "GURPS",
-  "GURPS.changelog": "LEIA-ME",
-  "GURPS.DontShowAgain": "Não exibir LEIA-ME novamente",
-  "GURPS.copyrightGURPS": "GURPS é marca registrada da Steve Jackson Games, que também detém direitos autorais sobre suas regras e arte. Todos os direitos reservados pela Steve Jackson Games. Este auxílio de jogo é criação original de Chris Normand/Nose66 e é distribuído gratuitamente, sendo vetada a venda, ver permissões em http://www.sjgames.com/general/online_policy.html",
-  "GURPS.copyrightGCS": "GCS© Todos os Direitos Reservados 1998-2020 Richard A. Wilkes.",
+  "gurps": {
+    "copyright": "GURPS é marca registrada da Steve Jackson Games, que também detém direitos autorais sobre suas regras e arte. Todos os direitos reservados pela Steve Jackson Games. Este auxílio de jogo é criação original de Chris Normand/Nose66 e é distribuído gratuitamente, sendo vetada a venda, ver permissões em http://www.sjgames.com/general/online_policy.html",
+    "changelog": {
+      "readme": "LEIA-ME",
+      "dontShowAgain": "Não exibir LEIA-ME novamente"
+    },
+    "sheet": {
+      "personal": {
+        "tab": "Pessoal",
+        "portrait": "Retrato",
+        "identity": "Identidade",
+        "name": "Nome",
+        "player": "Jogador(a)",
+        "title": "Título",
+        "miscellaneous": "Diversos",
+        "created": "Criação",
+        "modified": "Modificação",
+        "options": "Opções"
+      },
+      "gcs": {
+        "copyright": "GCS© Todos os Direitos Reservados 1998-2024 Richard A. Wilkes."
+      }
+    }
+  },
   "__Char Sheet__": "=========",
-  "GURPS.portrait": "Retrato",
-  "GURPS.personalTab": "Pessoal",
   "GURPS.resourcesModsTab": "Recursos e Modificadores",
   "__Character Sheet Identity__": "=========",
-  "GURPS.identity": "Identidade",
-  "GURPS.identityName": "Nome",
-  "GURPS.identityPlayer": "Jogador(a)",
-  "GURPS.identityTitle": "Título",
   "__Character Sheet Miscellaneous__": "=========",
-  "GURPS.miscellaneous": "Diversos",
-  "GURPS.miscellaneousCreated": "Criação",
-  "GURPS.miscellaneousModified": "Modificação",
-  "GURPS.miscellaneousOptions": "Opções",
   "__Character Description__": "=========",
   "GURPS.description": "Descrição",
   "GURPS.descriptionAge": "Idade",

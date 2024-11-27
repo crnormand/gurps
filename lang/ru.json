@@ -1,21 +1,34 @@
 {
   "__NOTE TO TRANSLATOR__": "If a given text is the same as the English (en.json), there is no need to include it here. It will fallback to en.json.",
-  "GURPS.DontShowAgain": "Не показывать README снова",
-  "GURPS.copyrightGCS": "Права на GCS принадлежат Richard A. Wilkes, 1998-2020. Все права защищены",
+  "gurps": {
+    "copyright": "GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html",
+    "changelog": {
+      "dontShowAgain": "Не показывать README сноваn",
+      "readme": "README",
+      "title": "GURPS"
+    },
+    "sheet": {
+      "personal": {
+        "tab": "Личное",
+        "portrait": "Изображение",
+        "identity": "Личность",
+        "name": "Имя",
+        "player": "Игрок",
+        "title": "Статус",
+        "miscellaneous": "Разное",
+        "created": "Создан",
+        "modified": "Изменён",
+        "options": "Настройки"
+      },
+      "gcs": {
+        "copyright": "Права на GCS принадлежат Richard A. Wilkes, 1998-2024. Все права защищены."
+      }
+    }
+  },
   "__Char Sheet__": "=========",
-  "GURPS.portrait": "Изображение",
-  "GURPS.personalTab": "Личное",
   "GURPS.resourcesModsTab": "Ресурсы и Модификаторы",
   "__Character Sheet Identity__": "=========",
-  "GURPS.identity": "Личность",
-  "GURPS.identityName": "Имя",
-  "GURPS.identityTitle": "Статус",
-  "GURPS.identityPlayer": "Игрок",
   "__Character Sheet Miscellaneous__": "=========",
-  "GURPS.miscellaneous": "Разное",
-  "GURPS.miscellaneousCreated": "Создан",
-  "GURPS.miscellaneousModified": "Изменён",
-  "GURPS.miscellaneousOptions": "Настройки",
   "__Character Description__": "=========",
   "GURPS.description": "Описание",
   "GURPS.descriptionGender": "Пол",
