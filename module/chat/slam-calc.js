@@ -87,7 +87,7 @@ export class SlamCalculator {
     }
 
     let attackerRoll = Roll.create(diceToFormula(attackerDice, `[Slam Attacker's roll]`, true))
-    await attackerRoll.evaluate({ async: true })
+    await attackerRoll.evaluate()
 
     let attackerMin = false
     let attackerResult = attackerRoll.total + attackerAdds
@@ -97,7 +97,7 @@ export class SlamCalculator {
     }
 
     let targetRoll = Roll.create(diceToFormula(targetDice, `[Slam Defender's roll]`, true))
-    await targetRoll.evaluate({ async: true })
+    await targetRoll.evaluate()
     let targetMin = false
     let targetResult = targetRoll.total + targetAdds
     if (targetResult < 1) {
@@ -263,7 +263,7 @@ export class SlamCalculator {
 
     if (!!isAoAStrong) explanation += ` + 2 (${i18n('GURPS.slamAOAStrong')})`
     let sign = shieldDB >= 0 ? '+' : '-'
-    if (!!shieldDB) explanation += ` ${sign} ${math.abs(shieldDB)} (${i18n('GURPS.slamShieldDB')})`
+    if (!!shieldDB) explanation += ` ${sign} ${Math.abs(shieldDB)} (${i18n('GURPS.slamShieldDB')})`
     if (!!velocity) explanation += ` + ${velocity} ${i18n('GURPS.slamRelativeVelocity')}`
     if (min) explanation += ` (${i18n('GURPS.minimum')} 1)`
     return explanation

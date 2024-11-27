@@ -293,7 +293,7 @@ Global Override body {
 .gga-group .results-table {
   justify-self: stretch;
   width: 100%;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: 2fr auto 3fr;
   min-height: 130px;
   font-size: 12px;
 }
