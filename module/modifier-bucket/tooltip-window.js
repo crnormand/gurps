@@ -26,7 +26,8 @@ export default class ModifierBucketEditor extends Application {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket/tooltip-window.html',
       minimizable: false,
-      width: 820,
+      width: 840,
+      height: 'auto', // Set height to 'auto' to make it depend on the content
       scale: scale,
       classes: ['modifier-bucket'],
     })
@@ -103,6 +104,7 @@ export default class ModifierBucketEditor extends Application {
     data.covermods = ModifierLiterals.CoverPostureModifiers
     data.sizemods = ModifierLiterals.SizeModifiers
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
+    data.effortmods = ModifierLiterals.ExtraEffortModifiers
     data.currentmods = []
 
     if (!!GURPS.LastActor) {
@@ -458,63 +460,65 @@ const ModifierLiterals = {
 
   // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
   get MeleeMods() {
-    return `[+4 ${i18n('GURPS.modifierDeterminedAttack')}] [PDF:${i18n('GURPS.pdfDeterminedAttack')}]
-    [+4 ${i18n('GURPS.modifierTelegraphicAttack')}] [PDF:${i18n('GURPS.pdfTelegraphicAttack')}]
-    [-2 ${i18n('GURPS.modifierDeceptiveAttack')}] [PDF:${i18n('GURPS.pdfDeceptiveAttack')}]
-    [-4 ${i18n('GURPS.modifierMoveAttack')} *Max:9] [PDF:${i18n('GURPS.pdfMoveAttack')}]
-    [+2 ${i18n('GURPS.modifierStrongAttack')}] [PDF:${i18n('GURPS.pdfStrongAttack')}]
-    ${horiz(i18n('GURPS.modifierExtraEffort'))} [PDF:${i18n('GURPS.pdfExtraEffort')}]
-    [+2 ${i18n('GURPS.modifierMightyBlow')} *Cost 1FP] [PDF:${i18n('GURPS.pdfMightyBlow')}]
-    [+0 ${i18n('GURPS.modifierHeroicCharge')} *Cost 1FP] [PDF:${i18n('GURPS.pdfHeroicCharge')}]`
+    return `
+    [+4 ${i18n('gurps.modifiers.aoaDetermined')}] [PDF:${i18n('gurps.modifiers.pdf.aoaDetermined')}]
+    [+2 ${i18n('gurps.modifiers.aoaStrong')}] [PDF:${i18n('gurps.modifiers.pdf.aoaStrong')}]
+    [+2 ${i18n('gurps.modifiers.committedDetermined')}] [PDF:${i18n('gurps.modifiers.pdf.committedDetermined')}]
+    [+1 ${i18n('gurps.modifiers.committedStrong')}] [PDF:${i18n('gurps.modifiers.pdf.committedStrong')}]
+    [+4 ${i18n('gurps.modifiers.telegraphic')}] [PDF:${i18n('gurps.modifiers.pdf.telegraphic')}]
+    [-4 ${i18n('gurps.modifiers.moveAndAttack')} *Max:9] [PDF:${i18n('gurps.modifiers.pdf.moveAndAttack')}]
+    [-2 ${i18n('gurps.modifiers.deceptive')}] [PDF:${i18n('gurps.modifiers.pdf.deceptive')}]
+    [-2 ${i18n('gurps.modifiers.defensive')}] [PDF:${i18n('gurps.modifiers.pdf.defensive')}]
+    [-6 ${i18n('gurps.modifiers.rapidStrike')}] [PDF:${i18n('gurps.modifiers.pdf.rapidStrike')}]`
   },
 
   get RangedMods() {
     const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
-    return `[+1 ${i18n('GURPS.aim')}]
-	${
-    useOnTarget
-      ? `[+2 ${i18n('GURPS.modifierAllOutAttackRanged')}] [PDF:${i18n('GURPS.pdfAllOutAttackRanged')}]`
-      : `[+1 ${i18n('GURPS.modifierDeterminedAttack')}] [PDF:${i18n('GURPS.pdfDeterminedAttack')}]`
-  }
-	${
-    useOnTarget
-      ? `[+1 ${i18n('GURPS.modifierCommittedAttackRanged')}] [PDF:${i18n('GURPS.pdfCommittedAttackRanged')}]`
-      : ''
-  }
-    ${useOnTarget ? horiz(i18n('GURPS.aiming')) : ''}
-    ${useOnTarget ? `[+4 ${i18n('GURPS.modifierAimAllOutAim')}] [PDF:${i18n('GURPS.pdfAllOutAim')}]` : ''}
-	${useOnTarget ? `[+2 ${i18n('GURPS.modifierAimAllOutAimBraced')}] [PDF:${i18n('GURPS.pdfAllOutAim')}]` : ''}
-	${useOnTarget ? `[+2 ${i18n('GURPS.modifierAimCommittedAim')}] [PDF:${i18n('GURPS.pdfCommittedAim')}]` : ''}
-	${useOnTarget ? `[+1 ${i18n('GURPS.modifierAimCommittedAimBraced')}] [PDF:${i18n('GURPS.pdfCommittedAim')}]` : ''}
-    ${horiz(i18n('GURPS.actions'))}
-    [${i18n('GURPS.modifierWillCheck')}]`
+    return (
+      `[+1 ${i18n('gurps.modifiers.aim')}] [PDF:${i18n('gurps.modifiers.pdf.aim')}]
+      [–2 ${i18n('gurps.modifiers.popup')}] [PDF:${i18n('gurps.modifiers.pdf.popup')}]` +
+      (useOnTarget
+        ? `
+${horiz(i18n('gurps.modifiers.onTargetAiming'))}
+[+2 ${i18n('gurps.modifiers.aoaRanged')}] [PDF:${i18n('gurps.modifiers.pdf.aoaRanged')}]
+[+1 ${i18n('gurps.modifiers.committedRanged')}] [PDF:${i18n('gurps.modifiers.pdf.committedRanged')}]
+[+4 ${i18n('gurps.modifiers.allOutAim')}] [PDF:${i18n('gurps.modifiers.pdf.allOutAim')}]
+[+2 ${i18n('gurps.modifiers.allOutAimBraced')}] [PDF:${i18n('gurps.modifiers.pdf.allOutAimBraced')}]
+[+2 ${i18n('gurps.modifiers.committedAim')}] [PDF:${i18n('gurps.modifiers.pdf.committedAim')}]
+[+1 ${i18n('gurps.modifiers.committedAimBraced')}] [PDF:${i18n('gurps.modifiers.pdf.committedAimBraced')}]`
+        : `
+[+1 ${i18n('gurps.modifiers.aoaRangedDetermined')}] [PDF:${i18n('gurps.modifiers.pdf.aoaRangedDetermined')}]`)
+    )
   },
 
   get DefenseMods() {
     const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
-    return `[+2 ${i18n('GURPS.allOutDefense')}] [PDF:${i18n('GURPS.pdfAllOutDefense')}]
-    [+1 ${i18n('GURPS.modifierShieldDB')}] [PDF:${i18n('GURPS.pdfShieldDB')}]
-    [+2 ${i18n('GURPS.modifierDodgeAcrobatic')}] [PDF:${i18n('GURPS.pdfDodgeAcrobatic')}]
-    [+3 ${i18n('GURPS.modifierDodgeDive')}] [PDF:${i18n('GURPS.pdfDodgeDive')}]
-    [+3 ${i18n('GURPS.modifierDodgeRetreat')}] [PDF:${i18n('GURPS.pdfDodgeRetreat')}]
-    [+1 ${i18n('GURPS.modifierBlockRetreat')}] [PDF:${i18n('GURPS.pdfBlockRetreat')}]
-    ${useOnTarget ? `[-2 ${i18n('GURPS.modifierDefenseCommittedAim')}] [PDF:${i18n('GURPS.pdfCommittedAim')}]` : ''}
+    return `[+2 ${i18n('gurps.modifiers.aodIncreased')}] [PDF:${i18n('gurps.modifiers.pdf.aodIncreased')}]
+    [+1 ${i18n('gurps.modifiers.shieldDB')}] [PDF:${i18n('gurps.modifiers.pdf.shieldDB')}]
+    [+2 ${i18n('gurps.modifiers.dodgeAcrobatic')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeAcrobatic')}]
+    [+3 ${i18n('gurps.modifiers.dodgeAndDrop')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeAndDrop')}]
+    [+3 ${i18n('gurps.modifiers.dodgeRetreat')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeRetreat')}]
+    [+1 ${i18n('gurps.modifiers.blockRetreat')}] [PDF:${i18n('gurps.modifiers.pdf.blockRetreat')}]
+    [+3 ${i18n('gurps.modifiers.fencingRetreat')}] [PDF:${i18n('gurps.modifiers.pdf.fencingRetreat')}]
+    [+1 ${i18n('gurps.modifiers.defensiveDefense')}] [PDF:${i18n('gurps.modifiers.pdf.defensiveDefense')}]
     ${
       useOnTarget
-        ? `[-2 ${i18n('GURPS.modifierDefenseCommittedAttackRanged')}] [PDF:${i18n('GURPS.pdfCommittedAttackRanged')}]`
+        ? `[-2 ${i18n('gurps.modifiers.committedAimDefense')}] [PDF:${i18n('gurps.modifiers.pdf.committedAimDefense')}]`
         : ''
     }
-    [-2 ${i18n('GURPS.modifierDodgeFailedAcro')}] [PDF:${i18n('GURPS.pdfDodgeFailedAcro')}]
-    [-2 ${i18n('GURPS.modifierDodgeSide')}] [PDF:${i18n('GURPS.pdfDodgeSide')}]
-    [-4 ${i18n('GURPS.modifierDodgeRear')}] [PDF:${i18n('GURPS.pdfDodgeRear')}]
-    [-1 ${i18n('GURPS.modifierDefDeceptiveAttack')}]
-    [-3 ${i18n('GURPS.modifierMaintainConcentration')}]
-    ${horiz(i18n('GURPS.modifierExtraEffort'))}
-    [+2 ${i18n('GURPS.modifierFeverishDef')} *Cost 1FP]`
-    //    ${horiz(i18n('GURPS.actions'))}
-    //    [WILL-3 ${i18n('GURPS.concentrationCheck')}]`
+    ${
+      useOnTarget
+        ? `[-2 ${i18n('gurps.modifiers.committedAttackRanged')}] [PDF:${i18n(
+            'gurps.modifiers.pdf.committedAttackRanged'
+          )}]`
+        : ''
+    }
+    [-2 ${i18n('gurps.modifiers.dodgeAcrobaticFail')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeAcrobaticFail')}]
+    [-2 ${i18n('gurps.modifiers.defenseSide')}] [PDF:${i18n('gurps.modifiers.pdf.defenseSide')}]
+    [-1 ${i18n('gurps.modifiers.deceptiveDefense')}] [PDF:${i18n('gurps.modifiers.pdf.deceptiveDefense')}]
+    [–1 ${i18n('gurps.modifiers.riposte')}] [PDF:${i18n('gurps.modifiers.pdf.riposte')}]`
   },
 
   get OtherMods1() {
@@ -598,6 +602,16 @@ const ModifierLiterals = {
       `-1 ${i18n('GURPS.modifierQualityMissing')}`,
       `-5 ${i18n('GURPS.modifierQualityNone')}`,
       `-10 ${i18n('GURPS.modifierQualityNoneTech')}`,
+    ]
+  },
+
+  get ExtraEffortModifiers() {
+    return [
+      i18n('gurps.modifiers.extraEffort'),
+      `+2 ${i18n('gurps.modifiers.feverishDefense')} *Cost 1FP`,
+      `+2 ${i18n('gurps.modifiers.mightyBlow')} *Cost 1FP`,
+      `+0 ${i18n('gurps.modifiers.heroicCharge')} *Cost 1FP`,
+      `-3 penalty for Rapid Strike (Flurry of Blows) *Cost 1FP`,
     ]
   },
 }

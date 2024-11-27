@@ -8,6 +8,7 @@ Release 0.17.16
 - Bugfix: Attack mixup if weapon name differs only in a postfix #2025
 - Bugfix: Damage dropping not working as intended #2007
 - Bugfix: Duplicating the specialization name to other skills #2035
+- Feature: Remove the homebrew rules from the modifier bucket, add MA maneuvers to the bucket, and/or allow users to edit the modifier bucket. #2023
 
 Release 0.17.15 10/31/2024
 

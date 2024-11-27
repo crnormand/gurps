@@ -1752,7 +1752,7 @@ button.equipmentbutton:last-child {
 #modtooltipbucket {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 4fr 2fr 4fr;
+  grid-template-rows: 2fr auto 4fr;
   gap: 0.35em;
   height: 100%;
 }
@@ -1799,7 +1799,7 @@ button.equipmentbutton:last-child {
 .button-row {
   display: flex;
   flex-flow: row wrap;
-  height: 4.8em;
+  /* height: 4.8em; */
   overflow: scroll;
   overflow-y: overlay;
   overflow-x: hidden;
@@ -1810,7 +1810,7 @@ button.equipmentbutton:last-child {
   padding: 0 0.5em 0 0;
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-between;
+  justify-content: stretch;
   color: black;
   border: 0.35em solid darkred;
   border-radius: 0.35em;
@@ -1822,7 +1822,8 @@ button.equipmentbutton:last-child {
 }
 
 #modtooltipleftbottom .shaded-group {
-  height: 13em;
+  height: 100%;
+  /* min-height: 13em; */
 }
 
 #modtooltipcenter {
@@ -1867,18 +1868,18 @@ button.equipmentbutton:last-child {
 }
 
 .removemod:hover {
-  font-weight: bold;
+  /* font-weight: bold; */
   cursor: pointer;
   text-shadow: 0 0 10px red;
 }
 
 .removemod:hover::after {
-  /*  font-family: 'Font Awesome 5 Free'; */
+  font-family: 'Font Awesome 6 Pro';
   content: '\f1f8';
   display: inline-block;
   padding-right: 3px;
   vertical-align: middle;
-  font-weight: 900;
+  /* font-weight: 900; */
   color: dimgrey;
 }
 
@@ -1922,6 +1923,7 @@ button.equipmentbutton:last-child {
   overflow: scroll;
   overflow-y: overlay;
   overflow-x: hidden;
+  height: min-content !important;
 }
 
 .modttt {
@@ -1982,7 +1984,7 @@ button.equipmentbutton:last-child {
 
 .modtooltip .collapsible-wrapper > label:after {
   font: normal normal normal 12px/1;
-  /*  font-family: 'Font Awesome 5 Free'; */
+  font-family: 'Font Awesome 6 Pro';
   font-weight: 900;
   content: '\f078';
   float: right;
@@ -2123,12 +2125,12 @@ button.equipmentbutton:last-child {
 .gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
+
 }
 
-.removemod.minus,
-.gga-chat-message .glinkmodminus,
-.modtooltip .glinkmodminus {
+.gga-chat-message .glinkmodminus, .modtooltip .glinkmodminus {
   color: darkred;
+  text-wrap: nowrap;
 }
 
 .modtooltip .gurpslink,
@@ -2159,6 +2161,22 @@ button.equipmentbutton:last-child {
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+}
+
+.removemod.plus {
+  text-indent: -1.5em;
+  margin-left: 1.5em;
+}
+
+.removemod.minus {
+  text-wrap: wrap;
+  text-indent: -1.5em;
+  margin-left: 1.5em;
+  color: darkred;
+}
+
+.removemod.minus:hover {
+  font-weight: normal;
 }
 
 .modtooltip .gga-group aside {

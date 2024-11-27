@@ -18,6 +18,9 @@
         "modified": "Modifiziert",
         "options": "Optionen"
       }
+    },
+    "modifiers": {
+      "determinedAttack": "Entschlossener Angriff"
     }
   },
   "__Char Sheet__": "=========",
@@ -465,7 +468,7 @@
   "GURPS.modifierQuality": "Ausrüstungs Qualität",
   "GURPS.modifierQualityBest": "Best Mögliche",
   "GURPS.modifierQualityFine": "Ausgezeichnete Qualität (Kosten ×20)",
-  "GURPS.modifierQualityGood": "Gute Qualität (Kosten ×5",
+  "GURPS.modifierQualityGood": "Gute Qualität (Kosten ×5)",
   "GURPS.modifierQualityImprovised": "Improvisiert",
   "GURPS.modifierQualityImprovTech": "Improvisiert (technologisch)",
   "GURPS.modifierQualityMissing": "Fehlende/Beschädigte Ausrüstung",
