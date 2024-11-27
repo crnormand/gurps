@@ -98,6 +98,7 @@ export default class GurpsToken extends Token {
   }
 
   /**
+   * Deprecated -- in favor of Actor.toggleStatusEffect
    * @override
    * @param {*} effect
    * @param {*} options
@@ -125,7 +126,7 @@ export default class GurpsToken extends Token {
   }
 
   isPostureEffect(effect) {
-    return effect.img && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
+    return effect?.img && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture'
   }
 
   async setEffectActive(name, active) {

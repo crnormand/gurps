@@ -50,7 +50,7 @@ export class StatusEffect {
     })
 
     Hooks.on('createActiveEffect', args => {
-      console.log(args)
+      // console.log(args)
     })
   }
 

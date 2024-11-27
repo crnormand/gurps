@@ -2,7 +2,15 @@
 
 Release 0.17.16
 
-- Feature: Multiple actor import. Import multiple GCS and GCA files with one command.
+- Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
+- Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024
+- Bugfix: Larger Fonts Hides "skills" in tabbed view till window is pulled open further #2015
+- Bugfix: Attack mixup if weapon name differs only in a postfix #2025
+- Bugfix: Damage dropping not working as intended #2007
+- Bugfix: Duplicating the specialization name to other skills #2035
+- Feature: Remove the homebrew rules from the modifier bucket, and add MA maneuvers to the bucket. #2023
+- Bugfix: Slam calculator appears not to be working #2022
+- Bugfix: Importing a Character Causes Endless Error Loop #2019
 
 Release 0.17.15 10/31/2024
 

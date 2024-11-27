@@ -2388,7 +2388,7 @@ if (!globalThis.GURPS) {
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>
 <div style='font-size:70%'>
-  <div>${game.i18n.localize('GURPS.copyrightGURPS')}</div>
+  <div>${game.i18n.localize('gurps.copyright')}</div>
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>

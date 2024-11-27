@@ -16,29 +16,23 @@
   <div>
     <div class="gga-group collapsible-content">
       <div class="grid gurps-3col results-table content-inner">
-      {{#if useDFRPGRules}}
-        <div>{{attacker}}</div>
-        <div>{{attackerDice.dice}}d{{#if attackerDice.adds}}{{{displayNumber attackerDice.adds}}}{{/if}}</div>
-        <div>{{i18n "GURPS.Dice"}}</div>
-        <div></div>       
-        <div>{{attackerResult}}</div>
-        <div>= {{attackerExplain}}</div>
+        {{#if useDFRPGRules}}
+          <div>{{attacker}}</div>
+          <div>{{attackerDice.dice}}d{{#if attackerDice.adds}}{{{displayNumber attackerDice.adds}}}{{/if}}</div>
+          <div>{{i18n "GURPS.Dice"}}</div>
+          <div></div>
+          <div>{{attackerResult}}</div>
+          <div>= {{attackerExplain}}</div>
 
-        <div>{{target}}</div>
-        <div></div>
-        <div>
-        </div>
-
-        <div></div>
-        <div>{{targetDice.dice}}d{{#if targetDice.adds}}{{{displayNumber targetDice.adds}}}{{/if}}</div>
-        <div>{{i18n "GURPS.Dice"}}</div>
-
-        <div></div>
-        <div>{{targetResult}}</div>
-        <div>= {{targetExplain}}</div>
+          <div>{{target}}</div>
+          <div>{{targetDice.dice}}d{{#if targetDice.adds}}{{{displayNumber targetDice.adds}}}{{/if}}</div>
+          <div>{{i18n "GURPS.Dice"}}</div>
+          <div></div>
+          <div>{{targetResult}}</div>
+          <div>= {{targetExplain}}</div>
       </div>
       {{else}}
-         <div>{{attacker}}</div>
+        <div>{{attacker}}</div>
         <div>{{attackerRaw}}</div>
         <div>
           = {{i18n "GURPS.HP"}} ({{attackerHp}}) &times; {{i18n "GURPS.slamVelocity"}} ({{relativeSpeed}}) &divide; 100
@@ -65,9 +59,9 @@
         <div></div>
         <div>{{targetResult}}</div>
         <div>= {{targetExplain}}</div>
-      </div>
-      
-      {{/if}}
     </div>
+
+    {{/if}}
   </div>
+</div>
 </div>

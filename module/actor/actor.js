@@ -989,6 +989,27 @@ export class GurpsActor extends Actor {
     await this.update(data, ctx)
   }
 
+  async toggleStatusEffect(statusId, { active, overlay = false } = {}) {
+    const status = CONFIG.statusEffects.find(e => e.id === statusId)
+    if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
+
+    if (foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture') {
+      let existing = this.getAllActivePostureEffects()
+      existing = existing.filter(e => e.statuses.find(s => s !== statusId))
+
+      for (const it of existing) {
+        console.log(it)
+        await super.toggleStatusEffect(it.statuses.first())
+      }
+    }
+
+    await super.toggleStatusEffect(statusId, { active, overlay })
+  }
+
+  getAllActivePostureEffects() {
+    return this.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+  }
+
   /**
    * This method is called when "system.conditions.maneuver" changes on the actor (via the update method)
    * @param {string} maneuverText
@@ -1003,7 +1024,7 @@ export class GurpsActor extends Actor {
     if (tokens)
       for (const t of tokens) {
         let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
-        await t.toggleEffect(GURPS.StatusEffect.lookup(id))
+        await this.toggleStatusEffect(id)
       }
   }
 
@@ -1139,7 +1160,9 @@ export class GurpsActor extends Actor {
    */
   async setResourceTrackers() {
     // find those with non-blank slots
-    let templates = ResourceTrackerManager.getAllTemplates().filter(it => !!it.slot)
+    let templates = ResourceTrackerManager.getAllTemplates()
+      .filter(it => !!it.slot)
+      .filter(it => it.slot !== 'none')
 
     for (const template of templates) {
       // find the matching data on this actor

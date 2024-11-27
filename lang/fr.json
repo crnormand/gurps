@@ -1,23 +1,31 @@
 {
-  "GURPS.title": "GURPS",
-  "GURPS.changelog": "LISEZ-MOI",
-  "GURPS.DontShowAgain": "Ne plus montrer le Lisez-moi",
-  "GURPS.copyrightGURPS": "GURPS est une marque déposée de Steve Jackson Games, et ses règles et illustrations sont protégées par leurs droits d'auteur. Tous les droits sont réservés à Steve Jackson Games. Cette aide de jeu est la création originale de Chris Normand/Nose66 et est distribuée gratuitement et non revendable, avec la permission gracieuse de http://www.sjgames.com/general/online_policy.html",
-  "GURPS.copyrightGCS": "GCS is une marque déposée (1998-2020) par Richard A. Wilkes. Tous droits réservés",
+  "gurps": {
+    "copyright": "GURPS est une marque déposée de Steve Jackson Games, et ses règles et illustrations sont protégées par leurs droits d'auteur. Tous les droits sont réservés à Steve Jackson Games. Cette aide de jeu est la création originale de Chris Normand/Nose66 et est distribuée gratuitement et non revendable, avec la permission gracieuse de http://www.sjgames.com/general/online_policy.html",
+    "changelog": {
+      "readme": "LISEZ-MOI",
+      "dontShowAgain": "Ne plus montrer le Lisez-moi"
+    },
+    "sheet": {
+      "personal": {
+        "tab": "Personnel",
+        "identity": "Identité",
+        "name": "Nom",
+        "player": "Joueur",
+        "title": "Titre",
+        "miscellaneous": "Divers",
+        "created": "Créé",
+        "modified": "Modifié"
+      },
+      "gcs": {
+        "copyright": "GCS is une marque déposée (1998-2024) par Richard A. Wilkes. Tous droits réservés."
+      }
+    }
+  },
+
   "__Char Sheet__": "=========",
-  "GURPS.portrait": "Portrait",
-  "GURPS.personalTab": "Personnel",
   "GURPS.resourcesModsTab": "Ressources et Modificateurs",
   "__Character Sheet Identity__": "=========",
-  "GURPS.identity": "Identité",
-  "GURPS.identityName": "Nom",
-  "GURPS.identityPlayer": "Joueur",
-  "GURPS.identityTitle": "Titre",
   "__Character Sheet Miscellaneous__": "=========",
-  "GURPS.miscellaneous": "Divers",
-  "GURPS.miscellaneousCreated": "Créé",
-  "GURPS.miscellaneousModified": "Modifié",
-  "GURPS.miscellaneousOptions": "Options",
   "__Character Description__": "=========",
   "GURPS.description": "Description",
   "GURPS.descriptionAge": "Age",
