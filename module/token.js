@@ -191,9 +191,10 @@ export default class GurpsToken extends Token {
         const effect = new GurpsActiveEffect(maneuver.data)
         await GurpsActiveEffect.create(effect, { parent: this.actor, keepId: true })
       }
+
       // Finally update Token Actions
       const actions = await TokenActions.fromToken(this)
-      await actions.selectManeuver(maneuver, game.combat.round)
+      await actions.selectManeuver(maneuver)
     }
   }
 

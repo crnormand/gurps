@@ -729,7 +729,7 @@
 }
 
 .gga-item {
-  color: olivedrab;
+  color: lightgrey;
 }
 
 .gga-child-item {
@@ -2294,9 +2294,9 @@ input.gcs-input:disabled {
 }
 
 .gga-app.item-editor {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .dr.gga-right.blue {
@@ -2316,7 +2316,7 @@ input.gcs-input:disabled {
 }
 .gga-item-image-thumb {
   width: 28px !important;
-  height:28px !important;
+  height: 28px !important;
   min-width: 28px;
   border: none;
   margin: 3px 8px;

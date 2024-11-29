@@ -1537,8 +1537,9 @@ export class ActorImporter {
     }
     data.QP.value = qp
 
-    let bl_value = parseFloat(calc?.basic_lift.match(/[\d\.]+/g))
-    let bl_unit = calc?.basic_lift.replace(bl_value + ' ', '')
+    let bl_string = calc?.basic_lift.match(/[\d,\.]+/g)[0]
+    let bl_value = parseDecimalNumber(bl_string)
+    let bl_unit = calc?.basic_lift.replace(bl_string + ' ', '')
 
     let lm = {}
     lm.basiclift = (bl_value * 1).toString() + ' ' + bl_unit

@@ -1,6 +1,12 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.16
+Release 0.17.17
+
+- Bugfix: The "roll for me" option does not work #2010
+- Bugfix: Fix bl unit for high strength characters #2041
+- Feature: Maneuver Menu on Combat Tracker #2027
+
+Release 0.17.16 11/29/2024
 
 - Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
 - Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024
@@ -11,6 +17,7 @@ Release 0.17.16
 - Feature: Remove the homebrew rules from the modifier bucket, and add MA maneuvers to the bucket. #2023
 - Bugfix: Slam calculator appears not to be working #2022
 - Bugfix: Importing a Character Causes Endless Error Loop #2019
+- Bugfix: Bug: Lifting and moving things chart breaks with high ST characters #2039
 
 Release 0.17.15 10/31/2024
 

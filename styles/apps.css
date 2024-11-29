@@ -2125,10 +2125,10 @@ button.equipmentbutton:last-child {
 .gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
-
 }
 
-.gga-chat-message .glinkmodminus, .modtooltip .glinkmodminus {
+.gga-chat-message .glinkmodminus,
+.modtooltip .glinkmodminus {
   color: darkred;
   text-wrap: nowrap;
 }
