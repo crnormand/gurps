@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.16
+Release 0.17.16 11/29/2024
 
 - Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
 - Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024
