@@ -96,7 +96,13 @@ export default class ResolveDiceRoll extends Application {
         }
       }
 
-      valid ? $(target).removeClass('gurps-invalid') : $(target).addClass('gurps-invalid')
+      if (valid) {
+        $(target).removeClass('gurps-invalid')
+        $(target).addClass('gurps-valid')
+      } else {
+        $(target).addClass('gurps-invalid')
+        $(target).removeClass('gurps-valid')
+      }
 
       // enable the apply button if all inputs have valid entries
       let inputs = html.find('input.gurps-invalid')
@@ -112,7 +118,7 @@ export default class ResolveDiceRoll extends Application {
     })
 
     html.find('#apply').on('click', () => this._applyCallback())
-    html.find('#roll').on('click', () => this._rollCallback())
+    html.find('#roll').on('click', async () => await this._rollCallback())
     html.find('input').focus()
   }
 
@@ -126,9 +132,12 @@ export default class ResolveDiceRoll extends Application {
     this.applyCallback(true)
   }
 
-  _rollCallback() {
-    // @ts-ignore
-    this.rollCallback(false)
+  async _rollCallback() {
+    for (const diceTerm of this.diceTerms) {
+      let result = this.getValues(diceTerm)
+      result.forEach(n => diceTerm.term.results.push({ active: true, result: n }))
+    }
+    this.rollCallback()
   }
 
   /**
@@ -203,17 +212,24 @@ export default class ResolveDiceRoll extends Application {
    *    add up to the target value.
    */
   generate(dice, target, results = []) {
-    if (dice.number === 1) results.push(target)
-    else {
-      dice.number--
-      let offset = Math.max(0, target - 1 - dice.faces * dice.number)
-      let range = Math.min(dice.faces, target - dice.number) - offset
+    if (!!target) {
+      if (dice.number === 1) results.push(target)
+      else {
+        dice.number--
+        let offset = Math.max(0, target - 1 - dice.faces * dice.number)
+        let range = Math.min(dice.faces, target - dice.number) - offset
 
-      let value = Math.ceil(CONFIG.Dice.randomUniform() * range) + offset
+        let value = Math.ceil(CONFIG.Dice.randomUniform() * range) + offset
 
-      results.push(value)
+        results.push(value)
 
-      this.generate(dice, target - value, results) // recurse!
+        this.generate(dice, target - value, results) // recurse!
+      }
+    } else {
+      // Simulate Nd6
+      for (let i = 0; i < dice.number; i++) {
+        results.push(Math.ceil(CONFIG.Dice.randomUniform() * dice.faces))
+      }
     }
     return results
   }

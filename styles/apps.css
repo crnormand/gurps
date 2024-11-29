@@ -2125,10 +2125,10 @@ button.equipmentbutton:last-child {
 .gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
-
 }
 
-.gga-chat-message .glinkmodminus, .modtooltip .glinkmodminus {
+.gga-chat-message .glinkmodminus,
+.modtooltip .glinkmodminus {
   color: darkred;
   text-wrap: nowrap;
 }
@@ -2346,7 +2346,13 @@ button.equipmentbutton:last-child {
 }
 
 .gurps-invalid {
-  background-color: lightpink !important;
+  border: 2px solid red !important;
+  box-shadow: none !important;
+}
+
+.gurps-valid {
+  border: 2px solid green !important;
+  box-shadow: none !important;
 }
 
 #fright-check label {

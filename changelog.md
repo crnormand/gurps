@@ -1,5 +1,9 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+Release 0.17.17
+
+- Bugfix: The "roll for me" option does not work #2010
+
 Release 0.17.16 11/29/2024
 
 - Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
