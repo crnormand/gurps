@@ -142,7 +142,7 @@ export class EffectModifierPopout extends Application {
                 break
             }
           } else {
-            obj = this._token.actor.items.get(itemReference)
+            obj = this._token?.actor.items.get(itemReference) || {}
           }
           const itemName = obj?.name || itemReference
           const itemType = obj?.type
