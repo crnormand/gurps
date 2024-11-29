@@ -95,6 +95,7 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
+    await GURPS.ModifierBucket.clear()
     const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
     if (isDamageRoll) {
       displayFormula = addBucketToDamage(formula)
