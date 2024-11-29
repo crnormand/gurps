@@ -15,7 +15,7 @@ import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
-import {
+import Maneuvers, {
   MOVE_NONE,
   MOVE_ONE,
   MOVE_STEP,
@@ -32,6 +32,8 @@ import { multiplyDice } from '../utilities/damage-utils.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { ActorImporter } from './actor-importer.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { TokenActions } from '../token-actions.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -491,11 +493,12 @@ export class GurpsActor extends Actor {
    * @param {string} sysKey - The system.<key> to use for the search.
    * @return {string | undefined} The trait key if found, otherwise undefined.
    */
-  _findSysKeyForId(key, id, sysKey) {
+  _findSysKeyForId(key, id, sysKey, include = false) {
     let traitKey
     let data = this.system
     recurselist(data[sysKey], (e, k, _d) => {
-      if (e[key] === id) traitKey = `system.${sysKey}.` + k
+      const exists = include ? !!e[key]?.includes(id) : e[key] === id
+      if (exists) traitKey = `system.${sysKey}.` + k
     })
     return traitKey
   }
@@ -856,6 +859,7 @@ export class GurpsActor extends Actor {
       }
     }
 
+    if (!Array.isArray(data) && !data._id) data._id = this.id
     return await super.update(data, context)
   }
 
@@ -1249,9 +1253,10 @@ export class GurpsActor extends Actor {
    * @param {any[]} damageData
    */
   handleDamageDrop(damageData) {
-    if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD))
-      new ApplyDamageDialog(this, damageData).render(true)
-    else ui.notifications?.warn('Only GMs are allowed to Apply Damage.')
+    if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD)) {
+      const dialog = new ApplyDamageDialog(this, damageData)
+      dialog.render(true)
+    } else ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
   }
 
   // Drag and drop from Item colletion
@@ -2706,5 +2711,30 @@ export class GurpsActor extends Actor {
     const template = Handlebars.partials['dr-tooltip']
     const compiledTemplate = Handlebars.compile(template)
     return new Handlebars.SafeString(compiledTemplate(context))
+  }
+
+  findByOriginalName(name, include = false) {
+    let item = this.items.find(i => i.system.originalName === name)
+    if (!item) item = this.items.find(i => i.system.name === name)
+    if (!!item) return item
+
+    const actorSysKeys = ['ads', 'skills', 'spells']
+    for (let key of actorSysKeys) {
+      let sysKey = this._findSysKeyForId('originalName', name, key, include)
+      if (!sysKey) sysKey = this._findSysKeyForId('name', name, key, include)
+      if (sysKey) return foundry.utils.getProperty(this, sysKey)
+      const camelCaseName = name
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join('')
+
+      const localizedKey = `GURPS.trait${camelCaseName}`
+      const localizedName = game.i18n.localize(localizedKey)
+      if (localizedName && localizedName !== localizedKey) {
+        sysKey = this._findSysKeyForId('originalName', localizedName, key, include)
+        if (!sysKey) sysKey = this._findSysKeyForId('name', localizedName, key, include)
+        if (sysKey) return foundry.utils.getProperty(this, sysKey)
+      }
+    }
   }
 }

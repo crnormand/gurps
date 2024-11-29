@@ -4,6 +4,7 @@ import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { i18n } from '../lib/utilities.js'
 import { isCombatActive, isTokenInActiveCombat } from './game-utils.js'
+import { TokenActions } from './token-actions.js'
 
 Hooks.once('init', async function () {
   game.settings.register(SYSTEM_NAME, 'token-override-refresh-icon', {
@@ -67,13 +68,13 @@ export default class GurpsToken extends Token {
           effects
             .filter(it => 'feint' === /** @type {string} */ (it.getFlag('gurps', 'name')))
             // @ts-ignore
-            .forEach(it => (it.icon = it.getFlag('gurps', 'alt')))
+            .forEach(it => (it.img = it.getFlag('gurps', 'alt')))
 
           if (detail === 'General') {
             // replace every maneuver that has an alternate appearance with it
             effects.forEach(it => {
               let alt = it.getFlag('gurps', 'alt')
-              if (alt) it.icon = /** @type {string} */ (alt)
+              if (alt) it.img = /** @type {string} */ (alt)
             })
           }
         }
@@ -83,11 +84,11 @@ export default class GurpsToken extends Token {
       const visibility = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
 
       // set all icons to null
-      if (visibility === 'NoOne') effects.forEach(it => (it.icon = null))
+      if (visibility === 'NoOne') effects.forEach(it => (it.img = null))
       else if (visibility === 'GMAndOwner')
         if (!game.user?.isGM && !this.isOwner)
           // set icon to null if neither GM nor owner
-          effects.forEach(it => (it.icon = null))
+          effects.forEach(it => (it.img = null))
     } // if (effects)
 
     // call the original method
@@ -190,6 +191,10 @@ export default class GurpsToken extends Token {
         const effect = new GurpsActiveEffect(maneuver.data)
         await GurpsActiveEffect.create(effect, { parent: this.actor, keepId: true })
       }
+
+      // Finally update Token Actions
+      const actions = await TokenActions.fromToken(this)
+      await actions.selectManeuver(maneuver)
     }
   }
 
@@ -233,28 +238,28 @@ export default class GurpsToken extends Token {
     // Size the texture aspect ratio within the token frame
     const tex = this.texture
     let aspect = tex.width / tex.height
-    const scale = this.icon.scale
+    const scale = this.img.scale
 
     if (aspect == 1) {
       if (this.w > this.h) aspect = 0.9 // force scaling by height when width is greater than height
     }
 
     if (aspect >= 1) {
-      this.icon.width = this.w * this.scale
+      this.img.width = this.w * this.scale
       scale.y = Number(scale.x)
     } else {
-      this.icon.height = this.h * this.scale
+      this.img.height = this.h * this.scale
       scale.x = Number(scale.y)
     }
 
     // Mirror horizontally or vertically
-    this.icon.scale.x = Math.abs(this.icon.scale.x) * (this.mirrorX ? -1 : 1)
-    this.icon.scale.y = Math.abs(this.icon.scale.y) * (this.mirrorY ? -1 : 1)
+    this.img.scale.x = Math.abs(this.img.scale.x) * (this.mirrorX ? -1 : 1)
+    this.img.scale.y = Math.abs(this.img.scale.y) * (this.mirrorY ? -1 : 1)
 
     // Set rotation, position, and opacity
-    this.icon.rotation = this.lockRotation ? 0 : Math.toRadians(this.rotation)
-    this.icon.position.set(this.w / 2, this.h / 2)
-    this.icon.alpha = this.hidden ? Math.min(this.alpha, 0.5) : this.alpha
-    this.icon.visible = true
+    this.img.rotation = this.lockRotation ? 0 : Math.toRadians(this.rotation)
+    this.img.position.set(this.w / 2, this.h / 2)
+    this.img.alpha = this.hidden ? Math.min(this.alpha, 0.5) : this.alpha
+    this.img.visible = true
   }
 }

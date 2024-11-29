@@ -678,7 +678,6 @@
   flex-flow: row nowrap;
   align-items: center;
   padding: 0 0.2em 0 0.2em;
-  white-space: nowrap;
   width: 100%;
 }
 
@@ -1377,6 +1376,7 @@ div#other {
   grid-area: advantages;
   align-content: start;
   flex-grow: 3;
+  max-width: 50%;
 }
 
 #skills {
@@ -1384,6 +1384,7 @@ div#other {
   grid-area: skills;
   align-content: start;
   flex-grow: 3;
+  max-width: 50%;
 }
 
 #spells {
@@ -2293,9 +2294,9 @@ input.gcs-input:disabled {
 }
 
 .gga-app.item-editor {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .dr.gga-right.blue {
@@ -2315,7 +2316,7 @@ input.gcs-input:disabled {
 }
 .gga-item-image-thumb {
   width: 28px !important;
-  height:28px !important;
+  height: 28px !important;
   min-width: 28px;
   border: none;
   margin: 3px 8px;
