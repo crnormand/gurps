@@ -26,13 +26,8 @@
     "minimum": "12",
     "verified": "12.331"
   },
-  "esmodules": [
-    "module/gurps.js",
-    "lib/xregexp-all.js"
-  ],
-  "scripts": [
-    "scripts/jquery.tinycolorpicker.js"
-  ],
+  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
+  "scripts": ["scripts/jquery.tinycolorpicker.js"],
   "styles": [
     "styles/simple.css",
     "styles/css_boilerplate.css",
@@ -78,6 +73,19 @@
     "distance": 1,
     "units": "yd"
   },
+  "media": [
+    {
+      "type": "cover",
+      "loop": false,
+      "flags": {}
+    },
+    {
+      "type": "setup",
+      "url": "systems/gurps/assets/gurps-thumbnail.jpg",
+      "thumbnail": "systems/gurps/assets/gurps-thumbnail.jpg"
+    }
+  ],
+  "background": "systems/gurps/assets/gurps-background.jpg",
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",

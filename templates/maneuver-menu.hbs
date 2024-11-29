@@ -1,0 +1,15 @@
+<div class='maneuver-combat-tracker-menu' data-combatant-id='{{combatant.id}}'>
+  <ul>
+    {{#each maneuvers as |maneuver|}}
+      <li class='maneuver-select-info' data-maneuver='{{maneuver.name}}'>
+        <img class='maneuver-select-icon' src='{{maneuver.icon}}' alt='{{maneuver.name}}' />
+        <div class='maneuver-select-line'>
+          <div class='maneuver-select-choice'>
+            {{localize maneuver.data.label}}
+          </div>
+          <div class='maneuver-select-hint'>{{getMoveIcon this}}</div>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</div>

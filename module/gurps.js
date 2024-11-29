@@ -81,6 +81,8 @@ import { JournalEntryPageGURPS } from './pdf/index.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import { GGADebugger } from '../utils/debugger.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
+import { TokenActions } from './token-actions.js'
+import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 
 let GURPS = undefined
 
@@ -2353,7 +2355,7 @@ if (!globalThis.GURPS) {
     })
 
     // @ts-ignore
-    Hooks.on('renderCombatTracker', function (_a, html, _c) {
+    Hooks.on('renderCombatTracker', async function (_a, html, _c) {
       // use class 'bound' to know if the drop event is already bound
       if (!html.hasClass('bound')) {
         html.addClass('bound')
@@ -2411,6 +2413,27 @@ if (!globalThis.GURPS) {
           })
         })
       }
+
+      // Resolve Quick Roll and Maneuver buttons
+      const combatants = html.find('.combatant')
+      for (let combatantElement of combatants) {
+        const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
+        const token = canvas.tokens.get(combatant.token.id)
+
+        // Get Combat Initiative
+        const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
+        // Add Quick Roll Menu
+        //  combatantElement = await addQuickRollButton(combatantElement, combatant, token)
+        // Add Maneuver Menu
+        combatantElement = await addManeuverMenu(combatantElement, combatant, token)
+
+        // Add Tooltip to Token Image
+        const tokenImage = $(combatantElement).find('.token-image')
+        tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
+      }
+      // Add Quick Roll and Maneuvers Menu Listeners
+      // addQuickRollListeners()
+      addManeuverListeners()
     })
 
     // @ts-ignore
@@ -2611,7 +2634,66 @@ if (!globalThis.GURPS) {
     //   })
     // }, 1000)
 
+    Hooks.on('combatStart', async combat => {
+      console.log(`Combat started: ${combat.id} - resetting token actions`)
+      await resetTokenActions(combat)
+    })
+
+    Hooks.on('combatRound', async (combat, round) => {
+      await handleCombatTurn(combat, round)
+    })
+
+    Hooks.on('combatTurn', async (combat, turn, combatant) => {
+      await handleCombatTurn(combat, turn)
+    })
+
+    Hooks.on('deleteCombat', async combat => {
+      console.log(`Combat ended: ${combat.id} - restarting token actions`)
+      await resetTokenActions(combat)
+    })
+
+    Hooks.on('modifierBucketSumUpdated', bucket => {
+      const signal = bucket.minus ? '-' : '+'
+      const target = $('#cr-target').text()
+      if (!!target && !isNaN(target)) {
+        const total = Math.max(3, parseInt(target) + bucket.currentSum)
+        const { targetColor, rollChance } = rollData(total)
+        setTimeout(() => {
+          $('#cr-operator').text(signal)
+          $('#cr-totalmods').text(Math.abs(bucket.currentSum))
+          $('#cr-total').text(total).css('color', targetColor)
+          $('.cr-tooltip').text(rollChance)
+        }, 200)
+      }
+      const damage = $('#cr-damage').text()
+      const formula = $('#cr-formula').text()
+      if (!!formula && !!damage) {
+        const newFormula = addBucketToDamage(formula, false)
+        const bucketTotal = GURPS.ModifierBucket.currentSum()
+        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+        setTimeout(() => {
+          $('#cr-damage').text(newFormula)
+          $('#cr-bucket').text(bucketRoll)
+        }, 200)
+      }
+    })
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
+}
+
+const handleCombatTurn = async (combat, round) => {
+  const nextCombatant = combat.nextCombatant
+  console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
+  const token = canvas.tokens.get(nextCombatant.token.id)
+  const actions = await TokenActions.fromToken(token)
+  if (round.round > 1) await actions.newTurn()
+}
+
+const resetTokenActions = async combat => {
+  for (const combatant of combat.combatants) {
+    const token = canvas.tokens.get(combatant.token.id)
+    const actions = await TokenActions.fromToken(token)
+    await actions.clear()
+  }
 }
