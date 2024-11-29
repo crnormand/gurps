@@ -11,6 +11,7 @@ Release 0.17.16
 - Feature: Remove the homebrew rules from the modifier bucket, and add MA maneuvers to the bucket. #2023
 - Bugfix: Slam calculator appears not to be working #2022
 - Bugfix: Importing a Character Causes Endless Error Loop #2019
+- Bugfix: Bug: Lifting and moving things chart breaks with high ST characters #2039
 
 Release 0.17.15 10/31/2024
 
