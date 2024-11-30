@@ -235,7 +235,7 @@ export class Named extends _Base {
   /**
    * Populate saved Item info stored on Actor.
    *
-   * This actor.system.itemInfo is populated only if you
+   * This actor.system.backupItemInfo is populated only if you
    * disable the `Import Player data as Foundry Items` and
    * import the actor again. The idea is to maintain on these data
    * any changes the Item have which the Actor Component does not
@@ -265,6 +265,7 @@ export class NamedCost extends Named {
     this.itemid = ''
     this.itemInfo = {}
     this.fromItem = ''
+    this.addToQuickRoll = false
   }
 }
 
@@ -386,6 +387,7 @@ export class Skill extends Leveled {
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
       },
     }
   }
@@ -500,6 +502,7 @@ export class Spell extends Leveled {
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
       },
     }
   }
@@ -618,6 +621,7 @@ export class Advantage extends NamedCost {
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
       },
     }
   }
@@ -700,6 +704,7 @@ export class Melee extends Attack {
     this.reach = ''
     this.parry = ''
     this.block = ''
+    this.baseParryPenalty = -4
   }
   static fromObject(data, actor) {
     let melee
@@ -724,6 +729,7 @@ export class Melee extends Attack {
       melee.reach = data.reach
       melee.parry = data.parry
       melee.block = data.block
+      melee.baseParryPenalty = data.baseParryPenalty || -4
     }
     return this._checkComponentInActor(actor, melee)
   }
@@ -779,6 +785,7 @@ export class Melee extends Attack {
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
       },
     }
   }
@@ -895,6 +902,7 @@ export class Ranged extends Attack {
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
       },
     }
   }
@@ -1061,6 +1069,7 @@ export class Equipment extends Named {
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
       },
     }
   }

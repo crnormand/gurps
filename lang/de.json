@@ -965,5 +965,16 @@
   "GURPS.tokenToolsTitle": "Öffne Effekt Modifikator Popup",
   "GURPS.effectModNoTokenSelected": "Kein Token ausgewählt",
   "GURPS.settingActiveEffects": "Aktive Effekte einschalten",
-  "GURPS.settingHintActiveEffects": "Erlaubt der SL, Aktive Effekte zu erstellen und anzuwenden"
+  "GURPS.settingHintActiveEffects": "Erlaubt der SL, Aktive Effekte zu erstellen und anzuwenden",
+  "GURPS.quickRollMenu": "Schnellwurfmenü",
+  "GURPS.settingUseQuickRolls": "Schnellwurfknopf verwenden",
+  "GURPS.settingHintUseQuickRolls": "Wenn aktiviert, wird das System einen Schnellwurfknopf im Kampftracker anzeigen.",
+  "GURPS.settingLabelUseQuickRolls": "Schnellwurfkonfiguration",
+  "GURPS.quickRollUse": "Schnellwurfknopf aktivieren/deaktivieren",
+  "GURPS.quickRollShowAttributes": "Zeige Attributwürfe",
+  "GURPS.quickRollShowOther": "Zeige Sekundäre Prüfwürfe",
+  "GURPS.quickRollShowAttacks": "Zeige Angriffswürfe",
+  "GURPS.quickRollShowDefenses": "Zeige Verteidigungswürfe",
+  "GURPS.quickRollShowMarked": "Zeige ausgewählte Fertigkeiten und Zauber aus dem Charakterbogen",
+  "GURPS.quickRollAlwaysBlind": "Immer verdeckte Würfe machen"
 }

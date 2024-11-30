@@ -2495,6 +2495,7 @@ export class ActorImporter {
     if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name
     // If notes have `\n  ` fix it
     newobj.notes = newobj.notes.replace(/\n\s\s+/g, ' ')
+    if (!newobj.addToQuickRoll) newobj.addToQuickRoll = oldobj.addToQuickRoll || false
   }
 
   /**
@@ -2657,6 +2658,8 @@ export class ActorImporter {
         actorComp.itemid = existingItem._id
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
+        actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
+
         return actorComp
       }
 
@@ -2676,6 +2679,7 @@ export class ActorImporter {
         actorComp.itemid = existingItem._id
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
+        actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
       }
     }
     return actorComp

@@ -5,6 +5,7 @@ Release 0.17.17
 - Bugfix: The "roll for me" option does not work #2010
 - Bugfix: Fix bl unit for high strength characters #2041
 - Feature: Maneuver Menu on Combat Tracker #2027
+- Feature: Quick Roll Menu #2028
 
 Release 0.17.16 11/29/2024
 

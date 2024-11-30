@@ -524,5 +524,16 @@
   "GURPS.settingLabelShowItemImage": "Выберите черты для отображения изображений",
   "GURPS.parentItemTooltip": "<div>Из {type}:<br>{name}</div>",
   "GURPS.cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",
-  "GURPS.droppingItemNotification": "{actorName} получил {itemName}"
+  "GURPS.droppingItemNotification": "{actorName} получил {itemName}",
+  "GURPS.quickRollMenu": "Меню быстрого броска",
+  "GURPS.settingUseQuickRolls": "Использовать кнопку быстрого броска",
+  "GURPS.settingHintUseQuickRolls": "Если включено, система покажет кнопку быстрого броска в трекере боя.",
+  "GURPS.settingLabelUseQuickRolls": "Настройка быстрого броска",
+  "GURPS.quickRollUse": "Включить/выключить кнопку быстрого броска",
+  "GURPS.quickRollShowAttributes": "Показать броски атрибутов",
+  "GURPS.quickRollShowOther": "Показать вторичные проверки",
+  "GURPS.quickRollShowAttacks": "Показать броски атак",
+  "GURPS.quickRollShowDefenses": "Показать броски защиты",
+  "GURPS.quickRollShowMarked": "Показать выбранные навыки и заклинания из листа персонажа",
+  "GURPS.quickRollAlwaysBlind": "Всегда делать скрытые броски"
 }
