@@ -2571,13 +2571,19 @@ export class GurpsActor extends Actor {
       item.type === 'equipment'
         ? this._findEqtkeyForId('itemid', item.id)
         : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+
     const actorComp = foundry.utils.getProperty(this, sysKey)
+
     if (!(await this._sanityCheckItemSettings(actorComp))) return
+
     if (!!item.editingActor) delete item.editingActor
+
     await this._removeItemAdditions(item.id)
+
     // Update Item
     item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+
     // Update Actor Component
     const itemInfo = item.getItemInfo()
     await this.internalUpdate({
@@ -2875,6 +2881,7 @@ export class GurpsActor extends Actor {
     let checks = []
     const data = {}
     let size = 0
+
     switch (checkType) {
       case 'attributeChecks':
         const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']

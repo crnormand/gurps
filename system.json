@@ -81,11 +81,11 @@
     },
     {
       "type": "setup",
-      "url": "systems/gurps/assets/gurps-thumbnail.jpg",
-      "thumbnail": "systems/gurps/assets/gurps-thumbnail.jpg"
+      "url": "systems/gurps/assets/gurps-thumbnail.webp",
+      "thumbnail": "systems/gurps/assets/gurps-thumbnail.webp"
     }
   ],
-  "background": "systems/gurps/assets/gurps-background.jpg",
+  "background": "systems/gurps/assets/gurps-background.webp",
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",

@@ -1,9 +1,6 @@
 {
   "Actor": {
-    "types": [
-      "character",
-      "enemy"
-    ],
+    "types": ["character", "enemy"],
     "templates": {
       "base": {
         "attributes": {
@@ -198,25 +195,14 @@
       }
     },
     "character": {
-      "templates": [
-        "base"
-      ]
+      "templates": ["base"]
     },
     "enemy": {
-      "templates": [
-        "base"
-      ]
+      "templates": ["base"]
     }
   },
   "Item": {
-    "types": [
-      "equipment",
-      "feature",
-      "skill",
-      "spell",
-      "meleeAtk",
-      "rangedAtk"
-    ],
+    "types": ["equipment", "feature", "skill", "spell", "meleeAtk", "rangedAtk"],
     "equipment": {
       "eqt": {
         "name": "",

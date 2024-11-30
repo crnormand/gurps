@@ -1305,6 +1305,8 @@ export class GurpsActorSheet extends ActorSheet {
               numprops.forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
 
               let q = html.find('.quick-roll')
+              if (!!q) obj.addToQuickRoll = q.is(':checked')
+
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!q) obj.addToQuickRoll = q.is(':checked')
               if (!!u) obj.save = u.is(':checked')

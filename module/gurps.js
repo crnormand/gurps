@@ -2561,6 +2561,7 @@ if (!globalThis.GURPS) {
 
         // Get Combat Initiative
         const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
+
         // Add Quick Roll Menu
         combatantElement = await addQuickRollButton(combatantElement, combatant, token)
         // Add Maneuver Menu
