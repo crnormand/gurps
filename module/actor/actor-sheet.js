@@ -1308,8 +1308,8 @@ export class GurpsActorSheet extends ActorSheet {
               if (!!q) obj.addToQuickRoll = q.is(':checked')
 
               let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!q) obj.addToQuickRoll = q.is(':checked')
               if (!!u) obj.save = u.is(':checked')
+
               if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
               await actor.removeModEffectFor(path)
               await actor.internalUpdate({ [path]: obj })
@@ -1802,8 +1802,8 @@ export class GurpsActorSheet extends ActorSheet {
           let key = e[0].dataset.key
           if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
             // We need to remove linked item
-            const actorComponent = foundry.utils.getProperty(this, key)
-            const existingItem = await this.items.get(actorComponent.itemid)
+            const actorComponent = foundry.utils.getProperty(this.actor, key)
+            const existingItem = await this.actor.items.get(actorComponent.itemid)
             if (!!existingItem) {
               this.actor._removeItemAdditions(existingItem.id)
               await existingItem.delete()

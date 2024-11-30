@@ -1,32 +1,30 @@
 <div>{{localize 'GURPS.settingHintUseQuickRolls'}}</div>
- <hr>
- <form>
-   <div class="form-group">
-     <label>{{localize 'GURPS.quickRollUse'}}</label>
-     <input type="checkbox" name="enabled" {{#if settings.enabled}}checked{{/if}}>
-   </div>
-   <hr>
-   <div class="form-group">
-     <label>{{localize 'GURPS.quickRollShowAttributes'}}</label>
-     <input type="checkbox" name="attributeChecks" {{#if settings.attributeChecks}}checked{{/if}}>
-
-
-   </div>
-   <div class="form-group">
-     <label>{{localize 'GURPS.quickRollShowOther'}}</label>
-     <input type="checkbox" name="otherChecks" {{#if settings.otherChecks}}checked{{/if}}>
-   </div>
-     <div class="form-group">
-     <label>{{localize 'GURPS.quickRollShowAttacks'}}</label>
-     <input type="checkbox" name="attackChecks" {{#if settings.attackChecks}}checked{{/if}}>
-   </div>
-   <div class="form-group">
-     <label>{{localize 'GURPS.quickRollShowDefenses'}}</label>
-     <input type="checkbox" name="defenseChecks" {{#if settings.defenseChecks}}checked{{/if}}>
-   </div>
-   <div class="form-group">
-     <label>{{localize 'GURPS.quickRollShowMarked'}}</label>
-     <input type="checkbox" name="markedChecks" {{#if settings.markedChecks}}checked{{/if}}>
-   </div>
-   <button type="submit"><i class="fa fa-save"></i><span>{{localize 'GURPS.update'}}</span></button>
+<hr />
+<form>
+  <div class='form-group'>
+    <label>{{localize 'GURPS.quickRollUse'}}</label>
+    <input type='checkbox' name='enabled' {{checked settings.enabled}} />
+  </div>
+  <hr />
+  <div class='form-group'>
+    <label>{{localize 'GURPS.quickRollShowAttributes'}}</label>
+    <input type='checkbox' name='attributeChecks' {{checked settings.attributeChecks}} />
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'GURPS.quickRollShowOther'}}</label>
+    <input type='checkbox' name='otherChecks' {{checked settings.otherChecks}} />
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'GURPS.quickRollShowAttacks'}}</label>
+    <input type='checkbox' name='attackChecks' {{checked settings.attackChecks}} />
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'GURPS.quickRollShowDefenses'}}</label>
+    <input type='checkbox' name='defenseChecks' {{checked settings.defenseChecks}} />
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'GURPS.quickRollShowMarked'}}</label>
+    <input type='checkbox' name='markedChecks' {{checked settings.markedChecks}} />
+  </div>
+  <button type='submit'><i class='fa fa-save'></i><span>{{localize 'GURPS.update'}}</span></button>
 </form>
