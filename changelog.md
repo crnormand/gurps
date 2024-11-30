@@ -1,11 +1,21 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-Release 0.17.17
+## Release 0.17.17
+
+#### Features
+
+- Feature: Maneuver Menu on Combat Tracker #2027
+- Feature: Quick Roll Menu #2028
+- Feature: Tagged Effect Modifiers #2029
+- Feature: Confirmation Dialog Roll #2030
+- Feature: Check Maneuver, Max Actions and Targets before Roll #2031
+- Feature: Add Maneuver's and Parry modifiers automatically before roll #2033
+- Feature: Improved support on Injury effects on Apply Damage Dialog #2034
+
+#### Bugfixes
 
 - Bugfix: The "roll for me" option does not work #2010
 - Bugfix: Fix bl unit for high strength characters #2041
-- Feature: Maneuver Menu on Combat Tracker #2027
-- Feature: Quick Roll Menu #2028
 
 Release 0.17.16 11/29/2024
 

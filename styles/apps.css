@@ -545,7 +545,7 @@ ul#result-effects li {
 
 .gga-chat-message .label-toggle {
   font-size: x-small;
-  font-family: var(--font-family-icons);
+  /* font-family: var(--font-family-icons); */
   padding: 0.25em;
   background-color: rgba(0, 0, 0, 0.5);
   margin-top: 4px;
@@ -630,7 +630,7 @@ ul#result-effects li {
 }
 
 .gga-app button.with-icon > i > span {
-  font-family: var(--font-family-icons);
+  /* font-family: var(--font-family-icons); */
   font-weight: 400;
 }
 

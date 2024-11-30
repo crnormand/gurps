@@ -505,12 +505,12 @@ export default class ApplyDamageDialog extends Application {
         break
       case 'knockback':
         const dx = i18n('GURPS.attributesDX')
-        const dxCheck = effect.modifier === 0 ? dx : `${dx}-${object.modifier}`
+        const dxCheck = effect.modifier === 0 ? dx : `${dx}-${effect.modifier}`
         const acro = i18n('GURPS.skillAcrobatics')
-        const acroCheck = effect.modifier === 0 ? acro : `${acro}-${object.modifier}`
+        const acroCheck = effect.modifier === 0 ? acro : `${acro}-${effect.modifier}`
         const judo = i18n('GURPS.skillJudo')
-        const judoCheck = effect.modifier === 0 ? judo : `${judo}-${object.modifier}`
-        otf = `/r [!${dxCheck}|!SK:Acrobatics|!Sk:${acroCheck}|!SK:Judo|!Sk:${judoCheck}]`
+        const judoCheck = effect.modifier === 0 ? judo : `${judo}-${effect.modifier}`
+        otf = `/r [!${dxCheck}|!Sk:${acroCheck}|!Sk:${judoCheck}]`
         break
     }
     if (!!otf) await this.actor.runOTF(otf)
