@@ -6,7 +6,7 @@
           <h4>{{i18n "GURPS.modifierCurrentEffects"}}</h4>
           <div class='actorname'>{{actorname}}</div>
           {{#each currentmods}}
-            <div>{{{gurpslink this true}}}</div>
+            <div class="roll-result">{{{gurpslink this true}}}</div>
           {{/each}}
         </div>
 
@@ -26,15 +26,15 @@
             {{#if everyone}}
               <div class='everyone'>
                 <span><button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
-                <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button></span>
+                  <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button></span>
               </div>
             {{else}}
               <div class='everyone'>
-                 <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button>
+                <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button>
               </div>
             {{/if}}
-                            
-            
+
+
           </div>
         {{/unless}}
 

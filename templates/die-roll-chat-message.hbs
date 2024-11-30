@@ -8,7 +8,7 @@
     <div>
       <ul class='modifier-list'>
         {{#each targetmods}}
-          <li>[{{{displayNumber mod}}}{{#if desc}} {{desc}}{{/if}}]</li>
+          <li><div class='roll-result'>[{{{displayNumber mod}}}{{#if desc}} {{desc}}{{/if}}]</div></li>
         {{/each}}
       </ul>
     </div>
@@ -31,13 +31,15 @@
             <span class='success'>{{localize 'GURPS.rollSuccess'}}</span>
           {{/if}}
           <span class='aside'>
-            {{#if seventeen}}
-              {{localize 'GURPS.rollFail17'}}
-            {{else}}
-              {{#if (eq margin 0)}}{{localize 'GURPS.rollJustMadeIt'}}{{/if}}
-              {{#if (gt margin 0)}}["{{localize 'GURPS.rollMadeBy' margin=margin}}"{{otf}}]{{/if}}
-              {{#if (lt margin 0)}}["{{localize 'GURPS.rollMissedBy' margin=margin}}"{{otf}}]{{/if}}
-            {{/if}}
+            <div class='roll-result'>
+              {{#if seventeen}}
+                {{localize 'GURPS.rollFail17'}}
+              {{else}}
+                {{#if (eq margin 0)}}{{localize 'GURPS.rollJustMadeIt'}}{{/if}}
+                {{#if (gt margin 0)}}["{{localize 'GURPS.rollMadeBy' margin=margin}}"{{otf}}]{{/if}}
+                {{#if (lt margin 0)}}["{{localize 'GURPS.rollMissedBy' margin=margin}}"{{otf}}]{{/if}}
+              {{/if}}
+            </div>
           </span>
         </span>
       </div>
@@ -63,7 +65,9 @@
       {{#if followon}}{{#if (not failure)}}
           <hr />
           {{i18n 'GURPS.damage'}}:
-          {{followon}}
+          <div class='roll-result'>
+            {{followon}}
+          </div>
         {{/if}}{{/if}}
     </div>
   </div>

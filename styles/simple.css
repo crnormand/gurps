@@ -837,6 +837,10 @@
   font-size: var(--font-size-13);
 }
 
+.roll.flex-center {
+  text-wrap: nowrap;
+}
+
 .gurps.sheet.item {
   min-width: 460px;
   min-height: 400px;
