@@ -13,6 +13,7 @@ import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, S
 import SplitDREditor from './splitdr-editor.js'
 import { ActorImporter } from './actor-importer.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { cleanTags } from './effect-modifier-popout.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -62,6 +63,10 @@ export class GurpsActorSheet extends ActorSheet {
   getData() {
     const sheetData = super.getData()
     sheetData.olddata = sheetData.data
+    let actions = {}
+    if (!this.actor.system.conditions.actions?.maxActions) actions['maxActions'] = 1
+    if (!this.actor.system.conditions.actions?.maxBlocks) actions['maxBlocks'] = 1
+    if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
     sheetData.data = this.actor.system
     sheetData.system = this.actor.system
     sheetData.ranges = GURPS.rangeObject.ranges
@@ -1126,6 +1131,7 @@ export class GurpsActorSheet extends ActorSheet {
                 item.system.eqt.techlevel = obj.techlevel
                 item.system.eqt.notes = obj.notes
                 item.system.eqt.pageref = obj.pageref
+                item.system.itemModifiers = obj.itemModifiers
                 await actor._updateItemFromForm(item)
                 await actor.updateParentOf(path, false)
               }
@@ -1169,6 +1175,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
+        'itemModifiers',
+        'modifierTags',
       ],
       ['baseParryPenalty']
     )
@@ -1196,6 +1204,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
+        'itemModifiers',
+        'modifierTags',
       ],
       ['acc', 'bulk']
     )
@@ -1208,7 +1218,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
-      ['name', 'notes', 'pageref'],
+      ['name', 'notes', 'pageref', 'itemModifiers'],
       ['points']
     )
   }
@@ -1220,7 +1230,19 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
+      [
+        'name',
+        'import',
+        'relativelevel',
+        'pageref',
+        'notes',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
+        'itemModifiers',
+        'modifierTags',
+      ],
       ['points']
     )
   }
@@ -1249,6 +1271,8 @@ export class GurpsActorSheet extends ActorSheet {
         'duringotf',
         'passotf',
         'failotf',
+        'itemModifiers',
+        'modifierTags',
       ],
       ['points']
     )
@@ -1285,7 +1309,21 @@ export class GurpsActorSheet extends ActorSheet {
 
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
-              actor.internalUpdate({ [path]: obj })
+
+              if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
+              await actor.removeModEffectFor(path)
+              await actor.internalUpdate({ [path]: obj })
+              const commit = actor.applyItemModEffects({}, true)
+              if (commit) {
+                await actor.internalUpdate(commit)
+                if (canvas.tokens.controlled.length > 0) {
+                  await canvas.tokens.controlled[0].document.setFlag(
+                    'gurps',
+                    'lastUpdate',
+                    new Date().getTime().toString()
+                  )
+                }
+              }
             },
           },
         },

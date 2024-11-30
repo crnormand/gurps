@@ -70,7 +70,13 @@ export default class ModifierBucketEditor extends Application {
   }
 
   convertModifiers(list) {
-    return list.map(it => `[${i18n(it)}]`).map(it => gurpslink(it))
+    return list
+      .map(it => {
+        const regex = it.includes('@man:') ? /^(.*?)(?=[#@])/ : /^(.*?)(?=[#@(])/
+        const desc = it.match(regex)?.[1]
+        return `[${i18n(desc.trim())}]`
+      })
+      .map(it => gurpslink(it))
   }
 
   /**

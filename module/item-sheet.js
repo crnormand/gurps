@@ -190,16 +190,17 @@ export class GurpsItemSheet extends ItemSheet {
 
     // When editing a Compendium Item, Actor does not exist, so we need to update the Item directly
     await this.item.update({ [`system.${this.item.itemSysKey}.name`]: this.item.name })
-    if (!!this.item.editingActor) {
+    const actor = this.item.editingActor || this.actor
+    if (!!actor) {
       const actorCompKey =
         this.item.type === 'equipment'
-          ? this.item.editingActor._findEqtkeyForId('itemid', this.item.id)
-          : this.item.editingActor._findSysKeyForId('itemid', this.item.id, this.item.actorComponentKey)
-      const actorComp = foundry.utils.getProperty(this.item.editingActor, actorCompKey)
-      if (!(await this.item.editingActor._sanityCheckItemSettings(actorComp))) return
+          ? actor._findEqtkeyForId('itemid', this.item.id)
+          : actor._findSysKeyForId('itemid', this.item.id, this.item.actorComponentKey)
+      const actorComp = foundry.utils.getProperty(actor, actorCompKey)
+      if (!(await actor._sanityCheckItemSettings(actorComp))) return
       if (!this.useFoundryItems) {
         if (this.item.type === 'equipment') {
-          await this.item.editingActor.updateItem(this.item)
+          await actor.updateItem(this.item)
         } else {
           await this.item.update({
             name: this.item.name,
@@ -208,7 +209,7 @@ export class GurpsItemSheet extends ItemSheet {
           })
         }
       } else {
-        await this.item.editingActor._updateItemFromForm(this.item)
+        await actor._updateItemFromForm(this.item)
       }
     } else {
       await this.item.update({
@@ -217,7 +218,11 @@ export class GurpsItemSheet extends ItemSheet {
         system: this.item.system,
       })
     }
-    if (this.actor) await this.actor.refreshDR()
+    if (actor) await actor.refreshDR()
+    // Not sure if this is the way to refresh UI if you're editing an Item from a token
+    if (canvas.tokens.controlled.length > 0) {
+      await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
+    }
     if (!!this.useFoundryItems && !!this.isContainer) {
       ui.notifications.info(`Item ${this.item.name} saved!`)
     }

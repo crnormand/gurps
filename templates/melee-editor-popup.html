@@ -9,6 +9,8 @@
     <input class="import gcs-input-sm8" type="text" value="{{import}}" data-dtype="Number" />
     <div class="label">Parry</div>
     <div><input class="parry gcs-input-sm8" type="text" value="{{parry}}" /></div>
+    <div class="label">Parry Pen.</div>
+    <div><input class="baseParryPenalty gcs-input-sm8" type="number" value="{{baseParryPenalty}}" /></div>
     <div class="label">Block</div>
     <div><input class="block gcs-input-sm8" type="text" value="{{block}}" /></div>
     <div class="label">Damage</div>
@@ -30,6 +32,10 @@
     <div><input class="failotf gcs-input-sm25" type="text" value="{{failotf}}" /></div>
     <div class="label">Notes</div>
     <textarea class="notes gcs-input-ta" style="width: 460px; height: 90px !important" rows="5">{{notes}}</textarea>
+    <div class="label">Modifiers</div>
+    <textarea class="itemModifiers gcs-input-ta" style="width: 460px; height: 90px !important" rows="5">{{itemModifiers}}</textarea>
+    <div class="label">Modifier Tags</div>
+    <div><input class="modifierTags gcs-input-sm25" type="text" value="{{modifierTags}}" /></div>
     <div class="label">Add to Quick Roll</div>
     <div><input class="quick-roll gcs-input-sm25" type="checkbox" {{#if addToQuickRoll}}checked{{/if}} /></div>
   </div>

@@ -1,0 +1,168 @@
+<form class="gga-app">
+  <div>{{localize 'GURPS.settingHintUseTaggedModifiers'}}</div>
+  <hr>
+  <div class="flexcol">
+    <div class="tm-content">
+      <div class="tm-check">
+        <div class="form-group">
+          <label>{{localize 'GURPS.autoAdd'}}</label>
+          <input type="checkbox" name="autoAdd" {{#if autoAdd}}checked{{/if}}>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'GURPS.checkConditionals'}}</label>
+          <input type="checkbox" name="checkConditionals" {{#if checkConditionals}}checked{{/if}}>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'GURPS.checkReactions'}}</label>
+          <input type="checkbox" name="checkReactions" {{#if checkReactions}}checked{{/if}}>
+        </div>
+      </div>
+      <nav class="gurps-sheet-tabs tabs gurps-tabs" data-group="sections">
+        <a class="item" data-tab="all-rolls-tab">{{i18n 'GURPS.AllRollsTab'}}</a>
+        <a class="item" data-tab="all-attributes-tab">{{i18n 'GURPS.AllAttributesTab'}}</a>
+        <a class="item" data-tab="all-checks-tab">{{i18n 'GURPS.AllChecksTab'}}</a>
+        <a class="item" data-tab="all-attacks-tab">{{i18n 'GURPS.AllAttacksTab'}}</a>
+        <a class="item" data-tab="all-defenses-tab">{{i18n 'GURPS.AllDefensesTab'}}</a>
+        <a class="item" data-tab="all-skills-tab">{{i18n 'GURPS.AllSkillsTab'}}</a>
+        <a class="item" data-tab="all-specials-tab">{{i18n 'GURPS.AllSpecialTab'}}</a>
+      </nav>
+      <div class="me-mod-tips"><i class="fa fa-circle-info"></i><span>{{localize 'GURPS.taggedModifierTips'}}</span>
+      </div>
+      <section id="config-tabs" class="content">
+        <div class="tab" data-tab="all-rolls-tab" data-group="sections">
+          <div class="form-group">
+            <label>{{localize 'GURPS.allRollsTags'}}
+              <input type="text" value="{{allRolls}}" name="allRolls"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.allDamageTags'}}
+              <input type="text" value="{{allDamageRolls}}" name="allDamageRolls"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.allAttrbuteTags'}}
+              <input type="text" value="{{allAttributesRolls}}" name="allAttributesRolls"></label>
+          </div>
+        </div>
+        <div class="tab" data-tab="all-attributes-tab" data-group="sections">
+          <div class="gurps-2col right-bias">
+            <div class="form-group">
+              <label>{{localize 'GURPS.allSTTags'}}
+                <input type="text" value="{{allSTRolls}}" name="allSTRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allDXTags'}}
+                <input type="text" value="{{allDXRolls}}" name="allDXRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allIQTags'}}
+                <input type="text" value="{{allIQRolls}}" name="allIQRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allHTTags'}}
+                <input type="text" value="{{allHTRolls}}" name="allHTRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allWillTags'}}
+                <input type="text" value="{{allWILLRolls}}" name="allWILLRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allPerTags'}}
+                <input type="text" value="{{allPERRolls}}" name="allPERRolls"></label>
+            </div>
+          </div>
+        </div>
+        <div class="tab" data-tab="all-checks-tab" data-group="sections">
+          <div class="gurps-2col right-bias">
+            <div class="form-group">
+              <label>{{localize 'GURPS.allFrightCheckTags'}}
+                <input type="text" value="{{allFRIGHTCHECKRolls}}" name="allFRIGHTCHECKRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allVisionTags'}}
+                <input type="text" value="{{allVISIONRolls}}" name="allVISIONRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allTasteSmellTags'}}
+                <input type="text" value="{{allTASTESMELLRolls}}" name="allTASTESMELLRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allHearingTags'}}
+                <input type="text" value="{{allHEARINGRolls}}" name="allHEARINGRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allTouchTags'}}
+                <input type="text" value="{{allTOUCHRolls}}" name="allTOUCHRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allControlRollTags'}}
+                <input type="text" value="{{allCRRolls}}" name="allCRRolls"></label>
+            </div>
+          </div>
+        </div>
+        <div class="tab" data-tab="all-attacks-tab" data-group="sections">
+          <div class="form-group">
+            <label>{{localize 'GURPS.allAttackTags'}}
+              <input type="text" value="{{allAttackRolls}}" name="allAttackRolls"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.allMeleeTags'}}
+              <input type="text" value="{{allMeleeRolls}}" name="allMeleeRolls"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.allRangedTags'}}
+              <input type="text" value="{{allRangedRolls}}" name="allRangedRolls"></label>
+          </div>
+        </div>
+        <div class="tab" data-tab="all-defenses-tab" data-group="sections">
+          <div class="gurps-2col right-bias">
+            <div class="form-group">
+              <label>{{localize 'GURPS.allDefenseTags'}}
+                <input type="text" value="{{allDefenseRolls}}" name="allDefenseRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allDodgeTags'}}
+                <input type="text" value="{{allDODGERolls}}" name="allDODGERolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allParryTags'}}
+                <input type="text" value="{{allParryRolls}}" name="allParryRolls"></label>
+            </div>
+            <div class="form-group">
+              <label>{{localize 'GURPS.allBlockTags'}}
+                <input type="text" value="{{allBlockRolls}}" name="allBlockRolls"></label>
+            </div>
+          </div>
+        </div>
+        <div class="tab" data-tab="all-skills-tab" data-group="sections">
+          <div class="form-group">
+            <label>{{localize 'GURPS.allSkillTags'}}
+              <input type="text" value="{{allSkillRolls}}" name="allSkillRolls"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.allSpellTags'}}
+              <input type="text" value="{{allSpellRolls}}" name="allSpellRolls"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.useSpellCollegeAsTag'}}
+              <input type="checkbox" name="useSpellCollegeAsTag" {{#if useSpellCollegeAsTag}}checked{{/if}}></label>
+          </div>
+        </div>
+        <div class="tab" data-tab="all-specials-tab" data-group="sections">
+          <div class="form-group">
+            <label>{{localize 'GURPS.CombatOnlyTag'}}
+              <input type="text" value="{{combatOnlyTag}}" name="combatOnlyTag"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.NoCombatTag'}}
+              <input type="text" value="{{nonCombatOnlyTag}}" name="nonCombatOnlyTag"></label>
+          </div>
+          <div class="form-group">
+            <label>{{localize 'GURPS.temporaryCombatTag'}}
+              <input type="text" value="{{combatTempTag}}" name="combatTempTag"></label>
+          </div>
+        </div>
+      </section>
+    </div>
+    <button type="submit"><i class="fa fa-save"></i><span>{{localize 'GURPS.update'}}</span></button>
+  </div>
+</form>

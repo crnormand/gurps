@@ -1,0 +1,25 @@
+{{#if messages}}
+<div class="cr-messages">
+  {{#each messages}}
+    <div class="cr-message">
+      <i class="fa fa-triangle-exclamation"></i><span>{{this}}</span>
+    </div>
+  {{/each}}
+</div>
+{{/if}}
+<div class="cr-damage-container">
+  <div class="cr-token-section">
+    <img class="cr-token-img" src="{{tokenImg}}" alt="">
+    <div class="cr-token-name">{{tokenName}}</div>
+  </div>
+  <div class="cr-damage-section">
+    <div>
+      <div id="cr-damage" class="cr-damage-formula">{{damageRoll}}</div>
+      <div class="cr-damage-section">
+        <div id="cr-formula" class="cr-damage-roll">{{targetRoll}}
+        <span id="cr-bucket" >{{bucketRoll}}</span></div>
+      </div>
+    </div>
+    <div class="cr-damage-type"><span>{{damageType}}</span></div>
+  </div>
+</div>

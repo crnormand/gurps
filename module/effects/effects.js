@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
 import { MOVE_ONE, MOVE_NONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
@@ -6,7 +6,7 @@ export class StatusEffect {
   static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'
 
   static useActiveEffects() {
-    return game.settings.get(SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS)
+    return game.settings.get(Settings.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS)
   }
 
   constructor() {
@@ -39,7 +39,7 @@ export class StatusEffect {
   }
 
   _registerSetting() {
-    game.settings.register(SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS, {
+    game.settings.register(Settings.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS, {
       name: i18n('GURPS.settingActiveEffects'),
       hint: i18n('GURPS.settingHintActiveEffects'),
       scope: 'world',
@@ -72,6 +72,16 @@ export class StatusEffect {
   }
 
   get rawStatusEffects() {
+    const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const defenseTag = taggedModifiersSetting.allDefenseRolls.split(',')[0]
+    const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
+    const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
+
+    const getTaggedValue = (key, tags) => {
+      const t = tags.map(tag => `#${tag}`).join(' ')
+      return `${key} ${t} @combatmod`
+    }
+
     return {
       prone: {
         img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
@@ -81,17 +91,17 @@ export class StatusEffect {
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureProneDefend',
+            value: getTaggedValue('GURPS.modifierPostureProneDefend', [defenseTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureProneMelee',
+            value: getTaggedValue('GURPS.modifierPostureProneMelee', [meleeTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.target.modifiers',
-            value: 'GURPS.modifierPostureProneRanged',
+            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
@@ -119,17 +129,17 @@ export class StatusEffect {
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureKneelDefend',
+            value: getTaggedValue('GURPS.modifierPostureKneelDefend', [defenseTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureKneelMelee',
+            value: getTaggedValue('GURPS.modifierPostureKneelMelee', [meleeTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.target.modifiers',
-            value: 'GURPS.modifierPostureCrouchRanged',
+            value: getTaggedValue('GURPS.modifierPostureCrouchRanged', [rangedTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
@@ -156,12 +166,12 @@ export class StatusEffect {
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureCrouchMelee',
+            value: getTaggedValue('GURPS.modifierPostureCrouchMelee', [meleeTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.target.modifiers',
-            value: 'GURPS.modifierPostureCrouchRanged',
+            value: getTaggedValue('GURPS.modifierPostureCrouchRanged', [rangedTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
@@ -188,17 +198,17 @@ export class StatusEffect {
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureKneelMelee',
+            value: getTaggedValue('GURPS.modifierPostureKneelMelee', [meleeTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureKneelDefend',
+            value: getTaggedValue('GURPS.modifierPostureKneelDefend', [defenseTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.target.modifiers',
-            value: 'GURPS.modifierPostureProneRanged',
+            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
@@ -225,17 +235,17 @@ export class StatusEffect {
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureProneMelee',
+            value: getTaggedValue('GURPS.modifierPostureProneMelee', [meleeTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.modifierPostureProneDefend',
+            value: getTaggedValue('GURPS.modifierPostureProneDefend', [defenseTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
             key: 'system.conditions.target.modifiers',
-            value: 'GURPS.modifierPostureProneRanged',
+            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
@@ -669,6 +679,17 @@ export class StatusEffect {
 }
 
 const _getActiveEffectsData = function (id) {
+  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const hitTag = taggedModifiersSetting.allAttackRolls.split(',')[0]
+  const defenseTag = taggedModifiersSetting.allDefenseRolls.split(',')[0]
+  const dxTag = taggedModifiersSetting.allDXRolls.split(',')[0]
+  const iqTag = taggedModifiersSetting.allIQRolls.split(',')[0]
+  const attributesTag = taggedModifiersSetting.allAttributesRolls.split(',')[0]
+  const perTag = taggedModifiersSetting.allPERRolls.split(',')[0]
+  const crTag = taggedModifiersSetting.allCRRolls.split(',')[0]
+  const spellTag = taggedModifiersSetting.allSpellRolls.split(',')[0]
+  const skillTag = taggedModifiersSetting.allSkillRolls.split(',')[0]
+
   const activeEffectsData = {
     shock1: {
       changes: [
@@ -676,6 +697,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock1',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -693,6 +715,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock2',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -710,6 +733,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock3',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -727,6 +751,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock4',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
       duration: {
@@ -744,6 +769,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusStunned',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [defenseTag],
         },
         {
           key: 'system.conditions.maneuver',
@@ -767,6 +793,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusStunned',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [defenseTag],
         },
         {
           key: 'system.conditions.maneuver',
@@ -790,6 +817,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierGrappling',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag],
         },
       ],
       flags: {
@@ -804,11 +832,13 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionNausea',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [attributesTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionNauseaDef',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [defenseTag],
         },
       ],
       flags: {
@@ -823,11 +853,13 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionCough',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionCoughIQ',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [iqTag],
         },
       ],
       flags: {
@@ -842,6 +874,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionRetch',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, perTag],
         },
       ],
       flags: {
@@ -860,6 +893,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrowsy',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, perTag],
         },
       ],
       flags: {
@@ -874,11 +908,13 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTipsy',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTipsyCR',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [crTag],
         },
       ],
       flags: {
@@ -893,11 +929,13 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrunk',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrunkCR',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [crTag],
         },
       ],
       flags: {
@@ -912,6 +950,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionEuphoria',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
         },
       ],
       flags: {
@@ -926,6 +965,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionModerateHPT',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
         },
       ],
       flags: {
@@ -940,6 +980,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionModerate',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
         },
       ],
       flags: {
@@ -954,6 +995,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTerribleHPT',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
         },
       ],
       flag: {
@@ -968,6 +1010,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionSevere',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
         },
       ],
       flags: {
@@ -982,6 +1025,7 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTerrible',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
         },
       ],
       flags: {
@@ -991,11 +1035,18 @@ const _getActiveEffectsData = function (id) {
       },
     },
     suffocate: {
+      changes: [
+        {
+          key: 'system.conditions.self.modifiers',
+          value: 'GURPS.modifierSuffocate',
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [dxTag, iqTag, crTag],
+        },
+      ],
       flags: {
         gurps: {
           effect: {
             pdfref: 'GURPS.pdfSuffocation',
-            everyturn: { type: 'otf', args: '/fp -1' }, // TODO implement everyturn
             requiresConfig: true,
           },
         },
@@ -1007,11 +1058,13 @@ const _getActiveEffectsData = function (id) {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifiersBlindAttack',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [hitTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifiersBlindDefend',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          tags: [defenseTag],
         },
       ],
       flags: {
@@ -1028,6 +1081,11 @@ const _getActiveEffectsData = function (id) {
   }
 
   let data = activeEffectsData[id]
+  data?.changes.map(change => {
+    const tags = [`#${id}`, ...(change.tags || []).map(tag => `#${tag}`)].join(' ')
+    change.value = `${change.value} ${tags} @combatmod`
+    return change
+  })
   return data
 }
 

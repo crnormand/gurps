@@ -4,6 +4,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
+import { TokenActions } from '../token-actions.js'
 
 /* 
   Crippling injury:
@@ -316,6 +317,48 @@ export class CompositeDamageCalculator {
     // return this._hitLocation === 'Large-Area'
     //   ? HitLocationEntry.getLargeAreaDR(entries)
     //   : HitLocationEntry.findLocation(entries, this._hitLocation).getDR(this.damageType)
+  }
+
+  async addEffectsContext() {
+    const defenderToken = canvas.tokens.get(this._defender.token.id)
+    const actions = await TokenActions.fromToken(defenderToken)
+    let isReady
+    const data = this.effects.map(effect => {
+      if (effect.type.includes('shock')) {
+        isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
+        return {
+          ...effect,
+          isReady,
+          spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+          effectTitle: isReady ? i18n('GURPS.removeShockEffect') : i18n('GURPS.addShockEffect'),
+        }
+      } else {
+        switch (effect.type) {
+          case 'headvitalshit':
+          case 'majorwound':
+            isReady =
+              defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun')) &&
+              defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            return {
+              ...effect,
+              isReady,
+              spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+              effectTitle: isReady ? i18n('GURPS.removepronestunEffect') : i18n('GURPS.addpronestunEffect'),
+              testTitle: i18n('GURPS.saveRollforEffect'),
+            }
+          case 'knockback':
+            isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            return {
+              ...effect,
+              isReady,
+              spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+              effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+              testTitle: i18n('GURPS.saveRollforEffect'),
+            }
+        }
+      }
+    })
+    return data.filter(effect => !!effect)
   }
 
   get effects() {

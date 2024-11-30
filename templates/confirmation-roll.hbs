@@ -1,0 +1,33 @@
+{{#if messages}}
+<div class="cr-messages">
+  {{#each messages}}
+    <div class="cr-message">
+      <i class="fa fa-triangle-exclamation"></i><span>{{this}}</span>
+    </div>
+  {{/each}}
+</div>
+{{/if}}
+<div class="cr-container">
+  <div class="cr-token-section">
+    <img class="cr-token-img" src="{{tokenImg}}" alt="">
+    <div class="cr-token-name">{{tokenName}}</div>
+  </div>
+  <div class="cr-result-section">
+    <div class="cr-result-math">
+      <span id="cr-target">{{target}}</span>
+      <span id="cr-operator">{{operator}}</span>
+      <span id="cr-totalmods">{{totalMods}}</span>
+    </div>
+    <div id="cr-total" class="cr-result-total" style="color: {{targetColor}};">{{totalRoll}}</div>
+    <span class="cr-tooltip">{{rollChance}}</span>
+    <div class="cr-result-type">{{rollType}}</div>
+  </div>
+  <div class="cr-item-section">
+    {{#if itemImage}}
+      <img class="cr-item-img" src="{{itemImage}}" alt="">
+    {{else}}
+      <div class="cr-item-icon" style="background-color: {{itemColor}};"><i class="{{itemIcon}}"></i></div>
+    {{/if}}
+    <div class="cr-item-roll">{{targetRoll}}</div>
+  </div>
+</div>
