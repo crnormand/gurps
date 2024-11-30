@@ -29,11 +29,12 @@
 
     <div class='image-column'>
       <div class='img-display itemdraggable' style='background-image: url({{item.img}}); border: solid 1px black;'>
-        <img
-          class='profile-img itemdraggable'
-          src='{{item.img}}'
-          data-edit='img'
-          title="{{#if name}}{{name}}{{else}}Image{{/if}}"
+        <img class='profile-img itemdraggable' src='{{item.img}}' data-edit='img'
+          {{#if name}}
+          title='{{name}}'
+          {{else}}
+          title='Image'
+          {{/if}}
         />
       </div>
       <div class='add-quick-roll-option'>
@@ -50,16 +51,16 @@
     <div class='gga-group'>
       <h2>{{i18n 'GURPS.attributes'}}</h2>
       {{#if (eq itemType 'equipment')}}
-        {{!>items}}
+        {{>items}}
       {{/if}}
       {{#if (eq itemType 'feature')}}
-        {{!>features}}
+        {{>features}}
       {{/if}}
       {{#if (eq itemType 'skill')}}
-        {{!>skill}}
+        {{>skill}}
       {{/if}}
       {{#if (eq itemType 'spell')}}
-        {{!>spell}}
+        {{>spell}}
       {{/if}}
     </div>
   </div>
@@ -83,9 +84,12 @@
         <a class='item' data-tab='skill-tab'><i class='fas fa-snowboarding'></i>&nbsp;{{i18n 'GURPS.skills'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.skills)}}({{length system.skills}}){{/if}}</span></a>
-        <a class='item' data-tab='bonus-tab'><i class='fas fa-plus'></i>&nbsp;{{i18n 'GURPS.bonuses'}}&nbsp;<span
+        <a class='item' data-tab='bonus-tab'><i class='fas fa-plus-minus'></i>&nbsp;{{i18n 'GURPS.bonuses'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.bonuses)}}(&checkmark;){{/if}}</span></a>
+        <a class='item' data-tab='effect-tab'><i class='fas fa-dice'></i>&nbsp;{{i18n 'GURPS.modifiers'}}&nbsp;<span
+            style='font-size: 80%'
+          >{{#if (length system.itemModifiers)}}(&checkmark;){{/if}}</span></a>
       </nav>
 
       <section id='config-tabs' class='content'>
@@ -113,8 +117,12 @@
                   <div><input type='text' value='{{mode}}' name='system.melee.{{key}}.mode' /></div>
                   <label>{{i18n 'GURPS.parrybonus'}}</label>
                   <div><input type='text' value='{{parry}}' name='system.melee.{{key}}.parry' /></div>
-                  <label>{{i18n "GURPS.parryBasePenalty"}}</label>
-                  <div><input type="number" value="{{baseParryPenalty}}" name="system.melee.{{key}}.baseParryPenalty" /></div>
+                  <label>{{i18n 'GURPS.parryBasePenalty'}}</label>
+                  <div><input
+                      type='number'
+                      value='{{baseParryPenalty}}'
+                      name='system.melee.{{key}}.baseParryPenalty'
+                    /></div>
                 </div>
                 <div class='label-value-row right-bias'>
                   <div></div>
@@ -243,10 +251,24 @@
           </div>
         </div>
 
+        <!-- item effects -->
+        <div class='tab' data-tab='effect-tab' data-group='sections'>
+          <div><textarea
+              class='notes'
+              rows='6'
+              name='system.itemModifiers'
+              placeholder='{{i18n "GURPS.itemModifiersText"}}'
+            >{{system.itemModifiers}}</textarea></div>
+        </div>
+
         <!-- bonus -->
         <div class='tab' data-tab='bonus-tab' data-group='sections'>
-          <div>{{i18n 'GURPS.itemBonusText'}}</div>
-          <div><textarea class='notes' rows='6' name='system.bonuses'>{{system.bonuses}}</textarea></div>
+          <div><textarea
+              class='notes'
+              rows='6'
+              name='system.bonuses'
+              placeholder='{{i18n "GURPS.itemBonusText"}}'
+            >{{system.bonuses}}</textarea></div>
         </div>
 
         <!-- Spells -->

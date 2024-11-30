@@ -341,6 +341,7 @@ export class Skill extends Leveled {
     super(n1, lvl)
     this.type = '' // "DX/E";
     this.relativelevel = '' // "DX+1";
+    this.modifierTags = ''
   }
 
   static get actorSystemKey() {
@@ -383,11 +384,13 @@ export class Skill extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -451,6 +454,7 @@ export class Spell extends Leveled {
     this.casttime = ''
     this.difficulty = ''
     this.relativelevel = '' // "IQ+1"
+    this.modifierTags = ''
   }
   static get actorSystemKey() {
     return 'spells'
@@ -498,11 +502,13 @@ export class Spell extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -617,11 +623,13 @@ export class Advantage extends NamedCost {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -680,6 +688,7 @@ export class Attack extends Named {
     this.st = ''
     this.mode = ''
     this.level = ''
+    this.modifierTags = ''
 
     Object.assign(Leveled.prototype, _AnimationMixin)
   }
@@ -764,6 +773,7 @@ export class Melee extends Attack {
           cost: this.cost || '',
           reach: this.reach || '',
           parry: this.parry || '',
+          baseParryPenalty: this.baseParryPenalty || -4,
           block: this.block || '',
           name: this.name,
           originalName: this.originalName || '',
@@ -781,11 +791,13 @@ export class Melee extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -898,11 +910,13 @@ export class Ranged extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -1063,6 +1077,7 @@ export class Equipment extends Named {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
+        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',
@@ -1070,6 +1085,7 @@ export class Equipment extends Named {
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
+        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -1140,6 +1156,7 @@ export class Reaction {
   constructor(m, s) {
     this.modifier = m || ''
     this.situation = s || ''
+    this.modifierTags = ''
   }
 }
 

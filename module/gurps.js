@@ -33,13 +33,13 @@ import {
   arrayToObject,
   objectToArray,
 } from '../lib/utilities.js'
-import { doRoll } from '../module/dierolls/dieroll.js'
+import { addBucketToDamage, doRoll, rollData } from './dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTable } from './damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
-import { AddImportEquipmentButton, ItemImporter } from './item-import.js'
+import { AddImportEquipmentButton } from './item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -163,7 +163,7 @@ if (!globalThis.GURPS) {
   GURPS.lastInjuryRolls = {} // mapped by actor and message id
 
   GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
-    let tmp = { ...chatdata }
+    let tmp = { ...chatdata, actorid, tokenid }
     if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
     if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
     GURPS.lastTargetedRoll = tmp // keep the local copy
@@ -592,16 +592,24 @@ if (!globalThis.GURPS) {
      * @param {GurpsActor|null} data.actor
      * @param {string[]} data.targets
      */
-    damage({ action, event, actor, targets }) {
+    async damage({ action, event, actor, targets }) {
       // accumulate action fails if there's no selected actor
       if (action.accumulate && !actor) {
         ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
 
+      let canRoll = { result: true }
+      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      if (actor) canRoll = await actor.canRoll(action, token)
+      if (!canRoll.canRoll) {
+        if (canRoll.targetMessage) ui.notifications?.warn(canRoll.targetMessage)
+        return false
+      }
+
       if (action.accumulate) {
         // store/increment value on GurpsActor
-        actor.accumulateDamageRoll(action)
+        await actor.accumulateDamageRoll(action)
         return true
       }
 
@@ -609,21 +617,90 @@ if (!globalThis.GURPS) {
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      DamageChat.create(
-        actor || game.user,
-        action.formula,
-        action.damagetype,
-        event,
-        null,
-        targets,
-        action.extdamagetype,
-        action.hitlocation
-      )
-      if (action.next) {
-        return GURPS.performAction(action.next, actor, event, targets)
+      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      let displayFormula = action.formula
+      if (actor && taggedSettings.autoAdd) {
+        await actor.addTaggedRollModifiers('', {}, action.att)
+        displayFormula = addBucketToDamage(displayFormula, false)
       }
 
-      return true
+      const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+      if (showRollDialog) {
+        // Get Actor Info
+        const tokenImg = token?.document.texture.src || actor?.img
+        const tokenName = token?.name || actor?.name
+        const damageRoll = displayFormula
+        const damageType = action.damagetype
+        const targetRoll = action.orig
+        const bucketTotal = GURPS.ModifierBucket.currentSum()
+        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+
+        const dialog = new Dialog({
+          title: game.i18n.localize('GURPS.confirmRoll'),
+          content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
+            tokenImg,
+            tokenName,
+            damageRoll,
+            damageType,
+            targetRoll,
+            bucketRoll,
+            messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
+          }),
+          buttons: {
+            roll: {
+              icon: '<i class="fas fa-check"></i>',
+              label: 'Roll',
+              callback: async () => {
+                await DamageChat.create(
+                  actor || game.user,
+                  action.formula,
+                  action.damagetype,
+                  event,
+                  null,
+                  targets,
+                  action.extdamagetype,
+                  action.hitlocation
+                )
+                if (action.next) {
+                  return GURPS.performAction(action.next, actor, event, targets)
+                }
+                return true
+              },
+            },
+            cancel: {
+              icon: '<i class="fas fa-times"></i>',
+              label: 'Cancel',
+              callback: async () => {
+                await GURPS.ModifierBucket.clear()
+              },
+            },
+          },
+          default: 'roll',
+          render: html => {
+            html.closest('.window-app').css('height', 'auto')
+          },
+        })
+        // Before open a new dialog, we need to make sure
+        // all other dialogs are closed, because bucket must be reset
+        // before we start a new roll
+        await $(document).find('.dialog-button.cancel').click().promise()
+        await dialog.render(true)
+      } else {
+        await DamageChat.create(
+          actor || game.user,
+          action.formula,
+          action.damagetype,
+          event,
+          null,
+          targets,
+          action.extdamagetype,
+          action.hitlocation
+        )
+        if (action.next) {
+          return GURPS.performAction(action.next, actor, event, targets)
+        }
+        return true
+      }
     },
     /**
      * @param {Object} data
@@ -714,6 +791,7 @@ if (!globalThis.GURPS) {
       dam.action.costs = action.costs
       dam.action.mod = action.mod
       dam.action.desc = action.desc
+      dam.action.att = att
       return performAction(dam.action, actor, event, targets)
     },
     /**
@@ -730,9 +808,17 @@ if (!globalThis.GURPS) {
      * @param {JQuery.Event|null} data.event
      */
     roll({ action, actor, event }) {
-      // const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${
-      //   !!action.desc ? ' ' + action.desc : ''
-      // }]`
+      let canRoll = true
+      if (!!actor) {
+        if (actor instanceof User) {
+          canRoll = true
+        } else {
+          const token = actor.getActiveTokens()[0]
+          actor.canRoll(action, token).then(r => (canRoll = r.canRoll))
+        }
+      }
+      if (!canRoll) return false
+
       const prefix = i18n_f('GURPS.chatRolling', {
         dice: !!action.displayformula ? action.displayformula : action.formula,
         desc: !!action.desc ? ' ' + action.desc : '',
@@ -744,6 +830,13 @@ if (!globalThis.GURPS) {
         prefix,
         optionalArgs: { blind: action.blindroll, event },
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -773,7 +866,15 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        action,
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -803,12 +904,19 @@ if (!globalThis.GURPS) {
       return doRoll({
         actor,
         formula: d6ify(df + action.formula),
-        prefix: i18n_f('GURPs.chatRolling', {
+        prefix: i18n_f('GURPS.chatRolling', {
           dice: action.derivedformula,
           desc: action.desc,
         }),
         optionalArgs: { blind: action.blindroll, event },
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -878,13 +986,14 @@ if (!globalThis.GURPS) {
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return doRoll({
+      return await doRoll({
         actor,
         targetmods,
         thing,
         chatthing,
         origtarget: target,
         optionalArgs: opt,
+        action,
       })
     },
     /**
@@ -941,7 +1050,15 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        action,
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -999,7 +1116,15 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        action,
       })
+        .then(result => {
+          return result
+        })
+        .catch(error => {
+          console.error('Error during doRoll:', error)
+          return false
+        })
     },
     /**
      * @param {Object} data
@@ -1071,6 +1196,7 @@ if (!globalThis.GURPS) {
         chatthing,
         origtarget: target,
         optionalArgs: opt,
+        action,
       })
     },
     /**
@@ -1125,7 +1251,7 @@ if (!globalThis.GURPS) {
       else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt })
+      return await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
     },
 
     /*
@@ -1185,9 +1311,15 @@ if (!globalThis.GURPS) {
       actions.push(action)
       action = action.next
     }
-    const calculations = await Promise.all(
-      actions.map(a => GURPS.actionFuncs[a.type]({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
-    )
+    const calculations = []
+    for (const a of actions) {
+      const func = GURPS.actionFuncs[a.type]
+      if (func.constructor.name === 'AsyncFunction') {
+        calculations.push(await func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+      } else {
+        calculations.push(func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+      }
+    }
     const levels = calculations.map(result => (result ? result.target : 0))
     if (!levels.some(level => level > 0)) {
       ui.notifications.warn(i18n('GURPS.noViableSkill'))
@@ -1439,7 +1571,7 @@ if (!globalThis.GURPS) {
       formula = d6ify(formula)
     }
 
-    doRoll({ actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt })
+    await doRoll({ actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt })
   }
   GURPS.handleRoll = handleRoll
 
@@ -2384,10 +2516,16 @@ if (!globalThis.GURPS) {
             let updates = []
             if (!!target && !!src) {
               if (target.initiative < src.initiative) {
-                updates.push({ _id: dropData.combatant, initiative: target.initiative - 0.00001 })
+                updates.push({
+                  _id: dropData.combatant,
+                  initiative: target.initiative - 0.00001,
+                })
                 console.log('Moving ' + src.name + ' below ' + target.name)
               } else {
-                updates.push({ _id: dropData.combatant, initiative: target.initiative + 0.00001 })
+                updates.push({
+                  _id: dropData.combatant,
+                  initiative: target.initiative + 0.00001,
+                })
                 console.log('Moving ' + src.name + ' above ' + target.name)
               }
               game.combat.updateEmbeddedDocuments('Combatant', updates)

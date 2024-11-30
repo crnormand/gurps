@@ -34,6 +34,7 @@ import { ActorImporter } from './actor-importer.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
+import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -197,6 +198,30 @@ export class GurpsActor extends Actor {
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
     await this.syncLanguages()
+
+    // If using Foundry Items we can remove Modifier Effects from Actor Components
+    const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      const validMods = userMods.filter(m => !m.includes('@system.'))
+      await this.update({ 'system.conditions.usermods': validMods })
+    } else {
+      // If not using Foundry Items, we can remove Modifier Effects from Item Effects
+      const validMods = userMods.filter(m => m.includes('@system.') || m.includes('@man:') || m.includes('@custom'))
+      await this.update({ 'system.conditions.usermods': validMods })
+    }
+    // If Actor does not have system.conditions.actions, create it
+    if (!this.system.conditions.actions) {
+      await this.internalUpdate({
+        'system.conditions.actions': {
+          maxActions: 1,
+          maxBlocks: 1,
+        },
+      })
+    }
+
+    if (canvas.tokens.controlled.length > 0) {
+      await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
+    }
   }
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
@@ -333,6 +358,80 @@ export class GurpsActor extends Actor {
     })
   }
 
+  /**
+   * Remove Item Effects for informed reference
+   * @param {string} reference - item.id or system.<path>
+   * @returns {Promise<void>}
+   */
+  async removeModEffectFor(reference) {
+    let userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
+    let newMods = userMods.filter(m => !m.includes(reference) || m.includes('@man:'))
+    await this.internalUpdate({ 'system.conditions.usermods': newMods })
+  }
+
+  /**
+   * Add Actor Modifier Effects from Character Sheet
+   * @param {object} commit
+   * @param {boolean} append
+   * @returns {object}
+   */
+  applyItemModEffects(commit, append = false) {
+    const userMods = append ? foundry.utils.getProperty(this.system, 'conditions.usermods') || [] : []
+    let newMods = []
+
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // First Resolve Actor Items
+      for (const item of this.items.contents) {
+        const itemData = GurpsItem.asGurpsItem(item)
+        if (itemData.system.itemModifiers?.length > 0) {
+          const allEffects = itemData.system.itemModifiers.split('\n').map(m => m.trim())
+          for (const effect of allEffects) {
+            const fullDesc = `${effect} @${item.id}`
+            if (!userMods.includes(fullDesc)) {
+              newMods.push(fullDesc)
+            }
+          }
+        }
+      }
+      // Then Melee and Ranged Actor Components
+      const paths = ['melee', 'ranged']
+      for (const path of paths) {
+        recurselist(this.system[path], (e, _k, _d) => {
+          if (!!e.itemModifiers) {
+            const allEffects = e.itemModifiers.split('\n').map(m => m.trim())
+            for (const effect of allEffects) {
+              const fullDesc = `${effect} @system.${path}.${_k}`
+              if (!userMods.includes(fullDesc)) {
+                newMods.push(fullDesc)
+              }
+            }
+          }
+        })
+      }
+    } else {
+      const paths = ['melee', 'ranged', 'ads', 'skills', 'spells', 'equipment.carried', 'equipment.other']
+      for (const path of paths) {
+        const fullPath = `system.${path}`
+        const data = foundry.utils.getProperty(this, fullPath)
+        recurselist(data, (e, _k, _d) => {
+          if (!!e.itemModifiers) {
+            const allEffects = e.itemModifiers.split('\n').map(m => m.trim())
+            for (const effect of allEffects) {
+              const fullDesc = `${effect} @system.${path}.${_k}`
+              if (!userMods.includes(fullDesc)) {
+                newMods.push(fullDesc)
+              }
+            }
+          }
+        })
+      }
+    }
+    return {
+      ...commit,
+      'system.conditions.usermods': [...userMods, ...newMods],
+    }
+  }
+
   _applyItemBonuses() {
     let pi = (/** @type {string | undefined} */ n) => (!!n ? parseInt(n) : 0)
     /** @type {string[]} */
@@ -342,7 +441,11 @@ export class GurpsActor extends Actor {
     for (const item of this.items.contents) {
       let itemData = GurpsItem.asGurpsItem(item).system
 
-      if (itemData.equipped && itemData.carried && !!itemData.bonuses && !gids.includes(itemData.globalid)) {
+      if (
+        (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
+        !!itemData.bonuses &&
+        !gids.includes(itemData.globalid)
+      ) {
         gids.push(itemData.globalid)
         let bonuses = itemData.bonuses.split('\n')
 
@@ -491,6 +594,7 @@ export class GurpsActor extends Actor {
    * @param {string} key - The key to search for in the trait objects.
    * @param {string | number} id - The ID to match within the trait objects.
    * @param {string} sysKey - The system.<key> to use for the search.
+   * @param {boolean} include - Whether to check equal or include in the search
    * @return {string | undefined} The trait key if found, otherwise undefined.
    */
   _findSysKeyForId(key, id, sysKey, include = false) {
@@ -1661,7 +1765,8 @@ export class GurpsActor extends Actor {
         }
       }
     }
-    if (!!commit) await this.internalUpdate(commit, { diff: false })
+    commit = this.applyItemModEffects(commit, true)
+    if (!!commit) await this.update(commit, { diff: false })
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
@@ -1842,7 +1947,20 @@ export class GurpsActor extends Actor {
     await this._removeItemElement(itemid, 'ads')
     await this._removeItemElement(itemid, 'skills')
     await this._removeItemElement(itemid, 'spells')
+    await this._removeItemEffect(itemid)
     this.ignoreRender = saved
+  }
+
+  /**
+   * Remove Item Effect from Actor system.conditions.usermods
+   *
+   * @param {string} itemId
+   * @private
+   */
+  async _removeItemEffect(itemId) {
+    let userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
+    const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
+    await this.update({ 'system.conditions.usermods': mods })
   }
 
   /**
@@ -2463,6 +2581,7 @@ export class GurpsActor extends Actor {
     await this._removeItemAdditions(item.id)
 
     // Update Item
+    item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
 
     // Update Actor Component
@@ -2474,6 +2593,8 @@ export class GurpsActor extends Actor {
         parentuuid: actorComp.parentuuid,
         itemInfo,
         addToQuickRoll: item.system.addToQuickRoll,
+        modifierTags: item.system.modifierTags,
+        itemModifiers: item.system.itemModifiers,
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -2734,7 +2855,6 @@ export class GurpsActor extends Actor {
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('')
-
       const localizedKey = `GURPS.trait${camelCaseName}`
       const localizedName = game.i18n.localize(localizedKey)
       if (localizedName && localizedName !== localizedKey) {
@@ -2919,6 +3039,377 @@ export class GurpsActor extends Actor {
         result.data = checks
         result.size = checks.length
         break
+    }
+    return result
+  }
+
+  /**
+   * Resolve and add tagged Modifier Effects.
+   *
+   * System will lookup each roll modifiers inside system.conditions.usermods
+   * against the Items.modifierTags and add the modifiers to the ModifierBucket.
+   *
+   * @param chatThing
+   * @param optionalArgs
+   * @returns {Promise<boolean>}
+   */
+  async addTaggedRollModifiers(chatThing, optionalArgs, attack) {
+    let isDamageRoll = false
+    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
+
+    // First get Item or Attribute Effect Tags
+    let modifierTags, itemRef, refTags
+    if (optionalArgs.obj) {
+      const ref = chatThing
+        .split('@')
+        .pop()
+        .match(/(\S+):/)?.[1]
+        .toLowerCase()
+      switch (ref) {
+        case 'm':
+          refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allMeleeRolls.split(',').map(it => it.trim().toLowerCase()))
+          isDamageRoll = true
+          break
+        case 'r':
+          refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allRangedRolls.split(',').map(it => it.trim().toLowerCase()))
+          isDamageRoll = true
+          break
+        case 'p':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'b':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'd':
+          refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
+          isDamageRoll = true
+          break
+        case 'sk':
+          refTags = taggedSettings.allSkillRolls.split(',').map(it => it.trim().toLowerCase())
+          break
+        case 'sp':
+          refTags = taggedSettings.allSpellRolls.split(',').map(it => it.trim().toLowerCase())
+          if (taggedSettings.useSpellCollegeAsTag) {
+            const spell = optionalArgs.obj
+            const collegeTags = cleanTags(spell.college)
+            refTags = refTags.concat(collegeTags)
+          }
+          break
+        case 'p':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'b':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        default:
+          refTags = []
+      }
+      // Item or Actor Component
+      modifierTags =
+        (optionalArgs.obj?.modifierTags || '')
+          .split(',')
+          .map(it => it.trim())
+          .map(it => it.toLowerCase()) || []
+      modifierTags = [...modifierTags, ...allRollTags, ...refTags].filter(m => !!m)
+      itemRef = optionalArgs.obj.name || optionalArgs.obj.originalName
+    } else if (chatThing) {
+      // Targeted Roll or Attribute Check
+      const ref = chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
+      let refTags
+      let regex = /(?<="|:).+(?=\s\(|"|])/gm
+      switch (ref) {
+        case 'st':
+        case 'dx':
+        case 'iq':
+        case 'ht':
+          refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+          refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
+          break
+        case 'will':
+        case 'per':
+        case 'frightcheck':
+        case 'vision':
+        case 'hearing':
+        case 'tastesmell':
+        case 'touch':
+        case 'cr':
+          refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+          break
+        case 'dodge':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(
+            taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+          )
+          break
+        case 'p':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+          itemRef = chatThing.match(regex)?.[0]
+          if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
+          break
+        case 'b':
+          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+
+          itemRef = chatThing.match(regex)?.[0]
+          if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
+          break
+        default:
+          refTags = []
+      }
+      modifierTags = [...allRollTags, ...refTags]
+    } else {
+      // Damage roll from OTF or Attack
+      if (!attack) {
+        refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
+        isDamageRoll = true
+      } else {
+        refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+      }
+      const attackMods = attack?.modifierTags || []
+      modifierTags = [...allRollTags, ...attackMods, ...refTags]
+      itemRef = attack?.name || attack?.originalName
+    }
+
+    // Then get the modifiers from:
+    // Actor User Mods
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
+    // Actor Self Mods
+    const selfMods =
+      foundry.utils.getProperty(this, 'system.conditions.self.modifiers').map(mod => {
+        const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+        if (key) return game.i18n.localize(key) + mod.replace(key, '')
+        return mod
+      }) || []
+    // Actor Targeted Mods
+    let targetMods = []
+    for (const target of Array.from(game.user.targets)) {
+      const targetActor = target.actor
+      const mods = targetActor ? foundry.utils.getProperty(targetActor, 'system.conditions.target.modifiers') : []
+      for (const mod of mods) {
+        const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+        if (key) targetMods.push(game.i18n.localize(key) + mod.replace(key, ''))
+        else targetMods.push(mod)
+      }
+      const actorToken = this.getActiveTokens()[0]
+      const rangeMod = getRangedModifier(actorToken, target)
+      if (rangeMod) targetMods.push(rangeMod)
+    }
+    const allMods = [...userMods, ...selfMods, ...targetMods]
+    const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
+
+    for (const userMod of allMods) {
+      const userModsTags = (userMod.match(/#(\S+)/g) || []).map(it => it.slice(1).toLowerCase())
+      for (const tag of userModsTags) {
+        let canApply = modifierTags.includes(tag)
+        if (userMod.includes('#maneuver')) {
+          canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
+        }
+        if (actorInCombat) {
+          canApply =
+            canApply && (!taggedSettings.nonCombatOnlyTag || !modifierTags.includes(taggedSettings.nonCombatOnlyTag))
+        } else {
+          canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
+        }
+        if (canApply) {
+          const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+          const desc = userMod.match(regex)?.[1].trim() || ''
+          const mod = userMod.match(/[-+]\d+/)?.[0] || '0'
+          await GURPS.ModifierBucket.addModifier(mod, desc)
+        }
+      }
+    }
+    return isDamageRoll
+  }
+
+  /**
+   * Check if Roll can be performed.
+   *
+   * @param {object} action
+   * @param {GurpsToken|Token} token
+   * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
+   */
+  async canRoll(action, token) {
+    let result = {
+      canRoll: true,
+    }
+    const isAttack = action.type === 'attack'
+    const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
+    const isAttribute = action.type === 'attribute'
+    if (token && game.combat?.isActive) {
+      const actions = await TokenActions.fromToken(token)
+
+      // Check Attack or Defense vs Maneuver
+      if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
+        const maneuver = Maneuvers.getManeuver(actions.currentManeuver)
+        const maneuverLabel = game.i18n.localize(maneuver.label)
+        const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
+        const checkManeuverSettings = game.settings.get(
+          Settings.SYSTEM_NAME,
+          Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER
+        )
+        const message = game.i18n.format(`GURPS.${checkManeuverSettings.toLowerCase()}CannotRollWithManeuver`, {
+          roll,
+          maneuver: maneuverLabel,
+        })
+        result = {
+          canRoll: checkManeuverSettings !== 'Forbid',
+          message,
+        }
+      }
+
+      // Check for Max Actions
+      const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
+      const maxActions = foundry.utils.getProperty(this, 'system.conditions.actions.maxActions') || 1
+      if (!isDefense && !isAttribute && actions.totalActions >= maxActions + actions.extraActions) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxActionMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxActionsReached`),
+        }
+      }
+      // Check for Max Blocks
+      const maxBlocks = foundry.utils.getProperty(this, 'system.conditions.actions.maxBlocks') || 1
+      if (isDefense && action.type === 'weapon-block' && actions.totalBlocks >= maxBlocks) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxBlockMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxBlocksReached`),
+        }
+      }
+      // Check for Max Parries
+      if (isDefense && action.type === 'weapon-parry' && actions.totalParries >= actions.maxParries) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxParryMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxParriesReached`),
+        }
+      }
+    }
+    // Check if roll need Target
+    const needTarget = isAttack || action.isSpellOnly || action.type === 'damage'
+    const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
+    if (needTarget && game.user.targets.size === 0) {
+      result = {
+        ...result,
+        canRoll: result.canRoll && checkForTargetSettings !== 'Forbid',
+        targetMessage: game.i18n.localize(`GURPS.${checkForTargetSettings.toLowerCase()}NoTargetSelected`),
+      }
+    }
+    return result
+  }
+
+  /**
+   * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatting - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
+   */
+  findUsingAction(action, chatting, formula, thing) {
+    const originType = action ? action.type : 'undefined'
+    let result = {}
+    let name, mode
+    switch (originType) {
+      case 'attack':
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+?)\)/)?.[1]
+        const path = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
+        recurselist(this.system[path], (obj, _k, _d) => {
+          if ((obj.originalName === name || obj.name === name) && (!mode || obj.mode === mode)) {
+            result = {
+              name: obj.name,
+              uuid: obj.uuid,
+              itemId: obj.itemid,
+              fromItem: obj.fromItem,
+              pageRef: obj.pageref,
+            }
+          }
+        })
+        break
+
+      case 'weapon-block':
+      case 'weapon-parry':
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+?)\)/)?.[1]
+        recurselist(this.system.melee, (melee, _k, _d) => {
+          if ((melee.originalName === name || melee.name === name) && (!mode || melee.mode === mode)) {
+            result = {
+              name: melee.name,
+              uuid: melee.uuid,
+              itemId: melee.itemid,
+              fromItem: melee.fromItem,
+              pageRef: melee.pageref,
+            }
+          }
+        })
+        break
+      case 'skill-spell':
+        const item = this.findByOriginalName(action.name)
+        if (!!item) {
+          result = {
+            name: item.name,
+            uuid: item.uuid,
+            itemId: item.itemid,
+            fromItem: item.fromItem,
+            pageRef: item.pageref,
+          }
+        } else {
+          result = {
+            name: action.name,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+        }
+        break
+
+      case 'attribute':
+        let attrName = action?.overridetxt
+        if (!attrName) attrName = game.i18n.localize(`GURPS.${action.attrkey.toLowerCase()}`)
+        if (attrName.startsWith('GURPS')) attrName = game.i18n.localize(`GURPS.attributes${action.attrkey}NAME`)
+        result = {
+          name: attrName,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+        break
+
+      case 'controlroll':
+        result = {
+          name: action.overridetxt || action.orig,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+        break
+
+      default:
+        result = {
+          name: thing ? thing : chatting ? chatting.split('/[')[0] : formula,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
     }
     return result
   }

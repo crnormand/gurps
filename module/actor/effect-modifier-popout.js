@@ -1,8 +1,51 @@
 import GurpsWiring from '../gurps-wiring.js'
-import { i18n, i18n_f, sanitize } from '../../lib/utilities.js'
-import { gurpslink } from '../../module/utilities/gurpslink.js'
+import { i18n, i18n_f, recurselist, sanitize } from '../../lib/utilities.js'
+import { gurpslink } from '../utilities/gurpslink.js'
 import { parselink } from '../../lib/parselink.js'
 import { RulerGURPS } from '../../lib/ranges.js'
+import { TokenActions } from '../token-actions.js'
+import Maneuvers from './maneuver.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+
+export const calculateRange = (token1, token2) => {
+  if (!token1 || !token2) return undefined
+  if (token1 === token2) return undefined
+
+  // const ruler = new Ruler() as Ruler & { totalDistance: number }
+  const ruler = new RulerGURPS(game.user)
+  ruler._state = Ruler.STATES.MEASURING
+  ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
+  ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
+  const horizontalDistance = ruler.totalDistance
+  const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
+  ruler.clear()
+
+  const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
+  const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
+  return {
+    yards: Math.ceil(dist),
+    modifier: ruler.yardsToSpeedRangePenalty(yards),
+  }
+}
+
+export const getRangedModifier = (source, target) => {
+  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
+  const spellTag = taggedModifiersSetting.allSpellRolls.split(',')[0]
+  const baseTags = `#${rangedTag} #${spellTag}`
+  let rangeModifier
+  let mod = calculateRange(source, target)
+  if (mod && mod.modifier !== 0) {
+    rangeModifier = game.i18n.format('GURPS.rangeToTarget', {
+      modifier: mod.modifier,
+      name: target.actor?.name,
+      distance: mod.yards,
+      unit: canvas.scene.grid.units,
+    })
+    rangeModifier += ` ${baseTags} @combatmod`
+  }
+  return rangeModifier
+}
 
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
@@ -20,8 +63,8 @@ export class EffectModifierPopout extends Application {
       classes: ['sidebar-popout effect-modifiers-app'],
       popOut: true,
       top: 0,
-      width: 400,
-      left: sidebarLeft - 405,
+      width: 550,
+      left: sidebarLeft - 555,
       height: 'auto',
       minimizable: true,
       jQuery: true,
@@ -37,10 +80,19 @@ export class EffectModifierPopout extends Application {
       selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
       selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
     }
+    selfMods.sort((a, b) => {
+      if (a.itemName === b.itemName) {
+        return a.desc.localeCompare(b.desc)
+      }
+      return a.itemName.localeCompare(b.itemName)
+    })
+    const targetModifiers = this._token
+      ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
+      : []
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
-      targetmodifiers: this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : [],
+      targetmodifiers: targetModifiers,
       targets: this.targets,
     })
   }
@@ -54,46 +106,67 @@ export class EffectModifierPopout extends Application {
       result.targetmodifiers = target.actor
         ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
         : []
-      let mod = this.calculateRange(this.getToken(), target)
-      if (mod && mod.modifier !== 0)
-        result.targetmodifiers.push(
-          gurpslink(`[${mod.modifier} range to target ${target.actor?.name} (${mod.yards} ${canvas.scene.grid.units})]`)
-        )
-
+      const rangeModifier = getRangedModifier(this.getToken(), target)
+      if (rangeModifier) {
+        const data = this.convertModifiers([rangeModifier])
+        result.targetmodifiers = [...result.targetmodifiers, ...data]
+      }
       // Add the range to the target
-
       results.push(result)
     }
     return results
   }
 
   convertModifiers(list) {
-    return list ? list.map(it => `[${i18n(it)}]`).map(it => gurpslink(it)) : []
+    return list
+      ? list.map(it => {
+          const tags = this.getTags(it)
+          let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
+          let obj = {}
+          if (itemReference.includes('system.')) {
+            if (itemReference.includes('.conditionalmods.')) {
+              obj.name = game.i18n.localize('GURPS.conditionalMods')
+            } else if (itemReference.includes('.reactions.')) {
+              obj.name = game.i18n.localize('GURPS.reactionMods')
+            } else {
+              obj = foundry.utils.getProperty(this._token.actor, itemReference)
+            }
+          } else if (itemReference.match(/\w{3}:/)) {
+            const refType = itemReference.match(/(\w{3}):/)[1]
+            const refValue = itemReference.match(/\w{3}:(\S+)/)[1]
+            const maneuver = Maneuvers.getManeuver(refValue)
+            switch (refType) {
+              case 'man':
+                obj.name = game.i18n.localize(maneuver.label)
+                obj.type = 'maneuver'
+                break
+            }
+          } else {
+            obj = this._token.actor.items.get(itemReference)
+          }
+          const itemName = obj?.name || itemReference
+          const itemType = obj?.type
+            ? obj.type
+            : it.includes('#maneuver')
+              ? 'maneuver'
+              : itemReference.includes('system.')
+                ? itemReference.split('.')[1]
+                : 'notfound'
+          const desc = this.getDescription(it, itemReference)
+          return {
+            link: gurpslink(`[${i18n(desc)}]`),
+            desc: i18n(desc),
+            itemName,
+            itemType,
+            itemId: itemReference,
+            tags,
+          }
+        })
+      : []
   }
 
   get selectedToken() {
     return this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
-  }
-
-  calculateRange(token1, token2) {
-    if (!token1 || !token2) return undefined
-    if (token1 == token2) return undefined
-
-    // const ruler = new Ruler() as Ruler & { totalDistance: number }
-    const ruler = new RulerGURPS(game.user)
-    ruler._state = Ruler.STATES.MEASURING
-    ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
-    ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
-    const horizontalDistance = ruler.totalDistance
-    const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
-    ruler.clear()
-
-    const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
-    const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
-    return {
-      yards: Math.ceil(dist),
-      modifier: ruler.yardsToSpeedRangePenalty(yards),
-    }
   }
 
   getToken() {
@@ -131,24 +204,74 @@ export class EffectModifierPopout extends Application {
     buttons.unshift({
       class: 'trash',
       icon: 'fas fa-trash',
-      onclick: ev => this.clearUserMods(ev),
+      onclick: async ev => this.clearUserMods(ev),
     })
     buttons.unshift({
       class: 'add',
       icon: 'fas fa-plus',
       onclick: ev => this.addUserMod(ev),
     })
+    buttons.unshift({
+      class: 'refresh',
+      icon: 'fas fa-sync',
+      onclick: async ev => this.refreshUserMods(ev),
+    })
     return buttons
   }
 
-  clearUserMods(event) {
-    let t = this.getToken()
-    if (t && t.actor) {
-      let umods = t.actor.system.conditions.usermods
-      if (umods) {
-        t.actor.update({ 'system.conditions.usermods': [] }).then(() => this.render(true))
+  async refreshUserMods(event) {
+    const actor = this.getToken()?.actor
+    if (actor) {
+      const userMods = foundry.utils.getProperty(actor, 'system.conditions.usermods') || []
+      const customMods = userMods.filter(it => it.includes('@custom'))
+      const itemMods = actor.applyItemModEffects({})
+      let sheetMods = []
+
+      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      if (taggedSettings.checkConditionals) {
+        const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
+        recurselist(conditionalMods, (e, _k, _d) => {
+          const mod = parseInt(e.modifier) || 0
+          const signal = mod > 0 ? '+' : '-'
+          const source = `system.conditionalmods.${_k}`
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+        })
       }
+      if (taggedSettings.checkReactions) {
+        const reactionMods = foundry.utils.getProperty(actor, 'system.reactions') || {}
+        recurselist(reactionMods, (e, _k, _d) => {
+          const mod = parseInt(e.modifier) || 0
+          const signal = mod > 0 ? '+' : '-'
+          const source = `system.reactions.${_k}`
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+        })
+      }
+      const newMods = [...itemMods['system.conditions.usermods'], ...customMods, ...sheetMods]
+      await actor.internalUpdate({ 'system.conditions.usermods': newMods })
+      // Check if combat
+      if (!!game.combat?.isActive) {
+        const actions = await TokenActions.fromToken(this.getToken())
+        await actions.addModifiers()
+      }
+      await this.render(true)
+      ui.notifications.info(i18n('GURPS.userModsRefreshed'))
     }
+  }
+
+  async clearUserMods(event) {
+    const actor = this.getToken()?.actor
+    // Add a Confirm dialog
+    await Dialog.confirm({
+      title: i18n('GURPS.confirmClearUserMods'),
+      content: i18n('GURPS.confirmClearHintUserMods'),
+      yes: async () => {
+        if (actor) {
+          await actor.update({ 'system.conditions.usermods': [] })
+          await this.render(true)
+        }
+      },
+      defaultYes: false,
+    })
   }
 
   addUserMod(event) {
@@ -156,13 +279,16 @@ export class EffectModifierPopout extends Application {
       setTimeout(() => $.find('#GURPS-user-mod-input')[0].focus(), 200)
       Dialog.prompt({
         title: 'Enter new modifier:',
-        content: "<input type='text' id='GURPS-user-mod-input' style='text-align: left;' placeholder ='+1 bonus'>'",
+        content:
+          "<input type='text' id='GURPS-user-mod-input' style='text-align: left;' placeholder ='Ex.: +1 GM&#39s Luck #hit #damage #check #combat'>'",
         label: 'Add (or press Enter)',
         callback: html => {
           let mod = html.find('#GURPS-user-mod-input').val()
+          // Because the '@' separator is a reserved character, we will replace it with space
+          mod = mod.replace('@', ' ')
           if (!!mod) {
             let action = parselink(mod)
-            if (action.action?.type == 'modifier') this._addUserMod(mod)
+            if (action.action?.type === 'modifier') this._addUserMod(mod)
             else ui.notifications.warn(i18n('GURPS.chatUnrecognizedFormat'))
           }
         },
@@ -171,17 +297,41 @@ export class EffectModifierPopout extends Application {
     } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
+  getDescription(text, itemRef) {
+    const regex = /^(.*?)(?=[#@])/
+    const desc = text.match(regex)?.[1]
+    return !!desc ? desc.trim() : text
+  }
+
+  getTags(text) {
+    const tags = text.match(/#(\S+)/g)?.map(it => it.slice(1))
+    return !!tags ? tags : []
+  }
+
   onRightClick(event) {
     event.preventDefault()
     event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
     let text = sanitize(el.innerHTML)
+    const itemId = $(el).closest('.me-link').data().itemId
+    const itemType = $(el).closest('.me-link').data().type
+    if (itemId.includes('system.') && itemType !== 'maneuver') {
+      this._token.actor.sheet?.render(true)
+      return
+    }
+    if (!!itemId && itemId !== 'custom' && itemType !== 'maneuver') {
+      const item = this._token.actor.items.get(itemId)
+      if (item) {
+        item.sheet.render(true)
+      }
+      return
+    }
     let t = this.getToken()
     if (t && t.actor) {
       let umods = t.actor.system.conditions.usermods
       if (umods) {
-        let m = umods.filter(i => sanitize(i) != text)
-        if (umods.length != m.length) t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
+        let m = umods.filter(i => !sanitize(i).includes(this.getDescription(text)))
+        if (umods.length !== m.length) t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
       }
     }
   }
@@ -212,7 +362,7 @@ export class EffectModifierPopout extends Application {
     if (t && t.actor) {
       mod += ' (' + i18n('GURPS.equipmentUserCreated') + ')'
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
-      m.push(mod)
+      m.push(`${mod} @custom`)
       t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
     } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
   }
@@ -224,5 +374,53 @@ export class EffectModifierPopout extends Application {
 
   async closeApp(options) {
     super.close(options)
+  }
+}
+
+/**
+ * Cleans up tags to be used in the settings
+ * @param {string} tags
+ * @returns {string[]}
+ */
+export const cleanTags = tags =>
+  (tags || '')
+    .split(',')
+    .map(it => it.trim())
+    .filter(it => !!it)
+    .map(it => it.toLowerCase())
+    .map(it => it.replace(/\W/g, ''))
+
+export class TaggedModifierSettings extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      title: game.i18n.localize('GURPS.settingUseTaggedModifiers'),
+      id: 'use-tagged-modifiers',
+      template: 'systems/gurps/templates/tagged-modifier-settings.hbs',
+      width: 500,
+      closeOnSubmit: true,
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.content', initial: 'all-rolls-tab' }],
+    })
+  }
+
+  getData() {
+    return {
+      ...game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS),
+    }
+  }
+
+  async _updateObject(event, formData) {
+    const cleanData = Object.keys(formData).reduce((acc, key) => {
+      if (typeof formData[key] === 'string') {
+        if (key.toLowerCase().includes('combat')) {
+          acc[key] = cleanTags(formData[key])[0]
+        } else {
+          acc[key] = cleanTags(formData[key]).join(', ')
+        }
+      } else {
+        acc[key] = formData[key]
+      }
+      return acc
+    }, {})
+    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
   }
 }

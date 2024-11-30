@@ -232,6 +232,7 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemModifiers": "",
       "equipped": true,
       "carried": true,
       "globalid": "",
@@ -259,6 +260,7 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemModifiers": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
@@ -294,11 +296,13 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemModifiers": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
       "fromItem": "",
-      "addToQuickRoll": false
+      "addToQuickRoll": false,
+      "modifierTags": ""
     },
     "spell": {
       "spl": {
@@ -333,11 +337,13 @@
       "skills": {},
       "spells": {},
       "bonuses": "",
+      "itemModifiers": "",
       "globalid": "",
       "importid": "",
       "importFrom": "",
       "fromItem": "",
-      "addToQuickRoll": false
+      "addToQuickRoll": false,
+      "modifierTags": ""
     },
     "meleeAtk": {
       "mel": {
@@ -364,7 +370,8 @@
         "duringotf": "",
         "passotf": "",
         "failotf": "",
-        "originalName": ""
+        "originalName": "",
+        "modifierTags": ""
       }
     },
     "rangedAtk": {
@@ -395,7 +402,8 @@
         "duringotf": "",
         "passotf": "",
         "failotf": "",
-        "originalName": ""
+        "originalName": "",
+        "modifierTags": ""
       }
     }
   }

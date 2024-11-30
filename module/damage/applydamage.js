@@ -12,11 +12,12 @@ import {
   locateToken,
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { digitsAndDecimalOnly, digitsOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
+import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor/actor.js'
 import { handleOnPdf } from '../pdf-refs.js'
+import { TokenActions } from '../token-actions.js'
 
-const simpleDialogHeight = 130
+const simpleDialogHeight = 160
 
 /**
  * Displays the Apply Damage Dialog. Delegates all the logic behind calculating
@@ -50,6 +51,12 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
+    const attacker = game.actors.get(damageData[0].attacker)
+    this.sourceTokenImg =
+      canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.document.texture.src || attacker.name
+    this.sourceTokenName = canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.name || attacker.name
+    this.targetTokenImg = actor.token.texture.src || actor.img
+    this.targetTokenName = actor.token.name || actor.name
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
@@ -70,13 +77,18 @@ export default class ApplyDamageDialog extends Application {
     })
   }
 
-  getData() {
+  async getData() {
     let data = super.getData()
     data.actor = this.actor
     data.CALC = this._calculator
     data.timesToApply = this.timesToApply
     data.isSimpleDialog = this.isSimpleDialog
     data.resourceLabels = this._resourceLabels
+    data.sourceTokenImage = this.sourceTokenImg
+    data.sourceTokenName = this.sourceTokenName
+    data.targetTokenImage = this.targetTokenImg
+    data.targetTokenName = this.targetTokenName
+    data.contextEffects = await this._calculator.addEffectsContext()
     return data
   }
 
@@ -329,6 +341,14 @@ export default class ApplyDamageDialog extends Application {
     // ==== Results ====
     html.find('#result-effects button').click(async ev => this._handleEffectButtonClick(ev))
 
+    html
+      .find('#add-shock-next button, #add-major button, #add-knockback button, #add-vitals button')
+      .on('click', ev => this._handleEffectAddEffectButtonClick(ev))
+
+    html
+      .find('#test-major button, #test-knockback button, #test-vitals button')
+      .on('click', ev => this._handleTestSaveEffectButtonClick(ev))
+
     html.find('#apply-injury-split').on('click', ev => {
       let content = html.find('#apply-injury-dropdown')
       this._toggleVisibility(content, content.hasClass('invisible'))
@@ -472,13 +492,102 @@ export default class ApplyDamageDialog extends Application {
     return renderTemplate('systems/gurps/templates/apply-damage/' + template, data)
   }
 
+  async _handleTestSaveEffectButtonClick(ev) {
+    let dataEffect = ev.currentTarget.attributes['data-effect'].value
+    let effect = JSON.parse(dataEffect)
+    let otf = ''
+    switch (effect.type) {
+      case 'headvitalshit':
+      case 'majorwound':
+        const htCheck =
+          effect.modifier === 0 ? 'HT' : effect.modifier < 0 ? `HT+${-effect.modifier}` : `HT-${effect.modifier}`
+        otf = `/r [!${htCheck}]`
+        break
+      case 'knockback':
+        const dx = i18n('GURPS.attributesDX')
+        const dxCheck = effect.modifier === 0 ? dx : `${dx}-${object.modifier}`
+        const acro = i18n('GURPS.skillAcrobatics')
+        const acroCheck = effect.modifier === 0 ? acro : `${acro}-${object.modifier}`
+        const judo = i18n('GURPS.skillJudo')
+        const judoCheck = effect.modifier === 0 ? judo : `${judo}-${object.modifier}`
+        otf = `/r [!${dxCheck}|!SK:Acrobatics|!Sk:${acroCheck}|!SK:Judo|!Sk:${judoCheck}]`
+        break
+    }
+    if (!!otf) await this.actor.runOTF(otf)
+  }
+
+  async _handleEffectAddEffectButtonClick(ev) {
+    ev.preventDefault()
+    ev.stopPropagation()
+    const button = $(ev.currentTarget)
+    const effect = button.data('effect')
+    const token = canvas.tokens.get(this.actor.token.id)
+    const actions = await TokenActions.fromToken(token)
+    const buttonAddClass = `fa-plus-circle`
+    const buttonAddedClass = `fa-check-circle`
+
+    const toggleEffect = async (effects, span) => {
+      // Check if effect already exists in Token
+      const effectExists = token.actor.effects.find(e => e.statuses.find(s => effects.includes(s)))
+      if (!!effectExists) {
+        // Remove all effects from Token
+        for (let effect of effects) {
+          await token.setEffectActive(effect, false)
+        }
+        span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
+        span.attr('title', i18n(`GURPS.add${effects.join('')}Effect`))
+      } else {
+        // Add all effects to Token
+        for (let effect of effects) {
+          await token.setEffectActive(effect, true)
+        }
+        span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
+        span.attr('title', i18n(`GURPS.remove${effects.join('')}Effect`))
+      }
+    }
+
+    const span = button.find('span')
+    let result
+    switch (effect.type) {
+      case 'shock':
+        // Check if the effect is already in the next turn
+        const shockEffect = `shock${effect.amount}`
+        const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
+        if (!!allShocks) {
+          await actions.removeFromNextTurn(allShocks)
+          span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
+          span.attr('title', i18n('GURPS.addShockEffect'))
+          ui.notifications.info(i18n('GURPS.removedShockEffect'))
+        } else {
+          const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
+          if (!otherShocks) {
+            await actions.removeFromNextTurn(otherShocks)
+          }
+          // Add the effect to the next turn
+          await actions.addToNextTurn([shockEffect])
+          span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
+          span.attr('title', i18n('GURPS.removeShockEffect'))
+          ui.notifications.info(i18n('GURPS.addedShockEffect'))
+        }
+        break
+      case 'headvitalshit':
+      case 'majorwound':
+        result = await toggleEffect(['prone', 'stun'], span)
+        break
+      case 'knockback':
+        result = await toggleEffect(['prone'], span)
+        break
+    }
+  }
+
   /**
    * Create and show the chat message for the Effect.
    * @param {*} ev
    */
   async _handleEffectButtonClick(ev) {
     // TODO allow click to automatically apply effect to a selected target
-    let stringified = ev.currentTarget.attributes['data-struct'].value
+    let stringified = ev.currentTarget.attributes['data-struct']?.value
+    if (!stringified) return
     let object = JSON.parse(stringified)
 
     let token = null
@@ -492,7 +601,7 @@ export default class ApplyDamageDialog extends Application {
     let message = ''
 
     if (object.type === 'shock') {
-      let button = `/st + shock${object.amount}`
+      let button = `/r [/st + shock${object.amount}]`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-shock.html', {
@@ -506,7 +615,7 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-      let button = `/if ! [${htCheck}] {/st + stun \\\\ /st + prone}`
+      let button = `/r [/if {![${htCheck}]} {/st + stun \\\\ /st + prone}]`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-majorwound.html', {
@@ -519,8 +628,8 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'headvitalshit') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-      let button = `/if ! [${htCheck}] {/st + stun \\\\ /st + prone}`
-      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
+      let button = `/r [/if {![${htCheck}]} {/st + stun \\\\ /st + prone}]`
+      if (!!token) button = `/r [/sel ${token.id} \\\\ ${button}]`
 
       message = await this._renderTemplate('chat-headvitalshit.html', {
         name: !!token ? token.name : this.actor.name,
@@ -538,8 +647,8 @@ export default class ApplyDamageDialog extends Application {
       let judo = i18n('GURPS.skillJudo')
       let judoCheck = object.modifier === 0 ? judo : `${judo}-${object.modifier}`
 
-      let button = `/if ! [${dxCheck}|Sk:${acroCheck}|Sk:${judoCheck}] /st + prone`
-      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
+      let button = `/r [/if {![${dxCheck}|Sk:Acrobatics|Sk:${acroCheck}|Sk:Judo|Sk:${judoCheck}]} {/st + prone}]`
+      if (!!token) button = `/r [/sel ${token.id} \\\\ ${button}]`
 
       let templateData = {
         name: !!token ? token.name : this.actor.name,

@@ -1,10 +1,58 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
-/*
-  This is the BIG method that does the roll and prepares the chat message.
-  unfortunately, it has a lot fo hard coded junk in it.
-  */
-// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn',
-// target=skill level or -1=damage roll
+import { i18n } from '../../lib/utilities.js'
+import { TokenActions } from '../token-actions.js'
+
+export const rollData = target => {
+  let targetColor, rollChance
+  if (target < 6) {
+    targetColor = '#b30000'
+    rollChance = game.i18n.localize('GURPS.veryHardRoll')
+  } else if (target < 11) {
+    targetColor = '#cc6600'
+    rollChance = game.i18n.localize('GURPS.hardRoll')
+  } else if (target < 14) {
+    targetColor = '#fdfdbd'
+    rollChance = game.i18n.localize('GURPS.fairRoll')
+  } else if (target < 17) {
+    targetColor = '#5cbd58'
+    rollChance = game.i18n.localize('GURPS.easyRoll')
+  } else {
+    targetColor = '#0a8d0a'
+    rollChance = game.i18n.localize('GURPS.veryEasyRoll')
+  }
+  return { targetColor, rollChance }
+}
+
+/**
+ * Recalculate the formula based on Modifier Bucket total.
+ *
+ * Formula examples: 2d+2, 1d-1, 3d6, 1d-2
+ * Can use the optional rule (B269) to round damage: +7 points = +2d and +4 points = +1d
+ *
+ * @param {string} formula
+ * @param {boolean} addDamageType
+ * @returns {string}
+ */
+export const addBucketToDamage = (formula, addDamageType = true) => {
+  let dice = parseInt(formula.match(/(\d+)d/)?.[1] || 1)
+  const add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
+  const damageType = formula.match(/\d\s(.+)/)?.[1] || ''
+  const bucketMod = GURPS.ModifierBucket.currentSum()
+  let newAdd = add + bucketMod
+  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)) {
+    while (newAdd >= 7) {
+      newAdd -= 7
+      dice += 2
+    }
+    while (newAdd >= 4) {
+      newAdd -= 4
+      dice += 1
+    }
+  }
+  const plus = newAdd > 0 ? '+' : ''
+  return `${dice}d${plus}${newAdd !== 0 ? newAdd : ''} ${addDamageType ? damageType : ''}`.trim()
+}
+
 export async function doRoll({
   actor,
   formula = '3d6',
@@ -14,6 +62,284 @@ export async function doRoll({
   chatthing = '',
   origtarget = -1,
   optionalArgs = {},
+  fromUser = game.user,
+  action = null,
+}) {
+  if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+
+  const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  let result = { canRoll: true }
+  let token
+  if (actor instanceof Actor && action) {
+    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === actor.id) || []
+    if (actorTokens.length === 1) {
+      token = actorTokens[0]
+    } else {
+      token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+    }
+    result = await actor.canRoll(action, token)
+  }
+
+  const messages = Object.keys(result)
+    .filter(key => key.toLowerCase().includes('message') && !!result[key])
+    .map(key => result[key])
+
+  if (!result.canRoll) {
+    for (const message of messages) {
+      ui.notifications.warn(message)
+    }
+    return false
+  }
+
+  let bucketRoll
+  let displayFormula = formula
+
+  if (actor instanceof Actor && taggedSettings.autoAdd) {
+    const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
+    if (isDamageRoll) {
+      displayFormula = addBucketToDamage(formula)
+      const currentSum = GURPS.ModifierBucket.currentSum()
+      const signal = currentSum >= 0 ? '+' : ''
+      bucketRoll = `(${signal}${currentSum})`
+    }
+  }
+
+  const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+  if (showRollDialog && actor instanceof Actor) {
+    // Get Actor Info
+    const tokenImg = token?.document.texture.src || actor?.img
+    const tokenName = token?.name || actor?.name
+
+    // Get Math Info
+    let totalMods = GURPS.ModifierBucket.currentSum()
+    const operator = totalMods >= 0 ? '+' : '-'
+    const totalRoll = origtarget + totalMods
+    totalMods = Math.abs(totalMods)
+
+    // Get Target Info
+    const targetData = actor.findUsingAction(action, chatthing, formula, thing)
+    const itemId = targetData.fromItem || targetData.itemId
+    const item = actor.items.get(itemId)
+    const itemImage = item?.img || ''
+    let itemIcon, itemColor, rollType
+    let targetRoll = targetData.name
+    if (origtarget > 0) targetRoll += `-${origtarget}`
+
+    let template = 'confirmation-roll.hbs'
+
+    // Special Case: thrust and swing buttons are formula based, not targeted rolls
+    let damageRoll, damageType
+    if (!action && !chatthing && targetData.name === formula) {
+      const damage = prefix.match(/\[(.+)]/)?.[1] || ''
+      damageType = damage === 'thrust' ? 'thr' : 'sw'
+      damageRoll = displayFormula
+      template = 'confirmation-damage-roll.hbs'
+    }
+
+    switch (action?.type || 'undefined') {
+      case 'attack':
+        if (action.isMelee) {
+          itemIcon = 'fas fa-sword'
+          itemColor = 'rgba(12,79,119)'
+          rollType = game.i18n.localize('GURPS.melee')
+        } else {
+          itemIcon = 'fas fa-crosshairs'
+          itemColor = 'rgba(12,79,119)'
+          rollType = game.i18n.localize('GURPS.ranged')
+        }
+        break
+      case 'weapon-parry':
+        itemIcon = 'fas fa-swords'
+        itemColor = '#9a5f16'
+        rollType = game.i18n.localize('GURPS.parry')
+        break
+      case 'weapon-block':
+        itemIcon = 'fas fa-shield-halved'
+        itemColor = '#9a5f16'
+        rollType = game.i18n.localize('GURPS.block')
+        break
+      case 'skill-spell':
+        if (chatthing.toLowerCase().includes('@sk:')) {
+          itemIcon = 'fas fa-book'
+          itemColor = '#015401'
+          rollType = game.i18n.localize('GURPS.skill')
+        } else {
+          itemIcon = 'fa fa-wand-magic-sparkles'
+          itemColor = '#6f63d9'
+          rollType = game.i18n.localize('GURPS.spell')
+        }
+        break
+      case 'controlroll':
+        itemIcon = 'fas fa-head-side-gear'
+        itemColor = '#c5360b'
+        rollType = game.i18n.localize('GURPS.ControlRoll')
+        break
+      case 'attribute':
+        itemColor = '#620707'
+        const ref = chatthing.split('@').pop().slice(0, -1)
+        switch (ref) {
+          case 'ST':
+            itemIcon = 'fas fa-dumbbell'
+            rollType = game.i18n.localize('GURPS.attributesSTNAME')
+            break
+          case 'DX':
+            itemIcon = 'fas fa-running'
+            rollType = game.i18n.localize('GURPS.attributesDXNAME')
+            break
+          case 'HT':
+            itemIcon = 'fas fa-heart'
+            rollType = game.i18n.localize('GURPS.attributesHTNAME')
+            break
+          case 'IQ':
+            itemIcon = 'fas fa-brain'
+            rollType = game.i18n.localize('GURPS.attributesIQNAME')
+            break
+          case 'WILL':
+            itemIcon = 'fas fa-brain'
+            rollType = game.i18n.localize('GURPS.attributesWILLNAME')
+            break
+          case 'Vision':
+            itemIcon = 'fas fa-eye'
+            rollType = game.i18n.localize('GURPS.vision')
+            break
+          case 'PER':
+            itemIcon = 'fas fa-signal-stream'
+            rollType = game.i18n.localize('GURPS.attributesPERNAME')
+            break
+          case 'Fright Check':
+            itemIcon = 'fas fa-face-scream'
+            rollType = game.i18n.localize('GURPS.frightcheck')
+            break
+          case 'Hearing':
+            itemIcon = 'fas fa-ear'
+            rollType = game.i18n.localize('GURPS.hearing')
+            break
+          case 'Taste Smell':
+            itemIcon = 'fas fa-nose'
+            rollType = game.i18n.localize('GURPS.tastesmell')
+            break
+          case 'Touch':
+            itemIcon = 'fa-solid fa-hand-point-up'
+            rollType = game.i18n.localize('GURPS.touch')
+            break
+          case 'Dodge':
+            itemIcon = 'fas fa-person-running-fast'
+            rollType = game.i18n.localize('GURPS.dodge')
+            break
+          default:
+            itemIcon = 'fas fa-dice'
+            rollType = !!targetData?.name
+              ? targetData.name
+              : thing
+                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+                : formula
+        }
+        break
+      default:
+        itemIcon = 'fas fa-dice'
+        itemColor = '#015401'
+        rollType = thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1) : formula
+    }
+
+    const { targetColor, rollChance } = rollData(origtarget)
+
+    let doRollResult
+    // Before open a new dialog, we need to make sure
+    // all other dialogs are closed, because bucket must be reset
+    // before we start a new roll
+    await $(document).find('.dialog-button.cancel').click().promise()
+    await new Promise(async resolve => {
+      const dialog = new Dialog({
+        title: game.i18n.localize('GURPS.confirmRoll'),
+        content: await renderTemplate(`systems/gurps/templates/${template}`, {
+          formula: formula,
+          thing: thing,
+          target: origtarget,
+          targetmods: targetmods,
+          prefix: prefix,
+          chatthing: chatthing,
+          optionalArgs: optionalArgs,
+          tokenImg,
+          tokenName,
+          totalRoll,
+          totalMods,
+          operator,
+          itemImage,
+          itemIcon,
+          targetRoll,
+          itemColor,
+          damageRoll,
+          damageType,
+          rollType,
+          targetColor,
+          rollChance,
+          bucketRoll,
+          messages,
+        }),
+        buttons: {
+          roll: {
+            icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
+            label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
+            callback: async () => {
+              doRollResult = await _doRoll({
+                actor,
+                formula,
+                targetmods,
+                prefix,
+                thing,
+                chatthing,
+                origtarget,
+                optionalArgs,
+                fromUser,
+              })
+              resolve(doRollResult)
+            },
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: i18n('GURPS.cancel'),
+            callback: async () => {
+              await GURPS.ModifierBucket.clear()
+              resolve(false)
+            },
+          },
+        },
+        default: 'roll',
+      })
+      dialog.render(true)
+    })
+    return doRollResult
+  } else {
+    return await _doRoll({
+      actor,
+      formula,
+      targetmods,
+      prefix,
+      thing,
+      chatthing,
+      origtarget,
+      optionalArgs,
+      fromUser,
+    })
+  }
+}
+
+/*
+  This is the BIG method that does the roll and prepares the chat message.
+  unfortunately, it has a lot fo hard coded junk in it.
+  */
+// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn',
+// target=skill level or -1=damage roll
+async function _doRoll({
+  actor,
+  formula = '3d6',
+  targetmods = [],
+  prefix = '',
+  thing = '',
+  chatthing = '',
+  origtarget = -1,
+  optionalArgs = {},
+  fromUser = game.user,
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   let isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
@@ -24,10 +350,10 @@ export async function doRoll({
     chatthing: chatthing,
     thing: thing,
     origtarget: origtarget,
+    fromUser: fromUser.id,
   }
 
-  // TODO Code below is duplicated in damagemessage.mjs (DamageChat) -- make sure it is updated in both places
-  // Lets collect up the modifiers, they are used differently depending on the type of roll
+  // Let's collect up the modifiers, they are used differently depending on the type of roll
   let modifier = 0
   let maxtarget = null // If not null, then the target cannot be any higher than this.
 
@@ -152,8 +478,13 @@ export async function doRoll({
     }
     chatdata['modifier'] = modifier
   }
-
+  chatdata['isBlind'] = !!(optionalArgs.blind || optionalArgs.event?.blind)
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
+
+  // For last, let's consume this action in Token
+  const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
+  const actions = await TokenActions.fromToken(actorToken)
+  await actions.consumeAction(optionalArgs.action, chatthing)
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 

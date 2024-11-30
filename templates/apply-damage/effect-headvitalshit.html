@@ -7,6 +7,16 @@
         "GURPS.majorWoundEffect"}}
       </aside>
     </div>
+    <div id="test-vitals" class="with-send-button">
+      <button name="test-vitals" data-effect="{{jsonStringify this}}"><span class="fa fa-dice"
+                                                                            title="{{testTitle}}"></span>
+      </button>
+    </div>
+    <div id="add-vitals" class="with-send-button">
+      <button name="add-vitals" data-effect="{{jsonStringify this}}"><span class="fa {{spanClass}}"
+                                                                           style="color: {{spanColor}};"
+                                                                           title="{{effectTitle}}"></span></button>
+    </div>
     <div class="with-send-button">
       <button name="send-wound" data-struct="{{jsonStringify this}}"><span class="fa fa-comment-alt"></span></button>
     </div>
