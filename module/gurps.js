@@ -35,11 +35,11 @@ import {
 } from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-import { DamageTable } from '../module/damage/damage-tables.js'
+import { DamageTable } from './damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
-import { AddImportEquipmentButton, ItemImporter } from '../module/item-import.js'
+import { AddImportEquipmentButton, ItemImporter } from './item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -82,6 +82,7 @@ import ApplyDamageDialog from './damage/applydamage.js'
 import { GGADebugger } from '../utils/debugger.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { TokenActions } from './token-actions.js'
+import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 
 let GURPS = undefined
@@ -2422,8 +2423,10 @@ if (!globalThis.GURPS) {
 
         // Get Combat Initiative
         const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
+
         // Add Quick Roll Menu
-        //  combatantElement = await addQuickRollButton(combatantElement, combatant, token)
+        combatantElement = await addQuickRollButton(combatantElement, combatant, token)
+
         // Add Maneuver Menu
         combatantElement = await addManeuverMenu(combatantElement, combatant, token)
 
@@ -2432,7 +2435,7 @@ if (!globalThis.GURPS) {
         tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
       }
       // Add Quick Roll and Maneuvers Menu Listeners
-      // addQuickRollListeners()
+      addQuickRollListeners()
       addManeuverListeners()
     })
 
@@ -2687,7 +2690,7 @@ const handleCombatTurn = async (combat, round) => {
   console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
   const token = canvas.tokens.get(nextCombatant.token.id)
   const actions = await TokenActions.fromToken(token)
-  if (round.round > 1) await actions.newTurn()
+  await actions.newTurn(round.round)
 }
 
 const resetTokenActions = async combat => {

@@ -2453,12 +2453,18 @@ export class GurpsActor extends Actor {
       item.type === 'equipment'
         ? this._findEqtkeyForId('itemid', item.id)
         : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+
     const actorComp = foundry.utils.getProperty(this, sysKey)
+
     if (!(await this._sanityCheckItemSettings(actorComp))) return
+
     if (!!item.editingActor) delete item.editingActor
+
     await this._removeItemAdditions(item.id)
+
     // Update Item
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+
     // Update Actor Component
     const itemInfo = item.getItemInfo()
     await this.internalUpdate({
@@ -2467,6 +2473,7 @@ export class GurpsActor extends Actor {
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
         itemInfo,
+        addToQuickRoll: item.system.addToQuickRoll,
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -2736,5 +2743,183 @@ export class GurpsActor extends Actor {
         if (sysKey) return foundry.utils.getProperty(this, sysKey)
       }
     }
+  }
+
+  /**
+   * Return all Checks of the given type.
+   * @param {string} checkType
+   * @returns {object} result
+   * @returns {any[]} result.data - The checks
+   * @returns {{integer}} result.size - The number of checks
+   */
+  getChecks(checkType) {
+    const quickRollSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
+    if (!quickRollSettings[checkType]) {
+      return { data: [], size: 0 }
+    }
+    let result = {}
+    let checks = []
+    const data = {}
+    let size = 0
+    
+    switch (checkType) {
+      case 'attributeChecks':
+        const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']
+        for (const key of keys) {
+          const attribute = this.system.attributes[key]
+          checks.push({
+            symbol: game.i18n.localize(`GURPS.attributes${key}`),
+            label: game.i18n.localize(`GURPS.attributes${key}NAME`),
+            value: attribute.import,
+            otf: key,
+          })
+        }
+        result.data = checks
+        result.size = checks.length
+        break
+      case 'otherChecks':
+        const icons = {
+          checks: {
+            vision: 'fa-solid fa-eye',
+            hearing: 'fa-solid fa-ear',
+            frightcheck: 'fa-solid fa-face-scream',
+            tastesmell: 'fa-regular fa-nose',
+            touch: 'fa-solid fa-hand-point-up',
+          },
+          dmg: {
+            thrust: 'fa-solid fa-sword',
+            swing: 'fa-solid fa-mace',
+          },
+        }
+        for (const key of Object.keys(icons)) {
+          let checks = []
+          for (const subKey of Object.keys(icons[key])) {
+            const value = this.system[subKey]
+            checks.push({
+              symbol: icons[key][subKey],
+              label: game.i18n.localize(`GURPS.${subKey}`),
+              value,
+              otf: subKey,
+            })
+            size += 1
+          }
+          data[key] = checks
+        }
+        result.data = data
+        result.size = size
+        break
+      case 'attackChecks':
+        const attacks = ['melee', 'ranged']
+        for (const key of attacks) {
+          let checks = []
+          recurselist(this.system[key], (attack, _k, _d) => {
+            if (attack.addToQuickRoll) {
+              let comp = this.findByOriginalName(attack.originalName || attack.name)
+              if (!comp) comp = this.findEquipmentByName(attack.name)[0]
+              const img = this.items.get(comp?.itemid)?.img
+              const symbol = game.i18n.localize(`GURPS.${key}`)
+              let otf = `${key.slice(0, 1)}:"${attack.name}"`
+              if (attack.mode) otf += ` (${attack.mode})`
+              let oftName = attack.name
+              if (attack.mode) oftName += ` (${attack.mode})`
+              checks.push({
+                symbol,
+                img,
+                label: attack.name,
+                value: attack.import,
+                damage: attack.damage,
+                mode: attack.mode,
+                otf: `${key.slice(0, 1)}:"${oftName}"`,
+                otfDamage: `d:${oftName}`,
+              })
+              size += 1
+            }
+          })
+          data[key] = checks
+        }
+        result.data = data
+        result.size = size
+        break
+      case 'defenseChecks':
+        recurselist(this.system.encumbrance, (enc, _k, _d) => {
+          if (enc.current) {
+            data.dodge = {
+              symbol: 'dodge',
+              label: game.i18n.localize(`GURPS.dodge`),
+              value: enc.dodge,
+              otf: `dodge`,
+            }
+          }
+        })
+        const defenses = ['parry', 'block']
+        for (const key of defenses) {
+          let checks = []
+          recurselist(this.system.melee, (defense, _k, _d) => {
+            if (parseInt(defense[key] || 0) > 0 && defense.addToQuickRoll) {
+              let comp = this.findByOriginalName(defense.originalName || defense.name)
+              if (!comp) comp = this.findEquipmentByName(defense.name)[0]
+              const img = this.items.get(comp?.itemid)?.img
+              const symbol = game.i18n.localize(`GURPS.${key}`)
+              let otf = `${key.slice(0, 1)}:"${defense.name}"`
+              if (defense.mode) otf += ` (${defense.mode})`
+              checks.push({
+                symbol,
+                img,
+                label: defense.name,
+                value: defense[key],
+                mode: defense.mode,
+                otf,
+              })
+              size += 1
+            }
+          })
+          data[key] = checks
+        }
+        result.data = data
+        result.size = size + 1
+        break
+      case 'markedChecks':
+        const traits = ['skills', 'spells', 'ads']
+
+        for (const traitType of traits) {
+          recurselist(this.system[traitType], (trait, _k, _d) => {
+            if (trait.addToQuickRoll) {
+              let comp = this.findByOriginalName(trait.originalName || trait.name)
+              const img = this.items.get(comp?.itemid)?.img
+              const symbol = game.i18n.localize(`GURPS.${traitType.slice(0, -1)}`)
+              if (trait.import) {
+                checks.push({
+                  symbol,
+                  img,
+                  label: trait.name,
+                  value: trait.import,
+                  notes: trait.notes,
+                  otf: `${traitType.slice(0, 2)}:"${trait.name}"`,
+                  isOTF: false,
+                })
+              }
+              const possibleOTFs = trait.notes.match(/\[.*?\]/g) || []
+              for (const otf of possibleOTFs) {
+                const parsed = parselink(otf)
+                if (parsed) {
+                  checks.push({
+                    symbol,
+                    img,
+                    label: parsed.text.replace(/[\[\]]/g, ''),
+                    value: '',
+                    notes: trait.notes,
+                    otf: `/r ${parsed.text}`,
+                    isOTF: true,
+                  })
+                }
+              }
+            }
+          })
+        }
+        result.data = checks
+        result.size = checks.length
+        break
+    }
+    return result
   }
 }

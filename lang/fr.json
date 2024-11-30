@@ -1138,5 +1138,16 @@
   "GURPS.modifiersBlindDefend": "-4 aux Défenses Actives (Aveugle)",
   "GURPS.parentItemTooltip": "De {type}: {name}",
   "GURPS.cannotDropItemAlreadyExists": "Vous avez déjà cet objet.",
-  "GURPS.droppingItemNotification": "{actorName} reçoit {itemName}"
+  "GURPS.droppingItemNotification": "{actorName} reçoit {itemName}",
+  "GURPS.quickRollMenu": "Menu de Jet Rapide",
+  "GURPS.settingUseQuickRolls": "Utiliser le Bouton de Jet Rapide",
+  "GURPS.settingHintUseQuickRolls": "Si activé, le système affichera un bouton de Jet Rapide dans le Suivi de Combat.",
+  "GURPS.settingLabelUseQuickRolls": "Configuration du Jet Rapide",
+  "GURPS.quickRollUse": "Activer/Désactiver le Bouton de Jet Rapide",
+  "GURPS.quickRollShowAttributes": "Afficher les Jets d'Attributs",
+  "GURPS.quickRollShowOther": "Afficher les Jets de Vérification Secondaires",
+  "GURPS.quickRollShowAttacks": "Afficher les Jets d'Attaque",
+  "GURPS.quickRollShowDefenses": "Afficher les Jets de Défense",
+  "GURPS.quickRollShowMarked": "Afficher les Compétences et Sorts Sélectionnés depuis la Fiche de Personnage",
+  "GURPS.quickRollAlwaysBlind": "Toujours faire des Jets Cachés"
 }

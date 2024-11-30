@@ -1,9 +1,6 @@
 {
   "Actor": {
-    "types": [
-      "character",
-      "enemy"
-    ],
+    "types": ["character", "enemy"],
     "templates": {
       "base": {
         "attributes": {
@@ -198,25 +195,14 @@
       }
     },
     "character": {
-      "templates": [
-        "base"
-      ]
+      "templates": ["base"]
     },
     "enemy": {
-      "templates": [
-        "base"
-      ]
+      "templates": ["base"]
     }
   },
   "Item": {
-    "types": [
-      "equipment",
-      "feature",
-      "skill",
-      "spell",
-      "meleeAtk",
-      "rangedAtk"
-    ],
+    "types": ["equipment", "feature", "skill", "spell", "meleeAtk", "rangedAtk"],
     "equipment": {
       "eqt": {
         "name": "",
@@ -251,7 +237,8 @@
       "globalid": "",
       "importid": "",
       "importFrom": "",
-      "fromItem": ""
+      "fromItem": "",
+      "addToQuickRoll": false
     },
     "feature": {
       "fea": {
@@ -310,7 +297,8 @@
       "globalid": "",
       "importid": "",
       "importFrom": "",
-      "fromItem": ""
+      "fromItem": "",
+      "addToQuickRoll": false
     },
     "spell": {
       "spl": {
@@ -348,7 +336,8 @@
       "globalid": "",
       "importid": "",
       "importFrom": "",
-      "fromItem": ""
+      "fromItem": "",
+      "addToQuickRoll": false
     },
     "meleeAtk": {
       "mel": {
@@ -368,6 +357,7 @@
         "cost": "",
         "reach": "",
         "parry": "",
+        "baseParryPenalty": -4,
         "block": "",
         "otf": "",
         "checkotf": "",
