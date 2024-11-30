@@ -1129,7 +1129,6 @@
   "GURPS.settingHintActiveEffects": "Autoriser le MJ à créer et appliquer des Effets Actifs",
   "GURPS.settingDragOnTokenDamage": "Glisser pour appliquer les dégâts au token sélectionné",
   "GURPS.settingHintDragOnTokenDamage": "Si coché, glisser les dégâts du chat vers un token les appliquera au token. Si décoché, une boîte de dialogue demandera la cible.",
-
   "GURPS.CR0": "PC: N/A (Ne peut Résister)",
   "GURPS.CR6": "PC: 6 (Résiste Rarement)",
   "GURPS.CR7": "PC: 7 (non standard)",
@@ -1146,7 +1145,6 @@
   "GURPS.parentItemTooltip": "De {type}: {name}",
   "GURPS.cannotDropItemAlreadyExists": "Vous avez déjà cet objet.",
   "GURPS.droppingItemNotification": "{actorName} reçoit {itemName}",
-
   "GURPS.settingShowConfirmationRollDialog": "Afficher la boîte de dialogue de confirmation du jet",
   "GURPS.settingHintShowConfirmationRoll": "Si coché, le système affichera une boîte de dialogue pour confirmer le jet avant qu'il ne soit effectué.",
   "GURPS.confirmRoll": "Confirmation du Jet",
