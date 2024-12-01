@@ -113,7 +113,7 @@ export default class GurpsToken extends Token {
       // if so, toggle them off:
       for (let e of existing) {
         for (const statusId of e.statuses) {
-          await super.toggleEffect(GURPS.StatusEffect.lookup(statusId))
+          await this.actor.toggleStatusEffect(GURPS.StatusEffect.lookup(statusId).id, { active: false })
         }
       }
     }
@@ -140,7 +140,7 @@ export default class GurpsToken extends Token {
     if (active && !!existing) return
     if (!active && !existing) return
 
-    this.toggleEffect(effect)
+    await this.toggleEffect(effect)
   }
 
   /**

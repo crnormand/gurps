@@ -1353,5 +1353,16 @@
   "GURPS.toDefenseBonus": "para bônus de defesa",
   "GURPS.toDefensePenalty": "de penalidade de defesa",
   "GURPS.removedShockEffect": "Efeito de Choque removido do próximo turno.",
-  "GURPS.addedShockEffect": "Efeito de Choque adicionado no próximo turno."
+  "GURPS.addedShockEffect": "Efeito de Choque adicionado no próximo turno.",
+  "GURPS.removeShockAtNextTurnEffect": "Efeito de choque removido na próxima rodada.",
+  "GURPS.addShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada.",
+  "GURPS.removeShockImmediatelyEffect": "Efeito de choque removido no alvo.",
+  "GURPS.addShockImmediatelyEffect": "Efeito de choque adicionado no alvo.",
+  "GURPS.settingAddShockAtTurn": "Quando adicionar o efeito de choque",
+  "GURPS.settingHintAddShockAtTurn": "Quando adicionar o efeito de choque no alvo.",
+  "GURPS.immediately": "Imediatamente",
+  "GURPS.atNextTurn": "Na próxima rodada",
+  "GURPS.removestunEffect": "Efeito de atordoamento removido no alvo.",
+  "GURPS.addstunEffect": "Efeito de atordoamento adicionado no alvo.",
+  "GURPS.addedShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada.",
 }

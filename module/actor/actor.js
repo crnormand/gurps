@@ -3338,6 +3338,15 @@ export class GurpsActor extends Actor {
             }
           }
         })
+        if (!Object.keys(result).length) {
+          result = {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+        }
         break
 
       case 'weapon-block':
@@ -3355,6 +3364,15 @@ export class GurpsActor extends Actor {
             }
           }
         })
+        if (!Object.keys(result).length) {
+          result = {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+        }
         break
       case 'skill-spell':
         const item = this.findByOriginalName(action.name)
