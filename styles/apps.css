@@ -1343,28 +1343,22 @@ details .popup.square5x4 {
 }
 
 .equipmentbutton {
-  text-align: center;
-  line-height: 0.5;
-  font-size: inherit;
-  margin: 0;
-  height: 0.75rem;
-  min-width: 0.75rem;
-  flex: 0;
-  /*  border: 1px solid grey;  */
-  font-family: var(--font-family-icons);
-  padding: 0px 0px 0px 0px;
-  cursor: pointer;
+  color: lightgrey;
+}
+
+.equipmentbutton:hover {
+  color: darkcyan;
 }
 
 .equipmentbutton.bold {
   font-weight: bold;
 }
 
-button.equipmentbutton:first-child {
+.equipmentbutton:first-child {
   margin-right: 0.5em;
 }
 
-button.equipmentbutton:last-child {
+.equipmentbutton:last-child {
   margin-left: 0.5em;
 }
 

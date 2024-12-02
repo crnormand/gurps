@@ -479,7 +479,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
 
     // On clicking equipment quantity increment, increase the amount.
-    html.find('button[data-operation="equipment-inc"]').click(async ev => {
+    html.find('i[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
@@ -524,7 +524,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
-    html.find('button[data-operation="equipment-dec"]').click(async ev => {
+    html.find('i[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
