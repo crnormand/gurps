@@ -561,9 +561,8 @@ export default class ApplyDamageDialog extends Application {
         // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
         const applyAt = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ADD_SHOCK_AT_TURN)
-        let allShocks
         if (applyAt === 'AtNextTurn') {
-          allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
+          const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
           if (!!allShocks) {
             await actions.removeFromNextTurn(allShocks)
             span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
@@ -581,7 +580,6 @@ export default class ApplyDamageDialog extends Application {
             ui.notifications.info(i18n(`GURPS.addedShock${applyAt}Effect`))
           }
         } else {
-          allShocks = token.actor.effects.find(e => e.statuses.find(s => s.startsWith('shock')))
           await toggleEffect(shockEffect, span, 'shock', applyAt)
         }
 
