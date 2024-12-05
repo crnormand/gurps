@@ -2792,7 +2792,7 @@ if (!globalThis.GURPS) {
       console.log(`Combat ended: ${combat.id} - restarting token actions`)
       await resetTokenActions(combat)
     })
-
+    
     Hooks.on('modifierBucketSumUpdated', bucket => {
       const signal = bucket.minus ? '-' : '+'
       const target = $('#cr-target').text()
@@ -2818,6 +2818,7 @@ if (!globalThis.GURPS) {
         }, 200)
       }
     })
+
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })

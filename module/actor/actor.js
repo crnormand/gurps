@@ -2881,7 +2881,7 @@ export class GurpsActor extends Actor {
     let checks = []
     const data = {}
     let size = 0
-    
+
     switch (checkType) {
       case 'attributeChecks':
         const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']
@@ -3070,12 +3070,10 @@ export class GurpsActor extends Actor {
         case 'm':
           refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allMeleeRolls.split(',').map(it => it.trim().toLowerCase()))
-          isDamageRoll = true
           break
         case 'r':
           refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allRangedRolls.split(',').map(it => it.trim().toLowerCase()))
-          isDamageRoll = true
           break
         case 'p':
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
@@ -3327,7 +3325,7 @@ export class GurpsActor extends Actor {
     switch (originType) {
       case 'attack':
         name = action.name.split('(')[0].trim()
-        mode = action.name.match(/\((.+?)\)/)?.[1]
+        mode = action.name.match(/\((.+)\)/)?.[1]
         const path = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
         recurselist(this.system[path], (obj, _k, _d) => {
           if ((obj.originalName === name || obj.name === name) && (!mode || obj.mode === mode)) {
@@ -3340,6 +3338,15 @@ export class GurpsActor extends Actor {
             }
           }
         })
+        if (!Object.keys(result).length) {
+          result = {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+        }
         break
 
       case 'weapon-block':
@@ -3357,6 +3364,15 @@ export class GurpsActor extends Actor {
             }
           }
         })
+        if (!Object.keys(result).length) {
+          result = {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+        }
         break
       case 'skill-spell':
         const item = this.findByOriginalName(action.name)

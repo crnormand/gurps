@@ -735,7 +735,8 @@ export class TokenActions {
    * @returns {Promise<boolean>}
    */
   async addToNextTurn(effectNames) {
-    const index = Math.max(this.currentTurn - 1, 0)
+    const index = Math.max(this.currentTurn, 0)
+    if (!this.lastManeuvers[index]) this.lastManeuvers[index] = this._getNewLastManeuvers()
     if (!this.lastManeuvers[index]?.nextTurnEffects) {
       this.lastManeuvers[index].nextTurnEffects = effectNames
     } else {

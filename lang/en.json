@@ -1421,6 +1421,16 @@
   "GURPS.saveRollforEffect": "Save Roll to avoid effects",
   "GURPS.toDefenseBonus": "to Defense Bonus",
   "GURPS.toDefensePenalty": "to Defense Penalty",
-  "GURPS.removedShockEffect": "Removed Shock effect on next round.",
-  "GURPS.addedShockEffect": "Added Shock effect on next round."
+  "GURPS.removeShockAtNextTurnEffect": "Remove Shock effect on next round.",
+  "GURPS.addShockAtNextTurnEffect": "Add Shock effect on next round.",
+  "GURPS.removeShockImmediatelyEffect": "Remove Shock effect on target.",
+  "GURPS.addShockImmediatelyEffect": "Add Shock effect on target.",
+  "GURPS.settingAddShockAtTurn": "When to add Shock effect",
+  "GURPS.settingHintAddShockAtTurn": "When to add Shock effect on target.",
+  "GURPS.immediately": "Immediately",
+  "GURPS.atNextTurn": "At Next Turn",
+  "GURPS.removestunEffect": "Remove Stun effect on target.",
+  "GURPS.addstunEffect": "Add Stun effect on target.",
+  "GURPS.addedShockAtNextTurnEffect": "Added Shock effect on next round.",
+  "GURPS.removedShockEffect": "Removed Shock effect on target."
 }
