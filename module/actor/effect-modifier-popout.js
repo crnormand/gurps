@@ -75,11 +75,10 @@ export class EffectModifierPopout extends Application {
 
   /** @override */
   getData(options) {
+    if (!this._token?.actor) return
     let selfMods = []
-    if (this._token) {
-      selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
-      selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
-    }
+    selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
+    selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
     selfMods.sort((a, b) => {
       if (a.itemName === b.itemName) {
         return a.desc.localeCompare(b.desc)
