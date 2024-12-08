@@ -6,6 +6,7 @@
   --lightgrey: rgba(0, 0, 0, 0.3);
   --headerfontsize: 80%;
   --standardborder: 1px solid black;
+  --color-glinkmod: rgb(255, 128, 64);
 }
 
 .reducedMode {
@@ -232,7 +233,6 @@
 
 .pdflink:hover {
   text-shadow: var(--controlhover);
-  /* text-shadow: none; */
   color: red;
   text-decoration: underline;
   overflow: visible;
@@ -249,8 +249,6 @@
   border-right: 1px solid #333300 !important;
   border-bottom: 1px solid #333300 !important;
   border-radius: 3px;
-  /* margin-bottom: -1px; */
-  /* margin-right: -1px; */
   overflow: visible;
   z-index: 99;
 }
@@ -327,7 +325,7 @@
   cursor: pointer;
   text-decoration: none;
   background-image: none;
-  background-color: rgb(255, 128, 64) !important;
+  background-color: var(--color-glinkmod) !important;
   color: black;
   padding: 1px 1px 1px 1px;
   border-top: 2px solid #cccccc;
@@ -348,7 +346,7 @@
   text-decoration: none;
   color: black;
   background-image: none;
-  background-color: rgb(255, 128, 64) !important;
+  background-color: var(--color-glinkmod) !important;
   padding: 1px 1px 1px 1px;
   border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
@@ -597,7 +595,7 @@
   height: auto !important;
   /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
   padding-top: 4px;
-  border-top: 1px solid var(--lightgrey);
+  /* border-top: 1px solid var(--lightgrey); */
 }
 
 .gurps .sheet-body .tab {
@@ -685,6 +683,10 @@
 .gga-tableheader > div:not(.header) {
   border-right: 1px solid lightgrey;
   border-bottom: 1px solid lightgrey;
+}
+
+.where {
+  text-wrap: nowrap;
 }
 
 .gga-tableheader > .header:first-child {
@@ -887,6 +889,11 @@
   display: inline-flex;
   flex-flow: row wrap;
   padding-top: 0.15em;
+  align-items: center;
+}
+
+#combat-tab #condition .fieldblock .label {
+  padding-left: 1em;
 }
 
 #combat-tab #condition .fieldblock .details {
@@ -1170,12 +1177,11 @@ div#other {
 }
 
 #stats-tab {
-  grid-area: stats;
+  /* grid-area: stats; */
   display: grid;
   grid-template:
     'portrait        attributes-tab  encumbrance hp-fp'
     'portrait        qnotes          qnotes      hp-fp'
-    'combat-trackers combat-trackers other       other'
     'combat-trackers combat-trackers other       other';
   grid-template-columns: 0fr 1fr 1fr 0fr;
   grid-gap: var(--sectiongap);
@@ -1718,14 +1724,18 @@ div#other {
   grid-template-columns: 1fr min-content;
   grid-template-rows: 0fr auto auto 1fr;
   grid-template-areas:
-    'condition         combat-sidebar'
+    'condition         condition'
+    'speed-range-table speed-range-table'
     'melee             combat-sidebar'
-    'speed-range-table combat-sidebar'
     'ranged            combat-sidebar';
 }
 
 .sheet-body.tabbed-sheet #combat-sidebar {
   grid-area: combat-sidebar;
+  display: inline-grid;
+  grid-template-areas:
+    'location'
+    'condition';
 }
 
 /* ----- combat sheet additions ----- */
@@ -1777,10 +1787,6 @@ div#other {
   /* overflow-y: hidden; */
   /* overflow-x: auto; */
   background-color: #eeeeee;
-}
-
-#tracker-scroller .tracked-resource {
-  /* margin: -2px 0 -2px -2px; */
 }
 
 #tracker-scroller .header {
@@ -2213,15 +2219,37 @@ div#other {
 
 .gurps-sheet-tabs {
   display: block;
-  font-size: 110%;
+  /* font-size: 1.1rem; */
   /* height: 32px; */
-  border-bottom: 1px solid #333;
+  /* border-bottom: 1px solid #333; */
   flex-grow: 0;
+  position: relative;
+  padding: 0.25rem; /* Adjust as needed to create space for the stripe */
+  z-index: 2;
+}
+
+.gurps-sheet-tabs::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: .75rem;
+  height: 1.75em; /* Adjust the height of the stripe */
+  background-color: lightgray; /* Set the color of the stripe */
+  z-index: 1;
 }
 
 .gurps-sheet-tabs li {
   display: inline-block;
   margin: 0 10px 0 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.gurps-sheet-tabs li.label {
+  font-size: 1rem;
+  top: -3px;
+  font-weight: 900;
 }
 
 .tab-item {
@@ -2229,12 +2257,68 @@ div#other {
   font-weight: normal;
 }
 
+.tab-item {
+  font-size: 1.25rem;
+  /* background: radial-gradient(circle at bottom center, #ffc837 15px, var(--color-glinkmod)); */
+  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  /* background: var(--color-glinkmod); */
+}
+
+.tab-item > div {
+  border-radius: calc(1em / 3);
+  display: grid;
+  place-items: center center;
+  /* background: radial-gradient(circle at bottom center, #ffc837 15px, #ff8008); */
+  /* box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.2); */
+  padding: calc(1em / 3);
+}
+
 .tab-item.active {
-  text-decoration: underline;
+  /* text-decoration: underline; */
   text-shadow: none;
-  font-weight: bold;
-  background-color: #e8ffe8;
-  font-size: 105%;
+  /* font-weight: bold; */
+  /* background-color: #e8ffe8; */
+  /* font-size: 105%; */
+  font-size: 1.5rem;
+  border-radius: calc(1rem / 3);
+  background: var(--color-glinkmod);
+  color: white;
+}
+
+.tab-item[data-tab='combat'] {
+  background: rgb(151 68 175);
+}
+
+.tab-item[data-tab='personal'] {
+  background: rgb(62, 77, 61);
+}
+
+.tab-item[data-tab='advantages'] {
+  background: rgb(44, 108, 155);
+}
+
+.tab-item[data-tab='skills'] {
+  background: rgb(60, 55, 122);
+}
+
+.tab-item[data-tab='stats'] {
+  background: rgb(240 44 43);
+}
+
+.tab-item[data-tab='spells'] {
+  background: rgb(113, 36, 36);
+}
+
+.tab-item[data-tab='equipment'] {
+  background: rgb(103, 52, 121);
+}
+
+.gurps-sheet-tabs .fa-stack i:first-child {
+  color: navy;
+}
+
+.gurps-sheet-tabs .fa-stack i:last-child {
+  color: radial-gradient(#387989, #6dd5ed);
 }
 
 /* Cannot use table-column as it breaks the indenting logic for contained items */
