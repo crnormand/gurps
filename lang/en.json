@@ -23,6 +23,9 @@
         "copyright": "GCS is copyrighted 1998-2024 by Richard A. Wilkes. All rights reserved."
       }
     },
+    "tabSheet": {
+      "tabs": "TABS"
+    },
     "modifiers": {
       "aim": "to hit (Aim)",
       "allOutAim": "to Aiming (All-Out Aim)",

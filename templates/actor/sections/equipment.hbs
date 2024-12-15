@@ -29,7 +29,7 @@
   <div class='ref header'>{{i18n 'GURPS.pdfRef'}}</div>
 
   {{#each (flatlist (lookup system.equipment container))}}
-    {{#if isEditing}}
+    {{#if ../isEditing}}
       <div class='itemmenu equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
         <i class='fas fa-caret-square-down'></i>
       </div>

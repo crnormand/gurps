@@ -33,7 +33,7 @@
     </div>
 
     <nav id='nav-tabs' class='gurps-sheet-tabs' data-group='primary-tabs'>
-      <li class="label">TABS</li>
+      <li class="label">{{i18n 'gurps.tabSheet.tabs'}}</li>
       <li>
         <a class='tab-item' data-tab='combat' title="{{i18n 'GURPS.combatTab'}}">
           <div><i class='fa-solid fa-swords'></i></div>
@@ -99,6 +99,7 @@
         <div id='combat-tab'>
           {{>conditions view='condensed'}}
 
+          {{debug system.melee}}
           {{#if (notEmpty system.melee)}}
             {{>melee}}
           {{/if}}

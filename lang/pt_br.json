@@ -925,17 +925,6 @@
   "GURPS.settingShowItemImage": "Exibir Imagem do Item na Planilha de Personagem",
   "GURPS.settingHintShowItemImage": "O sistema exibirá a imagem do Item do Foundry na planilha de ator para as características selecionadas.",
   "GURPS.settingLabelShowItemImage": "Selecione as características",
-  "GURPS.quickRollMenu": "Menu de Rolagem Rápida",
-  "GURPS.settingUseQuickRolls": "Usar Botão de Rolagem Rápida",
-  "GURPS.settingHintUseQuickRolls": "Quando ativado, o sistema exibirá um botão de Rolagem Rápida no Rastreador de Combate.",
-  "GURPS.settingLabelUseQuickRolls": "Configuração de Rolagem Rápida",
-  "GURPS.quickRollUse": "Ativar/Desativar Botão de Rolagem Rápida",
-  "GURPS.quickRollShowAttributes": "Mostrar Rolagens de Atributos",
-  "GURPS.quickRollShowOther": "Mostrar Rolagens de Verificações Secundárias",
-  "GURPS.quickRollShowAttacks": "Mostrar Rolagens de Ataque",
-  "GURPS.quickRollShowDefenses": "Mostrar Rolagens de Defesa",
-  "GURPS.quickRollShowMarked": "Mostrar Habilidades e Magias Selecionadas da Ficha de Personagem",
-  "GURPS.quickRollAlwaysBlind": "Sempre fazer Rolagens Ocultas",
   "GURPS.settingDragOnTokenDamage": "Ao arrastar, aplicar dano ao token selecionado",
   "GURPS.settingHintDragOnTokenDamage": "Se marcado, arrastar dano do log de chat para um token aplicará o dano ao token. Se desmarcado, uma janela de diálogo será exibida para perguntar o alvo.",
   "__Color Settings__": "=========",
@@ -1250,6 +1239,7 @@
   "GURPS.quickRollAlwaysBlind": "Sempre fazer Rolagens Ocultas",
   "GURPS.settingHintAnnounceCriticalRolls": "Se marcado, o sistema anunciará, com animação e som, acertos e falhas críticas. Apenas para jogadores e rolagens não ocultas. Necessita do Sequencer instalado.",
   "GURPS.otherTab": "Verificações",
+
   "GURPS.defenseTab": "Defesas",
   "GURPS.markedTab": "Habilidades e Magias",
   "GURPS.attributeTab": "Atributos",
@@ -1364,5 +1354,6 @@
   "GURPS.toDefenseBonus": "para bônus de defesa",
   "GURPS.toDefensePenalty": "de penalidade de defesa",
   "GURPS.removedShockEffect": "Efeito de Choque removido do próximo turno.",
+
   "GURPS.addedShockEffect": "Efeito de Choque adicionado no próximo turno."
 }

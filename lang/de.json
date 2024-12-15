@@ -21,6 +21,10 @@
         "options": "Optionen"
       }
     },
+    "tabSheet": {
+      "tabs": "Registerkarten"
+    },
+
     "modifiers": {
       "aim": "auf Zielen (Zielen)",
       "allOutAim": "auf Zielen (Massives Zielen)",

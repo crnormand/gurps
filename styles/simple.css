@@ -679,6 +679,10 @@
   width: 100%;
 }
 
+.gga-table > div.notedraggable {
+  align-items: flex-start;
+}
+
 .gga-table > div:not(.header),
 .gga-tableheader > div:not(.header) {
   border-right: 1px solid lightgrey;
@@ -1404,6 +1408,10 @@ div#other {
   align-content: start;
   flex-grow: 3;
   max-width: 50%;
+}
+
+#sheet-tab #advantages, #sheet-tab #skills {
+  max-width: unset;
 }
 
 #skills {

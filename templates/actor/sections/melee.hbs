@@ -14,10 +14,9 @@
   <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
-  {{#with isEditing as |isEditing|}}
     {{#with system as |system|}}
       {{#each (attackflatlist system.melee)}}
-        {{#if isEditing}}
+        {{#if ../isEditing}}
           <div class='itemmenu meleemenu' data-key='system.melee.{{@key}}'>
             <i class='fas fa-times'></i>
           </div>
@@ -96,24 +95,24 @@
             <div class='parry flex-center' style='background-color: #ffffbe; width: 100%;'>
               {{#if (isNum parry)}}
                 <span class='flex-center rollable' data-otf='{{quotedAttackName "P" this}}'>{{parry}}</span>
-                {{#if (isNum system.defenses.parry.bonus)}}
+                {{#if (isNum ../system.defenses.parry.bonus)}}
                   <span
                     class='flex-center rollable bonus'
-                    data-otf='{{quotedAttackName "P" this}}" {{{displayNumber system.defenses.parry.bonus}}} DB'
+                    data-otf='{{quotedAttackName "P" this}}" {{{displayNumber ../system.defenses.parry.bonus}}} DB'
                   >
-                    {{{displayNumber system.defenses.parry.bonus}}}</span>
+                    {{{displayNumber ../system.defenses.parry.bonus}}}</span>
                 {{/if}}
               {{/if}}
             </div>
             <div class='block flex-center' style='background-color: #ffffbe'>
               {{#if (isNum block)}}
                 <span class='flex-center rollable' data-otf='{{quotedAttackName "B" this}}'>{{block}}</span>
-                {{#if (isNum system.defenses.block.bonus)}}
+                {{#if (isNum ../system.defenses.block.bonus)}}
                   <span
                     class='flex-center rollable bonus'
-                    data-otf='{{quotedAttackName "B" this}}" {{{displayNumber system.defenses.block.bonus}}} DB'
+                    data-otf='{{quotedAttackName "B" this}}" {{{displayNumber ../system.defenses.block.bonus}}} DB'
                   >
-                    {{{displayNumber system.defenses.block.bonus}}}</span>
+                    {{{displayNumber ../system.defenses.block.bonus}}}</span>
                 {{/if}}
               {{/if}}
             </div>
@@ -124,5 +123,4 @@
         {{/if}}
       {{/each}}
     {{/with}}
-  {{/with}}
 </div>

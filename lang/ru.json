@@ -20,6 +20,9 @@
         "modified": "Изменён",
         "options": "Настройки"
       },
+      "tabSheet": {
+        "tabs": "ВКЛАДКИ"
+      },
       "gcs": {
         "copyright": "Права на GCS принадлежат Richard A. Wilkes, 1998-2024. Все права защищены."
       }

@@ -18,6 +18,9 @@
         "created": "Créé",
         "modified": "Modifié"
       },
+      "tabSheet": {
+        "tabs": "ONGLETS"
+      },
       "gcs": {
         "copyright": "GCS is une marque déposée (1998-2024) par Richard A. Wilkes. Tous droits réservés."
       },
