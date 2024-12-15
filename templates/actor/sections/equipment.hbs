@@ -180,7 +180,7 @@
         </div>
 
         <div class='uses flex-center' data-key='system.equipment.{{../container}}.{{@key}}'>
-          {{#if (or (gt maxuses 0) (ne uses 0))}}
+          {{#if (and (ne maxuses 0) (ne maxuses '0'))}}
             {{#if (isNum uses)}}
               {{#if (lt uses 1)}}
                 <i class='fa-solid fa-circle-minus equipmentbutton disabled'></i>
