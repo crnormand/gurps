@@ -2,8 +2,10 @@
 import ChatProcessor from './chat-processor.js'
 import { ChatProcessors } from '../../module/chat.js'
 import selectTarget from '../../module/select-target.js'
-import { i18n } from '../../lib/utilities.js'
+import { generateUniqueId, i18n, i18n_f, isNiceDiceEnabled } from '../../lib/utilities.js'
 import { SlamCalculator } from './slam-calc.js'
+import { isValidDiceTerm } from '../utilities/damage-utils.js'
+import { SizeAndSpeedRangeTable } from '../../lib/size-speed-range-table.js'
 
 /**
  * Handle the '/slam' command. Must have a selected actor.
@@ -50,6 +52,8 @@ export default class SlamChatProcessor extends ChatProcessor {
   }
 }
 
+const diceregex = /^(?<dice>\d+)d(?<mods>[+-]\d+)?/i
+
 class SlamCalculatorForm extends FormApplication {
   static process(actor, target) {
     let calc = new SlamCalculatorForm(actor, target)
@@ -68,7 +72,14 @@ class SlamCalculatorForm extends FormApplication {
     this._attacker = attacker
     this._target = target
 
-    this._calculator = new SlamCalculator()
+    this._calculator = new SlamCalculator({
+      generateUniqueId: generateUniqueId,
+      sizeAndSpeedRangeTable: GURPS.SSRT,
+      isNiceDiceEnabled: isNiceDiceEnabled,
+      roll: Roll,
+      i18n: i18n,
+      i18n_f: i18n_f,
+    })
 
     this._attackerHp = !!attacker ? attacker.actor.system.HP.max : 10
     this._attackerSpeed = !!attacker ? parseInt(attacker.actor.system.basicmove.value) : 5
@@ -164,11 +175,11 @@ class SlamCalculatorForm extends FormApplication {
     })
 
     html.find('#attacker-thr').change(ev => {
-      this._attackerThr = ev.currentTarget.value
+      this._attackerThr = isValidDiceTerm(ev.currentTarget.value) ? ev.currentTarget.value : '1d-5'
     })
 
     html.find('#target-thr').change(ev => {
-      this._targetThr = ev.currentTarget.value
+      this._targetThr = isValidDiceTerm(ev.currentTarget.value) ? ev.currentTarget.value : '1d-5'
     })
   }
 }
