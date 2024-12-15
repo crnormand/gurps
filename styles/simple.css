@@ -892,6 +892,11 @@
   align-items: center;
 }
 
+#condition .fieldblock {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
 #combat-tab #condition .fieldblock .label {
   padding-left: 1em;
 }
@@ -903,6 +908,12 @@
 }
 
 .fieldblock .label-field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items:center;
+}
+
+#combat-tab .fieldblock .label-field-pair {
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
