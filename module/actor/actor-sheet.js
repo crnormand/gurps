@@ -489,7 +489,7 @@ export class GurpsActorSheet extends ActorSheet {
       await this.actor.updateEqtCount(path, value)
     })
 
-    html.find('button[data-operation="equipment-inc-uses"]').click(async ev => {
+    html.find('i.equipmentbutton[data-operation="equipment-inc-uses"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
@@ -505,7 +505,7 @@ export class GurpsActorSheet extends ActorSheet {
         await this.actor._updateItemFromForm(item)
       }
     })
-    html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
+    html.find('i.equipmentbutton[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')

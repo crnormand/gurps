@@ -902,6 +902,12 @@
   align-self: end;
 }
 
+.fieldblock .label-field-pair {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
 #combat-tab #condition .fieldblock details .button {
   width: 2rem;
   height: 2rem;

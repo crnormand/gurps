@@ -38,66 +38,38 @@
         <a class='tab-item' data-tab='combat' title="{{i18n 'GURPS.combatTab'}}">
           <div><i class='fa-solid fa-swords'></i></div>
         </a>
-        {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='combat'>
-          <i class='fa-solid fa-circle fa-stack-2x'></i>
-          <i class='fa-solid fa-swords fa-stack-1x fa-inverse'></i>
-        </a> }}
       </li>
       <li>
         <a class='tab-item' data-tab='personal' title="{{i18n 'gurps.sheet.personal.tab'}}">
           <div><i class='fa-solid fa-user'></i></div>
         </a>
-        {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='personal'>
-          <i class='fa-solid fa-circle fa-stack-2x'></i>
-          <i class='fa-solid fa-image-portrait fa-stack-1x fa-inverse'></i>
-        </a> }}
       </li>
       <li>
         <a class='tab-item' data-tab='advantages' title="{{i18n 'GURPS.advantagesTab'}}">
           <div><i class='fa-solid fa-person-circle-plus'></i></div>
         </a>
-        {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='advantages'>
-          <i class='fa-solid fa-circle fa-stack-2x'></i>
-          <i class='fa-solid fa-person-circle-plus fa-stack-1x fa-inverse'></i>
-        </a> }}
       </li>
       <li>
         <a class='tab-item' data-tab='skills' title="{{i18n 'GURPS.skillsTab'}}">
           <div><i class='fa-solid fa-person-swimming'></i></div>
         </a>
-        {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='skills'>
-          <i class='fa-solid fa-circle fa-stack-2x'></i>
-          <i class='fa-solid fa-hammer-brush fa-stack-1x fa-inverse'></i>
-        </a> }}
       </li>
       <li>
         <a class='tab-item' data-tab='stats' title="{{i18n 'GURPS.resourcesModsTab'}}">
           <div><i class='fa-solid fa-bars-progress'></i></div>
         </a>
-        {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='stats'>
-          <i class='fa-solid fa-circle fa-stack-2x'></i>
-          <i class='fa-solid fa-bars-progress fa-stack-1x fa-inverse'></i>
-        </a> }}
       </li>
       {{#if (notEmpty system.spells)}}
         <li>
           <a class='tab-item' data-tab='spells' title="{{i18n 'GURPS.spellsTab'}}">
             <div><i class='fa-solid fa-wand-magic-sparkles'></i></div>
           </a>
-          {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='spells'>
-            <i class='fa-solid fa-circle fa-stack-2x'></i>
-            <i class='fa-solid fa-wand-magic-sparkles fa-stack-1x fa-inverse'></i>
-          </a> }}
         </li>
       {{/if}}
       <li>
         <a class='tab-item' data-tab='equipment' title="{{i18n 'GURPS.equipmentTab'}}">
           <div><i class='fa-solid fa-screwdriver-wrench'></i></div>
         </a>
-        {{! <a class='fa-stack tab-item' style='vertical-align: top;' data-tab='equipment'>
-          <i class='fa-solid fa-circle fa-stack-2x'></i>
-          <i class='fa-solid fa-gear fa-stack-1x fa-inverse'></i>
-        </a> }}
       </li>
     </nav>
     <section class='sheet-body tabbed-sheet'>

@@ -1346,7 +1346,7 @@ details .popup.square5x4 {
   color: lightgrey;
 }
 
-.equipmentbutton:hover {
+.equipmentbutton:not(.disabled):hover {
   color: darkcyan;
 }
 
