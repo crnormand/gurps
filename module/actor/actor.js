@@ -3235,13 +3235,15 @@ export class GurpsActor extends Actor {
    * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
    */
   async canRoll(action, token) {
-    let result = {
-      canRoll: true,
-    }
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
     const isAttribute = action.type === 'attribute'
-    if (token && game.combat?.isActive) {
+    const isSlam = action.type === 'damage' && action.orig.includes('slam') && action.orig.includes('@')
+    let result = {
+      canRoll: true,
+      isSlam,
+    }
+    if (token && game.combat?.isActive && !isSlam) {
       const actions = await TokenActions.fromToken(token)
 
       // Check Attack or Defense vs Maneuver
@@ -3292,7 +3294,7 @@ export class GurpsActor extends Actor {
       }
     }
     // Check if roll need Target
-    const needTarget = isAttack || action.isSpellOnly || action.type === 'damage'
+    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
     if (needTarget && game.user.targets.size === 0) {
       result = {

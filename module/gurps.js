@@ -625,7 +625,7 @@ if (!globalThis.GURPS) {
       }
 
       const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
-      if (showRollDialog) {
+      if (showRollDialog && !canRoll.isSlam) {
         // Get Actor Info
         const tokenImg = token?.document.texture.src || actor?.img
         const tokenName = token?.name || actor?.name
