@@ -1103,6 +1103,18 @@
   "GURPS.saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden.",
   "GURPS.toDefenseBonus": "zu Verteidigungsbonus",
   "GURPS.toDefensePenalty": "zu Verteidigungsabzug",
-  "GURPS.removedShockEffect": "Schockeffekt in der nächsten Runde entfernt.",
-  "GURPS.addedShockEffect": "Schockeffekt in der nächsten Runde hinzugefügt."
+  "GURPS.removeShockAtNextTurnEffect": "Schockeffekt in der nächsten Runde entfernt.",
+  "GURPS.addShockAtNextTurnEffect": "Schockeffekt in der nächsten Runde hinzugefügt.",
+  "GURPS.removeShockImmediatelyEffect": "Schockeffekt auf Ziel entfernt.",
+  "GURPS.addShockImmediatelyEffect": "Schockeffekt auf Ziel hinzugefügt.",
+  "GURPS.removedShockImmediatelyEffect": "Schockeffekt auf Ziel entfernt.",
+  "GURPS.addedShockImmediatelyEffect": "Schockeffekt auf Ziel hinzugefügt.",
+  "GURPS.settingAddShockAtTurn": "Wann der Schockeffekt hinzugefügt wird",
+  "GURPS.settingHintAddShockAtTurn": "Wann der Schockeffekt auf das Ziel hinzugefügt wird.",
+  "GURPS.immediately": "Sofort",
+  "GURPS.atNextTurn": "In der nächsten Runde",
+  "GURPS.removestunEffect": "Betäubungseffekt auf Ziel entfernt.",
+  "GURPS.addstunEffect": "Betäubungseffekt auf Ziel hinzugefügt.",
+  "GURPS.addedShockAtNextTurnEffect": "Schockeffekt in der nächsten Runde hinzugefügt.",
+  "GURPS.removedShockEffect": "Schockeffekt auf Ziel entfernt."
 }

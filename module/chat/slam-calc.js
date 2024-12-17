@@ -170,16 +170,15 @@ export class SlamCalculator {
       sound: this.rollThemBones([targetRoll]),
     }
 
-    ChatMessage.create(messageData).then(async () => {
-      let targets = []
-      game.user.targets.forEach(t => targets.push(t))
-      game.user.targets.clear()
-      await GURPS.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name}]`)
-      GURPS.LastActor = data.targetToken.actor
-      await GURPS.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name}]`)
-      GURPS.LastActor = data.attackerToken.actor
-      targets.forEach(t => game.user.targets.add(t))
-    })
+    await ChatMessage.create(messageData)
+    let targets = []
+    game.user.targets.forEach(t => targets.push(t))
+    game.user.targets.clear()
+    await GURPS.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name} "slam damage"]`)
+    GURPS.LastActor = data.targetToken.actor
+    await GURPS.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name} "slam damage"]`)
+    GURPS.LastActor = data.attackerToken.actor
+    targets.forEach(t => game.user.targets.add(t))
   }
 
   targetFallsDown(attackerResult, targetResult) {

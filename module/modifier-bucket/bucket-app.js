@@ -3,6 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 
 /**
  * Define some Typescript types.
@@ -191,6 +192,7 @@ class ModifierStack {
   }
 
   sum() {
+    const oldSum = this.currentSum
     this.currentSum = 0
     for (let m of this.modifierList) {
       this.currentSum += m.modint
@@ -200,8 +202,29 @@ class ModifierStack {
     this.minus = this.currentSum < 0
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
-    // Dispatch event
-    Hooks.call('modifierBucketSumUpdated', this)
+    // Update the Confirmation Dialog if opened
+    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    if (taggedSettings.autoAdd && this.currentSum !== oldSum) {
+      const signal = this.minus ? '-' : '+'
+      const target = $('#cr-target').text()
+      if (!!target && !isNaN(target)) {
+        const total = Math.max(3, parseInt(target) + this.currentSum)
+        const { targetColor, rollChance } = rollData(total)
+        $('#cr-operator').text(signal)
+        $('#cr-totalmods').text(Math.abs(this.currentSum))
+        $('#cr-total').text(total).css('color', targetColor)
+        $('.cr-tooltip').text(rollChance)
+      }
+      const damage = $('#cr-damage').text()
+      const formula = $('#cr-formula').text()
+      if (!!formula && !!damage) {
+        const newFormula = addBucketToDamage(formula, false)
+        const bucketTotal = this.currentSum
+        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+        $('#cr-damage').text(newFormula)
+        $('#cr-bucket').text(bucketRoll)
+      }
+    }
   }
 
   /**
