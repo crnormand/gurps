@@ -117,7 +117,7 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return list
+    return Array.isArray(list)
       ? list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
