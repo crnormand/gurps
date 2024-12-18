@@ -682,7 +682,7 @@ export class CompositeDamageCalculator {
 
   set damageReductionLevel(value) {
     if (value === null) this._useDamageReduction = false
-    if (!!value && value < 2) value = 2
+    if (!!value && value < 1) value = 1
     this._damageReductionLevel = value
   }
 

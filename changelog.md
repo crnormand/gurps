@@ -19,6 +19,7 @@
 - Bugfix: DFRPG Slam calculation is incorrect in /slam #2053
 - Bugfix: Item Statistics missing with GCA4 import. #2057
 - Bugfix: Item Indent on Reopen #2049
+- Bugfix: Injury Tolerance: Damage Reduction in the Damage Calculator does not allow decimal inputs for values less than 2. #2043 (This is really a feature, not a bug.)
 
 Release 0.17.16 11/29/2024
 
