@@ -154,7 +154,7 @@ class ChatProcessorRegistry {
   async processLine(line) {
     line = line.trim()
     this.msgs.oldQuiet = this.msgs.quiet
-    if (line[0] == '!') {
+    if (line[0] === '!') {
       this.msgs.quiet = true
       line = line.substr(1)
     }

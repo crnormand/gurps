@@ -1,4 +1,5 @@
-const diceRegex = /^(?<dice>\d+)d(?<sides>\d*)((?<sign>[\–\-+])(?<adds>\d+))?(?<remainder>.*)?/
+export const diceRegex = /^(?<dice>\d+)d(?<sides>\d*)((?<sign>[\–\-+])(?<adds>\d+))?(?<remainder>.*)?/
+
 /**
  *
  * @param {string} diceterm - OtF dice term, like '1d', '2d+1', etc...

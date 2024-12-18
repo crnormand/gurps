@@ -4,8 +4,8 @@
   "description": "NaN's GURPS Game Aid",
   "type": "module",
   "scripts": {
-    "test": "jest",
-    "tdd": "jest",
+    "test": "jest --coverage",
+    "tdd": "jest --coverage",
     "handlebars": "handlebars"
   },
   "devDependencies": {
