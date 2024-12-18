@@ -75,11 +75,10 @@ export class EffectModifierPopout extends Application {
 
   /** @override */
   getData(options) {
+    if (!this._token?.actor) return
     let selfMods = []
-    if (this._token) {
-      selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
-      selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
-    }
+    selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
+    selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
     selfMods.sort((a, b) => {
       if (a.itemName === b.itemName) {
         return a.desc.localeCompare(b.desc)
@@ -118,7 +117,7 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return list
+    return Array.isArray(list)
       ? list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
@@ -142,7 +141,7 @@ export class EffectModifierPopout extends Application {
                 break
             }
           } else {
-            obj = this._token.actor.items.get(itemReference)
+            obj = this._token?.actor.items.get(itemReference) || {}
           }
           const itemName = obj?.name || itemReference
           const itemType = obj?.type

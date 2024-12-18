@@ -107,6 +107,10 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
+    await GURPS.ModifierBucket.clear()
+    if (action.mod) {
+      GURPS.ModifierBucket.addModifier(action.mod, 'from action')
+    }
     const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
     if (isDamageRoll) {
       displayFormula = addBucketToDamage(formula)
@@ -253,7 +257,7 @@ export async function doRoll({
         rollType = thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1) : formula
     }
 
-    const { targetColor, rollChance } = rollData(origtarget)
+    const { targetColor, rollChance } = rollData(totalRoll)
 
     let doRollResult
     // Before open a new dialog, we need to make sure

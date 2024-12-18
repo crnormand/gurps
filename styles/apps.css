@@ -2138,7 +2138,7 @@ details .popup.square5x4 {
 }
 
 .modtooltip .modifier-row > div {
-  margin-bottom: 0.1m;
+  margin-bottom: 0.1em;
 }
 
 .modtooltip .modifier-row {
@@ -2195,6 +2195,15 @@ details .popup.square5x4 {
 
 .gga-app .section {
   margin-top: 0.5em;
+}
+
+.modifier-list {
+  margin-bottom: 1px;
+}
+
+.modifier-list.me-info {
+  max-height: 100px;
+  overflow-x: auto;
 }
 
 .gga-chat-message .modifier-list li {
@@ -2900,7 +2909,7 @@ details .popup.square5x4 {
   justify-content: left;
   align-items: center;
   margin-right: 10px;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   width: 100%;
 }
 
@@ -2910,6 +2919,10 @@ details .popup.square5x4 {
 }
 .me-link.sm {
   font-size: 0.9em;
+}
+.modifier-list  li {
+  margin: 2px 0;
+  padding: 1px;
 }
 .me-tag,
 .me-at {

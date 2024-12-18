@@ -666,6 +666,18 @@
   "GURPS.saveRollforEffect": "Сохранить бросок, чтобы избежать эффектов.",
   "GURPS.toDefenseBonus": "Бонус к защите",
   "GURPS.toDefensePenalty": "Штраф к защите",
-  "GURPS.removedShockEffect": "Эффект шока удален в следующем раунде.",
-  "GURPS.addedShockEffect": "Эффект шока добавлен в следующем раунде."
+  "GURPS.removeShockAtNextTurnEffect": "Эффект шока удален в следующем раунде.",
+  "GURPS.addShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
+  "GURPS.removeShockImmediatelyEffect": "Эффект шока удален на цели.",
+  "GURPS.addShockImmediatelyEffect": "Эффект шока добавлен на цели.",
+  "GURPS.removedShockImmediatelyEffect": "Эффект шока удален на цели.",
+  "GURPS.addedShockImmediatelyEffect": "Эффект шока добавлен на цели.",
+  "GURPS.settingAddShockAtTurn": "Когда добавлять эффект шока",
+  "GURPS.settingHintAddShockAtTurn": "Когда добавлять эффект шока на цели.",
+  "GURPS.immediately": "Немедленно",
+  "GURPS.atNextTurn": "В следующем раунде",
+  "GURPS.removestunEffect": "Эффект оглушения удален на цели.",
+  "GURPS.addstunEffect": "Эффект оглушения добавлен на цели.",
+  "GURPS.addedShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
+  "GURPS.removedShockEffect": "Эффект шока удален на цели."
 }

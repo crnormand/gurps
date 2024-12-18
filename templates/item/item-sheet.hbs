@@ -5,7 +5,9 @@
     {{/if}}
     {{#if (eq itemType 'feature')}}
       <div><i class='fa fa-cogs itemdraggable'></i>
-        <span class='first-cap'>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span></div>
+        <span class='first-cap'>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
+      </div>
+
     {{/if}}
     {{#if (eq itemType 'skill')}}
       <div><i class='fa fa-cogs itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.skillsTab'}}</span></div>
@@ -27,14 +29,14 @@
       />
     </div>
 
-    <div class='image-column'>
-      <div class='img-display itemdraggable' style='background-image: url({{item.img}}); border: solid 1px black;'>
-        <img class='profile-img itemdraggable' src='{{item.img}}' data-edit='img'
-          {{#if name}}
-          title='{{name}}'
-          {{else}}
-          title='Image'
-          {{/if}}
+    <div class="image-column">
+      <div class="img-display itemdraggable" style="background-image: url({{item.img}}); border: solid 1px black;">
+        <img
+          class='profile-img itemdraggable'
+          src='{{item.img}}'
+          data-edit='img'
+          title="{{#if name}}{{name}}{{else}}Image{{/if}}"
+
         />
       </div>
       <div class='add-quick-roll-option'>
@@ -95,6 +97,7 @@
       <section id='config-tabs' class='content'>
         <!-- melee tab -->
         <div class='tab' data-tab='melee-tab' data-group='sections'>
+
           {{#each system.melee as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
@@ -111,7 +114,6 @@
 
               <div class='gurps-3col'>
                 <div class='label-value-row right-bias'>
-                  <div></div>
                   <div></div>
                   <label>{{i18n 'GURPS.usage'}}</label>
                   <div><input type='text' value='{{mode}}' name='system.melee.{{key}}.mode' /></div>
@@ -415,13 +417,15 @@
 
         <!-- Advantages -->
         <div class='tab' data-tab='ads-tab' data-group='sections'>
-          {{#each system.ads as |this key|}}
+          {{#each system.ads as | this key |}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.advantage'}}
-                {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.ads' name='{{key}}'><i
-                    class='fas fa-trash'
-                  ></i></span>
+                {{i18n 'GURPS.advantage'}} {{#if name}}({{name}}){{/if}}<span
+                class='delete button'
+                data-path='system.ads'
+                name='{{key}}'
+              ><i class='fas fa-trash'
+              ></i></span>
               </h4>
 
               <div class='gurps-3col'>

@@ -1225,18 +1225,7 @@
   "GURPS.settingShowConfirmationRollDialog": "Exibir Diálogo de Confirmação de Rolagem",
   "GURPS.settingHintShowConfirmationRoll": "Se marcado, o sistema exibirá um diálogo para confirmar a rolagem antes de ser feita.",
   "GURPS.confirmRoll": "Confirmação de Rolagem",
-  "GURPS.quickRollMenu": "Menu de Rolagem Rápida",
-  "GURPS.settingUseQuickRolls": "Usar Botão de Rolagem Rápida",
-  "GURPS.settingHintUseQuickRolls": "Quando ativado, o sistema exibirá um botão de Rolagem Rápida no Rastreador de Combate.",
-  "GURPS.settingLabelUseQuickRolls": "Configuração de Rolagem Rápida",
-  "GURPS.quickRollUse": "Ativar/Desativar Botão de Rolagem Rápida",
-  "GURPS.quickRollShowAttributes": "Mostrar Rolagens de Atributos",
-  "GURPS.quickRollShowOther": "Mostrar Rolagens de Verificações Secundárias",
-  "GURPS.quickRollShowAttacks": "Mostrar Rolagens de Ataque",
-  "GURPS.quickRollShowDefenses": "Mostrar Rolagens de Defesa",
-  "GURPS.quickRollShowMarked": "Mostrar Habilidades e Magias Selecionadas da Ficha de Personagem",
-  "GURPS.settingAnnounceCriticalRolls": "Anunciar Rolagens Críticas",
-  "GURPS.quickRollAlwaysBlind": "Sempre fazer Rolagens Ocultas",
+   "GURPS.settingAnnounceCriticalRolls": "Anunciar Rolagens Críticas",
   "GURPS.settingHintAnnounceCriticalRolls": "Se marcado, o sistema anunciará, com animação e som, acertos e falhas críticas. Apenas para jogadores e rolagens não ocultas. Necessita do Sequencer instalado.",
   "GURPS.otherTab": "Verificações",
 
@@ -1354,6 +1343,16 @@
   "GURPS.toDefenseBonus": "para bônus de defesa",
   "GURPS.toDefensePenalty": "de penalidade de defesa",
   "GURPS.removedShockEffect": "Efeito de Choque removido do próximo turno.",
-
-  "GURPS.addedShockEffect": "Efeito de Choque adicionado no próximo turno."
+  "GURPS.addedShockEffect": "Efeito de Choque adicionado no próximo turno.",
+  "GURPS.removeShockAtNextTurnEffect": "Efeito de choque removido na próxima rodada.",
+  "GURPS.addShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada.",
+  "GURPS.removeShockImmediatelyEffect": "Efeito de choque removido no alvo.",
+  "GURPS.addShockImmediatelyEffect": "Efeito de choque adicionado no alvo.",
+  "GURPS.settingAddShockAtTurn": "Quando adicionar o efeito de choque",
+  "GURPS.settingHintAddShockAtTurn": "Quando adicionar o efeito de choque no alvo.",
+  "GURPS.immediately": "Imediatamente",
+  "GURPS.atNextTurn": "Na próxima rodada",
+  "GURPS.removestunEffect": "Efeito de atordoamento removido no alvo.",
+  "GURPS.addstunEffect": "Efeito de atordoamento adicionado no alvo.",
+  "GURPS.addedShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada."
 }

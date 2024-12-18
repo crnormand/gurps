@@ -55,8 +55,8 @@ export default class ApplyDamageDialog extends Application {
     this.sourceTokenImg =
       canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.document.texture.src || attacker.name
     this.sourceTokenName = canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.name || attacker.name
-    this.targetTokenImg = actor.token.texture.src || actor.img
-    this.targetTokenName = actor.token.name || actor.name
+    this.targetTokenImg = actor.token?.texture.src || actor.img
+    this.targetTokenName = actor.token?.name || actor.name
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
@@ -505,12 +505,19 @@ export default class ApplyDamageDialog extends Application {
         break
       case 'knockback':
         const dx = i18n('GURPS.attributesDX')
-        const dxCheck = effect.modifier === 0 ? dx : `${dx}-${effect.modifier}`
-        const acro = i18n('GURPS.skillAcrobatics')
-        const acroCheck = effect.modifier === 0 ? acro : `${acro}-${effect.modifier}`
-        const judo = i18n('GURPS.skillJudo')
-        const judoCheck = effect.modifier === 0 ? judo : `${judo}-${effect.modifier}`
-        otf = `/r [!${dxCheck}|!Sk:${acroCheck}|!Sk:${judoCheck}]`
+        const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
+        const localeAcrobaticsName = i18n('GURPS.skillAcrobatics')
+        const localeAcrobaticsCheck =
+          effect?.modifier && effect.modifier === 0
+            ? localeAcrobaticsName
+            : `${localeAcrobaticsName} -${effect.modifier}`
+        const acrobaticsCheck =
+          effect?.modifier && effect.modifier === 0 ? 'Acrobatics' : `Acrobatics -${effect.modifier}`
+        const localeJudoName = i18n('GURPS.skillJudo')
+        const localeJudoCheck =
+          effect?.modifier && effect.modifier === 0 ? localeJudoName : `${localeJudoName} -${effect.modifier}`
+        const judoCheck = effect?.modifier && effect.modifier === 0 ? 'Judo' : `Judo -${effect.modifier}`
+        otf = `/r [!${dxCheck}|!SK:${acrobaticsCheck}|!Sk:${localeAcrobaticsCheck}|!SK:${judoCheck}|!Sk:${localeJudoCheck}]`
         break
     }
     if (!!otf) await this.actor.runOTF(otf)
@@ -519,63 +526,70 @@ export default class ApplyDamageDialog extends Application {
   async _handleEffectAddEffectButtonClick(ev) {
     ev.preventDefault()
     ev.stopPropagation()
+    let tokenId = this.actor.token?.id
+    if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this.actor).id
     const button = $(ev.currentTarget)
     const effect = button.data('effect')
-    const token = canvas.tokens.get(this.actor.token.id)
+    const token = canvas.tokens.get(tokenId)
     const actions = await TokenActions.fromToken(token)
     const buttonAddClass = `fa-plus-circle`
     const buttonAddedClass = `fa-check-circle`
 
-    const toggleEffect = async (effects, span) => {
+    const toggleEffect = async (effect, span, starts = '', label = '') => {
       // Check if effect already exists in Token
-      const effectExists = token.actor.effects.find(e => e.statuses.find(s => effects.includes(s)))
-      if (!!effectExists) {
+      const effectExists = token.actor.effects.filter(e =>
+        !!starts ? e._source.statuses[0].startsWith(starts) : e._source.statuses[0] === effect
+      )
+      if (!!effectExists.length > 0) {
         // Remove all effects from Token
-        for (let effect of effects) {
-          await token.setEffectActive(effect, false)
+        for (let existingEffect of effectExists) {
+          await token.setEffectActive(existingEffect._source.statuses[0], false)
         }
         span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-        span.attr('title', i18n(`GURPS.add${effects.join('')}Effect`))
+        span.attr('title', i18n(`GURPS.add${starts || effect}${label}Effect`))
       } else {
-        // Add all effects to Token
-        for (let effect of effects) {
-          await token.setEffectActive(effect, true)
-        }
+        // Add effect to Token
+        await token.setEffectActive(effect, true)
         span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-        span.attr('title', i18n(`GURPS.remove${effects.join('')}Effect`))
+        span.attr('title', i18n(`GURPS.remove${starts || effect}${label}Effect`))
       }
     }
 
     const span = button.find('span')
-    let result
     switch (effect.type) {
       case 'shock':
-        // Check if the effect is already in the next turn
+        // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
-        const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
-        if (!!allShocks) {
-          await actions.removeFromNextTurn(allShocks)
-          span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-          span.attr('title', i18n('GURPS.addShockEffect'))
-          ui.notifications.info(i18n('GURPS.removedShockEffect'))
-        } else {
-          const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
-          if (!otherShocks) {
-            await actions.removeFromNextTurn(otherShocks)
+        const applyAt = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ADD_SHOCK_AT_TURN)
+        if (applyAt === 'AtNextTurn') {
+          const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
+          if (!!allShocks) {
+            await actions.removeFromNextTurn(allShocks)
+            span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
+            span.attr('title', i18n('GURPS.addShockEffect'))
+            ui.notifications.info(i18n('GURPS.removedShockEffect'))
+          } else {
+            const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
+            if (!!otherShocks) {
+              await actions.removeFromNextTurn(otherShocks)
+            }
+            // Add the effect to the next turn
+            await actions.addToNextTurn([shockEffect])
+            span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
+            span.attr('title', i18n(`GURPS.removeShock${applyAt}Effect`))
+            ui.notifications.info(i18n(`GURPS.addedShock${applyAt}Effect`))
           }
-          // Add the effect to the next turn
-          await actions.addToNextTurn([shockEffect])
-          span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-          span.attr('title', i18n('GURPS.removeShockEffect'))
-          ui.notifications.info(i18n('GURPS.addedShockEffect'))
+        } else {
+          await toggleEffect(shockEffect, span, 'shock', applyAt)
         }
+
         break
       case 'headvitalshit':
       case 'majorwound':
-        result = await toggleEffect(['prone', 'stun'], span)
+        await toggleEffect(effect.effectName, span)
         break
       case 'knockback':
-        result = await toggleEffect(['prone'], span)
+        await toggleEffect(effect.effectName, span)
         break
     }
   }

@@ -75,7 +75,17 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _delete(_effect, _data, _userId) {
-    // console.debug('delete ' + _effect)
+    // If ADD is opened for this actor, update the token effect buttons
+    const buttonAddClass = `fa-plus-circle`
+    const buttonAddedClass = `fa-check-circle`
+    for (const status of _effect._source.statuses) {
+      const selector = `span.${status}[data-actor="${_data.parent._id}"]`
+      const spans = $(selector)
+      for (const span of spans) {
+        $(span).removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
+        $(span).attr('title', i18n(`GURPS.add${status}Effect`))
+      }
+    }
   }
 
   /**
@@ -124,6 +134,18 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
     if (game.users.get(userId).isSelf) {
       if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
+    }
+
+    // If ADD is opened for this actor, update the token effect buttons
+    const buttonAddClass = `fa-plus-circle`
+    const buttonAddedClass = `fa-check-circle`
+    for (const status of data.statuses) {
+      const selector = `span.${status}[data-actor="${this.parent._id}"]`
+      const spans = $(selector)
+      for (const span of spans) {
+        $(span).removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
+        $(span).attr('title', i18n(`GURPS.remove${status}Effect`))
+      }
     }
   }
 

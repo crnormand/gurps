@@ -1279,5 +1279,16 @@
   "GURPS.toDefenseBonus": "au Bonus de Défense",
   "GURPS.toDefensePenalty": "à la Pénalité de Défense",
   "GURPS.removedShockEffect": "Effet de choc retiré au tour suivant.",
-  "GURPS.addedShockEffect": "Effet de choc ajouté au tour suivant."
+  "GURPS.addedShockEffect": "Effet de choc ajouté au tour suivant.",
+  "GURPS.removeShockAtNextTurnEffect": "Effet de choc supprimé au prochain tour.",
+  "GURPS.addShockAtNextTurnEffect": "Effet de choc ajouté au prochain tour.",
+  "GURPS.removeShockImmediatelyEffect": "Effet de choc supprimé sur la cible.",
+  "GURPS.addShockImmediatelyEffect": "Effet de choc ajouté sur la cible.",
+  "GURPS.settingAddShockAtTurn": "Quand ajouter l'effet de choc",
+  "GURPS.settingHintAddShockAtTurn": "Quand ajouter l'effet de choc sur la cible.",
+  "GURPS.immediately": "Immédiatement",
+  "GURPS.atNextTurn": "Au prochain tour",
+  "GURPS.removestunEffect": "Effet d'étourdissement supprimé sur la cible.",
+  "GURPS.addstunEffect": "Effet d'étourdissement ajouté sur la cible.",
+  "GURPS.addedShockAtNextTurnEffect": "Effet de choc ajouté au prochain tour."
 }
