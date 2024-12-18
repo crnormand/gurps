@@ -17,6 +17,7 @@
 - Bugfix: The "roll for me" option does not work #2010
 - Bugfix: Fix bl unit for high strength characters #2041
 - Bugfix: DFRPG Slam calculation is incorrect in /slam #2053
+- Bugfix: Item Statistics missing with GCA4 import. #2057
 
 Release 0.17.16 11/29/2024
 
