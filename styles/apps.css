@@ -635,7 +635,7 @@ ul#result-effects li {
 }
 
 .gga-app * {
-  font-family: Roboto, sans-serif;
+  font-family: Roboto, sans-serif, 'Font Awesome 6 Pro';
 }
 
 .gga-app .fa,
@@ -2920,7 +2920,7 @@ details .popup.square5x4 {
 .me-link.sm {
   font-size: 0.9em;
 }
-.modifier-list  li {
+.modifier-list li {
   margin: 2px 0;
   padding: 1px;
 }

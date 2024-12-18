@@ -1,19 +1,19 @@
 <form class='gga-app item-editor' autocomplete='off'>
   <div class='gga-item-sheet-title color-{{item.type}}'>
     {{#if (eq itemType 'equipment')}}
-      <div><i class='fa fa-cogs itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.equipment'}}</span></div>
+      <div><i class='fa-solid fa-screwdriver-wrench itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.equipment'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'feature')}}
-      <div><i class='fa fa-cogs itemdraggable'></i>
+      <div><i class='fas fa-theater-masks itemdraggable'></i>
         <span class='first-cap'>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
       </div>
 
     {{/if}}
     {{#if (eq itemType 'skill')}}
-      <div><i class='fa fa-cogs itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.skillsTab'}}</span></div>
+      <div><i class='fa-solid fa-person-swimming itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.skillsTab'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'spell')}}
-      <div><i class='fa fa-cogs itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.spellsTab'}}</span></div>
+      <div><i class='fa-solid fa-wand-magic-sparkles itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.spellsTab'}}</span></div>
     {{/if}}
   </div>
 
@@ -53,7 +53,7 @@
     <div class='gga-group'>
       <h2>{{i18n 'GURPS.attributes'}}</h2>
       {{#if (eq itemType 'equipment')}}
-        {{>items}}
+        {{~>items}}
       {{/if}}
       {{#if (eq itemType 'feature')}}
         {{>features}}
@@ -77,13 +77,13 @@
         <a class='item' data-tab='range-tab'><i class='fas fa-fighter-jet'></i>&nbsp;{{i18n 'GURPS.ranged'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.ranged)}}({{length system.ranged}}){{/if}}</span></a>
-        <a class='item' data-tab='spell-tab'><i class='fas fa-magic'></i>&nbsp;{{i18n 'GURPS.spells'}}&nbsp;<span
+        <a class='item' data-tab='spell-tab'><i class='fa-solid fa-wand-magic-sparkles'></i>&nbsp;{{i18n 'GURPS.spells'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.spells)}}({{length system.spells}}){{/if}}</span></a>
         <a class='item' data-tab='ads-tab'><i class='fas fa-theater-masks'></i>&nbsp;{{i18n
             'GURPS.advantages'
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.ads)}}({{length system.ads}}){{/if}}</span></a>
-        <a class='item' data-tab='skill-tab'><i class='fas fa-snowboarding'></i>&nbsp;{{i18n 'GURPS.skills'}}&nbsp;<span
+        <a class='item' data-tab='skill-tab'><i class='fa-solid fa-person-swimming'></i>&nbsp;{{i18n 'GURPS.skills'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.skills)}}({{length system.skills}}){{/if}}</span></a>
         <a class='item' data-tab='bonus-tab'><i class='fas fa-plus-minus'></i>&nbsp;{{i18n 'GURPS.bonuses'}}&nbsp;<span

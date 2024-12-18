@@ -2253,7 +2253,7 @@ div#other {
   z-index: 2;
 }
 
-.gurps-sheet-tabs::after {
+.gurpsactorsheet .gurps-sheet-tabs::after {
   content: '';
   position: absolute;
   left: 0;
