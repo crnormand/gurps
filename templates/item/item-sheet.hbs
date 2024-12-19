@@ -1,7 +1,8 @@
 <form class='gga-app item-editor' autocomplete='off'>
   <div class='gga-item-sheet-title color-{{item.type}}'>
     {{#if (eq itemType 'equipment')}}
-      <div><i class='fa-solid fa-screwdriver-wrench itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.equipment'}}</span></div>
+      <div><i class='fa-solid fa-screwdriver-wrench itemdraggable'></i>
+        <span class='first-cap'>{{i18n 'GURPS.equipment'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'feature')}}
       <div><i class='fas fa-theater-masks itemdraggable'></i>
@@ -10,10 +11,12 @@
 
     {{/if}}
     {{#if (eq itemType 'skill')}}
-      <div><i class='fa-solid fa-person-swimming itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.skillsTab'}}</span></div>
+      <div><i class='fa-solid fa-person-swimming itemdraggable'></i>
+        <span class='first-cap'>{{i18n 'GURPS.skillsTab'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'spell')}}
-      <div><i class='fa-solid fa-wand-magic-sparkles itemdraggable'></i> <span class='first-cap'>{{i18n 'GURPS.spellsTab'}}</span></div>
+      <div><i class='fa-solid fa-wand-magic-sparkles itemdraggable'></i>
+        <span class='first-cap'>{{i18n 'GURPS.spellsTab'}}</span></div>
     {{/if}}
   </div>
 
@@ -29,14 +32,17 @@
       />
     </div>
 
-    <div class="image-column">
-      <div class="img-display itemdraggable" style="background-image: url({{item.img}}); border: solid 1px black;">
+    <div class='image-column'>
+      <div class='img-display itemdraggable' style='background-image: url({{item.img}}); border: solid 1px black;'>
         <img
           class='profile-img itemdraggable'
           src='{{item.img}}'
           data-edit='img'
-          title="{{#if name}}{{name}}{{else}}Image{{/if}}"
-
+          {{#if name}}
+          title='{{name}}'
+          {{else}}
+          title='Image'
+          {{/if}}
         />
       </div>
       <div class='add-quick-roll-option'>
@@ -77,15 +83,19 @@
         <a class='item' data-tab='range-tab'><i class='fas fa-fighter-jet'></i>&nbsp;{{i18n 'GURPS.ranged'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.ranged)}}({{length system.ranged}}){{/if}}</span></a>
-        <a class='item' data-tab='spell-tab'><i class='fa-solid fa-wand-magic-sparkles'></i>&nbsp;{{i18n 'GURPS.spells'}}&nbsp;<span
-            style='font-size: 80%'
-          >{{#if (length system.spells)}}({{length system.spells}}){{/if}}</span></a>
+        <a class='item' data-tab='spell-tab'><i class='fa-solid fa-wand-magic-sparkles'></i>&nbsp;{{i18n
+            'GURPS.spells'
+          }}&nbsp;<span style='font-size: 80%'>{{#if (length system.spells)}}({{length
+                system.spells
+              }}){{/if}}</span></a>
         <a class='item' data-tab='ads-tab'><i class='fas fa-theater-masks'></i>&nbsp;{{i18n
             'GURPS.advantages'
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.ads)}}({{length system.ads}}){{/if}}</span></a>
-        <a class='item' data-tab='skill-tab'><i class='fa-solid fa-person-swimming'></i>&nbsp;{{i18n 'GURPS.skills'}}&nbsp;<span
-            style='font-size: 80%'
-          >{{#if (length system.skills)}}({{length system.skills}}){{/if}}</span></a>
+        <a class='item' data-tab='skill-tab'><i class='fa-solid fa-person-swimming'></i>&nbsp;{{i18n
+            'GURPS.skills'
+          }}&nbsp;<span style='font-size: 80%'>{{#if (length system.skills)}}({{length
+                system.skills
+              }}){{/if}}</span></a>
         <a class='item' data-tab='bonus-tab'><i class='fas fa-plus-minus'></i>&nbsp;{{i18n 'GURPS.bonuses'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.bonuses)}}(&checkmark;){{/if}}</span></a>
@@ -107,65 +117,43 @@
                   ></i></span>
               </h4>
 
-              <div class='label-value-row right-bias'>
+              <div class='gurps-label-field-grid-6'>
                 <label>{{i18n 'GURPS.skillLevel'}}</label>
-                <div><input type='text' value='{{otf}}' name='system.melee.{{key}}.otf' /></div>
-              </div>
+                <div class='span-5'><input type='text' value='{{otf}}' name='system.melee.{{key}}.otf' /></div>
+                
+                <label>{{i18n 'GURPS.usage'}}</label>
+                <div><input type='text' value='{{mode}}' name='system.melee.{{key}}.mode' /></div>
+                <label>{{i18n 'GURPS.damage'}}</label>
+                <div><input type='text' value='{{damage}}' name='system.melee.{{key}}.damage' /></div>
+                <label>{{i18n 'GURPS.reach'}}</label>
+                <div><input type='text' value='{{reach}}' name='system.melee.{{key}}.reach' /></div>
+                
+                <label>{{i18n 'GURPS.parrybonus'}}</label>
+                <div><input type='text' value='{{parry}}' name='system.melee.{{key}}.parry' /></div>
+                <label>{{i18n 'GURPS.attributesST'}}</label>
+                <div><input type='text' value='{{st}}' name='system.melee.{{key}}.st' /></div>
+                <label>{{i18n 'GURPS.blockbonus'}}</label>
+                <div><input type='text' value='{{block}}' name='system.melee.{{key}}.block' /></div>
+                
+                <label>{{i18n 'GURPS.parryBasePenalty'}}</label>
+                <div><input type='number' value='{{baseParryPenalty}}' name='system.melee.{{key}}.baseParryPenalty' /></div>
+                <label></label>
+                <div></div>
+                <label></label>
+                <div></div>
 
-              <div class='gurps-3col'>
-                <div class='label-value-row right-bias'>
-                  <div></div>
-                  <label>{{i18n 'GURPS.usage'}}</label>
-                  <div><input type='text' value='{{mode}}' name='system.melee.{{key}}.mode' /></div>
-                  <label>{{i18n 'GURPS.parrybonus'}}</label>
-                  <div><input type='text' value='{{parry}}' name='system.melee.{{key}}.parry' /></div>
-                  <label>{{i18n 'GURPS.parryBasePenalty'}}</label>
-                  <div><input
-                      type='number'
-                      value='{{baseParryPenalty}}'
-                      name='system.melee.{{key}}.baseParryPenalty'
-                    /></div>
-                </div>
-                <div class='label-value-row right-bias'>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n 'GURPS.blockbonus'}}</label>
-                  <div><input type='text' value='{{block}}' name='system.melee.{{key}}.block' /></div>
-                  <label>{{i18n 'GURPS.damage'}}</label>
-                  <div><input type='text' value='{{damage}}' name='system.melee.{{key}}.damage' /></div>
-                </div>
-                <div class='label-value-row right-bias'>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n 'GURPS.reach'}}</label>
-                  <div><input type='text' value='{{reach}}' name='system.melee.{{key}}.reach' /></div>
-                  <label>{{i18n 'GURPS.attributesST'}}</label>
-                  <div><input type='text' value='{{st}}' name='system.melee.{{key}}.st' /></div>
-                </div>
-              </div>
-              <div class='label-value-row right-bias'>
-                <div></div>
-                <div></div>
                 <label>{{i18n 'GURPS.notes'}}</label>
-                <div><textarea class='notes' rows='2' name='system.melee.{{key}}.notes'>{{notes}}</textarea></div>
-
-                <div></div>
-                <div></div>
+                <div class='span-5'><textarea class='notes' rows='2' name='system.melee.{{key}}.notes'>{{notes}}</textarea></div>
                 <label>{{i18n 'GURPS.check'}}</label>
-                <div><input type='text' value='{{checkotf}}' name='system.melee.{{key}}.checkotf' /></div>
-                <div></div>
-                <div></div>
+                <div class='span-5'><input type='text' value='{{checkotf}}' name='system.melee.{{key}}.checkotf' /></div>
                 <label>{{i18n 'GURPS.during'}}</label>
-                <div><input type='text' value='{{duringotf}}' name='system.melee.{{key}}.duringotf' /></div>
-                <div></div>
-                <div></div>
+                <div class="span-5"><input type='text' value='{{duringotf}}' name='system.melee.{{key}}.duringotf' /></div>
                 <label>{{i18n 'GURPS.pass'}}</label>
-                <div><input type='text' value='{{passotf}}' name='system.melee.{{key}}.passotf' /></div>
-                <div></div>
-                <div></div>
+                <div class='span-5'><input type='text' value='{{passotf}}' name='system.melee.{{key}}.passotf' /></div>
                 <label>{{i18n 'GURPS.fail'}}</label>
-                <div><input type='text' value='{{failotf}}' name='system.melee.{{key}}.failotf' /></div>
+                <div class='span-5'><input type='text' value='{{failotf}}' name='system.melee.{{key}}.failotf' /></div>
               </div>
+
             </div>
             <div class='vertical-gap'></div>
           {{/each}}
@@ -417,15 +405,13 @@
 
         <!-- Advantages -->
         <div class='tab' data-tab='ads-tab' data-group='sections'>
-          {{#each system.ads as | this key |}}
+          {{#each system.ads as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.advantage'}} {{#if name}}({{name}}){{/if}}<span
-                class='delete button'
-                data-path='system.ads'
-                name='{{key}}'
-              ><i class='fas fa-trash'
-              ></i></span>
+                {{i18n 'GURPS.advantage'}}
+                {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.ads' name='{{key}}'><i
+                    class='fas fa-trash'
+                  ></i></span>
               </h4>
 
               <div class='gurps-3col'>

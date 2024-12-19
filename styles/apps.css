@@ -6,7 +6,7 @@
   --hotbar-control-width: 32px;
   --font-size-small: 90%;
   --font-size-smaller: 80%;
-  --font-family-icons: 'Font Awesome 6 Pro', Roboto, sans-serif;
+  --font-family-icons: Roboto, sans-serif, 'Font Awesome 6 Pro';
 }
 
 Global Override body {
@@ -351,15 +351,46 @@ Global Override body {
   text-align: center !important;
 }
 
+.gurps-label-field-grid-4 {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content 1fr;
+  grid-template-rows: auto;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.gurps-label-field-grid-4 .span-3 {
+  grid-column-end: span 3;
+}
+
+.gurps-label-field-grid-6 {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content 1fr max-content 1fr;
+  grid-template-rows: auto;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.gurps-label-field-grid-6 .span-5 {
+  grid-column-end: span 5;
+}
+
+.gurps-label-field-grid-4 label,
+.gurps-label-field-grid-6 label {
+  font-size: var(--font-size-smaller);
+  justify-self: stretch;
+  text-align: end;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding-right: 0.15em;
+  padding-left: 0.35em;
+}
+
 .gga-group .label-value-row {
   gap: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-}
-
-.gga-group .label-value-row > *:nth-child(4n + 3),
-.gga-group .label-value-row > *:nth-child(4n + 4) {
-  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .button-bar {
