@@ -1,5 +1,5 @@
 // Import Modules
-import { parselink, parseForRollOrDamage, COSTS_REGEX } from '../lib/parselink.js'
+import { parselink, parseForRollOrDamage, COSTS_REGEX, PARSELINK_MAPPINGS } from '../lib/parselink.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import { GurpsActor } from './actor/actor.js'
 import { GurpsItem } from './item.js'
@@ -250,32 +250,9 @@ if (!globalThis.GURPS) {
     'Per/VH': 'GURPS.SkillPerVH',
   }
 
-  GURPS.PARSELINK_MAPPINGS = {
-    ST: 'attributes.ST.value',
-    DX: 'attributes.DX.value',
-    IQ: 'attributes.IQ.value',
-    HT: 'attributes.HT.value',
-    QN: 'attributes.QN.value',
-    WILL: 'attributes.WILL.value',
-    PER: 'attributes.PER.value',
-    VISION: 'vision',
-    FRIGHTCHECK: 'frightcheck',
-    'FRIGHT CHECK': 'frightcheck',
-    HEARING: 'hearing',
-    TASTESMELL: 'tastesmell',
-    'TASTE SMELL': 'tastesmell',
-    TASTE: 'tastesmell',
-    SMELL: 'tastesmell',
-    TOUCH: 'touch',
-    DODGE: 'currentdodge',
-    Parry: 'equippedparry',
-    PARRY: 'equippedparry',
-    BLOCK: 'equippedblock',
-  }
-
+  GURPS.PARSELINK_MAPPINGS = PARSELINK_MAPPINGS
   GURPS.SJGProductMappings = SJGProductMappings
   GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
-
   GURPS.findTracker = findTracker
 
   /**
@@ -2792,7 +2769,7 @@ if (!globalThis.GURPS) {
       console.log(`Combat ended: ${combat.id} - restarting token actions`)
       await resetTokenActions(combat)
     })
-    
+
     Hooks.on('modifierBucketSumUpdated', bucket => {
       const signal = bucket.minus ? '-' : '+'
       const target = $('#cr-target').text()
