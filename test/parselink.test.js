@@ -9,11 +9,13 @@ globalThis.game = {
 }
 
 describe('parseForRollOrDamage', () => {
+  let prefix
   beforeAll(() => {
     GURPS.DamageTables = new DamageTable()
+    prefix = expect.getState().currentTestName
   })
 
-  test('1d6+2 cr', () => {
+  test('#!1d6+2 cr', () => {
     const result = parseForRollOrDamage('1d6+2 cr')
 
     expect(result.action).toEqual({
@@ -29,7 +31,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('1d-2! cr', () => {
+  test('#!1d-2! cr', () => {
     const result = parseForRollOrDamage('1d-2! cr')
 
     expect(result.action).toEqual({
@@ -45,7 +47,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('12 pi++', () => {
+  test('#!12 pi++', () => {
     const result = parseForRollOrDamage('12 pi++')
 
     expect(result.action).toEqual({
@@ -61,7 +63,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('1d ctrl', () => {
+  test('#!1d ctrl', () => {
     const result = parseForRollOrDamage('1d ctrl')
 
     expect(result.action).toEqual({
@@ -77,7 +79,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('2d-1x3 pi++ @torso', () => {
+  test('#!2d-1x3 pi++ @torso', () => {
     const result = parseForRollOrDamage('2d-1x3 pi++ @torso')
 
     expect(result.action).toEqual({
@@ -93,7 +95,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('2d-1 imp *costs 1 FP', () => {
+  test('#!2d-1 imp *costs 1 FP', () => {
     const result = parseForRollOrDamage('2d-1 imp *costs 1 FP')
 
     expect(result.action).toEqual({
@@ -109,7 +111,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('2d-1(2) burn ex', () => {
+  test('#!2d-1(2) burn ex', () => {
     const result = parseForRollOrDamage('2d-1(2) burn ex')
 
     expect(result.action).toEqual({
@@ -125,7 +127,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('8(0.5) burn ex', () => {
+  test('#!8(0.5) burn ex', () => {
     const result = parseForRollOrDamage('8(0.5) burn ex')
 
     expect(result.action).toEqual({
@@ -141,11 +143,11 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('8', () => {
+  test('#!8', () => {
     expect(parseForRollOrDamage('8')).toBeUndefined()
   })
 
-  test('2d burn, 1d tox', () => {
+  test('#!2d burn, 1d tox', () => {
     const result = parseForRollOrDamage('2d burn, 1d tox')
 
     expect(result.action).toEqual({
@@ -171,7 +173,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('2d burn, foo', () => {
+  test('#!2d burn, foo', () => {
     const result = parseForRollOrDamage('2d burn, foo')
 
     expect(result.action).toEqual({
@@ -187,7 +189,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('2d charm fat', () => {
+  test('#!2d charm fat', () => {
     const result = parseForRollOrDamage('2d charm fat')
 
     expect(result.action).toEqual({
@@ -203,7 +205,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('sw+1 cut', () => {
+  test('#!sw+1 cut', () => {
     const result = parseForRollOrDamage('sw+1 cut')
 
     expect(result.action).toEqual({
@@ -219,7 +221,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test('sw+1 ctrl', () => {
+  test('#!sw+1 ctrl', () => {
     const result = parseForRollOrDamage('sw+1 ctrl')
 
     expect(result.action).toEqual({
@@ -236,8 +238,14 @@ describe('parseForRollOrDamage', () => {
 })
 
 describe('parseLink', () => {
-  test('A', () => {
-    const result = parselink('A')
+  let input
+
+  beforeEach(() => {
+    input = expect.getState().currentTestName.split('#!')[1]
+  })
+
+  test('#!A', () => {
+    const result = parselink(input)
 
     expect(result).toEqual({
       text: 'A',
@@ -245,8 +253,8 @@ describe('parseLink', () => {
   })
 
   describe('Common prefixes', () => {
-    test('Overridetext: "Modifiers" +1 mod', () => {
-      const result = parselink('"Modifiers" +1 mod')
+    test('Overridetext: #!"Modifiers" +1 mod', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         desc: 'mod',
@@ -259,8 +267,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='+1 mod'>Modifiers</span>"))
     })
 
-    test("Overridetext: 'Modifiers' +1 mod", () => {
-      const result = parselink("'Modifiers' +1 mod")
+    test("Overridetext: #!'Modifiers' +1 mod", () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         desc: 'mod',
@@ -273,8 +281,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='+1 mod'>Modifiers</span>"))
     })
 
-    test('Blind Roll: !HT-1', () => {
-      const result = parselink('"text" !HT-1')
+    test('Blind Roll: #!"text" !HT-1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'HT',
@@ -293,8 +301,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='!HT-1'>text</span>"))
     })
 
-    test('Actor ID: @actorid@ HT-1', () => {
-      const result = parselink('"Hello" @actorid@ HT-1')
+    test('Actor ID: #!"Hello" @actorid@ HT-1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'HT',
@@ -314,8 +322,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT-1'>Hello</span>"))
     })
 
-    test('Actor ID + Blind Roll: !@actorid@ HT-1', () => {
-      const result = parselink('!@actorid@ HT-1')
+    test('Actor ID + Blind Roll: #!!@actorid@ HT-1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'HT',
@@ -335,8 +343,8 @@ describe('parseLink', () => {
     })
   })
 
-  test('!@actorid@ 2d+2 cut', () => {
-    const result = parselink('!@actorid@ 2d+2 cut')
+  test('#!!@actorid@ 2d+2 cut', () => {
+    const result = parselink(input)
 
     expect(result.action).toEqual({
       orig: '2d+2 cut',
@@ -351,8 +359,8 @@ describe('parseLink', () => {
   })
 
   describe('Modifiers', () => {
-    test('!@actorid@ -2 for Stun', () => {
-      const result = parselink('!@actorid@ -2 for Stun')
+    test('#!!@actorid@ –2 for Stun', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '-2 for Stun',
@@ -364,8 +372,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("-2 for Stun'>&minus;2 for Stun</span>"))
     })
 
-    test('!@actorid@ -2', () => {
-      const result = parselink('!@actorid@ -2')
+    test('#!!@actorid@ -2', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '-2',
@@ -377,8 +385,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='-2'>&minus;2 </span>"))
     })
 
-    test('!@actorid@ -4 the GM hates me & IQ-2', () => {
-      const result = parselink('!@actorid@ -4 the GM hates me & IQ-2')
+    test('#!!@actorid@ -4 the GM hates me & IQ-2', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '-4 the GM hates me & IQ-2',
@@ -392,8 +400,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('!@actorid@ -2 for Stun &+1 for Luck&-3 My GM hates me', () => {
-      const result = parselink('!@actorid@ -2 for Stun &+1 for Luck&-3 My GM hates me')
+    test('#!!@actorid@ -2 for Stun &+1 for Luck&-3 My GM hates me', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '-2 for Stun &+1 for Luck&-3 My GM hates me',
@@ -424,8 +432,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('+@margin For some reason & -1 for stupidity', () => {
-      const result = parselink('+@margin For some reason & -1 for stupidity')
+    test('#!+@margin For some reason & -1 for stupidity', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '+@margin For some reason & -1 for stupidity',
@@ -448,8 +456,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('+@margin For some reason & ST12', () => {
-      const result = parselink('+@margin For some reason & ST12')
+    test('#!+@margin For some reason & ST12', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '+@margin For some reason & ST12',
@@ -463,8 +471,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('+@margin', () => {
-      const result = parselink('+@margin')
+    test('#!+@margin', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: '+@margin',
@@ -477,8 +485,8 @@ describe('parseLink', () => {
     })
   })
 
-  test('/chat command', () => {
-    const result = parselink('/chat command')
+  test('#!/chat command', () => {
+    const result = parselink(input)
 
     expect(result.action).toEqual({
       quiet: false,
@@ -489,8 +497,8 @@ describe('parseLink', () => {
   })
 
   describe('if test', () => {
-    test('@margin > 1', () => {
-      const result = parselink('@margin > 1')
+    test('#!@margin > 1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'iftest',
@@ -501,8 +509,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual('@margin > 1')
     })
 
-    test('@margin >= 1', () => {
-      const result = parselink('@margin >= 1')
+    test('#!@margin >= 1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'iftest',
@@ -513,8 +521,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual('@margin >= 1')
     })
 
-    test('@margin >= 1.5', () => {
-      const result = parselink('@margin >= 1.5')
+    test('#!@margin >= 1.5', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'iftest',
@@ -525,8 +533,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual('@margin >= 1.5')
     })
 
-    test('@isCritSuccess', () => {
-      const result = parselink('@isCritSuccess')
+    test('#!@isCritSuccess', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'iftest',
@@ -536,8 +544,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual('@isCritSuccess')
     })
 
-    test('@isCritFailure', () => {
-      const result = parselink('@isCritFailure = 0')
+    test('#!@isCritFailure = 0', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'iftest',
@@ -550,8 +558,8 @@ describe('parseLink', () => {
   })
 
   describe('Drag and Drop', () => {
-    test('JournalEntry', () => {
-      const result = parselink('JournalEntry[1234]{some text}')
+    test('#!JournalEntry[1234]{some text}', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'dragdrop',
@@ -565,8 +573,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('Actor -- dragdrop ignores quoted override text', () => {
-      const result = parselink('"ActorName" Actor[1234]{some text}')
+    test('Actor -- dragdrop ignores quoted override text #!"Hello" Actor[1234]{some text}', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'dragdrop',
@@ -578,8 +586,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Actor[1234]{some text}'>{some text}</span>"))
     })
 
-    test('Actor -- dragdrop ignores quoted override text', () => {
-      const result = parselink('"ActorName" Actor[1234]{}')
+    test('Actor -- dragdrop ignores quoted override text #!"PDF" Actor[1234]{}', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         type: 'dragdrop',
@@ -593,8 +601,8 @@ describe('parseLink', () => {
   })
 
   describe('Attribute', () => {
-    test('ST', () => {
-      const result = parselink('ST')
+    test('#!ST', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'ST',
@@ -611,8 +619,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='ST'>ST</span>"))
     })
 
-    test('Per12', () => {
-      const result = parselink('Per12')
+    test('#!Per12', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'Per12',
@@ -630,8 +638,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per12'>Per12</span>"))
     })
 
-    test('Per 12', () => {
-      const result = parselink('Per 12')
+    test('#!Per 12', () => {
+      const result = parselink(input)
       expect(result.action).toEqual({
         orig: 'Per 12',
         spantext: 'Per12 ',
@@ -648,8 +656,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per 12'>Per12</span>"))
     })
 
-    test('Per: 12', () => {
-      const result = parselink('Per: 12')
+    test('#!Per: 12', () => {
+      const result = parselink(input)
       expect(result.action).toEqual({
         orig: 'Per: 12',
         spantext: 'Per: 12',
@@ -665,8 +673,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per: 12'>Per: 12</span>"))
     })
 
-    test('Fright Check12', () => {
-      let result = parselink('Fright Check12')
+    test('#!Fright Check12', () => {
+      let result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'Fright Check12',
@@ -684,8 +692,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Fright Check12'>Fright Check12</span>"))
     })
 
-    test('ST12 +2 Some description', () => {
-      let result = parselink('ST12 +2 Some description')
+    test('#!ST12 +2 Some description', () => {
+      let result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'ST12 +2 Some description',
@@ -706,16 +714,16 @@ describe('parseLink', () => {
       )
     })
 
-    test('ЛВ (Russian DX)', () => {
-      const result = parselink('ЛВ')
+    test('(Russian DX) #!ЛВ', () => {
+      const result = parselink(input)
 
       // TODO code comments says it deals with non-English translations, but it doesn't
       // seem to do anything.
       expect(result).toEqual({ text: 'ЛВ' })
     })
 
-    test('HT +@margin', () => {
-      const result = parselink('HT +@margin')
+    test('#!HT +@margin', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'HT +@margin',
@@ -733,8 +741,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT +@margin'>HT +@margin</span>"))
     })
 
-    test('HT description', () => {
-      const result = parselink('HT description')
+    test('#!HT description', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'HT description',
@@ -751,8 +759,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT description'>HT description</span>"))
     })
 
-    test('Parry:Broadsword +2 Description', () => {
-      const result = parselink('Parry:Broadsword +2 Description')
+    test('#!Parry:Broadsword +2 Description', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'Parry',
@@ -773,8 +781,8 @@ describe('parseLink', () => {
     })
 
     // TODO Make this work (weapon with a space in the name and/or non-alphanumeric characters)
-    test('Parry:Wizard*s*Staff +2 Description ', () => {
-      const result = parselink('Parry:Wizard*s*Staff +2 Description')
+    test('#!Parry:Wizard*s*Staff +2 Description', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'Parry',
@@ -796,8 +804,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('HT | DX', () => {
-      const result = parselink('HT | DX')
+    test('#!HT | DX', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'HT',
@@ -826,8 +834,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT | DX'>HT  | DX</span>"))
     })
 
-    test('HT | Somthing else', () => {
-      const result = parselink('HT | Somthing else')
+    test('#!HT | Somthing else', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'HT',
@@ -844,8 +852,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT | Somthing else'>HT</span>"))
     })
 
-    test('IQ-2 ? "Idea!", "No Clue"', () => {
-      const result = parselink('IQ-2 ? "Idea!", "No Clue"')
+    test('#!IQ-2 ? "Idea!", "No Clue"', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'IQ',
@@ -866,8 +874,8 @@ describe('parseLink', () => {
     })
 
     // TODO: This is a bug.
-    test('HT ? "Awake" : "Fall asleep"', () => {
-      const result = parselink('HT ? "Awake" : "Fall asleep"')
+    test('#!HT ? "Awake" : "Fall asleep"', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'HT',
@@ -883,11 +891,11 @@ describe('parseLink', () => {
         type: 'attribute',
         name: 'HT',
       })
-      expect(result.text).toEqual(expect.stringContaining('data-otf=\'HT ? \"Awake\" : \"Fall asleep\"\'>HT</span>'))
+      expect(result.text).toEqual(expect.stringContaining('data-otf=\'HT ? "Awake" : "Fall asleep"\'>HT</span>'))
     })
 
-    test('IQ ? "Idea!"', () => {
-      const result = parselink('IQ ? "Idea!"')
+    test('#!IQ ? "Idea!"', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'IQ',
@@ -906,8 +914,8 @@ describe('parseLink', () => {
     })
   })
 
-  test('CR: 9 to resist temptation', () => {
-    const result = parselink('CR: 9 to resist temptation')
+  test('#!CR: 9 to resist temptation', () => {
+    const result = parselink(input)
 
     expect(result.action).toEqual({
       blindroll: false,
@@ -921,8 +929,8 @@ describe('parseLink', () => {
     )
   })
 
-  test('CR: 15', () => {
-    const result = parselink('CR: 15')
+  test('#!CR: 15', () => {
+    const result = parselink(input)
 
     expect(result.action).toEqual({
       blindroll: false,
@@ -934,8 +942,8 @@ describe('parseLink', () => {
     expect(result.text).toEqual(expect.stringContaining("data-otf='CR: 15'>CR: 15</span>"))
   })
 
-  test('PDF:B346', () => {
-    const result = parselink('PDF:B345')
+  test('#!PDF:B345', () => {
+    const result = parselink(input)
 
     expect(result.action).toEqual({
       link: 'B345',
@@ -945,8 +953,8 @@ describe('parseLink', () => {
     expect(result.text).toEqual("<span class='pdflink' data-pdf='B345'>B345</span>")
   })
 
-  test('"Basic" PDF:B345', () => {
-    const result = parselink('"Basic" PDF:B345')
+  test('#!"Basic" PDF:B345', () => {
+    const result = parselink(input)
 
     expect(result.action).toEqual({
       link: 'B345',
@@ -957,15 +965,14 @@ describe('parseLink', () => {
   })
 
   describe('Skill-Spell', () => {
-    test('S:Stealth', () => {
-      const result = parselink('S:Stealth')
+    test('#!S:Stealth', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
         desc: '',
         isSkillOnly: false,
         isSpellOnly: false,
-        mod: '',
         name: 'Stealth',
         orig: 'S:Stealth',
         spantext: '<b>S:</b>Stealth',
@@ -974,15 +981,115 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='S:Stealth'><b>S:</b>Stealth</span>"))
     })
 
-    test('Modifiers require a space: Sk:Stealth-1', () => {
-      const result = parselink('Sk:Stealth-1')
+    test('#!S:Stealth Comment', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'Comment',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        name: 'Stealth',
+        orig: input,
+        spantext: '<b>S:</b>Stealth Comment',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='S:Stealth Comment'><b>S:</b>Stealth Comment</span>")
+      )
+    })
+
+    test('#!S:Savoir-faire -3 description | something else', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'description',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        mod: '-3',
+        name: 'Savoir-faire',
+        orig: 'S:Savoir-faire -3 description | something else',
+        spantext: '<b>S:</b>Savoir-faire -3 description',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='S:Savoir-faire -3 description | something else'><b>S:</b>Savoir-faire -3 description</span>"
+        )
+      )
+    })
+
+    test('#!Sp:"Bigby\'s Crushing Hand" +1 Description', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'Description',
+        isSkillOnly: false,
+        isSpellOnly: true,
+        mod: '+1',
+        name: "Bigby's Crushing Hand",
+        orig: 'Sp:"Bigby\'s Crushing Hand" +1 Description',
+        spantext: "<b>Sp:</b>Bigby's Crushing Hand +1 Description",
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='Sp:\"Bigby's Crushing Hand\" +1 Description'><b>Sp:</b>Bigby's Crushing Hand +1 Description</span>"
+        )
+      )
+    })
+
+    test("#!Sp:'Bigbys Crushing Hand' +1 Description", () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'Description',
+        isSkillOnly: false,
+        isSpellOnly: true,
+        mod: '+1',
+        name: 'Bigbys Crushing Hand',
+        orig: "Sp:'Bigbys Crushing Hand' +1 Description",
+        spantext: '<b>Sp:</b>Bigbys Crushing Hand +1 Description',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='Sp:'Bigbys Crushing Hand' +1 Description'><b>Sp:</b>Bigbys Crushing Hand +1 Description</span>"
+        )
+      )
+    })
+
+    // TODO this should be an error!
+    test("#!Sp:'' +1 Description", () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'Description',
+        isSkillOnly: false,
+        isSpellOnly: true,
+        mod: '+1',
+        name: '',
+        orig: "Sp:'' +1 Description",
+        spantext: "<b>Sp:</b> +1 Description",
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='Sp: +1 Description'><b>Sp:</b> +1 Description</span>")
+      )
+    })
+
+    test('Modifiers require a space: #!Sk:Stealth-1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
         desc: '',
         isSkillOnly: true,
         isSpellOnly: false,
-        mod: '',
         name: 'Stealth-1',
         orig: 'Sk:Stealth-1',
         spantext: '<b>Sk:</b>Stealth-1',
@@ -991,8 +1098,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Sk:Stealth-1'><b>Sk:</b>Stealth-1</span>"))
     })
 
-    test('Modifiers require a space: Sk:Stealth -1', () => {
-      const result = parselink('Sk:Stealth -1')
+    test('Modifiers require a space: #!Sk:Stealth -1', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1008,8 +1115,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='Sk:Stealth -1'><b>Sk:</b>Stealth -1</span>"))
     })
 
-    test('SP:Stealth +3', () => {
-      const result = parselink('SP:Stealth +3')
+    test('#!SP:Stealth +3', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1025,8 +1132,8 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='SP:Stealth +3'><b>Sp:</b>Stealth +3</span>"))
     })
 
-    test('Sk:Stealth +3 (Based: IQ) Comment this', () => {
-      const result = parselink('Sk:Stealth +3 (Based: IQ) Comment this')
+    test('#!Sk:Stealth +3 (Based: IQ) Comment this', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1049,8 +1156,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('Sk:Stealth +3 (Based: ZX) Comment this', () => {
-      const result = parselink('Sk:Stealth +3 (Based: ZX) Comment this')
+    test('#!Sk:Stealth +3 (Based: ZX) Comment this', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1070,8 +1177,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('Sk:Stealth +3 *Costs 2 HP', () => {
-      const result = parselink('Sk:Stealth +3 *Costs 2 HP')
+    test('#!Sk:Stealth +3 *Costs 2 HP', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1090,8 +1197,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('Sk:Stealth +3 * Per 2HP', () => {
-      const result = parselink('Sk:Stealth +3 * Per 2HP')
+    test('#!Sk:Stealth +3 * Per 2HP', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1110,8 +1217,8 @@ describe('parseLink', () => {
       )
     })
 
-    test('Sk:Stealth -2 for armor ? "Sneaky" , "Alarm!"', () => {
-      const result = parselink('Sk:Stealth -2 for armor ? "Sneaky", "Alarm!"')
+    test('#!Sk:Stealth -2 for armor ? "Sneaky" , "Alarm!"', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1121,20 +1228,20 @@ describe('parseLink', () => {
         isSpellOnly: false,
         mod: '-2',
         name: 'Stealth',
-        orig: 'Sk:Stealth -2 for armor ? "Sneaky", "Alarm!"',
+        orig: 'Sk:Stealth -2 for armor ? "Sneaky" , "Alarm!"',
         spantext: '<b>Sk:</b>Stealth -2 for armor',
         truetext: 'Sneaky',
         type: 'skill-spell',
       })
       expect(result.text).toEqual(
         expect.stringContaining(
-          'data-otf=\'Sk:Stealth -2 for armor ? "Sneaky", "Alarm!"\'><b>Sk:</b>Stealth -2 for armor</span>'
+          'data-otf=\'Sk:Stealth -2 for armor ? "Sneaky" , "Alarm!"\'><b>Sk:</b>Stealth -2 for armor</span>'
         )
       )
     })
 
-    test('Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"', () => {
-      const result = parselink('Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"')
+    test('#!Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
@@ -1156,24 +1263,732 @@ describe('parseLink', () => {
       )
     })
 
-    test('S:Stealth +@margin for Spell', () => {
+    test('#!S:Stealth +@margin for Spell', () => {
       // Is there a way to get the test name?
-      
-      const result = parselink('S:Stealth +@margin for Spell')
+
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '+@margin for Spell',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        mod: '+@margin',
+        name: 'Stealth',
+        orig: 'S:Stealth +@margin for Spell',
+        spantext: '<b>S:</b>Stealth +@margin for Spell',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='S:Stealth +@margin for Spell'><b>S:</b>Stealth +@margin for Spell</span>")
+      )
+    })
+
+    test('#!S:Savoir-faire -3 description | IQ -6 default', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'description',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        mod: '-3',
+        name: 'Savoir-faire',
+        next: {
+          attribute: 'IQ',
+          attrkey: 'IQ',
+          blindroll: false,
+          desc: 'default',
+          melee: '',
+          mod: '-6',
+          name: 'IQ',
+          orig: 'IQ -6 default',
+          path: 'attributes.IQ.value',
+          spantext: 'IQ -6 default',
+          type: 'attribute',
+        },
+        orig: input,
+        spantext: '<b>S:</b>Savoir-faire -3 description | IQ -6 default',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='S:Savoir-faire -3 description | IQ -6 default'><b>S:</b>Savoir-faire -3 description | IQ -6 default</span>"
+        )
+      )
+    })
+  })
+
+  describe('Melee/Ranged/Attack/Damage/Block/Parry', () => {
+    test('#!A:', () => {
+      const result = parselink(input)
+      expect(result.action).toBeUndefined()
+    })
+
+    test('#!M:Broadsword', () => {
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
         desc: '',
-        isSkillOnly: false,
-        isSpellOnly: false,
-        mod: '+3',
-        name: 'Stealth',
-        orig: 'SP:Stealth +3',
-        spantext: '<b>Sp:</b>Stealth +3',
-        type: 'skill-spell',
+        isMelee: true,
+        isRanged: false,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
       })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='SP:Stealth +3'><b>Sp:</b>Stealth +3</span>"))
+      expect(result.text).toEqual(expect.stringContaining("data-otf='M:Broadsword'><b>M:</b>Broadsword</span>"))
     })
 
+    test('#!M:Broadsword (Swung)', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: false,
+        mod: '',
+        name: 'Broadsword (Swung)',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='M:Broadsword (Swung)'><b>M:</b>Broadsword (Swung)</span>")
+      )
+    })
+
+    test('#!A:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='A:Broadsword'><b>A:</b>Broadsword</span>"))
+    })
+
+    test('#!A:Broadsword *Per 1FP', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        costs: '*Per 1FP',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Broadsword *Per 1FP'><b>A:</b>Broadsword *Per 1FP</span>")
+      )
+    })
+
+    test('#!A:Broadsword * Costs 1 HP', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        costs: '* Costs 1 HP',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Broadsword * Costs 1 HP'><b>A:</b>Broadsword * Costs 1 HP</span>")
+      )
+    })
+
+    test('#!A:Broadsword * Per 1 tr0000', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        costs: '* Per 1 tr0000',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Broadsword * Per 1 tr0000'><b>A:</b>Broadsword * Per 1 tr0000</span>")
+      )
+    })
+
+    test('#!A:Broadsword *Costs 1 tr(Mana)', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        costs: '*Costs 1 tr(Mana)',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='A:Broadsword *Costs 1 tr(Mana)'><b>A:</b>Broadsword *Costs 1 tr(Mana)</span>"
+        )
+      )
+    })
+
+    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
+    test('#!A:Broadsword *Costs 1 tr("Control Points")', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
+        costs: '*Costs 1 tr(',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          'data-otf=\'A:Broadsword *Costs 1 tr("Control Points")\'><b>A:</b>Broadsword *Costs 1 tr(</span> "Control Points"'
+        )
+      )
+    })
+
+    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
+    test('#!A:Broadsword *Costs 1 tr(Control Points)', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
+        costs: '*Costs 1 tr(Control',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='A:Broadsword *Costs 1 tr(Control Points)'><b>A:</b>Broadsword *Costs 1 tr(Control</span> Points"
+        )
+      )
+    })
+
+    // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
+    test('#!A:Broadsword *Costs 1 tr(Control*Points)', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
+        costs: '*Costs 1 tr(Control',
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='A:Broadsword *Costs 1 tr(Control*Points)'><b>A:</b>Broadsword *Costs 1 tr(Control</span> *Points)"
+        )
+      )
+    })
+
+    // TODO I personally would require a space between the weapon name and the modifier.
+    test('#!A:Broadsword-2 stunned', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'stunned',
+        isMelee: true,
+        isRanged: true,
+        mod: '-2',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Broadsword-2 stunned'><b>A:</b>Broadsword-2 stunned</span>")
+      )
+    })
+
+    test('#!A:Broadsword -2 stunned', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'stunned',
+        isMelee: true,
+        isRanged: true,
+        mod: '-2',
+        name: 'Broadsword',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Broadsword -2 stunned'><b>A:</b>Broadsword-2 stunned</span>")
+      )
+    })
+
+    test('#!A:Throwing*Axe -2 stunned', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'stunned',
+        isMelee: true,
+        isRanged: true,
+        mod: '-2',
+        name: 'Throwing*Axe',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Throwing*Axe -2 stunned'><b>A:</b>Throwing*Axe-2 stunned</span>")
+      )
+    })
+
+    test('#!R:"Throwing Axe" -2 stunned', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'stunned',
+        isMelee: false,
+        isRanged: true,
+        mod: '-2',
+        name: 'Throwing Axe',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining('data-otf=\'R:"Throwing Axe" -2 stunned\'><b>R:</b>Throwing Axe-2 stunned</span>')
+      )
+    })
+
+    test('#!R:"Throwing Axe" +@margin', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '+@margin ',
+        isMelee: false,
+        isRanged: true,
+        mod: '+@margin',
+        name: 'Throwing Axe',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining('data-otf=\'R:"Throwing Axe" +@margin\'><b>R:</b>Throwing Axe +@margin</span>')
+      )
+    })
+
+    test('#!R:"Throwing Axe" +@margin Serendipity', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '+@margin Serendipity',
+        isMelee: false,
+        isRanged: true,
+        mod: '+@margin',
+        name: 'Throwing Axe',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          'data-otf=\'R:"Throwing Axe" +@margin Serendipity\'><b>R:</b>Throwing Axe +@margin Serendipity</span>'
+        )
+      )
+    })
+
+    // TODO I suggest we also have 'DM' for damage-melee and 'DR' for damage-ranged.
+    // TODO Another suggestion for A, R, M, D, DM, DR: include usage such as 'A(Thrust)' or 'R(Thrown)'.
+    test('#!D:"Throwing Axe"-2 stunned', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'stunned',
+        isMelee: true,
+        isRanged: true,
+        mod: '-2',
+        name: 'Throwing Axe',
+        orig: input,
+        type: 'attackdamage',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining('data-otf=\'D:"Throwing Axe"-2 stunned\'><b>D:</b>Throwing Axe-2 stunned</span>')
+      )
+    })
+
+    test('#!P:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: false,
+        mod: '',
+        name: 'Broadsword',
+        orig: input,
+        type: 'weapon-parry',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='P:Broadsword'><b>P:</b>Broadsword</span>"))
+    })
+
+    test('#!B:Shield', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: false,
+        mod: '',
+        name: 'Shield',
+        orig: input,
+        type: 'weapon-block',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='B:Shield'><b>B:</b>Shield</span>"))
+    })
+
+    // Degenerate case.
+    test('#!A:Throwing Axe -2 stunned', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        mod: '',
+        name: 'Throwing',
+        orig: input,
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='A:Throwing Axe -2 stunned'><b>A:</b>Throwing</span> Axe -2 stunned")
+      )
+    })
+  })
+
+  describe('Check existence', () => {
+    test('#!?A:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'A',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?A:Broadsword'>?A:Broadsword</span>"))
+    })
+
+    test('#!?M:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'M',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?M:Broadsword'>?M:Broadsword</span>"))
+    })
+
+    test('#!?R:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'R',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?R:Broadsword'>?R:Broadsword</span>"))
+    })
+
+    test('#!?S:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'S',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?S:Broadsword'>?S:Broadsword</span>"))
+    })
+
+    test('#!?AD:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'AD',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?AD:Broadsword'>?AD:Broadsword</span>"))
+    })
+
+    test.skip('#!?AT:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'AT',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?AT:Broadsword'>?AT:Broadsword</span>"))
+    })
+
+    test('#!?SK:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'SK',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?SK:Broadsword'>?SK:Broadsword</span>"))
+    })
+
+    test('#!?SP:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'SP',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?SP:Broadsword'>?SP:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?AK:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'AK',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?AK:Broadsword'>?AK:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?AP:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'AP',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?AP:Broadsword'>?AP:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?MD:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'MD',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?MD:Broadsword'>?MD:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?MT:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'MT',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?MT:Broadsword'>?MT:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?MK:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'MK',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?MK:Broadsword'>?MK:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?MP:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'MP',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?MP:Broadsword'>?MP:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?RD:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'RD',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?RD:Broadsword'>?RD:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?RT:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'RT',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?RT:Broadsword'>?RT:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?RK:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'RK',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?RK:Broadsword'>?RK:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?RP:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'RP',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?RP:Broadsword'>?RP:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?SD:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'SD',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?SD:Broadsword'>?SD:Broadsword</span>"))
+    })
+
+    // TODO This test should fail.
+    test('#!?ST:Broadsword', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        name: 'Broadsword',
+        orig: input,
+        prefix: 'ST',
+        type: 'test-exists',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='?ST:Broadsword'>?ST:Broadsword</span>"))
+    })
+  })
+
+  test('#!https://www.google.com', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      label: 'https://www.google.com',
+      orig: 'https://www.google.com',
+      type: 'href',
+    })
+    expect(result.text).toEqual('<a href="https://www.google.com">https://www.google.com</a>')
+  })
+
+  test('#!http://www.google.com', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      label: 'http://www.google.com',
+      orig: 'http://www.google.com',
+      type: 'href',
+    })
+    expect(result.text).toEqual('<a href="http://www.google.com">http://www.google.com</a>')
+  })
+
+  test('#!"Google this" http://www.google.com', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      label: 'Google this',
+      orig: 'http://www.google.com',
+      type: 'href',
+    })
+    expect(result.text).toEqual('<a href="http://www.google.com">Google this</a>')
   })
 })
