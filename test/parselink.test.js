@@ -288,8 +288,6 @@ describe('parseLink', () => {
         attribute: 'HT',
         attrkey: 'HT',
         blindroll: true,
-        desc: '',
-        melee: '',
         mod: '-1',
         name: 'HT',
         orig: 'HT-1',
@@ -308,8 +306,6 @@ describe('parseLink', () => {
         attribute: 'HT',
         attrkey: 'HT',
         blindroll: false,
-        desc: '',
-        melee: '',
         mod: '-1',
         name: 'HT',
         orig: 'HT-1',
@@ -329,8 +325,6 @@ describe('parseLink', () => {
         attribute: 'HT',
         attrkey: 'HT',
         blindroll: true,
-        desc: '',
-        melee: '',
         mod: '-1',
         name: 'HT',
         orig: 'HT-1',
@@ -612,9 +606,7 @@ describe('parseLink', () => {
         attrkey: 'ST',
         name: 'ST',
         path: 'attributes.ST.value',
-        desc: '',
         blindroll: false,
-        melee: '',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='ST'>ST</span>"))
     })
@@ -630,9 +622,7 @@ describe('parseLink', () => {
         attrkey: 'PER',
         name: 'PER',
         path: 'attributes.PER.value',
-        desc: '',
         blindroll: false,
-        melee: '',
         target: '12',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per12'>Per12</span>"))
@@ -641,55 +631,70 @@ describe('parseLink', () => {
     test('#!Per 12', () => {
       const result = parselink(input)
       expect(result.action).toEqual({
-        orig: 'Per 12',
-        spantext: 'Per12 ',
-        type: 'attribute',
         attribute: 'Per',
         attrkey: 'PER',
-        name: 'PER',
-        path: 'attributes.PER.value',
-        target: '12',
-        desc: '',
         blindroll: false,
-        melee: '',
+        desc: '12',
+        name: 'PER',
+        orig: 'Per 12',
+        path: 'attributes.PER.value',
+        spantext: 'Per 12',
+        type: 'attribute',
       })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='Per 12'>Per12</span>"))
+      expect(result.text).toEqual(expect.stringContaining("data-otf='Per 12'>Per 12</span>"))
     })
 
     test('#!Per: 12', () => {
       const result = parselink(input)
       expect(result.action).toEqual({
-        orig: 'Per: 12',
-        spantext: 'Per: 12',
-        type: 'attribute',
         attribute: 'Per',
         attrkey: 'PER',
-        name: 'PER',
-        path: 'attributes.PER.value',
-        desc: '12',
         blindroll: false,
-        melee: '',
+        desc: '12',
+        name: 'PER',
+        orig: 'Per: 12',
+        path: 'attributes.PER.value',
+        spantext: 'Per: 12',
+        type: 'attribute',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per: 12'>Per: 12</span>"))
     })
 
-    test('#!Fright Check12', () => {
+    test('#!Fright Check -2 for Fear', () => {
       let result = parselink(input)
 
       expect(result.action).toEqual({
-        orig: 'Fright Check12',
-        spantext: 'Fright Check12 ',
-        type: 'attribute',
         attribute: 'Fright Check',
         attrkey: 'FRIGHT CHECK',
-        name: 'FRIGHT CHECK',
-        path: 'frightcheck',
-        desc: '',
         blindroll: false,
-        melee: '',
-        target: '12',
+        desc: 'for Fear',
+        mod: '-2',
+        name: 'FRIGHT CHECK',
+        orig: 'Fright Check -2 for Fear',
+        path: 'frightcheck',
+        spantext: 'Fright Check -2 for Fear',
+        type: 'attribute',
       })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='Fright Check12'>Fright Check12</span>"))
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='Fright Check -2 for Fear'>Fright Check -2 for Fear</span>")
+      )
+    })
+
+    test('#!Fright Check14', () => {
+      let result = parselink(input)
+
+      expect(result.action).toEqual({
+        attribute: 'Fright Check',
+        attrkey: 'FRIGHT CHECK',
+        blindroll: false,
+        name: 'FRIGHT CHECK',
+        orig: 'Fright Check14',
+        path: 'frightcheck',
+        spantext: 'Fright Check14 ',
+        target: '14',
+        type: 'attribute',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='Fright Check14'>Fright Check14</span>"))
     })
 
     test('#!ST12 +2 Some description', () => {
@@ -706,7 +711,6 @@ describe('parseLink', () => {
         path: 'attributes.ST.value',
         desc: 'Some description',
         blindroll: false,
-        melee: '',
         target: '12',
       })
       expect(result.text).toEqual(
@@ -733,8 +737,6 @@ describe('parseLink', () => {
         attrkey: 'HT',
         name: 'HT',
         blindroll: false,
-        desc: '+@margin ',
-        melee: '',
         mod: '+@margin',
         path: 'attributes.HT.value',
       })
@@ -753,7 +755,6 @@ describe('parseLink', () => {
         name: 'HT',
         blindroll: false,
         desc: 'description',
-        melee: '',
         path: 'attributes.HT.value',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT description'>HT description</span>"))
@@ -811,14 +812,10 @@ describe('parseLink', () => {
         attribute: 'HT',
         attrkey: 'HT',
         blindroll: false,
-        desc: '',
-        melee: '',
         next: {
           attribute: 'DX',
           attrkey: 'DX',
           blindroll: false,
-          desc: '',
-          melee: '',
           orig: 'DX',
           path: 'attributes.DX.value',
           spantext: 'DX ',
@@ -841,8 +838,6 @@ describe('parseLink', () => {
         attribute: 'HT',
         attrkey: 'HT',
         blindroll: false,
-        desc: '',
-        melee: '',
         orig: 'HT | Somthing else',
         path: 'attributes.HT.value',
         spantext: 'HT ',
@@ -859,9 +854,7 @@ describe('parseLink', () => {
         attribute: 'IQ',
         attrkey: 'IQ',
         blindroll: false,
-        desc: '',
         falsetext: 'No Clue',
-        melee: '',
         orig: 'IQ-2 ? "Idea!", "No Clue"',
         path: 'attributes.IQ.value',
         spantext: 'IQ -2 ',
@@ -881,9 +874,7 @@ describe('parseLink', () => {
         attribute: 'HT',
         attrkey: 'HT',
         blindroll: false,
-        desc: '',
         falsetext: 'Fall asleep',
-        melee: '',
         orig: 'HT ? "Awake" : "Fall asleep"',
         path: 'attributes.HT.value',
         spantext: 'HT ',
@@ -901,8 +892,6 @@ describe('parseLink', () => {
         attribute: 'IQ',
         attrkey: 'IQ',
         blindroll: false,
-        desc: '',
-        melee: '',
         orig: 'IQ ? "Idea!"',
         path: 'attributes.IQ.value',
         spantext: 'IQ ',
@@ -1074,11 +1063,11 @@ describe('parseLink', () => {
         mod: '+1',
         name: '',
         orig: "Sp:'' +1 Description",
-        spantext: "<b>Sp:</b> +1 Description",
+        spantext: '<b>Sp:</b> +1 Description',
         type: 'skill-spell',
       })
       expect(result.text).toEqual(
-        expect.stringContaining("data-otf='Sp: +1 Description'><b>Sp:</b> +1 Description</span>")
+        expect.stringContaining("data-otf='Sp:'' +1 Description'><b>Sp:</b>+1 Description</span>")
       )
     })
 
@@ -1299,7 +1288,6 @@ describe('parseLink', () => {
           attrkey: 'IQ',
           blindroll: false,
           desc: 'default',
-          melee: '',
           mod: '-6',
           name: 'IQ',
           orig: 'IQ -6 default',
@@ -1333,7 +1321,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: false,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
@@ -1349,7 +1336,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: false,
-        mod: '',
         name: 'Broadsword (Swung)',
         orig: input,
         type: 'attack',
@@ -1367,7 +1353,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
@@ -1384,7 +1369,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
@@ -1403,7 +1387,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
@@ -1422,7 +1405,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
@@ -1441,7 +1423,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
@@ -1460,18 +1441,17 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         blindroll: false,
         // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
-        costs: '*Costs 1 tr(',
+        costs: '*Costs 1 tr("Control Points")',
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
       })
       expect(result.text).toEqual(
         expect.stringContaining(
-          'data-otf=\'A:Broadsword *Costs 1 tr("Control Points")\'><b>A:</b>Broadsword *Costs 1 tr(</span> "Control Points"'
+          'data-otf=\'A:Broadsword *Costs 1 tr("Control Points")\'><b>A:</b>Broadsword *Costs 1 tr("Control Points")</span> "Control Points")'
         )
       )
     })
@@ -1483,18 +1463,17 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         blindroll: false,
         // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
-        costs: '*Costs 1 tr(Control',
+        costs: '*Costs 1 tr(Control Points)',
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
       })
       expect(result.text).toEqual(
         expect.stringContaining(
-          "data-otf='A:Broadsword *Costs 1 tr(Control Points)'><b>A:</b>Broadsword *Costs 1 tr(Control</span> Points"
+          "data-otf='A:Broadsword *Costs 1 tr(Control Points)'><b>A:</b>Broadsword *Costs 1 tr(Control Points)</span> Points)"
         )
       )
     })
@@ -1506,18 +1485,17 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         blindroll: false,
         // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
-        costs: '*Costs 1 tr(Control',
+        costs: '*Costs 1 tr(Control*Points)',
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'attack',
       })
       expect(result.text).toEqual(
         expect.stringContaining(
-          "data-otf='A:Broadsword *Costs 1 tr(Control*Points)'><b>A:</b>Broadsword *Costs 1 tr(Control</span> *Points)"
+          "data-otf='A:Broadsword *Costs 1 tr(Control*Points)'><b>A:</b>Broadsword *Costs 1 tr(Control*Points)</span> *Points)"
         )
       )
     })
@@ -1661,7 +1639,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: false,
-        mod: '',
         name: 'Broadsword',
         orig: input,
         type: 'weapon-parry',
@@ -1677,7 +1654,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: false,
-        mod: '',
         name: 'Shield',
         orig: input,
         type: 'weapon-block',
@@ -1694,7 +1670,6 @@ describe('parseLink', () => {
         desc: '',
         isMelee: true,
         isRanged: true,
-        mod: '',
         name: 'Throwing',
         orig: input,
         type: 'attack',
@@ -1766,7 +1741,7 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='?AD:Broadsword'>?AD:Broadsword</span>"))
     })
 
-    test.skip('#!?AT:Broadsword', () => {
+    test('#!?AT:Broadsword', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
@@ -1802,160 +1777,9 @@ describe('parseLink', () => {
       expect(result.text).toEqual(expect.stringContaining("data-otf='?SP:Broadsword'>?SP:Broadsword</span>"))
     })
 
-    // TODO This test should fail.
     test('#!?AK:Broadsword', () => {
       const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'AK',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?AK:Broadsword'>?AK:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?AP:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'AP',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?AP:Broadsword'>?AP:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?MD:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'MD',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?MD:Broadsword'>?MD:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?MT:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'MT',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?MT:Broadsword'>?MT:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?MK:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'MK',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?MK:Broadsword'>?MK:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?MP:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'MP',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?MP:Broadsword'>?MP:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?RD:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'RD',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?RD:Broadsword'>?RD:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?RT:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'RT',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?RT:Broadsword'>?RT:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?RK:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'RK',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?RK:Broadsword'>?RK:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?RP:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'RP',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?RP:Broadsword'>?RP:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?SD:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'SD',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?SD:Broadsword'>?SD:Broadsword</span>"))
-    })
-
-    // TODO This test should fail.
-    test('#!?ST:Broadsword', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        name: 'Broadsword',
-        orig: input,
-        prefix: 'ST',
-        type: 'test-exists',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='?ST:Broadsword'>?ST:Broadsword</span>"))
+      expect(result.action).toBeUndefined()
     })
   })
 
