@@ -831,7 +831,8 @@ ul#result-effects li {
 
 #npc-sheet .field select,
 #combat-sheet .field select,
-#sheet .field select {
+#sheet .field select,
+#sheet-tab .field select {
   height: min-content;
   margin: 0;
   width: 100%;
@@ -839,16 +840,26 @@ ul#result-effects li {
   cursor: pointer;
 }
 
-#editorsheet select#move-mode,
-#combat-sheet select#move-mode,
-#sheet select#move-mode {
+#encumbrance .header select#move-mode,
+#encumbrance .header button#edit-move-modes {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 90%;
+  margin: 2px 0;
+  border: 1px solid var(--color-border-light-tertiary);
+}
+
+#encumbrance #edit-move-modes {
+  padding-bottom: 1px;
+  color: white;
+  line-height: unset;
   width: unset;
+  /* border: none; */
+  font-size: 90%;
 }
 
 #editorsheet .field select {
   height: min-content;
-  /* background-color: transparent; */
-  /* border: none; */
   padding: 0 1em 0 0;
   margin: 0;
   width: 100%;
@@ -1279,10 +1290,10 @@ active-effects-list .section h3 {
 #location .dr button {
   font-size: var(--font-size-small);
   max-height: fit-content;
-  width: auto;
+  width: 1.5rem;
   padding: 0 3px;
   line-height: unset;
-  height: calc(var(--form-field-height) + 1px);
+  height: 1.5rem;
 }
 
 #editorsheet #condition .fieldblock button#edit-move-modes,
