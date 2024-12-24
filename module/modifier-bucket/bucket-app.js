@@ -246,7 +246,7 @@ class ModifierStack {
    * @param {string} reason
    * @param {string} mod
    */
-  add(mod, reason, replace = false) {
+  add(mod, reason = '', replace = false) {
     this._add(this.modifierList, mod, reason, replace)
     this.sum()
   }
@@ -256,14 +256,13 @@ class ModifierStack {
    * @param {string} mod
    * @param {string} reason
    */
-  _add(list, mod, reason, replace = false) {
+  _add(list, mod, reason = '', replace = false) {
     /** @type {Modifier|undefined} */
     var oldmod
     reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc == reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
-      if (replace)
-        list.splice(i, 1) // only used by range modifier
+      if (replace) list.splice(i, 1) // only used by range modifier
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
     let m = (mod + '').match(/([+-])?@margin/i)
