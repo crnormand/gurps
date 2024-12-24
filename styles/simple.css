@@ -244,10 +244,10 @@
 .rollable:hover {
   cursor: pointer;
   text-decoration: none;
-  background-color: rgb(225, 225, 26) !important;
+  background-color: gold !important;
   color: black;
-  border-right: 1px solid #333300 !important;
-  border-bottom: 1px solid #333300 !important;
+  /* border-right: 1px solid #333300 !important; */
+  /* border-bottom: 1px solid #333300 !important; */
   border-radius: 3px;
   overflow: visible;
   z-index: 99;
@@ -292,10 +292,10 @@
   cursor: pointer;
   text-decoration: none;
   background-image: none;
-  background-color: rgb(255, 190, 130) !important;
+  background-color: orange !important;
   color: black;
-  border-right: 1px solid rgb(128, 95, 65) !important;
-  border-bottom: 1px solid rgb(128, 95, 65) !important;
+  /* border-right: 1px solid rgb(128, 95, 65) !important; */
+  /* border-bottom: 1px solid rgb(128, 95, 65) !important; */
   border-radius: 3px;
 }
 
@@ -474,15 +474,15 @@
 .gurpslink:hover {
   cursor: pointer;
   text-decoration: none;
-  background-color: rgb(255, 255, 128) !important;
+  background-color: gold !important;
   color: black;
-  padding: 2px 3px;
-  border-top: 1px solid #cccccc;
-  border-right: 1px solid #333333;
-  border-bottom: 1px solid #333333;
-  border-left: 1px solid #cccccc;
+  /* padding: 2px 3px; */
+  /* border-top: 1px solid #cccccc; */
+  /* border-right: 1px solid #333333; */
+  /* border-bottom: 1px solid #333333; */
+  /* border-left: 1px solid #cccccc; */
   border-radius: 3px;
-  margin: -2px -4px -2px -6px;
+  /* margin: -2px -4px -2px -6px; */
   overflow: visible;
   z-index: 99;
 }
@@ -914,7 +914,7 @@
 .fieldblock .label-field-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items:center;
+  align-items: center;
 }
 
 #combat-tab .fieldblock .label-field-pair {
@@ -1410,7 +1410,8 @@ div#other {
   max-width: 50%;
 }
 
-#sheet-tab #advantages, #sheet-tab #skills {
+#sheet-tab #advantages,
+#sheet-tab #skills {
   max-width: unset;
 }
 
@@ -2258,7 +2259,7 @@ div#other {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: .75rem;
+  bottom: 0.75rem;
   height: 1.75em; /* Adjust the height of the stripe */
   background-color: lightgray; /* Set the color of the stripe */
   z-index: 1;
