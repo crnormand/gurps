@@ -83,7 +83,12 @@ export async function doRoll({
   let result = { canRoll: true }
   let token
   if (actor instanceof Actor && action) {
-    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === actor.id) || []
+    const actorTokens =
+      canvas.tokens.placeables.filter(t => {
+        if (t.actor) return t.actor.id === actor.id
+        ui.notifications?.warn(`Token is not linked to an actor [${t.id}]`)
+        return false
+      }) || []
     if (actorTokens.length === 1) {
       token = actorTokens[0]
     } else {
@@ -107,8 +112,9 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
+    // TODO This is clearing the bucket before adding the modifiers in the bucket.
     await GURPS.ModifierBucket.clear()
-    if (action.mod) {
+    if (action?.mod) {
       GURPS.ModifierBucket.addModifier(action.mod, 'from action')
     }
     const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)

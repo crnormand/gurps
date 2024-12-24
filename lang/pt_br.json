@@ -854,7 +854,7 @@
   "GURPS.settingHintConvertRanged": "Se marcado, os campos de distância na forma 'xN' ou 'xN/xM' serão multiplicados pela ST do personagem para determinar a distância real para uma arma de arremesso. NOTA: Isto só acontece numa importação.",
   "GURPS.settingShowDiceRoller": "IU: Exibir 3D6 (Próximo ao Balde de Modificadores)",
   "GURPS.settingHintShowDiceRoller": "Se marcado, o sistema vai exibir o atalho de rolagem de dados à direita do Balde de Modificadores. Você deve recarregar o Foundry para essa configuração entrar em efeito.",
-  "GURPS.settingCombatInitiative": "Combate: Fórmula de Iniciativa",
+  "GURPS.settingCombatInitiative": "Combate: Fórmula da Sequência de Turnos",
   "GURPS.settingHintCombatInitiative": "Trata-se da fórmula utilizada pelo Foundry para determinar a ordem dos turnos no combate. Aviso: Só mude isto se você souber o que está fazendo! Nós não avaliamos o que está aqui para determinar se está correto ou não. Deixe este campo em branco para redefinir a fórmula para a Sequência de Combate do GURPS, B362.",
   "GURPS.settingDamageRestrictADD": "Dano: Restringir JAD para o MJ",
   "GURPS.settingHintDamageRestrictADD": "Se marcado, só o MJ pode visualizar/utilizar a Janela de Avaliação de Dano. Jogadores de arrastarem e soltarem dano receberão uma mensagem.",

@@ -923,7 +923,7 @@
   "GURPS.settingHintConvertRanged": "If checked, range fields in the form 'xN' or 'xN/xM' will be multiplied by the character's ST to determine the actual range for a thrown weapon. NOTE: This only occurs during import.",
   "GURPS.settingShowDiceRoller": "UI: Show 3D6 (next to Modifier Bucket)",
   "GURPS.settingHintShowDiceRoller": "If checked, the system will display the dice roller shortcut to the right of the Modifier Bucket. You must reload for this change to take effect.",
-  "GURPS.settingCombatInitiative": "Combat: Initiative Formula",
+  "GURPS.settingCombatInitiative": "Combat: Turn Sequence Formula",
   "GURPS.settingHintCombatInitiative": "This is the formula used by Foundry to determine turn order in combat. Warning: Only change this if you know what you are doing! We do not parse this for correctness. Set this field blank to reset the formula back to the GURPS Combat Turn Sequence, B362.",
   "GURPS.settingDamageRestrictADD": "Damage: Restrict ADD to GM",
   "GURPS.settingHintDamageRestrictADD": "If checked, only GMs can view/use the Apply Damage Dialog. Players who drag and drop damage will just receive a message.",

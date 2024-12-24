@@ -726,7 +726,7 @@
   "GURPS.settingHintConvertRanged": "Wenn diese Option aktiviert ist, werden Reichweiten in der Form 'xN' oder 'xN/xM' mit der ST des Charakters multipliziert, um die tatsächliche Reichweite für eine geworfene Waffe zu bestimmen. HINWEIS: Dies geschieht nur während des Imports.",
   "GURPS.settingShowDiceRoller": "UI: Zeige 3W6 (neben dem Modifier Bucket)",
   "GURPS.settingHintShowDiceRoller": "Wenn diese Option aktiviert ist, zeigt das System Würfel rechts neben dem Modifier Bucket an. Muß neu laden, damit diese Änderung wirksam wird.",
-  "GURPS.settingCombatInitiative": "Kampf: Initiative Formel",
+  "GURPS.settingCombatInitiative": "Kampf: Zugreihenfolge Formel",
   "GURPS.settingHintCombatInitiative": "Dies ist die Formel, die von Foundry verwendet wird, um die Zugreihenfolge im Kampf zu bestimmen. Achtung! Ändere dies nur, wenn Du weist, was Du tust!  Dies wird nicht auf Korrektheit überprüft. Dieses Feld leer lassen, um die Formel auf die GURPS Combat Turn Sequence, B362, zurückzusetzen.",
   "GURPS.settingDamageRestrictADD": "Schaden: Beschränke Schadensdialog (ADD) auf SL",
   "GURPS.settingHintDamageRestrictADD": "Wenn diese Option aktiviert ist, kann nur die Spielleitung den Dialog 'Schadensdialog' sehen/benutzen. Spieler, die Schaden zuteilen, erhalten lediglich eine Nachricht.",

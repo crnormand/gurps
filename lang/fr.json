@@ -819,7 +819,7 @@
   "GURPS.settingHintConvertRanged": "Si coché, les champs de portée sous la forme 'xN' ou 'xN/xM' seront multipliés par la F du personnage pour déterminer la portée actuelle pour une arme lancée. NOTE: Cela arrive uniquement pendant l'importe.",
   "GURPS.settingShowDiceRoller": "UI: Montrer 3D6 (A côté de la Réserve de Modificateurs)",
   "GURPS.settingHintShowDiceRoller": "Si coché, le système affichera le raccourci de lancer de dé à droite de la Réserve de Modificateurs. Vous devez recharger pour que la modification prenne effet.",
-  "GURPS.settingCombatInitiative": "Combat: Formule d'Initiative",
+  "GURPS.settingCombatInitiative": "Combat: Formule de Séquence de Tour",
   "GURPS.settingHintCombatInitiative": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
   "GURPS.settingDamageRestrictADD": "Dégâts: Restreindre ADD au MJ",
   "GURPS.settingHintDamageRestrictADD": "Si coché, seuls les MJs peuvent voir/utiliser la fenêtre d'Application Des Dégâts. Les joueurs qui glissent-déposent des dégâts recevront juste un message.",
