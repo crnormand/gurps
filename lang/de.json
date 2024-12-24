@@ -949,6 +949,7 @@
   "GURPS.equipmentOther": "Weitere Ausrüstung",
   "GURPS.equipmentUserCreated": "Benutzer-erstellt",
   "GURPS.equipmentIgnoreQtyImport": "Beim Importieren wird die Menge nicht aktualisiert.",
+  "GURPS.ignoreImportQtyLabel": "Menge beibehalten",
   "GURPS.showFlightMove": "Zeige Bewegung/Flug-Bewegung",
   "GURPS.rt": "RA",
   "GURPS.thresholds": "Schwellenwerte",

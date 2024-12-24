@@ -233,11 +233,11 @@ export class GurpsItemSheet extends ItemSheet {
   }
   get isContainer() {
     return (
-      Object.keys(this.item.system.melee).length > 0 ||
-      Object.keys(this.item.system.ranged).length > 0 ||
-      Object.keys(this.item.system.skills).length > 0 ||
-      Object.keys(this.item.system.spells).length > 0 ||
-      Object.keys(this.item.system.ads).length > 0
+      Object.keys(this.item.system.melee || {}).length > 0 ||
+      Object.keys(this.item.system.ranged || {}).length > 0 ||
+      Object.keys(this.item.system.skills || {}).length > 0 ||
+      Object.keys(this.item.system.spells || {}).length > 0 ||
+      Object.keys(this.item.system.ads || {}).length > 0
     )
   }
 }

@@ -976,6 +976,7 @@ export class Equipment extends Named {
     /** @type {{ [key: string]: any }} */
     this.contains = {}
     this.itemInfo = {}
+    this.originalCount = ''
   }
 
   /**
@@ -1070,6 +1071,8 @@ export class Equipment extends Named {
           uuid: uniqueId,
           location: this.location,
           parentuuid: this.parentuuid,
+          ignoreImportQty: this.ignoreImportQty,
+          originalCount: this.originalCount,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},
