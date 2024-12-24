@@ -1082,7 +1082,11 @@ export class ActorImporter {
         eqt.uuid = t(j.uuid)
         eqt.parentuuid = parentuuid
         eqt.setNotes(t(j.notes))
-        eqt.weight = !!parentuuid ? t(j.weightsum) : 0 // GCA sends calculated weight in 'weightsum'
+        
+        // TODO determine if we need the parentuuid in order to import weight
+        // eqt.weight = !!parentuuid ? t(j.weightsum) : 0 // GCA sends calculated weight in 'weightsum'
+        eqt.weight = t(j.weightsum) ?? 0
+        
         eqt.pageRef(t(j.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)

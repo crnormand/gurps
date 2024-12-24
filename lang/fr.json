@@ -18,6 +18,9 @@
         "created": "Créé",
         "modified": "Modifié"
       },
+      "tabSheet": {
+        "tabs": "ONGLETS"
+      },
       "gcs": {
         "copyright": "GCS is une marque déposée (1998-2024) par Richard A. Wilkes. Tous droits réservés."
       },
@@ -816,7 +819,7 @@
   "GURPS.settingHintConvertRanged": "Si coché, les champs de portée sous la forme 'xN' ou 'xN/xM' seront multipliés par la F du personnage pour déterminer la portée actuelle pour une arme lancée. NOTE: Cela arrive uniquement pendant l'importe.",
   "GURPS.settingShowDiceRoller": "UI: Montrer 3D6 (A côté de la Réserve de Modificateurs)",
   "GURPS.settingHintShowDiceRoller": "Si coché, le système affichera le raccourci de lancer de dé à droite de la Réserve de Modificateurs. Vous devez recharger pour que la modification prenne effet.",
-  "GURPS.settingCombatInitiative": "Combat: Formule d'Initiative",
+  "GURPS.settingCombatInitiative": "Combat: Formule de Séquence de Tour",
   "GURPS.settingHintCombatInitiative": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
   "GURPS.settingDamageRestrictADD": "Dégâts: Restreindre ADD au MJ",
   "GURPS.settingHintDamageRestrictADD": "Si coché, seuls les MJs peuvent voir/utiliser la fenêtre d'Application Des Dégâts. Les joueurs qui glissent-déposent des dégâts recevront juste un message.",
@@ -958,7 +961,7 @@
   "GURPS.combatTab": "Combat",
   "GURPS.concentrationCheck": "Jet Concentration",
   "GURPS.condition": "Etat",
-  "GURPS.conditions": "Etats",
+  "GURPS.conditions": "Statuts",
   "GURPS.crippling": "Blessure Handicapante",
   "GURPS.current": "Actuel",
   "GURPS.currentdodge": "Esquive",
@@ -1258,8 +1261,8 @@
   "GURPS.traitCombatReflexes": "Réflexes de Combat",
   "GURPS.traitWeaponMaster": "Maître d'Armes",
   "GURPS.parryBasePenalty": "Pénalité de base pour parer",
-  "GURPS.maxActionsPerTurn": "Actions maximales par tour",
-  "GURPS.maxBlocksPerTurn": "Parades maximales par tour",
+  "GURPS.maxActionsPerTurn": "Actions par tour",
+  "GURPS.maxBlocksPerTurn": "Parades par tour",
   "GURPS.settingAllowAfterMaxActions": "Autoriser une action après le maximum d'actions",
   "GURPS.settingHintAllowAfterMaxActions": "Si coché, le système permettra au joueur de faire une action après le maximum d'actions par tour.",
   "GURPS.forbidMaxActionsReached": "Vous avez atteint le nombre maximum d'actions disponibles ce tour.",
@@ -1276,5 +1279,16 @@
   "GURPS.toDefenseBonus": "au Bonus de Défense",
   "GURPS.toDefensePenalty": "à la Pénalité de Défense",
   "GURPS.removedShockEffect": "Effet de choc retiré au tour suivant.",
-  "GURPS.addedShockEffect": "Effet de choc ajouté au tour suivant."
+  "GURPS.addedShockEffect": "Effet de choc ajouté au tour suivant.",
+  "GURPS.removeShockAtNextTurnEffect": "Effet de choc supprimé au prochain tour.",
+  "GURPS.addShockAtNextTurnEffect": "Effet de choc ajouté au prochain tour.",
+  "GURPS.removeShockImmediatelyEffect": "Effet de choc supprimé sur la cible.",
+  "GURPS.addShockImmediatelyEffect": "Effet de choc ajouté sur la cible.",
+  "GURPS.settingAddShockAtTurn": "Quand ajouter l'effet de choc",
+  "GURPS.settingHintAddShockAtTurn": "Quand ajouter l'effet de choc sur la cible.",
+  "GURPS.immediately": "Immédiatement",
+  "GURPS.atNextTurn": "Au prochain tour",
+  "GURPS.removestunEffect": "Effet d'étourdissement supprimé sur la cible.",
+  "GURPS.addstunEffect": "Effet d'étourdissement ajouté sur la cible.",
+  "GURPS.addedShockAtNextTurnEffect": "Effet de choc ajouté au prochain tour."
 }

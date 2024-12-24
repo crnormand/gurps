@@ -320,40 +320,74 @@ export class CompositeDamageCalculator {
   }
 
   async addEffectsContext() {
-    const defenderToken = canvas.tokens.get(this._defender.token.id)
+    let tokenId = this._defender.token?.id
+    if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this._defender).id
+    const defenderToken = canvas.tokens.get(tokenId)
     const actions = await TokenActions.fromToken(defenderToken)
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
-        isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
+        const applyAt = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ADD_SHOCK_AT_TURN)
+        if (applyAt === 'AtNextTurn') {
+          isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
+        } else {
+          isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === `${effect.type}${effect.amount}`))
+        }
         return {
           ...effect,
-          isReady,
-          spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-          effectTitle: isReady ? i18n('GURPS.removeShockEffect') : i18n('GURPS.addShockEffect'),
+          buttons: [
+            {
+              ...effect,
+              actorId: this._defender.id,
+              isReady,
+              spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+              effectTitle: isReady ? i18n(`GURPS.removeShock${applyAt}Effect`) : i18n(`GURPS.addShock${applyAt}Effect`),
+            },
+          ],
         }
       } else {
         switch (effect.type) {
           case 'headvitalshit':
           case 'majorwound':
-            isReady =
-              defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun')) &&
-              defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun'))
+            const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
               ...effect,
-              isReady,
-              spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-              effectTitle: isReady ? i18n('GURPS.removepronestunEffect') : i18n('GURPS.addpronestunEffect'),
               testTitle: i18n('GURPS.saveRollforEffect'),
+              buttons: [
+                {
+                  ...effect,
+                  actorId: this._defender.id,
+                  stunIsReady,
+                  effectName: 'stun',
+                  spanClass: stunIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+                  effectTitle: stunIsReady ? i18n('GURPS.removestunEffect') : i18n('GURPS.addstunEffect'),
+                },
+                {
+                  ...effect,
+                  actorId: this._defender.id,
+                  proneIsReady,
+                  effectName: 'prone',
+                  spanClass: proneIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+                  effectTitle: proneIsReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+                },
+              ],
             }
           case 'knockback':
             isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
               ...effect,
-              isReady,
-              spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-              effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
               testTitle: i18n('GURPS.saveRollforEffect'),
+              buttons: [
+                {
+                  ...effect,
+                  actorId: this._defender.id,
+                  isReady,
+                  effectName: 'prone',
+                  spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+                  effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+                },
+              ],
             }
         }
       }
@@ -648,7 +682,7 @@ export class CompositeDamageCalculator {
 
   set damageReductionLevel(value) {
     if (value === null) this._useDamageReduction = false
-    if (!!value && value < 2) value = 2
+    if (!!value && value < 1) value = 1
     this._damageReductionLevel = value
   }
 

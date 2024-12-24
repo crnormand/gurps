@@ -26,7 +26,7 @@ export const rollData = target => {
 /**
  * Recalculate the formula based on Modifier Bucket total.
  *
- * Formula examples: 2d+2, 1d-1, 3d6, 1d-2
+ * Formula examples: 2d+2, 1d-1, 3d6, 1d-2. (Must also handle literal damage, such as '13').
  * Can use the optional rule (B269) to round damage: +7 points = +2d and +4 points = +1d
  *
  * @param {string} formula
@@ -34,11 +34,23 @@ export const rollData = target => {
  * @returns {string}
  */
 export const addBucketToDamage = (formula, addDamageType = true) => {
-  let dice = parseInt(formula.match(/(\d+)d/)?.[1] || 1)
+  let dice = undefined
+  let value = undefined
+  if (formula.match(/^(?<dice>\d+)d/)) {
+    dice = parseInt(formula.match(/^(?<dice>\d+)d/).groups.dice)
+  } else if (formula.match(/^(?<number>\d+)/)) {
+    value = parseInt(formula.match(/^(?<number>\d+)/).groups.number)
+  }
+
   const add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
   const damageType = formula.match(/\d\s(.+)/)?.[1] || ''
   const bucketMod = GURPS.ModifierBucket.currentSum()
   let newAdd = add + bucketMod
+
+  if (!dice && value) {
+    return `${value + newAdd} ${addDamageType ? damageType : ''}`.trim()
+  }
+
   if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)) {
     while (newAdd >= 7) {
       newAdd -= 7
@@ -71,7 +83,12 @@ export async function doRoll({
   let result = { canRoll: true }
   let token
   if (actor instanceof Actor && action) {
-    const actorTokens = canvas.tokens.placeables.find(t => t.actor.id === actor.id) || []
+    const actorTokens =
+      canvas.tokens.placeables.filter(t => {
+        if (t.actor) return t.actor.id === actor.id
+        ui.notifications?.warn(`Token is not linked to an actor [${t.id}]`)
+        return false
+      }) || []
     if (actorTokens.length === 1) {
       token = actorTokens[0]
     } else {
@@ -95,6 +112,11 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
+    // TODO This is clearing the bucket before adding the modifiers in the bucket.
+    await GURPS.ModifierBucket.clear()
+    if (action?.mod) {
+      GURPS.ModifierBucket.addModifier(action.mod, 'from action')
+    }
     const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
     if (isDamageRoll) {
       displayFormula = addBucketToDamage(formula)
@@ -231,8 +253,8 @@ export async function doRoll({
             rollType = !!targetData?.name
               ? targetData.name
               : thing
-                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
-                : formula
+              ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+              : formula
         }
         break
       default:
@@ -241,7 +263,7 @@ export async function doRoll({
         rollType = thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1) : formula
     }
 
-    const { targetColor, rollChance } = rollData(origtarget)
+    const { targetColor, rollChance } = rollData(totalRoll)
 
     let doRollResult
     // Before open a new dialog, we need to make sure

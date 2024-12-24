@@ -20,6 +20,9 @@
         "modified": "Изменён",
         "options": "Настройки"
       },
+      "tabSheet": {
+        "tabs": "ВКЛАДКИ"
+      },
       "gcs": {
         "copyright": "Права на GCS принадлежат Richard A. Wilkes, 1998-2024. Все права защищены."
       }
@@ -646,8 +649,8 @@
   "GURPS.traitCombatReflexes": "Боевые Рефлексы",
   "GURPS.traitWeaponMaster": "Мастер Оружия",
   "GURPS.parryBasePenalty": "Базовый штраф за парирование",
-  "GURPS.maxActionsPerTurn": "Максимальное количество действий за раунд",
-  "GURPS.maxBlocksPerTurn": "Максимальное количество блоков за раунд",
+  "GURPS.maxActionsPerTurn": "Действий за ход",
+  "GURPS.maxBlocksPerTurn": "Блоков за ход",
   "GURPS.settingAllowAfterMaxActions": "Разрешить действие после максимального количества действий",
   "GURPS.settingHintAllowAfterMaxActions": "Если отмечено, система позволит игроку выполнить действие после достижения максимального количества действий за раунд.",
   "GURPS.forbidMaxActionsReached": "Вы достигли максимального доступного количества действий в этом раунде.",
@@ -663,6 +666,18 @@
   "GURPS.saveRollforEffect": "Сохранить бросок, чтобы избежать эффектов.",
   "GURPS.toDefenseBonus": "Бонус к защите",
   "GURPS.toDefensePenalty": "Штраф к защите",
-  "GURPS.removedShockEffect": "Эффект шока удален в следующем раунде.",
-  "GURPS.addedShockEffect": "Эффект шока добавлен в следующем раунде."
+  "GURPS.removeShockAtNextTurnEffect": "Эффект шока удален в следующем раунде.",
+  "GURPS.addShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
+  "GURPS.removeShockImmediatelyEffect": "Эффект шока удален на цели.",
+  "GURPS.addShockImmediatelyEffect": "Эффект шока добавлен на цели.",
+  "GURPS.removedShockImmediatelyEffect": "Эффект шока удален на цели.",
+  "GURPS.addedShockImmediatelyEffect": "Эффект шока добавлен на цели.",
+  "GURPS.settingAddShockAtTurn": "Когда добавлять эффект шока",
+  "GURPS.settingHintAddShockAtTurn": "Когда добавлять эффект шока на цели.",
+  "GURPS.immediately": "Немедленно",
+  "GURPS.atNextTurn": "В следующем раунде",
+  "GURPS.removestunEffect": "Эффект оглушения удален на цели.",
+  "GURPS.addstunEffect": "Эффект оглушения добавлен на цели.",
+  "GURPS.addedShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
+  "GURPS.removedShockEffect": "Эффект шока удален на цели."
 }

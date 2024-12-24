@@ -4,11 +4,15 @@
   "description": "NaN's GURPS Game Aid",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
+    "tdd": "jest --coverage",
     "handlebars": "handlebars"
   },
   "devDependencies": {
-    "jest": "^26.6.3",
-    "handlebars": "^4.7.7"
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-jest": "^29.7.0",
+    "handlebars": "^4.7.7",
+    "jest": "^29.7.0"
   }
 }

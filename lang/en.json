@@ -23,6 +23,9 @@
         "copyright": "GCS is copyrighted 1998-2024 by Richard A. Wilkes. All rights reserved."
       }
     },
+    "tabSheet": {
+      "tabs": "TABS"
+    },
     "modifiers": {
       "aim": "to hit (Aim)",
       "allOutAim": "to Aiming (All-Out Aim)",
@@ -920,7 +923,7 @@
   "GURPS.settingHintConvertRanged": "If checked, range fields in the form 'xN' or 'xN/xM' will be multiplied by the character's ST to determine the actual range for a thrown weapon. NOTE: This only occurs during import.",
   "GURPS.settingShowDiceRoller": "UI: Show 3D6 (next to Modifier Bucket)",
   "GURPS.settingHintShowDiceRoller": "If checked, the system will display the dice roller shortcut to the right of the Modifier Bucket. You must reload for this change to take effect.",
-  "GURPS.settingCombatInitiative": "Combat: Initiative Formula",
+  "GURPS.settingCombatInitiative": "Combat: Turn Sequence Formula",
   "GURPS.settingHintCombatInitiative": "This is the formula used by Foundry to determine turn order in combat. Warning: Only change this if you know what you are doing! We do not parse this for correctness. Set this field blank to reset the formula back to the GURPS Combat Turn Sequence, B362.",
   "GURPS.settingDamageRestrictADD": "Damage: Restrict ADD to GM",
   "GURPS.settingHintDamageRestrictADD": "If checked, only GMs can view/use the Apply Damage Dialog. Players who drag and drop damage will just receive a message.",
@@ -1175,7 +1178,7 @@
   "GURPS.combatTab": "Combat",
   "GURPS.concentrationCheck": "Concentration check",
   "GURPS.condition": "Condition",
-  "GURPS.conditions": "Conditions",
+  "GURPS.conditions": "Status",
   "GURPS.crippling": "Crippling Injury, ",
   "GURPS.current": "Current",
   "GURPS.currentdodge": "Dodge",
@@ -1404,8 +1407,8 @@
   "GURPS.modifierSuffocate": "Lost 1 FP per turn from suffocation.",
   "GURPS.rangeToTarget": "{modifier} range to target {name} ({distance} {unit})",
   "GURPS.parryBasePenalty": "Parry base penalty",
-  "GURPS.maxActionsPerTurn": "Max Actions per Round",
-  "GURPS.maxBlocksPerTurn": "Max Blocks per Round",
+  "GURPS.maxActionsPerTurn": "Actions per Turn",
+  "GURPS.maxBlocksPerTurn": "Blocks per Turn",
   "GURPS.settingAllowAfterMaxActions": "Allow Action after Max Actions",
   "GURPS.settingHintAllowAfterMaxActions": "If checked, the system will allow the player to make an action after the max actions per round.",
   "GURPS.forbidMaxActionsReached": "You reach the maximum available actions on this round.",
@@ -1421,6 +1424,16 @@
   "GURPS.saveRollforEffect": "Save Roll to avoid effects",
   "GURPS.toDefenseBonus": "to Defense Bonus",
   "GURPS.toDefensePenalty": "to Defense Penalty",
-  "GURPS.removedShockEffect": "Removed Shock effect on next round.",
-  "GURPS.addedShockEffect": "Added Shock effect on next round."
+  "GURPS.removeShockAtNextTurnEffect": "Remove Shock effect on next round.",
+  "GURPS.addShockAtNextTurnEffect": "Add Shock effect on next round.",
+  "GURPS.removeShockImmediatelyEffect": "Remove Shock effect on target.",
+  "GURPS.addShockImmediatelyEffect": "Add Shock effect on target.",
+  "GURPS.settingAddShockAtTurn": "When to add Shock effect",
+  "GURPS.settingHintAddShockAtTurn": "When to add Shock effect on target.",
+  "GURPS.immediately": "Immediately",
+  "GURPS.atNextTurn": "At Next Turn",
+  "GURPS.removestunEffect": "Remove Stun effect on target.",
+  "GURPS.addstunEffect": "Add Stun effect on target.",
+  "GURPS.addedShockAtNextTurnEffect": "Added Shock effect on next round.",
+  "GURPS.removedShockEffect": "Removed Shock effect on target."
 }

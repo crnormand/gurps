@@ -6,7 +6,7 @@
   --hotbar-control-width: 32px;
   --font-size-small: 90%;
   --font-size-smaller: 80%;
-  --font-family-icons: 'Font Awesome 6 Pro', Roboto, sans-serif;
+  --font-family-icons: Roboto, sans-serif, 'Font Awesome 6 Pro';
 }
 
 Global Override body {
@@ -351,15 +351,46 @@ Global Override body {
   text-align: center !important;
 }
 
+.gurps-label-field-grid-4 {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content 1fr;
+  grid-template-rows: auto;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.gurps-label-field-grid-4 .span-3 {
+  grid-column-end: span 3;
+}
+
+.gurps-label-field-grid-6 {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content 1fr max-content 1fr;
+  grid-template-rows: auto;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.gurps-label-field-grid-6 .span-5 {
+  grid-column-end: span 5;
+}
+
+.gurps-label-field-grid-4 label,
+.gurps-label-field-grid-6 label {
+  font-size: var(--font-size-smaller);
+  justify-self: stretch;
+  text-align: end;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding-right: 0.15em;
+  padding-left: 0.35em;
+}
+
 .gga-group .label-value-row {
   gap: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-}
-
-.gga-group .label-value-row > *:nth-child(4n + 3),
-.gga-group .label-value-row > *:nth-child(4n + 4) {
-  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .button-bar {
@@ -545,7 +576,7 @@ ul#result-effects li {
 
 .gga-chat-message .label-toggle {
   font-size: x-small;
-  font-family: var(--font-family-icons);
+  /* font-family: var(--font-family-icons); */
   padding: 0.25em;
   background-color: rgba(0, 0, 0, 0.5);
   margin-top: 4px;
@@ -630,12 +661,12 @@ ul#result-effects li {
 }
 
 .gga-app button.with-icon > i > span {
-  font-family: var(--font-family-icons);
+  /* font-family: var(--font-family-icons); */
   font-weight: 400;
 }
 
 .gga-app * {
-  font-family: Roboto, sans-serif;
+  font-family: Roboto, sans-serif, 'Font Awesome 6 Pro';
 }
 
 .gga-app .fa,
@@ -1343,28 +1374,22 @@ details .popup.square5x4 {
 }
 
 .equipmentbutton {
-  text-align: center;
-  line-height: 0.5;
-  font-size: inherit;
-  margin: 0;
-  height: 0.75rem;
-  min-width: 0.75rem;
-  flex: 0;
-  /*  border: 1px solid grey;  */
-  font-family: var(--font-family-icons);
-  padding: 0px 0px 0px 0px;
-  cursor: pointer;
+  color: lightgrey;
+}
+
+.equipmentbutton:not(.disabled):hover {
+  color: darkcyan;
 }
 
 .equipmentbutton.bold {
   font-weight: bold;
 }
 
-button.equipmentbutton:first-child {
+.equipmentbutton:first-child {
   margin-right: 0.5em;
 }
 
-button.equipmentbutton:last-child {
+.equipmentbutton:last-child {
   margin-left: 0.5em;
 }
 
@@ -2144,7 +2169,7 @@ button.equipmentbutton:last-child {
 }
 
 .modtooltip .modifier-row > div {
-  margin-bottom: 0.1m;
+  margin-bottom: 0.1em;
 }
 
 .modtooltip .modifier-row {
@@ -2201,6 +2226,15 @@ button.equipmentbutton:last-child {
 
 .gga-app .section {
   margin-top: 0.5em;
+}
+
+.modifier-list {
+  margin-bottom: 1px;
+}
+
+.modifier-list.me-info {
+  max-height: 100px;
+  overflow-x: auto;
 }
 
 .gga-chat-message .modifier-list li {
@@ -2906,7 +2940,7 @@ button.equipmentbutton:last-child {
   justify-content: left;
   align-items: center;
   margin-right: 10px;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   width: 100%;
 }
 
@@ -2916,6 +2950,10 @@ button.equipmentbutton:last-child {
 }
 .me-link.sm {
   font-size: 0.9em;
+}
+.modifier-list li {
+  margin: 2px 0;
+  padding: 1px;
 }
 .me-tag,
 .me-at {
