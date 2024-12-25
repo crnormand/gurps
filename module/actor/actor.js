@@ -2587,6 +2587,7 @@ export class GurpsActor extends Actor {
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
       item.type === 'equipment' &&
+      game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) &&
       !!item.system.eqt.originalCount &&
       !isNaN(item.system.eqt.originalCount) &&
       item.system.eqt.originalCount !== item.system.eqt.count
