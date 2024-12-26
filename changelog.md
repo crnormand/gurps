@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.17
+## Release 0.17.17-beta
 
 #### Features
 
@@ -11,6 +11,7 @@
 - Feature: Check Maneuver, Max Actions and Targets before Roll #2031
 - Feature: Add Maneuver's and Parry modifiers automatically before roll #2033
 - Feature: Improved support on Injury effects on Apply Damage Dialog #2034
+- Feature: Refactored Tabbed Sheet
 
 #### Bugfixes
 
