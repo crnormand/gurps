@@ -1104,6 +1104,7 @@
   "GURPS.equipmentOther": "Autre Equipement",
   "GURPS.equipmentUserCreated": "Créé par l'utilisateur",
   "GURPS.equipmentIgnoreQtyImport": "L'import ne met pas la quantité à jour.",
+  "GURPS.ignoreImportQtyLabel": "Conserver Qté",
   "GURPS.showFlightMove": "Montrer Mouvement/ Mouvement Vol",
   "GURPS.rt": "RT",
   "GURPS.thresholds": "Seuils",

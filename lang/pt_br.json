@@ -1145,6 +1145,7 @@
   "GURPS.equipmentOther": "Outros Equipamentos",
   "GURPS.equipmentUserCreated": "Criado pelo Usuário",
   "GURPS.equipmentIgnoreQtyImport": "Importar não atualiza a quantidade.",
+  "GURPS.ignoreImportQtyLabel": "Manter Qtde",
   "GURPS.showFlightMove": "Exibir Desloc./Desloc. Aéreo",
   "GURPS.rt": "CR",
   "GURPS.thresholds": "Limites",

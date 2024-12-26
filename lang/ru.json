@@ -679,5 +679,6 @@
   "GURPS.removestunEffect": "Эффект оглушения удален на цели.",
   "GURPS.addstunEffect": "Эффект оглушения добавлен на цели.",
   "GURPS.addedShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
-  "GURPS.removedShockEffect": "Эффект шока удален на цели."
+  "GURPS.removedShockEffect": "Эффект шока удален на цели.",
+  "GURPS.ignoreImportQtyLabel": "Сохранить кол-во"
 }

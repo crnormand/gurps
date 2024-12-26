@@ -112,11 +112,17 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
-    // TODO This is clearing the bucket before adding the modifiers in the bucket.
+    // We need to clear the bucket when user starts
+    // a new roll for an Actor/Token
+    // when dialog is still opened for another Actor
+    // TODO: do we need to handle fixed values on bucket, or
+    //   tagged modifiers can resolve this (a custom
+    //   combat tagged modifier like `-2 from curse #combat`)?
     await GURPS.ModifierBucket.clear()
-    if (action?.mod) {
-      GURPS.ModifierBucket.addModifier(action.mod, 'from action')
+    for (let mod of targetmods) {
+      GURPS.ModifierBucket.addModifier(mod.mod, mod.desc || 'from action')
     }
+    targetmods = []
     const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
     if (isDamageRoll) {
       displayFormula = addBucketToDamage(formula)
@@ -253,8 +259,8 @@ export async function doRoll({
             rollType = !!targetData?.name
               ? targetData.name
               : thing
-              ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
-              : formula
+                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+                : formula
         }
         break
       default:

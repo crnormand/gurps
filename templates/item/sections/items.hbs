@@ -35,8 +35,15 @@
     <input id='techlevel' type='text' value='{{system.eqt.techlevel}}' name='system.eqt.techlevel' />
     <span>{{i18n 'GURPS.TL'}}</span>
   </div>
-  <label></label>
-  <div></div>
+  <label>{{i18n 'GURPS.ignoreImportQtyLabel'}}</label>
+  <div>
+    <input
+          class='ignoreQtyImport'
+          name='system.eqt.ignoreImportQty'
+          type='checkbox'
+          {{checked system.eqt.ignoreImportQty}}
+        />
+  </div>
   <label>{{i18n 'GURPS.pdfPageReference'}}</label>
   <div class='icon-prefix'>
     <input id='pageref' type='text' value='{{system.eqt.pageref}}' name='system.eqt.pageref' />

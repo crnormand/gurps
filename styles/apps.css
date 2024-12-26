@@ -2645,6 +2645,7 @@ details .popup.square5x4 {
 .can-do-icon {
   color: rgba(250, 235, 215, 0.82);
 }
+.actor-sheet-icons,
 .maneuver-select-info {
   display: flex;
   flex-direction: row;

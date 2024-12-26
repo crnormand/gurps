@@ -1068,7 +1068,8 @@ export class ActorImporter {
         let eqt = new Equipment()
         eqt.name = name
         eqt.originalName = t(j.name)
-        eqt.count = t(j.count)
+        eqt.count = i(j.count)
+        eqt.originalCount = i(j.count)
         eqt.cost = !!parentuuid ? t(j.cost) : 0
         eqt.location = t(j.location)
         let cstatus = i(j.carried)
@@ -1082,11 +1083,11 @@ export class ActorImporter {
         eqt.uuid = t(j.uuid)
         eqt.parentuuid = parentuuid
         eqt.setNotes(t(j.notes))
-        
+
         // TODO determine if we need the parentuuid in order to import weight
         // eqt.weight = !!parentuuid ? t(j.weightsum) : 0 // GCA sends calculated weight in 'weightsum'
         eqt.weight = t(j.weightsum) ?? 0
-        
+
         eqt.pageRef(t(j.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
@@ -1940,9 +1941,10 @@ export class ActorImporter {
     }
     e.name = i.description || 'Equipment'
     e.originalName = i.description
-    e.count = i.type == 'equipment_container' ? '1' : i.quantity || '0'
+    e.originalCount = i.type === 'equipment_container' ? 1 : i.quantity || 0
+    e.count = e.originalCount
     e.cost =
-      (parseFloat(i.calc?.extended_value) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || ''
+      (parseFloat(i.calc?.extended_value) / (i.type === 'equipment_container' ? 1 : i.quantity || 1)).toString() || ''
     e.carried = carried
     e.equipped = i.equipped
     e.techlevel = i.tech_level || ''

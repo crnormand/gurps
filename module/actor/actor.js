@@ -2479,11 +2479,11 @@ export class GurpsActor extends Actor {
     /** @type {{ [key: string]: any }} */
     let eqt = foundry.utils.getProperty(this, eqtkey)
     if (!(await this._sanityCheckItemSettings(eqt))) return
+    let update = { [eqtkey + '.count']: count }
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+      update[eqtkey + '.ignoreImportQty'] = true
+    await this.update(update)
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      let update = { [eqtkey + '.count']: count }
-      if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-        update[eqtkey + '.ignoreImportQty'] = true
-      await this.update(update)
       eqt = foundry.utils.getProperty(this, eqtkey)
       await this.updateParentOf(eqtkey, false)
       if (!!eqt.itemid) {
@@ -2498,6 +2498,8 @@ export class GurpsActor extends Actor {
       let item = this.items.get(eqt.itemid)
       if (!!item) {
         item.system.eqt.count = count
+        if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+          item.system.eqt.ignoreImportQty = true
         await item.actor._updateItemFromForm(item)
       }
       await this.updateParentOf(eqtkey, false)
@@ -2579,6 +2581,19 @@ export class GurpsActor extends Actor {
     if (!!item.editingActor) delete item.editingActor
 
     await this._removeItemAdditions(item.id)
+
+    // Check for Equipment changed count
+    // If originalCount exists, let's check if the count has changed
+    // If changed and ignoreImportQty is true, we need to add the flag to the item
+    if (
+      item.type === 'equipment' &&
+      game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) &&
+      !!item.system.eqt.originalCount &&
+      !isNaN(item.system.eqt.originalCount) &&
+      item.system.eqt.originalCount !== item.system.eqt.count
+    ) {
+      item.system.eqt.ignoreImportQty = true
+    }
 
     // Update Item
     item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
