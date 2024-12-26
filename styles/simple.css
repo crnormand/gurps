@@ -904,9 +904,9 @@
 
 #combat-tab #condition .fieldblock {
   display: inline-flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   padding-top: 0.15em;
-  align-items: center;
+  align-items: start;
 }
 
 #condition .fieldblock {
@@ -914,45 +914,76 @@
   grid-template-columns: 1fr;
 }
 
+#sheet #condition .fieldblock {
+  /* display: inline-grid; */
+  /* grid-template-columns: min-content 1fr min-content; */
+}
+
 #combat-tab #condition .fieldblock .label {
   padding-left: 1em;
 }
 
-#combat-tab #condition .fieldblock .details {
+#combat-tab #condition .fieldblock .details,
+#combat-tab #combat-status .details {
   border: none;
-  height: 100%;
+  /* height: 100%; */
   align-self: end;
+}
+
+#combat-status .status-block {
+  display: inline-grid;
+  grid-template-columns: 0fr 0fr;
+  /* gap: 1em; */
+  justify-items: left;
+  align-items: center;
+  /* width: 100%; */
+  justify-content: center;
+}
+
+#combat-status .status-block .label {
+  justify-self: right;
 }
 
 .fieldblock .label-field-pair {
   display: grid;
-  grid-template-columns: 1fr 1fr min-content;
+  grid-template-columns: 2fr 3fr min-content;
   align-items: center;
 }
 
-#combat-tab .fieldblock .label-field-pair {
+#combat-info .label-field-pair {
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
 }
 
-#combat-tab #condition .fieldblock details .button {
+#combat-info .field-block {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 3px;
+}
+
+#combat-tab #condition .fieldblock details .button,
+#combat-tab #combat-status details .button {
   width: 1.5rem;
   height: 1.5rem;
   border: none;
 }
 
-#combat-tab #condition .fieldblock details .button:hover {
+#combat-tab #condition .fieldblock details .button:hover,
+#combat-tab #combat-status details .button:hover {
   box-shadow: 0 0 5px var(--color-shadow-primary);
+  cursor: pointer;
 }
 
-#combat-tab #condition .fieldblock details > summary {
+#combat-tab #condition .fieldblock details > summary,
+#combat-tab #combat-status details > summary {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-#combat-tab #condition .fieldblock details[open] > summary {
+#combat-tab #condition .fieldblock details[open] > summary,
+#combat-tab #combat-status deatils[open] > summary {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1290,7 +1321,7 @@ div#other {
     'header   header  header  header header'
     'itemmenu roll    where   penalty dr   ';
   grid-template-columns: min-content min-content 1fr min-content min-content;
-  grid-template-rows: 0fr 0fr;
+  grid-template-rows: 0fr 0fr 1fr;
 }
 
 #melee .headermenu {
@@ -1326,6 +1357,7 @@ div#other {
 #location .header:first-child,
 #encumbrance .header:first-child {
   flex-flow: column nowrap;
+  grid-column: 1 / 6;
 }
 
 #encumbrance > * {
@@ -1418,6 +1450,7 @@ div#other {
   grid-template-columns: min-content 1fr repeat(10, auto);
   grid-area: ranged;
   align-content: start;
+  align-self: start;
 }
 
 #advantages {
@@ -1765,10 +1798,10 @@ div#other {
 .sheet-body.tabbed-sheet #combat-tab {
   display: grid;
   grid-gap: var(--sectiongap);
-  grid-template-columns: 1fr min-content;
-  grid-template-rows: 0fr auto auto 1fr;
+  grid-template-columns: 1fr 0fr;
+  grid-template-rows: 0fr 0fr 0fr 1fr;
   grid-template-areas:
-    'condition         condition'
+    'combat-info       combat-sidebar'
     'melee             combat-sidebar'
     'speed-range-table combat-sidebar'
     'ranged            combat-sidebar';
@@ -1778,8 +1811,10 @@ div#other {
   grid-area: combat-sidebar;
   display: inline-grid;
   grid-template-areas:
-    'location'
-    'condition';
+    'condition'
+    'location';
+  grid-gap: var(--sectiongap);
+  grid-template-rows: 0fr 0fr;
 }
 
 /* ----- combat sheet additions ----- */
@@ -2452,9 +2487,8 @@ input.gcs-input:disabled {
 .gga-table .indent6,
 .gga-table .indent7,
 .gga-table .indent8,
-.gga-table .indent9
-{
-    padding: 2px;
+.gga-table .indent9 {
+  padding: 2px;
 }
 
 .gga-column-description {
