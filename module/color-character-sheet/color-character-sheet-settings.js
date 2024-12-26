@@ -33,7 +33,7 @@ export const SETTING_COLOR_CHARACTER_SHEET_MENU = 'color-character-sheet-menu'
 export const SETTING_COLOR_CHARACTER_SHEET_DATA = 'color-character-sheet-data'
 export const SETTING_DEFAULT_COLOR_BACKGROUND = '#ffffbe'
 export const SETTING_DEFAULT_COLOR_TEXT = '#000000'
-export const SETTING_DEFAULT_COLOR_BACKGROUND_HOVER = '#cccc00'
+export const SETTING_DEFAULT_COLOR_BACKGROUND_HOVER = '#ffd700'
 export const SETTING_DEFAULT_COLOR_TEXT_HOVER = '#000000'
 export const SETTING_COLOR_ROLLABLE = [
   'color-attributes-rollable',
