@@ -33,41 +33,41 @@
     </div>
 
     <nav id='nav-tabs' class='gurps-sheet-tabs' data-group='primary-tabs'>
-      <li class="label">{{i18n 'gurps.tabSheet.tabs'}}</li>
+      <li class='label'>{{i18n 'gurps.tabSheet.tabs'}}</li>
       <li>
-        <a class='tab-item' data-tab='combat' title="{{i18n 'GURPS.combatTab'}}">
+        <a class='tab-item' data-tab='combat' title='{{i18n "GURPS.combatTab"}}'>
           <div><i class='fa-solid fa-swords'></i></div>
         </a>
       </li>
       <li>
-        <a class='tab-item' data-tab='personal' title="{{i18n 'gurps.sheet.personal.tab'}}">
+        <a class='tab-item' data-tab='personal' title='{{i18n "gurps.sheet.personal.tab"}}'>
           <div><i class='fa-solid fa-user'></i></div>
         </a>
       </li>
       <li>
-        <a class='tab-item' data-tab='advantages' title="{{i18n 'GURPS.advantagesTab'}}">
+        <a class='tab-item' data-tab='advantages' title='{{i18n "GURPS.advantagesTab"}}'>
           <div><i class='fas fa-theater-masks'></i></div>
         </a>
       </li>
       <li>
-        <a class='tab-item' data-tab='skills' title="{{i18n 'GURPS.skillsTab'}}">
+        <a class='tab-item' data-tab='skills' title='{{i18n "GURPS.skillsTab"}}'>
           <div><i class='fa-solid fa-person-swimming'></i></div>
         </a>
       </li>
       <li>
-        <a class='tab-item' data-tab='stats' title="{{i18n 'GURPS.resourcesModsTab'}}">
+        <a class='tab-item' data-tab='stats' title='{{i18n "GURPS.resourcesModsTab"}}'>
           <div><i class='fa-solid fa-bars-progress'></i></div>
         </a>
       </li>
       {{#if (notEmpty system.spells)}}
         <li>
-          <a class='tab-item' data-tab='spells' title="{{i18n 'GURPS.spellsTab'}}">
+          <a class='tab-item' data-tab='spells' title='{{i18n "GURPS.spellsTab"}}'>
             <div><i class='fa-solid fa-wand-magic-sparkles'></i></div>
           </a>
         </li>
       {{/if}}
       <li>
-        <a class='tab-item' data-tab='equipment' title="{{i18n 'GURPS.equipmentTab'}}">
+        <a class='tab-item' data-tab='equipment' title='{{i18n "GURPS.equipmentTab"}}'>
           <div><i class='fa-solid fa-screwdriver-wrench'></i></div>
         </a>
       </li>
@@ -97,9 +97,7 @@
 
       <div class='tab' data-tab='combat' data-group='primary-tabs'>
         <div id='combat-tab'>
-          {{>conditions view='condensed'}}
-
-          {{debug system.melee}}
+          {{>combat-info}}
           {{#if (notEmpty system.melee)}}
             {{>melee}}
           {{/if}}
@@ -108,6 +106,7 @@
             {{>ranged}}
           {{/if}}
           <div id='combat-sidebar'>
+            {{>combat-status}}
             {{>locations parent=../data}}
           </div>
         </div>

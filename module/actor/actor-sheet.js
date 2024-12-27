@@ -378,6 +378,12 @@ export class GurpsActorSheet extends ActorSheet {
       target.open = !target.open
     })
 
+    html.find('#combat-status details').click(ev => {
+      ev.preventDefault()
+      const target = $(ev.currentTarget)[0]
+      target.open = !target.open
+    })
+
     // Handle the "Maneuver" dropdown on the tabbed sheet.
     html.find('#condition details#maneuver .popup .button').click(ev => {
       ev.preventDefault()
@@ -387,8 +393,25 @@ export class GurpsActorSheet extends ActorSheet {
       details.open = !details.open
     })
 
+    html.find('#combat-status details#maneuver .popup .button').click(ev => {
+      ev.preventDefault()
+      const details = $(ev.currentTarget).closest('details')
+      const target = $(ev.currentTarget)[0]
+      this.actor.replaceManeuver(target.alt)
+      details.open = !details.open
+    })
+
     // Handle the "Posture" dropdown on the tabbed sheet.
     html.find('#condition details#posture .popup .button').click(ev => {
+      ev.preventDefault()
+      const details = $(ev.currentTarget).closest('details')
+      const target = $(ev.currentTarget)[0]
+      this.actor.replacePosture(target.alt)
+      details.open = !details.open
+    })
+
+    // Handle the "Posture" dropdown on the tabbed sheet.
+    html.find('#combat-status details#posture .popup .button').click(ev => {
       ev.preventDefault()
       const details = $(ev.currentTarget).closest('details')
       const target = $(ev.currentTarget)[0]

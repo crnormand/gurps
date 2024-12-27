@@ -133,212 +133,232 @@ export function colorGurpsActorSheet() {
   /**
    * Atributes
    */
-  $('#attributes')
-    .on('mouseenter', '.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[0].color_hover + ' !important; color:' + theColorData[0].color_hover_text
-      )
-    })
-    .on('mouseleave', '.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text
-      )
-    })
-  $('#attributes .rollable').attr(
-    'style',
-    'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text
-  )
+  if (theColorData[0].color_override) {
+    $('#attributes')
+      .on('mouseenter', '.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[0].color_hover + ' !important; color:' + theColorData[0].color_hover_text
+        )
+      })
+      .on('mouseleave', '.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text
+        )
+      })
+    $('#attributes .rollable').attr(
+      'style',
+      'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text
+    )
+  }
 
   /**
    * Dodge
    */
-  $('#encumbrance')
-    .on('mouseenter', '.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[1].color_hover + ' !important; color:' + theColorData[1].color_hover_text
-      )
-    })
-    .on('mouseleave', '.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text
-      )
-    })
-  $('.dodge.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text
-  )
+  if (theColorData[1].color_override) {
+    $('#encumbrance')
+      .on('mouseenter', '.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[1].color_hover + ' !important; color:' + theColorData[1].color_hover_text
+        )
+      })
+      .on('mouseleave', '.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text
+        )
+      })
+    $('.dodge.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text
+    )
+  }
 
   /**
    * Damage
    */
-  $('#melee, #ranged')
-    .on('mouseenter', '.damage.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[2].color_hover + ' !important; color:' + theColorData[2].color_hover_text
-      )
-    })
-    .on('mouseleave', '.damage.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text
-      )
-    })
-  $('.damage.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text
-  )
+  if (theColorData[2].color_override) {
+    $('#melee, #ranged')
+      .on('mouseenter', '.damage.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[2].color_hover + ' !important; color:' + theColorData[2].color_hover_text
+        )
+      })
+      .on('mouseleave', '.damage.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text
+        )
+      })
+    $('.damage.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text
+    )
+  }
 
-  /**
-   * Block
-   */
-  $('#melee, #ranged')
-    .on('mouseenter', '.block.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[3].color_hover + ' !important; color:' + theColorData[3].color_hover_text
-      )
-    })
-    .on('mouseleave', '.block.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text
-      )
-    })
-  $('.block.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text
-  )
+  if (theColorData[3].color_override) {
+    /**
+     * Block
+     */
+    $('#melee, #ranged')
+      .on('mouseenter', '.block.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[3].color_hover + ' !important; color:' + theColorData[3].color_hover_text
+        )
+      })
+      .on('mouseleave', '.block.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text
+        )
+      })
+    $('.block.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text
+    )
+  }
 
   /**
    * Parry
    */
-  $('#melee, #ranged')
-    .on('mouseenter', '.parry.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[4].color_hover + ' !important; color:' + theColorData[4].color_hover_text
-      )
-    })
-    .on('mouseleave', '.parry.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text
-      )
-    })
-  $('.parry.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text
-  )
+  if (theColorData[4].color_override) {
+    $('#melee, #ranged')
+      .on('mouseenter', '.parry.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[4].color_hover + ' !important; color:' + theColorData[4].color_hover_text
+        )
+      })
+      .on('mouseleave', '.parry.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text
+        )
+      })
+    $('.parry.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text
+    )
+  }
 
   /**
    * Melee / Ranged
    */
-  $('#melee, #ranged')
-    .on('mouseenter', '.usage.rollable, .level.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[5].color_hover + ' !important; color:' + theColorData[5].color_hover_text
-      )
-    })
-    .on('mouseleave', '.usage.rollable, .level.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text
-      )
-    })
-  $('#melee .usage.rollable, #melee .level.rollable, #ranged .usage.rollable, #ranged .level.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text
-  )
+  if (theColorData[5].color_override) {
+    $('#melee, #ranged')
+      .on('mouseenter', '.usage.rollable, .level.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[5].color_hover + ' !important; color:' + theColorData[5].color_hover_text
+        )
+      })
+      .on('mouseleave', '.usage.rollable, .level.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text
+        )
+      })
+    $('#melee .usage.rollable, #melee .level.rollable, #ranged .usage.rollable, #ranged .level.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text
+    )
+  }
 
   /**
    * Skills
    */
-  $('#skills')
-    .on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[6].color_hover + ' !important; color:' + theColorData[6].color_hover_text
-      )
-    })
-    .on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text
-      )
-    })
-  $('#skills .sl.rollable, #skills .rsl.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text
-  )
+  if (theColorData[6].color_override) {
+    $('#skills')
+      .on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[6].color_hover + ' !important; color:' + theColorData[6].color_hover_text
+        )
+      })
+      .on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text
+        )
+      })
+    $('#skills .sl.rollable, #skills .rsl.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text
+    )
+  }
 
   /**
    * Spells
    */
-  $('#spells')
-    .on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[7].color_hover + ' !important; color:' + theColorData[7].color_hover_text
-      )
-    })
-    .on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text
-      )
-    })
-  $('#spells .sl.rollable, #spells .rsl.rollable').attr(
-    'style',
-    'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text
-  )
+  if (theColorData[7].color_override) {
+    $('#spells')
+      .on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[7].color_hover + ' !important; color:' + theColorData[7].color_hover_text
+        )
+      })
+      .on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text
+        )
+      })
+    $('#spells .sl.rollable, #spells .rsl.rollable').attr(
+      'style',
+      'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text
+    )
+  }
 
   /**
    * OtF in Qick Notes
    */
-  $('#qnotes')
-    .on('mouseenter', '.gurpslink', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[8].color_hover + ' !important; color:' + theColorData[8].color_hover_text
-      )
-    })
-    .on('mouseleave', '.gurpslink', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
-      )
-    })
-  $('#qnotes .gurpslink').attr(
-    'style',
-    'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
-  )
+  if (theColorData[8].color_override) {
+    $('#qnotes')
+      .on('mouseenter', '.gurpslink', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[8].color_hover + ' !important; color:' + theColorData[8].color_hover_text
+        )
+      })
+      .on('mouseleave', '.gurpslink', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
+        )
+      })
+    $('#qnotes .gurpslink').attr(
+      'style',
+      'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
+    )
+  }
 
   /**
    * Ads / Disads
    */
-  $('#advantages')
-    .on('mouseenter', '.gurpslink', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[9].color_hover + ' !important; color:' + theColorData[9].color_hover_text
-      )
-    })
-    .on('mouseleave', '.gurpslink', function () {
-      $(this).attr(
-        'style',
-        'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text
-      )
-    })
-  $('#advantages .gurpslink').attr(
-    'style',
-    'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text
-  )
+  if (theColorData[9].color_override) {
+    $('#advantages')
+      .on('mouseenter', '.gurpslink', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[9].color_hover + ' !important; color:' + theColorData[9].color_hover_text
+        )
+      })
+      .on('mouseleave', '.gurpslink', function () {
+        $(this).attr(
+          'style',
+          'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text
+        )
+      })
+    $('#advantages .gurpslink').attr(
+      'style',
+      'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text
+    )
+  }
 }
 
 export function saveColorWheelsToSettings() {

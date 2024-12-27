@@ -831,7 +831,8 @@ ul#result-effects li {
 
 #npc-sheet .field select,
 #combat-sheet .field select,
-#sheet .field select {
+#sheet .field select,
+#sheet-tab .field select {
   height: min-content;
   margin: 0;
   width: 100%;
@@ -839,16 +840,24 @@ ul#result-effects li {
   cursor: pointer;
 }
 
-#editorsheet select#move-mode,
-#combat-sheet select#move-mode,
-#sheet select#move-mode {
+#encumbrance .header select#move-mode,
+#encumbrance .header button#edit-move-modes {
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 90%;
+  margin: 2px 0;
+  border: 1px solid var(--color-border-light-tertiary);
+}
+
+#encumbrance #edit-move-modes {
+  padding-bottom: 1px;
+  color: white;
+  line-height: unset;
   width: unset;
+  font-size: 90%;
 }
 
 #editorsheet .field select {
   height: min-content;
-  /* background-color: transparent; */
-  /* border: none; */
   padding: 0 1em 0 0;
   margin: 0;
   width: 100%;
@@ -1241,15 +1250,11 @@ active-effects-list .section h3 {
   text-align: right;
 }
 
-#condition .fieldblock .field {
+#condition .fieldblock .field,
+#combat-status .field {
   text-align: left;
   margin-top: 3px;
   min-height: calc(1em + 3px);
-  /* border: none; */
-  /* max-width: 12em; */
-  /* white-space: nowrap; */
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis; */
 }
 
 .npc-sheet #condition .field {
@@ -1267,26 +1272,27 @@ active-effects-list .section h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* margin-left: 8px; */
 }
 
 #combat-sheet .fieldblock .field[name='system.conditions.combatmove'] {
   font-size: var(--font-size-small);
 }
 
-#condition .fieldblock button#open-modifier-popup,
-#condition .fieldblock button#edit-move-modes,
-#location .dr button {
+#combat-status button#open-modifier-popup,
+#combat-status button#edit-move-modes,
+#location .dr button,
+#combat-info button#open-modifier-popup,
+#condition button#open-modifier-popup {
   font-size: var(--font-size-small);
   max-height: fit-content;
-  width: auto;
   padding: 0 3px;
   line-height: unset;
-  height: calc(var(--form-field-height) + 1px);
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
-#editorsheet #condition .fieldblock button#edit-move-modes,
-#combat-sheet #condition .fieldblock button#edit-move-modes,
+#editorsheet #condition button#edit-move-modes,
+#combat-sheet #condition button#edit-move-modes,
 #sheet #condition .fieldblock button#edit-move-modes,
 #location .dr button {
   height: min-content;
@@ -1301,6 +1307,7 @@ select#maneuver option {
 }
 
 .spinner details,
+#combat-status details,
 #condition details {
   position: relative;
 }
@@ -1314,7 +1321,7 @@ details .popup {
   flex-flow: row nowrap;
   position: absolute;
   z-index: 10;
-  margin-left: -150%;
+  margin-left: -200%;
   font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
@@ -1326,8 +1333,12 @@ details .popup {
 details .popup.square5x4 {
   flex-flow: row wrap;
   margin-left: 0;
-  min-inline-size: calc(5 * 2rem);
+  min-inline-size: calc(5 * 1.5rem);
   background: grey;
+}
+
+#combat-status .popup.square5x4 {
+  right: 0;
 }
 
 .spinner .button-ribbon button {
