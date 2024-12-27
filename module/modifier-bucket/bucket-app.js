@@ -7,7 +7,7 @@ import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 
 /**
  * Define some Typescript types.
- * @typedef {{mod: String, modint: Number, desc: String, plus: Boolean}} Modifier
+ * @typedef {{mod: String, modint: Number, desc: String, plus: Boolean, tagged: Boolean}} Modifier
  */
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (/** @type {any} */ _, /** @type {JQuery} */ element) => {
@@ -228,41 +228,55 @@ class ModifierStack {
   }
 
   /**
-   * @param {string} mod
-   * @param {any} reason
+   * Generate Modifier object
+   *
+   * @param {string} mod - the modifier value
+   * @param {any} reason - the modifier reason or description
+   * @param {boolean} tagged - this is a tagged or maneuver modifier?
    * @returns {Modifier}
    */
-  _makeModifier(mod, reason) {
+  _makeModifier(mod, reason, tagged) {
     let n = displayMod(mod)
     return {
       mod: n,
       modint: parseInt(n),
       desc: reason,
-      plus: n[0] != '-',
+      plus: n[0] !== '-',
+      tagged: tagged,
     }
   }
 
   /**
-   * @param {string} reason
-   * @param {string} mod
+   * Add new Modifier in Bucket
+   *
+   * @param {string} reason - the modifier reason or description
+   * @param {string} mod - the modifier value
+   * @param {boolean} replace - replace existing modifier?
+   * @param {boolean} tagged - this is a tagged or maneuver modifier?
    */
-  add(mod, reason = '', replace = false) {
-    this._add(this.modifierList, mod, reason, replace)
+  add(mod, reason = '', replace = false, tagged = false) {
+    this._add(this.modifierList, mod, reason, replace, tagged)
     this.sum()
   }
 
   /**
-   * @param {Modifier[]} list
-   * @param {string} mod
-   * @param {string} reason
+   * Add or Update Bucket Modifier List
+   *
+   * @param {Modifier[]} list - current modifier bucket list
+   * @param {string} mod - the modifier value
+   * @param {string} reason - the modifier reason or description
+   * @param {boolean} replace - replace existing modifier?
+   * @param {boolean} tagged - this is a tagged or maneuver modifier?
+   * @private
    */
-  _add(list, mod, reason = '', replace = false) {
+  _add(list, mod, reason = '', replace = false, tagged = false) {
     /** @type {Modifier|undefined} */
     var oldmod
     reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
-    let i = list.findIndex(e => e.desc == reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
+    let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
-      if (replace) list.splice(i, 1) // only used by range modifier
+      if (replace)
+        list.splice(i, 1) // only used by range modifier
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
     let m = (mod + '').match(/([+-])?@margin/i)
@@ -276,7 +290,7 @@ class ModifierStack {
       oldmod.mod = displayMod(m)
       oldmod.modint = m
     } else {
-      list.push(this._makeModifier(mod, reason))
+      list.push(this._makeModifier(mod, reason, tagged))
     }
   }
 
@@ -370,10 +384,11 @@ export class ModifierBucket extends Application {
    * @param {string} reason
    * @param {Modifier[] | undefined} [list]
    * @param {string | number} mod
+   * @param {boolean} tagged
    */
-  addModifier(mod, reason, list) {
-    if (!!list) this.modifierStack._add(list, mod.toString(), reason)
-    else this.modifierStack.add(mod.toString(), reason)
+  addModifier(mod, reason, list, tagged = false) {
+    if (!!list) this.modifierStack._add(list, mod.toString(), reason, false, tagged)
+    else this.modifierStack.add(mod.toString(), reason, false, tagged)
     this.refresh()
   }
 
@@ -403,6 +418,19 @@ export class ModifierBucket extends Application {
 
   clear(update = true) {
     this.modifierStack.reset()
+    if (update) this.refresh()
+  }
+
+  /**
+   * Clear Tagged Modifiers from Bucket.
+   *
+   * Tagged modifiers is all modifiers with a tag (#) in the description.
+   *
+   * @param {boolean} update - whether to refresh the UI after clearing
+   */
+  clearTaggedModifiers(update = true) {
+    this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => !m.tagged)
+    this.modifierStack.sum()
     if (update) this.refresh()
   }
 

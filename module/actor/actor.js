@@ -3235,7 +3235,7 @@ export class GurpsActor extends Actor {
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = userMod.match(regex)?.[1].trim() || ''
           const mod = userMod.match(/[-+]\d+/)?.[0] || '0'
-          await GURPS.ModifierBucket.addModifier(mod, desc)
+          await GURPS.ModifierBucket.addModifier(mod, desc, undefined, true)
         }
       }
     }
