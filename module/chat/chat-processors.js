@@ -373,15 +373,30 @@ class MookChatProcessor extends ChatProcessor {
 }
 
 class ChatExecuteChatProcessor extends ChatProcessor {
-  help() {
-    return '/:&lt;macro name&gt args (arguments require "Advanced Macros" module)'
+  help = () => '/:&lt;macro name&gt args...'
+  matches = line => line.startsWith('/:')
+
+  splitArgs(line) {
+    // Arguments to macros are of the form "name=value".  If the value contains spaces, it must be quoted.
+    let args = []
+    let inQuote = false
+    let arg = ''
+    for (let i = 0; i < line.length; i++) {
+      let c = line[i]
+      if (c == ' ' && !inQuote) {
+        if (arg.length > 0) args.push(arg)
+        arg = ''
+      } else if (c == '"') {
+        inQuote = !inQuote
+      } else arg += c
+    }
+    if (arg.length > 0) args.push(arg)
+    return args
   }
-  matches(line) {
-    return line.startsWith('/:')
-  }
+
   async process(line) {
     GURPS.chatreturn = false
-    let args = splitArgs(line.substr(2))
+    let args = this.splitArgs(line.substr(2))
     console.log(args)
     GURPS.chatargs = args
     let m = game.macros.find(m => m.name.startsWith(args[0]))
