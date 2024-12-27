@@ -21,6 +21,8 @@
 - Bugfix: Item Statistics missing with GCA4 import. #2057
 - Bugfix: Item Indent on Reopen #2049
 - Bugfix: Injury Tolerance: Damage Reduction in the Damage Calculator does not allow decimal inputs for values less than 2. #2043 (This is really a feature, not a bug.)
+- Bugfix: /iftest applies bonuses twice #2059
+- Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
 
 Release 0.17.16 11/29/2024
 
