@@ -130,41 +130,6 @@ export default class ModifierBucketEditor extends Application {
         data.currentmods.push(horiz(i18n('GURPS.equipmentUserCreated')))
         user.forEach(e => data.currentmods.push(e.replace(uc, '')))
       }
-
-      /*
-				  let melee = []
-				  let ranged = []
-				  let defense = []
-				  let gen = []
-				  
-				  let effects = GURPS.LastActor.effects.filter(e => !e.disabled)
-				  for (let effect of effects) {
-					let type = effect.flags?.core?.statusId
-					let m = ModifiersForStatus[type]
-					if (!!m) {
-					  melee = melee.concat(m.melee)
-					  ranged = ranged.concat(m.ranged)
-					  defense = defense.concat(m.defense)
-					  gen = gen.concat(m.gen)
-					}
-				  }
-				  if (gen.length > 0) {
-					data.currentmods.push(horiz('General'))
-					gen.forEach(e => data.currentmods.push(e))
-				  }
-				  if (melee.length > 0) {
-					data.currentmods.push(horiz('Melee'))
-					melee.forEach(e => data.currentmods.push(e))
-				  }
-				  if (ranged.length > 0) {
-					data.currentmods.push(horiz('Ranged'))
-					ranged.forEach(e => data.currentmods.push(e))
-				  }
-				  if (defense.length > 0) {
-					data.currentmods.push(horiz('Defense'))
-					defense.forEach(e => data.currentmods.push(e))
-				  }
-			*/
     }
     return data
   }
@@ -182,14 +147,7 @@ export default class ModifierBucketEditor extends Application {
     if (!this.options.popOut) {
       html.css('font-size', `${13 * scale}px`)
 
-      // let height = parseFloat(html.css('height').replace('px', ''))
-      // let top = window.innerHeight - height - 65
-      // html.css('top', `${top}px`)
-
-      // let right = parseFloat(html.css('right').replace('px', ''))
-      // if (right < 0) {
       let x = $('#modifierbucket')
-      // let bucketTop = x.position().top
       let bucketLeft = x.position().left
       let bucketWidth = 70
 
