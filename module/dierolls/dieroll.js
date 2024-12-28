@@ -115,7 +115,7 @@ export async function doRoll({
     // We need to clear all tagged tags from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
-    for (let mod of targetmods ?? []) {
+    for (let mod of targetmods || []) {
       GURPS.ModifierBucket.addModifier(mod.mod, mod.desc || 'from action')
     }
     targetmods = []
@@ -507,10 +507,11 @@ async function _doRoll({
 
   // For last, let's consume this action in Token
   const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
-  if (actorToken) {
+  if (!!actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
     await actions.consumeAction(optionalArgs.action, chatthing)
   }
+
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 
   messageData.content = message
