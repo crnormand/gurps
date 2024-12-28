@@ -48,7 +48,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 export class TokenActions {
   constructor(token) {
     this.token = token
-    this.actor = token.actor
+    this.actor = token?.actor
     this.initValues()
   }
 

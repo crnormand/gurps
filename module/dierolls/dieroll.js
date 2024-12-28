@@ -115,7 +115,7 @@ export async function doRoll({
     // We need to clear all tagged tags from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
-    for (let mod of targetmods) {
+    for (let mod of targetmods ?? []) {
       GURPS.ModifierBucket.addModifier(mod.mod, mod.desc || 'from action')
     }
     targetmods = []
