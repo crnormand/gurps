@@ -507,9 +507,10 @@ async function _doRoll({
 
   // For last, let's consume this action in Token
   const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
-  const actions = await TokenActions.fromToken(actorToken)
-  await actions.consumeAction(optionalArgs.action, chatthing)
-
+  if (actorToken) {
+    const actions = await TokenActions.fromToken(actorToken)
+    await actions.consumeAction(optionalArgs.action, chatthing)
+  }
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 
   messageData.content = message
