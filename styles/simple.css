@@ -1318,10 +1318,10 @@ div#other {
 #location {
   grid-area: location;
   grid-template:
-    'header   header  header  header header'
+    'header   header  header  header  header'
     'itemmenu roll    where   penalty dr   ';
   grid-template-columns: min-content min-content 1fr min-content min-content;
-  grid-template-rows: 0fr 0fr 1fr;
+  /* grid-template-rows: 0fr 0fr 1fr; */
 }
 
 #melee .headermenu {
@@ -1451,6 +1451,7 @@ div#other {
   grid-area: ranged;
   align-content: start;
   align-self: start;
+  width: 100%;
 }
 
 #advantages {

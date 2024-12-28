@@ -311,6 +311,23 @@ export class GurpsActorSheet extends ActorSheet {
           let restoreButton = $(details).find('button.restore')
           restoreButton.attr('data-value', `${tracker.value}`)
           restoreButton.text(tracker.value)
+
+          // set position of the popup
+          let window = ev.currentTarget.closest('.window-app')
+          let popup = $(details).find('.popup')
+          const windowRect = window.getBoundingClientRect()
+          const detailsRect = details.getBoundingClientRect()
+          const popupWidth = popup.width()
+
+          const center = detailsRect.left + detailsRect.width / 2
+
+          if (center - popupWidth / 2 < windowRect.left) {
+            popup.css({ left: '0px' })
+          } else if (center + popupWidth / 2 > windowRect.right) {
+            popup.css({ right: '0px' })
+          } else {
+            popup.css({ left: `-${popupWidth / 2 - detailsRect.width / 2}px` })
+          }
         }
         details.open = true
       })
@@ -1854,8 +1871,8 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      width: 765,
-      height: 'auto',
+      width: 770,
+      height: 600,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })

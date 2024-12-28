@@ -1321,7 +1321,7 @@ details .popup {
   flex-flow: row nowrap;
   position: absolute;
   z-index: 10;
-  margin-left: -200%;
+  /* margin-left: -200%; */
   font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
