@@ -1315,6 +1315,10 @@ div#other {
   grid-template-rows: 0fr;
 }
 
+#sheet-tab div#lifting {
+  height: min-content;
+}
+
 #location {
   grid-area: location;
   grid-template:
