@@ -409,6 +409,7 @@ export class TokenActions {
    * @returns {Promise<void>}
    */
   async selectManeuver(maneuver, round) {
+    if (round === undefined || round === null) return
     this.currentTurn = round
     if (!this.lastManeuvers[round]) {
       this.lastManeuvers[round] = this._getNewLastManeuvers()
@@ -607,7 +608,7 @@ export class TokenActions {
       this.concentrateTurns = 0
     }
     // Check for Effects marked for this turn
-    const effects = this.lastManeuvers[Math.max(round - 1, 0)].nextTurnEffects || []
+    const effects = this.lastManeuvers[Math.max(round - 1, 0)]?.nextTurnEffects || []
     for (const effect of effects) {
       await this.token.setEffectActive(effect, true)
     }
