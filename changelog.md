@@ -23,6 +23,7 @@
 - Bugfix: Injury Tolerance: Damage Reduction in the Damage Calculator does not allow decimal inputs for values less than 2. #2043 (This is really a feature, not a bug.)
 - Bugfix: /iftest applies bonuses twice #2059
 - Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
+- Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
 
 Release 0.17.16 11/29/2024
 
