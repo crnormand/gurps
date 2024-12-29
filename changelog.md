@@ -24,6 +24,7 @@
 - Bugfix: /iftest applies bonuses twice #2059
 - Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
+- Bugfix: /r [+1 anything] breaks executeOTF #2076
 
 Release 0.17.16 11/29/2024
 
