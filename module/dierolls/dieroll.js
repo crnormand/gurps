@@ -24,6 +24,33 @@ export const rollData = target => {
 }
 
 /**
+ * Return max level for targeted rolls
+ * checking for maneuvers like Move and Attack (B365)
+ *
+ * @param {number} currentLevel
+ * @param {{}} action
+ * @param {GurpsActor|Actor} actor
+ * @param {{}} optionalArgs
+ * @returns {{level: number, enforce: boolean}}
+ */
+export const getTargetRollMaxLevel = (currentLevel, action, actor, optionalArgs) => {
+  let enforce = false
+  const actionType = action?.type
+  if (!actionType) return { level: currentLevel, enforce }
+  const maneuver = foundry.utils.getProperty(actor, 'system.conditions.maneuver')
+  if (actionType === 'attack' && maneuver === 'move_and_attack') {
+    enforce = true
+    if (action.isMelee) {
+      currentLevel = Math.min(currentLevel - 4, 9)
+    } else {
+      const weaponBulk = parseInt(optionalArgs?.obj?.bulk || 0)
+      currentLevel = Math.min(currentLevel - Math.max(2, weaponBulk), 9)
+    }
+  }
+  return { level: currentLevel, enforce }
+}
+
+/**
  * Recalculate the formula based on Modifier Bucket total.
  *
  * Formula examples: 2d+2, 1d-1, 3d6, 1d-2. (Must also handle literal damage, such as '13').
@@ -112,7 +139,7 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
-    // We need to clear all tagged tags from the bucket when user starts
+    // We need to clear all tagged modifiers from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
     for (let mod of targetmods || []) {
@@ -137,7 +164,9 @@ export async function doRoll({
     // Get Math Info
     let totalMods = GURPS.ModifierBucket.currentSum()
     const operator = totalMods >= 0 ? '+' : '-'
-    const totalRoll = origtarget + totalMods
+    const { level, enforce } = getTargetRollMaxLevel(origtarget + totalMods, action, actor, optionalArgs)
+    if (enforce) GURPS.ModifierBucket.modifierStack.maxTotal = level
+    const totalRoll = level
     totalMods = Math.abs(totalMods)
 
     // Get Target Info
@@ -269,7 +298,7 @@ export async function doRoll({
 
     let doRollResult
     // Before open a new dialog, we need to make sure
-    // all other dialogs are closed, because bucket must be reset
+    // all other dialogs are closed, because bucket must be soft reset
     // before we start a new roll
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
@@ -278,7 +307,7 @@ export async function doRoll({
         content: await renderTemplate(`systems/gurps/templates/${template}`, {
           formula: formula,
           thing: thing,
-          target: origtarget,
+          target: Math.min(origtarget, level),
           targetmods: targetmods,
           prefix: prefix,
           chatthing: chatthing,
@@ -305,6 +334,7 @@ export async function doRoll({
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
+              origtarget = level
               doRollResult = await _doRoll({
                 actor,
                 formula,

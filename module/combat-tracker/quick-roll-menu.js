@@ -13,8 +13,9 @@ export const addQuickRollButton = async (html, combatant, token) => {
           role="button" 
           data-control="quickRollMenu"
           data-combatant-id="${combatant.id}" 
+          data-tooltip="GURPS.quickRollMenu"
           id="quick-roll-${combatant.id}">
-          <i class="fa-solid fa-dice-five"></i>`
+          <i class="fa-solid fa-dice-five""></i>`
   )
 
   // Add Quick Button and Menu Listeners

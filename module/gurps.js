@@ -33,7 +33,7 @@ import {
   arrayToObject,
   objectToArray,
 } from '../lib/utilities.js'
-import { addBucketToDamage, doRoll, rollData } from './dierolls/dieroll.js'
+import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTable } from './damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
@@ -2768,32 +2768,6 @@ if (!globalThis.GURPS) {
     Hooks.on('deleteCombat', async combat => {
       console.log(`Combat ended: ${combat.id} - restarting token actions`)
       await resetTokenActions(combat)
-    })
-
-    Hooks.on('modifierBucketSumUpdated', bucket => {
-      const signal = bucket.minus ? '-' : '+'
-      const target = $('#cr-target').text()
-      if (!!target && !isNaN(target)) {
-        const total = Math.max(3, parseInt(target) + bucket.currentSum)
-        const { targetColor, rollChance } = rollData(total)
-        setTimeout(() => {
-          $('#cr-operator').text(signal)
-          $('#cr-totalmods').text(Math.abs(bucket.currentSum))
-          $('#cr-total').text(total).css('color', targetColor)
-          $('.cr-tooltip').text(rollChance)
-        }, 200)
-      }
-      const damage = $('#cr-damage').text()
-      const formula = $('#cr-formula').text()
-      if (!!formula && !!damage) {
-        const newFormula = addBucketToDamage(formula, false)
-        const bucketTotal = GURPS.ModifierBucket.currentSum()
-        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        setTimeout(() => {
-          $('#cr-damage').text(newFormula)
-          $('#cr-bucket').text(bucketRoll)
-        }, 200)
-      }
     })
 
     // End of system "READY" hook.
