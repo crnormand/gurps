@@ -6,7 +6,7 @@ import { parselink } from '../../lib/parselink.js'
  * @param {boolean} [clrdmods=true]
  */
 export function gurpslink(str, clrdmods = true, returnActions = false) {
-  if (str === undefined || str == null) return '!!UNDEFINED'
+  if (str === undefined || str === null) return '!!UNDEFINED'
   let found = -1
   let depth = 0
   let output = ''

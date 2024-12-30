@@ -132,6 +132,8 @@ if (!globalThis.GURPS) {
   GURPS.SJGProductMappings = SJGProductMappings
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
+  // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
+
   GURPS.SetLastActor = function (actor, tokenDocument) {
     if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
     GURPS.LastActor = actor
@@ -2400,7 +2402,6 @@ if (!globalThis.GURPS) {
         })
     )
 
-    // Sorry, removed the ts-ignores during editing.
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return
       let name = data.otf || data.bucket.join(' & ')
@@ -2464,7 +2465,6 @@ if (!globalThis.GURPS) {
       return false
     })
 
-    // @ts-ignore
     Hooks.on('renderCombatTracker', async function (_a, html, _c) {
       // use class 'bound' to know if the drop event is already bound
       if (!html.hasClass('bound')) {
@@ -2554,7 +2554,6 @@ if (!globalThis.GURPS) {
       addManeuverListeners()
     })
 
-    // @ts-ignore
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
@@ -2680,7 +2679,7 @@ if (!globalThis.GURPS) {
       __dirname + '/apply-damage/effect-majorwound.html',
       __dirname + '/apply-damage/effect-shock.html',
     ])
-    // @ts-ignore
+
     GURPS.setInitiativeFormula()
 
     // Translate attribute mappings if not in English

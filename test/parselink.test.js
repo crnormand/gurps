@@ -252,7 +252,7 @@ describe('parseLink', () => {
     })
   })
 
-  describe('Common prefixes', () => {
+  describe('Common prefixes (override text, actor id, blind roll)', () => {
     test('Overridetext: #!"Modifiers" +1 mod', () => {
       const result = parselink(input)
 
@@ -337,19 +337,21 @@ describe('parseLink', () => {
     })
   })
 
-  test('#!!@actorid@ 2d+2 cut', () => {
-    const result = parselink(input)
+  describe('Damage', () => {
+    test('#!!@actorid@ 2d+2 cut', () => {
+      const result = parselink(input)
 
-    expect(result.action).toEqual({
-      orig: '2d+2 cut',
-      type: 'damage',
-      formula: '2d+2',
-      damagetype: 'cut',
-      accumulate: false,
-      blindroll: true,
-      sourceId: 'actorid',
+      expect(result.action).toEqual({
+        orig: '2d+2 cut',
+        type: 'damage',
+        formula: '2d+2',
+        damagetype: 'cut',
+        accumulate: false,
+        blindroll: true,
+        sourceId: 'actorid',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='2d+2 cut'>2d+2 cut</span>"))
     })
-    expect(result.text).toEqual(expect.stringContaining("data-otf='2d+2 cut'>2d+2 cut</span>"))
   })
 
   describe('Modifiers', () => {
@@ -479,15 +481,28 @@ describe('parseLink', () => {
     })
   })
 
-  test('#!/chat command', () => {
-    const result = parselink(input)
+  describe('Chat Commands', () => {
+    test('#!/chat command', () => {
+      const result = parselink(input)
 
-    expect(result.action).toEqual({
-      quiet: false,
-      orig: '/chat command',
-      type: 'chat',
+      expect(result.action).toEqual({
+        quiet: false,
+        orig: '/chat command',
+        type: 'chat',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='/chat command'>/chat command</span"))
     })
-    expect(result.text).toEqual(expect.stringContaining("data-otf='/chat command'>/chat command</span"))
+
+    test('Macro: #!/:chat command', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        quiet: false,
+        orig: '/:chat command',
+        type: 'chat',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='/:chat command'>/:chat command</span"))
+    })
   })
 
   describe('if test', () => {
