@@ -26,6 +26,7 @@
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
 - Bugfix: 17.17-beta2 broke Macro OtFs in the character sheet #2079
 - Bugfix: 17.16 chat message for Shock has duplicate pdflink span elements #2083
+- Bugfix: 17.17-beta2 Active Effects condition names are indistinguishable from each other in the droplist selector #2081
 
 Release 0.17.16 11/29/2024
 

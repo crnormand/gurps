@@ -285,22 +285,22 @@ export class StatusEffect {
       shock1: {
         img: 'systems/gurps/icons/statuses/condition-shock1.webp',
         id: 'shock1',
-        name: 'EFFECT.StatusShocked',
+        name: 'GURPS.shock1',
       },
       shock2: {
         img: 'systems/gurps/icons/statuses/condition-shock2.webp',
         id: 'shock2',
-        name: 'EFFECT.StatusShocked',
+        name: 'GURPS.shock2',
       },
       shock3: {
         img: 'systems/gurps/icons/statuses/condition-shock3.webp',
         id: 'shock3',
-        name: 'EFFECT.StatusShocked',
+        name: 'GURPS.shock3',
       },
       shock4: {
         img: 'systems/gurps/icons/statuses/condition-shock4.webp',
         id: 'shock4',
-        name: 'EFFECT.StatusShocked',
+        name: 'GURPS.shock4',
       },
       reeling: {
         img: 'systems/gurps/icons/statuses/cth-condition-major-wound.webp',
