@@ -25,6 +25,7 @@
 - Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
 - Bugfix: 17.17-beta2 broke Macro OtFs in the character sheet #2079
+- Bugfix: 17.16 chat message for Shock has duplicate pdflink span elements #2083
 
 Release 0.17.16 11/29/2024
 
