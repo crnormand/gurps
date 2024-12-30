@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.17-beta.2
+## Release 0.17.17-beta.3
 
 #### Features
 
@@ -24,6 +24,7 @@
 - Bugfix: /iftest applies bonuses twice #2059
 - Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
+- Bugfix: 17.17-beta2 broke Macro OtFs in the character sheet #2079
 
 Release 0.17.16 11/29/2024
 
