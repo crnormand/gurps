@@ -27,6 +27,8 @@ export class GurpsItemSheet extends ItemSheet {
     sheetData.data = this.item.system
     sheetData.system = this.item.system
     if (!!this.item.system.eqt) sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
+    if (this.item.ski && this.item.ski.consumeAction === undefined) sheetData.data.ski.consumeAction = false
+    if (this.item.spl && this.item.spl.consumeAction === undefined) sheetData.data.spl.consumeAction = true
     sheetData.name = this.item.name
     if (!this.item.system.globalid && !this.item.parent)
       this.item.update({ 'system.globalid': this.item.id, _id: this.item.id })

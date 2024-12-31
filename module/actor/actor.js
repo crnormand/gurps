@@ -3243,13 +3243,37 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * Check if Action consume Action.
+   *
+   * Default is false to handle rolls like Attributes
+   *
+   * @param action - Action parsed from OTF/GurpsLink
+   * @param actorComp - Actor Component for the Action
+   * @returns {boolean}
+   */
+  canConsumeAction(action, actorComp = {}) {
+    const isAttack = action.type === 'attack'
+    const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
+    const isDodge = action.attribute === 'dodge'
+    const isSkill = action.type === 'skill-spell' && action.isSkillOnly
+    const isSpell = action.type === 'skill-spell' && action.isSpellOnly
+    if ((isSpell || isAttack || isDefense) && !isDodge) {
+      return actorComp.consumeAction !== undefined ? actorComp.consumeAction : true
+    } else if (isSkill) {
+      return actorComp.consumeAction !== undefined ? actorComp.consumeAction : false
+    }
+    return false
+  }
+
+  /**
    * Check if Roll can be performed.
    *
-   * @param {object} action
-   * @param {GurpsToken|Token} token
+   * @param {object} action - Action parsed from OTF/GurpsLink
+   * @param {GurpsToken|Token} token - Actor Token
+   * @param {object} actorComp - Actor Component for the Action
    * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
    */
-  async canRoll(action, token) {
+  async canRoll(action, token, actorComp = {}) {
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
     const isAttribute = action.type === 'attribute'
@@ -3258,7 +3282,15 @@ export class GurpsActor extends Actor {
       canRoll: true,
       isSlam,
     }
-    if (token && game.combat?.isActive && !isSlam) {
+    const combatIsActive = !!game.combat?.isActive
+    const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
+    const combatStarted = combatIsActive && game.combat?.turn !== null && game.combat?.turn !== undefined
+
+    const consumeAction = this.canConsumeAction(action, actorComp)
+
+    if (!combatIsActive || !isCombatant) return result
+
+    if (token && combatIsActive && isCombatant && !isSlam) {
       const actions = await TokenActions.fromToken(token)
 
       // Check Attack or Defense vs Maneuver
@@ -3270,10 +3302,12 @@ export class GurpsActor extends Actor {
           Settings.SYSTEM_NAME,
           Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER
         )
-        const message = game.i18n.format(`GURPS.${checkManeuverSettings.toLowerCase()}CannotRollWithManeuver`, {
-          roll,
-          maneuver: maneuverLabel,
-        })
+        const message =
+          checkManeuverSettings !== 'Allow' &&
+          game.i18n.format(`GURPS.${checkManeuverSettings.toLowerCase()}CannotRollWithManeuver`, {
+            roll,
+            maneuver: maneuverLabel,
+          })
         result = {
           canRoll: checkManeuverSettings !== 'Forbid',
           message,
@@ -3283,39 +3317,89 @@ export class GurpsActor extends Actor {
       // Check for Max Actions
       const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
       const maxActions = foundry.utils.getProperty(this, 'system.conditions.actions.maxActions') || 1
-      if (!isDefense && !isAttribute && actions.totalActions >= maxActions + actions.extraActions) {
+      if (
+        !isAttack &&
+        !isDefense &&
+        !isAttribute &&
+        actions.totalActions >= maxActions + actions.extraActions &&
+        consumeAction
+      ) {
         result = {
           ...result,
           canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
-          maxActionMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxActionsReached`),
+          maxActionMessage:
+            checkMaxActionSettings !== 'Allow' &&
+            game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxActionsReached`),
         }
       }
-      // Check for Max Blocks
-      const maxBlocks = foundry.utils.getProperty(this, 'system.conditions.actions.maxBlocks') || 1
-      if (isDefense && action.type === 'weapon-block' && actions.totalBlocks >= maxBlocks) {
+      // Check for Max Attacks
+      const extraAttacks = actorComp.extraAttacks || 0
+      if (
+        isAttack &&
+        consumeAction &&
+        Math.max(actions.totalAttacks, actions.totalActions) >= maxActions + actions.extraActions + extraAttacks
+      ) {
         result = {
           ...result,
           canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
-          maxBlockMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxBlocksReached`),
+          maxActionMessage:
+            checkMaxActionSettings !== 'Allow' &&
+            game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxAttacksReached`),
+        }
+      }
+
+      // Check for Max Blocks
+      const maxBlocks = foundry.utils.getProperty(this, 'system.conditions.actions.maxBlocks') || 1
+      if (
+        isDefense &&
+        action.type === 'weapon-block' &&
+        actions.totalBlocks >= maxBlocks + action.extraBlocks &&
+        consumeAction
+      ) {
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
+          maxBlockMessage:
+            checkMaxActionSettings !== 'Allow' &&
+            game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxBlocksReached`),
         }
       }
       // Check for Max Parries
-      if (isDefense && action.type === 'weapon-parry' && actions.totalParries >= actions.maxParries) {
+      if (isDefense && action.type === 'weapon-parry' && actions.totalParries >= actions.maxParries && consumeAction) {
         result = {
           ...result,
           canRoll: result.canRoll && checkMaxActionSettings !== 'Forbid',
-          maxParryMessage: game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxParriesReached`),
+          maxParryMessage:
+            checkMaxActionSettings !== 'Allow' &&
+            game.i18n.localize(`GURPS.${checkMaxActionSettings.toLowerCase()}MaxParriesReached`),
+        }
+      }
+
+      // Check if Combat is started
+      if (!combatStarted) {
+        const checkCombatSettings = game.settings.get(
+          Settings.SYSTEM_NAME,
+          Settings.SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START
+        )
+        result = {
+          ...result,
+          canRoll: result.canRoll && checkCombatSettings !== 'Forbid',
+          rollBeforeStartMessage:
+            checkCombatSettings !== 'Allow' &&
+            game.i18n.localize(`GURPS.${checkCombatSettings.toLowerCase()}RollsBeforeCombatStarted`),
         }
       }
     }
     // Check if roll need Target
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
-    if (needTarget && game.user.targets.size === 0) {
+    if (isCombatant && needTarget && game.user.targets.size === 0) {
       result = {
         ...result,
         canRoll: result.canRoll && checkForTargetSettings !== 'Forbid',
-        targetMessage: game.i18n.localize(`GURPS.${checkForTargetSettings.toLowerCase()}NoTargetSelected`),
+        targetMessage:
+          checkForTargetSettings !== 'Allow' &&
+          game.i18n.localize(`GURPS.${checkForTargetSettings.toLowerCase()}NoTargetSelected`),
       }
     }
     return result

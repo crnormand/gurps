@@ -1195,7 +1195,10 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async editMelee(actor, path, obj) {
-    this.editItem(
+    if (obj.baseParryPenalty === undefined) obj.baseParryPenalty = -4
+    if (obj.extraAttacks === undefined) obj.extraAttacks = 0
+    if (obj.consumeAction === undefined) obj.consumeAction = true
+    await this.editItem(
       actor,
       path,
       obj,
@@ -1218,12 +1221,15 @@ export class GurpsActorSheet extends ActorSheet {
         'itemModifiers',
         'modifierTags',
       ],
-      ['baseParryPenalty']
+      ['baseParryPenalty', 'extraAttacks']
     )
   }
 
   async editRanged(actor, path, obj) {
-    this.editItem(
+    if (obj.baseParryPenalty === undefined) obj.baseParryPenalty = -4
+    if (obj.extraAttacks === undefined) obj.extraAttacks = 0
+    if (obj.consumeAction === undefined) obj.consumeAction = true
+    await this.editItem(
       actor,
       path,
       obj,
@@ -1247,7 +1253,7 @@ export class GurpsActorSheet extends ActorSheet {
         'itemModifiers',
         'modifierTags',
       ],
-      ['acc', 'bulk']
+      ['acc', 'bulk', 'extraAttacks']
     )
   }
 
@@ -1264,7 +1270,8 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async editSkills(actor, path, obj) {
-    this.editItem(
+    if (obj.consumeAction === undefined) obj.consumeAction = false
+    await this.editItem(
       actor,
       path,
       obj,
@@ -1288,7 +1295,8 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async editSpells(actor, path, obj) {
-    this.editItem(
+    if (obj.consumeAction === undefined) obj.consumeAction = true
+    await this.editItem(
       actor,
       path,
       obj,
@@ -1346,6 +1354,9 @@ export class GurpsActorSheet extends ActorSheet {
 
               let q = html.find('.quick-roll')
               if (!!q) obj.addToQuickRoll = q.is(':checked')
+
+              let ca = html.find('.consumeAction')
+              if (!!ca) obj.consumeAction = ca.is(':checked')
 
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
