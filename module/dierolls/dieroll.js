@@ -24,6 +24,33 @@ export const rollData = target => {
 }
 
 /**
+ * Return max level for targeted rolls
+ * checking for maneuvers like Move and Attack (B365)
+ *
+ * @param {number} currentLevel
+ * @param {{}} action
+ * @param {GurpsActor|Actor} actor
+ * @param {{}} optionalArgs
+ * @returns {{level: number, enforce: boolean}}
+ */
+export const getTargetRollMaxLevel = (currentLevel, action, actor, optionalArgs) => {
+  let enforce = false
+  const actionType = action?.type
+  if (!actionType) return { level: currentLevel, enforce }
+  const maneuver = foundry.utils.getProperty(actor, 'system.conditions.maneuver')
+  if (actionType === 'attack' && maneuver === 'move_and_attack') {
+    enforce = true
+    if (action.isMelee) {
+      currentLevel = Math.min(currentLevel - 4, 9)
+    } else {
+      const weaponBulk = parseInt(optionalArgs?.obj?.bulk || 0)
+      currentLevel = Math.min(currentLevel - Math.max(2, weaponBulk), 9)
+    }
+  }
+  return { level: currentLevel, enforce }
+}
+
+/**
  * Recalculate the formula based on Modifier Bucket total.
  *
  * Formula examples: 2d+2, 1d-1, 3d6, 1d-2. (Must also handle literal damage, such as '13').
@@ -94,7 +121,7 @@ export async function doRoll({
     } else {
       token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
     }
-    result = await actor.canRoll(action, token)
+    result = await actor.canRoll(action, token, optionalArgs.obj)
   }
 
   const messages = Object.keys(result)
@@ -112,7 +139,7 @@ export async function doRoll({
   let displayFormula = formula
 
   if (actor instanceof Actor && taggedSettings.autoAdd) {
-    // We need to clear all tagged tags from the bucket when user starts
+    // We need to clear all tagged modifiers from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
     for (let mod of targetmods || []) {
@@ -132,12 +159,15 @@ export async function doRoll({
   if (showRollDialog && actor instanceof Actor) {
     // Get Actor Info
     const tokenImg = token?.document.texture.src || actor?.img
+    const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
     const tokenName = token?.name || actor?.name
 
     // Get Math Info
     let totalMods = GURPS.ModifierBucket.currentSum()
     const operator = totalMods >= 0 ? '+' : '-'
-    const totalRoll = origtarget + totalMods
+    const { level, enforce } = getTargetRollMaxLevel(origtarget + totalMods, action, actor, optionalArgs)
+    if (enforce) GURPS.ModifierBucket.modifierStack.maxTotal = level
+    const totalRoll = level
     totalMods = Math.abs(totalMods)
 
     // Get Target Info
@@ -160,6 +190,17 @@ export async function doRoll({
       template = 'confirmation-damage-roll.hbs'
     }
 
+    // If Max Actions Check is enabled get Consume Action Info
+    let consumeActionIcon, consumeActionLabel, consumeActionColor
+    const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
+    if (checkMaxActionSettings !== 'Allow') {
+      const canConsumeAction = actor.canConsumeAction(action, optionalArgs.obj)
+      consumeActionIcon = canConsumeAction ? '<i class="fas fa-plus"></i>' : '<i class="fas fa-check"></i>'
+      consumeActionLabel = canConsumeAction ? i18n('GURPS.willConsumeAction') : i18n('GURPS.isFreeAction')
+      consumeActionColor = canConsumeAction ? 'rgb(138,0,0)' : 'rgb(51,114,68)'
+    }
+
+    // Get Target Roll Info
     switch (action?.type || 'undefined') {
       case 'attack':
         if (action.isMelee) {
@@ -269,7 +310,7 @@ export async function doRoll({
 
     let doRollResult
     // Before open a new dialog, we need to make sure
-    // all other dialogs are closed, because bucket must be reset
+    // all other dialogs are closed, because bucket must be soft reset
     // before we start a new roll
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
@@ -278,7 +319,7 @@ export async function doRoll({
         content: await renderTemplate(`systems/gurps/templates/${template}`, {
           formula: formula,
           thing: thing,
-          target: origtarget,
+          target: enforce ? Math.min(origtarget, level) : origtarget,
           targetmods: targetmods,
           prefix: prefix,
           chatthing: chatthing,
@@ -299,12 +340,17 @@ export async function doRoll({
           rollChance,
           bucketRoll,
           messages,
+          isVideo,
+          consumeActionIcon,
+          consumeActionLabel,
+          consumeActionColor,
         }),
         buttons: {
           roll: {
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
+              origtarget = enforce ? level : origtarget
               doRollResult = await _doRoll({
                 actor,
                 formula,
@@ -509,7 +555,7 @@ async function _doRoll({
   const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
   if (!!actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
-    await actions.consumeAction(optionalArgs.action, chatthing)
+    await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj)
   }
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)

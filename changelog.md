@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.17-beta.2
+## Release 0.17.17-beta.3
 
 #### Features
 
@@ -24,6 +24,11 @@
 - Bugfix: /iftest applies bonuses twice #2059
 - Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
+- Bugfix: 17.17-beta2 broke Macro OtFs in the character sheet #2079
+- Bugfix: 17.16 chat message for Shock has duplicate pdflink span elements #2083
+- Bugfix: 17.17-beta2 Active Effects condition names are indistinguishable from each other in the droplist selector #2081
+- Bugfix: 17.17-beta2: Button in Chat message for Major Wound broken #2087
+- Bugfix: 17.16 OtF Macro arguments do not support quoted strings #2089
 
 Release 0.17.16 11/29/2024
 

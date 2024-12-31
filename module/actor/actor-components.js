@@ -342,6 +342,7 @@ export class Skill extends Leveled {
     this.type = '' // "DX/E";
     this.relativelevel = '' // "DX+1";
     this.modifierTags = ''
+    this.consumeAction = false
   }
 
   static get actorSystemKey() {
@@ -377,6 +378,7 @@ export class Skill extends Leveled {
           duringotf: this.duringotf || '',
           passotf: this.passotf || '',
           failotf: this.failotf || '',
+          consumeAction: this.consumeAction || false,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},
@@ -410,6 +412,7 @@ export class Skill extends Leveled {
       skill.level = data.level
       skill.relativelevel = data.relativelevel
       skill['type'] = data['type']
+      skill.consumeAction = data.consumeAction
     }
     return this._checkComponentInActor(actor, skill)
   }
@@ -455,6 +458,7 @@ export class Spell extends Leveled {
     this.difficulty = ''
     this.relativelevel = '' // "IQ+1"
     this.modifierTags = ''
+    this.consumeAction = true
   }
   static get actorSystemKey() {
     return 'spells'
@@ -495,6 +499,7 @@ export class Spell extends Leveled {
           duringotf: this.duringotf || '',
           passotf: this.passotf || '',
           failotf: this.failotf || '',
+          consumeAction: this.consumeAction || true,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},
@@ -536,6 +541,7 @@ export class Spell extends Leveled {
       spell.resist = data.resist
       spell.casttime = data.casttime
       spell.difficulty = data.difficulty
+      spell.consumeAction = data.consumeAction
     }
     return this._checkComponentInActor(actor, spell)
   }
@@ -689,6 +695,8 @@ export class Attack extends Named {
     this.mode = ''
     this.level = ''
     this.modifierTags = ''
+    this.extraAttacks = 0
+    this.consumeAction = true
 
     Object.assign(Leveled.prototype, _AnimationMixin)
   }
@@ -739,6 +747,8 @@ export class Melee extends Attack {
       melee.parry = data.parry
       melee.block = data.block
       melee.baseParryPenalty = data.baseParryPenalty || -4
+      melee.extraAttacks = data.extraAttacks || 0
+      melee.consumeAction = data.consumeAction || true
     }
     return this._checkComponentInActor(actor, melee)
   }
@@ -784,6 +794,8 @@ export class Melee extends Attack {
           duringotf: this.duringotf || '',
           passotf: this.passotf || '',
           failotf: this.failotf || '',
+          extraAttacks: this.extraAttacks || 0,
+          consumeAction: this.consumeAction || true,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},
@@ -855,6 +867,8 @@ export class Ranged extends Attack {
       ranged.rcl = data.rcl
       ranged.halfd = data.halfd
       ranged.max = data.max
+      ranged.extraAttacks = data.extraAttacks || 0
+      ranged.consumeAction = data.consumeAction || true
     }
     return this._checkComponentInActor(actor, ranged)
   }
@@ -903,6 +917,8 @@ export class Ranged extends Attack {
           duringotf: this.duringotf || '',
           passotf: this.passotf || '',
           failotf: this.failotf || '',
+          extraAttacks: this.extraAttacks || 0,
+          consumeAction: this.consumeAction || true,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},

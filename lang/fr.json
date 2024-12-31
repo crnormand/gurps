@@ -1291,5 +1291,16 @@
   "GURPS.atNextTurn": "Au prochain tour",
   "GURPS.removestunEffect": "Effet d'étourdissement supprimé sur la cible.",
   "GURPS.addstunEffect": "Effet d'étourdissement ajouté sur la cible.",
-  "GURPS.addedShockAtNextTurnEffect": "Effet de choc ajouté au prochain tour."
+  "GURPS.addedShockAtNextTurnEffect": "Effet de choc ajouté au prochain tour.",
+  "GURPS.allAttributeTags": "Tags de tous les jets d'attributs",
+  "GURPS.temporaryCombatTag": "Tag de combat temporaire",
+  "GURPS.settingAllowRollsBeforeCombatStart": "Autoriser les jets avant le début du combat",
+  "GURPS.settingHintAllowRollsBeforeCombatStart": "Si coché, le système permettra au joueur de faire des jets avant le début du combat.",
+  "GURPS.forbidRollsBeforeCombatStarted": "Vous ne pouvez pas faire de jets avant le début du combat.",
+  "GURPS.warnRollsBeforeCombatStarted": "Combat non initié.",
+  "GURPS.warnMaxAttacksReached": "Tous les attaques de ce tour sont utilisées.",
+  "GURPS.forbidMaxAttacksReached": "Vous avez déjà utilisé toutes les attaques de ce tour.",
+  "GURPS.consumeAction": "Consommer l'Action",
+  "GURPS.willConsumeAction": "Consommera une action.",
+  "GURPS.isFreeAction": "Est une action gratuite."
 }

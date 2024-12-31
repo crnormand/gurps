@@ -629,7 +629,7 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-      let button = `/r [/if {![${htCheck}]} {/st + stun \\\\ /st + prone}]`
+      let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-majorwound.html', {
@@ -642,8 +642,8 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'headvitalshit') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-      let button = `/r [/if {![${htCheck}]} {/st + stun \\\\ /st + prone}]`
-      if (!!token) button = `/r [/sel ${token.id} \\\\ ${button}]`
+      let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
+      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-headvitalshit.html', {
         name: !!token ? token.name : this.actor.name,

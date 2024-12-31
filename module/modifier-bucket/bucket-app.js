@@ -171,6 +171,7 @@ class ModifierStack {
     this.displaySum = '+0'
     this.plus = false
     this.minus = false
+    this.maxTotal = undefined
 
     // do we automatically empty the bucket when a roll is made?
     this.AUTO_EMPTY = true
@@ -208,7 +209,8 @@ class ModifierStack {
       const signal = this.minus ? '-' : '+'
       const target = $('#cr-target').text()
       if (!!target && !isNaN(target)) {
-        const total = Math.max(3, parseInt(target) + this.currentSum)
+        let total = Math.max(3, parseInt(target) + this.currentSum)
+        if (this.maxTotal) total = Math.min(total, this.maxTotal)
         const { targetColor, rollChance } = rollData(total)
         $('#cr-operator').text(signal)
         $('#cr-totalmods').text(Math.abs(this.currentSum))
@@ -311,6 +313,7 @@ class ModifierStack {
    */
   reset(otherstacklist = []) {
     this.modifierList = otherstacklist
+    this.maxTotal = undefined
     this.sum()
   }
 
@@ -431,6 +434,7 @@ export class ModifierBucket extends Application {
   clearTaggedModifiers(update = true) {
     this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => !m.tagged)
     this.modifierStack.sum()
+    this.modifierStack.maxTotal = undefined
     if (update) this.refresh()
   }
 

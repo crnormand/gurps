@@ -33,7 +33,7 @@ import {
   arrayToObject,
   objectToArray,
 } from '../lib/utilities.js'
-import { addBucketToDamage, doRoll, rollData } from './dierolls/dieroll.js'
+import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTable } from './damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
@@ -131,6 +131,8 @@ if (!globalThis.GURPS) {
   GURPS.LastActor = null
   GURPS.SJGProductMappings = SJGProductMappings
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
+
+  // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
 
   GURPS.SetLastActor = function (actor, tokenDocument) {
     if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
@@ -2400,7 +2402,6 @@ if (!globalThis.GURPS) {
         })
     )
 
-    // Sorry, removed the ts-ignores during editing.
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return
       let name = data.otf || data.bucket.join(' & ')
@@ -2464,7 +2465,6 @@ if (!globalThis.GURPS) {
       return false
     })
 
-    // @ts-ignore
     Hooks.on('renderCombatTracker', async function (_a, html, _c) {
       // use class 'bound' to know if the drop event is already bound
       if (!html.hasClass('bound')) {
@@ -2554,7 +2554,6 @@ if (!globalThis.GURPS) {
       addManeuverListeners()
     })
 
-    // @ts-ignore
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
@@ -2680,7 +2679,7 @@ if (!globalThis.GURPS) {
       __dirname + '/apply-damage/effect-majorwound.html',
       __dirname + '/apply-damage/effect-shock.html',
     ])
-    // @ts-ignore
+
     GURPS.setInitiativeFormula()
 
     // Translate attribute mappings if not in English
@@ -2770,30 +2769,9 @@ if (!globalThis.GURPS) {
       await resetTokenActions(combat)
     })
 
-    Hooks.on('modifierBucketSumUpdated', bucket => {
-      const signal = bucket.minus ? '-' : '+'
-      const target = $('#cr-target').text()
-      if (!!target && !isNaN(target)) {
-        const total = Math.max(3, parseInt(target) + bucket.currentSum)
-        const { targetColor, rollChance } = rollData(total)
-        setTimeout(() => {
-          $('#cr-operator').text(signal)
-          $('#cr-totalmods').text(Math.abs(bucket.currentSum))
-          $('#cr-total').text(total).css('color', targetColor)
-          $('.cr-tooltip').text(rollChance)
-        }, 200)
-      }
-      const damage = $('#cr-damage').text()
-      const formula = $('#cr-formula').text()
-      if (!!formula && !!damage) {
-        const newFormula = addBucketToDamage(formula, false)
-        const bucketTotal = GURPS.ModifierBucket.currentSum()
-        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        setTimeout(() => {
-          $('#cr-damage').text(newFormula)
-          $('#cr-bucket').text(bucketRoll)
-        }, 200)
-      }
+    Hooks.on('deleteCombatant', async (combatant, combat) => {
+      console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
+      await resetTokenActionsForCombatant(combatant)
     })
 
     // End of system "READY" hook.
@@ -2811,8 +2789,12 @@ const handleCombatTurn = async (combat, round) => {
 
 const resetTokenActions = async combat => {
   for (const combatant of combat.combatants) {
-    const token = canvas.tokens.get(combatant.token.id)
-    const actions = await TokenActions.fromToken(token)
-    await actions.clear()
+    await resetTokenActionsForCombatant(combatant)
   }
+}
+
+const resetTokenActionsForCombatant = async combatant => {
+  const token = canvas.tokens.get(combatant.token.id)
+  const actions = await TokenActions.fromToken(token)
+  await actions.clear()
 }
