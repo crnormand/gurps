@@ -3252,6 +3252,9 @@ export class GurpsActor extends Actor {
    * @returns {boolean}
    */
   canConsumeAction(action, actorComp = {}) {
+    // TODO: Still need to check if all rolls without
+    //   action did not consume action
+    if (!action) return false
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
     const isDodge = action.attribute === 'dodge'
