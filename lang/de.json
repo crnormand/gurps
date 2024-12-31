@@ -1121,5 +1121,16 @@
   "GURPS.removestunEffect": "Betäubungseffekt auf Ziel entfernt.",
   "GURPS.addstunEffect": "Betäubungseffekt auf Ziel hinzugefügt.",
   "GURPS.addedShockAtNextTurnEffect": "Schockeffekt in der nächsten Runde hinzugefügt.",
-  "GURPS.removedShockEffect": "Schockeffekt auf Ziel entfernt."
+  "GURPS.removedShockEffect": "Schockeffekt auf Ziel entfernt.",
+  "GURPS.allAttributeTags": "Alle Attributs-Wurf-Tags",
+  "GURPS.temporaryCombatTag": "Temporärer Kampf-Tag",
+  "GURPS.settingAllowRollsBeforeCombatStart": "Würfe vor Kampfbeginn erlauben",
+  "GURPS.settingHintAllowRollsBeforeCombatStart": "Wenn aktiviert, erlaubt das System dem Spieler, Würfe vor dem Kampfbeginn zu machen.",
+  "GURPS.forbidRollsBeforeCombatStarted": "Sie können keine Würfe machen, bevor der Kampf beginnt.",
+  "GURPS.warnRollsBeforeCombatStarted": "Kampf nicht gestartet.",
+  "GURPS.warnMaxAttacksReached": "Alle Angriffe in dieser Runde verwendet.",
+  "GURPS.forbidMaxAttacksReached": "Du hast bereits alle Angriffe in dieser Runde verwendet.",
+  "GURPS.consumeAction": "Consommer l'Action",
+  "GURPS.willConsumeAction": "Wird eine Aktion verbrauchen.",
+  "GURPS.isFreeAction": "Ist eine freie Aktion."
 }

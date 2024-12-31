@@ -290,7 +290,8 @@
         "duringotf": "",
         "passotf": "",
         "failotf": "",
-        "originalName": ""
+        "originalName": "",
+        "consumeAction": false
       },
       "melee": {},
       "ranged": {},
@@ -331,7 +332,8 @@
         "duringotf": "",
         "passotf": "",
         "failotf": "",
-        "originalName": ""
+        "originalName": "",
+        "consumeAction": true
       },
       "melee": {},
       "ranged": {},
@@ -373,7 +375,9 @@
         "passotf": "",
         "failotf": "",
         "originalName": "",
-        "modifierTags": ""
+        "modifierTags": "",
+        "extraAttacks": 0,
+        "consumeAction": true
       }
     },
     "rangedAtk": {
@@ -405,7 +409,9 @@
         "passotf": "",
         "failotf": "",
         "originalName": "",
-        "modifierTags": ""
+        "modifierTags": "",
+        "extraAttacks": 0,
+        "consumeAction": true
       }
     }
   }

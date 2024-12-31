@@ -680,5 +680,16 @@
   "GURPS.addstunEffect": "Эффект оглушения добавлен на цели.",
   "GURPS.addedShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
   "GURPS.removedShockEffect": "Эффект шока удален на цели.",
-  "GURPS.ignoreImportQtyLabel": "Сохранить кол-во"
+  "GURPS.ignoreImportQtyLabel": "Сохранить кол-во",
+  "GURPS.allAttributeTags": "Теги всех бросков атрибутов",
+  "GURPS.temporaryCombatTag": "Временный боевой тег",
+  "GURPS.settingAllowRollsBeforeCombatStart": "Разрешить броски до начала боя",
+  "GURPS.settingHintAllowRollsBeforeCombatStart": "Если установлено, система позволит игроку делать броски до начала боя.",
+  "GURPS.forbidRollsBeforeCombatStarted": "Вы не можете делать броски до начала боя.",
+  "GURPS.warnRollsBeforeCombatStarted": "Бой не начат.",
+  "GURPS.warnMaxAttacksReached": "Все атаки в этом ходу использованы.",
+  "GURPS.forbidMaxAttacksReached": "Вы уже использовали все атаки в этом ходу.",
+  "GURPS.consumeAction": "Consommer l'Action",
+  "GURPS.willConsumeAction": "Потребует действия.",
+  "GURPS.isFreeAction": "Это свободное действие."
 }

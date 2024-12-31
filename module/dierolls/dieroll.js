@@ -121,7 +121,7 @@ export async function doRoll({
     } else {
       token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
     }
-    result = await actor.canRoll(action, token)
+    result = await actor.canRoll(action, token, optionalArgs.obj)
   }
 
   const messages = Object.keys(result)
@@ -159,6 +159,7 @@ export async function doRoll({
   if (showRollDialog && actor instanceof Actor) {
     // Get Actor Info
     const tokenImg = token?.document.texture.src || actor?.img
+    const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
     const tokenName = token?.name || actor?.name
 
     // Get Math Info
@@ -189,6 +190,17 @@ export async function doRoll({
       template = 'confirmation-damage-roll.hbs'
     }
 
+    // If Max Actions Check is enabled get Consume Action Info
+    let consumeActionIcon, consumeActionLabel, consumeActionColor
+    const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
+    if (checkMaxActionSettings !== 'Allow') {
+      const canConsumeAction = actor.canConsumeAction(action, optionalArgs.obj)
+      consumeActionIcon = canConsumeAction ? '<i class="fas fa-plus"></i>' : '<i class="fas fa-check"></i>'
+      consumeActionLabel = canConsumeAction ? i18n('GURPS.willConsumeAction') : i18n('GURPS.isFreeAction')
+      consumeActionColor = canConsumeAction ? 'rgb(138,0,0)' : 'rgb(51,114,68)'
+    }
+
+    // Get Target Roll Info
     switch (action?.type || 'undefined') {
       case 'attack':
         if (action.isMelee) {
@@ -307,7 +319,7 @@ export async function doRoll({
         content: await renderTemplate(`systems/gurps/templates/${template}`, {
           formula: formula,
           thing: thing,
-          target: Math.min(origtarget, level),
+          target: enforce ? Math.min(origtarget, level) : origtarget,
           targetmods: targetmods,
           prefix: prefix,
           chatthing: chatthing,
@@ -328,13 +340,17 @@ export async function doRoll({
           rollChance,
           bucketRoll,
           messages,
+          isVideo,
+          consumeActionIcon,
+          consumeActionLabel,
+          consumeActionColor,
         }),
         buttons: {
           roll: {
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
-              origtarget = level
+              origtarget = enforce ? level : origtarget
               doRollResult = await _doRoll({
                 actor,
                 formula,
@@ -539,7 +555,7 @@ async function _doRoll({
   const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
   if (!!actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
-    await actions.consumeAction(optionalArgs.action, chatthing)
+    await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj)
   }
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)

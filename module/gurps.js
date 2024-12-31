@@ -2769,6 +2769,11 @@ if (!globalThis.GURPS) {
       await resetTokenActions(combat)
     })
 
+    Hooks.on('deleteCombatant', async (combatant, combat) => {
+      console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
+      await resetTokenActionsForCombatant(combatant)
+    })
+
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
@@ -2784,8 +2789,12 @@ const handleCombatTurn = async (combat, round) => {
 
 const resetTokenActions = async combat => {
   for (const combatant of combat.combatants) {
-    const token = canvas.tokens.get(combatant.token.id)
-    const actions = await TokenActions.fromToken(token)
-    await actions.clear()
+    await resetTokenActionsForCombatant(combatant)
   }
+}
+
+const resetTokenActionsForCombatant = async combatant => {
+  const token = canvas.tokens.get(combatant.token.id)
+  const actions = await TokenActions.fromToken(token)
+  await actions.clear()
 }

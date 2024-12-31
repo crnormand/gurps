@@ -9,7 +9,11 @@
 {{/if}}
 <div class="cr-damage-container">
   <div class="cr-token-section">
-    <img class="cr-token-img" src="{{tokenImg}}" alt="">
+    {{#if isVideo}}
+      <video class="cr-token-img" src="{{tokenImg}}" autoplay loop muted></video>
+    {{else}}
+      <img class="cr-token-img" src="{{tokenImg}}" alt="">
+    {{/if}}
     <div class="cr-token-name">{{tokenName}}</div>
   </div>
   <div class="cr-damage-section">

@@ -144,6 +144,15 @@
   <div>
     <textarea class="notes" id="item-spell-notes" rows="4" name="system.spl.notes">{{system.spl.notes}}</textarea>
   </div>
+  <label>{{i18n "GURPS.consumeAction"}}</label>
+  <div class="icon-prefix">
+    <input
+      id="spell-consume-action"
+      name='system.spl.consumeAction'
+      type='checkbox'
+      {{checked system.spl.consumeAction}}
+    />
+  </div>
 </div>
 <hr />
 <div>

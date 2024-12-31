@@ -77,6 +77,7 @@ export class TokenActions {
 
     // Trackable resources per Turn
     this.totalActions = 0
+    this.totalAttacks = 0
     this.totalBlocks = 0
     this.maxBlocks = 1
     this.totalParries = 0
@@ -124,20 +125,36 @@ export class TokenActions {
 
   async init() {
     const savedTokenData = (await this.token.document.getFlag('gurps', 'tokenActions')) || {}
+
+    // Current (used) Values per Turn
     this.totalActions = savedTokenData.totalActions || 0
-    this.extraActions = 0
+    this.totalAttacks = savedTokenData.totalAttacks || 0
+    this.totalBlocks = savedTokenData.totalBlocks || 0
+    this.totalParries = savedTokenData.totalParries || 0
+    this.totalMoves = savedTokenData.totalMoves || 0
+
+    // Extra Values per Turn
+    this.extraActions = savedTokenData.extraActions || 0
+    this.extraAttacks = savedTokenData.extraAttacks || 0
+    this.extraBlocks = savedTokenData.extraBlocks || 0
+
+    // Max Values per Turn
     this.maxActions = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxActions') || 1
+    this.maxBlocks = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxBlocks') || 1
+    this.maxParries = savedTokenData.maxParries || Infinity
+    this.maxMove = savedTokenData.maxMove || this.getMaxMove()
+
+    // Turn Data
     this.currentTurn = game.combat?.round || 0
     this.lastManeuvers = savedTokenData.lastManeuvers || this._getInitialLastManeuvers()
-    this.totalBlocks = savedTokenData.totalBlocks || 0
-    this.maxBlocks = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxBlocks') || 1
-    this.totalParries = savedTokenData.totalParries || 0
-    this.maxParries = savedTokenData.maxParries || Infinity
-    this.totalMoves = savedTokenData.totalMoves || 0
-    this.maxMove = savedTokenData.maxMove || this.getMaxMove()
+    this.lastAttack = savedTokenData.lastAttack || {}
+
+    // Flags
     this.canDefend = savedTokenData.canDefend
     this.canAttack = savedTokenData.canAttack
     this.canMove = savedTokenData.canMove
+
+    // Modifiers
     this.toHitBonus = savedTokenData.toHitBonus || 0
     this.defenseBonus = savedTokenData.defenseBonus || 0
     this.concentrateTurns = savedTokenData.concentrateTurns || 0
@@ -147,24 +164,32 @@ export class TokenActions {
     this.readyTurns = savedTokenData.readyTurns || 0
     this.moveTurns = savedTokenData.moveTurns || 0
     this.blindAsDefault = savedTokenData.blindAsDefault !== undefined ? savedTokenData.blindAsDefault : game.user.isGM
-    this.lastAttack = savedTokenData.lastAttack || {}
+
     return this
   }
 
   async save() {
     const newData = {
       totalActions: this.totalActions,
-      extraActions: this.extraActions,
-      lastManeuvers: this.lastManeuvers,
+      totalAttacks: this.totalAttacks,
       totalBlocks: this.totalBlocks,
-      maxBlocks: this.maxBlocks,
       totalParries: this.totalParries,
-      maxParries: this.maxParries,
       totalMoves: this.totalMoves,
+
+      extraActions: this.extraActions,
+      extraAttacks: this.extraAttacks,
+      extraBlocks: this.extraBlocks,
+
+      maxParries: this.maxParries,
       maxMove: this.maxMove,
+
+      lastManeuvers: this.lastManeuvers,
+      lastAttack: this.lastAttack,
+
       canDefend: this.canDefend,
       canAttack: this.canAttack,
       canMove: this.canMove,
+
       toHitBonus: this.toHitBonus,
       defenseBonus: this.defenseBonus,
       concentrateTurns: this.concentrateTurns,
@@ -174,7 +199,6 @@ export class TokenActions {
       readyTurns: this.readyTurns,
       moveTurns: this.moveTurns,
       blindAsDefault: this.blindAsDefault,
-      lastAttack: this.lastAttack,
     }
     await this.token.document.setFlag('gurps', 'tokenActions', newData)
   }
@@ -399,10 +423,20 @@ export class TokenActions {
     })
   }
 
+  resetTurnValues() {
+    this.totalMoves = 0
+    this.totalBlocks = 0
+    this.totalParries = 0
+    this.totalActions = 0
+    this.totalAttacks = 0
+  }
+
   /**
    * Get Maneuver Modifiers
    *
    * Call this method every time a new maneuver is selected.
+   *
+   * Every time a maneuver is select, current totals for moves, blocks, parries, actions and attacks are reset.
    *
    * @param {Maneuver} maneuver
    * @param {integer} round
@@ -420,10 +454,14 @@ export class TokenActions {
     await this.removeModifiers()
 
     this.maxMove = this.getMaxMove()
+    this.maxParries = Infinity
+    this.maxActions = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxActions') || 1
+    this.maxBlocks = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxBlocks') || 1
+
     this.toHitBonus = 0
     this.defenseBonus = 0
-    this.maxParries = Infinity
-    this.maxBlocks = 1
+
+    this.resetTurnValues()
 
     switch (this.currentManeuver) {
       case 'do_nothing':
@@ -457,7 +495,7 @@ export class TokenActions {
         break
       case 'aoa_double':
       case 'aoa_feint':
-        this.extraActions = 1
+        this.extraAttacks = 1
         this.canAttack = true
         this.canDefend = false
         this.canMove = true
@@ -544,11 +582,10 @@ export class TokenActions {
     this.currentTurn = round
     const lastManeuver = foundry.utils.getProperty(this.actor, 'system.conditions.maneuver')
     this.lastManeuvers[round].maneuver = lastManeuver
-    this.totalMoves = 0
-    this.totalBlocks = 0
-    this.totalParries = 0
-    this.totalActions = 0
+    this.resetTurnValues()
     this.extraActions = 0
+    this.extraAttacks = 0
+    this.extraBlocks = 0
     this.maxParries = Infinity
     Object.keys(this.currentParry).map(k => {
       const p = this.currentParry[k]
@@ -698,12 +735,14 @@ export class TokenActions {
    *
    * @param {object} [action]
    * @param {string} chatThing
+   * @param {object} [actionObj]
+   * @param {boolean} [isRapidStrike]
    * @returns {Promise<void>}
    */
-  async consumeAction(action, chatThing) {
-    if (action && !['skill', 'spell', 'melee', 'ranged'].includes(action.type)) return
-    const chatCode = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
-    switch (chatCode) {
+  async consumeAction(action, chatThing, actionObj, isRapidStrike = false) {
+    if (!this.actor.canConsumeAction(action, actionObj)) return
+    const actionType = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
+    switch (actionType) {
       case 'b':
         this.totalBlocks += 1
         break
@@ -720,6 +759,11 @@ export class TokenActions {
           acc[k] = parry
           return acc
         }, {})
+        break
+      case 'm':
+      case 'r':
+        this.totalActions += 1
+        this.totalAttacks += 1
         break
       default:
         this.totalActions += 1
