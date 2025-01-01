@@ -34,6 +34,7 @@
 - Bugfix: 17.17-beta2: Parry penalty is empty for existing characters, resulting in an NaN modifier #2086
 - Bugfix: 17.17-beta2: Button in Chat message for Major Wound broken #2087
 - Bugfix: 17.16 OtF Macro arguments do not support quoted strings #2089
+- Bugfix: 17.17-b3-patched GURPS.executeOTF still unbalanced with more than one command in a clause #2093
 
 Release 0.17.16 11/29/2024
 
