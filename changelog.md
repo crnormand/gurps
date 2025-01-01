@@ -26,6 +26,7 @@
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
 - Bugfix: 17.17-beta TokenAction.newTurn throws "TypeError: Cannot read properties of undefined" #2074
 - Bugfix: 17.17 Beta - Move and Attack did not work on Confirmation Dialog #2075
+- Bugfix: /r [+1 anything] breaks executeOTF #2076
 - Bugfix: 17.17-beta2 broke Macro OtFs in the character sheet #2079
 - Bugfix: 17.17-beta 2 Confirmation Dialog Roll #2030 fails to recognize maneuver and character portrait #2080
 - Bugfix: 17.17-beta2 Active Effects condition names are indistinguishable from each other in the droplist selector #2081

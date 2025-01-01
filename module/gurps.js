@@ -388,7 +388,11 @@ if (!globalThis.GURPS) {
     inputstring = inputstring.trim()
     if (inputstring[0] == '[' && inputstring[inputstring.length - 1] == ']')
       inputstring = inputstring.substring(1, inputstring.length - 1)
-    let strings = inputstring.split('\\\\')
+
+    // Stop splitting on double backslashes. This breaks when you have nested /chat commands, the inner ones with double backslashes.
+    // Example: /if [ST] s:{/r [+@margin Successful ST roll]\\/r [Sk:"Forced Entry"]} cs:{...}]}
+    // let strings = inputstring.split('\\\\')
+    let strings = [inputstring]
     let answer = false
     for (let string of strings) {
       string = string.trim()
