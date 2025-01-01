@@ -9,7 +9,11 @@
 {{/if}}
 <div class="cr-container">
   <div class="cr-token-section">
-    <img class="cr-token-img" src="{{tokenImg}}" alt="">
+    {{#if isVideo}}
+      <video class="cr-token-img" src="{{tokenImg}}" autoplay loop muted></video>
+    {{else}}
+      <img class="cr-token-img" src="{{tokenImg}}" alt="">
+    {{/if}}
     <div class="cr-token-name">{{tokenName}}</div>
   </div>
   <div class="cr-result-section">
@@ -23,11 +27,16 @@
     <div class="cr-result-type">{{rollType}}</div>
   </div>
   <div class="cr-item-section">
-    {{#if itemImage}}
-      <img class="cr-item-img" src="{{itemImage}}" alt="">
-    {{else}}
-      <div class="cr-item-icon" style="background-color: {{itemColor}};"><i class="{{itemIcon}}"></i></div>
-    {{/if}}
+    <div class="cr-item-img-container">
+      {{#if itemImage}}
+        <img class="cr-item-img" src="{{itemImage}}" alt="">
+      {{else}}
+        <div class="cr-item-icon" style="background-color: {{itemColor}};"><i class="{{itemIcon}}"></i></div>
+      {{/if}}
+      {{#if consumeActionIcon }}
+        <div class="consume-action-badge" style="background-color: {{consumeActionColor}}" title="{{consumeActionLabel}}">{{{consumeActionIcon}}}</div>
+      {{/if}}
+    </div>
     <div class="cr-item-roll">{{targetRoll}}</div>
   </div>
 </div>

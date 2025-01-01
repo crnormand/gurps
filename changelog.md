@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.17-beta.2
+## Release 0.17.17-beta.3
 
 #### Features
 
@@ -19,12 +19,21 @@
 - Bugfix: Fix bl unit for high strength characters #2041
 - Bugfix: DFRPG Slam calculation is incorrect in /slam #2053
 - Bugfix: Item Statistics missing with GCA4 import. #2057
+- Bugfix: Injury Tolerance: Damage Reduction in the Damage Calculator does not allow decimal inputs for values less than 2. #2043
 - Bugfix: Item Indent on Reopen #2049
-- Bugfix: Injury Tolerance: Damage Reduction in the Damage Calculator does not allow decimal inputs for values less than 2. #2043 (This is really a feature, not a bug.)
 - Bugfix: /iftest applies bonuses twice #2059
 - Bugfix: GURPS.executeOTF is broken when using /if [On-the-Fly] cs:{ critsuccessclaus } s:{ thenclaus } f:{ elseclause } cf:{ critfailureclause } #2060
 - Bugfix: Auto save foundry Qty/Count not works when Use Foundry Itens is active #2063
+- Bugfix: 17.17-beta TokenAction.newTurn throws "TypeError: Cannot read properties of undefined" #2074
+- Bugfix: 17.17 Beta - Move and Attack did not work on Confirmation Dialog #2075
 - Bugfix: /r [+1 anything] breaks executeOTF #2076
+- Bugfix: 17.17-beta2 broke Macro OtFs in the character sheet #2079
+- Bugfix: 17.17-beta 2 Confirmation Dialog Roll #2030 fails to recognize maneuver and character portrait #2080
+- Bugfix: 17.17-beta2 Active Effects condition names are indistinguishable from each other in the droplist selector #2081
+- Bugfix: 17.16 chat message for Shock has duplicate pdflink span elements #2083
+- Bugfix: 17.17-beta2: Parry penalty is empty for existing characters, resulting in an NaN modifier #2086
+- Bugfix: 17.17-beta2: Button in Chat message for Major Wound broken #2087
+- Bugfix: 17.16 OtF Macro arguments do not support quoted strings #2089
 
 Release 0.17.16 11/29/2024
 

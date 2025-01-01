@@ -1355,5 +1355,16 @@
   "GURPS.atNextTurn": "Na próxima rodada",
   "GURPS.removestunEffect": "Efeito de atordoamento removido no alvo.",
   "GURPS.addstunEffect": "Efeito de atordoamento adicionado no alvo.",
-  "GURPS.addedShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada."
+  "GURPS.addedShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada.",
+  "GURPS.allAttributeTags": "Todas as Tags de Rolagens de Atributos",
+  "GURPS.temporaryCombatTag": "Tag de Combate Temporário",
+  "GURPS.settingAllowRollsBeforeCombatStart": "Permitir Rolagens antes do Início do Combate",
+  "GURPS.settingHintAllowRollsBeforeCombatStart": "Se marcado, o sistema permitirá que o jogador faça rolagens antes do início do combate.",
+  "GURPS.forbidRollsBeforeCombatStarted": "Você não pode fazer rolagens antes do início do combate.",
+  "GURPS.warnRollsBeforeCombatStarted": "Combate não iniciado.",
+  "GURPS.warnMaxAttacksReached": "Todos os ataques deste turno foram usados.",
+  "GURPS.forbidMaxAttacksReached": "Você já usou todos os ataques deste turno.",
+  "GURPS.consumeAction": "Consumir Ação",
+  "GURPS.willConsumeAction": "Consumirá uma ação.",
+  "GURPS.isFreeAction": "É uma ação livre."
 }

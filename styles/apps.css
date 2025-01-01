@@ -3294,3 +3294,25 @@ details .popup.square5x4 {
   color: #261f1d;
   line-height: 1.1;
 }
+
+.cr-item-img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.consume-action-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}

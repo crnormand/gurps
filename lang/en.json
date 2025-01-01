@@ -108,7 +108,6 @@
       "physicalDiceTooltip": "ex: 1,2,3 or 6"
     }
   },
-
   "__Char Sheet__": "=========",
   "GURPS.resourcesModsTab": "Resources and Modifiers",
   "__Character Sheet Identity__": "=========",
@@ -1258,6 +1257,10 @@
   "GURPS.rollForMe": "Roll for me",
   "GURPS.selectToken": "Select Token",
   "GURPS.shock": "Shock",
+  "GURPS.shock1": "Shock 1",
+  "GURPS.shock2": "Shock 2",
+  "GURPS.shock3": "Shock 3",
+  "GURPS.shock4": "Shock 4",
   "GURPS.shockPenalty": "Penalty (–{amount}) to DX and IQ.",
   "GURPS.shockPenaltyNextTurnOnly": "{name}: –{modifier} to DX and IQ for next turn only.",
   "GURPS.showQuestion": "Show?",
@@ -1436,5 +1439,16 @@
   "GURPS.removestunEffect": "Remove Stun effect on target.",
   "GURPS.addstunEffect": "Add Stun effect on target.",
   "GURPS.addedShockAtNextTurnEffect": "Added Shock effect on next round.",
-  "GURPS.removedShockEffect": "Removed Shock effect on target."
+  "GURPS.removedShockEffect": "Removed Shock effect on target.",
+  "GURPS.allAttributeTags": "All Attribute Rolls Tags",
+  "GURPS.temporaryCombatTag": "Temporary Combat Tag",
+  "GURPS.settingAllowRollsBeforeCombatStart": "Allow Rolls before Combat Start",
+  "GURPS.settingHintAllowRollsBeforeCombatStart": "If checked, the system will allow the player to make rolls before the combat starts.",
+  "GURPS.forbidRollsBeforeCombatStarted": "You can't make rolls before the combat starts.",
+  "GURPS.warnRollsBeforeCombatStarted": "Combat not initiated.",
+  "GURPS.warnMaxAttacksReached": "All attacks this turn used.",
+  "GURPS.forbidMaxAttacksReached": "You already use all attacks this turn.",
+  "GURPS.consumeAction": "Consume Action",
+  "GURPS.willConsumeAction": "Will consume an action.",
+  "GURPS.isFreeAction": "Is a Free Action"
 }
