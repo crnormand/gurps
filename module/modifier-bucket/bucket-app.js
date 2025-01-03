@@ -172,6 +172,7 @@ class ModifierStack {
     this.plus = false
     this.minus = false
     this.maxTotal = undefined
+    this.usingRapidStrike = false
 
     // do we automatically empty the bucket when a roll is made?
     this.AUTO_EMPTY = true
@@ -202,6 +203,10 @@ class ModifierStack {
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
+
+    // Check if Rapid Strike is on list.
+    let rs = this.modifierList.find(m => m.desc.includes(i18n('gurps.modifiers.rapidStrike')))
+    this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
     const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
@@ -314,6 +319,7 @@ class ModifierStack {
   reset(otherstacklist = []) {
     this.modifierList = otherstacklist
     this.maxTotal = undefined
+    this.usingRapidStrike = false
     this.sum()
   }
 

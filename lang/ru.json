@@ -691,5 +691,13 @@
   "GURPS.forbidMaxAttacksReached": "Вы уже использовали все атаки в этом ходу.",
   "GURPS.consumeAction": "Consommer l'Action",
   "GURPS.willConsumeAction": "Потребует действия.",
-  "GURPS.isFreeAction": "Это свободное действие."
+  "GURPS.isFreeAction": "Это свободное действие.",
+  "GURPS.noActionsAvailable": "Нет доступных действий.",
+  "GURPS.settingUseMaxActions": "Проверка максимальных действий",
+  "GURPS.settingHintUseMaxActions": "Включите, чтобы система проверяла, использует ли игрок больше действий, чем разрешено за ход, для каждого токена. Все бойцы = система будет проверять только токены в трекере боя; Все токены = система будет проверять все токены на сцене.",
+  "GURPS.disable": "Отключить",
+  "GURPS.allCombatants": "Все токены в бою",
+  "GURPS.allTokens": "Все токены на сцене",
+  "GURPS.settingAddCumulativeParryPenalties": "Автоматически добавлять кумулятивные штрафы за парирование",
+  "GURPS.settingHintAddCumulativeParryPenalties": "Если включено, система автоматически добавит кумулятивные штрафы за парирование к броску для выбранных токенов для проверки максимальных действий."
 }

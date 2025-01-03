@@ -1132,5 +1132,13 @@
   "GURPS.forbidMaxAttacksReached": "Du hast bereits alle Angriffe in dieser Runde verwendet.",
   "GURPS.consumeAction": "Consommer l'Action",
   "GURPS.willConsumeAction": "Wird eine Aktion verbrauchen.",
-  "GURPS.isFreeAction": "Ist eine freie Aktion."
+  "GURPS.isFreeAction": "Ist eine freie Aktion.",
+  "GURPS.noActionsAvailable": "Keine Aktionen verfügbar.",
+  "GURPS.settingUseMaxActions": "Maximale Aktionen überprüfen",
+  "GURPS.settingHintUseMaxActions": "Aktivieren, um das System für jeden Token zu überprüfen, ob der Spieler mehr Aktionen als erlaubt pro Runde verwendet. Alle Kämpfer = System überprüft nur die Tokens im Kampf-Tracker; Alle Tokens = System überprüft alle Tokens in der Szene.",
+  "GURPS.disable": "Deaktivieren",
+  "GURPS.allCombatants": "Alle Tokens im Kampf",
+  "GURPS.allTokens": "Alle Tokens in der Szene",
+  "GURPS.settingAddCumulativeParryPenalties": "Kumulative Parier-Strafen automatisch hinzufügen",
+  "GURPS.settingHintAddCumulativeParryPenalties": "Wenn aktiviert, fügt das System automatisch kumulative Parier-Strafen zum Wurf für die ausgewählten Tokens für die Max Actions Check hinzu."
 }

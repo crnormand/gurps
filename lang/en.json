@@ -1450,5 +1450,13 @@
   "GURPS.forbidMaxAttacksReached": "You already use all attacks this turn.",
   "GURPS.consumeAction": "Consume Action",
   "GURPS.willConsumeAction": "Will consume an action.",
-  "GURPS.isFreeAction": "Is a Free Action"
+  "GURPS.isFreeAction": "Is a Free Action",
+  "GURPS.noActionsAvailable": "No actions available.",
+  "GURPS.settingUseMaxActions": "Use Max Actions Check",
+  "GURPS.settingHintUseMaxActions": "Enable to let system check, for each selected token, if player is using more actions than allowed per turn. All Combatants = system will check only the tokens in combat tracker; All Tokens = system will check for all tokens in the scene.",
+  "GURPS.disable": "Disable",
+  "GURPS.allCombatants": "All Tokens in Combat",
+  "GURPS.allTokens": "All Tokens in Scene",
+  "GURPS.settingAddCumulativeParryPenalties": "Automatically Add Cumulative Parry Penalties",
+  "GURPS.settingHintAddCumulativeParryPenalties": "If checked, system will automatically add cumulative parry penalties to the roll for the tokens selected for Max Actions Check."
 }

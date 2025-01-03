@@ -349,6 +349,7 @@ export class CompositeDamageCalculator {
         switch (effect.type) {
           case 'headvitalshit':
           case 'majorwound':
+          case 'crippling':
             const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun'))
             const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
@@ -389,6 +390,8 @@ export class CompositeDamageCalculator {
                 },
               ],
             }
+          default:
+            return effect
         }
       }
     })

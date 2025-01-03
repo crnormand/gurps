@@ -24,37 +24,19 @@ export const rollData = target => {
 }
 
 /**
- * Return max level for targeted rolls
- * checking for maneuvers like Move and Attack (B365)
- *
- * @param {number} currentLevel
- * @param {{}} action
- * @param {GurpsActor|Actor} actor
- * @param {{}} optionalArgs
- * @returns {{level: number, enforce: boolean}}
- */
-export const getTargetRollMaxLevel = (currentLevel, action, actor, optionalArgs) => {
-  let enforce = false
-  const actionType = action?.type
-  if (!actionType) return { level: currentLevel, enforce }
-  const maneuver = foundry.utils.getProperty(actor, 'system.conditions.maneuver')
-  if (actionType === 'attack' && maneuver === 'move_and_attack') {
-    enforce = true
-    if (action.isMelee) {
-      currentLevel = Math.min(currentLevel - 4, 9)
-    } else {
-      const weaponBulk = parseInt(optionalArgs?.obj?.bulk || 0)
-      currentLevel = Math.min(currentLevel - Math.max(2, weaponBulk), 9)
-    }
-  }
-  return { level: currentLevel, enforce }
-}
-
-/**
  * Recalculate the formula based on Modifier Bucket total.
  *
  * Formula examples: 2d+2, 1d-1, 3d6, 1d-2. (Must also handle literal damage, such as '13').
  * Can use the optional rule (B269) to round damage: +7 points = +2d and +4 points = +1d
+ *
+ * Examples:
+ * * with armor divisor: 2d+2 (2)
+ * * with damage type: 2d+2 cut
+ * * with cost formula: 2d+2 (0.5) cut *Costs 1FP
+ * * with armor divisor and damage type: 2d+2(2) cut
+ * * with multiplier: 2d*2
+ * * with minimum damage: 2d+2!
+ * * Everything: 4d+2! (2) cut *Costs 1FP
  *
  * @param {string} formula
  * @param {boolean} addDamageType
@@ -71,6 +53,11 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
 
   const add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
   const damageType = formula.match(/\d\s(.+)/)?.[1] || ''
+
+  const armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
+  const hasMinDamage = formula.includes('!')
+  const costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
+
   const bucketMod = GURPS.ModifierBucket.currentSum()
   let newAdd = add + bucketMod
 
@@ -89,7 +76,12 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
     }
   }
   const plus = newAdd > 0 ? '+' : ''
-  return `${dice}d${plus}${newAdd !== 0 ? newAdd : ''} ${addDamageType ? damageType : ''}`.trim()
+  const addText = newAdd !== 0 ? newAdd : ''
+  const minDamageText = hasMinDamage ? '! ' : ''
+  const armorDivisorText = armorDivisor ? ` (${armorDivisor})` : ''
+  const damageTypeText = addDamageType ? ` ${damageType}` : ''
+  const costFormulaText = costFormula ? ` *${costFormula}` : ''
+  return `${dice}d${plus}${addText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
 }
 
 export async function doRoll({
@@ -107,7 +99,7 @@ export async function doRoll({
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 
   const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-  let result = { canRoll: true }
+  let result = { canRoll: true, hasActions: true }
   let token
   if (actor instanceof Actor && action) {
     const actorTokens =
@@ -121,7 +113,7 @@ export async function doRoll({
     } else {
       token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
     }
-    result = await actor.canRoll(action, token, optionalArgs.obj)
+    result = await actor.canRoll(action, token, chatthing, optionalArgs.obj)
   }
 
   const messages = Object.keys(result)
@@ -165,9 +157,9 @@ export async function doRoll({
     // Get Math Info
     let totalMods = GURPS.ModifierBucket.currentSum()
     const operator = totalMods >= 0 ? '+' : '-'
-    const { level, enforce } = getTargetRollMaxLevel(origtarget + totalMods, action, actor, optionalArgs)
-    if (enforce) GURPS.ModifierBucket.modifierStack.maxTotal = level
-    const totalRoll = level
+    let totalRoll = origtarget + totalMods
+    // Set min value 3 for targeted rolls
+    totalRoll = Math.max(totalRoll, 3)
     totalMods = Math.abs(totalMods)
 
     // Get Target Info
@@ -192,12 +184,30 @@ export async function doRoll({
 
     // If Max Actions Check is enabled get Consume Action Info
     let consumeActionIcon, consumeActionLabel, consumeActionColor
-    const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
-    if (checkMaxActionSettings !== 'Allow') {
-      const canConsumeAction = actor.canConsumeAction(action, optionalArgs.obj)
-      consumeActionIcon = canConsumeAction ? '<i class="fas fa-plus"></i>' : '<i class="fas fa-check"></i>'
-      consumeActionLabel = canConsumeAction ? i18n('GURPS.willConsumeAction') : i18n('GURPS.isFreeAction')
-      consumeActionColor = canConsumeAction ? 'rgb(138,0,0)' : 'rgb(51,114,68)'
+    const settingsAllowAfterMaxActions = game.settings.get(
+      Settings.SYSTEM_NAME,
+      Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS
+    )
+    const settingsUseMaxActions = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
+    const dontShowMaxActions =
+      settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
+    if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
+      const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
+      consumeActionIcon = !result.hasActions
+        ? '<i class="fas fa-exclamation"></i>'
+        : canConsumeAction
+          ? '<i class="fas fa-plus"></i>'
+          : '<i class="fas fa-check"></i>'
+      consumeActionLabel = !result.hasActions
+        ? i18n('GURPS.noActionsAvailable')
+        : canConsumeAction
+          ? i18n('GURPS.willConsumeAction')
+          : i18n('GURPS.isFreeAction')
+      consumeActionColor = !result.hasActions
+        ? 'rgb(215,185,33)'
+        : canConsumeAction
+          ? 'rgba(20,119,180,0.7)'
+          : 'rgb(51,114,68,0.7)'
     }
 
     // Get Target Roll Info
@@ -319,7 +329,7 @@ export async function doRoll({
         content: await renderTemplate(`systems/gurps/templates/${template}`, {
           formula: formula,
           thing: thing,
-          target: enforce ? Math.min(origtarget, level) : origtarget,
+          target: origtarget,
           targetmods: targetmods,
           prefix: prefix,
           chatthing: chatthing,
@@ -350,7 +360,7 @@ export async function doRoll({
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
-              origtarget = enforce ? level : origtarget
+              GURPS.LastActor.stopActions = false
               doRollResult = await _doRoll({
                 actor,
                 formula,
@@ -370,6 +380,7 @@ export async function doRoll({
             label: i18n('GURPS.cancel'),
             callback: async () => {
               await GURPS.ModifierBucket.clearTaggedModifiers()
+              GURPS.LastActor.stopActions = true
               resolve(false)
             },
           },
@@ -426,6 +437,7 @@ async function _doRoll({
   // Let's collect up the modifiers, they are used differently depending on the type of roll
   let modifier = 0
   let maxtarget = null // If not null, then the target cannot be any higher than this.
+  const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
 
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods) // append any global mods
 
@@ -555,7 +567,7 @@ async function _doRoll({
   const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
   if (!!actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
-    await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj)
+    await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)
   }
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
