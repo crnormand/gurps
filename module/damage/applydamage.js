@@ -342,11 +342,13 @@ export default class ApplyDamageDialog extends Application {
     html.find('#result-effects button').click(async ev => this._handleEffectButtonClick(ev))
 
     html
-      .find('#add-shock-next button, #add-major button, #add-knockback button, #add-vitals button')
+      .find(
+        '#add-shock-next button, #add-major button, #add-crippling button, #add-knockback button, #add-vitals button'
+      )
       .on('click', ev => this._handleEffectAddEffectButtonClick(ev))
 
     html
-      .find('#test-major button, #test-knockback button, #test-vitals button')
+      .find('#test-major button, #test-knockback button, #test-vitals button, #test-crippling button')
       .on('click', ev => this._handleTestSaveEffectButtonClick(ev))
 
     html.find('#apply-injury-split').on('click', ev => {
@@ -499,6 +501,7 @@ export default class ApplyDamageDialog extends Application {
     switch (effect.type) {
       case 'headvitalshit':
       case 'majorwound':
+      case 'crippling':
         const htCheck =
           effect.modifier === 0 ? 'HT' : effect.modifier < 0 ? `HT+${-effect.modifier}` : `HT-${effect.modifier}`
         otf = `/r [!${htCheck}]`
@@ -586,6 +589,7 @@ export default class ApplyDamageDialog extends Application {
         break
       case 'headvitalshit':
       case 'majorwound':
+      case 'crippling':
         await toggleEffect(effect.effectName, span)
         break
       case 'knockback':

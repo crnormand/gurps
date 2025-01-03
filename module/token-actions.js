@@ -72,6 +72,9 @@ export class TokenActions {
 
   initValues() {
     this.maxActions = 1
+    this.maxBlocks = 1
+    this.maxParries = Infinity
+    this.maxMove = this.getMaxMove()
     this.currentTurn = 0
     this.lastManeuvers = this._getInitialLastManeuvers()
 
@@ -79,11 +82,13 @@ export class TokenActions {
     this.totalActions = 0
     this.totalAttacks = 0
     this.totalBlocks = 0
-    this.maxBlocks = 1
     this.totalParries = 0
-    this.maxParries = Infinity
     this.totalMoves = 0
-    this.maxMove = this.getMaxMove()
+
+    this.extraBlocks = 0
+    this.extraAttacks = 0
+    this.extraActions = 0
+    this.rapidStrikeBonus = 0
 
     this.canDefend = undefined
     this.canAttack = undefined
@@ -105,7 +110,10 @@ export class TokenActions {
   }
 
   get currentManeuver() {
-    return this.lastManeuvers[this.currentTurn]?.maneuver || 'do_nothing'
+    if (!this.lastManeuvers) {
+      this.lastManeuvers = this._getInitialLastManeuvers()
+    }
+    return this.lastManeuvers[this.currentTurn || 0]?.maneuver || 'do_nothing'
   }
 
   async clear() {
@@ -137,6 +145,7 @@ export class TokenActions {
     this.extraActions = savedTokenData.extraActions || 0
     this.extraAttacks = savedTokenData.extraAttacks || 0
     this.extraBlocks = savedTokenData.extraBlocks || 0
+    this.rapidStrikeBonus = savedTokenData.rapidStrikeBonus || 0
 
     // Max Values per Turn
     this.maxActions = foundry.utils.getProperty(this.actor, 'system.conditions.actions.maxActions') || 1
@@ -179,6 +188,7 @@ export class TokenActions {
       extraActions: this.extraActions,
       extraAttacks: this.extraAttacks,
       extraBlocks: this.extraBlocks,
+      rapidStrikeBonus: this.rapidStrikeBonus,
 
       maxParries: this.maxParries,
       maxMove: this.maxMove,
@@ -249,6 +259,7 @@ export class TokenActions {
           uuid: e.uuid,
           name: e.name,
           originalName: e.originalName,
+          mode: e.mode,
           startAt: undefined,
           basePenalty: e.baseParryPenalty,
           key: `system.melee.${_k}`,
@@ -385,7 +396,16 @@ export class TokenActions {
     if (this.toHitBonus !== 0) {
       const signal = this.toHitBonus > 0 ? '+' : '-'
       const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toHitBonus' : 'GURPS.toHitPenalty')
-      addModifier(`${signal}${this.toHitBonus} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)
+      if (this.currentManeuver === 'move_and_attack') {
+        addModifier(
+          `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} *Max:9 #melee #maneuver @man:${this.currentManeuver}`
+        )
+        addModifier(
+          `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #ranged #maneuver @man:${this.currentManeuver}`
+        )
+      } else {
+        addModifier(`${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)
+      }
     }
     if (this.evaluateTurns > 0) {
       addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
@@ -394,7 +414,7 @@ export class TokenActions {
       const signal = this.defenseBonus > 0 ? '+' : '-'
       const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toDefenseBonus' : 'GURPS.toDefensePenalty')
       addModifier(
-        `${signal}${this.defenseBonus} ${signalLabel} #parry #block #dodge #maneuver @man:${this.currentManeuver}`
+        `${signal}${Math.abs(this.defenseBonus)} ${signalLabel} #parry #block #dodge #maneuver @man:${this.currentManeuver}`
       )
     }
     if (this.evaluateTurns > 0) {
@@ -406,7 +426,7 @@ export class TokenActions {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toParryBonus' : 'GURPS.toParryPenalty')
         addModifier(
-          `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver @${parry.key}`
+          `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver #${parry.mode} @${parry.key}`
         )
       }
     })
@@ -415,7 +435,7 @@ export class TokenActions {
       if (aim.aimBonus !== 0) {
         const signal = aim.aimBonus > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toAimBonus' : 'GURPS.toAimPenalty')
-        addModifier(`${signal}${aim.aimBonus} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`)
+        addModifier(`${signal}${Math.abs(aim.aimBonus)} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`)
       }
     })
     await this.actor.update({
@@ -429,6 +449,12 @@ export class TokenActions {
     this.totalParries = 0
     this.totalActions = 0
     this.totalAttacks = 0
+    this.extraAttacks = 0
+    this.extraActions = 0
+    this.extraBlocks = 0
+    this.rapidStrikeBonus = 0
+    this.currentAim = this._getInitialAim()
+    this.currentParry = this._getInitialParry()
   }
 
   /**
@@ -518,6 +544,7 @@ export class TokenActions {
         this.canDefend = true
         this.canMove = true
         this.maxParries = 0
+        this.toHitBonus = -4
         break
       case 'allout_defense':
       case 'aod_dodge':
@@ -736,34 +763,46 @@ export class TokenActions {
    * @param {object} [action]
    * @param {string} chatThing
    * @param {object} [actionObj]
-   * @param {boolean} [isRapidStrike]
+   * @param {boolean} [usingRapidStrike]
    * @returns {Promise<void>}
    */
-  async consumeAction(action, chatThing, actionObj, isRapidStrike = false) {
-    if (!this.actor.canConsumeAction(action, actionObj)) return
+  async consumeAction(action, chatThing, actionObj, usingRapidStrike = false) {
+    if (!this.actor.canConsumeAction(action, chatThing, actionObj)) return
     const actionType = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
     switch (actionType) {
       case 'b':
         this.totalBlocks += 1
         break
       case 'p':
-        this.totalParries += 1
-        const regex = /(?<="|:).+(?=\s\(|"|])/gm
-        let name = chatThing.match(regex)?.[0]
-        if (name) name = name.replace(/"/g, '').split('(')[0].trim()
-        this.currentParry = Object.keys(this.currentParry).reduce((acc, k) => {
-          let parry = this.currentParry[k]
-          if (name.includes(parry.name)) {
-            parry.currentPenalty += parry.basePenalty
-          }
-          acc[k] = parry
-          return acc
-        }, {})
+        const settingsAddParryMods = game.settings.get(
+          Settings.SYSTEM_NAME,
+          Settings.SETTING_ADD_CUMULATIVE_PARRY_PENALTIES
+        )
+        if (settingsAddParryMods) {
+          this.totalParries += 1
+          const nameRegex = /(?<="|:).+(?=\s\(|"|])/gm
+          let name = chatThing.match(nameRegex)?.[0]
+          if (name) name = name.replace(/"/g, '').split('(')[0].trim()
+          const modeRegex = /(?<=\().+(?=\))/gm
+          let mode = chatThing.match(modeRegex)?.[0] || ''
+          this.currentParry = Object.keys(this.currentParry).reduce((acc, k) => {
+            let parry = this.currentParry[k]
+            if (name.includes(parry.name) && mode.includes(parry.mode)) {
+              parry.currentPenalty += parry.basePenalty
+            }
+            acc[k] = parry
+            return acc
+          }, {})
+        }
         break
       case 'm':
       case 'r':
         this.totalActions += 1
         this.totalAttacks += 1
+        if (usingRapidStrike && this.rapidStrikeBonus < 1) {
+          console.log(`Adding Rapid Strike Bonus to token: ${this.token.name}`)
+          this.rapidStrikeBonus += 1
+        }
         break
       default:
         this.totalActions += 1
