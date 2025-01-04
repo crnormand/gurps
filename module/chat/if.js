@@ -68,6 +68,10 @@ export class IfChatProcessor extends ChatProcessor {
         let event = this.msgs().event
         event.chatmsgData = this.msgs().data
         let pass = await GURPS.performAction(action.action, GURPS.LastActor, event)
+        if (!!GURPS.LastActor.stopActions) {
+          console.log('Stop actions after dialog canceled')
+          return
+        }
         if (invert) pass = !pass
         if (pass) {
           if (!!results.cs && GURPS.lastTargetedRoll?.isCritSuccess) {

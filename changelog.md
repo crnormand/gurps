@@ -34,8 +34,15 @@
 - Bugfix: 17.17-beta2: Parry penalty is empty for existing characters, resulting in an NaN modifier #2086
 - Bugfix: 17.17-beta2: Button in Chat message for Major Wound broken #2087
 - Bugfix: 17.16 OtF Macro arguments do not support quoted strings #2089
-
-Release 0.17.16 11/29/2024
+- Bugfix: 17.17-b3-patched GURPS.executeOTF still unbalanced with more than one command in a clause #2093
+- Bugifx: 17.17-beta2 Roll Confirmation #2030, multiple issues #2082
+- Bugfix: 17.17-beta2: Parry penalty is applied multiple times (once for every attack mode) #2085
+- Bugfix: 17.17-b3 Confirmation Dialog did not consider Bucket special modifiers #2096
+- Bugfix: 17.17-b3: Tracking attacks and parrys not longer works #2099
+- Bugfix: Beta 3 - ADD doesn't note crippling any more #2101
+- Bugfix: 17.17-b3 Parsing error for non tagged modifiers in Modifier Bucket #2102
+- Bugfix: 17.17-b3 Damage roll ignores armor divisor #2103
+- Release 0.17.16 11/29/2024
 
 - Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
 - Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024

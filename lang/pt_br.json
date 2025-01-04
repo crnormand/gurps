@@ -1366,5 +1366,13 @@
   "GURPS.forbidMaxAttacksReached": "Você já usou todos os ataques deste turno.",
   "GURPS.consumeAction": "Consumir Ação",
   "GURPS.willConsumeAction": "Consumirá uma ação.",
-  "GURPS.isFreeAction": "É uma ação livre."
+  "GURPS.isFreeAction": "É uma ação livre.",
+  "GURPS.noActionsAvailable": "Nenhuma ação disponível.",
+  "GURPS.settingUseMaxActions": "Verificação de Ações Máximas",
+  "GURPS.settingHintUseMaxActions": "Ative para permitir que o sistema verifique, para cada token selecionado, se o jogador está usando mais ações do que permitido por turno. Todos os Combatentes = o sistema verificará apenas os tokens no rastreador de combate; Todos os Tokens = o sistema verificará todos os tokens na cena.",
+  "GURPS.disable": "Desativar",
+  "GURPS.allCombatants": "Todos os Tokens em Combate",
+  "GURPS.allTokens": "Todos os Tokens na Cena",
+  "GURPS.settingAddCumulativeParryPenalties": "Adicionar Penalidades de Aparar Cumulativas Automaticamente",
+  "GURPS.settingHintAddCumulativeParryPenalties": "Se ativado, o sistema adicionará automaticamente penalidades de aparar cumulativas ao teste para os tokens selecionados para a Verificação de Ações Máximas."
 }

@@ -1302,5 +1302,13 @@
   "GURPS.forbidMaxAttacksReached": "Vous avez déjà utilisé toutes les attaques de ce tour.",
   "GURPS.consumeAction": "Consommer l'Action",
   "GURPS.willConsumeAction": "Consommera une action.",
-  "GURPS.isFreeAction": "Est une action gratuite."
+  "GURPS.isFreeAction": "Est une action gratuite.",
+  "GURPS.noActionsAvailable": "Aucune action disponible.",
+  "GURPS.settingUseMaxActions": "Vérification des actions maximales",
+  "GURPS.settingHintUseMaxActions": "Activez pour permettre au système de vérifier, pour chaque jeton, si le joueur utilise plus d'actions que permis par tour. Tous les combattants = le système vérifiera uniquement les jetons dans le traqueur de combat; Tous les jetons = le système vérifiera tous les jetons dans la scène.",
+  "GURPS.disable": "Désactiver",
+  "GURPS.allCombatants": "Tous les jetons en combat",
+  "GURPS.allTokens": "Tous les jetons dans la scène",
+  "GURPS.settingAddCumulativeParryPenalties": "Ajouter automatiquement les pénalités de parade cumulatives",
+  "GURPS.settingHintAddCumulativeParryPenalties": "Si activé, le système ajoutera automatiquement les pénalités de parade cumulatives au jet pour les jetons sélectionnés pour la vérification des actions maximales."
 }
