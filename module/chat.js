@@ -76,7 +76,7 @@ class ChatProcessorRegistry {
     let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
     for (const line of lines)
       for (const p of this._processors) {
-        if (p.usagematches(line) || (line[0] == '!' ? p.matches(line.substr(1)) : p.matches(line))) return true
+        if (p.matches(line) || (line[0] === '!' ? p.matches(line.substring(1)) : p.matches(line))) return true
       }
     return false
   }
@@ -121,8 +121,8 @@ class ChatProcessorRegistry {
     let backslash = false
     for (let i = 0; i < message.length; i++) {
       const c = message[i]
-      if (c == '\\') {
-        if (escaped == 0) {
+      if (c === '\\') {
+        if (escaped === 0) {
           if (backslash) {
             lines.push(message.substring(start, i - 1))
             start = i + 1
@@ -130,9 +130,9 @@ class ChatProcessorRegistry {
           } else backslash = true
         }
       } else backslash = false
-      if (c == '{') escaped++
-      if (c == '}') escaped--
-      if (c == '\n') {
+      if (c === '{') escaped++
+      if (c === '}') escaped--
+      if (c === '\n') {
         lines.push(message.substring(start, i))
         start = i + 1
       }
@@ -221,7 +221,7 @@ class ChatProcessorRegistry {
    * @param {string[]} priv
    */
   _sendPriv(priv) {
-    if (priv.length == 0) return
+    if (priv.length === 0) return
     let lines = priv.slice()
     renderTemplate('systems/gurps/templates/chat-processing.html', {
       lines: lines,
@@ -241,7 +241,7 @@ class ChatProcessorRegistry {
    * @param {any} chatData
    */
   _sendPub(pub, chatData) {
-    if (pub.length == 0) return
+    if (pub.length === 0) return
 
     let d = foundry.utils.duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
     d.alreadyProcessed = true

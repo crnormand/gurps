@@ -43,10 +43,10 @@ export class IfChatProcessor extends ChatProcessor {
       var next, key
       while ((next = m.shift())) {
         let v = next.value.trim()
-        if (next.name == 'between' && v.endsWith(':')) key = v.slice(0, -1)
+        if (next.name === 'between' && v.endsWith(':')) key = v.slice(0, -1)
         if (!key || !key.trim()) key = needSuccess ? 's' : 'f'
-        if (key == 's') needSuccess = false
-        if (next.name == 'match') {
+        if (key === 's') needSuccess = false
+        if (next.name === 'match') {
           results[key] = next.value
           key = ''
         }

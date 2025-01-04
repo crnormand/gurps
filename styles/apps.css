@@ -572,6 +572,7 @@ ul#result-effects li {
 .gga-chat-message * {
   /* font-family: var(--font-family-icons); */
   font-size: 13px;
+  line-height: 18px;
 }
 
 .gga-chat-message .label-toggle {
@@ -2079,10 +2080,10 @@ details .popup.square5x4 {
 .gga-chat-message .glinkmodplus,
 .gga-chat-message .glinkmodminus,
 .gga-chat-message .gurpslink {
-  padding: 0.0825em 0.165em;
+  /* padding: 0.0825em 0.165em; */
   border: 0.0825em solid rgb(122, 121, 113);
   border-radius: 0.25em;
-  margin: 0.0825em 0;
+  /* margin: 5px 0; */
 }
 
 .modtooltip .glinkmod,
