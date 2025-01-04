@@ -42,7 +42,8 @@
 - Bugfix: Beta 3 - ADD doesn't note crippling any more #2101
 - Bugfix: 17.17-b3 Parsing error for non tagged modifiers in Modifier Bucket #2102
 - Bugfix: 17.17-b3 Damage roll ignores armor divisor #2103
-- Release 0.17.16 11/29/2024
+
+### Release 0.17.16 11/29/2024
 
 - Feature: Multiple actor import. Import multiple GCS and GCA files with one command. #1994
 - Bugfix: Errors occurring when users drop damage onto mooks/NPCs #2024
