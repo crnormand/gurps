@@ -1235,8 +1235,8 @@ div#other {
   display: grid;
   grid-template:
     'attributes hp-fp     location encumbrance'
-    'attributes condition location qnotes'
-    'attributes condition location lifting';
+    'attributes condition location lifting'
+    'qnotes     qnotes    qnotes   qnotes';
   grid-template-columns: 0fr 1fr 1fr 1fr;
   grid-gap: var(--sectiongap);
 }
