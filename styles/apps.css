@@ -1282,7 +1282,6 @@ active-effects-list .section h3 {
 #combat-status button#open-modifier-popup,
 #combat-status button#edit-move-modes,
 #location .dr button,
-#combat-info button#open-modifier-popup,
 #condition button#open-modifier-popup {
   font-size: var(--font-size-small);
   max-height: fit-content;

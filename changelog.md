@@ -12,6 +12,7 @@
 - Feature: Add Maneuver's and Parry modifiers automatically before roll #2033
 - Feature: Improved support on Injury effects on Apply Damage Dialog #2034
 - Feature: Refactored Tabbed Sheet
+- Feature: Make Quick Notes collapsible or popout #2084 (closes 17.17-b3 tabbed sheet portrait scaling issue #2094)
 
 #### Bugfixes
 

@@ -29,6 +29,7 @@
         }}
       </div>
       {{>encumbrance}}
+      {{>combat-info}}
       {{>quicknote}}
     </div>
 
@@ -97,7 +98,6 @@
 
       <div class='tab' data-tab='combat' data-group='primary-tabs'>
         <div id='combat-tab'>
-          {{>combat-info}}
           {{#if (notEmpty system.melee)}}
             {{>melee}}
           {{/if}}

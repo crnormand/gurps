@@ -86,6 +86,8 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
     sheetData.useQN = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
 
+    sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
+
     return sheetData
   }
 
@@ -630,7 +632,7 @@ export class GurpsActorSheet extends ActorSheet {
       }
     )
 
-    html.find('#qnotes').dblclick(ex => {
+    html.find('#qnotes .qnotes-content').dblclick(ex => {
       let n = this.actor.system.additionalresources.qnotes || ''
       n = n.replace(/<br>/g, '\n')
       let actor = this.actor
@@ -655,7 +657,11 @@ export class GurpsActorSheet extends ActorSheet {
       }).render(true)
     })
 
-    html.find('#qnotes').on('drop', this.handleQnoteDrop.bind(this))
+    html.find('#qnotes .qnotes-content').on('drop', this.handleQnoteDrop.bind(this))
+
+    html.find('#qnotes .toggle-label').click(ev => {
+      this.actor.setFlag('gurps', 'qnotes', !this.actor.getFlag('gurps', 'qnotes'))
+    })
 
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
