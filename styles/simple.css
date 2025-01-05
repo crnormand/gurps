@@ -664,7 +664,7 @@
 
 .gga-table,
 .gga-tableheader {
-  display: grid;
+  display: inline-grid;
   border: var(--standardborder);
   align-content: stretch;
   grid-template-rows: 0fr auto;
@@ -958,7 +958,7 @@
 
 #combat-info .field-block {
   display: inline-grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   padding: 3px;
 }
 
@@ -1245,9 +1245,9 @@ div#other {
   /* grid-area: stats; */
   display: grid;
   grid-template:
-    'portrait        attributes-tab  encumbrance hp-fp'
-    'portrait        qnotes          qnotes      hp-fp'
-    'combat-trackers combat-trackers other       other';
+    'portrait attributes-tab encumbrance hp-fp'
+    'portrait combat-info    combat-info hp-fp'
+    'qnotes   qnotes         qnotes      qnotes';
   grid-template-columns: 0fr 1fr 1fr 0fr;
   grid-gap: var(--sectiongap);
 }
@@ -1261,13 +1261,43 @@ div#other {
 #qnotes {
   grid-area: qnotes;
   margin: 2px;
+  display: inline-grid;
+  grid-template-columns: 0fr 1fr;
+  grid-gap: var(--sectiongap);
+}
+
+.toggle-label {
+  cursor: pointer;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#toggle-qnotes:checked + .toggle-label::before {
+  content: '\25BC'; /* Triangle pointing down */
+}
+
+#toggle-qnotes:not(:checked) + .toggle-label::before {
+  content: '\25B6'; /* Triangle pointing right */
+}
+
+#toggle-qnotes:not(:checked) ~ .qnotes-content {
+  line-height: 150%;
+  max-height: 1.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qnotes-content {
+  display: block;
+  line-height: 150%;
 }
 
 #condition {
-  /* display: grid; */
   grid-area: condition;
-  /* grid-template-columns: 0fr 1fr 1fr; */
-  /* align-items: start; */
   border: var(--standardborder);
 }
 
@@ -1806,7 +1836,6 @@ div#other {
   grid-template-columns: 1fr 0fr;
   grid-template-rows: 0fr 0fr 0fr 1fr;
   grid-template-areas:
-    'combat-info       combat-sidebar'
     'melee             combat-sidebar'
     'speed-range-table combat-sidebar'
     'ranged            combat-sidebar';

@@ -318,7 +318,7 @@ export function colorGurpsActorSheet() {
    * OtF in Qick Notes
    */
   if (theColorData[8].color_override) {
-    $('#qnotes')
+    $('#qnotes.qnotes-content')
       .on('mouseenter', '.gurpslink', function () {
         $(this).attr(
           'style',
@@ -331,7 +331,7 @@ export function colorGurpsActorSheet() {
           'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
         )
       })
-    $('#qnotes .gurpslink').attr(
+    $('#qnotes.qnotes-content .gurpslink').attr(
       'style',
       'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
     )
