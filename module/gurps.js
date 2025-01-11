@@ -678,7 +678,7 @@ if (!globalThis.GURPS) {
           await dialog.render(true)
         }
 
-        openDialogWithSemaphore(dialog)
+        await openDialogWithSemaphore(dialog)
         // await $(document).find('.dialog-button.cancel').click().promise()
         // await dialog.render(true)
       } else {
