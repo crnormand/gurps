@@ -1648,16 +1648,17 @@ export class ActorImporter {
       'system.traits': ts,
     }
 
-    if (p.portrait) {
-      if (game.user.hasPermission('FILES_UPLOAD')) {
-        r.img = `data:image/png;base64,${p.portrait}.png`
-      } else {
-        await ui.notifications.error(
-          'You do not have "FILES_UPLOAD" permission, portrait upload has failed. Please ask your GM to import your character, or acquire the correct permissions.'
-        )
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_OVERWRITE_PORTRAITS)) {
+      if (p.portrait) {
+        if (game.user.hasPermission('FILES_UPLOAD')) {
+          r.img = `data:image/png;base64,${p.portrait}.png`
+        } else {
+          await ui.notifications.error(
+            'You do not have "FILES_UPLOAD" permission, portrait upload has failed. Please ask your GM to import your character, or acquire the correct permissions.'
+          )
+        }
       }
     }
-
     return r
   }
 
