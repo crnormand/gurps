@@ -240,7 +240,7 @@ export class ActorImporter {
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
       if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IGNORE_IMPORT_NAME)) {
-        await this.actor.update({ name: nm, 'token.name': nm })
+        await this.actor.update({ name: nm, 'prototypeToken.name': nm })
       }
 
       // For each saved item with global id, lets run their additions
