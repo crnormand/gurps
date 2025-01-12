@@ -144,6 +144,11 @@ class ChatProcessorRegistry {
     for (const line of lines) {
       // use for loop to ensure single thread
       answer = await this.processLine(line)
+      if (!!GURPS.stopActions) {
+        console.log('Stop actions after dialog canceled')
+        GURPS.stopActions = false
+        break
+      }
     }
     return answer
   }

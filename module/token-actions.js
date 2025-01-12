@@ -401,7 +401,7 @@ export class TokenActions {
           `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} *Max:9 #melee #maneuver @man:${this.currentManeuver}`
         )
         addModifier(
-          `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #ranged #maneuver @man:${this.currentManeuver}`
+          `${signal}${Math.abs(this.toHitBonus / 2)} ${signalLabel} #ranged #maneuver @man:${this.currentManeuver}`
         )
       } else {
         addModifier(`${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)

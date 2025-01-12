@@ -31,8 +31,7 @@ export const calculateRange = (token1, token2) => {
 export const getRangedModifier = (source, target) => {
   const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
-  const spellTag = '' // taggedModifiersSetting.allSpellRolls.split(',')[0]
-  const baseTags = `#${rangedTag} #${spellTag}`
+  const baseTags = `#${rangedTag}`
   let rangeModifier
   let mod = calculateRange(source, target)
   if (mod && mod.modifier !== 0) {
@@ -314,7 +313,7 @@ export class EffectModifierPopout extends Application {
     let text = sanitize(el.innerHTML)
     const itemId = $(el).closest('.me-link').data().itemId
     const itemType = $(el).closest('.me-link').data().type
-    if (itemId.includes('system.') && itemType !== 'maneuver') {
+    if (!!itemId && itemId.includes('system.') && itemType !== 'maneuver') {
       this._token.actor.sheet?.render(true)
       return
     }

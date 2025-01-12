@@ -91,6 +91,7 @@ if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
   GURPS.DEBUG = true
+  GURPS.stopActions = false
   GURPS.Migration = Migration
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
@@ -586,8 +587,10 @@ if (!globalThis.GURPS) {
       const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
-        if (canRoll.targetMessage) ui.notifications?.warn(canRoll.targetMessage)
-        return false
+        if (canRoll.targetMessage) {
+          ui.notifications?.warn(canRoll.targetMessage)
+          return false
+        }
       }
 
       if (action.accumulate) {
@@ -618,56 +621,60 @@ if (!globalThis.GURPS) {
         const bucketTotal = GURPS.ModifierBucket.currentSum()
         const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
 
-        const dialog = new Dialog({
-          title: game.i18n.localize('GURPS.confirmRoll'),
-          content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
-            tokenImg,
-            tokenName,
-            damageRoll,
-            damageType,
-            targetRoll,
-            bucketRoll,
-            messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
-          }),
-          buttons: {
-            roll: {
-              icon: '<i class="fas fa-check"></i>',
-              label: 'Roll',
-              callback: async () => {
-                await DamageChat.create(
-                  actor || game.user,
-                  action.formula,
-                  action.damagetype,
-                  event,
-                  null,
-                  targets,
-                  action.extdamagetype,
-                  action.hitlocation
-                )
-                if (action.next) {
-                  return GURPS.performAction(action.next, actor, event, targets)
-                }
-                return true
-              },
-            },
-            cancel: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'Cancel',
-              callback: async () => {
-                await GURPS.ModifierBucket.clear()
-              },
-            },
-          },
-          default: 'roll',
-          render: html => {
-            html.closest('.window-app').css('height', 'auto')
-          },
-        })
         // Before open a new dialog, we need to make sure
         // all other dialogs are closed, because bucket must be reset
         // before we start a new roll
         await $(document).find('.dialog-button.cancel').click().promise()
-        await dialog.render(true)
+        await new Promise(async resolve => {
+          const dialog = new Dialog({
+            title: game.i18n.localize('GURPS.confirmRoll'),
+            content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
+              tokenImg,
+              tokenName,
+              damageRoll,
+              damageType,
+              targetRoll,
+              bucketRoll,
+              messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
+            }),
+            buttons: {
+              roll: {
+                icon: '<i class="fas fa-check"></i>',
+                label: 'Roll',
+                callback: async () => {
+                  await DamageChat.create(
+                    actor || game.user,
+                    action.formula,
+                    action.damagetype,
+                    event,
+                    null,
+                    targets,
+                    action.extdamagetype,
+                    action.hitlocation
+                  )
+                  if (action.next) {
+                    return resolve(await GURPS.performAction(action.next, actor, event, targets))
+                  }
+                  resolve(true)
+                },
+              },
+              cancel: {
+                icon: '<i class="fas fa-times"></i>',
+                label: 'Cancel',
+                callback: async () => {
+                  await GURPS.ModifierBucket.clear()
+                  GURPS.stopActions = true
+                  resolve(false)
+                },
+              },
+            },
+            default: 'roll',
+            render: html => {
+              html.closest('.window-app').css('height', 'auto')
+            },
+          })
+          await dialog.render(true)
+        })
       } else {
         await DamageChat.create(
           actor || game.user,
@@ -680,7 +687,7 @@ if (!globalThis.GURPS) {
           action.hitlocation
         )
         if (action.next) {
-          return GURPS.performAction(action.next, actor, event, targets)
+          return await GURPS.performAction(action.next, actor, event, targets)
         }
         return true
       }

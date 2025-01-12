@@ -360,7 +360,7 @@ export async function doRoll({
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
-              GURPS.LastActor.stopActions = false
+              GURPS.stopActions = false
               doRollResult = await _doRoll({
                 actor,
                 formula,
@@ -379,8 +379,7 @@ export async function doRoll({
             icon: '<i class="fas fa-times"></i>',
             label: i18n('GURPS.cancel'),
             callback: async () => {
-              await GURPS.ModifierBucket.clearTaggedModifiers()
-              GURPS.LastActor.stopActions = true
+              GURPS.stopActions = true
               resolve(false)
             },
           },

@@ -68,8 +68,9 @@ export class IfChatProcessor extends ChatProcessor {
         let event = this.msgs().event
         event.chatmsgData = this.msgs().data
         let pass = await GURPS.performAction(action.action, GURPS.LastActor, event)
-        if (!!GURPS.LastActor.stopActions) {
+        if (!!GURPS.stopActions) {
           console.log('Stop actions after dialog canceled')
+          GURPS.stopActions = false
           return
         }
         if (invert) pass = !pass
