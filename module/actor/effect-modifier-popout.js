@@ -313,7 +313,7 @@ export class EffectModifierPopout extends Application {
     let text = sanitize(el.innerHTML)
     const itemId = $(el).closest('.me-link').data().itemId
     const itemType = $(el).closest('.me-link').data().type
-    if (itemId.includes('system.') && itemType !== 'maneuver') {
+    if (!!itemId && itemId.includes('system.') && itemType !== 'maneuver') {
       this._token.actor.sheet?.render(true)
       return
     }
