@@ -31,7 +31,7 @@ export const calculateRange = (token1, token2) => {
 export const getRangedModifier = (source, target) => {
   const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
-  const spellTag = taggedModifiersSetting.allSpellRolls.split(',')[0]
+  const spellTag = '' // taggedModifiersSetting.allSpellRolls.split(',')[0]
   const baseTags = `#${rangedTag} #${spellTag}`
   let rangeModifier
   let mod = calculateRange(source, target)
