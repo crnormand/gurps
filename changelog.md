@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.17-beta.4
+## Release 0.17.17-beta.5
 
 #### Features
 
@@ -43,6 +43,11 @@
 - Bugfix: Beta 3 - ADD doesn't note crippling any more #2101
 - Bugfix: 17.17-b3 Parsing error for non tagged modifiers in Modifier Bucket #2102
 - Bugfix: 17.17-b3 Damage roll ignores armor divisor #2103
+- Bugfix: 17.17-beta4 Move and Attack, ranged penalty issues #2109
+- Bugfix: 17.16 Token name display appends .gcs #2111
+- Bugfix: 17.17-b4 Roll Confirmation breaks multiple damage rolls even if disabled #2112
+- Bugfix: 17.17-b4 Effect Modifier bug with range penalty and missile spells or melee spells #2113
+- Bugfix: Import overwrites character portrait regardless of System Setting "overwrite portraits" = true #2117
 
 ### Release 0.17.16 11/29/2024
 
