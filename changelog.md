@@ -48,6 +48,8 @@
 - Bugfix: 17.17-b4 Roll Confirmation breaks multiple damage rolls even if disabled #2112
 - Bugfix: 17.17-b4 Effect Modifier bug with range penalty and missile spells or melee spells #2113
 - Bugfix: Import overwrites character portrait regardless of System Setting "overwrite portraits" = true #2117
+- Bugfix: Modifiers created via Active Effect are duplicating #2119
+- Bugfix: System did not sum Acc bonus after 2nd turn #2120
 
 ### Release 0.17.16 11/29/2024
 
