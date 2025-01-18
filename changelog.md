@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.17-rc.1
+## Release 0.17.17-rc.2
 
 #### Features
 
