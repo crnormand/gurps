@@ -1087,7 +1087,7 @@
   "GURPS.statsTab": "Stats",
   "GURPS.suffersAMajorWound": "{name} souffre d'une Blessure Grave",
   "GURPS.suffersHeadVitalsWound": "{name} a été touché sur {location} avec une pénalité de Choc.",
-  "GURPS.suffersKnockback": "{name} est Renversé {classStart}([PDF:{pdfref}]){classEnd} ou {yards} {unit}.",
+  "GURPS.suffersKnockback": "{name} est Renversé ([PDF:{pdfref}]) ou {yards} {unit}.",
   "GURPS.swimmerFlyer": "Aquatique / Volant",
   "GURPS.swimmersOrFlyersSuffer": "Aquatique Volant",
   "GURPS.target": "Cible",

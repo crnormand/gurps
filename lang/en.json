@@ -1291,7 +1291,7 @@
   "GURPS.statsTab": "Stats",
   "GURPS.suffersAMajorWound": "{name} suffers a Major Wound",
   "GURPS.suffersHeadVitalsWound": "{name} was struck in the {location} with a Shock penalty.",
-  "GURPS.suffersKnockback": "{name} suffers Knockback {classStart}([PDF:{pdfref}]){classEnd} of {yards} {unit}.",
+  "GURPS.suffersKnockback": "{name} suffers Knockback ([PDF:{pdfref}]) of {yards} {unit}.",
   "GURPS.swimmerFlyer": "Swimmer / Flyer",
   "GURPS.swimmersOrFlyersSuffer": "Swimmers Flyers",
   "GURPS.target": "Target",

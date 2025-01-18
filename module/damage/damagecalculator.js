@@ -1310,6 +1310,7 @@ class DamageCalculator {
       if (this.isCripplingInjury) {
         _effects.push({
           type: 'crippling',
+          modifier: 0,
           amount: Math.floor(this._parent.locationMaxHP),
           detail: this._parent.hitLocation,
           reduceInjury: this.isInjuryReducedByLocation,

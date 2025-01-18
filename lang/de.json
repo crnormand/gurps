@@ -932,7 +932,7 @@
   "GURPS.statsTab": "Werte",
   "GURPS.suffersAMajorWound": "{name} erleidet eine Schwere Wunde",
   "GURPS.suffersHeadVitalsWound": "{name} wurde am {location} getroffen, und verursachte Schock.",
-  "GURPS.suffersKnockback": "{name} prallt {classStart}([PDF:{pdfref}]){classEnd} {yards} {unit} zurück.",
+  "GURPS.suffersKnockback": "{name} prallt ([PDF:{pdfref}]) {yards} {unit} zurück.",
   "GURPS.swimmerFlyer": "Schwimmer / Flieger",
   "GURPS.swimmersOrFlyersSuffer": "Schwimmer Flieger",
   "GURPS.target": "Ziel",

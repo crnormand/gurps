@@ -498,14 +498,21 @@ export default class ApplyDamageDialog extends Application {
     let dataEffect = ev.currentTarget.attributes['data-effect'].value
     let effect = JSON.parse(dataEffect)
     let otf = ''
+
     switch (effect.type) {
       case 'headvitalshit':
       case 'majorwound':
       case 'crippling':
         const htCheck =
-          effect.modifier === 0 ? 'HT' : effect.modifier < 0 ? `HT+${-effect.modifier}` : `HT-${effect.modifier}`
+          (effect?.modifier ?? 0) === 0
+            ? 'HT'
+            : effect.modifier < 0
+            ? `HT+${-effect.modifier}`
+            : `HT-${effect.modifier}`
+
         otf = `/r [!${htCheck}]`
         break
+
       case 'knockback':
         const dx = i18n('GURPS.attributesDX')
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
@@ -514,15 +521,13 @@ export default class ApplyDamageDialog extends Application {
           effect?.modifier && effect.modifier === 0
             ? localeAcrobaticsName
             : `${localeAcrobaticsName} -${effect.modifier}`
-        const acrobaticsCheck =
-          effect?.modifier && effect.modifier === 0 ? 'Acrobatics' : `Acrobatics -${effect.modifier}`
         const localeJudoName = i18n('GURPS.skillJudo')
         const localeJudoCheck =
           effect?.modifier && effect.modifier === 0 ? localeJudoName : `${localeJudoName} -${effect.modifier}`
-        const judoCheck = effect?.modifier && effect.modifier === 0 ? 'Judo' : `Judo -${effect.modifier}`
-        otf = `/r [!${dxCheck}|!SK:${acrobaticsCheck}|!Sk:${localeAcrobaticsCheck}|!SK:${judoCheck}|!Sk:${localeJudoCheck}]`
+        otf = `/r [!${dxCheck} | Sk:${localeAcrobaticsCheck} | Sk:${localeJudoCheck}]`
         break
     }
+
     if (!!otf) await this.actor.runOTF(otf)
   }
 
@@ -596,6 +601,8 @@ export default class ApplyDamageDialog extends Application {
         await toggleEffect(effect.effectName, span)
         break
     }
+
+    this.render(false)
   }
 
   /**
@@ -665,8 +672,8 @@ export default class ApplyDamageDialog extends Application {
       let judo = i18n('GURPS.skillJudo')
       let judoCheck = object.modifier === 0 ? judo : `${judo}-${object.modifier}`
 
-      let button = `/r [/if {![${dxCheck}|Sk:Acrobatics|Sk:${acroCheck}|Sk:Judo|Sk:${judoCheck}]} {/st + prone}]`
-      if (!!token) button = `/r [/sel ${token.id} \\\\ ${button}]`
+      let button = `/if ![${dxCheck} | Sk:${acroCheck} | Sk:${judoCheck}] {/st + prone}`
+      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       let templateData = {
         name: !!token ? token.name : this.actor.name,
@@ -698,7 +705,7 @@ export default class ApplyDamageDialog extends Application {
 
     let msgData = {
       content: message,
-      user: game.user.id,
+      author: game.user.id,
       type: CONST.CHAT_MESSAGE_STYLES.OOC,
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {

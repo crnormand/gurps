@@ -1127,7 +1127,7 @@
   "GURPS.statsTab": "Características",
   "GURPS.suffersAMajorWound": "{name} sofre um Ferimento Grave",
   "GURPS.suffersHeadVitalsWound": "{name} foi atingido(a) no(a) {location} com uma Penalidade de Choque.",
-  "GURPS.suffersKnockback": "{name} sofre uma Projeção {classStart}([PDF:{pdfref}]){classEnd} de {yards} {unit}.",
+  "GURPS.suffersKnockback": "{name} sofre uma Projeção ([PDF:{pdfref}]) de {yards} {unit}.",
   "GURPS.swimmerFlyer": "Nadador/Voador",
   "GURPS.swimmersOrFlyersSuffer": "Nadadores ou voadores sofrem",
   "GURPS.target": "Alvo",
