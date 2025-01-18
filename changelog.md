@@ -50,6 +50,8 @@
 - Bugfix: Import overwrites character portrait regardless of System Setting "overwrite portraits" = true #2117
 - Bugfix: Modifiers created via Active Effect are duplicating #2119
 - Bugfix: System did not sum Acc bonus after 2nd turn #2120
+- Bugfix: 17.17-b5 ADD Knockback errors, multiple #2122
+- Bugfix: 17.17-b5 Cannot drop OtFs on Quick Notes area #2125
 
 ### Release 0.17.16 11/29/2024
 
