@@ -2393,10 +2393,11 @@ if (!globalThis.GURPS) {
         const app = new ChangeLogWindow(changelogVersion)
         app.render(true)
         // @ts-ignore
-        game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
       }
       GURPS.executeOTF('/help')
     }
+
+    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
 
     // get all aliases defined in the resource tracker templates and register them as damage types
     let resourceTrackers = ResourceTrackerManager.getAllTemplates()
