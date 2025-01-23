@@ -726,5 +726,10 @@
   "GURPS.allCombatants": "Все токены в бою",
   "GURPS.allTokens": "Все токены на сцене",
   "GURPS.settingAddCumulativeParryPenalties": "Автоматически добавлять кумулятивные штрафы за парирование",
-  "GURPS.settingHintAddCumulativeParryPenalties": "Если включено, система автоматически добавит кумулятивные штрафы за парирование к броску для выбранных токенов для проверки максимальных действий."
+  "GURPS.settingHintAddCumulativeParryPenalties": "Если включено, система автоматически добавит кумулятивные штрафы за парирование к броску для выбранных токенов для проверки максимальных действий.",
+  "GURPS.multiplyAfterRoll": "После броска:",
+  "GURPS.armorDivisor": "Делитель брони:",
+  "GURPS.minDamageRule": "Мин. урон:",
+  "GURPS.diceAddDamageRule": "Правило кубиков+добавок:",
+  "GURPS.damageCosts": "Стоимость:"
 }

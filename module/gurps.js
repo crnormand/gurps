@@ -614,12 +614,35 @@ if (!globalThis.GURPS) {
       if (showRollDialog && !canRoll.isSlam) {
         // Get Actor Info
         const tokenImg = token?.document.texture.src || actor?.img
+        const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
         const tokenName = token?.name || actor?.name
         const damageRoll = displayFormula
-        const damageType = action.damagetype
+        const damageType = GURPS.DamageTables.translate(action.damagetype)
+        const damageTypeLabel = i18n(
+          `GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
+          damageType
+        )
+        const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
+        const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         const targetRoll = action.orig
         const bucketTotal = GURPS.ModifierBucket.currentSum()
         const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+        const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
+        const isBlindRoll = action.blindroll
+        const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
+        // Armor divisor can be (0.5) or (2) - need to regex to get the number
+        const armorDivisorRegex = /\((\d*\.?\d+)\)/
+        const armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
+        // Multiplier damage is x2, X3 or *4 - need to regex to get the number
+        const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
+        const multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
+        // Simple formula is dice+add, examples: 1d, 2d+3, 1d-1
+        const simpleFormula = displayFormula.match(/\d+d[+-]?\d*/)?.[0]
+        const originalFormula = action.formula.match(/\d+d[+-]?\d*/)?.[0]
+        const damageCost = action.costs?.split(' ').pop() || ''
+        //const otfDamageText = action.overridetxt || ''
+        const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
+        const usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
 
         // Before open a new dialog, we need to make sure
         // all other dialogs are closed, because bucket must be reset
@@ -631,16 +654,29 @@ if (!globalThis.GURPS) {
             content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
               tokenImg,
               tokenName,
-              damageRoll,
+              damageRoll: simpleFormula || damageRoll,
               damageType,
               targetRoll,
               bucketRoll,
               messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
+              useMinDamage,
+              armorDivisorNumber,
+              multiplierNumber,
+              damageTypeLabel,
+              damageTypeIcon,
+              damageTypeColor,
+              simpleFormula,
+              bucketRollColor,
+              originalFormula,
+              damageCost,
+              isVideo,
+              otfDamageText,
+              usingDiceAdd,
             }),
             buttons: {
               roll: {
-                icon: '<i class="fas fa-check"></i>',
-                label: 'Roll',
+                icon: isBlindRoll ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
+                label: isBlindRoll ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
                 callback: async () => {
                   await DamageChat.create(
                     actor || game.user,
@@ -660,7 +696,7 @@ if (!globalThis.GURPS) {
               },
               cancel: {
                 icon: '<i class="fas fa-times"></i>',
-                label: 'Cancel',
+                label: i18n('GURPS.cancel'),
                 callback: async () => {
                   await GURPS.ModifierBucket.clear()
                   GURPS.stopActions = true
