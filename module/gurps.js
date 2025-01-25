@@ -613,9 +613,10 @@ if (!globalThis.GURPS) {
       const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
       if (showRollDialog && !canRoll.isSlam) {
         // Get Actor Info
-        const tokenImg = token?.document.texture.src || actor?.img
+        const gmUser = game.users.find(it => it.isGM && it.active)
+        const tokenImg = token?.document.texture.src || actor?.img || gmUser.avatar
         const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
-        const tokenName = token?.name || actor?.name
+        const tokenName = token?.name || actor?.name || gmUser.name
         const damageRoll = displayFormula
         const damageType = GURPS.DamageTables.translate(action.damagetype)
         const damageTypeLabel = i18n(

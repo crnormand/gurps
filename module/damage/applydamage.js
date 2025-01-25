@@ -52,9 +52,13 @@ export default class ApplyDamageDialog extends Application {
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
     const attacker = game.actors.get(damageData[0].attacker)
+    const gmUser = game.users.find(it => it.isGM && it.active)
     this.sourceTokenImg =
-      canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.document.texture.src || attacker.name
-    this.sourceTokenName = canvas.tokens.placeables.find(t => t.actor.id === attacker.id)?.name || attacker.name
+      canvas.tokens.placeables.find(t => t.actor.id === attacker?.id)?.document.texture.src ||
+      attacker?.img ||
+      gmUser.avatar
+    this.sourceTokenName =
+      canvas.tokens.placeables.find(t => t.actor.id === attacker?.id)?.name || attacker?.name || gmUser.name
     this.targetTokenImg = actor.token?.texture.src || actor.img
     this.targetTokenName = actor.token?.name || actor.name
 
@@ -507,8 +511,8 @@ export default class ApplyDamageDialog extends Application {
           (effect?.modifier ?? 0) === 0
             ? 'HT'
             : effect.modifier < 0
-            ? `HT+${-effect.modifier}`
-            : `HT-${effect.modifier}`
+              ? `HT+${-effect.modifier}`
+              : `HT-${effect.modifier}`
 
         otf = `/r [!${htCheck}]`
         break
