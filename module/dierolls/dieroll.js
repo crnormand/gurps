@@ -134,8 +134,10 @@ export async function doRoll({
 
   let bucketRoll
   let displayFormula = formula
-
-  if (actor instanceof Actor && action && taggedSettings.autoAdd) {
+  const isAttributeOrCheckRoll = Object.keys(GURPS.PARSELINK_MAPPINGS).includes(
+    chatthing.split('@').pop().slice(0, -1).toUpperCase()
+  )
+  if (actor instanceof Actor && (action || isAttributeOrCheckRoll) && taggedSettings.autoAdd) {
     // We need to clear all tagged modifiers from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
@@ -415,6 +417,7 @@ export async function doRoll({
             icon: '<i class="fas fa-times"></i>',
             label: i18n('GURPS.cancel'),
             callback: async () => {
+              await GURPS.ModifierBucket.clearTaggedModifiers()
               GURPS.stopActions = true
               resolve(false)
             },

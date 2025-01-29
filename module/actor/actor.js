@@ -3144,7 +3144,7 @@ export class GurpsActor extends Actor {
         case 'iq':
         case 'ht':
           refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
-          refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
+          refTags = refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
           break
         case 'will':
         case 'per':
