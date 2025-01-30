@@ -87,6 +87,124 @@ import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver
 
 let GURPS = undefined
 
+async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, action, event, overrideText, targets) {
+  const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+  if (showRollDialog && !canRoll.isSlam) {
+    // Get Actor Info
+    const gmUser = game.users.find(it => it.isGM && it.active)
+    const tokenImg = token?.document.texture.src || actor?.img || gmUser.avatar
+    const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
+    const tokenName = token?.name || actor?.name || gmUser.name
+    const damageRoll = displayFormula
+    const damageType = GURPS.DamageTables.translate(action.damagetype)
+    const damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+    const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
+    const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
+    const targetRoll = action.orig
+    const bucketTotal = GURPS.ModifierBucket.currentSum()
+    const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+    const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
+    const isBlindRoll = action.blindroll
+    const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
+    // Armor divisor can be (0.5) or (2) - need to regex to get the number
+    const armorDivisorRegex = /\((\d*\.?\d+)\)/
+    const armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
+    // Multiplier damage is x2, X3 or *4 - need to regex to get the number
+    const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
+    const multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
+    // Simple formula is dice+add, examples: 1d, 2d+3, 1d-1
+    const simpleFormula = displayFormula.match(/\d+d[+-]?\d*/)?.[0]
+    const originalFormula = action.formula.match(/\d+d[+-]?\d*/)?.[0]
+    const damageCost = action.costs?.split(' ').pop() || ''
+    //const otfDamageText = action.overridetxt || ''
+    const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
+    const usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
+
+    // Before open a new dialog, we need to make sure
+    // all other dialogs are closed, because bucket must be reset
+    // before we start a new roll
+    await $(document).find('.dialog-button.cancel').click().promise()
+    await new Promise(async resolve => {
+      const dialog = new Dialog({
+        title: game.i18n.localize('GURPS.confirmRoll'),
+        content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
+          tokenImg,
+          tokenName,
+          damageRoll: simpleFormula || damageRoll,
+          damageType,
+          targetRoll,
+          bucketRoll,
+          messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
+          useMinDamage,
+          armorDivisorNumber,
+          multiplierNumber,
+          damageTypeLabel,
+          damageTypeIcon,
+          damageTypeColor,
+          simpleFormula,
+          bucketRollColor,
+          originalFormula,
+          damageCost,
+          isVideo,
+          otfDamageText,
+          usingDiceAdd,
+        }),
+        buttons: {
+          roll: {
+            icon: isBlindRoll ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
+            label: isBlindRoll ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
+            callback: async () => {
+              await DamageChat.create(
+                actor || game.user,
+                actionFormula,
+                action.damagetype,
+                event,
+                overrideText,
+                targets,
+                action.extdamagetype,
+                action.hitlocation
+              )
+              if (action.next) {
+                return resolve(await GURPS.performAction(action.next, actor, event, targets))
+              }
+              resolve(true)
+            },
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: i18n('GURPS.cancel'),
+            callback: async () => {
+              await GURPS.ModifierBucket.clear()
+              GURPS.stopActions = true
+              resolve(false)
+            },
+          },
+        },
+        default: 'roll',
+        render: html => {
+          html.closest('.window-app').css('height', 'auto')
+        },
+      })
+      await dialog.render(true)
+    })
+  } else {
+    await DamageChat.create(
+      actor || game.user,
+      actionFormula,
+      action.damagetype,
+      event,
+      overrideText,
+      targets,
+      action.extdamagetype,
+      action.hitlocation
+    )
+    if (action.next) {
+      return await GURPS.performAction(action.next, actor, event, targets)
+    }
+    return true
+  }
+}
+
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
@@ -609,125 +727,7 @@ if (!globalThis.GURPS) {
         await actor.addTaggedRollModifiers('', {}, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
-
-      const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
-      if (showRollDialog && !canRoll.isSlam) {
-        // Get Actor Info
-        const gmUser = game.users.find(it => it.isGM && it.active)
-        const tokenImg = token?.document.texture.src || actor?.img || gmUser.avatar
-        const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
-        const tokenName = token?.name || actor?.name || gmUser.name
-        const damageRoll = displayFormula
-        const damageType = GURPS.DamageTables.translate(action.damagetype)
-        const damageTypeLabel = i18n(
-          `GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
-          damageType
-        )
-        const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
-        const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
-        const targetRoll = action.orig
-        const bucketTotal = GURPS.ModifierBucket.currentSum()
-        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
-        const isBlindRoll = action.blindroll
-        const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
-        // Armor divisor can be (0.5) or (2) - need to regex to get the number
-        const armorDivisorRegex = /\((\d*\.?\d+)\)/
-        const armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
-        // Multiplier damage is x2, X3 or *4 - need to regex to get the number
-        const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
-        const multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
-        // Simple formula is dice+add, examples: 1d, 2d+3, 1d-1
-        const simpleFormula = displayFormula.match(/\d+d[+-]?\d*/)?.[0]
-        const originalFormula = action.formula.match(/\d+d[+-]?\d*/)?.[0]
-        const damageCost = action.costs?.split(' ').pop() || ''
-        //const otfDamageText = action.overridetxt || ''
-        const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
-        const usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
-
-        // Before open a new dialog, we need to make sure
-        // all other dialogs are closed, because bucket must be reset
-        // before we start a new roll
-        await $(document).find('.dialog-button.cancel').click().promise()
-        await new Promise(async resolve => {
-          const dialog = new Dialog({
-            title: game.i18n.localize('GURPS.confirmRoll'),
-            content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
-              tokenImg,
-              tokenName,
-              damageRoll: simpleFormula || damageRoll,
-              damageType,
-              targetRoll,
-              bucketRoll,
-              messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
-              useMinDamage,
-              armorDivisorNumber,
-              multiplierNumber,
-              damageTypeLabel,
-              damageTypeIcon,
-              damageTypeColor,
-              simpleFormula,
-              bucketRollColor,
-              originalFormula,
-              damageCost,
-              isVideo,
-              otfDamageText,
-              usingDiceAdd,
-            }),
-            buttons: {
-              roll: {
-                icon: isBlindRoll ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
-                label: isBlindRoll ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
-                callback: async () => {
-                  await DamageChat.create(
-                    actor || game.user,
-                    action.formula,
-                    action.damagetype,
-                    event,
-                    null,
-                    targets,
-                    action.extdamagetype,
-                    action.hitlocation
-                  )
-                  if (action.next) {
-                    return resolve(await GURPS.performAction(action.next, actor, event, targets))
-                  }
-                  resolve(true)
-                },
-              },
-              cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: i18n('GURPS.cancel'),
-                callback: async () => {
-                  await GURPS.ModifierBucket.clear()
-                  GURPS.stopActions = true
-                  resolve(false)
-                },
-              },
-            },
-            default: 'roll',
-            render: html => {
-              html.closest('.window-app').css('height', 'auto')
-            },
-          })
-          await dialog.render(true)
-        })
-      } else {
-        await DamageChat.create(
-          actor || game.user,
-          action.formula,
-          action.damagetype,
-          event,
-          null,
-          targets,
-          action.extdamagetype,
-          action.hitlocation
-        )
-        if (action.next) {
-          return await GURPS.performAction(action.next, actor, event, targets)
-        }
-        return true
-      }
+      return await rollDamage(canRoll, token, actor, displayFormula, action.formula, action, event, null, targets)
     },
     /**
      * @param {Object} data
@@ -745,7 +745,7 @@ if (!globalThis.GURPS) {
      * @param {GurpsActor|null} data.actor
      * @param {string[]} data.targets
      */
-    deriveddamage({ action, event, actor, targets }) {
+    async deriveddamage({ action, event, actor, targets }) {
       // action fails if there's no selected actor
       if (!actor) {
         ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -757,19 +757,45 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
         return false
       }
-      let formula = df + action.formula
+      // Here we need to check if both formula and df contains +add (like +1)
+      // If so, we need to sum the adds
+      const dice = df.match(/(\d+d).*/)?.[1]
+      const dfAdd = df.match(/([+-]\d+).*/)?.[1]
+      const formulaAdd = action.formula.match(/([+-]\d+).*/)?.[1]
+      // Need to find everything else in action.formula which is not the formulaAdd. Example +2x3 -> x3
+      const formulaOther = action.formula.replace(/([+-]\d+).*/g, '')
+      let finalAdd
+      let formula
+      if (dfAdd && formulaAdd) {
+        finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
+        const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
+        formula = `${dice}${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
+      } else {
+        formula = df + action.formula
+      }
 
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      DamageChat.create(
-        actor || game.user,
-        formula,
-        action.damagetype,
-        event,
-        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
-        targets,
-        action.extdamagetype,
-        action.hitlocation
-      )
+
+      if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
+
+      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      let displayFormula = formula
+      if (actor && taggedSettings.autoAdd) {
+        await actor.addTaggedRollModifiers('', {}, action.att)
+        displayFormula = addBucketToDamage(displayFormula, false)
+      }
+
+      let canRoll = { result: true }
+      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      if (actor) canRoll = await actor.canRoll(action, token)
+      if (!canRoll.canRoll) {
+        if (canRoll.targetMessage) {
+          ui.notifications?.warn(canRoll.targetMessage)
+          return false
+        }
+      }
+      const overrideText = action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1')
+      await rollDamage(canRoll, token, actor, displayFormula, formula, action, event, overrideText, targets)
       if (action.next) {
         return GURPS.performAction(action.next, actor, event, targets)
       }

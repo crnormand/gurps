@@ -195,10 +195,11 @@ export async function doRoll({
     if (!action && !chatthing && targetData.name === formula) {
       template = 'confirmation-damage-roll.hbs'
       const damageOTFType = prefix.match(/\[(.+)]/)?.[1] || ''
-      if (damageOTFType === 'thrust' || damageOTFType === 'swing') {
+      if (['thrust', 'swing', 'sw', 'thr'].includes(damageOTFType.toLowerCase())) {
         // Special Case: `[thrust]` and `[swing]` OTFs are formula based, not targeted rolls
         // We receive here the full dice formula, like 1d6+2, and we need to extract the dice + adds parts
         // For example, for the formula `1d6+2` we need to extract `1d` and `+2` to show in the confirmation dialog
+        // Because this is a simple roll and not a damage roll, we need to show the damage type as `dmg`
         otfDamageText = i18n(`GURPS.${damageOTFType}`, damageOTFType)
         damageType = 'dmg'
         damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
