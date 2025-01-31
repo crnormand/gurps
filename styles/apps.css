@@ -3186,10 +3186,10 @@ details .popup.square5x4 {
 .cr-damage-section {
   display: flex;
   width: 100%;
-  flex-direction: row;
+  flex-direction: column;
   align-items: baseline;
   justify-content: flex-start;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 .cr-damage-type {
   width: 30px;
@@ -3235,6 +3235,50 @@ details .popup.square5x4 {
   line-height: 0.9;
   border-top: darkgrey 2px solid;
   padding-top: 6px;
+}
+.cr-damage-info {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.cr-badge {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  background-color: #bcbbb0;
+  border-radius: 12px;
+  padding: 3px 10px;
+}
+.cr-badge-damage-type {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  background-color: #bcbbb0;
+  border-radius: 12px;
+  padding: 3px 10px;
+}
+.cr-badge-damage-type span {
+  text-transform: uppercase;
+  font-size: 0.75em;
+  color: whitesmoke;
+}
+.cr-badge span {
+  text-transform: uppercase;
+  font-size: 0.75em;
+  color: rgba(38, 31, 29, 0.72);
+}
+.cr-badge-damage-type span i {
+  margin-right: 2px;
+}
+.cr-text {
+  font-weight: bold;
+}
+.cr-text.green {
+  color: darkgreen;
+}
+#cr-formula {
+  margin-top: 5px;
+  font-size: 1em;
 }
 #cr-bucket {
   margin-left: 7px;

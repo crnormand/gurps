@@ -1333,5 +1333,10 @@
   "GURPS.allCombatants": "Tous les jetons en combat",
   "GURPS.allTokens": "Tous les jetons dans la scène",
   "GURPS.settingAddCumulativeParryPenalties": "Ajouter automatiquement les pénalités de parade cumulatives",
-  "GURPS.settingHintAddCumulativeParryPenalties": "Si activé, le système ajoutera automatiquement les pénalités de parade cumulatives au jet pour les jetons sélectionnés pour la vérification des actions maximales."
+  "GURPS.settingHintAddCumulativeParryPenalties": "Si activé, le système ajoutera automatiquement les pénalités de parade cumulatives au jet pour les jetons sélectionnés pour la vérification des actions maximales.",
+  "GURPS.multiplyAfterRoll": "Après le jet:",
+  "GURPS.armorDivisor": "Diviseur d'armure:",
+  "GURPS.minDamageRule": "Dégâts min.:",
+  "GURPS.diceAddDamageRule": "Règle des dés+ajouts:",
+  "GURPS.damageCosts": "Coûts:"
 }

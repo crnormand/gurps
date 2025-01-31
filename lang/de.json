@@ -1163,5 +1163,10 @@
   "GURPS.allCombatants": "Alle Tokens im Kampf",
   "GURPS.allTokens": "Alle Tokens in der Szene",
   "GURPS.settingAddCumulativeParryPenalties": "Kumulative Parier-Strafen automatisch hinzufügen",
-  "GURPS.settingHintAddCumulativeParryPenalties": "Wenn aktiviert, fügt das System automatisch kumulative Parier-Strafen zum Wurf für die ausgewählten Tokens für die Max Actions Check hinzu."
+  "GURPS.settingHintAddCumulativeParryPenalties": "Wenn aktiviert, fügt das System automatisch kumulative Parier-Strafen zum Wurf für die ausgewählten Tokens für die Max Actions Check hinzu.",
+  "GURPS.multiplyAfterRoll": "Nach dem Wurf:",
+  "GURPS.armorDivisor": "Rüstungsdivisor:",
+  "GURPS.minDamageRule": "Min. Schaden:",
+  "GURPS.diceAddDamageRule": "Würfel+Zusatzregel:",
+  "GURPS.damageCosts": "Kosten:"
 }

@@ -1472,5 +1472,10 @@
   "GURPS.allCombatants": "All Tokens in Combat",
   "GURPS.allTokens": "All Tokens in Scene",
   "GURPS.settingAddCumulativeParryPenalties": "Automatically Add Cumulative Parry Penalties",
-  "GURPS.settingHintAddCumulativeParryPenalties": "If checked, system will automatically add cumulative parry penalties to the roll for the tokens selected for Max Actions Check."
+  "GURPS.settingHintAddCumulativeParryPenalties": "If checked, system will automatically add cumulative parry penalties to the roll for the tokens selected for Max Actions Check.",
+  "GURPS.multiplyAfterRoll": "After roll:",
+  "GURPS.armorDivisor": "Armor Divisor:",
+  "GURPS.minDamageRule": "Min. Damage:",
+  "GURPS.diceAddDamageRule": "Dice+Adds Rule:",
+  "GURPS.damageCosts": "Costs:"
 }

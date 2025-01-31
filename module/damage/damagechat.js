@@ -243,7 +243,7 @@ export default class DamageChat {
     let message = new DamageChat()
 
     let diceFormula = addBucketToDamage(diceText, true) // run before applyMods()
-    const targetmods = await GURPS.ModifierBucket.applyMods() // append any global mods
+    const targetmods = GURPS.ModifierBucket.applyMods() // append any global mods
 
     const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     let diceMods

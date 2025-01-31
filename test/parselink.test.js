@@ -15,225 +15,287 @@ describe('parseForRollOrDamage', () => {
     prefix = expect.getState().currentTestName
   })
 
-  test('#!1d6+2 cr', () => {
-    const result = parseForRollOrDamage('1d6+2 cr')
-
-    expect(result.action).toEqual({
-      orig: '1d6+2 cr',
-      type: 'damage',
-      formula: '1d6+2',
-      damagetype: 'cr',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!1d-2! cr', () => {
-    const result = parseForRollOrDamage('1d-2! cr')
-
-    expect(result.action).toEqual({
-      orig: '1d-2! cr',
-      type: 'damage',
-      formula: '1d-2!',
-      damagetype: 'cr',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!12 pi++', () => {
-    const result = parseForRollOrDamage('12 pi++')
-
-    expect(result.action).toEqual({
-      orig: '12 pi++',
-      type: 'damage',
-      formula: '12',
-      damagetype: 'pi++',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!1d ctrl', () => {
-    const result = parseForRollOrDamage('1d ctrl')
-
-    expect(result.action).toEqual({
-      accumulate: false,
-      costs: undefined,
-      desc: 'ctrl',
-      displayformula: '1d',
-      formula: '1d6',
-      hitlocation: undefined,
-      next: undefined,
-      orig: '1d ctrl',
-      type: 'roll',
-    })
-  })
-
-  test('#!2d-1x3 pi++ @torso', () => {
-    const result = parseForRollOrDamage('2d-1x3 pi++ @torso')
-
-    expect(result.action).toEqual({
-      orig: '2d-1x3 pi++ @torso',
-      type: 'damage',
-      formula: '2d-1x3',
-      damagetype: 'pi++',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: 'torso',
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!2d-1 imp *costs 1 FP', () => {
-    const result = parseForRollOrDamage('2d-1 imp *costs 1 FP')
-
-    expect(result.action).toEqual({
-      orig: '2d-1 imp *costs 1 FP',
-      type: 'damage',
-      formula: '2d-1',
-      damagetype: 'imp',
-      extdamagetype: undefined,
-      costs: '*costs 1 FP',
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!2d-1(2) burn ex', () => {
-    const result = parseForRollOrDamage('2d-1(2) burn ex')
-
-    expect(result.action).toEqual({
-      orig: '2d-1(2) burn ex',
-      type: 'damage',
-      formula: '2d-1(2)',
-      damagetype: 'burn',
-      extdamagetype: 'ex',
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!8(0.5) burn ex', () => {
-    const result = parseForRollOrDamage('8(0.5) burn ex')
-
-    expect(result.action).toEqual({
-      orig: '8(0.5) burn ex',
-      type: 'damage',
-      formula: '8(0.5)',
-      damagetype: 'burn',
-      extdamagetype: 'ex',
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
+  test.each([
+    [
+      '1d6+2 cr',
+      {
+        orig: '1d6+2 cr',
+        type: 'damage',
+        formula: '1d6+2',
+        damagetype: 'cr',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '1d-2! cr',
+      {
+        orig: '1d-2! cr',
+        type: 'damage',
+        formula: '1d-2!',
+        damagetype: 'cr',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '12 pi++',
+      {
+        orig: '12 pi++',
+        type: 'damage',
+        formula: '12',
+        damagetype: 'pi++',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '1d ctrl',
+      {
+        orig: '1d ctrl',
+        type: 'roll',
+        formula: '1d6',
+        displayformula: '1d',
+        desc: 'ctrl',
+        accumulate: false,
+        costs: undefined,
+        hitlocation: undefined,
+        next: undefined,
+      },
+    ],
+    [
+      '2d-1x3 pi++ @torso',
+      {
+        orig: '2d-1x3 pi++ @torso',
+        type: 'damage',
+        formula: '2d-1x3',
+        damagetype: 'pi++',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: 'torso',
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '2d-1 imp *costs 1 FP',
+      {
+        orig: '2d-1 imp *costs 1 FP',
+        type: 'damage',
+        formula: '2d-1',
+        damagetype: 'imp',
+        extdamagetype: undefined,
+        costs: '*costs 1 FP',
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '2d-1(2) burn ex',
+      {
+        orig: '2d-1(2) burn ex',
+        type: 'damage',
+        formula: '2d-1(2)',
+        damagetype: 'burn',
+        extdamagetype: 'ex',
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '8(0.5) burn ex',
+      {
+        orig: '8(0.5) burn ex',
+        type: 'damage',
+        formula: '8(0.5)',
+        damagetype: 'burn',
+        extdamagetype: 'ex',
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '2d burn, 1d tox',
+      {
+        orig: '2d burn, 1d tox',
+        type: 'damage',
+        formula: '2d',
+        damagetype: 'burn',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: {
+          accumulate: false,
+          costs: undefined,
+          damagetype: 'tox',
+          extdamagetype: undefined,
+          formula: '1d',
+          hitlocation: undefined,
+          next: undefined,
+          orig: '1d tox',
+          type: 'damage',
+        },
+      },
+    ],
+    [
+      '2d burn, foo',
+      {
+        orig: '2d burn, foo',
+        type: 'damage',
+        formula: '2d',
+        damagetype: 'burn',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      '2d charm fat',
+      {
+        orig: '2d charm fat',
+        type: 'damage',
+        formula: '2d',
+        damagetype: 'fat',
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      },
+    ],
+    [
+      'sw+1 cut',
+      {
+        accumulate: false,
+        costs: undefined,
+        damagetype: 'cut',
+        derivedformula: 'sw',
+        extdamagetype: undefined,
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'sw+1 cut',
+        type: 'deriveddamage',
+      },
+    ],
+    [
+      'sw+1 ctrl',
+      {
+        accumulate: false,
+        costs: undefined,
+        derivedformula: 'sw',
+        desc: 'ctrl',
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'sw+1 ctrl',
+        type: 'derivedroll',
+      },
+    ],
+    [
+      'sw +1 cut',
+      {
+        accumulate: false,
+        costs: undefined,
+        damagetype: 'cut',
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'sw +1 cut',
+        type: 'deriveddamage',
+        extdamagetype: undefined,
+        derivedformula: 'sw',
+      },
+    ],
+    [
+      'swing+1 cut',
+      {
+        accumulate: false,
+        costs: undefined,
+        damagetype: 'cut',
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'swing+1 cut',
+        type: 'deriveddamage',
+        extdamagetype: undefined,
+        derivedformula: 'swing',
+      },
+    ],
+    [
+      'THR+1 imp',
+      {
+        accumulate: false,
+        costs: undefined,
+        damagetype: 'imp',
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'THR+1 imp',
+        type: 'deriveddamage',
+        extdamagetype: undefined,
+        derivedformula: 'THR',
+      },
+    ],
+    [
+      'THRUST +1 imp',
+      {
+        accumulate: false,
+        costs: undefined,
+        damagetype: 'imp',
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'THRUST +1 imp',
+        type: 'deriveddamage',
+        extdamagetype: undefined,
+        derivedformula: 'THRUST',
+      },
+    ],
+    [
+      'swing +1 ctrl',
+      {
+        accumulate: false,
+        costs: undefined,
+        derivedformula: 'swing',
+        desc: 'ctrl',
+        formula: '+1',
+        hitlocation: undefined,
+        orig: 'swing +1 ctrl',
+        type: 'derivedroll',
+      },
+    ],
+    [
+      '6d-10*3! pi++ (0.5) *Costs 1FP',
+      {
+        accumulate: false,
+        costs: '*Costs 1FP',
+        damagetype: 'pi++',
+        extdamagetype: '(0.5)',
+        formula: '6d-10*3!',
+        hitlocation: undefined,
+        orig: '6d-10*3! pi++ (0.5) *Costs 1FP',
+        type: 'damage',
+      },
+    ],
+  ])('parses %s correctly', (input, expected) => {
+    const result = parseForRollOrDamage(input)
+    expect(result.action).toEqual(expected)
   })
 
   test('#!8', () => {
     expect(parseForRollOrDamage('8')).toBeUndefined()
-  })
-
-  test('#!2d burn, 1d tox', () => {
-    const result = parseForRollOrDamage('2d burn, 1d tox')
-
-    expect(result.action).toEqual({
-      orig: '2d burn, 1d tox',
-      type: 'damage',
-      formula: '2d',
-      damagetype: 'burn',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: {
-        accumulate: false,
-        costs: undefined,
-        damagetype: 'tox',
-        extdamagetype: undefined,
-        formula: '1d',
-        hitlocation: undefined,
-        next: undefined,
-        orig: '1d tox',
-        type: 'damage',
-      },
-    })
-  })
-
-  test('#!2d burn, foo', () => {
-    const result = parseForRollOrDamage('2d burn, foo')
-
-    expect(result.action).toEqual({
-      orig: '2d burn, foo',
-      type: 'damage',
-      formula: '2d',
-      damagetype: 'burn',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!2d charm fat', () => {
-    const result = parseForRollOrDamage('2d charm fat')
-
-    expect(result.action).toEqual({
-      orig: '2d charm fat',
-      type: 'damage',
-      formula: '2d',
-      damagetype: 'fat',
-      extdamagetype: undefined,
-      costs: undefined,
-      hitlocation: undefined,
-      accumulate: false,
-      next: undefined,
-    })
-  })
-
-  test('#!sw+1 cut', () => {
-    const result = parseForRollOrDamage('sw+1 cut')
-
-    expect(result.action).toEqual({
-      accumulate: false,
-      costs: undefined,
-      damagetype: 'cut',
-      derivedformula: 'sw',
-      extdamagetype: undefined,
-      formula: '+1',
-      hitlocation: undefined,
-      orig: 'sw+1 cut',
-      type: 'deriveddamage',
-    })
-  })
-
-  test('#!sw+1 ctrl', () => {
-    const result = parseForRollOrDamage('sw+1 ctrl')
-
-    expect(result.action).toEqual({
-      accumulate: false,
-      costs: undefined,
-      derivedformula: 'sw',
-      desc: 'ctrl',
-      formula: '+1',
-      hitlocation: undefined,
-      orig: 'sw+1 ctrl',
-      type: 'derivedroll',
-    })
   })
 })
 

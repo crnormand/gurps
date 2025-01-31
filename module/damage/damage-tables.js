@@ -1,20 +1,36 @@
 'use strict'
 
 const woundModifiers = {
-  burn: { multiplier: 1, label: 'Burning' },
-  cor: { multiplier: 1, label: 'Corrosive' },
-  cr: { multiplier: 1, label: 'Crushing' },
-  cut: { multiplier: 1.5, label: 'Cutting' },
-  fat: { multiplier: 1, label: 'Fatigue' },
-  imp: { multiplier: 2, label: 'Impaling' },
-  'pi-': { multiplier: 0.5, label: 'Small Piercing' },
-  pi: { multiplier: 1, label: 'Piercing' },
-  'pi+': { multiplier: 1.5, label: 'Large Piercing' },
-  'pi++': { multiplier: 2, label: 'Huge Piercing' },
-  tox: { multiplier: 1, label: 'Toxic' },
-  dmg: { multiplier: 1, label: 'Damage', nodisplay: false },
-  injury: { multiplier: 1, label: 'Injury' },
-  kb: { multiplier: 1, label: 'Knockback only' },
+  burn: { multiplier: 1, label: 'Burning', icon: '<i class="fa fa-fire"></i>', color: '#c5360b' },
+  cor: { multiplier: 1, label: 'Corrosive', icon: '<i class="fa fa-flask"></i>', color: 'darkred' },
+  cr: { multiplier: 1, label: 'Crushing', icon: '<i class="fa fa-hammer"></i>', color: 'purple' },
+  cut: { multiplier: 1.5, label: 'Cutting', icon: '<i class="fa fa-cut"></i>', color: 'red' },
+  fat: { multiplier: 1, label: 'Fatigue', icon: '<i class="fa fa-bed"></i>', color: 'darkblue' },
+  imp: { multiplier: 2, label: 'Impaling', icon: '<i class="fa fa-bullseye"></i>', color: 'brown' },
+  'pi-': { multiplier: 0.5, label: 'Small Piercing', icon: '<i class="fa fa-arrow-down"></i>', color: '#8a0000' },
+  pi: { multiplier: 1, label: 'Piercing', icon: '<i class="fa fa-arrow-up"></i>', color: '#8a0000' },
+  'pi+': {
+    multiplier: 1.5,
+    label: 'Large Piercing',
+    icon: '<i class="fa fa-arrow-up"></i><i class="fa fa-arrow-up"></i>',
+    color: '#8a0000',
+  },
+  'pi++': {
+    multiplier: 2,
+    label: 'Huge Piercing',
+    icon: '<i class="fa fa-arrow-up"></i><i class="fa fa-arrow-up"></i><i class="fa fa-arrow-up"></i>',
+    color: '#8a0000',
+  },
+  tox: { multiplier: 1, label: 'Toxic', icon: '<i class="fa fa-biohazard"></i>', color: 'darkgreen' },
+  dmg: {
+    multiplier: 1,
+    label: 'Damage',
+    nodisplay: false,
+    icon: '<i class="fa fa-fist-raised"></i>',
+    color: '#762f21',
+  },
+  injury: { multiplier: 1, label: 'Injury', icon: '<i class="fa fa-clinic-medical"></i>', color: '#762f21' },
+  kb: { multiplier: 1, label: 'Knockback only', icon: '<i class="fa fa-arrow-right"></i>', color: '#6f63d9' },
   // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
 }
 
