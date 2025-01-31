@@ -108,7 +108,7 @@ export async function doRoll({
   let token
   if (actor instanceof Actor && action) {
     const actorTokens =
-      canvas.tokens.placeables.filter(t => {
+      canvas.tokens?.placeables.filter(t => {
         if (t.actor) return t.actor.id === actor.id
         ui.notifications?.warn(`Token is not linked to an actor [${t.id}]`)
         return false
@@ -603,7 +603,7 @@ async function _doRoll({
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   // For last, let's consume this action in Token
-  const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
+  const actorToken = canvas.tokens?.placeables.find(t => t.id === speaker.token)
   if (!!actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
     await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)
