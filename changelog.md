@@ -1,6 +1,15 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.0 ??? or 1.0.0 ???
+## Release 0.17.18
+
+#### Bugfixes
+
+- Bugfix: Error when targeting a token with tagged target modifiers #2127
+- Bugfix: Damage multipliers are not working #2129
+- Bugfix: Dragging damage rolled when a token is unselected does not work #2133
+- Bugfix: Still throwing placeables error. #2138
+- Bugfix: 17.17 Tagged Modifier tag #attribute doesn't work #2140
+- Bugfix: Roll not working for swing and thrust OTFs with modifiers #2141
 
 ## Release 0.17.17 01/19/2025
 

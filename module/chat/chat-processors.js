@@ -132,10 +132,10 @@ class QuickDamageChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^[\.\/](.*?)( +[xX\*]?(?<num>\d+))?$/)
+    this.match = line.match(/^[.\/](.*?)( +[xX*]?(?<num>\d+))?$/)
     if (!!this.match) {
       this.action = parselink(this.match[1])
-      return this.action?.action?.type == 'damage' || this.action?.action?.type == 'roll'
+      return this.action?.action?.type === 'damage' || this.action?.action?.type === 'roll'
     }
     return false
   }

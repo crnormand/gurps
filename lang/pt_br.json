@@ -1397,5 +1397,10 @@
   "GURPS.allCombatants": "Todos os Tokens em Combate",
   "GURPS.allTokens": "Todos os Tokens na Cena",
   "GURPS.settingAddCumulativeParryPenalties": "Adicionar Penalidades de Aparar Cumulativas Automaticamente",
-  "GURPS.settingHintAddCumulativeParryPenalties": "Se ativado, o sistema adicionará automaticamente penalidades de aparar cumulativas ao teste para os tokens selecionados para a Verificação de Ações Máximas."
+  "GURPS.settingHintAddCumulativeParryPenalties": "Se ativado, o sistema adicionará automaticamente penalidades de aparar cumulativas ao teste para os tokens selecionados para a Verificação de Ações Máximas.",
+  "GURPS.multiplyAfterRoll": "Após a rolagem:",
+  "GURPS.armorDivisor": "Divisor de armadura:",
+  "GURPS.minDamageRule": "Dano mín.:",
+  "GURPS.diceAddDamageRule": "Regra de Dados+Adições:",
+  "GURPS.damageCosts": "Custo:"
 }

@@ -52,10 +52,11 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
   }
 
   const add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
-  const damageType = formula.match(/\d\s(.+)/)?.[1] || ''
+  const damageType = formula.match(/\s(\w+)/)?.[1] || ''
 
   const armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
   const hasMinDamage = formula.includes('!')
+  const multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
   const costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
 
   const bucketMod = GURPS.ModifierBucket.currentSum()
@@ -78,10 +79,14 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
   const plus = newAdd > 0 ? '+' : ''
   const addText = newAdd !== 0 ? newAdd : ''
   const minDamageText = hasMinDamage ? '! ' : ''
-  const armorDivisorText = armorDivisor ? ` (${armorDivisor})` : ''
+  const armorDivisorText = armorDivisor ? `(${armorDivisor})` : ''
   const damageTypeText = addDamageType ? ` ${damageType}` : ''
   const costFormulaText = costFormula ? ` *${costFormula}` : ''
-  return `${dice}d${plus}${addText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
+  const multiplierText = multiplier ? `*${multiplier}` : ''
+  const newDice =
+    `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
+  console.debug(`addBucketToDamage: ${formula} => ${newDice}`)
+  return newDice
 }
 
 export async function doRoll({
@@ -103,7 +108,7 @@ export async function doRoll({
   let token
   if (actor instanceof Actor && action) {
     const actorTokens =
-      canvas.tokens.placeables.filter(t => {
+      canvas.tokens?.placeables.filter(t => {
         if (t.actor) return t.actor.id === actor.id
         ui.notifications?.warn(`Token is not linked to an actor [${t.id}]`)
         return false
@@ -129,8 +134,10 @@ export async function doRoll({
 
   let bucketRoll
   let displayFormula = formula
-
-  if (actor instanceof Actor && taggedSettings.autoAdd) {
+  const isAttributeOrCheckRoll = Object.keys(GURPS.PARSELINK_MAPPINGS).includes(
+    chatthing.split('@').pop().slice(0, -1).toUpperCase()
+  )
+  if (actor instanceof Actor && (action || isAttributeOrCheckRoll) && taggedSettings.autoAdd) {
     // We need to clear all tagged modifiers from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
@@ -173,13 +180,38 @@ export async function doRoll({
 
     let template = 'confirmation-roll.hbs'
 
-    // Special Case: thrust and swing buttons are formula based, not targeted rolls
-    let damageRoll, damageType
+    // If we receive a single formula
+    // like `/1d6+2` we need
+    // to process it like a single roll
+    let damageRoll,
+      damageType,
+      damageTypeLabel,
+      damageTypeIcon,
+      damageTypeColor,
+      simpleFormula,
+      originalFormula,
+      otfDamageText,
+      usingDiceAdd
     if (!action && !chatthing && targetData.name === formula) {
-      const damage = prefix.match(/\[(.+)]/)?.[1] || ''
-      damageType = damage === 'thrust' ? 'thr' : 'sw'
-      damageRoll = displayFormula
       template = 'confirmation-damage-roll.hbs'
+      const damageOTFType = prefix.match(/\[(.+)]/)?.[1] || ''
+      if (['thrust', 'swing', 'sw', 'thr'].includes(damageOTFType.toLowerCase())) {
+        // Special Case: `[thrust]` and `[swing]` OTFs are formula based, not targeted rolls
+        // We receive here the full dice formula, like 1d6+2, and we need to extract the dice + adds parts
+        // For example, for the formula `1d6+2` we need to extract `1d` and `+2` to show in the confirmation dialog
+        // Because this is a simple roll and not a damage roll, we need to show the damage type as `dmg`
+        otfDamageText = i18n(`GURPS.${damageOTFType}`, damageOTFType)
+        damageType = 'dmg'
+        damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+        damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
+        damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
+        usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
+      }
+      const dice = displayFormula.match(/\d+d/)?.[0] || ''
+      const adds = displayFormula.match(/[+-]\d+/)?.[0] || ''
+      simpleFormula = `${dice}${adds}`
+      originalFormula = simpleFormula
+      damageRoll = simpleFormula
     }
 
     // If Max Actions Check is enabled get Consume Action Info
@@ -354,6 +386,13 @@ export async function doRoll({
           consumeActionIcon,
           consumeActionLabel,
           consumeActionColor,
+          damageTypeLabel,
+          damageTypeIcon,
+          damageTypeColor,
+          simpleFormula,
+          originalFormula,
+          otfDamageText,
+          usingDiceAdd,
         }),
         buttons: {
           roll: {
@@ -379,6 +418,7 @@ export async function doRoll({
             icon: '<i class="fas fa-times"></i>',
             label: i18n('GURPS.cancel'),
             callback: async () => {
+              await GURPS.ModifierBucket.clearTaggedModifiers()
               GURPS.stopActions = true
               resolve(false)
             },
@@ -563,7 +603,7 @@ async function _doRoll({
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   // For last, let's consume this action in Token
-  const actorToken = canvas.tokens.placeables.find(t => t.id === speaker.token)
+  const actorToken = canvas.tokens?.placeables.find(t => t.id === speaker.token)
   if (!!actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
     await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)

@@ -224,12 +224,14 @@ class ModifierStack {
       }
       const damage = $('#cr-damage').text()
       const formula = $('#cr-formula').text()
-      if (!!formula && !!damage) {
-        const newFormula = addBucketToDamage(formula, false)
+      const originalFormula = $('#cr-damage').data('original')
+      if (!!formula && !!damage && !!originalFormula) {
+        const newFormula = addBucketToDamage(originalFormula, false)
         const bucketTotal = this.currentSum
-        const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+        const bucketRollModifier = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
+        const bucketRollModifierColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
         $('#cr-damage').text(newFormula)
-        $('#cr-bucket').text(bucketRoll)
+        $('#cr-bucket').text(bucketRollModifier).css('color', bucketRollModifierColor)
       }
     }
   }
