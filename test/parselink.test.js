@@ -1086,6 +1086,23 @@ describe('parseLink', () => {
       )
     })
 
+    test('#!S:Acrobatics-6', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        name: 'Acrobatics',
+        orig: 'S:Acrobatics-6',
+        spantext: '<b>S:</b>Acrobatics -6',
+        type: 'skill-spell',
+        mod: '-6',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='S:Acrobatics-6'><b>S:</b>Acrobatics -6</span>"))
+    })
+
     test('#!Sp:"Bigby\'s Crushing Hand" +1 Description', () => {
       const result = parselink(input)
 
@@ -1146,22 +1163,6 @@ describe('parseLink', () => {
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='Sp:'' +1 Description'><b>Sp:</b>+1 Description</span>")
       )
-    })
-
-    test('Modifiers require a space: #!Sk:Stealth-1', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        blindroll: false,
-        desc: '',
-        isSkillOnly: true,
-        isSpellOnly: false,
-        name: 'Stealth-1',
-        orig: 'Sk:Stealth-1',
-        spantext: '<b>Sk:</b>Stealth-1',
-        type: 'skill-spell',
-      })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='Sk:Stealth-1'><b>Sk:</b>Stealth-1</span>"))
     })
 
     test('Modifiers require a space: #!Sk:Stealth -1', () => {
@@ -1336,7 +1337,7 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         blindroll: false,
-        desc: '+@margin for Spell',
+        desc: 'for Spell',
         isSkillOnly: false,
         isSpellOnly: false,
         mod: '+@margin',
@@ -1347,6 +1348,27 @@ describe('parseLink', () => {
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='S:Stealth +@margin for Spell'><b>S:</b>Stealth +@margin for Spell</span>")
+      )
+    })
+
+    test('#!S:Stealth+@margin for Spell', () => {
+      // Is there a way to get the test name?
+
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'for Spell',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        mod: '+@margin',
+        name: 'Stealth',
+        orig: 'S:Stealth+@margin for Spell',
+        spantext: '<b>S:</b>Stealth +@margin for Spell',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='S:Stealth+@margin for Spell'><b>S:</b>Stealth +@margin for Spell</span>")
       )
     })
 
