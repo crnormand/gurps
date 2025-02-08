@@ -6,6 +6,7 @@
 
 - Bugfix: Error when targeting a token with tagged target modifiers #2127
 - Bugfix: Damage multipliers are not working #2129
+- Bugfix: Dragging damage rolled when a token is unselected does not work #2133
 
 ## Release 0.17.17 01/19/2025
 
