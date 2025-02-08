@@ -8,6 +8,7 @@
 - Bugfix: Damage multipliers are not working #2129
 - Bugfix: Dragging damage rolled when a token is unselected does not work #2133
 - Bugfix: Still throwing placeables error. #2138
+- Bugfix: 17.17 Tagged Modifier tag #attribute doesn't work #2140
 
 ## Release 0.17.17 01/19/2025
 
