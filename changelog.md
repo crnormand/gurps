@@ -11,6 +11,7 @@
 - Bugfix: 17.17 Tagged Modifier tag #attribute doesn't work #2140
 - Bugfix: Roll not working for swing and thrust OTFs with modifiers #2141
 - Bugfix: 17.17 inconsistent OtF space requirement before modifier #2145
+- Bugfix: 17.17 tabbed sheet truncates hit locations #2135
 
 ## Release 0.17.17 01/19/2025
 
