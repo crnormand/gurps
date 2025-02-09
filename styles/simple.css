@@ -1838,6 +1838,7 @@ div#other {
   grid-template-areas:
     'melee             combat-sidebar'
     'speed-range-table combat-sidebar'
+    'ranged            combat-sidebar'
     'ranged            combat-sidebar';
 }
 
