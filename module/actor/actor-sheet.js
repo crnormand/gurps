@@ -632,29 +632,51 @@ export class GurpsActorSheet extends ActorSheet {
       }
     )
 
-    html.find('#qnotes .qnotes-content').dblclick(ex => {
+    html.find('#qnotes .qnotes-content').dblclick(async ex => {
       let n = this.actor.system.additionalresources.qnotes || ''
       n = n.replace(/<br>/g, '\n')
       let actor = this.actor
-      new Dialog({
-        title: 'Edit Quick Note',
-        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><textarea rows="4" id="i">${n}</textarea><br><br>Examples:
-        <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
-        buttons: {
-          save: {
-            icon: '<i class="fas fa-save"></i>',
+
+      const dlg = await new foundry.applications.api.DialogV2({
+        window: { title: 'Quick Note', resizable: true },
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<textarea rows="4" id="i">${n}</textarea><b>Examples:</b>
+          [+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
+        buttons: [
+          {
             label: 'Save',
-            callback: html => {
-              const i = html[0].querySelector('#i')
-              actor.internalUpdate({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
+            icon: 'fas fa-save',
+            callback: (event, button, dialog) => {
+              let value = button.form.elements.i.value
+              actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
             },
           },
+        ],
+        _onRender(context, options) {
+          super._onRender(context, options)
+          this.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks)
         },
-        render: h => {
-          $(h).find('textarea').on('drop', this.dropFoundryLinks)
-          $(h).find('input').on('drop', this.dropFoundryLinks)
-        },
-      }).render(true)
+      }).render({ force: true })
+
+      dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
+
+      //   new Dialog({
+      //     title: 'Edit Quick Note',
+      //     content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><textarea rows="4" id="i">${n}</textarea><br><br>Examples:
+      //     <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
+      //     buttons: {
+      //       save: {
+      //         icon: '<i class="fas fa-save"></i>',
+      //         label: 'Save',
+      //         callback: html => {
+      //           const i = html[0].querySelector('#i')
+      //           actor.internalUpdate({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
+      //         },
+      //       },
+      //     },
+      //     render: h => {
+      //       $(h).find('textarea').on('drop', this.dropFoundryLinks)
+      //     },
+      //   }).render(true)
     })
 
     html.find('#qnotes .qnotes-content').on('drop', this.handleQnoteDrop.bind(this))
