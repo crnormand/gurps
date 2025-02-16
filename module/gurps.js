@@ -32,6 +32,7 @@ import {
   i18n_f,
   arrayToObject,
   objectToArray,
+  initialize_i18nHelper,
 } from '../lib/utilities.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -2385,6 +2386,9 @@ if (!globalThis.GURPS) {
     // do this only after we've initialized i18n/localize
     // GURPS.StatusEffect = new StatusEffect()
     // CONFIG.statusEffects = GURPS.StatusEffect.effects()
+
+    // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
+    initialize_i18nHelper()
 
     GURPS.DamageTables = new DamageTable()
 
