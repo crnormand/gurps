@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.17.19
+
+### Features
+
+- Quick Notes editor needs expandable-width dialog #2136
+
+### Bugfixes:
+
 ## Release 0.17.18 02/09/2025
 
 #### Bugfixes
