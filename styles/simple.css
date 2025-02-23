@@ -193,7 +193,7 @@
   position: relative;
 }
 
-.gurpstippable:hover::before {
+/* .gurpstippable:hover::before {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 130%;
@@ -216,7 +216,7 @@
   border-style: solid;
   border-color: #555 transparent transparent transparent;
   z-index: 102;
-}
+} */
 
 .pdflink {
   text-shadow: none;
@@ -2248,7 +2248,9 @@ div#other {
 
 .damage-all-message:hover,
 .damage-message:hover {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .roll-message .modifier-list {
