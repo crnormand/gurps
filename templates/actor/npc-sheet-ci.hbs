@@ -63,7 +63,7 @@
 				<div class="npc-input-sm-val npc-sheet-centered gmod" data-name="for Size Modifier"
 					data-otf='{{system.traits.sizemod}} for Size Modifier'>{{{displayNumber system.traits.sizemod}}}
 				</div>
-				<div class="npc-input-dr npc-input-labelr">{{i18n "GURPS.hitLocationDR"}}</div>
+				<div class="npc-input-dr npc-input-labelr">{{i18n "GURPS.DR"}}</div>
 				<div class="npc-input-dr-val npc-sheet-centered">{{defense.dr}}{{#each defense.split as | this key
 					|}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</div>
 			</div>

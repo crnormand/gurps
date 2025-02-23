@@ -3,12 +3,12 @@
   <div class="roll-result">
     <ul>
       {{#each lines}}
-      <li>{{{this}}}</li>
+        <li>{{{this}}}</li>
       {{/each}}
     </ul>
     <div class="aside">
-      <p>{{i18n "GURPS.importFileVersion" version=this.version}}</p>
-      <p>{{i18n "GURPS.importCurrentVersions" GCAVersion=this.GCAVersion GCSVersion=this.GCSVersion}}</p>
+      <p>{{i18n "GURPS.fileVersion" version=this.version}}</p>
+      <p>{{i18n "GURPS.currentVersions" GCAVersion=this.GCAVersion GCSVersion=this.GCSVersion}}</p>
       <p>{{i18n "GURPS.importSeeUsersGuide"}}</p>
       <a href="{{url}}">{{i18n "GURPS.gameAidUsersGuide"}}</a>
     </div>

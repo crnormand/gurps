@@ -96,12 +96,12 @@
 
         <div class='grid grid-3col flex-between' style='grid-template-columns: auto auto auto; gap: 0'>
           <div class='gga-group'>
-            <h4>{{i18n "GURPS.hitLocationAndDR"}}</h4>
+            <h4>{{i18n "GURPS.hitLocAndDR"}}</h4>
 
             <div class='gurps-3col gurps-radio-col'>
               <header>{{i18n "GURPS.location"}}</header>
               <header>{{i18n "GURPS.roll"}}</header>
-              <header>{{i18n "GURPS.hitLocationDR"}}</header>
+              <header>{{i18n "GURPS.DR"}}</header>
 
               {{#each CALC.hitLocationsWithDR}}
                 <div>
@@ -120,7 +120,7 @@
             <hr /> <!-- Doesn't do much except add some space -->
 
             <button id='random-location' class='with-icon'>
-              <i class='fa fa-dice'><span>&nbsp;{{i18n "GURPS.hitLocationRandom"}}</span></i>
+              <i class='fa fa-dice'><span>&nbsp;{{i18n "GURPS.random"}}</span></i>
             </button>
 
             <hr /> <!-- Doesn't do much except add some space -->
@@ -162,11 +162,11 @@
 
                   {{#each CALC.effectiveWoundModifiers}}
                     <div><label><input type='radio' name='woundmodifier' {{checked (eq ../CALC.damageType
-											@key)}} value='{{@key}}'>&nbsp;{{i18n (concat "GURPS.damageType" this.label)
+											@key)}} value='{{@key}}'>&nbsp;{{i18n (concat "GURPS.damageTypes." this.label)
 										this.label}}</label>
                     </div>
                     <div>
-                      {{i18n (concat "GURPS.damageAbbrev" @key) @key}}
+                      {{i18n (concat "GURPS.damageAbbrev." @key) @key}}
                     </div>
                     <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>
                       ×{{fractionalize
@@ -230,7 +230,7 @@
               <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{checked
 								CALC.useLocationModifiers}}></div>
               <div><label for='tactical-locationmodifier'>&nbsp;{{i18n
-								"GURPS.hitLocationWoundModifiers"}}</label>
+								"GURPS.hitLocationWoundingMods"}}</label>
               </div>
               <div class='pdflink'>B398</div>
             </div>
@@ -446,13 +446,13 @@
                   </div>
                 {{/if}}
 
-                <div id='result-dr'>{{i18n "GURPS.hitLocationDR"}}</div>
+                <div id='result-dr'>{{i18n "GURPS.DR"}}</div>
                 <div>{{CALC.DR}}</div>
                 <div>{{CALC.hitLocation}}{{#unless (eq CALC.userEnteredDR null)}} ({{localize
 							"GURPS.overridden"}}){{/unless}}</div>
 
                 {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
-                  <div>{{i18n "GURPS.hitLocationDRWithDivisor"}}</div>
+                  <div>{{i18n "GURPS.effectiveDR"}}</div>
                   <div>{{CALC.effectiveDR}}</div>
                   <!-- This is a big messy looking block, but it prints either:
                     "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->

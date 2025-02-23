@@ -98,7 +98,7 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     const tokenName = token?.name || actor?.name || gmUser.name
     const damageRoll = displayFormula
     const damageType = GURPS.DamageTables.translate(action.damagetype)
-    const damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+    const damageTypeLabel = i18n(`GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
     const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
     const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
     const targetRoll = action.orig
