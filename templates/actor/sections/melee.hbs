@@ -12,7 +12,7 @@
   <div class='block header'>{{i18n 'GURPS.block'}}</div>
   <div class='damage header'>{{i18n 'GURPS.damage'}}</div>
   <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
-  <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
+  <div class='st header'>{{i18n 'GURPS.ST'}}</div>
 
     {{#with system as |system|}}
       {{#each (attackflatlist system.melee)}}
@@ -69,7 +69,7 @@
                   <div>
                     {{#if (isFoundryItem this)}}
                       <i class='fas fa-star tooltip gga-item'>
-                        <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem'}}</span>
+                        <span class='tooltiptext'>{{i18n 'GURPS.foundryItem'}}</span>
                       </i>
                     {{/if}}
                   </div>

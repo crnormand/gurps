@@ -1,9 +1,9 @@
 <div>
   <div class='prefix'>
     {{#if rolled}}
-      {{i18n_f "GURPS.chatRollingDamage" this}}
+      {{i18n_f "GURPS.rollingDiceDamageTimes" this}}
     {{else}}
-      {{i18n_f "GURPS.chatFixedDamage" this}}
+      {{i18n_f "GURPS.fixedDamage" this}}
     {{/if}}
     {{#if hitlocation}} ({{hitlocation}}){{/if}}
   </div>
@@ -41,7 +41,7 @@
                   {{#if (eq damage 1)}}
                     {{{i18n_f "GURPS.pointDamage" this}}}
                   {{else}}
-                    {{{i18n_f "GURPS.pointsDamage" this}}}
+                    {{{i18n_f "GURPS.Damage" this}}}
                   {{/if}}</span>
               </span>
             </label>

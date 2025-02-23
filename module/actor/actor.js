@@ -937,7 +937,7 @@ export class GurpsActor extends Actor {
 
           if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
             // send the chat message
-            let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+            let tag = flag ? 'GURPS.nameIsReeling' : 'GURPS.nameNoLongerReeling'
             let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
             this.sendChatMessage(msg)
           }
@@ -953,7 +953,7 @@ export class GurpsActor extends Actor {
 
           // send the chat message
           if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
-            let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+            let tag = flag ? 'GURPS.nameIsTired' : 'GURPS.nameNoLongerTired'
             let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfTired') })
             this.sendChatMessage(msg)
           }
@@ -1564,7 +1564,7 @@ export class GurpsActor extends Actor {
         }
 
         Dialog.prompt({
-          title: i18n('GURPS.TransferTo') + ' ' + this.name,
+          title: i18n('GURPS.transferTo') + ' ' + this.name,
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,
@@ -1580,7 +1580,7 @@ export class GurpsActor extends Actor {
           // @ts-ignore
           (count = parseInt(html.find('#qty').val()))
         await Dialog.prompt({
-          title: i18n('GURPS.TransferTo') + ' ' + this.name,
+          title: i18n('GURPS.transferTo') + ' ' + this.name,
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,

@@ -24,7 +24,7 @@
 
   <div class='encmarker header'></div>
   <div class='enc header'>{{i18n 'GURPS.level'}}</div>
-  <div class='load header'>{{i18n 'GURPS.maxload'}}</div>
+  <div class='load header'>{{i18n 'GURPS.max'}}</div>
   <div class='move header'>{{i18n 'GURPS.move'}}</div>
   <div class='dodge header'>{{i18n 'GURPS.dodge'}}</div>
 
@@ -34,7 +34,7 @@
       class='enc {{include-if current "current"}} {{key}} {{include-if (not (automaticEncumbrance)) "clickable"}}'
       data-key='{{@key}}'
     >
-      {{{localizeKey (concat 'GURPS.encumbranceLevel-' @key)}}}
+      {{{localizeKey (concat 'GURPS.encumbranceLevel.' @key)}}}
     </div>
     <div class='load gga-right {{include-if current "current"}}'>
       {{#if ../isEditing}}

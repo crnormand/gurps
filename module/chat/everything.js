@@ -20,7 +20,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](everyone|ev)$/i)
   }
   usage() {
-    return i18n('GURPS.chatHelpEveryone')
+    return i18n('GURPS.chat.Everyone')
   }
 
   async process(line) {
@@ -183,7 +183,7 @@ export class RemoteChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](remote|rem)$/i)
   }
   usage() {
-    return i18n('GURPS.chatHelpRemote')
+    return i18n('GURPS.chat.Remote')
   }
 
   async process(line) {

@@ -15,7 +15,7 @@ export default async function selectTarget() {
         buttons: {
           apply: {
             icon: '<i class="fas fa-check"></i>',
-            label: game.i18n.localize('GURPS.addApply'),
+            label: game.i18n.localize('GURPS.apply'),
             callback: html => {
               let name = html.find('select option:selected').text().trim()
               let target = [...game.user.targets].find(token => token.name === name)

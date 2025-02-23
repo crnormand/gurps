@@ -1328,10 +1328,10 @@ export class ActorImporter {
             title: 'Hit Location Body Plan',
             content:
               `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
+                'GURPS.bodyplans.' + data.additionalresources.bodyplan
               )}) or ` +
               `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.BODYPLAN' + bodyplan
+                'GURPS.bodyplans.' + bodyplan
               )})?<br><br>&nbsp;`,
             buttons: {
               save: {
@@ -2169,10 +2169,10 @@ export class ActorImporter {
             title: 'Hit Location Body Plan',
             content:
               `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
+                'GURPS.bodyplans.' + data.additionalresources.bodyplan
               )}) or ` +
               `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.BODYPLAN' + bodyplan
+                'GURPS.bodyplans.' + bodyplan
               )})?<br><br>&nbsp;`,
             buttons: {
               save: {
