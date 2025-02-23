@@ -260,7 +260,7 @@ export class EffectModifierPopout extends Application {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
     await Dialog.confirm({
-      title: i18n('GURPS.confirmClearUserMods'),
+      title: i18n('GURPS.deleteAllUserMods'),
       content: i18n('GURPS.confirmClearHintUserMods'),
       yes: async () => {
         if (actor) {
@@ -292,7 +292,7 @@ export class EffectModifierPopout extends Application {
         },
         rejectClose: false,
       })
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
   }
 
   getDescription(text, itemRef) {
@@ -370,7 +370,7 @@ export class EffectModifierPopout extends Application {
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
       m.push(`${mod} @custom`)
       t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
   }
 
   /** @override */

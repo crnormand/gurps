@@ -225,20 +225,17 @@ export async function doRoll({
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
     if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
       const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
-      consumeActionIcon = !result.hasActions
-        ? '<i class="fas fa-exclamation"></i>'
-        : canConsumeAction
-        ? '<i class="fas fa-plus"></i>'
+      consumeActionIcon =
+        !result.hasActions ? '<i class="fas fa-exclamation"></i>'
+        : canConsumeAction ? '<i class="fas fa-plus"></i>'
         : '<i class="fas fa-check"></i>'
-      consumeActionLabel = !result.hasActions
-        ? i18n('GURPS.noActionsAvailable')
-        : canConsumeAction
-        ? i18n('GURPS.willConsumeAction')
+      consumeActionLabel =
+        !result.hasActions ? i18n('GURPS.noActionsAvailable')
+        : canConsumeAction ? i18n('GURPS.willConsumeAction')
         : i18n('GURPS.isFreeAction')
-      consumeActionColor = !result.hasActions
-        ? 'rgb(215,185,33)'
-        : canConsumeAction
-        ? 'rgba(20,119,180,0.7)'
+      consumeActionColor =
+        !result.hasActions ? 'rgb(215,185,33)'
+        : canConsumeAction ? 'rgba(20,119,180,0.7)'
         : 'rgb(51,114,68,0.7)'
     }
 
@@ -279,7 +276,7 @@ export async function doRoll({
       case 'controlroll':
         itemIcon = 'fas fa-head-side-gear'
         itemColor = '#c5360b'
-        rollType = game.i18n.localize('GURPS.ControlRoll')
+        rollType = game.i18n.localize('GURPS.controlRoll')
         break
       case 'attribute':
         itemColor = '#620707'
@@ -335,10 +332,9 @@ export async function doRoll({
             break
           default:
             itemIcon = 'fas fa-dice'
-            rollType = !!targetData?.name
-              ? targetData.name
-              : thing
-              ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+            rollType =
+              !!targetData?.name ? targetData.name
+              : thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
               : formula
         }
         break
@@ -357,7 +353,7 @@ export async function doRoll({
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
       const dialog = new Dialog({
-        title: game.i18n.localize('GURPS.confirmRoll'),
+        title: game.i18n.localize('GURPS.rollConfirmation'),
         content: await renderTemplate(`systems/gurps/templates/${template}`, {
           formula: formula,
           thing: thing,

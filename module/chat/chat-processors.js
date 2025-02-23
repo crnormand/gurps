@@ -469,7 +469,7 @@ class FpHpChatProcessor extends ChatProcessor {
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
       return false
     }
     if (m[6]?.trim().toLowerCase() == '@target') {
@@ -731,7 +731,7 @@ class UsesChatProcessor extends ChatProcessor {
     let answer = false
     let m = this.match
     let actor = GURPS.LastActor
-    if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    if (!actor) ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
     else {
       var eqt, key
       let m2 = m[3].trim().match(/^(o[\.:])?(.*)/i)
@@ -809,7 +809,7 @@ class QtyChatProcessor extends ChatProcessor {
     let answer = false
     let m = this.match
     let actor = GURPS.LastActor
-    if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    if (!actor) ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
     else {
       var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
@@ -843,7 +843,7 @@ class QtyChatProcessor extends ChatProcessor {
           }
         } else {
           let q = parseInt(eqt.count) + delta
-          if (q < 0) ui.notifications.warn(i18n('GURPS.chatYouDoNotHaveEnough') + " '" + eqt.name + "'")
+          if (q < 0) ui.notifications.warn(i18n('GURPS.youDoNotHaveEnough') + " '" + eqt.name + "'")
           else {
             answer = true
             this.prnt(`${eqt.name} ${i18n('GURPS.qty')} ${m[1]}`)
@@ -878,7 +878,7 @@ class LightChatProcessor extends ChatProcessor {
   }
   async process(line) {
     if (canvas.tokens.controlled.length == 0) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
       return
     }
     if (line.match(/^\/(light|li) *$/)) {
@@ -1116,7 +1116,7 @@ class ManeuverChatProcessor extends ChatProcessor {
     let r = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
     let m = Object.values(Maneuvers.getAll()).find(e => i18n(e.data.label).toLowerCase().match(r))
     if (!GURPS.LastActor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
       return false
     }
     if (!m) {
@@ -1147,7 +1147,7 @@ class RepeatChatProcessor extends ChatProcessor {
 
   async process(_line) {
     if (!GURPS.LastActor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
       return false
     }
     this.repeatLoop(GURPS.LastActor, this.match[3].trim(), this.match[2]) // We are purposefully NOT waiting for this method, so that it can continue in the background
@@ -1185,7 +1185,7 @@ class StopChatProcessor extends ChatProcessor {
 
   async process(_line) {
     if (!GURPS.LastActor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
       return false
     }
     GURPS.LastActor.RepeatAnimation = false
@@ -1278,7 +1278,7 @@ class ModChatProcessor extends ChatProcessor {
 
   async process(_line) {
     if (!GURPS.LastActor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
       return false
     }
     let actor = GURPS.LastActor
