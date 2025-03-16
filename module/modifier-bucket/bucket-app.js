@@ -205,7 +205,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(i18n('gurps.modifiers.rapidStrike')))
+    let rs = this.modifierList.find(m => m.desc.includes(i18n('GURPS.modifiers.rapidStrike')))
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
@@ -281,11 +281,10 @@ class ModifierStack {
   _add(list, mod, reason = '', replace = false, tagged = false) {
     /** @type {Modifier|undefined} */
     var oldmod
-    reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
+    reason = reason.replace('(' + i18n('GURPS.userCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
-      if (replace)
-        list.splice(i, 1) // only used by range modifier
+      if (replace) list.splice(i, 1) // only used by range modifier
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
     let m = (mod + '').match(/([+-])?@margin/i)

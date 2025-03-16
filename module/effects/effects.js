@@ -18,7 +18,7 @@ export class StatusEffect {
 
     GURPS.SavedStatusEffects = CONFIG.statusEffects
     GURPS.StatusEffectStanding = 'standing'
-    GURPS.StatusEffectStandingLabel = 'gurps.status.Standing'
+    GURPS.StatusEffectStandingLabel = 'GURPS.statuses.Standing'
 
     this.useActiveEffects = true // StatusEffect.useActiveEffects()
     this._statusEffects = {}
@@ -86,7 +86,7 @@ export class StatusEffect {
       prone: {
         img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
         id: 'prone',
-        name: 'gurps.status.Prone',
+        name: 'GURPS.statuses.Prone',
         // I'm sneakily using ActiveEffects to implement postures even if the system setting is turned off.
         changes: [
           {
@@ -118,14 +118,14 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'GURPS.pdfPostureLyingDown', type: 'posture' },
+            effect: { pdfref: 'GURPS.pdf.PostureLyingDown', type: 'posture' },
           },
         },
       },
       kneel: {
         img: 'systems/gurps/icons/statuses/condition-kneel.webp',
         id: 'kneel',
-        name: 'gurps.status.Kneel',
+        name: 'GURPS.statuses.Kneel',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -155,14 +155,14 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'GURPS.pdfPostureKneeling', type: 'posture' },
+            effect: { pdfref: 'GURPS.pdf.PostureKneeling', type: 'posture' },
           },
         },
       },
       crouch: {
         img: 'systems/gurps/icons/statuses/condition-crouch.webp',
         id: 'crouch',
-        name: 'gurps.status.Crouch',
+        name: 'GURPS.statuses.Crouch',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -187,14 +187,14 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrouching' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdf.PostureCrouching' },
           },
         },
       },
       sit: {
         img: 'systems/gurps/icons/statuses/condition-sit.webp',
         id: 'sit',
-        name: 'gurps.status.Sit',
+        name: 'GURPS.statuses.Sit',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -224,14 +224,14 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureSitting' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdf.PostureSitting' },
           },
         },
       },
       crawl: {
         img: 'systems/gurps/icons/statuses/condition-crawl.webp',
         id: 'crawl',
-        name: 'gurps.status.Crawling',
+        name: 'GURPS.statuses.Crawling',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -261,14 +261,14 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrawling' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdf.PostureCrawling' },
           },
         },
       },
       grapple: {
         img: 'systems/gurps/icons/statuses/path-condition-grappled.webp',
         id: 'grapple',
-        name: 'gurps.status.Grapple',
+        name: 'GURPS.statuses.Grapple',
       },
       stun: {
         img: 'systems/gurps/icons/statuses/dd-condition-stunned.webp',
@@ -279,7 +279,7 @@ export class StatusEffect {
       mentalstun: {
         img: 'systems/gurps/icons/statuses/dd-condition-stunned-iq.webp',
         id: 'mentalstun',
-        name: 'gurps.status.StunnedMental',
+        name: 'GURPS.statuses.StunnedMental',
         tint: '', // #FEAEF4 #AEFEAE
       },
       shock1: {
@@ -305,7 +305,7 @@ export class StatusEffect {
       reeling: {
         img: 'systems/gurps/icons/statuses/cth-condition-major-wound.webp',
         id: 'reeling',
-        name: 'gurps.status.Reeling',
+        name: 'GURPS.statuses.Reeling',
         changes: [
           {
             key: 'system.conditions.reeling',
@@ -316,11 +316,11 @@ export class StatusEffect {
         flags: {
           gurps: {
             effect: {
-              pdfref: 'GURPS.pdfReeling',
+              pdfref: 'GURPS.pdf.Reeling',
               // terminateActions: [
               //   {
               //     type: 'chat',
-              //     msg: 'GURPS.chatTurnOffReeling',
+              //     msg: 'GURPS.nameNoLongerReeling',
               //     args: { name: '@displayname' },
               //   },
               // ],
@@ -331,7 +331,7 @@ export class StatusEffect {
       exhausted: {
         img: 'systems/gurps/icons/statuses/path-condition-exhausted.webp',
         id: 'exhausted',
-        name: 'gurps.status.Exhausted',
+        name: 'GURPS.statuses.Exhausted',
         changes: [
           {
             key: 'system.conditions.exhausted',
@@ -347,7 +347,7 @@ export class StatusEffect {
         flags: {
           gurps: {
             effect: {
-              pdfref: 'GURPS.pdfTired',
+              pdfref: 'GURPS.pdf.Tired',
             },
           },
         },
@@ -355,208 +355,208 @@ export class StatusEffect {
       fly: {
         img: 'systems/gurps/icons/statuses/x-flying.webp',
         id: 'fly',
-        name: 'gurps.status.Fly',
+        name: 'GURPS.statuses.Fly',
       },
       fall: {
         img: 'systems/gurps/icons/statuses/condition-fall.webp',
         id: 'fall',
-        name: 'gurps.status.Fall',
+        name: 'GURPS.statuses.Fall',
       },
       pinned: {
         img: 'systems/gurps/icons/statuses/path-condition-pinned.webp',
         id: 'pinned',
-        name: 'gurps.status.Pin',
+        name: 'GURPS.statuses.Pin',
       },
       nauseated: {
         img: 'systems/gurps/icons/statuses/path-condition-nauseated.webp',
         id: 'nauseated',
-        name: 'gurps.status.Nauseated',
+        name: 'GURPS.statuses.Nauseated',
       },
       coughing: {
         img: 'systems/gurps/icons/statuses/condition-cough.webp',
         id: 'coughing',
-        name: 'gurps.status.Coughing',
+        name: 'GURPS.statuses.Coughing',
       },
       retching: {
         img: 'systems/gurps/icons/statuses/condition-wretch.webp',
         id: 'retching',
-        name: 'gurps.status.Retching',
+        name: 'GURPS.statuses.Retching',
       },
       drowsy: {
         img: 'systems/gurps/icons/statuses/x-drowsy.webp',
         id: 'drowsy',
-        name: 'gurps.status.Drowsy',
+        name: 'GURPS.statuses.Drowsy',
       },
       sleeping: {
         img: 'systems/gurps/icons/statuses/x-asleep.webp',
         id: 'sleeping',
-        name: 'gurps.status.Sleep',
+        name: 'GURPS.statuses.Sleep',
       },
       tipsy: {
         img: 'systems/gurps/icons/statuses/condition-drunk1.webp',
         id: 'tipsy',
-        name: 'gurps.status.Tipsy',
+        name: 'GURPS.statuses.Tipsy',
       },
       drunk: {
         img: 'systems/gurps/icons/statuses/condition-drunk2.webp',
         id: 'drunk',
-        name: 'gurps.status.Drunk',
+        name: 'GURPS.statuses.Drunk',
       },
       euphoria: {
         img: 'systems/gurps/icons/statuses/path-condition-fascinated.webp',
         id: 'euphoria',
-        name: 'gurps.status.Euphoria',
+        name: 'GURPS.statuses.Euphoria',
       },
       mild_pain: {
         // README No such condition in Basic -- map to Moderate Pain with HPT?
         img: 'systems/gurps/icons/statuses/condition-pain1.webp',
         id: 'mild_pain',
-        name: 'gurps.status.MildPain',
+        name: 'GURPS.statuses.MildPain',
       },
       moderate_pain: {
         img: 'systems/gurps/icons/statuses/condition-pain2.webp',
         id: 'moderate_pain',
-        name: 'gurps.status.ModeratePain2',
+        name: 'GURPS.statuses.ModeratePain2',
       },
       moderate_pain2: {
         // README No such condition in Basic -- map to Terrible Pain with HPT?
         img: 'systems/gurps/icons/statuses/condition-pain3.webp',
         id: 'moderate_pain2',
-        name: 'gurps.status.ModeratePain3',
+        name: 'GURPS.statuses.ModeratePain3',
       },
       severe_pain: {
         img: 'systems/gurps/icons/statuses/condition-pain4.webp',
         id: 'severe_pain',
-        name: 'gurps.status.SeverePain4',
+        name: 'GURPS.statuses.SeverePain4',
       },
       severe_pain2: {
         img: 'systems/gurps/icons/statuses/condition-pain5.webp',
         id: 'severe_pain2',
-        name: 'gurps.status.SeverePain5',
+        name: 'GURPS.statuses.SeverePain5',
       },
       terrible_pain: {
         img: 'systems/gurps/icons/statuses/condition-pain6.webp',
         id: 'terrible_pain',
-        name: 'gurps.status.TerriblePain',
+        name: 'GURPS.statuses.TerriblePain',
       },
       agony: {
         img: 'systems/gurps/icons/statuses/path-condition-helpless.webp',
         id: 'agony',
-        name: 'gurps.status.Agony',
+        name: 'GURPS.statuses.Agony',
       },
       bleed: {
         img: 'systems/gurps/icons/statuses/path-condition-bleeding.webp',
         id: 'bleed',
-        name: 'gurps.status.Bleed',
+        name: 'GURPS.statuses.Bleed',
       },
       poison: {
         img: 'systems/gurps/icons/statuses/dd-condition-poisoned.webp',
         id: 'poison',
-        name: 'gurps.status.Poison',
+        name: 'GURPS.statuses.Poison',
       },
       burn: {
         img: 'systems/gurps/icons/statuses/x-burning.webp',
         id: 'burn',
-        name: 'gurps.status.Burn',
+        name: 'GURPS.statuses.Burn',
       },
       suffocate: {
         img: 'systems/gurps/icons/statuses/condition-suffocate.webp',
         id: 'suffocate',
-        name: 'gurps.status.Suffocate',
+        name: 'GURPS.statuses.Suffocate',
       },
       disabled: {
         img: 'systems/gurps/icons/statuses/dd-condition-unconscious.webp',
         id: 'disabled',
-        name: 'gurps.status.Disable',
+        name: 'GURPS.statuses.Disable',
       },
       blind: {
         img: 'systems/gurps/icons/statuses/dd-condition-blinded.webp',
         id: 'blind',
-        name: 'gurps.status.Blind',
+        name: 'GURPS.statuses.Blind',
       },
       deaf: {
         img: 'systems/gurps/icons/statuses/dd-condition-deafened.webp',
         id: 'deaf',
-        name: 'gurps.status.Deaf',
+        name: 'GURPS.statuses.Deaf',
       },
       silence: {
         img: 'systems/gurps/icons/statuses/x-silenced.webp',
         id: 'silence',
-        name: 'gurps.status.Silence',
+        name: 'GURPS.statuses.Silence',
       },
       stealth: {
         img: 'systems/gurps/icons/statuses/x-stealth.webp',
         id: 'stealth',
-        name: 'gurps.status.Stealth',
+        name: 'GURPS.statuses.Stealth',
       },
       waiting: {
         img: 'systems/gurps/icons/statuses/x-low-light-vision.webp',
         id: 'waiting',
-        name: 'gurps.status.Wait',
+        name: 'GURPS.statuses.Wait',
       },
       sprint: {
         img: 'systems/gurps/icons/statuses/x-haste.webp',
         id: 'sprint',
-        name: 'gurps.status.Sprint',
+        name: 'GURPS.statuses.Sprint',
       },
       num1: {
         img: 'systems/gurps/icons/statuses/number-1.webp',
         id: 'num1',
-        name: 'gurps.status.Counter1',
+        name: 'GURPS.statuses.Counter1',
       },
       num2: {
         img: 'systems/gurps/icons/statuses/number-2.webp',
         id: 'num2',
-        name: 'gurps.status.Counter2',
+        name: 'GURPS.statuses.Counter2',
       },
       num3: {
         img: 'systems/gurps/icons/statuses/number-3.webp',
         id: 'num3',
-        name: 'gurps.status.Counter3',
+        name: 'GURPS.statuses.Counter3',
       },
       num4: {
         img: 'systems/gurps/icons/statuses/number-4.webp',
         id: 'num4',
-        name: 'gurps.status.Counter4',
+        name: 'GURPS.statuses.Counter4',
       },
       num5: {
         img: 'systems/gurps/icons/statuses/number-5.webp',
         id: 'num5',
-        name: 'gurps.status.Counter5',
+        name: 'GURPS.statuses.Counter5',
       },
       num6: {
         img: 'systems/gurps/icons/statuses/number-6.webp',
         id: 'num6',
-        name: 'gurps.status.Counter6',
+        name: 'GURPS.statuses.Counter6',
       },
       num7: {
         img: 'systems/gurps/icons/statuses/number-7.webp',
         id: 'num7',
-        name: 'gurps.status.Counter7',
+        name: 'GURPS.statuses.Counter7',
       },
       num8: {
         img: 'systems/gurps/icons/statuses/number-8.webp',
         id: 'num8',
-        name: 'gurps.status.Counter8',
+        name: 'GURPS.statuses.Counter8',
       },
       num9: {
         img: 'systems/gurps/icons/statuses/number-9.webp',
         id: 'num9',
-        name: 'gurps.status.Counter9',
+        name: 'GURPS.statuses.Counter9',
       },
       num10: {
         img: 'systems/gurps/icons/statuses/number-10.webp',
         id: 'num10',
-        name: 'gurps.status.Counter10',
+        name: 'GURPS.statuses.Counter10',
       },
       'bad+1': {
         img: 'systems/gurps/icons/statuses/BAD+1.webp',
         id: 'bad+1',
-        name: 'gurps.status.Bad+1',
+        name: 'GURPS.statuses.Bad+1',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad+1',
+            value: 'GURPS.statuses.Bad+1',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -564,11 +564,11 @@ export class StatusEffect {
       'bad+2': {
         img: 'systems/gurps/icons/statuses/BAD+2.webp',
         id: 'bad+2',
-        name: 'gurps.status.Bad+2',
+        name: 'GURPS.statuses.Bad+2',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad+2',
+            value: 'GURPS.statuses.Bad+2',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -576,11 +576,11 @@ export class StatusEffect {
       'bad+3': {
         img: 'systems/gurps/icons/statuses/BAD+3.webp',
         id: 'bad+3',
-        name: 'gurps.status.Bad+3',
+        name: 'GURPS.statuses.Bad+3',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad+3',
+            value: 'GURPS.statuses.Bad+3',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -588,11 +588,11 @@ export class StatusEffect {
       'bad+4': {
         img: 'systems/gurps/icons/statuses/BAD+4.webp',
         id: 'bad+4',
-        name: 'gurps.status.Bad+4',
+        name: 'GURPS.statuses.Bad+4',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad+4',
+            value: 'GURPS.statuses.Bad+4',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -600,11 +600,11 @@ export class StatusEffect {
       'bad+5': {
         img: 'systems/gurps/icons/statuses/BAD+5.webp',
         id: 'bad+5',
-        name: 'gurps.status.Bad+5',
+        name: 'GURPS.statuses.Bad+5',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad+5',
+            value: 'GURPS.statuses.Bad+5',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -612,11 +612,11 @@ export class StatusEffect {
       'bad-1': {
         img: 'systems/gurps/icons/statuses/BAD-1.webp',
         id: 'bad-1',
-        name: 'gurps.status.Bad-1',
+        name: 'GURPS.statuses.Bad-1',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad-1',
+            value: 'GURPS.statuses.Bad-1',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -624,11 +624,11 @@ export class StatusEffect {
       'bad-2': {
         img: 'systems/gurps/icons/statuses/BAD-2.webp',
         id: 'bad-2',
-        name: 'gurps.status.Bad-2',
+        name: 'GURPS.statuses.Bad-2',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad-2',
+            value: 'GURPS.statuses.Bad-2',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -636,11 +636,11 @@ export class StatusEffect {
       'bad-3': {
         img: 'systems/gurps/icons/statuses/BAD-3.webp',
         id: 'bad-3',
-        name: 'gurps.status.Bad-3',
+        name: 'GURPS.statuses.Bad-3',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad-3',
+            value: 'GURPS.statuses.Bad-3',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -648,11 +648,11 @@ export class StatusEffect {
       'bad-4': {
         img: 'systems/gurps/icons/statuses/BAD-4.webp',
         id: 'bad-4',
-        name: 'gurps.status.Bad-4',
+        name: 'GURPS.statuses.Bad-4',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad-4',
+            value: 'GURPS.statuses.Bad-4',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -660,11 +660,11 @@ export class StatusEffect {
       'bad-5': {
         img: 'systems/gurps/icons/statuses/BAD-5.webp',
         id: 'bad-5',
-        name: 'gurps.status.Bad-5',
+        name: 'GURPS.statuses.Bad-5',
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'gurps.status.Bad-5',
+            value: 'GURPS.statuses.Bad-5',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
         ],
@@ -672,7 +672,7 @@ export class StatusEffect {
       disarmed: {
         img: 'systems/gurps/icons/statuses/disarmed.webp',
         id: 'disarmed',
-        name: 'gurps.status.Disarmed',
+        name: 'GURPS.statuses.Disarmed',
       },
     }
   }
@@ -705,7 +705,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdfShock' },
+          effect: { pdfref: 'GURPS.pdf.Shock' },
         },
       },
     },
@@ -723,7 +723,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdfShock' },
+          effect: { pdfref: 'GURPS.pdf.Shock' },
         },
       },
     },
@@ -741,7 +741,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdfShock' },
+          effect: { pdfref: 'GURPS.pdf.Shock' },
         },
       },
     },
@@ -759,7 +759,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdfShock' },
+          effect: { pdfref: 'GURPS.pdf.Shock' },
         },
       },
     },
@@ -781,7 +781,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             endCondition: 'HT', // may move to 'IQ' (mental stun)
-            pdfref: 'GURPS.pdfKnockdownStun',
+            pdfref: 'GURPS.pdf.KnockdownStun',
             requiresConfig: true,
           },
         },
@@ -805,7 +805,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             endCondition: 'IQ', // may move to 'IQ' (mental stun)
-            pdfref: 'GURPS.pdfKnockdownStun',
+            pdfref: 'GURPS.pdf.KnockdownStun',
             requiresConfig: true,
           },
         },
@@ -822,7 +822,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdfGrappling', requiresConfig: true },
+          effect: { pdfref: 'GURPS.pdf.Grappling', requiresConfig: true },
         },
       },
     },
@@ -843,7 +843,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardNausea' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardNausea' },
         },
       },
     },
@@ -864,7 +864,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardCoughing' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardCoughing' },
         },
       },
     },
@@ -880,7 +880,7 @@ const _getActiveEffectsData = function (id) {
       flags: {
         gurps: {
           effect: {
-            pdfref: 'GURPS.pdfHazardRetching',
+            pdfref: 'GURPS.pdf.HazardRetching',
             terminateActions: [{ type: 'otf', args: '/fp -1' }], // TODO put in chat when followups are activated
             requiresConfig: true,
           },
@@ -898,7 +898,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardDrowsy' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardDrowsy' },
         },
       },
     },
@@ -919,7 +919,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardTipsy"' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardTipsy"' },
         },
       },
     },
@@ -940,7 +940,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardDrunk' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardDrunk' },
         },
       },
     },
@@ -955,7 +955,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardEuphoria' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardEuphoria' },
         },
       },
     },
@@ -970,7 +970,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
         },
       },
     },
@@ -985,7 +985,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
         },
       },
     },
@@ -1000,7 +1000,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flag: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
         },
       },
     },
@@ -1015,7 +1015,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
         },
       },
     },
@@ -1030,7 +1030,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
         },
       },
     },
@@ -1046,7 +1046,7 @@ const _getActiveEffectsData = function (id) {
       flags: {
         gurps: {
           effect: {
-            pdfref: 'GURPS.pdfSuffocation',
+            pdfref: 'GURPS.pdf.Suffocation',
             requiresConfig: true,
           },
         },
@@ -1071,7 +1071,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             requiresConfig: true,
-            pdfref: 'GURPS.pdfVisibility',
+            pdfref: 'GURPS.pdf.Visibility',
             // TODO implement configHint
             configHint: 'GURPS.effectHintBlind',
           },

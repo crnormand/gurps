@@ -14,5 +14,8 @@
     "babel-jest": "^29.7.0",
     "handlebars": "^4.7.7",
     "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "prettier": "^3.5.2"
   }
 }

@@ -127,8 +127,8 @@ export default class ModifierBucketEditor extends Application {
         GURPS.LastActor.system.conditions.usermods ? GURPS.LastActor.system.conditions.usermods : []
       )
       if (user.length > 0) {
-        let uc = '(' + i18n('GURPS.equipmentUserCreated') + ')'
-        data.currentmods.push(horiz(i18n('GURPS.equipmentUserCreated')))
+        let uc = '(' + i18n('GURPS.userCreated') + ')'
+        data.currentmods.push(horiz(i18n('GURPS.userCreated')))
         user.forEach(e => data.currentmods.push(e.replace(uc, '')))
       }
     }
@@ -426,64 +426,62 @@ const ModifierLiterals = {
   // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
   get MeleeMods() {
     return `
-    [+4 ${i18n('gurps.modifiers.aoaDetermined')}] [PDF:${i18n('gurps.modifiers.pdf.aoaDetermined')}]
-    [+2 ${i18n('gurps.modifiers.aoaStrong')}] [PDF:${i18n('gurps.modifiers.pdf.aoaStrong')}]
-    [+2 ${i18n('gurps.modifiers.committedDetermined')}] [PDF:${i18n('gurps.modifiers.pdf.committedDetermined')}]
-    [+1 ${i18n('gurps.modifiers.committedStrong')}] [PDF:${i18n('gurps.modifiers.pdf.committedStrong')}]
-    [+4 ${i18n('gurps.modifiers.telegraphic')}] [PDF:${i18n('gurps.modifiers.pdf.telegraphic')}]
-    [-4 ${i18n('gurps.modifiers.moveAndAttack')} *Max:9] [PDF:${i18n('gurps.modifiers.pdf.moveAndAttack')}]
-    [-2 ${i18n('gurps.modifiers.deceptive')}] [PDF:${i18n('gurps.modifiers.pdf.deceptive')}]
-    [-2 ${i18n('gurps.modifiers.defensive')}] [PDF:${i18n('gurps.modifiers.pdf.defensive')}]
-    [-6 ${i18n('gurps.modifiers.rapidStrike')}] [PDF:${i18n('gurps.modifiers.pdf.rapidStrike')}]`
+    [+4 ${i18n('GURPS.modifiers.aoaDetermined')}] [PDF:${i18n('GURPS.pdf.aoaDetermined')}]
+    [+2 ${i18n('GURPS.modifiers.aoaStrong')}] [PDF:${i18n('GURPS.pdf.aoaStrong')}]
+    [+2 ${i18n('GURPS.modifiers.committedDetermined')}] [PDF:${i18n('GURPS.pdf.committedDetermined')}]
+    [+1 ${i18n('GURPS.modifiers.committedStrong')}] [PDF:${i18n('GURPS.pdf.committedStrong')}]
+    [+4 ${i18n('GURPS.modifiers.telegraphic')}] [PDF:${i18n('GURPS.pdf.telegraphic')}]
+    [-4 ${i18n('GURPS.modifiers.moveAndAttack')} *Max:9] [PDF:${i18n('GURPS.pdf.moveAndAttack')}]
+    [-2 ${i18n('GURPS.modifiers.deceptive')}] [PDF:${i18n('GURPS.pdf.deceptive')}]
+    [-2 ${i18n('GURPS.modifiers.defensive')}] [PDF:${i18n('GURPS.pdf.defensive')}]
+    [-6 ${i18n('GURPS.modifiers.rapidStrike')}] [PDF:${i18n('GURPS.pdf.rapidStrike')}]`
   },
 
   get RangedMods() {
     const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     return (
-      `[+1 ${i18n('gurps.modifiers.aim')}] [PDF:${i18n('gurps.modifiers.pdf.aim')}]
-      [–2 ${i18n('gurps.modifiers.popup')}] [PDF:${i18n('gurps.modifiers.pdf.popup')}]` +
+      `[+1 ${i18n('GURPS.modifiers.aim')}] [PDF:${i18n('GURPS.pdf.aim')}]
+      [–2 ${i18n('GURPS.modifiers.popup')}] [PDF:${i18n('GURPS.pdf.popup')}]` +
       (useOnTarget
         ? `
-${horiz(i18n('gurps.modifiers.onTargetAiming'))}
-[+2 ${i18n('gurps.modifiers.aoaRanged')}] [PDF:${i18n('gurps.modifiers.pdf.aoaRanged')}]
-[+1 ${i18n('gurps.modifiers.committedRanged')}] [PDF:${i18n('gurps.modifiers.pdf.committedRanged')}]
-[+4 ${i18n('gurps.modifiers.allOutAim')}] [PDF:${i18n('gurps.modifiers.pdf.allOutAim')}]
-[+2 ${i18n('gurps.modifiers.allOutAimBraced')}] [PDF:${i18n('gurps.modifiers.pdf.allOutAimBraced')}]
-[+2 ${i18n('gurps.modifiers.committedAim')}] [PDF:${i18n('gurps.modifiers.pdf.committedAim')}]
-[+1 ${i18n('gurps.modifiers.committedAimBraced')}] [PDF:${i18n('gurps.modifiers.pdf.committedAimBraced')}]`
+${horiz(i18n('GURPS.modifiers.onTargetAiming'))}
+[+2 ${i18n('GURPS.modifiers.aoaRanged')}] [PDF:${i18n('GURPS.pdf.aoaRanged')}]
+[+1 ${i18n('GURPS.modifiers.committedRanged')}] [PDF:${i18n('GURPS.pdf.committedRanged')}]
+[+4 ${i18n('GURPS.modifiers.allOutAim')}] [PDF:${i18n('GURPS.pdf.allOutAim')}]
+[+2 ${i18n('GURPS.modifiers.allOutAimBraced')}] [PDF:${i18n('GURPS.pdf.allOutAimBraced')}]
+[+2 ${i18n('GURPS.modifiers.committedAim')}] [PDF:${i18n('GURPS.pdf.committedAim')}]
+[+1 ${i18n('GURPS.modifiers.committedAimBraced')}] [PDF:${i18n('GURPS.pdf.committedAimBraced')}]`
         : `
-[+1 ${i18n('gurps.modifiers.aoaRangedDetermined')}] [PDF:${i18n('gurps.modifiers.pdf.aoaRangedDetermined')}]`)
+[+1 ${i18n('GURPS.modifiers.aoaRangedDetermined')}] [PDF:${i18n('GURPS.pdf.aoaRangedDetermined')}]`)
     )
   },
 
   get DefenseMods() {
     const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
-    return `[+2 ${i18n('gurps.modifiers.aodIncreased')}] [PDF:${i18n('gurps.modifiers.pdf.aodIncreased')}]
-    [+1 ${i18n('gurps.modifiers.shieldDB')}] [PDF:${i18n('gurps.modifiers.pdf.shieldDB')}]
-    [+2 ${i18n('gurps.modifiers.dodgeAcrobatic')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeAcrobatic')}]
-    [+3 ${i18n('gurps.modifiers.dodgeAndDrop')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeAndDrop')}]
-    [+3 ${i18n('gurps.modifiers.dodgeRetreat')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeRetreat')}]
-    [+1 ${i18n('gurps.modifiers.blockRetreat')}] [PDF:${i18n('gurps.modifiers.pdf.blockRetreat')}]
-    [+3 ${i18n('gurps.modifiers.fencingRetreat')}] [PDF:${i18n('gurps.modifiers.pdf.fencingRetreat')}]
-    [+1 ${i18n('gurps.modifiers.defensiveDefense')}] [PDF:${i18n('gurps.modifiers.pdf.defensiveDefense')}]
+    return `[+2 ${i18n('GURPS.modifiers.aodIncreased')}] [PDF:${i18n('GURPS.pdf.aodIncreased')}]
+    [+1 ${i18n('GURPS.modifiers.shieldDB')}] [PDF:${i18n('GURPS.pdf.shieldDB')}]
+    [+2 ${i18n('GURPS.modifiers.dodgeAcrobatic')}] [PDF:${i18n('GURPS.pdf.dodgeAcrobatic')}]
+    [+3 ${i18n('GURPS.modifiers.dodgeAndDrop')}] [PDF:${i18n('GURPS.pdf.dodgeAndDrop')}]
+    [+3 ${i18n('GURPS.modifiers.dodgeRetreat')}] [PDF:${i18n('GURPS.pdf.dodgeRetreat')}]
+    [+1 ${i18n('GURPS.modifiers.blockRetreat')}] [PDF:${i18n('GURPS.pdf.blockRetreat')}]
+    [+3 ${i18n('GURPS.modifiers.fencingRetreat')}] [PDF:${i18n('GURPS.pdf.fencingRetreat')}]
+    [+1 ${i18n('GURPS.modifiers.defensiveDefense')}] [PDF:${i18n('GURPS.pdf.defensiveDefense')}]
     ${
       useOnTarget
-        ? `[-2 ${i18n('gurps.modifiers.committedAimDefense')}] [PDF:${i18n('gurps.modifiers.pdf.committedAimDefense')}]`
+        ? `[-2 ${i18n('GURPS.modifiers.committedAimDefense')}] [PDF:${i18n('GURPS.pdf.committedAimDefense')}]`
         : ''
     }
     ${
       useOnTarget
-        ? `[-2 ${i18n('gurps.modifiers.committedAttackRanged')}] [PDF:${i18n(
-            'gurps.modifiers.pdf.committedAttackRanged'
-          )}]`
+        ? `[-2 ${i18n('GURPS.modifiers.committedAttackRanged')}] [PDF:${i18n('GURPS.pdf.committedAttackRanged')}]`
         : ''
     }
-    [-2 ${i18n('gurps.modifiers.dodgeAcrobaticFail')}] [PDF:${i18n('gurps.modifiers.pdf.dodgeAcrobaticFail')}]
-    [-2 ${i18n('gurps.modifiers.defenseSide')}] [PDF:${i18n('gurps.modifiers.pdf.defenseSide')}]
-    [-1 ${i18n('gurps.modifiers.deceptiveDefense')}] [PDF:${i18n('gurps.modifiers.pdf.deceptiveDefense')}]
-    [–1 ${i18n('gurps.modifiers.riposte')}] [PDF:${i18n('gurps.modifiers.pdf.riposte')}]`
+    [-2 ${i18n('GURPS.modifiers.dodgeAcrobaticFail')}] [PDF:${i18n('GURPS.pdf.dodgeAcrobaticFail')}]
+    [-2 ${i18n('GURPS.modifiers.defenseSide')}] [PDF:${i18n('GURPS.pdf.defenseSide')}]
+    [-1 ${i18n('GURPS.modifiers.deceptiveDefense')}] [PDF:${i18n('GURPS.pdf.deceptiveDefense')}]
+    [–1 ${i18n('GURPS.modifiers.riposte')}] [PDF:${i18n('GURPS.pdf.riposte')}]`
   },
 
   get OtherMods1() {
@@ -572,10 +570,10 @@ ${horiz(i18n('gurps.modifiers.onTargetAiming'))}
 
   get ExtraEffortModifiers() {
     return [
-      i18n('gurps.modifiers.extraEffort'),
-      `+2 ${i18n('gurps.modifiers.feverishDefense')} *Cost 1FP`,
-      `+2 ${i18n('gurps.modifiers.mightyBlow')} *Cost 1FP`,
-      `+0 ${i18n('gurps.modifiers.heroicCharge')} *Cost 1FP`,
+      i18n('GURPS.modifiers.extraEffort'),
+      `+2 ${i18n('GURPS.modifiers.feverishDefense')} *Cost 1FP`,
+      `+2 ${i18n('GURPS.modifiers.mightyBlow')} *Cost 1FP`,
+      `+0 ${i18n('GURPS.modifiers.heroicCharge')} *Cost 1FP`,
       `-3 penalty for Rapid Strike (Flurry of Blows) *Cost 1FP`,
     ]
   },

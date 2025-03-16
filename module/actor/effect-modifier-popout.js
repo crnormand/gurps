@@ -84,9 +84,8 @@ export class EffectModifierPopout extends Application {
       }
       return a.itemName.localeCompare(b.itemName)
     })
-    const targetModifiers = this._token
-      ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
-      : []
+    const targetModifiers =
+      this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : []
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
@@ -101,9 +100,8 @@ export class EffectModifierPopout extends Application {
       let result = {}
       result.name = target.name
 
-      result.targetmodifiers = target.actor
-        ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
-        : []
+      result.targetmodifiers =
+        target.actor ? this.convertModifiers(target.actor.system.conditions.target.modifiers) : []
       const rangeModifier = getRangedModifier(this.getToken(), target)
       if (rangeModifier) {
         const data = this.convertModifiers([rangeModifier])
@@ -116,8 +114,8 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return Array.isArray(list)
-      ? list.map(it => {
+    return Array.isArray(list) ?
+        list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
           let obj = {}
@@ -147,13 +145,11 @@ export class EffectModifierPopout extends Application {
             obj = this._token?.actor.items.get(itemReference) || {}
           }
           const itemName = obj?.name || itemReference
-          const itemType = obj?.type
-            ? obj.type
-            : it.includes('#maneuver')
-              ? 'maneuver'
-              : itemReference.includes('system.')
-                ? itemReference.split('.')[1]
-                : 'notfound'
+          const itemType =
+            obj?.type ? obj.type
+            : it.includes('#maneuver') ? 'maneuver'
+            : itemReference.includes('system.') ? itemReference.split('.')[1]
+            : 'notfound'
           const desc = this.getDescription(it, itemReference)
           return {
             link: gurpslink(`[${i18n(desc)}]`),
@@ -264,7 +260,7 @@ export class EffectModifierPopout extends Application {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
     await Dialog.confirm({
-      title: i18n('GURPS.confirmClearUserMods'),
+      title: i18n('GURPS.deleteAllUserMods'),
       content: i18n('GURPS.confirmClearHintUserMods'),
       yes: async () => {
         if (actor) {
@@ -291,12 +287,12 @@ export class EffectModifierPopout extends Application {
           if (!!mod) {
             let action = parselink(mod)
             if (action.action?.type === 'modifier') this._addUserMod(mod)
-            else ui.notifications.warn(i18n('GURPS.chatUnrecognizedFormat'))
+            else ui.notifications.warn(i18n('GURPS.unrecognizedFormat'))
           }
         },
         rejectClose: false,
       })
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
   }
 
   getDescription(text, itemRef) {
@@ -370,11 +366,11 @@ export class EffectModifierPopout extends Application {
   _addUserMod(mod) {
     let t = this.getToken()
     if (t && t.actor) {
-      mod += ' (' + i18n('GURPS.equipmentUserCreated') + ')'
+      mod += ' (' + i18n('GURPS.userCreated') + ')'
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
       m.push(`${mod} @custom`)
       t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
   }
 
   /** @override */

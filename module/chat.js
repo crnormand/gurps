@@ -43,7 +43,7 @@ class HelpChatProcessor extends ChatProcessor {
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
-    t += '<br><br>' + i18n('GURPS.chatHelpHelp')
+    t += '<br><br>' + i18n('GURPS.chat.Help')
     this.priv(t)
   }
 }
@@ -190,7 +190,7 @@ class ChatProcessorRegistry {
     let answer = false
     let processor = this._processors.find(it => it.matches(line))
     if (!!processor) {
-      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
+      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.youMustBeGMToExecute'))
       else {
         try {
           answer = await processor.process(line)
@@ -204,7 +204,7 @@ class ChatProcessorRegistry {
     // if nothing matchs, check for chat command without options... and return a help output
     processor = this._processors.find(it => it.usagematches(line))
     if (!!processor) {
-      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
+      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.youMustBeGMToExecute'))
       else this.priv(line)
       this.priv('<hr>')
       this.priv(processor.usage().replaceAll('\n', '<br>'))

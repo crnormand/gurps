@@ -13,7 +13,7 @@
       <div style='display: flex; flex-flow: column nowrap'>
         <select class='splitdr-control' data-action='type' style='width: 100%;'>
           {{#each (damageTypeOptions key)}}
-            <option value='{{this}}' {{select-if this key}}>{{i18n (concat 'GURPS.damageAbbrev' this) this}}</option>
+            <option value='{{this}}' {{select-if this key}}>{{i18n (concat 'GURPS.damageAbbrev.' this) this}}</option>
           {{/each}}
           <option value='other'>&lt;{{i18n 'GURPS.moveModeOther'}}&gt;</option>
         </select>

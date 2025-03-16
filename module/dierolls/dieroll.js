@@ -202,7 +202,7 @@ export async function doRoll({
         // Because this is a simple roll and not a damage roll, we need to show the damage type as `dmg`
         otfDamageText = i18n(`GURPS.${damageOTFType}`, damageOTFType)
         damageType = 'dmg'
-        damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+        damageTypeLabel = i18n(`GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
         damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
@@ -225,21 +225,18 @@ export async function doRoll({
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
     if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
       const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
-      consumeActionIcon = !result.hasActions
-        ? '<i class="fas fa-exclamation"></i>'
-        : canConsumeAction
-          ? '<i class="fas fa-plus"></i>'
-          : '<i class="fas fa-check"></i>'
-      consumeActionLabel = !result.hasActions
-        ? i18n('GURPS.noActionsAvailable')
-        : canConsumeAction
-          ? i18n('GURPS.willConsumeAction')
-          : i18n('GURPS.isFreeAction')
-      consumeActionColor = !result.hasActions
-        ? 'rgb(215,185,33)'
-        : canConsumeAction
-          ? 'rgba(20,119,180,0.7)'
-          : 'rgb(51,114,68,0.7)'
+      consumeActionIcon =
+        !result.hasActions ? '<i class="fas fa-exclamation"></i>'
+        : canConsumeAction ? '<i class="fas fa-plus"></i>'
+        : '<i class="fas fa-check"></i>'
+      consumeActionLabel =
+        !result.hasActions ? i18n('GURPS.noActionsAvailable')
+        : canConsumeAction ? i18n('GURPS.willConsumeAction')
+        : i18n('GURPS.isFreeAction')
+      consumeActionColor =
+        !result.hasActions ? 'rgb(215,185,33)'
+        : canConsumeAction ? 'rgba(20,119,180,0.7)'
+        : 'rgb(51,114,68,0.7)'
     }
 
     // Get Target Roll Info
@@ -279,7 +276,7 @@ export async function doRoll({
       case 'controlroll':
         itemIcon = 'fas fa-head-side-gear'
         itemColor = '#c5360b'
-        rollType = game.i18n.localize('GURPS.ControlRoll')
+        rollType = game.i18n.localize('GURPS.controlRoll')
         break
       case 'attribute':
         itemColor = '#620707'
@@ -287,23 +284,23 @@ export async function doRoll({
         switch (ref) {
           case 'ST':
             itemIcon = 'fas fa-dumbbell'
-            rollType = game.i18n.localize('GURPS.attributesSTNAME')
+            rollType = game.i18n.localize('GURPS.strength')
             break
           case 'DX':
             itemIcon = 'fas fa-running'
-            rollType = game.i18n.localize('GURPS.attributesDXNAME')
+            rollType = game.i18n.localize('GURPS.dexterity')
             break
           case 'HT':
             itemIcon = 'fas fa-heart'
-            rollType = game.i18n.localize('GURPS.attributesHTNAME')
+            rollType = game.i18n.localize('GURPS.health')
             break
           case 'IQ':
             itemIcon = 'fas fa-brain'
-            rollType = game.i18n.localize('GURPS.attributesIQNAME')
+            rollType = game.i18n.localize('GURPS.intelligence')
             break
           case 'WILL':
             itemIcon = 'fas fa-brain'
-            rollType = game.i18n.localize('GURPS.attributesWILLNAME')
+            rollType = game.i18n.localize('GURPS.will')
             break
           case 'Vision':
             itemIcon = 'fas fa-eye'
@@ -311,7 +308,7 @@ export async function doRoll({
             break
           case 'PER':
             itemIcon = 'fas fa-signal-stream'
-            rollType = game.i18n.localize('GURPS.attributesPERNAME')
+            rollType = game.i18n.localize('GURPS.perception')
             break
           case 'Fright Check':
             itemIcon = 'fas fa-face-scream'
@@ -335,11 +332,10 @@ export async function doRoll({
             break
           default:
             itemIcon = 'fas fa-dice'
-            rollType = !!targetData?.name
-              ? targetData.name
-              : thing
-                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
-                : formula
+            rollType =
+              !!targetData?.name ? targetData.name
+              : thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+              : formula
         }
         break
       default:
@@ -357,7 +353,7 @@ export async function doRoll({
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
       const dialog = new Dialog({
-        title: game.i18n.localize('GURPS.confirmRoll'),
+        title: game.i18n.localize('GURPS.rollConfirmation'),
         content: await renderTemplate(`systems/gurps/templates/${template}`, {
           formula: formula,
           thing: thing,

@@ -18,7 +18,7 @@
           {{>hpfp-tracker
             name='HP'
             resource=system.HP
-            label='GURPS.attributesHPNAME'
+            label='GURPS.hitPoints'
             editable=false
             condition='reeling'
             testcondition=system.conditions.reeling
@@ -27,7 +27,7 @@
         {{>hpfp-tracker
           name='FP'
           resource=system.FP
-          label='GURPS.attributesFPNAME'
+          label='GURPS.fatigue'
           editable=false
           condition='exhausted'
           testcondition=system.conditions.exhausted
@@ -91,7 +91,7 @@
           {{#if navigateBar.hasRanged}}
             <div class='navigation-link' data-value='ranged'>{{i18n 'GURPS.ranged'}}</div>
           {{/if}}
-          <div class='navigation-link' data-value='advantages'>{{i18n 'GURPS.pointsAdvantages'}}</div>
+          <div class='navigation-link' data-value='advantages'>{{i18n 'GURPS.advantages'}}</div>
           <div class='navigation-link' data-value='skills'>{{i18n 'GURPS.skillsTab'}}</div>
           {{#if navigateBar.hasSpells}}
             <div class='navigation-link' data-value='spells'>{{i18n 'GURPS.spellsTab'}}</div>

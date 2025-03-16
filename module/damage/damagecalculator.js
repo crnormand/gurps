@@ -2,7 +2,7 @@
 
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
-import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { i18n, i18n_English, i18n_Text, i18n_Translate, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
 import { TokenActions } from '../token-actions.js'
 
@@ -139,9 +139,13 @@ export class CompositeDamageCalculator {
       this._isInjuryTolerance = true
       this._injuryToleranceType = DIFFUSE
     }
+
+    // Check for Vulnerabilities
   }
 
   isUnliving(values, found) {
+    // console.log(i18n_Translate('Schadensanfälligkeit')) => "Vulnerability"
+
     if (!found) {
       let self = this
       found = values.find(value => {
@@ -362,7 +366,7 @@ export class CompositeDamageCalculator {
                   stunIsReady,
                   effectName: 'stun',
                   spanClass: stunIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: stunIsReady ? i18n('GURPS.removestunEffect') : i18n('GURPS.addstunEffect'),
+                  effectTitle: stunIsReady ? i18n('GURPS.removestunEffect') : i18n('GURPS.addStunEffect'),
                 },
                 {
                   ...effect,
@@ -370,7 +374,7 @@ export class CompositeDamageCalculator {
                   proneIsReady,
                   effectName: 'prone',
                   spanClass: proneIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: proneIsReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+                  effectTitle: proneIsReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addProneEffect'),
                 },
               ],
             }
@@ -386,7 +390,7 @@ export class CompositeDamageCalculator {
                   isReady,
                   effectName: 'prone',
                   spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+                  effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addProneEffect'),
                 },
               ],
             }

@@ -81,7 +81,7 @@ export class IfChatProcessor extends ChatProcessor {
         } else if (!!results.cf && GURPS.lastTargetedRoll?.isCritFailure) {
           await this._handleResult(results.cf)
         } else if (!!results.f) await this._handleResult(results.f)
-      } else this.priv(`${i18n('GURPS.chatMustBeACheck')}: [${otf}]`)
-    } else this.priv(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
+      } else this.priv(`${i18n('GURPS.otfMustBeACheck')}: [${otf}]`)
+    } else this.priv(`${i18n('GURPS.unrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
   }
 }
