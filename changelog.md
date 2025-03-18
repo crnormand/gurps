@@ -5,11 +5,12 @@
 ### Features
 
 - Quick Notes editor needs expandable-width dialog #2136
-- Some skills not recognized if not quoted in OtF #2163
 
 ### Bugfixes:
 
 - Apply Damage fails when any token in the scene has no actor #2169
+- Some skills not recognized if not quoted in OtF #2163
+- On import from GCS, default skill cause unspent points, and skill points to be empty #1674
 
 ## Release 0.17.18 02/09/2025
 

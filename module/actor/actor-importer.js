@@ -2486,7 +2486,7 @@ export class ActorImporter {
     }
     if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
       for (let j of i.children) skills = this.skPointCount(j, skills)
-    else skills += i.points
+    else skills += i.points ?? 0
     return skills
   }
 
