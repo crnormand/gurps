@@ -5,6 +5,7 @@
 ### Features
 
 - Quick Notes editor needs expandable-width dialog #2136
+- Some skills not recognized if not quoted in OtF #2163
 
 ### Bugfixes:
 
