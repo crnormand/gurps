@@ -53,12 +53,15 @@ export default class ApplyDamageDialog extends Application {
     this.timesToApply = 1
     const attacker = game.actors.get(damageData[0].attacker)
     const gmUser = game.users.find(it => it.isGM && it.active)
+
     this.sourceTokenImg =
-      canvas.tokens.placeables.find(t => t.actor.id === attacker?.id)?.document.texture.src ||
+      canvas.tokens.placeables.find(t => t.actor?.id === attacker?.id)?.document.texture.src ||
       attacker?.img ||
       gmUser.avatar
+
     this.sourceTokenName =
-      canvas.tokens.placeables.find(t => t.actor.id === attacker?.id)?.name || attacker?.name || gmUser.name
+      canvas.tokens.placeables.find(t => t.actor?.id === attacker?.id)?.name || attacker?.name || gmUser.name
+
     this.targetTokenImg = actor.token?.texture.src || actor.img
     this.targetTokenName = actor.token?.name || actor.name
 

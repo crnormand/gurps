@@ -8,6 +8,8 @@
 
 ### Bugfixes:
 
+- Apply Damage fails when any token in the scene has no actor #2169
+
 ## Release 0.17.18 02/09/2025
 
 #### Bugfixes
