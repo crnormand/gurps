@@ -609,6 +609,18 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * @param {string} key
+   * @param {any} id
+   * @returns {string | undefined}
+   */
+  findAdvantage(advname) {
+    // This code is for when the actor is using Foundry items.
+    // let found = this.items.filter(it => it.type === 'feature').find(it => it.name.match(new RegExp(advname, 'i')))
+    // This code is for no Foundry items.
+    return Object.values(this.system.ads).find(it => it.name.match(new RegExp(advname, 'i')))
+  }
+
+  /**
    * @param {{ [key: string]: any }} dict
    * @param {string} type
    * @returns {number}

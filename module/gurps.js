@@ -85,6 +85,7 @@ import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { TokenActions } from './token-actions.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
+import { SetLastActor, ClearLastActor } from './utilities/last-actor.js'
 
 let GURPS = undefined
 
@@ -98,7 +99,10 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     const tokenName = token?.name || actor?.name || gmUser.name
     const damageRoll = displayFormula
     const damageType = GURPS.DamageTables.translate(action.damagetype)
-    const damageTypeLabel = i18n(`GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+    const damageTypeLabel = i18n(
+      `GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
+      damageType
+    )
     const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
     const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
     const targetRoll = action.orig
@@ -257,24 +261,8 @@ if (!globalThis.GURPS) {
 
   // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
 
-  GURPS.SetLastActor = function (actor, tokenDocument) {
-    if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
-    GURPS.LastActor = actor
-    GURPS.LastTokenDocument = tokenDocument
-    setTimeout(() => GURPS.ModifierBucket.refresh(), 100) // Need to make certain the mod bucket refresh occurs later
-  }
-
-  GURPS.ClearLastActor = function (actor) {
-    if (GURPS.LastActor == actor) {
-      console.log('Clearing Last Actor:' + GURPS.LastActor?.name)
-      GURPS.LastActor = null
-      GURPS.ModifierBucket.refresh()
-      const tokens = canvas.tokens
-      if (tokens && tokens.controlled.length > 0) {
-        GURPS.SetLastActor(tokens.controlled[0].actor)
-      } // There may still be tokens selected... if so, select one of them
-    }
-  }
+  GURPS.SetLastActor = SetLastActor
+  GURPS.ClearLastActor = ClearLastActor
 
   /**
    * This object literal holds the results of the last targeted roll by an actor.

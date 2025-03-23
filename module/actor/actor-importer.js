@@ -1690,11 +1690,12 @@ export class ActorImporter {
   }
 
   async importAd(i, p) {
-    let a = new Advantage()
+    const name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
+    let a = new Advantage(name, i.levels)
+
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('t') ? 'trait' : 'trait_container'
     }
-    a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
     a.originalName = i.name
     a.points = i.calc?.points
     a.notes = i.calc?.resolved_notes ?? i.notes ?? ''

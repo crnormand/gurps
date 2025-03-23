@@ -541,6 +541,19 @@ describe('parseLink', () => {
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='+@margin'>+@margin </span>"))
     })
+
+    test('#> +A:"Night Vision"', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        orig: '+A:"Night Vision"',
+        spantext: '+A:"Night Vision" ',
+        type: 'modifier',
+        mod: '+A:"Night Vision"',
+        desc: '',
+      })
+      expect(result.text).toEqual(expect.stringContaining(`data-otf='+A:"Night Vision"'>+A:"Night Vision" </span>`))
+    })
   })
 
   describe('Chat Commands', () => {

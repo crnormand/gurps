@@ -84,9 +84,9 @@ export class _Base {
   static _checkComponentInActor(actor, actorComp) {
     // This actor component already exists in Actor?
     const existingComponentKey =
-      actorComp instanceof Equipment
-        ? actor._findEqtkeyForId('uuid', actorComp.uuid)
-        : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
+      actorComp instanceof Equipment ?
+        actor._findEqtkeyForId('uuid', actorComp.uuid)
+      : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
     if (!!existingComponentKey) {
       const existingComponentItem = actor.items.get(actorComp.itemid)
       if (!!existingComponentItem) {
@@ -105,23 +105,23 @@ export class _Base {
 
 export class Named extends _Base {
   /**
-   * @param {string} [n1]
+   * @param {string} [name]
    */
-  constructor(n1) {
+  constructor(name) {
     super()
-    this.setName(n1)
+    this.setName(name)
   }
 
-  setName(n) {
-    if (!!n) {
+  setName(name) {
+    if (!!name) {
       let k = 'Page Ref: '
-      let i = n.indexOf(k)
+      let i = name.indexOf(k)
       if (i >= 0) {
-        this.name = n.substr(0, i).trim()
+        this.name = name.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageRef(n.substr(i + k.length).trim())
+        this.pageRef(name.substr(i + k.length).trim())
       } else {
-        this.name = n.trim()
+        this.name = name.trim()
         this.pageref = ''
       }
     }
@@ -256,10 +256,10 @@ export class Named extends _Base {
 
 export class NamedCost extends Named {
   /**
-   * @param {string} [n1]
+   * @param {string} [name]
    */
-  constructor(n1) {
-    super(n1)
+  constructor(name) {
+    super(name)
     this.points = 0
     this.save = false
     this.itemid = ''
@@ -313,11 +313,11 @@ const _AnimationMixin = {
 
 export class Leveled extends NamedCost {
   /**
-   * @param {string} [n1]
+   * @param {string} [name]
    * @param {string} [lvl]
    */
-  constructor(n1, lvl) {
-    super(n1)
+  constructor(name, lvl) {
+    super(name)
 
     this.import = lvl
 
@@ -581,10 +581,11 @@ export class Spell extends Leveled {
 
 export class Advantage extends NamedCost {
   /**
-   * @param {string} [n1]
+   * @param {string} [name]
    */
-  constructor(n1) {
-    super(n1)
+  constructor(name, level = undefined) {
+    super(name)
+    this.level = level
     this.userdesc = ''
     this.note = '' // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
   }
@@ -622,6 +623,7 @@ export class Advantage extends NamedCost {
           duringotf: this.duringotf || '',
           passotf: this.passotf || '',
           failotf: this.failotf || '',
+          level: this.level,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},
@@ -654,6 +656,7 @@ export class Advantage extends NamedCost {
       adv.points = data.points
       adv.userdesc = data.userdesc
       adv.note = data.note
+      adv.level = data.level
     }
     return this._checkComponentInActor(actor, adv)
   }
@@ -671,7 +674,8 @@ export class Advantage extends NamedCost {
         !arraysEqual(Object.keys(itemData.contains), Object.keys(this.contains)) ||
         itemData.points !== this.points ||
         (itemData.userdesc || '') !== (this.userdesc || '') ||
-        itemData.note !== this.note
+        itemData.note !== this.note ||
+        itemData.level !== this.level
       if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
     return result
