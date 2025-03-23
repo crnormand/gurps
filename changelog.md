@@ -5,6 +5,7 @@
 ### Features
 
 - Quick Notes editor needs expandable-width dialog #2136
+- Try to parse Advantage/Disadvantage level as a modifier #843
 
 ### Bugfixes:
 
