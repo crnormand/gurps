@@ -118,7 +118,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'GURPS.pdf.PostureLyingDown', type: 'posture' },
+            effect: { pdfref: 'GURPS.pdfPostureLyingDown', type: 'posture' },
           },
         },
       },
@@ -155,7 +155,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'GURPS.pdf.PostureKneeling', type: 'posture' },
+            effect: { pdfref: 'GURPS.pdfPostureKneeling', type: 'posture' },
           },
         },
       },
@@ -187,7 +187,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdf.PostureCrouching' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrouching' },
           },
         },
       },
@@ -224,7 +224,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdf.PostureSitting' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureSitting' },
           },
         },
       },
@@ -261,7 +261,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdf.PostureCrawling' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrawling' },
           },
         },
       },
@@ -316,7 +316,7 @@ export class StatusEffect {
         flags: {
           gurps: {
             effect: {
-              pdfref: 'GURPS.pdf.Reeling',
+              pdfref: 'GURPS.pdfReeling',
               // terminateActions: [
               //   {
               //     type: 'chat',
@@ -347,7 +347,7 @@ export class StatusEffect {
         flags: {
           gurps: {
             effect: {
-              pdfref: 'GURPS.pdf.Tired',
+              pdfref: 'GURPS.pdfTired',
             },
           },
         },
@@ -705,7 +705,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdf.Shock' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -723,7 +723,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdf.Shock' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -741,7 +741,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdf.Shock' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -759,7 +759,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdf.Shock' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -781,7 +781,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             endCondition: 'HT', // may move to 'IQ' (mental stun)
-            pdfref: 'GURPS.pdf.KnockdownStun',
+            pdfref: 'GURPS.pdfKnockdownStun',
             requiresConfig: true,
           },
         },
@@ -805,7 +805,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             endCondition: 'IQ', // may move to 'IQ' (mental stun)
-            pdfref: 'GURPS.pdf.KnockdownStun',
+            pdfref: 'GURPS.pdfKnockdownStun',
             requiresConfig: true,
           },
         },
@@ -822,7 +822,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { pdfref: 'GURPS.pdf.Grappling', requiresConfig: true },
+          effect: { pdfref: 'GURPS.pdfGrappling', requiresConfig: true },
         },
       },
     },
@@ -843,7 +843,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardNausea' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardNausea' },
         },
       },
     },
@@ -864,7 +864,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardCoughing' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardCoughing' },
         },
       },
     },
@@ -880,7 +880,7 @@ const _getActiveEffectsData = function (id) {
       flags: {
         gurps: {
           effect: {
-            pdfref: 'GURPS.pdf.HazardRetching',
+            pdfref: 'GURPS.pdfHazardRetching',
             terminateActions: [{ type: 'otf', args: '/fp -1' }], // TODO put in chat when followups are activated
             requiresConfig: true,
           },
@@ -898,7 +898,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardDrowsy' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardDrowsy' },
         },
       },
     },
@@ -919,7 +919,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardTipsy"' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardTipsy"' },
         },
       },
     },
@@ -940,7 +940,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardDrunk' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardDrunk' },
         },
       },
     },
@@ -955,7 +955,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardEuphoria' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardEuphoria' },
         },
       },
     },
@@ -970,7 +970,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -985,7 +985,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -1000,7 +1000,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flag: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -1015,7 +1015,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -1030,7 +1030,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'GURPS.pdf.HazardPain' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -1046,7 +1046,7 @@ const _getActiveEffectsData = function (id) {
       flags: {
         gurps: {
           effect: {
-            pdfref: 'GURPS.pdf.Suffocation',
+            pdfref: 'GURPS.pdfSuffocation',
             requiresConfig: true,
           },
         },
@@ -1071,7 +1071,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             requiresConfig: true,
-            pdfref: 'GURPS.pdf.Visibility',
+            pdfref: 'GURPS.pdfVisibility',
             // TODO implement configHint
             configHint: 'GURPS.effectHintBlind',
           },

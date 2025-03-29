@@ -6,10 +6,8 @@ import path from 'path'
 let dir = path.resolve(process.env._)
 dir = dir.substring(0, dir.lastIndexOf('/')).substring(0, dir.lastIndexOf('/'))
 
-const languageCode = 'en'
-
 // Read the en.json file
-const filePath = path.join(dir, `../lang/${languageCode}.json`)
+const filePath = path.join(dir, '../lang/en.json')
 const data = JSON.parse(fs.readFileSync(filePath, 'utf8'))
 
 // Function to convert flat keys to nested objects
@@ -54,8 +52,8 @@ const nestedData = convertToNestedObject(data)
 const sortedData = sortKeys(nestedData)
 
 // Write the transformed data to en-new.json
-const newFilePath = path.join(dir, `../lang/${languageCode}-new.json`)
+const newFilePath = path.join(dir, '../lang/en-new.json')
 
 fs.writeFileSync(newFilePath, JSON.stringify(sortedData, null, 2), 'utf8')
 
-console.log(`File has been written to ${languageCode}-new.json`)
+console.log('File has been written to en-new.json')

@@ -7,13 +7,12 @@
     {{#each buttons as |button|}}
       <div id="add-shock-next" class="with-send-button">
         <button name="add-shock-next" data-effect="{{jsonStringify this}}"><span class="fa {{spanClass}}"
-            title="{{effectTitle}}"></span></button>
+                                                                             title="{{effectTitle}}"></span></button>
       </div>
     {{/each}}
     <div class="with-send-button">
-      <button name="send-wound" data-struct="{{jsonStringify this}}" title="Send to chat"><span
-          class="fa fa-comment-alt"></span></button>
+      <button name="send-wound" data-struct="{{jsonStringify this}}" title="Send to chat"><span class="fa fa-comment-alt"></span></button>
     </div>
-    <div class="pdflink">{{i18n "GURPS.pdf.Shock"}}</div>
+    <div class="pdflink">{{i18n "GURPS.pdfShock"}}</div>
   </div>
 </li>
