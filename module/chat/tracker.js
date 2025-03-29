@@ -22,7 +22,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) {
-      ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
       return false
     }
 
@@ -58,7 +58,10 @@ export default class TrackerChatProcessor extends ChatProcessor {
       //if (!!theTracker.isDamageTracker) max = 0
       await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(
-        `${i18n('GURPS.resourceTracker')}${display} ${i18n('GURPS.resetTo')} ${value}`
+        `${i18n('GURPS.resourceTracker', 'Resource Tracker')}${display} ${i18n(
+          'GURPS.resetTo',
+          'reset to'
+        )} ${value}`
       )
       return true
     }

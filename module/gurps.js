@@ -108,10 +108,7 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     const targetRoll = action.orig
     const bucketTotal = GURPS.ModifierBucket.currentSum()
     const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-    const bucketRollColor =
-      bucketTotal > 0 ? 'darkgreen'
-      : bucketTotal < 0 ? 'darkred'
-      : '#a8a8a8'
+    const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
     const isBlindRoll = action.blindroll
     const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
     // Armor divisor can be (0.5) or (2) - need to regex to get the number
@@ -134,7 +131,7 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
       const dialog = new Dialog({
-        title: game.i18n.localize('GURPS.rollConfirmation'),
+        title: game.i18n.localize('GURPS.confirmRoll'),
         content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
           tokenImg,
           tokenName,
@@ -689,7 +686,7 @@ if (!globalThis.GURPS) {
     async damage({ action, event, actor, targets }) {
       // accumulate action fails if there's no selected actor
       if (action.accumulate && !actor) {
-        ui.notifications?.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
 
@@ -740,7 +737,7 @@ if (!globalThis.GURPS) {
     async deriveddamage({ action, event, actor, targets }) {
       // action fails if there's no selected actor
       if (!actor) {
-        ui.notifications?.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       let df = action.derivedformula.match(/sw/i) ? actor.system.swing : actor.system.thrust
@@ -760,10 +757,7 @@ if (!globalThis.GURPS) {
       let formula
       if (dfAdd && formulaAdd) {
         finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
-        const signal =
-          finalAdd === 0 ? ''
-          : finalAdd > 0 ? '+'
-          : '-'
+        const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
         formula = `${dice}${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
       } else {
         formula = df + action.formula
@@ -814,7 +808,7 @@ if (!globalThis.GURPS) {
     attackdamage({ action, event, actor, targets }) {
       // action fails if there's no selected actor
       if (!actor) {
-        ui.notifications?.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       if (!action.name) {
@@ -943,7 +937,7 @@ if (!globalThis.GURPS) {
         return false
       }
       if (!actor) {
-        ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.system.swing : actor.system.thrust
@@ -984,7 +978,7 @@ if (!globalThis.GURPS) {
      */
     async attack({ action, actor, event }) {
       if (!actor) {
-        ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       if (!action.name) {
@@ -1061,7 +1055,7 @@ if (!globalThis.GURPS) {
      */
     ['weapon-block']({ action, actor, event }) {
       if (!actor) {
-        ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, false) // find attack possibly using wildcards
@@ -1127,7 +1121,7 @@ if (!globalThis.GURPS) {
     // ['weapon-parry']({ action, actor, event, _calcOnly }) {
     ['weapon-parry']({ action, actor, event }) {
       if (!actor) {
-        ui.notifications.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, false) // find attack possibly using wildcards
@@ -1265,7 +1259,7 @@ if (!globalThis.GURPS) {
      */
     async ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
       if (!actor && (!action || !action.target)) {
-        ui.notifications?.warn(i18n('GURPS.youMustHaveACharacterSelected'))
+        ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
       const target = processSkillSpell({ action, actor })
@@ -1393,9 +1387,9 @@ if (!globalThis.GURPS) {
     if (['attribute', 'skill-spell'].includes(action.type)) {
       action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
     }
-    return !action ? false : (
-        await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
-      )
+    return !action
+      ? false
+      : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
   }
   GURPS.performAction = performAction
 
