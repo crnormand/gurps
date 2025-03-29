@@ -325,8 +325,8 @@ export class ActorImporter {
     let vernum = 1
     let exit = false
     if (!r) {
-      if (importName.endsWith('.gca5')) msg.push(i18n('GURPS.cannotImportGCADirectly'))
-      if (importName.endsWith('.gca4')) msg.push(i18n('GURPS.cannotImportGCADirectly'))
+      if (importName.endsWith('.gca5')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
+      if (importName.endsWith('.gca4')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
       else if (!xml.startsWith('<?xml')) msg.push(i18n('GURPS.importNoXMLDetected'))
       exit = true
     } else {
@@ -348,7 +348,7 @@ export class ActorImporter {
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       isFoundryGCA5 = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA5')
       if (!(isFoundryGCA || isFoundryGCA5)) {
-        msg.push(i18n('GURPS.fantasyGroundsUnsupported'))
+        msg.push(i18n('GURPS.importFantasyGroundUnsupported'))
         exit = true
       }
       version = ra?.version || ''
@@ -1018,9 +1018,9 @@ export class ActorImporter {
       // and backup their exclusive info inside Actor system.itemInfo
       const isEligibleItem = item => {
         const sysKey =
-          itemType === 'equipment' ?
-            this.actor._findEqtkeyForId('itemid', item.id)
-          : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+          itemType === 'equipment'
+            ? this.actor._findEqtkeyForId('itemid', item.id)
+            : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
         return (
           (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
           !foundry.utils.getProperty(this.actor, sysKey)?.save
@@ -1328,10 +1328,10 @@ export class ActorImporter {
             title: 'Hit Location Body Plan',
             content:
               `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.bodyplans.' + data.additionalresources.bodyplan
+                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
               )}) or ` +
               `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.bodyplans.' + bodyplan
+                'GURPS.BODYPLAN' + bodyplan
               )})?<br><br>&nbsp;`,
             buttons: {
               save: {
@@ -1690,11 +1690,12 @@ export class ActorImporter {
   }
 
   async importAd(i, p) {
-    let a = new Advantage()
+    const name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
+    let a = new Advantage(name, i.levels)
+
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('t') ? 'trait' : 'trait_container'
     }
-    a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
     a.originalName = i.name
     a.points = i.calc?.points
     a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
@@ -1757,10 +1758,7 @@ export class ActorImporter {
 
   async importSk(i, p) {
     if (this.GCSVersion === 5) {
-      i.type =
-        i.id.startsWith('q') ? 'technique'
-        : i.id.startsWith('s') ? 'skill'
-        : 'skill_container'
+      i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
     }
     let name =
       i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
@@ -1830,10 +1828,7 @@ export class ActorImporter {
   async importSp(i, p) {
     let s = new Spell()
     if (this.GCSVersion === 5) {
-      i.type =
-        i.id.startsWith('r') ? 'ritual_magic_spell'
-        : i.id.startsWith('p') ? 'spell'
-        : 'spell_container'
+      i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
     }
     s.name = i.name || 'Spell'
     s.originalName = i.name
@@ -2175,10 +2170,10 @@ export class ActorImporter {
             title: 'Hit Location Body Plan',
             content:
               `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.bodyplans.' + data.additionalresources.bodyplan
+                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
               )}) or ` +
               `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.bodyplans.' + bodyplan
+                'GURPS.BODYPLAN' + bodyplan
               )})?<br><br>&nbsp;`,
             buttons: {
               save: {
@@ -2486,7 +2481,7 @@ export class ActorImporter {
     }
     if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
       for (let j of i.children) skills = this.skPointCount(j, skills)
-    else skills += i.points
+    else skills += i.points ?? 0
     return skills
   }
 
@@ -2681,9 +2676,8 @@ export class ActorImporter {
 
       // Create or Update item
       const itemData = actorComp.toItemData(this.actor, fromProgram)
-      const [item] =
-        !!existingItem ?
-          await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
+      const [item] = !!existingItem
+        ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
         : await this.actor.createEmbeddedDocuments('Item', [itemData])
       // Update Actor Component for new Items
       if (!!item) {

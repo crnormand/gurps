@@ -1,9 +1,9 @@
-import { i18n, displayMod, generateUniqueId } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
-import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
+import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import ModifierBucketEditor from './tooltip-window.js'
 
 /**
  * Define some Typescript types.
@@ -12,6 +12,14 @@ import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (/** @type {any} */ _, /** @type {JQuery} */ element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
+  })
+
+  Hooks.on('updateLastActorGURPS', () => {
+    if (GURPS.ModifierBucket) {
+      // Update any actor-specific modifiers in the bucket, such as Advantage levels, and then refresh the UI.
+      GURPS.ModifierBucket.resetActorModifiers()
+      GURPS.ModifierBucket.refresh()
+    }
   })
 
   CONFIG.Dice.rolls.push(CONFIG.Dice.rolls[0]) // save a copy of Foundry's default roll
@@ -182,6 +190,7 @@ class ModifierStack {
     this.AUTO_EMPTY = !this.AUTO_EMPTY
     return this.AUTO_EMPTY
   }
+
   savelist() {
     this.savedModifierList = this.modifierList
     this.modifierList = []
@@ -205,7 +214,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(i18n('GURPS.modifiers.rapidStrike')))
+    let rs = this.modifierList.find(m => m.desc.includes(i18n('gurps.modifiers.rapidStrike')))
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
@@ -229,7 +238,10 @@ class ModifierStack {
         const newFormula = addBucketToDamage(originalFormula, false)
         const bucketTotal = this.currentSum
         const bucketRollModifier = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        const bucketRollModifierColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
+        const bucketRollModifierColor =
+          bucketTotal > 0 ? 'darkgreen'
+          : bucketTotal < 0 ? 'darkred'
+          : '#a8a8a8'
         $('#cr-damage').text(newFormula)
         $('#cr-bucket').text(bucketRollModifier).css('color', bucketRollModifierColor)
       }
@@ -281,18 +293,40 @@ class ModifierStack {
   _add(list, mod, reason = '', replace = false, tagged = false) {
     /** @type {Modifier|undefined} */
     var oldmod
-    reason = reason.replace('(' + i18n('GURPS.userCreated') + ')', '').trim() // Remove User Created tag
+    reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
-      if (replace) list.splice(i, 1) // only used by range modifier
+      if (replace)
+        list.splice(i, 1) // only used by range modifier
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
-    let m = (mod + '').match(/([+-])?@margin/i)
+
+    // Check if the modifier string contains '@margin'
+    let m = (mod + '').match(/(?<sign>[+-])?@margin/i)
     if (!!m) {
-      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m[1] == '-' ? -1 : 1)
+      // Calculate the modifier based on the margin of the last targeted roll
+      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m.groups.sign === '-' ? -1 : 1)
+      // If the last targeted roll has an associated "thing", update the reason string
       if (GURPS.lastTargetedRoll?.thing)
         reason = reason.replace(/-@/, ' -').replace(/\+@/, '') + ' for ' + GURPS.lastTargetedRoll.thing
     }
+
+    // Check if the modifier is a leveled advantage.
+    // TODO: Find where the modifier is *applied* to the roll, and move this code there.
+    const adv = (mod + '').match(/(?<sign>[+-])?A:(?<adv>"[^"]+"|'[^']+'|[^ ]+)/i)
+    if (!!adv) {
+      let originalText = `[${mod}]`
+      const advname = adv.groups.adv.replace(/['"]/g, '')
+      const actor = GURPS.LastActor
+      reason = `${originalText}${!!reason ? ' ' + reason : ''}`
+      if (!!actor) {
+        const matches = actor.findAdvantage(advname.replace(/\*/, '.*'))
+        mod = !!matches ? (matches.level ?? 0) * (adv.groups.sign === '-' ? -1 : 1) : 0
+      } else {
+        mod = 0
+      }
+    }
+
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
       oldmod.mod = displayMod(m)
@@ -322,6 +356,31 @@ class ModifierStack {
     this.maxTotal = undefined
     this.usingRapidStrike = false
     this.sum()
+  }
+
+  resetActorModifiers() {
+    // Find all modifiers with reasons that start with '[A:]'.
+    // These are leveled advantages that need to be recalculated.
+    const actor = GURPS.LastActor
+    const regex = /^(\[(?<sign>[+-])A:(?<name>[^\]]+)\])/i
+    this.modifierList
+      .filter(modifier => modifier.desc.match(regex))
+      .forEach(modifier => {
+        const match = modifier.desc.match(regex)
+        if (!!actor) {
+          const advname = match.groups.name.replace(/['"]/g, '')
+          const advantage = actor.findAdvantage(advname.replace(/\*/, '.*'))
+          if (!!advantage) {
+            modifier.modint = (advantage.level ?? 0) * (match.groups.sign === '-' ? -1 : 1)
+            modifier.mod = displayMod(modifier.modint)
+            this.sum()
+          }
+        } else {
+          modifier.modint = 0
+          modifier.mod = displayMod(modifier.modint)
+          this.sum()
+        }
+      })
   }
 
   /**
@@ -482,6 +541,11 @@ export class ModifierBucket extends Application {
       if (users.length > 0) this._sendBucket(users)
       else ui.notifications?.warn("No player with ID '" + id + "'")
     }
+  }
+
+  resetActorModifiers() {
+    this.modifierStack.resetActorModifiers()
+    this.refresh()
   }
 
   // End GLOBALLY ACCESSED METHODS
@@ -761,7 +825,6 @@ export class ModifierBucket extends Application {
   }
 
   refresh() {
-    // setTimeout(() => this.render(true), 100) // Not certain why the UI element isn't updating immediately, so hacked this
     this.render()
     if (this.SHOWING) {
       this.editor.render()

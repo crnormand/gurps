@@ -21,7 +21,7 @@ export const AddMultipleImportButton = function (html) {
     }
 
     if (files.length === 0) {
-      return ui.notifications.error(i18n('GURPS.directoryIsEmpty'))
+      return ui.notifications.error(i18n('GURPS.importEmptyDirectory'))
     }
 
     new MultipleImportApp(dirHandle, files).render(true)
@@ -41,7 +41,7 @@ class MultipleImportApp extends Application {
 
     this.data = {
       selectAll: false,
-      choices: { create: 'GURPS.create', update: 'GURPS.importUpdate', replace: 'GURPS.importReplace' },
+      choices: { create: 'GURPS.importCreate', update: 'GURPS.importUpdate', replace: 'GURPS.importReplace' },
       files: [],
     }
     for (const ii in files) {

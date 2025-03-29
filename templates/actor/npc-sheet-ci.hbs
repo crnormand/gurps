@@ -2,9 +2,9 @@
 	<div class='gga-app {{classes}} npc-sheet'>
 		<div class="npc-sheet-grid-container-ci">
 			<div class="npc-input-top">
-				<div class="npc-input-nm npc-input-label">{{i18n "GURPS.name"}}:</div>
+				<div class="npc-input-nm npc-input-label">{{i18n "gurps.sheet.personal.name"}}:</div>
 				<div class="npc-input-nm-val npc-sheet-label">{{{gurpslink actor.name}}}</div>
-				<div class="npc-input-title npc-input-label">{{i18n "GURPS.title"}}:</div>
+				<div class="npc-input-title npc-input-label">{{i18n "gurps.sheet.personal.title"}}:</div>
 				<div class="npc-input-title-val npc-sheet-label">{{{gurpslink system.traits.title}}}</div>
 				<div class="npc-input-desc npc-input-label">Desc:</div>
 				<div class="npc-input-desc-val npc-sheet-label">{{{gurpslink system.traits.appearance}}}</div>
@@ -63,7 +63,7 @@
 				<div class="npc-input-sm-val npc-sheet-centered gmod" data-name="for Size Modifier"
 					data-otf='{{system.traits.sizemod}} for Size Modifier'>{{{displayNumber system.traits.sizemod}}}
 				</div>
-				<div class="npc-input-dr npc-input-labelr">{{i18n "GURPS.DR"}}</div>
+				<div class="npc-input-dr npc-input-labelr">{{i18n "GURPS.hitLocationDR"}}</div>
 				<div class="npc-input-dr-val npc-sheet-centered">{{defense.dr}}{{#each defense.split as | this key
 					|}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</div>
 			</div>
@@ -71,7 +71,7 @@
 				<div class='npc-sheet-ci'>
 					{{#if useCI}}
 					<div id='combat-hit' class='conditional-injury'>
-						<div class='header major-heading'>{{i18n "GURPS.injury"}}</div>
+						<div class='header major-heading'>{{i18n "GURPS.addInjury"}}</div>
 						<div class="tracked-resource no-border">
 							<div class="header minor-heading">Severity</div>
 							<div class='spinner'>
@@ -233,7 +233,7 @@
 			</div>
 
 			<div class="npc-input-spells">
-				<div class="npc-input-sp dblclksort npc-header" data-key="system.spells">{{i18n "GURPS.spells"}}
+				<div class="npc-input-sp dblclksort npc-header" data-key="system.spells">{{i18n "GURPS.pointsSpells"}}
 				</div>
 				<div class="npc-sheet-sp-val">
 					{{#listeqt system.spells}}

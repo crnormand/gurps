@@ -4,7 +4,7 @@
     <input id='quantity' class='digits-only' type='number' value='{{system.eqt.count}}' name='system.eqt.count' />
     <span><i class='fa fa-plus-minus'></i></span>
   </div>
-  <label>{{i18n 'GURPS.cost'}}</label>
+  <label>{{i18n 'GURPS.equipmentCost'}}</label>
   <div class='icon-prefix'>
     <input id='cost' type='number' class='decimal-digits-only' value='{{system.eqt.cost}}' name='system.eqt.cost' />
     <span>$</span>
@@ -20,29 +20,29 @@
     />
     <span><i class='fas fa-weight-hanging'></i></span>
   </div>
-  <label>{{i18n 'GURPS.uses'}}</label>
+  <label>{{i18n 'GURPS.equipmentUses'}}</label>
   <div class='icon-prefix'>
     <input id='uses' type='number' class='digits-only' value='{{system.eqt.uses}}' name='system.eqt.uses' />
     <span><i class='fas fa-expand'></i></span>
   </div>
-  <label>{{i18n 'GURPS.maxUses'}}</label>
+  <label>{{i18n 'GURPS.equipmentMaxUses'}}</label>
   <div class='icon-prefix'>
     <input id='maxuses' type='number' class='digits-only' value='{{system.eqt.maxuses}}' name='system.eqt.maxuses' />
     <span><i class='fa fa-arrows-up-to-line'></i></span>
   </div>
-  <label>{{i18n 'GURPS.techlevel'}}</label>
+  <label>{{i18n 'GURPS.equipmentTechlevel'}}</label>
   <div class='icon-prefix'>
     <input id='techlevel' type='text' value='{{system.eqt.techlevel}}' name='system.eqt.techlevel' />
     <span>{{i18n 'GURPS.TL'}}</span>
   </div>
-  <label>{{i18n 'GURPS.preserveQty'}}</label>
+  <label>{{i18n 'GURPS.ignoreImportQtyLabel'}}</label>
   <div>
     <input
-      class='ignoreQtyImport'
-      name='system.eqt.ignoreImportQty'
-      type='checkbox'
-      {{checked system.eqt.ignoreImportQty}}
-    />
+          class='ignoreQtyImport'
+          name='system.eqt.ignoreImportQty'
+          type='checkbox'
+          {{checked system.eqt.ignoreImportQty}}
+        />
   </div>
   <label>{{i18n 'GURPS.pdfPageReference'}}</label>
   <div class='icon-prefix'>

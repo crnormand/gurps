@@ -6,16 +6,16 @@
 			<i class='fas fa-caret-square-down'></i>
 		</div>
 	</div>
-	<div class='cls header'>{{i18n 'GURPS.class'}}</div>
-	<div class='college header'>{{i18n 'GURPS.college'}}</div>
-	<div class='mana header'>{{i18n 'GURPS.cost'}}</div>
-	<div class='mana_maintain header'>{{i18n 'GURPS.maintain'}}</div>
-	<div class='time header'>{{i18n 'GURPS.time'}}</div>
-	<div class='duration header'>{{i18n 'GURPS.duration'}}</div>
+	<div class='cls header'>{{i18n 'GURPS.spellClass'}}</div>
+	<div class='college header'>{{i18n 'GURPS.spellCollege'}}</div>
+	<div class='mana header'>{{i18n 'GURPS.spellCost'}}</div>
+	<div class='mana_maintain header'>{{i18n 'GURPS.spellMaintain'}}</div>
+	<div class='time header'>{{i18n 'GURPS.spellTime'}}</div>
+	<div class='duration header'>{{i18n 'GURPS.spellDuration'}}</div>
 	<div class='sl header'>{{i18n 'GURPS.sl'}}</div>
 	<div class='rsl header'>{{i18n 'GURPS.rsl'}}</div>
-	<div class='pts header'>{{i18n "GURPS.pts"}}</div>
-	<div class='ref header'>{{i18n "GURPS.ref"}}</div>
+	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
+	<div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
 	{{#each (flatlist system.spells)}}
 	{{#if ../isEditing}}
@@ -85,7 +85,7 @@
         <div>
 					{{#if (isFoundryItem this)}}
 					<i class='fas fa-star tooltip gga-item'>
-						<span class='tooltiptext'>{{i18n "GURPS.foundryItem"}}</span>
+						<span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
 					</i>
 					{{/if}}
 				</div>

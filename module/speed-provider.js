@@ -4,9 +4,9 @@ export const init = function () {
     class GURPSSpeedProvider extends SpeedProvider {
       get colors() {
         return [
-          { id: 'walk', default: 0x00ff00, name: 'GURPS.dragruler.Walk' },
-          { id: 'sprint', default: 0xffff00, name: 'GURPS.dragruler.Sprint' },
-          { id: 'fly', default: 0xff8000, name: 'GURPS.dragruler.Fly' },
+          { id: 'walk', default: 0x00ff00, name: 'GURPS.dragrulerWalk' },
+          { id: 'sprint', default: 0xffff00, name: 'GURPS.dragrulerSprint' },
+          { id: 'fly', default: 0xff8000, name: 'GURPS.dragrulerFly' },
         ]
       }
 

@@ -1,9 +1,9 @@
 <div>
   <div class='prefix'>
     {{#if rolled}}
-      {{i18n_f "GURPS.rollingDiceDamageTimes" this}}
+      {{i18n_f "GURPS.chatRollingDamage" this}}
     {{else}}
-      {{i18n_f "GURPS.fixedDamage" this}}
+      {{i18n_f "GURPS.chatFixedDamage" this}}
     {{/if}}
     {{#if hitlocation}} ({{hitlocation}}){{/if}}
   </div>
@@ -41,7 +41,7 @@
                   {{#if (eq damage 1)}}
                     {{{i18n_f "GURPS.pointDamage" this}}}
                   {{else}}
-                    {{{i18n_f "GURPS.Damage" this}}}
+                    {{{i18n_f "GURPS.pointsDamage" this}}}
                   {{/if}}</span>
               </span>
             </label>
@@ -57,7 +57,7 @@
                   {{/if}}
                   {{#if isB378}}
                     <div class='aside'>{{i18n "GURPS.minimumDamageRule"}} (<span
-                        class='pdflink'>{{i18n "GURPS.pdf.DamageRoll"}}</span>)</div>
+                        class='pdflink'>{{i18n "GURPS.pdfDamageRoll"}}</span>)</div>
                   {{/if}}
                 </div>
               </div>

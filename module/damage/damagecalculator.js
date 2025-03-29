@@ -366,7 +366,7 @@ export class CompositeDamageCalculator {
                   stunIsReady,
                   effectName: 'stun',
                   spanClass: stunIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: stunIsReady ? i18n('GURPS.removestunEffect') : i18n('GURPS.addStunEffect'),
+                  effectTitle: stunIsReady ? i18n('GURPS.removestunEffect') : i18n('GURPS.addstunEffect'),
                 },
                 {
                   ...effect,
@@ -374,7 +374,7 @@ export class CompositeDamageCalculator {
                   proneIsReady,
                   effectName: 'prone',
                   spanClass: proneIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: proneIsReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addProneEffect'),
+                  effectTitle: proneIsReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
                 },
               ],
             }
@@ -390,7 +390,7 @@ export class CompositeDamageCalculator {
                   isReady,
                   effectName: 'prone',
                   spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addProneEffect'),
+                  effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
                 },
               ],
             }

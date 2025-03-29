@@ -280,7 +280,7 @@ export class AnimChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?]anim$/i)
   }
   usage() {
-    return i18n('GURPS.chat.Anim')
+    return i18n('GURPS.chatHelpAnim')
   }
 
   async process(line) {

@@ -59,7 +59,7 @@
               <img
                 class='button'
                 src='systems/gurps/icons/statuses/dd-condition-standing.webp'
-                title='{{i18n "GURPS.statuses.Standing"}}'
+                title='{{i18n "gurps.status.Standing"}}'
                 alt='standing'
               />
               {{#each (listAllPostures) as |this key|}}
@@ -71,9 +71,7 @@
       {{else}}
         <div class='field' style='border: none;'>
           <select id='posture' name='system.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
-            <option value='standing' {{select-if system.conditions.posture 'standing'}}>{{i18n
-                'GURPS.statuses.Standing'
-              }}
+            <option value='standing' {{select-if system.conditions.posture 'standing'}}>{{i18n 'gurps.status.Standing'}}
             </option>
             {{#with system.conditions.posture as |posture|}}
               {{#each (listAllPostures) as |this key|}}
@@ -88,7 +86,7 @@
     </div>
 
     <div class='label-field-pair'>
-      <div class='label'>{{i18n 'GURPS.combatMove'}}:</div>
+      <div class='label'>{{i18n 'GURPS.conditionsCombatMove'}}:</div>
       <div class='field' name='system.conditions.combatmove'><span>{{system.conditions.move}}</span></div>
     </div>
 

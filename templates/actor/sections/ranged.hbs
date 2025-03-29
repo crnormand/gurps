@@ -15,7 +15,7 @@
   <div class='shots header'>{{i18n 'GURPS.shots'}}</div>
   <div class='bulk header'>{{i18n 'GURPS.bulk'}}</div>
   <div class='rcl header'>{{i18n 'GURPS.rcl'}}</div>
-  <div class='st header'>{{i18n 'GURPS.ST'}}</div>
+  <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
   {{#each (attackflatlist system.ranged)}}
     {{#if ../isEditing}}
@@ -80,7 +80,7 @@
               <div>
                 {{#if (isFoundryItem this)}}
                   <i class='far fas fa-star tooltip gga-item'>
-                    <span class='tooltiptext'>{{i18n 'GURPS.foundryItem'}}</span>
+                    <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem'}}</span>
                   </i>
                 {{/if}}
               </div>

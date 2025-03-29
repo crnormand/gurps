@@ -8,8 +8,8 @@
 	</div>
 	<div class='sl header'>{{i18n 'GURPS.sl'}}</div>
 	<div class='rsl header'>{{i18n 'GURPS.rsl'}}</div>
-	<div class='pts header'>{{i18n "GURPS.pts"}}</div>
-	<div class='ref header'>{{i18n "GURPS.ref"}}</div>
+	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
+	<div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
 	{{#each (flatlist system.skills)}}
 	{{#if ../isEditing}}
@@ -73,7 +73,7 @@
           <div>
             {{#if (isFoundryItem this)}}
             <i class='fas fa-star tooltip gga-item'>
-              <span class='tooltiptext'>{{i18n "GURPS.foundryItem"}}</span>
+              <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
             </i>
             {{/if}}
           </div>

@@ -1,32 +1,32 @@
 <div id='attributes' style='display: flex; flex-flow: column;'>
   <div id='basic-attributes' class='fieldblock3'>
-    <div class='header' style='grid-column: 1 / 4'>{{i18n 'GURPS.primaryAttributes'}}</div>
+    <div class='header' style='grid-column: 1 / 4'>{{i18n 'GURPS.attributesPrimary'}}</div>
     <div class='points'>[{{system.attributes.ST.points}}]</div>
     <div class='field rollable' data-path='attributes.ST.value' data-otf='ST'>
       {{system.attributes.ST.value}}
     </div>
-    <div class='label'>{{i18n 'GURPS.strength'}} ({{i18n 'GURPS.ST'}})</div>
+    <div class='label'>{{i18n 'GURPS.attributesSTNAME'}} ({{i18n 'GURPS.attributesST'}})</div>
     <div class='points'>[{{system.attributes.DX.points}}]</div>
     <div class='field rollable' data-path='attributes.DX.value' data-otf='DX'>
       {{system.attributes.DX.value}}
     </div>
-    <div class='label'>{{i18n 'GURPS.dexterity'}} ({{i18n 'GURPS.DX'}})</div>
+    <div class='label'>{{i18n 'GURPS.attributesDXNAME'}} ({{i18n 'GURPS.attributesDX'}})</div>
     <div class='points'>[{{system.attributes.IQ.points}}]</div>
     <div class='field rollable' data-path='attributes.IQ.value' data-otf='IQ'>
       {{system.attributes.IQ.value}}
     </div>
-    <div class='label'>{{i18n 'GURPS.intelligence'}} ({{i18n 'GURPS.IQ'}})</div>
+    <div class='label'>{{i18n 'GURPS.attributesIQNAME'}} ({{i18n 'GURPS.attributesIQ'}})</div>
     <div class='points'>[{{system.attributes.HT.points}}]</div>
     <div class='field rollable' data-path='attributes.HT.value' data-otf='HT'>
       {{system.attributes.HT.value}}
     </div>
-    <div class='label'>{{i18n 'GURPS.health'}} ({{i18n 'GURPS.HT'}})</div>
+    <div class='label'>{{i18n 'GURPS.attributesHTNAME'}} ({{i18n 'GURPS.attributesHT'}})</div>
     {{#if useQN}}
       <div class='points'>[{{system.attributes.QN.points}}]</div>
       <div class='field rollable' data-path='attributes.QN.value' data-otf='QN'>
         {{system.attributes.QN.value}}
       </div>
-      <div class='label'>{{i18n 'GURPS.health'}} ({{i18n 'GURPS.QN'}})</div>
+      <div class='label'>{{i18n 'GURPS.attributesHTNAME'}} ({{i18n 'GURPS.attributesQN'}})</div>
     {{/if}}
     <hr />
     <div class='points'></div>
@@ -43,12 +43,12 @@
     <div class='label'>{{i18n 'GURPS.basicmove'}}</div>
   </div>
   <div id='secondary-attrs' class='fieldblock3' style='border-top: 1px solid black;'>
-    <div class='header' style='grid-column: 1 / 4'>{{i18n 'GURPS.secondaryAttributes'}}</div>
+    <div class='header' style='grid-column: 1 / 4'>{{i18n 'GURPS.attributesSecondary'}}</div>
     <div class='points'>[{{system.attributes.WILL.points}}]</div>
     <div class='field rollable' data-path='attributes.WILL.value' data-otf='WILL'>
       {{system.attributes.WILL.value}}
     </div>
-    <div class='label'>{{i18n 'GURPS.will'}}</div>
+    <div class='label'>{{i18n 'GURPS.attributesWILLNAME'}}</div>
     <div class='points'></div>
     <div class='field noedit rollable' data-path='frightcheck' data-otf='Fright Check'>
       {{system.frightcheck}}
@@ -59,7 +59,7 @@
     <div class='field rollable' data-path='attributes.PER.value' data-otf='PER'>
       {{system.attributes.PER.value}}
     </div>
-    <div class='label'>{{i18n 'GURPS.perception'}} ({{i18n 'GURPS.PER'}})</div>
+    <div class='label'>{{i18n 'GURPS.attributesPERNAME'}} ({{i18n 'GURPS.attributesPER'}})</div>
     <div class='points'></div>
     <div class='field noedit rollable' data-path='vision' data-otf='Vision'>{{system.vision}}</div>
     <div class='label'>{{i18n 'GURPS.vision'}}</div>
