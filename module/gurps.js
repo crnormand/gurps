@@ -108,7 +108,10 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     const targetRoll = action.orig
     const bucketTotal = GURPS.ModifierBucket.currentSum()
     const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-    const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
+    const bucketRollColor =
+      bucketTotal > 0 ? 'darkgreen'
+      : bucketTotal < 0 ? 'darkred'
+      : '#a8a8a8'
     const isBlindRoll = action.blindroll
     const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
     // Armor divisor can be (0.5) or (2) - need to regex to get the number
@@ -757,7 +760,10 @@ if (!globalThis.GURPS) {
       let formula
       if (dfAdd && formulaAdd) {
         finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
-        const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
+        const signal =
+          finalAdd === 0 ? ''
+          : finalAdd > 0 ? '+'
+          : '-'
         formula = `${dice}${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
       } else {
         formula = df + action.formula
@@ -1387,9 +1393,9 @@ if (!globalThis.GURPS) {
     if (['attribute', 'skill-spell'].includes(action.type)) {
       action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
     }
-    return !action
-      ? false
-      : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+    return !action ? false : (
+        await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+      )
   }
   GURPS.performAction = performAction
 
@@ -2433,7 +2439,7 @@ if (!globalThis.GURPS) {
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>
 <div style='font-size:70%'>
-  <div>${game.i18n.localize('gurps.copyright')}</div>
+  <div>${game.i18n.localize('GURPS.copyright')}</div>
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
@@ -2774,7 +2780,7 @@ if (!globalThis.GURPS) {
     // This system setting must be built AFTER all of the character sheets have been registered
     let sheets = /** @type {Record<string,string>} */ ({})
     Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
+      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'GURPS.GurpsActorSheet') sheets[e.label] = e.label
     })
     game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: i18n('GURPS.settingSheetDetail'),
