@@ -364,7 +364,7 @@
       "Restrained": "Restrained [-6 DX]",
       "Unrestrained": "Unrestrained"
     },
-    "file": "File",
+    "File": "File",
     "fileVersion": "The file version: '{version}'.",
     "fixedDamage": "[{dice} {damageTypeText}] damage.",
     "flexibleArmor": "Flexible Armor",
