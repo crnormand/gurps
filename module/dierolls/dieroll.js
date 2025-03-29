@@ -202,7 +202,7 @@ export async function doRoll({
         // Because this is a simple roll and not a damage roll, we need to show the damage type as `dmg`
         otfDamageText = i18n(`GURPS.${damageOTFType}`, damageOTFType)
         damageType = 'dmg'
-        damageTypeLabel = i18n(`GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+        damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
         damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)

@@ -10,8 +10,8 @@
           {{checked selectAll}}
         />
       </div>
-      <div class='label'>{{i18n 'GURPS.file'}}</div>
-      <div class='label'>{{i18n 'GURPS.currentActor'}}</div>
+      <div class='label'>{{i18n 'GURPS.importFile'}}</div>
+      <div class='label'>{{i18n 'GURPS.importCurrentActor'}}</div>
       <div class='label'>{{i18n 'GURPS.importSource'}}</div>
       <div class='label'>{{i18n 'GURPS.importOnImport'}}</div>
 
@@ -38,12 +38,12 @@
             {{selectOptions ../choices selected=onImport localize=true}}
           </select>
           {{else}}
-          <div class='value'>{{i18n 'GURPS.create'}}</div>          
+          <div class='value'>{{i18n 'GURPS.importCreate'}}</div>          
           {{/if}}
       {{/each}}
     </div>
     <div class='gga-button-bar'>
-      <button class='filelist-control' data-action='cancel' id='cancel'><i class='fas fa-times'></i>{{i18n 'GURPS.cancelImport'}}</button>
+      <button class='filelist-control' data-action='cancel' id='cancel'><i class='fas fa-times'></i>{{i18n 'GURPS.importCancel'}}</button>
       <button class='filelist-control' data-action='import' id='import'><i class='fas fa-file-import'></i>{{i18n 'GURPS.importSelected'}}</button>
     </div>
   </div>
