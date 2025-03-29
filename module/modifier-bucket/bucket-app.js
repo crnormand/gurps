@@ -1,9 +1,9 @@
-import { i18n, displayMod, generateUniqueId } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
-import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
+import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import ModifierBucketEditor from './tooltip-window.js'
 
 /**
  * Define some Typescript types.
@@ -214,7 +214,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(i18n('GURPS.modifiers.rapidStrike')))
+    let rs = this.modifierList.find(m => m.desc.includes(i18n('gurps.modifiers.rapidStrike')))
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
@@ -291,8 +291,9 @@ class ModifierStack {
    * @private
    */
   _add(list, mod, reason = '', replace = false, tagged = false) {
-    let oldmod
-    reason = reason.replace('(' + i18n('GURPS.userCreated') + ')', '').trim() // Remove User Created tag
+    /** @type {Modifier|undefined} */
+    var oldmod
+    reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
       if (replace)

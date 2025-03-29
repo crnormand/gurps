@@ -2,7 +2,7 @@
   <div class='gga-app {{classes}} npc-input'>
     <div class='npc-input-grid-container'>
       <div class='npc-input-top'>
-        <div class='npc-input-nm npc-input-label'>{{i18n 'GURPS.name'}}:</div>
+        <div class='npc-input-nm npc-input-label'>{{i18n 'gurps.sheet.personal.name'}}:</div>
         <div class='npc-input-nm-val'><input
             id='npc-input-name'
             data-key='name'
@@ -10,7 +10,7 @@
             type='text'
             value='{{mook.name}}'
           /></div>
-        <div class='npc-input-title npc-input-label'>{{i18n 'GURPS.title'}}:</div>
+        <div class='npc-input-title npc-input-label'>{{i18n 'gurps.sheet.personal.title'}}:</div>
         <div class='npc-input-title-val'><input data-key='title' class='gcs-input' type='text' value='{{mook.title}}' />
         </div>
         <div class='npc-input-desc npc-input-label'>Desc:</div>
@@ -18,16 +18,16 @@
         </div>
       </div>
       <div class='npc-input-attr'>
-        <div class='npc-input-st npc-input-label'>{{i18n 'GURPS.ST'}}:</div>
+        <div class='npc-input-st npc-input-label'>{{i18n 'GURPS.attributesST'}}:</div>
         <div class='npc-input-st-val'><input data-key='st' class='gcs-input-sm2' type='text' value='{{mook.st}}' />
         </div>
-        <div class='npc-input-dx npc-input-label'>{{i18n 'GURPS.DX'}}:</div>
+        <div class='npc-input-dx npc-input-label'>{{i18n 'GURPS.attributesDX'}}:</div>
         <div class='npc-input-dx-val'><input data-key='dx' class='gcs-input-sm2' type='text' value='{{mook.dx}}' />
         </div>
-        <div class='npc-input-iq npc-input-label'>{{i18n 'GURPS.IQ'}}:</div>
+        <div class='npc-input-iq npc-input-label'>{{i18n 'GURPS.attributesIQ'}}:</div>
         <div class='npc-input-iq-val'><input data-key='iq' class='gcs-input-sm2' type='text' value='{{mook.iq}}' />
         </div>
-        <div class='npc-input-ht npc-input-label'>{{i18n 'GURPS.HT'}}:</div>
+        <div class='npc-input-ht npc-input-label'>{{i18n 'GURPS.attributesHT'}}:</div>
         <div class='npc-input-ht-val'><input data-key='ht' class='gcs-input-sm2' type='text' value='{{mook.ht}}' />
         </div>
         <div class='npc-input-dmg npc-input-labelr'>Th/Sw:</div>
@@ -40,14 +40,14 @@
         <div class='npc-input-hp npc-input-label'>{{i18n 'GURPS.HP'}}:</div>
         <div class='npc-input-hp-val'><input data-key='hp' class='gcs-input-sm2' type='text' value='{{mook.hp}}' />
         </div>
-        <div class='npc-input-will npc-input-label'>{{i18n 'GURPS.will'}}:</div>
+        <div class='npc-input-will npc-input-label'>{{i18n 'GURPS.attributesWILL'}}:</div>
         <div class='npc-input-will-val'><input
             data-key='will'
             class='gcs-input-sm2'
             type='text'
             value='{{mook.will}}'
           /></div>
-        <div class='npc-input-per npc-input-label'>{{i18n 'GURPS.PER'}}:</div>
+        <div class='npc-input-per npc-input-label'>{{i18n 'GURPS.attributesPER'}}:</div>
         <div class='npc-input-per-val'><input data-key='per' class='gcs-input-sm2' type='text' value='{{mook.per}}' />
         </div>
         <div class='npc-input-fp npc-input-label'>{{i18n 'GURPS.FP'}}:</div>
@@ -70,7 +70,7 @@
         <div class='npc-input-mov npc-input-labelr'>{{i18n 'GURPS.move'}}:</div>
         <div class='npc-input-mov-val'><input data-key='move' class='gcs-input-sm2' type='text' value='{{mook.move}}' />
         </div>
-        <div class='npc-input-sm npc-input-labelr'>{{i18n 'GURPS.SM'}}:</div>
+        <div class='npc-input-sm npc-input-labelr'>SM:</div>
         <div class='npc-input-sm-val'><input data-key='sm' class='npc-input-sm2' type='text' value='{{mook.sm}}' />
         </div>
         <div class='npc-input-dr npc-input-labelr'>{{i18n 'GURPS.hitLocationDR'}}:</div>
@@ -132,7 +132,7 @@
           >{{mook.equipment}}</textarea></div>
       </div>
       <div class='npc-input-spells'>
-        <div class='npc-input-sp'>{{i18n 'GURPS.spells'}}</div>
+        <div class='npc-input-sp'>{{i18n 'GURPS.pointsSpells'}}</div>
         <div class='npc-input-sp-val'><textarea
             data-key='spells'
             class='npc-input-ta'

@@ -43,7 +43,7 @@ class HelpChatProcessor extends ChatProcessor {
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
-    t += '<br><br>' + i18n('GURPS.chat.Help')
+    t += '<br><br>' + i18n('GURPS.chatHelpHelp')
     this.priv(t)
   }
 }

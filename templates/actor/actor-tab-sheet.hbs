@@ -13,7 +13,7 @@
           {{>hpfp-tracker
             name='HP'
             resource=system.HP
-            label='GURPS.hitPoints'
+            label='GURPS.attributesHPNAME'
             editable=false
             condition='reeling'
             testcondition=system.conditions.reeling
@@ -22,7 +22,7 @@
         {{>hpfp-tracker
           name='FP'
           resource=system.FP
-          label='GURPS.fatigue'
+          label='GURPS.attributesFPNAME'
           editable=false
           condition='exhausted'
           testcondition=system.conditions.exhausted
@@ -34,14 +34,14 @@
     </div>
 
     <nav id='nav-tabs' class='gurps-sheet-tabs' data-group='primary-tabs'>
-      <li class='label'>{{i18n 'GURPS.tabSheet.tabs'}}</li>
+      <li class='label'>{{i18n 'gurps.tabSheet.tabs'}}</li>
       <li>
         <a class='tab-item' data-tab='combat' title='{{i18n "GURPS.combatTab"}}'>
           <div><i class='fa-solid fa-swords'></i></div>
         </a>
       </li>
       <li>
-        <a class='tab-item' data-tab='personal' title='{{i18n "GURPS.personal"}}'>
+        <a class='tab-item' data-tab='personal' title='{{i18n "gurps.sheet.personal.tab"}}'>
           <div><i class='fa-solid fa-user'></i></div>
         </a>
       </li>
@@ -56,7 +56,7 @@
         </a>
       </li>
       <li>
-        <a class='tab-item' data-tab='stats' title='{{i18n "GURPS.tabsheet.resourcesModsTab"}}'>
+        <a class='tab-item' data-tab='stats' title='{{i18n "GURPS.resourcesModsTab"}}'>
           <div><i class='fa-solid fa-bars-progress'></i></div>
         </a>
       </li>
@@ -68,7 +68,7 @@
         </li>
       {{/if}}
       <li>
-        <a class='tab-item' data-tab='equipment' title='{{i18n "GURPS.Tab"}}'>
+        <a class='tab-item' data-tab='equipment' title='{{i18n "GURPS.equipmentTab"}}'>
           <div><i class='fa-solid fa-screwdriver-wrench'></i></div>
         </a>
       </li>

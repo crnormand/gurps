@@ -42,7 +42,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   usage() {
-    return i18n('GURPS.chat.Status')
+    return i18n('GURPS.chatHelpStatus')
   }
 
   /**
@@ -62,7 +62,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     let tokens = !!tokenName ? this.getTokensFor(tokenName) : !!self ? this.getSelfTokens() : canvas.tokens?.controlled
 
     if (!tokens || tokens.length === 0) {
-      ui.notifications.warn(i18n_f('GURPS.mustSelectSelfOrNameTokens', { self: '@self' }))
+      ui.notifications.warn(i18n_f('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
       return
     }
 
@@ -73,13 +73,13 @@ export default class StatusChatProcessor extends ChatProcessor {
     let isStanding = false
     if (!effect) {
       if (!effectText) {
-        ui.notifications.warn(i18n('GURPS.noStatusMatched'))
+        ui.notifications.warn(i18n('GURPS.chatNoStatusMatched'))
         return
       } else if (
         !effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) &&
         !effectText.match(new RegExp(makeRegexPatternFrom(i18n(GURPS.StatusEffectStandingLabel)), 'i'))
       ) {
-        ui.notifications.warn(i18n('GURPS.noStatusMatched') + " '" + effectText + "'")
+        ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
         return
       }
       isStanding = true
@@ -155,7 +155,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     list = canvas.tokens?.placeables.filter(it => it.actor == GURPS.LastActor)
     if (list && list.length === 1) return list
 
-    let msg = list && list.length === 0 ? i18n('GURPS.noOwnedTokenFound') : i18n('GURPS.ownMoreThanOneToken')
+    let msg = list && list.length === 0 ? i18n('GURPS.chatNoOwnedTokenFound') : i18n('GURPS.chatMultipleOwnedFound')
     ui.notifications.warn(msg)
     return null
   }
@@ -213,7 +213,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   async toggle(tokens, effect) {
     for (const token of tokens) {
-      this.toggleTokenEffect(token, effect, 'GURPS.toggling')
+      this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
     }
   }
 
@@ -225,11 +225,11 @@ export default class StatusChatProcessor extends ChatProcessor {
     for (const token of tokens) {
       for (const actorEffect of token.actor?.effects || []) {
         if (actorEffect.statuses.has(effect.id)) {
-          await this.toggleTokenEffect(token, effect, 'GURPS.toggling')
+          await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
         }
 
         // if (effect.id == actorEffect.getFlag('core', 'statusId')) {
-        //   await this.toggleTokenEffect(token, effect, 'GURPS.toggling')
+        //   await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
         // }
       }
     }
@@ -241,7 +241,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   async set(tokens, effect) {
     for (const token of tokens) {
-      if (!this.isEffectActive(token, effect)) await this.toggleTokenEffect(token, effect, 'GURPS.toggling')
+      if (!this.isEffectActive(token, effect)) await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
     }
   }
 
@@ -251,7 +251,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   async clear(tokens) {
     for (const token of tokens)
       for (const actorEffect of token.actor?.effects || [])
-        await this.toggleTokenEffect(token, this.getStatusEffect(actorEffect), 'GURPS.clearing')
+        await this.toggleTokenEffect(token, this.getStatusEffect(actorEffect), 'GURPS.chatClearing')
   }
 
   /**

@@ -185,7 +185,7 @@ export default class DamageChat {
       let buttons = {
         apply: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize('GURPS.apply'),
+          label: game.i18n.localize('GURPS.addApply'),
           callback: (/** @type {JQuery<HTMLElement>} */ html) => {
             let name = html.find('select option:selected').text().trim()
             let target = targets.find(token => token.name === name)

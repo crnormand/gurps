@@ -6,8 +6,8 @@
 			<i class='fas fa-caret-square-down'></i>
 		</div>
 	</div>
-	<div class='pts header'>{{i18n "GURPS.pts"}}</div>
-	<div class='ref header'>{{i18n "GURPS.ref"}}</div>
+	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
+	<div class='ref header'>{{i18n "GURPS.abbrevReference"}}</div>
 
 	{{#each (flatlist system.ads)}}
 	{{#if ../isEditing}}
@@ -62,7 +62,7 @@
           <div>
             {{#if (isFoundryItem this)}}
             <i class='far fas fa-star tooltip gga-item'>
-              <span class='tooltiptext'>{{i18n "GURPS.foundryItem"}}</span>
+              <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
             </i>
             {{/if}}
           </div>

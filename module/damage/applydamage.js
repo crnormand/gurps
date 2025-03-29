@@ -80,7 +80,7 @@ export default class ApplyDamageDialog extends Application {
       minimizable: false,
       width: 800,
       height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
-      title: game.i18n.localize('GURPS.applyDamageDialog'),
+      title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
 
@@ -514,14 +514,14 @@ export default class ApplyDamageDialog extends Application {
           (effect?.modifier ?? 0) === 0
             ? 'HT'
             : effect.modifier < 0
-            ? `HT+${-effect.modifier}`
-            : `HT-${effect.modifier}`
+              ? `HT+${-effect.modifier}`
+              : `HT-${effect.modifier}`
 
         otf = `/r [!${htCheck}]`
         break
 
       case 'knockback':
-        const dx = i18n('GURPS.DX')
+        const dx = i18n('GURPS.attributesDX')
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
         const localeAcrobaticsName = i18n('GURPS.skillAcrobatics')
         const localeAcrobaticsCheck =
@@ -581,7 +581,7 @@ export default class ApplyDamageDialog extends Application {
           if (!!allShocks) {
             await actions.removeFromNextTurn(allShocks)
             span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-            span.attr('title', i18n('GURPS.addShockAtNextTurnEffect'))
+            span.attr('title', i18n('GURPS.addShockEffect'))
             ui.notifications.info(i18n('GURPS.removedShockEffect'))
           } else {
             const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
@@ -653,7 +653,7 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-majorwound.html', {
         name: !!token ? token.name : this.actor.name,
         button: button,
-        htCheck: htCheck.replace('HT', i18n('GURPS.HT')),
+        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
       })
     }
 
@@ -667,12 +667,12 @@ export default class ApplyDamageDialog extends Application {
         name: !!token ? token.name : this.actor.name,
         button: button,
         location: object.detail,
-        htCheck: htCheck.replace('HT', i18n('GURPS.HT')),
+        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
       })
     }
 
     if (object.type === 'knockback') {
-      let dx = i18n('GURPS.DX')
+      let dx = i18n('GURPS.attributesDX')
       let dxCheck = object.modifier === 0 ? dx : `${dx}-${object.modifier}`
       let acro = i18n('GURPS.skillAcrobatics')
       let acroCheck = object.modifier === 0 ? acro : `${acro}-${object.modifier}`

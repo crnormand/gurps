@@ -1,0 +1,130 @@
+[ 'templates', 'module', 'lib' ]
+Keys that do not match expected pattern
+=======================================
+__Char Sheet__
+__Character Sheet Identity__
+__Character Sheet Miscellaneous__
+__Character Description__
+__Character Points__
+__Character Attributes__
+__ Character AddsDisadsPerksQuirks__
+__ Character Skills__
+__Character Spells__
+__Character Equipment__
+__Character Encumbrance/Lift__
+__Character Weapons__
+__Apply Damage Dialog__
+__Body Plan__
+__Chat Messages__
+__Permissions__
+__Damage Types__
+__Drag Ruler__
+__Fantastic Dungeon Grappling__
+__Hit Location__
+__Modifier Bucket__
+__PDF References__
+__Resolve Damage Dialog__
+__Resource Trackers__
+Skill Names__
+__Slam Calculator__
+__Status/Conditions__
+__Maneuvers__
+__Import Messages__
+__System Settings__
+KEYS NOT FOUND
+===========================
+GURPS.BODYPLANarachnoid
+GURPS.BODYPLANavian
+GURPS.BODYPLANcancroid
+GURPS.BODYPLANcentaur
+GURPS.BODYPLANhexapod
+GURPS.BODYPLANhexapodWinged
+GURPS.BODYPLANhumanoid
+GURPS.BODYPLANhumanoid expanded
+GURPS.BODYPLANichthyoid
+GURPS.BODYPLANoctopod
+GURPS.BODYPLANquadruped
+GURPS.BODYPLANquadrupedWinged
+GURPS.BODYPLANscorpion
+GURPS.BODYPLANsnakeman
+GURPS.BODYPLANsquid
+GURPS.BODYPLANvermiform
+GURPS.BODYPLANvermiformWinged
+GURPS.BODYPLANwinged humanoid
+GURPS.FP
+GURPS.addTitleConcat0
+GURPS.addTitleConcat01
+GURPS.addTitleConcat0s
+GURPS.addTitleConcat1
+GURPS.chatLightSource
+GURPS.chatNoTokens
+GURPS.chatSuffersCripplingInjury
+GURPS.chatToApplyEffects
+GURPS.chatTokenLightPicker
+GURPS.chatYouMustSelectTokens
+GURPS.currentdodge
+GURPS.damageTypeBurning
+GURPS.damageTypeCorrosive
+GURPS.damageTypeCrushing
+GURPS.damageTypeCutting
+GURPS.damageTypeDamage
+GURPS.damageTypeFatigue
+GURPS.damageTypeHuge Piercing
+GURPS.damageTypeImpaling
+GURPS.damageTypeLarge Piercing
+GURPS.damageTypePiercing
+GURPS.damageTypeSmall Piercing
+GURPS.damageTypeToxic
+GURPS.equippedblock
+GURPS.equippedparry
+GURPS.groundCreaturesSuffer
+GURPS.highPainThreshold
+GURPS.hitLocationArm 1-2
+GURPS.hitLocationArm 3-4
+GURPS.hitLocationArm 5-6
+GURPS.hitLocationArm 7-8
+GURPS.hitLocationArm*
+GURPS.hitLocationFin*
+GURPS.hitLocationLeg 1-2
+GURPS.hitLocationLeg 3-4
+GURPS.hitLocationLeg 5-6
+GURPS.hitLocationLeg 7-8
+GURPS.hitLocationMid Leg*
+GURPS.hitLocationTorso*
+GURPS.lowPainThreshold
+GURPS.meters
+GURPS.otherEquipment
+GURPS.perfectBalance
+GURPS.point
+GURPS.swimmersOrFlyersSuffer
+GURPS.toAllDXBasedRolls
+Skill Names__
+__ Character AddsDisadsPerksQuirks__
+__ Character Skills__
+__Apply Damage Dialog__
+__Body Plan__
+__Char Sheet__
+__Character Attributes__
+__Character Description__
+__Character Encumbrance/Lift__
+__Character Equipment__
+__Character Points__
+__Character Sheet Identity__
+__Character Sheet Miscellaneous__
+__Character Spells__
+__Character Weapons__
+__Chat Messages__
+__Damage Types__
+__Drag Ruler__
+__Fantastic Dungeon Grappling__
+__Hit Location__
+__Import Messages__
+__Maneuvers__
+__Modifier Bucket__
+__PDF References__
+__Permissions__
+__Resolve Damage Dialog__
+__Resource Trackers__
+__Slam Calculator__
+__Status/Conditions__
+__System Settings__

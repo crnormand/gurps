@@ -722,7 +722,7 @@ export class GurpsActorSheet extends ActorSheet {
         '.headermenu',
         [
           {
-            name: i18n('GURPS.addResourceTrackerToEnd'),
+            name: i18n('GURPS.addTracker'),
             icon: '<i class="fas fa-plus"></i>',
             callback: e => {
               this._addTracker().then()
@@ -2126,11 +2126,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
       case '#advantages':
         return [
-          this.addItemMenu(
-            i18n('GURPS.advDisadvPerkQuirks'),
-            new Advantage(`${i18n('GURPS.advantageDisadvantage')}...`),
-            'system.ads'
-          ),
+          this.addItemMenu(i18n('GURPS.adDisadQuirkPerk'), new Advantage(`${i18n('GURPS.adDisad')}...`), 'system.ads'),
           ...menu,
         ]
 
