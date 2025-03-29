@@ -40,7 +40,7 @@
         {{hitlocationroll where roll parent}}
       {{/if}}
     </div>
-    <div class='where gurpstippable' data-tooltip="{{DRTooltip}}">
+    <div class='where gurpstippable' {{!data-tooltip='{{DRTooltip}}'>
       {{#if ../isEditing}}
         <input name='system.hitlocations.{{@key}}.where' class='gcs-input-5' type='text' value='{{where}}' />
       {{else}}
