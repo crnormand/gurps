@@ -1,40 +1,40 @@
 'use strict'
 
+import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
-  recurselist,
-  makeRegexPatternFrom,
+  arrayToObject,
+  generateUniqueId,
   i18n,
   i18n_f,
-  splitArgs,
-  generateUniqueId,
+  makeRegexPatternFrom,
   objectToArray,
-  arrayToObject,
+  recurselist,
+  splitArgs,
   zeroFill,
 } from '../../lib/utilities.js'
-import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
+import { HitLocation } from '../hitlocation/hitlocation.js'
+import { GurpsItem } from '../item.js'
+import { TokenActions } from '../token-actions.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
+import { ActorImporter } from './actor-importer.js'
+import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 import Maneuvers, {
+  MOVE_HALF,
   MOVE_NONE,
   MOVE_ONE,
+  MOVE_ONETHIRD,
   MOVE_STEP,
   MOVE_TWO_STEPS,
-  MOVE_ONETHIRD,
-  MOVE_HALF,
   MOVE_TWOTHIRDS,
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { GurpsItem } from '../item.js'
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
-import { multiplyDice } from '../utilities/damage-utils.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
-import { ActorImporter } from './actor-importer.js'
-import { HitLocation } from '../hitlocation/hitlocation.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { TokenActions } from '../token-actions.js'
-import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
