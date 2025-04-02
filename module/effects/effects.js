@@ -1,5 +1,5 @@
+import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { i18n } from '../../lib/utilities.js'
 import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
 export class StatusEffect {

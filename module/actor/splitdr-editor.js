@@ -1,4 +1,4 @@
-import { i18n_f } from '../../lib/utilities.js'
+import { i18n_f } from '../../lib/i18n.js'
 
 export default class SplitDREditor extends Application {
   constructor(actor, key, options) {

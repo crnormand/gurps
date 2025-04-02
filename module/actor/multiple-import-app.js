@@ -1,4 +1,4 @@
-import { i18n } from '../../lib/utilities.js'
+import { i18n } from '../../lib/i18n.js'
 import { ActorImporter } from './actor-importer.js'
 import { GurpsActor } from './actor.js'
 

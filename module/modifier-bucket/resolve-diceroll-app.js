@@ -1,4 +1,5 @@
-import { generateUniqueId, i18n } from '../../lib/utilities.js'
+import { i18n } from '../../lib/i18n.js'
+import { generateUniqueId } from '../../lib/utilities.js'
 import { GurpsDie } from './bucket-app.js'
 
 export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/

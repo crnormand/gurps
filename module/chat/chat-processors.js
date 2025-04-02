@@ -1,11 +1,10 @@
 'use strict'
 
+import { i18n, i18n_f } from '../../lib/i18n.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { parselink } from '../../lib/parselink.js'
 import {
   escapeHtml,
-  i18n,
-  i18n_f,
   isNiceDiceEnabled,
   makeRegexPatternFrom,
   requestFpHp,

@@ -1,8 +1,9 @@
 'use strict'
 
-import ChatProcessor from './chat-processor.js'
-import { i18n, i18n_f, locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
+import { locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
+import ChatProcessor from './chat-processor.js'
 
 const Command = {
   on: 'set',

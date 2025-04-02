@@ -1,6 +1,7 @@
+import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { displayMod, horiz, i18n } from '../../lib/utilities.js'
+import { displayMod, horiz } from '../../lib/utilities.js'
 import { gurpslink } from '../../module/utilities/gurpslink.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'

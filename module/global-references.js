@@ -1,9 +1,9 @@
-import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { GurpsActor } from './actor/actor.js'
-import GURPSRange from '../lib/ranges.js'
-import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
+import Initiative from '../lib/initiative.js'
+import GURPSRange from '../lib/ranges.js'
+import { GurpsActor } from './actor/actor.js'
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
+import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 
 /**
  * @typedef {object} ChatProcessor

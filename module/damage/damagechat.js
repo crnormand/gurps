@@ -4,6 +4,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
+import selectTarget from '../select-target.js'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -66,6 +67,7 @@ export default class DamageChat {
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
   static async _dropCanvasData(canvas, dropData) {
+    // TODO - Remove
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DRAG_ON_TOKEN_DAMAGE))
       return await DamageChat._calculateAndSelectTargets(canvas, dropData)
 
@@ -101,35 +103,32 @@ export default class DamageChat {
         })
 
         if (selectedTokens.length > 1) {
+          selectedTokens = await selectTarget(selectedTokens)
           // Wait for the dialog to complete
-          selectedTokens = await new Promise(async resolve => {
-            let d = new Dialog(
-              {
-                title: game.i18n.localize('GURPS.selectToken'),
-                content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
-                  tokens: selectedTokens,
-                }),
-                buttons: {
-                  apply: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize('GURPS.addApply'),
-                    callback: html => {
-                      let name = html.find('select option:selected')[0].value.trim()
-                      if (name === 'all') {
-                        resolve(selectedTokens) // Resolve with all targets
-                      } else {
-                        let target = selectedTokens.find(token => token.name === name)
-                        resolve([target]) // Resolve with the selected target
-                      }
-                    },
-                  },
-                },
-                default: 'apply',
-              },
-              { width: 300 }
-            )
-            d.render(true)
-          })
+          // selectedTokens = await new Promise(async (resolve, reject) => {
+          //   await new foundry.applications.api.DialogV2({
+          //     window: { title: game.i18n.localize('GURPS.selectToken'), resizable: true },
+          //     content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
+          //       tokens: selectedTokens,
+          //     }),
+          //     buttons: [
+          //       {
+          //         icon: 'fas fa-save',
+          //         label: game.i18n.localize('GURPS.addApply'),
+          //         callback: (event, button, dialog) => {
+          //           const select = button.form.elements.select
+          //           const name = select ? select.value : null
+          //           if (name === 'all') {
+          //             resolve(selectedTokens) // Resolve with all targets
+          //           } else {
+          //             let target = selectedTokens.find(token => token.name === name)
+          //             resolve([target]) // Resolve with the selected target
+          //           }
+          //         },
+          //       },
+          //     ],
+          //   }).render({ force: true })
+          // })
         }
 
         if (selectedTokens.length === 0) {
@@ -237,7 +236,7 @@ export default class DamageChat {
       let d = new Dialog(
         {
           title: game.i18n.localize('GURPS.selectToken'),
-          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
             tokens: targets,
           }),
           // @ts-ignore

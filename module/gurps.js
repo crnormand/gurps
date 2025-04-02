@@ -7,9 +7,6 @@ import {
   arrayToObject,
   atou,
   d6ify,
-  i18n,
-  i18n_f,
-  initialize_i18nHelper,
   makeRegexPatternFrom,
   objectToArray,
   quotedAttackName,
@@ -63,6 +60,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
 import AddChatHooks from './chat.js'
 
+import { i18n, i18n_f, initialize_i18nHelper } from '../lib/i18n.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import { GGADebugger } from '../utils/debugger.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'

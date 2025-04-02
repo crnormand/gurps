@@ -1,8 +1,9 @@
 'use strict'
 
-import ChatProcessor from './chat-processor.js'
+import { i18n } from '../../lib/i18n.js'
 import { parselink } from '../../lib/parselink.js'
-import { isNiceDiceEnabled, splitArgs, i18n } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
+import ChatProcessor from './chat-processor.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
   help() {

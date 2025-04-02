@@ -1,5 +1,5 @@
-import { zeroFill } from '../lib/utilities.js'
 import * as settings from '../lib/miscellaneous-settings.js'
+import { zeroFill } from '../lib/utilities.js'
 
 export const AddImportEquipmentButton = async function (html) {
   let button = $(

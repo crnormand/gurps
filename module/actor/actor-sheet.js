@@ -1,7 +1,8 @@
+import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { arrayToObject, atou, i18n, i18n_f, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
@@ -651,12 +652,8 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         ],
-        _onRender(context, options) {
-          super._onRender(context, options)
-          this.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks)
-        },
+       
       }).render({ force: true })
-
       dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
 
       //   new Dialog({

@@ -1,4 +1,4 @@
-import { i18n_f } from '../../lib/utilities.js'
+import { i18n_f } from '../../lib/i18n.js'
 
 export default class MoveModeEditor extends Application {
   constructor(actor, options) {

@@ -1,5 +1,5 @@
-import GurpsToken from '../token.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
+import GurpsToken from '../token.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'

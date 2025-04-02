@@ -1,6 +1,6 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
+import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
@@ -22,6 +22,7 @@ export class ResourceTrackerManager extends FormApplication {
     })
   }
 
+  
   static getDefaultTemplates() {
     return {
       '0000': {

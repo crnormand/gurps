@@ -1,4 +1,6 @@
-import { i18n, recurselist } from '../lib/utilities.js'
+import { i18n } from '../lib/i18n.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
+import { recurselist } from '../lib/utilities.js'
 import Maneuvers, {
   MOVE_FULL,
   MOVE_HALF,
@@ -9,7 +11,6 @@ import Maneuvers, {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from './actor/maneuver.js'
-import * as Settings from '../lib/miscellaneous-settings.js'
 
 /**
  * # Actor Actions Class

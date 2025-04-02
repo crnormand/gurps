@@ -1,21 +1,22 @@
-import { xmlTextToJson, recurselist, i18n, i18n_f, arrayBuffertoBase64, aRecurselist } from '../../lib/utilities.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
+import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
-import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import {
-  Skill,
-  Spell,
   Advantage,
-  Ranged,
-  Note,
   Encumbrance,
   Equipment,
-  Reaction,
-  Modifier,
-  Melee,
   Language,
+  Melee,
+  Modifier,
+  Note,
+  Ranged,
+  Reaction,
+  Skill,
+  Spell,
 } from './actor-components.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
 
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
@@ -453,24 +454,6 @@ export class ActorImporter {
       commit = { ...commit, ...(await this.importEquipmentFromGCA(c.inventorylist)) }
       commit = { ...commit, ...(await this.importProtectionFromGCA(c.combat?.protectionlist)) }
     } catch (err) {
-      throw err
-      console.log(err.stack)
-      let msg = i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
-        lines: [msg],
-        version: version,
-        GCAVersion: GCAVersion,
-        GCSVersion: this.GCSVersion,
-        url: GURPS.USER_GUIDE_URL,
-      })
-
-      ui.notifications?.warn(msg)
-      let chatData = {
-        user: game.user.id,
-        content: content,
-        whisper: [game.user.id],
-      }
-      ChatMessage.create(chatData, {})
       // Don't return, because we want to see how much actually gets committed.
     }
     console.log('Starting commit')
@@ -1018,9 +1001,9 @@ export class ActorImporter {
       // and backup their exclusive info inside Actor system.itemInfo
       const isEligibleItem = item => {
         const sysKey =
-          itemType === 'equipment'
-            ? this.actor._findEqtkeyForId('itemid', item.id)
-            : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+          itemType === 'equipment' ?
+            this.actor._findEqtkeyForId('itemid', item.id)
+          : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
         return (
           (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
           !foundry.utils.getProperty(this.actor, sysKey)?.save
@@ -1758,7 +1741,10 @@ export class ActorImporter {
 
   async importSk(i, p) {
     if (this.GCSVersion === 5) {
-      i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
+      i.type =
+        i.id.startsWith('q') ? 'technique'
+        : i.id.startsWith('s') ? 'skill'
+        : 'skill_container'
     }
     let name =
       i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
@@ -1828,7 +1814,10 @@ export class ActorImporter {
   async importSp(i, p) {
     let s = new Spell()
     if (this.GCSVersion === 5) {
-      i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
+      i.type =
+        i.id.startsWith('r') ? 'ritual_magic_spell'
+        : i.id.startsWith('p') ? 'spell'
+        : 'spell_container'
     }
     s.name = i.name || 'Spell'
     s.originalName = i.name
@@ -2676,8 +2665,9 @@ export class ActorImporter {
 
       // Create or Update item
       const itemData = actorComp.toItemData(this.actor, fromProgram)
-      const [item] = !!existingItem
-        ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
+      const [item] =
+        !!existingItem ?
+          await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
         : await this.actor.createEmbeddedDocuments('Item', [itemData])
       // Update Actor Component for new Items
       if (!!item) {

@@ -1,4 +1,4 @@
-import { i18n, i18n_f } from '../../lib/utilities.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
 
 export default class GurpsActiveEffectListSheet extends Application {
   constructor(actor, options) {
@@ -22,9 +22,7 @@ export default class GurpsActiveEffectListSheet extends Application {
 
   getData() {
     const sheetData = super.getData()
-    sheetData.effects = this.actor
-      .getEmbeddedCollection('ActiveEffect')
-      .contents.filter(it => !it.isManeuver)
+    sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents.filter(it => !it.isManeuver)
     return sheetData
   }
 

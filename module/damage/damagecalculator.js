@@ -1,9 +1,10 @@
 'use strict'
 
+import { i18n } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
-import * as hitlocation from '../hitlocation/hitlocation.js'
-import { i18n, i18n_English, i18n_Text, i18n_Translate, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
+import * as hitlocation from '../hitlocation/hitlocation.js'
 import { TokenActions } from '../token-actions.js'
 
 /* 
@@ -1194,11 +1195,11 @@ class DamageCalculator {
   get unmodifiedPointsToApply() {
     let injury = this.injury
     let pointsToApply =
-      injury === 0
-        ? this._parent.isFlexibleArmor && this._parent.useBluntTrauma
-          ? this.effectiveBluntTrauma
-          : 0
-        : injury
+      injury === 0 ?
+        this._parent.isFlexibleArmor && this._parent.useBluntTrauma ?
+          this.effectiveBluntTrauma
+        : 0
+      : injury
     return pointsToApply
   }
 

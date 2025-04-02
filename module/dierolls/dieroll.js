@@ -1,5 +1,5 @@
+import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { i18n } from '../../lib/utilities.js'
 import { TokenActions } from '../token-actions.js'
 
 export const rollData = target => {
@@ -225,21 +225,18 @@ export async function doRoll({
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
     if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
       const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
-      consumeActionIcon = !result.hasActions
-        ? '<i class="fas fa-exclamation"></i>'
-        : canConsumeAction
-          ? '<i class="fas fa-plus"></i>'
-          : '<i class="fas fa-check"></i>'
-      consumeActionLabel = !result.hasActions
-        ? i18n('GURPS.noActionsAvailable')
-        : canConsumeAction
-          ? i18n('GURPS.willConsumeAction')
-          : i18n('GURPS.isFreeAction')
-      consumeActionColor = !result.hasActions
-        ? 'rgb(215,185,33)'
-        : canConsumeAction
-          ? 'rgba(20,119,180,0.7)'
-          : 'rgb(51,114,68,0.7)'
+      consumeActionIcon =
+        !result.hasActions ? '<i class="fas fa-exclamation"></i>'
+        : canConsumeAction ? '<i class="fas fa-plus"></i>'
+        : '<i class="fas fa-check"></i>'
+      consumeActionLabel =
+        !result.hasActions ? i18n('GURPS.noActionsAvailable')
+        : canConsumeAction ? i18n('GURPS.willConsumeAction')
+        : i18n('GURPS.isFreeAction')
+      consumeActionColor =
+        !result.hasActions ? 'rgb(215,185,33)'
+        : canConsumeAction ? 'rgba(20,119,180,0.7)'
+        : 'rgb(51,114,68,0.7)'
     }
 
     // Get Target Roll Info
@@ -335,11 +332,10 @@ export async function doRoll({
             break
           default:
             itemIcon = 'fas fa-dice'
-            rollType = !!targetData?.name
-              ? targetData.name
-              : thing
-                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
-                : formula
+            rollType =
+              !!targetData?.name ? targetData.name
+              : thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+              : formula
         }
         break
       default:

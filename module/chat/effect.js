@@ -1,6 +1,5 @@
-import { makeRegexPatternFrom } from '../../lib/utilities.js'
-import ChatProcessor from './chat-processor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import ChatProcessor from './chat-processor.js'
 
 export class ActiveEffectChatProcessor extends ChatProcessor {
   help() {

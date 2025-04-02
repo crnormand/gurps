@@ -1,8 +1,8 @@
 'use strict'
 
+import { i18n } from '../../lib/i18n.js'
+import { wait } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
-import { parselink } from '../../lib/parselink.js'
-import { i18n, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'
 
 const JB2A_PATREON = 'jb2a_patreon'
 const JB2A_FREE = 'JB2A_DnD5e'
@@ -247,7 +247,6 @@ export class AnimChatProcessor extends ChatProcessor {
     list = ['Total: ' + ANIM_LIBRARY.length, ...list]
 
     let t = await renderTemplate('systems/gurps/templates/import-stat-block.html', { block: list.join('\n') })
-    //let t = await renderTemplate('systems/gurps/templates/chat-processing.html', { lines: list })
     let d = new Dialog(
       {
         title: `Anim library`,
@@ -269,7 +268,6 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    //   this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>[-+][\d\.]+)? *(?<fudge>[-+][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)
     this.match = line.match(
       /^\/anim +(?<list>list)? *(?<wait>w[\d\.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d\.]+,[\d\.]+)?)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>[\+>][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/
     )
@@ -393,7 +391,6 @@ export class AnimChatProcessor extends ChatProcessor {
     if ((!centered || move) && destTokens.length == 1 && destTokens[0] == srcToken) {
       await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/, ''))
       return true
-      //return this.errorExit('Source and Destination cannot be the same token with using a moving animation')
     }
     if (move) {
       let temp = srcToken
