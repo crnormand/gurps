@@ -1,26 +1,9 @@
 'use strict'
 
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
-
-/**
- * @typedef {{
-	  formula: string,
-	  rolled: boolean,
-	  modifier: number,
-	  diceText: string,
-	  damageType: string,
-	  extdamagetype: string|null,
-	  multiplier: number,
-	  divisor: number,
-	  adds1: number,
-	  adds2: number,
-	  min: number,
-	  loaded?: boolean,
-	}} diceData;
- */
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -108,46 +91,63 @@ export default class DamageChat {
           ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
           return false
         }
-        let userTargets = user?.targets
-        let oldTargets = [...userTargets]
 
-        if (!userTargets || userTargets.size === 0) {
-          // disable old Targets if exist and
-          // find token on dropped location
-          for (let target of oldTargets) {
-            target.setTarget(false, { user: user, releaseOthers: false })
+        // First check to see if the damage was dropped on a token.
+        let selectedTokens = canvas.tokens?.placeables.filter(token => {
+          if (isDropWithinTokenBounds(dropData.x, dropData.y, token)) {
+            return isInsidePolygon(dropData.x, dropData.y, createHitAreaPolygon(token))
           }
-          const grid_size = canvas.scene?.grid.size
-          const dropX = dropData.x
-          const dropY = dropData.y
-
-          const targetToken = canvas.tokens?.placeables.find(token => {
-            const tokenX = token.x
-            const tokenY = token.y
-            return dropX >= tokenX && dropX < tokenX + grid_size && dropY >= tokenY && dropY < tokenY + grid_size
-          })
-          // If token found, target it
-          if (targetToken) {
-            targetToken.setTarget(true, { user: user, releaseOthers: false })
-            userTargets = new Set([targetToken])
-          }
-        }
-        if (!userTargets || userTargets.size === 0) {
-          ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForDamageWarning'))
           return false
-        }
-        for (let target of userTargets) {
-          // Will open one Injury Dialog for each target
-          dropData.payload.token = target
-          if (target.actor) await target.actor.handleDamageDrop(dropData.payload)
+        })
+
+        if (selectedTokens.length > 1) {
+          // Wait for the dialog to complete
+          selectedTokens = await new Promise(async resolve => {
+            let d = new Dialog(
+              {
+                title: game.i18n.localize('GURPS.selectToken'),
+                content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+                  tokens: selectedTokens,
+                }),
+                buttons: {
+                  apply: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: game.i18n.localize('GURPS.addApply'),
+                    callback: html => {
+                      let name = html.find('select option:selected')[0].value.trim()
+                      if (name === 'all') {
+                        resolve(selectedTokens) // Resolve with all targets
+                      } else {
+                        let target = selectedTokens.find(token => token.name === name)
+                        resolve([target]) // Resolve with the selected target
+                      }
+                    },
+                  },
+                },
+                default: 'apply',
+              },
+              { width: 300 }
+            )
+            d.render(true)
+          })
         }
 
-        // Disable target and re-enable old targets, if exist
-        for (let target of userTargets) {
-          target.setTarget(false, { user: user, releaseOthers: false })
+        if (selectedTokens.length === 0) {
+          // If no token was found, check if the user has any targets.
+          selectedTokens = user?.targets.values().toArray()
+
+          if (!selectedTokens || selectedTokens.length === 0) {
+            ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForDamageWarning'))
+            return false
+          }
         }
-        for (let target of oldTargets) {
-          target.setTarget(true, { user: user, releaseOthers: false })
+
+        if (selectedTokens.length > 0) {
+          for (let target of selectedTokens) {
+            dropData.payload.token = target
+            if (target.actor) await target.actor.handleDamageDrop(dropData.payload)
+          }
+          return false
         }
         break
       case 'Item':
@@ -158,6 +158,46 @@ export default class DamageChat {
         break
     }
     return false
+
+    function createHitAreaPolygon(token) {
+      let points =
+        token.hitArea?.points.map((value, index) => {
+          return index % 2 === 1 ? value + token.x : value + token.y
+        }) || []
+
+      // Modify the points array by swapping the x and y coordinates.
+      // For some reason, the token.hitArea.points are in (y, x) order.
+      for (let i = 0; i < points.length; i += 2) {
+        let temp = points[i]
+        points[i] = points[i + 1]
+        points[i + 1] = temp
+      }
+      return points
+    }
+
+    function isDropWithinTokenBounds(dropX, dropY, token) {
+      return dropX >= token.x && dropX <= token.x + token.w && dropY >= token.y && dropY <= token.y + token.h
+    }
+
+    function isInsidePolygon(x, y, polygon) {
+      // A polygon must have 3 (x, y) coordinates.
+      if (polygon.length < 6) return false
+
+      let inside = false
+
+      for (let i = 0, j = polygon.length - 2; i < polygon.length; i += 2) {
+        const xi = polygon[i],
+          yi = polygon[i + 1]
+        const xj = polygon[j],
+          yj = polygon[j + 1]
+
+        const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi
+        if (intersect) inside = !inside
+        j = i
+      }
+
+      return inside
+    }
   }
 
   static async _calculateAndSelectTargets(canvas, dropData) {
