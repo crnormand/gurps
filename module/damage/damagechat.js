@@ -5,6 +5,7 @@ import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from
 import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
 import selectTarget from '../select-target.js'
+import { getTokenHitAreaAsPolygon, isInsidePolygon, isInsideTokenBoundingBox } from '../utilities/canvas.js'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -67,87 +68,11 @@ export default class DamageChat {
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
   static async _dropCanvasData(canvas, dropData) {
-    // TODO - Remove
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DRAG_ON_TOKEN_DAMAGE))
-      return await DamageChat._calculateAndSelectTargets(canvas, dropData)
-
     const actor = game.users.get(dropData.actorid)
-
-    const isValidUser = (user, attackerActor) => {
-      if (game.user.isGM) return true
-      const userCanAdd = !game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ONLY_GMS_OPEN_ADD)
-      const userOwnsAttacker = attackerActor ? user.character === attackerActor : false
-      if (!userOwnsAttacker) ui.notifications?.warn(game.i18n.localize('GURPS.noUserForDamageWarning'))
-      return userCanAdd && userOwnsAttacker
-    }
 
     switch (dropData.type) {
       case 'damageItem':
-        // We need to know who is:
-        // 1. The Attacker Actor: The actor that rolled the damage
-        // 2. The Game User: The user which makes the drag
-        // 3. The User existing Targets or the Token which user dropped the damage on
-        let attackerActor = game.actors.get(dropData.payload.attacker)
-        const { user } = game
-        if (!isValidUser(user, attackerActor)) {
-          ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
-          return false
-        }
-
-        // First check to see if the damage was dropped on a token.
-        let selectedTokens = canvas.tokens?.placeables.filter(token => {
-          if (isDropWithinTokenBounds(dropData.x, dropData.y, token)) {
-            return isInsidePolygon(dropData.x, dropData.y, createHitAreaPolygon(token))
-          }
-          return false
-        })
-
-        if (selectedTokens.length > 1) {
-          selectedTokens = await selectTarget(selectedTokens)
-          // Wait for the dialog to complete
-          // selectedTokens = await new Promise(async (resolve, reject) => {
-          //   await new foundry.applications.api.DialogV2({
-          //     window: { title: game.i18n.localize('GURPS.selectToken'), resizable: true },
-          //     content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
-          //       tokens: selectedTokens,
-          //     }),
-          //     buttons: [
-          //       {
-          //         icon: 'fas fa-save',
-          //         label: game.i18n.localize('GURPS.addApply'),
-          //         callback: (event, button, dialog) => {
-          //           const select = button.form.elements.select
-          //           const name = select ? select.value : null
-          //           if (name === 'all') {
-          //             resolve(selectedTokens) // Resolve with all targets
-          //           } else {
-          //             let target = selectedTokens.find(token => token.name === name)
-          //             resolve([target]) // Resolve with the selected target
-          //           }
-          //         },
-          //       },
-          //     ],
-          //   }).render({ force: true })
-          // })
-        }
-
-        if (selectedTokens.length === 0) {
-          // If no token was found, check if the user has any targets.
-          selectedTokens = user?.targets.values().toArray()
-
-          if (!selectedTokens || selectedTokens.length === 0) {
-            ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForDamageWarning'))
-            return false
-          }
-        }
-
-        if (selectedTokens.length > 0) {
-          for (let target of selectedTokens) {
-            dropData.payload.token = target
-            if (target.actor) await target.actor.handleDamageDrop(dropData.payload)
-          }
-          return false
-        }
+        await DamageChat._calculateAndSelectTargets(canvas, dropData)
         break
       case 'Item':
         await actor.handleItemDrop(dropData)
@@ -157,99 +82,6 @@ export default class DamageChat {
         break
     }
     return false
-
-    function createHitAreaPolygon(token) {
-      let points =
-        token.hitArea?.points.map((value, index) => {
-          return index % 2 === 1 ? value + token.x : value + token.y
-        }) || []
-
-      // Modify the points array by swapping the x and y coordinates.
-      // For some reason, the token.hitArea.points are in (y, x) order.
-      for (let i = 0; i < points.length; i += 2) {
-        let temp = points[i]
-        points[i] = points[i + 1]
-        points[i + 1] = temp
-      }
-      return points
-    }
-
-    function isDropWithinTokenBounds(dropX, dropY, token) {
-      return dropX >= token.x && dropX <= token.x + token.w && dropY >= token.y && dropY <= token.y + token.h
-    }
-
-    function isInsidePolygon(x, y, polygon) {
-      // A polygon must have 3 (x, y) coordinates.
-      if (polygon.length < 6) return false
-
-      let inside = false
-
-      for (let i = 0, j = polygon.length - 2; i < polygon.length; i += 2) {
-        const xi = polygon[i],
-          yi = polygon[i + 1]
-        const xj = polygon[j],
-          yj = polygon[j + 1]
-
-        const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi
-        if (intersect) inside = !inside
-        j = i
-      }
-
-      return inside
-    }
-  }
-
-  static async _calculateAndSelectTargets(canvas, dropData) {
-    if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
-      // Find all tokens under the drop point.
-      const targets = canvas.tokens.placeables.filter(token => {
-        return (
-          dropData.x >= token.bounds.x &&
-          dropData.x <= token.bounds.x + token.bounds.width &&
-          dropData.y >= token.bounds.y &&
-          dropData.y <= token.bounds.y + token.bounds.height
-        )
-      })
-
-      let handle = (/** @type {GurpsActor} */ actor) => actor.handleDamageDrop(dropData.payload)
-      if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
-      if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
-
-      if (targets.length === 0) return false
-      if (targets.length === 1) {
-        handle(targets[0].actor)
-        return false
-      }
-
-      let buttons = {
-        apply: {
-          icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize('GURPS.addApply'),
-          callback: (/** @type {JQuery<HTMLElement>} */ html) => {
-            let name = html.find('select option:selected').text().trim()
-            let target = targets.find(token => token.name === name)
-            handle(target?.actor)
-          },
-        },
-      }
-
-      let d = new Dialog(
-        {
-          title: game.i18n.localize('GURPS.selectToken'),
-          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
-            tokens: targets,
-          }),
-          // @ts-ignore
-          buttons: buttons,
-          default: 'apply',
-          tokens: targets,
-        },
-        { width: 300 }
-      )
-      await d.render(true)
-
-      return false
-    }
   }
 
   static init() {
@@ -602,6 +434,63 @@ export default class DamageChat {
       messageData.sound = CONFIG.sounds.dice
     }
     ChatMessage.create(messageData)
+  }
+
+  static async _calculateAndSelectTargets(canvas, dropData) {
+    // We need to know who is:
+    // 1. The Attacker Actor: The actor that rolled the damage
+    // 2. The Game User: The user which makes the drag
+    // 3. The User existing Targets or the Token which user dropped the damage on
+    let attackerActor = game.actors.get(dropData.payload.attacker)
+    const { user } = game
+    if (!isValidUser(user, attackerActor)) {
+      ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
+      return false
+    }
+
+    // First check to see if the damage was dropped on a token.
+    let selectedTokens = canvas.tokens?.placeables.filter(token => {
+      if (isInsideTokenBoundingBox(dropData.x, dropData.y, token)) {
+        return isInsidePolygon(dropData.x, dropData.y, getTokenHitAreaAsPolygon(token))
+      }
+      return false
+    })
+
+    if (selectedTokens.length > 1) {
+      selectedTokens = await selectTarget(selectedTokens)
+    }
+
+    if (selectedTokens.length === 0) {
+      // If no token was found, check if the user has any targets.
+      selectedTokens = user?.targets.values().toArray()
+
+      if (!selectedTokens || selectedTokens.length === 0) {
+        ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForDamageWarning'))
+        return false
+      }
+
+      if (selectedTokens.length > 1) {
+        selectedTokens = await selectTarget(selectedTokens)
+      }
+    }
+
+    if (selectedTokens.length > 0) {
+      for (let target of selectedTokens) {
+        dropData.payload.token = target
+        if (target.actor) await target.actor.handleDamageDrop(dropData.payload)
+      }
+      return false
+    }
+
+    return tue
+
+    function isValidUser(user, attackerActor) {
+      if (game.user.isGM) return true
+      const userCanAdd = !game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ONLY_GMS_OPEN_ADD)
+      const userOwnsAttacker = attackerActor ? user.character === attackerActor : false
+      if (!userOwnsAttacker) ui.notifications?.warn(game.i18n.localize('GURPS.noUserForDamageWarning'))
+      return userCanAdd && userOwnsAttacker
+    }
   }
 }
 
