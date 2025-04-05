@@ -2311,13 +2311,13 @@ export class GurpsActor extends Actor {
         let matched = false
         const equipment = this.system.equipment
 
-        recurselist(equipment.carried, (item, _k, _d) => {
+        recurselist(equipment?.carried ?? [], (item, _k, _d) => {
           if (!matched && namesMatch(melee, item)) {
             matched = true
           }
         })
 
-        recurselist(equipment.other, (item, _k, _d) => {
+        recurselist(equipment?.other ?? [], (item, _k, _d) => {
           if (!matched && namesMatch(melee, item)) {
             matched = true
           }
