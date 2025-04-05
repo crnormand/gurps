@@ -106,10 +106,7 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     const targetRoll = action.orig
     const bucketTotal = GURPS.ModifierBucket.currentSum()
     const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-    const bucketRollColor =
-      bucketTotal > 0 ? 'darkgreen'
-      : bucketTotal < 0 ? 'darkred'
-      : '#a8a8a8'
+    const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
     const isBlindRoll = action.blindroll
     const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
     // Armor divisor can be (0.5) or (2) - need to regex to get the number
@@ -758,10 +755,7 @@ if (!globalThis.GURPS) {
       let formula
       if (dfAdd && formulaAdd) {
         finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
-        const signal =
-          finalAdd === 0 ? ''
-          : finalAdd > 0 ? '+'
-          : '-'
+        const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
         formula = `${dice}${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
       } else {
         formula = df + action.formula
@@ -1391,9 +1385,9 @@ if (!globalThis.GURPS) {
     if (['attribute', 'skill-spell'].includes(action.type)) {
       action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
     }
-    return !action ? false : (
-        await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
-      )
+    return !action
+      ? false
+      : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
   }
   GURPS.performAction = performAction
 
@@ -2411,15 +2405,10 @@ if (!globalThis.GURPS) {
     const migrationVersion = SemanticVersion.fromString(mv)
     // @ts-ignore
     if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
-      // TODO: remove
       // check which migrations are needed
       // @ts-ignore
       // if (migrationVersion.isLowerThan(Settings.VERSION_096)) await Migration.migrateTo096(quiet)
-      // @ts-ignore
-      // if (migrationVersion.isLowerThan(Settings.VERSION_097)) await Migration.migrateTo097(quiet)
-      // @ts-ignore
-      // if (migrationVersion.isLowerThan(Settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
-
+      await Migration.showConfirmationDialogIfAutoAddIsTrue()
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
     }
 
