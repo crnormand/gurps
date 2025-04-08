@@ -2,7 +2,7 @@
  * Multiple targets are selected -- prompt the user for
  * which target to apply some function to.
  */
-export default async function selectTarget(targets) {
+export default async function selectTarget(targets, selected = false) {
   return new Promise(async resolve => {
     const dialog = await new foundry.applications.api.DialogV2({
       window: { title: game.i18n.localize('GURPS.selectToken'), resizable: true },
@@ -32,7 +32,15 @@ export default async function selectTarget(targets) {
     }).render({ force: true })
 
     const allCheckbox = dialog.element.querySelector('input[name="all"]')
+
+    // Default to checked if selected is true.
+    if (selected) allCheckbox.checked = true
+
     const otherCheckboxes = dialog.element.querySelectorAll('input[name="tokens"]')
+
+    // Default to checked if selected is true.
+    if (selected) otherCheckboxes.forEach(checkbox => (checkbox.checked = true))
+
     allCheckbox.addEventListener('change', event => {
       const isChecked = event.target.checked
       otherCheckboxes.forEach(checkbox => (checkbox.checked = isChecked))

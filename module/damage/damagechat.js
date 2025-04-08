@@ -5,7 +5,6 @@ import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from
 import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
 import selectTarget from '../select-target.js'
-import { getTokenHitAreaAsPolygon, isInsidePolygon, isInsideTokenBoundingBox } from '../utilities/canvas.js'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -448,13 +447,13 @@ export default class DamageChat {
       return false
     }
 
-    // First check to see if the damage was dropped on a token.
-    let selectedTokens = canvas.tokens?.placeables.filter(token => {
-      if (isInsideTokenBoundingBox(dropData.x, dropData.y, token)) {
-        return isInsidePolygon(dropData.x, dropData.y, getTokenHitAreaAsPolygon(token))
-      }
-      return false
-    })
+    // Create a "reactangle" to represent the drop coordinates. It is really a point as width and height are 0.
+    const rect = new PIXI.Rectangle(dropData.x, dropData.y, 0, 0)
+
+    // Get all tokens under the point.
+    let selectedTokens = canvas.tokens.quadtree.getObjects(rect, {
+      collisionTest: o => o.t.hitArea.contains(dropData.x - o.t.x, dropData.y - o.t.y),
+    }).values().toArray()
 
     if (selectedTokens.length > 1) {
       selectedTokens = await selectTarget(selectedTokens)
@@ -470,7 +469,7 @@ export default class DamageChat {
       }
 
       if (selectedTokens.length > 1) {
-        selectedTokens = await selectTarget(selectedTokens)
+        selectedTokens = await selectTarget(selectedTokens, true)
       }
     }
 
@@ -482,7 +481,7 @@ export default class DamageChat {
       return false
     }
 
-    return tue
+    return true
 
     function isValidUser(user, attackerActor) {
       if (game.user.isGM) return true
