@@ -4,15 +4,15 @@
  * ~Stevil
  */
 
-import { objectToArray } from '../../lib/utilities.js'
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
+import { objectToArray } from '../../lib/utilities.js'
 import {
   SETTING_COLOR_CHARACTER_SHEET_DATA,
-  SETTING_DEFAULT_COLOR_BACKGROUND,
-  SETTING_DEFAULT_COLOR_TEXT,
-  SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
-  SETTING_DEFAULT_COLOR_TEXT_HOVER,
   SETTING_COLOR_ROLLABLE,
+  SETTING_DEFAULT_COLOR_BACKGROUND,
+  SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
+  SETTING_DEFAULT_COLOR_TEXT,
+  SETTING_DEFAULT_COLOR_TEXT_HOVER,
 } from './color-character-sheet-settings.js'
 
 export function addColorWheelsToSettings() {

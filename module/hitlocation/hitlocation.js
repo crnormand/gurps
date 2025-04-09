@@ -1,6 +1,7 @@
 'use strict'
 
-import { extractP, convertRollStringToArrayOfInt, i18n } from '../../lib/utilities.js'
+import { i18n } from '../../lib/i18n.js'
+import { convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 
 export const LIMB = 'limb'
 export const EXTREMITY = 'extremity'

@@ -1,19 +1,20 @@
-import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill, isEmptyObject } from '../../lib/utilities.js'
-import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
-import { parselink } from '../../lib/parselink.js'
-import * as CI from '../injury/domain/ConditionalInjury.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { parselink } from '../../lib/parselink.js'
+import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
+import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
+import { isConfigurationAllowed } from '../game-utils.js'
+import GurpsWiring from '../gurps-wiring.js'
+import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
+import * as CI from '../injury/domain/ConditionalInjury.js'
+import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
+import { ActorImporter } from './actor-importer.js'
+import { cleanTags } from './effect-modifier-popout.js'
+import MoveModeEditor from './move-mode-editor.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
-import GurpsWiring from '../gurps-wiring.js'
-import { isConfigurationAllowed } from '../game-utils.js'
-import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
-import MoveModeEditor from './move-mode-editor.js'
-import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import SplitDREditor from './splitdr-editor.js'
-import { ActorImporter } from './actor-importer.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { cleanTags } from './effect-modifier-popout.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -651,12 +652,8 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         ],
-        _onRender(context, options) {
-          super._onRender(context, options)
-          this.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks)
-        },
+       
       }).render({ force: true })
-
       dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
 
       //   new Dialog({
@@ -1043,8 +1040,8 @@ export class GurpsActorSheet extends ActorSheet {
     }
     const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
-    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem
-      ? {
+    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem ?
+        {
           n: item.name,
           id: item.id,
         }
@@ -1659,7 +1656,7 @@ export class GurpsActorSheet extends ActorSheet {
   get title() {
     const t = this.actor.name
     const sheet = this.actor.getFlag('core', 'sheetClass')
-    return sheet === 'gurps.GurpsActorEditorSheet' ? '**** Editing: ' + t + ' ****' : t
+    return sheet === 'GURPS.GurpsActorEditorSheet' ? '**** Editing: ' + t + ' ****' : t
   }
 
   _getHeaderButtons() {
@@ -1677,10 +1674,10 @@ export class GurpsActorSheet extends ActorSheet {
    */
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
-    const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
+    const isEditor = sheet === 'GURPS.GurpsActorEditorSheet'
     const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
 
-    const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
+    const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
     let b = [
       {
         label: isFull ? altsheet : 'Full View',
@@ -1724,20 +1721,20 @@ export class GurpsActorSheet extends ActorSheet {
       Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.default)[0].id
     console.log('original: ' + original)
 
-    if (original != 'gurps.GurpsActorSheet') newSheet = 'gurps.GurpsActorSheet'
+    if (original != 'GURPS.GurpsActorSheet') newSheet = 'GURPS.GurpsActorSheet'
     if (event.shiftKey)
       // Hold down the shift key for Simplified
-      newSheet = 'gurps.GurpsActorSimplifiedSheet'
+      newSheet = 'GURPS.GurpsActorSimplifiedSheet'
     if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
       // Hold down the Ctrl key (Command on Mac) for Simplified
-      newSheet = 'gurps.GurpsActorNpcSheet'
+      newSheet = 'GURPS.GurpsActorNpcSheet'
 
     this.actor.openSheet(newSheet)
   }
 
   async _onOpenEditor(event) {
     event.preventDefault()
-    this.actor.openSheet('gurps.GurpsActorEditorSheet')
+    this.actor.openSheet('GURPS.GurpsActorEditorSheet')
   }
 
   async _onRightClickGurpslink(event) {
@@ -1920,8 +1917,8 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
 
   /** @override */
   get template() {
-    return !game.user.isGM && this.actor.limited
-      ? 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return !game.user.isGM && this.actor.limited ?
+        'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
       : 'systems/gurps/templates/actor/actor-tab-sheet.hbs'
   }
 }
@@ -1973,7 +1970,7 @@ Hooks.on('getGurpsActorEditorSheetHeaderButtons', sheet => {
             'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
           label: 'Ok',
           callback: async () => {
-            sheet.actor.openSheet('gurps.GurpsActorSheet')
+            sheet.actor.openSheet('GURPS.GurpsActorSheet')
           },
           rejectClose: false,
         }),

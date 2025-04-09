@@ -1,5 +1,4 @@
-import { i18n } from '../../lib/utilities.js'
-import GurpsToken from '../token.js'
+import { i18n } from '../../lib/i18n.js'
 import Maneuvers from './maneuver.js'
 
 /**
@@ -94,5 +93,4 @@ export default class ManeuverHUDButton {
   //      - per token [Always for Everyone, Same Disposition, Only When Controlled, etc...]
   // TODO Ultimately turn this into an Active Effect - and actually adjust Move and/or other conditions
   // TODO Add status hint text to modifier bucket
-
 }

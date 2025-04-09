@@ -7,9 +7,6 @@ import {
   arrayToObject,
   atou,
   d6ify,
-  i18n,
-  i18n_f,
-  initialize_i18nHelper,
   makeRegexPatternFrom,
   objectToArray,
   quotedAttackName,
@@ -63,6 +60,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
 import AddChatHooks from './chat.js'
 
+import { i18n, i18n_f, initialize_i18nHelper } from '../lib/i18n.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import { GGADebugger } from '../utils/debugger.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
@@ -2407,15 +2405,10 @@ if (!globalThis.GURPS) {
     const migrationVersion = SemanticVersion.fromString(mv)
     // @ts-ignore
     if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
-      // TODO: remove
       // check which migrations are needed
       // @ts-ignore
       // if (migrationVersion.isLowerThan(Settings.VERSION_096)) await Migration.migrateTo096(quiet)
-      // @ts-ignore
-      // if (migrationVersion.isLowerThan(Settings.VERSION_097)) await Migration.migrateTo097(quiet)
-      // @ts-ignore
-      // if (migrationVersion.isLowerThan(Settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
-
+      await Migration.showConfirmationDialogIfAutoAddIsTrue()
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
     }
 
@@ -2433,7 +2426,7 @@ if (!globalThis.GURPS) {
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>
 <div style='font-size:70%'>
-  <div>${game.i18n.localize('gurps.copyright')}</div>
+  <div>${game.i18n.localize('GURPS.copyright')}</div>
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
@@ -2774,7 +2767,7 @@ if (!globalThis.GURPS) {
     // This system setting must be built AFTER all of the character sheets have been registered
     let sheets = /** @type {Record<string,string>} */ ({})
     Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
+      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'GURPS.GurpsActorSheet') sheets[e.label] = e.label
     })
     game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: i18n('GURPS.settingSheetDetail'),

@@ -4,16 +4,16 @@
  * ~Stevil
  */
 
-import { objectToArray } from '../../lib/utilities.js'
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
-import { addColorWheelsToSettings, saveColorWheelsToSettings, colorGurpsActorSheet } from './color-character-sheet.js'
+import { objectToArray } from '../../lib/utilities.js'
 import {
   SETTING_COLOR_CHARACTER_SHEET_DATA,
   SETTING_DEFAULT_COLOR_BACKGROUND,
-  SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
+  SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_TEXT_HOVER,
 } from '../../module/color-character-sheet/color-character-sheet-settings.js'
+import { addColorWheelsToSettings, colorGurpsActorSheet, saveColorWheelsToSettings } from './color-character-sheet.js'
 
 export const updateSheets = () => {
   // eslint-disable-next-line no-undef

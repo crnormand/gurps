@@ -1,6 +1,7 @@
+import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
+import { displayMod, generateUniqueId } from '../../lib/utilities.js'
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
 import ModifierBucketEditor from './tooltip-window.js'
@@ -214,7 +215,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(i18n('gurps.modifiers.rapidStrike')))
+    let rs = this.modifierList.find(m => m.desc.includes(i18n('GURPS.modifiers_.rapidStrike')))
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened

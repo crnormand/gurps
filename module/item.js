@@ -1,5 +1,5 @@
-import { recurselist } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
+import { recurselist } from '../lib/utilities.js'
 
 export class GurpsItem extends Item {
   /**

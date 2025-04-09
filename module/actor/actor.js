@@ -1,40 +1,39 @@
 'use strict'
 
+import { i18n, i18n_f } from '../../lib/i18n.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
-  recurselist,
-  makeRegexPatternFrom,
-  i18n,
-  i18n_f,
-  splitArgs,
-  generateUniqueId,
-  objectToArray,
   arrayToObject,
+  generateUniqueId,
+  makeRegexPatternFrom,
+  objectToArray,
+  recurselist,
+  splitArgs,
   zeroFill,
 } from '../../lib/utilities.js'
-import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
+import { HitLocation } from '../hitlocation/hitlocation.js'
+import { GurpsItem } from '../item.js'
+import { TokenActions } from '../token-actions.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
+import { ActorImporter } from './actor-importer.js'
+import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 import Maneuvers, {
+  MOVE_HALF,
   MOVE_NONE,
   MOVE_ONE,
+  MOVE_ONETHIRD,
   MOVE_STEP,
   MOVE_TWO_STEPS,
-  MOVE_ONETHIRD,
-  MOVE_HALF,
   MOVE_TWOTHIRDS,
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { GurpsItem } from '../item.js'
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
-import { multiplyDice } from '../utilities/damage-utils.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
-import { ActorImporter } from './actor-importer.js'
-import { HitLocation } from '../hitlocation/hitlocation.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { TokenActions } from '../token-actions.js'
-import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -740,11 +739,13 @@ export class GurpsActor extends Actor {
     let posture = this._getMoveAdjustedForPosture(move, threshold)
 
     if (threshold == 1.0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
-    return updateMove
-      ? maneuver.move < posture.move
-        ? maneuver.move
+    return (
+      updateMove ?
+        maneuver.move < posture.move ?
+          maneuver.move
         : posture.move
       : Math.max(1, Math.floor(move * threshold))
+    )
   }
 
   _getMoveAdjustedForManeuver(move, threshold) {
@@ -757,12 +758,12 @@ export class GurpsActor extends Actor {
 
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
-    return !!adjustment
-      ? adjustment
-      : {
+    return !!adjustment ? adjustment : (
+        {
           move: Math.max(1, Math.floor(move * threshold)),
           text: i18n('GURPS.moveFull'),
         }
+      )
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -829,12 +830,12 @@ export class GurpsActor extends Actor {
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
-    return !!adjustment
-      ? adjustment
-      : {
+    return !!adjustment ? adjustment : (
+        {
           move: Math.max(1, Math.floor(move * threshold)),
           text: i18n('GURPS.moveFull'),
         }
+      )
   }
 
   _calculateRangedRanges() {
@@ -1435,9 +1436,9 @@ export class GurpsActor extends Actor {
 
       // 2. Check if Actor Component exists
       const actorCompKey =
-        data.type === 'equipment'
-          ? this._findEqtkeyForId('globalid', data.system.globalid)
-          : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
+        data.type === 'equipment' ?
+          this._findEqtkeyForId('globalid', data.system.globalid)
+        : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
       const actorComp = foundry.utils.getProperty(this, actorCompKey)
       if (!!actorComp) {
         ui.notifications?.warn(i18n('GURPS.cannotDropItemAlreadyExists'))
@@ -1504,9 +1505,9 @@ export class GurpsActor extends Actor {
 
         // 6. Process Child Items for created Item
         const actorCompKey =
-          data.type === 'equipment'
-            ? this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
-            : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
+          data.type === 'equipment' ?
+            this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
+          : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
         await this._addItemAdditions(parentItem, actorCompKey)
       }
     }
@@ -2310,13 +2311,13 @@ export class GurpsActor extends Actor {
         let matched = false
         const equipment = this.system.equipment
 
-        recurselist(equipment.carried, (item, _k, _d) => {
+        recurselist(equipment?.carried ?? [], (item, _k, _d) => {
           if (!matched && namesMatch(melee, item)) {
             matched = true
           }
         })
 
-        recurselist(equipment.other, (item, _k, _d) => {
+        recurselist(equipment?.other ?? [], (item, _k, _d) => {
           if (!matched && namesMatch(melee, item)) {
             matched = true
           }
@@ -2583,9 +2584,9 @@ export class GurpsActor extends Actor {
 
   async _updateItemFromForm(item) {
     const sysKey =
-      item.type === 'equipment'
-        ? this._findEqtkeyForId('itemid', item.id)
-        : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+      item.type === 'equipment' ?
+        this._findEqtkeyForId('itemid', item.id)
+      : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
 
     const actorComp = foundry.utils.getProperty(this, sysKey)
 
@@ -3562,7 +3563,10 @@ export class GurpsActor extends Actor {
 
       default:
         result = {
-          name: thing ? thing : chatting ? chatting.split('/[')[0] : formula,
+          name:
+            thing ? thing
+            : chatting ? chatting.split('/[')[0]
+            : formula,
           uuid: null,
           itemId: null,
           fromItem: null,

@@ -1,8 +1,8 @@
 'use strict'
-import { _Base, Melee, Skill, Spell, Advantage, Ranged } from './actor/actor-components.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
-import { recurselist } from '../lib/utilities.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
+import { recurselist } from '../lib/utilities.js'
+import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */

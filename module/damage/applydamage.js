@@ -1,21 +1,21 @@
 'use strict'
 
-import { CompositeDamageCalculator } from './damagecalculator.js'
+import { i18n } from '../../lib/i18n.js'
+import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
 import {
+  displayMod,
+  generateUniqueId,
   isNiceDiceEnabled,
+  locateToken,
+  objectToArray,
   parseFloatFrom,
   parseIntFrom,
-  generateUniqueId,
-  objectToArray,
-  i18n,
-  displayMod,
-  locateToken,
 } from '../../lib/utilities.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
-import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor/actor.js'
 import { handleOnPdf } from '../pdf-refs.js'
 import { TokenActions } from '../token-actions.js'
+import { CompositeDamageCalculator } from './damagecalculator.js'
 
 const simpleDialogHeight = 160
 
@@ -511,11 +511,9 @@ export default class ApplyDamageDialog extends Application {
       case 'majorwound':
       case 'crippling':
         const htCheck =
-          (effect?.modifier ?? 0) === 0
-            ? 'HT'
-            : effect.modifier < 0
-              ? `HT+${-effect.modifier}`
-              : `HT-${effect.modifier}`
+          (effect?.modifier ?? 0) === 0 ? 'HT'
+          : effect.modifier < 0 ? `HT+${-effect.modifier}`
+          : `HT-${effect.modifier}`
 
         otf = `/r [!${htCheck}]`
         break
@@ -525,9 +523,9 @@ export default class ApplyDamageDialog extends Application {
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
         const localeAcrobaticsName = i18n('GURPS.skillAcrobatics')
         const localeAcrobaticsCheck =
-          effect?.modifier && effect.modifier === 0
-            ? localeAcrobaticsName
-            : `${localeAcrobaticsName} -${effect.modifier}`
+          effect?.modifier && effect.modifier === 0 ?
+            localeAcrobaticsName
+          : `${localeAcrobaticsName} -${effect.modifier}`
         const localeJudoName = i18n('GURPS.skillJudo')
         const localeJudoCheck =
           effect?.modifier && effect.modifier === 0 ? localeJudoName : `${localeJudoName} -${effect.modifier}`
@@ -646,7 +644,9 @@ export default class ApplyDamageDialog extends Application {
 
     if (object.type === 'majorwound') {
       let htCheck =
-        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+        object.modifier === 0 ? 'HT'
+        : object.modifier < 0 ? `HT+${-object.modifier}`
+        : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
@@ -659,7 +659,9 @@ export default class ApplyDamageDialog extends Application {
 
     if (object.type === 'headvitalshit') {
       let htCheck =
-        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+        object.modifier === 0 ? 'HT'
+        : object.modifier < 0 ? `HT+${-object.modifier}`
+        : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 

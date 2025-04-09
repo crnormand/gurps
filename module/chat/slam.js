@@ -1,11 +1,11 @@
 'use strict'
-import ChatProcessor from './chat-processor.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
+import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
 import selectTarget from '../../module/select-target.js'
-import { generateUniqueId, i18n, i18n_f, isNiceDiceEnabled } from '../../lib/utilities.js'
-import { SlamCalculator } from './slam-calc.js'
 import { isValidDiceTerm } from '../utilities/damage-utils.js'
-import { SizeAndSpeedRangeTable } from '../../lib/size-speed-range-table.js'
+import ChatProcessor from './chat-processor.js'
+import { SlamCalculator } from './slam-calc.js'
 
 /**
  * Handle the '/slam' command. Must have a selected actor.

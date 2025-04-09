@@ -1,8 +1,8 @@
+import { i18n } from '../lib/i18n.js'
 import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } from '../lib/miscellaneous-settings.js'
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
-import { i18n } from '../lib/utilities.js'
 import { isCombatActive, isTokenInActiveCombat } from './game-utils.js'
 import { TokenActions } from './token-actions.js'
 

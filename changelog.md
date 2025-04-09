@@ -6,12 +6,17 @@
 
 - Quick Notes editor needs expandable-width dialog #2136
 - Try to parse Advantage/Disadvantage level as a modifier #843
+- Improved targeting of damage #2178
+- Auto-Apply of modifiers should require Roll Confirmation to be active #2151
 
 ### Bugfixes:
 
 - Apply Damage fails when any token in the scene has no actor #2169
 - Some skills not recognized if not quoted in OtF #2163
 - On import from GCS, default skill cause unspent points, and skill points to be empty #1674
+- Dragging a damage value in chat to a token bigger than 1x1 on the map does not open the damage calculator #2128
+- No equipment causes an error while importing actor from GCA #2181
+
 
 ## Release 0.17.18 02/09/2025
 

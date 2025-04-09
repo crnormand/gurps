@@ -1,8 +1,8 @@
 'use strict'
 
-import ChatProcessor from './chat-processor.js'
+import { i18n } from '../../lib/i18n.js'
 import { parselink } from '../../lib/parselink.js'
-import { i18n } from '../../lib/utilities.js'
+import ChatProcessor from './chat-processor.js'
 
 export class IfChatProcessor extends ChatProcessor {
   help() {

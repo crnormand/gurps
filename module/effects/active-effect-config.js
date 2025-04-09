@@ -1,5 +1,4 @@
-import { i18n } from '../../lib/utilities.js'
-import { GURPSActiveEffectsChanges } from './effects.js'
+import { i18n } from '../../lib/i18n.js'
 
 export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
   constructor(object = {}) {

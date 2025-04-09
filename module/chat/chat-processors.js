@@ -1,33 +1,32 @@
 'use strict'
 
-import ChatProcessor from './chat-processor.js'
-import { ChatProcessors } from '../../module/chat.js'
-import { parselink } from '../../lib/parselink.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
 import { NpcInput } from '../../lib/npc-input.js'
-import { FrightCheckChatProcessor } from './frightcheck.js'
-import {
-  EveryoneAChatProcessor,
-  EveryoneBChatProcessor,
-  EveryoneCChatProcessor,
-  RemoteChatProcessor,
-} from './everything.js'
-import { IfChatProcessor } from './if.js'
+import { parselink } from '../../lib/parselink.js'
 import {
   escapeHtml,
-  i18n,
-  i18n_f,
   isNiceDiceEnabled,
   makeRegexPatternFrom,
   requestFpHp,
   splitArgs,
   wait,
 } from '../../lib/utilities.js'
-import StatusChatProcessor from '../chat/status.js'
-import SlamChatProcessor from '../chat/slam.js'
-import TrackerChatProcessor from '../chat/tracker.js'
-import { AnimChatProcessor } from '../chat/anim.js'
-import Maneuvers from '../actor/maneuver.js'
+import { ChatProcessors } from '../../module/chat.js'
 import { ActorImporter } from '../actor/actor-importer.js'
+import Maneuvers from '../actor/maneuver.js'
+import { AnimChatProcessor } from '../chat/anim.js'
+import SlamChatProcessor from '../chat/slam.js'
+import StatusChatProcessor from '../chat/status.js'
+import TrackerChatProcessor from '../chat/tracker.js'
+import ChatProcessor from './chat-processor.js'
+import {
+  EveryoneAChatProcessor,
+  EveryoneBChatProcessor,
+  EveryoneCChatProcessor,
+  RemoteChatProcessor,
+} from './everything.js'
+import { FrightCheckChatProcessor } from './frightcheck.js'
+import { IfChatProcessor } from './if.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -1051,7 +1050,7 @@ class DevChatProcessor extends ChatProcessor {
       case 'open': {
         // Open the full character sheet for an Actor
         let a = game.actors.getName(m[2].trim())
-        if (a) a.openSheet('gurps.GurpsActorSheet')
+        if (a) a.openSheet('GURPS.GurpsActorSheet')
         else ui.notifications.warn("Can't find Actor named '" + m[2] + "'")
         break
       }

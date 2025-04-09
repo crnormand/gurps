@@ -1,5 +1,5 @@
+import { i18n } from '../../lib/i18n.js'
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
-import { i18n } from '../../lib/utilities.js'
 import { EffectModifierPopout } from './effect-modifier-popout.js'
 
 export class EffectModifierControl {

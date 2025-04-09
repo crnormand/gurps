@@ -1,5 +1,6 @@
+import { i18n } from '../../lib/i18n.js'
+import { zeroFill } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
-import { i18n, zeroFill } from '../../lib/utilities.js'
 
 export default class TrackerChatProcessor extends ChatProcessor {
   help() {

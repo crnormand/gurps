@@ -1,11 +1,12 @@
-import GurpsWiring from '../gurps-wiring.js'
-import { i18n, i18n_f, recurselist, sanitize } from '../../lib/utilities.js'
-import { gurpslink } from '../utilities/gurpslink.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { RulerGURPS } from '../../lib/ranges.js'
+import { recurselist, sanitize } from '../../lib/utilities.js'
+import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
+import { gurpslink } from '../utilities/gurpslink.js'
 import Maneuvers from './maneuver.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
 
 export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined
@@ -84,9 +85,8 @@ export class EffectModifierPopout extends Application {
       }
       return a.itemName.localeCompare(b.itemName)
     })
-    const targetModifiers = this._token
-      ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
-      : []
+    const targetModifiers =
+      this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : []
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
@@ -101,9 +101,8 @@ export class EffectModifierPopout extends Application {
       let result = {}
       result.name = target.name
 
-      result.targetmodifiers = target.actor
-        ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
-        : []
+      result.targetmodifiers =
+        target.actor ? this.convertModifiers(target.actor.system.conditions.target.modifiers) : []
       const rangeModifier = getRangedModifier(this.getToken(), target)
       if (rangeModifier) {
         const data = this.convertModifiers([rangeModifier])
@@ -116,8 +115,8 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return Array.isArray(list)
-      ? list.map(it => {
+    return Array.isArray(list) ?
+        list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
           let obj = {}
@@ -147,13 +146,11 @@ export class EffectModifierPopout extends Application {
             obj = this._token?.actor.items.get(itemReference) || {}
           }
           const itemName = obj?.name || itemReference
-          const itemType = obj?.type
-            ? obj.type
-            : it.includes('#maneuver')
-              ? 'maneuver'
-              : itemReference.includes('system.')
-                ? itemReference.split('.')[1]
-                : 'notfound'
+          const itemType =
+            obj?.type ? obj.type
+            : it.includes('#maneuver') ? 'maneuver'
+            : itemReference.includes('system.') ? itemReference.split('.')[1]
+            : 'notfound'
           const desc = this.getDescription(it, itemReference)
           return {
             link: gurpslink(`[${i18n(desc)}]`),

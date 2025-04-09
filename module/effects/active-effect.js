@@ -1,6 +1,6 @@
 'use strict'
 
-import { i18n, i18n_f } from '../../lib/utilities.js'
+import { i18n, i18n_f } from '../../lib/i18n.js'
 
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
