@@ -2632,9 +2632,7 @@ if (!globalThis.GURPS) {
         requestFpHp(resp)
       }
       if (resp.type == 'executeOtF') {
-        // @ts-ignore
         if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
-        // @ts-ignore
         GURPS.performAction(resp.action, GURPS.LastActor)
       }
       if (resp.type == 'setLastTargetedRoll') {
@@ -2642,30 +2640,21 @@ if (!globalThis.GURPS) {
       }
       if (resp.type == 'dragEquipment1') {
         if (resp.destuserid != game.user.id) return
-        // @ts-ignore
         let destactor = game.actors.get(resp.destactorid)
-        // @ts-ignore
         let srcActor = game.actors.get(resp.srcactorid)
         Dialog.confirm({
-          // @ts-ignore
           title: `Gift for ${destactor.name}!`,
-          // @ts-ignore
           content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
           yes: () => {
-            // @ts-ignore
             let destKey = destactor._findEqtkeyForId('name', resp.itemData.name)
             if (!!destKey) {
               // already have some
-              // @ts-ignore
               let destEqt = foundry.utils.getProperty(destactor, destKey)
-              // @ts-ignore
               destactor.updateEqtCount(destKey, +destEqt.count + resp.count)
             } else {
               resp.itemData.system.equipped = true
-              // @ts-ignore
               destactor.addNewItemData(resp.itemData)
             }
-            // @ts-ignore
             game.socket.emit('system.gurps', {
               type: 'dragEquipment2',
               srckey: resp.srckey,
@@ -2677,7 +2666,6 @@ if (!globalThis.GURPS) {
             })
           },
           no: () => {
-            // @ts-ignore
             game.socket.emit('system.gurps', {
               type: 'dragEquipment3',
               srcuserid: resp.srcuserid,
@@ -2689,33 +2677,24 @@ if (!globalThis.GURPS) {
       }
       if (resp.type == 'dragEquipment2') {
         if (resp.srcuserid != game.user.id) return
-        // @ts-ignore
         let srcActor = game.actors.get(resp.srcactorid)
-        // @ts-ignore
         let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
-          // @ts-ignore
           srcActor.deleteEquipment(resp.srckey)
         } else {
-          // @ts-ignore
           srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }
-        // @ts-ignore
         let destActor = game.actors.get(resp.destactorid)
-        // @ts-ignore
         ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
       }
       if (resp.type == 'dragEquipment3') {
         if (resp.srcuserid != game.user.id) return
-        // @ts-ignore
         let destActor = game.actors.get(resp.destactorid)
-        // @ts-ignore
         ui.notifications.info(`${destActor.name} did not want ${resp.itemname}`)
       }
     })
 
     // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
-    // @ts-ignore
     Hooks.on('controlToken', (...args) => {
       if (GURPS.IgnoreTokenSelect) return
       if (args.length > 1) {
@@ -2800,16 +2779,6 @@ if (!globalThis.GURPS) {
       h[0].innerHTML = gurpslink(h[0].innerHTML)
       GurpsWiring.hookupAllEvents(html)
     })
-
-    // Hack to clean up multiple maneuver icons.   This will be fixed in future releaseds of the Bestiaries.
-    // setTimeout(() => {
-    //   ;['createCombatant', 'deleteCombatant', 'deleteCombat'].forEach(h => {
-    //     let t = Hooks.events[h].reduce((total, value) => {
-    //       return value.fn.toString().includes('Maneuver(') ? total + 1 : total
-    //     }, 0)
-    //     while (t-- > 1) Hooks.events[h].pop()
-    //   })
-    // }, 1000)
 
     Hooks.on('combatStart', async combat => {
       console.log(`Combat started: ${combat.id} - resetting token actions`)
