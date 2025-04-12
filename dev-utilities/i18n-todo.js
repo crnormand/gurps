@@ -1,7 +1,7 @@
 #! /usr/local/bin/node
+import { spawnSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
-import { spawnSync } from 'child_process'
 
 let dir = path.resolve(process.env._)
 dir = dir.substr(0, dir.lastIndexOf('/'))

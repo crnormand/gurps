@@ -1417,6 +1417,36 @@ describe('parseLink', () => {
         )
       )
     })
+    test('#> S:Acrobatics | DX-6', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        mod: undefined,
+        name: 'Acrobatics',
+        next: {
+          attribute: 'DX',
+          attrkey: 'DX',
+          blindroll: false,
+          desc: undefined,
+          mod: '-6',
+          name: 'DX',
+          orig: 'DX-6',
+          path: 'attributes.DX.value',
+          spantext: 'DX -6 ',
+          type: 'attribute',
+        },
+        orig: input,
+        spantext: '<b>S:</b>Acrobatics | DX -6 ',
+        type: 'skill-spell',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining("data-otf='S:Acrobatics | DX-6'><b>S:</b>Acrobatics | DX -6</span>")
+      )
+    })
   })
 
   describe('Melee/Ranged/Attack/Damage/Block/Parry', () => {
