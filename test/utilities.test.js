@@ -1,31 +1,33 @@
-import * as utilities from '../lib/utilities.js'
+import * as lang from '../lib/i18n'
+import * as utilities from '../lib/utilities'
+import { displayMod, makeSelect } from '../lib/utilities'
 
 describe('utilities', () => {
   describe('displayMod', () => {
     test('should return "+0" for null or undefined input', () => {
-      expect(utilities.displayMod(null)).toBe('+0')
-      expect(utilities.displayMod(undefined)).toBe('+0')
+      expect(displayMod(null)).toBe('+0')
+      expect(displayMod(undefined)).toBe('+0')
     })
 
     test('should return "+0" for empty string input', () => {
-      expect(utilities.displayMod('')).toBe('+0')
+      expect(displayMod('')).toBe('+0')
     })
 
     test('should add "+" to positive numbers', () => {
-      expect(utilities.displayMod(5)).toBe('+5')
-      expect(utilities.displayMod('5')).toBe('+5')
+      expect(displayMod(5)).toBe('+5')
+      expect(displayMod('5')).toBe('+5')
     })
 
     test('should keep "-" for negative numbers', () => {
-      expect(utilities.displayMod(-5)).toBe('-5')
-      expect(utilities.displayMod('-5')).toBe('-5')
+      expect(displayMod(-5)).toBe('-5')
+      expect(displayMod('-5')).toBe('-5')
     })
   })
 
   describe('makeSelect', () => {
     test('should create a select structure from an array', () => {
       const array = ['Title', '*Group1', 'Option1', 'Option2', '*Group2', 'Option3']
-      const result = utilities.makeSelect(array)
+      const result = makeSelect(array)
       expect(result).toEqual({
         title: 'Title',
         groups: [
@@ -198,11 +200,11 @@ describe('utilities', () => {
     })
 
     test('i18n should return localized string', () => {
-      expect(utilities.i18n('test.string')).toBe('test.string')
+      expect(lang.i18n('test.string')).toBe('test.string')
     })
 
     test.skip('i18n_f should return formatted localized string', () => {
-      expect(utilities.i18n_f('test.string', { key: 'value' })).toBe('test.string {"key":"value"}')
+      expect(lang.i18n_f('test.string', { key: 'value' })).toBe('test.string {"key":"value"}')
     })
   })
 

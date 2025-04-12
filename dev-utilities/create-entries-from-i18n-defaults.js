@@ -7,7 +7,6 @@
 //   ./create-entries-from-i18n-defaults.js filename
 
 import fs from 'fs'
-import path from 'path'
 
 let filename = process.argv.slice(2)[0]
 console.log(filename)
