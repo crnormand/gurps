@@ -225,18 +225,21 @@ export async function doRoll({
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
     if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
       const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
-      consumeActionIcon =
-        !result.hasActions ? '<i class="fas fa-exclamation"></i>'
-        : canConsumeAction ? '<i class="fas fa-plus"></i>'
-        : '<i class="fas fa-check"></i>'
-      consumeActionLabel =
-        !result.hasActions ? i18n('GURPS.noActionsAvailable')
-        : canConsumeAction ? i18n('GURPS.willConsumeAction')
-        : i18n('GURPS.isFreeAction')
-      consumeActionColor =
-        !result.hasActions ? 'rgb(215,185,33)'
-        : canConsumeAction ? 'rgba(20,119,180,0.7)'
-        : 'rgb(51,114,68,0.7)'
+      consumeActionIcon = !result.hasActions
+        ? '<i class="fas fa-exclamation"></i>'
+        : canConsumeAction
+          ? '<i class="fas fa-plus"></i>'
+          : '<i class="fas fa-check"></i>'
+      consumeActionLabel = !result.hasActions
+        ? i18n('GURPS.noActionsAvailable')
+        : canConsumeAction
+          ? i18n('GURPS.willConsumeAction')
+          : i18n('GURPS.isFreeAction')
+      consumeActionColor = !result.hasActions
+        ? 'rgb(215,185,33)'
+        : canConsumeAction
+          ? 'rgba(20,119,180,0.7)'
+          : 'rgb(51,114,68,0.7)'
     }
 
     // Get Target Roll Info
@@ -332,10 +335,11 @@ export async function doRoll({
             break
           default:
             itemIcon = 'fas fa-dice'
-            rollType =
-              !!targetData?.name ? targetData.name
-              : thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
-              : formula
+            rollType = !!targetData?.name
+              ? targetData.name
+              : thing
+                ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
+                : formula
         }
         break
       default:
@@ -350,6 +354,20 @@ export async function doRoll({
     // Before open a new dialog, we need to make sure
     // all other dialogs are closed, because bucket must be soft reset
     // before we start a new roll
+
+    // TODO The problem with this is that when we are opening one Confirmation Roll Dialog immediately  after
+    // another, the first one may still be open, and clicking the Cancel button sets stopActions to true, which
+    // prevents the second dialog from opening.
+    // await cancelButton.click().promise()
+
+    if ($(document).find('.dialog-button.cancel').length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      for (const button of $(document).find('.dialog-button.cancel')) {
+        console.log('clicking cancel button')
+        await button.click()
+      }
+    }
+
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
       const dialog = new Dialog({
@@ -395,6 +413,9 @@ export async function doRoll({
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
+              // Find this dialog in the DOM using the appId, and add the "closing" class.
+              $(`#${dialog.appId}`).addClass('closing')
+
               GURPS.stopActions = false
               doRollResult = await _doRoll({
                 actor,
@@ -414,6 +435,9 @@ export async function doRoll({
             icon: '<i class="fas fa-times"></i>',
             label: i18n('GURPS.cancel'),
             callback: async () => {
+              // Find this dialog in the DOM using the appId, and add the "closing" class.
+              $(`#${dialog.appId}`).addClass('closing')
+
               await GURPS.ModifierBucket.clearTaggedModifiers()
               GURPS.stopActions = true
               resolve(false)
