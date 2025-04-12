@@ -451,16 +451,16 @@ export default class DamageChat {
     const rect = new PIXI.Rectangle(dropData.x, dropData.y, 0, 0)
 
     // Get all tokens under the point.
-    let selectedTokens = canvas.tokens.quadtree.getObjects(rect, {
-      collisionTest: o => o.t.hitArea.contains(dropData.x - o.t.x, dropData.y - o.t.y),
-    }).values().toArray()
+    let selectedTokens = canvas.tokens.quadtree
+      .getObjects(rect, {
+        collisionTest: o => o.t.hitArea.contains(dropData.x - o.t.x, dropData.y - o.t.y),
+      })
+      .values()
+      .toArray()
 
-    if (selectedTokens.length > 1) {
-      selectedTokens = await selectTarget(selectedTokens)
-    }
+    if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens)
 
     if (selectedTokens.length === 0) {
-      // If no token was found, check if the user has any targets.
       selectedTokens = user?.targets.values().toArray()
 
       if (!selectedTokens || selectedTokens.length === 0) {
@@ -468,9 +468,7 @@ export default class DamageChat {
         return false
       }
 
-      if (selectedTokens.length > 1) {
-        selectedTokens = await selectTarget(selectedTokens, true)
-      }
+      if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, true)
     }
 
     if (selectedTokens.length > 0) {

@@ -1003,7 +1003,7 @@
     "runningShoveAndKnockOver": "Encontrão e Derrubar",
     "saveRollforEffect": "Teste de resistência para evitar efeitos.",
     "selectActorFirst": "Por favor, selecione um ator primeiro.",
-    "selectTargetForDamageWarning": "Você precisa selecionar uma miniatura para aplicar dano.",
+    "selectTargetForDamageWarning": "Arraste o dano para o(s) alvo(s), ou solte na tela para aplicar aos tokens selecionados.",
     "selectToken": "Selecionar Miniatura",
     "serverity": "Severidade",
     "setManeuver": "Configurar Manobra",

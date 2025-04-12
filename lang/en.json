@@ -1063,7 +1063,7 @@
     "runningShoveAndKnockOver": "Running Shove & Knock Over",
     "saveRollforEffect": "Save Roll to avoid effects",
     "selectActorFirst": "Please, select an Actor first.",
-    "selectTargetForDamageWarning": "You need to select a token to apply damage.",
+    "selectTargetForDamageWarning": "Drop the damage on the target(s), or drop on the canvas to apply to targeted token(s).",
     "selectToken": "Select Token",
     "serverity": "Severity",
     "setManeuver": "Set Maneuver",
