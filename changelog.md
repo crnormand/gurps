@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.19-rc.2
+## Release 0.17.19-rc.4
 
 ### Features
 
@@ -16,7 +16,6 @@
 - On import from GCS, default skill cause unspent points, and skill points to be empty #1674
 - Dragging a damage value in chat to a token bigger than 1x1 on the map does not open the damage calculator #2128
 - No equipment causes an error while importing actor from GCA #2181
-
 
 ## Release 0.17.18 02/09/2025
 
