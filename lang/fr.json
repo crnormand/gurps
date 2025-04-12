@@ -956,7 +956,7 @@
     "runningShoveAndKnockOver": "Courir Pousser & Renverser",
     "saveRollforEffect": "Jet de sauvegarde pour éviter les effets.",
     "selectActorFirst": "Veuillez d'abord sélectionner un acteur.",
-    "selectTargetForDamageWarning": "Vous devez sélectionner un jeton pour appliquer des dégâts.",
+    "selectTargetForDamageWarning": "Déposez les dégâts sur la ou les cibles, ou déposez-les sur la scène pour les appliquer au(x) jeton(s) ciblé(s).",
     "selectToken": "Sélectionner Token",
     "serverity": "Gravité",
     "setManeuver": "Définir Manoeuvre",

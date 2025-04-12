@@ -812,7 +812,7 @@
     "runningShoveAndKnockOver": "Schieben & Umstoßen (Rennend)",
     "saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden.",
     "selectActorFirst": "Bitte wählen Sie zuerst einen Schauspieler aus.",
-    "selectTargetForDamageWarning": "Du musst ein Token auswählen, um Schaden zuzufügen.",
+    "selectTargetForDamageWarning": "Ziehe den Schaden auf das Ziel oder ziehe ihn auf die Karte, um ihn auf das ausgewählte Token anzuwenden.",
     "selectToken": "Wähle Token",
     "serverity": "Schwere",
     "setManeuver": "Wähle Manöver",

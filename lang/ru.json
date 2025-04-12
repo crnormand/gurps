@@ -493,7 +493,7 @@
     "runningShoveAndKnockOver": "Толчок и опрокидывание с разбега",
     "saveRollforEffect": "Сохранить бросок, чтобы избежать эффектов.",
     "selectActorFirst": "Пожалуйста, сначала выберите актера.",
-    "selectTargetForDamageWarning": "Вам нужно выбрать токен для нанесения урона.",
+    "selectTargetForDamageWarning": "Перетащите урон на цель(и) или на холст, чтобы применить его к выбранным токенам.",
     "settingAddCumulativeParryPenalties": "Автоматически добавлять кумулятивные штрафы за парирование",
     "settingAddShockAtTurn": "Когда добавлять эффект шока",
     "settingAllowAfterMaxActions": "Разрешить действие после максимального количества действий",
