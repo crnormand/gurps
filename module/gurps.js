@@ -126,7 +126,20 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     // Before open a new dialog, we need to make sure
     // all other dialogs are closed, because bucket must be reset
     // before we start a new roll
-    await $(document).find('.dialog-button.cancel').click().promise()
+
+    // TODO The problem with this is that when we are opening one Confirmation Roll Dialog immediately  after
+    // another, the first one may still be open, and clicking the Cancel button sets stopActions to true, which
+    // prevents the second dialog from opening.
+    // await cancelButton.click().promise()
+
+    if ($(document).find('.dialog-button.cancel').length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      for (const button of $(document).find('.dialog-button.cancel')) {
+        console.log('clicking cancel button')
+        await button.click()
+      }
+    }
+
     await new Promise(async resolve => {
       const dialog = new Dialog({
         title: game.i18n.localize('GURPS.confirmRoll'),
@@ -157,6 +170,9 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
             icon: isBlindRoll ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: isBlindRoll ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
+              // Find this dialog in the DOM using the appId, and add the "closing" class.
+              $(`#${dialog.appId}`).addClass('closing')
+
               await DamageChat.create(
                 actor || game.user,
                 actionFormula,
@@ -177,6 +193,9 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
             icon: '<i class="fas fa-times"></i>',
             label: i18n('GURPS.cancel'),
             callback: async () => {
+              // Find this dialog in the DOM using the appId, and add the "closing" class.
+              $(`#${dialog.appId}`).addClass('closing')
+
               await GURPS.ModifierBucket.clear()
               GURPS.stopActions = true
               resolve(false)
@@ -189,6 +208,17 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
         },
       })
       await dialog.render(true)
+
+      // await new Promise(resolve => {
+      //   const observer = new MutationObserver((mutations, obs) => {
+      //     const dialogElement = document.querySelector(`#${dialog.appId}`)
+      //     if (!dialogElement) {
+      //       obs.disconnect() // Stop observing
+      //       resolve() // Resolve the promise
+      //     }
+      //   })
+      //   observer.observe(document.body, { childList: true, subtree: true })
+      // })
     })
   } else {
     await DamageChat.create(

@@ -16,6 +16,7 @@
 - On import from GCS, default skill cause unspent points, and skill points to be empty #1674
 - Dragging a damage value in chat to a token bigger than 1x1 on the map does not open the damage calculator #2128
 - No equipment causes an error while importing actor from GCA #2181
+- Bug when chaining damage roll with any other commands in OtF success clause #2183
 
 ## Release 0.17.18 02/09/2025
 
