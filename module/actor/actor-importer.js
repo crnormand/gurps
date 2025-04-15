@@ -158,10 +158,7 @@ export class ActorImporter {
     let starttime = performance.now()
     let commit = {}
 
-    if (
-      !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS) ||
-      this.actor.items.filter(i => !!i.system.importid).length > 10
-    )
+    if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
       loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCS' })
     commit = { ...commit, ...{ 'system.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.actor.system.additionalresources || {}
@@ -245,7 +242,7 @@ export class ActorImporter {
       }
 
       // For each saved item with global id, lets run their additions
-      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (this.isUsingFoundryItems()) {
         for (let key of ['ads', 'skills', 'spells']) {
           await aRecurselist(this.actor.system[key], async t => {
             if (!!t.itemid) {
@@ -433,10 +430,7 @@ export class ActorImporter {
     let loadingDialog
     let importResult = false
     try {
-      if (
-        !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS) ||
-        this.actor.items.filter(i => !!i.system.importid).length > 10
-      )
+      if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
         loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
       // This is going to get ugly, so break out various data into different methods
       commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
@@ -475,7 +469,7 @@ export class ActorImporter {
       }
 
       // For each saved item with global id, lets run their additions
-      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (this.isUsingFoundryItems()) {
         for (let key of ['ads', 'skills', 'spells']) {
           await aRecurselist(this.actor.system[key], async t => {
             if (!!t.itemid) {
@@ -688,7 +682,7 @@ export class ActorImporter {
     await this.importBaseAdvantagesFromGCA(list, disadsjson)
 
     // Find all Features with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.ads, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -766,7 +760,7 @@ export class ActorImporter {
     }
 
     // Find all skills with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.skills, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -829,7 +823,7 @@ export class ActorImporter {
     }
 
     // Find all spells with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.spells, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -996,14 +990,14 @@ export class ActorImporter {
   }
 
   async _preImport(generator, itemType) {
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!this.isUsingFoundryItems()) {
       // Before we import, we need to find all eligible items,
       // and backup their exclusive info inside Actor system.itemInfo
       const isEligibleItem = item => {
         const sysKey =
-          itemType === 'equipment' ?
-            this.actor._findEqtkeyForId('itemid', item.id)
-          : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+          itemType === 'equipment'
+            ? this.actor._findEqtkeyForId('itemid', item.id)
+            : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
         return (
           (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
           !foundry.utils.getProperty(this.actor, sysKey)?.save
@@ -1111,7 +1105,7 @@ export class ActorImporter {
       }
     })
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
@@ -1653,7 +1647,7 @@ export class ActorImporter {
     }
 
     // Find all adds with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.ads, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -1670,6 +1664,10 @@ export class ActorImporter {
       'system.-=ads': null,
       'system.ads': this.foldList(temp),
     }
+  }
+
+  isUsingFoundryItems() {
+    return !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
   }
 
   async importAd(i, p) {
@@ -1720,7 +1718,7 @@ export class ActorImporter {
     }
 
     // Find all skills with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.skills, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -1741,10 +1739,7 @@ export class ActorImporter {
 
   async importSk(i, p) {
     if (this.GCSVersion === 5) {
-      i.type =
-        i.id.startsWith('q') ? 'technique'
-        : i.id.startsWith('s') ? 'skill'
-        : 'skill_container'
+      i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
     }
     let name =
       i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
@@ -1814,10 +1809,7 @@ export class ActorImporter {
   async importSp(i, p) {
     let s = new Spell()
     if (this.GCSVersion === 5) {
-      i.type =
-        i.id.startsWith('r') ? 'ritual_magic_spell'
-        : i.id.startsWith('p') ? 'spell'
-        : 'spell_container'
+      i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
     }
     s.name = i.name || 'Spell'
     s.originalName = i.name
@@ -1881,7 +1873,7 @@ export class ActorImporter {
       }
     })
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
@@ -2665,9 +2657,8 @@ export class ActorImporter {
 
       // Create or Update item
       const itemData = actorComp.toItemData(this.actor, fromProgram)
-      const [item] =
-        !!existingItem ?
-          await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
+      const [item] = !!existingItem
+        ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
         : await this.actor.createEmbeddedDocuments('Item', [itemData])
       // Update Actor Component for new Items
       if (!!item) {
@@ -2688,7 +2679,7 @@ export class ActorImporter {
     return actorComp
   }
   async _updateItemContains(actorComp, parent) {
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       const item = this.actor.items.get(actorComp.itemid)
       if (!!item) {
         if (!actorComp.parentuuid) {
