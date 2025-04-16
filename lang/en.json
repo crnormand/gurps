@@ -258,7 +258,7 @@
     "chatUsesIsNaN": "'USES' is not a number",
     "chatUsesReset": "'USES' reset to 'MAX USES'",
     "chatUsesSet": "'USES' set to",
-    "chatWantsToExecute": "Wants to execute <b>{command}</b> on {name},<br><br>Is that OK?",
+    "chatWantsToExecute": "{source} wants to execute <b>{command}</b> on {name}. Is that OK?",
     "chatYouDoNotHaveEnough": "You do not have enough",
     "chatYouMustBeGM": "You must be a GM to execute this command",
     "chatYouMustHaveACharacterSelected": "You must have a character selected",

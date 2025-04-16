@@ -3,14 +3,7 @@
 import { i18n, i18n_f } from '../../lib/i18n.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { parselink } from '../../lib/parselink.js'
-import {
-  escapeHtml,
-  isNiceDiceEnabled,
-  makeRegexPatternFrom,
-  requestFpHp,
-  splitArgs,
-  wait,
-} from '../../lib/utilities.js'
+import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
 import { ActorImporter } from '../actor/actor-importer.js'
 import Maneuvers from '../actor/maneuver.js'
@@ -496,17 +489,17 @@ class FpHpChatProcessor extends ChatProcessor {
       })
 
       game.socket?.emit('system.gurps', {
-        type: 'playerFpHp',
+        type: 'allowOtFExec',
         actorname: actor.name,
         targets: remotes,
         command: line,
       })
 
-      requestFpHp({
-        actorname: actor.name,
-        targets: locals,
-        command: line,
-      })
+      // allowOtfExec({
+      //   actorname: actor.name,
+      //   targets: locals,
+      //   command: line,
+      // })
       return true
     }
 

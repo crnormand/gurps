@@ -11,7 +11,6 @@ import {
   objectToArray,
   quotedAttackName,
   recurselist,
-  requestFpHp,
   sanitize,
   utoa,
   wait,
@@ -81,6 +80,7 @@ import { JournalEntryPageGURPS } from './pdf/index.js'
 import * as GURPSSpeedProvider from './speed-provider.js'
 import { TokenActions } from './token-actions.js'
 import GurpsToken from './token.js'
+import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
@@ -2658,9 +2658,10 @@ if (!globalThis.GURPS) {
           decimals: resp.decimals,
         }
       }
-      if (resp.type == 'playerFpHp') {
-        requestFpHp(resp)
+      if (resp.type == 'allowOtFExec') {
+        allowOtfExec(resp)
       }
+
       if (resp.type == 'executeOtF') {
         if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
         GURPS.performAction(resp.action, GURPS.LastActor)

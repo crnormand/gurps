@@ -304,40 +304,6 @@ describe('utilities', () => {
     })
   })
 
-  describe('requestFpHp', () => {
-    beforeAll(() => {
-      globalThis.game = {
-        canvas: {
-          tokens: {
-            get: jest.fn().mockReturnValue({ actor: { isOwner: true } }),
-          },
-        },
-        users: {
-          get: jest.fn().mockReturnValue({ isSelf: true }),
-        },
-      }
-      globalThis.GURPS = {
-        LastActor: null,
-        SetLastActor: jest.fn(),
-        executeOTF: jest.fn(),
-      }
-      globalThis.Dialog = {
-        confirm: jest.fn(options => options.yes()),
-      }
-    })
-
-    test.skip('should request FP/HP', async () => {
-      const resp = {
-        targets: [['user1', 'token1']],
-        actorname: 'Actor',
-        command: 'command',
-      }
-      await utilities.requestFpHp(resp)
-      expect(GURPS.SetLastActor).toHaveBeenCalled()
-      expect(GURPS.executeOTF).toHaveBeenCalledWith('command')
-    })
-  })
-
   describe('arraysEqual', () => {
     test('should return true for equal arrays', () => {
       expect(utilities.arraysEqual([1, 2, 3], [1, 2, 3])).toBe(true)
