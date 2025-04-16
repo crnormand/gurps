@@ -1,7 +1,7 @@
 /**
  * @description Multiple tokens are selected -- prompt the user for which tokens to apply some function to.
  *
- * @param {Array} targets - An array of targets to select from.
+ * @param {Array} targets - An array of tokens to select from.
  * @param {boolean} [selected=false] - Whether to pre-select all targets.
  * @returns {Promise<Array>} - A promise that resolves with the selected targets.
  */

@@ -459,6 +459,9 @@ class FpHpChatProcessor extends ChatProcessor {
 
   async process(line) {
     let m = this.match
+
+    // TODO Consider relaxing the requirement to have a LastActor and if none provided, default to the player's token(s).
+    // Maybe even popup the selectTarget dialog with all the players' tokens (if more than one) if no LastActor.
     let actor = GURPS.LastActor
     if (!actor) {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -488,6 +491,7 @@ class FpHpChatProcessor extends ChatProcessor {
         this.priv(`${i18n_f('GURPS.chatSentTo', { cmd: line, name: ta.name })}`)
       })
 
+      // Send the OtF to the target players.
       game.socket?.emit('system.gurps', {
         type: 'allowOtFExec',
         actorname: actor.name,
@@ -495,11 +499,6 @@ class FpHpChatProcessor extends ChatProcessor {
         command: line,
       })
 
-      // allowOtfExec({
-      //   actorname: actor.name,
-      //   targets: locals,
-      //   command: line,
-      // })
       return true
     }
 
