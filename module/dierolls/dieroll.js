@@ -350,7 +350,6 @@ export async function doRoll({
 
     const { targetColor, rollChance } = rollData(totalRoll)
 
-    let doRollResult
     // Before open a new dialog, we need to make sure
     // all other dialogs are closed, because bucket must be soft reset
     // before we start a new roll
@@ -367,6 +366,8 @@ export async function doRoll({
         await button.click()
       }
     }
+
+    let doRollResult
 
     await $(document).find('.dialog-button.cancel').click().promise()
     await new Promise(async resolve => {
@@ -413,9 +414,6 @@ export async function doRoll({
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
             label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
             callback: async () => {
-              // Find this dialog in the DOM using the appId, and add the "closing" class.
-              $(`#${dialog.appId}`).addClass('closing')
-
               GURPS.stopActions = false
               doRollResult = await _doRoll({
                 actor,
@@ -435,9 +433,6 @@ export async function doRoll({
             icon: '<i class="fas fa-times"></i>',
             label: i18n('GURPS.cancel'),
             callback: async () => {
-              // Find this dialog in the DOM using the appId, and add the "closing" class.
-              $(`#${dialog.appId}`).addClass('closing')
-
               await GURPS.ModifierBucket.clearTaggedModifiers()
               GURPS.stopActions = true
               resolve(false)
