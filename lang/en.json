@@ -433,6 +433,7 @@
     "encumbranceLevel-00003": "Heavy (3)",
     "encumbranceLevel-00004": "X-Heavy (4)",
     "encumbranceMoveDodge": "Encumbrance, Move & Dodge",
+    "enterTextHere": "Enter text here",
     "equipment": "Equipment",
     "equipmentCarried": "Carried Equipment",
     "equipmentCost": "Cost",
@@ -553,6 +554,7 @@
     "ignoreBodyPlan": "Ignore Imported Body Plan",
     "ignoreImportQtyLabel": "Preserve Qty",
     "immediately": "Immediately",
+    "import": "Import",
     "importCancel": "Cancel Import",
     "importCannotImportGCADirectly": "We cannot import a GCA file directly. Please export the file using the 'export to Foundry VTT.gce' script.",
     "importCannotImportGCSDirectly": "We cannot import a GCS file directly. Please export the file using the 'Foundry VTT' output template.",
@@ -804,6 +806,7 @@
       "mightyBlow": "damage (Mighty Blow)",
       "moveAndAttack": "to hit (Move and Attack)",
       "onTargetAiming": "On Target",
+      "pasteStatBlockHere": "Paste your stat block here",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -1384,6 +1387,7 @@
       "Tipsy": "Tipsy",
       "Wait": "Waiting"
     },
+    "submit": "Submit",
     "suffersAMajorWound": "{name} suffers a Major Wound",
     "suffersHeadVitalsWound": "{name} was struck in the {location} with a Shock penalty.",
     "suffersKnockback": "{name} suffers Knockback ([PDF:{pdfref}]) of {yards} {unit}.",

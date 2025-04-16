@@ -145,7 +145,7 @@ export class CompositeDamageCalculator {
   }
 
   isUnliving(values, found) {
-    // console.log(i18n_Translate('Schadensanfälligkeit')) => "Vulnerability"
+    // console.log(convertToEnglish('Schadensanfälligkeit')) => "Vulnerability"
 
     if (!found) {
       let self = this

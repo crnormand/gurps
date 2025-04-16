@@ -2,8 +2,8 @@
 import { i18n, i18n_f } from '../../lib/i18n.js'
 import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
-import selectTarget from '../../module/select-target.js'
 import { isValidDiceTerm } from '../utilities/damage-utils.js'
+import selectTarget from '../utilities/select-target.js'
 import ChatProcessor from './chat-processor.js'
 import { SlamCalculator } from './slam-calc.js'
 

@@ -246,28 +246,29 @@ export class AnimChatProcessor extends ChatProcessor {
     let list = ANIM_LIBRARY.map(s => s.replace(/modules\//, ''))
     list = ['Total: ' + ANIM_LIBRARY.length, ...list]
 
-    let t = await renderTemplate('systems/gurps/templates/import-stat-block.html', { block: list.join('\n') })
-    let d = new Dialog(
-      {
-        title: `Anim library`,
-        content: t,
-        buttons: {
-          no: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'OK',
-          },
-        },
-        default: false,
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: 'Anim library',
+        resizable: true,
       },
-      {
+      position: {
         width: 1200,
-        height: 800,
-      }
-    )
-    d.render(true)
+        height: 'auto',
+      },
+      content: `<textarea name='text' style='color: darkslategray;' readonly rows='30'>${list.join('\n')}</textarea>`,
+      buttons: [
+        {
+          action: 'cancel',
+          label: 'GURPS.ok',
+          icon: 'fas fa-times',
+          callback: () => undefined, // Resolve with undefined if cancelled
+        },
+      ],
+    }).render({ force: true })
   }
 
   matches(line) {
+    // TODO This should be able to match ONLY '/anim' and then show the usage.
     this.match = line.match(
       /^\/anim +(?<list>list)? *(?<wait>w[\d\.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d\.]+,[\d\.]+)?)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>[\+>][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/
     )

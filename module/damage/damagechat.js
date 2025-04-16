@@ -4,7 +4,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
-import selectTarget from '../select-target.js'
+import selectTarget from '../utilities/select-target.js'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for

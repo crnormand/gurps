@@ -655,25 +655,6 @@ export class GurpsActorSheet extends ActorSheet {
        
       }).render({ force: true })
       dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
-
-      //   new Dialog({
-      //     title: 'Edit Quick Note',
-      //     content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><textarea rows="4" id="i">${n}</textarea><br><br>Examples:
-      //     <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
-      //     buttons: {
-      //       save: {
-      //         icon: '<i class="fas fa-save"></i>',
-      //         label: 'Save',
-      //         callback: html => {
-      //           const i = html[0].querySelector('#i')
-      //           actor.internalUpdate({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
-      //         },
-      //       },
-      //     },
-      //     render: h => {
-      //       $(h).find('textarea').on('drop', this.dropFoundryLinks)
-      //     },
-      //   }).render(true)
     })
 
     html.find('#qnotes .qnotes-content').on('drop', this.handleQnoteDrop.bind(this))

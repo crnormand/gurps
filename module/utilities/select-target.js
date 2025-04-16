@@ -1,6 +1,9 @@
 /**
- * Multiple targets are selected -- prompt the user for
- * which target to apply some function to.
+ * @description Multiple tokens are selected -- prompt the user for which tokens to apply some function to.
+ *
+ * @param {Array} targets - An array of targets to select from.
+ * @param {boolean} [selected=false] - Whether to pre-select all targets.
+ * @returns {Promise<Array>} - A promise that resolves with the selected targets.
  */
 export default async function selectTarget(targets, selected = false) {
   return new Promise(async resolve => {
@@ -12,7 +15,7 @@ export default async function selectTarget(targets, selected = false) {
       buttons: [
         {
           icon: 'fas fa-save',
-          label: game.i18n.localize('GURPS.addApply'),
+          label: 'GURPS.addApply',
           callback: (event, button, dialog) => {
             console.log(dialog)
             const allTokens = button.form.elements.tokens
