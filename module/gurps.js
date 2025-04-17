@@ -127,7 +127,7 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     // all other dialogs are closed, because bucket must be reset
     // before we start a new roll
 
-    // TODO The problem with this is that when we are opening one Confirmation Roll Dialog immediately  after
+    // TODO The problem with this is that when we are opening one Confirmation Roll Dialog immediately after
     // another, the first one may still be open, and clicking the Cancel button sets stopActions to true, which
     // prevents the second dialog from opening.
     // await cancelButton.click().promise()
@@ -144,8 +144,14 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     }
 
     await new Promise(async resolve => {
-      const dialog = new Dialog({
-        title: game.i18n.localize('GURPS.confirmRoll'),
+      const dialog = await new foundry.applications.api.DialogV2({
+        window: {
+          title: game.i18n.localize('GURPS.confirmRoll'),
+          resizable: true,
+        },
+        position: {
+          height: 'auto',
+        },
         content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
           tokenImg,
           tokenName,
@@ -168,11 +174,13 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
           otfDamageText,
           usingDiceAdd,
         }),
-        buttons: {
-          roll: {
-            icon: isBlindRoll ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
-            label: isBlindRoll ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
-            callback: async () => {
+        buttons: [
+          {
+            action: 'roll',
+            icon: isBlindRoll ? 'fas fa-eye-slash' : 'fas fa-dice',
+            label: isBlindRoll ? 'GURPS.blindRoll' : 'GURPS.roll',
+            default: true,
+            callback: async (event, button, dialog) => {
               await DamageChat.create(
                 actor || game.user,
                 actionFormula,
@@ -189,22 +197,18 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
               resolve(true)
             },
           },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: i18n('GURPS.cancel'),
-            callback: async () => {
+          {
+            action: 'cancel',
+            icon: 'fas fa-times',
+            label: 'GURPS.cancel',
+            callback: async (event, button, dialog) => {
               await GURPS.ModifierBucket.clear()
               GURPS.stopActions = true
               resolve(false)
             },
           },
-        },
-        default: 'roll',
-        render: html => {
-          html.closest('.window-app').css('height', 'auto')
-        },
-      })
-      await dialog.render(true)
+        ],
+      }).render({ force: true })
     })
   } else {
     await DamageChat.create(
