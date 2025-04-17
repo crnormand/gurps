@@ -59,7 +59,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
 import AddChatHooks from './chat.js'
 
-import { initialize_i18nHelper } from '../lib/i18n.js'
+import { initialize_i18nHelper, translate } from '../lib/i18n.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import { GGADebugger } from '../utils/debugger.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
@@ -1667,7 +1667,6 @@ if (!globalThis.GURPS) {
   }
   GURPS.applyModifierDesc = applyModifierDesc
 
-
   /**
    * TODO Move to i18n.js.
    * Return the localized string for this data path (note en.json must match up to the data paths).
@@ -1914,7 +1913,6 @@ if (!globalThis.GURPS) {
     let canblind = false
     if (!!blindcheck) {
       canblind = blindcheck == true || blindcheck.hasOwnProperty('blindroll')
-      // @ts-ignore - blindcheck is either boolean or an object with a blindroll property
       if (canblind && blindcheck.blindroll) {
         otf = '!' + otf
         canblind = false
@@ -1928,51 +1926,55 @@ if (!globalThis.GURPS) {
     let botf = '[' + overridetxt + '!' + otf + ']'
     otf = '[' + overridetxt + otf + ']'
 
-    /** @type Record<string, Dialog.Button> */
-    let buttons = {}
-    buttons.one = {
-      icon: '<i class="fas fa-users"></i>',
-      label: 'To Everyone',
+    let buttons = []
+    buttons.push({
+      action: 'everyone',
+      icon: 'fas fa-users',
+      label: translate('To Everyone'),
       callback: () => GURPS.sendOtfMessage(otf, false),
-    }
+    })
+
     if (canblind)
-      buttons.two = {
-        icon: '<i class="fas fa-users-slash"></i>',
-        label: 'Blindroll to Everyone',
+      buttons.push({
+        action: 'blind-everyone',
+        icon: 'fas fa-users-slash',
+        label: translate('Blindroll to Everyone'),
         callback: () => GURPS.sendOtfMessage(botf, true),
-      }
+      })
+
     if (users.length > 0) {
-      let nms = users.map(u => u.name).join(' ')
-      buttons.three = {
-        icon: '<i class="fas fa-user"></i>',
-        label: 'Whisper to ' + nms,
+      buttons.push({
+        action: 'whisper',
+        icon: 'fas fa-user',
+        label: 'Whisper to ' + users.map(u => u.name).join(' '),
         callback: () => GURPS.sendOtfMessage(otf, false, users),
-      }
+      })
+
       if (canblind)
-        buttons.four = {
-          icon: '<i class="fas fa-user-slash"></i>',
-          label: 'Whisper Blindroll to ' + nms,
+        buttons.push({
+          action: 'blind-whisper',
+          icon: 'fas fa-user-slash',
+          label: 'Whisper Blindroll to ' + users.map(u => u.name).join(' '),
           callback: () => GURPS.sendOtfMessage(botf, true, users),
-        }
+        })
     }
-    buttons.def = {
-      icon: '<i class="far fa-copy"></i>',
+    buttons.push({
+      action: 'chat',
+      icon: 'far fa-copy',
       label: 'Copy to chat input',
+      default: true,
       callback: () => {
         $(document).find('#chat-message').val(otf)
       },
-    }
+    })
 
-    let d = new Dialog(
-      {
-        title: "GM 'Send Formula'",
-        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-        buttons: buttons,
-        default: 'def',
-      },
-      { width: 700 }
-    )
-    d.render(true)
+    let d = new foundry.applications.api.DialogV2({
+      window: { title: 'GM Send Formula' },
+      content: `<div style='text-align:center'>How would you like to send the formula:<div><strong>${otf}</strong></div>`,
+      position: { height: 'auto', width: 'auto' },
+      buttons: buttons,
+      default: 'def',
+    }).render({ force: true })
   }
 
   GURPS.sendOtfMessage = function (content, blindroll, users = null) {
