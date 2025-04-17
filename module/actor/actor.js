@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
@@ -109,7 +108,7 @@ export class GurpsActor extends Actor {
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
       if (sizemod !== '0' && sizemod !== '+0') {
         this.system.conditions.target.modifiers.push(
-          i18n_f('GURPS.modifiersSize', { sm: sizemod }, '{sm} for Size Modifier')
+          game.i18n.format('GURPS.modifiersSize', { sm: sizemod }, '{sm} for Size Modifier')
         )
       }
     }
@@ -229,25 +228,25 @@ export class GurpsActor extends Actor {
       let updated = false
       let newads = { ...this.system.ads }
       let langn = /Language:?/i
-      let langt = new RegExp(i18n('GURPS.language') + ':?', 'i')
+      let langt = new RegExp(game.i18n.localize('GURPS.language') + ':?', 'i')
       recurselist(this.system.languages, (e, _k, _d) => {
         let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
             // GCA4/GCS style
-            a.name = i18n('GURPS.language') + ': ' + a.name
+            a.name = game.i18n.localize('GURPS.language') + ': ' + a.name
             updated = true
           }
         } else {
           // GCA5 style (Language without Adv)
-          let n = i18n('GURPS.language') + ': ' + e.name
+          let n = game.i18n.localize('GURPS.language') + ': ' + e.name
           if (e.spoken == e.written)
             // If equal, then just report single level
             n += ' (' + e.spoken + ')'
           else if (e.spoken)
             // Otherwise, report type and level (like GCA4)
-            n += ' (' + i18n('GURPS.spoken') + ') (' + e.spoken + ')'
-          else n += ' (' + i18n('GURPS.written') + ') (' + e.written + ')'
+            n += ' (' + game.i18n.localize('GURPS.spoken') + ') (' + e.spoken + ')'
+          else n += ' (' + game.i18n.localize('GURPS.written') + ') (' + e.written + ')'
           let a = new Advantage()
           a.name = n
           a.points = e.points
@@ -739,13 +738,11 @@ export class GurpsActor extends Actor {
     let posture = this._getMoveAdjustedForPosture(move, threshold)
 
     if (threshold == 1.0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
-    return (
-      updateMove ?
-        maneuver.move < posture.move ?
-          maneuver.move
+    return updateMove
+      ? maneuver.move < posture.move
+        ? maneuver.move
         : posture.move
       : Math.max(1, Math.floor(move * threshold))
-    )
   }
 
   _getMoveAdjustedForManeuver(move, threshold) {
@@ -754,16 +751,16 @@ export class GurpsActor extends Actor {
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_MANEUVER)
       let mv = GURPS.Maneuvers.get(this.system.conditions.maneuver)
-      let reason = !!mv ? i18n(mv.label) : ''
+      let reason = !!mv ? game.i18n.localize(mv.label) : ''
 
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
-    return !!adjustment ? adjustment : (
-        {
+    return !!adjustment
+      ? adjustment
+      : {
           move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
+          text: game.i18n.localize('GURPS.moveFull'),
         }
-      )
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -771,50 +768,50 @@ export class GurpsActor extends Actor {
       case MOVE_NONE:
         return {
           move: 0,
-          // text: i18n_f('GURPS.moveNone', { reason: reason })
-          text: i18n_f('None'),
+          // text: game.i18n.format('GURPS.moveNone', { reason: reason })
+          text: game.i18n.format('None'),
         }
 
       case MOVE_ONE:
         return {
           move: 1,
           text: '1 yd/sec',
-          //          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
+          //          text: game.i18n.format('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
         }
 
       case MOVE_STEP:
         return {
           move: this._getStep(),
           text: 'Step',
-          //  text: i18n_f('GURPS.moveStep', { reason: reason })
+          //  text: game.i18n.format('GURPS.moveStep', { reason: reason })
         }
 
       case MOVE_TWO_STEPS:
         return {
           move: this._getStep() * 2,
           text: 'Step or Two',
-          //          text: i18n_f('GURPS.moveTwoSteps', { reason: reason })
+          //          text: game.i18n.format('GURPS.moveTwoSteps', { reason: reason })
         }
 
       case MOVE_ONETHIRD:
         return {
           move: Math.max(1, Math.ceil((move / 3) * threshold)),
           text: '×1/3',
-          //          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
+          //          text: game.i18n.format('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
           text: 'Half',
-          //          text: i18n_f('GURPS.moveHalf', { reason: reason }),
+          //          text: game.i18n.format('GURPS.moveHalf', { reason: reason }),
         }
 
       case MOVE_TWOTHIRDS:
         return {
           move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
           text: '×2/3',
-          //          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
+          //          text: game.i18n.format('GURPS.moveTwoThirds', { reason: reason }),
         }
     }
 
@@ -826,16 +823,16 @@ export class GurpsActor extends Actor {
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)
-      let reason = i18n(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
+      let reason = game.i18n.localize(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
-    return !!adjustment ? adjustment : (
-        {
+    return !!adjustment
+      ? adjustment
+      : {
           move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
+          text: game.i18n.localize('GURPS.moveFull'),
         }
-      )
   }
 
   _calculateRangedRanges() {
@@ -951,7 +948,7 @@ export class GurpsActor extends Actor {
           if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
             // send the chat message
             let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
-            let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
+            let msg = game.i18n.format(tag, { name: this.displayname, pdfref: game.i18n.localize('GURPS.pdfReeling') })
             this.sendChatMessage(msg)
           }
 
@@ -967,7 +964,7 @@ export class GurpsActor extends Actor {
           // send the chat message
           if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
             let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
-            let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfTired') })
+            let msg = game.i18n.format(tag, { name: this.displayname, pdfref: game.i18n.localize('GURPS.pdfTired') })
             this.sendChatMessage(msg)
           }
 
@@ -1401,7 +1398,7 @@ export class GurpsActor extends Actor {
   async handleItemDrop(dragData) {
     console.log('handleItemDrop', dragData)
     if (!this.isOwner) {
-      ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
+      ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
       return
     }
     // New item created in Foundry v12.331 dragData:
@@ -1427,7 +1424,7 @@ export class GurpsActor extends Actor {
       // 1. This global item was already dropped?
       const found = this.items.find(it => it.system.globalid === data.system.globalid)
       if (!!found) {
-        ui.notifications?.warn(i18n('GURPS.cannotDropItemAlreadyExists'))
+        ui.notifications?.warn(game.i18n.localize('GURPS.cannotDropItemAlreadyExists'))
         return
       }
       ui.notifications?.info(
@@ -1436,12 +1433,12 @@ export class GurpsActor extends Actor {
 
       // 2. Check if Actor Component exists
       const actorCompKey =
-        data.type === 'equipment' ?
-          this._findEqtkeyForId('globalid', data.system.globalid)
-        : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
+        data.type === 'equipment'
+          ? this._findEqtkeyForId('globalid', data.system.globalid)
+          : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
       const actorComp = foundry.utils.getProperty(this, actorCompKey)
       if (!!actorComp) {
-        ui.notifications?.warn(i18n('GURPS.cannotDropItemAlreadyExists'))
+        ui.notifications?.warn(game.i18n.localize('GURPS.cannotDropItemAlreadyExists'))
       } else {
         // 3. Create Actor Component
         let actorComp
@@ -1505,9 +1502,9 @@ export class GurpsActor extends Actor {
 
         // 6. Process Child Items for created Item
         const actorCompKey =
-          data.type === 'equipment' ?
-            this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
-          : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
+          data.type === 'equipment'
+            ? this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
+            : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
         await this._addItemAdditions(parentItem, actorCompKey)
       }
     }
@@ -1527,7 +1524,7 @@ export class GurpsActor extends Actor {
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
-      ui.notifications?.warn(i18n('GURPS.cannotDragNonFoundryEqt'))
+      ui.notifications?.warn(game.i18n.localize('GURPS.cannotDragNonFoundryEqt'))
       return
     }
     if (!dragData.isLinked) {
@@ -1577,8 +1574,8 @@ export class GurpsActor extends Actor {
         }
 
         Dialog.prompt({
-          title: i18n('GURPS.TransferTo') + ' ' + this.name,
-          label: i18n('GURPS.ok'),
+          title: game.i18n.localize('GURPS.TransferTo') + ' ' + this.name,
+          label: game.i18n.localize('GURPS.ok'),
           content: content,
           callback: callback,
           rejectClose: false, // Do not "reject" if the user presses the "close" gadget
@@ -1593,8 +1590,8 @@ export class GurpsActor extends Actor {
           // @ts-ignore
           (count = parseInt(html.find('#qty').val()))
         await Dialog.prompt({
-          title: i18n('GURPS.TransferTo') + ' ' + this.name,
-          label: i18n('GURPS.ok'),
+          title: game.i18n.localize('GURPS.TransferTo') + ' ' + this.name,
+          label: game.i18n.localize('GURPS.ok'),
           content: content,
           callback: callback,
         })
@@ -1614,7 +1611,7 @@ export class GurpsActor extends Actor {
           itemData: dragData.itemData,
           count: +count,
         })
-      } else ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
+      } else ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
     }
   }
 
@@ -2155,7 +2152,7 @@ export class GurpsActor extends Actor {
       (count = parseInt(html.find('#qty').val()?.toString() || '0'))
     await Dialog.prompt({
       title: 'Split stack',
-      label: i18n('GURPS.ok'),
+      label: game.i18n.localize('GURPS.ok'),
       content: content,
       callback: callback,
     })
@@ -2584,9 +2581,9 @@ export class GurpsActor extends Actor {
 
   async _updateItemFromForm(item) {
     const sysKey =
-      item.type === 'equipment' ?
-        this._findEqtkeyForId('itemid', item.id)
-      : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+      item.type === 'equipment'
+        ? this._findEqtkeyForId('itemid', item.id)
+        : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
 
     const actorComp = foundry.utils.getProperty(this, sysKey)
 
@@ -3563,10 +3560,7 @@ export class GurpsActor extends Actor {
 
       default:
         result = {
-          name:
-            thing ? thing
-            : chatting ? chatting.split('/[')[0]
-            : formula,
+          name: thing ? thing : chatting ? chatting.split('/[')[0] : formula,
           uuid: null,
           itemId: null,
           fromItem: null,

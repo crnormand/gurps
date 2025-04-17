@@ -3,19 +3,19 @@ import { addDice, getDiceData, getDicePlusAdds } from '../utilities/damage-utils
 
 const effects = {
   unaffected: {
-    i18n: 'GURPS.notAffected',
+    localizationKey: 'GURPS.notAffected',
     createButton(label) {
       return label
     },
   },
   fallsDown: {
-    i18n: 'GURPS.fallsDownApplyProne',
+    localizationKey: 'GURPS.fallsDownApplyProne',
     createButton(label, data) {
       return data.isRealTarget ? `["${label}" /st + prone :${data.token.id}]` : label
     },
   },
   dxCheck: {
-    i18n: 'GURPS.dxCheckOrFallApplyProne',
+    localizationKey: 'GURPS.dxCheckOrFallApplyProne',
     createButton(label, data) {
       return data.isRealTarget
         ? `["${label}" /sel ${data.token.id} \\\\ /if ! [DX] /st + prone]`
@@ -30,8 +30,8 @@ export class SlamCalculator {
     this._ssrt = dependencies?.sizeAndSpeedRangeTable
     this._isDiceSoNiceEnabled = dependencies?.isNiceDiceEnabled
     this._roll = dependencies?.roll
-    this._i18n = dependencies?.i18n
-    this._i18n_f = dependencies?.i18n_f
+    this.localize = dependencies?.localize
+    this.format = dependencies?.format
   }
 
   /*
@@ -91,7 +91,7 @@ export class SlamCalculator {
       resultData.isRealTarget = true
     }
 
-    let result = this._i18n_f(resultData.effect.i18n, resultData)
+    let result = this.format(resultData.effect.localizationKey, resultData)
     result = resultData.effect.createButton(result, resultData)
 
     let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
@@ -235,14 +235,16 @@ export class SlamCalculator {
     let results = resultsArray.map(it => it.result)
 
     let explanation =
-      roll.terms.length > 1 ? `${this._i18n('GURPS.rolled')} (${results})` : `${this._i18n('GURPS.rolled')} ${results}`
+      roll.terms.length > 1
+        ? `${this.localize('GURPS.rolled')} (${results})`
+        : `${this.localize('GURPS.rolled')} ${results}`
     if (roll.terms[2]?.number !== '0') explanation += `${roll.terms[1].formula}${roll.terms[2].formula}`
 
-    if (!!isAoAStrong) explanation += ` + 2 (${this._i18n('GURPS.slamAOAStrong')})`
+    if (!!isAoAStrong) explanation += ` + 2 (${this.localize('GURPS.slamAOAStrong')})`
     let sign = shieldDB >= 0 ? '+' : '-'
-    if (!!shieldDB) explanation += ` ${sign} ${Math.abs(shieldDB)} (${this._i18n('GURPS.slamShieldDB')})`
-    if (!!velocity) explanation += ` + ${velocity} ${this._i18n('GURPS.slamRelativeVelocity')}`
-    if (min) explanation += ` (${this._i18n('GURPS.minimum')} 1)`
+    if (!!shieldDB) explanation += ` ${sign} ${Math.abs(shieldDB)} (${this.localize('GURPS.slamShieldDB')})`
+    if (!!velocity) explanation += ` + ${velocity} ${this.localize('GURPS.slamRelativeVelocity')}`
+    if (min) explanation += ` (${this.localize('GURPS.minimum')} 1)`
     return explanation
   }
 }

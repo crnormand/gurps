@@ -1,8 +1,8 @@
 <div class="header {{#if editable}}with-editor minor-heading{{/if}}">
   {{#if label}}
-    {{i18n label label}}
+    {{localize label label}}
   {{else}}
-    {{i18n "GURPS.resource"}}{{@index}}
+    {{localize "GURPS.resource"}}{{@index}}
   {{/if}}{{#if editable}}<span class='edit'><i class='fas fa-pencil-alt'></i></span>{{/if}}
 </div>
 <div class="spinner">

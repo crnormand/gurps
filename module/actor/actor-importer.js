@@ -1,4 +1,3 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
@@ -125,12 +124,12 @@ export class ActorImporter {
     try {
       r = JSON.parse(json)
     } catch (err) {
-      msg.push(i18n('GURPS.importNoJSONDetected'))
+      msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
     }
     if (!!r) {
       if (!r.calc) {
-        msg.push(i18n('GURPS.importOldGCSFile'))
+        msg.push(game.i18n.localize('GURPS.importOldGCSFile'))
         exit = true
       }
     }
@@ -200,7 +199,7 @@ export class ActorImporter {
     } catch (err) {
       console.log(err.stack)
       msg.push(
-        i18n_f('GURPS.importGenericError', {
+        game.i18n.format('GURPS.importGenericError', {
           name: nm,
           error: err.name,
           message: err.message,
@@ -257,7 +256,7 @@ export class ActorImporter {
       // Recalculate DR
       await this.actor.refreshDR()
 
-      if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!suppressMessage) ui.notifications?.info(game.i18n.format('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
@@ -267,8 +266,8 @@ export class ActorImporter {
       importResult = true
     } catch (err) {
       console.log(err.stack)
-      let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
-      if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
+      let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+      if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
@@ -323,21 +322,21 @@ export class ActorImporter {
     let vernum = 1
     let exit = false
     if (!r) {
-      if (importName.endsWith('.gca5')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
-      if (importName.endsWith('.gca4')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
-      else if (!xml.startsWith('<?xml')) msg.push(i18n('GURPS.importNoXMLDetected'))
+      if (importName.endsWith('.gca5')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
+      if (importName.endsWith('.gca4')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
+      else if (!xml.startsWith('<?xml')) msg.push(game.i18n.localize('GURPS.importNoXMLDetected'))
       exit = true
     } else {
       // The character object starts here
       c = r.character
       if (!c) {
-        msg.push(i18n('GURPS.importNoCharacterFormat'))
+        msg.push(game.i18n.localize('GURPS.importNoCharacterFormat'))
         exit = true
       }
 
       let parsererror = r.parsererror
       if (!!parsererror) {
-        msg.push(i18n_f('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
+        msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
         exit = true
       }
 
@@ -346,7 +345,7 @@ export class ActorImporter {
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       isFoundryGCA5 = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA5')
       if (!(isFoundryGCA || isFoundryGCA5)) {
-        msg.push(i18n('GURPS.importFantasyGroundUnsupported'))
+        msg.push(game.i18n.localize('GURPS.importFantasyGroundUnsupported'))
         exit = true
       }
       version = ra?.version || ''
@@ -355,45 +354,45 @@ export class ActorImporter {
         if (isFoundryGCA5) {
           if (!!v[1]) vernum = parseInt(v[1])
           if (vernum < 12) {
-            msg.push(i18n('GURPS.importGCA5ImprovedInventoryHandling'))
+            msg.push(game.i18n.localize('GURPS.importGCA5ImprovedInventoryHandling'))
           }
           if (vernum < 13) {
-            msg.push(i18n('GURPS.importGCA5ImprovedBlock'))
+            msg.push(game.i18n.localize('GURPS.importGCA5ImprovedBlock'))
           }
         } else {
           if (!v[1]) {
-            msg.push(i18n('GURPS.importGCANoBodyPlan'))
+            msg.push(game.i18n.localize('GURPS.importGCANoBodyPlan'))
           }
           if (!!v[1]) vernum = parseInt(v[1])
           if (vernum < 2) {
-            msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
+            msg.push(game.i18n.localize('GURPS.importGCANoInnateRangedAndParent'))
           }
           if (vernum < 3) {
-            msg.push(i18n('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
+            msg.push(game.i18n.localize('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
           }
           if (vernum < 4) {
-            msg.push(i18n('GURPS.importGCANoParent'))
+            msg.push(game.i18n.localize('GURPS.importGCANoParent'))
           }
           if (vernum < 5) {
-            msg.push(i18n('GURPS.importGCANoSanitizeNotes'))
+            msg.push(game.i18n.localize('GURPS.importGCANoSanitizeNotes'))
           }
           if (vernum < 6) {
-            msg.push(i18n('GURPS.importGCANoMeleeIfAlsoRanged'))
+            msg.push(game.i18n.localize('GURPS.importGCANoMeleeIfAlsoRanged'))
           }
           if (vernum < 7) {
-            msg.push(i18n('GURPS.importGCABadBlockForDB'))
+            msg.push(game.i18n.localize('GURPS.importGCABadBlockForDB'))
           }
           if (vernum < 8) {
-            msg.push(i18n('GURPS.importGCANoHideFlag'))
+            msg.push(game.i18n.localize('GURPS.importGCANoHideFlag'))
           }
           if (vernum < 9) {
-            msg.push(i18n('GURPS.importGCAChildrenWeights'))
+            msg.push(game.i18n.localize('GURPS.importGCAChildrenWeights'))
           }
           if (vernum < 10) {
-            msg.push(i18n('GURPS.importGCAAdvMods'))
+            msg.push(game.i18n.localize('GURPS.importGCAAdvMods'))
           }
           if (vernum < 11) {
-            msg.push(i18n('GURPS.importGCAConditionalModifiers'))
+            msg.push(game.i18n.localize('GURPS.importGCAConditionalModifiers'))
           }
         }
       }
@@ -484,7 +483,7 @@ export class ActorImporter {
       // Recalculate DR
       await this.actor.refreshDR()
 
-      if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!suppressMessage) ui.notifications?.info(game.i18n.format('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
@@ -494,8 +493,8 @@ export class ActorImporter {
       importResult = true
     } catch (err) {
       console.log(err.stack)
-      let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
-      if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
+      let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+      if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>')) // FIXME: Why suppressMessage is not available here?
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
@@ -925,7 +924,7 @@ export class ActorImporter {
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
               r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + i18n('GURPS.acc') + ']'
+              r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
             r.rof = t(j2.rof)
             r.shots = t(j2.shots)
@@ -1160,7 +1159,7 @@ export class ActorImporter {
     let name
     let fullName = t(j.name)
     let techLevel = t(j.tl)
-    const localizedTL = i18n('GURPS.TL')
+    const localizedTL = game.i18n.localize('GURPS.TL')
     let regex = new RegExp(`.+\/[TL|${localizedTL}].+`)
     if (!!fullName.match(regex)) {
       let i = fullName.lastIndexOf('/TL') || fullName.lastIndexOf(`/${localizedTL}`)
@@ -2330,7 +2329,7 @@ export class ActorImporter {
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
               r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + i18n('GURPS.acc') + ']'
+              r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
             r.rof = w.rate_of_fire || ''
             r.shots = w.shots || ''

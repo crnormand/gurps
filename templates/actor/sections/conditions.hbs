@@ -1,27 +1,32 @@
 <div id='condition'>
-  <div class='header'>{{i18n 'GURPS.conditions'}}</div>
+  <div class='header'>{{localize 'GURPS.conditions'}}</div>
   <div class='fieldblock'>
 
     {{#if (ne system.conditions.maneuver 'undefined')}}
       <div class='label-field-pair'>
         {{#if (eq view 'condensed')}}
-          <div class='label'>{{i18n 'GURPS.maneuver'}}:</div>
+          <div class='label'>{{localize 'GURPS.maneuver'}}:</div>
           <div class='field details'>
             <details id='maneuver'>
               <summary>
                 {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
-                  <img class='button' src='{{maneuver.icon}}' title='{{i18n maneuver.label}}' alt='{{maneuver.name}}' />
+                  <img
+                    class='button'
+                    src='{{maneuver.icon}}'
+                    title='{{localize maneuver.label}}'
+                    alt='{{maneuver.name}}'
+                  />
                 {{/with}}
               </summary>
               <div class='popup square5x4'>
                 {{#each (listAllManeuvers) as |this key|}}
-                  <img class='button' src='{{icon}}' title='{{i18n label}}' alt='{{key}}' />
+                  <img class='button' src='{{icon}}' title='{{localize label}}' alt='{{key}}' />
                 {{/each}}
               </div>
             </details>
           </div>
         {{else}}
-          <div class='label'>{{i18n 'GURPS.maneuver'}}:</div>
+          <div class='label'>{{localize 'GURPS.maneuver'}}:</div>
           <div class='field' style='border: none;'>
             <select
               id='maneuver'
@@ -30,12 +35,12 @@
               {{disabled (or isEditing (not (inCombat this)))}}
             >
               <option value='undefined' {{select-if system.conditions.maneuver 'undefined'}}>
-                {{i18n 'GURPS.none'}}
+                {{localize 'GURPS.none'}}
               </option>
               {{#with system.conditions.maneuver as |maneuver|}}
                 {{#each (listAllManeuvers) as |this key|}}
                   <option value='{{key}}' {{select-if maneuver key}}>
-                    {{i18n this.label}}
+                    {{localize this.label}}
                   </option>
                 {{/each}}
               {{/with}}
@@ -46,24 +51,24 @@
     {{/if}}
 
     <div class='label-field-pair'>
-      <div class='label'>{{i18n 'GURPS.modifierPosture'}}:</div>
+      <div class='label'>{{localize 'GURPS.modifierPosture'}}:</div>
       {{#if (eq view 'condensed')}}
         <div class='field details'>
           <details id='posture'>
             <summary>
               {{#with (getPosture system.conditions.posture) as |posture|}}
-                <img class='button' src='{{posture.img}}' title='{{i18n posture.name}}' alt='{{posture.id}}' />
+                <img class='button' src='{{posture.img}}' title='{{localize posture.name}}' alt='{{posture.id}}' />
               {{/with}}
             </summary>
             <div class='popup square5x4'>
               <img
                 class='button'
                 src='systems/gurps/icons/statuses/dd-condition-standing.webp'
-                title='{{i18n "GURPS.status.Standing"}}'
+                title='{{localize "GURPS.status.Standing"}}'
                 alt='standing'
               />
               {{#each (listAllPostures) as |this key|}}
-                <img class='button' src='{{img}}' title='{{i18n name}}' alt='{{id}}' />
+                <img class='button' src='{{img}}' title='{{localize name}}' alt='{{id}}' />
               {{/each}}
             </div>
           </details>
@@ -71,12 +76,14 @@
       {{else}}
         <div class='field' style='border: none;'>
           <select id='posture' name='system.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
-            <option value='standing' {{select-if system.conditions.posture 'standing'}}>{{i18n 'GURPS.status.Standing'}}
+            <option value='standing' {{select-if system.conditions.posture 'standing'}}>{{localize
+                'GURPS.status.Standing'
+              }}
             </option>
             {{#with system.conditions.posture as |posture|}}
               {{#each (listAllPostures) as |this key|}}
                 <option value='{{key}}' {{select-if posture key}}>
-                  {{i18n this.name}}
+                  {{localize this.name}}
                 </option>
               {{/each}}
             {{/with}}
@@ -86,12 +93,12 @@
     </div>
 
     <div class='label-field-pair'>
-      <div class='label'>{{i18n 'GURPS.conditionsCombatMove'}}:</div>
+      <div class='label'>{{localize 'GURPS.conditionsCombatMove'}}:</div>
       <div class='field' name='system.conditions.combatmove'><span>{{system.conditions.move}}</span></div>
     </div>
 
     <div class='label-field-pair'>
-      <div class='label'>{{i18n 'GURPS.maxActionsPerTurn'}}:</div>
+      <div class='label'>{{localize 'GURPS.maxActionsPerTurn'}}:</div>
       {{#if isEditing}}
         <div class='field'>
           <input
@@ -108,7 +115,7 @@
     </div>
 
     <div class='label-field-pair'>
-      <div class='label'>{{i18n 'GURPS.maxBlocksPerTurn'}}:</div>
+      <div class='label'>{{localize 'GURPS.maxBlocksPerTurn'}}:</div>
       {{#if isEditing}}
         <div class='field'>
           <input
@@ -125,7 +132,7 @@
     </div>
 
     <div class='label-field-pair'>
-      <div class='label'>{{i18n 'GURPS.activeEffects'}}:</div>
+      <div class='label'>{{localize 'GURPS.activeEffects'}}:</div>
       <div class='field' style='border: none;'>
         <button id='open-modifier-popup'><i class='fa-regular fa-sparkles'></i></button>
       </div>

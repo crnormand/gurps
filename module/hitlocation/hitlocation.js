@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import { convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 
 export const LIMB = 'limb'
@@ -46,11 +45,11 @@ export class HitLocation {
    */
   static init() {
     // README: The keys in this object literal (Eye, Eyes, Skull, etc...) are directly used in
-    // README: the language files for i18n, with the prefix 'GURPS.hitLocation' (example:
+    // README: the language files for localization, with the prefix 'GURPS.hitLocation' (example:
     // README: 'GURPS.hitLocationEyes'). DO NOT EDIT the keys here, but instead update them in
     // README: the langauge file.
     //
-    // README: I'm also updating the desc property to be an array of i18n keys.
+    // README: I'm also updating the desc property to be an array of localization keys.
     hitlocationRolls = {
       Eye: { roll: '-', penalty: -9, skip: true },
       Eyes: { roll: '-', penalty: -9 }, // GCA
@@ -381,44 +380,44 @@ export class HitLocation {
    * To be called on Hook.ready
    */
   static ready() {
-    translations[i18n('GURPS.hitLocationArm, holding shield')] = 'Arm, holding shield'
-    translations[i18n('GURPS.hitLocationArm')] = 'Arm'
-    translations[i18n('GURPS.hitLocationBrain')] = 'Brain'
-    translations[i18n('GURPS.hitLocationChest')] = 'Chest'
-    translations[i18n('GURPS.hitLocationChinks in Other')] = 'Chinks in Other'
-    translations[i18n('GURPS.hitLocationChinks in Torso')] = 'Chinks in Torso'
-    translations[i18n('GURPS.hitLocationExtremity')] = 'Extremity'
-    translations[i18n('GURPS.hitLocationEye')] = 'Eye'
-    translations[i18n('GURPS.hitLocationEyes')] = 'Eyes'
-    translations[i18n('GURPS.hitLocationFace, from behind')] = 'Face, from behind'
-    translations[i18n('GURPS.hitLocationFace')] = 'Face'
-    translations[i18n('GURPS.hitLocationFin')] = 'Fin'
-    translations[i18n('GURPS.hitLocationFoot')] = 'Foot'
-    translations[i18n('GURPS.hitLocationForeleg')] = 'Foreleg'
-    translations[i18n('GURPS.hitLocationGroin')] = 'Groin'
-    translations[i18n('GURPS.hitLocationHand')] = 'Hand'
-    translations[i18n('GURPS.hitLocationHind Leg')] = 'Hind Leg'
-    translations[i18n('GURPS.hitLocationJaw')] = 'Jaw'
-    translations[i18n('GURPS.hitLocationLeft Arm, holding shield')] = 'Left Arm, holding shield'
-    translations[i18n('GURPS.hitLocationLeft Arm')] = 'Left Arm'
-    translations[i18n('GURPS.hitLocationLeft Leg')] = 'Left Leg'
-    translations[i18n('GURPS.hitLocationLeg')] = 'Leg'
-    translations[i18n('GURPS.hitLocationLimb Vein/Artery')] = 'Limb Vein/Artery'
-    translations[i18n('GURPS.hitLocationMid Leg')] = 'Mid Leg'
-    translations[i18n('GURPS.hitLocationNeck Vein/Artery')] = 'Neck Vein/Artery'
-    translations[i18n('GURPS.hitLocationNeck')] = 'Neck'
-    translations[i18n('GURPS.hitLocationNose')] = 'Nose'
-    translations[i18n('GURPS.hitLocationRight Arm, holding shield')] = 'Right Arm, holding shield'
-    translations[i18n('GURPS.hitLocationRight Arm')] = 'Right Arm'
-    translations[i18n('GURPS.hitLocationRight Leg')] = 'Right Leg'
-    translations[i18n('GURPS.hitLocationSkull, from behind')] = 'Skull, from behind'
-    translations[i18n('GURPS.hitLocationSkull')] = 'Skull'
-    translations[i18n('GURPS.hitLocationTail')] = 'Tail'
-    translations[i18n('GURPS.hitLocationTorso')] = 'Torso'
-    translations[i18n('GURPS.hitLocationVitals, Heart')] = 'Vitals, Heart'
-    translations[i18n('GURPS.hitLocationVitals')] = 'Vitals'
-    translations[i18n('GURPS.hitLocationWhere')] = 'Where'
-    translations[i18n('GURPS.hitLocationWing')] = 'Wing'
+    translations[game.i18n.localize('GURPS.hitLocationArm, holding shield')] = 'Arm, holding shield'
+    translations[game.i18n.localize('GURPS.hitLocationArm')] = 'Arm'
+    translations[game.i18n.localize('GURPS.hitLocationBrain')] = 'Brain'
+    translations[game.i18n.localize('GURPS.hitLocationChest')] = 'Chest'
+    translations[game.i18n.localize('GURPS.hitLocationChinks in Other')] = 'Chinks in Other'
+    translations[game.i18n.localize('GURPS.hitLocationChinks in Torso')] = 'Chinks in Torso'
+    translations[game.i18n.localize('GURPS.hitLocationExtremity')] = 'Extremity'
+    translations[game.i18n.localize('GURPS.hitLocationEye')] = 'Eye'
+    translations[game.i18n.localize('GURPS.hitLocationEyes')] = 'Eyes'
+    translations[game.i18n.localize('GURPS.hitLocationFace, from behind')] = 'Face, from behind'
+    translations[game.i18n.localize('GURPS.hitLocationFace')] = 'Face'
+    translations[game.i18n.localize('GURPS.hitLocationFin')] = 'Fin'
+    translations[game.i18n.localize('GURPS.hitLocationFoot')] = 'Foot'
+    translations[game.i18n.localize('GURPS.hitLocationForeleg')] = 'Foreleg'
+    translations[game.i18n.localize('GURPS.hitLocationGroin')] = 'Groin'
+    translations[game.i18n.localize('GURPS.hitLocationHand')] = 'Hand'
+    translations[game.i18n.localize('GURPS.hitLocationHind Leg')] = 'Hind Leg'
+    translations[game.i18n.localize('GURPS.hitLocationJaw')] = 'Jaw'
+    translations[game.i18n.localize('GURPS.hitLocationLeft Arm, holding shield')] = 'Left Arm, holding shield'
+    translations[game.i18n.localize('GURPS.hitLocationLeft Arm')] = 'Left Arm'
+    translations[game.i18n.localize('GURPS.hitLocationLeft Leg')] = 'Left Leg'
+    translations[game.i18n.localize('GURPS.hitLocationLeg')] = 'Leg'
+    translations[game.i18n.localize('GURPS.hitLocationLimb Vein/Artery')] = 'Limb Vein/Artery'
+    translations[game.i18n.localize('GURPS.hitLocationMid Leg')] = 'Mid Leg'
+    translations[game.i18n.localize('GURPS.hitLocationNeck Vein/Artery')] = 'Neck Vein/Artery'
+    translations[game.i18n.localize('GURPS.hitLocationNeck')] = 'Neck'
+    translations[game.i18n.localize('GURPS.hitLocationNose')] = 'Nose'
+    translations[game.i18n.localize('GURPS.hitLocationRight Arm, holding shield')] = 'Right Arm, holding shield'
+    translations[game.i18n.localize('GURPS.hitLocationRight Arm')] = 'Right Arm'
+    translations[game.i18n.localize('GURPS.hitLocationRight Leg')] = 'Right Leg'
+    translations[game.i18n.localize('GURPS.hitLocationSkull, from behind')] = 'Skull, from behind'
+    translations[game.i18n.localize('GURPS.hitLocationSkull')] = 'Skull'
+    translations[game.i18n.localize('GURPS.hitLocationTail')] = 'Tail'
+    translations[game.i18n.localize('GURPS.hitLocationTorso')] = 'Torso'
+    translations[game.i18n.localize('GURPS.hitLocationVitals, Heart')] = 'Vitals, Heart'
+    translations[game.i18n.localize('GURPS.hitLocationVitals')] = 'Vitals'
+    translations[game.i18n.localize('GURPS.hitLocationWhere')] = 'Where'
+    translations[game.i18n.localize('GURPS.hitLocationWing')] = 'Wing'
   }
 
   static translate(text) {

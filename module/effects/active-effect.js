@@ -1,7 +1,5 @@
 'use strict'
 
-import { i18n, i18n_f } from '../../lib/i18n.js'
-
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
@@ -116,7 +114,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       const spans = $(selector)
       for (const span of spans) {
         $(span).removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-        $(span).attr('title', i18n(`GURPS.add${status}Effect`))
+        $(span).attr('title', game.i18n.localize(`GURPS.add${status}Effect`))
       }
     }
   }
@@ -139,7 +137,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       //   for (const effect of token.actor.effects) {
       //     if (await effect.isExpired()) {
       //       effect.update({ disabled: true })
-      //       ui.notifications.info(`${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.name)}]'`)
+      //       ui.notifications.info(`${game.i18n.localize('GURPS.effectExpired', 'Effect has expired: ')} '[${game.i18n.localize(effect.name)}]'`)
       //     }
       //   }
       // }
@@ -177,7 +175,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       const spans = $(selector)
       for (const span of spans) {
         $(span).removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-        $(span).attr('title', i18n(`GURPS.remove${status}Effect`))
+        $(span).attr('title', game.i18n.localize(`GURPS.remove${status}Effect`))
       }
     }
   }
@@ -242,12 +240,12 @@ export default class GurpsActiveEffect extends ActiveEffect {
       if (foundry.utils.getType(val) === 'string' && val.startsWith('@')) {
         value.args[key] = actor[val.slice(1)]
       } else if (foundry.utils.getType(val) === 'string' && val.startsWith('!')) {
-        value.args[key] = i18n(val.slice(1))
+        value.args[key] = game.i18n.localize(val.slice(1))
       }
-      if (key === 'pdfref') value.args.pdfref = i18n(val)
+      if (key === 'pdfref') value.args.pdfref = game.i18n.localize(val)
     }
 
-    let msg = !!value.args ? i18n_f(value.msg, value.args) : i18n(value.msg)
+    let msg = !!value.args ? game.i18n.format(value.msg, value.args) : game.i18n.localize(value.msg)
 
     let self = this
     renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
@@ -287,7 +285,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     //   if (!!action.action) {
     //     if (action.action.type === 'modifier') {
     //       ui.notifications.warn(
-    //         `${i18n(
+    //         `${game.i18n.localize(
     //           'GURPS.effectBadEndCondition',
     //           'End Condition is not a skill or attribute test: '
     //         )} '[${endCondition}]'`
@@ -303,7 +301,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     //   } // Looks like a /roll OtF, but didn't parse as one
     //   else
     //     ui.notifications.warn(
-    //       `${i18n(
+    //       `${game.i18n.localize(
     //         'GURPS.effectBadEndCondition',
     //         'End Condition is not a skill or attribute test: '
     //       )} '[${endCondition}]'`

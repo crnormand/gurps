@@ -1,15 +1,15 @@
 <div class='gurps-label-field-grid-4'>
-  <label>{{i18n 'GURPS.quantity'}}</label>
+  <label>{{localize 'GURPS.quantity'}}</label>
   <div class='icon-prefix'>
     <input id='quantity' class='digits-only' type='number' value='{{system.eqt.count}}' name='system.eqt.count' />
     <span><i class='fa fa-plus-minus'></i></span>
   </div>
-  <label>{{i18n 'GURPS.equipmentCost'}}</label>
+  <label>{{localize 'GURPS.equipmentCost'}}</label>
   <div class='icon-prefix'>
     <input id='cost' type='number' class='decimal-digits-only' value='{{system.eqt.cost}}' name='system.eqt.cost' />
     <span>$</span>
   </div>
-  <label>{{i18n 'GURPS.weight'}}</label>
+  <label>{{localize 'GURPS.weight'}}</label>
   <div class='icon-prefix'>
     <input
       id='weight'
@@ -20,36 +20,36 @@
     />
     <span><i class='fas fa-weight-hanging'></i></span>
   </div>
-  <label>{{i18n 'GURPS.equipmentUses'}}</label>
+  <label>{{localize 'GURPS.equipmentUses'}}</label>
   <div class='icon-prefix'>
     <input id='uses' type='number' class='digits-only' value='{{system.eqt.uses}}' name='system.eqt.uses' />
     <span><i class='fas fa-expand'></i></span>
   </div>
-  <label>{{i18n 'GURPS.equipmentMaxUses'}}</label>
+  <label>{{localize 'GURPS.equipmentMaxUses'}}</label>
   <div class='icon-prefix'>
     <input id='maxuses' type='number' class='digits-only' value='{{system.eqt.maxuses}}' name='system.eqt.maxuses' />
     <span><i class='fa fa-arrows-up-to-line'></i></span>
   </div>
-  <label>{{i18n 'GURPS.equipmentTechlevel'}}</label>
+  <label>{{localize 'GURPS.equipmentTechlevel'}}</label>
   <div class='icon-prefix'>
     <input id='techlevel' type='text' value='{{system.eqt.techlevel}}' name='system.eqt.techlevel' />
-    <span>{{i18n 'GURPS.TL'}}</span>
+    <span>{{localize 'GURPS.TL'}}</span>
   </div>
-  <label>{{i18n 'GURPS.ignoreImportQtyLabel'}}</label>
+  <label>{{localize 'GURPS.ignoreImportQtyLabel'}}</label>
   <div>
     <input
-          class='ignoreQtyImport'
-          name='system.eqt.ignoreImportQty'
-          type='checkbox'
-          {{checked system.eqt.ignoreImportQty}}
-        />
+      class='ignoreQtyImport'
+      name='system.eqt.ignoreImportQty'
+      type='checkbox'
+      {{checked system.eqt.ignoreImportQty}}
+    />
   </div>
-  <label>{{i18n 'GURPS.pdfPageReference'}}</label>
+  <label>{{localize 'GURPS.pdfPageReference'}}</label>
   <div class='icon-prefix'>
     <input id='pageref' type='text' value='{{system.eqt.pageref}}' name='system.eqt.pageref' />
     <span><i class='fa fa-bookmark'></i></span>
   </div>
-  <label>{{i18n 'GURPS.notes'}}</label>
+  <label>{{localize 'GURPS.notes'}}</label>
   <div class='span-3'>
     <textarea class='notes' id='item-notes' rows='4' name='system.eqt.notes'>{{~system.eqt.notes~}}</textarea>
   </div>

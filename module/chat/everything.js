@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import { parselink } from '../../lib/parselink.js'
 import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
@@ -21,7 +20,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](everyone|ev)$/i)
   }
   usage() {
-    return i18n('GURPS.chatHelpEveryone')
+    return game.i18n.localize('GURPS.chatHelpEveryone')
   }
 
   async process(line) {
@@ -184,7 +183,7 @@ export class RemoteChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](remote|rem)$/i)
   }
   usage() {
-    return i18n('GURPS.chatHelpRemote')
+    return game.i18n.localize('GURPS.chatHelpRemote')
   }
 
   async process(line) {

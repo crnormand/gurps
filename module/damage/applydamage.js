@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import {
@@ -511,22 +510,24 @@ export default class ApplyDamageDialog extends Application {
       case 'majorwound':
       case 'crippling':
         const htCheck =
-          (effect?.modifier ?? 0) === 0 ? 'HT'
-          : effect.modifier < 0 ? `HT+${-effect.modifier}`
-          : `HT-${effect.modifier}`
+          (effect?.modifier ?? 0) === 0
+            ? 'HT'
+            : effect.modifier < 0
+              ? `HT+${-effect.modifier}`
+              : `HT-${effect.modifier}`
 
         otf = `/r [!${htCheck}]`
         break
 
       case 'knockback':
-        const dx = i18n('GURPS.attributesDX')
+        const dx = game.i18n.localize('GURPS.attributesDX')
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
-        const localeAcrobaticsName = i18n('GURPS.skillAcrobatics')
+        const localeAcrobaticsName = game.i18n.localize('GURPS.skillAcrobatics')
         const localeAcrobaticsCheck =
-          effect?.modifier && effect.modifier === 0 ?
-            localeAcrobaticsName
-          : `${localeAcrobaticsName} -${effect.modifier}`
-        const localeJudoName = i18n('GURPS.skillJudo')
+          effect?.modifier && effect.modifier === 0
+            ? localeAcrobaticsName
+            : `${localeAcrobaticsName} -${effect.modifier}`
+        const localeJudoName = game.i18n.localize('GURPS.skillJudo')
         const localeJudoCheck =
           effect?.modifier && effect.modifier === 0 ? localeJudoName : `${localeJudoName} -${effect.modifier}`
         otf = `/r [!${dxCheck} | Sk:${localeAcrobaticsCheck} | Sk:${localeJudoCheck}]`
@@ -559,12 +560,12 @@ export default class ApplyDamageDialog extends Application {
           await token.setEffectActive(existingEffect._source.statuses[0], false)
         }
         span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-        span.attr('title', i18n(`GURPS.add${starts || effect}${label}Effect`))
+        span.attr('title', game.i18n.localize(`GURPS.add${starts || effect}${label}Effect`))
       } else {
         // Add effect to Token
         await token.setEffectActive(effect, true)
         span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-        span.attr('title', i18n(`GURPS.remove${starts || effect}${label}Effect`))
+        span.attr('title', game.i18n.localize(`GURPS.remove${starts || effect}${label}Effect`))
       }
     }
 
@@ -579,8 +580,8 @@ export default class ApplyDamageDialog extends Application {
           if (!!allShocks) {
             await actions.removeFromNextTurn(allShocks)
             span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-            span.attr('title', i18n('GURPS.addShockEffect'))
-            ui.notifications.info(i18n('GURPS.removedShockEffect'))
+            span.attr('title', game.i18n.localize('GURPS.addShockEffect'))
+            ui.notifications.info(game.i18n.localize('GURPS.removedShockEffect'))
           } else {
             const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
             if (!!otherShocks) {
@@ -589,8 +590,8 @@ export default class ApplyDamageDialog extends Application {
             // Add the effect to the next turn
             await actions.addToNextTurn([shockEffect])
             span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-            span.attr('title', i18n(`GURPS.removeShock${applyAt}Effect`))
-            ui.notifications.info(i18n(`GURPS.addedShock${applyAt}Effect`))
+            span.attr('title', game.i18n.localize(`GURPS.removeShock${applyAt}Effect`))
+            ui.notifications.info(game.i18n.localize(`GURPS.addedShock${applyAt}Effect`))
           }
         } else {
           await toggleEffect(shockEffect, span, 'shock', applyAt)
@@ -644,24 +645,20 @@ export default class ApplyDamageDialog extends Application {
 
     if (object.type === 'majorwound') {
       let htCheck =
-        object.modifier === 0 ? 'HT'
-        : object.modifier < 0 ? `HT+${-object.modifier}`
-        : `HT-${object.modifier}`
+        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-majorwound.html', {
         name: !!token ? token.name : this.actor.name,
         button: button,
-        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
+        htCheck: htCheck.replace('HT', game.i18n.localize('GURPS.attributesHT')),
       })
     }
 
     if (object.type === 'headvitalshit') {
       let htCheck =
-        object.modifier === 0 ? 'HT'
-        : object.modifier < 0 ? `HT+${-object.modifier}`
-        : `HT-${object.modifier}`
+        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
@@ -669,16 +666,16 @@ export default class ApplyDamageDialog extends Application {
         name: !!token ? token.name : this.actor.name,
         button: button,
         location: object.detail,
-        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
+        htCheck: htCheck.replace('HT', game.i18n.localize('GURPS.attributesHT')),
       })
     }
 
     if (object.type === 'knockback') {
-      let dx = i18n('GURPS.attributesDX')
+      let dx = game.i18n.localize('GURPS.attributesDX')
       let dxCheck = object.modifier === 0 ? dx : `${dx}-${object.modifier}`
-      let acro = i18n('GURPS.skillAcrobatics')
+      let acro = game.i18n.localize('GURPS.skillAcrobatics')
       let acroCheck = object.modifier === 0 ? acro : `${acro}-${object.modifier}`
-      let judo = i18n('GURPS.skillJudo')
+      let judo = game.i18n.localize('GURPS.skillJudo')
       let judoCheck = object.modifier === 0 ? judo : `${judo}-${object.modifier}`
 
       let button = `/if ![${dxCheck} | Sk:${acroCheck} | Sk:${judoCheck}] {/st + prone}`
@@ -688,8 +685,8 @@ export default class ApplyDamageDialog extends Application {
         name: !!token ? token.name : this.actor.name,
         button: button,
         yards: object.amount,
-        pdfref: i18n('GURPS.pdfKnockback'),
-        unit: object.amount > 1 ? i18n('GURPS.yards') : i18n('GURPS.yard'),
+        pdfref: game.i18n.localize('GURPS.pdfKnockback'),
+        unit: object.amount > 1 ? game.i18n.localize('GURPS.yards') : game.i18n.localize('GURPS.yard'),
         dx: dxCheck.replace('-', '−'),
         acrobatics: acroCheck.replace('-', '−'),
         judo: judoCheck.replace('-', '−'),
@@ -706,7 +703,7 @@ export default class ApplyDamageDialog extends Application {
         location: object.detail,
         groundModifier: 'DX-1',
         swimFlyModifer: 'DX-2',
-        pdfref: i18n('GURPS.pdfCrippling'),
+        pdfref: game.i18n.localize('GURPS.pdfCrippling'),
         classStart: '<span class="pdflink">',
         classEnd: '</span>',
       })

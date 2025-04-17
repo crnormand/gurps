@@ -36,7 +36,7 @@ export default class ChatProcessor {
    */
   help() {
     return 'Must return help string or null'
-  } // This does not need to be i18n
+  } // This does not need to be localized (huh?)
 
   /**
    * Override to true if this chat command only works for GMs

@@ -1,12 +1,12 @@
 <!-- Added to color the rollable parts of the character sheet. Stevil... -->
 <form id='color-character-sheet-settings' autocomplete='off' class='gga-app'>
-  <h3>{{ i18n 'GURPS.settingColorSheetMenuTitle' }}</h3>
-  <aside>{{ i18n 'GURPS.settingColorSheetMenuHint' }}</aside>
+  <h3>{{localize 'GURPS.settingColorSheetMenuTitle' }}</h3>
+  <aside>{{localize 'GURPS.settingColorSheetMenuHint' }}</aside>
   <div class='section'>
     <div id='entry-list' class='gurps-sheet-colors overflowy'>
-      <header>{{ i18n 'GURPS.colorSheetMenuOverride' }}</header>
-      <header>{{ i18n 'GURPS.colorSheetMenuCustomColors' }}</header>
-      <header>{{ i18n 'GURPS.colorSheetMenuColorAreas' }}</header>
+      <header>{{localize 'GURPS.colorSheetMenuOverride' }}</header>
+      <header>{{localize 'GURPS.colorSheetMenuCustomColors' }}</header>
+      <header>{{localize 'GURPS.colorSheetMenuColorAreas' }}</header>
       {{#each allColors}}
         <hr />
         <div class='override-color'><input type='checkbox' id='{{ rollable_css }}' {{#if color_override}}
@@ -29,34 +29,34 @@
           <div class='area-colors'>
             {{#switch area}}
               {{#case 'Attributes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAttributesColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAttributesColor' }}
               {{/case}}
               {{#case 'Dodge'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDodgeColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDodgeColor' }}
               {{/case}}
               {{#case 'Damage'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDamageColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDamageColor' }}
               {{/case}}
               {{#case 'Block'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasBlockColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasBlockColor' }}
               {{/case}}
               {{#case 'Parry'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasParryColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasParryColor' }}
               {{/case}}
               {{#case 'Weapons'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasWeaponsColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasWeaponsColor' }}
               {{/case}}
               {{#case 'Skills'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSkillsColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSkillsColor' }}
               {{/case}}
               {{#case 'Spells'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSpellsColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSpellsColor' }}
               {{/case}}
               {{#case 'OtF-Notes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasOtfNotesColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasOtfNotesColor' }}
               {{/case}}
               {{#case 'Ads/Disads'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAdsDisadsColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAdsDisadsColor' }}
               {{/case}}
             {{/switch}}
           </div>
@@ -78,34 +78,34 @@
           <div class='area-colors'>
             {{#switch area}}
               {{#case 'Attributes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAttributesTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAttributesTextColor' }}
               {{/case}}
               {{#case 'Dodge'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDodgeTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDodgeTextColor' }}
               {{/case}}
               {{#case 'Damage'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDamageTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDamageTextColor' }}
               {{/case}}
               {{#case 'Block'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasBlockTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasBlockTextColor' }}
               {{/case}}
               {{#case 'Parry'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasParryTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasParryTextColor' }}
               {{/case}}
               {{#case 'Weapons'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasWeaponsTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasWeaponsTextColor' }}
               {{/case}}
               {{#case 'Skills'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSkillsTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSkillsTextColor' }}
               {{/case}}
               {{#case 'Spells'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSpellsTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSpellsTextColor' }}
               {{/case}}
               {{#case 'OtF-Notes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasOtfNotesTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasOtfNotesTextColor' }}
               {{/case}}
               {{#case 'Ads/Disads'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAdsDisadsTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAdsDisadsTextColor' }}
               {{/case}}
             {{/switch}}
           </div>
@@ -127,34 +127,34 @@
           <div class='area-colors'>
             {{#switch area}}
               {{#case 'Attributes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAttributesHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAttributesHoverColor' }}
               {{/case}}
               {{#case 'Dodge'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDodgeHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDodgeHoverColor' }}
               {{/case}}
               {{#case 'Damage'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDamageHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDamageHoverColor' }}
               {{/case}}
               {{#case 'Block'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasBlockHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasBlockHoverColor' }}
               {{/case}}
               {{#case 'Parry'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasParryHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasParryHoverColor' }}
               {{/case}}
               {{#case 'Weapons'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasWeaponsHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasWeaponsHoverColor' }}
               {{/case}}
               {{#case 'Skills'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSkillsHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSkillsHoverColor' }}
               {{/case}}
               {{#case 'Spells'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSpellsHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSpellsHoverColor' }}
               {{/case}}
               {{#case 'OtF-Notes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasOtfNotesHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasOtfNotesHoverColor' }}
               {{/case}}
               {{#case 'Ads/Disads'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAdsDisadsHoverColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAdsDisadsHoverColor' }}
               {{/case}}
             {{/switch}}
           </div>
@@ -177,34 +177,34 @@
           <div class='area-colors'>
             {{#switch area}}
               {{#case 'Attributes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAttributesHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAttributesHoverTextColor' }}
               {{/case}}
               {{#case 'Dodge'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDodgeHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDodgeHoverTextColor' }}
               {{/case}}
               {{#case 'Damage'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasDamageHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasDamageHoverTextColor' }}
               {{/case}}
               {{#case 'Block'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasBlockHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasBlockHoverTextColor' }}
               {{/case}}
               {{#case 'Parry'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasParryHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasParryHoverTextColor' }}
               {{/case}}
               {{#case 'Weapons'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasWeaponsHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasWeaponsHoverTextColor' }}
               {{/case}}
               {{#case 'Skills'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSkillsHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSkillsHoverTextColor' }}
               {{/case}}
               {{#case 'Spells'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasSpellsHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasSpellsHoverTextColor' }}
               {{/case}}
               {{#case 'OtF-Notes'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasOtfNotesHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasOtfNotesHoverTextColor' }}
               {{/case}}
               {{#case 'Ads/Disads'}}
-                {{ i18n 'GURPS.colorSheetMenuAreasAdsDisadsHoverTextColor' }}
+                {{localize 'GURPS.colorSheetMenuAreasAdsDisadsHoverTextColor' }}
               {{/case}}
             {{/switch}}
           </div>

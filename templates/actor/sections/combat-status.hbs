@@ -1,47 +1,47 @@
 <div id='combat-status' class='gga-table'>
-  <div class='header'>{{i18n 'GURPS.conditions'}}</div>
+  <div class='header'>{{localize 'GURPS.conditions'}}</div>
   <div class='status-block'>
     {{#if (ne system.conditions.maneuver 'undefined')}}
-      <div class='label'>{{i18n 'GURPS.maneuver'}}:</div>
+      <div class='label'>{{localize 'GURPS.maneuver'}}:</div>
       <div class='field details'>
         <details id='maneuver'>
           <summary>
             {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
-              <img class='button' src='{{maneuver.icon}}' title='{{i18n maneuver.label}}' alt='{{maneuver.name}}' />
+              <img class='button' src='{{maneuver.icon}}' title='{{localize maneuver.label}}' alt='{{maneuver.name}}' />
             {{/with}}
           </summary>
           <div class='popup square5x4'>
             {{#each (listAllManeuvers) as |this key|}}
-              <img class='button' src='{{icon}}' title='{{i18n label}}' alt='{{key}}' />
+              <img class='button' src='{{icon}}' title='{{localize label}}' alt='{{key}}' />
             {{/each}}
           </div>
         </details>
       </div>
     {{/if}}
 
-    <div class='label'>{{i18n 'GURPS.modifierPosture'}}:</div>
+    <div class='label'>{{localize 'GURPS.modifierPosture'}}:</div>
     <div class='field details'>
       <details id='posture'>
         <summary>
           {{#with (getPosture system.conditions.posture) as |posture|}}
-            <img class='button' src='{{posture.img}}' title='{{i18n posture.name}}' alt='{{posture.id}}' />
+            <img class='button' src='{{posture.img}}' title='{{localize posture.name}}' alt='{{posture.id}}' />
           {{/with}}
         </summary>
         <div class='popup square5x4'>
           <img
             class='button'
             src='systems/gurps/icons/statuses/dd-condition-standing.webp'
-            title='{{i18n "GURPS.status.Standing"}}'
+            title='{{localize "GURPS.status.Standing"}}'
             alt='standing'
           />
           {{#each (listAllPostures) as |this key|}}
-            <img class='button' src='{{img}}' title='{{i18n name}}' alt='{{id}}' />
+            <img class='button' src='{{img}}' title='{{localize name}}' alt='{{id}}' />
           {{/each}}
         </div>
       </details>
     </div>
 
-    <div class='label'>{{i18n 'GURPS.activeEffects'}}:</div>
+    <div class='label'>{{localize 'GURPS.activeEffects'}}:</div>
     <div class='field' style='border: none;'>
       <button id='open-modifier-popup'><i class='fa-regular fa-sparkles'></i></button>
     </div>

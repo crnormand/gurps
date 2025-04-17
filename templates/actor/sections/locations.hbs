@@ -2,23 +2,23 @@
   {{#if isEditing}}
     <div class='header'>
       <div class='headermenu' data-key='system.hitlocations'>
-        <span>{{i18n 'GURPS.hitLocation'}}</span>
+        <span>{{localize 'GURPS.hitLocation'}}</span>
         <i class='fas fa-caret-square-down'></i>
       </div>
       <div class='option'>
         <input id='ignoreinputbodyplan' type='checkbox' {{checked system.additionalresources.ignoreinputbodyplan}}/>
-        <label for='ignoreinputbodyplan'>{{i18n "GURPS.ignoreBodyPlan"}}</label>
+        <label for='ignoreinputbodyplan'>{{localize "GURPS.ignoreBodyPlan"}}</label>
       </div>
     </div>
   {{else}}
-    <div class='header'>{{i18n 'GURPS.hitLocation'}}</div>
+    <div class='header'>{{localize 'GURPS.hitLocation'}}</div>
   {{/if}}
 
   <div class='itemmenu header' readonly></div>
-  <div class='roll header flex-center'>{{i18n 'GURPS.roll'}}</div>
-  <div class='where header'>{{i18n 'GURPS.hitLocationWhere'}}</div>
-  <div class='penalty header gga-right'>{{i18n 'GURPS.hitLocationPenalty'}}</div>
-  <div class='dr header gga-right'>{{i18n 'GURPS.hitLocationDR'}}</div>
+  <div class='roll header flex-center'>{{localize 'GURPS.roll'}}</div>
+  <div class='where header'>{{localize 'GURPS.hitLocationWhere'}}</div>
+  <div class='penalty header gga-right'>{{localize 'GURPS.hitLocationPenalty'}}</div>
+  <div class='dr header gga-right'>{{localize 'GURPS.hitLocationDR'}}</div>
 
   {{#each system.hitlocations as |this key|}}
     {{#if ../isEditing}}
@@ -44,7 +44,7 @@
       {{#if ../isEditing}}
         <input name='system.hitlocations.{{@key}}.where' class='gcs-input-5' type='text' value='{{where}}' />
       {{else}}
-        {{i18n (concat 'GURPS.hitLocation' where) where}}
+        {{localize (concat 'GURPS.hitLocation' where) where}}
       {{/if}}
     </div>
     {{#if ../isEditing}}
@@ -65,14 +65,14 @@
       {{#if ../isEditing}}
         <div style="display: flex; flex-flow: row nowrap">
           <input class='gcs-input' type='text' name='system.hitlocations.{{@key}}.import' value='{{import}}' />
-          {{#each split as | this key |}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+          {{#each split as | this key |}}<span title='{{localize key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
           <button id="split-{{@key}}" style="padding-bottom: 1px;" data-key='system.hitlocations.{{@key}}'>…</button>
         </div>
       {{else}}
         {{#if ../document.limited}}
           ??
         {{else}}
-          {{dr}}{{#each split as | this key |}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+          {{dr}}{{#each split as | this key |}}<span title='{{localize key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
         {{/if}}
       {{/if}}
     </div>

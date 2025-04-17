@@ -1,4 +1,3 @@
-import { i18n_f } from '../../lib/i18n.js'
 
 export default class MoveModeEditor extends Application {
   constructor(actor, options) {
@@ -28,7 +27,7 @@ export default class MoveModeEditor extends Application {
 
   get title() {
     let name = this.actor?.name || 'UNKNOWN'
-    return i18n_f('GURPS.moveModeEditor.Title', { name: name }, 'Movement Modes for {name}')
+    return game.i18n.format('GURPS.moveModeEditor.Title', { name: name }, 'Movement Modes for {name}')
   }
 
   activateListeners(html) {

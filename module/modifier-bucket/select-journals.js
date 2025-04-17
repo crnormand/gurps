@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
@@ -21,7 +20,7 @@ export default class ModifierBucketJournals extends FormApplication {
       minimizable: false,
       width: 550,
       height: 'auto',
-      title: i18n('GURPS.modifierJournalManager'),
+      title: game.i18n.localize('GURPS.modifierJournalManager'),
       closeOnSubmit: true,
     })
   }

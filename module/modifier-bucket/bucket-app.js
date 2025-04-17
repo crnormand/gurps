@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, generateUniqueId } from '../../lib/utilities.js'
@@ -215,7 +214,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(i18n('GURPS.modifiers_.rapidStrike')))
+    let rs = this.modifierList.find(m => m.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
@@ -239,10 +238,7 @@ class ModifierStack {
         const newFormula = addBucketToDamage(originalFormula, false)
         const bucketTotal = this.currentSum
         const bucketRollModifier = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        const bucketRollModifierColor =
-          bucketTotal > 0 ? 'darkgreen'
-          : bucketTotal < 0 ? 'darkred'
-          : '#a8a8a8'
+        const bucketRollModifierColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
         $('#cr-damage').text(newFormula)
         $('#cr-bucket').text(bucketRollModifier).css('color', bucketRollModifierColor)
       }
@@ -294,7 +290,7 @@ class ModifierStack {
   _add(list, mod, reason = '', replace = false, tagged = false) {
     /** @type {Modifier|undefined} */
     var oldmod
-    reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
+    reason = reason.replace('(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
       if (replace)

@@ -1,5 +1,4 @@
 'use strict'
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
 import { isValidDiceTerm } from '../utilities/damage-utils.js'
@@ -30,7 +29,7 @@ export default class SlamChatProcessor extends ChatProcessor {
   async process(line) {
     let actor = GURPS.LastActor
     if (!actor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
       return
     }
 
@@ -77,8 +76,8 @@ class SlamCalculatorForm extends FormApplication {
       sizeAndSpeedRangeTable: GURPS.SSRT,
       isNiceDiceEnabled: isNiceDiceEnabled,
       roll: Roll,
-      i18n: i18n,
-      i18n_f: i18n_f,
+      localize: game.i18n.localize,
+      format: game.i18n.format,
     })
 
     this._attackerHp = !!attacker ? attacker.actor.system.HP.max : 10
@@ -111,7 +110,7 @@ class SlamCalculatorForm extends FormApplication {
     const data = super.getData(options)
 
     data.attackerToken = this._attacker
-    data.targetToken = this._target || { name: i18n('GURPS.target') }
+    data.targetToken = this._target || { name: game.i18n.localize('GURPS.target') }
     data.isRealTarget = !!this._target
 
     data.attackerHp = this._attackerHp

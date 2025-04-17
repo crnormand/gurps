@@ -1,5 +1,3 @@
-import { i18n_f } from '../../lib/i18n.js'
-
 export default class SplitDREditor extends Application {
   constructor(actor, key, options) {
     super(options)
@@ -28,7 +26,7 @@ export default class SplitDREditor extends Application {
   }
 
   get title() {
-    return i18n_f('GURPS.drSplitEditorTitle', { where: this.location.where }, 'Split DR ({where})')
+    return game.i18n.format('GURPS.drSplitEditorTitle', { where: this.location.where }, 'Split DR ({where})')
   }
 
   get location() {

@@ -4,21 +4,21 @@
   <header class='sheet-header'>
     <img class='effect-img' src='{{data.img}}' data-edit='img' />
     <h1 class='effect-title'>
-      <input name='name' type='text' value='{{data.name}}' placeholder='{{i18n "Name"}}' />
+      <input name='name' type='text' value='{{data.name}}' placeholder='{{localize "Name"}}' />
     </h1>
   </header>
 
   <!-- Effect Configuration Tabs -->
-  <nav class='sheet-tabs tabs' aria-role='{{i18n "SHEETS.FormNavLabel"}}'>
-    <a class='item' data-tab='details'><i class='fas fa-book'></i> {{i18n 'EFFECT.TabDetails'}}</a>
-    <a class='item' data-tab='duration'><i class='fas fa-clock'></i> {{i18n 'EFFECT.TabDuration'}}</a>
-    <a class='item' data-tab='effects'><i class='fas fa-cogs'></i> {{i18n 'EFFECT.TabEffects'}}</a>
+  <nav class='sheet-tabs tabs' aria-role='{{localize "SHEETS.FormNavLabel"}}'>
+    <a class='item' data-tab='details'><i class='fas fa-book'></i> {{localize 'EFFECT.TabDetails'}}</a>
+    <a class='item' data-tab='duration'><i class='fas fa-clock'></i> {{localize 'EFFECT.TabDuration'}}</a>
+    <a class='item' data-tab='effects'><i class='fas fa-cogs'></i> {{localize 'EFFECT.TabEffects'}}</a>
   </nav>
 
   <!-- Details Tab -->
   <section class='tab' data-tab='details'>
     <div class='form-group'>
-      <label for='tint'>{{i18n 'EFFECT.Tint'}}</label>
+      <label for='tint'>{{localize 'EFFECT.Tint'}}</label>
       <div class='form-fields'>
         <color-picker id='tint' name='tint' value='{{data.tint}}'></color-picker>
       </div>
@@ -37,13 +37,13 @@
     </div>
 
     <div class='form-group'>
-      <label>{{i18n 'GURPS.active'}}</label>
+      <label>{{localize 'GURPS.active'}}</label>
       <input type='checkbox' name='disabled' {{checked (not disabled)}} />
     </div>
 
     {{#if isActorEffect}}
       <div class='form-group'>
-        <label>{{i18n 'EFFECT.Origin'}}</label>
+        <label>{{localize 'EFFECT.Origin'}}</label>
         <div class='form-fields'>
           <input type='text' name='origin' value='{{data.origin}}' disabled />
         </div>
@@ -74,13 +74,13 @@
   <!-- Duration Tab -->
   <section class='tab' data-tab='duration'>
     <div class='form-group'>
-      <label>{{i18n 'EFFECT.DurationSecs'}}</label>
+      <label>{{localize 'EFFECT.DurationSecs'}}</label>
       <div class='form-fields'>
         <input type='number' name='duration.seconds' value='{{data.duration.seconds}}' />
       </div>
     </div>
     <div class='form-group'>
-      <label>{{i18n 'EFFECT.StartTime'}}</label>
+      <label>{{localize 'EFFECT.StartTime'}}</label>
       <div class='form-fields'>
         <input type='number' name='duration.startTime' value='{{data.duration.startTime}}' />
       </div>
@@ -96,23 +96,23 @@
       </div>
     </div>
     <div class='form-group'>
-      <label>{{i18n 'EFFECT.Combat'}}</label>
+      <label>{{localize 'EFFECT.Combat'}}</label>
       <div class='form-fields'>
         <input type='text' name='duration.combat' value='{{data.duration.combat}}' disabled />
       </div>
     </div>
     <div class='form-group'>
-      <label>{{i18n 'EFFECT.StartTurns'}}</label>
+      <label>{{localize 'EFFECT.StartTurns'}}</label>
       <div class='form-fields'>
-        <label>{{i18n 'COMBAT.Round' }}</label>
+        <label>{{localize 'COMBAT.Round' }}</label>
         <input type='number' name='duration.startRound' value='{{ data.duration.startRound }}' />
-        <label>{{i18n 'COMBAT.Turn' }}</label>
+        <label>{{localize 'COMBAT.Turn' }}</label>
         <input type='number' name='duration.startTurn' value='{{data.duration.startTurn}}' />
       </div>
     </div>
     <hr />
     <div class='form-group'>
-      <label>{{i18n 'GURPS.effectsTermination'}}</label>
+      <label>{{localize 'GURPS.effectsTermination'}}</label>
       <div class='form-fields'>
         <input type='text' name='flags.gurps.endCondition' value='{{data.flags.gurps.endCondition}}' />
       </div>
@@ -122,9 +122,9 @@
   <!-- Effects Tab -->
   <section class='tab' data-tab='effects'>
     <header class='effect-change effects-header flexrow'>
-      <div class='key'>{{i18n 'EFFECT.ChangeKey'}}</div>
-      <div class='mode'>{{i18n 'EFFECT.ChangeMode'}}</div>
-      <div class='value'>{{i18n 'EFFECT.ChangeValue'}}</div>
+      <div class='key'>{{localize 'EFFECT.ChangeKey'}}</div>
+      <div class='mode'>{{localize 'EFFECT.ChangeMode'}}</div>
+      <div class='value'>{{localize 'EFFECT.ChangeValue'}}</div>
       <div class='effect-controls'>
         <a class='effect-control' data-action='add'><i class='far fa-plus-square'></i></a>
       </div>
@@ -154,6 +154,6 @@
   </section>
 
   <footer class='sheet-footer'>
-    <button type='submit'><i class='fas fa-save'></i> {{i18n submitText}}</button>
+    <button type='submit'><i class='fas fa-save'></i> {{localize submitText}}</button>
   </footer>
 </form>

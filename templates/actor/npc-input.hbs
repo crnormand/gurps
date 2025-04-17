@@ -2,7 +2,7 @@
   <div class='gga-app {{classes}} npc-input'>
     <div class='npc-input-grid-container'>
       <div class='npc-input-top'>
-        <div class='npc-input-nm npc-input-label'>{{i18n 'GURPS.sheet.personal.name'}}:</div>
+        <div class='npc-input-nm npc-input-label'>{{localize 'GURPS.sheet.personal.name'}}:</div>
         <div class='npc-input-nm-val'><input
             id='npc-input-name'
             data-key='name'
@@ -10,7 +10,7 @@
             type='text'
             value='{{mook.name}}'
           /></div>
-        <div class='npc-input-title npc-input-label'>{{i18n 'GURPS.sheet.personal.title'}}:</div>
+        <div class='npc-input-title npc-input-label'>{{localize 'GURPS.sheet.personal.title'}}:</div>
         <div class='npc-input-title-val'><input data-key='title' class='gcs-input' type='text' value='{{mook.title}}' />
         </div>
         <div class='npc-input-desc npc-input-label'>Desc:</div>
@@ -18,16 +18,16 @@
         </div>
       </div>
       <div class='npc-input-attr'>
-        <div class='npc-input-st npc-input-label'>{{i18n 'GURPS.attributesST'}}:</div>
+        <div class='npc-input-st npc-input-label'>{{localize 'GURPS.attributesST'}}:</div>
         <div class='npc-input-st-val'><input data-key='st' class='gcs-input-sm2' type='text' value='{{mook.st}}' />
         </div>
-        <div class='npc-input-dx npc-input-label'>{{i18n 'GURPS.attributesDX'}}:</div>
+        <div class='npc-input-dx npc-input-label'>{{localize 'GURPS.attributesDX'}}:</div>
         <div class='npc-input-dx-val'><input data-key='dx' class='gcs-input-sm2' type='text' value='{{mook.dx}}' />
         </div>
-        <div class='npc-input-iq npc-input-label'>{{i18n 'GURPS.attributesIQ'}}:</div>
+        <div class='npc-input-iq npc-input-label'>{{localize 'GURPS.attributesIQ'}}:</div>
         <div class='npc-input-iq-val'><input data-key='iq' class='gcs-input-sm2' type='text' value='{{mook.iq}}' />
         </div>
-        <div class='npc-input-ht npc-input-label'>{{i18n 'GURPS.attributesHT'}}:</div>
+        <div class='npc-input-ht npc-input-label'>{{localize 'GURPS.attributesHT'}}:</div>
         <div class='npc-input-ht-val'><input data-key='ht' class='gcs-input-sm2' type='text' value='{{mook.ht}}' />
         </div>
         <div class='npc-input-dmg npc-input-labelr'>Th/Sw:</div>
@@ -37,46 +37,46 @@
             type='text'
             value='{{mook.damage}}'
           /></div>
-        <div class='npc-input-hp npc-input-label'>{{i18n 'GURPS.HP'}}:</div>
+        <div class='npc-input-hp npc-input-label'>{{localize 'GURPS.HP'}}:</div>
         <div class='npc-input-hp-val'><input data-key='hp' class='gcs-input-sm2' type='text' value='{{mook.hp}}' />
         </div>
-        <div class='npc-input-will npc-input-label'>{{i18n 'GURPS.attributesWILL'}}:</div>
+        <div class='npc-input-will npc-input-label'>{{localize 'GURPS.attributesWILL'}}:</div>
         <div class='npc-input-will-val'><input
             data-key='will'
             class='gcs-input-sm2'
             type='text'
             value='{{mook.will}}'
           /></div>
-        <div class='npc-input-per npc-input-label'>{{i18n 'GURPS.attributesPER'}}:</div>
+        <div class='npc-input-per npc-input-label'>{{localize 'GURPS.attributesPER'}}:</div>
         <div class='npc-input-per-val'><input data-key='per' class='gcs-input-sm2' type='text' value='{{mook.per}}' />
         </div>
-        <div class='npc-input-fp npc-input-label'>{{i18n 'GURPS.FP'}}:</div>
+        <div class='npc-input-fp npc-input-label'>{{localize 'GURPS.FP'}}:</div>
         <div class='npc-input-fp-val'><input data-key='fp' class='gcs-input-sm2' type='text' value='{{mook.fp}}' />
         </div>
-        <div class='npc-input-parry npc-input-labelr'>{{i18n 'GURPS.parry'}}:</div>
+        <div class='npc-input-parry npc-input-labelr'>{{localize 'GURPS.parry'}}:</div>
         <div class='npc-input-parry-val'><input
             data-key='parry'
             class='gcs-input-sm2'
             type='text'
             value='{{mook.parry}}'
           /></div>
-        <div class='npc-input-spd npc-input-labelr'>{{i18n 'GURPS.speed'}}:</div>
+        <div class='npc-input-spd npc-input-labelr'>{{localize 'GURPS.speed'}}:</div>
         <div class='npc-input-spd-val'><input
             data-key='speed'
             class='gcs-input-sm3'
             type='text'
             value='{{mook.speed}}'
           /></div>
-        <div class='npc-input-mov npc-input-labelr'>{{i18n 'GURPS.move'}}:</div>
+        <div class='npc-input-mov npc-input-labelr'>{{localize 'GURPS.move'}}:</div>
         <div class='npc-input-mov-val'><input data-key='move' class='gcs-input-sm2' type='text' value='{{mook.move}}' />
         </div>
         <div class='npc-input-sm npc-input-labelr'>SM:</div>
         <div class='npc-input-sm-val'><input data-key='sm' class='npc-input-sm2' type='text' value='{{mook.sm}}' />
         </div>
-        <div class='npc-input-dr npc-input-labelr'>{{i18n 'GURPS.hitLocationDR'}}:</div>
+        <div class='npc-input-dr npc-input-labelr'>{{localize 'GURPS.hitLocationDR'}}:</div>
         <div class='npc-input-dr-val'><input data-key='dr' class='npc-input-sm2' type='text' value='{{mook.dr}}' />
         </div>
-        <div class='npc-input-dodge npc-input-labelr'>{{i18n 'GURPS.dodge'}}:</div>
+        <div class='npc-input-dodge npc-input-labelr'>{{localize 'GURPS.dodge'}}:</div>
         <div class='npc-input-dodge-val'><input
             data-key='dodge'
             class='gcs-input-sm2'
@@ -92,7 +92,7 @@
           >{{mook.notes}}</textarea></div>
       </div>
       <div class='npc-input-melee'>
-        <div class='npc-input-me'>{{i18n 'GURPS.melee'}}</div>
+        <div class='npc-input-me'>{{localize 'GURPS.melee'}}</div>
         <div class='npc-input-me-val'><textarea
             data-key='melee'
             class='npc-input-ta'
@@ -100,7 +100,7 @@
           >{{mook.melee}}</textarea></div>
       </div>
       <div class='npc-input-ranged'>
-        <div class='npc-input-ra'>{{i18n 'GURPS.ranged'}}</div>
+        <div class='npc-input-ra'>{{localize 'GURPS.ranged'}}</div>
         <div class='npc-input-ra-val'><textarea
             data-key='ranged'
             class='npc-input-ta'
@@ -108,7 +108,7 @@
           >{{mook.ranged}}</textarea></div>
       </div>
       <div class='npc-input-traits'>
-        <div class='npc-input-tr'>{{i18n 'GURPS.advDisadvPerkQuirks'}}</div>
+        <div class='npc-input-tr'>{{localize 'GURPS.advDisadvPerkQuirks'}}</div>
         <div class='npc-input-tr-val'><textarea
             data-key='traits'
             class='npc-input-ta'
@@ -116,7 +116,7 @@
           >{{mook.traits}}</textarea></div>
       </div>
       <div class='npc-input-skills'>
-        <div class='npc-input-sk'>{{i18n 'GURPS.skills'}}</div>
+        <div class='npc-input-sk'>{{localize 'GURPS.skills'}}</div>
         <div class='npc-input-sk-val'><textarea
             data-key='skills'
             class='npc-input-ta'
@@ -124,7 +124,7 @@
           >{{mook.skills}}</textarea></div>
       </div>
       <div class='npc-input-equip'>
-        <div class='npc-input-eqt'>{{i18n 'GURPS.equipment'}}</div>
+        <div class='npc-input-eqt'>{{localize 'GURPS.equipment'}}</div>
         <div class='npc-input-eqt-val'><textarea
             data-key='equipment'
             class='npc-input-ta'
@@ -132,7 +132,7 @@
           >{{mook.equipment}}</textarea></div>
       </div>
       <div class='npc-input-spells'>
-        <div class='npc-input-sp'>{{i18n 'GURPS.pointsSpells'}}</div>
+        <div class='npc-input-sp'>{{localize 'GURPS.pointsSpells'}}</div>
         <div class='npc-input-sp-val'><textarea
             data-key='spells'
             class='npc-input-ta'

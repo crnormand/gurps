@@ -1,4 +1,3 @@
-import * as lang from '../lib/i18n'
 import * as utilities from '../lib/utilities'
 import { displayMod, makeSelect } from '../lib/utilities'
 
@@ -186,25 +185,6 @@ describe('utilities', () => {
       expect(utilities.getComparison('>')(3, 2)).toBe(true)
       expect(utilities.getComparison('≥')(3, 3)).toBe(true)
       expect(utilities.getComparison('≤')(2, 3)).toBe(true)
-    })
-  })
-
-  describe('i18n and i18n_f', () => {
-    beforeAll(() => {
-      globalThis.game = {
-        i18n: {
-          localize: str => str,
-          format: (str, data) => `${str} ${JSON.stringify(data)}`,
-        },
-      }
-    })
-
-    test('i18n should return localized string', () => {
-      expect(lang.i18n('test.string')).toBe('test.string')
-    })
-
-    test.skip('i18n_f should return formatted localized string', () => {
-      expect(lang.i18n_f('test.string', { key: 'value' })).toBe('test.string {"key":"value"}')
     })
   })
 

@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import Maneuvers from './maneuver.js'
 
 /**
@@ -45,7 +44,7 @@ export default class ManeuverHUDButton {
     button.classList.add('control-icon')
     button.classList.add('maneuver-open')
     button.setAttribute('data-action', 'maneuver')
-    button.title = i18n('GURPS.setManeuver')
+    button.title = game.i18n.localize('GURPS.setManeuver')
     button.innerHTML = await ManeuverHUDButton.getInnerHtml(effects)
     return button
   }

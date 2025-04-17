@@ -1,15 +1,15 @@
 <div>
   <div class='prefix'>
     {{#if rolled}}
-      {{i18n_f "GURPS.chatRollingDamage" this}}
+      {{localize "GURPS.chatRollingDamage" this}}
     {{else}}
-      {{i18n_f "GURPS.chatFixedDamage" this}}
+      {{localize "GURPS.chatFixedDamage" this}}
     {{/if}}
     {{#if hitlocation}} ({{hitlocation}}){{/if}}
   </div>
   {{#if userTarget}}
     <div style='font-size: smaller; margin-left: .5rem;'><i
-        class="fas fa-bullseye"></i>&nbsp;{{i18n_f "GURPS.targeting" userTarget}}
+        class="fas fa-bullseye"></i>&nbsp;{{localize "GURPS.targeting" userTarget}}
     </div>
   {{/if}}
   <div class='roll-message'>
@@ -39,9 +39,9 @@
                 <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
                 <span class='roll-detail'>
                   {{#if (eq damage 1)}}
-                    {{{i18n_f "GURPS.pointDamage" this}}}
+                    {{{localize "GURPS.pointDamage" this}}}
                   {{else}}
-                    {{{i18n_f "GURPS.pointsDamage" this}}}
+                    {{{localize "GURPS.pointsDamage" this}}}
                   {{/if}}</span>
               </span>
             </label>
@@ -56,8 +56,8 @@
                     <div style='text-align: start' class='aside'>{{explainLineTwo}}</div>
                   {{/if}}
                   {{#if isB378}}
-                    <div class='aside'>{{i18n "GURPS.minimumDamageRule"}} (<span
-                        class='pdflink'>{{i18n "GURPS.pdfDamageRoll"}}</span>)</div>
+                    <div class='aside'>{{localize "GURPS.minimumDamageRule"}} (<span
+                        class='pdflink'>{{localize "GURPS.pdfDamageRoll"}}</span>)</div>
                   {{/if}}
                 </div>
               </div>
@@ -73,14 +73,14 @@
         background-size: 50%; background-repeat: no-repeat; background-attachment: local;
         background-position: right;' {{/if}}>
         <span style='font-weight: 900;'><i class="fas fa-layer-group"></i>&nbsp;{{#if (gt draggableData.length 5)}}
-            {{i18n "GURPS.allTheDamage"}}
-          {{else}}{{i18n "GURPS.allDamage"}}{{/if}}</span>
+            {{localize "GURPS.allTheDamage"}}
+          {{else}}{{localize "GURPS.allDamage"}}{{/if}}</span>
       </div>
     {{/if}}
     {{#if userTarget}}
       <div>
         <button class='apply-all'
-          style='margin-top: 0.25rem;'>{{i18n_f "GURPS.applyAllToTarget" userTarget}}</button>
+          style='margin-top: 0.25rem;'>{{localize "GURPS.applyAllToTarget" userTarget}}</button>
       </div>
     {{/if}}
   </div>

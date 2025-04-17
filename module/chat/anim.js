@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import { wait } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
 
@@ -279,7 +278,7 @@ export class AnimChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?]anim$/i)
   }
   usage() {
-    return i18n('GURPS.chatHelpAnim')
+    return game.i18n.localize('GURPS.chatHelpAnim')
   }
 
   async process(line) {

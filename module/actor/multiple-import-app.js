@@ -1,10 +1,9 @@
-import { i18n } from '../../lib/i18n.js'
 import { ActorImporter } from './actor-importer.js'
 import { GurpsActor } from './actor.js'
 
 export const AddMultipleImportButton = function (html) {
   let button = $(
-    `<button class="mass-import"><i class="fas fa-file-import"></i>${i18n('GURPS.importMultiple')}</button>`
+    `<button class="mass-import"><i class="fas fa-file-import"></i>${game.i18n.localize('GURPS.importMultiple')}</button>`
   )
 
   button.click(async () => {
@@ -21,7 +20,7 @@ export const AddMultipleImportButton = function (html) {
     }
 
     if (files.length === 0) {
-      return ui.notifications.error(i18n('GURPS.importEmptyDirectory'))
+      return ui.notifications.error(game.i18n.localize('GURPS.importEmptyDirectory'))
     }
 
     new MultipleImportApp(dirHandle, files).render(true)
@@ -64,7 +63,7 @@ class MultipleImportApp extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'multiple-import-form',
-      title: i18n('GURPS.importMultipleActors'),
+      title: game.i18n.localize('GURPS.importMultipleActors'),
       template: 'systems/gurps/templates/actor/import-multiple-file-list.hbs',
       popOut: true,
       width: 'auto',
@@ -109,7 +108,7 @@ class MultipleImportApp extends Application {
         // Import the selected files
         const selectedFiles = this.data.files.filter(it => it.selected)
         if (selectedFiles.length === 0) {
-          return ui.notifications.error(i18n('GURPS.importNoFilesSelected'))
+          return ui.notifications.error(game.i18n.localize('GURPS.importNoFilesSelected'))
         }
         this._importFiles(selectedFiles)
         return this.close()

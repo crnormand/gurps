@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 
 /**
@@ -20,8 +19,8 @@ export class GlobalActiveEffectDataControl {
   _registerSetting() {
     // Register the setting to show the Active Effect Manager.
     // game.settings.register(SYSTEM_NAME, GlobalActiveEffectDataControl.SETTING_SHOW_EFFECT_MANAGER, {
-    //   name: i18n('GURPS.settingTokenToolsShowEffectManager', 'Show Active Effect Manager'),
-    //   hint: i18n('GURPS.settingHintTokenToolsShowEffectManaager', 'Show the Active Effect Manager.'),
+    //   name: game.i18n.localize('GURPS.settingTokenToolsShowEffectManager', 'Show Active Effect Manager'),
+    //   hint: game.i18n.localize('GURPS.settingHintTokenToolsShowEffectManaager', 'Show the Active Effect Manager.'),
     //   scope: 'client',
     //   config: true,
     //   type: Boolean,
@@ -46,7 +45,7 @@ export class GlobalActiveEffectDataControl {
         let self = this
         tokenButton.tools.push({
           name: GlobalActiveEffectDataControl.EFFECT_MANAGER_NAME,
-          title: i18n('GURPS.tokenToolsActiveEffects', 'Active Effects Manager'),
+          title: game.i18n.localize('GURPS.tokenToolsActiveEffects', 'Active Effects Manager'),
           icon: 'fa-solid fa-person-rays',
           toggle: true,
           active: this.showPopup,
@@ -112,7 +111,7 @@ class ActiveEffectManagerPopout extends Application {
       minimizable: true,
       jQuery: true,
       resizable: true,
-      title: i18n('GURPS.effectManagerPopout', 'Active Effect Manager'),
+      title: game.i18n.localize('GURPS.effectManagerPopout', 'Active Effect Manager'),
     })
   }
 
@@ -138,7 +137,7 @@ class ActiveEffectManagerPopout extends Application {
     let activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA)
 
     let newEffect = {
-      name: i18n('GURPS.effectNew', 'New Effect'),
+      name: game.i18n.localize('GURPS.effectNew', 'New Effect'),
       img: 'icons/svg/aura.svg',
       disabled: true,
     }
@@ -225,7 +224,7 @@ class ActiveEffectDataConfig extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'active-effect-config',
       template: 'systems/gurps/templates/active-effects/active-effect-data.hbs',
-      title: i18n('GURPS.effectConfig', 'Active Effect Data Configuration'),
+      title: game.i18n.localize('GURPS.effectConfig', 'Active Effect Data Configuration'),
       classes: ['sheet'],
       width: 600,
       height: 'auto',

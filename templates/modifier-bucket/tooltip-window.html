@@ -3,7 +3,7 @@
     <div id="modtooltip">
       <div id='modtooltipbucket' style='border-right: 1px solid #999;'>
         <div id="modtooltiplefttop" class='gga-group gurps-sparse-list' style='border: none;'>
-          <h4>{{i18n "GURPS.modifierCurrentEffects"}}</h4>
+          <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
           <div class='actorname'>{{actorname}}</div>
           {{#each currentmods}}
             <div class="roll-result">{{{gurpslink this true}}}</div>
@@ -12,12 +12,12 @@
 
         {{#unless cansend}}
           <div id="modtooltipleftcenter" class='gga-group' style='justify-content: center; border: none;'>
-            <p>{{i18n "GURPS.modifierClickToAdd"}}</p>
-            <p>{{i18n "GURPS.modifierAppearBelow"}}</p>
+            <p>{{localize "GURPS.modifierClickToAdd"}}</p>
+            <p>{{localize "GURPS.modifierAppearBelow"}}</p>
           </div>
         {{else}}
           <div id="modtooltipleftcenter" class='gga-group' style='border: none;'>
-            <h4>{{i18n "GURPS.modifierSendTo"}}</h4>
+            <h4>{{localize "GURPS.modifierSendTo"}}</h4>
             <div class='button-row'>
               {{#each users}}
                 <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
@@ -26,11 +26,12 @@
             {{#if everyone}}
               <div class='everyone'>
                 <span><button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
-                  <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button></span>
+                  <button class="gmbutton" data-id="SHOWALL"
+                    type="button">{{localize 'GURPS.showQuestion'}}</button></span>
               </div>
             {{else}}
               <div class='everyone'>
-                <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button>
+                <button class="gmbutton" data-id="SHOWALL" type="button">{{localize 'GURPS.showQuestion'}}</button>
               </div>
             {{/if}}
 
@@ -39,9 +40,9 @@
         {{/unless}}
 
         <div id="modtooltipleftbottom" class='gga-group gurps-sparse-list' style='border: none;'>
-          <h4>{{i18n "GURPS.modifierCurrentModifiers"}}</h4>
+          <h4>{{localize "GURPS.modifierCurrentModifiers"}}</h4>
           <div class='shaded-group overflowy'>
-            <aside>({{i18n "GURPS.clickToRemove"}})</aside>
+            <aside>({{localize "GURPS.clickToRemove"}})</aside>
             {{#each stack.modifierList}}
               <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}">
                 {{this.mod}} : {{this.desc}}
@@ -60,19 +61,19 @@
       <div class='gurps-2col' style='grid-template-columns: 1fr 1fr; gap: 0;'>
         <div class="gga-group gurps-space-between gurps-sparse-list">
           <div class='shaded-group'>
-            <h4>{{i18n "GURPS.meleeAttack"}}</h4>
+            <h4>{{localize "GURPS.meleeAttack"}}</h4>
             {{#each meleemods}}
               <div>{{{gurpslink this true}}}</div>
             {{/each}}
           </div>
           <div class='shaded-group'>
-            <h4>{{i18n "GURPS.ranged"}}</h4>
+            <h4>{{localize "GURPS.ranged"}}</h4>
             {{#each rangedmods}}
               <div>{{{gurpslink this true}}}</div>
             {{/each}}
           </div>
           <div class='shaded-group'>
-            <h4>{{i18n "GURPS.defense"}}</h4>
+            <h4>{{localize "GURPS.defense"}}</h4>
             {{#each defensemods}}
               <div>{{{gurpslink this true}}}</div>
             {{/each}}
@@ -83,7 +84,7 @@
           <div id='common-modifiers'>
             <h4 class='tabbed'>
               <span class='back'><i class="fas fa-caret-square-left"></i></span>
-              {{i18n "GURPS.modifierCommon"}}
+              {{localize "GURPS.modifierCommon"}}
               <span class='forward'><i class="fas fa-caret-square-right"></i></span>
             </h4>
             <div class='tabbedcontent'>
@@ -105,11 +106,11 @@
               </div>
             {{/each}}
             <div class='tabbedcontent'>
-              <aside>{{i18n 'GURPS.modifierTabAside'}} </aside>
+              <aside>{{localize 'GURPS.modifierTabAside'}} </aside>
             </div>
           </div>
           <div>
-            <h4>{{i18n "GURPS.modifierOthers"}}</h4>
+            <h4>{{localize "GURPS.modifierOthers"}}</h4>
             <div class='modifier-row'>
               {{#each othermods1}}
                 <div>{{{gurpslink this true}}}</div>
@@ -119,7 +120,7 @@
               {{/each}}
             </div>
             <div style='display: flex; flex-flow: column;'>
-              <aside>{{i18n "GURPS.modifierUserEntered"}}:</aside>
+              <aside>{{localize "GURPS.modifierUserEntered"}}:</aside>
               <input type="text" id="modmanualentry" />
             </div>
           </div>

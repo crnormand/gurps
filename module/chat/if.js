@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import { parselink } from '../../lib/parselink.js'
 import ChatProcessor from './chat-processor.js'
 
@@ -81,7 +80,7 @@ export class IfChatProcessor extends ChatProcessor {
         } else if (!!results.cf && GURPS.lastTargetedRoll?.isCritFailure) {
           await this._handleResult(results.cf)
         } else if (!!results.f) await this._handleResult(results.f)
-      } else this.priv(`${i18n('GURPS.chatMustBeACheck')}: [${otf}]`)
-    } else this.priv(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
+      } else this.priv(`${game.i18n.localize('GURPS.chatMustBeACheck')}: [${otf}]`)
+    } else this.priv(`${game.i18n.localize('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
   }
 }

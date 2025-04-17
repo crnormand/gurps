@@ -1,4 +1,3 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
@@ -576,8 +575,12 @@ export class GurpsActorSheet extends ActorSheet {
       if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       if (eqt.count == 0) {
         await Dialog.confirm({
-          title: i18n('GURPS.removeItem'),
-          content: i18n_f('GURPS.confirmRemoveItem', { name: eqt.name }, 'Remove {name} from the Equipment List?'),
+          title: game.i18n.localize('GURPS.removeItem'),
+          content: game.i18n.format(
+            'GURPS.confirmRemoveItem',
+            { name: eqt.name },
+            'Remove {name} from the Equipment List?'
+          ),
           yes: () => actor.deleteEquipment(path),
         })
       } else {
@@ -652,7 +655,6 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         ],
-       
       }).render({ force: true })
       dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
     })
@@ -700,7 +702,7 @@ export class GurpsActorSheet extends ActorSheet {
         '.headermenu',
         [
           {
-            name: i18n('GURPS.addTracker'),
+            name: game.i18n.localize('GURPS.addTracker'),
             icon: '<i class="fas fa-plus"></i>',
             callback: e => {
               this._addTracker().then()
@@ -715,7 +717,7 @@ export class GurpsActorSheet extends ActorSheet {
   _createGlobalItemMenus(html) {
     let opts = [
       this._createMenu(
-        i18n('GURPS.delete'),
+        game.i18n.localize('GURPS.delete'),
         '<i class="fas fa-trash"></i>',
         this._deleteItem.bind(this),
         this._isRemovable.bind(this)
@@ -730,31 +732,31 @@ export class GurpsActorSheet extends ActorSheet {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
     let opts = [
-      this._createMenu(i18n('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
+      this._createMenu(game.i18n.localize('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
-        i18n('GURPS.sortContentsAscending'),
+        game.i18n.localize('GURPS.sortContentsAscending'),
         '<i class="fas fa-sort-amount-down-alt"></i>',
         this._sortContentAscending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
       this._createMenu(
-        i18n('GURPS.sortContentsDescending'),
+        game.i18n.localize('GURPS.sortContentsDescending'),
         '<i class="fas fa-sort-amount-down"></i>',
         this._sortContentDescending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
-      this._createMenu(i18n('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
+      this._createMenu(game.i18n.localize('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
     ]
 
     let movedown = this._createMenu(
-      i18n('GURPS.moveToOtherEquipment'),
+      game.i18n.localize('GURPS.moveToOtherEquipment'),
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
-      i18n('GURPS.moveToCarriedEquipment'),
+      game.i18n.localize('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
@@ -863,8 +865,8 @@ export class GurpsActorSheet extends ActorSheet {
       '#spells': [this.sortAscendingMenu('system.spells'), this.sortDescendingMenu('system.spells')],
       '#equipmentcarried': [
         this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`, true),
+          game.i18n.localize('GURPS.equipment'),
+          new Equipment(`${game.i18n.localize('GURPS.equipment')}...`, true),
           'system.equipment.carried'
         ),
         this.sortAscendingMenu('system.equipment.carried'),
@@ -872,8 +874,8 @@ export class GurpsActorSheet extends ActorSheet {
       ],
       '#equipmentother': [
         this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`, true),
+          game.i18n.localize('GURPS.equipment'),
+          new Equipment(`${game.i18n.localize('GURPS.equipment')}...`, true),
           'system.equipment.other'
         ),
         this.sortAscendingMenu('system.equipment.other'),
@@ -885,7 +887,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   addItemMenu(name, obj, path) {
     return {
-      name: i18n_f('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
+      name: game.i18n.format('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
@@ -1021,8 +1023,8 @@ export class GurpsActorSheet extends ActorSheet {
     }
     const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
-    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem ?
-        {
+    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem
+      ? {
           n: item.name,
           id: item.id,
         }
@@ -1406,7 +1408,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   sortAscendingMenu(key) {
     return {
-      name: i18n('GURPS.sortAscending'),
+      name: game.i18n.localize('GURPS.sortAscending'),
       icon: '<i class="fas fa-sort-amount-down-alt"></i>',
       callback: e => this.sortAscending(key),
     }
@@ -1414,7 +1416,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   sortDescendingMenu(key) {
     return {
-      name: i18n('GURPS.sortDescending'),
+      name: game.i18n.localize('GURPS.sortDescending'),
       icon: '<i class="fas fa-sort-amount-down"></i>',
       callback: e => this.sortDescending(key),
     }
@@ -1505,7 +1507,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (!!targetkey) {
         let sourceKey = dragData.key
         if (sourceKey.includes(targetkey) || targetkey.includes(sourceKey)) {
-          ui.notifications.error(i18n('GURPS.dragSameContainer'))
+          ui.notifications.error(game.i18n.localize('GURPS.dragSameContainer'))
           return
         }
 
@@ -1531,11 +1533,11 @@ export class GurpsActorSheet extends ActorSheet {
 
         let d = new Dialog({
           title: object.name,
-          content: `<p>${i18n('GURPS.dropResolve')}</p>`,
+          content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-level-up-alt"></i>',
-              label: `${i18n('GURPS.dropBefore')}`,
+              label: `${game.i18n.localize('GURPS.dropBefore')}`,
               callback: async () => {
                 if (!isSrcFirst) {
                   await this._removeKey(sourceKey)
@@ -1548,7 +1550,7 @@ export class GurpsActorSheet extends ActorSheet {
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: `${i18n('GURPS.dropInside')}`,
+              label: `${game.i18n.localize('GURPS.dropInside')}`,
               callback: async () => {
                 let key = targetkey + '.contains.' + zeroFill(0)
                 if (!isSrcFirst) {
@@ -1898,8 +1900,8 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
 
   /** @override */
   get template() {
-    return !game.user.isGM && this.actor.limited ?
-        'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return !game.user.isGM && this.actor.limited
+      ? 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
       : 'systems/gurps/templates/actor/actor-tab-sheet.hbs'
   }
 }
@@ -2072,19 +2074,26 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     // add any additional items to the menu
     switch (elementid) {
       case '#location':
-        return [this.addItemMenu(i18n('GURPS.hitLocation'), new HitLocation('???'), 'system.hitlocations'), ...menu]
+        return [
+          this.addItemMenu(game.i18n.localize('GURPS.hitLocation'), new HitLocation('???'), 'system.hitlocations'),
+          ...menu,
+        ]
 
       case '#reactions':
         return [
-          this.addItemMenu(i18n('GURPS.reaction'), new Reaction('+0', i18n('GURPS.fromEllipses')), 'system.reactions'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.reaction'),
+            new Reaction('+0', game.i18n.localize('GURPS.fromEllipses')),
+            'system.reactions'
+          ),
           ...menu,
         ]
 
       case '#conditionalmods':
         return [
           this.addItemMenu(
-            i18n('GURPS.conditionalModifier'),
-            new Modifier('+0', i18n('GURPS.fromEllipses')),
+            game.i18n.localize('GURPS.conditionalModifier'),
+            new Modifier('+0', game.i18n.localize('GURPS.fromEllipses')),
             'system.conditionalmods'
           ),
           ...menu,
@@ -2092,27 +2101,53 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
       case '#melee':
         return [
-          this.addItemMenu(i18n('GURPS.meleeAttack'), new Ranged(`${i18n('GURPS.meleeAttack')}...`), 'system.melee'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.meleeAttack'),
+            new Ranged(`${game.i18n.localize('GURPS.meleeAttack')}...`),
+            'system.melee'
+          ),
           ...menu,
         ]
 
       case '#ranged':
         return [
-          this.addItemMenu(i18n('GURPS.rangedAttack'), new Ranged(`${i18n('GURPS.rangedAttack')}...`), 'system.ranged'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.rangedAttack'),
+            new Ranged(`${game.i18n.localize('GURPS.rangedAttack')}...`),
+            'system.ranged'
+          ),
           ...menu,
         ]
 
       case '#advantages':
         return [
-          this.addItemMenu(i18n('GURPS.adDisadQuirkPerk'), new Advantage(`${i18n('GURPS.adDisad')}...`), 'system.ads'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.adDisadQuirkPerk'),
+            new Advantage(`${game.i18n.localize('GURPS.adDisad')}...`),
+            'system.ads'
+          ),
           ...menu,
         ]
 
       case '#skills':
-        return [this.addItemMenu(i18n('GURPS.skill'), new Skill(`${i18n('GURPS.skill')}...`), 'system.skills'), ...menu]
+        return [
+          this.addItemMenu(
+            game.i18n.localize('GURPS.skill'),
+            new Skill(`${game.i18n.localize('GURPS.skill')}...`),
+            'system.skills'
+          ),
+          ...menu,
+        ]
 
       case '#spells':
-        return [this.addItemMenu(i18n('GURPS.spell'), new Spell(`${i18n('GURPS.spell')}...`), 'system.spells'), ...menu]
+        return [
+          this.addItemMenu(
+            game.i18n.localize('GURPS.spell'),
+            new Spell(`${game.i18n.localize('GURPS.spell')}...`),
+            'system.spells'
+          ),
+          ...menu,
+        ]
 
       default:
         return menu

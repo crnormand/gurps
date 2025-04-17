@@ -2,12 +2,12 @@
 	<div class='itemmenu header' readonly></div>
 	<div class='header desc'>
 		<div class='headermenu' data-key='system.ads'>
-			<span>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
+			<span>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
 			<i class='fas fa-caret-square-down'></i>
 		</div>
 	</div>
-	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
-	<div class='ref header'>{{i18n "GURPS.abbrevReference"}}</div>
+	<div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div>
+	<div class='ref header'>{{localize "GURPS.abbrevReference"}}</div>
 
 	{{#each (flatlist system.ads)}}
 	{{#if ../isEditing}}
@@ -62,7 +62,7 @@
           <div>
             {{#if (isFoundryItem this)}}
             <i class='far fas fa-star tooltip gga-item'>
-              <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
+              <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span>
             </i>
             {{/if}}
           </div>

@@ -1,4 +1,3 @@
-import { i18n } from '../lib/i18n.js'
 import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } from '../lib/miscellaneous-settings.js'
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
@@ -8,8 +7,8 @@ import { TokenActions } from './token-actions.js'
 
 Hooks.once('init', async function () {
   game.settings.register(SYSTEM_NAME, 'token-override-refresh-icon', {
-    name: i18n('GURPS.settingTokenOverrideRefresh'),
-    hint: i18n('GURPS.settingHintTokenOverrideRefresh'),
+    name: game.i18n.localize('GURPS.settingTokenOverrideRefresh'),
+    hint: game.i18n.localize('GURPS.settingHintTokenOverrideRefresh'),
     scope: 'client',
     config: true,
     type: Boolean,

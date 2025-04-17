@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 
@@ -200,9 +199,12 @@ export async function doRoll({
         // We receive here the full dice formula, like 1d6+2, and we need to extract the dice + adds parts
         // For example, for the formula `1d6+2` we need to extract `1d` and `+2` to show in the confirmation dialog
         // Because this is a simple roll and not a damage roll, we need to show the damage type as `dmg`
-        otfDamageText = i18n(`GURPS.${damageOTFType}`, damageOTFType)
+        otfDamageText = game.i18n.localize(`GURPS.${damageOTFType}`, damageOTFType)
         damageType = 'dmg'
-        damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+        damageTypeLabel = game.i18n.localize(
+          `GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
+          damageType
+        )
         damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
@@ -231,10 +233,10 @@ export async function doRoll({
           ? '<i class="fas fa-plus"></i>'
           : '<i class="fas fa-check"></i>'
       consumeActionLabel = !result.hasActions
-        ? i18n('GURPS.noActionsAvailable')
+        ? game.i18n.localize('GURPS.noActionsAvailable')
         : canConsumeAction
-          ? i18n('GURPS.willConsumeAction')
-          : i18n('GURPS.isFreeAction')
+          ? game.i18n.localize('GURPS.willConsumeAction')
+          : game.i18n.localize('GURPS.isFreeAction')
       consumeActionColor = !result.hasActions
         ? 'rgb(215,185,33)'
         : canConsumeAction
@@ -412,7 +414,7 @@ export async function doRoll({
         buttons: {
           roll: {
             icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
-            label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
+            label: !!optionalArgs.blind ? game.i18n.localize('GURPS.blindRoll') : game.i18n.localize('GURPS.roll'),
             callback: async () => {
               GURPS.stopActions = false
               doRollResult = await _doRoll({
@@ -431,7 +433,7 @@ export async function doRoll({
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: i18n('GURPS.cancel'),
+            label: game.i18n.localize('GURPS.cancel'),
             callback: async () => {
               await GURPS.ModifierBucket.clearTaggedModifiers()
               GURPS.stopActions = true

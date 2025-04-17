@@ -2,15 +2,15 @@
   <div class='header encHeader'>
     {{#if ../isEditing}}
       <div class='enchead'>
-        <span>{{i18n 'GURPS.encumbranceMoveDodge'}}</span>
+        <span>{{localize 'GURPS.encumbranceMoveDodge'}}</span>
       </div>
       <div class='option'>
         <input id='showflightmove' type='checkbox' {{checked system.additionalresources.showflightmove}} />
-        <label for='showflightmove'>{{i18n 'GURPS.showFlightMove'}}</label>
+        <label for='showflightmove'>{{localize 'GURPS.showFlightMove'}}</label>
       </div>
     {{else}}
       <div>
-        {{i18n 'GURPS.encumbranceMoveDodge'}}
+        {{localize 'GURPS.encumbranceMoveDodge'}}
       </div>
     {{/if}}
     <div style='margin-left: 5px'>
@@ -23,10 +23,10 @@
   </div>
 
   <div class='encmarker header'></div>
-  <div class='enc header'>{{i18n 'GURPS.level'}}</div>
-  <div class='load header'>{{i18n 'GURPS.maxload'}}</div>
-  <div class='move header'>{{i18n 'GURPS.move'}}</div>
-  <div class='dodge header'>{{i18n 'GURPS.dodge'}}</div>
+  <div class='enc header'>{{localize 'GURPS.level'}}</div>
+  <div class='load header'>{{localize 'GURPS.maxload'}}</div>
+  <div class='move header'>{{localize 'GURPS.move'}}</div>
+  <div class='dodge header'>{{localize 'GURPS.dodge'}}</div>
 
   {{#each system.encumbrance}}
     <div class='encmarker {{include-if current "current"}}'></div>
@@ -78,11 +78,11 @@
   {{/each}}
 
   <div id='move-mode-pair' class='label-field-pair header'>
-    <div class='label' for='move-mode'>{{i18n 'GURPS.moveMode' 'Mode'}}:</div>
+    <div class='label' for='move-mode'>{{localize 'GURPS.moveMode' 'Mode'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' {{disabled (or isEditing (lt (length system.move) 2))}}>
         {{#each system.move as |this key|}}
-          <option value='{{@key}}' {{select-if this.default true}}>{{i18n this.mode this.mode}}</option>
+          <option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode this.mode}}</option>
         {{/each}}
       </select>
     </div>

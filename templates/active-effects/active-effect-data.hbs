@@ -9,9 +9,9 @@
 
   <!-- Effect Configuration Tabs -->
   <nav class='sheet-tabs tabs'>
-    <a class='item' data-tab='details'><i class='fas fa-book'></i> {{i18n 'EFFECT.TabDetails'}}</a>
-    <a class='item' data-tab='duration'><i class='fas fa-clock'></i> {{i18n 'EFFECT.TabDuration'}}</a>
-    <a class='item' data-tab='effects'><i class='fas fa-cogs'></i> {{i18n 'EFFECT.TabEffects'}}</a>
+    <a class='item' data-tab='details'><i class='fas fa-book'></i> {{localize 'EFFECT.TabDetails'}}</a>
+    <a class='item' data-tab='duration'><i class='fas fa-clock'></i> {{localize 'EFFECT.TabDuration'}}</a>
+    <a class='item' data-tab='effects'><i class='fas fa-cogs'></i> {{localize 'EFFECT.TabEffects'}}</a>
   </nav>
 
   <!-- Details Tab -->
@@ -19,8 +19,10 @@
     <div class='form-group'>
       <label>Icon Tint Color</label>
       <div class='form-fields'>
-        <color-picker name='tint' value='{{object.tint}}' placeholder='#ffffff'><input type='text'
-            placeholder='#ffffff' /><input type='color' /></color-picker>
+        <color-picker name='tint' value='{{object.tint}}' placeholder='#ffffff'><input
+            type='text'
+            placeholder='#ffffff'
+          /><input type='color' /></color-picker>
       </div>
     </div>
 
@@ -46,7 +48,7 @@
     </div>
     <hr />
     <div class='form-group'>
-      <label>{{i18n 'GURPS.effectsTermination'}}</label>
+      <label>{{localize 'GURPS.effectsTermination'}}</label>
       <div class='form-fields'>
         <input type='text' name='flags.gurps.endCondition' value='{{object.flags.gurps.endCondition}}' />
       </div>
@@ -91,29 +93,29 @@
     </header>
     <ol class='changes-list'>
       {{#each system.changes as |change i|}}
-      <li class='effect-change flexrow' data-index='{{i}}'>
-        <div class='key'>
-          <select name='changes.{{i}}.key'>
-            {{!selectOptions ../changes selected=change.key localize=true}}
-          </select>
-        </div>
-        <div class='mode'>
-          <select name='changes.{{i}}.mode' data-dtype='Number'>
-            {{!selectOptions ../modes selected=change.mode}}
-          </select>
-        </div>
-        <div class='value'>
-          <input type='text' name='changes.{{i}}.value' value='{{change.value}}' />
-        </div>
-        <div class='effect-controls'>
-          <a class='effect-control' data-action='delete'><i class='fas fa-trash'></i></a>
-        </div>
-      </li>
+        <li class='effect-change flexrow' data-index='{{i}}'>
+          <div class='key'>
+            <select name='changes.{{i}}.key'>
+              {{!selectOptions ../changes selected=change.key localize=true}}
+            </select>
+          </div>
+          <div class='mode'>
+            <select name='changes.{{i}}.mode' data-dtype='Number'>
+              {{!selectOptions ../modes selected=change.mode}}
+            </select>
+          </div>
+          <div class='value'>
+            <input type='text' name='changes.{{i}}.value' value='{{change.value}}' />
+          </div>
+          <div class='effect-controls'>
+            <a class='effect-control' data-action='delete'><i class='fas fa-trash'></i></a>
+          </div>
+        </li>
       {{/each}}
     </ol>
   </section>
 
   <footer class='sheet-footer'>
-    <button id='submit-button' type='submit'><i class='fas fa-save'></i>{{i18n submitText 'Submit'}}</button>
+    <button id='submit-button' type='submit'><i class='fas fa-save'></i>{{localize submitText 'Submit'}}</button>
   </footer>
 </form>

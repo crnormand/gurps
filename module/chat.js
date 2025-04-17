@@ -1,5 +1,4 @@
 'use strict'
-import { i18n } from '../lib/i18n.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { parselink } from '../lib/parselink.js'
 import { gurpslink } from '../module/utilities/gurpslink.js'
@@ -29,7 +28,7 @@ class HelpChatProcessor extends ChatProcessor {
     let l = _line.split(' ')
     if (l.length > 1) return this.registry.handle('?' + l[1].trim())
 
-    let t = `<a href='${GURPS.USER_GUIDE_URL}'>${i18n('GURPS.gameAidUsersGuide')}</a><br>`
+    let t = `<a href='${GURPS.USER_GUIDE_URL}'>${game.i18n.localize('GURPS.gameAidUsersGuide')}</a><br>`
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
       .map(it => it.help())
@@ -43,7 +42,7 @@ class HelpChatProcessor extends ChatProcessor {
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
-    t += '<br><br>' + i18n('GURPS.chatHelpHelp')
+    t += '<br><br>' + game.i18n.localize('GURPS.chatHelpHelp')
     this.priv(t)
   }
 }
@@ -190,7 +189,7 @@ class ChatProcessorRegistry {
     let answer = false
     let processor = this._processors.find(it => it.matches(line))
     if (!!processor) {
-      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
+      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustBeGM'))
       else {
         try {
           answer = await processor.process(line)
@@ -204,7 +203,7 @@ class ChatProcessorRegistry {
     // if nothing matchs, check for chat command without options... and return a help output
     processor = this._processors.find(it => it.usagematches(line))
     if (!!processor) {
-      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
+      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustBeGM'))
       else this.priv(line)
       this.priv('<hr>')
       this.priv(processor.usage().replaceAll('\n', '<br>'))

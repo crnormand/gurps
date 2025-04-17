@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { EffectModifierPopout } from './effect-modifier-popout.js'
 
@@ -48,8 +47,11 @@ export class EffectModifierControl {
 
   _registerSetting() {
     game.settings.register(SYSTEM_NAME, EffectModifierControl.SETTING_SHOW_EFFECTMODIFIERS, {
-      name: i18n('GURPS.settingTokenToolsShowEffectMods', 'Show Effect Modifiers'),
-      hint: i18n('GURPS.settingHintTokenToolsShowEffectMods', 'Enable the token Effect Modifiers popup window.'),
+      name: game.i18n.localize('GURPS.settingTokenToolsShowEffectMods', 'Show Effect Modifiers'),
+      hint: game.i18n.localize(
+        'GURPS.settingHintTokenToolsShowEffectMods',
+        'Enable the token Effect Modifiers popup window.'
+      ),
       scope: 'client',
       config: true,
       type: Boolean,
@@ -65,7 +67,7 @@ export class EffectModifierControl {
         let self = this
         tokenButton.tools.push({
           name: EffectModifierControl.EffectModName,
-          title: i18n('GURPS.tokenToolsTitle'),
+          title: game.i18n.localize('GURPS.tokenToolsTitle'),
           icon: 'fas fa-list-alt',
           toggle: true,
           active: this.showPopup,

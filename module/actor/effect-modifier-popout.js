@@ -1,4 +1,3 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { RulerGURPS } from '../../lib/ranges.js'
@@ -69,7 +68,7 @@ export class EffectModifierPopout extends Application {
       minimizable: true,
       jQuery: true,
       resizable: true,
-      title: i18n('GURPS.effectModifierPopout', 'Effect Modifiers'),
+      title: game.i18n.localize('GURPS.effectModifierPopout', 'Effect Modifiers'),
     })
   }
 
@@ -85,8 +84,9 @@ export class EffectModifierPopout extends Application {
       }
       return a.itemName.localeCompare(b.itemName)
     })
-    const targetModifiers =
-      this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : []
+    const targetModifiers = this._token
+      ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
+      : []
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
@@ -101,8 +101,9 @@ export class EffectModifierPopout extends Application {
       let result = {}
       result.name = target.name
 
-      result.targetmodifiers =
-        target.actor ? this.convertModifiers(target.actor.system.conditions.target.modifiers) : []
+      result.targetmodifiers = target.actor
+        ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
+        : []
       const rangeModifier = getRangedModifier(this.getToken(), target)
       if (rangeModifier) {
         const data = this.convertModifiers([rangeModifier])
@@ -115,8 +116,8 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return Array.isArray(list) ?
-        list.map(it => {
+    return Array.isArray(list)
+      ? list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
           let obj = {}
@@ -146,15 +147,17 @@ export class EffectModifierPopout extends Application {
             obj = this._token?.actor.items.get(itemReference) || {}
           }
           const itemName = obj?.name || itemReference
-          const itemType =
-            obj?.type ? obj.type
-            : it.includes('#maneuver') ? 'maneuver'
-            : itemReference.includes('system.') ? itemReference.split('.')[1]
-            : 'notfound'
+          const itemType = obj?.type
+            ? obj.type
+            : it.includes('#maneuver')
+              ? 'maneuver'
+              : itemReference.includes('system.')
+                ? itemReference.split('.')[1]
+                : 'notfound'
           const desc = this.getDescription(it, itemReference)
           return {
-            link: gurpslink(`[${i18n(desc)}]`),
-            desc: i18n(desc),
+            link: gurpslink(`[${game.i18n.localize(desc)}]`),
+            desc: game.i18n.localize(desc),
             itemName,
             itemType,
             itemId: itemReference,
@@ -165,7 +168,7 @@ export class EffectModifierPopout extends Application {
   }
 
   get selectedToken() {
-    return this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
+    return this._token?.name ?? game.i18n.localize('GURPS.effectModNoTokenSelected')
   }
 
   getToken() {
@@ -195,7 +198,7 @@ export class EffectModifierPopout extends Application {
     html
       .closest('div.effect-modifiers-app')
       .find('.window-title')
-      .text(i18n_f('GURPS.effectModifierPopout', { name: this.selectedToken }, 'Effect Modifiers: {name}'))
+      .text(game.i18n.format('GURPS.effectModifierPopout', { name: this.selectedToken }, 'Effect Modifiers: {name}'))
   }
 
   _getHeaderButtons() {
@@ -253,7 +256,7 @@ export class EffectModifierPopout extends Application {
         await actions.addModifiers()
       }
       await this.render(true)
-      ui.notifications.info(i18n('GURPS.userModsRefreshed'))
+      ui.notifications.info(game.i18n.localize('GURPS.userModsRefreshed'))
     }
   }
 
@@ -261,8 +264,8 @@ export class EffectModifierPopout extends Application {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
     await Dialog.confirm({
-      title: i18n('GURPS.confirmClearUserMods'),
-      content: i18n('GURPS.confirmClearHintUserMods'),
+      title: game.i18n.localize('GURPS.confirmClearUserMods'),
+      content: game.i18n.localize('GURPS.confirmClearHintUserMods'),
       yes: async () => {
         if (actor) {
           await actor.update({ 'system.conditions.usermods': [] })
@@ -288,12 +291,12 @@ export class EffectModifierPopout extends Application {
           if (!!mod) {
             let action = parselink(mod)
             if (action.action?.type === 'modifier') this._addUserMod(mod)
-            else ui.notifications.warn(i18n('GURPS.chatUnrecognizedFormat'))
+            else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
           }
         },
         rejectClose: false,
       })
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
   getDescription(text, itemRef) {
@@ -367,11 +370,11 @@ export class EffectModifierPopout extends Application {
   _addUserMod(mod) {
     let t = this.getToken()
     if (t && t.actor) {
-      mod += ' (' + i18n('GURPS.equipmentUserCreated') + ')'
+      mod += ' (' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
       m.push(`${mod} @custom`)
       t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
   /** @override */

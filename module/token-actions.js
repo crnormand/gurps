@@ -1,4 +1,3 @@
-import { i18n } from '../lib/i18n.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { recurselist } from '../lib/utilities.js'
 import Maneuvers, {
@@ -419,7 +418,7 @@ export class TokenActions {
       )
     }
     if (this.evaluateTurns > 0) {
-      addModifier(`+${this.evaluateTurns} ${i18n('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
+      addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
     }
     Object.keys(this.currentParry).map(k => {
       const parry = this.currentParry[k]

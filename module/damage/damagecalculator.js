@@ -1,6 +1,5 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
@@ -314,7 +313,7 @@ export class CompositeDamageCalculator {
     // location localized to his language, like "Tronco" in Portuguese. Do a last ditch effort to find the hit location
     // using the localized name.
     if (!hitlocation) {
-      const alternative = i18n(`GURPS.hitLocation${this._hitLocation}`)
+      const alternative = game.i18n.localize(`GURPS.hitLocation${this._hitLocation}`)
       hitlocation = HitLocationEntry.findLocation(entries, alternative)
     }
 
@@ -346,7 +345,9 @@ export class CompositeDamageCalculator {
               actorId: this._defender.id,
               isReady,
               spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-              effectTitle: isReady ? i18n(`GURPS.removeShock${applyAt}Effect`) : i18n(`GURPS.addShock${applyAt}Effect`),
+              effectTitle: isReady
+                ? game.i18n.localize(`GURPS.removeShock${applyAt}Effect`)
+                : game.i18n.localize(`GURPS.addShock${applyAt}Effect`),
             },
           ],
         }
@@ -359,7 +360,7 @@ export class CompositeDamageCalculator {
             const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
               ...effect,
-              testTitle: i18n('GURPS.saveRollforEffect'),
+              testTitle: game.i18n.localize('GURPS.saveRollforEffect'),
               buttons: [
                 {
                   ...effect,
@@ -367,7 +368,9 @@ export class CompositeDamageCalculator {
                   stunIsReady,
                   effectName: 'stun',
                   spanClass: stunIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: stunIsReady ? i18n('GURPS.removestunEffect') : i18n('GURPS.addstunEffect'),
+                  effectTitle: stunIsReady
+                    ? game.i18n.localize('GURPS.removestunEffect')
+                    : game.i18n.localize('GURPS.addstunEffect'),
                 },
                 {
                   ...effect,
@@ -375,7 +378,9 @@ export class CompositeDamageCalculator {
                   proneIsReady,
                   effectName: 'prone',
                   spanClass: proneIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: proneIsReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+                  effectTitle: proneIsReady
+                    ? game.i18n.localize('GURPS.removeproneEffect')
+                    : game.i18n.localize('GURPS.addproneEffect'),
                 },
               ],
             }
@@ -383,7 +388,7 @@ export class CompositeDamageCalculator {
             isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
               ...effect,
-              testTitle: i18n('GURPS.saveRollforEffect'),
+              testTitle: game.i18n.localize('GURPS.saveRollforEffect'),
               buttons: [
                 {
                   ...effect,
@@ -391,7 +396,9 @@ export class CompositeDamageCalculator {
                   isReady,
                   effectName: 'prone',
                   spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
-                  effectTitle: isReady ? i18n('GURPS.removeproneEffect') : i18n('GURPS.addproneEffect'),
+                  effectTitle: isReady
+                    ? game.i18n.localize('GURPS.removeproneEffect')
+                    : game.i18n.localize('GURPS.addproneEffect'),
                 },
               ],
             }
@@ -448,7 +455,7 @@ export class CompositeDamageCalculator {
         type: 'knockback',
         amount: knockbackValue,
         modifier: knockbackMods,
-        unit: knockbackValue === 1 ? i18n('GURPS.yard') : i18n('GURPS.yards'),
+        unit: knockbackValue === 1 ? game.i18n.localize('GURPS.yard') : game.i18n.localize('GURPS.yards'),
         modifierText: !!knockbackMods ? `–${knockbackMods}` : '',
       })
     }
@@ -1195,11 +1202,11 @@ class DamageCalculator {
   get unmodifiedPointsToApply() {
     let injury = this.injury
     let pointsToApply =
-      injury === 0 ?
-        this._parent.isFlexibleArmor && this._parent.useBluntTrauma ?
-          this.effectiveBluntTrauma
-        : 0
-      : injury
+      injury === 0
+        ? this._parent.isFlexibleArmor && this._parent.useBluntTrauma
+          ? this.effectiveBluntTrauma
+          : 0
+        : injury
     return pointsToApply
   }
 

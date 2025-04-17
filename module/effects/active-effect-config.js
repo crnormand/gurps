@@ -1,5 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
-
 export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
   constructor(object = {}) {
     super(object)
@@ -9,7 +7,7 @@ export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
     const data = await super.getData(options)
 
     for (let i = 0; i < data.data.changes.length; i++) {
-      data.data.changes[i].value = i18n(data.data.changes[i].value)
+      data.data.changes[i].value = game.i18n.localize(data.data.changes[i].value)
     }
 
     return data

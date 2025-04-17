@@ -1,10 +1,10 @@
 <div class="quick-roll-menu" data-actor-id="{{actor.id}}">
   <div class="quick-roll-blind-toggle" data-combatant-id="{{combatant.id}}" title="{{localize "GURPS.quickRoll"}}">
       <div class="qr-blind qr-blue {{#if blindRoll}}active{{/if}}">
-        <i class="fas fa-eye-slash" title="{{ i18n 'GURPS.blindRollAsDefault'}}"></i>
+        <i class="fas fa-eye-slash" title="{{localize 'GURPS.blindRollAsDefault'}}"></i>
       </div>
       <div class="qr-blind qr-green {{#unless blindRoll}}active{{/unless}}">
-        <i class="fas fa-eye" title="{{i18n 'GURPS.publicRollAsDefault'}}"></i>
+        <i class="fas fa-eye" title="{{localize 'GURPS.publicRollAsDefault'}}"></i>
       </div>
   </div>
   {{#if (gt otherChecks.size 0)}}
@@ -45,7 +45,7 @@
             <span class="qr-attack-value">{{check.value}}</span>
           </div>
           <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
-            ({{check.mode}}){{/if}}-{{check.value}}<br>{{i18n 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
+            ({{check.mode}}){{/if}}-{{check.value}}<br>{{localize 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
             <hr class="hr-notes">{{check.notes}}{{/if}}</span>
         </button>
       {{/each}}
@@ -57,7 +57,7 @@
             <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
             <span>{{check.value}}</span></div>
           <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
-            ({{check.mode}}){{/if}}-{{check.value}}<br>{{i18n 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
+            ({{check.mode}}){{/if}}-{{check.value}}<br>{{localize 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
             <hr class="hr-notes">{{check.notes}}{{/if}}</span>
         </button>
       {{/each}}

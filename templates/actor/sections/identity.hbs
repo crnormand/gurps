@@ -1,7 +1,7 @@
 <div id='identity'>
-  <div class='header'>{{i18n 'GURPS.sheet.personal.identity'}}</div>
+  <div class='header'>{{localize 'GURPS.sheet.personal.identity'}}</div>
   <div class='fieldblock'>
-    <div class='label'>{{i18n 'GURPS.sheet.personal.name'}}:</div>
+    <div class='label'>{{localize 'GURPS.sheet.personal.name'}}:</div>
     <div class='field'><input
         name='name'
         class='gcs-input'
@@ -9,7 +9,7 @@
         value='{{actor.name}}'
         {{disabled (not isEditing)}}
       /></div>
-    <div class='label'>{{i18n 'GURPS.sheet.personal.title'}}:</div>
+    <div class='label'>{{localize 'GURPS.sheet.personal.title'}}:</div>
     <div class='field'><input
         name='system.traits.title'
         class='gcs-input'
@@ -17,7 +17,7 @@
         value='{{system.traits.title}}'
         {{disabled (not isEditing)}}
       /></div>
-    <div class='label'>{{i18n 'GURPS.sheet.personal.player'}}:</div>
+    <div class='label'>{{localize 'GURPS.sheet.personal.player'}}:</div>
     <div class='field'><input
         name='system.traits.player'
         class='gcs-input'

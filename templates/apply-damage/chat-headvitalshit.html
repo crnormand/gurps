@@ -1,14 +1,14 @@
 <div class="gga-chat-message">
   <div class="prefix">
-    {{i18n "GURPS.suffersHeadVitalsWound" name=name location=location}}
-    ([PDF:{{i18n "GURPS.pdfKnockdownStun"}}]).
+    {{localize "GURPS.suffersHeadVitalsWound" name=name location=location}}
+    ([PDF:{{localize "GURPS.pdfKnockdownStun"}}]).
   </div>
   <hr />
   <div class="roll-result">
-    ["{{i18n "GURPS.majorWoundEffectLabel" name=name htCheck=htCheck}}" {{button}}]
+    ["{{localize "GURPS.majorWoundEffectLabel" name=name htCheck=htCheck}}" {{button}}]
     <ul class="modifier-list">
-      <li>[{{i18n "GURPS.forLowPainThreshold" mod="-4"}}]</li>
-      <li>[{{i18n "GURPS.forHighPainThreshold" mod="+3"}}]</li>
+      <li>[{{localize "GURPS.forLowPainThreshold" mod="-4"}}]</li>
+      <li>[{{localize "GURPS.forHighPainThreshold" mod="+3"}}]</li>
     </ul>
   </div>
 </div>

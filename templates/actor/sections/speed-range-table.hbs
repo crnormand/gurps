@@ -10,7 +10,7 @@
       <div
         class='label {{gmod this}}'
         data-name='{{this.moddesc}}'
-        data-otf='{{i18n_f
+        data-otf='{{localize
           "GURPS.rangeModifier"
           (jsonToObject (replace '{ "penalty": "$1", "max": "$2" }' this.penalty this.max))
           "{penalty} for speed/range {max} yards"

@@ -1,7 +1,7 @@
 <form class='{{cssClass}}' autocomplete='off'>
   <div class='splitdr-editor table' style='display: grid; grid-template-columns: 1fr min-content min-content;'>
-    <div class='label'>{{i18n 'GURPS.splitDrType' 'Damage Type'}}</div>
-    <div class='label'>{{i18n 'GURPS.splitDrValue' 'DR Value'}}</div>
+    <div class='label'>{{localize 'GURPS.splitDrType' 'Damage Type'}}</div>
+    <div class='label'>{{localize 'GURPS.splitDrValue' 'DR Value'}}</div>
     {{#unless location.split}}
       <a id='template-add' class='splitdr-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
     {{else}}
@@ -13,9 +13,12 @@
       <div style='display: flex; flex-flow: column nowrap'>
         <select class='splitdr-control' data-action='type' style='width: 100%;'>
           {{#each (damageTypeOptions key)}}
-            <option value='{{this}}' {{select-if this key}}>{{i18n (concat 'GURPS.damageAbbrev' this) this}}</option>
+            <option value='{{this}}' {{select-if this key}}>{{localize
+                (concat 'GURPS.damageAbbrev' this)
+                this
+              }}</option>
           {{/each}}
-          <option value='other'>&lt;{{i18n 'GURPS.moveModeOther'}}&gt;</option>
+          <option value='other'>&lt;{{localize 'GURPS.moveModeOther'}}&gt;</option>
         </select>
         <div class='expand-container' style='overflow: hidden; line-height: 0;'>
           <input
@@ -23,7 +26,7 @@
             class='expand-contract splitdr-control contracted'
             data-action='other'
             type='text'
-            value='{{i18n type type}}'
+            value='{{localize type type}}'
           />
         </div>
       </div>
@@ -32,7 +35,7 @@
         class='splitdr-control'
         data-action='delete'
         data-key='{{@key}}'
-        title='{{i18n "GURPS.delete"}}'
+        title='{{localize "GURPS.delete"}}'
         style='padding: 6px 20px 0 10px;'
       >
         <i class='fas fa-trash'></i>

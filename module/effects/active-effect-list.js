@@ -1,5 +1,3 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
-
 export default class GurpsActiveEffectListSheet extends Application {
   constructor(actor, options) {
     super(options)
@@ -28,7 +26,7 @@ export default class GurpsActiveEffectListSheet extends Application {
 
   get title() {
     let name = this.actor?.name || 'UNKNOWN'
-    return i18n_f('GURPS.effects.ListTitle', { name: name }, 'Active Effects for {name}')
+    return game.i18n.format('GURPS.effects.ListTitle', { name: name }, 'Active Effects for {name}')
   }
 
   activateListeners(html) {
@@ -46,7 +44,7 @@ export default class GurpsActiveEffectListSheet extends Application {
       case 'create':
         await this.actor.createEmbeddedDocuments('ActiveEffect', [
           {
-            label: i18n('GURPS.effectNew', 'New Effect'),
+            label: game.i18n.localize('GURPS.effectNew', 'New Effect'),
             icon: 'icons/svg/aura.svg',
             disabled: true,
           },
