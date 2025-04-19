@@ -83,11 +83,6 @@ export default class DamageChat {
     return false
   }
 
-  static init() {
-    Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
-    Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
-  }
-
   /**
    * Create the damage chat message.
    * @param {GurpsActor|User} actor that rolled the damage.
