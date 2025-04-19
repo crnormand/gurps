@@ -1862,7 +1862,6 @@ if (!globalThis.GURPS) {
     ChatMessage.create(msgData)
   }
 
-
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
     let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
     if (!formula) {
@@ -2286,29 +2285,57 @@ if (!globalThis.GURPS) {
       let oldmacro = game.macros.get(game.user.hotbar[slot])
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
         let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
-        new Dialog({
-          title: 'Merge or Replace On-the-Fly macro',
-          content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
-            .split('\n')
-            .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-            .split('\n')
-            .join('<br>')}</mark><br>&nbsp;<br>`,
-          buttons: {
-            one: {
-              icon: '<i class="fas fa-angle-double-down"></i>',
+        new foundry.applications.api.DialogV2({
+          window: { title: 'Merge or Replace On-the-Fly macro' },
+          content: `<div><strong>Merge</strong> both macros into this:</div>
+          <div style='color: darkslategrey; border: 1px solid var(--color-cool-4);  border-radius: 4px; padding: 1rem;'>
+            ${oldmacro.command.split('\n').join('<br>')}<br>${cmd.split('\n').join('<br>')}
+          </div>
+          <div>Or <strong>replace</strong> current macro with:</div>
+          <div style='color: darkslategrey; border: 1px solid var(--color-cool-4);  border-radius: 4px; padding: 1rem;'>
+            ${c}
+          </div>`,
+          buttons: [
+            {
+              action: 'one',
+              default: true,
+              icon: 'fa-solid fa-merge',
               label: 'Merge',
               callback: () => {
                 setmacro(oldmacro.name, oldmacro.command + '\n' + cmd)
               },
             },
-            two: {
-              icon: '<i class="fas fa-angle-down"></i>',
+            {
+              action: 'two',
+              icon: 'fa-regular fa-object-subtract',
               label: 'Replace',
               callback: () => setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd),
             },
-          },
-          default: 'one',
+          ],
         }).render(true)
+        // new Dialog({
+        //   title: 'Merge or Replace On-the-Fly macro',
+        //   content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
+        //     .split('\n')
+        //     .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
+        //     .split('\n')
+        //     .join('<br>')}</mark><br>&nbsp;<br>`,
+        //   buttons: {
+        //     one: {
+        //       icon: '<i class="fas fa-angle-double-down"></i>',
+        //       label: 'Merge',
+        //       callback: () => {
+        //         setmacro(oldmacro.name, oldmacro.command + '\n' + cmd)
+        //       },
+        //     },
+        //     two: {
+        //       icon: '<i class="fas fa-angle-down"></i>',
+        //       label: 'Replace',
+        //       callback: () => setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd),
+        //     },
+        //   },
+        //   default: 'one',
+        // }).render(true)
       } else setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
       return false
     })

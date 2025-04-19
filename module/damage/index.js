@@ -17,6 +17,3 @@ export function init() {
 }
 
 export { rollDamage } from './roll-damage.js'
-// Export any other utilities or constants if needed
-// Example:
-// export { someUtilityFunction } from './someUtilityFile.js';
