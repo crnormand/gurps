@@ -1,15 +1,15 @@
 <div>
   <div class='prefix'>
     {{#if rolled}}
-      {{localize "GURPS.chatRollingDamage" this}}
+      {{localize "GURPS.chatRollingDamage" dice=dice damageTypeText=damageTypeText numtimes=numtimes}}
     {{else}}
-      {{localize "GURPS.chatFixedDamage" this}}
+      {{localize "GURPS.chatFixedDamage" dice=dice damageTypeText=damageTypeText}}
     {{/if}}
     {{#if hitlocation}} ({{hitlocation}}){{/if}}
   </div>
   {{#if userTarget}}
     <div style='font-size: smaller; margin-left: .5rem;'><i
-        class="fas fa-bullseye"></i>&nbsp;{{localize "GURPS.targeting" userTarget}}
+        class="fas fa-bullseye"></i>&nbsp;{{localize "GURPS.targeting" name=userTarget}}
     </div>
   {{/if}}
   <div class='roll-message'>
@@ -39,9 +39,9 @@
                 <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
                 <span class='roll-detail'>
                   {{#if (eq damage 1)}}
-                    {{{localize "GURPS.pointDamage" this}}}
+                    {{{localize "GURPS.pointDamage" damage=damage}}}
                   {{else}}
-                    {{{localize "GURPS.pointsDamage" this}}}
+                    {{{localize "GURPS.pointsDamage" damage=damage}}}
                   {{/if}}</span>
               </span>
             </label>
@@ -80,7 +80,7 @@
     {{#if userTarget}}
       <div>
         <button class='apply-all'
-          style='margin-top: 0.25rem;'>{{localize "GURPS.applyAllToTarget" userTarget}}</button>
+          style='margin-top: 0.25rem;'>{{localize "GURPS.applyAllToTarget" name=userTarget}}</button>
       </div>
     {{/if}}
   </div>

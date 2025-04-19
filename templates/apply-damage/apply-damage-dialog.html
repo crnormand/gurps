@@ -225,8 +225,8 @@
             <div class='gurps-3col gurps-checkbox-col'>
               <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{checked
 								CALC.useLocationModifiers}}></div>
-              <div><label for='tactical-locationmodifier'>&nbsp;{{localize
-								"GURPS.addHitLocationWoundModifiers"}}</label>
+              <div><label
+                  for='tactical-locationmodifier'>&nbsp;{{localize "GURPS.addHitLocationWoundModifiers"}}</label>
               </div>
               <div class='pdflink'>B398</div>
             </div>
@@ -260,8 +260,7 @@
                   {{checked CALC.useArmorDivisor}}>
               </div>
               <div>
-                <label for='tactical-armordivisor' class='label-toggle'>&nbsp;{{localize
-								"GURPS.addArmorDivisor"}}:
+                <label for='tactical-armordivisor' class='label-toggle'>&nbsp;{{localize "GURPS.addArmorDivisor"}}:
                   <select name='tactical-armordivisor' {{disabled (not CALC.useArmorDivisor)}}
                     style='margin-left: 8px;'>
                     <option value='0' {{select-if CALC.armorDivisor 0}}>None</option>
@@ -305,20 +304,20 @@
             <div class='collapsible-wrapper options-drawer'>
               <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{checked
 							CALC.isInjuryTolerance}}></input>
-              <label for='injury-tolerance' class='label-toggle'>&nbsp;{{localize
-							"GURPS.addInjuryTolerance"}}:<span class='pdflink'>
+              <label for='injury-tolerance' class='label-toggle'>&nbsp;{{localize "GURPS.addInjuryTolerance"}}:<span
+                  class='pdflink'>
                   B60</span></label>
               <div class='collapsible-content continuation'>
                 <div><label><input type='radio' name='injury-tolerance' value='unliving' {{checked (eq
-										CALC.injuryToleranceType "unliving" )}}>&nbsp;{{localize
-									"GURPS.addInjuryToleranceUnliving"}}<span class='pdflink'>B380</span></label></div>
+										CALC.injuryToleranceType "unliving" )}}>&nbsp;{{localize "GURPS.addInjuryToleranceUnliving"}}<span
+                      class='pdflink'>B380</span></label></div>
                 <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{checked (eq
-										CALC.injuryToleranceType "homogenous" )}}>&nbsp;{{localize
-									"GURPS.addInjuryToleranceHomogenous"}}<span class='pdflink'>B380</span></label>
+										CALC.injuryToleranceType "homogenous" )}}>&nbsp;{{localize "GURPS.addInjuryToleranceHomogenous"}}<span
+                      class='pdflink'>B380</span></label>
                 </div>
                 <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{checked (eq
-										CALC.injuryToleranceType "diffuse" )}}>&nbsp;{{localize
-									"GURPS.addInjuryToleranceDiffuse"}}<span class='pdflink'>B380</span></label></div>
+										CALC.injuryToleranceType "diffuse" )}}>&nbsp;{{localize "GURPS.addInjuryToleranceDiffuse"}}<span
+                      class='pdflink'>B380</span></label></div>
               </div>
             </div>
 
@@ -371,13 +370,12 @@
             <div class='collapsible-wrapper options-drawer'>
               <input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{checked
 							CALC.isShotgun}}></input>
-              <label for='shotgun-damage' class='label-toggle'>&nbsp;{{localize
-							"GURPS.addShotgunCloseRange"}}:<span class='pdflink'>B409</span></label>
+              <label for='shotgun-damage' class='label-toggle'>&nbsp;{{localize "GURPS.addShotgunCloseRange"}}:<span
+                  class='pdflink'>B409</span></label>
               <div class='collapsible-content continuation'>
                 <div style='display: flex; padding: 3px;'>
                   <label for='shotgun-rof-multiplier'
-                    style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>{{localize
-									"GURPS.addShotgunRofMultiplier"}}:&nbsp;</label>
+                    style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>{{localize "GURPS.addShotgunRofMultiplier"}}:&nbsp;</label>
                   <div style='position: relative;'>
                     <input type='number' id='shotgun-rof-multiplier' class='digits-only'
                       value='{{CALC.shotgunRofMultiplier}}' style='padding-left: 1.5rem;' />
@@ -444,8 +442,8 @@
 
                 <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
                 <div>{{CALC.DR}}</div>
-                <div>{{CALC.hitLocation}}{{#unless (eq CALC.userEnteredDR null)}} ({{localize
-							"GURPS.overridden"}}){{/unless}}</div>
+                <div>{{CALC.hitLocation}}{{#unless (eq CALC.userEnteredDR null)}}
+                    ({{localize "GURPS.overridden"}}){{/unless}}</div>
 
                 {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
                   <div>{{localize "GURPS.hitLocationDRWithDivisor"}}</div>
@@ -458,8 +456,7 @@
                         &divide;
                         {{#if CALC.isHardenedDR}}
                           ({{CALC.effectiveArmorDivisor}} = ({{#if (eq CALC.armorDivisor
-								-1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}}) {{localize
-								"GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
+								-1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}}) {{localize "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
                         {{else}}
                           ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
                         {{/if}}
@@ -552,8 +549,7 @@
             </div>
             <div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
               {{#if CALC.showApplyAction}}
-                <button id='apply-injury-publicly' class='split-button'>{{localize
-								"GURPS.addApplyInjury"}}</button>
+                <button id='apply-injury-publicly' class='split-button'>{{localize "GURPS.addApplyInjury"}}</button>
                 <div class='dropdown'>
                   <button id='apply-injury-split' class='split-button'>
                     <i class='fa fa-caret-down'></i>
@@ -566,8 +562,7 @@
                   </div>
                 </div>
               {{else}}
-                <button id='apply-injury-secretly' class='split-button'>{{localize
-								"GURPS.addApplyQuietly"}}</button>
+                <button id='apply-injury-secretly' class='split-button'>{{localize "GURPS.addApplyQuietly"}}</button>
                 <div class='dropdown'>
                   <button id='apply-injury-split' class='split-button'>
                     <i class='fa fa-caret-down'></i>

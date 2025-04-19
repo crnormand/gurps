@@ -26,7 +26,7 @@ export default class SplitDREditor extends Application {
   }
 
   get title() {
-    return game.i18n.format('GURPS.drSplitEditorTitle', { where: this.location.where }, 'Split DR ({where})')
+    return game.i18n.format('GURPS.drSplitEditorTitle', { where: this.location.where })
   }
 
   get location() {

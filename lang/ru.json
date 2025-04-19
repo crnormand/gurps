@@ -469,6 +469,7 @@
     "removeShockEffect": "Удалить эффект шока в следующем раунде.",
     "removeShockImmediatelyEffect": "Эффект шока удален на цели.",
     "removestunEffect": "Эффект оглушения удален на цели.",
+    "RESOLVEDAMAGEAdd": "Объединить",
     "RESOLVEDAMAGEMultiple": "Сделать несколько бросков",
     "RESOLVEDAMAGEPrompt": "Что вы хотите сделать с этим броском урона?",
     "RESOLVEDAMAGEQuantity": "Количество бросков:",

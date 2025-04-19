@@ -78,17 +78,16 @@
   {{/each}}
 
   <div id='move-mode-pair' class='label-field-pair header'>
-    <div class='label' for='move-mode'>{{localize 'GURPS.moveMode' 'Mode'}}:</div>
+    <div class='label' for='move-mode'>{{localize 'GURPS.moveMode'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' {{disabled (or isEditing (lt (length system.move) 2))}}>
         {{#each system.move as |this key|}}
-          <option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode this.mode}}</option>
+          <option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode}}</option>
         {{/each}}
       </select>
     </div>
     {{#if isEditing}}
       <button id='edit-move-modes' style='padding-bottom: 1px;'><i class='fas fa-pen'></i></button>
     {{/if}}
-
   </div>
 </div>

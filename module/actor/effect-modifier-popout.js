@@ -198,7 +198,7 @@ export class EffectModifierPopout extends Application {
     html
       .closest('div.effect-modifiers-app')
       .find('.window-title')
-      .text(game.i18n.format('GURPS.effectModifierPopout', { name: this.selectedToken }, 'Effect Modifiers: {name}'))
+      .text(game.i18n.localize('GURPS.effectModifierPopout'))
   }
 
   _getHeaderButtons() {

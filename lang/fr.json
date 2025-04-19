@@ -919,6 +919,7 @@
     "removestunEffect": "Effet d'étourdissement supprimé sur la cible.",
     "reset": "Effacer Configuration",
     "resolve": "Résoudre",
+    "RESOLVEDAMAGEAdd": "Combiner",
     "RESOLVEDAMAGEMultiple": "Lancer Multiple",
     "RESOLVEDAMAGEPrompt": "Que voulez-vous faire avec ces jets de Dégâts?",
     "RESOLVEDAMAGEQuantity": "Nombre de jets:",

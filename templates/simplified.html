@@ -40,7 +40,7 @@
         data-otf="Dodge">&nbsp;{{dodge}}&nbsp;</label>
     </div>
     <div class="simple_Body">{{defense.dr}}{{#each defense.split as | this key |}}<span
-          title='{{localize key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+          title='{{localize key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
     </div>
     <div class="simple_Heart {{hpCondition system.HP " style"}}">
       <div class="simple_Heart_inner">{{system.HP.value}}</div>

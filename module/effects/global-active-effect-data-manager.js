@@ -111,7 +111,7 @@ class ActiveEffectManagerPopout extends Application {
       minimizable: true,
       jQuery: true,
       resizable: true,
-      title: game.i18n.localize('GURPS.effectManagerPopout', 'Active Effect Manager'),
+      title: game.i18n.localize('GURPS.effectManagerPopout'),
     })
   }
 

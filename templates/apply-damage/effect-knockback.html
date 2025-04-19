@@ -1,8 +1,8 @@
 <li name="result-effect">
   <div>
     <div>
-      <header>{{localize "GURPS.knockback" this}}</header>
-      <aside>{{localize "GURPS.dxJudoAcrobaticsCheckToRemainStanding" this}}</aside>
+      <header>{{localize "GURPS.knockback" amount=amount unit=unit}}</header>
+      <aside>{{localize "GURPS.dxJudoAcrobaticsCheckToRemainStanding" modifierText=modifierText}}</aside>
     </div>
     <div id="test-knockback" class="with-send-button">
       <button name="test-knockback" data-effect="{{jsonStringify this}}"><span class="fa fa-dice"

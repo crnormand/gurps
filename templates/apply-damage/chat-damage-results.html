@@ -1,8 +1,7 @@
 <div class="gga-chat-message">
   <div class="prefix">
     ... {{localize "GURPS.chatDamageResultStart" defender=defender injury=injury}} {{pluralize 'point' injury}}
-    {{localize
-    "GURPS.chatDamageResultMiddle" type=type}}{{#if (and (ne 'User Entered' location) (ne 'Large-Area' location)
+    {{localize "GURPS.chatDamageResultMiddle" type=type}}{{#if (and (ne 'User Entered' location) (ne 'Large-Area' location)
     (defined location))}} {{localize "GURPS.chatDamageResultEnd" location=location}}{{/if}}.
   </div>
   {{#if resultsTable}}

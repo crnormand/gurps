@@ -139,12 +139,8 @@ export default class StatusChatProcessor extends ChatProcessor {
     if (matches.length !== 1) {
       let msg =
         matches.length === 0 //
-          ? game.i18n.format('GURPS.chatNoTokenFound', { name: name }, 'No Actor/Token found matching {name}')
-          : game.i18n.format(
-              'GURPS.chatMultipleTokensFound',
-              { name: name },
-              'More than one Token/Actor found matching {name}'
-            )
+          ? game.i18n.format('GURPS.chatNoTokenFound', { name: name })
+          : game.i18n.format('GURPS.chatMultipleTokensFound', { name: name })
       ui.notifications.warn(msg)
       return null
     }

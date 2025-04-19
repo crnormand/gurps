@@ -1,4 +1,3 @@
-
 export default class MoveModeEditor extends Application {
   constructor(actor, options) {
     super(options)
@@ -27,7 +26,7 @@ export default class MoveModeEditor extends Application {
 
   get title() {
     let name = this.actor?.name || 'UNKNOWN'
-    return game.i18n.format('GURPS.moveModeEditor.Title', { name: name }, 'Movement Modes for {name}')
+    return game.i18n.format('GURPS.moveModeEditorTitle', { name: name })
   }
 
   activateListeners(html) {

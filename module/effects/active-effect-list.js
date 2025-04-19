@@ -26,7 +26,7 @@ export default class GurpsActiveEffectListSheet extends Application {
 
   get title() {
     let name = this.actor?.name || 'UNKNOWN'
-    return game.i18n.format('GURPS.effects.ListTitle', { name: name }, 'Active Effects for {name}')
+    return game.i18n.format('GURPS.effectsListTitle', { name: name })
   }
 
   activateListeners(html) {

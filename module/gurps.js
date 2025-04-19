@@ -68,6 +68,7 @@ import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
 import ApplyDamageDialog from './damage/applydamage.js'
+import { resolveDamageRollAction } from './damage/resolve-damage-roll-action.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -85,7 +86,7 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
-let GURPS = undefined
+export let GURPS = undefined
 
 async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, action, event, overrideText, targets) {
   const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
@@ -123,9 +124,8 @@ async function rollDamage(canRoll, token, actor, displayFormula, actionFormula, 
     const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
     const usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
 
-    // Before open a new dialog, we need to make sure
-    // all other dialogs are closed, because bucket must be reset
-    // before we start a new roll
+    // Before open a new dialog, we need to make sure all other dialogs are closed, because bucket must be reset
+    // before we start a new roll.
 
     // TODO The problem with this is that when we are opening one Confirmation Roll Dialog immediately after
     // another, the first one may still be open, and clicking the Cancel button sets stopActions to true, which
@@ -1978,7 +1978,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.sendOtfMessage = function (content, blindroll, users = null) {
-    /** @type {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData} */
     let msgData = {
       content: content,
       user: game.user.id,
@@ -1992,72 +1991,7 @@ if (!globalThis.GURPS) {
     ChatMessage.create(msgData)
   }
 
-  GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf = false) {
-    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
-    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
-    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
-    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
-    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
-
-    /** @type {Record<string,Dialog.Button>} */
-    let buttons = {}
-
-    if (isGM) {
-      buttons.send = {
-        icon: '<i class="fas fa-paper-plane"></i>',
-        label: `${sendTo}`,
-        callback: () => GURPS.whisperOtfToOwner(otf, overridetxt, event, false, actor), // Can't blind roll damages (yet)
-      }
-    }
-
-    buttons.multiple = {
-      icon: '<i class="fas fa-clone"></i>',
-      label: `${multiple}`,
-      callback: html => {
-        // @ts-ignore
-        let text = /** @type {string} */ (html.find('#number-rolls').val())
-        let number = parseInt(text)
-        let targets = []
-        for (let index = 0; index < number; index++) {
-          targets[index] = `${index + 1}`
-        }
-        if (isOtf) GurpsWiring.handleGurpslink(event, actor, null, { targets: targets })
-        else GURPS.handleRoll(event, actor, { targets: targets })
-      },
-    }
-
-    buttons.combined = {
-      icon: '<i class="fas fa-plus"></i>',
-      label: game.i18n.localize('GURPS.RESOLVEDAMAGEAdd', 'Combine'),
-      callback: html => {
-        let text = /** @type {string} */ (html.find('#number-rolls').val())
-        let number = parseInt(text)
-
-        if (isOtf) otf = multiplyDice(otf, number)
-
-        if (isOtf) GurpsWiring.handleGurpslink(event, actor, null, { combined: number })
-        else GURPS.handleRoll(event, actor, { combined: number })
-      },
-    }
-    let def = GURPS.lastTargetedRoll?.rofrcl || 2
-    let dlg = new Dialog({
-      title: `${title}`,
-      content: `
-        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
-          <p style='font-size: large;'><strong>${otf}</strong></p>
-          <p>${prompt}</p>
-          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
-            <label>${quantity}</label>
-            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='${def}'>
-          </div>
-          <p/>
-        </div>
-        `,
-      buttons: buttons,
-      default: 'send',
-    })
-    dlg.render(true)
-  }
+  GURPS.resolveDamageRoll = resolveDamageRollAction
 
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
     let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))

@@ -777,6 +777,7 @@
     "removestunEffect": "Betäubungseffekt auf Ziel entfernt.",
     "reset": "Konfiguration löschen",
     "resolve": "Kläre",
+    "RESOLVEDAMAGEAdd": "Kombinieren",
     "RESOLVEDAMAGEMultiple": "Mehrere Würfe",
     "RESOLVEDAMAGEPrompt": "Was möchtest du mit diesem Schadenswurf machen?",
     "RESOLVEDAMAGEQuantity": "Anzahl der Würfe:",

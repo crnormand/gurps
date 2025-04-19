@@ -107,9 +107,7 @@ export class GurpsActor extends Actor {
       let sizemod = this.system.traits?.sizemod?.toString() || '+0'
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
       if (sizemod !== '0' && sizemod !== '+0') {
-        this.system.conditions.target.modifiers.push(
-          game.i18n.format('GURPS.modifiersSize', { sm: sizemod }, '{sm} for Size Modifier')
-        )
+        this.system.conditions.target.modifiers.push(game.i18n.format('GURPS.modifiersSize', { sm: sizemod }))
       }
     }
 
@@ -769,7 +767,7 @@ export class GurpsActor extends Actor {
         return {
           move: 0,
           // text: game.i18n.format('GURPS.moveNone', { reason: reason })
-          text: game.i18n.format('None'),
+          text: game.i18n.localize('GURPS.none'),
         }
 
       case MOVE_ONE:

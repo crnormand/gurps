@@ -1,6 +1,6 @@
 <div class="header {{#if editable}}with-editor minor-heading{{/if}}">
   {{#if label}}
-    {{localize label label}}
+    {{localize label}}
   {{else}}
     {{localize "GURPS.resource"}}{{@index}}
   {{/if}}{{#if editable}}<span class='edit'><i class='fas fa-pencil-alt'></i></span>{{/if}}
@@ -19,7 +19,7 @@
       <button data-operation="resource-update" data-value="-5">{{{displayNumber "-5"}}}</button>
       <button data-operation="resource-update" data-value="-1">{{{displayNumber "-1"}}}</button>
       <button data-operation="resource-update" data-value="0">{{{displayNumber "0"}}}</button>
-      <button class="restore" data-operation="resource-update" data-value=""></button>
+      <button data-operation="resource-update" data-value="" class="restore"></button>
       <button data-operation="resource-update" data-value="+1">{{{displayNumber "+1"}}}</button>
       <button data-operation="resource-update" data-value="+5">{{{displayNumber "+5"}}}</button>
       <button data-operation="resource-update" data-value="+10">{{{displayNumber "+10"}}}</button>

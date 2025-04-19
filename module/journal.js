@@ -15,11 +15,10 @@ export default class GurpsJournalEntry {
    */
   static _renderJournalPageSheet(app, html, options) {
     setTimeout(() => {
-      // crazy hack... html is NOT displayed yet, so you can't find the Journal Page.   Must delay to allow other thread to display HTML
+      // crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to display HTML
       if (options.editable) return
       let h = html.parent().find('.journal-page-content')
       if (!!h && h.length > 0) {
-        //h.html(gurpslink(h[0].innerHTML))
         GurpsWiring.hookupAllEvents(html)
 
         const dropHandler = function (event, app, options) {
@@ -52,13 +51,4 @@ export default class GurpsJournalEntry {
       }
     }, 10)
   }
-
-  /*  static _renderJournalSheet(app, html, options) {
-    console.log(app)
-    }
-  
-  static _getJournalSheetEntryContext(app, html, options) {
-    console.log(app)
-    }
-   */
 }

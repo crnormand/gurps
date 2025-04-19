@@ -65,7 +65,7 @@
 				</div>
 				<div class="npc-input-dr npc-input-labelr">{{localize "GURPS.hitLocationDR"}}</div>
 				<div class="npc-input-dr-val npc-sheet-centered">{{defense.dr}}{{#each defense.split as | this key
-					|}}<span title='{{localize key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</div>
+					|}}<span title='{{localize key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</div>
 			</div>
 			<div class="npc-input-notes">
 				<div class='npc-sheet-ci'>
@@ -152,7 +152,7 @@
 					<div class='field'>
 						<select id='move-mode' {{disabled (or isEditing (lt (length system.move) 2)) }}>
 							{{#each system.move as |this key|}}
-							<option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode this.mode}}
+							<option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode}}
 							</option>
 							{{/each}}
 						</select>
@@ -161,8 +161,7 @@
 				</div>
 			</div>
 			<div class="npc-input-traits">
-				<div class="npc-input-tr dblclksort npc-header" data-key="system.ads">{{localize
-					"GURPS.advDisadvPerkQuirks"}}</div>
+				<div class="npc-input-tr dblclksort npc-header" data-key="system.ads">{{localize "GURPS.advDisadvPerkQuirks"}}</div>
 				<div class="npc-input-tr-val">
 					{{#listeqt system.ads}}
 					<div class='npc-trait-row adsdraggable desc' data-key="system.ads.{{@key}}">

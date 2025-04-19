@@ -576,11 +576,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (eqt.count == 0) {
         await Dialog.confirm({
           title: game.i18n.localize('GURPS.removeItem'),
-          content: game.i18n.format(
-            'GURPS.confirmRemoveItem',
-            { name: eqt.name },
-            'Remove {name} from the Equipment List?'
-          ),
+          content: game.i18n.format('GURPS.confirmRemoveItem', { name: eqt.name }),
           yes: () => actor.deleteEquipment(path),
         })
       } else {
@@ -887,7 +883,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   addItemMenu(name, obj, path) {
     return {
-      name: game.i18n.format('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
+      name: game.i18n.format('GURPS.editorAddItem', { name: name }),
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {

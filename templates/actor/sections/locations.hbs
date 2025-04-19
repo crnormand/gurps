@@ -65,14 +65,14 @@
       {{#if ../isEditing}}
         <div style="display: flex; flex-flow: row nowrap">
           <input class='gcs-input' type='text' name='system.hitlocations.{{@key}}.import' value='{{import}}' />
-          {{#each split as | this key |}}<span title='{{localize key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+          {{#each split as | this key |}}<span title='{{localize key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
           <button id="split-{{@key}}" style="padding-bottom: 1px;" data-key='system.hitlocations.{{@key}}'>…</button>
         </div>
       {{else}}
         {{#if ../document.limited}}
           ??
         {{else}}
-          {{dr}}{{#each split as | this key |}}<span title='{{localize key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+          {{dr}}{{#each split as | this key |}}<span title='{{localize key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
         {{/if}}
       {{/if}}
     </div>
