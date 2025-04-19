@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --coverage",
     "tdd": "jest --coverage",
-    "handlebars": "handlebars"
+    "handlebars": "handlebars",
+    "tsc": "tsc"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

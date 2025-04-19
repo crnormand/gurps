@@ -1,0 +1,12 @@
+<header class='sheet-header'>
+  <section class='portrait'>
+    <h2>{{localize 'GURPS.sheet.personal.portrait'}}</h2>
+    <img src='{{actor.img}}' alt='{{actor.name}}' data-edit='img' />
+    {{#if isGM}}
+      <button class='sharebutton' data-operation='share-portrait'>{{localize 'GURPS.share'}}</button>
+    {{/if}}
+  </section>
+  <section class='attributes-primary'>
+    <h2>{{localize 'GURPS.attributesPrimary'}}</h2>
+  </section>
+</header>

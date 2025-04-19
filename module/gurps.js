@@ -27,6 +27,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
+import { GurpsActorSheetV2 } from './application/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -2172,6 +2173,10 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     Actors.registerSheet('gurps', GurpsActorTabSheet, {
       label: 'Tabbed Sheet',
+      makeDefault: false,
+    })
+    Actors.registerSheet('gurps', GurpsActorSheetV2, {
+      label: 'Tabbed Sheet (v2)',
       makeDefault: false,
     })
     // @ts-ignore
