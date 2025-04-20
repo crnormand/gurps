@@ -4,55 +4,46 @@ import { zeroFill } from '../lib/utilities.js'
 export const AddImportEquipmentButton = async function (html) {
   let button = $(
     '<button class="import-items"><i class="fas fa-file-import"></i>' +
-    game.i18n.localize('GURPS.itemImport') +
-    '</button>'
+      game.i18n.localize('GURPS.itemImport') +
+      '</button>'
   )
 
-  button.click(function () {
-    setTimeout(async () => {
-      new Dialog(
+  button.click(async function () {
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: game.i18n.localize('GURPS.itemImport'),
+      },
+      content: await renderTemplate('systems/gurps/templates/item-import.hbs'),
+      buttons: [
         {
-          title: 'Import Item Compendium',
-          // @ts-ignore
-          content: await renderTemplate('systems/gurps/templates/item-import.html'),
-          buttons: {
-            import: {
-              icon: '<i class="fas fa-file-import"></i>',
-              label: 'Import',
-              callback: html => {
-                // @ts-ignore
-                const form = html.find('form')[0]
-                let files = form.data.files
-                // @ts-ignore
-                let file = null
-                if (!files.length) {
-                  // @ts-ignore
-                  return ui.notifications.error('You did not upload a data file!')
-                } else {
-                  file = files[0]
-                  console.log(file)
-                  GURPS.readTextFromFile(file).then(text =>
-                    ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
-                  )
-                }
-              },
-            },
-            no: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'Cancel',
-            },
+          action: 'import',
+          label: game.i18n.localize('GURPS.import'),
+          icon: 'fa-solid fa-file-import',
+          default: true,
+          callback: async (html, button, dialog) => {
+            const files = button.form.elements.data.files
+            if (!files.length) {
+              return ui.notifications.error(game.i18n.localize('GURPS.noFile'))
+            } else {
+              const file = files[0]
+              console.log(file)
+              GURPS.readTextFromFile(file).then(text =>
+                ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
+              )
+            }
           },
-          default: 'import',
         },
         {
-          width: 400,
-        }
-      ).render(true)
-    }, 200)
+          action: 'cancel',
+          label: game.i18n.localize('GURPS.cancel'),
+          icon: 'fas fa-times',
+          callback: () => undefined, // Resolve with undefined if cancelled
+        },
+      ],
+    }).render({ force: true })
   })
 
   html.find('.directory-footer').append(button)
-
 }
 
 export class ItemImporter {

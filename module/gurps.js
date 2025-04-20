@@ -1835,7 +1835,7 @@ if (!globalThis.GURPS) {
       label: 'Copy to chat input',
       default: true,
       callback: () => {
-        $(document).find('#chat-message').val(otf)
+        document.querySelector('#chat-message').value = otf;
       },
     })
 
@@ -2020,57 +2020,6 @@ if (!globalThis.GURPS) {
       if (app.id === 'actors') AddMultipleImportButton(html)
       // Add the import equipment button to the Compendiums tab.
       if (app.id === 'compendium') AddImportEquipmentButton(html)
-      // if (app.options.id === 'compendium') {
-      //   let button = $(
-      //     '<button class="import-items"><i class="fas fa-file-import"></i>' +
-      //       game.i18n.localize('GURPS.itemImport') +
-      //       '</button>'
-      //   )
-
-      //   button.click(function () {
-      //     setTimeout(async () => {
-      //       new Dialog(
-      //         {
-      //           title: 'Import Item Compendium',
-      //           // @ts-ignore
-      //           content: await renderTemplate('systems/gurps/templates/item-import.html'),
-      //           buttons: {
-      //             import: {
-      //               icon: '<i class="fas fa-file-import"></i>',
-      //               label: 'Import',
-      //               callback: html => {
-      //                 // @ts-ignore
-      //                 const form = html.find('form')[0]
-      //                 let files = form.data.files
-      //                 // @ts-ignore
-      //                 let file = null
-      //                 if (!files.length) {
-      //                   // @ts-ignore
-      //                   return ui.notifications.error('You did not upload a data file!')
-      //                 } else {
-      //                   file = files[0]
-      //                   console.log(file)
-      //                   GURPS.readTextFromFile(file).then(text =>
-      //                     ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
-      //                   )
-      //                 }
-      //               },
-      //             },
-      //             no: {
-      //               icon: '<i class="fas fa-times"></i>',
-      //               label: 'Cancel',
-      //             },
-      //           },
-      //           default: 'import',
-      //         },
-      //         {
-      //           width: 400,
-      //         }
-      //       ).render(true)
-      //     }, 200)
-      //   })
-
-      //   html.find('.directory-footer').append(button)
 
       // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
       const hasMeme = game.modules.get('markdown-editor')?.active
@@ -2285,6 +2234,7 @@ if (!globalThis.GURPS) {
       let oldmacro = game.macros.get(game.user.hotbar[slot])
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
         let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
+        
         // TODO Use CSS to style the dialog.
         new foundry.applications.api.DialogV2({
           window: { title: 'Merge or Replace On-the-Fly macro' },
