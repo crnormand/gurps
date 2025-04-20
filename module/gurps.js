@@ -2436,38 +2436,40 @@ if (!globalThis.GURPS) {
         if (resp.destuserid != game.user.id) return
         let destactor = game.actors.get(resp.destactorid)
         let srcActor = game.actors.get(resp.srcactorid)
-        Dialog.confirm({
-          title: `Gift for ${destactor.name}!`,
-          content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
-          yes: () => {
-            let destKey = destactor._findEqtkeyForId('name', resp.itemData.name)
-            if (!!destKey) {
-              // already have some
-              let destEqt = foundry.utils.getProperty(destactor, destKey)
-              destactor.updateEqtCount(destKey, +destEqt.count + resp.count)
-            } else {
-              resp.itemData.system.equipped = true
-              destactor.addNewItemData(resp.itemData)
-            }
-            game.socket.emit('system.gurps', {
-              type: 'dragEquipment2',
-              srckey: resp.srckey,
-              srcuserid: resp.srcuserid,
-              srcactorid: resp.srcactorid,
-              destactorid: resp.destactorid,
-              itemname: resp.itemData.name,
-              count: resp.count,
-            })
-          },
-          no: () => {
-            game.socket.emit('system.gurps', {
-              type: 'dragEquipment3',
-              srcuserid: resp.srcuserid,
-              destactorid: resp.destactorid,
-              itemname: resp.itemData.name,
-            })
-          },
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+          window: { title: `Accept Gift for ${destactor.name}!` },
+          content: `<div>${srcActor.name} wants to give you <strong>${resp.itemData.name}</strong> (${resp.count}).</div><div>Do you accept?</div>`,
+          modal: true,
+          rejectClose: true,
         })
+
+        if (proceed) {
+          let destKey = destactor._findEqtkeyForId('name', resp.itemData.name)
+          if (!!destKey) {
+            // already have some
+            let destEqt = foundry.utils.getProperty(destactor, destKey)
+            destactor.updateEqtCount(destKey, +destEqt.count + resp.count)
+          } else {
+            resp.itemData.system.equipped = true
+            destactor.addNewItemData(resp.itemData)
+          }
+          game.socket.emit('system.gurps', {
+            type: 'dragEquipment2',
+            srckey: resp.srckey,
+            srcuserid: resp.srcuserid,
+            srcactorid: resp.srcactorid,
+            destactorid: resp.destactorid,
+            itemname: resp.itemData.name,
+            count: resp.count,
+          })
+        } else {
+          game.socket.emit('system.gurps', {
+            type: 'dragEquipment3',
+            srcuserid: resp.srcuserid,
+            destactorid: resp.destactorid,
+            itemname: resp.itemData.name,
+          })
+        }
       }
       if (resp.type == 'dragEquipment2') {
         if (resp.srcuserid != game.user.id) return
