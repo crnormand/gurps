@@ -1,5 +1,6 @@
-//@ts-nocheck
-import { DeepPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
+import { isEmptyObject } from 'lib/utilities.js'
+import * as settings from 'lib/miscellaneous-settings.js'
 
 // TODO: implement limited view
 
@@ -12,21 +13,21 @@ export class GurpsActorSheetV2 extends api.HandlebarsApplicationMixin(sheets.Act
 
   /* -------------------------------------------- */
 
-  static override DEFAULT_OPTIONS: foundry.applications.api.DocumentSheetV2.PartialConfiguration<foundry.applications.api.DocumentSheetV2.Configuration> & {
-    dragDrop: DragDrop.Configuration
-  } = {
-    tag: 'form',
-    classes: ['gurps', 'actor', 'character'],
-    position: {
-      width: 800,
-      height: 800,
-    },
-    dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null }],
-  }
+  static override DEFAULT_OPTIONS: foundry.applications.api.DocumentSheetV2.PartialConfiguration<foundry.applications.api.DocumentSheetV2.Configuration> =
+    {
+      tag: 'form',
+      classes: ['gurps', 'actor', 'character'],
+      position: {
+        width: 800,
+        height: 800,
+      },
+      // @ts-expect-error v12 currently doesn't include dragDrop yet
+      dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null }],
+    }
 
   /* -------------------------------------------- */
 
-  static override PARTS = {
+  static override PARTS: Record<string, foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       id: 'header',
       template: `systems/gurps/templates/actors/parts/character-header.hbs`,
@@ -116,7 +117,7 @@ export class GurpsActorSheetV2 extends api.HandlebarsApplicationMixin(sheets.Act
 
     const sheetData = await super._prepareContext(options)
     sheetData.oldData = sheetData.data
-    let actions = {}
+    let actions: AnyMutableObject = {}
 
     if (!this.actor.system.conditions.actions?.maxActions) actions['maxActions'] = 1
     if (!this.actor.system.conditions.actions?.maxBlocks) actions['maxBlocks'] = 1
@@ -126,16 +127,16 @@ export class GurpsActorSheetV2 extends api.HandlebarsApplicationMixin(sheets.Act
     sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {
-      visible: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
+      visible: game.settings?.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
       hasSpells: !isEmptyObject(this.actor.system.spells),
       hasOther: !isEmptyObject(this.actor.system?.equipment?.other),
     }
-    sheetData.isGM = game.user.isGM
+    sheetData.isGM = game.user?.isGM
     sheetData._id = sheetData.olddata._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
-    sheetData.useQN = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
+    sheetData.useQN = game.settings?.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 

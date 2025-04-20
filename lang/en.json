@@ -5,6 +5,45 @@
     }
   },
   "GURPS": {
+    "Sheet": {
+      "Actor": {
+        "Portrait": { "Header": "Portrait", "Share": "Share" },
+        "AttributesPrimary": {
+          "Header": "Basic Attributes",
+          "ST": "Strength (ST)",
+          "DX": "Dexterity (DX)",
+          "IQ": "Intelligence (IQ)",
+          "HT": "Health (HT)",
+          "BasicThrust": "Basic Thrust",
+          "BasicSwing": "Basic Swing",
+          "BasicSpeed": "Basic Speed",
+          "BasicMove": "Basic Move"
+        },
+        "AttributesSecondary": {
+          "Header": "Secondary Attributes",
+          "Will": "Will",
+          "FrightCheck": "Fright Check",
+          "Per": "Perception (Per)",
+          "Vision": "Vision",
+          "Hearing": "Hearing",
+          "Taste": "Taste/Smell",
+          "Touch": "Touch"
+        },
+        "AttributesPools": {
+          "HP": "Hit Points",
+          "FP": "Fatigue Points"
+        },
+        "EncumbranceMove": {
+          "Header": "Encumbrance, Move & Dodge",
+          "Level": "Level",
+          "Max": "Max",
+          "Move": "Move",
+          "Dodge": "Dodge",
+          "Levels": ["None (0)", "Light (1)", "Medium (2)", "Heavy (3)", "X-Heavy (4)"],
+          "MoveMode": "Move Mode"
+        }
+      }
+    },
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",

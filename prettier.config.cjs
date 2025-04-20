@@ -5,4 +5,13 @@ module.exports = {
   singleQuote: true,
   printWidth: 120,
   arrowParens: 'avoid',
+  htmlWhitespaceSensitivity: 'ignore',
+  overrides: [
+    {
+      files: '**/*.hbs',
+      options: {
+        parser: 'angular',
+      },
+    },
+  ],
 }

@@ -29,6 +29,7 @@ export class GurpsActorSheet extends ActorSheet {
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
+        'section.window-content',
       ],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })

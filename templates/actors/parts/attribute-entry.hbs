@@ -1,0 +1,13 @@
+<div class='attribute'>
+  <label class='points'>
+    {{attribute.name}}
+  </label>
+  {{#if isEditing}}
+    <input name='{{attribute.path}}' value='{{attribute.value}}' />
+  {{else}}
+
+  {{/if}}
+  <label class='value'>
+    {{attribute.value}}
+  </label>
+</div>

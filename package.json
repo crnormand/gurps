@@ -7,13 +7,18 @@
     "test": "jest --coverage",
     "tdd": "jest --coverage",
     "handlebars": "handlebars",
-    "tsc": "tsc"
+    "build": "tsup",
+    "prettier": "prettier --write ."
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "babel-jest": "^29.7.0",
+    "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#documents-v2",
     "handlebars": "^4.7.7",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3"
   }
 }

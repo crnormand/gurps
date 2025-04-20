@@ -1,0 +1,14 @@
+<section class="attributes-primary">
+  <header>{{localize 'GURPS.Sheet.Actor.AttributesPrimary.Header'}}</header>
+  <div class="attributes">
+    {{#each attributesPrimary as |attribute id|}} {{> 'gurps.actors.parts.attribute-entry'}} {{/each}}
+  </div>
+  <hr />
+  <div class="damage-move">
+    {{> 'gurps.actors.parts.attribute-entry' attribute=basicThrust}}
+{{> 'gurps.actors.parts.attribute-entry'
+    attribute=basicSwing}}
+{{> 'gurps.actors.parts.attribute-entry' attribute=basicSpeed}}
+{{> 'gurps.actors.parts.attribute-entry' attribute=basicMove}}
+  </div>
+</section>
