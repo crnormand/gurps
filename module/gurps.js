@@ -2285,6 +2285,7 @@ if (!globalThis.GURPS) {
       let oldmacro = game.macros.get(game.user.hotbar[slot])
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
         let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
+        // TODO Use CSS to style the dialog.
         new foundry.applications.api.DialogV2({
           window: { title: 'Merge or Replace On-the-Fly macro' },
           content: `<div><strong>Merge</strong> both macros into this:</div>
@@ -2313,29 +2314,6 @@ if (!globalThis.GURPS) {
             },
           ],
         }).render(true)
-        // new Dialog({
-        //   title: 'Merge or Replace On-the-Fly macro',
-        //   content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
-        //     .split('\n')
-        //     .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
-        //     .split('\n')
-        //     .join('<br>')}</mark><br>&nbsp;<br>`,
-        //   buttons: {
-        //     one: {
-        //       icon: '<i class="fas fa-angle-double-down"></i>',
-        //       label: 'Merge',
-        //       callback: () => {
-        //         setmacro(oldmacro.name, oldmacro.command + '\n' + cmd)
-        //       },
-        //     },
-        //     two: {
-        //       icon: '<i class="fas fa-angle-down"></i>',
-        //       label: 'Replace',
-        //       callback: () => setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd),
-        //     },
-        //   },
-        //   default: 'one',
-        // }).render(true)
       } else setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
       return false
     })

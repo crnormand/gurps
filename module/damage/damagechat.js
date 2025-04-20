@@ -67,7 +67,7 @@ export default class DamageChat {
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
   static async _dropCanvasData(canvas, dropData) {
-    const actor = game.users.get(dropData.actorid)
+    const actor = game.actors.get(dropData.actorid)
 
     switch (dropData.type) {
       case 'damageItem':
@@ -77,7 +77,12 @@ export default class DamageChat {
         await actor.handleItemDrop(dropData)
         break
       case 'equipment':
-        await actor.handleEquipmentDrop(dropData)
+        const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
+        if (token.length !== 1) {
+          ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForEquipmentWarning'))
+          break
+        }
+        await token[0].actor.handleEquipmentDrop(dropData)
         break
     }
     return false
@@ -443,17 +448,7 @@ export default class DamageChat {
     }
 
     // Create a "reactangle" to represent the drop coordinates. It is really a point as width and height are 0.
-    const rect = new PIXI.Rectangle(dropData.x, dropData.y, 0, 0)
-
-    // Get all tokens under the point.
-    let selectedTokens = canvas.tokens.quadtree
-      .getObjects(rect, {
-        collisionTest: o => o.t.hitArea.contains(dropData.x - o.t.x, dropData.y - o.t.y),
-      })
-      .values()
-      .toArray()
-
-    if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens)
+    let selectedTokens = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y)
 
     if (selectedTokens.length === 0) {
       selectedTokens = user?.targets.values().toArray()
@@ -463,7 +458,8 @@ export default class DamageChat {
         return false
       }
 
-      if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, true)
+      if (selectedTokens.length > 1)
+        selectedTokens = await selectTarget(selectedTokens, { selectAll: true, single: false })
     }
 
     if (selectedTokens.length > 0) {
@@ -483,6 +479,19 @@ export default class DamageChat {
       if (!userOwnsAttacker) ui.notifications?.warn(game.i18n.localize('GURPS.noUserForDamageWarning'))
       return userCanAdd && userOwnsAttacker
     }
+  }
+
+  static async selectTokensAtPosition(x, y, single = false) {
+    const rect = new PIXI.Rectangle(x, y, 0, 0)
+
+    // Get all tokens under the point.
+    let selectedTokens = canvas.tokens.quadtree
+      .getObjects(rect, { collisionTest: o => o.t.hitArea.contains(x - o.t.x, y - o.t.y) })
+      .values()
+      .toArray()
+
+    if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, { single: true })
+    return selectedTokens
   }
 }
 
