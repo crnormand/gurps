@@ -817,7 +817,6 @@
       "mightyBlow": "damage (Mighty Blow)",
       "moveAndAttack": "to hit (Move and Attack)",
       "onTargetAiming": "On Target",
-      "pasteStatBlockHere": "Paste your stat block here",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -949,6 +948,7 @@
     "parryBasePenalty": "Parry base penalty",
     "parrybonus": "Parry bonus",
     "pass": "Pass",
+    "pasteStatBlockHere": "Paste your stat block here",
     "pdfCode": "PDF Book Code",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
@@ -1437,7 +1437,6 @@
     "toParryPenalty": "To Parry Penalty",
     "touch": "Touch",
     "trackerNotUnique": "Tracker name ({name}) or alias ({alias}) is not unique.",
-    "Trait_Names__": "=========",
     "traitAlteredTimeRate": "Altered Time Rate",
     "traitCombatReflexes": "Combat Reflexes",
     "traitWeaponMaster": "Weapon Master",
