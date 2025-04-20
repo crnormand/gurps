@@ -66,43 +66,43 @@ export class ActorImporter {
   }
 
   async _openLocallyHostedImportDialog() {
-    setTimeout(async () => {
-      new Dialog(
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: game.i18n.format(`GURPS.importCharacterData`, { name: this.actor.name }),
+      },
+      position: {
+        width: 400,
+        height: 'auto',
+      },
+      content: await renderTemplate(
+        'systems/gurps/templates/import-gcs-v1-data.hbs',
+        SmartImporter.getTemplateOptions(this.actor)
+      ),
+      buttons: [
         {
-          title: `Import character data for: ${this.actor.name}`,
-          content: await renderTemplate(
-            'systems/gurps/templates/import-gcs-v1-data.hbs',
-            SmartImporter.getTemplateOptions(this.actor)
-          ),
-          buttons: {
-            import: {
-              icon: '<i class="fas fa-file-import"></i>',
-              label: 'Import',
-              callback: async html => {
-                const form = html.find('form')[0]
-                let files = form.data.files
-                let file = null
-                if (!files.length) {
-                  return ui.notifications.error('You did not upload a data file!')
-                } else {
-                  file = files[0]
-                  const text = await GURPS.readTextFromFile(file)
-                  await this.importActorFromExternalProgram(text, file.name, file.path)
-                }
-              },
-            },
-            no: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'Cancel',
-            },
+          action: 'import',
+          label: 'GURPS.import',
+          icon: 'fas fa-file-import',
+          default: true,
+          callback: async (_, button, __) => {
+            let files = button.form.elements.data.files
+            if (!files.length) {
+              return ui.notifications.error(game.i18n.localize('GURPS.noFile'))
+            } else {
+              const file = files[0]
+              const text = await GURPS.readTextFromFile(file)
+              await this.importActorFromExternalProgram(text, file.name, file.path)
+            }
           },
-          default: 'import',
         },
         {
-          width: 400,
-        }
-      ).render(true)
-    }, 200)
+          action: 'cancel',
+          label: 'GURPS.cancel',
+          icon: 'fas fa-times',
+          callback: () => undefined, // Resolve with undefined if cancelled
+        },
+      ],
+    }).render({ force: true })
   }
 
   async importActorFromExternalProgram(source, importName, importPath, suppressMessage = false) {
