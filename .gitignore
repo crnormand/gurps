@@ -7,7 +7,7 @@ data/
 .settings/
 Thumbs.db
 scripts/foundry.js
-node_modules/
+node_modules
 coverage
 .npmrc
 data/monsters.csv

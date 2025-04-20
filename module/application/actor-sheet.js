@@ -3,7 +3,7 @@ import * as settings from "lib/miscellaneous-settings.js";
 const { api, sheets } = foundry.applications;
 class GurpsActorSheetV2 extends api.HandlebarsApplicationMixin(sheets.ActorSheetV2) {
   tabGroups = {
-    // TODO: update with actual tab name2
+    // TODO: update with actual tab name
     primary: "combat"
   };
   /* -------------------------------------------- */
