@@ -302,7 +302,7 @@ export class ActorImporter {
         {
           action: 'cancel',
           label: 'Please wait...',
-          icon: 'fa-solid fa-hourglass-start',
+          icon: 'fa-solid fa-hourglass-start fa-spin',
         },
       ],
       form: { closeOnSubmit: false },
@@ -549,36 +549,7 @@ export class ActorImporter {
     let hp = i(json.hps)
     let fp = i(json.fps)
 
-    let saveCurrent = false
-    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
-      if (option == 0) {
-        saveCurrent = true
-      }
-      if (option == 2) {
-        saveCurrent = await new Promise(resolve => {
-          let d = new Dialog({
-            title: 'Current HP & FP',
-            content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(true),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(false),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
-      }
-    }
+    let saveCurrent = await this.promptForSaveOrOverwrite(data, hp, fp)
     if (!saveCurrent) {
       data.HP.value = hp
       data.FP.value = fp
@@ -625,6 +596,46 @@ export class ActorImporter {
       'system.vision': data.vision,
       'system.liftingmoving': lm,
     }
+  }
+
+  async promptForSaveOrOverwrite(data, hp, fp) {
+    let saveCurrent = false
+    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
+      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
+      if (option == 0) {
+        saveCurrent = true
+      }
+      if (option == 2) {
+        saveCurrent = await foundry.applications.api.DialogV2.wait({
+          window: { title: game.i18n.localize('GURPS.importOverwriteHpFp') },
+          content: game.i18n.format('GURPS.importSaveOrOverwriteHpFp', {
+            currentHP: data.HP.value,
+            currentFP: data.FP.value,
+            hp: hp,
+            fp: fp,
+          }),
+          modal: true,
+          buttons: [
+            {
+              action: 'save',
+              label: game.i18n.localize('GURPS.save'),
+              icon: 'far fa-square',
+              default: true,
+              callback: () => true,
+            },
+            {
+              action: 'overwrite',
+              label: game.i18n.localize('GURPS.overwrite'),
+              icon: 'fas fa-edit',
+              callback: () => false,
+            },
+          ],
+        })
+
+        //   title: 'Current HP & FP',
+      }
+    }
+    return saveCurrent
   }
 
   /**
@@ -1482,37 +1493,7 @@ export class ActorImporter {
     let fp = atts.find(e => e.attr_id === 'fp')?.calc?.current || 0
     let qp = atts.find(e => e.attr_id === 'qp')?.calc?.current || 0
 
-    let saveCurrent = false
-
-    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
-      if (option == 0) {
-        saveCurrent = true
-      }
-      if (option == 2) {
-        saveCurrent = await new Promise((resolve, _reject) => {
-          let d = new Dialog({
-            title: 'Current HP & FP',
-            content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(true),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(false),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
-      }
-    }
+    let saveCurrent = await this.promptForSaveOrOverwrite(data, hp, fp)
     if (!saveCurrent) {
       data.HP.value = hp
       data.FP.value = fp
