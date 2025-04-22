@@ -652,7 +652,6 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         ],
-       
       }).render({ force: true })
       dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
 
@@ -1040,8 +1039,8 @@ export class GurpsActorSheet extends ActorSheet {
     }
     const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
-    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem ?
-        {
+    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem
+      ? {
           n: item.name,
           id: item.id,
         }
@@ -1656,7 +1655,7 @@ export class GurpsActorSheet extends ActorSheet {
   get title() {
     const t = this.actor.name
     const sheet = this.actor.getFlag('core', 'sheetClass')
-    return sheet === 'GURPS.GurpsActorEditorSheet' ? '**** Editing: ' + t + ' ****' : t
+    return sheet === 'gurps.GurpsActorEditorSheet' ? '**** Editing: ' + t + ' ****' : t
   }
 
   _getHeaderButtons() {
@@ -1674,7 +1673,7 @@ export class GurpsActorSheet extends ActorSheet {
    */
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
-    const isEditor = sheet === 'GURPS.GurpsActorEditorSheet'
+    const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
     const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
 
     const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
@@ -1719,7 +1718,6 @@ export class GurpsActorSheet extends ActorSheet {
     const original =
       this.actor.getFlag('core', 'sheetClass') ||
       Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.default)[0].id
-    console.log('original: ' + original)
 
     if (original != 'GURPS.GurpsActorSheet') newSheet = 'GURPS.GurpsActorSheet'
     if (event.shiftKey)
@@ -1734,7 +1732,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onOpenEditor(event) {
     event.preventDefault()
-    this.actor.openSheet('GURPS.GurpsActorEditorSheet')
+    this.actor.openSheet('gurps.GurpsActorEditorSheet')
   }
 
   async _onRightClickGurpslink(event) {
@@ -1917,8 +1915,8 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
 
   /** @override */
   get template() {
-    return !game.user.isGM && this.actor.limited ?
-        'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return !game.user.isGM && this.actor.limited
+      ? 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
       : 'systems/gurps/templates/actor/actor-tab-sheet.hbs'
   }
 }
