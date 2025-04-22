@@ -4,8 +4,8 @@ import { zeroFill } from '../lib/utilities.js'
 export const AddImportEquipmentButton = async function (html) {
   let button = $(
     '<button class="import-items"><i class="fas fa-file-import"></i>' +
-    game.i18n.localize('GURPS.itemImport') +
-    '</button>'
+      game.i18n.localize('GURPS.itemImport') +
+      '</button>'
   )
 
   button.click(function () {
@@ -52,7 +52,6 @@ export const AddImportEquipmentButton = async function (html) {
   })
 
   html.find('.directory-footer').append(button)
-
 }
 
 export class ItemImporter {

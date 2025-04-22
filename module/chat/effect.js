@@ -19,7 +19,7 @@ export class ActiveEffectChatProcessor extends ChatProcessor {
       ui.notifications.error('Please select a token/character.')
       return
     }
-    
+
     let actor = GURPS.LastActor
     let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
 

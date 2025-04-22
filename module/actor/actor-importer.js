@@ -1001,9 +1001,9 @@ export class ActorImporter {
       // and backup their exclusive info inside Actor system.itemInfo
       const isEligibleItem = item => {
         const sysKey =
-          itemType === 'equipment' ?
-            this.actor._findEqtkeyForId('itemid', item.id)
-          : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+          itemType === 'equipment'
+            ? this.actor._findEqtkeyForId('itemid', item.id)
+            : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
         return (
           (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
           !foundry.utils.getProperty(this.actor, sysKey)?.save
@@ -1741,10 +1741,7 @@ export class ActorImporter {
 
   async importSk(i, p) {
     if (this.GCSVersion === 5) {
-      i.type =
-        i.id.startsWith('q') ? 'technique'
-        : i.id.startsWith('s') ? 'skill'
-        : 'skill_container'
+      i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
     }
     let name =
       i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
@@ -1814,10 +1811,7 @@ export class ActorImporter {
   async importSp(i, p) {
     let s = new Spell()
     if (this.GCSVersion === 5) {
-      i.type =
-        i.id.startsWith('r') ? 'ritual_magic_spell'
-        : i.id.startsWith('p') ? 'spell'
-        : 'spell_container'
+      i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
     }
     s.name = i.name || 'Spell'
     s.originalName = i.name
@@ -2665,9 +2659,8 @@ export class ActorImporter {
 
       // Create or Update item
       const itemData = actorComp.toItemData(this.actor, fromProgram)
-      const [item] =
-        !!existingItem ?
-          await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
+      const [item] = !!existingItem
+        ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
         : await this.actor.createEmbeddedDocuments('Item', [itemData])
       // Update Actor Component for new Items
       if (!!item) {
