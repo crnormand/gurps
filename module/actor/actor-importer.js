@@ -291,21 +291,22 @@ export class ActorImporter {
 
   async _showLoadingDialog(diagOps) {
     const { name, generator } = diagOps
-    const dialog = new Dialog(
-      {
-        title: game.i18n.format('GURPS.importSheetTitle', { generator }),
-        content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
-        buttons: {},
-        close: () => {},
-      },
-      {
+    const dialog = new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.format('GURPS.importSheetHint', { name, generator }) },
+      position: {
         width: 400,
-        height: 200,
-        resizable: false,
-        closeOnSubmit: false,
-      }
-    )
-    await dialog.render(true)
+        height: 'auto',
+      },
+      content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
+      buttons: [
+        {
+          action: 'cancel',
+          label: 'Please wait...',
+          icon: 'fa-solid fa-hourglass-start',
+        },
+      ],
+      form: { closeOnSubmit: false },
+    }).render({ force: true })
     return dialog
   }
 
