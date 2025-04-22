@@ -1719,13 +1719,13 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.getFlag('core', 'sheetClass') ||
       Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.default)[0].id
 
-    if (original != 'GURPS.GurpsActorSheet') newSheet = 'GURPS.GurpsActorSheet'
+    if (original != 'gurps.GurpsActorSheet') newSheet = 'gurps.GurpsActorSheet'
     if (event.shiftKey)
       // Hold down the shift key for Simplified
-      newSheet = 'GURPS.GurpsActorSimplifiedSheet'
+      newSheet = 'gurps.GurpsActorSimplifiedSheet'
     if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
       // Hold down the Ctrl key (Command on Mac) for Simplified
-      newSheet = 'GURPS.GurpsActorNpcSheet'
+      newSheet = 'gurps.GurpsActorNpcSheet'
 
     this.actor.openSheet(newSheet)
   }
@@ -1968,7 +1968,7 @@ Hooks.on('getGurpsActorEditorSheetHeaderButtons', sheet => {
             'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
           label: 'Ok',
           callback: async () => {
-            sheet.actor.openSheet('GURPS.GurpsActorSheet')
+            sheet.actor.openSheet('gurps.GurpsActorSheet')
           },
           rejectClose: false,
         }),
