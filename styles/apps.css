@@ -42,7 +42,10 @@ Global Override body {
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
+  background:
+    url(/systems/gurps/icons/hex2.webp) repeat,
+    url(/ui/parchment.jpg) repeat,
+    #dcdcd0;
   color: black;
 }
 
@@ -639,7 +642,9 @@ ul#result-effects li {
 
 .gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
 .gga-app .collapsible-wrapper .collapsible-content {
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
+  box-shadow:
+    1px 1px 3px rgba(0, 0, 0, 0.3) inset,
+    0px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
@@ -690,7 +695,9 @@ ul#result-effects li {
 
 .dragging {
   outline: 5px auto -webkit-focus-ring-color;
-  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+  box-shadow:
+    0 0 2px 3px #78aeda,
+    0 0 2px #78aeda inset;
   border-radius: 3px;
   background-color: rgba(240, 128, 128, 0.6);
 }
@@ -731,7 +738,9 @@ ul#result-effects li {
   border-radius: 6px;
   font-weight: normal;
   text-shadow: none;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.5),
+    0 2px 4px -1px rgba(0, 0, 0, 0.3);
   font-family: 'Roboto Condensed', Helvetica, sans-serif;
 
   /* Position the tooltip text */
@@ -1325,7 +1334,9 @@ details .popup {
   font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.5),
+    0 2px 4px -1px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 3px;
 }
@@ -1988,7 +1999,9 @@ details .popup.square5x4 {
 .modttt .modtooltip {
   padding: 0.35em;
   border-radius: 0.75em;
-  box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 4px 8px 4px rgba(0, 0, 0, 0.8),
+    0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .modtooltip .plus,

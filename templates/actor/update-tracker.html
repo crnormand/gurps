@@ -2,9 +2,9 @@
   {{localize "GURPS.resourceTemplateTitle"}}:
   <select {{disabled (not templates)}}>
     {{#each templates}}
-      <option value="{{tracker.name}}">{{tracker.name}}</option>
+    <option value="{{tracker.name}}">{{tracker.name}}</option>
     {{else}}
-      <option value="none">{{localize "GURPS.resourceUndefined"}}</option>
+    <option value="none">{{localize "GURPS.resourceUndefined"}}</option>
     {{/each}}
   </select>
 </div>
