@@ -1044,7 +1044,7 @@ class DevChatProcessor extends ChatProcessor {
       case 'open': {
         // Open the full character sheet for an Actor
         let a = game.actors.getName(m[2].trim())
-        if (a) a.openSheet('GURPS.GurpsActorSheet')
+        if (a) a.openSheet('gurps.GurpsActorSheet')
         else ui.notifications.warn("Can't find Actor named '" + m[2] + "'")
         break
       }

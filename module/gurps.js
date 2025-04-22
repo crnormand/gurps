@@ -2492,7 +2492,7 @@ if (!globalThis.GURPS) {
     // This system setting must be built AFTER all of the character sheets have been registered
     let sheets = /** @type {Record<string,string>} */ ({})
     Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'GURPS.GurpsActorSheet') sheets[e.label] = e.label
+      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
     })
     game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: game.i18n.localize('GURPS.settingSheetDetail'),
