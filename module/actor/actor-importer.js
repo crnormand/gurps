@@ -2046,7 +2046,7 @@ export class ActorImporter {
     // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
-    let bodyplan = hls.id // Was a body plan actually in the import?
+    let bodyplan = hls.name.toLowerCase() // Was a body plan actually in the import?
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
 

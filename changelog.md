@@ -1,6 +1,17 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.17.19
+## Release 0.17.20
+
+### Features
+
+### Bugfixes
+
+- It creates body parts that doesn't exist in character sheet #2201
+- Refactor token selection logic in DamageChat to ensure compatibility with GURPS Token Shapes and Movement.
+- Fixed hit location table recognition for GCS imports.
+- "Editor" link no longer opens editor sheet #2198
+
+## Release 0.17.19 04/13/2025
 
 ### Features
 
