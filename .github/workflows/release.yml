@@ -4,31 +4,52 @@ on:
   release:
     types: [released]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v4
 
-      # get part of the tag after the `v`
       - name: Extract tag version number
         id: get_version
         uses: battila7/get-version-action@v2
 
-      # Substitute the Manifest and Download URLs in the module.json
-      - name: Substitute Manifest and Download Links For Versioned Ones
-        id: sub_manifest_link_version
-        uses: microsoft/variable-substitution@v1
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          files: 'system.json'
+          node-version: 20
+      - name: Install dependencies
+
+        run: npm ci;
+
+      - name: Build the project
+        run: npm run build;
+
+      - name: Substitute manifest and download links for versioned ones
+        run: |
+          jq --arg version "$RELEASE_VERSION" \
+          --arg url "https://github.com/$GITHUB_REPOSITORY"
+          --arg manifest "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/release/system.json" \
+          --arg download "https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/system.zip" \
+          '.version = $version | .manifest = $manifest | .download = $download | .url = $url' \
+          dist/system.json > tmp.$$.json && mv tmp.$$.json dist/system.json
         env:
-          esmodules: '["module/gurps.js", "lib/xregexp-all.js"]'
-          version: ${{steps.get_version.outputs.version-without-v}}
-          manifest: https://raw.githubusercontent.com/crnormand/gurps/release/system.json
-          download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/system.zip
+          RELEASE_VERSION: ${{steps.get_version.outputs.version-without-v}}
+          RELEASE_TAG: ${{github.event.release.tag_name}}
+          GITHUB_REPOSITORY: ${{github.repository}}
+          GITHUB_BRANCH: ${{github.branch}}
 
       # Create a zip file with all files required by the module to add to the release
-      - run: zip -r ./system.zip system.json template.json changelog.md LICENSE.txt assets/ icons/ lang/ lib/ module/ scripts/ styles/ templates/ ui/ utils/
+      - name: Zip fist
+        run: |
+          cd dist
+          zip -r "./system.zip" ./*
+        env:
+          RELEASE_VERSION: ${{steps.get_version.outputs.version-without-v}}
 
       # Create a release for this specific version
       - name: Update Release with Files
@@ -40,6 +61,6 @@ jobs:
           draft: ${{ github.event.release.unpublished }}
           prerelease: ${{ github.event.release.prerelease }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: './system.json, ./system.zip'
+          artifacts: './dist/system.json, ./dist/system.zip'
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}

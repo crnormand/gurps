@@ -22,6 +22,7 @@ const staticFiles = [
   'utils',
   'system.json',
   'template.json',
+  'changelog.md',
 ]
 
 const isProd = process.env.NODE_ENV === 'production'
