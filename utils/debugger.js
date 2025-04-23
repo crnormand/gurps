@@ -1,15 +1,15 @@
 import * as Settings from '../lib/miscellaneous-settings.js'
 
+globalThis._patchedFuncs = {}
+
 // Copied from Monks Little Details module
 export let patchFunc = (prop, func, type = 'WRAPPER') => {
   let nonLibWrapper = () => {
-    // TODO: find some way to get this to work despite rollup bundling
-    console.warn(`patchFunc for function ${prop} failed because libWrapper is not currently installed.`)
-    return
-    // const oldFunc = eval(prop)
-    // eval(`${prop} = function (event) {
-    //         return func.call(this, ${type != 'OVERRIDE' ? 'oldFunc.bind(this),' : ''} ...arguments);
-    //     }`)
+    const id = foundry.utils.randomID()
+    _patchedFuncs[id] = eval(prop)
+    eval(`${prop} = function (event) {
+            return func.call(this, ${type != 'OVERRIDE' ? `_patchedFuncs["${id}"].bind(this),` : ''} ...arguments);
+        }`)
   }
   if (game.modules.get('lib-wrapper')?.active) {
     try {
