@@ -6,13 +6,15 @@
   "scripts": {
     "test": "jest --coverage",
     "tdd": "jest --coverage",
-    "handlebars": "handlebars"
+    "handlebars": "handlebars",
+    "prettier": "prettier --write ."
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "babel-jest": "^29.7.0",
     "handlebars": "^4.7.7",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "prettier": "^3.5.3"
   }
 }

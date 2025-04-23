@@ -85,8 +85,9 @@ export class EffectModifierPopout extends Application {
       }
       return a.itemName.localeCompare(b.itemName)
     })
-    const targetModifiers =
-      this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : []
+    const targetModifiers = this._token
+      ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
+      : []
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
@@ -101,8 +102,9 @@ export class EffectModifierPopout extends Application {
       let result = {}
       result.name = target.name
 
-      result.targetmodifiers =
-        target.actor ? this.convertModifiers(target.actor.system.conditions.target.modifiers) : []
+      result.targetmodifiers = target.actor
+        ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
+        : []
       const rangeModifier = getRangedModifier(this.getToken(), target)
       if (rangeModifier) {
         const data = this.convertModifiers([rangeModifier])
@@ -115,8 +117,8 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return Array.isArray(list) ?
-        list.map(it => {
+    return Array.isArray(list)
+      ? list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
           let obj = {}
@@ -146,11 +148,13 @@ export class EffectModifierPopout extends Application {
             obj = this._token?.actor.items.get(itemReference) || {}
           }
           const itemName = obj?.name || itemReference
-          const itemType =
-            obj?.type ? obj.type
-            : it.includes('#maneuver') ? 'maneuver'
-            : itemReference.includes('system.') ? itemReference.split('.')[1]
-            : 'notfound'
+          const itemType = obj?.type
+            ? obj.type
+            : it.includes('#maneuver')
+              ? 'maneuver'
+              : itemReference.includes('system.')
+                ? itemReference.split('.')[1]
+                : 'notfound'
           const desc = this.getDescription(it, itemReference)
           return {
             link: gurpslink(`[${i18n(desc)}]`),

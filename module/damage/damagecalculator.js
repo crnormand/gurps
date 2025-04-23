@@ -1195,11 +1195,11 @@ class DamageCalculator {
   get unmodifiedPointsToApply() {
     let injury = this.injury
     let pointsToApply =
-      injury === 0 ?
-        this._parent.isFlexibleArmor && this._parent.useBluntTrauma ?
-          this.effectiveBluntTrauma
-        : 0
-      : injury
+      injury === 0
+        ? this._parent.isFlexibleArmor && this._parent.useBluntTrauma
+          ? this.effectiveBluntTrauma
+          : 0
+        : injury
     return pointsToApply
   }
 

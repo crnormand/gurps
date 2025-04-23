@@ -84,9 +84,9 @@ export class _Base {
   static _checkComponentInActor(actor, actorComp) {
     // This actor component already exists in Actor?
     const existingComponentKey =
-      actorComp instanceof Equipment ?
-        actor._findEqtkeyForId('uuid', actorComp.uuid)
-      : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
+      actorComp instanceof Equipment
+        ? actor._findEqtkeyForId('uuid', actorComp.uuid)
+        : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
     if (!!existingComponentKey) {
       const existingComponentItem = actor.items.get(actorComp.itemid)
       if (!!existingComponentItem) {

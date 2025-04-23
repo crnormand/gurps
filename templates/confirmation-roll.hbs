@@ -1,42 +1,46 @@
 {{#if messages}}
-<div class="cr-messages">
-  {{#each messages}}
-    <div class="cr-message">
-      <i class="fa fa-triangle-exclamation"></i><span>{{this}}</span>
-    </div>
-  {{/each}}
-</div>
+  <div class='cr-messages'>
+    {{#each messages}}
+      <div class='cr-message'>
+        <i class='fa fa-triangle-exclamation'></i><span>{{this}}</span>
+      </div>
+    {{/each}}
+  </div>
 {{/if}}
-<div class="cr-container">
-  <div class="cr-token-section">
+<div class='cr-container'>
+  <div class='cr-token-section'>
     {{#if isVideo}}
-      <video class="cr-token-img" src="{{tokenImg}}" autoplay loop muted></video>
+      <video class='cr-token-img' src='{{tokenImg}}' autoplay loop muted></video>
     {{else}}
-      <img class="cr-token-img" src="{{tokenImg}}" alt="">
+      <img class='cr-token-img' src='{{tokenImg}}' alt='' />
     {{/if}}
-    <div class="cr-token-name">{{tokenName}}</div>
+    <div class='cr-token-name'>{{tokenName}}</div>
   </div>
-  <div class="cr-result-section">
-    <div class="cr-result-math">
-      <span id="cr-target">{{target}}</span>
-      <span id="cr-operator">{{operator}}</span>
-      <span id="cr-totalmods">{{totalMods}}</span>
+  <div class='cr-result-section'>
+    <div class='cr-result-math'>
+      <span id='cr-target'>{{target}}</span>
+      <span id='cr-operator'>{{operator}}</span>
+      <span id='cr-totalmods'>{{totalMods}}</span>
     </div>
-    <div id="cr-total" class="cr-result-total" style="color: {{targetColor}};">{{totalRoll}}</div>
-    <span class="cr-tooltip">{{rollChance}}</span>
-    <div class="cr-result-type">{{rollType}}</div>
+    <div id='cr-total' class='cr-result-total' style='color: {{targetColor}};'>{{totalRoll}}</div>
+    <span class='cr-tooltip'>{{rollChance}}</span>
+    <div class='cr-result-type'>{{rollType}}</div>
   </div>
-  <div class="cr-item-section">
-    <div class="cr-item-img-container">
+  <div class='cr-item-section'>
+    <div class='cr-item-img-container'>
       {{#if itemImage}}
-        <img class="cr-item-img" src="{{itemImage}}" alt="">
+        <img class='cr-item-img' src='{{itemImage}}' alt='' />
       {{else}}
-        <div class="cr-item-icon" style="background-color: {{itemColor}};"><i class="{{itemIcon}}"></i></div>
+        <div class='cr-item-icon' style='background-color: {{itemColor}};'><i class='{{itemIcon}}'></i></div>
       {{/if}}
-      {{#if consumeActionIcon }}
-        <div class="consume-action-badge" style="background-color: {{consumeActionColor}}" title="{{consumeActionLabel}}">{{{consumeActionIcon}}}</div>
+      {{#if consumeActionIcon}}
+        <div
+          class='consume-action-badge'
+          style='background-color: {{consumeActionColor}}'
+          title='{{consumeActionLabel}}'
+        >{{{consumeActionIcon}}}</div>
       {{/if}}
     </div>
-    <div class="cr-item-roll">{{targetRoll}}</div>
+    <div class='cr-item-roll'>{{targetRoll}}</div>
   </div>
 </div>

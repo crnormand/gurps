@@ -239,10 +239,7 @@ class ModifierStack {
         const newFormula = addBucketToDamage(originalFormula, false)
         const bucketTotal = this.currentSum
         const bucketRollModifier = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        const bucketRollModifierColor =
-          bucketTotal > 0 ? 'darkgreen'
-          : bucketTotal < 0 ? 'darkred'
-          : '#a8a8a8'
+        const bucketRollModifierColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
         $('#cr-damage').text(newFormula)
         $('#cr-bucket').text(bucketRollModifier).css('color', bucketRollModifierColor)
       }
