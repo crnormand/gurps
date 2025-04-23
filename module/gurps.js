@@ -1835,7 +1835,7 @@ if (!globalThis.GURPS) {
       label: 'Copy to chat input',
       default: true,
       callback: () => {
-        document.querySelector('#chat-message').value = otf;
+        document.querySelector('#chat-message').value = otf
       },
     })
 
@@ -2234,7 +2234,7 @@ if (!globalThis.GURPS) {
       let oldmacro = game.macros.get(game.user.hotbar[slot])
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
         let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
-        
+
         // TODO Use CSS to style the dialog.
         new foundry.applications.api.DialogV2({
           window: { title: 'Merge or Replace On-the-Fly macro' },

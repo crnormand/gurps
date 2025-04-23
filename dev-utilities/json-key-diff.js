@@ -43,4 +43,3 @@ let sameKeys = Object.entries(object1)
   .sort()
 sameKeys.forEach(([k, v]) => console.log(`  ${k}: ${v}`))
 console.log('------------')
-

@@ -1,69 +1,69 @@
 {{#if messages}}
-  <div class="cr-messages">
+  <div class='cr-messages'>
     {{#each messages}}
-      <div class="cr-message">
-        <i class="fa fa-triangle-exclamation"></i><span>{{this}}</span>
+      <div class='cr-message'>
+        <i class='fa fa-triangle-exclamation'></i><span>{{this}}</span>
       </div>
     {{/each}}
   </div>
 {{/if}}
-<div class="cr-damage-container">
-  <div class="cr-token-section">
+<div class='cr-damage-container'>
+  <div class='cr-token-section'>
     {{#if isVideo}}
-      <video class="cr-token-img" src="{{tokenImg}}" autoplay loop muted></video>
+      <video class='cr-token-img' src='{{tokenImg}}' autoplay loop muted></video>
     {{else}}
-      <img class="cr-token-img" src="{{tokenImg}}" alt="">
+      <img class='cr-token-img' src='{{tokenImg}}' alt='' />
     {{/if}}
-    <div class="cr-token-name">{{tokenName}}</div>
+    <div class='cr-token-name'>{{tokenName}}</div>
   </div>
-  <div class="cr-damage-section">
-    <div id="cr-damage" class="cr-damage-formula" data-original="{{originalFormula}}">{{damageRoll}}</div>
-    <div class="cr-damage-info">
-      {{#if damageTypeLabel }}
-        <div class="cr-badge-damage-type" style="background-color: {{damageTypeColor}}">
+  <div class='cr-damage-section'>
+    <div id='cr-damage' class='cr-damage-formula' data-original='{{originalFormula}}'>{{damageRoll}}</div>
+    <div class='cr-damage-info'>
+      {{#if damageTypeLabel}}
+        <div class='cr-badge-damage-type' style='background-color: {{damageTypeColor}}'>
           <span>{{{damageTypeIcon}}}</span>
           <span>{{damageTypeLabel}}</span>
         </div>
       {{/if}}
-      {{#if otfDamageText }}
-        <div class="cr-badge">
-          <span class="cr-text">{{otfDamageText}}</span>
+      {{#if otfDamageText}}
+        <div class='cr-badge'>
+          <span class='cr-text'>{{otfDamageText}}</span>
         </div>
       {{/if}}
-      {{#if multiplierNumber }}
-        <div class="cr-badge">
-          <span>{{localize "GURPS.multiplyAfterRoll"}}</span>
-          <span class="cr-text green">x{{multiplierNumber}}</span>
+      {{#if multiplierNumber}}
+        <div class='cr-badge'>
+          <span>{{localize 'GURPS.multiplyAfterRoll'}}</span>
+          <span class='cr-text green'>x{{multiplierNumber}}</span>
         </div>
       {{/if}}
-      {{#if armorDivisorNumber }}
-        <div class="cr-badge">
-          <span>{{localize "GURPS.armorDivisor"}}</span>
-          <span class="cr-text green">x{{armorDivisorNumber}}</span>
+      {{#if armorDivisorNumber}}
+        <div class='cr-badge'>
+          <span>{{localize 'GURPS.armorDivisor'}}</span>
+          <span class='cr-text green'>x{{armorDivisorNumber}}</span>
         </div>
       {{/if}}
-      {{#if useMinDamage }}
-        <div class="cr-badge">
-          <span>{{localize "GURPS.minDamageRule"}}</span>
-          <span class="cr-text green">ON</span>
+      {{#if useMinDamage}}
+        <div class='cr-badge'>
+          <span>{{localize 'GURPS.minDamageRule'}}</span>
+          <span class='cr-text green'>ON</span>
         </div>
       {{/if}}
       {{#if damageCost}}
-        <div class="cr-badge">
-          <span>{{localize "GURPS.damageCosts"}}</span>
-          <span class="cr-text">{{damageCost}}</span>
+        <div class='cr-badge'>
+          <span>{{localize 'GURPS.damageCosts'}}</span>
+          <span class='cr-text'>{{damageCost}}</span>
         </div>
       {{/if}}
-      {{#if usingDiceAdd }}
-        <div class="cr-badge">
-          <span>{{localize "GURPS.diceAddDamageRule"}}</span>
-          <span class="cr-text green">ON</span>
+      {{#if usingDiceAdd}}
+        <div class='cr-badge'>
+          <span>{{localize 'GURPS.diceAddDamageRule'}}</span>
+          <span class='cr-text green'>ON</span>
         </div>
       {{/if}}
     </div>
-    <div class="cr-damage-section">
-      <div id="cr-formula" class="cr-damage-roll">{{targetRoll}}
-        <span id="cr-bucket" style="color: {{bucketRollColor}}">{{bucketRoll}}</span></div>
+    <div class='cr-damage-section'>
+      <div id='cr-formula' class='cr-damage-roll'>{{targetRoll}}
+        <span id='cr-bucket' style='color: {{bucketRollColor}}'>{{bucketRoll}}</span></div>
     </div>
   </div>
 </div>
