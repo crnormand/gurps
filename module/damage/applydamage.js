@@ -74,7 +74,7 @@ export default class ApplyDamageDialog extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['boilerplate', 'sheet', 'actor'],
       id: 'apply-damage-dialog',
-      template: 'systems/gurps/templates/apply-damage/apply-damage-dialog.html',
+      template: 'systems/gurps/templates/apply-damage/apply-damage-dialog.hbs',
       resizable: true,
       minimizable: false,
       width: 800,
@@ -635,7 +635,7 @@ export default class ApplyDamageDialog extends Application {
       let button = `/r [/st + shock${object.amount}]`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
-      message = await this._renderTemplate('chat-shock.html', {
+      message = await this._renderTemplate('chat-shock.hbs', {
         name: !!token ? token.name : this.actor.name,
         modifier: object.amount,
         doubled: object.amount * 2,
@@ -649,7 +649,7 @@ export default class ApplyDamageDialog extends Application {
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
-      message = await this._renderTemplate('chat-majorwound.html', {
+      message = await this._renderTemplate('chat-majorwound.hbs', {
         name: !!token ? token.name : this.actor.name,
         button: button,
         htCheck: htCheck.replace('HT', game.i18n.localize('GURPS.attributesHT')),
@@ -662,7 +662,7 @@ export default class ApplyDamageDialog extends Application {
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
-      message = await this._renderTemplate('chat-headvitalshit.html', {
+      message = await this._renderTemplate('chat-headvitalshit.hbs', {
         name: !!token ? token.name : this.actor.name,
         button: button,
         location: object.detail,
@@ -694,11 +694,11 @@ export default class ApplyDamageDialog extends Application {
         classEnd: '</span>',
       }
 
-      message = await this._renderTemplate('chat-knockback.html', templateData)
+      message = await this._renderTemplate('chat-knockback.hbs', templateData)
     }
 
     if (object.type === 'crippling') {
-      message = await this._renderTemplate('chat-crippling.html', {
+      message = await this._renderTemplate('chat-crippling.hbs', {
         name: this.actor.name,
         location: object.detail,
         groundModifier: 'DX-1',
@@ -789,7 +789,7 @@ export default class ApplyDamageDialog extends Application {
     update[`${path}.value`] = newValue
     await this.actor.update(update)
 
-    this._renderTemplate('chat-damage-results.html', data).then(html => {
+    this._renderTemplate('chat-damage-results.hbs', data).then(html => {
       let speaker = ChatMessage.getSpeaker(game.user)
       if (!!attackingActor) speaker = ChatMessage.getSpeaker(attackingActor)
       let messageData = {

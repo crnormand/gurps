@@ -2123,7 +2123,7 @@ if (!globalThis.GURPS) {
     //     minimizable: false,
     //     resizable: false,
     //     id: 'ThreeD6',
-    //     template: 'systems/gurps/templates/threed6.html',
+    //     template: 'systems/gurps/templates/threed6.hbs',
     //     classes: [],
     //   }).render(true)
 
@@ -2457,12 +2457,12 @@ if (!globalThis.GURPS) {
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
     loadTemplates([
-      __dirname + '/apply-damage/effect-blunttrauma.html',
-      __dirname + '/apply-damage/effect-crippling.html',
-      __dirname + '/apply-damage/effect-headvitalshit.html',
-      __dirname + '/apply-damage/effect-knockback.html',
-      __dirname + '/apply-damage/effect-majorwound.html',
-      __dirname + '/apply-damage/effect-shock.html',
+      __dirname + '/apply-damage/effect-blunttrauma.hbs',
+      __dirname + '/apply-damage/effect-crippling.hbs',
+      __dirname + '/apply-damage/effect-headvitalshit.hbs',
+      __dirname + '/apply-damage/effect-knockback.hbs',
+      __dirname + '/apply-damage/effect-majorwound.hbs',
+      __dirname + '/apply-damage/effect-shock.hbs',
     ])
 
     GURPS.setInitiativeFormula()
