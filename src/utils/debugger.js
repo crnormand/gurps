@@ -3,10 +3,12 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 // Copied from Monks Little Details module
 export let patchFunc = (prop, func, type = 'WRAPPER') => {
   let nonLibWrapper = () => {
-    const oldFunc = eval(prop)
-    eval(`${prop} = function (event) {
-            return func.call(this, ${type != 'OVERRIDE' ? 'oldFunc.bind(this),' : ''} ...arguments);
-        }`)
+    console.warn(`patchFunc for function ${prop} failed because libWrapper is not currently installed.`)
+    return
+    // const oldFunc = eval(prop)
+    // eval(`${prop} = function (event) {
+    //         return func.call(this, ${type != 'OVERRIDE' ? 'oldFunc.bind(this),' : ''} ...arguments);
+    //     }`)
   }
   if (game.modules.get('lib-wrapper')?.active) {
     try {
