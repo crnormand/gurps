@@ -8,7 +8,7 @@ import resolve from '@rollup/plugin-node-resolve'
 
 const name = 'gurps'
 const distDirectory = 'dist'
-const srcDirectory = 'src'
+const srcDirectory = '.'
 
 const staticFiles = [
   'assets',
@@ -28,7 +28,7 @@ const isProd = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
   strictDeprecations: true,
-  input: { [`${name}`]: `${srcDirectory}/${name}.js` },
+  input: { [`${name}`]: `${srcDirectory}/module/${name}.js` },
   output: {
     dir: distDirectory,
     format: 'es',

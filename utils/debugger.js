@@ -3,6 +3,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 // Copied from Monks Little Details module
 export let patchFunc = (prop, func, type = 'WRAPPER') => {
   let nonLibWrapper = () => {
+    // TODO: find some way to get this to work despite rollup bundling
     console.warn(`patchFunc for function ${prop} failed because libWrapper is not currently installed.`)
     return
     // const oldFunc = eval(prop)
