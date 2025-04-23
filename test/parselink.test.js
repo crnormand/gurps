@@ -1,12 +1,17 @@
-import { parseForRollOrDamage, parselink } from '../lib/parselink'
-import { DamageTable } from '../module/damage/damage-tables'
+import { parseForRollOrDamage, parselink } from '@/lib/parselink.js'
+import { DamageTable } from '@/module/damage/damage-tables.js'
 
-globalThis.GURPS = {}
-globalThis.game = {
-  i18n: {
-    localize: str => str,
-  },
-}
+beforeAll(() => {
+  /** @type {Game} */
+  globalThis.GURPS = {}
+
+  /** @type {Game} */
+  globalThis.game = {
+    i18n: {
+      localize: str => str,
+    },
+  }
+})
 
 describe('parseForRollOrDamage', () => {
   let prefix

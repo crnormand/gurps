@@ -2,7 +2,7 @@
   "id": "gurps",
   "title": "GURPS 4e Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
-  "version": "0.17.19",
+  "version": "0.18.0",
   "authors": [
     {
       "name": "Chris Normand",
@@ -26,7 +26,7 @@
     "minimum": "12",
     "verified": "12.331"
   },
-  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
+  "esmodules": ["gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
   "styles": [
     "styles/simple.css",

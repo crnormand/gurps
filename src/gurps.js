@@ -1,8 +1,8 @@
 // Import Modules
-import { ChangeLogWindow } from '../lib/change-log.js'
-import { Migration } from '../lib/migration.js'
-import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
-import { SemanticVersion } from '../lib/semver.js'
+import { ChangeLogWindow } from '@/lib/change-log.js'
+import { Migration } from '@/lib/migration.js'
+import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@/lib/parselink.js'
+import { SemanticVersion } from '@/lib/semver.js'
 import {
   arrayToObject,
   atou,
@@ -15,8 +15,8 @@ import {
   utoa,
   wait,
   zeroFill,
-} from '../lib/utilities.js'
-import RegisterChatProcessors from '../module/chat/chat-processors.js'
+} from '@/lib/utilities.js'
+import RegisterChatProcessors from '@/module/chat/chat-processors.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -26,64 +26,64 @@ import {
   GurpsActorSimplifiedSheet,
   GurpsActorTabSheet,
   GurpsInventorySheet,
-} from './actor/actor-sheet.js'
-import { GurpsActor } from './actor/actor.js'
-import ManeuverHUDButton from './actor/maneuver-button.js'
-import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
-import TriggerHappySupport from './effects/triggerhappy.js'
-import { AddImportEquipmentButton } from './item-import.js'
-import { GurpsItemSheet } from './item-sheet.js'
-import { GurpsItem } from './item.js'
-import GurpsJournalEntry from './journal.js'
-import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { handlePdf, SJGProductMappings } from './pdf-refs.js'
-import GURPSTokenHUD from './token-hud.js'
+} from '@/module/actor/actor-sheet.js'
+import { GurpsActor } from '@/module/actor/actor.js'
+import ManeuverHUDButton from '@/module/actor/maneuver-button.js'
+import { ResourceTrackerManager } from '@/module/actor/resource-tracker-manager.js'
+import { addBucketToDamage, doRoll } from '@/module/dierolls/dieroll.js'
+import TriggerHappySupport from '@/module/effects/triggerhappy.js'
+import { AddImportEquipmentButton } from '@/module/item-import.js'
+import { GurpsItemSheet } from '@/module/item-sheet.js'
+import { GurpsItem } from '@/module/item.js'
+import GurpsJournalEntry from '@/module/journal.js'
+import { ModifierBucket } from '@/module/modifier-bucket/bucket-app.js'
+import { handlePdf, SJGProductMappings } from '@/module/pdf-refs.js'
+import GURPSTokenHUD from '@/module/token-hud.js'
 
 /**
  * /dded to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
  * ~Stevil
  */
-import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
-import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
+import { registerColorPickerSettings } from '@/module/color-character-sheet/color-character-sheet-settings.js'
+import { colorGurpsActorSheet } from '@/module/color-character-sheet/color-character-sheet.js'
 
-import HitFatPoints from '../lib/hitpoints.js'
-import Initiative from '../lib/initiative.js'
-import { GURPSRange, RulerGURPS, setupRanges } from '../lib/ranges.js'
+import HitFatPoints from '@/lib/hitpoints.js'
+import Initiative from '@/lib/initiative.js'
+import { GURPSRange, RulerGURPS, setupRanges } from '@/lib/ranges.js'
 
-import JQueryHelpers from '../lib/jquery-helper.js'
-import * as Settings from '../lib/miscellaneous-settings.js'
-import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
-import AddChatHooks from './chat.js'
+import JQueryHelpers from '@/lib/jquery-helper.js'
+import * as Settings from '@/lib/miscellaneous-settings.js'
+import MoustacheWax, { findTracker } from '@/lib/moustachewax.js'
+import AddChatHooks from '@/module/chat.js'
 
-import { initialize_i18nHelper, translate } from '../lib/i18n.js'
-import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
-import { GGADebugger } from '../utils/debugger.js'
-import { EffectModifierControl } from './actor/effect-modifier-control.js'
-import Maneuvers from './actor/maneuver.js'
-import { AddMultipleImportButton } from './actor/multiple-import-app.js'
-import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
-import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
-import GurpsActiveEffectConfig from './effects/active-effect-config.js'
-import GurpsActiveEffect from './effects/active-effect.js'
-import { StatusEffect } from './effects/effects.js'
-import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
-import GurpsWiring from './gurps-wiring.js'
-import { HitLocation } from './hitlocation/hitlocation.js'
-import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
-import { PDFEditorSheet } from './pdf/edit.js'
-import { JournalEntryPageGURPS } from './pdf/index.js'
-import * as GURPSSpeedProvider from './speed-provider.js'
-import { TokenActions } from './token-actions.js'
-import GurpsToken from './token.js'
-import { allowOtfExec } from './utilities/allow-otf-exec.js'
-import { multiplyDice } from './utilities/damage-utils.js'
-import { gurpslink } from './utilities/gurpslink.js'
-import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { initialize_i18nHelper, translate } from '@/lib/i18n.js'
+import { parseDecimalNumber } from '@/lib/parse-decimal-number/parse-decimal-number.js'
+import { GGADebugger } from '@/utils/debugger.js'
+import { EffectModifierControl } from '@/module/actor/effect-modifier-control.js'
+import Maneuvers from '@/module/actor/maneuver.js'
+import { AddMultipleImportButton } from '@/module/actor/multiple-import-app.js'
+import { addManeuverListeners, addManeuverMenu } from '@/module/combat-tracker/maneuver-menu.js'
+import { addQuickRollButton, addQuickRollListeners } from '@/module/combat-tracker/quick-roll-menu.js'
+import GurpsActiveEffectConfig from '@/module/effects/active-effect-config.js'
+import GurpsActiveEffect from '@/module/effects/active-effect.js'
+import { StatusEffect } from '@/module/effects/effects.js'
+import { GlobalActiveEffectDataControl } from '@/module/effects/global-active-effect-data-manager.js'
+import GurpsWiring from '@/module/gurps-wiring.js'
+import { HitLocation } from '@/module/hitlocation/hitlocation.js'
+import GURPSConditionalInjury from '@/module/injury/foundry/conditional-injury.js'
+import { PDFEditorSheet } from '@/module/pdf/edit.js'
+import { JournalEntryPageGURPS } from '@/module/pdf/index.js'
+import * as GURPSSpeedProvider from '@/module/speed-provider.js'
+import { TokenActions } from '@/module/token-actions.js'
+import GurpsToken from '@/module/token.js'
+import { allowOtfExec } from '@/module/utilities/allow-otf-exec.js'
+import { multiplyDice } from '@/module/utilities/damage-utils.js'
+import { gurpslink } from '@/module/utilities/gurpslink.js'
+import { ClearLastActor, SetLastActor } from '@/module/utilities/last-actor.js'
 
 // Import the damage module
-import * as Damage from './damage/index.js'
+import * as Damage from '@/module/damage/index.js'
 
 export let GURPS = undefined
 
