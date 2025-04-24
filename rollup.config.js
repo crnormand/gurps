@@ -17,7 +17,6 @@ const staticFiles = [
   'lang',
   'lib',
   'scripts',
-  'styles',
   'templates',
   'utils',
   'system.json',
