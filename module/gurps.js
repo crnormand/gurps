@@ -39,6 +39,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import GURPSTokenHUD from './token-hud.js'
+import { preloadHandlebarsTemplates } from './util/handlebars-partials'
 import '../gurps.scss'
 
 /**
@@ -85,6 +86,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import { GurpsActorSheetV2 } from './applications/actor/actor-sheet.js'
 
 export let GURPS = undefined
 
@@ -1986,6 +1988,10 @@ if (!globalThis.GURPS) {
       label: 'Reduced Mode',
       makeDefault: false,
     })
+    Actors.registerSheet('gurps', GurpsActorSheetV2, {
+      label: 'ApplicationV2 Test Sheet',
+      makeDefault: false,
+    })
     // @ts-ignore
     Actors.registerSheet('gurps', GurpsActorSheet, {
       // Add this sheet last
@@ -2099,6 +2105,8 @@ if (!globalThis.GURPS) {
 
     GURPS.ActorSheets = { character: GurpsActorSheet }
     GURPS.handlePdf = handlePdf
+
+    preloadHandlebarsTemplates()
 
     Hooks.call('gurpsinit', GURPS)
   })

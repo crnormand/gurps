@@ -1,0 +1,7 @@
+<section class='portrait'>
+  <header>{{localize 'GURPS.sheet.personal.portrait'}}</header>
+  <img src='{{actor.img}}' data-edit='img' title='{{actor.name}}' />
+  {{#if isGM}}
+    <button data-operation='share-portrait'>{{localize 'GURPS.share'}}</button>
+  {{/if}}
+</section>
