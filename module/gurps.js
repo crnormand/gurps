@@ -43,7 +43,7 @@ import { preloadHandlebarsTemplates } from './util/handlebars-partials'
 import '../gurps.scss'
 
 /**
- * /dded to color the rollable parts of the character sheet.
+ * Added to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
  * ~Stevil
  */
