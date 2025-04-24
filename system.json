@@ -26,7 +26,7 @@
     "minimum": "12",
     "verified": "12.331"
   },
-  "esmodules": ["gurps.js", "lib/xregexp-all.js"],
+  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
   "styles": ["gurps.css"],
   "languages": [

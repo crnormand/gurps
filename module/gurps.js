@@ -39,10 +39,9 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import GURPSTokenHUD from './token-hud.js'
-import '../gurps.scss'
 
 /**
- * /dded to color the rollable parts of the character sheet.
+ * Added to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
  * ~Stevil
  */
