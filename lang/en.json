@@ -5,6 +5,14 @@
     }
   },
   "GURPS": {
+    "Sheet": {
+      "Common": {
+        "PortraitHoverText": {
+          "Edit": "Click to Edit",
+          "View": "Click to View"
+        }
+      }
+    },
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",

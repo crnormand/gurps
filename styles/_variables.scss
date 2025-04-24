@@ -1,5 +1,24 @@
 $testblue: #007bff;
 
+body {
+  // Headers
+  --color-light-header-background: var(--color-text-dark-inactive);
+  --color-light-header-border: var(--color-border-dark-4);
+  --color-light-header-text: var(--color-text-light-highlight);
+  --color-dark-header-background: var(--color-cool-4);
+  --color-dark-header-border: var(--color-cool-4);
+  --color-dark-header-text: var(--color-text-light-highlight);
+  --padding-header: 0.25rem;
+
+  // Buttons
+  // --color-light-button-background:
+  // --color-light-button-border:
+  // --color-light-button-text:
+  // --color-dark-button-background:
+  // --color-dark-button-border:
+  // --color-dark-button-text:
+}
+
 .testbutton {
   background-color: $testblue;
 }

@@ -1,7 +1,11 @@
 <section class='portrait'>
   <header>{{localize 'GURPS.sheet.personal.portrait'}}</header>
-  <img src='{{actor.img}}' data-edit='img' title='{{actor.name}}' />
-  {{#if isGM}}
-    <button data-operation='share-portrait'>{{localize 'GURPS.share'}}</button>
-  {{/if}}
+  <div class='img-wrapper'>
+    {{#if isEditing}}
+      <img src='{{actor.img}}' alt='{{actor.name}}' data-action='editImage' title='{{actor.name}}' />
+    {{else}}
+      <img src='{{actor.img}}' alt='{{actor.name}}' data-action='viewImage' title='{{actor.name}}' />
+    {{/if}}
+    <span class='img-overlay'>{{portraitHoverText}}</span>
+  </div>
 </section>
