@@ -137,7 +137,7 @@ export class ActorImporter {
 
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -205,7 +205,7 @@ export class ActorImporter {
           message: err.message,
         })
       )
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: [msg],
         version: this.GC,
         GCAVersion: GCAVersion,
@@ -269,7 +269,7 @@ export class ActorImporter {
       let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: 'GCS Direct',
         GCAVersion: GCAVersion,
@@ -400,7 +400,7 @@ export class ActorImporter {
     }
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -497,7 +497,7 @@ export class ActorImporter {
       let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>')) // FIXME: Why suppressMessage is not available here?
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,

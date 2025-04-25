@@ -953,7 +953,7 @@ export class GurpsActorSheet extends ActorSheet {
     let actor = this.actor
     let list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path))
     let obj = new Note('', true)
-    let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
+    let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
 
     let d = new Dialog(
       {
@@ -1118,7 +1118,7 @@ export class GurpsActorSheet extends ActorSheet {
     let d = new Dialog(
       {
         title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
+        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.hbs', { templates: templates }),
         buttons: buttons,
         default: 'edit',
         templates: templates,
@@ -1141,7 +1141,7 @@ export class GurpsActorSheet extends ActorSheet {
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
-    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
+    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.hbs', obj)
 
     if (!(await this.actor._sanityCheckItemSettings(obj))) return
 
@@ -1205,7 +1205,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/melee-editor-popup.html',
+      'systems/gurps/templates/melee-editor-popup.hbs',
       'Melee Weapon Editor',
       [
         'name',
@@ -1236,7 +1236,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/ranged-editor-popup.html',
+      'systems/gurps/templates/ranged-editor-popup.hbs',
       'Ranged Weapon Editor',
       [
         'name',
@@ -1265,7 +1265,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/advantage-editor-popup.html',
+      'systems/gurps/templates/advantage-editor-popup.hbs',
       'Advantage / Disadvantage / Perk / Quirk Editor',
       ['name', 'notes', 'pageref', 'itemModifiers'],
       ['points']
@@ -1278,7 +1278,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/skill-editor-popup.html',
+      'systems/gurps/templates/skill-editor-popup.hbs',
       'Skill Editor',
       [
         'name',
@@ -1303,7 +1303,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/spell-editor-popup.html',
+      'systems/gurps/templates/spell-editor-popup.hbs',
       'Spell Editor',
       [
         'name',
@@ -1334,7 +1334,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/note-editor-popup.html',
+      'systems/gurps/templates/note-editor-popup.hbs',
       'Note Editor',
       ['pageref', 'notes', 'title'],
       [],
@@ -2181,7 +2181,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/simplified.html'
+    return 'systems/gurps/templates/simplified.hbs'
   }
 
   getData() {
@@ -2274,7 +2274,7 @@ export class GurpsInventorySheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/inventory-sheet.html'
+    return 'systems/gurps/templates/inventory-sheet.hbs'
   }
 }
 

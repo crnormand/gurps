@@ -1,0 +1,11 @@
+// This is the root of the stylesheets
+@use './styles/apps.css';
+@use './styles/chat-message.css';
+@use './styles/color-character-sheet.css';
+@use './styles/css_boilerplate.css';
+@use './styles/npc-input.css';
+@use './styles/simple.css';
+@use './styles/simplified.css';
+@use './styles/tinycolorpicker.css';
+
+@use 'styles/variables';

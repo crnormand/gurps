@@ -248,7 +248,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     let msg = !!value.args ? game.i18n.format(value.msg, value.args) : game.i18n.localize(value.msg)
 
     let self = this
-    renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+    renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] }).then(content => {
       let users = actor.getOwners()
       let ids = users?.map(it => it.id)
 

@@ -575,7 +575,7 @@ export class ModifierBucket extends Application {
       minimizable: false,
       resizable: false,
       id: 'ModifierBucket',
-      template: 'systems/gurps/templates/modifier-bucket/bucket-app.html',
+      template: 'systems/gurps/templates/modifier-bucket/bucket-app.hbs',
     })
   }
 

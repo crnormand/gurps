@@ -979,7 +979,7 @@ export class GurpsActor extends Actor {
   sendChatMessage(msg) {
     let self = this
 
-    renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+    renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] }).then(content => {
       let users = self.getOwners()
       let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
 
@@ -1553,7 +1553,7 @@ export class GurpsActor extends Actor {
           await this.addNewItemData(item)
         }
       } else {
-        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
+        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
         let callback = async (/** @type {JQuery<HTMLElement> | HTMLElement} */ html) => {
           // @ts-ignore
           let qty = parseInt(html.find('#qty').val())
@@ -1583,7 +1583,7 @@ export class GurpsActor extends Actor {
       // different owners
       let count = eqt.count
       if (eqt.count > 1) {
-        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
+        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
         let callback = async (/** @type {HTMLElement | JQuery<HTMLElement>} */ html) =>
           // @ts-ignore
           (count = parseInt(html.find('#qty').val()))
@@ -2144,7 +2144,7 @@ export class GurpsActor extends Actor {
   async _splitEquipment(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     if (srceqt.count <= 1) return false // nothing to split
-    let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: srceqt })
+    let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: srceqt })
     let count = 0
     let callback = async (/** @type {JQuery<HTMLElement>} */ html) =>
       (count = parseInt(html.find('#qty').val()?.toString() || '0'))

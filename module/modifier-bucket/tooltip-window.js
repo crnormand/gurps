@@ -24,7 +24,7 @@ export default class ModifierBucketEditor extends Application {
 
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
-      template: 'systems/gurps/templates/modifier-bucket/tooltip-window.html',
+      template: 'systems/gurps/templates/modifier-bucket/tooltip-window.hbs',
       minimizable: false,
       width: 840,
       height: 'auto', // Set height to 'auto' to make it depend on the content
