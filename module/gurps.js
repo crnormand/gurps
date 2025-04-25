@@ -16,7 +16,7 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
-import RegisterChatProcessors from '../module/chat/chat-processors.js'
+import RegisterChatProcessors from './chat/chat-processors.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -41,12 +41,12 @@ import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import GURPSTokenHUD from './token-hud.js'
 
 /**
- * /dded to color the rollable parts of the character sheet.
+ * Added to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
  * ~Stevil
  */
-import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
-import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
+import { registerColorPickerSettings } from './color-character-sheet/color-character-sheet-settings.js'
+import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
 
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
@@ -2123,7 +2123,7 @@ if (!globalThis.GURPS) {
     //     minimizable: false,
     //     resizable: false,
     //     id: 'ThreeD6',
-    //     template: 'systems/gurps/templates/threed6.html',
+    //     template: 'systems/gurps/templates/threed6.hbs',
     //     classes: [],
     //   }).render(true)
 
@@ -2457,12 +2457,12 @@ if (!globalThis.GURPS) {
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
     loadTemplates([
-      __dirname + '/apply-damage/effect-blunttrauma.html',
-      __dirname + '/apply-damage/effect-crippling.html',
-      __dirname + '/apply-damage/effect-headvitalshit.html',
-      __dirname + '/apply-damage/effect-knockback.html',
-      __dirname + '/apply-damage/effect-majorwound.html',
-      __dirname + '/apply-damage/effect-shock.html',
+      __dirname + '/apply-damage/effect-blunttrauma.hbs',
+      __dirname + '/apply-damage/effect-crippling.hbs',
+      __dirname + '/apply-damage/effect-headvitalshit.hbs',
+      __dirname + '/apply-damage/effect-knockback.hbs',
+      __dirname + '/apply-damage/effect-majorwound.hbs',
+      __dirname + '/apply-damage/effect-shock.hbs',
     ])
 
     GURPS.setInitiativeFormula()

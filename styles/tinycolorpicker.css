@@ -6,7 +6,7 @@
 }
 
 #colorPicker .track {
-  background: #000 url('images/hex-colormap.gif') no-repeat 50% 50%;
+  background: #000 url('assets/hex-colormap.gif') no-repeat 50% 50%;
   height: 201px;
   width: 236px;
   padding: 10px;

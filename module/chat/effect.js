@@ -24,7 +24,7 @@ export class ActiveEffectChatProcessor extends ChatProcessor {
     let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
 
     // TODO reskin frightcheck UI
-    renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname }).then(dialogTemplate =>
+    renderTemplate('systems/gurps/templates/frightcheck-macro.hbs', { tblname: tblname }).then(dialogTemplate =>
       new Dialog(
         {
           title: 'Fright Check',
