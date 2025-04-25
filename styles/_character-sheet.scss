@@ -1,14 +1,35 @@
 form.gurps2.actor.sheet {
-  // Section headers
-  section > header {
-    padding: var(--padding-header);
-    text-align: center;
-    font-weight: bold;
-    text-shadow: 1px 1px var(--color-shadow-dark);
-    background: var(--color-light-header-background);
-    border: 1px solid var(--color-light-header-border);
-    color: var(--color-light-header-text);
+  /* -------------------------------------------- */
+  /*  General Styles                              */
+  /* -------------------------------------------- */
+
+  .window-content {
+    padding: 0.25rem;
+
+    section.element {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      border-radius: 0.25rem;
+
+      background: var(--color-light-header-background);
+      border: 1px solid var(--color-light-header-border);
+      > header {
+        // border-radius: 0.25rem 0.25rem 0 0;
+        padding: var(--padding-header);
+        text-align: center;
+        font-weight: bold;
+        text-shadow: 1px 1px var(--color-shadow-dark);
+        background: var(--color-light-header-background);
+        color: var(--color-light-header-text);
+      }
+    }
   }
+
+  /* -------------------------------------------- */
+  /*  Sections                                    */
+  /* -------------------------------------------- */
 
   section.portrait {
     width: 8rem;
@@ -41,21 +62,28 @@ form.gurps2.actor.sheet {
     }
 
     img {
-      width: 100%;
-      display: block;
+      height: 8rem;
       aspect-ratio: 1 / 1;
-      transition: filter 0.3s ease;
+      display: block;
+      border: 0.125rem solid transparent;
+      border-radius: 0.25rem;
+      // padding: 0.125rem;
     }
   }
+
+  /* -------------------------------------------- */
 }
 
 // Dark mode
 .theme-dark {
   form.gurps2.actor.sheet {
-    section > header {
+    section.element {
       background: var(--color-dark-header-background);
       border-color: var(--color-dark-header-border);
-      color: var(--color-dark-header-text);
+      > header {
+        background: var(--color-dark-header-background);
+        color: var(--color-dark-header-text);
+      }
     }
   }
 }

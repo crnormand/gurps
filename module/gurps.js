@@ -39,8 +39,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import GURPSTokenHUD from './token-hud.js'
-import { preloadHandlebarsTemplates } from './util/handlebars-partials'
-import '../gurps.scss'
+import { preloadHandlebarsTemplates } from './util/handlebars-partials.js'
 
 /**
  * Added to color the rollable parts of the character sheet.

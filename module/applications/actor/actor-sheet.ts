@@ -1,5 +1,5 @@
 import { DeepPartial } from 'fvtt-types/utils'
-import { ActorSheetTabs } from './helpers'
+import { ActorSheetTabs } from './helpers.js'
 
 namespace GurpsActorSheetV2 {
   export type RenderContext = {}
@@ -193,7 +193,7 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       const toggleLabel = game.i18n?.localize('GURPS.Sheet.Common.ToggleMode')
       const toggleIcon = this._mode === this.constructor.MODES.EDIT ? 'fa-solid fa-unlock' : 'fa-solid fa-lock'
       const toggleButton = `<button type='button' class='header-control ${toggleIcon}' data-action='toggleMode' data-tooltip='${toggleLabel}' aria-label='${toggleLabel}'></button>`
-      this.window.icon?.insertAdjacentHTML('beforebegin', toggleButton)
+      this.window.controls?.insertAdjacentHTML('beforebegin', toggleButton)
     }
 
     return frame
