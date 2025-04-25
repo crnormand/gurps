@@ -1,0 +1,22 @@
+<section class='character-header'>
+	<div class="flexrow">
+		{{> 'gurps.actor.parts.portrait'}}
+		<div class="flexcol">
+			<div class="flexrow">
+				{{> 'gurps.actor.parts.attributes-primary'}}
+				{{> 'gurps.actor.parts.attributes-secondary'}}
+				{{> 'gurps.actor.parts.encumbrance-move'}}
+			</div>
+				{{> 'gurps.actor.parts.combat-info'}}
+		</div>
+		{{> 'gurps.actor.parts.attributes-pool'}}
+	</div>
+
+	<nav class="tabs" data-group="primary">
+		{{#each tabs as |tab|}}
+		<a class="{{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+			<span class="{{tab.icon}}"></span>
+		</a>
+		{{/each}}
+	</nav>
+</section>

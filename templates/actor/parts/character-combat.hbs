@@ -1,0 +1,26 @@
+<section class='tab {{tab.cssClass}}' data-group='primary' data-tab='combat'>
+  <table class='item-table'>
+    <tr>
+      <th>Melee Weapon</th>
+      <th>Usage</th>
+      <th>SL</th>
+      <th>Parry</th>
+      <th>Block</th>
+      <th>Damage</th>
+      <th>Reach</th>
+      <th>ST</th>
+    </tr>
+    {{#each meleeWeapons}}
+      <tr>
+        <td>{{this.name}}</td>
+        <td>{{this.mode}}</td>
+        <td>{{this.level}}</td>
+        <td>{{this.parry}}</td>
+        <td>{{this.block}}</td>
+        <td>{{this.damage}}</td>
+        <td>{{this.reach}}</td>
+        <td>{{this.st}}</td>
+      </tr>
+    {{/each}}
+  </table>
+</section>

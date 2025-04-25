@@ -81,9 +81,11 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { preloadHandlebarsTemplates } from './util/handlebars-partials.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import { GurpsActorSheetV2 } from './applications/actor/actor-sheet.js'
 
 export let GURPS = undefined
 
@@ -1991,7 +1993,13 @@ if (!globalThis.GURPS) {
       label: 'Full (GCS)',
       makeDefault: true,
     })
+    // @ts-ignore
+    Actors.registerSheet('gurps', GurpsActorSheetV2, {
+      label: 'Sheet V2 Test',
+      makeDefault: false,
+    })
 
+    // @ts-ignore
     Items.unregisterSheet('core', ItemSheet)
     // @ts-ignore
     Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
@@ -2098,6 +2106,8 @@ if (!globalThis.GURPS) {
 
     GURPS.ActorSheets = { character: GurpsActorSheet }
     GURPS.handlePdf = handlePdf
+
+    preloadHandlebarsTemplates()
 
     Hooks.call('gurpsinit', GURPS)
   })

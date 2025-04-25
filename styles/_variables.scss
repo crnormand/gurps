@@ -1,5 +1,50 @@
 $testblue: #007bff;
 
+body {
+  // Header
+  --color-light-header-background: var(--color-light-5);
+  --color-light-header-border: var(--color-light-6;);
+  --color-light-header-text: var(--color-light-1);
+  --color-dark-header-background: var(--color-cool-4);
+  --color-dark-header-border: var(--color-cool-5);
+  --color-dark-header-text: var(--color-light-1);
+  --padding-header: 0.125rem;
+
+  // Content
+  --color-light-content-background: var(--color-light-2);
+  --color-light-content-border: var(--color-light-3);
+  --color-light-content-text: var(--color-dark-2);
+  --color-dark-content-background: var(--color-dark-2);
+  --color-dark-content-border: var(--color-cool-4);
+  --color-dark-content-text: var(--color-light-1);
+
+  // Input
+  --color-input-light-background: white;
+  --color-input-light-border: black;
+  --color-input-light-text: black;
+  --color-input-dark-background: black;
+  --color-input-dark-border: white;
+  --color-input-dark-text: white;
+
+  // Button
+  --color-button-light-background: white;
+  --color-button-light-border: black;
+  --color-button-light-text: black;
+  --color-button-dark-background: black;
+  --color-button-dark-border: white;
+  --color-button-dark-text: white;
+
+  // Special Button
+  --color-button-ra-background: cyan; // Rollable button
+  --color-button-mod-background: yellow; // Modifier button
+  // --color-light-button-background:
+  // --color-light-button-border:
+  // --color-light-button-text:
+  // --color-dark-button-background:
+  // --color-dark-button-border:
+  // --color-dark-button-text:
+}
+
 .testbutton {
   background-color: $testblue;
 }

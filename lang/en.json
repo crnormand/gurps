@@ -1,5 +1,18 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Character"
+    }
+  },
   "GURPS": {
+    "Sheet": {
+      "Common": {
+        "PortraitHoverText": {
+          "Edit": "Edit Image",
+          "View": "View Image"
+        }
+      }
+    },
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
