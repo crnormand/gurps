@@ -606,6 +606,7 @@
     "importOverwriteHpFp": "Overwrite or Save Current HP & FP",
     "importReplace": "Replace",
     "importSaveOrOverwriteHpFp": "<div><p>Do you want to:</p><p>&nbsp;&bull;&nbsp;<strong>Save</strong> the current HP ({currentHP}) & FP ({currentFP}) values</p><p>Or:</p><p>&nbsp;&bull;&nbsp;<strong>Overwrite</strong> it with the import data, HP ({hp}) & FP ({fp})?</p></div>",
+    "importSaveOverwriteBodyPlan": "<div><p>Do you want to:</p><p>&nbsp;&bull;&nbsp;<strong>Save</strong> the current body plan ({curentBodyPlan}) value</p><p>Or:</p><p>&nbsp;&bull;&nbsp;<strong>Overwrite</strong> it with the imported body plan, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Check the Users Guide for details on where to get the latest version.",
     "importSelected": "Import Selected",
     "importSelectFileDescribeAction": "This import will:",

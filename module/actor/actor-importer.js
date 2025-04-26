@@ -631,8 +631,6 @@ export class ActorImporter {
             },
           ],
         })
-
-        //   title: 'Current HP & FP',
       }
     }
     return saveCurrent
@@ -1304,49 +1302,49 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let saveprot = true
+    let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
       let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
-        saveprot = false
+        saveprot = true
       }
       if (option == 2) {
-        saveprot = await new Promise((resolve, _reject) => {
-          let d = new Dialog({
-            title: 'Hit Location Body Plan',
-            content:
-              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
-              )}) or ` +
-              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.BODYPLAN' + bodyplan
-              )})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(false),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(true),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
+        saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot)
+    if (saveprot) return {}
+    else
       return {
         'system.-=hitlocations': null,
         'system.hitlocations': prot,
         'system.additionalresources.bodyplan': bodyplan,
       }
-    else return {}
+  }
+
+  async getSaveOrOverwriteBodyPlan(saveprot, currentPlan, newPlan) {
+    return await foundry.applications.api.DialogV2.wait({
+      window: { title: game.i18n.localize('GURPS.importHitLocationBodyPlan') },
+      content: game.i18n.format('GURPS.importSaveOverwriteBodyPlan', {
+        curentBodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + currentPlan)}`,
+        bodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + newPlan)}`,
+      }),
+      modal: true,
+      buttons: [
+        {
+          action: 'save',
+          label: game.i18n.localize('GURPS.save'),
+          icon: 'far fa-square',
+          default: true,
+          callback: () => true,
+        },
+        {
+          action: 'overwrite',
+          label: game.i18n.localize('GURPS.overwrite'),
+          icon: 'fas fa-edit',
+          callback: () => false,
+        },
+      ],
+    })
   }
 
   importLangFromGCA(json) {
@@ -2120,49 +2118,23 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let saveprot = true
+    let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
       let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
-        saveprot = false
+        saveprot = true
       }
       if (option == 2) {
-        saveprot = await new Promise((resolve, _reject) => {
-          let d = new Dialog({
-            title: 'Hit Location Body Plan',
-            content:
-              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
-              )}) or ` +
-              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.BODYPLAN' + bodyplan
-              )})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(false),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(true),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
+        saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot) {
+    if (saveprot) return {}
+    else
       return {
         'system.-=hitlocations': null,
         'system.hitlocations': prot,
         'system.additionalresources.bodyplan': bodyplan,
       }
-    } else return {}
   }
 
   importPointTotalsFromGCS(total, atts, ads, skills, spells) {

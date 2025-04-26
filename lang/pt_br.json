@@ -1468,6 +1468,7 @@
     "written": "Escrito",
     "yard": "jarda",
     "yards": "jardas",
-    "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
+    "youDoNotHavePermssion": "Você não tem permissão para fazer isso.",
+    "importSaveOverwriteBodyPlan": "<div><p>Você deseja:</p><p>&nbsp;&bull;&nbsp;<strong>Salvar</strong> o tipo de corpo atual ({curentBodyPlan})</p><p>Ou:</p><p>&nbsp;&bull;&nbsp;<strong>Sobrescrever</strong> com o tipo de corpo importado, ({bodyPlan})?</p></div>"
   }
 }

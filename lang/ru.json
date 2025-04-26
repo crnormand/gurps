@@ -1469,6 +1469,7 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это."
+    "youDoNotHavePermssion": "У вас нет разрешения на это.",
+    "importSaveOverwriteBodyPlan": "<div><p>Вы хотите:</p><p>&nbsp;&bull;&nbsp;<strong>Сохранить</strong> текущее значение плана тела ({curentBodyPlan})</p><p>Или:</p><p>&nbsp;&bull;&nbsp;<strong>Перезаписать</strong> его импортированным планом тела, ({bodyPlan})?</p></div>"
   }
 }

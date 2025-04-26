@@ -1468,6 +1468,7 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
+    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
+    "importSaveOverwriteBodyPlan": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> des aktuellen Körperplans ({curentBodyPlan})</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit dem importierten Körperplan ({bodyPlan})?</p></div>"
   }
 }

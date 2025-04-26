@@ -1468,6 +1468,7 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela."
+    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela.",
+    "importSaveOverwriteBodyPlan": "<div><p>Voulez-vous :</p><p>&nbsp;&bull;&nbsp;<strong>Sauvegarder</strong> la valeur actuelle du type ({curentBodyPlan})</p><p>Ou :</p><p>&nbsp;&bull;&nbsp;<strong>Écraser</strong> avec le type importé, ({bodyPlan}) ?</p></div>"
   }
 }
