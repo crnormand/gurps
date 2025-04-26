@@ -1,8 +1,14 @@
+import * as settings from '../../../lib/miscellaneous-settings.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
+import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../../lib/utilities.js'
 import { AnyObject, DeepPartial, EmptyObject } from 'fvtt-types/utils'
 import { ActorSheetTabs } from './helpers.js'
 import GurpsActiveEffectListSheet from '../../effects/active-effect-list.js'
 import DocumentSheetV2 from 'node_modules/fvtt-types/src/foundry/client-esm/applications/api/document-sheet.mjs'
 import { dom } from '../../util/index.js'
+import GurpsWiring from '../../gurps-wiring.js'
+import SplitDREditor from '../../actor/splitdr-editor.js'
+import { isConfigurationAllowed } from '../../game-utils.js'
 
 namespace GurpsActorSheetV2 {
   export type RenderContext = {}
@@ -47,11 +53,10 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   static override DEFAULT_OPTIONS: foundry.applications.api.DocumentSheetV2.PartialConfiguration<foundry.applications.api.DocumentSheetV2.Configuration> =
     {
       tag: 'form',
-      // NOTE: Currently using "gurps2" to avoid conflicts with existing CSS declarations
-      classes: ['gurps2', 'actor', 'character'],
+      classes: ['gurps', 'sheet', 'actor'],
       position: {
         height: 800,
-        width: 'auto',
+        width: 800,
       },
       form: {
         submitOnChange: true,
@@ -68,45 +73,18 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
         openActiveEffects: this.#onOpenActiveEffects,
       },
       // @ts-expect-error v12 currently doesn't include dragDrop for DocumentSheetV2
-      dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null }],
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     }
 
   /* -------------------------------------------- */
 
   static override PARTS: Record<string, foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
-    header: {
-      id: 'header',
-      template: `systems/gurps/templates/actor/parts/character-header.hbs`,
-    },
-    combatTab: {
-      id: 'combat',
-      template: `systems/gurps/templates/actor/parts/character-combat.hbs`,
-      scrollable: [''],
-    },
-    personalTab: {
-      id: 'personal',
-      template: `systems/gurps/templates/actor/parts/character-personal.hbs`,
-      scrollable: [''],
-    },
-    traitsTab: {
-      id: 'traits',
-      template: `systems/gurps/templates/actor/parts/character-traits.hbs`,
-      scrollable: [''],
-    },
-    skillsTab: {
-      id: 'skills',
-      template: `systems/gurps/templates/actor/parts/character-skills.hbs`,
-      scrollable: [''],
-    },
-    resourcesTab: {
-      id: 'resources',
-      template: `systems/gurps/templates/actor/parts/character-resources.hbs`,
-      scrollable: [''],
-    },
-    equipmentTab: {
-      id: 'equipment',
-      template: `systems/gurps/templates/actor/parts/character-equipment.hbs`,
-      scrollable: [''],
+    main: {
+      id: 'sheet',
+      template: 'systems/gurps/templates/actor/actor-sheet-gcs.hbs',
+      scrollable: [
+        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
+      ],
     },
   }
 
@@ -167,7 +145,6 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       v.cssClass = v.active ? 'active' : ''
       if ('tabs' in v) this._markTabs(v.tabs as Record<string, Partial<foundry.applications.types.ApplicationTab>>)
     }
-    console.log(tabs)
     return tabs
   }
 
@@ -178,125 +155,135 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   ): Promise<GurpsActorSheetV2.RenderContext> {
     const data = await super._prepareContext(options)
 
+    const actions = {}
+    // TODO: remove once move to DataModel for actor is complete
+    // this makes the assumption that the model is missing some properties
+    // and correts for it. It should not be missing those in the first place.
+    if (!this.actor.system.conditions.actions?.maxActions) actions['maxActions'] = 1
+    if (!this.actor.system.conditions.actions?.maxBlocks) actions['maxBlocks'] = 1
+    if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
+
     return {
       ...data,
-      isEditing: this.isEditing,
-      tabs: this._getTabs(),
-      isGM: game.user?.isGM ?? false,
       actor: this.actor,
+      data: this.actor.system,
       system: this.actor.system,
-      portraitHoverText: game.i18n?.localize(`GURPS.Sheet.PortraitHoverText.${this.isEditing ? 'Edit' : 'View'}`),
-      attributesPrimary: Object.entries(this.actor.system.attributes as Record<string, AnyObject>).reduce(
-        (array: Array<AnyObject>, [key, attribute]: [string, AnyObject]) => {
-          if (['ST', 'DX', 'IQ', 'HT'].includes(key)) {
-            array.push({
-              points: attribute.points,
-              value: attribute.value,
-              name: `${game.i18n?.localize('GURPS.attributes' + key)} (${game.i18n?.localize('GURPS.attributes' + key + 'NAME')})`,
-            })
-          }
-          return array
-        },
-        []
-      ),
-      basicThrust: {},
-      basicSwing: {},
-      attributesSecondary: [
-        {
-          points: this.actor.system.attributes.WILL.points,
-          value: this.actor.system.attributes.WILL.value,
-          name: `${game.i18n?.localize('GURPS.attributesWILL')} (${game.i18n?.localize('GURPS.attributesWILLNAME')})`,
-        },
-        {
-          points: null,
-          value: this.actor.system.frightcheck,
-          name: game.i18n?.localize('GURPS.frightcheck'),
-        },
-        {
-          points: this.actor.system.attributes.PER.points,
-          value: this.actor.system.attributes.PER.value,
-          name: `${game.i18n?.localize('GURPS.attributesPER')} (${game.i18n?.localize('GURPS.attributesPERNAME')})`,
-        },
-        {
-          points: null,
-          value: this.actor.system.vision,
-          name: game.i18n?.localize('GURPS.vision'),
-        },
-        {
-          points: null,
-          value: this.actor.system.hearing,
-          name: game.i18n?.localize('GURPS.hearing'),
-        },
-        {
-          points: null,
-          value: this.actor.system.tastesmell,
-          name: game.i18n?.localize('GURPS.tastesmell'),
-        },
-        {
-          points: null,
-          value: this.actor.system.touch,
-          name: game.i18n?.localize('GURPS.touch'),
-        },
-      ],
-      attributesPool: [
-        {
-          title: game.i18n?.localize('GURPS.attributesHPNAME'),
-          name: 'system.HP',
-          current: this.actor.system.HP.value,
-          max: this.actor.system.HP.max,
-        },
-        {
-          title: game.i18n?.localize('GURPS.attributesFPNAME'),
-          name: 'system.FP',
-          current: this.actor.system.FP.value,
-          max: this.actor.system.FP.max,
-        },
-      ],
-      encumbranceLevels: Object.entries(this.actor.system.encumbrance).map(([key, level]: [string, any]) => {
-        return {
-          ...level,
-          name: game.i18n?.localize(`GURPS.encumbranceLevel-${key}`),
-        }
-      }),
-      meleeWeapons: this.actor.system.melee,
-      rangedWeapons: this.actor.system.ranged,
-      // For speed / range table
       ranges: GURPS.rangeObject.ranges,
-      hitLocations: this.actor.system.hitlocations,
+      useCI: GURPS.ConditionalInjury.isInUse(),
+      conditionalEffectsTable: GURPS.ConditionalInjury.conditionalEffectsTable(),
+      eqtsummary: this.actor.system.eqtsummary,
+      navigateBar: {
+        visible: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
+        hasMelee: !isEmptyObject(this.actor.system.melee),
+        hasRanged: !isEmptyObject(this.actor.system.ranged),
+        hasSpells: !isEmptyObject(this.actor.system.spells),
+        hasOther: !isEmptyObject(this.actor.system?.equipment?.other),
+      },
+      isGM: game.user.isGM,
+      // _id: olddata._id,
+      effects: this.actor.getEmbeddedCollection('ActiveEffect').contents,
+      useQN: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE),
+      toggleQnotes: this.actor.getFlag('gurps', 'qnotes'),
     }
   }
 
   /* -------------------------------------------- */
 
-  protected override async _preparePartContext(
-    partId: string,
-    context: foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>,
-    _options: DeepPartial<foundry.applications.api.HandlebarsApplicationMixin.RenderOptions>
-  ): Promise<foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>> {
-    context.partId = `${this.id}-${partId}`
-    context.tab = context.tabs[partId]
+  // protected override async _preparePartContext(
+  //   partId: string,
+  //   context: foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>,
+  //   _options: DeepPartial<foundry.applications.api.HandlebarsApplicationMixin.RenderOptions>
+  // ): Promise<foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>> {
+  //   context.partId = `${this.id}-${partId}`
+  //   context.tab = context.tabs[partId]
+  //
+  //   return context
+  // }
 
-    return context
+  /* -------------------------------------------- */
+
+  protected override _onFirstRender(
+    context: DeepPartial<EmptyObject>,
+    options: DeepPartial<DocumentSheetV2.RenderOptions>
+  ): void {
+    super._onFirstRender(context, options)
+    GURPS.SetLastActor(this.actor)
   }
 
   /* -------------------------------------------- */
 
   protected override _onRender(
-    _context: DeepPartial<EmptyObject>,
-    _options: DeepPartial<DocumentSheetV2.RenderOptions>
+    context: DeepPartial<EmptyObject>,
+    options: DeepPartial<DocumentSheetV2.RenderOptions>
   ): void {
-    // Set application width to maximum tab width
-    const tabs = dom.querySelectorAll(this.element, '.tab')
-    let maxWidth = 0
-    tabs.forEach(tab => {
-      tab.style.display = 'block'
-      const width = tab.scrollWidth
-      tab.style.display = ''
-      if (width > maxWidth) maxWidth = width
+    // Set Last Actor when sheet is clicked on
+    dom.querySelector(this.element, '.gurpsactorsheet')?.addEventListener('click', event => this._onClickSheet(event))
+    dom.siblings(dom.querySelector(this.element, '.window-content'), '.window-header')?.forEach(header => {
+      header.addEventListener('click', event => this._onClickSheet(event))
     })
-    maxWidth += 8 // Add some padding
 
-    dom.querySelector(this.element, '.window-content')?.style.setProperty('width', `${maxWidth}px`)
+    // Click on a navigation-link to scroll the sheet to that section.
+    dom.querySelectorAll(this.element, '.navigation-link').forEach(link => {
+      link.addEventListener('click', event => this._onClickNavigate(event))
+    })
+
+    // Enable some fields to be a targeted roll without an OTF.
+    dom.querySelectorAll(this.element, '.rollable').forEach(rollable => {
+      rollable.addEventListener('click', event => this._onClickRoll(event))
+    })
+
+    // Wire events to all OTFs on the sheet.
+    GurpsWiring.hookupAllEvents($(this.element))
+
+    // Allow OTFs on this actor sheet to be draggable.
+    dom.querySelectorAll(this.element, '[data-otf]').forEach(element => {
+      element.setAttribute('draggable', 'true')
+      element.addEventListener('dragstart', event => {
+        let display = ''
+        if (!!element.dataset.action) display = element.innerText
+        return event.dataTransfer?.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: element.getAttribute('data-otf'),
+            actor: this.actor.id,
+            encodedAction: element.dataset.action,
+            displayname: display,
+          })
+        )
+      })
+    })
+
+    // open the split DR dialog
+    dom.querySelectorAll(this.element, '.dr button[data-key]').forEach(button => {
+      button.addEventListener('click', event => this._onClickDrSplit(event))
+    })
+
+    // Only allow "owners" to be able to edit the sheet, but anyone can roll from the sheet
+    if (!isConfigurationAllowed(this.actor)) return
+
+    this._createHeaderMenus(this.element)
+  }
+
+  /* -------------------------------------------- */
+
+  // add the default menu items for all tables with a headermenu
+  protected _createHeaderMenus(element: HTMLElement): void {
+    const tables = Array.from(dom.querySelectorAll(element, '.headermenu')).reduce((acc: HTMLElement[], el) => {
+      const table = dom.closest(el, '.gga-table')
+      if (table) acc.push(table)
+      return acc
+    }, [])
+
+    for (const table of tables) {
+      const id = `#${table.id}`
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  protected override _onClose(options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions>): void {
+    super._onClose(options)
+    GURPS.ClearLastActor(this.actor)
   }
 
   /* -------------------------------------------- */
@@ -322,6 +309,49 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
 
   /* -------------------------------------------- */
   /*   Event Handlers                             */
+  /* -------------------------------------------- */
+
+  protected _onClickSheet(event: MouseEvent): void {
+    event.preventDefault()
+    GURPS.SetLastActor(this.actor)
+  }
+
+  /* -------------------------------------------- */
+
+  protected _onClickNavigate(event: MouseEvent): void {
+    event.preventDefault()
+    const button = event.currentTarget as HTMLElement
+    const value = button.dataset.value
+    const windowContent = dom.querySelector(this.element, '.window-content')
+    const scrollTarget = dom.querySelector(windowContent, `#${value}`)
+
+    if (!scrollTarget) return // If they click on a section that isn't on the sheet (like ranged)
+
+    scrollTarget.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' })
+
+    button.classList.add('glowing')
+    scrollTarget.classList.add('glowing')
+
+    setTimeout(() => {
+      button.classList.remove('glowing')
+      scrollTarget.classList.remove('glowing')
+    }, 2000)
+  }
+
+  /* -------------------------------------------- */
+
+  protected _onClickRoll(event: MouseEvent): void {
+    GURPS.handleRoll(event, this.actor, { targets: [] })
+  }
+
+  /* -------------------------------------------- */
+
+  protected _onClickDrSplit(event: MouseEvent): void {
+    const button = event.currentTarget as HTMLElement
+    const key = button.dataset.key
+    new SplitDREditor(this.actor, key).render(true)
+  }
+
   /* -------------------------------------------- */
 
   static async #onSubmit(

@@ -238,18 +238,19 @@
 
       </section>
 
-      <section class='element item-list notes'>
-        <table class='item-list'>
+      <!-- Notes List -->
+      <section class='element note-list'>
+        <table>
           <thead>
             <tr>
               <th>{{localize 'GURPS.notes'}}</th>
               <th><i class='fa-solid fa-bookmark icon'></i></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class='item-list'>
             {{#each system.notes}}
-              <tr>
-                <td>{{this.notes}}</td>
+              <tr class='item'>
+                <td><p>{{this.notes}}</p></td>
                 <td>{{this.pageref}}</td>
               </tr>
             {{/each}}

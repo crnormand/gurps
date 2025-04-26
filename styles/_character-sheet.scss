@@ -31,6 +31,18 @@ form.gurps2.actor.sheet {
       }
     }
 
+    tbody.item-list {
+      max-width: 38rem;
+
+      tr.item {
+        p {
+          max-width: 38rem;
+          white-space: normal;
+          word-break: break-word;
+        }
+      }
+    }
+
     table {
       margin: 0;
       border-radius: 0.25rem;
@@ -319,14 +331,6 @@ form.gurps2.actor.sheet {
   }
 
   /* -------------------------------------------- */
-
-  section.item-list.notes {
-    td {
-      white-space: normal;
-      word-break: break-word;
-      max-width: 38rem;
-    }
-  }
 }
 
 /* -------------------------------------------- */

@@ -85,10 +85,11 @@ import { preloadHandlebarsTemplates } from './util/handlebars-partials.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
-import { GurpsActorSheetV2 } from './applications/actor/actor-sheet.js'
+import { GurpsActorSheetV3 } from './applications/actor/actor-sheet2.js'
 
 // Import Submodules
 import applications from './applications/index.js'
+import { GurpsActorSheetV2 } from './applications/actor/actor-sheet.js'
 
 export let GURPS = undefined
 
@@ -1998,9 +1999,14 @@ if (!globalThis.GURPS) {
     })
     // @ts-ignore
     Actors.registerSheet('gurps', GurpsActorSheetV2, {
-      label: 'Sheet V2 Test',
+      label: 'Full (GCS) 2',
       makeDefault: false,
     })
+    // disabled for now
+    // Actors.registerSheet('gurps', GurpsActorSheetV3, {
+    //   label: 'Sheet V2 Test',
+    //   makeDefault: false,
+    // })
 
     // @ts-ignore
     Items.unregisterSheet('core', ItemSheet)
