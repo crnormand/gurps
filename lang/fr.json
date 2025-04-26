@@ -1445,7 +1445,7 @@
     "traitAlteredTimeRate": "Vitesse Temporelle Altérée",
     "traitCombatReflexes": "Réflexes de Combat",
     "traitWeaponMaster": "Maître d'Armes",
-    "TransferTo": "Transférer à",
+    "TransferTo": "Transférer à {name}",
     "twoHandLift": "Porter à deux mains",
     "unconscious": "Inconscient",
     "update": "Mis à Jour",

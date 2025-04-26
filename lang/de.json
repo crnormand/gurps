@@ -1445,7 +1445,7 @@
     "traitAlteredTimeRate": "Veränderte Zeitrate",
     "traitCombatReflexes": "Kampfreflexe",
     "traitWeaponMaster": "Waffenmeister",
-    "TransferTo": "Übertrage auf",
+    "TransferTo": "Übertrage auf {name}",
     "twoHandLift": "Zwei-Hand Heben",
     "unconscious": "Bewusstlos",
     "update": "Aktualisieren",

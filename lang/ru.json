@@ -1446,7 +1446,7 @@
     "traitAlteredTimeRate": "Изменённая Скорость Времени",
     "traitCombatReflexes": "Боевые Рефлексы",
     "traitWeaponMaster": "Мастер Оружия",
-    "TransferTo": "Перенести в",
+    "TransferTo": "Перенести в {name}",
     "twoHandLift": "Подъём двумя руками",
     "unconscious": "Без сознания",
     "update": "Обновить",

@@ -1445,7 +1445,7 @@
     "traitAlteredTimeRate": "Altered Time Rate",
     "traitCombatReflexes": "Combat Reflexes",
     "traitWeaponMaster": "Weapon Master",
-    "TransferTo": "Transfer to",
+    "TransferTo": "Transfer to {name}",
     "twoHandLift": "Two-Hand Lift",
     "unconscious": "Unconscious",
     "update": "Update",
