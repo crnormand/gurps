@@ -21,7 +21,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   // static _preCreate(_effect, data, _options, _userId) {
-  //   console.debug(_effect, data, _options, _userId)
+  //   console.log(_effect, data, _options, _userId)
   //   // Add Delay Seconds to the duration object
   //   if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
   // }
@@ -52,7 +52,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   static _apply(actor, change, _options, _user) {
     if (change.key === 'system.conditions.maneuver') actor.replaceManeuver(change.value)
     else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
-    else console.debug(change)
+    // else console.log(change)
   }
 
   /**
@@ -63,7 +63,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _update(_effect, _data, _options, _userId) {
-    console.debug('update ', _effect)
+    // console.log('update ', _effect)
     if (canvas.tokens.controlled.length > 0) {
       canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
@@ -182,7 +182,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
   async _preCreate(data, options, user) {
     if (user.isSelf) {
-      console.log('preCreate', data, options, user)
+      // console.log('preCreate', data, options, user)
     }
   }
 
@@ -220,7 +220,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       let condition = effect[i].name
       let status = effect[i].disabled
       let effect_id = effect[i]._id
-      console.debug(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
+      console.log(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
       if (status === false) {
         await _token.actor.deleteEmbeddedDocuments('ActiveEffect', [effect_id])
       }
@@ -230,7 +230,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   chat(actor, value) {
     if (!!value?.frequency && value.frequency === 'once') {
       if (this.chatmessages.includes(value.msg)) {
-        console.debug(`Message [${value.msg}] already displayed, do nothing`)
+        console.log(`Message [${value.msg}] already displayed, do nothing`)
         return
       }
     }

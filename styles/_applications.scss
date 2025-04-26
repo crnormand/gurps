@@ -1,0 +1,53 @@
+condition-select {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+
+  button.condition-select {
+    display: flex;
+    padding: 0;
+    width: inherit;
+    height: inherit;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // button.condition-select {
+  //   display: flex;
+  //   padding: 0;
+  //   width: inherit;
+  //   height: inherit;
+  //   align-items: center;
+  //   justify-content: center;
+  // }
+
+  img.current-selection {
+    border: none;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  div.menu {
+    position: relative;
+    visibility: hidden;
+    top: -2rem;
+    left: -10.5rem;
+    display: grid;
+    width: 10rem;
+    grid-template-columns: repeat(5, 2rem);
+    z-index: var(--z-index-tooltip);
+
+    button.condition-option {
+      padding: 0;
+      width: 2rem;
+      height: 2rem;
+      cursor: pointer;
+    }
+
+    &.active {
+      visibility: visible;
+    }
+  }
+}

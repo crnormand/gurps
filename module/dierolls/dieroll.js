@@ -84,7 +84,7 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
   const multiplierText = multiplier ? `*${multiplier}` : ''
   const newDice =
     `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
-  console.debug(`addBucketToDamage: ${formula} => ${newDice}`)
+  console.log(`addBucketToDamage: ${formula} => ${newDice}`)
   return newDice
 }
 

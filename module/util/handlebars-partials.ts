@@ -8,6 +8,7 @@ export async function preloadHandlebarsTemplates() {
     'systems/gurps/templates/actor/parts/attribute-entry.hbs',
     'systems/gurps/templates/actor/parts/encumbrance-move.hbs',
     'systems/gurps/templates/actor/parts/combat-info.hbs',
+    'systems/gurps/templates/actor/parts/hit-location-table.hbs',
   ]
 
   const paths: Record<string, string> = {}

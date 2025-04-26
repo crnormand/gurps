@@ -1,6 +1,8 @@
-import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+import { AnyObject, DeepPartial, EmptyObject } from 'fvtt-types/utils'
 import { ActorSheetTabs } from './helpers.js'
-import HandlebarsApplicationMixin from 'node_modules/fvtt-types/src/foundry/client-esm/applications/api/handlebars-application.mjs'
+import GurpsActiveEffectListSheet from '../../effects/active-effect-list.js'
+import DocumentSheetV2 from 'node_modules/fvtt-types/src/foundry/client-esm/applications/api/document-sheet.mjs'
+import { dom } from '../../util/index.js'
 
 namespace GurpsActorSheetV2 {
   export type RenderContext = {}
@@ -48,8 +50,8 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       // NOTE: Currently using "gurps2" to avoid conflicts with existing CSS declarations
       classes: ['gurps2', 'actor', 'character'],
       position: {
-        width: 925,
         height: 800,
+        width: 'auto',
       },
       form: {
         submitOnChange: true,
@@ -63,6 +65,7 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
         viewImage: this.#onViewImage,
         editImage: this.#onEditImage,
         toggleMode: this.#onToggleMode,
+        openActiveEffects: this.#onOpenActiveEffects,
       },
       // @ts-expect-error v12 currently doesn't include dragDrop for DocumentSheetV2
       dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null }],
@@ -78,33 +81,39 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
     combatTab: {
       id: 'combat',
       template: `systems/gurps/templates/actor/parts/character-combat.hbs`,
+      scrollable: [''],
     },
     personalTab: {
       id: 'personal',
       template: `systems/gurps/templates/actor/parts/character-personal.hbs`,
+      scrollable: [''],
     },
     traitsTab: {
       id: 'traits',
       template: `systems/gurps/templates/actor/parts/character-traits.hbs`,
+      scrollable: [''],
     },
     skillsTab: {
       id: 'skills',
       template: `systems/gurps/templates/actor/parts/character-skills.hbs`,
+      scrollable: [''],
     },
     resourcesTab: {
       id: 'resources',
       template: `systems/gurps/templates/actor/parts/character-resources.hbs`,
+      scrollable: [''],
     },
     equipmentTab: {
       id: 'equipment',
       template: `systems/gurps/templates/actor/parts/character-equipment.hbs`,
+      scrollable: [''],
     },
   }
 
   /* -------------------------------------------- */
 
   override tabGroups: Record<string, string> = {
-    primary: ActorSheetTabs.combat,
+    primary: ActorSheetTabs.Personal,
   }
 
   /* -------------------------------------------- */
@@ -112,32 +121,32 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   protected _getTabs(): Record<string, Partial<foundry.applications.types.ApplicationTab>> {
     return this._markTabs({
       combatTab: {
-        id: ActorSheetTabs.combat,
+        id: ActorSheetTabs.Combat,
         group: 'primary',
         icon: 'fa-solid fa-swords',
       },
       personalTab: {
-        id: ActorSheetTabs.personal,
+        id: ActorSheetTabs.Personal,
         group: 'primary',
         icon: 'fa-solid fa-user',
       },
       traitsTab: {
-        id: ActorSheetTabs.traits,
+        id: ActorSheetTabs.Traits,
         group: 'primary',
         icon: 'fa-solid fa-theater-masks',
       },
       skillsTab: {
-        id: ActorSheetTabs.skills,
+        id: ActorSheetTabs.Skills,
         group: 'primary',
         icon: 'fa-solid fa-person-swimming',
       },
       resourcesTab: {
-        id: ActorSheetTabs.resources,
+        id: ActorSheetTabs.Resources,
         group: 'primary',
         icon: 'fa-solid fa-bars-progress',
       },
       equipmentTab: {
-        id: ActorSheetTabs.equipment,
+        id: ActorSheetTabs.Equipment,
         group: 'primary',
         icon: 'fa-solid fa-screwdriver-wrench',
       },
@@ -158,6 +167,7 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       v.cssClass = v.active ? 'active' : ''
       if ('tabs' in v) this._markTabs(v.tabs as Record<string, Partial<foundry.applications.types.ApplicationTab>>)
     }
+    console.log(tabs)
     return tabs
   }
 
@@ -166,8 +176,7 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   protected override async _prepareContext(
     options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions> & { isFirstRender: boolean }
   ): Promise<GurpsActorSheetV2.RenderContext> {
-    const data = super._prepareContext(options)
-    console.log(data)
+    const data = await super._prepareContext(options)
 
     return {
       ...data,
@@ -176,9 +185,7 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       isGM: game.user?.isGM ?? false,
       actor: this.actor,
       system: this.actor.system,
-      portraitHoverText: game.i18n?.localize(
-        `GURPS.Sheet.Common.PortraitHoverText.${this.isEditing ? 'Edit' : 'View'}`
-      ),
+      portraitHoverText: game.i18n?.localize(`GURPS.Sheet.PortraitHoverText.${this.isEditing ? 'Edit' : 'View'}`),
       attributesPrimary: Object.entries(this.actor.system.attributes as Record<string, AnyObject>).reduce(
         (array: Array<AnyObject>, [key, attribute]: [string, AnyObject]) => {
           if (['ST', 'DX', 'IQ', 'HT'].includes(key)) {
@@ -252,6 +259,10 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
         }
       }),
       meleeWeapons: this.actor.system.melee,
+      rangedWeapons: this.actor.system.ranged,
+      // For speed / range table
+      ranges: GURPS.rangeObject.ranges,
+      hitLocations: this.actor.system.hitlocations,
     }
   }
 
@@ -259,9 +270,9 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
 
   protected override async _preparePartContext(
     partId: string,
-    context: HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>,
-    _options: DeepPartial<HandlebarsApplicationMixin.RenderOptions>
-  ): Promise<HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>> {
+    context: foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>,
+    _options: DeepPartial<foundry.applications.api.HandlebarsApplicationMixin.RenderOptions>
+  ): Promise<foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>> {
     context.partId = `${this.id}-${partId}`
     context.tab = context.tabs[partId]
 
@@ -269,7 +280,25 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   }
 
   /* -------------------------------------------- */
-  /*  Data Preparation                            */
+
+  protected override _onRender(
+    _context: DeepPartial<EmptyObject>,
+    _options: DeepPartial<DocumentSheetV2.RenderOptions>
+  ): void {
+    // Set application width to maximum tab width
+    const tabs = dom.querySelectorAll(this.element, '.tab')
+    let maxWidth = 0
+    tabs.forEach(tab => {
+      tab.style.display = 'block'
+      const width = tab.scrollWidth
+      tab.style.display = ''
+      if (width > maxWidth) maxWidth = width
+    })
+    maxWidth += 8 // Add some padding
+
+    dom.querySelector(this.element, '.window-content')?.style.setProperty('width', `${maxWidth}px`)
+  }
+
   /* -------------------------------------------- */
 
   /**
@@ -279,11 +308,11 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
     options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions>
   ): Promise<HTMLElement> {
     const frame = await super._renderFrame(options)
-    console.log(frame)
 
     if (this.isEditable) {
       const toggleLabel = game.i18n?.localize('GURPS.Sheet.Common.ToggleMode')
-      const toggleIcon = this._mode === this.constructor.MODES.EDIT ? 'fa-solid fa-unlock' : 'fa-solid fa-lock'
+      const toggleIcon =
+        this._mode === this.constructor.MODES.EDIT ? 'fa-solid fa-unlock icon' : 'fa-solid fa-lock icon'
       const toggleButton = `<button type='button' class='header-control ${toggleIcon}' data-action='toggleMode' data-tooltip='${toggleLabel}' aria-label='${toggleLabel}'></button>`
       this.window.controls?.insertAdjacentHTML('beforebegin', toggleButton)
     }
@@ -347,6 +376,14 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
     else this._mode = MODES.PLAY
     await this.submit()
     this.render()
+  }
+
+  /* -------------------------------------------- */
+
+  static async #onOpenActiveEffects(this: GurpsActorSheetV2, event: Event): Promise<void> {
+    event.preventDefault()
+
+    new GurpsActiveEffectListSheet(this.actor).render(true)
   }
 }
 export { GurpsActorSheetV2 }

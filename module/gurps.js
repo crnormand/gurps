@@ -87,6 +87,9 @@ import { preloadHandlebarsTemplates } from './util/handlebars-partials.js'
 import * as Damage from './damage/index.js'
 import { GurpsActorSheetV2 } from './applications/actor/actor-sheet.js'
 
+// Import Submodules
+import applications from './applications/index.js'
+
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
@@ -2116,6 +2119,7 @@ if (!globalThis.GURPS) {
     // Set up SSRT
     GURPS.SSRT = setupRanges()
     GURPS.rangeObject = new GURPSRange()
+    GURPS.applications = applications
 
     // reset the TokenHUD to our version
     // @ts-ignore

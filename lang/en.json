@@ -6,12 +6,18 @@
   },
   "GURPS": {
     "Sheet": {
-      "Common": {
-        "PortraitHoverText": {
-          "Edit": "Edit Image",
-          "View": "View Image"
-        }
-      }
+      "PortraitHoverText": {
+        "Edit": "Edit Image",
+        "View": "View Image"
+      },
+      "Organization": "Organization",
+      "SizeModifier": "SM",
+      "TechLevel": "TL"
+    },
+    "SpeedRangeTable": {
+      "Title": "Speed / Range Table",
+      "Measure": "Measure (yd)",
+      "Modifier": "Modifier"
     },
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",

@@ -1,10 +1,10 @@
 enum ActorSheetTabs {
-  combat = 'combat',
-  personal = 'personal',
-  traits = 'traits',
-  skills = 'skills',
-  resources = 'resources',
-  equipment = 'equipment',
+  Combat = 'combat',
+  Personal = 'personal',
+  Traits = 'traits',
+  Skills = 'skills',
+  Resources = 'resources',
+  Equipment = 'equipment',
 }
 
 export { ActorSheetTabs }
