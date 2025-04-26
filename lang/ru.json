@@ -606,6 +606,7 @@
     "importOverwriteHpFp": "Перезаписать или сохранить текущие ЕЖ и ЕУ",
     "importReplace": "Заменить",
     "importSaveOrOverwriteHpFp": "<div><p>Вы хотите:</p><p>&nbsp;&bull;&nbsp;<strong>Сохранить</strong> текущие значения ЕЖ ({currentHP}) и ЕУ ({currentFP})</p><p>Или:</p><p>&nbsp;&bull;&nbsp;<strong>Перезаписать</strong> их данными импорта, ЕЖ ({hp}) и ЕУ ({fp})?</p></div>",
+    "importSaveOverwriteBodyPlan": "<div><p>Вы хотите:</p><p>&nbsp;&bull;&nbsp;<strong>Сохранить</strong> текущее значение плана тела ({curentBodyPlan})</p><p>Или:</p><p>&nbsp;&bull;&nbsp;<strong>Перезаписать</strong> его импортированным планом тела, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Проверьте Руководство пользователя для получения информации о том, где получить последнюю версию.",
     "importSelected": "Импортировать выбранное",
     "importSelectFileDescribeAction": "Этот импорт выполнит:",
@@ -1469,7 +1470,6 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это.",
-    "importSaveOverwriteBodyPlan": "<div><p>Вы хотите:</p><p>&nbsp;&bull;&nbsp;<strong>Сохранить</strong> текущее значение плана тела ({curentBodyPlan})</p><p>Или:</p><p>&nbsp;&bull;&nbsp;<strong>Перезаписать</strong> его импортированным планом тела, ({bodyPlan})?</p></div>"
+    "youDoNotHavePermssion": "У вас нет разрешения на это."
   }
 }

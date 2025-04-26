@@ -606,6 +606,7 @@
     "importOverwriteHpFp": "Aktuelle TP & AP überschreiben oder speichern",
     "importReplace": "Ersetzen",
     "importSaveOrOverwriteHpFp": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> der aktuellen TP ({currentHP}) & AP ({currentFP}) Werte</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit den Importdaten, TP ({hp}) & AP ({fp})?</p></div>",
+    "importSaveOverwriteBodyPlan": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> des aktuellen Körperplans ({curentBodyPlan})</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit dem importierten Körperplan ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Im Benutzerhandbuch befinden sich Informationen darüber, wo  die neueste Version zu erhalten ist.",
     "importSelected": "Ausgewählte importieren",
     "importSelectFileDescribeAction": "Dieser Import wird:",
@@ -1468,7 +1469,6 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
-    "importSaveOverwriteBodyPlan": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> des aktuellen Körperplans ({curentBodyPlan})</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit dem importierten Körperplan ({bodyPlan})?</p></div>"
+    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
   }
 }
