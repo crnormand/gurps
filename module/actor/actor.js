@@ -1582,9 +1582,17 @@ export class GurpsActor extends Actor {
       // different owners
       let count = eqt.count
       if (eqt.count > 1) {
+        // let count = await foundry.applications.api.DialogV2.prompt({
+        //   window: { title: game.i18n.format('GURPS.TransferTo', { name: this.name }) },
+        //   content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
+        //   ok: {
+        //     label: game.i18n.localize('GURPS.ok'),
+        //     callback: (_, button, __) => button.form.elements.qty.valueAsNumber,
+        //   },
+        // })
+
         let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
-        let callback = async (/** @type {HTMLElement | JQuery<HTMLElement>} */ html) =>
-          (count = parseInt(html.find('#qty').val()))
+        let callback = async html => (count = parseInt(html.find('#qty').val()))
         await Dialog.prompt({
           title: game.i18n.localize('GURPS.TransferTo') + ' ' + this.name,
           label: game.i18n.localize('GURPS.ok'),
