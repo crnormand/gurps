@@ -1512,7 +1512,7 @@ export class GurpsActor extends Actor {
   _forceRender() {
     this.ignoreRender = false
     //console.log("Force Render")
-    this.render()
+    this.render(true)
   }
 
   // Drag and drop from an equipment list
@@ -1553,31 +1553,30 @@ export class GurpsActor extends Actor {
           await this.addNewItemData(item)
         }
       } else {
-        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
-        let callback = async (/** @type {JQuery<HTMLElement> | HTMLElement} */ html) => {
-          // @ts-ignore
-          let qty = parseInt(html.find('#qty').val())
-          let destKey = this._findEqtkeyForId('name', eqt.name)
-          if (!!destKey) {
-            // already have some
-            let destEqt = foundry.utils.getProperty(this, destKey)
-            await this.updateEqtCount(destKey, +destEqt.count + qty)
-          } else {
-            let item = /** @type {GurpsItem} */ (srcActor.items.get(eqt.itemid))
-            item.system.eqt.count = qty
-            await this.addNewItemData(item)
-          }
-          if (qty >= eqt.count) await srcActor.deleteEquipment(dragData.key)
-          else await srcActor.updateEqtCount(dragData.key, +eqt.count - qty)
-        }
-
-        Dialog.prompt({
-          title: game.i18n.localize('GURPS.TransferTo') + ' ' + this.name,
-          label: game.i18n.localize('GURPS.ok'),
-          content: content,
-          callback: callback,
-          rejectClose: false, // Do not "reject" if the user presses the "close" gadget
+        let qty = await foundry.applications.api.DialogV2.prompt({
+          window: { title: game.i18n.format('GURPS.TransferTo', { name: this.name }) },
+          content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
+          ok: {
+            label: game.i18n.localize('GURPS.ok'),
+            callback: (_, button, __) => button.form.elements.qty.valueAsNumber,
+          },
         })
+
+        let item = srcActor.items.get(eqt.itemid)
+        if (qty > item.system.eqt.count) qty = item.system.eqt.count
+
+        let destKey = this._findEqtkeyForId('name', eqt.name)
+        if (!!destKey) {
+          // already have some
+          let destEqt = foundry.utils.getProperty(this, destKey)
+          await this.updateEqtCount(destKey, +destEqt.count + qty)
+        } else {
+          let item = srcActor.items.get(eqt.itemid)
+          item.system.eqt.count = qty
+          await this.addNewItemData(item)
+        }
+        if (qty >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+        else await srcActor.updateEqtCount(dragData.key, +eqt.count - qty)
       }
     } else {
       // different owners
@@ -1585,7 +1584,6 @@ export class GurpsActor extends Actor {
       if (eqt.count > 1) {
         let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
         let callback = async (/** @type {HTMLElement | JQuery<HTMLElement>} */ html) =>
-          // @ts-ignore
           (count = parseInt(html.find('#qty').val()))
         await Dialog.prompt({
           title: game.i18n.localize('GURPS.TransferTo') + ' ' + this.name,
@@ -1611,6 +1609,7 @@ export class GurpsActor extends Actor {
         })
       } else ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
     }
+    this._forceRender()
   }
 
   // Called from the ItemEditor to let us know our personal Item has been modified
