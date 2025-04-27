@@ -1516,9 +1516,6 @@ export class GurpsActor extends Actor {
   }
 
   // Drag and drop from an equipment list
-  /**
-   * @param {{ type?: string; x?: number; y?: number; payload?: any; actorid?: any; itemid?: any; isLinked?: any; key?: any; itemData?: any; }} dragData
-   */
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
@@ -1539,68 +1536,29 @@ export class GurpsActor extends Actor {
       return
     }
 
+    let count = eqt.count === 1 ? 1 : await this.promptEquipmentQuantity(eqt)
+    if (count > eqt.count) count = eqt.count
+
+    // If this actor and sourceActor have the same owner...
     if (!!this.isOwner && !!srcActor.isOwner) {
-      // same owner
-      if (eqt.count < 2) {
-        let destKey = this._findEqtkeyForId('name', eqt.name)
-        if (!!destKey) {
-          // already have some
-          let destEqt = foundry.utils.getProperty(this, destKey)
-          await this.updateEqtCount(destKey, +destEqt.count + +eqt.count)
-          await srcActor.deleteEquipment(dragData.key)
-        } else {
-          let item = await srcActor.deleteEquipment(dragData.key)
-          await this.addNewItemData(item)
-        }
+      let item = srcActor.items.get(eqt.itemid)
+
+      let destKey = this._findEqtkeyForId('name', eqt.name)
+      // If this actor already has the item, just update the count.
+      if (!!destKey) {
+        let destEqt = foundry.utils.getProperty(this, destKey)
+        await this.updateEqtCount(destKey, +destEqt.count + count)
       } else {
-        let qty = await foundry.applications.api.DialogV2.prompt({
-          window: { title: game.i18n.format('GURPS.TransferTo', { name: this.name }) },
-          content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
-          ok: {
-            label: game.i18n.localize('GURPS.ok'),
-            callback: (_, button, __) => button.form.elements.qty.valueAsNumber,
-          },
-        })
-
-        let item = srcActor.items.get(eqt.itemid)
-        if (qty > item.system.eqt.count) qty = item.system.eqt.count
-
-        let destKey = this._findEqtkeyForId('name', eqt.name)
-        if (!!destKey) {
-          // already have some
-          let destEqt = foundry.utils.getProperty(this, destKey)
-          await this.updateEqtCount(destKey, +destEqt.count + qty)
-        } else {
-          let item = srcActor.items.get(eqt.itemid)
-          item.system.eqt.count = qty
-          await this.addNewItemData(item)
-        }
-        if (qty >= eqt.count) await srcActor.deleteEquipment(dragData.key)
-        else await srcActor.updateEqtCount(dragData.key, +eqt.count - qty)
+        // Otherwise, create a new item.
+        item.system.eqt.count = count
+        await this.addNewItemData(item)
       }
+
+      // Adjust the source actor's equipment.
+      if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+      else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
     } else {
-      // different owners
-      let count = eqt.count
-      if (eqt.count > 1) {
-        // let count = await foundry.applications.api.DialogV2.prompt({
-        //   window: { title: game.i18n.format('GURPS.TransferTo', { name: this.name }) },
-        //   content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
-        //   ok: {
-        //     label: game.i18n.localize('GURPS.ok'),
-        //     callback: (_, button, __) => button.form.elements.qty.valueAsNumber,
-        //   },
-        // })
-
-        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
-        let callback = async html => (count = parseInt(html.find('#qty').val()))
-        await Dialog.prompt({
-          title: game.i18n.localize('GURPS.TransferTo') + ' ' + this.name,
-          label: game.i18n.localize('GURPS.ok'),
-          content: content,
-          callback: callback,
-        })
-      }
-      if (count > eqt.count) count = eqt.count
+      // This actor and source actor have different owners.
       let destowner = game.users?.players.find(p => this.testUserPermission(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications?.info(`Asking ${this.name} if they want ${eqt.name}`)
@@ -1618,6 +1576,17 @@ export class GurpsActor extends Actor {
       } else ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
     }
     this._forceRender()
+  }
+
+  async promptEquipmentQuantity(eqt) {
+    return await foundry.applications.api.DialogV2.prompt({
+      window: { title: game.i18n.format('GURPS.TransferTo', { name: this.name }) },
+      content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
+      ok: {
+        label: game.i18n.localize('GURPS.ok'),
+        callback: (_, button, __) => button.form.elements.qty.valueAsNumber,
+      },
+    })
   }
 
   // Called from the ItemEditor to let us know our personal Item has been modified
