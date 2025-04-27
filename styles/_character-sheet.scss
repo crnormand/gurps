@@ -1,0 +1,378 @@
+form.gurps2.actor.sheet {
+  /* -------------------------------------------- */
+  /*  General Styles                              */
+  /* -------------------------------------------- */
+
+  .window-content {
+    padding: 0.25rem;
+    overflow-y: scroll;
+
+    .gridcol,
+    .gridrow {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .gridrow {
+      flex-direction: row;
+    }
+
+    .gridcol {
+      flex-direction: column;
+    }
+
+    .gridrow > *,
+    .gridcol > * {
+      flex-shrink: 0; /* Default: don't shrink smaller than content */
+      flex-grow: 0; /* Default: don't grow unless told */
+
+      &.fill {
+        flex-grow: 1; /* This class makes an element expand to fill the space */
+      }
+    }
+
+    tbody.item-list {
+      max-width: 38rem;
+
+      tr.item {
+        p {
+          max-width: 38rem;
+          white-space: normal;
+          word-break: break-word;
+        }
+      }
+    }
+
+    table {
+      margin: 0;
+      border-radius: 0.25rem;
+
+      caption,
+      th {
+        background: var(--color-light-header-background);
+        color: var(--color-light-header-text);
+        text-align: center;
+        font-size: var(--font-size-14);
+      }
+
+      caption,
+      td,
+      th {
+        padding: 0.25rem 0.5rem;
+        white-space: nowrap;
+      }
+    }
+
+    section.element {
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      flex: 0 0 auto;
+
+      border: 0.1rem solid transparent;
+      border-radius: 0.25rem;
+
+      background: var(--color-light-content-background);
+      border-color: var(--color-light-content-border);
+      color: var(--color-light-content-text);
+
+      > header {
+        width: 100%;
+        padding: var(--padding-header);
+        text-align: center;
+        font-weight: bold;
+        text-shadow: 0.1rem 0.1rem var(--color-shadow-dark);
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+
+        background: var(--color-light-header-background);
+        color: var(--color-light-header-text);
+      }
+    }
+  }
+
+  /* -------------------------------------------- */
+  /*  Sections                                    */
+  /* -------------------------------------------- */
+
+  section.element.portrait {
+    height: fit-content;
+
+    .img-wrapper {
+      width: 8rem;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+
+      &:hover .img-overlay {
+        opacity: 1;
+      }
+
+      .img-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0.8) 100%);
+        opacity: 0;
+        color: var(--color-light-header-text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+    }
+
+    img {
+      height: 8rem;
+      aspect-ratio: 1 / 1;
+      display: block;
+      border: 0.125rem solid transparent;
+      border-radius: 0.25rem;
+      // padding: 0.125rem;
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  section.element.attributes {
+    ul {
+      white-space: nowrap;
+      border: 0.125rem solid transparent;
+      border-radius: 0.25rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      width: 100%;
+      height: 100%;
+
+      li {
+        flex-wrap: nowrap;
+        gap: 0.25rem;
+
+        label.points {
+          min-width: 4ch;
+        }
+
+        input,
+        button {
+          min-width: 3ch;
+          width: fit-content;
+          height: 1.5rem;
+          padding: 0.125rem;
+          margin: 0;
+          border: 0.1rem solid inherit;
+          font-size: var(--font-size-14);
+        }
+
+        > * {
+          flex-grow: 0;
+        }
+      }
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  section.element.encumbrance-move {
+    table {
+      td {
+        &.max-weight,
+        &.move,
+        &.dodge {
+          text-align: end;
+        }
+      }
+
+      select {
+        width: auto;
+      }
+    }
+
+    .selector {
+      cursor: pointer;
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  section.element.combat-info {
+    label {
+      width: fit-content;
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  div.pools-container {
+    flex: 0;
+  }
+
+  section.element.pool {
+    .spinner {
+      padding: 0.25rem;
+      gap: 0;
+    }
+
+    .flexrow {
+      flex-wrap: nowrap;
+    }
+
+    input {
+      width: 2.25rem;
+      height: 2rem;
+    }
+
+    button {
+      flex: 0;
+      height: 1.5rem;
+      width: 1.5rem;
+
+      &[data-action='pool-decrease'] {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &[data-action='pool-increase'] {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+
+  nav.tabs {
+    display: flex;
+    width: 100%;
+    margin: 0.25rem 0;
+    margin-top: 0;
+    gap: 2.5rem;
+    padding: 0.5rem;
+    align-self: center;
+    border-radius: 0.25rem;
+    justify-content: center;
+
+    background: var(--color-light-header-background);
+    color: var(--color-light-header-text);
+
+    a {
+      font-size: var(--font-size-16);
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  section.element.status {
+    gap: 0.25rem;
+    align-items: stretch;
+
+    > div {
+      gap: 0.5rem;
+      width: 100%;
+      align-items: center;
+      padding: 0 0.25rem;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      flex: auto;
+    }
+
+    label {
+      flex: 0 0 auto;
+    }
+
+    button {
+      display: block;
+      height: 2rem;
+      width: 2rem;
+      padding: 0;
+      flex: 0 0 2rem;
+    }
+
+    condition-select {
+      flex: 0 0 2rem;
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  section.identity,
+  section.miscellaneous,
+  section.description,
+  section.point-summary {
+    .fieldpairs {
+      display: grid;
+      grid-template-columns: 0fr auto;
+      padding: 0.25rem;
+      gap: 0.5rem;
+      align-items: center;
+
+      label {
+        text-align: right;
+      }
+    }
+  }
+
+  section.point-summary {
+    input {
+      justify-self: end;
+      max-width: 5rem;
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  section.lifting-moving {
+    tr td:first-child {
+      text-align: right;
+    }
+  }
+
+  /* -------------------------------------------- */
+}
+
+/* -------------------------------------------- */
+/*  Dark Mode                                   */
+/* -------------------------------------------- */
+
+.theme-dark {
+  form.gurps2.actor.sheet {
+    /* -------------------------------------------- */
+    /*  General Styles                              */
+    /* -------------------------------------------- */
+
+    table {
+      caption,
+      th {
+        background: var(--color-dark-header-background);
+        color: var(--color-dark-header-text);
+      }
+
+      tr:nth-child(even) {
+        background: rgba(100, 100, 100, 0.2);
+      }
+    }
+
+    /* -------------------------------------------- */
+
+    section.element {
+      background: var(--color-dark-content-background);
+      border-color: var(--color-dark-content-border);
+      color: var(--color-dark-content-text);
+
+      > header {
+        background: var(--color-dark-header-background);
+        color: var(--color-dark-header-text);
+      }
+    }
+
+    /* -------------------------------------------- */
+
+    nav.tabs {
+      background: var(--color-dark-header-background);
+      color: var(--color-dark-header-text);
+    }
+  }
+}

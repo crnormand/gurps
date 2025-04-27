@@ -1,0 +1,34 @@
+<section class='tab {{tab.cssClass}}' data-group='primary' data-tab='traits'>
+
+  <!-- Trait List -->
+  <section class='element trait-list'>
+    <table>
+      <thead>
+        <tr>
+          <th>{{localize 'GURPS.advDisadvPerkQuirks'}}</th>
+          <th>{{localize 'GURPS.abbrevPoints'}}</th>
+          <th><i class='fa-solid fa-bookmark icon'></i></th>
+        </tr>
+      </thead>
+      <tbody class='item-list'>
+        {{#each system.ads}}
+				{{> traitEntry}}
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+</section>
+
+{{#*inline "traitEntry"}}
+<tr class='item'>
+	<td>
+		<span>{{this.name}}</span>
+		<p>{{this.notes}}</p>
+	</td>
+	<td>{{this.points}}</td>
+	<td>{{this.pageref}}</td>
+</tr>
+{{#each this.contains}}
+{{> traitEntry}}
+{{/each}}
+{{/inline}}

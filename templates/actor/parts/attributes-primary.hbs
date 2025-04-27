@@ -1,0 +1,13 @@
+<section class='element attributes'>
+  <header>{{localize 'GURPS.attributesPrimary'}}</header>
+	<ul>
+	{{#each attributesPrimary}}
+		{{> 'gurps.actor.parts.attribute-entry'}}
+	{{/each}}
+	</ul>
+	<hr/>
+	<ul>
+		{{#with basicThrust}}{{> 'gurps.actor.parts.attribute-entry'}}{{/with}}
+		{{#with basicSwing}}{{> 'gurps.actor.parts.attribute-entry'}}{{/with}}
+	</ul>
+</section>

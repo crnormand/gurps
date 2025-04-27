@@ -1,0 +1,11 @@
+<section class='element portrait'>
+  <header>{{localize 'GURPS.sheet.personal.portrait'}}</header>
+  <div class='img-wrapper'>
+    {{#if isEditing}}
+      <img src='{{actor.img}}' alt='{{actor.name}}' data-action='editImage' title='{{actor.name}}' />
+    {{else}}
+      <img src='{{actor.img}}' alt='{{actor.name}}' data-action='viewImage' title='{{actor.name}}' />
+    {{/if}}
+    <span class='img-overlay'>{{portraitHoverText}}</span>
+  </div>
+</section>

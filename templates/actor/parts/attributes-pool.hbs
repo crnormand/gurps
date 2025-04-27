@@ -1,0 +1,15 @@
+<div class='gridcol pools-container fill'>
+  {{#each attributesPool}}
+    <section class='element pool flexcol' data-id='{{this.id}}'>
+      <header>{{this.title}}</header>
+      <div class='flexrow'>
+        <div class='spinner flexrow'>
+          <button class='fa-solid fa-minus icon' data-action='pool-decrease'></button>
+          <input type='number' value='{{this.current}}' />
+          <button class='fa-solid fa-plus icon' data-action='pool-increase'></button>
+        </div>
+        <button class='fa-solid fa-rotate-left icon' data-action='pool-reset'></button>
+      </div>
+    </section>
+  {{/each}}
+</div>

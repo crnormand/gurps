@@ -81,9 +81,15 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { preloadHandlebarsTemplates } from './util/handlebars-partials.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import { GurpsActorSheetV3 } from './applications/actor/actor-sheet2.js'
+
+// Import Submodules
+import applications from './applications/index.js'
+import { GurpsActorSheetV2 } from './applications/actor/actor-sheet.js'
 
 export let GURPS = undefined
 
@@ -1991,7 +1997,18 @@ if (!globalThis.GURPS) {
       label: 'Full (GCS)',
       makeDefault: true,
     })
+    // @ts-ignore
+    Actors.registerSheet('gurps', GurpsActorSheetV2, {
+      label: 'Full (GCS) 2',
+      makeDefault: false,
+    })
+    // disabled for now
+    // Actors.registerSheet('gurps', GurpsActorSheetV3, {
+    //   label: 'Sheet V2 Test',
+    //   makeDefault: false,
+    // })
 
+    // @ts-ignore
     Items.unregisterSheet('core', ItemSheet)
     // @ts-ignore
     Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
@@ -2099,6 +2116,8 @@ if (!globalThis.GURPS) {
     GURPS.ActorSheets = { character: GurpsActorSheet }
     GURPS.handlePdf = handlePdf
 
+    preloadHandlebarsTemplates()
+
     Hooks.call('gurpsinit', GURPS)
   })
 
@@ -2106,6 +2125,7 @@ if (!globalThis.GURPS) {
     // Set up SSRT
     GURPS.SSRT = setupRanges()
     GURPS.rangeObject = new GURPSRange()
+    GURPS.applications = applications
 
     // reset the TokenHUD to our version
     // @ts-ignore

@@ -1,0 +1,15 @@
+<li class='attribute gridrow'>
+  <!-- {{#if this.points includeZero=true}} -->
+  <!--   <label class='points'>[{{this.points}}]</label> -->
+  <!-- {{else}} -->
+  <!--   <label class='points'></label> -->
+  <!-- {{/if}} -->
+  {{#if @root/isEditing}}
+    <input class='value' type='number' value='{{this.value}}' />
+  {{else}}
+    <button class='value' data-action='rollAttribute'>
+      {{this.value}}
+    </button>
+  {{/if}}
+  <label class='name'>{{this.name}}</label>
+</li>

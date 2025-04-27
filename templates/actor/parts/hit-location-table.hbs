@@ -1,0 +1,23 @@
+<section class='element'>
+  <table class='hit-location-table'>
+    <caption>{{localize 'GURPS.hitLocation'}}</caption>
+    <thead>
+      <tr>
+        <th>{{localize 'GURPS.roll'}}</th>
+        <th>{{localize 'GURPS.hitLocationWhere'}}</th>
+        <th>{{localize 'GURPS.hitLocationPenalty'}}</th>
+        <th>{{localize 'GURPS.hitLocationDR'}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each hitLocations}}
+        <tr>
+          <td>{{this.roll}}</td>
+          <td>{{this.where}}</td>
+          <td>{{this.penalty}}</td>
+          <td>{{this.dr}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</section>

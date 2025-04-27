@@ -1,0 +1,264 @@
+<section class='tab {{tab.cssClass}}' data-group='primary' data-tab='personal'>
+  <div class='gridcol'>
+    <div class='gridrow'>
+      <div class='gridcol'>
+        <div class='gridrow'>
+
+          <!-- Identity -->
+          <section class='element identity'>
+            <header>{{localize 'GURPS.sheet.personal.identity'}}</header>
+
+            <div class='fieldpairs'>
+              <label>{{localize 'GURPS.sheet.personal.name'}}</label>
+              {{#if @root/isEditing}}
+                <input type='text' name='name' value='{{actor.name}}' />
+              {{else}}
+                <input type='text' value='{{actor.name}}' disabled />
+              {{/if}}
+
+              <label>{{localize 'GURPS.sheet.personal.title'}}</label>
+              {{#if @root/isEditing}}
+                <input type='text' name='system.traits.title' value='{{system.traits.title}}' />
+              {{else}}
+                <input type='text' value='{{system.traits.title}}' disabled />
+              {{/if}}
+
+              <label>{{localize 'GURPS.Sheet.Organization'}}</label>
+              <input type='text' value='{{system.traits.organization}}' disabled />
+            </div>
+
+          </section>
+
+          <!-- Miscellaneous -->
+          <section class='element miscellaneous fill'>
+            <header>{{localize 'GURPS.sheet.personal.miscellaneous'}}</header>
+
+            <div class='fieldpairs'>
+              <label>{{localize 'GURPS.sheet.personal.created'}}</label>
+              <input type='text' value='{{system.traits.createdon}}' disabled />
+
+              <label>{{localize 'GURPS.sheet.personal.modified'}}</label>
+              <input type='text' value='{{system.traits.modifiedon}}' disabled />
+
+              <label>{{localize 'GURPS.sheet.personal.player'}}</label>
+              {{#if @root/isEditing}}
+                <input type='text' name='system.traits.player' value='{{system.traits.player}}' />
+              {{else}}
+                <input type='text' value='{{system.traits.player}}' disabled />
+              {{/if}}
+
+            </div>
+          </section>
+
+        </div>
+
+        <!-- Description -->
+        <section class='element description fill'>
+          <header>{{localize 'GURPS.description'}}</header>
+
+          <div class='gridrow'>
+
+            <div class='gridcol'>
+              <div class='fieldpairs'>
+                <label>{{localize 'GURPS.descriptionGender'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.gender' value='{{system.traits.gender}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.gender}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionAge'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.age' value='{{system.traits.age}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.age}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionBirthday'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.birthday' value='{{system.traits.birthday}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.birthday}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionReligion'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.religion' value='{{system.traits.religion}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.religion}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionHeight'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.height' value='{{system.traits.height}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.height}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.weight'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.weight' value='{{system.traits.weight}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.weight}}' disabled />
+                {{/if}}
+              </div>
+            </div>
+
+            <div class='gridcol'>
+              <div class='fieldpairs'>
+                <label>{{localize 'GURPS.Sheet.SizeModifier'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.sm' value='{{system.traits.sm}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.sm}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.Sheet.TechLevel'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.techlevel' value='{{system.traits.techlevel}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.techlevel}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionHair'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.hair' value='{{system.traits.hair}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.hair}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionEyes'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.eyes' value='{{system.traits.eyes}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.eyes}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionSkin'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.skin' value='{{system.traits.skin}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.skin}}' disabled />
+                {{/if}}
+
+                <label>{{localize 'GURPS.descriptionHand'}}</label>
+                {{#if @root/isEditing}}
+                  <input type='text' name='system.traits.hand' value='{{system.traits.hand}}' />
+                {{else}}
+                  <input type='text' value='{{system.traits.hand}}' disabled />
+                {{/if}}
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Point Summary -->
+      <section class='element point-summary'>
+        <header>{{system.totalpoints.total}} {{localize 'GURPS.points'}}</header>
+        <div class='fieldpairs'>
+          <label>{{localize 'GURPS.pointsUnspent'}}</label>
+          <input type='text' value='{{system.totalpoints.unspent}}' disabled />
+
+          <label>{{localize 'GURPS.pointsAttributes'}}</label>
+          <input type='text' value='{{system.totalpoints.attributes}}' disabled />
+
+          <label>{{localize 'GURPS.pointsAdvantages'}}</label>
+          <input type='text' value='{{system.totalpoints.ads}}' disabled />
+
+          <label>{{localize 'GURPS.pointsDisadvantages'}}</label>
+          <input type='text' value='{{system.totalpoints.disads}}' disabled />
+
+          <label>{{localize 'GURPS.pointsQuirks'}}</label>
+          <input type='text' value='{{system.totalpoints.quirks}}' disabled />
+
+          <label>{{localize 'GURPS.pointsSkills'}}</label>
+          <input type='text' value='{{system.totalpoints.skills}}' disabled />
+
+          <label>{{localize 'GURPS.pointsSpells'}}</label>
+          <input type='text' value='{{system.totalpoints.spells}}' disabled />
+        </div>
+      </section>
+
+    </div>
+
+    <div class='gridrow'>
+
+      <section class='element lifting-moving'>
+        <header>{{localize 'GURPS.liftingAndMovingThings'}}</header>
+        <table>
+          <tr>
+            <td>{{system.liftingmoving.basiclift}}</td>
+            <td>{{localize 'GURPS.basicLift'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.onehandedlift}}</td>
+            <td>{{localize 'GURPS.oneHandLift'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.twohandedlift}}</td>
+            <td>{{localize 'GURPS.twoHandLift'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.shove}}</td>
+            <td>{{localize 'GURPS.shoveAndKnockOver'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.runningshove}}</td>
+            <td>{{localize 'GURPS.runningShoveAndKnockOver'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.carryonback}}</td>
+            <td>{{localize 'GURPS.carryOnBack'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.shiftslightly}}</td>
+            <td>{{localize 'GURPS.shiftSlightly'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.basiclift}}</td>
+            <td>{{localize 'GURPS.basicLift'}}</td>
+          </tr>
+
+          <tr>
+            <td>{{system.liftingmoving.basiclift}}</td>
+            <td>{{localize 'GURPS.basicLift'}}</td>
+          </tr>
+
+        </table>
+
+      </section>
+
+      <!-- Notes List -->
+      <section class='element note-list'>
+        <table>
+          <thead>
+            <tr>
+              <th>{{localize 'GURPS.notes'}}</th>
+              <th><i class='fa-solid fa-bookmark icon'></i></th>
+            </tr>
+          </thead>
+          <tbody class='item-list'>
+            {{#each system.notes}}
+              <tr class='item'>
+                <td><p>{{this.notes}}</p></td>
+                <td>{{this.pageref}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+
+  </div>
+</section>

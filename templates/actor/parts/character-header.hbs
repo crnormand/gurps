@@ -1,0 +1,22 @@
+<section class='character-header gridcol'>
+	<div class="gridcol">
+		<div class="gridrow">
+			<div class="gridcol">
+				{{> 'gurps.actor.parts.portrait'}}
+				{{> 'gurps.actor.parts.combat-info'}}
+			</div>
+			{{> 'gurps.actor.parts.attributes-primary'}}
+			{{> 'gurps.actor.parts.attributes-secondary'}}
+			{{> 'gurps.actor.parts.encumbrance-move'}}
+			{{> 'gurps.actor.parts.attributes-pool'}}
+		</div>
+	</div>
+
+	<nav class="tabs" data-group="primary">
+		{{#each tabs as |tab|}}
+		<a class="{{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+			<span class="{{tab.icon}}"></span>
+		</a>
+		{{/each}}
+	</nav>
+</section>

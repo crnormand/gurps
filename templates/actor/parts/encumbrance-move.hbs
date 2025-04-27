@@ -1,0 +1,41 @@
+<section class='element encumbrance-move'>
+  <!-- <header>{{localize 'GURPS.encumbranceMoveDodge'}}</header> -->
+  <table>
+    <caption>
+      {{localize 'GURPS.encumbranceMoveDodge'}}
+    </caption>
+    <tr>
+      <th class='indicator' colspan='2'>{{localize 'GURPS.level'}}</th>
+      <th>{{localize 'GURPS.max'}}</th>
+      <th>{{localize 'GURPS.move'}}</th>
+      <th>{{localize 'GURPS.dodge'}}</th>
+    </tr>
+    {{#each encumbranceLevels}}
+      <tr>
+        {{#if this.current}}
+          <td class='selector' data-action='setEncumbrance' data-level='{{@index}}'>
+            <i class='fa-solid fa-weight-hanging'></i>
+          </td>
+        {{else}}
+          <td class='selector' data-action='setEncumbrance' data-level='{{@index}}'>
+          </td>
+        {{/if}}
+        <td class='level'>{{this.name}}</td>
+        <td class='max-weight'>{{this.weight}}</td>
+        <td class='move'>{{this.move}}</td>
+        <td class='dodge'>{{this.dodge}}</td>
+      </tr>
+    {{/each}}
+    <tfoot>
+      <tr>
+        <!-- Span all columns -->
+        <th colspan='100'>
+          {{localize 'GURPS.moveMode'}}
+          <select>
+            <option>Ground</option>
+          </select>
+        </th>
+      </tr>
+    </tfoot>
+  </table>
+</section>

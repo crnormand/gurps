@@ -1,0 +1,123 @@
+<section class='tab {{tab.cssClass}}' data-group='primary' data-tab='combat'>
+
+  <div class='gridrow'>
+
+    <!-- Column 1 -->
+    <div class='gridcol'>
+      <!-- Melee Weapons Table -->
+      <table class='item-table'>
+        <tr>
+          <th>{{localize 'GURPS.meleeWeapons'}}</th>
+          <th>{{localize 'GURPS.usage'}}</th>
+          <th>{{localize 'GURPS.sl'}}</th>
+          <th>{{localize 'GURPS.parry'}}</th>
+          <th>{{localize 'GURPS.block'}}</th>
+          <th>{{localize 'GURPS.damage'}}</th>
+          <th>{{localize 'GURPS.reach'}}</th>
+          <th>{{localize 'GURPS.attributesST'}}</th>
+        </tr>
+        {{#each meleeWeapons}}
+          <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.mode}}</td>
+            <td>{{this.level}}</td>
+            <td>{{this.parry}}</td>
+            <td>{{this.block}}</td>
+            <td>{{this.damage}}</td>
+            <td>{{this.reach}}</td>
+            <td>{{this.st}}</td>
+          </tr>
+        {{/each}}
+      </table>
+
+      <!-- Ranged Weapons Table -->
+      <table class='item-table'>
+        <tr>
+          <th>{{localize 'GURPS.rangedWeapons'}}</th>
+          <th>{{localize 'GURPS.usage'}}</th>
+          <th>{{localize 'GURPS.sl'}}</th>
+          <th>{{localize 'GURPS.acc'}}</th>
+          <th>{{localize 'GURPS.damage'}}</th>
+          <th>{{localize 'GURPS.range'}}</th>
+          <th>{{localize 'GURPS.rof'}}</th>
+          <th>{{localize 'GURPS.shots'}}</th>
+          <th>{{localize 'GURPS.bulk'}}</th>
+          <th>{{localize 'GURPS.rcl'}}</th>
+          <th>{{localize 'GURPS.attributesST'}}</th>
+        </tr>
+        {{#each rangedWeapons}}
+          <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.mode}}</td>
+            <td>{{this.level}}</td>
+            <td>{{this.acc}}</td>
+            <td>{{this.damage}}</td>
+            <td>{{this.range}}</td>
+            <td>{{this.rof}}</td>
+            <td>{{this.shots}}</td>
+            <td>{{this.bulk}}</td>
+            <td>{{this.recoil}}</td>
+            <td>{{this.st}}</td>
+          </tr>
+        {{/each}}
+      </table>
+
+      <!-- Speed / Range Table -->
+      <table>
+        <caption>{{localize 'GURPS.SpeedRangeTable.Title'}}</caption>
+        <tr>
+          <th>
+            {{localize 'GURPS.SpeedRangeTable.Measure'}}
+          </th>
+          {{#each ranges}}
+            <td>
+              {{{this.max}}}
+            </td>
+          {{/each}}
+        </tr>
+        <tr>
+          <th>
+            {{localize 'GURPS.SpeedRangeTable.Modifier'}}
+          </th>
+          {{#each ranges}}
+            <td data-action='addModifier'>
+              {{{displayNumber this.penalty}}}
+            </td>
+          {{/each}}
+        </tr>
+      </table>
+    </div>
+
+    <!-- Column 2 -->
+    <div class='gridcol'>
+
+      <!-- Status -->
+      <section class='element status'>
+        <header>{{localize 'GURPS.conditions'}}</header>
+        <div>
+          <label>
+            {{localize 'GURPS.maneuver'}}
+          </label>
+          <condition-select type='maneuver' />
+        </div>
+
+        <div>
+          <label>
+            {{localize 'GURPS.modifierPosture'}}
+          </label>
+          <condition-select type='posture' />
+        </div>
+
+        <div>
+          <label>
+            {{localize 'GURPS.activeEffects'}}
+          </label>
+          <button class='fa-solid fa-sparkles icon' data-action='openActiveEffects'></button>
+        </div>
+      </section>
+
+			{{> 'gurps.actor.parts.hit-location-table'}}
+
+    </div>
+  </div>
+</section>
