@@ -12,27 +12,24 @@
     "build": "run-s clean build:code build:styles build:static",
     "build:code": "tsc || true",
     "build:styles": "sass --no-source-map --style=compressed gurps.scss:dist/gurps.css",
-    "build:static": "tsx build/sync-static.ts",
+    "build:static": "node build/cpx.js",
     "dev": "run-s clean watch",
     "watch": "run-p wach:styles watch:code watch:static",
     "watch:code": "tsc-watch",
     "wach:styles": "sass --watch --update --style=expanded gurps.scss:dist/gurps.css",
-    "watch:static": "npm run build:static && tsx build/watch-static.ts"
+    "watch:static": "node build/cpx.js --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.14",
     "@types/jquery": "^3.5.32",
     "@types/node": "^22.14.1",
     "autoprefixer": "^10.4.21",
     "babel-jest": "^29.7.0",
-    "chokidar": "^4.0.3",
-    "chokidar-cli": "^3.0.0",
+    "cpx": "^1.5.0",
     "eslint": "^8.57.1",
     "eslint-plugin-deprecation": "^3.0.0",
-    "fs-extra": "^11.3.0",
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "handlebars": "^4.7.7",
     "jest": "^29.7.0",
@@ -41,7 +38,6 @@
     "rimraf": "^6.0.1",
     "sass": "^1.87.0",
     "tsc-watch": "^6.2.1",
-    "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   },
   "overrides": {
