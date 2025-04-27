@@ -2,7 +2,6 @@ import * as settings from '../../../lib/miscellaneous-settings.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../../lib/utilities.js'
 import { AnyObject, DeepPartial, EmptyObject } from 'fvtt-types/utils'
-import { ActorSheetTabs } from './helpers.js'
 import GurpsActiveEffectListSheet from '../../effects/active-effect-list.js'
 import DocumentSheetV2 from 'node_modules/fvtt-types/src/foundry/client-esm/applications/api/document-sheet.mjs'
 import { dom } from '../../util/index.js'
@@ -21,31 +20,6 @@ interface GurpsActorSheetV2 {
 class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.sheets.ActorSheetV2
 ) {
-  /* -------------------------------------------- */
-  /*  Sheet Editing                               */
-  /* -------------------------------------------- */
-
-  /**
-   * Intended as a replacement for previous dedicated editing sheet.
-   */
-  get isEditing(): boolean {
-    return this.isEditable && this._mode === this.constructor.MODES.EDIT
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * PLAY mode indicates non-editing, EDIT mode indicates editing.
-   */
-  static MODES = {
-    PLAY: 1,
-    EDIT: 2,
-  }
-
-  /* -------------------------------------------- */
-
-  protected _mode = this.constructor.MODES.PLAY
-
   /* -------------------------------------------- */
   /*  Basic Functionality                         */
   /* -------------------------------------------- */
@@ -86,49 +60,6 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
       ],
     },
-  }
-
-  /* -------------------------------------------- */
-
-  override tabGroups: Record<string, string> = {
-    primary: ActorSheetTabs.Personal,
-  }
-
-  /* -------------------------------------------- */
-
-  protected _getTabs(): Record<string, Partial<foundry.applications.types.ApplicationTab>> {
-    return this._markTabs({
-      combatTab: {
-        id: ActorSheetTabs.Combat,
-        group: 'primary',
-        icon: 'fa-solid fa-swords',
-      },
-      personalTab: {
-        id: ActorSheetTabs.Personal,
-        group: 'primary',
-        icon: 'fa-solid fa-user',
-      },
-      traitsTab: {
-        id: ActorSheetTabs.Traits,
-        group: 'primary',
-        icon: 'fa-solid fa-theater-masks',
-      },
-      skillsTab: {
-        id: ActorSheetTabs.Skills,
-        group: 'primary',
-        icon: 'fa-solid fa-person-swimming',
-      },
-      resourcesTab: {
-        id: ActorSheetTabs.Resources,
-        group: 'primary',
-        icon: 'fa-solid fa-bars-progress',
-      },
-      equipmentTab: {
-        id: ActorSheetTabs.Equipment,
-        group: 'primary',
-        icon: 'fa-solid fa-screwdriver-wrench',
-      },
-    })
   }
 
   /* -------------------------------------------- */
@@ -186,19 +117,6 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       toggleQnotes: this.actor.getFlag('gurps', 'qnotes'),
     }
   }
-
-  /* -------------------------------------------- */
-
-  // protected override async _preparePartContext(
-  //   partId: string,
-  //   context: foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>,
-  //   _options: DeepPartial<foundry.applications.api.HandlebarsApplicationMixin.RenderOptions>
-  // ): Promise<foundry.applications.api.HandlebarsApplicationMixin.HandlebarsApplication.RenderContextFor<this>> {
-  //   context.partId = `${this.id}-${partId}`
-  //   context.tab = context.tabs[partId]
-  //
-  //   return context
-  // }
 
   /* -------------------------------------------- */
 
@@ -278,7 +196,6 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       const id = `#${table.id}`
     }
   }
-
   /* -------------------------------------------- */
 
   protected override _onClose(options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions>): void {
@@ -296,13 +213,13 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   ): Promise<HTMLElement> {
     const frame = await super._renderFrame(options)
 
-    if (this.isEditable) {
-      const toggleLabel = game.i18n?.localize('GURPS.Sheet.Common.ToggleMode')
-      const toggleIcon =
-        this._mode === this.constructor.MODES.EDIT ? 'fa-solid fa-unlock icon' : 'fa-solid fa-lock icon'
-      const toggleButton = `<button type='button' class='header-control ${toggleIcon}' data-action='toggleMode' data-tooltip='${toggleLabel}' aria-label='${toggleLabel}'></button>`
-      this.window.controls?.insertAdjacentHTML('beforebegin', toggleButton)
-    }
+    // if (this.isEditable) {
+    //   const toggleLabel = game.i18n?.localize('GURPS.Sheet.Common.ToggleMode')
+    //   const toggleIcon =
+    //     this._mode === this.constructor.MODES.EDIT ? 'fa-solid fa-unlock icon' : 'fa-solid fa-lock icon'
+    //   const toggleButton = `<button type='button' class='header-control ${toggleIcon}' data-action='toggleMode' data-tooltip='${toggleLabel}' aria-label='${toggleLabel}'></button>`
+    //   this.window.controls?.insertAdjacentHTML('beforebegin', toggleButton)
+    // }
 
     return frame
   }
@@ -392,20 +309,6 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
       left: this.position.left! + 10,
     })
     await fp.browse(current)
-  }
-
-  /* -------------------------------------------- */
-
-  static async #onToggleMode(this: GurpsActorSheetV2, event: Event): Promise<void> {
-    const toggle = event.target as HTMLButtonElement
-    toggle.classList.toggle('fa-lock')
-    toggle.classList.toggle('fa-unlock')
-
-    const { MODES } = this.constructor
-    if (this._mode === MODES.PLAY) this._mode = MODES.EDIT
-    else this._mode = MODES.PLAY
-    await this.submit()
-    this.render()
   }
 
   /* -------------------------------------------- */
