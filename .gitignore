@@ -13,3 +13,4 @@ coverage
 data/monsters.csv
 .history
 simple.css.map
+dist

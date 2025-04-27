@@ -5,7 +5,7 @@ export function readyTimesUpSetup() {
   Hooks.on('createActiveEffect', (effect, options, user) => {
     //@ts-expect-error
     if (!game.users.activeGM?.isSelf) return
-    
+
     if (effect.transfer && !(getEffectActor(effect) instanceof Actor)) return
     if (debugEnabled > 0) debug('create active effect', effect.uuid, effect.updateDuration(), isTransferEffect(effect))
     // record passive, start time/round/turn duration any flags of relevance.
@@ -62,7 +62,7 @@ export function readyTimesUpSetup() {
     GMEffectQueue('deleteEffect', effect)
   })
 
-  Hooks.on('updateWorldTime', async (worldTime: number, dt: number, options, user) => {
+  Hooks.on('updateWorldTime', async (worldTime, dt, options, user) => {
     if (!timesUpEnabled) return
     //@ts-expect-error
     if (!game.users.activeGM?.isSelf) return

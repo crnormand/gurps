@@ -22,7 +22,6 @@ export class ResourceTrackerManager extends FormApplication {
     })
   }
 
-  
   static getDefaultTemplates() {
     return {
       '0000': {

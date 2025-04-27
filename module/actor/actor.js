@@ -739,13 +739,11 @@ export class GurpsActor extends Actor {
     let posture = this._getMoveAdjustedForPosture(move, threshold)
 
     if (threshold == 1.0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
-    return (
-      updateMove ?
-        maneuver.move < posture.move ?
-          maneuver.move
+    return updateMove
+      ? maneuver.move < posture.move
+        ? maneuver.move
         : posture.move
       : Math.max(1, Math.floor(move * threshold))
-    )
   }
 
   _getMoveAdjustedForManeuver(move, threshold) {
@@ -758,12 +756,12 @@ export class GurpsActor extends Actor {
 
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
-    return !!adjustment ? adjustment : (
-        {
+    return !!adjustment
+      ? adjustment
+      : {
           move: Math.max(1, Math.floor(move * threshold)),
           text: i18n('GURPS.moveFull'),
         }
-      )
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -830,12 +828,12 @@ export class GurpsActor extends Actor {
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
-    return !!adjustment ? adjustment : (
-        {
+    return !!adjustment
+      ? adjustment
+      : {
           move: Math.max(1, Math.floor(move * threshold)),
           text: i18n('GURPS.moveFull'),
         }
-      )
   }
 
   _calculateRangedRanges() {
@@ -1436,9 +1434,9 @@ export class GurpsActor extends Actor {
 
       // 2. Check if Actor Component exists
       const actorCompKey =
-        data.type === 'equipment' ?
-          this._findEqtkeyForId('globalid', data.system.globalid)
-        : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
+        data.type === 'equipment'
+          ? this._findEqtkeyForId('globalid', data.system.globalid)
+          : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
       const actorComp = foundry.utils.getProperty(this, actorCompKey)
       if (!!actorComp) {
         ui.notifications?.warn(i18n('GURPS.cannotDropItemAlreadyExists'))
@@ -1505,9 +1503,9 @@ export class GurpsActor extends Actor {
 
         // 6. Process Child Items for created Item
         const actorCompKey =
-          data.type === 'equipment' ?
-            this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
-          : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
+          data.type === 'equipment'
+            ? this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
+            : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
         await this._addItemAdditions(parentItem, actorCompKey)
       }
     }
@@ -2584,9 +2582,9 @@ export class GurpsActor extends Actor {
 
   async _updateItemFromForm(item) {
     const sysKey =
-      item.type === 'equipment' ?
-        this._findEqtkeyForId('itemid', item.id)
-      : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+      item.type === 'equipment'
+        ? this._findEqtkeyForId('itemid', item.id)
+        : this._findSysKeyForId('itemid', item.id, item.actorComponentKey)
 
     const actorComp = foundry.utils.getProperty(this, sysKey)
 
@@ -3563,10 +3561,7 @@ export class GurpsActor extends Actor {
 
       default:
         result = {
-          name:
-            thing ? thing
-            : chatting ? chatting.split('/[')[0]
-            : formula,
+          name: thing ? thing : chatting ? chatting.split('/[')[0] : formula,
           uuid: null,
           itemId: null,
           fromItem: null,

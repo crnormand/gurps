@@ -444,8 +444,8 @@ const ModifierLiterals = {
     return (
       `[+1 ${i18n('GURPS.modifiers_.aim')}] [PDF:${i18n('GURPS.modifiers_.pdf.aim')}]
       [–2 ${i18n('GURPS.modifiers_.popup')}] [PDF:${i18n('GURPS.modifiers_.pdf.popup')}]` +
-      (useOnTarget ?
-        `
+      (useOnTarget
+        ? `
 ${horiz(i18n('GURPS.modifiers_.onTargetAiming'))}
 [+2 ${i18n('GURPS.modifiers_.aoaRanged')}] [PDF:${i18n('GURPS.modifiers_.pdf.aoaRanged')}]
 [+1 ${i18n('GURPS.modifiers_.committedRanged')}] [PDF:${i18n('GURPS.modifiers_.pdf.committedRanged')}]
@@ -453,7 +453,7 @@ ${horiz(i18n('GURPS.modifiers_.onTargetAiming'))}
 [+2 ${i18n('GURPS.modifiers_.allOutAimBraced')}] [PDF:${i18n('GURPS.modifiers_.pdf.allOutAimBraced')}]
 [+2 ${i18n('GURPS.modifiers_.committedAim')}] [PDF:${i18n('GURPS.modifiers_.pdf.committedAim')}]
 [+1 ${i18n('GURPS.modifiers_.committedAimBraced')}] [PDF:${i18n('GURPS.modifiers_.pdf.committedAimBraced')}]`
-      : `
+        : `
 [+1 ${i18n('GURPS.modifiers_.aoaRangedDetermined')}] [PDF:${i18n('GURPS.modifiers_.pdf.aoaRangedDetermined')}]`)
     )
   },
@@ -470,16 +470,16 @@ ${horiz(i18n('GURPS.modifiers_.onTargetAiming'))}
     [+3 ${i18n('GURPS.modifiers_.fencingRetreat')}] [PDF:${i18n('GURPS.modifiers_.pdf.fencingRetreat')}]
     [+1 ${i18n('GURPS.modifiers_.defensiveDefense')}] [PDF:${i18n('GURPS.modifiers_.pdf.defensiveDefense')}]
     ${
-      useOnTarget ?
-        `[-2 ${i18n('GURPS.modifiers_.committedAimDefense')}] [PDF:${i18n('GURPS.modifiers_.pdf.committedAimDefense')}]`
-      : ''
+      useOnTarget
+        ? `[-2 ${i18n('GURPS.modifiers_.committedAimDefense')}] [PDF:${i18n('GURPS.modifiers_.pdf.committedAimDefense')}]`
+        : ''
     }
     ${
-      useOnTarget ?
-        `[-2 ${i18n('GURPS.modifiers_.committedAttackRanged')}] [PDF:${i18n(
-          'GURPS.modifiers_.pdf.committedAttackRanged'
-        )}]`
-      : ''
+      useOnTarget
+        ? `[-2 ${i18n('GURPS.modifiers_.committedAttackRanged')}] [PDF:${i18n(
+            'GURPS.modifiers_.pdf.committedAttackRanged'
+          )}]`
+        : ''
     }
     [-2 ${i18n('GURPS.modifiers_.dodgeAcrobaticFail')}] [PDF:${i18n('GURPS.modifiers_.pdf.dodgeAcrobaticFail')}]
     [-2 ${i18n('GURPS.modifiers_.defenseSide')}] [PDF:${i18n('GURPS.modifiers_.pdf.defenseSide')}]
