@@ -22,7 +22,6 @@ import MoveModeEditor from '../../actor/move-mode-editor.js'
 import { ResourceTrackerEditor } from '../../actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from '../../actor/resource-tracker-manager.js'
 import { cleanTags } from '../../actor/effect-modifier-popout.js'
-import ContextMenu from 'node_modules/fvtt-types/src/foundry/client-esm/applications/ux/context-menu.mjs'
 
 class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.sheets.ActorSheetV2
@@ -297,7 +296,12 @@ class GurpsActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMi
   /* -------------------------------------------- */
 
   protected _editEquipment(target: HTMLElement): void {
-    const path = target.dataset.key
+    const path = target.dataset.key ?? null
+    if (path === null) {
+      console.error('GurpsActorSheetV2._editEquipment: No path found')
+      return
+    }
+
     const o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
     this.editEquipment(this.actor, path, o)
   }
