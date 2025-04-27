@@ -17,7 +17,7 @@ export class ResourceTrackerEditor extends Application {
    * @param {*} path
    * @param {*} options
    */
-  static editForActor(actor, path, options) {
+  static editForActor(actor, path, options = {}) {
     let tracker = foundry.utils.getProperty(actor.system, path)
     let temp = JSON.stringify(tracker)
     let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)

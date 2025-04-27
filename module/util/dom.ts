@@ -35,4 +35,44 @@ function children(element: Element | null, selector?: string): HTMLElement[] {
   }
 }
 
-export { closest, querySelector, querySelectorAll, children, siblings }
+/* -------------------------------------------- */
+
+function getValue(element: HTMLElement): string | string[] {
+  if (
+    !(
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement ||
+      element instanceof HTMLSelectElement
+    )
+  )
+    return ''
+
+  if (element instanceof HTMLSelectElement && element.options && element.multiple) {
+    return Array.from(element.options)
+      .filter(option => option.selected)
+      .map(option => option.value)
+  } else {
+    return element.value
+  }
+}
+
+function setValue(element: HTMLElement, value: string | string[]): void {
+  if (
+    !(
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement ||
+      element instanceof HTMLSelectElement
+    )
+  )
+    return
+  if (element instanceof HTMLSelectElement && element.options && element.multiple) {
+    Array.from(element.options).forEach(option => {
+      option.selected = value.includes(option.value)
+    })
+  } else {
+    // NOTE: may want to rethink this, as it will set the value to the first element of the array
+    element.value = typeof value === 'string' ? value : value[0]
+  }
+}
+
+export { closest, querySelector, querySelectorAll, children, siblings, getValue, setValue }
