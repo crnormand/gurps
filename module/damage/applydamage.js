@@ -515,6 +515,11 @@ export default class ApplyDamageDialog extends Application {
             : effect.modifier < 0
               ? `HT+${-effect.modifier}`
               : `HT-${effect.modifier}`
+          (effect?.modifier ?? 0) === 0
+            ? 'HT'
+            : effect.modifier < 0
+              ? `HT+${-effect.modifier}`
+              : `HT-${effect.modifier}`
 
         otf = `/r [!${htCheck}]`
         break
@@ -646,6 +651,7 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
@@ -658,6 +664,7 @@ export default class ApplyDamageDialog extends Application {
 
     if (object.type === 'headvitalshit') {
       let htCheck =
+        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`

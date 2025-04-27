@@ -7,7 +7,17 @@
           <td class='me-at {{{this.itemType}}}'><span>{{{this.itemName}}}</span></td>
           <td class='me-tag'>
             {{#each tags}}
+      {{#each selfmodifiers}}
+        <tr class='me-line'>
+          <td class='me-link' data-item-id='{{this.itemId}}' data-type='{{this.itemType}}'>{{{this.link}}}</td>
+          <td class='me-at {{{this.itemType}}}'><span>{{{this.itemName}}}</span></td>
+          <td class='me-tag'>
+            {{#each tags}}
               <span>{{this}}</span>
+            {{/each}}
+          </td>
+        </tr>
+      {{/each}}
             {{/each}}
           </td>
         </tr>
@@ -19,9 +29,12 @@
     <ul class='modifier-list'>
       {{#each targetmodifiers}}
         <li class='me-link sm'>{{{this.link}}}
+        <li class='me-link sm'>{{{this.link}}}
           {{#each tags}}
             <span class='me-other-tags'>{{{this}}}</span>
+            <span class='me-other-tags'>{{{this}}}</span>
           {{/each}}
+        </li>
         </li>
       {{/each}}
     </ul>
@@ -33,6 +46,10 @@
     >{{localize 'GURPS.targetModifiers'}}&ensp;{{name}}</div>
     <ul class='modifier-list'>
       {{#each targetmodifiers}}
+        <li class='me-link sm'>{{{this.link}}}
+          {{#each tags}}
+            <span class='me-other-tags'>{{{this}}}</span>
+          {{/each}}
         <li class='me-link sm'>{{{this.link}}}
           {{#each tags}}
             <span class='me-other-tags'>{{{this}}}</span>

@@ -63,6 +63,7 @@ export default class DamageChat {
   }
 
   /**
+   * TODO This method is called for damage, items, and equipment. It should NOT be defined here.
    * @param {Canvas} canvas
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
@@ -77,6 +78,12 @@ export default class DamageChat {
         await actor.handleItemDrop(dropData)
         break
       case 'equipment':
+        const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
+        if (token.length !== 1) {
+          ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForEquipmentWarning'))
+          break
+        }
+        await token[0].actor.handleEquipmentDrop(dropData)
         const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
         if (token.length !== 1) {
           ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForEquipmentWarning'))
@@ -447,7 +454,6 @@ export default class DamageChat {
       return false
     }
 
-    // Create a "reactangle" to represent the drop coordinates. It is really a point as width and height are 0.
     let selectedTokens = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y)
 
     if (selectedTokens.length === 0) {
@@ -495,11 +501,9 @@ export default class DamageChat {
 
     // Get all tokens under the drop point. Use this instead of the quadtree approach because
     // GURPS Token Shapes and Movement manipulates the position of the tokens.
-    let selectedTokens = canvas.tokens.objects.children.filter(t =>
-      t.hitArea.contains(dropData.x - t.x, dropData.y - t.y)
-    )
+    let selectedTokens = canvas.tokens.objects.children.filter(t => t.hitArea.contains(x - t.x, y - t.y))
 
-    if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, { single: true })
+    if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, { single: single })
     return selectedTokens
   }
 }
