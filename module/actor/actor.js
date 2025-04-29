@@ -1536,7 +1536,10 @@ export class GurpsActor extends Actor {
       return
     }
 
-    let count = eqt.count === 1 ? 1 : await this.promptEquipmentQuantity(eqt)
+    let count =
+      eqt.count === 1
+        ? 1
+        : await this.promptEquipmentQuantity(eqt, game.i18n.format('GURPS.TransferTo', { name: this.name }))
     if (count > eqt.count) count = eqt.count
 
     // If this actor and sourceActor have the same owner...
@@ -1578,9 +1581,9 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
-  async promptEquipmentQuantity(eqt) {
+  async promptEquipmentQuantity(eqt, title) {
     return await foundry.applications.api.DialogV2.prompt({
-      window: { title: game.i18n.format('GURPS.TransferTo', { name: this.name }) },
+      window: { title: title },
       content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
       ok: {
         label: game.i18n.localize('GURPS.ok'),
@@ -1776,7 +1779,7 @@ export class GurpsActor extends Actor {
     eqt.equipped = equipped
 
     if (!!eqt.itemid) {
-      let item = /** @type {Item} */ (await this.items.get(eqt.itemid))
+      let item = await this.items.get(eqt.itemid)
       await this.updateEmbeddedDocuments('Item', [
         { _id: item.id, 'system.equipped': equipped, 'system.carried': carried },
       ])
@@ -2012,7 +2015,7 @@ export class GurpsActor extends Actor {
     let tara = targetkey.split('.')
     tara.splice(0, 3)
     let max = Math.min(srca.length, tara.length)
-    let isSrcFirst = max == 0 ? srca.length > tara.length : false
+    let isSrcFirst = max === 0 ? srca.length > tara.length : false
     for (let i = 0; i < max; i++) {
       if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
     }
@@ -2109,19 +2112,14 @@ export class GurpsActor extends Actor {
   async _splitEquipment(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     if (srceqt.count <= 1) return false // nothing to split
-    let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: srceqt })
-    let count = 0
-    let callback = async (/** @type {JQuery<HTMLElement>} */ html) =>
-      (count = parseInt(html.find('#qty').val()?.toString() || '0'))
-    await Dialog.prompt({
-      title: 'Split stack',
-      label: game.i18n.localize('GURPS.ok'),
-      content: content,
-      callback: callback,
-    })
+
+    const count = await this.promptEquipmentQuantity(srceqt, game.i18n.localize('GURPS.splitQuantity'))
+
     if (count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move
+
     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
+
     if (!!srceqt.globalid) {
       this.ignoreRender = true
       await this.updateEqtCount(srckey, srceqt.count - count)
