@@ -2038,55 +2038,44 @@ export class GurpsActor extends Actor {
       return
     }
     this.toggleExpand(targetkey, true)
-    let d = new Dialog({
-      title: object.name,
-      content: '<p>Where do you want to place this?</p>',
-      buttons: {
-        one: {
-          icon: '<i class="fas fa-level-up-alt"></i>',
-          label: 'Before',
-          callback: async () => {
-            this.ignoreRender = true
-            if (!isSrcFirst) {
-              await GURPS.removeKey(this, srckey)
-              await this.updateParentOf(srckey, false)
-            }
-            await this.updateItemAdditionsBasedOn(object, targetkey)
-            await GURPS.insertBeforeKey(this, targetkey, object)
-            await this.updateParentOf(targetkey, true)
-            if (isSrcFirst) {
-              await GURPS.removeKey(this, srckey)
-              await this.updateParentOf(srckey, false)
-            }
-            this._forceRender()
-          },
-        },
-        two: {
-          icon: '<i class="fas fa-sign-in-alt"></i>',
-          label: 'In',
-          callback: async () => {
-            this.ignoreRender = true
-            if (!isSrcFirst) {
-              await GURPS.removeKey(this, srckey)
-              await this.updateParentOf(srckey, false)
-            }
-            let k = targetkey + '.contains.' + zeroFill(0)
-            // let targ = foundry.utils.getProperty(this, targetkey)
 
-            await this.updateItemAdditionsBasedOn(object, targetkey)
-            await GURPS.insertBeforeKey(this, k, object)
-            await this.updateParentOf(k, true)
-            if (isSrcFirst) {
-              await GURPS.removeKey(this, srckey)
-              await this.updateParentOf(srckey, false)
-            }
-            this._forceRender()
-          },
+    const where = await foundry.applications.api.DialogV2.wait({
+      window: { title: object.name },
+      content: `<p>${game.i18n.localize('GURPS.dropPlacement')}</p>`,
+      buttons: [
+        {
+          action: 'before',
+          icon: 'fa-solid fa-turn-left-down',
+          label: 'GURPS.dropBefore',
+          default: true,
         },
-      },
-      default: 'one',
+        {
+          action: 'inside',
+          icon: 'fa-solid fa-arrow-down-to-bracket',
+          label: 'GURPS.dropInside',
+        },
+      ],
     })
-    d.render(true)
+
+    if (!where) return
+
+    this.ignoreRender = true
+    if (!isSrcFirst) {
+      await GURPS.removeKey(this, srckey)
+      await this.updateParentOf(srckey, false)
+    }
+
+    await this.updateItemAdditionsBasedOn(object, targetkey)
+
+    const k = where === 'before' ? targetkey : targetkey + '.contains.' + zeroFill(0)
+    await GURPS.insertBeforeKey(this, k, object)
+    await this.updateParentOf(k, true)
+
+    if (isSrcFirst) {
+      await GURPS.removeKey(this, srckey)
+      await this.updateParentOf(srckey, false)
+    }
+    this._forceRender()
   }
 
   /**

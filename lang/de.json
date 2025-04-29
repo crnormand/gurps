@@ -416,6 +416,7 @@
     "dropInside": "IM Ziel",
     "droppedItem": "Gezogener Gegenstand",
     "droppingItemNotification": "{actorName} erhält {itemName}",
+    "dropPlacement": "Wo möchten Sie den Gegenstand platzieren?",
     "dropResolve": "Wohin soll der Gegenstand bewegt werden?",
     "drSplitEditorTitle": "Geteilte SR ({where})",
     "during": "Während",

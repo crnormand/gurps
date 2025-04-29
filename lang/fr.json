@@ -416,6 +416,7 @@
     "dropInside": "Après la cible",
     "droppedItem": "Objet Déposé",
     "droppingItemNotification": "{actorName} reçoit {itemName}",
+    "dropPlacement": "Où voulez-vous placer l'objet ?",
     "dropResolve": "Ou voulez-vous lâcher cet objet?",
     "drSplitEditorTitle": "Diviser RD ({where})",
     "during": "Pendant",

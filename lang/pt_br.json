@@ -416,6 +416,7 @@
     "dropInside": "Dentro do alvo",
     "droppedItem": "Item Obtido",
     "droppingItemNotification": "{actorName} obteve {itemName}",
+    "dropPlacement": "Onde você quer colocar o item?",
     "dropResolve": "Onde você quer soltar este objeto?",
     "drSplitEditorTitle": "Dividir RD ({where})",
     "during": "Durante",

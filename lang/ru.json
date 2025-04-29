@@ -416,6 +416,7 @@
     "dropInside": "Внутри цели",
     "droppedItem": "Перетащенный предмет",
     "droppingItemNotification": "{actorName} получил {itemName}",
+    "dropPlacement": "Куда вы хотите поместить этот объект?",
     "dropResolve": "Куда вы хотите поместить этот объект?",
     "drSplitEditorTitle": "Разделение СП ({where})",
     "during": "Во время",
