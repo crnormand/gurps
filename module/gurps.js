@@ -16,7 +16,6 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
-import RegisterChatProcessors from './chat/chat-processors.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -30,6 +29,7 @@ import {
 import { GurpsActor } from './actor/actor.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
 import { AddImportEquipmentButton } from './item-import.js'

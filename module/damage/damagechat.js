@@ -84,12 +84,6 @@ export default class DamageChat {
           break
         }
         await token[0].actor.handleEquipmentDrop(dropData)
-        const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
-        if (token.length !== 1) {
-          ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForEquipmentWarning'))
-          break
-        }
-        await token[0].actor.handleEquipmentDrop(dropData)
         break
     }
     return false
