@@ -1,4 +1,4 @@
-export default class GurpsActiveEffectConfig extends ActiveEffectConfig {
+export default class GurpsActiveEffectConfig extends foundry.applications.sheets.ActiveEffectConfig {
   constructor(object = {}) {
     super(object)
   }

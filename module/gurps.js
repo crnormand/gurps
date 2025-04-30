@@ -1931,8 +1931,14 @@ if (!globalThis.GURPS) {
     CONFIG.Canvas.rulerClass = RulerGURPS
 
     // add custom ActiveEffectConfig sheet class
-    DocumentSheetConfig.unregisterSheet(ActiveEffect, 'core', ActiveEffectConfig)
-    DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, { makeDefault: true })
+    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
+      ActiveEffect,
+      'core',
+      foundry.applications.sheets.ActiveEffectConfig
+    )
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
+      makeDefault: true,
+    })
 
     // preload drag-and-drop image
     {
@@ -1949,56 +1955,51 @@ if (!globalThis.GURPS) {
     }
 
     // Register sheet application classes
-    Actors.unregisterSheet('core', ActorSheet)
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
       label: 'Combat',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
       label: 'Editor',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
       label: 'Simple',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
       label: 'NPC/mini',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsInventorySheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
       label: 'Inventory Only',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorTabSheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
       label: 'Tabbed Sheet',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
       label: 'Reduced Mode',
       makeDefault: false,
     })
-    // @ts-ignore
-    Actors.registerSheet('gurps', GurpsActorSheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
       // Add this sheet last
       label: 'Full (GCS)',
       makeDefault: true,
     })
 
-    Items.unregisterSheet('core', ItemSheet)
-    // @ts-ignore
-    Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
+    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
-    DocumentSheetConfig.unregisterSheet(JournalEntryPage, 'core', JournalPDFPageSheet)
+    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
+      JournalEntryPage,
+      'core',
+      foundry.applications.sheets.journal.JournalEntryPagePDFSheet
+    )
 
-    DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
       types: ['pdf'],
       makeDefault: true,
       label: 'GURPS PDF Editor Sheet',
@@ -2456,7 +2457,7 @@ if (!globalThis.GURPS) {
 
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
-    loadTemplates([
+    foundry.applications.handlebars.loadTemplates([
       __dirname + '/apply-damage/effect-blunttrauma.hbs',
       __dirname + '/apply-damage/effect-crippling.hbs',
       __dirname + '/apply-damage/effect-headvitalshit.hbs',
