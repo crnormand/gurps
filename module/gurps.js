@@ -1913,8 +1913,8 @@ if (!globalThis.GURPS) {
     GGADebugger.init()
 
     // Modifier Bucket must be defined after hit locations
-    GURPS.ModifierBucket = new ModifierBucket()
-    GURPS.ModifierBucket.render(true)
+    // GURPS.ModifierBucket = new ModifierBucket()
+    // GURPS.ModifierBucket.render(true)
 
     GURPS.initiative = new Initiative()
     GURPS.hitpoints = new HitFatPoints()
@@ -2554,6 +2554,11 @@ if (!globalThis.GURPS) {
     Hooks.call('gurpsready')
   })
 }
+
+Hooks.once('renderHotbar', (_application, element, _applicationOptions, _renderContext) => {
+  GURPS.ModifierBucket = new ModifierBucket()
+  GURPS.ModifierBucket.render(true)
+})
 
 const handleCombatTurn = async (combat, round) => {
   const nextCombatant = combat.nextCombatant

@@ -588,28 +588,28 @@ export class ModifierBucket extends foundry.appv1.api.Application {
   }
 
   /**
-   * @param {JQuery<HTMLElement>} html
+   * @param {JQuery<HTMLElement>} $html
    */
-  activateListeners(html) {
-    super.activateListeners(html)
+  activateListeners($html) {
+    super.activateListeners($html)
 
-    html.find('#oned6dice').addClass('invisible')
-    html.find('#threed6dice').removeClass('invisible')
+    const html = $html[0]
 
-    html.find('#trash').on('click', this._onClickTrash.bind(this))
-    html.find('#magnet').on('click', this._onClickMagnet.bind(this))
+    html.querySelector('#oned6dice').classList.add('invisible')
+    html.querySelector('#threed6dice').classList.remove('invisible')
 
-    let e = html.find('#globalmodifier')
-    e.on('click', this._onClick.bind(this))
-    e.on('contextmenu', this.onRightClick.bind(this))
-    e.each((_, li) => {
+    html.querySelector('#trash')?.addEventListener('click', event => this._onClickTrash(event))
+    html.querySelector('#magnet')?.addEventListener('click', event => this._onClickMagnet(event))
+
+    const globalModifier = html.querySelector('#globalmodifier')
+    globalModifier?.addEventListener('click', event => this._onClick(event))
+    globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
+    Array.from(globalModifier.children).forEach(li => {
       li.addEventListener('dragstart', ev => {
         let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-        //.join(' & ')
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
-            //displayname: 'Modifier Bucket',
             type: 'modifierbucket',
             bucket: bucket,
           })
@@ -617,13 +617,14 @@ export class ModifierBucket extends foundry.appv1.api.Application {
       })
     })
 
-    if (this.isTooltip) e.on('mouseenter', ev => this._onenter(ev))
+    if (this.isTooltip) globalModifier.addEventListener('mouseenter', event => this._onenter(event))
 
-    let modifierbucket = html.find('#modifierbucket')
-    modifierbucket.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
-      event.preventDefault()
+    const modifierBucket = html.querySelector('#modifierbucket')
+
+    modifierBucket?.addEventListener('drop', event => {
       event.stopPropagation()
-      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain') || '')
+      event.preventDefault()
+      let dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
       if (!!dragData && !!dragData.otf) {
         let link = parselink(dragData.otf)
         if (link.action) {
@@ -634,37 +635,38 @@ export class ModifierBucket extends foundry.appv1.api.Application {
       }
     })
 
-    modifierbucket.on(
+    modifierBucket?.addEventListener(
       'wheel',
-      (/** @type {JQuery.TriggeredEvent} */ event) => {
+      event => {
         event.preventDefault()
-        let originalEvent = event.originalEvent
-        if (originalEvent instanceof WheelEvent) {
-          let s = Math.round(originalEvent.deltaY / -100)
-          this.addModifier(s, '')
-        }
+        const s = Math.round(event.deltaY / -100)
+        this.addModifier(s, '')
       },
       { passive: false }
     )
 
-    html.find('#threed6').click(this._on3dClick.bind(this))
-    html.find('#threed6').contextmenu(this._on3dRightClick.bind(this))
-    html.find('#threed6').on('drop', function (event) {
+    const threed6dice = html.querySelector('#threed6dice')
+
+    threed6dice?.addEventListener('click', event => this._on3dClick(event))
+    threed6dice?.addEventListener('contextmenu', event => this._on3dRightClick(event))
+    threed6dice?.addEventListener('drop', event => {
       event.preventDefault()
       event.stopPropagation()
-      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
-      if (!!dragData && !!dragData.actor && !!dragData.otf) {
+      const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+      if (!!dragData && !!dragData.otf) {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
-        GURPS.performAction(action.action, game.actors.get(dragData.actor), {
-          shiftKey: game.user.isGM,
+        GURPS.performAction(action.action, game.actors?.get(dragData.actor), {
+          shiftKey: game.user?.isGM,
           ctrlKey: false,
           data: {},
         })
       }
     })
 
-    html.find('.accumulator-control').on('click', this._onAccumulatorClick.bind(this, html))
+    html
+      .querySelector('.accumulator-control')
+      ?.addEventListener('click', event => this._onAccumulatorClick(html, event))
   }
 
   _onAccumulatorClick(hmtl, event) {
@@ -832,10 +834,18 @@ export class ModifierBucket extends foundry.appv1.api.Application {
 
      * @override
      */
-  _injectHTML(html) {
-    if ($('body').find('#bucket-app').length === 0) {
-      html.insertAfter($('body').find('#hotbar'))
-      this._element = html
-    } else console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
+  _injectHTML($html) {
+    const bucketExists = !!ui.hotbar.element.querySelector('#modifierbucket')
+    if (!bucketExists) {
+      ui.hotbar.element.prepend($html[0])
+    } else {
+      console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
+    }
+    this._element = $html
+    //
+    // if ($('body').find('#bucket-app').length === 0) {
+    //   html.insertAfter($('body').find('#hotbar'))
+    // } else console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
+    // this._element = html
   }
 }

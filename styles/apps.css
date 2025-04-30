@@ -1752,14 +1752,8 @@ details .popup.square5x4 {
 }
 
 .modifierbucket #current-actor {
-  grid-row: 1;
-  grid-column: 1 / 3;
-  width: 150px;
-  height: 20px;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  position: absolute;
+  transform: translateY(-20px);
 }
 
 .modifierbucket #current-actor > span {
