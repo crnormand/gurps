@@ -2269,8 +2269,8 @@ if (!globalThis.GURPS) {
       return false
     })
 
-    Hooks.on('renderCombatTracker', async function (_a, html, _c) {
-      // use class 'bound' to know if the drop event is already bound
+    Hooks.on('renderCombatTracker', async function (_app, element, _options, _context) {
+      const html = $(element)
       if (!html.hasClass('bound')) {
         html.addClass('bound')
         // @ts-ignore
