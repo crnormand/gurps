@@ -57,6 +57,7 @@ export class GurpsRoll extends Roll {
    * @inheritdoc
    * @param {*} data
    * @returns {*}
+   * @override
    */
   _prepareData(data) {
     const _data = super._prepareData(data)
@@ -79,7 +80,7 @@ export class GurpsRoll extends Roll {
 
 export class GurpsDie extends foundry.dice.terms.Die {
   /**
-   * @param {Die} die
+   * @param {foundry.dice.terms.Die} die
    */
   constructor(die) {
     super({
@@ -108,6 +109,9 @@ export class GurpsDie extends foundry.dice.terms.Die {
     return `${this.number}d${x}`
   }
 
+  /**
+   * @override
+   */
   roll({ minimize = false, maximize = false } = {}) {
     if (!this._loaded || !this._loaded.length) return super.roll({ minimize, maximize })
 
@@ -125,23 +129,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
   }
 
   /**
-   * @inheritdoc
-   */
-  // evaluate({ minimize = false, maximize = false, async = false } = {}) {
-  //   if (this._evaluated) {
-  //     throw new Error(`The ${this.constructor.name} has already been evaluated and is now immutable`)
-  //   }
-  //   this._evaluated = true
-
-  //   return async ? this._evaluate({ minimize, maximize }) : this._evaluateSync({ minimize, maximize })
-  // }
-
-  /**
-   * Evaluate the term.
-   * @param {object} [options={}]           Options which modify how the RollTerm is evaluated, see RollTerm#evaluate
-   * @param {boolean} [options.minimize=false]    Minimize the result, obtaining the smallest possible value.
-   * @param {boolean} [options.maximize=false]    Maximize the result, obtaining the largest possible value.
-   * @returns {Promise<RollTerm>}
+   * @override
    */
   async _evaluate({ minimize = false, maximize = false } = {}) {
     let physicalDice = game.user?.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
@@ -179,7 +167,7 @@ class ModifierStack {
     this.displaySum = '+0'
     this.plus = false
     this.minus = false
-    this.maxTotal = undefined
+    this.maxTotal = null
     this.usingRapidStrike = false
 
     // do we automatically empty the bucket when a roll is made?
@@ -350,7 +338,7 @@ class ModifierStack {
    */
   reset(otherstacklist = []) {
     this.modifierList = otherstacklist
-    this.maxTotal = undefined
+    this.maxTotal = null
     this.usingRapidStrike = false
     this.sum()
   }
@@ -397,7 +385,7 @@ class ModifierStack {
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
-export class ModifierBucket extends Application {
+export class ModifierBucket extends foundry.appv1.api.Application {
   constructor(options = {}) {
     super(options)
 
@@ -416,7 +404,6 @@ export class ModifierBucket extends Application {
 
     /** @type {string|null} */
     this._tempRangeMod = null
-
     this.modifierStack = new ModifierStack()
 
     // is the Dice section visible?
@@ -579,12 +566,8 @@ export class ModifierBucket extends Application {
     })
   }
 
-  /**
-   * @typedef {Application.RenderOptions & {stack: ModifierStack, cssClass: string, currentActor: string}} ModifierBucket.Data
-   * @param {Application.RenderOptions | undefined} [options]
-   */
   getData(options) {
-    const data = /** @type {ModifierBucket.Data} */ (/** @type {unknown} */ (super.getData(options)))
+    const data = super.getData(options)
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
     const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
@@ -651,14 +634,18 @@ export class ModifierBucket extends Application {
       }
     })
 
-    modifierbucket.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
-      event.preventDefault()
-      let originalEvent = event.originalEvent
-      if (originalEvent instanceof WheelEvent) {
-        let s = Math.round(originalEvent.deltaY / -100)
-        this.addModifier(s, '')
-      }
-    })
+    modifierbucket.on(
+      'wheel',
+      (/** @type {JQuery.TriggeredEvent} */ event) => {
+        event.preventDefault()
+        let originalEvent = event.originalEvent
+        if (originalEvent instanceof WheelEvent) {
+          let s = Math.round(originalEvent.deltaY / -100)
+          this.addModifier(s, '')
+        }
+      },
+      { passive: false }
+    )
 
     html.find('#threed6').click(this._on3dClick.bind(this))
     html.find('#threed6').contextmenu(this._on3dRightClick.bind(this))
@@ -841,7 +828,10 @@ export class ModifierBucket extends Application {
     }
     return content
   }
+  /**
 
+     * @override
+     */
   _injectHTML(html) {
     if ($('body').find('#bucket-app').length === 0) {
       html.insertAfter($('body').find('#hotbar'))
