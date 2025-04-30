@@ -842,10 +842,5 @@ export class ModifierBucket extends foundry.appv1.api.Application {
       console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
     }
     this._element = $html
-    //
-    // if ($('body').find('#bucket-app').length === 0) {
-    //   html.insertAfter($('body').find('#hotbar'))
-    // } else console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
-    // this._element = html
   }
 }
