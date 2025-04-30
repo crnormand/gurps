@@ -62,21 +62,21 @@ export class EffectModifierControl {
 
   _createEffectModifierButton(controls) {
     if (this.shouldUseEffectModifierPopup()) {
-      let tokenButton = controls.find(b => b.name == 'token')
+      let tokenButton = controls.tokens
       if (tokenButton) {
         let self = this
-        tokenButton.tools.push({
+        tokenButton.tools[EffectModifierControl.EffectModName] = {
           name: EffectModifierControl.EffectModName,
           title: game.i18n.localize('GURPS.tokenToolsTitle'),
           icon: 'fas fa-list-alt',
           toggle: true,
           active: this.showPopup,
           visible: true,
-          onClick: value => {
+          onChange: value => {
             console.log(value)
             self.showPopup = value
           },
-        })
+        }
       }
     }
   }
