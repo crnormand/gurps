@@ -17,14 +17,14 @@
     },
     {
       "name": "Mikolaj Tomczynski",
-      "email": "mikolajtomczynski@gmail.com",
+      "email": "mikolaj@tomczynski.org",
       "discord": "sasiedny",
       "flags": {}
     }
   ],
   "compatibility": {
     "minimum": "13",
-    "verified": "13.340"
+    "verified": "13.341"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
