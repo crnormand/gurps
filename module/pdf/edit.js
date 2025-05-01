@@ -1,4 +1,4 @@
-export class PDFEditorSheet extends JournalPDFPageSheet {
+export class PDFEditorSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
   constructor(object, options = { pageNumber: 1 }) {
     super(object, options)
   }

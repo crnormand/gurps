@@ -1,5 +1,5 @@
 // Context Menu
-export default class GgaContextMenu extends ContextMenu {
+export default class GgaContextMenu extends foundry.applications.ux.ContextMenu {
   constructor(container, element, selector, title, menuItems, events = { eventName: 'contextmenu' }) {
     super(element, selector, menuItems, events)
 

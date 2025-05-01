@@ -4,7 +4,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 import { recurselist } from '../lib/utilities.js'
 import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
 
-export class GurpsItemSheet extends ItemSheet {
+export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
