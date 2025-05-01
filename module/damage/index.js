@@ -1,11 +1,13 @@
 import ApplyDamageDialog from './applydamage.js'
 import { DamageTable } from './damage-tables.js'
 import DamageChat from './damagechat.js'
+import DamageChatV2 from './damage-chat.js'
 import { resolveDamageRollAction } from './resolve-damage-roll-action.js'
 
 export function init() {
   // console.log('Damage module initialized.')
-  Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
+  // Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
+  Hooks.on('renderChatMessageHTML', DamageChatV2._renderDamageChat)
   Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
   Hooks.on('gurpsinit', () => {
     console.log('Damage module initialized.')
