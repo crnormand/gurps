@@ -835,9 +835,12 @@ export class ModifierBucket extends foundry.appv1.api.Application {
      * @override
      */
   _injectHTML($html) {
+    const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
     const bucketExists = !!ui.hotbar.element.querySelector('#modifierbucket')
     if (!bucketExists) {
-      ui.hotbar.element.prepend($html[0])
+      if (position === 'left') ui.hotbar.element.prepend($html[0])
+      else ui.hotbar.element.append($html[0])
     } else {
       console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
     }
