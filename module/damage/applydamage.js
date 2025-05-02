@@ -792,7 +792,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = ChatMessage.getSpeaker(game.user)
-      if (!!attackingActor) speaker = ChatMessage.getSpeaker(attackingActor)
+      if (!!attackingActor) speaker = ChatMessage.getSpeaker({ actor: attackingActor })
       let messageData = {
         user: game.user.id,
         speaker: speaker,
