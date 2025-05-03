@@ -84,6 +84,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import { RulerGURPSv2 } from './canvas/interaction/ruler.js'
 
 export let GURPS = undefined
 
@@ -1928,7 +1929,8 @@ if (!globalThis.GURPS) {
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
-    CONFIG.Canvas.rulerClass = RulerGURPS
+    // CONFIG.Canvas.rulerClass = RulerGURPS
+    CONFIG.Canvas.rulerClass = RulerGURPSv2
 
     // add custom ActiveEffectConfig sheet class
     foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
