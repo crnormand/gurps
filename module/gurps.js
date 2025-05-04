@@ -2408,55 +2408,29 @@ if (!globalThis.GURPS) {
     //   }).render(true)
 
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-    // Test for migration
-    let mv = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
-    // let quiet = false
-    if (!mv) {
-      mv = '0.0.1'
-      // quiet = true
-    }
+    let previousVersionString = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
-    console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + mv)
-    const migrationVersion = SemanticVersion.fromString(mv)
+    console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
+    const migrationVersion = SemanticVersion.fromString(previousVersionString)
 
-    new Migration().runMigrations()
+    // Run any needed migrations.
+    Migration.run()
 
-    if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
-      // check which migrations are needed
-      // if (migrationVersion.isLowerThan(Settings.VERSION_096)) await Migration.migrateTo096(quiet)
-      await Migration.showConfirmationDialogIfAutoAddIsTrue()
-      game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
-    }
+    // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
+    // migration version to the current version even if it is lower than the current version.
+    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
 
     // Show changelog
     const v = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
     const changelogVersion = SemanticVersion.fromString(v)
 
-    // @ts-ignore
     if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
-      // @ts-ignore
-      if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
-        // If it isn't already in the chat log somewhere
-        ChatMessage.create({
-          content: `
-<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
-<hr>
-<div style='font-size:70%'>
-  <div>${game.i18n.localize('GURPS.copyright')}</div>
-  <hr/>
-  <div style='text-align: center;'>
-    <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
-    <div><a href="https://github.com/sponsors/crnormand?o=esb"><img height="24" src="systems/gurps/icons/sponsor.png"> Github Sponsor</a></div><br>
-    <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
-  </div>
-</div>`,
-          // @ts-ignore
-          whisper: [game.user],
-        })
+      // If it isn't already in the chat log somewhere
+      if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0) showGURPSCopyright()
+
       if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
         const app = new ChangeLogWindow(changelogVersion)
         app.render(true)
-        // @ts-ignore
       }
       GURPS.executeOTF('/help')
     }
@@ -2842,4 +2816,23 @@ const resetTokenActionsForCombatant = async combatant => {
   const token = canvas.tokens.get(combatant.token.id)
   const actions = await TokenActions.fromToken(token)
   await actions.clear()
+}
+
+const showGURPSCopyright = function () {
+  ChatMessage.create({
+    content: `
+<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
+<hr>
+<div style='font-size:70%'>
+  <div>${game.i18n.localize('GURPS.copyright')}</div>
+  <hr/>
+  <div style='text-align: center;'>
+    <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
+    <div><a href="https://github.com/sponsors/crnormand?o=esb"><img height="24" src="systems/gurps/icons/sponsor.png"> Github Sponsor</a></div><br>
+    <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
+  </div>
+</div>`,
+    // @ts-ignore
+    whisper: [game.user],
+  })
 }

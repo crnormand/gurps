@@ -22,7 +22,6 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    // let transfer = JSON.parse(app.flags.transfer)
     let transfer = app.flags.gurps.transfer
 
     // for each damage-message, set the drag-and-drop events and data
@@ -38,7 +37,6 @@ export default class DamageChat {
     // for the damage-all-message, set the drag-and-drop events and data
     let allDamageMessage = html.find('.damage-all-message')
     if (!!allDamageMessage && allDamageMessage.length == 1) {
-      // let transfer = JSON.parse(app.flags.transfer)
       let message = allDamageMessage[0]
 
       makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, GURPS.damageDragImage, [30, 30])
