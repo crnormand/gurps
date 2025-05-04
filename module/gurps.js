@@ -51,7 +51,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
 import { GURPSRange, setupRanges } from '../lib/ranges.js'
-import { RulerGURPS } from './canvas/interaction/ruler.js'
+import { RulerGURPS } from './canvas/index.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
