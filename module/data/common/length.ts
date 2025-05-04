@@ -76,6 +76,8 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     [Length.Unit.Feet]: 12,
     [Length.Unit.Yard]: 36,
     [Length.Unit.Mile]: Length.INCHES_PER_MILE,
+    // In GURPS simplified lengths, 1 millimeter is defined as 0.36 inches (36/100),
+    // which is a non-standard abstraction used for gameplay purposes.
     [Length.Unit.Millimeter]: 36 / 100,
     [Length.Unit.Centimeter]: 36 / 1000,
     [Length.Unit.Kilometer]: 36000,
