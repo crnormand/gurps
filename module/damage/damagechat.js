@@ -22,7 +22,8 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    let transfer = app.flags.gurps.transfer
+    app.flags.gurps.transfer = app.flags.gurps.transfer || {};
+    let transfer = app.flags.gurps.transfer;
 
     // for each damage-message, set the drag-and-drop events and data
     let damageMessages = html.find('.damage-message')
