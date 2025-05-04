@@ -81,6 +81,7 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import * as dataModels from './data/index.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
@@ -88,7 +89,9 @@ import * as Damage from './damage/index.js'
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
-  GURPS = {}
+  GURPS = {
+    dataModels,
+  }
   globalThis.GURPS = GURPS // Make GURPS global!
   GURPS.DEBUG = true
   GURPS.stopActions = false

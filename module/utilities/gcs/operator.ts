@@ -50,11 +50,13 @@ namespace Operator {
 
   /* ---------------------------------------- */
 
-  export type Function<ReturnType extends Arg = Arg> = (left: Operator.Arg, right: Operator.Arg) => ReturnType
-
+  export type Function<ReturnType extends Arg = Arg> = (
+    left: Operator.Arg,
+    right: Operator.Arg
+  ) => [ReturnType, boolean]
   /* ---------------------------------------- */
 
-  export type UnaryFunction<ReturnType extends Arg = Arg> = (arg: Operator.Arg) => ReturnType
+  export type UnaryFunction<ReturnType extends Arg = Arg> = (arg: Operator.Arg) => [ReturnType, boolean]
 
   /* ---------------------------------------- */
 
