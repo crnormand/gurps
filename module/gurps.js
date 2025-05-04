@@ -2407,7 +2407,6 @@ if (!globalThis.GURPS) {
     //     classes: [],
     //   }).render(true)
 
-    // @ts-ignore
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
     // Test for migration
     let mv = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
@@ -2416,13 +2415,14 @@ if (!globalThis.GURPS) {
       mv = '0.0.1'
       // quiet = true
     }
-    // @ts-ignore
+
     console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + mv)
     const migrationVersion = SemanticVersion.fromString(mv)
-    // @ts-ignore
+
+    new Migration().runMigrations()
+
     if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
       // check which migrations are needed
-      // @ts-ignore
       // if (migrationVersion.isLowerThan(Settings.VERSION_096)) await Migration.migrateTo096(quiet)
       await Migration.showConfirmationDialogIfAutoAddIsTrue()
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)

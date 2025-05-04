@@ -2,14 +2,14 @@
 
 ## Release 0.17.20
 
-### Features
-
 ### Bugfixes
 
 - It creates body parts that doesn't exist in character sheet #2201
 - Refactor token selection logic in DamageChat to ensure compatibility with GURPS Token Shapes and Movement.
 - Fixed hit location table recognition for GCS imports.
 - "Editor" link no longer opens editor sheet #2198
+- ADD not remembering who rolled damage. #2195
+- ChatMessage flags are being created incorrectly #2240. This is a fix for the upcoming FoundryVTT v13 release -- it is recommended everyone who intends to adopt FoundryVTT v13 upgrade to this patch release as it migrates data needed by v13.
 
 ## Release 0.17.19 04/13/2025
 
