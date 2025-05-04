@@ -1,5 +1,17 @@
-$testblue: #007bff;
+@use 'sass:meta';
 
-.testbutton {
-  background-color: $testblue;
+@mixin styles {
+  body.theme-light {
+    --color-modifier-negative: #ff0000;
+    --color-modifier-positive: #00ff00;
+  }
+
+  body.theme-dark {
+    --color-modifier-negative: #ff7b7b;
+    --color-modifier-positive: #00ff00;
+  }
+
+  h4.message-sender {
+    color: red !important;
+  }
 }

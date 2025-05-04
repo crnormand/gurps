@@ -1,0 +1,7 @@
+@mixin styles {
+  .waypoint-label {
+    .total-modifier {
+      color: var(--color-modifier-negative);
+    }
+  }
+}

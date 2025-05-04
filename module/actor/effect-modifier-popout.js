@@ -1,6 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { RulerGURPS } from '../../lib/ranges.js'
+import { RulerGURPS } from '../canvas/interaction/ruler.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'

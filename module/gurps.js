@@ -50,7 +50,8 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
-import { GURPSRange, RulerGURPS, setupRanges } from '../lib/ranges.js'
+import { GURPSRange, setupRanges } from '../lib/ranges.js'
+import { RulerGURPS } from './canvas/interaction/ruler.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
@@ -84,7 +85,6 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
-import { RulerGURPSv2 } from './canvas/interaction/ruler.js'
 
 export let GURPS = undefined
 
@@ -1929,8 +1929,7 @@ if (!globalThis.GURPS) {
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
-    // CONFIG.Canvas.rulerClass = RulerGURPS
-    CONFIG.Canvas.rulerClass = RulerGURPSv2
+    CONFIG.Canvas.rulerClass = RulerGURPS
 
     // add custom ActiveEffectConfig sheet class
     foundry.applications.apps.DocumentSheetConfig.unregisterSheet(

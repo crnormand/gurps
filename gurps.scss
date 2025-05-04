@@ -8,4 +8,8 @@
 @use './styles/simplified.css';
 @use './styles/tinycolorpicker.css';
 
-@use 'styles/variables';
+@use 'styles/variables' as variables;
+@use 'styles/canvas' as canvas;
+
+@include variables.styles;
+@include canvas.styles;
