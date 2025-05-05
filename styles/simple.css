@@ -527,6 +527,7 @@
   scroll-behavior: smooth;
   background: white;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .gurps .sheet-header {

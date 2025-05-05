@@ -81,6 +81,7 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { ActorSheetGURPS } from './applications/actor/actor-sheet.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
@@ -1988,6 +1989,10 @@ if (!globalThis.GURPS) {
       // Add this sheet last
       label: 'Full (GCS)',
       makeDefault: true,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorSheetGURPS, {
+      label: 'Full (GCS) V2',
+      makeDefault: false,
     })
 
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
