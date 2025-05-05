@@ -2137,7 +2137,7 @@ if (!globalThis.GURPS) {
       // "ControlLeft", "ControlRight"
     })
 
-    GURPS.ActorSheets = { character: GurpsActorSheet }
+    GURPS.ActorSheets = { character: ActorSheetGURPS }
     GURPS.handlePdf = handlePdf
 
     Hooks.call('gurpsinit', GURPS)

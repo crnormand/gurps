@@ -25,7 +25,7 @@ import MoveModeEditor from '../../actor/move-mode-editor.js'
 import { cleanTags } from '../../actor/effect-modifier-popout.js'
 import { ActorImporter } from '../../actor/actor-importer.js'
 import SplitDREditor from '../../actor/splitdr-editor.js'
-import { HitLocation } from 'module/hitlocation/hitlocation.js'
+import { HitLocation } from '../../hitlocation/hitlocation.js'
 
 const ClickAndContextMenu = 'click contextmenu'
 
@@ -284,7 +284,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
     html.find('.rollable').on('click', event => this._onClickRoll(event))
 
     // Wire events to all OTFs on the sheet.
-    GurpsWiring.hookupAllEvents(html)
+    GurpsWiring.hookupAllEvents(this.element)
 
     // Allow OTFs on this actor sheet to be draggable.
     html.find('[data-otf]').each((_, li) => {
@@ -336,13 +336,16 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
       ev.preventDefault()
       // @ts-expect-error: awaiting types implementation
       let image = this.actor.system.fullimage ?? this.actor.img
-      const ip = new ImagePopout(image, {
-        title: this.actor.name,
-        shareable: true,
+      const ip = new foundry.applications.apps.ImagePopout({
+        src: image,
+        window: {
+          title: this.actor.name,
+        },
+        // shareable: true,
         uuid: this.actor.uuid,
       })
       // Display the image popout
-      ip.render(true)
+      ip.render({ force: true })
     })
 
     // Stop ENTER key in a Resource Tracker (HP, FP, others) from doing anything.
