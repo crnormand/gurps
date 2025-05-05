@@ -1,0 +1,10 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="{{tab.id}}">
+	{{>trackers}}
+	{{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}}
+		<div id='other' style='display: flex; flex-flow: row nowrap;'>
+			{{#if (notEmpty system.reactions)}}{{>reactions}}{{/if}}
+			{{#if (notEmpty system.conditionalmods)}}{{>conditionalmods}}{{/if}}
+		</div>
+	{{/if}}
+
+</section>

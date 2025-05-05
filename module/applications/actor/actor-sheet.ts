@@ -1,8 +1,8 @@
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
-import DocumentSheetV2 from 'node_modules/fvtt-types/src/foundry/client-esm/applications/api/document-sheet.mjs'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../../lib/utilities.js'
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin
 import ActorSheetV2 = foundry.applications.sheets.ActorSheetV2
+import DocumentSheetV2 = foundry.applications.api.DocumentSheetV2
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import * as CI from '../../injury/domain/ConditionalInjury.js'
 import GurpsWiring from '../../gurps-wiring.js'
@@ -11,10 +11,10 @@ import {
   Advantage,
   Equipment,
   Melee,
-  // Modifier,
+  Modifier,
   Note,
   Ranged,
-  // Reaction,
+  Reaction,
   Skill,
   Spell,
 } from '../../actor/actor-components.js'
@@ -25,8 +25,11 @@ import MoveModeEditor from '../../actor/move-mode-editor.js'
 import { cleanTags } from '../../actor/effect-modifier-popout.js'
 import { ActorImporter } from '../../actor/actor-importer.js'
 import SplitDREditor from '../../actor/splitdr-editor.js'
+import { HitLocation } from 'module/hitlocation/hitlocation.js'
 
 const ClickAndContextMenu = 'click contextmenu'
+
+type ActorComponent = Advantage | Equipment | Melee | Note | Ranged | Skill | Spell | HitLocation | Modifier | Reaction
 
 class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheetGURPS.RenderContext>) {
   // @ts-expect-error: awaiting types implementation
@@ -40,7 +43,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   }
 
   /* ---------------------------------------- */
-  static override DEFAULT_OPTIONS = {
+  static override DEFAULT_OPTIONS: foundry.applications.api.DocumentSheetV2.DefaultOptions = {
     tag: 'form',
     classes: ['gurps', 'sheet', 'actor'],
     position: {
@@ -63,12 +66,13 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
       fileImport: this.#onFileImport,
       openEditor: this.#onOpenEditor,
     },
+    // @ts-expect-error: awaiting types implementation
     dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
   }
 
   /* ---------------------------------------- */
 
-  static override PARTS = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     main: {
       id: 'sheet',
       template: 'systems/gurps/templates/actor/actor-sheet-gcs.hbs',
@@ -945,11 +949,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
 
   /* ---------------------------------------- */
 
-  _createEquipmentItemMenus(html: HTMLElement) {
-    // TODO: come back to
-    // let includeCollapsed = this instanceof ActorEditorSheetGURPS
-    let includeCollapsed = false
-
+  _createEquipmentItemMenus(html: HTMLElement, includeCollapsed = false) {
     let opts = [
       this._createMenu(
         game.i18n?.localize('GURPS.edit') ?? '',
@@ -1147,12 +1147,12 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
 
   /* ---------------------------------------- */
 
-  addItemMenu(name: string, obj: Equipment, path: string) {
+  addItemMenu(name: string, obj: ActorComponent, path: string) {
     return {
       name: game.i18n?.format('GURPS.editorAddItem', { name: name }) ?? '',
       icon: '<i class="fas fa-plus"></i>',
       callback: async (_e: HTMLElement) => {
-        if (path.includes('system.equipment')) {
+        if (path.includes('system.equipment') && obj instanceof Equipment) {
           if (!!game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
             obj.save = true
             let payload = obj.toItemData(this.actor, '')
@@ -2013,7 +2013,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
     const altsheet = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET) ?? ''
 
-    const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
+    const isFull = sheet === undefined || sheet === 'GURPS.ActorSheetGURPS'
 
     let b = [
       {
@@ -2105,19 +2105,20 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   static async #onToggleSheet(this: ActorSheetGURPS, event: PointerEvent) {
     event.preventDefault()
     const altsheet = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET) ?? ''
+    console.log(altsheet)
     let newSheet = CONFIG.Actor.sheetClasses['character'][altsheet].id
 
     const original =
       this.actor.getFlag('core', 'sheetClass') ||
       Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.default)[0].id
 
-    if (original != 'gurps.GurpsActorSheet') newSheet = 'gurps.GurpsActorSheet'
+    if (original != 'gurps.ActorSheetGURPS') newSheet = 'gurps.ActorSheetGURPS'
     if (event.shiftKey)
       // Hold down the shift key for Simplified
-      newSheet = 'gurps.GurpsActorSimplifiedSheet'
+      newSheet = 'gurps.ActorSimplifiedSheetGURPS'
     if (game.keyboard?.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
       // Hold down the Ctrl key (Command on Mac) for Simplified
-      newSheet = 'gurps.GurpsActorNpcSheet'
+      newSheet = 'gurps.NPCSheetGURPS'
 
     this.actor.openSheet(newSheet)
   }
@@ -2267,8 +2268,8 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: async (e: JQuery<HTMLElement>) => {
-          let key = e[0].dataset.key
+        callback: async (e: HTMLElement) => {
+          let key = e.dataset.key
           if (!key) return
           if (!!game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
             // We need to remove linked item

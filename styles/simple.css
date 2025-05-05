@@ -255,8 +255,8 @@
 }
 
 .rollable {
-  color: black;
-  background-color: #ffffbe !important;
+  color: var(--gurps-color-rollable-text);
+  background: var(--gurps-color-rollable-background);
   min-width: max-content;
 }
 
@@ -303,7 +303,7 @@
 
 .gmod {
   color: black;
-  background-color: rgb(255, 230, 190) !important;
+  background-color: var(--gurps-color-mod-background) !important;
 }
 
 .gmod:active {
@@ -527,7 +527,7 @@
   scroll-behavior: smooth;
   background: white;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 .gurps .sheet-header {
@@ -585,7 +585,7 @@
 }
 
 .gurps .tabs {
-  height: 40px;
+  height: fit-content;
   border-top: 1px solid #aaa;
   border-bottom: 1px solid #aaa;
 }
@@ -649,7 +649,7 @@
   flex: 0 0 36px;
 }
 
-.header {
+.gurps .header {
   background-color: black;
   border-bottom: var(--standardborder);
   color: white;
@@ -1014,7 +1014,7 @@ body {
   justify-content: start;
 }
 
-#sheet-tab .tab[data-tab] > div,
+#sheet-tab section[data-tab] > div,
 #sheet > div {
   margin-bottom: var(--sectiongap);
 }
@@ -1657,7 +1657,7 @@ div#other {
 .equipmentlist .ref:nth-child(20n + 20),
 #notes .notedraggable:nth-child(4n + 3),
 #notes .ref:nth-child(4n + 4) {
-  background-color: #e8ffe8;
+  background-color: var(--gurps-color-banding-background);
 }
 
 .liftdesc {
@@ -1831,7 +1831,7 @@ div#other {
 }
 
 /* ----- tabbed sheet additions ----- */
-.sheet-body.tabbed-sheet #combat-tab {
+.tabbed-sheet #combat-tab {
   display: grid;
   grid-gap: var(--sectiongap);
   grid-template-columns: 1fr 0fr;
@@ -1843,7 +1843,7 @@ div#other {
     'ranged            combat-sidebar';
 }
 
-.sheet-body.tabbed-sheet #combat-sidebar {
+.tabbed-sheet #combat-sidebar {
   grid-area: combat-sidebar;
   display: inline-grid;
   grid-template-areas:

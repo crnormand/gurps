@@ -92,7 +92,7 @@
               data-key='system.melee.{{@key}}'
               data-otf='{{quotedAttackName "M" this}}'
             >{{level}}</div>
-            <div class='parry flex-center' style='background-color: #ffffbe; width: 100%;'>
+            <div class='parry flex-center' style='width: 100%;'>
               {{#if (isNum parry)}}
                 <span class='flex-center rollable' data-otf='{{quotedAttackName "P" this}}'>{{parry}}</span>
                 {{#if (isNum ../system.defenses.parry.bonus)}}
@@ -104,7 +104,7 @@
                 {{/if}}
               {{/if}}
             </div>
-            <div class='block flex-center' style='background-color: #ffffbe'>
+            <div class='block flex-center'>
               {{#if (isNum block)}}
                 <span class='flex-center rollable' data-otf='{{quotedAttackName "B" this}}'>{{block}}</span>
                 {{#if (isNum ../system.defenses.block.bonus)}}

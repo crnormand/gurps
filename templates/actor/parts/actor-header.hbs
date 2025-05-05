@@ -1,0 +1,45 @@
+<div class='gurpsactorsheet'>
+	<div id='stats-tab'>
+		{{>portrait}}
+		<div id='attributes-tab'>
+			{{>basic-attributes}}
+			{{>secondary-attributes}}
+		</div>
+		<div id='hp-fp-tab'>
+			{{#if useCI}}
+				{{>conditional-injury}}
+			{{else}}
+				{{>hpfp-tracker
+					name='HP'
+					resource=system.HP
+					label='GURPS.attributesHPNAME'
+					editable=false
+					condition='reeling'
+					testcondition=system.conditions.reeling
+				}}
+			{{/if}}
+			{{>hpfp-tracker
+				name='FP'
+				resource=system.FP
+				label='GURPS.attributesFPNAME'
+				editable=false
+				condition='exhausted'
+				testcondition=system.conditions.exhausted
+			}}
+		</div>
+		{{>encumbrance}}
+		{{>combat-info}}
+		{{>quicknote}}
+	</div>
+
+	<nav class="tabs gurps-sheet-tabs" data-group="primary">
+		<li class='label'>{{localize 'GURPS.tabSheet.tabs'}}</li>
+		{{#each tabs as |tab|}}
+		<li>
+			<a class="tab-item {{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+				<div><i class="{{tab.icon}}"></i></div>
+			</a>
+		</li>
+		{{/each}}
+	</nav>
+</div>
