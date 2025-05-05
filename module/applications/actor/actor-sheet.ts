@@ -284,7 +284,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
     html.find('.rollable').on('click', event => this._onClickRoll(event))
 
     // Wire events to all OTFs on the sheet.
-    GurpsWiring.hookupAllEvents(this.element)
+    GurpsWiring.hookupAllEvents(html)
 
     // Allow OTFs on this actor sheet to be draggable.
     html.find('[data-otf]').each((_, li) => {
