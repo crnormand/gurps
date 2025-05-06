@@ -69,7 +69,7 @@ class ActorEditorSheetGURPS extends ActorSheetGURPS {
     html.find('#showflightmove').on('click', this._onClickShowFlightMove.bind(this))
     html.find('label[for="showflightmove"]').on('click', this._onClickShowFlightMove.bind(this))
 
-    html.find('#showflightmove').on('cick', ev => {
+    html.find('#showflightmove').on('click', ev => {
       ev.preventDefault()
       let element = ev.currentTarget as HTMLInputElement
       let show = element.checked
