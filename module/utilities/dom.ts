@@ -28,9 +28,9 @@ function children(element: Element | null, selector?: string): HTMLElement[] {
   const children = Array.from(element.children)
   if (!selector) return children as HTMLElement[]
   else {
-    return children.filter(child => {
-      child instanceof HTMLElement && child.matches(selector)
-    }) as HTMLElement[]
+    return children.filter(child => 
+      child instanceof HTMLElement && child.matches(selector
+    )) as HTMLElement[]
   }
 }
 
