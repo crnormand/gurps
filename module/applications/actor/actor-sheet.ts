@@ -404,7 +404,6 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
     const formatCIEmpty = (val: number | null) => (val === null ? '' : val)
 
     const updateActorWithChangedSeverity = (changedSeverity: number | null) => {
-      console.log('updateActorWithChangedSeverity')
       this.actor.internalUpdate({
         'system.conditionalinjury.injury.severity': formatCIEmpty(changedSeverity),
         'system.conditionalinjury.injury.daystoheal': formatCIEmpty(CI.daysToHealForSeverity(changedSeverity)),
@@ -424,7 +423,6 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
     })
 
     const updateActorWithChangedDaysToHeal = (changedDaysToHeal: number | null) => {
-      console.log('updateActorWithChangedDaysToHeal')
       this.actor.internalUpdate({
         'system.conditionalinjury.injury.severity': formatCIEmpty(CI.severityForDaysToHeal(changedDaysToHeal)),
         'system.conditionalinjury.injury.daystoheal': formatCIEmpty(changedDaysToHeal),
@@ -454,14 +452,12 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
 
     html.find('input[data-operation="ci-severity-set"]').on('change', ev => {
       ev.preventDefault()
-      console.log('change severity', (ev.target as HTMLInputElement).value)
       updateActorWithChangedSeverity(CI.setSeverity((ev.target as HTMLInputElement).value))
     })
 
     // TODO after this event resolves, the severity field briefly flashes with the correct value but then reverts to what was there before the change
     html.find('input[data-operation="ci-days-set"]').on('change', ev => {
       ev.preventDefault()
-      console.log('change days', (ev.target as HTMLInputElement).value)
       updateActorWithChangedDaysToHeal(CI.setDaysToHeal((ev.target as HTMLInputElement).value))
     })
 
@@ -936,7 +932,6 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
         this._isRemovable.bind(this)
       ),
     ]
-    console.log('opts', opts)
     new ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu', jQuery: false })
     new ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu', jQuery: false })
     new ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu', jQuery: false })
@@ -2100,7 +2095,6 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   static async #onToggleSheet(this: ActorSheetGURPS, event: PointerEvent) {
     event.preventDefault()
     const altsheet = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET) ?? ''
-    console.log(altsheet)
     let newSheet = CONFIG.Actor.sheetClasses['character'][altsheet].id
 
     const original =
