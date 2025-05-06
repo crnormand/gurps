@@ -3,6 +3,7 @@ import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin
 import ActorSheetV2 = foundry.applications.sheets.ActorSheetV2
 import DocumentSheetV2 = foundry.applications.api.DocumentSheetV2
+import ContextMenu = foundry.applications.ux.ContextMenu
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import * as CI from '../../injury/domain/ConditionalInjury.js'
 import GurpsWiring from '../../gurps-wiring.js'
@@ -236,16 +237,6 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
 
     return frame
   }
-
-  // _getHeaderButtons() {
-  //   let buttons = super._getHeaderButtons()
-  //
-  //   // Token Configuration
-  //   if (this.options.editable && isConfigurationAllowed(this.actor)) {
-  //     buttons = this.getCustomHeaderButtons().concat(buttons)
-  //   }
-  //   return buttons
-  // }
 
   /* ---------------------------------------- */
 
@@ -798,7 +789,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
 
     html.find('.addnoteicon').on('click', (event: JQuery.ClickEvent) => this._addNote(event.currentTarget))
 
-    let notesMenuItems: foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] = [
+    let notesMenuItems: ContextMenu.Entry<HTMLElement>[] = [
       {
         name: 'Edit',
         icon: "<i class='fas fa-edit'></i>",
@@ -817,7 +808,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
         },
       },
     ]
-    new foundry.applications.ux.ContextMenu(this.element, '.notesmenu', notesMenuItems, { jQuery: false })
+    new ContextMenu(this.element, '.notesmenu', notesMenuItems, { jQuery: false })
 
     html.find('[data-onethird]').on('click', ev => {
       ev.preventDefault()
@@ -942,12 +933,13 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
         game.i18n?.localize('GURPS.delete') ?? '',
         '<i class="fas fa-trash"></i>',
         this._deleteItem.bind(this),
-        () => this._isRemovable(html)
+        this._isRemovable.bind(this)
       ),
     ]
-    new foundry.applications.ux.ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu', jQuery: false })
-    new foundry.applications.ux.ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu', jQuery: false })
-    new foundry.applications.ux.ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu', jQuery: false })
+    console.log('opts', opts)
+    new ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu', jQuery: false })
+    new ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu', jQuery: false })
+    new ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu', jQuery: false })
   }
 
   /* ---------------------------------------- */
@@ -963,13 +955,13 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
         game.i18n?.localize('GURPS.sortContentsAscending') ?? '',
         '<i class="fas fa-sort-amount-down-alt"></i>',
         this._sortContentAscending.bind(this),
-        () => this._isSortable(includeCollapsed, html)
+        this._isSortable.bind(this, includeCollapsed)
       ),
       this._createMenu(
         game.i18n?.localize('GURPS.sortContentsDescending') ?? '',
         '<i class="fas fa-sort-amount-down"></i>',
         this._sortContentDescending.bind(this),
-        () => this._isSortable(includeCollapsed, html)
+        this._isSortable.bind(this, includeCollapsed)
       ),
       this._createMenu(
         game.i18n?.localize('GURPS.delete') ?? '',
@@ -983,7 +975,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
-    new foundry.applications.ux.ContextMenu(html, '.equipmenucarried', [movedown, ...opts], {
+    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], {
       eventName: 'contextmenu',
       jQuery: false,
     })
@@ -993,7 +985,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
-    new foundry.applications.ux.ContextMenu(html, '.equipmenuother', [moveup, ...opts], {
+    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], {
       eventName: 'contextmenu',
       jQuery: false,
     })
@@ -1014,8 +1006,8 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
     label: string,
     icon: string,
     callback: (target: HTMLElement) => void,
-    condition = () => true
-  ): foundry.applications.ux.ContextMenu.Entry<HTMLElement> {
+    condition: boolean | ((target: HTMLElement) => boolean) = true
+  ): ContextMenu.Entry<HTMLElement> {
     return {
       name: label,
       icon: icon,
@@ -1107,8 +1099,8 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   /* ---------------------------------------- */
 
   _isRemovable(target: HTMLElement): boolean {
-    let path = target.dataset.key
-    let ac = GURPS.decode(this.actor, path)
+    const path = target.dataset.key
+    const ac = GURPS.decode(this.actor, path)
     let item
     if (ac.itemid) {
       item = this.actor.items.get(ac.itemid)
@@ -1120,7 +1112,7 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   /* ---------------------------------------- */
 
   getMenuItems(elementid: string) {
-    const map: Record<string, foundry.applications.ux.ContextMenu.Entry<HTMLElement>[]> = {
+    const map: Record<string, ContextMenu.Entry<HTMLElement>[]> = {
       '#ranged': [this.sortAscendingMenu('system.ranged'), this.sortDescendingMenu('system.ranged')],
       '#melee': [this.sortAscendingMenu('system.melee'), this.sortDescendingMenu('system.melee')],
       '#advantages': [this.sortAscendingMenu('system.ads'), this.sortDescendingMenu('system.ads')],
@@ -1740,11 +1732,11 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   _makeHeaderMenu(
     html: HTMLElement,
     cssclass: string,
-    menuitems: foundry.applications.ux.ContextMenu.Entry<HTMLElement>[],
+    menuitems: ContextMenu.Entry<HTMLElement>[],
     eventname = 'contextmenu'
   ) {
     eventname.split(' ').forEach(function (e) {
-      new foundry.applications.ux.ContextMenu(html, cssclass, menuitems, { eventName: e, jQuery: false })
+      new ContextMenu(html, cssclass, menuitems, { eventName: e, jQuery: false })
     })
   }
 
