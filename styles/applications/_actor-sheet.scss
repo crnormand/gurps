@@ -1,0 +1,58 @@
+.theme-light {
+  // Application
+  --gurps-color-application-background: white;
+
+  // Headers
+  --gurps-color-header-background: black;
+  --gurps-color-header-border: black;
+  --gurps-color-header-text: white;
+
+  // Banding
+  --gurps-color-banding-background: #e8ffe8;
+
+  // Rollable
+  --gurps-color-rollable-background: #ffffbe;
+  --gurps-color-rollable-text: black;
+
+  // Mod
+  --gurps-color-mod-background: rgb(255, 230, 190);
+  --gurps-color-mod-text: var(--input-text-color);
+}
+.theme-dark {
+  // Application
+  --gurps-color-application-background: var(--color-cool-5-90);
+
+  // Headers
+  --gurps-color-header-background: var(--color-cool-4);
+  --gurps-color-header-border: var(--color-cool-4);
+  --gurps-color-header-text: var(--input-text-color);
+
+  // Banding
+  --gurps-color-banding-background: var(--color-cool-5-75);
+
+  // Rollable
+  --gurps-color-rollable-background: #904d20;
+  --gurps-color-rollable-text: var(--input-text-color);
+
+  // Mod
+  --gurps-color-mod-background: #2c9033;
+  --gurps-color-mod-text: var(--input-text-color);
+}
+
+form.application.sheet.gurps.actor {
+  background: var(--gurps-color-application-background);
+
+  .window-content {
+    background: transparent;
+  }
+
+  .header {
+    border-bottom: var(--standardborder);
+    border-color: var(--gurps-color-header-border);
+    background-color: var(--gurps-color-header-background);
+    color: var(--gurps-color-header-text);
+    justify-content: center;
+    text-align: center;
+    font-size: var(--font-size-11);
+  }
+}

@@ -1,0 +1,15 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="{{tab.id}}">
+	<div id='combat-tab'>
+		{{#if (notEmpty system.melee)}}
+			{{>melee}}
+		{{/if}}
+		{{>speed-range-table}}
+		{{#if (notEmpty system.ranged)}}
+			{{>ranged}}
+		{{/if}}
+		<div id='combat-sidebar'>
+			{{>combat-status}}
+			{{>locations parent=../data}}
+		</div>
+	</div>
+</div>

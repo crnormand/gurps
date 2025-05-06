@@ -81,9 +81,17 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { ActorSheetGURPS } from './applications/actor/actor-sheet.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import { ActorCombatSheetGURPS } from './applications/actor/actor-combat-sheet.js'
+import { ActorEditorSheetGURPS } from './applications/actor/actor-editor-sheet.js'
+import { ActorSimplifiedSheetGURPS } from './applications/actor/actor-simplified-sheet.js'
+import { NPCSheetGURPS } from './applications/actor/npc-sheet.js'
+import { InventorySheetGURPS } from './applications/actor/inventory-sheet.js'
+import { ActorTabbedSheetGURPS } from './applications/actor/actor-tabbed-sheet.js'
+import { ActorReducedSheetGURPS } from './applications/actor/actor-reduced-sheet.js'
 
 export let GURPS = undefined
 
@@ -1956,39 +1964,71 @@ if (!globalThis.GURPS) {
 
     // Register sheet application classes
     foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorCombatSheetGURPS, {
+      label: 'Combat V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorEditorSheetGURPS, {
+      label: 'Editor V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorSimplifiedSheetGURPS, {
+      label: 'Simple V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-      label: 'NPC/mini',
+    foundry.documents.collections.Actors.registerSheet('gurps', NPCSheetGURPS, {
+      label: 'NPC / Mini V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
+    foundry.documents.collections.Actors.registerSheet('gurps', InventorySheetGURPS, {
+      label: 'Inventory Only V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorTabbedSheetGURPS, {
+      label: 'Tabbed Sheet V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorReducedSheetGURPS, {
+      label: 'Reduced Mode V2',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
+    foundry.documents.collections.Actors.registerSheet('gurps', ActorSheetGURPS, {
+      label: 'Full (GCS) V2',
       makeDefault: true,
     })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+    //   label: 'Combat',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+    //   label: 'Editor',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+    //   label: 'Simple',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+    //   label: 'NPC/mini',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
+    //   label: 'Inventory Only',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
+    //   label: 'Tabbed Sheet',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+    //   label: 'Reduced Mode',
+    //   makeDefault: false,
+    // })
+    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
+    //   // Add this sheet last
+    //   label: 'Full (GCS)',
+    //   makeDefault: false,
+    // })
 
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
@@ -2097,7 +2137,7 @@ if (!globalThis.GURPS) {
       // "ControlLeft", "ControlRight"
     })
 
-    GURPS.ActorSheets = { character: GurpsActorSheet }
+    GURPS.ActorSheets = { character: ActorSheetGURPS }
     GURPS.handlePdf = handlePdf
 
     Hooks.call('gurpsinit', GURPS)
@@ -2491,10 +2531,14 @@ if (!globalThis.GURPS) {
     }
 
     // This system setting must be built AFTER all of the character sheets have been registered
-    let sheets = /** @type {Record<string,string>} */ ({})
-    Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
-    })
+    // let sheets = /** @type {Record<string,string>} */ ({})
+    // Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
+    //   if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
+    // })
+    const sheets = Object.values(CONFIG.Actor.sheetClasses['character']).reduce((acc, e) => {
+      if (e.id.startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.ActorSheetGURPS') acc[e.id] = e.label
+      return acc
+    }, {})
     game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: game.i18n.localize('GURPS.settingSheetDetail'),
       hint: game.i18n.localize('GURPS.settingHintSheetDetail'),

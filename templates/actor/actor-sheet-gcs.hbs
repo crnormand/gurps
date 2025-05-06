@@ -1,4 +1,3 @@
-<form class='{{cssClass}}' autocomplete='off' style='scroll-padding-top: 5px;'>
   <div id='sheet' class='gurpsactorsheet'>
     <div id='personal'>
       {{>portrait}}
@@ -80,34 +79,33 @@
     {{/if}}
 
     {{>notes}}
+		{{>footer}}
+		{{#if navigateBar.visible}}
+			<div class='navigate-area'>
+				<input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' />
+				<div class='navigate-bar'>
+					<label class='navigation-view' for='navigate-toggle-{{_id}}'><i class="fa-solid fa-chevrons-right"></i></label>
+					<div class='navigate-container'>
+						<div class='navigation-link' data-value='personal'>TOP</div>
+						<div class='navigation-link' data-value='stats'>{{localize 'GURPS.statsTab'}}</div>
+						{{#if navigateBar.hasMelee}}
+							<div class='navigation-link' data-value='melee'>{{localize 'GURPS.melee'}}</div>
+						{{/if}}
+						{{#if navigateBar.hasRanged}}
+							<div class='navigation-link' data-value='ranged'>{{localize 'GURPS.ranged'}}</div>
+						{{/if}}
+						<div class='navigation-link' data-value='advantages'>{{localize 'GURPS.pointsAdvantages'}}</div>
+						<div class='navigation-link' data-value='skills'>{{localize 'GURPS.skillsTab'}}</div>
+						{{#if navigateBar.hasSpells}}
+							<div class='navigation-link' data-value='spells'>{{localize 'GURPS.spellsTab'}}</div>
+						{{/if}}
+						<div class='navigation-link' data-value='equipmentcarried'>{{localize 'GURPS.equipment'}}</div>
+						{{#if navigateBar.hasOther}}
+							<div class='navigation-link' data-value='equipmentother'>OTHER</div>
+						{{/if}}
+						<div class='navigation-link' data-value='notes'>{{localize 'GURPS.notes'}}</div>
+					</div>
+				</div>
+			</div>
+		{{/if}}
   </div>
-  {{>footer}}
-  {{#if navigateBar.visible}}
-    <div class='navigate-area'>
-      <input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' />
-      <div class='navigate-bar'>
-        <label class='navigation-view' for='navigate-toggle-{{_id}}'><i class="fa-solid fa-chevrons-right"></i></label>
-        <div class='navigate-container'>
-          <div class='navigation-link' data-value='personal'>TOP</div>
-          <div class='navigation-link' data-value='stats'>{{localize 'GURPS.statsTab'}}</div>
-          {{#if navigateBar.hasMelee}}
-            <div class='navigation-link' data-value='melee'>{{localize 'GURPS.melee'}}</div>
-          {{/if}}
-          {{#if navigateBar.hasRanged}}
-            <div class='navigation-link' data-value='ranged'>{{localize 'GURPS.ranged'}}</div>
-          {{/if}}
-          <div class='navigation-link' data-value='advantages'>{{localize 'GURPS.pointsAdvantages'}}</div>
-          <div class='navigation-link' data-value='skills'>{{localize 'GURPS.skillsTab'}}</div>
-          {{#if navigateBar.hasSpells}}
-            <div class='navigation-link' data-value='spells'>{{localize 'GURPS.spellsTab'}}</div>
-          {{/if}}
-          <div class='navigation-link' data-value='equipmentcarried'>{{localize 'GURPS.equipment'}}</div>
-          {{#if navigateBar.hasOther}}
-            <div class='navigation-link' data-value='equipmentother'>OTHER</div>
-          {{/if}}
-          <div class='navigation-link' data-value='notes'>{{localize 'GURPS.notes'}}</div>
-        </div>
-      </div>
-    </div>
-  {{/if}}
-</form>
