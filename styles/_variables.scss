@@ -1,5 +1,13 @@
-$testblue: #007bff;
+body.theme-light {
+  --color-modifier-negative: #ff0000;
+  --color-modifier-positive: #00ff00;
+}
 
-.testbutton {
-  background-color: $testblue;
+body.theme-dark {
+  --color-modifier-negative: #ff7b7b;
+  --color-modifier-positive: #00ff00;
+}
+
+h4.message-sender {
+  color: red !important;
 }
