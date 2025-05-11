@@ -1453,6 +1453,7 @@
     "update": "Mis à Jour",
     "usage": "Utilisation",
     "useBreakpoints": "Utiliser les Points de Rupture",
+    "userModInputPlaceholder": "Par exemple : +1 Chance du MJ #toucher #dégâts #jet #combat",
     "userModsRefreshed": "Modifications Utilisateur de l'Acteur actualisées",
     "useSpellCollegeAsTag": "Utiliser le collège de sorts comme tags",
     "veryEasyRoll": "Très bonne chance",

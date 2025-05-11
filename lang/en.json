@@ -1453,6 +1453,7 @@
     "update": "Update",
     "usage": "Usage",
     "useBreakpoints": "Use Breakpoints",
+    "userModInputPlaceholder": "Ex.: +1 GM&#39s Luck #hit #damage #check #combat",
     "userModsRefreshed": "Actor User Mods refreshed",
     "useSpellCollegeAsTag": "Use Spell College as Tags",
     "veryEasyRoll": "Very good chance",
