@@ -5,7 +5,10 @@ import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocatio
 import { Advantage, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from '../../actor/actor-components.js'
 
 class ActorEditorSheetGURPS extends ActorSheetGURPS {
-  static override DEFAULT_OPTIONS: DocumentSheetV2.DefaultOptions = {
+  static override DEFAULT_OPTIONS: DocumentSheetV2.PartialConfiguration<
+    DocumentSheetV2.Configuration<Actor.Implementation>
+  > &
+    object = {
     position: {
       width: 880,
       height: 800,

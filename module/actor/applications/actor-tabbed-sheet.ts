@@ -5,7 +5,10 @@ import { ActorSheetGURPS } from './actor-sheet.js'
 import DocumentSheetV2 from 'node_modules/fvtt-types/src/foundry/client-esm/applications/api/document-sheet.mjs'
 
 class ActorTabbedSheetGURPS extends ActorSheetGURPS {
-  static override DEFAULT_OPTIONS: foundry.applications.api.DocumentSheetV2.DefaultOptions = {
+  static override DEFAULT_OPTIONS: DocumentSheetV2.PartialConfiguration<
+    DocumentSheetV2.Configuration<Actor.Implementation>
+  > &
+    object = {
     id: 'sheet-tab',
     classes: ['gurps', 'sheet', 'actor', 'tabbed-sheet'],
     position: {

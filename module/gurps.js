@@ -81,17 +81,19 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
-import { ActorSheetGURPS } from './applications/actor/actor-sheet.js'
+import {
+  ActorSheetGURPS,
+  ActorCombatSheetGURPS,
+  ActorEditorSheetGURPS,
+  ActorSimplifiedSheetGURPS,
+  NPCSheetGURPS,
+  InventorySheetGURPS,
+  ActorTabbedSheetGURPS,
+  ActorReducedSheetGURPS,
+} from './actor/applications/index.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
-import { ActorCombatSheetGURPS } from './applications/actor/actor-combat-sheet.js'
-import { ActorEditorSheetGURPS } from './applications/actor/actor-editor-sheet.js'
-import { ActorSimplifiedSheetGURPS } from './applications/actor/actor-simplified-sheet.js'
-import { NPCSheetGURPS } from './applications/actor/npc-sheet.js'
-import { InventorySheetGURPS } from './applications/actor/inventory-sheet.js'
-import { ActorTabbedSheetGURPS } from './applications/actor/actor-tabbed-sheet.js'
-import { ActorReducedSheetGURPS } from './applications/actor/actor-reduced-sheet.js'
 
 export let GURPS = undefined
 

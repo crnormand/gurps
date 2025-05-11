@@ -1,12 +1,14 @@
 import { ActorSheetGURPS } from './actor-sheet.js'
 import DocumentSheetV2 = foundry.applications.api.DocumentSheetV2
 
-class InventorySheetGURPS extends ActorSheetGURPS {
-  static override DEFAULT_OPTIONS: DocumentSheetV2.DefaultOptions = {
-    classes: ['npc-sheet', 'sheet', 'actor'],
+class ActorCombatSheetGURPS extends ActorSheetGURPS {
+  static override DEFAULT_OPTIONS: DocumentSheetV2.PartialConfiguration<
+    DocumentSheetV2.Configuration<Actor.Implementation>
+  > &
+    object = {
     position: {
-      width: 700,
-      height: 400,
+      width: 670,
+      height: 'auto',
     },
   }
 
@@ -15,7 +17,7 @@ class InventorySheetGURPS extends ActorSheetGURPS {
   static override PARTS = {
     main: {
       id: 'sheet',
-      template: 'systems/gurps/templates/inventory-sheet.hbs',
+      template: 'systems/gurps/templates/actor/combat-sheet.hbs',
       scrollable: [
         '.gurpsactorsheet',
         '#advantages',
@@ -32,4 +34,4 @@ class InventorySheetGURPS extends ActorSheetGURPS {
   }
 }
 
-export { InventorySheetGURPS }
+export { ActorCombatSheetGURPS }

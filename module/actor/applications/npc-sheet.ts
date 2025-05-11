@@ -3,11 +3,15 @@ import { ActorSheetGURPS } from './actor-sheet.js'
 import DocumentSheetV2 = foundry.applications.api.DocumentSheetV2
 import { parselink } from '../../../lib/parselink.js'
 
-class ActorSimplifiedSheetGURPS extends ActorSheetGURPS {
-  static override DEFAULT_OPTIONS: DocumentSheetV2.DefaultOptions = {
+class NPCSheetGURPS extends ActorSheetGURPS {
+  static override DEFAULT_OPTIONS: DocumentSheetV2.PartialConfiguration<
+    DocumentSheetV2.Configuration<Actor.Implementation>
+  > &
+    object = {
+    classes: ['npc-sheet', 'sheet', 'actor'],
     position: {
-      width: 820,
-      height: 900,
+      width: 750,
+      height: 450,
     },
   }
 
@@ -16,7 +20,7 @@ class ActorSimplifiedSheetGURPS extends ActorSheetGURPS {
   static override PARTS = {
     main: {
       id: 'sheet',
-      template: 'systems/gurps/templates/simplified.hbs',
+      template: 'systems/gurps/templates/actor/npc-sheet-ci.hbs',
       scrollable: [
         '.gurpsactorsheet',
         '#advantages',
@@ -40,8 +44,12 @@ class ActorSimplifiedSheetGURPS extends ActorSheetGURPS {
     const data = await super._prepareContext(options)
     return {
       ...data,
-      dodge: this.actor.getCurrentDodge(),
+      // @ts-expect-error: awaiting type implementation
+      currentdodge: this.actor.system.currentdodge,
+      // @ts-expect-error: awaiting type implementation
+      currentmove: this.actor.system.currentmove,
       defense: this.actor.getTorsoDr(),
+      parryblock: this.actor.getEquippedParry(),
     }
   }
 
@@ -53,6 +61,10 @@ class ActorSimplifiedSheetGURPS extends ActorSheetGURPS {
   ): Promise<void> {
     await super._onRender(_context, _options)
     const html = $(this.element)
+
+    html.find('.npc-sheet').on('click', ev => {
+      this._onfocus(ev)
+    })
 
     html.find('.rollableicon').on('click', event => this._onClickRollableIcon(event))
   }
@@ -68,4 +80,4 @@ class ActorSimplifiedSheetGURPS extends ActorSheetGURPS {
   }
 }
 
-export { ActorSimplifiedSheetGURPS }
+export { NPCSheetGURPS }

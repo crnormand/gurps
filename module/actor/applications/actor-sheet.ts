@@ -44,7 +44,11 @@ class ActorSheetGURPS extends HandlebarsApplicationMixin(ActorSheetV2<ActorSheet
   }
 
   /* ---------------------------------------- */
-  static override DEFAULT_OPTIONS: foundry.applications.api.DocumentSheetV2.DefaultOptions = {
+  static override DEFAULT_OPTIONS: DocumentSheetV2.PartialConfiguration<
+    DocumentSheetV2.Configuration<Actor.Implementation>
+  > &
+    object = {
+    ...super.DEFAULT_OPTIONS,
     tag: 'form',
     classes: ['gurps', 'sheet', 'actor'],
     position: {
