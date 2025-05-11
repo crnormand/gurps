@@ -55,7 +55,7 @@ export default class ManeuverHUDButton {
    *
    * @static
    * @param {TokenHUD} hud - The HUD object, not used.
-   * @param {JQuery} html - The jQuery reference to the HUD HTML.
+   * @param {HTMLElement} html - The jQuery reference to the HUD HTML.
    * @param {Token} token - The data for the Token.
    * @memberof ManeuverHUDButton
    */
@@ -67,21 +67,25 @@ export default class ManeuverHUDButton {
     const effects = await game.actors.get(token.actorId).effects.contents
     const button = await this.createButton(effects)
 
-    html.find('div.right').append(button)
+    html.querySelector('div.right')?.append(button)
 
-    html.find('#collapsible-hud').on('change', function () {
-      let icon = html.find('.control-icon.maneuver-open')
-      // @ts-ignore
-      this.checked ? icon.addClass('active') : icon.removeClass('active')
+    html.querySelector('#collapsible-hud')?.addEventListener('change', () => {
+      const icon = html.querySelector('.control-icon.maneuver-open')
+      if (!icon) return
+
+      if (this.checked) icon.classList.add('active')
+      else icon.classList.remove('active')
     })
 
-    html.find('.status-maneuvers .effect-control').click(ev => {
-      let key = $(ev.currentTarget).attr('data-status-id') || ''
-      let token = hud.object
-      token.setManeuver(key)
+    html.querySelectorAll('.status-maneuvers .effect-control').forEach(el => {
+      el.addEventListener('click', event => {
+        const key = el.getAttribute('data-status-id') || ''
+        const token = hud.object
+        token.setManeuver(key)
 
-      html.find('.status-maneuvers .effect-control').removeClass('active')
-      $(ev.currentTarget).addClass('active')
+        html.querySelectorAll('.status-maneuvers .effect-control').forEach(el => el.classList.remove('active'))
+        event.currentTarget.classList.add('active')
+      })
     })
   }
 

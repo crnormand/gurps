@@ -170,7 +170,7 @@ export class GurpsItem extends Item {
    * @returns {string[]}
    * @constructor
    */
-  static get TYPES() {
-    return Object.keys(game.model[this.metadata.name]).filter(k => !k.includes('Atk'))
-  }
+  // static get TYPES() {
+  //   return Object.keys(game.model[this.metadata.name]).filter(k => !k.includes('Atk'))
+  // }
 }

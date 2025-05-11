@@ -81,9 +81,11 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { CombatantGURPS } from './combat/combatant.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import { CombatGURPS } from './combat/combat.js'
 
 export let GURPS = undefined
 
@@ -1927,6 +1929,8 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
+    CONFIG.Combat.documentClass = CombatGURPS
+    CONFIG.Combatant.documentClass = CombatantGURPS
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
     CONFIG.Canvas.rulerClass = RulerGURPS
 
@@ -2514,15 +2518,15 @@ if (!globalThis.GURPS) {
       await handleCombatTurn(combat, turn)
     })
 
-    Hooks.on('deleteCombat', async combat => {
-      console.log(`Combat ended: ${combat.id} - restarting token actions`)
-      await resetTokenActions(combat)
-    })
+    // Hooks.on('deleteCombat', async combat => {
+    //   console.log(`Combat ended: ${combat.id} - restarting token actions`)
+    //   await resetTokenActions(combat)
+    // })
 
-    Hooks.on('deleteCombatant', async (combatant, combat) => {
-      console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
-      await resetTokenActionsForCombatant(combatant)
-    })
+    // Hooks.on('deleteCombatant', async (combatant, combat) => {
+    //   console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
+    //   await resetTokenActionsForCombatant(combatant)
+    // })
 
     // End of system "READY" hook.
     Hooks.call('gurpsready')
