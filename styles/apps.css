@@ -2925,9 +2925,6 @@ details .popup.square5x4 {
 .qr-blind {
   display: none;
 }
-/* .active { */
-/*   display: block; */
-/* } */
 .qr-otf {
   color: #d7b921;
   font-style: italic;
