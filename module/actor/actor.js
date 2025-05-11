@@ -2609,27 +2609,21 @@ export class GurpsActor extends Actor {
     }
 
     if (!canEdit) {
-      const phrases = game.i18n
-        .localize(message)
+      const phrases = game.i18n.localize(message)
+      const body = phrases
         .split('.')
         .filter(p => !!p)
         .map(p => `${p.trim()}.`)
-      const body = phrases.join('</p><p>')
-      const dialog = new Dialog(
-        {
-          title: game.i18n.localize('GURPS.settingNoEditAllowed'),
-          content: `<p>${body}</p>`,
-          buttons: {
-            ok: {
-              label: 'OK',
-            },
-          },
+        .join('</p><p>')
+
+      await foundry.applications.api.DialogV2.wait({
+        window: { title: game.i18n.localize('GURPS.settingNoEditAllowed') },
+        content: `<p>${body}</p>`,
+        ok: {
+          label: 'GURPS.ok',
+          icon: 'fa-solid fa-check',
         },
-        {
-          width: 400,
-        }
-      )
-      await dialog.render(true)
+      })
     }
     return canEdit
   }

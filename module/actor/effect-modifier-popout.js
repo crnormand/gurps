@@ -263,17 +263,17 @@ export class EffectModifierPopout extends Application {
   async clearUserMods(event) {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
-    await Dialog.confirm({
-      title: game.i18n.localize('GURPS.confirmClearUserMods'),
-      content: game.i18n.localize('GURPS.confirmClearHintUserMods'),
-      yes: async () => {
-        if (actor) {
-          await actor.update({ 'system.conditions.usermods': [] })
-          await this.render(true)
-        }
-      },
-      defaultYes: false,
+    const proceed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize('GURPS.confirmClearUserMods') },
+      content: 'GURPS.confirmClearHintUserMods',
     })
+
+    if (proceed) {
+      if (actor) {
+        await actor.update({ 'system.conditions.usermods': [] })
+        await this.render(true)
+      }
+    }
   }
 
   addUserMod(event) {
