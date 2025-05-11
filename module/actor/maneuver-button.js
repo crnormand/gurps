@@ -69,11 +69,11 @@ export default class ManeuverHUDButton {
 
     html.querySelector('div.right')?.append(button)
 
-    html.querySelector('#collapsible-hud')?.addEventListener('change', () => {
+    html.querySelector('#collapsible-hud')?.addEventListener('change', function (event) {
       const icon = html.querySelector('.control-icon.maneuver-open')
       if (!icon) return
 
-      if (this.checked) icon.classList.add('active')
+      if (event.currentTarget.checked) icon.classList.add('active')
       else icon.classList.remove('active')
     })
 
