@@ -6,14 +6,14 @@ class CombatGURPS extends Combat {
   ): Promise<boolean | void> {
     await super._preDelete(options, user)
     if (user.id === game.user?.id) {
-      this.combatants.forEach(async combatant => {
+      for (const combatant of this.combatants) {
         const tokenId = combatant.token?.id ?? null
-        if (tokenId === null) return
+        if (tokenId === null) continue
         const token = canvas.tokens?.get(tokenId)
         if (token) {
-          token.removeManeuver()
+          await token.removeManeuver()
         }
-      })
+      }
     }
   }
 }
