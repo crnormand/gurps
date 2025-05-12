@@ -1,4 +1,4 @@
-class CombatGURPS extends Combat {
+class CombatGURPS<SubType extends Combat.SubType = Combat.SubType> extends Combat<SubType> {
   // Remove maneuvers for all combatants on combat deletion
   protected override async _preDelete(
     options: Combat.Database.PreDeleteOptions,

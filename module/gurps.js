@@ -85,7 +85,7 @@ import { CombatantGURPS } from './combat/combatant.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
-import { CombatGURPS } from './combat/combat.js'
+import * as Combat from './combat/index.js'
 
 export let GURPS = undefined
 
@@ -113,6 +113,7 @@ if (!globalThis.GURPS) {
   }
 
   Damage.init() // Initialize the Damage module
+  Combat.init() // Initialize the Combat module
 
   AddChatHooks()
   JQueryHelpers()
@@ -1929,8 +1930,6 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
-    CONFIG.Combat.documentClass = CombatGURPS
-    CONFIG.Combatant.documentClass = CombatantGURPS
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
     CONFIG.Canvas.rulerClass = RulerGURPS
 
