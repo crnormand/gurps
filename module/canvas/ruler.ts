@@ -1,6 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
-import * as Settings from '../../../lib/miscellaneous-settings.js'
-import { Length, LengthUnit } from '../../data/common/index.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import { Length, LengthUnit } from '../data/common/index.js'
 
 // @ts-expect-error: types have not yet caught up
 class RulerGURPS extends foundry.canvas.interaction.Ruler {
