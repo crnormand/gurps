@@ -2517,16 +2517,6 @@ if (!globalThis.GURPS) {
       await handleCombatTurn(combat, turn)
     })
 
-    // Hooks.on('deleteCombat', async combat => {
-    //   console.log(`Combat ended: ${combat.id} - restarting token actions`)
-    //   await resetTokenActions(combat)
-    // })
-
-    // Hooks.on('deleteCombatant', async (combatant, combat) => {
-    //   console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
-    //   await resetTokenActionsForCombatant(combatant)
-    // })
-
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
