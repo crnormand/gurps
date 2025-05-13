@@ -638,7 +638,6 @@ export class TokenActions {
         console.log(`Add +1 Move bonus to ${this.token.name})`)
         break
       case 'aim':
-        console.log(this.actor.name, 'Current Aim before:', { ...this.currentAim })
         Object.keys(this.currentAim).map(k => {
           const a = this.currentAim[k]
           if (a.startAt === null) a.startAt = this.currentTurn - 1
@@ -651,18 +650,15 @@ export class TokenActions {
             a.aimBonus += 1
           }
         })
-        console.log(this.actor.name, 'Current Aim after:', { ...this.currentAim })
 
         break
     }
-    console.log(this.actor.name, lastManeuver)
     if (lastManeuver !== 'evaluate' && this.evaluateTurns > 0) {
       this.evaluateTurns = 0
     }
     if (lastManeuver !== 'aim') {
       this.currentAim = this._getInitialAim()
     }
-    console.log(this.actor.name, ', Current Aim:', this.currentAim)
     if (lastManeuver !== 'move' && this.moveTurns > 0) {
       this.moveTurns = 0
     }
