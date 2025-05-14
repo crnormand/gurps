@@ -81,7 +81,6 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
-import { CombatantGURPS } from './combat/combatant.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'

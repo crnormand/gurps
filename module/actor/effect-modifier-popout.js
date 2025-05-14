@@ -263,39 +263,40 @@ export class EffectModifierPopout extends Application {
   async clearUserMods(event) {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
-    await Dialog.confirm({
-      title: game.i18n.localize('GURPS.confirmClearUserMods'),
+    const proceed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize('GURPS.confirmClearUserMods') },
       content: game.i18n.localize('GURPS.confirmClearHintUserMods'),
-      yes: async () => {
-        if (actor) {
-          await actor.update({ 'system.conditions.usermods': [] })
-          await this.render(true)
-        }
-      },
-      defaultYes: false,
     })
+
+    if (proceed) {
+      if (actor) {
+        await actor.update({ 'system.conditions.usermods': [] })
+        await this.render(true)
+      }
+    }
   }
 
-  addUserMod(event) {
+  async addUserMod(event) {
     if (this.getToken()) {
       setTimeout(() => $.find('#GURPS-user-mod-input')[0].focus(), 200)
-      Dialog.prompt({
-        title: 'Enter new modifier:',
-        content:
-          "<input type='text' id='GURPS-user-mod-input' style='text-align: left;' placeholder ='Ex.: +1 GM&#39s Luck #hit #damage #check #combat'>'",
-        label: 'Add (or press Enter)',
-        callback: html => {
-          let mod = html.find('#GURPS-user-mod-input').val()
-          // Because the '@' separator is a reserved character, we will replace it with space
-          mod = mod.replace('@', ' ')
-          if (!!mod) {
-            let action = parselink(mod)
-            if (action.action?.type === 'modifier') this._addUserMod(mod)
-            else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
-          }
+      const input = await foundry.applications.api.DialogV2.prompt({
+        window: { title: game.i18n.localize('GURPS.addUserMod') },
+        content: `<input type='text' id='GURPS-user-mod-input' name='input' style='text-align: left;' placeholder="${game.i18n.localize('GURPS.userModInputPlaceholder')}">`,
+        ok: {
+          label: 'Add (or press Enter)',
+          callback: (event, button, dialog) => button.form.elements.input.value,
         },
-        rejectClose: false,
       })
+
+      if (input) {
+        // Because the '@' separator is a reserved character, we will replace it with space
+        let mod = input.replace('@', ' ')
+        if (!!mod) {
+          let action = parselink(mod)
+          if (action.action?.type === 'modifier') this._addUserMod(mod)
+          else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
+        }
+      }
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 

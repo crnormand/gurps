@@ -613,7 +613,21 @@ export class GurpsActor extends Actor {
     // This code is for when the actor is using Foundry items.
     // let found = this.items.filter(it => it.type === 'feature').find(it => it.name.match(new RegExp(advname, 'i')))
     // This code is for no Foundry items.
-    return Object.values(this.system.ads).find(it => it.name.match(new RegExp(advname, 'i')))
+
+    // flatten the advantages into a single array. an advantage is a container if it has a `contains` property
+    const list = []
+    const traverse = ads => {
+      for (const key in ads) {
+        const adv = ads[key]
+        list.push(adv)
+        if (adv.contains) {
+          traverse(adv.contains)
+        }
+      }
+    }
+    traverse(this.system.ads)
+
+    return Object.values(list).find(it => it.name.match(new RegExp(advname, 'i')))
   }
 
   /**
@@ -2609,27 +2623,21 @@ export class GurpsActor extends Actor {
     }
 
     if (!canEdit) {
-      const phrases = game.i18n
-        .localize(message)
+      const phrases = game.i18n.localize(message)
+      const body = phrases
         .split('.')
         .filter(p => !!p)
         .map(p => `${p.trim()}.`)
-      const body = phrases.join('</p><p>')
-      const dialog = new Dialog(
-        {
-          title: game.i18n.localize('GURPS.settingNoEditAllowed'),
-          content: `<p>${body}</p>`,
-          buttons: {
-            ok: {
-              label: 'OK',
-            },
-          },
+        .join('</p><p>')
+
+      await foundry.applications.api.DialogV2.wait({
+        window: { title: game.i18n.localize('GURPS.settingNoEditAllowed') },
+        content: `<p>${body}</p>`,
+        ok: {
+          label: 'GURPS.ok',
+          icon: 'fa-solid fa-check',
         },
-        {
-          width: 400,
-        }
-      )
-      await dialog.render(true)
+      })
     }
     return canEdit
   }
