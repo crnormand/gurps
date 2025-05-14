@@ -81,9 +81,11 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
+import { CombatantGURPS } from './combat/combatant.js'
 
 // Import the damage module
 import * as Damage from './damage/index.js'
+import * as Combat from './combat/index.js'
 // Import the canvas module
 import * as Canvas from './canvas/index.js'
 
@@ -113,6 +115,7 @@ if (!globalThis.GURPS) {
   }
 
   Damage.init() // Initialize the Damage module
+  Combat.init() // Initialize the Combat module
   Canvas.init() // Initialize the Canvas module
 
   AddChatHooks()
@@ -2514,16 +2517,6 @@ if (!globalThis.GURPS) {
 
     Hooks.on('combatTurn', async (combat, turn, combatant) => {
       await handleCombatTurn(combat, turn)
-    })
-
-    Hooks.on('deleteCombat', async combat => {
-      console.log(`Combat ended: ${combat.id} - restarting token actions`)
-      await resetTokenActions(combat)
-    })
-
-    Hooks.on('deleteCombatant', async (combatant, combat) => {
-      console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
-      await resetTokenActionsForCombatant(combatant)
     })
 
     // End of system "READY" hook.
