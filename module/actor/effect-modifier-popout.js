@@ -1,6 +1,5 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { RulerGURPS } from '../canvas/index.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
@@ -12,7 +11,7 @@ export const calculateRange = (token1, token2) => {
   if (token1 === token2) return undefined
 
   // const ruler = new Ruler() as Ruler & { totalDistance: number }
-  const ruler = new RulerGURPS(game.user)
+  const ruler = new CONFIG.Canvas.rulerClass(game.user)
   ruler._state = Ruler.STATES.MEASURING
   ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
   ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })

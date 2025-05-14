@@ -1,5 +1,16 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.0
+
+### Features
+- Foundry v13 compatibility!
+- GCS Actor import now captures Advantage CR value as an attribute (`Advantage.cr`).
+- Internationalized the Fright Check dialog.
+- Enhanced Fright Check dialog to automatically set fields based on Actor's Advantages.
+
+### Bugfixes
+- Bugfix: `GURPSActor.findAdvantage(name)` now correctly searches inside advantage containers.
+
 ## Release 0.17.20 05/06/2025
 
 ### Bugfixes
