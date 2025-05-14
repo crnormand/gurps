@@ -1,7 +1,6 @@
 # IDE
 .idea/
 .vs/
-data/
 .DS_Store
 .project
 .settings/
