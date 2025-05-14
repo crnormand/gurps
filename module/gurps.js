@@ -65,6 +65,7 @@ import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
+import { CombatantGURPS } from './combat/combatant.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -81,11 +82,10 @@ import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
-import { CombatantGURPS } from './combat/combatant.js'
 
 // Import the damage module
-import * as Damage from './damage/index.js'
 import { CombatGURPS } from './combat/combat.js'
+import * as Damage from './damage/index.js'
 
 export let GURPS = undefined
 

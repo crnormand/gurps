@@ -1660,10 +1660,12 @@ export class ActorImporter {
     a.points = i.calc?.points
     a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
     a.userdesc = i.userdesc
+    a.cr = i.cr || null
 
-    if (i.cr != null) {
+    if (i.cr) {
       a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
     }
+    
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
         if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
