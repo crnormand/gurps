@@ -83,8 +83,8 @@ import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 // Import the damage module
-import * as Damage from './damage/index.js'
 import * as Combat from './combat/index.js'
+import * as Damage from './damage/index.js'
 // Import the canvas module
 import * as Canvas from './canvas/index.js'
 
@@ -1918,7 +1918,7 @@ if (!globalThis.GURPS) {
     GGADebugger.init()
 
     // Modifier Bucket must be defined after hit locations
-    // GURPS.ModifierBucket = new ModifierBucket()
+    GURPS.ModifierBucket = new ModifierBucket()
     // GURPS.ModifierBucket.render(true)
 
     GURPS.initiative = new Initiative()
@@ -2524,7 +2524,6 @@ if (!globalThis.GURPS) {
 }
 
 Hooks.once('renderHotbar', (_application, element, _applicationOptions, _renderContext) => {
-  GURPS.ModifierBucket = new ModifierBucket()
   GURPS.ModifierBucket.render(true)
 })
 
