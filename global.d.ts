@@ -17,4 +17,8 @@ declare global {
   interface PlaceableObjectClassConfig {
     Token: typeof GurpsToken
   }
+
+  interface SettingConfig {
+    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
+  }
 }

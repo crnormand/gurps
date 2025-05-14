@@ -90,9 +90,9 @@ export class TokenActions {
     this.extraActions = 0
     this.rapidStrikeBonus = 0
 
-    this.canDefend = undefined
-    this.canAttack = undefined
-    this.canMove = undefined
+    this.canDefend = null
+    this.canAttack = null
+    this.canMove = null
 
     this.toHitBonus = 0
     this.defenseBonus = 0
@@ -172,7 +172,7 @@ export class TokenActions {
     this.evaluateTurns = savedTokenData.evaluateTurns || 0
     this.readyTurns = savedTokenData.readyTurns || 0
     this.moveTurns = savedTokenData.moveTurns || 0
-    this.blindAsDefault = savedTokenData.blindAsDefault !== undefined ? savedTokenData.blindAsDefault : game.user.isGM
+    this.blindAsDefault = savedTokenData.blindAsDefault !== null ? savedTokenData.blindAsDefault : game.user.isGM
 
     return this
   }
@@ -232,7 +232,6 @@ export class TokenActions {
   get currentEffects() {
     return this.actor.system.conditions.self?.modifiers
   }
-
   _getInitialAim() {
     let currentAim = {}
     recurselist(this.actor.system.ranged, (e, _k, _d) => {
@@ -242,8 +241,8 @@ export class TokenActions {
         uuid: e.uuid,
         name: e.name,
         originalName: e.originalName,
-        startAt: undefined,
-        targetToken: undefined,
+        startAt: null,
+        targetToken: null,
         key: `system.ranged.${_k}`,
       }
     })
@@ -260,7 +259,7 @@ export class TokenActions {
           name: e.name,
           originalName: e.originalName,
           mode: e.mode,
-          startAt: undefined,
+          startAt: null,
           basePenalty: e.baseParryPenalty,
           key: `system.melee.${_k}`,
         }
@@ -468,7 +467,7 @@ export class TokenActions {
    * @returns {Promise<void>}
    */
   async selectManeuver(maneuver, round) {
-    if (round === undefined || round === null) return
+    if (round === null) return
     this.currentTurn = round
     if (!this.lastManeuvers[round]) {
       this.lastManeuvers[round] = this._getNewLastManeuvers()
@@ -641,7 +640,7 @@ export class TokenActions {
       case 'aim':
         Object.keys(this.currentAim).map(k => {
           const a = this.currentAim[k]
-          if (a.startAt === undefined) a.startAt = this.currentTurn - 1
+          if (a.startAt === null) a.startAt = this.currentTurn - 1
           const acc = parseInt(a.acc || 0)
           const maxAccBonus = acc + 2 // Add here an Acc bonus field on Item like Extra Attack?
           const dif = this.currentTurn - a.startAt
@@ -651,6 +650,7 @@ export class TokenActions {
             a.aimBonus += 1
           }
         })
+
         break
     }
     if (lastManeuver !== 'evaluate' && this.evaluateTurns > 0) {

@@ -50,7 +50,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
-import { GURPSRange, RulerGURPS, setupRanges } from '../lib/ranges.js'
+import { GURPSRange, setupRanges } from '../lib/ranges.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
@@ -65,7 +65,6 @@ import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
-import { CombatantGURPS } from './combat/combatant.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -84,8 +83,10 @@ import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 // Import the damage module
-import { CombatGURPS } from './combat/combat.js'
 import * as Damage from './damage/index.js'
+import * as Combat from './combat/index.js'
+// Import the canvas module
+import * as Canvas from './canvas/index.js'
 
 export let GURPS = undefined
 
@@ -113,6 +114,8 @@ if (!globalThis.GURPS) {
   }
 
   Damage.init() // Initialize the Damage module
+  Combat.init() // Initialize the Combat module
+  Canvas.init() // Initialize the Canvas module
 
   AddChatHooks()
   JQueryHelpers()
@@ -1929,10 +1932,7 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
-    CONFIG.Combat.documentClass = CombatGURPS
-    CONFIG.Combatant.documentClass = CombatantGURPS
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
-    CONFIG.Canvas.rulerClass = RulerGURPS
 
     // add custom ActiveEffectConfig sheet class
     foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
@@ -2517,16 +2517,6 @@ if (!globalThis.GURPS) {
     Hooks.on('combatTurn', async (combat, turn, combatant) => {
       await handleCombatTurn(combat, turn)
     })
-
-    // Hooks.on('deleteCombat', async combat => {
-    //   console.log(`Combat ended: ${combat.id} - restarting token actions`)
-    //   await resetTokenActions(combat)
-    // })
-
-    // Hooks.on('deleteCombatant', async (combatant, combat) => {
-    //   console.log(`Combatant removed: ${combatant.token.name} - resetting token actions`)
-    //   await resetTokenActionsForCombatant(combatant)
-    // })
 
     // End of system "READY" hook.
     Hooks.call('gurpsready')
