@@ -153,7 +153,7 @@ export default class GurpsWiring {
     let action = el.dataset.action
     if (!!action) {
       action = JSON.parse(atou(action))
-      if (action.type === 'damage' || action.type === 'deriveddamage')
+      if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage')
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
       else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
     }

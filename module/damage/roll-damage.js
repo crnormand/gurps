@@ -66,72 +66,70 @@ export async function rollDamage(
       }
     }
 
-    await new Promise(async resolve => {
-      const dialog = await new foundry.applications.api.DialogV2({
-        window: {
-          title: game.i18n.localize('GURPS.confirmRoll'),
-          resizable: true,
-        },
-        position: {
-          height: 'auto',
-        },
-        content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
-          tokenImg,
-          tokenName,
-          damageRoll: simpleFormula || damageRoll,
-          damageType,
-          targetRoll,
-          bucketRoll,
-          messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
-          useMinDamage,
-          armorDivisorNumber,
-          multiplierNumber,
-          damageTypeLabel,
-          damageTypeIcon,
-          damageTypeColor,
-          simpleFormula,
-          bucketRollColor,
-          originalFormula,
-          damageCost,
-          isVideo,
-          otfDamageText,
-          usingDiceAdd,
-        }),
-        buttons: [
-          {
-            action: 'roll',
-            icon: isBlindRoll ? 'fas fa-eye-slash' : 'fas fa-dice',
-            label: isBlindRoll ? 'GURPS.blindRoll' : 'GURPS.roll',
-            default: true,
-            callback: async (event, button, dialog) => {
-              await DamageChat.create(
-                actor || game.user,
-                actionFormula,
-                action.damagetype,
-                event,
-                overrideText,
-                targets,
-                action.extdamagetype,
-                action.hitlocation
-              )
-              if (action.next) {
-                return resolve(await GURPS.performAction(action.next, actor, event, targets))
-              }
-              resolve(true)
-            },
+    await foundry.applications.api.DialogV2.wait({
+      window: {
+        title: game.i18n.localize('GURPS.confirmRoll'),
+        resizable: true,
+      },
+      position: {
+        height: 'auto',
+      },
+      content: await renderTemplate('systems/gurps/templates/confirmation-damage-roll.hbs', {
+        tokenImg,
+        tokenName,
+        damageRoll: simpleFormula || damageRoll,
+        damageType,
+        targetRoll,
+        bucketRoll,
+        messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
+        useMinDamage,
+        armorDivisorNumber,
+        multiplierNumber,
+        damageTypeLabel,
+        damageTypeIcon,
+        damageTypeColor,
+        simpleFormula,
+        bucketRollColor,
+        originalFormula,
+        damageCost,
+        isVideo,
+        otfDamageText,
+        usingDiceAdd,
+      }),
+      buttons: [
+        {
+          action: 'roll',
+          icon: isBlindRoll ? 'fas fa-eye-slash' : 'fas fa-dice',
+          label: isBlindRoll ? 'GURPS.blindRoll' : 'GURPS.roll',
+          default: true,
+          callback: async (event, button, dialog) => {
+            await DamageChat.create(
+              actor || game.user,
+              actionFormula,
+              action.damagetype,
+              event,
+              overrideText,
+              targets,
+              action.extdamagetype,
+              action.hitlocation
+            )
+            if (action.next) {
+              return resolve(await GURPS.performAction(action.next, actor, event, targets))
+            }
+            return true
           },
-          {
-            action: 'cancel',
-            icon: 'fas fa-times',
-            label: 'GURPS.cancel',
-            callback: async (event, button, dialog) => {
-              await GURPS.ModifierBucket.clear()
-              GURPS.stopActions = true
-              resolve(false)
-            },
+        },
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'GURPS.cancel',
+          callback: async (event, button, dialog) => {
+            await GURPS.ModifierBucket.clear()
+            GURPS.stopActions = true
+            return false
           },
-        ],
-      }).render({ force: true })
+        },
+      ],
     })
   } else {
     await DamageChat.create(
