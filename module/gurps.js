@@ -50,7 +50,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
-import { GURPSRange, RulerGURPS, setupRanges } from '../lib/ranges.js'
+import { GURPSRange, setupRanges } from '../lib/ranges.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
@@ -86,6 +86,8 @@ import { CombatantGURPS } from './combat/combatant.js'
 // Import the damage module
 import * as Damage from './damage/index.js'
 import * as Combat from './combat/index.js'
+// Import the canvas module
+import * as Canvas from './canvas/index.js'
 
 export let GURPS = undefined
 
@@ -114,6 +116,7 @@ if (!globalThis.GURPS) {
 
   Damage.init() // Initialize the Damage module
   Combat.init() // Initialize the Combat module
+  Canvas.init() // Initialize the Canvas module
 
   AddChatHooks()
   JQueryHelpers()
@@ -1931,7 +1934,6 @@ if (!globalThis.GURPS) {
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
-    CONFIG.Canvas.rulerClass = RulerGURPS
 
     // add custom ActiveEffectConfig sheet class
     foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
