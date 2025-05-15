@@ -2086,9 +2086,17 @@ if (!globalThis.GURPS) {
       AddImportEquipmentButton(html)
     })
 
-    Hooks.on('renderSidebarTab', async (app, html) => {
-      const dropHandler = function (event, inLog) {
+    Hooks.on('renderChatLog', (app, html, data) => {
+      let selector = '.chat-scroll'
+      // COMPATIBILITY: v12
+      if (game.release.generation === 12) {
+        html = html[0]
+        selector = '#chat-log'
+      }
+
+      html.querySelector(selector)?.addEventListener('drop', event => {
         event.preventDefault()
+        console.log('Drop event')
         if (event.originalEvent) event = event.originalEvent
         const data = JSON.parse(event.dataTransfer.getData('text/plain'))
         if (!!data && (!!data.otf || !!data.bucket)) {
@@ -2111,22 +2119,14 @@ if (!globalThis.GURPS) {
             cmd = q + data.displayname + q + cmd
           }
           cmd = '[' + cmd + ']'
-          if (inLog) {
-            let messageData = {
-              user: game.user.id,
-              //speaker: ChatMessage.getSpeaker({ actor: game.user }),
-              type: CONST.CHAT_MESSAGE_STYLES.OOC,
-              content: cmd,
-            }
-            ChatMessage.create(messageData, {})
-          } else
-            $(document)
-              .find('#chat-message')
-              .val($(document).find('#chat-message').val() + cmd)
+          let messageData = {
+            user: game.user.id,
+            type: CONST.CHAT_MESSAGE_STYLES.OOC,
+            content: cmd,
+          }
+          ChatMessage.create(messageData, {})
         }
-      }
-      if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
-      html.find('#chat-log').on('drop', event => dropHandler(event, true))
+      })
     })
 
     /**
