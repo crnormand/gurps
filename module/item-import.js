@@ -42,7 +42,8 @@ export const AddImportEquipmentButton = async function (html) {
   const icon = document.createElement('i')
   icon.classList.add('fa-solid', 'fa-file-import')
   button.appendChild(icon)
-  button.innerHTML += game.i18n.localize('GURPS.itemImport')
+  const textNode = document.createTextNode(' ' + game.i18n.localize('GURPS.itemImport'))
+  button.appendChild(textNode)
 
   if (game.release.generation === 12) {
     html = html[0]
