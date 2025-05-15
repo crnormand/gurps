@@ -180,12 +180,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
     }
   }
 
-  // async _preCreate(data, options, user) {
-  //   if (user.isSelf) {
-  //     console.log('preCreate', data, options, user)
-  //   }
-  // }
-
   get endCondition() {
     return this.getFlag('gurps', 'endCondition')
   }

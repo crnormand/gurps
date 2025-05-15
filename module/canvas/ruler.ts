@@ -2,6 +2,7 @@ import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { Length, LengthUnit } from '../data/common/index.js'
 
+// COMPATIBILITY: v12
 // class RulerGURPS extends foundry.canvas.interaction.Ruler {
 class RulerGURPS extends Ruler {
   // Used to determine the distance modifier to apply to the modifier bucket

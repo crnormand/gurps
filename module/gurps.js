@@ -1967,6 +1967,7 @@ if (!globalThis.GURPS) {
     }
 
     // Register sheet application classes
+    // COMPATIBILITY: v12
     if (game.release.generation >= 13) {
       Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
       Actors.registerSheet('gurps', GurpsActorCombatSheet, {
@@ -2491,6 +2492,7 @@ if (!globalThis.GURPS) {
 
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
+    // COMPATIBILITY: v12
     if (game.release.generation >= 13) {
       foundry.applications.handlebars.loadTemplates([
         __dirname + '/apply-damage/effect-blunttrauma.hbs',

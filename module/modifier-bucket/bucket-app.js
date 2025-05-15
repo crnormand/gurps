@@ -839,6 +839,7 @@ export class ModifierBucket extends Application {
   _injectHTML($html) {
     const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
+    // COMPATIBILITY: v12
     const hotbarElement = game.release.generation === 12 ? ui.hotbar.element[0] : ui.hotbar.element
 
     const bucketExists = !!hotbarElement.querySelector('#modifierbucket')

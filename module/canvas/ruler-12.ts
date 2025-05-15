@@ -1,6 +1,7 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { Length, LengthUnit } from '../data/common/index.js'
 
+// COMPATIBILITY: v12
 export class RulerGURPSv12 extends Ruler {
   override _getSegmentLabel(segment: Ruler.PartialSegmentForLabelling) {
     const totalDistance = this.totalDistance
