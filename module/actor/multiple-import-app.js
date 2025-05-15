@@ -2,11 +2,9 @@ import { ActorImporter } from './actor-importer.js'
 import { GurpsActor } from './actor.js'
 
 export const AddMultipleImportButton = function (html) {
-  let button = $(
-    `<button class="mass-import"><i class="fas fa-file-import"></i>${game.i18n.localize('GURPS.importMultiple')}</button>`
-  )
-
-  button.click(async () => {
+  const button = document.createElement('button')
+  button.classList.add('mass-import')
+  button.addEventListener('click', async () => {
     const dirHandle = await window.showDirectoryPicker()
 
     // Create an array to hold the file names
@@ -26,7 +24,17 @@ export const AddMultipleImportButton = function (html) {
     new MultipleImportApp(dirHandle, files).render(true)
   })
 
-  html.find('.directory-footer').append(button)
+  const icon = document.createElement('i')
+  icon.classList.add('fa-solid', 'fa-file-import')
+  button.appendChild(icon)
+  button.innerHTML += game.i18n.localize('GURPS.importMultiple')
+
+  if (game.release.generation === 12) {
+    html = html[0]
+    html.querySelector('.directory-footer').append(button)
+  } else {
+    html.querySelector('.header-actions').append(button)
+  }
 }
 
 class MultipleImportApp extends Application {

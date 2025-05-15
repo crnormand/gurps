@@ -2,13 +2,9 @@ import * as settings from '../lib/miscellaneous-settings.js'
 import { zeroFill } from '../lib/utilities.js'
 
 export const AddImportEquipmentButton = async function (html) {
-  let button = $(
-    '<button class="import-items"><i class="fas fa-file-import"></i>' +
-      game.i18n.localize('GURPS.itemImport') +
-      '</button>'
-  )
-
-  button.click(async function () {
+  const button = document.createElement('button')
+  button.classList.add('import-items')
+  button.addEventListener('click', async () => {
     new foundry.applications.api.DialogV2({
       window: {
         title: game.i18n.localize('GURPS.itemImport'),
@@ -36,14 +32,24 @@ export const AddImportEquipmentButton = async function (html) {
         {
           action: 'cancel',
           label: game.i18n.localize('GURPS.cancel'),
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-times',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],
     }).render({ force: true })
   })
 
-  html.find('.directory-footer').append(button)
+  const icon = document.createElement('i')
+  icon.classList.add('fa-solid', 'fa-file-import')
+  button.appendChild(icon)
+  button.innerHTML += game.i18n.localize('GURPS.itemImport')
+
+  if (game.release.generation === 12) {
+    html = html[0]
+    html.querySelector('.directory-footer').append(button)
+  } else {
+    html.querySelector('.header-actions').append(button)
+  }
 }
 
 export class ItemImporter {

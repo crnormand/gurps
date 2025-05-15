@@ -2076,13 +2076,17 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 
-    // @ts-ignore
-    Hooks.on('renderSidebarTab', async (app, html) => {
+    Hooks.on('renderActorDirectory', (app, html, context) => {
       // Add the Import Multiple Actors button to the Actors tab.
-      if (app.id === 'actors') AddMultipleImportButton(html)
-      // Add the import equipment button to the Compendiums tab.
-      if (app.id === 'compendium') AddImportEquipmentButton(html)
+      AddMultipleImportButton(html)
+    })
 
+    Hooks.on('renderCompendiumDirectory', (app, html, context) => {
+      // Add the import equipment button to the Compendiums tab.
+      AddImportEquipmentButton(html)
+    })
+
+    Hooks.on('renderSidebarTab', async (app, html) => {
       // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
       const hasMeme = game.modules.get('markdown-editor')?.active
       const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
