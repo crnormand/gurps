@@ -2087,10 +2087,6 @@ if (!globalThis.GURPS) {
     })
 
     Hooks.on('renderSidebarTab', async (app, html) => {
-      // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
-      const hasMeme = game.modules.get('markdown-editor')?.active
-      const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
-
       const dropHandler = function (event, inLog) {
         event.preventDefault()
         if (event.originalEvent) event = event.originalEvent
