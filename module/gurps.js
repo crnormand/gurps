@@ -2096,7 +2096,6 @@ if (!globalThis.GURPS) {
 
       html.querySelector(selector)?.addEventListener('drop', event => {
         event.preventDefault()
-        console.log('Drop event')
         if (event.originalEvent) event = event.originalEvent
         const data = JSON.parse(event.dataTransfer.getData('text/plain'))
         if (!!data && (!!data.otf || !!data.bucket)) {
