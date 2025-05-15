@@ -23,7 +23,9 @@ Hooks.once('ready', async function () {
   overrideRefresh = game.settings.get(SYSTEM_NAME, 'token-override-refresh-icon')
 })
 
-export default class GurpsToken extends foundry.canvas.placeables.Token {
+// waiting for v13 types to catch up
+// export default class GurpsToken extends foundry.canvas.placeables.Token {
+export default class GurpsToken extends Token {
   static ready() {
     Hooks.on('createToken', GurpsToken._createToken)
   }

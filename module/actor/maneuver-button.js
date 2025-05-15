@@ -60,6 +60,9 @@ export default class ManeuverHUDButton {
    * @memberof ManeuverHUDButton
    */
   static async prepTokenHUD(hud, html, token) {
+    // COMPATIBILITY: v12
+    if (game.release.generation === 12) html = html[0]
+
     if (!hud.object?.combatant) return
 
     // @ts-ignore

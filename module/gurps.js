@@ -1935,14 +1935,22 @@ if (!globalThis.GURPS) {
     CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
 
     // add custom ActiveEffectConfig sheet class
-    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-      ActiveEffect,
-      'core',
-      foundry.applications.sheets.ActiveEffectConfig
-    )
-    foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
-      makeDefault: true,
-    })
+    // COMPATIBILITY: v12
+    if (game.release.generation >= 13) {
+      foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
+        ActiveEffect,
+        'core',
+        foundry.applications.sheets.ActiveEffectConfig
+      )
+      foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
+        makeDefault: true,
+      })
+    } else {
+      DocumentSheetConfig.unregisterSheet(ActiveEffect, 'core', ActiveEffectConfig)
+      DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
+        makeDefault: true,
+      })
+    }
 
     // preload drag-and-drop image
     {
@@ -1959,55 +1967,103 @@ if (!globalThis.GURPS) {
     }
 
     // Register sheet application classes
-    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-      label: 'NPC/mini',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
-      makeDefault: true,
-    })
+    if (game.release.generation >= 13) {
+      Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
+      Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+        label: 'Combat',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+        label: 'Editor',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+        label: 'Simple',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+        label: 'NPC/mini',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsInventorySheet, {
+        label: 'Inventory Only',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorTabSheet, {
+        label: 'Tabbed Sheet',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+        label: 'Reduced Mode',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorSheet, {
+        // Add this sheet last
+        label: 'Full (GCS)',
+        makeDefault: true,
+      })
 
-    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+      Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
+      Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
-    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-      JournalEntryPage,
-      'core',
-      foundry.applications.sheets.journal.JournalEntryPagePDFSheet
-    )
+      foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
+        JournalEntryPage,
+        'core',
+        foundry.applications.sheets.journal.JournalEntryPagePDFSheet
+      )
 
-    foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
-      types: ['pdf'],
-      makeDefault: true,
-      label: 'GURPS PDF Editor Sheet',
-    })
+      foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
+        types: ['pdf'],
+        makeDefault: true,
+        label: 'GURPS PDF Editor Sheet',
+      })
+    } else {
+      Actors.unregisterSheet('core', ActorSheet)
+      Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+        label: 'Combat',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+        label: 'Editor',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+        label: 'Simple',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+        label: 'NPC/mini',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsInventorySheet, {
+        label: 'Inventory Only',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorTabSheet, {
+        label: 'Tabbed Sheet',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+        label: 'Reduced Mode',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorSheet, {
+        // Add this sheet last
+        label: 'Full (GCS)',
+        makeDefault: true,
+      })
+
+      Items.unregisterSheet('core', ItemSheet)
+      Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+
+      DocumentSheetConfig.unregisterSheet(JournalEntryPage, 'core', JournalPDFPageSheet)
+
+      DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
+        types: ['pdf'],
+        makeDefault: true,
+        label: 'GURPS PDF Editor Sheet',
+      })
+    }
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-ignore
@@ -2435,14 +2491,25 @@ if (!globalThis.GURPS) {
 
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
-    foundry.applications.handlebars.loadTemplates([
-      __dirname + '/apply-damage/effect-blunttrauma.hbs',
-      __dirname + '/apply-damage/effect-crippling.hbs',
-      __dirname + '/apply-damage/effect-headvitalshit.hbs',
-      __dirname + '/apply-damage/effect-knockback.hbs',
-      __dirname + '/apply-damage/effect-majorwound.hbs',
-      __dirname + '/apply-damage/effect-shock.hbs',
-    ])
+    if (game.release.generation >= 13) {
+      foundry.applications.handlebars.loadTemplates([
+        __dirname + '/apply-damage/effect-blunttrauma.hbs',
+        __dirname + '/apply-damage/effect-crippling.hbs',
+        __dirname + '/apply-damage/effect-headvitalshit.hbs',
+        __dirname + '/apply-damage/effect-knockback.hbs',
+        __dirname + '/apply-damage/effect-majorwound.hbs',
+        __dirname + '/apply-damage/effect-shock.hbs',
+      ])
+    } else {
+      loadTemplates([
+        __dirname + '/apply-damage/effect-blunttrauma.hbs',
+        __dirname + '/apply-damage/effect-crippling.hbs',
+        __dirname + '/apply-damage/effect-headvitalshit.hbs',
+        __dirname + '/apply-damage/effect-knockback.hbs',
+        __dirname + '/apply-damage/effect-majorwound.hbs',
+        __dirname + '/apply-damage/effect-shock.hbs',
+      ])
+    }
 
     GURPS.setInitiativeFormula()
 

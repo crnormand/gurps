@@ -385,7 +385,9 @@ class ModifierStack {
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
-export class ModifierBucket extends foundry.appv1.api.Application {
+// export class ModifierBucket extends foundry.appv1.api.Application {
+// COMPATIBILITY: v12
+export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
@@ -837,7 +839,9 @@ export class ModifierBucket extends foundry.appv1.api.Application {
   _injectHTML($html) {
     const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
-    const bucketExists = !!ui.hotbar.element.querySelector('#modifierbucket')
+    const hotbarElement = game.release.generation === 12 ? ui.hotbar.element[0] : ui.hotbar.element
+
+    const bucketExists = !!hotbarElement.querySelector('#modifierbucket')
     if (!bucketExists) {
       if (position === 'left') ui.hotbar.element.prepend($html[0])
       else ui.hotbar.element.append($html[0])
