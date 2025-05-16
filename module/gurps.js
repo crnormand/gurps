@@ -2076,18 +2076,25 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 
-    // @ts-ignore
-    Hooks.on('renderSidebarTab', async (app, html) => {
+    Hooks.on('renderActorDirectory', (app, html, context) => {
       // Add the Import Multiple Actors button to the Actors tab.
-      if (app.id === 'actors') AddMultipleImportButton(html)
+      AddMultipleImportButton(html)
+    })
+
+    Hooks.on('renderCompendiumDirectory', (app, html, context) => {
       // Add the import equipment button to the Compendiums tab.
-      if (app.id === 'compendium') AddImportEquipmentButton(html)
+      AddImportEquipmentButton(html)
+    })
 
-      // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
-      const hasMeme = game.modules.get('markdown-editor')?.active
-      const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
+    Hooks.on('renderChatLog', (app, html, data) => {
+      let selector = '.chat-scroll'
+      // COMPATIBILITY: v12
+      if (game.release.generation === 12) {
+        html = html[0]
+        selector = '#chat-log'
+      }
 
-      const dropHandler = function (event, inLog) {
+      html.querySelector(selector)?.addEventListener('drop', event => {
         event.preventDefault()
         if (event.originalEvent) event = event.originalEvent
         const data = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -2111,22 +2118,14 @@ if (!globalThis.GURPS) {
             cmd = q + data.displayname + q + cmd
           }
           cmd = '[' + cmd + ']'
-          if (inLog) {
-            let messageData = {
-              user: game.user.id,
-              //speaker: ChatMessage.getSpeaker({ actor: game.user }),
-              type: CONST.CHAT_MESSAGE_STYLES.OOC,
-              content: cmd,
-            }
-            ChatMessage.create(messageData, {})
-          } else
-            $(document)
-              .find('#chat-message')
-              .val($(document).find('#chat-message').val() + cmd)
+          let messageData = {
+            user: game.user.id,
+            type: CONST.CHAT_MESSAGE_STYLES.OOC,
+            content: cmd,
+          }
+          ChatMessage.create(messageData, {})
         }
-      }
-      if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
-      html.find('#chat-log').on('drop', event => dropHandler(event, true))
+      })
     })
 
     /**
