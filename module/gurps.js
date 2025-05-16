@@ -2591,7 +2591,7 @@ if (!globalThis.GURPS) {
   })
 }
 
-Hooks.on('renderHotbar', (app, element, context) => {
+Hooks.once('renderHotbar', (app, element, context) => {
   GURPS.ModifierBucket.render(true)
 })
 
