@@ -49,7 +49,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
-import { GURPSRange, setupRanges } from '../lib/ranges.js'
+import { GurpsRange, setupRanges } from '../lib/ranges.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
@@ -2162,7 +2162,7 @@ if (!globalThis.GURPS) {
   Hooks.once('ready', async function () {
     // Set up SSRT
     GURPS.SSRT = setupRanges()
-    GURPS.rangeObject = new GURPSRange()
+    GURPS.rangeObject = new GurpsRange()
 
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()

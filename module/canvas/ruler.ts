@@ -3,8 +3,8 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { Length, LengthUnit } from '../data/common/index.js'
 
 // COMPATIBILITY: v12
-// class RulerGURPS extends foundry.canvas.interaction.Ruler {
-class RulerGURPS extends Ruler {
+// class GurpsRuler extends foundry.canvas.interaction.Ruler {
+class GurpsRuler extends Ruler {
   // Used to determine the distance modifier to apply to the modifier bucket
   // when releasing the ruler.
   distanceModifier = 0
@@ -59,4 +59,4 @@ class RulerGURPS extends Ruler {
   }
 }
 
-export { RulerGURPS }
+export { GurpsRuler }
