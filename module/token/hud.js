@@ -1,5 +1,5 @@
-import Maneuvers from './actor/maneuver.js'
-import * as Settings from '../lib/miscellaneous-settings.js'
+import Maneuvers from '../actor/maneuver.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 // Our override of the TokenHUD; it removes the maneuver tokens from the list of status effects
 // export default class GURPSTokenHUD extends foundry.applications.hud.TokenHUD {

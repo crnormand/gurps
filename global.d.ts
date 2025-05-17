@@ -1,7 +1,7 @@
-import GurpsToken from './module/token.js'
 import { GurpsActor } from './module/actor/actor.js'
 import { GurpsItem } from './module/item.js'
 import { CombatantGURPS } from './module/combat/combatant.ts'
+import { TokenGURPS } from './module/token/object.ts'
 
 export {}
 
@@ -15,7 +15,7 @@ declare global {
   }
 
   interface PlaceableObjectClassConfig {
-    Token: typeof GurpsToken
+    Token: typeof TokenGURPS
   }
 
   interface SettingConfig {

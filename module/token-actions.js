@@ -43,7 +43,7 @@ import Maneuvers, {
  * ### Aim
  * * +Acc, modified per Maneuver or Effect, +1 after first turn.
  *
- * @param {Token} token - The token to control.
+ * @param {Token.Implementation} token - The token to control.
  */
 export class TokenActions {
   constructor(token) {
@@ -596,7 +596,7 @@ export class TokenActions {
       // Check for Effects marked for this turn
       const effects = this.lastManeuvers[Math.max(round - 1, 0)].nextTurnEffects || []
       for (const effect of effects) {
-        await this.token.setEffectActive(effect, true)
+        await this.actor.toggleStatusEffect(effect, { active: true })
       }
       return
     }
@@ -671,7 +671,7 @@ export class TokenActions {
     // Check for Effects marked for this turn
     const effects = this.lastManeuvers[Math.max(round - 1, 0)]?.nextTurnEffects || []
     for (const effect of effects) {
-      await this.token.setEffectActive(effect, true)
+      await this.token.actor.toggleStatusEffect(effect, { active: true })
     }
 
     await this.addModifiers()

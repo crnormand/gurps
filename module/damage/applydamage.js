@@ -514,12 +514,11 @@ export default class ApplyDamageDialog extends Application {
             ? 'HT'
             : effect.modifier < 0
               ? `HT+${-effect.modifier}`
-              : `HT-${effect.modifier}`
-          (effect?.modifier ?? 0) === 0
-            ? 'HT'
-            : effect.modifier < 0
-              ? `HT+${-effect.modifier}`
-              : `HT-${effect.modifier}`
+              : `HT-${effect.modifier}`(effect?.modifier ?? 0) === 0
+                ? 'HT'
+                : effect.modifier < 0
+                  ? `HT+${-effect.modifier}`
+                  : `HT-${effect.modifier}`
 
         otf = `/r [!${htCheck}]`
         break
@@ -562,13 +561,13 @@ export default class ApplyDamageDialog extends Application {
       if (!!effectExists.length > 0) {
         // Remove all effects from Token
         for (let existingEffect of effectExists) {
-          await token.setEffectActive(existingEffect._source.statuses[0], false)
+          await token.actor.toggleStatusEffect(existingEffect._source.statuses[0], { active: false })
         }
         span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
         span.attr('title', game.i18n.localize(`GURPS.add${starts || effect}${label}Effect`))
       } else {
         // Add effect to Token
-        await token.setEffectActive(effect, true)
+        await token.actor.toggleStatusEffect(effect, { active: true })
         span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
         span.attr('title', game.i18n.localize(`GURPS.remove${starts || effect}${label}Effect`))
       }
@@ -651,7 +650,7 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+      object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
@@ -665,7 +664,7 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'headvitalshit') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+      object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 

@@ -1,5 +1,5 @@
+import { TokenGURPS } from '../token/index.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
-import GurpsToken from '../token.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -22,7 +22,6 @@ const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
 const MANEUVER_NAME_AIM = 'aim'
 
-CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
 
 // Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
@@ -410,8 +409,8 @@ export default class Maneuvers {
   }
 
   /**
-   * @param {ActiveEffect[]|undefined} effects
-   * @return {ActiveEffect[]} just the ActiveEffects that are also Maneuvers
+   * @param {ActiveEffect.Implementation[]|undefined} effects
+   * @return {ActiveEffect.Implementation[]} just the ActiveEffects that are also Maneuvers
    */
   static getActiveEffectManeuvers(effects) {
     return effects ? effects.filter(it => Maneuvers.isActiveEffectManeuver(it)) : []

@@ -38,7 +38,6 @@ import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
-import GURPSTokenHUD from './token-hud.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -74,19 +73,16 @@ import { HitLocation } from './hitlocation/hitlocation.js'
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
 import { PDFEditorSheet } from './pdf/edit.js'
 import { JournalEntryPageGURPS } from './pdf/index.js'
-import * as GURPSSpeedProvider from './speed-provider.js'
 import { TokenActions } from './token-actions.js'
-import GurpsToken from './token.js'
 import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
-// Import the damage module
 import * as Combat from './combat/index.js'
 import * as Damage from './damage/index.js'
-// Import the canvas module
 import * as Canvas from './canvas/index.js'
+import * as Token from './token/index.js'
 
 export let GURPS = undefined
 
@@ -116,6 +112,7 @@ if (!globalThis.GURPS) {
   Damage.init() // Initialize the Damage module
   Combat.init() // Initialize the Combat module
   Canvas.init() // Initialize the Canvas module
+  Token.init() // Initialize the Token module
 
   AddChatHooks()
   JQueryHelpers()
@@ -1912,7 +1909,6 @@ if (!globalThis.GURPS) {
 
     RegisterChatProcessors()
     GurpsActiveEffect.init()
-    GURPSSpeedProvider.init()
 
     // Add Debugger info
     GGADebugger.init()
@@ -2168,10 +2164,6 @@ if (!globalThis.GURPS) {
     GURPS.SSRT = setupRanges()
     GURPS.rangeObject = new GURPSRange()
 
-    // reset the TokenHUD to our version
-    // @ts-ignore
-    canvas.hud.token = new GURPSTokenHUD()
-
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
 
@@ -2353,7 +2345,6 @@ if (!globalThis.GURPS) {
         html.find('.combatant').each((_, li) => {
           li.setAttribute('draggable', true)
           li.addEventListener('dragstart', ev => {
-            // let display = ''
             if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
             let dragIcon = $(event.currentTarget).find('.token-image')[0]
             ev.dataTransfer.setDragImage(dragIcon, 25, 25)
@@ -2372,7 +2363,7 @@ if (!globalThis.GURPS) {
       const combatants = html.find('.combatant')
       for (let combatantElement of combatants) {
         const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
-        const token = canvas.tokens.get(combatant.token.id)
+        const token = canvas.tokens.get(combatant.token.id) ?? null
 
         // Get Combat Initiative
         const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
@@ -2552,7 +2543,6 @@ if (!globalThis.GURPS) {
       onChange: value => console.log(`${Settings.SETTING_ALT_SHEET}: ${value}`),
     })
 
-    GurpsToken.ready()
     TriggerHappySupport.init()
 
     CONFIG.TextEditor.enrichers = CONFIG.TextEditor.enrichers.concat([

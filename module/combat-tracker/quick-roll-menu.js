@@ -4,7 +4,8 @@ import { TokenActions } from '../token-actions.js'
 export const addQuickRollButton = async (html, combatant, token) => {
   const quickRollSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
   const canShowButtons = quickRollSettings.enabled && (game.user.isGM || combatant.isOwner)
-  if (!canShowButtons || !token.actor) return html
+
+  if (!canShowButtons || !token?.actor) return html
 
   const buttonClass = `combatant-control`
   let quickRollButton = $(
