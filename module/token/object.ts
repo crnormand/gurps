@@ -24,13 +24,6 @@ class TokenGURPS extends Token {
 
   /* ---------------------------------------- */
 
-  protected override async _drawEffects(): Promise<void> {
-    console.log('TokenGURPS._drawEffects')
-    return super._drawEffects()
-  }
-
-  /* ---------------------------------------- */
-
   /**
    * We use this function because maneuvers are special Active Effects: maneuvers don't apply
    * outside of combat, and only one maneuver can be active simultaneously. So we really don't
@@ -39,7 +32,7 @@ class TokenGURPS extends Token {
    */
   async setManeuver(maneuverId: string): Promise<void> {
     // if not in combat, do nothing
-    if (!isCombatActive || !isTokenInActiveCombat(this)) return
+    if (!isCombatActive() || !isTokenInActiveCombat(this)) return
 
     console.log('TokenGURPS.setManeuver', maneuverId)
 
@@ -50,7 +43,7 @@ class TokenGURPS extends Token {
     // if there is a single active effect maneuver, update its data
     if (activeManeuvers.length === 1) {
       // @ts-expect-error: waiting for flag type update
-      if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) activeManeuvers[0].update(maneuver)
+      if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) await activeManeuvers[0].update(maneuver)
     } else {
       if (activeManeuvers.length > 1) {
         await this.actor?.deleteEmbeddedDocuments(

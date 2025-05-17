@@ -1,4 +1,3 @@
-import { TokenGURPS } from '../token/index.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 
 export const MANEUVER = 'maneuver'

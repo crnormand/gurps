@@ -2347,11 +2347,11 @@ export class GurpsActor extends Actor {
    * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
    */
   get temporaryEffects() {
-    const set = super.temporaryEffects
-    const maneuver = set.find(e => e.isManeuver)
-    if (!maneuver) return set
+    const allEffects = super.temporaryEffects
+    const maneuver = allEffects.find(e => e.isManeuver)
+    if (!maneuver) return allEffects
 
-    const effects = set.filter(e => !e.isManeuver)
+    const effects = allEffects.filter(e => !e.isManeuver)
 
     const visibility = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
     if (visibility === 'NoOne') return effects
