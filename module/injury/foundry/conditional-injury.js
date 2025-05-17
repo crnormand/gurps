@@ -1,7 +1,7 @@
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import * as CI from '../domain/ConditionalInjury.js'
 
-export default class GURPSConditionalInjury {
+export default class GurpsConditionalInjury {
   constructor() {
     let self = this
     Handlebars.registerHelper('ciSeveritiesTooltip', self.severitiesTooltip)

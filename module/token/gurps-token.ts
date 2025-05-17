@@ -4,8 +4,8 @@ import { DatabaseCreateOperation } from 'node_modules/fvtt-types/src/foundry/com
 import { TokenActions } from '../token-actions.js'
 
 // COMPATIBILITY: v12
-// export default class TokenGURPS extends foundry.canvas.placeables.Token {
-class TokenGURPS extends Token {
+// export default class GurpsToken extends foundry.canvas.placeables.Token {
+class GurpsToken extends Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
@@ -75,4 +75,4 @@ class TokenGURPS extends Token {
     )
   }
 }
-export { TokenGURPS }
+export { GurpsToken }

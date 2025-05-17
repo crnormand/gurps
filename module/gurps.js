@@ -70,9 +70,9 @@ import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
-import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
+import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
 import { PDFEditorSheet } from './pdf/edit.js'
-import { JournalEntryPageGURPS } from './pdf/index.js'
+import { GurpsJournalEntryPage } from './pdf/index.js'
 import { TokenActions } from './token-actions.js'
 import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
@@ -1919,7 +1919,7 @@ if (!globalThis.GURPS) {
 
     GURPS.initiative = new Initiative()
     GURPS.hitpoints = new HitFatPoints()
-    GURPS.ConditionalInjury = new GURPSConditionalInjury()
+    GURPS.ConditionalInjury = new GurpsConditionalInjury()
 
     // do this only after we've initialized localize
     GURPS.Maneuvers = Maneuvers
@@ -1928,7 +1928,7 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
-    CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
+    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
 
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12
@@ -2365,8 +2365,8 @@ if (!globalThis.GURPS) {
         const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
         const token = canvas.tokens.get(combatant.token.id)
         if (!token) {
-          console.warn(`Token not found for combatant: ${combatant.name}`);
-          continue;
+          console.warn(`Token not found for combatant: ${combatant.name}`)
+          continue
         }
 
         // Get Combat Initiative

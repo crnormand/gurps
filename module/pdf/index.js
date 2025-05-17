@@ -1,4 +1,4 @@
-export class JournalEntryPageGURPS extends JournalEntryPage {
+export class GurpsJournalEntryPage extends JournalEntryPage {
   constructor(data, context = {}) {
     if (context.gurps?.ready) {
       super(data, context)
