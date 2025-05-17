@@ -615,7 +615,7 @@ export class GurpsActorSheet extends ActorSheet {
       let el = ev.currentTarget
       let opt = el.dataset.onethird
       let active = !!this.actor.system.conditions[opt]
-      this.actor.toggleStatusEffect(opt, !active)
+      this.actor.toggleStatusEffect(opt, { active: !active })
     })
 
     html.find('[data-onethird]').hover(

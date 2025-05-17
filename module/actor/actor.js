@@ -947,7 +947,7 @@ export class GurpsActor extends Actor {
       if (data.hasOwnProperty('system.HP.value')) {
         let flag = data['system.HP.value'] < this.system.HP.max / 3
         if (!!this.system.conditions.reeling != flag) {
-          this.toggleStatusEffect('reeling', flag)
+          this.toggleStatusEffect('reeling', { active: flag })
 
           if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
             // send the chat message
@@ -963,7 +963,7 @@ export class GurpsActor extends Actor {
       if (data.hasOwnProperty('system.FP.value')) {
         let flag = data['system.FP.value'] < this.system.FP.max / 3
         if (!!this.system.conditions.exhausted != flag) {
-          this.toggleStatusEffect('exhausted', flag)
+          this.toggleStatusEffect('exhausted', { active: flag })
 
           // send the chat message
           if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
