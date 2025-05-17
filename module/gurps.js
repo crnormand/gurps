@@ -2363,7 +2363,11 @@ if (!globalThis.GURPS) {
       const combatants = html.find('.combatant')
       for (let combatantElement of combatants) {
         const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
-        const token = canvas.tokens.get(combatant.token.id) ?? null
+        const token = canvas.tokens.get(combatant.token.id)
+        if (!token) {
+          console.warn(`Token not found for combatant: ${combatant.name}`);
+          continue;
+        }
 
         // Get Combat Initiative
         const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
