@@ -832,23 +832,26 @@ export class ModifierBucket extends Application {
     }
     return content
   }
-  /**
 
-     * @override
-     */
+  /**
+   * @override
+   */
   _injectHTML($html) {
     const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
-    // COMPATIBILITY: v12
-    const hotbarElement = game.release.generation === 12 ? ui.hotbar.element[0] : ui.hotbar.element
-
-    const bucketExists = !!hotbarElement.querySelector('#modifierbucket')
+    const bucketExists = !!document.querySelector('#modifierbucket')
     if (!bucketExists) {
-      if (position === 'left') ui.hotbar.element.prepend($html[0])
-      else ui.hotbar.element.append($html[0])
+      if (game.release.generation >= 13) {
+        if (position === 'left') document.querySelector('#ui-bottom').append($html[0])
+        else document.querySelector('#ui-right').prepend($html[0])
+      } else {
+        document.querySelector('#ui-bottom > div').append($html[0])
+
+        if (position === 'left') document.querySelector('#ui-bottom > div').style.justifyContent = 'flex-start'
+      }
+      this._element = $html
     } else {
       console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
     }
-    this._element = $html
   }
 }
