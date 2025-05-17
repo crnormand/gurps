@@ -3,13 +3,18 @@
 ## Release 0.18.0
 
 ### Features
+
 - Foundry v13 compatibility!
 - GCS Actor import now captures Advantage CR value as an attribute (`Advantage.cr`).
 - Internationalized the Fright Check dialog.
 - Enhanced Fright Check dialog to automatically set fields based on Actor's Advantages.
+- Roll multiple in attack chat message #2072
+- Make chat message damage button right clickable to allow for multiple damage rolls. #2159
 
 ### Bugfixes
-- Bugfix: `GURPSActor.findAdvantage(name)` now correctly searches inside advantage containers.
+
+- `GURPSActor.findAdvantage(name)` now correctly searches inside advantage containers.
+- Player token update throws error #2214
 
 ## Release 0.17.20 05/06/2025
 
@@ -20,7 +25,7 @@
 - Fixed hit location table recognition for GCS imports.
 - "Editor" link no longer opens editor sheet #2198
 - ADD not remembering who rolled damage. #2195
-- ChatMessage flags are being created incorrectly #2240. 
+- ChatMessage flags are being created incorrectly #2240.
   - This is a fix for the upcoming FoundryVTT v13 release -- it is recommended everyone who intends to adopt FoundryVTT v13 upgrade to this patch release as it migrates data needed by v13.
 
 ## Release 0.17.19 04/13/2025

@@ -24,29 +24,37 @@ export class FallbackFileHandler {
         ? `<input id="inputFiles" type="file" accept="${extensions}" />`
         : `<input id="inputFiles" type="file" webkitdirectory mozdirectory />`
     const content = template({ inputElement, ...templateOptions })
-    const promise = new Promise((resolve, reject) => {
-      Dialog.prompt({
-        title: `Import Data`,
-        content,
-        label: 'Import',
-        callback: html => {
-          const inputElementObject = html.find('#inputFiles')[0]
-          if (!(inputElementObject instanceof HTMLInputElement)) return reject(`can't find input element`)
-          if (!inputElementObject.files) return reject(`input element isn't file input`)
-          let files = Array.from(inputElementObject.files)
-          files = extensions.length > 0 ? files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : files
-          files.length !== 0
-            ? resolve(files.map(f => new FallbackFile(f)))
-            : reject('no files with the correct extensions were chosen')
+
+    return new Promise((resolve, reject) => {
+      foundry.applications.api.DialogV2.prompt({
+        window: { title: game.i18n.localize('GURPS.import') },
+        content: content,
+        ok: {
+          label: 'GURPS.import',
+          icon: 'fas fa-save',
+          callback: (event, button, dialog) => {
+            const html = dialog.element
+            const inputElementObject = html.querySelector('#inputFiles')
+
+            if (!(inputElementObject instanceof HTMLInputElement)) reject(`can't find input element`)
+            if (!inputElementObject.files) reject(`input element isn't file input`)
+
+            let files = Array.from(inputElementObject.files)
+            files = extensions.length > 0 ? files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : files
+
+            files.length === 0
+              ? reject('no files with the correct extensions were chosen')
+              : resolve(files.map(f => new FallbackFile(f)))
+          },
         },
-        rejectClose: false,
       })
     })
-    return promise
   }
+
   static async getFile({ template, templateOptions = {}, extensions = [] }) {
     return (await this._getFileOrFolder({ template, templateOptions, mode: 'file', extensions }))[0]
   }
+
   static async getFolder({ template, templateOptions = {} }) {
     return new FallbackFolder(await this._getFileOrFolder({ template, templateOptions, mode: 'folder' }))
   }

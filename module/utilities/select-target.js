@@ -6,84 +6,53 @@
  * @returns {Promise<Array>} - A promise that resolves with the selected targets.
  */
 export default async function selectTarget(targets, selectOptions = { selectAll: false, single: false }) {
-  return new Promise(async resolve => {
-    const dialog = await new DialogWithListeners(
-      {
-        window: { title: game.i18n.localize('GURPS.selectToken'), resizable: true },
-        content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
-          tokens: targets,
-          single: selectOptions.single,
-        }),
-        buttons: [
-          {
-            icon: 'fas fa-save',
-            label: 'GURPS.addApply',
-            callback: (event, button, dialog) => {
-              const allTokens = button.form.elements.tokens
-              const names = Array.from(allTokens)
-                .filter(token => token.checked)
-                .map(token => token.value)
+  return await foundry.applications.api.DialogV2.prompt({
+    window: { title: game.i18n.localize('GURPS.selectToken'), resizable: true },
+    content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
+      tokens: targets,
+      single: selectOptions.single,
+    }),
+    ok: {
+      callback: (event, button, dialog) => {
+        const allTokens = button.form.elements.tokens
+        const ids = Array.from(allTokens)
+          .filter(token => token.checked)
+          .map(token => token.value)
 
-              const selected = []
-              names.forEach(name => {
-                const target = targets.find(token => token.name === name)
-                if (target) selected.push(target)
-              })
-              resolve(selected) // Resolve with the selected targets
-            },
-          },
-        ],
+        const selected = []
+        ids.forEach(id => {
+          const target = targets.find(token => token.id === id)
+          if (target) selected.push(target)
+        })
+        return selected
       },
-      selectOptions
-    ).render({ force: true })
+    },
+    render: (event, dialog) => {
+      const tokenCheckboxes = Array.from(dialog.element.querySelectorAll('input[name="tokens"]')) ?? []
 
-    console.log(dialog)
+      if (selectOptions.single) {
+        tokenCheckboxes.forEach(token => {
+          token.addEventListener('change', () => {
+            tokenCheckboxes.filter(cb => cb !== token).forEach(cb => (cb.checked = false))
+          })
+        })
+      } else {
+        const allCheckbox = dialog.element.querySelector('input[name="all"]')
+        if (selectOptions.selectAll) {
+          allCheckbox.checked = true
+          tokenCheckboxes.forEach(checkbox => (checkbox.checked = true))
+        }
+
+        allCheckbox.addEventListener('change', event =>
+          tokenCheckboxes.forEach(checkbox => (checkbox.checked = event.target.checked))
+        )
+
+        tokenCheckboxes.forEach(checkbox => {
+          checkbox.addEventListener('change', event => {
+            if (!event.target.checked) allCheckbox.checked = false
+          })
+        })
+      }
+    },
   })
-}
-
-class DialogWithListeners extends foundry.applications.api.DialogV2 {
-  constructor(options, selectOptions) {
-    super(options)
-    this.selectOptions = selectOptions
-  }
-
-  _onRender(context, options) {
-    super._onRender(context, options)
-
-    const checkboxes = this.element.querySelectorAll('input[name="tokens"]')
-
-    if (this.selectOptions.single) {
-      checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-          if (checkbox.checked) {
-            checkboxes.forEach(cb => {
-              if (cb !== checkbox) cb.checked = false
-            })
-          }
-        })
-      })
-    } else {
-      const allCheckbox = this.element.querySelector('input[name="all"]')
-
-      // Default to checked if selected is true.
-      if (this.selectOptions.selectAll) allCheckbox.checked = true
-
-      allCheckbox.addEventListener('change', event => {
-        const isChecked = event.target.checked
-        checkboxes.forEach(checkbox => (checkbox.checked = isChecked))
-      })
-
-      // Default to checked if selected is true.
-      if (this.selectOptions.selectAll) checkboxes.forEach(checkbox => (checkbox.checked = true))
-
-      Array.from(checkboxes).forEach(checkbox => {
-        checkbox.addEventListener('change', event => {
-          const isChecked = event.target.checked
-          if (!isChecked) {
-            allCheckbox.checked = false
-          }
-        })
-      })
-    }
-  }
 }
