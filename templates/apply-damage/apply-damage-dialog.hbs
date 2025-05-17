@@ -158,11 +158,11 @@
 
                   {{#each CALC.effectiveWoundModifiers}}
                     <div><label><input type='radio' name='woundmodifier' {{checked (eq ../CALC.damageType
-											@key)}} value='{{@key}}'>&nbsp;{{localize (concat "GURPS.damageType" this.label)
+											@key)}} value='{{@key}}'>&nbsp;{{i18nFallback (concat "GURPS.damageType" this.label)
 										this.label}}</label>
                     </div>
                     <div>
-                      {{localize (concat "GURPS.damageAbbrev" @key) @key}}
+                      {{i18nFallback (concat "GURPS.damageAbbrev" @key) @key}}
                     </div>
                     <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>
                       ×{{fractionalize
