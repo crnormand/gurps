@@ -22,8 +22,8 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    app.flags.gurps.transfer = app.flags.gurps.transfer || {};
-    let transfer = app.flags.gurps.transfer;
+    app.flags.gurps.transfer = app.flags.gurps.transfer || {}
+    let transfer = app.flags.gurps.transfer
 
     // for each damage-message, set the drag-and-drop events and data
     let damageMessages = html.find('.damage-message')
@@ -372,7 +372,7 @@ export default class DamageChat {
       loaded: diceData.loaded,
       damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-      userTarget: userTarget,
+      userTarget: userTarget.name,
       hitlocation: draggableData[0].hitlocation,
       numtimes: draggableData.length > 1 ? ' x' + draggableData.length : '',
     })
