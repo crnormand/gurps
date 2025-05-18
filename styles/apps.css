@@ -3341,7 +3341,7 @@ details .popup.square5x4 {
   margin-left: 4px;
   font-size: 0.9em;
   font-weight: bold;
-  color: #261f1d;
+  color: var(--color-text-primary);
   line-height: 1.1;
 }
 

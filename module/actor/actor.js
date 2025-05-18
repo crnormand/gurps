@@ -544,7 +544,6 @@ export class GurpsActor extends Actor {
               locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             }
             recurselist(data.hitlocations, (e, _k, _d) => {
-              // console.log(e, _k, _d)
               if (!locpatterns || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
                 let dr = e.dr ?? ''
                 dr += ''
@@ -1013,7 +1012,6 @@ export class GurpsActor extends Actor {
       existing = existing.filter(e => e.statuses.find(s => s !== statusId))
 
       for (const it of existing) {
-        console.log(it)
         await super.toggleStatusEffect(it.statuses.first())
       }
     }
@@ -1115,7 +1113,6 @@ export class GurpsActor extends Actor {
     accumulators.push(action)
     await this.internalUpdate({ 'system.conditions.damageAccumulators': accumulators })
     GURPS.ModifierBucket.render()
-    //console.log(accumulators)
   }
 
   get damageAccumulators() {
@@ -1400,7 +1397,6 @@ export class GurpsActor extends Actor {
    * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
    */
   async handleItemDrop(dragData) {
-    console.log('handleItemDrop', dragData)
     if (!this.isOwner) {
       ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
       return
@@ -1517,7 +1513,6 @@ export class GurpsActor extends Actor {
 
   _forceRender() {
     this.ignoreRender = false
-    //console.log("Force Render")
     this.render(true)
   }
 
@@ -3201,6 +3196,10 @@ export class GurpsActor extends Actor {
         let canApply = modifierTags.includes(tag)
         if (userMod.includes('#maneuver')) {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
+        }
+        if (optionalArgs.hasOwnProperty('itemPath')) {
+          // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
+          canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
         if (actorInCombat) {
           canApply =

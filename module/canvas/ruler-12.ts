@@ -11,7 +11,7 @@ export class GurpsRulerV12 extends Ruler {
     }
     const yards = Length.from(totalDistance, units as unknown as LengthUnit, true)?.to(Length.Unit.Yard)
     let label = yards.toString()
-    let mod = this._yardsToRangePenalty(yards.value)
+    let mod = this.yardsToRangePenalty(yards.value)
     GURPS.ModifierBucket.setTempRangeMod(mod)
     if (segment.last) {
       let total = `${dist(totalDistance, units)}`
@@ -31,7 +31,7 @@ export class GurpsRulerV12 extends Ruler {
 
   /* ---------------------------------------- */
 
-  protected _yardsToRangePenalty(yards: number): number {
+  yardsToRangePenalty(yards: number): number {
     const strategy = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY) ?? 'Standard'
     if (strategy === 'Standard') {
       return GURPS.SSRT.getModifier(yards)

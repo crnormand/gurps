@@ -1424,6 +1424,7 @@ if (!globalThis.GURPS) {
     let element = event.currentTarget
     let prefix = ''
     let thing = ''
+    let action = null
     var chatthing
     /** @type {Record<string, any>} */
     let opt = { event: event }
@@ -1445,6 +1446,22 @@ if (!globalThis.GURPS) {
         }
       }
       return
+    } else if ('key' in element.dataset) {
+      formula = '3d6'
+      const path = element.dataset.key
+      opt.itemPath = `@${path}`
+
+      const item = foundry.utils.getProperty(actor, path)
+      if ('level' in item) target = item.level
+      opt.obj = item
+
+      let srcid = !!actor ? '@' + actor.id + '@' : ''
+      if ('name' in element.dataset) thing = element.dataset.name
+      if ('otf' in element.dataset) {
+        const parsedLink = GURPS.parselink(element.dataset.otf)
+        if ('action' in parsedLink) action = parsedLink.action
+        chatthing = '[' + srcid + element.dataset.otf + ']'
+      }
     } else if ('path' in element.dataset) {
       let srcid = !!actor ? '@' + actor.id + '@' : ''
       prefix = game.i18n.localize('GURPS.rollVs')
@@ -1480,8 +1497,8 @@ if (!globalThis.GURPS) {
       if (!k) k = element.dataset.key
       if (!!k) {
         if (actor) opt.obj = foundry.utils.getProperty(actor, k) // During the roll, we may want to extract something from the object
-        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
         if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
       }
       formula = '3d6'
       let t = element.innerText
@@ -1504,7 +1521,17 @@ if (!globalThis.GURPS) {
       formula = d6ify(formula)
     }
 
-    await doRoll({ actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt })
+    await doRoll({
+      action,
+      actor,
+      formula,
+      targetmods,
+      prefix,
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: opt,
+    })
   }
   GURPS.handleRoll = handleRoll
 
@@ -2301,7 +2328,6 @@ if (!globalThis.GURPS) {
         html.addClass('bound')
         // @ts-ignore
         html.on('drop', function (ev) {
-          console.log('Handle drop event on combatTracker')
           ev.preventDefault()
           ev.stopPropagation()
           let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)

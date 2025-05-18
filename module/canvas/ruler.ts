@@ -24,7 +24,7 @@ class GurpsRuler extends Ruler {
     if (waypoint.next === null) {
       const units = canvas.scene?.grid.units ?? Length.Unit.Yard
       const yards = Length.from(waypoint.measurement.distance, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
-      this.distanceModifier = this._yardsToRangePenalty(yards)
+      this.distanceModifier = this.yardsToRangePenalty(yards)
 
       GURPS.ModifierBucket.setTempRangeMod(this.distanceModifier)
       context.modifier = { total: this.distanceModifier }
@@ -34,7 +34,7 @@ class GurpsRuler extends Ruler {
 
   /* ---------------------------------------- */
 
-  protected _yardsToRangePenalty(yards: number): number {
+  yardsToRangePenalty(yards: number): number {
     const strategy = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY) ?? 'Standard'
     if (strategy === 'Standard') {
       return GURPS.SSRT.getModifier(yards)
