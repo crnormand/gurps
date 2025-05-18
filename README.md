@@ -18,7 +18,9 @@ The list was getting just too long, so it has been moved to a separate file. Cli
 
 If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
-Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
+Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/VzybymD8z6)) 
+
+Thanks 🙂
 
 [Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-14' 9/09/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
