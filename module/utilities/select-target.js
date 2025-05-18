@@ -28,7 +28,10 @@ export default async function selectTarget(targets, selectOptions = { selectAll:
       },
     },
     render: (event, dialog) => {
-      const tokenCheckboxes = Array.from(dialog.element.querySelectorAll('input[name="tokens"]')) ?? []
+      // COMPATIBILITY: v12
+      const element = game.release.generation >= 13 ? dialog.element : dialog
+
+      const tokenCheckboxes = Array.from(element.querySelectorAll('input[name="tokens"]')) ?? []
 
       if (selectOptions.single) {
         tokenCheckboxes.forEach(token => {
@@ -37,7 +40,7 @@ export default async function selectTarget(targets, selectOptions = { selectAll:
           })
         })
       } else {
-        const allCheckbox = dialog.element.querySelector('input[name="all"]')
+        const allCheckbox = element.querySelector('input[name="all"]')
         if (selectOptions.selectAll) {
           allCheckbox.checked = true
           tokenCheckboxes.forEach(checkbox => (checkbox.checked = true))
