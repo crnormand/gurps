@@ -44,6 +44,7 @@ export class ChromiumFileHandler {
     return new Promise((resolve, reject) => {
       foundry.applications.api.DialogV2.prompt({
         window: { title: game.i18n.localize('GURPS.import') },
+        position: { width: 'auto' },
         content: content,
         ok: {
           label: 'GURPS.import',
@@ -51,8 +52,11 @@ export class ChromiumFileHandler {
           callback: () => (handle ? resolve(handle) : reject(`no ${mode} were chosen`)),
         },
         render: (event, dialog) => {
-          const fileChosenDiv = dialog.element.querySelector('#selectedFile')
-          dialog.element.querySelector('#importButton').addEventListener('click', async event => {
+          // COMPATIBILITY: v12
+          const element = game.release.generation >= 13 ? dialog.element : dialog
+
+          const fileChosenDiv = element.querySelector('#selectedFile')
+          element.querySelector('#importButton').addEventListener('click', async event => {
             event.preventDefault() // Prevent default browser dialog dismiss behavior.
             event.stopPropagation() // Prevent the event from propagating further
 
