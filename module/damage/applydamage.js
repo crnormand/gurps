@@ -514,12 +514,7 @@ export default class ApplyDamageDialog extends Application {
             ? 'HT'
             : effect.modifier < 0
               ? `HT+${-effect.modifier}`
-              : `HT-${effect.modifier}`(effect?.modifier ?? 0) === 0
-                ? 'HT'
-                : effect.modifier < 0
-                  ? `HT+${-effect.modifier}`
-                  : `HT-${effect.modifier}`
-
+              : `HT-${effect.modifier}`
         otf = `/r [!${htCheck}]`
         break
 
