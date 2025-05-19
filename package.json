@@ -4,8 +4,8 @@
   "description": "NaN's GURPS Game Aid",
   "type": "module",
   "scripts": {
-    "test": "jest --coverage",
-    "tdd": "jest --coverage",
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --config=jest.config.mjs",
+    "tdd": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --config=jest.config.mjs",
     "handlebars": "handlebars",
     "prettier": "prettier --write .",
     "clean": "rimraf dist",
@@ -37,6 +37,7 @@
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "sass": "^1.87.0",
+    "ts-jest": "^29.3.4",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.8.3"
   },

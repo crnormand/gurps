@@ -6,18 +6,18 @@ beforeAll(() => {
   globalThis.GURPS = {}
 
   /** @type {Game} */
+  // @ts-ignore
   globalThis.game = {
     i18n: {
+      // @ts-ignore
       localize: str => str,
     },
   }
 })
 
 describe('parseForRollOrDamage', () => {
-  let prefix
   beforeAll(() => {
     GURPS.DamageTables = new DamageTable()
-    prefix = expect.getState().currentTestName
   })
 
   test.each([
@@ -296,7 +296,7 @@ describe('parseForRollOrDamage', () => {
     ],
   ])('parses %s correctly', (input, expected) => {
     const result = parseForRollOrDamage(input)
-    expect(result.action).toEqual(expected)
+    expect(result!.action).toEqual(expected)
   })
 
   test('#> 8', () => {
@@ -305,10 +305,10 @@ describe('parseForRollOrDamage', () => {
 })
 
 describe('parseLink', () => {
-  let input
+  let input: string
 
   beforeEach(() => {
-    input = expect.getState().currentTestName.split('#> ')[1]
+    input = expect.getState().currentTestName!.split('#> ')[1]
   })
 
   test('#> A', () => {

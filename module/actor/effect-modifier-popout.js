@@ -1,6 +1,7 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
+import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
 import { gurpslink } from '../utilities/gurpslink.js'
@@ -20,10 +21,10 @@ export const calculateRange = (token1, token2) => {
   ruler.clear()
 
   const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
-  const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
+  const yards = Length.from(dist, canvas.scene.grid.units).to(Length.Unit.Yard).value
   return {
     yards: Math.ceil(dist),
-    modifier: ruler.yardsToSpeedRangePenalty(yards),
+    modifier: ruler.yardsToRangePenalty(yards),
   }
 }
 
