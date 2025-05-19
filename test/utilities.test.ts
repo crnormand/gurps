@@ -1,5 +1,5 @@
-import * as utilities from '../lib/utilities'
-import { displayMod, makeSelect } from '../lib/utilities'
+import * as utilities from '../lib/utilities.js'
+import { displayMod, makeSelect } from '../lib/utilities.js'
 
 describe('utilities', () => {
   describe('displayMod', () => {
@@ -201,7 +201,7 @@ describe('utilities', () => {
   describe('diceToFormula', () => {
     test('should convert dice object to formula string', () => {
       const dice = { dice: 2, adds: -1 }
-      expect(utilities.diceToFormula(dice)).toBe('2d6-1')
+      expect(utilities.diceToFormula(dice, '[flavor]')).toBe('2d6[flavor]-1')
     })
   })
 
@@ -213,7 +213,9 @@ describe('utilities', () => {
 
   describe('locateToken', () => {
     beforeAll(() => {
-      globalThis.canvas = {
+      // @ts-expect-error: global.canvas is used for testing purposes
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      global.canvas = {
         tokens: {
           placeables: [
             { id: 'token1', name: 'Token One', actor: { id: 'actor1', name: 'Actor One' } },

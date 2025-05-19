@@ -35,6 +35,13 @@ type LengthSchema = ReturnType<typeof lengthSchema>
 /* ---------------------------------------- */
 
 class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends DataModel<LengthSchema, Parent> {
+  // Provide a Constructor for the Length class to allow for testing.
+  constructor(data: { value: number; unit: LengthUnit }, parent?: Parent) {
+    super(data, parent === null ? undefined : parent)
+    this.value = data.value
+    this.unit = data.unit
+  }
+
   /* ---------------------------------------- */
   /*  Static Properties                       */
   /* ---------------------------------------- */

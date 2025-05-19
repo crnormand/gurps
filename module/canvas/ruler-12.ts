@@ -64,21 +64,6 @@ export class GurpsRulerV12 extends Ruler {
 
     return meter * 1.0936
   }
-
-  yardsToSpeedRangePenalty(yards: number): number {
-    let currentValue = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY)
-    if (currentValue == 'Standard') {
-      return GURPS.SSRT.getModifier(yards)
-    } else {
-      for (let range of GURPS.rangeObject.ranges) {
-        if (typeof range.max === 'string')
-          // Handles last distance being "500+"
-          return range.penalty
-        if (yards <= range.max) return range.penalty
-      }
-    }
-    return 0
-  }
 }
 
 const meters = ['meters', 'meter', 'm']

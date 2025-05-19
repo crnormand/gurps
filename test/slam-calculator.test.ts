@@ -2,7 +2,7 @@ import { SizeAndSpeedRangeTable } from '../lib/size-speed-range-table.js'
 import { SlamCalculator } from '../module/chat/slam-calc.js'
 
 describe('SlamCalculator', () => {
-  let slamCalculator
+  let slamCalculator: SlamCalculator | null = null
 
   beforeEach(() => {
     slamCalculator = new SlamCalculator({
@@ -26,7 +26,7 @@ describe('SlamCalculator', () => {
       data.attackerThr = '2d'
       data.targetThr = '1d'
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
       expect(result.attackerAdds).toEqual(0)
@@ -38,7 +38,7 @@ describe('SlamCalculator', () => {
       data.attackerThr = '1d+1'
       data.targetThr = '1d-1'
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: -1 })
       expect(result.attackerAdds).toEqual(0)
@@ -52,7 +52,7 @@ describe('SlamCalculator', () => {
         data.targetThr = '1d'
         data.relativeSpeed = 1
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(0)
@@ -65,7 +65,7 @@ describe('SlamCalculator', () => {
         data.targetThr = '1d'
         data.relativeSpeed = 2
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(0)
@@ -78,7 +78,7 @@ describe('SlamCalculator', () => {
         data.targetThr = '1d'
         data.relativeSpeed = 3
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(2)
@@ -91,7 +91,7 @@ describe('SlamCalculator', () => {
         data.targetThr = '1d'
         data.relativeSpeed = 5
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(4)
@@ -104,7 +104,7 @@ describe('SlamCalculator', () => {
         data.targetThr = '1d'
         data.relativeSpeed = 6
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(6)
@@ -117,7 +117,7 @@ describe('SlamCalculator', () => {
         data.targetThr = '1d'
         data.relativeSpeed = 7
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(6)
@@ -132,7 +132,7 @@ describe('SlamCalculator', () => {
       data.relativeSpeed = 7
       data.isAoAStrong = true
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
       expect(result.attackerAdds).toEqual(8)
@@ -148,7 +148,7 @@ describe('SlamCalculator', () => {
         data.isAoAStrong = true
         data.shieldDB = 1
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: -2 })
         expect(result.attackerAdds).toEqual(9)
@@ -173,7 +173,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 8
       data.relativeSpeed = 1
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: -3 })
       expect(result.attackerAdds).toEqual(0)
@@ -186,7 +186,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 8
       data.relativeSpeed = 1
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: -3 })
       expect(result.attackerAdds).toEqual(0)
@@ -199,7 +199,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 5
       data.relativeSpeed = 5
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: -2 })
       expect(result.attackerAdds).toEqual(0)
@@ -212,7 +212,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 5
       data.relativeSpeed = 6
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: -1 })
       expect(result.attackerAdds).toEqual(0)
@@ -225,7 +225,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 5
       data.relativeSpeed = 10
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: 0 })
       expect(result.attackerAdds).toEqual(0)
@@ -238,7 +238,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 5
       data.relativeSpeed = 14
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 1, adds: 0 })
       expect(result.attackerAdds).toEqual(0)
@@ -251,7 +251,7 @@ describe('SlamCalculator', () => {
       data.targetHp = 5
       data.relativeSpeed = 15
 
-      const result = slamCalculator._getSlamData(data)
+      const result = slamCalculator!._getSlamData(data)
 
       expect(result.attackerDice).toEqual({ dice: 2, adds: 0 })
       expect(result.attackerAdds).toEqual(0)
@@ -266,7 +266,7 @@ describe('SlamCalculator', () => {
         data.targetHp = 5
         data.relativeSpeed = 14
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 1, adds: 0 })
         expect(result.attackerAdds).toEqual(2)
@@ -280,7 +280,7 @@ describe('SlamCalculator', () => {
         data.targetHp = 5
         data.relativeSpeed = 15
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: 0 })
         expect(result.attackerAdds).toEqual(2)
@@ -297,7 +297,7 @@ describe('SlamCalculator', () => {
         data.relativeSpeed = 14
         data.shieldDB = 3
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 1, adds: 0 })
         expect(result.attackerAdds).toEqual(5)
@@ -312,7 +312,7 @@ describe('SlamCalculator', () => {
         data.relativeSpeed = 15
         data.shieldDB = 2
 
-        const result = slamCalculator._getSlamData(data)
+        const result = slamCalculator!._getSlamData(data)
 
         expect(result.attackerDice).toEqual({ dice: 2, adds: 0 })
         expect(result.attackerAdds).toEqual(4)

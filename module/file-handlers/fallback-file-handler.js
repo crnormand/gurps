@@ -36,8 +36,8 @@ export class FallbackFileHandler {
             const html = dialog.element
             const inputElementObject = html.querySelector('#inputFiles')
 
-            if (!(inputElementObject instanceof HTMLInputElement)) reject(`can't find input element`)
-            if (!inputElementObject.files) reject(`input element isn't file input`)
+            if (!(inputElementObject instanceof HTMLInputElement)) return reject(`can't find input element`)
+            if (!inputElementObject.files) return reject(`input element isn't file input`)
 
             let files = Array.from(inputElementObject.files)
             files = extensions.length > 0 ? files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : files
