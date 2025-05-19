@@ -1,4 +1,3 @@
-import * as settings from '../../lib/miscellaneous-settings.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -77,7 +76,7 @@ export class GurpsActorSheet extends ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {
-      visible: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
+      visible: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_SHEET_NAVIGATION),
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
       hasSpells: !isEmptyObject(this.actor.system.spells),
@@ -86,7 +85,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
-    sheetData.useQN = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
+    sheetData.useQN = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 
@@ -147,12 +146,12 @@ export class GurpsActorSheet extends ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
-    if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       this._createGlobalItemMenus(html)
     }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       html.find('.enc').click(this._onClickEnc.bind(this))
     }
 
@@ -302,7 +301,7 @@ export class GurpsActorSheet extends ActorSheet {
     // END CONDITIONAL INJURY
 
     // If using the "enhanced" inputs for trackers, enable the ribbon popup.
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ENHANCED_INPUT)) {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ENHANCED_INPUT)) {
       // On Focus, initialize the ribbon popup and show it.
       html.find('.spinner details summary input').focus(ev => {
         let details = ev.currentTarget.closest('details')
@@ -615,7 +614,7 @@ export class GurpsActorSheet extends ActorSheet {
       let el = ev.currentTarget
       let opt = el.dataset.onethird
       let active = !!this.actor.system.conditions[opt]
-      this.actor.toggleEffectByName(opt, !active)
+      this.actor.toggleStatusEffect(opt, { active: !active })
     })
 
     html.find('[data-onethird]').hover(
@@ -1656,7 +1655,7 @@ export class GurpsActorSheet extends ActorSheet {
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
-    const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
+    const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
     const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
     let b = [
@@ -1668,7 +1667,7 @@ export class GurpsActorSheet extends ActorSheet {
       },
     ]
 
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
       b.push({
         label: 'Import',
         class: 'import',
@@ -1792,7 +1791,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onClickEnc(ev) {
     ev.preventDefault()
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       let element = ev.currentTarget
       let key = element.dataset.key
       //////////
@@ -2293,11 +2292,11 @@ export class ItemImageSettings extends FormApplication {
 
   getData() {
     return {
-      settings: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE),
+      settings: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE),
     }
   }
 
   async _updateObject(event, formData) {
-    await game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE, formData)
+    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE, formData)
   }
 }

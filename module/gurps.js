@@ -38,7 +38,6 @@ import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
-import GURPSTokenHUD from './token-hud.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -50,7 +49,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 
 import HitFatPoints from '../lib/hitpoints.js'
 import Initiative from '../lib/initiative.js'
-import { GURPSRange, setupRanges } from '../lib/ranges.js'
+import { GurpsRange, setupRanges } from '../lib/ranges.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
@@ -71,22 +70,19 @@ import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
-import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
+import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
 import { PDFEditorSheet } from './pdf/edit.js'
-import { JournalEntryPageGURPS } from './pdf/index.js'
-import * as GURPSSpeedProvider from './speed-provider.js'
+import { GurpsJournalEntryPage } from './pdf/index.js'
 import { TokenActions } from './token-actions.js'
-import GurpsToken from './token.js'
 import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
-// Import the damage module
 import * as Combat from './combat/index.js'
 import * as Damage from './damage/index.js'
-// Import the canvas module
 import * as Canvas from './canvas/index.js'
+import * as Token from './token/index.js'
 
 export let GURPS = undefined
 
@@ -116,6 +112,7 @@ if (!globalThis.GURPS) {
   Damage.init() // Initialize the Damage module
   Combat.init() // Initialize the Combat module
   Canvas.init() // Initialize the Canvas module
+  Token.init() // Initialize the Token module
 
   AddChatHooks()
   JQueryHelpers()
@@ -1427,6 +1424,7 @@ if (!globalThis.GURPS) {
     let element = event.currentTarget
     let prefix = ''
     let thing = ''
+    let action = null
     var chatthing
     /** @type {Record<string, any>} */
     let opt = { event: event }
@@ -1448,6 +1446,22 @@ if (!globalThis.GURPS) {
         }
       }
       return
+    } else if ('key' in element.dataset) {
+      formula = '3d6'
+      const path = element.dataset.key
+      opt.itemPath = `@${path}`
+
+      const item = foundry.utils.getProperty(actor, path)
+      if ('level' in item) target = item.level
+      opt.obj = item
+
+      let srcid = !!actor ? '@' + actor.id + '@' : ''
+      if ('name' in element.dataset) thing = element.dataset.name
+      if ('otf' in element.dataset) {
+        const parsedLink = GURPS.parselink(element.dataset.otf)
+        if ('action' in parsedLink) action = parsedLink.action
+        chatthing = '[' + srcid + element.dataset.otf + ']'
+      }
     } else if ('path' in element.dataset) {
       let srcid = !!actor ? '@' + actor.id + '@' : ''
       prefix = game.i18n.localize('GURPS.rollVs')
@@ -1483,8 +1497,8 @@ if (!globalThis.GURPS) {
       if (!k) k = element.dataset.key
       if (!!k) {
         if (actor) opt.obj = foundry.utils.getProperty(actor, k) // During the roll, we may want to extract something from the object
-        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
         if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
       }
       formula = '3d6'
       let t = element.innerText
@@ -1507,7 +1521,17 @@ if (!globalThis.GURPS) {
       formula = d6ify(formula)
     }
 
-    await doRoll({ actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt })
+    await doRoll({
+      action,
+      actor,
+      formula,
+      targetmods,
+      prefix,
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: opt,
+    })
   }
   GURPS.handleRoll = handleRoll
 
@@ -1912,7 +1936,6 @@ if (!globalThis.GURPS) {
 
     RegisterChatProcessors()
     GurpsActiveEffect.init()
-    GURPSSpeedProvider.init()
 
     // Add Debugger info
     GGADebugger.init()
@@ -1923,7 +1946,7 @@ if (!globalThis.GURPS) {
 
     GURPS.initiative = new Initiative()
     GURPS.hitpoints = new HitFatPoints()
-    GURPS.ConditionalInjury = new GURPSConditionalInjury()
+    GURPS.ConditionalInjury = new GurpsConditionalInjury()
 
     // do this only after we've initialized localize
     GURPS.Maneuvers = Maneuvers
@@ -1932,7 +1955,7 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
-    CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
+    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
 
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12
@@ -2166,11 +2189,7 @@ if (!globalThis.GURPS) {
   Hooks.once('ready', async function () {
     // Set up SSRT
     GURPS.SSRT = setupRanges()
-    GURPS.rangeObject = new GURPSRange()
-
-    // reset the TokenHUD to our version
-    // @ts-ignore
-    canvas.hud.token = new GURPSTokenHUD()
+    GURPS.rangeObject = new GurpsRange()
 
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
@@ -2309,7 +2328,6 @@ if (!globalThis.GURPS) {
         html.addClass('bound')
         // @ts-ignore
         html.on('drop', function (ev) {
-          console.log('Handle drop event on combatTracker')
           ev.preventDefault()
           ev.stopPropagation()
           let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
@@ -2353,7 +2371,6 @@ if (!globalThis.GURPS) {
         html.find('.combatant').each((_, li) => {
           li.setAttribute('draggable', true)
           li.addEventListener('dragstart', ev => {
-            // let display = ''
             if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
             let dragIcon = $(event.currentTarget).find('.token-image')[0]
             ev.dataTransfer.setDragImage(dragIcon, 25, 25)
@@ -2373,6 +2390,10 @@ if (!globalThis.GURPS) {
       for (let combatantElement of combatants) {
         const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
         const token = canvas.tokens.get(combatant.token.id)
+        if (!token) {
+          console.warn(`Token not found for combatant: ${combatant.name}`)
+          continue
+        }
 
         // Get Combat Initiative
         const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
@@ -2552,7 +2573,6 @@ if (!globalThis.GURPS) {
       onChange: value => console.log(`${Settings.SETTING_ALT_SHEET}: ${value}`),
     })
 
-    GurpsToken.ready()
     TriggerHappySupport.init()
 
     CONFIG.TextEditor.enrichers = CONFIG.TextEditor.enrichers.concat([

@@ -3,8 +3,8 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { Length, LengthUnit } from '../data/common/index.js'
 
 // COMPATIBILITY: v12
-// class RulerGURPS extends foundry.canvas.interaction.Ruler {
-class RulerGURPS extends Ruler {
+// class GurpsRuler extends foundry.canvas.interaction.Ruler {
+class GurpsRuler extends Ruler {
   // Used to determine the distance modifier to apply to the modifier bucket
   // when releasing the ruler.
   distanceModifier = 0
@@ -24,7 +24,7 @@ class RulerGURPS extends Ruler {
     if (waypoint.next === null) {
       const units = canvas.scene?.grid.units ?? Length.Unit.Yard
       const yards = Length.from(waypoint.measurement.distance, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
-      this.distanceModifier = this._yardsToRangePenalty(yards)
+      this.distanceModifier = this.yardsToRangePenalty(yards)
 
       GURPS.ModifierBucket.setTempRangeMod(this.distanceModifier)
       context.modifier = { total: this.distanceModifier }
@@ -34,7 +34,7 @@ class RulerGURPS extends Ruler {
 
   /* ---------------------------------------- */
 
-  protected _yardsToRangePenalty(yards: number): number {
+  yardsToRangePenalty(yards: number): number {
     const strategy = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY) ?? 'Standard'
     if (strategy === 'Standard') {
       return GURPS.SSRT.getModifier(yards)
@@ -59,4 +59,4 @@ class RulerGURPS extends Ruler {
   }
 }
 
-export { RulerGURPS }
+export { GurpsRuler }

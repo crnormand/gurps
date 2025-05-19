@@ -3,7 +3,7 @@ import { TokenActions } from '../token-actions.js'
 
 export const addManeuverMenu = async (html, combatant, token) => {
   // If token doesn't have an actor, return
-  if (!token.actor) return html
+  if (!token?.actor) return html
   // Find Current Maneuver element
   const tokenEffectsDiv = $(html).find('.token-effects')
   let currentManeuver = null

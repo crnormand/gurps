@@ -1,4 +1,4 @@
-import * as settings from '../lib/miscellaneous-settings.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
 import { zeroFill } from '../lib/utilities.js'
 
 export const AddImportEquipmentButton = async function (html) {
@@ -103,7 +103,7 @@ export class ItemImporter {
   }
 
   _getItemCost(i) {
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
       return !!i.value ? parseFloat(i.value) || 0 : 0
     }
     let value
@@ -113,7 +113,7 @@ export class ItemImporter {
   }
 
   _getItemWeight(i) {
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
       return !!i.weight ? parseFloat(i.weight) || 0 : 0
     }
     let weight
