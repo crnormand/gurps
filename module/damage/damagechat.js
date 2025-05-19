@@ -372,7 +372,7 @@ export default class DamageChat {
       loaded: diceData.loaded,
       damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-      userTarget: userTarget.name,
+      userTarget: userTarget?.name,
       hitlocation: draggableData[0].hitlocation,
       numtimes: draggableData.length > 1 ? ' x' + draggableData.length : '',
     })
