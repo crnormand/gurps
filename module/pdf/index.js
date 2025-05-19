@@ -6,7 +6,7 @@ export class GurpsJournalEntryPage extends JournalEntryPage {
       this.system.offset ??= 0
     } else {
       foundry.utils.mergeObject(context, { gurps: { ready: true } })
-      if (data.type === 'pdf') return new JournalEntryPageGURPS(data, context)
+      if (data.type === 'pdf') return new GurpsJournalEntryPage(data, context)
       else return new JournalEntryPage(data, context)
     }
   }
