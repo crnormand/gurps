@@ -15,6 +15,8 @@
 
 - `GURPSActor.findAdvantage(name)` now correctly searches inside advantage containers.
 - Player token update throws error #2214
+- Double ACC Aim bonus in ranged weapon with two ammo types #2152
+- ACC bonus for Aim only works once per combat #2153
 
 ## Release 0.17.20 05/06/2025
 
