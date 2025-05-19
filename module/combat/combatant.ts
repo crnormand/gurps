@@ -1,6 +1,6 @@
 import { TokenActions } from '../token-actions.js'
 
-class CombatantGURPS<SubType extends Combatant.SubType = Combatant.SubType> extends Combatant<SubType> {
+class GurpsCombatant<SubType extends Combatant.SubType = Combatant.SubType> extends Combatant<SubType> {
   // Set "Do Nothing" maneuver by defualt when a combatant is created (enters combat)
   protected override _onCreate(
     data: Combatant.CreateData,
@@ -42,4 +42,4 @@ class CombatantGURPS<SubType extends Combatant.SubType = Combatant.SubType> exte
   }
 }
 
-export { CombatantGURPS }
+export { GurpsCombatant }

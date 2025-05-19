@@ -1,7 +1,7 @@
 'use strict'
 
 import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import {
   displayMod,
   generateUniqueId,
@@ -48,7 +48,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._calculator = new CompositeDamageCalculator(actor, damageData)
     this.actor = actor
-    this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
+    this.isSimpleDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
     const attacker = game.actors.get(damageData[0].attacker)
     const gmUser = game.users.find(it => it.isGM && it.active)
@@ -78,7 +78,7 @@ export default class ApplyDamageDialog extends Application {
       resizable: true,
       minimizable: false,
       width: 800,
-      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
+      height: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
       title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
@@ -514,12 +514,7 @@ export default class ApplyDamageDialog extends Application {
             ? 'HT'
             : effect.modifier < 0
               ? `HT+${-effect.modifier}`
-              : `HT-${effect.modifier}`(effect?.modifier ?? 0) === 0
-                ? 'HT'
-                : effect.modifier < 0
-                  ? `HT+${-effect.modifier}`
-                  : `HT-${effect.modifier}`
-
+              : `HT-${effect.modifier}`
         otf = `/r [!${htCheck}]`
         break
 
@@ -561,13 +556,13 @@ export default class ApplyDamageDialog extends Application {
       if (!!effectExists.length > 0) {
         // Remove all effects from Token
         for (let existingEffect of effectExists) {
-          await token.setEffectActive(existingEffect._source.statuses[0], false)
+          await token.actor.toggleStatusEffect(existingEffect._source.statuses[0], { active: false })
         }
         span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
         span.attr('title', game.i18n.localize(`GURPS.add${starts || effect}${label}Effect`))
       } else {
         // Add effect to Token
-        await token.setEffectActive(effect, true)
+        await token.actor.toggleStatusEffect(effect, { active: true })
         span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
         span.attr('title', game.i18n.localize(`GURPS.remove${starts || effect}${label}Effect`))
       }
@@ -578,7 +573,7 @@ export default class ApplyDamageDialog extends Application {
       case 'shock':
         // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
-        const applyAt = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ADD_SHOCK_AT_TURN)
+        const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
         if (applyAt === 'AtNextTurn') {
           const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
           if (!!allShocks) {
@@ -664,7 +659,6 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'headvitalshit') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
-
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
@@ -720,7 +714,7 @@ export default class ApplyDamageDialog extends Application {
       author: game.user.id,
       type: CONST.CHAT_MESSAGE_STYLES.OOC,
     }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getOwners()
       let ids = users.map(it => it.id)
       msgData.whisper = ids

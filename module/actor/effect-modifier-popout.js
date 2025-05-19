@@ -1,3 +1,4 @@
+import { Length } from '../data/common/length.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
@@ -11,16 +12,17 @@ export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined
   if (token1 === token2) return undefined
 
-  // const ruler = new Ruler() as Ruler & { totalDistance: number }
+  // TODO: Ruler shouldn't be needed here, we should be able to get the
+  // SSRT value without invoking it.
   const ruler = new CONFIG.Canvas.rulerClass(game.user)
-  ruler._state = Ruler.STATES.MEASURING
-  ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
-  ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
-  const horizontalDistance = ruler.totalDistance
-  const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
-  ruler.clear()
 
-  const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
+  let dist = canvas.grid.measurePath([token1.document, token2.document]).distance
+
+  if (game.release.generation === 12) {
+    const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
+    dist = Math.sqrt(Math.pow(dist, 2) + Math.pow(verticalDistance, 2)) - 1
+  }
+
   const yards = Length.from(dist, canvas.scene.grid.units).to(Length.Unit.Yard).value
   return {
     yards: Math.ceil(dist),

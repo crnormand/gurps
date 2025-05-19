@@ -1,6 +1,6 @@
 'use strict'
 
-import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
@@ -41,10 +41,10 @@ export class CompositeDamageCalculator {
    * @param {DamageData[]} damageData
    */
   constructor(defender, damageData) {
-    this._useBluntTrauma = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLUNT_TRAUMA)
-    this._useLocationModifiers = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_LOCATION_MODIFIERS)
-    this._useArmorDivisor = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_APPLY_DIVISOR)
-    this._useBodyHits = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BODY_HITS)
+    this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
+    this._useLocationModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_LOCATION_MODIFIERS)
+    this._useArmorDivisor = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_APPLY_DIVISOR)
+    this._useBodyHits = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BODY_HITS)
 
     this._defender = defender
 
@@ -213,8 +213,8 @@ export class CompositeDamageCalculator {
 
   get showApplyAction() {
     return (
-      game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'apply' ||
-      (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'target' &&
+      game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DEFAULT_ADD_ACTION) == 'apply' ||
+      (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DEFAULT_ADD_ACTION) == 'target' &&
         this._defender.hasPlayerOwner)
     )
   }
@@ -331,7 +331,7 @@ export class CompositeDamageCalculator {
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
-        const applyAt = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ADD_SHOCK_AT_TURN)
+        const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
         } else {
