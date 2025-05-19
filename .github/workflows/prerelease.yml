@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install dependencies
 
+      - name: Install dependencies
         run: npm ci;
 
       - name: Build the project
@@ -32,8 +32,8 @@ jobs:
       - name: Substitute manifest and download links for versioned ones
         run: |
           jq --arg version "$RELEASE_VERSION" \
-          --arg url "https://github.com/$GITHUB_REPOSITORY"
-          --arg manifest "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/release/system.json" \
+          --arg url "https://github.com/$GITHUB_REPOSITORY" \
+          --arg manifest "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/prerelease/system.json" \
           --arg download "https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/system.zip" \
           '.version = $version | .manifest = $manifest | .download = $download | .url = $url' \
           dist/system.json > tmp.$$.json && mv tmp.$$.json dist/system.json
