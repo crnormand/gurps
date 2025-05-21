@@ -11,10 +11,8 @@ import * as HitLocations from '../hitlocation/hitlocation.js'
 export default class ModifierBucketEditor extends Application {
   constructor(bucket, options = {}) {
     super(options)
-
-    // console.trace('+++++ Create ModifierBucketEditor +++++')
-
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
+
     this.inside = false
     this.tabIndex = 0
   }
@@ -80,11 +78,6 @@ export default class ModifierBucketEditor extends Application {
       .map(it => gurpslink(it))
   }
 
-  /**
-   * @override
-   * @param {*} options
-   * @returns
-   */
   getData(options) {
     const data = super.getData(options)
 
@@ -135,10 +128,6 @@ export default class ModifierBucketEditor extends Application {
     return data
   }
 
-  /**
-   * @override
-   * @param {*} html
-   */
   activateListeners(html) {
     super.activateListeners(html)
 
@@ -155,9 +144,7 @@ export default class ModifierBucketEditor extends Application {
       let width = parseFloat(html.css('width').replace('px', ''))
       // ensure that left is not negative
       let left = Math.max(bucketLeft + bucketWidth / 2 - width / 2, 10)
-      // console.log(`bucketLeft: ${bucketLeft}; width: ${width}; left: ${left}`)
       html.css('left', `${left}px`)
-      // }
     }
 
     html.removeClass('overflowy')
@@ -238,7 +225,6 @@ export default class ModifierBucketEditor extends Application {
   }
 
   _onleave(_ev) {
-    // console.log('onleave')
     this.inside = false
     this.bucket.SHOWING = false
     this.close()
@@ -247,7 +233,6 @@ export default class ModifierBucketEditor extends Application {
   _onenter(ev) {
     if (!this.options.popOut) {
       if (!this.inside) {
-        // console.log('onenter')
         this.inside = true
         $(ev.currentTarget).mouseleave(ev => this._onleave(ev))
       }
@@ -304,7 +289,6 @@ export default class ModifierBucketEditor extends Application {
     let index = element.dataset.index
     this.bucket.modifierStack.removeIndex(index)
     this.bucket.refresh()
-    //    this.render(false)
   }
 }
 
@@ -506,13 +490,6 @@ ${horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming'))}
   get OtherMods2() {
     return ''
   },
-  /**
-		  return `[+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
-		  [-1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
-		  [+4 ${game.i18n.localize('GURPS.modifierGMBlessed')}]
-		  [-4 ${game.i18n.localize('GURPS.modifierGMDontTry')}]`
-		},
-		*/
 
   get TaskDifficultyModifiers() {
     return [

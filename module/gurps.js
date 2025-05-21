@@ -83,6 +83,7 @@ import * as Canvas from './canvas/index.js'
 import * as Combat from './combat/index.js'
 import * as Damage from './damage/index.js'
 import * as Token from './token/index.js'
+import * as UI from './ui/index.js'
 
 export let GURPS = undefined
 
@@ -109,10 +110,11 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  Damage.init() // Initialize the Damage module
-  Combat.init() // Initialize the Combat module
   Canvas.init() // Initialize the Canvas module
+  Combat.init() // Initialize the Combat module
+  Damage.init() // Initialize the Damage module
   Token.init() // Initialize the Token module
+  UI.init() // Initialize the UI module
 
   AddChatHooks()
   JQueryHelpers()

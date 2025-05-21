@@ -20,5 +20,6 @@ declare global {
 
   interface SettingConfig {
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
+    'gurps.bucket-position': 'left' | 'right'
   }
 }
