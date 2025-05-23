@@ -4,7 +4,7 @@
 
 ### Features
 
-- Foundry v13 compatibility!
+- **Foundry v13 compatibility!**
 - GCS Actor import now captures Advantage CR value as an attribute (`Advantage.cr`).
 - Internationalized the Fright Check dialog.
 - Enhanced Fright Check dialog to automatically set fields based on Actor's Advantages.
