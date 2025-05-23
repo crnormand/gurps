@@ -84,23 +84,23 @@
         <label class='navigation-view' for='navigate-toggle-{{_id}}'><span class='icon'></span></label>
         <div class='navigate-container'>
           <div class='navigation-link' data-value='personal'>TOP</div>
-          <div class='navigation-link' data-value='stats'>{{i18n 'GURPS.statsTab'}}</div>
+          <div class='navigation-link' data-value='stats'>{{localize 'GURPS.statsTab'}}</div>
           {{#if navigateBar.hasMelee}}
-            <div class='navigation-link' data-value='melee'>{{i18n 'GURPS.melee'}}</div>
+            <div class='navigation-link' data-value='melee'>{{localize 'GURPS.melee'}}</div>
           {{/if}}
           {{#if navigateBar.hasRanged}}
-            <div class='navigation-link' data-value='ranged'>{{i18n 'GURPS.ranged'}}</div>
+            <div class='navigation-link' data-value='ranged'>{{localize 'GURPS.ranged'}}</div>
           {{/if}}
-          <div class='navigation-link' data-value='advantages'>{{i18n 'GURPS.pointsAdvantages'}}</div>
-          <div class='navigation-link' data-value='skills'>{{i18n 'GURPS.skillsTab'}}</div>
+          <div class='navigation-link' data-value='advantages'>{{localize 'GURPS.pointsAdvantages'}}</div>
+          <div class='navigation-link' data-value='skills'>{{localize 'GURPS.skillsTab'}}</div>
           {{#if navigateBar.hasSpells}}
-            <div class='navigation-link' data-value='spells'>{{i18n 'GURPS.spellsTab'}}</div>
+            <div class='navigation-link' data-value='spells'>{{localize 'GURPS.spellsTab'}}</div>
           {{/if}}
-          <div class='navigation-link' data-value='equipmentcarried'>{{i18n 'GURPS.equipment'}}</div>
+          <div class='navigation-link' data-value='equipmentcarried'>{{localize 'GURPS.equipment'}}</div>
           {{#if navigateBar.hasOther}}
             <div class='navigation-link' data-value='equipmentother'>OTHER</div>
           {{/if}}
-          <div class='navigation-link' data-value='notes'>{{i18n 'GURPS.notes'}}</div>
+          <div class='navigation-link' data-value='notes'>{{localize 'GURPS.notes'}}</div>
         </div>
       </div>
     </div>

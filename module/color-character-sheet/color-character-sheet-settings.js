@@ -4,7 +4,6 @@
  * ~Stevil
  */
 
-import { i18n } from '../../lib/i18n.js'
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import ColorCharacterSheetSettings from './color-character-sheet-html.js'
 
@@ -51,9 +50,9 @@ export const SETTING_COLOR_ROLLABLE = [
 export const registerColorPickerSettings = function () {
   // eslint-disable-next-line no-undef
   game.settings.registerMenu(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_MENU, {
-    name: i18n('GURPS.settingColorSheetMenuTitle'),
-    hint: i18n('GURPS.settingColorSheetMenuHint'),
-    label: i18n('GURPS.settingColorSheetMenuTitle'),
+    name: game.i18n.localize('GURPS.settingColorSheetMenuTitle'),
+    hint: game.i18n.localize('GURPS.settingColorSheetMenuHint'),
+    label: game.i18n.localize('GURPS.settingColorSheetMenuTitle'),
     type: ColorCharacterSheetSettings,
     restricted: false,
   })

@@ -1,6 +1,6 @@
 <div class='gurps-2col no-gap'>
   <div class='label-value-row right-bias'>
-    <label>{{i18n 'GURPS.roll'}}</label>
+    <label>{{localize 'GURPS.roll'}}</label>
     <div class='icon-prefix'>
       <input
         id='item-skill-roll'
@@ -8,15 +8,21 @@
         class='decimal-digits-only'
         value='{{system.ski.import}}'
         name='system.ski.import'
+        id='item-skill-roll'
+        type='number'
+        class='decimal-digits-only'
+        value='{{system.ski.import}}'
+        name='system.ski.import'
       />
       <span><i class='fa fa-dice'></i></span>
+      <span><i class='fa fa-dice'></i></span>
     </div>
-    <label>{{i18n 'GURPS.skillType'}}</label>
+    <label>{{localize 'GURPS.skillType'}}</label>
     <div class='icon-prefix'>
       <input id='item-skill-type' type='text' value='{{system.ski.type}}' name='system.ski.type' />
       <span><i class='fa fa-person-running'></i></span>
     </div>
-    <label>{{i18n 'GURPS.skillLevel'}}</label>
+    <label>{{localize 'GURPS.skillLevel'}}</label>
     <div class='icon-prefix'>
       <input
         id='item-skill-level'
@@ -24,12 +30,18 @@
         class='digits-only'
         value='{{system.ski.level}}'
         name='system.ski.level'
+        id='item-skill-level'
+        type='number'
+        class='digits-only'
+        value='{{system.ski.level}}'
+        name='system.ski.level'
       />
+      <span><i class='fa fa-pen-ruler'></i></span>
       <span><i class='fa fa-pen-ruler'></i></span>
     </div>
   </div>
   <div class='label-value-row right-bias'>
-    <label>{{i18n 'GURPS.skillRelativeLevel'}}</label>
+    <label>{{localize 'GURPS.skillRelativeLevel'}}</label>
     <div class='icon-prefix'>
       <input
         id='item-skill-relative'
@@ -38,13 +50,19 @@
         name='system.ski.relativelevel'
       />
       <span><i class='fa fa-sliders'></i></span>
+        id='item-skill-relative'
+        type='text'
+        value='{{system.ski.relativelevel}}'
+        name='system.ski.relativelevel'
+      />
+      <span><i class='fa fa-sliders'></i></span>
     </div>
-    <label>{{i18n 'GURPS.pdfPageReference'}}</label>
+    <label>{{localize 'GURPS.pdfPageReference'}}</label>
     <div class='icon-prefix'>
       <input id='item-skill-pageref' type='text' value='{{system.ski.pageref}}' name='system.ski.pageref' />
       <span><i class='fa fa-bookmark'></i></span>
     </div>
-    <label>{{i18n 'GURPS.points'}}</label>
+    <label>{{localize 'GURPS.points'}}</label>
     <div class='icon-prefix'>
       <input
         id='item-skill-cost'
@@ -52,27 +70,34 @@
         class='decimal-digits-only'
         value='{{system.ski.points}}'
         name='system.ski.points'
+        id='item-skill-cost'
+        type='number'
+        class='decimal-digits-only'
+        value='{{system.ski.points}}'
+        name='system.ski.points'
       />
+      <span><i class='fa fa-pen-to-square'></i></span>
       <span><i class='fa fa-pen-to-square'></i></span>
     </div>
   </div>
 </div>
 <hr />
 <div class='label-value-row right-bias'>
-  <label>{{i18n 'GURPS.modifierTags'}}</label>
+  <label>{{localize 'GURPS.modifierTags'}}</label>
   <div class='icon-prefix'>
     <input id='item-skill-tags' type='text' value='{{system.modifierTags}}' name='system.modifierTags' />
     <span><i class='fa fa-tags'></i></span>
   </div>
   <div></div>
   <div></div>
-  <label>{{i18n 'GURPS.notes'}}</label>
+  <label>{{localize 'GURPS.notes'}}</label>
   <div>
+    <textarea class='notes' id='item-skill-notes' rows='4' name='system.ski.notes'>{{system.ski.notes}}</textarea>
     <textarea class='notes' id='item-skill-notes' rows='4' name='system.ski.notes'>{{system.ski.notes}}</textarea>
   </div>
   <div></div>
   <div></div>
-  <label>{{i18n 'GURPS.consumeAction'}}</label>
+  <label>{{localize 'GURPS.consumeAction'}}</label>
   <div class='icon-prefix'>
     <input
       id='item-consume-action'
@@ -84,25 +109,25 @@
 </div>
 <hr />
 <div>
-  <h3>{{i18n 'GURPS.OTFormulasEvent'}}</h3>
+  <h3>{{localize 'GURPS.OTFormulasEvent'}}</h3>
   <div class='label-value-row right-bias'>
-    <label>{{i18n 'GURPS.skillLevel'}}</label>
+    <label>{{localize 'GURPS.skillLevel'}}</label>
     <div><input type='text' value='{{system.ski.otf}}' name='system.ski.otf' /></div>
     <div></div>
     <div></div>
-    <label>{{i18n 'GURPS.check'}}</label>
+    <label>{{localize 'GURPS.check'}}</label>
     <div><input type='text' value='{{system.ski.checkotf}}' name='system.ski.checkotf' /></div>
     <div></div>
     <div></div>
-    <label>{{i18n 'GURPS.during'}}</label>
+    <label>{{localize 'GURPS.during'}}</label>
     <div><input type='text' value='{{system.ski.duringotf}}' name='system.ski.duringotf' /></div>
     <div></div>
     <div></div>
-    <label>{{i18n 'GURPS.pass'}}</label>
+    <label>{{localize 'GURPS.pass'}}</label>
     <div><input type='text' value='{{system.ski.passotf}}' name='system.ski.passotf' /></div>
     <div></div>
     <div></div>
-    <label>{{i18n 'GURPS.fail'}}</label>
+    <label>{{localize 'GURPS.fail'}}</label>
     <div><input type='text' value='{{system.ski.failotf}}' name='system.ski.failotf' /></div>
   </div>
 </div>

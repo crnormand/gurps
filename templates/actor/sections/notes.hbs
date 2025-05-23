@@ -1,11 +1,11 @@
 <div id='notes' class='gga-table'>
   <div class='desc header' data-key='system.notes'>
     <div class='headermenu'>
-      <span>{{i18n 'GURPS.notes'}}</span>
+      <span>{{localize 'GURPS.notes'}}</span>
       <i class='fas fa-plus addnoteicon'></i>
     </div>
   </div>
-  <div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
+  <div class='ref header'>{{localize "GURPS.abbrevRef"}}</div>
 
   {{#each (flatlist system.notes)}}
     {{#if ../isEditing}}
@@ -36,13 +36,13 @@
                 {{#if this.notes}}
                   {{#if title}}<b>{{{gurpslinkbr this.title}}}</b> {{/if}}{{{gurpslinkbr this.notes}}}
                 {{else}}
-                  {{i18n "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
+                  {{localize "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
                 {{/if}}
               </div>
               <div>
                 {{#if (isUserCreated this)}}
                   <i class='fas fa-bookmark tooltip gga-usercreated'>
-                    <span class='tooltiptext'>{{i18n "GURPS.equipmentUserCreated"}}</span>
+                    <span class='tooltiptext'>{{localize "GURPS.equipmentUserCreated"}}</span>
                   </i>
                 {{/if}}
               </div>

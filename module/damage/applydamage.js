@@ -1,8 +1,7 @@
 'use strict'
 
-import { i18n } from '../../lib/i18n.js'
 import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import {
   displayMod,
   generateUniqueId,
@@ -49,7 +48,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._calculator = new CompositeDamageCalculator(actor, damageData)
     this.actor = actor
-    this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
+    this.isSimpleDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
     const attacker = game.actors.get(damageData[0].attacker)
     const gmUser = game.users.find(it => it.isGM && it.active)
@@ -75,11 +74,11 @@ export default class ApplyDamageDialog extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['boilerplate', 'sheet', 'actor'],
       id: 'apply-damage-dialog',
-      template: 'systems/gurps/templates/apply-damage/apply-damage-dialog.html',
+      template: 'systems/gurps/templates/apply-damage/apply-damage-dialog.hbs',
       resizable: true,
       minimizable: false,
       width: 800,
-      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
+      height: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
       title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
@@ -516,19 +515,18 @@ export default class ApplyDamageDialog extends Application {
             : effect.modifier < 0
               ? `HT+${-effect.modifier}`
               : `HT-${effect.modifier}`
-
         otf = `/r [!${htCheck}]`
         break
 
       case 'knockback':
-        const dx = i18n('GURPS.attributesDX')
+        const dx = game.i18n.localize('GURPS.attributesDX')
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
-        const localeAcrobaticsName = i18n('GURPS.skillAcrobatics')
+        const localeAcrobaticsName = game.i18n.localize('GURPS.skillAcrobatics')
         const localeAcrobaticsCheck =
           effect?.modifier && effect.modifier === 0
             ? localeAcrobaticsName
             : `${localeAcrobaticsName} -${effect.modifier}`
-        const localeJudoName = i18n('GURPS.skillJudo')
+        const localeJudoName = game.i18n.localize('GURPS.skillJudo')
         const localeJudoCheck =
           effect?.modifier && effect.modifier === 0 ? localeJudoName : `${localeJudoName} -${effect.modifier}`
         otf = `/r [!${dxCheck} | Sk:${localeAcrobaticsCheck} | Sk:${localeJudoCheck}]`
@@ -558,15 +556,15 @@ export default class ApplyDamageDialog extends Application {
       if (!!effectExists.length > 0) {
         // Remove all effects from Token
         for (let existingEffect of effectExists) {
-          await token.setEffectActive(existingEffect._source.statuses[0], false)
+          await token.actor.toggleStatusEffect(existingEffect._source.statuses[0], { active: false })
         }
         span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-        span.attr('title', i18n(`GURPS.add${starts || effect}${label}Effect`))
+        span.attr('title', game.i18n.localize(`GURPS.add${starts || effect}${label}Effect`))
       } else {
         // Add effect to Token
-        await token.setEffectActive(effect, true)
+        await token.actor.toggleStatusEffect(effect, { active: true })
         span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-        span.attr('title', i18n(`GURPS.remove${starts || effect}${label}Effect`))
+        span.attr('title', game.i18n.localize(`GURPS.remove${starts || effect}${label}Effect`))
       }
     }
 
@@ -575,14 +573,14 @@ export default class ApplyDamageDialog extends Application {
       case 'shock':
         // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
-        const applyAt = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ADD_SHOCK_AT_TURN)
+        const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
         if (applyAt === 'AtNextTurn') {
           const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
           if (!!allShocks) {
             await actions.removeFromNextTurn(allShocks)
             span.removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
-            span.attr('title', i18n('GURPS.addShockEffect'))
-            ui.notifications.info(i18n('GURPS.removedShockEffect'))
+            span.attr('title', game.i18n.localize('GURPS.addShockEffect'))
+            ui.notifications.info(game.i18n.localize('GURPS.removedShockEffect'))
           } else {
             const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
             if (!!otherShocks) {
@@ -591,8 +589,8 @@ export default class ApplyDamageDialog extends Application {
             // Add the effect to the next turn
             await actions.addToNextTurn([shockEffect])
             span.removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-            span.attr('title', i18n(`GURPS.removeShock${applyAt}Effect`))
-            ui.notifications.info(i18n(`GURPS.addedShock${applyAt}Effect`))
+            span.attr('title', game.i18n.localize(`GURPS.removeShock${applyAt}Effect`))
+            ui.notifications.info(game.i18n.localize(`GURPS.addedShock${applyAt}Effect`))
           }
         } else {
           await toggleEffect(shockEffect, span, 'shock', applyAt)
@@ -636,7 +634,7 @@ export default class ApplyDamageDialog extends Application {
       let button = `/r [/st + shock${object.amount}]`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
-      message = await this._renderTemplate('chat-shock.html', {
+      message = await this._renderTemplate('chat-shock.hbs', {
         name: !!token ? token.name : this.actor.name,
         modifier: object.amount,
         doubled: object.amount * 2,
@@ -647,13 +645,14 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+      object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
-      message = await this._renderTemplate('chat-majorwound.html', {
+      message = await this._renderTemplate('chat-majorwound.hbs', {
         name: !!token ? token.name : this.actor.name,
         button: button,
-        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
+        htCheck: htCheck.replace('HT', game.i18n.localize('GURPS.attributesHT')),
       })
     }
 
@@ -663,20 +662,20 @@ export default class ApplyDamageDialog extends Application {
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
-      message = await this._renderTemplate('chat-headvitalshit.html', {
+      message = await this._renderTemplate('chat-headvitalshit.hbs', {
         name: !!token ? token.name : this.actor.name,
         button: button,
         location: object.detail,
-        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
+        htCheck: htCheck.replace('HT', game.i18n.localize('GURPS.attributesHT')),
       })
     }
 
     if (object.type === 'knockback') {
-      let dx = i18n('GURPS.attributesDX')
+      let dx = game.i18n.localize('GURPS.attributesDX')
       let dxCheck = object.modifier === 0 ? dx : `${dx}-${object.modifier}`
-      let acro = i18n('GURPS.skillAcrobatics')
+      let acro = game.i18n.localize('GURPS.skillAcrobatics')
       let acroCheck = object.modifier === 0 ? acro : `${acro}-${object.modifier}`
-      let judo = i18n('GURPS.skillJudo')
+      let judo = game.i18n.localize('GURPS.skillJudo')
       let judoCheck = object.modifier === 0 ? judo : `${judo}-${object.modifier}`
 
       let button = `/if ![${dxCheck} | Sk:${acroCheck} | Sk:${judoCheck}] {/st + prone}`
@@ -686,8 +685,8 @@ export default class ApplyDamageDialog extends Application {
         name: !!token ? token.name : this.actor.name,
         button: button,
         yards: object.amount,
-        pdfref: i18n('GURPS.pdfKnockback'),
-        unit: object.amount > 1 ? i18n('GURPS.yards') : i18n('GURPS.yard'),
+        pdfref: game.i18n.localize('GURPS.pdfKnockback'),
+        unit: object.amount > 1 ? game.i18n.localize('GURPS.yards') : game.i18n.localize('GURPS.yard'),
         dx: dxCheck.replace('-', '−'),
         acrobatics: acroCheck.replace('-', '−'),
         judo: judoCheck.replace('-', '−'),
@@ -695,16 +694,16 @@ export default class ApplyDamageDialog extends Application {
         classEnd: '</span>',
       }
 
-      message = await this._renderTemplate('chat-knockback.html', templateData)
+      message = await this._renderTemplate('chat-knockback.hbs', templateData)
     }
 
     if (object.type === 'crippling') {
-      message = await this._renderTemplate('chat-crippling.html', {
+      message = await this._renderTemplate('chat-crippling.hbs', {
         name: this.actor.name,
         location: object.detail,
         groundModifier: 'DX-1',
         swimFlyModifer: 'DX-2',
-        pdfref: i18n('GURPS.pdfCrippling'),
+        pdfref: game.i18n.localize('GURPS.pdfCrippling'),
         classStart: '<span class="pdflink">',
         classEnd: '</span>',
       })
@@ -715,7 +714,7 @@ export default class ApplyDamageDialog extends Application {
       author: game.user.id,
       type: CONST.CHAT_MESSAGE_STYLES.OOC,
     }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getOwners()
       let ids = users.map(it => it.id)
       msgData.whisper = ids
@@ -790,7 +789,7 @@ export default class ApplyDamageDialog extends Application {
     update[`${path}.value`] = newValue
     await this.actor.update(update)
 
-    this._renderTemplate('chat-damage-results.html', data).then(html => {
+    this._renderTemplate('chat-damage-results.hbs', data).then(html => {
       let speaker = ChatMessage.getSpeaker(game.user)
       if (!!attackingActor) speaker = ChatMessage.getSpeaker({ actor: attackingActor })
       let messageData = {

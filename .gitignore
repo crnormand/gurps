@@ -1,7 +1,6 @@
 # IDE
 .idea/
 .vs/
-data/
 .DS_Store
 .project
 .settings/
@@ -13,4 +12,6 @@ coverage
 data/monsters.csv
 .history
 simple.css.map
-dist
+
+# Build
+dist/

@@ -1,5 +1,3 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -18,8 +16,10 @@ import SplitDREditor from './splitdr-editor.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
- * @extends {ActorSheet}
+ * @extends {foundry.appv1.sheets.ActorSheet}
  */
+// COMPATIBILITY: v12
+// export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 export class GurpsActorSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
@@ -76,7 +76,7 @@ export class GurpsActorSheet extends ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {
-      visible: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
+      visible: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_SHEET_NAVIGATION),
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
       hasSpells: !isEmptyObject(this.actor.system.spells),
@@ -85,7 +85,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
-    sheetData.useQN = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
+    sheetData.useQN = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 
@@ -146,12 +146,12 @@ export class GurpsActorSheet extends ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
-    if (!!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       this._createGlobalItemMenus(html)
     }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       html.find('.enc').click(this._onClickEnc.bind(this))
     }
 
@@ -301,7 +301,7 @@ export class GurpsActorSheet extends ActorSheet {
     // END CONDITIONAL INJURY
 
     // If using the "enhanced" inputs for trackers, enable the ribbon popup.
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ENHANCED_INPUT)) {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ENHANCED_INPUT)) {
       // On Focus, initialize the ribbon popup and show it.
       html.find('.spinner details summary input').focus(ev => {
         let details = ev.currentTarget.closest('details')
@@ -576,8 +576,8 @@ export class GurpsActorSheet extends ActorSheet {
       if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       if (eqt.count == 0) {
         await Dialog.confirm({
-          title: i18n('GURPS.removeItem'),
-          content: i18n_f('GURPS.confirmRemoveItem', { name: eqt.name }, 'Remove {name} from the Equipment List?'),
+          title: game.i18n.localize('GURPS.removeItem'),
+          content: game.i18n.format('GURPS.confirmRemoveItem', { name: eqt.name }),
           yes: () => actor.deleteEquipment(path),
         })
       } else {
@@ -614,7 +614,7 @@ export class GurpsActorSheet extends ActorSheet {
       let el = ev.currentTarget
       let opt = el.dataset.onethird
       let active = !!this.actor.system.conditions[opt]
-      this.actor.toggleEffectByName(opt, !active)
+      this.actor.toggleStatusEffect(opt, { active: !active })
     })
 
     html.find('[data-onethird]').hover(
@@ -654,25 +654,6 @@ export class GurpsActorSheet extends ActorSheet {
         ],
       }).render({ force: true })
       dlg.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
-
-      //   new Dialog({
-      //     title: 'Edit Quick Note',
-      //     content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><textarea rows="4" id="i">${n}</textarea><br><br>Examples:
-      //     <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
-      //     buttons: {
-      //       save: {
-      //         icon: '<i class="fas fa-save"></i>',
-      //         label: 'Save',
-      //         callback: html => {
-      //           const i = html[0].querySelector('#i')
-      //           actor.internalUpdate({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
-      //         },
-      //       },
-      //     },
-      //     render: h => {
-      //       $(h).find('textarea').on('drop', this.dropFoundryLinks)
-      //     },
-      //   }).render(true)
     })
 
     html.find('#qnotes .qnotes-content').on('drop', this.handleQnoteDrop.bind(this))
@@ -718,7 +699,7 @@ export class GurpsActorSheet extends ActorSheet {
         '.headermenu',
         [
           {
-            name: i18n('GURPS.addTracker'),
+            name: game.i18n.localize('GURPS.addTracker'),
             icon: '<i class="fas fa-plus"></i>',
             callback: e => {
               this._addTracker().then()
@@ -733,7 +714,7 @@ export class GurpsActorSheet extends ActorSheet {
   _createGlobalItemMenus(html) {
     let opts = [
       this._createMenu(
-        i18n('GURPS.delete'),
+        game.i18n.localize('GURPS.delete'),
         '<i class="fas fa-trash"></i>',
         this._deleteItem.bind(this),
         this._isRemovable.bind(this)
@@ -748,31 +729,31 @@ export class GurpsActorSheet extends ActorSheet {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
     let opts = [
-      this._createMenu(i18n('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
+      this._createMenu(game.i18n.localize('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
-        i18n('GURPS.sortContentsAscending'),
+        game.i18n.localize('GURPS.sortContentsAscending'),
         '<i class="fas fa-sort-amount-down-alt"></i>',
         this._sortContentAscending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
       this._createMenu(
-        i18n('GURPS.sortContentsDescending'),
+        game.i18n.localize('GURPS.sortContentsDescending'),
         '<i class="fas fa-sort-amount-down"></i>',
         this._sortContentDescending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
-      this._createMenu(i18n('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
+      this._createMenu(game.i18n.localize('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
     ]
 
     let movedown = this._createMenu(
-      i18n('GURPS.moveToOtherEquipment'),
+      game.i18n.localize('GURPS.moveToOtherEquipment'),
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
-      i18n('GURPS.moveToCarriedEquipment'),
+      game.i18n.localize('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
@@ -881,8 +862,8 @@ export class GurpsActorSheet extends ActorSheet {
       '#spells': [this.sortAscendingMenu('system.spells'), this.sortDescendingMenu('system.spells')],
       '#equipmentcarried': [
         this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`, true),
+          game.i18n.localize('GURPS.equipment'),
+          new Equipment(`${game.i18n.localize('GURPS.equipment')}...`, true),
           'system.equipment.carried'
         ),
         this.sortAscendingMenu('system.equipment.carried'),
@@ -890,8 +871,8 @@ export class GurpsActorSheet extends ActorSheet {
       ],
       '#equipmentother': [
         this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`, true),
+          game.i18n.localize('GURPS.equipment'),
+          new Equipment(`${game.i18n.localize('GURPS.equipment')}...`, true),
           'system.equipment.other'
         ),
         this.sortAscendingMenu('system.equipment.other'),
@@ -903,7 +884,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   addItemMenu(name, obj, path) {
     return {
-      name: i18n_f('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
+      name: game.i18n.format('GURPS.editorAddItem', { name: name }),
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
@@ -973,7 +954,7 @@ export class GurpsActorSheet extends ActorSheet {
     let actor = this.actor
     let list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path))
     let obj = new Note('', true)
-    let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
+    let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
 
     let d = new Dialog(
       {
@@ -1138,7 +1119,7 @@ export class GurpsActorSheet extends ActorSheet {
     let d = new Dialog(
       {
         title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
+        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.hbs', { templates: templates }),
         buttons: buttons,
         default: 'edit',
         templates: templates,
@@ -1161,7 +1142,7 @@ export class GurpsActorSheet extends ActorSheet {
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
-    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
+    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.hbs', obj)
 
     if (!(await this.actor._sanityCheckItemSettings(obj))) return
 
@@ -1225,7 +1206,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/melee-editor-popup.html',
+      'systems/gurps/templates/melee-editor-popup.hbs',
       'Melee Weapon Editor',
       [
         'name',
@@ -1256,7 +1237,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/ranged-editor-popup.html',
+      'systems/gurps/templates/ranged-editor-popup.hbs',
       'Ranged Weapon Editor',
       [
         'name',
@@ -1285,7 +1266,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/advantage-editor-popup.html',
+      'systems/gurps/templates/advantage-editor-popup.hbs',
       'Advantage / Disadvantage / Perk / Quirk Editor',
       ['name', 'notes', 'pageref', 'itemModifiers'],
       ['points']
@@ -1298,7 +1279,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/skill-editor-popup.html',
+      'systems/gurps/templates/skill-editor-popup.hbs',
       'Skill Editor',
       [
         'name',
@@ -1323,7 +1304,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/spell-editor-popup.html',
+      'systems/gurps/templates/spell-editor-popup.hbs',
       'Spell Editor',
       [
         'name',
@@ -1354,7 +1335,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/note-editor-popup.html',
+      'systems/gurps/templates/note-editor-popup.hbs',
       'Note Editor',
       ['pageref', 'notes', 'title'],
       [],
@@ -1424,7 +1405,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   sortAscendingMenu(key) {
     return {
-      name: i18n('GURPS.sortAscending'),
+      name: game.i18n.localize('GURPS.sortAscending'),
       icon: '<i class="fas fa-sort-amount-down-alt"></i>',
       callback: e => this.sortAscending(key),
     }
@@ -1432,7 +1413,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   sortDescendingMenu(key) {
     return {
-      name: i18n('GURPS.sortDescending'),
+      name: game.i18n.localize('GURPS.sortDescending'),
       icon: '<i class="fas fa-sort-amount-down"></i>',
       callback: e => this.sortDescending(key),
     }
@@ -1523,7 +1504,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (!!targetkey) {
         let sourceKey = dragData.key
         if (sourceKey.includes(targetkey) || targetkey.includes(sourceKey)) {
-          ui.notifications.error(i18n('GURPS.dragSameContainer'))
+          ui.notifications.error(game.i18n.localize('GURPS.dragSameContainer'))
           return
         }
 
@@ -1549,11 +1530,11 @@ export class GurpsActorSheet extends ActorSheet {
 
         let d = new Dialog({
           title: object.name,
-          content: `<p>${i18n('GURPS.dropResolve')}</p>`,
+          content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-level-up-alt"></i>',
-              label: `${i18n('GURPS.dropBefore')}`,
+              label: `${game.i18n.localize('GURPS.dropBefore')}`,
               callback: async () => {
                 if (!isSrcFirst) {
                   await this._removeKey(sourceKey)
@@ -1566,7 +1547,7 @@ export class GurpsActorSheet extends ActorSheet {
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: `${i18n('GURPS.dropInside')}`,
+              label: `${game.i18n.localize('GURPS.dropInside')}`,
               callback: async () => {
                 let key = targetkey + '.contains.' + zeroFill(0)
                 if (!isSrcFirst) {
@@ -1674,7 +1655,7 @@ export class GurpsActorSheet extends ActorSheet {
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
-    const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
+    const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
     const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
     let b = [
@@ -1686,7 +1667,7 @@ export class GurpsActorSheet extends ActorSheet {
       },
     ]
 
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
       b.push({
         label: 'Import',
         class: 'import',
@@ -1810,7 +1791,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onClickEnc(ev) {
     ev.preventDefault()
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       let element = ev.currentTarget
       let key = element.dataset.key
       //////////
@@ -2089,19 +2070,26 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     // add any additional items to the menu
     switch (elementid) {
       case '#location':
-        return [this.addItemMenu(i18n('GURPS.hitLocation'), new HitLocation('???'), 'system.hitlocations'), ...menu]
+        return [
+          this.addItemMenu(game.i18n.localize('GURPS.hitLocation'), new HitLocation('???'), 'system.hitlocations'),
+          ...menu,
+        ]
 
       case '#reactions':
         return [
-          this.addItemMenu(i18n('GURPS.reaction'), new Reaction('+0', i18n('GURPS.fromEllipses')), 'system.reactions'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.reaction'),
+            new Reaction('+0', game.i18n.localize('GURPS.fromEllipses')),
+            'system.reactions'
+          ),
           ...menu,
         ]
 
       case '#conditionalmods':
         return [
           this.addItemMenu(
-            i18n('GURPS.conditionalModifier'),
-            new Modifier('+0', i18n('GURPS.fromEllipses')),
+            game.i18n.localize('GURPS.conditionalModifier'),
+            new Modifier('+0', game.i18n.localize('GURPS.fromEllipses')),
             'system.conditionalmods'
           ),
           ...menu,
@@ -2109,27 +2097,53 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
       case '#melee':
         return [
-          this.addItemMenu(i18n('GURPS.meleeAttack'), new Ranged(`${i18n('GURPS.meleeAttack')}...`), 'system.melee'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.meleeAttack'),
+            new Ranged(`${game.i18n.localize('GURPS.meleeAttack')}...`),
+            'system.melee'
+          ),
           ...menu,
         ]
 
       case '#ranged':
         return [
-          this.addItemMenu(i18n('GURPS.rangedAttack'), new Ranged(`${i18n('GURPS.rangedAttack')}...`), 'system.ranged'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.rangedAttack'),
+            new Ranged(`${game.i18n.localize('GURPS.rangedAttack')}...`),
+            'system.ranged'
+          ),
           ...menu,
         ]
 
       case '#advantages':
         return [
-          this.addItemMenu(i18n('GURPS.adDisadQuirkPerk'), new Advantage(`${i18n('GURPS.adDisad')}...`), 'system.ads'),
+          this.addItemMenu(
+            game.i18n.localize('GURPS.adDisadQuirkPerk'),
+            new Advantage(`${game.i18n.localize('GURPS.adDisad')}...`),
+            'system.ads'
+          ),
           ...menu,
         ]
 
       case '#skills':
-        return [this.addItemMenu(i18n('GURPS.skill'), new Skill(`${i18n('GURPS.skill')}...`), 'system.skills'), ...menu]
+        return [
+          this.addItemMenu(
+            game.i18n.localize('GURPS.skill'),
+            new Skill(`${game.i18n.localize('GURPS.skill')}...`),
+            'system.skills'
+          ),
+          ...menu,
+        ]
 
       case '#spells':
-        return [this.addItemMenu(i18n('GURPS.spell'), new Spell(`${i18n('GURPS.spell')}...`), 'system.spells'), ...menu]
+        return [
+          this.addItemMenu(
+            game.i18n.localize('GURPS.spell'),
+            new Spell(`${game.i18n.localize('GURPS.spell')}...`),
+            'system.spells'
+          ),
+          ...menu,
+        ]
 
       default:
         return menu
@@ -2168,7 +2182,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/simplified.html'
+    return 'systems/gurps/templates/simplified.hbs'
   }
 
   getData() {
@@ -2261,7 +2275,7 @@ export class GurpsInventorySheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/inventory-sheet.html'
+    return 'systems/gurps/templates/inventory-sheet.hbs'
   }
 }
 
@@ -2278,11 +2292,11 @@ export class ItemImageSettings extends FormApplication {
 
   getData() {
     return {
-      settings: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE),
+      settings: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE),
     }
   }
 
   async _updateObject(event, formData) {
-    await game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_ITEM_IMAGE, formData)
+    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE, formData)
   }
 }

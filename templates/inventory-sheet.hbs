@@ -1,0 +1,50 @@
+<form class="{{cssClass}}" autocomplete="off" style="scroll-padding-top: 5px">
+  <div id="inv-sheet" class="gurpsactorsheet">
+    <div id="personal">
+      <div id="identity">
+        <div class="header">{{localize "GURPS.sheet.pesonal.identity"}}</div>
+        <div class="fieldblock">
+          <div class="label">{{localize "GURPS.sheet.personal.name"}}:</div>
+          <div class="field">{{{actor.name}}}</div>
+          <div class="label">{{localize "GURPS.sheet.personal.title"}}:</div>
+          <div class="field">{{system.traits.title}}</div>
+          <div class="label">{{localize "GURPS.sheet.personal.player"}}:</div>
+          <div class="field">{{system.traits.player}}</div>
+        </div>
+      </div>
+      <div id="miscellaneous">
+        <div class="header">{{localize "GURPS.sheet.personal.miscellaneous"}}</div>
+        <div class="fieldblock">
+          <div class="label">{{localize "GURPS.sheet.personal.created"}}:</div>
+          <div class="field">{{system.traits.createdon}}</div>
+          <div class="label">{{localize "GURPS.sheet.personal.modified"}}:</div>
+          <div class="field">{{system.traits.modifiedon}}</div>
+          <div class="label">{{localize "GURPS.sheet.personal.options"}}:</div>
+          <div class="field"></div>
+        </div>
+      </div>
+    </div>
+    {{>equipment container='carried' data=this.data}} {{>equipment container='other' data=this.data}}
+
+    <div id="notes">
+      <div class="desc header" data-key="system.notes">Notes &nbsp; <i class="fas fa-plus addnoteicon"></i></div>
+      <div class="ref header">Ref</div>
+      {{#listeqt system.notes}}
+      <div
+        class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}"
+        data-key="system.notes.{{@key}}"
+      >
+        {{#if (notEmpty this.contains)}}<i class="fas fa-caret-down expandcollapseicon"></i>{{/if}} {{#if (notEmpty
+        this.collapsed)}}<i class="fas fa-caret-right expandcollapseicon"></i>{{/if}} {{#if this.notes}}{{{gurpslinkbr
+        this.notes}}} {{else}}this note was intentionally left blank ;-){{/if}}
+      </div>
+      <div class="ref">{{{pdflinkext this}}}</div>
+      {{/listeqt}}
+      <div></div>
+    </div>
+  </div>
+  <div id="footer">
+    {{localize "GURPS.sheet.gcs.copyright"}}
+    <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
+  </div>
+</form>

@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
@@ -40,8 +39,8 @@ export class StatusEffect {
 
   _registerSetting() {
     game.settings.register(Settings.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS, {
-      name: i18n('GURPS.settingActiveEffects'),
-      hint: i18n('GURPS.settingHintActiveEffects'),
+      name: game.i18n.localize('GURPS.settingActiveEffects'),
+      hint: game.i18n.localize('GURPS.settingHintActiveEffects'),
       scope: 'world',
       config: false, // TODO when everything is ready change this to 'true' to allow end user to configure
       type: Boolean,

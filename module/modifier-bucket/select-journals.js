@@ -1,10 +1,9 @@
-import { i18n } from '../../lib/i18n.js'
-import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export default class ModifierBucketJournals extends FormApplication {
   static getJournalIds() {
-    let journals = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BUCKET_JOURNALS)
+    let journals = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS)
     let results = objectToArray(journals)
     return results
   }
@@ -16,12 +15,12 @@ export default class ModifierBucketJournals extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'modifier-journals',
-      template: 'systems/gurps/templates/modifier-bucket/select-journals.html',
+      template: 'systems/gurps/templates/modifier-bucket/select-journals.hbs',
       resizeable: true,
       minimizable: false,
       width: 550,
       height: 'auto',
-      title: i18n('GURPS.modifierJournalManager'),
+      title: game.i18n.localize('GURPS.modifierJournalManager'),
       closeOnSubmit: true,
     })
   }
@@ -91,6 +90,6 @@ export default class ModifierBucketJournals extends FormApplication {
     let ids = Array.from(checkboxes).map(it => it.id)
 
     let data = arrayToObject(ids)
-    game.settings.set(settings.SYSTEM_NAME, settings.SETTING_BUCKET_JOURNALS, data)
+    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS, data)
   }
 }

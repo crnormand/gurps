@@ -2,21 +2,21 @@
   <div class='gga-item-sheet-title color-{{item.type}}'>
     {{#if (eq itemType 'equipment')}}
       <div><i class='fa-solid fa-screwdriver-wrench itemdraggable'></i>
-        <span class='first-cap'>{{i18n 'GURPS.equipment'}}</span></div>
+        <span class='first-cap'>{{localize 'GURPS.equipment'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'feature')}}
       <div><i class='fas fa-theater-masks itemdraggable'></i>
-        <span class='first-cap'>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
+        <span class='first-cap'>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
       </div>
 
     {{/if}}
     {{#if (eq itemType 'skill')}}
       <div><i class='fa-solid fa-person-swimming itemdraggable'></i>
-        <span class='first-cap'>{{i18n 'GURPS.skillsTab'}}</span></div>
+        <span class='first-cap'>{{localize 'GURPS.skillsTab'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'spell')}}
       <div><i class='fa-solid fa-wand-magic-sparkles itemdraggable'></i>
-        <span class='first-cap'>{{i18n 'GURPS.spellsTab'}}</span></div>
+        <span class='first-cap'>{{localize 'GURPS.spellsTab'}}</span></div>
     {{/if}}
   </div>
 
@@ -27,7 +27,7 @@
         type='text'
         value='{{name}}'
         class='title'
-        placeholder='{{i18n "GURPS.name"}}'
+        placeholder='{{localize "GURPS.name"}}'
         name='system.eqt.name'
       />
     </div>
@@ -52,12 +52,12 @@
           type='checkbox'
           {{checked system.addToQuickRoll}}
         />
-        <div class='label'>{{i18n 'GURPS.addToQuickRoll'}}</div>
+        <div class='label'>{{localize 'GURPS.addToQuickRoll'}}</div>
       </div>
     </div>
 
     <div class='gga-group'>
-      <h2>{{i18n 'GURPS.attributes'}}</h2>
+      <h2>{{localize 'GURPS.attributes'}}</h2>
       {{#if (eq itemType 'equipment')}}
         {{~>items}}
       {{/if}}
@@ -74,32 +74,32 @@
   </div>
   <hr />
   <div>
-    <h2>{{i18n 'GURPS.itemFeatures'}}</h2>
+    <h2>{{localize 'GURPS.itemFeatures'}}</h2>
     <div class='flexcol'>
       <nav class='gurps-sheet-tabs tabs gurps-tabs' data-group='sections'>
-        <a class='item' data-tab='melee-tab'><i class='fas fa-fist-raised'></i>&nbsp;{{i18n 'GURPS.melee'}}&nbsp;<span
+        <a class='item' data-tab='melee-tab'><i class='fas fa-fist-raised'></i>&nbsp;{{localize 'GURPS.melee'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.melee)}}({{length system.melee}}){{/if}}</span></a>
-        <a class='item' data-tab='range-tab'><i class='fas fa-fighter-jet'></i>&nbsp;{{i18n 'GURPS.ranged'}}&nbsp;<span
+        <a class='item' data-tab='range-tab'><i class='fas fa-fighter-jet'></i>&nbsp;{{localize 'GURPS.ranged'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.ranged)}}({{length system.ranged}}){{/if}}</span></a>
-        <a class='item' data-tab='spell-tab'><i class='fa-solid fa-wand-magic-sparkles'></i>&nbsp;{{i18n
+        <a class='item' data-tab='spell-tab'><i class='fa-solid fa-wand-magic-sparkles'></i>&nbsp;{{localize
             'GURPS.spells'
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.spells)}}({{length
                 system.spells
               }}){{/if}}</span></a>
-        <a class='item' data-tab='ads-tab'><i class='fas fa-theater-masks'></i>&nbsp;{{i18n
+        <a class='item' data-tab='ads-tab'><i class='fas fa-theater-masks'></i>&nbsp;{{localize
             'GURPS.advantages'
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.ads)}}({{length system.ads}}){{/if}}</span></a>
-        <a class='item' data-tab='skill-tab'><i class='fa-solid fa-person-swimming'></i>&nbsp;{{i18n
+        <a class='item' data-tab='skill-tab'><i class='fa-solid fa-person-swimming'></i>&nbsp;{{localize
             'GURPS.skills'
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.skills)}}({{length
                 system.skills
               }}){{/if}}</span></a>
-        <a class='item' data-tab='bonus-tab'><i class='fas fa-plus-minus'></i>&nbsp;{{i18n 'GURPS.bonuses'}}&nbsp;<span
+        <a class='item' data-tab='bonus-tab'><i class='fas fa-plus-minus'></i>&nbsp;{{localize 'GURPS.bonuses'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.bonuses)}}(&checkmark;){{/if}}</span></a>
-        <a class='item' data-tab='effect-tab'><i class='fas fa-dice'></i>&nbsp;{{i18n 'GURPS.modifiers'}}&nbsp;<span
+        <a class='item' data-tab='effect-tab'><i class='fas fa-dice'></i>&nbsp;{{localize 'GURPS.modifiers'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.itemModifiers)}}(&checkmark;){{/if}}</span></a>
       </nav>
@@ -111,46 +111,46 @@
           {{#each system.melee as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.meleeAttack'}}
+                {{localize 'GURPS.meleeAttack'}}
                 {{#if mode}}({{mode}}){{/if}}<span class='delete button' data-path='system.melee' name='{{key}}'><i
                     class='fas fa-trash'
                   ></i></span>
               </h4>
 
               <div class='gurps-label-field-grid-6'>
-                <label>{{i18n 'GURPS.skillLevel'}}</label>
+                <label>{{localize 'GURPS.skillLevel'}}</label>
                 <div class='span-5'><input type='text' value='{{otf}}' name='system.melee.{{key}}.otf' /></div>
                 
-                <label>{{i18n 'GURPS.usage'}}</label>
+                <label>{{localize 'GURPS.usage'}}</label>
                 <div><input type='text' value='{{mode}}' name='system.melee.{{key}}.mode' /></div>
-                <label>{{i18n 'GURPS.damage'}}</label>
+                <label>{{localize 'GURPS.damage'}}</label>
                 <div><input type='text' value='{{damage}}' name='system.melee.{{key}}.damage' /></div>
-                <label>{{i18n 'GURPS.reach'}}</label>
+                <label>{{localize 'GURPS.reach'}}</label>
                 <div><input type='text' value='{{reach}}' name='system.melee.{{key}}.reach' /></div>
                 
-                <label>{{i18n 'GURPS.parrybonus'}}</label>
+                <label>{{localize 'GURPS.parrybonus'}}</label>
                 <div><input type='text' value='{{parry}}' name='system.melee.{{key}}.parry' /></div>
-                <label>{{i18n 'GURPS.attributesST'}}</label>
+                <label>{{localize 'GURPS.attributesST'}}</label>
                 <div><input type='text' value='{{st}}' name='system.melee.{{key}}.st' /></div>
-                <label>{{i18n 'GURPS.blockbonus'}}</label>
+                <label>{{localize 'GURPS.blockbonus'}}</label>
                 <div><input type='text' value='{{block}}' name='system.melee.{{key}}.block' /></div>
                 
-                <label>{{i18n 'GURPS.parryBasePenalty'}}</label>
+                <label>{{localize 'GURPS.parryBasePenalty'}}</label>
                 <div><input type='number' value='{{baseParryPenalty}}' name='system.melee.{{key}}.baseParryPenalty' /></div>
                 <label></label>
                 <div></div>
                 <label></label>
                 <div></div>
 
-                <label>{{i18n 'GURPS.notes'}}</label>
+                <label>{{localize 'GURPS.notes'}}</label>
                 <div class='span-5'><textarea class='notes' rows='2' name='system.melee.{{key}}.notes'>{{notes}}</textarea></div>
-                <label>{{i18n 'GURPS.check'}}</label>
+                <label>{{localize 'GURPS.check'}}</label>
                 <div class='span-5'><input type='text' value='{{checkotf}}' name='system.melee.{{key}}.checkotf' /></div>
-                <label>{{i18n 'GURPS.during'}}</label>
+                <label>{{localize 'GURPS.during'}}</label>
                 <div class="span-5"><input type='text' value='{{duringotf}}' name='system.melee.{{key}}.duringotf' /></div>
-                <label>{{i18n 'GURPS.pass'}}</label>
+                <label>{{localize 'GURPS.pass'}}</label>
                 <div class='span-5'><input type='text' value='{{passotf}}' name='system.melee.{{key}}.passotf' /></div>
-                <label>{{i18n 'GURPS.fail'}}</label>
+                <label>{{localize 'GURPS.fail'}}</label>
                 <div class='span-5'><input type='text' value='{{failotf}}' name='system.melee.{{key}}.failotf' /></div>
               </div>
 
@@ -158,7 +158,7 @@
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-melee'><i class='fas fa-check'></i> {{i18n 'GURPS.addMeleeAttack'}}</button>
+            <button id='add-melee'><i class='fas fa-check'></i> {{localize 'GURPS.addMeleeAttack'}}</button>
           </div>
         </div>
 
@@ -167,14 +167,14 @@
           {{#each system.ranged as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.rangedAttack'}}
+                {{localize 'GURPS.rangedAttack'}}
                 {{#if mode}}({{mode}}){{/if}}<span class='delete button' data-path='system.ranged' name='{{key}}'><i
                     class='fas fa-trash'
                   ></i></span>
               </h4>
 
               <div class='label-value-row right-bias'>
-                <label>{{i18n 'GURPS.skillLevel'}}</label>
+                <label>{{localize 'GURPS.skillLevel'}}</label>
                 <div><input type='text' value='{{otf}}' name='system.ranged.{{key}}.otf' /></div>
               </div>
 
@@ -182,29 +182,29 @@
                 <div class='label-value-row right-bias'>
                   <div></div>
                   <div></div>
-                  <label>{{i18n 'GURPS.usage'}}</label>
+                  <label>{{localize 'GURPS.usage'}}</label>
                   <div><input type='text' value='{{mode}}' name='system.ranged.{{key}}.mode' /></div>
-                  <label>{{i18n 'GURPS.acc'}}</label>
+                  <label>{{localize 'GURPS.acc'}}</label>
                   <div><input type='text' value='{{acc}}' name='system.ranged.{{key}}.acc' /></div>
-                  <label>{{i18n 'GURPS.damage'}}</label>
+                  <label>{{localize 'GURPS.damage'}}</label>
                   <div><input class='damage' type='text' value='{{damage}}' name='system.ranged.{{key}}.damage' /></div>
                 </div>
                 <div class='label-value-row right-bias'>
                   <div></div>
                   <div></div>
-                  <label>{{i18n 'GURPS.range'}}</label>
+                  <label>{{localize 'GURPS.range'}}</label>
                   <div><input type='text' value='{{range}}' name='system.ranged.{{key}}.range' /></div>
-                  <label>{{i18n 'GURPS.rof'}}</label>
+                  <label>{{localize 'GURPS.rof'}}</label>
                   <div><input type='text' value='{{rof}}' name='system.ranged.{{key}}.rof' /></div>
-                  <label>{{i18n 'GURPS.shots'}}</label>
+                  <label>{{localize 'GURPS.shots'}}</label>
                   <div><input type='text' value='{{shots}}' name='system.ranged.{{key}}.shots' /></div>
                 </div>
                 <div class='label-value-row right-bias'>
                   <div></div>
                   <div></div>
-                  <label>{{i18n 'GURPS.bulk'}}</label>
+                  <label>{{localize 'GURPS.bulk'}}</label>
                   <div><input type='text' value='{{bulk}}' name='system.ranged.{{key}}.bulk' /></div>
-                  <label>{{i18n 'GURPS.rcl'}}</label>
+                  <label>{{localize 'GURPS.rcl'}}</label>
                   <div><input type='text' value='{{rcl}}' name='system.ranged.{{key}}.rcl' /></div>
                   <div></div>
                   <div>
@@ -213,31 +213,31 @@
                 </div>
               </div>
               <div class='label-value-row right-bias'>
-                <label>{{i18n 'GURPS.notes'}}</label>
+                <label>{{localize 'GURPS.notes'}}</label>
                 <div><textarea class='notes' rows='2' name='system.ranged.{{key}}.notes'>{{notes}}</textarea></div>
 
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.check'}}</label>
+                <label>{{localize 'GURPS.check'}}</label>
                 <div><input type='text' value='{{checkotf}}' name='system.ranged.{{key}}.checkotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.during'}}</label>
+                <label>{{localize 'GURPS.during'}}</label>
                 <div><input type='text' value='{{duringotf}}' name='system.ranged.{{key}}.duringotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.pass'}}</label>
+                <label>{{localize 'GURPS.pass'}}</label>
                 <div><input type='text' value='{{passotf}}' name='system.ranged.{{key}}.passotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.fail'}}</label>
+                <label>{{localize 'GURPS.fail'}}</label>
                 <div><input type='text' value='{{failotf}}' name='system.ranged.{{key}}.failotf' /></div>
               </div>
             </div>
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-ranged'><i class='fas fa-check'></i> {{i18n 'GURPS.addRangedAttack'}}</button>
+            <button id='add-ranged'><i class='fas fa-check'></i> {{localize 'GURPS.addRangedAttack'}}</button>
           </div>
         </div>
 
@@ -247,7 +247,7 @@
               class='notes'
               rows='6'
               name='system.itemModifiers'
-              placeholder='{{i18n "GURPS.itemModifiersText"}}'
+              placeholder='{{localize "GURPS.itemModifiersText"}}'
             >{{system.itemModifiers}}</textarea></div>
         </div>
 
@@ -257,7 +257,7 @@
               class='notes'
               rows='6'
               name='system.bonuses'
-              placeholder='{{i18n "GURPS.itemBonusText"}}'
+              placeholder='{{localize "GURPS.itemBonusText"}}'
             >{{system.bonuses}}</textarea></div>
         </div>
 
@@ -266,7 +266,7 @@
           {{#each system.spells as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.spell'}}
+                {{localize 'GURPS.spell'}}
                 {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.spells' name='{{key}}'><i
                     class='fas fa-trash'
                   ></i></span>
@@ -274,12 +274,12 @@
 
               <div class='gurps-3col'>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.name'}}</label>
+                  <label>{{localize 'GURPS.name'}}</label>
                   <div><input type='text' value='{{name}}' name='system.spells.{{key}}.name' /></div>
                 </div>
                 <div class='label-value-row right-bias'></div>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.spellClass'}}</label>
+                  <label>{{localize 'GURPS.spellClass'}}</label>
                   <div><input type='text' value='{{class}}' name='system.spells.{{key}}.class' /></div>
                 </div>
               </div>
@@ -287,31 +287,31 @@
               <div class='label-value-row right-bias'>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.skillLevel'}}</label>
+                <label>{{localize 'GURPS.skillLevel'}}</label>
                 <div><input type='text' value='{{otf}}' name='system.spells.{{key}}.otf' /></div>
               </div>
 
               <div class='gurps-3col'>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.spellCollege'}}</label>
+                  <label>{{localize 'GURPS.spellCollege'}}</label>
                   <div><input type='text' value='{{college}}' name='system.spells.{{key}}.college' /></div>
-                  <label>{{i18n 'GURPS.spellCost'}}</label>
+                  <label>{{localize 'GURPS.spellCost'}}</label>
                   <div><input type='text' value='{{cost}}' name='system.spells.{{key}}.cost' /></div>
-                  <label>{{i18n 'GURPS.spellMaintain'}}</label>
+                  <label>{{localize 'GURPS.spellMaintain'}}</label>
                   <div><input type='text' value='{{maintain}}' name='system.spells.{{key}}.maintain' /></div>
                 </div>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.spellDuration'}}</label>
+                  <label>{{localize 'GURPS.spellDuration'}}</label>
                   <div><input type='text' value='{{duration}}' name='system.spells.{{key}}.duration' /></div>
-                  <label>{{i18n 'GURPS.spellResist'}}</label>
+                  <label>{{localize 'GURPS.spellResist'}}</label>
                   <div><input type='text' value='{{resist}}' name='system.spells.{{key}}.resist' /></div>
-                  <label>{{i18n 'GURPS.spellTime'}}</label>
+                  <label>{{localize 'GURPS.spellTime'}}</label>
                   <div><input type='text' value='{{casttime}}' name='system.spells.{{key}}.casttime' /></div>
                 </div>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.spellDifficulty'}}</label>
+                  <label>{{localize 'GURPS.spellDifficulty'}}</label>
                   <div><input type='text' value='{{difficulty}}' name='system.spells.{{key}}.difficulty' /></div>
-                  <label>{{i18n 'GURPS.pdfPageReference'}}</label>
+                  <label>{{localize 'GURPS.pdfPageReference'}}</label>
                   <div><input type='text' value='{{pageref}}' name='system.spells.{{key}}.pageref' /></div>
                   <div></div>
                   <div><input type='text' value='' disabled='' style='background: transparent' /></div>
@@ -319,31 +319,31 @@
               </div>
 
               <div class='label-value-row right-bias'>
-                <label>{{i18n 'GURPS.notes'}}</label>
+                <label>{{localize 'GURPS.notes'}}</label>
                 <div><textarea class='notes' rows='2' name='system.spells.{{key}}.notes'>{{notes}}</textarea></div>
 
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.check'}}</label>
+                <label>{{localize 'GURPS.check'}}</label>
                 <div><input type='text' value='{{checkotf}}' name='system.spells.{{key}}.checkotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.during'}}</label>
+                <label>{{localize 'GURPS.during'}}</label>
                 <div><input type='text' value='{{duringotf}}' name='system.spells.{{key}}.duringotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.pass'}}</label>
+                <label>{{localize 'GURPS.pass'}}</label>
                 <div><input type='text' value='{{passotf}}' name='system.spells.{{key}}.passotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.fail'}}</label>
+                <label>{{localize 'GURPS.fail'}}</label>
                 <div><input type='text' value='{{failotf}}' name='system.spells.{{key}}.failotf' /></div>
               </div>
             </div>
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-spell'><i class='fas fa-check'></i> {{i18n 'GURPS.addSpell'}}</button>
+            <button id='add-spell'><i class='fas fa-check'></i> {{localize 'GURPS.addSpell'}}</button>
           </div>
         </div>
 
@@ -352,7 +352,7 @@
           {{#each system.skills as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.skill'}}
+                {{localize 'GURPS.skill'}}
                 {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.skills' name='{{key}}'><i
                     class='fas fa-trash'
                   ></i></span>
@@ -360,12 +360,12 @@
 
               <div class='gurps-3col'>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.name'}}</label>
+                  <label>{{localize 'GURPS.name'}}</label>
                   <div><input type='text' value='{{name}}' name='system.skills.{{key}}.name' /></div>
                 </div>
                 <div class='label-value-row right-bias'></div>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.pdfPageReference'}}</label>
+                  <label>{{localize 'GURPS.pdfPageReference'}}</label>
                   <div><input type='text' value='{{pageref}}' name='system.skills.{{key}}.pageref' /></div>
                 </div>
               </div>
@@ -373,33 +373,33 @@
                 <div></div>
                 <div></div>
 
-                <label>{{i18n 'GURPS.skillLevel'}}</label>
+                <label>{{localize 'GURPS.skillLevel'}}</label>
                 <div><input type='text' value='{{otf}}' name='system.skills.{{key}}.otf' /></div>
-                <label>{{i18n 'GURPS.notes'}}</label>
+                <label>{{localize 'GURPS.notes'}}</label>
                 <div><textarea class='notes' rows='2' name='system.skills.{{key}}.notes'>{{notes}}</textarea></div>
 
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.check'}}</label>
+                <label>{{localize 'GURPS.check'}}</label>
                 <div><input type='text' value='{{checkotf}}' name='system.skills.{{key}}.checkotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.during'}}</label>
+                <label>{{localize 'GURPS.during'}}</label>
                 <div><input type='text' value='{{duringotf}}' name='system.skills.{{key}}.duringotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.pass'}}</label>
+                <label>{{localize 'GURPS.pass'}}</label>
                 <div><input type='text' value='{{passotf}}' name='system.skills.{{key}}.passotf' /></div>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.fail'}}</label>
+                <label>{{localize 'GURPS.fail'}}</label>
                 <div><input type='text' value='{{failotf}}' name='system.skills.{{key}}.failotf' /></div>
               </div>
             </div>
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-skill'><i class='fas fa-check'></i> {{i18n 'GURPS.addSkill'}}</button>
+            <button id='add-skill'><i class='fas fa-check'></i> {{localize 'GURPS.addSkill'}}</button>
           </div>
         </div>
 
@@ -408,7 +408,7 @@
           {{#each system.ads as |this key|}}
             <div class='gga-group inputs'>
               <h4 class='with-button'>
-                {{i18n 'GURPS.advantage'}}
+                {{localize 'GURPS.advantage'}}
                 {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.ads' name='{{key}}'><i
                     class='fas fa-trash'
                   ></i></span>
@@ -416,26 +416,26 @@
 
               <div class='gurps-3col'>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.name'}}</label>
+                  <label>{{localize 'GURPS.name'}}</label>
                   <div><input type='text' value='{{name}}' name='system.ads.{{key}}.name' /></div>
                 </div>
                 <div class='label-value-row right-bias'></div>
                 <div class='label-value-row right-bias'>
-                  <label>{{i18n 'GURPS.pdfPageReference'}}</label>
+                  <label>{{localize 'GURPS.pdfPageReference'}}</label>
                   <div><input type='text' value='{{pageref}}' name='system.ads.{{key}}.pageref' /></div>
                 </div>
               </div>
               <div class='label-value-row right-bias'>
                 <div></div>
                 <div></div>
-                <label>{{i18n 'GURPS.notes'}}</label>
+                <label>{{localize 'GURPS.notes'}}</label>
                 <div><textarea class='notes' rows='2' name='system.ads.{{key}}.notes'>{{notes}}</textarea></div>
               </div>
             </div>
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-ads'><i class='fas fa-check'></i> {{i18n 'GURPS.addAdvantage'}}</button>
+            <button id='add-ads'><i class='fas fa-check'></i> {{localize 'GURPS.addAdvantage'}}</button>
           </div>
         </div>
       </section>

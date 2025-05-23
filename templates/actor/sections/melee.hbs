@@ -2,17 +2,17 @@
   <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='headermenu'>
-      <span>{{i18n 'GURPS.meleeWeapons'}}</span>
+      <span>{{localize 'GURPS.meleeWeapons'}}</span>
       <i class='fas fa-caret-square-down'></i>
     </div>
   </div>
-  <div class='usage header'>{{i18n 'GURPS.usage'}}</div>
-  <div class='level header'>{{i18n 'GURPS.level'}}</div>
-  <div class='parry header'>{{i18n 'GURPS.parry'}}</div>
-  <div class='block header'>{{i18n 'GURPS.block'}}</div>
-  <div class='damage header'>{{i18n 'GURPS.damage'}}</div>
-  <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
-  <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
+  <div class='usage header'>{{localize 'GURPS.usage'}}</div>
+  <div class='level header'>{{localize 'GURPS.level'}}</div>
+  <div class='parry header'>{{localize 'GURPS.parry'}}</div>
+  <div class='block header'>{{localize 'GURPS.block'}}</div>
+  <div class='damage header'>{{localize 'GURPS.damage'}}</div>
+  <div class='reach header'>{{localize 'GURPS.reach'}}</div>
+  <div class='st header'>{{localize 'GURPS.attributesST'}}</div>
 
     {{#with system as |system|}}
       {{#each (attackflatlist system.melee)}}
@@ -69,7 +69,7 @@
                   <div>
                     {{#if (isFoundryItem this)}}
                       <i class='fas fa-star tooltip gga-item'>
-                        <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem'}}</span>
+                        <span class='tooltiptext'>{{localize 'GURPS.equipmentFoundryItem'}}</span>
                       </i>
                     {{/if}}
                   </div>

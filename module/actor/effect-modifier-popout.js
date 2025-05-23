@@ -1,8 +1,7 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { RulerGURPS } from '../../lib/ranges.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
+import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
 import { gurpslink } from '../utilities/gurpslink.js'
@@ -12,20 +11,21 @@ export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined
   if (token1 === token2) return undefined
 
-  // const ruler = new Ruler() as Ruler & { totalDistance: number }
-  const ruler = new RulerGURPS(game.user)
-  ruler._state = Ruler.STATES.MEASURING
-  ruler._addWaypoint({ x: token1.x, y: token1.y }, { snap: false })
-  ruler.measure({ x: token2.x, y: token2.y }, { gridSpaces: true })
-  const horizontalDistance = ruler.totalDistance
-  const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
-  ruler.clear()
+  // TODO: Ruler shouldn't be needed here, we should be able to get the
+  // SSRT value without invoking it.
+  const ruler = new CONFIG.Canvas.rulerClass(game.user)
 
-  const dist = Math.sqrt(horizontalDistance ** 2 + verticalDistance ** 2) - 1
-  const yards = ruler.convert_to_yards(dist, canvas.scene.grid.units)
+  let dist = canvas.grid.measurePath([token1.document, token2.document]).distance
+
+  if (game.release.generation === 12) {
+    const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
+    dist = Math.sqrt(Math.pow(dist, 2) + Math.pow(verticalDistance, 2)) - 1
+  }
+
+  const yards = Length.from(dist, canvas.scene.grid.units).to(Length.Unit.Yard).value
   return {
     yards: Math.ceil(dist),
-    modifier: ruler.yardsToSpeedRangePenalty(yards),
+    modifier: ruler.yardsToRangePenalty(yards),
   }
 }
 
@@ -69,7 +69,7 @@ export class EffectModifierPopout extends Application {
       minimizable: true,
       jQuery: true,
       resizable: true,
-      title: i18n('GURPS.effectModifierPopout', 'Effect Modifiers'),
+      title: game.i18n.localize('GURPS.effectModifierPopout', 'Effect Modifiers'),
     })
   }
 
@@ -157,8 +157,8 @@ export class EffectModifierPopout extends Application {
                 : 'notfound'
           const desc = this.getDescription(it, itemReference)
           return {
-            link: gurpslink(`[${i18n(desc)}]`),
-            desc: i18n(desc),
+            link: gurpslink(`[${game.i18n.localize(desc)}]`),
+            desc: game.i18n.localize(desc),
             itemName,
             itemType,
             itemId: itemReference,
@@ -169,7 +169,7 @@ export class EffectModifierPopout extends Application {
   }
 
   get selectedToken() {
-    return this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
+    return this._token?.name ?? game.i18n.localize('GURPS.effectModNoTokenSelected')
   }
 
   getToken() {
@@ -199,7 +199,7 @@ export class EffectModifierPopout extends Application {
     html
       .closest('div.effect-modifiers-app')
       .find('.window-title')
-      .text(i18n_f('GURPS.effectModifierPopout', { name: this.selectedToken }, 'Effect Modifiers: {name}'))
+      .text(game.i18n.localize('GURPS.effectModifierPopout'))
   }
 
   _getHeaderButtons() {
@@ -257,47 +257,48 @@ export class EffectModifierPopout extends Application {
         await actions.addModifiers()
       }
       await this.render(true)
-      ui.notifications.info(i18n('GURPS.userModsRefreshed'))
+      ui.notifications.info(game.i18n.localize('GURPS.userModsRefreshed'))
     }
   }
 
   async clearUserMods(event) {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
-    await Dialog.confirm({
-      title: i18n('GURPS.confirmClearUserMods'),
-      content: i18n('GURPS.confirmClearHintUserMods'),
-      yes: async () => {
-        if (actor) {
-          await actor.update({ 'system.conditions.usermods': [] })
-          await this.render(true)
-        }
-      },
-      defaultYes: false,
+    const proceed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize('GURPS.confirmClearUserMods') },
+      content: game.i18n.localize('GURPS.confirmClearHintUserMods'),
     })
+
+    if (proceed) {
+      if (actor) {
+        await actor.update({ 'system.conditions.usermods': [] })
+        await this.render(true)
+      }
+    }
   }
 
-  addUserMod(event) {
+  async addUserMod(event) {
     if (this.getToken()) {
       setTimeout(() => $.find('#GURPS-user-mod-input')[0].focus(), 200)
-      Dialog.prompt({
-        title: 'Enter new modifier:',
-        content:
-          "<input type='text' id='GURPS-user-mod-input' style='text-align: left;' placeholder ='Ex.: +1 GM&#39s Luck #hit #damage #check #combat'>'",
-        label: 'Add (or press Enter)',
-        callback: html => {
-          let mod = html.find('#GURPS-user-mod-input').val()
-          // Because the '@' separator is a reserved character, we will replace it with space
-          mod = mod.replace('@', ' ')
-          if (!!mod) {
-            let action = parselink(mod)
-            if (action.action?.type === 'modifier') this._addUserMod(mod)
-            else ui.notifications.warn(i18n('GURPS.chatUnrecognizedFormat'))
-          }
+      const input = await foundry.applications.api.DialogV2.prompt({
+        window: { title: game.i18n.localize('GURPS.addUserMod') },
+        content: `<input type='text' id='GURPS-user-mod-input' name='input' style='text-align: left;' placeholder="${game.i18n.localize('GURPS.userModInputPlaceholder')}">`,
+        ok: {
+          label: 'Add (or press Enter)',
+          callback: (event, button, dialog) => button.form.elements.input.value,
         },
-        rejectClose: false,
       })
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+
+      if (input) {
+        // Because the '@' separator is a reserved character, we will replace it with space
+        let mod = input.replace('@', ' ')
+        if (!!mod) {
+          let action = parselink(mod)
+          if (action.action?.type === 'modifier') this._addUserMod(mod)
+          else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
+        }
+      }
+    } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
   getDescription(text, itemRef) {
@@ -371,11 +372,11 @@ export class EffectModifierPopout extends Application {
   _addUserMod(mod) {
     let t = this.getToken()
     if (t && t.actor) {
-      mod += ' (' + i18n('GURPS.equipmentUserCreated') + ')'
+      mod += ' (' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
       let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
       m.push(`${mod} @custom`)
       t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+    } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
   /** @override */

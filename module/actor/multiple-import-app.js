@@ -1,13 +1,10 @@
-import { i18n } from '../../lib/i18n.js'
 import { ActorImporter } from './actor-importer.js'
 import { GurpsActor } from './actor.js'
 
 export const AddMultipleImportButton = function (html) {
-  let button = $(
-    `<button class="mass-import"><i class="fas fa-file-import"></i>${i18n('GURPS.importMultiple')}</button>`
-  )
-
-  button.click(async () => {
+  const button = document.createElement('button')
+  button.classList.add('mass-import')
+  button.addEventListener('click', async () => {
     const dirHandle = await window.showDirectoryPicker()
 
     // Create an array to hold the file names
@@ -21,13 +18,24 @@ export const AddMultipleImportButton = function (html) {
     }
 
     if (files.length === 0) {
-      return ui.notifications.error(i18n('GURPS.importEmptyDirectory'))
+      return ui.notifications.error(game.i18n.localize('GURPS.importEmptyDirectory'))
     }
 
     new MultipleImportApp(dirHandle, files).render(true)
   })
 
-  html.find('.directory-footer').append(button)
+  const icon = document.createElement('i')
+  icon.classList.add('fa-solid', 'fa-file-import')
+  button.appendChild(icon)
+  const textNode = document.createTextNode(game.i18n.localize('GURPS.importMultiple'));
+  button.appendChild(textNode);
+
+  if (game.release.generation === 12) {
+    html = html[0]
+    html.querySelector('.directory-footer').append(button)
+  } else {
+    html.querySelector('.header-actions').append(button)
+  }
 }
 
 class MultipleImportApp extends Application {
@@ -64,7 +72,7 @@ class MultipleImportApp extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'multiple-import-form',
-      title: i18n('GURPS.importMultipleActors'),
+      title: game.i18n.localize('GURPS.importMultipleActors'),
       template: 'systems/gurps/templates/actor/import-multiple-file-list.hbs',
       popOut: true,
       width: 'auto',
@@ -109,7 +117,7 @@ class MultipleImportApp extends Application {
         // Import the selected files
         const selectedFiles = this.data.files.filter(it => it.selected)
         if (selectedFiles.length === 0) {
-          return ui.notifications.error(i18n('GURPS.importNoFilesSelected'))
+          return ui.notifications.error(game.i18n.localize('GURPS.importNoFilesSelected'))
         }
         this._importFiles(selectedFiles)
         return this.close()

@@ -1,0 +1,19 @@
+<form id="select-bucket-journals" autocomplete="off" class="gga-app">
+  <h3>{{localize 'GURPS.modifierSelectJournalsTitle'}}</h3>
+  <aside>{{localize 'GURPS.modifierSelectJournalsAside'}}</aside>
+  <div class="section">
+    <div id="entry-list" class="gurps-3col gurps-checkbox-col overflowy">
+      <header>{{localize 'GURPS.showQuestion'}}</header>
+      <header>{{localize 'GURPS.name'}}</header>
+      <header>{{localize 'GURPS.ID'}}</header>
+      {{#each allJournals}}
+        <div><input type="checkbox" id='{{id}}' {{checked (includes ../journals id)}}></div>
+        <div><label for="{{id}}">{{#if folder}}{{folder}}/{{/if}}{{name}}</label></div>
+        <div>{{id}}</div>
+      {{/each}}
+    </div>
+  </div>
+  <div class="section">
+    <button id="update"><i class="fas fa-save"></i>{{localize "GURPS.update"}}</button>
+  </div>
+</form>

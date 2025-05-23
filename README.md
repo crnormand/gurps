@@ -2,15 +2,8 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-# Current Release Version 0.17.20 (compatible with FoundryVTT v12.x)
-
-## Upgrade Warning
-
-**It is recommended to upgrade to 0.17.20 before upgrading FoundryVTT to v13.**
-
-FoundryVTT v13 includes more strict checking for best practice compliance. One result of this is that GGA's Damage Chat Messages created prior to GGA v0.17.20 will be broken in FoundryVTT v13. GGA v0.17.20 includes a migration to make those Damage Chat Messages compatible with FoundryVTT v13.
-
-_If you skip this upgrade before going to FoundryVTT v13_, existing Damage Chat Messages's drag-and-drop will not work. Newly created Damage Chat Messages are expected to work as usual.
+## Current Release Version 0.18.0 
+Compatible with FoundryVTT v12.x AND **v13.x**!
 
 ### [Change Log](changelog.md)
 

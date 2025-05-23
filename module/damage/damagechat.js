@@ -4,7 +4,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
-import selectTarget from '../select-target.js'
+import selectTarget from '../utilities/select-target.js'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -22,8 +22,8 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    app.flags.gurps.transfer = app.flags.gurps.transfer || {};
-    let transfer = app.flags.gurps.transfer;
+    app.flags.gurps.transfer = app.flags.gurps.transfer || {}
+    let transfer = app.flags.gurps.transfer
 
     // for each damage-message, set the drag-and-drop events and data
     let damageMessages = html.find('.damage-message')
@@ -68,7 +68,7 @@ export default class DamageChat {
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
   static async _dropCanvasData(canvas, dropData) {
-    const actor = game.users.get(dropData.actorid)
+    const actor = game.actors.get(dropData.actorid)
 
     switch (dropData.type) {
       case 'damageItem':
@@ -87,11 +87,6 @@ export default class DamageChat {
         break
     }
     return false
-  }
-
-  static init() {
-    Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
-    Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
   }
 
   /**
@@ -377,7 +372,7 @@ export default class DamageChat {
       loaded: diceData.loaded,
       damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-      userTarget: userTarget,
+      userTarget: userTarget?.name,
       hitlocation: draggableData[0].hitlocation,
       numtimes: draggableData.length > 1 ? ' x' + draggableData.length : '',
     })
@@ -463,7 +458,8 @@ export default class DamageChat {
         return false
       }
 
-      if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, true)
+      if (selectedTokens.length > 1)
+        selectedTokens = await selectTarget(selectedTokens, { selectAll: true, single: false })
     }
 
     if (selectedTokens.length > 0) {

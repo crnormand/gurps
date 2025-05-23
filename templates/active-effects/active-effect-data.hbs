@@ -9,9 +9,9 @@
 
   <!-- Effect Configuration Tabs -->
   <nav class='sheet-tabs tabs'>
-    <a class='item' data-tab='details'><i class='fas fa-book'></i> {{i18n 'EFFECT.TabDetails'}}</a>
-    <a class='item' data-tab='duration'><i class='fas fa-clock'></i> {{i18n 'EFFECT.TabDuration'}}</a>
-    <a class='item' data-tab='effects'><i class='fas fa-cogs'></i> {{i18n 'EFFECT.TabEffects'}}</a>
+    <a class='item' data-tab='details'><i class='fas fa-book'></i> {{localize 'EFFECT.TabDetails'}}</a>
+    <a class='item' data-tab='duration'><i class='fas fa-clock'></i> {{localize 'EFFECT.TabDuration'}}</a>
+    <a class='item' data-tab='effects'><i class='fas fa-cogs'></i> {{localize 'EFFECT.TabEffects'}}</a>
   </nav>
 
   <!-- Details Tab -->
@@ -48,7 +48,7 @@
     </div>
     <hr />
     <div class='form-group'>
-      <label>{{i18n 'GURPS.effectsTermination'}}</label>
+      <label>{{localize 'GURPS.effectsTermination'}}</label>
       <div class='form-fields'>
         <input type='text' name='flags.gurps.endCondition' value='{{object.flags.gurps.endCondition}}' />
       </div>
@@ -116,6 +116,6 @@
   </section>
 
   <footer class='sheet-footer'>
-    <button id='submit-button' type='submit'><i class='fas fa-save'></i>{{i18n submitText 'Submit'}}</button>
+    <button id='submit-button' type='submit'><i class='fas fa-save'></i>{{localize 'GURPS.submit'}}</button>
   </footer>
 </form>

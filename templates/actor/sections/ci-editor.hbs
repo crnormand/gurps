@@ -1,5 +1,5 @@
 <div id='combat-hit' class='tracked-resource'>
-  <div class='header'>{{i18n 'GURPS.injury'}}</div>
+  <div class='header'>{{localize 'GURPS.injury'}}</div>
   <div class='fieldblock3'>
     <div class='points'></div>
     <div class='field'><input
@@ -10,7 +10,7 @@
         data-dtype='Number'
       />
     </div>
-    <div class='label'>{{i18n 'GURPS.serverity'}}</div>
+    <div class='label'>{{localize 'GURPS.serverity'}}</div>
 
     <div class='points'></div>
     <div class='field'><input
@@ -21,7 +21,7 @@
         data-dtype='Number'
       />
     </div>
-    <div class='label'>{{i18n 'GURPS.days'}}</div>
+    <div class='label'>{{localize 'GURPS.days'}}</div>
 
     <div class='points'>
       [<input
@@ -39,7 +39,7 @@
         data-dtype='Number'
       />
     </div>
-    <div class='label'>{{i18n 'GURPS.rt'}}</div>
+    <div class='label'>{{localize 'GURPS.rt'}}</div>
 
     <div class='points'>
       [<input name='system.HP.points' class='gcs-input-sm2' type='text' value='{{system.HP.points}}' />]
@@ -47,10 +47,10 @@
     <div class='field'>
       <input class='gcs-input' name='system.HP.max' type='text' value='{{system.HP.max}}' data-dtype='Number' />
     </div>
-    <div class='label'>{{i18n 'GURPS.attributesHPNAME'}}</div>
+    <div class='label'>{{localize 'GURPS.attributesHPNAME'}}</div>
   </div>
   <div class='tooltip-wrapper gentle-flex'>
-    <div class='tooltip'>{{i18n 'GURPS.severities'}}
+    <div class='tooltip'>{{localize 'GURPS.severities'}}
       <span class='tooltiptext'>
         <div class='fieldblock'>
           {{#ciSeveritiesTooltip}}

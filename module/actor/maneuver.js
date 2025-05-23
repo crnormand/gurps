@@ -1,5 +1,4 @@
-import * as settings from '../../lib/miscellaneous-settings.js'
-import GurpsToken from '../token.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -22,7 +21,6 @@ const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
 const MANEUVER_NAME_AIM = 'aim'
 
-CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
 
 // Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
@@ -369,7 +367,7 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    const useOnTarget = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     const filter = []
     if (useOnTarget) {
@@ -410,47 +408,12 @@ export default class Maneuvers {
   }
 
   /**
-   * @param {ActiveEffect[]|undefined} effects
-   * @return {ActiveEffect[]} just the ActiveEffects that are also Maneuvers
+   * @param {ActiveEffect.Implementation[]|undefined} effects
+   * @return {ActiveEffect.Implementation[]} just the ActiveEffects that are also Maneuvers
    */
   static getActiveEffectManeuvers(effects) {
     return effects ? effects.filter(it => Maneuvers.isActiveEffectManeuver(it)) : []
   }
 }
-
-// on create combatant, set the maneuver
-Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  if (game.user?.isGM) {
-    console.log(id)
-    let token = /** @type {GurpsToken} */ (combat.token?.object)
-    if (!!token && token.id) token.setManeuver('do_nothing')
-  }
-})
-
-// on delete combatant, remove the maneuver
-Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  if (game.user?.isGM) {
-    console.log(id)
-    let token = /** @type {GurpsToken} */ (combat.token?.object)
-    if (!!token && token.id) {
-      console.log(`Delete Combatant: remove maneuver token[${token.id}]`)
-      token.removeManeuver()
-    }
-  }
-})
-
-// On delete combat, remove the maneuver from every combatant
-Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _options, /** @type {any} */ _id) => {
-  if (game.user?.isGM) {
-    let combatants = combat.combatants.contents
-    for (const combatant of combatants) {
-      if (combatant?.token) {
-        let token = /** @type {GurpsToken} */ (combatant.token.object)
-        console.log(`Delete Combat: remove maneuver token[${token.id}]`)
-        token.removeManeuver()
-      }
-    }
-  }
-})
 
 // TODO consider subtracting 1 FP from every combatant that leaves combat

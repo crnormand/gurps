@@ -1,7 +1,7 @@
 <div id='miscellaneous'>
-  <div class='header'>{{i18n 'GURPS.sheet.personal.miscellaneous'}}</div>
+  <div class='header'>{{localize 'GURPS.sheet.personal.miscellaneous'}}</div>
   <div class='fieldblock'>
-    <div class='label'>{{i18n 'GURPS.sheet.personal.created'}}:</div>
+    <div class='label'>{{localize 'GURPS.sheet.personal.created'}}:</div>
     <div class='field'>
       <input
         name='system.traits.createdon'
@@ -11,7 +11,7 @@
         {{disabled (not isEditing)}}
       />
     </div>
-    <div class='label'>{{i18n 'GURPS.sheet.personal.modified'}}:</div>
+    <div class='label'>{{localize 'GURPS.sheet.personal.modified'}}:</div>
     <div class='field'><input
         name='system.traits.modifiedon'
         class='gcs-input'
@@ -19,7 +19,7 @@
         value='{{system.traits.modifiedon}}'
         {{disabled (not isEditing)}}
       /></div>
-    <div class='label'>{{i18n 'GURPS.sheet.personal.options'}}:</div>
+    <div class='label'>{{localize 'GURPS.sheet.personal.options'}}:</div>
     <div class='field'><input
         name='system.traits.options'
         class='gcs-input'

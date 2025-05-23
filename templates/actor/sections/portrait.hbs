@@ -1,7 +1,7 @@
 <div id='portrait'>
-  <div class='header'>{{i18n 'GURPS.sheet.personal.portrait'}}</div>
+  <div class='header'>{{localize 'GURPS.sheet.personal.portrait'}}</div>
   <div class='img-display' style='background-image: url({{actor.img}});'>
     <img class='profile-img' src='{{actor.img}}' data-edit='img' title='{{actor.name}}' />
   </div>
-  {{#if isGM}}<button class='sharebutton' data-operation='share-portrait'>{{i18n 'GURPS.share'}}</button>{{/if}}
+  {{#if isGM}}<button class='sharebutton' data-operation='share-portrait'>{{localize 'GURPS.share'}}</button>{{/if}}
 </div>

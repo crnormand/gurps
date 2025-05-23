@@ -1,19 +1,19 @@
 <div id='equipment{{container}}' class='equipmentlist gga-table with-notes'>
   <div class='itemmenu header' readonly></div>
-  <div class='equipped header'>{{#if (eq container 'carried')}}{{i18n 'GURPS.equipmentEquipped'}}{{/if}}</div>
+  <div class='equipped header'>{{#if (eq container 'carried')}}{{localize 'GURPS.equipmentEquipped'}}{{/if}}</div>
   <div class='qty header' data-key='system.equipment.{{container}}'>
-    {{i18n 'GURPS.equipmentQuantity'}}
+    {{localize 'GURPS.equipmentQuantity'}}
   </div>
 
   <div class='desc header eqtdragtarget' data-key='system.equipment.{{container}}'>
     <div class='headermenu'>
       <span>
         {{#if (eq container 'carried')}}
-          {{i18n 'GURPS.equipmentCarried'}}
+          {{localize 'GURPS.equipmentCarried'}}
           ({{toLocaleString eqtsummary.eqtlbs}}
           lb; ${{toLocaleString eqtsummary.eqtcost}})
         {{else}}
-          {{i18n 'GURPS.equipmentOther'}}
+          {{localize 'GURPS.equipmentOther'}}
           (${{toLocaleString eqtsummary.othercost}})
         {{/if}}
       </span>
@@ -21,12 +21,12 @@
     </div>
   </div>
 
-  <div class='uses header'>{{i18n 'GURPS.equipmentUses'}}</div>
+  <div class='uses header'>{{localize 'GURPS.equipmentUses'}}</div>
   <div class='cost header'>$</div>
   <div class='weight header'><i class='fas fa-weight-hanging'></i></div>
   <div class='sum_cost header'>&sum; $</div>
   <div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div>
-  <div class='ref header'>{{i18n 'GURPS.pdfRef'}}</div>
+  <div class='ref header'>{{localize 'GURPS.pdfRef'}}</div>
 
   {{#each (flatlist (lookup system.equipment container))}}
     {{#if ../isEditing}}
@@ -156,17 +156,17 @@
                     {{/if}}
                     {{#if (isUserCreated this)}}
                       <i class='fas fa-bookmark tooltip gga-usercreated'>
-                        <span class='tooltiptext'>{{i18n 'GURPS.equipmentUserCreated'}}</span>
+                        <span class='tooltiptext'>{{localize 'GURPS.equipmentUserCreated'}}</span>
                       </i>
                     {{/if}}
                     {{#if (isFoundryItem this)}}
                       <i class='fas fa-star tooltip gga-item'>
-                        <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem'}}</span>
+                        <span class='tooltiptext'>{{localize 'GURPS.equipmentFoundryItem'}}</span>
                       </i>
                     {{/if}}
                     {{#if (ignoreImportQty this)}}
                       <i class='fas fa-hashtag tooltip gga-ignoreimport'>
-                        <span class='tooltiptext'>{{i18n 'GURPS.equipmentIgnoreQtyImport'}} </span>
+                        <span class='tooltiptext'>{{localize 'GURPS.equipmentIgnoreQtyImport'}} </span>
                       </i>
                     {{/if}}
                   </div>

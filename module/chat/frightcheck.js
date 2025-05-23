@@ -8,6 +8,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
   help() {
     return '/frightcheck (or /fc)'
   }
+
   isGMOnly() {
     return true
   }
@@ -16,33 +17,116 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(fc|frightcheck)/)
     return !!this.match
   }
+
   async process(line) {
     if (!GURPS.LastActor) {
       ui.notifications.error('Please select a token/character.')
       return
     }
+
     let actor = GURPS.LastActor
     let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
 
+    const data = {
+      tblname: tblname,
+      fear: this.getFearModifier(actor) || 0,
+      fearChoices: {
+        0: game.i18n.localize('GURPS.none'),
+        1: `${game.i18n.localize('GURPS.traits.fearlessness')} 1`,
+        2: `${game.i18n.localize('GURPS.traits.fearlessness')} 2`,
+        3: `${game.i18n.localize('GURPS.traits.fearlessness')} 3`,
+        4: `${game.i18n.localize('GURPS.traits.fearlessness')} 4`,
+        5: `${game.i18n.localize('GURPS.traits.fearlessness')} 5`,
+        '-1': `${game.i18n.localize('GURPS.traits.fearfulness')} 1`,
+        '-2': `${game.i18n.localize('GURPS.traits.fearfulness')} 2`,
+        '-3': `${game.i18n.localize('GURPS.traits.fearfulness')} 3`,
+        '-4': `${game.i18n.localize('GURPS.traits.fearfulness')} 4`,
+        '-5': `${game.i18n.localize('GURPS.traits.fearfulness')} 5`,
+      },
+      combat: this.getCombatModifier(actor) || 0,
+      combatChoices: {
+        0: 'GURPS.none',
+        2: 'GURPS.traits.combatReflexes',
+        '-2': 'GURPS.traits.combatParalysis',
+      },
+      cowardice: this.getCowardiceModifier(actor) || 0,
+      cowardiceChoices: {
+        0: game.i18n.localize('GURPS.none'),
+        '-1': `${game.i18n.localize('GURPS.traits.cowardice')} CR:15`,
+        '-2': `${game.i18n.localize('GURPS.traits.cowardice')} CR:12`,
+        '-3': `${game.i18n.localize('GURPS.traits.cowardice')} CR:9`,
+        '-4': `${game.i18n.localize('GURPS.traits.cowardice')} CR:6`,
+      },
+      xenophilia: this.getXenophiliaModifier(actor) || 0,
+      xenophiliaChoices: {
+        0: game.i18n.localize('GURPS.none'),
+        1: `${game.i18n.localize('GURPS.traits.xenophilia')} CR:15`,
+        2: `${game.i18n.localize('GURPS.traits.xenophilia')} CR:12`,
+        3: `${game.i18n.localize('GURPS.traits.xenophilia')} CR:9`,
+        4: `${game.i18n.localize('GURPS.traits.xenophilia')} CR:6`,
+      },
+      daredevil: actor.findAdvantage(game.i18n.localize('GURPS.traits.daredevil')) || null,
+    }
+
     // TODO reskin frightcheck UI
-    renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname }).then(dialogTemplate =>
-      new Dialog(
-        {
-          title: 'Fright Check',
-          content: dialogTemplate,
-          buttons: {
-            rollFrightCheck: {
-              label: 'Roll Fright Check',
-              callback: this.rollFrightCheckCallback.bind(this, actor),
-            },
-            close: {
-              label: 'Close',
-            },
+    new foundry.applications.api.DialogV2(
+      {
+        window: { title: 'Fright Check' },
+        content: await renderTemplate('systems/gurps/templates/frightcheck-macro.hbs', data),
+        buttons: [
+          {
+            action: 'rollFrightCheck',
+            label: 'Roll Fright Check',
+            icon: 'fa-solid fa-dice',
+            default: true,
+            callback: (event, button, dialog) =>
+              this.rollFrightCheckCallback
+                .bind(this)
+                .call(this, actor, game.release.generation >= 13 ? dialog.element : dialog),
           },
-        },
-        { width: 650 }
-      ).render(true)
-    )
+          {
+            icon: 'fa-solid fa-xmark',
+            action: 'close',
+            label: 'Close',
+          },
+        ],
+      },
+      { width: 650 }
+    ).render(true)
+  }
+
+  getCombatModifier(actor) {
+    const combatReflexes = actor.findAdvantage(game.i18n.localize('GURPS.traits.combatReflexes'))
+    const combatParalysis = actor.findAdvantage(game.i18n.localize('GURPS.traits.combatParalysis'))
+    return combatReflexes ? 2 : combatParalysis ? -2 : 0
+  }
+
+  getFearModifier(actor) {
+    const fearless = actor.findAdvantage(game.i18n.localize('GURPS.traits.fearlessness'))
+    const fearful = actor.findAdvantage(game.i18n.localize('GURPS.traits.fearfulness'))
+    return fearless ? fearless.level || 0 : fearful ? -fearful.level || 0 : 0
+  }
+
+  getCowardiceModifier(actor) {
+    const cowardice = actor.findAdvantage(game.i18n.localize('GURPS.traits.cowardice'))
+    const cr = cowardice ? cowardice.cr || 0 : 0
+    if (cr === 0) return 0
+    if (cr <= 6) return -4
+    if (cr <= 9) return -3
+    if (cr <= 12) return -2
+    if (cr <= 15) return -1
+    return 0
+  }
+
+  getXenophiliaModifier(actor) {
+    const xenophilia = actor.findAdvantage(game.i18n.localize('GURPS.traits.xenophilia'))
+    const cr = xenophilia ? xenophilia.cr || 0 : 0
+    if (cr === 0) return 0
+    if (cr <= 6) return 4
+    if (cr <= 9) return 3
+    if (cr <= 12) return 2
+    if (cr <= 15) return 1
+    return 0
   }
 
   /**
@@ -50,7 +134,6 @@ export class FrightCheckChatProcessor extends ChatProcessor {
    * @param {*} html
    */
   async rollFrightCheckCallback(actor, html) {
-    // { mod: -1, desc: 'Fearfulness 1' }
     let selectIds = [
       '#mod2',
       '#mod3',
@@ -89,15 +172,15 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let ruleOf14 = finaltarget > 13
     finaltarget = ruleOf14 ? 13 : finaltarget
 
-    let tblname = html.find('#tblname')[0].value
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, tblname)
+    let tblname = html.querySelector('#tblname').value
+    let table = this._findFrightCheckTable(tblname)
+    if (table) game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, table.name)
 
     let roll = Roll.create('3d6[Fright Check]')
     await roll.evaluate()
 
     let margin = finaltarget - roll.total
     let failure = margin < 0
-    let table = this._findFrightCheckTable(tblname)
 
     let content = await renderTemplate('systems/gurps/templates/frightcheck-results.hbs', {
       WILLVar: WILLVar,
@@ -120,26 +203,31 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     }).then(async html => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
       if (failure) {
-        // Draw results using a custom roll formula.   use the negated margin for the rolltable only
+        // Draw results using a custom roll formula. Use the negated margin for the rolltable only
         let tableRoll = Roll.create(`3d6[Fright Check table roll] + @margin`)
+        if (!table) {
+          ui.notifications.error('No Rollable Table found for ' + tblname)
+          return
+        }
+
         table.draw({ roll: tableRoll }).then(() => GURPS.setLastTargetedRoll({ margin: margin }, actor)) // don't evaluate before passing
       }
     })
   }
 
   _getMod(html, id) {
-    let mod = html.find(id)[0]
+    let mod = html.querySelector(id)
     if (mod.type === 'select' || mod.type === 'select-one') {
       if (parseInt(mod.value, 10) === 0) return null
       return { mod: parseInt(mod.value, 10), desc: mod.options[mod.selectedIndex].text }
     } else if (mod.type === 'checkbox') {
-      if ($(mod).prop('checked')) {
-        let label = html.find(`label[for="${mod.id}"]`)[0].innerText
+      if (mod.checked) {
+        let label = html.querySelector(`label[for="${mod.id}"]`).innerText
         return { mod: parseInt(mod.value, 10), desc: label }
       }
     } else if (mod.type === 'number') {
       if (parseInt(mod.value, 10) === 0) return null
-      let label = html.find(`label[for="${mod.id}"]`)[0].innerText
+      let label = html.querySelector(`label[for="${mod.id}"]`).innerText
       return { mod: parseInt(mod.value, 10), desc: label }
     }
 

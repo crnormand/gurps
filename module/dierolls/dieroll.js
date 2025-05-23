@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 
@@ -200,9 +199,12 @@ export async function doRoll({
         // We receive here the full dice formula, like 1d6+2, and we need to extract the dice + adds parts
         // For example, for the formula `1d6+2` we need to extract `1d` and `+2` to show in the confirmation dialog
         // Because this is a simple roll and not a damage roll, we need to show the damage type as `dmg`
-        otfDamageText = i18n(`GURPS.${damageOTFType}`, damageOTFType)
+        otfDamageText = game.i18n.localize(`GURPS.${damageOTFType}`, damageOTFType)
         damageType = 'dmg'
-        damageTypeLabel = i18n(`GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`, damageType)
+        damageTypeLabel = game.i18n.localize(
+          `GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
+          damageType
+        )
         damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
@@ -231,10 +233,10 @@ export async function doRoll({
           ? '<i class="fas fa-plus"></i>'
           : '<i class="fas fa-check"></i>'
       consumeActionLabel = !result.hasActions
-        ? i18n('GURPS.noActionsAvailable')
+        ? game.i18n.localize('GURPS.noActionsAvailable')
         : canConsumeAction
-          ? i18n('GURPS.willConsumeAction')
-          : i18n('GURPS.isFreeAction')
+          ? game.i18n.localize('GURPS.willConsumeAction')
+          : game.i18n.localize('GURPS.isFreeAction')
       consumeActionColor = !result.hasActions
         ? 'rgb(215,185,33)'
         : canConsumeAction
@@ -367,82 +369,85 @@ export async function doRoll({
       }
     }
 
-    let doRollResult
-
     await $(document).find('.dialog-button.cancel').click().promise()
-    await new Promise(async resolve => {
-      const dialog = new Dialog({
+    let doRollResult = await foundry.applications.api.DialogV2.wait({
+      window: {
         title: game.i18n.localize('GURPS.confirmRoll'),
-        content: await renderTemplate(`systems/gurps/templates/${template}`, {
-          formula: formula,
-          thing: thing,
-          target: origtarget,
-          targetmods: targetmods,
-          prefix: prefix,
-          chatthing: chatthing,
-          optionalArgs: optionalArgs,
-          tokenImg,
-          tokenName,
-          totalRoll,
-          totalMods,
-          operator,
-          itemImage,
-          itemIcon,
-          targetRoll,
-          itemColor,
-          damageRoll,
-          damageType,
-          rollType,
-          targetColor,
-          rollChance,
-          bucketRoll,
-          messages,
-          isVideo,
-          consumeActionIcon,
-          consumeActionLabel,
-          consumeActionColor,
-          damageTypeLabel,
-          damageTypeIcon,
-          damageTypeColor,
-          simpleFormula,
-          originalFormula,
-          otfDamageText,
-          usingDiceAdd,
-        }),
-        buttons: {
-          roll: {
-            icon: !!optionalArgs.blind ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-dice"></i>',
-            label: !!optionalArgs.blind ? i18n('GURPS.blindRoll') : i18n('GURPS.roll'),
-            callback: async () => {
-              GURPS.stopActions = false
-              doRollResult = await _doRoll({
-                actor,
-                formula,
-                targetmods,
-                prefix,
-                thing,
-                chatthing,
-                origtarget,
-                optionalArgs,
-                fromUser,
-              })
-              resolve(doRollResult)
-            },
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: i18n('GURPS.cancel'),
-            callback: async () => {
-              await GURPS.ModifierBucket.clearTaggedModifiers()
-              GURPS.stopActions = true
-              resolve(false)
-            },
+        resizable: true,
+      },
+      position: {
+        height: 'auto',
+      },
+      content: await renderTemplate(`systems/gurps/templates/${template}`, {
+        formula: formula,
+        thing: thing,
+        target: origtarget,
+        targetmods: targetmods,
+        prefix: prefix,
+        chatthing: chatthing,
+        optionalArgs: optionalArgs,
+        tokenImg,
+        tokenName,
+        totalRoll,
+        totalMods,
+        operator,
+        itemImage,
+        itemIcon,
+        targetRoll,
+        itemColor,
+        damageRoll,
+        damageType,
+        rollType,
+        targetColor,
+        rollChance,
+        bucketRoll,
+        messages,
+        isVideo,
+        consumeActionIcon,
+        consumeActionLabel,
+        consumeActionColor,
+        damageTypeLabel,
+        damageTypeIcon,
+        damageTypeColor,
+        simpleFormula,
+        originalFormula,
+        otfDamageText,
+        usingDiceAdd,
+      }),
+      buttons: [
+        {
+          action: 'roll',
+          icon: !!optionalArgs.blind ? 'fas fa-eye-slash' : 'fas fa-dice',
+          label: !!optionalArgs.blind ? 'GURPS.blindRoll' : 'GURPS.roll',
+          default: true,
+          callback: async (event, button, dialog) => {
+            GURPS.stopActions = false
+            return await _doRoll({
+              actor,
+              formula,
+              targetmods,
+              prefix,
+              thing,
+              chatthing,
+              origtarget,
+              optionalArgs,
+              fromUser,
+            })
           },
         },
-        default: 'roll',
-      })
-      dialog.render(true)
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'GURPS.cancel',
+          callback: async (event, button, dialog) => {
+            await GURPS.ModifierBucket.clearTaggedModifiers()
+            GURPS.stopActions = true
+            return false
+          },
+        },
+      ],
     })
+
     return doRollResult
   } else {
     return await _doRoll({

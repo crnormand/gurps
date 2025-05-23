@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import { generateUniqueId } from '../../lib/utilities.js'
 import { GurpsDie } from './bucket-app.js'
 
@@ -37,7 +36,7 @@ export default class ResolveDiceRoll extends Application {
       minimizable: false,
       width: 350,
       height: 'auto',
-      title: i18n('GURPS.resolveDiceRoll'),
+      title: game.i18n.localize('GURPS.resolveDiceRoll'),
     })
   }
 

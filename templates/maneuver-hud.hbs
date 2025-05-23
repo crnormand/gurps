@@ -4,7 +4,7 @@
   <div class='collapsible-content maneuver-content'>
     <div class='status-maneuvers'>
       {{#each maneuvers}}
-        <img class='effect-control {{#if (includes ../effects this.icon)}}active{{/if}}' src='{{this.icon}}' title='{{i18n this.label}}' data-status-id='{{@key}}' />
+        <img class='effect-control {{#if (includes ../effects this.icon)}}active{{/if}}' src='{{this.icon}}' title='{{localize this.label}}' data-status-id='{{@key}}' />
       {{/each}}
     </div>
   </div>

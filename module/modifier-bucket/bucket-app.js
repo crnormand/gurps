@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, generateUniqueId } from '../../lib/utilities.js'
@@ -58,6 +57,7 @@ export class GurpsRoll extends Roll {
    * @inheritdoc
    * @param {*} data
    * @returns {*}
+   * @override
    */
   _prepareData(data) {
     const _data = super._prepareData(data)
@@ -80,7 +80,7 @@ export class GurpsRoll extends Roll {
 
 export class GurpsDie extends foundry.dice.terms.Die {
   /**
-   * @param {Die} die
+   * @param {foundry.dice.terms.Die} die
    */
   constructor(die) {
     super({
@@ -109,6 +109,9 @@ export class GurpsDie extends foundry.dice.terms.Die {
     return `${this.number}d${x}`
   }
 
+  /**
+   * @override
+   */
   roll({ minimize = false, maximize = false } = {}) {
     if (!this._loaded || !this._loaded.length) return super.roll({ minimize, maximize })
 
@@ -126,23 +129,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
   }
 
   /**
-   * @inheritdoc
-   */
-  // evaluate({ minimize = false, maximize = false, async = false } = {}) {
-  //   if (this._evaluated) {
-  //     throw new Error(`The ${this.constructor.name} has already been evaluated and is now immutable`)
-  //   }
-  //   this._evaluated = true
-
-  //   return async ? this._evaluate({ minimize, maximize }) : this._evaluateSync({ minimize, maximize })
-  // }
-
-  /**
-   * Evaluate the term.
-   * @param {object} [options={}]           Options which modify how the RollTerm is evaluated, see RollTerm#evaluate
-   * @param {boolean} [options.minimize=false]    Minimize the result, obtaining the smallest possible value.
-   * @param {boolean} [options.maximize=false]    Maximize the result, obtaining the largest possible value.
-   * @returns {Promise<RollTerm>}
+   * @override
    */
   async _evaluate({ minimize = false, maximize = false } = {}) {
     let physicalDice = game.user?.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
@@ -180,7 +167,7 @@ class ModifierStack {
     this.displaySum = '+0'
     this.plus = false
     this.minus = false
-    this.maxTotal = undefined
+    this.maxTotal = null
     this.usingRapidStrike = false
 
     // do we automatically empty the bucket when a roll is made?
@@ -215,7 +202,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(i18n('GURPS.modifiers_.rapidStrike')))
+    let rs = this.modifierList.find(m => m.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
@@ -291,7 +278,7 @@ class ModifierStack {
   _add(list, mod, reason = '', replace = false, tagged = false) {
     /** @type {Modifier|undefined} */
     var oldmod
-    reason = reason.replace('(' + i18n('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
+    reason = reason.replace('(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
       if (replace)
@@ -351,7 +338,7 @@ class ModifierStack {
    */
   reset(otherstacklist = []) {
     this.modifierList = otherstacklist
-    this.maxTotal = undefined
+    this.maxTotal = null
     this.usingRapidStrike = false
     this.sum()
   }
@@ -398,6 +385,8 @@ class ModifierStack {
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
+// export class ModifierBucket extends foundry.appv1.api.Application {
+// COMPATIBILITY: v12
 export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
@@ -417,7 +406,6 @@ export class ModifierBucket extends Application {
 
     /** @type {string|null} */
     this._tempRangeMod = null
-
     this.modifierStack = new ModifierStack()
 
     // is the Dice section visible?
@@ -576,16 +564,12 @@ export class ModifierBucket extends Application {
       minimizable: false,
       resizable: false,
       id: 'ModifierBucket',
-      template: 'systems/gurps/templates/modifier-bucket/bucket-app.html',
+      template: 'systems/gurps/templates/modifier-bucket/bucket-app.hbs',
     })
   }
 
-  /**
-   * @typedef {Application.RenderOptions & {stack: ModifierStack, cssClass: string, currentActor: string}} ModifierBucket.Data
-   * @param {Application.RenderOptions | undefined} [options]
-   */
   getData(options) {
-    const data = /** @type {ModifierBucket.Data} */ (/** @type {unknown} */ (super.getData(options)))
+    const data = super.getData(options)
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
     const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
@@ -606,28 +590,28 @@ export class ModifierBucket extends Application {
   }
 
   /**
-   * @param {JQuery<HTMLElement>} html
+   * @param {JQuery<HTMLElement>} $html
    */
-  activateListeners(html) {
-    super.activateListeners(html)
+  activateListeners($html) {
+    super.activateListeners($html)
 
-    html.find('#oned6dice').addClass('invisible')
-    html.find('#threed6dice').removeClass('invisible')
+    const html = $html[0]
 
-    html.find('#trash').on('click', this._onClickTrash.bind(this))
-    html.find('#magnet').on('click', this._onClickMagnet.bind(this))
+    html.querySelector('#oned6dice').classList.add('invisible')
+    html.querySelector('#threed6dice').classList.remove('invisible')
 
-    let e = html.find('#globalmodifier')
-    e.on('click', this._onClick.bind(this))
-    e.on('contextmenu', this.onRightClick.bind(this))
-    e.each((_, li) => {
+    html.querySelector('#trash')?.addEventListener('click', event => this._onClickTrash(event))
+    html.querySelector('#magnet')?.addEventListener('click', event => this._onClickMagnet(event))
+
+    const globalModifier = html.querySelector('#globalmodifier')
+    globalModifier?.addEventListener('click', event => this._onClick(event))
+    globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
+    Array.from(globalModifier.children).forEach(li => {
       li.addEventListener('dragstart', ev => {
         let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-        //.join(' & ')
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
-            //displayname: 'Modifier Bucket',
             type: 'modifierbucket',
             bucket: bucket,
           })
@@ -635,13 +619,14 @@ export class ModifierBucket extends Application {
       })
     })
 
-    if (this.isTooltip) e.on('mouseenter', ev => this._onenter(ev))
+    if (this.isTooltip) globalModifier.addEventListener('mouseenter', event => this._onenter(event))
 
-    let modifierbucket = html.find('#modifierbucket')
-    modifierbucket.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
-      event.preventDefault()
+    const modifierBucket = html.querySelector('#modifierbucket')
+
+    modifierBucket?.addEventListener('drop', event => {
       event.stopPropagation()
-      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain') || '')
+      event.preventDefault()
+      let dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
       if (!!dragData && !!dragData.otf) {
         let link = parselink(dragData.otf)
         if (link.action) {
@@ -652,33 +637,38 @@ export class ModifierBucket extends Application {
       }
     })
 
-    modifierbucket.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
-      event.preventDefault()
-      let originalEvent = event.originalEvent
-      if (originalEvent instanceof WheelEvent) {
-        let s = Math.round(originalEvent.deltaY / -100)
+    modifierBucket?.addEventListener(
+      'wheel',
+      event => {
+        event.preventDefault()
+        const s = Math.round(event.deltaY / -100)
         this.addModifier(s, '')
-      }
-    })
+      },
+      { passive: false }
+    )
 
-    html.find('#threed6').click(this._on3dClick.bind(this))
-    html.find('#threed6').contextmenu(this._on3dRightClick.bind(this))
-    html.find('#threed6').on('drop', function (event) {
+    const threed6dice = html.querySelector('#threed6dice')
+
+    threed6dice?.addEventListener('click', event => this._on3dClick(event))
+    threed6dice?.addEventListener('contextmenu', event => this._on3dRightClick(event))
+    threed6dice?.addEventListener('drop', event => {
       event.preventDefault()
       event.stopPropagation()
-      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
-      if (!!dragData && !!dragData.actor && !!dragData.otf) {
+      const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+      if (!!dragData && !!dragData.otf) {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
-        GURPS.performAction(action.action, game.actors.get(dragData.actor), {
-          shiftKey: game.user.isGM,
+        GURPS.performAction(action.action, game.actors?.get(dragData.actor), {
+          shiftKey: game.user?.isGM,
           ctrlKey: false,
           data: {},
         })
       }
     })
 
-    html.find('.accumulator-control').on('click', this._onAccumulatorClick.bind(this, html))
+    html
+      .querySelector('.accumulator-control')
+      ?.addEventListener('click', event => this._onAccumulatorClick(html, event))
   }
 
   _onAccumulatorClick(hmtl, event) {
@@ -843,10 +833,25 @@ export class ModifierBucket extends Application {
     return content
   }
 
-  _injectHTML(html) {
-    if ($('body').find('#bucket-app').length === 0) {
-      html.insertAfter($('body').find('#hotbar'))
-      this._element = html
-    } else console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
+  /**
+   * @override
+   */
+  _injectHTML($html) {
+    const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
+    const bucketExists = !!document.querySelector('#modifierbucket')
+    if (!bucketExists) {
+      if (game.release.generation >= 13) {
+        if (position === 'left') document.querySelector('#ui-bottom').append($html[0])
+        else document.querySelector('#ui-right').prepend($html[0])
+      } else {
+        document.querySelector('#ui-bottom > div').append($html[0])
+
+        if (position === 'left') document.querySelector('#ui-bottom > div').style.justifyContent = 'flex-start'
+      }
+      this._element = $html
+    } else {
+      console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
+    }
   }
 }

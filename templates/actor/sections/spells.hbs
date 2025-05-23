@@ -2,20 +2,20 @@
 	<div class='itemmenu header' readonly></div>
 	<div class='desc header'>
 		<div class='headermenu'>
-			<span>{{i18n 'GURPS.spells'}}</span>
+			<span>{{localize 'GURPS.spells'}}</span>
 			<i class='fas fa-caret-square-down'></i>
 		</div>
 	</div>
-	<div class='cls header'>{{i18n 'GURPS.spellClass'}}</div>
-	<div class='college header'>{{i18n 'GURPS.spellCollege'}}</div>
-	<div class='mana header'>{{i18n 'GURPS.spellCost'}}</div>
-	<div class='mana_maintain header'>{{i18n 'GURPS.spellMaintain'}}</div>
-	<div class='time header'>{{i18n 'GURPS.spellTime'}}</div>
-	<div class='duration header'>{{i18n 'GURPS.spellDuration'}}</div>
-	<div class='sl header'>{{i18n 'GURPS.sl'}}</div>
-	<div class='rsl header'>{{i18n 'GURPS.rsl'}}</div>
-	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
-	<div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
+	<div class='cls header'>{{localize 'GURPS.spellClass'}}</div>
+	<div class='college header'>{{localize 'GURPS.spellCollege'}}</div>
+	<div class='mana header'>{{localize 'GURPS.spellCost'}}</div>
+	<div class='mana_maintain header'>{{localize 'GURPS.spellMaintain'}}</div>
+	<div class='time header'>{{localize 'GURPS.spellTime'}}</div>
+	<div class='duration header'>{{localize 'GURPS.spellDuration'}}</div>
+	<div class='sl header'>{{localize 'GURPS.sl'}}</div>
+	<div class='rsl header'>{{localize 'GURPS.rsl'}}</div>
+	<div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div>
+	<div class='ref header'>{{localize "GURPS.abbrevRef"}}</div>
 
 	{{#each (flatlist system.spells)}}
 	{{#if ../isEditing}}
@@ -85,7 +85,7 @@
         <div>
 					{{#if (isFoundryItem this)}}
 					<i class='fas fa-star tooltip gga-item'>
-						<span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
+						<span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span>
 					</i>
 					{{/if}}
 				</div>

@@ -1,10 +1,10 @@
-import * as settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
-    game.settings.registerMenu(settings.SYSTEM_NAME, settings.SETTING_TRACKER_DEFAULT_EDITOR, {
+    game.settings.registerMenu(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_DEFAULT_EDITOR, {
       name: game.i18n.localize('GURPS.resourceTemplateManager'),
       hint: game.i18n.localize('GURPS.resourceTemplateHint'),
       label: game.i18n.localize('GURPS.resourceTemplateButton'),
@@ -12,7 +12,7 @@ export class ResourceTrackerManager extends FormApplication {
       restricted: true,
     })
 
-    game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
+    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES, {
       name: game.i18n.localize('GURPS.resourceTemplateTitle'),
       scope: 'world',
       config: false,
@@ -86,7 +86,7 @@ export class ResourceTrackerManager extends FormApplication {
   }
 
   static getAllTemplates() {
-    let templates = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES) || {}
+    let templates = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES) || {}
     return objectToArray(templates)
   }
 
@@ -103,7 +103,7 @@ export class ResourceTrackerManager extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'tracker-manager',
-      template: 'systems/gurps/templates/actor/tracker-manager.html',
+      template: 'systems/gurps/templates/actor/tracker-manager.hbs',
       resizable: false,
       minimizable: false,
       width: 520,
@@ -235,7 +235,7 @@ export class ResourceTrackerManager extends FormApplication {
   _updateObject() {
     // convert the array into an object:
     let data = arrayToObject(this._templates)
-    game.settings.set(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, data)
+    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES, data)
 
     // remove all resources from the two objects:
     let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([k, v]) => !!v.resource)

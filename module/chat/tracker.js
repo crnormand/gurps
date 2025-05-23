@@ -1,4 +1,3 @@
-import { i18n } from '../../lib/i18n.js'
 import { zeroFill } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
 
@@ -16,14 +15,14 @@ export default class TrackerChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))?$/i)
   }
   usage() {
-    return i18n('GURPS.chatHelpTracker')
+    return game.i18n.localize('GURPS.chatHelpTracker')
   }
 
   async process(line) {
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
       return false
     }
 
@@ -41,7 +40,9 @@ export default class TrackerChatProcessor extends ChatProcessor {
         }
       }
       if (tracker == -1) {
-        ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} '${m[3]}'`)
+        ui.notifications.warn(
+          `${game.i18n.localize('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} '${m[3]}'`
+        )
         return false
       }
     }
@@ -49,7 +50,9 @@ export default class TrackerChatProcessor extends ChatProcessor {
     let theTrackerKey = zeroFill(tracker, 4)
     let theTracker = actor.system.additionalresources.tracker[theTrackerKey]
     if (!theTracker) {
-      ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} 'tr${m[2]}'`)
+      ui.notifications.warn(
+        `${game.i18n.localize('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} 'tr${m[2]}'`
+      )
       return false
     }
 
@@ -59,7 +62,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
       //if (!!theTracker.isDamageTracker) max = 0
       await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(
-        `${i18n('GURPS.chatResourceTracker', 'Resource Tracker')}${display} ${i18n(
+        `${game.i18n.localize('GURPS.chatResourceTracker', 'Resource Tracker')}${display} ${game.i18n.localize(
           'GURPS.chatResetTo',
           'reset to'
         )} ${value}`
@@ -68,7 +71,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     }
 
     if (!m[5]) {
-      ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+      ui.notifications.warn(`${game.i18n.localize('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
       return false
     }
 
@@ -77,13 +80,13 @@ export default class TrackerChatProcessor extends ChatProcessor {
       // only happens with '='
       let value = parseInt(m[5].substr(1).replace(/ /g, ''))
       if (isNaN(value)) {
-        ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+        ui.notifications.warn(`${game.i18n.localize('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
         return false
       } else {
         value = theTracker.isMaximumEnforced && value > parseInt(theTracker.max) ? parseInt(theTracker.max) : value
         value = theTracker.isMinimumEnforced && value < parseInt(theTracker.min) ? parseInt(theTracker.min) : value
         await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
-        this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} set to ${value}`)
+        this.prnt(`${game.i18n.localize('GURPS.chatResourceTracker')}${display} set to ${value}`)
         return true
       }
     } else {
@@ -93,7 +96,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
 
       if (value > max) {
         ui.notifications.warn(
-          `${i18n('GURPS.chatExceededMax', 'Exceeded MAX')}:${max} ${i18n('GURPS.for')} ${i18n(
+          `${game.i18n.localize('GURPS.chatExceededMax', 'Exceeded MAX')}:${max} ${game.i18n.localize('GURPS.for')} ${game.i18n.localize(
             'GURPS.chatResourceTracker'
           )}${display}`
         )
@@ -101,12 +104,12 @@ export default class TrackerChatProcessor extends ChatProcessor {
       }
       if (value < min) {
         ui.notifications.warn(
-          `${i18n('GURPS.chatResultBelowZero', 'Result below zero')}: ${i18n('GURPS.chatResourceTracker')}${display}`
+          `${game.i18n.localize('GURPS.chatResultBelowZero', 'Result below zero')}: ${game.i18n.localize('GURPS.chatResourceTracker')}${display}`
         )
         if (theTracker.isMinimumEnforced) return false
       }
       await actor.update({ ['system.additionalresources.tracker.' + theTrackerKey + '.value']: value })
-      this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} ${m[5]} = ${value}`)
+      this.prnt(`${game.i18n.localize('GURPS.chatResourceTracker')}${display} ${m[5]} = ${value}`)
       return true
     }
   }

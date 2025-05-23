@@ -1,0 +1,151 @@
+<div class='gga-app fright-check' style='width: 100%; max-width: 600px;'>
+  <div class='gga-group' style='border: none'>
+    <h4>{{localize 'GURPS.adDisad'}}</h4>
+    <div class='gurps-2col no-bias'>
+      <div class='full-width' style='justify-self: start'>&#8226;
+        {{localize 'GURPS.traits.unfazeable'}}
+        ({{localize 'GURPS.noCheckRequired'}})</div>
+      <label for='mod2'>{{localize 'GURPS.traits.fearlessness'}}/{{localize 'GURPS.traits.fearfulness'}}:
+        <select id='mod2'>
+          {{selectOptions fearChoices selected=fear localize=false}}
+        </select>
+      </label>
+      <label for='mod3'>{{localize 'GURPS.traits.combatReflexes'}}/{{localize 'GURPS.traits.combatParalysis'}}:
+        <select id='mod3' value='0'>
+          {{selectOptions combatChoices selected=combat localize=true}}
+        </select></label>
+      <label for='mod4'>{{localize 'GURPS.traits.cowardice'}}:
+        <select id='mod4' value='0'>
+          {{selectOptions cowardiceChoices selected=cowardice localize=false}}
+        </select></label>
+      <label for='mod5'>{{localize 'GURPS.traits.xenophilia'}}
+        ({{localize 'GURPS.ifConfrontingMonster'}}):
+        <select id='mod5' value='0'>
+          {{selectOptions xenophiliaChoices selected=xenophilia localize=false}}
+        </select></label>
+      <label for='check1' class='vertical-center' style='justify-self: start'><input
+          id='check1'
+          type='checkbox'
+          value='1'
+          {{checked daredevil}}
+        />&nbsp;{{localize 'GURPS.traits.daredevil'}}</label>
+      <label for='check2' class='vertical-center' style='justify-self: start'><input
+          id='check2'
+          type='checkbox'
+          value='1'
+        />&nbsp;{{localize 'GURPS.traits.higherPurpose'}}
+        ({{localize 'GURPS.whenApplicable'}})
+      </label>
+    </div>
+    <h4 style='margin-top: 8px'>{{localize 'GURPS.bodies'}}</h4>
+    <div class='gurps-2col no-bias'>
+      <label for='bodies1'>{{localize 'GURPS.descriptionAppearance'}}:
+        <select id='bodies1' value='0'>
+          <option value='0'>{{localize 'GURPS.fc.noCorpse'}}</option>
+          <option value='0'>{{localize 'GURPS.fc.victimsOfViolence'}}</option>
+          <option value='1'>{{localize 'GURPS.fc.peaceful'}}</option>
+          <option value='2'>{{localize 'GURPS.fc.noSignOfViolence'}}</option>
+          <option value='-1'>{{localize 'GURPS.fc.mutilated'}} (&minus;1)</option>
+          <option value='-2'>{{localize 'GURPS.fc.terriblyMutilated'}} (&minus;2)</option>
+          <option value='-3'>{{localize 'GURPS.fc.horriblyMutilated'}} (&minus;3)</option>
+        </select>
+      </label>
+      <label for='bodies2' style='align-self: flex-end;'><input
+          id='bodies2'
+          type='checkbox'
+          value='-6'
+        />&nbsp;{{localize 'GURPS.fc.corpseDependent'}}</label>
+    </div>
+    <h4 style='margin-top: 8px'>{{localize 'GURPS.fc.monsters'}}</h4>
+    <div class='gurps-2col no-bias'>
+      <label for='monster1'>{{localize 'GURPS.descriptionAppearance'}}:
+        <select id='monster1' value='0'>
+          <option value='0'>{{localize 'GURPS.none'}}</option>
+          <option value='-1'>{{localize 'GURPS.fc.inhuman'}} (&minus;1)</option>
+          <option value='-2'>{{localize 'GURPS.fc.beastly'}} (&minus;2)</option>
+          <option value='-3'>{{localize 'GURPS.fc.scary'}} (&minus;3)</option>
+          <option value='-4'>{{localize 'GURPS.fc.ghastly'}} (&minus;4)</option>
+          <option value='-5'>{{localize 'GURPS.fc.frightening'}} (&minus;5)</option>
+          <option value='-6'>{{localize 'GURPS.fc.horrifying'}} (&minus;6)</option>
+          <option value='-7'>{{localize 'GURPS.fc.bloodCurdling'}} (&minus;7)</option>
+          <option value='-8'>{{localize 'GURPS.fc.petrifying'}} (&minus;8)</option>
+          <option value='-9'>{{localize 'GURPS.fc.terrifying'}} (&minus;9)</option>
+          <option value='-10'>{{localize 'GURPS.fc.cosmicallyHorrific'}} (&minus;10)</option>
+        </select>
+      </label>
+
+      <label for='monster2'>{{localize 'GURPS.number'}}:
+        <select id='monster2' value='0'>
+          <option value='0'>{{localize 'GURPS.lessThan'}} 5</option>
+          <option value='-1'>{{localize 'GURPS.atLeast'}} 5</option>
+          <option value='-2'>{{localize 'GURPS.atLeast'}} 10</option>
+          <option value='-3'>{{localize 'GURPS.atLeast'}} 20</option>
+          <option value='-4'>{{localize 'GURPS.atLeast'}} 50</option>
+          <option value='-5'>{{localize 'GURPS.atLeast'}} 100</option>
+        </select>
+      </label>
+    </div>
+    <h4 style='margin-top: 8px'>{{localize 'GURPS.fc.physicalCircumstances'}}</h4>
+    <div class='gurps-2col no-bias'>
+      <label for='check4a' class='vertical-center'><input id='check4a' type='checkbox' value='1' />&nbsp;{{localize
+          'GURPS.fc.encounteredAtDistance'
+        }}</label>
+      <label for='check4b' class='vertical-center'><input id='check4b' type='checkbox' value='3' />&nbsp;{{localize
+          'GURPS.fc.viewedRemotely'
+        }}</label>
+      <label for='check4' class='vertical-center'><input id='check4' type='checkbox' value='-1' />&nbsp;{{localize
+          'GURPS.fc.touches'
+        }}</label>
+      <label for='check5' class='vertical-center'><input id='check5' type='checkbox' value='-1' />&nbsp;{{localize
+          'GURPS.fc.areaIsolated'
+        }}</label>
+      <label for='check6' class='vertical-center'><input id='check6' type='checkbox' value='-1' />&nbsp;{{localize
+          'GURPS.darkness'
+        }}/{{localize 'GURPS.night'}}</label>
+      <label for='check7' class='vertical-center'><input id='check7' type='checkbox' value='-2' />&nbsp;{{localize
+          'GURPS.fc.believeAlone'
+        }}</label>
+      <label for='check3' class='vertical-center'><input id='check3' type='checkbox' value='5' />&nbsp;{{localize
+          'GURPS.fc.heatOfBattle'
+        }}</label>
+    </div>
+    <h4 style='margin-top: 8px'>{{localize 'GURPS.fc.preparation'}}</h4>
+    <div class='gurps-2col no-bias'>
+      <label for='check10'>{{localize 'GURPS.fc.research'}}:
+        <select id='check10' value='0'>
+          <option value='0'>{{localize 'GURPS.fc.noKnowledge'}}</option>
+          <option value='+1'>{{localize 'GURPS.fc.rumorsGossip'}}</option>
+          <option value='+2'>{{localize 'GURPS.fc.someKnowledge'}}</option>
+          <option value='+3'>{{localize 'GURPS.fc.fullyBriefed'}}</option>
+        </select></label>
+      <label for='check8' class='vertical-center' style='align-self: flex-end'><input
+          id='check8'
+          type='checkbox'
+          value='1'
+        />&nbsp;{{localize 'GURPS.fc.previousExperience'}}</label>
+      <div
+        style='display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 5px; text-align: right;'
+      >
+        <label for='check9' style='white-space: normal; word-wrap: break-word;'>
+          {{{localize 'GURPS.fc.exposuresToThreat'}}}:
+        </label>
+        <input id='check9' type='number' value='0' style='max-width: 50px' />
+      </div>
+      <div
+        style='display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 5px; text-align: right;'
+      >
+        <label for='mod1' class='vertical-center'>{{localize 'GURPS.addAdditionalStackingModifier'}}
+          (+/&ndash;):&nbsp;</label>
+        <input id='mod1' type='number' value='0' style='width: 50px' />
+      </div>
+    </div>
+  </div>
+
+  <hr />
+  <label for='tblname' style='margin-bottom: 8px'>{{localize 'GURPS.rollableTableName'}}:&nbsp;<input
+      id='tblname'
+      value='{{tblname}}'
+      style='width: 250px'
+    />
+  </label>
+</div>

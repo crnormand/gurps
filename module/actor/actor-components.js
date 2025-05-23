@@ -624,6 +624,7 @@ export class Advantage extends NamedCost {
           passotf: this.passotf || '',
           failotf: this.failotf || '',
           level: this.level,
+          cr: this.cr,
         },
         ads: this.ads || system.ads || {},
         skills: this.skills || system.skills || {},
@@ -657,6 +658,7 @@ export class Advantage extends NamedCost {
       adv.userdesc = data.userdesc
       adv.note = data.note
       adv.level = data.level
+      adv.cr = data.cr
     }
     return this._checkComponentInActor(actor, adv)
   }
@@ -675,7 +677,8 @@ export class Advantage extends NamedCost {
         itemData.points !== this.points ||
         (itemData.userdesc || '') !== (this.userdesc || '') ||
         itemData.note !== this.note ||
-        itemData.level !== this.level
+        itemData.level !== this.level ||
+        itemData.cr !== this.cr
       if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
     return result

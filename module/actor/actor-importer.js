@@ -1,4 +1,3 @@
-import { i18n, i18n_f } from '../../lib/i18n.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
@@ -67,43 +66,43 @@ export class ActorImporter {
   }
 
   async _openLocallyHostedImportDialog() {
-    setTimeout(async () => {
-      new Dialog(
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: game.i18n.format(`GURPS.importCharacterData`, { name: this.actor.name }),
+      },
+      position: {
+        width: 400,
+        height: 'auto',
+      },
+      content: await renderTemplate(
+        'systems/gurps/templates/import-gcs-v1-data.hbs',
+        SmartImporter.getTemplateOptions(this.actor)
+      ),
+      buttons: [
         {
-          title: `Import character data for: ${this.actor.name}`,
-          content: await renderTemplate(
-            'systems/gurps/templates/import-gcs-v1-data.hbs',
-            SmartImporter.getTemplateOptions(this.actor)
-          ),
-          buttons: {
-            import: {
-              icon: '<i class="fas fa-file-import"></i>',
-              label: 'Import',
-              callback: async html => {
-                const form = html.find('form')[0]
-                let files = form.data.files
-                let file = null
-                if (!files.length) {
-                  return ui.notifications.error('You did not upload a data file!')
-                } else {
-                  file = files[0]
-                  const text = await GURPS.readTextFromFile(file)
-                  await this.importActorFromExternalProgram(text, file.name, file.path)
-                }
-              },
-            },
-            no: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'Cancel',
-            },
+          action: 'import',
+          label: 'GURPS.import',
+          icon: 'fas fa-file-import',
+          default: true,
+          callback: async (_, button, __) => {
+            let files = button.form.elements.data.files
+            if (!files.length) {
+              return ui.notifications.error(game.i18n.localize('GURPS.noFile'))
+            } else {
+              const file = files[0]
+              const text = await GURPS.readTextFromFile(file)
+              await this.importActorFromExternalProgram(text, file.name, file.path)
+            }
           },
-          default: 'import',
         },
         {
-          width: 400,
-        }
-      ).render(true)
-    }, 200)
+          action: 'cancel',
+          label: 'GURPS.cancel',
+          icon: 'fas fa-times',
+          callback: () => undefined, // Resolve with undefined if cancelled
+        },
+      ],
+    }).render({ force: true })
   }
 
   async importActorFromExternalProgram(source, importName, importPath, suppressMessage = false) {
@@ -125,12 +124,12 @@ export class ActorImporter {
     try {
       r = JSON.parse(json)
     } catch (err) {
-      msg.push(i18n('GURPS.importNoJSONDetected'))
+      msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
     }
     if (!!r) {
       if (!r.calc) {
-        msg.push(i18n('GURPS.importOldGCSFile'))
+        msg.push(game.i18n.localize('GURPS.importOldGCSFile'))
         exit = true
       }
     }
@@ -138,7 +137,7 @@ export class ActorImporter {
 
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -158,10 +157,7 @@ export class ActorImporter {
     let starttime = performance.now()
     let commit = {}
 
-    if (
-      !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS) ||
-      this.actor.items.filter(i => !!i.system.importid).length > 10
-    )
+    if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
       loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCS' })
     commit = { ...commit, ...{ 'system.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.actor.system.additionalresources || {}
@@ -203,13 +199,13 @@ export class ActorImporter {
     } catch (err) {
       console.log(err.stack)
       msg.push(
-        i18n_f('GURPS.importGenericError', {
+        game.i18n.format('GURPS.importGenericError', {
           name: nm,
           error: err.name,
           message: err.message,
         })
       )
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: [msg],
         version: this.GC,
         GCAVersion: GCAVersion,
@@ -245,7 +241,7 @@ export class ActorImporter {
       }
 
       // For each saved item with global id, lets run their additions
-      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (this.isUsingFoundryItems()) {
         for (let key of ['ads', 'skills', 'spells']) {
           await aRecurselist(this.actor.system[key], async t => {
             if (!!t.itemid) {
@@ -260,7 +256,7 @@ export class ActorImporter {
       // Recalculate DR
       await this.actor.refreshDR()
 
-      if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!suppressMessage) ui.notifications?.info(game.i18n.format('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
@@ -270,10 +266,10 @@ export class ActorImporter {
       importResult = true
     } catch (err) {
       console.log(err.stack)
-      let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
-      if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
+      let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+      if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: 'GCS Direct',
         GCAVersion: GCAVersion,
@@ -295,21 +291,22 @@ export class ActorImporter {
 
   async _showLoadingDialog(diagOps) {
     const { name, generator } = diagOps
-    const dialog = new Dialog(
-      {
-        title: game.i18n.format('GURPS.importSheetTitle', { generator }),
-        content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
-        buttons: {},
-        close: () => {},
-      },
-      {
+    const dialog = new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.format('GURPS.importSheetHint', { name, generator }) },
+      position: {
         width: 400,
-        height: 200,
-        resizable: false,
-        closeOnSubmit: false,
-      }
-    )
-    await dialog.render(true)
+        height: 'auto',
+      },
+      content: `<p>${game.i18n.format('GURPS.importSheetHint', { name, generator })}</p>`,
+      buttons: [
+        {
+          action: 'cancel',
+          label: 'Please wait...',
+          icon: 'fa-solid fa-hourglass-start fa-spin',
+        },
+      ],
+      form: { closeOnSubmit: false },
+    }).render({ force: true })
     return dialog
   }
 
@@ -326,21 +323,21 @@ export class ActorImporter {
     let vernum = 1
     let exit = false
     if (!r) {
-      if (importName.endsWith('.gca5')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
-      if (importName.endsWith('.gca4')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
-      else if (!xml.startsWith('<?xml')) msg.push(i18n('GURPS.importNoXMLDetected'))
+      if (importName.endsWith('.gca5')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
+      if (importName.endsWith('.gca4')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
+      else if (!xml.startsWith('<?xml')) msg.push(game.i18n.localize('GURPS.importNoXMLDetected'))
       exit = true
     } else {
       // The character object starts here
       c = r.character
       if (!c) {
-        msg.push(i18n('GURPS.importNoCharacterFormat'))
+        msg.push(game.i18n.localize('GURPS.importNoCharacterFormat'))
         exit = true
       }
 
       let parsererror = r.parsererror
       if (!!parsererror) {
-        msg.push(i18n_f('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
+        msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
         exit = true
       }
 
@@ -349,7 +346,7 @@ export class ActorImporter {
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       isFoundryGCA5 = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA5')
       if (!(isFoundryGCA || isFoundryGCA5)) {
-        msg.push(i18n('GURPS.importFantasyGroundUnsupported'))
+        msg.push(game.i18n.localize('GURPS.importFantasyGroundUnsupported'))
         exit = true
       }
       version = ra?.version || ''
@@ -358,52 +355,52 @@ export class ActorImporter {
         if (isFoundryGCA5) {
           if (!!v[1]) vernum = parseInt(v[1])
           if (vernum < 12) {
-            msg.push(i18n('GURPS.importGCA5ImprovedInventoryHandling'))
+            msg.push(game.i18n.localize('GURPS.importGCA5ImprovedInventoryHandling'))
           }
           if (vernum < 13) {
-            msg.push(i18n('GURPS.importGCA5ImprovedBlock'))
+            msg.push(game.i18n.localize('GURPS.importGCA5ImprovedBlock'))
           }
         } else {
           if (!v[1]) {
-            msg.push(i18n('GURPS.importGCANoBodyPlan'))
+            msg.push(game.i18n.localize('GURPS.importGCANoBodyPlan'))
           }
           if (!!v[1]) vernum = parseInt(v[1])
           if (vernum < 2) {
-            msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
+            msg.push(game.i18n.localize('GURPS.importGCANoInnateRangedAndParent'))
           }
           if (vernum < 3) {
-            msg.push(i18n('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
+            msg.push(game.i18n.localize('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
           }
           if (vernum < 4) {
-            msg.push(i18n('GURPS.importGCANoParent'))
+            msg.push(game.i18n.localize('GURPS.importGCANoParent'))
           }
           if (vernum < 5) {
-            msg.push(i18n('GURPS.importGCANoSanitizeNotes'))
+            msg.push(game.i18n.localize('GURPS.importGCANoSanitizeNotes'))
           }
           if (vernum < 6) {
-            msg.push(i18n('GURPS.importGCANoMeleeIfAlsoRanged'))
+            msg.push(game.i18n.localize('GURPS.importGCANoMeleeIfAlsoRanged'))
           }
           if (vernum < 7) {
-            msg.push(i18n('GURPS.importGCABadBlockForDB'))
+            msg.push(game.i18n.localize('GURPS.importGCABadBlockForDB'))
           }
           if (vernum < 8) {
-            msg.push(i18n('GURPS.importGCANoHideFlag'))
+            msg.push(game.i18n.localize('GURPS.importGCANoHideFlag'))
           }
           if (vernum < 9) {
-            msg.push(i18n('GURPS.importGCAChildrenWeights'))
+            msg.push(game.i18n.localize('GURPS.importGCAChildrenWeights'))
           }
           if (vernum < 10) {
-            msg.push(i18n('GURPS.importGCAAdvMods'))
+            msg.push(game.i18n.localize('GURPS.importGCAAdvMods'))
           }
           if (vernum < 11) {
-            msg.push(i18n('GURPS.importGCAConditionalModifiers'))
+            msg.push(game.i18n.localize('GURPS.importGCAConditionalModifiers'))
           }
         }
       }
     }
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -433,10 +430,7 @@ export class ActorImporter {
     let loadingDialog
     let importResult = false
     try {
-      if (
-        !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS) ||
-        this.actor.items.filter(i => !!i.system.importid).length > 10
-      )
+      if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
         loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
       // This is going to get ugly, so break out various data into different methods
       commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
@@ -475,7 +469,7 @@ export class ActorImporter {
       }
 
       // For each saved item with global id, lets run their additions
-      if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      if (this.isUsingFoundryItems()) {
         for (let key of ['ads', 'skills', 'spells']) {
           await aRecurselist(this.actor.system[key], async t => {
             if (!!t.itemid) {
@@ -490,7 +484,7 @@ export class ActorImporter {
       // Recalculate DR
       await this.actor.refreshDR()
 
-      if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!suppressMessage) ui.notifications?.info(game.i18n.format('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
@@ -500,10 +494,10 @@ export class ActorImporter {
       importResult = true
     } catch (err) {
       console.log(err.stack)
-      let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
-      if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
+      let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+      if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>')) // FIXME: Why suppressMessage is not available here?
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -555,36 +549,7 @@ export class ActorImporter {
     let hp = i(json.hps)
     let fp = i(json.fps)
 
-    let saveCurrent = false
-    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
-      if (option == 0) {
-        saveCurrent = true
-      }
-      if (option == 2) {
-        saveCurrent = await new Promise(resolve => {
-          let d = new Dialog({
-            title: 'Current HP & FP',
-            content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(true),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(false),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
-      }
-    }
+    let saveCurrent = await this.promptForSaveOrOverwrite(data, hp, fp)
     if (!saveCurrent) {
       data.HP.value = hp
       data.FP.value = fp
@@ -631,6 +596,44 @@ export class ActorImporter {
       'system.vision': data.vision,
       'system.liftingmoving': lm,
     }
+  }
+
+  async promptForSaveOrOverwrite(data, hp, fp) {
+    let saveCurrent = false
+    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
+      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
+      if (option == 0) {
+        saveCurrent = true
+      }
+      if (option == 2) {
+        saveCurrent = await foundry.applications.api.DialogV2.wait({
+          window: { title: game.i18n.localize('GURPS.importOverwriteHpFp') },
+          content: game.i18n.format('GURPS.importSaveOrOverwriteHpFp', {
+            currentHP: data.HP.value,
+            currentFP: data.FP.value,
+            hp: hp,
+            fp: fp,
+          }),
+          modal: true,
+          buttons: [
+            {
+              action: 'save',
+              label: game.i18n.localize('GURPS.save'),
+              icon: 'far fa-square',
+              default: true,
+              callback: () => true,
+            },
+            {
+              action: 'overwrite',
+              label: game.i18n.localize('GURPS.overwrite'),
+              icon: 'fas fa-edit',
+              callback: () => false,
+            },
+          ],
+        })
+      }
+    }
+    return saveCurrent
   }
 
   /**
@@ -688,7 +691,7 @@ export class ActorImporter {
     await this.importBaseAdvantagesFromGCA(list, disadsjson)
 
     // Find all Features with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.ads, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -766,7 +769,7 @@ export class ActorImporter {
     }
 
     // Find all skills with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.skills, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -829,7 +832,7 @@ export class ActorImporter {
     }
 
     // Find all spells with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.spells, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -931,7 +934,7 @@ export class ActorImporter {
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
               r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + i18n('GURPS.acc') + ']'
+              r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
             r.rof = t(j2.rof)
             r.shots = t(j2.shots)
@@ -996,7 +999,7 @@ export class ActorImporter {
   }
 
   async _preImport(generator, itemType) {
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!this.isUsingFoundryItems()) {
       // Before we import, we need to find all eligible items,
       // and backup their exclusive info inside Actor system.itemInfo
       const isEligibleItem = item => {
@@ -1111,7 +1114,7 @@ export class ActorImporter {
       }
     })
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
@@ -1166,7 +1169,7 @@ export class ActorImporter {
     let name
     let fullName = t(j.name)
     let techLevel = t(j.tl)
-    const localizedTL = i18n('GURPS.TL')
+    const localizedTL = game.i18n.localize('GURPS.TL')
     let regex = new RegExp(`.+\/[TL|${localizedTL}].+`)
     if (!!fullName.match(regex)) {
       let i = fullName.lastIndexOf('/TL') || fullName.lastIndexOf(`/${localizedTL}`)
@@ -1299,49 +1302,49 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let saveprot = true
+    let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
       let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
-        saveprot = false
+        saveprot = true
       }
       if (option == 2) {
-        saveprot = await new Promise((resolve, _reject) => {
-          let d = new Dialog({
-            title: 'Hit Location Body Plan',
-            content:
-              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
-              )}) or ` +
-              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.BODYPLAN' + bodyplan
-              )})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(false),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(true),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
+        saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot)
+    if (saveprot) return {}
+    else
       return {
         'system.-=hitlocations': null,
         'system.hitlocations': prot,
         'system.additionalresources.bodyplan': bodyplan,
       }
-    else return {}
+  }
+
+  async getSaveOrOverwriteBodyPlan(saveprot, currentPlan, newPlan) {
+    return await foundry.applications.api.DialogV2.wait({
+      window: { title: game.i18n.localize('GURPS.importHitLocationBodyPlan') },
+      content: game.i18n.format('GURPS.importSaveOverwriteBodyPlan', {
+        curentBodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + currentPlan)}`,
+        bodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + newPlan)}`,
+      }),
+      modal: true,
+      buttons: [
+        {
+          action: 'save',
+          label: game.i18n.localize('GURPS.save'),
+          icon: 'far fa-square',
+          default: true,
+          callback: () => true,
+        },
+        {
+          action: 'overwrite',
+          label: game.i18n.localize('GURPS.overwrite'),
+          icon: 'fas fa-edit',
+          callback: () => false,
+        },
+      ],
+    })
   }
 
   importLangFromGCA(json) {
@@ -1488,37 +1491,7 @@ export class ActorImporter {
     let fp = atts.find(e => e.attr_id === 'fp')?.calc?.current || 0
     let qp = atts.find(e => e.attr_id === 'qp')?.calc?.current || 0
 
-    let saveCurrent = false
-
-    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
-      if (option == 0) {
-        saveCurrent = true
-      }
-      if (option == 2) {
-        saveCurrent = await new Promise((resolve, _reject) => {
-          let d = new Dialog({
-            title: 'Current HP & FP',
-            content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(true),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(false),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
-      }
-    }
+    let saveCurrent = await this.promptForSaveOrOverwrite(data, hp, fp)
     if (!saveCurrent) {
       data.HP.value = hp
       data.FP.value = fp
@@ -1653,7 +1626,7 @@ export class ActorImporter {
     }
 
     // Find all adds with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.ads, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -1672,6 +1645,10 @@ export class ActorImporter {
     }
   }
 
+  isUsingFoundryItems() {
+    return !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  }
+
   async importAd(i, p) {
     const name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
     let a = new Advantage(name, i.levels)
@@ -1683,10 +1660,12 @@ export class ActorImporter {
     a.points = i.calc?.points
     a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
     a.userdesc = i.userdesc
+    a.cr = i.cr || null
 
-    if (i.cr != null) {
+    if (i.cr) {
       a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
     }
+    
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
         if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
@@ -1720,7 +1699,7 @@ export class ActorImporter {
     }
 
     // Find all skills with globalId
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       await aRecurselist(this.actor.system.skills, async t => {
         if (!!t.itemid) {
           const i = this.actor.items.get(t.itemid)
@@ -1875,7 +1854,7 @@ export class ActorImporter {
       }
     })
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
@@ -2141,49 +2120,23 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let saveprot = true
+    let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
       let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
-        saveprot = false
+        saveprot = true
       }
       if (option == 2) {
-        saveprot = await new Promise((resolve, _reject) => {
-          let d = new Dialog({
-            title: 'Hit Location Body Plan',
-            content:
-              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
-                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
-              )}) or ` +
-              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
-                'GURPS.BODYPLAN' + bodyplan
-              )})?<br><br>&nbsp;`,
-            buttons: {
-              save: {
-                icon: '<i class="far fa-square"></i>',
-                label: 'Save',
-                callback: () => resolve(false),
-              },
-              overwrite: {
-                icon: '<i class="fas fa-edit"></i>',
-                label: 'Overwrite',
-                callback: () => resolve(true),
-              },
-            },
-            default: 'save',
-            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
-          })
-          d.render(true)
-        })
+        saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot) {
+    if (saveprot) return {}
+    else
       return {
         'system.-=hitlocations': null,
         'system.hitlocations': prot,
         'system.additionalresources.bodyplan': bodyplan,
       }
-    } else return {}
   }
 
   importPointTotalsFromGCS(total, atts, ads, skills, spells) {
@@ -2332,7 +2285,7 @@ export class ActorImporter {
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
               r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + i18n('GURPS.acc') + ']'
+              r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
             r.rof = w.rate_of_fire || ''
             r.shots = w.shots || ''
@@ -2681,7 +2634,7 @@ export class ActorImporter {
     return actorComp
   }
   async _updateItemContains(actorComp, parent) {
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (this.isUsingFoundryItems()) {
       const item = this.actor.items.get(actorComp.itemid)
       if (!!item) {
         if (!actorComp.parentuuid) {

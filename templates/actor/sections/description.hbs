@@ -1,17 +1,17 @@
 <div id='description'>
-  <div class='header'>{{i18n 'GURPS.description'}}</div>
+  <div class='header'>{{localize 'GURPS.description'}}</div>
   {{#unless document.limited}}
     <div class='fieldblock'>
-      <div class='label'>{{i18n 'GURPS.descriptionGender'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionGender'}}:</div>
       <div class='field'><input name='system.traits.gender' class='gcs-input' type='text' value='{{system.traits.gender}}'
           {{disabled (not isEditing)}} /></div>
-      <div class='label'>{{i18n 'GURPS.descriptionAge'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionAge'}}:</div>
       <div class='field'><input name='system.traits.age' class='gcs-input' type='text' value='{{system.traits.age}}'
           {{disabled (not isEditing)}} /></div>
-      <div class='label'>{{i18n 'GURPS.descriptionBirthday'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionBirthday'}}:</div>
       <div class='field'><input name='system.traits.birthday' class='gcs-input' type='text'
           value='{{system.traits.birthday}}' {{disabled (not isEditing)}} /></div>
-      <div class='label'>{{i18n 'GURPS.descriptionReligion'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionReligion'}}:</div>
       <div class='field'><input name='system.traits.religion' class='gcs-input' type='text'
           value='{{system.traits.religion}}' {{disabled (not isEditing)}} /></div>
       <div class='label'>&nbsp;</div>
@@ -20,74 +20,74 @@
   {{/unless}}
   <div class='fieldblock'>
     {{#if document.limited}}
-      <div class='label'>{{i18n 'GURPS.descriptionGender'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionGender'}}:</div>
       <div class='field'>
         <input name='system.traits.gender' class='gcs-input' type='text' value='{{system.traits.gender}}'
           {{disabled (not isEditing)}} />
       </div>
     {{/if}}
-    <div class='label'>{{i18n 'GURPS.descriptionHeight'}}:</div>
+    <div class='label'>{{localize 'GURPS.descriptionHeight'}}:</div>
     <div class='field'>
       <input name='system.traits.height' class='gcs-input' type='text' value='{{system.traits.height}}'
         {{disabled (not isEditing)}}>
     </div>
-    <div class='label'>{{i18n 'GURPS.weight'}}:</div>
+    <div class='label'>{{localize 'GURPS.weight'}}:</div>
     <div class='field'>
       <input name='system.traits.weight' class='gcs-input' type='text' value='{{system.traits.weight}}'
         {{disabled (not isEditing)}} />
     </div>
-    <div class='label'>{{i18n 'GURPS.descriptionSizeModifier'}}:</div>
+    <div class='label'>{{localize 'GURPS.descriptionSizeModifier'}}:</div>
     <div class='field'>
       <input name='system.traits.sizemod' class='gcs-input' type='text' value='{{system.traits.sizemod}}'
         {{disabled (not isEditing)}} />
     </div>
     {{#unless document.limited}}
-      <div class='label'>{{i18n 'GURPS.descriptionTechLevel'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionTechLevel'}}:</div>
       <div class='field'>
         <input name='system.traits.techlevel' class='gcs-input' type='text' value='{{system.traits.techlevel}}'
           {{disabled (not isEditing)}} />
       </div>
     {{/unless}}
-    <div class='label'>{{i18n 'GURPS.descriptionBodyPlan'}}:</div>
+    <div class='label'>{{localize 'GURPS.descriptionBodyPlan'}}:</div>
 
     <div class='field'>
       {{#if isEditing}}
         <select id='body-plan' name='system.additionalresources.bodyplan' {{disabled (not isEditing)}}>
           {{#each (listAllBodyPlans)}}
             <option value='{{this}}' {{select-if ../system.additionalresources.bodyplan this}}>
-              {{i18n (concat 'GURPS.BODYPLAN' this)}}
+              {{localize (concat 'GURPS.BODYPLAN' this)}}
             </option>
           {{/each}}
         </select>
       {{else}}
-        {{i18n (concat 'GURPS.BODYPLAN' system.additionalresources.bodyplan)}}
+        {{localize (concat 'GURPS.BODYPLAN' system.additionalresources.bodyplan)}}
       {{/if}}
     </div>
   </div>
   <div class='fieldblock hairEyesSkinHandBlock'>
     {{#if system.traits.eyes}}
-      <div class='label'>{{i18n 'GURPS.descriptionHair'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionHair'}}:</div>
       <div class='field'>
         <input name='system.traits.hair' class='gcs-input' type='text' value='{{system.traits.hair}}'
           {{disabled (not isEditing)}} />
       </div>
-      <div class='label'>{{i18n 'GURPS.descriptionEyes'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionEyes'}}:</div>
       <div class='field'>
         <input name='system.traits.eyes' class='gcs-input' type='text' value='{{system.traits.eyes}}'
           {{disabled (not isEditing)}} />
       </div>
-      <div class='label'>{{i18n 'GURPS.descriptionSkin'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionSkin'}}:</div>
       <div class='field'>
         <input name='system.traits.skin' class='gcs-input' type='text' value='{{system.traits.skin}}'
           {{disabled (not isEditing)}} />
       </div>
-      <div class='label'>{{i18n 'GURPS.descriptionHand'}}:</div>
+      <div class='label'>{{localize 'GURPS.descriptionHand'}}:</div>
       <div class='field'>
         <input name='system.traits.hand' class='gcs-input' type='text' value='{{system.traits.hand}}'
           {{disabled (not isEditing)}} />
       </div>
     {{else}}
-      <div class='label textarea'>{{i18n 'GURPS.descriptionAppearance'}}:</div>
+      <div class='label textarea'>{{localize 'GURPS.descriptionAppearance'}}:</div>
       <div class='label'></div>
 
       <div class='field' style='border: none; grid-column: 1 / span 2;'>

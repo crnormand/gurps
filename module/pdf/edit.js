@@ -1,3 +1,5 @@
+// export class PDFEditorSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
+// COMPATIBILITY: v12
 export class PDFEditorSheet extends JournalPDFPageSheet {
   constructor(object, options = { pageNumber: 1 }) {
     super(object, options)
