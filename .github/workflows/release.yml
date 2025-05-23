@@ -36,7 +36,7 @@ jobs:
           --arg manifest "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/release/system.json" \
           --arg download "https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/system.zip" \
           '.version = $version | .manifest = $manifest | .download = $download | .url = $url' \
-          dist/system.json > tmp.$$.json && mv tmp.$$.json dist/system.json
+          dist/system.json > tmp.$$.json && cp tmp.$$.json dist/system.json && mv tmp.$$.json dist/system.json
         env:
           RELEASE_VERSION: ${{steps.get_version.outputs.version-without-v}}
           RELEASE_TAG: ${{github.event.release.tag_name}}
