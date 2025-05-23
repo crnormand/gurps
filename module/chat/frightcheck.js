@@ -80,7 +80,9 @@ export class FrightCheckChatProcessor extends ChatProcessor {
             icon: 'fa-solid fa-dice',
             default: true,
             callback: (event, button, dialog) =>
-              this.rollFrightCheckCallback.bind(this).call(this, actor, $(dialog.element)),
+              this.rollFrightCheckCallback
+                .bind(this)
+                .call(this, actor, game.release.generation >= 13 ? dialog.element : dialog),
           },
           {
             icon: 'fa-solid fa-xmark',
@@ -170,7 +172,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let ruleOf14 = finaltarget > 13
     finaltarget = ruleOf14 ? 13 : finaltarget
 
-    let tblname = html.find('#tblname')[0].value
+    let tblname = html.querySelector('#tblname').value
     let table = this._findFrightCheckTable(tblname)
     if (table) game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, table.name)
 
@@ -214,18 +216,18 @@ export class FrightCheckChatProcessor extends ChatProcessor {
   }
 
   _getMod(html, id) {
-    let mod = html.find(id)[0]
+    let mod = html.querySelector(id)
     if (mod.type === 'select' || mod.type === 'select-one') {
       if (parseInt(mod.value, 10) === 0) return null
       return { mod: parseInt(mod.value, 10), desc: mod.options[mod.selectedIndex].text }
     } else if (mod.type === 'checkbox') {
-      if ($(mod).prop('checked')) {
-        let label = html.find(`label[for="${mod.id}"]`)[0].innerText
+      if (mod.checked) {
+        let label = html.querySelector(`label[for="${mod.id}"]`).innerText
         return { mod: parseInt(mod.value, 10), desc: label }
       }
     } else if (mod.type === 'number') {
       if (parseInt(mod.value, 10) === 0) return null
-      let label = html.find(`label[for="${mod.id}"]`)[0].innerText
+      let label = html.querySelector(`label[for="${mod.id}"]`).innerText
       return { mod: parseInt(mod.value, 10), desc: label }
     }
 
