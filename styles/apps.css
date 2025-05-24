@@ -1660,7 +1660,7 @@ details .popup.square5x4 {
   flex-direction: row;
   align-self: flex-end;
   margin-bottom: 0.5rem;
-  transition: all 0.3s ease-in-out;
+  transition: all 200ms ease;
   transform: translateX(var(--offset));
   margin-bottom: 16px;
 }
