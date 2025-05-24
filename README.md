@@ -2,7 +2,8 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-## Current Release Version 0.18.0a 
+## Current Release Version 0.18.0-a
+
 Compatible with FoundryVTT v12.x AND **v13.x**!
 
 ### [Change Log](changelog.md)
@@ -11,7 +12,7 @@ The list was getting just too long, so it has been moved to a separate file. Cli
 
 If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
-Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/VzybymD8z6)) 
+Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/VzybymD8z6))
 
 Thanks 🙂
 
