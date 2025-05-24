@@ -133,18 +133,29 @@ export default class ModifierBucketEditor extends Application {
 
     // if this is a tooltip, scale and position
     let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+    const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
     if (!this.options.popOut) {
       html.css('font-size', `${13 * scale}px`)
 
-      let x = $('#modifierbucket')
-      let bucketLeft = x.position().left
-      let bucketWidth = 70
+      const button = document.getElementById('modifierbucket')
 
-      let width = parseFloat(html.css('width').replace('px', ''))
+      const buttonLeft = button.getBoundingClientRect().left
+      const buttonWidth = button.offsetWidth
+      const buttonHeight = button.offsetHeight
+
+      const width = parseFloat(html.css('width').replace('px', ''))
+
+      let left = 0
+      if (positionSetting === 'left') {
+        left = Math.max(buttonLeft + buttonWidth / 2 - width / 2, 10)
+      } else {
+        left = Math.max(buttonLeft + buttonWidth - width, 10)
+      }
+
       // ensure that left is not negative
-      let left = Math.max(bucketLeft + bucketWidth / 2 - width / 2, 10)
       html.css('left', `${left}px`)
+      html.css('bottom', `${buttonHeight + 30}px`)
     }
 
     html.removeClass('overflowy')

@@ -594,6 +594,9 @@ export class ModifierBucket extends Application {
    */
   activateListeners($html) {
     super.activateListeners($html)
+    this.refreshPosition($html)
+
+    window.addEventListener('resize', () => this.refreshPosition())
 
     const html = $html[0]
 
@@ -819,6 +822,92 @@ export class ModifierBucket extends Application {
     }
   }
 
+  refreshPosition(element = this.element) {
+    if (!element || !element[0]) return
+    const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
+    if (game.release.generation >= 13) {
+      const chatBox = document.getElementById('chat-message')
+      const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
+
+      if (positionSetting === 'left') {
+        const hotbar = document.querySelector('#hotbar')
+        const hotbarIsOffset = hotbar.classList.contains('offset')
+        const hotbarOffset = window.getComputedStyle(hotbar).getPropertyValue('--offset')
+
+        function waitUntilStill(el, { threshold = 0.1, timeout = 500 } = {}) {
+          return new Promise(resolve => {
+            if (!el) {
+              resolve()
+              return
+            }
+
+            let lastRect = el.getBoundingClientRect()
+            let startTime = performance.now()
+
+            function check(time) {
+              const newRect = el.getBoundingClientRect()
+              const dx = Math.abs(newRect.left - lastRect.left)
+              const dy = Math.abs(newRect.top - lastRect.top)
+
+              if (dx < threshold && dy < threshold) {
+                // Movement is below threshold, assume it's done
+                resolve()
+                return
+              }
+
+              lastRect = newRect
+
+              if (time - startTime > timeout) {
+                // Give up after timeout
+                resolve()
+                return
+              }
+
+              requestAnimationFrame(check)
+            }
+
+            requestAnimationFrame(check)
+          })
+        }
+
+        setTimeout(() => {
+          waitUntilStill(chatBox, { threshold: 0.1, timeout: 500 }).then(() => {
+            const chatBoxOverlap =
+              element[0].getBoundingClientRect().right > (chatBox?.getBoundingClientRect().left ?? 0)
+            const chatBoxIsOverlapping = chatBoxIsFloating && chatBoxOverlap
+
+            element[0].style.setProperty('--offset', hotbarOffset)
+            if (hotbarIsOffset || chatBoxIsOverlapping) {
+              const chatBoxBottom = window.innerHeight - chatBox?.getBoundingClientRect().top
+              element[0].style.marginBottom = `${chatBoxBottom + 16}px`
+            } else {
+              element[0].style.marginBottom = '16px'
+            }
+          })
+        }, 50)
+      } else {
+        const uiRight = document.getElementById('ui-right-column-1')
+        const uiRightWidth = uiRight.getBoundingClientRect().width
+
+        if (chatBoxIsFloating) {
+          const chatBoxBottom = window.innerHeight - chatBox.getBoundingClientRect().top
+          element[0].style.marginBottom = `${chatBoxBottom + 16}px`
+          element[0].style.setProperty('--offset', `${uiRightWidth}px`)
+        } else {
+          element[0].style.marginBottom = `16px`
+          element[0].style.setProperty('--offset', `${uiRightWidth + 50}px`)
+        }
+      }
+    } else {
+      if (positionSetting === 'left') {
+        element[0].style.setProperty('transform', 'translate(30px,-10px)')
+      } else {
+        element[0].style.setProperty('transform', 'translate(-10px,-10px)')
+      }
+    }
+  }
+
   /**
    * @param {ModifierStack} modst
    */
@@ -841,12 +930,18 @@ export class ModifierBucket extends Application {
 
     const bucketExists = !!document.querySelector('#modifierbucket')
     if (!bucketExists) {
+      const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
       if (game.release.generation >= 13) {
-        if (position === 'left') document.querySelector('#ui-bottom').append($html[0])
-        else document.querySelector('#ui-right').prepend($html[0])
+        if (position === 'left') {
+          const hotbar = document.querySelector('#hotbar')
+          hotbar.parentNode.insertBefore($html[0], hotbar.nextSibling)
+        } else {
+          const uiRight = document.querySelector('#ui-right')
+          uiRight.prepend($html[0])
+        }
+        this.refreshPosition($html)
       } else {
         document.querySelector('#ui-bottom > div').append($html[0])
-
         if (position === 'left') document.querySelector('#ui-bottom > div').style.justifyContent = 'flex-start'
       }
       this._element = $html

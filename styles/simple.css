@@ -166,19 +166,19 @@
 }
 
 #threed6 #oned6dice {
-  /* display: none; */
-  /* position: absolute; */
-  /* top: 0; */
-  /* left: 0; */
-  /* z-index: 105; */
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 105;
 }
 
 #threed6 #threed6dicerotactive {
   display: none;
-  /* position: absolute; */
-  /* top: 0; */
-  /* left: 0; */
-  /* z-index: 105; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 105;
 }
 
 #threed6:hover #threed6dicerot {

@@ -1655,19 +1655,18 @@ details .popup.square5x4 {
 }
 
 #bucket-container {
+  --offset: 0;
   display: flex;
   flex-direction: row;
   align-self: flex-end;
   margin-bottom: 0.5rem;
+  transition: all 0.3s ease-in-out;
+  transform: translateX(var(--offset));
+  margin-bottom: 16px;
 }
 
 #bucket-container.force-left {
-  justify-content: flex-start;
-  margin-left: 4rem;
-}
-
-#bucket-container.force-right {
-  justify-content: flex-end;
+  margin-left: 10px;
 }
 
 #bucket-app {
@@ -1971,23 +1970,9 @@ details .popup.square5x4 {
   text-align: center;
   border-radius: 10px;
   width: 63.5em;
-  bottom: 90px !important;
-  left: 430px;
   position: fixed;
   z-index: 999;
 }
-
-/* .modttt::after {
-  content: '';
-  position: absolute;
-  /* top: 100%; 
-  left: 50%;
-  margin-left: -300px;
-  border-width: 37px 300px;
-  border-style: solid;
-  border-color: grey transparent transparent transparent;
-  pointer-events: none;
-} */
 
 .modttt .modtooltip {
   padding: 0.35em;
