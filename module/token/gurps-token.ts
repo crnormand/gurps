@@ -1,6 +1,5 @@
 import Maneuvers from '../actor/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
-import { DatabaseCreateOperation } from 'node_modules/fvtt-types/src/foundry/common/abstract/_types.mjs'
 import { TokenActions } from '../token-actions.js'
 
 // COMPATIBILITY: v12
@@ -10,7 +9,7 @@ class GurpsToken extends Token {
 
   protected override _onCreate(
     data: foundry.data.fields.SchemaField.CreateData<Token.Schema>,
-    options: foundry.abstract.Document.Database.CreateOptions<DatabaseCreateOperation>,
+    options: foundry.abstract.Document.Database.CreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
     userId: string
   ): void {
     super._onCreate(data, options, userId)
