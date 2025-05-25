@@ -28,7 +28,6 @@ import {
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
-import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -38,6 +37,7 @@ import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
+import { ResourceTrackerManager } from './resource-tracker/resource-tracker-manager.js'
 
 /**
  * Added to color the rollable parts of the character sheet.

@@ -15,6 +15,7 @@ import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { GurpsItem } from '../item.js'
+import { ResourceTrackerManager } from '../resource-tracker/resource-tracker-manager.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
@@ -31,7 +32,6 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
