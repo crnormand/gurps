@@ -827,37 +827,26 @@ export class ModifierBucket extends Application {
     const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
     if (game.release.generation >= 13) {
-      const chatBox = document.getElementById('chat-message')
-      if (!chatBox) {
-        console.warn('#chat-message element not found, cannot adjust position')
-        return
-      }
-      const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
-
       if (positionSetting === 'left') {
         const hotbar = document.querySelector('#hotbar')
-        const hotbarIsOffset = hotbar.classList.contains('offset')
-        const hotbarOffset = window.getComputedStyle(hotbar).getPropertyValue('--offset')
+        const hotbarOffset = parseFloat(hotbar.style.getPropertyValue('--offset')) || '0px'
+        const buttonWidth = element[0].offsetWidth || 0
+        const currentButtonOffset = parseFloat(element[0].style.getPropertyValue('--offset')) || 0
+        // hotbarOffset is always negative but buttonWidth is positive so need to subtract
+        const totalOffset = hotbarOffset === currentButtonOffset ? currentButtonOffset : hotbarOffset - buttonWidth
 
-        setTimeout(() => {
-          waitUntilStill(chatBox, { threshold: 0.1, timeout: 500 }).then(() => {
-            const chatBoxOverlap =
-              element[0].getBoundingClientRect().right > (chatBox?.getBoundingClientRect().left ?? 0)
-            const chatBoxIsOverlapping = chatBoxIsFloating && chatBoxOverlap
-
-            element[0].style.setProperty('--offset', hotbarOffset)
-            if (hotbarIsOffset || chatBoxIsOverlapping) {
-              const chatBoxBottom = window.innerHeight - chatBox?.getBoundingClientRect().top
-              element[0].style.marginBottom = `${chatBoxBottom + 16}px`
-            } else {
-              element[0].style.marginBottom = '16px'
-            }
-          })
-        }, 50)
+        hotbar.style.setProperty('--offset', `${totalOffset}px`)
+        element[0].style.setProperty('--offset', `${totalOffset}px`)
       } else {
+        const chatBox = document.getElementById('chat-message')
+        // Can't adjust position if there is no #chat-message element
+        if (!chatBox) return
+
+        const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
+
         const uiRight = document.getElementById('ui-right-column-1')
         if (!uiRight) {
-          console.warn('#ui-right-column-1 element not found, cannot adjust position')
+          // Can't adjust position if there is no #ui-right element
           return
         }
         const uiRightWidth = uiRight.getBoundingClientRect().width
@@ -918,7 +907,7 @@ export class ModifierBucket extends Application {
       }
       this._element = $html
     } else {
-      console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
+      console.warn('GURPS | ModifierBucket: _injectHTML called, but bucket already exists.')
     }
   }
 }
