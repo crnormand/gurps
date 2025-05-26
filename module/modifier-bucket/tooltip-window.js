@@ -142,7 +142,7 @@ export default class ModifierBucketEditor extends Application {
 
       const buttonLeft = button.getBoundingClientRect().left
       const buttonWidth = button.offsetWidth
-      const buttonHeight = button.offsetHeight
+      const buttonTop = window.innerHeight - button.getBoundingClientRect().top
 
       const width = parseFloat(html.css('width').replace('px', ''))
 
@@ -155,7 +155,7 @@ export default class ModifierBucketEditor extends Application {
 
       // ensure that left is not negative
       html.css('left', `${left}px`)
-      html.css('bottom', `${buttonHeight + 30}px`)
+      html.css('bottom', `${buttonTop + 20}px`)
     }
 
     html.removeClass('overflowy')
