@@ -828,15 +828,26 @@ export class ModifierBucket extends Application {
 
     if (game.release.generation >= 13) {
       if (positionSetting === 'left') {
-        const hotbar = document.querySelector('#hotbar')
-        const hotbarOffset = parseFloat(hotbar.style.getPropertyValue('--offset')) || '0px'
-        const buttonWidth = element[0].offsetWidth || 0
-        const currentButtonOffset = parseFloat(element[0].style.getPropertyValue('--offset')) || 0
-        // hotbarOffset is always negative but buttonWidth is positive so need to subtract
-        const totalOffset = hotbarOffset === currentButtonOffset ? currentButtonOffset : hotbarOffset - buttonWidth
+        const hotbar = document.getElementById('hotbar')
+        const playerList = document.getElementById('players-active')
 
-        hotbar.style.setProperty('--offset', `${totalOffset}px`)
-        element[0].style.setProperty('--offset', `${totalOffset}px`)
+        if (!hotbar || !playerList) {
+          // Can't adjust position if there is no #hotbar or #players-active element
+          return
+        }
+
+        const hotbarOffset = parseFloat(hotbar.style.getPropertyValue('--offset')) || '0px'
+        const playerListTop = window.innerHeight - playerList.getBoundingClientRect().top
+        const playersIsOverlapping =
+          playerList.getBoundingClientRect().right > element[0].getBoundingClientRect().left + hotbarOffset
+
+        if (playersIsOverlapping) {
+          element[0].style.marginBottom = `${playerListTop + 16}px`
+        } else {
+          element[0].style.marginBottom = `16px`
+        }
+
+        element[0].style.setProperty('--offset', `${hotbarOffset}px`)
       } else {
         const chatBox = document.getElementById('chat-message')
         // Can't adjust position if there is no #chat-message element
@@ -852,8 +863,8 @@ export class ModifierBucket extends Application {
         const uiRightWidth = uiRight.getBoundingClientRect().width
 
         if (chatBoxIsFloating) {
-          const chatBoxBottom = window.innerHeight - chatBox.getBoundingClientRect().top
-          element[0].style.marginBottom = `${chatBoxBottom + 16}px`
+          const chatBoxTop = window.innerHeight - chatBox.getBoundingClientRect().top
+          element[0].style.marginBottom = `${chatBoxTop + 16}px`
           element[0].style.setProperty('--offset', `${uiRightWidth}px`)
         } else {
           element[0].style.marginBottom = `16px`
@@ -895,7 +906,7 @@ export class ModifierBucket extends Application {
       if (game.release.generation >= 13) {
         if (position === 'left') {
           const hotbar = document.querySelector('#hotbar')
-          hotbar.parentNode.insertBefore($html[0], hotbar.nextSibling)
+          hotbar.parentNode.insertBefore($html[0], hotbar)
         } else {
           const uiRight = document.querySelector('#ui-right')
           uiRight.prepend($html[0])
@@ -910,40 +921,4 @@ export class ModifierBucket extends Application {
       console.warn('GURPS | ModifierBucket: _injectHTML called, but bucket already exists.')
     }
   }
-}
-
-function waitUntilStill(el, { threshold = 0.1, timeout = 500 } = {}) {
-  return new Promise(resolve => {
-    if (!el) {
-      resolve()
-      return
-    }
-
-    let lastRect = el.getBoundingClientRect()
-    let startTime = performance.now()
-
-    function check(time) {
-      const newRect = el.getBoundingClientRect()
-      const dx = Math.abs(newRect.left - lastRect.left)
-      const dy = Math.abs(newRect.top - lastRect.top)
-
-      if (dx < threshold && dy < threshold) {
-        // Movement is below threshold, assume it's done
-        resolve()
-        return
-      }
-
-      lastRect = newRect
-
-      if (time - startTime > timeout) {
-        // Give up after timeout
-        resolve()
-        return
-      }
-
-      requestAnimationFrame(check)
-    }
-
-    requestAnimationFrame(check)
-  })
 }
