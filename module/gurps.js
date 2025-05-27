@@ -37,7 +37,6 @@ import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
-import { ResourceTrackerManager } from './resource-tracker/resource-tracker-manager.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -82,6 +81,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import * as Canvas from './canvas/index.js'
 import * as Combat from './combat/index.js'
 import * as Damage from './damage/index.js'
+import * as Trackers from './resource-tracker/index.js'
 import * as Token from './token/index.js'
 import * as UI from './ui/index.js'
 
@@ -90,6 +90,7 @@ export let GURPS = undefined
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
+  GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
@@ -110,11 +111,20 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  Canvas.init() // Initialize the Canvas module
-  Combat.init() // Initialize the Combat module
-  Damage.init() // Initialize the Damage module
-  Token.init() // Initialize the Token module
-  UI.init() // Initialize the UI module
+  // TODO I'd like to define a type for each module equivalent to { init: function, migrate: function}.
+  /** @type {import('./types.js').GurpsModule[]} */
+  GURPS.modules = [Canvas, Combat, Damage, Token, UI, Trackers]
+
+  GURPS.modules.forEach(mod => {
+    if (mod.init) mod.init()
+  })
+
+  // Canvas.init() // Initialize the Canvas module
+  // Combat.init() // Initialize the Combat module
+  // Damage.init() // Initialize the Damage module
+  // Token.init() // Initialize the Token module
+  // UI.init() // Initialize the UI module
+  // Trackers.init() // Initialize the Resource Tracker module
 
   AddChatHooks()
   JQueryHelpers()
@@ -2196,7 +2206,6 @@ if (!globalThis.GURPS) {
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
 
-    ResourceTrackerManager.initSettings()
     HitLocation.ready()
 
     // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
@@ -2217,6 +2226,9 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
+    GURPS.modules.forEach(mod => {
+      if (mod.migrate) mod.migrate()
+    })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.
@@ -2239,20 +2251,20 @@ if (!globalThis.GURPS) {
 
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
 
-    // get all aliases defined in the resource tracker templates and register them as damage types
-    let resourceTrackers = ResourceTrackerManager.getAllTemplates()
-      .filter(it => !!it.tracker.isDamageType)
-      .filter(it => !!it.tracker.alias)
-      .map(it => it.tracker)
-    resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
-    resourceTrackers.forEach(
-      it =>
-        (GURPS.DamageTables.woundModifiers[it.alias] = {
-          multiplier: 1,
-          label: it.name,
-          resource: true,
-        })
-    )
+    // // get all aliases defined in the resource tracker templates and register them as damage types
+    // let resourceTrackers = ResourceTrackerManager.getAllTemplates()
+    //   .filter(it => !!it.tracker.isDamageType)
+    //   .filter(it => !!it.tracker.alias)
+    //   .map(it => it.tracker)
+    // resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
+    // resourceTrackers.forEach(
+    //   it =>
+    //     (GURPS.DamageTables.woundModifiers[it.alias] = {
+    //       multiplier: 1,
+    //       label: it.name,
+    //       resource: true,
+    //     })
+    // )
 
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return

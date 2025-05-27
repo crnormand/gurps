@@ -1,9 +1,9 @@
 import { GurpsActor } from './module/actor/actor.js'
-import { GurpsItem } from './module/item.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
+import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
-export {}
+export { }
 
 declare global {
   var GURPS: any
@@ -21,5 +21,9 @@ declare global {
   interface SettingConfig {
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.bucket-position': 'left' | 'right'
+    'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
+    'gurps.resource-tracker.templates': Record<string, ResourceTracker>
+    // TODO: Remove this when the setting is removed.
+    'gurps.tracker-templates': new (options?: any) => ResourceTrackerEditor
   }
 }

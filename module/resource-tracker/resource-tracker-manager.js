@@ -1,27 +1,30 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
+import { SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export class ResourceTrackerManager extends FormApplication {
-  static initSettings() {
-    game.settings.registerMenu(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_DEFAULT_EDITOR, {
-      name: game.i18n.localize('GURPS.resourceTemplateManager'),
-      hint: game.i18n.localize('GURPS.resourceTemplateHint'),
-      label: game.i18n.localize('GURPS.resourceTemplateButton'),
-      type: ResourceTrackerManager,
-      restricted: true,
-    })
+  // static initSettings() {
+  //   game.settings.registerMenu(GURPS.SYSTEM_NAME, SETTING_TRACKER_EDITOR, {
+  //     name: game.i18n.localize('GURPS.resourceTemplateManager'),
+  //     hint: game.i18n.localize('GURPS.resourceTemplateHint'),
+  //     label: game.i18n.localize('GURPS.resourceTemplateButton'),
+  //     type: ResourceTrackerManager,
+  //     restricted: true,
+  //   })
 
-    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES, {
-      name: game.i18n.localize('GURPS.resourceTemplateTitle'),
-      scope: 'world',
-      config: false,
-      type: Object,
-      default: ResourceTrackerManager.getDefaultTemplates(),
-      onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
-    })
-  }
+  //   game.settings.register(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, {
+  //     name: game.i18n.localize('GURPS.resourceTemplateTitle'),
+  //     scope: 'world',
+  //     config: false,
+  //     type: Object,
+  //     default: ResourceTrackerManager.getDefaultTemplates(),
+  //     onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
+  //   })
+  // }
 
+  /**
+   * @returns {Record<string, ResourceTracker>}
+   */
   static getDefaultTemplates() {
     return {
       '0000': {
@@ -86,7 +89,7 @@ export class ResourceTrackerManager extends FormApplication {
   }
 
   static getAllTemplates() {
-    let templates = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES) || {}
+    let templates = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES) || {}
     return objectToArray(templates)
   }
 
@@ -232,10 +235,10 @@ export class ResourceTrackerManager extends FormApplication {
   /**
    * @override
    */
-  _updateObject() {
+  async _updateObject() {
     // convert the array into an object:
     let data = arrayToObject(this._templates)
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES, data)
+    game.settings.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, data)
 
     // remove all resources from the two objects:
     let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([k, v]) => !!v.resource)
