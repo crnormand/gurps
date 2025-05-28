@@ -23,6 +23,12 @@ class GurpsToken extends Token {
 
   /* ---------------------------------------- */
 
+  protected override async _drawEffects(): Promise<void> {
+    super._drawEffects()
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * We use this function because maneuvers are special Active Effects: maneuvers don't apply
    * outside of combat, and only one maneuver can be active simultaneously. So we really don't
@@ -32,8 +38,6 @@ class GurpsToken extends Token {
   async setManeuver(maneuverId: string): Promise<void> {
     // if not in combat, do nothing
     if (!isCombatActive() || !isTokenInActiveCombat(this)) return
-
-    console.log('TokenGURPS.setManeuver', maneuverId)
 
     const maneuver = Maneuvers.get(maneuverId)
     if (!maneuver) return

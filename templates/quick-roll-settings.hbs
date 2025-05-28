@@ -1,6 +1,6 @@
-<div>{{localize 'GURPS.settingHintUseQuickRolls'}}</div>
-<hr />
-<form>
+<div>
+  <div>{{localize 'GURPS.settingHintUseQuickRolls'}}</div>
+  <hr />
   <div class='form-group'>
     <label>{{localize 'GURPS.quickRollUse'}}</label>
     <input type='checkbox' name='enabled' {{checked settings.enabled}} />
@@ -27,4 +27,4 @@
     <input type='checkbox' name='markedChecks' {{checked settings.markedChecks}} />
   </div>
   <button type='submit'><i class='fa fa-save'></i><span>{{localize 'GURPS.update'}}</span></button>
-</form>
+</div>
