@@ -65,6 +65,16 @@ class GurpsToken extends Token {
 
   /* ---------------------------------------- */
 
+  protected override _onDelete(
+    options: foundry.abstract.Document.Database.DeleteOptions<foundry.abstract.types.DatabaseDeleteOperation>,
+    userId: string
+  ): void {
+    this.removeManeuver()
+    super._onDelete(options, userId)
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * Assumes that this token is not in combat any more -- if so, updating the manuever will only
    * update the actor's data model, and not add/update the active effect that represents that
