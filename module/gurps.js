@@ -27,7 +27,6 @@ import {
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
-import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -2096,15 +2095,6 @@ if (!globalThis.GURPS) {
     Hooks.on('createRollTable', async function (entity, _options, _userId) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
-    })
-
-    // @ts-ignore
-    Hooks.on('renderTokenHUD', (...args) => {
-      // COMPATIBILITY: v12
-      if (!game.release) return
-      if (game.release?.generation === 12) {
-        ManeuverHUDButton.prepTokenHUD(...args)
-      }
     })
 
     Hooks.on('renderActorDirectory', (app, html, context) => {

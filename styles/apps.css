@@ -1757,6 +1757,7 @@ details .popup.square5x4 {
 .modifierbucket #current-actor > span {
   color: gold;
   background-color: black;
+  white-space: nowrap;
 }
 
 .modifierbucket #globalmodifier {

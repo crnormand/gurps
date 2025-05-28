@@ -66,13 +66,13 @@
 					<div class="control-icon {{effectsClass}} maneuvers" data-action="maneuvers" data-tooltip="GURPS.setManeuver">
 							<img src="{{icons.maneuvers}}" width="36" height="36"/>
 					</div>
-					<div class="status-effects maneuvers">
+					<div class="maneuver-palette">
 							{{#each maneuvers as |status|}}
-							<img class="effect-control {{status.cssClass}}" src="{{status.src}}"
+							<img class="maneuver-control {{status.cssClass}}" src="{{status.src}}"
 									{{#if status.title}}data-tooltip="{{status.title}}"{{/if}} data-status-id="{{status.id}}"/>
 							{{/each}}
 					</div>
 					{{/if}}
         {{/if}}
-    </div>
 </form>
+    </div>
