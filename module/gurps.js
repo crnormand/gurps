@@ -2099,7 +2099,13 @@ if (!globalThis.GURPS) {
     })
 
     // @ts-ignore
-    Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
+    Hooks.on('renderTokenHUD', (...args) => {
+      // COMPATIBILITY: v12
+      if (!game.release) return
+      if (game.release?.generation === 12) {
+        ManeuverHUDButton.prepTokenHUD(...args)
+      }
+    })
 
     Hooks.on('renderActorDirectory', (app, html, context) => {
       // Add the Import Multiple Actors button to the Actors tab.
