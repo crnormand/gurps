@@ -130,7 +130,6 @@ export class EffectModifierControl {
 
   _controlToken(token, isControlled) {
     let sharedStateID = this.token?.id
-    console.log(`controlToken: isControlled: ${isControlled}, token: ${token?.id}, current token: ${sharedStateID}`)
     if (isControlled) this.token = token
     else if (this.token === token) this.token = null
 
