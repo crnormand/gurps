@@ -1454,7 +1454,7 @@ if (!globalThis.GURPS) {
       opt.itemPath = `@${path}`
 
       const item = foundry.utils.getProperty(actor, path)
-      if ('level' in item) target = item.level
+      if (item && 'level' in item) target = item.level
       opt.obj = item
 
       let srcid = !!actor ? '@' + actor.id + '@' : ''

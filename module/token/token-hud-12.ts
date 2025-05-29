@@ -54,7 +54,7 @@ class GurpsTokenHUD extends TokenHUD {
     active ??= !this.#maneuverTrayActive
     this.#maneuverTrayActive = active
     const button = this.element.find('.control-icon[data-action="maneuvers"]')[0]
-    button.classList.toggle('active', active)
+    button?.classList.toggle('active', active)
     const palette = this.element[0].querySelector('.maneuver-palette')
     palette?.classList.toggle('active', active)
   }

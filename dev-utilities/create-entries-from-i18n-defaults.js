@@ -53,8 +53,8 @@ fs.writeFileSync(filename + '.old', contents)
 
 const replacement = contents
   .replaceAll(regexJS, "i18n('$1')")
-  .replaceAll(regexHB, '{{i18n "$1"}}')
-  .replace(regexHBf, '{{i18n_f "$1" $2}}')
+  .replaceAll(regexHB, '{{localize "$1"}}')
+  .replace(regexHBf, '{{localize "$1" $2}}')
 fs.writeFileSync(filename, replacement)
 
 console.log(`Written: ${filename}`)
