@@ -14,6 +14,17 @@ declare global {
     Combatant: typeof GurpsCombatant
   }
 
+  interface DataModelConfig {
+    Item: {
+      equipment: typeof EquipmentData
+      feature: typeof FeatureData
+      skill: typeof SkillData
+      spell: typeof SpellData
+      meleeAtk: typeof MeleeAttackData
+      rangedAtk: typeof RangedAttackData
+    }
+  }
+
   interface PlaceableObjectClassConfig {
     Token: typeof GurpsToken
   }
