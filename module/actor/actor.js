@@ -127,11 +127,6 @@ export class GurpsActor extends Actor {
     this.system.trackersByName = this.trackersByName
   }
 
-  prepareEmbeddedEntities() {
-    // Calls this.applyActiveEffects()
-    super.prepareEmbeddedEntities()
-  }
-
   prepareDerivedData() {
     super.prepareDerivedData()
 
