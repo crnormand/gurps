@@ -18,18 +18,21 @@ export type ResourceTrackerThreshold = {
   color: string
 }
 
+export type ResourceTracker = {
+  name: string
+  alias: string
+  pdf: string
+  max: number
+  min: number
+  value: number
+  isDamageType: boolean
+  isDamageTracker: boolean
+  breakpoints: boolean
+  thresholds: ResourceTrackerThreshold[]
+}
+
 export type ResourceTrackerTemplate = {
-  tracker: {
-    name: string
-    alias: string
-    pdf: string
-    max: number
-    min: number
-    value: number
-    isDamageType: boolean
-    isDamageTracker: boolean
-    breakpoints: boolean
-    thresholds: ResourceTrackerThreshold[]
-  }
+  tracker: ResourceTracker
   initialValue: string
+  slot: boolean
 }

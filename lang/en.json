@@ -1530,6 +1530,7 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermssion": "You do not have permission to do that.",
+    "autoApply": "Auto Apply"
   }
 }

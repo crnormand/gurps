@@ -1,9 +1,9 @@
-import type { GurpsModule } from '../types.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import { SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
 
 const OLD_SETTING_TEMPLATES = 'tracker-templates'
-function init() {
+export function init() {
+  console.log('GURPS | Initializing GURPS Resource Tracker Module')
   Hooks.once('ready', async function () {
     if (!game.settings) throw new Error('GURPS | Game settings not found')
     if (!game.i18n) throw new Error('GURPS | Game i18n not found')
@@ -55,7 +55,7 @@ function init() {
   })
 }
 
-function migrate() {
+export function migrate() {
   if (!game.settings) throw new Error('GURPS | Game settings not found')
 
   const oldTemplates = game.settings.get(GURPS.SYSTEM_NAME, OLD_SETTING_TEMPLATES) || null
@@ -67,5 +67,3 @@ function migrate() {
     console.log('GURPS | Resource tracker templates migrated successfully')
   }
 }
-
-export const resourceTrackerModule: GurpsModule = { init, migrate }

@@ -1172,12 +1172,22 @@ export class GurpsActor extends Actor {
    */
   async setResourceTrackers() {
     // find those with non-blank slots
-    let templates = ResourceTrackerManager.getAllTemplates()
-      .filter(it => !!it.slot)
-      .filter(it => it.slot !== 'none')
+    /** @type {Array<ResourceTrackerTemplate>} */
+    let templates = ResourceTrackerManager.getAllTemplates().filter(it => !!it.slot)
 
+    const currentTrackers = this.getTrackersAsArray(this.system)
+
+    // TODO Update to search all currently applied trackers to see if the template was already applied.
+    // No longer use the slot to know which index to put the tracker.
     for (const template of templates) {
       // find the matching data on this actor
+      const found = currentTrackers.find(t => t.name === template.tracker.name)
+
+      // If not found, add it.
+      if (!found) {
+        await ResourceTrackerEditor.createTrackerDataForActor(this, template)
+      }
+
       let index = zeroFill(template.slot, 4)
       let path = `additionalresources.tracker.${index}`
       let tracker = foundry.utils.getProperty(this, 'system.' + path)

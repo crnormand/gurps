@@ -1,6 +1,6 @@
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
-import { SETTING_TRACKER_TEMPLATES } from './types.js'
+import { ResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export class ResourceTrackerManager extends FormApplication {
   // static initSettings() {
@@ -23,7 +23,7 @@ export class ResourceTrackerManager extends FormApplication {
   // }
 
   /**
-   * @returns {Record<string, ResourceTracker>}
+   * @returns {Record<string, ResourceTrackerTemplate>}
    */
   static getDefaultTemplates() {
     return {
@@ -84,13 +84,21 @@ export class ResourceTrackerManager extends FormApplication {
           ],
         },
         initialValue: 'attributes.ST.value',
+        slot: false,
       },
     }
   }
 
+  /**
+   * Retrieves all resource tracker templates from the settings.
+   * @returns {Array<ResourceTrackerTemplate>}
+   */
   static getAllTemplates() {
     let templates = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES) || {}
-    return objectToArray(templates)
+    const templates = objectToArray(templates)
+    // For legacy support, convert the slot field to a boolean.
+    templates.forEach(element => (element.slot = element.slot !== '' && element.slot !== 'none'))
+    return templates
   }
 
   /**
@@ -100,6 +108,7 @@ export class ResourceTrackerManager extends FormApplication {
   constructor(options = {}) {
     super(options)
 
+    /** @type {ResourceTrackerTemplate[]} */
     this._templates = ResourceTrackerManager.getAllTemplates()
   }
 
@@ -142,7 +151,7 @@ export class ResourceTrackerManager extends FormApplication {
           min: 0,
           value: 0,
         },
-        slot: '',
+        slot: false,
         initialValue: '',
       })
       this.render(true)
@@ -202,20 +211,10 @@ export class ResourceTrackerManager extends FormApplication {
       this.render(true)
     })
 
-    html.find('[name="tracker-instance"]').change(ev => {
+    html.find('[name="slot"]').change(ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
-      let value = ev.currentTarget.value
-
-      // verify that it is unique
-      if (this._validate(index, value)) {
-        this._templates[index].slot = value
-      } else {
-        ui.notifications.warn(
-          game.i18n.format('GURPS.slotNotUnique', {
-            value: value,
-          })
-        )
-      }
+      let value = ev.currentTarget.checked
+      this._templates[index].slot = value
       this.render(true)
     })
 
@@ -223,13 +222,6 @@ export class ResourceTrackerManager extends FormApplication {
       let index = parseInt($(ev.currentTarget).attr('data'))
       this._templates[index].initialValue = ev.currentTarget.value
     })
-  }
-
-  _validate(index, value) {
-    return this._templates
-      .filter(it => !!it.slot)
-      .filter((it, idx) => idx != index)
-      .every(it => it.slot !== value)
   }
 
   /**

@@ -1085,6 +1085,10 @@ export class GurpsActorSheet extends ActorSheet {
     ev.preventDefault()
 
     let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
+
+    // TODO: Refactor -- call a method on ResourceTracker Manager to delete the tracker, or return the template
+    // to apply. This function would simply update the tracker with the new data (whether it was edited
+    // or a template was applied).
     let templates = ResourceTrackerManager.getAllTemplates()
     if (!templates || templates.length == 0) templates = null
 

@@ -12,9 +12,10 @@ export class ResourceTrackerEditor extends Application {
   }
 
   /**
-   *
-   * @param {*} actor
-   * @param {*} path
+   * TODO Should update this to not depend upon actor: read the tracker in the Actor class, and
+   * pass it in as parameter, then return it if edited.
+   * @param {Actor} actor
+   * @param {string} path
    * @param {*} options
    */
   static editForActor(actor, path, options) {
@@ -28,6 +29,10 @@ export class ResourceTrackerEditor extends Application {
       dialog.close()
     }
     dialog.render(true)
+  }
+
+  static createTrackerDataForActor(actor, path, template) {
+    const tracker = template.tracker
   }
 
   /** @override */
