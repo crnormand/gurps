@@ -1,0 +1,63 @@
+import { CommonItemData, CommonItemDataSchema, ItemComponent, ItemComponentSchema } from './base.js'
+import fields = foundry.data.fields
+
+class EquipmentData extends CommonItemData<EquipmentSchema> {
+  static override defineSchema(): EquipmentSchema {
+    return {
+      ...super.defineSchema(),
+      ...equipmentSchema,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  get component(): EquipmentComponent {
+    return this.eqt
+  }
+}
+
+/* ---------------------------------------- */
+
+class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {
+  static override defineSchema(): EquipmentComponentSchema {
+    return {
+      ...super.defineSchema(),
+      ...equipmentComponentSchema,
+    }
+  }
+}
+
+/* ---------------------------------------- */
+
+const equipmentSchema = {
+  eqt: new fields.EmbeddedDataField(EquipmentComponent, { required: true, nullable: false }),
+}
+
+type EquipmentSchema = CommonItemDataSchema & typeof equipmentSchema
+
+/* ---------------------------------------- */
+
+const equipmentComponentSchema = {
+  name: new fields.StringField({ required: true, nullable: false }),
+  count: new fields.NumberField({ required: true, nullable: false }),
+  weight: new fields.NumberField({ required: true, nullable: false }),
+  cost: new fields.NumberField({ required: true, nullable: false }),
+  location: new fields.StringField({ required: true, nullable: false }),
+  carried: new fields.BooleanField({ required: true, nullable: false }),
+  equipped: new fields.BooleanField({ required: true, nullable: false }),
+  techlevel: new fields.StringField({ required: true, nullable: false }),
+  categories: new fields.StringField({ required: true, nullable: false }),
+  legalityclass: new fields.StringField({ required: true, nullable: false }),
+  costsum: new fields.NumberField({ required: true, nullable: false }),
+  weightsum: new fields.NumberField({ required: true, nullable: false }),
+  uses: new fields.StringField({ required: true, nullable: false }),
+  maxuses: new fields.StringField({ required: true, nullable: false }),
+  originalCount: new fields.StringField({ required: true, nullable: false }),
+  ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
+}
+
+type EquipmentComponentSchema = ItemComponentSchema & typeof equipmentComponentSchema
+
+/* ---------------------------------------- */
+
+export { EquipmentData, type EquipmentSchema }

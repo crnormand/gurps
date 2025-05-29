@@ -12,7 +12,7 @@ class GurpsCombatant<SubType extends Combatant.SubType = Combatant.SubType> exte
     if (userId === game.user?.id) {
       const tokenId = this.token?.id ?? null
       if (tokenId === null) return
-      const token = canvas.tokens?.get(tokenId)
+      const token = canvas?.tokens?.get(tokenId)
       if (token) token.setManeuver('do_nothing')
     }
   }
@@ -29,7 +29,7 @@ class GurpsCombatant<SubType extends Combatant.SubType = Combatant.SubType> exte
       const tokenId = this.token?.id ?? null
       if (tokenId === null) return
 
-      const token = canvas.tokens?.get(tokenId)
+      const token = canvas?.tokens?.get(tokenId)
       if (token) {
         // Reset token actions
         const actions = await TokenActions.fromToken(token)
