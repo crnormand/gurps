@@ -110,11 +110,20 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  Canvas.init() // Initialize the Canvas module
-  Combat.init() // Initialize the Combat module
-  Damage.init() // Initialize the Damage module
-  Token.init() // Initialize the Token module
-  UI.init() // Initialize the UI module
+  // TODO I'd like to define a type for each module equivalent to { init: function, migrate: function}.
+  /** @type {import('./types.js').GurpsModule[]} */
+  GURPS.modules = [Canvas, Combat, Damage, Token, UI]
+
+  GURPS.modules.forEach(mod => {
+    if (mod.init) mod.init()
+  })
+
+  // Canvas.init() // Initialize the Canvas module
+  // Combat.init() // Initialize the Combat module
+  // Damage.init() // Initialize the Damage module
+  // Token.init() // Initialize the Token module
+  // UI.init() // Initialize the UI module
+  // Trackers.init() // Initialize the Resource Tracker module
 
   AddChatHooks()
   JQueryHelpers()
@@ -2217,6 +2226,9 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
+    GURPS.modules.forEach(mod => {
+      if (mod.migrate) mod.migrate()
+    })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.

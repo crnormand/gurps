@@ -4,11 +4,10 @@ import DamageChat from './damagechat.js'
 import { resolveDamageRollAction } from './resolve-damage-roll-action.js'
 
 export function init() {
-  // console.log('Damage module initialized.')
+  console.log('GURPS | Initializing GURPS Damage Module')
   Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
   Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
   Hooks.on('gurpsinit', () => {
-    console.log('Damage module initialized.')
     GURPS.ApplyDamageDialog = ApplyDamageDialog
     GURPS.DamageChat = DamageChat
     GURPS.DamageTables = new DamageTable()
