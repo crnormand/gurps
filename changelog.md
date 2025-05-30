@@ -2,6 +2,10 @@
 
 ## Release 0.18.1
 
+### Features
+
+- Added move limit indicators to token drag ruler (v13 only) #2294
+
 ### Bugfixes
 
 - Melee attacks are not clickable in the Quick Roll Menu #2287
