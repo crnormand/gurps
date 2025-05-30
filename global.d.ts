@@ -1,3 +1,4 @@
+import { AnyMutableObject } from 'fvtt-types/utils'
 import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
@@ -25,5 +26,6 @@ declare global {
     'gurps.resource-tracker.templates': Record<string, ResourceTracker>
     // TODO: Remove this when the setting is removed.
     'gurps.tracker-templates': new (options?: any) => ResourceTrackerEditor
+    'gurps.use-quick-rolls': AnyMutableObject
   }
 }
