@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- SemanticVersion.toString does not show pre-release data or build metadata #2297
 - Melee attacks are not clickable in the Quick Roll Menu #2287
 
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
