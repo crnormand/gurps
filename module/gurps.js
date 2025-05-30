@@ -911,9 +911,10 @@ if (!globalThis.GURPS) {
         blind: action.blindroll,
         event,
         obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-        followon: followon,
+        followon,
         text: '',
       }
+      if ('itemPath' in action) opt.itemPath = action.itemPath
       let targetmods = []
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
@@ -1463,6 +1464,8 @@ if (!globalThis.GURPS) {
         const parsedLink = GURPS.parselink(element.dataset.otf)
         if ('action' in parsedLink) action = parsedLink.action
         chatthing = '[' + srcid + element.dataset.otf + ']'
+        action.itemPath = opt.itemPath
+        return performAction(action, actor, event, options?.targets)
       }
     } else if ('path' in element.dataset) {
       let srcid = !!actor ? '@' + actor.id + '@' : ''

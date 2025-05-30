@@ -63,7 +63,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _update(_effect, _data, _options, _userId) {
-    console.debug('update ', _effect)
     if (canvas.tokens.controlled.length > 0) {
       canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
