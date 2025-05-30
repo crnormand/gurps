@@ -37,11 +37,11 @@
     <h4>{{localize "GURPS.attackTab"}}</h4>
     <div class="quick-roll-row">
       {{#each attackChecks.data.melee as |check|}}
-        <!-- <button class="quick-roll-button sm atk" data-otf="{{check.otf}}" data-skill="{{check.value}}" data-otf-damage="{{check.otfDamage}}" data-damage="{{check.damage}}" data-combatant-id="{{../combatant.id}}"> -->
+        <button class="quick-roll-button sm atk" data-otf="{{check.otf}}" data-skill="{{check.value}}" data-otf-damage="{{check.otfDamage}}" data-damage="{{check.damage}}" data-combatant-id="{{../combatant.id}}">
           <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
             <i class="fa-solid fa-hand-fist"></i>{{/if}}</div>
           <div class="qr-line">
-            <!-- <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}&nbsp;</div> -->
+            <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}&nbsp;</div>
             <span class="qr-attack-value">{{check.value}}</span>
           </div>
           <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
