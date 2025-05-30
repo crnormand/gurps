@@ -9,6 +9,7 @@
 - Cannot set maneuvers via the TokenHUD in v13 #2290
 - Effect Modifier Control does not show in the canvas controls #2296
 - Effect Modifier Pop-out shows some modifiers twice #2296
+- SemanticVersion.toString does not show pre-release data or build metadata #2297
 
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
