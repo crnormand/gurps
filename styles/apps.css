@@ -2574,7 +2574,7 @@ details .popup.square5x4 {
   padding: 10px;
 }
 
-li.combatant.active {
+li.combatant {
   display: flex;
   flex-wrap: wrap;
 }
