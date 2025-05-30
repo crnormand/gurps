@@ -5,6 +5,7 @@
 ### Bugfixes
 
 - Damage prompts do not show in the chat log when an attack is rolled from the character sheet #2288
+- Maneuvers are not removed from actors when their tokens are deleted #2295
 
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
