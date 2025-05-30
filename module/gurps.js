@@ -27,7 +27,6 @@ import {
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
-import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -1455,7 +1454,7 @@ if (!globalThis.GURPS) {
       opt.itemPath = `@${path}`
 
       const item = foundry.utils.getProperty(actor, path)
-      if ('level' in item) target = item.level
+      if (item && 'level' in item) target = item.level
       opt.obj = item
 
       let srcid = !!actor ? '@' + actor.id + '@' : ''
@@ -2100,9 +2099,6 @@ if (!globalThis.GURPS) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
     })
-
-    // @ts-ignore
-    Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 
     Hooks.on('renderActorDirectory', (app, html, context) => {
       // Add the Import Multiple Actors button to the Actors tab.

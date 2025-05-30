@@ -1,0 +1,26 @@
+#token-hud {
+  .status-effects.maneuvers {
+    --effect-columns: 4;
+  }
+
+  .maneuver-palette {
+    visibility: hidden;
+    position: absolute;
+    left: 65px;
+    top: 0;
+    display: grid;
+    padding: 3px;
+    box-sizing: content-box;
+    width: 100px;
+    grid-template-columns: repeat(4, 25%);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 15px var(--color-shadow-dark);
+    border: 1px solid var(--color-border-dark-3);
+    border-radius: 4px;
+    pointer-events: all;
+
+    &.active {
+      visibility: visible;
+    }
+  }
+}

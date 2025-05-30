@@ -10,37 +10,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on('updateActiveEffect', GurpsActiveEffect._update)
     Hooks.on('deleteActiveEffect', GurpsActiveEffect._delete)
     Hooks.on('updateCombat', GurpsActiveEffect._updateCombat)
-    Hooks.on('updateWorldTime', GurpsActiveEffect._updateWorldTime)
   }
-
-  /**
-   * Before adding the ActiveEffect to the Actor/Item -- might be used to augment the data used to create, for example.
-   * @param {ActiveEffect} _effect
-   * @param {ActiveEffectData} data
-   * @param {*} _options
-   * @param {*} _userId
-   */
-  // static _preCreate(_effect, data, _options, _userId) {
-  //   console.debug(_effect, data, _options, _userId)
-  //   // Add Delay Seconds to the duration object
-  //   if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
-  // }
-
-  /**
-   * After creation of the ActiveEffect.
-   * @param {ActiveEffect} effect
-   * @param {ActiveEffectData} _data
-   * @param {*} _userId
-   */
-  // static async _create(effect, _data, _userId) {
-  //   if (effect.getFlag('gurps', 'requiresConfig') === true) {
-  //     let dialog = new ActiveEffectConfig(effect)
-  //     await dialog.render(true)
-  //   }
-  //   if (!effect.getFlag('gurps', 'duration.delaySeconds')) {
-  //  	 effect.setFlag('gurps', 'duration.delaySeconds', null)
-  //   }
-  // }
 
   /**
    * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
@@ -52,7 +22,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
   static _apply(actor, change, _options, _user) {
     if (change.key === 'system.conditions.maneuver') actor.replaceManeuver(change.value)
     else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
-    else console.debug(change)
   }
 
   /**
@@ -126,25 +95,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static async _updateCombat(combat, _data, _options, _userId) {
-    // get previous combatant { round: 6, turn: 0, combatantId: 'id', tokenId: 'id' }
     let previous = combat.previous
     if (previous.tokenId) {
       let token = canvas.tokens?.get(previous.tokenId)
-
-      // go through all effects, removing those that have expired
-      // if (token && token.actor) {
-      //   for (const effect of token.actor.effects) {
-      //     if (await effect.isExpired()) {
-      //       effect.update({ disabled: true })
-      //       ui.notifications.info(`${game.i18n.localize('GURPS.effectExpired', 'Effect has expired: ')} '[${game.i18n.localize(effect.name)}]'`)
-      //     }
-      //   }
-      // }
     }
-  }
-
-  static async _updateWorldTime(_world, _worldTime, _options, _userId) {
-    // console.log('update world time', _world, _worldTime, _options, _userId)
   }
 
   /**
@@ -272,50 +226,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
       }
     }
 
-    // if (!!this.endCondition) {
-    //   let action = parselink(this.endCondition)
-
-    //   if (!!action.action) {
-    //     if (action.action.type === 'modifier') {
-    //       ui.notifications.warn(
-    //         `${game.i18n.localize(
-    //           'GURPS.effectBadEndCondition',
-    //           'End Condition is not a skill or attribute test: '
-    //         )} '[${endCondition}]'`
-    //       )
-    //       return false
-    //     }
-
-    //     return await GURPS.performAction(action.action, this.parent, {
-    //       shiftKey: false,
-    //       ctrlKey: false,
-    //       data: {},
-    //     })
-    //   } // Looks like a /roll OtF, but didn't parse as one
-    //   else
-    //     ui.notifications.warn(
-    //       `${game.i18n.localize(
-    //         'GURPS.effectBadEndCondition',
-    //         'End Condition is not a skill or attribute test: '
-    //       )} '[${endCondition}]'`
-    //     )
-    // }
-
     return false
   }
 }
-
-/*
-  {
-	key: fields.BLANK_STRING,
-	value: fields.BLANK_STRING,
-	mode: {
-	  type: Number,
-	  required: true,
-	  default: CONST.ACTIVE_EFFECT_MODES.ADD,
-	  validate: m => Object.values(CONST.ACTIVE_EFFECT_MODES).includes(m),
-	  validationError: "Invalid mode specified for change in ActiveEffectData"
-	  },
-	  priority: fields.NUMERIC_FIELD
-	}
-*/
