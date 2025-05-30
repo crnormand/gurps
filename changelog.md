@@ -1,5 +1,12 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.1
+
+### Bugfixes
+
+- Effect Modifier Control does not show in the canvas controls #2296
+- Effect Modifier Pop-out shows some modifiers twice #2296
+
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
 ### Features
