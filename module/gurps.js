@@ -27,7 +27,6 @@ import {
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
-import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -911,9 +910,10 @@ if (!globalThis.GURPS) {
         blind: action.blindroll,
         event,
         obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-        followon: followon,
+        followon,
         text: '',
       }
+      if ('itemPath' in action) opt.itemPath = action.itemPath
       let targetmods = []
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
@@ -1454,7 +1454,7 @@ if (!globalThis.GURPS) {
       opt.itemPath = `@${path}`
 
       const item = foundry.utils.getProperty(actor, path)
-      if ('level' in item) target = item.level
+      if (item && 'level' in item) target = item.level
       opt.obj = item
 
       let srcid = !!actor ? '@' + actor.id + '@' : ''
@@ -1463,6 +1463,8 @@ if (!globalThis.GURPS) {
         const parsedLink = GURPS.parselink(element.dataset.otf)
         if ('action' in parsedLink) action = parsedLink.action
         chatthing = '[' + srcid + element.dataset.otf + ']'
+        action.itemPath = opt.itemPath
+        return performAction(action, actor, event, options?.targets)
       }
     } else if ('path' in element.dataset) {
       let srcid = !!actor ? '@' + actor.id + '@' : ''
@@ -2097,9 +2099,6 @@ if (!globalThis.GURPS) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
     })
-
-    // @ts-ignore
-    Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 
     Hooks.on('renderActorDirectory', (app, html, context) => {
       // Add the Import Multiple Actors button to the Actors tab.
