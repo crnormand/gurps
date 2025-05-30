@@ -3,7 +3,7 @@ import { GurpsToken } from './gurps-token.js'
 import { registerTokenHUD } from './token-hud.js'
 
 export * from './gurps-token.js'
-export { QuickRollSettings } from './hud.js'
+export * from './quick-roll-settings.js'
 
 export function init(): void {
   Hooks.once('init', () => {
