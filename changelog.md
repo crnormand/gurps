@@ -2,8 +2,14 @@
 
 ## Release 0.18.1
 
+### Features
+
+- Added move limit indicators to token drag ruler (v13 only) #2294
+
 ### Bugfixes
 
+- SemanticVersion.toString does not show pre-release data or build metadata #2297
+- Melee attacks are not clickable in the Quick Roll Menu #2287
 - Effect Modifier Control does not show in the canvas controls #2296
 - Effect Modifier Pop-out shows some modifiers twice #2296
 
