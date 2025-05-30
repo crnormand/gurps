@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.1
+
+### Features
+
+- Added move limit indicators to token drag ruler (v13 only) #2294
+
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
 ### Features
