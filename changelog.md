@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.1
+
+### Bugfixes
+
+- Melee attacks are not clickable in the Quick Roll Menu #2287
+
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
 ### Features
