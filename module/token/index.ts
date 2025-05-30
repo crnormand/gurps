@@ -15,6 +15,7 @@ export function init(): void {
       registerTokenHUD()
     } else {
       CONFIG.Token.hudClass = GurpsTokenHUD
+
     }
   })
 }
