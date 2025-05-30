@@ -1,5 +1,16 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.1
+
+### Features
+
+- Added move limit indicators to token drag ruler (v13 only) #2294
+
+### Bugfixes
+
+- SemanticVersion.toString does not show pre-release data or build metadata #2297
+- Melee attacks are not clickable in the Quick Roll Menu #2287
+
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
 ### Features
