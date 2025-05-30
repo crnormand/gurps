@@ -33,8 +33,6 @@ class GurpsToken extends Token {
     // if not in combat, do nothing
     if (!isCombatActive() || !isTokenInActiveCombat(this)) return
 
-    console.log('TokenGURPS.setManeuver', maneuverId)
-
     const maneuver = Maneuvers.get(maneuverId)
     if (!maneuver) return
 
@@ -57,6 +55,16 @@ class GurpsToken extends Token {
 
     const actions = await TokenActions.fromToken(this)
     await actions.selectManeuver(maneuver, game.combat?.round)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _onDelete(
+    options: foundry.abstract.Document.Database.DeleteOptions<foundry.abstract.types.DatabaseDeleteOperation>,
+    userId: string
+  ): void {
+    this.removeManeuver()
+    super._onDelete(options, userId)
   }
 
   /* ---------------------------------------- */
