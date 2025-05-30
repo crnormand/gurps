@@ -63,7 +63,7 @@ export class EffectModifierControl {
   _createEffectModifierButton(controls) {
     if (this.shouldUseEffectModifierPopup()) {
       // COMPATIBILITY: v12
-      let tokenButton = game.release.generation >= 13 ? controls.tokens : controls.find(c => c.name === 'token')
+      const tokenButton = game.release.generation >= 13 ? controls.tokens : controls.find(c => c.name === 'token')
       if (tokenButton) {
         const newButton = {
           name: EffectModifierControl.EffectModName,
