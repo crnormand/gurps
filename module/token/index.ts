@@ -13,7 +13,6 @@ export function init(): void {
     if (!game.release) return
     if (game.release?.generation >= 13) {
       registerTokenRuler()
-    } else {
     }
   })
 }
