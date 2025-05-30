@@ -1,5 +1,5 @@
-import { GurpsTokenHUD } from './token-hud-12.js'
 import { GurpsToken } from './gurps-token.js'
+import { GurpsTokenHUD } from './token-hud-12.js'
 import { registerTokenHUD } from './token-hud.js'
 
 export * from './gurps-token.js'
