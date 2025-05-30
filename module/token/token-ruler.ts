@@ -36,7 +36,6 @@ function registerTokenRuler() {
         return { ...data, color: 0x00ff00 }
       }
 
-      return data
     }
   }
 
