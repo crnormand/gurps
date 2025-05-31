@@ -1421,6 +1421,7 @@ if (!globalThis.GURPS) {
    */
   async function handleRoll(event, actor, options) {
     event.preventDefault()
+
     let formula = ''
     let targetmods = null
     let element = event.currentTarget
