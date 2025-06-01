@@ -1,17 +1,5 @@
 export class ResourceTrackerEditor extends Application {
   /**
-   * Create a new Resource Tracker Editor
-   * @param {Tracker} tracker data to update
-   * @param {*} options
-   */
-  constructor(tracker, isActor, options = {}) {
-    super(options)
-
-    this._tracker = tracker
-    this._isActor = isActor
-  }
-
-  /**
    * TODO Should update this to not depend upon actor: read the tracker in the Actor class, and
    * pass it in as parameter, then return it if edited.
    * @param {Actor} actor
@@ -31,8 +19,16 @@ export class ResourceTrackerEditor extends Application {
     dialog.render(true)
   }
 
-  static createTrackerDataForActor(actor, path, template) {
-    const tracker = template.tracker
+  /**
+   * Create a new Resource Tracker Editor
+   * @param {Tracker} tracker data to update
+   * @param {*} options
+   */
+  constructor(tracker, isActor, options = {}) {
+    super(options)
+
+    this._tracker = tracker
+    this._isActor = isActor
   }
 
   /** @override */
@@ -102,6 +98,12 @@ export class ResourceTrackerEditor extends Application {
     html.find('[name="damage-tracker"]').click(ev => {
       let element = $(ev.currentTarget)
       this._tracker.isDamageTracker = element.is(':checked')
+      this.render(false)
+    })
+
+    html.find('[name="breakpoints"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.breakpoints = element.is(':checked')
       this.render(false)
     })
 
@@ -181,6 +183,7 @@ export class ResourceTrackerEditor extends Application {
         isDamageType: false,
         initialValue: '',
         thresholds: [],
+        breakpoints: true,
       }
       this.render(false)
     })

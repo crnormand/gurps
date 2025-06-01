@@ -5,6 +5,7 @@
 ### Features
 
 - Added move limit indicators to token drag ruler (v13 only) #2294
+- Allow "Breakpoints" to be set on a resource tracker (partially fixes #2168)
 
 ### Bugfixes
 

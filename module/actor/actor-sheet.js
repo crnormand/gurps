@@ -1102,7 +1102,7 @@ export class GurpsActorSheet extends ActorSheet {
       edit: {
         icon: '<i class="fas fa-edit"></i>',
         label: game.i18n.localize('GURPS.resourceEditTracker'),
-        callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
+        callback: () => this._editTracker(path),
       },
       remove: {
         icon: '<i class="fas fa-trash"></i>',
@@ -1130,6 +1130,19 @@ export class GurpsActorSheet extends ActorSheet {
       { width: 600 }
     )
     d.render(true)
+  }
+
+  async _editTracker(path) {
+    let tracker = foundry.utils.getProperty(this.actor.system, path)
+    let temp = JSON.stringify(tracker)
+    let dialog = new ResourceTrackerEditor(JSON.parse(temp))
+    dialog._updateTracker = async () => {
+      let update = {}
+      update[`system.${path}`] = dialog._tracker
+      this.actor.update(update)
+      dialog.close()
+    }
+    dialog.render(true)
   }
 
   async _showActiveEffectsListPopup(ev) {
