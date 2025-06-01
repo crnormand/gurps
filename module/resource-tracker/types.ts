@@ -4,11 +4,11 @@
 
 // README: By Convention, settings should be prefixed with the module name.
 const SettingPrefix = 'resource-tracker'
-const editorName = 'manager'
-const templateName = 'templates'
 
-export const SETTING_TRACKER_EDITOR = `${SettingPrefix}.${editorName}`
-export const SETTING_TRACKER_TEMPLATES = `${SettingPrefix}.${templateName}`
+export const SETTING_TRACKER_EDITOR = `${SettingPrefix}.manager`
+export const SETTING_TRACKER_TEMPLATES = `${SettingPrefix}.templates`
+// TODO May be removed when the setting is removed.
+export const OLD_SETTING_TEMPLATES = 'tracker-templates'
 
 export type ResourceTrackerThreshold = {
   comparison: string

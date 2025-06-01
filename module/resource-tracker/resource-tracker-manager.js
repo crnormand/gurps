@@ -2,25 +2,6 @@ import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export class ResourceTrackerManager extends FormApplication {
-  // static initSettings() {
-  //   game.settings.registerMenu(GURPS.SYSTEM_NAME, SETTING_TRACKER_EDITOR, {
-  //     name: game.i18n.localize('GURPS.resourceTemplateManager'),
-  //     hint: game.i18n.localize('GURPS.resourceTemplateHint'),
-  //     label: game.i18n.localize('GURPS.resourceTemplateButton'),
-  //     type: ResourceTrackerManager,
-  //     restricted: true,
-  //   })
-
-  //   game.settings.register(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, {
-  //     name: game.i18n.localize('GURPS.resourceTemplateTitle'),
-  //     scope: 'world',
-  //     config: false,
-  //     type: Object,
-  //     default: ResourceTrackerManager.getDefaultTemplates(),
-  //     onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
-  //   })
-  // }
-
   /**
    * @returns {Record<string, ResourceTrackerTemplate>}
    */
@@ -93,12 +74,18 @@ export class ResourceTrackerManager extends FormApplication {
    * @returns {ResourceTrackerTemplate[]}
    */
   static getAllTemplates() {
-    const templates = objectToArray(game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES) || {})
+    const settings = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES)
+    const templates = objectToArray(settings || {})
+
     // For legacy support, convert the slot field to a boolean.
     templates.forEach(element => (element.slot = element.slot !== '' && element.slot !== 'none'))
     return templates
   }
 
+  /**
+   * Retrieves templates that are required but not currently present in the provided trackers.
+   * @returns {ResourceTrackerTemplate[]}
+   */
   static getMissingRequiredTemplates(currentTrackers) {
     const newTrackers = []
     const templates = ResourceTrackerManager.getAllTemplates().filter(t => t.slot)
@@ -124,7 +111,7 @@ export class ResourceTrackerManager extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'tracker-manager',
-      template: 'systems/gurps/templates/actor/tracker-manager.hbs',
+      template: 'systems/gurps/templates/resource-tracker/tracker-manager.hbs',
       resizable: false,
       minimizable: false,
       width: 520,
@@ -316,7 +303,7 @@ export class ResourceTrackerEditor extends Application {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/resource-editor-popup.hbs',
+      template: 'systems/gurps/templates/resource-tracker/resource-editor-popup.hbs',
       width: 360,
       height: 'auto',
       popOut: true,

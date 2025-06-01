@@ -38,7 +38,7 @@ export class ResourceTrackerEditor extends Application {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/resource-editor-popup.hbs',
+      template: 'systems/gurps/templates/resource-tracker/resource-editor-popup.hbs',
       width: 360,
       height: 'auto',
       popOut: true,

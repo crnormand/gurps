@@ -6,7 +6,7 @@
           {{#if templates}}
             <div class='label'>{{localize 'GURPS.resourceTemplateName'}}</div>
             <div class='label'>{{localize 'GURPS.resourceTemplateAlias'}}</div>
-            <div class='label'>{{localize 'GURPS.autoAdd'}}</div>
+            <div class='label'>{{localize 'GURPS.autoApply'}}</div>
             <div class='label'>{{localize 'GURPS.resourceTemplateInitializer'}}</div>
             <div><a id='template-add' class='button icon'><i class='fas fa-plus'></i></a></div>
           {{else}}
@@ -34,15 +34,6 @@
 
             <!-- slot -->
             <input name='autoapply' name='slot' type='checkbox' data='{{@index}}' {{checked slot}} />
-            {{!-- <select name='tracker-instance' data='{{@index}}'>
-              <option value='none' {{select-if slot 'none' }}></option>
-              {{#with @index as |current|}}
-                {{#each ../../templates}}
-                  <option value='{{@index}}' {{select-if slot current }}>{{localize "GURPS.resourceTracker"}} {{@index}}
-                  </option>
-                {{/each}}
-              {{/with}}
-            </select> --}}
 
             <!-- initialValue -->
             <input name='initial-value' data='{{@index}}' class='gcs-input' type='text' value='{{initialValue}}' />

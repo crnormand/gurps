@@ -1,7 +1,6 @@
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
-import { SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
+import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
 
-const OLD_SETTING_TEMPLATES = 'tracker-templates'
 export function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
   Hooks.once('ready', async function () {
@@ -33,8 +32,9 @@ export function init() {
       scope: 'world',
       config: false,
       type: Object as any,
-      // @ts-expect-error Foundry types do not allow default for Object, but we need it
-      default: ResourceTrackerManager.getDefaultTemplates(),
+      // Copy the old setting to the new one.
+      // TODO Reset to this when the setting is removed: `ResourceTrackerManager.getDefaultTemplates()`
+      default: game.settings.get(GURPS.SYSTEM_NAME, OLD_SETTING_TEMPLATES),
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
 
@@ -55,21 +55,8 @@ export function init() {
   })
 }
 
-export function migrate() {
-  if (!game.settings) throw new Error('GURPS | Game settings not found')
-
-  const oldTemplates = game.settings.get(GURPS.SYSTEM_NAME, OLD_SETTING_TEMPLATES) || null
-  const newTemplates = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES) || null
-
-  if (oldTemplates && !newTemplates) {
-    console.log('GURPS | Migrating resource tracker templates to new setting')
-    game.settings.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, oldTemplates)
-    console.log('GURPS | Resource tracker templates migrated successfully')
-  }
-}
-
 export { ResourceTrackerEditor } from './resource-tracker-editor.js'
 export { ResourceTrackerManager } from './resource-tracker-manager.js'
 
 // @ts-expect-error
-const _typecheck: GurpsModule = { init, migrate }
+const _typecheck: GurpsModule = { init }
