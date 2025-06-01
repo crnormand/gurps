@@ -6,7 +6,7 @@ export * from './gurps-token.js'
 export * from './quick-roll-settings.js'
 
 export function init(): void {
-  console.log('GURPS | Initializing GURPS Token Module')
+  console.log('GURPS | Initializing GURPS Token module.')
   Hooks.once('init', () => {
     CONFIG.Token.objectClass = GurpsToken
 
@@ -16,7 +16,9 @@ export function init(): void {
       registerTokenHUD()
     } else {
       CONFIG.Token.hudClass = GurpsTokenHUD
-
     }
   })
 }
+
+// @ts-expect-error
+const _typecheck: GurpsModule = { init }
