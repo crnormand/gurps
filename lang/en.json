@@ -152,6 +152,7 @@
     "attributesWILLNAME": "Will",
     "attributeTab": "Attributes",
     "autoAdd": "Automatically add tagged modifiers to the roll.",
+    "autoApply": "Auto Apply",
     "autoEncumbrance": "Auto Encumbrance",
     "basic": "Basic",
     "basicLift": "Basic Lift",
@@ -1530,7 +1531,6 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermssion": "You do not have permission to do that.",
-    "autoApply": "Auto Apply"
+    "youDoNotHavePermssion": "You do not have permission to do that."
   }
 }

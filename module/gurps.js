@@ -27,8 +27,6 @@ import {
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
-import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-import ManeuverHUDButton from './actor/maneuver-button.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
