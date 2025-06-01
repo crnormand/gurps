@@ -1,3 +1,4 @@
+import { GurpsModule } from 'module/types.js'
 import { GurpsRulerV12 } from './ruler-12.js'
 import { GurpsRuler } from './ruler.js'
 
@@ -13,3 +14,6 @@ export function init() {
     }
   })
 }
+
+// @ts-expect-error
+const _typecheck: GurpsModule = { init }

@@ -1,10 +1,10 @@
-import { GurpsActor } from './module/actor/actor.js'
-import { GurpsItem } from './module/item.js'
-import { GurpsCombatant } from './module/combat/combatant.ts'
-import { GurpsToken } from './module/token/gurps-token.ts'
 import { AnyMutableObject } from 'fvtt-types/utils'
+import { GurpsActor } from './module/actor/actor.js'
+import { GurpsCombatant } from './module/combat/combatant.ts'
+import { GurpsItem } from './module/item.js'
+import { GurpsToken } from './module/token/gurps-token.ts'
 
-export {}
+export { }
 
 declare global {
   var GURPS: any

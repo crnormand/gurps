@@ -8,3 +8,6 @@ export function init() {
     CONFIG.Combatant.documentClass = GurpsCombatant
   })
 }
+
+// @ts-expect-error
+const _typecheck: GurpsModule = { init }

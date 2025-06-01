@@ -109,20 +109,9 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  // TODO I'd like to define a type for each module equivalent to { init: function, migrate: function}.
-  /** @type {import('./types.js').GurpsModule[]} */
+  /** @type GurpsModule[] */
   GURPS.modules = [Canvas, Combat, Damage, Token, UI]
-
-  GURPS.modules.forEach(mod => {
-    if (mod.init) mod.init()
-  })
-
-  // Canvas.init() // Initialize the Canvas module
-  // Combat.init() // Initialize the Combat module
-  // Damage.init() // Initialize the Damage module
-  // Token.init() // Initialize the Token module
-  // UI.init() // Initialize the UI module
-  // Trackers.init() // Initialize the Resource Tracker module
+  GURPS.modules.forEach(mod => mod.init())
 
   AddChatHooks()
   JQueryHelpers()
@@ -131,13 +120,13 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  //CONFIG.debug.hooks = true;
+  // CONFIG.debug.hooks = true;
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
 
   // Use the target d6 icon for rolltable entries
-  //CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
+  // CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
   CONFIG.time.roundTime = 1
 
   GURPS.StatusEffect = new StatusEffect()

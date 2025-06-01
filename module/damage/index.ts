@@ -4,7 +4,7 @@ import DamageChat from './damagechat.js'
 import { resolveDamageRollAction } from './resolve-damage-roll-action.js'
 
 export function init() {
-  console.log('GURPS | Initializing GURPS Damage Module')
+  console.log('GURPS | Initializing GURPS Damage module.')
   Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
   Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
   Hooks.on('gurpsinit', () => {
@@ -16,3 +16,6 @@ export function init() {
 }
 
 export { rollDamage } from './roll-damage.js'
+
+// @ts-expect-error
+const _typecheck: GurpsModule = { init }
