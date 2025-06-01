@@ -67,3 +67,9 @@ export function migrate() {
     console.log('GURPS | Resource tracker templates migrated successfully')
   }
 }
+
+export { ResourceTrackerEditor } from './resource-tracker-editor.js'
+export { ResourceTrackerManager } from './resource-tracker-manager.js'
+
+// @ts-expect-error
+const _typecheck: GurpsModule = { init, migrate }

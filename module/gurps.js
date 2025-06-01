@@ -80,6 +80,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import * as Canvas from './canvas/index.js'
 import * as Combat from './combat/index.js'
 import * as Damage from './damage/index.js'
+import * as ResourceTracker from './resource-tracker/index.js'
 import * as Token from './token/index.js'
 import * as UI from './ui/index.js'
 
@@ -110,7 +111,7 @@ if (!globalThis.GURPS) {
   }
 
   /** @type GurpsModule[] */
-  GURPS.modules = [Canvas, Combat, Damage, Token, UI]
+  GURPS.modules = [Canvas, Combat, Damage, ResourceTracker, Token, UI]
   GURPS.modules.forEach(mod => mod.init())
 
   AddChatHooks()
