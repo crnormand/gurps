@@ -842,12 +842,12 @@ class GCACharacter extends DataModel<GCACharacterSchema> {
     data.description = xml.getElementsByTagName('description')[0]?.textContent ?? null
     data.notes = xml.getElementsByTagName('notes')[0]?.textContent ?? null
 
-    data.body = GCABody.fromXML(xml.getElementsByTagName('body')[0] as HTMLElement)
+    // data.body = GCABody.fromXML(xml.getElementsByTagName('body')[0] as HTMLElement)
+    //
+    // data.tags = GCAExtendedTagsBlock.fromXML(xml.getElementsByTagName('tags')[0] as HTMLElement)
+    // data.messages = GCAMessagesBlock.fromXML(xml.getElementsByTagName('messages')[0] as HTMLElement)
 
-    data.tags = GCAExtendedTagsBlock.fromXML(xml.getElementsByTagName('tags')[0] as HTMLElement)
-    data.messages = GCAMessagesBlock.fromXML(xml.getElementsByTagName('messages')[0] as HTMLElement)
-
-    return new this(data)
+    return new this(data, { strict: false })
   }
 }
 
@@ -1257,7 +1257,8 @@ class GCA5 extends DataModel<GCA5Schema> {
       const character = GCACharacter.fromXML(child as HTMLElement)
       characters.push(character)
     }
-    return new this({ character: characters })
+    console.log(characters)
+    return new this({ character: characters }, { strict: false })
   }
 }
 
