@@ -84,6 +84,8 @@ import * as Combat from './combat/index.js'
 import * as Damage from './damage/index.js'
 import * as Token from './token/index.js'
 import * as UI from './ui/index.js'
+import * as GCA5 from './utilities/gca-importer/gca-schema.js'
+import { importTestXML } from './utilities/gca-importer/parser.js'
 
 export let GURPS = undefined
 
@@ -93,6 +95,7 @@ if (!globalThis.GURPS) {
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
+  GURPS.importTestXML = importTestXML
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   

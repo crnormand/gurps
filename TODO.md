@@ -2,7 +2,21 @@
 
 This is a developer TODO file. It is not meant to be read by users.
 
-## Item DataModel Migration
+## Master Notes
+
+- I believe that the migration from using actor components to using native items (for all characters) as well as the migration
+  from the old, non-DataModel actor to a DataModel actor should be done in a single step. The alternative, dealing with a data
+  model which does not make use of Foundry's native data validation methods, is unnecessarily cumbersome.
+- This migration is an excellent opportunity to clean up existing actor code, enforce stricter standards for the way we write
+  code concerning the actor and items, and to make the code more readable and maintainable.
+- To avoid having to deal with old code in the new DataModel, I propose to migrate actors to a new actor type while keeping
+  the old one intact. This way, we can keep the old code intact and allow users to voluntarily migrate their actors to the new
+  data type when they are ready. This will make for much easier deprecation of the old code as we begin the transition from the
+  legacy data-model to an intermediary DataModel Actor (and DataModel items), and then finally to a GCS-based DataModel Actor
+  and Items later down the line. There will be no need to mess with the old code, and we can focus on the new code only when
+  we reach that stage in the migration.
+
+## Actor DataModel Migration
 
 ### Notes
 
@@ -11,6 +25,8 @@ This is a developer TODO file. It is not meant to be read by users.
   automatically update their data to match the setting. However, since the "Use Foundry Items" setting does not seem to change
   the fact that the item data is stored/duplicated in the actor's own system data. Therefore, we can avoid checking whether this
   setting is used or not, ignore the item documents on the actor, and use only the actor's system data as migration data.
+
+## Item DataModel Migration
 
 ### Move base classes to ItemComponent or sub-classes thereof
 
