@@ -16,6 +16,14 @@ This is a developer TODO file. It is not meant to be read by users.
   and Items later down the line. There will be no need to mess with the old code, and we can focus on the new code only when
   we reach that stage in the migration.
 
+## Importing GCA5 XML files directly
+
+- The GCA5 XML files can be imported directly into the new DataModel Actor and Item system.
+  The data will likely not need to be transformed much, as the GCA5 XML files are already the basis for the current
+  data structure in some sense.
+- The GCA5 schemas currently used schema fields which could be transformed into Array Fields as the only non-child
+  nodes in them are the $count attribute.
+
 ## Actor DataModel Migration
 
 ### Notes
