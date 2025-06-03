@@ -1,3 +1,4 @@
+import { ItemComponent, ItemComponentSchema, ItemDataSchema } from './base.js'
 import fields = foundry.data.fields
 
 class EquipmentData extends foundry.abstract.TypeDataModel<EquipmentSchema, Item.Implementation> {
@@ -20,13 +21,12 @@ class EquipmentData extends foundry.abstract.TypeDataModel<EquipmentSchema, Item
 
 /* ---------------------------------------- */
 
-class EquipmentComponent extends foundry.abstract.DataModel<EquipmentComponentSchema> {
-  constructor(...args: foundry.abstract.DataModel.ConstructorArgs<EquipmentComponentSchema>) {
-    super(...args)
-  }
-
+class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {
   static override defineSchema(): EquipmentComponentSchema {
-    return equipmentComponentSchema
+    return {
+      ...super.defineSchema(),
+      ...equipmentComponentSchema,
+    }
   }
 }
 
@@ -55,14 +55,12 @@ const equipmentSchema = {
   addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
 }
 
-type EquipmentSchema = typeof equipmentSchema
+type EquipmentSchema = ItemDataSchema & typeof equipmentSchema
 
 /* ---------------------------------------- */
 
 const equipmentComponentSchema = {
   name: new fields.StringField({ required: true, nullable: false }),
-  notes: new fields.StringField({ required: true, nullable: false }),
-  pageref: new fields.StringField({ required: true, nullable: false }),
   count: new fields.NumberField({ required: true, nullable: false }),
   weight: new fields.NumberField({ required: true, nullable: false }),
   cost: new fields.NumberField({ required: true, nullable: false }),
@@ -76,19 +74,11 @@ const equipmentComponentSchema = {
   weightsum: new fields.NumberField({ required: true, nullable: false }),
   uses: new fields.StringField({ required: true, nullable: false }),
   maxuses: new fields.StringField({ required: true, nullable: false }),
-  parentuuid: new fields.StringField({ required: true, nullable: false }),
-  uuid: new fields.StringField({ required: true, nullable: false }),
-  // Change from previous schema. Set of IDs
-  contains: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false }), {
-    required: true,
-    nullable: false,
-  }),
-  originalName: new fields.StringField({ required: true, nullable: false }),
   originalCount: new fields.StringField({ required: true, nullable: false }),
   ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
 }
 
-type EquipmentComponentSchema = typeof equipmentComponentSchema
+type EquipmentComponentSchema = ItemComponentSchema & typeof equipmentComponentSchema
 
 /* ---------------------------------------- */
 
