@@ -1,5 +1,7 @@
+import { GCA5 } from './gca-schema.js'
+
 async function importTestXML() {
-  new foundry.applications.api.DialogV2({
+  return new foundry.applications.api.DialogV2({
     window: {
       title: 'Import tet XML',
     },
@@ -20,7 +22,9 @@ async function importTestXML() {
           } else {
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            globalThis.xmlTest = new DOMParser().parseFromString(text, 'application/xml')
+            const xmlTest = new DOMParser().parseFromString(text, 'application/xml')
+            const gca5File = GCA5.fromXML(xmlTest)
+            console.log(gca5File)
           }
         },
       },

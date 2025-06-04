@@ -23,6 +23,9 @@ This is a developer TODO file. It is not meant to be read by users.
   data structure in some sense.
 - The GCA5 schemas currently used schema fields which could be transformed into Array Fields as the only non-child
   nodes in them are the $count attribute.
+- Attributes are displayed in GCA based on the number in the "mainwin" attribute. This is not used in the current data model
+  even with the GCS data model but can be used in the future to hide some attributes form the sheet. This can potentially
+  effectively allow us to use GCA-style attributes in a GCS-based Actor DataModel, which would be nice.
 
 ## Actor DataModel Migration
 
