@@ -1,21 +1,18 @@
-import { ItemComponent, ItemComponentSchema, ItemDataSchema } from './base.js'
+import { CommonItemData, CommonItemDataSchema, ItemComponent, ItemComponentSchema } from './base.js'
 import fields = foundry.data.fields
 
-class TraitData extends foundry.abstract.TypeDataModel<TraitSchema, Item.Implementation> {
+class TraitData extends CommonItemData<TraitSchema> {
   static override defineSchema(): TraitSchema {
-    return traitSchema
+    return {
+      ...super.defineSchema(),
+      ...traitSchema,
+    }
   }
 
   /* ---------------------------------------- */
 
-  get contents(): Item.Implementation[] {
-    const contents: Record<string, string> = this.eqt?.contains
-
-    return Object.values(contents).reduce((acc: Item.Implementation[], id: string) => {
-      const item = this.parent.actor?.items.get(id)
-      if (item) acc.push(item)
-      return acc
-    }, [])
+  get component(): TraitComponent {
+    return this.fea
   }
 }
 
@@ -32,9 +29,11 @@ class TraitComponent extends ItemComponent<TraitComponentSchema> {
 
 /* ---------------------------------------- */
 
-const traitSchema = {}
+const traitSchema = {
+  fea: new fields.EmbeddedDataField(TraitComponent, { required: true, nullable: false }),
+}
 
-type TraitSchema = ItemDataSchema & typeof traitSchema
+type TraitSchema = CommonItemDataSchema & typeof traitSchema
 
 /* ---------------------------------------- */
 

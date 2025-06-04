@@ -1,21 +1,18 @@
-import { ItemComponent, ItemComponentSchema, ItemDataSchema } from './base.js'
+import { CommonItemData, CommonItemDataSchema, ItemComponent, ItemComponentSchema } from './base.js'
 import fields = foundry.data.fields
 
-class EquipmentData extends foundry.abstract.TypeDataModel<EquipmentSchema, Item.Implementation> {
+class EquipmentData extends CommonItemData<EquipmentSchema> {
   static override defineSchema(): EquipmentSchema {
-    return equipmentSchema
+    return {
+      ...super.defineSchema(),
+      ...equipmentSchema,
+    }
   }
 
   /* ---------------------------------------- */
 
-  get contents(): Item.Implementation[] {
-    const contents: Record<string, string> = this.eqt?.contains
-
-    return Object.values(contents).reduce((acc: Item.Implementation[], id: string) => {
-      const item = this.parent.actor?.items.get(id)
-      if (item) acc.push(item)
-      return acc
-    }, [])
+  get component(): EquipmentComponent {
+    return this.eqt
   }
 }
 
@@ -34,28 +31,9 @@ class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {
 
 const equipmentSchema = {
   eqt: new fields.EmbeddedDataField(EquipmentComponent, { required: true, nullable: false }),
-  // Change from previous schema. Set of IDs
-  melee: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs
-  ranged: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs
-  ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs
-  skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs
-  spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  bonuses: new fields.StringField({ required: true, nullable: false }),
-  itemModifiers: new fields.StringField({ required: true, nullable: false }),
-  equipped: new fields.BooleanField({ required: true, nullable: false }),
-  carried: new fields.BooleanField({ required: true, nullable: false }),
-  globalid: new fields.StringField({ required: true, nullable: false }),
-  importid: new fields.StringField({ required: true, nullable: false }),
-  importFrom: new fields.StringField({ required: true, nullable: false }),
-  fromItem: new fields.StringField({ required: true, nullable: false }),
-  addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
 }
 
-type EquipmentSchema = ItemDataSchema & typeof equipmentSchema
+type EquipmentSchema = CommonItemDataSchema & typeof equipmentSchema
 
 /* ---------------------------------------- */
 

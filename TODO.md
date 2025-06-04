@@ -43,6 +43,8 @@ This is a developer TODO file. It is not meant to be read by users.
 
 #### Fields
 
+##### Shared
+
 - notes: String field for storing notes about the item. Simple text field, but see #setNotes below for further details.
   STATUS: Migrated to StringField in ItemComponent.
 - pageref: String field for storing the page reference of the item. It is used to store the page number or link to
@@ -59,7 +61,80 @@ This is a developer TODO file. It is not meant to be read by users.
   in a hierarchy, such as containers and their contents. This will not be needed in the new data model, as it would duplicate the
   functionality of "contains" (above) while providing less information than the above (namely, the order in which the child items
   are stored/displayed in the parent).
-- originalName:
+  STATUS: NOT NEEDED, NOT YET REMOVED
+- originalName: String field used to store the original name of the item. As far as I can tell, this is only needed because
+  GGA sometimes changes the name of an item on import. We can likely deprecate this field and rely only on the ID field for
+  recognising re-imported items.
+  STATUS: NOT NEEDED, NOT YET REMOVED
+- points: Number field for storing point cost of an item. Straightforwardly needed.
+  STATUS: KEEP
+- save: Boolean field. Not sure what it does.
+  STATUS: more information needed
+- itemid: String field used to store ID of associated Item. Won't be needed in the new data model as this will be
+  accessible through the component's parent
+  STATUS: NOT NEEDED, NOT YET REMOVED
+- itemInfo: Object field used to store additional information about the item. It is a plain object which is essentially
+  the equivalent of CommonItemDataSchema. As such, it is not needed and can be removed.
+  STATUS: NOT NEEDED, NOT YET REMOVED
+- fromItem: String field used to store the ID of an item which contains this component. This is used for the traits, skills,
+  spells and weapons which can be stored on any Item.
+  We will be moving to a system where ItemComponents will always be stored as singletons on the Item. This field will not be
+  needed as the IDs of stored Items will be accessible through the ItemComponent's parent.
+  Status: NOT NEEDED, NOT YET REMOVED
+- addToQuickRoll: Boolean field used to indicate whether the item should be added to the quick roll menu.
+  This is straightforwardly needed
+  STATUS: KEEP
+- import: Number field (for some reason it accepts strings too, but that's horrible), used for the original/imported level
+  of a levelled item (such as a skill or spell). I don't like the name but we can keep it for now. This field is useful.
+  Status: KEEP
+  level: Number field used to store the level of the item. It is used for levelled items such as skills and spells.
+  This field is initially set to 0 and is updated during import, then combined with various bonuses.
+  We may want to remove the duplicate data so we're not storing both the pre-processed and post-processed value in the DB,
+  but we can keep it for now.
+  STATUS: KEEP
+- modifierTags: This string field is used to store a set of tags for the item. The tags are used to determine which
+  modifiers are automatically applied to rolls related to this item. We can probably replace it with an ArrayField<StringField>
+  for cleaner parsing.
+  STATUS: TO MIGRATE
+- consumeAction: Boolean value to indicate whether the use of the item consumes an action (see TokenActions). This is
+  straightforwardly useful and needed as is.
+  STATUS: KEEP
+
+##### Skill
+
+- type: String field used to store the Attribute Difficulty of a skill. We may be able to migrate this to a DifficultyField
+  for skills, but techniques would be harder as they are not based directly on attributes.
+- relativelevel: String field used to store the relative level of a skill compared to the attribute or skill it is based
+  on. I don't think this is needed as we can calculate it from the above type field and the level of the skill, but we can
+  keep it for now.
+  STATUS: KEEP
+
+##### Spell
+
+- class: String field used to store the class of the spell. Needed.
+  STATUS: KEEP
+- college: String field used to store the college of the spell. Needed. May be converted to an ArrayField<StringField>
+  in the future.
+  STATUS: KEEP
+- cost: String field used to store the cost of the spell. It is used to determine the cost of casting the spell. Needed.
+  STATUS: KEEP
+- maintain: as above. Keep.
+  STATUS: KEEP
+- duration: As above. Keep.
+  STATUS: KEEP
+- resist: As above. Keep.
+  STATUS: KEEP
+- casttime: As above. Keep.
+  STATUS: KEEP
+- difficulty: As above. Keep. Equivalent of skill "type" field as far as I can tell.
+  We may want to migrate this or the other one so the naming is consistent.
+  STATUS: KEEP
+- relativelevel: As above. Keep.
+  STATUS: KEEP
+
+##### Equipment
+
+- equipped: Boolean field,
 
 #### Methods
 
@@ -121,5 +196,7 @@ Note: I am using "." for static methods and "#" for instance methods. Visibility
   import process, and the data in the import isn't even used fully as the resulting action if this returns "true" is to only
   update some of the string information. It can be removed as the import functionality will be replaced.
   STATUS: TODO
+
+##### NamedCost
 
 ### Migrate item importing methods to fit new data model
