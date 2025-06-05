@@ -14,6 +14,7 @@
 - Maneuvers are not removed from actors when their tokens are deleted #2295
 - Cannot set maneuvers via the TokenHUD in v13 #2290
 - Melee attacks are not clickable in the Quick Roll Menu #2287
+- Setting posture via /st command does not work #2306
 
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 
