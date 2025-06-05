@@ -27,5 +27,7 @@ declare global {
     // TODO: Remove this when the setting is removed.
     'gurps.tracker-templates': new (options?: any) => ResourceTrackerEditor
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.show-confirmation-roll-dialog': boolean
+    'gurps.modify-dice-plus-adds': boolean
   }
 }

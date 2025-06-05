@@ -77,12 +77,11 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
-import * as Canvas from './canvas/index.js'
-import * as Combat from './combat/index.js'
-import * as Damage from './damage/index.js'
-import * as ResourceTracker from './resource-tracker/index.js'
-import * as Token from './token/index.js'
-import * as UI from './ui/index.js'
+import { Canvas } from './canvas/index.js'
+import { Combat } from './combat/index.js'
+import { Damage } from './damage/index.js'
+import { Token } from './token/index.js'
+import { UI } from './ui/index.js'
 
 export let GURPS = undefined
 
