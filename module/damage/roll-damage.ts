@@ -1,5 +1,5 @@
-import { i18nFallback } from 'module/utilities/i18nFallback.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { i18nFallback } from '../utilities/i18nFallback.js'
 import DamageChat from './damagechat.js'
 
 export async function rollDamage(
