@@ -1506,7 +1506,7 @@ export class GurpsActor extends Actor {
 
   _forceRender() {
     this.ignoreRender = false
-    this.render(true)
+    this.render()
   }
 
   // Drag and drop from an equipment list

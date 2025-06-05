@@ -1664,7 +1664,9 @@ details .popup.square5x4 {
   flex-direction: row;
   align-self: flex-end;
   margin-bottom: 0.5rem;
-  transition: all 200ms ease;
+  /* Transition temporarily disabled to prevent jolting when the actor updates. This will be */
+  /* re-enabled when the actor data is not updated multiple times per single change. */
+  /* transition: all 200ms ease; */
   transform: translateX(var(--offset));
   margin-bottom: 16px;
 }
