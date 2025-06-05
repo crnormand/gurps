@@ -80,6 +80,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
+import { ResourceTracker } from './resourcetracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 
@@ -2238,21 +2239,6 @@ if (!globalThis.GURPS) {
     }
 
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
-
-    // // get all aliases defined in the resource tracker templates and register them as damage types
-    // let resourceTrackers = ResourceTrackerManager.getAllTemplates()
-    //   .filter(it => !!it.tracker.isDamageType)
-    //   .filter(it => !!it.tracker.alias)
-    //   .map(it => it.tracker)
-    // resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
-    // resourceTrackers.forEach(
-    //   it =>
-    //     (GURPS.DamageTables.woundModifiers[it.alias] = {
-    //       multiplier: 1,
-    //       label: it.name,
-    //       resource: true,
-    //     })
-    // )
 
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return

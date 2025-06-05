@@ -15,7 +15,7 @@ import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { GurpsItem } from '../item.js'
-import { ResourceTrackerManager } from '../resource-tracker/resource-tracker-manager.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
@@ -1171,11 +1171,11 @@ export class GurpsActor extends Actor {
    * Adds any assigned resource trackers to the actor data and sheet.
    */
   async setResourceTrackers() {
-    /** @type {ResourceTracker[]} */
+    /** @type {TrackerInstance[]} */
     const currentTrackers = GurpsActor.getTrackersAsArray(this.system)
 
     /** @type {ResourceTrackerTemplate[]} */
-    const newTrackers = ResourceTrackerManager.getMissingRequiredTemplates(currentTrackers)
+    const newTrackers = ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
 
     // If no new trackers were added, nothing to do.
     if (newTrackers.length === 0) return

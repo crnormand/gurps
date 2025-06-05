@@ -1,3 +1,4 @@
+import { ResourceTracker } from 'module/resource-tracker/index.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -6,7 +7,6 @@ import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
-import { ResourceTrackerEditor, ResourceTrackerManager } from '../resource-tracker/index.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
@@ -1088,7 +1088,7 @@ export class GurpsActorSheet extends ActorSheet {
     // TODO: Refactor -- call a method on ResourceTracker Manager to delete the tracker, or return the template
     // to apply. This function would simply update the tracker with the new data (whether it was edited
     // or a template was applied).
-    let templates = ResourceTrackerManager.getAllTemplates()
+    let templates = ResourceTracker.TemplateManager.getAllTemplates()
     if (!templates || templates.length == 0) templates = null
 
     let selectTracker = async function (html) {
@@ -1135,7 +1135,7 @@ export class GurpsActorSheet extends ActorSheet {
   async _editTracker(path) {
     let tracker = foundry.utils.getProperty(this.actor.system, path)
     let temp = JSON.stringify(tracker)
-    let dialog = new ResourceTrackerEditor(JSON.parse(temp))
+    let dialog = new ResourceTracker.TrackerEditor(JSON.parse(temp))
     dialog._updateTracker = async () => {
       let update = {}
       update[`system.${path}`] = dialog._tracker

@@ -1,7 +1,10 @@
+import { GurpsModule } from 'module/gurps-module.js'
+
+import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
 
-export function init() {
+function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
   Hooks.once('ready', async function () {
     if (!game.settings) throw new Error('GURPS | Game settings not found')
@@ -55,8 +58,13 @@ export function init() {
   })
 }
 
-export { ResourceTrackerEditor } from './resource-tracker-editor.js'
-export { ResourceTrackerManager } from './resource-tracker-manager.js'
+interface ResourceTrackerModule extends GurpsModule {
+  TemplateManager: typeof ResourceTrackerManager
+  TrackerEditor: typeof ResourceTrackerEditor
+}
 
-// @ts-expect-error
-const _typecheck: GurpsModule = { init }
+export const ResourceTracker: ResourceTrackerModule = {
+  init,
+  TemplateManager: ResourceTrackerManager,
+  TrackerEditor: ResourceTrackerEditor,
+}

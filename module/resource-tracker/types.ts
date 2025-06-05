@@ -18,7 +18,7 @@ export type ResourceTrackerThreshold = {
   color: string
 }
 
-export type ResourceTracker = {
+export type TrackerInstance = {
   name: string
   alias: string
   pdf: string
@@ -32,7 +32,7 @@ export type ResourceTracker = {
 }
 
 export type ResourceTrackerTemplate = {
-  tracker: ResourceTracker
+  tracker: TrackerInstance
   initialValue: string
   slot: boolean
 }
