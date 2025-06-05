@@ -1,11 +1,13 @@
+import { GurpsModule } from 'module/gurps-module.js'
 import { GurpsSidebar } from './sidebar.js'
 
-export function init() {
+function init() {
   console.log('GURPS | Initializing GURPS UI module.')
   Hooks.once('init', () => {
     CONFIG.ui.sidebar = GurpsSidebar
   })
 }
 
-// @ts-expect-error
-const _typecheck: GurpsModule = { init }
+export const UI: GurpsModule = {
+  init,
+}

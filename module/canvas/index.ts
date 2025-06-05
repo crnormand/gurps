@@ -1,8 +1,8 @@
-import { GurpsModule } from 'module/types.js'
+import { GurpsModule } from 'module/gurps-module.js'
 import { GurpsRulerV12 } from './ruler-12.js'
 import { GurpsRuler } from './ruler.js'
 
-export function init() {
+function init() {
   Hooks.once('init', () => {
     console.log('GURPS | Initializing GURPS Canvas Module')
 
@@ -15,5 +15,6 @@ export function init() {
   })
 }
 
-// @ts-expect-error
-const _typecheck: GurpsModule = { init }
+export const Canvas: GurpsModule = {
+  init,
+}

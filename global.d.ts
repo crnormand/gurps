@@ -4,7 +4,7 @@ import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
-export { }
+export {}
 
 declare global {
   var GURPS: any
@@ -23,5 +23,7 @@ declare global {
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.bucket-position': 'left' | 'right'
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.show-confirmation-roll-dialog': boolean
+    'gurps.modify-dice-plus-adds': boolean
   }
 }
