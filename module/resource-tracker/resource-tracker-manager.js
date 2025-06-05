@@ -1,4 +1,5 @@
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
+import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export class ResourceTrackerManager extends FormApplication {
@@ -76,9 +77,6 @@ export class ResourceTrackerManager extends FormApplication {
   static getAllTemplates() {
     const settings = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES)
     const templates = objectToArray(settings || {})
-
-    // For legacy support, convert the slot field to a boolean.
-    templates.forEach(element => (element.slot = ResourceTrackerManager.convertSlotToBoolean(element.slot)))
     return templates
   }
 
@@ -88,7 +86,7 @@ export class ResourceTrackerManager extends FormApplication {
    */
   static getMissingRequiredTemplates(currentTrackers) {
     const newTrackers = []
-    const templates = ResourceTrackerManager.getAllTemplates().filter(t => t.slot)
+    const templates = ResourceTrackerManager.getAllTemplates().filter(t => t.autoapply)
     for (const template of templates) {
       if (!currentTrackers.some(t => t.name === template.tracker.name)) {
         newTrackers.push(template)
@@ -161,8 +159,7 @@ export class ResourceTrackerManager extends FormApplication {
 
     html.find('[name="name"]').click(async ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
-      let data = JSON.stringify(this._templates[index].tracker)
-      let dialog = new ResourceTrackerEditor(JSON.parse(data))
+      let dialog = new ResourceTrackerEditor(JSON.parse(JSON.stringify(this._templates[index].tracker)))
       let defaultClose = dialog.close
 
       let tracker = await new Promise((resolve, reject) => {
@@ -207,10 +204,10 @@ export class ResourceTrackerManager extends FormApplication {
       this.render(true)
     })
 
-    html.find('[name="slot"]').change(ev => {
+    html.find('[name="autoapply"]').change(ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
       let value = ev.currentTarget.checked
-      this._templates[index].slot = value
+      this._templates[index].autoapply = value
       this.render(true)
     })
 

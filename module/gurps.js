@@ -80,7 +80,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
-import { ResourceTracker } from './resourcetracker/index.js'
+import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 

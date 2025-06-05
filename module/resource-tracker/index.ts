@@ -1,8 +1,14 @@
 import { GurpsModule } from 'module/gurps-module.js'
 
+import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
-import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
+import {
+  OLD_SETTING_TEMPLATES,
+  ResourceTrackerTemplate,
+  SETTING_TRACKER_EDITOR,
+  SETTING_TRACKER_TEMPLATES,
+} from './types.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
@@ -16,8 +22,7 @@ function init() {
       scope: 'world',
       config: false,
       type: Object as any,
-      // @ts-expect-error Foundry types do not allow default for Object, but we need it
-      default: ResourceTrackerManager.getDefaultTemplates(),
+      default: ResourceTrackerManager.getDefaultTemplates() as any,
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
 
@@ -35,9 +40,9 @@ function init() {
       scope: 'world',
       config: false,
       type: Object as any,
-      // Copy the old setting to the new one.
+      // Copy the old settings to the new one.
       // TODO Reset to this when the setting is removed: `ResourceTrackerManager.getDefaultTemplates()`
-      default: game.settings.get(GURPS.SYSTEM_NAME, OLD_SETTING_TEMPLATES),
+      default: (await convertOldSettings(game.settings.get(GURPS.SYSTEM_NAME, OLD_SETTING_TEMPLATES))) as any,
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
 
@@ -56,6 +61,27 @@ function init() {
         })
     )
   })
+}
+
+// Migrate old settings to the new setting if present
+async function convertOldSettings(
+  oldTemplates: Record<string, ResourceTrackerTemplate>
+): Promise<Record<string, ResourceTrackerTemplate>> {
+  if (!game.settings) throw new Error('GURPS | Game settings not found')
+
+  let newTemplates: ResourceTrackerTemplate[] = []
+  // Copy each field of oldTemplates to newTemplates, converting "slot" to "autoapply" if needed
+  for (let oldTemplate of objectToArray(oldTemplates)) {
+    let newTemplate: ResourceTrackerTemplate = {
+      tracker: {
+        ...oldTemplate.tracker,
+      },
+      initialValue: oldTemplate.initialValue,
+      autoapply: !!oldTemplate.slot,
+    }
+    newTemplates.push(newTemplate)
+  }
+  return arrayToObject(newTemplates)
 }
 
 interface ResourceTrackerModule extends GurpsModule {

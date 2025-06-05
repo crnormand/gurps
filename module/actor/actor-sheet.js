@@ -1,4 +1,3 @@
-import { ResourceTracker } from 'module/resource-tracker/index.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -7,6 +6,7 @@ import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
@@ -1134,8 +1134,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _editTracker(path) {
     let tracker = foundry.utils.getProperty(this.actor.system, path)
-    let temp = JSON.stringify(tracker)
-    let dialog = new ResourceTracker.TrackerEditor(JSON.parse(temp))
+    let dialog = new ResourceTracker.TrackerEditor(JSON.parse(JSON.stringify(tracker)))
     dialog._updateTracker = async () => {
       let update = {}
       update[`system.${path}`] = dialog._tracker

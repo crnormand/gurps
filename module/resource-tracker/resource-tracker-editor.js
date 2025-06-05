@@ -1,27 +1,7 @@
 export class ResourceTrackerEditor extends Application {
   /**
-   * TODO Should update this to not depend upon actor: read the tracker in the Actor class, and
-   * pass it in as parameter, then return it if edited.
-   * @param {Actor} actor
-   * @param {string} path
-   * @param {*} options
-   */
-  static editForActor(actor, path, options) {
-    let tracker = foundry.utils.getProperty(actor.system, path)
-    let temp = JSON.stringify(tracker)
-    let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)
-    dialog._updateTracker = async () => {
-      let update = {}
-      update[`system.${path}`] = dialog._tracker
-      actor.update(update)
-      dialog.close()
-    }
-    dialog.render(true)
-  }
-
-  /**
    * Create a new Resource Tracker Editor
-   * @param {Tracker} tracker data to update
+   * @param {import('./types.js').TrackerInstance} tracker data to update
    * @param {*} options
    */
   constructor(tracker, isActor, options = {}) {

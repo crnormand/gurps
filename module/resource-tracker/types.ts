@@ -34,5 +34,6 @@ export type TrackerInstance = {
 export type ResourceTrackerTemplate = {
   tracker: TrackerInstance
   initialValue: string
-  slot: boolean
+  slot?: boolean
+  autoapply?: boolean
 }
