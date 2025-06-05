@@ -78,7 +78,7 @@ export class ResourceTrackerManager extends FormApplication {
     const templates = objectToArray(settings || {})
 
     // For legacy support, convert the slot field to a boolean.
-    templates.forEach(element => (element.slot = element.slot !== '' && element.slot !== 'none'))
+    templates.forEach(element => (element.slot = ResourceTrackerManager.convertSlotToBoolean(element.slot)))
     return templates
   }
 
