@@ -84,6 +84,28 @@ async function convertOldSettings(
   return arrayToObject(newTemplates)
 }
 
+/**
+ * @description I suggest creating functions in this interface for any game.settings owned by the module and needed
+ * outside the module.
+ * 
+ * @example
+ * interface ResourceTrackerModule extends GurpsModule {
+ *   TemplateManager: typeof ResourceTrackerManager
+ *   TrackerEditor: typeof ResourceTrackerEditor
+ *   getTrackerTemplates(): ResourceTrackerTemplate[]
+ *}
+ *
+ * export const ResourceTracker: ResourceTrackerModule = {
+ *  init,
+ *  TemplateManager: ResourceTrackerManager,
+ *  TrackerEditor: ResourceTrackerEditor,
+ *  getTrackerTemplates(): ResourceTrackerTemplate[] {
+ *     return game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES)
+ *   }
+ *
+ * // From outside the module use this instead of game.settings.get():
+ * const templates = ResourceTracker.getTrackerTemplates()
+ */
 interface ResourceTrackerModule extends GurpsModule {
   TemplateManager: typeof ResourceTrackerManager
   TrackerEditor: typeof ResourceTrackerEditor
