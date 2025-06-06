@@ -6,12 +6,11 @@ import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
 import MoveModeEditor from './move-mode-editor.js'
-import { ResourceTrackerEditor } from './resource-tracker-editor.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import SplitDREditor from './splitdr-editor.js'
 
 /**
@@ -1085,7 +1084,11 @@ export class GurpsActorSheet extends ActorSheet {
     ev.preventDefault()
 
     let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
-    let templates = ResourceTrackerManager.getAllTemplates()
+
+    // TODO: Refactor -- call a method on ResourceTracker Manager to delete the tracker, or return the template
+    // to apply. This function would simply update the tracker with the new data (whether it was edited
+    // or a template was applied).
+    let templates = ResourceTracker.TemplateManager.getAllTemplates()
     if (!templates || templates.length == 0) templates = null
 
     let selectTracker = async function (html) {
@@ -1099,7 +1102,7 @@ export class GurpsActorSheet extends ActorSheet {
       edit: {
         icon: '<i class="fas fa-edit"></i>',
         label: game.i18n.localize('GURPS.resourceEditTracker'),
-        callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
+        callback: () => this._editTracker(path),
       },
       remove: {
         icon: '<i class="fas fa-trash"></i>',
@@ -1127,6 +1130,18 @@ export class GurpsActorSheet extends ActorSheet {
       { width: 600 }
     )
     d.render(true)
+  }
+
+  async _editTracker(path) {
+    let tracker = foundry.utils.getProperty(this.actor.system, path)
+    let dialog = new ResourceTracker.TrackerEditor(JSON.parse(JSON.stringify(tracker)))
+    dialog._updateTracker = async () => {
+      let update = {}
+      update[`system.${path}`] = dialog._tracker
+      this.actor.update(update)
+      dialog.close()
+    }
+    dialog.render(true)
   }
 
   async _showActiveEffectsListPopup(ev) {

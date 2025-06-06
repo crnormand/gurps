@@ -1,39 +1,19 @@
 export class ResourceTrackerEditor extends Application {
   /**
    * Create a new Resource Tracker Editor
-   * @param {Tracker} tracker data to update
+   * @param {import('./types.js').TrackerInstance} tracker data to update
    * @param {*} options
    */
-  constructor(tracker, isActor, options = {}) {
+  constructor(tracker, options = {}) {
     super(options)
 
     this._tracker = tracker
-    this._isActor = isActor
-  }
-
-  /**
-   *
-   * @param {*} actor
-   * @param {*} path
-   * @param {*} options
-   */
-  static editForActor(actor, path, options) {
-    let tracker = foundry.utils.getProperty(actor.system, path)
-    let temp = JSON.stringify(tracker)
-    let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)
-    dialog._updateTracker = async () => {
-      let update = {}
-      update[`system.${path}`] = dialog._tracker
-      actor.update(update)
-      dialog.close()
-    }
-    dialog.render(true)
   }
 
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/resource-editor-popup.hbs',
+      template: 'systems/gurps/templates/resource-tracker/resource-editor-popup.hbs',
       width: 360,
       height: 'auto',
       popOut: true,
@@ -48,7 +28,6 @@ export class ResourceTrackerEditor extends Application {
   getData(options) {
     const data = super.getData(options)
     data.tracker = this._tracker
-    data.isActor = this._isActor
     return data
   }
 
@@ -97,6 +76,12 @@ export class ResourceTrackerEditor extends Application {
     html.find('[name="damage-tracker"]').click(ev => {
       let element = $(ev.currentTarget)
       this._tracker.isDamageTracker = element.is(':checked')
+      this.render(false)
+    })
+
+    html.find('[name="breakpoints"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.breakpoints = element.is(':checked')
       this.render(false)
     })
 
@@ -176,6 +161,7 @@ export class ResourceTrackerEditor extends Application {
         isDamageType: false,
         initialValue: '',
         thresholds: [],
+        breakpoints: true,
       }
       this.render(false)
     })

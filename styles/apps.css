@@ -1206,6 +1206,10 @@ active-effects-list .section h3 {
   /* min-height: calc(var(--form-field-height) + 1px); */
 }
 
+.resource-editor input[name='autoapply'] {
+  justify-self: center;
+}
+
 .resource-editor .clickable:hover,
 .gga-effects-list .clickable:hover {
   cursor: pointer;
