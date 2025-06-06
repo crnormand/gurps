@@ -1,7 +1,8 @@
+import { GurpsModule } from 'module/gurps-module.js'
 import { GurpsRulerV12 } from './ruler-12.js'
 import { GurpsRuler } from './ruler.js'
 
-export function init() {
+function init() {
   Hooks.once('init', () => {
     console.log('GURPS | Initializing GURPS Canvas Module')
 
@@ -12,4 +13,8 @@ export function init() {
       CONFIG.Canvas.rulerClass = GurpsRulerV12
     }
   })
+}
+
+export const Canvas: GurpsModule = {
+  init,
 }

@@ -78,11 +78,11 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
-import * as Canvas from './canvas/index.js'
-import * as Combat from './combat/index.js'
-import * as Damage from './damage/index.js'
-import * as Token from './token/index.js'
-import * as UI from './ui/index.js'
+import { Canvas } from './canvas/index.js'
+import { Combat } from './combat/index.js'
+import { Damage } from './damage/index.js'
+import { Token } from './token/index.js'
+import { UI } from './ui/index.js'
 
 export let GURPS = undefined
 
@@ -109,11 +109,9 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  Canvas.init() // Initialize the Canvas module
-  Combat.init() // Initialize the Combat module
-  Damage.init() // Initialize the Damage module
-  Token.init() // Initialize the Token module
-  UI.init() // Initialize the UI module
+  /** @type GurpsModule[] */
+  GURPS.modules = [Canvas, Combat, Damage, Token, UI]
+  GURPS.modules.forEach(mod => mod.init())
 
   AddChatHooks()
   JQueryHelpers()
@@ -122,13 +120,13 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  //CONFIG.debug.hooks = true;
+  // CONFIG.debug.hooks = true;
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
 
   // Use the target d6 icon for rolltable entries
-  //CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
+  // CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
   CONFIG.time.roundTime = 1
 
   GURPS.StatusEffect = new StatusEffect()
@@ -2217,6 +2215,9 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
+    GURPS.modules.forEach(mod => {
+      if (mod.migrate) mod.migrate()
+    })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.
