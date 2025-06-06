@@ -4,11 +4,10 @@ export class ResourceTrackerEditor extends Application {
    * @param {import('./types.js').TrackerInstance} tracker data to update
    * @param {*} options
    */
-  constructor(tracker, isActor, options = {}) {
+  constructor(tracker, options = {}) {
     super(options)
 
     this._tracker = tracker
-    this._isActor = isActor
   }
 
   /** @override */
@@ -29,7 +28,6 @@ export class ResourceTrackerEditor extends Application {
   getData(options) {
     const data = super.getData(options)
     data.tracker = this._tracker
-    data.isActor = this._isActor
     return data
   }
 
