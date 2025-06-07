@@ -27,7 +27,6 @@ import {
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
-import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -81,6 +80,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
+import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 
@@ -89,6 +89,7 @@ export let GURPS = undefined
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
+  GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
@@ -110,7 +111,7 @@ if (!globalThis.GURPS) {
   }
 
   /** @type GurpsModule[] */
-  GURPS.modules = [Canvas, Combat, Damage, Token, UI]
+  GURPS.modules = [Canvas, Combat, Damage, ResourceTracker, Token, UI]
   GURPS.modules.forEach(mod => mod.init())
 
   AddChatHooks()
@@ -2194,7 +2195,6 @@ if (!globalThis.GURPS) {
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
 
-    ResourceTrackerManager.initSettings()
     HitLocation.ready()
 
     // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
@@ -2239,21 +2239,6 @@ if (!globalThis.GURPS) {
     }
 
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
-
-    // get all aliases defined in the resource tracker templates and register them as damage types
-    let resourceTrackers = ResourceTrackerManager.getAllTemplates()
-      .filter(it => !!it.tracker.isDamageType)
-      .filter(it => !!it.tracker.alias)
-      .map(it => it.tracker)
-    resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
-    resourceTrackers.forEach(
-      it =>
-        (GURPS.DamageTables.woundModifiers[it.alias] = {
-          multiplier: 1,
-          label: it.name,
-          resource: true,
-        })
-    )
 
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return
