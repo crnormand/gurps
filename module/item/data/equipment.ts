@@ -38,7 +38,6 @@ type EquipmentSchema = CommonItemDataSchema & typeof equipmentSchema
 /* ---------------------------------------- */
 
 const equipmentComponentSchema = {
-  name: new fields.StringField({ required: true, nullable: false }),
   count: new fields.NumberField({ required: true, nullable: false }),
   weight: new fields.NumberField({ required: true, nullable: false }),
   cost: new fields.NumberField({ required: true, nullable: false }),

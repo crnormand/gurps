@@ -67,6 +67,7 @@ abstract class ItemComponent<Schema extends ItemComponentSchema = ItemComponentS
 /* ---------------------------------------- */
 
 const itemComponentSchema = {
+  name: new fields.StringField({ required: true, nullable: false }),
   notes: new fields.StringField({ required: true, nullable: false }),
   pageref: new fields.StringField({ required: true, nullable: false }),
   // Change from previous schema. Set of IDs
@@ -82,6 +83,7 @@ const itemComponentSchema = {
   duringotf: new fields.StringField({ required: true, nullable: false }),
   passotf: new fields.StringField({ required: true, nullable: false }),
   failotf: new fields.StringField({ required: true, nullable: false }),
+  consumeAction: new fields.BooleanField({ required: true, nullable: false }),
 }
 
 type ItemComponentSchema = typeof itemComponentSchema
