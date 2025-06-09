@@ -22,7 +22,7 @@ async function importGCS() {
           } else {
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            const char = GcsCharacter.fromImportData(text)
+            const char = GcsCharacter.fromImportData(JSON.parse(text))
             console.log(char)
           }
         },

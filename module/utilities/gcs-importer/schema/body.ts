@@ -7,14 +7,13 @@ class GcsHitLocation extends GcsElement<GcsHitLocationData> {
   }
 
   /* ---------------------------------------- */
-
-  protected static override _importField(data: any, field: fields.DataField.Any) {
-    if (field.name === 'sub_table') {
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
+    if (name === 'sub_table') {
       return data?.map((subTableData: any) => {
-        return GcsHitLocation.fromImportData(subTableData, GcsHitLocation.schema.fields)
+        return GcsHitLocation.importSchema(subTableData, GcsHitLocation.defineSchema())
       })
     }
-    return super._importField(data, field)
+    return super._importField(data, field, name)
   }
 }
 
@@ -25,12 +24,12 @@ const hitLocationData = () => {
     id: new fields.StringField({ required: true, nullable: false }),
     choice_name: new fields.StringField({ required: true, nullable: false }),
     table_name: new fields.StringField({ required: true, nullable: false }),
-    slots: new fields.NumberField({ required: true, nullable: false }),
-    hit_penalty: new fields.NumberField({ required: true, nullable: false }),
-    dr_bonus: new fields.NumberField({ required: true, nullable: false }),
-    description: new fields.StringField({ required: true, nullable: false }),
-    notes: new fields.StringField({ required: true, nullable: false }),
-    sub_table: new fields.ObjectField(),
+    slots: new fields.NumberField({ required: true, nullable: true }),
+    hit_penalty: new fields.NumberField({ required: true, nullable: true }),
+    dr_bonus: new fields.NumberField({ required: true, nullable: true }),
+    description: new fields.StringField({ required: true, nullable: true }),
+    notes: new fields.StringField({ required: true, nullable: true }),
+    sub_table: new fields.ObjectField({ required: true, nullable: true }),
   }
 }
 
@@ -45,13 +44,13 @@ class GcsBody extends GcsElement<GcsBodyData> {
 
   /* ---------------------------------------- */
 
-  protected static override _importField(data: any, field: fields.DataField.Any) {
-    if (field.name === 'locations') {
-      return data[field.name].map((locationData: any) => {
-        return GcsHitLocation.fromImportData(locationData, GcsHitLocation.schema.fields)
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
+    if (name === 'locations') {
+      return data.map((locationData: any) => {
+        return GcsHitLocation.importSchema(locationData, GcsHitLocation.defineSchema())
       })
     }
-    return super._importField(data, field)
+    return super._importField(data, field, name)
   }
 }
 
@@ -61,7 +60,7 @@ const bodyData = () => {
   return {
     name: new fields.StringField({ required: true, nullable: false }),
     roll: new fields.StringField({ required: true, nullable: false }),
-    locations: new fields.ArrayField(new fields.ObjectField(), { required: true, nullable: false }),
+    locations: new fields.ArrayField(new fields.EmbeddedDataField(GcsHitLocation), { required: true, nullable: false }),
   }
 }
 
