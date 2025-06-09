@@ -1,8 +1,8 @@
 import fields = foundry.data.fields
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
-import { GcsSkillDefault, SkillDefaultData } from './skill-default.js'
+import { GcsSkillDefault } from './skill-default.js'
 import { GcsWeapon } from './weapon.js'
-import DataModel = foundry.abstract.DataModel
+import { AnyObject } from 'fvtt-types/utils'
 
 class GcsSkill extends GcsItem<SkillData> {
   static override metadata = {
@@ -21,13 +21,13 @@ class GcsSkill extends GcsItem<SkillData> {
 
   /* ---------------------------------------- */
 
-  protected static override _importField(data: any, field: fields.DataField.Any): any {
-    if (field.name === 'defaults') {
-      return data[field.name].map((defaultData: Partial<DataModel.CreateData<SkillDefaultData>>[]) => {
-        return GcsSkillDefault.fromImportData(defaultData as any, GcsSkillDefault.schema.fields)
-      })
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string): any {
+    if (name === 'defaults') {
+      return data?.map((defaultData: AnyObject) =>
+        GcsSkillDefault.fromImportData(defaultData as any, GcsSkillDefault.defineSchema())
+      )
     }
-    return super._importField(data, field)
+    return super._importField(data, field, name)
   }
 }
 
@@ -89,10 +89,10 @@ const skillData = () => {
       {
         unsatisfied_reason: new fields.StringField({ required: true, nullable: true }),
         resolved_notes: new fields.StringField({ required: true, nullable: true }),
-        level: new fields.NumberField({ required: true, nullable: false }),
+        level: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
         rsl: new fields.StringField({ required: true, nullable: false }),
       },
-      { required: true, nullable: true }
+      { required: false, nullable: true }
     ),
     // END: calc
   }
