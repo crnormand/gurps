@@ -83,6 +83,7 @@ import { Damage } from './damage/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
+import { importGCS } from './utilities/gcs-importer/parser.js'
 
 export let GURPS = undefined
 
@@ -93,7 +94,8 @@ if (!globalThis.GURPS) {
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
-  GURPS.importTestXML = importTestXML
+  // GURPS.importTextXML = importTestXML
+  GURPS.importGCS = importGCS
   GURPS.GCA5 = GCA5 // Expose the GCA5 parser
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
