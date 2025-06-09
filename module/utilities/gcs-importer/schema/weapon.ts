@@ -10,13 +10,13 @@ class GcsWeapon extends GcsElement<WeaponData> {
 
   /* ---------------------------------------- */
 
-  protected static override _importField(data: any, field: fields.DataField.Any): any {
-    if (field.name === 'defaults') {
-      return data?.map((defaultData: AnyObject) => {
-        return GcsSkillDefault.fromImportData(defaultData as any, GcsSkillDefault.schema.fields)
-      })
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string): any {
+    if (name === 'defaults') {
+      return data?.map((defaultData: AnyObject) =>
+        GcsSkillDefault.fromImportData(defaultData as any, GcsSkillDefault.defineSchema())
+      )
     }
-    return super._importField(data, field)
+    return super._importField(data, field, name)
   }
 }
 
