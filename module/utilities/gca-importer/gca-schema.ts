@@ -120,7 +120,7 @@ class GCAGroupingOptions extends GCASchemaBlock<GCAGroupingOptionsSchema> {
   static fromXML(xml: HTMLElement): GCAGroupingOptions {
     const data: Partial<DataModel.CreateData<GCAGroupingOptionsSchema>> = this._primitiveFieldsFromXML(
       xml,
-      this.schema.fields
+      this.defineSchema()
     )
 
     return new this(data)

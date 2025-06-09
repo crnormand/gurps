@@ -1,3 +1,4 @@
+// @ts-nocheck: Deprecated file for v12
 import { MaybePromise } from 'fvtt-types/utils'
 
 class GurpsTokenHUD extends TokenHUD {

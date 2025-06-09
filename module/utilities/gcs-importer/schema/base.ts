@@ -16,23 +16,23 @@ type SourcedIdSchema = ReturnType<typeof sourcedIdSchema>
 class GcsElement<Schema extends fields.DataSchema> extends DataModel<Schema> {
   static fromImportData<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
-    schema: Schema = this.schema.fields
+    schema: Schema = this.defineSchema() as Schema
   ): GcsElement<Schema> {
-    const createData: DataModel.CreateData<Schema> = this._importSchema(importData, schema)
+    const createData: DataModel.CreateData<Schema> = this.importSchema(importData, schema)
 
     return new this(createData as DataModel.CreateData<Schema>)
   }
 
   /* ---------------------------------------- */
 
-  protected static _importSchema<Schema extends fields.DataSchema>(
+  static importSchema<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
-    schema: Schema
+    schema: Schema = this.defineSchema() as Schema
   ): DataModel.CreateData<Schema> {
     const data: Partial<DataModel.CreateData<Schema>> = {}
 
     for (const [key, field] of Object.entries(schema)) {
-      ;(data as AnyMutableObject)[key] = this._importField(importData[key], field)
+      ;(data as AnyMutableObject)[key] = this._importField(importData[key], field, key)
     }
 
     return data as DataModel.CreateData<Schema>
@@ -40,20 +40,16 @@ class GcsElement<Schema extends fields.DataSchema> extends DataModel<Schema> {
 
   /* ---------------------------------------- */
 
-  protected static _importField(data: any, field: fields.DataField.Any): any {
+  protected static _importField(data: any, field: fields.DataField.Any, _name: string): any {
     switch (field.constructor) {
       case fields.StringField:
       case fields.NumberField:
       case fields.BooleanField:
       case fields.ObjectField:
         return data ?? field.getInitialValue()
-      case fields.SchemaField:
-        return data === undefined || data === null
-          ? null
-          : Object.keys((field as fields.SchemaField<any>).fields).reduce((obj: any, key) => {
-              obj[key] = this._importField(data[key], (field as unknown as fields.SchemaField<any>).fields[key])
-              return obj
-            }, {})
+      case fields.SchemaField: {
+        return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
+      }
     }
   }
 }
@@ -73,47 +69,41 @@ class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
 
   /* ---------------------------------------- */
 
-  protected static override _importField(data: any, field: fields.DataField.Any): any {
-    if (this.metadata.childClass !== null && field.name === 'children') {
-      return this._importChildren(data ?? null)
-    }
-    if (this.metadata.modifierClass !== null && field.name === 'modifiers') {
-      return this._importModifiers(data ?? null)
-    }
-    return super._importField(data, field)
+  get metadata(): GcsItemMetaData {
+    return (this.constructor as typeof GcsItem).metadata
   }
 
   /* ---------------------------------------- */
 
-  protected static _importChildren<Schema extends fields.DataSchema>(
-    data: Partial<DataModel.CreateData<Schema>>[] | null
-  ): GcsItem<any>[] {
-    if (data === null || data === undefined) return []
-
-    const childClass: null | typeof GcsItem<any> = this.metadata.childClass
-    if (childClass === null) return []
-
-    return data.map(child => {
-      return childClass?.fromImportData(child as any, childClass.schema.fields)
-    })
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string): any {
+    switch (name) {
+      case 'children':
+        if (this.metadata.childClass === null) return null
+        return data?.map((childData: any) => this.metadata.childClass?.importSchema(childData))
+      case 'modifiers':
+        if (this.metadata.modifierClass === null) return null
+        return data?.map((modifierData: any) => this.metadata.modifierClass?.importSchema(modifierData))
+      default:
+        return super._importField(data, field, name)
+    }
   }
 
   /* ---------------------------------------- */
 
-  protected static _importModifiers<Schema extends fields.DataSchema>(
-    data: Partial<DataModel.CreateData<Schema>>[] | null
-  ): GcsItem<any>[] {
-    if (data === null || data === undefined) return []
-
-    const modifierClass: null | typeof GcsItem<any> = this.metadata.modifierClass
-    if (modifierClass === null) return []
-
-    return data.map(modifier => {
-      return modifierClass?.fromImportData(modifier as any, modifierClass.schema.fields)
-    })
+  get childItems(): GcsItem<any>[] {
+    return ((this as any).children ?? []).map((childData: any) => this.metadata.childClass?.fromImportData(childData))
   }
+
+  /* ---------------------------------------- */
+
+  get modifierItems(): GcsItem<any>[] {
+    return ((this as any).modifiers ?? []).map((modifierData: any) =>
+      this.metadata.modifierClass?.fromImportData(modifierData)
+    )
+  }
+
+  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
-
 export { GcsElement, GcsItem, sourcedIdSchema, type SourcedIdSchema }

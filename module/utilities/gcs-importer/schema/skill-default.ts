@@ -17,9 +17,9 @@ const skillDefaultData = () => {
     name: new fields.StringField({ required: true, nullable: true }),
     specialization: new fields.StringField({ required: true, nullable: true }),
     modifier: new fields.NumberField({ required: true, nullable: true }),
-    level: new fields.NumberField({ required: true, nullable: false }),
-    adjusted_level: new fields.NumberField({ required: true, nullable: false }),
-    points: new fields.NumberField({ required: true, nullable: false }),
+    level: new fields.NumberField({ required: true, nullable: true }),
+    adjusted_level: new fields.NumberField({ required: true, nullable: true }),
+    points: new fields.NumberField({ required: true, nullable: true }),
     // STUB: when_tl is not yet supported
     when_tl: new fields.ObjectField({ required: true, nullable: true }),
   }

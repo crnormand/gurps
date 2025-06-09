@@ -64,7 +64,6 @@ function registerTokenHUD(): void {
     }
   }
 
-  // @ts-expect-error: waiting for types to catch up
   CONFIG.Token.hudClass = GurpsTokenHUDV2
 }
 export { registerTokenHUD }

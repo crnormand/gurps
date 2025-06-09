@@ -1,10 +1,40 @@
 import { GcsBody } from './body.js'
 import fields = foundry.data.fields
 import { GcsElement } from './base.js'
+import { GcsTrait } from './trait.js'
+import { GcsEquipment } from './equipment.js'
+import { GcsNote } from './note.js'
+import { GcsSkill } from './skill.js'
+import { GcsSpell } from './spell.js'
+import { GcsAttribute } from './attribute.js'
 
 class GcsCharacter extends GcsElement<GcsCharacterData> {
   static override defineSchema(): GcsCharacterData {
     return characterData()
+  }
+
+  /* ---------------------------------------- */
+
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
+    switch (name) {
+      case 'body_type':
+        return GcsBody.importSchema(data, GcsBody.defineSchema())
+      case 'attributes':
+        return data?.map((attributeData: any) => GcsAttribute.importSchema(attributeData))
+      case 'traits':
+        return data?.map((traitData: any) => GcsTrait.importSchema(traitData))
+      case 'skills':
+        return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
+      case 'spells':
+        return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
+      case 'equipment':
+      case 'other_equipment':
+        return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
+      case 'notes':
+        return data?.map((noteData: any) => GcsNote.importSchema(noteData))
+      default:
+        return super._importField(data, field, name)
+    }
   }
 }
 
@@ -46,8 +76,8 @@ const characterData = () => {
         // STUB: settings.block_layout is not yet supported
         block_layout: new fields.ObjectField({ required: true, nullable: false }),
         // STUB: settings.attributes is not yet supported
-        attributes: new fields.ObjectField({ required: true, nullable: false }),
         body_type: new fields.EmbeddedDataField(GcsBody, { required: true, nullable: false }),
+        attributes: new fields.ObjectField({ required: true, nullable: false }),
         damage_progression: new fields.StringField({ required: true, nullable: false }),
         default_length_units: new fields.StringField({ required: true, nullable: false }),
         default_weight_units: new fields.StringField({ required: true, nullable: false }),
@@ -71,6 +101,37 @@ const characterData = () => {
       },
       { required: true, nullable: false }
     ),
+    attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttribute, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    traits: new fields.ArrayField(new fields.EmbeddedDataField(GcsTrait, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    skills: new fields.ArrayField(new fields.EmbeddedDataField(GcsSkill, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    spells: new fields.ArrayField(new fields.EmbeddedDataField(GcsSpell, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    equipment: new fields.ArrayField(new fields.EmbeddedDataField(GcsEquipment, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    other_equipment: new fields.ArrayField(
+      new fields.EmbeddedDataField(GcsEquipment, { required: true, nullable: false }),
+      { required: true, nullable: true }
+    ),
+    notes: new fields.ArrayField(new fields.EmbeddedDataField(GcsNote, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    created_date: new fields.StringField({ required: true, nullable: false }),
+    modified_date: new fields.StringField({ required: true, nullable: false }),
+    third_party: new fields.ObjectField({ required: true, nullable: true }),
   }
 }
 
