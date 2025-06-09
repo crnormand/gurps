@@ -999,6 +999,11 @@
     "parrybonus": "Parry bonus",
     "pass": "Pass",
     "pasteStatBlockHere": "Paste your stat block here",
+    "pdf": {
+      "settingsButton": "PDF Settings",
+      "settingsHint": "Configure how PDFs are handled.",
+      "settingsName": "PDFs"
+    },
     "pdfCode": "PDF Book Code",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
@@ -1229,6 +1234,7 @@
     "settingHintStatusReeling": "If checked, Reeling (1/2 move/dodge) and Tired (1/2 move/dodge/ST) will automatically be turned on when the character drops below 1/3 HP and 1/3 FP.",
     "settingHintStatusWhisper": "If checked, Status Effects messages (Shock, Major Wound, etc.) will be sent to the target's owner as a Whisper. Otherwise they will be sent as a Out of Character (OOC) message to everyone.",
     "settingHintTokenOverrideRefresh": "If \"on\", try to draw tokens to properly fit the hex grid. Overrides Foundry drawing functionality -- turn this off if there's any odd Foundry drawing behavior. Requires reloading the world.",
+    "settingHintTokenToolsShowEffectMods": "If checked, the Effect Modifier Popup will be shown.",
     "settingHintUseEquipped": "If checked, ONLY 'Equipped' items will be included in the weight calculation. If unchecked, all items in the Equipment list are included in the weight calculation. Uncheck, and the players can use the 'Equipped' flag to indicate they have dropped the item.",
     "settingHintUseFoundryItems": "If checked, the system will create Foundry Items for player inventory, features, skills and spells when importing character sheets. When you import the character sheet from GCA/GCS for the first time, the system will create each item trying to preserve current player data info on actor sheet, including name, image, count, uses and notes. This can be a very long operation, especially for GCS sheets.",
     "settingHintUseMaxActions": "Enable to let system check, for each selected token, if player is using more actions than allowed per turn. All Combatants = system will check only the tokens in combat tracker; All Tokens = system will check for all tokens in the scene.",
@@ -1295,6 +1301,7 @@
     "settingStatusReeling": "Status Effects: Auto Reeling and Tired",
     "settingStatusWhisper": "Status Effects: Whisper",
     "settingTokenOverrideRefresh": "Override Token scaling",
+    "settingTokenToolsShowEffectMods": "Show Effect Modifier Popup",
     "settingUseEquipped": "Actor: Weight based on 'Equipped'",
     "settingUseFoundryItems": "Use Foundry Items for Player Data",
     "settingUseMaxActions": "Use Max Actions Check",

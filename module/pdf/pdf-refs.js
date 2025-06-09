@@ -1,5 +1,5 @@
-import * as Settings from '../lib/miscellaneous-settings.js'
-import { PDFViewerSheet } from './pdf/sheet.js'
+import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.js'
+import { GurpsPDFSheet, GurpsPDFSheetV1 } from './sheet.js'
 
 export const SJGProductMappings = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
@@ -65,10 +65,6 @@ export const SJGProductMappings = {
   'DFRPG:E': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
 }
 
-// Convert GCS page refs into PDFoundry book & page. Special handling for refs like "PU8:12" or "DFRPG:A12"
-/**
- * @param {JQuery.ClickEvent} event
- */
 export function handleOnPdf(event) {
   event.preventDefault()
   event.stopPropagation()
@@ -76,21 +72,12 @@ export function handleOnPdf(event) {
   handlePdf(pdf)
 }
 
-/**
- * @param {string} links
- */
 export function handlePdf(links) {
-  // // @ts-ignore
-  // if (!ui.PDFoundry) {
-  // 	ui.notifications?.warn('PDFoundry must be installed and configured to use links.')
-  // 	return
-  // }
-
   // Just in case we get sent multiple links separated by commas, we will open them all
   // or just the first found, depending on SETTING_PDF_OPEN_FIRST
   let success = false
   for (let link of links.split(',')) {
-    if (!!success && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PDF_OPEN_FIRST)) continue
+    if (!!success && isOpenFirstPDFSetting()) continue
     let t = link.trim()
     let i = t.indexOf(':')
     let book = ''
@@ -113,7 +100,7 @@ export function handlePdf(links) {
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
     }
     // Special case for Separate Basic Set PDFs
-    let setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
+    let setting = getBasicSetPDFSetting()
     if (book === 'B') {
       if (page > 336)
         if (setting === 'Separate') {
@@ -135,7 +122,11 @@ export function handlePdf(links) {
     let journalPage = null
     if (pdfPages.length) journalPage = pdfPages.find(e => e.system.code === book)
     if (journalPage) {
-      const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
+      const viewer =
+        game.release.generation >= 13
+          ? new GurpsPDFSheet({ document: journalPage, pageNumber: page, mode: 'view' })
+          : new GurpsPDFSheetV1(journalPage, { pageNumber: page, mode: 'view' })
+
       viewer.render(true)
       success = true
     } else {
