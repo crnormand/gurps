@@ -40,7 +40,7 @@ const equipmentData = () => {
     }),
     rated_strength: new fields.NumberField({ required: true, nullable: true }),
     quantity: new fields.NumberField({ required: true, nullable: true }),
-    level: new fields.NumberField({ required: true, nullable: false }),
+    level: new fields.NumberField({ required: true, nullable: true }),
     uses: new fields.NumberField({ required: true, nullable: true }),
     equipped: new fields.BooleanField({ required: true, nullable: true }),
     // END: EquipmentEditData
@@ -68,7 +68,7 @@ const equipmentData = () => {
     // START: calc
     calc: new fields.SchemaField(
       {
-        value: new fields.NumberField({ required: true, nullable: false }),
+        value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
         extended_value: new fields.NumberField({ required: true, nullable: false }),
         weight: new fields.StringField({ required: true, nullable: false }),
         extended_weight: new fields.StringField({ required: true, nullable: false }),
@@ -76,7 +76,7 @@ const equipmentData = () => {
         resolved_notes: new fields.StringField({ required: true, nullable: true }),
         unsatisfied_reason: new fields.StringField({ required: true, nullable: true }),
       },
-      { required: true, nullable: true }
+      { required: false, nullable: true }
     ),
     // END: calc
   }
