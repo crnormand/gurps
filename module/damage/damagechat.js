@@ -433,7 +433,8 @@ export default class DamageChat {
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
-    ChatMessage.create(messageData)
+
+    ChatMessage.create(messageData, { rollMode: game.settings.get('core', 'rollMode') })
   }
 
   static async _calculateAndSelectTargets(canvas, dropData) {
