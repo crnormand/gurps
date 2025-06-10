@@ -193,6 +193,17 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     return new Length({ value: feet * 12 + inches, unit: Length.Unit.FeetAndInches })
   }
 
+  /* ---------------------------------------- */
+
+  static unitFromString(text: string): LengthUnit {
+    for (const [unit, labels] of Object.entries(Length.UNIT_LABELS)) {
+      if (labels.some(label => text.endsWith(label))) return unit as LengthUnit
+    }
+    return LengthUnit.Yard // Default to Inch if no unit is found
+  }
+
+  /* ---------------------------------------- */
+
   static objectToString(data: { value: number; unit: LengthUnit }): string {
     if (data.unit === Length.Unit.FeetAndInches) {
       const feet = Math.floor(data.value / 12)

@@ -5,19 +5,21 @@ import { Length, LengthUnit } from '../data/common/index.js'
 export class GurpsRulerV12 extends Ruler {
   override _getSegmentLabel(segment: Ruler.PartialSegmentForLabelling) {
     const totalDistance = this.totalDistance
-    const units = canvas?.scene?.grid.units ?? Length.Unit.Yard
+    const gridUnits = canvas?.scene?.grid.units ?? ''
+    const units = Length.unitFromString(gridUnits ?? Length.Unit.Yard)
     let dist = (d: number, u: string) => {
       return `${Math.round(d * 100) / 100} ${u}`
     }
     const length = Length.from(totalDistance, units as unknown as LengthUnit, true)
     const yards = length.to(Length.Unit.Yard)
-    let label = length.toString()
+    let label = dist(length.value, gridUnits)
     let mod = this.yardsToRangePenalty(yards.value)
     GURPS.ModifierBucket.setTempRangeMod(mod)
     if (segment.last) {
-      let total = `${dist(totalDistance, units)}`
+      let total = dist(totalDistance, gridUnits)
       if (total != label) label += ` [${total}]`
     }
+
     return label + ` (${mod})`
   }
 

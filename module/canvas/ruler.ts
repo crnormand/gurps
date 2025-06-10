@@ -22,7 +22,7 @@ class GurpsRuler extends Ruler {
     const context = super._getWaypointLabelContext(waypoint, state)
     if (context === undefined) return context
     if (waypoint.next === null) {
-      const units = canvas?.scene?.grid.units ?? Length.Unit.Yard
+      const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
       const yards = Length.from(waypoint.measurement.distance, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
       this.distanceModifier = this.yardsToRangePenalty(yards)
 
