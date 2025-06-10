@@ -1,5 +1,5 @@
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.js'
-import { GurpsPDFSheet, GurpsPDFSheetV1 } from './sheet.js'
+import { createGurpsPDFSheetViewer } from './sheet.js'
 
 export const SJGProductMappings = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
@@ -122,11 +122,7 @@ export function handlePdf(links) {
     let journalPage = null
     if (pdfPages.length) journalPage = pdfPages.find(e => e.system.code === book)
     if (journalPage) {
-      const viewer =
-        game.release.generation >= 13
-          ? new GurpsPDFSheet({ document: journalPage, pageNumber: page, mode: 'view' })
-          : new GurpsPDFSheetV1(journalPage, { pageNumber: page, mode: 'view' })
-
+      const viewer = createGurpsPDFSheetViewer(journalPage, page)
       viewer.render(true)
       success = true
     } else {

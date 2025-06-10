@@ -1217,7 +1217,7 @@
     "settingHintManeuverVisibility": "Détermine qui peut voir les icônes de manoeuvre d'un token.",
     "settingHintModifyDicePlusAdds": "Si coché, le système utilisera la règle optionnelle 'Modifier les Dés + Ajouts' lorsque vous ajouterez des modificateurs de dégâts, comme indiqué dans B269.",
     "settingHintMookGenerator": "Edition des valeurs par défaut du Générateur de Mook",
-    "settingHintPDFOpenFirst": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs références de page sont indiquées. Si décoché, le système ouvrira tous les PDF trouvés.",
+    "settingHintPDFOpenFirst": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs PDF sont saisis. Si décoché, le système ouvrira tous les PDF saisis.",
     "settingHintPlayerBlindRoll": "Si non coché, maintenir la touche MAJ quand vous faites un jet en fera un jet Personnel (Seulement vous pouvez le voir, peu importe qui vous êtes). Si coché, quand les joueurs maintiennent la touche MAJ, cela fera un jet à l'Aveugle à la place.(GMs still get a Self roll).",
     "settingHintPlayerChatPrivate": "Si coché, la plupart des commandes du chat(e.g. /hp, /fp, /qty, etc.) seront affichées comme message privé au joueur (au lieu d'un message hors personnage). Si vous faites confiance à vos personnages, et n'aimez pas voir le chat rempli par leurs commandes, activez-le.",
     "settingHintQtyItems": "Si coché, une petite icône apparaîtra après l'équipement où QTE/compte sera sauvegardé pendant les imports",

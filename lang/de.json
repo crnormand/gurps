@@ -1217,7 +1217,7 @@
     "settingHintManeuverVisibility": "Legt fest, wer das Manöversymbol eines Tokens sehen kann.",
     "settingHintModifyDicePlusAdds": "Wenn aktiviert, wird das System die optionale Regel 'Würfel + Modifikatoren ändern' verwenden, wenn Sie Eimermodifikatoren für Schadenswürfe hinzufügen, gemäß B269.",
     "settingHintMookGenerator": "Bearbeite die Standardwerte des Mook Generators",
-    "settingHintPDFOpenFirst": "Wenn diese Option aktiviert ist, wird das System das erste gefundene PDF öffnen, wenn mehrere Seitenreferenzen angegeben sind. Wenn diese Option deaktiviert ist, wird das System alle gefundenen PDFs öffnen.",
+    "settingHintPDFOpenFirst": "Wenn diese Option aktiviert ist, öffnet das System das erste gefundene PDF, wenn mehrere PDFs eingegeben wurden. Wenn sie deaktiviert ist, öffnet das System alle eingegebenen PDFs.",
     "settingHintPlayerBlindRoll": "Wenn diese Option nicht aktiviert ist, wird bei einem Wurf mit gedrückter UMSCHALT-Taste ein Selbst-Wurf durchgeführt (nur du kannst ihn sehen, egal wer du bist). Wenn das Häkchen gesetzt ist, machen Spieler, die die SHIFT-Taste gedrückt halten, stattdessen einen verdeckten Wurf (SL machen immer noch einen Selbst-Wurf).",
     "settingHintPlayerChatPrivate": "Wenn diese Option aktiviert ist, werden die meisten Chat-Befehle (z.B. /hp, /fp, /qty, etc.) als Flüstern für den Spieler angezeigt (anstelle einer 'Out of Character'-Nachricht). Wenn du deinen Spielern vertraust und nicht möchtest, dass sich der Chat mit ihren Chat-Befehlen füllt, aktiviere diese Option.",
     "settingHintQtyItems": "Wenn diese Option aktiviert ist, wird ein kleines Symbol hinter von Benutzer-erstellten (nicht importierten) Gegenständen und vor vom Benutzer-erstellten Notizen angezeigt.",

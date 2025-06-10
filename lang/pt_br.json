@@ -1217,7 +1217,7 @@
     "settingHintManeuverVisibility": "Determina quem pode ver o ícone de manobra de uma miniatura.",
     "settingHintModifyDicePlusAdds": "Se marcado, o sistema usará a regra opcional 'Modificar Dados + Adicionar' quando você adicionar modificadores de dano, conforme B269.",
     "settingHintMookGenerator": "Editar os valores iniciais do Gerador de Mook",
-    "settingHintPDFOpenFirst": "Se marcado, o sistema vai abrir o primeiro PDF encontrado quando múltiplas referências de página forem informadas. Se desmarcado, o sistema vai abrir todos os PDFs encontrados.",
+    "settingHintPDFOpenFirst": "Se marcado, o sistema vai abrir o primeiro PDF encontrado quando múltiplos PDFs forem informados. Se desmarcado, o sistema vai abrir todos os PDFs informados.",
     "settingHintPlayerBlindRoll": "Se não estiver marcado, segurar a tecla SHIFT quando for fazer uma rolagem de dados resultará numa rolagem Oculta (só você pode ver, não importa quem você seja). Se marcado, quando os jogadores segurarem a tecla SHIFT eles farão uma Rolagem às Cegas (O MJ vê como uma Rolagem Oculta).",
     "settingHintPlayerChatPrivate": "Se marcado, a maioria dos comandos de chat (ex.: /hp, /fp, /qty, etc.) serão exibidas como sussurros para o jogador (ao invés de uma mensagem pública). Se você confia nos seus jogadores e não gosta de ver o chat repleto de comandos de chat, desative isto.",
     "settingHintQtyItems": "Se marcado, um pequeno ícone vai aparecer na frente de equipamento cuja QTD/Contagem será mantida durante importações",
