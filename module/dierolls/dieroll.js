@@ -657,7 +657,7 @@ async function _doRoll({
     messageData.blind = true
   }
 
-  creatOptions.rollMode = game.settings.get('core', 'rollMode')
+  creatOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
 
   messageData.sound = CONFIG.sounds.dice
   ChatMessage.create(messageData, creatOptions)
