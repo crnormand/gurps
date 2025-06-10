@@ -83,6 +83,7 @@ import { Damage } from './damage/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
+import { Length } from './data/common/length.js'
 
 export let GURPS = undefined
 
@@ -93,6 +94,7 @@ if (!globalThis.GURPS) {
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
+  GURPS.Length = Length
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
