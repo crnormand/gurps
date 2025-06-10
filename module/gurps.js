@@ -1279,6 +1279,7 @@ if (!globalThis.GURPS) {
     if (['attribute', 'skill-spell'].includes(action.type)) {
       action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
     }
+
     return !action
       ? false
       : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
@@ -1433,6 +1434,11 @@ if (!globalThis.GURPS) {
     let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
     if (!!actor) GURPS.SetLastActor(actor)
 
+    const blindroll =
+      event.ctrlKey ||
+      game.settings.get('core', 'rollMode') === 'blindroll' ||
+      (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
+
     if ('damage' in element.dataset) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
       let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
@@ -1444,7 +1450,7 @@ if (!globalThis.GURPS) {
         if (result?.action) {
           if (options?.combined && result.action.type == 'damage')
             result.action.formula = multiplyDice(result.action.formula, options.combined)
-          performAction(result.action, actor, event, options?.targets)
+          performAction({ ...result.action, blindroll }, actor, event, options?.targets)
         }
       }
       return
@@ -1464,7 +1470,7 @@ if (!globalThis.GURPS) {
         if ('action' in parsedLink) action = parsedLink.action
         chatthing = '[' + srcid + element.dataset.otf + ']'
         action.itemPath = opt.itemPath
-        return performAction(action, actor, event, options?.targets)
+        return performAction({ ...action, blindroll }, actor, event, options?.targets)
       }
     } else if ('path' in element.dataset) {
       let srcid = !!actor ? '@' + actor.id + '@' : ''
@@ -1526,7 +1532,7 @@ if (!globalThis.GURPS) {
     }
 
     await doRoll({
-      action,
+      action: { ...action, blindroll },
       actor,
       formula,
       targetmods,
@@ -1587,26 +1593,6 @@ if (!globalThis.GURPS) {
     return game.i18n.localize('GURPS.' + path)
   }
   GURPS._mapAttributePath = _mapAttributePath
-
-  /**
-   *   A user has clicked on a "gurpslink", so we can assume that it previously qualified as a "gurpslink"
-   *  and followed the On-the-Fly formulas. As such, we may already have an action block (base 64 encoded so we can handle
-   *  any text).  If not, we will just re-parse the text looking for the action block.
-   *
-   * @param {JQuery.MouseEventBase} event
-   * @param {GurpsActor | null} actor
-   * @param {string | null} desc
-   * @param {string[] | undefined} targets
-   */
-  // function handleGurpslink(event, actor, desc, targets) {
-  //   event.preventDefault()
-  //   let element = event.currentTarget
-  //   let action = element.dataset.action // If we have already parsed
-  //   if (!!action) action = JSON.parse(atou(action))
-  //   else action = parselink(element.innerText, desc).action
-  //   GURPS.performAction(action, actor, event, targets)
-  // }
-  // GURPS.handleGurpslink = handleGurpslink
 
   // So it can be called from a script macro
   GURPS.genkey = zeroFill

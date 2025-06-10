@@ -653,7 +653,7 @@ async function _doRoll({
     (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {
     messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(u => u.id)
-    // messageData.blind = true  // possibly not used anymore
+    messageData.blind = true
     creatOptions.rollMode = 'blindroll' // new for V9
   }
 
