@@ -5,7 +5,7 @@ import { Length, LengthUnit } from '../data/common/index.js'
 export class GurpsRulerV12 extends Ruler {
   override _getSegmentLabel(segment: Ruler.PartialSegmentForLabelling) {
     const totalDistance = this.totalDistance
-    const gridUnits = canvas?.scene?.grid.units ?? ''
+    const gridUnits = canvas?.scene?.grid.units ?? Length.Unit.Yard
     const units = Length.unitFromString(gridUnits ?? Length.Unit.Yard)
     let dist = (d: number, u: string) => {
       return `${Math.round(d * 100) / 100} ${u}`
