@@ -39,10 +39,10 @@ type TraitSchema = CommonItemDataSchema & typeof traitSchema
 
 const traitComponentSchema = {
   level: new fields.NumberField({ required: true, nullable: false }),
+  // Change from previous schema. "note" is no longer used, and userdesc and notes are kept separate.
   userdesc: new fields.StringField({ required: true, nullable: false }),
   points: new fields.NumberField({ required: true, nullable: false }),
-  save: new fields.BooleanField({ required: true, nullable: false }),
-  // itemid: new fields.StringField({ required: true, nullable: false }),
+  cr: new fields.NumberField({ required: true, nullable: true }),
 }
 
 type TraitComponentSchema = ItemComponentSchema & typeof traitComponentSchema
