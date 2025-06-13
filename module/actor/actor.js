@@ -46,12 +46,14 @@ export const MoveModes = {
 }
 
 export class GurpsActor extends Actor {
+  // NOTE: Not needed in new system
   /** @override */
   getRollData() {
     const data = super.getRollData()
     return data
   }
 
+  // NOTE: not needed in new system
   /**
    * @returns {GurpsActor}
    */
@@ -60,11 +62,13 @@ export class GurpsActor extends Actor {
     return /** @type {GurpsActor} */ (this)
   }
 
+  // NOTE: changed to accessors users() in new system
   // Return collection os Users that have ownership on this actor
   getOwners() {
     return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
   }
 
+  // NOTE: may not be needed in new system. to evaluate
   // 0.8.x added steps necessary to switch sheets
   /**
    * @param {Application} newSheet
@@ -81,6 +85,7 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: stub
   prepareData() {
     super.prepareData()
     // By default, it does this:
