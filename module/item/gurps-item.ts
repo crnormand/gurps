@@ -1,6 +1,53 @@
+import { CommonItemData } from './data/base.js'
+
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubType> {
-  // NOTE: migrated from getItemAttacks
-  get attacks(): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[]
+  isOfType<SubType extends Item.SubType>(...types: SubType[]): this is ConfiguredItem<SubType>
+  isOfType(...types: string[]): boolean {
+    return types.includes(this.type as Item.SubType)
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Return Item Attacks from melee and ranged Actor Components
+   *
+   * This is intended for external libraries like Argon Combat HUD,
+   * but can be used anytime you have only the Item UUID and need
+   * to know if this Item has any Melee or Ranged attacks registered
+   * on Actor System.
+   *
+   * NOTE: change from previous model: Now returns the full item rather than just the component
+   * in preparation for deprecating Item Components in the future
+   */
+  getItemAttacks(options: { attackType: 'melee' }): ConfiguredItem<'meleeAtk'>[]
+  getItemAttacks(options: { attackType: 'ranged' }): ConfiguredItem<'rangedAtk'>[]
+  getItemAttacks(options: { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[]
+  getItemAttacks(): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[]
+  getItemAttacks(options = { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[] {
+    if (!(this.system instanceof CommonItemData)) return []
+
+    const attacks =
+      this.actor?.items.filter(
+        item => (item.system as CommonItemData).component.parentuuid === (this.system as CommonItemData).component.uuid
+      ) ?? []
+    switch (options.attackType) {
+      case 'melee':
+        return attacks.filter(item => item.isOfType('meleeAtk'))
+      case 'ranged':
+        return attacks.filter(item => item.isOfType('rangedAtk'))
+      case 'both':
+        return attacks.filter(item => item.isOfType('meleeAtk', 'rangedAtk'))
+      default:
+        console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
+        return []
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  get hasAttacks(): boolean {
+    return this.getItemAttacks().length > 0
+  }
 }
 
 export { GurpsItemV2 }
