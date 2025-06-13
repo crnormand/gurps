@@ -391,8 +391,6 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    // console.trace('+++++ Create ModifierBucket +++++')
-
     this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 
     this.editor = new ModifierBucketEditor(this, {
