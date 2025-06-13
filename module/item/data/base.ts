@@ -52,6 +52,7 @@ const commonItemDataSchema = {
   importFrom: new fields.StringField({ required: true, nullable: false }),
   fromItem: new fields.StringField({ required: true, nullable: false }),
   addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
+  modifierTags: new fields.StringField({ required: true, nullable: false }),
 }
 
 type CommonItemDataSchema = typeof commonItemDataSchema

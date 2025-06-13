@@ -37,6 +37,7 @@ type EquipmentSchema = CommonItemDataSchema & typeof equipmentSchema
 
 /* ---------------------------------------- */
 
+// Change from previous schema. "last_import" is not present as it is never used.
 const equipmentComponentSchema = {
   count: new fields.NumberField({ required: true, nullable: false }),
   weight: new fields.NumberField({ required: true, nullable: false }),

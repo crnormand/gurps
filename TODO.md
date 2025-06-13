@@ -2,6 +2,22 @@
 
 This is a developer TODO file. It is not meant to be read by users.
 
+## The list
+
+- Data Models
+
+  - Trait [DONE]
+  - Skill [DONE]
+  - Spell [DONE]
+  - Equipment [DONE]
+  - Melee Weapon [DONE]
+  - Ranged Weapon [DONE]
+  - Character
+
+- Functionality
+  - Import
+    - Opt for minimal import (update existing items) if the ID of the items matches
+
 ## Master Notes
 
 - I believe that the migration from using actor components to using native items (for all characters) as well as the migration

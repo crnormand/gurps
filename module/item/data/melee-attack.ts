@@ -45,7 +45,7 @@ const meleeAttackComponentSchema = {
   level: new fields.NumberField({ required: true, nullable: false }),
   weight: new fields.NumberField({ required: true, nullable: false }),
   techlevel: new fields.NumberField({ required: true, nullable: false }),
-  cost: new fields.StringField({ required: true, nullable: false }),
+  cast: new fields.StringField({ required: true, nullable: false }),
   reach: new fields.StringField({ required: true, nullable: false }),
   parry: new fields.StringField({ required: true, nullable: false }),
   baseParryPenalty: new fields.NumberField({ required: true, nullable: false }),
