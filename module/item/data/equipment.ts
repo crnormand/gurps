@@ -14,6 +14,12 @@ class EquipmentData extends CommonItemData<EquipmentSchema> {
   get component(): EquipmentComponent {
     return this.eqt
   }
+
+  /* ---------------------------------------- */
+
+  override get enabled(): boolean {
+    return this.equipped
+  }
 }
 
 /* ---------------------------------------- */

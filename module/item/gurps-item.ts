@@ -1,6 +1,8 @@
 import { CommonItemData } from './data/base.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubType> {
+  /* ---------------------------------------- */
+
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is ConfiguredItem<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
@@ -48,6 +50,26 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubT
   get hasAttacks(): boolean {
     return this.getItemAttacks().length > 0
   }
+
+  /* ---------------------------------------- */
+
+  async toggleEnabled(enabled: boolean | null = null): Promise<this | undefined> {
+    if (!this.isOfType('equipment')) {
+      console.warn(`Item of type "${this.type}" cannot be toggled.`)
+      return this
+    }
+
+    const currentEnabled = (this.system as Item.SystemOfType<'equipment'>).equipped
+
+    // NOTE: do I really need to assert Item.UpdateData here?
+    return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
+  }
+
+  async toggleEquipped(equipped: boolean | null = null): Promise<this | undefined> {
+    return this.toggleEnabled(equipped)
+  }
+
+  /* ---------------------------------------- */
 }
 
 export { GurpsItemV2 }

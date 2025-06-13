@@ -16,6 +16,12 @@ abstract class BaseItemData<Schema extends fields.DataSchema> extends TypeDataMo
       return acc
     }, [])
   }
+
+  /* ---------------------------------------- */
+
+  get enabled(): boolean {
+    return true
+  }
 }
 
 /* ---------------------------------------- */
