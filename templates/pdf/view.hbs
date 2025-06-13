@@ -1,12 +1,29 @@
-{{#unless v13}}
-<form class='{{cssClass}} flexcol' autocomplete='off'>
-{{/unless}}
-  <div class='pdf' style='flex-grow: 1;'>
-    <iframe
-      src='scripts/pdfjs/web/viewer.html?{{params}}#page={{sum pageNumber document.system.offset}}'
-      style='height: 100%;'
-    ></iframe>
+{{#if v13}}
+  {{log "Using v13 View PDF template"}}
+  <div class="flexcol">
+    {{#if title.show}}
+      <header class="journal-page-header" style="flex: none;">
+        <h{{title.level}}>{{name}}</h{{title.level}}>
+      </header>
+    {{/if}}
+
+    {{#if src}}
+      <iframe src='scripts/pdfjs/web/viewer.html?{{params}}#page={{pageNumber}}'></iframe>
+    {{/if}}
   </div>
-{{#unless v13}}
-</form>
-{{/unless}}
+{{else}}
+  {{log "Using legacy View PDF template"}}
+  <div class="flexcol">
+    <form class="pdf-viewer-form" style="display: none; flex: none;"> </form>
+    {{#with data}}
+      {{#if title.show}}
+        <header class="journal-page-header" style="flex: none;">
+          <h{{title.level}}>{{name}}</h{{title.level}}>
+        </header>
+      {{/if}}
+    {{/with}}
+    {{#if data.src}}
+      <iframe src='scripts/pdfjs/web/viewer.html?{{params}}#page={{pageNumber}}'></iframe>
+    {{/if}}
+  </div>
+{{/if}}

@@ -30,12 +30,6 @@ function getGurpsPDFSheetV2() {
   if (game.release.generation < 13) return
 
   class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
-    constructor(options) {
-      if (!options) options = {}
-      options.pageNumber = options?.pageNumber || 1
-      super(options)
-    }
-
     /** @inheritDoc */
     static EDIT_PARTS = {
       header: super.EDIT_PARTS?.header,
@@ -56,8 +50,8 @@ function getGurpsPDFSheetV2() {
 
     async _prepareContext(options) {
       let context = await super._prepareContext(options)
-      context = _mergeGameVersionInfo(context)
-      return _mergePdfData(this, context)
+      context = addPDFContext(this, context)
+      return context
     }
   }
   return GurpsPDFSheet
@@ -68,20 +62,14 @@ function getGurpsPDFSheetV1() {
   if (game.release.generation >= 13) return
 
   class GurpsPDFSheetV1 extends JournalPDFPageSheet {
-    constructor(object, options) {
-      if (!options) options = {}
-      options.pageNumber = options?.pageNumber || 1
-      super(object, options)
-    }
-
     get template() {
       return `systems/gurps/templates/pdf/${this.isView || !this.isEditable ? 'view' : 'edit'}.hbs`
     }
 
     getData(options) {
-      let data = super.getData(options)
-      data = _mergeGameVersionInfo(data)
-      return _mergePdfData(this, data)
+      let context = super.getData(options)
+      context = addPDFContext(this, context)
+      return context
     }
 
     get isView() {
@@ -91,25 +79,11 @@ function getGurpsPDFSheetV1() {
   return GurpsPDFSheetV1
 }
 
-const _getPDFData = function (sheet) {
-  const params = new URLSearchParams()
-  if (sheet.document.src) {
-    const src = URL.parseSafe(sheet.document.src) ? sheet.document.src : foundry.utils.getRoute(sheet.document.src)
-    params.append('file', src)
-  }
-  return params
-}
-
-const _mergePdfData = function (sheet, data) {
-  return foundry.utils.mergeObject(data, {
-    pageNumber: sheet.options.pageNumber,
-    params: _getPDFData(sheet),
-  })
-}
-
-const _mergeGameVersionInfo = function (data) {
-  return foundry.utils.mergeObject(data, {
-    v13: game.release?.generation >= 13,
+const addPDFContext = (instance, context) => {
+  return foundry.utils.mergeObject(context, {
+    params: instance._getViewerParams(),
+    pageNumber: (instance.options.pageNumber || 0) + (instance.document.system.offset || 0),
+    v13: game.release.generation >= 13,
   })
 }
 

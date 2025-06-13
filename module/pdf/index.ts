@@ -20,7 +20,6 @@ function init(): void {
   })
 
   Hooks.once('ready', () => {
-    // PDF Configuration ----
     registerPDFSettings()
   })
 }

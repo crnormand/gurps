@@ -1,0 +1,15 @@
+section.window-content {
+  article.journal-entry-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    div:first-child {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+    }
+  }
+}

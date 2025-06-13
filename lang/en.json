@@ -1005,6 +1005,7 @@
       "settingsName": "PDFs"
     },
     "pdfCode": "PDF Book Code",
+    "pdfCodePlaceholder": "PDF Code: (e.g., 'B' or 'MA')",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
     "pdfGrappling": "B370",
@@ -1023,6 +1024,7 @@
     "pdfLPT": "B142",
     "pdfMajorWound": "B420",
     "pdfOffset": "Page Offset",
+    "pdfOffsetPlaceholder": "Offset: (e.g., -5, 0, or 2)",
     "pdfPageReference": "Page Ref",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",
@@ -1217,9 +1219,7 @@
     "settingHintManeuverVisibility": "Determines who can see a token's maneuver icon.",
     "settingHintModifyDicePlusAdds": "If checked, the system will use the 'Modify Dice + Adds' optional rule, when you add bucket modifiers for damage rolls, as per B269.",
     "settingHintMookGenerator": "Edit the initial values of the Mook Generator",
-
     "settingHintPDFOpenFirst": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered.",
-
     "settingHintPlayerBlindRoll": "If not checked, holding down the SHIFT key when you are making a roll will make a Self roll (only you can see it, no matter who you are). If checked, when players hold down the SHIFT key, it will make it a Blind Roll instead (GMs still get a Self roll).",
     "settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message). If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
     "settingHintQtyItems": "If checked, a small icon will appear after equipment where the QTY/Count will be saved during imports",
