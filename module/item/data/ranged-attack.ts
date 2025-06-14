@@ -1,5 +1,8 @@
 import { BaseItemData, ItemComponent, ItemComponentSchema } from './base.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
 import fields = foundry.data.fields
+import { makeRegexPatternFrom } from '../../../lib/utilities.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 class RangedAttackData extends BaseItemData<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
@@ -14,6 +17,50 @@ class RangedAttackData extends BaseItemData<RangedAttackSchema> {
   get component(): RangedAttackComponent {
     return this.rng
   }
+
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+
+  override prepareBaseData(): void {
+    super.prepareBaseData()
+    this.component.level = this.component.import
+  }
+
+  /* ---------------------------------------- */
+
+  convertRanges(st: number): void {
+    if (game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED) === false) return
+
+    let range = this.component.range
+    // Match the range format, e.g., "x2", "x20", "x30"
+    const matchSingle = range.match(/^\s*[xX]([\d\.]+)\s*$/)
+    const matchMultiple = range.match(/^\s*[xX]([\d\.]+)\s*-\s*[xX]([\d\.]+)\s*$/)
+    if (matchSingle) {
+      this.component.range = `${parseFloat(matchSingle[1]) * st}`
+    } else if (matchMultiple) {
+      const newRangeStart = parseFloat(matchMultiple[1]) * st
+      const newRangeEnd = parseFloat(matchMultiple[2]) * st
+      this.component.range = `${newRangeStart} - ${newRangeEnd}`
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  override applyBonuses(bonuses: AnyObject[]): void {
+    for (const bonus of bonuses) {
+      // All melee attacks are affected by DX
+      if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {
+        this.component.level += bonus.mod as number
+      }
+
+      if (bonus.type === 'attack' && bonus.isRanged) {
+        if (this.component.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
+          this.component.level += bonus.mod as number
+        }
+      }
+    }
+  }
 }
 
 /* ---------------------------------------- */
@@ -25,6 +72,12 @@ class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
       ...rangedAttackComponentSchema,
     }
   }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  level: number = 0
 }
 
 /* ---------------------------------------- */
@@ -38,11 +91,13 @@ type RangedAttackSchema = typeof rangedAttackSchema
 /* ---------------------------------------- */
 
 const rangedAttackComponentSchema = {
-  import: new fields.StringField({ required: true, nullable: false }),
+  // NOTE: change from previous schema where this was a string
+  import: new fields.NumberField({ required: true, nullable: false }),
+  // NOTE: no longer persistent data, always derived from import value
+  // level: new fields.NumberField({ required: true, nullable: false }),
   damage: new fields.StringField({ required: true, nullable: false }),
   st: new fields.StringField({ required: true, nullable: false }),
   mode: new fields.StringField({ required: true, nullable: false }),
-  level: new fields.NumberField({ required: true, nullable: false }),
   bulk: new fields.StringField({ required: true, nullable: false }),
   legalityclass: new fields.StringField({ required: true, nullable: false }),
   ammo: new fields.StringField({ required: true, nullable: false }),
