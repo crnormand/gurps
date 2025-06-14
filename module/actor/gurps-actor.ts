@@ -1,4 +1,4 @@
-import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
+import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from 'module/token-actions.js'
 import Maneuvers from './maneuver.js'
@@ -68,8 +68,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     message?: string
     targetMessage?: string
     maxActionMessage?: string
+    maxAttackMessage?: string
     maxBlockmessage?: string
     maxParryMessage?: string
+    rollBeforeStartMessage?: string
   }> {
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
@@ -140,6 +142,74 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       actions.totalActions >= maxActions + extraActions &&
       canConsumeAction
     ) {
+      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
+      result.hasActions = false
+      result.maxActionMessage =
+        checkMaxActionsSetting !== 'Allow'
+          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxActionsReached`)
+          : ''
+    }
+
+    // Same as above, but for maximum attacks per round
+    // using things like Extra Attack
+    const itemExtraAttacks = actorComponent?.extraAttacks ?? 0
+    const rapidStrikeBonus = actorComponent?.rapidStrikeBonus ?? 0
+
+    if (
+      isAttack &&
+      canConsumeAction &&
+      Math.max(actions.totalAttacks, actions.totalActions) >=
+        maxActions + extraActions + (actions.extraAttacks ?? 0) + itemExtraAttacks + rapidStrikeBonus
+    ) {
+      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
+      result.hasActions = false
+      result.maxAttackMessage =
+        checkMaxActionsSetting !== 'Allow'
+          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxAttacksReached`)
+          : ''
+    }
+
+    // Same as above, but for maximum blocks per round
+    const maxBlocks = this.system.conditions.actions.maxBlocks ?? 1
+    if (
+      isDefense &&
+      canConsumeAction &&
+      action.type === 'weapon-block' &&
+      actions.totalBlocks >= maxBlocks + (actions.extraBlocks ?? 0) + extraActions
+    ) {
+      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
+      result.hasActions = false
+      result.maxBlockmessage =
+        checkMaxActionsSetting !== 'Allow'
+          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxBlocksReached`)
+          : ''
+    }
+
+    // Same as above, but for maximum parries per round
+    if (
+      isDefense &&
+      canConsumeAction &&
+      action.type === 'weapon-parry' &&
+      actions.totalParries >= extraActions + (actions.maxParries ?? 0)
+    ) {
+      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
+      result.hasActions = false
+      result.maxParryMessage =
+        checkMaxActionsSetting !== 'Allow'
+          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxParriesReached`)
+          : ''
+    }
+
+    // Check if combat has started
+    if (!isCombatStarted) {
+      const checkCombatStartedSetting =
+        game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START) ?? 'Warn'
+
+      result.canRoll = result.canRoll && checkCombatStartedSetting !== 'Forbid'
+      result.rollBeforeStartMessage =
+        checkCombatStartedSetting !== 'Allow'
+          ? game.i18n?.localize(`GURPS.${checkCombatStartedSetting.toLowerCase()}RollsBeforeCombatStarted`)
+          : ''
     }
 
     return result

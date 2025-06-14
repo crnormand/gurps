@@ -42,6 +42,7 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
   // Derived properties
   declare encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[]
   declare liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema>
+  // TODO: consider moving this back to the schema
   declare conditions: fields.SchemaField.SourceData<ConditionsSchema>
   declare hitlocationNames: Record<string, HitLocationEntry>
 

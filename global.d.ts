@@ -83,6 +83,7 @@ declare global {
     'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
     'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
   }
 }
