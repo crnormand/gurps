@@ -12,6 +12,7 @@ import {
 
 function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
+  
   Hooks.once('ready', async function () {
     if (!game.settings) throw new Error('GURPS | Game settings not found')
     if (!game.i18n) throw new Error('GURPS | Game i18n not found')

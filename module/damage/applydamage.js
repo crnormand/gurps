@@ -12,7 +12,6 @@ import {
   parseIntFrom,
 } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
-import { handleOnPdf } from '../pdf-refs.js'
 import { TokenActions } from '../token-actions.js'
 import { CompositeDamageCalculator } from './damagecalculator.js'
 
@@ -105,7 +104,7 @@ export default class ApplyDamageDialog extends Application {
     super.activateListeners(html)
 
     // Activate all PDF links
-    html.find('.pdflink').on('click', handleOnPdf)
+    html.find('.pdflink').on('click', GURPS.modules.Pdf.handleOnPdf)
     html.find('.digits-only').inputFilter(value => digitsAndNegOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 

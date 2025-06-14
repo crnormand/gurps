@@ -17,6 +17,7 @@
 - Melee attacks are not clickable in the Quick Roll Menu #2287
 - Resource Tracker templates cannot be reset to the 'unassigned' slot #2285
 - Setting posture via /st command does not work #2306
+- Setting PDF Page Offset and PDF Book Code in new PDF Journals is not possible under v13 #2308
 
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 

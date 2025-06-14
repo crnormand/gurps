@@ -1,0 +1,15 @@
+#pdf-settings {
+  label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+
+    &::before,
+    &::after {
+      content: none;
+    }
+
+    * {
+      font-weight: normal;
+    }
+  }
+}

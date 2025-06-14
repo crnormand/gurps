@@ -2375,57 +2375,50 @@ div#other {
 
 .tab-item {
   font-size: 1.25rem;
-  /* background: radial-gradient(circle at bottom center, #ffc837 15px, var(--color-glinkmod)); */
-  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-  /* background: var(--color-glinkmod); */
 }
 
-.tab-item > div {
+.tab-item > span {
   border-radius: calc(1em / 3);
   display: grid;
   place-items: center center;
-  /* background: radial-gradient(circle at bottom center, #ffc837 15px, #ff8008); */
-  /* box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.2); */
   padding: calc(1em / 3);
+  background: inherit;
+  border-radius: inherit;
 }
 
 .tab-item.active {
-  /* text-decoration: underline; */
   text-shadow: none;
-  /* font-weight: bold; */
-  /* background-color: #e8ffe8; */
-  /* font-size: 105%; */
   font-size: 1.5rem;
   border-radius: calc(1rem / 3);
   background: var(--color-glinkmod);
   color: white;
 }
 
-.tab-item[data-tab='combat'] {
+.tab-item.active[data-tab='combat'] {
   background: rgb(151 68 175);
 }
 
-.tab-item[data-tab='personal'] {
+.tab-item.active[data-tab='personal'] {
   background: rgb(62, 77, 61);
 }
 
-.tab-item[data-tab='advantages'] {
+.tab-item.active[data-tab='advantages'] {
   background: rgb(44, 108, 155);
 }
 
-.tab-item[data-tab='skills'] {
+.tab-item.active[data-tab='skills'] {
   background: rgb(60, 55, 122);
 }
 
-.tab-item[data-tab='stats'] {
+.tab-item.active[data-tab='stats'] {
   background: rgb(240 44 43);
 }
 
-.tab-item[data-tab='spells'] {
+.tab-item.active[data-tab='spells'] {
   background: rgb(113, 36, 36);
 }
 
-.tab-item[data-tab='equipment'] {
+.tab-item.active[data-tab='equipment'] {
   background: rgb(103, 52, 121);
 }
 

@@ -1,0 +1,25 @@
+<section class='settings-header'>
+  <div class='form-group' data-setting-id='gurps.pdf.basicset'>
+    <div class='form-fields'>
+      <label for='gurps.pdf.basicset'>{{localize 'GURPS.settingBasicPDFs'}}
+        <select id='gurps.pdf.basicset' name='basicSetPdfSetting' data-dtype='String'>
+          {{selectOptions basicSetPdfChoices selected=basicSetPdfSetting localize=true}}
+        </select></label>
+      <p class='notes'>{{localize 'GURPS.settingHintBasicPDFs'}}</p>
+    </div>
+  </div>
+
+  <div class='form-group' data-setting-id='gurps.pdf.open-first'>
+    <div class='form-fields'>
+      <label for='gurps.pdf.open-first'>{{localize 'GURPS.settingPDFOpenFirst'}}
+        <input
+          id='gurps.pdf.open-first'
+          type='checkbox'
+          name='pdfOpenFirstSetting'
+          data-dtype='Boolean'
+          {{checked pdfOpenFirstSetting}}
+        /></label>
+      <p class='notes'>{{localize 'GURPS.settingHintPDFOpenFirst'}}</p>
+    </div>
+  </div>
+</section>

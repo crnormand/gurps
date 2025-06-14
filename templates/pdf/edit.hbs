@@ -1,31 +1,67 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
-	{{> journalEntryPageHeader}}
+{{#if v13}}
+  {{log "Using v13 Edit PDF template"}}
+  <section>
+    <div class='form-group picker'>
+      <label>{{localize 'JOURNALENTRYPAGE.PDFSource'}}</label>
+      <div class='form-fields'>
+        <file-picker type='text' name='src' value='{{document.src}}'>
+        </file-picker>
+      </div>
+    </div>
+    <div class='form-group'>
+      <label>{{localize 'GURPS.pdfOffset'}}</label>
+      <div class='form-fields'>
+        <input type='number' name='system.offset' placeholder='Offset (e.g. -5, 0, 2)'
+          value='{{document.system.offset}}' />
+      </div>
+    </div>
+    <div class='form-group'>When changing this value, the PDF will automatically adjust to what should be page 5</div>
+    <div class='form-group'>
+      <label>{{localize 'GURPS.pdfCode'}}</label>
+      <div class='form-fields'>
+        <input type='text' name='system.code' placeholder="PDF Code (e.g. 'B')" value='{{document.system.code}}' />
+      </div>
+    </div>
 
-	{{#if document.src}}
-	<iframe src="scripts/pdfjs/web/viewer.html?{{params}}#page={{sum document.system.offset 5}}"></iframe>
-	{{/if}}
+    {{#if document.src}}
+      <div class="form-group">
+        <iframe src='scripts/pdfjs/web/viewer.html?{{params}}#page={{pageNumber}}'></iframe>
+      </div>
+    {{/if}}
+  </section>
+{{else}}
+  {{log "Using legacy Edit PDF template"}}
+  <form class="{{cssClass}} flexcol" autocomplete="off">
+    {{> journalEntryPageHeader}}
+    <section>
+      <div class='form-group picker'>
+        <label>{{localize 'JOURNALENTRYPAGE.PDFSource'}}</label>
+        <div class='form-fields'>
+          <file-picker type='text' name='src' value='{{document.src}}'>
+          </file-picker>
+        </div>
+      </div>
+      <div class='form-group'>
+        <label>{{localize 'GURPS.pdfOffset'}}</label>
+        <div class='form-fields'>
+          <input type='number' name='system.offset' placeholder='Offset (e.g. -5, 0, 2)'
+            value='{{document.system.offset}}' />
+        </div>
+      </div>
+      <div class='form-group'>When changing this value, the PDF will automatically adjust to what should be page 5</div>
+      <div class='form-group'>
+        <label>{{localize 'GURPS.pdfCode'}}</label>
+        <div class='form-fields'>
+          <input type='text' name='system.code' placeholder="PDF Code (e.g. 'B')" value='{{document.system.code}}' />
+        </div>
+      </div>
 
-	<div class="form-group picker">
-		<label>{{localize "JOURNALENTRYPAGE.PDFSource"}}</label>
-		<div class="form-fields">
-			{{filePicker target="src" type="text"}}
-			<input class="image" type="text" name="src" placeholder="path/document.pdf" value="{{document.src}}">
-		</div>
-	</div>
-	<div class="form-group">
-		<label>{{localize "GURPS.pdfOffset"}}</label>
-		<div class="form-fields">
-			<input type="number" name="system.offset" placeholder="Offset (e.g. -5, 0, 2)"
-				value="{{document.system.offset}}">
-		</div>
-	</div>
-	<div class="form-group">When changing this value, the PDF will automatically adjust to what should be page 5</div>
-	<div class="form-group">
-		<label>{{localize "GURPS.pdfCode"}}</label>
-		<div class="form-fields">
-			<input type="text" name="system.code" placeholder="PDF Code (e.g. 'B')" value="{{document.system.code}}">
-		</div>
-	</div>
-
-	{{> journalEntryPageFooter}}
-</form>
+      {{#if document.src}}
+        <div class="form-group">
+          <iframe src='scripts/pdfjs/web/viewer.html?{{params}}#page={{pageNumber}}'></iframe>
+        </div>
+      {{/if}}
+    </section>
+    {{> journalEntryPageFooter}}
+  </form>
+{{/if}}

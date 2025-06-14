@@ -35,7 +35,6 @@ import { GurpsItemSheet } from './item-sheet.js'
 import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -69,8 +68,6 @@ import { GlobalActiveEffectDataControl } from './effects/global-active-effect-da
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
-import { PDFEditorSheet } from './pdf/edit.js'
-import { GurpsJournalEntryPage } from './pdf/index.js'
 import { TokenActions } from './token-actions.js'
 import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
@@ -80,6 +77,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
+import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
@@ -112,9 +110,17 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  /** @type GurpsModule[] */
-  GURPS.modules = [Canvas, Combat, Damage, ResourceTracker, Token, UI]
-  GURPS.modules.forEach(mod => mod.init())
+  /** @type {{ [key: string]: GurpsModule }} */
+  GURPS.modules = {
+    Canvas,
+    Combat,
+    Damage,
+    Pdf,
+    ResourceTracker,
+    Token,
+    UI,
+  }
+  Object.values(GURPS.modules).forEach(mod => mod.init())
 
   AddChatHooks()
   JQueryHelpers()
@@ -136,7 +142,6 @@ if (!globalThis.GURPS) {
 
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
-  GURPS.SJGProductMappings = SJGProductMappings
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
   // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
@@ -244,7 +249,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.PARSELINK_MAPPINGS = PARSELINK_MAPPINGS
-  GURPS.SJGProductMappings = SJGProductMappings
   GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
   GURPS.findTracker = findTracker
 
@@ -449,7 +453,7 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn('no link was parsed for the pdf')
         return false // if there's no link action fails
       }
-      handlePdf(action.link)
+      GURPS.modules.Pdf.handlePdf(action.link)
       return true
     },
 
@@ -1010,9 +1014,7 @@ if (!globalThis.GURPS) {
      *
      * @param {GurpsActor|null} data.actor
      * @param {JQuery.Event|null} data.event
-     * @param {boolean} data.calcOnly
      */
-    // ['weapon-parry']({ action, actor, event, _calcOnly }) {
     ['weapon-parry']({ action, actor, event }) {
       if (!actor) {
         ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
@@ -1883,6 +1885,7 @@ if (!globalThis.GURPS) {
     ChatMessage.create(msgData)
   }
 
+  // TODO: Move to the combat module.
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
     let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
     if (!formula) {
@@ -1947,7 +1950,6 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
-    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
 
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12
@@ -2021,18 +2023,6 @@ if (!globalThis.GURPS) {
 
       foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
       foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-
-      foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-        JournalEntryPage,
-        'core',
-        foundry.applications.sheets.journal.JournalEntryPagePDFSheet
-      )
-
-      foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
-        types: ['pdf'],
-        makeDefault: true,
-        label: 'GURPS PDF Editor Sheet',
-      })
     } else {
       Actors.unregisterSheet('core', ActorSheet)
       Actors.registerSheet('gurps', GurpsActorCombatSheet, {
@@ -2071,14 +2061,6 @@ if (!globalThis.GURPS) {
 
       Items.unregisterSheet('core', ItemSheet)
       Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-
-      DocumentSheetConfig.unregisterSheet(JournalEntryPage, 'core', JournalPDFPageSheet)
-
-      DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
-        types: ['pdf'],
-        makeDefault: true,
-        label: 'GURPS PDF Editor Sheet',
-      })
     }
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
@@ -2170,7 +2152,6 @@ if (!globalThis.GURPS) {
     })
 
     GURPS.ActorSheets = { character: GurpsActorSheet }
-    GURPS.handlePdf = handlePdf
 
     Hooks.call('gurpsinit', GURPS)
   })
@@ -2203,7 +2184,7 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
-    GURPS.modules.forEach(mod => {
+    Object.values(GURPS.modules).forEach(mod => {
       if (mod.migrate) mod.migrate()
     })
 
@@ -2569,15 +2550,18 @@ if (!globalThis.GURPS) {
       GurpsWiring.hookupAllEvents(html)
     })
 
+    // TODO: Move to the combat module?  We could have a method in combat that allows other modules to request hooks into the Combat system.
     Hooks.on('combatStart', async combat => {
       console.log(`Combat started: ${combat.id} - resetting token actions`)
       await resetTokenActions(combat)
     })
 
+    // TODO: Move to the combat module.
     Hooks.on('combatRound', async (combat, round) => {
       await handleCombatTurn(combat, round)
     })
 
+    // TODO: Move to the combat module.
     Hooks.on('combatTurn', async (combat, turn, combatant) => {
       await handleCombatTurn(combat, turn)
     })
