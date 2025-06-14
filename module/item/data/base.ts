@@ -1,8 +1,19 @@
+import { parselink } from 'lib/parselink.js'
 import fields = foundry.data.fields
 import TypeDataModel = foundry.abstract.TypeDataModel
 import DataModel = foundry.abstract.DataModel
+import { AnyObject } from 'fvtt-types/utils'
 
 abstract class BaseItemData<Schema extends fields.DataSchema> extends TypeDataModel<Schema, Item.Implementation> {
+  /* ---------------------------------------- */
+
+  isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.SystemOfType<SubType>
+  isOfType(...types: string[]): boolean {
+    return types.includes(this.parent.type as Item.SubType)
+  }
+
+  /* ---------------------------------------- */
+
   abstract get component(): ItemComponent
 
   /* ---------------------------------------- */
@@ -22,6 +33,12 @@ abstract class BaseItemData<Schema extends fields.DataSchema> extends TypeDataMo
   get enabled(): boolean {
     return true
   }
+
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+
+  applyBonuses(bonuses: AnyObject[]): void {}
 }
 
 /* ---------------------------------------- */
@@ -32,6 +49,31 @@ abstract class BaseItemData<Schema extends fields.DataSchema> extends TypeDataMo
 abstract class CommonItemData<Schema extends CommonItemDataSchema = CommonItemDataSchema> extends BaseItemData<Schema> {
   static override defineSchema(): CommonItemDataSchema {
     return commonItemDataSchema
+  }
+
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+
+  // override prepareSiblingData(): void {
+  //   super.prepareSiblingData()
+  // }
+
+  getGlobalBonuses(): AnyObject[] {
+    if (this.isOfType('equipment') && !this.equipped) return []
+
+    const bonuses = []
+
+    for (let bonus of this.bonuses.split('\n')) {
+      // Remove square brackets around OTF
+      const internalOTF = bonus.match(/\[(.*)\]/)
+      if (internalOTF) bonus = internalOTF[1].trim()
+
+      const parsedOTF = parselink(bonus)
+      if (parsedOTF.action) bonuses.push(parsedOTF.action)
+    }
+
+    return bonuses
   }
 }
 
