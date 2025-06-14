@@ -95,6 +95,7 @@ export class GurpsActor extends Actor {
     // this.prepareDerivedData()
   }
 
+  // NOTE: migrated
   prepareBaseData() {
     super.prepareBaseData()
 
@@ -132,6 +133,7 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
+    // NOTE: migrated as #prepareEncumbrance
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -261,14 +263,19 @@ export class GurpsActor extends Actor {
   calculateDerivedValues() {
     let saved = !!this.ignoreRender
     this.ignoreRender = true
+    // NOTE: migrated
     this._initializeStartingValues()
+    // NOTE: migrated
     this._applyItemBonuses()
 
     // Must be done after bonuses, but before weights
+    // NOTE: migrated
     this._calculateEncumbranceIssues()
 
     // Must be after bonuses and encumbrance effects on ST
+    // NOTE: not migrated, I'm not convinced this is ever actually needed
     this._recalcItemFeatures()
+    // NOTE: migrated
     this._calculateRangedRanges()
 
     // Must be done at end
@@ -633,6 +640,7 @@ export class GurpsActor extends Actor {
    * @param {string} type
    * @returns {number}
    */
+  // NOTE: migrated
   _sumeqt(dict, type, checkEquipped = false) {
     if (!dict) return 0.0
     let flt = (/** @type {string} */ str) => (!!str ? parseFloat(str) : 0)
@@ -649,6 +657,7 @@ export class GurpsActor extends Actor {
     return parseInt(sum * 100) / 100
   }
 
+  // NOTE: migrated
   _calculateWeights() {
     let data = this.system
     let eqt = data.equipment || {}
@@ -667,6 +676,7 @@ export class GurpsActor extends Actor {
     data.eqtsummary = eqtsummary
   }
 
+  // NOTE: migrated
   _calculateEncumbranceIssues() {
     const data = this.system
     const encs = data.encumbrance
@@ -714,10 +724,12 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: no longer needed
   _isEnhancedMove() {
     return !!this._getCurrentMoveMode()?.enhanced
   }
 
+  // NOTE: no longer needed
   _getSprintMove() {
     let current = this._getCurrentMoveMode()
     if (!current) return 0
@@ -725,6 +737,7 @@ export class GurpsActor extends Actor {
     return Math.floor(current.basic * 1.2)
   }
 
+  // NOTE: migrated
   _getCurrentMoveMode() {
     let move = this.system.move
     let current = Object.values(move).find(it => it.default)
@@ -845,6 +858,7 @@ export class GurpsActor extends Actor {
         }
   }
 
+  // NOTE: migrated
   _calculateRangedRanges() {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED)) return
     let st = +this.system.attributes.ST.value
@@ -867,6 +881,7 @@ export class GurpsActor extends Actor {
   }
 
   // Once all of the bonuses are applied, determine the actual level for each feature
+  // NOTE: not migrated, I'm not convinced this is ever actually needed
   _recalcItemFeatures() {
     let data = this.system
     this._collapseQuantumEq(data.melee, true)
