@@ -13,6 +13,7 @@ import { SkillData } from 'module/item/data/skill.ts'
 import { MeleeAttackData } from 'module/item/data/melee-attack.ts'
 import { RangedAttackData } from 'module/item/data/ranged-attack.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
+import { CharacterData } from 'module/actor/data/character.ts'
 
 export {}
 
@@ -40,6 +41,10 @@ declare global {
   /* ---------------------------------------- */
 
   interface DataModelConfig {
+    Actor: {
+      character: typeof CharacterData
+      enemy: typeof CharacterData
+    }
     Item: {
       equipment: typeof EquipmentData
       feature: typeof TraitData
@@ -72,5 +77,12 @@ declare global {
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.basicsetpdf': String
     'gurps.pdf-open-first': boolean
+    'gurps.convert-ranged': boolean
+    'gurps.check-equipped': boolean
+    'gurps.automatic-encumbrance': boolean
+    'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
   }
 }

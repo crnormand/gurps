@@ -3,11 +3,21 @@ import { CommonItemData } from './data/base.js'
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubType> {
   /* ---------------------------------------- */
 
-  isOfType<SubType extends Item.SubType>(...types: SubType[]): this is ConfiguredItem<SubType>
+  isOfType<SubType extends Item.SubType>(...types: SubType[]): this is ConfiguredItem<SubType>['document']
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
   }
 
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+
+  // prepareSiblingData(): void {
+  //   ;(this.system as BaseItemData<any>).prepareSiblingData()
+  // }
+
+  /* ---------------------------------------- */
+  /*  Utilities                               */
   /* ---------------------------------------- */
 
   /**
@@ -21,11 +31,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubT
    * NOTE: change from previous model: Now returns the full item rather than just the component
    * in preparation for deprecating Item Components in the future
    */
-  getItemAttacks(options: { attackType: 'melee' }): ConfiguredItem<'meleeAtk'>[]
-  getItemAttacks(options: { attackType: 'ranged' }): ConfiguredItem<'rangedAtk'>[]
-  getItemAttacks(options: { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[]
-  getItemAttacks(): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[]
-  getItemAttacks(options = { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>[] {
+  getItemAttacks(options: { attackType: 'melee' }): ConfiguredItem<'meleeAtk'>['document'][]
+  getItemAttacks(options: { attackType: 'ranged' }): ConfiguredItem<'rangedAtk'>['document'][]
+  getItemAttacks(options: { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][]
+  getItemAttacks(): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][]
+  getItemAttacks(options = { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][] {
     if (!(this.system instanceof CommonItemData)) return []
 
     const attacks =
