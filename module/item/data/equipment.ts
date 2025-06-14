@@ -20,9 +20,11 @@ class EquipmentData extends CommonItemData<EquipmentSchema> {
   override get enabled(): boolean {
     return this.equipped
   }
-}
 
-/* ---------------------------------------- */
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+}
 
 class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {
   static override defineSchema(): EquipmentComponentSchema {

@@ -20,34 +20,104 @@ const poolSchema = {
 const encumbranceSchema = {
   key: new fields.StringField({ required: true, nullable: false }),
   level: new fields.NumberField({ required: true, nullable: false }),
+  // NOTE: change from previous schema, where "dodge" was a string
   dodge: new fields.NumberField({ required: true, nullable: false }),
+  // NOTE: change from previuos schema where "weight" was a string
   weight: new fields.NumberField({ required: true, nullable: false }),
   move: new fields.NumberField({ required: true, nullable: false }),
+  current: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+  currentmove: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+  currentsprint: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+  currentdodge: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+  currentmovedisplay: new fields.StringField({ required: true, nullable: false, initial: '' }),
 }
 
 type EncumbranceSchema = typeof encumbranceSchema
 
 /* ---------------------------------------- */
 
+// NOTE: change from previous schema where these values were all strings
 const liftingMovingSchema = {
-  basiclift: new fields.StringField({ required: true, nullable: false }),
-  onehandedlift: new fields.StringField({ required: true, nullable: false }),
-  twohandedlift: new fields.StringField({ required: true, nullable: false }),
-  shove: new fields.StringField({ required: true, nullable: false }),
-  runnningshove: new fields.StringField({ required: true, nullable: false }),
-  shiftslightly: new fields.StringField({ required: true, nullable: false }),
-  carryonback: new fields.StringField({ required: true, nullable: false }),
+  basiclift: new fields.NumberField({ required: true, nullable: false }),
+  onehandedlift: new fields.NumberField({ required: true, nullable: false }),
+  twohandedlift: new fields.NumberField({ required: true, nullable: false }),
+  shove: new fields.NumberField({ required: true, nullable: false }),
+  runningshove: new fields.NumberField({ required: true, nullable: false }),
+  shiftslightly: new fields.NumberField({ required: true, nullable: false }),
+  carryonback: new fields.NumberField({ required: true, nullable: false }),
 }
 
 type LiftingMovingSchema = typeof liftingMovingSchema
 
 /* ---------------------------------------- */
 
+const modifierSetSchema = {
+  modifiers: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+    required: true,
+    nullable: false,
+  }),
+}
+
+const conditionsSchema = {
+  actions: new fields.SchemaField(
+    {
+      maxActions: new fields.NumberField({ required: true, nullable: false, initial: 1 }),
+      maxBlocks: new fields.NumberField({ required: true, nullable: false, initial: 1 }),
+    },
+    { required: true, nullable: false }
+  ),
+  posture: new fields.StringField({ required: true, nullable: false }),
+  maneuver: new fields.StringField({ required: true, nullable: false }),
+  move: new fields.StringField({ required: true, nullable: false }),
+
+  self: new fields.SchemaField(modifierSetSchema, { required: true, nullable: false }),
+  target: new fields.SchemaField(modifierSetSchema, { required: true, nullable: false }),
+  usermods: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+    required: true,
+    nullable: false,
+  }),
+
+  reeling: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+  exhausted: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+}
+
+type ConditionsSchema = typeof conditionsSchema
+
+/* ---------------------------------------- */
+
+const reactionSchema = {
+  // NOTE: change from previous schema, where "modifier" was a string
+  modifier: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+  situation: new fields.StringField({ required: true, nullable: false }),
+  modifierTags: new fields.StringField({ required: true, nullable: false }),
+}
+
+type ReactionSchema = typeof reactionSchema
+
+/* ---------------------------------------- */
+
+const moveSchema = {
+  mode: new fields.StringField({ required: true, nullable: false }),
+  basic: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+  enhanced: new fields.NumberField({ required: true, nullable: true }),
+  default: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+}
+
+type MoveSchema = typeof moveSchema
+
+/* ---------------------------------------- */
+
 export {
   attributeSchema,
-  poolSchema,
+  conditionsSchema,
   encumbranceSchema,
   liftingMovingSchema,
+  moveSchema,
+  poolSchema,
+  reactionSchema,
+  type ConditionsSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
+  type MoveSchema,
+  type ReactionSchema,
 }
