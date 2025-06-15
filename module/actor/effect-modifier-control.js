@@ -47,11 +47,8 @@ export class EffectModifierControl {
 
   _registerSetting() {
     game.settings.register(SYSTEM_NAME, EffectModifierControl.SETTING_SHOW_EFFECTMODIFIERS, {
-      name: game.i18n.localize('GURPS.settingTokenToolsShowEffectMods', 'Show Effect Modifiers'),
-      hint: game.i18n.localize(
-        'GURPS.settingHintTokenToolsShowEffectMods',
-        'Enable the token Effect Modifiers popup window.'
-      ),
+      name: game.i18n.localize('GURPS.settingTokenToolsShowEffectMods'),
+      hint: game.i18n.localize('GURPS.settingHintTokenToolsShowEffectMods'),
       scope: 'client',
       config: true,
       type: Boolean,
