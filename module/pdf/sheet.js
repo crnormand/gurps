@@ -62,6 +62,12 @@ function getGurpsPDFSheetV1() {
   if (game.release.generation >= 13) return
 
   class GurpsPDFSheetV1 extends JournalPDFPageSheet {
+    static get defaultOptions() {
+      return foundry.utils.mergeObject(super.defaultOptions, {
+        width: 600,
+        height: 780,
+      })
+    }
     get template() {
       return `systems/gurps/templates/pdf/${this.isView || !this.isEditable ? 'view' : 'edit'}.hbs`
     }
