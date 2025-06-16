@@ -3236,6 +3236,7 @@ export class GurpsActor extends Actor {
    * @param actorComp - Actor Component for the Action
    * @returns {boolean}
    */
+  // NOTE: migrated
   canConsumeAction(action, chatThing, actorComp = {}) {
     if (!action && !chatThing) return false
     const settingsUseMaxActions = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
@@ -3269,6 +3270,7 @@ export class GurpsActor extends Actor {
    * @param {object} [actorComp] - Actor Component for the Action
    * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
    */
+  // NOTE: migrated
   async canRoll(action, token, chatThing = '', actorComp = {}) {
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
