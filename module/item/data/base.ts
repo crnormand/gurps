@@ -7,7 +7,10 @@ import { parselink } from '../../../lib/parselink.js'
 import { MeleeAttack } from 'module/action/melee-attack.js'
 import { RangedAttack } from 'module/action/ranged-attack.js'
 
-abstract class BaseItemData<Schema extends BaseItemDataSchema> extends TypeDataModel<Schema, Item.Implementation> {
+abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSchema> extends TypeDataModel<
+  Schema,
+  Item.Implementation
+> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.SystemOfType<SubType>
