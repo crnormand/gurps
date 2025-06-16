@@ -1,9 +1,10 @@
+import { Length, LengthUnit } from '../data/common/length.js'
+
 // COMPATIBILITY: v12
 function registerTokenRuler() {
   if (!game.release) return
   if (game.release?.generation < 13) return
 
-  // @ts-expect-error: waiting for types to catch up
   class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     /**
      * Get the style to be used to highlight the grid offset.
@@ -19,23 +20,26 @@ function registerTokenRuler() {
       waypoint: TokenRulerWaypoint,
       offset: { i: number; j: number }
     ): { color?: PIXI.ColorSource; alpha?: number; texture?: PIXI.Texture; matrix?: PIXI.Matrix | null } {
+      // @ts-expect-error waiting for types to catch up
       const data = super._getGridHighlightStyle(waypoint, offset)
       const actor = this.token.actor
       if (!actor) return data
 
-      // @ts-expect-error: waiting for actor update to DataModel
-      if (waypoint.measurement.cost <= Math.ceil(actor.system.currentmove / 10)) {
-        return { ...data, color: 0x0000ff }
-        // @ts-expect-error: waiting for actor update to DataModel
-      } else if (waypoint.measurement.cost > actor.system.currentsprint) {
-        return { ...data, color: 0xff0000 }
-        // @ts-expect-error: waiting for actor update to DataModel
-      } else if (waypoint.measurement.cost > actor.system.currentmove) {
-        return { ...data, color: 0xffff00 }
-      } else {
-        return { ...data, color: 0x00ff00 }
-      }
+      const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
+      const yards = Length.from(waypoint.measurement.cost, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
 
+      // @ts-expect-error: waiting for actor update to DataModel
+      if (yards <= Math.ceil(actor.system.currentmove / 10)) {
+        return { ...data, color: 0x0000ff } // Step: blue
+        // @ts-expect-error: waiting for actor update to DataModel
+      } else if (yards <= actor.system.currentmove) {
+        return { ...data, color: 0x00ff00 } // Normal move: green
+        // @ts-expect-error: waiting for actor update to DataModel
+      } else if (yards <= actor.system.currentsprint) {
+        return { ...data, color: 0xffff00 } // Sprint / Enhanced move: yellow
+      } else {
+        return { ...data, color: 0xff0000 } // More than sprint: red
+      }
     }
   }
 
