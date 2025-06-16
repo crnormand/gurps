@@ -1,4 +1,4 @@
-import { CommonItemData } from './data/base.js'
+import { BaseItemData } from './data/base.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubType> {
   /* ---------------------------------------- */
@@ -36,11 +36,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubT
   getItemAttacks(options: { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][]
   getItemAttacks(): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][]
   getItemAttacks(options = { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][] {
-    if (!(this.system instanceof CommonItemData)) return []
+    if (!(this.system instanceof BaseItemData)) return []
 
     const attacks =
       this.actor?.items.filter(
-        item => (item.system as CommonItemData).component.parentuuid === (this.system as CommonItemData).component.uuid
+        item => (item.system as BaseItemData).component.parentuuid === (this.system as BaseItemData).component.uuid
       ) ?? []
     switch (options.attackType) {
       case 'melee':
