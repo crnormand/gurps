@@ -20,7 +20,7 @@ class BaseAction<Schema extends BaseActionSchema = BaseActionSchema> extends Dat
 
   /* ---------------------------------------- */
 
-  static override defineSchema<Schema extends BaseActionSchema = BaseActionSchema>(): Schema {
+  static override defineSchema() {
     return {
       ...baseActionSchema(),
       type: new fields.StringField({
@@ -30,8 +30,18 @@ class BaseAction<Schema extends BaseActionSchema = BaseActionSchema> extends Dat
         readOnly: true,
         initial: () => this.metadata.type,
       }),
-    } as Schema
+    }
   }
+
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+
+  prepareBaseData(): void {}
+
+  /* ---------------------------------------- */
+
+  prepareDerivedData(): void {}
 }
 
 /* ---------------------------------------- */
@@ -56,3 +66,5 @@ const baseActionSchema = () => {
 type BaseActionSchema = ReturnType<typeof baseActionSchema>
 
 /* ---------------------------------------- */
+
+export { BaseAction, type ActionMetadata, type BaseActionSchema }

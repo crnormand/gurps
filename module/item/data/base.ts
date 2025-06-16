@@ -1,15 +1,24 @@
-import { parselink } from 'lib/parselink.js'
 import fields = foundry.data.fields
 import TypeDataModel = foundry.abstract.TypeDataModel
-import DataModel = foundry.abstract.DataModel
 import { AnyObject } from 'fvtt-types/utils'
 
-abstract class BaseItemData<Schema extends fields.DataSchema> extends TypeDataModel<Schema, Item.Implementation> {
+import { ItemComponent } from './component.js'
+import { parselink } from '../../../lib/parselink.js'
+import { MeleeAttack } from 'module/action/melee-attack.js'
+import { RangedAttack } from 'module/action/ranged-attack.js'
+
+abstract class BaseItemData<Schema extends BaseItemDataSchema> extends TypeDataModel<Schema, Item.Implementation> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.SystemOfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.parent.type as Item.SubType)
+  }
+
+  /* ---------------------------------------- */
+
+  static override defineSchema(): BaseItemDataSchema {
+    return baseItemDataSchema
   }
 
   /* ---------------------------------------- */
@@ -35,29 +44,36 @@ abstract class BaseItemData<Schema extends fields.DataSchema> extends TypeDataMo
   }
 
   /* ---------------------------------------- */
-  /*  Data Preparation                        */
-  /* ---------------------------------------- */
 
-  applyBonuses(bonuses: AnyObject[]): void {}
-}
-
-/* ---------------------------------------- */
-
-/**
- * CommonItemData is the base class used by all item types other than weapons.
- */
-abstract class CommonItemData<Schema extends CommonItemDataSchema = CommonItemDataSchema> extends BaseItemData<Schema> {
-  static override defineSchema(): CommonItemDataSchema {
-    return commonItemDataSchema
+  applyBonuses(bonuses: AnyObject[]): void {
+    for (const attack of [...this.melee, ...this.ranged]) {
+      attack.applyBonuses(bonuses)
+    }
   }
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  // override prepareSiblingData(): void {
-  //   super.prepareSiblingData()
-  // }
+  override prepareBaseData(): void {
+    super.prepareBaseData()
+
+    for (const attack of [...this.melee, ...this.ranged]) {
+      attack.prepareBaseData()
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData(): void {
+    super.prepareDerivedData()
+
+    for (const attack of [...this.melee, ...this.ranged]) {
+      attack.prepareDerivedData()
+    }
+  }
+
+  /* ---------------------------------------- */
 
   getGlobalBonuses(): AnyObject[] {
     if (this.isOfType('equipment') && !this.equipped) return []
@@ -81,10 +97,17 @@ abstract class CommonItemData<Schema extends CommonItemDataSchema = CommonItemDa
 
 // This Item schema is repeated in multiple places, so we define it here to avoid duplication
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
-const commonItemDataSchema = {
-  melee: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs corresponding to subtypes of Item
-  ranged: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+const baseItemDataSchema = {
+  // Change from previous schema. Array instead of object
+  melee: new fields.ArrayField(new fields.EmbeddedDataField(MeleeAttack, { required: true, nullable: false }), {
+    required: true,
+    nullable: false,
+  }),
+  // Change from previous schema. Array instead of object
+  ranged: new fields.ArrayField(new fields.EmbeddedDataField(RangedAttack, { required: true, nullable: false }), {
+    required: true,
+    nullable: false,
+  }),
   // Change from previous schema. Set of IDs corresponding to subtypes of Item
   ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
   // Change from previous schema. Set of IDs corresponding to subtypes of Item
@@ -103,47 +126,8 @@ const commonItemDataSchema = {
   modifierTags: new fields.StringField({ required: true, nullable: false }),
 }
 
-type CommonItemDataSchema = typeof commonItemDataSchema
+type BaseItemDataSchema = typeof baseItemDataSchema
 
 /* ---------------------------------------- */
 
-abstract class ItemComponent<Schema extends ItemComponentSchema = ItemComponentSchema> extends DataModel<Schema> {
-  static override defineSchema(): ItemComponentSchema {
-    return itemComponentSchema
-  }
-}
-
-/* ---------------------------------------- */
-
-const itemComponentSchema = {
-  name: new fields.StringField({ required: true, nullable: false }),
-  notes: new fields.StringField({ required: true, nullable: false }),
-  pageref: new fields.StringField({ required: true, nullable: false }),
-  // Change from previous schema. Set of IDs
-  contains: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false }), {
-    required: true,
-    nullable: false,
-  }),
-  uuid: new fields.StringField({ required: true, nullable: false }),
-  parentuuid: new fields.StringField({ required: true, nullable: false }),
-  originalName: new fields.StringField({ required: true, nullable: false }),
-  // Change from previous schema. Previously Trait OTFs were stored on the trait item rather than the component
-  checkotf: new fields.StringField({ required: true, nullable: false }),
-  duringotf: new fields.StringField({ required: true, nullable: false }),
-  passotf: new fields.StringField({ required: true, nullable: false }),
-  failotf: new fields.StringField({ required: true, nullable: false }),
-  consumeAction: new fields.BooleanField({ required: true, nullable: false }),
-}
-
-type ItemComponentSchema = typeof itemComponentSchema
-
-/* ---------------------------------------- */
-
-export {
-  BaseItemData,
-  CommonItemData,
-  ItemComponent,
-  commonItemDataSchema,
-  type CommonItemDataSchema,
-  type ItemComponentSchema,
-}
+export { BaseItemData, ItemComponent, baseItemDataSchema, type BaseItemDataSchema }
