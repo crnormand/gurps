@@ -1,13 +1,15 @@
-import { BaseItemData, ItemComponent, ItemComponentSchema } from './base.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
-import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 
-class MeleeAttackData extends BaseItemData<MeleeAttackSchema> {
+import { BaseAction, BaseActionSchema } from './base.js'
+import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+import { makeRegexPatternFrom } from '../../lib/utilities.js'
+
+class MeleeAttack extends BaseAction<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {
     return {
       ...super.defineSchema(),
-      ...meleeAttackSchema,
+      ...meleeAttackSchema(),
     }
   }
 
@@ -28,7 +30,7 @@ class MeleeAttackData extends BaseItemData<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
-  override applyBonuses(bonuses: AnyObject[]): void {
+  applyBonuses(bonuses: AnyObject[]): void {
     for (const bonus of bonuses) {
       // All melee attacks are affected by DX
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {
@@ -68,28 +70,13 @@ class MeleeAttackData extends BaseItemData<MeleeAttackSchema> {
 
 /* ---------------------------------------- */
 
-class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
-  static override defineSchema(): MeleeAttackComponentSchema {
-    return {
-      ...super.defineSchema(),
-      ...meleeAttackComponentSchema,
-    }
+const meleeAttackSchema = () => {
+  return {
+    mel: new fields.EmbeddedDataField(MeleeAttackComponent, { required: true, nullable: false }),
   }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
 }
 
-/* ---------------------------------------- */
-
-const meleeAttackSchema = {
-  mel: new fields.EmbeddedDataField(MeleeAttackComponent, { required: true, nullable: false }),
-}
-
-type MeleeAttackSchema = typeof meleeAttackSchema
+type MeleeAttackSchema = BaseActionSchema & ReturnType<typeof meleeAttackSchema>
 
 /* ---------------------------------------- */
 
@@ -118,4 +105,21 @@ type MeleeAttackComponentSchema = ItemComponentSchema & typeof meleeAttackCompon
 
 /* ---------------------------------------- */
 
-export { MeleeAttackData, type MeleeAttackSchema }
+class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
+  static override defineSchema(): MeleeAttackComponentSchema {
+    return {
+      ...super.defineSchema(),
+      ...meleeAttackComponentSchema,
+    }
+  }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  level: number = 0
+}
+
+/* ---------------------------------------- */
+
+export { MeleeAttack, type MeleeAttackSchema }
