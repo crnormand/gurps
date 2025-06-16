@@ -1,6 +1,6 @@
 {
   "name": "gurps",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "description": "NaN's GURPS Game Aid",
   "type": "module",
   "scripts": {
