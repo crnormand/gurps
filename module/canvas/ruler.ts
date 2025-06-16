@@ -4,7 +4,6 @@ import { Length, LengthUnit } from '../data/common/index.js'
 
 function registerRuler() {
   if (game.release?.generation ?? 12 >= 13) {
-    // @ts-expect-error: Waiting for types to catch up
     class GurpsRuler extends foundry.canvas.interaction.Ruler {
       // Used to determine the distance modifier to apply to the modifier bucket
       // when releasing the ruler.
@@ -19,6 +18,7 @@ function registerRuler() {
 
       //@ts-expect-error: types have not yet caught up
       protected _getWaypointLabelContext(waypoint: RulerWaypoint, state: any): AnyObject | void {
+        //@ts-expect-error: types have not yet caught up
         const context = super._getWaypointLabelContext(waypoint, state)
         if (context === undefined) return context
         if (waypoint.next === null) {
@@ -54,11 +54,11 @@ function registerRuler() {
       // @ts-expect-error: types have not yet caught up
       override reset(): void {
         if (this.distanceModifier !== 0) GURPS.ModifierBucket.addTempRangeMod()
+        // @ts-expect-error: types have not yet caught up
         return super.reset()
       }
     }
 
-    // @ts-expect-error: Waiting for types to catch up
     CONFIG.Canvas.rulerClass = GurpsRuler
   }
 }
