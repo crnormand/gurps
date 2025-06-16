@@ -1,14 +1,16 @@
-import { BaseItemData, ItemComponent, ItemComponentSchema } from './base.js'
-import * as Settings from '../../../lib/miscellaneous-settings.js'
 import fields = foundry.data.fields
-import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-class RangedAttackData extends BaseItemData<RangedAttackSchema> {
+import { BaseAction, BaseActionSchema } from './base.js'
+import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+import { makeRegexPatternFrom } from '../../lib/utilities.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+
+class RangedAttack extends BaseAction<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
     return {
       ...super.defineSchema(),
-      ...rangedAttackSchema,
+      ...rangedAttackSchema(),
     }
   }
 
@@ -17,6 +19,7 @@ class RangedAttackData extends BaseItemData<RangedAttackSchema> {
   get component(): RangedAttackComponent {
     return this.rng
   }
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -47,7 +50,7 @@ class RangedAttackData extends BaseItemData<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  override applyBonuses(bonuses: AnyObject[]): void {
+  applyBonuses(bonuses: AnyObject[]): void {
     for (const bonus of bonuses) {
       // All melee attacks are affected by DX
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {
@@ -65,28 +68,13 @@ class RangedAttackData extends BaseItemData<RangedAttackSchema> {
 
 /* ---------------------------------------- */
 
-class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
-  static override defineSchema(): RangedAttackComponentSchema {
-    return {
-      ...super.defineSchema(),
-      ...rangedAttackComponentSchema,
-    }
+const rangedAttackSchema = () => {
+  return {
+    rng: new fields.EmbeddedDataField(RangedAttackComponent, { required: true, nullable: false }),
   }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
 }
 
-/* ---------------------------------------- */
-
-const rangedAttackSchema = {
-  rng: new fields.EmbeddedDataField(RangedAttackComponent, { required: true, nullable: false }),
-}
-
-type RangedAttackSchema = typeof rangedAttackSchema
+type RangedAttackSchema = BaseActionSchema & ReturnType<typeof rangedAttackSchema>
 
 /* ---------------------------------------- */
 
@@ -117,4 +105,21 @@ type RangedAttackComponentSchema = ItemComponentSchema & typeof rangedAttackComp
 
 /* ---------------------------------------- */
 
-export { RangedAttackData, type RangedAttackSchema }
+class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
+  static override defineSchema(): RangedAttackComponentSchema {
+    return {
+      ...super.defineSchema(),
+      ...rangedAttackComponentSchema,
+    }
+  }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  level: number = 0
+}
+
+/* ---------------------------------------- */
+
+export { RangedAttack, type RangedAttackSchema }

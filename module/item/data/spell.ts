@@ -1,9 +1,10 @@
-import { CommonItemData, CommonItemDataSchema, ItemComponent, ItemComponentSchema } from './base.js'
+import { BaseItemData, BaseItemDataSchema } from './base.js'
+import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 
-class SpellData extends CommonItemData<SpellSchema> {
+class SpellData extends BaseItemData<SpellSchema> {
   static override defineSchema(): SpellSchema {
     return {
       ...super.defineSchema(),
@@ -29,6 +30,8 @@ class SpellData extends CommonItemData<SpellSchema> {
   /* ---------------------------------------- */
 
   override applyBonuses(bonuses: AnyObject[]): void {
+    super.applyBonuses(bonuses)
+
     for (const bonus of bonuses) {
       // Skills are affected by their base attribute changes
       if (bonus.type === 'attribute') {
@@ -69,7 +72,7 @@ const spellSchema = {
   spl: new fields.EmbeddedDataField(SpellComponent, { required: true, nullable: false }),
 }
 
-type SpellSchema = CommonItemDataSchema & typeof spellSchema
+type SpellSchema = BaseItemDataSchema & typeof spellSchema
 
 /* ---------------------------------------- */
 
