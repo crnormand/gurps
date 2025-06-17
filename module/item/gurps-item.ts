@@ -1,4 +1,5 @@
 import { BaseItemData } from './data/base.js'
+import fields = foundry.data.fields
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubType> {
   /* ---------------------------------------- */
@@ -9,12 +10,25 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubT
   }
 
   /* ---------------------------------------- */
-  /*  Data Preparation                        */
+  /*  Editing Methods                         */
   /* ---------------------------------------- */
 
-  // prepareSiblingData(): void {
-  //   ;(this.system as BaseItemData<any>).prepareSiblingData()
-  // }
+  async updateAction(
+    id: string,
+    data: fields.SchemaField.UpdateData<fields.DataSchema> | undefined,
+    operation?: Item.Database.UpdateOperation
+  ): Promise<this> {
+    if (!(this.system instanceof BaseItemData)) return this
+    if (!this.system.actions.has(id)) throw new Error(`Action with ID ${id} does not exist on this item.`)
+
+    const action = this.system.actions.get(id)
+    if (!action) throw new Error(`Action with ID ${id} does not exist on this item.`)
+    const updatedAction = await action.update(data, operation)
+    this.system.actions.set(id, updatedAction)
+    // Re-render the item to reflect changes
+    this.render()
+    return this
+  }
 
   /* ---------------------------------------- */
   /*  Utilities                               */
