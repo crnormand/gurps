@@ -1,7 +1,7 @@
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAction, BaseActionSchema } from './base.js'
+import { BaseAction, BaseActionSchema } from './base-action.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 
