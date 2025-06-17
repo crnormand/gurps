@@ -4,8 +4,7 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemComponent } from './component.js'
 import { parselink } from '../../../lib/parselink.js'
-import { MeleeAttack } from 'module/action/melee-attack.js'
-import { RangedAttack } from 'module/action/ranged-attack.js'
+import { ActionCollectionField, MeleeAttack, RangedAttack } from '../../action/index.js'
 
 abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSchema> extends TypeDataModel<
   Schema,
@@ -23,6 +22,13 @@ abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSche
   static override defineSchema(): BaseItemDataSchema {
     return baseItemDataSchema
   }
+
+  /* ---------------------------------------- */
+  /*  Instance properties                     */
+  /* ---------------------------------------- */
+
+  declare melee: MeleeAttack[]
+  declare ranged: RangedAttack[]
 
   /* ---------------------------------------- */
 
@@ -61,9 +67,9 @@ abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSche
   override prepareBaseData(): void {
     super.prepareBaseData()
 
-    for (const attack of [...this.melee, ...this.ranged]) {
-      attack.prepareBaseData()
-    }
+    this.actions.forEach(action => {
+      action.prepareBaseData()
+    })
   }
 
   /* ---------------------------------------- */
@@ -94,6 +100,10 @@ abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSche
 
     return bonuses
   }
+
+  testFunc() {
+    const a = this.actions
+  }
 }
 
 /* ---------------------------------------- */
@@ -101,16 +111,18 @@ abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSche
 // This Item schema is repeated in multiple places, so we define it here to avoid duplication
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
 const baseItemDataSchema = {
-  // Change from previous schema. Array instead of object
-  melee: new fields.ArrayField(new fields.EmbeddedDataField(MeleeAttack, { required: true, nullable: false }), {
-    required: true,
-    nullable: false,
-  }),
-  // Change from previous schema. Array instead of object
-  ranged: new fields.ArrayField(new fields.EmbeddedDataField(RangedAttack, { required: true, nullable: false }), {
-    required: true,
-    nullable: false,
-  }),
+  // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
+  actions: new ActionCollectionField(),
+  // // Change from previous schema. Array instead of object
+  // melee: new fields.ArrayField(new fields.EmbeddedDataField(MeleeAttack, { required: true, nullable: false }), {
+  //   required: true,
+  //   nullable: false,
+  // }),
+  // // Change from previous schema. Array instead of object
+  // ranged: new fields.ArrayField(new fields.EmbeddedDataField(RangedAttack, { required: true, nullable: false }), {
+  //   required: true,
+  //   nullable: false,
+  // }),
   // Change from previous schema. Set of IDs corresponding to subtypes of Item
   ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
   // Change from previous schema. Set of IDs corresponding to subtypes of Item
