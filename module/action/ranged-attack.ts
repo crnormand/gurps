@@ -1,7 +1,7 @@
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAction, BaseActionSchema } from './base.js'
+import { BaseAction, BaseActionSchema } from './base-action.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
@@ -28,6 +28,16 @@ class RangedAttack extends BaseAction<RangedAttackSchema> {
   override prepareBaseData(): void {
     super.prepareBaseData()
     this.component.level = this.component.import
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData(): void {
+    super.prepareDerivedData()
+
+    const actor = this.actor
+    if (!actor || !actor.isOfType('character', 'enemy')) return
+    this.convertRanges(actor.system.attributes.ST.value)
   }
 
   /* ---------------------------------------- */

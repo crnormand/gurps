@@ -11,7 +11,7 @@ import {
 import TypeDataModel = foundry.abstract.TypeDataModel
 import fields = foundry.data.fields
 import { HitLocationEntry } from './hit-location-entry.js'
-import { BaseItemData, CommonItemData } from 'module/item/data/base.js'
+import { BaseItemData } from 'module/item/data/base.js'
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom, splitArgs } from '../../../lib/utilities.js'
 import { HitLocation } from '../../hitlocation/hitlocation.js'
@@ -104,7 +104,7 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
 
   prepareEmbeddedDocuments() {
     this._globalBonuses = this.parent.items.reduce((acc: AnyObject[], item) => {
-      if (!(item.system instanceof CommonItemData)) return acc
+      if (!(item.system instanceof BaseItemData)) return acc
       acc.push(...item.system.getGlobalBonuses())
       return acc
     }, [])
@@ -112,10 +112,6 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
     for (const item of this.parent.items) {
       if (!(item.system instanceof BaseItemData)) continue
       item.system.applyBonuses(this._globalBonuses)
-
-      if (item.isOfType('rangedAtk')) {
-        item.system.convertRanges(this.attributes.ST.value)
-      }
     }
 
     this.ads = this.parent.items.filter(item => item.isOfType('feature'))
