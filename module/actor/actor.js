@@ -199,7 +199,7 @@ export class GurpsActor extends Actor {
     await this.syncLanguages()
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
-    // NOTE: no longer needed as Foundry Itmes are alwasys used
+    // NOTE: no longer needed as Foundry Itmes are always used
     const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const validMods = userMods.filter(m => !m.includes('@system.'))
@@ -1370,6 +1370,7 @@ export class GurpsActor extends Actor {
     return byName
   }
 
+  // NOTE: migrated
   async setMoveDefault(value) {
     this.ignoreRender = true
     let move = this.system.move
@@ -1381,6 +1382,7 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
+  // NOTE: migrated
   async addMoveMode(mode, basic, enhanced = basic, isDefault = false) {
     // copy existing entries
     let move = {}
@@ -1421,6 +1423,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {any[]} damageData
    */
+  // TODO: move to ActorSheet
   handleDamageDrop(damageData) {
     if (game.user.isGM || !game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ONLY_GMS_OPEN_ADD)) {
       const dialog = new ApplyDamageDialog(this, damageData)
@@ -1449,6 +1452,7 @@ export class GurpsActor extends Actor {
    *
    * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async handleItemDrop(dragData) {
     if (!this.isOwner) {
       ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
@@ -1564,12 +1568,14 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
+  // TODO: no longer required with new DataModel.
   _forceRender() {
     this.ignoreRender = false
     this.render()
   }
 
   // Drag and drop from an equipment list
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
@@ -1635,6 +1641,7 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
+  // TODO: move to ActorSheet
   async promptEquipmentQuantity(eqt, title) {
     return await foundry.applications.api.DialogV2.prompt({
       window: { title: title },
@@ -1650,6 +1657,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {Item} item
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async updateItem(item) {
     // @ts-ignore
     delete item.editingActor
@@ -1684,6 +1692,7 @@ export class GurpsActor extends Actor {
    * @param {ItemData} itemData
    * @param {string | null} [targetkey]
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async addNewItemData(itemData, targetkey = null) {
     let d = itemData
     // @ts-ignore
@@ -1707,6 +1716,7 @@ export class GurpsActor extends Actor {
    * @param {ItemData} itemData
    * @param {string | null} [targetkey]
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async addItemData(itemData, targetkey) {
     let [eqtkey, addFeatures] = await this._addNewItemEquipment(itemData, targetkey)
     if (addFeatures) {
@@ -1719,6 +1729,7 @@ export class GurpsActor extends Actor {
    * @param {ItemData} itemData
    * @param {string | null} targetkey
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _addNewItemEquipment(itemData, targetkey) {
     let existing = this._findEqtkeyForId('itemid', itemData._id)
     if (!!existing) {
@@ -1783,6 +1794,7 @@ export class GurpsActor extends Actor {
    * @param {GurpsItemData} itemData
    * @param {string} eqtkey
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
@@ -1817,6 +1829,7 @@ export class GurpsActor extends Actor {
    * @param {Equipment} eqt equipment.
    * @param {string} targetPath equipment target path.
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async updateItemAdditionsBasedOn(eqt, targetPath) {
     await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'), eqt.equipped)
   }
@@ -1828,6 +1841,7 @@ export class GurpsActor extends Actor {
    * @param {boolean} carried container item's carried status.
    * @param {boolean} equipped container item's equipped status.
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _updateEqtStatus(eqt, eqtkey, carried, equipped) {
     eqt.carried = carried
     eqt.equipped = equipped
@@ -1852,6 +1866,7 @@ export class GurpsActor extends Actor {
    * @param {string} eqtkey
    * @param {string} key
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _addItemElement(itemData, eqtkey, key) {
     let found = false
     // @ts-ignore
@@ -1888,6 +1903,7 @@ export class GurpsActor extends Actor {
    * @returns {Promise<*>}
    * @private
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _getSkillLevelFromOTF(otf) {
     if (!otf) return
     let skillAction = parselink(otf).action
@@ -1908,6 +1924,7 @@ export class GurpsActor extends Actor {
    * @returns {Promise<{[p: string]: *}|{}>}
    * @private
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _addChildItemElement(parentItem, childItemData, key, list) {
     let found = false
     if (found) {
@@ -1954,6 +1971,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} path
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async deleteEquipment(path, depth = 0) {
     let eqt = foundry.utils.getProperty(this, path)
     if (!eqt) return eqt
@@ -1981,6 +1999,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} itemid
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _removeItemAdditions(itemid) {
     let saved = this.ignoreRender
     this.ignoreRender = true
@@ -1999,6 +2018,7 @@ export class GurpsActor extends Actor {
    * @param {string} itemId
    * @private
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _removeItemEffect(itemId) {
     let userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
     const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
@@ -2025,6 +2045,7 @@ export class GurpsActor extends Actor {
    * @param {string} itemid
    * @param {string} key
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async _removeItemElement(itemid, key) {
     let found = true
     let any = false
@@ -2059,6 +2080,7 @@ export class GurpsActor extends Actor {
    * @param {string} targetkey
    * @param {boolean} shiftkey
    */
+  // TODO: no longer required with new DataModel. Replace all isntances.
   async moveEquipment(srckey, targetkey, shiftkey) {
     if (srckey == targetkey) return
     if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
@@ -2138,6 +2160,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} path
    */
+  // TODO: Move to ActorSheet
   async toggleExpand(path, expandOnly = false) {
     let obj = foundry.utils.getProperty(this, path)
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
@@ -2163,6 +2186,7 @@ export class GurpsActor extends Actor {
    * @param {string} srckey
    * @param {string} targetkey
    */
+  // TODO: no longer needed. Remove references and replace with appropriate replacement
   async _splitEquipment(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     if (srceqt.count <= 1) return false // nothing to split
@@ -2203,6 +2227,7 @@ export class GurpsActor extends Actor {
    * @param {string} srckey
    * @param {string} targetkey
    */
+  // TODO: no longer needed. Remove references and replace with appropriate replacement
   async _checkForMerging(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     let desteqt = foundry.utils.getProperty(this, targetkey)
