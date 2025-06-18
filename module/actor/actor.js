@@ -130,6 +130,7 @@ export class GurpsActor extends Actor {
     this.system.trackersByName = this.trackersByName
   }
 
+  // NOTE: migrated
   prepareDerivedData() {
     super.prepareDerivedData()
 
@@ -156,6 +157,7 @@ export class GurpsActor extends Actor {
   }
 
   // execute after every import.
+  // TODO: add to import functionality
   async postImport() {
     this.calculateDerivedValues()
 
@@ -197,6 +199,7 @@ export class GurpsActor extends Actor {
     await this.syncLanguages()
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
+    // NOTE: no longer needed as Foundry Itmes are alwasys used
     const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const validMods = userMods.filter(m => !m.includes('@system.'))
@@ -216,12 +219,14 @@ export class GurpsActor extends Actor {
       })
     }
 
+    // NOTE: this is never used
     if (canvas.tokens.controlled.length > 0) {
       await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
   }
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
+  // TODO: add to import functionality
   async syncLanguages() {
     if (this.system.languages) {
       let updated = false
@@ -260,6 +265,7 @@ export class GurpsActor extends Actor {
   }
 
   // This will ensure that every character at least starts with these new data values. actor-sheet.js may change them.
+  // NOTE: migrated
   calculateDerivedValues() {
     let saved = !!this.ignoreRender
     this.ignoreRender = true
@@ -369,6 +375,7 @@ export class GurpsActor extends Actor {
    * @param {string} reference - item.id or system.<path>
    * @returns {Promise<void>}
    */
+  // TODO: verify whether this is needed after migration complete
   async removeModEffectFor(reference) {
     let userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     let newMods = userMods.filter(m => !m.includes(reference) || m.includes('@man:') || !m.includes('@eft:'))
@@ -440,6 +447,7 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: no longer needed
   _applyItemBonuses() {
     let pi = (/** @type {string | undefined} */ n) => (!!n ? parseInt(n) : 0)
     /** @type {string[]} */
@@ -582,6 +590,7 @@ export class GurpsActor extends Actor {
    * @param {any} id
    * @returns {string | undefined}
    */
+  // TODO: no longer needed. Remove references and replace with appropriate replacement
   _findEqtkeyForId(key, id) {
     var eqtkey
     let data = this.system
@@ -604,6 +613,7 @@ export class GurpsActor extends Actor {
    * @param {boolean} include - Whether to check equal or include in the search
    * @return {string | undefined} The trait key if found, otherwise undefined.
    */
+  // TODO: no longer needed. Remove references and replace with appropriate replacement
   _findSysKeyForId(key, id, sysKey, include = false) {
     let traitKey
     let data = this.system
@@ -619,6 +629,7 @@ export class GurpsActor extends Actor {
    * @param {any} id
    * @returns {string | undefined}
    */
+  // NOTE: migrated
   findAdvantage(advname) {
     // This code is for when the actor is using Foundry items.
     // let found = this.items.filter(it => it.type === 'feature').find(it => it.name.match(new RegExp(advname, 'i')))
@@ -755,6 +766,7 @@ export class GurpsActor extends Actor {
    * @param {number} threshold
    * @returns {number}
    */
+  // NOTE: migrated
   _getCurrentMove(move, threshold) {
     let inCombat = false
     try {
@@ -773,6 +785,7 @@ export class GurpsActor extends Actor {
       : Math.max(1, Math.floor(move * threshold))
   }
 
+  // NOTE: migrated
   _getMoveAdjustedForManeuver(move, threshold) {
     let adjustment = null
 
@@ -791,6 +804,7 @@ export class GurpsActor extends Actor {
         }
   }
 
+  // NOTE: migrated
   _adjustMove(move, threshold, value, reason) {
     switch (value.toString()) {
       case MOVE_NONE:
@@ -846,6 +860,7 @@ export class GurpsActor extends Actor {
     return null
   }
 
+  // NOTE: migrated
   _getMoveAdjustedForPosture(move, threshold) {
     let adjustment = null
 
@@ -899,6 +914,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {Object} list
    */
+  // NOTE: migrated
   _collapseQuantumEq(list, isMelee = false) {
     recurselist(list, async e => {
       let otf = e.otf
@@ -947,6 +963,7 @@ export class GurpsActor extends Actor {
     })
   }
 
+  // NOTE: not needed
   _getStep() {
     let step = Math.ceil(parseInt(this.system.basicmove.value.toString()) / 10)
     return Math.max(1, step)
@@ -1001,6 +1018,7 @@ export class GurpsActor extends Actor {
     return await super.update(data, context)
   }
 
+  // NOTE: is this really needed? Not migrated
   sendChatMessage(msg) {
     let self = this
 
@@ -1016,13 +1034,14 @@ export class GurpsActor extends Actor {
     })
   }
 
+  // NOTE: no longer needed
   async internalUpdate(data, context) {
     //let ctx = { render: !this.ignoreRender }
     let ctx = { render: false }
     if (!!context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
-
+  // NOTE: migrated
   async toggleStatusEffect(statusId, { active, overlay = false } = {}) {
     const status = CONFIG.statusEffects.find(e => e.id === statusId)
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
@@ -1039,6 +1058,7 @@ export class GurpsActor extends Actor {
     await super.toggleStatusEffect(statusId, { active, overlay })
   }
 
+  // NOTE: no longer needed
   getAllActivePostureEffects() {
     return this.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
   }
@@ -1064,6 +1084,7 @@ export class GurpsActor extends Actor {
   /**
    * @returns {Token.Implementation[]}
    */
+  // NOTE: not needed, Actor#getDependentTokens is used instead
   _findTokens() {
     if (this.isToken && this.token?.layer) {
       let token = this.token.object
@@ -1075,6 +1096,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {{ id: unknown; }} effect
    */
+  // NOTE: migrated
   isEffectActive(effect) {
     for (const it of this.effects) {
       if (it.statuses.find(s => s === effect.id)) return true
@@ -1085,10 +1107,12 @@ export class GurpsActor extends Actor {
     return false
   }
 
+  // NOTE: not needed
   get _additionalResources() {
     return this.system.additionalresources
   }
 
+  // NOTE: migrated
   get displayname() {
     let n = this.name
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
@@ -1106,6 +1130,7 @@ export class GurpsActor extends Actor {
    * @param {string} action.hitlocation - optional hit location
    * @param {boolean} action.accumulate
    */
+  // NOTE: migrated
   async accumulateDamageRoll(action) {
     // define a new actor property, damageAccumulators, which is an array of object:
     // {
@@ -1135,16 +1160,19 @@ export class GurpsActor extends Actor {
     GURPS.ModifierBucket.render()
   }
 
+  // NOTE: migrated
   get damageAccumulators() {
     return this.system.conditions.damageAccumulators
   }
 
+  // NOTE: migrated
   async incrementDamageAccumulator(index) {
     this.damageAccumulators[index].count++
     await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
+  // NOTE: migrated
   async decrementDamageAccumulator(index) {
     this.damageAccumulators[index].count--
     if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
@@ -1152,12 +1180,14 @@ export class GurpsActor extends Actor {
     GURPS.ModifierBucket.render()
   }
 
+  // NOTE: migrated
   async clearDamageAccumulator(index) {
     this.damageAccumulators.splice(index, 1)
     await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
+  // NOTE: migrated
   async applyDamageAccumulator(index) {
     let accumulator = this.damageAccumulators[index]
     let roll = multiplyDice(accumulator.formula, accumulator.count)
@@ -1173,11 +1203,13 @@ export class GurpsActor extends Actor {
     await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
+  // NOTE: unused
   getPortraitPath() {
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_PATH) == 'global') return 'images/portraits/'
     return `worlds/${game.world.id}/images/portraits`
   }
 
+  // NOTE: unused
   removeAccents(str) {
     return str
       .normalize('NFD')
@@ -1190,6 +1222,7 @@ export class GurpsActor extends Actor {
   /**
    * Adds any assigned resource trackers to the actor data and sheet.
    */
+  // TODO: add to import functionality
   async setResourceTrackers() {
     /** @type {TrackerInstance[]} */
     const currentTrackers = GurpsActor.getTrackersAsArray(this.system)
@@ -1214,6 +1247,7 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: no longer needed, TrackerInstane uses DataModel now
   _initializeTrackerValues(template) {
     let value = template.tracker.value
     if (!!template.initialValue) {
@@ -1233,6 +1267,7 @@ export class GurpsActor extends Actor {
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    * @param {*} template to apply
    */
+  // NOTE: migrated to TrackerInstance#applyTemplate
   async applyTrackerTemplate(path, template) {
     this._initializeTrackerValues(template)
 
@@ -1249,6 +1284,7 @@ export class GurpsActor extends Actor {
    * Overwrites the tracker pointed to by the path with default/blank values.
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    */
+  // NOTE: no longer needed, TrackerInstane uses DataModel now
   async clearTracker(path) {
     // verify that this is a Tracker
     const prefix = 'additionalresources.tracker.'
@@ -1275,6 +1311,7 @@ export class GurpsActor extends Actor {
    * Removes the indicated tracker from the object, reindexing the keys.
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    */
+  // NOTE: migrated
   async removeTracker(path) {
     this.ignoreRender = true
     const prefix = 'additionalresources.tracker.'
@@ -1309,18 +1346,21 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
+  // NOTE: migrated
   static addTrackerToDataObject(data, trackerData) {
     let trackers = GurpsActor.getTrackersAsArray(data)
     trackers.push(trackerData)
     return arrayToObject(trackers)
   }
 
+  // NOTE: no longer needed
   static getTrackersAsArray(data) {
     let trackerArray = data.additionalresources.tracker
     if (!trackerArray) trackerArray = {}
     return objectToArray(trackerArray)
   }
 
+  // NOTE: migrated
   get trackersByName() {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
     const byName = {}
