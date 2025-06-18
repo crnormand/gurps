@@ -742,6 +742,49 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
+
+  async setMoveDefault(value: string): Promise<void> {
+    const move = this.move
+    move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
+      moveEntry.default = moveEntry.mode === value
+    })
+
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.move': move })
+  }
+
+  /* ---------------------------------------- */
+
+  async addMoveMode({
+    mode,
+    basic,
+    enhanced,
+    isDefault = false,
+  }: {
+    mode: string
+    basic: number
+    enhanced?: number
+    isDefault?: boolean
+  }): Promise<void> {
+    const move = this.move ?? []
+    const existingMove = move.find(entry => entry.mode === mode)
+    if (existingMove) {
+      existingMove.basic = basic ?? existingMove.basic
+      existingMove.enhanced = enhanced ?? existingMove.enhanced
+      existingMove.default = isDefault ?? existingMove.default
+    } else {
+      move.push({
+        mode,
+        basic: basic,
+        enhanced: enhanced ?? basic ?? 0,
+        default: isDefault ?? move.length === 0,
+      })
+    }
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.move': move })
+  }
+
+  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */

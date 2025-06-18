@@ -131,9 +131,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     formula: string,
     locations: string[]
   ): Promise<{ changed: boolean; msg: string; warn?: string; info?: string }> {
-    if (!this.isOfType('character', 'enemy'))
-      return { changed: false, msg: '', warn: 'Actor is not a character or enemy.' }
-    return this.system.changeDR(formula, locations)
+    if (this.isOfType('character', 'enemy')) {
+      return this.system.changeDR(formula, locations)
+    }
+    return { changed: false, msg: '', warn: 'Actor is not a character or enemy.' }
   }
 
   /* ---------------------------------------- */
