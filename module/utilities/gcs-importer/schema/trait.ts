@@ -39,7 +39,7 @@ const traitData = () => {
       required: true,
       nullable: true,
     }),
-    cr: new fields.StringField({ required: true, nullable: true }),
+    cr: new fields.NumberField({ required: true, nullable: true }),
     disabled: new fields.BooleanField({ required: true, nullable: true }),
     // END: TraitEditData
     // START: TraitSyncData
