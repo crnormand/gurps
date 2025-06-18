@@ -56,10 +56,17 @@ class GcsElement<Schema extends fields.DataSchema> extends DataModel<Schema> {
 
 /* ---------------------------------------- */
 
-type GcsItemMetaData = {
-  childClass: null | typeof GcsItem<any>
-  modifierClass: null | typeof GcsItem<any>
+type GcsItemMetaData<
+  Child extends typeof GcsItem<any> = typeof GcsItem<any>,
+  Modifier extends typeof GcsItem<any> = typeof GcsItem<any>,
+> = {
+  childClass: null | Child
+  modifierClass: null | Modifier
 }
+
+type ResolvedEmbeddedItemType<Type extends typeof GcsItem<any> | null> = Type extends typeof GcsItem<any>
+  ? InstanceType<Type>
+  : null
 
 class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
   static metadata: GcsItemMetaData = {
@@ -90,13 +97,13 @@ class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
 
   /* ---------------------------------------- */
 
-  get childItems(): GcsItem<any>[] {
+  get childItems(): ResolvedEmbeddedItemType<this['metadata']['childClass']>[] {
     return ((this as any).children ?? []).map((childData: any) => this.metadata.childClass?.fromImportData(childData))
   }
 
   /* ---------------------------------------- */
 
-  get modifierItems(): GcsItem<any>[] {
+  get modifierItems(): ResolvedEmbeddedItemType<this['metadata']['modifierClass']>[] {
     return ((this as any).modifiers ?? []).map((modifierData: any) =>
       this.metadata.modifierClass?.fromImportData(modifierData)
     )
