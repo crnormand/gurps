@@ -10,15 +10,27 @@ import { EquipmentData } from 'module/item/data/equipment.ts'
 import { TraitData } from 'module/item/data/trait.ts'
 import { SpellData } from 'module/item/data/spell.ts'
 import { SkillData } from 'module/item/data/skill.ts'
-import { MeleeAttackData } from 'module/item/data/melee-attack.ts'
-import { RangedAttackData } from 'module/item/data/ranged-attack.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { CharacterData } from 'module/actor/data/character.ts'
+import { BaseAction } from 'module/action/base-action.ts'
 
 export {}
 
 declare global {
-  var GURPS: any
+  var GURPS: {
+    SYSTEM_NAME: 'gurps'
+    CONFIG: {
+      Action: Record<
+        string,
+        {
+          label: string
+          documentClass: typeof BaseAction
+        }
+      >
+      // HACK: to get rid of later. just used for TypedPseudoDocument.TYPEs at the moment
+      [key: string]: unknown
+    }
+  } & any
 
   /* ---------------------------------------- */
 
@@ -40,6 +52,16 @@ declare global {
 
   /* ---------------------------------------- */
 
+  interface FlagConfig {
+    ActiveEffect: {
+      gurps: {
+        name: string
+      }
+    }
+  }
+
+  /* ---------------------------------------- */
+
   interface DataModelConfig {
     Actor: {
       character: typeof CharacterData
@@ -50,8 +72,8 @@ declare global {
       feature: typeof TraitData
       skill: typeof SkillData
       spell: typeof SpellData
-      meleeAtk: typeof MeleeAttackData
-      rangedAtk: typeof RangedAttackData
+      // meleeAtk: typeof MeleeAttackData
+      // rangedAtk: typeof RangedAttackData
     }
   }
 

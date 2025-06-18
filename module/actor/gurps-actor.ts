@@ -2,6 +2,9 @@ import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from 'module/token-actions.js'
 import Maneuvers from './maneuver.js'
+import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
+import { ModelCollection } from 'module/data/model-collection.js'
+import { BaseActorModel } from './data/base.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -26,15 +29,66 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
+  override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
+    embeddedName: EmbeddedName,
+    id: string,
+    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
+  ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined {
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    if (embeddedName in systemEmbeds) {
+      const path = systemEmbeds[embeddedName]
+      return foundry.utils.getProperty(this, path).get(id, { invalid, strict }) ?? null
+    }
+    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Obtain the embedded collection of a given pseudo-document type.
+   */
+  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
+    const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
+    if (!collectionPath) {
+      throw new Error(
+        `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
+      )
+    }
+    return foundry.utils.getProperty(this, collectionPath)
+  }
+
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  override prepareEmbeddedDocuments(): void {
-    super.prepareEmbeddedDocuments()
-    if (this.isOfType('character', 'enemy')) {
-      ;(this.system as Actor.SystemOfType<'character'>).prepareEmbeddedDocuments()
+  /* ---------------------------------------- */
+
+  override prepareBaseData() {
+    super.prepareBaseData()
+    const documentNames = Object.keys((this.system as BaseActorModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareBaseData()
+      }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData() {
+    super.prepareDerivedData()
+    const documentNames = Object.keys((this.system as BaseActorModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareDerivedData()
+      }
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareEmbeddedDocuments(): void {
+    ;(this.system as BaseActorModel).prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */
@@ -54,6 +108,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   // Check if a roll can be performed.
+  // NOTE: there doesn't seem to be much reason for this method to be in the Actor class.
+  // Consider moving it to roll or elsewhere.
   async canRoll(
     // TODO: replace with action
     action: AnyObject, // Action parsed from OTF

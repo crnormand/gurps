@@ -1,7 +1,9 @@
-import { BaseItemData } from './data/base.js'
-import fields = foundry.data.fields
+import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
+import { BaseItemModel } from './data/base.js'
+import { MeleeAttack, RangedAttack } from 'module/action/index.js'
+import { ModelCollection } from 'module/data/model-collection.js'
 
-class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubType> {
+class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is ConfiguredItem<SubType>['document']
@@ -9,25 +11,56 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubT
     return types.includes(this.type as Item.SubType)
   }
 
-  /* ---------------------------------------- */
-  /*  Editing Methods                         */
-  /* ---------------------------------------- */
-
-  async updateAction(
+  override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
+    embeddedName: EmbeddedName,
     id: string,
-    data: fields.SchemaField.UpdateData<fields.DataSchema> | undefined,
-    operation?: Item.Database.UpdateOperation
-  ): Promise<this> {
-    if (!(this.system instanceof BaseItemData)) return this
-    if (!this.system.actions.has(id)) throw new Error(`Action with ID ${id} does not exist on this item.`)
+    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
+  ): Item.Embedded.DocumentFor<EmbeddedName> | undefined {
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    if (embeddedName in systemEmbeds) {
+      const path = systemEmbeds[embeddedName]
+      return foundry.utils.getProperty(this, path).get(id, { invalid, strict }) ?? null
+    }
+    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+  }
 
-    const action = this.system.actions.get(id)
-    if (!action) throw new Error(`Action with ID ${id} does not exist on this item.`)
-    const updatedAction = await action.update(data, operation)
-    this.system.actions.set(id, updatedAction)
-    // Re-render the item to reflect changes
-    this.render()
-    return this
+  /* ---------------------------------------- */
+
+  /**
+   * Obtain the embedded collection of a given pseudo-document type.
+   */
+  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
+    const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
+    if (!collectionPath) {
+      throw new Error(
+        `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
+      )
+    }
+    return foundry.utils.getProperty(this, collectionPath)
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareBaseData() {
+    super.prepareBaseData()
+    const documentNames = Object.keys((this.system as BaseItemModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareBaseData()
+      }
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData() {
+    super.prepareDerivedData()
+    const documentNames = Object.keys((this.system as BaseItemModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareDerivedData()
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -45,24 +78,22 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends Item<SubT
    * NOTE: change from previous model: Now returns the full item rather than just the component
    * in preparation for deprecating Item Components in the future
    */
-  getItemAttacks(options: { attackType: 'melee' }): ConfiguredItem<'meleeAtk'>['document'][]
-  getItemAttacks(options: { attackType: 'ranged' }): ConfiguredItem<'rangedAtk'>['document'][]
-  getItemAttacks(options: { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][]
-  getItemAttacks(): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][]
-  getItemAttacks(options = { attackType: 'both' }): ConfiguredItem<'meleeAtk' | 'rangedAtk'>['document'][] {
-    if (!(this.system instanceof BaseItemData)) return []
+  getItemAttacks(options: { attackType: 'melee' }): MeleeAttack[]
+  getItemAttacks(options: { attackType: 'ranged' }): RangedAttack[]
+  getItemAttacks(options: { attackType: 'both' }): (MeleeAttack | RangedAttack)[]
+  getItemAttacks(): (MeleeAttack | RangedAttack)[]
+  getItemAttacks(options = { attackType: 'both' }): (MeleeAttack | RangedAttack)[] {
+    if (!(this.system instanceof BaseItemModel)) return []
 
-    const attacks =
-      this.actor?.items.filter(
-        item => (item.system as BaseItemData).component.parentuuid === (this.system as BaseItemData).component.uuid
-      ) ?? []
+    const actions = (this.system as BaseItemModel).actions
+
     switch (options.attackType) {
       case 'melee':
-        return attacks.filter(item => item.isOfType('meleeAtk'))
+        return actions.filter(item => item.type === 'meleeAtk') as MeleeAttack[]
       case 'ranged':
-        return attacks.filter(item => item.isOfType('rangedAtk'))
+        return actions.filter(item => item.type === 'rangedAtk') as RangedAttack[]
       case 'both':
-        return attacks.filter(item => item.isOfType('meleeAtk', 'rangedAtk'))
+        return actions.filter(item => item.type in ['meleeAtk', 'rangedAtk']) as (MeleeAttack | RangedAttack)[]
       default:
         console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
         return []

@@ -1,10 +1,10 @@
-import { BaseItemData, BaseItemDataSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 
-class SkillData extends BaseItemData<SkillSchema> {
+class SkillData extends BaseItemModel<SkillSchema> {
   static override defineSchema(): SkillSchema {
     return {
       ...super.defineSchema(),
@@ -72,7 +72,7 @@ const skillSchema = {
   ski: new fields.EmbeddedDataField(SkillComponent, { required: true, nullable: false }),
 }
 
-type SkillSchema = BaseItemDataSchema & typeof skillSchema
+type SkillSchema = BaseItemModelSchema & typeof skillSchema
 
 /* ---------------------------------------- */
 

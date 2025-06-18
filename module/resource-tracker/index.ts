@@ -88,7 +88,7 @@ async function convertOldSettings(
 /**
  * @description I suggest creating functions in this interface for any game.settings owned by the module and needed
  * outside the module.
- * 
+ *
  * @example
  * interface ResourceTrackerModule extends GurpsModule {
  *   TemplateManager: typeof ResourceTrackerManager

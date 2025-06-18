@@ -1,8 +1,8 @@
-import { BaseItemData, BaseItemDataSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 
-class TraitData extends BaseItemData<TraitSchema> {
+class TraitData extends BaseItemModel<TraitSchema> {
   static override defineSchema(): TraitSchema {
     return {
       ...super.defineSchema(),
@@ -34,7 +34,7 @@ const traitSchema = {
   fea: new fields.EmbeddedDataField(TraitComponent, { required: true, nullable: false }),
 }
 
-type TraitSchema = BaseItemDataSchema & typeof traitSchema
+type TraitSchema = BaseItemModelSchema & typeof traitSchema
 
 /* ---------------------------------------- */
 

@@ -2,9 +2,7 @@ import Maneuvers from '../actor/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
-// COMPATIBILITY: v12
-// export default class GurpsToken extends foundry.canvas.placeables.Token {
-class GurpsToken extends Token {
+class GurpsToken extends foundry.canvas.placeables.Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
@@ -39,7 +37,6 @@ class GurpsToken extends Token {
     const activeManeuvers = Maneuvers.getActiveEffectManeuvers(Array.from(this.actor?.effects.values() ?? []))
     // if there is a single active effect maneuver, update its data
     if (activeManeuvers.length === 1) {
-      // @ts-expect-error: waiting for flag type update
       if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) await activeManeuvers[0].update(maneuver)
     } else {
       if (activeManeuvers.length > 1) {

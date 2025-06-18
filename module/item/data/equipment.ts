@@ -1,8 +1,8 @@
-import { BaseItemData, BaseItemDataSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema } from './base.js'
 import fields = foundry.data.fields
 import { ItemComponent, ItemComponentSchema } from './component.js'
 
-class EquipmentData extends BaseItemData<EquipmentSchema> {
+class EquipmentData extends BaseItemModel<EquipmentSchema> {
   static override defineSchema(): EquipmentSchema {
     return {
       ...super.defineSchema(),
@@ -42,7 +42,7 @@ const equipmentSchema = {
   eqt: new fields.EmbeddedDataField(EquipmentComponent, { required: true, nullable: false }),
 }
 
-type EquipmentSchema = BaseItemDataSchema & typeof equipmentSchema
+type EquipmentSchema = BaseItemModelSchema & typeof equipmentSchema
 
 /* ---------------------------------------- */
 
