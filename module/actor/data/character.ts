@@ -1,6 +1,7 @@
 import {
   attributeSchema,
   conditionsSchema,
+  DamageActionSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
   MoveSchema,
@@ -11,11 +12,23 @@ import {
 import fields = foundry.data.fields
 import { HitLocationEntry } from './hit-location-entry.js'
 import { BaseItemModel } from 'module/item/data/base.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 import { makeRegexPatternFrom, splitArgs } from '../../../lib/utilities.js'
 import { HitLocation } from '../../hitlocation/hitlocation.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { BaseActorModel } from './base.js'
+import {
+  MOVE_HALF,
+  MOVE_NONE,
+  MOVE_ONE,
+  MOVE_ONETHIRD,
+  MOVE_STEP,
+  MOVE_TWO_STEPS,
+  MOVE_TWOTHIRDS,
+} from '../maneuver.js'
+import { multiplyDice } from 'module/utilities/damage-utils.js'
+import { COSTS_REGEX } from 'lib/parselink.js'
+import { TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
 
 class CharacterData extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -63,7 +76,12 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
   currentmove: number = 0
   currentflight: number = 0
 
-  private _globalBonuses: AnyObject[] = []
+  moveoverride: { maneuver: string | null; posture: string | null } = {
+    maneuver: null,
+    posture: null,
+  }
+
+  protected _globalBonuses: AnyObject[] = []
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -283,6 +301,8 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
         current = true
       }
 
+      const currentmove = this.#getCurrentMove(move)
+
       encumbrance.push({
         key: `enc${i}`,
         level: i,
@@ -291,8 +311,8 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
         dodge,
         current,
 
-        currentmove: move,
-        currentsprint: move * 1.2,
+        currentmove,
+        currentsprint: currentmove * 1.2,
         currentdodge: dodge,
         currentmovedisplay: moveIsEnhanced ? `${move}/${sprint}` : `${move}`,
       })
@@ -316,6 +336,164 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
         this.defenses.dodge.bonus += bonusAmount
       }
     })
+  }
+
+  /* ---------------------------------------- */
+
+  #getCurrentMove(base: number): number {
+    const doUpdateMove =
+      game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && this.parent.inCombat
+
+    const moveForManeuver = this.#getMoveAdjustmentForManeuver(base)
+    const moveForPosture = this.#getMoveAdjustmentForPosture(base)
+
+    this.conditions.move =
+      moveForManeuver.value < moveForPosture.value ? moveForManeuver.tooltip : moveForPosture.tooltip
+
+    if (doUpdateMove) {
+      return Math.min(moveForManeuver.value, moveForPosture.value)
+    } else {
+      return base
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  #getMoveAdjustmentForManeuver(base: number): { value: number; tooltip: string } {
+    // NOTE: why does moveoverride need to be a value on the system? Why not just fetch
+    // the value dynamically each time?
+    let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
+    const maneuver = GURPS.Maneuvers.get(this.conditions.maneuver)
+    if (maneuver) tooltip = game.i18n?.localize(maneuver.label) ?? ''
+
+    const override = this.#getMoveAdjustmentForOverride(base, this.moveoverride.maneuver)
+
+    return override ?? { value: base, tooltip }
+  }
+
+  /* ---------------------------------------- */
+
+  #getMoveAdjustmentForPosture(base: number): { value: number; tooltip: string } {
+    // NOTE: why does moveoverride need to be a value on the system? Why not just fetch
+    // the value dynamically each time?
+    let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
+    const posture = this.moveoverride.posture
+    if (posture) tooltip = game.i18n?.localize(GURPS.StatusEffect.lookup(this.conditions.posture).name) ?? ''
+
+    const override = this.#getMoveAdjustmentForOverride(base, this.moveoverride.posture)
+
+    return override ?? { value: base, tooltip }
+  }
+
+  /* ---------------------------------------- */
+
+  #getMoveAdjustmentForOverride(base: number, override: string | null): { value: number; tooltip: string } | null {
+    switch (override) {
+      case MOVE_NONE:
+        return {
+          value: 0,
+          tooltip: game.i18n?.localize('GURPS.none') ?? '',
+        }
+      case MOVE_ONE:
+        return {
+          value: 1,
+          // TODO: localize
+          tooltip: '1 yd/sec',
+        }
+      case MOVE_STEP:
+        return {
+          value: Math.max(1, Math.ceil(base / 10)),
+          // TODO: localize
+          tooltip: 'Step',
+        }
+      case MOVE_TWO_STEPS:
+        return {
+          value: Math.max(1, Math.ceil(base / 10)) * 2,
+          // TODO: localize
+          tooltip: 'Step or Two',
+        }
+      case MOVE_ONETHIRD:
+        return {
+          value: Math.max(1, Math.ceil(base / 3)),
+          // TODO: localize
+          tooltip: '×1/3',
+        }
+      case MOVE_HALF:
+        return {
+          value: Math.max(1, Math.ceil(base / 2)),
+          // TODO: localize
+          tooltip: 'Half',
+        }
+      case MOVE_TWOTHIRDS:
+        return {
+          value: Math.max(1, Math.ceil((base * 2) / 3)),
+          // TODO: localize
+          tooltip: '×2/3',
+        }
+      default:
+        return null
+    }
+  }
+
+  /* ---------------------------------------- */
+  /*   CRUD Handlers                          */
+  /* ---------------------------------------- */
+
+  protected override _onUpdate(
+    changed: DeepPartial<foundry.abstract.TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
+    options: foundry.abstract.Document.Database.UpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
+    userId: string
+  ): void {
+    super._onUpdate(changed, options, userId)
+
+    // Automatically set reeling / exhausted conditions based on HP/FP value
+    if (game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
+      const doAnnounce = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)
+
+      if (changed.system?.HP?.value !== undefined) {
+        const isReeling = changed.system.HP.value < this.HP.value / 3
+        if (this.conditions.reeling !== isReeling) {
+          this.parent.toggleStatusEffect('reeling', { active: isReeling })
+
+          if (doAnnounce) {
+            let tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+            let message = game.i18n?.format(tag, {
+              name: this.parent.displayname,
+              pdfref: game.i18n.localize('GURPS.pdfReeling'),
+            })
+
+            foundry.applications.handlebars
+              .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [message] })
+              .then(content => {
+                const whisper = this.parent.owners.length > 0 ? this.parent.owners.map(user => user.id) : null
+                ChatMessage.create({ content, whisper })
+              })
+          }
+        }
+      }
+
+      if (changed.system?.FP?.value !== undefined) {
+        const isExhausted = changed.system.FP.value < this.FP.value / 3
+        if (this.conditions.exhausted !== isExhausted) {
+          this.parent.toggleStatusEffect('exhausted', { active: isExhausted })
+
+          if (doAnnounce) {
+            let tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+            let message = game.i18n?.format(tag, {
+              name: this.parent.displayname,
+              pdfref: game.i18n.localize('GURPS.pdfTired'),
+            })
+
+            foundry.applications.handlebars
+              .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [message] })
+              .then(content => {
+                const whisper = this.parent.owners.length > 0 ? this.parent.owners.map(user => user.id) : null
+                ChatMessage.create({ content, whisper })
+              })
+          }
+        }
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -410,6 +588,8 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
     return { changed, msg: '', info: `${this.parent.name}: /dr command with formula ${formula} had no effect.` }
   }
 
+  /* ---------------------------------------- */
+
   #addDRChanges(changes: Record<string, number | null>, formula: string, value: HitLocationEntry, index: string): void {
     let dr = value.dr ?? 0
     let drMod = value.drMod ?? 0
@@ -457,6 +637,111 @@ class CharacterData extends BaseActorModel<CharacterSchema> {
     changes[`system.hitlocations.${index}.drMod`] = drMod
     changes[`system.hitlocations.${index}.drCap`] = drCap
   }
+
+  /* ---------------------------------------- */
+
+  findTrait(name: string): ConfiguredItem<'feature'>['document'] | null {
+    return this.ads.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
+  }
+
+  findAdvantage(name: string): ConfiguredItem<'feature'>['document'] | null {
+    return this.findTrait(name)
+  }
+
+  /* ---------------------------------------- */
+
+  async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
+    const accumulatedActions = this.conditions.damageAccumulators
+
+    const existingActionIndex = accumulatedActions.findIndex(e => e.orig === action.orig)
+    if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
+
+    action.count = 1
+    // @ts-expect-error: not sure why I can't set this value to null
+    action.accumulate = null
+    accumulatedActions.push(action)
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.conditions.damageAccumulators': accumulatedActions })
+  }
+
+  /* ---------------------------------------- */
+
+  async incrementDamageAccumulator(index: number): Promise<void> {
+    const count = (this.conditions.damageAccumulators[index].count ?? 0) + 1
+    await this.parent.update({ [`system.conditions.damageAccumulators.${index}.accumulate`]: count })
+  }
+
+  /* ---------------------------------------- */
+
+  async decrementDamageAccumulator(index: number): Promise<void> {
+    const count = (this.conditions.damageAccumulators[index].count ?? 0) - 1
+    if (count < 1) {
+      const accumulators = this.conditions.damageAccumulators
+      accumulators.splice(index, 1)
+      // @ts-expect-error: not sure why the path is not recognised
+      await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
+    } else await this.parent.update({ [`system.conditions.damageAccumulators.${index}.accumulate`]: count })
+  }
+
+  /* ---------------------------------------- */
+
+  async clearDamageAccumulator(index: number): Promise<void> {
+    const accumulators = this.conditions.damageAccumulators
+    accumulators.splice(index, 1)
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
+  }
+
+  /* ---------------------------------------- */
+
+  async applyDamageAccumulator(index: number): Promise<void> {
+    const accumulators = this.conditions.damageAccumulators
+    const accumulator = accumulators[index]
+
+    const roll = multiplyDice(accumulator.roll ?? '', accumulator.count ?? 1)
+    if (accumulator.costs) {
+      const costs = accumulator.costs.match(COSTS_REGEX)
+      if (costs)
+        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '0')} ${costs.groups?.type}`
+    }
+
+    accumulator.roll = roll ?? null
+
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
+    await GURPS.performAction(accumulator, GURPS.LastActor)
+  }
+
+  /* ---------------------------------------- */
+
+  // NOTE: change from previous schema, where path was used instead of index
+  async removeTracker(index: number): Promise<void> {
+    const trackers = this.additionalresources.tracker
+    if (index < 0 || index >= trackers.length) return
+    trackers.splice(index, 1)
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+  }
+
+  /* ---------------------------------------- */
+
+  async addTracker(): Promise<void> {
+    const trackers = this.additionalresources.tracker ?? []
+    trackers.push(new TrackerInstance())
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+  }
+
+  /* ---------------------------------------- */
+
+  get trackersByName(): Record<string, TrackerInstance> {
+    return this.additionalresources.tracker.reduce((acc: Record<string, TrackerInstance>, tracker: TrackerInstance) => {
+      acc[tracker.name] = tracker
+      return acc
+    }, {})
+  }
+
+  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
@@ -525,9 +810,10 @@ const characterSchema = () => {
     additionalresources: new fields.SchemaField(
       {
         bodyplan: new fields.StringField({ required: true, nullable: false }),
-        // FIXME: this should be a SchemaField or EmbeddedDataField but trackers do not currently
-        //extend DataModel
-        tracker: new fields.TypedObjectField(new fields.ObjectField(), { required: true, nullable: false }),
+        tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
+          required: true,
+          nullable: false,
+        }),
       },
       { required: true, nullable: false }
     ),

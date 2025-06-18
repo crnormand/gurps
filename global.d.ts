@@ -1,5 +1,4 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
-import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
 // import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 // import { GurpsItem } from './module/item.js'
@@ -11,8 +10,8 @@ import { TraitData } from 'module/item/data/trait.ts'
 import { SpellData } from 'module/item/data/spell.ts'
 import { SkillData } from 'module/item/data/skill.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
-import { CharacterData } from 'module/actor/data/character.ts'
 import { BaseAction } from 'module/action/base-action.ts'
+import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 
 export {}
 
@@ -56,6 +55,9 @@ declare global {
     ActiveEffect: {
       gurps: {
         name: string
+        effect: {
+          type: string
+        }
       }
     }
   }
@@ -107,5 +109,8 @@ declare global {
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
     'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
+    'gurps.maneuver-updates-move': boolean
+    'gurps.automatic-onethird': boolean
+    'gurps.show-chat-reeling-tired': boolean
   }
 }

@@ -9,31 +9,3 @@ export const SETTING_TRACKER_EDITOR = `${SettingPrefix}.manager`
 export const SETTING_TRACKER_TEMPLATES = `${SettingPrefix}.templates`
 // TODO May be removed when the setting is removed.
 export const OLD_SETTING_TEMPLATES = 'tracker-templates'
-
-export type ResourceTrackerThreshold = {
-  comparison: string
-  operator: string
-  value: number
-  condition: string
-  color: string
-}
-
-export type TrackerInstance = {
-  name: string
-  alias: string
-  pdf: string
-  max: number
-  min: number
-  value: number
-  isDamageType: boolean
-  isDamageTracker: boolean
-  breakpoints: boolean
-  thresholds: ResourceTrackerThreshold[]
-}
-
-export type ResourceTrackerTemplate = {
-  tracker: TrackerInstance
-  initialValue: string
-  slot?: boolean
-  autoapply?: boolean
-}
