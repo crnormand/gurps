@@ -5,6 +5,7 @@ import Maneuvers from './maneuver.js'
 import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
 import { ModelCollection } from 'module/data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
+// import { type DamageActionSchema } from './data/character-components.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -58,9 +59,39 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   /* ---------------------------------------- */
-  /*  Data Preparation                        */
+
+  override async toggleStatusEffect(
+    statusId: string,
+    options?: Actor.ToggleStatusEffectOptions
+  ): Promise<ActiveEffect.Implementation | boolean | undefined> {
+    const status = CONFIG.statusEffects.find(effect => effect.id === statusId)
+    if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActor#toggleStatusEffect`)
+
+    if (status.flags?.gurps?.effect?.type === 'posture') {
+      // If the status effect is a posture, remove all other postures first
+      const postureEffects = this.effects.filter(e => e.flags.gurps.effect.type === 'posture' && e.id !== statusId)
+      await this.deleteEmbeddedDocuments(
+        'ActiveEffect',
+        postureEffects.map(e => e.id!),
+        { parent: this }
+      )
+    }
+
+    return super.toggleStatusEffect(statusId, options)
+  }
+
+  /* ---------------------------------------- */
+  /*  Accessors                               */
   /* ---------------------------------------- */
 
+  get displayname() {
+    let n = this.name
+    if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
+    return n
+  }
+
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
   /* ---------------------------------------- */
 
   override prepareBaseData() {
@@ -307,6 +338,62 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     return false
   }
+
+  /* ---------------------------------------- */
+
+  async replaceManeuver(maneuverId: string) {
+    this.getDependentTokens().forEach(token => token.object?.setManeuver(maneuverId))
+  }
+
+  /* ---------------------------------------- */
+
+  isEffectActive(effect: ActiveEffect.Implementation | { id: string }): boolean {
+    return this.effects.some(e => e.id === effect.id)
+  }
+
+  /* ---------------------------------------- */
+
+  get damageAccumulators() {
+    if (this.isOfType('character', 'enemy'))
+      return (this.system as Actor.SystemOfType<'character'>).conditions.damageAccumulators ?? null
+    return null
+  }
+
+  /* ---------------------------------------- */
+
+  async accumulateDamageRoll(action): Promise<void> {
+    if (this.isOfType('character', 'enemy')) this.system.accumulateDamageRoll(action)
+  }
+
+  /* ---------------------------------------- */
+
+  async incrementDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    this.system.incrementDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  async decrementDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    this.system.decrementDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  async clearDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    this.system.clearDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  async applyDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    this.system.applyDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
 }
 
 export { GurpsActorV2 }

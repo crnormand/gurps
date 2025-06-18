@@ -3,12 +3,8 @@ import { GurpsModule } from 'module/gurps-module.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
-import {
-  OLD_SETTING_TEMPLATES,
-  ResourceTrackerTemplate,
-  SETTING_TRACKER_EDITOR,
-  SETTING_TRACKER_TEMPLATES,
-} from './types.js'
+import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
+import { ResourceTrackerTemplate } from './resource-tracker.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
@@ -73,13 +69,13 @@ async function convertOldSettings(
   let newTemplates: ResourceTrackerTemplate[] = []
   // Copy each field of oldTemplates to newTemplates, converting "slot" to "autoapply" if needed
   for (let oldTemplate of objectToArray(oldTemplates)) {
-    let newTemplate: ResourceTrackerTemplate = {
+    let newTemplate = new ResourceTrackerTemplate({
       tracker: {
         ...oldTemplate.tracker,
       },
       initialValue: oldTemplate.initialValue,
       autoapply: !!oldTemplate.slot,
-    }
+    })
     newTemplates.push(newTemplate)
   }
   return arrayToObject(newTemplates)
