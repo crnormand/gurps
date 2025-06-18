@@ -857,6 +857,8 @@ const characterSchema = () => {
           required: true,
           nullable: false,
         }),
+        importname: new fields.StringField({ required: true, nullable: true }),
+        importpath: new fields.FilePathField({ required: true, nullable: true }),
       },
       { required: true, nullable: false }
     ),
@@ -899,7 +901,7 @@ const characterSchema = () => {
         sizemod: new fields.NumberField({ required: true, nullable: false }),
         techlevel: new fields.StringField({ required: true, nullable: false }),
         createdon: new fields.StringField({ required: true, nullable: false }),
-        modifierdon: new fields.StringField({ required: true, nullable: false }),
+        modifiedon: new fields.StringField({ required: true, nullable: false }),
         player: new fields.StringField({ required: true, nullable: false }),
       },
       { required: true, nullable: false }

@@ -56,7 +56,7 @@ const characterData = () => {
         hair: new fields.StringField({ required: true, nullable: true }),
         skin: new fields.StringField({ required: true, nullable: true }),
         handedness: new fields.StringField({ required: true, nullable: true }),
-        gendeer: new fields.StringField({ required: true, nullable: true }),
+        gender: new fields.StringField({ required: true, nullable: true }),
         height: new fields.StringField({ required: true, nullable: true }),
         weight: new fields.StringField({ required: true, nullable: true }),
         player_name: new fields.StringField({ required: true, nullable: true }),
@@ -103,7 +103,7 @@ const characterData = () => {
     ),
     attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttribute, { required: true, nullable: false }), {
       required: true,
-      nullable: true,
+      nullable: false,
     }),
     traits: new fields.ArrayField(new fields.EmbeddedDataField(GcsTrait, { required: true, nullable: false }), {
       required: true,
@@ -132,6 +132,31 @@ const characterData = () => {
     created_date: new fields.StringField({ required: true, nullable: false }),
     modified_date: new fields.StringField({ required: true, nullable: false }),
     third_party: new fields.ObjectField({ required: true, nullable: true }),
+
+    calc: new fields.SchemaField(
+      {
+        swing: new fields.StringField({ required: true, nullable: false }),
+        thrust: new fields.StringField({ required: true, nullable: false }),
+        basic_lift: new fields.StringField({ required: true, nullable: false }),
+        lifting_st_bonus: new fields.NumberField({ required: true, nullable: true }),
+        striking_st_bonus: new fields.NumberField({ required: true, nullable: true }),
+        throwing_st_bonus: new fields.NumberField({ required: true, nullable: true }),
+        dodge_bonus: new fields.NumberField({ required: true, nullable: true }),
+        parry_bonus: new fields.NumberField({ required: true, nullable: true }),
+        block_bonus: new fields.NumberField({ required: true, nullable: true }),
+        move: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
+          required: true,
+          nullable: false,
+          length: 5,
+        }),
+        dodge: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
+          required: true,
+          nullable: false,
+          length: 5,
+        }),
+      },
+      { required: true, nullable: false }
+    ),
   }
 }
 

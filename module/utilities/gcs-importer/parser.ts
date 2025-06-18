@@ -1,3 +1,4 @@
+import { GcsImporter } from './importer.js'
 import { GcsCharacter } from './schema/character.js'
 
 async function importGCS() {
@@ -22,8 +23,8 @@ async function importGCS() {
           } else {
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            const char = GcsCharacter.fromImportData(JSON.parse(text))
-            console.log(char)
+            const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
+            GcsImporter.importCharacter(char)
           }
         },
       },

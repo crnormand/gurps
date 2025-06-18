@@ -50,4 +50,4 @@ type TraitComponentSchema = ItemComponentSchema & typeof traitComponentSchema
 
 /* ---------------------------------------- */
 
-export { TraitData, type TraitSchema }
+export { TraitData, type TraitSchema, TraitComponent, type TraitComponentSchema }
