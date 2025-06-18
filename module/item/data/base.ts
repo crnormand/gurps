@@ -4,9 +4,24 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemComponent } from './component.js'
 import { parselink } from '../../../lib/parselink.js'
-import { ActionCollectionField, MeleeAttack, RangedAttack } from '../../action/index.js'
+import { MeleeAttack, RangedAttack } from '../../action/index.js'
+import { CollectionField } from 'module/data/fields/collection-field.js'
+import { BaseAction } from 'module/action/base-action.js'
 
-abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSchema> extends TypeDataModel<
+type ItemMetadata = Readonly<{
+  /** The expected `type` value */
+  type: string
+  /** Actor types that this item cannot be placed on */
+  invalidActorTypes: string[]
+  /** Are there any partials to fill in the Details tab of the item? */
+  detailsPartial?: string[]
+  /* Record of document names of pseudo-documents and the path to the collection. */
+  embedded: Record<string, string>
+}>
+
+/* ---------------------------------------- */
+
+abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelSchema> extends TypeDataModel<
   Schema,
   Item.Implementation
 > {
@@ -19,8 +34,24 @@ abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSche
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): BaseItemDataSchema {
-    return baseItemDataSchema
+  static get metadata(): ItemMetadata {
+    return {
+      embedded: {},
+      type: 'base',
+      invalidActorTypes: [],
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  get metadata(): ItemMetadata {
+    return (this.constructor as typeof BaseItemModel).metadata
+  }
+
+  /* ---------------------------------------- */
+
+  static override defineSchema(): BaseItemModelSchema {
+    return baseItemModelSchema
   }
 
   /* ---------------------------------------- */
@@ -100,29 +131,15 @@ abstract class BaseItemData<Schema extends BaseItemDataSchema = BaseItemDataSche
 
     return bonuses
   }
-
-  testFunc() {
-    const a = this.actions
-  }
 }
 
 /* ---------------------------------------- */
 
 // This Item schema is repeated in multiple places, so we define it here to avoid duplication
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
-const baseItemDataSchema = {
+const baseItemModelSchema = {
   // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
-  actions: new ActionCollectionField(),
-  // // Change from previous schema. Array instead of object
-  // melee: new fields.ArrayField(new fields.EmbeddedDataField(MeleeAttack, { required: true, nullable: false }), {
-  //   required: true,
-  //   nullable: false,
-  // }),
-  // // Change from previous schema. Array instead of object
-  // ranged: new fields.ArrayField(new fields.EmbeddedDataField(RangedAttack, { required: true, nullable: false }), {
-  //   required: true,
-  //   nullable: false,
-  // }),
+  actions: new CollectionField(BaseAction),
   // Change from previous schema. Set of IDs corresponding to subtypes of Item
   ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
   // Change from previous schema. Set of IDs corresponding to subtypes of Item
@@ -141,8 +158,8 @@ const baseItemDataSchema = {
   modifierTags: new fields.StringField({ required: true, nullable: false }),
 }
 
-type BaseItemDataSchema = typeof baseItemDataSchema
+type BaseItemModelSchema = typeof baseItemModelSchema
 
 /* ---------------------------------------- */
 
-export { BaseItemData, ItemComponent, baseItemDataSchema, type BaseItemDataSchema }
+export { BaseItemModel, ItemComponent, baseItemModelSchema, type BaseItemModelSchema }

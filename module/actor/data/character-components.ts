@@ -67,7 +67,8 @@ const conditionsSchema = {
     { required: true, nullable: false }
   ),
   posture: new fields.StringField({ required: true, nullable: false }),
-  maneuver: new fields.StringField({ required: true, nullable: false }),
+  // NOTE: change from previous schema where maneuver is not nullable
+  maneuver: new fields.StringField({ required: true, nullable: true }),
   move: new fields.StringField({ required: true, nullable: false }),
 
   self: new fields.SchemaField(modifierSetSchema, { required: true, nullable: false }),

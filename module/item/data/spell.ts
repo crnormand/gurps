@@ -1,10 +1,10 @@
-import { BaseItemData, BaseItemDataSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 
-class SpellData extends BaseItemData<SpellSchema> {
+class SpellData extends BaseItemModel<SpellSchema> {
   static override defineSchema(): SpellSchema {
     return {
       ...super.defineSchema(),
@@ -72,7 +72,7 @@ const spellSchema = {
   spl: new fields.EmbeddedDataField(SpellComponent, { required: true, nullable: false }),
 }
 
-type SpellSchema = BaseItemDataSchema & typeof spellSchema
+type SpellSchema = BaseItemModelSchema & typeof spellSchema
 
 /* ---------------------------------------- */
 

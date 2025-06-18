@@ -3,7 +3,6 @@ function registerTokenRuler() {
   if (!game.release) return
   if (game.release?.generation < 13) return
 
-  // @ts-expect-error: waiting for types to catch up
   class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     /**
      * Get the style to be used to highlight the grid offset.
@@ -19,6 +18,7 @@ function registerTokenRuler() {
       waypoint: TokenRulerWaypoint,
       offset: { i: number; j: number }
     ): { color?: PIXI.ColorSource; alpha?: number; texture?: PIXI.Texture; matrix?: PIXI.Matrix | null } {
+      // @ts-expect-error: waiting for types to catch up
       const data = super._getGridHighlightStyle(waypoint, offset)
       const actor = this.token.actor
       if (!actor) return data
@@ -35,7 +35,6 @@ function registerTokenRuler() {
       } else {
         return { ...data, color: 0x00ff00 }
       }
-
     }
   }
 
