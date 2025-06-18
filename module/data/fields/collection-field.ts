@@ -1,19 +1,29 @@
-import { AnyObject, SimpleMerge } from 'fvtt-types/utils'
+import { AnyObject } from 'fvtt-types/utils'
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
+import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from 'module/pseudo-document/typed-pseudo-document.js'
+import { ModelCollection } from '../model-collection.js'
+
+class LazyTypedSchemaField<
+  const Types extends fields.TypedSchemaField.Types,
+  const Options extends fields.TypedSchemaField.Options<Types> = fields.TypedSchemaField.DefaultOptions,
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  const AssignmentType = fields.TypedSchemaField.AssignmentType<Types, Options>,
+  const InitializedType = fields.TypedSchemaField.InitializedType<Types, Options>,
+  const PersistedType = fields.TypedSchemaField.PersistedType<Types, Options>,
+> extends fields.TypedSchemaField<Types, Options, AssignmentType, InitializedType, PersistedType> {
+  protected override _validateSpecial(value: AssignmentType): boolean | void {
+    if (!value || (value as any).type in this.types) return super._validateSpecial(value)
+    return true
+  }
+}
+
+/* ---------------------------------------- */
 
 namespace CollectionField {
-  type ValidDataSchema = {
-    readonly [field: string]: fields.DataField.Any
-  }
-
-  type Type =
-    | ValidDataSchema
-    | fields.SchemaField<fields.DataSchema, { required: true; nullable: false }, any, any, any>
-    | DataModel.ConcreteConstructor
-
-  export type Types = {
-    [type: string]: Type
+  export type Types<Model extends typeof PseudoDocument> = {
+    [type: string]: Model
   }
 
   /* ---------------------------------------- */
@@ -24,84 +34,70 @@ namespace CollectionField {
 
   /* ---------------------------------------- */
 
+  export type Element<Model extends DataModel.ConcreteConstructor> = Model extends typeof TypedPseudoDocument
+    ? LazyTypedSchemaField<CollectionField.Types<Model>>
+    : fields.EmbeddedDataField<typeof PseudoDocument>
+
+  /* ---------------------------------------- */
+
   export type AssignmentType<
-    Element extends fields.DataField.Any,
+    Model extends DataModel.ConcreteConstructor,
     Options extends CollectionField.Options<AnyObject>,
-  > = fields.TypedObjectField.AssignmentType<Element, Options>
+  > = fields.TypedObjectField.AssignmentType<Element<Model>, Options>
 
   /* ---------------------------------------- */
 
   export type InitializedType<
-    Element extends fields.DataField.Any,
+    Model extends DataModel.ConcreteConstructor,
     Options extends CollectionField.Options<AnyObject>,
-  > = fields.TypedObjectField.InitializedType<Element, Options>
+  > = fields.DataField.DerivedInitializedType<ModelCollection<InstanceType<Model>>, Options>
 
   /* ---------------------------------------- */
+
+  export type PersistedType<
+    Element extends fields.DataField.Any,
+    Options extends CollectionField.Options<AnyObject>,
+  > = fields.DataField.DerivedInitializedType<Element[], Options>
 }
 
 class CollectionField<
-  const Types extends CollectionField.Types,
-  const Element extends fields.TypedSchemaField<Types>,
+  const Model extends DataModel.ConcreteConstructor,
+  const Element extends CollectionField.Element<Model> = CollectionField.Element<Model>,
   const Options extends CollectionField.Options<AnyObject> = CollectionField.DefaultOptions,
   // eslint-disable-next-line @typescript-eslint/no-deprecated
-  const AssignmentType = CollectionField.AssignmentType<Element, Options>,
-  const InitializedType = CollectionField.InitializedType<Element, Options>,
-  const PersistedType extends AnyObject | null | undefined = CollectionField.InitializedType<Element, Options>,
-> extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {}
+  const AssignmentType = CollectionField.AssignmentType<Model, Options>,
+  const InitializedType = CollectionField.InitializedType<Model, Options>,
+  // @ts-expect-error: types haven't quite caught up
+  const PersistedType extends AnyObject | null | undefined = CollectionField.PersistedType<Element, Options>,
+> extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {
+  constructor(model: Model, options?: Options, context?: fields.DataField.ConstructionContext) {
+    let field = foundry.utils.isSubclass(model, TypedPseudoDocument)
+      ? (new LazyTypedSchemaField(model.TYPES) as unknown as Element)
+      : (new fields.EmbeddedDataField(model) as unknown as Element)
 
-// class CollectionField<
-//   const Types extends CollectionField.Types,
-//   const Options extends fields.TypedObjectField.Options<AnyObject> = fields.TypedObjectField.DefaultOptions,
-//   // eslint-disable-next-line @typescript-eslint/no-deprecated
-//   const AssignmentType = fields.TypedObjectField.AssignmentType<fields.TypedSchemaField<Types>, Options>,
-//   const InitializedType = fields.TypedObjectField.InitializedType<fields.TypedSchemaField<Types>, Options>,
-//   const PersistedType extends AnyObject | null | undefined = fields.TypedObjectField.InitializedType<
-//     fields.TypedSchemaField<Types>,
-//     Options
-//   >,
-// > extends fields.TypedObjectField<
-//   fields.TypedSchemaField<Types>,
-//   Options,
-//   AssignmentType,
-//   InitializedType,
-//   PersistedType
-// > {
-//   constructor(types: Types, options?: Options, context?: fields.DataField.ConstructionContext) {
-//     super(new fields.TypedSchemaField(types), options, context)
-//     this.readonly = true
-//   }
-//
-//   /* ---------------------------------------- */
-//
-//   override initialize(
-//     value: PersistedType,
-//     model: DataModel.Any,
-//     options?: fields.DataField.InitializeOptions
-//   ): InitializedType | (() => InitializedType | null) {
-//     const elements = Object.values(super.initialize(value, model, options) as AnyObject)
-//     if (!elements) return new Collection() as InitializedType
-//
-//     elements.sort((a: any, b: any) => {
-//       if (
-//         a.hasOwnProperty('sort') &&
-//         b.hasOwnProperty('sort') &&
-//         typeof a.sort === 'number' &&
-//         typeof b.sort === 'number'
-//       ) {
-//         return a.sort - b.sort
-//       }
-//       return 0
-//     })
-//
-//     return new Collection(
-//       elements.map((e: any, index: number) => {
-//         if (!e.hasOwnProperty('id')) return [`${index}`, e]
-//         return [e.id, e]
-//       })
-//     ) as InitializedType
-//   }
-// }
+    super(field, options, context)
+  }
 
-/* ---------------------------------------- */
+  /* ---------------------------------------- */
+
+  override initialize(
+    value: PersistedType,
+    model: DataModel.Any,
+    options?: fields.DataField.InitializeOptions
+  ): InitializedType | (() => InitializedType | null) {
+    const init = super.initialize(value, model, options)
+    const collection = new ModelCollection()
+    // @ts-expect-error: types haven't quite caught up
+    for (const [id, model] of Object.entries(init)) {
+      if (model instanceof PseudoDocument) {
+        collection.set(id, model)
+      } else {
+        // @ts-expect-error: types haven't quite caught up
+        collection.setInvalid(model)
+      }
+    }
+    return collection as InitializedType
+  }
+}
 
 export { CollectionField }

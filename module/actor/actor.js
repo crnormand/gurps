@@ -279,11 +279,14 @@ export class GurpsActor extends Actor {
     this._calculateRangedRanges()
 
     // Must be done at end
+    // NOTE: migrated
     this._calculateWeights()
 
+    // NOTE: migrated
     let maneuver = this.effects.contents.find(it => it.statuses.find(s => s === 'maneuver'))
     this.system.conditions.maneuver = maneuver ? maneuver.flags.gurps.name : 'undefined'
 
+    // NOTE: migrated
     if (!this.system.equippedparry) this.system.equippedparry = this.getEquippedParry()
     if (!this.system.equippedblock) this.system.equippedblock = this.getEquippedBlock()
     // Catch for older actors that may not have these values set.
@@ -301,6 +304,7 @@ export class GurpsActor extends Actor {
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
+  // NOTE: migrated
   _initializeStartingValues() {
     const data = this.system
     data.currentdodge = 0 // start at zero, and bonuses will add, and then they will be finalized later
@@ -377,6 +381,7 @@ export class GurpsActor extends Actor {
    * @param {boolean} append
    * @returns {object}
    */
+  // NOTE: can be under prepareDerivedData as usermods being claimed from items and the like
   applyItemModEffects(commit, append = false) {
     const allUserMods = append ? foundry.utils.getProperty(this.system, 'conditions.usermods') || [] : []
     const userMods = allUserMods.filter(m => !m.includes('@eft:'))
@@ -2323,6 +2328,7 @@ export class GurpsActor extends Actor {
     return this.getEquipped('block')[1]
   }
 
+  // NOTE: migrated
   getEquippedDefenseBonuses() {
     let defenses = { parry: {}, block: {}, dodge: {} }
     const carried = this.system.equipment?.carried
