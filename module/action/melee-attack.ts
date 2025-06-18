@@ -7,10 +7,7 @@ import { makeRegexPatternFrom } from '../../lib/utilities.js'
 
 class MeleeAttack extends BaseAction<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {
-    return {
-      ...super.defineSchema(),
-      ...meleeAttackSchema(),
-    }
+    return Object.assign(super.defineSchema(), meleeAttackSchema())
   }
 
   /* ---------------------------------------- */
