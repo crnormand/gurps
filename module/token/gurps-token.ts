@@ -27,6 +27,9 @@ class GurpsToken extends foundry.canvas.placeables.Token {
    * deactivate the old maneuver and then activate the new one -- we simply update the singleton
    * maneuver data to match the new maneuver's data.
    */
+  // NOTE: I don't think using this function is a good idea. You end up losing functionality
+  // including floaty text, for example. This can be revisited later, but for now, I'm leaving it as is.
+  // - MT
   async setManeuver(maneuverId: string): Promise<void> {
     // if not in combat, do nothing
     if (!isCombatActive() || !isTokenInActiveCombat(this)) return

@@ -51,12 +51,31 @@ type LiftingMovingSchema = typeof liftingMovingSchema
 
 /* ---------------------------------------- */
 
+// TODO: move this to a move appropriate location to do wih OTF Action or something like that
+const damageActionSchema = {
+  orig: new fields.StringField({ required: true, nullable: false }),
+  costs: new fields.StringField({ required: true, nullable: false }),
+  formula: new fields.StringField({ required: true, nullable: false }),
+  damagetype: new fields.StringField({ required: true, nullable: false }),
+  extdamagetype: new fields.StringField({ required: true, nullable: false }),
+  hitlocation: new fields.StringField({ required: true, nullable: false }),
+  accumulate: new fields.BooleanField({ required: true, nullable: true, initial: false }),
+  count: new fields.NumberField({ required: false, nullable: false, initial: undefined }),
+  roll: new fields.StringField({ required: true, nullable: true, initial: '' }),
+}
+
+type DamageActionSchema = typeof damageActionSchema
+
+/* ---------------------------------------- */
+
 const modifierSetSchema = {
   modifiers: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
     required: true,
     nullable: false,
   }),
 }
+
+/* ---------------------------------------- */
 
 const conditionsSchema = {
   actions: new fields.SchemaField(
@@ -80,6 +99,11 @@ const conditionsSchema = {
 
   reeling: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   exhausted: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+  damageAccumulators: new fields.ArrayField(
+    new fields.SchemaField(damageActionSchema, { required: true, nullable: false }),
+    { required: true, nullable: false }
+  ),
 }
 
 type ConditionsSchema = typeof conditionsSchema
@@ -111,12 +135,14 @@ type MoveSchema = typeof moveSchema
 export {
   attributeSchema,
   conditionsSchema,
+  damageActionSchema,
   encumbranceSchema,
   liftingMovingSchema,
   moveSchema,
   poolSchema,
   reactionSchema,
   type ConditionsSchema,
+  type DamageActionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
   type MoveSchema,
