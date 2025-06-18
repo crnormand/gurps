@@ -1,6 +1,6 @@
 import {
   attributeSchema,
-  ConditionsSchema,
+  conditionsSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
   MoveSchema,
@@ -8,16 +8,16 @@ import {
   poolSchema,
   reactionSchema,
 } from './character-components.js'
-import TypeDataModel = foundry.abstract.TypeDataModel
 import fields = foundry.data.fields
 import { HitLocationEntry } from './hit-location-entry.js'
-import { BaseItemData } from 'module/item/data/base.js'
+import { BaseItemModel } from 'module/item/data/base.js'
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom, splitArgs } from '../../../lib/utilities.js'
 import { HitLocation } from '../../hitlocation/hitlocation.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
+import { BaseActorModel } from './base.js'
 
-class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation> {
+class CharacterData extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
     return characterSchema()
   }
@@ -42,8 +42,6 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
   // Derived properties
   declare encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[]
   declare liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema>
-  // TODO: consider moving this back to the schema
-  declare conditions: fields.SchemaField.SourceData<ConditionsSchema>
   declare hitlocationNames: Record<string, HitLocationEntry>
 
   declare eqtsummary: {
@@ -53,7 +51,17 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
     otherlbs: number
   }
 
+  declare defenses: {
+    parry: { bonus: number }
+    block: { bonus: number }
+    dodge: { bonus: number }
+  }
+
+  equippedparry: number = 0
+  equippedblock: number = 0
   currentdodge: number = 0
+  currentmove: number = 0
+  currentflight: number = 0
 
   private _globalBonuses: AnyObject[] = []
 
@@ -70,16 +78,11 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
     // Reset the conditions object
     // TODO: verify whether this should be fully reset
     this.conditions = {
-      actions: {
-        maxActions: 1,
-        maxBlocks: 1,
-      },
+      ...this.conditions,
       posture: 'standing',
       maneuver: 'ready',
-      move: '1 yd/sec',
       self: { modifiers: [] },
       target: { modifiers: [] },
-      usermods: [],
       reeling: false,
       exhausted: false,
     }
@@ -102,15 +105,15 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
 
   /* ---------------------------------------- */
 
-  prepareEmbeddedDocuments() {
+  override prepareEmbeddedDocuments(): void {
     this._globalBonuses = this.parent.items.reduce((acc: AnyObject[], item) => {
-      if (!(item.system instanceof BaseItemData)) return acc
+      if (!(item.system instanceof BaseItemModel)) return acc
       acc.push(...item.system.getGlobalBonuses())
       return acc
     }, [])
 
     for (const item of this.parent.items) {
-      if (!(item.system instanceof BaseItemData)) continue
+      if (!(item.system instanceof BaseItemModel)) continue
       item.system.applyBonuses(this._globalBonuses)
     }
 
@@ -135,6 +138,11 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
     this.#prepareLiftingMoving()
     this.#prepareEquipmentSummary()
     this.#prepareEncumbrance()
+    this.#prepareDefenses()
+
+    // Set currernt maneuver to maneuver active effect if a valid one is present
+    const maneuverEffect = this.parent.effects.find(effect => effect.statuses.some(status => status === 'maneuver'))
+    this.conditions.maneuver = maneuverEffect ? maneuverEffect.flags.gurps.name : null
   }
 
   /* ---------------------------------------- */
@@ -289,6 +297,25 @@ class CharacterData extends TypeDataModel<CharacterSchema, Actor.Implementation>
         currentmovedisplay: moveIsEnhanced ? `${move}/${sprint}` : `${move}`,
       })
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareDefenses() {
+    this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
+
+    // NOTE: this used to check again whether equipment is equipped but this was already
+    // done when _globalBonuses was gathered so is not necessary
+    this._globalBonuses.forEach(bonus => {
+      // TODO: revise type
+      const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+      if (match) {
+        const bonusAmount = parseInt(match.groups?.bonus ?? '0')
+        this.defenses.parry.bonus += bonusAmount
+        this.defenses.block.bonus += bonusAmount
+        this.defenses.dodge.bonus += bonusAmount
+      }
+    })
   }
 
   /* ---------------------------------------- */
@@ -477,8 +504,8 @@ const characterSchema = () => {
     touch: new fields.NumberField({ required: true, nullable: false }),
     // Generic parry used for mooks
     parry: new fields.NumberField({ required: true, nullable: false }),
-    // NOTE: may want to revise this to be an accessor or derived property
-    currentmove: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: moved to derived property
+    // currentmove: new fields.NumberField({ required: true, nullable: false }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
     thrust: new fields.StringField({ required: true, nullable: false }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
@@ -580,6 +607,8 @@ const characterSchema = () => {
         nullable: false,
       }
     ),
+
+    conditions: new fields.SchemaField(conditionsSchema, { required: true, nullable: false }),
 
     move: new fields.ArrayField(new fields.SchemaField(moveSchema, { required: true, nullable: false }), {
       required: true,
