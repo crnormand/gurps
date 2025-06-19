@@ -12,6 +12,12 @@ class MeleeAttack extends BaseAction<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
+  static override get TYPE(): string {
+    return 'melee-attack'
+  }
+
+  /* ---------------------------------------- */
+
   get component(): MeleeAttackComponent {
     return this.mel
   }
@@ -87,7 +93,7 @@ const meleeAttackComponentSchema = {
   mode: new fields.StringField({ required: true, nullable: false }),
   weight: new fields.NumberField({ required: true, nullable: false }),
   techlevel: new fields.NumberField({ required: true, nullable: false }),
-  cast: new fields.StringField({ required: true, nullable: false }),
+  cost: new fields.StringField({ required: true, nullable: false }),
   reach: new fields.StringField({ required: true, nullable: false }),
   parry: new fields.StringField({ required: true, nullable: false }),
   baseParryPenalty: new fields.NumberField({ required: true, nullable: false }),
@@ -119,4 +125,4 @@ class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
 
 /* ---------------------------------------- */
 
-export { MeleeAttack, type MeleeAttackSchema }
+export { MeleeAttack, type MeleeAttackSchema, MeleeAttackComponent, type MeleeAttackComponentSchema }
