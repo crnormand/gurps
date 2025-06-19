@@ -12,6 +12,7 @@ import { SkillData } from 'module/item/data/skill.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
+import { CharacterModel } from 'module/actor/data/character.ts'
 
 export {}
 
@@ -66,8 +67,8 @@ declare global {
 
   interface DataModelConfig {
     Actor: {
-      character: typeof CharacterData
-      enemy: typeof CharacterData
+      character: typeof CharacterModel
+      enemy: typeof CharacterModel
     }
     Item: {
       equipment: typeof EquipmentData
