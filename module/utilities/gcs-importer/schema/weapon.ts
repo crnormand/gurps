@@ -25,19 +25,25 @@ class GcsWeapon extends GcsElement<WeaponData> {
 const weaponData = () => {
   return {
     id: new fields.StringField({ required: true, nullable: false }),
-    damage: new fields.ObjectField({ required: true, nullable: false }),
-    strength: new fields.ObjectField({ required: true, nullable: true }),
+    damage: new fields.SchemaField(
+      {
+        base: new fields.StringField({ required: true, nullable: false }),
+        type: new fields.StringField({ required: true, nullable: false }),
+      },
+      { required: true, nullable: false }
+    ),
+    strength: new fields.StringField({ required: true, nullable: true }),
     usage: new fields.StringField({ required: true, nullable: true }),
     usage_notes: new fields.StringField({ required: true, nullable: true }),
-    reach: new fields.ObjectField({ required: true, nullable: true }),
-    parry: new fields.ObjectField({ required: true, nullable: true }),
-    block: new fields.ObjectField({ required: true, nullable: true }),
-    accuracy: new fields.ObjectField({ required: true, nullable: true }),
-    range: new fields.ObjectField({ required: true, nullable: true }),
-    rate_of_fire: new fields.ObjectField({ required: true, nullable: true }),
-    shots: new fields.ObjectField({ required: true, nullable: true }),
-    bulk: new fields.ObjectField({ required: true, nullable: true }),
-    recoil: new fields.ObjectField({ required: true, nullable: true }),
+    reach: new fields.StringField({ required: true, nullable: true }),
+    parry: new fields.StringField({ required: true, nullable: true }),
+    block: new fields.StringField({ required: true, nullable: true }),
+    accuracy: new fields.StringField({ required: true, nullable: true }),
+    range: new fields.StringField({ required: true, nullable: true }),
+    rate_of_fire: new fields.StringField({ required: true, nullable: true }),
+    shots: new fields.StringField({ required: true, nullable: true }),
+    bulk: new fields.StringField({ required: true, nullable: true }),
+    recoil: new fields.StringField({ required: true, nullable: true }),
     defaults: new fields.ArrayField(new fields.EmbeddedDataField(GcsSkillDefault, { required: true, nullable: false })),
     hide: new fields.BooleanField({ required: true, nullable: true }),
     calc: new fields.SchemaField(

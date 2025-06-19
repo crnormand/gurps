@@ -68,9 +68,9 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   get contents(): Item.Implementation[] {
-    const contents: Record<string, string> = this.component.contains || {}
+    const contents: string[] = this.component.contains || []
 
-    return Object.values(contents).reduce((acc: Item.Implementation[], id: string) => {
+    return contents.reduce((acc: Item.Implementation[], id: string) => {
       const item = this.parent.actor?.items.get(id)
       if (item) acc.push(item)
       return acc
@@ -86,8 +86,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   applyBonuses(bonuses: AnyObject[]): void {
-    for (const attack of [...this.melee, ...this.ranged]) {
-      attack.applyBonuses(bonuses)
+    for (const action of this.actions) {
+      if (action instanceof MeleeAttack || action instanceof RangedAttack) action.applyBonuses(bonuses)
     }
   }
 

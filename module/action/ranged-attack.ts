@@ -132,4 +132,4 @@ class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
 
 /* ---------------------------------------- */
 
-export { RangedAttack, type RangedAttackSchema }
+export { RangedAttack, type RangedAttackSchema, RangedAttackComponent, type RangedAttackComponentSchema }
