@@ -8,8 +8,8 @@ import { GcsSkill } from './skill.js'
 import { GcsSpell } from './spell.js'
 import { GcsAttribute } from './attribute.js'
 
-class GcsCharacter extends GcsElement<GcsCharacterData> {
-  static override defineSchema(): GcsCharacterData {
+class GcsCharacter extends GcsElement<GcsCharacterModel> {
+  static override defineSchema(): GcsCharacterModel {
     return characterData()
   }
 
@@ -160,8 +160,8 @@ const characterData = () => {
   }
 }
 
-type GcsCharacterData = ReturnType<typeof characterData>
+type GcsCharacterModel = ReturnType<typeof characterData>
 
 /* ---------------------------------------- */
 
-export { GcsCharacter, characterData, type GcsCharacterData }
+export { GcsCharacter, characterData, type GcsCharacterModel }

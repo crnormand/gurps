@@ -30,7 +30,7 @@ import { multiplyDice } from 'module/utilities/damage-utils.js'
 import { COSTS_REGEX } from 'lib/parselink.js'
 import { TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
 
-class CharacterData extends BaseActorModel<CharacterSchema> {
+class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
     return characterSchema()
   }
@@ -968,4 +968,4 @@ type CharacterSchema = ReturnType<typeof characterSchema>
 
 /* ---------------------------------------- */
 
-export { CharacterData, type CharacterSchema }
+export { CharacterModel, type CharacterSchema }

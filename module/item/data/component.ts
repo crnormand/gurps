@@ -14,7 +14,9 @@ const itemComponentSchema = {
   notes: new fields.StringField({ required: true, nullable: false }),
   pageref: new fields.StringField({ required: true, nullable: false }),
   // Change from previous schema. Set of IDs
-  contains: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false }), {
+  // NOTE: this method of storing child items overrides Foundry's default "sort" behaviour.
+  // TODO: look into using a different method of storing child items such as storing the parent ID on the child item only.
+  contains: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
     required: true,
     nullable: false,
   }),

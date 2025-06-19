@@ -3,7 +3,17 @@ import DataModel = foundry.abstract.DataModel
 import { CharacterSchema } from 'module/actor/data/character.js'
 import { GcsCharacter } from './schema/character.js'
 import { GcsItem } from './schema/base.js'
-import { TraitSchema } from 'module/item/data/trait.js'
+import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
+import { BaseItemModel } from 'module/item/data/base.js'
+import { GcsTrait } from './schema/trait.js'
+import { ItemComponentSchema } from 'module/item/data/component.js'
+import { AnyGcsItem } from './schema/index.js'
+import { GcsEquipment } from './schema/equipment.js'
+import { MeleeAttackComponentSchema, MeleeAttackSchema } from 'module/action/melee-attack.js'
+import { RangedAttackComponentSchema, RangedAttackSchema } from 'module/action/ranged-attack.js'
+import { GcsWeapon } from './schema/weapon.js'
+import { SkillComponentSchema, SkillSchema } from 'module/item/data/skill.js'
+import { GcsSkill } from './schema/skill.js'
 
 class GcsImporter {
   input: GcsCharacter
@@ -33,7 +43,7 @@ class GcsImporter {
 
     this.#importAttributes()
     this.#importProfile()
-    this.#importTraits()
+    this.#importItems()
 
     console.log(this.output)
   }
@@ -124,17 +134,176 @@ class GcsImporter {
     }
   }
 
+  #importItems() {
+    this.input.traits?.forEach(trait => this.#importTrait(trait))
+    this.input.skills?.forEach(skill => this.#importSkill(skill))
+  }
+
   /* ---------------------------------------- */
 
-  #importTraits() {
-    this.input.traits?.forEach(trait => {
-			const.name = trait.name ?? ''
-      const item: DataModel.CreateData<TraitSchema> = {}
+  #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
+    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
 
+    system.actions = item.weapons?.map(action => this.#importWeapon(action)) ?? []
 
+    if (item instanceof GcsEquipment) {
+      system.equipped = item.equipped ?? false
+      system.carried = carried
+    }
 
-    })
+    return system
   }
+
+  /* ---------------------------------------- */
+
+  #importWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> {
+    if (weapon.id.startsWith('w')) return this.#importMeleeWeapon(weapon)
+    return this.#importRangedWeapon(weapon)
+  }
+
+  /* ---------------------------------------- */
+
+  #importMeleeWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema> {
+    const name = weapon.usage ?? ''
+    const type = 'melee-attack'
+    const _id = foundry.utils.randomID()
+
+    const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
+      // TODO: add parent item name
+      name: '',
+      notes: weapon.usage_notes ?? '',
+      pageref: '',
+      mode: weapon.usage ?? '',
+      import: weapon.calc.level,
+      damage: weapon.calc.damage,
+      st: weapon.calc.strength ?? weapon.strength,
+      reach: weapon.calc.reach ?? weapon.reach,
+      parry: weapon.calc.parry ?? weapon.parry,
+      block: weapon.calc.block ?? weapon.block,
+    }
+
+    return {
+      name,
+      type,
+      _id,
+      ...component,
+    }
+  }
+
+  #importRangedWeapon(weapon: GcsWeapon): DataModel.CreateData<RangedAttackSchema> {
+    const name = weapon.usage ?? ''
+    const type = 'ranged-attack'
+    const _id = foundry.utils.randomID()
+
+    const halfd = weapon.range?.includes('/') ? weapon.range.split('/')[0] : '0'
+
+    const component: DataModel.CreateData<RangedAttackComponentSchema> = {
+      // TODO: add parent item name
+      name: '',
+      notes: weapon.usage_notes ?? '',
+      pageref: '',
+      mode: weapon.usage ?? '',
+      import: weapon.calc.level,
+      damage: weapon.calc.damage,
+      st: weapon.calc.strength ?? weapon.strength,
+      acc: weapon.calc.accuracy ?? weapon.accuracy,
+      range: weapon.calc.range ?? weapon.range,
+      shots: weapon.calc.shots ?? weapon.shots,
+      rcl: weapon.calc.recoil ?? weapon.recoil,
+      halfd,
+    }
+
+    return {
+      name,
+      type,
+      _id,
+      ...component,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  #importTrait(trait: GcsTrait): Item.CreateData {
+    const type = 'feature'
+    const _id = foundry.utils.randomID()
+
+    const system: DataModel.CreateData<TraitSchema> = this.#importItem(trait)
+    const component: DataModel.CreateData<TraitComponentSchema> = this.#importTraitComponent(trait)
+
+    const children = trait.childItems?.map((child: GcsTrait) => this.#importTrait(child)) ?? []
+    component.contains = children.map((c: Item.CreateData) => c._id as string)
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      system,
+    }
+
+    this.items.push(item)
+    return item
+  }
+
+  /* ---------------------------------------- */
+
+  #importSkill(skill: GcsSkill): Item.CreateData {
+    const type = 'skill'
+    const _id = foundry.utils.randomID()
+
+    const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill)
+    const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
+
+    const children = skill.childItems?.map((child: GcsSkill) => this.#importSkill(child)) ?? []
+    component.contains = children.map((c: Item.CreateData) => c._id as string)
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      system,
+    }
+
+    this.items.push(item)
+    return item
+  }
+
+  /* ---------------------------------------- */
+
+  #importBaseComponent(item: AnyGcsItem): DataModel.CreateData<ItemComponentSchema> {
+    const component: DataModel.CreateData<ItemComponentSchema> = {
+      name: item instanceof GcsEquipment ? item.description : (item.name ?? ''),
+      notes: item.calc.resolved_notes ?? '',
+      pageref: item.reference ?? '',
+    }
+    return component
+  }
+
+  /* ---------------------------------------- */
+
+  #importTraitComponent(trait: GcsTrait): DataModel.CreateData<TraitComponentSchema> {
+    const component: DataModel.CreateData<TraitComponentSchema> = this.#importBaseComponent(trait)
+    Object.assign(component, {
+      cr: trait.cr ?? 0,
+      level: trait.levels ?? 0,
+      userdesc: trait.userdesc ?? '',
+      points: trait.calc.points ?? 0,
+    })
+
+    return component
+  }
+
+  /* ---------------------------------------- */
+
+  #importSkillComponent(skill: GcsSkill): DataModel.CreateData<SkillComponentSchema> {
+    const component: DataModel.CreateData<SkillComponentSchema> = this.#importBaseComponent(skill)
+    Object.assign(component, {
+      points: skill.points ?? 0,
+      type: skill.difficulty ?? '',
+      relativelevel: skill.calc.rsl ?? '',
+    })
+
+    return component
+  }
+
+  /* ---------------------------------------- */
 }
 
 export { GcsImporter }

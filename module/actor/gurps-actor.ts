@@ -5,6 +5,7 @@ import Maneuvers from './maneuver.js'
 import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
 import { ModelCollection } from 'module/data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
+import { DamageActionSchema } from './data/character-components.js'
 // import { type DamageActionSchema } from './data/character-components.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
@@ -362,7 +363,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  async accumulateDamageRoll(action): Promise<void> {
+  async accumulateDamageRoll(
+    action: foundry.data.fields.SchemaField.InitializedData<DamageActionSchema>
+  ): Promise<void> {
     if (this.isOfType('character', 'enemy')) this.system.accumulateDamageRoll(action)
   }
 

@@ -91,4 +91,4 @@ type SkillComponentSchema = ItemComponentSchema & typeof skillComponentSchema
 
 /* ---------------------------------------- */
 
-export { SkillData, type SkillSchema }
+export { SkillData, type SkillSchema, type SkillComponentSchema }

@@ -64,10 +64,6 @@ type GcsItemMetaData<
   modifierClass: null | Modifier
 }
 
-type ResolvedEmbeddedItemType<Type extends typeof GcsItem<any> | null> = Type extends typeof GcsItem<any>
-  ? InstanceType<Type>
-  : null
-
 class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
   static metadata: GcsItemMetaData = {
     childClass: null,
@@ -97,13 +93,13 @@ class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
 
   /* ---------------------------------------- */
 
-  get childItems(): ResolvedEmbeddedItemType<this['metadata']['childClass']>[] {
+  get childItems() {
     return ((this as any).children ?? []).map((childData: any) => this.metadata.childClass?.fromImportData(childData))
   }
 
   /* ---------------------------------------- */
 
-  get modifierItems(): ResolvedEmbeddedItemType<this['metadata']['modifierClass']>[] {
+  get modifierItems() {
     return ((this as any).modifiers ?? []).map((modifierData: any) =>
       this.metadata.modifierClass?.fromImportData(modifierData)
     )
