@@ -16,6 +16,12 @@ class RangedAttack extends BaseAction<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
+  static override get TYPE(): string {
+    return 'rangedAttack'
+  }
+
+  /* ---------------------------------------- */
+
   get component(): RangedAttackComponent {
     return this.rng
   }
@@ -88,30 +94,32 @@ type RangedAttackSchema = BaseActionSchema & ReturnType<typeof rangedAttackSchem
 
 /* ---------------------------------------- */
 
-const rangedAttackComponentSchema = {
-  // NOTE: change from previous schema where this was a string
-  import: new fields.NumberField({ required: true, nullable: false }),
-  // NOTE: no longer persistent data, always derived from import value
-  // level: new fields.NumberField({ required: true, nullable: false }),
-  damage: new fields.StringField({ required: true, nullable: false }),
-  st: new fields.StringField({ required: true, nullable: false }),
-  mode: new fields.StringField({ required: true, nullable: false }),
-  bulk: new fields.StringField({ required: true, nullable: false }),
-  legalityclass: new fields.StringField({ required: true, nullable: false }),
-  ammo: new fields.StringField({ required: true, nullable: false }),
-  acc: new fields.StringField({ required: true, nullable: false }),
-  range: new fields.StringField({ required: true, nullable: false }),
-  shots: new fields.StringField({ required: true, nullable: false }),
-  rcl: new fields.StringField({ required: true, nullable: false }),
-  halfd: new fields.StringField({ required: true, nullable: false }),
-  max: new fields.StringField({ required: true, nullable: false }),
-  otf: new fields.StringField({ required: true, nullable: false }),
-  modifierTags: new fields.StringField({ required: true, nullable: false }),
-  extraAttacks: new fields.NumberField({ required: true, nullable: false }),
-  consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+const rangedAttackComponentSchema = () => {
+  return {
+    // NOTE: change from previous schema where this was a string
+    import: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: no longer persistent data, always derived from import value
+    // level: new fields.NumberField({ required: true, nullable: false }),
+    damage: new fields.StringField({ required: true, nullable: false }),
+    st: new fields.StringField({ required: true, nullable: false }),
+    mode: new fields.StringField({ required: true, nullable: false }),
+    bulk: new fields.StringField({ required: true, nullable: false }),
+    legalityclass: new fields.StringField({ required: true, nullable: false }),
+    ammo: new fields.StringField({ required: true, nullable: false }),
+    acc: new fields.StringField({ required: true, nullable: false }),
+    range: new fields.StringField({ required: true, nullable: false }),
+    shots: new fields.StringField({ required: true, nullable: false }),
+    rcl: new fields.StringField({ required: true, nullable: false }),
+    halfd: new fields.StringField({ required: true, nullable: false }),
+    max: new fields.StringField({ required: true, nullable: false }),
+    otf: new fields.StringField({ required: true, nullable: false }),
+    modifierTags: new fields.StringField({ required: true, nullable: false }),
+    extraAttacks: new fields.NumberField({ required: true, nullable: false }),
+    consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+  }
 }
 
-type RangedAttackComponentSchema = ItemComponentSchema & typeof rangedAttackComponentSchema
+type RangedAttackComponentSchema = ItemComponentSchema & ReturnType<typeof rangedAttackComponentSchema>
 
 /* ---------------------------------------- */
 
@@ -119,7 +127,7 @@ class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
   static override defineSchema(): RangedAttackComponentSchema {
     return {
       ...super.defineSchema(),
-      ...rangedAttackComponentSchema,
+      ...rangedAttackComponentSchema(),
     }
   }
 

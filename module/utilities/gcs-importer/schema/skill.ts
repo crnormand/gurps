@@ -4,15 +4,16 @@ import { GcsSkillDefault } from './skill-default.js'
 import { GcsWeapon } from './weapon.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-class GcsSkill extends GcsItem<SkillData> {
+class GcsSkill extends GcsItem<SkillModel> {
   static override metadata = {
     childClass: GcsSkill,
     modifierClass: null,
+    weaponClass: GcsWeapon,
   }
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): SkillData {
+  static override defineSchema(): SkillModel {
     return {
       ...sourcedIdSchema(),
       ...skillData(),
@@ -35,14 +36,14 @@ class GcsSkill extends GcsItem<SkillData> {
 
 const skillData = () => {
   return {
-    // START: SkillData
+    // START: SkillModel
     third_party: new fields.ObjectField(),
     // Change from Gcs' own schema, allowing for recursion of data models
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),
-    // END: SkillData
+    // END: SkillModel
     // START: SkillEditData
     vtt_note: new fields.StringField({ required: true, nullable: true }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
@@ -98,7 +99,7 @@ const skillData = () => {
   }
 }
 
-type SkillData = SourcedIdSchema & ReturnType<typeof skillData>
+type SkillModel = SourcedIdSchema & ReturnType<typeof skillData>
 
 /* ---------------------------------------- */
 

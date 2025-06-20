@@ -1,4 +1,4 @@
-import { GurpsModule } from 'module/gurps-module.js'
+import { GurpsModule } from '../gurps-module.js'
 import { GurpsRulerV12 } from './ruler-12.js'
 import { GurpsRuler } from './ruler.js'
 

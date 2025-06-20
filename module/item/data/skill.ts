@@ -4,11 +4,11 @@ import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 
-class SkillData extends BaseItemModel<SkillSchema> {
+class SkillModel extends BaseItemModel<SkillSchema> {
   static override defineSchema(): SkillSchema {
     return {
       ...super.defineSchema(),
-      ...skillSchema,
+      ...skillSchema(),
     }
   }
 
@@ -51,11 +51,21 @@ class SkillData extends BaseItemModel<SkillSchema> {
 
 /* ---------------------------------------- */
 
+const skillSchema = () => {
+  return {
+    ski: new fields.EmbeddedDataField(SkillComponent, { required: true, nullable: false }),
+  }
+}
+
+type SkillSchema = BaseItemModelSchema & ReturnType<typeof skillSchema>
+
+/* ---------------------------------------- */
+
 class SkillComponent extends ItemComponent<SkillComponentSchema> {
   static override defineSchema(): SkillComponentSchema {
     return {
       ...super.defineSchema(),
-      ...skillComponentSchema,
+      ...skillComponentSchema(),
     }
   }
 
@@ -68,27 +78,21 @@ class SkillComponent extends ItemComponent<SkillComponentSchema> {
 
 /* ---------------------------------------- */
 
-const skillSchema = {
-  ski: new fields.EmbeddedDataField(SkillComponent, { required: true, nullable: false }),
+const skillComponentSchema = () => {
+  return {
+    points: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: change from previous schema where this was a string
+    import: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: no longer persistent data, always derived from import value
+    // level: new fields.NumberField({ required: true, nullable: false }),
+    type: new fields.StringField({ required: true, nullable: false }),
+    relativelevel: new fields.StringField({ required: true, nullable: false }),
+    otf: new fields.StringField({ required: true, nullable: false }),
+  }
 }
 
-type SkillSchema = BaseItemModelSchema & typeof skillSchema
+type SkillComponentSchema = ItemComponentSchema & ReturnType<typeof skillComponentSchema>
 
 /* ---------------------------------------- */
 
-const skillComponentSchema = {
-  points: new fields.NumberField({ required: true, nullable: false }),
-  // NOTE: change from previous schema where this was a string
-  import: new fields.NumberField({ required: true, nullable: false }),
-  // NOTE: no longer persistent data, always derived from import value
-  // level: new fields.NumberField({ required: true, nullable: false }),
-  type: new fields.StringField({ required: true, nullable: false }),
-  relativelevel: new fields.StringField({ required: true, nullable: false }),
-  otf: new fields.StringField({ required: true, nullable: false }),
-}
-
-type SkillComponentSchema = ItemComponentSchema & typeof skillComponentSchema
-
-/* ---------------------------------------- */
-
-export { SkillData, type SkillSchema, type SkillComponentSchema }
+export { SkillModel, type SkillSchema, type SkillComponentSchema }

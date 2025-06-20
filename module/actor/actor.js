@@ -2779,6 +2779,7 @@ export class GurpsActor extends Actor {
   }
 
   // TODO review and refactor
+  // NOTE: Migrated
   _changeDR(drFormula, hitLocation) {
     if (drFormula === 'reset') {
       hitLocation.dr = hitLocation.import
@@ -2817,11 +2818,13 @@ export class GurpsActor extends Actor {
     return hitLocation
   }
 
+  // NOTE: Migrated
   async refreshDR() {
     await this.changeDR('+0', [])
   }
 
   // TODO review and refactor
+  // NOTE: Migrated
   async changeDR(drFormula, drLocations) {
     let changed = false
     let actorLocations = { ...this.system.hitlocations }
@@ -2907,6 +2910,7 @@ export class GurpsActor extends Actor {
     return new Handlebars.SafeString(compiledTemplate(context))
   }
 
+  // NOTE: No longer needed
   findByOriginalName(name, include = false) {
     let item = this.items.find(i => i.system.originalName === name)
     if (!item) item = this.items.find(i => i.system.name === name)

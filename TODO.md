@@ -17,6 +17,7 @@ This is a developer TODO file. It is not meant to be read by users.
 - Functionality
   - Import
     - Opt for minimal import (update existing items) if the ID of the items matches
+    - Make sure replaceable strings are processed on import
   - Actor
     - Mimic all current functionality
     - Try to separate t

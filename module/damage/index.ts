@@ -1,4 +1,4 @@
-import { GurpsModule } from 'module/gurps-module.js'
+import { GurpsModule } from '../gurps-module.js'
 import ApplyDamageDialog from './applydamage.js'
 import { DamageTable } from './damage-tables.js'
 import DamageChat from './damagechat.js'

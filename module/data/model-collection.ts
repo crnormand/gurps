@@ -1,5 +1,5 @@
-import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
-import DataModel from 'node_modules/fvtt-types/src/foundry/common/abstract/data.mjs'
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import DataModel = foundry.abstract.DataModel
 
 class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends foundry.utils.Collection<Model> {
   /* ---------------------------------------- */
