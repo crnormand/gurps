@@ -32,6 +32,7 @@ class TypedPseudoDocument<
    * The subtypes of this pseudo-document.
    */
   static get TYPES(): Record<string, typeof TypedPseudoDocument> {
+    if (!globalThis.GURPS) return {}
     return Object.values(
       GURPS.CONFIG[this.metadata.documentName] as Record<string, { documentClass: typeof TypedPseudoDocument }>
     ).reduce((acc: Record<string, typeof TypedPseudoDocument>, { documentClass }) => {
@@ -46,6 +47,7 @@ class TypedPseudoDocument<
    * The localized label for this typed pseudodocument's type.
    */
   get typeLabel(): string {
+    if (!globalThis.GURPS) return ''
     return (GURPS.CONFIG[this.metadata.documentName] as any)[this.type].label
   }
 

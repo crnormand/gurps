@@ -2,15 +2,16 @@ import fields = foundry.data.fields
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsWeapon } from './weapon.js'
 
-class GcsSpell extends GcsItem<SpellData> {
+class GcsSpell extends GcsItem<SpellModel> {
   static override metadata = {
     childClass: GcsSpell,
     modifierClass: null,
+    weaponClass: GcsWeapon,
   }
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): SpellData {
+  static override defineSchema(): SpellModel {
     return {
       ...sourcedIdSchema(),
       ...spellData(),
@@ -22,14 +23,14 @@ class GcsSpell extends GcsItem<SpellData> {
 
 const spellData = () => {
   return {
-    // START: SpellData
+    // START: SpellModel
     third_party: new fields.ObjectField(),
     // Change from Gcs' own schema, allowing for recursion of data models
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),
-    // END: SpellData
+    // END: SpellModel
     // START: SpellEditData
     vtt_note: new fields.StringField({ required: true, nullable: true }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
@@ -85,7 +86,7 @@ const spellData = () => {
   }
 }
 
-type SpellData = SourcedIdSchema & ReturnType<typeof spellData>
+type SpellModel = SourcedIdSchema & ReturnType<typeof spellData>
 
 /* ---------------------------------------- */
 
