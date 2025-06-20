@@ -1,12 +1,11 @@
 import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { TokenActions } from 'module/token-actions.js'
+import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
-import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
-import { ModelCollection } from 'module/data/model-collection.js'
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
-// import { type DamageActionSchema } from './data/character-components.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */

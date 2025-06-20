@@ -5,8 +5,8 @@ import { AnyObject } from 'fvtt-types/utils'
 import { ItemComponent } from './component.js'
 import { parselink } from '../../../lib/parselink.js'
 import { MeleeAttack, RangedAttack } from '../../action/index.js'
-import { CollectionField } from 'module/data/fields/collection-field.js'
-import { BaseAction } from 'module/action/base-action.js'
+import { CollectionField } from '../../data/fields/collection-field.js'
+import { BaseAction } from '../../action/base-action.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -51,7 +51,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   static override defineSchema(): BaseItemModelSchema {
-    return baseItemModelSchema
+    return baseItemModelSchema()
   }
 
   /* ---------------------------------------- */
@@ -137,28 +137,30 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
 // This Item schema is repeated in multiple places, so we define it here to avoid duplication
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
-const baseItemModelSchema = {
-  // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
-  actions: new CollectionField(BaseAction),
-  // Change from previous schema. Set of IDs corresponding to subtypes of Item
-  ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs corresponding to subtypes of Item
-  skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  // Change from previous schema. Set of IDs corresponding to subtypes of Item
-  spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-  bonuses: new fields.StringField({ required: true, nullable: false }),
-  itemModifiers: new fields.StringField({ required: true, nullable: false }),
-  equipped: new fields.BooleanField({ required: true, nullable: false }),
-  carried: new fields.BooleanField({ required: true, nullable: false }),
-  globalid: new fields.StringField({ required: true, nullable: false }),
-  importid: new fields.StringField({ required: true, nullable: false }),
-  importFrom: new fields.StringField({ required: true, nullable: false }),
-  fromItem: new fields.StringField({ required: true, nullable: false }),
-  addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
-  modifierTags: new fields.StringField({ required: true, nullable: false }),
+const baseItemModelSchema = () => {
+  return {
+    // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
+    actions: new CollectionField(BaseAction),
+    // Change from previous schema. Set of IDs corresponding to subtypes of Item
+    ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // Change from previous schema. Set of IDs corresponding to subtypes of Item
+    skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // Change from previous schema. Set of IDs corresponding to subtypes of Item
+    spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    bonuses: new fields.StringField({ required: true, nullable: false }),
+    itemModifiers: new fields.StringField({ required: true, nullable: false }),
+    equipped: new fields.BooleanField({ required: true, nullable: false }),
+    carried: new fields.BooleanField({ required: true, nullable: false }),
+    globalid: new fields.StringField({ required: true, nullable: false }),
+    importid: new fields.StringField({ required: true, nullable: false }),
+    importFrom: new fields.StringField({ required: true, nullable: false }),
+    fromItem: new fields.StringField({ required: true, nullable: false }),
+    addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
+    modifierTags: new fields.StringField({ required: true, nullable: false }),
+  }
 }
 
-type BaseItemModelSchema = typeof baseItemModelSchema
+type BaseItemModelSchema = ReturnType<typeof baseItemModelSchema>
 
 /* ---------------------------------------- */
 

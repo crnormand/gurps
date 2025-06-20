@@ -11,7 +11,7 @@ import {
 } from './character-components.js'
 import fields = foundry.data.fields
 import { HitLocationEntry } from './hit-location-entry.js'
-import { BaseItemModel } from 'module/item/data/base.js'
+import { BaseItemModel } from '../../item/data/base.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 import { makeRegexPatternFrom, splitArgs } from '../../../lib/utilities.js'
 import { HitLocation } from '../../hitlocation/hitlocation.js'
@@ -26,9 +26,9 @@ import {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from '../maneuver.js'
-import { multiplyDice } from 'module/utilities/damage-utils.js'
-import { COSTS_REGEX } from 'lib/parselink.js'
-import { TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
+import { multiplyDice } from '../../utilities/damage-utils.js'
+import { COSTS_REGEX } from '../../../lib/parselink.js'
+import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -794,21 +794,21 @@ const characterSchema = () => {
     // Default attributes
     attributes: new fields.SchemaField(
       {
-        ST: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
-        DX: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
-        IQ: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
-        HT: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
-        WILL: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
-        PER: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
-        QN: new fields.SchemaField(attributeSchema, { required: true, nullable: false }),
+        ST: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
+        DX: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
+        IQ: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
+        HT: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
+        WILL: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
+        PER: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
+        QN: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
       },
       { required: true, nullable: false }
     ),
 
     // In-build pools
-    HP: new fields.SchemaField(poolSchema, { required: true, nullable: false }),
-    FP: new fields.SchemaField(poolSchema, { required: true, nullable: false }),
-    QP: new fields.SchemaField(poolSchema, { required: true, nullable: false }),
+    HP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+    FP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+    QP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
 
     // Other attributes which don't count as core in this version of the system
     dodge: new fields.SchemaField({
@@ -858,7 +858,7 @@ const characterSchema = () => {
           nullable: false,
         }),
         importname: new fields.StringField({ required: true, nullable: true }),
-        importpath: new fields.FilePathField({ required: true, nullable: true }),
+        importpath: new fields.FilePathField({ required: true, nullable: true, categories: ['TEXT'] }),
       },
       { required: true, nullable: false }
     ),
@@ -927,21 +927,21 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema, { required: true, nullable: false }), {
+    reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
     conditionalmods: new fields.ArrayField(
-      new fields.SchemaField(reactionSchema, { required: true, nullable: false }),
+      new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
       {
         required: true,
         nullable: false,
       }
     ),
 
-    conditions: new fields.SchemaField(conditionsSchema, { required: true, nullable: false }),
+    conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
 
-    move: new fields.ArrayField(new fields.SchemaField(moveSchema, { required: true, nullable: false }), {
+    move: new fields.ArrayField(new fields.SchemaField(moveSchema(), { required: true, nullable: false }), {
       required: true,
       nullable: false,
       default: [{ mode: 'GURPS.moveModeGround', basic: 5, enhanced: null, default: true }],

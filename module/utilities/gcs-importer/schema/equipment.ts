@@ -3,15 +3,16 @@ import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsEquipmentModifier } from './equipment-modifier.js'
 import { GcsWeapon } from './weapon.js'
 
-class GcsEquipment extends GcsItem<EquipmentData> {
+class GcsEquipment extends GcsItem<EquipmentModel> {
   static override metadata = {
     childClass: GcsEquipment,
     modifierClass: GcsEquipmentModifier,
+    weaponClass: GcsWeapon,
   }
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): EquipmentData {
+  static override defineSchema(): EquipmentModel {
     return {
       ...sourcedIdSchema(),
       ...equipmentData(),
@@ -23,14 +24,14 @@ class GcsEquipment extends GcsItem<EquipmentData> {
 
 const equipmentData = () => {
   return {
-    // START: EquipmentData
+    // START: EquipmentModel
     third_party: new fields.ObjectField(),
     // Change from Gcs' own schema, allowing for recursion of data models
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),
-    // END: EquipmentData
+    // END: EquipmentModel
     // START: EquipmentEditData
     vtt_note: new fields.StringField({ required: true, nullable: true }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
@@ -82,7 +83,7 @@ const equipmentData = () => {
   }
 }
 
-type EquipmentData = SourcedIdSchema & ReturnType<typeof equipmentData>
+type EquipmentModel = SourcedIdSchema & ReturnType<typeof equipmentData>
 
 /* ---------------------------------------- */
 

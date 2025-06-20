@@ -1,14 +1,14 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
 // import { GurpsActor } from './module/actor/actor.js'
-import { GurpsCombatant } from './module/combat/combatant.ts'
+import { GurpsCombatant } from 'module/combat/combatant.ts'
 // import { GurpsItem } from './module/item.js'
-import { GurpsToken } from './module/token/gurps-token.ts'
+import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
-import { EquipmentData } from 'module/item/data/equipment.ts'
-import { TraitData } from 'module/item/data/trait.ts'
-import { SpellData } from 'module/item/data/spell.ts'
-import { SkillData } from 'module/item/data/skill.ts'
+import { EquipmentModel } from 'module/item/data/equipment.ts'
+import { TraitModel } from 'module/item/data/trait.ts'
+import { SpellModel } from 'module/item/data/spell.ts'
+import { SkillModel } from 'module/item/data/skill.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
@@ -71,10 +71,10 @@ declare global {
       enemy: typeof CharacterModel
     }
     Item: {
-      equipment: typeof EquipmentData
-      feature: typeof TraitData
-      skill: typeof SkillData
-      spell: typeof SpellData
+      equipment: typeof EquipmentModel
+      feature: typeof TraitModel
+      skill: typeof SkillModel
+      spell: typeof SpellModel
       // meleeAtk: typeof MeleeAttackData
       // rangedAtk: typeof RangedAttackData
     }

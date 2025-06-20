@@ -13,7 +13,7 @@ class MeleeAttack extends BaseAction<MeleeAttackSchema> {
   /* ---------------------------------------- */
 
   static override get TYPE(): string {
-    return 'melee-attack'
+    return 'meleeAttack'
   }
 
   /* ---------------------------------------- */
@@ -83,28 +83,30 @@ type MeleeAttackSchema = BaseActionSchema & ReturnType<typeof meleeAttackSchema>
 
 /* ---------------------------------------- */
 
-const meleeAttackComponentSchema = {
-  // NOTE: change from previous schema where this was a string
-  import: new fields.NumberField({ required: true, nullable: false }),
-  // NOTE: no longer persistent data, always derived from import value
-  // level: new fields.NumberField({ required: true, nullable: false }),
-  damage: new fields.StringField({ required: true, nullable: false }),
-  st: new fields.StringField({ required: true, nullable: false }),
-  mode: new fields.StringField({ required: true, nullable: false }),
-  weight: new fields.NumberField({ required: true, nullable: false }),
-  techlevel: new fields.NumberField({ required: true, nullable: false }),
-  cost: new fields.StringField({ required: true, nullable: false }),
-  reach: new fields.StringField({ required: true, nullable: false }),
-  parry: new fields.StringField({ required: true, nullable: false }),
-  baseParryPenalty: new fields.NumberField({ required: true, nullable: false }),
-  block: new fields.StringField({ required: true, nullable: false }),
-  otf: new fields.StringField({ required: true, nullable: false }),
-  modifierTags: new fields.StringField({ required: true, nullable: false }),
-  extraAttacks: new fields.NumberField({ required: true, nullable: false }),
-  consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+const meleeAttackComponentSchema = () => {
+  return {
+    // NOTE: change from previous schema where this was a string
+    import: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: no longer persistent data, always derived from import value
+    // level: new fields.NumberField({ required: true, nullable: false }),
+    damage: new fields.StringField({ required: true, nullable: false }),
+    st: new fields.StringField({ required: true, nullable: false }),
+    mode: new fields.StringField({ required: true, nullable: false }),
+    weight: new fields.NumberField({ required: true, nullable: false }),
+    techlevel: new fields.NumberField({ required: true, nullable: false }),
+    cost: new fields.StringField({ required: true, nullable: false }),
+    reach: new fields.StringField({ required: true, nullable: false }),
+    parry: new fields.StringField({ required: true, nullable: false }),
+    baseParryPenalty: new fields.NumberField({ required: true, nullable: false }),
+    block: new fields.StringField({ required: true, nullable: false }),
+    otf: new fields.StringField({ required: true, nullable: false }),
+    modifierTags: new fields.StringField({ required: true, nullable: false }),
+    extraAttacks: new fields.NumberField({ required: true, nullable: false }),
+    consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+  }
 }
 
-type MeleeAttackComponentSchema = ItemComponentSchema & typeof meleeAttackComponentSchema
+type MeleeAttackComponentSchema = ItemComponentSchema & ReturnType<typeof meleeAttackComponentSchema>
 
 /* ---------------------------------------- */
 
@@ -112,7 +114,7 @@ class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
   static override defineSchema(): MeleeAttackComponentSchema {
     return {
       ...super.defineSchema(),
-      ...meleeAttackComponentSchema,
+      ...meleeAttackComponentSchema(),
     }
   }
 

@@ -1,8 +1,8 @@
 import { AnyObject } from 'fvtt-types/utils'
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
-import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
-import { TypedPseudoDocument } from 'module/pseudo-document/typed-pseudo-document.js'
+import { PseudoDocument } from '../../pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from '../../pseudo-document/typed-pseudo-document.js'
 import { ModelCollection } from '../model-collection.js'
 
 class LazyTypedSchemaField<

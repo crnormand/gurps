@@ -9,7 +9,7 @@ class HitLocationEntry extends DataModel<HitLocationSchema> {
   /* ---------------------------------------- */
 
   static override defineSchema(): HitLocationSchema {
-    return hitLocationSchema
+    return hitLocationSchema()
   }
 
   /* ---------------------------------------- */
@@ -41,27 +41,29 @@ class HitLocationEntry extends DataModel<HitLocationSchema> {
   }
 }
 
-const hitLocationSchema = {
-  where: new fields.StringField({ required: true, nullable: false }),
-  import: new fields.NumberField({ required: true, nullable: false }),
-  _dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-  _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
-  roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
-    required: true,
-    nullable: false,
-  }),
-  split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
-    required: true,
-    nullable: false,
-  }),
-  // drMod represent the DR bonus from the /dr command
-  drMod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-  // drItem represent the DR bonus from Item bonuses
-  drItem: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-  // drCap represents the capped DR, applied by the /dr command
-  drCap: new fields.NumberField({ required: true, nullable: true, initial: 0 }),
+const hitLocationSchema = () => {
+  return {
+    where: new fields.StringField({ required: true, nullable: false }),
+    import: new fields.NumberField({ required: true, nullable: false }),
+    _dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
+    roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
+      required: true,
+      nullable: false,
+    }),
+    split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
+      required: true,
+      nullable: false,
+    }),
+    // drMod represent the DR bonus from the /dr command
+    drMod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    // drItem represent the DR bonus from Item bonuses
+    drItem: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    // drCap represents the capped DR, applied by the /dr command
+    drCap: new fields.NumberField({ required: true, nullable: true, initial: 0 }),
+  }
 }
 
-type HitLocationSchema = typeof hitLocationSchema
+type HitLocationSchema = ReturnType<typeof hitLocationSchema>
 
 export { HitLocationEntry, type HitLocationSchema }

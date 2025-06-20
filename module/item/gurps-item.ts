@@ -1,7 +1,7 @@
-import { PseudoDocument } from 'module/pseudo-document/pseudo-document.js'
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
-import { MeleeAttack, RangedAttack } from 'module/action/index.js'
-import { ModelCollection } from 'module/data/model-collection.js'
+import { MeleeAttack, RangedAttack } from '../action/index.js'
+import { ModelCollection } from '../data/model-collection.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */

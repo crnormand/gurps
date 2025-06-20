@@ -1,6 +1,6 @@
 import DataModel = foundry.abstract.DataModel
 
-import { CharacterSchema } from 'module/actor/data/character.js'
+import { CharacterSchema } from '../../actor/data/character.js'
 import { GcsCharacter } from './schema/character.js'
 import { GcsItem } from './schema/base.js'
 import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
@@ -9,11 +9,14 @@ import { GcsTrait } from './schema/trait.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
 import { AnyGcsItem } from './schema/index.js'
 import { GcsEquipment } from './schema/equipment.js'
-import { MeleeAttackComponentSchema, MeleeAttackSchema } from 'module/action/melee-attack.js'
-import { RangedAttackComponentSchema, RangedAttackSchema } from 'module/action/ranged-attack.js'
+import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../../action/melee-attack.js'
+import { RangedAttackComponentSchema, RangedAttackSchema } from '../../action/ranged-attack.js'
 import { GcsWeapon } from './schema/weapon.js'
-import { SkillComponentSchema, SkillSchema } from 'module/item/data/skill.js'
+import { SkillComponentSchema, SkillSchema } from '../../item/data/skill.js'
 import { GcsSkill } from './schema/skill.js'
+import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
+import { GcsSpell } from './schema/spell.js'
+import { EquipmentSchema, EquipmentComponentSchema } from '../../item/data/equipment.js'
 
 class GcsImporter {
   input: GcsCharacter
@@ -41,11 +44,31 @@ class GcsImporter {
     // Measure how long importing takes
     const startTime = performance.now()
 
+    const _id = foundry.utils.randomID()
+    const type = 'character'
+    const name = this.input.profile.name ?? 'Imported Character'
+
     this.#importAttributes()
     this.#importProfile()
     this.#importItems()
 
-    console.log(this.output)
+    console.log({
+      _id,
+      name,
+      type,
+      system: this.output,
+      items: this.items,
+    })
+
+    Actor.create({
+      _id,
+      name,
+      type,
+      system: this.output,
+      items: this.items,
+    })
+
+    console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
   }
 
   /* ---------------------------------------- */
@@ -137,6 +160,9 @@ class GcsImporter {
   #importItems() {
     this.input.traits?.forEach(trait => this.#importTrait(trait))
     this.input.skills?.forEach(skill => this.#importSkill(skill))
+    this.input.spells?.forEach(spell => this.#importSpell(spell))
+    this.input.equipment?.forEach(equipment => this.#importEquipment(equipment, true))
+    this.input.other_equipment?.forEach(equipment => this.#importEquipment(equipment, false))
   }
 
   /* ---------------------------------------- */
@@ -165,7 +191,7 @@ class GcsImporter {
 
   #importMeleeWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema> {
     const name = weapon.usage ?? ''
-    const type = 'melee-attack'
+    const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
@@ -192,7 +218,7 @@ class GcsImporter {
 
   #importRangedWeapon(weapon: GcsWeapon): DataModel.CreateData<RangedAttackSchema> {
     const name = weapon.usage ?? ''
-    const type = 'ranged-attack'
+    const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
     const halfd = weapon.range?.includes('/') ? weapon.range.split('/')[0] : '0'
@@ -226,6 +252,8 @@ class GcsImporter {
   #importTrait(trait: GcsTrait): Item.CreateData {
     const type = 'feature'
     const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = trait.name ?? 'Trait'
 
     const system: DataModel.CreateData<TraitSchema> = this.#importItem(trait)
     const component: DataModel.CreateData<TraitComponentSchema> = this.#importTraitComponent(trait)
@@ -236,7 +264,11 @@ class GcsImporter {
     const item: Item.CreateData = {
       _id,
       type,
-      system,
+      name,
+      system: {
+        ...system,
+        fea: component,
+      },
     }
 
     this.items.push(item)
@@ -248,6 +280,8 @@ class GcsImporter {
   #importSkill(skill: GcsSkill): Item.CreateData {
     const type = 'skill'
     const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = skill.name ?? 'Skill'
 
     const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill)
     const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
@@ -258,7 +292,70 @@ class GcsImporter {
     const item: Item.CreateData = {
       _id,
       type,
-      system,
+      name,
+      system: {
+        ...system,
+        ski: component,
+      },
+    }
+
+    this.items.push(item)
+    return item
+  }
+
+  /* ---------------------------------------- */
+
+  #importSpell(spell: GcsSpell): Item.CreateData {
+    const type = 'spell'
+    const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = spell.name ?? 'Spell'
+
+    const system: DataModel.CreateData<SpellSchema> = this.#importItem(spell)
+    const component: DataModel.CreateData<SpellComponentSchema> = this.#importSpellComponent(spell)
+
+    const children = spell.childItems?.map((child: GcsSpell) => this.#importSpell(child)) ?? []
+    component.contains = children.map((c: Item.CreateData) => c._id as string)
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      system: {
+        ...system,
+        spl: component,
+      },
+    }
+
+    this.items.push(item)
+    return item
+  }
+
+  /* ---------------------------------------- */
+
+  #importEquipment(equipment: GcsEquipment, equipped: boolean): Item.CreateData {
+    const type = 'equipment'
+    const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = equipment.description ?? 'Equipment'
+
+    const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment)
+    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(
+      equipment,
+      equipped
+    )
+
+    const children = equipment.childItems?.map((child: GcsEquipment) => this.#importEquipment(child, equipped)) ?? []
+    component.contains = children.map((c: Item.CreateData) => c._id as string)
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      system: {
+        ...system,
+        eqt: component,
+      },
     }
 
     this.items.push(item)
@@ -298,12 +395,57 @@ class GcsImporter {
       points: skill.points ?? 0,
       type: skill.difficulty ?? '',
       relativelevel: skill.calc.rsl ?? '',
+      import: skill.calc.level ?? 0,
     })
 
     return component
   }
 
   /* ---------------------------------------- */
+
+  #importSpellComponent(spell: GcsSpell): DataModel.CreateData<SpellComponentSchema> {
+    const component: DataModel.CreateData<SpellComponentSchema> = this.#importBaseComponent(spell)
+    Object.assign(component, {
+      points: spell.points ?? 0,
+      type: spell.difficulty ?? '',
+      relativelevel: spell.calc.rsl ?? '',
+      import: spell.calc.level ?? 0,
+      class: spell.spell_class ?? '',
+      college: spell.college ?? '',
+      cost: spell.casting_cost ?? 0,
+      maintain: spell.maintenance_cost ?? 0,
+      duration: spell.duration ?? '',
+      resist: spell.resist ?? '',
+      casttime: spell.casting_time ?? '',
+    })
+
+    return component
+  }
+
+  /* ---------------------------------------- */
+
+  #importEquipmentComponent(
+    equipment: GcsEquipment,
+    equipped: boolean
+  ): DataModel.CreateData<EquipmentComponentSchema> {
+    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importBaseComponent(equipment)
+    Object.assign(component, {
+      count: equipment.quantity ?? 1,
+      weight: equipment.calc.weight,
+      cost: equipment.calc.value ?? 0,
+      location: '',
+      carried: true,
+      equipped,
+      techlevel: equipment.tech_level ?? '',
+      categories: equipment.tags ?? '',
+      costsum: equipment.calc.extended_value,
+      weightsum: equipment.calc.extended_weight,
+      uses: equipment.uses,
+      maxuses: equipment.max_uses,
+    })
+
+    return component
+  }
 }
 
 export { GcsImporter }

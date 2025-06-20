@@ -66,6 +66,18 @@
     "distance": 1,
     "units": "yd"
   },
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "enemy": {}
+    },
+    "Item": {
+      "feature": {},
+      "skill": {},
+      "spell": {},
+      "equipment": {}
+    }
+  },
   "media": [
     {
       "type": "cover",

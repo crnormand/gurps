@@ -74,6 +74,15 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
+import { importGCS } from './utilities/gcs-importer/parser.js'
+import { TraitModel } from './item/data/trait.js'
+import { SkillModel } from './item/data/skill.js'
+import { SpellModel } from './item/data/spell.js'
+import { EquipmentModel } from './item/data/equipment.js'
+import { GurpsActorV2 } from './actor/gurps-actor.js'
+import { GurpsItemV2 } from './item/gurps-item.js'
+import { CharacterModel } from './actor/data/character.js'
+
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -1951,8 +1960,25 @@ if (!globalThis.GURPS) {
 
     // Define custom Entity classes
     // @ts-ignore
-    CONFIG.Actor.documentClass = GurpsActor
-    CONFIG.Item.documentClass = GurpsItem
+    // CONFIG.Actor.documentClass = GurpsActor
+    // CONFIG.Item.documentClass = GurpsItem
+
+    CONFIG.Actor.documentClass = GurpsActorV2
+    CONFIG.Item.documentClass = GurpsItemV2
+
+    CONFIG.Actor.dataModels = {
+      character: CharacterModel,
+      enemy: CharacterModel,
+    }
+
+    CONFIG.Item.dataModels = {
+      feature: TraitModel,
+      skill: SkillModel,
+      spell: SpellModel,
+      equipment: EquipmentModel,
+    }
+
+    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
 
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12

@@ -3,15 +3,16 @@ import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsTraitModifier } from './trait-modifier.js'
 import { GcsWeapon } from './weapon.js'
 
-class GcsTrait extends GcsItem<TraitData> {
+class GcsTrait extends GcsItem<TraitModel> {
   static override metadata = {
     childClass: GcsTrait,
     modifierClass: GcsTraitModifier,
+    weaponClass: GcsWeapon,
   }
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): TraitData {
+  static override defineSchema(): TraitModel {
     return {
       ...sourcedIdSchema(),
       ...traitData(),
@@ -23,14 +24,14 @@ class GcsTrait extends GcsItem<TraitData> {
 
 const traitData = () => {
   return {
-    // START: TraitData
+    // START: TraitModel
     third_party: new fields.ObjectField(),
     // Change from Gcs' own schema, allowing for recursion of data models
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),
-    // END: TraitData
+    // END: TraitModel
     // START: TraitEditData
     vtt_note: new fields.StringField({ required: true, nullable: true }),
     userdesc: new fields.StringField({ required: true, nullable: true }),
@@ -91,7 +92,7 @@ const traitData = () => {
   }
 }
 
-type TraitData = SourcedIdSchema & ReturnType<typeof traitData>
+type TraitModel = SourcedIdSchema & ReturnType<typeof traitData>
 
 /* ---------------------------------------- */
 

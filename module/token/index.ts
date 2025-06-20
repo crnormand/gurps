@@ -1,4 +1,4 @@
-import { GurpsModule } from 'module/gurps-module.js'
+import { GurpsModule } from '../gurps-module.js'
 import { GurpsToken } from './gurps-token.js'
 import { GurpsTokenHUD } from './token-hud-12.js'
 import { registerTokenHUD } from './token-hud.js'

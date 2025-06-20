@@ -1,7 +1,7 @@
-import { PseudoDocumentMetadata } from 'module/pseudo-document/pseudo-document.js'
+import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from 'module/pseudo-document/typed-pseudo-document.js'
+import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
 
 class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,

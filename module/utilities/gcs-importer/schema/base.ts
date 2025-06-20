@@ -62,12 +62,14 @@ type GcsItemMetaData<
 > = {
   childClass: null | Child
   modifierClass: null | Modifier
+  weaponClass: null | typeof GcsElement<any>
 }
 
 class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
   static metadata: GcsItemMetaData = {
     childClass: null,
     modifierClass: null,
+    weaponClass: null,
   }
 
   /* ---------------------------------------- */
@@ -86,6 +88,10 @@ class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
       case 'modifiers':
         if (this.metadata.modifierClass === null) return null
         return data?.map((modifierData: any) => this.metadata.modifierClass?.importSchema(modifierData))
+
+      case 'weapons':
+        if (this.metadata.weaponClass === null) return null
+        return data?.map((weaponData: any) => this.metadata.weaponClass?.importSchema(weaponData))
       default:
         return super._importField(data, field, name)
     }
