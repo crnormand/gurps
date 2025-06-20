@@ -4,11 +4,11 @@ import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 
-class SpellData extends BaseItemModel<SpellSchema> {
+class SpellModel extends BaseItemModel<SpellSchema> {
   static override defineSchema(): SpellSchema {
     return {
       ...super.defineSchema(),
-      ...spellSchema,
+      ...spellSchema(),
     }
   }
 
@@ -55,7 +55,7 @@ class SpellComponent extends ItemComponent<SpellComponentSchema> {
   static override defineSchema(): SpellComponentSchema {
     return {
       ...super.defineSchema(),
-      ...spellComponentSchema,
+      ...spellComponentSchema(),
     }
   }
 
@@ -68,34 +68,38 @@ class SpellComponent extends ItemComponent<SpellComponentSchema> {
 
 /* ---------------------------------------- */
 
-const spellSchema = {
-  spl: new fields.EmbeddedDataField(SpellComponent, { required: true, nullable: false }),
+const spellSchema = () => {
+  return {
+    spl: new fields.EmbeddedDataField(SpellComponent, { required: true, nullable: false }),
+  }
 }
 
-type SpellSchema = BaseItemModelSchema & typeof spellSchema
+type SpellSchema = BaseItemModelSchema & ReturnType<typeof spellSchema>
 
 /* ---------------------------------------- */
 
-const spellComponentSchema = {
-  points: new fields.NumberField({ required: true, nullable: false }),
-  // NOTE: change from previous schema where this was a string
-  import: new fields.NumberField({ required: true, nullable: false }),
-  // NOTE: no longer persistent data, always derived from import value
-  // level: new fields.NumberField({ required: true, nullable: false }),
-  class: new fields.StringField({ required: true, nullable: false }),
-  college: new fields.StringField({ required: true, nullable: false }),
-  cost: new fields.StringField({ required: true, nullable: false }),
-  maintain: new fields.StringField({ required: true, nullable: false }),
-  duration: new fields.StringField({ required: true, nullable: false }),
-  resist: new fields.StringField({ required: true, nullable: false }),
-  casttime: new fields.StringField({ required: true, nullable: false }),
-  difficulty: new fields.StringField({ required: true, nullable: false }),
-  relativelevel: new fields.StringField({ required: true, nullable: false }),
-  otf: new fields.StringField({ required: true, nullable: false }),
+const spellComponentSchema = () => {
+  return {
+    points: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: change from previous schema where this was a string
+    import: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: no longer persistent data, always derived from import value
+    // level: new fields.NumberField({ required: true, nullable: false }),
+    class: new fields.StringField({ required: true, nullable: false }),
+    college: new fields.StringField({ required: true, nullable: false }),
+    cost: new fields.StringField({ required: true, nullable: false }),
+    maintain: new fields.StringField({ required: true, nullable: false }),
+    duration: new fields.StringField({ required: true, nullable: false }),
+    resist: new fields.StringField({ required: true, nullable: false }),
+    casttime: new fields.StringField({ required: true, nullable: false }),
+    difficulty: new fields.StringField({ required: true, nullable: false }),
+    relativelevel: new fields.StringField({ required: true, nullable: false }),
+    otf: new fields.StringField({ required: true, nullable: false }),
+  }
 }
 
-type SpellComponentSchema = ItemComponentSchema & typeof spellComponentSchema
+type SpellComponentSchema = ItemComponentSchema & ReturnType<typeof spellComponentSchema>
 
 /* ---------------------------------------- */
 
-export { SpellData, type SpellSchema }
+export { SpellModel, type SpellSchema, type SpellComponentSchema }
