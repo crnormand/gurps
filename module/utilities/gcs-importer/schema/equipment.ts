@@ -18,6 +18,19 @@ class GcsEquipment extends GcsItem<EquipmentModel> {
       ...equipmentData(),
     }
   }
+
+  /* ---------------------------------------- */
+
+  override get isContainer(): boolean {
+    return this.id.startsWith('E')
+  }
+
+  /* ---------------------------------------- */
+
+  /** @abstract */
+  override get isEnabled(): boolean {
+    return this.equipped ?? false
+  }
 }
 
 /* ---------------------------------------- */
