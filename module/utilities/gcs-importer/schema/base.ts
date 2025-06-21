@@ -13,14 +13,19 @@ type SourcedIdSchema = ReturnType<typeof sourcedIdSchema>
 
 /* ---------------------------------------- */
 
-class GcsElement<Schema extends fields.DataSchema> extends DataModel<Schema> {
+class GcsElement<
+  Schema extends fields.DataSchema = fields.DataSchema,
+  Parent extends DataModel.Any | null = DataModel.Any | null,
+> extends DataModel<Schema, Parent> {
+  container: null | GcsElement<any> = null
+
   static fromImportData<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
-    schema: Schema = this.defineSchema() as Schema
+    parent: null | GcsElement = null
   ): GcsElement<Schema> {
-    const createData: DataModel.CreateData<Schema> = this.importSchema(importData, schema)
+    const createData: DataModel.CreateData<Schema> = this.importSchema(importData, this.defineSchema() as Schema)
 
-    return new this(createData as DataModel.CreateData<Schema>)
+    return new this(createData as DataModel.CreateData<Schema>, { parent })
   }
 
   /* ---------------------------------------- */
@@ -47,10 +52,40 @@ class GcsElement<Schema extends fields.DataSchema> extends DataModel<Schema> {
       case fields.BooleanField:
       case fields.ObjectField:
         return data ?? field.getInitialValue()
+      case fields.ArrayField: {
+        return (
+          data?.map(
+            (item: any) => item ?? (field as fields.ArrayField<fields.DataField.Any>).element.getInitialValue()
+          ) ?? []
+        )
+      }
       case fields.SchemaField: {
         return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Is this the root element?
+   */
+  get isRoot(): boolean {
+    return false
+  }
+
+  /* ---------------------------------------- */
+
+  /** @abstract */
+  get isContainer(): boolean {
+    return false
+  }
+
+  /* ---------------------------------------- */
+
+  /** @abstract */
+  get isEnabled(): boolean {
+    return true
   }
 }
 
@@ -65,7 +100,7 @@ type GcsItemMetaData<
   weaponClass: null | typeof GcsElement<any>
 }
 
-class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
+class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsElement<Schema> {
   static metadata: GcsItemMetaData = {
     childClass: null,
     modifierClass: null,
@@ -100,14 +135,35 @@ class GcsItem<Schema extends fields.DataSchema> extends GcsElement<Schema> {
   /* ---------------------------------------- */
 
   get childItems() {
-    return ((this as any).children ?? []).map((childData: any) => this.metadata.childClass?.fromImportData(childData))
+    if (this.metadata.childClass === null) return []
+    return ((this as any).children ?? []).map((childData: any) =>
+      this.metadata.childClass?.fromImportData(childData, this)
+    )
+  }
+
+  get allChildItems() {
+    const children = this.childItems
+    children.forEach((child: GcsItem) => {
+      if (child.isContainer) children.push(...child.allChildItems)
+    })
+    return children
   }
 
   /* ---------------------------------------- */
 
   get modifierItems() {
+    if (this.metadata.modifierClass === null) return []
     return ((this as any).modifiers ?? []).map((modifierData: any) =>
-      this.metadata.modifierClass?.fromImportData(modifierData)
+      this.metadata.modifierClass?.fromImportData(modifierData, this)
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get weaponItems() {
+    if (this.metadata.weaponClass === null) return []
+    return ((this as any).weapons ?? []).map((weaponData: any) =>
+      this.metadata.weaponClass?.fromImportData(weaponData, this)
     )
   }
 

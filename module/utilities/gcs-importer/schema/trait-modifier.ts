@@ -7,6 +7,7 @@ class GcsTraitModifier extends GcsItem<TraitModifierData> {
   static override metadata = {
     childClass: GcsTraitModifier,
     modifierClass: null, // TraitModifiers do not have modifiers
+    weaponClass: null, // TraitModifiers do not have weapons
   }
 
   /* ---------------------------------------- */
@@ -16,6 +17,12 @@ class GcsTraitModifier extends GcsItem<TraitModifierData> {
       ...sourcedIdSchema(),
       ...traitModifierData(),
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override get isContainer(): boolean {
+    return this.id.startsWith('M')
   }
 }
 

@@ -12,11 +12,21 @@ class GcsWeapon extends GcsElement<WeaponData> {
 
   protected static override _importField(data: any, field: fields.DataField.Any, name: string): any {
     if (name === 'defaults') {
-      return data?.map((defaultData: AnyObject) =>
-        GcsSkillDefault.fromImportData(defaultData as any, GcsSkillDefault.defineSchema())
-      )
+      return data?.map((defaultData: AnyObject) => GcsSkillDefault.fromImportData(defaultData as any), { parent: this })
     }
     return super._importField(data, field, name)
+  }
+
+  /* ---------------------------------------- */
+
+  get isMelee(): boolean {
+    return this.id.startsWith('w')
+  }
+
+  /* ---------------------------------------- */
+
+  get isRanged(): boolean {
+    return this.id.startsWith('W')
   }
 }
 

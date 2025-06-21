@@ -1,6 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.3 (FoundryVTT v13 ONLY)
+## Release 1.0.0 (FoundryVTT v13 Only)
+
+### Features
+
+- Refactored the document models to use Foundry's DataModel system.
 
 ## Release 0.18.2 07/02/2025
 
