@@ -36,13 +36,13 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  static importCharacter(input: GcsCharacter) {
-    return new GcsImporter(input).#importCharacter()
+  static async importCharacter(input: GcsCharacter): Promise<void> {
+    return await new GcsImporter(input).#importCharacter()
   }
 
   /* ---------------------------------------- */
 
-  #importCharacter() {
+  async #importCharacter() {
     // Measure how long importing takes
     const startTime = performance.now()
 
@@ -65,7 +65,7 @@ class GcsImporter {
       items: this.items,
     })
 
-    Actor.create({
+    await Actor.create({
       _id,
       name,
       type,
@@ -161,9 +161,6 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importProfile() {
-    // TODO: add race
-    // ensure SM bonuses are respected
-
     const { profile } = this.input
     this.output.traits = {
       title: profile.title ?? '',
@@ -241,6 +238,14 @@ class GcsImporter {
       if (weaponParry > parry) parry = weaponParry
     }
     this.output.parry = parry
+
+    let race = 'Human'
+    const ancestryTrait = this.input.traits?.find(trait => trait.container_type === 'ancestry')
+    if (ancestryTrait) {
+      race = ancestryTrait.name ?? 'Human'
+    }
+
+    this.output.traits!.race = race
   }
 
   /* ---------------------------------------- */
@@ -281,7 +286,7 @@ class GcsImporter {
   #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
 
-    system.actions = item.weaponItems?.map((action: GcsWeapon) => this.#importWeapon(action)) ?? []
+    system.actions = item.weaponItems?.map((action: GcsWeapon) => this.#importWeapon(action, item)) ?? []
 
     if (item instanceof GcsEquipment) {
       system.equipped = item.equipped ?? false
@@ -293,21 +298,20 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> {
-    if (weapon.id.startsWith('w')) return this.#importMeleeWeapon(weapon)
-    return this.#importRangedWeapon(weapon)
+  #importWeapon(weapon: GcsWeapon, item: AnyGcsItem): DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> {
+    if (weapon.id.startsWith('w')) return this.#importMeleeWeapon(weapon, item)
+    return this.#importRangedWeapon(weapon, item)
   }
 
   /* ---------------------------------------- */
 
-  #importMeleeWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema> {
+  #importMeleeWeapon(weapon: GcsWeapon, item: AnyGcsItem): DataModel.CreateData<MeleeAttackSchema> {
     const name = weapon.usage ?? ''
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
-      // TODO: add parent item name
-      name: '',
+      name: item.name ?? '',
       notes: weapon.usage_notes ?? '',
       pageref: '',
       mode: weapon.usage ?? '',
@@ -327,7 +331,7 @@ class GcsImporter {
     }
   }
 
-  #importRangedWeapon(weapon: GcsWeapon): DataModel.CreateData<RangedAttackSchema> {
+  #importRangedWeapon(weapon: GcsWeapon, item: AnyGcsItem): DataModel.CreateData<RangedAttackSchema> {
     const name = weapon.usage ?? ''
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
@@ -335,8 +339,7 @@ class GcsImporter {
     const halfd = weapon.range?.includes('/') ? weapon.range.split('/')[0] : '0'
 
     const component: DataModel.CreateData<RangedAttackComponentSchema> = {
-      // TODO: add parent item name
-      name: '',
+      name: item.name ?? '',
       notes: weapon.usage_notes ?? '',
       pageref: '',
       mode: weapon.usage ?? '',
@@ -344,8 +347,8 @@ class GcsImporter {
       damage: weapon.calc.damage,
       st: weapon.calc.strength ?? weapon.strength,
       acc: weapon.calc.accuracy ?? weapon.accuracy,
-      range: weapon.calc.range ?? weapon.range,
       shots: weapon.calc.shots ?? weapon.shots,
+      range: weapon.calc.range ?? weapon.range,
       rcl: weapon.calc.recoil ?? weapon.recoil,
       halfd,
     }
@@ -448,7 +451,7 @@ class GcsImporter {
     const type = 'equipment'
     const _id = foundry.utils.randomID()
     // TODO: localize
-    const name = equipment.description ?? 'Equipment'
+    const name = equipment.name ?? 'Equipment'
 
     const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment)
     const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(
@@ -477,7 +480,7 @@ class GcsImporter {
 
   #importBaseComponent(item: AnyGcsItem): DataModel.CreateData<ItemComponentSchema> {
     const component: DataModel.CreateData<ItemComponentSchema> = {
-      name: item instanceof GcsEquipment ? item.description : (item.name ?? ''),
+      name: item.name,
       notes: item.calc.resolved_notes ?? '',
       pageref: item.reference ?? '',
     }

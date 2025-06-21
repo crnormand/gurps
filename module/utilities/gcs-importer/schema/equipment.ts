@@ -31,6 +31,12 @@ class GcsEquipment extends GcsItem<EquipmentModel> {
   override get isEnabled(): boolean {
     return this.equipped ?? false
   }
+
+  /* ---------------------------------------- */
+
+  get name(): string | null {
+    return this.description
+  }
 }
 
 /* ---------------------------------------- */

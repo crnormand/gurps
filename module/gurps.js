@@ -75,6 +75,7 @@ import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 import { importGCS } from './utilities/gcs-importer/parser.js'
+import { importGCA } from './utilities/gca-importer/parser.js'
 import { TraitModel } from './item/data/trait.js'
 import { SkillModel } from './item/data/skill.js'
 import { SpellModel } from './item/data/spell.js'
@@ -105,6 +106,7 @@ if (!globalThis.GURPS) {
   GURPS.Length = Length
   // GURPS.importTextXML = importTestXML
   GURPS.importGCS = importGCS
+  GURPS.importGCA = importGCA
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
