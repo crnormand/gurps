@@ -22,6 +22,7 @@ class GcsImporter {
   input: GcsCharacter
   output: DataModel.CreateData<CharacterSchema>
   items: DataModel.CreateData<DataModel.SchemaOf<GcsItem<any>>>[]
+  img: string
 
   /* ---------------------------------------- */
 
@@ -30,6 +31,7 @@ class GcsImporter {
     this.output = {}
 
     this.items = []
+    this.img = ''
   }
 
   /* ---------------------------------------- */
@@ -48,9 +50,12 @@ class GcsImporter {
     const type = 'character'
     const name = this.input.profile.name ?? 'Imported Character'
 
+    this.#importPortrait()
     this.#importAttributes()
     this.#importProfile()
     this.#importItems()
+    this.#importPointTotals()
+    this.#importMiscValues()
 
     console.log({
       _id,
@@ -64,11 +69,21 @@ class GcsImporter {
       _id,
       name,
       type,
-      system: this.output,
-      items: this.items,
+      img: this.img,
+      // FIXME: not sure why this is not resolving correctly
+      system: this.output as any,
+      items: this.items as any,
     })
 
     console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
+  }
+
+  /* ---------------------------------------- */
+
+  #importPortrait() {
+    if (game.user?.hasPermission('FILES_UPLOAD')) {
+      this.img = `data:image/png;base64,${this.input.profile.portrait}.png`
+    }
   }
 
   /* ---------------------------------------- */
@@ -88,6 +103,18 @@ class GcsImporter {
           points: 0,
         }
       }
+    }
+
+    const basicSpeed = this.input.attributes.find(attr => attr.attr_id === 'basic_speed')
+    this.output.basicspeed = {
+      value: basicSpeed?.calc.value ?? 5,
+      points: basicSpeed?.calc.points ?? 0,
+    }
+
+    const basicMove = this.input.attributes.find(attr => attr.attr_id === 'basic_move')
+    this.output.basicmove = {
+      value: basicMove?.calc.value ?? 5,
+      points: basicMove?.calc.points ?? 0,
     }
 
     for (const key of ['HP', 'FP', 'QP'] as const) {
@@ -128,6 +155,7 @@ class GcsImporter {
 
     this.output.thrust = this.input.calc.thrust
     this.output.swing = this.input.calc.swing
+    this.output.dodge = { value: this.input.calc.dodge[0] ?? 0 }
   }
 
   /* ---------------------------------------- */
@@ -157,6 +185,8 @@ class GcsImporter {
     }
   }
 
+  /* ---------------------------------------- */
+
   #importItems() {
     this.input.traits?.forEach(trait => this.#importTrait(trait))
     this.input.skills?.forEach(skill => this.#importSkill(skill))
@@ -167,10 +197,91 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
+  #importPointTotals() {
+    this.output.totalpoints = {
+      attributes: 0,
+      race: 0,
+      ads: 0,
+      disads: 0,
+      quirks: 0,
+      skills: 0,
+      spells: 0,
+      total: 0,
+      unspent: 0,
+    }
+
+    this.output.totalpoints!.attributes! += this.input.attributes.reduce(
+      (acc, attr) => acc + (attr.calc.points ?? 0),
+      0
+    )
+
+    this.input.traits?.forEach(trait => this.#calculateSingleTraitPoints(trait))
+
+    this.output.totalpoints.skills = this.input.allSkills?.reduce((acc, skill) => acc + (skill.points ?? 0), 0) ?? 0
+    this.output.totalpoints.spells = this.input.allSpells?.reduce((acc, spell) => acc + (spell.points ?? 0), 0) ?? 0
+
+    this.output.totalpoints.unspent =
+      this.input.total_points -
+      this.output.totalpoints!.attributes! -
+      this.output.totalpoints!.race! -
+      this.output.totalpoints!.ads! -
+      this.output.totalpoints!.disads! -
+      this.output.totalpoints!.quirks! -
+      this.output.totalpoints!.skills! -
+      this.output.totalpoints!.spells!
+  }
+
+  /* ---------------------------------------- */
+
+  #importMiscValues() {
+    let parry = 0
+    for (const weapon of this.input.allEquippedWeapons.filter(e => e.isMelee)) {
+      let weaponParry = parseInt(weapon.calc.parry ?? weapon.parry ?? '0')
+      if (isNaN(weaponParry)) weaponParry = 0
+      if (weaponParry > parry) parry = weaponParry
+    }
+    this.output.parry = parry
+  }
+
+  /* ---------------------------------------- */
+
+  #calculateSingleTraitPoints(trait: GcsTrait): void {
+    if (trait.disabled) return
+
+    if (trait.isContainer) {
+      switch (trait.container_type) {
+        case 'group':
+          trait.childItems.forEach((child: GcsTrait) => this.#calculateSingleTraitPoints(child))
+          break
+        case 'ancestry':
+          this.output.totalpoints!.race! += trait.adjustedPoints
+          break
+        case 'attributes':
+          this.output.totalpoints!.race! += trait.adjustedPoints
+          break
+      }
+    }
+    const points = trait.adjustedPoints
+
+    switch (true) {
+      case points === -1:
+        this.output.totalpoints!.quirks! += points
+        break
+      case points < 0:
+        this.output.totalpoints!.disads! += points
+        break
+      case points > 0:
+        this.output.totalpoints!.ads! += points
+        break
+    }
+  }
+
+  /* ---------------------------------------- */
+
   #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
 
-    system.actions = item.weapons?.map(action => this.#importWeapon(action)) ?? []
+    system.actions = item.weaponItems?.map((action: GcsWeapon) => this.#importWeapon(action)) ?? []
 
     if (item instanceof GcsEquipment) {
       system.equipped = item.equipped ?? false

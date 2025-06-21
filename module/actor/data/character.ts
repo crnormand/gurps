@@ -812,8 +812,9 @@ const characterSchema = () => {
 
     // Other attributes which don't count as core in this version of the system
     dodge: new fields.SchemaField({
-      value: new fields.NumberField({ required: true, nullable: false }),
-      enc_level: new fields.NumberField({ required: true, nullable: false }),
+      value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+      // NOTE: env_level is never used in the code, so has been removed.
+      // enc_level: new fields.NumberField({ required: true, nullable: false }),
     }),
     basicmove: new fields.SchemaField({
       // NOTE: change from previous data model, uses number instead of string type as value is always a number
@@ -867,15 +868,15 @@ const characterSchema = () => {
       {
         RT: new fields.SchemaField(
           {
-            value: new fields.NumberField({ required: true, nullable: false }),
-            points: new fields.NumberField({ required: true, nullable: false }),
+            value: new fields.NumberField({ required: true, nullable: false, initial: 4 }),
+            points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
           },
           { required: true, nullable: false }
         ),
         injury: new fields.SchemaField(
           {
-            severity: new fields.StringField({ required: true, nullable: false }),
-            daystoheal: new fields.NumberField({ required: true, nullable: false }),
+            severity: new fields.StringField({ required: true, nullable: false, initial: 0 }),
+            daystoheal: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
           },
           { required: true, nullable: false }
         ),

@@ -18,6 +18,75 @@ class GcsTrait extends GcsItem<TraitModel> {
       ...traitData(),
     }
   }
+
+  /* ---------------------------------------- */
+
+  override get isContainer(): boolean {
+    return this.id.startsWith('T')
+  }
+
+  /* ---------------------------------------- */
+
+  get effectivelyDisabled(): boolean {
+    if (this.disabled) return true
+    let parent = this.parent
+    while (parent instanceof GcsTrait) {
+      if (parent.disabled) return true
+      parent = parent.parent
+    }
+    return false
+  }
+
+  /* ---------------------------------------- */
+
+  get adjustedPoints(): number {
+    if (this.effectivelyDisabled) return 0
+    if (!this.isContainer) return this.calc?.points ?? 0
+
+    let points = 0
+    if (this.container_type === 'alternative_abilities') {
+      const values = this.childItems.map((child: GcsTrait) => child.adjustedPoints) ?? []
+      points = Math.max(...values)
+      const maximum = points
+      let found = false
+      for (const value of values) {
+        if (!found && value === maximum) {
+          found = true
+        } else {
+          points += this.round_down ? Math.floor(value / 5) : Math.ceil(value / 5)
+        }
+      }
+    } else {
+      this.childItems.reduce((sum: number, child: GcsTrait) => (sum += child.adjustedPoints), points)
+    }
+
+    return points
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+	/* Should this trait container be counted against attribute point costs?
+	*/
+  get isAttribute(): boolean {
+    if (!this.isContainer) return false
+    return this.container_type === 'attribute'
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+	/* Should this trait container be counted against ancestry point costs?
+	*/
+  get isAncestry(): boolean {
+    if (!this.isContainer) return false
+    return this.container_type === 'ancestry'
+  }
+
+  /** @abstract */
+  override get isEnabled(): boolean {
+    return !this.effectivelyDisabled
+  }
 }
 
 /* ---------------------------------------- */

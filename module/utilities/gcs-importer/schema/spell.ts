@@ -17,6 +17,12 @@ class GcsSpell extends GcsItem<SpellModel> {
       ...spellData(),
     }
   }
+
+  /* ---------------------------------------- */
+
+  override get isContainer(): boolean {
+    return this.id.startsWith('P')
+  }
 }
 
 /* ---------------------------------------- */
