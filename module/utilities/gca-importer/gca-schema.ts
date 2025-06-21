@@ -53,7 +53,7 @@ class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema>
             break
         }
       } else {
-        const element = xml.getElementsByTagName(key)[0]
+        const element = xml.querySelector(`:scope > ${key}`)
         if (!element) return
         switch (field.constructor) {
           case fields.StringField:
@@ -472,7 +472,7 @@ const gcaAttackModeSchema = () => {
     charreach: new fields.StringField({ required: true, nullable: true }),
     charrof: new fields.StringField({ required: true, nullable: true }),
     charshots: new fields.StringField({ required: true, nullable: true }),
-    charskillscore: new fields.StringField({ required: true, nullable: true }),
+    charskillscore: new fields.NumberField({ required: true, nullable: true }),
     charskillused: new fields.StringField({ required: true, nullable: true }),
 
     itemnotes: new fields.StringField({ required: true, nullable: true }),
@@ -493,11 +493,25 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
     const data: Partial<DataModel.CreateData<GCATraitSchema>> = this._primitiveFieldsFromXML(xml, this.defineSchema())
 
     data.calcs = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('calcs')[0] as HTMLElement,
+      xml.querySelector(':scope > calcs') as HTMLElement,
       this.defineSchema().calcs.fields
     )
 
     return new this(data)
+  }
+
+  /* ---------------------------------------- */
+
+  getChildren(list: GCATrait[]): GCATrait[] {
+    const children: GCATrait[] = []
+    const childKeyList = this.childkeylist?.split(',').map(e => e.trim()) ?? []
+
+    for (const childKey of childKeyList) {
+      const child = list.find(trait => `k${trait.$idkey}` === childKey)
+      if (child) children.push(child)
+    }
+
+    return children
   }
 }
 
@@ -552,6 +566,8 @@ const gcaTraitSchema = () => {
         postformulaweight: new fields.StringField({ required: true, nullable: true }),
         prechildrencost: new fields.StringField({ required: true, nullable: true }),
         prechildrenweight: new fields.StringField({ required: true, nullable: true }),
+        postchildrencost: new fields.StringField({ required: true, nullable: true }),
+        postchildrenweight: new fields.StringField({ required: true, nullable: true }),
 
         childpoints: new fields.StringField({ required: true, nullable: true }),
         baseapppoints: new fields.StringField({ required: true, nullable: true }),
@@ -740,161 +756,168 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
     )
 
     data.author = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('author')[0] as HTMLElement,
+      xml.querySelector(':scope > author') as HTMLElement,
       this.defineSchema().author.fields
     )
 
     data.system = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('system')[0] as HTMLElement,
+      xml.querySelector(':scope > system') as HTMLElement,
       this.defineSchema().system.fields
     )
 
     data.library = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('library')[0] as HTMLElement,
+      xml.querySelector(':scope > library') as HTMLElement,
       this.defineSchema().library.fields
     )
 
     data.settings = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('settings')[0] as HTMLElement,
+      xml.querySelector(':scope > settings') as HTMLElement,
       this.defineSchema().settings.fields
     )
 
     data.output = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('output')[0] as HTMLElement,
+      xml.querySelector(':scope > output') as HTMLElement,
       this.defineSchema().output.fields
     )
 
     data.vitals = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('vitals')[0] as HTMLElement,
+      xml.querySelector(':scope > vitals') as HTMLElement,
       this.defineSchema().vitals.fields,
       ['portraitimage']
     )
 
     data.basicdefense = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('basicdefense')[0] as HTMLElement,
+      xml.querySelector(':scope > basicdefense') as HTMLElement,
       this.defineSchema().basicdefense.fields
     )
 
-    data.body = Array.from(xml.getElementsByTagName('body')[0].getElementsByTagName('bodyitem')).map(node =>
+    data.body = Array.from(xml.querySelector(':scope > body')?.querySelectorAll('bodyitem') ?? []).map(node =>
       GCABodyItem.fromXML(node as HTMLElement)
     )
 
     data.tags =
-      xml.getElementsByTagName('tags').length > 0
-        ? Array.from(xml.getElementsByTagName('tags')[0].getElementsByTagName('extendedtag')).map(node =>
+      (xml.querySelectorAll(':scope > tags') ?? [].length > 0)
+        ? Array.from(xml.querySelector(':scope > tags')?.querySelectorAll('extendedtag') ?? []).map(node =>
             GCAUnknownTag.fromXML(node as HTMLElement)
           )
         : []
 
     data.messages =
-      xml.getElementsByTagName('messages').length > 0
-        ? Array.from(xml.getElementsByTagName('messages')[0].getElementsByTagName('message')).map(node =>
+      (xml.querySelectorAll(':scope > messages') ?? [].length > 0)
+        ? Array.from(xml.querySelector(':scope > messages')?.querySelectorAll('message') ?? []).map(node =>
             GCAMessage.fromXML(node as HTMLElement)
           )
         : []
 
     data.traits = {
-      attributes: Array.from(xml.getElementsByTagName('attributes')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
+      attributes: Array.from(xml.querySelector(':scope > traits > attributes')?.querySelectorAll('trait') ?? []).map(
+        node => GCATrait.fromXML(node as HTMLElement)
       ),
-      cultures: Array.from(xml.getElementsByTagName('cultures')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
+      cultures: Array.from(
+        xml.querySelector(':scope > traits > cultures')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
+      languages: Array.from(
+        xml.querySelector(':scope > traits > languages')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
+      advantages: Array.from(
+        xml.querySelector(':scope > traits > advantages')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
+      disadvantages: Array.from(
+        xml.querySelector(':scope > traits > disadvantages')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
+      perks: Array.from(xml.querySelector(':scope > traits > perks')?.querySelectorAll(':scope > trait') ?? []).map(
+        node => GCATrait.fromXML(node as HTMLElement)
       ),
-      languages: Array.from(xml.getElementsByTagName('languages')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
+      quirks: Array.from(xml.querySelector(':scope > traits > quirks')?.querySelectorAll(':scope > trait') ?? []).map(
+        node => GCATrait.fromXML(node as HTMLElement)
       ),
-      advantages: Array.from(xml.getElementsByTagName('advantages')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
+      features: Array.from(
+        xml.querySelector(':scope > traits > features')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
+      skills: Array.from(xml.querySelector(':scope > traits > skills')?.querySelectorAll(':scope > trait') ?? []).map(
+        node => GCATrait.fromXML(node as HTMLElement)
       ),
-      disadvantages: Array.from(xml.getElementsByTagName('disadvantages')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
+      spells: Array.from(xml.querySelector(':scope > traits > spells')?.querySelectorAll(':scope > trait') ?? []).map(
+        node => GCATrait.fromXML(node as HTMLElement)
       ),
-      perks: Array.from(xml.getElementsByTagName('perks')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
-      quirks: Array.from(xml.getElementsByTagName('quirks')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
-      features: Array.from(xml.getElementsByTagName('features')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
-      skills: Array.from(xml.getElementsByTagName('attributes')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
-      spells: Array.from(xml.getElementsByTagName('spells')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
-      equipment: Array.from(xml.getElementsByTagName('equipment')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
-      templates: Array.from(xml.getElementsByTagName('templates')[0].getElementsByTagName('trait')).map(node =>
-        GCATrait.fromXML(node as HTMLElement)
-      ),
+      equipment: Array.from(
+        xml.querySelector(':scope > traits > equipment')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
+      templates: Array.from(
+        xml.querySelector(':scope > traits > templates')?.querySelectorAll(':scope > trait') ?? []
+      ).map(node => GCATrait.fromXML(node as HTMLElement)),
     }
 
-    data.loadouts = Array.from(xml.getElementsByTagName('loadouts')[0].getElementsByTagName('loadout')).map(node =>
-      this._getLoadoutFromXML(node as HTMLElement)
+    data.loadouts = Array.from(xml.querySelector(':scope > loadouts')?.querySelectorAll(':scope > loadout') ?? []).map(
+      node => this._getLoadoutFromXML(node as HTMLElement)
     )
 
-    data.transforms = Array.from(xml.getElementsByTagName('transforms')[0].getElementsByTagName('transform')).map(
-      node => this._getTransformFromXML(node as HTMLElement)
-    )
+    data.transforms = Array.from(
+      xml.querySelector(':scope > transforms')?.querySelectorAll(':scope > transform') ?? []
+    ).map(node => this._getTransformFromXML(node as HTMLElement))
 
     data.campaign = {
       ...this._primitiveFieldsFromXML(
-        xml.getElementsByTagName('campaign')[0] as HTMLElement,
+        xml.querySelector(':scope > campaign') as HTMLElement,
         this.defineSchema().campaign.fields
       ),
-      logentries: Array.from(xml.getElementsByTagName('logentries')[0].getElementsByTagName('logentry')).map(node =>
-        this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().campaign.fields.logentries.element.fields)
+      logentries: Array.from(xml.querySelector(':scope > logentries')?.querySelectorAll(':scope > logentry') ?? []).map(
+        node =>
+          this._primitiveFieldsFromXML(
+            node as HTMLElement,
+            this.defineSchema().campaign.fields.logentries.element.fields
+          )
       ),
     }
 
-    data.basicdamages = Array.from(xml.getElementsByTagName('basicdamages')[0].getElementsByTagName('basicdamage')).map(
-      node => this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().basicdamages.element.fields)
-    )
+    data.basicdamages = Array.from(
+      xml.querySelector(':scope > basicdamages')?.querySelectorAll(':scope > basicdamage') ?? []
+    ).map(node => this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().basicdamages.element.fields))
 
-    data.damagebreaks = Array.from(xml.getElementsByTagName('damagebreaks')[0].getElementsByTagName('damagebreak')).map(
-      node => this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().damagebreaks.element.fields)
-    )
+    data.damagebreaks = Array.from(
+      xml.querySelector(':scope > damagebreaks')?.querySelectorAll(':scope > damagebreak') ?? []
+    ).map(node => this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().damagebreaks.element.fields))
 
-    data.skilltypes = Array.from(xml.getElementsByTagName('skilltypes')[0].getElementsByTagName('skilltype')).map(
-      node => this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().skilltypes.element.fields)
-    )
+    data.skilltypes = Array.from(
+      xml.querySelector(':scope > skilltypes')?.querySelectorAll(':scope > skilltype') ?? []
+    ).map(node => this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().skilltypes.element.fields))
 
-    data.groups = Array.from(xml.getElementsByTagName('groups')[0].getElementsByTagName('group')).map(node => {
-      return {
-        ...this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().groups.element.fields),
-        groupitems:
-          node.getElementsByTagName('groupitems').length === 1
-            ? Array.from(node.getElementsByTagName('groupitems')[0].getElementsByTagName('groupitem')).map(itemNode =>
-                this._primitiveFieldsFromXML(
-                  itemNode as HTMLElement,
-                  this.defineSchema().groups.element.fields.groupitem.element.fields
+    data.groups = Array.from(xml.querySelector(':scope > groups')?.querySelectorAll(':scope > group') ?? []).map(
+      node => {
+        return {
+          ...this._primitiveFieldsFromXML(node as HTMLElement, this.defineSchema().groups.element.fields),
+          groupitems:
+            (node.querySelectorAll(':scope > groupitems') ?? [].length === 1)
+              ? Array.from(node.querySelector(':scope > groupitems')?.querySelectorAll(':scope > groupitem') ?? []).map(
+                  itemNode =>
+                    this._primitiveFieldsFromXML(
+                      itemNode as HTMLElement,
+                      this.defineSchema().groups.element.fields.groupitem.element.fields
+                    )
                 )
-              )
-            : [],
+              : [],
+        }
       }
-    })
+    )
 
     data.categories =
-      xml.getElementsByTagName('categories').length > 0
-        ? Array.from(xml.getElementsByTagName('categories')[0].getElementsByTagName('category')).map(node =>
+      (xml.querySelectorAll(':scope > categories') ?? [].length > 0)
+        ? Array.from(xml.querySelector(':scope > categories')?.querySelectorAll(':scope > category') ?? []).map(node =>
             GCACategory.fromXML(node as HTMLElement)
           )
         : []
 
     data.symbols =
-      xml.getElementsByTagName('symbols').length > 0
-        ? Array.from(xml.getElementsByTagName('symbols')[0].getElementsByTagName('symbol')).map(node =>
+      (xml.querySelectorAll(':scope > symbols') ?? [].length > 0)
+        ? Array.from(xml.querySelector(':scope > symbols')?.querySelectorAll(':scope > symbol') ?? []).map(node =>
             GCAFlagSymbol.fromXML(node as unknown as HTMLElement)
           )
         : []
 
     data.bonusclasses =
-      xml.getElementsByTagName('bonusclasses').length > 0
-        ? Array.from(xml.getElementsByTagName('bonusclasses')[0].getElementsByTagName('bonusclass')).map(node =>
-            GCABonusClass.fromXML(node as HTMLElement)
+      (xml.querySelectorAll(':scope > bonusclasses') ?? [].length > 0)
+        ? Array.from(xml.querySelector(':scope > bonusclasses')?.querySelectorAll(':scope > bonusclass') ?? []).map(
+            node => GCABonusClass.fromXML(node as HTMLElement)
           )
         : []
 
@@ -909,22 +932,22 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
     const schema = this.defineSchema().loadouts.element.fields
 
     data.facingdb = this._primitiveFieldsFromXML(
-      xml.getElementsByTagName('facingdb')[0] as HTMLElement,
+      xml.querySelector(':scope > facingdb') as HTMLElement,
       schema.facingdb.fields
     )
-    data.items = Array.from(xml.getElementsByTagName('items')[0].getElementsByTagName('item')).map(node =>
+    data.items = Array.from(xml.querySelector(':scope > items')?.querySelectorAll(':scope > item') ?? []).map(node =>
       this._primitiveFieldsFromXML(node as HTMLElement, schema.items.element.fields)
     )
-    data.armoritems = Array.from(xml.getElementsByTagName('armoritems')[0].getElementsByTagName('item')).map(node =>
-      this._primitiveFieldsFromXML(node as HTMLElement, schema.armoritems.element.fields)
+    data.armoritems = Array.from(xml.querySelector(':scope > armoritems')?.querySelectorAll(':scope > item') ?? []).map(
+      node => this._primitiveFieldsFromXML(node as HTMLElement, schema.armoritems.element.fields)
     )
-    data.shielditems = Array.from(xml.getElementsByTagName('shielditems')[0].getElementsByTagName('item')).map(node =>
-      this._primitiveFieldsFromXML(node as HTMLElement, schema.armoritems.element.fields)
-    )
-    data.orderedlayers = Array.from(xml.getElementsByTagName('orderedlayers')[0].getElementsByTagName('layer')).map(
-      node => GCALayerItem.fromXML(node as HTMLElement)
-    )
-    data.body = Array.from(xml.getElementsByTagName('body')[0].getElementsByTagName('bodyitem')).map(node =>
+    data.shielditems = Array.from(
+      xml.querySelector(':scope > shielditems')?.querySelectorAll(':scope > item') ?? []
+    ).map(node => this._primitiveFieldsFromXML(node as HTMLElement, schema.armoritems.element.fields))
+    data.orderedlayers = Array.from(
+      xml.querySelector(':scope > orderedlayers')?.querySelectorAll(':scope > layer') ?? []
+    ).map(node => GCALayerItem.fromXML(node as HTMLElement))
+    data.body = Array.from(xml.querySelector(':scope > body')?.querySelectorAll(':scope > bodyitem') ?? []).map(node =>
       GCABodyItem.fromXML(node as HTMLElement)
     )
 
@@ -939,7 +962,7 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
 
     const schema = this.defineSchema().transforms.element.fields
 
-    data.items = Array.from(xml.getElementsByTagName('items')[0].getElementsByTagName('item')).map(node =>
+    data.items = Array.from(xml.querySelector(':scope > items')?.querySelectorAll(':scope > item') ?? []).map(node =>
       this._primitiveFieldsFromXML(node as HTMLElement, schema.items.element.fields)
     )
 
@@ -1082,7 +1105,7 @@ const gcaCharacterSchema = () => {
     ),
 
     name: new fields.StringField({ required: true, nullable: false }),
-    player: new fields.ArrayField(new fields.StringField({ required: true, nullable: true })),
+    player: new fields.StringField({ required: true, nullable: true }),
     bodytype: new fields.StringField({ required: true, nullable: true }),
     bodyimagefile: new fields.StringField({ required: true, nullable: true }),
     bodyimage: new fields.StringField({ required: true, nullable: true }),
@@ -1262,7 +1285,7 @@ class GCA5 extends GCASchemaBlock<GCA5Schema> {
     const data: Partial<DataModel.CreateData<GCA5Schema>> = {}
     const characters: GCACharacter[] = []
 
-    for (const child of xml.getElementsByTagName('character')) {
+    for (const child of xml.querySelectorAll(':scope > character') ?? []) {
       const character = GCACharacter.fromXML(child as HTMLElement)
       characters.push(character)
     }
