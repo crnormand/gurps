@@ -22,11 +22,15 @@ class GcsSkill extends GcsItem<SkillModel> {
 
   /* ---------------------------------------- */
 
+  override get isContainer(): boolean {
+    return this.id.startsWith('S')
+  }
+
+  /* ---------------------------------------- */
+
   protected static override _importField(data: any, field: fields.DataField.Any, name: string): any {
     if (name === 'defaults') {
-      return data?.map((defaultData: AnyObject) =>
-        GcsSkillDefault.fromImportData(defaultData as any, GcsSkillDefault.defineSchema())
-      )
+      return data?.map((defaultData: AnyObject) => GcsSkillDefault.fromImportData(defaultData as any))
     }
     return super._importField(data, field, name)
   }

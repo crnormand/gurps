@@ -7,6 +7,7 @@ import { GcsNote } from './note.js'
 import { GcsSkill } from './skill.js'
 import { GcsSpell } from './spell.js'
 import { GcsAttribute } from './attribute.js'
+import { GcsWeapon } from './weapon.js'
 
 class GcsCharacter extends GcsElement<GcsCharacterModel> {
   static override defineSchema(): GcsCharacterModel {
@@ -35,6 +36,82 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
       default:
         return super._importField(data, field, name)
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override get isRoot(): boolean {
+    return true
+  }
+
+  /* ---------------------------------------- */
+
+  get allTraits(): GcsTrait[] {
+    const traits = this.traits ?? []
+    for (const trait of traits) {
+      traits.push(...trait.allChildItems)
+    }
+    return traits
+  }
+
+  /* ---------------------------------------- */
+
+  get allSkills(): GcsSkill[] {
+    const skills = this.skills ?? []
+    for (const skill of skills) {
+      skills.push(...skill.allChildItems)
+    }
+    return skills
+  }
+
+  /* ---------------------------------------- */
+
+  get allSpells(): GcsSpell[] {
+    const spells = this.spells ?? []
+    for (const spell of spells) {
+      spells.push(...spell.allChildItems)
+    }
+    return spells
+  }
+
+  /* ---------------------------------------- */
+
+  get allCarriedEquipment(): GcsEquipment[] {
+    const equipment = this.equipment ?? []
+    for (const item of equipment) {
+      equipment.push(...item.allChildItems)
+    }
+    return equipment
+  }
+
+  /* ---------------------------------------- */
+
+  get allOtherEquipment(): GcsEquipment[] {
+    const equipment = this.other_equipment ?? []
+    for (const item of equipment) {
+      equipment.push(...item.allChildItems)
+    }
+    return equipment
+  }
+
+  /* ---------------------------------------- */
+
+  get allNotes(): GcsNote[] {
+    const notes = this.notes ?? []
+    for (const note of notes) {
+      notes.push(...note.allChildItems)
+    }
+    return notes
+  }
+
+  /* ---------------------------------------- */
+
+  get allEquippedWeapons(): GcsWeapon[] {
+    const weapons: GcsWeapon[] = []
+    ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(e => {
+      if (!e.isEnabled) weapons.push(...e.weaponItems)
+    })
+    return weapons
   }
 }
 

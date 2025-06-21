@@ -7,6 +7,7 @@ class GcsEquipmentModifier extends GcsItem<EquipmentModifierData> {
   static override metadata = {
     childClass: GcsEquipmentModifier,
     modifierClass: null, // EquipmentModifiers do not have modifiers
+    weaponClass: null,
   }
 
   /* ---------------------------------------- */
@@ -16,6 +17,12 @@ class GcsEquipmentModifier extends GcsItem<EquipmentModifierData> {
       ...sourcedIdSchema(),
       ...equipmentModifierData(),
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override get isContainer(): boolean {
+    return this.id.startsWith('F')
   }
 }
 

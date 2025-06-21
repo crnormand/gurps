@@ -5,6 +5,7 @@ class GcsNote extends GcsItem<NoteData> {
   static override metadata = {
     childClass: GcsNote,
     modifierClass: null,
+    weaponClass: null,
   }
 
   /* ---------------------------------------- */
@@ -14,6 +15,12 @@ class GcsNote extends GcsItem<NoteData> {
       ...sourcedIdSchema(),
       ...noteData(),
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override get isContainer(): boolean {
+    return this.id.startsWith('N')
   }
 }
 
