@@ -242,7 +242,7 @@ const gcaBonusSchema = () => {
     targettype: new fields.StringField({ required: true, nullable: false }),
     affects: new fields.StringField({ required: true, nullable: false }),
     bonuspart: new fields.StringField({ required: true, nullable: false }),
-    // this is an unsignedByte in GCA5, but we use a NumberField here
+    // NOTE: this is an unsignedByte in GCA5, but we use a NumberField here
     bonustype: new fields.NumberField({ required: true, nullable: false }),
     fullbonustext: new fields.StringField({ required: true, nullable: false }),
     upto: new fields.StringField({ required: true, nullable: true }),
@@ -290,7 +290,7 @@ const gcaBodyItemSchema = () => {
     basedb: new fields.StringField({ required: true, nullable: false }),
     basedr: new fields.StringField({ required: true, nullable: false }),
     basehp: new fields.StringField({ required: true, nullable: false }),
-    display: new fields.StringField({ required: true, nullable: false }),
+    display: new fields.NumberField({ required: true, nullable: false }),
     posx: new fields.NumberField({ required: true, nullable: false }),
     posy: new fields.NumberField({ required: true, nullable: false }),
     width: new fields.NumberField({ required: true, nullable: true }),
