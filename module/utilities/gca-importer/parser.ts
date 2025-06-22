@@ -4,7 +4,7 @@ import { GcaImporter } from './importer.js'
 async function importGCA() {
   return new foundry.applications.api.DialogV2({
     window: {
-      title: 'Import tet XML',
+      title: 'Import from GCA 5',
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/import-gcs-v1-data.hbs', {}),
