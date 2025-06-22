@@ -93,7 +93,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
       case 'ranged':
         return actions.filter(item => item.type === 'rangedAtk') as RangedAttack[]
       case 'both':
-        return actions.filter(item => item.type in ['meleeAtk', 'rangedAtk']) as (MeleeAttack | RangedAttack)[]
+        return actions.filter(item => ['meleeAtk', 'rangedAtk'].includes(item.type)) as (MeleeAttack | RangedAttack)[]
       default:
         console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
         return []
