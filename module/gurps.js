@@ -84,6 +84,7 @@ import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { GurpsItemV2 } from './item/gurps-item.js'
 import { CharacterModel } from './actor/data/character.js'
 
+import { Action } from './action/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -124,6 +125,7 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
+    Action,
     Canvas,
     Combat,
     Damage,
