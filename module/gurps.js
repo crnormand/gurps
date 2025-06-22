@@ -1976,8 +1976,6 @@ if (!globalThis.GURPS) {
       equipment: EquipmentModel,
     }
 
-    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
-
     // add custom ActiveEffectConfig sheet class
     foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
       ActiveEffect,
