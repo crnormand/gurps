@@ -13,6 +13,9 @@ class GcsHitLocation extends GcsElement<GcsHitLocationData> {
         return GcsHitLocation.importSchema(subTableData, GcsHitLocation.defineSchema())
       })
     }
+    if (name === 'dr') {
+      return data // NOTE: this is a plain object of numbers, no real issue just importing it as is
+    }
     return super._importField(data, field, name)
   }
 }
@@ -30,6 +33,13 @@ const hitLocationData = () => {
     description: new fields.StringField({ required: true, nullable: true }),
     notes: new fields.StringField({ required: true, nullable: true }),
     sub_table: new fields.ObjectField({ required: true, nullable: true }),
+    calc: new fields.SchemaField({
+      roll_range: new fields.StringField({ required: true, nullable: false }),
+      dr: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
+        required: true,
+        nullable: false,
+      }),
+    }),
   }
 }
 

@@ -13,6 +13,10 @@ import { SpellComponentSchema, SpellSchema } from 'module/item/data/spell.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
 import { EquipmentSchema, EquipmentComponentSchema } from 'module/item/data/equipment.js'
 import { SkillSchema, SkillComponentSchema } from 'module/item/data/skill.js'
+import { HitLocationSchema } from 'module/actor/data/hit-location-entry.js'
+
+// TODO: get rid of when this is migrated
+import * as HitLocations from '../../hitlocation/hitlocation.js'
 
 class GcaImporter {
   input: GCACharacter
@@ -46,11 +50,12 @@ class GcaImporter {
     const type = 'character'
     const name = this.input.name ?? 'Imported Character'
 
-    await this.#importPortrait()
-    await this.#importAttributes()
-    await this.#importProfile()
-    await this.#importItems()
-    await this.#importPointTotals()
+    this.#importPortrait()
+    this.#importAttributes()
+    this.#importProfile()
+    this.#importHitLocations()
+    this.#importItems()
+    this.#importPointTotals()
 
     console.log({
       _id,
@@ -75,7 +80,7 @@ class GcaImporter {
 
   /* ---------------------------------------- */
 
-  async #importPortrait() {
+  #importPortrait() {
     if (game.user?.hasPermission('FILES_UPLOAD')) {
       this.img = `data:image/png;base65,${this.input.vitals.portraitimage}.png`
     }
@@ -83,7 +88,7 @@ class GcaImporter {
 
   /* ---------------------------------------- */
 
-  async #importAttributes() {
+  #importAttributes() {
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {} }
     for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PERCEPTION'] as const) {
       const attribute = this.input.traits.attributes.find(attr => attr.name.toLowerCase() === key.toLowerCase())
@@ -162,7 +167,7 @@ class GcaImporter {
     this.output.swing = '1d+1'
   }
 
-  async #importProfile() {
+  #importProfile() {
     const { vitals } = this.input
 
     const SM = this.input.traits.attributes.find(attr => attr.symbol === 'SM')
@@ -191,7 +196,37 @@ class GcaImporter {
 
   /* ---------------------------------------- */
 
-  async #importItems() {
+  #importHitLocations() {
+    this.output.additionalresources ||= {}
+    this.output.additionalresources.bodyplan = this.input.bodytype ?? 'Humanoid'
+
+    const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
+    this.output.hitlocations = []
+    this.input.body?.forEach(location => {
+      if (location.display === 0) return // Skip hidden locations
+
+      let roll = ''
+
+      if (table) {
+        const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, location.name)
+        if (standardEntry) {
+          roll = standardEntry.roll
+        }
+      }
+
+      const newLocation: DataModel.CreateData<HitLocationSchema> = {
+        where: location.name ?? '',
+        import: parseInt(location.dr) ?? 0,
+        roll,
+      }
+
+      ;(this.output.hitlocations as DataModel.CreateData<HitLocationSchema>[]).push(newLocation)
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  #importItems() {
     const parentsOnly = (items: GCATrait[]) => items.filter(item => !item.parentkey)
 
     parentsOnly(this.input.traits.advantages)?.forEach(trait => this.#importTrait(trait))
@@ -207,7 +242,7 @@ class GcaImporter {
 
   /* ---------------------------------------- */
 
-  async #importPointTotals() {
+  #importPointTotals() {
     this.output.totalpoints = {
       attributes: 0,
       race: 0,

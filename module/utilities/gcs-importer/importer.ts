@@ -17,6 +17,7 @@ import { GcsSkill } from './schema/skill.js'
 import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
 import { GcsSpell } from './schema/spell.js'
 import { EquipmentSchema, EquipmentComponentSchema } from '../../item/data/equipment.js'
+import { HitLocationSchema } from 'module/actor/data/hit-location-entry.js'
 
 class GcsImporter {
   input: GcsCharacter
@@ -53,6 +54,7 @@ class GcsImporter {
     this.#importPortrait()
     this.#importAttributes()
     this.#importProfile()
+    this.#importHitLocations()
     this.#importItems()
     this.#importPointTotals()
     this.#importMiscValues()
@@ -180,6 +182,28 @@ class GcsImporter {
       modifiedon: this.input.modified_date ?? '',
       player: profile.player_name ?? '',
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #importHitLocations() {
+    this.output.additionalresources ||= {}
+    this.output.additionalresources.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
+
+    this.output.hitlocations = []
+    this.input.settings.body_type.locations.forEach(location => {
+      const split = location.calc.dr as Record<string, number>
+
+      const newLocation: DataModel.CreateData<HitLocationSchema> = {
+        where: location.table_name ?? '',
+        import: (location.calc.dr as Record<string, number>).all ?? 0,
+        penalty: location.hit_penalty ?? 0,
+        roll: location.calc.roll_range ?? '-',
+        split,
+      }
+
+      ;(this.output.hitlocations as DataModel.CreateData<HitLocationSchema>[]).push(newLocation)
+    })
   }
 
   /* ---------------------------------------- */

@@ -45,12 +45,10 @@ const hitLocationSchema = () => {
   return {
     where: new fields.StringField({ required: true, nullable: false }),
     import: new fields.NumberField({ required: true, nullable: false }),
+    penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     _dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
-    roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
+    roll: new fields.StringField({ required: true, nullable: false, initial: '-' }),
     split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
