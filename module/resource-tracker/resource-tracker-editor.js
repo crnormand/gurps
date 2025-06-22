@@ -1,7 +1,7 @@
 export class ResourceTrackerEditor extends Application {
   /**
    * Create a new Resource Tracker Editor
-   * @param {import('./types.js').TrackerInstance} tracker data to update
+   * @param {import('./resource-tracker.js').TrackerInstance} tracker data to update
    * @param {*} options
    */
   constructor(tracker, options = {}) {

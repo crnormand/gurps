@@ -74,6 +74,17 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
+import { importGCS } from './utilities/gcs-importer/parser.js'
+import { importGCA } from './utilities/gca-importer/parser.js'
+import { TraitModel } from './item/data/trait.js'
+import { SkillModel } from './item/data/skill.js'
+import { SpellModel } from './item/data/spell.js'
+import { EquipmentModel } from './item/data/equipment.js'
+import { GurpsActorV2 } from './actor/gurps-actor.js'
+import { GurpsItemV2 } from './item/gurps-item.js'
+import { CharacterModel } from './actor/data/character.js'
+
+import { Action } from './action/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -82,7 +93,6 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { Length } from './data/common/length.js'
-
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
@@ -93,6 +103,9 @@ if (!globalThis.GURPS) {
   GURPS.stopActions = false
   GURPS.Migration = Migration
   GURPS.Length = Length
+  // GURPS.importTextXML = importTestXML
+  GURPS.importGCS = importGCS
+  GURPS.importGCA = importGCA
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -112,6 +125,7 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
+    Action,
     Canvas,
     Combat,
     Damage,
@@ -1948,8 +1962,23 @@ if (!globalThis.GURPS) {
 
     // Define custom Entity classes
     // @ts-ignore
-    CONFIG.Actor.documentClass = GurpsActor
-    CONFIG.Item.documentClass = GurpsItem
+    // CONFIG.Actor.documentClass = GurpsActor
+    // CONFIG.Item.documentClass = GurpsItem
+
+    CONFIG.Actor.documentClass = GurpsActorV2
+    CONFIG.Item.documentClass = GurpsItemV2
+
+    CONFIG.Actor.dataModels = {
+      character: CharacterModel,
+      enemy: CharacterModel,
+    }
+
+    CONFIG.Item.dataModels = {
+      feature: TraitModel,
+      skill: SkillModel,
+      spell: SpellModel,
+      equipment: EquipmentModel,
+    }
 
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12

@@ -2,9 +2,7 @@ import Maneuvers from '../actor/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
-// COMPATIBILITY: v12
-// export default class GurpsToken extends foundry.canvas.placeables.Token {
-class GurpsToken extends Token {
+class GurpsToken extends foundry.canvas.placeables.Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
@@ -29,6 +27,9 @@ class GurpsToken extends Token {
    * deactivate the old maneuver and then activate the new one -- we simply update the singleton
    * maneuver data to match the new maneuver's data.
    */
+  // NOTE: I don't think using this function is a good idea. You end up losing functionality
+  // including floaty text, for example. This can be revisited later, but for now, I'm leaving it as is.
+  // - MT
   async setManeuver(maneuverId: string): Promise<void> {
     // if not in combat, do nothing
     if (!isCombatActive() || !isTokenInActiveCombat(this)) return
@@ -39,7 +40,6 @@ class GurpsToken extends Token {
     const activeManeuvers = Maneuvers.getActiveEffectManeuvers(Array.from(this.actor?.effects.values() ?? []))
     // if there is a single active effect maneuver, update its data
     if (activeManeuvers.length === 1) {
-      // @ts-expect-error: waiting for flag type update
       if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) await activeManeuvers[0].update(maneuver)
     } else {
       if (activeManeuvers.length > 1) {
