@@ -1979,8 +1979,6 @@ if (!globalThis.GURPS) {
       equipment: EquipmentModel,
     }
 
-    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
-
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12
     if (game.release.generation >= 13) {
