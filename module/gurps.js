@@ -92,8 +92,6 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { Length } from './data/common/length.js'
-import { importGCS } from './utilities/gcs-importer/parser.js'
-
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
