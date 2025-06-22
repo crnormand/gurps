@@ -192,7 +192,8 @@ class GcsImporter {
 
     this.output.hitlocations = []
     this.input.settings.body_type.locations.forEach(location => {
-      const split = location.calc.dr as Record<string, number>
+      const split = { ...(location.calc.dr as Record<string, number>) }
+      delete split.all // Remove the 'all' key, as it is already present in the 'import' field
 
       const newLocation: DataModel.CreateData<HitLocationSchema> = {
         where: location.table_name ?? '',
