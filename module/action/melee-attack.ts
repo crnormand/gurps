@@ -5,7 +5,7 @@ import { BaseAction, BaseActionSchema } from './base-action.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 
-class MeleeAttack extends BaseAction<MeleeAttackSchema> {
+class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {
     return Object.assign(super.defineSchema(), meleeAttackSchema())
   }
@@ -127,4 +127,4 @@ class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
 
 /* ---------------------------------------- */
 
-export { MeleeAttack, type MeleeAttackSchema, MeleeAttackComponent, type MeleeAttackComponentSchema }
+export { MeleeAttackModel, type MeleeAttackSchema, MeleeAttackComponent, type MeleeAttackComponentSchema }
