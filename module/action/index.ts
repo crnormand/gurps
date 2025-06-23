@@ -1,7 +1,7 @@
 import { GurpsModule } from 'module/gurps-module.js'
 
-import { MeleeAttack } from './melee-attack.js'
-import { RangedAttack } from './ranged-attack.js'
+import { MeleeAttackModel } from './melee-attack.js'
+import { RangedAttackModel } from './ranged-attack.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Action module.')
@@ -10,12 +10,12 @@ function init() {
     meleeAttack: {
       // TODO: localize
       label: 'Melee Attack',
-      documentClass: MeleeAttack,
+      documentClass: MeleeAttackModel,
     },
     rangedAttack: {
       // TODO: localize
       label: 'Ranged Attack',
-      documentClass: RangedAttack,
+      documentClass: RangedAttackModel,
     },
   }
 }
