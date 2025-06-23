@@ -119,6 +119,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   override prepareEmbeddedDocuments(): void {
+    super.prepareEmbeddedDocuments()
     ;(this.system as BaseActorModel).prepareEmbeddedDocuments()
   }
 

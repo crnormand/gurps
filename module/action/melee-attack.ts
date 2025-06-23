@@ -4,6 +4,7 @@ import { AnyObject } from 'fvtt-types/utils'
 import { BaseAction, BaseActionSchema } from './base-action.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
+import { parselink } from '../../lib/parselink.js'
 
 class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {
@@ -28,7 +29,68 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
 
   override prepareBaseData(): void {
     super.prepareBaseData()
-    this.component.level = this.component.import
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData(): void {
+    super.prepareDerivedData()
+    this.#prepareLevelsFromOtf()
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Prepare the level of this skill based on an OTF formula.
+   */
+  #prepareLevelsFromOtf(): void {
+    let otf = this.component.otf
+    if (otf === '') return
+
+    // Remove extraneous brackets
+    otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
+
+    // If the OTF is just a number, Set the level directly
+    if (otf.match(/^\d+$/)) {
+      this.component.import = parseInt(otf)
+      this.component.level = this.component.import
+      return
+    }
+
+    // If the OTF is not a number, parse it using the OTF parser.
+    const action = parselink(otf)
+    // If the OTF does not return an action, we cannot set the level.
+    if (!action.action) return
+
+    action.action.calcOnly = true
+    // TODO: verify that target is of type "number" (or replace this whole thing)
+    GURPS.performAction(action.action, this.actor).then(
+      (result: boolean | { target: number; thing: any } | undefined) => {
+        if (result && typeof result === 'object') {
+          this.component.level = result.target
+        }
+
+        // If parry is a number, its value will be re-calculated using the parry
+        // bonus and the current level.
+        // NOTE: Change from previous method where parry itself could store a
+        // value with a leading [+-] to indicate a bonus.
+        if (!isNaN(parseInt(this.component.parry))) {
+          const parryLevel = parseInt(this.component.parry)
+          const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
+          this.component.parry = `${3 + Math.floor(this.component.level / 2) + this.component.parrybonus}${parrySuffix}`
+        }
+
+        // If block is a number, its value will be re-calculated using the block
+        // bonus and the current level.
+        // NOTE: Change from previous method where block itself could store a
+        // value with a leading [+-] to indicate a bonus.
+        if (!isNaN(parseInt(this.component.block))) {
+          const blockLevel = parseInt(this.component.block)
+          const blockSuffix = this.component.block.replace(blockLevel.toString(), '').trim()
+          this.component.block = `${3 + Math.floor(this.component.level / 2) + this.component.blockbonus}${blockSuffix}`
+        }
+      }
+    )
   }
 
   /* ---------------------------------------- */
@@ -97,8 +159,10 @@ const meleeAttackComponentSchema = () => {
     cost: new fields.StringField({ required: true, nullable: false }),
     reach: new fields.StringField({ required: true, nullable: false }),
     parry: new fields.StringField({ required: true, nullable: false }),
+    parrybonus: new fields.NumberField({ required: true, nullable: false }),
     baseParryPenalty: new fields.NumberField({ required: true, nullable: false }),
     block: new fields.StringField({ required: true, nullable: false }),
+    blockbonus: new fields.NumberField({ required: true, nullable: false }),
     otf: new fields.StringField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false }),
