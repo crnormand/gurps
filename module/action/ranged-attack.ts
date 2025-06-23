@@ -6,7 +6,7 @@ import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 
-class RangedAttack extends BaseAction<RangedAttackSchema> {
+class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
     return {
       ...super.defineSchema(),
@@ -140,4 +140,4 @@ class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
 
 /* ---------------------------------------- */
 
-export { RangedAttack, type RangedAttackSchema, RangedAttackComponent, type RangedAttackComponentSchema }
+export { RangedAttackModel, type RangedAttackSchema, RangedAttackComponent, type RangedAttackComponentSchema }

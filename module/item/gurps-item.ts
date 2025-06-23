@@ -1,6 +1,6 @@
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
-import { MeleeAttack, RangedAttack } from '../action/index.js'
+import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { ModelCollection } from '../data/model-collection.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
@@ -78,22 +78,25 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
    * NOTE: change from previous model: Now returns the full item rather than just the component
    * in preparation for deprecating Item Components in the future
    */
-  getItemAttacks(options: { attackType: 'melee' }): MeleeAttack[]
-  getItemAttacks(options: { attackType: 'ranged' }): RangedAttack[]
-  getItemAttacks(options: { attackType: 'both' }): (MeleeAttack | RangedAttack)[]
-  getItemAttacks(): (MeleeAttack | RangedAttack)[]
-  getItemAttacks(options = { attackType: 'both' }): (MeleeAttack | RangedAttack)[] {
+  getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
+  getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
+  getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
     if (!(this.system instanceof BaseItemModel)) return []
 
     const actions = (this.system as BaseItemModel).actions
 
     switch (options.attackType) {
       case 'melee':
-        return actions.filter(item => item.type === 'meleeAtk') as MeleeAttack[]
+        return actions.filter(item => item.type === 'meleeAtk') as MeleeAttackModel[]
       case 'ranged':
-        return actions.filter(item => item.type === 'rangedAtk') as RangedAttack[]
+        return actions.filter(item => item.type === 'rangedAtk') as RangedAttackModel[]
       case 'both':
-        return actions.filter(item => ['meleeAtk', 'rangedAtk'].includes(item.type)) as (MeleeAttack | RangedAttack)[]
+        return actions.filter(item => ['meleeAtk', 'rangedAtk'].includes(item.type)) as (
+          | MeleeAttackModel
+          | RangedAttackModel
+        )[]
       default:
         console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
         return []

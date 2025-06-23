@@ -4,7 +4,7 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemComponent } from './component.js'
 import { parselink } from '../../../lib/parselink.js'
-import { MeleeAttack, RangedAttack } from '../../action/index.js'
+import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { BaseAction } from '../../action/base-action.js'
 
@@ -58,8 +58,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /*  Instance properties                     */
   /* ---------------------------------------- */
 
-  declare melee: MeleeAttack[]
-  declare ranged: RangedAttack[]
+  declare melee: MeleeAttackModel[]
+  declare ranged: RangedAttackModel[]
 
   /* ---------------------------------------- */
 
@@ -87,7 +87,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   applyBonuses(bonuses: AnyObject[]): void {
     for (const action of this.actions) {
-      if (action instanceof MeleeAttack || action instanceof RangedAttack) action.applyBonuses(bonuses)
+      if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
     }
   }
 
