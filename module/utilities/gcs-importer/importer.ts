@@ -335,6 +335,9 @@ class GcsImporter {
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
+    const parrybonus = this.input.calc.parry_bonus ?? 0
+    const blockbonus = this.input.calc.parry_bonus ?? 0
+
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
       name: item.name ?? '',
       notes: weapon.usage_notes ?? '',
@@ -345,7 +348,9 @@ class GcsImporter {
       st: weapon.calc.strength ?? weapon.strength,
       reach: weapon.calc.reach ?? weapon.reach,
       parry: weapon.calc.parry ?? weapon.parry,
+      parrybonus,
       block: weapon.calc.block ?? weapon.block,
+      blockbonus,
     }
 
     return {

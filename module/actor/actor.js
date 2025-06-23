@@ -46,23 +46,23 @@ export const MoveModes = {
 }
 
 export class GurpsActor extends Actor {
-  // NOTE: Not needed in new system
   /** @override */
+  // NOTE: Not needed. Stub.
   getRollData() {
     const data = super.getRollData()
     return data
   }
 
-  // NOTE: not needed in new system
   /**
    * @returns {GurpsActor}
    */
+  // NOTE: Not needed. New system uses Actor.Implementation for type asserting.
   asGurpsActor() {
     return /** @type {GurpsActor} */ (this)
   }
 
-  // NOTE: changed to accessors users() in new system
   // Return collection os Users that have ownership on this actor
+  // NOTE: Migrated. Now accessor GurpsActorV2#owners
   getOwners() {
     return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
   }
@@ -76,6 +76,19 @@ export class GurpsActor extends Actor {
   /**
    * @param {Application} newSheet
    */
+  // NOTE: Potentially not needed. Currently used for the following:
+  // - Toggling between default actor sheet and editor sheet
+  // - Toggling between two default actor sheets
+  // - Switching off the editor sheet when the user attempts to edit
+  //   an empty actor.
+  // - Opening the sheet using the /open command.
+  // I don't believe any of these use cases should be retained in the new system.
+  // The editor sheet should not be its own sheet.
+  // The /open command seems entirely unnecessary given the other options available
+  // for opening an actor sheet.
+  // The default sheet swtiching options seems superfluous as well.
+  // - MT
+  // TODO: Review with Nick
   async openSheet(newSheet) {
     const sheet = this.sheet
     if (sheet) {
@@ -88,7 +101,7 @@ export class GurpsActor extends Actor {
     }
   }
 
-  // NOTE: stub
+  // NOTE: Not needed. Stub.
   prepareData() {
     super.prepareData()
     // By default, it does this:
@@ -98,7 +111,7 @@ export class GurpsActor extends Actor {
     // this.prepareDerivedData()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now CharacterModel#prepareBaseData
   prepareBaseData() {
     super.prepareBaseData()
 
@@ -125,21 +138,21 @@ export class GurpsActor extends Actor {
 
     this.system.hitlocationNames = this.hitLocationByWhere
     for (const location in this.system.hitlocationNames) {
+      this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
       if (typeof this.system.hitlocationNames[location].import === 'string') {
-        this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
       }
     }
 
     this.system.trackersByName = this.trackersByName
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now CharacterModel#prepareDerivedData
   prepareDerivedData() {
     super.prepareDerivedData()
 
-    // NOTE: migrated as #prepareEncumbrance
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
+    // NOTE: migrated as #prepareEncumbrance
     if (this.system.encumbrance) {
       let move = this.system.move
       if (!move) {
@@ -160,7 +173,11 @@ export class GurpsActor extends Actor {
   }
 
   // execute after every import.
-  // TODO: add to import functionality
+  // NOTE: Potentially not needed. Functionality of methods called from this function
+  // should instead be moved elsewhere (to the importer classes in some cases, and to
+  // data preparation methods in others)
+  // - MT
+  // TODO: Review with Nick.
   async postImport() {
     this.calculateDerivedValues()
 
@@ -194,8 +211,8 @@ export class GurpsActor extends Actor {
         orig = []
       }
     }
-    for (const item of good) await this.addItemData(item) // re-add the item equipment and features
 
+    for (const item of good) await this.addItemData(item) // re-add the item equipment and features
     await this.internalUpdate({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
@@ -229,7 +246,7 @@ export class GurpsActor extends Actor {
   }
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
-  // TODO: add to import functionality
+  // TODO: Migrate. Need to move this to the imoprter functions.
   async syncLanguages() {
     if (this.system.languages) {
       let updated = false
@@ -272,13 +289,10 @@ export class GurpsActor extends Actor {
   calculateDerivedValues() {
     let saved = !!this.ignoreRender
     this.ignoreRender = true
-    // NOTE: migrated
     this._initializeStartingValues()
-    // NOTE: migrated
     this._applyItemBonuses()
 
     // Must be done after bonuses, but before weights
-    // NOTE: migrated
     this._calculateEncumbranceIssues()
 
     // Must be after bonuses and encumbrance effects on ST
@@ -313,7 +327,7 @@ export class GurpsActor extends Actor {
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
-  // NOTE: migrated
+  // NOTE: Migrated. Now part of CharacterModel#prepareBaseData
   _initializeStartingValues() {
     const data = this.system
     data.currentdodge = 0 // start at zero, and bonuses will add, and then they will be finalized later
@@ -450,7 +464,7 @@ export class GurpsActor extends Actor {
     }
   }
 
-  // NOTE: no longer needed
+  // NOTE: Migrated. Now method BaseItemModel#applyBonuses
   _applyItemBonuses() {
     let pi = (/** @type {string | undefined} */ n) => (!!n ? parseInt(n) : 0)
     /** @type {string[]} */
@@ -593,7 +607,8 @@ export class GurpsActor extends Actor {
    * @param {any} id
    * @returns {string | undefined}
    */
-  // TODO: no longer needed. Remove references and replace with appropriate replacement
+  // NOTE: Not needed. Made obsolete by universalisation of Foundry Item use.
+  // TODO: Remove all references to this method.
   _findEqtkeyForId(key, id) {
     var eqtkey
     let data = this.system
@@ -616,7 +631,8 @@ export class GurpsActor extends Actor {
    * @param {boolean} include - Whether to check equal or include in the search
    * @return {string | undefined} The trait key if found, otherwise undefined.
    */
-  // TODO: no longer needed. Remove references and replace with appropriate replacement
+  // NOTE: Not needed. Made obsolete by universalisation of Foundry Item use.
+  // TODO: Remove all references to this method.
   _findSysKeyForId(key, id, sysKey, include = false) {
     let traitKey
     let data = this.system
@@ -632,7 +648,7 @@ export class GurpsActor extends Actor {
    * @param {any} id
    * @returns {string | undefined}
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel#findTrait and CharacterModel#findAdvantage
   findAdvantage(advname) {
     // This code is for when the actor is using Foundry items.
     // let found = this.items.filter(it => it.type === 'feature').find(it => it.name.match(new RegExp(advname, 'i')))
@@ -659,7 +675,7 @@ export class GurpsActor extends Actor {
    * @param {string} type
    * @returns {number}
    */
-  // NOTE: migrated
+  // NOTE: Not needed. Now part of meethod CharacterModel#prepareEquipmentSummary
   _sumeqt(dict, type, checkEquipped = false) {
     if (!dict) return 0.0
     let flt = (/** @type {string} */ str) => (!!str ? parseFloat(str) : 0)
@@ -676,7 +692,7 @@ export class GurpsActor extends Actor {
     return parseInt(sum * 100) / 100
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel##prepareEquipmentSummary
   _calculateWeights() {
     let data = this.system
     let eqt = data.equipment || {}
@@ -695,7 +711,7 @@ export class GurpsActor extends Actor {
     data.eqtsummary = eqtsummary
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel##prepareEncmbrance
   _calculateEncumbranceIssues() {
     const data = this.system
     const encs = data.encumbrance
@@ -743,12 +759,12 @@ export class GurpsActor extends Actor {
     }
   }
 
-  // NOTE: no longer needed
+  // NOTE: Migrated. Now part of method CharacterModel##prepareEncumbrance
   _isEnhancedMove() {
     return !!this._getCurrentMoveMode()?.enhanced
   }
 
-  // NOTE: no longer needed
+  // NOTE: Migrated. Now part of method CharacterModel##prepareEncumbrance
   _getSprintMove() {
     let current = this._getCurrentMoveMode()
     if (!current) return 0
@@ -756,7 +772,7 @@ export class GurpsActor extends Actor {
     return Math.floor(current.basic * 1.2)
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now accessor CharacterModel#currentMoveMode
   _getCurrentMoveMode() {
     let move = this.system.move
     let current = Object.values(move).find(it => it.default)
@@ -769,7 +785,7 @@ export class GurpsActor extends Actor {
    * @param {number} threshold
    * @returns {number}
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel##getCurrentMove
   _getCurrentMove(move, threshold) {
     let inCombat = false
     try {
@@ -788,7 +804,7 @@ export class GurpsActor extends Actor {
       : Math.max(1, Math.floor(move * threshold))
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel##getMoveAdjustmentForManeuver
   _getMoveAdjustedForManeuver(move, threshold) {
     let adjustment = null
 
@@ -807,7 +823,7 @@ export class GurpsActor extends Actor {
         }
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel##getMoveAdjustmentForOverride
   _adjustMove(move, threshold, value, reason) {
     switch (value.toString()) {
       case MOVE_NONE:
@@ -863,7 +879,7 @@ export class GurpsActor extends Actor {
     return null
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel##getMoveAdjustmentForPosture
   _getMoveAdjustedForPosture(move, threshold) {
     let adjustment = null
 
@@ -881,7 +897,7 @@ export class GurpsActor extends Actor {
         }
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method RangedAttackModel#convertRanges
   _calculateRangedRanges() {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED)) return
     let st = +this.system.attributes.ST.value
@@ -904,7 +920,7 @@ export class GurpsActor extends Actor {
   }
 
   // Once all of the bonuses are applied, determine the actual level for each feature
-  // NOTE: not migrated, I'm not convinced this is ever actually needed
+  // NOTE: Migrated. See _collapseQuantumEq
   _recalcItemFeatures() {
     let data = this.system
     this._collapseQuantumEq(data.melee, true)
@@ -917,7 +933,15 @@ export class GurpsActor extends Actor {
   /**
    * @param {Object} list
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method ##prepareLevelsFromOtf in the following classes:
+  // - SkillModel
+  // - SpellModel
+  // - MeleeAttackModel
+  // - RangedAttackModel
+  // This method is now called before bonuses are applied. There is some circularity
+  // in the code as bonuses depend on defined OTF levels, but the O
+  // This should be resolved in the future.
+  // TODO: Discuss with Nick.
   _collapseQuantumEq(list, isMelee = false) {
     recurselist(list, async e => {
       let otf = e.otf
@@ -966,7 +990,7 @@ export class GurpsActor extends Actor {
     })
   }
 
-  // NOTE: not needed
+  // NOTE: Migrated. Now part of method CharacterModel##prepareEncumbrance
   _getStep() {
     let step = Math.ceil(parseInt(this.system.basicmove.value.toString()) / 10)
     return Math.max(1, step)
@@ -981,6 +1005,7 @@ export class GurpsActor extends Actor {
    * @returns {Promise<this | undefined>} The updated Document instance
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
+  // NOTE: Migrated. Now part of CharacterModel#_onUpdate
   async update(data, context) {
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('system.HP.value')) {
