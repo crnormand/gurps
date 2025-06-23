@@ -1,10 +1,11 @@
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 
+import * as Settings from '../../lib/miscellaneous-settings.js'
 import { BaseAction, BaseActionSchema } from './base-action.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import { parselink } from '../../lib/parselink.js'
 
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
@@ -33,7 +34,42 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
 
   override prepareBaseData(): void {
     super.prepareBaseData()
-    this.component.level = this.component.import
+    this.#prepareLevelsFromOtf()
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Prepare the level of this skill based on an OTF formula.
+   */
+  #prepareLevelsFromOtf(): void {
+    let otf = this.component.otf
+    if (otf === '') return
+
+    // Remove extraneous brackets
+    otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
+
+    // If the OTF is just a number, Set the level directly
+    if (otf.match(/^\d+$/)) {
+      this.component.import = parseInt(otf)
+      this.component.level = this.component.import
+      return
+    }
+
+    // If the OTF is not a number, parse it using the OTF parser.
+    const action = parselink(otf)
+    // If the OTF does not return an action, we cannot set the level.
+    if (!action.action) return
+
+    action.action.calcOnly = true
+    // TODO: verify that target is of type "number" (or replace this whole thing)
+    GURPS.performAction(action.action, this.actor).then(
+      (result: boolean | { target: number; thing: any } | undefined) => {
+        if (result && typeof result === 'object') {
+          this.component.level = result.target
+        }
+      }
+    )
   }
 
   /* ---------------------------------------- */

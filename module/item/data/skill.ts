@@ -26,8 +26,6 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   override prepareBaseData(): void {
     super.prepareBaseData()
     this.#prepareLevelsFromOtf()
-
-    this.component.level = this.component.import
   }
 
   /* ---------------------------------------- */
@@ -44,7 +42,8 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
     // If the OTF is just a number, Set the level directly
     if (otf.match(/^\d+$/)) {
-      this.component.level = parseInt(otf)
+      this.component.import = parseInt(otf)
+      this.component.level = this.component.import
       return
     }
 
@@ -52,6 +51,16 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     const action = parselink(otf)
     // If the OTF does not return an action, we cannot set the level.
     if (!action.action) return
+
+    action.action.calcOnly = true
+    // TODO: verify that target is of type "number" (or replace this whole thing)
+    GURPS.performAction(action.action, this.actor).then(
+      (result: boolean | { target: number; thing: any } | undefined) => {
+        if (result && typeof result === 'object') {
+          this.component.level = result.target
+        }
+      }
+    )
   }
 
   /* ---------------------------------------- */

@@ -63,6 +63,18 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  get item(): Item.Implementation {
+    return this.parent as Item.Implementation
+  }
+
+  /* ---------------------------------------- */
+
+  get actor(): Actor.Implementation | null {
+    return this.parent.actor || null
+  }
+
+  /* ---------------------------------------- */
+
   abstract get component(): ItemComponent
 
   /* ---------------------------------------- */
