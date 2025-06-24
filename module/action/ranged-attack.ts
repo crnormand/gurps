@@ -149,6 +149,7 @@ const rangedAttackComponentSchema = () => {
     halfd: new fields.StringField({ required: true, nullable: false }),
     max: new fields.StringField({ required: true, nullable: false }),
     otf: new fields.StringField({ required: true, nullable: false }),
+    itemModifiers: new fields.StringField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),

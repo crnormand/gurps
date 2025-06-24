@@ -164,6 +164,7 @@ const meleeAttackComponentSchema = () => {
     block: new fields.StringField({ required: true, nullable: false }),
     blockbonus: new fields.NumberField({ required: true, nullable: false }),
     otf: new fields.StringField({ required: true, nullable: false }),
+    itemModifiers: new fields.StringField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),

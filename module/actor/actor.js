@@ -405,7 +405,7 @@ export class GurpsActor extends Actor {
    * @param {boolean} append
    * @returns {object}
    */
-  // NOTE: can be under prepareDerivedData as usermods being claimed from items and the like
+  // NOTE: Migrated. Now method CharactreModel#prepareUserModifiers
   applyItemModEffects(commit, append = false) {
     const allUserMods = append ? foundry.utils.getProperty(this.system, 'conditions.usermods') || [] : []
     const userMods = allUserMods.filter(m => !m.includes('@eft:'))
@@ -1046,7 +1046,7 @@ export class GurpsActor extends Actor {
     return await super.update(data, context)
   }
 
-  // NOTE: is this really needed? Not migrated
+  // NOTE: Migrated. Now method GurpsActorV2#sendChatMessage
   sendChatMessage(msg) {
     let self = this
 
@@ -1062,14 +1062,17 @@ export class GurpsActor extends Actor {
     })
   }
 
-  // NOTE: no longer needed
+  // NOTE: Not needed. This method is used when updating the Actor without rendering the resulting data.
+  //  However, the very practice of updating the Actor multiple times while simulating one update cycle
+  //  (and subsequent data preparation cycle) should be eliminated as a whole.
   async internalUpdate(data, context) {
     //let ctx = { render: !this.ignoreRender }
     let ctx = { render: false }
     if (!!context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
-  // NOTE: migrated
+
+  // NOTE: Migrated. Now GurpsActorV2#toggleStatusEffect
   async toggleStatusEffect(statusId, { active, overlay = false } = {}) {
     const status = CONFIG.statusEffects.find(e => e.id === statusId)
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
@@ -1086,7 +1089,8 @@ export class GurpsActor extends Actor {
     await super.toggleStatusEffect(statusId, { active, overlay })
   }
 
-  // NOTE: no longer needed
+  // NOTE: Not needed. This method is called only once as part of another method.
+  //  Now part of method GurpsActorV2#toggleStatusEffect
   getAllActivePostureEffects() {
     return this.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
   }
@@ -1095,11 +1099,13 @@ export class GurpsActor extends Actor {
    * This method is called when "system.conditions.maneuver" changes on the actor (via the update method)
    * @param {string} maneuverText
    */
+  // NOTE: Migrated. Now method GurpsActorV2#replaceManeuver
   async replaceManeuver(maneuverText) {
     let tokens = this._findTokens()
     if (tokens && tokens.length) for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
+  // NOTE: Migrated. Now method GurpsActorV2#replacePosture
   async replacePosture(changeData) {
     let tokens = this._findTokens()
     if (tokens)
@@ -1108,11 +1114,11 @@ export class GurpsActor extends Actor {
         await this.toggleStatusEffect(id)
       }
   }
-
   /**
+
    * @returns {Token.Implementation[]}
    */
-  // NOTE: not needed, Actor#getDependentTokens is used instead
+  // NOTE: Not needed. Actor#getDependentTokens is used instead
   _findTokens() {
     if (this.isToken && this.token?.layer) {
       let token = this.token.object
@@ -1124,7 +1130,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {{ id: unknown; }} effect
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#isEffectActive
   isEffectActive(effect) {
     for (const it of this.effects) {
       if (it.statuses.find(s => s === effect.id)) return true
@@ -1135,12 +1141,12 @@ export class GurpsActor extends Actor {
     return false
   }
 
-  // NOTE: not needed
+  // NOTE: Not needed. Directly referencing the object in a type-safe way is now used instead.
   get _additionalResources() {
     return this.system.additionalresources
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now accessor GurpsActorV2#displayname
   get displayname() {
     let n = this.name
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
@@ -1158,7 +1164,8 @@ export class GurpsActor extends Actor {
    * @param {string} action.hitlocation - optional hit location
    * @param {boolean} action.accumulate
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#accumulateDamageRoll
+  //  and method CharacterModel#accumulateDamageRoll
   async accumulateDamageRoll(action) {
     // define a new actor property, damageAccumulators, which is an array of object:
     // {
@@ -1188,19 +1195,22 @@ export class GurpsActor extends Actor {
     GURPS.ModifierBucket.render()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now accessor GurpsActorV2#damageAccumulators
+  // and accessor CharacterModel#damageAccumulators
   get damageAccumulators() {
     return this.system.conditions.damageAccumulators
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#incrementDamageAccumulator
+  // and method CharacterModel#incrementDamageAccumulator
   async incrementDamageAccumulator(index) {
     this.damageAccumulators[index].count++
     await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#decrementDamageAccumulator
+  // and method CharacterModel#decrementDamageAccumulator
   async decrementDamageAccumulator(index) {
     this.damageAccumulators[index].count--
     if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
@@ -1208,14 +1218,16 @@ export class GurpsActor extends Actor {
     GURPS.ModifierBucket.render()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#clearDamageAccumulator
+  // and method CharacterModel#clearDamageAccumulator
   async clearDamageAccumulator(index) {
     this.damageAccumulators.splice(index, 1)
     await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#applyDamageAccumulator
+  // and method CharacterModel#applyDamageAccumulator
   async applyDamageAccumulator(index) {
     let accumulator = this.damageAccumulators[index]
     let roll = multiplyDice(accumulator.formula, accumulator.count)
@@ -1231,13 +1243,13 @@ export class GurpsActor extends Actor {
     await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
-  // NOTE: unused
+  // NOTE: Not needed. This method is never used.
   getPortraitPath() {
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_PATH) == 'global') return 'images/portraits/'
     return `worlds/${game.world.id}/images/portraits`
   }
 
-  // NOTE: unused
+  // NOTE: Not needed. This method is never used.
   removeAccents(str) {
     return str
       .normalize('NFD')
@@ -1250,7 +1262,7 @@ export class GurpsActor extends Actor {
   /**
    * Adds any assigned resource trackers to the actor data and sheet.
    */
-  // TODO: add to import functionality
+  // TODO: Migrate. Need to move this to the imoprter functions.
   async setResourceTrackers() {
     /** @type {TrackerInstance[]} */
     const currentTrackers = GurpsActor.getTrackersAsArray(this.system)
@@ -1275,7 +1287,7 @@ export class GurpsActor extends Actor {
     }
   }
 
-  // NOTE: no longer needed, TrackerInstane uses DataModel now
+  // NOTE: Not needed. Now part of TrackerInstance DataModel initialization.
   _initializeTrackerValues(template) {
     let value = template.tracker.value
     if (!!template.initialValue) {
@@ -1295,7 +1307,7 @@ export class GurpsActor extends Actor {
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    * @param {*} template to apply
    */
-  // NOTE: migrated to TrackerInstance#applyTemplate
+  // NOTE: Migrated. Now method TrackerInstance#applyTemplate
   async applyTrackerTemplate(path, template) {
     this._initializeTrackerValues(template)
 
@@ -1312,7 +1324,7 @@ export class GurpsActor extends Actor {
    * Overwrites the tracker pointed to by the path with default/blank values.
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    */
-  // NOTE: no longer needed, TrackerInstane uses DataModel now
+  // NOTE: Migrated. Now part of method TrackerInstance#applyTemplate
   async clearTracker(path) {
     // verify that this is a Tracker
     const prefix = 'additionalresources.tracker.'
@@ -1339,7 +1351,7 @@ export class GurpsActor extends Actor {
    * Removes the indicated tracker from the object, reindexing the keys.
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel#removeTracker
   async removeTracker(path) {
     this.ignoreRender = true
     const prefix = 'additionalresources.tracker.'
@@ -1374,21 +1386,22 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now part of method CharacterModel#addTracker
   static addTrackerToDataObject(data, trackerData) {
     let trackers = GurpsActor.getTrackersAsArray(data)
     trackers.push(trackerData)
     return arrayToObject(trackers)
   }
 
-  // NOTE: no longer needed
+  // NOTE: Not needed. The CharacterModel#additionalresources.tracker property is now
+  //  natively an Array.
   static getTrackersAsArray(data) {
     let trackerArray = data.additionalresources.tracker
     if (!trackerArray) trackerArray = {}
     return objectToArray(trackerArray)
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now accessor CharacterModel#trackersByName
   get trackersByName() {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
     const byName = {}
@@ -1398,7 +1411,7 @@ export class GurpsActor extends Actor {
     return byName
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel#setMoveDefault
   async setMoveDefault(value) {
     this.ignoreRender = true
     let move = this.system.move
@@ -1410,7 +1423,7 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now method CharacterModel#addMoveMode
   async addMoveMode(mode, basic, enhanced = basic, isDefault = false) {
     // copy existing entries
     let move = {}
@@ -1451,7 +1464,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {any[]} damageData
    */
-  // TODO: move to ActorSheet
+  // TODO: Migrate. Need to move this to the appropriate ActorSheet class.
   handleDamageDrop(damageData) {
     if (game.user.isGM || !this.Damage.settings.onlyGMsCanOpenADD()) {
       const dialog = new ApplyDamageDialog(this, damageData)
@@ -1480,7 +1493,8 @@ export class GurpsActor extends Actor {
    *
    * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async handleItemDrop(dragData) {
     if (!this.isOwner) {
       ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
@@ -1596,14 +1610,16 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
-  // TODO: no longer required with new DataModel.
+  // NOTE: Not needed. This method is a relic of the use of multiple update cycles disguised as a single update cycle.
+  //  Use of this type of update should be entirely removed.
+  // TODO: Remove all references to this method.
   _forceRender() {
     this.ignoreRender = false
     this.render()
   }
 
   // Drag and drop from an equipment list
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // TODO: Migrate. This method should be moved to the appropriate ActorSheet class.
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
@@ -1669,7 +1685,7 @@ export class GurpsActor extends Actor {
     this._forceRender()
   }
 
-  // TODO: move to ActorSheet
+  // TODO: Migrate. This method should be moved to the appropriate ActorSheet class.
   async promptEquipmentQuantity(eqt, title) {
     return await foundry.applications.api.DialogV2.prompt({
       window: { title: title },
@@ -1685,7 +1701,8 @@ export class GurpsActor extends Actor {
   /**
    * @param {Item} item
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async updateItem(item) {
     // @ts-ignore
     delete item.editingActor
@@ -1720,7 +1737,8 @@ export class GurpsActor extends Actor {
    * @param {ItemData} itemData
    * @param {string | null} [targetkey]
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async addNewItemData(itemData, targetkey = null) {
     let d = itemData
     // @ts-ignore
@@ -1746,7 +1764,8 @@ export class GurpsActor extends Actor {
    * @param {ItemData} itemData
    * @param {string | null} [targetkey]
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async addItemData(itemData, targetkey) {
     let [eqtkey, addFeatures] = await this._addNewItemEquipment(itemData, targetkey)
     if (addFeatures) {
@@ -1759,7 +1778,8 @@ export class GurpsActor extends Actor {
    * @param {ItemData} itemData
    * @param {string | null} targetkey
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _addNewItemEquipment(itemData, targetkey) {
     let existing = this._findEqtkeyForId('itemid', itemData._id)
     if (!!existing) {
@@ -1824,7 +1844,8 @@ export class GurpsActor extends Actor {
    * @param {GurpsItemData} itemData
    * @param {string} eqtkey
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
@@ -1859,7 +1880,8 @@ export class GurpsActor extends Actor {
    * @param {Equipment} eqt equipment.
    * @param {string} targetPath equipment target path.
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async updateItemAdditionsBasedOn(eqt, targetPath) {
     await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'), eqt.equipped)
   }
@@ -1871,7 +1893,8 @@ export class GurpsActor extends Actor {
    * @param {boolean} carried container item's carried status.
    * @param {boolean} equipped container item's equipped status.
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _updateEqtStatus(eqt, eqtkey, carried, equipped) {
     eqt.carried = carried
     eqt.equipped = equipped
@@ -1896,7 +1919,8 @@ export class GurpsActor extends Actor {
    * @param {string} eqtkey
    * @param {string} key
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _addItemElement(itemData, eqtkey, key) {
     let found = false
     // @ts-ignore
@@ -1933,7 +1957,11 @@ export class GurpsActor extends Actor {
    * @returns {Promise<*>}
    * @private
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use.
+  //  Specifically, this method is only called for pseudo-items which are no longer used.
+  //  See method ##prepareLevelsFromOtf in classes SkillModel, SpellModel, MeleeAttackModel, RangedAttackModel
+  //  for an effective replacement.
+  // TODO: Remove all references to this method.
   async _getSkillLevelFromOTF(otf) {
     if (!otf) return
     let skillAction = parselink(otf).action
@@ -1954,7 +1982,8 @@ export class GurpsActor extends Actor {
    * @returns {Promise<{[p: string]: *}|{}>}
    * @private
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _addChildItemElement(parentItem, childItemData, key, list) {
     let found = false
     if (found) {
@@ -2001,7 +2030,8 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} path
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async deleteEquipment(path, depth = 0) {
     let eqt = foundry.utils.getProperty(this, path)
     if (!eqt) return eqt
@@ -2029,7 +2059,8 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} itemid
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _removeItemAdditions(itemid) {
     let saved = this.ignoreRender
     this.ignoreRender = true
@@ -2048,7 +2079,8 @@ export class GurpsActor extends Actor {
    * @param {string} itemId
    * @private
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. The usermods object is now reset during the data preparation cycle.
+  // TODO: Remove all references to this method.
   async _removeItemEffect(itemId) {
     let userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
     const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
@@ -2075,7 +2107,8 @@ export class GurpsActor extends Actor {
    * @param {string} itemid
    * @param {string} key
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use
+  // TODO: Remove all references to this method.
   async _removeItemElement(itemid, key) {
     let found = true
     let any = false
@@ -2085,8 +2118,8 @@ export class GurpsActor extends Actor {
       let list = foundry.utils.getProperty(this, key)
       recurselist(list, (e, k, _d) => {
         if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          if (e.itemid === itemid) found = k
         } else {
+          if (e.itemid === itemid) found = k
           if (e.fromItem === itemid) found = k
         }
       })
@@ -2110,7 +2143,6 @@ export class GurpsActor extends Actor {
    * @param {string} targetkey
    * @param {boolean} shiftkey
    */
-  // TODO: no longer required with new DataModel. Replace all isntances.
   async moveEquipment(srckey, targetkey, shiftkey) {
     if (srckey == targetkey) return
     if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
@@ -2190,7 +2222,6 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} path
    */
-  // TODO: Move to ActorSheet
   async toggleExpand(path, expandOnly = false) {
     let obj = foundry.utils.getProperty(this, path)
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
@@ -2216,7 +2247,6 @@ export class GurpsActor extends Actor {
    * @param {string} srckey
    * @param {string} targetkey
    */
-  // TODO: no longer needed. Remove references and replace with appropriate replacement
   async _splitEquipment(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     if (srceqt.count <= 1) return false // nothing to split
@@ -2257,7 +2287,6 @@ export class GurpsActor extends Actor {
    * @param {string} srckey
    * @param {string} targetkey
    */
-  // TODO: no longer needed. Remove references and replace with appropriate replacement
   async _checkForMerging(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     let desteqt = foundry.utils.getProperty(this, targetkey)

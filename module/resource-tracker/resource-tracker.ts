@@ -23,8 +23,10 @@ class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> 
 
   // TODO: verify this works
   async applyTemplate(template: ResourceTrackerTemplate) {
+    const initialData = new fields.SchemaField(resourceTrackerSchema()).getInitialValue()
     const data = template.tracker.toObject()
-    return this.updateSource(data)
+
+    return this.updateSource(foundry.utils.mergeObject(initialData, data))
   }
 }
 
@@ -32,20 +34,21 @@ class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> 
 
 const resourceTrackerSchema = () => {
   return {
-    name: new fields.StringField({ required: true, nullable: false }),
-    alias: new fields.StringField({ required: true, nullable: false }),
-    pdf: new fields.StringField({ required: true, nullable: false }),
-    max: new fields.NumberField({ required: true, nullable: false }),
-    min: new fields.NumberField({ required: true, nullable: false }),
-    value: new fields.NumberField({ required: true, nullable: false }),
-    isDamageType: new fields.BooleanField({ required: true, nullable: false }),
-    isDamageTracker: new fields.BooleanField({ required: true, nullable: false }),
-    breakpoints: new fields.BooleanField({ required: true, nullable: false }),
+    name: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    alias: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    pdf: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    isDamageType: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    isDamageTracker: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    breakpoints: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     thresholds: new fields.ArrayField(
       new fields.EmbeddedDataField(ResourceTrackerThreshold, { required: true, nullable: false }),
       {
         required: true,
         nullable: false,
+        initial: [],
       }
     ),
   }
