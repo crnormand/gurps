@@ -101,6 +101,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       maneuver: 'ready',
       self: { modifiers: [] },
       target: { modifiers: [] },
+      usermods: [],
       reeling: false,
       exhausted: false,
     }
@@ -157,6 +158,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.#prepareEquipmentSummary()
     this.#prepareEncumbrance()
     this.#prepareDefenses()
+    this.#prepareUserModifiers()
 
     // Set currernt maneuver to maneuver active effect if a valid one is present
     const maneuverEffect = this.parent.effects.find(effect => effect.statuses.some(status => status === 'maneuver'))
@@ -340,6 +342,26 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  #prepareUserModifiers() {
+    this.parent.items.forEach(item => {
+      if (!item.isOfType('feature', 'skill', 'spell', 'equipment')) return
+      for (const modifier of item.system.itemModifiers.split('\n').map(e => e.trim())) {
+        const modifierDescription = `${modifier} ${item.id}`
+        this.conditions.usermods.add(modifierDescription)
+      }
+
+      for (const attack of item.getItemAttacks()) {
+        if (item.system.itemModifiers === '') continue
+        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
+          const modifierDescription = `${modifier} ${item.id}`
+          this.conditions.usermods.add(modifierDescription)
+        }
+      }
+    })
+  }
+
+  /* ---------------------------------------- */
+
   #getCurrentMove(base: number): number {
     const doUpdateMove =
       game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && this.parent.inCombat
@@ -457,17 +479,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
           if (doAnnounce) {
             let tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
-            let message = game.i18n?.format(tag, {
-              name: this.parent.displayname,
-              pdfref: game.i18n.localize('GURPS.pdfReeling'),
-            })
-
-            foundry.applications.handlebars
-              .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [message] })
-              .then(content => {
-                const whisper = this.parent.owners.length > 0 ? this.parent.owners.map(user => user.id) : null
-                ChatMessage.create({ content, whisper })
-              })
+            let message =
+              game.i18n?.format(tag, {
+                name: this.parent.displayname,
+                pdfref: game.i18n.localize('GURPS.pdfReeling'),
+              }) ?? ''
+            this.parent.sendChatMessage(message)
           }
         }
       }
@@ -479,17 +496,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
           if (doAnnounce) {
             let tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
-            let message = game.i18n?.format(tag, {
-              name: this.parent.displayname,
-              pdfref: game.i18n.localize('GURPS.pdfTired'),
-            })
-
-            foundry.applications.handlebars
-              .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [message] })
-              .then(content => {
-                const whisper = this.parent.owners.length > 0 ? this.parent.owners.map(user => user.id) : null
-                ChatMessage.create({ content, whisper })
-              })
+            let message =
+              game.i18n?.format(tag, {
+                name: this.parent.displayname,
+                pdfref: game.i18n.localize('GURPS.pdfTired'),
+              }) ?? ''
+            this.parent.sendChatMessage(message)
           }
         }
       }
