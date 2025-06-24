@@ -105,7 +105,7 @@ const conditionsSchema = () => {
 
     self: new fields.SchemaField(modifierSetSchema(), { required: true, nullable: false }),
     target: new fields.SchemaField(modifierSetSchema(), { required: true, nullable: false }),
-    usermods: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+    usermods: new fields.SetField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
