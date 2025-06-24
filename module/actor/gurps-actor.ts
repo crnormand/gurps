@@ -81,6 +81,22 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   /* ---------------------------------------- */
+
+  /**
+   * Send a private chat message containing the specified text to all users
+   * with ownership permission of this Actor document.
+   * @param message - Message content to send
+   */
+  sendChatMessage(message: string) {
+    foundry.applications.handlebars
+      .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [message] })
+      .then(content => {
+        const whisper = this.owners.length > 0 ? this.owners.map(user => user.id) : null
+        ChatMessage.create({ content, whisper })
+      })
+  }
+
+  /* ---------------------------------------- */
   /*  Accessors                               */
   /* ---------------------------------------- */
 
@@ -344,7 +360,18 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async replaceManeuver(maneuverId: string) {
+    if (!this.isOfType('enemy', 'character')) return
+
     this.getDependentTokens().forEach(token => token.object?.setManeuver(maneuverId))
+  }
+
+  /* ---------------------------------------- */
+
+  async replacePosture(postureId: string) {
+    if (!this.isOfType('enemy', 'character')) return
+
+    const id = postureId === GURPS.StatusEffectStanding ? this.system.conditions.posture : postureId
+    this.toggleStatusEffect(id)
   }
 
   /* ---------------------------------------- */
