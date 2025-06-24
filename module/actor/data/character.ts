@@ -347,14 +347,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       if (!item.isOfType('feature', 'skill', 'spell', 'equipment')) return
       for (const modifier of item.system.itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
-        this.conditions.usermods.add(modifierDescription)
+        if (!this.conditions.usermods.includes(modifierDescription)) this.conditions.usermods.push(modifierDescription)
       }
 
       for (const attack of item.getItemAttacks()) {
         if (item.system.itemModifiers === '') continue
         for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
           const modifierDescription = `${modifier} ${item.id}`
-          this.conditions.usermods.add(modifierDescription)
+          if (!this.conditions.usermods.includes(modifierDescription))
+            this.conditions.usermods.push(modifierDescription)
         }
       }
     })
