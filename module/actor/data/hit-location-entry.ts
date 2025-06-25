@@ -14,6 +14,19 @@ class HitLocationEntry extends DataModel<HitLocationSchema> {
 
   /* ---------------------------------------- */
 
+  protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
+    super._initialize(options)
+
+    const rollText = this.rollText
+    const roll: number[] = []
+    for (const part of rollText.split(' ')) {
+      const match = part.match(/^\d+$/)
+      if (match) roll.push(parseInt(match[0]))
+    }
+  }
+
+  /* ---------------------------------------- */
+
   static getlargeAreaDR(locations: HitLocationEntry[]): number {
     let lowestDR = Number.POSITIVE_INFINITY
     let torsoDR = 0
@@ -48,7 +61,12 @@ const hitLocationSchema = () => {
     penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     _dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
-    roll: new fields.StringField({ required: true, nullable: false, initial: '-' }),
+    rollText: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
+      required: true,
+      nullable: false,
+      initial: [],
+    }),
     split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
       required: true,
       nullable: false,

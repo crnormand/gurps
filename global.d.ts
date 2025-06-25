@@ -13,6 +13,7 @@ import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
+import GurpsActiveEffect from 'module/effects/active-effect.js'
 
 export { }
 
@@ -38,6 +39,7 @@ declare global {
     Actor: typeof GurpsActorV2
     Item: typeof GurpsItemV2
     Combatant: typeof GurpsCombatant
+    ActiveEffect: typeof GurpsActiveEffect
   }
 
   /* ---------------------------------------- */
@@ -132,5 +134,8 @@ declare global {
     'gurps.maneuver-updates-move': boolean
     'gurps.automatic-onethird': boolean
     'gurps.show-chat-reeling-tired': boolean
+    'gurps.default-hitlocation': string
+    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
+    'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
   }
 }
