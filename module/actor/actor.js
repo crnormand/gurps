@@ -2137,6 +2137,7 @@ export class GurpsActor extends Actor {
    * @param {string} targetkey
    * @param {boolean} shiftkey
    */
+  // TODO: Migrate. This method should be moved to the appropriate ActorSheet class.
   async moveEquipment(srckey, targetkey, shiftkey) {
     if (srckey == targetkey) return
     if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
@@ -2216,6 +2217,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} path
    */
+  // TODO: Migrate. This method should be moved to the appropriate ActorSheet class.
   async toggleExpand(path, expandOnly = false) {
     let obj = foundry.utils.getProperty(this, path)
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
@@ -2241,6 +2243,7 @@ export class GurpsActor extends Actor {
    * @param {string} srckey
    * @param {string} targetkey
    */
+  // TODO: Migrate. This method should be moved to the appropriate ActorSheet class.
   async _splitEquipment(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     if (srceqt.count <= 1) return false // nothing to split
@@ -2281,6 +2284,7 @@ export class GurpsActor extends Actor {
    * @param {string} srckey
    * @param {string} targetkey
    */
+  // TODO: Migrate. This method should be moved to the appropriate ActorSheet class.
   async _checkForMerging(srckey, targetkey) {
     let srceqt = foundry.utils.getProperty(this, srckey)
     let desteqt = foundry.utils.getProperty(this, targetkey)
@@ -2310,6 +2314,8 @@ export class GurpsActor extends Actor {
   //  	rollText: string value of the roll from the hitlocations table (examples: '5', '6-9', '-')
   //  	roll: array of int of the values that match rollText (examples: [5], [6,7,8,9], [])
   // 	}
+  // NOTE: Migrated. Now accessor GurpsActorV2#hitLocationsWithDR
+  //  and accessor CharacterActor#hitLocationsWithDR
   get hitLocationsWithDR() {
     let myhitlocations = []
     let table = this._hitLocationRolls
@@ -2330,6 +2336,7 @@ export class GurpsActor extends Actor {
   /**
    * @returns an object where each property is a hitlocation, keyed by location.where.
    */
+  // NOTE: Not used. Repalced by method CharacterModel##prepareHitLocations
   get hitLocationByWhere() {
     const byWhere = {}
     if (this.system.hitlocations) {
@@ -2344,25 +2351,34 @@ export class GurpsActor extends Actor {
   /**
    * @returns the appropriate hitlocation table based on the actor's bodyplan
    */
+  // NOTE: Migrated. Now accessor GurpsActorV2#_hitLocationRolls
+  //  and accessor CharacterActor#_hitLocationRolls
   get _hitLocationRolls() {
     return HitLocations.HitLocation.getHitLocationRolls(this.system.additionalresources?.bodyplan)
   }
 
   // Return the 'where' value of the default hit location, or 'Random'
   // NOTE: could also return 'Large-Area'?
+  // NOTE: Migrated. Now accessor GurpsActorV2#defaultHitLocation
   get defaultHitLocation() {
     // TODO implement a system setting but (potentially) allow it to be overridden
     return game.settings.get('gurps', 'default-hitlocation')
   }
 
+  // NOTE: Not needed. Used only in ActorSheet, where use of this accessor will be replaced with a direct reference
+  // to the property.
+  // TODO: Remove all references to this accessor.
   getCurrentDodge() {
     return this.system.currentdodge
   }
 
+  // NOTE: Not needed. Never used.
   getCurrentMove() {
     return this.system.currentmove
   }
 
+  // NOTE: Migrated. Now method GurpsActorV2#getTorsoDr
+  //  and accessor CharacterModel#torsoDR
   getTorsoDr() {
     if (!this.system.hitlocations) return 0
     let hl = Object.values(this.system.hitlocations).find(h => h.penalty == 0)
@@ -2372,6 +2388,9 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} key
    */
+  // NOTE: Not needed. This method is used only for GurpsActor#getEquippedParry
+  //  and GurpsActor#getEquippedBlock which are also no longer used as the preparation
+  //  of these values is now carried out by CharacterModel##prepareDefenses
   getEquipped(key) {
     let val = 0
     let txt = ''
@@ -2436,17 +2455,19 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: Not needed. Now dealt with by CharacterModel##prepareDefenses
   getEquippedParry() {
     let [txt, val] = this.getEquipped('parry')
     this.system.equippedparryisfencing = !!txt && /f$/i.test(txt)
     return val
   }
 
+  // NOTE: Not needed. Now dealt with by CharacterModel##prepareDefenses
   getEquippedBlock() {
     return this.getEquipped('block')[1]
   }
 
-  // NOTE: migrated
+  // NOTE: Migrated. Now part of method CharacterModel##prepareDefenses
   getEquippedDefenseBonuses() {
     let defenses = { parry: {}, block: {}, dodge: {} }
     const carried = this.system.equipment?.carried
@@ -2473,6 +2494,8 @@ export class GurpsActor extends Actor {
    * @since Foundry v12
    * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
    */
+  // NOTE: Migrated. Now accessor GurpsActorV2#temporaryEffects
+  //  and method CharacterModel#getTemporaryEffects
   get temporaryEffects() {
     const allEffects = super.temporaryEffects
     const maneuver = allEffects.find(e => e.isManeuver)
