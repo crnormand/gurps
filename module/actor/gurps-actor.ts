@@ -6,6 +6,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
+import { HitLocationEntry } from './data/hit-location-entry.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -38,7 +39,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
-      return foundry.utils.getProperty(this, path).get(id, { invalid, strict }) ?? null
+      return (
+        (foundry.utils.getProperty(this, path) as ModelCollection<PseudoDocument>).get(id, { invalid, strict }) ?? null
+      )
     }
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
   }
@@ -55,7 +58,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
         `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
       )
     }
-    return foundry.utils.getProperty(this, collectionPath)
+    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
   }
 
   /* ---------------------------------------- */
@@ -104,6 +107,54 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     let n = this.name
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
     return n
+  }
+
+  /* ---------------------------------------- */
+
+  get hitLocationsWithDR(): HitLocationEntry[] {
+    if (this.isOfType('character', 'enemy')) {
+      return this.system.hitLocationsWithDR
+    }
+    return []
+  }
+
+  /* ---------------------------------------- */
+
+  get _hitLocationRolls() {
+    if (this.isOfType('character', 'enemy')) {
+      return this.system._hitLocationRolls
+    }
+    return {}
+  }
+
+  /* ---------------------------------------- */
+
+  get defaultHitLocation(): string {
+    return game.settings?.get('gurps', 'default-hitlocation') ?? ''
+  }
+
+  /* ---------------------------------------- */
+
+  // NOTE: Not technically an accessor but here for parity with the old system.
+  getTorsoDr(): number {
+    if (this.isOfType('character', 'enemy')) {
+      return this.system.torsoDR
+    }
+    return 0
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * @returns An array of temporary effects that are applied to the actor.
+   * This is overriden for CharacterModel where maneuvers are moved to the top of the
+   * array.
+   */
+  override get temporaryEffects(): ActiveEffect.Implementation[] {
+    if (this.isOfType('character', 'enemy')) {
+      return this.system.getTemporaryEffects(super.temporaryEffects)
+    }
+    return super.temporaryEffects
   }
 
   /* ---------------------------------------- */
