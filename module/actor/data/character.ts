@@ -16,6 +16,7 @@ import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 import { makeRegexPatternFrom, splitArgs } from '../../../lib/utilities.js'
 import { HitLocation } from '../../hitlocation/hitlocation.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
+import * as HitLocations from '../../hitlocation/hitlocation.js'
 import { BaseActorModel } from './base.js'
 import {
   MOVE_HALF,
@@ -173,7 +174,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       return acc
     }, {})
   }
-
   /* ---------------------------------------- */
 
   #prepareEquipmentSummary() {
@@ -338,6 +338,20 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         this.defenses.dodge.bonus += bonusAmount
       }
     })
+
+    this.equippedparry = this.parent.getItemAtacks('meleeAttack').reduce((acc, attack) => {
+      if (!attack.component.parry) return acc
+      const newParry = parseInt(attack.component.parry)
+      if (newParry > acc) acc = newParry
+      return acc
+    }, 0)
+
+    this.equippedblock = this.parent.getItemAtacks('meleeAttack').reduce((acc, attack) => {
+      if (!attack.component.block) return acc
+      const newblock = parseInt(attack.component.block)
+      if (newblock > acc) acc = newblock
+      return acc
+    }, 0)
   }
 
   /* ---------------------------------------- */
@@ -515,6 +529,55 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
     return this.move.find(enc => enc.default) ?? null
+  }
+
+  /* ---------------------------------------- */
+
+  get hitLocationsWithDR(): HitLocationEntry[] {
+    const table = this._hitLocationRolls
+    return this.hitlocations.map(location => {
+      return new HitLocationEntry({
+        ...location.toObject(),
+        rollText: table[location.where]?.roll ?? '',
+      })
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  get _hitLocationRolls() {
+    return HitLocations.HitLocation.getHitLocationRolls(this.additionalresources?.bodyplan)
+  }
+
+  /* ---------------------------------------- */
+
+  get torsoDR(): number {
+    // We assume that the torso is the hit location with a penalty of 0.
+    const torsoLocation = this.hitlocations.find(location => location.penalty === 0)
+    return torsoLocation ? torsoLocation.dr : 0
+  }
+
+  /* ---------------------------------------- */
+
+  getTemporaryEffects(effects: ActiveEffect.Implementation[]): ActiveEffect.Implementation[] {
+    const maneuver = effects.find(e => e.isManeuver)
+    if (!maneuver) return effects
+
+    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
+
+    const visibility = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
+    if (visibility === 'NoOne') return nonManeuverEffects
+
+    if (!game.user?.isGM && !this.parent.isOwner) {
+      if (visibility === 'GMAndOwner') return nonManeuverEffects
+
+      const detail = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
+      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
+        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+      }
+    }
+
+    return [maneuver, ...nonManeuverEffects]
   }
 
   /* ---------------------------------------- */
@@ -796,8 +859,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.move': move })
   }
-
-  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
