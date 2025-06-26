@@ -13,7 +13,7 @@ import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
-import GurpsActiveEffect from 'module/effects/active-effect.js'
+import { GurpsActiveEffect } from 'module/active-effect/active-effect.js'
 
 export {}
 
