@@ -166,7 +166,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.#prepareUserModifiers()
 
     // Set currernt maneuver to maneuver active effect if a valid one is present
-    const maneuverEffect = this.parent.effects.find(effect => effect.statuses.some(status => status === 'maneuver'))
+    const maneuverEffect = this.parent.effects.find((effect: ActiveEffect.Implementation) =>
+      effect.statuses.some((status: string) => status === 'maneuver')
+    )
     this.conditions.maneuver = maneuverEffect ? maneuverEffect.flags.gurps.name : null
   }
 
@@ -343,14 +345,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     })
 
-    this.equippedparry = this.parent.getItemAtacks('meleeAttack').reduce((acc, attack) => {
+    this.equippedparry = this.actor.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.component.parry) return acc
       const newParry = parseInt(attack.component.parry)
       if (newParry > acc) acc = newParry
       return acc
     }, 0)
 
-    this.equippedblock = this.parent.getItemAtacks('meleeAttack').reduce((acc, attack) => {
+    this.equippedblock = this.actor.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.component.block) return acc
       const newblock = parseInt(attack.component.block)
       if (newblock > acc) acc = newblock
@@ -500,10 +502,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             let tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
             let message =
               game.i18n?.format(tag, {
-                name: this.parent.displayname,
+                name: this.actor.displayname,
                 pdfref: game.i18n.localize('GURPS.pdfReeling'),
               }) ?? ''
-            this.parent.sendChatMessage(message)
+            this.actor.sendChatMessage(message)
           }
         }
       }
@@ -517,10 +519,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             let tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
             let message =
               game.i18n?.format(tag, {
-                name: this.parent.displayname,
+                name: this.actor.displayname,
                 pdfref: game.i18n.localize('GURPS.pdfTired'),
               }) ?? ''
-            this.parent.sendChatMessage(message)
+            this.actor.sendChatMessage(message)
           }
         }
       }
@@ -529,6 +531,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
   /*  Accessors                               */
+  /* ---------------------------------------- */
+
+  get actor(): Actor.Implementation {
+    return this.parent as Actor.Implementation
+  }
+
   /* ---------------------------------------- */
 
   get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
@@ -872,6 +880,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       img?: string
       symbol: string
       label: string
+      mode?: string
       value: number | string
       notes?: string
       otf: string
@@ -883,6 +892,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       img?: string
       symbol: string
       label: string
+      mode?: string
       value: number | string
       notes?: string
       otf: string
@@ -967,18 +977,24 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
       case 'attackChecks':
         checks.push(
-          ...this.parent.getItemAttacks().map(attack => {
-            const otfName = attack.mode ? `${attack.name} (${attack.mode})` : attack.name
-            return {
-              img: attack.img,
-              symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
-              label: attack.name,
-              value: attack.component.import,
-              mode: attack.component.mode,
-              otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
-              otfDamage: `D:"${otfName}"`,
-            }
-          })
+          ...this.actor.items
+            .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
+              acc.push(...item.getItemAttacks())
+              return acc
+            }, [])
+            .map(attack => {
+              const otfName = attack.component.mode ? `${attack.name} (${attack.component.mode})` : attack.name
+              return {
+                img: attack.img ?? '',
+                symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
+                label: attack.name ?? '',
+                value: attack.component.import,
+                mode: attack.component.mode,
+                otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
+                isOTF: true,
+                otfDamage: `D:"${otfName}"`,
+              }
+            })
         )
         return { data: checks, size: checks.length }
       case 'defenseChecks':
@@ -989,33 +1005,37 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             value: this.currentdodge,
             otf: 'dodge',
             isOTF: true,
-          },
-          ...this.parent.getItemAttacks('meleeAttack').reduce((acc, attack) => {
-            const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
-            const img = attack.img
-            const otfName = attack.mode ? `"${attack.name} (${attack.mode})"` : `"${attack.name}"`
-
-            if (!isNaN(parseInt(attack.component.parry)))
-              acc.push({
-                symbol,
-                img,
-                label: attack.name,
-                mode: attack.component.mode,
-                otf: `P:${otfName}`,
-                isOTF: true,
-              })
-
-            if (!isNaN(parseInt(attack.component.block)))
-              acc.push({
-                symbol,
-                img,
-                label: attack.name,
-                mode: attack.component.mode,
-                otf: `B:${otfName}`,
-                isOTF: true,
-              })
-          }, [])
+          }
+          // TODO: implement getItemAttacks on actor
         )
+        this.actor.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+          const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
+          const img = attack.img
+          const otfName = attack.component.mode ? `"${attack.name} (${attack.component.mode})"` : `"${attack.name}"`
+
+          if (!isNaN(parseInt(attack.component.parry)))
+            acc.push({
+              symbol,
+              img: img ?? '',
+              label: attack.name ?? '',
+              value: attack.component.parry,
+              mode: attack.component.mode,
+              otf: `P:${otfName}`,
+              isOTF: true,
+            })
+
+          if (!isNaN(parseInt(attack.component.block)))
+            acc.push({
+              symbol,
+              img: img ?? '',
+              label: attack.name ?? '',
+              value: attack.component.block,
+              mode: attack.component.mode,
+              otf: `B:${otfName}`,
+              isOTF: true,
+            })
+          return acc
+        }, checks)
         return { data: checks, size: checks.length }
 
       case 'markedChecks':
@@ -1023,11 +1043,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         for (const item of items) {
           if (item.system.addToQuickRoll) {
             const type = item.type === 'feature' ? 'ad' : item.type
-            const value = item.isOfType('feature') ? 0 : (item.system.component.import ?? 0)
+            let value = 0
+            if (item.isOfType('skill', 'spell')) value = item.system.component.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
-              img: item.img,
+              img: item.img ?? '',
               label: item.name,
               value,
               notes: item.system.component.notes,
@@ -1119,7 +1140,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
 
         for (const tag of correspondingTags[ref]) {
-          refTags.push((taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+          refTags.push(...(taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
         }
       }
     } else {
@@ -1140,7 +1161,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // Get modiifers from self mods
     const selfMods =
-      this.conditions.selfmods?.map(mod => {
+      this.conditions.self.modifiers?.map(mod => {
         const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
         return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
       }) ?? []
