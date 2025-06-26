@@ -8,6 +8,7 @@ import { BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntry } from './data/hit-location-entry.js'
 import { makeRegexPatternFrom } from 'lib/utilities.js'
+import { MeleeAttackModel, RangedAttackModel } from 'module/action/index.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -60,6 +61,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       )
     }
     return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
+  }
+
+  /* ---------------------------------------- */
+
+  getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
+  getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
+  getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
+    return this.items.reduce((acc: any[], item) => {
+      acc.push(...item.getItemAttacks(options as any))
+      return acc
+    }, [])
   }
 
   /* ---------------------------------------- */
@@ -122,10 +136,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get _hitLocationRolls() {
-    if (this.isOfType('character', 'enemy')) {
-      return this.system._hitLocationRolls
-    }
-    return {}
+    if (!this.isOfType('character', 'enemy')) return {}
+    return (this.system as Actor.SystemOfType<'character'>)._hitLocationRolls
   }
 
   /* ---------------------------------------- */
@@ -514,7 +526,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async updateEqtCount(id: string, count: number) {
     if (!this.isOfType('character', 'enemy')) return null
 
-    const equipment = this.system.allEquipment.find(e => e.id === id)
+    const equipment = (this.system as Actor.SystemOfType<'character'>).allEquipment.find(e => e.id === id)
     const updateData: Record<string, unknown> = { count }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
@@ -547,9 +559,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  getChecks(checkType) {
+  getChecks(checkType: string) {
     if (!this.isOfType('character', 'enemy')) return null
-    return this.system.getChecks(checkType)
+    return (this.system as Actor.SystemOfType<'character'>).getChecks(checkType)
   }
 }
 
