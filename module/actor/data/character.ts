@@ -30,6 +30,8 @@ import {
 import { multiplyDice } from '../../utilities/damage-utils.js'
 import { COSTS_REGEX } from '../../../lib/parselink.js'
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
+import { MeleeAttackModel } from 'module/action/melee-attack.js'
+import { RangedAttackModel } from 'module/action/ranged-attack.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -50,6 +52,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     carried: ConfiguredItem<'equipment'>['document'][]
     other: ConfiguredItem<'equipment'>['document'][]
   }
+  declare allEquipment: ConfiguredItem<'equipment'>['document'][]
 
   /* ---------------------------------------- */
 
@@ -141,6 +144,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.skills = this.parent.items.filter(item => item.isOfType('skill'))
     this.spells = this.parent.items.filter(item => item.isOfType('spell'))
     const equipment = this.parent.items.filter(item => item.isOfType('equipment'))
+    this.allEquipment = equipment
     this.equipment = {
       carried: equipment.filter(item => item.system.carried === true),
       other: equipment.filter(item => item.system.carried === false),
@@ -858,6 +862,335 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.move': move })
+  }
+
+  /* ---------------------------------------- */
+
+  getChecks(checkType: string): {
+    size: number
+    data: Array<{
+      img?: string
+      symbol: string
+      label: string
+      value: number | string
+      notes?: string
+      otf: string
+      otfDamage?: string
+      isOTF: boolean
+    }>
+  } {
+    const checks: Array<{
+      img?: string
+      symbol: string
+      label: string
+      value: number | string
+      notes?: string
+      otf: string
+      otfDamage?: string
+      isOTF: boolean
+    }> = []
+
+    switch (checkType) {
+      case 'attributeChecks':
+        Object.entries(this.attributes).forEach(([key, attribute]) => {
+          checks.push({
+            symbol: game.i18n?.localize(`GURPS.attributes${key}`) ?? '',
+            label: game.i18n?.localize(`GURPS.attributes${key}NAME`) ?? '',
+            value: attribute.import,
+            notes: '',
+            otf: key,
+            isOTF: true,
+          })
+        })
+        return { data: checks, size: checks.length }
+      case 'otherChecks':
+        checks.push(
+          ...[
+            {
+              symbol: 'fa-solid fa-eye',
+              label: game.i18n?.localize('GURPS.vision') ?? '',
+              value: this.vision,
+              otf: 'vision',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-ear',
+              label: game.i18n?.localize('GURPS.hearing') ?? '',
+              value: this.hearing,
+              otf: 'hearing',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-face-scream',
+              label: game.i18n?.localize('GURPS.frightcheck') ?? '',
+              value: this.frightcheck,
+              otf: 'frightcheck',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-hand',
+              label: game.i18n?.localize('GURPS.touch') ?? '',
+              value: this.touch,
+              otf: 'touch',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-nose',
+              label: game.i18n?.localize('GURPS.tastesmell') ?? '',
+              value: this.tastesmell,
+              otf: 'tastesmell',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-hand-point-up',
+              label: game.i18n?.localize('GURPS.touch') ?? '',
+              value: this.touch,
+              otf: 'touch',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-sword',
+              label: game.i18n?.localize('GURPS.thrust') ?? '',
+              value: this.thrust,
+              otf: 'thrust',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-mace',
+              label: game.i18n?.localize('GURPS.swing') ?? '',
+              value: this.swing,
+              otf: 'swing',
+              isOTF: true,
+            },
+          ]
+        )
+        return { data: checks, size: checks.length }
+      case 'attackChecks':
+        checks.push(
+          ...this.parent.getItemAttacks().map(attack => {
+            const otfName = attack.mode ? `${attack.name} (${attack.mode})` : attack.name
+            return {
+              img: attack.img,
+              symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
+              label: attack.name,
+              value: attack.component.import,
+              mode: attack.component.mode,
+              otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
+              otfDamage: `D:"${otfName}"`,
+            }
+          })
+        )
+        return { data: checks, size: checks.length }
+      case 'defenseChecks':
+        checks.push(
+          {
+            symbol: 'dodge',
+            label: game.i18n?.localize('GURPS.dodge') ?? '',
+            value: this.currentdodge,
+            otf: 'dodge',
+            isOTF: true,
+          },
+          ...this.parent.getItemAttacks('meleeAttack').reduce((acc, attack) => {
+            const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
+            const img = attack.img
+            const otfName = attack.mode ? `"${attack.name} (${attack.mode})"` : `"${attack.name}"`
+
+            if (!isNaN(parseInt(attack.component.parry)))
+              acc.push({
+                symbol,
+                img,
+                label: attack.name,
+                mode: attack.component.mode,
+                otf: `P:${otfName}`,
+                isOTF: true,
+              })
+
+            if (!isNaN(parseInt(attack.component.block)))
+              acc.push({
+                symbol,
+                img,
+                label: attack.name,
+                mode: attack.component.mode,
+                otf: `B:${otfName}`,
+                isOTF: true,
+              })
+          }, [])
+        )
+        return { data: checks, size: checks.length }
+
+      case 'markedChecks':
+        const items = this.parent.items.filter(item => item.isOfType('feature', 'skill', 'spell'))
+        for (const item of items) {
+          if (item.system.addToQuickRoll) {
+            const type = item.type === 'feature' ? 'ad' : item.type
+            const value = item.isOfType('feature') ? 0 : (item.system.component.import ?? 0)
+
+            checks.push({
+              symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
+              img: item.img,
+              label: item.name,
+              value,
+              notes: item.system.component.notes,
+              otf: `${type}:"${item.name}"`,
+              isOTF: false,
+            })
+          }
+        }
+
+        return { data: checks, size: checks.length }
+      default:
+        return { data: [], size: 0 }
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  async addTaggedRollModifiers(
+    chatThing: string,
+    optionalArgs: { obj?: AnyObject },
+    attack?: MeleeAttackModel | RangedAttackModel
+  ): Promise<boolean> {
+    let isDamageRoll = false
+    const taggedSettings = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)!
+    const allRollTags: string[] = taggedSettings.allRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
+
+    let itemRef = ''
+    let allTags: string[] = []
+    let refTags: string[] = []
+    let modifierTags: string[] = []
+
+    if (optionalArgs.obj) {
+      // Get modifiers from action object
+      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
+        m: ['allAttackRolls', 'allMeleeRolls'],
+        r: ['allAttackRolls', 'allRangedRolls'],
+        p: ['allDefenseRolls', 'allDefenseRolls'],
+        b: ['allDefenseRolls', 'allBlockRolls'],
+        d: ['allDamageRolls'],
+        sk: ['allSkillRolls'],
+        sp: ['allSpellRolls'],
+      }
+
+      const ref = chatThing
+        .split('@')
+        .pop()!
+        .match(/(\S+):/)?.[1]
+        .toLowerCase()
+
+      if (ref && correspondingTags[ref]) {
+        if (ref === 'd') isDamageRoll = true
+
+        for (const tag of correspondingTags[ref]) {
+          refTags.push(...(taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+        }
+      }
+
+      modifierTags =
+        (optionalArgs.obj.modifierTags as string)?.split(',').map((tag: string) => tag.trim().toLowerCase()) ?? []
+      allTags = [...modifierTags, ...allRollTags, ...refTags]
+      itemRef = (optionalArgs.obj.name as string) ?? ''
+    } else if (chatThing) {
+      // Get modifiers from chat string
+      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
+        st: ['allAttributesRolls', 'allSTRolls'],
+        dx: ['allAttributesRolls', 'allDXRolls'],
+        iq: ['allAttributesRolls', 'allIQRolls'],
+        ht: ['allAttributesRolls', 'allHTRolls'],
+        will: ['allWILLRolls'],
+        per: ['allPERRolls'],
+        frightcheck: ['allFRIGHTCHECKRolls'],
+        vision: ['allVISIONRolls'],
+        hearing: ['allHEARINGRolls'],
+        tastesmell: ['allTASTESMELLRolls'],
+        touch: ['allTOUCHRolls'],
+        cr: ['allCRRolls'],
+        dodge: ['allDefenseRolls', 'allDODGERolls'],
+        p: ['allDefenseRolls', 'allParryRolls'],
+        b: ['allDefenseRolls', 'allBlockRolls'],
+      }
+
+      const ref = chatThing.split('@').pop()!.toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
+      let regex = /(?<="|:).+(?=\s\(|"|])/gm
+
+      if (ref && correspondingTags[ref]) {
+        if (ref === 'p' || ref === 'b') {
+          itemRef = chatThing.match(regex)?.[0] ?? ''
+          if (itemRef !== '') itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
+        }
+
+        for (const tag of correspondingTags[ref]) {
+          refTags.push((taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+        }
+      }
+    } else {
+      // Get modifiers from attack/damage roll
+      if (!attack) {
+        refTags = taggedSettings.allDamageRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
+        isDamageRoll = true
+      } else {
+        refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
+      }
+      const attackMods = attack?.component.modifierTags ?? []
+      modifierTags = [...allRollTags, ...attackMods, ...refTags]
+      itemRef = attack?.name ?? ''
+    }
+
+    // Get modifiers from user mods
+    const userMods = this.conditions.usermods ?? []
+
+    // Get modiifers from self mods
+    const selfMods =
+      this.conditions.selfmods?.map(mod => {
+        const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+        return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
+      }) ?? []
+
+    // Get modifiers from target mods
+    const targetMods =
+      game.user?.targets.reduce((acc: string[], target: Token.Implementation) => {
+        const actor = target.actor
+        if (!actor || !actor.isOfType('character', 'enemy')) return acc
+
+        acc.push(
+          ...(actor.system.conditions.target.modifiers?.map(mod => {
+            const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+            return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
+          }) ?? [])
+        )
+        return acc
+      }, []) ?? []
+
+    const actorInCombat = this.parent.inCombat
+    const allMods: string[] = [...userMods, ...selfMods, ...targetMods]
+    for (const mod of allMods) {
+      const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
+
+      userModsTags.forEach(async tag => {
+        let canApply = true
+
+        if (mod.includes('#maneuver'))
+          canApply = allTags.includes(tag) && (mod.includes(itemRef) || mod.includes('@man:'))
+
+        // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
+        if ('itemPath' in optionalArgs && typeof optionalArgs.itemPath === 'string')
+          canApply = canApply && (mod.includes(optionalArgs.itemPath) || !mod.includes('@system'))
+
+        if (actorInCombat)
+          canApply =
+            canApply && (!taggedSettings.nonCombatOnlyTag || !allTags.includes(taggedSettings.nonCombatOnlyTag))
+        else canApply = canApply && (!taggedSettings.combatOnlyTag || !allTags.includes(taggedSettings.combatOnlyTag))
+
+        if (canApply) {
+          const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+          const desc = mod.match(regex)?.[1].trim() || ''
+          const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
+          // TODO: evaluate whether this causes too many data preparation cycles
+          await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
+        }
+      })
+    }
+
+    return isDamageRoll
   }
 }
 
