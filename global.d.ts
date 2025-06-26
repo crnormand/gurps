@@ -137,5 +137,40 @@ declare global {
     'gurps.default-hitlocation': string
     'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
     'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
+    'gurps.auto-ignore-qty': boolean
+    'gurps.use-quintessence': boolean
+    'gurps.use-tagged-modifiers': {
+      autoAdd: boolean
+      checkConditionals: boolean
+      checkReactions: boolean
+      useSpellCollegeAsTag: boolean
+      allRolls: string
+      allAttributesRolls: string
+      allSkillRolls: string
+      allSpellRolls: string
+      allDamageRolls: string
+      allAttackRolls: string
+      allRangedRolls: string
+      allMeleeRolls: string
+      allDefenseRolls: string
+      allDODGERolls: string
+      allParryRolls: string
+      allBlockRolls: string
+      allPERRolls: string
+      allWILLRolls: string
+      allSTRolls: string
+      allDXRolls: string
+      allIQRolls: string
+      allHTRolls: string
+      allFRIGHTCHECKRolls: string
+      allVISIONRolls: string
+      allTASTESMELLRolls: string
+      allHEARINGRolls: string
+      allTOUCHRolls: string
+      allCRRolls: string
+      combatOnlyTag: string
+      nonCombatOnlyTag: string
+      combatTempTag: string
+    }
   }
 }

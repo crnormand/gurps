@@ -7,6 +7,7 @@ import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntry } from './data/hit-location-entry.js'
+import { makeRegexPatternFrom } from 'lib/utilities.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -155,6 +156,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       return this.system.getTemporaryEffects(super.temporaryEffects)
     }
     return super.temporaryEffects
+  }
+
+  /* ---------------------------------------- */
+
+  get usingQuintessence(): boolean {
+    return game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE) ?? false
   }
 
   /* ---------------------------------------- */
@@ -476,6 +483,74 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   /* ---------------------------------------- */
+
+  findEquipmentByName(pattern: string, otherFirst = false): [ConfiguredItem<'equipment'>['document'], string] | null {
+    if (!this.isOfType('character', 'enemy')) return null
+
+    // Removed leading slashes
+    const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))
+      // Remove leading ^
+      .substring(1)
+      // Split by /
+      .split('/')
+      // Apply ^ to each pattern
+      .map(e => new RegExp('^' + e, 'i'))
+
+    const carriedItem = this.system.equipment.carried.find(e => patterns.some(p => p.test(e.name)))
+    const otherItem = this.system.equipment.other.find(e => patterns.some(p => p.test(e.name)))
+
+    const carriedResult: [ConfiguredItem<'equipment'>['document'], string] | null = carriedItem
+      ? [carriedItem ?? null, carriedItem.id ?? '']
+      : null
+    const otherResult: [ConfiguredItem<'equipment'>['document'], string] | null = otherItem
+      ? [otherItem ?? null, otherItem.id ?? '']
+      : null
+
+    return otherFirst ? (otherResult ?? carriedResult ?? null) : (carriedResult ?? otherResult ?? null)
+  }
+
+  /* ---------------------------------------- */
+
+  async updateEqtCount(id: string, count: number) {
+    if (!this.isOfType('character', 'enemy')) return null
+
+    const equipment = this.system.allEquipment.find(e => e.id === id)
+    const updateData: Record<string, unknown> = { count }
+
+    // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
+    // set ignoreImportQty to true.
+    if (game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
+      updateData['ignoreImportQty'] = true
+    }
+
+    if (equipment) {
+      await this.updateEmbeddedDocuments('Item', [{ _id: id, ...updateData }], { parent: this })
+      return equipment
+    } else {
+      throw new Error(`GURPS | Equipment with ID ${id} not found in actor ${this.name}`)
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  isEmptyActor(): boolean {
+    if (!this.isOfType('character', 'enemy')) return false
+    return this.system.additionalresources.importname === null
+  }
+
+  /* ---------------------------------------- */
+
+  async runOTF(otf: string): Promise<void> {
+    const action = GURPS.parselink(otf)
+    await GURPS.performAction(action.action, this)
+  }
+
+  /* ---------------------------------------- */
+
+  getChecks(checkType) {
+    if (!this.isOfType('character', 'enemy')) return null
+    return this.system.getChecks(checkType)
+  }
 }
 
 export { GurpsActorV2 }

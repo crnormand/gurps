@@ -2526,6 +2526,9 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} pattern
    */
+  // NOTE: Migrated. Now method GurpsActorV2#findEquipmentByName
+  // New function has return type [GurpsItemV2<"equipment">, string] | null rather than [Equipment (Component), string]
+  // TODO: Replace all references to this method to account for different return type.
   findEquipmentByName(pattern, otherFirst = false) {
     while (pattern[0] == '/') pattern = pattern.substring(1)
     pattern = makeRegexPatternFrom(pattern, false)
@@ -2575,6 +2578,7 @@ export class GurpsActor extends Actor {
   /**
    * @param {number} currentWeight
    */
+  // NOTE: Not needed. Now part of method CharacterModel#prepareEquipmentSummary
   checkEncumbance(currentWeight) {
     /** @type {{ [key: string]: any }} */
     let encs = this.system.encumbrance
@@ -2613,6 +2617,9 @@ export class GurpsActor extends Actor {
    * @param {string} eqtkey
    * @param {number} count
    */
+  // NOTE: Migrated. Now method GurpsActorV2#updateEqtCount
+  // New method uses item ID instead of item path.
+  // TODO: Update all references to this method to account for the new parameters.
   async updateEqtCount(eqtkey, count) {
     /** @type {{ [key: string]: any }} */
     let eqt = foundry.utils.getProperty(this, eqtkey)
@@ -2648,6 +2655,8 @@ export class GurpsActor extends Actor {
   /**
    * @param {string} srckey
    */
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use.
+  // TODO: Remove all references to this method.
   async updateParentOf(srckey, updatePuuid = true) {
     // pindex = 4 for equipment
     let pindex = 4
@@ -2674,6 +2683,7 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: Migrated. Now method GurpsActorV2#isEmptyActor
   isEmptyActor() {
     let d = this.system
     let chkAttr = (/** @type {string} */ attr) => {
@@ -2694,6 +2704,8 @@ export class GurpsActor extends Actor {
     return true
   }
 
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use.
+  // TODO: Remove all references to this method.
   async _updateEquipmentCalc(equipKey) {
     if (!equipKey.includes('system.eqt.')) return
     const equip = foundry.utils.getProperty(this, equipKey)
@@ -2706,6 +2718,8 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use.
+  // TODO: Remove all references to this method.
   async _updateItemFromForm(item) {
     const sysKey =
       item.type === 'equipment'
@@ -2757,6 +2771,8 @@ export class GurpsActor extends Actor {
     }
   }
 
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use.
+  // TODO: Remove all references to this method.
   async _sanityCheckItemSettings(actorComp) {
     let canEdit = false
     let message
@@ -2802,6 +2818,7 @@ export class GurpsActor extends Actor {
    * @param {string} otf - The On-The-Fly (OTF) string representing the action to be performed.
    * @return {Promise<void>} A promise that resolves once the action has been performed.
    */
+  // NOTE: Migrated. Now method GurpsActorV2#runOTF
   async runOTF(otf) {
     const action = parselink(otf)
     await GURPS.performAction(action.action, this)
@@ -2819,6 +2836,7 @@ export class GurpsActor extends Actor {
   }
 
   // TODO review and refactor
+  // NOTE: Not needed. Now part of method CharacterModel#prepareHitLocations
   _getDRFromItems(actorLocations, update = true) {
     let itemMap = {}
     if (update) {
@@ -2860,7 +2878,7 @@ export class GurpsActor extends Actor {
   }
 
   // TODO review and refactor
-  // NOTE: Migrated
+  // NOTE: Migrated. Now part of method GurpsActorV2#changeDR
   _changeDR(drFormula, hitLocation) {
     if (drFormula === 'reset') {
       hitLocation.dr = hitLocation.import
@@ -2905,7 +2923,7 @@ export class GurpsActor extends Actor {
   }
 
   // TODO review and refactor
-  // NOTE: Migrated
+  // NOTE: Migrated. Now method GurpsActorV2#changeDR
   async changeDR(drFormula, drLocations) {
     let changed = false
     let actorLocations = { ...this.system.hitlocations }
@@ -2974,7 +2992,8 @@ export class GurpsActor extends Actor {
     }
   }
 
-  // TODO: maybe this belongs in actorsheet.js ?
+  // TODO: Migrate. This is used by a handlebars helper, but should just be generated as part of prepareContext
+  // on the sheet instead.
   getDRTooltip(locationKey) {
     const hitLocation = this.system.hitlocations[locationKey]
     if (!hitLocation) return ''
@@ -2991,7 +3010,9 @@ export class GurpsActor extends Actor {
     return new Handlebars.SafeString(compiledTemplate(context))
   }
 
-  // NOTE: No longer needed
+  // NOTE: Not needed. This method has been made obsolete with the universalisation of Foundry Item use.
+  // Specifically, all items can now be found using their import ids.
+  // TODO: Remove all references to this method.
   findByOriginalName(name, include = false) {
     let item = this.items.find(i => i.system.originalName === name)
     if (!item) item = this.items.find(i => i.system.name === name)
@@ -3023,6 +3044,8 @@ export class GurpsActor extends Actor {
    * @returns {any[]} result.data - The checks
    * @returns {{integer}} result.size - The number of checks
    */
+  // NOTE: MIgrated. Now method GurpsActorV2#getChecks and
+  //  method CharacterModel#getChecks
   getChecks(checkType) {
     const quickRollSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
     if (!quickRollSettings[checkType]) {
@@ -3204,6 +3227,7 @@ export class GurpsActor extends Actor {
    * @param optionalArgs
    * @returns {Promise<boolean>}
    */
+  // NOTE: Migrated. Now method GurpsActorV2#addTaggedRollModifiers
   async addTaggedRollModifiers(chatThing, optionalArgs, attack) {
     let isDamageRoll = false
     const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
@@ -3357,8 +3381,8 @@ export class GurpsActor extends Actor {
     for (const userMod of allMods) {
       const userModsTags = (userMod.match(/#(\S+)/g) || []).map(it => it.slice(1).toLowerCase())
       for (const tag of userModsTags) {
-        let canApply = modifierTags.includes(tag)
         if (userMod.includes('#maneuver')) {
+          let canApply = modifierTags.includes(tag)
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
         if (optionalArgs.hasOwnProperty('itemPath')) {
@@ -3392,7 +3416,7 @@ export class GurpsActor extends Actor {
    * @param actorComp - Actor Component for the Action
    * @returns {boolean}
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now method GurpsActorV2#canConsumeAction
   canConsumeAction(action, chatThing, actorComp = {}) {
     if (!action && !chatThing) return false
     const settingsUseMaxActions = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
@@ -3426,7 +3450,7 @@ export class GurpsActor extends Actor {
    * @param {object} [actorComp] - Actor Component for the Action
    * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
    */
-  // NOTE: migrated
+  // NOTE: Migrated. Now GurpsActorV2#canRoll
   async canRoll(action, token, chatThing = '', actorComp = {}) {
     const isAttack = action.type === 'attack'
     const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
