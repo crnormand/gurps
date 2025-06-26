@@ -14,10 +14,7 @@ type ActorMetadata = Readonly<{
 
 /* ---------------------------------------- */
 
-class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> extends TypeDataModel<
-  Schema,
-  Actor.Implementation
-> {
+class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> extends TypeDataModel<Schema, Actor> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.SystemOfType<SubType>

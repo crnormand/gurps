@@ -62,7 +62,7 @@ import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
-import GurpsActiveEffect from './effects/active-effect.js'
+// import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import GurpsWiring from './gurps-wiring.js'
@@ -85,6 +85,7 @@ import { GurpsItemV2 } from './item/gurps-item.js'
 import { CharacterModel } from './actor/data/character.js'
 
 import { Action } from './action/index.js'
+import { ActiveEffect, GurpsActiveEffect } from './active-effect/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -127,6 +128,7 @@ if (!globalThis.GURPS) {
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
     Action,
+    ActiveEffect,
     Canvas,
     Combat,
     Damage,
@@ -1945,7 +1947,6 @@ if (!globalThis.GURPS) {
     // DamageChat.init()
 
     RegisterChatProcessors()
-    GurpsActiveEffect.init()
 
     // Add Debugger info
     GGADebugger.init()
