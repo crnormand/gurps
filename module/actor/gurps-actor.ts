@@ -7,8 +7,8 @@ import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntry } from './data/hit-location-entry.js'
-import { makeRegexPatternFrom } from 'lib/utilities.js'
-import { MeleeAttackModel, RangedAttackModel } from 'module/action/index.js'
+import { makeRegexPatternFrom } from '../../lib/utilities.js'
+import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
