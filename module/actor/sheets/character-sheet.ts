@@ -5,7 +5,7 @@ import { DeepPartial } from 'fvtt-types/utils'
 class GurpsCharacterSheet extends GurpsActorSheet {
   static override DEFAULT_OPTIONS: api.DocumentSheet.DefaultOptions = {
     tag: 'form',
-    classes: ['gurps2', 'actor-sheet'],
+    classes: ['character'],
   }
 
   /* ---------------------------------------- */
@@ -59,7 +59,7 @@ class GurpsCharacterSheet extends GurpsActorSheet {
 
   protected override async _prepareContext(
     options: DeepPartial<api.Application.RenderOptions> & { isFirstRender: boolean }
-  ): Promise<foundry.applications.sheets.ActorSheet.RenderContext> {
+  ) {
     const context = await super._prepareContext(options)
     console.log(context)
     return context

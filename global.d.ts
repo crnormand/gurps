@@ -46,6 +46,8 @@ declare module 'fvtt-types/configuration' {
 
   /* ---------------------------------------- */
 
+  /* ---------------------------------------- */
+
   interface ConfiguredItem<SubType extends Item.SubType> {
     document: GurpsItemV2<SubType>
   }
