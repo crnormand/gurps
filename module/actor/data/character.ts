@@ -1257,21 +1257,21 @@ const characterSchema = () => {
     }),
     basicmove: new fields.SchemaField({
       // NOTE: change from previous data model, uses number instead of string type as value is always a number
-      value: new fields.NumberField({ required: true, nullable: false }),
-      points: new fields.NumberField({ required: true, nullable: false }),
+      value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+      points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
     basicspeed: new fields.SchemaField({
       // NOTE: change from previous data model, uses number instead of string type as value is always a number
-      value: new fields.NumberField({ required: true, nullable: false }),
-      points: new fields.NumberField({ required: true, nullable: false }),
+      value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+      points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
-    frightcheck: new fields.NumberField({ required: true, nullable: false }),
-    hearing: new fields.NumberField({ required: true, nullable: false }),
-    tastesmell: new fields.NumberField({ required: true, nullable: false }),
-    vision: new fields.NumberField({ required: true, nullable: false }),
-    touch: new fields.NumberField({ required: true, nullable: false }),
+    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    vision: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    touch: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // Generic parry used for mooks
-    parry: new fields.NumberField({ required: true, nullable: false }),
+    parry: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: moved to derived property
     // currentmove: new fields.NumberField({ required: true, nullable: false }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
@@ -1338,7 +1338,7 @@ const characterSchema = () => {
         hand: new fields.StringField({ required: true, nullable: false }),
         skin: new fields.StringField({ required: true, nullable: false }),
         // NOTE: change from previous data model, uses number instead of string type as value is always a number
-        sizemod: new fields.NumberField({ required: true, nullable: false }),
+        sizemod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
         techlevel: new fields.StringField({ required: true, nullable: false }),
         createdon: new fields.StringField({ required: true, nullable: false }),
         modifiedon: new fields.StringField({ required: true, nullable: false }),
@@ -1349,15 +1349,15 @@ const characterSchema = () => {
 
     totalpoints: new fields.SchemaField(
       {
-        attributes: new fields.NumberField({ required: true, nullable: false }),
-        ads: new fields.NumberField({ required: true, nullable: false }),
-        disads: new fields.NumberField({ required: true, nullable: false }),
-        quirks: new fields.NumberField({ required: true, nullable: false }),
-        skills: new fields.NumberField({ required: true, nullable: false }),
-        spells: new fields.NumberField({ required: true, nullable: false }),
-        total: new fields.NumberField({ required: true, nullable: false }),
-        unspent: new fields.NumberField({ required: true, nullable: false }),
-        race: new fields.NumberField({ required: true, nullable: false }),
+        attributes: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        ads: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        disads: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        quirks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        skills: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        spells: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        total: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        unspent: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        race: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       },
       { required: true, nullable: false }
     ),

@@ -94,6 +94,7 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { Length } from './data/common/length.js'
+import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
@@ -2048,6 +2049,11 @@ if (!globalThis.GURPS) {
       foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
         // Add this sheet last
         label: 'Full (GCS)',
+        makeDefault: true,
+      })
+
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsCharacterSheet, {
+        label: 'Experimental',
         makeDefault: true,
       })
 
