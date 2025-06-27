@@ -13,7 +13,7 @@ import { MeleeAttackModel, RangedAttackModel } from 'module/action/index.js'
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
-  isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is ConfiguredActor<SubType>['document']
+  isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Actor.SubType)
   }
@@ -42,7 +42,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
       return (
-        (foundry.utils.getProperty(this, path) as ModelCollection<PseudoDocument>).get(id, { invalid, strict }) ?? null
+        // @ts-expect-error: TODO: Revise types so pseudo-document collections are evaluated as valid.
+        foundry.utils.getProperty(this, path).get(id, {
+          invalid,
+          strict,
+        }) ?? null
       )
     }
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
@@ -496,7 +500,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  findEquipmentByName(pattern: string, otherFirst = false): [ConfiguredItem<'equipment'>['document'], string] | null {
+  findEquipmentByName(pattern: string, otherFirst = false): [Item.OfType<'equipment'>, string] | null {
     if (!this.isOfType('character', 'enemy')) return null
 
     // Removed leading slashes
@@ -511,10 +515,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const carriedItem = this.system.equipment.carried.find(e => patterns.some(p => p.test(e.name)))
     const otherItem = this.system.equipment.other.find(e => patterns.some(p => p.test(e.name)))
 
-    const carriedResult: [ConfiguredItem<'equipment'>['document'], string] | null = carriedItem
+    const carriedResult: [Item.OfType<'equipment'>, string] | null = carriedItem
       ? [carriedItem ?? null, carriedItem.id ?? '']
       : null
-    const otherResult: [ConfiguredItem<'equipment'>['document'], string] | null = otherItem
+    const otherResult: [Item.OfType<'equipment'>, string] | null = otherItem
       ? [otherItem ?? null, otherItem.id ?? '']
       : null
 

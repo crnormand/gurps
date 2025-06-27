@@ -43,35 +43,52 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // Item collections
-  declare ads: ConfiguredItem<'feature'>['document'][]
-  declare skills: ConfiguredItem<'skill'>['document'][]
-  declare spells: ConfiguredItem<'spell'>['document'][]
+  ads: Item.OfType<'feature'>[] = []
+  skills: Item.OfType<'skill'>[] = []
+  spells: Item.OfType<'spell'>[] = []
   // FIXME: There is no note item type. Not sure what to do with this yet
-  // declare notes: ConfiguredItem<'feature'>[]
-  declare equipment: {
-    carried: ConfiguredItem<'equipment'>['document'][]
-    other: ConfiguredItem<'equipment'>['document'][]
-  }
-  declare allEquipment: ConfiguredItem<'equipment'>['document'][]
+  // notes: ConfiguredItem<'feature'>[]
+  equipment: {
+    carried: Item.OfType<'equipment'>[]
+    other: Item.OfType<'equipment'>[]
+  } = { carried: [], other: [] }
+  allEquipment: Item.OfType<'equipment'>[] = []
 
   /* ---------------------------------------- */
 
   // Derived properties
-  declare encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[]
-  declare liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema>
-  declare hitlocationNames: Record<string, HitLocationEntry>
+  encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[] = []
+  liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema> = {
+    basiclift: 0,
+    onehandedlift: 0,
+    twohandedlift: 0,
+    shove: 0,
+    runningshove: 0,
+    shiftslightly: 0,
+    carryonback: 0,
+  }
+  hitlocationNames: Record<string, HitLocationEntry> = {}
 
-  declare eqtsummary: {
+  eqtsummary: {
     eqtcost: number
     eqtlbs: number
     othercost: number
     otherlbs: number
+  } = {
+    eqtcost: 0,
+    eqtlbs: 0,
+    othercost: 0,
+    otherlbs: 0,
   }
 
-  declare defenses: {
+  defenses: {
     parry: { bonus: number }
     block: { bonus: number }
     dodge: { bonus: number }
+  } = {
+    parry: { bonus: 0 },
+    block: { bonus: 0 },
+    dodge: { bonus: 0 },
   }
 
   equippedparry: number = 0
@@ -345,14 +362,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     })
 
-    this.equippedparry = this.actor.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.component.parry) return acc
       const newParry = parseInt(attack.component.parry)
       if (newParry > acc) acc = newParry
       return acc
     }, 0)
 
-    this.equippedblock = this.actor.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.component.block) return acc
       const newblock = parseInt(attack.component.block)
       if (newblock > acc) acc = newblock
@@ -502,10 +519,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             let tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
             let message =
               game.i18n?.format(tag, {
-                name: this.actor.displayname,
+                name: this.parent.displayname,
                 pdfref: game.i18n.localize('GURPS.pdfReeling'),
               }) ?? ''
-            this.actor.sendChatMessage(message)
+            this.parent.sendChatMessage(message)
           }
         }
       }
@@ -519,10 +536,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             let tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
             let message =
               game.i18n?.format(tag, {
-                name: this.actor.displayname,
+                name: this.parent.displayname,
                 pdfref: game.i18n.localize('GURPS.pdfTired'),
               }) ?? ''
-            this.actor.sendChatMessage(message)
+            this.parent.sendChatMessage(message)
           }
         }
       }
@@ -531,12 +548,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
   /*  Accessors                               */
-  /* ---------------------------------------- */
-
-  get actor(): Actor.Implementation {
-    return this.parent as Actor.Implementation
-  }
-
   /* ---------------------------------------- */
 
   get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
@@ -728,11 +739,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  findTrait(name: string): ConfiguredItem<'feature'>['document'] | null {
+  findTrait(name: string): Item.OfType<'feature'> | null {
     return this.ads.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
-  findAdvantage(name: string): ConfiguredItem<'feature'>['document'] | null {
+  findAdvantage(name: string): Item.OfType<'feature'> | null {
     return this.findTrait(name)
   }
 
@@ -977,7 +988,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
       case 'attackChecks':
         checks.push(
-          ...this.actor.items
+          ...this.parent.items
             .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
               acc.push(...item.getItemAttacks())
               return acc
@@ -1008,7 +1019,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           }
           // TODO: implement getItemAttacks on actor
         )
-        this.actor.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+        this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
           const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
           const img = attack.img
           const otfName = attack.component.mode ? `"${attack.name} (${attack.component.mode})"` : `"${attack.name}"`

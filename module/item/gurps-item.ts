@@ -6,7 +6,7 @@ import { ModelCollection } from '../data/model-collection.js'
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
 
-  isOfType<SubType extends Item.SubType>(...types: SubType[]): this is ConfiguredItem<SubType>['document']
+  isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.OfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
   }
@@ -19,7 +19,12 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
-      return foundry.utils.getProperty(this, path).get(id, { invalid, strict }) ?? null
+      return (
+        (foundry.utils.getProperty(this, path) as ModelCollection<any>).get(id, {
+          invalid,
+          strict,
+        }) ?? undefined
+      )
     }
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
   }
@@ -36,7 +41,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
         `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
       )
     }
-    return foundry.utils.getProperty(this, collectionPath)
+    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
   }
 
   /* ---------------------------------------- */
