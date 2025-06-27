@@ -58,8 +58,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /*  Instance properties                     */
   /* ---------------------------------------- */
 
-  declare melee: MeleeAttackModel[]
-  declare ranged: RangedAttackModel[]
+  melee: MeleeAttackModel[] = []
+  ranged: RangedAttackModel[] = []
 
   /* ---------------------------------------- */
 

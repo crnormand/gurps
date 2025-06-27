@@ -13,7 +13,7 @@ import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
-import { GurpsActiveEffect } from 'module/active-effect/active-effect.js'
+import { GurpsActiveEffect } from 'module/active-effect/gurps-active-effect.ts'
 
 export { }
 
@@ -28,18 +28,20 @@ declare global {
           documentClass: typeof BaseAction
         }
       >
-      // HACK: to get rid of later. just used for TypedPseudoDocument.TYPEs at the moment
+      // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
       [key: string]: unknown
     }
   } & any
 
   /* ---------------------------------------- */
+}
 
+declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
-    Actor: typeof GurpsActorV2
-    Item: typeof GurpsItemV2
-    Combatant: typeof GurpsCombatant
-    ActiveEffect: typeof GurpsActiveEffect
+    Actor: typeof GurpsActorV2<Actor.SubType>
+    Item: typeof GurpsItemV2<Item.SubType>
+    Combatant: typeof GurpsCombatant<Combatant.SubType>
+    ActiveEffect: typeof GurpsActiveEffect<ActiveEffect.SubType>
   }
 
   /* ---------------------------------------- */
@@ -58,6 +60,7 @@ declare global {
     ActiveEffect: {
       gurps: {
         name: string
+        alt: string
         effect: {
           type: string
         }

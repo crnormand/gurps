@@ -1,4 +1,4 @@
-export class GurpsActiveEffect extends ActiveEffect {
+class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffect<SubType> {
   chatmessages: string[] = []
 
   /**
@@ -197,3 +197,7 @@ export class GurpsActiveEffect extends ActiveEffect {
   //   return false
   // }
 }
+
+/* ---------------------------------------- */
+
+export { GurpsActiveEffect }
