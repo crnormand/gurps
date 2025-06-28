@@ -1,12 +1,13 @@
-import { GcsBody } from './body.js'
 import fields = foundry.data.fields
+
+import { GcsAttribute } from './attribute.js'
+import { GcsBody } from './body.js'
 import { GcsElement } from './base.js'
-import { GcsTrait } from './trait.js'
 import { GcsEquipment } from './equipment.js'
 import { GcsNote } from './note.js'
 import { GcsSkill } from './skill.js'
 import { GcsSpell } from './spell.js'
-import { GcsAttribute } from './attribute.js'
+import { GcsTrait } from './trait.js'
 import { GcsWeapon } from './weapon.js'
 
 class GcsCharacter extends GcsElement<GcsCharacterModel> {

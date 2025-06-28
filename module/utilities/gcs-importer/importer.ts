@@ -44,9 +44,6 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   async #importCharacter() {
-    // Measure how long importing takes
-    const startTime = performance.now()
-
     const _id = foundry.utils.randomID()
     const type = 'character'
     const name = this.input.profile.name ?? 'Imported Character'
@@ -76,8 +73,6 @@ class GcsImporter {
       system: this.output as any,
       items: this.items as any,
     })
-
-    console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
   }
 
   /* ---------------------------------------- */
@@ -199,7 +194,7 @@ class GcsImporter {
         where: location.table_name ?? '',
         import: (location.calc.dr as Record<string, number>).all ?? 0,
         penalty: location.hit_penalty ?? 0,
-        roll: location.calc.roll_range ?? '-',
+        rollText: location.calc.roll_range ?? '-',
         split,
       }
 

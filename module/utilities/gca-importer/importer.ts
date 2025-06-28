@@ -43,9 +43,6 @@ class GcaImporter {
   /* ---------------------------------------- */
 
   async #importCharacter() {
-    // Measure how long importing takes
-    const startTime = performance.now()
-
     const _id = foundry.utils.randomID()
     const type = 'character'
     const name = this.input.name ?? 'Imported Character'
@@ -74,8 +71,6 @@ class GcaImporter {
       system: this.output as any,
       items: this.items as any,
     })
-
-    console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
   }
 
   /* ---------------------------------------- */
@@ -217,7 +212,7 @@ class GcaImporter {
       const newLocation: DataModel.CreateData<HitLocationSchema> = {
         where: location.name ?? '',
         import: parseInt(location.dr) ?? 0,
-        roll,
+        rollText: roll,
       }
 
       ;(this.output.hitlocations as DataModel.CreateData<HitLocationSchema>[]).push(newLocation)
