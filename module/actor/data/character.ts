@@ -1265,11 +1265,11 @@ const characterSchema = () => {
       value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
-    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    vision: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    touch: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.frightcheck' }),
+    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.hearing' }),
+    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.tastesmell' }),
+    vision: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.vision' }),
+    touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
     // Generic parry used for mooks
     parry: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: moved to derived property

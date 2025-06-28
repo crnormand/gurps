@@ -1,1 +1,20 @@
-<header>hey there</header>
+{{! Sheet Header }}
+<header class='sheet-header'>
+  <div class='header-center flexcol'>
+    <div class='document-name'>
+      {{#if isPlay}}
+        <h2>{{document.name}}</h2>
+      {{else}}
+        {{formInput fields.name name='name' value=document._source.name placeholder=(localize 'Name')}}
+      {{/if}}
+    </div>
+    {{#if isPlay}}
+      <span>{{system.traits.title}}</span>
+    {{else}}
+      {{formInput systemFields.traits.fields.title value=system.traits.title}}
+    {{/if}}
+  </div>
+  <div class='header-right flexcol'>
+    <h4>{{system.totalpoints.total}} {{localize 'GURPS.pointsTotal'}}</h4>
+  </div>
+</header>

@@ -4,7 +4,7 @@
 @use './styles/color-character-sheet.css';
 @use './styles/css_boilerplate.css';
 @use './styles/npc-input.css';
-@use './styles/simple.css';
+// @use './styles/simple.css';
 @use './styles/simplified.css';
 @use './styles/tinycolorpicker.css';
 
@@ -14,3 +14,5 @@
 @use 'styles/token-hud';
 @use 'styles/settings';
 @use 'styles/pdf';
+@use 'styles/simple';
+@use 'styles/character-sheet';
