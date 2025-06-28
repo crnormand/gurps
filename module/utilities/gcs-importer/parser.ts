@@ -21,10 +21,15 @@ async function importGCS() {
             ui.notifications?.error('No file selected for import.')
             return
           } else {
+            // Measure how long importing takes
+            const startTime = performance.now()
+
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
             const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
             await GcsImporter.importCharacter(char)
+
+            console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
           }
         },
       },
