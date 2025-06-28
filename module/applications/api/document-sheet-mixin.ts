@@ -1,5 +1,6 @@
 import { DeepPartial } from 'fvtt-types/utils'
 import api = foundry.applications.api
+import { constructHTMLButton } from '../../utilities/dom.js'
 
 /* ---------------------------------------- */
 
@@ -43,7 +44,7 @@ export default function <BaseClass extends api.DocumentSheet.AnyConstructor>(bas
       return this._mode === GurpsDocumentSheet.MODES.PLAY
     }
 
-    /* -------------------------------------------------- */
+    /* ---------------------------------------- */
 
     /**
      * Is this sheet in Edit Mode?
@@ -52,7 +53,33 @@ export default function <BaseClass extends api.DocumentSheet.AnyConstructor>(bas
       return this._mode === GurpsDocumentSheet.MODES.EDIT
     }
 
-    /* -------------------------------------------------- */
+    /* ---------------------------------------- */
+
+    /** @inheritdoc */
+    protected override async _renderFrame(options: DeepPartial<api.Application.RenderOptions>) {
+      const frame = await super._renderFrame(options)
+      const buttons = [
+        constructHTMLButton({
+          label: '',
+          classes: ['header-control', 'icon', 'fa-solid', 'fa-user-lock'],
+          dataset: { action: 'toggleMode', tooltip: 'GURPS.Sheet.ToggleMode' },
+        }),
+      ]
+
+      if ((this.document.system as any | undefined)?.source) {
+        buttons.push(
+          constructHTMLButton({
+            label: '',
+            classes: ['header-control', 'icon', 'fa-solid', 'fa-book'],
+            dataset: { action: 'updateSource', tooltip: 'GURPS.Sheet.UpdateSource' },
+          })
+        )
+      }
+      this.window.controls?.after(...buttons)
+
+      return frame
+    }
+    /* ---------------------------------------- */
 
     protected override async _prepareContext(
       options: DeepPartial<api.DocumentSheet.RenderOptions> & { isFirstRender: boolean }

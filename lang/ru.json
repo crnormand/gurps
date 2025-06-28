@@ -1,5 +1,14 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Персонаж",
+      "enemy": "Враг"
+    }
+  },
   "GURPS": {
+    "Sheet": {
+      "ToggleMode": "Переключить режим"
+    },
     "abbrevPoints": "Очк",
     "abbrevRef": "Ссыл",
     "abbrevReference": "Ссылка",

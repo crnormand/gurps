@@ -60,7 +60,7 @@ export class EffectModifierPopout extends Application {
     let sidebarLeft = x.parent().position().left
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/actor/effect-modifier-popout.hbs',
-      classes: ['sidebar-popout effect-modifiers-app'],
+      classes: ['sidebar-popout', 'effect-modifiers-app'],
       popOut: true,
       top: 0,
       width: 550,

@@ -1,5 +1,14 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Charakter",
+      "enemy": "Feind"
+    }
+  },
   "GURPS": {
+    "Sheet": {
+      "ToggleMode": "Modus wechseln"
+    },
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",

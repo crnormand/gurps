@@ -1,0 +1,99 @@
+.gurps2.sheet.character {
+  section.window-content {
+    // display: flex;
+    // flex-direction: column;
+
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    grid-template-areas:
+      'sidebar header'
+      'sidebar tabs'
+      'sidebar active';
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  aside[data-application-part='sidebar'] {
+    grid-area: sidebar;
+    border-right: 0.1rem solid var(--color-tabs-border);
+    padding-right: 0.5rem;
+  }
+
+  header[data-application-part='header'] {
+    grid-area: header;
+  }
+
+  header[data-application-part='tabs'] {
+    grid-area: tabs;
+    height: fit-content;
+  }
+
+  section.tab {
+    grid-area: active;
+  }
+
+  // Header
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 0.25rem;
+
+    .document-name {
+      max-height: 4rem;
+      line-height: 4rem;
+      h2 {
+        max-height: 100%;
+        max-width: 100%;
+        vertical-align: middle;
+        overflow: hidden;
+      }
+      h2,
+      input {
+        font-family: var(--font-h2);
+        font-size: var(--font-h2-size);
+        margin: 0;
+        border: 0;
+      }
+    }
+  }
+
+  // Profile image.
+  .profile-img {
+    width: 8.5rem;
+    border: 0.1rem solid var(--color-tabs-border);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  // Attributes
+  section.attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    hr {
+      margin: 0.25rem 0;
+    }
+
+    .form-group.attribute {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0.5rem;
+      width: 100%;
+
+      label {
+        align-self: center;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      input {
+        height: 1.75rem;
+        padding: 0.1rem;
+        min-width: 2rem;
+      }
+    }
+  }
+}
