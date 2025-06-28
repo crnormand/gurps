@@ -96,6 +96,7 @@ import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { Length } from './data/common/length.js'
 import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
+import { registerGurpsHandlebarsHelpers } from './utilities/handlebars.js'
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
@@ -143,6 +144,7 @@ if (!globalThis.GURPS) {
   AddChatHooks()
   JQueryHelpers()
   MoustacheWax()
+  registerGurpsHandlebarsHelpers()
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()

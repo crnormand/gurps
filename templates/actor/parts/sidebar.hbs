@@ -1,0 +1,71 @@
+<aside class='{{tab.classes}}'>
+  <img
+    class='profile-img'
+    src='{{document.img}}'
+    alt='{{document.name}}'
+    data-action='{{ifThen isPlay "showPortraitArtwork" "editImage"}}'
+    data-edit='img'
+    title='{{document.name}}'
+  />
+  <hr />
+  <section class='attributes'>
+    {{#each primaryAttributes}}
+      {{#if @root.isPlay}}
+        <div class='form-group attribute'>
+          <label>{{this.label}}</label>
+          <div class='form-fields'>
+            <button>{{this.value}}</button>
+          </div>
+        </div>
+      {{else}}
+        {{formGroup this.fields.import value=this.import label=this.label classes='attribute'}}
+      {{/if}}
+    {{/each}}
+    <hr />
+  </section>
+  <section class='attributes'>
+    {{#if isPlay}}
+      {{buttonGroup
+        systemFields.attributes.fields.WILL.fields.import
+        value=system.attributes.WILL.import
+        label='GURPS.attributesWILL'
+        classes='attribute'
+        localize=true
+      }}
+      {{buttonGroup systemFields.frightcheck value=system.frightcheck classes='attribute' localize=true}}
+      <hr />
+      {{buttonGroup
+        systemFields.attributes.fields.PER.fields.import
+        value=system.attributes.PER.import
+        label='GURPS.attributesPER'
+        classes='attribute'
+        localize=true
+      }}
+      {{buttonGroup systemFields.vision value=system.vision classes='attribute' localize=true}}
+      {{buttonGroup systemFields.hearing value=system.hearing classes='attribute' localize=true}}
+      {{buttonGroup systemFields.tastesmell value=system.tastesmell classes='attribute' localize=true}}
+      {{buttonGroup systemFields.touch value=system.touch classes='attribute' localize=true}}
+    {{else}}
+      {{formGroup
+        systemFields.attributes.fields.WILL.fields.import
+        value=system.attributes.WILL.import
+        label='GURPS.attributesWILL'
+        classes='attribute'
+        localize=true
+      }}
+      {{formGroup systemFields.frightcheck value=system.frightcheck classes='attribute' localize=true}}
+      <hr />
+      {{formGroup
+        systemFields.attributes.fields.PER.fields.import
+        value=system.attributes.PER.import
+        label='GURPS.attributesPER'
+        classes='attribute'
+        localize=true
+      }}
+      {{formGroup systemFields.vision value=system.vision classes='attribute' localize=true}}
+      {{formGroup systemFields.hearing value=system.hearing classes='attribute' localize=true}}
+      {{formGroup systemFields.tastesmell value=system.tastesmell classes='attribute' localize=true}}
+      {{formGroup systemFields.touch value=system.touch classes='attribute' localize=true}}
+    {{/if}}
+  </section>
+</aside>
