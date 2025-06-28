@@ -21,12 +21,16 @@ async function importGCA() {
             ui.notifications?.error('No file selected for import.')
             return
           } else {
+            // Measure how long importing takes
+            const startTime = performance.now()
+
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
             const xmlTest = new DOMParser().parseFromString(text, 'application/xml')
             const gca5File = GCA5.fromXML(xmlTest)
-            console.log(gca5File.character[0])
             await GcaImporter.importCharacter(gca5File.character[0])
+
+            console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
           }
         },
       },
