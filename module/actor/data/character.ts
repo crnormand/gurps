@@ -1275,9 +1275,9 @@ const characterSchema = () => {
     // NOTE: moved to derived property
     // currentmove: new fields.NumberField({ required: true, nullable: false }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    thrust: new fields.StringField({ required: true, nullable: false }),
+    thrust: new fields.StringField({ required: true, nullable: false, label: 'GURPS.thrust' }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    swing: new fields.StringField({ required: true, nullable: false }),
+    swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
 
     // NOTE: these properties no longer exists in the schema as their value is always derived.
     // They have been replaced with a class property which is updated during data preparation

@@ -9,6 +9,10 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     actions: {
       toggleMode: this.#toggleMode,
     },
+    position: {
+      width: 675,
+      height: 700,
+    },
   }
 
   /* ---------------------------------------- */
