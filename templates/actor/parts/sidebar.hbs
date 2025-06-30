@@ -22,8 +22,6 @@
       {{/if}}
     {{/each}}
     <hr />
-  </section>
-  <section class='attributes'>
     {{#if isPlay}}
       {{buttonGroup
         systemFields.attributes.fields.WILL.fields.import
@@ -66,6 +64,14 @@
       {{formGroup systemFields.hearing value=system.hearing classes='attribute' localize=true}}
       {{formGroup systemFields.tastesmell value=system.tastesmell classes='attribute' localize=true}}
       {{formGroup systemFields.touch value=system.touch classes='attribute' localize=true}}
+    {{/if}}
+    <hr />
+    {{#if isPlay}}
+      {{buttonGroup systemFields.thrust value=system.thrust classes='attribute' localize=true}}
+      {{buttonGroup systemFields.swing value=system.swing classes='attribute' localize=true}}
+    {{else}}
+      {{formGroup systemFields.thrust value=system.thrust classes='attribute' localize=true}}
+      {{formGroup systemFields.swing value=system.swing classes='attribute' localize=true}}
     {{/if}}
   </section>
 </aside>
