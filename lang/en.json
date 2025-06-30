@@ -7,7 +7,8 @@
   },
   "GURPS": {
     "Sheet": {
-      "ToggleMode": "Toggle Mode"
+      "ToggleMode": "Toggle Mode",
+      "SpeedRangeTable": "Speed/Range Table"
     },
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",

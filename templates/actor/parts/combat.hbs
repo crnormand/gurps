@@ -1,3 +1,66 @@
 <section class='tab {{tab.cssClass}}' data-group='primary' data-tab='combat'>
-  COMBAT
+  <div class='flexrow'>
+    <div class='flexcol'>
+      <!-- TODO: come back to  -->
+      <fieldset>
+        <legend>{{localize 'GURPS.Sheet.SpeedRangeTable'}}</legend>
+        <table>
+          <tr>
+            <th>Measure</th>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+            <td>8</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <th>Modifier</th>
+            <td>+1</td>
+            <td>+2</td>
+            <td>+3</td>
+            <td>+4</td>
+            <td>+5</td>
+            <td>+6</td>
+            <td>+7</td>
+            <td>+8</td>
+            <td>+9</td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+    <div class='flexcol'>
+      <fieldset>
+        <legend>{{localize 'GURPS.conditions'}}</legend>
+        <!-- Maneuver -->
+        <div class='form-group'>
+          <label>{{localize 'GURPS.maneuver'}}</label>
+          <div class='form-fields'>
+            <select>
+              <option><img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+                {{localize 'GURPS.maneuverReady'}}
+              </option>
+              <option><img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+                {{localize 'GURPS.maneuverReady'}}
+              </option>
+              <option><img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+                {{localize 'GURPS.maneuverReady'}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Posture -->
+        <div class='form-group'>
+          <label>{{localize 'GURPS.modifierPosture'}}</label>
+          <div class='form-fields'>
+          </div>
+        </div>
+
+      </fieldset>
+    </div>
+  </div>
 </section>
