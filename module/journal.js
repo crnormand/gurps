@@ -3,7 +3,9 @@ import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
   static ready() {
+    // renderJournalEntrySheet or renderJournalEntryPageSheet or renderJournalEntryPageTextSheet
     Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalPageSheet)
+    Hooks.on('renderJournalEntryPageTextSheet', GurpsJournalEntry._renderJournalPageSheet)
     //    Hooks.on('getJournalSheetEntryContext', GurpsJournalEntry._getJournalSheetEntryContext)
     //    Hooks.on('renderJournalSheet', GurpsJournalEntry._renderJournalSheet)
   }
@@ -13,10 +15,13 @@ export default class GurpsJournalEntry {
    * @param {JQuery<HTMLElement>} html
    * @param {*} _options
    */
-  static _renderJournalPageSheet(app, html, options) {
+  static _renderJournalPageSheet(app, html, document, options) {
+    if (!app.isView) return
+
+    // crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to display HTML
     setTimeout(() => {
-      // crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to display HTML
-      if (options.editable) return
+      if (html instanceof HTMLElement) html = $(html)
+
       let h = html.parent().find('.journal-page-content')
       if (!!h && h.length > 0) {
         GurpsWiring.hookupAllEvents(html)
@@ -47,7 +52,7 @@ export default class GurpsJournalEntry {
         html
           .parent()
           .parent()
-          .on('drop', event => dropHandler(event, app, options))
+          .on('drop', event => dropHandler(event, app, document))
       }
     }, 10)
   }
