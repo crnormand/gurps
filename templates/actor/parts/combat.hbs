@@ -1,10 +1,15 @@
 <section class='tab {{tab.cssClass}}' data-group='primary' data-tab='combat'>
   <div class='flexrow'>
     <div class='flexcol'>
-      <!-- TODO: come back to  -->
-      <fieldset>
-        <legend>{{localize 'GURPS.Sheet.SpeedRangeTable'}}</legend>
-        <table>
+      <table>
+        <thead>
+          <tr>
+            <th colspan='100'>
+              {{localize 'GURPS.Sheet.SpeedRangeTable'}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
           <tr>
             <th>Measure</th>
             <td>1</td>
@@ -29,8 +34,77 @@
             <td>+8</td>
             <td>+9</td>
           </tr>
-        </table>
-      </fieldset>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <!-- Melee Attacks -->
+      <table>
+        <thead>
+          <tr>
+            <th>{{localize 'GURPS.meleeWeapons'}}</th>
+            <th>{{localize 'GURPS.usage'}}</th>
+            <th>{{localize 'GURPS.level'}}</th>
+            <th>{{localize 'GURPS.parry'}}</th>
+            <th>{{localize 'GURPS.block'}}</th>
+            <th>{{localize 'GURPS.damage'}}</th>
+            <th>{{localize 'GURPS.reach'}}</th>
+            <th>{{localize 'GURPS.attributesST'}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.melee}}
+            <tr class='draggable'>
+              <td>{{this.component.name}}</td>
+              <td>{{this.component.mode}}</td>
+              <td>{{this.component.level}}</td>
+              <td>{{this.component.parry}}</td>
+              <td>{{this.component.block}}</td>
+              <td>{{this.component.damage}}</td>
+              <td>{{this.component.reach}}</td>
+              <td>{{this.component.st}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <!-- Ranged Attacks -->
+      <table>
+        <thead>
+          <tr>
+            <th>{{localize 'GURPS.rangedWeapons'}}</th>
+            <th>{{localize 'GURPS.usage'}}</th>
+            <td>{{this.component.level}}</td>
+            <th>{{localize 'GURPS.acc'}}</th>
+            <th>{{localize 'GURPS.damage'}}</th>
+            <th>{{localize 'GURPS.range'}}</th>
+            <th>{{localize 'GURPS.rof'}}</th>
+            <th>{{localize 'GURPS.shots'}}</th>
+            <th>{{localize 'GURPS.bulk'}}</th>
+            <th>{{localize 'GURPS.rcl'}}</th>
+            <th>{{localize 'GURPS.attributesST'}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.ranged}}
+            <tr class='draggable'>
+              <td>{{this.component.name}}</td>
+              <td>{{this.component.mode}}</td>
+              <td>{{this.component.level}}</td>
+              <td>{{this.component.acc}}</td>
+              <td>{{this.component.damage}}</td>
+              <td>{{this.component.range}}</td>
+              <td>{{this.component.rof}}</td>
+              <td>{{this.component.shots}}</td>
+              <td>{{this.component.bulk}}</td>
+              <td>{{this.component.rcl}}</td>
+              <td>{{this.component.st}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
     </div>
     <div class='flexcol'>
       <fieldset>
@@ -39,17 +113,14 @@
         <div class='form-group'>
           <label>{{localize 'GURPS.maneuver'}}</label>
           <div class='form-fields'>
-            <select>
-              <option><img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-                {{localize 'GURPS.maneuverReady'}}
-              </option>
-              <option><img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-                {{localize 'GURPS.maneuverReady'}}
-              </option>
-              <option><img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-                {{localize 'GURPS.maneuverReady'}}
-              </option>
-            </select>
+            <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+            <div class='palette maneuvers' data-palette='maneuvers'>
+              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+            </div>
           </div>
         </div>
 

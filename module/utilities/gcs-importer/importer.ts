@@ -306,7 +306,23 @@ class GcsImporter {
   #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
 
-    system.actions = item.weaponItems?.map((action: GcsWeapon) => this.#importWeapon(action, item)) ?? []
+    system.actions = item.weaponItems
+      ?.map((action: GcsWeapon) => this.#importWeapon(action, item))
+      .reduce(
+        (
+          acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
+          weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
+        ) => {
+          if (!weapon._id || typeof weapon._id !== 'string') {
+            console.error('GURPS | Failed to import weapon: No _id set.')
+            console.error(weapon)
+            return acc
+          }
+          acc[weapon._id] = weapon
+          return acc
+        },
+        {}
+      )
 
     if (item instanceof GcsEquipment) {
       system.equipped = item.equipped ?? false
@@ -334,17 +350,17 @@ class GcsImporter {
     const blockbonus = this.input.calc.parry_bonus ?? 0
 
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
-      name: item.name ?? '',
-      notes: weapon.usage_notes ?? '',
+      name: item.name || '',
+      notes: weapon.usage_notes || '',
       pageref: '',
-      mode: weapon.usage ?? '',
-      import: weapon.calc.level,
+      mode: weapon.usage || '',
+      import: weapon.calc.level || 0,
       damage: weapon.calc.damage,
-      st: weapon.calc.strength ?? weapon.strength,
-      reach: weapon.calc.reach ?? weapon.reach,
-      parry: weapon.calc.parry ?? weapon.parry,
+      st: weapon.calc.strength || weapon.strength,
+      reach: weapon.calc.reach || weapon.reach,
+      parry: weapon.calc.parry || weapon.parry,
       parrybonus,
-      block: weapon.calc.block ?? weapon.block,
+      block: weapon.calc.block || weapon.block,
       blockbonus,
     }
 
@@ -352,9 +368,11 @@ class GcsImporter {
       name,
       type,
       _id,
-      ...component,
+      mel: component,
     }
   }
+
+  /* ---------------------------------------- */
 
   #importRangedWeapon(weapon: GcsWeapon, item: AnyGcsItem): DataModel.CreateData<RangedAttackSchema> {
     const name = weapon.usage ?? ''
@@ -364,17 +382,17 @@ class GcsImporter {
     const halfd = weapon.range?.includes('/') ? weapon.range.split('/')[0] : '0'
 
     const component: DataModel.CreateData<RangedAttackComponentSchema> = {
-      name: item.name ?? '',
-      notes: weapon.usage_notes ?? '',
+      name: item.name || '',
+      notes: weapon.usage_notes || '',
       pageref: '',
-      mode: weapon.usage ?? '',
+      mode: weapon.usage || '',
       import: weapon.calc.level,
       damage: weapon.calc.damage,
-      st: weapon.calc.strength ?? weapon.strength,
-      acc: weapon.calc.accuracy ?? weapon.accuracy,
-      shots: weapon.calc.shots ?? weapon.shots,
-      range: weapon.calc.range ?? weapon.range,
-      rcl: weapon.calc.recoil ?? weapon.recoil,
+      st: weapon.calc.strength || weapon.strength,
+      acc: weapon.calc.accuracy || weapon.accuracy,
+      shots: weapon.calc.shots || weapon.shots,
+      range: weapon.calc.range || weapon.range,
+      rcl: weapon.calc.recoil || weapon.recoil,
       halfd,
     }
 
@@ -382,7 +400,7 @@ class GcsImporter {
       name,
       type,
       _id,
-      ...component,
+      rng: component,
     }
   }
 

@@ -153,7 +153,9 @@ class PseudoDocument<
     const embeds = this.metadata.embedded ?? {}
     if (embeddedName in embeds) {
       const path = embeds[embeddedName]
-      return foundry.utils.getProperty(this, path).get(id, { invalid, strict }) ?? null
+      return (
+        (foundry.utils.getProperty(this, path) as ModelCollection<PseudoDocument>).get(id, { invalid, strict }) ?? null
+      )
     }
     return null
   }
@@ -170,7 +172,7 @@ class PseudoDocument<
         `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
       )
     }
-    return foundry.utils.getProperty(this, collectionPath)
+    return foundry.utils.getProperty(this, collectionPath) as ModelCollection
   }
 
   /* ---------------------------------------- */
@@ -197,7 +199,7 @@ class PseudoDocument<
     // @ts-expect-error: TODO: revise parent types
     const fieldPath = this.parent.constructor.metadata.embedded[docName]
     const parent = this.parent instanceof foundry.abstract.TypeDataModel ? this.parent.parent : this.parent
-    const source = foundry.utils.getProperty(parent._source, fieldPath)
+    const source = foundry.utils.getProperty(parent._source, fieldPath) as AnyObject
     if (foundry.utils.getType(source) !== 'Object') {
       throw new Error('Source is not an object!')
     }

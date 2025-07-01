@@ -120,9 +120,9 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   override prepareDerivedData(): void {
     super.prepareDerivedData()
 
-    for (const attack of [...this.melee, ...this.ranged]) {
-      attack.prepareDerivedData()
-    }
+    this.actions.forEach(action => {
+      action.prepareDerivedData()
+    })
   }
 
   /* ---------------------------------------- */

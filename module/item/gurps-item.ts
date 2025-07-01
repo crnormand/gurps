@@ -94,11 +94,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
     switch (options.attackType) {
       case 'melee':
-        return actions.filter(item => item.type === 'meleeAtk') as MeleeAttackModel[]
+        return actions.filter(item => item.type === 'meleeAttack') as MeleeAttackModel[]
       case 'ranged':
-        return actions.filter(item => item.type === 'rangedAtk') as RangedAttackModel[]
+        return actions.filter(item => item.type === 'rangedAttack') as RangedAttackModel[]
       case 'both':
-        return actions.filter(item => ['meleeAtk', 'rangedAtk'].includes(item.type)) as (
+        return actions.filter(item => ['meleeAttack', 'rangedAttack'].includes(item.type)) as (
           | MeleeAttackModel
           | RangedAttackModel
         )[]

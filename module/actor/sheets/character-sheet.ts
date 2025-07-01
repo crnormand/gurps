@@ -1,9 +1,9 @@
 import { GurpsActorSheet } from './actor-sheet.js'
 import api = foundry.applications.api
-import { DeepPartial } from 'fvtt-types/utils'
+import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 class GurpsCharacterSheet extends GurpsActorSheet {
-  static override DEFAULT_OPTIONS: api.DocumentSheet.DefaultOptions = {
+  static override DEFAULT_OPTIONS: api.DocumentSheet.DefaultOptions & AnyObject = {
     tag: 'form',
     classes: ['character'],
     actions: {
@@ -118,13 +118,10 @@ class GurpsCharacterSheet extends GurpsActorSheet {
   }
 
   /* ---------------------------------------- */
-
-  /* ---------------------------------------- */
   /*  Actions                                 */
   /* ---------------------------------------- */
 
   /**
-   *
    * Toggle Edit vs. Play mode
    * @param event   The originating click event
    * @param target   The capturing HTML element which defined a [data-action]
@@ -136,6 +133,14 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     }
     this._mode = this.isPlayMode ? GurpsCharacterSheet.MODES.EDIT : GurpsCharacterSheet.MODES.PLAY
     this.render()
+  }
+
+  protected override async _onRender(
+    context: DeepPartial<api.Application.RenderContext>,
+    options: DeepPartial<api.Application.RenderOptions>
+  ): Promise<void> {
+    super._onRender(context, options)
+    GURPS.SetLastActor(this.document)
   }
 }
 
