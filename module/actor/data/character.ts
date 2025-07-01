@@ -54,6 +54,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   } = { carried: [], other: [] }
   allEquipment: Item.OfType<'equipment'>[] = []
 
+  // Action collections
+  melee: MeleeAttackModel[] = []
+  ranged: RangedAttackModel[] = []
+
   /* ---------------------------------------- */
 
   // Derived properties
@@ -166,6 +170,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       carried: equipment.filter(item => item.system.carried === true),
       other: equipment.filter(item => item.system.carried === false),
     }
+
+    this.melee = this.parent.getItemAttacks({ attackType: 'melee' })
+    this.ranged = this.parent.getItemAttacks({ attackType: 'ranged' })
 
     this.#prepareEquipmentSummary()
   }

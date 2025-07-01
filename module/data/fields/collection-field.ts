@@ -70,6 +70,8 @@ class CollectionField<
   // @ts-expect-error: types haven't quite caught up
   const PersistedType extends AnyObject | null | undefined = CollectionField.PersistedType<Element, Options>,
 > extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {
+  /* ---------------------------------------- */
+
   constructor(model: Model, options?: Options, context?: fields.DataField.ConstructionContext) {
     let field = foundry.utils.isSubclass(model, TypedPseudoDocument)
       ? (new LazyTypedSchemaField(model.TYPES) as unknown as Element)

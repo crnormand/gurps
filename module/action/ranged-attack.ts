@@ -44,7 +44,10 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
-    if (otf === '') return
+    if (otf === '') {
+      this.component.level = this.component.import
+      return
+    }
 
     // Remove extraneous brackets
     otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
@@ -133,7 +136,7 @@ type RangedAttackSchema = BaseActionSchema & ReturnType<typeof rangedAttackSchem
 const rangedAttackComponentSchema = () => {
   return {
     // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false }),
+    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: no longer persistent data, always derived from import value
     // level: new fields.NumberField({ required: true, nullable: false }),
     damage: new fields.StringField({ required: true, nullable: false }),
@@ -151,7 +154,7 @@ const rangedAttackComponentSchema = () => {
     otf: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
-    extraAttacks: new fields.NumberField({ required: true, nullable: false }),
+    extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
   }
 }
