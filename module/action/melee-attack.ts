@@ -45,7 +45,10 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
-    if (otf === '') return
+    if (otf === '') {
+      this.component.level = this.component.import
+      return
+    }
 
     // Remove extraneous brackets
     otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
@@ -148,25 +151,25 @@ type MeleeAttackSchema = BaseActionSchema & ReturnType<typeof meleeAttackSchema>
 const meleeAttackComponentSchema = () => {
   return {
     // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false }),
+    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: no longer persistent data, always derived from import value
     // level: new fields.NumberField({ required: true, nullable: false }),
     damage: new fields.StringField({ required: true, nullable: false }),
     st: new fields.StringField({ required: true, nullable: false }),
     mode: new fields.StringField({ required: true, nullable: false }),
-    weight: new fields.NumberField({ required: true, nullable: false }),
-    techlevel: new fields.NumberField({ required: true, nullable: false }),
+    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    techlevel: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     cost: new fields.StringField({ required: true, nullable: false }),
     reach: new fields.StringField({ required: true, nullable: false }),
     parry: new fields.StringField({ required: true, nullable: false }),
-    parrybonus: new fields.NumberField({ required: true, nullable: false }),
-    baseParryPenalty: new fields.NumberField({ required: true, nullable: false }),
+    parrybonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    baseParryPenalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     block: new fields.StringField({ required: true, nullable: false }),
-    blockbonus: new fields.NumberField({ required: true, nullable: false }),
+    blockbonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     otf: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
-    extraAttacks: new fields.NumberField({ required: true, nullable: false }),
+    extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
   }
 }

@@ -14,7 +14,9 @@ class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> 
       tracker.value = parseInt(template.initialValue) || 0
       if (isNaN(tracker.value)) {
         // try to use initialValue as a path to another value
-        tracker.value = foundry.utils.getProperty(actor, 'system.' + template.initialValue) ?? template.tracker.value
+        tracker.value =
+          // TODO: verify this works
+          Number(foundry.utils.getProperty(actor, 'system.' + template.initialValue)) ?? template.tracker.value
       }
     }
 
