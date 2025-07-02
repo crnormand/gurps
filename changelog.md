@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.2
+
+### Bugfixes
+
+- Mook Attacks Not Working #2333
+
 ## Release 0.18.1 06/21/2025
 
 ### Features
