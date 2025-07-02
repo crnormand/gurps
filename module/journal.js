@@ -16,7 +16,9 @@ export default class GurpsJournalEntry {
    * @param {*} _options
    */
   static _renderJournalPageSheet(app, html, document, options) {
-    if (!app.isView) return
+    if ((game.release?.generation ?? 12) >= 13) {
+      if (!app.isView) return
+    } else if (document.isEditable) return
 
     // crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to display HTML
     setTimeout(() => {
