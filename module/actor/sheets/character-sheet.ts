@@ -8,6 +8,7 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     classes: ['character'],
     actions: {
       toggleMode: this.#toggleMode,
+      applyGlobalModifier: this.#applyGlobalModifier,
     },
     position: {
       width: 675,
@@ -84,6 +85,16 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     GurpsCharacterSheet.MODES.PLAY
 
   /* ---------------------------------------- */
+
+  protected override async _onRender(
+    context: DeepPartial<api.Application.RenderContext>,
+    options: DeepPartial<api.Application.RenderOptions>
+  ): Promise<void> {
+    super._onRender(context, options)
+    GURPS.SetLastActor(this.document)
+  }
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
@@ -92,12 +103,31 @@ class GurpsCharacterSheet extends GurpsActorSheet {
   ) {
     const context = await super._prepareContext(options)
 
+    console.log(this.tabGroups)
+
     Object.assign(context, {
+      tabGroups: this.tabGroups,
       systemFields: this.document.system.schema.fields,
+      // Used for range table in combat tab
+      ranges: GURPS.rangeObject.ranges,
       ...this._prepareAttributes(),
     })
 
     console.log(context)
+    return context
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _preparePartContext(
+    partId: string,
+    // HACK: Render context doesn't seem to be defined correctly,
+    // TODO: deal with later.
+    context: api.Application.RenderContextOf<this> & any,
+    _options: DeepPartial<api.HandlebarsApplicationMixin.RenderOptions>
+  ): Promise<api.Application.RenderContextOf<this>> {
+    if (partId in context.tabs) context.tab = context.tabs[partId]
+
     return context
   }
 
@@ -126,21 +156,25 @@ class GurpsCharacterSheet extends GurpsActorSheet {
    * @param event   The originating click event
    * @param target   The capturing HTML element which defined a [data-action]
    */
-  static async #toggleMode(this: GurpsCharacterSheet, event: PointerEvent, target: HTMLElement) {
+  static async #toggleMode(this: GurpsCharacterSheet, _event: PointerEvent, _target: HTMLElement) {
     if (!this.isEditable) {
-      console.error("You can't switch to Edit mode if the sheet is uneditable")
+      console.error("GURPS | You can't switch to Edit mode if the sheet is uneditable")
       return
     }
     this._mode = this.isPlayMode ? GurpsCharacterSheet.MODES.EDIT : GurpsCharacterSheet.MODES.PLAY
     this.render()
   }
 
-  protected override async _onRender(
-    context: DeepPartial<api.Application.RenderContext>,
-    options: DeepPartial<api.Application.RenderOptions>
-  ): Promise<void> {
-    super._onRender(context, options)
-    GURPS.SetLastActor(this.document)
+  /* ---------------------------------------- */
+
+  // TODO: Disconnect applying global modifiers from parselink or any OTF functionality.
+  // We should be able to ascertain what a function does from within the function.
+  // This is a long-term goal. - MT
+  static async #applyGlobalModifier(this: GurpsCharacterSheet, event: PointerEvent, target: HTMLElement) {
+    const otfAction = GURPS.parselink(target.innerText, target.dataset.comment ?? '').action
+    if (!otfAction) return
+
+    return GURPS.performAction(otfAction, this.document, event)
   }
 }
 

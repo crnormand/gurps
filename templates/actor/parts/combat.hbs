@@ -5,39 +5,37 @@
         <thead>
           <tr>
             <th colspan='100'>
-              {{localize 'GURPS.Sheet.SpeedRangeTable'}}
+              {{localize 'GURPS.Sheet.SpeedRangeTable.Title'}}
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <th>Measure</th>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-            <td>8</td>
-            <td>9</td>
+            <th>
+              {{localize 'GURPS.Sheet.SpeedRangeTable.Measure'}}
+            </th>
+            {{#each ranges}}
+              <td>{{this.max}}</td>
+            {{/each}}
           </tr>
           <tr>
-            <th>Modifier</th>
-            <td>+1</td>
-            <td>+2</td>
-            <td>+3</td>
-            <td>+4</td>
-            <td>+5</td>
-            <td>+6</td>
-            <td>+7</td>
-            <td>+8</td>
-            <td>+9</td>
+            <th>
+              {{localize 'GURPS.Sheet.SpeedRangeTable.Modifier'}}
+            </th>
+            {{#each ranges}}
+              <td>
+                <button
+                  data-action='applyGlobalModifier'
+                  data-modifier='{{this.penalty}}'
+                  data-comment='{{this.moddesc}}'
+                >
+                  {{this.penalty}}
+                </button>
+              </td>
+            {{/each}}
           </tr>
         </tbody>
       </table>
-
-      <hr />
 
       <!-- Melee Attacks -->
       <table>
@@ -113,14 +111,7 @@
         <div class='form-group'>
           <label>{{localize 'GURPS.maneuver'}}</label>
           <div class='form-fields'>
-            <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-            <div class='palette maneuvers' data-palette='maneuvers'>
-              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-              <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
-            </div>
+
           </div>
         </div>
 
