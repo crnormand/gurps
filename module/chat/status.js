@@ -200,7 +200,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   async toggleTokenEffect(token, effect, actionText) {
     if (!!effect) {
-      await token.actor.toggleStatusEffect(effect)
+      await token.actor.toggleStatusEffect(effect.id)
       let actor = /** @type {GurpsActor} */ (token.actor)
       // TODO We need to turn this into a single string, instead of multiple localized strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.

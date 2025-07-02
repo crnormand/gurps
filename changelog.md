@@ -1,6 +1,32 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.1
+## Release 0.18.2 07/02/2025
+
+### Bugfixes
+
+- Some fields are not imported when importing a GCS equipment library #2327
+- Mook Attacks Not Working #2333
+- PDF links in journals do not work in GGA 0.18.1 and Foundry v13 #2329
+- On The Fly Formulas writen in Journals don't work in GGA 0.18.1 #2332
+
+## Release 0.18.1 06/21/2025
+
+### Features
+
+- Added move limit indicators to token drag ruler (v13 only) #2294
+- Allow "Breakpoints" to be set on a resource tracker (partially fixes #2168)
+
+### Bugfixes
+
+- SemanticVersion.toString does not show pre-release data or build metadata #2297
+- Effect Modifier Control does not show in the canvas controls #2296
+- Effect Modifier Pop-out shows some modifiers twice #2296
+- Maneuvers are not removed from actors when their tokens are deleted #2295
+- Cannot set maneuvers via the TokenHUD in v13 #2290
+- Melee attacks are not clickable in the Quick Roll Menu #2287
+- Resource Tracker templates cannot be reset to the 'unassigned' slot #2285
+- Setting posture via /st command does not work #2306
+- Setting PDF Page Offset and PDF Book Code in new PDF Journals is not possible under v13 #2308
 
 ## Release 0.18.0-a 05/23/2025 (FNORD!)
 

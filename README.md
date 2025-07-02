@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-## Current Release Version 0.18.0-a
+## Current Release Version 0.18.2
 
 Compatible with FoundryVTT v12.x AND **v13.x**!
 

@@ -647,15 +647,17 @@ async function _doRoll({
   } catch {}
 
   if (
+    game.settings.get('core', 'rollMode') === 'blindroll' ||
     !!optionalArgs.blind ||
     !!optionalArgs.event?.blind ||
     isCtrl ||
     (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {
     messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(u => u.id)
-    // messageData.blind = true  // possibly not used anymore
-    creatOptions.rollMode = 'blindroll' // new for V9
+    messageData.blind = true
   }
+
+  creatOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
 
   messageData.sound = CONFIG.sounds.dice
   ChatMessage.create(messageData, creatOptions)

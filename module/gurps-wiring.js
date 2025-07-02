@@ -1,6 +1,5 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import { handleOnPdf } from './pdf-refs.js'
 import GgaContextMenu from './utilities/contextmenu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
@@ -20,7 +19,7 @@ export default class GurpsWiring {
     html.find('.glinkmod').on('click', GurpsWiring.chatClickGmod)
     html.find('.glinkmodplus').on('click', GurpsWiring.chatClickGmod)
     html.find('.glinkmodminus').on('click', GurpsWiring.chatClickGmod)
-    html.find('.pdflink').on('click', handleOnPdf)
+    html.find('.pdflink').on('click', GURPS.modules.Pdf.handleOnPdf)
 
     // Make any OtF element draggable
     html.find('[data-otf]').each((_, li) => {

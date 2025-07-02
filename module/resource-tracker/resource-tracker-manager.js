@@ -1,27 +1,11 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
+import { SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export class ResourceTrackerManager extends FormApplication {
-  static initSettings() {
-    game.settings.registerMenu(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_DEFAULT_EDITOR, {
-      name: game.i18n.localize('GURPS.resourceTemplateManager'),
-      hint: game.i18n.localize('GURPS.resourceTemplateHint'),
-      label: game.i18n.localize('GURPS.resourceTemplateButton'),
-      type: ResourceTrackerManager,
-      restricted: true,
-    })
-
-    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES, {
-      name: game.i18n.localize('GURPS.resourceTemplateTitle'),
-      scope: 'world',
-      config: false,
-      type: Object,
-      default: ResourceTrackerManager.getDefaultTemplates(),
-      onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
-    })
-  }
-
+  /**
+   * @returns {Record<string, ResourceTrackerTemplate>}
+   */
   static getDefaultTemplates() {
     return {
       '0000': {
@@ -46,48 +30,69 @@ export class ResourceTrackerManager extends FormApplication {
             {
               comparison: '≥',
               operator: '×',
-              value: 0.5,
+              value: 0.1,
               condition: game.i18n.localize('GURPS.grapplingGrabbed'),
               color: '#eeee30',
             },
             {
               comparison: '≥',
               operator: '×',
-              value: 1,
+              value: 0.5,
               condition: game.i18n.localize('GURPS.grapplingGrappled'),
               color: '#eeaa30',
             },
             {
               comparison: '≥',
               operator: '×',
-              value: 1.5,
+              value: 1.0,
               condition: game.i18n.localize('GURPS.grapplingRestrained'),
               color: '#ee5000',
             },
             {
               comparison: '≥',
               operator: '×',
-              value: 2,
+              value: 1.5,
               condition: game.i18n.localize('GURPS.grapplingControlled'),
               color: '#ee0000',
             },
             {
               comparison: '≥',
               operator: '×',
-              value: 2,
+              value: 2.0,
               condition: game.i18n.localize('GURPS.grapplingPinned'),
               color: '#900000',
             },
           ],
         },
         initialValue: 'attributes.ST.value',
+        slot: false,
       },
     }
   }
 
+  /**
+   * Retrieves all resource tracker templates from the settings.
+   * @returns {ResourceTrackerTemplate[]}
+   */
   static getAllTemplates() {
-    let templates = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES) || {}
-    return objectToArray(templates)
+    const settings = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES)
+    const templates = objectToArray(settings || {})
+    return templates
+  }
+
+  /**
+   * Retrieves templates that are required but not currently present in the provided trackers.
+   * @returns {ResourceTrackerTemplate[]}
+   */
+  static getMissingRequiredTemplates(currentTrackers) {
+    const newTrackers = []
+    const templates = ResourceTrackerManager.getAllTemplates().filter(t => t.autoapply)
+    for (const template of templates) {
+      if (!currentTrackers.some(t => t.name === template.tracker.name)) {
+        newTrackers.push(template)
+      }
+    }
+    return newTrackers
   }
 
   /**
@@ -97,17 +102,18 @@ export class ResourceTrackerManager extends FormApplication {
   constructor(options = {}) {
     super(options)
 
+    /** @type {import('./types.js').ResourceTrackerTemplate[]} */
     this._templates = ResourceTrackerManager.getAllTemplates()
   }
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'tracker-manager',
-      template: 'systems/gurps/templates/actor/tracker-manager.hbs',
+      template: 'systems/gurps/templates/resource-tracker/tracker-manager.hbs',
       resizable: false,
       minimizable: false,
       width: 520,
-      height: 368,
+      height: 'auto',
       title: game.i18n.localize('GURPS.resourceTemplateManager'),
       closeOnSubmit: true,
     })
@@ -139,7 +145,7 @@ export class ResourceTrackerManager extends FormApplication {
           min: 0,
           value: 0,
         },
-        slot: '',
+        slot: false,
         initialValue: '',
       })
       this.render(true)
@@ -153,8 +159,7 @@ export class ResourceTrackerManager extends FormApplication {
 
     html.find('[name="name"]').click(async ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
-      let data = JSON.stringify(this._templates[index].tracker)
-      let dialog = new ResourceTrackerEditor(JSON.parse(data))
+      let dialog = new ResourceTrackerEditor(JSON.parse(JSON.stringify(this._templates[index].tracker)))
       let defaultClose = dialog.close
 
       let tracker = await new Promise((resolve, reject) => {
@@ -199,20 +204,10 @@ export class ResourceTrackerManager extends FormApplication {
       this.render(true)
     })
 
-    html.find('[name="tracker-instance"]').change(ev => {
+    html.find('[name="autoapply"]').change(ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
-      let value = ev.currentTarget.value
-
-      // verify that it is unique
-      if (this._validate(index, value)) {
-        this._templates[index].slot = value
-      } else {
-        ui.notifications.warn(
-          game.i18n.format('GURPS.slotNotUnique', {
-            value: value,
-          })
-        )
-      }
+      let value = ev.currentTarget.checked
+      this._templates[index].autoapply = value
       this.render(true)
     })
 
@@ -222,20 +217,13 @@ export class ResourceTrackerManager extends FormApplication {
     })
   }
 
-  _validate(index, value) {
-    return this._templates
-      .filter(it => !!it.slot)
-      .filter((it, idx) => idx != index)
-      .every(it => it.slot !== value)
-  }
-
   /**
    * @override
    */
-  _updateObject() {
+  async _updateObject() {
     // convert the array into an object:
     let data = arrayToObject(this._templates)
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_TRACKER_TEMPLATES, data)
+    game.settings.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, data)
 
     // remove all resources from the two objects:
     let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([k, v]) => !!v.resource)

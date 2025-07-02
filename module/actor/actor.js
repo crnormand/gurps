@@ -15,6 +15,7 @@ import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { GurpsItem } from '../item.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
@@ -31,7 +32,6 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -1171,37 +1171,41 @@ export class GurpsActor extends Actor {
    * Adds any assigned resource trackers to the actor data and sheet.
    */
   async setResourceTrackers() {
-    // find those with non-blank slots
-    let templates = ResourceTrackerManager.getAllTemplates()
-      .filter(it => !!it.slot)
-      .filter(it => it.slot !== 'none')
+    /** @type {TrackerInstance[]} */
+    const currentTrackers = GurpsActor.getTrackersAsArray(this.system)
 
-    for (const template of templates) {
-      // find the matching data on this actor
-      let index = zeroFill(template.slot, 4)
-      let path = `additionalresources.tracker.${index}`
-      let tracker = foundry.utils.getProperty(this, 'system.' + path)
+    /** @type {ResourceTrackerTemplate[]} */
+    const newTrackers = ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
 
-      while (!tracker) {
-        await this.addTracker()
-        tracker = foundry.utils.getProperty(this, 'system.' + path)
-      }
+    // If no new trackers were added, nothing to do.
+    if (newTrackers.length === 0) return
 
-      // skip if already set
-      if (!!tracker && tracker.name === template.tracker.name) {
-        return
-      }
-
-      // if not blank, don't overwrite
-      if (!!tracker && !!tracker.name) {
-        ui.notifications?.warn(
-          `Will not overwrite Tracker ${template.slot} as its name is set to ${tracker.name}. Create Tracker for ${template.tracker.name} failed.`
-        )
-        return
-      }
-
-      await this.applyTrackerTemplate(path, template)
+    for (const template of newTrackers) {
+      this._initializeTrackerValues(template)
+      currentTrackers.push(template.tracker)
     }
+
+    const data = arrayToObject(currentTrackers)
+
+    // Remove all trackers first. Add the new "array" of trackers.
+    if (data) {
+      await this.update({ 'system.additionalresources.-=tracker': null })
+      await this.update({ 'system.additionalresources.tracker': data })
+    }
+  }
+
+  _initializeTrackerValues(template) {
+    let value = template.tracker.value
+    if (!!template.initialValue) {
+      value = parseInt(template.initialValue, 10)
+      if (Number.isNaN(value)) {
+        // try to use initialValue as a path to another value
+        value = foundry.utils.getProperty(this, 'system.' + template.initialValue) ?? template.tracker.value
+      }
+    }
+
+    template.tracker.max = value
+    template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
   }
 
   /**
@@ -1210,23 +1214,12 @@ export class GurpsActor extends Actor {
    * @param {*} template to apply
    */
   async applyTrackerTemplate(path, template) {
-    // is there an initializer? If so calculate its value
-    let value = template.tracker.value
-    if (!!template.initialValue) {
-      value = parseInt(template.initialValue, 10)
-      if (Number.isNaN(value)) {
-        // try to use initialValue as a path to another value
-        value = foundry.utils.getProperty(this, 'system.' + template.initialValue)
-      }
-    }
-    template.tracker.max = value
-    template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
+    this._initializeTrackerValues(template)
 
     // remove whatever is there
     await this.clearTracker(path)
 
     // add the new tracker
-    /** @type {{ [key: string]: any }} */
     let update = {}
     update[`system.${path}`] = template.tracker
     await this.update(update)
@@ -1309,7 +1302,7 @@ export class GurpsActor extends Actor {
   }
 
   get trackersByName() {
-    // Convert this.system.hitlocations into an object keyed by location.where.
+    // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
     const byName = {}
     for (const [_key, value] of Object.entries(this.system.additionalresources.tracker ?? {})) {
       byName[`${value.name}`] = value
@@ -1513,7 +1506,7 @@ export class GurpsActor extends Actor {
 
   _forceRender() {
     this.ignoreRender = false
-    this.render(true)
+    this.render()
   }
 
   // Drag and drop from an equipment list

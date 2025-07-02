@@ -91,10 +91,10 @@ export default class DamageChat {
 
   /**
    * Create the damage chat message.
-   * @param {GurpsActor|User} actor that rolled the damage.
+   * @param {Actor<"base" | ModuleSubtype>|User} actor that rolled the damage.
    * @param {String} diceText such as '3d-1(2)'
    * @param {String} damageType text from DamageTables.damageTypeMap
-   * @param {JQuery.Event|null} event that triggered this action
+   * @param {Event|null} event that triggered this action
    * @param {String|null} overrideDiceText ??
    * @param {String[]|undefined} tokenNames
    * @param {String|null} extdamagetype
@@ -433,7 +433,8 @@ export default class DamageChat {
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
-    ChatMessage.create(messageData)
+
+    ChatMessage.create(messageData, { rollMode: game.settings.get('core', 'rollMode') })
   }
 
   static async _calculateAndSelectTargets(canvas, dropData) {

@@ -3,9 +3,10 @@ import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
   static ready() {
+    // Foundry v12
     Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalPageSheet)
-    //    Hooks.on('getJournalSheetEntryContext', GurpsJournalEntry._getJournalSheetEntryContext)
-    //    Hooks.on('renderJournalSheet', GurpsJournalEntry._renderJournalSheet)
+    // Foundry v13
+    Hooks.on('renderJournalEntryPageTextSheet', GurpsJournalEntry._renderJournalPageSheet)
   }
 
   /**
@@ -13,10 +14,19 @@ export default class GurpsJournalEntry {
    * @param {JQuery<HTMLElement>} html
    * @param {*} _options
    */
-  static _renderJournalPageSheet(app, html, options) {
+  static _renderJournalPageSheet(app, html, document, options) {
+    if ((game.release?.generation ?? 12) >= 13) {
+      if (!app.isView) return
+    } else if (document.isEditable) return
+
+    // Crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to
+    //  display HTML.
+    // TODO: Not sure this timeout is necessary; the only thing that depends on parent is setting the dropHandler.
+    //  Maybe there is a better way to do this?
     setTimeout(() => {
-      // crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to display HTML
-      if (options.editable) return
+      // TODO: Convert to native HTML, not JQuery.
+      if (html instanceof HTMLElement) html = $(html)
+
       let h = html.parent().find('.journal-page-content')
       if (!!h && h.length > 0) {
         GurpsWiring.hookupAllEvents(html)
@@ -47,7 +57,7 @@ export default class GurpsJournalEntry {
         html
           .parent()
           .parent()
-          .on('drop', event => dropHandler(event, app, options))
+          .on('drop', event => dropHandler(event, app, document))
       }
     }, 10)
   }

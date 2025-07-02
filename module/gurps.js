@@ -27,8 +27,6 @@ import {
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
-import ManeuverHUDButton from './actor/maneuver-button.js'
-import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -37,7 +35,6 @@ import { GurpsItemSheet } from './item-sheet.js'
 import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -71,28 +68,31 @@ import { GlobalActiveEffectDataControl } from './effects/global-active-effect-da
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
-import { PDFEditorSheet } from './pdf/edit.js'
-import { GurpsJournalEntryPage } from './pdf/index.js'
 import { TokenActions } from './token-actions.js'
 import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
-import * as Canvas from './canvas/index.js'
-import * as Combat from './combat/index.js'
-import * as Damage from './damage/index.js'
-import * as Token from './token/index.js'
-import * as UI from './ui/index.js'
+import { Canvas } from './canvas/index.js'
+import { Combat } from './combat/index.js'
+import { Damage } from './damage/index.js'
+import { Length } from './data/common/length.js'
+import { Pdf } from './pdf/index.js'
+import { ResourceTracker } from './resource-tracker/index.js'
+import { Token } from './token/index.js'
+import { UI } from './ui/index.js'
 
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
+  GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
+  GURPS.Length = Length
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -110,11 +110,17 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
-  Canvas.init() // Initialize the Canvas module
-  Combat.init() // Initialize the Combat module
-  Damage.init() // Initialize the Damage module
-  Token.init() // Initialize the Token module
-  UI.init() // Initialize the UI module
+  /** @type {{ [key: string]: GurpsModule }} */
+  GURPS.modules = {
+    Canvas,
+    Combat,
+    Damage,
+    Pdf,
+    ResourceTracker,
+    Token,
+    UI,
+  }
+  Object.values(GURPS.modules).forEach(mod => mod.init())
 
   AddChatHooks()
   JQueryHelpers()
@@ -123,20 +129,19 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  //CONFIG.debug.hooks = true;
+  // CONFIG.debug.hooks = true;
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
 
   // Use the target d6 icon for rolltable entries
-  //CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
+  // CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
   CONFIG.time.roundTime = 1
 
   GURPS.StatusEffect = new StatusEffect()
 
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
-  GURPS.SJGProductMappings = SJGProductMappings
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
   // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
@@ -244,7 +249,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.PARSELINK_MAPPINGS = PARSELINK_MAPPINGS
-  GURPS.SJGProductMappings = SJGProductMappings
   GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
   GURPS.findTracker = findTracker
 
@@ -449,7 +453,7 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn('no link was parsed for the pdf')
         return false // if there's no link action fails
       }
-      handlePdf(action.link)
+      GURPS.modules.Pdf.handlePdf(action.link)
       return true
     },
 
@@ -911,9 +915,10 @@ if (!globalThis.GURPS) {
         blind: action.blindroll,
         event,
         obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-        followon: followon,
+        followon,
         text: '',
       }
+      if ('itemPath' in action) opt.itemPath = action.itemPath
       let targetmods = []
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
@@ -1009,9 +1014,7 @@ if (!globalThis.GURPS) {
      *
      * @param {GurpsActor|null} data.actor
      * @param {JQuery.Event|null} data.event
-     * @param {boolean} data.calcOnly
      */
-    // ['weapon-parry']({ action, actor, event, _calcOnly }) {
     ['weapon-parry']({ action, actor, event }) {
       if (!actor) {
         ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
@@ -1280,6 +1283,7 @@ if (!globalThis.GURPS) {
     if (['attribute', 'skill-spell'].includes(action.type)) {
       action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
     }
+
     return !action
       ? false
       : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
@@ -1421,6 +1425,7 @@ if (!globalThis.GURPS) {
    */
   async function handleRoll(event, actor, options) {
     event.preventDefault()
+
     let formula = ''
     let targetmods = null
     let element = event.currentTarget
@@ -1433,6 +1438,11 @@ if (!globalThis.GURPS) {
     let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
     if (!!actor) GURPS.SetLastActor(actor)
 
+    const blindroll =
+      event.ctrlKey ||
+      game.settings.get('core', 'rollMode') === 'blindroll' ||
+      (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
+
     if ('damage' in element.dataset) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
       let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
@@ -1444,7 +1454,7 @@ if (!globalThis.GURPS) {
         if (result?.action) {
           if (options?.combined && result.action.type == 'damage')
             result.action.formula = multiplyDice(result.action.formula, options.combined)
-          performAction(result.action, actor, event, options?.targets)
+          performAction({ ...result.action, blindroll }, actor, event, options?.targets)
         }
       }
       return
@@ -1454,7 +1464,7 @@ if (!globalThis.GURPS) {
       opt.itemPath = `@${path}`
 
       const item = foundry.utils.getProperty(actor, path)
-      if ('level' in item) target = item.level
+      if (item && 'level' in item) target = item.level
       opt.obj = item
 
       let srcid = !!actor ? '@' + actor.id + '@' : ''
@@ -1463,6 +1473,8 @@ if (!globalThis.GURPS) {
         const parsedLink = GURPS.parselink(element.dataset.otf)
         if ('action' in parsedLink) action = parsedLink.action
         chatthing = '[' + srcid + element.dataset.otf + ']'
+        action.itemPath = opt.itemPath
+        return performAction({ ...action, blindroll }, actor, event, options?.targets)
       }
     } else if ('path' in element.dataset) {
       let srcid = !!actor ? '@' + actor.id + '@' : ''
@@ -1524,7 +1536,7 @@ if (!globalThis.GURPS) {
     }
 
     await doRoll({
-      action,
+      action: { ...action, blindroll },
       actor,
       formula,
       targetmods,
@@ -1585,26 +1597,6 @@ if (!globalThis.GURPS) {
     return game.i18n.localize('GURPS.' + path)
   }
   GURPS._mapAttributePath = _mapAttributePath
-
-  /**
-   *   A user has clicked on a "gurpslink", so we can assume that it previously qualified as a "gurpslink"
-   *  and followed the On-the-Fly formulas. As such, we may already have an action block (base 64 encoded so we can handle
-   *  any text).  If not, we will just re-parse the text looking for the action block.
-   *
-   * @param {JQuery.MouseEventBase} event
-   * @param {GurpsActor | null} actor
-   * @param {string | null} desc
-   * @param {string[] | undefined} targets
-   */
-  // function handleGurpslink(event, actor, desc, targets) {
-  //   event.preventDefault()
-  //   let element = event.currentTarget
-  //   let action = element.dataset.action // If we have already parsed
-  //   if (!!action) action = JSON.parse(atou(action))
-  //   else action = parselink(element.innerText, desc).action
-  //   GURPS.performAction(action, actor, event, targets)
-  // }
-  // GURPS.handleGurpslink = handleGurpslink
 
   // So it can be called from a script macro
   GURPS.genkey = zeroFill
@@ -1893,6 +1885,7 @@ if (!globalThis.GURPS) {
     ChatMessage.create(msgData)
   }
 
+  // TODO: Move to the combat module.
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
     let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
     if (!formula) {
@@ -1957,7 +1950,6 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
-    CONFIG.JournalEntryPage.documentClass = GurpsJournalEntryPage
 
     // add custom ActiveEffectConfig sheet class
     // COMPATIBILITY: v12
@@ -1994,55 +1986,43 @@ if (!globalThis.GURPS) {
     // Register sheet application classes
     // COMPATIBILITY: v12
     if (game.release.generation >= 13) {
-      Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-      Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+      foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
         label: 'Combat',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
         label: 'Editor',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
         label: 'Simple',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
         label: 'NPC/mini',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsInventorySheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
         label: 'Inventory Only',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorTabSheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
         label: 'Tabbed Sheet',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
         label: 'Reduced Mode',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorSheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
         // Add this sheet last
         label: 'Full (GCS)',
         makeDefault: true,
       })
 
-      Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-      Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-
-      foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-        JournalEntryPage,
-        'core',
-        foundry.applications.sheets.journal.JournalEntryPagePDFSheet
-      )
-
-      foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
-        types: ['pdf'],
-        makeDefault: true,
-        label: 'GURPS PDF Editor Sheet',
-      })
+      foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
+      foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
     } else {
       Actors.unregisterSheet('core', ActorSheet)
       Actors.registerSheet('gurps', GurpsActorCombatSheet, {
@@ -2081,14 +2061,6 @@ if (!globalThis.GURPS) {
 
       Items.unregisterSheet('core', ItemSheet)
       Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-
-      DocumentSheetConfig.unregisterSheet(JournalEntryPage, 'core', JournalPDFPageSheet)
-
-      DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
-        types: ['pdf'],
-        makeDefault: true,
-        label: 'GURPS PDF Editor Sheet',
-      })
     }
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
@@ -2097,9 +2069,6 @@ if (!globalThis.GURPS) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
     })
-
-    // @ts-ignore
-    Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 
     Hooks.on('renderActorDirectory', (app, html, context) => {
       // Add the Import Multiple Actors button to the Actors tab.
@@ -2183,7 +2152,6 @@ if (!globalThis.GURPS) {
     })
 
     GURPS.ActorSheets = { character: GurpsActorSheet }
-    GURPS.handlePdf = handlePdf
 
     Hooks.call('gurpsinit', GURPS)
   })
@@ -2196,7 +2164,6 @@ if (!globalThis.GURPS) {
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
 
-    ResourceTrackerManager.initSettings()
     HitLocation.ready()
 
     // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
@@ -2217,6 +2184,9 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
+    Object.values(GURPS.modules).forEach(mod => {
+      if (mod.migrate) mod.migrate()
+    })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.
@@ -2238,21 +2208,6 @@ if (!globalThis.GURPS) {
     }
 
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
-
-    // get all aliases defined in the resource tracker templates and register them as damage types
-    let resourceTrackers = ResourceTrackerManager.getAllTemplates()
-      .filter(it => !!it.tracker.isDamageType)
-      .filter(it => !!it.tracker.alias)
-      .map(it => it.tracker)
-    resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
-    resourceTrackers.forEach(
-      it =>
-        (GURPS.DamageTables.woundModifiers[it.alias] = {
-          multiplier: 1,
-          label: it.name,
-          resource: true,
-        })
-    )
 
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return
@@ -2595,15 +2550,18 @@ if (!globalThis.GURPS) {
       GurpsWiring.hookupAllEvents(html)
     })
 
+    // TODO: Move to the combat module?  We could have a method in combat that allows other modules to request hooks into the Combat system.
     Hooks.on('combatStart', async combat => {
       console.log(`Combat started: ${combat.id} - resetting token actions`)
       await resetTokenActions(combat)
     })
 
+    // TODO: Move to the combat module.
     Hooks.on('combatRound', async (combat, round) => {
       await handleCombatTurn(combat, round)
     })
 
+    // TODO: Move to the combat module.
     Hooks.on('combatTurn', async (combat, turn, combatant) => {
       await handleCombatTurn(combat, turn)
     })

@@ -47,11 +47,8 @@ export class EffectModifierControl {
 
   _registerSetting() {
     game.settings.register(SYSTEM_NAME, EffectModifierControl.SETTING_SHOW_EFFECTMODIFIERS, {
-      name: game.i18n.localize('GURPS.settingTokenToolsShowEffectMods', 'Show Effect Modifiers'),
-      hint: game.i18n.localize(
-        'GURPS.settingHintTokenToolsShowEffectMods',
-        'Enable the token Effect Modifiers popup window.'
-      ),
+      name: game.i18n.localize('GURPS.settingTokenToolsShowEffectMods'),
+      hint: game.i18n.localize('GURPS.settingHintTokenToolsShowEffectMods'),
       scope: 'client',
       config: true,
       type: Boolean,
@@ -62,10 +59,10 @@ export class EffectModifierControl {
 
   _createEffectModifierButton(controls) {
     if (this.shouldUseEffectModifierPopup()) {
-      let tokenButton = controls.tokens
+      // COMPATIBILITY: v12
+      const tokenButton = game.release.generation >= 13 ? controls.tokens : controls.find(c => c.name === 'token')
       if (tokenButton) {
-        let self = this
-        tokenButton.tools[EffectModifierControl.EffectModName] = {
+        const newButton = {
           name: EffectModifierControl.EffectModName,
           title: game.i18n.localize('GURPS.tokenToolsTitle'),
           icon: 'fas fa-list-alt',
@@ -73,9 +70,16 @@ export class EffectModifierControl {
           active: this.showPopup,
           visible: true,
           onChange: value => {
-            console.log(value)
-            self.showPopup = value
+            GURPS.EffectModifierControl.showPopup = value
           },
+          onClick: value => {
+            GURPS.EffectModifierControl.showPopup = value
+          },
+        }
+        if (game.release.generation >= 13) {
+          tokenButton.tools[EffectModifierControl.EffectModName] = newButton
+        } else {
+          tokenButton.tools.push(newButton)
         }
       }
     }
@@ -84,14 +88,12 @@ export class EffectModifierControl {
   _updatedActiveEffect(effect, _, __) {
     let effectID = effect?.parent.id
     let sharedStateID = this.token?.actor.id
-    console.debug(`updated ActiveEffect: effect id: ${effectID}, token actor id: ${sharedStateID}`)
     if (effect?.parent.id === this.token?.actor.id) this._ui.render(false)
   }
 
   _updateToken(tokenDocument) {
     let tokenID = tokenDocument.object?.id
     let sharedStateID = this.token?.id
-    console.debug(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
     if (tokenDocument.object === this.token) this._ui.render(false)
   }
 
