@@ -21,7 +21,7 @@ export default class GurpsJournalEntry {
 
     // Crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to
     //  display HTML.
-    // TODO: Not sure this timeout is necessary; the only think that depends on parent is setting the dropHandler.
+    // TODO: Not sure this timeout is necessary; the only thing that depends on parent is setting the dropHandler.
     //  Maybe there is a better way to do this?
     setTimeout(() => {
       // TODO: Convert to native HTML, not JQuery.
