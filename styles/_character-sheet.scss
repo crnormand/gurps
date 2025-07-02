@@ -124,4 +124,29 @@
       position: absolute;
     }
   }
+
+  // Image select test
+  .image-select {
+    position: relative;
+    display: inline-block;
+  }
+  .image-select-dropdown {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    background: #222;
+    border: 1px solid #555;
+    padding: 5px;
+  }
+  .image-select.open .image-select-dropdown {
+    display: block;
+  }
+  .image-option {
+    cursor: pointer;
+    padding: 2px;
+  }
+  .image-option img {
+    width: 32px;
+    height: 32px;
+  }
 }
