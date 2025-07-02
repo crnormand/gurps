@@ -3,11 +3,10 @@ import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
   static ready() {
-    // renderJournalEntrySheet or renderJournalEntryPageSheet or renderJournalEntryPageTextSheet
+    // Foundry v12
     Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalPageSheet)
+    // Foundry v13
     Hooks.on('renderJournalEntryPageTextSheet', GurpsJournalEntry._renderJournalPageSheet)
-    //    Hooks.on('getJournalSheetEntryContext', GurpsJournalEntry._getJournalSheetEntryContext)
-    //    Hooks.on('renderJournalSheet', GurpsJournalEntry._renderJournalSheet)
   }
 
   /**
@@ -20,8 +19,12 @@ export default class GurpsJournalEntry {
       if (!app.isView) return
     } else if (document.isEditable) return
 
-    // crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to display HTML
+    // Crazy hack... html is NOT displayed yet, so you can't find the Journal Page. Must delay to allow other thread to
+    //  display HTML.
+    // TODO: Not sure this timeout is necessary; the only think that depends on parent is setting the dropHandler.
+    //  Maybe there is a better way to do this?
     setTimeout(() => {
+      // TODO: Convert to native HTML, not JQuery.
       if (html instanceof HTMLElement) html = $(html)
 
       let h = html.parent().find('.journal-page-content')
