@@ -4,9 +4,10 @@
 
 ### Bugfixes
 
+- Mook Attacks Not Working #2333
 - PDF links in journals do not work in GGA 0.18.1 and Foundry v13 #2329
 - On The Fly Formulas writen in Journals don't work in GGA 0.18.1 #2332
-  
+
 ## Release 0.18.1 06/21/2025
 
 ### Features
