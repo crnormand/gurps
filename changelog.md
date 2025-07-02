@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.2
+
+### Bugfixes
+
+- Some fields are not imported when importing a GCS equipment library #2327
+
 ## Release 0.18.1 06/21/2025
 
 ### Features
