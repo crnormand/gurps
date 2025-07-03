@@ -94,7 +94,6 @@ import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
-import { Length } from './data/common/length.js'
 import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
 import { registerGurpsHandlebarsHelpers } from './utilities/handlebars.js'
 export let GURPS = undefined

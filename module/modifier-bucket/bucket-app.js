@@ -385,9 +385,7 @@ class ModifierStack {
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
-// export class ModifierBucket extends foundry.appv1.api.Application {
-// COMPATIBILITY: v12
-export class ModifierBucket extends Application {
+export class ModifierBucket extends foundry.appv1.api.Application {
   constructor(options = {}) {
     super(options)
 
@@ -835,56 +833,48 @@ export class ModifierBucket extends Application {
     if (!element || !element[0]) return
     const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
-    if (game.release.generation >= 13) {
-      if (positionSetting === 'left') {
-        const hotbar = document.getElementById('hotbar')
-        const playerList = document.getElementById('players-active')
+    if (positionSetting === 'left') {
+      const hotbar = document.getElementById('hotbar')
+      const playerList = document.getElementById('players-active')
 
-        if (!hotbar || !playerList) {
-          // Can't adjust position if there is no #hotbar or #players-active element
-          return
-        }
-
-        const hotbarOffset = parseFloat(hotbar.style.getPropertyValue('--offset')) || '0px'
-        const playerListTop = window.innerHeight - playerList.getBoundingClientRect().top
-        const playersIsOverlapping =
-          playerList.getBoundingClientRect().right > element[0].getBoundingClientRect().left + hotbarOffset
-
-        if (playersIsOverlapping) {
-          element[0].style.marginBottom = `${playerListTop + 16}px`
-        } else {
-          element[0].style.marginBottom = `16px`
-        }
-
-        element[0].style.setProperty('--offset', `${hotbarOffset}px`)
-      } else {
-        const chatBox = document.getElementById('chat-message')
-        // Can't adjust position if there is no #chat-message element
-        if (!chatBox) return
-
-        const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
-
-        const uiRight = document.getElementById('ui-right-column-1')
-        if (!uiRight) {
-          // Can't adjust position if there is no #ui-right element
-          return
-        }
-        const uiRightWidth = uiRight.getBoundingClientRect().width
-
-        if (chatBoxIsFloating) {
-          const chatBoxTop = window.innerHeight - chatBox.getBoundingClientRect().top
-          element[0].style.marginBottom = `${chatBoxTop + 16}px`
-          element[0].style.setProperty('--offset', `${uiRightWidth}px`)
-        } else {
-          element[0].style.marginBottom = `16px`
-          element[0].style.setProperty('--offset', `${uiRightWidth + 50}px`)
-        }
+      if (!hotbar || !playerList) {
+        // Can't adjust position if there is no #hotbar or #players-active element
+        return
       }
-    } else {
-      if (positionSetting === 'left') {
-        element[0].style.setProperty('transform', 'translate(30px,-10px)')
+
+      const hotbarOffset = parseFloat(hotbar.style.getPropertyValue('--offset')) || '0px'
+      const playerListTop = window.innerHeight - playerList.getBoundingClientRect().top
+      const playersIsOverlapping =
+        playerList.getBoundingClientRect().right > element[0].getBoundingClientRect().left + hotbarOffset
+
+      if (playersIsOverlapping) {
+        element[0].style.marginBottom = `${playerListTop + 16}px`
       } else {
-        element[0].style.setProperty('transform', 'translate(-10px,-10px)')
+        element[0].style.marginBottom = `16px`
+      }
+
+      element[0].style.setProperty('--offset', `${hotbarOffset}px`)
+    } else {
+      const chatBox = document.getElementById('chat-message')
+      // Can't adjust position if there is no #chat-message element
+      if (!chatBox) return
+
+      const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
+
+      const uiRight = document.getElementById('ui-right-column-1')
+      if (!uiRight) {
+        // Can't adjust position if there is no #ui-right element
+        return
+      }
+      const uiRightWidth = uiRight.getBoundingClientRect().width
+
+      if (chatBoxIsFloating) {
+        const chatBoxTop = window.innerHeight - chatBox.getBoundingClientRect().top
+        element[0].style.marginBottom = `${chatBoxTop + 16}px`
+        element[0].style.setProperty('--offset', `${uiRightWidth}px`)
+      } else {
+        element[0].style.marginBottom = `16px`
+        element[0].style.setProperty('--offset', `${uiRightWidth + 50}px`)
       }
     }
   }
@@ -912,19 +902,14 @@ export class ModifierBucket extends Application {
     const bucketExists = !!document.querySelector('#modifierbucket')
     if (!bucketExists) {
       const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
-      if (game.release.generation >= 13) {
-        if (position === 'left') {
-          const hotbar = document.querySelector('#hotbar')
-          hotbar.parentNode.insertBefore($html[0], hotbar)
-        } else {
-          const uiRight = document.querySelector('#ui-right')
-          uiRight.prepend($html[0])
-        }
-        this.refreshPosition($html)
+      if (position === 'left') {
+        const hotbar = document.querySelector('#hotbar')
+        hotbar.parentNode.insertBefore($html[0], hotbar)
       } else {
-        document.querySelector('#ui-bottom > div').append($html[0])
-        if (position === 'left') document.querySelector('#ui-bottom > div').style.justifyContent = 'flex-start'
+        const uiRight = document.querySelector('#ui-right')
+        uiRight.prepend($html[0])
       }
+      this.refreshPosition($html)
       this._element = $html
     } else {
       console.warn('GURPS | ModifierBucket: _injectHTML called, but bucket already exists.')
