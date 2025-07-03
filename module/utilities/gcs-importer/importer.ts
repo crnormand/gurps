@@ -586,9 +586,10 @@ class GcsImporter {
     equipped: boolean
   ): DataModel.CreateData<EquipmentComponentSchema> {
     const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importBaseComponent(equipment)
+
     Object.assign(component, {
       count: equipment.quantity ?? 1,
-      weight: equipment.calc.weight,
+      weight: parseInt(equipment.calc.weight) ?? 0,
       cost: equipment.calc.value ?? 0,
       location: '',
       carried: true,
@@ -599,7 +600,7 @@ class GcsImporter {
       weightsum: equipment.calc.extended_weight,
       uses: equipment.uses,
       maxuses: equipment.max_uses,
-    })
+    } as DataModel.CreateData<EquipmentComponentSchema>)
 
     return component
   }
