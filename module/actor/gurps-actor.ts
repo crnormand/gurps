@@ -91,7 +91,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     if (status.flags?.gurps?.effect?.type === 'posture') {
       // If the status effect is a posture, remove all other postures first
-      const postureEffects = this.effects.filter(e => e.flags.gurps.effect.type === 'posture' && e.id !== statusId)
+      const postureEffects = this.effects.filter(e => e.flags.gurps?.effect?.type === 'posture' && e.id !== statusId)
       await this.deleteEmbeddedDocuments(
         'ActiveEffect',
         postureEffects.map(e => e.id!),

@@ -193,7 +193,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const maneuverEffect = this.parent.effects.find((effect: ActiveEffect.Implementation) =>
       effect.statuses.some((status: string) => status === 'maneuver')
     )
-    this.conditions.maneuver = maneuverEffect ? maneuverEffect.flags.gurps.name : null
+    this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
   }
 
   /* ---------------------------------------- */

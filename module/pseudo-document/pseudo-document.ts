@@ -212,15 +212,15 @@ class PseudoDocument<
    * Create a new instance of this pseudo-document.
    * @returns a promise that resolves to the updated document.
    */
-  static async create<Schema extends PseudoDocumentSchema = PseudoDocumentSchema>(
-    data: DataModel.CreateData<Schema>,
+  static async create(
+    data: fields.SchemaField.CreateData<PseudoDocumentSchema>,
     { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
   ): Promise<Document.Any | undefined> {
     if (!parent) {
       throw new Error('A parent document must be specified for the creation of a pseudo-document!')
     }
     const id =
-      operation.keepId && foundry.data.validators.isValidId(data._id as string | null)
+      operation.keepId && foundry.data.validators.isValidId((data._id as string | undefined) ?? '')
         ? data._id
         : foundry.utils.randomID()
 

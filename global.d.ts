@@ -95,6 +95,17 @@ declare module 'fvtt-types/configuration' {
 
   /* ---------------------------------------- */
 
+  namespace Hooks {
+    interface HookConfig {
+      // TODO: Deprecated in FVTT 13. Replace with renderChatMessageHTML or get rid of if no longer needed.
+      renderChatMessage: (app: any, html: JQuery<HTMLElement>, message: any) => void
+      dropCanvasData: (canvas: Canvas, dropData: any) => void
+      applyActiveEffect: (actor: Actor.Implementation, change: any, options: any, user: User.Implementation) => void
+    }
+  }
+
+  /* ---------------------------------------- */
+
   interface SettingConfig {
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.bucket-position': 'left' | 'right'

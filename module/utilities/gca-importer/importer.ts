@@ -256,7 +256,23 @@ class GcaImporter {
   #importItem(item: GCATrait): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
 
-    system.actions = item.attackmodes?.map((action: GCAAttackMode) => this.#importWeapon(action, item)) ?? []
+    system.actions = item.attackmodes
+      ?.map((action: GCAAttackMode) => this.#importWeapon(action, item))
+      .reduce(
+        (
+          acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
+          weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
+        ) => {
+          if (!weapon._id || typeof weapon._id !== 'string') {
+            console.error('GURPS | Failed to import weapon: No _id set.')
+            console.error(weapon)
+            return acc
+          }
+          acc[weapon._id] = weapon
+          return acc
+        },
+        {}
+      )
     return system
   }
 
