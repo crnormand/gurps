@@ -30,7 +30,7 @@ import DataModel = foundry.abstract.DataModel
 class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema> {
   static _primitiveFieldsFromXML<Schema extends fields.DataSchema>(
     xml: HTMLElement,
-    schema: Schema['fields'],
+    schema: fields.SchemaField<Schema>['fields'],
     exclusions: string[] = []
   ): Partial<DataModel.CreateData<Schema>> {
     const data: AnyMutableObject = {}
@@ -69,7 +69,7 @@ class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema>
       }
     })
 
-    return data
+    return data as Partial<DataModel.CreateData<Schema>>
   }
 }
 

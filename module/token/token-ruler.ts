@@ -14,7 +14,6 @@ function registerTokenRuler() {
      *   The color, alpha, texture, and texture matrix to be used to draw the grid space.
      *   If the alpha is 0, the grid space is not highlighted.
      */
-    // @ts-expect-error: waiting for types to catch up
     protected override _getGridHighlightStyle(
       // @ts-expect-error: waiting for types to catch up
       waypoint: TokenRulerWaypoint,
@@ -41,11 +40,6 @@ function registerTokenRuler() {
         return { ...data, color: 0xff0000 } // More than sprint: red
       }
     }
-  }
-
-  // COMPATIBILITY: v12
-  interface GurpsTokenRuler {
-    token: Token.Implementation
   }
 
   // @ts-expect-error: waiting for types to catch up
