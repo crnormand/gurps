@@ -51,7 +51,7 @@ type EquipmentSchema = BaseItemModelSchema & ReturnType<typeof equipmentSchema>
 // Change from previous schema. "last_import" is not present as it is never used.
 const equipmentComponentSchema = () => {
   return {
-    count: new fields.NumberField({ required: true, nullable: false }),
+    count: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     weight: new fields.NumberField({ required: true, nullable: false }),
     cost: new fields.NumberField({ required: true, nullable: false }),
     location: new fields.StringField({ required: true, nullable: false }),
