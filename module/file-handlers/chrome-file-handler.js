@@ -52,8 +52,7 @@ export class ChromiumFileHandler {
           callback: () => (handle ? resolve(handle) : reject(`no ${mode} were chosen`)),
         },
         render: (event, dialog) => {
-          // COMPATIBILITY: v12
-          const element = game.release.generation >= 13 ? dialog.element : dialog
+          const element = dialog.element
 
           const fileChosenDiv = element.querySelector('#selectedFile')
           element.querySelector('#importButton').addEventListener('click', async event => {

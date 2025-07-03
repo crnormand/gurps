@@ -80,9 +80,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
             icon: 'fa-solid fa-dice',
             default: true,
             callback: (event, button, dialog) =>
-              this.rollFrightCheckCallback
-                .bind(this)
-                .call(this, actor, game.release.generation >= 13 ? dialog.element : dialog),
+              this.rollFrightCheckCallback.bind(this).call(this, actor, dialog.element),
           },
           {
             icon: 'fa-solid fa-xmark',
