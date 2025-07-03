@@ -45,12 +45,7 @@ export const AddImportEquipmentButton = async function (html) {
   const textNode = document.createTextNode(game.i18n.localize('GURPS.itemImport'))
   button.appendChild(textNode)
 
-  if (game.release.generation === 12) {
-    html = html[0]
-    html.querySelector('.directory-footer').append(button)
-  } else {
-    html.querySelector('.header-actions').append(button)
-  }
+  html.querySelector('.header-actions').append(button)
 }
 
 export class ItemImporter {
@@ -117,7 +112,7 @@ export class ItemImporter {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
       return !!i.calc.weight ? parseFloat(i.calc.weight) || 0 : 0
     }
-    
+
     let weight
     if (!!i.calc?.extended_weight) weight = parseFloat(i.calc.extended_weight)
     if (!weight) weight = parseFloat(i.weight) || 0
