@@ -4,7 +4,7 @@
 
 ### Bugfixes
 
-- Issue when importing Equipment Libraries from GCS into Compendiums #2338
+- Fixes an issue when importing Equipment Libraries from GCS into Compendiums #2338
 
 ## Release 0.18.2 07/02/2025
 
