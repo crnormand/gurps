@@ -1,11 +1,129 @@
 .gurps2.sheet.character {
   section.window-content {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    grid-template-rows: 0fr 0fr 1fr;
 
     gap: 0.5rem;
     padding: 0.5rem;
+  }
+
+  aside[data-application-part='sidebar'] {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    width: fit-content;
+
+    border-right: 0.1rem solid var(--color-tabs-border);
+    padding-right: 0.5rem;
+  }
+
+  header[data-application-part='header'],
+  nav[data-application-part='tabs'],
+  section.tab {
+    grid-column: 2;
+  }
+
+  header[data-application-part='header'],
+  nav[data-application-part='tabs'] {
+    height: fit-content;
+  }
+
+  section.tab {
+    overflow-y: auto;
+  }
+
+  // Header
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 0.25rem;
+
+    .document-name {
+      padding: 0;
+      max-height: 4rem;
+      line-height: 4rem;
+      h2 {
+        max-height: 100%;
+        max-width: 100%;
+        vertical-align: middle;
+        overflow: hidden;
+      }
+      h2,
+      input {
+        font-family: var(--font-h2);
+        font-size: var(--font-h2-size);
+        margin: 0;
+        border: 0;
+      }
+    }
+  }
+
+  // Profile image.
+  .profile-img {
+    width: 8.5rem;
+    border: 0.1rem solid var(--color-tabs-border);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    margin: 0 auto;
+  }
+
+  // Attributes
+  section.attributes {
+    display: flex;
+    flex-direction: column;
+    padding-right: 0.5rem;
+    gap: 0.25rem;
+
+    hr {
+      margin: 0.25rem 0;
+    }
+
+    .form-group.attribute {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0.5rem;
+      width: 100%;
+
+      label {
+        align-self: center;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      input {
+        height: 1.75rem;
+        padding: 0.1rem;
+        min-width: 2rem;
+      }
+    }
+  }
+
+  // Combat
+  section.combat {
+    table {
+      th {
+        padding: 0.5rem;
+        white-space: nowrap;
+      }
+      td {
+        padding: 0.25rem;
+        white-space: nowrap;
+      }
+    }
+
+    img {
+      width: 2rem;
+    }
+
+    div.palette {
+      display: grid;
+      grid-template-columns: repeat(5, 2rem);
+      gap: 0.25rem;
+      visibility: hidden;
+      position: absolute;
+    }
   }
 
   // Item Lists
@@ -26,6 +144,10 @@
     ul.item-contents {
       margin: 0;
       list-style: none;
+
+      > li:not(:last-child) {
+        border-bottom: 0.1rem solid var(--color-tabs-border);
+      }
     }
 
     // To-most list only
@@ -137,123 +259,6 @@
     ul ul ul ul ul ul,
     ul ul ul ul ul ul ul ul {
       background: var(--table-row-color-even);
-    }
-  }
-
-  aside[data-application-part='sidebar'] {
-    flex-basis: 100%;
-    border-right: 0.1rem solid var(--color-tabs-border);
-    padding-right: 0.5rem;
-  }
-
-  header[data-application-part='header'],
-  nav[data-application-part='tabs'],
-  section.tab {
-  }
-
-  header[data-application-part='header'],
-  nav[data-application-part='tabs'] {
-    height: fit-content;
-    flex-basis: fit-content;
-    flex: 0;
-  }
-
-  section.tab {
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  // Header
-  .sheet-header {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    gap: 0.25rem;
-
-    .document-name {
-      padding: 0;
-      max-height: 4rem;
-      line-height: 4rem;
-      h2 {
-        max-height: 100%;
-        max-width: 100%;
-        vertical-align: middle;
-        overflow: hidden;
-      }
-      h2,
-      input {
-        font-family: var(--font-h2);
-        font-size: var(--font-h2-size);
-        margin: 0;
-        border: 0;
-      }
-    }
-  }
-
-  // Profile image.
-  .profile-img {
-    width: 8.5rem;
-    border: 0.1rem solid var(--color-tabs-border);
-    border-radius: 0.25rem;
-    padding: 0.25rem;
-    margin: 0 auto;
-  }
-
-  // Attributes
-  section.attributes {
-    display: flex;
-    flex-direction: column;
-    padding-right: 0.5rem;
-    gap: 0.25rem;
-
-    hr {
-      margin: 0.25rem 0;
-    }
-
-    .form-group.attribute {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: 0.5rem;
-      width: 100%;
-
-      label {
-        align-self: center;
-        font-weight: bold;
-        white-space: nowrap;
-      }
-
-      input {
-        height: 1.75rem;
-        padding: 0.1rem;
-        min-width: 2rem;
-      }
-    }
-  }
-
-  // Combat
-  section.combat {
-    table {
-      th {
-        padding: 0.5rem;
-        white-space: nowrap;
-      }
-      td {
-        padding: 0.25rem;
-        white-space: nowrap;
-      }
-    }
-
-    img {
-      width: 2rem;
-    }
-
-    div.palette {
-      display: grid;
-      grid-template-columns: repeat(5, 2rem);
-      gap: 0.25rem;
-      visibility: hidden;
-      position: absolute;
     }
   }
 }
