@@ -90,12 +90,12 @@ import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
-import { Pdf } from './pdf/index.js'
+import { JournalEntry } from './journal-entry/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
-import { registerGurpsHandlebarsHelpers } from './utilities/handlebars.js'
+import { registerGurpsHandlebarsHelpers, registerHandlebarsPartials } from './utilities/handlebars.js'
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
@@ -133,7 +133,7 @@ if (!globalThis.GURPS) {
     Canvas,
     Combat,
     Damage,
-    Pdf,
+    JournalEntry,
     ResourceTracker,
     Token,
     UI,
@@ -144,6 +144,7 @@ if (!globalThis.GURPS) {
   JQueryHelpers()
   MoustacheWax()
   registerGurpsHandlebarsHelpers()
+  registerHandlebarsPartials()
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
@@ -472,7 +473,7 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn('no link was parsed for the pdf')
         return false // if there's no link action fails
       }
-      GURPS.modules.Pdf.handlePdf(action.link)
+      GURPS.modules.JournalEntry.handlePdf(action.link)
       return true
     },
 
