@@ -8,6 +8,138 @@
     padding: 0.5rem;
   }
 
+  // Item Lists
+  div.item-list {
+    header,
+    li > div.item-info {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+    }
+
+    header {
+      justify-content: end;
+    }
+
+    ul.item-contents {
+      margin: 0;
+      list-style: none;
+    }
+
+    // To-most list only
+    > ul.item-contents {
+      padding-left: 0;
+    }
+
+    li {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      // All lists except the topmost
+      > ul.item-contents {
+        margin: 0.25rem;
+        margin-right: 0;
+        border: 0.1rem solid var(--color-tabs-border);
+        border-right: 0;
+        border-radius: 0.25rem 0 0.25rem 0;
+        padding-left: 0.5rem;
+      }
+    }
+
+    > ul.item-contents {
+      background: var(--table-background-color);
+    }
+
+    header {
+      background: var(--table-header-bg-color);
+      border: 0.1rem solid var(--table-header-border-color);
+      color: var(--table-header-text-color);
+      font-weight: bold;
+      > div {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    // Fixed width fields
+    header > div,
+    li > div.item-info > div {
+      padding: 0.5rem;
+      white-space: nowrap;
+      flex: 0;
+      overflow-x: hidden;
+
+      &.item-name {
+        flex: 1;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+
+        img {
+          width: 3rem;
+          padding: 0.25rem;
+          aspect-ratio: 1 / 1;
+          border: 0.1rem solid var(--color-tabs-border);
+        }
+      }
+
+      &.item-equipped {
+        flex-basis: 1.5rem;
+      }
+
+      &.item-quantity {
+        flex-basis: 2.5rem;
+      }
+
+      &.item-uses {
+        flex-basis: 2.5rem;
+      }
+
+      &.item-value {
+        flex-basis: 3rem;
+      }
+
+      &.item-weight {
+        flex-basis: 3rem;
+      }
+
+      &.item-extended-value {
+        flex-basis: 4rem;
+      }
+
+      &.item-extended-weight {
+        flex-basis: 4rem;
+      }
+
+      &.item-reference {
+        flex-basis: 3rem;
+      }
+
+      &.item-controls {
+        flex-basis: 2rem;
+      }
+    }
+
+    ul,
+    ul ul ul,
+    ul ul ul ul ul,
+    ul ul ul ul ul ul ul {
+      background: var(--table-row-color-odd);
+    }
+
+    ul ul,
+    ul ul ul ul,
+    ul ul ul ul ul ul,
+    ul ul ul ul ul ul ul ul {
+      background: var(--table-row-color-even);
+    }
+  }
+
   aside[data-application-part='sidebar'] {
     flex-basis: 100%;
     border-right: 0.1rem solid var(--color-tabs-border);
@@ -123,30 +255,5 @@
       visibility: hidden;
       position: absolute;
     }
-  }
-
-  // Image select test
-  .image-select {
-    position: relative;
-    display: inline-block;
-  }
-  .image-select-dropdown {
-    display: none;
-    position: absolute;
-    z-index: 10;
-    background: #222;
-    border: 1px solid #555;
-    padding: 5px;
-  }
-  .image-select.open .image-select-dropdown {
-    display: block;
-  }
-  .image-option {
-    cursor: pointer;
-    padding: 2px;
-  }
-  .image-option img {
-    width: 32px;
-    height: 32px;
   }
 }

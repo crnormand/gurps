@@ -11,6 +11,17 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     return types.includes(this.type as Item.SubType)
   }
 
+  /* ---------------------------------------- */
+
+  get isContained(): boolean {
+    if (this.system instanceof BaseItemModel) {
+      return (this.system as BaseItemModel).isContained
+    }
+    return false
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,

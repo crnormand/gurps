@@ -1,3 +1,29 @@
 <section class='tab {{tab.cssClass}}' data-group='primary' data-tab='spells'>
-  SPELLS
+
+  <!-- Spells -->
+  <table>
+    <thead>
+      <tr>
+        <th>{{localize 'GURPS.Actor.Character.Spells.Title'}}</th>
+        <th>{{localize 'GURPS.Actor.Character.Spells.Level'}}</th>
+        <th>{{localize 'GURPS.Actor.Character.Spells.RelativeSkillLevel'}}</th>
+        <th>{{localize 'GURPS.Actor.Character.Spells.Points'}}</th>
+        <th>{{{localize 'GURPS.Sheet.Reference'}}}</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each spells}}
+        <tr class='draggable'>
+          <td>{{this.system.component.name}}</td>
+          <td>{{this.system.component.level}}</td>
+          <td>{{this.system.component.relativelevel}}</td>
+          <td>{{this.system.component.points}}</td>
+					{{> actor.parts.item-reference}}
+					{{> actor.parts.item-controls}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
 </section>

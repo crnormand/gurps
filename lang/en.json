@@ -8,7 +8,89 @@
   "GURPS": {
     "Sheet": {
       "ToggleMode": "Toggle Mode",
-      "SpeedRangeTable": { "Title": "Speed/Range Table", "Measure": "Measure (yd)", "Modifier": "Modifier" }
+      "Reference": "<i class=\"fa-solid fa-bookmark\"></i>"
+    },
+    "Actor": {
+      "Character": {
+        "Tabs": {
+          "combat": "Combat",
+          "personal": "Personal",
+          "traits": "Traits",
+          "skills": "Skills",
+          "spells": "Spells",
+          "equipment": "Equipment",
+          "resources": "Resources"
+        },
+        "FIELDS": {
+          "traits": {
+            "gender": { "label": "Gender" },
+            "age": { "label": "Age" },
+            "birthday": { "label": "Birthday" },
+            "religion": { "label": "Religion" },
+            "height": { "label": "Height" },
+            "weight": { "label": "Weight" },
+            "sizemod": { "label": "SM" },
+            "techlevel": { "label": "TL" },
+            "eyes": { "label": "Eyes" },
+            "skin": { "label": "Skin" },
+            "hair": { "label": "Hair" },
+            "hand": { "label": "Handedness" }
+          }
+        },
+        "Combat": {
+          "SpeedRangeTable": { "Title": "Speed/Range Table", "Measure": "Measure (yd)", "Modifier": "Modifier" },
+          "Melee": {
+            "Title": "Melee Attacks",
+            "Usage": "Usage",
+            "Level": "Level",
+            "Damage": "Damage",
+            "Parry": "Parry",
+            "Block": "Block",
+            "Reach": "Reach",
+            "Strength": "ST"
+          },
+          "Ranged": {
+            "Title": "Ranged Attacks",
+            "Usage": "Usage",
+            "Level": "Level",
+            "Damage": "Damage",
+            "Accuracy": "Acc",
+            "Range": "Range",
+            "RateOfFire": "RoF",
+            "Shots": "Shots",
+            "Bulk": "Bulk",
+            "Recoil": "Rcl",
+            "Strength": "ST"
+          }
+        },
+        "Traits": {
+          "Title": "Traits",
+          "Points": "Pts"
+        },
+        "Skills": {
+          "Title": "Skills",
+          "Level": "SL",
+          "RelativeSkillLevel": "RSL",
+          "Points": "Pts"
+        },
+        "Spells": {
+          "Title": "Spells",
+          "Level": "SL",
+          "RelativeSkillLevel": "RSL",
+          "Points": "Pts"
+        },
+        "Equipment": {
+          "TitleCarried": "Carried Equipment",
+          "TitleOther": "Other Equipment",
+          "Equipped": "<i class=\"fa-solid fa-check\"></i>",
+          "Quantity": "<i class=\"fa-solid fa-hashtag\"></i>",
+          "Uses": "Uses",
+          "Value": "<i class=\"fa-solid fa-coins\"></i>",
+          "Weight": "<i class=\"fa-solid fa-weight-hanging\"></i>",
+          "ExtendedValue": "<i class=\"fa-solid fa-layer-group\"></i><i class=\"fa-solid fa-coins\"></i>",
+          "ExtendedWeight": "<i class=\"fa-solid fa-layer-group\"></i><i class=\"fa-solid fa-weight-hanging\"></i>"
+        }
+      }
     },
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",

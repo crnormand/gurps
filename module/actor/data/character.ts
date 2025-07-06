@@ -39,6 +39,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
+
+  /* ---------------------------------------- */
   /*  Instance properties                     */
   /* ---------------------------------------- */
 

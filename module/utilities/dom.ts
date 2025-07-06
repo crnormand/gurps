@@ -40,4 +40,22 @@ function constructHTMLButton({
 
 /* ---------------------------------------- */
 
-export { constructHTMLButton }
+function htmlClosest(element: HTMLElement, selector: string): HTMLElement | null {
+  return element.closest(selector) as HTMLElement | null
+}
+
+/* ---------------------------------------- */
+
+function htmlQuerySelector(element: HTMLElement, selector: string): HTMLElement | null {
+  return element.querySelector(selector) as HTMLElement | null
+}
+
+/* ---------------------------------------- */
+
+function htmlQuerySelectorAll(element: HTMLElement, selector: string): NodeListOf<HTMLElement> {
+  return element.querySelectorAll(selector) as NodeListOf<HTMLElement>
+}
+
+/* ---------------------------------------- */
+
+export { constructHTMLButton, htmlClosest, htmlQuerySelector, htmlQuerySelectorAll }

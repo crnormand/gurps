@@ -1,3 +1,112 @@
+{{#*inline "carriedEquipment"}}
+  <li class='item-entry' data-item-id='{{this.id}}'>
+		<div class="item-info">
+			<div class="item-name">
+				<img src="{{this.img}}"/>
+				{{#if this.system.contents.length}}
+					{{#if this.system.open}}
+					<a type="button" data-action="toggleOpen" class="fa-solid fa-caret-down"></a>
+					{{else}}
+					<a type="button" data-action="toggleOpen" class="fa-solid fa-caret-right"></a>
+					{{/if}}
+				{{/if}}
+				{{this.system.component.name}}
+			</div>
+			<!-- <div class="item-uses">{{this.system.component.uses}}</div> -->
+			<!-- <div class="item-equipped"> -->
+			<!-- 	{{#if this.system.component.equipped}} -->
+			<!-- 		<a type="button" data-action="toggleEquipped" class="fa-regular fa-square-check"></a> -->
+			<!-- 	{{else}} -->
+			<!-- 		<a type="button" data-action="toggleEquipped" class="fa-regular fa-square"></a> -->
+			<!-- 	{{/if}} -->
+			<!-- </div> -->
+			<div class="item-quantity">{{this.system.component.count}}</div>
+			<div class="item-value">{{this.system.component.cost}}</div>
+			<div class="item-weight">{{this.system.component.weight}} lb</div>
+			<!-- <div class="item-extended-value">{{this.system.component.costsum}}</div> -->
+			<!-- <div class="item-extended-weight">{{this.system.component.weightsum}} lb</div> -->
+			<!-- {{> actor.parts.item-reference}} -->
+			{{> actor.parts.item-controls}}
+		</div>
+		{{#if (and this.system.contents.length this.system.open)}}
+			<ul class='item-contents'>
+			{{#each this.system.contents}}
+			{{> "carriedEquipment"}}
+			{{/each}}
+		</ul>
+		{{/if}}
+  </li>
+{{/inline }}
+
+{{#*inline "otherEquipment"}}
+  <li class='item-entry' data-item-id='{{this.id}}'>
+		<div class="item-info">
+			<div class="item-name">{{this.system.component.name}}</div>
+			<div class="item-quantity">{{this.system.component.count}}</div>
+			<!-- <div class="item-uses">{{this.system.component.uses}}</div> -->
+			<div class="item-value">{{this.system.component.cost}}</div>
+			<div class="item-weight">{{this.system.component.weight}} lb</div>
+			<!-- <div class="item-extended-value">{{this.system.component.costsum}}</div> -->
+			<!-- <div class="item-extended-weight">{{this.system.component.weightsum}} lb</div> -->
+			<!-- {{> actor.parts.item-reference}} -->
+			{{> actor.parts.item-controls}}
+		</div>
+		{{#if (and this.system.contents.length this.system.open)}}
+		<ul class='item-contents'>
+			{{#each this.system.contents}}
+			{{> "otherEquipment"}}
+			{{/each}}
+		</ul>
+		{{/if}}
+  </li>
+{{/inline }}
+
 <section class='tab {{tab.cssClass}}' data-group='primary' data-tab='equipment'>
-  EQUIPMENT
+
+  <!-- Carried Equipment -->
+  {{#if carriedEquipment.length}}
+    <div class="item-list">
+      <header>
+          <div class="item-name">{{localize 'GURPS.Actor.Character.Equipment.TitleCarried'}}</div>
+          <!-- <div class="item-equipped">{{{localize 'GURPS.Actor.Character.Equipment.Equipped'}}}</div> -->
+          <div class="item-quantity">{{{localize 'GURPS.Actor.Character.Equipment.Quantity'}}}</div>
+          <!-- <div class="item-uses">{{localize 'GURPS.Actor.Character.Equipment.Uses'}}</div> -->
+          <div class="item-value">{{{localize 'GURPS.Actor.Character.Equipment.Value'}}}</div>
+          <div class="item-weight">{{{localize 'GURPS.Actor.Character.Equipment.Weight'}}}</div>
+          <!-- <div class="item-extended-value">{{{localize 'GURPS.Actor.Character.Equipment.ExtendedValue'}}}</div> -->
+          <!-- <div class="item-extended-weight">{{{localize 'GURPS.Actor.Character.Equipment.ExtendedWeight'}}}</div> -->
+        	<!-- <div class="item-reference">{{{localize 'GURPS.Sheet.Reference'}}}</div> -->
+          <div class="item-controls"> </div>
+      </header>
+      <ul class="item-contents">
+        {{#each carriedEquipment}}
+				{{> "carriedEquipment"}}
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+
+  <!-- Other Equipment -->
+  {{#if otherEquipment.length}}
+    <div class="item-list">
+      <header>
+					<div class="item-image"></div>
+          <div class="item-name">{{localize 'GURPS.Actor.Character.Equipment.TitleOther'}}</div>
+          <div class="item-quantity">{{{localize 'GURPS.Actor.Character.Equipment.Quantity'}}}</div>
+          <!-- <div class="item-uses">{{localize 'GURPS.Actor.Character.Equipment.Uses'}}</div> -->
+          <div class="item-value">{{{localize 'GURPS.Actor.Character.Equipment.Value'}}}</div>
+          <div class="item-weight">{{{localize 'GURPS.Actor.Character.Equipment.Weight'}}}</div>
+          <!-- <div class="item-extended-value">{{{localize 'GURPS.Actor.Character.Equipment.ExtendedValue'}}}</div> -->
+          <!-- <div class="item-extended-weight">{{{localize 'GURPS.Actor.Character.Equipment.ExtendedWeight'}}}</div> -->
+        	<!-- <div class="item-reference">{{{localize 'GURPS.Sheet.Reference'}}}</div> -->
+          <div class="item-controls"> </div>
+      </header>
+      <ul class="item-contents">
+        {{#each otherEquipment}}
+				{{> "otherEquipment"}}
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
 </section>
+

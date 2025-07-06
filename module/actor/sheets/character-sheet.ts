@@ -1,6 +1,9 @@
 import { GurpsActorSheet } from './actor-sheet.js'
 import api = foundry.applications.api
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+import { htmlClosest } from '../../utilities/dom.js'
+import { JournalEntry } from '../../journal-entry/index.js'
+import { BaseItemModel } from '../../item/data/base.js'
 
 class GurpsCharacterSheet extends GurpsActorSheet {
   static override DEFAULT_OPTIONS: api.DocumentSheet.DefaultOptions & AnyObject = {
@@ -9,6 +12,12 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     actions: {
       toggleMode: this.#toggleMode,
       applyGlobalModifier: this.#applyGlobalModifier,
+      toggleOpen: this.#toggleOpen,
+      toggleEquipped: this.#toggleEquipped,
+      openPageReference: this.#openPageReference,
+      openItemContextMenu: this.#openItemContextMenu,
+      editItem: this.#editItem,
+      deleteItem: this.#deleteItem,
     },
     position: {
       width: 675,
@@ -63,19 +72,19 @@ class GurpsCharacterSheet extends GurpsActorSheet {
 
   /* ---------------------------------------- */
 
-  // TODO: finish
   static override TABS: Record<string, api.Application.TabsConfiguration> = {
     primary: {
       tabs: [
-        { id: 'combat', label: 'Combat', cssClass: '' },
-        { id: 'personal', label: 'Personal', cssClass: '' },
-        { id: 'traits', label: 'Traits', cssClass: '' },
-        { id: 'skills', label: 'Skills', cssClass: '' },
-        { id: 'spells', label: 'Spells', cssClass: '' },
-        { id: 'equipment', label: 'Equipment', cssClass: '' },
-        { id: 'resources', label: 'Resources', cssClass: '' },
+        { id: 'combat', cssClass: '' },
+        { id: 'personal', cssClass: '' },
+        { id: 'traits', cssClass: '' },
+        { id: 'skills', cssClass: '' },
+        { id: 'spells', cssClass: '' },
+        { id: 'equipment', cssClass: '' },
+        { id: 'resources', cssClass: '' },
       ],
-      initial: 'combat',
+      initial: 'equipment',
+      labelPrefix: 'GURPS.Actor.Character.Tabs',
     },
   }
 
@@ -111,6 +120,7 @@ class GurpsCharacterSheet extends GurpsActorSheet {
       // Used for range table in combat tab
       ranges: GURPS.rangeObject.ranges,
       ...this._prepareAttributes(),
+      ...this._prepareItems(),
     })
 
     console.log(context)
@@ -133,6 +143,20 @@ class GurpsCharacterSheet extends GurpsActorSheet {
 
   /* ---------------------------------------- */
 
+  protected override _prepareTabs(group: string): Record<string, api.Application.Tab> {
+    const tabs = super._prepareTabs(group)
+    if (group === 'primary' && this._mode === GurpsCharacterSheet.MODES.PLAY) {
+      if (this.document.system.ads.length === 0) delete tabs.traits
+      if (this.document.system.skills.length === 0) delete tabs.skills
+      if (this.document.system.spells.length === 0) delete tabs.spells
+      if (this.document.system.allEquipment.length === 0) delete tabs.spells
+    }
+
+    return tabs
+  }
+
+  /* ---------------------------------------- */
+
   protected _prepareAttributes() {
     const primaryAttributes = (['ST', 'DX', 'IQ', 'HT'] as const).map(attr => {
       return {
@@ -144,6 +168,24 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     })
     return {
       primaryAttributes,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected _prepareItems() {
+    const traits = this.document.system.ads.filter(item => !item.isContained)
+    const skills = this.document.system.skills.filter(item => !item.isContained)
+    const spells = this.document.system.spells.filter(item => !item.isContained)
+    const carriedEquipment = this.document.system.equipment.carried.filter(item => !item.isContained)
+    const otherEquipment = this.document.system.equipment.other.filter(item => !item.isContained)
+
+    return {
+      traits,
+      skills,
+      spells,
+      carriedEquipment,
+      otherEquipment,
     }
   }
 
@@ -175,6 +217,69 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     if (!otfAction) return
 
     return GURPS.performAction(otfAction, this.document, event)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #toggleOpen(this: GurpsCharacterSheet, _event: PointerEvent, target: HTMLElement) {
+    const itemId = htmlClosest(target, '[data-item-id]')?.dataset.itemId
+    if (!itemId) return
+
+    const item = this.document.items.get(itemId)
+    if (!item || !(item.system instanceof BaseItemModel)) return
+    const isOpen = (item.system as BaseItemModel).open
+    // @ts-expect-error: Not sure why key is not recognised
+    await item.update({ 'system.open': !isOpen })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #toggleEquipped(this: GurpsCharacterSheet, _event: PointerEvent, target: HTMLElement) {
+    const itemId = htmlClosest(target, '[data-item-id]')?.dataset.itemId
+    if (!itemId) return
+
+    const item = this.document.items.get(itemId)
+    if (!item || !item.isOfType('equipment')) return
+    const isEquipped = item.system.eqt.equipped
+    // @ts-expect-error: Not sure why key is not recognised
+    await item.update({ 'system.eqt.equipped': !isEquipped })
+  }
+
+  /* ---------------------------------------- */
+
+  static #openPageReference(this: GurpsCharacterSheet, _event: PointerEvent, target: HTMLElement) {
+    const pageReference = target.dataset.reference
+    if (!pageReference) return
+    return JournalEntry.handlePdf(pageReference)
+  }
+
+  /* ---------------------------------------- */
+
+  // TODO: Implement a context menu for items.
+  static #openItemContextMenu(this: GurpsCharacterSheet, _event: PointerEvent, _target: HTMLElement) {}
+
+  /* ---------------------------------------- */
+
+  static async #editItem(this: GurpsCharacterSheet, _event: PointerEvent, target: HTMLElement) {
+    const itemId = htmlClosest(target, '[data-item-id]')?.dataset.itemId
+    if (!itemId) return
+
+    const item = this.document.items.get(itemId)
+    if (!item) return
+
+    await item.sheet?.render(true)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #deleteItem(this: GurpsCharacterSheet, _event: PointerEvent, target: HTMLElement) {
+    const itemId = htmlClosest(target, '[data-item-id]')?.dataset.itemId
+    if (!itemId) return
+
+    const item = this.document.items.get(itemId)
+    if (!item) return
+
+    await item.deleteDialog()
   }
 }
 
