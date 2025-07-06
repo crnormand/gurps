@@ -234,8 +234,8 @@ export class ItemImporter {
       for (let m of i.modifiers) {
         if (!m.disabled && m.features?.length)
           for (let f of m.features) {
-            f.modifier = true
-            feat_list.push(f)
+            let clonedFeature = { ...f, modifier: true }
+            feat_list.push(clonedFeature)
           }
       }
     if (feat_list.length)
