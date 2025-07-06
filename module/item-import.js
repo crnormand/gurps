@@ -258,7 +258,7 @@ export class ItemImporter {
             locations = f.locations.map(loc => this._formatLocation(loc))
           }
 
-          if (!!locations.length > 0) {
+          if (locations.length > 0) {
             bonus_list.push(`DR ${bonus} ${locations.join(' ')}`)
           } else {
             bonus_list.push(`DR ${bonus}`)
