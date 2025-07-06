@@ -97,6 +97,29 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  get container(): Item.Implementation | null {
+    return (
+      this.actor?.items.find(
+        item => item.system instanceof BaseItemModel && item.system.component.contains.includes(this.parent.id ?? '')
+      ) ?? null
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get isContained(): boolean {
+    return !!this.container
+  }
+
+  /* ---------------------------------------- */
+
+  get containerDepth(): number {
+    if (!this.isContained) return 0
+    return 1 + (this.container?.system as BaseItemModel).containerDepth
+  }
+
+  /* ---------------------------------------- */
+
   applyBonuses(bonuses: AnyObject[]): void {
     for (const action of this.actions) {
       if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
@@ -151,6 +174,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
 const baseItemModelSchema = () => {
   return {
+    // Change from previous schema. Boolean indicating whether item is open
+    open: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
     actions: new CollectionField(BaseAction),
     // Change from previous schema. Set of IDs corresponding to subtypes of Item

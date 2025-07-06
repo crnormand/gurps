@@ -1,0 +1,9 @@
+<div class='item-controls flexrow'>
+  {{#if @root.isPlay}}
+    <button data-action='openItemContextMenu'><i class='fa-solid fa-ellipsis-vertical'></i></button>
+  {{else}}
+    <button data-action='openItemContextMenu'><i class='fa-solid fa-ellipsis-vertical'></i></button>
+    <button data-action='editItem'><i class='fa-solid fa-pen-to-square'></i></button>
+    <button data-action='deleteItem'><i class='fa-solid fa-trash'></i></button>
+  {{/if}}
+</div>
