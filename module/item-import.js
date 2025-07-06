@@ -247,7 +247,7 @@ export class ItemImporter {
           let locations = []
           // Handle modifiers like "Fortify" that don't have locations, but are applied to "this armor". In that case,
           // we create a DR bonus that applies to all locations that the other DR bonuses apply to.
-          if (f.modifier && !f.locations) {
+          if (f.modifier && (!f.locations || f.locations.length === 0)) {
             locations.push(
               bonus_list
                 .filter(b => b.startsWith('DR ')) // This will get all the DR entries in the bonus list
