@@ -104,7 +104,7 @@ export default class ApplyDamageDialog extends Application {
     super.activateListeners(html)
 
     // Activate all PDF links
-    html.find('.pdflink').on('click', GURPS.modules.Pdf.handleOnPdf)
+    html.find('.pdflink').on('click', GURPS.modules.JournalEntry.handleOnPdf)
     html.find('.digits-only').inputFilter(value => digitsAndNegOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 

@@ -19,7 +19,7 @@ export default class GurpsWiring {
     html.find('.glinkmod').on('click', GurpsWiring.chatClickGmod)
     html.find('.glinkmodplus').on('click', GurpsWiring.chatClickGmod)
     html.find('.glinkmodminus').on('click', GurpsWiring.chatClickGmod)
-    html.find('.pdflink').on('click', GURPS.modules.Pdf.handleOnPdf)
+    html.find('.pdflink').on('click', GURPS.modules.JournalEntry.handleOnPdf)
 
     // Make any OtF element draggable
     html.find('[data-otf]').each((_, li) => {

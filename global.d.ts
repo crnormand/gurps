@@ -5,6 +5,7 @@ import { GurpsCombatant } from 'module/combat/combatant.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
+import { GurpsJournalEntryPage } from 'module/journal-entry/gurps-journal-entry-page.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
 import { SpellModel } from 'module/item/data/spell.ts'
@@ -14,6 +15,7 @@ import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/active-effect/gurps-active-effect.ts'
+import { GurpsJournalEntryPDFPage } from 'module/journal-entry/data/pdf.ts'
 
 export {}
 
@@ -42,6 +44,7 @@ declare module 'fvtt-types/configuration' {
     Item: typeof GurpsItemV2<Item.SubType>
     Combatant: typeof GurpsCombatant<Combatant.SubType>
     ActiveEffect: typeof GurpsActiveEffect<ActiveEffect.SubType>
+    JournalEntryPage: typeof GurpsJournalEntryPage<JournalEntryPage.SubType>
   }
 
   /* ---------------------------------------- */
@@ -54,6 +57,10 @@ declare module 'fvtt-types/configuration' {
 
   interface ConfiguredActor<SubType extends Actor.SubType> {
     document: GurpsActorV2<SubType>
+  }
+
+  interface ConfiguredJournalEntryPage<SubType extends JournalEntryPage.SubType> {
+    document: GurpsJournalEntryPage<SubType>
   }
 
   /* ---------------------------------------- */
@@ -84,6 +91,9 @@ declare module 'fvtt-types/configuration' {
       spell: typeof SpellModel
       // meleeAtk: typeof MeleeAttackData
       // rangedAtk: typeof RangedAttackData
+    }
+    JournalEntryPage: {
+      pdf: typeof GurpsJournalEntryPDFPage
     }
   }
 
