@@ -22,6 +22,20 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   /* ---------------------------------------- */
 
+  get contents(): Item.Implementation[] {
+    if (!(this.system instanceof BaseItemModel)) return []
+    return (this.system as BaseItemModel).contents
+  }
+
+  /* ---------------------------------------- */
+
+  get allContents(): Item.Implementation[] {
+    if (!(this.system instanceof BaseItemModel)) return []
+    return (this.system as BaseItemModel).allContents
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,
@@ -38,6 +52,44 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
       )
     }
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+  }
+
+  /* ---------------------------------------- */
+
+  override delete(operation?: Item.Database.DeleteOperation & { deleteContents?: boolean }): Promise<this | undefined> {
+    return super.delete(operation)
+  }
+
+  /* ---------------------------------------- */
+
+  override async deleteDialog(options = {}) {
+    // Display custom delete dialog when deleting a container with contents
+    const count = this.contents.length
+    if (count) {
+      return foundry.applications.api.Dialog.confirm({
+        window: {
+          title: `${game.i18n?.format('DOCUMENT.Delete', { type: game.i18n.localize('DOCUMENT.Item') })}: ${this.name}`,
+        },
+        content:
+          `<p>${game.i18n?.format('GURPS.Item.DeleteMessage', { count: count.toString() })}</p>` +
+          `<label>` +
+          `<input type="checkbox" name="deleteContents">` +
+          `${game.i18n?.localize('GURPS.Item.DeleteContents')}` +
+          `</label>`,
+        yes: {
+          action: '',
+          callback: (event: PointerEvent | SubmitEvent) => {
+            const deleteContents = (
+              (event.currentTarget as HTMLElement).querySelector('[name="deleteContents"]') as HTMLInputElement
+            )?.checked
+            this.delete({ deleteContents })
+          },
+        },
+        options: { ...options },
+      })
+    }
+
+    return super.deleteDialog(options)
   }
 
   /* ---------------------------------------- */

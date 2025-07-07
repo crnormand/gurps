@@ -41,7 +41,17 @@
 {{#*inline "otherEquipment"}}
   <li class='item-entry' data-item-id='{{this.id}}'>
 		<div class="item-info">
-			<div class="item-name">{{this.system.component.name}}</div>
+			<div class="item-name">
+				<img src="{{this.img}}"/>
+				{{#if this.system.contents.length}}
+					{{#if this.system.open}}
+					<a type="button" data-action="toggleOpen" class="fa-solid fa-caret-down"></a>
+					{{else}}
+					<a type="button" data-action="toggleOpen" class="fa-solid fa-caret-right"></a>
+					{{/if}}
+				{{/if}}
+				{{this.system.component.name}}
+			</div>
 			<div class="item-quantity">{{this.system.component.count}}</div>
 			<!-- <div class="item-uses">{{this.system.component.uses}}</div> -->
 			<div class="item-value">{{this.system.component.cost}}</div>

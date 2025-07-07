@@ -43,30 +43,37 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     combat: {
       template: 'systems/gurps/templates/actor/parts/combat.hbs',
       classes: ['combat'],
+      scrollable: [''],
     },
     personal: {
       template: 'systems/gurps/templates/actor/parts/personal.hbs',
       classes: ['personal'],
+      scrollable: [''],
     },
     traits: {
       template: 'systems/gurps/templates/actor/parts/traits.hbs',
       classes: ['traits'],
+      scrollable: [''],
     },
     skills: {
       template: 'systems/gurps/templates/actor/parts/skills.hbs',
       classes: ['skills'],
+      scrollable: [''],
     },
     spells: {
       template: 'systems/gurps/templates/actor/parts/spells.hbs',
       classes: ['spells'],
+      scrollable: [''],
     },
     equipment: {
       template: 'systems/gurps/templates/actor/parts/equipment.hbs',
       classes: ['equipment'],
+      scrollable: [''],
     },
     resources: {
       template: 'systems/gurps/templates/actor/parts/resources.hbs',
       classes: ['resources'],
+      scrollable: [''],
     },
   }
 
@@ -101,6 +108,7 @@ class GurpsCharacterSheet extends GurpsActorSheet {
   ): Promise<void> {
     super._onRender(context, options)
     GURPS.SetLastActor(this.document)
+    if (this._mode === GurpsCharacterSheet.MODES.PLAY) this._disableFields()
   }
 
   /* ---------------------------------------- */
@@ -112,8 +120,6 @@ class GurpsCharacterSheet extends GurpsActorSheet {
   ) {
     const context = await super._prepareContext(options)
 
-    console.log(this.tabGroups)
-
     Object.assign(context, {
       tabGroups: this.tabGroups,
       systemFields: this.document.system.schema.fields,
@@ -123,7 +129,6 @@ class GurpsCharacterSheet extends GurpsActorSheet {
       ...this._prepareItems(),
     })
 
-    console.log(context)
     return context
   }
 

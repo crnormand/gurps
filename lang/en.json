@@ -10,6 +10,10 @@
       "ToggleMode": "Toggle Mode",
       "Reference": "<i class=\"fa-solid fa-bookmark\"></i>"
     },
+    "Item": {
+      "DeleteMessage": "<b>Are You Sure?</b> This Item will be permanently deleted ad cannot be recovered. All contained items will be taken out of the container and moved one level up in the hierarchy.",
+      "DeleteContents": "Also delete all contained items"
+    },
     "Actor": {
       "Character": {
         "Tabs": {

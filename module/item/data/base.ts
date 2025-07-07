@@ -91,6 +91,14 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  get allContents(): Item.Implementation[] {
+    const contents = this.contents
+    const otherContents = contents.flatMap(i => i.allContents || [])
+    return [...contents, ...otherContents]
+  }
+
+  /* ---------------------------------------- */
+
   get enabled(): boolean {
     return true
   }
@@ -112,7 +120,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   }
 
   /* ---------------------------------------- */
-
   get containerDepth(): number {
     if (!this.isContained) return 0
     return 1 + (this.container?.system as BaseItemModel).containerDepth
@@ -123,6 +130,22 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   applyBonuses(bonuses: AnyObject[]): void {
     for (const action of this.actions) {
       if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _onDelete(
+    options: Item.Database.OnDeleteOperation & { deleteContents?: boolean },
+    userId: string
+  ): Promise<void> {
+    super._onDelete(options, userId)
+    if (userId !== game.user?.id || !options.deleteContents) return
+
+    // Delete a container's contents when it is deleted
+    const contents = this.allContents
+    if (contents.length > 0) {
+      await Item.deleteDocuments(Array.from(contents.map(i => i.id!)), options)
     }
   }
 

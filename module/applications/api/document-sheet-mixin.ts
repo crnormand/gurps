@@ -1,6 +1,6 @@
 import { DeepPartial } from 'fvtt-types/utils'
 import api = foundry.applications.api
-import { constructHTMLButton } from '../../utilities/dom.js'
+import { constructHTMLButton, htmlQuerySelectorAll } from '../../utilities/dom.js'
 
 /* ---------------------------------------- */
 
@@ -51,6 +51,25 @@ export default function <BaseClass extends api.DocumentSheet.AnyConstructor>(bas
      */
     get isEditMode(): boolean {
       return this._mode === GurpsDocumentSheet.MODES.EDIT
+    }
+
+    /* ---------------------------------------- */
+
+    protected _disableFields() {
+      const selector = `.window-content :is(${[
+        'INPUT',
+        'SELECT',
+        'TEXTAREA',
+        // 'BUTTON',
+        'FILE-PICKER',
+        'MULTI-SELECT',
+        'PROSE-MIRROR',
+      ].join(', ')}):not(.always-interactive)`
+      for (const element of htmlQuerySelectorAll(this.element, selector) as NodeListOf<HTMLInputElement>) {
+        if (element.closest('prose-mirror[open]')) continue // Skip active ProseMirror editors
+        if (element.tagName === 'TEXTAREA') element.readOnly = true
+        else element.disabled = true
+      }
     }
 
     /* ---------------------------------------- */
