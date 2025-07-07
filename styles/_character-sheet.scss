@@ -243,7 +243,10 @@
       }
 
       &.item-controls {
-        flex-basis: 2rem;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        flex-basis: 6rem;
       }
     }
 
