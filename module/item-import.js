@@ -104,24 +104,32 @@ export class ItemImporter {
 
   _getItemCost(i) {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
-      return !!i.calc.value ? parseFloat(i.calc.value) || 0 : 0
+      return this._getCostValue(i)
     }
 
     let value
     if (!!i.calc?.extended_value) value = parseFloat(i.calc.extended_value)
-    if (!value) value = parseFloat(i.value) || 0
+    if (!value) value = this._getCostValue(i)
     return value
+  }
+
+  _getCostValue(i) {
+    return parseFloat(i.calc.value ?? i.value) || 0
   }
 
   _getItemWeight(i) {
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
-      return !!i.calc.weight ? parseFloat(i.calc.weight) || 0 : 0
+      return this._getWeightValue(i)
     }
 
     let weight
     if (!!i.calc?.extended_weight) weight = parseFloat(i.calc.extended_weight)
-    if (!weight) weight = parseFloat(i.weight) || 0
+    if (!weight) weight = this._getWeightValue(i)
     return weight
+  }
+
+  _getWeightValue(i) {
+    return parseFloat(i.calc?.weight ?? i.weight) || 0
   }
 
   async _importItem(i, pack, filename, timestamp) {
