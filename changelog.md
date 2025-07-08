@@ -4,7 +4,8 @@
 
 ### Bugfixes
 
-- Journal entry pages longer than the window height are not scrollable. #2339
+- Fixes an issue when importing Equipment Libraries from GCS into Compendiums #2338
+
 
 ## Release 0.18.2 07/02/2025
 
