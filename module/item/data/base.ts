@@ -15,9 +15,20 @@ type ItemMetadata = Readonly<{
   invalidActorTypes: string[]
   /** Are there any partials to fill in the Details tab of the item? */
   detailsPartial?: string[]
-  /* Record of document names of pseudo-documents and the path to the collection. */
+  /** Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
+  /** Record of actions the item can perform */
+  actions: Record<string, Function>
 }>
+
+/* ---------------------------------------- */
+
+type ItemUseOptions = {
+  /** The user initiating the use action */
+  userId?: string
+  /** The action to perform */
+  action?: string
+}
 
 /* ---------------------------------------- */
 
@@ -39,6 +50,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       embedded: {},
       type: 'base',
       invalidActorTypes: [],
+      actions: {},
     }
   }
 
@@ -135,6 +147,19 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  use(options: ItemUseOptions = {}) {
+    if (options.action && options.action in this.metadata.actions) {
+      const actionFn = this.metadata.actions[options.action]
+      if (typeof actionFn === 'function') {
+        return actionFn.call(this, options)
+      }
+    } else {
+      console.warn(`No action found for ${options.action} in item ${this.parent.name} (${this.parent.id})`)
+    }
+  }
+
+  /* ---------------------------------------- */
+
   protected override async _onDelete(
     options: Item.Database.OnDeleteOperation & { deleteContents?: boolean },
     userId: string
@@ -197,8 +222,10 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
 const baseItemModelSchema = () => {
   return {
+    // Change from previous schema. Boolean value to indicate if item is container
+    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     // Change from previous schema. Boolean indicating whether item is open
-    open: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+    open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
     // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
     actions: new CollectionField(BaseAction),
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
@@ -224,4 +251,11 @@ type BaseItemModelSchema = ReturnType<typeof baseItemModelSchema>
 
 /* ---------------------------------------- */
 
-export { BaseItemModel, ItemComponent, baseItemModelSchema, type BaseItemModelSchema }
+export {
+  BaseItemModel,
+  ItemComponent,
+  baseItemModelSchema,
+  type BaseItemModelSchema,
+  type ItemMetadata,
+  type ItemUseOptions,
+}

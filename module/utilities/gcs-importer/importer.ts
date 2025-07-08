@@ -305,6 +305,7 @@ class GcsImporter {
 
   #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
+    system.isContainer = item.isContainer
 
     system.actions = item.weaponItems
       ?.map((action: GcsWeapon) => this.#importWeapon(action, item))

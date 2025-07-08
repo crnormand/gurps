@@ -1,4 +1,4 @@
-import { BaseItemModel, BaseItemModelSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema, ItemMetadata, ItemUseOptions } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
@@ -15,8 +15,27 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
   /* ---------------------------------------- */
 
+  static override get metadata(): ItemMetadata {
+    return {
+      embedded: {},
+      type: 'base',
+      invalidActorTypes: [],
+      actions: {
+        level: this.#rollLevel,
+      },
+    }
+  }
+
+  /* ---------------------------------------- */
+
   get component(): SkillComponent {
     return this.ski
+  }
+
+  /* ---------------------------------------- */
+
+  static #rollLevel(this: SkillModel, options: ItemUseOptions): void {
+    console.log(`Rolling level for skill ${this.parent.name}...`)
   }
 
   /* ---------------------------------------- */
@@ -35,7 +54,10 @@ class SkillModel extends BaseItemModel<SkillSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
-    if (otf === '') return
+    if (otf === '') {
+      this.component.level = this.component.import
+      return
+    }
 
     // Remove extraneous brackets
     otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf

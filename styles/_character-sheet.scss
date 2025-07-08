@@ -238,6 +238,14 @@
         flex-basis: 4rem;
       }
 
+      &.item-level {
+        flex-basis: 4rem;
+      }
+
+      &.item-relative-level {
+        flex-basis: 5rem;
+      }
+
       &.item-reference {
         flex-basis: 3rem;
       }

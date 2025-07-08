@@ -75,8 +75,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     shiftslightly: 0,
     carryonback: 0,
   }
-  hitlocationNames: Record<string, HitLocationEntry> = {}
 
+  hitlocationNames: Record<string, HitLocationEntry> = {}
   eqtsummary: {
     eqtcost: number
     eqtlbs: number

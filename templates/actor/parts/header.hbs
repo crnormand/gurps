@@ -13,6 +13,16 @@
     {{else}}
       {{formInput systemFields.traits.fields.title value=system.traits.title}}
     {{/if}}
+    <!-- Experimeng -->
+    <div class='flexrow' style='justify-content: space-around; gap: 0.5rem;'>
+      <div style='background: red; color: white; padding: 0.2rem; border: 0.1rem solid white; border-radius: 0.2rem;'>HP
+        10 / 10 [Fatigued]</div>
+      <div style='background: red; color: white; padding: 0.2rem; border: 0.1rem solid white; border-radius: 0.2rem;'>FP
+        10 / 10 [Fatigued]</div>
+      <div>Dodge: 10</div>
+      <div>Move: 10</div>
+    </div>
+    <!-- Experimeng -->
   </div>
   <div class='header-right flexcol'>
     <h4>{{system.totalpoints.total}} {{localize 'GURPS.pointsTotal'}}</h4>

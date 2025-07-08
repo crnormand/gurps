@@ -18,9 +18,11 @@ class GurpsCharacterSheet extends GurpsActorSheet {
       openItemContextMenu: this.#openItemContextMenu,
       editItem: this.#editItem,
       deleteItem: this.#deleteItem,
+      rollOtf: this.#rollOtf,
+      useItem: this.#useItem,
     },
     position: {
-      width: 675,
+      width: 750,
       height: 700,
     },
   }
@@ -285,6 +287,30 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     if (!item) return
 
     await item.deleteDialog()
+  }
+
+  /* ---------------------------------------- */
+
+  static async #rollOtf(this: GurpsCharacterSheet, event: PointerEvent, target: HTMLElement) {
+    const otfAction = GURPS.parselink(target.dataset.otf ?? '').action
+    console.log(otfAction)
+    if (!otfAction) return
+
+    return GURPS.performAction(otfAction, this.document, event)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #useItem(this: GurpsCharacterSheet, _event: PointerEvent, target: HTMLElement) {
+    const itemId = htmlClosest(target, '[data-item-id]')?.dataset.itemId
+    if (!itemId) return
+
+    const item = this.document.items.get(itemId)
+    if (!item) return
+
+    const action = target.dataset.type
+
+    await item.system.use({ action })
   }
 }
 

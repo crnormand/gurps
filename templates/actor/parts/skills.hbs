@@ -1,27 +1,61 @@
+{{#*inline 'skill'}}
+  <li class='item-entry' data-item-id='{{this.id}}'>
+		<div class='item-info'>
+
+			<div class='item-name'>
+				<img src='{{this.img}}'/>
+				{{#if this.system.isContainer}}
+					{{#if this.system.open}}
+					<a type='button' data-action='toggleOpen' class='fa-solid fa-caret-down'></a>
+					{{else}}
+					<a type='button' data-action='toggleOpen' class='fa-solid fa-caret-right'></a>
+					{{/if}}
+				{{/if}}
+				{{this.name}}
+			</div>
+
+			<!-- Don't render rollable buttons for containers -->
+			{{#if this.system.isContainer}}
+				<div class='item-level'></div>
+				<div class='item-relative-level'></div>
+			{{else}}
+				<div class='item-level'>
+					<button type='button' data-action='useItem' data-type='level'>{{this.system.component.level}}</button>
+				</div>
+				<div class='item-relative-level'>
+					<button type='button' data-action='rollOtf' data-otf='Sk:"{{this.name}}"'>{{this.system.component.relativelevel}}</button>
+				</div>
+			{{/if}}
+
+			{{> actor.parts.item-controls}}
+		</div>
+
+		{{#if (and this.system.contents.length this.system.open)}}
+			<ul class='item-contents'>
+			{{#each this.system.contents}}
+			{{> 'skill'}}
+			{{/each}}
+			</ul>
+		{{/if}}
+
+	</li>
+{{/inline}}
+
 <section class='tab {{tab.cssClass}}' data-group='primary' data-tab='skills'>
 
   <!-- Skills -->
-  <table>
-    <thead>
-      <tr>
-        <th>{{localize 'GURPS.Actor.Character.Skills.Title'}}</th>
-        <th>{{localize 'GURPS.Actor.Character.Skills.Level'}}</th>
-        <th>{{localize 'GURPS.Actor.Character.Skills.Points'}}</th>
-        <th>{{{localize 'GURPS.Sheet.Reference'}}}</th>
-        <th> </th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each skills}}
-        <tr class='draggable'>
-          <td>{{this.system.component.name}}</td>
-          <td>{{this.system.component.level}}</td>
-          <td>{{this.system.component.points}}</td>
-					{{> actor.parts.item-reference}}
-					{{> actor.parts.item-controls}}
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
+	<div class='item-list'>
+		<header>
+			<div class='item-name'>{{localize 'GURPS.Actor.Character.Skills.Title'}}</div>
+			<div class='item-level'>{{localize 'GURPS.Actor.Character.Skills.Level'}}</div>
+			<div class='item-relative-level'>{{localize 'GURPS.Actor.Character.Skills.RelativeSkillLevel'}}</div>
+			<div class='item-controls'> </div>
+		</header>
+		<ul class='item-contents'>
+			{{#each skills}}
+			{{> 'skill'}}
+			{{/each}}
+		</ul>
+	</div>
 
 </section>

@@ -1,25 +1,42 @@
+{{#*inline "trait"}}
+  <li class='item-entry' data-item-id='{{this.id}}'>
+		<div class="item-info">
+			<div class="item-name">
+				<img src="{{this.img}}"/>
+				{{#if this.system.contents.length}}
+					{{#if this.system.open}}
+					<a type="button" data-action="toggleOpen" class="fa-solid fa-caret-down"></a>
+					{{else}}
+					<a type="button" data-action="toggleOpen" class="fa-solid fa-caret-right"></a>
+					{{/if}}
+				{{/if}}
+				{{this.system.component.name}}
+			</div>
+			{{> actor.parts.item-controls}}
+		</div>
+		{{#if (and this.system.contents.length this.system.open)}}
+			<ul class='item-contents'>
+			{{#each this.system.contents}}
+			{{> "trait"}}
+			{{/each}}
+			</ul>
+		{{/if}}
+	</li>
+{{/inline}}
+
 <section class='tab {{tab.cssClass}}' data-group='primary' data-tab='traits'>
 
   <!-- Traits -->
-  <table>
-    <thead>
-      <tr>
-        <th>{{localize 'GURPS.Actor.Character.Traits.Title'}}</th>
-        <th>{{localize 'GURPS.Actor.Character.Traits.Points'}}</th>
-        <th>{{{localize 'GURPS.Sheet.Reference'}}}</th>
-        <th> </th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each traits}}
-        <tr class='draggable'>
-          <td>{{this.system.component.name}}</td>
-          <td>{{this.system.component.points}}</td>
-					{{> actor.parts.item-reference}}
-					{{> actor.parts.item-controls}}
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
+	<div class="item-list">
+		<header>
+			<div class="item-name">{{localize 'GURPS.Actor.Character.Traits.Title'}}</div>
+			<div class="item-controls"> </div>
+		</header>
+		<ul class="item-contents">
+			{{#each traits}}
+			{{> "trait"}}
+			{{/each}}
+		</ul>
+	</div>
 
 </section>

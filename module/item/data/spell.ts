@@ -33,7 +33,10 @@ class SpellModel extends BaseItemModel<SpellSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
-    if (otf === '') return
+    if (otf === '') {
+      this.component.level = this.component.import
+      return
+    }
 
     // Remove extraneous brackets
     otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
