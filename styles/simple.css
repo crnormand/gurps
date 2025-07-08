@@ -1517,11 +1517,13 @@ div#other {
 #equipmentcarried {
   grid-template-columns: min-content auto auto 1fr repeat(6, auto);
   grid-area: equipmentcarried;
+  width: 100%;
 }
 
 #equipmentother {
   grid-template-columns: min-content auto auto 1fr repeat(6, auto);
   grid-area: equipmentother;
+  width: 100%;
 }
 
 #notes {
