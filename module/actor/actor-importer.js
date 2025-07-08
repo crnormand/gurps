@@ -1658,7 +1658,7 @@ export class ActorImporter {
     }
     a.originalName = i.name
     a.points = i.calc?.points
-    a.notes = i.calc?.resolved_notes ?? i.notes ?? i.local_notes ?? ''
+    a.notes = this.resolveNotes(i)
     a.userdesc = i.userdesc
     a.cr = i.cr || null
 
