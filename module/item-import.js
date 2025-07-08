@@ -242,7 +242,8 @@ export class ItemImporter {
       for (let m of i.modifiers) {
         if (!m.disabled && m.features?.length)
           for (let f of m.features) {
-            feat_list.push(f)
+            let clonedFeature = { ...f, modifier: true }
+            feat_list.push(clonedFeature)
           }
       }
     if (feat_list.length)
@@ -251,16 +252,21 @@ export class ItemImporter {
         if (f.type === 'attribute_bonus') {
           bonus_list.push(`${f.attribute} ${bonus}`)
         } else if (f.type === 'dr_bonus') {
-          const locations = f.locations.map(loc => {
-            // If the string contains embedded spaces, wrap it in double quotes.
-            if (/\s+/.test(loc)) {
-              return `"*${loc}"`
-            } else {
-              return `*${loc}`
-            }
-          })
+          let locations = []
+          // Handle modifiers like "Fortify" that don't have locations, but are applied to "this armor". In that case,
+          // we create a DR bonus that applies to all locations that the other DR bonuses apply to.
+          if (f.modifier && (!f.locations || f.locations.length === 0)) {
+            locations.push(
+              bonus_list
+                .filter(b => b.startsWith('DR ')) // This will get all the DR entries in the bonus list
+                .map(b => this._getTextAfterNthSpace(b, 2)) // This gets the locations part
+                .join(' ')
+            )
+          } else {
+            locations = f.locations.map(loc => this._formatLocation(loc))
+          }
 
-          if (!!locations.length > 0) {
+          if (locations.length > 0) {
             bonus_list.push(`DR ${bonus} ${locations.join(' ')}`)
           } else {
             bonus_list.push(`DR ${bonus}`)
@@ -329,6 +335,16 @@ export class ItemImporter {
     } else {
       return Item.create(itemData, { pack: `world.${filename}` })
     }
+  }
+
+  _getTextAfterNthSpace(text, number) {
+    const parts = text.split(' ')
+    if (parts.length <= number) return ''
+    return parts.slice(number).join(' ')
+  }
+
+  _formatLocation(text) {
+    return /\s+/.test(text) ? `"*${text}"` : `*${text}`
   }
 
   isRangedWeapon(w) {

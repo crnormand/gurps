@@ -5,6 +5,7 @@
 ### Bugfixes
 
 - Missing values when importing equipment libraries into GGA #2341
+- Issue when importing Equipment Libraries from GCS into Compendiums #2338
 
 ## Release 0.18.2 07/02/2025
 
