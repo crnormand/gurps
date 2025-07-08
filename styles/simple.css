@@ -1514,13 +1514,17 @@ div#other {
   grid-area: spells;
 }
 
-#equipmentcarried {
+#equipmentcarried,
+#equipmentother {
   grid-template-columns: min-content auto auto 1fr repeat(6, auto);
+  width: 100%;
+}
+
+#equipmentcarried {
   grid-area: equipmentcarried;
 }
 
 #equipmentother {
-  grid-template-columns: min-content auto auto 1fr repeat(6, auto);
   grid-area: equipmentother;
 }
 

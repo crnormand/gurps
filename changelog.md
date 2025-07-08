@@ -7,7 +7,7 @@
 - Missing values when importing equipment libraries into GGA #2341
 - Issue when importing Equipment Libraries from GCS into Compendiums #2338
 - Notes fields are sometimes empty after GCS import, but not always #2345
-
+- Make equipment DIVs fill width of container
 
 ## Release 0.18.2 07/02/2025
 
