@@ -8,6 +8,7 @@
 - Issue when importing Equipment Libraries from GCS into Compendiums #2338
 - Notes fields are sometimes empty after GCS import, but not always #2345
 - Make equipment DIVs fill width of container
+- Statuses still undefined #2346
 
 ## Release 0.18.2 07/02/2025
 
