@@ -9,6 +9,7 @@
 - Notes fields are sometimes empty after GCS import, but not always #2345
 - Make equipment DIVs fill width of container
 - Statuses still undefined #2346
+- Journal entry pages longer than the window height are not scrollable. #2339
 
 ## Release 0.18.2 07/02/2025
 
