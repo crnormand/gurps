@@ -25,6 +25,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     return game.users?.filter(user => user.isOwner) ?? []
   }
 
+  /** Alias of accessor owners */
+  getOwners(): User.Implementation[] {
+    return this.owners
+  }
+
   /* ---------------------------------------- */
 
   // NOTE: STUB. Not convinced this is needed in the new system.

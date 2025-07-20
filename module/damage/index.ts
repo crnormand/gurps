@@ -33,7 +33,7 @@ interface DamageModule extends GurpsModule {
 
 function init() {
   console.log('GURPS | Initializing GURPS Damage module.')
-  Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
+  // Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
   Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
   Hooks.on('init', () => {
     GURPS.ApplyDamageDialog = ApplyDamageDialog

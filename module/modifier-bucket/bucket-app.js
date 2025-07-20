@@ -22,9 +22,9 @@ Hooks.once('init', async function () {
     }
   })
 
-  CONFIG.Dice.rolls.push(CONFIG.Dice.rolls[0]) // save a copy of Foundry's default roll
-  CONFIG.Dice.rolls[0] = GurpsRoll // replace it with our custom roll
-  CONFIG.Dice.terms['d'] = GurpsDie // Hack to get Dice so nice working (it checks the terms["d"].name vs the Dice class name
+  // CONFIG.Dice.rolls.push(CONFIG.Dice.rolls[0]) // save a copy of Foundry's default roll
+  // CONFIG.Dice.rolls[0] = GurpsRoll // replace it with our custom roll
+  // CONFIG.Dice.terms['d'] = GurpsDie // Hack to get Dice so nice working (it checks the terms["d"].name vs the Dice class name
 })
 
 /**

@@ -39,8 +39,16 @@ function buttonGroup(field: fields.DataField.Any, options: any): Handlebars.Safe
 
 /* ---------------------------------------- */
 
+function print(value: any): void {
+  console.log('**Handlebars Print**')
+  console.log(value)
+}
+
+/* ---------------------------------------- */
+
 export function registerGurpsHandlebarsHelpers() {
   Handlebars.registerHelper('buttonGroup', buttonGroup)
+  Handlebars.registerHelper('print', print)
 }
 
 /* ---------------------------------------- */

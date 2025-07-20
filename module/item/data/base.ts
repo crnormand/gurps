@@ -24,10 +24,12 @@ type ItemMetadata = Readonly<{
 /* ---------------------------------------- */
 
 type ItemUseOptions = {
-  /** The user initiating the use action */
-  userId?: string
   /** The action to perform */
   action?: string
+  /** The user initiating the use action */
+  user?: User.Implementation
+  /** The actor object passed to the use function */
+  actor?: Actor.Implementation
 }
 
 /* ---------------------------------------- */

@@ -92,7 +92,7 @@ class GurpsCharacterSheet extends GurpsActorSheet {
         { id: 'equipment', cssClass: '' },
         { id: 'resources', cssClass: '' },
       ],
-      initial: 'equipment',
+      initial: 'combat',
       labelPrefix: 'GURPS.Actor.Character.Tabs',
     },
   }
@@ -306,11 +306,11 @@ class GurpsCharacterSheet extends GurpsActorSheet {
     if (!itemId) return
 
     const item = this.document.items.get(itemId)
-    if (!item) return
+    if (!item || !(item.system instanceof BaseItemModel)) return
 
     const action = target.dataset.type
 
-    await item.system.use({ action })
+    await item.system.use({ action, user: game.user as User.Implementation, actor: this.document })
   }
 }
 

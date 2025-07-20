@@ -1,4 +1,3 @@
-// Import Modules
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
@@ -87,11 +86,13 @@ import { CharacterModel } from './actor/data/character.js'
 import { Action } from './action/index.js'
 import { ActiveEffect, GurpsActiveEffect } from './active-effect/index.js'
 import { Canvas } from './canvas/index.js'
+import { ChatMessage } from './chat-message/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { JournalEntry } from './journal-entry/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
+import { Roll } from './roll/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
@@ -131,10 +132,12 @@ if (!globalThis.GURPS) {
     Action,
     ActiveEffect,
     Canvas,
+    ChatMessage,
     Combat,
     Damage,
     JournalEntry,
     ResourceTracker,
+    Roll,
     Token,
     UI,
   }

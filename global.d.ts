@@ -5,6 +5,7 @@ import { GurpsCombatant } from 'module/combat/combatant.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
+import { GurpsChatMessage } from 'module/chat-message/gurps-chat-message.ts'
 import { GurpsJournalEntryPage } from 'module/journal-entry/gurps-journal-entry-page.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
@@ -16,6 +17,7 @@ import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracke
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/active-effect/gurps-active-effect.ts'
 import { GurpsJournalEntryPDFPage } from 'module/journal-entry/data/pdf.ts'
+import { SuccessRollMessageModel } from 'module/chat-message/data/success-roll.ts'
 
 export { }
 
@@ -45,6 +47,7 @@ declare module 'fvtt-types/configuration' {
     Combatant: typeof GurpsCombatant<Combatant.SubType>
     ActiveEffect: typeof GurpsActiveEffect<ActiveEffect.SubType>
     JournalEntryPage: typeof GurpsJournalEntryPage<JournalEntryPage.SubType>
+    ChatMessage: typeof GurpsChatMessage<ChatMessage.SubType>
   }
 
   /* ---------------------------------------- */
@@ -61,6 +64,10 @@ declare module 'fvtt-types/configuration' {
 
   interface ConfiguredJournalEntryPage<SubType extends JournalEntryPage.SubType> {
     document: GurpsJournalEntryPage<SubType>
+  }
+
+  interface ConfiguredChatMessage<SubType extends ChatMessage.SubType> {
+    document: GurpsChatMessage<SubType>
   }
 
   /* ---------------------------------------- */
@@ -94,6 +101,9 @@ declare module 'fvtt-types/configuration' {
     }
     JournalEntryPage: {
       pdf: typeof GurpsJournalEntryPDFPage
+    }
+    ChatMessage: {
+      successRoll: typeof SuccessRollMessageModel
     }
   }
 

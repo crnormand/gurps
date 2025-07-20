@@ -347,59 +347,59 @@ export default function addChatHooks() {
     // because the server in 0.7.8 strips the "for" attribute in an attempt
     // to guard against weird security hacks. When "for" is whitelisted as
     // a valid attribute (future) we can remove this.
-    Hooks.on('renderChatMessage', (_app, html, _msg) => {
-      // this is a fucking hack
-      let wrapper = html.find('.collapsible-wrapper')
-      if (GURPS.lastTargetedRoll && !GURPS.lastTargetedRoll.msgId) {
-        GURPS.lastTargetedRoll.msgId = _msg.message._id
-      }
-      if (wrapper.length > 0) {
-        //console.log($(wrapper).hbs())
-        let input = $(wrapper).find('input.toggle')[0]
-        let label = $(input).siblings('label.label-toggle')[0]
-        let id = input.id
-        let labelFor = $(label).attr('for')
-        if (labelFor !== id) {
-          $(label).attr('for', id)
-          console.log(`add the 'for' attribute if needed: ${$(wrapper).html()}`)
-        }
-      }
-    })
+    // Hooks.on('renderChatMessage', (_app, html, _msg) => {
+    //   // this is a fucking hack
+    //   let wrapper = html.find('.collapsible-wrapper')
+    //   if (GURPS.lastTargetedRoll && !GURPS.lastTargetedRoll.msgId) {
+    //     GURPS.lastTargetedRoll.msgId = _msg.message._id
+    //   }
+    //   if (wrapper.length > 0) {
+    //     //console.log($(wrapper).hbs())
+    //     let input = $(wrapper).find('input.toggle')[0]
+    //     let label = $(input).siblings('label.label-toggle')[0]
+    //     let id = input.id
+    //     let labelFor = $(label).attr('for')
+    //     if (labelFor !== id) {
+    //       $(label).attr('for', id)
+    //       console.log(`add the 'for' attribute if needed: ${$(wrapper).html()}`)
+    //     }
+    //   }
+    // })
 
     // Look for RESULTS from a RollTable.   RollTables do not generate regular chat messages
-    Hooks.on(
-      'preCreateChatMessage',
-      (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
-        let c = chatMessage.content
-        try {
-          let html = $(c)
-          let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
-          let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
-          let t = rt[0]?.innerText
-          if (!!t) {
-            t.split('\n').forEach(e => {
-              let m = e.match(re)
-              if (!!m && !!m[2]) {
-                let action = parselink(m[2])
-                if (!!action.action) {
-                  GURPS.performAction(action.action, GURPS.LastActor, {
-                    shiftKey: e.startsWith('/pr'),
-                  })
-                  //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
-                }
-              }
-            })
-          }
-        } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
-        let newContent = gurpslink(c)
-        foundry.utils.setProperty(chatMessage, '_source.content', newContent)
-        return true
-      }
-    )
-
-    Hooks.on('renderChatMessage', (_app, html, _msg) => {
-      GurpsWiring.hookupAllEvents(html)
-    })
+    // Hooks.on(
+    //   'preCreateChatMessage',
+    //   (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
+    //     let c = chatMessage.content
+    //     try {
+    //       let html = $(c)
+    //       let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
+    //       let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
+    //       let t = rt[0]?.innerText
+    //       if (!!t) {
+    //         t.split('\n').forEach(e => {
+    //           let m = e.match(re)
+    //           if (!!m && !!m[2]) {
+    //             let action = parselink(m[2])
+    //             if (!!action.action) {
+    //               GURPS.performAction(action.action, GURPS.LastActor, {
+    //                 shiftKey: e.startsWith('/pr'),
+    //               })
+    //               //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
+    //             }
+    //           }
+    //         })
+    //       }
+    //     } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
+    //     let newContent = gurpslink(c)
+    //     foundry.utils.setProperty(chatMessage, '_source.content', newContent)
+    //     return true
+    //   }
+    // )
+    //
+    // Hooks.on('renderChatMessage', (_app, html, _msg) => {
+    //   GurpsWiring.hookupAllEvents(html)
+    // })
 
     Hooks.on(
       'diceSoNiceRollComplete',
