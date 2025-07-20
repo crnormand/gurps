@@ -1,5 +1,4 @@
 import { ChangeLogWindow } from '../lib/change-log.js'
-import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
 import { SemanticVersion } from '../lib/semver.js'
 import {
@@ -15,16 +14,6 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
-import {
-  GurpsActorCombatSheet,
-  GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
-  GurpsActorSheet,
-  GurpsActorSheetReduced,
-  GurpsActorSimplifiedSheet,
-  GurpsActorTabSheet,
-  GurpsInventorySheet,
-} from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -79,11 +68,11 @@ import { TraitModel } from './item/data/trait.js'
 import { SkillModel } from './item/data/skill.js'
 import { SpellModel } from './item/data/spell.js'
 import { EquipmentModel } from './item/data/equipment.js'
-import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { GurpsItemV2 } from './item/gurps-item.js'
 import { CharacterModel } from './actor/data/character.js'
 
 import { Action } from './action/index.js'
+import { Actor } from './actor/index.js'
 import { ActiveEffect, GurpsActiveEffect } from './active-effect/index.js'
 import { Canvas } from './canvas/index.js'
 import { ChatMessage } from './chat-message/index.js'
@@ -95,6 +84,7 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Roll } from './roll/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
+import { Migration } from './migration/index.js'
 import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
 import { registerGurpsHandlebarsHelpers, registerHandlebarsPartials } from './utilities/handlebars.js'
 export let GURPS = undefined
@@ -105,7 +95,6 @@ if (!globalThis.GURPS) {
   GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
   GURPS.DEBUG = true
   GURPS.stopActions = false
-  GURPS.Migration = Migration
   GURPS.Length = Length
   // GURPS.importTextXML = importTestXML
   GURPS.importGCS = importGCS
@@ -130,12 +119,14 @@ if (!globalThis.GURPS) {
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
     Action,
+    Actor,
     ActiveEffect,
     Canvas,
     ChatMessage,
     Combat,
     Damage,
     JournalEntry,
+    Migration,
     ResourceTracker,
     Roll,
     Token,
@@ -1970,13 +1961,7 @@ if (!globalThis.GURPS) {
     // CONFIG.Actor.documentClass = GurpsActor
     // CONFIG.Item.documentClass = GurpsItem
 
-    CONFIG.Actor.documentClass = GurpsActorV2
     CONFIG.Item.documentClass = GurpsItemV2
-
-    CONFIG.Actor.dataModels = {
-      character: CharacterModel,
-      enemy: CharacterModel,
-    }
 
     CONFIG.Item.dataModels = {
       feature: TraitModel,
@@ -2056,17 +2041,6 @@ if (!globalThis.GURPS) {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
 
-    /**
-     * Added to color the rollable parts of the character sheet.
-     * Made this part eslint compatible...
-     * ~Stevil
-     */
-    registerColorPickerSettings()
-    // eslint-disable-next-line no-undef
-    Hooks.on('renderActorSheet', () => {
-      colorGurpsActorSheet()
-    })
-
     // Listen for the Ctrl key and toggle the roll mode (to show the behaviour we currently do anyway)
     game.keybindings.register('gurps', 'toggleDiceDisplay', {
       name: 'Toggle dice display',
@@ -2084,8 +2058,6 @@ if (!globalThis.GURPS) {
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"
     })
-
-    GURPS.ActorSheets = { character: GurpsActorSheet }
 
     Hooks.call('gurpsinit', GURPS)
   })
@@ -2111,9 +2083,8 @@ if (!globalThis.GURPS) {
     const migrationVersion = SemanticVersion.fromString(previousVersionString)
 
     // Run any needed migrations.
-    Migration.run()
     Object.values(GURPS.modules).forEach(mod => {
-      if (mod.migrate) mod.migrate()
+      if ('migrate' in mod) mod.migrate()
     })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the

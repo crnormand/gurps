@@ -82,6 +82,11 @@ declare module 'fvtt-types/configuration' {
         }
       }
     }
+    ChatMessage: {
+      gurps: {
+        transfer: AnyObject
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -175,6 +180,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
     'gurps.auto-ignore-qty': boolean
     'gurps.use-quintessence': boolean
+    'gurps.migration-version': `${number}.${number}.${number}${string | undefined}`
     'gurps.use-tagged-modifiers': {
       autoAdd: boolean
       checkConditionals: boolean

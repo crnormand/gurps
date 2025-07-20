@@ -16,6 +16,8 @@ import initializeGameSettings, {
   useLocationWoundMods,
 } from './settings.js'
 
+/* ---------------------------------------- */
+
 interface DamageModule extends GurpsModule {
   rollDamage: typeof rollDamage
   settings: {
@@ -30,6 +32,8 @@ interface DamageModule extends GurpsModule {
     defaultADDAction: () => string
   }
 }
+
+/* ---------------------------------------- */
 
 function init() {
   console.log('GURPS | Initializing GURPS Damage module.')
@@ -63,6 +67,8 @@ function init() {
     ])
   })
 }
+
+/* ---------------------------------------- */
 
 export const Damage: DamageModule = {
   init,

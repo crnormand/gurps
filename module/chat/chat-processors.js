@@ -169,13 +169,6 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/forcemigrate/i)
     return !!this.match
   }
-  async process(_line) {
-    /*    await Migration.migrateTo096()
-		await Migration.migrateTo097()
-		await Migration.migrateTo0104()
-		await Migration.fixDataModelProblems() 
-	*/
-  }
 }
 
 class RolltableChatProcessor extends ChatProcessor {

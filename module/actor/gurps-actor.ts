@@ -1,4 +1,4 @@
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
@@ -121,6 +121,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
         const whisper = this.owners.length > 0 ? this.owners.map(user => user.id) : null
         ChatMessage.create({ content, whisper })
       })
+  }
+
+  /* ---------------------------------------- */
+  /*  Migration                               */
+  /* ---------------------------------------- */
+
+  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+    console.log(`GURPS | Migrating Actor data for ${source.name} (${source._id})`)
+    console.log(source)
+    return source
   }
 
   /* ---------------------------------------- */
