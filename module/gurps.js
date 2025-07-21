@@ -2518,7 +2518,7 @@ const handleChatInputDrop = function (event) {
 }
 
 const showGURPSCopyright = function () {
-  ChatMessage.create({
+  CONFIG.ChatMessage.documentClass.create({
     content: `
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>

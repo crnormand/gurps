@@ -9,6 +9,7 @@ import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntry } from './data/hit-location-entry.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
+import { migrateCharacter } from './migration/character-migration.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -129,8 +130,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   static override migrateData(source: AnyMutableObject): AnyMutableObject {
     console.log(`GURPS | Migrating Actor data for ${source.name} (${source._id})`)
-    console.log(source)
-    return source
+    return migrateCharacter(source)
   }
 
   /* ---------------------------------------- */
