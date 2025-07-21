@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.4
+
+### Bugfixes
+
+- When re-importing a GCS sheet, all foundry items get removed #2354
+
 ## Release 0.18.3 07/09/2025
 
 ### Bugfixes
