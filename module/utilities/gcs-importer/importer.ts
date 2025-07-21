@@ -330,6 +330,31 @@ class GcsImporter {
       system.carried = carried
     }
 
+    if (!(item instanceof GcsSpell)) {
+      const level = item instanceof GcsTrait ? (item.levels ?? 0) : 1
+      system.reactions = item.features
+        ?.filter(e => e.type === 'reaction_bonus')
+        .map(e => {
+          const amount = e.per_level ? Number(e.amount) * level : Number(e.amount)
+          return {
+            modifier: amount,
+            situation: String(e.situation),
+            modifierTags: '',
+          }
+        })
+
+      system.conditionalmods = item.features
+        ?.filter(e => e.type === 'conditional_modifier')
+        .map(e => {
+          const amount = e.per_level ? Number(e.amount) * level : Number(e.amount)
+          return {
+            modifier: amount,
+            situation: String(e.situation),
+            modifierTags: '',
+          }
+        })
+    }
+
     return system
   }
 
@@ -590,7 +615,7 @@ class GcsImporter {
 
     Object.assign(component, {
       count: equipment.quantity ?? 1,
-      weight: parseInt(equipment.calc.weight) ?? 0,
+      weight: parseInt(equipment.calc.weight) || 0,
       cost: equipment.calc.value ?? 0,
       location: '',
       carried: true,

@@ -7,7 +7,7 @@ import {
   MoveSchema,
   moveSchema,
   poolSchema,
-  reactionSchema,
+  ReactionSchema,
 } from './character-components.js'
 import fields = foundry.data.fields
 import { HitLocationEntry } from './hit-location-entry.js'
@@ -61,6 +61,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // Action collections
   melee: MeleeAttackModel[] = []
   ranged: RangedAttackModel[] = []
+
+  // Reactions & Conditional modifiers
+  reactions: fields.SchemaField.SourceData<ReactionSchema>[] = []
+  conditionalmods: fields.SchemaField.SourceData<ReactionSchema>[] = []
 
   /* ---------------------------------------- */
 
@@ -177,6 +181,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.melee = this.parent.getItemAttacks({ attackType: 'melee' })
     this.ranged = this.parent.getItemAttacks({ attackType: 'ranged' })
+
+    this.reactions = this.parent.getItemReactions('reactions')
+    this.conditionalmods = this.parent.getItemReactions('conditionalmods')
 
     this.#prepareEquipmentSummary()
   }
@@ -1309,7 +1316,9 @@ const characterSchema = () => {
           nullable: false,
         }),
         importname: new fields.StringField({ required: true, nullable: true }),
-        importpath: new fields.FilePathField({ required: true, nullable: true, categories: ['TEXT'] }),
+        // NOTE: Should be a FilePathField but these do not allow arbitrary file extension.
+        // TODO: implement FilePathField with arbitrary file extension support
+        importpath: new fields.StringField({ required: true, nullable: true }),
       },
       { required: true, nullable: false }
     ),
@@ -1378,17 +1387,18 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
-    conditionalmods: new fields.ArrayField(
-      new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
-      {
-        required: true,
-        nullable: false,
-      }
-    ),
+    // NOTE: Change from previous schema where these fields were part of the schema. They are now derived properties
+    // reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
+    //   required: true,
+    //   nullable: false,
+    // }),
+    // conditionalmods: new fields.ArrayField(
+    //   new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
+    //   {
+    //     required: true,
+    //     nullable: false,
+    //   }
+    // ),
 
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
 

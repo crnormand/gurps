@@ -52,7 +52,7 @@ type EquipmentSchema = BaseItemModelSchema & ReturnType<typeof equipmentSchema>
 const equipmentComponentSchema = () => {
   return {
     count: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    weight: new fields.NumberField({ required: true, nullable: false }),
+    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     cost: new fields.NumberField({ required: true, nullable: false }),
     location: new fields.StringField({ required: true, nullable: false }),
     carried: new fields.BooleanField({ required: true, nullable: false }),

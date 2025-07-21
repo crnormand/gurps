@@ -5,7 +5,7 @@ import Maneuvers from './maneuver.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
-import { DamageActionSchema } from './data/character-components.js'
+import { DamageActionSchema, ReactionSchema } from './data/character-components.js'
 import { HitLocationEntry } from './data/hit-location-entry.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
@@ -88,6 +88,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
+  getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
+    return this.items.reduce((acc: any[], item) => {
+      acc.push(...((item.system as Item.SystemOfType<'feature'>)[key] ?? []))
+      return acc
+    }, [])
+  }
+
+  /* ---------------------------------------- */
+
   override async toggleStatusEffect(
     statusId: string,
     options?: Actor.ToggleStatusEffectOptions
@@ -129,8 +138,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   static override migrateData(source: AnyMutableObject): AnyMutableObject {
-    console.log(`GURPS | Migrating Actor data for ${source.name} (${source._id})`)
-    return migrateCharacter(source)
+    super.migrateData(source)
+    migrateCharacter(source)
+    return source
   }
 
   /* ---------------------------------------- */

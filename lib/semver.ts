@@ -34,7 +34,7 @@ export class SemanticVersion {
       result.major = parseInt(match.groups?.major || '0')
       result.minor = parseInt(match.groups?.minor || '0')
       result.patch = parseInt(match.groups?.patch || '0')
-      result.preRelease = match.groups?.preRelase || ''
+      result.preRelease = match.groups?.preRelease || ''
       result.buildMetaData = match.groups?.buildMetaData || ''
       return result
     }
@@ -65,5 +65,17 @@ export class SemanticVersion {
     if (this.major === otherVersion.major && this.minor === otherVersion.minor && this.patch < otherVersion.patch)
       return true
     return false
+  }
+
+  /* ---------------------------------------- */
+
+  isEqualTo(otherVersion: SemanticVersion): boolean {
+    return (
+      this.major === otherVersion.major &&
+      this.minor === otherVersion.minor &&
+      this.patch === otherVersion.patch &&
+      this.preRelease === otherVersion.preRelease &&
+      this.buildMetaData === otherVersion.buildMetaData
+    )
   }
 }

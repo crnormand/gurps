@@ -2,6 +2,10 @@ import DataModel = foundry.abstract.DataModel
 import fields = foundry.data.fields
 
 class HitLocationEntry extends DataModel<HitLocationSchema> {
+  roll: number[] = []
+
+  /* ---------------------------------------- */
+
   constructor(...args: DataModel.ConstructorArgs<HitLocationSchema>) {
     super(...args)
   }
@@ -17,12 +21,14 @@ class HitLocationEntry extends DataModel<HitLocationSchema> {
   protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
     super._initialize(options)
 
-    const rollText = this.rollText
-    const roll: number[] = []
-    for (const part of rollText.split(' ')) {
+    const rollText = this.rollText ?? '-'
+    const roll = rollText.split('-').reduce((acc: number[], part: string) => {
+      if (!part) return acc
       const match = part.match(/^\d+$/)
-      if (match) roll.push(parseInt(match[0]))
-    }
+      if (match) acc.push(parseInt(match[0]))
+      return acc
+    }, [])
+    this.roll = roll
   }
 
   /* ---------------------------------------- */
@@ -62,11 +68,11 @@ const hitLocationSchema = () => {
     _dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
     rollText: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-      initial: [],
-    }),
+    // roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
+    //   required: true,
+    //   nullable: false,
+    //   initial: [],
+    // }),
     split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
       required: true,
       nullable: false,

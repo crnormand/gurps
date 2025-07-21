@@ -9,8 +9,6 @@ export async function fixBadDamageChatMessages() {
       // @ts-expect-error Legacy flag structure
       const transfer: string = message.flags.transfer
       await message.setFlag('gurps', 'transfer', JSON.parse(transfer))
-    } else {
-      console.log(`Already migrated: ${message.id}:`, message.flags)
     }
   }
 }

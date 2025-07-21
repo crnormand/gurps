@@ -13,6 +13,8 @@ import {
 } from './actor-sheet.js'
 import { CharacterModel } from './data/character.js'
 import { GurpsActorV2 } from './gurps-actor.js'
+import { migrateCharacter } from './migration/character-migration.js'
+import { GurpsCharacterSheet } from './sheets/character-sheet.js'
 
 /* ---------------------------------------- */
 
@@ -61,10 +63,10 @@ function init() {
       label: 'Full (GCS)',
       makeDefault: true,
     })
-    // foundry.documents.collections.Actors.registerSheet('gurps', GurpsCharacterSheet, {
-    //   label: 'Experimental',
-    //   makeDefault: false,
-    // })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsCharacterSheet, {
+      label: 'Experimental',
+      makeDefault: false,
+    })
 
     GURPS.ActorSheets = { character: GurpsActorSheet }
   })
@@ -82,9 +84,18 @@ function init() {
 
 /* ---------------------------------------- */
 
-function migrate() {
+async function migrate() {
   console.log('GURPS | Migrating Actor module data.')
   // Migration logic can be added here if needed in the future
+
+  const migrations =
+    game.actors?.reduce((acc: any[], actor) => {
+      const version = actor._stats.systemVersion!
+      if (foundry.utils.isNewerVersion(game.system!.version, version)) acc.push(migrateCharacter(actor.toObject()))
+      return acc
+    }, []) ?? []
+
+  if (migrations.length) await foundry.documents.Actor.updateDocuments(migrations)
 }
 
 /* ---------------------------------------- */

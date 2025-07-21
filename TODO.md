@@ -4,6 +4,8 @@ This is a developer TODO file. It is not meant to be read by users.
 
 ## The list
 
+- Migration script: make sure reactions and conditional mods migrate correctly
+
 - Implement "use" ability for Items and Actions
 
 - Documents

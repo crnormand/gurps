@@ -7,6 +7,7 @@ import { parselink } from '../../../lib/parselink.js'
 import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { BaseAction } from '../../action/base-action.js'
+import { reactionSchema } from '../../actor/data/character-components.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -246,6 +247,14 @@ const baseItemModelSchema = () => {
     fromItem: new fields.StringField({ required: true, nullable: false }),
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
+    reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
+      required: true,
+      nullable: false,
+    }),
+    conditionalmods: new fields.ArrayField(
+      new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
+      { required: true, nullable: false }
+    ),
   }
 }
 
