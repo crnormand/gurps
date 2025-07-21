@@ -1873,8 +1873,8 @@ export class ActorImporter {
     })
 
     for (const e of temp) {
+      let parent = null
       if (!!e.parentuuid) {
-        let parent = null
         parent = temp.find(f => f.uuid === e.parentuuid)
         if (!!parent) GURPS.put(parent.contains, e)
         else e.parentuuid = ''
