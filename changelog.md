@@ -4,6 +4,7 @@
 
 ### Bugfixes
 
+- Cannot delete attacks on character sheet #2355
 - When re-importing a GCS sheet, all foundry items get removed #2354
 
 ## Release 0.18.3 07/09/2025
