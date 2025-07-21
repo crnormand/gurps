@@ -1634,7 +1634,9 @@ export class GurpsActor extends Actor {
     // @ts-ignore
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
-    await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'system.eqt.uuid': generateUniqueId() }])
+    await this.updateEmbeddedDocuments('Item', [
+      { _id: localItem.id, 'system.eqt.uuid': generateUniqueId(), 'system.eqt.save': true },
+    ])
     await this.addItemData(localItem, targetkey) // only created 1 item
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const item = await this.items.get(localItem._id)
