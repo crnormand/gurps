@@ -2,7 +2,7 @@
   --controlhover: 0 0 5px red;
   --sectiongap: 0.05in;
   --smallemgap: 0.2em;
-  --fontawesomefamily: 'fontawesome';
+  --fontawesomefamily: 'Font Awesome 6 Pro';
   --lightgrey: rgba(0, 0, 0, 0.3);
   --headerfontsize: 80%;
   --standardborder: 1px solid black;
@@ -1514,13 +1514,17 @@ div#other {
   grid-area: spells;
 }
 
-#equipmentcarried {
+#equipmentcarried,
+#equipmentother {
   grid-template-columns: min-content auto auto 1fr repeat(6, auto);
+  width: 100%;
+}
+
+#equipmentcarried {
   grid-area: equipmentcarried;
 }
 
 #equipmentother {
-  grid-template-columns: min-content auto auto 1fr repeat(6, auto);
   grid-area: equipmentother;
 }
 

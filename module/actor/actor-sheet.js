@@ -2036,7 +2036,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), 'click')
     this.makeDeleteMenu(html, '.condmodmenu', new Modifier('+0', '???'), 'click')
     this.makeDeleteMenu(html, '.meleemenu', new Melee('???'), 'click')
-    this.makeDeleteMenu(html, '.rangedmenu', new Ranged('???'), 'click context')
+    this.makeDeleteMenu(html, '.rangedmenu', new Ranged('???'), 'click')
     this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), 'click')
     this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), 'click')
     this.makeDeleteMenu(html, '.spellmenu', new Spell('???'), 'click')

@@ -1658,14 +1658,14 @@ export class ActorImporter {
     }
     a.originalName = i.name
     a.points = i.calc?.points
-    a.notes = i.calc?.resolved_notes ?? i.notes ?? ''
+    a.notes = this._resolveNotes(i)
     a.userdesc = i.userdesc
     a.cr = i.cr || null
 
     if (i.cr) {
       a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
     }
-    
+
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
         if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
@@ -1688,6 +1688,10 @@ export class ActorImporter {
       for (let j of i.children) ch = ch.concat(await this.importAd(j, i.id))
     }
     return [a].concat(ch)
+  }
+
+  _resolveNotes(i) {
+    return i.calc?.resolved_notes ?? i.notes ?? i.local_notes ?? ''
   }
 
   async importSkillsFromGCS(sks) {
@@ -1744,7 +1748,7 @@ export class ActorImporter {
       if (s.level == 0) s.level = ''
       s.points = i.points
       s.relativelevel = i.calc?.rsl
-      s.notes = i.calc?.resolved_notes ?? i.notes ?? ''
+      s.notes = this._resolveNotes(i)
     } else {
       // Usually containers
       s.level = ''
@@ -1804,7 +1808,7 @@ export class ActorImporter {
       s.maintain = i.maintenance_cost || ''
       s.difficulty = i.difficulty.toUpperCase()
       s.relativelevel = i.calc?.rsl
-      s.notes = i.calc?.resolved_notes ?? i.notes ?? ''
+      s.notes = this._resolveNotes(i)
       s.duration = i.duration || ''
       s.points = i.points || ''
       s.casttime = i.casting_time || ''
@@ -1869,8 +1873,8 @@ export class ActorImporter {
     })
 
     for (const e of temp) {
+      let parent = null
       if (!!e.parentuuid) {
-        let parent = null
         parent = temp.find(f => f.uuid === e.parentuuid)
         if (!!parent) GURPS.put(parent.contains, e)
         else e.parentuuid = ''
@@ -1919,7 +1923,7 @@ export class ActorImporter {
     e.uuid = i.id
     e.parentuuid = p
     e.notes = ''
-    e.notes = i.calc?.resolved_notes ?? i.notes ?? ''
+    e.notes = this._resolveNotes(i)
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
         if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`

@@ -124,7 +124,7 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     sortedEffects.forEach(s => {
       let p = s.posture ? ' *' : ''
-      html += `<tr><td>${s.id}</td><td>'${game.i18n.localize(s.label)}'${p}</td></tr>`
+      html += `<tr><td>${s.id}</td><td>'${game.i18n.localize(s.name)}'${p}</td></tr>`
     })
     html += `<tr><td></td><td>* => ${game.i18n.localize('GURPS.modifierPosture')}</td></tr>`
     return html + '</table>'
@@ -205,7 +205,7 @@ export default class StatusChatProcessor extends ChatProcessor {
       // TODO We need to turn this into a single string, instead of multiple localized strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
       this.prnt(
-        `${game.i18n.localize(actionText)} <i>${effect.id}:'${game.i18n.localize(effect.label)}'</i> ${game.i18n.localize('GURPS.for')} ${actor.displayname}`
+        `${game.i18n.localize(actionText)} <i>${effect.id}:'${game.i18n.localize(effect.name)}'</i> ${game.i18n.localize('GURPS.for')} ${actor.displayname}`
       )
     }
   }

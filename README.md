@@ -1,8 +1,6 @@
-# [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
+# [Users Guide](https://github.com/crnormand/gurps/wiki) for GURPS 4e Game Aid for Foundry VTT
 
-If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
-
-## Current Release Version 0.18.2
+## Current Release Version 0.18.4
 
 Compatible with FoundryVTT v12.x AND **v13.x**!
 
@@ -14,9 +12,7 @@ If you like our work [Sponsor our development](https://github.com/sponsors/crnor
 
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/VzybymD8z6))
 
-Thanks 🙂
-
-[Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-14' 9/09/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+Thanks 🙂!
 
 #### Legal
 

@@ -1,6 +1,23 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.3 (FoundryVTT v13 ONLY)
+## Release 0.18.4 07/21/2025
+
+### Bugfixes
+
+- Font Awesome font family fix.
+- Cannot delete attacks on character sheet #2355
+- When re-importing a GCS sheet, all foundry items get removed #2354
+
+## Release 0.18.3 07/09/2025
+
+### Bugfixes
+
+- Missing values when importing equipment libraries into GGA #2341
+- Issue when importing Equipment Libraries from GCS into Compendiums #2338
+- Notes fields are sometimes empty after GCS import, but not always #2345
+- Make equipment DIVs fill width of container
+- Statuses still undefined #2346
+- Journal entry pages longer than the window height are not scrollable. #2339
 
 ## Release 0.18.2 07/02/2025
 
