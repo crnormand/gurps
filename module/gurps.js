@@ -2546,7 +2546,7 @@ const handleChatInputDrop = function (event) {
   const data = JSON.parse(event.dataTransfer.getData('text/plain'))
   if (!!data && (!!data.otf || !!data.bucket)) {
     const cmd = buildCommandFromDragData(data)
-    $(document).find('#chat-message').val(cmd)
+    document.querySelector('#chat-message').value = cmd
   }
 }
 
