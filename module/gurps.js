@@ -1926,9 +1926,6 @@ if (!globalThis.GURPS) {
     // set up all hitlocation tables (must be done before MB)
     HitLocation.init()
 
-    // TODO Damage Module
-    // DamageChat.init()
-
     RegisterChatProcessors()
     GurpsActiveEffect.init()
 
@@ -2031,7 +2028,7 @@ if (!globalThis.GURPS) {
       AddImportEquipmentButton(html)
     })
 
-    // TODO Move to a new 'chat' module?
+    // TODO Move to a new 'bucket' module?
     Hooks.on('renderChatLog', (app, html, data) => {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
@@ -2071,7 +2068,7 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
-    // TODO Move to a new 'chat' module?
+    // TODO Move to a new 'bucket' module?
     // Find the element with ID "chat-message".
     document.querySelector('#chat-message')?.addEventListener('drop', handleChatInputDrop)
 
@@ -2523,7 +2520,7 @@ const buildCommandFromDragData = function (data) {
   return cmd
 }
 
-// TODO Move to a new 'chat' module?
+// TODO Move to a new 'bucket' module?
 const handleChatLogDrop = function (event) {
   event.preventDefault()
   if (event.originalEvent) event = event.originalEvent
@@ -2539,7 +2536,7 @@ const handleChatLogDrop = function (event) {
   }
 }
 
-// TODO Move to a new 'chat' module?
+// TODO Move to a new 'bucket' module?
 const handleChatInputDrop = function (event) {
   event.preventDefault()
   if (event.originalEvent) event = event.originalEvent
