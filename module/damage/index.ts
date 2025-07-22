@@ -18,6 +18,13 @@ function init() {
     GURPS.DamageChat = DamageChat
     GURPS.DamageTables = new DamageTable()
     GURPS.resolveDamageRoll = resolveDamageRollAction
+
+    // preload drag-and-drop image
+    {
+      let img = new Image()
+      img.src = 'systems/gurps/icons/blood-splatter-clipart-small.webp'
+      DamageChat.damageDragImage = img
+    }
   })
   Hooks.on('ready', () => {
     // define Handlebars partials for ADD:

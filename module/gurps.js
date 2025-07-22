@@ -1958,20 +1958,6 @@ if (!globalThis.GURPS) {
       makeDefault: true,
     })
 
-    // preload drag-and-drop image
-    {
-      let img = new Image()
-      img.src = 'systems/gurps/icons/blood-splatter-clipart-small.webp'
-      GURPS.damageDragImage = img
-    }
-
-    // LOAD ALL THE THINGS!!!
-    {
-      let img = new Image()
-      img.src = 'systems/gurps/icons/all-the-things-transparent.webp'
-      GURPS.allTheThingsImage = img
-    }
-
     // Register sheet application classes
     foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
