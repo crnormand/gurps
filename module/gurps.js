@@ -2082,16 +2082,6 @@ if (!globalThis.GURPS) {
 
     HitLocation.ready()
 
-    // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
-    //   new ThreeD6({
-    //     popOut: false,
-    //     minimizable: false,
-    //     resizable: false,
-    //     id: 'ThreeD6',
-    //     template: 'systems/gurps/templates/threed6.hbs',
-    //     classes: [],
-    //   }).render(true)
-
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
     let previousVersionString = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
