@@ -94,8 +94,8 @@
 }
 
 .simple_IQ {
-  display: inline-flex;
   grid-area: IQ;
+  display: inline-flex;
 }
 
 .simple_HT {
