@@ -1,5 +1,17 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.19.0 FoundryV13 _ONLY_
+
+### Features
+
+- You can now drag the Modifier Bucket to a macro slot, the chat log, or chat input.
+
+### Bugfixes
+
+- Fixed a few layout problems with the Simplified character sheet.
+- Fixed a few layout problems with the Active Effects List application.
+- Fixed bug that always showed "Full Sheet" on the Switch Sheet header button.
+
 ## Release 0.18.4 07/21/2025
 
 ### Bugfixes

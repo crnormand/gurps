@@ -129,7 +129,7 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  // CONFIG.debug.hooks = true;
+  CONFIG.debug.hooks = true
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -2032,38 +2032,7 @@ if (!globalThis.GURPS) {
     })
 
     Hooks.on('renderChatLog', (app, html, data) => {
-      html.querySelector('.chat-scroll')?.addEventListener('drop', event => {
-        event.preventDefault()
-        if (event.originalEvent) event = event.originalEvent
-        const data = JSON.parse(event.dataTransfer.getData('text/plain'))
-        if (!!data && (!!data.otf || !!data.bucket)) {
-          let cmd = ''
-          if (!!data.encodedAction) {
-            let action = JSON.parse(atou(data.encodedAction))
-            if (action.quiet) cmd += '!'
-          }
-          if (data.otf) cmd += data.otf
-          else {
-            let sep = ''
-            data.bucket.forEach(otf => {
-              cmd += sep + otf
-              sep = ' & '
-            })
-          }
-          if (!!data.displayname) {
-            let q = '"'
-            if (data.displayname.includes('"')) q = "'"
-            cmd = q + data.displayname + q + cmd
-          }
-          cmd = '[' + cmd + ']'
-          let messageData = {
-            user: game.user.id,
-            type: CONST.CHAT_MESSAGE_STYLES.OOC,
-            content: cmd,
-          }
-          ChatMessage.create(messageData, {})
-        }
-      })
+      html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
 
     /**
@@ -2101,6 +2070,9 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    // Find the element with ID "chat-message".
+    document.querySelector('#chat-message')?.addEventListener('drop', handleChatInputDrop)
+
     // Set up SSRT
     GURPS.SSRT = setupRanges()
     GURPS.rangeObject = new GurpsRange()
@@ -2533,6 +2505,69 @@ const resetTokenActionsForCombatant = async combatant => {
   const token = canvas.tokens.get(combatant.token.id)
   const actions = await TokenActions.fromToken(token)
   await actions.clear()
+}
+
+const handleChatLogDrop = function (event) {
+  event.preventDefault()
+  if (event.originalEvent) event = event.originalEvent
+  const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+  if (!!data && (!!data.otf || !!data.bucket)) {
+    let cmd = ''
+    if (!!data.encodedAction) {
+      let action = JSON.parse(atou(data.encodedAction))
+      if (action.quiet) cmd += '!'
+    }
+    if (data.otf) cmd += data.otf
+    else {
+      let sep = ''
+      data.bucket.forEach(otf => {
+        cmd += sep + otf
+        sep = ' & '
+      })
+    }
+    if (!!data.displayname) {
+      let q = '"'
+      if (data.displayname.includes('"')) q = "'"
+      cmd = q + data.displayname + q + cmd
+    }
+    cmd = '[' + cmd + ']'
+
+    let messageData = {
+      user: game.user.id,
+      type: CONST.CHAT_MESSAGE_STYLES.OOC,
+      content: cmd,
+    }
+    ChatMessage.create(messageData, {})
+  }
+}
+
+const handleChatInputDrop = function (event) {
+  event.preventDefault()
+  if (event.originalEvent) event = event.originalEvent
+  const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+  if (!!data && (!!data.otf || !!data.bucket)) {
+    let cmd = ''
+    if (!!data.encodedAction) {
+      let action = JSON.parse(atou(data.encodedAction))
+      if (action.quiet) cmd += '!'
+    }
+    if (data.otf) cmd += data.otf
+    else {
+      let sep = ''
+      data.bucket.forEach(otf => {
+        cmd += sep + otf
+        sep = ' & '
+      })
+    }
+    if (!!data.displayname) {
+      let q = '"'
+      if (data.displayname.includes('"')) q = "'"
+      cmd = q + data.displayname + q + cmd
+    }
+    cmd = '[' + cmd + ']'
+
+    $(document).find('#chat-message').val(cmd)
+  }
 }
 
 const showGURPSCopyright = function () {
