@@ -429,6 +429,10 @@
     "easyRoll": "Chance fácil",
     "edit": "Editar",
     "editorAddItem": "Adicionar {name} no final",
+    "effect": {
+      "listTitle": "Efeitos Ativos para {name}",
+      "new": "Novo Efeito"
+    },
     "effectChatModifiedToHit": "{displayName} :<br>[{modifier}]",
     "effectChatRangedModifier": "{displayName} :<br>[-2 nas jogadas de ataque feitas contra você com armas de combate à distância ({posture})].",
     "effectHintBlind": "-6 na jogada de ataque se acostumado à cegueira; Audição -2 um sucesso reduz a penalidade na jogada de ataque para -4.",
@@ -437,7 +441,6 @@
     "effectModNoTokenSelected": "Nenhuma miniatura selecionada",
     "effects": "Efeitos",
     "effectsEffect": "Efeito",
-    "effectsListTitle": "Efeitos Ativos para {name}",
     "effectsNotApplicableDefenses": "Não se aplica a Defesas Ativas ou outras reações defensivas.",
     "effectsTemporaryAttributePenalties": "Ver Penalidades de Atributo Temporárias",
     "effectsTermination": "Condição para Finalizar (OtF)",
@@ -1005,6 +1008,7 @@
       "settingsName": "PDFs"
     },
     "pdfCode": "Código do PDF",
+    "pdfCodePlaceholder": "Código do PDF: (ex.: 'B' ou 'MA')",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
     "pdfGrappling": "B370",
@@ -1023,6 +1027,7 @@
     "pdfLPT": "B144",
     "pdfMajorWound": "B420",
     "pdfOffset": "Ajuste de página",
+    "pdfOffsetPlaceholder": "Ajuste: (ex.: -5, 0 ou 2)",
     "pdfPageReference": "Ref de Pág",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",

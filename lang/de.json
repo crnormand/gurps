@@ -429,6 +429,10 @@
     "easyRoll": "Gute Chance",
     "edit": "Bearbeiten",
     "editorAddItem": "Füge {name} am Ende hinzu",
+    "effect": {
+      "listTitle": "Aktive Effekte für {name}",
+      "new": "Neuer Effekt"
+    },
     "effectChatModifiedToHit": "{displayName} ist<br>[{modifier}]",
     "effectChatRangedModifier": "{displayName} ist<br>[-2 um mit Fernkampfwaffe getroffen zu werden ({posture})].",
     "effectHintBlind": "-6 um zu treffen, wenn man daran gewöhnt ist, blind zu sein; erfolgreiche Hören-Probe-2 senkt den Abzug auf -4",
@@ -437,7 +441,6 @@
     "effectModNoTokenSelected": "Kein Token ausgewählt",
     "effects": "Effekte",
     "effectsEffect": "Effekt",
-    "effectsListTitle": "Aktive Effekte für {name}",
     "effectsNotApplicableDefenses": "Beeinflusst nicht Aktive Verteidigung oder andere denfensive Reaktionen.",
     "effectsTemporaryAttributePenalties": "Siehe Temporary Attribute Penalties",
     "effectsTermination": "Beendigungsbedingung (OtF)",
@@ -1005,6 +1008,7 @@
       "settingsName": "PDFs"
     },
     "pdfCode": "PDF-Buchcode",
+    "pdfCodePlaceholder": "PDF-Code: (z.B. 'B' oder 'MA')",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
     "pdfGrappling": "B370",
@@ -1022,7 +1026,8 @@
     "pdfKnockdownStun": "B420",
     "pdfLPT": "B142",
     "pdfMajorWound": "B420",
-    "pdfOffset": "Page Offset",
+    "pdfOffset": "Seitenoffset",
+    "pdfOffsetPlaceholder": "Offset: (z.B. -5, 0 oder 2)",
     "pdfPageReference": "Seiten Ref",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",

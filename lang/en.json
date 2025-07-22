@@ -429,6 +429,10 @@
     "easyRoll": "Good chance",
     "edit": "Edit",
     "editorAddItem": "Add {name} at the end",
+    "effect": {
+      "listTitle": "Active Effects for {name}",
+      "new": "New Effect"
+    },
     "effectChatModifiedToHit": "{displayName} is<br>[{modifier}]",
     "effectChatRangedModifier": "{displayName} is<br>[-2 to be hit with ranged combat ({posture})].",
     "effectHintBlind": "-6 to hit if accustomed to being blind; Hearing -2 success lowers the to hit penalty to -4.",
@@ -437,7 +441,6 @@
     "effectModNoTokenSelected": "No token selected",
     "effects": "Effects",
     "effectsEffect": "Effect",
-    "effectsListTitle": "Active Effects for {name}",
     "effectsNotApplicableDefenses": "Does not apply to Active Defenses or other defensive reactions.",
     "effectsTemporaryAttributePenalties": "See Temporary Attribute Penalties",
     "effectsTermination": "Termination Condition (OtF)",

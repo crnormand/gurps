@@ -26,7 +26,7 @@ export default class GurpsActiveEffectListSheet extends Application {
 
   get title() {
     let name = this.actor?.name || 'UNKNOWN'
-    return game.i18n.format('GURPS.effectsListTitle', { name: name })
+    return game.i18n.format('GURPS.effect.listTitle', { name: name })
   }
 
   activateListeners(html) {
@@ -44,7 +44,7 @@ export default class GurpsActiveEffectListSheet extends Application {
       case 'create':
         await this.actor.createEmbeddedDocuments('ActiveEffect', [
           {
-            label: game.i18n.localize('GURPS.effectNew', 'New Effect'),
+            name: game.i18n.localize('GURPS.effect.new'),
             icon: 'icons/svg/aura.svg',
             disabled: true,
           },

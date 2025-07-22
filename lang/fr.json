@@ -429,6 +429,10 @@
     "easyRoll": "Bonne chance",
     "edit": "Modifier",
     "editorAddItem": "Ajouter {name} à la fin",
+    "effect": {
+      "listTitle": "Effets Actifs pour {name}",
+      "new": "Nouvel Effet"
+    },
     "effectChatModifiedToHit": "{displayName} est<br>[{modifier}]",
     "effectChatRangedModifier": "{displayName} est<br>[-2 pour être touché à distance ({posture})].",
     "effectHintBlind": "-6 pour toucher si accoutumé à l'aveuglement; Une réussite sur un jet d'Ouïe à -2 réduit la pénalité à -4.",
@@ -437,7 +441,6 @@
     "effectModNoTokenSelected": "Aucun Token sélectionné",
     "effects": "Effets",
     "effectsEffect": "Effet",
-    "effectsListTitle": "Effets Actifs pour {name}",
     "effectsNotApplicableDefenses": "Ne s'applique pas aux Défenses Actives ou autre réactions défensives.",
     "effectsTemporaryAttributePenalties": "Voir Pénalités d'Attribut Temporaires",
     "effectsTermination": "Condition de Terminaison (OtF)",
@@ -1005,6 +1008,7 @@
       "settingsName": "PDFs"
     },
     "pdfCode": "Code Livre PDF",
+    "pdfCodePlaceholder": "Code PDF : (ex. : 'B' ou 'MA')",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
     "pdfGrappling": "B370",
@@ -1023,6 +1027,7 @@
     "pdfLPT": "B142",
     "pdfMajorWound": "B420",
     "pdfOffset": "Décalage de Page",
+    "pdfOffsetPlaceholder": "Décalage : (ex. : -5, 0 ou 2)",
     "pdfPageReference": "Page Ref",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",

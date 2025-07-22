@@ -429,6 +429,10 @@
     "easyRoll": "Легкий шанс",
     "edit": "Редактировать",
     "editorAddItem": "Добавить {name} в конец",
+    "effect": {
+      "listTitle": "Активные эффекты для {name}",
+      "new": "Новый эффект"
+    },
     "effectChatModifiedToHit": "{displayName} изменён<br>[{modifier}]",
     "effectChatRangedModifier": "{displayName} изменён<br>[-2 к попаданию в дальнем бою ({posture})].",
     "effectHintBlind": "-6 к попаданию, если привык к слепоте; Слух -2 успех снижает штраф к попаданию до -4.",
@@ -437,7 +441,6 @@
     "effectModNoTokenSelected": "Токен не выбран",
     "effects": "Эффекты",
     "effectsEffect": "Эффект",
-    "effectsListTitle": "Активные эффекты для {name}",
     "effectsNotApplicableDefenses": "Не применяется к активной защите или другим защитным реакциям.",
     "effectsTemporaryAttributePenalties": "См. Временные штрафы атрибутов",
     "effectsTermination": "Условие завершения (OtF)",
@@ -1005,6 +1008,7 @@
       "settingsName": "PDF-файлы"
     },
     "pdfCode": "Код PDF книги",
+    "pdfCodePlaceholder": "Код PDF: (например, 'B' или 'MA')",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
     "pdfGrappling": "B370",
@@ -1023,6 +1027,7 @@
     "pdfLPT": "B142",
     "pdfMajorWound": "B420",
     "pdfOffset": "Смещение страницы",
+    "pdfOffsetPlaceholder": "Смещение: (например, -5, 0 или 2)",
     "pdfPageReference": "Ссылка на страницу",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",
