@@ -3,7 +3,7 @@
     <div class='gga-effects-list table'>
       <div class='label'>{{localize 'GURPS.effectsEffect'}}</div>
       <div class='label'>?</div>
-      <div><a id='template-add' class='effect-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
+      <div><a id='template-add' class='effect-control icon' data-action='create'><i class='fas fa-plus'></i></a>
       </div>
       {{#each effects}}
         <input
@@ -24,13 +24,7 @@
           {{checked (not disabled)}}
         />
         <div class='vertical-center'>
-          <a
-            class='effect-control'
-            data-effect-id='{{id}}'
-            data-action='delete'
-            title='{{localize "GURPS.delete"}}'
-            style='padding: 6px 20px 0 10px;'
-          >
+          <a class='effect-control' data-effect-id='{{id}}' data-action='delete' title='{{localize "GURPS.delete"}}'>
             <i class='fas fa-trash'></i>
           </a>
         </div>

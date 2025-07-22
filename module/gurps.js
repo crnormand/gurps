@@ -1952,22 +1952,14 @@ if (!globalThis.GURPS) {
     CONFIG.Item.documentClass = GurpsItem
 
     // add custom ActiveEffectConfig sheet class
-    // COMPATIBILITY: v12
-    if (game.release.generation >= 13) {
-      foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-        ActiveEffect,
-        'core',
-        foundry.applications.sheets.ActiveEffectConfig
-      )
-      foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
-        makeDefault: true,
-      })
-    } else {
-      DocumentSheetConfig.unregisterSheet(ActiveEffect, 'core', ActiveEffectConfig)
-      DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
-        makeDefault: true,
-      })
-    }
+    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
+      ActiveEffect,
+      'core',
+      foundry.applications.sheets.ActiveEffectConfig
+    )
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
+      makeDefault: true,
+    })
 
     // preload drag-and-drop image
     {
