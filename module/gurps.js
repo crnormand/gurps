@@ -2031,6 +2031,7 @@ if (!globalThis.GURPS) {
       AddImportEquipmentButton(html)
     })
 
+    // TODO Move to a new 'chat' module?
     Hooks.on('renderChatLog', (app, html, data) => {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
@@ -2070,6 +2071,7 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    // TODO Move to a new 'chat' module?
     // Find the element with ID "chat-message".
     document.querySelector('#chat-message')?.addEventListener('drop', handleChatInputDrop)
 
@@ -2497,31 +2499,37 @@ const resetTokenActionsForCombatant = async combatant => {
   await actions.clear()
 }
 
+// TODO Move to a new 'chat' module?
+const buildCommandFromDragData = function (data) {
+  let cmd = ''
+  if (!!data.encodedAction) {
+    let action = JSON.parse(atou(data.encodedAction))
+    if (action.quiet) cmd += '!'
+  }
+  if (data.otf) cmd += data.otf
+  else {
+    let sep = ''
+    data.bucket.forEach(otf => {
+      cmd += sep + otf
+      sep = ' & '
+    })
+  }
+  if (!!data.displayname) {
+    let q = '"'
+    if (data.displayname.includes('"')) q = "'"
+    cmd = q + data.displayname + q + cmd
+  }
+  cmd = '[' + cmd + ']'
+  return cmd
+}
+
+// TODO Move to a new 'chat' module?
 const handleChatLogDrop = function (event) {
   event.preventDefault()
   if (event.originalEvent) event = event.originalEvent
   const data = JSON.parse(event.dataTransfer.getData('text/plain'))
   if (!!data && (!!data.otf || !!data.bucket)) {
-    let cmd = ''
-    if (!!data.encodedAction) {
-      let action = JSON.parse(atou(data.encodedAction))
-      if (action.quiet) cmd += '!'
-    }
-    if (data.otf) cmd += data.otf
-    else {
-      let sep = ''
-      data.bucket.forEach(otf => {
-        cmd += sep + otf
-        sep = ' & '
-      })
-    }
-    if (!!data.displayname) {
-      let q = '"'
-      if (data.displayname.includes('"')) q = "'"
-      cmd = q + data.displayname + q + cmd
-    }
-    cmd = '[' + cmd + ']'
-
+    const cmd = buildCommandFromDragData(data)
     let messageData = {
       user: game.user.id,
       type: CONST.CHAT_MESSAGE_STYLES.OOC,
@@ -2531,31 +2539,13 @@ const handleChatLogDrop = function (event) {
   }
 }
 
+// TODO Move to a new 'chat' module?
 const handleChatInputDrop = function (event) {
   event.preventDefault()
   if (event.originalEvent) event = event.originalEvent
   const data = JSON.parse(event.dataTransfer.getData('text/plain'))
   if (!!data && (!!data.otf || !!data.bucket)) {
-    let cmd = ''
-    if (!!data.encodedAction) {
-      let action = JSON.parse(atou(data.encodedAction))
-      if (action.quiet) cmd += '!'
-    }
-    if (data.otf) cmd += data.otf
-    else {
-      let sep = ''
-      data.bucket.forEach(otf => {
-        cmd += sep + otf
-        sep = ' & '
-      })
-    }
-    if (!!data.displayname) {
-      let q = '"'
-      if (data.displayname.includes('"')) q = "'"
-      cmd = q + data.displayname + q + cmd
-    }
-    cmd = '[' + cmd + ']'
-
+    const cmd = buildCommandFromDragData(data)
     $(document).find('#chat-message').val(cmd)
   }
 }
