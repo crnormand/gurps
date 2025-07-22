@@ -85,18 +85,22 @@
 
 .simple_ST {
   grid-area: ST;
+  display: inline-flex;
 }
 
 .simple_DX {
   grid-area: DX;
+  display: inline-flex;
 }
 
 .simple_IQ {
+  display: inline-flex;
   grid-area: IQ;
 }
 
 .simple_HT {
   grid-area: HT;
+  display: inline-flex;
 }
 
 .simple_ST-desc {
@@ -176,7 +180,7 @@
   justify-content: center;
   align-content: center;
   flex-direction: column;
-  padding: 0px 0px 30px 0px;
+  /* padding: 0px 0px 30px 0px; */
 }
 
 .simple_Heart {
@@ -198,7 +202,7 @@
   justify-content: center;
   align-content: center;
   flex-direction: column;
-  padding: 0px 0px 30px 0px;
+  /* padding: 0px 0px 30px 0px; */
 }
 
 .simple_Defend {
@@ -220,6 +224,11 @@
   font-weight: bold;
   text-align: center;
   background-color: red;
+}
+
+.simple_container .list_note {
+  margin-left: 5px;
+  width: unset;
 }
 
 .simple_Attacks {
@@ -258,7 +267,7 @@
   display: grid;
   align-content: stretch;
   grid-template-rows: repeat(100, 1fr);
-  grid-template-columns: 9fr 1fr;
+  grid-template-columns: max-content auto min-content;
   text-align: left;
   vertical-align: middle;
   font-size: 120%;

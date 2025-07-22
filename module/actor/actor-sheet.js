@@ -1672,7 +1672,7 @@ export class GurpsActorSheet extends ActorSheet {
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
     const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
-    const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
+    const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
     let b = [
       {
         label: isFull ? altsheet : 'Full View',

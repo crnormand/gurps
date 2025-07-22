@@ -1984,84 +1984,43 @@ if (!globalThis.GURPS) {
     }
 
     // Register sheet application classes
-    // COMPATIBILITY: v12
-    if (game.release.generation >= 13) {
-      foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-        label: 'Combat',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-        label: 'Editor',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-        label: 'Simple',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-        label: 'NPC/mini',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-        label: 'Inventory Only',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-        label: 'Tabbed Sheet',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-        label: 'Reduced Mode',
-        makeDefault: false,
-      })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-        // Add this sheet last
-        label: 'Full (GCS)',
-        makeDefault: true,
-      })
+    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+      label: 'Combat',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+      label: 'Editor',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+      label: 'Simple',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+      label: 'NPC/mini',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
+      label: 'Inventory Only',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
+      label: 'Tabbed Sheet',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+      label: 'Reduced Mode',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
+      // Add this sheet last
+      label: 'Full (GCS)',
+      makeDefault: true,
+    })
 
-      foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-      foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-    } else {
-      Actors.unregisterSheet('core', ActorSheet)
-      Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-        label: 'Combat',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-        label: 'Editor',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-        label: 'Simple',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-        label: 'NPC/mini',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsInventorySheet, {
-        label: 'Inventory Only',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsActorTabSheet, {
-        label: 'Tabbed Sheet',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-        label: 'Reduced Mode',
-        makeDefault: false,
-      })
-      Actors.registerSheet('gurps', GurpsActorSheet, {
-        // Add this sheet last
-        label: 'Full (GCS)',
-        makeDefault: true,
-      })
-
-      Items.unregisterSheet('core', ItemSheet)
-      Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-    }
+    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
+    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-ignore
