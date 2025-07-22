@@ -129,7 +129,7 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  CONFIG.debug.hooks = true
+  // CONFIG.debug.hooks = true
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
