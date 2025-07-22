@@ -19,6 +19,18 @@ function init() {
     GURPS.DamageTables = new DamageTable()
     GURPS.resolveDamageRoll = resolveDamageRollAction
   })
+  Hooks.on('ready', () => {
+    // define Handlebars partials for ADD:
+    const __dirname = 'systems/gurps/templates'
+    foundry.applications.handlebars.loadTemplates([
+      __dirname + '/apply-damage/effect-blunttrauma.hbs',
+      __dirname + '/apply-damage/effect-crippling.hbs',
+      __dirname + '/apply-damage/effect-headvitalshit.hbs',
+      __dirname + '/apply-damage/effect-knockback.hbs',
+      __dirname + '/apply-damage/effect-majorwound.hbs',
+      __dirname + '/apply-damage/effect-shock.hbs',
+    ])
+  })
 }
 
 export const Damage: DamageModule = {

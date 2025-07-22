@@ -2371,30 +2371,6 @@ if (!globalThis.GURPS) {
     })
 
     GurpsJournalEntry.ready()
-
-    // define Handlebars partials for ADD:
-    const __dirname = 'systems/gurps/templates'
-    // COMPATIBILITY: v12
-    if (game.release.generation >= 13) {
-      foundry.applications.handlebars.loadTemplates([
-        __dirname + '/apply-damage/effect-blunttrauma.hbs',
-        __dirname + '/apply-damage/effect-crippling.hbs',
-        __dirname + '/apply-damage/effect-headvitalshit.hbs',
-        __dirname + '/apply-damage/effect-knockback.hbs',
-        __dirname + '/apply-damage/effect-majorwound.hbs',
-        __dirname + '/apply-damage/effect-shock.hbs',
-      ])
-    } else {
-      loadTemplates([
-        __dirname + '/apply-damage/effect-blunttrauma.hbs',
-        __dirname + '/apply-damage/effect-crippling.hbs',
-        __dirname + '/apply-damage/effect-headvitalshit.hbs',
-        __dirname + '/apply-damage/effect-knockback.hbs',
-        __dirname + '/apply-damage/effect-majorwound.hbs',
-        __dirname + '/apply-damage/effect-shock.hbs',
-      ])
-    }
-
     GURPS.setInitiativeFormula()
 
     // Translate attribute mappings if not in English
