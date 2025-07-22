@@ -1969,20 +1969,6 @@ if (!globalThis.GURPS) {
       })
     }
 
-    // preload drag-and-drop image
-    {
-      let img = new Image()
-      img.src = 'systems/gurps/icons/blood-splatter-clipart-small.webp'
-      GURPS.damageDragImage = img
-    }
-
-    // LOAD ALL THE THINGS!!!
-    {
-      let img = new Image()
-      img.src = 'systems/gurps/icons/all-the-things-transparent.webp'
-      GURPS.allTheThingsImage = img
-    }
-
     // Register sheet application classes
     // COMPATIBILITY: v12
     if (game.release.generation >= 13) {

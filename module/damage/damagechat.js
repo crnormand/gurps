@@ -14,6 +14,9 @@ import selectTarget from '../utilities/select-target.js'
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
+  /** @type { HTMLImageElement | null } */
+  static damageDragImage = null
+
   /**
    * @param {{ data: { flags: { transfer: string; }; }; }} app
    * @param {JQuery<HTMLElement>} html
@@ -31,7 +34,7 @@ export default class DamageChat {
       for (let index = 0; index < damageMessages.length; index++) {
         let message = damageMessages[index]
         let payload = transfer.payload[index]
-        makeElementDraggable(message, 'damageItem', 'dragging', payload, GURPS.damageDragImage, [30, 30])
+        makeElementDraggable(message, 'damageItem', 'dragging', payload, DamageChat.damageDragImage, [30, 30])
       }
     } // end-if (!!damageMessages && damageMessages.length)
 
@@ -40,7 +43,7 @@ export default class DamageChat {
     if (!!allDamageMessage && allDamageMessage.length == 1) {
       let message = allDamageMessage[0]
 
-      makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, GURPS.damageDragImage, [30, 30])
+      makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, DamageChat.damageDragImage, [30, 30])
     }
 
     // If there was a target, enable the GM's apply button
