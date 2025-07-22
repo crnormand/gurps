@@ -607,6 +607,7 @@ export class ModifierBucket extends Application {
     const globalModifier = html.querySelector('#globalmodifier')
     globalModifier?.addEventListener('click', event => this._onClick(event))
     globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
+
     Array.from(globalModifier.children).forEach(li => {
       li.addEventListener('dragstart', ev => {
         let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
@@ -623,7 +624,6 @@ export class ModifierBucket extends Application {
     if (this.isTooltip) globalModifier.addEventListener('mouseenter', event => this._onenter(event))
 
     const modifierBucket = html.querySelector('#modifierbucket')
-
     modifierBucket?.addEventListener('drop', event => {
       event.stopPropagation()
       event.preventDefault()
@@ -636,6 +636,17 @@ export class ModifierBucket extends Application {
             GURPS.performAction(link.action, game.actors?.get(dragData.actor))
         }
       }
+    })
+
+    modifierBucket?.addEventListener('dragstart', ev => {
+      let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+      return ev.dataTransfer?.setData(
+        'text/plain',
+        JSON.stringify({
+          type: 'modifierbucket',
+          bucket: bucket,
+        })
+      )
     })
 
     modifierBucket?.addEventListener(

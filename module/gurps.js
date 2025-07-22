@@ -129,7 +129,7 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  // CONFIG.debug.hooks = true;
+  // CONFIG.debug.hooks = true
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -1926,9 +1926,6 @@ if (!globalThis.GURPS) {
     // set up all hitlocation tables (must be done before MB)
     HitLocation.init()
 
-    // TODO Damage Module
-    // DamageChat.init()
-
     RegisterChatProcessors()
     GurpsActiveEffect.init()
 
@@ -2031,39 +2028,9 @@ if (!globalThis.GURPS) {
       AddImportEquipmentButton(html)
     })
 
+    // TODO Move to a new 'bucket' module?
     Hooks.on('renderChatLog', (app, html, data) => {
-      html.querySelector('.chat-scroll')?.addEventListener('drop', event => {
-        event.preventDefault()
-        if (event.originalEvent) event = event.originalEvent
-        const data = JSON.parse(event.dataTransfer.getData('text/plain'))
-        if (!!data && (!!data.otf || !!data.bucket)) {
-          let cmd = ''
-          if (!!data.encodedAction) {
-            let action = JSON.parse(atou(data.encodedAction))
-            if (action.quiet) cmd += '!'
-          }
-          if (data.otf) cmd += data.otf
-          else {
-            let sep = ''
-            data.bucket.forEach(otf => {
-              cmd += sep + otf
-              sep = ' & '
-            })
-          }
-          if (!!data.displayname) {
-            let q = '"'
-            if (data.displayname.includes('"')) q = "'"
-            cmd = q + data.displayname + q + cmd
-          }
-          cmd = '[' + cmd + ']'
-          let messageData = {
-            user: game.user.id,
-            type: CONST.CHAT_MESSAGE_STYLES.OOC,
-            content: cmd,
-          }
-          ChatMessage.create(messageData, {})
-        }
-      })
+      html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
 
     /**
@@ -2101,6 +2068,10 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    // TODO Move to a new 'bucket' module?
+    // Find the element with ID "chat-message".
+    document.querySelector('#chat-message')?.addEventListener('drop', handleChatInputDrop)
+
     // Set up SSRT
     GURPS.SSRT = setupRanges()
     GURPS.rangeObject = new GurpsRange()
@@ -2109,16 +2080,6 @@ if (!globalThis.GURPS) {
     initialize_i18nHelper()
 
     HitLocation.ready()
-
-    // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
-    //   new ThreeD6({
-    //     popOut: false,
-    //     minimizable: false,
-    //     resizable: false,
-    //     id: 'ThreeD6',
-    //     template: 'systems/gurps/templates/threed6.hbs',
-    //     classes: [],
-    //   }).render(true)
 
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
     let previousVersionString = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
@@ -2533,6 +2494,57 @@ const resetTokenActionsForCombatant = async combatant => {
   const token = canvas.tokens.get(combatant.token.id)
   const actions = await TokenActions.fromToken(token)
   await actions.clear()
+}
+
+// TODO Move to a new 'chat' module?
+const buildCommandFromDragData = function (data) {
+  let cmd = ''
+  if (!!data.encodedAction) {
+    let action = JSON.parse(atou(data.encodedAction))
+    if (action.quiet) cmd += '!'
+  }
+  if (data.otf) cmd += data.otf
+  else {
+    let sep = ''
+    data.bucket.forEach(otf => {
+      cmd += sep + otf
+      sep = ' & '
+    })
+  }
+  if (!!data.displayname) {
+    let q = '"'
+    if (data.displayname.includes('"')) q = "'"
+    cmd = q + data.displayname + q + cmd
+  }
+  cmd = '[' + cmd + ']'
+  return cmd
+}
+
+// TODO Move to a new 'bucket' module?
+const handleChatLogDrop = function (event) {
+  event.preventDefault()
+  if (event.originalEvent) event = event.originalEvent
+  const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+  if (!!data && (!!data.otf || !!data.bucket)) {
+    const cmd = buildCommandFromDragData(data)
+    let messageData = {
+      user: game.user.id,
+      type: CONST.CHAT_MESSAGE_STYLES.OOC,
+      content: cmd,
+    }
+    ChatMessage.create(messageData, {})
+  }
+}
+
+// TODO Move to a new 'bucket' module?
+const handleChatInputDrop = function (event) {
+  event.preventDefault()
+  if (event.originalEvent) event = event.originalEvent
+  const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+  if (!!data && (!!data.otf || !!data.bucket)) {
+    const cmd = buildCommandFromDragData(data)
+    document.querySelector('#chat-message').value = cmd
+  }
 }
 
 const showGURPSCopyright = function () {
