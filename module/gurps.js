@@ -2032,14 +2032,7 @@ if (!globalThis.GURPS) {
     })
 
     Hooks.on('renderChatLog', (app, html, data) => {
-      let selector = '.chat-scroll'
-      // COMPATIBILITY: v12
-      if (game.release.generation === 12) {
-        html = html[0]
-        selector = '#chat-log'
-      }
-
-      html.querySelector(selector)?.addEventListener('drop', event => {
+      html.querySelector('.chat-scroll')?.addEventListener('drop', event => {
         event.preventDefault()
         if (event.originalEvent) event = event.originalEvent
         const data = JSON.parse(event.dataTransfer.getData('text/plain'))
