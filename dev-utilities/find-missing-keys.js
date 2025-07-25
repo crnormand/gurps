@@ -47,24 +47,56 @@ files.forEach(it => {
   let contents = fs.readFileSync(it, 'utf8')
   let lines = contents.split('\n')
 
-  // look for patterns like 'i18n("<key>",'
+  // Find any strings that start with 'GURPS.'.
   {
-    let matches = lines.filter(it => it.match(/i18n\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
-    // console.log(`i18n("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
+    let matches = lines.filter(it => it.match(/[\'\"\`]GURPS\.[A-Za-z0-9_. ]+?[\'\"\`]\b/g))
+    // console.log(`GURPS.<key>... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*i18n\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches = matches.map(it => it.replace(/.*[\'\"\`](GURPS\.[A-Za-z0-9_. ]+?)[\'\"\`]\b.*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
 
-  // look for patterns like '{{i18n "<key>",'
   {
-    let matches = lines.filter(it => it.match(/\{\{i18n [\'\"\`][A-Za-z0-9_. ]+?[\'\"\`]/g))
-    // console.log(`{{i18n "key"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
+    let matches = lines.filter(it => it.match(/localize\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
+    // console.log(`localize("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*\{\{i18n [\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches = matches.map(it => it.replace(/.*localize\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches.forEach(it => tags.add(it))
+    }
+  }
+
+  // look for patterns like 'localize("<key>",'
+  {
+    let matches = lines.filter(it => it.match(/localize\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
+    // console.log(`localize("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
+
+    if (matches.length > 0) {
+      matches = matches.map(it => it.replace(/.*localize\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches.forEach(it => tags.add(it))
+    }
+  }
+
+  // look for patterns like 'format("<key>",'
+  {
+    let matches = lines.filter(it => it.match(/format\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
+    // console.log(`format("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
+
+    if (matches.length > 0) {
+      matches = matches.map(it => it.replace(/.*format\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches.forEach(it => tags.add(it))
+    }
+  }
+
+  // look for patterns like '{{localize "<key>",'
+  {
+    let matches = lines.filter(it => it.match(/\{\{localize [\'\"\`][A-Za-z0-9_. ]+?[\'\"\`]/g))
+    // console.log(`{{localize "key"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
+
+    if (matches.length > 0) {
+      matches = matches.map(it => it.replace(/.*\{\{localize [\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
@@ -73,9 +105,28 @@ files.forEach(it => {
 // read the tags from en.json
 let object = JSON.parse(fs.readFileSync('lang/en.json', 'utf8'))
 let keys = Object.keys(object)
-let orphans = Array.from(tags)
-  .filter(it => !keys.includes(it))
-  .sort()
+tags = Array.from(tags).sort()
+
+// tags include strings like "GURPS.some.key" or "GURPS.some.key.subkey"; I need code that can search object like this: object['GURPS']['some']['key']
+let orphans = []
+for (let tag of tags) {
+  let parts = tag.split('.')
+  let current = object
+  let found = true
+
+  for (let part of parts) {
+    if (current[part]) {
+      current = current[part]
+    } else {
+      found = false
+      break
+    }
+  }
+
+  if (!found) {
+    orphans.push(tag)
+  }
+}
 
 console.log('===== ORPHANS =====')
 console.log(orphans)

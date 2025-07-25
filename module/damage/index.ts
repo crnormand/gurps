@@ -4,9 +4,31 @@ import { DamageTable } from './damage-tables.js'
 import DamageChat from './damagechat.js'
 import { resolveDamageRollAction } from './resolve-damage-roll-action.js'
 import { rollDamage } from './roll-damage.js'
+import initializeGameSettings, {
+  defaultADDAction,
+  defaultHitLocation,
+  isSimpleADD,
+  onlyGMsCanOpenADD,
+  showTheMath,
+  useArmorDivisor,
+  useBluntTrauma,
+  useHighTechBodyHits,
+  useLocationWoundMods,
+} from './settings.js'
 
 interface DamageModule extends GurpsModule {
   rollDamage: typeof rollDamage
+  settings: {
+    isSimpleADD: () => boolean
+    onlyGMsCanOpenADD: () => boolean
+    defaultHitLocation: () => string
+    useArmorDivisor: () => boolean
+    useBluntTrauma: () => boolean
+    useLocationWoundMods: () => boolean
+    showTheMath: () => boolean
+    useHighTechBodyHits: () => boolean
+    defaultADDAction: () => string
+  }
 }
 
 function init() {
@@ -23,9 +45,11 @@ function init() {
     {
       let img = new Image()
       img.src = 'systems/gurps/icons/blood-splatter-clipart-small.webp'
-      DamageChat.damageDragImage = img
+      DamageChat.damageDragImage = img // used in DamageChat._dropCanvasData
     }
+    initializeGameSettings()
   })
+
   Hooks.on('ready', () => {
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
@@ -43,4 +67,15 @@ function init() {
 export const Damage: DamageModule = {
   init,
   rollDamage,
+  settings: {
+    isSimpleADD,
+    onlyGMsCanOpenADD,
+    defaultHitLocation,
+    useArmorDivisor,
+    useBluntTrauma,
+    useLocationWoundMods,
+    showTheMath,
+    useHighTechBodyHits,
+    defaultADDAction,
+  },
 }
