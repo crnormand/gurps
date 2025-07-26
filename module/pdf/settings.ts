@@ -4,34 +4,6 @@ export function registerPDFSettings() {
   if (!game.settings || !game.i18n)
     throw new Error('GURPS | PDF module requires game.settings and game.i18n to be available!')
 
-  // Register the old settings for migration purposes.
-  game.settings.register(GURPS.SYSTEM_NAME, 'basicsetpdf', {
-    name: game.i18n.localize('GURPS.settingBasicPDFs'),
-    hint: game.i18n.localize('GURPS.settingHintBasicPDFs'),
-    scope: 'world',
-    config: false,
-    type: String as any,
-    // @ts-expect-error: choices may not be typed in Foundry's API
-    choices: {
-      Combined: game.i18n.localize('GURPS.settingBasicPDFsCombined'),
-      Separate: game.i18n.localize('GURPS.settingBasicPDFsSeparate'),
-    },
-    default: 'Combined' as any,
-    onChange: value => console.log(`Basic Set PDFs : ${value}`),
-  })
-
-  game.settings.register(GURPS.SYSTEM_NAME, 'pdf-open-first', {
-    name: game.i18n.localize('GURPS.settingPDFOpenFirst'),
-    hint: game.i18n.localize('GURPS.settingHintPDFOpenFirst'),
-    scope: 'world',
-    config: false,
-    type: Boolean as any,
-    default: false as any,
-    onChange: value => console.log(`On multiple Page Refs open first PDF found : ${value}`),
-  })
-
-  // Register the new settings for the PDF module.
-
   // Support for combined or separate Basic Set PDFs
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_BASICSET_PDF, {
     name: game.i18n.localize('GURPS.settingBasicPDFs'),
@@ -39,12 +11,11 @@ export function registerPDFSettings() {
     scope: 'world',
     config: false,
     type: String as any,
-    // @ts-expect-error: choices may not be typed in Foundry's API
     choices: {
       Combined: game.i18n.localize('GURPS.settingBasicPDFsCombined'),
       Separate: game.i18n.localize('GURPS.settingBasicPDFsSeparate'),
     },
-    default: (game.settings.get(GURPS.SYSTEM_NAME, 'basicsetpdf') as any) ?? 'Combined', // Migrate old setting if needed
+    default: 'Combined',
     onChange: value => console.log(`Basic Set PDFs : ${value}`),
   })
 
@@ -54,7 +25,7 @@ export function registerPDFSettings() {
     scope: 'world',
     config: false,
     type: Boolean as any,
-    default: (game.settings.get(GURPS.SYSTEM_NAME, 'pdf-open-first') as any) ?? false, // Migrate old setting if needed
+    default: false,
     onChange: value => console.log(`On multiple Page Refs open first PDF found : ${value}`),
   })
 

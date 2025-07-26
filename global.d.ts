@@ -5,7 +5,7 @@ import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
-export {  }
+export { }
 
 declare global {
   var GURPS: any
@@ -28,7 +28,7 @@ declare global {
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.modify-dice-plus-adds': boolean
-    'gurps.pdf.basicset': String
+    'gurps.pdf.basicset': 'Combined' | 'Separate'
     'gurps.pdf.open-first': boolean
     'gurps.damage.default-hitlocation': 'Torso' | 'Random'
     'gurps.damage.simple-add': foundry.data.fields.BooleanField
