@@ -1,15 +1,49 @@
-#pdf-settings {
-  label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+#gga-settings.gga {
+  gap: 0;
+}
 
-    &::before,
-    &::after {
-      content: none;
+.gga .gga-settings {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  row-gap: 1rem;
+
+  .settings-list {
+    background: unset;
+    overflow-y: scroll;
+
+    .form-group {
+      gap: 0;
     }
 
-    * {
-      font-weight: normal;
+    &>div {
+      padding: 0.5rem;
+    }
+
+    &>div:nth-child(odd) {
+      background-color: rgb(0, 0, 0, 5%);
+    }
+
+    label {
+      display: inline-flex;
+      align-items: start;
+      justify-content: space-between;
+      width: 100%;
+      font-weight: bold;
+
+      &::before,
+      &::after {
+        content: none;
+      }
+
+      * {
+        font-weight: normal;
+        max-width: max-content;
+      }
+    }
+
+    p.hint {
+      padding: 0 1rem;
     }
   }
 }

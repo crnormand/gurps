@@ -56,13 +56,16 @@ export class GurpsActor extends Actor {
    * @returns {GurpsActor}
    */
   asGurpsActor() {
-    // @ts-ignore
     return /** @type {GurpsActor} */ (this)
   }
 
-  // Return collection os Users that have ownership on this actor
+  // Return collection of Users that have ownership on this actor
   getOwners() {
     return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+  }
+
+  get Damage() {
+    return GURPS.modules.Damage
   }
 
   // 0.8.x added steps necessary to switch sheets
@@ -1362,7 +1365,7 @@ export class GurpsActor extends Actor {
    * @param {any[]} damageData
    */
   handleDamageDrop(damageData) {
-    if (game.user.isGM || !game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ONLY_GMS_OPEN_ADD)) {
+    if (game.user.isGM || !this.Damage.settings.onlyGMsCanOpenADD()) {
       const dialog = new ApplyDamageDialog(this, damageData)
       dialog.render(true)
     } else ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
@@ -2215,8 +2218,7 @@ export class GurpsActor extends Actor {
   // Return the 'where' value of the default hit location, or 'Random'
   // NOTE: could also return 'Large-Area'?
   get defaultHitLocation() {
-    // TODO implement a system setting but (potentially) allow it to be overridden
-    return game.settings.get('gurps', 'default-hitlocation')
+    return this.Damage.settings.defaultHitLocation()
   }
 
   getCurrentDodge() {

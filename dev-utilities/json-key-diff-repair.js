@@ -2,6 +2,14 @@
 //const fs = require('fs')
 import fs from 'fs'
 
+// Example usage: json-key-diff-repair.js lang/dr.json fix
+//
+// This script compares two lang files, one being the input file and the other being lang/en.json.
+// It finds keys that are in the input file but not in lang/en.json, and vice versa.
+// If the 'fix' argument is provided, it will modify the input file to remove keys
+// that are not in lang/en.json, and add keys that are in lang/en.json but not in the input file.
+// It will also remove keys that have the same value in both files.
+
 let args = process.argv.slice(2)
 
 const targetFile = args[0]

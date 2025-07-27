@@ -5,6 +5,13 @@ import { objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { TokenActions } from '../token-actions.js'
+import {
+  defaultADDAction,
+  useArmorDivisor,
+  useBluntTrauma,
+  useHighTechBodyHits,
+  useLocationWoundMods,
+} from './settings.js'
 
 /* 
   Crippling injury:
@@ -41,10 +48,10 @@ export class CompositeDamageCalculator {
    * @param {DamageData[]} damageData
    */
   constructor(defender, damageData) {
-    this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
-    this._useLocationModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_LOCATION_MODIFIERS)
-    this._useArmorDivisor = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_APPLY_DIVISOR)
-    this._useBodyHits = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BODY_HITS)
+    this._useBluntTrauma = useBluntTrauma()
+    this._useLocationModifiers = useLocationWoundMods()
+    this._useArmorDivisor = useArmorDivisor()
+    this._useBodyHits = useHighTechBodyHits()
 
     this._defender = defender
 
@@ -212,11 +219,7 @@ export class CompositeDamageCalculator {
   }
 
   get showApplyAction() {
-    return (
-      game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DEFAULT_ADD_ACTION) == 'apply' ||
-      (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_DEFAULT_ADD_ACTION) == 'target' &&
-        this._defender.hasPlayerOwner)
-    )
+    return defaultADDAction() === 'apply' || (defaultADDAction() === 'target' && this._defender.hasPlayerOwner)
   }
 
   get additionalWoundModifier() {

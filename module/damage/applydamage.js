@@ -14,6 +14,7 @@ import {
 import { GurpsActor } from '../actor/actor.js'
 import { TokenActions } from '../token-actions.js'
 import { CompositeDamageCalculator } from './damagecalculator.js'
+import { isSimpleADD } from './settings.js'
 
 const simpleDialogHeight = 160
 
@@ -47,7 +48,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._calculator = new CompositeDamageCalculator(actor, damageData)
     this.actor = actor
-    this.isSimpleDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SIMPLE_DAMAGE)
+    this.isSimpleDialog = isSimpleADD()
     this.timesToApply = 1
     const attacker = game.actors.get(damageData[0].attacker)
     const gmUser = game.users.find(it => it.isGM && it.active)
@@ -77,8 +78,8 @@ export default class ApplyDamageDialog extends Application {
       resizable: true,
       minimizable: false,
       width: 800,
-      height: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
-      title: game.i18n.localize('GURPS.addApplyDamageDialog'),
+      height: isSimpleADD() ? simpleDialogHeight : 'auto',
+      title: game.i18n.localize('GURPS.dmg.add.applyDamageDialog'),
     })
   }
 

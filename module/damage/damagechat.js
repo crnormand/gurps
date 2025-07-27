@@ -478,7 +478,7 @@ export default class DamageChat {
 
     function isValidUser(user, attackerActor) {
       if (game.user.isGM) return true
-      const userCanAdd = !game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ONLY_GMS_OPEN_ADD)
+      const userCanAdd = !onlyGMsCanOpenADD()
       const userOwnsAttacker = attackerActor ? user.character === attackerActor : false
       if (!userOwnsAttacker) ui.notifications?.warn(game.i18n.localize('GURPS.noUserForDamageWarning'))
       return userCanAdd && userOwnsAttacker

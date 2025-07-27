@@ -1,0 +1,31 @@
+<div class='gga-settings'>
+  <section class='settings-list scrollable'>
+    {{#each settings}}
+      {{#if (isBoolean this.type)}}
+        <div class='form-group' data-setting-id='{{this.id}}'>
+          <label for='{{this.id}}'>{{localize this.name}}</label>
+          <input type='checkbox' id='{{this.id}}' name='{{this.id}}' {{checked this.value}} />
+          <p class='hint'>{{localize this.hint}}</p>
+        </div>
+      {{/if}}
+      {{#if (isString this.type)}}
+        <div class='form-group' data-setting-id='{{this.id}}'>
+          <label for='{{this.id}}'>{{localize this.name}}
+            {{#if this.choices}}
+              <select id='{{this.id}}' name='{{this.id}}' data-dtype='String'>
+                {{selectOptions this.choices selected=this.value localize=true}}
+              </select>
+            {{else}}
+              <input type='text' id='{{this.id}}' name='{{this.id}}' value='{{this.value}}' />
+            {{/if}}
+          </label>
+          <p class='hint'>{{localize this.hint}}</p>
+        </div>
+      {{/if}}
+    {{/each}}
+  </section>
+
+  <footer class='form-footer'>
+    <button type='submit'><i class='fa-solid fa-floppy-disk' inert></i> {{localize 'SETTINGS.Save'}}</button>
+  </footer>
+</div>
