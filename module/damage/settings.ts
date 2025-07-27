@@ -279,6 +279,6 @@ export function defaultADDAction(): string {
 
 class DamageSettingsApplication extends GurpsSettingsApplication {
   constructor(options?: any) {
-    super({ title: game.i18n!.localize(SETTINGS), module: MODULE_NAME }, options)
+    super({ title: game.i18n!.localize(SETTINGS), module: MODULE_NAME, icon: 'fa-light fa-face-head-bandage' }, options)
   }
 }

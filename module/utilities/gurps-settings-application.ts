@@ -7,17 +7,17 @@ type GurpsSettingsConfig = {
 
 /**
  * GURPS Settings Application.
- * 
- * This application is used to display and manage settings for a specific GURPS module. Settings are determined by the 
+ *
+ * This application is used to display and manage settings for a specific GURPS module. Settings are determined by the
  * module name passed in the constructor.
  *
  * Pass in a configuration object with the following fields:
  * - title: The title of the settings window.
  * - module: The name of the GURPS module for which settings are being managed.
  * - icon: (optional) The icon to display in the title bar.
- * 
+ *
  * Module settings are registered with the namespace `gurps.<module>.<settingId>`.
- * For example, if the module is "damage", a setting with ID "useArmorDivisor" would be registered as 
+ * For example, if the module is "damage", a setting with ID "useArmorDivisor" would be registered as
  * `gurps.damage.useArmorDivisor`.
  *
  */
@@ -60,7 +60,7 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
   static override PARTS = {
     main: {
       scrollable: ['settings-list'],
-      template: 'systems/gurps/templates/damage/settings.hbs',
+      template: 'systems/gurps/templates/settings.hbs',
     },
   }
 
