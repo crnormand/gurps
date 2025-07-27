@@ -28,7 +28,7 @@ export default function initializeGameSettings() {
     throw new Error('GURPS | Damage module requires game.settings and game.i18n to be available!')
 
   // Register the old settings for migration purposes.
-
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_ONLY_GMS_OPEN_ADD, {
     name: 'GURPS.settingDamageRestrictADD',
     hint: 'GURPS.settingHintDamageRestrictADD',
@@ -39,6 +39,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Only GMs can open ADD : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_SIMPLE_DAMAGE, {
     name: 'GURPS.settingDamageSimpleADD',
     hint: 'GURPS.settingHintDamageSimpleADD',
@@ -49,6 +50,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Use simple Apply Damage Dialog : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_DEFAULT_LOCATION, {
     name: 'GURPS.settingDamageLocation',
     hint: 'GURPS.settingHintDamageLocation',
@@ -63,6 +65,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Default hit location: ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_APPLY_DIVISOR, {
     name: 'GURPS.settingDamageAD',
     hint: 'GURPS.settingHintDamageAD',
@@ -73,6 +76,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Apply Armor Divisor : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_BLUNT_TRAUMA, {
     name: 'GURPS.settingDamageBluntTrauma',
     hint: 'GURPS.settingHintDamageBluntTrauma',
@@ -83,6 +87,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Apply Blunt Trauma : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_LOCATION_MODIFIERS, {
     name: 'GURPS.settingDamageLocationMods',
     hint: 'GURPS.settingHintDamageLocationMods',
@@ -93,6 +98,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Apply Location Modifiers : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_SHOW_THE_MATH, {
     name: 'GURPS.settingDamageMath',
     hint: 'GURPS.settingHintDamageMath',
@@ -103,6 +109,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Always expand SHOW THE MATH : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_BODY_HITS, {
     name: game.i18n.localize('Damage: Body Hits'),
     hint: game.i18n.localize(
@@ -115,6 +122,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Damage: Body Hits : ${value}`),
   })
 
+  // @deprecated
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_DEFAULT_ADD_ACTION, {
     name: 'GURPS.settingDefaultADDAction',
     hint: 'GURPS.settingHintDefaultADDAction',
