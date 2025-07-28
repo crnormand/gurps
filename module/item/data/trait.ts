@@ -21,9 +21,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   static override migrateData(source: AnyMutableObject): AnyMutableObject {
     super.migrateData(source)
-    if (source.level === undefined) {
-      source.level = source.import || null
-    }
+    if (source.import) source.level ??= source.import || null
 
     return source
   }

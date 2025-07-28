@@ -91,12 +91,12 @@ class GcsImporter {
       const attribute = this.input.attributes.find(attr => attr.attr_id === key.toLowerCase())
       if (attribute) {
         this.output.attributes[key === 'PERCEPTION' ? 'PER' : key] = {
-          value: attribute.calc.value,
+          import: attribute.calc.value,
           points: attribute.calc.points,
         }
       } else {
         this.output.attributes[key === 'PERCEPTION' ? 'PER' : key] = {
-          value: 10,
+          import: 10,
           points: 0,
         }
       }
