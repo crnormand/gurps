@@ -32,7 +32,7 @@ class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema>
     xml: HTMLElement,
     schema: fields.SchemaField<Schema>['fields'],
     exclusions: string[] = []
-  ): Partial<DataModel.CreateData<Schema>> {
+  ): DataModel.CreateData<Schema> {
     const data: AnyMutableObject = {}
 
     Object.entries(schema).forEach(([key, field]) => {
@@ -69,7 +69,7 @@ class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema>
       }
     })
 
-    return data as Partial<DataModel.CreateData<Schema>>
+    return data as DataModel.CreateData<Schema>
   }
 }
 
@@ -228,7 +228,10 @@ class GCABonus extends GCASchemaBlock<GCABonusSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCABonus {
-    const data: Partial<DataModel.CreateData<GCABonusSchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+    const data: DataModel.CreateData<GCABonusSchema> = this._primitiveFieldsFromXML<GCABonusSchema>(
+      xml,
+      this.schema.fields
+    )
     return new this(data)
   }
 }
@@ -274,7 +277,10 @@ class GCABodyItem extends GCASchemaBlock<GCABodyItemSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCABodyItem {
-    const data: Partial<DataModel.CreateData<GCABodyItemSchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+    const data: DataModel.CreateData<GCABodyItemSchema> = this._primitiveFieldsFromXML<GCABodyItemSchema>(
+      xml,
+      this.schema.fields
+    )
     return new this(data)
   }
 }
@@ -364,7 +370,10 @@ class GCAModifier extends GCASchemaBlock<GCAModifierSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCAModifier {
-    const data: Partial<DataModel.CreateData<GCAModifierSchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+    const data: DataModel.CreateData<GCAModifierSchema> = this._primitiveFieldsFromXML<GCAModifierSchema>(
+      xml,
+      this.schema.fields
+    )
     return new this(data)
   }
 }

@@ -62,8 +62,10 @@ const equipmentComponentSchema = () => {
     legalityclass: new fields.StringField({ required: true, nullable: false }),
     costsum: new fields.NumberField({ required: true, nullable: false }),
     weightsum: new fields.StringField({ required: true, nullable: false }),
-    uses: new fields.StringField({ required: true, nullable: false }),
-    maxuses: new fields.StringField({ required: true, nullable: false }),
+    // NOTE: Change from previous schema, where this was a string
+    uses: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: Change from previous schema, where this was a string
+    maxuses: new fields.NumberField({ required: true, nullable: false }),
     originalCount: new fields.StringField({ required: true, nullable: false }),
     ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
   }

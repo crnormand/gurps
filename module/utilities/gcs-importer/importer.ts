@@ -304,7 +304,7 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
-    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
+    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {} }
     system.isContainer = item.isContainer
 
     system.actions = item.weaponItems
@@ -559,50 +559,44 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importTraitComponent(trait: GcsTrait): DataModel.CreateData<TraitComponentSchema> {
-    const component: DataModel.CreateData<TraitComponentSchema> = this.#importBaseComponent(trait)
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(trait),
       cr: trait.cr ?? 0,
       level: trait.levels ?? 0,
       userdesc: trait.userdesc ?? '',
       points: trait.calc.points ?? 0,
-    })
-
-    return component
+    }
   }
 
   /* ---------------------------------------- */
 
   #importSkillComponent(skill: GcsSkill): DataModel.CreateData<SkillComponentSchema> {
-    const component: DataModel.CreateData<SkillComponentSchema> = this.#importBaseComponent(skill)
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(skill),
       points: skill.points ?? 0,
       type: skill.difficulty ?? '',
       relativelevel: skill.calc.rsl ?? '',
       import: skill.calc.level ?? 0,
-    })
-
-    return component
+    }
   }
 
   /* ---------------------------------------- */
 
   #importSpellComponent(spell: GcsSpell): DataModel.CreateData<SpellComponentSchema> {
-    const component: DataModel.CreateData<SpellComponentSchema> = this.#importBaseComponent(spell)
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(spell),
       points: spell.points ?? 0,
-      type: spell.difficulty ?? '',
+      difficulty: spell.difficulty ?? '',
       relativelevel: spell.calc.rsl ?? '',
       import: spell.calc.level ?? 0,
       class: spell.spell_class ?? '',
-      college: spell.college ?? '',
-      cost: spell.casting_cost ?? 0,
-      maintain: spell.maintenance_cost ?? 0,
+      college: spell.college?.join(', ') ?? '',
+      cost: spell.casting_cost ?? '',
+      maintain: spell.maintenance_cost ?? '',
       duration: spell.duration ?? '',
       resist: spell.resist ?? '',
       casttime: spell.casting_time ?? '',
-    })
-
-    return component
+    }
   }
 
   /* ---------------------------------------- */
@@ -611,9 +605,8 @@ class GcsImporter {
     equipment: GcsEquipment,
     equipped: boolean
   ): DataModel.CreateData<EquipmentComponentSchema> {
-    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importBaseComponent(equipment)
-
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(equipment),
       count: equipment.quantity ?? 1,
       weight: parseInt(equipment.calc.weight) || 0,
       cost: equipment.calc.value ?? 0,
@@ -621,14 +614,12 @@ class GcsImporter {
       carried: true,
       equipped,
       techlevel: equipment.tech_level ?? '',
-      categories: equipment.tags ?? '',
+      categories: equipment.tags?.join(', ') ?? '',
       costsum: equipment.calc.extended_value,
       weightsum: equipment.calc.extended_weight,
-      uses: equipment.uses,
-      maxuses: equipment.max_uses,
-    } as DataModel.CreateData<EquipmentComponentSchema>)
-
-    return component
+      uses: equipment.uses ?? 0,
+      maxuses: equipment.max_uses ?? 0,
+    }
   }
 }
 

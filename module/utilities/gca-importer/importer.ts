@@ -213,6 +213,7 @@ class GcaImporter {
         where: location.name ?? '',
         import: parseInt(location.dr) ?? 0,
         rollText: roll,
+        split: {},
       }
 
       ;(this.output.hitlocations as DataModel.CreateData<HitLocationSchema>[]).push(newLocation)
@@ -254,7 +255,7 @@ class GcaImporter {
   /* ---------------------------------------- */
 
   #importItem(item: GCATrait): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
-    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
+    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {} }
 
     system.actions = item.attackmodes
       ?.map((action: GCAAttackMode) => this.#importWeapon(action, item))
@@ -272,7 +273,8 @@ class GcaImporter {
           return acc
         },
         {}
-      )
+      ) as any
+
     return system
   }
 
@@ -484,37 +486,30 @@ class GcaImporter {
   /* ---------------------------------------- */
 
   #importTraitComponent(trait: GCATrait): DataModel.CreateData<TraitComponentSchema> {
-    const component: DataModel.CreateData<TraitComponentSchema> = this.#importBaseComponent(trait)
-
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(trait),
       cr: 0,
       level: trait.level ?? 0,
       userdesc: trait.ref?.description ?? '',
       points: trait.points ?? 0,
-    })
-
-    return component
+    }
   }
 
   /* ---------------------------------------- */
 
   #importSkillComponent(skill: GCATrait): DataModel.CreateData<SkillComponentSchema> {
-    const component: DataModel.CreateData<SkillComponentSchema> = this.#importBaseComponent(skill)
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(skill),
       points: skill.points ?? 0,
       type: skill.type ?? '',
       relativelevel: `${skill.stepoff}${skill.step}`,
       import: skill.level ?? 0,
-    })
-
-    return component
+    }
   }
 
   /* ---------------------------------------- */
 
   #importSpellComponent(spell: GCATrait): DataModel.CreateData<SpellComponentSchema> {
-    const component: DataModel.CreateData<SpellComponentSchema> = this.#importBaseComponent(spell)
-
     let spellClass = ''
     let spellResist = ''
     if (spell.ref?.class?.includes('/')) {
@@ -532,9 +527,10 @@ class GcaImporter {
       spellMaintain = spell.ref.castingcost ?? ''
     }
 
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(spell),
       points: spell.points ?? 0,
-      type: spell.type ?? '',
+      difficulty: spell.type ?? '',
       relativelevel: `${spell.stepoff}${spell.step}`,
       import: spell.level ?? 0,
       class: spellClass,
@@ -544,31 +540,27 @@ class GcaImporter {
       duration: spell.ref?.duration ?? '',
       resist: spellResist,
       casttime: spell.ref?.time ?? '',
-    })
-
-    return component
+    }
   }
 
   /* ---------------------------------------- */
 
   #importEquipmentComponent(equipment: GCATrait): DataModel.CreateData<EquipmentComponentSchema> {
-    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importBaseComponent(equipment)
-    Object.assign(component, {
+    return {
+      ...this.#importBaseComponent(equipment),
       count: equipment.count ?? 1,
-      weight: equipment.calcs.postformulaweight ?? '',
-      cost: equipment.calcs.postformulacost ?? 0,
+      weight: parseFloat(equipment.calcs.postformulaweight ?? '0') ?? 0,
+      cost: parseFloat(equipment.calcs.postformulacost ?? '0') ?? 0,
       location: '',
       carried: true,
       equipped: true,
       techlevel: equipment.tl ?? '',
       categories: equipment.cat,
-      costsum: equipment.calcs.postchildrencost ?? 0,
+      costsum: parseFloat(equipment.calcs.postchildrencost ?? '0') ?? 0,
       weightsum: equipment.calcs.postchildrenweight ?? '',
       uses: 0,
       maxuses: 0,
-    })
-
-    return component
+    }
   }
 }
 

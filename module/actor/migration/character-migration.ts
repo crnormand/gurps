@@ -291,6 +291,7 @@ function migrateHitLocations(source: any): DataModel.CreateData<HitLocationSchem
       import: Number(e.import),
       penalty: Number(e.penalty),
       rollText: e.roll,
+      split: e.split,
     }
   })
 

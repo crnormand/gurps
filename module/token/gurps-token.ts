@@ -3,8 +3,7 @@ import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
 // COMPATIBILITY: v12
-// export default class GurpsToken extends foundry.canvas.placeables.Token {
-class GurpsToken extends Token {
+class GurpsToken extends foundry.canvas.placeables.Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
@@ -14,10 +13,9 @@ class GurpsToken extends Token {
   ): void {
     super._onCreate(data, options, userId)
     const actor = this.actor
-    if (actor) {
-      // @ts-expect-error: Waiting for DataModel migration for Actor
+    if (actor && actor.isOfType('character', 'enemy')) {
       const maneuverText = actor.system.conditions.maneuver
-      actor.replaceManeuver(maneuverText)
+      actor.replaceManeuver(maneuverText ?? 'Do Nothing')
     }
   }
 

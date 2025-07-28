@@ -107,6 +107,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   equippedblock: number = 0
   currentdodge: number = 0
   currentmove: number = 0
+  currentsprint: number = 0
   currentflight: number = 0
 
   moveoverride: { maneuver: string | null; posture: string | null } = {
@@ -774,7 +775,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
     action.count = 1
-    // @ts-expect-error: not sure why I can't set this value to null
     action.accumulate = null
     accumulatedActions.push(action)
     // @ts-expect-error: not sure why the path is not recognised
@@ -1202,7 +1202,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         if (!actor || !actor.isOfType('character', 'enemy')) return acc
 
         acc.push(
-          ...(actor.system.conditions.target.modifiers?.map(mod => {
+          ...((actor.system as CharacterModel).conditions.target.modifiers?.map(mod => {
             const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
             return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
           }) ?? [])
