@@ -309,21 +309,19 @@ class GcsImporter {
 
     system.actions = item.weaponItems
       ?.map((action: GcsWeapon) => this.#importWeapon(action, item))
-      .reduce(
-        (
-          acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
-          weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
-        ) => {
-          if (!weapon._id || typeof weapon._id !== 'string') {
-            console.error('GURPS | Failed to import weapon: No _id set.')
-            console.error(weapon)
-            return acc
-          }
-          acc[weapon._id] = weapon
-          return acc
-        },
-        {}
+      ?.filter(
+        (weapon): weapon is DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> & { _id: string } =>
+          weapon._id && typeof weapon._id === 'string'
       )
+      .map(weapon => [weapon._id, weapon])
+      .reduce((entries, pair) => {
+        if (!pair[0]) {
+          console.error('GURPS | Failed to import weapon: No _id set.')
+          console.error(pair[1])
+          return entries;
+        }
+        return Object.fromEntries(entries)
+      })
 
     if (item instanceof GcsEquipment) {
       system.equipped = item.equipped ?? false
