@@ -77,7 +77,7 @@ class GcaImporter {
 
   #importPortrait() {
     if (game.user?.hasPermission('FILES_UPLOAD')) {
-      this.img = `data:image/png;base65,${this.input.vitals.portraitimage}.png`
+      this.img = `data:image/png;base64,${this.input.vitals.portraitimage}.png`
     }
   }
 
@@ -310,7 +310,7 @@ class GcaImporter {
       name,
       type,
       _id,
-      ...component,
+      mel: component,
     }
   }
 
@@ -338,7 +338,7 @@ class GcaImporter {
       name,
       type,
       _id,
-      ...component,
+      rng: component,
     }
   }
 
