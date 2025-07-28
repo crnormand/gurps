@@ -59,8 +59,7 @@ export class EffectModifierControl {
 
   _createEffectModifierButton(controls) {
     if (this.shouldUseEffectModifierPopup()) {
-      // COMPATIBILITY: v12
-      const tokenButton = game.release.generation >= 13 ? controls.tokens : controls.find(c => c.name === 'token')
+      const tokenButton = controls.tokens
       if (tokenButton) {
         const newButton = {
           name: EffectModifierControl.EffectModName,
@@ -76,11 +75,7 @@ export class EffectModifierControl {
             GURPS.EffectModifierControl.showPopup = value
           },
         }
-        if (game.release.generation >= 13) {
-          tokenButton.tools[EffectModifierControl.EffectModName] = newButton
-        } else {
-          tokenButton.tools.push(newButton)
-        }
+        tokenButton.tools[EffectModifierControl.EffectModName] = newButton
       }
     }
   }

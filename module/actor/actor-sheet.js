@@ -15,11 +15,8 @@ import SplitDREditor from './splitdr-editor.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
- * @extends {foundry.appv1.sheets.ActorSheet}
  */
-// COMPATIBILITY: v12
-// export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
-export class GurpsActorSheet extends ActorSheet {
+export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -199,7 +196,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.internalUpdate(JSON.parse(json))
+      this.actor.update(JSON.parse(json))
     })
 
     // Handle resource tracker "-" button.
@@ -216,7 +213,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.internalUpdate(JSON.parse(json))
+      this.actor.update(JSON.parse(json))
     })
 
     // Handle resource tracker "reset" button.
@@ -229,7 +226,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = !!tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.internalUpdate(JSON.parse(json))
+      this.actor.update(JSON.parse(json))
     })
 
     // allow a click on the 'edit' icon to open the resource tracker editor.

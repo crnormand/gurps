@@ -1,6 +1,6 @@
 {
   "name": "gurps",
-  "version": "0.18.1",
+  "version": "1.0.0",
   "description": "NaN's GURPS Game Aid",
   "type": "module",
   "scripts": {
@@ -40,10 +40,5 @@
     "ts-jest": "^29.3.4",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.8.3"
-  },
-  "overrides": {
-    "@pixi/utils": {
-      "@types/earcut": "3.0.0"
-    }
   }
 }

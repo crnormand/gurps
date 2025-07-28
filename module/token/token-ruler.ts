@@ -14,7 +14,6 @@ function registerTokenRuler() {
      *   The color, alpha, texture, and texture matrix to be used to draw the grid space.
      *   If the alpha is 0, the grid space is not highlighted.
      */
-    // @ts-expect-error: waiting for types to catch up
     protected override _getGridHighlightStyle(
       // @ts-expect-error: waiting for types to catch up
       waypoint: TokenRulerWaypoint,
@@ -28,13 +27,10 @@ function registerTokenRuler() {
       const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
       const yards = Length.from(waypoint.measurement.cost, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
 
-      // @ts-expect-error: waiting for actor update to DataModel
       if (yards <= Math.ceil(actor.system.currentmove / 10)) {
         return { ...data, color: 0x0000ff } // Step: blue
-        // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentmove) {
         return { ...data, color: 0x00ff00 } // Normal move: green
-        // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentsprint) {
         return { ...data, color: 0xffff00 } // Sprint / Enhanced move: yellow
       } else {
@@ -43,12 +39,6 @@ function registerTokenRuler() {
     }
   }
 
-  // COMPATIBILITY: v12
-  interface GurpsTokenRuler {
-    token: Token.Implementation
-  }
-
-  // @ts-expect-error: waiting for types to catch up
   CONFIG.Token.rulerClass = GurpsTokenRuler
 }
 
