@@ -26,7 +26,6 @@ class SuccessRoll extends GurpsBaseRoll<SuccessRoll.Data> {
    * - MT
    */
   constructor(formula: string, data?: SuccessRoll.Data, options?: Roll.Options) {
-    console.trace('SuccessRoll constructor called with:', formula, data, options)
     super(formula, data, options)
   }
 
@@ -128,16 +127,12 @@ class SuccessRoll extends GurpsBaseRoll<SuccessRoll.Data> {
   }: { flavor?: string; isPrivate?: boolean } & AnyObject = {}): Promise<AnyObject> {
     const context = await super._prepareChatRenderContext({ flavor, isPrivate, ...options })
 
-    console.log('this:', this)
-    console.log('data:', this.data)
-    console.log('item:', this.item)
-
     const modifiers = this.data.modifiers
     const name = this.item?.name ?? ''
     const outcome = this.outcome
 
     Object.assign(context, { name, modifiers, outcome })
-    console.log(context)
+    // console.log(context)
     return context
   }
 }
