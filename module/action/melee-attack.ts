@@ -157,6 +157,7 @@ const meleeAttackComponentSchema = () => {
     damage: new fields.StringField({ required: true, nullable: false }),
     st: new fields.StringField({ required: true, nullable: false }),
     mode: new fields.StringField({ required: true, nullable: false }),
+    notes: new fields.StringField({ required: true, nullable: false }),
     weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     techlevel: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     cost: new fields.StringField({ required: true, nullable: false }),

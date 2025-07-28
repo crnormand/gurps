@@ -1242,6 +1242,143 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     return isDamageRoll
   }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatthing - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
+   */
+  findUsingAction(
+    action: { type: string; name: string; orig: string; overridetxt?: string; attrkey?: string },
+    chatthing: string,
+    formula: string,
+    thing: string
+  ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
+    if (!this.isOfType('character', 'enemy')) {
+      console.warn('Actor is not a character or enemy.')
+      return {
+        name: thing,
+        uuid: null,
+        itemId: null,
+        fromItem: null,
+        pageRef: null,
+      }
+    }
+
+    const originType: string | null = action ? action.type : null
+    let name: string, mode: string | undefined
+    switch (originType) {
+      case 'attack': {
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+)\)/)?.[1]
+        const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
+        const weapon = this.parent
+          // @ts-expect-error: Not sure why this isn't resolving correctly.
+          .getItemAttacks({ attackType })
+          .find(e => e.name === name && (!mode || e.component.mode === mode))
+        if (weapon)
+          return {
+            name: weapon.name ?? '',
+            uuid: weapon.uuid,
+            itemId: weapon.id,
+            fromItem: weapon.item.id,
+            pageRef: null,
+          }
+        else
+          return {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+      }
+      case 'weapon-block':
+      case 'weapon-parry': {
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+?)\)/)?.[1]
+        const weapon = this.parent
+          .getItemAttacks({ attackType: 'melee' })
+          .find(e => e.name === name && (!mode || e.component.mode === mode))
+        if (weapon)
+          return {
+            name: weapon.name ?? '',
+            uuid: weapon.uuid,
+            itemId: weapon.id,
+            fromItem: weapon.item.id,
+            pageRef: null,
+          }
+        else
+          return {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+      }
+      case 'skill-spell': {
+        const item = [...this.skills, ...this.spells].find(e => e.name === action.name)
+        if (item)
+          return {
+            name: item.name,
+            uuid: item.uuid,
+            itemId: item.id,
+            fromItem: item.id,
+            pageRef: item.system.component.pageref,
+          }
+        else
+          return {
+            name: action.name,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+      }
+      case 'attribute': {
+        let attrName = action?.overridetxt
+        if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
+        if (attrName.startsWith('GURPS')) attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey}NAME`) ?? ''
+        return {
+          name: attrName,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
+      case 'controlroll': {
+        return {
+          name: action.overridetxt || action.orig,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
+      default: {
+        return {
+          name: thing ? thing : chatthing ? chatthing.split('/[')[0] : formula,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
+    }
+  }
 }
 
 /* ---------------------------------------- */

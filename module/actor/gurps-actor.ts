@@ -10,6 +10,7 @@ import { HitLocationEntry } from './data/hit-location-entry.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { migrateCharacter } from './migration/character-migration.js'
+import { CharacterModel } from './data/character.js'
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -81,7 +82,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
     return this.items.reduce((acc: any[], item) => {
-      acc.push(...item.getItemAttacks(options as any))
+      // @ts-expect-error: Not sure why this isn't resolving correctly.
+      acc.push(...item.getItemAttacks(options))
       return acc
     }, [])
   }
@@ -240,6 +242,63 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
   /*  Legacy Functionality                    */
+  /* ---------------------------------------- */
+
+  async internalUpdate(data: Actor.UpdateData | undefined, operation?: Actor.Database.UpdateOperation) {
+    console.trace('internalUpdate', data)
+    return this.update(data, { ...operation, render: false })
+  }
+
+  /* ---------------------------------------- */
+
+  async addTaggedRollModifiers(
+    chatThing: string,
+    optionalArgs: { obj?: AnyObject },
+    attack?: MeleeAttackModel | RangedAttackModel
+  ): Promise<boolean> {
+    if (this.isOfType('character', 'enemy')) {
+      return this.system.addTaggedRollModifiers(chatThing, optionalArgs, attack)
+    }
+    console.warn('Actor is not a character or enemy.')
+    return false
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatthing - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
+   */
+  findUsingAction(
+    action: { type: string; name: string; orig: string },
+    chatthing: string,
+    formula: string,
+    thing: string
+  ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
+    if (this.isOfType('character', 'enemy')) {
+      return (this.system as CharacterModel).findUsingAction(action, chatthing, formula, thing)
+    }
+
+    console.warn('Actor is not a character or enemy.')
+    return {
+      name: thing,
+      uuid: null,
+      itemId: null,
+      fromItem: null,
+      pageRef: null,
+    }
+  }
+
   /* ---------------------------------------- */
 
   // TODO: review and refactor

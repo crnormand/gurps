@@ -1,4 +1,5 @@
 import fields = foundry.data.fields
+
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsTraitModifier } from './trait-modifier.js'
 import { GcsWeapon } from './weapon.js'
@@ -16,6 +17,24 @@ class GcsTrait extends GcsItem<TraitModel> {
     return {
       ...sourcedIdSchema(),
       ...traitData(),
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected static override _importField(
+    data: any,
+    field: fields.DataField.Any,
+    name: string,
+    replacements: Record<string, string> = {}
+  ): any {
+    switch (name) {
+      case 'name':
+      case 'local_notes':
+      case 'userdesc':
+        return this.processReplacements(data, replacements) ?? field.getInitialValue()
+      default:
+        return super._importField(data, field, name, replacements)
     }
   }
 

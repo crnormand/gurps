@@ -26,7 +26,6 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   get component(): RangedAttackComponent {
     return this.rng
   }
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -142,6 +141,7 @@ const rangedAttackComponentSchema = () => {
     damage: new fields.StringField({ required: true, nullable: false }),
     st: new fields.StringField({ required: true, nullable: false }),
     mode: new fields.StringField({ required: true, nullable: false }),
+    notes: new fields.StringField({ required: true, nullable: false }),
     bulk: new fields.StringField({ required: true, nullable: false }),
     legalityclass: new fields.StringField({ required: true, nullable: false }),
     ammo: new fields.StringField({ required: true, nullable: false }),

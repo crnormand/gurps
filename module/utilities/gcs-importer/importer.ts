@@ -377,9 +377,9 @@ class GcsImporter {
 
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
       name: item.name || '',
-      notes: weapon.usage_notes || '',
       pageref: '',
       mode: weapon.usage || '',
+      notes: weapon.usage_notes || '',
       import: weapon.calc.level || 0,
       damage: weapon.calc.damage,
       st: weapon.calc.strength || weapon.strength,
@@ -409,9 +409,9 @@ class GcsImporter {
 
     const component: DataModel.CreateData<RangedAttackComponentSchema> = {
       name: item.name || '',
-      notes: weapon.usage_notes || '',
       pageref: '',
       mode: weapon.usage || '',
+      notes: weapon.usage_notes || '',
       import: weapon.calc.level,
       damage: weapon.calc.damage,
       st: weapon.calc.strength || weapon.strength,

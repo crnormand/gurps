@@ -21,6 +21,23 @@ class GcsEquipment extends GcsItem<EquipmentModel> {
 
   /* ---------------------------------------- */
 
+  protected static override _importField(
+    data: any,
+    field: fields.DataField.Any,
+    name: string,
+    replacements: Record<string, string>
+  ): any {
+    switch (name) {
+      case 'description':
+      case 'local_notes':
+        return this.processReplacements(data, replacements) ?? field.getInitialValue()
+      default:
+        return super._importField(data, field, name, replacements)
+    }
+  }
+
+  /* ---------------------------------------- */
+
   override get isContainer(): boolean {
     return this.id.startsWith('E')
   }

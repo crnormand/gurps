@@ -20,6 +20,32 @@ class GcsSpell extends GcsItem<SpellModel> {
 
   /* ---------------------------------------- */
 
+  protected static override _importField(
+    data: any,
+    field: fields.DataField.Any,
+    name: string,
+    replacements: Record<string, string>
+  ): any {
+    switch (name) {
+      case 'name':
+      case 'local_notes':
+      case 'power_source':
+      case 'spell_class':
+      case 'resist':
+      case 'casting_cost':
+      case 'maintenance_cost':
+      case 'casting_time':
+      case 'duration':
+      case 'base_skill':
+      case 'college':
+        return this.processReplacements(data, replacements) ?? field.getInitialValue()
+      default:
+        return super._importField(data, field, name, replacements)
+    }
+  }
+
+  /* ---------------------------------------- */
+
   override get isContainer(): boolean {
     return this.id.startsWith('P')
   }

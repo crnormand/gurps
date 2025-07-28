@@ -35,9 +35,10 @@ class GcsElement<
     schema: Schema = this.defineSchema() as Schema
   ): DataModel.CreateData<Schema> {
     const data: Partial<DataModel.CreateData<Schema>> = {}
+    const replacements: Record<string, string> = (importData.replacements as unknown as Record<string, string>) ?? {}
 
     for (const [key, field] of Object.entries(schema)) {
-      ;(data as AnyMutableObject)[key] = this._importField(importData[key], field, key)
+      ;(data as AnyMutableObject)[key] = this._importField(importData[key], field, key, replacements)
     }
 
     return data as DataModel.CreateData<Schema>
@@ -45,7 +46,12 @@ class GcsElement<
 
   /* ---------------------------------------- */
 
-  protected static _importField(data: any, field: fields.DataField.Any, _name: string): any {
+  protected static _importField(
+    data: any,
+    field: fields.DataField.Any,
+    _name: string,
+    _replacements: Record<string, string> = {}
+  ): any {
     switch (field.constructor) {
       case fields.StringField:
       case fields.NumberField:
@@ -63,6 +69,25 @@ class GcsElement<
         return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static processReplacements(data: string, replacements: Record<string, string>): string | null
+  static processReplacements(data: string[], replacements: Record<string, string>): string[] | null
+  static processReplacements(data: string | string[], replacements: Record<string, string>): string | string[] | null {
+    const process = (datum: string) => {
+      for (const key of Object.keys(replacements)) {
+        const pattern = new RegExp('@' + key + '@', 'g')
+        if (datum.match(pattern)) datum = datum.replace(pattern, replacements[key])
+      }
+      return datum
+    }
+
+    if (typeof data === 'string') return process(data)
+    if (Array.isArray(data)) return data.map(e => process(e))
+
+    return null
   }
 
   /* ---------------------------------------- */
@@ -115,7 +140,12 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 
   /* ---------------------------------------- */
 
-  protected static override _importField(data: any, field: fields.DataField.Any, name: string): any {
+  protected static override _importField(
+    data: any,
+    field: fields.DataField.Any,
+    name: string,
+    _replacements: Record<string, string> = {}
+  ): any {
     switch (name) {
       case 'children':
         if (this.metadata.childClass === null) return null
