@@ -14,7 +14,6 @@ import {
 import { CharacterModel } from './data/character.js'
 import { GurpsActorV2 } from './gurps-actor.js'
 import { migrateCharacter } from './migration/character-migration.js'
-import { GurpsCharacterSheet } from './sheets/character-sheet.js'
 
 /* ---------------------------------------- */
 
@@ -62,10 +61,6 @@ function init() {
       // Add this sheet last
       label: 'Full (GCS)',
       makeDefault: true,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsCharacterSheet, {
-      label: 'Experimental',
-      makeDefault: false,
     })
 
     GURPS.ActorSheets = { character: GurpsActorSheet }

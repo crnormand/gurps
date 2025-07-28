@@ -1,11 +1,9 @@
-import { BaseItemModel, BaseItemModelSchema, ItemMetadata, ItemUseOptions } from './base.js'
+import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 import { parselink } from '../../../lib/parselink.js'
-import { GurpsBaseRoll } from '../../roll/base-roll.js'
-import { SuccessRoll } from '../../roll/success-roll.js'
 
 class SkillModel extends BaseItemModel<SkillSchema> {
   static override defineSchema(): SkillSchema {
@@ -23,7 +21,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       type: 'base',
       invalidActorTypes: [],
       actions: {
-        level: this.#rollLevel,
+        // level: this.#rollLevel,
       },
     }
   }
@@ -36,22 +34,22 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
   /* ---------------------------------------- */
 
-  static async #rollLevel(this: SkillModel, options: ItemUseOptions): Promise<void> {
-    const target = this.component.level
-    const modifiers: GurpsBaseRoll.RollModifier[] = GURPS.ModifierBucket.modifierStack.modifierList.map((mod: any) => {
-      return {
-        comment: mod.desc,
-        value: mod.modint,
-      }
-    })
-    const actorId = this.actor?.id
-    const itemId = this.parent.id
-
-    console.log(target, modifiers, actorId, itemId)
-
-    const roll = new SuccessRoll('3d6', { target, modifiers, actorId, itemId })
-    await roll.toMessage()
-  }
+  // static async #rollLevel(this: SkillModel, options: ItemUseOptions): Promise<void> {
+  //   const target = this.component.level
+  //   const modifiers: GurpsBaseRoll.RollModifier[] = GURPS.ModifierBucket.modifierStack.modifierList.map((mod: any) => {
+  //     return {
+  //       comment: mod.desc,
+  //       value: mod.modint,
+  //     }
+  //   })
+  //   const actorId = this.actor?.id
+  //   const itemId = this.parent.id
+  //
+  //   console.log(target, modifiers, actorId, itemId)
+  //
+  //   const roll = new SuccessRoll('3d6', { target, modifiers, actorId, itemId })
+  //   await roll.toMessage()
+  // }
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
