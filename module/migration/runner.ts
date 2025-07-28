@@ -49,15 +49,14 @@ class MigrationRunner {
 
   /* ---------------------------------------- */
 
-  run() {
+  async run() {
     for (const migration of this.migrations) {
-      migration()
-        .then(() => {
-          console.log(`Migration completed successfully: ${migration.name}`)
-        })
-        .catch(error => {
-          console.error(`Migration failed: ${migration.name}`, error)
-        })
+      try {
+        await migration();
+        console.log(`Migration completed successfully: ${migration.name}`);
+      } catch (error) {
+        console.error(`Migration failed: ${migration.name}`, error);
+      }
     }
   }
 }
