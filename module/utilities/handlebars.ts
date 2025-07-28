@@ -54,7 +54,8 @@ export function registerGurpsHandlebarsHelpers() {
 /* ---------------------------------------- */
 
 export function registerHandlebarsPartials() {
-  const templates = ['actor.parts.item-reference', 'actor.parts.item-controls']
+  // const templates = ['actor.parts.item-reference', 'actor.parts.item-controls']
+  const templates = []
 
   templates.forEach(name => {
     const fileName = `systems/gurps/templates/${name.replace(/\./g, '/')}.hbs`

@@ -75,17 +75,14 @@ import { Action } from './action/index.js'
 import { Actor } from './actor/index.js'
 import { ActiveEffect, GurpsActiveEffect } from './active-effect/index.js'
 import { Canvas } from './canvas/index.js'
-import { ChatMessage } from './chat-message/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
-import { JournalEntry } from './journal-entry/index.js'
+import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
-import { Roll } from './roll/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { Migration } from './migration/index.js'
-import { GurpsCharacterSheet } from './actor/sheets/character-sheet.js'
 import { registerGurpsHandlebarsHelpers, registerHandlebarsPartials } from './utilities/handlebars.js'
 export let GURPS = undefined
 
@@ -118,17 +115,15 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
+    Pdf,
     Action,
-    Actor,
     ActiveEffect,
+    Actor,
     Canvas,
-    ChatMessage,
     Combat,
     Damage,
-    JournalEntry,
     Migration,
     ResourceTracker,
-    Roll,
     Token,
     UI,
   }
@@ -467,7 +462,7 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn('no link was parsed for the pdf')
         return false // if there's no link action fails
       }
-      GURPS.modules.JournalEntry.handlePdf(action.link)
+      GURPS.modules.Pdf.handlePdf(action.link)
       return true
     },
 
@@ -1981,41 +1976,6 @@ if (!globalThis.GURPS) {
     })
 
     // Register sheet application classes
-    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-      label: 'NPC/mini',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
-      makeDefault: true,
-    })
-
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
