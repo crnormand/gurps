@@ -5,6 +5,7 @@
 ### Features
 
 - You can now drag the Modifier Bucket to a macro slot, the chat log, or chat input.
+- Refactored the document models to use Foundry's DataModel system.
 
 ### Bugfixes
 

@@ -1,4 +1,10 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Charakter",
+      "enemy": "Feind"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
