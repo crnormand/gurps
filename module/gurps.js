@@ -1276,7 +1276,13 @@ if (!globalThis.GURPS) {
    */
   async function performAction(action, actor, event = null, targets = []) {
     if (!action || !(action.type in actionFuncs)) return false
-    if (action.sourceId) actor = game.actors.get(action.sourceId)
+
+    if (action.sourceId) {
+      const originalActor = game.actors.get(action.sourceId)
+      // If there is no (actor) GURPS.LastActor or the actor is the same as the original actor, use the original actor.
+      if (!actor || actor.id === originalActor.id) actor = originalActor
+    }
+    
     // const origAction = action
     const originalOtf = action.orig
     const calcOnly = action.calcOnly
