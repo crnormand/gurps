@@ -300,7 +300,7 @@ class ModifierStack {
     // TODO: Find where the modifier is *applied* to the roll, and move this code there.
     const adv = (mod + '').match(/(?<sign>[+-])?A:(?<adv>"[^"]+"|'[^']+'|[^ ]+)/i)
     if (!!adv) {
-      let originalText = `[${mod}]`
+      let originalText = `(${mod})`
       const advname = adv.groups.adv.replace(/['"]/g, '')
       const actor = GURPS.LastActor
       reason = `${originalText}${!!reason ? ' ' + reason : ''}`
@@ -344,10 +344,10 @@ class ModifierStack {
   }
 
   resetActorModifiers() {
-    // Find all modifiers with reasons that start with '[A:]'.
+    // Find all modifiers with reasons that start with '(A:]'.
     // These are leveled advantages that need to be recalculated.
     const actor = GURPS.LastActor
-    const regex = /^(\[(?<sign>[+-])A:(?<name>[^\]]+)\])/i
+    const regex = /^(\((?<sign>[+-])A:(?<name>[^\]]+)\))/i
     this.modifierList
       .filter(modifier => modifier.desc.match(regex))
       .forEach(modifier => {

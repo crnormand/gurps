@@ -559,6 +559,19 @@ describe('parseLink', () => {
       })
       expect(result.text).toEqual(expect.stringContaining(`data-otf='+A:"Night Vision"'>+A:"Night Vision" </span>`))
     })
+
+    test('#> +a:Night*Vision', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        orig: '+a:Night*Vision',
+        spantext: '+A:Night*Vision ',
+        type: 'modifier',
+        mod: '+A:Night*Vision',
+        desc: '',
+      })
+      expect(result.text).toEqual(expect.stringContaining(`data-otf='+a:Night*Vision'>+A:Night*Vision </span>`))
+    })
   })
 
   describe('Chat Commands', () => {
@@ -836,6 +849,23 @@ describe('parseLink', () => {
         path: 'attributes.HT.value',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT +@margin'>HT +@margin</span>"))
+    })
+
+    test('#> Per +a:Magery', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        attribute: 'Per',
+        attrkey: 'PER',
+        blindroll: false,
+        mod: '+a:Magery',
+        name: 'PER',
+        orig: 'Per +a:Magery',
+        path: 'attributes.PER.value',
+        spantext: 'Per +a:Magery ',
+        type: 'attribute',
+      })
+      expect(result.text).toEqual(expect.stringContaining("data-otf='Per +a:Magery'>Per +a:Magery</span>"))
     })
 
     test('#> HT description', () => {

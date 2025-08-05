@@ -8,7 +8,6 @@ describe('Length', () => {
     it('parses inches', () => {
       const l = Length.fromString('12 in', Length.Unit.Inch)
       expect(l).not.toBeNull()
-      console.log('length', l)
       expect(l?.value).toBe(12)
       expect(l?.unit).toBe(Length.Unit.Inch)
     })
