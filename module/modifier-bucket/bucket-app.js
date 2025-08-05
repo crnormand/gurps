@@ -14,11 +14,13 @@ Hooks.once('init', async function () {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 
-  Hooks.on('updateLastActorGURPS', () => {
+  Hooks.on('updateLastActorGURPS', async actor => {
     if (GURPS.ModifierBucket) {
       // Update any actor-specific modifiers in the bucket, such as Advantage levels, and then refresh the UI.
       GURPS.ModifierBucket.resetActorModifiers()
-      GURPS.ModifierBucket.refresh()
+      setTimeout(() => {
+        GURPS.ModifierBucket.refresh()
+      }, 100) // Need to make certain the mod bucket refresh occurs later
     }
   })
 
@@ -300,7 +302,7 @@ class ModifierStack {
     // TODO: Find where the modifier is *applied* to the roll, and move this code there.
     const adv = (mod + '').match(/(?<sign>[+-])?A:(?<adv>"[^"]+"|'[^']+'|[^ ]+)/i)
     if (!!adv) {
-      let originalText = `[${mod}]`
+      let originalText = `(${mod})`
       const advname = adv.groups.adv.replace(/['"]/g, '')
       const actor = GURPS.LastActor
       reason = `${originalText}${!!reason ? ' ' + reason : ''}`
@@ -344,10 +346,10 @@ class ModifierStack {
   }
 
   resetActorModifiers() {
-    // Find all modifiers with reasons that start with '[A:]'.
+    // Find all modifiers with reasons that start with '(A:]'.
     // These are leveled advantages that need to be recalculated.
     const actor = GURPS.LastActor
-    const regex = /^(\[(?<sign>[+-])A:(?<name>[^\]]+)\])/i
+    const regex = /^(\((?<sign>[+-])A:(?<name>[^\]]+)\))/i
     this.modifierList
       .filter(modifier => modifier.desc.match(regex))
       .forEach(modifier => {
@@ -529,7 +531,6 @@ export class ModifierBucket extends Application {
 
   resetActorModifiers() {
     this.modifierStack.resetActorModifiers()
-    this.refresh()
   }
 
   // End GLOBALLY ACCESSED METHODS

@@ -1,6 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.4
+## Release 0.18.5
+
+### Bugfixes
+
+- Add ability to query Advantage or Disadvantage value #2379
+- Actors can roll other Actors skills from the chat log as that actor. #2353
+
+## Release 0.18.4 07/21/2025
 
 ### Bugfixes
 
