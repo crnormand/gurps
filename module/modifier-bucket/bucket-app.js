@@ -14,11 +14,13 @@ Hooks.once('init', async function () {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 
-  Hooks.on('updateLastActorGURPS', () => {
+  Hooks.on('updateLastActorGURPS', async actor => {
     if (GURPS.ModifierBucket) {
       // Update any actor-specific modifiers in the bucket, such as Advantage levels, and then refresh the UI.
       GURPS.ModifierBucket.resetActorModifiers()
-      GURPS.ModifierBucket.refresh()
+      setTimeout(() => {
+        GURPS.ModifierBucket.refresh()
+      }, 100) // Need to make certain the mod bucket refresh occurs later
     }
   })
 
@@ -529,7 +531,6 @@ export class ModifierBucket extends Application {
 
   resetActorModifiers() {
     this.modifierStack.resetActorModifiers()
-    this.refresh()
   }
 
   // End GLOBALLY ACCESSED METHODS
