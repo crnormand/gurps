@@ -1,4 +1,6 @@
 // @ts-nocheck: TODO: Fix typescript errors later
+// NOTE: This file has not changed from the previous version apart from being in a different location and
+// adding some types so Active Effects are correctly typed in the system.
 
 class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffect<SubType> {
   chatmessages: string[] = []
