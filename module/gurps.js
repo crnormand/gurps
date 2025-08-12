@@ -77,6 +77,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
+import { GcsImport } from './gcs-importer/index.js'
 import { Length } from './data/common/length.js'
 import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
@@ -115,6 +116,7 @@ if (!globalThis.GURPS) {
     Canvas,
     Combat,
     Damage,
+    GcsImport,
     Pdf,
     ResourceTracker,
     Token,
@@ -1282,7 +1284,7 @@ if (!globalThis.GURPS) {
       // If there is no (actor) GURPS.LastActor or the actor is the same as the original actor, use the original actor.
       if (!actor || actor.id === originalActor.id) actor = originalActor
     }
-    
+
     // const origAction = action
     const originalOtf = action.orig
     const calcOnly = action.calcOnly

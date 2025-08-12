@@ -4,8 +4,9 @@ import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
+import { CharacterModel } from 'module/actor/data/character.ts'
 
-export { }
+export {}
 
 declare global {
   var GURPS: any
@@ -18,6 +19,12 @@ declare global {
 
   interface PlaceableObjectClassConfig {
     Token: typeof GurpsToken
+  }
+
+  interface DataModelConfig {
+    Actor: {
+      character: typeof CharacterModel
+    }
   }
 
   interface SettingConfig {
