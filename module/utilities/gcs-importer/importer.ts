@@ -303,7 +303,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importItem(item: AnyGcsItem, carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
+  #importItem(item: AnyGcsItem, _carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {} }
     system.isContainer = item.isContainer
 
@@ -324,11 +324,6 @@ class GcsImporter {
         },
         {}
       )
-
-    if (item instanceof GcsEquipment) {
-      system.equipped = item.equipped ?? false
-      system.carried = carried
-    }
 
     if (!(item instanceof GcsSpell)) {
       const level = item instanceof GcsTrait ? (item.levels ?? 0) : 1
@@ -516,19 +511,16 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importEquipment(equipment: GcsEquipment, equipped: boolean): Item.CreateData {
+  #importEquipment(equipment: GcsEquipment, carried: boolean): Item.CreateData {
     const type = 'equipment'
     const _id = foundry.utils.randomID()
     // TODO: localize
     const name = equipment.name ?? 'Equipment'
 
     const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment)
-    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(
-      equipment,
-      equipped
-    )
+    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(equipment, carried)
 
-    const children = equipment.childItems?.map((child: GcsEquipment) => this.#importEquipment(child, equipped)) ?? []
+    const children = equipment.childItems?.map((child: GcsEquipment) => this.#importEquipment(child, carried)) ?? []
     component.contains = children.map((c: Item.CreateData) => c._id as string)
 
     const item: Item.CreateData = {
@@ -550,7 +542,7 @@ class GcsImporter {
   #importBaseComponent(item: AnyGcsItem): DataModel.CreateData<ItemComponentSchema> {
     const component: DataModel.CreateData<ItemComponentSchema> = {
       name: item.name,
-      notes: item.calc.resolved_notes ?? '',
+      notes: item.calc.resolved_notes || item.local_notes || '',
       pageref: item.reference ?? '',
     }
     return component
@@ -559,9 +551,11 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importTraitComponent(trait: GcsTrait): DataModel.CreateData<TraitComponentSchema> {
+    // console.log('Importing trait component', trait)
+
     return {
       ...this.#importBaseComponent(trait),
-      cr: trait.cr ?? 0,
+      cr: trait.cr ?? null,
       level: trait.levels ?? 0,
       userdesc: trait.userdesc ?? '',
       points: trait.calc.points ?? 0,
@@ -601,18 +595,15 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importEquipmentComponent(
-    equipment: GcsEquipment,
-    equipped: boolean
-  ): DataModel.CreateData<EquipmentComponentSchema> {
+  #importEquipmentComponent(equipment: GcsEquipment, carried: boolean): DataModel.CreateData<EquipmentComponentSchema> {
     return {
       ...this.#importBaseComponent(equipment),
       count: equipment.quantity ?? 1,
       weight: parseInt(equipment.calc.weight) || 0,
       cost: equipment.calc.value ?? 0,
       location: '',
-      carried: true,
-      equipped,
+      carried,
+      equipped: equipment.equipped ?? false,
       techlevel: equipment.tech_level ?? '',
       categories: equipment.tags?.join(', ') ?? '',
       costsum: equipment.calc.extended_value,

@@ -18,11 +18,13 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   static override get metadata(): ItemMetadata {
     return {
       embedded: {},
-      type: 'base',
+      type: 'skill',
       invalidActorTypes: [],
       actions: {
         // level: this.#rollLevel,
       },
+      childTypes: ['skill'],
+      modifierTypes: [],
     }
   }
 

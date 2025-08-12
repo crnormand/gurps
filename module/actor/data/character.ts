@@ -1447,6 +1447,7 @@ const characterSchema = () => {
 
     additionalresources: new fields.SchemaField(
       {
+        qnotes: new fields.StringField({ required: true, nullable: false }),
         bodyplan: new fields.StringField({ required: true, nullable: false }),
         tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
           required: true,

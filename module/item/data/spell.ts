@@ -1,4 +1,4 @@
-import { BaseItemModel, BaseItemModelSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
@@ -10,6 +10,19 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     return {
       ...super.defineSchema(),
       ...spellSchema(),
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): ItemMetadata {
+    return {
+      embedded: {},
+      type: 'spell',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: ['spell'],
+      modifierTypes: [],
     }
   }
 

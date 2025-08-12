@@ -61,58 +61,62 @@ const spellData = () => {
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
     // END: SpellModel
     // START: SpellEditData
-    vtt_note: new fields.StringField({ required: true, nullable: true }),
+    vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: SpellEditData
     // START: SpellSyncData
-    name: new fields.StringField({ required: true, nullable: true }),
-    reference: new fields.StringField({ required: true, nullable: true }),
-    reference_highlight: new fields.StringField({ required: true, nullable: true }),
-    local_notes: new fields.StringField({ required: true, nullable: true }),
+    name: new fields.StringField({ required: true, nullable: true, initial: null }),
+    reference: new fields.StringField({ required: true, nullable: true, initial: null }),
+    reference_highlight: new fields.StringField({ required: true, nullable: true, initial: null }),
+    local_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
     // END: SpellSyncData
     // START: SpellNonContianerOnlyEditData
-    tech_level: new fields.StringField({ required: true, nullable: true }),
-    points: new fields.NumberField({ required: true, nullable: true }),
+    tech_level: new fields.StringField({ required: true, nullable: true, initial: null }),
+    points: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // STUB: study is not yet supported
     study: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
-    study_hours_needed: new fields.NumberField({ required: true, nullable: true }),
+    study_hours_needed: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // END: SpellNonContianerOnlyEditData
     // START: SpellNonContianerOnlySyncData
-    difficulty: new fields.StringField({ required: true, nullable: true }),
+    difficulty: new fields.StringField({ required: true, nullable: true, initial: null }),
     college: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
-    power_source: new fields.StringField({ required: true, nullable: true }),
-    spell_class: new fields.StringField({ required: true, nullable: true }),
-    resist: new fields.StringField({ required: true, nullable: true }),
-    casting_cost: new fields.StringField({ required: true, nullable: true }),
-    maintenance_cost: new fields.StringField({ required: true, nullable: true }),
-    casting_time: new fields.StringField({ required: true, nullable: true }),
-    duration: new fields.StringField({ required: true, nullable: true }),
-    base_skill: new fields.StringField({ required: true, nullable: true }),
-    prereq_count: new fields.NumberField({ required: true, nullable: true }),
+    power_source: new fields.StringField({ required: true, nullable: true, initial: null }),
+    spell_class: new fields.StringField({ required: true, nullable: true, initial: null }),
+    resist: new fields.StringField({ required: true, nullable: true, initial: null }),
+    casting_cost: new fields.StringField({ required: true, nullable: true, initial: null }),
+    maintenance_cost: new fields.StringField({ required: true, nullable: true, initial: null }),
+    casting_time: new fields.StringField({ required: true, nullable: true, initial: null }),
+    duration: new fields.StringField({ required: true, nullable: true, initial: null }),
+    base_skill: new fields.StringField({ required: true, nullable: true, initial: null }),
+    prereq_count: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // STUB: prereqs is not yet supported
-    prereqs: new fields.ObjectField({ required: true, nullable: true }),
+    prereqs: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     calc: new fields.SchemaField(
       {
-        unsatisfied_reason: new fields.StringField({ required: true, nullable: true }),
-        resolved_notes: new fields.StringField({ required: true, nullable: true }),
-        level: new fields.NumberField({ required: true, nullable: false }),
-        rsl: new fields.StringField({ required: true, nullable: false }),
+        unsatisfied_reason: new fields.StringField({ required: true, nullable: true, initial: null }),
+        resolved_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+        level: new fields.NumberField({ required: true, nullable: true, initial: null }),
+        rsl: new fields.StringField({ required: true, nullable: true, initial: null }),
       },
-      { required: true, nullable: true }
+      { required: true, nullable: true, initial: null }
     ),
     // END: calc
   }

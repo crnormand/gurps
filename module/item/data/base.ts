@@ -20,6 +20,10 @@ type ItemMetadata = Readonly<{
   embedded: Record<string, string>
   /** Record of actions the item can perform */
   actions: Record<string, Function>
+  /** A set of Item subtypes that this item cna contain as children */
+  childTypes: string[]
+  /** A set of Item subtypes that this item can contain as modifiers */
+  modifierTypes: string[]
 }>
 
 /* ---------------------------------------- */
@@ -54,6 +58,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       type: 'base',
       invalidActorTypes: [],
       actions: {},
+      childTypes: [],
+      modifierTypes: [],
     }
   }
 
@@ -102,6 +108,18 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       if (item) acc.push(item)
       return acc
     }, [])
+  }
+
+  /* ---------------------------------------- */
+
+  get children(): Item.Implementation[] {
+    return this.contents.filter(e => this.metadata.childTypes.includes(e.type))
+  }
+
+  /* ---------------------------------------- */
+
+  get modifiers(): Item.Implementation[] {
+    return this.contents.filter(e => this.metadata.modifierTypes.includes(e.type))
   }
 
   /* ---------------------------------------- */
@@ -202,7 +220,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   getGlobalBonuses(): AnyObject[] {
-    if (this.isOfType('equipment') && !this.equipped) return []
+    if (this.isOfType('equipment') && !this.component.equipped) return []
 
     const bonuses = []
 
@@ -239,8 +257,6 @@ const baseItemModelSchema = () => {
     spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     bonuses: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
-    equipped: new fields.BooleanField({ required: true, nullable: false }),
-    carried: new fields.BooleanField({ required: true, nullable: false }),
     globalid: new fields.StringField({ required: true, nullable: false }),
     importid: new fields.StringField({ required: true, nullable: false }),
     importFrom: new fields.StringField({ required: true, nullable: false }),

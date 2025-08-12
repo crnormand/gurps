@@ -118,63 +118,67 @@ const traitData = () => {
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
     // END: TraitModel
     // START: TraitEditData
-    vtt_note: new fields.StringField({ required: true, nullable: true }),
-    userdesc: new fields.StringField({ required: true, nullable: true }),
+    vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
+    userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
-    cr: new fields.NumberField({ required: true, nullable: true }),
-    disabled: new fields.BooleanField({ required: true, nullable: true }),
+    cr: new fields.NumberField({ required: true, nullable: true, initial: null }),
+    disabled: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitEditData
     // START: TraitSyncData
-    name: new fields.StringField({ required: true, nullable: true }),
-    reference: new fields.StringField({ required: true, nullable: true }),
-    reference_highlight: new fields.StringField({ required: true, nullable: true }),
-    local_notes: new fields.StringField({ required: true, nullable: true }),
+    name: new fields.StringField({ required: true, nullable: true, initial: null }),
+    reference: new fields.StringField({ required: true, nullable: true, initial: null }),
+    reference_highlight: new fields.StringField({ required: true, nullable: true, initial: null }),
+    local_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
     // STUB: prereqs is not yet supported
-    prereqs: new fields.ObjectField({ required: true, nullable: true }),
-    cr_adj: new fields.StringField({ required: true, nullable: true }),
+    prereqs: new fields.ObjectField({ required: true, nullable: true, initial: null }),
+    cr_adj: new fields.StringField({ required: true, nullable: true, initial: null }),
     // END: TraitSyncData
     // START: TraitContainerSyncData
-    ancestry: new fields.StringField({ required: true, nullable: true }),
-    template_picker: new fields.ObjectField({ required: true, nullable: true }),
-    container_type: new fields.StringField({ required: true, nullable: true }),
+    ancestry: new fields.StringField({ required: true, nullable: true, initial: null }),
+    template_picker: new fields.ObjectField({ required: true, nullable: true, initial: null }),
+    container_type: new fields.StringField({ required: true, nullable: true, initial: null }),
     // END: TraitContainerSyncData
     // START: TraitNonContainerOnlyEditData
-    levels: new fields.NumberField({ required: true, nullable: true }),
+    levels: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // STUB: study is not yet supported
     study: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
-    study_hours_needed: new fields.NumberField({ required: true, nullable: true }),
+    study_hours_needed: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // END: TraitNonContainerOnlyEditData
     // START: TraitNonContainerOnlySyncData
-    base_points: new fields.NumberField({ required: true, nullable: true }),
-    points_per_level: new fields.NumberField({ required: true, nullable: true }),
+    base_points: new fields.NumberField({ required: true, nullable: true, initial: null }),
+    points_per_level: new fields.NumberField({ required: true, nullable: true, initial: null }),
     weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
-    round_down: new fields.BooleanField({ required: true, nullable: true }),
-    can_level: new fields.BooleanField({ required: true, nullable: true }),
+    round_down: new fields.BooleanField({ required: true, nullable: true, initial: null }),
+    can_level: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitNonContainerOnlySyncData
     // START: calc
     calc: new fields.SchemaField(
       {
         points: new fields.NumberField({ required: true, nullable: false }),
-        unsatisfied_reason: new fields.StringField({ required: true, nullable: true }),
-        resolved_notes: new fields.StringField({ required: true, nullable: true }),
+        unsatisfied_reason: new fields.StringField({ required: true, nullable: true, initial: null }),
+        resolved_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
       },
-      { required: true, nullable: true }
+      { required: true, nullable: true, initial: null }
     ),
     // END: calc
   }

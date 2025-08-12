@@ -1,4 +1,4 @@
-import { BaseItemModel, BaseItemModelSchema } from './base.js'
+import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import fields = foundry.data.fields
 import { ItemComponent, ItemComponentSchema } from './component.js'
 
@@ -12,6 +12,19 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   /* ---------------------------------------- */
 
+  static override get metadata(): ItemMetadata {
+    return {
+      embedded: {},
+      type: 'equipment',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: ['equipment'],
+      modifierTypes: [],
+    }
+  }
+
+  /* ---------------------------------------- */
+
   get component(): EquipmentComponent {
     return this.eqt
   }
@@ -19,7 +32,17 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   /* ---------------------------------------- */
 
   override get enabled(): boolean {
-    return this.equipped
+    return this.component.equipped
+  }
+
+  get equipped(): boolean {
+    return this.component.equipped
+  }
+
+  /* ---------------------------------------- */
+
+  get carried(): boolean {
+    return this.component.carried
   }
 
   /* ---------------------------------------- */

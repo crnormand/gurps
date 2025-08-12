@@ -23,6 +23,7 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
         return GcsBody.importSchema(data, GcsBody.defineSchema())
       case 'attributes':
         return data?.map((attributeData: any) => GcsAttribute.importSchema(attributeData))
+      case 'advantages':
       case 'traits':
         return data?.map((traitData: any) => GcsTrait.importSchema(traitData))
       case 'skills':

@@ -57,45 +57,48 @@ const skillData = () => {
     children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
     // END: SkillModel
     // START: SkillEditData
-    vtt_note: new fields.StringField({ required: true, nullable: true }),
+    vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: SkillEditData
     // START: SkillSyncData
-    name: new fields.StringField({ required: true, nullable: true }),
-    reference: new fields.StringField({ required: true, nullable: true }),
-    reference_highlight: new fields.StringField({ required: true, nullable: true }),
-    local_notes: new fields.StringField({ required: true, nullable: true }),
+    name: new fields.StringField({ required: true, nullable: true, initial: null }),
+    reference: new fields.StringField({ required: true, nullable: true, initial: null }),
+    reference_highlight: new fields.StringField({ required: true, nullable: true, initial: null }),
+    local_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
     // END: SkillSyncData
     // START: SkillContainerSyncData
-    template_picker: new fields.ObjectField({ required: true, nullable: true }),
+    template_picker: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     // END: SkillContainerSyncData
     // START: SkillNonContianerOnlyEditData
-    tech_level: new fields.StringField({ required: true, nullable: true }),
-    points: new fields.NumberField({ required: true, nullable: true }),
-    defaulted_from: new fields.ObjectField({ required: true, nullable: true }),
+    tech_level: new fields.StringField({ required: true, nullable: true, initial: null }),
+    points: new fields.NumberField({ required: true, nullable: true, initial: null }),
+    defaulted_from: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     // STUB: study is not yet supported
     study: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
+      initial: null,
     }),
-    study_hours_needed: new fields.NumberField({ required: true, nullable: true }),
+    study_hours_needed: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // END: SkillNonContianerOnlyEditData
     // START: SkillNonContianerOnlySyncData
-    specialization: new fields.StringField({ required: true, nullable: true }),
-    difficulty: new fields.StringField({ required: true, nullable: true }),
-    encumbrance_penalty_multiplier: new fields.NumberField({ required: true, nullable: true }),
+    specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
+    difficulty: new fields.StringField({ required: true, nullable: true, initial: null }),
+    encumbrance_penalty_multiplier: new fields.NumberField({ required: true, nullable: true, initial: null }),
     defaults: new fields.ArrayField(new fields.EmbeddedDataField(GcsSkillDefault, { required: true, nullable: false })),
-    default: new fields.EmbeddedDataField(GcsSkillDefault, { required: true, nullable: true }),
-    limit: new fields.NumberField({ required: true, nullable: true }),
+    default: new fields.EmbeddedDataField(GcsSkillDefault, { required: true, nullable: true, initial: null }),
+    limit: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // STUB: prereqs is not yet supported
-    prereqs: new fields.ObjectField({ required: true, nullable: true }),
+    prereqs: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
@@ -103,12 +106,12 @@ const skillData = () => {
     // START: calc
     calc: new fields.SchemaField(
       {
-        unsatisfied_reason: new fields.StringField({ required: true, nullable: true }),
-        resolved_notes: new fields.StringField({ required: true, nullable: true }),
+        unsatisfied_reason: new fields.StringField({ required: true, nullable: true, initial: null }),
+        resolved_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
         level: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
         rsl: new fields.StringField({ required: true, nullable: false }),
       },
-      { required: false, nullable: true }
+      { required: false, nullable: true, initial: null }
     ),
     // END: calc
   }
