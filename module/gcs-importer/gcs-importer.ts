@@ -4,8 +4,16 @@ import DataModel = foundry.abstract.DataModel
 import { GcsItem } from './schema/base.js'
 import { GurpsActor } from 'module/actor/actor.js'
 
-// Minimal shape of an importer result; implementation to be added later.
+/**
+ * GCS Importer class for importing GCS characters into the system.
+ * This class handles the conversion of GCS character data into the format used by the GURPS system.
+ */
 export class GcsImporter {
+  /**
+   * Given a GCS Character, return a (new) GURPS Actor.
+   * @param input GCS Character data
+   * @returns GURPS Actor instance
+   */
   static async importCharacter(input: GcsCharacter): Promise<GurpsActor | undefined> {
     return await new GcsImporter(input).#importCharacter()
   }
@@ -22,13 +30,20 @@ export class GcsImporter {
     this.img = ''
   }
 
+  /* ---------------------------------------- */
+
   async #importCharacter(): Promise<GurpsActor | undefined> {
     const _id = foundry.utils.randomID()
     const type = 'character'
     const name = this.input.profile.name ?? 'Imported Character'
 
+    this.#importProfile()
     this.#importPortrait()
     this.#importAttributes()
+
+    // Convert this.output into json.
+    const json = JSON.stringify(this.output)
+    console.log(json)
 
     return await Actor.create({
       _id,
@@ -40,11 +55,39 @@ export class GcsImporter {
     })
   }
 
+  /* ---------------------------------------- */
+
+  #importProfile() {
+    const profile = this.input.profile
+    this.output.traits = {
+      title: profile.title ?? '',
+      height: profile.height ?? '',
+      weight: profile.weight ?? '',
+      age: profile.age ?? '',
+      birthday: profile.birthday ?? '',
+      religion: profile.religion ?? '',
+      gender: profile.gender ?? '',
+      eyes: profile.eyes ?? '',
+      hair: profile.hair ?? '',
+      hand: profile.handedness ?? '',
+      skin: profile.skin ?? '',
+      sizemod: profile.SM ?? 0,
+      techlevel: profile.tech_level ?? '',
+      createdon: this.input.created_date ?? '',
+      modifiedon: this.input.modified_date ?? '',
+      player: profile.player_name ?? '',
+    }
+  }
+
+  /* ---------------------------------------- */
+
   #importPortrait() {
     if (game.user?.hasPermission('FILES_UPLOAD')) {
       this.img = `data:image/png;base64,${this.input.profile.portrait}.png`
     }
   }
+
+  /* ---------------------------------------- */
 
   #importAttributes() {
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {}, WILL: {}, PER: {}, QN: {} }

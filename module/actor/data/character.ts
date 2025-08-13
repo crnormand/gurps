@@ -4,7 +4,6 @@ import fields = foundry.data.fields
 
 /* ---------------------------------------- */
 
-// Minimal schema to unblock typing and allow progressive enhancement.
 const characterSchema = () => {
   return {
     // Default attributes
@@ -45,7 +44,6 @@ const characterSchema = () => {
     tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.tastesmell' }),
     vision: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.vision' }),
     touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
-    // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
     thrust: new fields.StringField({ required: true, nullable: false, label: 'GURPS.thrust' }),
@@ -56,6 +54,31 @@ const characterSchema = () => {
     dodge: new fields.SchemaField({
       value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
+    // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
+
+    traits: new fields.SchemaField(
+      {
+        title: new fields.StringField({ required: true, nullable: false }),
+        race: new fields.StringField({ required: true, nullable: false }),
+        height: new fields.StringField({ required: true, nullable: false }),
+        weight: new fields.StringField({ required: true, nullable: false }),
+        age: new fields.StringField({ required: true, nullable: false }),
+        birthday: new fields.StringField({ required: true, nullable: false }),
+        religion: new fields.StringField({ required: true, nullable: false }),
+        gender: new fields.StringField({ required: true, nullable: false }),
+        eyes: new fields.StringField({ required: true, nullable: false }),
+        hair: new fields.StringField({ required: true, nullable: false }),
+        hand: new fields.StringField({ required: true, nullable: false }),
+        skin: new fields.StringField({ required: true, nullable: false }),
+        // NOTE: change from previous data model, uses number instead of string type as value is always a number
+        sizemod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        techlevel: new fields.StringField({ required: true, nullable: false }),
+        createdon: new fields.StringField({ required: true, nullable: false }),
+        modifiedon: new fields.StringField({ required: true, nullable: false }),
+        player: new fields.StringField({ required: true, nullable: false }),
+      },
+      { required: true, nullable: false }
+    ),
   }
 }
 
