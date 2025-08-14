@@ -96,6 +96,15 @@ export class GurpsActor extends Actor {
   prepareBaseData() {
     super.prepareBaseData()
 
+    this.system.hitlocationNames = this.hitLocationByWhere
+    for (const location in this.system.hitlocationNames) {
+      if (typeof this.system.hitlocationNames[location].import === 'string') {
+        this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
+      }
+    }
+
+    if (this.type !== 'character') return
+
     this.system.conditions.posture = 'standing'
     this.system.conditions.self = { modifiers: [] }
     this.system.conditions.target = { modifiers: [] }
@@ -117,13 +126,6 @@ export class GurpsActor extends Actor {
     if (foundry.utils.getType(attributes.ST.import) === 'string')
       this.system.attributes.ST.import = parseInt(attributes.ST.import)
 
-    this.system.hitlocationNames = this.hitLocationByWhere
-    for (const location in this.system.hitlocationNames) {
-      if (typeof this.system.hitlocationNames[location].import === 'string') {
-        this.system.hitlocationNames[location].import = parseInt(this.system.hitlocationNames[location].import)
-      }
-    }
-
     this.system.trackersByName = this.trackersByName
   }
 
@@ -134,6 +136,7 @@ export class GurpsActor extends Actor {
 
   prepareDerivedData() {
     super.prepareDerivedData()
+    if (this.type !== 'character') return
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
@@ -158,6 +161,7 @@ export class GurpsActor extends Actor {
 
   // execute after every import.
   async postImport() {
+    if (this.type !== 'character') return
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list

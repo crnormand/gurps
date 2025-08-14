@@ -2,6 +2,8 @@ import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
 
+/* ---------------------------------------- */
+
 class GcsElement<
   Schema extends fields.DataSchema = fields.DataSchema,
   Parent extends DataModel.Any | null = DataModel.Any | null,
@@ -14,6 +16,8 @@ class GcsElement<
 
     return new this(createData as DataModel.CreateData<Schema>, { parent })
   }
+
+  /* ---------------------------------------- */
 
   static importSchema<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
@@ -29,6 +33,8 @@ class GcsElement<
     return data as DataModel.CreateData<Schema>
   }
 
+  /* ---------------------------------------- */
+
   protected static _importField(
     data: any,
     field: fields.DataField.Any,
@@ -41,16 +47,16 @@ class GcsElement<
       case fields.BooleanField:
       case fields.ObjectField:
         return data ?? field.getInitialValue()
-      case fields.ArrayField: {
+      case fields.ArrayField:
         return (
           data?.map(
             (item: any) => item ?? (field as fields.ArrayField<fields.DataField.Any>).element.getInitialValue()
           ) ?? []
         )
-      }
-      case fields.SchemaField: {
+
+      case fields.EmbeddedDataField:
+      case fields.SchemaField:
         return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
-      }
     }
   }
 }

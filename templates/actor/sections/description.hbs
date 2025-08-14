@@ -60,7 +60,7 @@
           {{/each}}
         </select>
       {{else}}
-        {{localize (concat 'GURPS.BODYPLAN' system.additionalresources.bodyplan)}}
+        {{i18nFallback (concat 'GURPS.BODYPLAN' system.additionalresources.bodyplan) system.additionalresources.bodyplan}}
       {{/if}}
     </div>
   </div>

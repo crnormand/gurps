@@ -1,6 +1,7 @@
 import { GcsElement } from './base.js'
 import fields = foundry.data.fields
 import { GcsAttribute } from './attribute.js'
+import { GcsBody } from './body.js'
 
 class GcsCharacter extends GcsElement<GcsCharacterModel> {
   static override defineSchema(): GcsCharacterModel {
@@ -32,10 +33,12 @@ const characterData = () => {
       tech_level: new fields.StringField({ required: true, nullable: true }),
       SM: new fields.NumberField({ required: true, nullable: true }),
     }),
+
     attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttribute, { required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
+
     calc: new fields.SchemaField({
       swing: new fields.StringField({ required: true, nullable: false }),
       thrust: new fields.StringField({ required: true, nullable: false }),
@@ -44,6 +47,10 @@ const characterData = () => {
         nullable: false,
         length: 5,
       }),
+    }),
+
+    settings: new fields.SchemaField({
+      body_type: new fields.EmbeddedDataField(GcsBody, { required: true, nullable: false }),
     }),
   }
 }

@@ -1,11 +1,15 @@
 import { GcsElement } from './base.js'
 import fields = foundry.data.fields
 
+/* ---------------------------------------- */
+
 class GcsAttribute extends GcsElement<AttributeData> {
   static override defineSchema(): AttributeData {
     return attributeData()
   }
 }
+
+/* ---------------------------------------- */
 
 const attributeData = () => {
   return {
@@ -24,5 +28,7 @@ const attributeData = () => {
 }
 
 type AttributeData = ReturnType<typeof attributeData>
+
+/* ---------------------------------------- */
 
 export { GcsAttribute, type AttributeData }

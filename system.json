@@ -2,7 +2,7 @@
   "id": "gurps",
   "title": "GURPS 4e Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
-  "version": "0.18.5",
+  "version": "1.0.0-alpha",
   "authors": [
     {
       "name": "Chris Normand",
@@ -23,7 +23,7 @@
     }
   ],
   "compatibility": {
-    "minimum": "12",
+    "minimum": "13",
     "maximum": "13",
     "verified": "13.346"
   },
@@ -65,6 +65,19 @@
   "grid": {
     "distance": 1,
     "units": "yd"
+  },
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "characterV2": {},
+      "enemy": {}
+    },
+    "Item": {
+      "feature": {},
+      "skill": {},
+      "spell": {},
+      "equipment": {}
+    }
   },
   "media": [
     {

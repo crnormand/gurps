@@ -1,10 +1,10 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
-import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
+import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 
 export {}
 
@@ -12,7 +12,7 @@ declare global {
   var GURPS: any
 
   interface DocumentClassConfig {
-    Actor: typeof GurpsActor
+    Actor: typeof GurpsActorV2
     Item: typeof GurpsItem
     Combatant: typeof GurpsCombatant
   }
@@ -23,7 +23,8 @@ declare global {
 
   interface DataModelConfig {
     Actor: {
-      character: typeof CharacterModel
+      character: any
+      characterV2: typeof CharacterModel
     }
   }
 
