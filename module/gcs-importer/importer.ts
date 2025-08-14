@@ -3,6 +3,7 @@ import type { CharacterSchema } from '../actor/data/types.js'
 import DataModel = foundry.abstract.DataModel
 import { GcsItem } from './schema/base.js'
 import { GurpsActor } from '../actor/actor.js'
+import { HitLocationSchemaV2 } from 'module/actor/data/hit-location-entry.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -169,7 +170,6 @@ export class GcsImporter {
     this.output.additionalresources.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
 
     this.output.hitlocationsV2 = []
-    this.output.hitlocations = {}
     this.input.settings.body_type.locations.forEach(location => {
       const split = { ...(location.calc.dr as Record<string, number>) }
       delete split.all // Remove the 'all' key, as it is already present in the 'import' field

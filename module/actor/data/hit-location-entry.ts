@@ -65,13 +65,13 @@ class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
 const hitLocationSchemaV1 = () => {
   return {
     _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
-    dr: new fields.StringField({ required: true, nullable: true, initial: null }),
-    drCap: new fields.StringField({ required: true, nullable: true, initial: null }),
+    dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    drCap: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     drItem: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    drMod: new fields.StringField({ required: true, nullable: true, initial: null }),
+    drMod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     equipment: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    import: new fields.StringField({ required: true, nullable: false, initial: '0' }),
-    penalty: new fields.StringField({ required: true, nullable: false, initial: '0' }),
+    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     roll: new fields.StringField({ required: true, nullable: false, initial: '' }),
     where: new fields.StringField({ required: true, nullable: false }),
     split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {

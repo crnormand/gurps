@@ -1,9 +1,8 @@
 import { attributeSchema, conditionsSchema, poolSchema } from './character-components.js'
 import { BaseActorModel } from './base.js'
 import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
-import { HitLocationEntryV1, HitLocationEntryV2, HitLocationSchemaV1 } from './hit-location-entry.js'
-import { recurselist, zeroFill } from '../../../lib/utilities.js'
+import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
+import { zeroFill } from '../../../lib/utilities.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -15,9 +14,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   override prepareBaseData() {
     super.prepareBaseData()
 
-    this.#prepareHitLocations()
     this.#resetConditionsObject()
   }
+
+  /* ---------------------------------------- */
 
   #resetConditionsObject() {
     // TODO: verify whether this should be fully reset
@@ -33,33 +33,66 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
-  #prepareHitLocations(): void {
-    this.hitlocationsV2.forEach((l: any, index: number) => {
-      const hlv1 = new HitLocationEntryV1({
-        _damageType: l._damageType,
-        dr: l._dr === 0 ? null : l._dr.toString(),
-        drCap: l.drCap === 0 ? null : l.drCap.toString(),
-        drItem: l.drItem,
-        drMod: l.drMod === 0 ? null : l.drMod.toString(),
-        equipment: '',
-        import: l.import.toString(),
-        penalty: l.penalty.toString(),
-        roll: l.rollText,
-        where: l.where,
-        split: l.split,
-      })
+  /* ---------------------------------------- */
 
-      // @ts-expect-error:
-      ;(this.hitlocations as DataModel.CreateData<HitLocationSchemaV1>)[`${zeroFill(index, 5)}`] = hlv1
+  get hitlocations() {
+    const hitlocationsV1: Record<string, HitLocationEntryV1> = {}
+
+    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
+      hitlocationsV1[`${zeroFill(index, 5)}`] = new HitLocationEntryV1({
+        _damageType: locationV2._damageType,
+        dr: locationV2._dr,
+        drCap: locationV2.drCap,
+        drItem: locationV2.drItem,
+        drMod: locationV2.drMod,
+        equipment: '',
+        import: locationV2.import,
+        penalty: locationV2.penalty,
+        roll: locationV2.rollText,
+        where: locationV2.where,
+        split: locationV2.split,
+      })
     })
+    return hitlocationsV1
   }
+
+  /* ---------------------------------------- */
 
   override prepareDerivedData() {
     super.prepareDerivedData()
 
-    recurselist(this.hitlocations, (e, _k, _d) => {
-      if (!e.dr) e.dr = e.import
-    })
+    this.#applyCharacterBonuses()
+  }
+
+  /* ---------------------------------------- */
+
+  #applyCharacterBonuses() {
+    this.#applyBonusesToHitLocations()
+  }
+
+  /* ---------------------------------------- */
+
+  #applyBonusesToHitLocations() {
+    for (const location of this.hitlocationsV2) {
+      location.drItem = this._drBonusesFromItems[location.where] ?? 0
+      const newDR = location.import + location.drItem + location.drMod
+
+      // NOTE: I'm unsure as to whether drCap should ever apply.
+      // On the one hand, using the ! operator in the /dr command may imply
+      // that the DR of the location should always be set to the new value.
+      // On the other hand, this may not be the intended behavior.
+      // This is where documentation regarding intent would be helpful.
+      location._dr = location.drCap === null ? newDR : Math.max(location.drCap, newDR)
+    }
+  }
+
+  /* ---------------------------------------- */
+  /*  Legacy Functionality                    */
+  /* ---------------------------------------- */
+
+  protected get _drBonusesFromItems(): Record<string, number> {
+    // TODO Go through the list of Items and find all DR bonuses
+    return {}
   }
 }
 
@@ -144,11 +177,6 @@ const characterSchema = () => {
     hitlocationsV2: new fields.ArrayField(
       new fields.EmbeddedDataField(HitLocationEntryV2, { required: true, nullable: false }),
       { required: true, nullable: false }
-    ),
-
-    hitlocations: new fields.TypedObjectField(
-      new fields.EmbeddedDataField(HitLocationEntryV1, { required: true, nullable: false }),
-      { required: true, nullable: false, initial: {} }
     ),
 
     additionalresources: new fields.SchemaField(
