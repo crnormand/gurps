@@ -86,6 +86,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
+  override _onUpdate(changed: object, options: any, userId: string): void {
+    console.log('changed', changed)
+    super._onUpdate(changed, options, userId)
+  }
+
   /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */

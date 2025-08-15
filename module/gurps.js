@@ -83,6 +83,8 @@ import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
+import { GurpsActorV2 } from './actor/gurps-actor.js'
+import ActorProxy from './actor/base-actor.js'
 
 export let GURPS = undefined
 
@@ -1952,8 +1954,7 @@ if (!globalThis.GURPS) {
     GURPS.Maneuvers = Maneuvers
 
     // Define custom Entity classes
-    // @ts-ignore
-    CONFIG.Actor.documentClass = GurpsActor
+    CONFIG.Actor.documentClass = ActorProxy
     CONFIG.Item.documentClass = GurpsItem
 
     // add custom ActiveEffectConfig sheet class

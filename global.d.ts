@@ -11,6 +11,10 @@ export {}
 declare global {
   var GURPS: any
 
+  type PreCreate<T extends SourceFromSchema<DataSchema>> = T extends { type: string }
+    ? Omit<DeepPartial<T>, 'type'> & { _id?: Maybe<string>; type: T['type'] }
+    : DeepPartial<T>
+
   interface DocumentClassConfig {
     Actor: typeof GurpsActorV2
     Item: typeof GurpsItem
