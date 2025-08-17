@@ -1,4 +1,4 @@
-import { attributeSchema, conditionsSchema, poolSchema } from './character-components.js'
+import { attributeSchema, conditionsSchema, LiftingMovingSchema, poolSchema } from './character-components.js'
 import { BaseActorModel } from './base.js'
 import fields = foundry.data.fields
 import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
@@ -11,10 +11,34 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
+
+  /* ---------------------------------------- */
+  /*  Instance properties                     */
+  /* ---------------------------------------- */
+
+  liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema> = {
+    basiclift: 0,
+    onehandedlift: 0,
+    twohandedlift: 0,
+    shove: 0,
+    runningshove: 0,
+    shiftslightly: 0,
+    carryonback: 0,
+  }
+
+  /* ---------------------------------------- */
+
   override prepareBaseData() {
     super.prepareBaseData()
 
     this.#resetConditionsObject()
+
+    // Reset the calculated values of attributes
+    Object.keys(this.attributes).forEach(key => {
+      const attribute = this.attributes[key as keyof typeof this.attributes]
+      this.attributes[key as keyof typeof this.attributes].value = attribute.import
+    })
   }
 
   /* ---------------------------------------- */
@@ -35,33 +59,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get hitlocations() {
-    const hitlocationsV1: Record<string, HitLocationEntryV1> = {}
-
-    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
-      hitlocationsV1[`${zeroFill(index, 5)}`] = new HitLocationEntryV1({
-        _damageType: locationV2._damageType,
-        dr: locationV2._dr,
-        drCap: locationV2.drCap,
-        drItem: locationV2.drItem,
-        drMod: locationV2.drMod,
-        equipment: '',
-        import: locationV2.import,
-        penalty: locationV2.penalty,
-        roll: locationV2.rollText,
-        where: locationV2.where,
-        split: locationV2.split,
-      })
-    })
-    return hitlocationsV1
-  }
-
-  /* ---------------------------------------- */
-
   override prepareDerivedData() {
     super.prepareDerivedData()
 
     this.#applyCharacterBonuses()
+    this.#prepareLiftingMoving()
   }
 
   /* ---------------------------------------- */
@@ -86,6 +88,29 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
+  /* ---------------------------------------- */
+
+  protected get _drBonusesFromItems(): Record<string, number> {
+    // TODO Go through the list of Items and find all DR bonuses
+    return {}
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareLiftingMoving() {
+    const basicLift = Math.round(0.2 * (this.attributes.ST.value * this.attributes.ST.value))
+
+    this.liftingmoving = {
+      basiclift: basicLift,
+      onehandedlift: basicLift * 2,
+      twohandedlift: basicLift * 8,
+      shove: basicLift * 12,
+      runningshove: basicLift * 24,
+      carryonback: basicLift * 15,
+      shiftslightly: basicLift * 50,
+    }
+  }
+
   override _onUpdate(changed: object, options: any, userId: string): void {
     console.log('changed', changed)
     super._onUpdate(changed, options, userId)
@@ -95,9 +120,25 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
-  protected get _drBonusesFromItems(): Record<string, number> {
-    // TODO Go through the list of Items and find all DR bonuses
-    return {}
+  get hitlocations() {
+    const hitlocationsV1: Record<string, HitLocationEntryV1> = {}
+
+    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
+      hitlocationsV1[`${zeroFill(index, 5)}`] = new HitLocationEntryV1({
+        _damageType: locationV2._damageType,
+        dr: locationV2._dr,
+        drCap: locationV2.drCap,
+        drItem: locationV2.drItem,
+        drMod: locationV2.drMod,
+        equipment: '',
+        import: locationV2.import,
+        penalty: locationV2.penalty,
+        roll: locationV2.rollText,
+        where: locationV2.where,
+        split: locationV2.split,
+      })
+    })
+    return hitlocationsV1
   }
 }
 

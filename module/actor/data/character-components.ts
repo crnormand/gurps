@@ -21,6 +21,23 @@ const poolSchema = () => {
 
 /* ---------------------------------------- */
 
+// NOTE: change from previous schema where these values were all strings
+const liftingMovingSchema = () => {
+  return {
+    basiclift: new fields.NumberField({ required: true, nullable: false }),
+    onehandedlift: new fields.NumberField({ required: true, nullable: false }),
+    twohandedlift: new fields.NumberField({ required: true, nullable: false }),
+    shove: new fields.NumberField({ required: true, nullable: false }),
+    runningshove: new fields.NumberField({ required: true, nullable: false }),
+    shiftslightly: new fields.NumberField({ required: true, nullable: false }),
+    carryonback: new fields.NumberField({ required: true, nullable: false }),
+  }
+}
+
+type LiftingMovingSchema = ReturnType<typeof liftingMovingSchema>
+
+/* ---------------------------------------- */
+
 // TODO: move this to a move appropriate location to do wih OTF Action or something like that
 const damageActionSchema = () => {
   return {
@@ -85,4 +102,4 @@ const conditionsSchema = () => {
 
 // type ConditionsSchema = ReturnType<typeof conditionsSchema>
 
-export { attributeSchema, poolSchema, conditionsSchema }
+export { attributeSchema, poolSchema, conditionsSchema, liftingMovingSchema, type LiftingMovingSchema }
