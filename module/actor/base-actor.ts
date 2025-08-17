@@ -10,7 +10,7 @@ const ActorProxy = new Proxy(Actor, {
     switch (type) {
       case 'character':
         return new GurpsActor(...args)
-      case 'character':
+      case 'characterV2':
         return new GurpsActorV2(...args)
       default:
         throw Error(`Actor type ${type} does not exist and actor module sub-types are not supported`)

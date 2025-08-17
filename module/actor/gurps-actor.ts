@@ -1,11 +1,9 @@
-import { GurpsActor } from './actor.js'
-
 // add type = 'characterV2' to ActorMetadata
 type ActorMetadata = (typeof foundry.documents.BaseActor)['metadata'] & {
   type: 'characterV2'
 }
 
-class GurpsActorV2 extends GurpsActor {
+class GurpsActorV2 extends Actor<Actor.SubType> {
   static override get metadata(): ActorMetadata {
     return {
       ...foundry.documents.BaseActor.metadata,
@@ -13,7 +11,7 @@ class GurpsActorV2 extends GurpsActor {
     }
   }
 
-  override async update(data: Partial<GurpsActorV2>, context: any): Promise<this> {
+  override async update(data: Actor.UpdateData, context: any): Promise<this> {
     console.log('GurpsActorV2.update', { data, context })
 
     this.#translateLegacyHitlocationData(data)
@@ -24,7 +22,7 @@ class GurpsActorV2 extends GurpsActor {
     return this
   }
 
-  #translateLegacyHitlocationData(data: Partial<GurpsActorV2>) {
+  #translateLegacyHitlocationData(data: Actor.UpdateData) {
     Object.keys(data)
       .filter(key => key.startsWith('system.hitlocations.'))
       .forEach(key => {
@@ -47,6 +45,28 @@ class GurpsActorV2 extends GurpsActor {
 
         delete data[key as keyof typeof data]
       })
+  }
+
+  async internalUpdate(data: Actor.UpdateData, context: any): Promise<this> {
+    console.log('GurpsActorV2.internalUpdate', { data, context })
+    return await this.update(data, context)
+  }
+
+  /**
+   * This method is called when "system.conditions.maneuver" changes on the actor (via the update method)
+   * @param {string} maneuverText
+   */
+  async replaceManeuver(maneuverText: string) {
+    let tokens = this._findTokens()
+    for (const t of tokens) await t.setManeuver(maneuverText)
+  }
+
+  _findTokens(): Token.Implementation[] {
+    if (this.isToken && this.token?.layer) {
+      let token = this.token.object
+      return token ? [token] : []
+    }
+    return this.getActiveTokens()
   }
 }
 

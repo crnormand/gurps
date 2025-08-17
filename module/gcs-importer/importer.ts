@@ -2,8 +2,8 @@ import { GcsCharacter } from './schema/character.js'
 import type { CharacterSchema } from '../actor/data/types.js'
 import DataModel = foundry.abstract.DataModel
 import { GcsItem } from './schema/base.js'
-import { GurpsActor } from '../actor/actor.js'
 import { HitLocationSchemaV2 } from 'module/actor/data/hit-location-entry.js'
+import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -15,7 +15,7 @@ export class GcsImporter {
    * @param input GCS Character data
    * @returns GURPS Actor instance
    */
-  static async importCharacter(input: GcsCharacter): Promise<GurpsActor | undefined> {
+  static async importCharacter(input: GcsCharacter): Promise<GurpsActorV2 | undefined> {
     return await new GcsImporter(input).#importCharacter()
   }
 
@@ -35,7 +35,7 @@ export class GcsImporter {
 
   /* ---------------------------------------- */
 
-  async #importCharacter(): Promise<GurpsActor | undefined> {
+  async #importCharacter(): Promise<GurpsActorV2 | undefined> {
     const _id = foundry.utils.randomID()
     const name = this.input.profile.name ?? 'Imported Character'
 
