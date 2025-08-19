@@ -1,8 +1,15 @@
-import { attributeSchema, conditionsSchema, LiftingMovingSchema, poolSchema } from './character-components.js'
+import {
+  attributeSchema,
+  conditionsSchema,
+  EncumbranceSchema,
+  LiftingMovingSchema,
+  poolSchema,
+} from './character-components.js'
 import { BaseActorModel } from './base.js'
 import fields = foundry.data.fields
 import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
 import { zeroFill } from '../../../lib/utilities.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -14,9 +21,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
 
   /* ---------------------------------------- */
-  /*  Instance properties                     */
+  /*  Derived properties                     */
   /* ---------------------------------------- */
-
+  encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[] = []
   liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema> = {
     basiclift: 0,
     onehandedlift: 0,
@@ -26,7 +33,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     shiftslightly: 0,
     carryonback: 0,
   }
-
   /* ---------------------------------------- */
 
   override prepareBaseData() {
@@ -64,6 +70,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.#applyCharacterBonuses()
     this.#prepareLiftingMoving()
+    this.#prepareEncumbrance()
   }
 
   /* ---------------------------------------- */
@@ -111,10 +118,93 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
+  /* ---------------------------------------- */
+
+  #prepareEncumbrance() {
+    const automaticEncumbrance = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE) ?? false
+
+    let foundCurrent = false
+    // let manualEncumbranceIndex = -1
+    // const currentEncumbrance = this.encumbrance ?? []
+
+    // if (!currentEncumbrance.length && !automaticEncumbrance) {
+    //   manualEncumbranceIndex = currentEncumbrance.findIndex(enc => enc.current)
+    //   if (manualEncumbranceIndex < 0) manualEncumbranceIndex = 0
+    //   foundCurrent = true
+    // }
+
+    const basicLift = this.liftingmoving.basiclift
+    const liftBrackets: number[] = [basicLift, basicLift * 2, basicLift * 3, basicLift * 6, basicLift * 10]
+    const basicMove = this.basicmove.value
+    const basicDodge = this.dodge.value
+
+    const moveIsEnhanced = false // this.currentMoveMode?.enhanced !== null
+
+    const carriedWeight = 0 // this.eqtsummary.eqtlbs ?? 0
+
+    for (let i = 0; i < liftBrackets.length; i++) {
+      let move = Math.floor(Math.max(1, basicMove * (1 - i * 0.2)))
+      let dodge = Math.max(1, basicDodge - i)
+      let sprint = Math.max(1, move * 1.2)
+
+      if (this.conditions.reeling) {
+        move = Math.ceil(move / 2)
+        dodge = Math.ceil(dodge / 2)
+        sprint = Math.ceil(sprint / 2)
+      }
+
+      if (this.conditions.exhausted) {
+        move = Math.ceil(move / 2)
+        dodge = Math.ceil(dodge / 2)
+        sprint = Math.ceil(sprint / 2)
+      }
+
+      let current = false
+
+      if (automaticEncumbrance) {
+        if (!foundCurrent && carriedWeight <= liftBrackets[i]) {
+          foundCurrent = true
+          current = true
+        }
+      } else {
+        if (i === this.additionalresources.currentEncumbrance) {
+          foundCurrent = true
+          current = true
+        }
+      }
+
+      const currentmove = this.#getCurrentMove(move)
+
+      this.encumbrance.push({
+        key: `enc${i}`,
+        level: i,
+        weight: liftBrackets[i],
+        move,
+        dodge,
+        current,
+        currentmove,
+        currentsprint: currentmove * 1.2,
+        currentdodge: dodge,
+        currentmovedisplay: moveIsEnhanced ? `${move}/${sprint}` : `${move}`,
+      })
+    }
+  }
+
+  #getCurrentMove(base: number): number {
+    return base // TODO implement correct logic
+  }
+
+  /* ---------------------------------------- */
+  /*   CRUD Handlers                          */
+  /* ---------------------------------------- */
+
   override _onUpdate(changed: object, options: any, userId: string): void {
-    console.log('changed', changed)
     super._onUpdate(changed, options, userId)
   }
+
+  /* ---------------------------------------- */
+  /*  Accessors                               */
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  Legacy Functionality                    */
@@ -229,6 +319,7 @@ const characterSchema = () => {
       {
         // TODO This could be a trait instead.
         bodyplan: new fields.StringField({ required: true, nullable: false }),
+        currentEncumbrance: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       },
       { required: true, nullable: false }
     ),

@@ -51,6 +51,7 @@ declare global {
     'gurps.damage.only-gms-open-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
     'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
+    'gurps.automatic-encumbrance': boolean
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>

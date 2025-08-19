@@ -1807,30 +1807,23 @@ export class GurpsActorSheet extends ActorSheet {
   async _onClickEnc(ev) {
     ev.preventDefault()
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
-      let element = ev.currentTarget
-      let key = element.dataset.key
-      //////////
-      // Check for 'undefined' when clicking on Encumbrance Level 'header'. ~Stevil
-      if (key !== undefined) {
-        //////////
-        let encs = this.actor.system.encumbrance
-        if (encs[key].current) return // already selected
-        for (let enckey in encs) {
-          let enc = encs[enckey]
-          let t = 'system.encumbrance.' + enckey + '.current'
-          if (key === enckey) {
-            await this.actor.internalUpdate({
-              [t]: true,
-              'system.currentmove': parseInt(enc.move),
-              'system.currentdodge': parseInt(enc.dodge),
-            })
-          } else if (enc.current) {
-            await this.actor.internalUpdate({ [t]: false })
-          }
-        }
-        //////////
+      const element = ev.currentTarget
+      const key = element.dataset.key
+      if (!key) return
+
+      const encs = this.actor.system.encumbrance
+      const currentIndex = Object.keys(encs).find(k => {
+        if (encs[k].current) return k
+      })
+      const newIndex = key
+
+      const newLocal = {
+        [`system.encumbrance.${currentIndex}.current`]: false,
+        [`system.encumbrance.${newIndex}.current`]: true,
+        'system.currentmove': parseInt(encs[newIndex].move),
+        'system.currentdodge': parseInt(encs[newIndex].dodge),
       }
-      //////////
+      await this.actor.update(newLocal)
     } else {
       ui.notifications.warn(
         "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."

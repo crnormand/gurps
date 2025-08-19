@@ -21,6 +21,27 @@ const poolSchema = () => {
 
 /* ---------------------------------------- */
 
+const encumbranceSchema = () => {
+  return {
+    key: new fields.StringField({ required: true, nullable: false }),
+    level: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: change from previous schema, where "dodge" was a string
+    dodge: new fields.NumberField({ required: true, nullable: false }),
+    // NOTE: change from previuos schema where "weight" was a string
+    weight: new fields.NumberField({ required: true, nullable: false }),
+    move: new fields.NumberField({ required: true, nullable: false }),
+    current: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    currentmove: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    currentsprint: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    currentdodge: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    currentmovedisplay: new fields.StringField({ required: true, nullable: false, initial: '' }),
+  }
+}
+
+type EncumbranceSchema = ReturnType<typeof encumbranceSchema>
+
+/* ---------------------------------------- */
+
 // NOTE: change from previous schema where these values were all strings
 const liftingMovingSchema = () => {
   return {
@@ -102,4 +123,12 @@ const conditionsSchema = () => {
 
 // type ConditionsSchema = ReturnType<typeof conditionsSchema>
 
-export { attributeSchema, poolSchema, conditionsSchema, liftingMovingSchema, type LiftingMovingSchema }
+export {
+  attributeSchema,
+  poolSchema,
+  conditionsSchema,
+  liftingMovingSchema,
+  encumbranceSchema,
+  type LiftingMovingSchema,
+  type EncumbranceSchema,
+}

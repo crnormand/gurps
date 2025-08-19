@@ -12,9 +12,8 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
   }
 
   override async update(data: Actor.UpdateData, context: any): Promise<this> {
-    console.log('GurpsActorV2.update', { data, context })
-
     this.#translateLegacyHitlocationData(data)
+    this.#translateLegacyEncumbranceData(data)
 
     // Call the parent class's update method
     await super.update(data, context)
@@ -22,6 +21,9 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
     return this
   }
 
+  /**
+   * Translate legacy HitLocation data like "system.hitlocations.00003.import" to "system.hitlocationsV2.3.import".
+   */
   #translateLegacyHitlocationData(data: Actor.UpdateData) {
     Object.keys(data)
       .filter(key => key.startsWith('system.hitlocations.'))
@@ -47,8 +49,29 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
       })
   }
 
+  /**
+   * Translate legacy Encumbrance current index from "system.encumbrance.2.current = true" to "system.additionalresources.currentEncumbrance = 2"
+   * @param data
+   */
+  #translateLegacyEncumbranceData(data: Actor.UpdateData) {
+    Object.keys(data)
+      .filter(key => key.startsWith('system.encumbrance.'))
+      .forEach(key => {
+        const index = key.split('.')[2]
+        const field = key.split('.').slice(3).join('.')
+        const value = data[key as keyof typeof data]
+
+        if (field === 'current' && value === true) {
+          // @ts-expect-error
+          data[`system.additionalresources.currentEncumbrance`] = index
+        }
+
+        delete data[key as keyof typeof data]
+      })
+  }
+
+  // TODO Remove this eventually.
   async internalUpdate(data: Actor.UpdateData, context: any): Promise<this> {
-    console.log('GurpsActorV2.internalUpdate', { data, context })
     return await this.update(data, context)
   }
 
