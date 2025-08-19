@@ -29,6 +29,7 @@ declare global {
     Actor: {
       character: any
       characterV2: typeof CharacterModel
+      enemy: typeof CharacterModel
     }
   }
 
@@ -52,6 +53,44 @@ declare global {
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
     'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
     'gurps.automatic-encumbrance': boolean
+    'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
+    'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.use-tagged-modifiers': {
+      autoAdd: boolean
+      checkConditionals: boolean
+      checkReactions: boolean
+      useSpellCollegeAsTag: boolean
+      allRolls: string
+      allAttributesRolls: string
+      allSkillRolls: string
+      allSpellRolls: string
+      allDamageRolls: string
+      allAttackRolls: string
+      allRangedRolls: string
+      allMeleeRolls: string
+      allDefenseRolls: string
+      allDODGERolls: string
+      allParryRolls: string
+      allBlockRolls: string
+      allPERRolls: string
+      allWILLRolls: string
+      allSTRolls: string
+      allDXRolls: string
+      allIQRolls: string
+      allHTRolls: string
+      allFRIGHTCHECKRolls: string
+      allVISIONRolls: string
+      allTASTESMELLRolls: string
+      allHEARINGRolls: string
+      allTOUCHRolls: string
+      allCRRolls: string
+      combatOnlyTag: string
+      nonCombatOnlyTag: string
+      combatTempTag: string
+    }
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>

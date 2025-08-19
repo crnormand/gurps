@@ -10,6 +10,7 @@ import fields = foundry.data.fields
 import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
 import { zeroFill } from '../../../lib/utilities.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -24,6 +25,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Derived properties                     */
   /* ---------------------------------------- */
   encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[] = []
+
   liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema> = {
     basiclift: 0,
     onehandedlift: 0,
@@ -33,14 +35,26 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     shiftslightly: 0,
     carryonback: 0,
   }
+
+  /* ---------------------------------------- */
+  /*  Data Preparation                        */
   /* ---------------------------------------- */
 
+  /**
+   * Prepare data related to this DataModel itself, before any derived data is computed.
+   */
   override prepareBaseData() {
     super.prepareBaseData()
 
     this.#resetConditionsObject()
+    this.#resetCalculatedAttributeValues()
 
-    // Reset the calculated values of attributes
+    this.#applySizeModifierToTargetConditions()
+  }
+
+  /* ---------------------------------------- */
+
+  #resetCalculatedAttributeValues() {
     Object.keys(this.attributes).forEach(key => {
       const attribute = this.attributes[key as keyof typeof this.attributes]
       this.attributes[key as keyof typeof this.attributes].value = attribute.import
@@ -60,6 +74,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       usermods: [],
       reeling: false,
       exhausted: false,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  #applySizeModifierToTargetConditions() {
+    if (this.traits.sizemod !== 0) {
+      const sizeModifier = this.traits.sizemod > 0 ? `+${this.traits.sizemod}` : `${this.traits.sizemod}`
+      this.conditions.target?.modifiers?.push(game.i18n?.format('GURPS.modifiersSize', { sm: sizeModifier }) ?? '')
     }
   }
 
@@ -224,6 +247,293 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       hitlocationsV1[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
     })
     return hitlocationsV1
+  }
+
+  /* ---------------------------------------- */
+
+  async addTaggedRollModifiers(
+    chatThing: string,
+    optionalArgs: { obj?: AnyObject },
+    attack?: AnyObject
+  ): Promise<boolean> {
+    let isDamageRoll = false
+    const taggedSettings = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)!
+    const allRollTags: string[] = taggedSettings.allRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
+
+    let itemRef = ''
+    let allTags: string[] = []
+    let refTags: string[] = []
+    let modifierTags: string[] = []
+
+    if (optionalArgs.obj) {
+      // Get modifiers from action object
+      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
+        m: ['allAttackRolls', 'allMeleeRolls'],
+        r: ['allAttackRolls', 'allRangedRolls'],
+        p: ['allDefenseRolls', 'allDefenseRolls'],
+        b: ['allDefenseRolls', 'allBlockRolls'],
+        d: ['allDamageRolls'],
+        sk: ['allSkillRolls'],
+        sp: ['allSpellRolls'],
+      }
+
+      const ref = chatThing
+        .split('@')
+        .pop()!
+        .match(/(\S+):/)?.[1]
+        .toLowerCase()
+
+      if (ref && correspondingTags[ref]) {
+        if (ref === 'd') isDamageRoll = true
+
+        for (const tag of correspondingTags[ref]) {
+          refTags.push(...(taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+        }
+      }
+
+      modifierTags =
+        (optionalArgs.obj.modifierTags as string)?.split(',').map((tag: string) => tag.trim().toLowerCase()) ?? []
+      allTags = [...modifierTags, ...allRollTags, ...refTags]
+      itemRef = (optionalArgs.obj.name as string) ?? ''
+    } else if (chatThing) {
+      // Get modifiers from chat string
+      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
+        st: ['allAttributesRolls', 'allSTRolls'],
+        dx: ['allAttributesRolls', 'allDXRolls'],
+        iq: ['allAttributesRolls', 'allIQRolls'],
+        ht: ['allAttributesRolls', 'allHTRolls'],
+        will: ['allWILLRolls'],
+        per: ['allPERRolls'],
+        frightcheck: ['allFRIGHTCHECKRolls'],
+        vision: ['allVISIONRolls'],
+        hearing: ['allHEARINGRolls'],
+        tastesmell: ['allTASTESMELLRolls'],
+        touch: ['allTOUCHRolls'],
+        cr: ['allCRRolls'],
+        dodge: ['allDefenseRolls', 'allDODGERolls'],
+        p: ['allDefenseRolls', 'allParryRolls'],
+        b: ['allDefenseRolls', 'allBlockRolls'],
+      }
+
+      const ref = chatThing.split('@').pop()!.toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
+      let regex = /(?<="|:).+(?=\s\(|"|])/gm
+
+      if (ref && correspondingTags[ref]) {
+        if (ref === 'p' || ref === 'b') {
+          itemRef = chatThing.match(regex)?.[0] ?? ''
+          if (itemRef !== '') itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
+        }
+
+        for (const tag of correspondingTags[ref]) {
+          refTags.push(...(taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+        }
+      }
+    } else {
+      // Get modifiers from attack/damage roll
+      if (!attack) {
+        refTags = taggedSettings.allDamageRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
+        isDamageRoll = true
+      } else {
+        refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
+      }
+      // @ts-expect-error
+      const attackMods = attack?.component.modifierTags ?? []
+      modifierTags = [...allRollTags, ...attackMods, ...refTags]
+      // @ts-expect-error
+      itemRef = attack?.name ?? ''
+    }
+
+    // Get modifiers from user mods
+    const userMods = this.conditions.usermods ?? []
+
+    // Get modiifers from self mods
+    const selfMods =
+      this.conditions.self.modifiers?.map(mod => {
+        const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+        return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
+      }) ?? []
+
+    // Get modifiers from target mods
+    const targetMods =
+      game.user?.targets.reduce((acc: string[], target: Token.Implementation) => {
+        const actor = target.actor
+        if (!actor || !actor.isOfType('character', 'enemy')) return acc
+
+        acc.push(
+          ...((actor.system as CharacterModel).conditions.target.modifiers?.map(mod => {
+            const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+            return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
+          }) ?? [])
+        )
+        return acc
+      }, []) ?? []
+
+    const actorInCombat = this.parent.inCombat
+    const allMods: string[] = [...userMods, ...selfMods, ...targetMods]
+    for (const mod of allMods) {
+      const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
+
+      userModsTags.forEach(async tag => {
+        let canApply = true
+
+        if (mod.includes('#maneuver'))
+          canApply = allTags.includes(tag) && (mod.includes(itemRef) || mod.includes('@man:'))
+
+        // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
+        if ('itemPath' in optionalArgs && typeof optionalArgs.itemPath === 'string')
+          canApply = canApply && (mod.includes(optionalArgs.itemPath) || !mod.includes('@system'))
+
+        if (actorInCombat)
+          canApply =
+            canApply && (!taggedSettings.nonCombatOnlyTag || !allTags.includes(taggedSettings.nonCombatOnlyTag))
+        else canApply = canApply && (!taggedSettings.combatOnlyTag || !allTags.includes(taggedSettings.combatOnlyTag))
+
+        if (canApply) {
+          const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+          const desc = mod.match(regex)?.[1].trim() || ''
+          const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
+          // TODO: evaluate whether this causes too many data preparation cycles
+          await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
+        }
+      })
+    }
+
+    return isDamageRoll
+  }
+
+  /**
+   * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatthing - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
+   */
+  findUsingAction(
+    action: { type: string; name: string; orig: string; overridetxt?: string; attrkey?: string },
+    chatthing: string,
+    formula: string,
+    thing: string
+  ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
+    if (!this.isOfType('character', 'enemy')) {
+      console.warn('Actor is not a character or enemy.')
+      return {
+        name: thing,
+        uuid: null,
+        itemId: null,
+        fromItem: null,
+        pageRef: null,
+      }
+    }
+
+    const originType: string | null = action ? action.type : null
+    // let name: string, mode: string | undefined
+    switch (originType) {
+      // case 'attack': {
+      //   name = action.name.split('(')[0].trim()
+      //   mode = action.name.match(/\((.+)\)/)?.[1]
+      //   const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
+      //   const weapon = this.parent
+      //     // @ts-expect-error: Not sure why this isn't resolving correctly.
+      //     .getItemAttacks({ attackType })
+      //     .find(e => e.name === name && (!mode || e.component.mode === mode))
+      //   if (weapon)
+      //     return {
+      //       name: weapon.name ?? '',
+      //       uuid: weapon.uuid,
+      //       itemId: weapon.id,
+      //       fromItem: weapon.item.id,
+      //       pageRef: null,
+      //     }
+      //   else
+      //     return {
+      //       name: thing,
+      //       uuid: null,
+      //       itemId: null,
+      //       fromItem: null,
+      //       pageRef: null,
+      //     }
+      // }
+      // case 'weapon-block':
+      // case 'weapon-parry': {
+      //   name = action.name.split('(')[0].trim()
+      //   mode = action.name.match(/\((.+?)\)/)?.[1]
+      //   const weapon = this.parent
+      //     .getItemAttacks({ attackType: 'melee' })
+      //     .find(e => e.name === name && (!mode || e.component.mode === mode))
+      //   if (weapon)
+      //     return {
+      //       name: weapon.name ?? '',
+      //       uuid: weapon.uuid,
+      //       itemId: weapon.id,
+      //       fromItem: weapon.item.id,
+      //       pageRef: null,
+      //     }
+      //   else
+      //     return {
+      //       name: thing,
+      //       uuid: null,
+      //       itemId: null,
+      //       fromItem: null,
+      //       pageRef: null,
+      //     }
+      // }
+      // case 'skill-spell': {
+      //   const item = [...this.skills, ...this.spells].find(e => e.name === action.name)
+      //   if (item)
+      //     return {
+      //       name: item.name,
+      //       uuid: item.uuid,
+      //       itemId: item.id,
+      //       fromItem: item.id,
+      //       pageRef: item.system.component.pageref,
+      //     }
+      //   else
+      //     return {
+      //       name: action.name,
+      //       uuid: null,
+      //       itemId: null,
+      //       fromItem: null,
+      //       pageRef: null,
+      //     }
+      // }
+      case 'attribute': {
+        let attrName = action?.overridetxt
+        if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
+        if (attrName.startsWith('GURPS')) attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey}NAME`) ?? ''
+        return {
+          name: attrName,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
+      case 'controlroll': {
+        return {
+          name: action.overridetxt || action.orig,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
+      default: {
+        return {
+          name: thing ? thing : chatthing ? chatthing.split('/[')[0] : formula,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
+    }
   }
 }
 
