@@ -37,6 +37,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
+  /*  Accessors                               */
+  /* ---------------------------------------- */
+
+  get hitlocationNames() {
+    return this.hitlocationsV2.reduce((acc: Record<string, HitLocationEntryV2>, location) => {
+      acc[location.where] = location
+      return acc
+    }, {})
+  }
+
+  /* ---------------------------------------- */
+
+  get currentdodge(): number {
+    return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
+  }
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
@@ -213,6 +230,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
+  /* ---------------------------------------- */
+
   #getCurrentMove(base: number): number {
     return base // TODO implement correct logic
   }
@@ -223,17 +242,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   override _onUpdate(changed: object, options: any, userId: string): void {
     super._onUpdate(changed, options, userId)
-  }
-
-  /* ---------------------------------------- */
-  /*  Accessors                               */
-  /* ---------------------------------------- */
-
-  get hitlocationNames() {
-    return this.hitlocationsV2.reduce((acc: Record<string, HitLocationEntryV2>, location) => {
-      acc[location.where] = location
-      return acc
-    }, {})
   }
 
   /* ---------------------------------------- */

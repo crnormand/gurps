@@ -33,6 +33,7 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /** Alias of accessor owners */
   getOwners(): User.Implementation[] {
+    console.warn('getOwners() is deprecated, use owners instead')
     return this.owners
   }
 
@@ -102,6 +103,7 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   // TODO Remove this eventually.
   async internalUpdate(data: Actor.UpdateData, context: any): Promise<this> {
+    console.warn('internalUpdate() is deprecated, use update() instead')
     console.trace('internalUpdate', data)
     return await this.update(data, context)
   }
