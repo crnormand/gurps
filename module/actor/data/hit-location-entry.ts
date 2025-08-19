@@ -52,6 +52,22 @@ type HitLocationSchemaV2 = ReturnType<typeof hitLocationSchema>
 /* ---------------------------------------- */
 
 class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
+  static createFromV2(entry: HitLocationEntryV2): HitLocationEntryV1 {
+    return new HitLocationEntryV1({
+      _damageType: entry._damageType,
+      dr: entry._dr,
+      drCap: entry.drCap,
+      drItem: entry.drItem,
+      drMod: entry.drMod,
+      equipment: '',
+      import: entry.import,
+      penalty: entry.penalty,
+      roll: entry.rollText,
+      where: entry.where,
+      split: entry.split,
+    })
+  }
+
   static override defineSchema(): HitLocationSchemaV1 {
     return hitLocationSchemaV1()
   }

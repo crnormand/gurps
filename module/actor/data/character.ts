@@ -206,6 +206,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
+  get hitlocationNames() {
+    return this.hitlocationsV2.reduce((acc: Record<string, HitLocationEntryV2>, location) => {
+      acc[location.where] = location
+      return acc
+    }, {})
+  }
+
   /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
@@ -214,19 +221,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const hitlocationsV1: Record<string, HitLocationEntryV1> = {}
 
     this.hitlocationsV2.forEach((locationV2: any, index: number) => {
-      hitlocationsV1[`${zeroFill(index, 5)}`] = new HitLocationEntryV1({
-        _damageType: locationV2._damageType,
-        dr: locationV2._dr,
-        drCap: locationV2.drCap,
-        drItem: locationV2.drItem,
-        drMod: locationV2.drMod,
-        equipment: '',
-        import: locationV2.import,
-        penalty: locationV2.penalty,
-        roll: locationV2.rollText,
-        where: locationV2.where,
-        split: locationV2.split,
-      })
+      hitlocationsV1[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
     })
     return hitlocationsV1
   }
