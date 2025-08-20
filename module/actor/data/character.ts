@@ -149,13 +149,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  protected get _drBonusesFromItems(): Record<string, number> {
-    // TODO Go through the list of Items and find all DR bonuses
-    return {}
-  }
-
-  /* ---------------------------------------- */
-
   #prepareLiftingMoving() {
     const basicLift = Math.round(0.2 * (this.attributes.ST.value * this.attributes.ST.value))
 
@@ -181,7 +174,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const basicMove = this.basicmove.value
     const basicDodge = this.dodge.value
 
-    const moveIsEnhanced = false // this.currentMoveMode?.enhanced !== null
+    // TODO const moveIsEnhanced = this.currentMoveMode?.enhanced !== null
 
     const carriedWeight = 0 // this.eqtsummary.eqtlbs ?? 0
 
@@ -343,6 +336,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
+  protected get _drBonusesFromItems(): Record<string, number> {
+    // TODO Go through the list of Items and find all DR bonuses
+    return {}
+  }
+
+  /* ---------------------------------------- */
+
   get hitlocations() {
     const hitlocationsV1: Record<string, HitLocationEntryV1> = {}
 
@@ -354,6 +354,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  /**
+   * Get temporary effects for display in the Token HUD.
+   *
+   * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
+   * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
+   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in the array.
+   */
   getTemporaryEffects(effects: GurpsActiveEffect[]): ActiveEffect.Implementation[] {
     const maneuver = effects.find(e => e.isManeuver)
     if (!maneuver) return effects as ActiveEffect.Implementation[]
@@ -719,17 +726,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /**
    * Parse roll info based on action type.
-   *
-   * @param {object} action - Object from GURPS.parselink
-   * @param {string} chatthing - internal code for roll
-   * @param {string} formula - formula for roll
-   * @param {string} thing - name of the source of the roll
-   * @returns {{}} result
-   * @returns {string} result.name - Name of the action which originates the roll
-   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
-   * @returns {[string]} result.itemId - ID of the item that originates the roll
-   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
-   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
     action: { type: string; name: string; orig: string; overridetxt?: string; attrkey?: string },

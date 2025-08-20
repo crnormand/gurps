@@ -64,6 +64,15 @@ declare module 'fvtt-types/configuration' {
         }
       }
     }
+    StatusEffect: {
+      gurps: {
+        name: string
+        alt: string
+        effect: {
+          type: string
+        }
+      }
+    }
     ChatMessage: {
       gurps: {
         transfer: AnyObject

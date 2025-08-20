@@ -2,6 +2,7 @@ import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
+import GurpsActiveEffect from 'module/effects/active-effect.js'
 
 // add type = 'characterV2' to ActorMetadata
 type ActorMetadata = (typeof foundry.documents.BaseActor)['metadata'] & {
@@ -355,6 +356,37 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
    */
   async replaceManeuver(maneuverId: string) {
     this.getDependentTokens().forEach(token => token.object?.setManeuver(maneuverId))
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
+   * the existing one will be toggled (off).
+   */
+  override async toggleStatusEffect(
+    statusId: string,
+    options: Actor.ToggleStatusEffectOptions | undefined = {}
+  ): Promise<boolean | GurpsActiveEffect | undefined> {
+    const status = CONFIG.statusEffects.find(e => e.id === statusId)
+    if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
+
+    if (this.isPostureEffect(status)) {
+      let existing = this.getAllActivePostureEffects().filter(e => e.statuses.find(s => s !== statusId))
+      for (const it of existing) {
+        await super.toggleStatusEffect(it.statuses.first()!, options)
+      }
+    }
+
+    return await super.toggleStatusEffect(statusId, options)
+  }
+
+  private isPostureEffect(status: object): boolean {
+    return foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture'
+  }
+
+  private getAllActivePostureEffects() {
+    return this.effects.filter(e => this.isPostureEffect(e))
   }
 
   /* ---------------------------------------- */
