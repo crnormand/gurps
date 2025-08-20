@@ -11,6 +11,7 @@ import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
 import { zeroFill } from '../../../lib/utilities.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { AnyObject } from 'fvtt-types/utils'
+import GurpsActiveEffect from 'module/effects/active-effect.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -111,6 +112,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.#applyCharacterBonuses()
     this.#prepareLiftingMoving()
     this.#prepareEncumbrance()
+
+    this.#setCurrentManeuver()
   }
 
   /* ---------------------------------------- */
@@ -230,6 +233,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
+  #setCurrentManeuver() {
+    const maneuverEffect = this.parent.effects.find((effect: ActiveEffect.Implementation) =>
+      effect.statuses.some((status: string) => status === 'maneuver')
+    )
+    this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
+  }
+
   /* ---------------------------------------- */
 
   #getCurrentMove(base: number): number {
@@ -255,6 +265,219 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       hitlocationsV1[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
     })
     return hitlocationsV1
+  }
+
+  /* ---------------------------------------- */
+
+  getTemporaryEffects(effects: GurpsActiveEffect[]): ActiveEffect.Implementation[] {
+    const maneuver = effects.find(e => e.isManeuver)
+    if (!maneuver) return effects as ActiveEffect.Implementation[]
+
+    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
+
+    const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
+    if (visibility === 'NoOne') return nonManeuverEffects as ActiveEffect.Implementation[]
+
+    if (!game.user?.isGM && !this.parent.isOwner) {
+      if (visibility === 'GMAndOwner') return nonManeuverEffects as ActiveEffect.Implementation[]
+
+      const detail = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
+      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
+        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+      }
+    }
+
+    return [maneuver, ...nonManeuverEffects] as ActiveEffect.Implementation[]
+  }
+
+  getChecks(checkType: string): {
+    size: number
+    data: Array<{
+      img?: string
+      symbol: string
+      label: string
+      mode?: string
+      value: number | string
+      notes?: string
+      otf: string
+      otfDamage?: string
+      isOTF: boolean
+    }>
+  } {
+    const checks: Array<{
+      img?: string
+      symbol: string
+      label: string
+      mode?: string
+      value: number | string
+      notes?: string
+      otf: string
+      otfDamage?: string
+      isOTF: boolean
+    }> = []
+
+    switch (checkType) {
+      case 'attributeChecks':
+        Object.entries(this.attributes).forEach(([key, attribute]) => {
+          checks.push({
+            symbol: game.i18n?.localize(`GURPS.attributes${key}`) ?? '',
+            label: game.i18n?.localize(`GURPS.attributes${key}NAME`) ?? '',
+            value: attribute.import,
+            notes: '',
+            otf: key,
+            isOTF: true,
+          })
+        })
+        return { data: checks, size: checks.length }
+      case 'otherChecks':
+        checks.push(
+          ...[
+            {
+              symbol: 'fa-solid fa-eye',
+              label: game.i18n?.localize('GURPS.vision') ?? '',
+              value: this.vision,
+              otf: 'vision',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-ear',
+              label: game.i18n?.localize('GURPS.hearing') ?? '',
+              value: this.hearing,
+              otf: 'hearing',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-face-scream',
+              label: game.i18n?.localize('GURPS.frightcheck') ?? '',
+              value: this.frightcheck,
+              otf: 'frightcheck',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-hand',
+              label: game.i18n?.localize('GURPS.touch') ?? '',
+              value: this.touch,
+              otf: 'touch',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-nose',
+              label: game.i18n?.localize('GURPS.tastesmell') ?? '',
+              value: this.tastesmell,
+              otf: 'tastesmell',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-hand-point-up',
+              label: game.i18n?.localize('GURPS.touch') ?? '',
+              value: this.touch,
+              otf: 'touch',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-sword',
+              label: game.i18n?.localize('GURPS.thrust') ?? '',
+              value: this.thrust,
+              otf: 'thrust',
+              isOTF: true,
+            },
+            {
+              symbol: 'fa-solid fa-mace',
+              label: game.i18n?.localize('GURPS.swing') ?? '',
+              value: this.swing,
+              otf: 'swing',
+              isOTF: true,
+            },
+          ]
+        )
+        return { data: checks, size: checks.length }
+      // case 'attackChecks':
+      //   checks.push(
+      //     ...this.parent.items
+      //       .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
+      //         acc.push(...item.getItemAttacks())
+      //         return acc
+      //       }, [])
+      //       .map(attack => {
+      //         const otfName = attack.component.mode ? `${attack.name} (${attack.component.mode})` : attack.name
+      //         return {
+      //           img: attack.img ?? '',
+      //           symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
+      //           label: attack.name ?? '',
+      //           value: attack.component.import,
+      //           mode: attack.component.mode,
+      //           otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
+      //           isOTF: true,
+      //           otfDamage: `D:"${otfName}"`,
+      //         }
+      //       })
+      //   )
+      //   return { data: checks, size: checks.length }
+      case 'defenseChecks':
+        checks.push(
+          {
+            symbol: 'dodge',
+            label: game.i18n?.localize('GURPS.dodge') ?? '',
+            value: this.currentdodge,
+            otf: 'dodge',
+            isOTF: true,
+          }
+          // TODO: implement getItemAttacks on actor
+        )
+        // this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+        //   const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
+        //   const img = attack.img
+        //   const otfName = attack.component.mode ? `"${attack.name} (${attack.component.mode})"` : `"${attack.name}"`
+
+        //   if (!isNaN(parseInt(attack.component.parry)))
+        //     acc.push({
+        //       symbol,
+        //       img: img ?? '',
+        //       label: attack.name ?? '',
+        //       value: attack.component.parry,
+        //       mode: attack.component.mode,
+        //       otf: `P:${otfName}`,
+        //       isOTF: true,
+        //     })
+
+        //   if (!isNaN(parseInt(attack.component.block)))
+        //     acc.push({
+        //       symbol,
+        //       img: img ?? '',
+        //       label: attack.name ?? '',
+        //       value: attack.component.block,
+        //       mode: attack.component.mode,
+        //       otf: `B:${otfName}`,
+        //       isOTF: true,
+        //     })
+        //   return acc
+        // }, checks)
+        return { data: checks, size: checks.length }
+
+      // case 'markedChecks':
+      //   const items = this.parent.items.filter(item => item.isOfType('feature', 'skill', 'spell'))
+      //   for (const item of items) {
+      //     if (item.system.addToQuickRoll) {
+      //       const type = item.type === 'feature' ? 'ad' : item.type
+      //       let value = 0
+      //       if (item.isOfType('skill', 'spell')) value = item.system.component.import
+
+      //       checks.push({
+      //         symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
+      //         img: item.img ?? '',
+      //         label: item.name,
+      //         value,
+      //         notes: item.system.component.notes,
+      //         otf: `${type}:"${item.name}"`,
+      //         isOTF: false,
+      //       })
+      //     }
+      //   }
+      //   return { data: checks, size: checks.length }
+
+      default:
+        return { data: [], size: 0 }
+    }
   }
 
   /* ---------------------------------------- */

@@ -46,6 +46,13 @@ export const MoveModes = {
 }
 
 export class GurpsActor extends Actor {
+  static get metadata() {
+    return {
+      ...foundry.documents.BaseActor.metadata,
+      type: 'character',
+    }
+  }
+
   /** @override */
   getRollData() {
     const data = super.getRollData()
@@ -82,15 +89,6 @@ export class GurpsActor extends Actor {
       this.ignoreRender = false
       this.sheet.render(true)
     }
-  }
-
-  prepareData() {
-    super.prepareData()
-    // By default, it does this:
-    // this.data.reset()
-    // this.prepareBaseData()
-    // this.prepareEmbeddedEntities()
-    // this.prepareDerivedData()
   }
 
   prepareBaseData() {

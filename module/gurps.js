@@ -1937,7 +1937,7 @@ if (!globalThis.GURPS) {
     HitLocation.init()
 
     RegisterChatProcessors()
-    GurpsActiveEffect.init()
+    // GurpsActiveEffect.init()
 
     // Add Debugger info
     GGADebugger.init()
@@ -1956,6 +1956,7 @@ if (!globalThis.GURPS) {
     // Define custom Entity classes
     CONFIG.Actor.documentClass = ActorProxy
     CONFIG.Item.documentClass = GurpsItem
+    CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class
     foundry.applications.apps.DocumentSheetConfig.unregisterSheet(

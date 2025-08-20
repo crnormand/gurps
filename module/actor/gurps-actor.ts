@@ -115,11 +115,7 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
     optionalArgs: { obj?: AnyObject },
     attack?: AnyObject
   ): Promise<boolean> {
-    if (this.isOfType('character', 'enemy')) {
-      return (this.system as Actor.SystemOfType<'characterV2'>).addTaggedRollModifiers(chatThing, optionalArgs, attack)
-    }
-    console.warn('Actor is not a character or enemy.')
-    return false
+    return (this.system as Actor.SystemOfType<'characterV2'>).addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
   /**
@@ -142,18 +138,7 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    if (this.isOfType('character', 'enemy')) {
-      return (this.system as Actor.SystemOfType<'characterV2'>).findUsingAction(action, chatthing, formula, thing)
-    }
-
-    console.warn('Actor is not a character or enemy.')
-    return {
-      name: thing,
-      uuid: null,
-      itemId: null,
-      fromItem: null,
-      pageRef: null,
-    }
+    return (this.system as Actor.SystemOfType<'characterV2'>).findUsingAction(action, chatthing, formula, thing)
   }
 
   /**
@@ -356,20 +341,36 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
   }
 
   /**
+   * @returns An array of temporary effects that are applied to the actor.
+   * This is overriden for CharacterModel where maneuvers are moved to the top of the
+   * array.
+   */
+  override get temporaryEffects(): ActiveEffect.Implementation[] {
+    return (this.system as Actor.SystemOfType<'characterV2'>).getTemporaryEffects(super.temporaryEffects)
+  }
+
+  /**
    * This method is called when "system.conditions.maneuver" changes on the actor (via the update method)
    * @param {string} maneuverText
    */
-  async replaceManeuver(maneuverText: string) {
-    let tokens = this._findTokens()
-    for (const t of tokens) await t.setManeuver(maneuverText)
+  async replaceManeuver(maneuverId: string) {
+    this.getDependentTokens().forEach(token => token.object?.setManeuver(maneuverId))
   }
 
-  _findTokens(): Token.Implementation[] {
-    if (this.isToken && this.token?.layer) {
-      let token = this.token.object
-      return token ? [token] : []
-    }
-    return this.getActiveTokens()
+  /* ---------------------------------------- */
+
+  async replacePosture(postureId: string) {
+    const id =
+      postureId === GURPS.StatusEffectStanding
+        ? (this.system as Actor.SystemOfType<'characterV2'>).conditions.posture
+        : postureId
+    this.toggleStatusEffect(id)
+  }
+
+  /* ---------------------------------------- */
+
+  getChecks(checkType: string) {
+    return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
   }
 }
 

@@ -5,31 +5,80 @@ import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
+import { ActiveEffect } from './module/active-effect/index'
+import GurpsActiveEffect from 'module/effects/active-effect.js'
 
 export {}
 
 declare global {
-  var GURPS: any
+  var GURPS: {
+    SYSTEM_NAME: 'gurps'
+    CONFIG: {
+      Action: Record<
+        string,
+        {
+          label: string
+          documentClass: typeof BaseAction
+        }
+      >
+      // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
+      [key: string]: unknown
+    }
+  } & any
+}
 
-  type PreCreate<T extends SourceFromSchema<DataSchema>> = T extends { type: string }
-    ? Omit<DeepPartial<T>, 'type'> & { _id?: Maybe<string>; type: T['type'] }
-    : DeepPartial<T>
-
+declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
     Actor: typeof GurpsActorV2
     Item: typeof GurpsItem
     Combatant: typeof GurpsCombatant
+    ActiveEffect: typeof GurpsActiveEffect
   }
 
-  interface PlaceableObjectClassConfig {
-    Token: typeof GurpsToken
-  }
+  /* ---------------------------------------- */
 
   interface DataModelConfig {
     Actor: {
       character: any
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
+    }
+    ChatMessage: {}
+  }
+
+  /* ---------------------------------------- */
+
+  interface PlaceableObjectClassConfig {
+    Token: typeof GurpsToken
+  }
+
+  /* ---------------------------------------- */
+
+  interface FlagConfig {
+    ActiveEffect: {
+      gurps: {
+        name: string
+        alt: string
+        effect: {
+          type: string
+        }
+      }
+    }
+    ChatMessage: {
+      gurps: {
+        transfer: AnyObject
+      }
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  namespace Hooks {
+    interface HookConfig {
+      // TODO: Deprecated in FVTT 13. Replace with renderChatMessageHTML or get rid of if no longer needed.
+      renderChatMessage: (app: any, html: JQuery<HTMLElement>, message: any) => void
+      dropCanvasData: (canvas: Canvas, dropData: any) => void
+      applyActiveEffect: (actor: Actor.Implementation, change: any) => void
     }
   }
 
@@ -91,6 +140,8 @@ declare global {
       nonCombatOnlyTag: string
       combatTempTag: string
     }
+    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
+    'gurps.maneuver-detail': 'General' | 'NoFeint' | 'Full'
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
