@@ -12,6 +12,15 @@ import { zeroFill } from '../../../lib/utilities.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { AnyObject } from 'fvtt-types/utils'
 import GurpsActiveEffect from 'module/effects/active-effect.js'
+import {
+  MOVE_HALF,
+  MOVE_NONE,
+  MOVE_ONE,
+  MOVE_ONETHIRD,
+  MOVE_STEP,
+  MOVE_TWO_STEPS,
+  MOVE_TWOTHIRDS,
+} from '../maneuver.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -167,15 +176,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const automaticEncumbrance = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE) ?? false
 
     let foundCurrent = false
-    // let manualEncumbranceIndex = -1
-    // const currentEncumbrance = this.encumbrance ?? []
-
-    // if (!currentEncumbrance.length && !automaticEncumbrance) {
-    //   manualEncumbranceIndex = currentEncumbrance.findIndex(enc => enc.current)
-    //   if (manualEncumbranceIndex < 0) manualEncumbranceIndex = 0
-    //   foundCurrent = true
-    // }
-
     const basicLift = this.liftingmoving.basiclift
     const liftBrackets: number[] = [basicLift, basicLift * 2, basicLift * 3, basicLift * 6, basicLift * 10]
     const basicMove = this.basicmove.value
@@ -228,7 +228,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         currentmove,
         currentsprint: currentmove * 1.2,
         currentdodge: dodge,
-        currentmovedisplay: moveIsEnhanced ? `${move}/${sprint}` : `${move}`,
+        currentmovedisplay: `${currentmove}`,
       })
     }
   }
@@ -243,7 +243,92 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #getCurrentMove(base: number): number {
-    return base // TODO implement correct logic
+    const moveForManeuver = this.#getMoveAdjustmentForManeuver(base)
+    const moveForPosture = this.#getMoveAdjustmentForPosture(base)
+
+    this.conditions.move =
+      moveForManeuver.value < moveForPosture.value ? moveForManeuver.tooltip : moveForPosture.tooltip
+
+    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && this.parent.inCombat) {
+      return Math.min(moveForManeuver.value, moveForPosture.value)
+    } else {
+      return base
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  #getMoveAdjustmentForManeuver(base: number): { value: number; tooltip: string } {
+    let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
+    const maneuver = GURPS.Maneuvers.get(this.conditions.maneuver)
+    if (maneuver) {
+      tooltip = game.i18n?.localize(maneuver.label) ?? ''
+      const override = this.#getMoveAdjustmentForOverride(base, maneuver.move)
+      return override ?? { value: base, tooltip }
+    }
+    return { value: base, tooltip }
+  }
+
+  /* ---------------------------------------- */
+
+  #getMoveAdjustmentForPosture(base: number): { value: number; tooltip: string } {
+    let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
+    const posture_ = GURPS.StatusEffect.lookup(this.conditions.posture)
+    if (posture_) {
+      tooltip = game.i18n?.localize(posture_.name) ?? ''
+      const override = this.#getMoveAdjustmentForOverride(base, posture_.move)
+      return override ?? { value: base, tooltip }
+    }
+    return { value: base, tooltip }
+  }
+  /* ---------------------------------------- */
+
+  #getMoveAdjustmentForOverride(base: number, override: string | null): { value: number; tooltip: string } | null {
+    switch (override) {
+      case MOVE_NONE:
+        return {
+          value: 0,
+          tooltip: game.i18n?.localize('GURPS.none') ?? '',
+        }
+      case MOVE_ONE:
+        return {
+          value: 1,
+          // TODO: localize
+          tooltip: '1 yd/sec',
+        }
+      case MOVE_STEP:
+        return {
+          value: Math.max(1, Math.ceil(base / 10)),
+          // TODO: localize
+          tooltip: 'Step',
+        }
+      case MOVE_TWO_STEPS:
+        return {
+          value: Math.max(1, Math.ceil(base / 10)) * 2,
+          // TODO: localize
+          tooltip: 'Step or Two',
+        }
+      case MOVE_ONETHIRD:
+        return {
+          value: Math.max(1, Math.ceil(base / 3)),
+          // TODO: localize
+          tooltip: '×1/3',
+        }
+      case MOVE_HALF:
+        return {
+          value: Math.max(1, Math.ceil(base / 2)),
+          // TODO: localize
+          tooltip: 'Half',
+        }
+      case MOVE_TWOTHIRDS:
+        return {
+          value: Math.max(1, Math.ceil((base * 2) / 3)),
+          // TODO: localize
+          tooltip: '×2/3',
+        }
+      default:
+        return null
+    }
   }
 
   /* ---------------------------------------- */

@@ -142,6 +142,7 @@ declare module 'fvtt-types/configuration' {
     }
     'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
     'gurps.maneuver-detail': 'General' | 'NoFeint' | 'Full'
+    'gurps.maneuver-updates-move': boolean
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>

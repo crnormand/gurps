@@ -77,6 +77,7 @@ class Maneuver {
       id: MANEUVER,
       label: this._data.label,
       icon: this._data.icon,
+      move: this.move,
       flags: {
         gurps: {
           name: this._data.name,
