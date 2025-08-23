@@ -49,8 +49,6 @@ import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
-import GurpsActiveEffectConfig from './effects/active-effect-config.js'
-// import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import GurpsWiring from './gurps-wiring.js'
@@ -73,7 +71,7 @@ import { CharacterModel } from './actor/data/character.js'
 
 import { Action } from './action/index.js'
 import { Actor } from './actor/index.js'
-import { ActiveEffect, GurpsActiveEffect } from './active-effect/index.js'
+import { ActiveEffect } from './active-effect/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -151,7 +149,7 @@ if (!globalThis.GURPS) {
 
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
-  GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
+  GURPS.clearActiveEffects = ActiveEffect.clearEffectsOnSelectedToken
 
   // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
 
@@ -1964,16 +1962,6 @@ if (!globalThis.GURPS) {
       spell: SpellModel,
       equipment: EquipmentModel,
     }
-
-    // add custom ActiveEffectConfig sheet class
-    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-      ActiveEffect,
-      'core',
-      foundry.applications.sheets.ActiveEffectConfig
-    )
-    foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
-      makeDefault: true,
-    })
 
     // Register sheet application classes
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
