@@ -1,3 +1,4 @@
+import { convertRollStringToArrayOfInt } from '../../../lib/utilities.js'
 import DataModel = foundry.abstract.DataModel
 import fields = foundry.data.fields
 
@@ -22,12 +23,7 @@ class HitLocationEntry extends DataModel<HitLocationSchema> {
     super._initialize(options)
 
     const rollText = this.rollText ?? '-'
-    const roll = rollText.split('-').reduce((acc: number[], part: string) => {
-      if (!part) return acc
-      const match = part.match(/^\d+$/)
-      if (match) acc.push(parseInt(match[0]))
-      return acc
-    }, [])
+    const roll = convertRollStringToArrayOfInt(rollText)
     this.roll = roll
   }
 
