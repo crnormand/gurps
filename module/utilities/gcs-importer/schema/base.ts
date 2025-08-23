@@ -65,6 +65,7 @@ class GcsElement<
           ) ?? []
         )
       }
+      case fields.EmbeddedDataField:
       case fields.SchemaField: {
         return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
       }
