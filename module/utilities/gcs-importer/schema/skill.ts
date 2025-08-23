@@ -60,10 +60,12 @@ const skillData = () => {
       initial: null,
     }),
     // END: SkillModel
+
     // START: SkillEditData
     vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: SkillEditData
+
     // START: SkillSyncData
     name: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: true, initial: null }),
@@ -75,10 +77,12 @@ const skillData = () => {
       initial: null,
     }),
     // END: SkillSyncData
+
     // START: SkillContainerSyncData
     template_picker: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     // END: SkillContainerSyncData
-    // START: SkillNonContianerOnlyEditData
+
+    // START: SkillNonContainerOnlyEditData
     tech_level: new fields.StringField({ required: true, nullable: true, initial: null }),
     points: new fields.NumberField({ required: true, nullable: true, initial: null }),
     defaulted_from: new fields.ObjectField({ required: true, nullable: true, initial: null }),
@@ -89,8 +93,9 @@ const skillData = () => {
       initial: null,
     }),
     study_hours_needed: new fields.NumberField({ required: true, nullable: true, initial: null }),
-    // END: SkillNonContianerOnlyEditData
-    // START: SkillNonContianerOnlySyncData
+    // END: SkillNonContainerOnlyEditData
+
+    // START: SkillNonContainerOnlySyncData
     specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
     difficulty: new fields.StringField({ required: true, nullable: true, initial: null }),
     encumbrance_penalty_multiplier: new fields.NumberField({ required: true, nullable: true, initial: null }),
@@ -102,7 +107,8 @@ const skillData = () => {
     weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
-    // END: SkillNonContianerOnlySyncData
+    // END: SkillNonContainerOnlySyncData
+
     // START: calc
     calc: new fields.SchemaField(
       {

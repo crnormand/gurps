@@ -38,10 +38,12 @@ const traitModifierData = () => {
       nullable: true,
     }),
     // END: TraitModifierData
+
     // START: TraitModifierEditData
     vtt_notes: new fields.StringField({ required: true, nullable: true }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: TraitModifierEditData
+
     // START: TraitModifierSyncData
     name: new fields.StringField({ required: true, nullable: true }),
     reference: new fields.StringField({ required: true, nullable: true }),
@@ -52,6 +54,7 @@ const traitModifierData = () => {
       nullable: true,
     }),
     // END: TraitModifierSyncData
+
     // START: TraitModifierNonContainerSyncData
     cost: new fields.NumberField({ required: true, nullable: true }),
     cost_type: new fields.StringField({ required: true, nullable: true }),

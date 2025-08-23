@@ -64,10 +64,12 @@ const spellData = () => {
       initial: null,
     }),
     // END: SpellModel
+
     // START: SpellEditData
     vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: SpellEditData
+
     // START: SpellSyncData
     name: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: true, initial: null }),
@@ -79,7 +81,8 @@ const spellData = () => {
       initial: null,
     }),
     // END: SpellSyncData
-    // START: SpellNonContianerOnlyEditData
+
+    // START: SpellNonContainerOnlyEditData
     tech_level: new fields.StringField({ required: true, nullable: true, initial: null }),
     points: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // STUB: study is not yet supported
@@ -89,8 +92,9 @@ const spellData = () => {
       initial: null,
     }),
     study_hours_needed: new fields.NumberField({ required: true, nullable: true, initial: null }),
-    // END: SpellNonContianerOnlyEditData
-    // START: SpellNonContianerOnlySyncData
+    // END: SpellNonContainerOnlyEditData
+
+    // START: SpellNonContainerOnlySyncData
     difficulty: new fields.StringField({ required: true, nullable: true, initial: null }),
     college: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
@@ -109,6 +113,9 @@ const spellData = () => {
     // STUB: prereqs is not yet supported
     prereqs: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
+    //END: SpellNonContainerOnlySyncData
+
+    //START: call
     calc: new fields.SchemaField(
       {
         unsatisfied_reason: new fields.StringField({ required: true, nullable: true, initial: null }),

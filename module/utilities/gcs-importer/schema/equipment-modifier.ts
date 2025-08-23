@@ -38,13 +38,16 @@ const equipmentModifierData = () => {
       nullable: true,
     }),
     // END: EquipmentModifierData
+
     // START: EquipmentModifierEditData
     vtt_notes: new fields.StringField({ required: true, nullable: true }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: EquipmentModifierEditData
+
     // START: EquipmentModifierEditDataNonContainerOnly
     disabled: new fields.BooleanField({ required: true, nullable: true }),
     // END: EquipmentModifierEditDataNonContainerOnly
+
     // START: EquipmentModifierSyncData
     name: new fields.StringField({ required: true, nullable: true }),
     reference: new fields.StringField({ required: true, nullable: true }),
@@ -55,6 +58,7 @@ const equipmentModifierData = () => {
       nullable: true,
     }),
     // END: EquipmentModifierSyncData
+
     // START: EquipmentModifierNonContainerSyncData
     cost_type: new fields.StringField({ required: true, nullable: true }),
     cost_is_per_level: new fields.BooleanField({ required: true, nullable: true }),

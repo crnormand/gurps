@@ -121,6 +121,7 @@ const traitData = () => {
       initial: null,
     }),
     // END: TraitModel
+
     // START: TraitEditData
     vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
     userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
@@ -133,6 +134,7 @@ const traitData = () => {
     cr: new fields.NumberField({ required: true, nullable: true, initial: null }),
     disabled: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitEditData
+
     // START: TraitSyncData
     name: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: true, initial: null }),
@@ -147,11 +149,13 @@ const traitData = () => {
     prereqs: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     cr_adj: new fields.StringField({ required: true, nullable: true, initial: null }),
     // END: TraitSyncData
+
     // START: TraitContainerSyncData
     ancestry: new fields.StringField({ required: true, nullable: true, initial: null }),
     template_picker: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     container_type: new fields.StringField({ required: true, nullable: true, initial: null }),
     // END: TraitContainerSyncData
+
     // START: TraitNonContainerOnlyEditData
     levels: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // STUB: study is not yet supported
@@ -162,6 +166,7 @@ const traitData = () => {
     }),
     study_hours_needed: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // END: TraitNonContainerOnlyEditData
+
     // START: TraitNonContainerOnlySyncData
     base_points: new fields.NumberField({ required: true, nullable: true, initial: null }),
     points_per_level: new fields.NumberField({ required: true, nullable: true, initial: null }),
@@ -171,6 +176,7 @@ const traitData = () => {
     round_down: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     can_level: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitNonContainerOnlySyncData
+
     // START: calc
     calc: new fields.SchemaField(
       {

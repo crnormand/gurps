@@ -36,14 +36,17 @@ const noteData = () => {
       nullable: true,
     }),
     // END: NoteData
+
     // START: NoteEditData
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: NoteEditData
+
     // START: NoteSyncData
     markdown: new fields.StringField({ required: true, nullable: true }),
     reference: new fields.StringField({ required: true, nullable: true }),
     reference_highlight: new fields.StringField({ required: true, nullable: true }),
     // END: NoteSyncData
+
     // START: calc
     calc: new fields.SchemaField(
       {

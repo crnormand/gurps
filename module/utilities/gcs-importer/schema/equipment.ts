@@ -68,6 +68,7 @@ const equipmentData = () => {
       nullable: true,
     }),
     // END: EquipmentModel
+
     // START: EquipmentEditData
     vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
@@ -82,6 +83,7 @@ const equipmentData = () => {
     uses: new fields.NumberField({ required: true, nullable: true, initial: null }),
     equipped: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: EquipmentEditData
+
     // START: EquipmentSyncData
     description: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: true, initial: null }),
@@ -104,6 +106,7 @@ const equipmentData = () => {
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     ignore_weight_for_skills: new fields.BooleanField({ required: true, nullable: true }),
     // END: EquipmentSyncData
+
     // START: calc
     calc: new fields.SchemaField(
       {
