@@ -136,19 +136,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
     'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
 
-    // TODO: Deprecated settings.
-    'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
-    'gurps.basicsetpdf': String
-    'gurps.pdf-open-first': boolean
-    'gurps.only-gms-open-add': boolean
-    'gurps.combat-simple-damage': boolean
-    'gurps.default-hitlocation': 'Torso' | 'Random'
-    'gurps.combat-apply-divisor': boolean
-    'gurps.combat-blunt-trauma': boolean
-    'gurps.combat-body-hits': boolean
-    'gurps.combat-location-modifiers': boolean
-    'gurps.show-the-math': boolean
-    'gurps.default-add-action': 'apply' | 'quiet' | 'target'
+    // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.convert-ranged': boolean
     'gurps.check-equipped': boolean
     'gurps.automatic-encumbrance': boolean
@@ -198,5 +186,19 @@ declare module 'fvtt-types/configuration' {
       nonCombatOnlyTag: string
       combatTempTag: string
     }
+
+    // TODO: Deprecated settings.
+    'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
+    'gurps.basicsetpdf': String
+    'gurps.pdf-open-first': boolean
+    'gurps.only-gms-open-add': boolean
+    'gurps.combat-simple-damage': boolean
+    'gurps.default-hitlocation': 'Torso' | 'Random'
+    'gurps.combat-apply-divisor': boolean
+    'gurps.combat-blunt-trauma': boolean
+    'gurps.combat-body-hits': boolean
+    'gurps.combat-location-modifiers': boolean
+    'gurps.show-the-math': boolean
+    'gurps.default-add-action': 'apply' | 'quiet' | 'target'
   }
 }
