@@ -87,15 +87,15 @@ class GcsImporter {
 
   #importAttributes() {
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {} }
-    for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PERCEPTION'] as const) {
+    for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PER'] as const) {
       const attribute = this.input.attributes.find(attr => attr.attr_id === key.toLowerCase())
       if (attribute) {
-        this.output.attributes[key === 'PERCEPTION' ? 'PER' : key] = {
+        this.output.attributes[key] = {
           import: attribute.calc.value,
           points: attribute.calc.points,
         }
       } else {
-        this.output.attributes[key === 'PERCEPTION' ? 'PER' : key] = {
+        this.output.attributes[key] = {
           import: 10,
           points: 0,
         }
