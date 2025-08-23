@@ -253,7 +253,7 @@ class GcsImporter {
   #importMiscValues() {
     let parry = 0
     for (const weapon of this.input.allEquippedWeapons.filter(e => e.isMelee)) {
-      let weaponParry = parseInt(weapon.calc.parry ?? weapon.parry ?? '0')
+      let weaponParry = parseInt(weapon.calc?.parry ?? weapon.parry ?? '0')
       if (isNaN(weaponParry)) weaponParry = 0
       if (weaponParry > parry) parry = weaponParry
     }
@@ -375,13 +375,13 @@ class GcsImporter {
       pageref: '',
       mode: weapon.usage || '',
       notes: weapon.usage_notes || '',
-      import: weapon.calc.level || 0,
-      damage: weapon.calc.damage,
-      st: weapon.calc.strength || weapon.strength,
-      reach: weapon.calc.reach || weapon.reach,
-      parry: weapon.calc.parry || weapon.parry,
+      import: weapon.calc?.level || 0,
+      damage: weapon.calc?.damage,
+      st: weapon.calc?.strength || weapon.strength,
+      reach: weapon.calc?.reach || weapon.reach,
+      parry: weapon.calc?.parry || weapon.parry,
       parrybonus,
-      block: weapon.calc.block || weapon.block,
+      block: weapon.calc?.block || weapon.block,
       blockbonus,
     }
 
@@ -407,13 +407,13 @@ class GcsImporter {
       pageref: '',
       mode: weapon.usage || '',
       notes: weapon.usage_notes || '',
-      import: weapon.calc.level,
-      damage: weapon.calc.damage,
-      st: weapon.calc.strength || weapon.strength,
-      acc: weapon.calc.accuracy || weapon.accuracy,
-      shots: weapon.calc.shots || weapon.shots,
-      range: weapon.calc.range || weapon.range,
-      rcl: weapon.calc.recoil || weapon.recoil,
+      import: weapon.calc?.level,
+      damage: weapon.calc?.damage,
+      st: weapon.calc?.strength || weapon.strength,
+      acc: weapon.calc?.accuracy || weapon.accuracy,
+      shots: weapon.calc?.shots || weapon.shots,
+      range: weapon.calc?.range || weapon.range,
+      rcl: weapon.calc?.recoil || weapon.recoil,
       halfd,
     }
 
@@ -542,7 +542,7 @@ class GcsImporter {
   #importBaseComponent(item: AnyGcsItem): DataModel.CreateData<ItemComponentSchema> {
     const component: DataModel.CreateData<ItemComponentSchema> = {
       name: item.name,
-      notes: item.calc.resolved_notes || item.local_notes || '',
+      notes: item.calc?.resolved_notes || item.local_notes || '',
       pageref: item.reference ?? '',
     }
     return component
@@ -558,7 +558,7 @@ class GcsImporter {
       cr: trait.cr ?? null,
       level: trait.levels ?? 0,
       userdesc: trait.userdesc ?? '',
-      points: trait.calc.points ?? 0,
+      points: trait.calc?.points ?? 0,
     }
   }
 
@@ -569,8 +569,8 @@ class GcsImporter {
       ...this.#importBaseComponent(skill),
       points: skill.points ?? 0,
       type: skill.difficulty ?? '',
-      relativelevel: skill.calc.rsl ?? '',
-      import: skill.calc.level ?? 0,
+      relativelevel: skill.calc?.rsl ?? '',
+      import: skill.calc?.level ?? 0,
     }
   }
 
@@ -581,8 +581,8 @@ class GcsImporter {
       ...this.#importBaseComponent(spell),
       points: spell.points ?? 0,
       difficulty: spell.difficulty ?? '',
-      relativelevel: spell.calc.rsl ?? '',
-      import: spell.calc.level ?? 0,
+      relativelevel: spell.calc?.rsl ?? '',
+      import: spell.calc?.level ?? 0,
       class: spell.spell_class ?? '',
       college: spell.college?.join(', ') ?? '',
       cost: spell.casting_cost ?? '',
@@ -599,15 +599,15 @@ class GcsImporter {
     return {
       ...this.#importBaseComponent(equipment),
       count: equipment.quantity ?? 1,
-      weight: parseInt(equipment.calc.weight) || 0,
-      cost: equipment.calc.value ?? 0,
+      weight: equipment.calc ? parseInt(equipment.calc.weight) : 0,
+      cost: equipment.calc?.value ?? 0,
       location: '',
       carried,
       equipped: equipment.equipped ?? false,
       techlevel: equipment.tech_level ?? '',
       categories: equipment.tags?.join(', ') ?? '',
-      costsum: equipment.calc.extended_value,
-      weightsum: equipment.calc.extended_weight,
+      costsum: equipment.calc?.extended_value || 0,
+      weightsum: equipment.calc?.extended_weight,
       uses: equipment.uses ?? 0,
       maxuses: equipment.max_uses ?? 0,
     }

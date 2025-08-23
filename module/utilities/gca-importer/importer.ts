@@ -77,7 +77,7 @@ class GcaImporter {
 
   #importPortrait() {
     if (game.user?.hasPermission('FILES_UPLOAD')) {
-      this.img = `data:image/png;base64,${this.input.vitals.portraitimage}.png`
+      this.img = `data:image/png;base64,${this.input.vitals?.portraitimage}.png`
     }
   }
 
@@ -170,10 +170,10 @@ class GcaImporter {
 
     this.output.traits = {
       title: '',
-      height: vitals.height ?? '',
-      weight: vitals.weight ?? '',
-      age: vitals.age ?? '',
-      race: vitals.race ?? '',
+      height: vitals?.height ?? '',
+      weight: vitals?.weight ?? '',
+      age: vitals?.age ?? '',
+      race: vitals?.race ?? '',
       birthday: '',
       religion: '',
       gender: '',
@@ -183,7 +183,7 @@ class GcaImporter {
       skin: '',
       sizemod: SM?.score ?? 0,
       techlevel: `${TL?.score ?? 0}`,
-      createdon: this.input.author.datecreated ?? '',
+      createdon: this.input.author?.datecreated ?? '',
       modifiedon: '',
       player: this.input.player ?? '',
     }
@@ -515,7 +515,7 @@ class GcaImporter {
     if (spell.ref?.class?.includes('/')) {
       ;[spellClass, spellResist] = spell.ref.class.split('/')
     } else {
-      spellClass = spell.ref.class ?? ''
+      spellClass = spell.ref?.class ?? ''
     }
 
     let spellCost = ''
@@ -523,8 +523,8 @@ class GcaImporter {
     if (spell.ref?.castingcost?.includes('/')) {
       ;[spellCost, spellMaintain] = spell.ref.castingcost.split('/')
     } else {
-      spellCost = spell.ref.castingcost ?? ''
-      spellMaintain = spell.ref.castingcost ?? ''
+      spellCost = spell.ref?.castingcost ?? ''
+      spellMaintain = spell.ref?.castingcost ?? ''
     }
 
     return {
