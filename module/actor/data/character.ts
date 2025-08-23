@@ -2,6 +2,7 @@ import {
   attributeSchema,
   conditionsSchema,
   DamageActionSchema,
+  encumbranceSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
   MoveSchema,
@@ -69,7 +70,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // Derived properties
-  encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[] = []
+  // NOTE: moved back to persistent property
+  // encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[] = []
   liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema> = {
     basiclift: 0,
     onehandedlift: 0,
@@ -1433,11 +1435,12 @@ const characterSchema = () => {
     // NOTE: may want to revise this in the future to a custom DiceField or the like
     swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
 
+    encumbrance: new fields.ArrayField(
+      new fields.SchemaField(encumbranceSchema(), { required: true, nullable: false })
+    ),
+
     // NOTE: these properties no longer exists in the schema as their value is always derived.
     // They have been replaced with a class property which is updated during data preparation
-    // encumbrance: new fields.TypedObjectField(
-    //   new fields.SchemaField(encumbranceSchema, { required: true, nullable: false })
-    // ),
     // lifitngmoving: new fields.SchemaField(liftingMovingSchema, { required: true, nullable: false }),
 
     // NOTE: conditions does not seem to ever be explicitly defined in the previous schema, only implicitly.

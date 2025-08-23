@@ -4,6 +4,7 @@ import { MeleeAttackSchema } from '../../action/melee-attack.js'
 import { RangedAttackSchema } from '../../action/ranged-attack.js'
 import { PseudoDocumentSchema } from '../../pseudo-document/pseudo-document.js'
 import { HitLocationSchema } from '../data/hit-location-entry.js'
+import { EncumbranceSchema } from '../data/character-components.js'
 
 /* ---------------------------------------- */
 
@@ -300,6 +301,27 @@ function migrateHitLocations(source: any): DataModel.CreateData<HitLocationSchem
 
 /* ---------------------------------------- */
 
+function migrateEncumbrance(source: any): DataModel.CreateData<EncumbranceSchema>[] {
+  const loc = Object.values(source).map((e: any) => {
+    return {
+      key: String(e.key),
+      level: Number(e.level),
+      dodge: Number(e.dodge),
+      weight: Number(e.weight),
+      move: Number(e.move),
+      current: e.current,
+      currentmove: Number(e.currentmove),
+      currentsprint: Number(e.currentsprint),
+      currentdodge: Number(e.currentdodge),
+      currentmovedisplay: e.currentmovedisplay,
+    }
+  })
+
+  return loc
+}
+
+/* ---------------------------------------- */
+
 function migrateCharacter(source: any): DataModel.CreateData<DataModel.SchemaOf<Actor.OfType<'character'>>> {
   if (!source || !source._stats || !source._stats.systemVersion) {
     // No source provided, skip migration
@@ -349,6 +371,8 @@ function migrateCharacter(source: any): DataModel.CreateData<DataModel.SchemaOf<
   }
 
   system.hitlocations = migrateHitLocations(source.system.hitlocations)
+
+  system.encumbrance = migrateEncumbrance(source.system.encumbrance)
 
   const items: Item.CreateData[] = []
   if (source.system?.ads) items.push(...migrateAdvantages(source.system.ads))

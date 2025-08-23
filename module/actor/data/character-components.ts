@@ -28,7 +28,7 @@ const encumbranceSchema = () => {
     // NOTE: change from previous schema, where "dodge" was a string
     dodge: new fields.NumberField({ required: true, nullable: false }),
     // NOTE: change from previuos schema where "weight" was a string
-    weight: new fields.NumberField({ required: true, nullable: false }),
+    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     move: new fields.NumberField({ required: true, nullable: false }),
     current: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     currentmove: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
