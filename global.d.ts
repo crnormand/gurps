@@ -63,6 +63,10 @@ declare module 'fvtt-types/configuration' {
       gurps: {
         name: string
         alt: string
+        duration: { delaySeconds: number | null }
+        endCondition: string
+        terminateActions: { type: string; args: string }[]
+        statusId: string
         effect: {
           type: string
         }

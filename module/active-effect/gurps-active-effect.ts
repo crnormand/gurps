@@ -1,6 +1,7 @@
-// @ts-nocheck: TODO: Fix typescript errors later
 // NOTE: This file has not changed from the previous version apart from being in a different location and
 // adding some types so Active Effects are correctly typed in the system.
+
+import DataModel = foundry.abstract.DataModel
 
 class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffect<SubType> {
   chatmessages: string[] = []
@@ -20,6 +21,19 @@ class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffe
   ) {
     if (change.key === 'system.conditions.maneuver') actor.replaceManeuver(change.value)
     else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
+  }
+
+  get actor(): Actor.Implementation | null {
+    if (!this.parent) {
+      return null
+    }
+    if (this.parent instanceof Actor) {
+      return this.parent
+    }
+    if (this.parent instanceof Item) {
+      return this.parent.actor
+    }
+    return null
   }
 
   // /**
@@ -60,7 +74,8 @@ class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffe
     user: User.Implementation
   ): Promise<boolean | void> {
     const effectIdTag = `@eft:${this._id}`
-    changed.changes?.map(effect => {
+
+    ;(changed.changes as DataModel<ActiveEffect.ChangeSchema>[])?.map(effect => {
       if (this.allUserModKeys.includes(effect.key) && !effect.value.includes(effectIdTag)) {
         // If exists a bad reference on the line, like `@bad-dog123`, let's remove it first
         const badRefRegex = /@\S+/g
@@ -77,8 +92,9 @@ class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffe
     // If ADD is opened for this actor, update the token effect buttons
     const buttonAddClass = `fa-plus-circle`
     const buttonAddedClass = `fa-check-circle`
+
     for (const status of this._source.statuses) {
-      const selector = `span.${status}[data-actor="${data.parent._id}"]`
+      const selector = `span.${status}[data-actor="${this.actor?._id}"]`
       const spans = $(selector)
       for (const span of spans) {
         $(span).removeClass(`${buttonAddedClass} green`).addClass(`${buttonAddClass} black`)
@@ -88,35 +104,40 @@ class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffe
   }
 
   /** @inheritDoc */
-  _onCreate(data, options, userId) {
+  protected override _onCreate(
+    data: ActiveEffect.CreateData,
+    options: ActiveEffect.Database.OnCreateOperation,
+    userId: string
+  ): void {
     super._onCreate(data, options, userId)
 
-    if (game.users.get(userId).isSelf) {
+    if (game.users?.get(userId)?.isSelf) {
       if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
     }
 
     // If ADD is opened for this actor, update the token effect buttons
     const buttonAddClass = `fa-plus-circle`
     const buttonAddedClass = `fa-check-circle`
-    for (const status of data.statuses) {
-      const selector = `span.${status}[data-actor="${this.parent._id}"]`
-      const spans = $(selector)
-      for (const span of spans) {
-        $(span).removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
-        $(span).attr('title', game.i18n.localize(`GURPS.remove${status}Effect`))
+    if (data.statuses)
+      for (const status of data.statuses as Set<string>) {
+        const selector = `span.${status}[data-actor="${this.actor?._id}"]`
+        const spans = $(selector)
+        for (const span of spans) {
+          $(span).removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
+          $(span).attr('title', game.i18n?.localize(`GURPS.remove${status}Effect`) || '')
+        }
       }
-    }
   }
 
-  get endCondition() {
+  get endCondition(): string {
     return this.getFlag('gurps', 'endCondition')
   }
 
-  set endCondition(otf) {
+  set endCondition(otf: string) {
     this.setFlag('gurps', 'endCondition', otf)
     if (!!otf) {
       // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
-      this.setFlag('core', 'statusId', `${this.name}-endCondition`)
+      this.setFlag('gurps', 'statusId', `${this.name}-endCondition`)
     }
   }
 
@@ -157,14 +178,15 @@ class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffe
     for (const key in value.args) {
       let val = value.args[key]
       if (foundry.utils.getType(val) === 'string' && val.startsWith('@')) {
-        value.args[key] = actor[val.slice(1)]
+        // NOTE: This is not very clean.
+        value.args[key] = (actor as any)[val.slice(1)]
       } else if (foundry.utils.getType(val) === 'string' && val.startsWith('!')) {
-        value.args[key] = game.i18n.localize(val.slice(1))
+        value.args[key] = game.i18n?.localize(val.slice(1))
       }
-      if (key === 'pdfref') value.args.pdfref = game.i18n.localize(val)
+      if (key === 'pdfref') value.args.pdfref = game.i18n?.localize(val) ?? ''
     }
 
-    let msg = !!value.args ? game.i18n.format(value.msg, value.args) : game.i18n.localize(value.msg)
+    let msg = !!value.args ? game.i18n?.format(value.msg, value.args) : game.i18n?.localize(value.msg)
 
     let self = this
     foundry.applications.handlebars
