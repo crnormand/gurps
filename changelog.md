@@ -13,7 +13,14 @@
 - Fixed a few layout problems with the Active Effects List application.
 - Fixed bug that always showed "Full Sheet" on the Switch Sheet header button.
 
-## Release 0.18.4 07/21/2025
+## Release 0.18.5 08/05/2025
+
+### Bugfixes
+
+- Add ability to query Advantage or Disadvantage value #2379
+- Actors can roll other Actors skills from the chat log as that actor. #2353
+
+## Release 0.18.4 07/21/2025 07/21/2025
 
 ### Bugfixes
 

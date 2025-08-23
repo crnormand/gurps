@@ -343,7 +343,7 @@ export default function addChatHooks() {
 				}
 			  });  */
 
-    // Add the "for" attribute to a collapsible panel label. This is needed
+    // TODO Add the "for" attribute to a collapsible panel label. This is needed
     // because the server in 0.7.8 strips the "for" attribute in an attempt
     // to guard against weird security hacks. When "for" is whitelisted as
     // a valid attribute (future) we can remove this.

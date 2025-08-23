@@ -1,6 +1,6 @@
 # [Users Guide](https://github.com/crnormand/gurps/wiki) for GURPS 4e Game Aid for Foundry VTT
 
-## Current Release Version 0.18.4
+## Current Release Version 0.18.5
 
 Compatible with FoundryVTT v12.x AND **v13.x**!
 
