@@ -72,6 +72,8 @@ class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffe
   }
 
   protected override _onDelete(options: ActiveEffect.Database.OnDeleteOperation, userId: string): void {
+    super._onDelete(options, userId)
+
     // If ADD is opened for this actor, update the token effect buttons
     const buttonAddClass = `fa-plus-circle`
     const buttonAddedClass = `fa-check-circle`
