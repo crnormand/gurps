@@ -27,6 +27,7 @@ function buttonGroup(field: fields.DataField.Any, options: any): Handlebars.Safe
     const group = field.toFormGroup(groupConfig, inputConfig)
 
     const button = document.createElement('button')
+    button.type = 'button'
     button.innerText = value
     group.querySelector('input')?.replaceWith(button)
 
