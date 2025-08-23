@@ -94,8 +94,8 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
 
     let range = this.component.range
     // Match the range format, e.g., "x2", "x20", "x30"
-    const matchSingle = range.match(/^\s*[xX]([\d\.]+)\s*$/)
-    const matchMultiple = range.match(/^\s*[xX]([\d\.]+)\s*-\s*[xX]([\d\.]+)\s*$/)
+    const matchSingle = range.match(/^\s*[×xX]([\d\.]+)\s*$/)
+    const matchMultiple = range.match(/^\s*[×xX]([\d\.]+)\s*-\s*[×xX]([\d\.]+)\s*$/)
     if (matchSingle) {
       this.component.range = `${parseFloat(matchSingle[1]) * st}`
     } else if (matchMultiple) {
