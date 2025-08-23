@@ -63,7 +63,10 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
     // If the OTF is not a number, parse it using the OTF parser.
     const action = parselink(otf)
     // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) return
+    if (!action.action) {
+      console.warn(`GURPS | MeleeAttackModel: OTF "${otf}" did not return a valid action.`)
+      return
+    }
 
     action.action.calcOnly = true
     // TODO: verify that target is of type "number" (or replace this whole thing)
