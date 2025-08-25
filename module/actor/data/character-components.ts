@@ -28,7 +28,7 @@ const encumbranceSchema = () => {
     // NOTE: change from previous schema, where "dodge" was a string
     dodge: new fields.NumberField({ required: true, nullable: false }),
     // NOTE: change from previuos schema where "weight" was a string
-    weight: new fields.NumberField({ required: true, nullable: false }),
+    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     move: new fields.NumberField({ required: true, nullable: false }),
     current: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     currentmove: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
@@ -106,7 +106,7 @@ const conditionsSchema = () => {
     self: new fields.SchemaField(modifierSetSchema(), { required: true, nullable: false }),
     target: new fields.SchemaField(modifierSetSchema(), { required: true, nullable: false }),
     // Change from previous schema. Now a Set instead of an Array to eliminate duplicates.
-    usermods: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+    usermods: new fields.SetField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
@@ -125,10 +125,10 @@ const conditionsSchema = () => {
 
 export {
   attributeSchema,
-  poolSchema,
   conditionsSchema,
-  liftingMovingSchema,
   encumbranceSchema,
-  type LiftingMovingSchema,
+  liftingMovingSchema,
+  poolSchema,
   type EncumbranceSchema,
+  type LiftingMovingSchema,
 }

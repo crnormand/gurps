@@ -18,6 +18,8 @@ class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> exten
   Schema,
   Actor.Implementation
 > {
+  /* ---------------------------------------- */
+
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.SystemOfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.parent.type as Actor.SubType)

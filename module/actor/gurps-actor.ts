@@ -2,22 +2,9 @@ import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
+import { HitLocationEntry } from './actor-components.js'
 
-// add type = 'characterV2' to ActorMetadata
-type ActorMetadata = (typeof foundry.documents.BaseActor)['metadata'] & {
-  type: 'characterV2'
-}
-
-class GurpsActorV2 extends Actor<Actor.SubType> {
-  /* ---------------------------------------- */
-
-  static override get metadata(): ActorMetadata {
-    return {
-      ...foundry.documents.BaseActor.metadata,
-      type: 'characterV2',
-    }
-  }
-
+class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
@@ -27,7 +14,7 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /* ---------------------------------------- */
 
-  // NOTE: changed from getOnwers() in old system
+  // NOTE: changed from getOwners() in old system
   get owners(): User.Implementation[] {
     return game.users?.filter(user => user.isOwner) ?? []
   }
@@ -43,6 +30,18 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
   // NOTE: STUB. Not convinced this is needed in the new system.
   //
   async openSheet(_newSheet: foundry.applications.api.ApplicationV2): Promise<void> {}
+
+  /* ---------------------------------------- */
+
+  override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
+    embeddedName: EmbeddedName,
+    id: string,
+    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
+  ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined {
+    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+  }
+
+  /* ---------------------------------------- */
 
   /**
    * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
@@ -61,14 +60,15 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
       for (const it of postureEffects) {
         await super.toggleStatusEffect(it.statuses.first()!, options)
       }
-      // await this.deleteEmbeddedDocuments(
-      //   'ActiveEffect',
-      //   postureEffects.map(e => e.id!),
-      //   { parent: this }
-      // )
+
+      await this.deleteEmbeddedDocuments(
+        'ActiveEffect',
+        postureEffects.map(e => e.id!),
+        { parent: this }
+      )
     }
 
-    return await super.toggleStatusEffect(statusId, options)
+    return super.toggleStatusEffect(statusId, options)
   }
 
   /* ---------------------------------------- */
@@ -100,94 +100,84 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
   }
 
   /* ---------------------------------------- */
+  /*  Migration                               */
+  /* ---------------------------------------- */
 
-  get hitLocationsWithDR() {
+  // static override migrateData(source: AnyMutableObject): AnyMutableObject {
+  //   super.migrateData(source)
+  //   migrateCharacter(source)
+  //   return source
+  // }
+
+  /* ---------------------------------------- */
+  /*  Accessors                               */
+  /* ---------------------------------------- */
+
+  get displayname() {
+    let n = this.name
+    if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
+    return n
+  }
+
+  /* ---------------------------------------- */
+
+  get hitLocationsWithDR(): HitLocationEntry[] {
     return (this.system as Actor.SystemOfType<'characterV2'>).hitLocationsWithDR
   }
 
   /* ---------------------------------------- */
-  /*  CRUD Operations                         */
+
+  get _hitLocationRolls() {
+    return (this.system as Actor.SystemOfType<'characterV2'>)._hitLocationRolls
+  }
+
   /* ---------------------------------------- */
 
-  override async update(data: Actor.UpdateData, context: Actor.Database.UpdateOperation = {}): Promise<this> {
-    this.#translateLegacyHitlocationData(data)
-    this.#translateLegacyEncumbranceData(data)
-
-    // Call the parent class's update method
-    await super.update(data, context)
-
-    return this
+  get defaultHitLocation(): string {
+    return game.settings?.get('gurps', 'default-hitlocation') ?? ''
   }
 
   /**
-   * Translate legacy HitLocation data like "system.hitlocations.00003.import" to "system.hitlocationsV2.3.import".
+   * @returns An array of temporary effects that are applied to the actor.
+   * This is overriden for CharacterModel where maneuvers are moved to the top of the
+   * array.
    */
-  #translateLegacyHitlocationData(data: Actor.UpdateData) {
-    Object.keys(data)
-      .filter(key => key.startsWith('system.hitlocations.'))
-      .forEach(key => {
-        // A key will be of the form "system.hitlocations.<index>.<field>". Map these to
-        // "system.hitlocationsV2.<index>.<field>".
-        const index = key.split('.')[2]
-        let field = key.split('.').slice(3).join('.')
-        let value = data[key as keyof typeof data]
-
-        if (field === 'roll') field = 'rollText' // remap 'roll' to 'rollText'
-        if (field === 'dr') field = '_dr' // remap 'dr' to '_dr'
-
-        if (['import', 'penalty', '_dr', 'drMod', 'drItem', 'drCap'].includes(field)) {
-          if (typeof value === 'string') {
-            value = parseInt(value) || 0
-          }
-        }
-        // @ts-expect-error
-        data[`system.hitlocationsV2.${parseInt(index)}.${field}`] = value
-
-        delete data[key as keyof typeof data]
-      })
+  override get temporaryEffects(): ActiveEffect.Implementation[] {
+    return (this.system as Actor.SystemOfType<'characterV2'>).getTemporaryEffects(super.temporaryEffects)
   }
 
-  /**
-   * Translate legacy Encumbrance current index from "system.encumbrance.2.current = true" to "system.additionalresources.currentEncumbrance = 2"
-   */
-  #translateLegacyEncumbranceData(data: Actor.UpdateData) {
-    Object.keys(data)
-      .filter(key => key.startsWith('system.encumbrance.'))
-      .forEach(key => {
-        const index = key.split('.')[2]
-        const field = key.split('.').slice(3).join('.')
-        const value = data[key as keyof typeof data]
+  /* ---------------------------------------- */
 
-        if (field === 'current' && value === true) {
-          // @ts-expect-error
-          data[`system.additionalresources.currentEncumbrance`] = index
-        }
-
-        delete data[key as keyof typeof data]
-      })
+  get usingQuintessence(): boolean {
+    return game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE) ?? false
   }
-
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
+  override prepareBaseData(): void {
+    super.prepareBaseData()
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData(): void {
+    super.prepareDerivedData()
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareEmbeddedDocuments(): void {
+    super.prepareEmbeddedDocuments()
+  }
   /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
-  // TODO Remove this eventually.
-  async internalUpdate(data: Actor.UpdateData): Promise<this> {
-    console.warn('internalUpdate() is deprecated, use update() instead')
+  async internalUpdate(data: Actor.UpdateData | undefined, operation?: Actor.Database.UpdateOperation) {
     console.trace('internalUpdate', data)
-    return await this.update(data)
-  }
-
-  _hitLocationRolls() {
-    return (this.system as Actor.SystemOfType<'characterV2'>)._hitLocationRolls
-  }
-
-  get defaultHitLocation(): string {
-    return game.settings?.get('gurps', 'default-hitlocation') ?? ''
+    // @ts-expect-error
+    return this.update(data, { ...operation, render: false })
   }
 
   /* ---------------------------------------- */
@@ -200,6 +190,8 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
     return (this.system as Actor.SystemOfType<'characterV2'>).addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
+  /* ---------------------------------------- */
+
   /**
    * Parse roll info based on action type.
    */
@@ -210,6 +202,12 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
     return (this.system as Actor.SystemOfType<'characterV2'>).findUsingAction(action, chatthing, formula, thing)
+  }
+
+  /* ---------------------------------------- */
+
+  async changeDR(formula: string, locations: string[]) {
+    ;(this.system as Actor.SystemOfType<'characterV2'>).changeDR(formula, locations)
   }
 
   /**
@@ -412,15 +410,6 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
   }
 
   /**
-   * @returns An array of temporary effects that are applied to the actor.
-   * This is overriden for CharacterModel where maneuvers are moved to the top of the
-   * array.
-   */
-  override get temporaryEffects(): ActiveEffect.Implementation[] {
-    return (this.system as Actor.SystemOfType<'characterV2'>).getTemporaryEffects(super.temporaryEffects)
-  }
-
-  /**
    * This method is called when "system.conditions.maneuver" changes on the actor (via the update method)
    * @param {string} maneuverText
    */
@@ -440,26 +429,106 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /* ---------------------------------------- */
 
-  getChecks(checkType: string) {
-    return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
-  }
-
-  /* ---------------------------------------- */
-
   get _additionalResources() {
     return (this.system as Actor.SystemOfType<'characterV2'>)?.additionalresources ?? {}
   }
 
   /* ---------------------------------------- */
 
-  async changeDR(formula: string, locations: string[]) {
-    ;(this.system as Actor.SystemOfType<'characterV2'>).changeDR(formula, locations)
+  async refreshDR() {
+    await this.changeDR('+0', [])
   }
 
   /* ---------------------------------------- */
 
-  async refreshDR() {
-    await this.changeDR('+0', [])
+  getChecks(checkType: string) {
+    return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
+  }
+
+  /* ---------------------------------------- */
+  /*  CRUD Operations                         */
+  /* ---------------------------------------- */
+
+  override async update(data: Actor.UpdateData, context: Actor.Database.UpdateOperation = {}): Promise<this> {
+    this.#translateLegacyHitlocationData(data)
+    this.#translateLegacyEncumbranceData(data)
+    this.#translateHitLocationsV2(data)
+
+    // Call the parent class's update method
+    await super.update(data, context)
+
+    return this
+  }
+
+  /**
+   * Translate legacy HitLocation data like "system.hitlocations.00003.import" to "system.hitlocationsV2.3.import".
+   */
+  #translateLegacyHitlocationData(data: Actor.UpdateData) {
+    Object.keys(data)
+      .filter(key => key.startsWith('system.hitlocations.'))
+      .forEach(key => {
+        // A key will be of the form "system.hitlocations.<index>.<field>". Map these to
+        // "system.hitlocationsV2.<index>.<field>".
+        const index = key.split('.')[2]
+        let field = key.split('.').slice(3).join('.')
+        let value = data[key as keyof typeof data]
+
+        if (field === 'roll') field = 'rollText' // remap 'roll' to 'rollText'
+        if (field === 'dr') field = '_dr' // remap 'dr' to '_dr'
+
+        if (['import', 'penalty', '_dr', 'drMod', 'drItem', 'drCap'].includes(field)) {
+          if (typeof value === 'string') {
+            value = parseInt(value) || 0
+          }
+        }
+        // @ts-expect-error
+        data[`system.hitlocationsV2.${parseInt(index)}.${field}`] = value
+
+        delete data[key as keyof typeof data]
+      })
+  }
+
+  /**
+   * Translate legacy Encumbrance current index from "system.encumbrance.2.current = true" to "system.additionalresources.currentEncumbrance = 2"
+   */
+  #translateLegacyEncumbranceData(data: Actor.UpdateData) {
+    Object.keys(data)
+      .filter(key => key.startsWith('system.encumbrance.'))
+      .forEach(key => {
+        const index = key.split('.')[2]
+        const field = key.split('.').slice(3).join('.')
+        const value = data[key as keyof typeof data]
+
+        if (field === 'current' && value === true) {
+          // @ts-expect-error
+          data[`system.additionalresources.currentEncumbrance`] = index
+        }
+
+        delete data[key as keyof typeof data]
+      })
+  }
+
+  // When updating any property of HitLocationV2, you have to update the entire array.
+  #translateHitLocationsV2(data: Actor.UpdateData) {
+    const regex = /^system\.hitlocationsV2\.(\d+)\..*/
+    const array = foundry.utils.deepClone((this.system as Actor.SystemOfType<'characterV2'>)._source.hitlocationsV2)
+
+    const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
+
+    // changes is an array of keys.
+    for (const key of changes) {
+      const value = data[key as keyof typeof data]
+      const index = parseInt(key.replace(regex, '$1'))
+      const field = key.replace(regex, '')
+
+      // @ts-expect-error
+      array[index][field] = value
+
+      delete data[key as keyof typeof data]
+    }
+
+    // @ts-expect-error
+    data['system.hitlocationsV2'] = array
   }
 }
 

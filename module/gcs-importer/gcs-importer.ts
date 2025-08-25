@@ -16,7 +16,7 @@ export class GcsImporter {
    * @param input GCS Character data
    * @returns GURPS Actor instance
    */
-  static async importCharacter(input: GcsCharacter): Promise<GurpsActorV2 | undefined> {
+  static async importCharacter(input: GcsCharacter): Promise<GurpsActorV2<any> | undefined> {
     return await new GcsImporter(input).#importCharacter()
   }
 
@@ -36,7 +36,7 @@ export class GcsImporter {
 
   /* ---------------------------------------- */
 
-  async #importCharacter(): Promise<GurpsActorV2 | undefined> {
+  async #importCharacter(): Promise<GurpsActorV2<any> | undefined> {
     const _id = foundry.utils.randomID()
     const name = this.input.profile.name ?? 'Imported Character'
 

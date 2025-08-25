@@ -1,8 +1,17 @@
+import {
+  attributeSchema,
+  conditionsSchema,
+  EncumbranceSchema,
+  LiftingMovingSchema,
+  poolSchema,
+} from './character-components.js'
+import fields = foundry.data.fields
+import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
+import { HitLocationEntry } from '../actor-components.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
-import GurpsActiveEffect from 'module/effects/active-effect.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
-import { zeroFill } from '../../../lib/utilities.js'
-import { HitLocation } from '../../hitlocation/hitlocation.js'
+import * as HitLocations from '../../hitlocation/hitlocation.js'
+import { BaseActorModel } from './base.js'
 import {
   MOVE_HALF,
   MOVE_NONE,
@@ -12,20 +21,10 @@ import {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from '../maneuver.js'
-import { BaseActorModel } from './base.js'
-import {
-  attributeSchema,
-  conditionsSchema,
-  EncumbranceSchema,
-  LiftingMovingSchema,
-  poolSchema,
-} from './character-components.js'
-import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
-import fields = foundry.data.fields
 
 // TODO Fix this later; only index.js should be referenced outside of the module.
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
-import { HitLocationEntry } from '../actor-components.js'
+import { zeroFill } from '../../../lib/utilities.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -34,7 +33,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
+  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.CharacterV2')
 
   /* ---------------------------------------- */
   /*  Instance properties                     */
@@ -59,6 +58,44 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     carryonback: 0,
   }
 
+  // hitlocationNames: Record<string, HitLocationEntry> = {}
+
+  // eqtsummary: {
+  //   eqtcost: number
+  //   eqtlbs: number
+  //   othercost: number
+  //   otherlbs: number
+  // } = {
+  //   eqtcost: 0,
+  //   eqtlbs: 0,
+  //   othercost: 0,
+  //   otherlbs: 0,
+  // }
+
+  // defenses: {
+  //   parry: { bonus: number }
+  //   block: { bonus: number }
+  //   dodge: { bonus: number }
+  // } = {
+  //   parry: { bonus: 0 },
+  //   block: { bonus: 0 },
+  //   dodge: { bonus: 0 },
+  // }
+
+  // equippedparry: number = 0
+  // equippedblock: number = 0
+  // currentdodge: number = 0
+  // currentmove: number = 0
+  // currentsprint: number = 0
+  // currentflight: number = 0
+
+  // moveoverride: { maneuver: string | null; posture: string | null } = {
+  //   maneuver: null,
+  //   posture: null,
+  // }
+
+  protected _globalBonuses: AnyObject[] = []
+
   /* ---------------------------------------- */
   /*  Accessors                               */
   /* ---------------------------------------- */
@@ -78,34 +115,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
   }
 
-  /**
-   * Get temporary effects for display in the Token HUD.
-   *
-   * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
-   * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
-   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in the array.
-   */
-  getTemporaryEffects(effects: GurpsActiveEffect[]): ActiveEffect.Implementation[] {
-    const maneuver = effects.find(e => e.isManeuver)
-    if (!maneuver) return effects as ActiveEffect.Implementation[]
-
-    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
-
-    const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
-    if (visibility === 'NoOne') return nonManeuverEffects as ActiveEffect.Implementation[]
-
-    if (!game.user?.isGM && !this.parent.isOwner) {
-      if (visibility === 'GMAndOwner') return nonManeuverEffects as ActiveEffect.Implementation[]
-
-      const detail = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
-      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
-      }
-    }
-
-    return [maneuver, ...nonManeuverEffects] as ActiveEffect.Implementation[]
-  }
-
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
@@ -116,21 +125,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   override prepareBaseData() {
     super.prepareBaseData()
 
+    // Reset the conditions object
     this.#resetConditionsObject()
     this.#resetCalculatedAttributeValues()
 
     this.#applySizeModifierToTargetConditions()
   }
-
-  /* ---------------------------------------- */
-
-  #resetCalculatedAttributeValues() {
-    Object.keys(this.attributes).forEach(key => {
-      const attribute = this.attributes[key as keyof typeof this.attributes]
-      this.attributes[key as keyof typeof this.attributes].value = attribute.import
-    })
-  }
-
   /* ---------------------------------------- */
 
   #resetConditionsObject() {
@@ -141,7 +141,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       maneuver: 'do_nothing',
       self: { modifiers: [] },
       target: { modifiers: [] },
-      usermods: [],
+      usermods: new Set<string>(),
       reeling: false,
       exhausted: false,
     }
@@ -150,10 +150,20 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #applySizeModifierToTargetConditions() {
+    // Add the default size modifier to the target conditions
     if (this.traits.sizemod !== 0) {
       const sizeModifier = this.traits.sizemod > 0 ? `+${this.traits.sizemod}` : `${this.traits.sizemod}`
       this.conditions.target?.modifiers?.push(game.i18n?.format('GURPS.modifiersSize', { sm: sizeModifier }) ?? '')
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #resetCalculatedAttributeValues() {
+    Object.keys(this.attributes).forEach(key => {
+      const attribute = this.attributes[key as keyof typeof this.attributes]
+      this.attributes[key as keyof typeof this.attributes].value = attribute.import
+    })
   }
 
   /* ---------------------------------------- */
@@ -183,6 +193,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  #prepareEquipmentSummary() {
+    // TODO implement me.
+  }
+
+  /* ---------------------------------------- */
+
   #applyCharacterBonuses() {
     this.#applyBonusesToAttributes()
     this.#applyBonusesToHitLocations()
@@ -208,12 +224,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       // This is where documentation regarding intent would be helpful.
       location._dr = location.drCap === null ? newDR : Math.max(location.drCap, newDR)
     }
-  }
-
-  /* ---------------------------------------- */
-
-  #prepareEquipmentSummary() {
-    // TODO implement me.
   }
 
   /* ---------------------------------------- */
@@ -348,6 +358,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
     return { value: base, tooltip }
   }
+
   /* ---------------------------------------- */
 
   #getMoveAdjustmentForOverride(base: number, override: string | null): { value: number; tooltip: string } | null {
@@ -411,6 +422,53 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
+  /*  Accessors                               */
+  /* ---------------------------------------- */
+
+  // TODO This method converts HitLocationV2 to HitLocation ... perhaps we can move the necessary functions to
+  // HitLocationsV2 and not do the translation?
+  get hitLocationsWithDR(): HitLocationEntry[] {
+    return this.hitlocationsV2.map(location => {
+      return new HitLocationEntry(location.where, location._dr ?? 0, location.rollText ?? '-', location.split)
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  get _hitLocationRolls() {
+    return this.hitlocationNames
+    // return HitLocation.getHitLocationRolls(this.additionalresources?.bodyplan)
+  }
+
+  /**
+   * Get temporary effects for display in the Token HUD.
+   *
+   * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
+   * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
+   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in the array.
+   */
+  getTemporaryEffects(effects: ActiveEffect.Implementation[]): ActiveEffect.Implementation[] {
+    const maneuver = effects.find(e => e.isManeuver)
+    if (!maneuver) return effects
+
+    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
+
+    const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
+    if (visibility === 'NoOne') return nonManeuverEffects
+
+    if (!game.user?.isGM && !this.parent.isOwner) {
+      if (visibility === 'GMAndOwner') return nonManeuverEffects
+
+      const detail = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
+      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
+        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+      }
+    }
+
+    return [maneuver, ...nonManeuverEffects]
+  }
+
+  /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
@@ -418,6 +476,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // TODO Go through the list of Items and find all DR bonuses
     return {}
   }
+
+  /* ---------------------------------------- */
 
   /**
    * Update the .drMod property of hit locations based on the provided formula.
@@ -443,7 +503,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { changed: false, msg: '', warn: 'No body plan defined for the actor.' }
       }
 
-      const table = HitLocation.getHitLocationRolls(bodyPlan)
+      const table = HitLocations.HitLocation.getHitLocationRolls(bodyPlan)
       availableLocations = Object.keys(table).map(key => key.toLowerCase())
 
       // NOTE: this checks whether any of the provided location names contain the available location
@@ -474,8 +534,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     if (changed) {
       const msg = `${this.parent.name}: DR ${formula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all hit locations'}.`
-      const validChanges = this.#validDRChanges(changes)
-      await this.parent.update(validChanges)
+      // const validChanges = this.#validDRChanges(changes)
+      await this.parent.update(changes)
       return { changed, msg, info: msg }
     }
     return { changed, msg: '', info: `${this.parent.name}: /dr command with formula ${formula} had no effect.` }
@@ -538,20 +598,31 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  #validDRChanges(changes: Record<string, any>): Record<string, any> {
-    const array = foundry.utils.deepClone(this._source.hitlocationsV2)
-    const regex = /^system\.hitlocationsV2\.(\d+)\..*/
+  // #validDRChanges(changes: Record<string, any>): Record<string, any> {
+  //   const array = foundry.utils.deepClone(this._source.hitlocationsV2)
+  //   const regex = /^system\.hitlocationsV2\.(\d+)\..*/
 
-    for (const [key, value] of Object.entries(changes)) {
-      const index = parseInt(key.replace(regex, '$1'))
-      const field = key.replace(regex, '')
+  //   for (const [key, value] of Object.entries(changes)) {
+  //     const index = parseInt(key.replace(regex, '$1'))
+  //     const field = key.replace(regex, '')
 
-      // @ts-expect-error
-      array[index][field] = value
-    }
-    return { 'system.hitlocationsV2': array }
+  //     // @ts-expect-error
+  //     array[index][field] = value
+  //   }
+  //   return { 'system.hitlocationsV2': array }
+  // }
+
+  /* ---------------------------------------- */
+
+  // @ts-expect-error
+  findTrait(name: string): Item.OfType<'feature'> | null {
+    return this.ads.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
+  // @ts-expect-error
+  findAdvantage(name: string): Item.OfType<'feature'> | null {
+    return this.findTrait(name)
+  }
   /* ---------------------------------------- */
 
   get hitlocations() {
@@ -573,23 +644,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         acc[location.where] = location
         return acc
       }, {})
-  }
-
-  /* ---------------------------------------- */
-
-  // TODO This method converts HitLocationV2 to HitLocation ... perhaps we can move the necessary functions to
-  // HitLocationsV2 and not do the translation?
-  get hitLocationsWithDR(): HitLocationEntry[] {
-    return this.hitlocationsV2.map(location => {
-      return new HitLocationEntry(location.where, location._dr ?? 0, location.rollText ?? '-', location.split)
-    })
-  }
-
-  /* ---------------------------------------- */
-
-  get _hitLocationRolls() {
-    return this.hitlocationNames
-    // return HitLocation.getHitLocationRolls(this.additionalresources?.bodyplan)
   }
 
   /* ---------------------------------------- */
@@ -881,7 +935,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // Get modifiers from user mods
     const userMods = this.conditions.usermods ?? []
 
-    // Get modiifers from self mods
+    // Get modifiers from self mods
     const selfMods =
       this.conditions.self.modifiers?.map(mod => {
         const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
@@ -936,8 +990,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return isDamageRoll
   }
 
+  /* ---------------------------------------- */
+
   /**
    * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatthing - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
     action: { type: string; name: string; orig: string; overridetxt?: string; attrkey?: string },
@@ -1116,6 +1183,23 @@ const characterSchema = () => {
     swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
+    // TODO Additional resources was created by Chris to cover additional stuff that we didn't plan for. It allowed us
+    // to add persistent fields without declaring them in the schema (and doing a subsdquent migration). We should
+    // consider finding real homes for this data.
+    additionalresources: new fields.SchemaField(
+      {
+        qnotes: new fields.StringField({ required: true, nullable: false }),
+        // TODO This could be a trait instead.
+        bodyplan: new fields.StringField({ required: true, nullable: false }),
+        tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
+          required: true,
+          nullable: false,
+        }),
+        currentEncumbrance: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+      },
+      { required: true, nullable: false }
+    ),
+
     // TODO I never liked calling these traits. I'd rather call Advantages/Disadvantages "traits" and this something
     // else ("personalData"? "biographicalData"? "profile"? etc.)
     traits: new fields.SchemaField(
@@ -1144,23 +1228,6 @@ const characterSchema = () => {
 
     hitlocationsV2: new fields.ArrayField(
       new fields.EmbeddedDataField(HitLocationEntryV2, { required: true, nullable: false }),
-      { required: true, nullable: false }
-    ),
-
-    // TODO Additional resources was created by Chris to cover additional stuff that we didn't plan for. It allowed us
-    //  to add persistent fields without declaring them in the schema (and doing a subsdquent migration). We should
-    // consider finding real homes for this data.
-    additionalresources: new fields.SchemaField(
-      {
-        // TODO This could be a trait instead.
-        bodyplan: new fields.StringField({ required: true, nullable: false }),
-
-        currentEncumbrance: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-        tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
-          required: true,
-          nullable: false,
-        }),
-      },
       { required: true, nullable: false }
     ),
 

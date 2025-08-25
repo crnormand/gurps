@@ -1,12 +1,13 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
-import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
-import { GurpsCombatant } from './module/combat/combatant.ts'
-import { GurpsItem } from './module/item.js'
-import { GurpsToken } from './module/token/gurps-token.ts'
-import { CharacterModel } from 'module/actor/data/character.ts'
+// import { GurpsActor } from './module/actor/actor.js'
+import { GurpsCombatant } from 'module/combat/combatant.ts'
+// import { GurpsItem } from './module/item.js'
+import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
-import { ActiveEffect } from './module/active-effect/index'
-import GurpsActiveEffect from 'module/effects/active-effect.js'
+import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
+import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
+import { CharacterModel } from 'module/actor/data/character.ts'
+import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 
 export {}
 
@@ -25,31 +26,16 @@ declare global {
       [key: string]: unknown
     }
   } & any
+
+  /* ---------------------------------------- */
 }
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
-    Actor: typeof GurpsActorV2
+    Actor: typeof GurpsActorV2<Actor.SubType>
     Item: typeof GurpsItem
     Combatant: typeof GurpsCombatant
     ActiveEffect: typeof GurpsActiveEffect
-  }
-
-  /* ---------------------------------------- */
-
-  interface DataModelConfig {
-    Actor: {
-      character: any
-      characterV2: typeof CharacterModel
-      enemy: typeof CharacterModel
-    }
-    ChatMessage: {}
-  }
-
-  /* ---------------------------------------- */
-
-  interface PlaceableObjectClassConfig {
-    Token: typeof GurpsToken
   }
 
   /* ---------------------------------------- */
@@ -82,6 +68,23 @@ declare module 'fvtt-types/configuration' {
 
   /* ---------------------------------------- */
 
+  interface DataModelConfig {
+    Actor: {
+      character: any
+      characterV2: typeof CharacterModel
+      enemy: typeof CharacterModel
+    }
+    ChatMessage: {}
+  }
+
+  /* ---------------------------------------- */
+
+  interface PlaceableObjectClassConfig {
+    Token: typeof GurpsToken
+  }
+
+  /* ---------------------------------------- */
+
   namespace Hooks {
     interface HookConfig {
       // TODO: Deprecated in FVTT 13. Replace with renderChatMessageHTML or get rid of if no longer needed.
@@ -90,6 +93,8 @@ declare module 'fvtt-types/configuration' {
       applyActiveEffect: (actor: Actor.Implementation, change: any) => void
     }
   }
+
+  /* ---------------------------------------- */
 
   interface SettingConfig {
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
@@ -152,6 +157,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
     'gurps.maneuver-detail': 'General' | 'NoFeint' | 'Full'
     'gurps.maneuver-updates-move': boolean
+    'gurps.use-quintessence': boolean
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
