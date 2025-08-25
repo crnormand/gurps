@@ -419,6 +419,45 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     userId: string
   ): void {
     super._onUpdate(changed, options, userId)
+
+    // Automatically set reeling / exhausted conditions based on HP/FP value
+    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
+      const doAnnounce = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)
+
+      if (changed.system?.HP?.value !== undefined) {
+        const isReeling = changed.system.HP.value < this.HP.max / 3
+        if (this.conditions.reeling !== isReeling) {
+          this.parent.toggleStatusEffect('reeling', { active: isReeling })
+
+          if (doAnnounce) {
+            let tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+            let message =
+              game.i18n?.format(tag, {
+                name: this.parent.displayname,
+                pdfref: game.i18n.localize('GURPS.pdfReeling'),
+              }) ?? ''
+            this.parent.sendChatMessage(message)
+          }
+        }
+      }
+
+      if (changed.system?.FP?.value !== undefined) {
+        const isExhausted = changed.system.FP.value < this.FP.max / 3
+        if (this.conditions.exhausted !== isExhausted) {
+          this.parent.toggleStatusEffect('exhausted', { active: isExhausted })
+
+          if (doAnnounce) {
+            let tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+            let message =
+              game.i18n?.format(tag, {
+                name: this.parent.displayname,
+                pdfref: game.i18n.localize('GURPS.pdfTired'),
+              }) ?? ''
+            this.parent.sendChatMessage(message)
+          }
+        }
+      }
+    }
   }
 
   /* ---------------------------------------- */

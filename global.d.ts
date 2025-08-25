@@ -158,6 +158,8 @@ declare module 'fvtt-types/configuration' {
     'gurps.maneuver-detail': 'General' | 'NoFeint' | 'Full'
     'gurps.maneuver-updates-move': boolean
     'gurps.use-quintessence': boolean
+    'gurps.automatic-onethird': boolean
+    'gurps.show-chat-reeling-tired': boolean
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>

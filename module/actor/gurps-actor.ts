@@ -4,6 +4,10 @@ import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import { HitLocationEntry } from './actor-components.js'
 
+function getDamageModule() {
+  return GURPS.module.Damage
+}
+
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
@@ -151,6 +155,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   get usingQuintessence(): boolean {
     return game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE) ?? false
   }
+
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
@@ -170,6 +175,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
   }
+
   /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
@@ -177,7 +183,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async internalUpdate(data: Actor.UpdateData | undefined, operation?: Actor.Database.UpdateOperation) {
     console.trace('internalUpdate', data)
     // @ts-expect-error
-    return this.update(data, { ...operation, render: false })
+    return this.update(data, operation)
   }
 
   /* ---------------------------------------- */
@@ -443,6 +449,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   getChecks(checkType: string) {
     return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
+  }
+
+  /* ---------------------------------------- */
+  /*  Actor Operations                        */
+  /* ---------------------------------------- */
+  handleDamageDrop(damageData: any) {
+    if (game.user?.isGM || !getDamageModule().settings.onlyGMsCanOpenADD()) {
+      const dialog = new GURPS.ApplyDamageDialog(this, damageData)
+      dialog.render(true)
+    } else ui.notifications?.warn(game.i18n?.localize('GURPS.invalidUserForDamageWarning') ?? '')
   }
 
   /* ---------------------------------------- */

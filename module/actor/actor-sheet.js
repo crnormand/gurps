@@ -1504,15 +1504,8 @@ export class GurpsActorSheet extends ActorSheet {
     await this.actor.refreshDR()
   }
 
-  get Damage() {
-    return GURPS.module.Damage
-  }
-
   handleDamageDrop(damageData) {
-    if (game.user?.isGM || !this.Damage.settings.onlyGMsCanOpenADD()) {
-      const dialog = new GURPS.ApplyDamageDialog(this.actor, damageData)
-      dialog.render(true)
-    } else ui.notifications?.warn(game.i18n?.localize('GURPS.invalidUserForDamageWarning') ?? '')
+    this.actor.handleDamageDrop(damageData)
   }
 
   // Non-equipment list drags
