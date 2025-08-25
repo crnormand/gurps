@@ -1,6 +1,6 @@
 import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
-import { importGCS } from './gcs-importer.js'
+import { importGCS } from './importer.js'
 
 interface GcsImportModule extends GurpsModule {}
 

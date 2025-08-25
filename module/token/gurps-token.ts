@@ -13,7 +13,6 @@ class GurpsToken extends foundry.canvas.placeables.Token {
     super._onCreate(data, options, userId)
     const actor = this.actor
     if (actor && actor.isOfType('characterV2', 'enemy')) {
-      // @ts-expect-error: Waiting for DataModel migration for Actor
       const maneuverText = actor.system.conditions.maneuver
       actor.replaceManeuver(maneuverText ?? 'Do Nothing')
     }

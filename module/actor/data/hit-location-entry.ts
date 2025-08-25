@@ -20,10 +20,8 @@ const hitLocationSchema = () => {
     where: new fields.StringField({ required: true, nullable: false }),
     import: new fields.NumberField({ required: true, nullable: false }),
     penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
     _dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
-
     rollText: new fields.StringField({ required: true, nullable: false, initial: '' }),
 
     // roll: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
@@ -45,6 +43,10 @@ const hitLocationSchema = () => {
 
     // drCap represents the capped DR, applied by the /dr command
     drCap: new fields.NumberField({ required: true, nullable: true, initial: 0 }),
+
+    // The role of the hitlocation for the purposes of applying damage: arms and legs are "limbs"; hands and feet,
+    // "extremities", etc.
+    role: new fields.StringField({ required: false, nullable: false, initial: '' }),
   }
 }
 type HitLocationSchemaV2 = ReturnType<typeof hitLocationSchema>
@@ -65,6 +67,7 @@ class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
       roll: entry.rollText,
       where: entry.where,
       split: entry.split,
+      role: entry.role,
     })
   }
 
@@ -82,8 +85,14 @@ const hitLocationSchemaV1 = () => {
   return {
     _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
     dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    // drCap represents the capped DR, applied by the /dr command
     drCap: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    // drItem represent the DR bonus from Item bonuses
     drItem: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    // drMod represent the DR bonus from the /dr command
     drMod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     equipment: new fields.StringField({ required: true, nullable: false, initial: '' }),
     import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
@@ -94,12 +103,7 @@ const hitLocationSchemaV1 = () => {
       required: true,
       nullable: false,
     }),
-
-    // drMod represent the DR bonus from the /dr command
-
-    // drItem represent the DR bonus from Item bonuses
-
-    // drCap represents the capped DR, applied by the /dr command
+    role: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }
 type HitLocationSchemaV1 = ReturnType<typeof hitLocationSchemaV1>

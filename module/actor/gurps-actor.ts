@@ -2,7 +2,6 @@ import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
-import GurpsActiveEffect from 'module/effects/active-effect.js'
 
 // add type = 'characterV2' to ActorMetadata
 type ActorMetadata = (typeof foundry.documents.BaseActor)['metadata'] & {
@@ -21,8 +20,9 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /* ---------------------------------------- */
 
-  isOfType<T extends Actor.SubType>(...types: T[]): this is GurpsActorV2 & { type: T } {
-    return types.includes(this.type as T)
+  isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
+  isOfType(...types: string[]): boolean {
+    return types.includes(this.type as Actor.SubType)
   }
 
   /* ---------------------------------------- */
@@ -40,7 +40,76 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /* ---------------------------------------- */
 
-  override async update(data: Actor.UpdateData, context: any): Promise<this> {
+  // NOTE: STUB. Not convinced this is needed in the new system.
+  //
+  async openSheet(_newSheet: foundry.applications.api.ApplicationV2): Promise<void> {}
+
+  /**
+   * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
+   * the existing one will be toggled (off).
+   */
+  override async toggleStatusEffect(
+    statusId: string,
+    options?: Actor.ToggleStatusEffectOptions
+  ): Promise<ActiveEffect.Implementation | boolean | undefined> {
+    const status = CONFIG.statusEffects.find(effect => effect.id === statusId)
+    if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActor#toggleStatusEffect`)
+
+    if (this.isPostureEffect(status)) {
+      // If the status effect is a posture, remove all other postures first
+      let postureEffects = this.getAllActivePostureEffects().filter(e => e.statuses.find(s => s !== statusId))
+      for (const it of postureEffects) {
+        await super.toggleStatusEffect(it.statuses.first()!, options)
+      }
+      // await this.deleteEmbeddedDocuments(
+      //   'ActiveEffect',
+      //   postureEffects.map(e => e.id!),
+      //   { parent: this }
+      // )
+    }
+
+    return await super.toggleStatusEffect(statusId, options)
+  }
+
+  /* ---------------------------------------- */
+
+  private isPostureEffect(status: object): boolean {
+    return foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture'
+  }
+
+  /* ---------------------------------------- */
+
+  private getAllActivePostureEffects() {
+    return this.effects.filter(e => this.isPostureEffect(e))
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Send a private chat message containing the specified text to all users
+   * with ownership permission of this Actor document.
+   * @param message - Message content to send
+   */
+  sendChatMessage(message: string) {
+    foundry.applications.handlebars
+      .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [message] })
+      .then(content => {
+        const whisper = this.owners.length > 0 ? this.owners.map(user => user.id) : null
+        ChatMessage.create({ content, whisper })
+      })
+  }
+
+  /* ---------------------------------------- */
+
+  get hitLocationsWithDR() {
+    return (this.system as Actor.SystemOfType<'characterV2'>).hitLocationsWithDR
+  }
+
+  /* ---------------------------------------- */
+  /*  CRUD Operations                         */
+  /* ---------------------------------------- */
+
+  override async update(data: Actor.UpdateData, context: Actor.Database.UpdateOperation = {}): Promise<this> {
     this.#translateLegacyHitlocationData(data)
     this.#translateLegacyEncumbranceData(data)
 
@@ -99,14 +168,26 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
   }
 
   /* ---------------------------------------- */
+  /*  Data Preparation                        */
+  /* ---------------------------------------- */
+
+  /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
   // TODO Remove this eventually.
-  async internalUpdate(data: Actor.UpdateData, context: any): Promise<this> {
+  async internalUpdate(data: Actor.UpdateData): Promise<this> {
     console.warn('internalUpdate() is deprecated, use update() instead')
     console.trace('internalUpdate', data)
-    return await this.update(data, context)
+    return await this.update(data)
+  }
+
+  _hitLocationRolls() {
+    return (this.system as Actor.SystemOfType<'characterV2'>)._hitLocationRolls
+  }
+
+  get defaultHitLocation(): string {
+    return game.settings?.get('gurps', 'default-hitlocation') ?? ''
   }
 
   /* ---------------------------------------- */
@@ -121,17 +202,6 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /**
    * Parse roll info based on action type.
-   *
-   * @param {object} action - Object from GURPS.parselink
-   * @param {string} chatthing - internal code for roll
-   * @param {string} formula - formula for roll
-   * @param {string} thing - name of the source of the roll
-   * @returns {{}} result
-   * @returns {string} result.name - Name of the action which originates the roll
-   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
-   * @returns {[string]} result.itemId - ID of the item that originates the roll
-   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
-   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
     action: { type: string; name: string; orig: string },
@@ -360,37 +430,6 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   /* ---------------------------------------- */
 
-  /**
-   * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
-   * the existing one will be toggled (off).
-   */
-  override async toggleStatusEffect(
-    statusId: string,
-    options: Actor.ToggleStatusEffectOptions | undefined = {}
-  ): Promise<boolean | GurpsActiveEffect | undefined> {
-    const status = CONFIG.statusEffects.find(e => e.id === statusId)
-    if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
-
-    if (this.isPostureEffect(status)) {
-      let existing = this.getAllActivePostureEffects().filter(e => e.statuses.find(s => s !== statusId))
-      for (const it of existing) {
-        await super.toggleStatusEffect(it.statuses.first()!, options)
-      }
-    }
-
-    return await super.toggleStatusEffect(statusId, options)
-  }
-
-  private isPostureEffect(status: object): boolean {
-    return foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture'
-  }
-
-  private getAllActivePostureEffects() {
-    return this.effects.filter(e => this.isPostureEffect(e))
-  }
-
-  /* ---------------------------------------- */
-
   async replacePosture(postureId: string) {
     const id =
       postureId === GURPS.StatusEffectStanding
@@ -403,6 +442,24 @@ class GurpsActorV2 extends Actor<Actor.SubType> {
 
   getChecks(checkType: string) {
     return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
+  }
+
+  /* ---------------------------------------- */
+
+  get _additionalResources() {
+    return (this.system as Actor.SystemOfType<'characterV2'>)?.additionalresources ?? {}
+  }
+
+  /* ---------------------------------------- */
+
+  async changeDR(formula: string, locations: string[]) {
+    ;(this.system as Actor.SystemOfType<'characterV2'>).changeDR(formula, locations)
+  }
+
+  /* ---------------------------------------- */
+
+  async refreshDR() {
+    await this.changeDR('+0', [])
   }
 }
 

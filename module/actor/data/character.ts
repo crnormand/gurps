@@ -1,17 +1,8 @@
-import {
-  attributeSchema,
-  conditionsSchema,
-  EncumbranceSchema,
-  LiftingMovingSchema,
-  poolSchema,
-} from './character-components.js'
-import { BaseActorModel } from './base.js'
-import fields = foundry.data.fields
-import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
-import { zeroFill } from '../../../lib/utilities.js'
-import * as Settings from '../../../lib/miscellaneous-settings.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 import GurpsActiveEffect from 'module/effects/active-effect.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
+import { zeroFill } from '../../../lib/utilities.js'
+import { HitLocation } from '../../hitlocation/hitlocation.js'
 import {
   MOVE_HALF,
   MOVE_NONE,
@@ -21,6 +12,20 @@ import {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from '../maneuver.js'
+import { BaseActorModel } from './base.js'
+import {
+  attributeSchema,
+  conditionsSchema,
+  EncumbranceSchema,
+  LiftingMovingSchema,
+  poolSchema,
+} from './character-components.js'
+import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
+import fields = foundry.data.fields
+
+// TODO Fix this later; only index.js should be referenced outside of the module.
+import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
+import { HitLocationEntry } from '../actor-components.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -32,8 +37,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
 
   /* ---------------------------------------- */
-  /*  Derived properties                     */
+  /*  Instance properties                     */
   /* ---------------------------------------- */
+
+  // Item collections
+  // @ts-expect-error
+  ads: Item.OfType<'feature'>[] = []
+
+  /* ---------------------------------------- */
+
+  // Derived properties
   encumbrance: fields.SchemaField.SourceData<EncumbranceSchema>[] = []
 
   liftingmoving: fields.SchemaField.SourceData<LiftingMovingSchema> = {
@@ -50,17 +63,47 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get hitlocationNames() {
+  /**
+   * Return an object mapping hit location names to their corresponding data.
+   */
+  get hitlocationNamesV2() {
     return this.hitlocationsV2.reduce((acc: Record<string, HitLocationEntryV2>, location) => {
       acc[location.where] = location
       return acc
     }, {})
   }
-
   /* ---------------------------------------- */
 
   get currentdodge(): number {
     return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
+  }
+
+  /**
+   * Get temporary effects for display in the Token HUD.
+   *
+   * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
+   * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
+   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in the array.
+   */
+  getTemporaryEffects(effects: GurpsActiveEffect[]): ActiveEffect.Implementation[] {
+    const maneuver = effects.find(e => e.isManeuver)
+    if (!maneuver) return effects as ActiveEffect.Implementation[]
+
+    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
+
+    const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
+    if (visibility === 'NoOne') return nonManeuverEffects as ActiveEffect.Implementation[]
+
+    if (!game.user?.isGM && !this.parent.isOwner) {
+      if (visibility === 'GMAndOwner') return nonManeuverEffects as ActiveEffect.Implementation[]
+
+      const detail = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
+      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
+        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+      }
+    }
+
+    return [maneuver, ...nonManeuverEffects] as ActiveEffect.Implementation[]
   }
 
   /* ---------------------------------------- */
@@ -95,7 +138,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.conditions = {
       ...this.conditions,
       posture: 'standing',
-      maneuver: null,
+      maneuver: 'do_nothing',
       self: { modifiers: [] },
       target: { modifiers: [] },
       usermods: [],
@@ -120,15 +163,35 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.#applyCharacterBonuses()
     this.#prepareLiftingMoving()
+    this.#prepareEquipmentSummary()
     this.#prepareEncumbrance()
+    this.#prepareDefenses()
+    this.#prepareUserModifiers()
 
     this.#setCurrentManeuver()
   }
 
   /* ---------------------------------------- */
 
+  #setCurrentManeuver() {
+    // Set current maneuver to maneuver active effect if a valid one is present
+    const maneuverEffect = this.parent.effects.find((effect: ActiveEffect.Implementation) =>
+      effect.statuses.some((status: string) => status === 'maneuver')
+    )
+    this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
+  }
+
+  /* ---------------------------------------- */
+
   #applyCharacterBonuses() {
+    this.#applyBonusesToAttributes()
     this.#applyBonusesToHitLocations()
+  }
+
+  /* ---------------------------------------- */
+
+  #applyBonusesToAttributes() {
+    // TODO implement me.
   }
 
   /* ---------------------------------------- */
@@ -145,6 +208,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       // This is where documentation regarding intent would be helpful.
       location._dr = location.drCap === null ? newDR : Math.max(location.drCap, newDR)
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareEquipmentSummary() {
+    // TODO implement me.
   }
 
   /* ---------------------------------------- */
@@ -226,11 +295,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
-  #setCurrentManeuver() {
-    const maneuverEffect = this.parent.effects.find((effect: ActiveEffect.Implementation) =>
-      effect.statuses.some((status: string) => status === 'maneuver')
-    )
-    this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
+  /* ---------------------------------------- */
+
+  #prepareDefenses() {
+    // TODO Implement me.
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareUserModifiers() {
+    // TODO Implement me.
   }
 
   /* ---------------------------------------- */
@@ -328,7 +402,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*   CRUD Handlers                          */
   /* ---------------------------------------- */
 
-  override _onUpdate(changed: object, options: any, userId: string): void {
+  protected override _onUpdate(
+    changed: DeepPartial<foundry.abstract.TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
+    options: foundry.abstract.Document.Database.UpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
+    userId: string
+  ): void {
     super._onUpdate(changed, options, userId)
   }
 
@@ -341,46 +419,180 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return {}
   }
 
-  /* ---------------------------------------- */
-
-  get hitlocations() {
-    const hitlocationsV1: Record<string, HitLocationEntryV1> = {}
-
-    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
-      hitlocationsV1[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
-    })
-    return hitlocationsV1
-  }
-
-  /* ---------------------------------------- */
-
   /**
-   * Get temporary effects for display in the Token HUD.
-   *
-   * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
-   * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
-   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in the array.
+   * Update the .drMod property of hit locations based on the provided formula.
+   * @param formula - The formula to apply to the DR.
+   * @param locations - An array of hit location names to apply the formula to.
+   * @returns An object indicating whether the DR was changed, a message, and any warnings.
    */
-  getTemporaryEffects(effects: GurpsActiveEffect[]): ActiveEffect.Implementation[] {
-    const maneuver = effects.find(e => e.isManeuver)
-    if (!maneuver) return effects as ActiveEffect.Implementation[]
+  async changeDR(
+    formula: string,
+    locations: string[]
+  ): Promise<{ changed: boolean; msg: string; info?: string; warn?: string }> {
+    let changed = false
+    let actorLocations = this.hitlocationsV2
+    let affectedLocations: string[] = []
+    let availableLocations: string[] = []
 
-    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
+    if (locations.length > 0) {
+      // NOTE: The system only supports adding bonuses to locations in set body plans.
+      // This part of the function effectively filters the locations to only those
+      // matching an existing body plan.
+      const bodyPlan = this.additionalresources.bodyplan
+      if (bodyPlan === '') {
+        return { changed: false, msg: '', warn: 'No body plan defined for the actor.' }
+      }
 
-    const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
-    if (visibility === 'NoOne') return nonManeuverEffects as ActiveEffect.Implementation[]
+      const table = HitLocation.getHitLocationRolls(bodyPlan)
+      availableLocations = Object.keys(table).map(key => key.toLowerCase())
 
-    if (!game.user?.isGM && !this.parent.isOwner) {
-      if (visibility === 'GMAndOwner') return nonManeuverEffects as ActiveEffect.Implementation[]
+      // NOTE: this checks whether any of the provided location names contain the available location
+      // name as a substring. This allows for partials like "arm" to match "left arm" or "right arm".
+      affectedLocations = availableLocations.filter(key => locations.some(location => location.includes(key)))
 
-      const detail = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
-      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+      if (affectedLocations.length === 0) {
+        return {
+          changed: false,
+          msg: `<p>No valid locations found using: <i>${locations.join(
+            ', '
+          )}</i>.</p><p>Available locations are: <ul><li>${availableLocations.join('</li><li>')}</li></ul>`,
+          warn: `No matching hit locations found. Available locatios are: ${availableLocations.join(', ')}`,
+        }
       }
     }
 
-    return [maneuver, ...nonManeuverEffects] as ActiveEffect.Implementation[]
+    const changes: Record<string, number | null> = {}
+
+    for (const [index, value] of Object.entries(actorLocations)) {
+      let processedFormula = '+0'
+      if (locations.length === 0 || affectedLocations.includes(value.where.toLowerCase())) {
+        changed = true
+        processedFormula = formula
+      }
+      this.#addDRChanges(changes, processedFormula, value, index)
+    }
+
+    if (changed) {
+      const msg = `${this.parent.name}: DR ${formula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all hit locations'}.`
+      const validChanges = this.#validDRChanges(changes)
+      await this.parent.update(validChanges)
+      return { changed, msg, info: msg }
+    }
+    return { changed, msg: '', info: `${this.parent.name}: /dr command with formula ${formula} had no effect.` }
   }
+
+  /* ---------------------------------------- */
+
+  #addDRChanges(
+    changes: Record<string, number | null>,
+    formula: string,
+    value: HitLocationEntryV2,
+    index: string
+  ): void {
+    let dr = value._dr ?? 0
+    let drMod = value.drMod ?? 0
+    let drCap: number | null = value.drCap ?? null
+    let drItem = value.drItem ?? 0
+
+    if (formula === 'reset') {
+      dr = value.import
+      drMod = 0
+      drCap = null
+      drItem = 0
+    } else {
+      switch (formula.charAt(0)) {
+        case '+':
+        case '-':
+          // If the formula starts with + or -, we assume it's a simple modifier
+          drMod += parseInt(formula)
+          break
+        case '*':
+          if (drCap === null) drCap = Math.max(0, value.import + drItem)
+          drCap *= parseInt(formula.slice(1))
+          dr = drCap
+          drMod = drCap - drItem - value.import
+          break
+        case '/':
+          if (drCap === null) drCap = Math.max(0, value.import + drItem)
+          drCap = Math.max(0, Math.floor(drCap / parseInt(formula.slice(1))))
+          dr = drCap
+          drMod = drCap - drItem - value.import
+          break
+        case '!':
+          const mod = parseInt(formula.slice(1))
+          drMod = mod
+          dr = mod
+          drCap = mod
+          break
+        default:
+          drMod = parseInt(formula)
+          dr = Math.max(0, value.import, drMod, drItem)
+          drCap = dr
+      }
+    }
+
+    changes[`system.hitlocationsV2.${index}._dr`] = dr
+    changes[`system.hitlocationsV2.${index}.drMod`] = drMod
+    changes[`system.hitlocationsV2.${index}.drCap`] = drCap
+  }
+
+  /* ---------------------------------------- */
+
+  #validDRChanges(changes: Record<string, any>): Record<string, any> {
+    const array = foundry.utils.deepClone(this._source.hitlocationsV2)
+    const regex = /^system\.hitlocationsV2\.(\d+)\..*/
+
+    for (const [key, value] of Object.entries(changes)) {
+      const index = parseInt(key.replace(regex, '$1'))
+      const field = key.replace(regex, '')
+
+      // @ts-expect-error
+      array[index][field] = value
+    }
+    return { 'system.hitlocationsV2': array }
+  }
+
+  /* ---------------------------------------- */
+
+  get hitlocations() {
+    const hitlocations: Record<string, HitLocationEntryV1> = {}
+
+    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
+      hitlocations[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
+    })
+
+    return hitlocations
+  }
+
+  /* ---------------------------------------- */
+
+  get hitlocationNames() {
+    return this.hitlocationsV2
+      .map(it => HitLocationEntryV1.createFromV2(it))
+      .reduce((acc: Record<string, HitLocationEntryV1>, location) => {
+        acc[location.where] = location
+        return acc
+      }, {})
+  }
+
+  /* ---------------------------------------- */
+
+  // TODO This method converts HitLocationV2 to HitLocation ... perhaps we can move the necessary functions to
+  // HitLocationsV2 and not do the translation?
+  get hitLocationsWithDR(): HitLocationEntry[] {
+    return this.hitlocationsV2.map(location => {
+      return new HitLocationEntry(location.where, location._dr ?? 0, location.rollText ?? '-', location.split)
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  get _hitLocationRolls() {
+    return this.hitlocationNames
+    // return HitLocation.getHitLocationRolls(this.additionalresources?.bodyplan)
+  }
+
+  /* ---------------------------------------- */
 
   getChecks(checkType: string): {
     size: number
@@ -869,6 +1081,17 @@ const characterSchema = () => {
 
     // TODO In some future update, consider moving all of these to the attributes structure.
     // ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎
+
+    // Built-in pools
+    HP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+    FP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+    QP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+
+    // Other attributes which don't count as core in this version of the system
+    dodge: new fields.SchemaField({
+      value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    }),
+
     basicmove: new fields.SchemaField({
       // NOTE: change from previous data model, uses number instead of string type as value is always a number
       value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
@@ -881,11 +1104,6 @@ const characterSchema = () => {
       points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
 
-    // Built-in pools
-    HP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-    FP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-    QP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-
     frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.frightcheck' }),
     hearing: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.hearing' }),
     tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.tastesmell' }),
@@ -896,13 +1114,10 @@ const characterSchema = () => {
     thrust: new fields.StringField({ required: true, nullable: false, label: 'GURPS.thrust' }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
     swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
-
-    // Other attributes which don't count as core in this version of the system
-    dodge: new fields.SchemaField({
-      value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
+    // TODO I never liked calling these traits. I'd rather call Advantages/Disadvantages "traits" and this something
+    // else ("personalData"? "biographicalData"? "profile"? etc.)
     traits: new fields.SchemaField(
       {
         title: new fields.StringField({ required: true, nullable: false }),
@@ -932,11 +1147,19 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
+    // TODO Additional resources was created by Chris to cover additional stuff that we didn't plan for. It allowed us
+    //  to add persistent fields without declaring them in the schema (and doing a subsdquent migration). We should
+    // consider finding real homes for this data.
     additionalresources: new fields.SchemaField(
       {
         // TODO This could be a trait instead.
         bodyplan: new fields.StringField({ required: true, nullable: false }),
+
         currentEncumbrance: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
+          required: true,
+          nullable: false,
+        }),
       },
       { required: true, nullable: false }
     ),

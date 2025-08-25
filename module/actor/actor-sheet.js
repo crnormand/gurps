@@ -1471,7 +1471,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.actor.ignoreRender = true
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-    if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
+    if (dragData.type === 'damageItem') this.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
     await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
@@ -1502,6 +1502,17 @@ export class GurpsActorSheet extends ActorSheet {
     }
     this.actor.ignoreRender = false
     await this.actor.refreshDR()
+  }
+
+  get Damage() {
+    return GURPS.module.Damage
+  }
+
+  handleDamageDrop(damageData) {
+    if (game.user?.isGM || !this.Damage.settings.onlyGMsCanOpenADD()) {
+      const dialog = new GURPS.ApplyDamageDialog(this.actor, damageData)
+      dialog.render(true)
+    } else ui.notifications?.warn(game.i18n?.localize('GURPS.invalidUserForDamageWarning') ?? '')
   }
 
   // Non-equipment list drags
