@@ -85,6 +85,7 @@ import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import ActorProxy from './actor/base-actor.js'
+import ItemProxy from './item/item-proxy.js'
 
 export let GURPS = undefined
 
@@ -1955,7 +1956,7 @@ if (!globalThis.GURPS) {
 
     // Define custom Entity classes
     CONFIG.Actor.documentClass = ActorProxy
-    CONFIG.Item.documentClass = GurpsItem
+    CONFIG.Item.documentClass = ItemProxy
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class

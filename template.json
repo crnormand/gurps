@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["character", "enemy", "characterV2"],
+    "types": ["character", "enemy"],
     "templates": {
       "base": {
         "attributes": {
@@ -202,7 +202,7 @@
     }
   },
   "Item": {
-    "types": ["equipment", "feature", "skill", "spell", "meleeAtk", "rangedAtk"],
+    "types": ["equipment", "feature", "featureV2", "skill", "spell", "meleeAtk", "rangedAtk"],
     "equipment": {
       "eqt": {
         "name": "",

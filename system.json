@@ -74,6 +74,7 @@
     },
     "Item": {
       "feature": {},
+      "featureV2": {},
       "skill": {},
       "spell": {},
       "equipment": {}

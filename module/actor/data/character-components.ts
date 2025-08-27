@@ -121,7 +121,18 @@ const conditionsSchema = () => {
   }
 }
 
-// type ConditionsSchema = ReturnType<typeof conditionsSchema>
+/* ---------------------------------------- */
+
+const reactionSchema = () => {
+  return {
+    // NOTE: change from previous schema, where "modifier" was a string
+    modifier: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    situation: new fields.StringField({ required: true, nullable: false }),
+    modifierTags: new fields.StringField({ required: true, nullable: false }),
+  }
+}
+
+type ReactionSchema = ReturnType<typeof reactionSchema>
 
 export {
   attributeSchema,
@@ -129,6 +140,8 @@ export {
   encumbranceSchema,
   liftingMovingSchema,
   poolSchema,
+  reactionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
+  type ReactionSchema,
 }

@@ -5,7 +5,7 @@ import { GurpsActorV2 } from './gurps-actor.js'
 
 const ActorProxy = new Proxy(Actor, {
   // @ts-expect-error
-  construct(_target, args: [source: PreCreate<ActorSource>, context?: DocumentConstructionContext<Actor['parent']>]) {
+  construct(_target, args: [data?: Actor.CreateData | undefined, context?: Actor.ConstructionContext | undefined]) {
     const type = args[0]?.type
     switch (type) {
       case 'character':

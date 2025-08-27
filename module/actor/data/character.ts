@@ -4,10 +4,12 @@ import {
   EncumbranceSchema,
   LiftingMovingSchema,
   poolSchema,
+  ReactionSchema,
 } from './character-components.js'
 import fields = foundry.data.fields
 import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
 import { HitLocationEntry } from '../actor-components.js'
+import { BaseItemModel } from '../../item/data/base.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import * as HitLocations from '../../hitlocation/hitlocation.js'
@@ -25,6 +27,7 @@ import {
 // TODO Fix this later; only index.js should be referenced outside of the module.
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
 import { zeroFill } from '../../../lib/utilities.js'
+import { fromTraitV2, TraitV1 } from './types.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -33,15 +36,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.CharacterV2')
+  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
 
   /* ---------------------------------------- */
   /*  Instance properties                     */
   /* ---------------------------------------- */
 
   // Item collections
-  // @ts-expect-error
-  ads: Item.OfType<'feature'>[] = []
+  adsV2: Item.OfType<'featureV2'>[] = []
+
+  // Reactions & Conditional modifiers
+  reactions: fields.SchemaField.SourceData<ReactionSchema>[] = []
+  conditionalmods: fields.SchemaField.SourceData<ReactionSchema>[] = []
 
   /* ---------------------------------------- */
 
@@ -115,6 +121,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
   }
 
+  get ads() {
+    const ads: Record<string, TraitV1> = {}
+    this.adsV2.forEach((item: Item.OfType<'featureV2'>, index: number) => {
+      ads[zeroFill(index, 5)] = fromTraitV2(item)
+    })
+
+    return ads
+  }
+
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
@@ -164,6 +179,50 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const attribute = this.attributes[key as keyof typeof this.attributes]
       this.attributes[key as keyof typeof this.attributes].value = attribute.import
     })
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareEmbeddedDocuments(): void {
+    this._globalBonuses = this.parent.items.reduce((acc: AnyObject[], item) => {
+      if (!(item.system instanceof BaseItemModel)) return acc
+      acc.push(...item.system.getGlobalBonuses())
+      return acc
+    }, [])
+
+    for (const item of this.parent.items) {
+      if (!(item.system instanceof BaseItemModel)) continue
+      item.system.applyBonuses(this._globalBonuses)
+    }
+
+    this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
+    // this.skills = this.parent.items.filter(item => item.isOfType('skill'))
+    // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
+    // const equipment = this.parent.items.filter(item => item.isOfType('equipment'))
+    // this.allEquipment = equipment
+    // this.equipment = {
+    //   carried: equipment.filter(item => item.system.carried === true),
+    //   other: equipment.filter(item => item.system.carried === false),
+    // }
+
+    // this.melee = this.parent.getItemAttacks({ attackType: 'melee' })
+    // this.ranged = this.parent.getItemAttacks({ attackType: 'ranged' })
+
+    this.reactions = this.getReactionsAndModifiers('reactions')
+    this.conditionalmods = this.getReactionsAndModifiers('conditionalmods')
+
+    this.#prepareEquipmentSummary()
+  }
+
+  /* ---------------------------------------- */
+
+  getReactionsAndModifiers(
+    key: 'reactions' | 'conditionalmods'
+  ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
+    return this.parent.items.reduce((acc: any[], item) => {
+      acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
+      return acc
+    }, [])
   }
 
   /* ---------------------------------------- */
@@ -314,7 +373,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareUserModifiers() {
-    // TODO Implement me.
+    this.parent.items.forEach(item => {
+      if (!item.isOfType('featureV2')) return
+
+      for (const modifier of (item.system.itemModifiers ?? '').split('\n').map(e => e.trim())) {
+        const modifierDescription = `${modifier} ${item.id}`
+        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+      }
+
+      // for (const attack of item.getItemAttacks()) {
+      //   if (item.system.itemModifiers === '') continue
+      //   // @ts-expect-error
+      //   for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
+      //     const modifierDescription = `${modifier} ${item.id}`
+      //     if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+      //   }
+      // }
+    })
   }
 
   /* ---------------------------------------- */
@@ -653,13 +728,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // @ts-expect-error
-  findTrait(name: string): Item.OfType<'feature'> | null {
-    return this.ads.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
+  findTrait(name: string): Item.OfType<'featureV2'> | null {
+    return this.adsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
-  // @ts-expect-error
-  findAdvantage(name: string): Item.OfType<'feature'> | null {
+  findAdvantage(name: string): Item.OfType<'featureV2'> | null {
     return this.findTrait(name)
   }
   /* ---------------------------------------- */
@@ -852,10 +925,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
 
       // case 'markedChecks':
-      //   const items = this.parent.items.filter(item => item.isOfType('feature', 'skill', 'spell'))
+      //   const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skill', 'spell'))
       //   for (const item of items) {
       //     if (item.system.addToQuickRoll) {
-      //       const type = item.type === 'feature' ? 'ad' : item.type
+      //       const type = item.type === 'featureV2' ? 'ad' : item.type
       //       let value = 0
       //       if (item.isOfType('skill', 'spell')) value = item.system.component.import
 

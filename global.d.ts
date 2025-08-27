@@ -3,11 +3,14 @@ import { AnyMutableObject } from 'fvtt-types/utils'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
 // import { GurpsItem } from './module/item.js'
 import { GurpsToken } from 'module/token/gurps-token.ts'
+import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
+import { GurpsItem } from 'module/item.js'
+import { TraitModel } from 'module/item/data/trait.ts'
 
 export {}
 
@@ -26,16 +29,26 @@ declare global {
       [key: string]: unknown
     }
   } & any
-
-  /* ---------------------------------------- */
 }
+
+/* ---------------------------------------- */
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
     Actor: typeof GurpsActorV2<Actor.SubType>
-    Item: typeof GurpsItem
+    Item: typeof GurpsItemV2<Item.SubType>
     Combatant: typeof GurpsCombatant
     ActiveEffect: typeof GurpsActiveEffect
+  }
+
+  /* ---------------------------------------- */
+
+  interface ConfiguredItem<SubType extends Item.SubType> {
+    document: GurpsItemV2<SubType>
+  }
+
+  interface ConfiguredActor<SubType extends Actor.SubType> {
+    document: GurpsActorV2<SubType>
   }
 
   /* ---------------------------------------- */
@@ -73,6 +86,12 @@ declare module 'fvtt-types/configuration' {
       character: any
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
+    }
+    Item: {
+      equipment: any
+      skill: any
+      feature: any
+      featureV2: typeof TraitModel
     }
     ChatMessage: {}
   }
@@ -115,12 +134,20 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.only-gms-open-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
     'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
+
+    // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.automatic-encumbrance': boolean
     'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
-    'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
     'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
+    'gurps.maneuver-updates-move': boolean
+    'gurps.automatic-onethird': boolean
+    'gurps.show-chat-reeling-tired': boolean
+    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
+    'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
+    'gurps.use-quintessence': boolean
     'gurps.use-tagged-modifiers': {
       autoAdd: boolean
       checkConditionals: boolean
@@ -154,12 +181,6 @@ declare module 'fvtt-types/configuration' {
       nonCombatOnlyTag: string
       combatTempTag: string
     }
-    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
-    'gurps.maneuver-detail': 'General' | 'NoFeint' | 'Full'
-    'gurps.maneuver-updates-move': boolean
-    'gurps.use-quintessence': boolean
-    'gurps.automatic-onethird': boolean
-    'gurps.show-chat-reeling-tired': boolean
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>

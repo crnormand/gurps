@@ -47,6 +47,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
+  // getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
+  //   return this.items.reduce((acc: any[], item) => {
+  //     // @ts-expect-error
+  //     acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
+  //     return acc
+  //   }, [])
+  // }
+
   /**
    * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
    * the existing one will be toggled (off).
@@ -174,6 +182,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
+    ;(this.system as Actor.SystemOfType<'characterV2'>).prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */
