@@ -16,6 +16,8 @@ class GcsElement<
   Schema extends fields.DataSchema = fields.DataSchema,
   Parent extends DataModel.Any | null = DataModel.Any | null,
 > extends DataModel<Schema, Parent> {
+  container: null | GcsElement<any> = null
+
   static fromImportData<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
     parent: null | GcsElement = null
@@ -89,9 +91,25 @@ class GcsElement<
 
   /* ---------------------------------------- */
 
+  /**
+   * Is this the root element?
+   */
+  get isRoot(): boolean {
+    return false
+  }
+
+  /* ---------------------------------------- */
+
   /** @abstract */
   get isContainer(): boolean {
     return false
+  }
+
+  /* ---------------------------------------- */
+
+  /** @abstract */
+  get isEnabled(): boolean {
+    return true
   }
 }
 

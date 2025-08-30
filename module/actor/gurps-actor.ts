@@ -1,8 +1,13 @@
+import DataModel = foundry.abstract.DataModel
+
 import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import { HitLocationEntry } from './actor-components.js'
+import { recurselist } from '../../lib/utilities.js'
+import { TraitV1 } from './data/types.js'
+import { TraitModel } from 'module/item/data/trait.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -192,7 +197,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async internalUpdate(data: Actor.UpdateData | undefined, operation?: Actor.Database.UpdateOperation) {
     console.trace('internalUpdate', data)
     // @ts-expect-error
-    return this.update(data, operation)
+    return this.update(data, { ...operation, render: false })
   }
 
   /* ---------------------------------------- */
@@ -461,6 +466,64 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   /* ---------------------------------------- */
+
+  async _sanityCheckItemSettings(actorComp: AnyObject): Promise<boolean> {
+    let canEdit = false
+    let message = 'GURPS.settingNoEquipAllowedHint'
+    if (!!actorComp.itemid) canEdit = true
+
+    if (!canEdit) {
+      const phrases = game.i18n!.localize(message)
+      const body = phrases
+        .split('.')
+        .filter(p => !!p)
+        .map(p => `${p.trim()}.`)
+        .join('</p><p>')
+
+      await foundry.applications.api.DialogV2.prompt({
+        window: { title: game.i18n!.localize('GURPS.settingNoEditAllowed') },
+        content: `<p>${body}</p>`,
+        ok: {
+          label: 'GURPS.ok',
+          icon: 'fa-solid fa-check',
+        },
+      })
+    }
+    return canEdit
+  }
+
+  /**
+   * Finds the actor component key corresponding to the given ID.
+   *
+   * @param {string} key - The key to search for in the trait objects.
+   * @param {string | number} id - The ID to match within the trait objects.
+   * @param {string} sysKey - The system.<key> to use for the search.
+   * @param {boolean} include - Whether to check equal or include in the search
+   * @return {string | undefined} The trait key if found, otherwise undefined.
+   */
+  _findSysKeyForId(key: string, id: any, sysKey: string, include = false): string | undefined {
+    let traitKey: string | undefined = undefined
+    const data = this.system as Record<string, any>
+    const list = data[sysKey] as any
+    if (list) {
+      recurselist(list, (e: any, k: string, _d: number) => {
+        const exists = include ? !!e?.[key]?.includes?.(id) : e?.[key] === id
+        if (exists) traitKey = `system.${sysKey}.` + k
+      })
+    }
+    return traitKey
+  }
+
+  async _updateItemFromForm(item: Item) {
+    // I think this can be ignored because the underlying Item has already been updated, and the legacy ads list
+    // is always derived from the Item data.
+  }
+
+  _removeItemAdditions(item: Item) {
+    // Ignore this? We are deleting the item, and any derived data should be removed automatically.
+  }
+
+  /* ---------------------------------------- */
   /*  Actor Operations                        */
   /* ---------------------------------------- */
   handleDamageDrop(damageData: any) {
@@ -475,9 +538,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   override async update(data: Actor.UpdateData, context: Actor.Database.UpdateOperation = {}): Promise<this> {
-    this.#translateLegacyHitlocationData(data)
-    this.#translateLegacyEncumbranceData(data)
-    this.#translateHitLocationsV2(data)
+    await this.#translateLegacyHitlocationData(data)
+    await this.#translateLegacyEncumbranceData(data)
+    await this.#translateHitLocationsV2(data)
+    await this.#translateAdsData(data)
 
     // Call the parent class's update method
     await super.update(data, context)
@@ -540,7 +604,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
 
-    // changes is an array of keys.
     for (const key of changes) {
       const value = data[key as keyof typeof data]
       const index = parseInt(key.replace(regex, '$1'))
@@ -554,6 +617,72 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // @ts-expect-error
     data['system.hitlocationsV2'] = array
+  }
+
+  /*
+   * Translate legacy Advantages/Disadvantages data from "system.ads" to Item updates.
+   *
+   * We are either deleting the entire array or inserting the entire array. Updates are handled directly in the Item.
+   */
+  async #translateAdsData(data: Actor.UpdateData) {
+    const deleteKey = Object.keys(data).includes('system.-=ads')
+    const insertKey = Object.keys(data).includes('system.ads')
+    if (!deleteKey && !insertKey) return
+
+    // Handle delete of whole array:
+    Object.keys(data)
+      .filter(key => key === 'system.-=ads')
+      .forEach(key => {
+        // Delete all embedded Items of type "featureV2".
+        const features = this.items.filter(item => item.isOfType('featureV2'))
+        for (const feature of features) {
+          feature.delete()
+        }
+        delete data[key as keyof typeof data]
+      })
+
+    // Handle insertion of the whole array:
+    const regex = /^system\.ads$/
+    const changes =
+      Object.keys(data)
+        .filter(key => key.match(regex))
+        .sort() ?? []
+
+    const array = this.items.filter(item => item.isOfType('featureV2'))
+    if (array.length > 0) console.warn(`Existing array elements unexpected:`, { array, changes })
+
+    for (const key of changes) {
+      // @ts-expect-error
+      const record: Record<string, TraitV1> = data[key as keyof typeof data]
+      for (const value of Object.values(record)) {
+        const name = value.originalName
+        const system: DataModel.CreateData<DataModel.SchemaOf<TraitModel>> = {
+          isContainer: value.contains && Object.keys(value.contains).length > 0,
+          itemModifiers: value.itemModifiers ?? [],
+          // actions: getActions...
+          reactions: value.reactions,
+          conditionalmods: value.conditionalModifiers,
+          fea: value.fea ?? {},
+        }
+
+        const item: Item.CreateData = {
+          _id: foundry.utils.randomID(),
+          type: 'featureV2',
+          name,
+          system: {
+            ...system,
+          },
+        }
+
+        // Create the item and store it on the character.
+        const newItem = await Item.create(item, { parent: this })
+        console.log(`Created new featureV2 Item for legacy ad:`, { item, newItem })
+      }
+      delete data[key as keyof typeof data]
+    }
+
+    // @ts-expect-error
+    data['system.ads'] = array
   }
 }
 

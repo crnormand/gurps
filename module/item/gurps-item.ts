@@ -1,4 +1,5 @@
 import { BaseItemModel } from './data/base.js'
+import { TraitComponent, TraitModel } from './data/trait.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
@@ -192,6 +193,38 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   async toggleEquipped(equipped: boolean | null = null): Promise<this | undefined> {
     return this.toggleEnabled(equipped)
+  }
+
+  /* ---------------------------------------- */
+  /* Legacy Functionality                     */
+  /* ---------------------------------------- */
+  get addToQuickRoll(): boolean {
+    if (!(this.system instanceof TraitModel)) return false
+    return (this.system as TraitModel).addToQuickRoll
+  }
+
+  get fea(): TraitComponent | null {
+    if (!(this.system instanceof TraitModel)) return null
+    return (this.system as TraitModel).fea
+  }
+
+  /**
+   * Find Actor Component Key for this Item Type.
+   * NOTE: May be removed after full migration; the output isn't really used for anything real.
+   * @returns {string} actor.system.<key>
+   */
+  get actorComponentKey() {
+    const keys = {
+      equipment: 'equipment',
+      featureV2: 'ads',
+      skill: 'skills',
+      spell: 'spells',
+      meleeAtk: 'melee',
+      rangedAtk: 'ranged',
+    } // @ts-expect-error
+    const sysKey = keys[this.type]
+    if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
+    return sysKey
   }
 }
 

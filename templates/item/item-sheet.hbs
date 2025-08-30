@@ -4,7 +4,7 @@
       <div><i class='fa-solid fa-screwdriver-wrench itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.equipment'}}</span></div>
     {{/if}}
-    {{#if (eq itemType 'feature')}}
+    {{#if (or (eq itemType 'feature') (eq itemType 'featureV2'))}}
       <div><i class='fas fa-theater-masks itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
       </div>
@@ -61,7 +61,7 @@
       {{#if (eq itemType 'equipment')}}
         {{~>items}}
       {{/if}}
-      {{#if (eq itemType 'feature')}}
+      {{#if (or (eq itemType 'feature') (eq itemType 'featureV2'))}}
         {{>features}}
       {{/if}}
       {{#if (eq itemType 'skill')}}

@@ -1124,16 +1124,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    if (!this.isOfType('character', 'enemy')) {
-      console.warn('Actor is not a character or enemy.')
-      return {
-        name: thing,
-        uuid: null,
-        itemId: null,
-        fromItem: null,
-        pageRef: null,
-      }
-    }
+    // if (!this.isOfType('character', 'enemy')) {
+    //   console.warn('Actor is not a character or enemy.')
+    //   return {
+    //     name: thing,
+    //     uuid: null,
+    //     itemId: null,
+    //     fromItem: null,
+    //     pageRef: null,
+    //   }
+    // }
 
     const originType: string | null = action ? action.type : null
     // let name: string, mode: string | undefined

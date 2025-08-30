@@ -17,7 +17,7 @@ interface TraitV1 {
     name: string
   }
   itemModifiers: string
-  itemId: string
+  itemid: string
   level: number | null
   modifierTags: string
   name: string
@@ -28,11 +28,15 @@ interface TraitV1 {
   points: number
   save: boolean
   uuid: string
+  fea: {}
+  actions: []
+  reactions: []
+  conditionalModifiers: []
 }
 
 function fromTraitV2(traitV2: Item.OfType<'featureV2'>): TraitV1 {
   const model = traitV2.system
-  return {
+  const result = {
     addToQuickRoll: model.addToQuickRoll,
     contains: {},
     cr: model.fea.cr,
@@ -43,7 +47,7 @@ function fromTraitV2(traitV2: Item.OfType<'featureV2'>): TraitV1 {
       name: traitV2.name,
     },
     itemModifiers: model.itemModifiers,
-    itemId: traitV2.id ?? '',
+    itemid: traitV2.id ?? '',
     level: model.fea.level,
     modifierTags: '',
     name: traitV2.name,
@@ -54,7 +58,26 @@ function fromTraitV2(traitV2: Item.OfType<'featureV2'>): TraitV1 {
     points: model.fea.points,
     save: false,
     uuid: traitV2.uuid ?? '',
+    fea: {
+      cr: model.fea.cr,
+      level: model.fea.level,
+      userdesc: model.fea.userdesc,
+      points: model.fea.points,
+      notes: model.fea.notes,
+      pageref: model.fea.pageref,
+    },
+    actions: [],
+    reactions: model.reactions,
+    conditionalModifiers: model.conditionalmods,
   }
+
+  if (model.fea.cr)
+    result.notes = `[${game.i18n?.localize('GURPS.CR' + model.fea.cr)}: ${result.name}]<br>` + result.notes
+
+  if (result.level) result.name = `${result.name} ${result.level}`
+
+  // @ts-expect-error
+  return result
 }
 
 export type { CharacterSchema } from './character.js'
