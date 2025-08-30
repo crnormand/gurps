@@ -47,6 +47,34 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
   }
 
+  /**
+   * Obtain the embedded collection of a given pseudo-document type.
+   */
+  // getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
+  //   const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
+  //   if (!collectionPath) {
+  //     throw new Error(
+  //       `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
+  //     )
+  //   }
+  //   return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
+  // }
+
+  /* ---------------------------------------- */
+
+  // getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
+  // getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
+  // getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
+  // getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
+  // getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
+  //   return this.items.reduce((acc: any[], item) => {
+  //     // @ts-expect-error: Not sure why this isn't resolving correctly.
+  //     acc.push(...item.getItemAttacks(options))
+  //     return acc
+  //   }, [])
+  // }
+
+  /* ---------------------------------------- */
   /* ---------------------------------------- */
 
   // getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
@@ -68,6 +96,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const status = CONFIG.statusEffects.find(effect => effect.id === statusId)
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActor#toggleStatusEffect`)
 
+    // TODO See if isPostureEffect can be moved to status.
     if (this.isPostureEffect(status)) {
       // If the status effect is a posture, remove all other postures first
       let postureEffects = this.getAllActivePostureEffects().filter(e => e.statuses.find(s => s !== statusId))

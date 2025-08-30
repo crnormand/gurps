@@ -12,23 +12,30 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   /* ---------------------------------------- */
 
   get isContained(): boolean {
-    if (this.system instanceof BaseItemModel) {
-      return (this.system as BaseItemModel).isContained
-    }
-    return false
+    // if (this.system instanceof BaseItemModel) {
+    return (this.system as BaseItemModel).isContained
+    // }
+    // return false
+  }
+
+  get containedBy(): string | null {
+    // if (this.system instanceof BaseItemModel) {
+    return this.fea?.containedBy ?? null
+    // }
+    // return null
   }
 
   /* ---------------------------------------- */
 
   get contents(): Item.Implementation[] {
-    if (!(this.system instanceof BaseItemModel)) return []
+    // if (!(this.system instanceof BaseItemModel)) return []
     return (this.system as BaseItemModel).contents
   }
 
   /* ---------------------------------------- */
 
   get allContents(): Item.Implementation[] {
-    if (!(this.system instanceof BaseItemModel)) return []
+    // if (!(this.system instanceof BaseItemModel)) return []
     return (this.system as BaseItemModel).allContents
   }
 
@@ -199,12 +206,12 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   /* Legacy Functionality                     */
   /* ---------------------------------------- */
   get addToQuickRoll(): boolean {
-    if (!(this.system instanceof TraitModel)) return false
+    // if (!(this.system instanceof TraitModel)) return false
     return (this.system as TraitModel).addToQuickRoll
   }
 
   get fea(): TraitComponent | null {
-    if (!(this.system instanceof TraitModel)) return null
+    // if (!(this.system instanceof TraitModel)) return null
     return (this.system as TraitModel).fea
   }
 

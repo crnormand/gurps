@@ -195,7 +195,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       item.system.applyBonuses(this._globalBonuses)
     }
 
-    this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
+    this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2')).filter(item => item.containedBy === null)
+
+    // Make this recursive so the fully hierarchy of children are populated.
+    // const populateChildren = (parent: Item.Implementation) => {
+    //   const containedItems = this.parent.items.filter(
+    //     child => child.isOfType('featureV2') && child.containedBy === parent.id
+    //   )
+    //   parent.children = containedItems
+    //   containedItems.forEach(populateChildren)
+    // }
+    // this.adsV2.forEach(item => populateChildren(item))
+
     // this.skills = this.parent.items.filter(item => item.isOfType('skill'))
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
     // const equipment = this.parent.items.filter(item => item.isOfType('equipment'))

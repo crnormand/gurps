@@ -29,9 +29,9 @@ declare global {
       [key: string]: unknown
     }
   } & any
-}
 
-/* ---------------------------------------- */
+  /* ---------------------------------------- */
+}
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
@@ -58,15 +58,10 @@ declare module 'fvtt-types/configuration' {
       gurps: {
         name: string
         alt: string
-        effect: {
-          type: string
-        }
-      }
-    }
-    StatusEffect: {
-      gurps: {
-        name: string
-        alt: string
+        duration: { delaySeconds: number | null }
+        endCondition: string
+        terminateActions: { type: string; args: string }[]
+        statusId: string
         effect: {
           type: string
         }

@@ -22,6 +22,8 @@ const itemComponentSchema = () => {
       required: true,
       nullable: false,
     }),
+
+    containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }
 

@@ -362,7 +362,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importTrait(trait: GcsTrait): Item.CreateData {
+  #importTrait(trait: GcsTrait, containedBy: string | undefined): Item.CreateData {
     const type = 'featureV2'
     const _id = foundry.utils.randomID()
     // TODO: localize
@@ -371,9 +371,9 @@ class GcsImporter {
     const system: DataModel.CreateData<TraitSchema> = this.#importItem(trait)
     const component: DataModel.CreateData<TraitComponentSchema> = this.#importTraitComponent(trait)
 
-    const children = trait.childItems?.map((child: GcsTrait) => this.#importTrait(child)) ?? []
+    const children = trait.childItems?.map((child: GcsTrait) => this.#importTrait(child, _id)) ?? []
     component.contains = children.map((c: Item.CreateData) => c._id as string)
-
+    component.containedBy = containedBy ?? null
     const item: Item.CreateData = {
       _id,
       type,
