@@ -1,13 +1,10 @@
-import DataModel = foundry.abstract.DataModel
-
 import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import { HitLocationEntry } from './actor-components.js'
 import { recurselist } from '../../lib/utilities.js'
-import { TraitV1 } from './data/types.js'
-import { TraitModel } from 'module/item/data/trait.js'
+import { fromTraitV1, TraitV1 } from './data/types.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -655,28 +652,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       // @ts-expect-error
       const record: Record<string, TraitV1> = data[key as keyof typeof data]
       for (const value of Object.values(record)) {
-        const name = value.originalName
-        const system: DataModel.CreateData<DataModel.SchemaOf<TraitModel>> = {
-          isContainer: value.contains && Object.keys(value.contains).length > 0,
-          itemModifiers: value.itemModifiers ?? [],
-          // actions: getActions...
-          reactions: value.reactions,
-          conditionalmods: value.conditionalModifiers,
-          fea: value.fea ?? {},
-        }
-
-        const item: Item.CreateData = {
-          _id: foundry.utils.randomID(),
-          type: 'featureV2',
-          name,
-          system: {
-            ...system,
-          },
-        }
-
-        // Create the item and store it on the character.
-        const newItem = await Item.create(item, { parent: this })
-        console.log(`Created new featureV2 Item for legacy ad:`, { item, newItem })
+        await fromTraitV1<SubType>(value, this)
       }
       delete data[key as keyof typeof data]
     }

@@ -6,6 +6,10 @@
  *   import type { CharacterSchema } from 'module/actor/data/character-schema.js'
  */
 
+import { TraitModel } from 'module/item/data/trait.js'
+import DataModel = foundry.abstract.DataModel
+import { GurpsActorV2 } from '../gurps-actor.js'
+
 interface TraitV1 {
   addToQuickRoll: boolean
   contains: {}
@@ -80,6 +84,31 @@ function fromTraitV2(traitV2: Item.OfType<'featureV2'>): TraitV1 {
   return result
 }
 
+async function fromTraitV1<SubType extends Actor.SubType>(value: TraitV1, actor: GurpsActorV2<SubType>) {
+  const name = value.originalName
+  const system: DataModel.CreateData<DataModel.SchemaOf<TraitModel>> = {
+    isContainer: value.contains && Object.keys(value.contains).length > 0,
+    itemModifiers: value.itemModifiers ?? [],
+    // actions: getActions...
+    reactions: value.reactions,
+    conditionalmods: value.conditionalModifiers,
+    fea: value.fea ?? {},
+  }
+
+  const item: Item.CreateData = {
+    _id: foundry.utils.randomID(),
+    type: 'featureV2',
+    name,
+    system: {
+      ...system,
+    },
+  }
+
+  // Create the item and store it on the character.
+  const newItem = await Item.create(item, { parent: actor })
+  console.log(`Created new featureV2 Item for legacy ad:`, { item, newItem })
+}
+
 export type { CharacterSchema } from './character.js'
 export type { TraitV1 }
-export { fromTraitV2 }
+export { fromTraitV2, fromTraitV1 }
