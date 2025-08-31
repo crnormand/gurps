@@ -11,6 +11,7 @@ class TraitV1 {
       'collapsed',
       'contains',
       'cr',
+      'disabled',
       'fromItem',
       'hasContains',
       'hasCollapsed',
@@ -74,6 +75,18 @@ class TraitV1 {
 
   get cr(): number | null {
     return this.traitV2.fea!.cr
+  }
+
+  private get parent(): TraitV1 | null {
+    const parentTraitV2 = this.traitV2.actor?.items.find(item => item.id === this.traitV2.containedBy)
+    if (!parentTraitV2) return null
+    return new TraitV1(parentTraitV2 as GurpsItemV2<'featureV2'>)
+  }
+
+  get disabled(): boolean {
+    if (this.traitV2.system.disabled) return true
+    const parentDisabled = this.parent ? this.parent.disabled : false
+    return parentDisabled
   }
 
   get fromItem(): string | null {

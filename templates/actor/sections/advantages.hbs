@@ -35,7 +35,7 @@
             {{#if (showItemImage this)}}
               <div><img class="gga-item-image-thumb traits" src='{{getItemImage this}}' /></div>
             {{/if}}
-            <div class='desc dblclkedit indent{{indent}}' data-key='system.ads.{{@key}}'>
+            <div class='desc dblclkedit indent{{indent}} {{#if this.disabled}}disabled{{/if}}' data-key='system.ads.{{@key}}'>
               <div class='gga-desc-text'>
                 <div>
                   {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}

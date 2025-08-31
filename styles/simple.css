@@ -719,6 +719,11 @@
   width: 100%;
 }
 
+.desc.disabled {
+  color: gray;
+  text-decoration: line-through;
+}
+
 .npc-sheet .desc {
   max-height: 9em;
 }

@@ -244,6 +244,7 @@ class GcsImporter {
     system.isContainer = item.isContainer
     system.itemModifiers = ''
     system.collapsed = false
+    system.disabled = item.disabled
 
     // system.actions = item.weaponItems
     //   ?.map((action: GcsWeapon) => this.#importWeapon(action, item))
