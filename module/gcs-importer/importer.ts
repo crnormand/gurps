@@ -243,6 +243,7 @@ class GcsImporter {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {}
     system.isContainer = item.isContainer
     system.itemModifiers = ''
+    system.collapsed = false
 
     // system.actions = item.weaponItems
     //   ?.map((action: GcsWeapon) => this.#importWeapon(action, item))
@@ -362,7 +363,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importTrait(trait: GcsTrait, containedBy: string | undefined): Item.CreateData {
+  #importTrait(trait: GcsTrait, containedBy?: string | undefined): Item.CreateData {
     const type = 'featureV2'
     const _id = foundry.utils.randomID()
     // TODO: localize

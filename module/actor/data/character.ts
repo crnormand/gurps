@@ -26,8 +26,8 @@ import {
 
 // TODO Fix this later; only index.js should be referenced outside of the module.
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
-import { zeroFill } from '../../../lib/utilities.js'
-import { fromTraitV2, TraitV1 } from './types.js'
+import { arrayToObject, zeroFill } from '../../../lib/utilities.js'
+import { TraitV1 } from '../../item/legacy/trait-adapter.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -122,12 +122,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   get ads() {
-    const ads: Record<string, TraitV1> = {}
-    this.adsV2.forEach((item: Item.OfType<'featureV2'>, index: number) => {
-      ads[zeroFill(index, 5)] = fromTraitV2(item)
-    })
-
-    return ads
+    return arrayToObject(
+      this.adsV2.map(item => new TraitV1(item)),
+      5
+    )
   }
 
   /* ---------------------------------------- */

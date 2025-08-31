@@ -4,7 +4,7 @@ import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import { HitLocationEntry } from './actor-components.js'
 import { recurselist } from '../../lib/utilities.js'
-import { fromTraitV1, TraitV1 } from './data/types.js'
+import { TraitV1 } from '../item/legacy/trait-adapter.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -549,6 +549,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // Ignore this? We are deleting the item, and any derived data should be removed automatically.
   }
 
+  async toggleExpand(path: string, expandOnly: boolean = false) {
+    let obj = foundry.utils.getProperty(this, path)
+    if (obj instanceof TraitV1) obj.traitV2.toggleCollapsed(expandOnly)
+  }
+
   /* ---------------------------------------- */
   /*  Actor Operations                        */
   /* ---------------------------------------- */
@@ -681,7 +686,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       // @ts-expect-error
       const record: Record<string, TraitV1> = data[key as keyof typeof data]
       for (const value of Object.values(record)) {
-        await fromTraitV1<SubType>(value, this)
+        const trait = value.traitV2
+
+        // Create the item and store it on the character.
+        const newItem = await Item.create(trait, { parent: this })
+        console.log(`Created new featureV2 Item for legacy ad:`, { trait, newItem })
       }
       delete data[key as keyof typeof data]
     }

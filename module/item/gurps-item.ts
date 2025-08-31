@@ -233,6 +233,12 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
     return sysKey
   }
+
+  toggleCollapsed(expandOnly: boolean = false): void {
+    const newValue = !(this.system as BaseItemModel).collapsed
+    if (expandOnly && !newValue) return
+    this.update({ 'system.collapsed': newValue } as Item.UpdateData)
+  }
 }
 
 export { GurpsItemV2 }

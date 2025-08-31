@@ -230,6 +230,7 @@ const baseItemModelSchema = () => {
   return {
     // Change from previous schema. Boolean value to indicate if item is container
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    collapsed: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
     // actions: new CollectionField(BaseAction),
