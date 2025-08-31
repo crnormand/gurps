@@ -9,8 +9,110 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
   static override defineSchema(): GcsCharacterModel {
     return characterData()
   }
+
+  /* ---------------------------------------- */
+
+  protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
+    switch (name) {
+      case 'body_type':
+        return GcsBody.importSchema(data, GcsBody.defineSchema())
+      case 'attributes':
+        return data?.map((attributeData: any) => GcsAttribute.importSchema(attributeData))
+      case 'advantages':
+      case 'traits':
+        return data?.map((traitData: any) => GcsTrait.importSchema(traitData))
+      // case 'skills':
+      //   return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
+      // case 'spells':
+      //   return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
+      // case 'equipment':
+      // case 'other_equipment':
+      //   return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
+      // case 'notes':
+      //   return data?.map((noteData: any) => GcsNote.importSchema(noteData))
+      default:
+        return super._importField(data, field, name)
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  override get isRoot(): boolean {
+    return true
+  }
+
+  /* ---------------------------------------- */
+
+  get allTraits(): GcsTrait[] {
+    const traits = this.traits ?? []
+    for (const trait of traits) {
+      traits.push(...trait.allChildItems)
+    }
+    return traits
+  }
+
+  /* ---------------------------------------- */
+
+  // get allSkills(): GcsSkill[] {
+  //   const skills = this.skills ?? []
+  //   for (const skill of skills) {
+  //     skills.push(...skill.allChildItems)
+  //   }
+  //   return skills
+  // }
+
+  /* ---------------------------------------- */
+
+  // get allSpells(): GcsSpell[] {
+  //   const spells = this.spells ?? []
+  //   for (const spell of spells) {
+  //     spells.push(...spell.allChildItems)
+  //   }
+  //   return spells
+  // }
+
+  /* ---------------------------------------- */
+
+  // get allCarriedEquipment(): GcsEquipment[] {
+  //   const equipment = this.equipment ?? []
+  //   for (const item of equipment) {
+  //     equipment.push(...item.allChildItems)
+  //   }
+  //   return equipment
+  // }
+
+  /* ---------------------------------------- */
+
+  // get allOtherEquipment(): GcsEquipment[] {
+  //   const equipment = this.other_equipment ?? []
+  //   for (const item of equipment) {
+  //     equipment.push(...item.allChildItems)
+  //   }
+  //   return equipment
+  // }
+
+  /* ---------------------------------------- */
+
+  // get allNotes(): GcsNote[] {
+  //   const notes = this.notes ?? []
+  //   for (const note of notes) {
+  //     notes.push(...note.allChildItems)
+  //   }
+  //   return notes
+  // }
+
+  /* ---------------------------------------- */
+
+  // get allEquippedWeapons(): GcsWeapon[] {
+  //   const weapons: GcsWeapon[] = []
+  //   ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(e => {
+  //     if (!e.isEnabled) weapons.push(...e.weaponItems)
+  //   })
+  //   return weapons
+  // }
 }
 
+/* ---------------------------------------- */
 const characterData = () => {
   return {
     created_date: new fields.StringField({ required: true, nullable: false }),
@@ -69,4 +171,6 @@ const characterData = () => {
 
 type GcsCharacterModel = ReturnType<typeof characterData>
 
-export { GcsCharacter }
+/* ---------------------------------------- */
+
+export { GcsCharacter, characterData, type GcsCharacterModel }

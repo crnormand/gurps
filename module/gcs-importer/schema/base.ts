@@ -8,6 +8,7 @@ const sourcedIdSchema = () => {
     source: new fields.StringField({ required: true, nullable: true }),
   }
 }
+
 type SourcedIdSchema = ReturnType<typeof sourcedIdSchema>
 
 /* ---------------------------------------- */
@@ -57,16 +58,17 @@ class GcsElement<
       case fields.BooleanField:
       case fields.ObjectField:
         return data ?? field.getInitialValue()
-      case fields.ArrayField:
+      case fields.ArrayField: {
         return (
           data?.map(
             (item: any) => item ?? (field as fields.ArrayField<fields.DataField.Any>).element.getInitialValue()
           ) ?? []
         )
-
+      }
       case fields.EmbeddedDataField:
-      case fields.SchemaField:
+      case fields.SchemaField: {
         return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
+      }
     }
   }
 
@@ -160,6 +162,7 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
         return super._importField(data, field, name)
     }
   }
+
   /* ---------------------------------------- */
 
   get childItems() {
@@ -194,6 +197,9 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
       this.metadata.weaponClass?.fromImportData(weaponData, this)
     )
   }
+
+  /* ---------------------------------------- */
 }
 
+/* ---------------------------------------- */
 export { GcsElement, GcsItem, sourcedIdSchema, type SourcedIdSchema }

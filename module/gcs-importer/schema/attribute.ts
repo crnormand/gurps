@@ -31,4 +31,4 @@ type AttributeData = ReturnType<typeof attributeData>
 
 /* ---------------------------------------- */
 
-export { GcsAttribute, type AttributeData }
+export { GcsAttribute, attributeData, type AttributeData }

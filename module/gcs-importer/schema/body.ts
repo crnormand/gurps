@@ -5,6 +5,7 @@ class GcsHitLocation extends GcsElement<GcsHitLocationData> {
   static override defineSchema(): GcsHitLocationData {
     return hitLocationData()
   }
+
   /* ---------------------------------------- */
   protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
     if (name === 'sub_table') {
@@ -50,7 +51,7 @@ class GcsBody extends GcsElement<GcsBodyData> {
   static override defineSchema(): GcsBodyData {
     return bodyData()
   }
-  
+
   /* ---------------------------------------- */
 
   protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
@@ -70,7 +71,6 @@ const bodyData = () => {
     name: new fields.StringField({ required: true, nullable: false }),
     roll: new fields.StringField({ required: true, nullable: false }),
     locations: new fields.ArrayField(new fields.EmbeddedDataField(GcsHitLocation), { required: true, nullable: false }),
-    // Add more fields as needed
   }
 }
 
@@ -78,4 +78,4 @@ type GcsBodyData = ReturnType<typeof bodyData>
 
 /* ---------------------------------------- */
 
-export { GcsBody }
+export { GcsBody, bodyData, type GcsBodyData }
