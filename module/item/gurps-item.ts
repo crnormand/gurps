@@ -1,5 +1,7 @@
+import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { BaseItemModel } from './data/base.js'
 import { TraitComponent, TraitModel } from './data/trait.js'
+import { RangedAttackModel } from 'module/action/ranged-attack.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
@@ -153,30 +155,31 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
    * NOTE: change from previous model: Now returns the full item rather than just the component
    * in preparation for deprecating Item Components in the future
    */
-  // getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
-  // getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
-  // getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
-  // getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
-  // getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
-  //   if (!(this.system instanceof BaseItemModel)) return []
+  getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
+  getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
+  getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
+    // if (!(this.system instanceof BaseItemModel)) return []
 
-  //   const actions = (this.system as BaseItemModel).actions
+    let actions = Object.values((this.system as BaseItemModel).actions)
+    actions = actions.filter(it => this.actor!.items.get(it.container)!.disabled !== true)
 
-  //   switch (options.attackType) {
-  //     case 'melee':
-  //       return actions.filter(item => item.type === 'meleeAttack') as MeleeAttackModel[]
-  //     case 'ranged':
-  //       return actions.filter(item => item.type === 'rangedAttack') as RangedAttackModel[]
-  //     case 'both':
-  //       return actions.filter(item => ['meleeAttack', 'rangedAttack'].includes(item.type)) as (
-  //         | MeleeAttackModel
-  //         | RangedAttackModel
-  //       )[]
-  //     default:
-  //       console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
-  //       return []
-  //   }
-  // }
+    switch (options.attackType) {
+      case 'melee':
+        return actions.filter(item => item.type === 'meleeAttack') as MeleeAttackModel[]
+      case 'ranged':
+        return actions.filter(item => item.type === 'rangedAttack') as RangedAttackModel[]
+      case 'both':
+        return actions.filter(item => ['meleeAttack', 'rangedAttack'].includes(item.type)) as (
+          | MeleeAttackModel
+          | RangedAttackModel
+        )[]
+      default:
+        console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
+        return []
+    }
+  }
 
   /* ---------------------------------------- */
 
@@ -235,9 +238,16 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   }
 
   toggleCollapsed(expandOnly: boolean = false): void {
-    const newValue = !(this.system as BaseItemModel).collapsed
+    const newValue = !(this.system as BaseItemModel).open
     if (expandOnly && !newValue) return
-    this.update({ 'system.collapsed': newValue } as Item.UpdateData)
+    this.update({ 'system.open': newValue } as Item.UpdateData)
+  }
+
+  get disabled(): boolean {
+    const disabled = (this.system as BaseItemModel).disabled === true
+    // If this item is contained by a Trait, it is disabled if the Trait is disabled
+    if (!disabled && this.fea?.containedBy) return this.parent?.items.get(this.fea?.containedBy)?.disabled === true
+    return disabled
   }
 }
 

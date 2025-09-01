@@ -1,12 +1,13 @@
 import fields = foundry.data.fields
 
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import { GcsWeapon } from './weapon.js'
 
 class GcsTrait extends GcsItem<TraitModel> {
   static override metadata = {
     childClass: GcsTrait,
     modifierClass: null,
-    weaponClass: null,
+    weaponClass: GcsWeapon,
   }
 
   /* ---------------------------------------- */
@@ -145,6 +146,8 @@ const traitData = () => {
     // END: TraitNonContainerOnlyEditData
 
     // START: TraitNonContainerOnlySyncData
+    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
+    // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     round_down: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitNonContainerOnlySyncData

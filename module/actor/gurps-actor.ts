@@ -3,8 +3,10 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import { HitLocationEntry } from './actor-components.js'
-import { recurselist } from '../../lib/utilities.js'
+import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
+import { recurselist } from '../../lib/utilities.js'
+import { CharacterModel } from './data/character.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -62,17 +64,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  // getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
-  // getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
-  // getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
-  // getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
-  // getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
-  //   return this.items.reduce((acc: any[], item) => {
-  //     // @ts-expect-error: Not sure why this isn't resolving correctly.
-  //     acc.push(...item.getItemAttacks(options))
-  //     return acc
-  //   }, [])
-  // }
+  getItemAttacks(options: { attackType: 'melee' }): MeleeAttackModel[]
+  getItemAttacks(options: { attackType: 'ranged' }): RangedAttackModel[]
+  getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
+  getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
+    return this.items.reduce((acc: any[], item) => {
+      // @ts-expect-error: Not sure why this isn't resolving correctly.
+      acc.push(...item.getItemAttacks(options))
+      return acc
+    }, [])
+  }
 
   /* ---------------------------------------- */
   /* ---------------------------------------- */
@@ -165,13 +167,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get hitLocationsWithDR(): HitLocationEntry[] {
-    return (this.system as Actor.SystemOfType<'characterV2'>).hitLocationsWithDR
+    return (this.system as CharacterModel).hitLocationsWithDR
   }
 
   /* ---------------------------------------- */
 
   get _hitLocationRolls() {
-    return (this.system as Actor.SystemOfType<'characterV2'>)._hitLocationRolls
+    return (this.system as CharacterModel)._hitLocationRolls
   }
 
   /* ---------------------------------------- */
@@ -186,7 +188,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * array.
    */
   override get temporaryEffects(): ActiveEffect.Implementation[] {
-    return (this.system as Actor.SystemOfType<'characterV2'>).getTemporaryEffects(super.temporaryEffects)
+    return (this.system as CharacterModel).getTemporaryEffects(super.temporaryEffects)
   }
 
   /* ---------------------------------------- */
@@ -213,7 +215,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
-    ;(this.system as Actor.SystemOfType<'characterV2'>).prepareEmbeddedDocuments()
+    ;(this.system as CharacterModel).prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */
@@ -233,7 +235,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     optionalArgs: { obj?: AnyObject },
     attack?: AnyObject
   ): Promise<boolean> {
-    return (this.system as Actor.SystemOfType<'characterV2'>).addTaggedRollModifiers(chatThing, optionalArgs, attack)
+    return (this.system as CharacterModel).addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
   /* ---------------------------------------- */
@@ -247,13 +249,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    return (this.system as Actor.SystemOfType<'characterV2'>).findUsingAction(action, chatthing, formula, thing)
+    return (this.system as CharacterModel).findUsingAction(action, chatthing, formula, thing)
   }
 
   /* ---------------------------------------- */
 
   async changeDR(formula: string, locations: string[]) {
-    ;(this.system as Actor.SystemOfType<'characterV2'>).changeDR(formula, locations)
+    ;(this.system as CharacterModel).changeDR(formula, locations)
   }
 
   /**
@@ -336,7 +338,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // result and set canRoll to false depending on the actions settings
     const checkMaxActionsSetting =
       game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS) ?? 'Warn'
-    const maxActions = (this.system as Actor.SystemOfType<'characterV2'>).conditions.actions.maxActions ?? 1
+    const maxActions = (this.system as CharacterModel).conditions.actions.maxActions ?? 1
     const extraActions = actions.extraActions ?? 0
     const canConsumeAction = this.canConsumeAction(action, chatThing, actorComponent)
 
@@ -375,7 +377,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     // Same as above, but for maximum blocks per round
-    const maxBlocks = (this.system as Actor.SystemOfType<'characterV2'>).conditions.actions.maxBlocks ?? 1
+    const maxBlocks = (this.system as CharacterModel).conditions.actions.maxBlocks ?? 1
     if (
       isDefense &&
       canConsumeAction &&
@@ -466,17 +468,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async replacePosture(postureId: string) {
-    const id =
-      postureId === GURPS.StatusEffectStanding
-        ? (this.system as Actor.SystemOfType<'characterV2'>).conditions.posture
-        : postureId
+    const id = postureId === GURPS.StatusEffectStanding ? (this.system as CharacterModel).conditions.posture : postureId
     this.toggleStatusEffect(id)
   }
 
   /* ---------------------------------------- */
 
   get _additionalResources() {
-    return (this.system as Actor.SystemOfType<'characterV2'>)?.additionalresources ?? {}
+    return (this.system as CharacterModel)?.additionalresources ?? {}
   }
 
   /* ---------------------------------------- */
@@ -488,7 +487,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   getChecks(checkType: string) {
-    return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
+    return (this.system as CharacterModel).getChecks(checkType)
   }
 
   /* ---------------------------------------- */
@@ -631,7 +630,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // When updating any property of HitLocationV2, you have to update the entire array.
   #translateHitLocationsV2(data: Actor.UpdateData) {
     const regex = /^system\.hitlocationsV2\.(\d+)\..*/
-    const array = foundry.utils.deepClone((this.system as Actor.SystemOfType<'characterV2'>)._source.hitlocationsV2)
+    const array = foundry.utils.deepClone((this.system as CharacterModel)._source.hitlocationsV2)
 
     const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
 

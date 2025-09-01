@@ -52,24 +52,28 @@ class GcsElement<
     _name: string,
     _replacements: Record<string, string> = {}
   ): any {
-    switch (field.constructor) {
-      case fields.StringField:
-      case fields.NumberField:
-      case fields.BooleanField:
-      case fields.ObjectField:
-        return data ?? field.getInitialValue()
-      case fields.ArrayField: {
-        return (
-          data?.map(
-            (item: any) => item ?? (field as fields.ArrayField<fields.DataField.Any>).element.getInitialValue()
-          ) ?? []
-        )
-      }
-      case fields.EmbeddedDataField:
-      case fields.SchemaField: {
-        return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
-      }
+    if (
+      field instanceof fields.StringField ||
+      field instanceof fields.NumberField ||
+      field instanceof fields.BooleanField ||
+      field instanceof fields.ObjectField
+    ) {
+      return data ?? field.getInitialValue()
     }
+
+    if (field instanceof fields.ArrayField) {
+      return (
+        data?.map(
+          (item: any) => item ?? (field as fields.ArrayField<fields.DataField.Any>).element.getInitialValue()
+        ) ?? []
+      )
+    }
+
+    if (field instanceof fields.EmbeddedDataField || field instanceof fields.SchemaField) {
+      return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
+    }
+
+    console.warn(`Unsupported field type ${field.constructor.name} for import`)
   }
 
   /* ---------------------------------------- */

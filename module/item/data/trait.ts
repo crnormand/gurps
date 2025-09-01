@@ -46,6 +46,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
     return source
   }
 }
+
 /* ---------------------------------------- */
 
 class TraitComponent extends ItemComponent<TraitComponentSchema> {
@@ -64,6 +65,7 @@ const traitSchema = () => {
     fea: new fields.EmbeddedDataField(TraitComponent, { required: true, nullable: false }),
   }
 }
+
 type TraitSchema = BaseItemModelSchema & ReturnType<typeof traitSchema>
 
 /* ---------------------------------------- */
@@ -79,6 +81,7 @@ const traitComponentSchema = () => {
     cr: new fields.NumberField({ required: true, nullable: true, initial: null }),
   }
 }
+
 type TraitComponentSchema = ItemComponentSchema & ReturnType<typeof traitComponentSchema>
 
 /* ---------------------------------------- */

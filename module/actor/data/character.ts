@@ -26,8 +26,11 @@ import {
 
 // TODO Fix this later; only index.js should be referenced outside of the module.
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
+import { MeleeAttackModel } from 'module/action/melee-attack.js'
+import { RangedAttackModel } from 'module/action/ranged-attack.js'
 import { arrayToObject, zeroFill } from '../../../lib/utilities.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
+import { MeleeV1 } from '../../action/legacy/meleev1.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -44,6 +47,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // Item collections
   adsV2: Item.OfType<'featureV2'>[] = []
+
+  // Action collections
+  meleeV2: MeleeAttackModel[] = []
+  ranged: RangedAttackModel[] = []
 
   // Reactions & Conditional modifiers
   reactions: fields.SchemaField.SourceData<ReactionSchema>[] = []
@@ -123,7 +130,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   get ads() {
     return arrayToObject(
-      this.adsV2.map(item => new TraitV1(item)),
+      this.adsV2.filter(item => item.containedBy === null).map(item => new TraitV1(item)),
+      5
+    )
+  }
+
+  get melee() {
+    return arrayToObject(
+      this.meleeV2.map(item => new MeleeV1(item)),
       5
     )
   }
@@ -193,17 +207,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       item.system.applyBonuses(this._globalBonuses)
     }
 
-    this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2')).filter(item => item.containedBy === null)
-
-    // Make this recursive so the fully hierarchy of children are populated.
-    // const populateChildren = (parent: Item.Implementation) => {
-    //   const containedItems = this.parent.items.filter(
-    //     child => child.isOfType('featureV2') && child.containedBy === parent.id
-    //   )
-    //   parent.children = containedItems
-    //   containedItems.forEach(populateChildren)
-    // }
-    // this.adsV2.forEach(item => populateChildren(item))
+    this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
 
     // this.skills = this.parent.items.filter(item => item.isOfType('skill'))
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
@@ -214,8 +218,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     //   other: equipment.filter(item => item.system.carried === false),
     // }
 
-    // this.melee = this.parent.getItemAttacks({ attackType: 'melee' })
-    // this.ranged = this.parent.getItemAttacks({ attackType: 'ranged' })
+    this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
+    this.ranged = this.parent.getItemAttacks({ attackType: 'ranged' })
 
     this.reactions = this.getReactionsAndModifiers('reactions')
     this.conditionalmods = this.getReactionsAndModifiers('conditionalmods')

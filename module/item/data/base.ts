@@ -3,6 +3,10 @@ import TypeDataModel = foundry.abstract.TypeDataModel
 import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemComponent } from './component.js'
+import { parselink } from '../../../lib/parselink.js'
+import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
+import { CollectionField } from '../../data/fields/collection-field.js'
+import { BaseAction } from '../../action/base-action.js'
 import { reactionSchema } from '../../actor/data/character-components.js'
 
 type ItemMetadata = Readonly<{
@@ -70,6 +74,15 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   static override defineSchema(): BaseItemModelSchema {
     return baseItemModelSchema()
   }
+
+  /* ---------------------------------------- */
+  /*  Instance properties                     */
+  /* ---------------------------------------- */
+
+  melee: MeleeAttackModel[] = []
+  ranged: RangedAttackModel[] = []
+
+  /* ---------------------------------------- */
 
   get item(): Item.Implementation {
     return this.parent as Item.Implementation
@@ -148,9 +161,9 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   applyBonuses(bonuses: AnyObject[]): void {
-    // for (const action of this.actions) {
-    //   if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
-    // }
+    for (const action of this.actions) {
+      if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
+    }
   }
 
   /* ---------------------------------------- */
@@ -189,9 +202,9 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   override prepareBaseData(): void {
     super.prepareBaseData()
 
-    // this.actions.forEach(action => {
-    //   action.prepareBaseData()
-    // })
+    this.actions.forEach(action => {
+      action.prepareBaseData()
+    })
   }
 
   /* ---------------------------------------- */
@@ -199,28 +212,30 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   override prepareDerivedData(): void {
     super.prepareDerivedData()
 
-    // this.actions.forEach(action => {
-    //   action.prepareDerivedData()
-    // })
+    this.actions.forEach(action => {
+      action.prepareDerivedData()
+    })
   }
 
   /* ---------------------------------------- */
 
   getGlobalBonuses(): AnyObject[] {
     // if (this.isOfType('equipment') && !this.component.equipped) return []
-    // const bonuses = []
-    // for (let bonus of this.bonuses.split('\n')) {
-    //   // Remove square brackets around OTF
-    //   const internalOTF = bonus.match(/\[(.*)\]/)
-    //   if (internalOTF) bonus = internalOTF[1].trim()
-    //   const parsedOTF = parselink(bonus)
-    //   if (parsedOTF.action) bonuses.push(parsedOTF.action)
-    // }
-    return [{}]
+
+    const bonuses = []
+
+    for (let bonus of this.bonuses.split('\n')) {
+      // Remove square brackets around OTF
+      const internalOTF = bonus.match(/\[(.*)\]/)
+      if (internalOTF) bonus = internalOTF[1].trim()
+
+      const parsedOTF = parselink(bonus)
+      if (parsedOTF.action) bonuses.push(parsedOTF.action)
+    }
+
+    return bonuses
   }
 }
-
-/* ---------------------------------------- */
 
 /* ---------------------------------------- */
 
@@ -230,13 +245,17 @@ const baseItemModelSchema = () => {
   return {
     // Change from previous schema. Boolean value to indicate if item is container
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    collapsed: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    // Change from previous schema. Boolean indicating whether item is open
+    open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
+
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
-    // actions: new CollectionField(BaseAction),
+    actions: new CollectionField(BaseAction),
 
-    itemModifiers: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    bonuses: new fields.StringField({ required: true, nullable: false }),
+    itemModifiers: new fields.StringField({ required: true, nullable: false }),
 
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
 

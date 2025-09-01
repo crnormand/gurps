@@ -66,11 +66,11 @@ class TraitV1 {
   }
 
   get contains(): Record<string, TraitV1> {
-    return this.traitV2.system.collapsed ? {} : this._contains
+    return this.traitV2.system.open ? this._contains : {}
   }
 
   get collapsed(): Record<string, TraitV1> {
-    return this.traitV2.system.collapsed ? this._contains : {}
+    return this.traitV2.system.open ? {} : this._contains
   }
 
   get cr(): number | null {
