@@ -1,5 +1,8 @@
-import { MeleeAttackModel } from 'module/action/melee-attack.js'
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
+import { MeleeAttackModel } from 'module/action/melee-attack.js'
+import { ModelCollection } from '../data/model-collection.js'
+
 import { TraitComponent, TraitModel } from './data/trait.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
 
@@ -43,23 +46,23 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   /* ---------------------------------------- */
 
-  // override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
-  //   embeddedName: EmbeddedName,
-  //   id: string,
-  //   { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  // ): Item.Embedded.DocumentFor<EmbeddedName> | undefined {
-  //   const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
-  //   if (embeddedName in systemEmbeds) {
-  //     const path = systemEmbeds[embeddedName]
-  //     return (
-  //       (foundry.utils.getProperty(this, path) as ModelCollection<any>).get(id, {
-  //         invalid,
-  //         strict,
-  //       }) ?? undefined
-  //     )
-  //   }
-  //   return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
-  // }
+  override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
+    embeddedName: EmbeddedName,
+    id: string,
+    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
+  ): Item.Embedded.DocumentFor<EmbeddedName> | undefined {
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    if (embeddedName in systemEmbeds) {
+      const path = systemEmbeds[embeddedName]
+      return (
+        (foundry.utils.getProperty(this, path) as ModelCollection<any>).get(id, {
+          invalid,
+          strict,
+        }) ?? undefined
+      )
+    }
+    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+  }
 
   /* ---------------------------------------- */
 
@@ -104,40 +107,40 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   /**
    * Obtain the embedded collection of a given pseudo-document type.
    */
-  // getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
-  // const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
-  // if (!collectionPath) {
-  //   throw new Error(
-  //     `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
-  //   )
-  // }
-  // return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
-  // }
+  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
+    const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
+    if (!collectionPath) {
+      throw new Error(
+        `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
+      )
+    }
+    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
+  }
 
   /* ---------------------------------------- */
 
   override prepareBaseData() {
     super.prepareBaseData()
 
-    // const documentNames = Object.keys((this.system as BaseItemModel)?.metadata?.embedded ?? {})
-    // for (const documentName of documentNames) {
-    //   for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
-    //     pseudoDocument.prepareBaseData()
-    //   }
-    // }
+    const documentNames = Object.keys((this.system as BaseItemModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareBaseData()
+      }
+    }
   }
 
   /* ---------------------------------------- */
 
   override prepareDerivedData() {
     super.prepareDerivedData()
-    // const documentNames = Object.keys((this.system as BaseItemModel)?.metadata?.embedded ?? {})
 
-    // for (const documentName of documentNames) {
-    //   for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
-    //     pseudoDocument.prepareDerivedData()
-    //   }
-    // }
+    const documentNames = Object.keys((this.system as BaseItemModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareDerivedData()
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -162,8 +165,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
     // if (!(this.system instanceof BaseItemModel)) return []
 
-    let actions = Object.values((this.system as BaseItemModel).actions)
-    actions = actions.filter(it => this.actor!.items.get(it.container)!.disabled !== true)
+    const actions = (this.system as BaseItemModel).actions
+    if (Object.keys(actions).length === 0) return []
 
     switch (options.attackType) {
       case 'melee':
@@ -184,26 +187,26 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   /* ---------------------------------------- */
 
   get hasAttacks(): boolean {
-    return false
-    // return this.getItemAttacks().length > 0
+    return this.getItemAttacks().length > 0
   }
 
   /* ---------------------------------------- */
 
-  async toggleEnabled(enabled: boolean | null = null): Promise<this | undefined> {
-    // if (!this.isOfType('equipment')) {
-    //   console.warn(`Item of type "${this.type}" cannot be toggled.`)
-    //   return this
-    // }
-    //  const currentEnabled = (this.system as Item.SystemOfType<'equipment'>).equipped
-    // // NOTE: do I really need to assert Item.UpdateData here?
-    // return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
-    return this.update({ 'system.equipped': enabled === null ? false : !enabled } as Item.UpdateData)
-  }
+  // async toggleEnabled(enabled: boolean | null = null): Promise<this | undefined> {
+  //   if (!this.isOfType('equipment')) {
+  //     console.warn(`Item of type "${this.type}" cannot be toggled.`)
+  //     return this
+  //   }
 
-  async toggleEquipped(equipped: boolean | null = null): Promise<this | undefined> {
-    return this.toggleEnabled(equipped)
-  }
+  //   const currentEnabled = (this.system as Item.SystemOfType<'equipment'>).equipped
+
+  //   // NOTE: do I really need to assert Item.UpdateData here?
+  //   return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
+  // }
+
+  // async toggleEquipped(equipped: boolean | null = null): Promise<this | undefined> {
+  //   return this.toggleEnabled(equipped)
+  // }
 
   /* ---------------------------------------- */
   /* Legacy Functionality                     */

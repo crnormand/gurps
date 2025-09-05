@@ -166,4 +166,6 @@ const traitData = () => {
 
 type TraitModel = SourcedIdSchema & ReturnType<typeof traitData>
 
+/* ---------------------------------------- */
+
 export { GcsTrait }

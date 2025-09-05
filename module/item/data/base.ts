@@ -153,6 +153,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   }
 
   /* ---------------------------------------- */
+
   get containerDepth(): number {
     if (!this.isContained) return 0
     return 1 + (this.container?.system as BaseItemModel).containerDepth
@@ -254,11 +255,13 @@ const baseItemModelSchema = () => {
     // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
     actions: new CollectionField(BaseAction),
 
+    // Change from previous schema. Set of IDs corresponding to subtypes of Item
+    ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     bonuses: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
 
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
-
+    modifierTags: new fields.StringField({ required: true, nullable: false }),
     reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
       required: true,
       nullable: false,

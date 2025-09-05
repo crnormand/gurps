@@ -113,6 +113,7 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 }
 
 /* ---------------------------------------- */
+
 const characterData = () => {
   return {
     created_date: new fields.StringField({ required: true, nullable: false }),
@@ -157,16 +158,20 @@ const characterData = () => {
       nullable: true,
     }),
 
-    calc: new fields.SchemaField({
-      swing: new fields.StringField({ required: true, nullable: false }),
-      thrust: new fields.StringField({ required: true, nullable: false }),
+    calc: new fields.SchemaField(
+      {
+        swing: new fields.StringField({ required: true, nullable: false }),
+        thrust: new fields.StringField({ required: true, nullable: false }),
         parry_bonus: new fields.NumberField({ required: true, nullable: true }),
-      dodge: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
-        required: true,
-        nullable: false,
-        length: 5,
-      }),
-    }),
+
+        dodge: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
+          required: true,
+          nullable: false,
+          length: 5,
+        }),
+      },
+      { required: true, nullable: false }
+    ),
   }
 }
 

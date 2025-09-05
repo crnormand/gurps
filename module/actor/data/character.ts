@@ -23,6 +23,8 @@ import {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from '../maneuver.js'
+import { multiplyDice } from '../../utilities/damage-utils.js'
+import { COSTS_REGEX } from '../../../lib/parselink.js'
 
 // TODO Fix this later; only index.js should be referenced outside of the module.
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
@@ -71,7 +73,30 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     carryonback: 0,
   }
 
-  // hitlocationNames: Record<string, HitLocationEntry> = {}
+  /* ---------------------------------------- */
+
+  get hitlocations() {
+    const hitlocations: Record<string, HitLocationEntryV1> = {}
+
+    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
+      hitlocations[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
+    })
+
+    return hitlocations
+  }
+
+  /* ---------------------------------------- */
+
+  get hitlocationNames() {
+    return this.hitlocationsV2
+      .map(it => HitLocationEntryV1.createFromV2(it))
+      .reduce((acc: Record<string, HitLocationEntryV1>, location) => {
+        acc[location.where] = location
+        return acc
+      }, {})
+  }
+
+  /* ----------------------------------------- */
 
   // eqtsummary: {
   //   eqtcost: number
@@ -111,17 +136,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
   /*  Accessors                               */
-  /* ---------------------------------------- */
-
-  /**
-   * Return an object mapping hit location names to their corresponding data.
-   */
-  get hitlocationNamesV2() {
-    return this.hitlocationsV2.reduce((acc: Record<string, HitLocationEntryV2>, location) => {
-      acc[location.where] = location
-      return acc
-    }, {})
-  }
   /* ---------------------------------------- */
 
   get currentdodge(): number {
@@ -265,8 +279,36 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  // NOTE: Not needed; hit location names are now derived at runtime.
+  // #prepareHitLocationNames(): Record<string, HitLocationEntry> {
+  //   return this.hitlocations.reduce((acc: Record<string, HitLocationEntry>, location) => {
+  //     acc[location.where] = location
+  //     return acc
+  //   }, {})
+  // }
+
+  /* ---------------------------------------- */
+
   #prepareEquipmentSummary() {
-    // TODO implement me.
+    // const onlyCountEquipped = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_CHECK_EQUIPPED) ?? false
+    // const numberToTwoDP = (num: number) => Math.round(num * 100) / 100
+    // const carriedItems = onlyCountEquipped
+    //   ? this.equipment.carried.filter(item => item.system.equipped)
+    //   : this.equipment.carried
+    // this.eqtsummary = {
+    //   eqtcost: numberToTwoDP(
+    //     carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
+    //   ),
+    //   eqtlbs: numberToTwoDP(
+    //     carriedItems.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
+    //   ),
+    //   othercost: numberToTwoDP(
+    //     this.equipment.other.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
+    //   ),
+    //   otherlbs: numberToTwoDP(
+    //     this.equipment.other.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
+    //   ),
+    // }
   }
 
   /* ---------------------------------------- */
@@ -279,7 +321,19 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #applyBonusesToAttributes() {
-    // TODO implement me.
+    for (const bonus of this._globalBonuses) {
+      if (bonus.type !== 'attribute') continue
+
+      const attrKey = bonus.attrkey
+      if (this.attributes[attrKey as keyof typeof this.attributes]) {
+        this.attributes[attrKey as keyof typeof this.attributes].value += bonus.mod as number
+      }
+
+      if (attrKey === 'DODGE') {
+        // Special handling for dodge attribute
+        this.dodge.value += bonus.mod as number
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -380,7 +434,31 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareDefenses() {
-    // TODO Implement me.
+    // this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
+    // // NOTE: this used to check again whether equipment is equipped but this was already
+    // // done when _globalBonuses was gathered so is not necessary
+    // this._globalBonuses.forEach(bonus => {
+    //   // TODO: revise type
+    //   const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+    //   if (match) {
+    //     const bonusAmount = parseInt(match.groups?.bonus ?? '0')
+    //     this.defenses.parry.bonus += bonusAmount
+    //     this.defenses.block.bonus += bonusAmount
+    //     this.defenses.dodge.bonus += bonusAmount
+    //   }
+    // })
+    // this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+    //   if (!attack.component.parry) return acc
+    //   const newParry = parseInt(attack.component.parry)
+    //   if (newParry > acc) acc = newParry
+    //   return acc
+    // }, 0)
+    // this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+    //   if (!attack.component.block) return acc
+    //   const newblock = parseInt(attack.component.block)
+    //   if (newblock > acc) acc = newblock
+    //   return acc
+    // }, 0)
   }
 
   /* ---------------------------------------- */
@@ -394,14 +472,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
       }
 
-      // for (const attack of item.getItemAttacks()) {
-      //   if (item.system.itemModifiers === '') continue
-      //   // @ts-expect-error
-      //   for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
-      //     const modifierDescription = `${modifier} ${item.id}`
-      //     if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-      //   }
-      // }
+      for (const attack of item.getItemAttacks()) {
+        if (item.system.itemModifiers === '') continue
+        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
+          const modifierDescription = `${modifier} ${item.id}`
+          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+        }
+      }
     })
   }
 
@@ -552,6 +629,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
+  // get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
+  //   return this.move.find(enc => enc.default) ?? null
+  // }
+
+  /* ---------------------------------------- */
+
   // TODO This method converts HitLocationV2 to HitLocation ... perhaps we can move the necessary functions to
   // HitLocationsV2 and not do the translation?
   get hitLocationsWithDR(): HitLocationEntry[] {
@@ -566,6 +649,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.hitlocationNames
     // return HitLocation.getHitLocationRolls(this.additionalresources?.bodyplan)
   }
+
+  /* ---------------------------------------- */
+
+  get torsoDR(): number {
+    // We assume that the torso is the hit location with a penalty of 0.
+    const torsoLocation = this.hitlocationsV2.find(location => location.penalty === 0)
+    return torsoLocation ? torsoLocation._dr : 0
+  }
+
+  /* ---------------------------------------- */
 
   /**
    * Get temporary effects for display in the Token HUD.
@@ -600,8 +693,22 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   protected get _drBonusesFromItems(): Record<string, number> {
-    // TODO Go through the list of Items and find all DR bonuses
     return {}
+    // return this._globalBonuses.reduce((acc: Record<string, number>, bonus: AnyObject) => {
+    //   const bonusMatch = (bonus.text as string).match(/DR\s*([+-]\d+)\s*(.*)/)
+    //   if (!bonusMatch) return acc
+
+    //   let modifier = parseInt(bonusMatch[1])
+    //   if (isNaN(modifier)) return acc
+
+    //   const locationPatterns = splitArgs(bonusMatch[2] ?? '').map(name => new RegExp(makeRegexPatternFrom(name))) ?? []
+
+    //   for (const location of this.hitlocationsV2) {
+    //     if (!locationPatterns.some(pattern => location.where.match(pattern))) continue
+    //     acc[location.where] = (acc[location.where] ?? 0) + modifier
+    //   }
+    //   return acc
+    // }, {})
   }
 
   /* ---------------------------------------- */
@@ -725,22 +832,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // #validDRChanges(changes: Record<string, any>): Record<string, any> {
-  //   const array = foundry.utils.deepClone(this._source.hitlocationsV2)
-  //   const regex = /^system\.hitlocationsV2\.(\d+)\..*/
-
-  //   for (const [key, value] of Object.entries(changes)) {
-  //     const index = parseInt(key.replace(regex, '$1'))
-  //     const field = key.replace(regex, '')
-
-  //     // @ts-expect-error
-  //     array[index][field] = value
-  //   }
-  //   return { 'system.hitlocationsV2': array }
-  // }
-
-  /* ---------------------------------------- */
-
   findTrait(name: string): Item.OfType<'featureV2'> | null {
     return this.adsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
@@ -748,28 +839,140 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   findAdvantage(name: string): Item.OfType<'featureV2'> | null {
     return this.findTrait(name)
   }
+
   /* ---------------------------------------- */
 
-  get hitlocations() {
-    const hitlocations: Record<string, HitLocationEntryV1> = {}
+  // async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
+  //   const accumulatedActions = this.conditions.damageAccumulators
 
-    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
-      hitlocations[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
-    })
+  //   const existingActionIndex = accumulatedActions.findIndex(e => e.orig === action.orig)
+  //   if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
-    return hitlocations
+  //   action.count = 1
+  //   action.accumulate = null
+  //   accumulatedActions.push(action)
+  //   // @ts-expect-error: not sure why the path is not recognised
+  //   await this.parent.update({ 'system.conditions.damageAccumulators': accumulatedActions })
+  // }
+
+  /* ---------------------------------------- */
+
+  async incrementDamageAccumulator(index: number): Promise<void> {
+    const count = (this.conditions.damageAccumulators[index].count ?? 0) + 1
+    await this.parent.update({ [`system.conditions.damageAccumulators.${index}.accumulate`]: count })
   }
 
   /* ---------------------------------------- */
 
-  get hitlocationNames() {
-    return this.hitlocationsV2
-      .map(it => HitLocationEntryV1.createFromV2(it))
-      .reduce((acc: Record<string, HitLocationEntryV1>, location) => {
-        acc[location.where] = location
-        return acc
-      }, {})
+  async decrementDamageAccumulator(index: number): Promise<void> {
+    const count = (this.conditions.damageAccumulators[index].count ?? 0) - 1
+    if (count < 1) {
+      const accumulators = this.conditions.damageAccumulators
+      accumulators.splice(index, 1)
+      // @ts-expect-error: not sure why the path is not recognised
+      await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
+    } else await this.parent.update({ [`system.conditions.damageAccumulators.${index}.accumulate`]: count })
   }
+
+  /* ---------------------------------------- */
+
+  async clearDamageAccumulator(index: number): Promise<void> {
+    const accumulators = this.conditions.damageAccumulators
+    accumulators.splice(index, 1)
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
+  }
+
+  /* ---------------------------------------- */
+
+  async applyDamageAccumulator(index: number): Promise<void> {
+    const accumulators = this.conditions.damageAccumulators
+    const accumulator = accumulators[index]
+
+    const roll = multiplyDice(accumulator.roll ?? '', accumulator.count ?? 1)
+    if (accumulator.costs) {
+      const costs = accumulator.costs.match(COSTS_REGEX)
+      if (costs)
+        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '0')} ${costs.groups?.type}`
+    }
+
+    accumulator.roll = roll ?? null
+
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
+    await GURPS.performAction(accumulator, GURPS.LastActor)
+  }
+
+  /* ---------------------------------------- */
+
+  // NOTE: change from previous schema, where path was used instead of index
+  async removeTracker(index: number): Promise<void> {
+    const trackers = this.additionalresources.tracker
+    if (index < 0 || index >= trackers.length) return
+    trackers.splice(index, 1)
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+  }
+
+  /* ---------------------------------------- */
+
+  async addTracker(): Promise<void> {
+    const trackers = this.additionalresources.tracker ?? []
+    trackers.push(new TrackerInstance())
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+  }
+
+  /* ---------------------------------------- */
+
+  get trackersByName(): Record<string, TrackerInstance> {
+    return this.additionalresources.tracker.reduce((acc: Record<string, TrackerInstance>, tracker: TrackerInstance) => {
+      acc[tracker.name] = tracker
+      return acc
+    }, {})
+  }
+  /* ---------------------------------------- */
+
+  // async setMoveDefault(value: string): Promise<void> {
+  //   const move = this.move
+  //   move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
+  //     moveEntry.default = moveEntry.mode === value
+  //   })
+
+  //   // @ts-expect-error: not sure why the path is not recognised
+  //   await this.parent.update({ 'system.move': move })
+  // }
+
+  /* ---------------------------------------- */
+
+  // async addMoveMode({
+  //   mode,
+  //   basic,
+  //   enhanced,
+  //   isDefault = false,
+  // }: {
+  //   mode: string
+  //   basic: number
+  //   enhanced?: number
+  //   isDefault?: boolean
+  // }): Promise<void> {
+  //   const move = this.move ?? []
+  //   const existingMove = move.find(entry => entry.mode === mode)
+  //   if (existingMove) {
+  //     existingMove.basic = basic ?? existingMove.basic
+  //     existingMove.enhanced = enhanced ?? existingMove.enhanced
+  //     existingMove.default = isDefault ?? existingMove.default
+  //   } else {
+  //     move.push({
+  //       mode,
+  //       basic: basic,
+  //       enhanced: enhanced ?? basic ?? 0,
+  //       default: isDefault ?? move.length === 0,
+  //     })
+  //   }
+  //   // @ts-expect-error: not sure why the path is not recognised
+  //   await this.parent.update({ 'system.move': move })
+  // }
 
   /* ---------------------------------------- */
 
@@ -874,28 +1077,28 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           ]
         )
         return { data: checks, size: checks.length }
-      // case 'attackChecks':
-      //   checks.push(
-      //     ...this.parent.items
-      //       .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
-      //         acc.push(...item.getItemAttacks())
-      //         return acc
-      //       }, [])
-      //       .map(attack => {
-      //         const otfName = attack.component.mode ? `${attack.name} (${attack.component.mode})` : attack.name
-      //         return {
-      //           img: attack.img ?? '',
-      //           symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
-      //           label: attack.name ?? '',
-      //           value: attack.component.import,
-      //           mode: attack.component.mode,
-      //           otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
-      //           isOTF: true,
-      //           otfDamage: `D:"${otfName}"`,
-      //         }
-      //       })
-      //   )
-      //   return { data: checks, size: checks.length }
+      case 'attackChecks':
+        checks.push(
+          ...this.parent.items
+            .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
+              acc.push(...item.getItemAttacks())
+              return acc
+            }, [])
+            .map(attack => {
+              const otfName = attack.component.mode ? `${attack.name} (${attack.component.mode})` : attack.name
+              return {
+                img: attack.img ?? '',
+                symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
+                label: attack.name ?? '',
+                value: attack.component.import,
+                mode: attack.component.mode,
+                otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
+                isOTF: true,
+                otfDamage: `D:"${otfName}"`,
+              }
+            })
+        )
+        return { data: checks, size: checks.length }
       case 'defenseChecks':
         checks.push(
           {
@@ -907,56 +1110,57 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           }
           // TODO: implement getItemAttacks on actor
         )
-        // this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-        //   const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
-        //   const img = attack.img
-        //   const otfName = attack.component.mode ? `"${attack.name} (${attack.component.mode})"` : `"${attack.name}"`
+        this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+          const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
+          const img = attack.img
+          const otfName = attack.component.mode ? `"${attack.name} (${attack.component.mode})"` : `"${attack.name}"`
 
-        //   if (!isNaN(parseInt(attack.component.parry)))
-        //     acc.push({
-        //       symbol,
-        //       img: img ?? '',
-        //       label: attack.name ?? '',
-        //       value: attack.component.parry,
-        //       mode: attack.component.mode,
-        //       otf: `P:${otfName}`,
-        //       isOTF: true,
-        //     })
+          if (!isNaN(parseInt(attack.component.parry)))
+            acc.push({
+              symbol,
+              img: img ?? '',
+              label: attack.name ?? '',
+              value: attack.component.parry,
+              mode: attack.component.mode,
+              otf: `P:${otfName}`,
+              isOTF: true,
+            })
 
-        //   if (!isNaN(parseInt(attack.component.block)))
-        //     acc.push({
-        //       symbol,
-        //       img: img ?? '',
-        //       label: attack.name ?? '',
-        //       value: attack.component.block,
-        //       mode: attack.component.mode,
-        //       otf: `B:${otfName}`,
-        //       isOTF: true,
-        //     })
-        //   return acc
-        // }, checks)
+          if (!isNaN(parseInt(attack.component.block)))
+            acc.push({
+              symbol,
+              img: img ?? '',
+              label: attack.name ?? '',
+              value: attack.component.block,
+              mode: attack.component.mode,
+              otf: `B:${otfName}`,
+              isOTF: true,
+            })
+          return acc
+        }, checks)
         return { data: checks, size: checks.length }
 
-      // case 'markedChecks':
-      //   const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skill', 'spell'))
-      //   for (const item of items) {
-      //     if (item.system.addToQuickRoll) {
-      //       const type = item.type === 'featureV2' ? 'ad' : item.type
-      //       let value = 0
-      //       if (item.isOfType('skill', 'spell')) value = item.system.component.import
+      case 'markedChecks':
+        const items = this.parent.items.filter(item => item.isOfType('featureV2' /*'skill', 'spell'*/))
+        for (const item of items) {
+          if (item.system.addToQuickRoll) {
+            const type = item.type === 'featureV2' ? 'ad' : item.type
+            let value = 0
+            if (item.isOfType('skill' /*'spell'*/)) value = (item.system as any).component.import
 
-      //       checks.push({
-      //         symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
-      //         img: item.img ?? '',
-      //         label: item.name,
-      //         value,
-      //         notes: item.system.component.notes,
-      //         otf: `${type}:"${item.name}"`,
-      //         isOTF: false,
-      //       })
-      //     }
-      //   }
-      //   return { data: checks, size: checks.length }
+            checks.push({
+              symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
+              img: item.img ?? '',
+              label: item.name,
+              value,
+              notes: item.system.component.notes,
+              otf: `${type}:"${item.name}"`,
+              isOTF: false,
+            })
+          }
+        }
+
+        return { data: checks, size: checks.length }
 
       default:
         return { data: [], size: 0 }
@@ -968,7 +1172,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   async addTaggedRollModifiers(
     chatThing: string,
     optionalArgs: { obj?: AnyObject },
-    attack?: AnyObject
+    attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
     let isDamageRoll = false
     const taggedSettings = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)!
@@ -1050,10 +1254,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       } else {
         refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
       }
-      // @ts-expect-error
+
       const attackMods = attack?.component.modifierTags ?? []
       modifierTags = [...allRollTags, ...attackMods, ...refTags]
-      // @ts-expect-error
       itemRef = attack?.name ?? ''
     }
 
@@ -1137,88 +1340,77 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    // if (!this.isOfType('character', 'enemy')) {
-    //   console.warn('Actor is not a character or enemy.')
-    //   return {
-    //     name: thing,
-    //     uuid: null,
-    //     itemId: null,
-    //     fromItem: null,
-    //     pageRef: null,
-    //   }
-    // }
-
     const originType: string | null = action ? action.type : null
-    // let name: string, mode: string | undefined
+    let name: string, mode: string | undefined
     switch (originType) {
-      // case 'attack': {
-      //   name = action.name.split('(')[0].trim()
-      //   mode = action.name.match(/\((.+)\)/)?.[1]
-      //   const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
-      //   const weapon = this.parent
-      //     // @ts-expect-error: Not sure why this isn't resolving correctly.
-      //     .getItemAttacks({ attackType })
-      //     .find(e => e.name === name && (!mode || e.component.mode === mode))
-      //   if (weapon)
-      //     return {
-      //       name: weapon.name ?? '',
-      //       uuid: weapon.uuid,
-      //       itemId: weapon.id,
-      //       fromItem: weapon.item.id,
-      //       pageRef: null,
-      //     }
-      //   else
-      //     return {
-      //       name: thing,
-      //       uuid: null,
-      //       itemId: null,
-      //       fromItem: null,
-      //       pageRef: null,
-      //     }
-      // }
-      // case 'weapon-block':
-      // case 'weapon-parry': {
-      //   name = action.name.split('(')[0].trim()
-      //   mode = action.name.match(/\((.+?)\)/)?.[1]
-      //   const weapon = this.parent
-      //     .getItemAttacks({ attackType: 'melee' })
-      //     .find(e => e.name === name && (!mode || e.component.mode === mode))
-      //   if (weapon)
-      //     return {
-      //       name: weapon.name ?? '',
-      //       uuid: weapon.uuid,
-      //       itemId: weapon.id,
-      //       fromItem: weapon.item.id,
-      //       pageRef: null,
-      //     }
-      //   else
-      //     return {
-      //       name: thing,
-      //       uuid: null,
-      //       itemId: null,
-      //       fromItem: null,
-      //       pageRef: null,
-      //     }
-      // }
-      // case 'skill-spell': {
-      //   const item = [...this.skills, ...this.spells].find(e => e.name === action.name)
-      //   if (item)
-      //     return {
-      //       name: item.name,
-      //       uuid: item.uuid,
-      //       itemId: item.id,
-      //       fromItem: item.id,
-      //       pageRef: item.system.component.pageref,
-      //     }
-      //   else
-      //     return {
-      //       name: action.name,
-      //       uuid: null,
-      //       itemId: null,
-      //       fromItem: null,
-      //       pageRef: null,
-      //     }
-      // }
+      case 'attack': {
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+)\)/)?.[1]
+        const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
+        const weapon = this.parent
+          // @ts-expect-error: Not sure why this isn't resolving correctly.
+          .getItemAttacks({ attackType })
+          .find(e => e.name === name && (!mode || e.component.mode === mode))
+        if (weapon)
+          return {
+            name: weapon.name ?? '',
+            uuid: weapon.uuid,
+            itemId: weapon.id,
+            fromItem: weapon.item.id,
+            pageRef: null,
+          }
+        else
+          return {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+      }
+      case 'weapon-block':
+      case 'weapon-parry': {
+        name = action.name.split('(')[0].trim()
+        mode = action.name.match(/\((.+?)\)/)?.[1]
+        const weapon = this.parent
+          .getItemAttacks({ attackType: 'melee' })
+          .find(e => e.name === name && (!mode || e.component.mode === mode))
+        if (weapon)
+          return {
+            name: weapon.name ?? '',
+            uuid: weapon.uuid,
+            itemId: weapon.id,
+            fromItem: weapon.item.id,
+            pageRef: null,
+          }
+        else
+          return {
+            name: thing,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
+      }
+      case 'skill-spell': {
+        // const item = [...this.skills, ...this.spells].find(e => e.name === action.name)
+        // if (item)
+        //   return {
+        //     name: item.name,
+        //     uuid: item.uuid,
+        //     itemId: item.id,
+        //     fromItem: item.id,
+        //     pageRef: item.system.component.pageref,
+        //   }
+        // else
+        return {
+          name: action.name,
+          uuid: null,
+          itemId: null,
+          fromItem: null,
+          pageRef: null,
+        }
+      }
       case 'attribute': {
         let attrName = action?.overridetxt
         if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
@@ -1251,6 +1443,22 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     }
   }
+
+  /* ---------------------------------------- */
+
+  // #validDRChanges(changes: Record<string, any>): Record<string, any> {
+  //   const array = foundry.utils.deepClone(this._source.hitlocationsV2)
+  //   const regex = /^system\.hitlocationsV2\.(\d+)\..*/
+
+  //   for (const [key, value] of Object.entries(changes)) {
+  //     const index = parseInt(key.replace(regex, '$1'))
+  //     const field = key.replace(regex, '')
+
+  //     // @ts-expect-error
+  //     array[index][field] = value
+  //   }
+  //   return { 'system.hitlocationsV2': array }
+  // }
 }
 
 /* ---------------------------------------- */

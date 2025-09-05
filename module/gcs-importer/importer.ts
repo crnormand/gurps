@@ -8,12 +8,14 @@ import { BaseItemModel } from 'module/item/data/base.js'
 import { GcsTrait } from './schema/trait.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
 import { AnyGcsItem } from './schema/index.js'
+
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../action/melee-attack.js'
 import { RangedAttackComponentSchema, RangedAttackSchema } from '../action/ranged-attack.js'
 import { GcsWeapon } from './schema/weapon.js'
 
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
+import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -40,13 +42,13 @@ class GcsImporter {
    * Given a GCS Character, create a (new) GURPS Actor.
    * @param input GCS Character data
    */
-  static async importCharacter(input: GcsCharacter): Promise<void> {
+  static async importCharacter(input: GcsCharacter): Promise<GurpsActorV2<'characterV2'>> {
     return await new GcsImporter(input).#importCharacter()
   }
 
   /* ---------------------------------------- */
 
-  async #importCharacter() {
+  async #importCharacter(): Promise<GurpsActorV2<'characterV2'>> {
     const _id = foundry.utils.randomID()
     const type = 'characterV2'
     const name = this.input.profile.name ?? 'Imported Character'
@@ -68,7 +70,7 @@ class GcsImporter {
       items: this.items,
     })
 
-    await Actor.create({
+    const actor = (await Actor.create({
       _id,
       name,
       type,
@@ -76,7 +78,12 @@ class GcsImporter {
       // FIXME: not sure why this is not resolving correctly
       system: this.output as any,
       items: this.items as any,
-    })
+    })) as GurpsActorV2<'characterV2'> | undefined
+
+    if (!actor) {
+      throw new Error('Failed to create GURPS actor during import.')
+    }
+    return actor
   }
 
   /* ---------------------------------------- */
@@ -568,4 +575,5 @@ class GcsImporter {
     // Placeholder for adding standard trackers to the character.
   }
 }
+
 export { GcsImporter }

@@ -86,6 +86,8 @@ import { UI } from './ui/index.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import ActorProxy from './actor/base-actor.js'
 import ItemProxy from './item/item-proxy.js'
+import { TraitModel } from './item/data/trait.js'
+import { Action } from './action/index.js'
 
 export let GURPS = undefined
 
@@ -116,6 +118,7 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
+    Action,
     Canvas,
     Combat,
     Damage,
@@ -1957,6 +1960,12 @@ if (!globalThis.GURPS) {
     // Define custom Entity classes
     CONFIG.Actor.documentClass = ActorProxy
     CONFIG.Item.documentClass = ItemProxy
+    CONFIG.Item.dataModels = {
+      featureV2: TraitModel,
+      // skill: SkillModel,
+      // spell: SpellModel,
+      // equipment: EquipmentModel,
+    }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class

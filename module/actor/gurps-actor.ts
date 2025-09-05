@@ -2,11 +2,16 @@ import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import { ModelCollection } from '../data/model-collection.js'
+import { BaseActorModel } from './data/base.js'
 import { HitLocationEntry } from './actor-components.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
+import { CharacterModel } from './data/character.js'
+
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { recurselist } from '../../lib/utilities.js'
-import { CharacterModel } from './data/character.js'
+import { ReactionSchema } from './data/character-components.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -46,21 +51,33 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     id: string,
     { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
   ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined {
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    if (embeddedName in systemEmbeds) {
+      const path = systemEmbeds[embeddedName]
+      return (
+        foundry.utils.getProperty(this, path).get(id, {
+          invalid,
+          strict,
+        }) ?? null
+      )
+    }
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
   }
+
+  /* ---------------------------------------- */
 
   /**
    * Obtain the embedded collection of a given pseudo-document type.
    */
-  // getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
-  //   const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
-  //   if (!collectionPath) {
-  //     throw new Error(
-  //       `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
-  //     )
-  //   }
-  //   return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
-  // }
+  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
+    const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
+    if (!collectionPath) {
+      throw new Error(
+        `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
+      )
+    }
+    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
+  }
 
   /* ---------------------------------------- */
 
@@ -77,15 +94,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   /* ---------------------------------------- */
-  /* ---------------------------------------- */
 
-  // getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
-  //   return this.items.reduce((acc: any[], item) => {
-  //     // @ts-expect-error
-  //     acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
-  //     return acc
-  //   }, [])
-  // }
+  getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
+    return this.items.reduce((acc: any[], item) => {
+      acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
+      return acc
+    }, [])
+  }
 
   /**
    * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
@@ -182,6 +197,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     return game.settings?.get('gurps', 'default-hitlocation') ?? ''
   }
 
+  /* ---------------------------------------- */
+
+  // NOTE: Not technically an accessor but here for parity with the old system.
+  getTorsoDr(): number {
+    return (this.system as CharacterModel).torsoDR
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * @returns An array of temporary effects that are applied to the actor.
    * This is overriden for CharacterModel where maneuvers are moved to the top of the
@@ -201,14 +225,26 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  override prepareBaseData(): void {
+  override prepareBaseData() {
     super.prepareBaseData()
+    const documentNames = Object.keys((this.system as BaseActorModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareBaseData()
+      }
+    }
   }
 
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
+  override prepareDerivedData() {
     super.prepareDerivedData()
+    const documentNames = Object.keys((this.system as BaseActorModel)?.metadata?.embedded ?? {})
+    for (const documentName of documentNames) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
+        pseudoDocument.prepareDerivedData()
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -222,9 +258,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
-  async internalUpdate(data: Actor.UpdateData | undefined, operation?: Actor.Database.UpdateOperation) {
+  async internalUpdate(data: Actor.UpdateData, operation?: Actor.Database.UpdateOperation) {
     console.trace('internalUpdate', data)
-    // @ts-expect-error
     return this.update(data, { ...operation, render: false })
   }
 
@@ -233,7 +268,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async addTaggedRollModifiers(
     chatThing: string,
     optionalArgs: { obj?: AnyObject },
-    attack?: AnyObject
+    attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
     return (this.system as CharacterModel).addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
@@ -258,9 +293,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     ;(this.system as CharacterModel).changeDR(formula, locations)
   }
 
-  /**
-   * Check if a roll can be performed.
-   */
+  /* ---------------------------------------- */
+
+  // Check if a roll can be performed.
+  // NOTE: there doesn't seem to be much reason for this method to be in the Actor class.
+  // Consider moving it to roll or elsewhere.
   async canRoll(
     // TODO Replace with Action.
     action: AnyObject, // Action parsed from OTF.
@@ -422,6 +459,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     return result
   }
 
+  /* ---------------------------------------- */
+
   /**
    * Check if the current action consumes an action slot from the actor.
    * False by default to handle things like attribute rolls.
@@ -474,14 +513,114 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  get _additionalResources() {
-    return (this.system as CharacterModel)?.additionalresources ?? {}
+  isEffectActive(effect: ActiveEffect.Implementation | { id: string }): boolean {
+    return this.effects.some(e => e.id === effect.id)
   }
 
   /* ---------------------------------------- */
 
-  async refreshDR() {
-    await this.changeDR('+0', [])
+  get damageAccumulators() {
+    if (this.isOfType('character', 'enemy'))
+      return (this.system as CharacterModel).conditions.damageAccumulators ?? null
+    return null
+  }
+
+  /* ---------------------------------------- */
+
+  // async accumulateDamageRoll(
+  //   action: foundry.data.fields.SchemaField.InitializedData<DamageActionSchema>
+  // ): Promise<void> {
+  //   ;(this.system as CharacterModel).accumulateDamageRoll(action)
+  // }
+
+  /* ---------------------------------------- */
+
+  async incrementDamageAccumulator(index: number): Promise<void> {
+    ;(this.system as CharacterModel).incrementDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  async decrementDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    ;(this.system as CharacterModel).decrementDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  async clearDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    ;(this.system as CharacterModel).clearDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  async applyDamageAccumulator(index: number): Promise<void> {
+    if (!this.isOfType('character', 'enemy')) return
+    ;(this.system as CharacterModel).applyDamageAccumulator(index)
+  }
+
+  /* ---------------------------------------- */
+
+  // findEquipmentByName(pattern: string, otherFirst = false): [Item.OfType<'equipment'>, string] | null {
+  //   if (!this.isOfType('character', 'enemy')) return null
+
+  //   // Removed leading slashes
+  //   const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))
+  //     // Remove leading ^
+  //     .substring(1)
+  //     // Split by /
+  //     .split('/')
+  //     // Apply ^ to each pattern
+  //     .map(e => new RegExp('^' + e, 'i'))
+
+  //   const carriedItem = (this.system as CharacterModel).equipment.carried.find(e => patterns.some(p => p.test(e.name)))
+  //   const otherItem = (this.system as CharacterModel).equipment.other.find(e => patterns.some(p => p.test(e.name)))
+
+  //   const carriedResult: [Item.OfType<'equipment'>, string] | null = carriedItem
+  //     ? [carriedItem ?? null, carriedItem.id ?? '']
+  //     : null
+  //   const otherResult: [Item.OfType<'equipment'>, string] | null = otherItem
+  //     ? [otherItem ?? null, otherItem.id ?? '']
+  //     : null
+
+  //   return otherFirst ? (otherResult ?? carriedResult ?? null) : (carriedResult ?? otherResult ?? null)
+  // }
+
+  /* ---------------------------------------- */
+
+  // async updateEqtCount(id: string, count: number) {
+  //   if (!this.isOfType('character', 'enemy')) return null
+
+  //   const equipment = (this.system as Actor.SystemOfType<'character'>).allEquipment.find(e => e.id === id)
+  //   const updateData: Record<string, unknown> = { count }
+
+  //   // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
+  //   // set ignoreImportQty to true.
+  //   if (game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
+  //     updateData['ignoreImportQty'] = true
+  //   }
+
+  //   if (equipment) {
+  //     await this.updateEmbeddedDocuments('Item', [{ _id: id, ...updateData }], { parent: this })
+  //     return equipment
+  //   } else {
+  //     throw new Error(`GURPS | Equipment with ID ${id} not found in actor ${this.name}`)
+  //   }
+  // }
+
+  /* ---------------------------------------- */
+
+  isEmptyActor(): boolean {
+    // return (this.system as CharacterModel).additionalresources.importname === null
+    return false
+  }
+
+  /* ---------------------------------------- */
+
+  async runOTF(otf: string): Promise<void> {
+    const action = GURPS.parselink(otf)
+    await GURPS.performAction(action.action, this)
   }
 
   /* ---------------------------------------- */
@@ -551,6 +690,18 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async toggleExpand(path: string, expandOnly: boolean = false) {
     let obj = foundry.utils.getProperty(this, path)
     if (obj instanceof TraitV1) obj.traitV2.toggleCollapsed(expandOnly)
+  }
+
+  /* ---------------------------------------- */
+
+  async refreshDR() {
+    await this.changeDR('+0', [])
+  }
+
+  /* ---------------------------------------- */
+
+  get _additionalResources() {
+    return (this.system as CharacterModel)?.additionalresources ?? {}
   }
 
   /* ---------------------------------------- */
