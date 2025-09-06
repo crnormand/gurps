@@ -1,33 +1,6 @@
+import { Melee } from '../../actor/actor-components.js'
 import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { MeleeAttackModel } from '../index.js'
-
-const getterKeys = [
-  'addToQuickRoll',
-  'baseParryPenalty',
-  'block',
-  'consumeAction',
-  'contains',
-  'cost',
-  'damage',
-  'extraAttacks',
-  'import',
-  'itemModifiers',
-  'level',
-  'mode',
-  'modifierTags',
-  'name',
-  'notes',
-  'originalName',
-  'pageref',
-  'parentuuid',
-  'parry',
-  'parryBonus',
-  'reach',
-  'st',
-  'techlevel',
-  'uuid',
-  'weight',
-] as const
 
 class MeleeV1 {
   meleeV2: MeleeAttackModel
@@ -35,8 +8,10 @@ class MeleeV1 {
   constructor(meleeV2: MeleeAttackModel) {
     this.meleeV2 = meleeV2
 
+    const meleeKeys = Object.keys(new Melee())
+
     // Make selected prototype getters enumerable own properties so Object.values() includes them.
-    defineGetterProperties(this, [...getterKeys])
+    defineGetterProperties(this, [...meleeKeys, 'name', 'parryBonus', 'itemModifier', 'addToQuickRoll'])
   }
 
   get addToQuickRoll() {
@@ -92,7 +67,7 @@ class MeleeV1 {
   }
 
   get name() {
-    return this.meleeV2.name
+    return this.meleeV2.mel.name
   }
 
   get notes() {

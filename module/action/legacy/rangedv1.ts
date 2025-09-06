@@ -1,35 +1,6 @@
+import { Ranged } from '../../actor/actor-components.js'
 import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { RangedAttackModel } from '../ranged-attack.js'
-
-const getterKeys = [
-  'acc',
-  'addToQuickRoll',
-  'ammo',
-  'bulk',
-  'consumeAction',
-  'contains',
-  'damage',
-  'extraAttacks',
-  'halfd',
-  'import',
-  'itemModifiers',
-  'legalityClass',
-  'level',
-  'max',
-  'mode',
-  'modifierTags',
-  'name',
-  'notes',
-  'originalName',
-  'pageref',
-  'parentuuid',
-  'range',
-  'rcl',
-  'rof',
-  'shots',
-  'st',
-  'uuid',
-] as const
 
 class RangedV1 {
   rangedV2: RangedAttackModel
@@ -37,8 +8,10 @@ class RangedV1 {
   constructor(rangedV2: RangedAttackModel) {
     this.rangedV2 = rangedV2
 
+    const rangedKeys = Object.keys(new Ranged())
+
     // Make selected prototype getters enumerable own properties so Object.values() includes them.
-    defineGetterProperties(this, [...getterKeys])
+    defineGetterProperties(this, [...rangedKeys, 'addToQuickRoll', 'itemModifiers', 'name'])
   }
 
   // Generate getters for each of the ranged attack properties. Delegate to the underlying RangedAttackModel.
@@ -86,7 +59,7 @@ class RangedV1 {
     return this.rangedV2.rng.itemModifiers
   }
 
-  get legalityClass() {
+  get legalityclass() {
     return this.rangedV2.rng.legalityclass
   }
 
