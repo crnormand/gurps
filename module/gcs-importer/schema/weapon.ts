@@ -58,7 +58,7 @@ const weaponData = () => {
     hide: new fields.BooleanField({ required: true, nullable: true }),
     calc: new fields.SchemaField(
       {
-        level: new fields.NumberField({ required: true, nullable: false }),
+        level: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
         damage: new fields.StringField({ required: true, nullable: true }),
         parry: new fields.StringField({ required: true, nullable: true }),
         block: new fields.StringField({ required: true, nullable: true }),

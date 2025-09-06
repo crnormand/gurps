@@ -1538,7 +1538,8 @@
 			],
 			"weapons": [
 				{
-					"id": "wBpF6swTCN2Dyv_8Z",
+					"id": "wCgyK1rx0FVrwuROh",
+					"sv": 1,
 					"damage": {
 						"type": "cr",
 						"st": "thr",
@@ -1571,7 +1572,8 @@
 					}
 				},
 				{
-					"id": "w6uXnX5tV1RkREiqy",
+					"id": "wKIFTGffIIh8-BcF_",
+					"sv": 1,
 					"damage": {
 						"type": "cr",
 						"st": "thr"
@@ -1600,6 +1602,20 @@
 					],
 					"calc": {
 						"level": 13,
+						"damage": "1d cr"
+					}
+				},
+				{
+					"id": "W_T-cDH_6xDYwBvMI",
+					"sv": 1,
+					"damage": {
+						"type": "cr",
+						"base": "1d"
+					},
+					"usage": "Innate Attack",
+					"accuracy": "2",
+					"rate_of_fire": "1",
+					"calc": {
 						"damage": "1d cr"
 					}
 				}
@@ -2213,6 +2229,7 @@
 							"weapons": [
 								{
 									"id": "w2Ryr7xOWOQcfSJu7",
+									"sv": 1,
 									"damage": {
 										"type": "cut",
 										"st": "thr",
@@ -2246,6 +2263,7 @@
 								},
 								{
 									"id": "wrZeHs84Y0Xg8AXtW",
+									"sv": 1,
 									"damage": {
 										"type": "cut",
 										"st": "thr"
@@ -2359,6 +2377,7 @@
 							"weapons": [
 								{
 									"id": "w4x73HLY6LXRpUtET",
+									"sv": 1,
 									"damage": {
 										"type": "cut",
 										"st": "thr",
@@ -3406,6 +3425,7 @@
 			"weapons": [
 				{
 					"id": "wl-tg2yWwlosmLxlm",
+					"sv": 1,
 					"damage": {
 						"type": "cut",
 						"st": "sw",
@@ -3443,6 +3463,7 @@
 				},
 				{
 					"id": "WdQVqElAvIPgvDHUb",
+					"sv": 1,
 					"damage": {
 						"type": "cut",
 						"st": "sw",
@@ -3572,6 +3593,7 @@
 			"weapons": [
 				{
 					"id": "WbVTQCZpWueTgyjrL",
+					"sv": 1,
 					"damage": {
 						"type": "imp",
 						"st": "thr",
@@ -3629,6 +3651,7 @@
 			"weapons": [
 				{
 					"id": "WP9Tvb9jAOp1kkDrs",
+					"sv": 1,
 					"damage": {
 						"type": "special"
 					},
@@ -3665,7 +3688,7 @@
 		}
 	],
 	"created_date": "2025-05-20T12:53:11-04:00",
-	"modified_date": "2025-07-20T14:46:39-04:00",
+	"modified_date": "2025-08-31T15:05:52-04:00",
 	"calc": {
 		"swing": "2d-1",
 		"thrust": "1d",

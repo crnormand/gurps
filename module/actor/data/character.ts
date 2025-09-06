@@ -8,7 +8,6 @@ import {
 } from './character-components.js'
 import fields = foundry.data.fields
 import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
-import { HitLocationEntry } from '../actor-components.js'
 import { BaseItemModel } from '../../item/data/base.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
@@ -31,8 +30,10 @@ import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
 import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
 import { arrayToObject, zeroFill } from '../../../lib/utilities.js'
+import { HitLocationEntry } from '../actor-components.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
 import { MeleeV1 } from '../../action/legacy/meleev1.js'
+import { RangedV1 } from '../../action/legacy/rangedv1.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -52,7 +53,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // Action collections
   meleeV2: MeleeAttackModel[] = []
-  ranged: RangedAttackModel[] = []
+  rangedV2: RangedAttackModel[] = []
 
   // Reactions & Conditional modifiers
   reactions: fields.SchemaField.SourceData<ReactionSchema>[] = []
@@ -156,6 +157,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     )
   }
 
+  get ranged() {
+    return arrayToObject(
+      this.rangedV2.map(item => new RangedV1(item)),
+      5
+    )
+  }
+
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
@@ -233,7 +241,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // }
 
     this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
-    this.ranged = this.parent.getItemAttacks({ attackType: 'ranged' })
+    this.rangedV2 = this.parent.getItemAttacks({ attackType: 'ranged' })
 
     this.reactions = this.getReactionsAndModifiers('reactions')
     this.conditionalmods = this.getReactionsAndModifiers('conditionalmods')

@@ -8,6 +8,7 @@ import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import { CharacterModel } from 'module/actor/data/character.js'
 
+// TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
     return {
@@ -160,6 +161,12 @@ const rangedAttackComponentSchema = () => {
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+    // Added to allow disabling from containing Trait.
+    container: new fields.StringField({ required: true, nullable: false }),
+    // Added to support QuickRoll menu.
+    addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    // Added: Missing?"
+    rate_of_fire: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }
 

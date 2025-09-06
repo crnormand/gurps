@@ -6,6 +6,7 @@ import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 
+// TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {
     return Object.assign(super.defineSchema(), meleeAttackSchema())

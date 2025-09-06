@@ -362,6 +362,7 @@ class GcsImporter {
       range: weapon.calc?.range || weapon.range,
       rcl: weapon.calc?.recoil || weapon.recoil,
       halfd,
+      rate_of_fire: weapon.calc?.rate_of_fire || weapon.rate_of_fire,
     }
 
     return {
