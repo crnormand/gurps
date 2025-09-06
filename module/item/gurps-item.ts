@@ -46,6 +46,19 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   /* ---------------------------------------- */
 
+  get enabled(): boolean {
+    const disabled = (this.system as BaseItemModel).disabled
+    if (disabled) return false
+
+    if (this.containedBy) {
+      return this.parent?.items.get(this.containedBy)?.enabled ?? true
+    }
+
+    return true
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,
@@ -163,10 +176,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
-    // if (!(this.system instanceof BaseItemModel)) return []
+    if (!(this.system instanceof BaseItemModel)) return []
 
-    const actions = (this.system as BaseItemModel).actions
-    if (Object.keys(actions).length === 0) return []
+    const actions = (this.system as BaseItemModel).actions.filter(action => this.enabled)
 
     switch (options.attackType) {
       case 'melee':
