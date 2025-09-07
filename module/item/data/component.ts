@@ -17,11 +17,6 @@ const itemComponentSchema = () => {
 
     // Change from previous schema. Set of IDs
     // NOTE: this method of storing child items overrides Foundry's default "sort" behaviour.
-    // TODO: look into using a different method of storing child items such as storing the parent ID on the child item only.
-    contains: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
     uuid: new fields.StringField({ required: true, nullable: false }),
     parentuuid: new fields.StringField({ required: true, nullable: false }),
     originalName: new fields.StringField({ required: true, nullable: false }),
@@ -31,8 +26,6 @@ const itemComponentSchema = () => {
     passotf: new fields.StringField({ required: true, nullable: false }),
     failotf: new fields.StringField({ required: true, nullable: false }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false }),
-
-    containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }
 

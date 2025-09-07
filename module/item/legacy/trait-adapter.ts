@@ -35,11 +35,7 @@ class TraitV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'featureV2'>[] =
-      this.traitV2.actor?.items
-        .filter(item => item.type === 'featureV2')
-        .filter(item => item.containedBy === this.traitV2.id)
-        .map(item => item as GurpsItemV2<'featureV2'>) || []
+    const containedItems: GurpsItemV2<'featureV2'>[] = this.traitV2.contains.map(it => it as GurpsItemV2<'featureV2'>)
     this._contains = arrayToObject(
       containedItems?.map(item => new TraitV1(item)),
       5

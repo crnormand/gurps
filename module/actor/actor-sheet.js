@@ -1555,13 +1555,7 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-level-up-alt"></i>',
               label: `${game.i18n.localize('GURPS.dropBefore')}`,
               callback: async () => {
-                if (!isSrcFirst) {
-                  await this._removeKey(sourceKey)
-                  await this._insertBeforeKey(targetkey, object)
-                } else {
-                  await this._insertBeforeKey(targetkey, object)
-                  await this._removeKey(sourceKey)
-                }
+                await this.actor.reorderItem(sourceKey, targetkey, object, isSrcFirst)
               },
             },
             two: {
@@ -1569,13 +1563,7 @@ export class GurpsActorSheet extends ActorSheet {
               label: `${game.i18n.localize('GURPS.dropInside')}`,
               callback: async () => {
                 let key = targetkey + '.contains.' + zeroFill(0)
-                if (!isSrcFirst) {
-                  await this._removeKey(sourceKey)
-                  await this._insertBeforeKey(key, object)
-                } else {
-                  await this._insertBeforeKey(key, object)
-                  await this._removeKey(sourceKey)
-                }
+                await this.actor.reorderItem(sourceKey, key, object, isSrcFirst)
               },
             },
           },
@@ -1584,56 +1572,6 @@ export class GurpsActorSheet extends ActorSheet {
         d.render(true)
       }
     }
-  }
-
-  async _insertBeforeKey(targetKey, element) {
-    // target key is the whole path, like 'data.melee.00001'
-    let components = targetKey.split('.')
-
-    let index = parseInt(components.pop())
-    let path = components.join('.')
-
-    let object = GURPS.decode(this.actor, path)
-    let array = objectToArray(object)
-
-    // Delete the whole object.
-    let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
-
-    // Insert the element into the array.
-    array.splice(index, 0, element)
-
-    // Convert back to an object
-    object = arrayToObject(array, 5)
-
-    // update the actor
-    await this.actor.internalUpdate({ [path]: object }, { diff: false })
-  }
-
-  async _removeKey(sourceKey) {
-    // source key is the whole path, like 'data.melee.00001'
-    let components = sourceKey.split('.')
-
-    let index = parseInt(components.pop())
-    let path = components.join('.')
-
-    let object = GURPS.decode(this.actor, path)
-    let array = objectToArray(object)
-
-    // Delete the whole object.
-    let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
-
-    // Remove the element from the array
-    array.splice(index, 1)
-
-    // Convert back to an object
-    object = arrayToObject(array, 5)
-
-    // update the actor
-    await this.actor.internalUpdate({ [path]: object }, { diff: false })
   }
 
   _onfocus(ev) {

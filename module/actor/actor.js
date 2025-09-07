@@ -3533,4 +3533,74 @@ export class GurpsActor extends Actor {
     }
     return result
   }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Reorder an item in the actor's item list. This function moves the item at sourceKey to be just before the item at
+   * targetKey.
+   * @param {*} sourceKey A full path up to the index, such as "system.skills.123456"
+   * @param {*} targetkey A full path up to the index, such as "system.skills.654321"
+   * @param {*} object The object to move
+   * @param {*} isSrcFirst Whether the source key comes first
+   */
+  async reorderItem(sourceKey, targetkey, object, isSrcFirst) {
+    if (!isSrcFirst) {
+      await this._removeKey(sourceKey)
+      await this._insertBeforeKey(targetkey, object)
+    } else {
+      await this._insertBeforeKey(targetkey, object)
+      await this._removeKey(sourceKey)
+    }
+  }
+
+  async _removeKey(sourceKey) {
+    // source key is the whole path, like 'data.melee.00001'
+    let components = sourceKey.split('.')
+
+    let index = parseInt(components.pop())
+    let path = components.join('.')
+
+    let object = GURPS.decode(this, path)
+    let array = objectToArray(object)
+
+    // Delete the whole object.
+    let last = components.pop()
+    let t = `${components.join('.')}.-=${last}`
+    await this.internalUpdate({ [t]: null })
+
+    // Remove the element from the array
+    array.splice(index, 1)
+
+    // Convert back to an object
+    object = arrayToObject(array, 5)
+
+    // update the actor
+    await this.internalUpdate({ [path]: object }, { diff: false })
+  }
+
+  async _insertBeforeKey(targetKey, element) {
+    // target key is the whole path, like 'data.melee.00001'
+    let components = targetKey.split('.')
+
+    let index = parseInt(components.pop())
+    let path = components.join('.')
+
+    let object = GURPS.decode(this, path)
+    let array = objectToArray(object)
+
+    // Delete the whole object.
+    let last = components.pop()
+    let t = `${components.join('.')}.-=${last}`
+    await this.internalUpdate({ [t]: null })
+
+    // Insert the element into the array.
+    array.splice(index, 0, element)
+
+    // Convert back to an object
+    object = arrayToObject(array, 5)
+
+    // update the actor
+    await this.internalUpdate({ [path]: object }, { diff: false })
+  }
 }

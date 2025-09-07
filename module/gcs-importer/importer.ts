@@ -227,8 +227,8 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importItems() {
-    this.input.traits?.forEach(trait => this.#importTrait(trait))
-    this.input.skills?.forEach(skill => this.#importSkill(skill))
+    this.input.traits?.forEach((trait, index) => this.#importTrait(trait, index))
+    this.input.skills?.forEach((skill, index) => this.#importSkill(skill, index))
   }
 
   /* ---------------------------------------- */
@@ -377,7 +377,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importTrait(trait: GcsTrait, containedBy?: string | undefined): Item.CreateData {
+  #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = 'featureV2'
     const _id = foundry.utils.randomID()
     // TODO: localize
@@ -385,6 +385,7 @@ class GcsImporter {
 
     const system: DataModel.CreateData<TraitSchema> = this.#importItem(trait)
     system.disabled = trait.disabled
+    system.containedBy = containedBy ?? null
 
     // Update any actions with the containing trait id:
     // @ts-expect-error
@@ -392,15 +393,16 @@ class GcsImporter {
       // @ts-expect-error
       action.container = _id
     }
-    const component: DataModel.CreateData<TraitComponentSchema> = this.#importTraitComponent(trait)
 
-    const children = trait.childItems?.map((child: GcsTrait) => this.#importTrait(child, _id)) ?? []
-    component.contains = children.map((c: Item.CreateData) => c._id as string)
-    component.containedBy = containedBy ?? null
+    const component: DataModel.CreateData<TraitComponentSchema> = this.#importTraitComponent(trait)
+    trait.childItems?.forEach((child: GcsTrait, childIndex: number) => this.#importTrait(child, childIndex, _id))
+
+    // component.contains = children.map((c: Item.CreateData) => c._id as string)
     const item: Item.CreateData = {
       _id,
       type,
       name,
+      sort: index,
       system: {
         ...system,
         fea: component,
@@ -413,18 +415,17 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importSkill(skill: GcsSkill, containedBy?: string | undefined): Item.CreateData {
+  #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = 'skillV2'
     const _id = foundry.utils.randomID()
     // TODO: localize
     const name = skill.name ?? 'Skill'
 
     const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill)
-    const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
+    system.containedBy = containedBy ?? null
 
-    const children = skill.childItems?.map((child: GcsSkill) => this.#importSkill(child, _id)) ?? []
-    component.contains = children.map((c: Item.CreateData) => c._id as string)
-    component.containedBy = containedBy ?? null
+    const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
+    skill.childItems?.forEach((child: GcsSkill, childIndex: number) => this.#importSkill(child, childIndex, _id))
 
     const item: Item.CreateData = {
       _id,

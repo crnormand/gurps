@@ -36,7 +36,7 @@ class RangedV1 {
   }
 
   get contains() {
-    return this.rangedV2.rng.contains
+    return [] // this.rangedV2.rng.contains
   }
 
   get damage() {

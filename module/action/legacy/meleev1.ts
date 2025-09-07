@@ -31,7 +31,8 @@ class MeleeV1 {
   }
 
   get contains() {
-    return this.meleeV2.mel.contains
+    // return this.meleeV2.contains
+    return []
   }
 
   get cost() {

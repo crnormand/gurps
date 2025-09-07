@@ -50,8 +50,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // Item collections
-  adsV2: Item.OfType<'featureV2'>[] = []
-  skillsV2: Item.OfType<'skillV2'>[] = []
+  // Flat list of all Items of each type.
+  allAdsV2: Item.OfType<'featureV2'>[] = []
+  allSkillsV2: Item.OfType<'skillV2'>[] = []
 
   // Action collections
   meleeV2: MeleeAttackModel[] = []
@@ -145,9 +146,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
   }
 
+  // List of top-level ADs (not contained in another AD), sorted by `sort` field.
+  get adsV2(): Item.OfType<'featureV2'>[] {
+    return this.allAdsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  }
+
+  get skillsV2(): Item.OfType<'skillV2'>[] {
+    return this.allSkillsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  }
+
   get ads() {
     return arrayToObject(
-      this.adsV2.filter(item => item.containedBy === null).map(item => new TraitV1(item)),
+      this.adsV2.map(item => new TraitV1(item)),
       5
     )
   }
@@ -250,8 +260,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       item.system.applyBonuses(this._globalBonuses)
     }
 
-    this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
-    this.skillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
+    this.allAdsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
+    this.allSkillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
 
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
     // const equipment = this.parent.items.filter(item => item.isOfType('equipment'))
@@ -849,7 +859,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   findTrait(name: string): Item.OfType<'featureV2'> | null {
-    return this.adsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
+    return this.allAdsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
   findAdvantage(name: string): Item.OfType<'featureV2'> | null {

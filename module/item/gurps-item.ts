@@ -25,7 +25,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   get containedBy(): string | null {
     // if (this.system instanceof BaseItemModel) {
-    return this.component?.containedBy ?? null
+    return (this.system as BaseItemModel).containedBy ?? null
     // }
     // return null
   }
@@ -49,8 +49,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   get disabled(): boolean {
     const disabled = (this.system as BaseItemModel).disabled === true
     // If this item is contained by a Trait, it is disabled if the Trait is disabled
-    if (!disabled && this.component?.containedBy)
-      return this.parent?.items.get(this.component.containedBy)?.disabled === true
+    if (!disabled && (this.system as BaseItemModel).containedBy)
+      return this.parent?.items.get((this.system as BaseItemModel).containedBy!)?.disabled === true
     return disabled
   }
 
@@ -153,6 +153,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     }
   }
 
+  override update(data: Item.UpdateData, options?: Item.Database.UpdateOptions): Promise<this | undefined> {
+    console.log('GURPS | GurpsItemV2#update', { data, options })
+    return super.update(data, options)
+  }
+
   /* ---------------------------------------- */
   /*  Utilities                               */
   /* ---------------------------------------- */
@@ -247,6 +252,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   get ski(): SkillComponent | null {
     if (!(this.system instanceof SkillModel)) return null
     return this.system.ski
+  }
+
+  get contains() {
+    return this.contents.sort((a, b) => a.sort - b.sort) ?? []
   }
 
   /**

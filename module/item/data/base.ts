@@ -101,13 +101,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   get contents(): Item.Implementation[] {
-    const contents: string[] = this.component.contains || []
-
-    return contents.reduce((acc: Item.Implementation[], id: string) => {
-      const item = this.parent.actor?.items.get(id)
-      if (item) acc.push(item)
-      return acc
-    }, [])
+    return this.parent.actor?.items.filter(item => (item.system as BaseItemModel).containedBy === this.parent.id) || []
   }
 
   /* ---------------------------------------- */
@@ -133,11 +127,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   get container(): Item.Implementation | null {
-    return (
-      this.actor?.items.find(
-        item => item.system instanceof BaseItemModel && item.system.component.contains.includes(this.parent.id ?? '')
-      ) ?? null
-    )
+    return this.parent.actor?.items.get(this.containedBy ?? '') || null
   }
 
   /* ---------------------------------------- */
@@ -266,6 +256,8 @@ const baseItemModelSchema = () => {
       new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
       { required: true, nullable: false }
     ),
+
+    containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }
 type BaseItemModelSchema = ReturnType<typeof baseItemModelSchema>

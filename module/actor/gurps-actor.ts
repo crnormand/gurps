@@ -663,13 +663,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /**
    * Finds the actor component key corresponding to the given ID.
    *
-   * @param {string} key - The key to search for in the trait objects.
-   * @param {string | number} id - The ID to match within the trait objects.
-   * @param {string} sysKey - The system.<key> to use for the search.
-   * @param {boolean} include - Whether to check equal or include in the search
-   * @return {string | undefined} The trait key if found, otherwise undefined.
+   * @param key - The key to search for in the trait objects.
+   * @param id - The ID to match within the trait objects.
+   * @param sysKey - The system.<key> to use for the search.
+   * @param include - Whether to check equal or include in the search
+   * @return The trait key if found, otherwise undefined.
    */
-  _findSysKeyForId(key: string, id: any, sysKey: string, include = false): string | undefined {
+  _findSysKeyForId(key: string, id: string | undefined, sysKey: string, include: boolean = false): string | undefined {
     let traitKey: string | undefined = undefined
     const data = this.system as Record<string, any>
     const list = data[sysKey] as any
@@ -706,6 +706,72 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   get _additionalResources() {
     return (this.system as CharacterModel)?.additionalresources ?? {}
+  }
+
+  /**
+   * Reorder an item in the actor's item list. This function moves the item at sourceKey to be just before the item at
+   * targetKey.
+   * @param sourceKey A full path up to the index, such as "system.skills.123456"
+   * @param targetkey A full path up to the index, such as "system.skills.654321"
+   * @param object The object to move
+   * @param isSrcFirst Whether the source key comes first
+   */
+  async reorderItem(sourceKey: string, targetkey: string, object: any, isSrcFirst: boolean) {
+    console.log('Reorder item', { sourceKey, targetkey, object, isSrcFirst })
+
+    sourceKey = this.#convertLegacyKeys(sourceKey)
+    targetkey = this.#convertLegacyKeys(targetkey)
+
+    const sourceComponents = sourceKey.split('.')
+    let sourceCollection = sourceComponents[0] + '.' + sourceComponents[1]
+
+    const targetComponents = targetkey.split('.')
+    let targetCollection = targetComponents[0] + '.' + targetComponents[1]
+
+    if (targetCollection !== sourceCollection)
+      throw new Error(`Cannot reorder items between different collections: ${sourceCollection} and ${targetCollection}`)
+
+    let sourceIndex = parseInt(sourceComponents.pop()!)
+    let sourcePath = sourceComponents.join('.')
+
+    let targetIndex = parseInt(targetComponents.pop()!)
+    let targetPath = targetComponents.join('.')
+
+    let sourceArray: any[] = foundry.utils.getProperty(this, sourcePath) ?? []
+    let targetArray: any[] = sourceArray
+    if (sourcePath !== targetPath) targetArray = foundry.utils.getProperty(this, targetPath) ?? []
+
+    // Remove the object from the source array
+    let [movedObject] = sourceArray.splice(sourceIndex, 1)
+    if (!movedObject) throw new Error(`No object found at source index ${sourceIndex}`)
+
+    // Insert the object into the target array at the correct position
+    if (isSrcFirst && sourcePath === targetPath) targetIndex--
+    if (targetIndex < 0) targetIndex = 0
+    if (targetIndex > targetArray.length) targetIndex = targetArray.length
+    const containedBy = targetArray[targetIndex]?.containedBy
+    targetArray.splice(targetIndex, 0, movedObject)
+
+    // Update the moved object's containedBy property.
+    await movedObject.update({ system: { containedBy: containedBy ?? null } })
+
+    // Update the sort property of each element in the two arrays
+    sourceArray.forEach(async (obj, index) => {
+      await obj.update({ sort: index })
+    })
+
+    if (sourceArray !== targetArray) {
+      targetArray.forEach(async (obj, index) => {
+        await obj.update({ sort: index })
+      })
+    }
+  }
+
+  #convertLegacyKeys(key: string) {
+    key = key.replace(/^system\.ads\./, 'system.adsV2.')
+    key = key.replace(/^system\.skills\./, 'system.skillsV2.')
+    // For any substring like .12345., convert to parseInt(12345)
+    return key.replace(/\.([0-9]+)\./g, (_, num) => `.${parseInt(num)}.`)
   }
 
   /* ---------------------------------------- */
