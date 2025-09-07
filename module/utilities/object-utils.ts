@@ -4,7 +4,7 @@
  * @param object The object to define properties on.
  * @param keys The keys of the properties to define.
  */
-function defineGetterProperties(object: Object, keys: string[]) {
+function defineGetterProperties(object: Object, keys: readonly string[]) {
   const proto = Object.getPrototypeOf(object)
   for (const key of keys) {
     if (Object.prototype.hasOwnProperty.call(object, key)) continue // already own

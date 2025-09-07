@@ -10,7 +10,7 @@
       </div>
 
     {{/if}}
-    {{#if (eq itemType 'skill')}}
+    {{#if (or (eq itemType 'skill') (eq itemType 'skillV2'))}}
       <div><i class='fa-solid fa-person-swimming itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.skillsTab'}}</span></div>
     {{/if}}
@@ -64,7 +64,7 @@
       {{#if (or (eq itemType 'feature') (eq itemType 'featureV2'))}}
         {{>features}}
       {{/if}}
-      {{#if (eq itemType 'skill')}}
+      {{#if (or (eq itemType 'skill') (eq itemType 'skillV2'))}}
         {{>skill}}
       {{/if}}
       {{#if (eq itemType 'spell')}}

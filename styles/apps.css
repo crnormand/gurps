@@ -2464,7 +2464,8 @@ details .popup.square5x4 {
   background-color: #91241e;
 }
 
-.color-skill {
+.color-skill,
+.color-skillV2 {
   background-color: #453c96;
 }
 

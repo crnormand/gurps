@@ -1,6 +1,5 @@
 // Import Modules
 import { ChangeLogWindow } from '../lib/change-log.js'
-import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
 import { SemanticVersion } from '../lib/semver.js'
 import {
@@ -74,6 +73,10 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
+import { TraitModel } from './item/data/trait.js'
+import { SkillModel } from './item/data/skill.js'
+import { Action } from './action/index.js'
+import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -83,11 +86,10 @@ import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
-import { GurpsActorV2 } from './actor/gurps-actor.js'
+
+import { Migration } from '../lib/migration.js'
 import ActorProxy from './actor/base-actor.js'
 import ItemProxy from './item/item-proxy.js'
-import { TraitModel } from './item/data/trait.js'
-import { Action } from './action/index.js'
 
 export let GURPS = undefined
 
@@ -1962,7 +1964,7 @@ if (!globalThis.GURPS) {
     CONFIG.Item.documentClass = ItemProxy
     CONFIG.Item.dataModels = {
       featureV2: TraitModel,
-      // skill: SkillModel,
+      skillV2: SkillModel,
       // spell: SpellModel,
       // equipment: EquipmentModel,
     }
@@ -2530,7 +2532,7 @@ const handleChatInputDrop = function (event) {
 }
 
 const showGURPSCopyright = function () {
-  ChatMessage.create({
+  CONFIG.ChatMessage.documentClass.create({
     content: `
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>

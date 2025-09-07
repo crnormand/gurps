@@ -12,10 +12,12 @@ import { AnyGcsItem } from './schema/index.js'
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../action/melee-attack.js'
 import { RangedAttackComponentSchema, RangedAttackSchema } from '../action/ranged-attack.js'
 import { GcsWeapon } from './schema/weapon.js'
+import { GcsSkill } from './schema/skill.js'
 
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
+import { SkillSchema, SkillComponentSchema } from '../item/data/skill.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -226,6 +228,7 @@ class GcsImporter {
 
   #importItems() {
     this.input.traits?.forEach(trait => this.#importTrait(trait))
+    this.input.skills?.forEach(skill => this.#importSkill(skill))
   }
 
   /* ---------------------------------------- */
@@ -254,7 +257,6 @@ class GcsImporter {
     system.isContainer = item.isContainer
     system.itemModifiers = ''
     system.open = true
-    system.disabled = item.disabled
 
     system.actions = item.weaponItems
       ?.map((action: GcsWeapon) => this.#importWeapon(action, item))
@@ -382,6 +384,8 @@ class GcsImporter {
     const name = trait.name ?? 'Trait'
 
     const system: DataModel.CreateData<TraitSchema> = this.#importItem(trait)
+    system.disabled = trait.disabled
+
     // Update any actions with the containing trait id:
     // @ts-expect-error
     for (const action of Object.values(system.actions)) {
@@ -409,31 +413,32 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // #importSkill(skill: GcsSkill): Item.CreateData {
-  //   const type = 'skill'
-  //   const _id = foundry.utils.randomID()
-  //   // TODO: localize
-  //   const name = skill.name ?? 'Skill'
+  #importSkill(skill: GcsSkill, containedBy?: string | undefined): Item.CreateData {
+    const type = 'skillV2'
+    const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = skill.name ?? 'Skill'
 
-  //   const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill)
-  //   const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
+    const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill)
+    const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
 
-  //   const children = skill.childItems?.map((child: GcsSkill) => this.#importSkill(child)) ?? []
-  //   component.contains = children.map((c: Item.CreateData) => c._id as string)
+    const children = skill.childItems?.map((child: GcsSkill) => this.#importSkill(child, _id)) ?? []
+    component.contains = children.map((c: Item.CreateData) => c._id as string)
+    component.containedBy = containedBy ?? null
 
-  //   const item: Item.CreateData = {
-  //     _id,
-  //     type,
-  //     name,
-  //     system: {
-  //       ...system,
-  //       ski: component,
-  //     },
-  //   }
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      system: {
+        ...system,
+        ski: component,
+      },
+    }
 
-  //   this.items.push(item)
-  //   return item
-  // }
+    this.items.push(item)
+    return item
+  }
 
   /* ---------------------------------------- */
 
@@ -518,15 +523,15 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // #importSkillComponent(skill: GcsSkill): DataModel.CreateData<SkillComponentSchema> {
-  //   return {
-  //     ...this.#importBaseComponent(skill),
-  //     points: skill.points ?? 0,
-  //     type: skill.difficulty ?? '',
-  //     relativelevel: skill.calc?.rsl ?? '',
-  //     import: skill.calc?.level ?? 0,
-  //   }
-  // }
+  #importSkillComponent(skill: GcsSkill): DataModel.CreateData<SkillComponentSchema> {
+    return {
+      ...this.#importBaseComponent(skill),
+      points: skill.points ?? 0,
+      type: skill.difficulty ?? '',
+      relativelevel: skill.calc?.rsl ?? '',
+      import: skill.calc?.level ?? 0,
+    }
+  }
 
   /* ---------------------------------------- */
 

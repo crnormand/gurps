@@ -719,7 +719,7 @@
   width: 100%;
 }
 
-.desc.disabled {
+.desc.inactive {
   color: gray;
   text-decoration: line-through;
 }

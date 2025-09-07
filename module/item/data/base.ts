@@ -132,12 +132,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  get enabled(): boolean {
-    return this.parent.enabled
-  }
-
-  /* ---------------------------------------- */
-
   get container(): Item.Implementation | null {
     return (
       this.actor?.items.find(
@@ -257,6 +251,8 @@ const baseItemModelSchema = () => {
 
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
     ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // Change from previous schema. Set of IDs corresponding to subtypes of Item
+    skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     bonuses: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
 

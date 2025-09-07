@@ -201,6 +201,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   // NOTE: Not technically an accessor but here for parity with the old system.
   getTorsoDr(): number {
+    return this.torsoDr
+  }
+
+  get torsoDr(): number {
     return (this.system as CharacterModel).torsoDR
   }
 
@@ -299,11 +303,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // NOTE: there doesn't seem to be much reason for this method to be in the Actor class.
   // Consider moving it to roll or elsewhere.
   async canRoll(
-    // TODO Replace with Action.
-    action: AnyObject, // Action parsed from OTF.
-    token: Token.Implementation, // Actor token.
-    chatThing: string, // String representation of the Action.
-    actorComponent?: AnyObject // Actor component for the action.
+    // TODO: replace with action
+    action: AnyObject, // Action parsed from OTF
+    token: Token.Implementation, // Actor token
+    chatThing?: string, // String representation of the action
+    actorComponent?: AnyObject // Actor component for the action
   ): Promise<{
     canRoll: boolean
     isSlam: boolean

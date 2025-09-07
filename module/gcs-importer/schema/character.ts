@@ -3,6 +3,7 @@ import fields = foundry.data.fields
 import { GcsAttribute } from './attribute.js'
 import { GcsBody } from './body.js'
 import { GcsElement } from './base.js'
+import { GcsSkill } from './skill.js'
 import { GcsTrait } from './trait.js'
 
 class GcsCharacter extends GcsElement<GcsCharacterModel> {
@@ -21,8 +22,8 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
       case 'advantages':
       case 'traits':
         return data?.map((traitData: any) => GcsTrait.importSchema(traitData))
-      // case 'skills':
-      //   return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
+      case 'skills':
+        return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
       // case 'spells':
       //   return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
       // case 'equipment':
@@ -53,13 +54,13 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  // get allSkills(): GcsSkill[] {
-  //   const skills = this.skills ?? []
-  //   for (const skill of skills) {
-  //     skills.push(...skill.allChildItems)
-  //   }
-  //   return skills
-  // }
+  get allSkills(): GcsSkill[] {
+    const skills = this.skills ?? []
+    for (const skill of skills) {
+      skills.push(...skill.allChildItems)
+    }
+    return skills
+  }
 
   /* ---------------------------------------- */
 
@@ -154,6 +155,10 @@ const characterData = () => {
       nullable: false,
     }),
     traits: new fields.ArrayField(new fields.EmbeddedDataField(GcsTrait, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    skills: new fields.ArrayField(new fields.EmbeddedDataField(GcsSkill, { required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),

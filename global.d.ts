@@ -6,6 +6,7 @@ import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
+import { SkillModel } from 'module/item/data/skill.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
@@ -87,6 +88,7 @@ declare module 'fvtt-types/configuration' {
       feature: any
       featureV2: typeof TraitModel
       skill: any
+      skillV2: typeof SkillModel
     }
     ChatMessage: {}
   }

@@ -34,6 +34,7 @@ import { HitLocationEntry } from '../actor-components.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
 import { MeleeV1 } from '../../action/legacy/meleev1.js'
 import { RangedV1 } from '../../action/legacy/rangedv1.js'
+import { SkillV1 } from '../../item/legacy/skill-adapter.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -50,6 +51,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // Item collections
   adsV2: Item.OfType<'featureV2'>[] = []
+  skillsV2: Item.OfType<'skillV2'>[] = []
 
   // Action collections
   meleeV2: MeleeAttackModel[] = []
@@ -164,6 +166,24 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     )
   }
 
+  get skills() {
+    return arrayToObject(
+      this.skillsV2.filter(item => item.containedBy === null).map(item => new SkillV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  getReactionsAndModifiers(
+    key: 'reactions' | 'conditionalmods'
+  ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
+    return this.parent.items.reduce((acc: any[], item) => {
+      acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
+      return acc
+    }, [])
+  }
+
   /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
@@ -209,6 +229,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #resetCalculatedAttributeValues() {
+    // Reset the calculated values of attributes
     Object.keys(this.attributes).forEach(key => {
       const attribute = this.attributes[key as keyof typeof this.attributes]
       this.attributes[key as keyof typeof this.attributes].value = attribute.import
@@ -230,8 +251,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
 
     this.adsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
+    this.skillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
 
-    // this.skills = this.parent.items.filter(item => item.isOfType('skill'))
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
     // const equipment = this.parent.items.filter(item => item.isOfType('equipment'))
     // this.allEquipment = equipment
@@ -247,17 +268,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.conditionalmods = this.getReactionsAndModifiers('conditionalmods')
 
     this.#prepareEquipmentSummary()
-  }
-
-  /* ---------------------------------------- */
-
-  getReactionsAndModifiers(
-    key: 'reactions' | 'conditionalmods'
-  ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
-    return this.parent.items.reduce((acc: any[], item) => {
-      acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
-      return acc
-    }, [])
   }
 
   /* ---------------------------------------- */
@@ -443,10 +453,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareDefenses() {
     // this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
-    // // NOTE: this used to check again whether equipment is equipped but this was already
-    // // done when _globalBonuses was gathered so is not necessary
+    // NOTE: this used to check again whether equipment is equipped but this was already
+    // done when _globalBonuses was gathered so is not necessary
     // this._globalBonuses.forEach(bonus => {
-    //   // TODO: revise type
+    // TODO: revise type
     //   const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
     //   if (match) {
     //     const bonusAmount = parseInt(match.groups?.bonus ?? '0')
@@ -473,9 +483,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareUserModifiers() {
     this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2')) return
+      if (!item.isOfType('featureV2', 'skillV2' /* 'spellV2', 'equipmentV2' */)) return
 
-      for (const modifier of (item.system.itemModifiers ?? '').split('\n').map(e => e.trim())) {
+      for (const modifier of item.system.itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
       }
@@ -643,8 +653,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // TODO This method converts HitLocationV2 to HitLocation ... perhaps we can move the necessary functions to
-  // HitLocationsV2 and not do the translation?
   get hitLocationsWithDR(): HitLocationEntry[] {
     return this.hitlocationsV2.map(location => {
       return new HitLocationEntry(location.where, location._dr ?? 0, location.rollText ?? '-', location.split)
@@ -1149,12 +1157,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
 
       case 'markedChecks':
-        const items = this.parent.items.filter(item => item.isOfType('featureV2' /*'skill', 'spell'*/))
+        const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2' /*'spell'*/))
         for (const item of items) {
           if (item.system.addToQuickRoll) {
             const type = item.type === 'featureV2' ? 'ad' : item.type
             let value = 0
-            if (item.isOfType('skill' /*'spell'*/)) value = (item.system as any).component.import
+            if (item.isOfType('skillV2' /*'spell'*/)) value = (item.system as any).component.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
@@ -1401,23 +1409,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           }
       }
       case 'skill-spell': {
-        // const item = [...this.skills, ...this.spells].find(e => e.name === action.name)
-        // if (item)
-        //   return {
-        //     name: item.name,
-        //     uuid: item.uuid,
-        //     itemId: item.id,
-        //     fromItem: item.id,
-        //     pageRef: item.system.component.pageref,
-        //   }
-        // else
-        return {
-          name: action.name,
-          uuid: null,
-          itemId: null,
-          fromItem: null,
-          pageRef: null,
-        }
+        const item = [...this.skillsV2 /*...this.spells*/].find(e => e.name === action.name)
+        if (item)
+          return {
+            name: item.name,
+            uuid: item.uuid,
+            itemId: item.id,
+            fromItem: item.id,
+            pageRef: item.system.component.pageref,
+          }
+        else
+          return {
+            name: action.name,
+            uuid: null,
+            itemId: null,
+            fromItem: null,
+            pageRef: null,
+          }
       }
       case 'attribute': {
         let attrName = action?.overridetxt
@@ -1473,7 +1481,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
 const characterSchema = () => {
   return {
-    // Default attributes.
+    // Default attributes
     attributes: new fields.SchemaField(
       {
         ST: new fields.SchemaField(attributeSchema(), { required: true, nullable: false }),
@@ -1524,9 +1532,10 @@ const characterSchema = () => {
     swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
-    // TODO Additional resources was created by Chris to cover additional stuff that we didn't plan for. It allowed us
+    // TODO AdditionalResources was created by Chris to cover additional stuff that we didn't plan for. It allowed us
     // to add persistent fields without declaring them in the schema (and doing a subsdquent migration). We should
-    // consider finding real homes for this data.
+    // consider finding real homes for this data AND allowing for arbitrary additions without changing the schema.
+    // Perhaps a ObjectModel? Or flags?
     additionalresources: new fields.SchemaField(
       {
         qnotes: new fields.StringField({ required: true, nullable: false }),
@@ -1536,7 +1545,31 @@ const characterSchema = () => {
           required: true,
           nullable: false,
         }),
+        importname: new fields.StringField({ required: true, nullable: true }),
+        // NOTE: Should be a FilePathField but these do not allow arbitrary file extension.
+        // TODO: implement FilePathField with arbitrary file extension support
+        importpath: new fields.StringField({ required: true, nullable: true }),
         currentEncumbrance: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+      },
+      { required: true, nullable: false }
+    ),
+
+    conditionalinjury: new fields.SchemaField(
+      {
+        RT: new fields.SchemaField(
+          {
+            value: new fields.NumberField({ required: true, nullable: false, initial: 4 }),
+            points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+          },
+          { required: true, nullable: false }
+        ),
+        injury: new fields.SchemaField(
+          {
+            severity: new fields.StringField({ required: true, nullable: false, initial: 0 }),
+            daystoheal: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+          },
+          { required: true, nullable: false }
+        ),
       },
       { required: true, nullable: false }
     ),
@@ -1572,7 +1605,35 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
+    // NOTE: Change from previous schema where these fields were part of the schema. They are now derived properties
+    // reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
+    //   required: true,
+    //   nullable: false,
+    // }),
+    // conditionalmods: new fields.ArrayField(
+    //   new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
+    //   {
+    //     required: true,
+    //     nullable: false,
+    //   }
+    // ),
+
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
+
+    // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
+    // They are commented out but this note is kept here for reference.
+    // ads: new fields.ObjectField(),
+    // languages: new fields.ObjectField(),
+    // skills: new fields.ObjectField(),
+    // spells: new fields.ObjectField(),
+    // money: new fields.ObjectField(),
+    // melee: new fields.ObjectField(),
+    // ranged: new fields.ObjectField(),
+    // notes: new fields.ObjectField(),
+    // equipment: new fields.SchemaField({
+    // 	carried: new fields.ObjectField(),
+    // 	other: new fields.ObjectField(),
+    // }, { required: true, nullable: false }),
   }
 }
 type CharacterSchema = ReturnType<typeof characterSchema>

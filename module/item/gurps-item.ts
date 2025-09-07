@@ -1,10 +1,10 @@
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
-import { MeleeAttackModel } from 'module/action/melee-attack.js'
+import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { ModelCollection } from '../data/model-collection.js'
 
 import { TraitComponent, TraitModel } from './data/trait.js'
-import { RangedAttackModel } from 'module/action/ranged-attack.js'
+import { SkillComponent, SkillModel } from './data/skill.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
@@ -25,7 +25,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   get containedBy(): string | null {
     // if (this.system instanceof BaseItemModel) {
-    return this.fea?.containedBy ?? null
+    return this.component?.containedBy ?? null
     // }
     // return null
   }
@@ -46,15 +46,12 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   /* ---------------------------------------- */
 
-  get enabled(): boolean {
-    const disabled = (this.system as BaseItemModel).disabled
-    if (disabled) return false
-
-    if (this.containedBy) {
-      return this.parent?.items.get(this.containedBy)?.enabled ?? true
-    }
-
-    return true
+  get disabled(): boolean {
+    const disabled = (this.system as BaseItemModel).disabled === true
+    // If this item is contained by a Trait, it is disabled if the Trait is disabled
+    if (!disabled && this.component?.containedBy)
+      return this.parent?.items.get(this.component.containedBy)?.disabled === true
+    return disabled
   }
 
   /* ---------------------------------------- */
@@ -178,7 +175,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
     if (!(this.system instanceof BaseItemModel)) return []
 
-    const actions = (this.system as BaseItemModel).actions.filter(action => this.enabled)
+    const actions = (this.system as BaseItemModel).actions.filter(action => !this.disabled)
 
     switch (options.attackType) {
       case 'melee':
@@ -204,21 +201,25 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   /* ---------------------------------------- */
 
-  // async toggleEnabled(enabled: boolean | null = null): Promise<this | undefined> {
-  //   if (!this.isOfType('equipment')) {
-  //     console.warn(`Item of type "${this.type}" cannot be toggled.`)
-  //     return this
-  //   }
+  async toggleEnabled(enabled: boolean | null = null): Promise<Item.UpdateData | undefined> {
+    // @ts-expect-error
+    if (!this.isOfType('equipmentV2')) {
+      // @ts-expect-error
+      console.warn(`Item of type "${this.type}" cannot be toggled.`)
+      return this
+    }
 
-  //   const currentEnabled = (this.system as Item.SystemOfType<'equipment'>).equipped
+    // @ts-expect-error
+    const currentEnabled = (this.system as Item.SystemOfType<'equipmentV2'>).equipped
 
-  //   // NOTE: do I really need to assert Item.UpdateData here?
-  //   return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
-  // }
+    // NOTE: do I really need to assert Item.UpdateData here?
+    // @ts-expect-error
+    return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled })
+  }
 
-  // async toggleEquipped(equipped: boolean | null = null): Promise<this | undefined> {
-  //   return this.toggleEnabled(equipped)
-  // }
+  async toggleEquipped(equipped: boolean | null = null): Promise<Item.UpdateData | undefined> {
+    return this.toggleEnabled(equipped)
+  }
 
   /* ---------------------------------------- */
   /* Legacy Functionality                     */
@@ -228,9 +229,24 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     return (this.system as TraitModel).addToQuickRoll
   }
 
+  get component(): TraitComponent | SkillComponent | null {
+    if (this.type === 'featureV2') return this.fea
+    if (this.type === 'skillV2') return this.ski
+    return null
+  }
+
+  /* ---------------------------------------- */
+
   get fea(): TraitComponent | null {
-    // if (!(this.system instanceof TraitModel)) return null
-    return (this.system as TraitModel).fea
+    if (!(this.system instanceof TraitModel)) return null
+    return this.system.fea
+  }
+
+  /* ---------------------------------------- */
+
+  get ski(): SkillComponent | null {
+    if (!(this.system instanceof SkillModel)) return null
+    return this.system.ski
   }
 
   /**
@@ -242,7 +258,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     const keys = {
       equipment: 'equipment',
       featureV2: 'ads',
-      skill: 'skills',
+      skillV2: 'skills',
       spell: 'spells',
       meleeAtk: 'melee',
       rangedAtk: 'ranged',
@@ -256,13 +272,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     const newValue = !(this.system as BaseItemModel).open
     if (expandOnly && !newValue) return
     this.update({ 'system.open': newValue } as Item.UpdateData)
-  }
-
-  get disabled(): boolean {
-    const disabled = (this.system as BaseItemModel).disabled === true
-    // If this item is contained by a Trait, it is disabled if the Trait is disabled
-    if (!disabled && this.fea?.containedBy) return this.parent?.items.get(this.fea?.containedBy)?.disabled === true
-    return disabled
   }
 }
 
