@@ -101,7 +101,7 @@ const equipmentData = () => {
     max_uses: new fields.NumberField({ required: true, nullable: true }),
     // STUB: prereqs is not yet supported
     // prereqs: new fields.ObjectField({ required: true, nullable: true }),
-    // weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
+    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     // ignore_weight_for_skills: new fields.BooleanField({ required: true, nullable: true }),
