@@ -207,9 +207,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   /* ---------------------------------------- */
 
   async toggleEnabled(enabled: boolean | null = null): Promise<Item.UpdateData | undefined> {
-    // @ts-expect-error
     if (!this.isOfType('equipmentV2')) {
-      // @ts-expect-error
       console.warn(`Item of type "${this.type}" cannot be toggled.`)
       return this
     }
@@ -254,6 +252,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     return this.system.ski
   }
 
+  /* ---------------------------------------- */
+
   get contains() {
     return this.contents.sort((a, b) => a.sort - b.sort) ?? []
   }
@@ -265,7 +265,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
    */
   get actorComponentKey() {
     const keys = {
-      equipment: 'equipment',
+      equipmentV2: 'equipment',
       featureV2: 'ads',
       skillV2: 'skills',
       spell: 'spells',
@@ -276,6 +276,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
     return sysKey
   }
+
+  /* ---------------------------------------- */
 
   toggleCollapsed(expandOnly: boolean = false): void {
     const newValue = !(this.system as BaseItemModel).open

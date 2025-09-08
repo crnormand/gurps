@@ -15,8 +15,6 @@ const itemComponentSchema = () => {
     notes: new fields.StringField({ required: true, nullable: false }),
     pageref: new fields.StringField({ required: true, nullable: false }),
 
-    // Change from previous schema. Set of IDs
-    // NOTE: this method of storing child items overrides Foundry's default "sort" behaviour.
     uuid: new fields.StringField({ required: true, nullable: false }),
     parentuuid: new fields.StringField({ required: true, nullable: false }),
     originalName: new fields.StringField({ required: true, nullable: false }),

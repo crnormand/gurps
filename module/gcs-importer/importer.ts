@@ -12,12 +12,14 @@ import { AnyGcsItem } from './schema/index.js'
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../action/melee-attack.js'
 import { RangedAttackComponentSchema, RangedAttackSchema } from '../action/ranged-attack.js'
 import { GcsWeapon } from './schema/weapon.js'
+import { SkillComponentSchema, SkillSchema } from '../item/data/skill.js'
 import { GcsSkill } from './schema/skill.js'
 
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
-import { SkillSchema, SkillComponentSchema } from '../item/data/skill.js'
+import { GcsEquipment } from './schema/equipment.js'
+import { EquipmentComponentSchema, EquipmentSchema } from 'module/item/data/equipment.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -229,6 +231,7 @@ class GcsImporter {
   #importItems() {
     this.input.traits?.forEach((trait, index) => this.#importTrait(trait, index))
     this.input.skills?.forEach((skill, index) => this.#importSkill(skill, index))
+    this.input.equipment?.forEach((equipment, index) => this.#importEquipment(equipment, index, true))
   }
 
   /* ---------------------------------------- */
@@ -431,6 +434,7 @@ class GcsImporter {
       _id,
       type,
       name,
+      sort: index,
       system: {
         ...system,
         ski: component,
@@ -471,31 +475,47 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // #importEquipment(equipment: GcsEquipment, carried: boolean): Item.CreateData {
-  //   const type = 'equipment'
-  //   const _id = foundry.utils.randomID()
-  //   // TODO: localize
-  //   const name = equipment.name ?? 'Equipment'
+  #importEquipment(
+    equipment: GcsEquipment,
+    index: number,
+    carried: boolean,
+    containedBy?: string | undefined
+  ): Item.CreateData {
+    const type = 'equipmentV2'
+    const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = equipment.name ?? 'Equipment'
 
-  //   const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment)
-  //   const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(equipment, carried)
+    const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment)
+    system.containedBy = containedBy ?? null
 
-  //   const children = equipment.childItems?.map((child: GcsEquipment) => this.#importEquipment(child, carried)) ?? []
-  //   component.contains = children.map((c: Item.CreateData) => c._id as string)
+    // Update any actions with the containing trait id:
+    // @ts-expect-error
+    for (const action of Object.values(system.actions)) {
+      // @ts-expect-error
+      action.container = _id
+    }
 
-  //   const item: Item.CreateData = {
-  //     _id,
-  //     type,
-  //     name,
-  //     system: {
-  //       ...system,
-  //       eqt: component,
-  //     },
-  //   }
+    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(equipment, carried)
 
-  //   this.items.push(item)
-  //   return item
-  // }
+    equipment.childItems?.forEach((child: GcsEquipment, childIndex: number) =>
+      this.#importEquipment(child, childIndex, carried, _id)
+    )
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      sort: index,
+      system: {
+        ...system,
+        eqt: component,
+      },
+    }
+
+    this.items.push(item)
+    return item
+  }
 
   /* ---------------------------------------- */
 
@@ -557,23 +577,23 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // #importEquipmentComponent(equipment: GcsEquipment, carried: boolean): DataModel.CreateData<EquipmentComponentSchema> {
-  //   return {
-  //     ...this.#importBaseComponent(equipment),
-  //     count: equipment.quantity ?? 1,
-  //     weight: equipment.calc ? parseInt(equipment.calc.weight) : 0,
-  //     cost: equipment.calc?.value ?? 0,
-  //     location: '',
-  //     carried,
-  //     equipped: equipment.equipped ?? false,
-  //     techlevel: equipment.tech_level ?? '',
-  //     categories: equipment.tags?.join(', ') ?? '',
-  //     costsum: equipment.calc?.extended_value || 0,
-  //     weightsum: equipment.calc?.extended_weight,
-  //     uses: equipment.uses ?? 0,
-  //     maxuses: equipment.max_uses ?? 0,
-  //   }
-  // }
+  #importEquipmentComponent(equipment: GcsEquipment, carried: boolean): DataModel.CreateData<EquipmentComponentSchema> {
+    return {
+      ...this.#importBaseComponent(equipment),
+      count: equipment.quantity ?? 1,
+      weight: equipment.calc ? parseInt(equipment.calc.weight) : 0,
+      cost: equipment.calc?.value ?? 0,
+      location: '',
+      carried,
+      equipped: equipment.equipped ?? false,
+      techlevel: equipment.tech_level ?? '',
+      categories: equipment.tags?.join(', ') ?? '',
+      costsum: equipment.calc?.extended_value || 0,
+      weightsum: equipment.calc?.extended_weight,
+      uses: equipment.uses ?? 0,
+      maxuses: equipment.max_uses ?? 0,
+    }
+  }
 
   /* ---------------------------------------- */
 

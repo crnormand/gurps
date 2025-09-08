@@ -29,12 +29,15 @@ import { COSTS_REGEX } from '../../../lib/parselink.js'
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
 import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
+import { EquipmentModel } from 'module/item/data/equipment.js'
+
 import { arrayToObject, zeroFill } from '../../../lib/utilities.js'
 import { HitLocationEntry } from '../actor-components.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
 import { MeleeV1 } from '../../action/legacy/meleev1.js'
 import { RangedV1 } from '../../action/legacy/rangedv1.js'
 import { SkillV1 } from '../../item/legacy/skill-adapter.js'
+import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -53,6 +56,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // Flat list of all Items of each type.
   allAdsV2: Item.OfType<'featureV2'>[] = []
   allSkillsV2: Item.OfType<'skillV2'>[] = []
+  allEquipmentV2: Item.OfType<'equipmentV2'>[] = []
 
   // Action collections
   meleeV2: MeleeAttackModel[] = []
@@ -146,20 +150,47 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
   }
 
+  get ads() {
+    return arrayToObject(
+      this.adsV2.map(item => new TraitV1(item)),
+      5
+    )
+  }
+
   // List of top-level ADs (not contained in another AD), sorted by `sort` field.
   get adsV2(): Item.OfType<'featureV2'>[] {
     return this.allAdsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  }
+
+  get skills() {
+    return arrayToObject(
+      this.skillsV2.filter(item => item.containedBy === null).map(item => new SkillV1(item)),
+      5
+    )
   }
 
   get skillsV2(): Item.OfType<'skillV2'>[] {
     return this.allSkillsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
   }
 
-  get ads() {
-    return arrayToObject(
-      this.adsV2.map(item => new TraitV1(item)),
-      5
-    )
+  get equipmentV2() {
+    return {
+      carried: this.allEquipmentV2
+        .filter(item => (item.system as EquipmentModel).eqt.carried === true)
+        .filter(item => item.containedBy === null)
+        .sort((a, b) => a.sort - b.sort),
+      other: this.allEquipmentV2
+        .filter(item => (item.system as EquipmentModel).eqt.carried === false)
+        .filter(item => item.containedBy === null)
+        .sort((a, b) => a.sort - b.sort),
+    }
+  }
+
+  get equipment() {
+    return {
+      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
+      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
+    }
   }
 
   get melee() {
@@ -172,13 +203,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   get ranged() {
     return arrayToObject(
       this.rangedV2.map(item => new RangedV1(item)),
-      5
-    )
-  }
-
-  get skills() {
-    return arrayToObject(
-      this.skillsV2.filter(item => item.containedBy === null).map(item => new SkillV1(item)),
       5
     )
   }
@@ -264,7 +288,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.allSkillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
 
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
-    // const equipment = this.parent.items.filter(item => item.isOfType('equipment'))
+    this.allEquipmentV2 = this.parent.items.filter(item => item.isOfType('equipmentV2'))
     // this.allEquipment = equipment
     // this.equipment = {
     //   carried: equipment.filter(item => item.system.carried === true),

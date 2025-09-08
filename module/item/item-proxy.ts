@@ -14,6 +14,7 @@ const ItemProxy = new Proxy(Item, {
         return new GurpsItem(...args)
       case 'featureV2':
       case 'skillV2':
+      case 'equipmentV2':
         return new GurpsItemV2(...args)
       default:
         throw Error(`Item type ${type} does not exist and item module sub-types are not supported`)

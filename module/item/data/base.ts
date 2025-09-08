@@ -126,6 +126,12 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  get enabled(): boolean {
+    return !!this.disabled ? !this.disabled : true
+  }
+
+  /* ---------------------------------------- */
+
   get container(): Item.Implementation | null {
     return this.parent.actor?.items.get(this.containedBy ?? '') || null
   }
@@ -147,7 +153,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   applyBonuses(bonuses: AnyObject[]): void {
     for (const action of this.actions) {
-      if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
+      action.applyBonuses(bonuses)
     }
   }
 
@@ -205,8 +211,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   getGlobalBonuses(): AnyObject[] {
-    // if (this.isOfType('equipment') && !this.component.equipped) return []
-
     const bonuses = []
 
     for (let bonus of this.bonuses.split('\n')) {

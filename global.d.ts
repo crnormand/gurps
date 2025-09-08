@@ -5,6 +5,7 @@ import { GurpsCombatant } from 'module/combat/combatant.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
+import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
@@ -85,6 +86,7 @@ declare module 'fvtt-types/configuration' {
     }
     Item: {
       equipment: any
+      equipmentV2: typeof GcsEquipment
       feature: any
       featureV2: typeof TraitModel
       skill: any

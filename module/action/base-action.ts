@@ -2,6 +2,7 @@ import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,
@@ -38,6 +39,10 @@ class BaseAction<
 
   prepareSheetContext(): this {
     return this
+  }
+
+  applyBonuses(bonuses: AnyObject[]): void {
+    // NOTE: Do nothing. Override in subclasses.
   }
 }
 

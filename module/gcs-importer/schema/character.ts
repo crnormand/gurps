@@ -3,6 +3,7 @@ import fields = foundry.data.fields
 import { GcsAttribute } from './attribute.js'
 import { GcsBody } from './body.js'
 import { GcsElement } from './base.js'
+import { GcsEquipment } from './equipment.js'
 import { GcsSkill } from './skill.js'
 import { GcsTrait } from './trait.js'
 
@@ -26,9 +27,9 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
         return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
       // case 'spells':
       //   return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
-      // case 'equipment':
-      // case 'other_equipment':
-      //   return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
+      case 'equipment':
+        // case 'other_equipment':
+        return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
       // case 'notes':
       //   return data?.map((noteData: any) => GcsNote.importSchema(noteData))
       default:
@@ -74,13 +75,13 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  // get allCarriedEquipment(): GcsEquipment[] {
-  //   const equipment = this.equipment ?? []
-  //   for (const item of equipment) {
-  //     equipment.push(...item.allChildItems)
-  //   }
-  //   return equipment
-  // }
+  get allCarriedEquipment(): GcsEquipment[] {
+    const equipment = this.equipment ?? []
+    for (const item of equipment) {
+      equipment.push(...item.allChildItems)
+    }
+    return equipment
+  }
 
   /* ---------------------------------------- */
 
@@ -117,9 +118,6 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
 const characterData = () => {
   return {
-    created_date: new fields.StringField({ required: true, nullable: false }),
-    modified_date: new fields.StringField({ required: true, nullable: false }),
-
     profile: new fields.SchemaField(
       {
         name: new fields.StringField({ required: true, nullable: true }),
@@ -162,6 +160,12 @@ const characterData = () => {
       required: true,
       nullable: true,
     }),
+    equipment: new fields.ArrayField(new fields.EmbeddedDataField(GcsEquipment, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    created_date: new fields.StringField({ required: true, nullable: false }),
+    modified_date: new fields.StringField({ required: true, nullable: false }),
 
     calc: new fields.SchemaField(
       {

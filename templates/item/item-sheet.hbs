@@ -1,6 +1,6 @@
 <form class='gga-app item-editor' autocomplete='off'>
   <div class='gga-item-sheet-title color-{{item.type}}'>
-    {{#if (eq itemType 'equipment')}}
+    {{#if (or (eq itemType 'equipment') (eq itemType 'equipmentV2'))}}
       <div><i class='fa-solid fa-screwdriver-wrench itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.equipment'}}</span></div>
     {{/if}}

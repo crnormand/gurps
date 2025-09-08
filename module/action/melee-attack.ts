@@ -102,7 +102,7 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
-  applyBonuses(bonuses: AnyObject[]): void {
+  override applyBonuses(bonuses: AnyObject[]): void {
     for (const bonus of bonuses) {
       // All melee attacks are affected by DX
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {
@@ -177,7 +177,7 @@ const meleeAttackComponentSchema = () => {
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     // Added to allow disabling from containing Trait.
-    container: new fields.StringField({ required: true, nullable: false }),
+    containedBy: new fields.StringField({ required: true, nullable: false }),
     // Added to support QuickRoll menu.
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }

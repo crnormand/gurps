@@ -202,7 +202,7 @@
     }
   },
   "Item": {
-    "types": ["equipment", "feature", "featureV2", "skill", "skillV2", "spell", "meleeAtk", "rangedAtk"],
+    "types": ["equipment", "equipmentV2", "feature", "featureV2", "skill", "skillV2", "spell", "meleeAtk", "rangedAtk"],
     "equipment": {
       "eqt": {
         "name": "",
