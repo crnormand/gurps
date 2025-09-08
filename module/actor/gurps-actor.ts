@@ -711,31 +711,22 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /**
    * Reorder an item in the actor's item list. This function moves the item at sourceKey to be just before the item at
    * targetKey.
-   * @param sourceKey A full path up to the index, such as "system.skills.123456"
+   * @param sourcekey A full path up to the index, such as "system.skills.123456"
    * @param targetkey A full path up to the index, such as "system.skills.654321"
    * @param object The object to move
    * @param isSrcFirst Whether the source key comes first
    */
-  async reorderItem(sourceKey: string, targetkey: string, object: any, isSrcFirst: boolean) {
-    console.log('Reorder item', { sourceKey, targetkey, object, isSrcFirst })
+  async reorderItem(sourcekey: string, targetkey: string, object: any, isSrcFirst: boolean) {
+    console.log('Reorder item', { sourceKey: sourcekey, targetkey, object, isSrcFirst })
 
-    sourceKey = this.#convertLegacyKeys(sourceKey)
-    targetkey = this.#convertLegacyKeys(targetkey)
+    sourcekey = this.#convertLegacyReorderKeys(sourcekey)
+    targetkey = this.#convertLegacyReorderKeys(targetkey)
 
-    const sourceComponents = sourceKey.split('.')
-    let sourceCollection = sourceComponents[0] + '.' + sourceComponents[1]
-
-    const targetComponents = targetkey.split('.')
-    let targetCollection = targetComponents[0] + '.' + targetComponents[1]
+    let [sourceCollection, sourceIndex, sourcePath] = this.#parseReorderKey(sourcekey)
+    let [targetCollection, targetIndex, targetPath] = this.#parseReorderKey(targetkey)
 
     if (targetCollection !== sourceCollection)
       throw new Error(`Cannot reorder items between different collections: ${sourceCollection} and ${targetCollection}`)
-
-    let sourceIndex = parseInt(sourceComponents.pop()!)
-    let sourcePath = sourceComponents.join('.')
-
-    let targetIndex = parseInt(targetComponents.pop()!)
-    let targetPath = targetComponents.join('.')
 
     let sourceArray: any[] = foundry.utils.getProperty(this, sourcePath) ?? []
     let targetArray: any[] = sourceArray
@@ -745,15 +736,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     let [movedObject] = sourceArray.splice(sourceIndex, 1)
     if (!movedObject) throw new Error(`No object found at source index ${sourceIndex}`)
 
-    // Insert the object into the target array at the correct position
     if (isSrcFirst && sourcePath === targetPath) targetIndex--
     if (targetIndex < 0) targetIndex = 0
     if (targetIndex > targetArray.length) targetIndex = targetArray.length
-    const containedBy = targetArray[targetIndex]?.containedBy
-    targetArray.splice(targetIndex, 0, movedObject)
 
     // Update the moved object's containedBy property.
+    const containedBy = targetArray[targetIndex]?.containedBy
     await movedObject.update({ system: { containedBy: containedBy ?? null } })
+
+    // Insert the object into the target array at the correct position
+    targetArray.splice(targetIndex, 0, movedObject)
 
     // Update the sort property of each element in the two arrays
     sourceArray.forEach(async (obj, index) => {
@@ -767,11 +759,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
   }
 
-  #convertLegacyKeys(key: string) {
+  #convertLegacyReorderKeys(key: string) {
     key = key.replace(/^system\.ads\./, 'system.adsV2.')
     key = key.replace(/^system\.skills\./, 'system.skillsV2.')
     // For any substring like .12345., convert to parseInt(12345)
     return key.replace(/\.([0-9]+)\./g, (_, num) => `.${parseInt(num)}.`)
+  }
+
+  #parseReorderKey(key: string): [string, number, string] {
+    const components = key.split('.')
+    const index = parseInt(components.pop()!)
+    const path = components.join('.')
+    const primaryComponentPath = components[0] + '.' + components[1]
+    return [primaryComponentPath, index, path]
   }
 
   /* ---------------------------------------- */
