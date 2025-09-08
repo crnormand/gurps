@@ -162,6 +162,8 @@ const skillComponentSchema = () => {
     type: new fields.StringField({ required: true, nullable: false }),
     relativelevel: new fields.StringField({ required: true, nullable: false }),
     otf: new fields.StringField({ required: true, nullable: false }),
+    specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
+    techlevel: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }
 

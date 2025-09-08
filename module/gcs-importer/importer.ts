@@ -531,6 +531,8 @@ class GcsImporter {
       type: skill.difficulty ?? '',
       relativelevel: skill.calc?.rsl ?? '',
       import: skill.calc?.level ?? 0,
+      specialization: skill.specialization ?? '',
+      techlevel: skill.tech_level ?? '',
     }
   }
 

@@ -114,7 +114,9 @@ class SkillV1 {
   }
 
   get name(): string {
-    return this.skillV2.name
+    const techlevel = this.skillV2.ski?.techlevel ? '/TL' + this.skillV2.ski.techlevel : ''
+    const specialization = this.skillV2.ski?.specialization ? ' (' + this.skillV2.ski.specialization + ')' : ''
+    return `${this.skillV2.name}${techlevel}${specialization}`
   }
 
   get notes(): string {
