@@ -1,6 +1,4 @@
-// Import Modules
 import { ChangeLogWindow } from '../lib/change-log.js'
-import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
 import { SemanticVersion } from '../lib/semver.js'
 import {
@@ -16,16 +14,6 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
-import {
-  GurpsActorCombatSheet,
-  GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
-  GurpsActorSheet,
-  GurpsActorSheetReduced,
-  GurpsActorSimplifiedSheet,
-  GurpsActorTabSheet,
-  GurpsInventorySheet,
-} from './actor/actor-sheet.js'
 import { GurpsActor } from './actor/actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -61,8 +49,6 @@ import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
-import GurpsActiveEffectConfig from './effects/active-effect-config.js'
-import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import GurpsWiring from './gurps-wiring.js'
@@ -74,6 +60,18 @@ import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
 import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
+import { importGCS } from './utilities/gcs-importer/parser.js'
+import { importGCA } from './utilities/gca-importer/parser.js'
+import { TraitModel } from './item/data/trait.js'
+import { SkillModel } from './item/data/skill.js'
+import { SpellModel } from './item/data/spell.js'
+import { EquipmentModel } from './item/data/equipment.js'
+import { GurpsItemV2 } from './item/gurps-item.js'
+import { CharacterModel } from './actor/data/character.js'
+
+import { Action } from './action/index.js'
+import { Actor } from './actor/index.js'
+import { ActiveEffect } from './active-effect/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -82,7 +80,8 @@ import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
-
+import { Migration } from './migration/index.js'
+import { registerGurpsHandlebarsHelpers, registerHandlebarsPartials } from './utilities/handlebars.js'
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
@@ -91,8 +90,10 @@ if (!globalThis.GURPS) {
   GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
   GURPS.DEBUG = true
   GURPS.stopActions = false
-  GURPS.Migration = Migration
   GURPS.Length = Length
+  // GURPS.importTextXML = importTestXML
+  GURPS.importGCS = importGCS
+  GURPS.importGCA = importGCA
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -112,10 +113,14 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
+    Pdf,
+    Action,
+    ActiveEffect,
+    Actor,
     Canvas,
     Combat,
     Damage,
-    Pdf,
+    Migration,
     ResourceTracker,
     Token,
     UI,
@@ -125,6 +130,8 @@ if (!globalThis.GURPS) {
   AddChatHooks()
   JQueryHelpers()
   MoustacheWax()
+  registerGurpsHandlebarsHelpers()
+  registerHandlebarsPartials()
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
@@ -142,7 +149,7 @@ if (!globalThis.GURPS) {
 
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
-  GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
+  GURPS.clearActiveEffects = ActiveEffect.clearEffectsOnSelectedToken
 
   // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
 
@@ -1933,7 +1940,6 @@ if (!globalThis.GURPS) {
     HitLocation.init()
 
     RegisterChatProcessors()
-    GurpsActiveEffect.init()
 
     // Add Debugger info
     GGADebugger.init()
@@ -1951,55 +1957,19 @@ if (!globalThis.GURPS) {
 
     // Define custom Entity classes
     // @ts-ignore
-    CONFIG.Actor.documentClass = GurpsActor
-    CONFIG.Item.documentClass = GurpsItem
+    // CONFIG.Actor.documentClass = GurpsActor
+    // CONFIG.Item.documentClass = GurpsItem
 
-    // add custom ActiveEffectConfig sheet class
-    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(
-      ActiveEffect,
-      'core',
-      foundry.applications.sheets.ActiveEffectConfig
-    )
-    foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
-      makeDefault: true,
-    })
+    CONFIG.Item.documentClass = GurpsItemV2
+
+    CONFIG.Item.dataModels = {
+      feature: TraitModel,
+      skill: SkillModel,
+      spell: SpellModel,
+      equipment: EquipmentModel,
+    }
 
     // Register sheet application classes
-    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-      label: 'NPC/mini',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
-      makeDefault: true,
-    })
-
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
@@ -2025,17 +1995,6 @@ if (!globalThis.GURPS) {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
 
-    /**
-     * Added to color the rollable parts of the character sheet.
-     * Made this part eslint compatible...
-     * ~Stevil
-     */
-    registerColorPickerSettings()
-    // eslint-disable-next-line no-undef
-    Hooks.on('renderActorSheet', () => {
-      colorGurpsActorSheet()
-    })
-
     // Listen for the Ctrl key and toggle the roll mode (to show the behaviour we currently do anyway)
     game.keybindings.register('gurps', 'toggleDiceDisplay', {
       name: 'Toggle dice display',
@@ -2053,8 +2012,6 @@ if (!globalThis.GURPS) {
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"
     })
-
-    GURPS.ActorSheets = { character: GurpsActorSheet }
 
     Hooks.call('gurpsinit', GURPS)
   })
@@ -2080,9 +2037,8 @@ if (!globalThis.GURPS) {
     const migrationVersion = SemanticVersion.fromString(previousVersionString)
 
     // Run any needed migrations.
-    Migration.run()
-    Object.values(GURPS.modules).forEach(mod => {
-      if (mod.migrate) mod.migrate()
+    Object.values(GURPS.modules).forEach(async mod => {
+      if (typeof mod.migrate === 'function') await mod.migrate()
     })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
@@ -2516,7 +2472,7 @@ const handleChatInputDrop = function (event) {
 }
 
 const showGURPSCopyright = function () {
-  ChatMessage.create({
+  CONFIG.ChatMessage.documentClass.create({
     content: `
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.title}</div>
 <hr>

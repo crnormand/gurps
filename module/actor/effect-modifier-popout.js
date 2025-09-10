@@ -17,11 +17,6 @@ export const calculateRange = (token1, token2) => {
 
   let dist = canvas.grid.measurePath([token1.document, token2.document]).distance
 
-  if (game.release.generation === 12) {
-    const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
-    dist = Math.sqrt(Math.pow(dist, 2) + Math.pow(verticalDistance, 2)) - 1
-  }
-
   const yards = Length.from(dist, canvas.scene.grid.units).to(Length.Unit.Yard).value
   return {
     yards: Math.ceil(dist),
@@ -60,7 +55,7 @@ export class EffectModifierPopout extends Application {
     let sidebarLeft = x.parent().position().left
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/actor/effect-modifier-popout.hbs',
-      classes: ['sidebar-popout effect-modifiers-app'],
+      classes: ['sidebar-popout', 'effect-modifiers-app'],
       popOut: true,
       top: 0,
       width: 550,
