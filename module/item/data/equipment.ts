@@ -1,6 +1,7 @@
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import fields = foundry.data.fields
 import { ItemComponent, ItemComponentSchema } from './component.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   static override defineSchema(): EquipmentSchema {
@@ -46,8 +47,22 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   }
 
   /* ---------------------------------------- */
+
+  override async toggleEnabled(enabled: boolean | null = null): Promise<this['parent'] | undefined> {
+    const currentEnabled = this.equipped
+
+    // NOTE: do I really need to assert Item.UpdateData here?
+    return this.parent.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
+
+  override getGlobalBonuses(): AnyObject[] {
+    if (!this.component.equipped) return []
+    return super.getGlobalBonuses()
+  }
 }
 
 class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {

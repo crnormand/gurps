@@ -101,7 +101,7 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
-  applyBonuses(bonuses: AnyObject[]): void {
+  override applyBonuses(bonuses: AnyObject[]): void {
     for (const bonus of bonuses) {
       // All melee attacks are affected by DX
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {

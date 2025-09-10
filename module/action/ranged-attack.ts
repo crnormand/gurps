@@ -107,7 +107,7 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  applyBonuses(bonuses: AnyObject[]): void {
+  override applyBonuses(bonuses: AnyObject[]): void {
     for (const bonus of bonuses) {
       // All melee attacks are affected by DX
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {

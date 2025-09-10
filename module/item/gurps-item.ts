@@ -180,19 +180,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   /* ---------------------------------------- */
 
   async toggleEnabled(enabled: boolean | null = null): Promise<this | undefined> {
-    if (!this.isOfType('equipment')) {
-      console.warn(`Item of type "${this.type}" cannot be toggled.`)
-      return this
-    }
-
-    const currentEnabled = (this.system as Item.SystemOfType<'equipment'>).equipped
-
-    // NOTE: do I really need to assert Item.UpdateData here?
-    return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
+    return this.system.toggleEnabled(enabled) as Promise<this | undefined>
   }
 
   async toggleEquipped(equipped: boolean | null = null): Promise<this | undefined> {
-    return this.toggleEnabled(equipped)
+    return this.system.toggleEnabled(equipped) as Promise<this | undefined>
   }
 
   /* ---------------------------------------- */

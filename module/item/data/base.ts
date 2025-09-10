@@ -162,8 +162,15 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   applyBonuses(bonuses: AnyObject[]): void {
     for (const action of this.actions) {
-      if (action instanceof MeleeAttackModel || action instanceof RangedAttackModel) action.applyBonuses(bonuses)
+      action.applyBonuses(bonuses)
     }
+  }
+
+  /* ---------------------------------------- */
+
+  async toggleEnabled(_enabled: boolean | null = null): Promise<this['parent'] | undefined> {
+    console.warn(`Item of type "${this.parent.type}" cannot be toggled.`)
+    return this.parent
   }
 
   /* ---------------------------------------- */
@@ -220,8 +227,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   getGlobalBonuses(): AnyObject[] {
-    if (this.isOfType('equipment') && !this.component.equipped) return []
-
     const bonuses = []
 
     for (let bonus of this.bonuses.split('\n')) {
