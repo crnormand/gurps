@@ -105,4 +105,4 @@ type EquipmentComponentSchema = ItemComponentSchema & ReturnType<typeof equipmen
 
 /* ---------------------------------------- */
 
-export { EquipmentModel, type EquipmentSchema, type EquipmentComponentSchema }
+export { EquipmentModel, type EquipmentSchema, type EquipmentComponentSchema, EquipmentComponent }

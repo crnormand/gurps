@@ -5,6 +5,7 @@ import { ModelCollection } from '../data/model-collection.js'
 
 import { TraitComponent, TraitModel } from './data/trait.js'
 import { SkillComponent, SkillModel } from './data/skill.js'
+import { EquipmentComponent, EquipmentModel } from './data/equipment.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
@@ -178,9 +179,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
-    if (!(this.system instanceof BaseItemModel)) return []
+    if (!(this.system instanceof BaseItemModel) || !this.system.enabled) return []
 
-    const actions = (this.system as BaseItemModel).actions.filter(action => !this.disabled)
+    const actions = (this.system as BaseItemModel).actions
 
     switch (options.attackType) {
       case 'melee':
@@ -250,6 +251,13 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   get ski(): SkillComponent | null {
     if (!(this.system instanceof SkillModel)) return null
     return this.system.ski
+  }
+
+  /* ---------------------------------------- */
+
+  get eqt(): EquipmentComponent | null {
+    if (!(this.system instanceof EquipmentModel)) return null
+    return this.system.eqt
   }
 
   /* ---------------------------------------- */

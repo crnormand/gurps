@@ -63,11 +63,11 @@ class EquipmentV1 {
   }
 
   get carried(): boolean {
-    return (this.equipmentV2.system as EquipmentModel).eqt.carried
+    return this.equipmentV2.eqt!.carried
   }
 
   get categories(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.categories
+    return this.equipmentV2.eqt!.categories
   }
 
   get collapsed(): Record<string, EquipmentV1> {
@@ -79,23 +79,23 @@ class EquipmentV1 {
   }
 
   get cost(): number {
-    return (this.equipmentV2.system as EquipmentModel).eqt.cost
+    return this.equipmentV2.eqt!.cost
   }
 
   get costsum(): number {
-    return (this.equipmentV2.system as EquipmentModel).eqt.costsum
+    return this.equipmentV2.eqt!.costsum
   }
 
   get count(): number {
-    return (this.equipmentV2.system as EquipmentModel).eqt.count
+    return this.equipmentV2.eqt!.count
   }
 
   get equipped(): boolean {
-    return (this.equipmentV2.system as EquipmentModel).eqt.equipped
+    return this.equipmentV2.eqt!.equipped
   }
 
   get ignoreImportQty(): boolean {
-    return (this.equipmentV2.system as EquipmentModel).eqt.ignoreImportQty
+    return this.equipmentV2.eqt!.ignoreImportQty
   }
 
   get itemInfo(): {
@@ -119,15 +119,15 @@ class EquipmentV1 {
   }
 
   get legalityclass(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.legalityclass
+    return this.equipmentV2.eqt!.legalityclass
   }
 
   get location(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.location
+    return this.equipmentV2.eqt!.location
   }
 
   get maxuses(): number | null {
-    return (this.equipmentV2.system as EquipmentModel).eqt.maxuses
+    return this.equipmentV2.eqt!.maxuses
   }
 
   get modifierTags(): string {
@@ -139,18 +139,15 @@ class EquipmentV1 {
   }
 
   get notes(): string {
-    const system = this.equipmentV2.system as EquipmentModel
-    const vttNotes = system.eqt.vtt_notes
-    let fullNotes = system.eqt.notes ?? ''
-    if (vttNotes) {
-      if (fullNotes) fullNotes += '<br>'
-      fullNotes += vttNotes
-    }
-    return fullNotes
+    const notes = [this.equipmentV2.eqt!.notes ?? '', this.equipmentV2.eqt!.vtt_notes ?? '']
+      .filter(it => it)
+      .join('<br>')
+      .trim()
+    return notes
   }
 
   get originalCount(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.originalCount ?? ''
+    return this.equipmentV2.eqt!.originalCount ?? ''
   }
 
   get originalName(): string {
@@ -158,19 +155,19 @@ class EquipmentV1 {
   }
 
   get pageref(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.pageref ?? ''
+    return this.equipmentV2.eqt!.pageref ?? ''
   }
 
   get parentuuid(): string | null {
-    return (this.equipmentV2.system as EquipmentModel).eqt.parentuuid ?? null
+    return this.equipmentV2.eqt!.parentuuid ?? null
   }
 
   get techlevel(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.techlevel
+    return this.equipmentV2.eqt!.techlevel
   }
 
   get uses(): number | null {
-    return (this.equipmentV2.system as EquipmentModel).eqt.uses
+    return this.equipmentV2.eqt!.uses
   }
 
   get uuid(): string {
@@ -178,11 +175,11 @@ class EquipmentV1 {
   }
 
   get weight(): number {
-    return (this.equipmentV2.system as EquipmentModel).eqt.weight
+    return this.equipmentV2.eqt!.weight
   }
 
   get weightsum(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.weightsum
+    return this.equipmentV2.eqt!.weightsum
   }
 }
 

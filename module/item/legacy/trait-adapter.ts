@@ -114,9 +114,15 @@ class TraitV1 {
   }
 
   get notes(): string {
-    return this.cr
-      ? `[${game.i18n!.localize('GURPS.CR' + this.cr)}: ${this.traitV2.name}]<br>` + this.traitV2.fea!.notes
-      : this.traitV2.fea!.notes
+    const notes = [
+      this.cr ? `[${game.i18n!.localize('GURPS.CR' + this.cr)}: ${this.traitV2.name}]` : '',
+      this.traitV2.fea!.notes ?? '',
+      this.traitV2.fea!.vtt_notes ?? '',
+    ]
+      .filter(it => it)
+      .join('<br>')
+      .trim()
+    return notes
   }
 
   get originalName(): string {

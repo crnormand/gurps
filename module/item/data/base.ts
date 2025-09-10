@@ -127,7 +127,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   get enabled(): boolean {
-    return !!this.disabled ? !this.disabled : true
+    return this.disabled ?? true
   }
 
   /* ---------------------------------------- */
