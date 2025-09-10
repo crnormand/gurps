@@ -5,13 +5,14 @@ import Maneuvers from './maneuver.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
-import { HitLocationEntry } from './actor-components.js'
+import { Equipment, HitLocationEntry } from './actor-components.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { CharacterModel } from './data/character.js'
 
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
-import { recurselist } from '../../lib/utilities.js'
+import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
 import { ReactionSchema } from './data/character-components.js'
+import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -566,52 +567,56 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  // findEquipmentByName(pattern: string, otherFirst = false): [Item.OfType<'equipment'>, string] | null {
-  //   if (!this.isOfType('character', 'enemy')) return null
+  findEquipmentByName(pattern: string, otherFirst = false): [Item.OfType<'equipment'>, string] | null {
+    if (!this.isOfType('character', 'enemy')) return null
 
-  //   // Removed leading slashes
-  //   const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))
-  //     // Remove leading ^
-  //     .substring(1)
-  //     // Split by /
-  //     .split('/')
-  //     // Apply ^ to each pattern
-  //     .map(e => new RegExp('^' + e, 'i'))
+    // Removed leading slashes
+    const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))
+      // Remove leading ^
+      .substring(1)
+      // Split by /
+      .split('/')
+      // Apply ^ to each pattern
+      .map(e => new RegExp('^' + e, 'i'))
 
-  //   const carriedItem = (this.system as CharacterModel).equipment.carried.find(e => patterns.some(p => p.test(e.name)))
-  //   const otherItem = (this.system as CharacterModel).equipment.other.find(e => patterns.some(p => p.test(e.name)))
+    const carriedItem = (this.system as CharacterModel).equipment.carried.find((e: GurpsItemV2) =>
+      patterns.some(p => p.test(e.name))
+    )
+    const otherItem = (this.system as CharacterModel).equipment.other.find((e: GurpsItemV2) =>
+      patterns.some(p => p.test(e.name))
+    )
 
-  //   const carriedResult: [Item.OfType<'equipment'>, string] | null = carriedItem
-  //     ? [carriedItem ?? null, carriedItem.id ?? '']
-  //     : null
-  //   const otherResult: [Item.OfType<'equipment'>, string] | null = otherItem
-  //     ? [otherItem ?? null, otherItem.id ?? '']
-  //     : null
+    const carriedResult: [Item.OfType<'equipment'>, string] | null = carriedItem
+      ? [carriedItem ?? null, carriedItem.id ?? '']
+      : null
+    const otherResult: [Item.OfType<'equipment'>, string] | null = otherItem
+      ? [otherItem ?? null, otherItem.id ?? '']
+      : null
 
-  //   return otherFirst ? (otherResult ?? carriedResult ?? null) : (carriedResult ?? otherResult ?? null)
-  // }
+    return otherFirst ? (otherResult ?? carriedResult ?? null) : (carriedResult ?? otherResult ?? null)
+  }
 
   /* ---------------------------------------- */
 
-  // async updateEqtCount(id: string, count: number) {
-  //   if (!this.isOfType('character', 'enemy')) return null
+  async updateEqtCountV2(id: string, count: number) {
+    if (!this.isOfType('characterV2', 'enemy')) return null
 
-  //   const equipment = (this.system as Actor.SystemOfType<'character'>).allEquipment.find(e => e.id === id)
-  //   const updateData: Record<string, unknown> = { count }
+    const equipment = (this.system as Actor.SystemOfType<'characterV2'>).allEquipmentV2.find(e => e.id === id)
+    const updateData: Record<string, unknown> = { count }
 
-  //   // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
-  //   // set ignoreImportQty to true.
-  //   if (game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
-  //     updateData['ignoreImportQty'] = true
-  //   }
+    // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
+    // set ignoreImportQty to true.
+    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
+      updateData['ignoreImportQty'] = true
+    }
 
-  //   if (equipment) {
-  //     await this.updateEmbeddedDocuments('Item', [{ _id: id, ...updateData }], { parent: this })
-  //     return equipment
-  //   } else {
-  //     throw new Error(`GURPS | Equipment with ID ${id} not found in actor ${this.name}`)
-  //   }
-  // }
+    if (equipment) {
+      await this.updateEmbeddedDocuments('Item', [{ _id: id, ...updateData }], { parent: this })
+      return equipment
+    } else {
+      throw new Error(`GURPS | Equipment with ID ${id} not found in actor ${this.name}`)
+    }
+  }
 
   /* ---------------------------------------- */
 
@@ -742,22 +747,32 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // Update the moved object's containedBy property.
     const containedBy = targetArray[targetIndex]?.containedBy
-    await movedObject.update({ system: { containedBy: containedBy ?? null } })
+
+    // await movedObject.update({ system: { containedBy: containedBy ?? null } })
+    await this.updateEmbeddedDocuments(
+      'Item',
+      [{ _id: movedObject.id, system: { containedBy: containedBy ?? null } }],
+      { parent: this }
+    )
 
     // Insert the object into the target array at the correct position
     targetArray.splice(targetIndex, 0, movedObject)
 
     // Update the sort property of each element in the two arrays
     sourceArray.forEach(async (obj, index) => {
-      await obj.update({ sort: index })
+      // await obj.update({ sort: index })
+      await this.updateEmbeddedDocuments('Item', [{ _id: obj.id, sort: index }], { parent: this })
     })
 
     if (sourceArray !== targetArray) {
       targetArray.forEach(async (obj, index) => {
-        await obj.update({ sort: index })
+        // await obj.update({ sort: index })
+        await this.updateEmbeddedDocuments('Item', [{ _id: obj.id, sort: index }], { parent: this })
       })
     }
   }
+
+  /* ---------------------------------------- */
 
   #convertLegacyReorderKeys(key: string) {
     key = key.replace(/^system\.ads\./, 'system.adsV2.')
@@ -766,12 +781,35 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     return key.replace(/\.([0-9]+)\./g, (_, num) => `.${parseInt(num)}.`)
   }
 
+  /* ---------------------------------------- */
+
   #parseReorderKey(key: string): [string, number, string] {
     const components = key.split('.')
     const index = parseInt(components.pop()!)
     const path = components.join('.')
     const primaryComponentPath = components[0] + '.' + components[1]
     return [primaryComponentPath, index, path]
+  }
+
+  /* ---------------------------------------- */
+
+  updateEqtCount(path: string, value: number) {
+    // TODO Implement me!
+    console.error('updateEqtCount not implemented', { path, value })
+  }
+
+  /* ---------------------------------------- */
+
+  updateItemAdditionsBasedOn(eqt: Equipment, key: string) {
+    // TODO Implement me!
+    console.error('updateItemAdditionsBasedOn not implemented', { eqt, key })
+  }
+
+  /* ---------------------------------------- */
+
+  handleEquipmentDrop(eqtData: any) {
+    // TODO Implement me!
+    console.error('handleEquipmentDrop not implemented', { eqtData })
   }
 
   /* ---------------------------------------- */

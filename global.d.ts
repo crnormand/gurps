@@ -148,6 +148,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.show-chat-reeling-tired': boolean
     'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
     'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
+    'gurps.auto-ignore-qty': boolean
     'gurps.use-quintessence': boolean
     'gurps.use-tagged-modifiers': {
       autoAdd: boolean

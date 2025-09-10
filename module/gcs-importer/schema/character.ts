@@ -28,7 +28,7 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
       // case 'spells':
       //   return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
       case 'equipment':
-        // case 'other_equipment':
+      case 'other_equipment':
         return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
       // case 'notes':
       //   return data?.map((noteData: any) => GcsNote.importSchema(noteData))
@@ -85,13 +85,13 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  // get allOtherEquipment(): GcsEquipment[] {
-  //   const equipment = this.other_equipment ?? []
-  //   for (const item of equipment) {
-  //     equipment.push(...item.allChildItems)
-  //   }
-  //   return equipment
-  // }
+  get allOtherEquipment(): GcsEquipment[] {
+    const equipment = this.other_equipment ?? []
+    for (const item of equipment) {
+      equipment.push(...item.allChildItems)
+    }
+    return equipment
+  }
 
   /* ---------------------------------------- */
 
@@ -164,6 +164,10 @@ const characterData = () => {
       required: true,
       nullable: true,
     }),
+    other_equipment: new fields.ArrayField(
+      new fields.EmbeddedDataField(GcsEquipment, { required: true, nullable: false }),
+      { required: true, nullable: true }
+    ),
     created_date: new fields.StringField({ required: true, nullable: false }),
     modified_date: new fields.StringField({ required: true, nullable: false }),
 
@@ -172,7 +176,6 @@ const characterData = () => {
         swing: new fields.StringField({ required: true, nullable: false }),
         thrust: new fields.StringField({ required: true, nullable: false }),
         parry_bonus: new fields.NumberField({ required: true, nullable: true }),
-
         dodge: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
           required: true,
           nullable: false,

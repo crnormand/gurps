@@ -62,7 +62,8 @@ const skillData = () => {
     // END: SkillModel
 
     // START: SkillEditData
-    vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
+    notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: SkillEditData
 
@@ -77,10 +78,11 @@ const skillData = () => {
     points: new fields.NumberField({ required: true, nullable: true, initial: null }),
     defaulted_from: new fields.ObjectField({ required: true, nullable: true, initial: null }),
     // END: SkillNonContainerOnlyEditData
-    
+
     // START: SkillNonContainerOnlySyncData
     specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
     difficulty: new fields.StringField({ required: true, nullable: true, initial: null }),
+    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     // END: SkillNonContainerOnlySyncData

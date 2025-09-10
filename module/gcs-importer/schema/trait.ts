@@ -120,7 +120,8 @@ const traitData = () => {
     }),
     // END: TraitModel
     // START: TraitEditData
-    vtt_note: new fields.StringField({ required: true, nullable: true, initial: null }),
+    notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
     userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {

@@ -14,6 +14,7 @@ const itemComponentSchema = () => {
     name: new fields.StringField({ required: true, nullable: false }),
     notes: new fields.StringField({ required: true, nullable: false }),
     pageref: new fields.StringField({ required: true, nullable: false }),
+    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     uuid: new fields.StringField({ required: true, nullable: false }),
     parentuuid: new fields.StringField({ required: true, nullable: false }),

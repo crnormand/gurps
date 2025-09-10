@@ -8,7 +8,7 @@ import { BaseItemModel } from 'module/item/data/base.js'
 import { GcsTrait } from './schema/trait.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
 import { AnyGcsItem } from './schema/index.js'
-
+import { GcsEquipment } from './schema/equipment.js'
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../action/melee-attack.js'
 import { RangedAttackComponentSchema, RangedAttackSchema } from '../action/ranged-attack.js'
 import { GcsWeapon } from './schema/weapon.js'
@@ -18,7 +18,6 @@ import { GcsSkill } from './schema/skill.js'
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
-import { GcsEquipment } from './schema/equipment.js'
 import { EquipmentComponentSchema, EquipmentSchema } from 'module/item/data/equipment.js'
 import { BaseAction } from 'module/action/base-action.js'
 
@@ -233,6 +232,7 @@ class GcsImporter {
     this.input.traits?.forEach((trait, index) => this.#importTrait(trait, index))
     this.input.skills?.forEach((skill, index) => this.#importSkill(skill, index))
     this.input.equipment?.forEach((equipment, index) => this.#importEquipment(equipment, index, true))
+    this.input.other_equipment?.forEach((equipment, index) => this.#importEquipment(equipment, index, false))
   }
 
   /* ---------------------------------------- */
@@ -520,8 +520,9 @@ class GcsImporter {
   #importBaseComponent(item: AnyGcsItem): DataModel.CreateData<ItemComponentSchema> {
     const component: DataModel.CreateData<ItemComponentSchema> = {
       name: item.name,
-      notes: item.calc?.resolved_notes || item.local_notes || '',
+      notes: item.calc?.resolved_notes || item.local_notes || item.notes || '',
       pageref: item.reference ?? '',
+      vtt_notes: item.vtt_notes ?? null,
     }
     return component
   }
@@ -576,10 +577,15 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importEquipmentComponent(equipment: GcsEquipment, carried: boolean): DataModel.CreateData<EquipmentComponentSchema> {
+    // Get the correct weight value. I'm guessing that weight should be equal to calc.weight unless that field is "", otherwise it should be calc.extended_weight.
+    const weight = equipment.calc?.weight
+      ? parseFloat(equipment.calc.weight)
+      : parseFloat(equipment.calc?.extended_weight || '0')
+
     return {
       ...this.#importBaseComponent(equipment),
       count: equipment.quantity ?? 1,
-      weight: equipment.calc ? parseInt(equipment.calc.weight) : 0,
+      weight,
       cost: equipment.calc?.value ?? 0,
       location: '',
       carried,

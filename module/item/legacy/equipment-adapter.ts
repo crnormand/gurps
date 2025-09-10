@@ -139,7 +139,14 @@ class EquipmentV1 {
   }
 
   get notes(): string {
-    return (this.equipmentV2.system as EquipmentModel).eqt.notes ?? ''
+    const system = this.equipmentV2.system as EquipmentModel
+    const vttNotes = system.eqt.vtt_notes
+    let fullNotes = system.eqt.notes ?? ''
+    if (vttNotes) {
+      if (fullNotes) fullNotes += '<br>'
+      fullNotes += vttNotes
+    }
+    return fullNotes
   }
 
   get originalCount(): string {
