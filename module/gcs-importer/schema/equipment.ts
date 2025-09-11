@@ -1,12 +1,12 @@
 import fields = foundry.data.fields
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
-// import { GcsEquipmentModifier } from './equipment-modifier.js'
+import { GcsEquipmentModifier } from './equipment-modifier.js'
 import { GcsWeapon } from './weapon.js'
 
 class GcsEquipment extends GcsItem<EquipmentModel> {
   static override metadata = {
     childClass: GcsEquipment,
-    modifierClass: null, // GcsEquipmentModifier,
+    modifierClass: GcsEquipmentModifier,
     weaponClass: GcsWeapon,
   }
 
@@ -67,17 +67,18 @@ const equipmentData = () => {
       required: true,
       nullable: true,
     }),
+    notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
+    replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
     // END: EquipmentModel
 
     // START: EquipmentEditData
-    notes: new fields.StringField({ required: true, nullable: true, initial: null }),
-    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
-    replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
-    // modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
-    //   required: true,
-    //   nullable: true,
-    //   initial: null,
-    // }),
+    modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+      initial: null,
+    }),
     // rated_strength: new fields.NumberField({ required: true, nullable: true, initial: null }),
     quantity: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // level: new fields.NumberField({ required: true, nullable: true, initial: null }),
@@ -102,7 +103,6 @@ const equipmentData = () => {
     max_uses: new fields.NumberField({ required: true, nullable: true }),
     // STUB: prereqs is not yet supported
     // prereqs: new fields.ObjectField({ required: true, nullable: true }),
-    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     // ignore_weight_for_skills: new fields.BooleanField({ required: true, nullable: true }),

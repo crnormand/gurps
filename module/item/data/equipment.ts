@@ -33,8 +33,10 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   /* ---------------------------------------- */
 
   override get enabled(): boolean {
-    return this.component.equipped
+    return this.equipped && this.carried
   }
+
+  /* ---------------------------------------- */
 
   get equipped(): boolean {
     return this.component.equipped
@@ -44,6 +46,15 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   get carried(): boolean {
     return this.component.carried
+  }
+
+  /* ---------------------------------------- */
+
+  override async toggleEnabled(enabled: boolean | null = null): Promise<this['parent'] | undefined> {
+    const currentEnabled = this.equipped
+
+    // NOTE: do I really need to assert Item.UpdateData here?
+    return this.parent.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled } as Item.UpdateData)
   }
 
   /* ---------------------------------------- */

@@ -41,9 +41,9 @@ class BaseAction<
     return this
   }
 
-  applyBonuses(bonuses: AnyObject[]): void {
-    // NOTE: Do nothing. Override in subclasses.
-  }
+  /* ---------------------------------------- */
+
+  applyBonuses(_bonuses: AnyObject[]): void {}
 }
 
 /* ---------------------------------------- */

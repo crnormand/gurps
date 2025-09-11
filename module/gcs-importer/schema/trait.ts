@@ -1,12 +1,13 @@
 import fields = foundry.data.fields
 
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import { GcsTraitModifier } from './trait-modifier.js'
 import { GcsWeapon } from './weapon.js'
 
 class GcsTrait extends GcsItem<TraitModel> {
   static override metadata = {
     childClass: GcsTrait,
-    modifierClass: null,
+    modifierClass: GcsTraitModifier,
     weaponClass: GcsWeapon,
   }
 
@@ -118,12 +119,14 @@ const traitData = () => {
       nullable: true,
       initial: null,
     }),
-    // END: TraitModel
-    // START: TraitEditData
     notes: new fields.StringField({ required: true, nullable: true, initial: null }),
     vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
-    userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
+    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false })),
+    // END: TraitModel
+
+    // START: TraitEditData
+    userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
     modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
       required: true,
       nullable: true,
@@ -147,7 +150,6 @@ const traitData = () => {
     // END: TraitNonContainerOnlyEditData
 
     // START: TraitNonContainerOnlySyncData
-    weapons: new fields.ArrayField(new fields.EmbeddedDataField(GcsWeapon, { required: true, nullable: false })),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     round_down: new fields.BooleanField({ required: true, nullable: true, initial: null }),

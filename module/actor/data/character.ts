@@ -517,15 +517,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareUserModifiers() {
     this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2', 'skillV2' /* 'spellV2', 'equipmentV2' */)) return
+      if (!item.isOfType('featureV2', 'skillV2', /* 'spellV2',*/ 'equipmentV2')) return
 
-      for (const modifier of item.system.itemModifiers.split('\n').map(e => e.trim())) {
+      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
       }
 
       for (const attack of item.getItemAttacks()) {
-        if (item.system.itemModifiers === '') continue
+        if ((item.system as BaseItemModel).itemModifiers === '') continue
         for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
           const modifierDescription = `${modifier} ${item.id}`
           if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)

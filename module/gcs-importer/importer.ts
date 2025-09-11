@@ -577,7 +577,8 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importEquipmentComponent(equipment: GcsEquipment, carried: boolean): DataModel.CreateData<EquipmentComponentSchema> {
-    // Get the correct weight value. I'm guessing that weight should be equal to calc.weight unless that field is "", otherwise it should be calc.extended_weight.
+    // Get the correct weight value. I'm guessing that weight should be equal to calc.weight unless that field is "",
+    // otherwise it should be calc.extended_weight.
     const weight = equipment.calc?.weight
       ? parseFloat(equipment.calc.weight)
       : parseFloat(equipment.calc?.extended_weight || '0')

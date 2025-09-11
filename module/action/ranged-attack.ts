@@ -6,7 +6,6 @@ import { BaseAction, BaseActionSchema } from './base-action.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
-import { CharacterModel } from 'module/actor/data/character.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
@@ -85,8 +84,8 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
     super.prepareDerivedData()
 
     const actor = this.actor
-    if (!actor || !actor.isOfType('character', 'enemy')) return
-    this.convertRanges((actor.system as CharacterModel).attributes.ST.value)
+    if (!actor || !actor.isOfType('characterV2', 'enemy')) return
+    this.convertRanges(actor.system.attributes.ST.value)
   }
 
   /* ---------------------------------------- */

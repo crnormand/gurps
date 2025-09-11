@@ -127,7 +127,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   get enabled(): boolean {
-    return this.disabled ?? true
+    return !this.disabled
   }
 
   /* ---------------------------------------- */
@@ -155,6 +155,13 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     for (const action of this.actions) {
       action.applyBonuses(bonuses)
     }
+  }
+
+  /* ---------------------------------------- */
+
+  async toggleEnabled(_enabled: boolean | null = null): Promise<this['parent'] | undefined> {
+    console.warn(`Item of type "${this.parent.type}" cannot be toggled.`)
+    return this.parent
   }
 
   /* ---------------------------------------- */
