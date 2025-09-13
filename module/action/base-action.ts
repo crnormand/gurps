@@ -53,6 +53,9 @@ const baseActionSchema = () => {
     name: new fields.StringField({ initial: undefined }),
     img: new fields.FilePathField({ initial: undefined, categories: ['IMAGE'], base64: false }),
     sort: new fields.IntegerSortField(),
+
+    // Added to allow disabling from containing Trait.
+    containedBy: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

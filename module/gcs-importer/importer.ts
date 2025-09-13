@@ -19,7 +19,6 @@ import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { EquipmentComponentSchema, EquipmentSchema } from 'module/item/data/equipment.js'
-import { BaseAction } from 'module/action/base-action.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -393,7 +392,8 @@ class GcsImporter {
     system.containedBy = containedBy ?? null
 
     // Update any actions with the containing trait id:
-    for (const action of Object.values(system.actions as BaseAction)) {
+    for (const action of Object.values(system.actions)) {
+      // @ts-expect-error
       action.containedBy = _id
     }
 
@@ -406,6 +406,7 @@ class GcsImporter {
       type,
       name,
       sort: index,
+      // @ts-expect-error
       system: {
         ...system,
         fea: component,
@@ -435,6 +436,7 @@ class GcsImporter {
       type,
       name,
       sort: index,
+      // @ts-expect-error
       system: {
         ...system,
         ski: component,
@@ -490,7 +492,8 @@ class GcsImporter {
     system.containedBy = containedBy ?? null
 
     // Update any actions with the containing trait id:
-    for (const action of Object.values(system.actions as BaseAction)) {
+    for (const action of Object.values(system.actions)) {
+      // @ts-expect-error
       action.containedBy = _id
     }
 
@@ -505,6 +508,7 @@ class GcsImporter {
       type,
       name,
       sort: index,
+      // @ts-expect-error
       system: {
         ...system,
         eqt: component,

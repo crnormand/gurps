@@ -4,7 +4,6 @@ import { GurpsItem } from '../item.js'
 import { GurpsItemV2 } from './gurps-item.js'
 
 const ItemProxy = new Proxy(Item, {
-  // @ts-expect-error
   construct(_target, args: [source: Item.CreateData, context?: Item.ConstructionContext]) {
     const type = args[0]?.type
     switch (type) {

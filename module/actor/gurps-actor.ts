@@ -56,6 +56,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
       return (
+        // @ts-expect-error: Dynamic access to embedded collection
         foundry.utils.getProperty(this, path).get(id, {
           invalid,
           strict,
@@ -524,7 +525,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  get damageAccumulators() {
+  get damageAccumulators(): any[] | null {
     if (this.isOfType('character', 'enemy'))
       return (this.system as CharacterModel).conditions.damageAccumulators ?? null
     return null
@@ -611,6 +612,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     if (equipment) {
+      // @ts-expect-error
       await this.updateEmbeddedDocuments('Item', [{ _id: id, ...updateData }], { parent: this })
       return equipment
     } else {
@@ -733,9 +735,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (targetCollection !== sourceCollection)
       throw new Error(`Cannot reorder items between different collections: ${sourceCollection} and ${targetCollection}`)
 
-    let sourceArray: any[] = foundry.utils.getProperty(this, sourcePath) ?? []
+    let sourceArray: any[] = (foundry.utils.getProperty(this, sourcePath) as any[]) ?? []
     let targetArray: any[] = sourceArray
-    if (sourcePath !== targetPath) targetArray = foundry.utils.getProperty(this, targetPath) ?? []
+    if (sourcePath !== targetPath) targetArray = (foundry.utils.getProperty(this, targetPath) as any[]) ?? []
 
     // Remove the object from the source array
     let [movedObject] = sourceArray.splice(sourceIndex, 1)
@@ -751,6 +753,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // await movedObject.update({ system: { containedBy: containedBy ?? null } })
     await this.updateEmbeddedDocuments(
       'Item',
+      // @ts-expect-error
       [{ _id: movedObject.id, system: { containedBy: containedBy ?? null } }],
       { parent: this }
     )
@@ -761,12 +764,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // Update the sort property of each element in the two arrays
     sourceArray.forEach(async (obj, index) => {
       // await obj.update({ sort: index })
+      // @ts-expect-error
       await this.updateEmbeddedDocuments('Item', [{ _id: obj.id, sort: index }], { parent: this })
     })
 
     if (sourceArray !== targetArray) {
       targetArray.forEach(async (obj, index) => {
         // await obj.update({ sort: index })
+        // @ts-expect-error
         await this.updateEmbeddedDocuments('Item', [{ _id: obj.id, sort: index }], { parent: this })
       })
     }

@@ -58,9 +58,12 @@ class TypedPseudoDocument<
     { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
   ): Promise<Document.Any | undefined> {
     data = foundry.utils.deepClone(data)
+    // @ts-expect-error
     if (!data.type) data.type = Object.keys(this.TYPES)[0]
+    // @ts-expect-error
     if (!data.type || !(data.type in this.TYPES)) {
       throw new Error(
+        // @ts-expect-error
         `The '${data.type}' type is not a valid type for a '${this.metadata.documentName}' pseudo-document!`
       )
     }

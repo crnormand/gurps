@@ -210,10 +210,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   async toggleEnabled(enabled: boolean | null = null): Promise<Item.UpdateData | undefined> {
     if (!this.isOfType('equipmentV2')) {
       console.warn(`Item of type "${this.type}" cannot be toggled.`)
-      return this
+      return
     }
 
-    // @ts-expect-error
     const currentEnabled = (this.system as Item.SystemOfType<'equipmentV2'>).equipped
 
     // NOTE: do I really need to assert Item.UpdateData here?
@@ -290,7 +289,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   toggleCollapsed(expandOnly: boolean = false): void {
     const newValue = !(this.system as BaseItemModel).open
     if (expandOnly && !newValue) return
-    this.update({ 'system.open': newValue } as Item.UpdateData)
+    // @ts-expect-error
+    this.update({ 'system.open': newValue })
   }
 }
 
