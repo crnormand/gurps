@@ -11,9 +11,35 @@ class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
   get roll(): number[] {
     return convertRangeTextToArray(this.rollText)
   }
-}
 
-/* ---------------------------------------- */
+  /* ---------------------------------------- */
+
+  static getlargeAreaDR(locations: HitLocationEntryV2[]): number {
+    let lowestDR = Number.POSITIVE_INFINITY
+    let torsoDR = 0
+
+    for (const location of locations.filter(loc => loc.roll.length > 0)) {
+      if (location.where.toLowerCase() === 'torso') torsoDR = location.dr
+      if (location.dr < lowestDR) lowestDR = location.dr
+    }
+
+    // return the average of torso and lowest DR
+    return Math.ceil((torsoDR + lowestDR) / 2)
+  }
+
+  /* ---------------------------------------- */
+  /*  Accessors                               */
+  /* ---------------------------------------- */
+
+  getDR(damageType: string | null = null): number {
+    if (damageType === null || !this.split) return this._dr
+    return this.split.hasOwnProperty(damageType) ? (this.split as Record<string, number>)[damageType] : this._dr
+  }
+
+  get dr(): number {
+    return this.getDR(this._damageType)
+  }
+}
 
 const hitLocationSchema = () => {
   return {
@@ -53,59 +79,4 @@ type HitLocationSchemaV2 = ReturnType<typeof hitLocationSchema>
 
 /* ---------------------------------------- */
 
-class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
-  static createFromV2(entry: HitLocationEntryV2): HitLocationEntryV1 {
-    return new HitLocationEntryV1({
-      _damageType: entry._damageType,
-      dr: entry._dr,
-      drCap: entry.drCap,
-      drItem: entry.drItem,
-      drMod: entry.drMod,
-      equipment: '',
-      import: entry.import,
-      penalty: entry.penalty,
-      roll: entry.rollText,
-      where: entry.where,
-      split: entry.split,
-      role: entry.role,
-    })
-  }
-
-  static override defineSchema(): HitLocationSchemaV1 {
-    return hitLocationSchemaV1()
-  }
-
-  // NOTE: Made it a lazily evaluated value.
-  get rollArray(): number[] {
-    return convertRangeTextToArray(this.roll)
-  }
-}
-
-const hitLocationSchemaV1 = () => {
-  return {
-    _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
-    dr: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
-    // drCap represents the capped DR, applied by the /dr command
-    drCap: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
-    // drItem represent the DR bonus from Item bonuses
-    drItem: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
-    // drMod represent the DR bonus from the /dr command
-    drMod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    equipment: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    roll: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    where: new fields.StringField({ required: true, nullable: false }),
-    split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
-    role: new fields.StringField({ required: true, nullable: false, initial: '' }),
-  }
-}
-type HitLocationSchemaV1 = ReturnType<typeof hitLocationSchemaV1>
-
-export { HitLocationEntryV2, HitLocationEntryV1, type HitLocationSchemaV2, type HitLocationSchemaV1 }
+export { HitLocationEntryV2, type HitLocationSchemaV2 }

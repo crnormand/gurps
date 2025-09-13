@@ -283,6 +283,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /**
    * Parse roll info based on action type.
+   *
+   * @param {object} action - Object from GURPS.parselink
+   * @param {string} chatthing - internal code for roll
+   * @param {string} formula - formula for roll
+   * @param {string} thing - name of the source of the roll
+   * @returns {{}} result
+   * @returns {string} result.name - Name of the action which originates the roll
+   * @returns {[string]} result.uuid - UUID of the actor component that originates the roll
+   * @returns {[string]} result.itemId - ID of the item that originates the roll
+   * @returns {[string]} result.fromItem - ID of the parent item of the item that originates the roll
+   * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
     action: { type: string; name: string; orig: string },
@@ -307,9 +318,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async canRoll(
     // TODO: replace with action
     action: AnyObject, // Action parsed from OTF
-    token: Token.Implementation, // Actor token
+    token: Token.Implementation, // Actor Token
     chatThing?: string, // String representation of the action
-    actorComponent?: AnyObject // Actor component for the action
+    actorComponent?: AnyObject // Actor Component for the action
   ): Promise<{
     canRoll: boolean
     isSlam: boolean
@@ -319,7 +330,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     targetMessage?: string
     maxActionMessage?: string
     maxAttackMessage?: string
-    maxBlockMessage?: string
+    maxBlockmessage?: string
     maxParryMessage?: string
     rollBeforeStartMessage?: string
   }> {
@@ -339,7 +350,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       isCombatant,
     }
 
-    if (!isCombatActive || !isCombatant || !this.isOfType('character', 'enemy')) return result
+    if (!isCombatActive || !isCombatant || !this.isOfType('characterV2', 'enemy')) return result
 
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings =
@@ -429,7 +440,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     ) {
       result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
       result.hasActions = false
-      result.maxBlockMessage =
+      result.maxBlockmessage =
         checkMaxActionsSetting !== 'Allow'
           ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxBlocksReached`)
           : ''
@@ -548,28 +559,28 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async decrementDamageAccumulator(index: number): Promise<void> {
-    if (!this.isOfType('character', 'enemy')) return
+    if (!this.isOfType('characterV2', 'enemy')) return
     ;(this.system as CharacterModel).decrementDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async clearDamageAccumulator(index: number): Promise<void> {
-    if (!this.isOfType('character', 'enemy')) return
+    if (!this.isOfType('characterV2', 'enemy')) return
     ;(this.system as CharacterModel).clearDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async applyDamageAccumulator(index: number): Promise<void> {
-    if (!this.isOfType('character', 'enemy')) return
+    if (!this.isOfType('characterV2', 'enemy')) return
     ;(this.system as CharacterModel).applyDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   findEquipmentByName(pattern: string, otherFirst = false): [Item.OfType<'equipment'>, string] | null {
-    if (!this.isOfType('character', 'enemy')) return null
+    if (!this.isOfType('characterV2', 'enemy')) return null
 
     // Removed leading slashes
     const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))

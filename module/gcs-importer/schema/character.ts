@@ -6,6 +6,7 @@ import { GcsElement } from './base.js'
 import { GcsEquipment } from './equipment.js'
 import { GcsSkill } from './skill.js'
 import { GcsTrait } from './trait.js'
+import { GcsWeapon } from './weapon.js'
 
 class GcsCharacter extends GcsElement<GcsCharacterModel> {
   static override defineSchema(): GcsCharacterModel {
@@ -105,13 +106,13 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  // get allEquippedWeapons(): GcsWeapon[] {
-  //   const weapons: GcsWeapon[] = []
-  //   ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(e => {
-  //     if (!e.isEnabled) weapons.push(...e.weaponItems)
-  //   })
-  //   return weapons
-  // }
+  get allEquippedWeapons(): GcsWeapon[] {
+    const weapons: GcsWeapon[] = []
+    ;[...this.allTraits, ...this.allSkills, /*...this.allSpells,*/ ...this.allCarriedEquipment].forEach(e => {
+      if (!e.isEnabled) weapons.push(...e.weaponItems)
+    })
+    return weapons
+  }
 }
 
 /* ---------------------------------------- */

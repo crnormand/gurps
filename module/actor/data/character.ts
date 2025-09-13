@@ -7,9 +7,10 @@ import {
   ReactionSchema,
 } from './character-components.js'
 import fields = foundry.data.fields
-import { HitLocationEntryV1, HitLocationEntryV2 } from './hit-location-entry.js'
+import { HitLocationEntryV2 } from './hit-location-entry.js'
 import { BaseItemModel } from '../../item/data/base.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '../../../lib/utilities.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import * as HitLocations from '../../hitlocation/hitlocation.js'
 import { BaseActorModel } from './base.js'
@@ -31,8 +32,8 @@ import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
 import { EquipmentModel } from 'module/item/data/equipment.js'
 
-import { arrayToObject, zeroFill } from '../../../lib/utilities.js'
 import { HitLocationEntry } from '../actor-components.js'
+import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
 import { MeleeV1 } from '../../action/legacy/meleev1.js'
 import { RangedV1 } from '../../action/legacy/rangedv1.js'
@@ -150,6 +151,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
   }
 
+  /* ---------------------------------------- */
+
+  // List of top-level ADs (not contained in another AD), sorted by `sort` field.
+  get adsV2(): Item.OfType<'featureV2'>[] {
+    return this.allAdsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  }
+
+  /* ---------------------------------------- */
+
+  // Legacy collection
   get ads() {
     return arrayToObject(
       this.adsV2.map(item => new TraitV1(item)),
@@ -157,11 +168,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     )
   }
 
-  // List of top-level ADs (not contained in another AD), sorted by `sort` field.
-  get adsV2(): Item.OfType<'featureV2'>[] {
-    return this.allAdsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  /* ---------------------------------------- */
+
+  get skillsV2(): Item.OfType<'skillV2'>[] {
+    return this.allSkillsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
   }
 
+  /* ---------------------------------------- */
+
+  // Legacy collection
   get skills() {
     return arrayToObject(
       this.skillsV2.filter(item => item.containedBy === null).map(item => new SkillV1(item)),
@@ -169,10 +184,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     )
   }
 
-  get skillsV2(): Item.OfType<'skillV2'>[] {
-    return this.allSkillsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  /* ---------------------------------------- */
+
+  get equipment() {
+    return {
+      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
+      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
+    }
   }
 
+  /* ---------------------------------------- */
+
+  // Legacy collection
   get equipmentV2() {
     return {
       carried: this.allEquipmentV2
@@ -186,13 +209,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
-  get equipment() {
-    return {
-      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
-      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
-    }
-  }
+  /* ---------------------------------------- */
 
+  // Legacy collection.
   get melee() {
     return arrayToObject(
       this.meleeV2.map(item => new MeleeV1(item)),
@@ -200,6 +219,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     )
   }
 
+  /* ---------------------------------------- */
+
+  // Legacy collection.
   get ranged() {
     return arrayToObject(
       this.rangedV2.map(item => new RangedV1(item)),
@@ -290,7 +312,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
     this.allEquipmentV2 = this.parent.items.filter(item => item.isOfType('equipmentV2'))
     // this.allEquipment = equipment
-    // this.equipment = {
+    // this.equipmentV2 = {
     //   carried: equipment.filter(item => item.system.carried === true),
     //   other: equipment.filter(item => item.system.carried === false),
     // }
@@ -537,13 +559,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #getCurrentMove(base: number): number {
+    const doUpdateMove =
+      game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && this.parent.inCombat
+
     const moveForManeuver = this.#getMoveAdjustmentForManeuver(base)
     const moveForPosture = this.#getMoveAdjustmentForPosture(base)
 
     this.conditions.move =
       moveForManeuver.value < moveForPosture.value ? moveForManeuver.tooltip : moveForPosture.tooltip
 
-    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && this.parent.inCombat) {
+    if (doUpdateMove) {
       return Math.min(moveForManeuver.value, moveForPosture.value)
     } else {
       return base
@@ -743,22 +768,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   protected get _drBonusesFromItems(): Record<string, number> {
-    return {}
-    // return this._globalBonuses.reduce((acc: Record<string, number>, bonus: AnyObject) => {
-    //   const bonusMatch = (bonus.text as string).match(/DR\s*([+-]\d+)\s*(.*)/)
-    //   if (!bonusMatch) return acc
+    return this._globalBonuses.reduce((acc: Record<string, number>, bonus: AnyObject) => {
+      const bonusMatch = (bonus.text as string).match(/DR\s*([+-]\d+)\s*(.*)/)
+      if (!bonusMatch) return acc
 
-    //   let modifier = parseInt(bonusMatch[1])
-    //   if (isNaN(modifier)) return acc
+      let modifier = parseInt(bonusMatch[1])
+      if (isNaN(modifier)) return acc
 
-    //   const locationPatterns = splitArgs(bonusMatch[2] ?? '').map(name => new RegExp(makeRegexPatternFrom(name))) ?? []
+      const locationPatterns = splitArgs(bonusMatch[2] ?? '').map(name => new RegExp(makeRegexPatternFrom(name))) ?? []
 
-    //   for (const location of this.hitlocationsV2) {
-    //     if (!locationPatterns.some(pattern => location.where.match(pattern))) continue
-    //     acc[location.where] = (acc[location.where] ?? 0) + modifier
-    //   }
-    //   return acc
-    // }, {})
+      for (const location of this.hitlocationsV2) {
+        if (!locationPatterns.some(pattern => location.where.match(pattern))) continue
+        acc[location.where] = (acc[location.where] ?? 0) + modifier
+      }
+      return acc
+    }, {})
   }
 
   /* ---------------------------------------- */
@@ -981,6 +1005,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       return acc
     }, {})
   }
+
   /* ---------------------------------------- */
 
   // async setMoveDefault(value: string): Promise<void> {
@@ -1191,12 +1216,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
 
       case 'markedChecks':
-        const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2' /*'spell'*/))
+        const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2' /*'spellV2'*/))
         for (const item of items) {
           if (item.system.addToQuickRoll) {
             const type = item.type === 'featureV2' ? 'ad' : item.type
             let value = 0
-            if (item.isOfType('skillV2' /*'spell'*/)) value = (item.system as any).component.import
+            if (item.isOfType('skillV2' /*'spellV2'*/)) value = item.system.component.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
@@ -1443,7 +1468,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           }
       }
       case 'skill-spell': {
-        const item = [...this.skillsV2 /*...this.spells*/].find(e => e.name === action.name)
+        const item = [...this.skillsV2 /*...this.spellsV2*/].find(e => e.name === action.name)
         if (item)
           return {
             name: item.name,

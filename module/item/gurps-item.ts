@@ -232,9 +232,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     return (this.system as TraitModel).addToQuickRoll
   }
 
-  get component(): TraitComponent | SkillComponent | null {
+  get component(): TraitComponent | SkillComponent | EquipmentComponent | null {
     if (this.type === 'featureV2') return this.fea
     if (this.type === 'skillV2') return this.ski
+    if (this.type === 'equipmentV2') return this.eqt
     return null
   }
 

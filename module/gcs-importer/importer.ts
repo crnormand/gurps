@@ -15,10 +15,10 @@ import { GcsWeapon } from './schema/weapon.js'
 import { SkillComponentSchema, SkillSchema } from '../item/data/skill.js'
 import { GcsSkill } from './schema/skill.js'
 
+import { EquipmentSchema, EquipmentComponentSchema } from '../item/data/equipment.js'
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
-import { EquipmentComponentSchema, EquipmentSchema } from 'module/item/data/equipment.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -328,7 +328,7 @@ class GcsImporter {
       mode: weapon.usage || '',
       notes: weapon.usage_notes || '',
       import: weapon.calc?.level || 0,
-      damage: weapon.calc?.damage,
+      damage: weapon.calc?.damage || '',
       st: weapon.calc?.strength || weapon.strength,
       reach: weapon.calc?.reach || weapon.reach,
       parry: weapon.calc?.parry || weapon.parry,
@@ -359,8 +359,8 @@ class GcsImporter {
       pageref: '',
       mode: weapon.usage || '',
       notes: weapon.usage_notes || '',
-      import: weapon.calc?.level,
-      damage: weapon.calc?.damage,
+      import: weapon.calc?.level || 0,
+      damage: weapon.calc?.damage || '',
       st: weapon.calc?.strength || weapon.strength,
       acc: weapon.calc?.accuracy || weapon.accuracy,
       shots: weapon.calc?.shots || weapon.shots,

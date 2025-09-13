@@ -1,4 +1,4 @@
-/** A `Proxy` to to get Foundry to construct `ActorPF2e` subclasses */
+/** A `Proxy` to to get Foundry to construct `GurpsActor` subclasses */
 
 import { GurpsActor } from './actor.js'
 import { GurpsActorV2 } from './gurps-actor.js'

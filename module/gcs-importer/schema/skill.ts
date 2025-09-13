@@ -80,6 +80,8 @@ const skillData = () => {
     // START: SkillNonContainerOnlySyncData
     specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
     difficulty: new fields.StringField({ required: true, nullable: true, initial: null }),
+    defaults: new fields.ArrayField(new fields.EmbeddedDataField(GcsSkillDefault, { required: true, nullable: false })),
+    default: new fields.EmbeddedDataField(GcsSkillDefault, { required: true, nullable: true, initial: null }),
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     // END: SkillNonContainerOnlySyncData
