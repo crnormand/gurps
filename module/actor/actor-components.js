@@ -492,7 +492,7 @@ export class Spell extends Leveled {
           maintain: this.maintain || '',
           duration: this.duration || '',
           resist: this.resist || '',
-          casttime: this.casttime || '', 
+          casttime: this.casttime || '',
           difficulty: this.difficulty || '',
           otf: this.otf || '',
           checkotf: this.checkotf || '',

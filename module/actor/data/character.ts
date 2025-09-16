@@ -186,16 +186,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get equipment() {
-    return {
-      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
-      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  // Legacy collection
   get equipmentV2() {
     return {
       carried: this.allEquipmentV2
@@ -206,6 +196,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         .filter(item => (item.system as EquipmentModel).eqt.carried === false)
         .filter(item => item.containedBy === null)
         .sort((a, b) => a.sort - b.sort),
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  // Legacy collection
+  get equipment() {
+    return {
+      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
+      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
     }
   }
 
@@ -311,12 +311,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
     this.allEquipmentV2 = this.parent.items.filter(item => item.isOfType('equipmentV2'))
-    // this.allEquipment = equipment
-    // this.equipmentV2 = {
-    //   carried: equipment.filter(item => item.system.carried === true),
-    //   other: equipment.filter(item => item.system.carried === false),
-    // }
-
     this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
     this.rangedV2 = this.parent.getItemAttacks({ attackType: 'ranged' })
 

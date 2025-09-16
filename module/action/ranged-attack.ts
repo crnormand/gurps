@@ -83,8 +83,8 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   override prepareDerivedData(): void {
     super.prepareDerivedData()
 
-    const actor = this.actor
-    if (!actor || !actor.isOfType('characterV2', 'enemy')) return
+    const actor = this.actor as Actor<'characterV2'> | null
+    if (!actor) return
     this.convertRanges(actor.system.attributes.ST.value)
   }
 
@@ -160,11 +160,7 @@ const rangedAttackComponentSchema = () => {
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
-    
-    // Added to allow disabling from containing Trait.
-    containedBy: new fields.StringField({ required: true, nullable: false }),
-    // Added to support QuickRoll menu.
-    addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
     // Added: Missing?
     rate_of_fire: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }

@@ -20,7 +20,7 @@ class RangedV1 {
   }
 
   get addToQuickRoll() {
-    return this.rangedV2.rng.addToQuickRoll
+    return this.rangedV2.addToQuickRoll
   }
 
   get ammo() {

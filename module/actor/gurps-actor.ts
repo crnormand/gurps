@@ -7,7 +7,6 @@ import { ModelCollection } from '../data/model-collection.js'
 import { BaseActorModel } from './data/base.js'
 import { Equipment, HitLocationEntry } from './actor-components.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
-import { CharacterModel } from './data/character.js'
 
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
@@ -56,7 +55,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
       return (
-        // @ts-expect-error: Dynamic access to embedded collection
+        // @ts-expect-error: TODO: Revise types so pseudo-document collections are evaluated as valid.
         foundry.utils.getProperty(this, path).get(id, {
           invalid,
           strict,
@@ -184,13 +183,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get hitLocationsWithDR(): HitLocationEntry[] {
-    return (this.system as CharacterModel).hitLocationsWithDR
+    return (this.system as Actor.SystemOfType<'characterV2'>).hitLocationsWithDR
   }
 
   /* ---------------------------------------- */
 
   get _hitLocationRolls() {
-    return (this.system as CharacterModel)._hitLocationRolls
+    return (this.system as Actor.SystemOfType<'characterV2'>)._hitLocationRolls
   }
 
   /* ---------------------------------------- */
@@ -207,7 +206,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   get torsoDr(): number {
-    return (this.system as CharacterModel).torsoDR
+    return (this.system as Actor.SystemOfType<'characterV2'>).torsoDR
   }
 
   /* ---------------------------------------- */
@@ -218,7 +217,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * array.
    */
   override get temporaryEffects(): ActiveEffect.Implementation[] {
-    return (this.system as CharacterModel).getTemporaryEffects(super.temporaryEffects)
+    return (this.system as Actor.SystemOfType<'characterV2'>).getTemporaryEffects(super.temporaryEffects)
   }
 
   /* ---------------------------------------- */
@@ -257,7 +256,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
-    ;(this.system as CharacterModel).prepareEmbeddedDocuments()
+    ;(this.system as Actor.SystemOfType<'characterV2'>).prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */
@@ -276,7 +275,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     optionalArgs: { obj?: AnyObject },
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
-    return (this.system as CharacterModel).addTaggedRollModifiers(chatThing, optionalArgs, attack)
+    return (this.system as Actor.SystemOfType<'characterV2'>).addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
   /* ---------------------------------------- */
@@ -301,13 +300,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    return (this.system as CharacterModel).findUsingAction(action, chatthing, formula, thing)
+    return (this.system as Actor.SystemOfType<'characterV2'>).findUsingAction(action, chatthing, formula, thing)
   }
 
   /* ---------------------------------------- */
 
   async changeDR(formula: string, locations: string[]) {
-    ;(this.system as CharacterModel).changeDR(formula, locations)
+    ;(this.system as Actor.SystemOfType<'characterV2'>).changeDR(formula, locations)
   }
 
   /* ---------------------------------------- */
@@ -392,7 +391,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // result and set canRoll to false depending on the actions settings
     const checkMaxActionsSetting =
       game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS) ?? 'Warn'
-    const maxActions = (this.system as CharacterModel).conditions.actions.maxActions ?? 1
+    const maxActions = (this.system as Actor.SystemOfType<'characterV2'>).conditions.actions.maxActions ?? 1
     const extraActions = actions.extraActions ?? 0
     const canConsumeAction = this.canConsumeAction(action, chatThing, actorComponent)
 
@@ -431,7 +430,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     // Same as above, but for maximum blocks per round
-    const maxBlocks = (this.system as CharacterModel).conditions.actions.maxBlocks ?? 1
+    const maxBlocks = (this.system as Actor.SystemOfType<'characterV2'>).conditions.actions.maxBlocks ?? 1
     if (
       isDefense &&
       canConsumeAction &&
@@ -524,7 +523,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async replacePosture(postureId: string) {
-    const id = postureId === GURPS.StatusEffectStanding ? (this.system as CharacterModel).conditions.posture : postureId
+    const id =
+      postureId === GURPS.StatusEffectStanding
+        ? (this.system as Actor.SystemOfType<'characterV2'>).conditions.posture
+        : postureId
     this.toggleStatusEffect(id)
   }
 
@@ -538,7 +540,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   get damageAccumulators(): any[] | null {
     if (this.isOfType('character', 'enemy'))
-      return (this.system as CharacterModel).conditions.damageAccumulators ?? null
+      return (this.system as Actor.SystemOfType<'characterV2'>).conditions.damageAccumulators ?? null
     return null
   }
 
@@ -547,34 +549,34 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // async accumulateDamageRoll(
   //   action: foundry.data.fields.SchemaField.InitializedData<DamageActionSchema>
   // ): Promise<void> {
-  //   ;(this.system as CharacterModel).accumulateDamageRoll(action)
+  //   ;(this.system as Actor.SystemOfType<'characterV2'>).accumulateDamageRoll(action)
   // }
 
   /* ---------------------------------------- */
 
   async incrementDamageAccumulator(index: number): Promise<void> {
-    ;(this.system as CharacterModel).incrementDamageAccumulator(index)
+    ;(this.system as Actor.SystemOfType<'characterV2'>).incrementDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async decrementDamageAccumulator(index: number): Promise<void> {
     if (!this.isOfType('characterV2', 'enemy')) return
-    ;(this.system as CharacterModel).decrementDamageAccumulator(index)
+    ;(this.system as Actor.SystemOfType<'characterV2'>).decrementDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async clearDamageAccumulator(index: number): Promise<void> {
     if (!this.isOfType('characterV2', 'enemy')) return
-    ;(this.system as CharacterModel).clearDamageAccumulator(index)
+    ;(this.system as Actor.SystemOfType<'characterV2'>).clearDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async applyDamageAccumulator(index: number): Promise<void> {
     if (!this.isOfType('characterV2', 'enemy')) return
-    ;(this.system as CharacterModel).applyDamageAccumulator(index)
+    ;(this.system as Actor.SystemOfType<'characterV2'>).applyDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
@@ -591,10 +593,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       // Apply ^ to each pattern
       .map(e => new RegExp('^' + e, 'i'))
 
-    const carriedItem = (this.system as CharacterModel).equipment.carried.find((e: GurpsItemV2) =>
+    const carriedItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.carried.find((e: GurpsItemV2) =>
       patterns.some(p => p.test(e.name))
     )
-    const otherItem = (this.system as CharacterModel).equipment.other.find((e: GurpsItemV2) =>
+    const otherItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.other.find((e: GurpsItemV2) =>
       patterns.some(p => p.test(e.name))
     )
 
@@ -634,7 +636,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   isEmptyActor(): boolean {
-    // return (this.system as CharacterModel).additionalresources.importname === null
+    // return (this.system as Actor.SystemOfType<'characterV2'>).additionalresources.importname === null
     return false
   }
 
@@ -648,7 +650,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   getChecks(checkType: string) {
-    return (this.system as CharacterModel).getChecks(checkType)
+    return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
   }
 
   /* ---------------------------------------- */
@@ -723,7 +725,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get _additionalResources() {
-    return (this.system as CharacterModel)?.additionalresources ?? {}
+    return (this.system as Actor.SystemOfType<'characterV2'>)?.additionalresources ?? {}
   }
 
   /**
@@ -905,7 +907,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // When updating any property of HitLocationV2, you have to update the entire array.
   #translateHitLocationsV2(data: Actor.UpdateData) {
     const regex = /^system\.hitlocationsV2\.(\d+)\..*/
-    const array = foundry.utils.deepClone((this.system as CharacterModel)._source.hitlocationsV2)
+    const array = foundry.utils.deepClone((this.system as Actor.SystemOfType<'characterV2'>)._source.hitlocationsV2)
 
     const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
 

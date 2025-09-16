@@ -154,6 +154,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     }
   }
 
+  // NOTE: This is here only for debugging purposes.
   override update(data: Item.UpdateData, options?: Item.Database.UpdateOptions): Promise<this | undefined> {
     console.log('GURPS | GurpsItemV2#update', { data, options })
     return super.update(data, options)

@@ -34,9 +34,9 @@ import Maneuvers, {
 } from './maneuver.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
-Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
-  await actor.internalUpdate({ '_stats.systemVersion': game.system.version })
-})
+// Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
+//   await actor.internalUpdate({ '_stats.systemVersion': game.system.version })
+// })
 
 export const MoveModes = {
   Ground: 'GURPS.moveModeGround',

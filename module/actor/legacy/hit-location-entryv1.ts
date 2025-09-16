@@ -1,7 +1,7 @@
 import { HitLocationEntryV2 } from '../data/hit-location-entry.js'
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
-import { convertRangeTextToArray } from 'module/utilities/text-utilties.js'
+import { convertRangeTextToArray } from '../../utilities/text-utilties.js'
 
 class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
   static createFromV2(entry: HitLocationEntryV2): HitLocationEntryV1 {

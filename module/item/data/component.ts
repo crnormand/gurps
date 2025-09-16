@@ -14,6 +14,17 @@ const itemComponentSchema = () => {
     name: new fields.StringField({ required: true, nullable: false }),
     notes: new fields.StringField({ required: true, nullable: false }),
     pageref: new fields.StringField({ required: true, nullable: false }),
+    
+    // Change from previous schema. Set of IDs
+    // NOTE: this method of storing child items overrides Foundry's default "sort" behaviour.
+    // TODO: look into using a different method of storing child items such as storing the parent ID on the child item only.
+    // NOTE: Replaced by "containedBy" in BaseItemModelSchema. The new implementation stores the parent ID on each 
+    // child, instead of the parent having a list of children.
+    // contains: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+    //   required: true,
+    //   nullable: false,
+    // }),
+    
     vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     uuid: new fields.StringField({ required: true, nullable: false }),

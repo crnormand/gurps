@@ -56,6 +56,8 @@ const baseActionSchema = () => {
 
     // Added to allow disabling from containing Trait.
     containedBy: new fields.StringField({ required: true, nullable: false }),
+    // Added to support QuickRoll menu.
+    addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }
 }
 

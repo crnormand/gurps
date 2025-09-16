@@ -15,7 +15,7 @@ class MeleeV1 {
   }
 
   get addToQuickRoll() {
-    return this.meleeV2.mel.addToQuickRoll
+    return this.meleeV2.addToQuickRoll
   }
 
   get baseParryPenalty() {
