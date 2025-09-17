@@ -120,7 +120,12 @@ class SkillV1 {
   }
 
   get notes(): string {
-    return this.skillV2.ski?.notes ?? ''
+    const vttNotes = this.skillV2.system.ski?.vtt_notes
+    const notes = this.skillV2.ski?.notes
+    return [notes, vttNotes]
+      .filter(it => !!it)
+      .join('<br>')
+      .trim()
   }
 
   get originalName(): string {

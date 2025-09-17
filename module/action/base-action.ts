@@ -3,6 +3,7 @@ import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
 import { AnyObject } from 'fvtt-types/utils'
+import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,
@@ -23,8 +24,8 @@ class BaseAction<
     }
   }
 
-  get item(): Item.Implementation {
-    return this.parent.parent
+  get item(): GurpsItemV2 {
+    return this.parent.parent as GurpsItemV2
   }
 
   /* ---------------------------------------- */

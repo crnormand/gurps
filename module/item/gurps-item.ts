@@ -57,6 +57,12 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
 
   /* ---------------------------------------- */
 
+  get notes(): string | null {
+    return (this.system as BaseItemModel).component?.notes ?? null
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,
