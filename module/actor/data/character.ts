@@ -32,6 +32,7 @@ import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
 import { EquipmentModel } from 'module/item/data/equipment.js'
 
+// Legacy models.
 import { HitLocationEntry } from '../actor-components.js'
 import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
@@ -39,6 +40,7 @@ import { MeleeV1 } from '../../action/legacy/meleev1.js'
 import { RangedV1 } from '../../action/legacy/rangedv1.js'
 import { SkillV1 } from '../../item/legacy/skill-adapter.js'
 import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
+import { SpellV1 } from '../../item/legacy/spell-adapter.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -180,7 +182,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // Legacy collection
   get skills() {
     return arrayToObject(
-      this.skillsV2.filter(item => item.containedBy === null).map(item => new SkillV1(item)),
+      this.skillsV2.map(item => new SkillV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get spellsV2(): Item.OfType<'spellV2'>[] {
+    return this.allSpellsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+  }
+
+  /* ---------------------------------------- */
+
+  // Legacy collection
+  get spells() {
+    return arrayToObject(
+      this.spellsV2.map(item => new SpellV1(item)),
       5
     )
   }

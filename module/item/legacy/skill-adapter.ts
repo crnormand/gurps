@@ -140,8 +140,8 @@ class SkillV1 {
     return this.skillV2.ski?.parentuuid ?? null
   }
 
-  get points(): number | null {
-    return this.skillV2.ski?.points ?? null
+  get points(): number {
+    return this.skillV2.ski?.points ?? 0
   }
 
   get relativelevel(): string {
