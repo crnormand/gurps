@@ -110,17 +110,17 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ----------------------------------------- */
 
-  // eqtsummary: {
-  //   eqtcost: number
-  //   eqtlbs: number
-  //   othercost: number
-  //   otherlbs: number
-  // } = {
-  //   eqtcost: 0,
-  //   eqtlbs: 0,
-  //   othercost: 0,
-  //   otherlbs: 0,
-  // }
+  eqtsummary: {
+    eqtcost: number
+    eqtlbs: number
+    othercost: number
+    otherlbs: number
+  } = {
+    eqtcost: 0,
+    eqtlbs: 0,
+    othercost: 0,
+    otherlbs: 0,
+  }
 
   // defenses: {
   //   parry: { bonus: number }
@@ -376,25 +376,25 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareEquipmentSummary() {
-    // const onlyCountEquipped = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_CHECK_EQUIPPED) ?? false
-    // const numberToTwoDP = (num: number) => Math.round(num * 100) / 100
-    // const carriedItems = onlyCountEquipped
-    //   ? this.equipment.carried.filter(item => item.system.equipped)
-    //   : this.equipment.carried
-    // this.eqtsummary = {
-    //   eqtcost: numberToTwoDP(
-    //     carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
-    //   ),
-    //   eqtlbs: numberToTwoDP(
-    //     carriedItems.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
-    //   ),
-    //   othercost: numberToTwoDP(
-    //     this.equipment.other.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
-    //   ),
-    //   otherlbs: numberToTwoDP(
-    //     this.equipment.other.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
-    //   ),
-    // }
+    const allCarried = this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === true)
+    const allOther = this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === false)
+    const onlyCountEquipped = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHECK_EQUIPPED) ?? false
+    const numberToTwoDP = (num: number) => Math.round(num * 100) / 100
+    const carriedItems = onlyCountEquipped ? allCarried.filter(item => item.system.equipped) : allCarried
+    this.eqtsummary = {
+      eqtcost: numberToTwoDP(
+        carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
+      ),
+      eqtlbs: numberToTwoDP(
+        carriedItems.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
+      ),
+      othercost: numberToTwoDP(
+        allOther.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
+      ),
+      otherlbs: numberToTwoDP(
+        allOther.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
+      ),
+    }
   }
 
   /* ---------------------------------------- */
@@ -467,7 +467,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // TODO const moveIsEnhanced = this.currentMoveMode?.enhanced !== null
 
-    const carriedWeight = 0 // this.eqtsummary.eqtlbs ?? 0
+    const carriedWeight = this.eqtsummary.eqtlbs ?? 0
 
     for (let i = 0; i < liftBrackets.length; i++) {
       let move = Math.floor(Math.max(1, basicMove * (1 - i * 0.2)))
