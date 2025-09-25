@@ -12,6 +12,7 @@ import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
 import { ReactionSchema } from './data/character-components.js'
 import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
+import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -623,18 +624,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (!this.isOfType('characterV2', 'enemy')) return null
 
     const equipment = (this.system as Actor.SystemOfType<'characterV2'>).allEquipmentV2.find(e => e.id === id)
-    const updateData: Record<string, unknown> = { system: { eqt: { count } } }
+    const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
     if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
-      // @ts-expect-error
-      updateData['system']['eqt']['ignoreImportQty'] = true
+      updateData.system.eqt.ignoreImportQty = true
     }
 
     if (equipment) {
-      // @ts-expect-error
-      await this.updateEmbeddedDocuments('Item', [{ _id: id, ...updateData }], { parent: this })
+      await this.updateEmbeddedDocuments('Item', [updateData], { parent: this })
       return equipment
     } else {
       throw new Error(`GURPS | Equipment with ID ${id} not found in actor ${this.name}`)
@@ -823,6 +822,28 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const eqt = foundry.utils.getProperty(this, key) as EquipmentV1
     const item = eqt.equipmentV2
     await this.updateEqtCountV2(item.id!, value)
+  }
+
+  /* ---------------------------------------- */
+
+  async deleteEquipment(key: string) {
+    const eqt = foundry.utils.getProperty(this, key) as EquipmentV1
+    const item = eqt.equipmentV2
+    await this.deleteItem(item)
+    return item
+  }
+
+  /* ---------------------------------------- */
+
+  async deleteItem(item: GurpsItemV2) {
+    // If the equipment is a container, delete the contained items first.
+    if (item.contains) {
+      for (const child of item.contents) {
+        await this.deleteItem(child)
+      }
+    }
+
+    await this.deleteEmbeddedDocuments('Item', [item.id!])
   }
 
   /* ---------------------------------------- */
