@@ -11,7 +11,6 @@ import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
 import { ReactionSchema } from './data/character-components.js'
-import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -593,11 +592,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       // Apply ^ to each pattern
       .map(e => new RegExp('^' + e, 'i'))
 
-    const carriedItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.carried.find((e: GurpsItemV2) =>
-      patterns.some(p => p.test(e.name))
+    const carriedItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.carried.find(
+      (e: Item.OfType<'equipment'>) => patterns.some(p => p.test(e.name))
     )
-    const otherItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.other.find((e: GurpsItemV2) =>
-      patterns.some(p => p.test(e.name))
+    const otherItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.other.find(
+      (e: Item.OfType<'equipment'>) => patterns.some(p => p.test(e.name))
     )
 
     const carriedResult: [Item.OfType<'equipment'>, string] | null = carriedItem

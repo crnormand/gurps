@@ -254,6 +254,8 @@ const baseItemModelSchema = () => {
     ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
     skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // Change from previous schema. Set of IDs corresponding to subtypes of Item
+    spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     bonuses: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
 

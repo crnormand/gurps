@@ -6,6 +6,7 @@ import { ModelCollection } from '../data/model-collection.js'
 import { TraitComponent, TraitModel } from './data/trait.js'
 import { SkillComponent, SkillModel } from './data/skill.js'
 import { EquipmentComponent, EquipmentModel } from './data/equipment.js'
+import { SpellComponent, SpellModel } from './data/spell.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.documents.Item<SubType> {
   /* ---------------------------------------- */
@@ -239,9 +240,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
     return (this.system as TraitModel).addToQuickRoll
   }
 
-  get component(): TraitComponent | SkillComponent | EquipmentComponent | null {
+  get component(): TraitComponent | SkillComponent | SpellComponent | EquipmentComponent | null {
     if (this.type === 'featureV2') return this.fea
     if (this.type === 'skillV2') return this.ski
+    if (this.type === 'spellV2') return this.spl
     if (this.type === 'equipmentV2') return this.eqt
     return null
   }
@@ -258,6 +260,13 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
   get ski(): SkillComponent | null {
     if (!(this.system instanceof SkillModel)) return null
     return this.system.ski
+  }
+
+  /* ---------------------------------------- */
+
+  get spl(): SpellComponent | null {
+    if (!(this.system instanceof SpellModel)) return null
+    return this.system.spl
   }
 
   /* ---------------------------------------- */
@@ -283,7 +292,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType> extends foundry.d
       equipmentV2: 'equipment',
       featureV2: 'ads',
       skillV2: 'skills',
-      spell: 'spells',
+      spellV2: 'spells',
       meleeAtk: 'melee',
       rangedAtk: 'ranged',
     } // @ts-expect-error

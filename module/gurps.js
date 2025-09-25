@@ -75,6 +75,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 import { TraitModel } from './item/data/trait.js'
 import { SkillModel } from './item/data/skill.js'
+import { SpellModel } from './item/data/spell.js'
 import { EquipmentModel } from './item/data/equipment.js'
 import { Action } from './action/index.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
@@ -1966,7 +1967,7 @@ if (!globalThis.GURPS) {
     CONFIG.Item.dataModels = {
       featureV2: TraitModel,
       skillV2: SkillModel,
-      // spell: SpellModel,
+      spellV2: SpellModel,
       equipmentV2: EquipmentModel,
     }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect

@@ -5,6 +5,7 @@ import { GcsBody } from './body.js'
 import { GcsElement } from './base.js'
 import { GcsEquipment } from './equipment.js'
 import { GcsSkill } from './skill.js'
+import { GcsSpell } from './spell.js'
 import { GcsTrait } from './trait.js'
 import { GcsWeapon } from './weapon.js'
 
@@ -26,8 +27,8 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
         return data?.map((traitData: any) => GcsTrait.importSchema(traitData))
       case 'skills':
         return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
-      // case 'spells':
-      //   return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
+      case 'spells':
+        return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
       case 'equipment':
       case 'other_equipment':
         return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
@@ -66,13 +67,13 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  // get allSpells(): GcsSpell[] {
-  //   const spells = this.spells ?? []
-  //   for (const spell of spells) {
-  //     spells.push(...spell.allChildItems)
-  //   }
-  //   return spells
-  // }
+  get allSpells(): GcsSpell[] {
+    const spells = this.spells ?? []
+    for (const spell of spells) {
+      spells.push(...spell.allChildItems)
+    }
+    return spells
+  }
 
   /* ---------------------------------------- */
 
@@ -108,7 +109,7 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allEquippedWeapons(): GcsWeapon[] {
     const weapons: GcsWeapon[] = []
-    ;[...this.allTraits, ...this.allSkills, /*...this.allSpells,*/ ...this.allCarriedEquipment].forEach(e => {
+    ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(e => {
       if (!e.isEnabled) weapons.push(...e.weaponItems)
     })
     return weapons
@@ -158,6 +159,10 @@ const characterData = () => {
       nullable: true,
     }),
     skills: new fields.ArrayField(new fields.EmbeddedDataField(GcsSkill, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
+    spells: new fields.ArrayField(new fields.EmbeddedDataField(GcsSpell, { required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),

@@ -13,6 +13,7 @@ import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracke
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { GurpsItem } from 'module/item.js'
+import { SpellModel } from 'module/item/data/spell.ts'
 
 export {}
 
@@ -91,6 +92,8 @@ declare module 'fvtt-types/configuration' {
       featureV2: typeof TraitModel
       skill: any
       skillV2: typeof SkillModel
+      spell: any
+      spellV2: typeof SpellModel
     }
     ChatMessage: {}
   }

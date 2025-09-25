@@ -57,6 +57,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // Flat list of all Items of each type.
   allAdsV2: Item.OfType<'featureV2'>[] = []
   allSkillsV2: Item.OfType<'skillV2'>[] = []
+  allSpellsV2: Item.OfType<'spellV2'>[] = []
   allEquipmentV2: Item.OfType<'equipmentV2'>[] = []
 
   // Action collections
@@ -308,8 +309,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.allAdsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
     this.allSkillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
-
-    // this.spells = this.parent.items.filter(item => item.isOfType('spell'))
+    this.allSpellsV2 = this.parent.items.filter(item => item.isOfType('spellV2'))
     this.allEquipmentV2 = this.parent.items.filter(item => item.isOfType('equipmentV2'))
     this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
     this.rangedV2 = this.parent.getItemAttacks({ attackType: 'ranged' })
@@ -533,7 +533,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareUserModifiers() {
     this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2', 'skillV2', /* 'spellV2',*/ 'equipmentV2')) return
+      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
 
       for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
@@ -1210,12 +1210,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
 
       case 'markedChecks':
-        const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2' /*'spellV2'*/))
+        const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2', 'spellV2'))
         for (const item of items) {
           if (item.system.addToQuickRoll) {
             const type = item.type === 'featureV2' ? 'ad' : item.type
             let value = 0
-            if (item.isOfType('skillV2' /*'spellV2'*/)) value = item.system.component.import
+            if (item.isOfType('skillV2', 'spellV2')) value = item.system.component.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
@@ -1462,7 +1462,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           }
       }
       case 'skill-spell': {
-        const item = [...this.skillsV2 /*...this.spellsV2*/].find(e => e.name === action.name)
+        const item = [...this.allSkillsV2, ...this.allSpellsV2].find(e => e.name === action.name)
         if (item)
           return {
             name: item.name,

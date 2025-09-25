@@ -2461,7 +2461,8 @@ details .popup.square5x4 {
   background-color: #35713e;
 }
 
-.color-spell {
+.color-spell,
+.color-spellV2 {
   background-color: #91241e;
 }
 

@@ -19,6 +19,8 @@ import { EquipmentSchema, EquipmentComponentSchema } from '../item/data/equipmen
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
+import { GcsSpell } from './schema/spell.js'
+import { SpellComponentSchema, SpellSchema } from 'module/item/data/spell.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -230,6 +232,7 @@ class GcsImporter {
   #importItems() {
     this.input.traits?.forEach((trait, index) => this.#importTrait(trait, index))
     this.input.skills?.forEach((skill, index) => this.#importSkill(skill, index))
+    this.input.spells?.forEach((spell, index) => this.#importSpell(spell, index))
     this.input.equipment?.forEach((equipment, index) => this.#importEquipment(equipment, index, true))
     this.input.other_equipment?.forEach((equipment, index) => this.#importEquipment(equipment, index, false))
   }
@@ -449,31 +452,40 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // #importSpell(spell: GcsSpell): Item.CreateData {
-  //   const type = 'spell'
-  //   const _id = foundry.utils.randomID()
-  //   // TODO: localize
-  //   const name = spell.name ?? 'Spell'
+  #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
+    const type = 'spellV2'
+    const _id = foundry.utils.randomID()
+    // TODO: localize
+    const name = spell.name ?? 'Spell'
 
-  //   const system: DataModel.CreateData<SpellSchema> = this.#importItem(spell)
-  //   const component: DataModel.CreateData<SpellComponentSchema> = this.#importSpellComponent(spell)
+    const system: DataModel.CreateData<SpellSchema> = this.#importItem(spell)
+    system.containedBy = containedBy ?? null
 
-  //   const children = spell.childItems?.map((child: GcsSpell) => this.#importSpell(child)) ?? []
-  //   component.contains = children.map((c: Item.CreateData) => c._id as string)
+    // Update any actions with the containing trait id:
+    for (const action of Object.values(system.actions)) {
+      // @ts-expect-error
+      action.containedBy = _id
+    }
 
-  //   const item: Item.CreateData = {
-  //     _id,
-  //     type,
-  //     name,
-  //     system: {
-  //       ...system,
-  //       spl: component,
-  //     },
-  //   }
+    const component: DataModel.CreateData<SpellComponentSchema> = this.#importSpellComponent(spell)
 
-  //   this.items.push(item)
-  //   return item
-  // }
+    spell.childItems?.forEach((child: GcsSpell, childIndex: number) => this.#importSpell(child, childIndex, _id))
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      sort: index,
+      // @ts-expect-error
+      system: {
+        ...system,
+        spl: component,
+      },
+    }
+
+    this.items.push(item)
+    return item
+  }
 
   /* ---------------------------------------- */
 
@@ -561,22 +573,22 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // #importSpellComponent(spell: GcsSpell): DataModel.CreateData<SpellComponentSchema> {
-  //   return {
-  //     ...this.#importBaseComponent(spell),
-  //     points: spell.points ?? 0,
-  //     difficulty: spell.difficulty ?? '',
-  //     relativelevel: spell.calc?.rsl ?? '',
-  //     import: spell.calc?.level ?? 0,
-  //     class: spell.spell_class ?? '',
-  //     college: spell.college?.join(', ') ?? '',
-  //     cost: spell.casting_cost ?? '',
-  //     maintain: spell.maintenance_cost ?? '',
-  //     duration: spell.duration ?? '',
-  //     resist: spell.resist ?? '',
-  //     casttime: spell.casting_time ?? '',
-  //   }
-  // }
+  #importSpellComponent(spell: GcsSpell): DataModel.CreateData<SpellComponentSchema> {
+    return {
+      ...this.#importBaseComponent(spell),
+      points: spell.points ?? 0,
+      difficulty: spell.difficulty ?? '',
+      relativelevel: spell.calc?.rsl ?? '',
+      import: spell.calc?.level ?? 0,
+      class: spell.spell_class ?? '',
+      college: spell.college?.join(', ') ?? '',
+      cost: spell.casting_cost ?? '',
+      maintain: spell.maintenance_cost ?? '',
+      duration: spell.duration ?? '',
+      resist: spell.resist ?? '',
+      casttime: spell.casting_time ?? '',
+    }
+  }
 
   /* ---------------------------------------- */
 

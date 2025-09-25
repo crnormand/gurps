@@ -8,13 +8,12 @@
       <div><i class='fas fa-theater-masks itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
       </div>
-
     {{/if}}
     {{#if (or (eq itemType 'skill') (eq itemType 'skillV2'))}}
       <div><i class='fa-solid fa-person-swimming itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.skillsTab'}}</span></div>
     {{/if}}
-    {{#if (eq itemType 'spell')}}
+    {{#if (or (eq itemType 'spell') (eq itemType 'spellV2'))}}
       <div><i class='fa-solid fa-wand-magic-sparkles itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.spellsTab'}}</span></div>
     {{/if}}

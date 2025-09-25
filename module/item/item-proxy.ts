@@ -9,10 +9,12 @@ const ItemProxy = new Proxy(Item, {
     switch (type) {
       case 'equipment':
       case 'skill':
+      case 'spell':
       case 'feature':
         return new GurpsItem(...args)
       case 'featureV2':
       case 'skillV2':
+      case 'spellV2':
       case 'equipmentV2':
         return new GurpsItemV2(...args)
       default:
