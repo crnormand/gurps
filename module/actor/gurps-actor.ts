@@ -11,10 +11,18 @@ import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
 import { ReactionSchema } from './data/character-components.js'
+import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
 }
+
+// Legacy TODO
+// TODO Uncaught (in promise) TypeError: this.actor.getEquippedParry is not a function
+// TODO updateItemAdditionsBasedOn not implemented
+// TODO Uncaught TypeError: this.actor.moveEquipment is not a function
+// TODO handleEquipmentDrop not implemented
+// TODO foundry.mjs:119973 Uncaught Error: TypeError: actor.deleteEquipment is not a function
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -615,12 +623,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (!this.isOfType('characterV2', 'enemy')) return null
 
     const equipment = (this.system as Actor.SystemOfType<'characterV2'>).allEquipmentV2.find(e => e.id === id)
-    const updateData: Record<string, unknown> = { count }
+    const updateData: Record<string, unknown> = { system: { eqt: { count } } }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
     if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
-      updateData['ignoreImportQty'] = true
+      // @ts-expect-error
+      updateData['system']['eqt']['ignoreImportQty'] = true
     }
 
     if (equipment) {
@@ -810,9 +819,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  updateEqtCount(path: string, value: number) {
-    // TODO Implement me!
-    console.error('updateEqtCount not implemented', { path, value })
+  async updateEqtCount(key: string, value: number) {
+    const eqt = foundry.utils.getProperty(this, key) as EquipmentV1
+    const item = eqt.equipmentV2
+    await this.updateEqtCountV2(item.id!, value)
   }
 
   /* ---------------------------------------- */

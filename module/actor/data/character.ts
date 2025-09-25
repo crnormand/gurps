@@ -122,18 +122,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     otherlbs: 0,
   }
 
-  // defenses: {
-  //   parry: { bonus: number }
-  //   block: { bonus: number }
-  //   dodge: { bonus: number }
-  // } = {
-  //   parry: { bonus: 0 },
-  //   block: { bonus: 0 },
-  //   dodge: { bonus: 0 },
-  // }
+  defenses: {
+    parry: { bonus: number }
+    block: { bonus: number }
+    dodge: { bonus: number }
+  } = {
+    parry: { bonus: 0 },
+    block: { bonus: 0 },
+    dodge: { bonus: 0 },
+  }
 
-  // equippedparry: number = 0
-  // equippedblock: number = 0
+  equippedparry: number = 0
+  equippedblock: number = 0
   // currentdodge: number = 0
   // currentmove: number = 0
   // currentsprint: number = 0
@@ -520,31 +520,31 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareDefenses() {
-    // this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
+    this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
     // NOTE: this used to check again whether equipment is equipped but this was already
     // done when _globalBonuses was gathered so is not necessary
-    // this._globalBonuses.forEach(bonus => {
+    this._globalBonuses.forEach(bonus => {
     // TODO: revise type
-    //   const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
-    //   if (match) {
-    //     const bonusAmount = parseInt(match.groups?.bonus ?? '0')
-    //     this.defenses.parry.bonus += bonusAmount
-    //     this.defenses.block.bonus += bonusAmount
-    //     this.defenses.dodge.bonus += bonusAmount
-    //   }
-    // })
-    // this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-    //   if (!attack.component.parry) return acc
-    //   const newParry = parseInt(attack.component.parry)
-    //   if (newParry > acc) acc = newParry
-    //   return acc
-    // }, 0)
-    // this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-    //   if (!attack.component.block) return acc
-    //   const newblock = parseInt(attack.component.block)
-    //   if (newblock > acc) acc = newblock
-    //   return acc
-    // }, 0)
+      const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+      if (match) {
+        const bonusAmount = parseInt(match.groups?.bonus ?? '0')
+        this.defenses.parry.bonus += bonusAmount
+        this.defenses.block.bonus += bonusAmount
+        this.defenses.dodge.bonus += bonusAmount
+      }
+    })
+    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+      if (!attack.component.parry) return acc
+      const newParry = parseInt(attack.component.parry)
+      if (newParry > acc) acc = newParry
+      return acc
+    }, 0)
+    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+      if (!attack.component.block) return acc
+      const newblock = parseInt(attack.component.block)
+      if (newblock > acc) acc = newblock
+      return acc
+    }, 0)
   }
 
   /* ---------------------------------------- */
