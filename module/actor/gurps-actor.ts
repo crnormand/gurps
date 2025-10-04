@@ -887,6 +887,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       if (sourcePath === targetPath && sourceIndex! < targetIndex!) isSrcFirst = true
     }
 
+    if (await this.#checkForMerge(item, targetkey)) return
+
     let where: 'before' | 'inside' | 'after' | null = null
     if (targetkey === targetCollection)
       where = 'after' // Dropping on the collection itself, so add to the end.
@@ -1042,7 +1044,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // @ts-expect-error
     const result = await foundry.applications.api.DialogV2.input({
       window: { title: title },
-      content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
+      content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/transfer-equipment.hbs', {
+        eqt: eqt,
+      }),
       ok: {
         label: game.i18n!.localize('GURPS.ok'),
         icon: 'fa-solid fa-check',
@@ -1053,6 +1057,40 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // @ts-expect-error
     return result
+  }
+
+  async #checkForMerge(item: GurpsItemV2<'equipmentV2'>, targetkey: string): Promise<boolean> {
+    // If dropping on an item of the same name and type, ask if they want to merge.
+    let targetItem = (foundry.utils.getProperty(this, targetkey) as GurpsItemV2<'equipmentV2'>) ?? null
+    if (!targetItem || targetItem.type !== 'equipmentV2' || targetItem.name !== item.name) return false
+
+    const merge = await foundry.applications.api.DialogV2.wait({
+      window: { title: `Merge Items` },
+      content: `Merge the equipment named "${item.name}"?<p>This will add the quantities together and delete the source item.</p>`,
+      buttons: [
+        {
+          action: 'merge',
+          icon: 'fa-solid fa-check',
+          label: `Merge`,
+          default: true,
+        },
+        {
+          action: 'cancel',
+          icon: 'fa-solid fa-xmark',
+          label: `Cancel`,
+        },
+      ],
+    })
+
+    if (merge === 'merge') {
+      // Update the target item's count.
+      await this.updateEqtCountV2(targetItem.id!, targetItem.system.eqt.count + item.system.eqt.count)
+      // Delete the source item.
+      await this.deleteItem(item)
+      return true
+    }
+
+    return false
   }
 
   /* ---------------------------------------- */
