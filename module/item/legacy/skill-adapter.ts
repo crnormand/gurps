@@ -37,15 +37,14 @@ class SkillV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'skillV2'>[] =
-      this.skillV2.actor?.items
-        .filter(item => item.type === 'skillV2')
-        .filter(item => item.containedBy === this.skillV2.id)
-        .map(item => item as GurpsItemV2<'skillV2'>) || []
+    const containedItems: GurpsItemV2<'skillV2'>[] = this.skillV2.contains
+      .sort((a, b) => a.sort - b.sort)
+      .map(item => item as GurpsItemV2<'skillV2'>)
     this._contains = arrayToObject(
       containedItems?.map(item => new SkillV1(item)),
       5
     )
+
     this.save = false
   }
 

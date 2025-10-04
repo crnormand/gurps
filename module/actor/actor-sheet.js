@@ -1494,7 +1494,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let targetkey = dropTarget.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-        await this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
+        this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
+        this.render(true)
       }
     }
     this.actor.ignoreRender = false

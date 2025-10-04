@@ -23,7 +23,6 @@ function getDamageModule() {
 // TODO updateItemAdditionsBasedOn not implemented
 // TODO Uncaught TypeError: this.actor.moveEquipment is not a function
 // TODO handleEquipmentDrop not implemented
-// TODO foundry.mjs:119973 Uncaught Error: TypeError: actor.deleteEquipment is not a function
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -746,20 +745,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async reorderItem(sourcekey: string, targetkey: string, object: any, isSrcFirst: boolean) {
     console.log('Reorder item', { sourceKey: sourcekey, targetkey, object, isSrcFirst })
 
-    sourcekey = this.#convertLegacyReorderKeys(sourcekey)
-    targetkey = this.#convertLegacyReorderKeys(targetkey)
+    sourcekey = this.#convertLegacyItemKey(sourcekey)
+    targetkey = this.#convertLegacyItemKey(targetkey)
 
     let [sourceCollection, sourceIndex, sourcePath] = this.#parseReorderKey(sourcekey)
     let [targetCollection, targetIndex, targetPath] = this.#parseReorderKey(targetkey)
 
     if (targetCollection !== sourceCollection)
+      // TODO: Maybe this should fail quietly? Or it should pop up a warning to the user?
       throw new Error(`Cannot reorder items between different collections: ${sourceCollection} and ${targetCollection}`)
 
     let sourceArray: any[] = (foundry.utils.getProperty(this, sourcePath) as any[]) ?? []
     let targetArray: any[] = sourceArray
     if (sourcePath !== targetPath) targetArray = (foundry.utils.getProperty(this, targetPath) as any[]) ?? []
 
-    // Remove the object from the source array
+    // Remove the object from the source array.
     let [movedObject] = sourceArray.splice(sourceIndex, 1)
     if (!movedObject) throw new Error(`No object found at source index ${sourceIndex}`)
 
@@ -769,41 +769,35 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // Update the moved object's containedBy property.
     const containedBy = targetArray[targetIndex]?.containedBy
+    const updates: Record<string, any>[] = []
+    updates.push({ _id: movedObject.id, system: { containedBy: containedBy ?? null } } as Item.UpdateData)
 
-    // await movedObject.update({ system: { containedBy: containedBy ?? null } })
-    await this.updateEmbeddedDocuments(
-      'Item',
-      // @ts-expect-error
-      [{ _id: movedObject.id, system: { containedBy: containedBy ?? null } }],
-      { parent: this }
-    )
-
-    // Insert the object into the target array at the correct position
+    // Insert the object into the target array at the correct position.
     targetArray.splice(targetIndex, 0, movedObject)
 
-    // Update the sort property of each element in the two arrays
+    // Update the sort property of each element in the two arrays.
     sourceArray.forEach(async (obj, index) => {
-      // await obj.update({ sort: index })
-      // @ts-expect-error
-      await this.updateEmbeddedDocuments('Item', [{ _id: obj.id, sort: index }], { parent: this })
+      updates.push({ _id: obj.id, sort: index })
     })
 
     if (sourceArray !== targetArray) {
       targetArray.forEach(async (obj, index) => {
-        // await obj.update({ sort: index })
-        // @ts-expect-error
-        await this.updateEmbeddedDocuments('Item', [{ _id: obj.id, sort: index }], { parent: this })
+        updates.push({ _id: obj.id, sort: index })
       })
     }
+    await this.updateEmbeddedDocuments('Item', updates, { parent: this })
   }
 
   /* ---------------------------------------- */
 
-  #convertLegacyReorderKeys(key: string) {
-    key = key.replace(/^system\.ads\./, 'system.adsV2.')
-    key = key.replace(/^system\.skills\./, 'system.skillsV2.')
+  #convertLegacyItemKey(key: string) {
+    key = key.replace(/^system\.ads/, 'system.adsV2')
+    key = key.replace(/^system\.spells/, 'system.spellsV2')
+    key = key.replace(/^system\.skills/, 'system.skillsV2')
+    key = key.replace(/^system\.equipment\.carried/, 'system.equipmentV2.carried')
+    key = key.replace(/^system\.equipment\.other/, 'system.equipmentV2.other')
     // For any substring like .12345., convert to parseInt(12345)
-    return key.replace(/\.([0-9]+)\./g, (_, num) => `.${parseInt(num)}.`)
+    return key.replace(/\.([0-9]+)/g, (_, num) => `.${parseInt(num)}`)
   }
 
   /* ---------------------------------------- */
@@ -855,9 +849,210 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  handleEquipmentDrop(eqtData: any) {
+  async handleEquipmentDrop(eqtData: any) {
     // TODO Implement me!
     console.error('handleEquipmentDrop not implemented', { eqtData })
+    return false
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   *
+   * @param sourcekey using legacy Equipment, such as 'system.equipment.carried.00112'.
+   * @param targetkey using legacy format, such as 'system.equipment.other.00000.contains.00123'
+   * @param shiftkey
+   * @returns
+   */
+  async moveEquipment(sourcekey: string, targetkey: string, shiftkey: boolean) {
+    if (sourcekey == targetkey) return
+
+    // Convert the legacy key format to the new format.
+    sourcekey = this.#convertLegacyItemKey(sourcekey)
+    targetkey = this.#convertLegacyItemKey(targetkey)
+
+    // If the Shift key is down, the user wants to split the amount of the item between the source and destination.
+    if (shiftkey && (await this.#splitEquipment(sourcekey, targetkey))) return
+
+    // Parse the source and target keys.
+    let [sourceCollection, sourceIndex, sourcePath] = this.#parseItemKey(sourcekey)
+    let [targetCollection, targetIndex, targetPath] = this.#parseItemKey(targetkey)
+
+    // Get the item to move.
+    let item = foundry.utils.getProperty(this, sourcekey) as GurpsItemV2<'equipmentV2'>
+
+    // Set isSrcFirst to true if the source comes before the target in the same container.
+    let isSrcFirst = false
+    if (sourceCollection === targetCollection) {
+      if (sourcePath === targetPath && sourceIndex! < targetIndex!) isSrcFirst = true
+    }
+
+    let where: 'before' | 'inside' | 'after' | null = null
+    if (targetkey === targetCollection)
+      where = 'after' // Dropping on the collection itself, so add to the end.
+    else
+      where = await foundry.applications.api.DialogV2.wait({
+        window: { title: item.name },
+        content: `<p>${game.i18n!.localize('GURPS.dropPlacement')}</p>`,
+        buttons: [
+          {
+            action: 'before',
+            icon: 'fa-solid fa-turn-left-down',
+            label: 'GURPS.dropBefore',
+            default: true,
+          },
+          {
+            action: 'inside',
+            icon: 'fa-solid fa-arrow-down-to-bracket',
+            label: 'GURPS.dropInside',
+          },
+        ],
+      })
+
+    if (!where) return
+
+    // Get the source array contents
+    const sourceArray = foundry.utils.getProperty(
+      this,
+      sourcePath ? [sourceCollection, sourcePath].join('.') : sourceCollection
+    ) as GurpsItemV2<'equipmentV2'>[]
+
+    // Adjust the target index if dropping before and the source comes before the target.
+    if (where === 'before' && isSrcFirst) targetIndex && targetIndex > 0 ? targetIndex-- : 0
+    if (where === 'after' && !isSrcFirst) targetIndex = undefined // Add to the end of the array.
+
+    // Dropping inside a container. Set the target to be the end of the container's contents.
+    if (where === 'inside') {
+      targetPath = `${targetPath ? targetPath + '.' + targetIndex + '.contains' : targetIndex + '.contains'}`
+      targetIndex = undefined // Add to the end of the array.
+
+      // Expand the target container if it is collapsed.
+      await this.toggleExpand(targetkey, true)
+    }
+
+    // Get the target container contents.
+    let targetArray = sourceArray
+    if (targetCollection !== sourceCollection || targetPath !== sourcePath)
+      targetArray = foundry.utils.getProperty(
+        this,
+        targetPath ? [targetCollection, targetPath].join('.') : targetCollection
+      ) as GurpsItemV2<'equipmentV2'>[]
+
+    // If targetIndex is undefined, set to to add to the end of the array.
+    targetIndex ??= targetArray.length
+
+    // Remove the item from the source array.
+    sourceArray.splice(sourceIndex!, 1)
+
+    // Set the parent and add the item to the target.
+    let containedBy = null
+    if (targetPath) {
+      const container = foundry.utils.getProperty(
+        this,
+        targetCollection + '.' + targetPath.replace(/\.contains$/, '') // Get rid of the final '.contains'.
+      ) as GurpsItemV2<'equipmentV2'>
+      containedBy = container.id
+    }
+
+    let updates: Record<string, any>[] = []
+    updates.push({
+      _id: item.id,
+      sort: targetIndex,
+      system: {
+        containedBy: containedBy ?? null,
+        eqt: { carried: targetCollection === 'system.equipmentV2.carried', lastUpdate: new Date().toISOString() },
+      },
+    } as Item.UpdateData)
+
+    // Insert the item into the target array at the correct position.
+    targetArray.splice(targetIndex, 0, item)
+
+    targetArray.forEach((obj, index) => {
+      if (obj === item) return // Skip the moved item, already updated above.
+      updates.push({ _id: obj.id, sort: index })
+    })
+
+    // Update the sort property of each element in the source arrays.
+    if (sourceArray !== targetArray) {
+      sourceArray.forEach((obj, index) => {
+        updates.push({ _id: obj.id, sort: index })
+      })
+    }
+
+    await this.updateEmbeddedDocuments('Item', updates, { parent: this })
+  }
+
+  /**
+   *
+   * @param key such as 'system.equipment.carried.00000.contains.00123'
+   * @returns [
+   *  string - primary component collection, such as 'system.equipment.carried',
+   *  number - index (as a number) of the final segment of the path (such as 123 in the example),
+   *  path - path within the collection, such as '00000.contains'.
+   * ]
+   */
+  #parseItemKey(key: string): [string, number | undefined, string] {
+    const components = key.split('.')
+
+    const primaryComponentPath = [components[0], components[1], components[2]].join('.')
+    const index = components[components.length - 1].match(/^\d+$/) ? parseInt(components.pop() ?? '0') : 0
+    let path: string | null = components.join('.').replace(primaryComponentPath, '').replace(/^\./, '')
+
+    return [primaryComponentPath, index, path]
+  }
+
+  /**
+   * Ask the user if they want to split the quantity of the item and put some in targetkey, leaving the rest in srckey.
+   * @param srckey
+   * @param targetkey
+   * @returns true if split was handled.
+   */
+  async #splitEquipment(srckey: string, targetkey: string): Promise<boolean> {
+    let sourceItem = (foundry.utils.getProperty(this, srckey) as GurpsItemV2<'equipmentV2'>) ?? null
+    if (!sourceItem || !sourceItem.eqt || sourceItem.eqt.count <= 1) return false // Nothing to split
+
+    const count =
+      (await this.#promptEquipmentQuantity(sourceItem.name, game.i18n!.localize('GURPS.splitQuantity'))) ?? 0
+    if (count <= 0) return true // Didn't want to split.
+    if (count >= sourceItem.eqt.count) return false // Not a split, but a move.
+
+    // Could be a list such as 'system.equipment.other' or an item such as 'system.equipment.other.1'.
+    // If it ends in '.other' or '.carried', parent is null.
+    let parent = null
+    if (!targetkey.match(/^system\.equipmentV2\.(other|carried)$/)) {
+      parent = (foundry.utils.getProperty(this, targetkey) as GurpsItemV2<'equipmentV2'>) ?? null
+    }
+
+    // Copy item and save.
+    let newItem = foundry.utils.duplicate(sourceItem) as unknown as GurpsItemV2<'equipmentV2'>
+    newItem._id = foundry.utils.randomID()
+    newItem.system.containedBy = parent?.id ?? null
+    newItem.system.eqt.count = count
+    newItem.system.eqt.carried = targetkey.startsWith('system.equipment.carried')
+
+    await this.createEmbeddedDocuments('Item', [newItem as unknown as Item.CreateData], { parent: this })
+
+    // Update src equipment count (sourceItem.eqt.count - count)
+    await this.updateEqtCountV2(sourceItem.id!, sourceItem.eqt.count - count)
+
+    return true
+  }
+
+  async #promptEquipmentQuantity(eqt: string, title: string): Promise<number | null> {
+    // @ts-expect-error
+    const result = await foundry.applications.api.DialogV2.input({
+      window: { title: title },
+      content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
+      ok: {
+        label: game.i18n!.localize('GURPS.ok'),
+        icon: 'fa-solid fa-check',
+        // @ts-expect-error
+        callback: (_, button, __) => parseInt(button.form.elements.qty.valueAsNumber),
+      },
+    })
+
+    // @ts-expect-error
+    return result
   }
 
   /* ---------------------------------------- */
@@ -965,6 +1160,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const deleteKey = Object.keys(data).includes('system.-=ads')
     const insertKey = Object.keys(data).includes('system.ads')
     if (!deleteKey && !insertKey) return
+
+    console.warn('Translating legacy ads data', { data })
 
     // Handle delete of whole array:
     Object.keys(data)

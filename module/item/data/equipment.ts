@@ -111,6 +111,7 @@ const equipmentComponentSchema = () => {
     maxuses: new fields.NumberField({ required: true, nullable: false }),
     originalCount: new fields.StringField({ required: true, nullable: false }),
     ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
+    lastUpdate: new fields.StringField({ required: false, nullable: true }),
   }
 }
 

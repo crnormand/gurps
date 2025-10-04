@@ -524,7 +524,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // NOTE: this used to check again whether equipment is equipped but this was already
     // done when _globalBonuses was gathered so is not necessary
     this._globalBonuses.forEach(bonus => {
-    // TODO: revise type
+      // TODO: revise type
       const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
       if (match) {
         const bonusAmount = parseInt(match.groups?.bonus ?? '0')

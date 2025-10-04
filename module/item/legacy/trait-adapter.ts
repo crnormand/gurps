@@ -35,7 +35,9 @@ class TraitV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'featureV2'>[] = this.traitV2.contains.map(it => it as GurpsItemV2<'featureV2'>)
+    const containedItems: GurpsItemV2<'featureV2'>[] = this.traitV2.contains
+      .sort((a, b) => a.sort - b.sort)
+      .map(it => it as GurpsItemV2<'featureV2'>)
     this._contains = arrayToObject(
       containedItems?.map(item => new TraitV1(item)),
       5

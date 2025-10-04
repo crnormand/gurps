@@ -101,7 +101,11 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /* ---------------------------------------- */
 
   get contents(): Item.Implementation[] {
-    return this.parent.actor?.items.filter(item => (item.system as BaseItemModel).containedBy === this.parent.id) || []
+    return (
+      this.parent.actor?.items.contents
+        .filter(item => (item.system as BaseItemModel).containedBy === this.parent.id)
+        .sort((a, b) => a.sort - b.sort) || []
+    )
   }
 
   /* ---------------------------------------- */

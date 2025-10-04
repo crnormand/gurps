@@ -43,15 +43,14 @@ class SpellV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'spellV2'>[] =
-      this.spellV2.actor?.items
-        .filter(item => item.type === 'spellV2')
-        .filter(item => item.containedBy === this.spellV2.id)
-        .map(item => item as GurpsItemV2<'spellV2'>) || []
+    const containedItems: GurpsItemV2<'spellV2'>[] = this.spellV2.contains
+      .sort((a, b) => a.sort - b.sort)
+      .map(item => item as GurpsItemV2<'spellV2'>)
     this._contains = arrayToObject(
       containedItems?.map(item => new SpellV1(item)),
       5
     )
+
     this.save = false
   }
 
