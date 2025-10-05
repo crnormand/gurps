@@ -13,6 +13,7 @@ import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
 import { ReactionSchema } from './data/character-components.js'
 import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
 import { GurpsItemV2 } from 'module/item/gurps-item.js'
+import { CharacterModel } from './data/character.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -20,9 +21,22 @@ function getDamageModule() {
 
 // Legacy TODO
 // TODO Uncaught (in promise) TypeError: this.actor.getEquippedParry is not a function
-// TODO updateItemAdditionsBasedOn not implemented
-// TODO Uncaught TypeError: this.actor.moveEquipment is not a function
-// TODO handleEquipmentDrop not implemented
+
+interface EquipmentDropData {
+  actorid: string
+  isLinked: boolean
+  itemData: {
+    _id: string
+    type: string
+    name: string
+    sort: number
+    system: Record<string, any>
+  }
+  itemid: string
+  key: string
+  type: string
+  uuid: string
+}
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
@@ -588,7 +602,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  findEquipmentByName(pattern: string, otherFirst = false): [Item.OfType<'equipment'>, string] | null {
+  findEquipmentByName(pattern: string, otherFirst = false): [GurpsItemV2<'equipmentV2'>, string] | null {
     if (!this.isOfType('characterV2', 'enemy')) return null
 
     // Removed leading slashes
@@ -600,17 +614,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       // Apply ^ to each pattern
       .map(e => new RegExp('^' + e, 'i'))
 
-    const carriedItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.carried.find(
-      (e: Item.OfType<'equipment'>) => patterns.some(p => p.test(e.name))
+    const carriedItem = (this.system as Actor.SystemOfType<'characterV2'>).equipmentV2.carried.find(
+      (e: GurpsItemV2<'equipmentV2'>) => patterns.some(p => p.test(e.name))
     )
-    const otherItem = (this.system as Actor.SystemOfType<'characterV2'>).equipment.other.find(
-      (e: Item.OfType<'equipment'>) => patterns.some(p => p.test(e.name))
+    const otherItem = (this.system as Actor.SystemOfType<'characterV2'>).equipmentV2.other.find(
+      (e: GurpsItemV2<'equipmentV2'>) => patterns.some(p => p.test(e.name))
     )
 
-    const carriedResult: [Item.OfType<'equipment'>, string] | null = carriedItem
+    const carriedResult: [GurpsItemV2<'equipmentV2'>, string] | null = carriedItem
       ? [carriedItem ?? null, carriedItem.id ?? '']
       : null
-    const otherResult: [Item.OfType<'equipment'>, string] | null = otherItem
+    const otherResult: [GurpsItemV2<'equipmentV2'>, string] | null = otherItem
       ? [otherItem ?? null, otherItem.id ?? '']
       : null
 
@@ -843,16 +857,94 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   updateItemAdditionsBasedOn(eqt: Equipment, key: string) {
-    // TODO Implement me!
-    console.error('updateItemAdditionsBasedOn not implemented', { eqt, key })
+    // TODO In the new system I don't think we need this! Keep it until the code stops calling it.
+    console.info('updateItemAdditionsBasedOn not implemented', { eqt, key })
   }
 
   /* ---------------------------------------- */
 
-  async handleEquipmentDrop(eqtData: any) {
-    // TODO Implement me!
-    console.error('handleEquipmentDrop not implemented', { eqtData })
+  async handleEquipmentDrop(dropData: EquipmentDropData): Promise<boolean> {
+    // Drag and drop on same actor is handled by moveEquipment().
+    if (dropData.actorid === this.id) return false
+
+    if (!dropData.itemid) {
+      ui.notifications?.warn(game.i18n!.localize('GURPS.cannotDragNonFoundryEqt'))
+      return false
+    }
+
+    // TODO: Why is dragging from unlinked tokens disallowed?
+    if (!dropData.isLinked) {
+      ui.notifications?.warn(
+        `You cannot drag from an unlinked token. The source token must have 'Link Actor Data' checked.`
+      )
+      return false
+    }
+
+    let srcActor = game.actors!.get(dropData.actorid)
+    let eqt = foundry.utils.getProperty(srcActor!, dropData.key) as EquipmentV1
+
+    if (
+      (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
+      (!!eqt.collapsed && Object.keys(eqt.collapsed).length > 0)
+    ) {
+      ui.notifications?.warn('You cannot transfer an Item that contains other equipment.')
+      return false
+    }
+
+    let count: number | null = eqt.count
+    if (count && count > 1) {
+      count = await this.#promptEquipmentQuantity(eqt.name, game.i18n!.format('GURPS.TransferTo', { name: this.name }))
+    }
+    if (!count) return false
+
+    if (count! > eqt.count) count = eqt.count
+
+    // If the two actors are owned by the same user...
+    if (this.isOwner && srcActor?.isOwner) {
+      // Search the target actor (this) for an item with the same name.
+      const existing = this.findEquipmentByName(eqt.name, false)
+      if (existing) {
+        // If found, increment the count of the existing item.
+        await this.updateEqtCountV2(existing[0].id!, existing[0].system.eqt.count + count)
+      } else {
+        // If not found, create a new item with the specified count.
+        await this.#createEquipment(eqt.equipmentV2.toObject(false), count)
+      }
+
+      // Adjust the source actor's equipment.
+      if (count >= eqt.count) await srcActor.deleteEquipment(dropData.key)
+      else await srcActor.updateEqtCount(dropData.key, +eqt.count - count)
+    } else {
+      // The two actors are not owned by the same user.
+      let destowner = game.users?.players.find(p => this.testUserPermission(p, 'OWNER'))
+
+      if (destowner) {
+        // Send a request to the owner of the destination actor to add the item.
+        ui.notifications?.info(`Asking ${this.name} if they want ${eqt.name}`)
+
+        dropData.itemData.system.eqt.count = count // They may not have given all of them
+
+        game.socket?.emit('system.gurps', {
+          type: 'dragEquipment1',
+          srckey: dropData.key,
+          srcuserid: game.user!.id,
+          srcactorid: dropData.actorid,
+          destuserid: destowner.id,
+          destactorid: this.id,
+          itemData: dropData.itemData,
+          count: +count,
+        })
+      } else ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermssion'))
+    }
     return false
+  }
+
+  async #createEquipment(eqt: Record<string, any>, count: number, parent: GurpsItemV2<'equipmentV2'> | null = null) {
+    const { _id: _omit, ...itemData } = foundry.utils.duplicate(eqt) as Record<string, any>
+    itemData.system.containedBy = parent?.id ?? null
+    itemData.system.eqt.count = count
+    itemData.system.eqt.carried = true // Default to carried when transferring.
+    await this.createEmbeddedDocuments('Item', [itemData as Item.CreateData], { parent: this })
   }
 
   /* ---------------------------------------- */
@@ -1026,13 +1118,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     // Copy item and save.
-    let newItem = foundry.utils.duplicate(sourceItem) as unknown as GurpsItemV2<'equipmentV2'>
-    newItem._id = foundry.utils.randomID()
-    newItem.system.containedBy = parent?.id ?? null
-    newItem.system.eqt.count = count
-    newItem.system.eqt.carried = targetkey.startsWith('system.equipment.carried')
-
-    await this.createEmbeddedDocuments('Item', [newItem as unknown as Item.CreateData], { parent: this })
+    await this.#createEquipment(sourceItem.toObject(false), count, parent)
 
     // Update src equipment count (sourceItem.eqt.count - count)
     await this.updateEqtCountV2(sourceItem.id!, sourceItem.eqt.count - count)
@@ -1040,24 +1126,30 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     return true
   }
 
+  /* ---------------------------------------- */
+
   async #promptEquipmentQuantity(eqt: string, title: string): Promise<number | null> {
     // @ts-expect-error
-    const result = await foundry.applications.api.DialogV2.input({
+    const result: number | null = await foundry.applications.api.DialogV2.wait({
       window: { title: title },
       content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/transfer-equipment.hbs', {
         eqt: eqt,
       }),
-      ok: {
-        label: game.i18n!.localize('GURPS.ok'),
-        icon: 'fa-solid fa-check',
-        // @ts-expect-error
-        callback: (_, button, __) => parseInt(button.form.elements.qty.valueAsNumber),
-      },
+      buttons: [
+        {
+          action: 'ok',
+          label: game.i18n!.localize('GURPS.ok'),
+          icon: 'fa-solid fa-check',
+          // @ts-expect-error
+          callback: (_, button, __) => parseInt(button.form!.elements.qty.valueAsNumber),
+        },
+      ],
     })
 
-    // @ts-expect-error
     return result
   }
+
+  /* ---------------------------------------- */
 
   async #checkForMerge(item: GurpsItemV2<'equipmentV2'>, targetkey: string): Promise<boolean> {
     // If dropping on an item of the same name and type, ask if they want to merge.
@@ -1091,6 +1183,29 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     return false
+  }
+
+  /* ---------------------------------------- */
+
+  _findEqtkeyForId(key: string, id: any): string | undefined {
+    const equipment = [
+      ...(this.system as CharacterModel).equipmentV2.carried,
+      ...(this.system as CharacterModel).equipmentV2.other,
+    ] as Record<string, any>[]
+    return equipment.find(item => item[key] === id)?.id
+  }
+
+  /* ---------------------------------------- */
+
+  addNewItemData(itemData: Record<string, any>, targetKey: string | null = null) {
+    if (targetKey) {
+      targetKey = this.#convertLegacyItemKey(targetKey)
+      const parent = foundry.utils.getProperty(this, targetKey) as GurpsItemV2<'equipmentV2'> | null
+      if (parent && parent.isOfType('equipmentV2')) {
+        itemData.system.containedBy = parent.id
+      }
+    }
+    this.#createEquipment(itemData, itemData.system.eqt.count ?? 1, null)
   }
 
   /* ---------------------------------------- */

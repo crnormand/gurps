@@ -2285,6 +2285,7 @@ if (!globalThis.GURPS) {
       addManeuverListeners()
     })
 
+    // TODO Move to a "Module".
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
