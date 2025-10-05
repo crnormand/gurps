@@ -1541,29 +1541,34 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           }
         }
 
-        let d = new Dialog({
-          title: object.name,
-          content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
-          buttons: {
-            one: {
-              icon: '<i class="fas fa-level-up-alt"></i>',
-              label: `${game.i18n.localize('GURPS.dropBefore')}`,
-              callback: async () => {
-                await this.actor.reorderItem(sourceKey, targetkey, object, isSrcFirst)
+        // One of the few places we need to know the actor type.
+        if (this.actor.type === 'characterV2') {
+          this.actor.moveItem(sourceKey, targetkey)
+        } else {
+          let d = new Dialog({
+            title: object.name,
+            content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
+            buttons: {
+              one: {
+                icon: '<i class="fas fa-level-up-alt"></i>',
+                label: `${game.i18n.localize('GURPS.dropBefore')}`,
+                callback: async () => {
+                  await this.actor.reorderItem(sourceKey, targetkey, object, isSrcFirst)
+                },
+              },
+              two: {
+                icon: '<i class="fas fa-sign-in-alt"></i>',
+                label: `${game.i18n.localize('GURPS.dropInside')}`,
+                callback: async () => {
+                  let key = targetkey + '.contains.' + zeroFill(0)
+                  await this.actor.reorderItem(sourceKey, key, object, isSrcFirst)
+                },
               },
             },
-            two: {
-              icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: `${game.i18n.localize('GURPS.dropInside')}`,
-              callback: async () => {
-                let key = targetkey + '.contains.' + zeroFill(0)
-                await this.actor.reorderItem(sourceKey, key, object, isSrcFirst)
-              },
-            },
-          },
-          default: 'one',
-        })
-        d.render(true)
+            default: 'one',
+          })
+          d.render(true)
+        }
       }
     }
   }
