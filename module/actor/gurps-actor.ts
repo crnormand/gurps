@@ -4,7 +4,6 @@ import { TokenActions } from '../token-actions.js'
 import Maneuvers from './maneuver.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ModelCollection } from '../data/model-collection.js'
-import { BaseActorModel } from './data/base.js'
 import { Equipment, HitLocationEntry } from './actor-components.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 
@@ -49,6 +48,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // Common guard for new actor subtypes.
   private get isNewActorType(): boolean {
     return this.isOfType('characterV2', 'enemy')
+  }
+
+  // Item subtype guard helpers
+  private isFeatureV2(item: Item.Implementation): item is Item.OfType<'featureV2'> {
+    return item.isOfType('featureV2')
+  }
+
+  // Settings getter with default fallback
+  private getSetting(key: string, fallback: string): string
+  private getSetting(key: string, fallback: boolean): boolean
+  private getSetting(key: string, fallback: number): number
+  private getSetting<T>(key: string, fallback: T): T
+  private getSetting<T>(key: string, fallback: T): T {
+    const val = (game.settings as any)?.get(GURPS.SYSTEM_NAME, key)
+    return (val ?? fallback) as T
   }
 
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
@@ -131,7 +145,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
     const out: foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] = []
     for (const item of this.items) {
-      if (!item.isOfType('featureV2')) continue
+      if (!this.isFeatureV2(item)) continue
       out.push(...(item.system[key] ?? []))
     }
     return out
@@ -229,7 +243,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get defaultHitLocation(): string {
-    return game.settings?.get('gurps', 'default-hitlocation') ?? ''
+    return this.getSetting('default-hitlocation', '')
   }
 
   /* ---------------------------------------- */
@@ -257,7 +271,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get usingQuintessence(): boolean {
-    return game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE) ?? false
+    return this.getSetting(Settings.SETTING_USE_QUINTESSENCE, false)
   }
 
   /* ---------------------------------------- */
@@ -266,19 +280,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   override prepareBaseData() {
     super.prepareBaseData()
-    this.#forEachEmbedded(pd => pd.prepareBaseData())
+    this.doForEachEmbedded(pd => pd.prepareBaseData())
   }
 
   /* ---------------------------------------- */
 
   override prepareDerivedData() {
     super.prepareDerivedData()
-    this.#forEachEmbedded(pd => pd.prepareDerivedData())
+    this.doForEachEmbedded(pd => pd.prepareDerivedData())
   }
 
   /** Iterate through all embedded pseudo-documents and execute a function */
-  #forEachEmbedded(fn: (pd: PseudoDocument) => void) {
-    const embedded = (this.system as BaseActorModel)?.metadata?.embedded ?? {}
+  doForEachEmbedded(fn: (pd: PseudoDocument) => void) {
+    const embedded = this.model?.metadata?.embedded ?? {}
     for (const documentName of Object.keys(embedded)) {
       for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) fn(pseudoDocument)
     }
@@ -384,8 +398,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (!isCombatActive || !isCombatant || !this.isOfType('characterV2', 'enemy')) return result
 
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
-    const checkForTargetSettings =
-      game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS) ?? 'Allow'
+    const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
 
     if (isCombatant && needTarget && game.user?.targets.size === 0) {
       result.canRoll = result.canRoll && checkForTargetSettings !== 'Forbid'
@@ -404,8 +417,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
       const maneuver = game.i18n?.localize(Maneuvers.getManeuver(actions.currentManeuver).label) ?? ''
       const rollTypeLabel = game.i18n?.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll') ?? ''
-      const checkManeuverSetting =
-        game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER) ?? 'Warn'
+      const checkManeuverSetting = this.getSetting(Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER, 'Warn')
 
       const message =
         checkManeuverSetting !== 'Allow'
@@ -421,8 +433,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // If the maximum actions limit has been reached, add a warning message to the
     // result and set canRoll to false depending on the actions settings
-    const checkMaxActionsSetting =
-      game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS) ?? 'Warn'
+    const checkMaxActionsSetting = this.getSetting(Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS, 'Warn')
     const maxActions = this.model.conditions.actions.maxActions ?? 1
     const extraActions = actions.extraActions ?? 0
     const canConsumeAction = this.canConsumeAction(action, chatThing, actorComponent)
@@ -494,8 +505,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // Check if combat has started
     if (!isCombatStarted) {
-      const checkCombatStartedSetting =
-        game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START) ?? 'Warn'
+      const checkCombatStartedSetting = this.getSetting(Settings.SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START, 'Warn')
 
       result.canRoll = result.canRoll && checkCombatStartedSetting !== 'Forbid'
       result.rollBeforeStartMessage =
@@ -516,7 +526,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   canConsumeAction(action: AnyObject, chatThing?: string, actorComponent?: AnyObject): boolean {
     if (!action && !chatThing) return false
 
-    const useMaxActions = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS) ?? 'Disable'
+    const useMaxActions = this.getSetting(Settings.SETTING_USE_MAX_ACTIONS, 'Disable')
     if (useMaxActions === 'Disable') return false
 
     const isCombatant = this.inCombat
@@ -648,7 +658,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
-    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) === true) {
+    if (this.getSetting(Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY, false) === true) {
       updateData.system.eqt.ignoreImportQty = true
     }
 
