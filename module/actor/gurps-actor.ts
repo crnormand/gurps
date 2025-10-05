@@ -41,6 +41,11 @@ interface EquipmentDropData {
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
+  // Narrowed view of this.system for characterV2 logic
+  private get model(): Actor.SystemOfType<'characterV2'> {
+    return this.system as Actor.SystemOfType<'characterV2'>
+  }
+
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Actor.SubType)
@@ -204,13 +209,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get hitLocationsWithDR(): HitLocationEntry[] {
-    return (this.system as Actor.SystemOfType<'characterV2'>).hitLocationsWithDR
+    return this.model.hitLocationsWithDR
   }
 
   /* ---------------------------------------- */
 
   get _hitLocationRolls() {
-    return (this.system as Actor.SystemOfType<'characterV2'>)._hitLocationRolls
+    return this.model._hitLocationRolls
   }
 
   /* ---------------------------------------- */
@@ -227,7 +232,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   get torsoDr(): number {
-    return (this.system as Actor.SystemOfType<'characterV2'>).torsoDR
+    return this.model.torsoDR
   }
 
   /* ---------------------------------------- */
@@ -238,7 +243,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * array.
    */
   override get temporaryEffects(): ActiveEffect.Implementation[] {
-    return (this.system as Actor.SystemOfType<'characterV2'>).getTemporaryEffects(super.temporaryEffects)
+    return this.model.getTemporaryEffects(super.temporaryEffects)
   }
 
   /* ---------------------------------------- */
@@ -253,23 +258,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   override prepareBaseData() {
     super.prepareBaseData()
-    const documentNames = Object.keys((this.system as BaseActorModel)?.metadata?.embedded ?? {})
-    for (const documentName of documentNames) {
-      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
-        pseudoDocument.prepareBaseData()
-      }
-    }
+    this.#forEachEmbedded(pd => pd.prepareBaseData())
   }
 
   /* ---------------------------------------- */
 
   override prepareDerivedData() {
     super.prepareDerivedData()
-    const documentNames = Object.keys((this.system as BaseActorModel)?.metadata?.embedded ?? {})
-    for (const documentName of documentNames) {
-      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
-        pseudoDocument.prepareDerivedData()
-      }
+    this.#forEachEmbedded(pd => pd.prepareDerivedData())
+  }
+
+  /** Iterate through all embedded pseudo-documents and execute a function */
+  #forEachEmbedded(fn: (pd: PseudoDocument) => void) {
+    const embedded = (this.system as BaseActorModel)?.metadata?.embedded ?? {}
+    for (const documentName of Object.keys(embedded)) {
+      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) fn(pseudoDocument)
     }
   }
 
@@ -296,7 +299,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     optionalArgs: { obj?: AnyObject },
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
-    return (this.system as Actor.SystemOfType<'characterV2'>).addTaggedRollModifiers(chatThing, optionalArgs, attack)
+    return this.model.addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
   /* ---------------------------------------- */
@@ -321,13 +324,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    return (this.system as Actor.SystemOfType<'characterV2'>).findUsingAction(action, chatthing, formula, thing)
+    return this.model.findUsingAction(action, chatthing, formula, thing)
   }
 
   /* ---------------------------------------- */
 
   async changeDR(formula: string, locations: string[]) {
-    ;(this.system as Actor.SystemOfType<'characterV2'>).changeDR(formula, locations)
+    this.model.changeDR(formula, locations)
   }
 
   /* ---------------------------------------- */
@@ -412,7 +415,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // result and set canRoll to false depending on the actions settings
     const checkMaxActionsSetting =
       game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS) ?? 'Warn'
-    const maxActions = (this.system as Actor.SystemOfType<'characterV2'>).conditions.actions.maxActions ?? 1
+    const maxActions = this.model.conditions.actions.maxActions ?? 1
     const extraActions = actions.extraActions ?? 0
     const canConsumeAction = this.canConsumeAction(action, chatThing, actorComponent)
 
@@ -451,7 +454,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     // Same as above, but for maximum blocks per round
-    const maxBlocks = (this.system as Actor.SystemOfType<'characterV2'>).conditions.actions.maxBlocks ?? 1
+    const maxBlocks = this.model.conditions.actions.maxBlocks ?? 1
     if (
       isDefense &&
       canConsumeAction &&
@@ -560,8 +563,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get damageAccumulators(): any[] | null {
-    if (this.isOfType('character', 'enemy'))
-      return (this.system as Actor.SystemOfType<'characterV2'>).conditions.damageAccumulators ?? null
+    if (this.isOfType('characterV2', 'enemy')) return this.model.conditions.damageAccumulators ?? null
     return null
   }
 
@@ -576,28 +578,28 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async incrementDamageAccumulator(index: number): Promise<void> {
-    ;(this.system as Actor.SystemOfType<'characterV2'>).incrementDamageAccumulator(index)
+    this.model.incrementDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async decrementDamageAccumulator(index: number): Promise<void> {
     if (!this.isOfType('characterV2', 'enemy')) return
-    ;(this.system as Actor.SystemOfType<'characterV2'>).decrementDamageAccumulator(index)
+    this.model.decrementDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async clearDamageAccumulator(index: number): Promise<void> {
     if (!this.isOfType('characterV2', 'enemy')) return
-    ;(this.system as Actor.SystemOfType<'characterV2'>).clearDamageAccumulator(index)
+    this.model.clearDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async applyDamageAccumulator(index: number): Promise<void> {
     if (!this.isOfType('characterV2', 'enemy')) return
-    ;(this.system as Actor.SystemOfType<'characterV2'>).applyDamageAccumulator(index)
+    this.model.applyDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
