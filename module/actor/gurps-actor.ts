@@ -41,9 +41,14 @@ interface EquipmentDropData {
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
-  // Narrowed view of this.system for characterV2 logic
+  // Narrowed view of this.system for characterV2 logic.
   private get model(): Actor.SystemOfType<'characterV2'> {
     return this.system as Actor.SystemOfType<'characterV2'>
+  }
+
+  // Common guard for new actor subtypes.
+  private get isNewActorType(): boolean {
+    return this.isOfType('characterV2', 'enemy')
   }
 
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
@@ -113,20 +118,23 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   getItemAttacks(options: { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(): (MeleeAttackModel | RangedAttackModel)[]
   getItemAttacks(options = { attackType: 'both' }): (MeleeAttackModel | RangedAttackModel)[] {
-    return this.items.reduce((acc: any[], item) => {
-      // @ts-expect-error: Not sure why this isn't resolving correctly.
-      acc.push(...item.getItemAttacks(options))
-      return acc
-    }, [])
+    const attacks: (MeleeAttackModel | RangedAttackModel)[] = []
+    for (const item of this.items) {
+      // @ts-expect-error: Item type declarations may not expose getItemAttacks
+      attacks.push(...item.getItemAttacks(options))
+    }
+    return attacks
   }
 
   /* ---------------------------------------- */
 
   getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
-    return this.items.reduce((acc: any[], item) => {
-      acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
-      return acc
-    }, [])
+    const out: foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] = []
+    for (const item of this.items) {
+      if (!item.isOfType('featureV2')) continue
+      out.push(...(item.system[key] ?? []))
+    }
+    return out
   }
 
   /**
@@ -280,7 +288,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
-    ;(this.system as Actor.SystemOfType<'characterV2'>).prepareEmbeddedDocuments()
+    this.model.prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */
@@ -547,10 +555,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async replacePosture(postureId: string) {
-    const id =
-      postureId === GURPS.StatusEffectStanding
-        ? (this.system as Actor.SystemOfType<'characterV2'>).conditions.posture
-        : postureId
+    const id = postureId === GURPS.StatusEffectStanding ? this.model.conditions.posture : postureId
     this.toggleStatusEffect(id)
   }
 
@@ -563,7 +568,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get damageAccumulators(): any[] | null {
-    if (this.isOfType('characterV2', 'enemy')) return this.model.conditions.damageAccumulators ?? null
+    if (this.isNewActorType) return this.model.conditions.damageAccumulators ?? null
     return null
   }
 
@@ -584,21 +589,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   async decrementDamageAccumulator(index: number): Promise<void> {
-    if (!this.isOfType('characterV2', 'enemy')) return
+    if (!this.isNewActorType) return
     this.model.decrementDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async clearDamageAccumulator(index: number): Promise<void> {
-    if (!this.isOfType('characterV2', 'enemy')) return
+    if (!this.isNewActorType) return
     this.model.clearDamageAccumulator(index)
   }
 
   /* ---------------------------------------- */
 
   async applyDamageAccumulator(index: number): Promise<void> {
-    if (!this.isOfType('characterV2', 'enemy')) return
+    if (!this.isNewActorType) return
     this.model.applyDamageAccumulator(index)
   }
 
@@ -616,11 +621,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       // Apply ^ to each pattern
       .map(e => new RegExp('^' + e, 'i'))
 
-    const carriedItem = (this.system as Actor.SystemOfType<'characterV2'>).equipmentV2.carried.find(
-      (e: GurpsItemV2<'equipmentV2'>) => patterns.some(p => p.test(e.name))
+    const carriedItem = this.model.equipmentV2.carried.find((e: GurpsItemV2<'equipmentV2'>) =>
+      patterns.some(p => p.test(e.name))
     )
-    const otherItem = (this.system as Actor.SystemOfType<'characterV2'>).equipmentV2.other.find(
-      (e: GurpsItemV2<'equipmentV2'>) => patterns.some(p => p.test(e.name))
+    const otherItem = this.model.equipmentV2.other.find((e: GurpsItemV2<'equipmentV2'>) =>
+      patterns.some(p => p.test(e.name))
     )
 
     const carriedResult: [GurpsItemV2<'equipmentV2'>, string] | null = carriedItem
@@ -638,7 +643,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async updateEqtCountV2(id: string, count: number) {
     if (!this.isOfType('characterV2', 'enemy')) return null
 
-    const equipment = (this.system as Actor.SystemOfType<'characterV2'>).allEquipmentV2.find(e => e.id === id)
+    const equipment = this.model.allEquipmentV2.find(e => e.id === id)
     const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
@@ -747,7 +752,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   get _additionalResources() {
-    return (this.system as Actor.SystemOfType<'characterV2'>)?.additionalresources ?? {}
+    return this.model?.additionalresources ?? {}
   }
 
   /**
