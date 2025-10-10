@@ -86,7 +86,7 @@
         <div class='parry flex-center' style='background-color: #ffffbe; width: 100%;'>
           {{#if (isNum parry)}}
             <span class='flex-center rollable' data-otf='{{quotedAttackName "P" this}}'>{{parry}}</span>
-            {{#if (isNum ../system.defenses.parry.bonus)}}
+            {{#if (and (isNum ../system.defenses.parry.bonus) (not (eq ../system.defenses.parry.bonus 0)))}}
               <span class='flex-center rollable bonus'
                 data-otf='{{quotedAttackName "P" this}}" {{{displayNumber ../system.defenses.parry.bonus}}} DB'>
                 {{{displayNumber ../system.defenses.parry.bonus}}}</span>
