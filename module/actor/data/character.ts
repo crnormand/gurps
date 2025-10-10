@@ -3,6 +3,8 @@ import {
   conditionsSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
+  MoveSchema,
+  moveSchema,
   poolSchema,
   ReactionSchema,
 } from './character-components.js'
@@ -25,8 +27,6 @@ import {
 } from '../maneuver.js'
 import { multiplyDice } from '../../utilities/damage-utils.js'
 import { COSTS_REGEX } from '../../../lib/parselink.js'
-
-// TODO Fix this later; only index.js should be referenced outside of the module.
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
 import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
@@ -250,6 +250,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  get move() {
+    return arrayToObject(this.moveV2, 5)
+  }
+
+  /* ---------------------------------------- */
+
   getReactionsAndModifiers(
     key: 'reactions' | 'conditionalmods'
   ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
@@ -462,7 +468,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     let foundCurrent = false
     const basicLift = this.liftingmoving.basiclift
     const liftBrackets: number[] = [basicLift, basicLift * 2, basicLift * 3, basicLift * 6, basicLift * 10]
-    const basicMove = this.basicmove.value
+    const basicMove = this.currentMoveMode?.basic ?? this.basicmove.value
     const basicDodge = this.dodge.value
 
     // TODO const moveIsEnhanced = this.currentMoveMode?.enhanced !== null
@@ -515,57 +521,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         currentmovedisplay: `${currentmove}`,
       })
     }
-  }
-
-  /* ---------------------------------------- */
-
-  #prepareDefenses() {
-    this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
-    // NOTE: this used to check again whether equipment is equipped but this was already
-    // done when _globalBonuses was gathered so is not necessary
-    this._globalBonuses.forEach(bonus => {
-      // TODO: revise type
-      const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
-      if (match) {
-        const bonusAmount = parseInt(match.groups?.bonus ?? '0')
-        this.defenses.parry.bonus += bonusAmount
-        this.defenses.block.bonus += bonusAmount
-        this.defenses.dodge.bonus += bonusAmount
-      }
-    })
-    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.component.parry) return acc
-      const newParry = parseInt(attack.component.parry)
-      if (newParry > acc) acc = newParry
-      return acc
-    }, 0)
-    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.component.block) return acc
-      const newblock = parseInt(attack.component.block)
-      if (newblock > acc) acc = newblock
-      return acc
-    }, 0)
-  }
-
-  /* ---------------------------------------- */
-
-  #prepareUserModifiers() {
-    this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
-
-      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
-        const modifierDescription = `${modifier} ${item.id}`
-        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-      }
-
-      for (const attack of item.getItemAttacks()) {
-        if ((item.system as BaseItemModel).itemModifiers === '') continue
-        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
-          const modifierDescription = `${modifier} ${item.id}`
-          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-        }
-      }
-    })
   }
 
   /* ---------------------------------------- */
@@ -664,6 +619,57 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
+
+  #prepareDefenses() {
+    this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
+    // NOTE: this used to check again whether equipment is equipped but this was already
+    // done when _globalBonuses was gathered so is not necessary
+    this._globalBonuses.forEach(bonus => {
+      // TODO: revise type
+      const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+      if (match) {
+        const bonusAmount = parseInt(match.groups?.bonus ?? '0')
+        this.defenses.parry.bonus += bonusAmount
+        this.defenses.block.bonus += bonusAmount
+        this.defenses.dodge.bonus += bonusAmount
+      }
+    })
+    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+      if (!attack.component.parry) return acc
+      const newParry = parseInt(attack.component.parry)
+      if (newParry > acc) acc = newParry
+      return acc
+    }, 0)
+    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+      if (!attack.component.block) return acc
+      const newblock = parseInt(attack.component.block)
+      if (newblock > acc) acc = newblock
+      return acc
+    }, 0)
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareUserModifiers() {
+    this.parent.items.forEach(item => {
+      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
+
+      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
+        const modifierDescription = `${modifier} ${item.id}`
+        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+      }
+
+      for (const attack of item.getItemAttacks()) {
+        if ((item.system as BaseItemModel).itemModifiers === '') continue
+        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
+          const modifierDescription = `${modifier} ${item.id}`
+          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+        }
+      }
+    })
+  }
+
+  /* ---------------------------------------- */
   /*   CRUD Handlers                          */
   /* ---------------------------------------- */
 
@@ -718,9 +724,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  // get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
-  //   return this.move.find(enc => enc.default) ?? null
-  // }
+  get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
+    return this.moveV2.find(enc => enc.default) ?? null
+  }
 
   /* ---------------------------------------- */
 
@@ -1020,46 +1026,46 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // async setMoveDefault(value: string): Promise<void> {
-  //   const move = this.move
-  //   move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
-  //     moveEntry.default = moveEntry.mode === value
-  //   })
+  async setMoveDefault(value: string): Promise<void> {
+    const move = this.moveV2
+    move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
+      moveEntry.default = moveEntry.mode === value
+    })
 
-  //   // @ts-expect-error: not sure why the path is not recognised
-  //   await this.parent.update({ 'system.move': move })
-  // }
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.move': move })
+  }
 
   /* ---------------------------------------- */
 
-  // async addMoveMode({
-  //   mode,
-  //   basic,
-  //   enhanced,
-  //   isDefault = false,
-  // }: {
-  //   mode: string
-  //   basic: number
-  //   enhanced?: number
-  //   isDefault?: boolean
-  // }): Promise<void> {
-  //   const move = this.move ?? []
-  //   const existingMove = move.find(entry => entry.mode === mode)
-  //   if (existingMove) {
-  //     existingMove.basic = basic ?? existingMove.basic
-  //     existingMove.enhanced = enhanced ?? existingMove.enhanced
-  //     existingMove.default = isDefault ?? existingMove.default
-  //   } else {
-  //     move.push({
-  //       mode,
-  //       basic: basic,
-  //       enhanced: enhanced ?? basic ?? 0,
-  //       default: isDefault ?? move.length === 0,
-  //     })
-  //   }
-  //   // @ts-expect-error: not sure why the path is not recognised
-  //   await this.parent.update({ 'system.move': move })
-  // }
+  async addMoveMode({
+    mode,
+    basic,
+    enhanced,
+    isDefault = false,
+  }: {
+    mode: string
+    basic: number
+    enhanced?: number
+    isDefault?: boolean
+  }): Promise<void> {
+    const move = this.moveV2 ?? []
+    const existingMove = move.find(entry => entry.mode === mode)
+    if (existingMove) {
+      existingMove.basic = basic ?? existingMove.basic
+      existingMove.enhanced = enhanced ?? existingMove.enhanced
+      existingMove.default = isDefault ?? existingMove.default
+    } else {
+      move.push({
+        mode,
+        basic: basic,
+        enhanced: enhanced ?? basic ?? 0,
+        default: isDefault ?? move.length === 0,
+      })
+    }
+    // @ts-expect-error: not sure why the path is not recognised
+    await this.parent.update({ 'system.move': move })
+  }
 
   /* ---------------------------------------- */
 
@@ -1690,6 +1696,26 @@ const characterSchema = () => {
     // ),
 
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
+
+    // TODO Different move modes can be added based on Traits such as "Flight". Perhaps it's completely derived from Traits?
+    // * "Normal" - Ground (Basic Move)/Air (0)/Water (Basic Move / 5)
+    // * Amphibious = Ground (Basic Move)/Water (Basic Move)
+    // * Aquatic = Ground (0) and Water (Basic Move)
+    // * Flight = Ground (Basic Move)/Air (Basic Move x 2)
+    // * Walk on Air = Ground (Basic Move)/Air (Basic Move)
+    // * Flight (Newtonian Space Flight or Space Flight) = Ground (Basic Speed)/Air (Basic Speed x 2)/Space (Basic
+    //   Speed x2)
+    // * Flight (Space Flight Only AND one of Newtonian Space Flight or Space Flight) = Ground (Basic Speed)/Air (0)/
+    //    Space (Basic Speed x2)
+    //
+    //  Enhanced Move = (Basic Speed x level; half level x 1.5) For ONE move mode
+    //
+    // * Tunneling = Underground (1 yard per level)
+    moveV2: new fields.ArrayField(new fields.SchemaField(moveSchema(), { required: true, nullable: false }), {
+      required: true,
+      nullable: false,
+      default: [{ mode: 'GURPS.moveModeGround', basic: 5, enhanced: null, default: true }],
+    }),
 
     // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
     // They are commented out but this note is kept here for reference.

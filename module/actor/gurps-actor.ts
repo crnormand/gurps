@@ -8,11 +8,10 @@ import { Equipment, HitLocationEntry } from './actor-components.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
-import { makeRegexPatternFrom, recurselist } from '../../lib/utilities.js'
+import { makeRegexPatternFrom, objectToArray, recurselist } from '../../lib/utilities.js'
 import { ReactionSchema } from './data/character-components.js'
 import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
 import { GurpsItemV2 } from 'module/item/gurps-item.js'
-import { CharacterModel } from './data/character.js'
 
 function getDamageModule() {
   return GURPS.module.Damage
@@ -587,7 +586,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // async accumulateDamageRoll(
   //   action: foundry.data.fields.SchemaField.InitializedData<DamageActionSchema>
   // ): Promise<void> {
-  //   ;(this.system as Actor.SystemOfType<'characterV2'>).accumulateDamageRoll(action)
+  //   ;(this.model).accumulateDamageRoll(action)
   // }
 
   /* ---------------------------------------- */
@@ -673,7 +672,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   isEmptyActor(): boolean {
-    // return (this.system as Actor.SystemOfType<'characterV2'>).additionalresources.importname === null
+    // return (this.model).additionalresources.importname === null
     return false
   }
 
@@ -687,7 +686,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   getChecks(checkType: string) {
-    return (this.system as Actor.SystemOfType<'characterV2'>).getChecks(checkType)
+    return this.model.getChecks(checkType)
   }
 
   /* ---------------------------------------- */
@@ -936,10 +935,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     let [sourceCollection, sourceIndex, sourcePath] = this.#parseItemKey(sourcekey)
     let [targetCollection, targetIndex, targetPath] = this.#parseItemKey(targetkey)
 
-    // Modify this comparison to allow moving between carried and other.
     const allowed =
       targetCollection.startsWith('system.equipmentV2') && sourceCollection.startsWith('system.equipmentV2')
-
     if (!allowed) {
       if (targetCollection !== sourceCollection) {
         // TODO: Maybe this should fail quietly? Or it should pop up a warning to the user?
@@ -952,9 +949,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // Get the item to move.
     let item = foundry.utils.getProperty(this, sourcekey) as GurpsItemV2
 
-    // If Item is equipmentV2, check for the shift key to split the item.
+    // If Item is equipmentV2, check if we should split the item's quantity.
     if (item && item.type === 'equipmentV2') {
-      // If the Shift key is down, the user wants to split the amount of the item between the source and destination.
       if (split && (await this.#splitEquipment(sourcekey, targetkey))) return
     }
 
@@ -964,6 +960,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       if (sourcePath === targetPath && sourceIndex! < targetIndex!) isSrcFirst = true
     }
 
+    // If the item is being dropped onto a same-named item, check if we should merge them.
     if (item.type === 'equipmentV2' && (await this.#checkForMerge(item as GurpsItemV2<'equipmentV2'>, targetkey)))
       return
 
@@ -1193,10 +1190,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   _findEqtkeyForId(key: string, id: any): string | undefined {
-    const equipment = [
-      ...(this.system as CharacterModel).equipmentV2.carried,
-      ...(this.system as CharacterModel).equipmentV2.other,
-    ] as Record<string, any>[]
+    const equipment = [...this.model.equipmentV2.carried, ...this.model.equipmentV2.other] as Record<string, any>[]
     return equipment.find(item => item[key] === id)?.id
   }
 
@@ -1211,6 +1205,22 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       }
     }
     this.#createEquipment(itemData, itemData.system.eqt.count ?? 1, null)
+  }
+
+  /* ---------------------------------------- */
+
+  async setMoveDefault(value: string) {
+    const index = parseInt(value)
+    if (isNaN(index)) return
+
+    let move: any[] = this.model.moveV2
+    for (let i = 0; i < move.length; i++) {
+      move[i].default = index === i
+    }
+
+    // Replace the entire array.
+    await this.update({ 'system.-=move': null } as Actor.UpdateData)
+    await this.update({ 'system.move': move } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -1232,6 +1242,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     await this.#translateLegacyEncumbranceData(data)
     await this.#translateHitLocationsV2(data)
     await this.#translateAdsData(data)
+    await this.#translateMoveData(data)
 
     // Call the parent class's update method
     await super.update(data, context)
@@ -1290,7 +1301,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   // When updating any property of HitLocationV2, you have to update the entire array.
   #translateHitLocationsV2(data: Actor.UpdateData) {
     const regex = /^system\.hitlocationsV2\.(\d+)\..*/
-    const array = foundry.utils.deepClone((this.system as Actor.SystemOfType<'characterV2'>)._source.hitlocationsV2)
+    const array = foundry.utils.deepClone(this.model._source.hitlocationsV2)
 
     const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
 
@@ -1358,6 +1369,76 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     // @ts-expect-error
     data['system.ads'] = array
+  }
+
+  /**
+   * system.-=move: null
+   * system.move:[
+   *  {
+   *    mode:"GURPS.moveModeGround",
+   *    basic:7,
+   *    enhanced:0,
+   *    default:true
+   *  },
+   *  {
+   *    mode:"other"
+   *    basic:0,
+   *    enhanced:null,
+   *    default:false
+   * }]
+   * @param data
+   * @returns
+   */
+  #translateMoveData(data: Actor.UpdateData) {
+    const deleteKey = Object.keys(data).includes('system.-=move')
+    const insertKey = Object.keys(data).includes('system.move')
+    // A "changeKey" is any key that starts with "system.move." such as "system.move.0.default"
+    const changeKey = Object.keys(data).find(key => key.startsWith('system.move.'))
+    if (!deleteKey && !insertKey && !changeKey) return
+
+    console.warn(
+      'Translating legacy move data',
+      Object.keys(data).filter(key => key.startsWith('system.move') || key === 'system.-=move')
+    )
+
+    // For each key that is deleting the entire array, add a new key named "system.-=moveV2" with an empty array.
+    Object.keys(data)
+      .filter(key => key === 'system.-=move')
+      .forEach(key => {
+        // @ts-expect-error
+        data['system.moveV2'] = []
+        delete data[key as keyof typeof data]
+      })
+
+    // For each key that is inserting the entire array, add a new key named "system.moveV2" with the same value.
+    Object.keys(data)
+      .filter(key => key === 'system.move')
+      .forEach(key => {
+        // @ts-expect-error
+        data['system.moveV2'] = objectToArray(data[key as keyof typeof data])
+        delete data[key as keyof typeof data]
+      })
+
+    // For each key that is changing a property of an array element, such as "system.move.0.default", copy the entire
+    // array to "system.moveV2" and apply the change.
+    if (changeKey) {
+      const array: any[] = foundry.utils.deepClone(this.model._source.moveV2) ?? []
+      const changes = Object.keys(data).filter(key => key.startsWith('system.move.')) ?? []
+
+      for (const change of changes) {
+        const [index, field] = change.split('.').slice(2)
+        if (!field) {
+          array[parseInt(index)] = data[change as keyof typeof data]
+        } else {
+          array[parseInt(index)][field] = data[change as keyof typeof data]
+        }
+
+        delete data[change as keyof typeof data]
+      }
+
+      // @ts-expect-error
+      data['system.moveV2'] = array
+    }
   }
 }
 

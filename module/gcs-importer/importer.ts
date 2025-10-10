@@ -14,13 +14,13 @@ import { RangedAttackComponentSchema, RangedAttackSchema } from '../action/range
 import { GcsWeapon } from './schema/weapon.js'
 import { SkillComponentSchema, SkillSchema } from '../item/data/skill.js'
 import { GcsSkill } from './schema/skill.js'
-
+import { SpellComponentSchema, SpellSchema } from '../item/data/spell.js'
+import { GcsSpell } from './schema/spell.js'
 import { EquipmentSchema, EquipmentComponentSchema } from '../item/data/equipment.js'
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
+
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
-import { GcsSpell } from './schema/spell.js'
-import { SpellComponentSchema, SpellSchema } from 'module/item/data/spell.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -37,6 +37,7 @@ class GcsImporter {
   constructor(input: GcsCharacter) {
     this.input = input
     this.output = {}
+
     this.items = []
     this.img = ''
   }
@@ -247,6 +248,14 @@ class GcsImporter {
 
   #importMiscValues() {
     // TODO Implement me.
+    this.output.moveV2 = [
+      {
+        mode: 'GURPS.moveModeGround',
+        basic: this.output.basicmove?.value ?? 5,
+        enhanced: 0,
+        default: true,
+      },
+    ]
   }
 
   /* ---------------------------------------- */
@@ -431,6 +440,12 @@ class GcsImporter {
     const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill)
     system.containedBy = containedBy ?? null
 
+    // Update any actions with the containing trait id:
+    for (const action of Object.values(system.actions)) {
+      // @ts-expect-error
+      action.containedBy = _id
+    }
+
     const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
     skill.childItems?.forEach((child: GcsSkill, childIndex: number) => this.#importSkill(child, childIndex, _id))
 
@@ -594,7 +609,7 @@ class GcsImporter {
 
   #importEquipmentComponent(equipment: GcsEquipment, carried: boolean): DataModel.CreateData<EquipmentComponentSchema> {
     // Get the correct weight value. I'm guessing that weight should be equal to calc.weight unless that field is "",
-    // otherwise it should be calc.extended_weight.
+    // Otherwise it should be calc.extended_weight.
     const weight = equipment.calc?.weight
       ? parseFloat(equipment.calc.weight)
       : parseFloat(equipment.calc?.extended_weight || '0')

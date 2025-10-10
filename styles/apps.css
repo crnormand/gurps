@@ -852,7 +852,7 @@ ul#result-effects li {
 
 #encumbrance .header select#move-mode,
 #encumbrance .header button#edit-move-modes {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.3);
   font-size: 90%;
   margin: 2px 0;
   border: 1px solid var(--color-border-light-tertiary);
