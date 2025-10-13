@@ -1237,17 +1237,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /*  CRUD Operations                         */
   /* ---------------------------------------- */
 
-  override async update(data: Actor.UpdateData, context: Actor.Database.UpdateOperation = {}): Promise<this> {
-    await this.#translateLegacyHitlocationData(data)
-    await this.#translateLegacyEncumbranceData(data)
-    await this.#translateHitLocationsV2(data)
-    await this.#translateAdsData(data)
-    await this.#translateMoveData(data)
-
-    // Call the parent class's update method
-    await super.update(data, context)
-
-    return this
+  override async _preUpdate(changes: Actor.UpdateData, options: AnyObject, user: User): Promise<void> {
+    console.debug('GURPS | Actor._preUpdate', { changes, options, user })
+    await this.#translateLegacyHitlocationData(changes)
+    await this.#translateLegacyEncumbranceData(changes)
+    await this.#translateHitLocationsV2(changes)
+    await this.#translateAdsData(changes)
+    await this.#translateMoveData(changes)
+    console.debug('GURPS | Actor._preUpdate translated', { changes, options, user })
   }
 
   /**
@@ -1300,10 +1297,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   // When updating any property of HitLocationV2, you have to update the entire array.
   #translateHitLocationsV2(data: Actor.UpdateData) {
+    const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
+    if (changes.length === 0) return
+
     const regex = /^system\.hitlocationsV2\.(\d+)\..*/
     const array = foundry.utils.deepClone(this.model._source.hitlocationsV2)
-
-    const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
 
     for (const key of changes) {
       const value = data[key as keyof typeof data]

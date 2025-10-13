@@ -32,9 +32,46 @@ declare global {
       [key: string]: unknown
     }
   } & any
-
-  /* ---------------------------------------- */
 }
+
+/* ---------------------------------------- */
+
+// TODO This should be moved to its own module eventually.
+export interface TaggedModifiersSettings {
+  autoAdd: boolean
+  checkConditionals: boolean
+  checkReactions: boolean
+  useSpellCollegeAsTag: boolean
+  allRolls: string
+  allAttributesRolls: string
+  allSkillRolls: string
+  allSpellRolls: string
+  allDamageRolls: string
+  allAttackRolls: string
+  allRangedRolls: string
+  allMeleeRolls: string
+  allDefenseRolls: string
+  allDODGERolls: string
+  allParryRolls: string
+  allBlockRolls: string
+  allPERRolls: string
+  allWILLRolls: string
+  allSTRolls: string
+  allDXRolls: string
+  allIQRolls: string
+  allHTRolls: string
+  allFRIGHTCHECKRolls: string
+  allVISIONRolls: string
+  allTASTESMELLRolls: string
+  allHEARINGRolls: string
+  allTOUCHRolls: string
+  allCRRolls: string
+  combatOnlyTag: string
+  nonCombatOnlyTag: string
+  combatTempTag: string
+}
+
+/* ---------------------------------------- */
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
@@ -153,39 +190,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
     'gurps.auto-ignore-qty': boolean
     'gurps.use-quintessence': boolean
-    'gurps.use-tagged-modifiers': {
-      autoAdd: boolean
-      checkConditionals: boolean
-      checkReactions: boolean
-      useSpellCollegeAsTag: boolean
-      allRolls: string
-      allAttributesRolls: string
-      allSkillRolls: string
-      allSpellRolls: string
-      allDamageRolls: string
-      allAttackRolls: string
-      allRangedRolls: string
-      allMeleeRolls: string
-      allDefenseRolls: string
-      allDODGERolls: string
-      allParryRolls: string
-      allBlockRolls: string
-      allPERRolls: string
-      allWILLRolls: string
-      allSTRolls: string
-      allDXRolls: string
-      allIQRolls: string
-      allHTRolls: string
-      allFRIGHTCHECKRolls: string
-      allVISIONRolls: string
-      allTASTESMELLRolls: string
-      allHEARINGRolls: string
-      allTOUCHRolls: string
-      allCRRolls: string
-      combatOnlyTag: string
-      nonCombatOnlyTag: string
-      combatTempTag: string
-    }
+    'gurps.use-tagged-modifiers': TaggedModifiersSettings
 
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>

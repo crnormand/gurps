@@ -41,6 +41,7 @@ import { RangedV1 } from '../../action/legacy/rangedv1.js'
 import { SkillV1 } from '../../item/legacy/skill-adapter.js'
 import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
 import { SpellV1 } from '../../item/legacy/spell-adapter.js'
+import { TaggedModifiersSettings } from 'global.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -48,6 +49,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
+
+  // Local settings helper mirrors actor’s wrapper and avoids strict KeyFor typing.
+  private getSetting<T>(key: string, fallback: T): T {
+    const val = (game.settings as any)?.get(GURPS.SYSTEM_NAME, key)
+    return (val ?? fallback) as T
+  }
 
   static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
 
@@ -134,25 +141,34 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   equippedparry: number = 0
   equippedblock: number = 0
-  // currentdodge: number = 0
-  // currentmove: number = 0
-  // currentsprint: number = 0
-  // currentflight: number = 0
-
-  // moveoverride: { maneuver: string | null; posture: string | null } = {
-  //   maneuver: null,
-  //   posture: null,
-  // }
-
-  protected _globalBonuses: AnyObject[] = []
 
   /* ---------------------------------------- */
   /*  Accessors                               */
   /* ---------------------------------------- */
 
   get currentdodge(): number {
-    return this.encumbrance.find(enc => enc.current)?.currentdodge ?? 0
+    return this.currentEncumbranceData?.currentdodge ?? 0
   }
+
+  get currentmove(): number {
+    return this.currentEncumbranceData?.currentmove ?? 0
+  }
+
+  get currentsprint(): number {
+    return this.currentmove * 1.2 // TODO Should this be rounded to an integer?
+  }
+
+  get currentflight(): number {
+    const flightmode = this.moveV2.find(mv => this.isAirMoveMode(mv))
+    return flightmode?.basic ?? 0
+  }
+
+  /* ---------------------------------------- */
+
+  // moveoverride: { maneuver: string | null; posture: string | null } = {
+  //   maneuver: null,
+  //   posture: null,
+  // }
 
   /* ---------------------------------------- */
 
@@ -207,15 +223,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   get equipmentV2() {
     return {
-      carried: this.allEquipmentV2
-        .filter(item => (item.system as EquipmentModel).eqt.carried === true)
-        .filter(item => item.containedBy === null)
-        .sort((a, b) => a.sort - b.sort),
-      other: this.allEquipmentV2
-        .filter(item => (item.system as EquipmentModel).eqt.carried === false)
-        .filter(item => item.containedBy === null)
-        .sort((a, b) => a.sort - b.sort),
+      carried: this.allEquipmentCarried.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort),
+      other: this.allEquipmentOther.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort),
     }
+  }
+
+  /* ---------------------------------------- */
+
+  get allEquipmentCarried() {
+    return this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === true)
+  }
+
+  /* ---------------------------------------- */
+
+  get allEquipmentOther() {
+    return this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === false)
   }
 
   /* ---------------------------------------- */
@@ -256,6 +278,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  private get currentEncumbranceData() {
+    return this.encumbrance.find(enc => enc.current)
+  }
+
+  /* ---------------------------------------- */
+
+  private isAirMoveMode(mv: fields.SchemaField.SourceData<MoveSchema>): boolean {
+    return mv.mode === 'GURPS.moveModeAir'
+  }
+
+  /* ---------------------------------------- */
+
   getReactionsAndModifiers(
     key: 'reactions' | 'conditionalmods'
   ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
@@ -264,6 +298,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       return acc
     }, [])
   }
+
+  protected _globalBonuses: AnyObject[] = []
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -382,11 +418,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareEquipmentSummary() {
-    const allCarried = this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === true)
-    const allOther = this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === false)
-    const onlyCountEquipped = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHECK_EQUIPPED) ?? false
+    const onlyCountEquipped = this.getSetting(Settings.SETTING_CHECK_EQUIPPED, false)
     const numberToTwoDP = (num: number) => Math.round(num * 100) / 100
-    const carriedItems = onlyCountEquipped ? allCarried.filter(item => item.system.equipped) : allCarried
+    const carriedItems = onlyCountEquipped
+      ? this.allEquipmentCarried.filter(item => item.system.equipped)
+      : this.allEquipmentCarried
     this.eqtsummary = {
       eqtcost: numberToTwoDP(
         carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
@@ -395,10 +431,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         carriedItems.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
       ),
       othercost: numberToTwoDP(
-        allOther.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
+        this.allEquipmentOther.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
       ),
       otherlbs: numberToTwoDP(
-        allOther.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
+        this.allEquipmentOther.reduce(
+          (acc, item) => acc + item.system.component.weight * item.system.component.count,
+          0
+        )
       ),
     }
   }
@@ -447,7 +486,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareLiftingMoving() {
-    const basicLift = Math.round(0.2 * (this.attributes.ST.value * this.attributes.ST.value))
+    const basicLift = Math.round((this.attributes.ST.value * this.attributes.ST.value) / 5)
 
     this.liftingmoving = {
       basiclift: basicLift,
@@ -463,7 +502,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareEncumbrance() {
-    const automaticEncumbrance = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE) ?? false
+    // Prevent duplicate entries across prepares
+    this.encumbrance = []
 
     let foundCurrent = false
     const basicLift = this.liftingmoving.basiclift
@@ -475,9 +515,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const carriedWeight = this.eqtsummary.eqtlbs ?? 0
 
-    for (let i = 0; i < liftBrackets.length; i++) {
-      let move = Math.floor(Math.max(1, basicMove * (1 - i * 0.2)))
-      let dodge = Math.max(1, basicDodge - i)
+    for (let encumbranceLevel = 0; encumbranceLevel < liftBrackets.length; encumbranceLevel++) {
+      let move = Math.floor(Math.max(1, basicMove * (1 - encumbranceLevel * 0.2)))
+      let dodge = Math.max(1, basicDodge - encumbranceLevel)
       let sprint = Math.max(1, move * 1.2)
 
       if (this.conditions.reeling) {
@@ -494,13 +534,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       let current = false
 
-      if (automaticEncumbrance) {
-        if (!foundCurrent && carriedWeight <= liftBrackets[i]) {
+      if (this.getSetting(Settings.SETTING_AUTOMATIC_ENCUMBRANCE, false)) {
+        if (!foundCurrent && carriedWeight <= liftBrackets[encumbranceLevel]) {
           foundCurrent = true
           current = true
         }
       } else {
-        if (i === this.additionalresources.currentEncumbrance) {
+        if (encumbranceLevel === this.additionalresources.currentEncumbrance) {
           foundCurrent = true
           current = true
         }
@@ -509,9 +549,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const currentmove = this.#getCurrentMove(move)
 
       this.encumbrance.push({
-        key: `enc${i}`,
-        level: i,
-        weight: liftBrackets[i],
+        key: `enc${encumbranceLevel}`,
+        level: encumbranceLevel,
+        weight: liftBrackets[encumbranceLevel],
         move,
         dodge,
         current,
@@ -525,9 +565,59 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  #prepareDefenses() {
+    this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
+
+    // NOTE: this used to check again whether equipment is equipped but this was already
+    // done when _globalBonuses was gathered so is not necessary
+    this._globalBonuses.forEach(bonus => {
+      // TODO: revise type
+      const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+      if (match) {
+        const bonusAmount = parseInt(match.groups?.bonus ?? '0')
+        this.defenses.parry.bonus += bonusAmount
+        this.defenses.block.bonus += bonusAmount
+        this.defenses.dodge.bonus += bonusAmount
+      }
+    })
+
+    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+      if (!attack.component.parry) return acc
+      const newParry = parseInt(attack.component.parry)
+      if (newParry > acc) acc = newParry
+      return acc
+    }, 0)
+
+    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+      if (!attack.component.block) return acc
+      const newblock = parseInt(attack.component.block)
+      if (newblock > acc) acc = newblock
+      return acc
+    }, 0)
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareUserModifiers() {
+    this.parent.items.forEach(item => {
+      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
+
+      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
+        const modifierDescription = `${modifier} ${item.id}`
+        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+      }
+
+      for (const attack of item.getItemAttacks()) {
+        if ((item.system as BaseItemModel).itemModifiers === '') continue
+        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
+          const modifierDescription = `${modifier} ${item.id}`
+          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+        }
+      }
+    })
+  }
   #getCurrentMove(base: number): number {
-    const doUpdateMove =
-      game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && this.parent.inCombat
+    const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat
 
     const moveForManeuver = this.#getMoveAdjustmentForManeuver(base)
     const moveForPosture = this.#getMoveAdjustmentForPosture(base)
@@ -619,57 +709,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
-
-  #prepareDefenses() {
-    this.defenses = { parry: { bonus: 0 }, block: { bonus: 0 }, dodge: { bonus: 0 } }
-    // NOTE: this used to check again whether equipment is equipped but this was already
-    // done when _globalBonuses was gathered so is not necessary
-    this._globalBonuses.forEach(bonus => {
-      // TODO: revise type
-      const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
-      if (match) {
-        const bonusAmount = parseInt(match.groups?.bonus ?? '0')
-        this.defenses.parry.bonus += bonusAmount
-        this.defenses.block.bonus += bonusAmount
-        this.defenses.dodge.bonus += bonusAmount
-      }
-    })
-    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.component.parry) return acc
-      const newParry = parseInt(attack.component.parry)
-      if (newParry > acc) acc = newParry
-      return acc
-    }, 0)
-    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.component.block) return acc
-      const newblock = parseInt(attack.component.block)
-      if (newblock > acc) acc = newblock
-      return acc
-    }, 0)
-  }
-
-  /* ---------------------------------------- */
-
-  #prepareUserModifiers() {
-    this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
-
-      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
-        const modifierDescription = `${modifier} ${item.id}`
-        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-      }
-
-      for (const attack of item.getItemAttacks()) {
-        if ((item.system as BaseItemModel).itemModifiers === '') continue
-        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
-          const modifierDescription = `${modifier} ${item.id}`
-          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-        }
-      }
-    })
-  }
-
-  /* ---------------------------------------- */
   /*   CRUD Handlers                          */
   /* ---------------------------------------- */
 
@@ -681,8 +720,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     super._onUpdate(changed, options, userId)
 
     // Automatically set reeling / exhausted conditions based on HP/FP value
-    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
-      const doAnnounce = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)
+    if (this.getSetting(Settings.SETTING_AUTOMATIC_ONETHIRD, false)) {
+      const doAnnounce = this.getSetting(Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED, false)
 
       if (changed.system?.HP?.value !== undefined) {
         const isReeling = changed.system.HP.value < this.HP.max / 3
@@ -754,11 +793,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   /**
-   * Get temporary effects for display in the Token HUD.
-   *
    * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
    * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
-   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in the array.
+   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in
+   * the array.
    */
   getTemporaryEffects(effects: ActiveEffect.Implementation[]): ActiveEffect.Implementation[] {
     const maneuver = effects.find(e => e.isManeuver)
@@ -766,13 +804,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const nonManeuverEffects = effects.filter(e => !e.isManeuver)
 
-    const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY) ?? 'NoOne'
+    const visibility = this.getSetting(Settings.SETTING_MANEUVER_VISIBILITY, 'NoOne')
     if (visibility === 'NoOne') return nonManeuverEffects
 
     if (!game.user?.isGM && !this.parent.isOwner) {
       if (visibility === 'GMAndOwner') return nonManeuverEffects
 
-      const detail = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL) ?? 'General'
+      const detail = this.getSetting(Settings.SETTING_MANEUVER_DETAIL, 'General')
       if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
         if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
       }
@@ -1032,8 +1070,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       moveEntry.default = moveEntry.mode === value
     })
 
-    // @ts-expect-error: not sure why the path is not recognised
-    await this.parent.update({ 'system.move': move })
+    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -1063,8 +1100,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         default: isDefault ?? move.length === 0,
       })
     }
-    // @ts-expect-error: not sure why the path is not recognised
-    await this.parent.update({ 'system.move': move })
+
+    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -1268,7 +1305,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
     let isDamageRoll = false
-    const taggedSettings = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)!
+
+    const taggedSettings = this.getSetting(
+      Settings.SETTING_USE_TAGGED_MODIFIERS,
+      null
+    ) as TaggedModifiersSettings | null
+    if (!taggedSettings) return false
+
     const allRollTags: string[] = taggedSettings.allRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
 
     let itemRef = ''
@@ -1383,7 +1426,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     for (const mod of allMods) {
       const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
 
-      userModsTags.forEach(async tag => {
+      for (const tag of userModsTags) {
         let canApply = true
 
         if (mod.includes('#maneuver'))
@@ -1405,7 +1448,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           // TODO: evaluate whether this causes too many data preparation cycles
           await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
         }
-      })
+      }
     }
 
     return isDamageRoll
@@ -1609,6 +1652,11 @@ const characterSchema = () => {
     swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
+    // NOTE: Change from previous schema; the encumbrance data is derived and only the current level is stored.
+    // encumbrance: new fields.ArrayField(
+    //   new fields.SchemaField(encumbranceSchema(), { required: true, nullable: false })
+    // ),
+
     // TODO AdditionalResources was created by Chris to cover additional stuff that we didn't plan for. It allowed us
     // to add persistent fields without declaring them in the schema (and doing a subsdquent migration). We should
     // consider finding real homes for this data AND allowing for arbitrary additions without changing the schema.
@@ -1626,6 +1674,7 @@ const characterSchema = () => {
         // NOTE: Should be a FilePathField but these do not allow arbitrary file extension.
         // TODO: implement FilePathField with arbitrary file extension support
         importpath: new fields.StringField({ required: true, nullable: true }),
+        // NOTE: Change to schema; Save only the index of the current encumbrance level.
         currentEncumbrance: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       },
       { required: true, nullable: false }

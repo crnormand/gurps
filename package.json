@@ -7,6 +7,7 @@
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --config=jest.config.mjs",
     "tdd": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --config=jest.config.mjs",
     "handlebars": "handlebars",
+    "gen:actor-methods": "node dev-utilities/generate-actor-methods.mjs",
     "prettier": "prettier --write .",
     "clean": "rimraf dist",
     "build": "run-s clean build:code build:styles build:static",
