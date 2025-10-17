@@ -6,6 +6,7 @@
 
 - Unable to add accuracy of Mooks/NPC \#2393
 - OTF "*Costs" not applying if right-click activation \#2389
+- Spell Damage Building up above Modifier Bucket and Cannot Remove It \#2391
 
 ## Release 0.18.5 08/05/2025
 
