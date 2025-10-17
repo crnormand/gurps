@@ -681,7 +681,7 @@ export class ModifierBucket extends Application {
       .forEach(a => a.addEventListener('click', event => this._onAccumulatorClick(html, event)))
   }
 
-  _onAccumulatorClick(hmtl, event) {
+  _onAccumulatorClick(html, event) {
     event.preventDefault()
     const a = event.currentTarget
     const value = a.value ?? null
