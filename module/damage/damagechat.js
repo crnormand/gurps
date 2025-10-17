@@ -113,40 +113,47 @@ export default class DamageChat {
   ) {
     let message = new DamageChat()
 
-    let diceFormula = addBucketToDamage(diceText, true) // run before applyMods()
-    const targetmods = GURPS.ModifierBucket.applyMods() // append any global mods
-
-    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-    let diceMods
-    if (taggedSettings.autoAdd) {
-      diceMods = []
-    } else {
-      diceFormula = diceText
-      diceMods = targetmods
-    }
-
-    let dice = message._getDiceData(diceFormula, damageType, diceMods, overrideDiceText, extdamagetype)
-    if (dice == null) return
-
-    if (!tokenNames) tokenNames = []
-    if (!!event && event.data?.repeat > 1) for (let i = 0; i < event.data.repeat; i++) tokenNames.push('' + i)
-
-    if (tokenNames.length == 0) tokenNames.push('')
-
+    let targetmods = []
     let draggableData = []
+    let dice = null
+    let diceFormula = addBucketToDamage(diceText, true) // run before applyMods()
+    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    if (!tokenNames || tokenNames.length == 0) tokenNames.push('')
+
+    const oldAutoEmpty = GURPS.ModifierBucket.modifierStack.AUTO_EMPTY
+    GURPS.ModifierBucket.modifierStack.AUTO_EMPTY = false
+
     for (const tokenName of tokenNames) {
-      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods, hitlocation)
-      draggableData.push(data)
+      targetmods = GURPS.ModifierBucket.applyMods() // append any global mods
+
+      let diceMods
+      if (taggedSettings.autoAdd) {
+        diceMods = []
+      } else {
+        diceFormula = diceText
+        diceMods = targetmods
+      }
+
+      dice = message._getDiceData(diceFormula, damageType, diceMods, overrideDiceText, extdamagetype)
+      if (dice == null) return
+
+      if (!!event && event.data?.repeat > 1) for (let i = 0; i < event.data.repeat; i++) tokenNames.push('' + i)
+
+      draggableData.push(await message._createDraggableSection(actor, dice, tokenName, targetmods, hitlocation))
+
+      // Resolve any modifier descriptors (such as *Costs 1FP)
+      const descriptions = targetmods.filter(it => !!it.desc).map(it => it.desc)
+
+      for (const it of descriptions) {
+        await GURPS.applyModifierDesc(actor, it)
+      }
     }
 
     // TODO add hitlocation to Chat message (e.g, something like 'Rolling 3d cut damage to Neck')
     message._createChatMessage(actor, dice, targetmods, draggableData, event)
 
-    // Resolve any modifier descriptors (such as *Costs 1FP)
-    targetmods
-      .filter(it => !!it.desc)
-      .map(it => it.desc)
-      .forEach(it => GURPS.applyModifierDesc(actor, it))
+    GURPS.ModifierBucket.clear()
+    GURPS.ModifierBucket.modifierStack.AUTO_EMPTY = oldAutoEmpty
   }
 
   /**
