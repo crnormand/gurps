@@ -677,8 +677,8 @@ export class ModifierBucket extends Application {
     })
 
     html
-      .querySelector('.accumulator-control')
-      ?.addEventListener('click', event => this._onAccumulatorClick(html, event))
+      .querySelectorAll('.accumulator-control')
+      .forEach(a => a.addEventListener('click', event => this._onAccumulatorClick(html, event)))
   }
 
   _onAccumulatorClick(hmtl, event) {
