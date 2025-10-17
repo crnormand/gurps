@@ -136,7 +136,12 @@ export default class GurpsWiring {
 
     if (options?.combined) {
       action.formula = multiplyDice(action.formula, options.combined)
-      // action.orig = multiplyDice(action.orig, options.combined)
+      action.costs = action.costs
+        ? action.costs.replace(
+            /(\*cost|\*costs)\s+(\d+)\s*(\S+)/gi,
+            (match, p1, p2, p3) => `${p1} ${parseInt(p2) * options.combined}${p3}`
+          )
+        : undefined
     }
 
     GURPS.performAction(action, actor, event, options?.targets)

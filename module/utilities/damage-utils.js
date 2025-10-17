@@ -13,6 +13,16 @@ export function multiplyDice(diceterm, factor) {
     let sign = groups.sign ?? ''
     let sides = groups.sides ?? ''
     let remainder = groups.remainder ?? ''
+
+    // If there is a *Cost value, multiply it too. For example, remainder = ' burn Costs* 1FP' should become ' burn
+    // Costs* 2FP'. The key value to look for is "cost*" or "costs*", case insensitive.
+    if (remainder) {
+      remainder = remainder.replace(
+        /\s+(\*cost|\*costs)\s+(\d+)\s*(\S+)/gi,
+        (match, p1, p2, p3) => ` ${p1} ${parseInt(p2) * factor} ${p3}`
+      )
+    }
+
     return `${dice}d${sides}${sign}${adds}${remainder}`.trim()
   }
 }

@@ -377,6 +377,10 @@ class ModifierStack {
     this.modifierList.splice(index, 1)
     this.sum()
   }
+
+  isEmpty() {
+    return this.modifierList.length === 0
+  }
 }
 
 /**
@@ -449,6 +453,10 @@ export class ModifierBucket extends Application {
 
   currentSum() {
     return this.modifierStack.currentSum
+  }
+
+  isEmpty() {
+    return this.modifierStack.isEmpty()
   }
 
   /**
