@@ -25,7 +25,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
-import { GurpsActor } from './actor/actor.js'
+import { GurpsActorV2 } from './actor/gurps-actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
@@ -78,7 +78,6 @@ import { SkillModel } from './item/data/skill.js'
 import { SpellModel } from './item/data/spell.js'
 import { EquipmentModel } from './item/data/equipment.js'
 import { Action } from './action/index.js'
-import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
@@ -92,6 +91,7 @@ import { UI } from './ui/index.js'
 import { Migration } from '../lib/migration.js'
 import ActorProxy from './actor/base-actor.js'
 import ItemProxy from './item/item-proxy.js'
+import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
 
 export let GURPS = undefined
 
@@ -579,7 +579,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.accumulate
      *
      * @param {JQuery.Event|null} data.event
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {string[]} data.targets
      */
     async damage({ action, event, actor, targets }) {
@@ -600,7 +600,7 @@ if (!globalThis.GURPS) {
       }
 
       if (action.accumulate) {
-        // store/increment value on GurpsActor
+        // store/increment value on GurpsActorV2
         await actor.accumulateDamageRoll(action)
         return true
       }
@@ -640,7 +640,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.accumulate
      *
      * @param {JQuery.Event|null} data.event
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {string[]} data.targets
      */
     async deriveddamage({ action, event, actor, targets }) {
@@ -711,7 +711,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.desc
      *
      * @param {JQuery.Event|null} data.event
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {string[]} data.targets
      */
     attackdamage({ action, event, actor, targets }) {
@@ -755,7 +755,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.costs
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     roll({ action, actor, event }) {
@@ -797,7 +797,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.desc
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     controlroll({ action, actor, event }) {
@@ -837,7 +837,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.formula
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     derivedroll({ action, actor, event }) {
@@ -882,7 +882,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.calcOnly
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     async attack({ action, actor, event }) {
@@ -960,7 +960,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.calcOnly
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     ['weapon-block']({ action, actor, event }) {
@@ -1024,7 +1024,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.calcOnly
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     ['weapon-parry']({ action, actor, event }) {
@@ -1088,7 +1088,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.blindroll
      * @param {string} [data.action.target]
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
@@ -1160,7 +1160,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.blindroll
      * @param {string} [data.action.target]
      *
-     * @param {GurpsActor|null} data.actor
+     * @param {GurpsActorV2|null} data.actor
      * @param {JQuery.Event|null} data.event
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
@@ -1281,7 +1281,7 @@ if (!globalThis.GURPS) {
 
   /**
    * @param {Action} action
-   * @param {GurpsActor|null} actor
+   * @param {GurpsActorV2|null} actor
    * @param {JQuery.Event|null} [event]
    * @param {string[] } [targets]
    * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
@@ -1310,14 +1310,14 @@ if (!globalThis.GURPS) {
 
   /**
    * Find the skill or spell. if isSkillOnly or isSpellOnly set, only check that list.
-   * @param {GurpsActor|GurpsActorData} actor
+   * @param {GurpsActorV2|GurpsActorData} actor
    * @param {string} sname
    */
   function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
     const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
     var t
     if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.system
+    if (actor instanceof GurpsActorV2) actor = actor.system
     let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
     let best = 0
     if (!isSpellOnly)
@@ -1343,14 +1343,14 @@ if (!globalThis.GURPS) {
   GURPS.objectToArray = objectToArray
 
   /**
-   * @param {GurpsActor | GurpsActorData} actor
+   * @param {GurpsActorV2 | GurpsActorData} actor
    * @param {string} sname
    * @returns {any}
    */
   function findAdDisad(actor, sname) {
     var t
     if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.system
+    if (actor instanceof GurpsActorV2) actor = actor.system
     sname = makeRegexPatternFrom(sname, false)
     let regex = new RegExp(sname, 'i')
     recurselist(actor.ads, s => {
@@ -1363,14 +1363,14 @@ if (!globalThis.GURPS) {
   GURPS.findAdDisad = findAdDisad
 
   /**
-   * @param {GurpsActor | GurpsActorData} actor
+   * @param {GurpsActorV2 | GurpsActorData} actor
    * @param {string} sname
    */
   function findAttack(actor, sname, isMelee = true, isRanged = true) {
     const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
     var t
     if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.system
+    if (actor instanceof GurpsActorV2) actor = actor.system
     let s = sanitize(sname)
     let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
     let smode = ''
@@ -1438,7 +1438,7 @@ if (!globalThis.GURPS) {
    * The user clicked on a field that would allow a dice roll. Use the element
    * information to try to determine what type of roll.
    * @param {JQuery.MouseEventBase} event
-   * @param {GurpsActor | null} actor
+   * @param {GurpsActorV2 | null} actor
    * @param {string[]} targets - labels for multiple Damage rolls
    */
   async function handleRoll(event, actor, options) {
@@ -1569,7 +1569,7 @@ if (!globalThis.GURPS) {
 
   /**
    * If the desc contains *Cost ?FP or *Max:9 then perform action
-   * @param {GurpsActor|User} actor
+   * @param {GurpsActorV2|User} actor
    * @param {string} desc
    */
   async function applyModifierDesc(actor, desc) {
@@ -1648,7 +1648,7 @@ if (!globalThis.GURPS) {
   /**
    * Convolutions to remove a key from an object and fill in the gaps, necessary
    * because the default add behavior just looks for the first open gap
-   * @param {GurpsActor} actor
+   * @param {GurpsActorV2} actor
    * @param {string} path
    */
   async function removeKey(actor, path) {
@@ -1962,12 +1962,16 @@ if (!globalThis.GURPS) {
     GURPS.Maneuvers = Maneuvers
 
     // Define custom Entity classes
-    CONFIG.Actor.documentClass = ActorProxy
+    CONFIG.Actor.documentClass = GurpsActorV2
     CONFIG.Item.documentClass = ItemProxy
     CONFIG.Item.dataModels = {
+      feature: Advantage,
       featureV2: TraitModel,
+      skill: Skill,
       skillV2: SkillModel,
+      spell: Spell,
       spellV2: SpellModel,
+      equipment: Equipment,
       equipmentV2: EquipmentModel,
     }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect

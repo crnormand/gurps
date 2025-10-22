@@ -1,8 +1,8 @@
 'use strict'
 
+import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
 import selectTarget from '../utilities/select-target.js'
 
@@ -265,7 +265,7 @@ export default class DamageChat {
   /**
    * This method creates the content of each draggable section with
    * damage rolled for a single target.
-   * @param {GurpsActor|User} actor
+   * @param {GurpsActorV2|User} actor
    * @param {diceData} diceData
    * @param {*} tokenName
    * @param {*} targetmods
@@ -353,7 +353,7 @@ export default class DamageChat {
   }
 
   /**
-   * @param {GurpsActor | User } actor
+   * @param {GurpsActorV2 | User } actor
    * @param {diceData} diceData
    * @param {any[]} targetmods
    * @param {any[]} draggableData

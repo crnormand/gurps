@@ -1,7 +1,5 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
-// import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
-// import { GurpsItem } from './module/item.js'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
@@ -14,6 +12,7 @@ import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { GurpsItem } from 'module/item.js'
 import { SpellModel } from 'module/item/data/spell.ts'
+import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 
 export {}
 
@@ -118,7 +117,7 @@ declare module 'fvtt-types/configuration' {
 
   interface DataModelConfig {
     Actor: {
-      character: any
+      character: typeof ActorV1Model
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
     }
@@ -173,6 +172,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.only-gms-open-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
     'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
+    'gurps.portrait-path': 'global' | 'world'
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.convert-ranged': boolean

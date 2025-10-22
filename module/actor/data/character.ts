@@ -1,6 +1,7 @@
 import {
   attributeSchema,
   conditionsSchema,
+  DamageActionSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
   MoveSchema,
@@ -42,6 +43,7 @@ import { SkillV1 } from '../../item/legacy/skill-adapter.js'
 import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
 import { SpellV1 } from '../../item/legacy/spell-adapter.js'
 import { TaggedModifiersSettings } from 'global.js'
+import { CheckInfo } from '../types.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -784,10 +786,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get torsoDR(): number {
+  get torsoDR(): HitLocationEntryV2 | undefined {
     // We assume that the torso is the hit location with a penalty of 0.
     const torsoLocation = this.hitlocationsV2.find(location => location.penalty === 0)
-    return torsoLocation ? torsoLocation._dr : 0
+    return torsoLocation
   }
 
   /* ---------------------------------------- */
@@ -972,18 +974,19 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
-  //   const accumulatedActions = this.conditions.damageAccumulators
+  async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
+    const accumulatedActions = this.conditions.damageAccumulators
 
-  //   const existingActionIndex = accumulatedActions.findIndex(e => e.orig === action.orig)
-  //   if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
+    const existingActionIndex = accumulatedActions.findIndex(e => e.orig === action.orig)
+    if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
-  //   action.count = 1
-  //   action.accumulate = null
-  //   accumulatedActions.push(action)
-  //   // @ts-expect-error: not sure why the path is not recognised
-  //   await this.parent.update({ 'system.conditions.damageAccumulators': accumulatedActions })
-  // }
+    action.count = 1
+    // @ts-expect-error: accumulate is not part of the schema
+    action.accumulate = null
+    accumulatedActions.push(action)
+
+    await this.parent.update({ 'system.conditions.damageAccumulators': accumulatedActions } as Actor.UpdateData)
+  }
 
   /* ---------------------------------------- */
 
@@ -1064,6 +1067,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  // @deprecated -- Use GurpsActorV2.setMoveDefault instead.
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
     move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
@@ -1107,30 +1111,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   getChecks(checkType: string): {
+    data: Array<CheckInfo>
     size: number
-    data: Array<{
-      img?: string
-      symbol: string
-      label: string
-      mode?: string
-      value: number | string
-      notes?: string
-      otf: string
-      otfDamage?: string
-      isOTF: boolean
-    }>
   } {
-    const checks: Array<{
-      img?: string
-      symbol: string
-      label: string
-      mode?: string
-      value: number | string
-      notes?: string
-      otf: string
-      otfDamage?: string
-      isOTF: boolean
-    }> = []
+    const checks: Array<CheckInfo> = []
 
     switch (checkType) {
       case 'attributeChecks':

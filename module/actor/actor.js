@@ -71,7 +71,7 @@ export class GurpsActor extends Actor {
     return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
   }
 
-  get Damage() {
+  get DamageModule() {
     return GURPS.modules.Damage
   }
 
@@ -367,70 +367,6 @@ export class GurpsActor extends Actor {
     let userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     let newMods = userMods.filter(m => !m.includes(reference) || m.includes('@man:') || !m.includes('@eft:'))
     await this.internalUpdate({ 'system.conditions.usermods': newMods })
-  }
-
-  /**
-   * Add Actor Modifier Effects from Character Sheet
-   * @param {object} commit
-   * @param {boolean} append
-   * @returns {object}
-   */
-  applyItemModEffects(commit, append = false) {
-    const allUserMods = append ? foundry.utils.getProperty(this.system, 'conditions.usermods') || [] : []
-    const userMods = allUserMods.filter(m => !m.includes('@eft:'))
-    let newMods = []
-
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      // First Resolve Actor Items
-      for (const item of this.items.contents) {
-        const itemData = GurpsItem.asGurpsItem(item)
-        if (itemData.system.itemModifiers?.length > 0) {
-          const allEffects = itemData.system.itemModifiers.split('\n').map(m => m.trim())
-          for (const effect of allEffects) {
-            const fullDesc = `${effect} @${item.id}`
-            if (!userMods.includes(fullDesc)) {
-              newMods.push(fullDesc)
-            }
-          }
-        }
-      }
-      // Then Melee and Ranged Actor Components
-      const paths = ['melee', 'ranged']
-      for (const path of paths) {
-        recurselist(this.system[path], (e, _k, _d) => {
-          if (!!e.itemModifiers) {
-            const allEffects = e.itemModifiers.split('\n').map(m => m.trim())
-            for (const effect of allEffects) {
-              const fullDesc = `${effect} @system.${path}.${_k}`
-              if (!userMods.includes(fullDesc)) {
-                newMods.push(fullDesc)
-              }
-            }
-          }
-        })
-      }
-    } else {
-      const paths = ['melee', 'ranged', 'ads', 'skills', 'spells', 'equipment.carried', 'equipment.other']
-      for (const path of paths) {
-        const fullPath = `system.${path}`
-        const data = foundry.utils.getProperty(this, fullPath)
-        recurselist(data, (e, _k, _d) => {
-          if (!!e.itemModifiers) {
-            const allEffects = e.itemModifiers.split('\n').map(m => m.trim())
-            for (const effect of allEffects) {
-              const fullDesc = `${effect} @system.${path}.${_k}`
-              if (!userMods.includes(fullDesc)) {
-                newMods.push(fullDesc)
-              }
-            }
-          }
-        })
-      }
-    }
-    return {
-      ...commit,
-      'system.conditions.usermods': [...userMods, ...newMods],
-    }
   }
 
   _applyItemBonuses() {
@@ -1163,14 +1099,14 @@ export class GurpsActor extends Actor {
     return `worlds/${game.world.id}/images/portraits`
   }
 
-  removeAccents(str) {
-    return str
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // Remove accents
-      .replace(/([^\w]+|\s+)/g, '-') // Replace space and other characters by hyphen
-      .replace(/\-\-+/g, '-') // Replaces multiple hyphens by one hyphen
-      .replace(/(^-+|-+$)/g, '')
-  }
+  // removeAccents(str) {
+  //   return str
+  //     .normalize('NFD')
+  //     .replace(/[\u0300-\u036f]/g, '') // Remove accents
+  //     .replace(/([^\w]+|\s+)/g, '-') // Replace space and other characters by hyphen
+  //     .replace(/\-\-+/g, '-') // Replaces multiple hyphens by one hyphen
+  //     .replace(/(^-+|-+$)/g, '')
+  // }
 
   /**
    * Adds any assigned resource trackers to the actor data and sheet.
@@ -1367,7 +1303,7 @@ export class GurpsActor extends Actor {
    * @param {any[]} damageData
    */
   handleDamageDrop(damageData) {
-    if (game.user.isGM || !this.Damage.settings.onlyGMsCanOpenADD()) {
+    if (game.user.isGM || !this.DamageModule.settings.onlyGMsCanOpenADD()) {
       const dialog = new ApplyDamageDialog(this, damageData)
       dialog.render(true)
     } else ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
@@ -2220,7 +2156,7 @@ export class GurpsActor extends Actor {
   // Return the 'where' value of the default hit location, or 'Random'
   // NOTE: could also return 'Large-Area'?
   get defaultHitLocation() {
-    return this.Damage.settings.defaultHitLocation()
+    return this.DamageModule.settings.defaultHitLocation()
   }
 
   getCurrentDodge() {

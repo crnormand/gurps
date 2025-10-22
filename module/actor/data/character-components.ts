@@ -74,7 +74,7 @@ const damageActionSchema = () => {
   }
 }
 
-// type DamageActionSchema = ReturnType<typeof damageActionSchema>
+type DamageActionSchema = ReturnType<typeof damageActionSchema>
 
 /* ---------------------------------------- */
 
@@ -157,6 +157,8 @@ export {
   moveSchema,
   poolSchema,
   reactionSchema,
+  damageActionSchema,
+  type DamageActionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
   type MoveSchema,

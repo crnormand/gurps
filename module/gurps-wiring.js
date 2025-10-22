@@ -121,7 +121,6 @@ export default class GurpsWiring {
    * any text). If not, we will just re-parse the text looking for the action block.
    *
    * @param {JQuery.MouseEventBase} event
-   * @param {import("./actor/actor.js").GurpsActor | null} actor
    * @param {undefined} [desc]
    * @param {undefined} [targets]
    */
