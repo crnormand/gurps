@@ -31,7 +31,6 @@ function registerTokenHUD(): void {
 
       const activeEffects = this.object.actor?.effects.contents ?? []
 
-      // @ts-expect-error: Waiting for DataModel migration for actor
       const currentManeuverId = this.object.actor?.system.conditions.maneuver
       const maneuverIcon =
         GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png'

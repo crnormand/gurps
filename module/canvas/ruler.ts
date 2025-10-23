@@ -1,4 +1,3 @@
-import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { Length, LengthUnit } from '../data/common/index.js'
 
@@ -14,8 +13,7 @@ function registerRuler() {
 
     /* ---------------------------------------- */
 
-    // @ts-expect-error: types have not yet caught up
-    protected _getWaypointLabelContext(waypoint: RulerWaypoint, state: any): AnyObject | void {
+    protected override _getWaypointLabelContext(waypoint: Ruler.Waypoint, state: any): Ruler.WaypointContext | void {
       const context = super._getWaypointLabelContext(waypoint, state)
       if (context === undefined) return context
       if (waypoint.next === null) {
@@ -24,10 +22,10 @@ function registerRuler() {
         this.distanceModifier = this.yardsToRangePenalty(yards)
 
         GURPS.ModifierBucket.setTempRangeMod(this.distanceModifier)
-        // @ts-expect-error: types have not yet caught up
+
+        // @ts-expect-error: Add to context for display.
         context.modifier = { total: this.distanceModifier }
       }
-      // @ts-expect-error: types have not yet caught up
       return context
     }
 
@@ -56,7 +54,6 @@ function registerRuler() {
     }
   }
 
-  // @ts-expect-error: types have not yet caught up
   CONFIG.Canvas.rulerClass = GurpsRuler
 }
 

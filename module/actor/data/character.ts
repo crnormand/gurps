@@ -44,6 +44,7 @@ import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
 import { SpellV1 } from '../../item/legacy/spell-adapter.js'
 import { TaggedModifiersSettings } from 'global.js'
 import { CheckInfo } from '../types.js'
+import { roundTo } from '../../utilities/math.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -421,21 +422,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareEquipmentSummary() {
     const onlyCountEquipped = this.getSetting(Settings.SETTING_CHECK_EQUIPPED, false)
-    const numberToTwoDP = (num: number) => Math.round(num * 100) / 100
+
     const carriedItems = onlyCountEquipped
-      ? this.allEquipmentCarried.filter(item => item.system.equipped)
+      ? this.allEquipmentCarried.filter(item => item.system.component.equipped)
       : this.allEquipmentCarried
     this.eqtsummary = {
-      eqtcost: numberToTwoDP(
+      eqtcost: roundTo(
         carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
       ),
-      eqtlbs: numberToTwoDP(
+      eqtlbs: roundTo(
         carriedItems.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
       ),
-      othercost: numberToTwoDP(
+      othercost: roundTo(
         this.allEquipmentOther.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
       ),
-      otherlbs: numberToTwoDP(
+      otherlbs: roundTo(
         this.allEquipmentOther.reduce(
           (acc, item) => acc + item.system.component.weight * item.system.component.count,
           0
@@ -901,7 +902,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     if (changed) {
       const msg = `${this.parent.name}: DR ${formula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all hit locations'}.`
       // const validChanges = this.#validDRChanges(changes)
-      await this.parent.update(changes)
+      await this.parent.update(changes as Actor.UpdateData)
       return { changed, msg, info: msg }
     }
     return { changed, msg: '', info: `${this.parent.name}: /dr command with formula ${formula} had no effect.` }
@@ -981,7 +982,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
     action.count = 1
-    // @ts-expect-error: accumulate is not part of the schema
     action.accumulate = null
     accumulatedActions.push(action)
 
@@ -1002,6 +1002,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     if (count < 1) {
       const accumulators = this.conditions.damageAccumulators
       accumulators.splice(index, 1)
+
       // @ts-expect-error: not sure why the path is not recognised
       await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
     } else await this.parent.update({ [`system.conditions.damageAccumulators.${index}.accumulate`]: count })
@@ -1074,7 +1075,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       moveEntry.default = moveEntry.mode === value
     })
 
-    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
+    await this.parent.update({ 'system.moveV2': move } as unknown as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -1105,7 +1106,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       })
     }
 
-    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
+    await this.parent.update({ 'system.moveV2': move } as unknown as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */

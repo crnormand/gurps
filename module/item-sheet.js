@@ -180,7 +180,6 @@ export class GurpsItemSheet extends ItemSheet {
 
   /**
    * A convenience reference to the Item document
-   * @return {GurpsItem}
    */
   get item() {
     return this.object

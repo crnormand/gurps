@@ -418,7 +418,6 @@ class GcsImporter {
       type,
       name,
       sort: index,
-      // @ts-expect-error
       system: {
         ...system,
         fea: component,
@@ -454,7 +453,6 @@ class GcsImporter {
       type,
       name,
       sort: index,
-      // @ts-expect-error
       system: {
         ...system,
         ski: component,
@@ -491,7 +489,6 @@ class GcsImporter {
       type,
       name,
       sort: index,
-      // @ts-expect-error
       system: {
         ...system,
         spl: component,
@@ -535,7 +532,6 @@ class GcsImporter {
       type,
       name,
       sort: index,
-      // @ts-expect-error
       system: {
         ...system,
         eqt: component,

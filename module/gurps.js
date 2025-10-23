@@ -31,7 +31,6 @@ import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
 import { AddImportEquipmentButton } from './item-import.js'
 import { GurpsItemSheet } from './item-sheet.js'
-import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 
@@ -92,6 +91,7 @@ import { Migration } from '../lib/migration.js'
 import ActorProxy from './actor/base-actor.js'
 import ItemProxy from './item/item-proxy.js'
 import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
+import { GurpsItemV2 } from './item/gurps-item.js'
 
 export let GURPS = undefined
 
@@ -1963,7 +1963,7 @@ if (!globalThis.GURPS) {
 
     // Define custom Entity classes
     CONFIG.Actor.documentClass = GurpsActorV2
-    CONFIG.Item.documentClass = ItemProxy
+    CONFIG.Item.documentClass = GurpsItemV2
     CONFIG.Item.dataModels = {
       feature: Advantage,
       featureV2: TraitModel,

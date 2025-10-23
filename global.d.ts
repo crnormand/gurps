@@ -10,9 +10,9 @@ import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
-import { GurpsItem } from 'module/item.js'
 import { SpellModel } from 'module/item/data/spell.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
+import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
 
 export {}
 
@@ -117,18 +117,18 @@ declare module 'fvtt-types/configuration' {
 
   interface DataModelConfig {
     Actor: {
-      character: typeof ActorV1Model
+      character: ActorV1Model
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
     }
     Item: {
-      equipment: any
-      equipmentV2: typeof GcsEquipment
-      feature: any
+      equipment: Equipment
+      equipmentV2: typeof EquipmentModel
+      feature: Feature
       featureV2: typeof TraitModel
-      skill: any
+      skill: Skill
       skillV2: typeof SkillModel
-      spell: any
+      spell: Spell
       spellV2: typeof SpellModel
     }
     ChatMessage: {}

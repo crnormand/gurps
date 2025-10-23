@@ -78,7 +78,7 @@ interface ActorV1Interface {
   }>
   clearDamageAccumulator(index: number): Promise<void>
   decrementDamageAccumulator(index: number): Promise<void>
-  deleteEquipment(path: string, depth?: number): Promise<GurpsItemV2<'equipmentV2'> | undefined>
+  deleteEquipment(path: string, depth?: number): Promise<GurpsItemV2 | undefined>
   findAdvantage(name: string): Advantage | undefined
   findEquipmentByName(pattern: string, otherFirst?: boolean): [Item | null, string | null] | null
   findUsingAction(action: Record<string, any>, chatthing: string, formula: string, thing: string): RollInfo
@@ -256,7 +256,7 @@ interface ActorV1Model {
   conditions: {
     reeling: boolean
     exhausted: boolean
-    maneuver: string
+    maneuver: string | undefined
     posture: string
     move: number | string
     damageAccumulators?: DamageAccumulator[]

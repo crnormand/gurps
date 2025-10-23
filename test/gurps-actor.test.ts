@@ -132,10 +132,10 @@ describe('GurpsActorV2', () => {
       })
     })
 
-    describe('translate legacy HitLocation data', () => {
-      it.skip('convert a request to remove the whole array to ', async () => {
-        const updateData: Record<string, any> = {}
-      })
-    })
+    // describe('translate legacy HitLocation data', () => {
+    //   it.skip('convert a request to remove the whole array to ', async () => {
+    //     const updateData: Record<string, any> = {}
+    //   })
+    // })
   })
 })
