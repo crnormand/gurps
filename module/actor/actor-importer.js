@@ -157,8 +157,8 @@ export class ActorImporter {
     let starttime = performance.now()
     let commit = {}
 
-    if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
-      loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCS' })
+    // if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
+    loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCS' })
     commit = { ...commit, ...{ 'system.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.actor.system.additionalresources || {}
     ar.importname = importname || ar.importname
@@ -241,18 +241,18 @@ export class ActorImporter {
       }
 
       // For each saved item with global id, lets run their additions
-      if (this.isUsingFoundryItems()) {
-        for (let key of ['ads', 'skills', 'spells']) {
-          await aRecurselist(this.actor.system[key], async t => {
-            if (!!t.itemid) {
-              const i = this.actor.items.get(t.itemid)
-              if (!!i.system.globalid) {
-                await this.actor._addItemAdditions(i, '')
-              }
+      // if (this.isUsingFoundryItems()) {
+      for (let key of ['ads', 'skills', 'spells']) {
+        await aRecurselist(this.actor.system[key], async t => {
+          if (!!t.itemid) {
+            const i = this.actor.items.get(t.itemid)
+            if (!!i.system.globalid) {
+              await this.actor._addItemAdditions(i, '')
             }
-          })
-        }
+          }
+        })
       }
+      // }
       // Recalculate DR
       await this.actor.refreshDR()
 
@@ -430,8 +430,8 @@ export class ActorImporter {
     let loadingDialog
     let importResult = false
     try {
-      if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
-        loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
+      // if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
+      loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
       // This is going to get ugly, so break out various data into different methods
       commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
       commit = { ...commit, ...(await this.importSkillsFromGCA(c.abilities?.skilllist)) }
@@ -469,18 +469,18 @@ export class ActorImporter {
       }
 
       // For each saved item with global id, lets run their additions
-      if (this.isUsingFoundryItems()) {
-        for (let key of ['ads', 'skills', 'spells']) {
-          await aRecurselist(this.actor.system[key], async t => {
-            if (!!t.itemid) {
-              const i = this.actor.items.get(t.itemid)
-              if (!!i.system.globalid) {
-                await this.actor._addItemAdditions(i, '')
-              }
+      // if (this.isUsingFoundryItems()) {
+      for (let key of ['ads', 'skills', 'spells']) {
+        await aRecurselist(this.actor.system[key], async t => {
+          if (!!t.itemid) {
+            const i = this.actor.items.get(t.itemid)
+            if (!!i.system.globalid) {
+              await this.actor._addItemAdditions(i, '')
             }
-          })
-        }
+          }
+        })
       }
+      // }
       // Recalculate DR
       await this.actor.refreshDR()
 
@@ -691,18 +691,18 @@ export class ActorImporter {
     await this.importBaseAdvantagesFromGCA(list, disadsjson)
 
     // Find all Features with globalId
-    if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.ads, async t => {
-        if (!!t.itemid) {
-          const i = this.actor.items.get(t.itemid)
-          if (!!i?.system.globalid) {
-            if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
-            t = await this._processItemFrom(t, 'GCA')
-            list.push(t)
-          }
+    // if (this.isUsingFoundryItems()) {
+    await aRecurselist(this.actor.system.ads, async t => {
+      if (!!t.itemid) {
+        const i = this.actor.items.get(t.itemid)
+        if (!!i?.system.globalid) {
+          if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
+          t = await this._processItemFrom(t, 'GCA')
+          list.push(t)
         }
-      })
-    }
+      }
+    })
+    // }
 
     return {
       'system.-=ads': null,
@@ -769,18 +769,18 @@ export class ActorImporter {
     }
 
     // Find all skills with globalId
-    if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.skills, async t => {
-        if (!!t.itemid) {
-          const i = this.actor.items.get(t.itemid)
-          if (!!i?.system.globalid) {
-            if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
-            t = await this._processItemFrom(t, 'GCA')
-            temp.push(t)
-          }
+    // if (this.isUsingFoundryItems()) {
+    await aRecurselist(this.actor.system.skills, async t => {
+      if (!!t.itemid) {
+        const i = this.actor.items.get(t.itemid)
+        if (!!i?.system.globalid) {
+          if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
+          t = await this._processItemFrom(t, 'GCA')
+          temp.push(t)
         }
-      })
-    }
+      }
+    })
+    // }
 
     return {
       'system.-=skills': null,
@@ -832,18 +832,18 @@ export class ActorImporter {
     }
 
     // Find all spells with globalId
-    if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.spells, async t => {
-        if (!!t.itemid) {
-          const i = this.actor.items.get(t.itemid)
-          if (!!i?.system.globalid) {
-            if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
-            t = await this._processItemFrom(t, 'GCA')
-            temp.push(t)
-          }
+    // if (this.isUsingFoundryItems()) {
+    await aRecurselist(this.actor.system.spells, async t => {
+      if (!!t.itemid) {
+        const i = this.actor.items.get(t.itemid)
+        if (!!i?.system.globalid) {
+          if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
+          t = await this._processItemFrom(t, 'GCA')
+          temp.push(t)
         }
-      })
-    }
+      }
+    })
+    // }
 
     return {
       'system.-=spells': null,
@@ -999,35 +999,34 @@ export class ActorImporter {
   }
 
   async _preImport(generator, itemType) {
-    if (!this.isUsingFoundryItems()) {
-      // Before we import, we need to find all eligible items,
-      // and backup their exclusive info inside Actor system.itemInfo
-      const isEligibleItem = item => {
-        const sysKey =
-          itemType === 'equipment'
-            ? this.actor._findEqtkeyForId('itemid', item.id)
-            : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
-        return (
-          (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
-          !foundry.utils.getProperty(this.actor, sysKey)?.save
-        )
-      }
-      let backupItemData = foundry.utils.getProperty(this.actor, `system.backupItemInfo`) || {}
-      const eligibleItems = this.actor.items.filter(i => !!isEligibleItem(i))
-      backupItemData = eligibleItems.reduce((acc, i) => {
-        return {
-          ...acc,
-          [i.system.importid || i.system.originalName]: i.getItemInfo(),
-        }
-      }, backupItemData)
-      await this.actor.internalUpdate({ 'system.backupItemInfo': backupItemData })
-
-      if (eligibleItems.length > 0)
-        await this.actor.deleteEmbeddedDocuments(
-          'Item',
-          eligibleItems.map(i => i.id)
-        )
-    }
+    // if (!this.isUsingFoundryItems()) {
+    //   // Before we import, we need to find all eligible items,
+    //   // and backup their exclusive info inside Actor system.itemInfo
+    //   const isEligibleItem = item => {
+    //     const sysKey =
+    //       itemType === 'equipment'
+    //         ? this.actor._findEqtkeyForId('itemid', item.id)
+    //         : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
+    //     return (
+    //       (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
+    //       !foundry.utils.getProperty(this.actor, sysKey)?.save
+    //     )
+    //   }
+    //   let backupItemData = foundry.utils.getProperty(this.actor, `system.backupItemInfo`) || {}
+    //   const eligibleItems = this.actor.items.filter(i => !!isEligibleItem(i))
+    //   backupItemData = eligibleItems.reduce((acc, i) => {
+    //     return {
+    //       ...acc,
+    //       [i.system.importid || i.system.originalName]: i.getItemInfo(),
+    //     }
+    //   }, backupItemData)
+    //   await this.actor.internalUpdate({ 'system.backupItemInfo': backupItemData })
+    //   if (eligibleItems.length > 0)
+    //     await this.actor.deleteEmbeddedDocuments(
+    //       'Item',
+    //       eligibleItems.map(i => i.id)
+    //     )
+    // }
   }
 
   /**
@@ -1114,14 +1113,14 @@ export class ActorImporter {
       }
     })
 
-    if (this.isUsingFoundryItems()) {
-      // After retrieve all relevant data
-      // Lets remove equipments now
-      await this.actor.internalUpdate({
-        'system.equipment.-=carried': null,
-        'system.equipment.-=other': null,
-      })
-    }
+    // if (this.isUsingFoundryItems()) {
+    // After retrieve all relevant data
+    // Lets remove equipments now
+    await this.actor.internalUpdate({
+      'system.equipment.-=carried': null,
+      'system.equipment.-=other': null,
+    })
+    // }
 
     temp.forEach(eqt => {
       // Remove all entries from inside items because if they still exist, they will be added back in
@@ -1626,18 +1625,18 @@ export class ActorImporter {
     }
 
     // Find all adds with globalId
-    if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.ads, async t => {
-        if (!!t.itemid) {
-          const i = this.actor.items.get(t.itemid)
-          if (!!i?.system.globalid) {
-            if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
-            t = await this._processItemFrom(t, 'GCS')
-            temp.push(t)
-          }
+    // if (this.isUsingFoundryItems()) {
+    await aRecurselist(this.actor.system.ads, async t => {
+      if (!!t.itemid) {
+        const i = this.actor.items.get(t.itemid)
+        if (!!i?.system.globalid) {
+          if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
+          t = await this._processItemFrom(t, 'GCS')
+          temp.push(t)
         }
-      })
-    }
+      }
+    })
+    // }
 
     return {
       'system.-=ads': null,
@@ -1645,9 +1644,9 @@ export class ActorImporter {
     }
   }
 
-  isUsingFoundryItems() {
-    return !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
-  }
+  // isUsingFoundryItems() {
+  //   return !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  // }
 
   async importAd(i, p) {
     const name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
@@ -1703,18 +1702,18 @@ export class ActorImporter {
     }
 
     // Find all skills with globalId
-    if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.skills, async t => {
-        if (!!t.itemid) {
-          const i = this.actor.items.get(t.itemid)
-          if (!!i?.system.globalid) {
-            if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
-            t = await this._processItemFrom(t, 'GCS')
-            temp.push(t)
-          }
+    // if (this.isUsingFoundryItems()) {
+    await aRecurselist(this.actor.system.skills, async t => {
+      if (!!t.itemid) {
+        const i = this.actor.items.get(t.itemid)
+        if (!!i?.system.globalid) {
+          if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
+          t = await this._processItemFrom(t, 'GCS')
+          temp.push(t)
         }
-      })
-    }
+      }
+    })
+    // }
 
     return {
       'system.-=skills': null,
@@ -1858,14 +1857,14 @@ export class ActorImporter {
       }
     })
 
-    if (this.isUsingFoundryItems()) {
-      // After retrieve all relevant data
-      // Lets remove equipments now
-      await this.actor.internalUpdate({
-        'system.equipment.-=carried': null,
-        'system.equipment.-=other': null,
-      })
-    }
+    // if (this.isUsingFoundryItems()) {
+    // After retrieve all relevant data
+    // Lets remove equipments now
+    await this.actor.internalUpdate({
+      'system.equipment.-=carried': null,
+      'system.equipment.-=other': null,
+    })
+    // }
 
     temp.forEach(e => {
       e.contains = {}
@@ -2581,71 +2580,72 @@ export class ActorImporter {
   }
 
   async _processItemFrom(actorComp, fromProgram) {
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      // Sanity check
-      if (
-        !(actorComp instanceof Equipment) &&
-        !(actorComp instanceof Advantage) &&
-        !(actorComp instanceof Skill) &&
-        !(actorComp instanceof Spell) &&
-        !(actorComp instanceof Melee) &&
-        !(actorComp instanceof Ranged)
-      ) {
-        throw new Error(
-          'Invalid Actor Component. To process a Item it must be an Equipment, Skill, Spell, Ranged or Melee Attack or Advantage'
-        )
-      }
-      // When Item does not have uuid (some cases in GCA) we need to check against the originalName too
-      const existingItem = this.actor.items.find(
-        i =>
-          i.system.importid === actorComp.uuid ||
-          (!!i.system[i.itemSysKey]?.originalName && i.system[i.itemSysKey].originalName === actorComp.originalName)
+    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // Sanity check
+    if (
+      !(actorComp instanceof Equipment) &&
+      !(actorComp instanceof Advantage) &&
+      !(actorComp instanceof Skill) &&
+      !(actorComp instanceof Spell) &&
+      !(actorComp instanceof Melee) &&
+      !(actorComp instanceof Ranged)
+    ) {
+      throw new Error(
+        'Invalid Actor Component. To process a Item it must be an Equipment, Skill, Spell, Ranged or Melee Attack or Advantage'
       )
-
-      // Check if we need to update the Item
-      if (!actorComp._itemNeedsUpdate(existingItem)) {
-        actorComp.name = existingItem.name
-        actorComp.itemid = existingItem._id
-        actorComp.itemInfo = existingItem.getItemInfo()
-        actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
-        actorComp.itemModifiers = existingItem.system.itemModifiers
-        actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
-        actorComp.modifierTags = existingItem.system.modifierTags
-        return actorComp
-      }
-
-      // Create or Update item
-      const itemData = actorComp.toItemData(this.actor, fromProgram)
-      const [item] = !!existingItem
-        ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
-        : await this.actor.createEmbeddedDocuments('Item', [itemData])
-      // Update Actor Component for new Items
-      if (!!item) {
-        actorComp.name = item.name
-        actorComp.itemid = item._id
-        actorComp.itemInfo = item.getItemInfo()
-        actorComp.uuid = item.system[item.itemSysKey].uuid
-      } else if (!!existingItem) {
-        actorComp.name = existingItem.name
-        actorComp.itemid = existingItem._id
-        actorComp.itemInfo = existingItem.getItemInfo()
-        actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
-        actorComp.itemModifiers = existingItem.system.itemModifiers
-        actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
-        actorComp.modifierTags = existingItem.system.modifierTags
-      }
     }
+    // When Item does not have uuid (some cases in GCA) we need to check against the originalName too
+    const existingItem = this.actor.items.find(
+      i =>
+        i.system.importid === actorComp.uuid ||
+        (!!i.system[i.itemSysKey]?.originalName && i.system[i.itemSysKey].originalName === actorComp.originalName)
+    )
+
+    // Check if we need to update the Item
+    if (!actorComp._itemNeedsUpdate(existingItem)) {
+      actorComp.name = existingItem.name
+      actorComp.itemid = existingItem._id
+      actorComp.itemInfo = existingItem.getItemInfo()
+      actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
+      actorComp.itemModifiers = existingItem.system.itemModifiers
+      actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
+      actorComp.modifierTags = existingItem.system.modifierTags
+      return actorComp
+    }
+
+    // Create or Update item
+    const itemData = actorComp.toItemData(this.actor, fromProgram)
+    const [item] = !!existingItem
+      ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
+      : await this.actor.createEmbeddedDocuments('Item', [itemData])
+    // Update Actor Component for new Items
+    if (!!item) {
+      actorComp.name = item.name
+      actorComp.itemid = item._id
+      actorComp.itemInfo = item.getItemInfo()
+      actorComp.uuid = item.system[item.itemSysKey].uuid
+    } else if (!!existingItem) {
+      actorComp.name = existingItem.name
+      actorComp.itemid = existingItem._id
+      actorComp.itemInfo = existingItem.getItemInfo()
+      actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
+      actorComp.itemModifiers = existingItem.system.itemModifiers
+      actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
+      actorComp.modifierTags = existingItem.system.modifierTags
+    }
+    // }
     return actorComp
   }
+
   async _updateItemContains(actorComp, parent) {
-    if (this.isUsingFoundryItems()) {
-      const item = this.actor.items.get(actorComp.itemid)
-      if (!!item) {
-        if (!actorComp.parentuuid) {
-          const itemSysContain = `system.${item.itemSysKey}.contains`
-          await this.actor.updateEmbeddedDocuments('Item', [{ _id: item._id, [itemSysContain]: actorComp.contains }])
-        }
+    // if (this.isUsingFoundryItems()) {
+    const item = this.actor.items.get(actorComp.itemid)
+    if (!!item) {
+      if (!actorComp.parentuuid) {
+        const itemSysContain = `system.${item.itemSysKey}.contains`
+        await this.actor.updateEmbeddedDocuments('Item', [{ _id: item._id, [itemSysContain]: actorComp.contains }])
       }
     }
+    // }
   }
 }

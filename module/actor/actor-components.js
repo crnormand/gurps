@@ -90,10 +90,10 @@ export class _Base {
     if (!!existingComponentKey) {
       const existingComponentItem = actor.items.get(actorComp.itemid)
       if (!!existingComponentItem) {
-        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          actorComp.itemid = existingComponentItem.itemid || ''
-        }
-        actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
+        // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        actorComp.itemid = existingComponentItem.itemid || ''
+        // }
+        // actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
       } else {
         actorComp.itemid = ''
         actorComp.itemInfo = {}

@@ -142,9 +142,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      this._createGlobalItemMenus(html)
-    }
+    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    this._createGlobalItemMenus(html)
+    // }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -536,13 +536,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-        await this.actor.internalUpdate({ [path + '.uses']: value })
-      } else {
-        let item = this.actor.items.get(eqt.itemid)
-        item.system.eqt.uses = value
-        await this.actor._updateItemFromForm(item)
-      }
+      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      //   await this.actor.internalUpdate({ [path + '.uses']: value })
+      // } else {
+      let item = this.actor.items.get(eqt.itemid)
+      item.system.eqt.uses = value
+      await this.actor._updateItemFromForm(item)
+      // }
     })
     html.find('i.equipmentbutton[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
@@ -553,13 +553,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-        await this.actor.internalUpdate({ [path + '.uses']: value })
-      } else {
-        let item = this.actor.items.get(eqt.itemid)
-        item.system.eqt.uses = value
-        await this.actor._updateItemFromForm(item)
-      }
+      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      //   await this.actor.internalUpdate({ [path + '.uses']: value })
+      // } else {
+      let item = this.actor.items.get(eqt.itemid)
+      item.system.eqt.uses = value
+      await this.actor._updateItemFromForm(item)
+      // }
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -773,20 +773,20 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   _deleteItem(target) {
     let key = target[0].dataset.key
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-      else GURPS.removeKey(this.actor, key)
-      this.actor.refreshDR().then()
-    } else {
-      let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
-      if (!!item) {
-        this.actor._removeItemAdditions(item.id).then(() => {
-          this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
-            GURPS.removeKey(this.actor, key)
-            this.actor.refreshDR().then()
-          })
+    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    //   if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+    //   else GURPS.removeKey(this.actor, key)
+    //   this.actor.refreshDR().then()
+    // } else {
+    let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
+    if (!!item) {
+      this.actor._removeItemAdditions(item.id).then(() => {
+        this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
+          GURPS.removeKey(this.actor, key)
+          this.actor.refreshDR().then()
         })
-      }
+      })
+      // }
     }
   }
 
@@ -884,12 +884,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
-          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-            obj.save = true
-            let payload = obj.toItemData(this.actor, '')
-            const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
-            obj.itemid = item._id
-          }
+          // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          obj.save = true
+          let payload = obj.toItemData(this.actor, '')
+          const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
+          obj.itemid = item._id
+          // }
           if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
         }
         let o = GURPS.decode(this.actor, path) || {}
@@ -1014,9 +1014,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         item = j.pages.get(dragData.uuid.split('.').at(-1))
         break
     }
-    const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+    // const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
-    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem
+    return item.type !== 'equipment' // || !equipmentAsItem
       ? {
           n: item.name,
           id: item.id,
@@ -1166,31 +1166,31 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                  a => (obj[a] = html.find(`.${a}`).val())
-                )
-                ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
-                let u = html.find('.save') // Should only find in Note (or equipment)
-                if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
-                let v = html.find('.ignoreImportQty') // Should only find in equipment
-                if (!!v) obj.ignoreImportQty = v.is(':checked')
-                await actor.internalUpdate({ [path]: obj })
-                await actor.updateParentOf(path, false)
-              } else {
-                let item = actor.items.get(obj.itemid)
-                item.name = obj.name
-                item.system.eqt.count = obj.count
-                item.system.eqt.cost = obj.cost
-                item.system.eqt.uses = obj.uses
-                item.system.eqt.maxuses = obj.maxuses
-                item.system.eqt.techlevel = obj.techlevel
-                item.system.eqt.notes = obj.notes
-                item.system.eqt.pageref = obj.pageref
-                item.system.itemModifiers = obj.itemModifiers
-                await actor._updateItemFromForm(item)
-                await actor.updateParentOf(path, false)
-              }
+              // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+              //   ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
+              //     a => (obj[a] = html.find(`.${a}`).val())
+              //   )
+              //   ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+              //   let u = html.find('.save') // Should only find in Note (or equipment)
+              //   if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
+              //   let v = html.find('.ignoreImportQty') // Should only find in equipment
+              //   if (!!v) obj.ignoreImportQty = v.is(':checked')
+              //   await actor.internalUpdate({ [path]: obj })
+              //   await actor.updateParentOf(path, false)
+              // } else {
+              let item = actor.items.get(obj.itemid)
+              item.name = obj.name
+              item.system.eqt.count = obj.count
+              item.system.eqt.cost = obj.cost
+              item.system.eqt.uses = obj.uses
+              item.system.eqt.maxuses = obj.maxuses
+              item.system.eqt.techlevel = obj.techlevel
+              item.system.eqt.notes = obj.notes
+              item.system.eqt.pageref = obj.pageref
+              item.system.itemModifiers = obj.itemModifiers
+              await actor._updateItemFromForm(item)
+              await actor.updateParentOf(path, false)
+              // }
             },
           },
         },
@@ -1781,12 +1781,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      let item = this.actor.items.get(eqt.itemid)
-      item.system.equipped = eqt.equipped
-      item.system.eqt.equipped = eqt.equipped
-      await this.actor._updateItemFromForm(item)
-    }
+    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    let item = this.actor.items.get(eqt.itemid)
+    item.system.equipped = eqt.equipped
+    item.system.eqt.equipped = eqt.equipped
+    await this.actor._updateItemFromForm(item)
+    // }
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.internalUpdate({
@@ -1803,17 +1803,17 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         icon: "<i class='fas fa-trash'></i>",
         callback: async e => {
           let key = e[0].dataset.key
-          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-            // We need to remove linked item
-            const actorComponent = foundry.utils.getProperty(this.actor, key)
-            const existingItem = await this.actor.items.get(actorComponent.itemid)
-            if (!!existingItem) {
-              this.actor._removeItemAdditions(existingItem.id)
-              await existingItem.delete()
-            }
-          } else {
-            if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+          // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          // We need to remove linked item
+          const actorComponent = foundry.utils.getProperty(this.actor, key)
+          const existingItem = await this.actor.items.get(actorComponent.itemid)
+          if (!!existingItem) {
+            this.actor._removeItemAdditions(existingItem.id)
+            await existingItem.delete()
           }
+          // } else {
+          //   if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+          // }
           GURPS.removeKey(this.actor, key)
           await this.actor.refreshDR()
         },

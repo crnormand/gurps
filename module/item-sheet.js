@@ -159,17 +159,17 @@ export class GurpsItemSheet extends ItemSheet {
     let srcData = foundry.utils.getProperty(srcActor, dragData.key)
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      // Scenario 1: Only works for Equipment
-      if (dragData.type === 'equipment') {
-        await this.item.update({
-          name: srcData.name,
-          'system.eqt': srcData,
-        })
-        return
-      }
-      await this._addToList(dragData.type, srcData)
-    }
+    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    //   // Scenario 1: Only works for Equipment
+    //   if (dragData.type === 'equipment') {
+    //     await this.item.update({
+    //       name: srcData.name,
+    //       'system.eqt': srcData,
+    //     })
+    //     return
+    //   }
+    //   await this._addToList(dragData.type, srcData)
+    // }
   }
 
   async _addToList(key, data) {
@@ -187,7 +187,7 @@ export class GurpsItemSheet extends ItemSheet {
 
   async close() {
     await super.close()
-    if (!!this.useFoundryItems && !!this.isContainer) {
+    if (/* !!this.useFoundryItems && */ !!this.isContainer) {
       ui.notifications.info(`Saving Item ${this.item.name}... Please wait.`)
     }
 
@@ -200,20 +200,21 @@ export class GurpsItemSheet extends ItemSheet {
           ? actor._findEqtkeyForId('itemid', this.item.id)
           : actor._findSysKeyForId('itemid', this.item.id, this.item.actorComponentKey)
       const actorComp = foundry.utils.getProperty(actor, actorCompKey)
+
       if (!(await actor._sanityCheckItemSettings(actorComp))) return
-      if (!this.useFoundryItems) {
-        if (this.item.type === 'equipment') {
-          await actor.updateItem(this.item)
-        } else {
-          await this.item.update({
-            name: this.item.name,
-            img: this.item.img,
-            system: this.item.system,
-          })
-        }
-      } else {
-        await actor._updateItemFromForm(this.item)
-      }
+      // if (!this.useFoundryItems) {
+      //   if (this.item.type === 'equipment') {
+      //     await actor.updateItem(this.item)
+      //   } else {
+      //     await this.item.update({
+      //       name: this.item.name,
+      //       img: this.item.img,
+      //       system: this.item.system,
+      //     })
+      //   }
+      // } else {
+      await actor._updateItemFromForm(this.item)
+      // }
     } else {
       await this.item.update({
         name: this.item.name,
@@ -226,14 +227,14 @@ export class GurpsItemSheet extends ItemSheet {
     if (canvas.tokens.controlled.length > 0) {
       await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
-    if (!!this.useFoundryItems && !!this.isContainer) {
+    if (/* !!this.useFoundryItems && */ !!this.isContainer) {
       ui.notifications.info(`Item ${this.item.name} saved!`)
     }
   }
 
-  get useFoundryItems() {
-    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
-  }
+  // get useFoundryItems() {
+  //   return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  // }
   get isContainer() {
     return (
       Object.keys(this.item.system.melee || {}).length > 0 ||

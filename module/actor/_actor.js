@@ -201,14 +201,14 @@ export class GurpsActor extends Actor {
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
     const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      const validMods = userMods.filter(m => !m.includes('@system.'))
-      await this.update({ 'system.conditions.usermods': validMods })
-    } else {
-      // If not using Foundry Items, we can remove Modifier Effects from Item Effects
-      const validMods = userMods.filter(m => m.includes('@system.') || m.includes('@man:') || m.includes('@custom'))
-      await this.update({ 'system.conditions.usermods': validMods })
-    }
+    // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    const validMods = userMods.filter(m => !m.includes('@system.'))
+    await this.update({ 'system.conditions.usermods': validMods })
+    // } else {
+    //   // If not using Foundry Items, we can remove Modifier Effects from Item Effects
+    //   const validMods = userMods.filter(m => m.includes('@system.') || m.includes('@man:') || m.includes('@custom'))
+    //   await this.update({ 'system.conditions.usermods': validMods })
+    // }
     // If Actor does not have system.conditions.actions, create it
     if (!this.system.conditions.actions) {
       await this.internalUpdate({
@@ -1348,99 +1348,99 @@ export class GurpsActor extends Actor {
     }
     if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      // Scenario 1: Work only for Equipment dropped
-      ui.notifications?.info(data.name + ' => ' + this.name)
-      await this.addNewItemData(data)
+    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    //   // Scenario 1: Work only for Equipment dropped
+    //   ui.notifications?.info(data.name + ' => ' + this.name)
+    //   await this.addNewItemData(data)
+    // } else {
+    // Scenario 2: Process Actor Component, Parent (dropped) Item and Child Items
+
+    // 1. This global item was already dropped?
+    const found = this.items.find(it => it.system.globalid === data.system.globalid)
+    if (!!found) {
+      ui.notifications?.warn(game.i18n.localize('GURPS.cannotDropItemAlreadyExists'))
+      return
+    }
+    ui.notifications?.info(
+      game.i18n.format('GURPS.droppingItemNotification', { actorName: this.name, itemName: data.name })
+    )
+
+    // 2. Check if Actor Component exists
+    const actorCompKey =
+      data.type === 'equipment'
+        ? this._findEqtkeyForId('globalid', data.system.globalid)
+        : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
+    const actorComp = foundry.utils.getProperty(this, actorCompKey)
+    if (!!actorComp) {
+      ui.notifications?.warn(game.i18n.localize('GURPS.cannotDropItemAlreadyExists'))
     } else {
-      // Scenario 2: Process Actor Component, Parent (dropped) Item and Child Items
-
-      // 1. This global item was already dropped?
-      const found = this.items.find(it => it.system.globalid === data.system.globalid)
-      if (!!found) {
-        ui.notifications?.warn(game.i18n.localize('GURPS.cannotDropItemAlreadyExists'))
-        return
+      // 3. Create Actor Component
+      let actorComp
+      let targetKey
+      switch (data.type) {
+        case 'equipment':
+          actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
+          targetKey = 'system.equipment.carried'
+          break
+        case 'feature':
+          actorComp = Advantage.fromObject({ name: data.name, ...data.system.fea }, this)
+          targetKey = 'system.ads'
+          break
+        case 'skill':
+          actorComp = Skill.fromObject({ name: data.name, ...data.system.ski }, this)
+          targetKey = 'system.skills'
+          break
+        case 'spell':
+          actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
+          targetKey = 'system.spells'
+          break
       }
-      ui.notifications?.info(
-        game.i18n.format('GURPS.droppingItemNotification', { actorName: this.name, itemName: data.name })
-      )
+      actorComp.itemInfo.img = data.img
+      actorComp.otf = data.system[data.itemSysKey].otf
+      actorComp.checkotf = data.system[data.itemSysKey].checkotf
+      actorComp.duringotf = data.system[data.itemSysKey].duringotf
+      actorComp.passotf = data.system[data.itemSysKey].passotf
+      actorComp.failotf = data.system[data.itemSysKey].failotf
 
-      // 2. Check if Actor Component exists
+      // 4. Create Parent Item
+      const importer = new ActorImporter(this)
+      actorComp = await importer._processItemFrom(actorComp, '')
+      let parentItem = this.items.get(actorComp.itemid)
+      const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
+      for (const key of keys) {
+        recurselist(data.system[key], e => {
+          if (!e.uuid) e.uuid = foundry.utils.randomID(16)
+        })
+      }
+
+      await this.updateEmbeddedDocuments('Item', [
+        {
+          _id: parentItem.id,
+          'system.globalid': dragData.uuid,
+          'system.melee': data.system.melee,
+          'system.ranged': data.system.ranged,
+          'system.ads': data.system.ads,
+          'system.spells': data.system.spells,
+          'system.skills': data.system.skills,
+          'system.bonuses': data.system.bonuses,
+        },
+      ])
+
+      // 5. Update Actor System with new Component
+      const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
+      const removeKey = targetKey.replace(/(\w+)$/, '-=$1')
+      await this.internalUpdate({ [removeKey]: null })
+      await GURPS.put(systemObject, actorComp)
+      await this.internalUpdate({ [targetKey]: systemObject })
+      if (data.type === 'equipment') await Equipment.calc(actorComp)
+
+      // 6. Process Child Items for created Item
       const actorCompKey =
         data.type === 'equipment'
-          ? this._findEqtkeyForId('globalid', data.system.globalid)
-          : this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
-      const actorComp = foundry.utils.getProperty(this, actorCompKey)
-      if (!!actorComp) {
-        ui.notifications?.warn(game.i18n.localize('GURPS.cannotDropItemAlreadyExists'))
-      } else {
-        // 3. Create Actor Component
-        let actorComp
-        let targetKey
-        switch (data.type) {
-          case 'equipment':
-            actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
-            targetKey = 'system.equipment.carried'
-            break
-          case 'feature':
-            actorComp = Advantage.fromObject({ name: data.name, ...data.system.fea }, this)
-            targetKey = 'system.ads'
-            break
-          case 'skill':
-            actorComp = Skill.fromObject({ name: data.name, ...data.system.ski }, this)
-            targetKey = 'system.skills'
-            break
-          case 'spell':
-            actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
-            targetKey = 'system.spells'
-            break
-        }
-        actorComp.itemInfo.img = data.img
-        actorComp.otf = data.system[data.itemSysKey].otf
-        actorComp.checkotf = data.system[data.itemSysKey].checkotf
-        actorComp.duringotf = data.system[data.itemSysKey].duringotf
-        actorComp.passotf = data.system[data.itemSysKey].passotf
-        actorComp.failotf = data.system[data.itemSysKey].failotf
-
-        // 4. Create Parent Item
-        const importer = new ActorImporter(this)
-        actorComp = await importer._processItemFrom(actorComp, '')
-        let parentItem = this.items.get(actorComp.itemid)
-        const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
-        for (const key of keys) {
-          recurselist(data.system[key], e => {
-            if (!e.uuid) e.uuid = foundry.utils.randomID(16)
-          })
-        }
-
-        await this.updateEmbeddedDocuments('Item', [
-          {
-            _id: parentItem.id,
-            'system.globalid': dragData.uuid,
-            'system.melee': data.system.melee,
-            'system.ranged': data.system.ranged,
-            'system.ads': data.system.ads,
-            'system.spells': data.system.spells,
-            'system.skills': data.system.skills,
-            'system.bonuses': data.system.bonuses,
-          },
-        ])
-
-        // 5. Update Actor System with new Component
-        const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
-        const removeKey = targetKey.replace(/(\w+)$/, '-=$1')
-        await this.internalUpdate({ [removeKey]: null })
-        await GURPS.put(systemObject, actorComp)
-        await this.internalUpdate({ [targetKey]: systemObject })
-        if (data.type === 'equipment') await Equipment.calc(actorComp)
-
-        // 6. Process Child Items for created Item
-        const actorCompKey =
-          data.type === 'equipment'
-            ? this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
-            : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
-        await this._addItemAdditions(parentItem, actorCompKey)
-      }
+          ? this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
+          : this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
+      await this._addItemAdditions(parentItem, actorCompKey)
+      // }
     }
     this._forceRender()
   }
