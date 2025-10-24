@@ -1965,13 +1965,9 @@ if (!globalThis.GURPS) {
     CONFIG.Actor.documentClass = GurpsActorV2
     CONFIG.Item.documentClass = GurpsItemV2
     CONFIG.Item.dataModels = {
-      feature: Advantage,
       featureV2: TraitModel,
-      skill: Skill,
       skillV2: SkillModel,
-      spell: Spell,
       spellV2: SpellModel,
-      equipment: Equipment,
       equipmentV2: EquipmentModel,
     }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect

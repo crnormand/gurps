@@ -8,7 +8,7 @@ import { SkillComponent, SkillModel } from './data/skill.js'
 import { EquipmentComponent, EquipmentModel } from './data/equipment.js'
 import { SpellComponent, SpellModel } from './data/spell.js'
 import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
-import { recurselist } from 'lib/utilities.js'
+import { recurselist } from '../../lib/utilities.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>

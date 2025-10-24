@@ -38,15 +38,15 @@ import {
   MoveMode,
 } from './legacy/actorv1-interface.js'
 import { ActorImporter } from './actor-importer.js'
-import { COSTS_REGEX, parselink } from 'lib/parselink.js'
+import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 import { CanRollResult, CheckInfo } from './types.js'
-import { HitLocation } from 'module/hitlocation/hitlocation.js'
+import { HitLocation } from '../hitlocation/hitlocation.js'
 import { HitLocationEntryV1 } from './legacy/hit-location-entryv1.js'
-import { ResourceTrackerTemplate, TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
+import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
-import { multiplyDice } from 'module/utilities/damage-utils.js'
-import { ResourceTracker } from 'module/resource-tracker/index.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
 
 function DamageModule() {
   return GURPS.module.Damage
@@ -537,7 +537,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
-    this.modelV2.prepareEmbeddedDocuments()
+    if (this.isNewActorType) this.modelV2.prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */
@@ -3227,6 +3227,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       // 4. Create Parent Item
       const importer = new ActorImporter(this)
       actorComp = await importer._processItemFrom(actorComp, '')
+      // @ts-expect-error
       let parentItem = this.items.get(actorComp.itemid)
       const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
       for (const key of keys) {
