@@ -88,8 +88,6 @@ import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 
 import { Migration } from '../lib/migration.js'
-import ActorProxy from './actor/base-actor.js'
-import ItemProxy from './item/item-proxy.js'
 import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
 import { GurpsItemV2 } from './item/gurps-item.js'
 

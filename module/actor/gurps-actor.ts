@@ -135,7 +135,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns An array of User instances who are owners of this Actor.
    */
   getOwners(): User.Implementation[] {
-    console.warn('getOwners() is deprecated, use owners instead')
     return this.owners
   }
 
@@ -905,8 +904,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * NOTE: Both character and characterV2
    */
-  async changeDR(formula: string, locations: string[]) {
-    if (this.isNewActorType) return this.modelV2.changeDR(formula, locations)
+  async changeDR(drFormula: string, locations: string[]) {
+    if (this.isNewActorType) return this.modelV2.changeDR(drFormula, locations)
 
     // Legacy V1 handling
     let changed = false
@@ -959,17 +958,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let formula
       if (!locations.length || affectedLocations.includes(actorLocations[key].where.toLowerCase())) {
         changed = true
-        formula = formula
+        formula = drFormula
       } else {
         formula = '+0'
       }
-      actorLocations[key] = this._changeDR(formula!, actorLocations[key])
+      actorLocations[key] = this._changeDR(formula, actorLocations[key])
     }
     if (changed) {
       // Exclude than rewrite the hitlocations on Actor
       await this.internalUpdate({ 'system.-=hitlocations': null } as Actor.UpdateData)
       await this.update({ 'system.hitlocations': actorLocations } as Actor.UpdateData)
-      const msg = `${this.name}: DR ${formula} applied to ${
+      const msg = `${this.name}: DR ${drFormula} applied to ${
         affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
       }`
       return { changed, msg, info: msg }
@@ -1776,11 +1775,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       let item = this.items.get(eqt.itemid)
       if (!!item) {
-        // @ts-expect-error
-        item.system.eqt.count = count
+        item.system.eqt!.count = count
         if (game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-          // @ts-expect-error
-          item.system.eqt.ignoreImportQty = true
+          item.system.eqt!.ignoreImportQty = true
 
         await item.actor!._updateItemFromForm(item)
       }
@@ -2495,7 +2492,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   async postImport(): Promise<void> {
-    if (!this.isNewActorType) return
+    if (this.isNewActorType) return
+
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list
@@ -4043,7 +4041,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
     // @ts-expect-error
-    let item = this.items.find(i => i.model.originalName === name)
+    let item = this.items.find(i => i.system.originalName === name)
     // @ts-expect-error
     if (!item) item = this.items.find(i => i.system.name === name)
     if (!!item) return item

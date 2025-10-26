@@ -321,8 +321,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   toggleCollapsed(expandOnly: boolean = false): void {
     const newValue = !this.modelV2.open
     if (expandOnly && !newValue) return
-    // @ts-expect-error: waiting for types to catch up
-    this.update({ 'system.open': newValue })
+    this.update({ 'system.open': newValue } as Item.UpdateData)
   }
 
   /* ---------------------------------------- */

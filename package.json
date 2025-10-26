@@ -46,5 +46,10 @@
     "@pixi/utils": {
       "@types/earcut": "3.0.0"
     }
+  },
+  "dependencies": {
+    "@jridgewell/trace-mapping": "^0.3.31",
+    "source-map-support": "^0.5.21",
+    "v8-to-istanbul": "^9.3.0"
   }
 }
