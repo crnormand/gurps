@@ -42,9 +42,9 @@ import { RangedV1 } from '../../action/legacy/rangedv1.js'
 import { SkillV1 } from '../../item/legacy/skill-adapter.js'
 import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
 import { SpellV1 } from '../../item/legacy/spell-adapter.js'
-import { TaggedModifiersSettings } from 'global.js'
 import { CheckInfo } from '../types.js'
 import { roundTo } from '../../utilities/math.js'
+import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -619,6 +619,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     })
   }
+  
   #getCurrentMove(base: number): number {
     const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat
 

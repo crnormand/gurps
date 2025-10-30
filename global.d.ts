@@ -5,14 +5,15 @@ import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
+import { SpellModel } from 'module/item/data/spell.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
-import { SpellModel } from 'module/item/data/spell.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 
 export {}
 
@@ -31,46 +32,9 @@ declare global {
       [key: string]: unknown
     }
   } & any
+
+  /* ---------------------------------------- */
 }
-
-/* ---------------------------------------- */
-
-// TODO This should be moved to its own module eventually.
-export interface TaggedModifiersSettings {
-  autoAdd: boolean
-  checkConditionals: boolean
-  checkReactions: boolean
-  useSpellCollegeAsTag: boolean
-  allRolls: string
-  allAttributesRolls: string
-  allSkillRolls: string
-  allSpellRolls: string
-  allDamageRolls: string
-  allAttackRolls: string
-  allRangedRolls: string
-  allMeleeRolls: string
-  allDefenseRolls: string
-  allDODGERolls: string
-  allParryRolls: string
-  allBlockRolls: string
-  allPERRolls: string
-  allWILLRolls: string
-  allSTRolls: string
-  allDXRolls: string
-  allIQRolls: string
-  allHTRolls: string
-  allFRIGHTCHECKRolls: string
-  allVISIONRolls: string
-  allTASTESMELLRolls: string
-  allHEARINGRolls: string
-  allTOUCHRolls: string
-  allCRRolls: string
-  combatOnlyTag: string
-  nonCombatOnlyTag: string
-  combatTempTag: string
-}
-
-/* ---------------------------------------- */
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
@@ -79,6 +43,8 @@ declare module 'fvtt-types/configuration' {
     Combatant: typeof GurpsCombatant
     ActiveEffect: typeof GurpsActiveEffect
   }
+
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
 
@@ -123,12 +89,12 @@ declare module 'fvtt-types/configuration' {
     }
     Item: {
       equipment: Equipment
-      equipmentV2: typeof EquipmentModel
       feature: Feature
-      featureV2: typeof TraitModel
       skill: Skill
-      skillV2: typeof SkillModel
       spell: Spell
+      equipmentV2: typeof EquipmentModel
+      featureV2: typeof TraitModel
+      skillV2: typeof SkillModel
       spellV2: typeof SpellModel
     }
     ChatMessage: {}
@@ -147,7 +113,7 @@ declare module 'fvtt-types/configuration' {
       // TODO: Deprecated in FVTT 13. Replace with renderChatMessageHTML or get rid of if no longer needed.
       renderChatMessage: (app: any, html: JQuery<HTMLElement>, message: any) => void
       dropCanvasData: (canvas: Canvas, dropData: any) => void
-      applyActiveEffect: (actor: Actor.Implementation, change: any) => void
+      applyActiveEffect: (actor: Actor.Implementation, change: any, options: any, user: User.Implementation) => void
     }
   }
 

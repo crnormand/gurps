@@ -152,12 +152,12 @@ type MoveSchema = ReturnType<typeof moveSchema>
 export {
   attributeSchema,
   conditionsSchema,
+  damageActionSchema,
   encumbranceSchema,
   liftingMovingSchema,
   moveSchema,
   poolSchema,
   reactionSchema,
-  damageActionSchema,
   type DamageActionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,

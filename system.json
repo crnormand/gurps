@@ -25,7 +25,7 @@
   "compatibility": {
     "minimum": "13",
     "maximum": "13",
-    "verified": "13.346"
+    "verified": "13.350"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
@@ -69,18 +69,13 @@
   "documentTypes": {
     "Actor": {
       "character": {},
-      "characterV2": {},
       "enemy": {}
     },
     "Item": {
       "feature": {},
-      "featureV2": {},
       "skill": {},
-      "skillV2": {},
       "spell": {},
-      "spellV2": {},
-      "equipment": {},
-      "equipmentV2": {}
+      "equipment": {}
     }
   },
   "media": [
