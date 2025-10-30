@@ -1661,6 +1661,7 @@ if (!globalThis.GURPS) {
       i = objpath.lastIndexOf('.')
       let parentpath = objpath.substring(0, i)
       let objkey = objpath.substring(i + 1)
+
       // Create shallow copy of object
       let object = foundry.utils.duplicate(GURPS.decode(actor, objpath))
       let t = parentpath + '.-=' + objkey
@@ -1679,17 +1680,10 @@ if (!globalThis.GURPS) {
         key = k
         i++
       }
-      /*    Since object is duplicated, no longer need to create a sorted copy
-      let sorted = Object.keys(object)
-        .sort()
-        .reduce((a, v) => {
-          // @ts-ignore
-          a[v] = object[v]
-          return a
-        }, {}) // Enforced key order
-*/
+
       actor.ignoreRender = oldRender
       await actor.internalUpdate({ [objpath]: object }, { diff: false })
+
       // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
       if (Object.keys(object).length === 0) GURPS.decode(actor, parentpath)[objkey] = {}
     } else {

@@ -149,8 +149,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const sheet = this.sheet
     if (sheet) {
       await sheet.close()
-      // @ts-expect-error: ignore
-      this._sheet = null
 
       // @ts-expect-error: ignore
       delete this.apps[sheet.appId]
@@ -168,18 +166,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,
-    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
+    options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
   ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined {
-    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
-    if (embeddedName in systemEmbeds) {
-      const path = systemEmbeds[embeddedName]
-      const document = foundry.utils.getProperty(this, path) as any
-      return (
-        document.get(id, {
-          invalid,
-          strict,
-        }) ?? null
-      )
+    const { invalid = false, strict = true } = options ?? {}
+    if (this.isNewActorType) {
+      const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+      if (embeddedName in systemEmbeds) {
+        const path = systemEmbeds[embeddedName]
+        const document = foundry.utils.getProperty(this, path) as any
+        return (
+          document.get(id, {
+            invalid,
+            strict,
+          }) ?? null
+        )
+      }
     }
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
   }
