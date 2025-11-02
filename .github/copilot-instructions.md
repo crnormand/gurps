@@ -52,6 +52,13 @@ module/
 
 ### TypeScript/JavaScript Guidelines
 
+#### Key Guidelines
+
+1. Follow TypeScript best practices and idiomatic patterns
+2. Maintain existing code structure and organization
+3. Write unit tests for new functionality. Use table-driven unit tests when possible.
+4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate
+
 #### File Extensions and Types
 
 - `.ts` for new TypeScript files (preferred)

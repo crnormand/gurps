@@ -182,7 +182,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // Legacy collection
+  // @deprecated Legacy collection.
   get ads() {
     return arrayToObject(
       this.adsV2.map(item => new TraitV1(item)),
@@ -198,7 +198,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // Legacy collection
+  // @deprecated Legacy collection.
   get skills() {
     return arrayToObject(
       this.skillsV2.map(item => new SkillV1(item)),
@@ -214,7 +214,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // Legacy collection
+  // @deprecated Legacy collection.
   get spells() {
     return arrayToObject(
       this.spellsV2.map(item => new SpellV1(item)),
@@ -245,7 +245,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // Legacy collection
+  // @deprecated Legacy collection.
   get equipment() {
     return {
       carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
@@ -255,7 +255,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // Legacy collection.
+  // @deprecated Legacy collection.
   get melee() {
     return arrayToObject(
       this.meleeV2.map(item => new MeleeV1(item)),
@@ -265,7 +265,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // Legacy collection.
+  // @deprecated Legacy collection.
   get ranged() {
     return arrayToObject(
       this.rangedV2.map(item => new RangedV1(item)),
@@ -619,7 +619,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     })
   }
-  
+
   #getCurrentMove(base: number): number {
     const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat
 
@@ -653,10 +653,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #getMoveAdjustmentForPosture(base: number): { value: number; tooltip: string } {
     let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
-    const posture_ = GURPS.StatusEffect.lookup(this.conditions.posture)
-    if (posture_) {
-      tooltip = game.i18n?.localize(posture_.name) ?? ''
-      const override = this.#getMoveAdjustmentForOverride(base, posture_.move)
+    const posture = GURPS.StatusEffect.lookup(this.conditions.posture)
+    if (posture) {
+      tooltip = game.i18n?.localize(posture.name) ?? ''
+      const override = this.#getMoveAdjustmentForOverride(base, posture.move)
       return override ?? { value: base, tooltip }
     }
     return { value: base, tooltip }
@@ -1076,7 +1076,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       moveEntry.default = moveEntry.mode === value
     })
 
-    await this.parent.update({ 'system.moveV2': move } as unknown as Actor.UpdateData)
+    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -1107,7 +1107,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       })
     }
 
-    await this.parent.update({ 'system.moveV2': move } as unknown as Actor.UpdateData)
+    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */

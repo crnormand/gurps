@@ -68,10 +68,15 @@
   },
   "documentTypes": {
     "Actor": {
+      "characterV2": {},
       "character": {},
       "enemy": {}
     },
     "Item": {
+      "featureV2": {},
+      "skillV2": {},
+      "spellV2": {},
+      "equipmentV2": {},
       "feature": {},
       "skill": {},
       "spell": {},
