@@ -81,7 +81,6 @@ class GcsImporter {
       name,
       type,
       img: this.img,
-      // FIXME: not sure why this is not resolving correctly
       system: this.output as any,
       items: this.items as any,
     })) as GurpsActorV2<'characterV2'> | undefined
@@ -241,7 +240,37 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importPointTotals() {
-    // TODO Implement me.
+    this.output.totalpoints = {
+      attributes: 0,
+      race: 0,
+      ads: 0,
+      disads: 0,
+      quirks: 0,
+      skills: 0,
+      spells: 0,
+      total: 0,
+      unspent: 0,
+    }
+
+    this.output.totalpoints!.attributes! += this.input.attributes.reduce(
+      (acc, attr) => acc + (attr.calc.points ?? 0),
+      0
+    )
+
+    this.input.traits?.forEach(trait => this.#calculateSingleTraitPoints(trait))
+
+    this.output.totalpoints.skills = this.input.allSkills?.reduce((acc, skill) => acc + (skill.points ?? 0), 0) ?? 0
+    this.output.totalpoints.spells = this.input.allSpells?.reduce((acc, spell) => acc + (spell.points ?? 0), 0) ?? 0
+
+    this.output.totalpoints.unspent =
+      this.input.total_points -
+      this.output.totalpoints!.attributes! -
+      this.output.totalpoints!.race! -
+      this.output.totalpoints!.ads! -
+      this.output.totalpoints!.disads! -
+      this.output.totalpoints!.quirks! -
+      this.output.totalpoints!.skills! -
+      this.output.totalpoints!.spells!
   }
 
   /* ---------------------------------------- */
@@ -260,9 +289,35 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  // @ts-expect-error
   #calculateSingleTraitPoints(trait: GcsTrait): void {
-    // TODO Implement me.
+    if (trait.disabled) return
+
+    if (trait.isContainer) {
+      switch (trait.container_type) {
+        case 'group':
+          trait.childItems.forEach((child: GcsTrait) => this.#calculateSingleTraitPoints(child))
+          break
+        case 'ancestry':
+          this.output.totalpoints!.race! += trait.adjustedPoints
+          break
+        case 'attributes':
+          this.output.totalpoints!.race! += trait.adjustedPoints
+          break
+      }
+    }
+    const points = trait.adjustedPoints
+
+    switch (true) {
+      case points === -1:
+        this.output.totalpoints!.quirks! += points
+        break
+      case points < 0:
+        this.output.totalpoints!.disads! += points
+        break
+      case points > 0:
+        this.output.totalpoints!.ads! += points
+        break
+    }
   }
 
   /* ---------------------------------------- */

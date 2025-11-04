@@ -120,6 +120,7 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
 const characterData = () => {
   return {
+    total_points: new fields.NumberField({ required: true, nullable: false }),
     profile: new fields.SchemaField(
       {
         name: new fields.StringField({ required: true, nullable: true }),

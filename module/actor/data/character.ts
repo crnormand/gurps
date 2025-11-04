@@ -1686,8 +1686,6 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    // TODO I never liked calling these traits. I'd rather call Advantages/Disadvantages "traits" and this something
-    // else ("personalData"? "biographicalData"? "profile"? etc.)
     traits: new fields.SchemaField(
       {
         title: new fields.StringField({ required: true, nullable: false }),
@@ -1708,6 +1706,21 @@ const characterSchema = () => {
         createdon: new fields.StringField({ required: true, nullable: false }),
         modifiedon: new fields.StringField({ required: true, nullable: false }),
         player: new fields.StringField({ required: true, nullable: false }),
+      },
+      { required: true, nullable: false }
+    ),
+
+    totalpoints: new fields.SchemaField(
+      {
+        attributes: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        ads: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        disads: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        quirks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        skills: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        spells: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        total: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        unspent: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+        race: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       },
       { required: true, nullable: false }
     ),
