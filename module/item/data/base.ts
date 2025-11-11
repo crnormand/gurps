@@ -244,6 +244,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 const baseItemModelSchema = () => {
   return {
     // Change from previous schema. Boolean value to indicate if item is container
+    // TODO Can this be derived?
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     // Change from previous schema. Boolean indicating whether item is open

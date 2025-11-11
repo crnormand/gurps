@@ -17,10 +17,12 @@ import { GcsSkill } from './schema/skill.js'
 import { SpellComponentSchema, SpellSchema } from '../item/data/spell.js'
 import { GcsSpell } from './schema/spell.js'
 import { EquipmentSchema, EquipmentComponentSchema } from '../item/data/equipment.js'
+import { GcsNote } from './schema/note.js'
 import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
+import { NoteV2Schema } from 'module/actor/data/note.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -66,6 +68,7 @@ class GcsImporter {
     this.#importItems()
     this.#importPointTotals()
     this.#importMiscValues()
+    this.#importNotes()
     this.#createStandardTrackers()
 
     console.log({
@@ -680,6 +683,38 @@ class GcsImporter {
       uses: equipment.uses ?? 0,
       maxuses: equipment.max_uses ?? 0,
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #importNotes() {
+    this.output.allNotes = []
+    if (this.input.notes) this.input.notes.forEach(note => this.#importNote(note, null))
+  }
+
+  /* ---------------------------------------- */
+
+  #importNote(gcs_note: GcsNote, containedBy: string | null): void {
+    const id = gcs_note.id ?? foundry.utils.randomID()
+    const note: DataModel.CreateData<NoteV2Schema> = {
+      id,
+      open: true,
+      containedBy,
+      markdown: gcs_note.markdown,
+      text: gcs_note.text,
+      reference: gcs_note.reference,
+      reference_highlight: gcs_note.reference_highlight,
+      calc: {
+        resolved_notes: gcs_note.calc?.resolved_notes ?? null,
+      },
+    }
+
+    gcs_note.childItems.forEach((child: GcsNote) => {
+      this.#importNote(child, id)
+    })
+
+    // @ts-expect-error
+    this.output.allNotes!.push(note)
   }
 
   /* ---------------------------------------- */

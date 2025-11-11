@@ -1980,8 +1980,15 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('n') ? 'note' : 'note_container'
     }
-    n.notes = i.calc?.resolved_text ?? i.text ?? ''
+
+    n.notes =
+      i.calc?.resolved_text ??
+      i.markdown ??
+      // (i.markdown ? foundry.appv1.sheets.JournalTextPageSheet._converter.makeHtml(i.markdown) : '') ??
+      i.text ??
+      ''
     n.uuid = i.id
+    n.markdown = !!i.markdown
     n.parentuuid = p
     n.pageRef(i.reference || '')
     n = this._substituteItemReplacements(n, i)

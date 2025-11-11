@@ -133,7 +133,13 @@
     <div class='simple_Notes'>
       <label>Notes</label>
       {{#each system.notes}}
-        <div>{{{gurpslinkbr this.notes}}}</div>
+        <div>
+          {{#if (truthy this.notes)}}
+            {{{gurpslinkbr this.notes}}}
+          {{else}}
+            {{{gurpslinkmd this.markdown}}}
+          {{/if}}
+        </div>
       {{/each}}
     </div>
   </div>

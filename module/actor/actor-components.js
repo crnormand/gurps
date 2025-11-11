@@ -955,6 +955,7 @@ export class Note extends _Base {
 
     this.notes = n || ''
     this.save = ue
+    this.markdown = false
   }
 }
 

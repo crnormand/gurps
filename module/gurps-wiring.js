@@ -129,9 +129,9 @@ export default class GurpsWiring {
     let element = event.currentTarget
     let action = element.dataset?.action // If we have already parsed
     if (!!action) action = JSON.parse(atou(action))
-    else action = parselink(element.innerText, desc).action
+    else action = parselink(element.innerText /*, desc */).action
 
-    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf, desc).action
+    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf /*, desc */).action
 
     if (options?.combined) {
       action.formula = multiplyDice(action.formula, options.combined)

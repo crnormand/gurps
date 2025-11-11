@@ -4,6 +4,7 @@ import { GcsAttribute } from './attribute.js'
 import { GcsBody } from './body.js'
 import { GcsElement } from './base.js'
 import { GcsEquipment } from './equipment.js'
+import { GcsNote } from './note.js'
 import { GcsSkill } from './skill.js'
 import { GcsSpell } from './spell.js'
 import { GcsTrait } from './trait.js'
@@ -175,6 +176,10 @@ const characterData = () => {
       new fields.EmbeddedDataField(GcsEquipment, { required: true, nullable: false }),
       { required: true, nullable: true }
     ),
+    notes: new fields.ArrayField(new fields.EmbeddedDataField(GcsNote, { required: true, nullable: false }), {
+      required: true,
+      nullable: true,
+    }),
     created_date: new fields.StringField({ required: true, nullable: false }),
     modified_date: new fields.StringField({ required: true, nullable: false }),
 

@@ -9,6 +9,7 @@ import {
   poolSchema,
   ReactionSchema,
 } from './character-components.js'
+import { NoteV2 } from './note.js'
 import fields = foundry.data.fields
 import { HitLocationEntryV2 } from './hit-location-entry.js'
 import { BaseItemModel } from '../../item/data/base.js'
@@ -45,6 +46,7 @@ import { SpellV1 } from '../../item/legacy/spell-adapter.js'
 import { CheckInfo } from '../types.js'
 import { roundTo } from '../../utilities/math.js'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
+import { NoteV1 } from '../legacy/note-adapter.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -275,8 +277,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  // @deprecated Legacy collection.
   get move() {
     return arrayToObject(this.moveV2, 5)
+  }
+
+  /* ---------------------------------------- */
+
+  // List of top-level notes (not contained in another note).
+  get notesV2() {
+    return this.allNotes.filter(item => item.containedBy === null)
+  }
+
+  get notes() {
+    return arrayToObject(
+      this.notesV2.map(item => new NoteV1(item)),
+      5
+    )
   }
 
   /* ---------------------------------------- */
@@ -1763,6 +1780,11 @@ const characterSchema = () => {
       required: true,
       nullable: false,
       default: [{ mode: 'GURPS.moveModeGround', basic: 5, enhanced: null, default: true }],
+    }),
+
+    allNotes: new fields.ArrayField(new fields.EmbeddedDataField(NoteV2, { required: true, nullable: false }), {
+      required: true,
+      nullable: false,
     }),
 
     // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
