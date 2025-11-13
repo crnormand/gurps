@@ -8,6 +8,8 @@ import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { BaseAction } from '../../action/base-action.js'
 import { reactionSchema } from '../../actor/data/character-components.js'
+import { IContainable, containableSchema } from '../../data/mixins/containable.js'
+import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -39,10 +41,10 @@ type ItemUseOptions = {
 
 /* ---------------------------------------- */
 
-abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelSchema> extends TypeDataModel<
-  Schema,
-  Item.Implementation
-> {
+abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelSchema>
+  extends TypeDataModel<Schema, Item.Implementation>
+  implements IContainable<Item.Implementation>
+{
   /* ---------------------------------------- */
 
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.SystemOfType<SubType>
@@ -99,6 +101,20 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   abstract get component(): ItemComponent
 
   /* ---------------------------------------- */
+  /*  IContainable Interface Implementation   */
+  /* ---------------------------------------- */
+
+  get id(): string {
+    return this.parent.id ?? ''
+  }
+
+  get container(): Item.Implementation | null {
+    return this.parent.actor?.items.get(this.containedBy ?? '') || null
+  }
+
+  get isContained(): boolean {
+    return ContainerUtils.isContained(this)
+  }
 
   get contents(): Item.Implementation[] {
     return (
@@ -108,8 +124,53 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     )
   }
 
+  get allContents(): Item.Implementation[] {
+    return ContainerUtils.getAllContents(this)
+  }
+
+  get containerDepth(): number {
+    return ContainerUtils.getContainerDepth(this)
+  }
+
+  /**
+   * Check if this container contains the specified item (directly or indirectly)
+   */
+  contains(item: Item.Implementation): boolean {
+    return ContainerUtils.contains(this, item)
+  }
+
+  get ancestors(): Item.Implementation[] {
+    return ContainerUtils.getAncestors(this)
+  }
+
+  /**
+   * Get all descendants with optional filtering
+   */
+  getDescendants(filter?: (item: Item.Implementation) => boolean): Item.Implementation[] {
+    return ContainerUtils.getDescendants(this, filter)
+  }
+
+  /**
+   * Check if this item is contained by (directly or indirectly) the specified container
+   */
+  isContainedBy(container: Item.Implementation): boolean {
+    return ContainerUtils.isContainedBy(this, container.system as IContainable<Item.Implementation>)
+  }
+
+  /**
+   * Toggle the open/collapsed state of this container
+   */
+  async toggleOpen(expandOnly: boolean = false): Promise<void> {
+    if (expandOnly && this.open) return
+
+    const newValue = !this.open
+
+    await this.parent.update({ 'system.open': newValue } as Item.UpdateData)
+  }
+
   /* ---------------------------------------- */
 
+  // TODO I'm not sure what this is trying to do.
   get children(): Item.Implementation[] {
     return this.contents.filter(e => this.metadata.childTypes.includes(e.type))
   }
@@ -122,35 +183,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  get allContents(): Item.Implementation[] {
-    const contents = this.contents
-    const otherContents = contents.flatMap(i => i.allContents || [])
-    return [...contents, ...otherContents]
-  }
-
-  /* ---------------------------------------- */
-
   get enabled(): boolean {
     return !this.disabled
-  }
-
-  /* ---------------------------------------- */
-
-  get container(): Item.Implementation | null {
-    return this.parent.actor?.items.get(this.containedBy ?? '') || null
-  }
-
-  /* ---------------------------------------- */
-
-  get isContained(): boolean {
-    return !!this.container
-  }
-
-  /* ---------------------------------------- */
-
-  get containerDepth(): number {
-    if (!this.isContained) return 0
-    return 1 + (this.container?.system as BaseItemModel).containerDepth
   }
 
   /* ---------------------------------------- */
@@ -243,12 +277,12 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
 const baseItemModelSchema = () => {
   return {
+    // Include containable functionality
+    ...containableSchema(),
+
     // Change from previous schema. Boolean value to indicate if item is container
     // TODO Can this be derived?
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-
-    // Change from previous schema. Boolean indicating whether item is open
-    open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
 
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
@@ -274,8 +308,6 @@ const baseItemModelSchema = () => {
       new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
       { required: true, nullable: false }
     ),
-
-    containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }
 type BaseItemModelSchema = ReturnType<typeof baseItemModelSchema>

@@ -71,6 +71,10 @@ class NoteV1 {
   get title(): string {
     return this.noteV2.title
   }
+
+  toggleOpen(expandOnly: boolean = false) {
+    return this.noteV2.toggleOpen(expandOnly)
+  }
 }
 
 export { NoteV1 }

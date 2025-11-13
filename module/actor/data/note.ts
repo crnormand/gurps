@@ -1,4 +1,6 @@
 import { CharacterModel } from './character.js'
+import { IContainable, containableSchema } from '../../data/mixins/containable.js'
+import { ContainerUtils } from '../../data/mixins/container-utils.js'
 import fields = foundry.data.fields
 
 /* ---------------------------------------- */
@@ -9,7 +11,7 @@ import fields = foundry.data.fields
  * Data model for character notes in GURPS V2 system.
  * Represents a single note that can contain markdown content and be organized hierarchically.
  */
-class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> {
+class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContainable<NoteV2> {
   static override defineSchema(): NoteV2Schema {
     return noteV2Schema()
   }
@@ -37,9 +39,9 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> {
 
   /* ---------------------------------------- */
 
-  get contents(): NoteV2[] {
-    return (this.parent! as CharacterModel).allNotes.filter(note => note.containedBy === this.id)
-  }
+  /* ---------------------------------------- */
+  /*  IContainable Interface Implementation   */
+  /* ---------------------------------------- */
 
   get container(): NoteV2 | null {
     return (this.parent! as CharacterModel).allNotes.find(note => note.id === this.containedBy) ?? null
@@ -49,19 +51,64 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> {
     return !!this.container
   }
 
+  get contents(): NoteV2[] {
+    return (this.parent! as CharacterModel).allNotes.filter(note => note.containedBy === this.id)
+  }
+
+  get allContents(): NoteV2[] {
+    return ContainerUtils.getAllContents(this)
+  }
+
   get containerDepth(): number {
-    if (!this.isContained) return 0
-    return 1 + this.container!.containerDepth
+    return ContainerUtils.getContainerDepth(this)
+  }
+
+  contains(note: NoteV2): boolean {
+    return ContainerUtils.contains(this, note)
+  }
+
+  get ancestors(): NoteV2[] {
+    return ContainerUtils.getAncestors(this)
+  }
+
+  getDescendants(filter?: (note: NoteV2) => boolean): NoteV2[] {
+    return ContainerUtils.getDescendants(this, filter)
+  }
+
+  isContainedBy(container: NoteV2): boolean {
+    return ContainerUtils.isContainedBy(this, container)
   }
 
   /* ---------------------------------------- */
 
   /**
-   * Check if this note is a top-level note (not contained by another note).
-   * @returns True if this is a top-level note
+   * Toggle the open/collapsed state of this note
+   * @param expandOnly - If true, only expand (don't collapse)
    */
-  isTopLevel(): boolean {
-    return this.containedBy === null
+  async toggleOpen(expandOnly: boolean = false): Promise<void> {
+    if (expandOnly && this.open) return
+
+    const newValue = !this.open
+
+    // Notes are embedded in the character, so we need to update through the character
+    const character = this.parent! as CharacterModel
+    const noteIndex = character.allNotes.findIndex(note => note.id === this.id)
+    if (noteIndex === -1) return
+
+    const notes = foundry.utils.deepClone(character._source.allNotes)
+    notes[noteIndex].open = newValue
+    await character.parent.update({ system: { allNotes: notes } })
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Legacy method for compatibility - delegates to toggleOpen
+   * @param expandOnly - If true, only expand (don't collapse)
+   * @deprecated Use toggleOpen instead
+   */
+  async toggleCollapsed(expandOnly: boolean = false): Promise<void> {
+    return this.toggleOpen(expandOnly)
   }
 
   /* ---------------------------------------- */
@@ -86,8 +133,7 @@ const noteV2Schema = () => {
     markdown: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: false, initial: '' }),
     reference_highlight: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
-    containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
+    ...containableSchema(),
     calc: new fields.SchemaField(
       {
         resolved_notes: new fields.StringField({ required: false, nullable: true, initial: null }),

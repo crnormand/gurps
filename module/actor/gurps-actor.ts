@@ -17,7 +17,6 @@ import { ModelCollection } from '../data/model-collection.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 
-import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import {
   arrayToObject,
   generateUniqueId,
@@ -47,6 +46,7 @@ import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/re
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
+import { ContainerUtils } from '../data/mixins/container-utils.js'
 
 function DamageModule() {
   return GURPS.module.Damage
@@ -1692,7 +1692,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async toggleExpand(path: string, expandOnly: boolean = false) {
     if (this.isNewActorType) {
       let obj = foundry.utils.getProperty(this, path) as any
-      if (obj instanceof TraitV1) obj.traitV2.toggleCollapsed(expandOnly)
+
+      // Check if object implements IContainable interface and call toggleOpen
+      if (ContainerUtils.isToggleable(obj)) await obj.toggleOpen(expandOnly)
     } else {
       // Legacy actor type
       let obj = foundry.utils.getProperty(this, path) as any
@@ -3821,8 +3823,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         let eqt = foundry.utils.getProperty(this, srckey) as Equipment
         if (!!eqt.itemid) {
           let item = this.items.get(eqt.itemid)
-          // @ts-expect-error
-          if (item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.parentuuid': puuid }])
+          if (item)
+            await this.updateEmbeddedDocuments('Item', [
+              { _id: item.id, 'system.eqt.parentuuid': puuid } as Item.UpdateData,
+            ])
         }
       }
     }

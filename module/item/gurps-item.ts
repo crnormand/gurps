@@ -2,6 +2,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { ModelCollection } from '../data/model-collection.js'
+import { IContainable } from '../data/mixins/containable.js'
 
 import { TraitComponent, TraitModel } from './data/trait.js'
 import { SkillComponent, SkillModel } from './data/skill.js'
@@ -12,7 +13,7 @@ import { recurselist } from '../../lib/utilities.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
-  implements ItemV1Interface
+  implements ItemV1Interface, IContainable<GurpsItemV2>
 {
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
@@ -28,6 +29,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   get isNewItemType(): boolean {
     return this.isOfType('equipmentV2', 'featureV2', 'skillV2', 'spellV2')
   }
+
   /* ---------------------------------------- */
 
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.OfType<SubType>
@@ -37,24 +39,65 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  get isContained(): boolean {
-    return this.modelV2.isContained
-  }
+  /* ---------------------------------------- */
+  /*  IContainable Interface Implementation   */
+  /* ---------------------------------------- */
 
   get containedBy(): string | null {
     return this.modelV2.containedBy ?? null
   }
 
-  /* ---------------------------------------- */
+  get open(): boolean | null {
+    return this.modelV2.open ?? null
+  }
 
-  get contents(): Item.Implementation[] {
+  get container(): GurpsItemV2 | null {
+    if (!this.modelV2.containedBy) return null
+    return (this.parent?.items.get(this.modelV2.containedBy) as GurpsItemV2) || null
+  }
+
+  get isContained(): boolean {
+    return this.modelV2.isContained
+  }
+
+  get contents(): GurpsItemV2[] {
     return this.modelV2.contents
   }
 
-  /* ---------------------------------------- */
-
-  get allContents(): Item.Implementation[] {
+  get allContents(): GurpsItemV2[] {
     return this.modelV2.allContents
+  }
+
+  get containerDepth(): number {
+    return this.modelV2.containerDepth
+  }
+
+  /**
+   * Check if this container contains the specified item.
+   */
+  contains(item: GurpsItemV2): boolean {
+    return this.modelV2.contains(item)
+  }
+
+  get ancestors(): GurpsItemV2[] {
+    return this.modelV2.ancestors
+  }
+
+  getDescendants(filter?: (item: GurpsItemV2) => boolean): GurpsItemV2[] {
+    return this.modelV2.getDescendants(filter)
+  }
+
+  isContainedBy(container: GurpsItemV2): boolean {
+    return this.modelV2.isContainedBy(container)
+  }
+
+  /**
+   * Toggle the open/collapsed state of this container.
+   */
+  async toggleOpen(expandOnly: boolean = false): Promise<void> {
+    const newValue = !this.modelV2.open
+    if (expandOnly && !newValue) return
+    await this.update({ 'system.open': newValue } as Item.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -283,7 +326,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  get contains() {
+  get sortedContents() {
     return this.contents.sort((a, b) => a.sort - b.sort) ?? []
   }
 
@@ -323,6 +366,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     if (expandOnly && !newValue) return
     this.update({ 'system.open': newValue } as Item.UpdateData)
   }
+
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /* ItemV1Interface Implementation           */

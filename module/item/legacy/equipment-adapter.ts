@@ -44,9 +44,9 @@ class EquipmentV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'equipmentV2'>[] = this.equipmentV2.contains
-      .sort((a, b) => a.sort - b.sort)
-      .map(it => it as GurpsItemV2<'equipmentV2'>)
+    const containedItems: GurpsItemV2<'equipmentV2'>[] = this.equipmentV2.sortedContents.map(
+      it => it as GurpsItemV2<'equipmentV2'>
+    )
     this._contains = arrayToObject(
       containedItems?.map(item => new EquipmentV1(item)),
       5
@@ -180,6 +180,10 @@ class EquipmentV1 {
 
   get weightsum(): string {
     return this.equipmentV2.eqt!.weightsum
+  }
+
+  toggleOpen(expandOnly: boolean = false) {
+    return this.equipmentV2.toggleOpen(expandOnly)
   }
 }
 

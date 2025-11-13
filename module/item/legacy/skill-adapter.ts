@@ -37,9 +37,9 @@ class SkillV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'skillV2'>[] = this.skillV2.contains
-      .sort((a, b) => a.sort - b.sort)
-      .map(item => item as GurpsItemV2<'skillV2'>)
+    const containedItems: GurpsItemV2<'skillV2'>[] = this.skillV2.sortedContents.map(
+      item => item as GurpsItemV2<'skillV2'>
+    )
     this._contains = arrayToObject(
       containedItems?.map(item => new SkillV1(item)),
       5
@@ -153,6 +153,10 @@ class SkillV1 {
 
   get uuid(): string {
     return this.skillV2.uuid
+  }
+
+  toggleOpen(expandOnly: boolean = false) {
+    return this.skillV2.toggleOpen(expandOnly)
   }
 }
 export { SkillV1 }

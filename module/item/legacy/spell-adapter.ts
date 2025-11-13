@@ -43,9 +43,9 @@ class SpellV1 {
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'spellV2'>[] = this.spellV2.contains
-      .sort((a, b) => a.sort - b.sort)
-      .map(item => item as GurpsItemV2<'spellV2'>)
+    const containedItems: GurpsItemV2<'spellV2'>[] = this.spellV2.sortedContents.map(
+      item => item as GurpsItemV2<'spellV2'>
+    )
     this._contains = arrayToObject(
       containedItems?.map(item => new SpellV1(item)),
       5
@@ -181,6 +181,10 @@ class SpellV1 {
 
   get uuid(): string {
     return this.spellV2.uuid
+  }
+
+  toggleOpen(expandOnly: boolean = false) {
+    return this.spellV2.toggleOpen(expandOnly)
   }
 }
 

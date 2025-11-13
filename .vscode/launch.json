@@ -7,9 +7,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Jest: gurps-actor.test.ts",
+      "name": "Debug Jest: container-utils.test.ts",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-      "args": ["--runInBand", "--config=jest.config.mjs", "test/gurps-actor.test.ts"],
+      "args": ["--runInBand", "--config=jest.config.mjs", "test/container-utils.test.ts"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
