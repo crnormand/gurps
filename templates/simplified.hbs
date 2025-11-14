@@ -134,11 +134,7 @@
       <label>Notes</label>
       {{#each system.notes}}
         <div>
-          {{#if (truthy this.notes)}}
-            {{{gurpslinkbr this.notes}}}
-          {{else}}
-            {{{gurpslinkmd this.markdown}}}
-          {{/if}}
+          {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
         </div>
       {{/each}}
     </div>

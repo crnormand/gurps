@@ -35,11 +35,7 @@
           data-key="system.notes.{{@key}}">
           {{#if (notEmpty contains)}}<i class="fas fa-caret-down expandcollapseicon"></i>{{/if}} {{#if (notEmpty
         collapsed)}}<i class="fas fa-caret-right expandcollapseicon"></i>{{/if}}
-          {{#if notes}}
-            {{{gurpslinkbr notes}}}
-          {{else}}
-            {{{gurpslinkmd markdown}}}
-          {{/if}}
+          {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
         </div>
         <div class="ref">{{{pdflinkext this}}}</div>
       {{/listeqt}}

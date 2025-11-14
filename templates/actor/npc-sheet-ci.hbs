@@ -155,11 +155,7 @@
         <div class="npc-input-nt-val" style='--of:auto'>
           {{#listeqt system.notes}}
             <div class="desc indent0 dblclkedit" data-key="system.notes.{{@key}}">
-              {{#if (truthy this.notes)}}
-                {{{gurpslinkbr this.notes}}}
-              {{else}}
-                {{{gurpslinkmd this.markdown}}}
-              {{/if}}
+              {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
             </div>
           {{/listeqt}}
         </div>

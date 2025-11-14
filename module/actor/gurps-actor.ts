@@ -47,6 +47,7 @@ import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ContainerUtils } from '../data/mixins/container-utils.js'
+import { NoteV1 } from './legacy/note-adapter.js'
 
 function DamageModule() {
   return GURPS.module.Damage
@@ -1831,6 +1832,55 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async deleteItem(item: GurpsItemV2) {
     for (const child of item.contents) await this.deleteItem(child)
     await this.deleteEmbeddedDocuments('Item', [item.id!])
+  }
+
+  /* ---------------------------------------- */
+
+  async deleteNote(path: string) {
+    if (this.isNewActorType) {
+      const note = foundry.utils.getProperty(this, path) as NoteV1
+      const item = note.noteV2
+      const array = foundry.utils.deepClone(this.modelV2._source.allNotes)
+
+      for (const child of item.allContents) {
+        const index = array.findIndex(n => n.id === child.id)
+        if (index !== -1) array.splice(index, 1)
+      }
+      array.splice(
+        array.findIndex(it => it.id === item.id),
+        1
+      )
+
+      await this.update({ 'system.allNotes': array } as Actor.UpdateData)
+    } else {
+      // Legacy actor type
+      GURPS.removeKey(this, path)
+    }
+  }
+
+  async editItem(path: string, obj: any) {
+    if (this.isNewActorType) {
+      const note = foundry.utils.getProperty(this, path) as NoteV1
+      const item = note.noteV2
+      const array = foundry.utils.deepClone(this.system._source.allNotes)
+      const index = array.findIndex(n => n.id === item.id)
+      if (index !== -1) {
+        array[index] = { ...array[index], ...obj }
+        await this.update({ 'system.allNotes': array } as Actor.UpdateData)
+      }
+    } else {
+      if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
+      await this.removeModEffectFor(path)
+      await this.internalUpdate({ [path]: obj })
+      const commit = this.applyItemModEffects({}, true)
+      if (commit) {
+        await this.internalUpdate(commit)
+        if (canvas!.tokens!.controlled.length > 0) {
+          // @ts-expect-error
+          await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
+        }
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -4482,6 +4532,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       this.#translateHitLocationsV2(changes)
       await this.#translateAdsData(changes)
       this.#translateMoveData(changes)
+      this.#translateNoteData(changes)
       console.debug('GURPS | Actor._preUpdate translated', { changes, options, user })
     }
   }
@@ -4675,6 +4726,76 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       // @ts-expect-error
       data['system.moveV2'] = array
+    }
+  }
+
+  /**
+   * system.notes.00000.contains.00000
+   *
+   * @param data
+   * @returns
+   */
+  #translateNoteData(data: Actor.UpdateData) {
+    // Check for deletion pattern: { system: { '-=notes': null } }
+    const deleteKey = data.system && typeof data.system === 'object' && '-=notes' in data.system
+
+    // Check for complete array replacement: {system: { notes: [...] } }
+    const nestedInsertKey =
+      data.system && typeof data.system === 'object' && 'notes' in data.system && Array.isArray(data.system.notes)
+
+    // Check for individual element updates: { system: { notes: { '00000': { title': 'New Title' } } } }
+    const nestedChangeKey =
+      data.system &&
+      typeof data.system === 'object' &&
+      'notes' in data.system &&
+      typeof data.system.notes === 'object' &&
+      !Array.isArray(data.system.notes)
+
+    if (!nestedInsertKey && !nestedChangeKey && !deleteKey) return
+
+    console.warn(
+      'Translating legacy notes data',
+      Object.keys(data).filter(key => key.startsWith('system.notes') || key === 'system.-=notes')
+    )
+
+    // Handle nested deletion pattern: { system: { '-=notes': null } }
+    if (deleteKey) {
+      // @ts-expect-error
+      data.system.allNotes = []
+      // @ts-expect-error
+      delete data.system['-=notes']
+    }
+
+    // For each key that is inserting the entire array, add a new key named "system.notesV2" with the same value.
+    if (nestedInsertKey) {
+      // @ts-expect-error
+      data.system.allNotes = objectToArray(data.system.notes)
+      // @ts-expect-error
+      delete data.system.notes
+    }
+
+    if (nestedChangeKey) {
+      const array: any[] = foundry.utils.deepClone(this.modelV2._source.allNotes) ?? []
+      // @ts-expect-error
+      const changes = Object.keys(data.system.notes) ?? []
+
+      for (const change of changes) {
+        const index = parseInt(change)
+        // @ts-expect-error
+        const fields = data.system.notes[change]
+
+        for (const field of Object.keys(fields)) {
+          array[index][field] = fields[field]
+        }
+
+        // @ts-expect-error
+        delete data.system.notes[change]
+      }
+
+      // @ts-expect-error
+      data.system.allNotes = array
+      // @ts-expect-error
+      delete data.system.notes
     }
   }
 }

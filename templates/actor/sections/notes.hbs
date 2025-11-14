@@ -30,14 +30,9 @@
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               <div class='tooltip gga-manual'>
-                {{debug this.notes }}
                 {{#if (or this.notes this.markdown)}}
                   {{#if this.title}}<b>{{{gurpslinkbr this.title}}}</b> {{/if}}
-                  {{#if this.notes}}
-                    {{{gurpslinkbr this.notes}}}
-                  {{else}}
-                    {{{gurpslinkmd this.markdown}}}
-                  {{/if}}
+                  {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
                 {{/if}}
               </div>
               <div>

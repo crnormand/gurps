@@ -599,7 +599,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+          this.actor.deleteNote(e[0].dataset.key)
+          // GURPS.removeKey(this.actor, e[0].dataset.key)
         },
       },
     ]
@@ -1349,7 +1350,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       obj,
       'systems/gurps/templates/note-editor-popup.hbs',
       'Note Editor',
-      ['pageref', 'notes', 'title'],
+      ['pageref', 'notes', 'markdown', 'title'],
       [],
       730
     )
@@ -1365,7 +1366,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              strprops.forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              strprops.forEach(a => (obj[a] = html.find(`.${a}`)?.val() || ''))
               numprops.forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
 
               let q = html.find('.quick-roll')
@@ -1377,20 +1378,22 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
 
-              if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
-              await actor.removeModEffectFor(path)
-              await actor.internalUpdate({ [path]: obj })
-              const commit = actor.applyItemModEffects({}, true)
-              if (commit) {
-                await actor.internalUpdate(commit)
-                if (canvas.tokens.controlled.length > 0) {
-                  await canvas.tokens.controlled[0].document.setFlag(
-                    'gurps',
-                    'lastUpdate',
-                    new Date().getTime().toString()
-                  )
-                }
-              }
+              actor.editItem(path, obj)
+
+              // if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
+              // await actor.removeModEffectFor(path)
+              // await actor.internalUpdate({ [path]: obj })
+              // const commit = actor.applyItemModEffects({}, true)
+              // if (commit) {
+              //   await actor.internalUpdate(commit)
+              //   if (canvas.tokens.controlled.length > 0) {
+              //     await canvas.tokens.controlled[0].document.setFlag(
+              //       'gurps',
+              //       'lastUpdate',
+              //       new Date().getTime().toString()
+              //     )
+              //   }
+              // }
             },
           },
         },
