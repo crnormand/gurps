@@ -13,8 +13,13 @@
         <div style="display: inline-flex; flex-flow: column nowrap; width: 100%;">
           <input name="system.notes.{{@key}}.title" type="text" value="{{this.title}}" title="Title"
             placeholder="Title">
+          {{#if this.notes}}
           <textarea name='system.notes.{{@key}}.notes' class='gcs-input-ta' type='text'
             style='height:120px !important'>{{this.notes}}</textarea>
+          {{else}}
+          <textarea name='system.notes.{{@key}}.markdown' class='gcs-input-ta' type='text'
+            style='height:120px !important'>{{this.markdown}}</textarea>
+          {{/if}}
         </div>
       </div>
       <div class='ref' data-key='system.notes.{{@key}}'>

@@ -133,6 +133,7 @@ const noteV2Schema = () => {
     markdown: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: false, initial: '' }),
     reference_highlight: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    save: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     ...containableSchema(),
     calc: new fields.SchemaField(
       {

@@ -44,6 +44,10 @@ class NoteV1 {
     return this.noteV2.id
   }
 
+  get title(): string {
+    return this.noteV2.title
+  }
+
   get contains(): Record<string, NoteV1> {
     return this.noteV2.open ? this._contains : {}
   }
@@ -68,12 +72,34 @@ class NoteV1 {
     return this.noteV2.reference
   }
 
-  get title(): string {
-    return this.noteV2.title
-  }
-
   toggleOpen(expandOnly: boolean = false) {
     return this.noteV2.toggleOpen(expandOnly)
+  }
+
+  update(noteV2: NoteV2) {
+    noteV2.title = this.title
+    noteV2.reference = this.pageref
+    noteV2.markdown = this.markdown
+    noteV2.text = this.notes
+  }
+
+  updateProperty(noteV2: NoteV2, property: string) {
+    switch (property) {
+      case 'title':
+        noteV2.title = this.title
+        break
+      case 'pageref':
+        noteV2.reference = this.pageref
+        break
+      case 'markdown':
+        noteV2.markdown = this.markdown
+        break
+      case 'notes':
+        noteV2.text = this.notes
+        break
+      default:
+        console.warn(`NoteV1.updateProperty: Unknown property "${property}"`)
+    }
   }
 }
 

@@ -74,6 +74,13 @@ module/
 - **Constants**: SCREAMING_SNAKE_CASE (`SETTING_USE_FOUNDRY_ITEMS`)
 - **Foundry Extensions**: Prefix with `Gurps` (`GurpsToken`, `GurpsTokenHUD`)
 
+#### Commenting Standards
+
+- Use JSDoc for public APIs and complex functions
+- Inline comments for non-obvious logic
+- Comments begin with a capital letter and end with a period or question mark.
+- Maintain existing comment styles in legacy code
+
 #### Foundry Document Patterns
 
 ##### Document Extensions

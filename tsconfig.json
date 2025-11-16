@@ -54,6 +54,7 @@
     "dev-utilities",
     "scripts",
     "jest.config.mjs",
+    "test/jest.setup.js",
     "tsconfig.json",
     "package-lock.json",
     "package.json",

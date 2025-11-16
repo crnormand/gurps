@@ -45,6 +45,7 @@ import { HitLocationEntryV1 } from './legacy/hit-location-entryv1.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
+import { parseItemKey } from '../utilities/object-utils.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { NoteV1 } from './legacy/note-adapter.js'
@@ -2100,8 +2101,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     targetkey = this.#convertLegacyItemKey(targetkey)
 
     // Parse the source and target keys.
-    let [sourceCollection, sourceIndex, sourcePath] = this.#parseItemKey(sourcekey)
-    let [targetCollection, targetIndex, targetPath] = this.#parseItemKey(targetkey)
+    let [sourceCollection, sourceIndex, sourcePath] = parseItemKey(sourcekey)
+    let [targetCollection, targetIndex, targetPath] = parseItemKey(targetkey)
 
     const allowed =
       targetCollection.startsWith('system.equipmentV2') && sourceCollection.startsWith('system.equipmentV2')
@@ -2246,25 +2247,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   /**
-   * @param key such as 'system.equipment.carried.00000.contains.00123'
+   * @param key such as 'system.equipment.carried.00000.contains.00123'. May also parse keys ending with a property,
+   *  such as 'system.equipment.carried.00000.contains.00123.weight'.
    * @returns [
    *  string - primary component collection, such as 'system.equipment.carried',
    *  number - index (as a number) of the final segment of the path (such as 123 in the example),
    *  path - path within the collection, such as '00000.contains'.
+   *  property - final property if the key ends with a property rather than an index, otherwise undefined.
    * ]
    */
-  #parseItemKey(key: string): [string, number | undefined, string] {
-    const components = key.split('.')
-
-    let primaryComponentPath = [components[0], components[1]].join('.')
-    if (primaryComponentPath === 'system.equipmentV2') primaryComponentPath += '.' + components[2]
-
-    const index = components[components.length - 1].match(/^\d+$/) ? parseInt(components.pop() ?? '0') : 0
-    let path: string | null = components.join('.').replace(primaryComponentPath, '').replace(/^\./, '')
-
-    return [primaryComponentPath, index, path]
-  }
-
   /**
    * Ask the user if they want to split the quantity of the item and put some in targetkey, leaving the rest in srckey.
    * @param srckey
@@ -4614,49 +4605,40 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    *
    * We are either deleting the entire array or inserting the entire array. Updates are handled directly in the Item.
    */
-  async #translateAdsData(data: Actor.UpdateData) {
-    const deleteKey = Object.keys(data).includes('system.-=ads')
-    const insertKey = Object.keys(data).includes('system.ads')
-    if (!deleteKey && !insertKey) return
+  async #translateAdsData(data: any) {
+    if (!data.system || typeof data.system !== 'object') return
+    if (!('ads' in data.system) && !('-=ads' in data.system)) return
 
-    console.warn('Translating legacy ads data', { data })
+    // Check for deletion pattern: { system: { '-=ads': null } }
+    const deleteKey = '-=ads' in data.system
+    if (deleteKey) {
+      const featureIds = this.items.filter(item => item.isOfType('featureV2')).map(item => item.id!)
+      await this.deleteEmbeddedDocuments('Item', featureIds)
 
-    // Handle delete of whole array:
-    Object.keys(data)
-      .filter(key => key === 'system.-=ads')
-      .forEach(key => {
-        // Delete all embedded Items of type "featureV2".
-        const features = this.items.filter(item => item.isOfType('featureV2'))
-        for (const feature of features) {
-          feature.delete()
-        }
-        delete data[key as keyof typeof data]
-      })
+      delete data.system['-=ads']
+      // If system object is now empty, clean it up
+      if (Object.keys(data.system).length === 0) {
+        delete data.system
+      }
+    }
 
-    // Handle insertion of the whole array:
-    const regex = /^system\.ads$/
-    const changes =
-      Object.keys(data)
-        .filter(key => key.match(regex))
-        .sort() ?? []
-
-    const array = this.items.filter(item => item.isOfType('featureV2'))
-    if (array.length > 0) console.warn(`Existing array elements unexpected:`, { array, changes })
-
-    for (const key of changes) {
-      const record = data[key as keyof typeof data]!
+    // Check for insertion/update: { system: { ads: {...} } }
+    const insertKey = 'ads' in data.system && typeof data.system.ads === 'object'
+    if (insertKey) {
+      const record = data.system.ads
       for (const value of Object.values(record)) {
-        const trait = value.traitV2
+        const trait = (value as any).traitV2
 
         // Create the item and store it on the character.
         const newItem = await Item.create(trait, { parent: this })
         console.log(`Created new featureV2 Item for legacy ad:`, { trait, newItem })
       }
-      delete data[key as keyof typeof data]
+      delete data.system.ads
+      // If system object is now empty, clean it up
+      if (Object.keys(data.system).length === 0) {
+        delete data.system
+      }
     }
-
-    // @ts-expect-error
-    data['system.ads'] = array
   }
 
   /**
@@ -4677,55 +4659,57 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @param data
    * @returns
    */
-  #translateMoveData(data: Actor.UpdateData) {
-    const deleteKey = Object.keys(data).includes('system.-=move')
-    const insertKey = Object.keys(data).includes('system.move')
-    // A "changeKey" is any key that starts with "system.move." such as "system.move.0.default"
-    const changeKey = Object.keys(data).find(key => key.startsWith('system.move.'))
-    if (!deleteKey && !insertKey && !changeKey) return
+  #translateMoveData(data: any) {
+    if (!data.system || typeof data.system !== 'object') return
+    if (!('move' in data.system) && !('-=move' in data.system)) return
 
-    console.warn(
-      'Translating legacy move data',
-      Object.keys(data).filter(key => key.startsWith('system.move') || key === 'system.-=move')
-    )
+    // Check for deletion pattern: { system: { '-=move': null } }
+    const deleteKey = '-=move' in data.system
+    if (deleteKey) {
+      data.system.moveV2 = []
+      delete data.system['-=move']
+    }
 
-    // For each key that is deleting the entire array, add a new key named "system.-=moveV2" with an empty array.
-    Object.keys(data)
-      .filter(key => key === 'system.-=move')
-      .forEach(key => {
-        // @ts-expect-error
-        data['system.moveV2'] = []
-        delete data[key as keyof typeof data]
-      })
-
-    // For each key that is inserting the entire array, add a new key named "system.moveV2" with the same value.
-    Object.keys(data)
-      .filter(key => key === 'system.move')
-      .forEach(key => {
-        // @ts-expect-error
-        data['system.moveV2'] = objectToArray(data[key as keyof typeof data])
-        delete data[key as keyof typeof data]
-      })
-
-    // For each key that is changing a property of an array element, such as "system.move.0.default", copy the entire
-    // array to "system.moveV2" and apply the change.
+    const changeKey = 'move' in data.system && typeof data.system.move === 'object'
     if (changeKey) {
       const array: any[] = foundry.utils.deepClone(this.modelV2._source.moveV2) ?? []
-      const changes = Object.keys(data).filter(key => key.startsWith('system.move.')) ?? []
 
-      for (const change of changes) {
-        const [index, field] = change.split('.').slice(2)
-        if (!field) {
-          array[parseInt(index)] = data[change as keyof typeof data]
+      // Get the list of property keys of system.move -- these are indices into system.moveV2.
+      const keys = Object.keys(data.system.move).sort()
+      for (const key of keys) {
+        const index = parseInt(key)
+        const moveV1 = foundry.utils.getProperty(data, `system.move.${key}`) as any
+
+        if (array.length <= index) {
+          const moveV2 = {}
+          this.#updateMove2V2FromLegacyMove(moveV2, moveV1)
+          // insert at the correct index
+          array.splice(index, 0, moveV2)
         } else {
-          array[parseInt(index)][field] = data[change as keyof typeof data]
+          this.#updateMove2V2FromLegacyMove(array[index], moveV1)
         }
-
-        delete data[change as keyof typeof data]
+        delete data.system.move[key]
       }
 
-      // @ts-expect-error
-      data['system.moveV2'] = array
+      data.system.moveV2 = array
+      delete data.system.move
+    }
+  }
+
+  #updateMove2V2FromLegacyMove(moveV2: any, changes: any) {
+    const keys = Object.keys(changes)
+    for (const key of keys) {
+      switch (key) {
+        case 'basic':
+        case 'enhanced':
+        case 'mode':
+        case 'default':
+          moveV2[key] = changes[key]
+          break
+        default:
+          console.warn(`Unknown move property in legacy data: ${key}`)
+          break
+      }
     }
   }
 
@@ -4735,67 +4719,78 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @param data
    * @returns
    */
-  #translateNoteData(data: Actor.UpdateData) {
+  #translateNoteData(data: any) {
+    if (!data.system || typeof data.system !== 'object') return
+    if (!('notes' in data.system) && !('-=notes' in data.system)) return
+
     // Check for deletion pattern: { system: { '-=notes': null } }
-    const deleteKey = data.system && typeof data.system === 'object' && '-=notes' in data.system
-
-    // Check for complete array replacement: {system: { notes: [...] } }
-    const nestedInsertKey =
-      data.system && typeof data.system === 'object' && 'notes' in data.system && Array.isArray(data.system.notes)
-
-    // Check for individual element updates: { system: { notes: { '00000': { title': 'New Title' } } } }
-    const nestedChangeKey =
-      data.system &&
-      typeof data.system === 'object' &&
-      'notes' in data.system &&
-      typeof data.system.notes === 'object' &&
-      !Array.isArray(data.system.notes)
-
-    if (!nestedInsertKey && !nestedChangeKey && !deleteKey) return
-
-    console.warn(
-      'Translating legacy notes data',
-      Object.keys(data).filter(key => key.startsWith('system.notes') || key === 'system.-=notes')
-    )
-
-    // Handle nested deletion pattern: { system: { '-=notes': null } }
+    const deleteKey = '-=notes' in data.system
     if (deleteKey) {
-      // @ts-expect-error
       data.system.allNotes = []
-      // @ts-expect-error
       delete data.system['-=notes']
     }
 
-    // For each key that is inserting the entire array, add a new key named "system.notesV2" with the same value.
-    if (nestedInsertKey) {
-      // @ts-expect-error
-      data.system.allNotes = objectToArray(data.system.notes)
-      // @ts-expect-error
-      delete data.system.notes
-    }
-
-    if (nestedChangeKey) {
+    // Check for individual element updates: { system: { notes: { '00000': { title': 'New Title' } } } }
+    const changeKey = 'notes' in data.system && typeof data.system.notes === 'object'
+    if (changeKey) {
       const array: any[] = foundry.utils.deepClone(this.modelV2._source.allNotes) ?? []
-      // @ts-expect-error
-      const changes = Object.keys(data.system.notes) ?? []
+      const keys = Object.keys(foundry.utils.flattenObject(data as object))
+      const changes = keys.filter(it => it.startsWith('system.notes.'))
+
+      const processedChanges: string[] = []
 
       for (const change of changes) {
-        const index = parseInt(change)
-        // @ts-expect-error
-        const fields = data.system.notes[change]
+        // If change ends in a number like '000123', we're updating the whole object; if it ends in a property name,
+        // we're updating a property of the object.
+        const [_, __, ___, property] = parseItemKey(change)
+        const pathToObject = property ? change.replace(new RegExp(`\\.${property}$`), '') : change
 
-        for (const field of Object.keys(fields)) {
-          array[index][field] = fields[field]
+        if (processedChanges.includes(pathToObject)) {
+          delete data[change]
+          continue
         }
 
-        // @ts-expect-error
-        delete data.system.notes[change]
+        // Does the note already exist?
+        const notev1 = foundry.utils.getProperty(this, pathToObject) as any
+        if (notev1) {
+          // Existing note.
+          const arrIndex = array.findIndex(it => it.id === notev1.noteV2.id)
+          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
+          this.#updateNoteV2FromLegacyNote(array[arrIndex], newData)
+          delete data[change]
+          processedChanges.push(pathToObject)
+          continue
+        } else {
+          // New note.
+          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
+          const notev2: any = {}
+          this.#updateNoteV2FromLegacyNote(notev2, newData)
+          array.push(notev2)
+          delete data[change]
+          processedChanges.push(pathToObject)
+          continue
+        }
       }
 
-      // @ts-expect-error
       data.system.allNotes = array
-      // @ts-expect-error
       delete data.system.notes
+    }
+  }
+
+  #updateNoteV2FromLegacyNote(notev2: any, changes: any) {
+    const keys = Object.keys(changes)
+    for (const key of keys) {
+      switch (key) {
+        case 'pageref':
+          notev2.reference = changes[key]
+          break
+        case 'notes':
+          notev2.text = changes[key]
+          break
+        default:
+          notev2[key] = changes[key]
+          break
+      }
     }
   }
 }

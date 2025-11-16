@@ -1,11 +1,162 @@
 global.foundry = {
   abstract: {
     // @ts-ignore
-    DataModel: class {},
+    DataModel: class {
+      constructor(data, options) {
+        Object.assign(this, data)
+      }
+    },
+    // @ts-ignore
+    TypeDataModel: class {
+      constructor(data, options) {
+        Object.assign(this, data)
+      }
+
+      static defineSchema() {
+        return {}
+      }
+
+      static LOCALIZATION_PREFIXES = []
+    },
+    // @ts-ignore
+    Document: class {
+      constructor(data, options) {
+        this._id = data?._id || 'TEST_ID'
+        Object.assign(this, data)
+      }
+    },
+  },
+  documents: {
+    // @ts-ignore
+    BaseActor: class {
+      constructor(data = {}, options = {}) {
+        this.name = data.name || ''
+        this.type = data.type || 'base'
+        this.items = []
+        this.effects = []
+        this.system = {}
+        this.id = data.id || 'ACTOR_ID'
+        this._id = data._id || this.id
+      }
+    },
+    // @ts-ignore
+    BaseItem: class {
+      constructor(data = {}, options = {}) {
+        this.name = data.name || ''
+        this.type = data.type || 'base'
+        this.system = data.system || {}
+        this.id = data.id || 'ITEM_ID'
+        this._id = data._id || this.id
+        this.parent = options?.parent || null
+      }
+
+      async delete() {
+        return this
+      }
+
+      async update(data) {
+        Object.assign(this, data)
+        return this
+      }
+
+      isOfType(...types) {
+        return types.includes(this.type)
+      }
+    },
   },
   // @ts-ignore
-  data: {},
+  data: {
+    // @ts-ignore
+    fields: {
+      // @ts-ignore
+      TypedSchemaField: class TypedSchemaField {
+        constructor(types, options) {
+          this.types = types
+          this.options = options
+        }
+
+        _validateSpecial(value) {
+          return true
+        }
+      },
+      // @ts-ignore
+      TypedObjectField: class TypedObjectField {
+        constructor(element, options) {
+          this.element = element
+          this.options = options
+        }
+      },
+      // @ts-ignore
+      SchemaField: class SchemaField {
+        constructor(schema, options) {
+          this.schema = schema
+          this.options = options
+        }
+      },
+      // @ts-ignore
+      StringField: class StringField {
+        constructor(options) {
+          this.options = options
+        }
+      },
+      // @ts-ignore
+      NumberField: class NumberField {
+        constructor(options) {
+          this.options = options
+        }
+      },
+      // @ts-ignore
+      BooleanField: class BooleanField {
+        constructor(options) {
+          this.options = options
+        }
+      },
+      // @ts-ignore
+      ArrayField: class ArrayField {
+        constructor(element, options) {
+          this.element = element
+          this.options = options
+        }
+      },
+      // @ts-ignore
+      ObjectField: class ObjectField {
+        constructor(options) {
+          this.options = options
+        }
+      },
+    },
+  },
   utils: {
+    // Mock Collection class
+    // @ts-ignore
+    Collection: class Collection extends Map {
+      constructor(entries) {
+        super(entries)
+      }
+
+      get(key) {
+        return super.get(key)
+      }
+
+      set(key, value) {
+        return super.set(key, value)
+      }
+
+      find(predicate) {
+        for (const [key, value] of this.entries()) {
+          if (predicate(value)) return value
+        }
+        return undefined
+      }
+
+      filter(predicate) {
+        const result = []
+        for (const [key, value] of this.entries()) {
+          if (predicate(value)) result.push(value)
+        }
+        return result
+      }
+    },
     // Minimal getProperty implementation for tests
     getProperty: (obj, path) => {
       if (!obj || !path) return undefined
@@ -33,6 +184,60 @@ global.foundry = {
       // @ts-ignore
       return global.foundry.utils.deepClone(obj)
     },
+    flattenObject: (obj, _d = 0) => {
+      const flat = {}
+      if (_d > 100) {
+        throw new Error('Maximum depth exceeded')
+      }
+      for (const [k, v] of Object.entries(obj)) {
+        const t = foundry.utils.getType(v)
+        if (t === 'Object') {
+          if (foundry.utils.isEmpty(v)) flat[k] = v
+          const inner = foundry.utils.flattenObject(v, _d + 1)
+          for (const [ik, iv] of Object.entries(inner)) {
+            flat[`${k}.${ik}`] = iv
+          }
+        } else flat[k] = v
+      }
+      return flat
+    },
+    getType: variable => {
+      // Primitive types, handled with simple typeof check
+      const typeOf = typeof variable
+      if (typeOf !== 'object') return typeOf
+
+      // Special cases of object
+      if (variable === null) return 'null'
+      if (!variable.constructor) return 'Object' // Object with the null prototype.
+      if (variable.constructor === Object) return 'Object' // Simple objects
+
+      // Match prototype instances
+      for (const [cls, type] of typePrototypes) {
+        if (variable instanceof cls) return type
+      }
+      if ('HTMLElement' in globalThis && variable instanceof globalThis.HTMLElement) return 'HTMLElement'
+
+      // Unknown Object type
+      return 'Unknown'
+    },
+    isEmpty: value => {
+      const t = foundry.utils.getType(value)
+      switch (t) {
+        case 'undefined':
+          return true
+        case 'null':
+          return true
+        case 'Array':
+          return !value.length
+        case 'Object':
+          return !Object.keys(value).length
+        case 'Set':
+        case 'Map':
+          return !value.size
+        default:
+          return false
+      }
+    },
   },
   appv1: {
     sheets: {
@@ -46,6 +251,12 @@ global.foundry = {
   applications: {
     api: {
       // @ts-ignore
+      Application: class {
+        constructor(options) {
+          this.options = options
+        }
+      },
+      // @ts-ignore
       ApplicationV2: class {},
       // @ts-ignore
       HandlebarsApplicationMixin: Base => class extends Base {},
@@ -56,6 +267,10 @@ global.foundry = {
     },
   },
 }
+
+// Add Item and Actor to documents namespace for generic use
+foundry.documents.Item = foundry.documents.BaseItem
+foundry.documents.Actor = foundry.documents.BaseActor
 
 global.canvas = {
   // @ts-ignore
@@ -104,14 +319,11 @@ global.Hooks = {
 
 // Provide a minimal Actor base so classes can extend it in tests
 // @ts-ignore
-global.Actor = class {
-  constructor(data = {}, _options = {}) {
-    this.name = data.name || ''
-    this.type = data.type || 'base'
-    this.items = []
+global.Actor = class extends foundry.documents.BaseActor {
+  constructor(data = {}, options = {}) {
+    super(data, options)
+    this.items = new foundry.utils.Collection()
     this.effects = []
-    this.system = {}
-    this.id = 'ACTOR_ID'
   }
   // Basic helpers used by code paths
   isOfType(...types) {
@@ -132,6 +344,23 @@ global.Actor = class {
   }
   async toggleStatusEffect() {
     return true
+  }
+}
+
+// Provide a minimal Item base so classes can extend it in tests
+// @ts-ignore
+global.Item = class extends foundry.documents.BaseItem {
+  constructor(data = {}, options = {}) {
+    super(data, options)
+  }
+
+  static async create(data, options = {}) {
+    const item = new this(data, options)
+    // If there's a parent, add to their items collection
+    if (options.parent && options.parent.items) {
+      options.parent.items.set(item.id, item)
+    }
+    return item
   }
 }
 
