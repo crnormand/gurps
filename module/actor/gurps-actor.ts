@@ -49,6 +49,7 @@ import { parseItemKey } from '../utilities/object-utils.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { NoteV1 } from './legacy/note-adapter.js'
+import { TraitV1 } from '../item/legacy/trait-adapter.js'
 
 function DamageModule() {
   return GURPS.module.Damage
@@ -4616,28 +4617,53 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       await this.deleteEmbeddedDocuments('Item', featureIds)
 
       delete data.system['-=ads']
-      // If system object is now empty, clean it up
-      if (Object.keys(data.system).length === 0) {
-        delete data.system
-      }
     }
 
     // Check for insertion/update: { system: { ads: {...} } }
-    const insertKey = 'ads' in data.system && typeof data.system.ads === 'object'
-    if (insertKey) {
-      const record = data.system.ads
-      for (const value of Object.values(record)) {
-        const trait = (value as any).traitV2
+    const changeKey = 'ads' in data.system && typeof data.system.ads === 'object'
+    if (changeKey) {
+      const toUpdate: Record<string, any>[] = []
+      const toCreate: Record<string, any>[] = []
 
-        // Create the item and store it on the character.
-        const newItem = await Item.create(trait, { parent: this })
-        console.log(`Created new featureV2 Item for legacy ad:`, { trait, newItem })
+      // const array = this.items.filter(item => item.type === 'featureV2')
+      const keys = Object.keys(foundry.utils.flattenObject(data as object))
+      const changes = keys.filter(it => it.startsWith('system.ads.'))
+
+      const processedChanges: string[] = []
+      for (const change of changes) {
+        const [_, __, ___, property] = parseItemKey(change)
+        const pathToObject = property ? change.replace(new RegExp(`\\.${property}$`), '') : change
+
+        if (processedChanges.includes(pathToObject)) {
+          delete data[change]
+          continue
+        }
+
+        const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
+
+        // Does the ad already exist?
+        const adsv1 = foundry.utils.getProperty(this, pathToObject) as TraitV1
+        if (adsv1 && adsv1.traitV2) {
+          // Existing ad.
+          const updateData: Record<string, any> = TraitV1.getUpdateData(newData, adsv1)
+          toUpdate.push({ _id: adsv1.traitV2._id, ...updateData })
+
+          delete data[change]
+          processedChanges.push(pathToObject)
+        } else {
+          // New ad.
+          const updateData: Record<string, any> = TraitV1.getUpdateData(newData)
+          toCreate.push(updateData)
+
+          delete data[change]
+          processedChanges.push(pathToObject)
+        }
       }
+
+      if (toCreate.length > 0) this.createEmbeddedDocuments('Item', toCreate as Item.CreateData[])
+      if (toUpdate.length > 0) this.updateEmbeddedDocuments('Item', toUpdate as Item.UpdateData[])
+
       delete data.system.ads
-      // If system object is now empty, clean it up
-      if (Object.keys(data.system).length === 0) {
-        delete data.system
-      }
     }
   }
 
@@ -4759,7 +4785,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           this.#updateNoteV2FromLegacyNote(array[arrIndex], newData)
           delete data[change]
           processedChanges.push(pathToObject)
-          continue
         } else {
           // New note.
           const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
@@ -4768,7 +4793,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           array.push(notev2)
           delete data[change]
           processedChanges.push(pathToObject)
-          continue
         }
       }
 

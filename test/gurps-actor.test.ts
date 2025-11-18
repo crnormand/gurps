@@ -1,8 +1,10 @@
+import { jest } from '@jest/globals'
 import { GurpsActorV2 } from '../module/actor/gurps-actor.js'
 import { parseItemKey } from '../module/utilities/object-utils.js'
 import { CharacterModel } from '../module/actor/data/character.js'
 import { GurpsItemV2 } from '../module/item/gurps-item.js'
 import { TraitModel } from '../module/item/data/trait.js'
+import { _Collection } from './foundry-utils/collection.js'
 
 describe('GurpsActorV2', () => {
   let actor: GurpsActorV2<'characterV2'>
@@ -100,12 +102,71 @@ describe('GurpsActorV2', () => {
             }),
           }),
         ]
-        console.log(allAds)
+
+        // Mock the actor's items collection for testing: actor.items should return our test ads.
+        const itemsCollection = new _Collection()
+        allAds.forEach(ad => itemsCollection.set(ad._id!, ad))
+        Object.defineProperty(actor, 'items', {
+          get: jest.fn(() => itemsCollection),
+          configurable: true,
+        })
       })
 
-      // TODO: Add tests for translating legacy Ads data
-      it('placeholder for future tests', () => {
-        expect(true).toBe(true)
+      it('converts a request to remove the entire ads array with calls to Actor.deleteEmbeddedDocuments', async () => {
+        const deleteEmbeddedDocuments = jest.spyOn(actor, 'deleteEmbeddedDocuments').mockResolvedValue([])
+        const updateData: Record<string, any> = { system: { '-=ads': null } }
+        // @ts-ignore
+        await actor._preUpdate(updateData, {}, {})
+
+        expect(Object.keys(updateData.system).includes('-=ads')).toBe(false)
+        expect(deleteEmbeddedDocuments).toHaveBeenCalledTimes(1)
+        expect(deleteEmbeddedDocuments).toHaveBeenCalledWith('Item', ['ad1', 'ad2', 'ad3', 'ad2.1', 'ad2.2', 'ad2.2.1'])
+      })
+
+      it('can insert new Ads', async () => {
+        const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments').mockResolvedValue([] as any)
+        const updateData = {
+          system: {
+            ads: {
+              '00004': {
+                uuid: 'ad4',
+                name: 'Ad 4',
+                cr: '12',
+                points: '5',
+                containedBy: null,
+                notes: 'Some note.',
+              },
+              '00005': {
+                uuid: 'ad5',
+                name: 'Ad-Five 5',
+                cr: 12,
+                level: '5',
+                points: 5,
+                containedBy: null,
+                notes: '[CR: 12 (Resist Quite Often): Ad-Five]<br/>Some note.',
+              },
+            },
+          },
+        }
+        // @ts-ignore
+        await actor._preUpdate(updateData, {}, {})
+
+        expect(createSpy).toHaveBeenCalledTimes(1)
+        expect(createSpy).toHaveBeenCalledWith('Item', [
+          {
+            name: 'Ad 4',
+            uuid: 'ad4',
+            fea: { points: 5, cr: 12, notes: 'Some note.', vtt_notes: '' },
+            containedBy: null,
+          },
+          {
+            name: 'Ad-Five',
+            uuid: 'ad5',
+            fea: { points: 5, level: 5, cr: 12, notes: 'Some note.', vtt_notes: '' },
+            containedBy: null,
+          },
+        ])
+        expect(Object.keys(updateData.system).includes('ads')).toBe(false)
       })
     })
 

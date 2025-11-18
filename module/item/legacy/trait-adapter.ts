@@ -107,8 +107,7 @@ class TraitV1 {
   }
 
   get modifierTags(): string {
-    return ''
-    // return this.traitV2.system.modifierTags ?? ''
+    return this.traitV2.system.modifierTags ?? ''
   }
 
   get name(): string {
@@ -136,8 +135,7 @@ class TraitV1 {
   }
 
   get parentuuid(): string | null {
-    return null
-    // return this.traitV2.parentuuid ?? null
+    return this.traitV2.containedBy || null
   }
 
   get points(): number {
@@ -150,6 +148,74 @@ class TraitV1 {
 
   toggleOpen(expandOnly: boolean = false) {
     return this.traitV2.toggleOpen(expandOnly)
+  }
+
+  static getUpdateData(newData: Partial<TraitV1>, traitv1?: TraitV1): Record<string, any> {
+    const updateData: Record<string, any> = {}
+
+    // For each property in newData, map to traitV2 system properties.
+    for (const key of Object.keys(newData) as (keyof TraitV1)[]) {
+      switch (key) {
+        case 'cr':
+        case 'level':
+        case 'points':
+          updateData.fea = updateData.fea || {}
+          updateData.fea[key] = typeof newData[key] === 'string' ? parseInt(newData[key]) : newData[key]
+          break
+
+        case 'collapsed':
+          updateData['open'] = false
+          break
+
+        case 'contains':
+          updateData['open'] = true
+          break
+
+        case 'name':
+        case 'notes':
+          // Handled after the loop.
+          break
+
+        case 'pageref':
+          updateData.fea = updateData.fea || {}
+          updateData.fea['pageref'] = newData.pageref
+          break
+
+        case 'parentuuid':
+          updateData['containedBy'] = newData.parentuuid
+          break
+
+        // Add more mappings as needed.
+        case 'addToQuickRoll':
+        case 'disabled':
+        case 'itemModifiers':
+        case 'modifierTags':
+        default:
+          updateData[key] = (newData as any)[key]
+          break
+      }
+    }
+
+    // if newData contains 'name', process it after all other properties.
+    if (Object.keys(newData).includes('name')) {
+      const level = newData.level ?? traitv1?.level ?? null
+      const nameWithoutLevel = newData.name!.replace(new RegExp(`\\s${level}$`), '')
+      updateData['name'] = nameWithoutLevel
+    }
+
+    if (Object.keys(newData).includes('notes')) {
+      const cr = newData.cr ?? traitv1?.cr ?? null
+      const crText = game.i18n!.localize('GURPS.CR' + cr)
+      // Escape special regex characters in crText (parentheses, etc.)
+      const escapedCrText = crText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      let notesWithoutCR = newData.notes!.replace(new RegExp(`^\\[${escapedCrText}:.*?\\]`), '')
+      if (notesWithoutCR.startsWith('<br/>')) notesWithoutCR = notesWithoutCR.substring(5)
+
+      updateData.fea['notes'] = notesWithoutCR
+      updateData.fea['vtt_notes'] = ''
+    }
+
+    return updateData
   }
 }
 

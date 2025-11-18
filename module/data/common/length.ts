@@ -150,7 +150,7 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   static fromString(text: string, defaultUnits: LengthUnit, forced: boolean = false): Length | null {
     function returnNull() {
       if (forced) return new Length({ value: 0, unit: Length.Unit.Inch })
-      console.error('Invalid length string', text)
+      // console.error('Invalid length string', text)
       return null
     }
 

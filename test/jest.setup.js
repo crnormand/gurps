@@ -45,8 +45,8 @@ global.foundry = {
         this.name = data.name || ''
         this.type = data.type || 'base'
         this.system = data.system || {}
-        this.id = data.id || 'ITEM_ID'
-        this._id = data._id || this.id
+        this._id = data._id || data.id || 'ITEM_ID'
+        this.id = this._id
         this.parent = options?.parent || null
       }
 
@@ -284,7 +284,12 @@ global.game = {
   // @ts-ignore
   i18n: {
     // @ts-ignore
-    localize: key => key,
+    localize: key => {
+      // Mock specific GURPS localization keys
+      if (key === 'GURPS.CR12') return 'CR: 12 (Resist Quite Often)'
+      // Add more as needed
+      return key
+    },
   },
   users: [],
 }
@@ -341,6 +346,12 @@ global.Actor = class extends foundry.documents.BaseActor {
   }
   async update(_data) {
     return this
+  }
+  async createEmbeddedDocuments(_embeddedName, _data, _options = {}) {
+    return []
+  }
+  async deleteEmbeddedDocuments(_embeddedName, _ids, _options = {}) {
+    return []
   }
   async toggleStatusEffect() {
     return true
