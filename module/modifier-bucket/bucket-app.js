@@ -377,6 +377,10 @@ class ModifierStack {
     this.modifierList.splice(index, 1)
     this.sum()
   }
+
+  isEmpty() {
+    return this.modifierList.length === 0
+  }
 }
 
 /**
@@ -449,6 +453,10 @@ export class ModifierBucket extends Application {
 
   currentSum() {
     return this.modifierStack.currentSum
+  }
+
+  isEmpty() {
+    return this.modifierStack.isEmpty()
   }
 
   /**
@@ -680,11 +688,11 @@ export class ModifierBucket extends Application {
     })
 
     html
-      .querySelector('.accumulator-control')
-      ?.addEventListener('click', event => this._onAccumulatorClick(html, event))
+      .querySelectorAll('.accumulator-control')
+      .forEach(a => a.addEventListener('click', event => this._onAccumulatorClick(html, event)))
   }
 
-  _onAccumulatorClick(hmtl, event) {
+  _onAccumulatorClick(html, event) {
     event.preventDefault()
     const a = event.currentTarget
     const value = a.value ?? null
