@@ -1920,7 +1920,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     let count: number | null = eqt.count
     if (count && count > 1) {
-      count = await this.#promptEquipmentQuantity(eqt.name, game.i18n!.format('GURPS.TransferTo', { name: this.name }))
+      count = await this.promptEquipmentQuantity(eqt.name, game.i18n!.format('GURPS.TransferTo', { name: this.name }))
     }
     if (!count) return false
 
@@ -2120,8 +2120,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let item = foundry.utils.getProperty(this, sourcekey) as GurpsItemV2
 
     // If Item is equipmentV2, check if we should split the item's quantity.
-    if (item && item.type === 'equipmentV2') {
-      if (split && (await this.#splitEquipment(sourcekey, targetkey))) return
+    if (item && item.type === 'equipmentV2' && split) {
+      if (await this.#splitEquipment(sourcekey, targetkey)) return
     }
 
     // Set isSrcFirst to true if the source comes before the target in the same container.
@@ -2131,30 +2131,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // If the item is being dropped onto a same-named item, check if we should merge them.
-    if (item.type === 'equipmentV2' && (await this.#checkForMerge(item as GurpsItemV2<'equipmentV2'>, targetkey)))
-      return
+    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as GurpsItemV2<'equipmentV2'>, targetkey))) return
 
     let where: 'before' | 'inside' | 'after' | null = null
     if (targetkey === targetCollection)
       where = 'after' // Dropping on the collection itself, so add to the end.
     else
-      where = await foundry.applications.api.DialogV2.wait({
-        window: { title: item.name },
-        content: `<p>${game.i18n!.localize('GURPS.dropResolve')}</p>`,
-        buttons: [
-          {
-            action: 'before',
-            icon: 'fa-solid fa-turn-left-down',
-            label: 'GURPS.dropBefore',
-            default: true,
-          },
-          {
-            action: 'inside',
-            icon: 'fas fa-sign-in-alt',
-            label: 'GURPS.dropInside',
-          },
-        ],
-      })
+      where = await this.resolveDropPosition(item as GurpsItemV2<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>)
 
     if (!where) return
 
@@ -2185,11 +2168,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         targetPath ? [targetCollection, targetPath].join('.') : targetCollection
       ) as GurpsItemV2[]
 
-    // If targetIndex is undefined, set to to add to the end of the array.
-    targetIndex ??= targetArray.length
-
     // Remove the item from the source array.
     sourceArray.splice(sourceIndex!, 1)
+
+    // If targetIndex is undefined, set to to add to the end of the array.
+    targetIndex ??= targetArray.length
 
     // Set the parent and add the item to the target.
     let containedBy = null
@@ -2235,6 +2218,28 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     await this.updateEmbeddedDocuments('Item', updates, { parent: this })
   }
 
+  private async resolveDropPosition(
+    item: GurpsItemV2<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
+  ): Promise<'before' | 'inside' | 'after' | null> {
+    return await foundry.applications.api.DialogV2.wait({
+      window: { title: item.name },
+      content: `<p>${game.i18n!.localize('GURPS.dropResolve')}</p>`,
+      buttons: [
+        {
+          action: 'before',
+          icon: 'fa-solid fa-turn-left-down',
+          label: 'GURPS.dropBefore',
+          default: true,
+        },
+        {
+          action: 'inside',
+          icon: 'fas fa-sign-in-alt',
+          label: 'GURPS.dropInside',
+        },
+      ],
+    })
+  }
+
   /* ---------------------------------------- */
 
   #convertLegacyItemKey(key: string) {
@@ -2267,8 +2272,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let sourceItem = (foundry.utils.getProperty(this, srckey) as GurpsItemV2<'equipmentV2'>) ?? null
     if (!sourceItem || !sourceItem.eqt || sourceItem.eqt.count <= 1) return false // Nothing to split
 
-    const count =
-      (await this.#promptEquipmentQuantity(sourceItem.name, game.i18n!.localize('GURPS.splitQuantity'))) ?? 0
+    const count = (await this.promptEquipmentQuantity(sourceItem.name, game.i18n!.localize('GURPS.splitQuantity'))) ?? 0
     if (count <= 0) return true // Didn't want to split.
     if (count >= sourceItem.eqt.count) return false // Not a split, but a move.
 
@@ -2293,7 +2297,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * NOTE: Both character and characterV2.
    */
-  async #promptEquipmentQuantity(eqt: string, title: string): Promise<number | null> {
+  private async promptEquipmentQuantity(eqt: string, title: string): Promise<number | null> {
     // @ts-expect-error
     const result: number | null = await foundry.applications.api.DialogV2.wait({
       window: { title: title },
@@ -2316,7 +2320,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  async #checkForMerge(item: GurpsItemV2<'equipmentV2'>, targetkey: string): Promise<boolean> {
+  private async checkForMerge(item: GurpsItemV2<'equipmentV2'>, targetkey: string): Promise<boolean> {
     // If dropping on an item of the same name and type, ask if they want to merge.
     let targetItem = (foundry.utils.getProperty(this, targetkey) as GurpsItemV2<'equipmentV2'>) ?? null
     if (!targetItem || targetItem.type !== 'equipmentV2' || targetItem.name !== item.name) return false
@@ -4270,7 +4274,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let srceqt = foundry.utils.getProperty(this, srckey) as any
     if (srceqt.count <= 1) return false // nothing to split
 
-    const count = await this.#promptEquipmentQuantity(srceqt, game.i18n!.localize('GURPS.splitQuantity'))
+    const count = await this.promptEquipmentQuantity(srceqt, game.i18n!.localize('GURPS.splitQuantity'))
 
     if (!count || count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move

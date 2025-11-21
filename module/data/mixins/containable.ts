@@ -45,7 +45,7 @@ interface IContainable<T = any> {
   readonly containerDepth: number
 
   /** Check if this container contains the specified item */
-  contains(item: T): boolean
+  containsItem(item: T): boolean
 
   /** Get all ancestors in the container hierarchy. */
   readonly ancestors: T[]

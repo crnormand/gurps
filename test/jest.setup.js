@@ -9,7 +9,24 @@ global.foundry = {
     // @ts-ignore
     TypeDataModel: class {
       constructor(data, options) {
-        Object.assign(this, data)
+        // Only assign properties that don't already exist as getters
+        if (data) {
+          for (const [key, value] of Object.entries(data)) {
+            // Check if it's a getter in this class or any parent class
+            let obj = this
+            let isGetter = false
+            while (obj) {
+              const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+              if (descriptor && descriptor.get && !descriptor.set) {
+                isGetter = true
+                break
+              }
+              obj = Object.getPrototypeOf(obj)
+            }
+            if (isGetter) continue
+            this[key] = value
+          }
+        }
       }
 
       static defineSchema() {
@@ -128,7 +145,6 @@ global.foundry = {
   },
   utils: {
     // Mock Collection class
-    // @ts-ignore
     Collection: class Collection extends Map {
       constructor(entries) {
         super(entries)
@@ -289,7 +305,6 @@ foundry.documents.Item = foundry.documents.BaseItem
 foundry.documents.Actor = foundry.documents.BaseActor
 
 global.canvas = {
-  // @ts-ignore
   layer: {
     // @ts-ignore
     get: () => ({}),
@@ -297,7 +312,6 @@ global.canvas = {
 }
 
 global.game = {
-  // @ts-ignore
   i18n: {
     // @ts-ignore
     localize: key => {
@@ -310,7 +324,6 @@ global.game = {
   users: [],
 }
 
-// @ts-ignore
 global.ui = {
   notifications: {
     info: () => {},
@@ -320,26 +333,22 @@ global.ui = {
 }
 
 // Minimal CONFIG stub
-// @ts-ignore
 global.CONFIG = {
   statusEffects: [],
 }
 
 // Minimal ChatMessage stub
-// @ts-ignore
 global.ChatMessage = {
   create: async () => ({}),
 }
 
 // Minimal Hooks stub
-// @ts-ignore
 global.Hooks = {
   once: () => {},
   on: () => {},
 }
 
 // Provide a minimal Actor base so classes can extend it in tests
-// @ts-ignore
 global.Actor = class extends foundry.documents.BaseActor {
   constructor(data = {}, options = {}) {
     super(data, options)
@@ -366,6 +375,9 @@ global.Actor = class extends foundry.documents.BaseActor {
   async createEmbeddedDocuments(_embeddedName, _data, _options = {}) {
     return []
   }
+  async updateEmbeddedDocuments(_embeddedName, _updates, _options = {}) {
+    return []
+  }
   async deleteEmbeddedDocuments(_embeddedName, _ids, _options = {}) {
     return []
   }
@@ -375,7 +387,6 @@ global.Actor = class extends foundry.documents.BaseActor {
 }
 
 // Provide a minimal Item base so classes can extend it in tests
-// @ts-ignore
 global.Item = class extends foundry.documents.BaseItem {
   constructor(data = {}, options = {}) {
     super(data, options)
@@ -405,7 +416,6 @@ global.ContextMenu = class {
 }
 
 // Minimal FormApplication for classes extending it
-// @ts-ignore
 global.FormApplication = class extends global.Application {
   constructor(object = {}, options = {}) {
     super(options)

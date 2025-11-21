@@ -135,7 +135,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /**
    * Check if this container contains the specified item (directly or indirectly)
    */
-  contains(item: Item.Implementation): boolean {
+  containsItem(item: Item.Implementation): boolean {
     return ContainerUtils.contains(this, item)
   }
 
