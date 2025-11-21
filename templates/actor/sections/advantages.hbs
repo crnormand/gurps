@@ -10,6 +10,7 @@
   <div class='ref header'>{{localize "GURPS.abbrevReference"}}</div>
 
   {{#each (flatlist system.ads)}}
+    {{debug ../isEditing}}
     {{#if (and ../isEditing (not this.traitV2))}}
       <div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
         <i class='fas fa-times'></i>
@@ -28,14 +29,20 @@
       </div>
     {{else}}
       {{#unless isCollapsed}}
-        <div class='itemmenu' readonly></div>
-
+        {{#if (and ../isEditing this.traitV2)}}
+          <div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
+            <i class='fas fa-times'></i>
+          </div>
+        {{else}}
+          <div class='itemmenu' readonly></div>
+        {{/if}}
         <div class='adsdraggable' data-key='system.ads.{{@key}}'>
           <div class="gga-line-description">
             {{#if (showItemImage this)}}
               <div><img class="gga-item-image-thumb traits" src='{{getItemImage this}}' /></div>
             {{/if}}
-            <div class='desc dblclkedit indent{{indent}} {{#if this.disabled}}inactive{{/if}}' data-key='system.ads.{{@key}}'>
+            <div class='desc dblclkedit indent{{indent}} {{#if this.disabled}}inactive{{/if}}'
+              data-key='system.ads.{{@key}}'>
               <div class='gga-desc-text'>
                 <div>
                   {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}

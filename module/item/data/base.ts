@@ -170,6 +170,10 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  get isContainer(): boolean {
+    return this.contents.length > 0
+  }
+
   // TODO I'm not sure what this is trying to do.
   get children(): Item.Implementation[] {
     return this.contents.filter(e => this.metadata.childTypes.includes(e.type))
@@ -282,7 +286,7 @@ const baseItemModelSchema = () => {
 
     // Change from previous schema. Boolean value to indicate if item is container
     // TODO Can this be derived?
-    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    // isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 

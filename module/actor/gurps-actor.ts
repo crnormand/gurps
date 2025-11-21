@@ -4648,20 +4648,31 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           const updateData: Record<string, any> = TraitV1.getUpdateData(newData, adsv1)
           toUpdate.push({ _id: adsv1.traitV2._id, ...updateData })
 
-          delete data[change]
+          // foundry.utils.deleteProperty(data, pathToObject)
           processedChanges.push(pathToObject)
         } else {
           // New ad.
           const updateData: Record<string, any> = TraitV1.getUpdateData(newData)
           toCreate.push(updateData)
 
-          delete data[change]
+          // foundry.utils.deleteProperty(data, pathToObject)
           processedChanges.push(pathToObject)
         }
       }
 
-      if (toCreate.length > 0) this.createEmbeddedDocuments('Item', toCreate as Item.CreateData[])
-      if (toUpdate.length > 0) this.updateEmbeddedDocuments('Item', toUpdate as Item.UpdateData[])
+      if (toCreate.length > 0) {
+        toCreate.forEach((it, index) => {
+          if (it.system?.containedBy === null) {
+            const length = this.items
+              .filter(item => item.isOfType('featureV2'))
+              .filter(ad => ad.modelV2.containedBy === null).length
+            it.sort = length + index
+          }
+        })
+
+        await this.createEmbeddedDocuments('Item', toCreate as Item.CreateData[])
+      }
+      if (toUpdate.length > 0) await this.updateEmbeddedDocuments('Item', toUpdate as Item.UpdateData[])
 
       delete data.system.ads
     }

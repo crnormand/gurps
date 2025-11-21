@@ -47,7 +47,6 @@ describe('GurpsActorV2', () => {
             type: 'featureV2',
             // @ts-expect-error
             system: new TraitModel({
-              isContainer: false,
               containedBy: null,
             }),
           }),
@@ -57,7 +56,6 @@ describe('GurpsActorV2', () => {
             type: 'featureV2',
             // @ts-expect-error
             system: new TraitModel({
-              isContainer: true,
               containedBy: null,
             }),
           }),
@@ -67,7 +65,6 @@ describe('GurpsActorV2', () => {
             type: 'featureV2',
             // @ts-expect-error
             system: new TraitModel({
-              isContainer: false,
               containedBy: null,
             }),
           }),
@@ -77,7 +74,6 @@ describe('GurpsActorV2', () => {
             type: 'featureV2',
             // @ts-expect-error
             system: new TraitModel({
-              isContainer: false,
               containedBy: 'ad2',
             }),
           }),
@@ -87,7 +83,6 @@ describe('GurpsActorV2', () => {
             type: 'featureV2',
             // @ts-expect-error
             system: new TraitModel({
-              isContainer: true,
               containedBy: 'ad2',
             }),
           }),
@@ -97,7 +92,6 @@ describe('GurpsActorV2', () => {
             type: 'featureV2',
             // @ts-expect-error
             system: new TraitModel({
-              isContainer: false,
               containedBy: 'ad2.2',
             }),
           }),
@@ -129,22 +123,37 @@ describe('GurpsActorV2', () => {
           system: {
             ads: {
               '00004': {
-                uuid: 'ad4',
-                name: 'Ad 4',
-                cr: '12',
-                points: '5',
-                containedBy: null,
-                notes: 'Some note.',
+                save: false,
+                addToQuickRoll: true,
+                collapsed: {},
+                contains: {},
+                cr: 15,
+                disabled: true,
+                fromItem: null,
+                hasContains: false,
+                hasCollapsed: false,
+                itemModifiers: 'mod1, mod2',
+                itemid: 'Qfp10Etwg9779H9l',
+                level: 10,
+                modifierTags: '@tag1, @tag2, @tag3',
+                name: 'Always says "Hail, and Well Met!"',
+                notes: 'Some kind of notes.',
+                originalName: 'Always says "Hail, and Well Met!"',
+                pageref: 'DFA68',
+                parentuuid: null,
+                points: -1,
+                uuid: 'Actor.f9wRCqt63iE2YyTI.Item.Qfp10Etwg9779H9l',
               },
-              '00005': {
-                uuid: 'ad5',
-                name: 'Ad-Five 5',
-                cr: 12,
-                level: '5',
-                points: 5,
-                containedBy: null,
-                notes: '[CR: 12 (Resist Quite Often): Ad-Five]<br/>Some note.',
-              },
+              // '00005': {
+              //   uuid: 'ad5',
+              //   name: 'Ad-Five 5',
+              //   cr: 12,
+              //   level: '5',
+              //   points: 5,
+              //   containedBy: null,
+              //   notes: '[CR: 12 (Resist Quite Often): Ad-Five]<br/>Some note.',
+              //   pageref: 'DFA77',
+              // },
             },
           },
         }
@@ -154,20 +163,110 @@ describe('GurpsActorV2', () => {
         expect(createSpy).toHaveBeenCalledTimes(1)
         expect(createSpy).toHaveBeenCalledWith('Item', [
           {
-            name: 'Ad 4',
-            uuid: 'ad4',
-            fea: { points: 5, cr: 12, notes: 'Some note.', vtt_notes: '' },
-            containedBy: null,
+            _id: 'Qfp10Etwg9779H9l',
+            type: 'featureV2',
+            name: 'Always says "Hail, and Well Met!"',
+            sort: 3,
+            system: {
+              addToQuickRoll: true,
+              open: true,
+              disabled: true,
+              itemModifiers: 'mod1, mod2',
+              modifierTags: '@tag1, @tag2, @tag3',
+              containedBy: null,
+              fea: {
+                cr: 15,
+                level: 10,
+                name: 'Always says "Hail, and Well Met!"',
+                notes: 'Some kind of notes.',
+                pageref: 'DFA68',
+                vtt_notes: '',
+                points: -1,
+              },
+            },
           },
-          {
-            name: 'Ad-Five',
-            uuid: 'ad5',
-            fea: { points: 5, level: 5, cr: 12, notes: 'Some note.', vtt_notes: '' },
-            containedBy: null,
-          },
+          // {
+          //   _id: 'ad5',
+          //   type: 'featureV2',
+          //   name: 'Ad-Five',
+          //   sort: 1,
+          //   system: {
+          //     actions: {},
+          //     isContainer: false,
+          //     itemModifiers: '',
+          //     open: true,
+          //     reactions: [],
+          //     conditionalmods: [],
+          //     disabled: null,
+          //     containedBy: null,
+          //     fea: {
+          //       name: 'Ad-Five',
+          //       notes: 'Some note.',
+          //       pageref: 'DFA77',
+          //       vtt_notes: '',
+          //       cr: 12,
+          //       level: 5,
+          //       userdesc: '',
+          //       points: 5,
+          //     },
+          //   },
+          // },
         ])
         expect(Object.keys(updateData.system).includes('ads')).toBe(false)
       })
+
+      /* Test: input:
+        {
+          "save":false,
+          "addToQuickRoll":false,
+          "collapsed":{},
+          "contains":{},
+          "cr":15,
+          "disabled":false,
+          "fromItem":null,
+          "hasContains":false,
+          "hasCollapsed":false,
+          "itemModifiers":"",
+          "itemid":"Qfp10Etwg9779H9l",
+          "level":0,
+          "modifierTags":"",
+          "name":"Always says \"Hail, and Well Met!\"",
+          "notes":"",
+          "originalName":"Always says \"Hail, and Well Met!\"",
+          "pageref":"DFA68",
+          "parentuuid":null,
+          "points":-1,
+          "uuid":"Actor.f9wRCqt63iE2YyTI.Item.Qfp10Etwg9779H9l"
+        }
+        
+      Output:
+        {
+          "_id": "Qfp10Etwg9779H9l",
+          "type": "featureV2",
+          "name": "Always says \"Hail, and Well Met!\"",
+          "sort": 0,
+          "system": {
+            "actions": {},
+            "isContainer": false,
+            "itemModifiers": "",
+            "open": true,
+            "reactions": [],
+            "conditionalmods": [],
+            "disabled": null,
+            "containedBy": null,
+            "fea": {
+              "name": "Always says \"Hail, and Well Met!\"",
+              "notes": "",
+              "pageref": "DFA68",
+              "vtt_notes": "",
+              "cr": null,
+              "level": 0,
+              "userdesc": "",
+              "points": -1
+            }
+          }
+        }
+      */
     })
 
     describe('translate legacy Move data', () => {

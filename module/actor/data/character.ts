@@ -979,6 +979,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     changes[`system.hitlocationsV2.${index}._dr`] = dr
     changes[`system.hitlocationsV2.${index}.drMod`] = drMod
     changes[`system.hitlocationsV2.${index}.drCap`] = drCap
+    changes[`system.hitlocationsV2.${index}.import`] = value.import
   }
 
   /* ---------------------------------------- */

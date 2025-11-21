@@ -1806,17 +1806,19 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         icon: "<i class='fas fa-trash'></i>",
         callback: async e => {
           let key = e[0].dataset.key
-          // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          // We need to remove linked item
           const actorComponent = foundry.utils.getProperty(this.actor, key)
+          if (this.actor.type === 'characterV2') {
+            if (key.startsWith('system.ads')) this.actor.deleteItem(actorComponent.traitV2)
+            return
+          }
+
+          // We need to remove linked item
           const existingItem = await this.actor.items.get(actorComponent.itemid)
           if (!!existingItem) {
             this.actor._removeItemAdditions(existingItem.id)
             await existingItem.delete()
           }
-          // } else {
-          //   if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-          // }
+
           GURPS.removeKey(this.actor, key)
           await this.actor.refreshDR()
         },

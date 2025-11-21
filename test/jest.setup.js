@@ -238,6 +238,22 @@ global.foundry = {
           return false
       }
     },
+    deleteProperty: (object, key) => {
+      if (!key || !object) return false
+      let parent
+      let target = object
+      const parts = key.split('.')
+      for (const p of parts) {
+        if (!target) return false
+        const type = typeof target
+        if (type !== 'object' && type !== 'function') return false
+        if (!(p in target)) return false
+        parent = target
+        target = parent[p]
+      }
+      delete parent[parts.at(-1)]
+      return true
+    },
   },
   appv1: {
     sheets: {

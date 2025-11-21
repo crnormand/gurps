@@ -1,0 +1,87 @@
+{
+  "import": {
+    "_id": "Qfp10Etwg9779H9l",
+    "type": "featureV2",
+    "name": "Always says \"Hail, and Well Met!\"",
+    "sort": 0,
+    "system": {
+      "actions": {},
+      "isContainer": false,
+      "itemModifiers": "",
+      "open": true,
+      "reactions": [],
+      "conditionalmods": [],
+      "disabled": null,
+      "containedBy": null,
+      "fea": {
+        "name": "Always says \"Hail, and Well Met!\"",
+        "notes": "",
+        "pageref": "DFA68",
+        "vtt_notes": "",
+        "cr": null,
+        "level": 0,
+        "userdesc": "",
+        "points": -1
+      }
+    }
+  },
+  "other": {
+    "notes": "",
+    "pageref": "DFA68",
+    "contains": {},
+    "uuid": "t-F5KbFKE33moJdcN",
+    "parentuuid": "",
+    "originalName": "Always says \"Hail, and Well Met!\"",
+    "name": "Always says \"Hail, and Well Met!\"",
+    "points": "-1",
+    "save": false,
+    "itemid": "SlMEG3YnCVBIqKKV",
+    "itemInfo": {
+      "id": "SlMEG3YnCVBIqKKV",
+      "img": "icons/svg/book.svg",
+      "name": "Always says \"Hail, and Well Met!\"",
+      "system": {
+        "fea": {
+          "notes": "",
+          "pageref": "DFA68",
+          "contains": {},
+          "uuid": "t-F5KbFKE33moJdcN",
+          "parentuuid": "",
+          "points": -1,
+          "userdesc": "",
+          "note": "",
+          "name": "Always says \"Hail, and Well Met!\"",
+          "originalName": "Always says \"Hail, and Well Met!\"",
+          "checkotf": "",
+          "duringotf": "",
+          "passotf": "",
+          "failotf": "",
+          "cr": null
+        },
+        "melee": {},
+        "ranged": {},
+        "ads": {},
+        "skills": {},
+        "spells": {},
+        "bonuses": "",
+        "itemModifiers": "",
+        "globalid": "",
+        "importid": "t-F5KbFKE33moJdcN",
+        "importFrom": "GCS",
+        "fromItem": "",
+        "checkotf": "",
+        "duringotf": "",
+        "passotf": "",
+        "failotf": "",
+        "addToQuickRoll": false,
+        "modifierTags": ""
+      }
+    },
+    "fromItem": "",
+    "addToQuickRoll": false,
+    "note": "",
+    "cr": null,
+    "itemModifiers": "",
+    "modifierTags": ""
+  }
+}

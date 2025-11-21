@@ -327,7 +327,6 @@ class GcsImporter {
 
   #importItem(item: AnyGcsItem, _carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {} }
-    system.isContainer = item.isContainer
     system.itemModifiers = ''
     system.open = true
 

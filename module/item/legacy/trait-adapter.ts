@@ -152,46 +152,40 @@ class TraitV1 {
 
   static getUpdateData(newData: Partial<TraitV1>, traitv1?: TraitV1): Record<string, any> {
     const updateData: Record<string, any> = {}
+    updateData['type'] = 'featureV2'
+    updateData['system'] = {}
+    updateData.system['open'] = true
+    updateData.system['containedBy'] = null
+    updateData.system['isContainer'] = false
+    updateData.system['fea'] = {}
+    updateData.system.fea.points = 0
 
     // For each property in newData, map to traitV2 system properties.
     for (const key of Object.keys(newData) as (keyof TraitV1)[]) {
       switch (key) {
+        case 'itemid':
+          updateData['_id'] = newData.itemid
+          break
+
         case 'cr':
         case 'level':
         case 'points':
-          updateData.fea = updateData.fea || {}
-          updateData.fea[key] = typeof newData[key] === 'string' ? parseInt(newData[key]) : newData[key]
-          break
-
-        case 'collapsed':
-          updateData['open'] = false
-          break
-
-        case 'contains':
-          updateData['open'] = true
-          break
-
-        case 'name':
-        case 'notes':
-          // Handled after the loop.
+          updateData.system.fea[key] = typeof newData[key] === 'string' ? parseInt(newData[key]) : newData[key]
           break
 
         case 'pageref':
-          updateData.fea = updateData.fea || {}
-          updateData.fea['pageref'] = newData.pageref
-          break
-
-        case 'parentuuid':
-          updateData['containedBy'] = newData.parentuuid
+          updateData.system.fea['pageref'] = newData.pageref
           break
 
         // Add more mappings as needed.
         case 'addToQuickRoll':
+          updateData.system[key] = newData[key]
+          break
+
         case 'disabled':
         case 'itemModifiers':
         case 'modifierTags':
-        default:
-          updateData[key] = (newData as any)[key]
+          updateData.system[key] = (newData as any)[key]
           break
       }
     }
@@ -201,6 +195,7 @@ class TraitV1 {
       const level = newData.level ?? traitv1?.level ?? null
       const nameWithoutLevel = newData.name!.replace(new RegExp(`\\s${level}$`), '')
       updateData['name'] = nameWithoutLevel
+      updateData.system.fea['name'] = nameWithoutLevel
     }
 
     if (Object.keys(newData).includes('notes')) {
@@ -211,8 +206,14 @@ class TraitV1 {
       let notesWithoutCR = newData.notes!.replace(new RegExp(`^\\[${escapedCrText}:.*?\\]`), '')
       if (notesWithoutCR.startsWith('<br/>')) notesWithoutCR = notesWithoutCR.substring(5)
 
-      updateData.fea['notes'] = notesWithoutCR
-      updateData.fea['vtt_notes'] = ''
+      updateData.system.fea['notes'] = notesWithoutCR
+      updateData.system.fea['vtt_notes'] = ''
+    }
+
+    if (Object.keys(newData).includes('collapsed')) {
+      if (Object.keys(newData.collapsed!).length > 0) {
+        updateData.system['open'] = false
+      }
     }
 
     return updateData
