@@ -1,7 +1,7 @@
 import { GcsImporter } from './importer.js'
 import { GcsCharacter } from './schema/character.js'
 
-async function importGCS() {
+async function importGCS(actor?: Actor.OfType<'characterV2'>) {
   return new foundry.applications.api.DialogV2({
     window: {
       title: 'Import from GCS 5.36',
@@ -30,7 +30,7 @@ async function importGCS() {
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
             const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
-            const actor = await GcsImporter.importCharacter(char)
+            await GcsImporter.importCharacter(char, actor)
 
             console.log(actor)
             console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
