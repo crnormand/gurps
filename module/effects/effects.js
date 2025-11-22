@@ -86,6 +86,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
         id: 'prone',
         name: 'GURPS.status.Prone',
+        move: MOVE_ONE,
         // I'm sneakily using ActiveEffects to implement postures even if the system setting is turned off.
         changes: [
           {
@@ -125,6 +126,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-kneel.webp',
         id: 'kneel',
         name: 'GURPS.status.Kneel',
+        move: MOVE_ONETHIRD,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -162,6 +164,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-crouch.webp',
         id: 'crouch',
         name: 'GURPS.status.Crouch',
+        move: MOVE_TWOTHIRDS,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -194,6 +197,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-sit.webp',
         id: 'sit',
         name: 'GURPS.status.Sit',
+        move: MOVE_NONE,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -231,6 +235,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-crawl.webp',
         id: 'crawl',
         name: 'GURPS.status.Crawling',
+        move: MOVE_ONETHIRD,
         changes: [
           {
             key: 'system.conditions.self.modifiers',

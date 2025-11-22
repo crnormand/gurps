@@ -11,13 +11,15 @@
     {{#if ../isEditing}}
       <div class='desc indent{{indent}} notemenu' data-key='system.notes.{{@key}}'>
         <div style="display: inline-flex; flex-flow: column nowrap; width: 100%;">
-          <input name="system.notes.{{@key}}.title" type="text" value="{{this.title}}" title="Title" placeholder="Title">
-          <textarea
-            name='system.notes.{{@key}}.notes'
-            class='gcs-input-ta'
-            type='text'
-            style='height:120px !important'
-          >{{this.notes}}</textarea>
+          <input name="system.notes.{{@key}}.title" type="text" value="{{this.title}}" title="Title"
+            placeholder="Title">
+          {{#if this.notes}}
+          <textarea name='system.notes.{{@key}}.notes' class='gcs-input-ta' type='text'
+            style='height:120px !important'>{{this.notes}}</textarea>
+          {{else}}
+          <textarea name='system.notes.{{@key}}.markdown' class='gcs-input-ta' type='text'
+            style='height:120px !important'>{{this.markdown}}</textarea>
+          {{/if}}
         </div>
       </div>
       <div class='ref' data-key='system.notes.{{@key}}'>
@@ -33,10 +35,9 @@
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               <div class='tooltip gga-manual'>
-                {{#if this.notes}}
-                  {{#if title}}<b>{{{gurpslinkbr this.title}}}</b> {{/if}}{{{gurpslinkbr this.notes}}}
-                {{else}}
-                  {{localize "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
+                {{#if (or this.notes this.markdown)}}
+                  {{#if this.title}}<b>{{{gurpslinkbr this.title}}}</b> {{/if}}
+                  {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
                 {{/if}}
               </div>
               <div>

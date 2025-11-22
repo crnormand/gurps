@@ -1,82 +1,91 @@
 <div id='advantages' class='gga-table with-notes'>
-	<div class='itemmenu header' readonly></div>
-	<div class='header desc'>
-		<div class='headermenu' data-key='system.ads'>
-			<span>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
-			<i class='fas fa-caret-square-down'></i>
-		</div>
-	</div>
-	<div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div>
-	<div class='ref header'>{{localize "GURPS.abbrevReference"}}</div>
+  <div class='itemmenu header' readonly></div>
+  <div class='header desc'>
+    <div class='headermenu' data-key='system.ads'>
+      <span>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
+      <i class='fas fa-caret-square-down'></i>
+    </div>
+  </div>
+  <div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div>
+  <div class='ref header'>{{localize "GURPS.abbrevReference"}}</div>
 
-	{{#each (flatlist system.ads)}}
-	{{#if ../isEditing}}
-	<div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
-		<i class='fas fa-times'></i>
-	</div>
-	<div class='desc indent{{indent}}' data-key='system.ads.{{@key}}'>
-		<input name='system.ads.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' />
-		<div class='list_note'>
-			<textarea name='system.ads.{{@key}}.notes' class='gcs-input-ta' type='text'>{{this.notes}}</textarea>
-		</div>
-	</div>
-	<div class='pts' data-key='system.ads.{{@key}}'>
-		<input name='system.ads.{{@key}}.points' class='gcs-input-sm3' type='text' value='{{this.points}}' />
-	</div>
-	<div class='ref' data-key='system.ads.{{@key}}'>
-		<input name='system.ads.{{@key}}.pageref' class='gcs-input-sm5' type='text' value='{{this.pageref}}' />
-	</div>
-	{{else}}
-	{{#unless isCollapsed}}
-	<div class='itemmenu' readonly></div>
-
-	<div class='adsdraggable' data-key='system.ads.{{@key}}'>
-    <div class="gga-line-description">
-      {{#if (showItemImage this)}}<div><img class="gga-item-image-thumb traits" src='{{getItemImage this}}' /></div>{{/if}}
-		  <div class='desc dblclkedit indent{{indent}}' data-key='system.ads.{{@key}}'>
-        <div class='gga-desc-text'>
-          <div>
-            {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-            {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+  {{#each (flatlist system.ads)}}
+    {{#if (and ../isEditing (not this.traitV2))}}
+      <div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+      <div class='desc indent{{indent}}' data-key='system.ads.{{@key}}'>
+        <input name='system.ads.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' />
+        <div class='list_note'>
+          <textarea name='system.ads.{{@key}}.notes' class='gcs-input-ta' type='text'>{{this.notes}}</textarea>
+        </div>
+      </div>
+      <div class='pts' data-key='system.ads.{{@key}}'>
+        <input name='system.ads.{{@key}}.points' class='gcs-input-sm3' type='text' value='{{this.points}}' />
+      </div>
+      <div class='ref' data-key='system.ads.{{@key}}'>
+        <input name='system.ads.{{@key}}.pageref' class='gcs-input-sm5' type='text' value='{{this.pageref}}' />
+      </div>
+    {{else}}
+      {{#unless isCollapsed}}
+        {{#if (and ../isEditing this.traitV2)}}
+          <div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
+            <i class='fas fa-times'></i>
           </div>
-          <div class='tooltip gga-manual'>
-            {{{gurpslink this.name}}}
-            {{#if (displayItemHover this)}}
-            <div class='tooltiptext gga-manual'><img class="gga-tooltip-item-image" src='{{getItemImage this}}' /></div>
+        {{else}}
+          <div class='itemmenu' readonly></div>
+        {{/if}}
+        <div class='adsdraggable' data-key='system.ads.{{@key}}'>
+          <div class="gga-line-description">
+            {{#if (showItemImage this)}}
+              <div><img class="gga-item-image-thumb traits" src='{{getItemImage this}}' /></div>
             {{/if}}
-          </div>
-          <div>
-            {{#if (isFoundryGlobalItem this)}}
-            <i class='fas fa-book tooltip gga-global-item'>
-              <span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
-            </i>
-            {{/if}}
-          </div>
-          <div>
-            {{#if (isImportedItem this)}}
-            <i class='fas fa-layer-group tooltip gga-child-item'>
-              <span class='tooltiptext'>{{{parentItemTooltip this}}}</span>
-            </i>
-            {{/if}}
-          </div>
-          <div>
-            {{#if (isFoundryItem this)}}
-            <i class='far fas fa-star tooltip gga-item'>
-              <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span>
-            </i>
-            {{/if}}
+            <div class='desc dblclkedit indent{{indent}} {{#if this.disabled}}inactive{{/if}}'
+              data-key='system.ads.{{@key}}'>
+              <div class='gga-desc-text'>
+                <div>
+                  {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                  {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                </div>
+                <div class='tooltip gga-manual'>
+                  {{{gurpslink this.name}}}
+                  {{#if (displayItemHover this)}}
+                    <div class='tooltiptext gga-manual'><img class="gga-tooltip-item-image"
+                        src='{{getItemImage this}}' /></div>
+                  {{/if}}
+                </div>
+                <div>
+                  {{#if (isFoundryGlobalItem this)}}
+                    <i class='fas fa-book tooltip gga-global-item'>
+                      <span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
+                    </i>
+                  {{/if}}
+                </div>
+                <div>
+                  {{#if (isImportedItem this)}}
+                    <i class='fas fa-layer-group tooltip gga-child-item'>
+                      <span class='tooltiptext'>{{{parentItemTooltip this}}}</span>
+                    </i>
+                  {{/if}}
+                </div>
+                <div>
+                  {{#if (isFoundryItem this)}}
+                    <i class='far fas fa-star tooltip gga-item'>
+                      <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span>
+                    </i>
+                  {{/if}}
+                </div>
+              </div>
+              <div class='list_note'>
+                {{{gurpslinkbr this.notes}}}
+              </div>
+            </div>
           </div>
         </div>
-        <div class='list_note'>
-				  {{{gurpslinkbr this.notes}}}
-			  </div>
-		  </div>
-    </div>
-	</div>
 
-	<div class='pts gga-right'>{{{displayNumber this.points showPlus=false}}}</div>
-	<div class='ref flex-center'>{{{pdflinkext this}}}</div>
-	{{/unless}}
-	{{/if}}
-	{{/each}}
+        <div class='pts gga-right'>{{{displayNumber this.points showPlus=false}}}</div>
+        <div class='ref flex-center'>{{{pdflinkext this}}}</div>
+      {{/unless}}
+    {{/if}}
+  {{/each}}
 </div>

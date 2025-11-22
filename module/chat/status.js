@@ -1,7 +1,7 @@
 'use strict'
 
 import { locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor/actor.js'
+import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import ChatProcessor from './chat-processor.js'
 
 const Command = {
@@ -185,7 +185,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    * @returns {boolean}
    */
   isEffectActive(token, effect) {
-    /** @type {GurpsActor} */
+    /** @type {GurpsActorV2} */
     // @ts-ignore
     let actor = token?.actor || game.actors?.get(token?.document.actorId)
     return actor.isEffectActive(effect)
@@ -201,7 +201,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   async toggleTokenEffect(token, effect, actionText) {
     if (!!effect) {
       await token.actor.toggleStatusEffect(effect.id)
-      let actor = /** @type {GurpsActor} */ (token.actor)
+      let actor = /** @type {GurpsActorV2} */ (token.actor)
       // TODO We need to turn this into a single string, instead of multiple localized strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
       this.prnt(

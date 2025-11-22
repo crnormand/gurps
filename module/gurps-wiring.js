@@ -121,7 +121,6 @@ export default class GurpsWiring {
    * any text). If not, we will just re-parse the text looking for the action block.
    *
    * @param {JQuery.MouseEventBase} event
-   * @param {import("./actor/actor.js").GurpsActor | null} actor
    * @param {undefined} [desc]
    * @param {undefined} [targets]
    */
@@ -130,9 +129,9 @@ export default class GurpsWiring {
     let element = event.currentTarget
     let action = element.dataset?.action // If we have already parsed
     if (!!action) action = JSON.parse(atou(action))
-    else action = parselink(element.innerText, desc).action
+    else action = parselink(element.innerText /*, desc */).action
 
-    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf, desc).action
+    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf /*, desc */).action
 
     if (options?.combined) {
       action.formula = multiplyDice(action.formula, options.combined)

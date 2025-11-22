@@ -6,7 +6,7 @@
           <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
           <div class='actorname'>{{actorname}}</div>
           {{#each currentmods}}
-            <div class="roll-result">{{{gurpslink this true}}}</div>
+            <div class="roll-result">{{{gurpslink this}}}</div>
           {{/each}}
         </div>
 
@@ -63,19 +63,19 @@
           <div class='shaded-group'>
             <h4>{{localize "GURPS.meleeAttack"}}</h4>
             {{#each meleemods}}
-              <div>{{{gurpslink this true}}}</div>
+              <div>{{{gurpslink this}}}</div>
             {{/each}}
           </div>
           <div class='shaded-group'>
             <h4>{{localize "GURPS.ranged"}}</h4>
             {{#each rangedmods}}
-              <div>{{{gurpslink this true}}}</div>
+              <div>{{{gurpslink this}}}</div>
             {{/each}}
           </div>
           <div class='shaded-group'>
             <h4>{{localize "GURPS.defense"}}</h4>
             {{#each defensemods}}
-              <div>{{{gurpslink this true}}}</div>
+              <div>{{{gurpslink this}}}</div>
             {{/each}}
           </div>
         </div>
@@ -102,7 +102,7 @@
             {{#each journals}}
               <div class='tabbedcontent'>
                 <h2>{{this.name}}</h2>
-                {{{gurpslink this.text.content true}}}
+                {{{gurpslink this.text.content}}}
               </div>
             {{/each}}
             <div class='tabbedcontent'>
@@ -113,10 +113,10 @@
             <h4>{{localize "GURPS.modifierOthers"}}</h4>
             <div class='modifier-row'>
               {{#each othermods1}}
-                <div>{{{gurpslink this true}}}</div>
+                <div>{{{gurpslink this}}}</div>
               {{/each}}
               {{#each othermods2}}
-                <div>{{{gurpslink this true}}}</div>
+                <div>{{{gurpslink this}}}</div>
               {{/each}}
             </div>
             <div style='display: flex; flex-flow: column;'>

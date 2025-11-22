@@ -1,0 +1,134 @@
+Actor Class API Surface (auto-generated)
+========================================
+
+- Generated on: 2025-10-13T18:05:42.510Z
+
+GurpsActor (module/actor/actor.js)
+----------------------------------
+
+### Getters
+
+- **\_additionalResources() — [get]**
+- **\_hitLocationRolls() — [get]**
+- **Damage() — [get]**
+- **damageAccumulators() — [get]**
+- **defaultHitLocation() — [get]**
+- **displayname() — [get]**
+- **hitLocationByWhere() — [get]**
+- **hitLocationsWithDR() — [get]**
+- **temporaryEffects() — [get]**
+- **trackersByName() — [get]**
+- **usingQuintessence() — [get]**
+
+### Methods
+
+- **\_addChildItemElement() — [async]**
+- **\_addItemAdditions() — [async]**
+- *\_addItemElement() — [async]*
+- **\_addNewItemEquipment() — [async]**
+- **\_adjustMove()**
+- **\_applyItemBonuses()**
+- **\_calculateEncumbranceIssues()**
+- **\_calculateRangedRanges()**
+- **\_calculateWeights()**
+- **\_changeDR()**
+- **\_checkForMerging() — [async]**
+- **\_collapseQuantumEq()**
+- **\_findEqtkeyForId()**
+- **\_findSysKeyForId()**
+- *\_findTokens()*
+- **\_forceRender()**
+- **\_getCurrentMove()**
+- **\_getCurrentMoveMode()**
+- **\_getDRFromItems()**
+- **\_getMoveAdjustedForManeuver()**
+- **\_getMoveAdjustedForPosture()**
+- **\_getSkillLevelFromOTF() — [async]**
+- **\_getSprintMove()**
+- **\_getStep()**
+- **\_initializeStartingValues()**
+- **\_initializeTrackerValues()**
+- **\_insertBeforeKey() — [async]**
+- **\_isEnhancedMove()**
+- **\_recalcItemFeatures()**
+- **\_removeItemAdditions() — [async]**
+- **\_removeItemEffect() — [async]**
+- **\_removeItemElement() — [async]**
+- **\_removeKey() — [async]**
+- **\_sanityCheckItemSettings() — [async]**
+- **\_splitEquipment() — [async]**
+- **\_sumeqt()**
+- **\_updateEqtStatus() — [async]**
+- **\_updateEquipmentCalc() — [async]**
+- **\_updateItemFromForm() — [async]**
+- **accumulateDamageRoll() — [async]**
+- **addItemData() — [async]**
+- *addMoveMode() — [async]*
+- **addNewItemData() — [async]**
+- **addTaggedRollModifiers() — [async]**
+- **addTracker() — [async]**
+- **addTrackerToDataObject() — [static]**
+- **applyDamageAccumulator() — [async]**
+- **applyItemModEffects()**
+- **applyTrackerTemplate() — [async]**
+- *asGurpsActor()*
+- **calculateDerivedValues()**
+- **canConsumeAction()**
+- **canRoll() — [async]**
+- **changeDR() — [async]**
+- **checkEncumbance**()
+- **clearDamageAccumulator() — [async]**
+- **clearTracker() — [async]**
+- **decrementDamageAccumulator() — [async]**
+- **deleteEquipment() — [async]**
+- **findAdvantage()**
+- **findByOriginalName()**
+- **findEquipmentByName()**
+- **findUsingAction()**
+- **getAllActivePostureEffects()**
+- **getChecks()**
+- **getCurrentDodge()**
+- **getCurrentMove()**
+- **getDRTooltip()**
+- **getEquipped**()
+- **getEquippedBlock**()
+- **getEquippedDefenseBonuses**()
+- **getEquippedParry**()
+- *getOwners()*
+- **getPortraitPath()**
+- *getRollData()*
+- **getTorsoDr()**
+- **getTrackersAsArray() — [static]**
+- **handleDamageDrop()**
+- **handleEquipmentDrop() — [async]**
+- **handleItemDrop() — [async]**
+- **incrementDamageAccumulator() — [async]**
+- **internalUpdate() — [async]**
+- **isEffectActive()**
+- **isEmptyActor()**
+- **moveEquipment() — [async]**
+- **openSheet() — [async]**
+- **postImport() — [async]**
+- **prepareBaseData()**
+- **prepareDerivedData()**
+- *prepareEmbeddedEntities()*
+- **promptEquipmentQuantity() — [async]**
+- **refreshDR() — [async]**
+- *removeAccents()*
+- **removeModEffectFor() — [async]**
+- **removeTracker() — [async]**
+- **reorderItem() — [async]**
+- **replaceManeuver() — [async]**
+- **replacePosture() — [async]**
+- **runOTF() — [async]**
+- **sendChatMessage()**
+- **setMoveDefault() — [async]**
+- **setResourceTrackers() — [async]**
+- **syncLanguages() — [async]**
+- **toggleExpand() — [async]**
+- **toggleStatusEffect() — [async]**
+- *update() — [async]*
+- **updateEqtCount() — [async]**
+- **updateItem() — [async]**
+- **updateItemAdditionsBasedOn() — [async]**
+- **updateParentOf() — [async]**

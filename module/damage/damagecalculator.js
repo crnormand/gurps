@@ -328,7 +328,9 @@ export class CompositeDamageCalculator {
 
   async addEffectsContext() {
     let tokenId = this._defender.token?.id
-    if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this._defender).id
+    if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this._defender)?.id
+    if (!tokenId) return // TODO Need to handle this in a better way.
+
     const defenderToken = canvas.tokens.get(tokenId)
     const actions = await TokenActions.fromToken(defenderToken)
     let isReady

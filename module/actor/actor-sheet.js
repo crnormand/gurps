@@ -15,11 +15,8 @@ import SplitDREditor from './splitdr-editor.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
- * @extends {foundry.appv1.sheets.ActorSheet}
  */
-// COMPATIBILITY: v12
-// export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
-export class GurpsActorSheet extends ActorSheet {
+export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -145,9 +142,9 @@ export class GurpsActorSheet extends ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      this._createGlobalItemMenus(html)
-    }
+    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    this._createGlobalItemMenus(html)
+    // }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -199,7 +196,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.internalUpdate(JSON.parse(json))
+      this.actor.update(JSON.parse(json))
     })
 
     // Handle resource tracker "-" button.
@@ -216,7 +213,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.internalUpdate(JSON.parse(json))
+      this.actor.update(JSON.parse(json))
     })
 
     // Handle resource tracker "reset" button.
@@ -229,7 +226,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = !!tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.internalUpdate(JSON.parse(json))
+      this.actor.update(JSON.parse(json))
     })
 
     // allow a click on the 'edit' icon to open the resource tracker editor.
@@ -539,13 +536,13 @@ export class GurpsActorSheet extends ActorSheet {
       if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-        await this.actor.internalUpdate({ [path + '.uses']: value })
-      } else {
-        let item = this.actor.items.get(eqt.itemid)
-        item.system.eqt.uses = value
-        await this.actor._updateItemFromForm(item)
-      }
+      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      //   await this.actor.internalUpdate({ [path + '.uses']: value })
+      // } else {
+      let item = this.actor.items.get(eqt.itemid)
+      item.system.eqt.uses = value
+      await this.actor._updateItemFromForm(item)
+      // }
     })
     html.find('i.equipmentbutton[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
@@ -556,13 +553,13 @@ export class GurpsActorSheet extends ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-        await this.actor.internalUpdate({ [path + '.uses']: value })
-      } else {
-        let item = this.actor.items.get(eqt.itemid)
-        item.system.eqt.uses = value
-        await this.actor._updateItemFromForm(item)
-      }
+      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      //   await this.actor.internalUpdate({ [path + '.uses']: value })
+      // } else {
+      let item = this.actor.items.get(eqt.itemid)
+      item.system.eqt.uses = value
+      await this.actor._updateItemFromForm(item)
+      // }
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -602,7 +599,8 @@ export class GurpsActorSheet extends ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+          this.actor.deleteNote(e[0].dataset.key)
+          // GURPS.removeKey(this.actor, e[0].dataset.key)
         },
       },
     ]
@@ -776,20 +774,20 @@ export class GurpsActorSheet extends ActorSheet {
 
   _deleteItem(target) {
     let key = target[0].dataset.key
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-      else GURPS.removeKey(this.actor, key)
-      this.actor.refreshDR().then()
-    } else {
-      let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
-      if (!!item) {
-        this.actor._removeItemAdditions(item.id).then(() => {
-          this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
-            GURPS.removeKey(this.actor, key)
-            this.actor.refreshDR().then()
-          })
+    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    //   if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+    //   else GURPS.removeKey(this.actor, key)
+    //   this.actor.refreshDR().then()
+    // } else {
+    let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
+    if (!!item) {
+      this.actor._removeItemAdditions(item.id).then(() => {
+        this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
+          GURPS.removeKey(this.actor, key)
+          this.actor.refreshDR().then()
         })
-      }
+      })
+      // }
     }
   }
 
@@ -887,12 +885,12 @@ export class GurpsActorSheet extends ActorSheet {
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
-          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-            obj.save = true
-            let payload = obj.toItemData(this.actor, '')
-            const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
-            obj.itemid = item._id
-          }
+          // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          obj.save = true
+          let payload = obj.toItemData(this.actor, '')
+          const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
+          obj.itemid = item._id
+          // }
           if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
         }
         let o = GURPS.decode(this.actor, path) || {}
@@ -1017,9 +1015,9 @@ export class GurpsActorSheet extends ActorSheet {
         item = j.pages.get(dragData.uuid.split('.').at(-1))
         break
     }
-    const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+    // const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
-    return (!!equipmentAsItem && item.type !== 'equipment') || !equipmentAsItem
+    return item.type !== 'equipment' // || !equipmentAsItem
       ? {
           n: item.name,
           id: item.id,
@@ -1169,31 +1167,31 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                  a => (obj[a] = html.find(`.${a}`).val())
-                )
-                ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
-                let u = html.find('.save') // Should only find in Note (or equipment)
-                if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
-                let v = html.find('.ignoreImportQty') // Should only find in equipment
-                if (!!v) obj.ignoreImportQty = v.is(':checked')
-                await actor.internalUpdate({ [path]: obj })
-                await actor.updateParentOf(path, false)
-              } else {
-                let item = actor.items.get(obj.itemid)
-                item.name = obj.name
-                item.system.eqt.count = obj.count
-                item.system.eqt.cost = obj.cost
-                item.system.eqt.uses = obj.uses
-                item.system.eqt.maxuses = obj.maxuses
-                item.system.eqt.techlevel = obj.techlevel
-                item.system.eqt.notes = obj.notes
-                item.system.eqt.pageref = obj.pageref
-                item.system.itemModifiers = obj.itemModifiers
-                await actor._updateItemFromForm(item)
-                await actor.updateParentOf(path, false)
-              }
+              // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+              //   ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
+              //     a => (obj[a] = html.find(`.${a}`).val())
+              //   )
+              //   ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+              //   let u = html.find('.save') // Should only find in Note (or equipment)
+              //   if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
+              //   let v = html.find('.ignoreImportQty') // Should only find in equipment
+              //   if (!!v) obj.ignoreImportQty = v.is(':checked')
+              //   await actor.internalUpdate({ [path]: obj })
+              //   await actor.updateParentOf(path, false)
+              // } else {
+              let item = actor.items.get(obj.itemid)
+              item.name = obj.name
+              item.system.eqt.count = obj.count
+              item.system.eqt.cost = obj.cost
+              item.system.eqt.uses = obj.uses
+              item.system.eqt.maxuses = obj.maxuses
+              item.system.eqt.techlevel = obj.techlevel
+              item.system.eqt.notes = obj.notes
+              item.system.eqt.pageref = obj.pageref
+              item.system.itemModifiers = obj.itemModifiers
+              await actor._updateItemFromForm(item)
+              await actor.updateParentOf(path, false)
+              // }
             },
           },
         },
@@ -1352,7 +1350,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/note-editor-popup.hbs',
       'Note Editor',
-      ['pageref', 'notes', 'title'],
+      ['pageref', 'notes', 'markdown', 'title'],
       [],
       730
     )
@@ -1368,7 +1366,7 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              strprops.forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              strprops.forEach(a => (obj[a] = html.find(`.${a}`)?.val() || ''))
               numprops.forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
 
               let q = html.find('.quick-roll')
@@ -1380,20 +1378,22 @@ export class GurpsActorSheet extends ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
 
-              if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
-              await actor.removeModEffectFor(path)
-              await actor.internalUpdate({ [path]: obj })
-              const commit = actor.applyItemModEffects({}, true)
-              if (commit) {
-                await actor.internalUpdate(commit)
-                if (canvas.tokens.controlled.length > 0) {
-                  await canvas.tokens.controlled[0].document.setFlag(
-                    'gurps',
-                    'lastUpdate',
-                    new Date().getTime().toString()
-                  )
-                }
-              }
+              actor.editItem(path, obj)
+
+              // if (!!obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
+              // await actor.removeModEffectFor(path)
+              // await actor.internalUpdate({ [path]: obj })
+              // const commit = actor.applyItemModEffects({}, true)
+              // if (commit) {
+              //   await actor.internalUpdate(commit)
+              //   if (canvas.tokens.controlled.length > 0) {
+              //     await canvas.tokens.controlled[0].document.setFlag(
+              //       'gurps',
+              //       'lastUpdate',
+              //       new Date().getTime().toString()
+              //     )
+              //   }
+              // }
             },
           },
         },
@@ -1497,7 +1497,8 @@ export class GurpsActorSheet extends ActorSheet {
       let targetkey = dropTarget.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-        await this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
+        this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
+        this.render(true)
       }
     }
     this.actor.ignoreRender = false
@@ -1543,93 +1544,36 @@ export class GurpsActorSheet extends ActorSheet {
           }
         }
 
-        let d = new Dialog({
-          title: object.name,
-          content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
-          buttons: {
-            one: {
-              icon: '<i class="fas fa-level-up-alt"></i>',
-              label: `${game.i18n.localize('GURPS.dropBefore')}`,
-              callback: async () => {
-                if (!isSrcFirst) {
-                  await this._removeKey(sourceKey)
-                  await this._insertBeforeKey(targetkey, object)
-                } else {
-                  await this._insertBeforeKey(targetkey, object)
-                  await this._removeKey(sourceKey)
-                }
+        // One of the few places we need to know the actor type.
+        if (this.actor.type === 'characterV2') {
+          this.actor.moveItem(sourceKey, targetkey)
+        } else {
+          let d = new Dialog({
+            title: object.name,
+            content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
+            buttons: {
+              one: {
+                icon: '<i class="fas fa-level-up-alt"></i>',
+                label: `${game.i18n.localize('GURPS.dropBefore')}`,
+                callback: async () => {
+                  await this.actor.reorderItem(sourceKey, targetkey, object, isSrcFirst)
+                },
+              },
+              two: {
+                icon: '<i class="fas fa-sign-in-alt"></i>',
+                label: `${game.i18n.localize('GURPS.dropInside')}`,
+                callback: async () => {
+                  let key = targetkey + '.contains.' + zeroFill(0)
+                  await this.actor.reorderItem(sourceKey, key, object, isSrcFirst)
+                },
               },
             },
-            two: {
-              icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: `${game.i18n.localize('GURPS.dropInside')}`,
-              callback: async () => {
-                let key = targetkey + '.contains.' + zeroFill(0)
-                if (!isSrcFirst) {
-                  await this._removeKey(sourceKey)
-                  await this._insertBeforeKey(key, object)
-                } else {
-                  await this._insertBeforeKey(key, object)
-                  await this._removeKey(sourceKey)
-                }
-              },
-            },
-          },
-          default: 'one',
-        })
-        d.render(true)
+            default: 'one',
+          })
+          d.render(true)
+        }
       }
     }
-  }
-
-  async _insertBeforeKey(targetKey, element) {
-    // target key is the whole path, like 'data.melee.00001'
-    let components = targetKey.split('.')
-
-    let index = parseInt(components.pop())
-    let path = components.join('.')
-
-    let object = GURPS.decode(this.actor, path)
-    let array = objectToArray(object)
-
-    // Delete the whole object.
-    let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
-
-    // Insert the element into the array.
-    array.splice(index, 0, element)
-
-    // Convert back to an object
-    object = arrayToObject(array, 5)
-
-    // update the actor
-    await this.actor.internalUpdate({ [path]: object }, { diff: false })
-  }
-
-  async _removeKey(sourceKey) {
-    // source key is the whole path, like 'data.melee.00001'
-    let components = sourceKey.split('.')
-
-    let index = parseInt(components.pop())
-    let path = components.join('.')
-
-    let object = GURPS.decode(this.actor, path)
-    let array = objectToArray(object)
-
-    // Delete the whole object.
-    let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
-
-    // Remove the element from the array
-    array.splice(index, 1)
-
-    // Convert back to an object
-    object = arrayToObject(array, 5)
-
-    // update the actor
-    await this.actor.internalUpdate({ [path]: object }, { diff: false })
   }
 
   _onfocus(ev) {
@@ -1807,30 +1751,23 @@ export class GurpsActorSheet extends ActorSheet {
   async _onClickEnc(ev) {
     ev.preventDefault()
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
-      let element = ev.currentTarget
-      let key = element.dataset.key
-      //////////
-      // Check for 'undefined' when clicking on Encumbrance Level 'header'. ~Stevil
-      if (key !== undefined) {
-        //////////
-        let encs = this.actor.system.encumbrance
-        if (encs[key].current) return // already selected
-        for (let enckey in encs) {
-          let enc = encs[enckey]
-          let t = 'system.encumbrance.' + enckey + '.current'
-          if (key === enckey) {
-            await this.actor.internalUpdate({
-              [t]: true,
-              'system.currentmove': parseInt(enc.move),
-              'system.currentdodge': parseInt(enc.dodge),
-            })
-          } else if (enc.current) {
-            await this.actor.internalUpdate({ [t]: false })
-          }
-        }
-        //////////
+      const element = ev.currentTarget
+      const key = element.dataset.key
+      if (!key) return
+
+      const encs = this.actor.system.encumbrance
+      const currentIndex = Object.keys(encs).find(k => {
+        if (encs[k].current) return k
+      })
+      const newIndex = key
+
+      const newLocal = {
+        [`system.encumbrance.${currentIndex}.current`]: false,
+        [`system.encumbrance.${newIndex}.current`]: true,
+        'system.currentmove': parseInt(encs[newIndex].move),
+        'system.currentdodge': parseInt(encs[newIndex].dodge),
       }
-      //////////
+      await this.actor.update(newLocal)
     } else {
       ui.notifications.warn(
         "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."
@@ -1847,12 +1784,12 @@ export class GurpsActorSheet extends ActorSheet {
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      let item = this.actor.items.get(eqt.itemid)
-      item.system.equipped = eqt.equipped
-      item.system.eqt.equipped = eqt.equipped
-      await this.actor._updateItemFromForm(item)
-    }
+    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    let item = this.actor.items.get(eqt.itemid)
+    item.system.equipped = eqt.equipped
+    item.system.eqt.equipped = eqt.equipped
+    await this.actor._updateItemFromForm(item)
+    // }
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.internalUpdate({
@@ -1869,17 +1806,19 @@ export class GurpsActorSheet extends ActorSheet {
         icon: "<i class='fas fa-trash'></i>",
         callback: async e => {
           let key = e[0].dataset.key
-          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-            // We need to remove linked item
-            const actorComponent = foundry.utils.getProperty(this.actor, key)
-            const existingItem = await this.actor.items.get(actorComponent.itemid)
-            if (!!existingItem) {
-              this.actor._removeItemAdditions(existingItem.id)
-              await existingItem.delete()
-            }
-          } else {
-            if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+          const actorComponent = foundry.utils.getProperty(this.actor, key)
+          if (this.actor.type === 'characterV2') {
+            if (key.startsWith('system.ads')) this.actor.deleteItem(actorComponent.traitV2)
+            return
           }
+
+          // We need to remove linked item
+          const existingItem = await this.actor.items.get(actorComponent.itemid)
+          if (!!existingItem) {
+            this.actor._removeItemAdditions(existingItem.id)
+            await existingItem.delete()
+          }
+
           GURPS.removeKey(this.actor, key)
           await this.actor.refreshDR()
         },

@@ -852,7 +852,7 @@ ul#result-effects li {
 
 #encumbrance .header select#move-mode,
 #encumbrance .header button#edit-move-modes {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.3);
   font-size: 90%;
   margin: 2px 0;
   border: 1px solid var(--color-border-light-tertiary);
@@ -2456,19 +2456,23 @@ details .popup.square5x4 {
   text-transform: uppercase;
 }
 
-.color-equipment {
+.color-equipment,
+.color-equipmentV2 {
   background-color: #35713e;
 }
 
-.color-spell {
+.color-spell,
+.color-spellV2 {
   background-color: #91241e;
 }
 
-.color-skill {
+.color-skill,
+.color-skillV2 {
   background-color: #453c96;
 }
 
-.color-feature {
+.color-feature,
+.color-featureV2 {
   background-color: #3177b2;
 }
 

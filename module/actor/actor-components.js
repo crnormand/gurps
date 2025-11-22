@@ -90,10 +90,10 @@ export class _Base {
     if (!!existingComponentKey) {
       const existingComponentItem = actor.items.get(actorComp.itemid)
       if (!!existingComponentItem) {
-        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          actorComp.itemid = existingComponentItem.itemid || ''
-        }
-        actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
+        // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        actorComp.itemid = existingComponentItem.itemid || ''
+        // }
+        // actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
       } else {
         actorComp.itemid = ''
         actorComp.itemInfo = {}
@@ -481,12 +481,12 @@ export class Spell extends Leveled {
           uuid: uniqueId,
           parentuuid: this.parentuuid || '',
           points: this.points || 0,
-          ['import']: this['import'] || '',
+          import: this['import'] || '',
           level: this.level || 0,
           relativelevel: this.relativelevel || '',
           name: this.name,
           originalName: this.originalName || '',
-          ['class']: this['class'] || '',
+          class: this['class'] || '',
           college: this.college || '',
           cost: this.cost || '',
           maintain: this.maintain || '',
@@ -955,6 +955,7 @@ export class Note extends _Base {
 
     this.notes = n || ''
     this.save = ue
+    this.markdown = false
   }
 }
 
@@ -1018,16 +1019,21 @@ export class Equipment extends Named {
    */
   static async calcUpdate(actor, eqt, objkey) {
     if (!eqt) return
+    // NOTE: no longer necessary with DataModel validation
     const num = (/** @type {string | number} */ s) => {
       // @ts-ignore
       return isNaN(s) ? 0 : Number(s)
     }
+    // NOTE: no longer necessary with DataModel validation
     const cln = (/** @type {number} */ s) => {
       return !s ? 0 : num(String(s).replace(/,/g, ''))
     }
 
+    // NOTE: no longer necessary with DataModel validation
     eqt.count = cln(eqt.count)
+    // NOTE: no longer necessary with DataModel validation
     eqt.cost = cln(eqt.cost)
+    // NOTE: no longer necessary with DataModel validation
     eqt.weight = cln(eqt.weight)
     let cs = eqt.count * eqt.cost
     let ws = eqt.count * eqt.weight

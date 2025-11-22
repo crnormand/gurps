@@ -1,0 +1,33 @@
+export interface TaggedModifiersSettings {
+  autoAdd: boolean
+  checkConditionals: boolean
+  checkReactions: boolean
+  useSpellCollegeAsTag: boolean
+  allRolls: string
+  allAttributesRolls: string
+  allSkillRolls: string
+  allSpellRolls: string
+  allDamageRolls: string
+  allAttackRolls: string
+  allRangedRolls: string
+  allMeleeRolls: string
+  allDefenseRolls: string
+  allDODGERolls: string
+  allParryRolls: string
+  allBlockRolls: string
+  allPERRolls: string
+  allWILLRolls: string
+  allSTRolls: string
+  allDXRolls: string
+  allIQRolls: string
+  allHTRolls: string
+  allFRIGHTCHECKRolls: string
+  allVISIONRolls: string
+  allTASTESMELLRolls: string
+  allHEARINGRolls: string
+  allTOUCHRolls: string
+  allCRRolls: string
+  combatOnlyTag: string
+  nonCombatOnlyTag: string
+  combatTempTag: string
+}

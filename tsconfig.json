@@ -23,7 +23,9 @@
 
     /* Emit */
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
-    // "sourceMap": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "inlineSourceMap": false,
 
     /* Interop Constraints */
     "isolatedModules": true /* Ensure that each file can be safely transpiled without relying on other imports. */,
@@ -52,6 +54,7 @@
     "dev-utilities",
     "scripts",
     "jest.config.mjs",
+    "test/jest.setup.js",
     "tsconfig.json",
     "package-lock.json",
     "package.json",

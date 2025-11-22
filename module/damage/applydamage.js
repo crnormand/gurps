@@ -11,7 +11,7 @@ import {
   parseFloatFrom,
   parseIntFrom,
 } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor/actor.js'
+import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import { TokenActions } from '../token-actions.js'
 import { CompositeDamageCalculator } from './damagecalculator.js'
 import { isSimpleADD } from './settings.js'
@@ -22,7 +22,7 @@ const simpleDialogHeight = 160
  * Displays the Apply Damage Dialog. Delegates all the logic behind calculating
  * and applying damage to a character to instance variable _calculator.
  *
- * Takes as input a GurpsActor and DamageData.
+ * Takes as input a GurpsActorV2 and DamageData.
  *
  * EXAMPLE DamageData:
  *   let damageData = {
@@ -37,7 +37,7 @@ export default class ApplyDamageDialog extends Application {
   /**
    * Create a new ADD.
    *
-   * @param {GurpsActor} actor
+   * @param {GurpsActorV2} actor
    * @param {Array} damageData
    * @param {*} options
    */

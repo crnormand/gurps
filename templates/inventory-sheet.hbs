@@ -30,15 +30,14 @@
       <div class="desc header" data-key="system.notes">Notes &nbsp; <i class="fas fa-plus addnoteicon"></i></div>
       <div class="ref header">Ref</div>
       {{#listeqt system.notes}}
-      <div
-        class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}"
-        data-key="system.notes.{{@key}}"
-      >
-        {{#if (notEmpty this.contains)}}<i class="fas fa-caret-down expandcollapseicon"></i>{{/if}} {{#if (notEmpty
-        this.collapsed)}}<i class="fas fa-caret-right expandcollapseicon"></i>{{/if}} {{#if this.notes}}{{{gurpslinkbr
-        this.notes}}} {{else}}this note was intentionally left blank ;-){{/if}}
-      </div>
-      <div class="ref">{{{pdflinkext this}}}</div>
+        <div
+          class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}"
+          data-key="system.notes.{{@key}}">
+          {{#if (notEmpty contains)}}<i class="fas fa-caret-down expandcollapseicon"></i>{{/if}} {{#if (notEmpty
+        collapsed)}}<i class="fas fa-caret-right expandcollapseicon"></i>{{/if}}
+          {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
+        </div>
+        <div class="ref">{{{pdflinkext this}}}</div>
       {{/listeqt}}
       <div></div>
     </div>

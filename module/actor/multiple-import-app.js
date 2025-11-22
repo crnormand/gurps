@@ -1,5 +1,5 @@
 import { ActorImporter } from './actor-importer.js'
-import { GurpsActor } from './actor.js'
+import { GurpsActorV2 } from './gurps-actor.js'
 
 export const AddMultipleImportButton = function (html) {
   const button = document.createElement('button')
@@ -27,15 +27,10 @@ export const AddMultipleImportButton = function (html) {
   const icon = document.createElement('i')
   icon.classList.add('fa-solid', 'fa-file-import')
   button.appendChild(icon)
-  const textNode = document.createTextNode(game.i18n.localize('GURPS.importMultiple'));
-  button.appendChild(textNode);
+  const textNode = document.createTextNode(game.i18n.localize('GURPS.importMultiple'))
+  button.appendChild(textNode)
 
-  if (game.release.generation === 12) {
-    html = html[0]
-    html.querySelector('.directory-footer').append(button)
-  } else {
-    html.querySelector('.header-actions').append(button)
-  }
+  html.querySelector('.header-actions').append(button)
 }
 
 class MultipleImportApp extends Application {
@@ -149,7 +144,7 @@ class MultipleImportApp extends Application {
 
       // If Create or Replace, create a new actor.
       if (onImport === 'replace' || onImport === 'create') {
-        actor = await GurpsActor.create(
+        actor = await GurpsActorV2.create(
           {
             name: file.file,
             type: 'character',

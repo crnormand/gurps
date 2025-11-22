@@ -1,10 +1,124 @@
 {
+  "_id": "hbI2uKMYeUIHTKwh",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.346",
+    "createdTime": 1755201775508,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "szmRlAo4qx3MndgW",
+    "modifiedTime": 1755201775508,
+    "systemId": "gurps",
+    "systemVersion": "1.0.0-alpha"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "worlds/migration/assets/actors/hbI2uKMYeUIHTKwh-img.png",
+  "items": [],
+  "name": "Alice Wozniak",
+  "ownership": {
+    "default": 0,
+    "szmRlAo4qx3MndgW": 3
+  },
+  "prototypeToken": {
+    "actorLink": false,
+    "alpha": 1,
+    "appendNumber": false,
+    "bar1": {
+      "attribute": "HP"
+    },
+    "bar2": {
+      "attribute": "FP"
+    },
+    "detectionModes": [],
+    "displayBars": 0,
+    "displayName": 0,
+    "disposition": -1,
+    "flags": {},
+    "height": 1,
+    "light": {
+      "alpha": 0.5,
+      "angle": 360,
+      "animation": {
+        "intensity": 5,
+        "reverse": false,
+        "speed": 5,
+        "type": null
+      },
+      "attenuation": 0.5,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "contrast": 0,
+      "darkness": {
+        "max": 1,
+        "min": 0
+      },
+      "dim": 0,
+      "luminosity": 0.5,
+      "negative": false,
+      "priority": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "lockRotation": false,
+    "movementAction": null,
+    "name": "Alice Wozniak",
+    "occludable": {
+      "radius": 0
+    },
+    "prependAdjective": false,
+    "randomImg": false,
+    "ring": {
+      "colors": {
+        "background": null,
+        "ring": null
+      },
+      "effects": 1,
+      "enabled": false,
+      "subject": {
+        "scale": 1,
+        "texture": null
+      }
+    },
+    "rotation": 0,
+    "sight": {
+      "angle": 360,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "color": null,
+      "contrast": 0,
+      "enabled": false,
+      "range": 0,
+      "saturation": 0,
+      "visionMode": "basic"
+    },
+    "texture": {
+      "alphaThreshold": 0.75,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "fit": "contain",
+      "offsetX": 0,
+      "offsetY": 0,
+      "rotation": 0,
+      "scaleX": 1,
+      "scaleY": 1,
+      "src": "worlds/migration/assets/actors/hbI2uKMYeUIHTKwh-prototypeToken-texture-src.png",
+      "tint": "#ffffff"
+    },
+    "turnMarker": {
+      "animation": null,
+      "disposition": false,
+      "mode": 1,
+      "src": null
+    },
+    "width": 1
+  },
+  "sort": 0,
   "system": {
     "additionalresources": {
-      "bodyplan": "Humanoid",
-      "importname": "",
-      "importpath": "",
-      "tracker": []
+      "bodyplan": "Humanoid"
     },
     "attributes": {
       "DX": {
@@ -13,8 +127,8 @@
         "value": 10
       },
       "HT": {
-        "import": 14,
-        "points": 40,
+        "import": 13,
+        "points": 30,
         "value": 10
       },
       "IQ": {
@@ -23,8 +137,8 @@
         "value": 10
       },
       "PER": {
-        "import": 10,
-        "points": 0,
+        "import": 13,
+        "points": 5,
         "value": 10
       },
       "QN": {
@@ -33,13 +147,13 @@
         "value": 10
       },
       "ST": {
-        "import": 18,
-        "points": 80,
+        "import": 13,
+        "points": 30,
         "value": 10
       },
       "WILL": {
-        "import": 14,
-        "points": 10,
+        "import": 11,
+        "points": -5,
         "value": 10
       }
     },
@@ -48,18 +162,8 @@
       "value": 7
     },
     "basicspeed": {
-      "points": 0,
+      "points": 5,
       "value": 7
-    },
-    "conditionalinjury": {
-      "injury": {
-        "daystoheal": 0,
-        "severity": ""
-      },
-      "RT": {
-        "points": 0,
-        "value": 4
-      }
     },
     "conditions": {
       "actions": {
@@ -84,21 +188,192 @@
       "value": 11
     },
     "FP": {
-      "max": 14,
+      "max": 13,
       "min": 0,
       "points": 0,
-      "value": 14
+      "value": 13
     },
-    "frightcheck": 16,
+    "frightcheck": 13,
     "hearing": 13,
-    "hitlocations": [
+    "hitlocations": {
+      "00000": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "0",
+        "penalty": "-9",
+        "roll": "-",
+        "split": {},
+        "where": "Eyes"
+      },
+      "00001": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "2",
+        "penalty": "-7",
+        "roll": "3-4",
+        "split": {},
+        "where": "Skull"
+      },
+      "00002": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "0",
+        "penalty": "-5",
+        "roll": "5",
+        "split": {},
+        "where": "Face"
+      },
+      "00003": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "-2",
+        "roll": "6-7",
+        "split": {},
+        "where": "Right Leg"
+      },
+      "00004": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "-2",
+        "roll": "8",
+        "split": {},
+        "where": "Right Arm"
+      },
+      "00005": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "0",
+        "roll": "9-10",
+        "split": {},
+        "where": "Torso"
+      },
+      "00006": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "-3",
+        "roll": "11",
+        "split": {},
+        "where": "Groin"
+      },
+      "00007": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "-2",
+        "roll": "12",
+        "split": {},
+        "where": "Left Arm"
+      },
+      "00008": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "-2",
+        "roll": "13-14",
+        "split": {},
+        "where": "Left Leg"
+      },
+      "00009": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "0",
+        "penalty": "-4",
+        "roll": "15",
+        "split": {},
+        "where": "Hand"
+      },
+      "00010": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "0",
+        "penalty": "-4",
+        "roll": "16",
+        "split": {},
+        "where": "Foot"
+      },
+      "00011": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "0",
+        "penalty": "-5",
+        "roll": "17-18",
+        "split": {},
+        "where": "Neck"
+      },
+      "00012": {
+        "_damageType": "",
+        "dr": "",
+        "drCap": "",
+        "drItem": 0,
+        "drMod": "",
+        "equipment": "",
+        "import": "1",
+        "penalty": "-3",
+        "roll": "-",
+        "split": {},
+        "where": "Vitals"
+      }
+    },
+    "hitlocationsV2": [
       {
         "_damageType": "",
         "_dr": 0,
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 7,
+        "import": 0,
         "penalty": -9,
         "rollText": "-",
         "split": {},
@@ -110,7 +385,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 5,
+        "import": 2,
         "penalty": -7,
         "rollText": "3-4",
         "split": {},
@@ -122,7 +397,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 3,
+        "import": 0,
         "penalty": -5,
         "rollText": "5",
         "split": {},
@@ -134,7 +409,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 5,
+        "import": 1,
         "penalty": -2,
         "rollText": "6-7",
         "split": {},
@@ -146,7 +421,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 5,
+        "import": 1,
         "penalty": -2,
         "rollText": "8",
         "split": {},
@@ -158,7 +433,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 9,
+        "import": 1,
         "penalty": 0,
         "rollText": "9-10",
         "split": {},
@@ -170,7 +445,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 3,
+        "import": 1,
         "penalty": -3,
         "rollText": "11",
         "split": {},
@@ -182,7 +457,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 5,
+        "import": 1,
         "penalty": -2,
         "rollText": "12",
         "split": {},
@@ -194,7 +469,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 5,
+        "import": 1,
         "penalty": -2,
         "rollText": "13-14",
         "split": {},
@@ -206,7 +481,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 3,
+        "import": 0,
         "penalty": -4,
         "rollText": "15",
         "split": {},
@@ -218,7 +493,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 5,
+        "import": 0,
         "penalty": -4,
         "rollText": "16",
         "split": {},
@@ -230,7 +505,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 6,
+        "import": 0,
         "penalty": -5,
         "rollText": "17-18",
         "split": {},
@@ -242,7 +517,7 @@
         "drCap": 0,
         "drItem": 0,
         "drMod": 0,
-        "import": 9,
+        "import": 1,
         "penalty": -3,
         "rollText": "-",
         "split": {},
@@ -250,54 +525,41 @@
       }
     ],
     "HP": {
-      "max": 18,
+      "max": 17,
       "min": 0,
-      "points": 0,
-      "value": 18
+      "points": 8,
+      "value": 17
     },
-    "move": [],
-    "parry": 0,
     "QP": {
       "max": 10,
       "min": 0,
       "points": 0,
       "value": 10
     },
-    "swing": "4d",
+    "swing": "2d-1",
     "tastesmell": 13,
-    "thrust": "2d",
-    "totalpoints": {
-      "ads": 145,
-      "attributes": 255,
-      "disads": -75,
-      "quirks": -5,
-      "race": 0,
-      "skills": 81,
-      "spells": 0,
-      "total": 0,
-      "unspent": -1
-    },
+    "thrust": "1d",
     "touch": 13,
     "traits": {
-      "age": "16",
-      "birthday": "December 18",
-      "createdon": "2011-06-05T00:00:00-04:00",
+      "age": "23",
+      "birthday": "October 5",
+      "createdon": "2025-05-20T12:53:11-04:00",
       "eyes": "Blue",
-      "gender": "Male",
-      "hair": "Blond, wavy, long",
+      "gender": "Female",
+      "hair": "Black",
       "hand": "Left",
-      "height": "5'8\"",
-      "modifiedon": "2025-05-10T12:38:01-04:00",
-      "player": "Andy",
-      "race": "Human",
+      "height": "5'9\"",
+      "modifiedon": "2025-07-20T14:46:39-04:00",
+      "player": "jeff",
+      "race": "",
       "religion": "",
       "sizemod": 0,
-      "skin": "Pale",
+      "skin": "Brown",
       "techlevel": "8",
-      "title": "Demonspawn Atoner",
-      "weight": "162 lb"
+      "title": "Accidental Hero",
+      "weight": "135 lb"
     },
     "vision": 13
   },
-  "type": "character"
+  "type": "characterV2"
 }

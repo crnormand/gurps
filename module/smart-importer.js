@@ -20,11 +20,11 @@ export class SmartImporter {
   }
   static getTemplateOptions(actor) {
     const { name } = actor
-    const useFoundryItems = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
-    const equipType = useFoundryItems
-      ? game.i18n.localize('GURPS.importTraitToFoundryItem')
-      : game.i18n.localize('GURPS.importTraitToClassicData')
-    const equipColor = useFoundryItems ? '#35713e' : '#337bb7'
+    // const useFoundryItems = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+    const equipType = // useFoundryItems ?
+      game.i18n.localize('GURPS.importTraitToFoundryItem')
+    // : game.i18n.localize('GURPS.importTraitToClassicData')
+    const equipColor = /* useFoundryItems ? */ '#35713e' //: '#337bb7'
     return {
       title: game.i18n.localize('GURPS.importSelectFileTitle'),
       source: game.i18n.localize('GURPS.importSelectFileSource'),

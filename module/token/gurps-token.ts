@@ -2,9 +2,7 @@ import Maneuvers from '../actor/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
-// COMPATIBILITY: v12
-// export default class GurpsToken extends foundry.canvas.placeables.Token {
-class GurpsToken extends Token {
+class GurpsToken extends foundry.canvas.placeables.Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
@@ -14,10 +12,9 @@ class GurpsToken extends Token {
   ): void {
     super._onCreate(data, options, userId)
     const actor = this.actor
-    if (actor) {
-      // @ts-expect-error: Waiting for DataModel migration for Actor
+    if (actor && actor.isOfType('characterV2', 'enemy')) {
       const maneuverText = actor.system.conditions.maneuver
-      actor.replaceManeuver(maneuverText)
+      actor.replaceManeuver(maneuverText ?? 'Do Nothing')
     }
   }
 
@@ -39,13 +36,12 @@ class GurpsToken extends Token {
     const activeManeuvers = Maneuvers.getActiveEffectManeuvers(Array.from(this.actor?.effects.values() ?? []))
     // if there is a single active effect maneuver, update its data
     if (activeManeuvers.length === 1) {
-      // @ts-expect-error: waiting for flag type update
       if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) await activeManeuvers[0].update(maneuver)
     } else {
       if (activeManeuvers.length > 1) {
         await this.actor?.deleteEmbeddedDocuments(
           'ActiveEffect',
-          activeManeuvers.map(m => m.id!)
+          (activeManeuvers as { id: string }[]).map(m => m.id!)
         )
       }
       maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name

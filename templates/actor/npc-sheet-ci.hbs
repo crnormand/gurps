@@ -31,6 +31,38 @@
           data-otf='{{system.swing}} dmg'>{{system.swing}}</div>
         <div class=" npc-input-hp npc-input-labelr">{{localize "GURPS.HP"}}</div>
         <div class="npc-input-hp-val condition-block"><input class="npc-input-2 {{hpCondition system.HP "
+  <div class='gga-app {{classes}} npc-sheet'>
+    <div class="npc-sheet-grid-container-ci">
+      <div class="npc-input-top">
+        <div class="npc-input-nm npc-input-label">{{localize "GURPS.sheet.personal.name"}}:</div>
+        <div class="npc-input-nm-val npc-sheet-label">{{{gurpslink actor.name}}}</div>
+        <div class="npc-input-title npc-input-label">{{localize "GURPS.sheet.personal.title"}}:</div>
+        <div class="npc-input-title-val npc-sheet-label">{{{gurpslink system.traits.title}}}</div>
+        <div class="npc-input-desc npc-input-label">Desc:</div>
+        <div class="npc-input-desc-val npc-sheet-label">{{{gurpslink system.traits.appearance}}}</div>
+      </div>
+      <div class="npc-input-attr gurps">
+        <div class="npc-input-st npc-input-labelr">{{localize "GURPS.attributesST"}}</div>
+        <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.value" data-otf='ST'>
+          {{system.attributes.ST.value}}
+        </div>
+        <div class="npc-input-dx npc-input-labelr">{{localize "GURPS.attributesDX"}}</div>
+        <div class="npc-input-dx-val rollable npc-sheet-centered" data-path="attributes.DX.value" data-otf='DX'>
+          {{system.attributes.DX.value}}
+        </div>
+        <div class="npc-input-iq npc-input-labelr">{{localize "GURPS.attributesIQ"}}</div>
+        <div class="npc-input-iq-val rollable npc-sheet-centered" data-path="attributes.IQ.value" data-otf='IQ'>
+          {{system.attributes.IQ.value}}
+        </div>
+        <div class="npc-input-ht npc-input-labelr">{{localize "GURPS.attributesHT"}}</div>
+        <div class="npc-input-ht-val rollable npc-sheet-centered" data-path="attributes.HT.value" data-otf='HT'>
+          {{system.attributes.HT.value}}
+        </div>
+        <div class="npc-input-dmg npc-input-labelr">Dmg</div>
+        <div class="npc-input-dmg-val rollable npc-sheet-centered" data-path="swing" data-damage
+          data-otf='{{system.swing}} dmg'>{{system.swing}}</div>
+        <div class=" npc-input-hp npc-input-labelr">{{localize "GURPS.HP"}}</div>
+        <div class="npc-input-hp-val condition-block"><input class="npc-input-2 {{hpCondition system.HP "
 						style"}}" name="system.HP.value" type="text" value="{{system.HP.value}}" data-dtype="Number" />
         </div>
         <div class="npc-input-will npc-input-labelr">{{localize "GURPS.attributesWILL"}}</div>
@@ -69,7 +101,7 @@
         <div class='npc-sheet-ci'>
           {{#if useCI}}
             <div id='combat-hit' class='conditional-injury'>
-              <div class='header major-heading'>{{localize "GURPS.addInjury"}}</div>
+              <div class='header major-heading'>{{localize "GURPS.injury"}}</div>
               <div class="tracked-resource no-border">
                 <div class="header minor-heading">Severity</div>
                 <div class='spinner'>
@@ -123,7 +155,7 @@
         <div class="npc-input-nt-val" style='--of:auto'>
           {{#listeqt system.notes}}
             <div class="desc indent0 dblclkedit" data-key="system.notes.{{@key}}">
-              {{{gurpslinkbr this.notes}}}
+              {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
             </div>
           {{/listeqt}}
         </div>
@@ -180,7 +212,7 @@
             <div class='npc-trait-row skldraggable desc' data-key="system.skills.{{@key}}">
               <div>
                 <div class="dblclkedit">{{{gurpslink this.name}}}
-                  <div class="list_note">{{{gurpslinkbr this.notes @root}}}</div>
+                  <div class="list_note">{{{gurpslinkbr this.notes}}}</div>
                 </div>
               </div>
             </div>
@@ -222,8 +254,7 @@
             </div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="system.ranged.{{@key}}"
               data-otf='{{quotedAttackName 'R' this}}'>{{this.level}}</div>
-            <div class="acc {{gmod this.acc}}" data-name='Acc for {{this.name}}'
-              data-otf='{{{displayNumber this.acc}}} Acc'>
+            <div class="acc {{gmod this.acc}}" data-name='Acc for {{this.name}}'>
               {{{displayNumber this.acc showPlus=false}}}
             </div>
             <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
