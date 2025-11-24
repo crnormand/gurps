@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals'
-import { GurpsActorV2 } from '../module/actor/gurps-actor.js'
-import { parseItemKey } from '../module/utilities/object-utils.js'
-import { CharacterModel } from '../module/actor/data/character.js'
-import { GurpsItemV2 } from '../module/item/gurps-item.js'
-import { TraitModel } from '../module/item/data/trait.js'
-import { _Collection } from './foundry-utils/collection.js'
+import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
+import { parseItemKey } from '../../../module/utilities/object-utils.js'
+import { CharacterModel } from '../../../module/actor/data/character.js'
+import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
+import { TraitModel } from '../../../module/item/data/trait.js'
+import { _Collection } from '../../foundry-utils/collection.js'
 
 describe('GurpsActorV2', () => {
   let actor: GurpsActorV2<'characterV2'>
@@ -483,7 +483,7 @@ describe('GurpsActorV2', () => {
 
     beforeEach(async () => {
       // Import EquipmentModel
-      EquipmentModel = (await import('../module/item/data/equipment.js')).EquipmentModel
+      EquipmentModel = (await import('../../../module/item/data/equipment.js')).EquipmentModel
 
       // Mock game.settings for updateEqtCountV2
       // @ts-expect-error

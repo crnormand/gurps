@@ -1,5 +1,5 @@
-import { ContainerUtils } from '../module/data/mixins/container-utils.js'
-import { IContainable } from '../module/data/mixins/containable.js'
+import { ContainerUtils } from '../../../../module/data/mixins/container-utils.js'
+import { IContainable } from '../../../../module/data/mixins/containable.js'
 
 interface MockContainable extends IContainable<MockContainable> {
   id: string

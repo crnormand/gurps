@@ -1,5 +1,5 @@
-import { parseForRollOrDamage, parselink } from '../lib/parselink.js'
-import { DamageTable } from '../module/damage/damage-tables.js'
+import { parseForRollOrDamage, parselink } from '../../lib/parselink.js'
+import { DamageTable } from '../../module/damage/damage-tables.js'
 
 beforeAll(() => {
   /** @type {Game} */

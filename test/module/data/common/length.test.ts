@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Length } from '../module/data/common/length'
+import { Length } from '../../../../module/data/common/length'
 
 describe('Length', () => {
   Length._localize = (key: any) => key // or a mock function

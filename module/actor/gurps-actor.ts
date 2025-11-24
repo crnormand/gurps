@@ -4521,7 +4521,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* =========================================================================================== */
 
   override async _preUpdate(changes: Actor.UpdateData, options: AnyObject, user: User): Promise<void> {
-    console.debug('GURPS | Actor._preUpdate', { changes, options, user })
     if (this.isNewActorType) {
       this.#translateLegacyHitlocationData(changes)
       this.#translateLegacyEncumbranceData(changes)
@@ -4529,7 +4528,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       await this.#translateAdsData(changes)
       this.#translateMoveData(changes)
       this.#translateNoteData(changes)
-      console.debug('GURPS | Actor._preUpdate translated', { changes, options, user })
     }
   }
 

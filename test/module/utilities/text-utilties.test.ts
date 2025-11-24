@@ -1,5 +1,5 @@
 // @ts-ignore - extension-less import to match repo convention under ts-jest ESM
-import { convertRangeTextToArray } from '../module/utilities/text-utilties'
+import { convertRangeTextToArray } from '../../../module/utilities/text-utilties'
 
 describe('convertRangeTextToArray', () => {
   test('parses a single inclusive range', () => {
