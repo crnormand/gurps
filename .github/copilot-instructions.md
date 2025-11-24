@@ -377,7 +377,9 @@ The project includes tests organized to mirror the module structure:
 
 **Actor Tests:**
 
-- `test/module/actor/gurps-actor.test.ts` - GurpsActorV2 methods (moveItem, \_preUpdate, etc.)
+- `test/module/actor/gurps-actor.test.ts` - GurpsActorV2 instantiation and parseItemKey utility tests
+- `test/module/actor/gurps-actor-preupdate.test.ts` - GurpsActorV2.\_preUpdate method (legacy data translation)
+- `test/module/actor/gurps-actor-moveitem.test.ts` - GurpsActorV2.moveItem method (drag-drop, reordering, splitting)
 
 **Chat Tests:**
 
@@ -404,7 +406,7 @@ Test infrastructure:
 - `test/stubs/` - Stub implementations for dependencies
 
 **Test Organization:**
-Tests are organized in a directory structure that mirrors the module source files being tested. When adding new tests, place them in the corresponding location under `test/` that matches the `module/` or `lib/` directory structure.
+Tests are organized in a directory structure that mirrors the module source files being tested. When adding new tests, place them in the corresponding location under `test/` that matches the `module/` or `lib/` directory structure. Large test files should be split by method or feature area for better maintainability.
 
 ## Development Workflow
 
