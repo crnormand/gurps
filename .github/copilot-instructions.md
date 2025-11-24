@@ -639,6 +639,10 @@ const formatted = game.i18n.format('GURPS.DamageFormula', { damage: '2d+1' })
 
 ### Code Comments
 
+- Use JSDoc for public APIs
+- Document complex logic with inline comments
+- Comments should begin with a capital letter and end with a period or question mark.
+
 ```typescript
 /**
  * Calculate effective skill level including modifiers
