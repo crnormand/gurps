@@ -1,4 +1,21 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Personagem (v1)",
+      "characterV2": "Personagem (v2)",
+      "enemy": "Inimigo"
+    },
+    "Item": {
+      "feature": "Característica (v1)",
+      "skill": "Perícia (v1)",
+      "spell": "Mágica (v1)",
+      "equipment": "Equipamento (v1)",
+      "featureV2": "Característica (v2)",
+      "skillV2": "Perícia (v2)",
+      "spellV2": "Mágica (v2)",
+      "equipmentV2": "Equipamento (v2)"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Ptos",
     "abbrevRef": "Ref",

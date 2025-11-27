@@ -1,4 +1,21 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Charakter (v1)",
+      "characterV2": "Charakter (v2)",
+      "enemy": "Gegner"
+    },
+    "Item": {
+      "feature": "Merkmal (v1)",
+      "skill": "Fertigkeit (v1)",
+      "spell": "Zauberspruch (v1)",
+      "equipment": "Ausrüstung (v1)",
+      "featureV2": "Merkmal (v2)",
+      "skillV2": "Fertigkeit (v2)",
+      "spellV2": "Zauberspruch (v2)",
+      "equipmentV2": "Ausrüstung (v2)"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",

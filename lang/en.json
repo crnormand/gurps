@@ -1,4 +1,21 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Character (v1)",
+      "characterV2": "Character (v2)",
+      "enemy": "Enemy"
+    },
+    "Item": {
+      "feature": "Feature (v1)",
+      "skill": "Skill (v1)",
+      "spell": "Spell (v1)",
+      "equipment": "Equipment (v1)",
+      "featureV2": "Feature (v2)",
+      "skillV2": "Skill (v2)",
+      "spellV2": "Spell (v2)",
+      "equipmentV2": "Equipment (v2)"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
