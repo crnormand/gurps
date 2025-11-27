@@ -1,24 +1,20 @@
-import { AnyObject } from 'fvtt-types/utils'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { Length, LengthUnit } from '../data/common/index.js'
 
 function registerRuler() {
   if (game.release?.generation ?? 12 >= 13) {
     class GurpsRuler extends foundry.canvas.interaction.Ruler {
-      // Used to determine the distance modifier to apply to the modifier bucket
-      // when releasing the ruler.
+      // Used to determine the distance modifier to apply to the modifier bucket when releasing the ruler.
       distanceModifier = 0
 
       /* ---------------------------------------- */
 
-      // @ts-expect-error: types have not yet caught up
       static override WAYPOINT_LABEL_TEMPLATE = 'systems/gurps/templates/canvas/ruler-waypoint-label.hbs'
 
       /* ---------------------------------------- */
 
-      //@ts-expect-error: types have not yet caught up
-      protected _getWaypointLabelContext(waypoint: RulerWaypoint, state: any): AnyObject | void {
-        //@ts-expect-error: types have not yet caught up
+      // @ts-expect-error: types have not yet caught up
+      protected _getWaypointLabelContext(waypoint: RulerWaypoint, state: any): Ruler.WaypointContext | void {
         const context = super._getWaypointLabelContext(waypoint, state)
         if (context === undefined) return context
         if (waypoint.next === null) {
@@ -27,6 +23,7 @@ function registerRuler() {
           this.distanceModifier = this.yardsToRangePenalty(yards)
 
           GURPS.ModifierBucket.setTempRangeMod(this.distanceModifier)
+          // @ts-expect-error: augmenting context type
           context.modifier = { total: this.distanceModifier }
         }
         return context
@@ -51,10 +48,8 @@ function registerRuler() {
 
       /* ---------------------------------------- */
 
-      // @ts-expect-error: types have not yet caught up
       override reset(): void {
         if (this.distanceModifier !== 0) GURPS.ModifierBucket.addTempRangeMod()
-        // @ts-expect-error: types have not yet caught up
         return super.reset()
       }
     }
