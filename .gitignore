@@ -4,6 +4,7 @@
 .DS_Store
 .project
 .settings/
+.vscode/
 Thumbs.db
 scripts/foundry.js
 node_modules

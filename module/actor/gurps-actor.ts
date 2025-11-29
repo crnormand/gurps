@@ -4523,7 +4523,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (this.isNewActorType) {
       this.#translateLegacyHitlocationData(changes)
       this.#translateLegacyEncumbranceData(changes)
-      this.#translateHitLocationsV2(changes)
       await this.#translateAdsData(changes)
       this.#translateMoveData(changes)
       this.#translateNoteData(changes)
@@ -4533,30 +4532,58 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * Translate legacy HitLocation data like "system.hitlocations.00003.import" to "system.hitlocationsV2.3.import".
    */
-  #translateLegacyHitlocationData(data: Actor.UpdateData) {
-    Object.keys(data)
-      .filter(key => key.startsWith('system.hitlocations.'))
-      .forEach(key => {
-        // A key will be of the form "system.hitlocations.<index>.<field>". Map these to
-        // "system.hitlocationsV2.<index>.<field>".
-        const index = key.split('.')[2]
-        let field = key.split('.').slice(3).join('.')
-        let value: any = data[key as keyof typeof data]
+  #translateLegacyHitlocationData(data: any) {
+    if (!data.system || typeof data.system !== 'object') return
+    if (!('hitlocations' in data.system) && !('-=hitlocations' in data.system)) return
 
-        if (field === 'roll') field = 'rollText' // remap 'roll' to 'rollText'
-        if (field === 'dr') field = '_dr' // remap 'dr' to '_dr'
+    // Check for deletion pattern: { system: { '-=hitLocations': null } }
+    const deleteKey = '-=hitlocations' in data.system
+    if (deleteKey) {
+      delete data.system['-=hitlocations']
+      data.system.hitlocationsV2 = []
+    }
 
-        if (['import', 'penalty', '_dr', 'drMod', 'drItem', 'drCap'].includes(field)) {
-          if (typeof value === 'string') {
-            value = parseInt(value) || 0
-          }
+    // Check for individual element updates: { system: { notes: { '00000': { title': 'New Title' } } } }
+    const changeKey = 'hitlocations' in data.system && typeof data.system.hitlocations === 'object'
+    if (changeKey) {
+      const hitlocationsV2: any[] = foundry.utils.deepClone(this.modelV2._source.hitlocationsV2) ?? []
+      const keys = Object.keys(foundry.utils.flattenObject(data as object))
+      const changes = keys.filter(it => it.startsWith('system.hitlocations.'))
+      const processedChanges: string[] = []
+
+      for (const change of changes) {
+        // If change ends in a number like '000123', we're updating the whole object; if it ends in a property name,
+        // we're updating a property of the object.
+        const [_, index, ___, property] = parseItemKey(change)
+        const pathToObject = property ? change.replace(new RegExp(`\\.${property}$`), '') : change
+
+        if (processedChanges.includes(pathToObject)) {
+          delete data[change]
+          continue
         }
 
-        // @ts-expect-error
-        data[`system.hitlocationsV2.${parseInt(index)}.${field}`] = value
+        // Does the hitlocation already exist?
+        const hitlocationV1 = foundry.utils.getProperty(this, pathToObject) as HitLocationEntryV1
+        if (hitlocationV1) {
+          // Existing hitlocation.
+          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
+          HitLocationEntryV1.updateV2(hitlocationsV2[index!], newData)
+          delete data[change]
+          processedChanges.push(pathToObject)
+        } else {
+          // New hitlocation.
+          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
+          const location = {} as HitLocationEntryV2
+          HitLocationEntryV1.updateV2(location, newData)
+          hitlocationsV2.push(location)
+          delete data[change]
+          processedChanges.push(pathToObject)
+        }
+      }
 
-        delete data[key as keyof typeof data]
-      })
+      data.system.hitlocationsV2 = hitlocationsV2
+      delete data.system.hitlocations
+    }
   }
 
   /**
@@ -4577,29 +4604,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         delete data[key as keyof typeof data]
       })
-  }
-
-  // When updating any property of HitLocationV2, you have to update the entire array.
-  #translateHitLocationsV2(data: Actor.UpdateData) {
-    const changes = Object.keys(data).filter(key => key.startsWith('system.hitlocationsV2.')) ?? []
-    if (changes.length === 0) return
-
-    const regex = /^system\.hitlocationsV2\.(\d+)\..*/
-    const array = foundry.utils.deepClone(this.modelV2._source.hitlocationsV2)
-
-    for (const key of changes) {
-      const value = data[key as keyof typeof data]
-      const index = parseInt(key.replace(regex, '$1'))
-      const field = key.replace(regex, '')
-
-      // @ts-expect-error
-      array[index][field] = value
-
-      delete data[key as keyof typeof data]
-    }
-
-    // @ts-expect-error
-    data['system.hitlocationsV2'] = array
   }
 
   /*
@@ -4789,19 +4793,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         // Does the note already exist?
-        const notev1 = foundry.utils.getProperty(this, pathToObject) as any
+        const notev1 = foundry.utils.getProperty(this, pathToObject) as NoteV1
         if (notev1) {
           // Existing note.
           const arrIndex = array.findIndex(it => it.id === notev1.noteV2.id)
           const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
-          this.#updateNoteV2FromLegacyNote(array[arrIndex], newData)
+          NoteV1.updateNoteV2(array[arrIndex], newData)
           delete data[change]
           processedChanges.push(pathToObject)
         } else {
           // New note.
           const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
           const notev2: any = {}
-          this.#updateNoteV2FromLegacyNote(notev2, newData)
+          NoteV1.updateNoteV2(notev2, newData)
           array.push(notev2)
           delete data[change]
           processedChanges.push(pathToObject)
@@ -4810,23 +4814,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       data.system.allNotes = array
       delete data.system.notes
-    }
-  }
-
-  #updateNoteV2FromLegacyNote(notev2: any, changes: any) {
-    const keys = Object.keys(changes)
-    for (const key of keys) {
-      switch (key) {
-        case 'pageref':
-          notev2.reference = changes[key]
-          break
-        case 'notes':
-          notev2.text = changes[key]
-          break
-        default:
-          notev2[key] = changes[key]
-          break
-      }
     }
   }
 }
