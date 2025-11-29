@@ -1,8 +1,15 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.19.0 FoundryV13 _ONLY_
+## Release 1.0.0 FoundryV13 _ONLY_
 
 ### Features
+
+
+## Release 0.18.7
+
+### Bugfixes
+
+- Clean up some CSS to fix problems in the Gaming Ballistic character sheets.
 
 
 ## Release 0.18.6 10/17/2025

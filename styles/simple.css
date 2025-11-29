@@ -241,8 +241,10 @@
   cursor: pointer;
 }
 
-.rollable.test,
-.rollable:hover {
+.npc-sheet .rollable.test,
+.npc-sheet .rollable:hover,
+.gurpsactorsheet .rollable.test,
+.gurpsactorsheet .rollable:hover {
   cursor: pointer;
   text-decoration: none;
   background-color: var(--color-gurpslink) !important;
@@ -254,10 +256,26 @@
   z-index: 99;
 }
 
-.rollable {
+.npc-sheet .rollable,
+.gurpsactorsheet .rollable {
   color: black;
   background-color: #ffffbe !important;
   min-width: max-content;
+}
+
+.npc-sheet .rollable:active,
+.gurpsactorsheet .rollable:active {
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  background-color: rgb(255, 255, 128) !important;
+  padding: 2px 3px 2px 3px;
+  border-bottom: 1px solid #cccccc;
+  border-left: 1px solid #333333;
+  border-top: 1px solid #333333;
+  border-right: 1px solid #cccccc;
+  border-radius: 8px;
+  margin: -2px -2px -3px -2px;
 }
 
 .dodge span,
@@ -273,20 +291,6 @@
 .parry span.bonus,
 .block span.bonus {
   font-size: var(--font-size-11);
-}
-
-.rollable:active {
-  cursor: pointer;
-  text-decoration: none;
-  color: black;
-  background-color: rgb(255, 255, 128) !important;
-  padding: 2px 3px 2px 3px;
-  border-bottom: 1px solid #cccccc;
-  border-left: 1px solid #333333;
-  border-top: 1px solid #333333;
-  border-right: 1px solid #cccccc;
-  border-radius: 8px;
-  margin: -2px -2px -3px -2px;
 }
 
 .gmod.test,
@@ -479,8 +483,14 @@
   text-shadow: 0 0 5px green;
 }
 
-.gurpslink.test,
-.gurpslink:hover {
+.gga-chat-messsage .gurpslink:hover,
+.gga-chat-messsage .gurpslink.test,
+.simple-container .gurpslink:hover,
+.simple-container .gurpslink.test,
+.gga-app .gurpslink:hover,
+.gga-app .gurpslink.test,
+.gurpsactorsheet .gurpslink:hover,
+.gurpsactorsheet .gurpslink.test {
   cursor: pointer;
   text-decoration: none;
   background-color: var(--color-gurpslink) !important;
@@ -496,7 +506,10 @@
   z-index: 99;
 }
 
-.gurpslink {
+.gga-chat-messsage .gurpslink,
+.simple-container .gurpslink,
+.gga-app .gurpslink,
+.gurpsactorsheet .gurpslink {
   color: black;
   background-color: rgb(255, 255, 175) !important;
   border-radius: 3px;
@@ -505,7 +518,10 @@
   /* margin-bottom: 2px; */
 }
 
-.gurpslink:active {
+.gga-chat-messsage .gurpslink:active,
+.simple-container .gurpslink:active,
+.gga-app .gurpslink:active,
+.gurpsactorsheet .gurpslink:active {
   cursor: pointer;
   text-decoration: none;
   color: black;
@@ -919,10 +935,10 @@
   grid-template-columns: 1fr;
 }
 
-#sheet #condition .fieldblock {
-  /* display: inline-grid; */
-  /* grid-template-columns: min-content 1fr min-content; */
-}
+/* #sheet #condition .fieldblock {
+  /display: inline-grid; 
+  /grid-template-columns: min-content 1fr min-content; 
+} */
 
 #combat-tab #condition .fieldblock .label {
   padding-left: 1em;
@@ -1768,39 +1784,39 @@ div#other {
   text-wrap: wrap;
 }
 
-.indent1 {
+.gurpsactorsheet .indent1 {
   padding-left: 1em !important;
 }
 
-.indent2 {
+.gurpsactorsheet .indent2 {
   padding-left: 2em !important;
 }
 
-.indent3 {
+.gurpsactorsheet .indent3 {
   padding-left: 3em !important;
 }
 
-.indent4 {
+.gurpsactorsheet .indent4 {
   padding-left: 4em !important;
 }
 
-.indent5 {
+.gurpsactorsheet .indent5 {
   padding-left: 5em !important;
 }
 
-.indent6 {
+.gurpsactorsheet .indent6 {
   padding-left: 6em !important;
 }
 
-.indent7 {
+.gurpsactorsheet .indent7 {
   padding-left: 7em !important;
 }
 
-.indent8 {
+.gurpsactorsheet .indent8 {
   padding-left: 8em !important;
 }
 
-.indent9 {
+.gurpsactorsheet .indent9 {
   padding-left: 9em !important;
 }
 
