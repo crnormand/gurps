@@ -259,7 +259,7 @@
 .npc-sheet .rollable,
 .gurpsactorsheet .rollable {
   color: black;
-  background-color: #ffffbe;
+  background-color: #ffffbe !important;
   min-width: max-content;
 }
 
@@ -483,8 +483,14 @@
   text-shadow: 0 0 5px green;
 }
 
-.gurpslink.test,
-.gurpslink:hover {
+.gga-chat-messsage .gurpslink:hover,
+.gga-chat-messsage .gurpslink.test,
+.simple-container .gurpslink:hover,
+.simple-container .gurpslink.test,
+.gga-app .gurpslink:hover,
+.gga-app .gurpslink.test,
+.gurpsactorsheet .gurpslink:hover,
+.gurpsactorsheet .gurpslink.test {
   cursor: pointer;
   text-decoration: none;
   background-color: var(--color-gurpslink) !important;
@@ -500,7 +506,10 @@
   z-index: 99;
 }
 
-.gurpslink {
+.gga-chat-messsage .gurpslink,
+.simple-container .gurpslink,
+.gga-app .gurpslink,
+.gurpsactorsheet .gurpslink {
   color: black;
   background-color: rgb(255, 255, 175) !important;
   border-radius: 3px;
@@ -509,7 +518,10 @@
   /* margin-bottom: 2px; */
 }
 
-.gurpslink:active {
+.gga-chat-messsage .gurpslink:active,
+.simple-container .gurpslink:active,
+.gga-app .gurpslink:active,
+.gurpsactorsheet .gurpslink:active {
   cursor: pointer;
   text-decoration: none;
   color: black;
