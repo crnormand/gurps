@@ -40,7 +40,7 @@ export class ContainerUtils {
    * Check if a containable object is contained by (directly or indirectly) the specified container.
    */
   static isContainedBy<T>(containable: IContainable<T>, container: IContainable<T>): boolean {
-    return container.contains(containable as unknown as T)
+    return container.containsItem(containable as unknown as T)
   }
 
   /* ---------------------------------------- */
@@ -64,7 +64,7 @@ export class ContainerUtils {
   /**
    * Check if a container contains the specified item (directly or indirectly).
    */
-  static contains<T>(container: IContainable<T>, item: T): boolean {
+  static containsItem<T>(container: IContainable<T>, item: T): boolean {
     const allContents = container.allContents
     return allContents.some(contained => (contained as IContainable<T>).id === (item as IContainable<T>).id)
   }

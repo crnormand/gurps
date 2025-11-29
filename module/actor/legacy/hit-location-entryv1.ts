@@ -21,6 +21,20 @@ class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
     })
   }
 
+  static updateV2(entryV2: HitLocationEntryV2, newData: any) {
+    entryV2._damageType = newData._damageType ?? entryV2._damageType
+    entryV2._dr = newData.dr ?? entryV2._dr
+    entryV2.drCap = newData.drCap ?? entryV2.drCap
+    entryV2.drItem = newData.drItem ?? entryV2.drItem
+    entryV2.drMod = newData.drMod ?? entryV2.drMod
+    entryV2.import = newData.import ?? entryV2.import
+    entryV2.penalty = newData.penalty ?? entryV2.penalty
+    entryV2.rollText = newData.roll ?? entryV2.rollText
+    entryV2.where = newData.where ?? entryV2.where
+    entryV2.split = newData.split ?? entryV2.split
+    entryV2.role = newData.role ?? entryV2.role
+  }
+
   static override defineSchema(): HitLocationSchemaV1 {
     return hitLocationSchemaV1()
   }

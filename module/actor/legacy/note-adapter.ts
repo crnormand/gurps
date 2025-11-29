@@ -17,6 +17,23 @@ const getterKeys = [
 ] as const
 
 class NoteV1 {
+  static updateNoteV2(notev2: any, changes: any) {
+    const keys = Object.keys(changes)
+    for (const key of keys) {
+      switch (key) {
+        case 'pageref':
+          notev2.reference = changes[key]
+          break
+        case 'notes':
+          notev2.text = changes[key]
+          break
+        default:
+          notev2[key] = changes[key]
+          break
+      }
+    }
+  }
+
   private _contains: Record<string, NoteV1> = {}
   private get model(): CharacterModel {
     return this.noteV2.parent! as CharacterModel

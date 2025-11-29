@@ -149,11 +149,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override async deleteDialog(options = {}) {
+  override async deleteDialog(options = {}): Promise<any> {
     // Display custom delete dialog when deleting a container with contents
     const count = this.contents.length
     if (count) {
-      return foundry.applications.api.Dialog.confirm({
+      return foundry.applications.api.DialogV2.confirm({
         window: {
           title: `${game.i18n?.format('DOCUMENT.Delete', { type: game.i18n.localize('DOCUMENT.Item') })}: ${this.name}`,
         },

@@ -430,4 +430,192 @@ describe('GurpsActorV2._preUpdate', () => {
       ])
     })
   })
+
+  describe('translate legacy HitLocation data', () => {
+    let allHitLocations: any[]
+
+    beforeEach(() => {
+      allHitLocations = [
+        {
+          _damageType: null,
+          _dr: 1,
+          drCap: 0,
+          drItem: 0,
+          drMod: 0,
+          equipment: '',
+          import: 0,
+          penalty: 0,
+          rollText: '',
+          where: 'Head',
+          role: 'Head',
+        },
+        {
+          _damageType: null,
+          _dr: 2,
+          drCap: 0,
+          drItem: 0,
+          drMod: 0,
+          equipment: '',
+          import: 0,
+          penalty: 0,
+          rollText: '',
+          where: 'Torso',
+          role: 'Torso',
+        },
+        {
+          _damageType: null,
+          _dr: 3,
+          drCap: 0,
+          drItem: 0,
+          drMod: 0,
+          equipment: '',
+          import: 0,
+          penalty: 0,
+          rollText: '',
+          where: 'Left Arm',
+          role: 'Limb',
+        },
+        {
+          _damageType: null,
+          _dr: 3,
+          drCap: 0,
+          drItem: 0,
+          drMod: 0,
+          equipment: '',
+          import: 0,
+          penalty: 0,
+          rollText: '',
+          where: 'Right Arm',
+          role: 'Limb',
+        },
+      ] as any
+
+      actor.system.hitlocationsV2 = allHitLocations
+      // @ts-expect-error
+      actor.system._source = { hitlocationsV2: allHitLocations } as any
+    })
+
+    it('converts a request to remove the entire hitlocations array with an empty array on hitlocationsV2', async () => {
+      const updateData: Record<string, any> = { system: { '-=hitlocations': null } }
+
+      // @ts-ignore
+      await actor._preUpdate(updateData, {}, {})
+
+      expect(Object.keys(updateData).length).toBe(1)
+      expect(Object.keys(updateData.system)).toContain('hitlocationsV2')
+      expect(updateData.system['hitlocationsV2']).toStrictEqual([])
+    })
+
+    it('can update existing HitLocations', async () => {
+      const updateData: Record<string, any> = {
+        system: {
+          hitlocations: {
+            '00000': {
+              where: 'Head',
+              dr: 4,
+              role: 'Some notes about the head.',
+            },
+            '00001': {
+              where: 'Torso',
+              dr: 3,
+              role: 'Some notes about the torso.',
+            },
+          },
+        },
+      }
+
+      // @ts-ignore
+      await actor._preUpdate(updateData, {}, {})
+
+      expect(Object.keys(updateData.system).length).toBe(1)
+      expect(Object.keys(updateData.system)).toContain('hitlocationsV2')
+      expect(updateData.system.hitlocationsV2).toEqual([
+        {
+          ...allHitLocations[0],
+          where: 'Head',
+          _dr: 4,
+          role: 'Some notes about the head.',
+        },
+        {
+          ...allHitLocations[1],
+          where: 'Torso',
+          _dr: 3,
+          role: 'Some notes about the torso.',
+        },
+        {
+          ...allHitLocations[2],
+          where: 'Left Arm',
+          _dr: 3,
+          role: 'Limb',
+        },
+        {
+          ...allHitLocations[3],
+          where: 'Right Arm',
+          _dr: 3,
+          role: 'Limb',
+        },
+      ])
+    })
+
+    it('can insert new HitLocations', async () => {
+      const updateData: Record<string, any> = {
+        system: {
+          hitlocations: {
+            '00004': {
+              where: 'Left Leg',
+              dr: 2,
+              role: 'Limb',
+            },
+            '00005': {
+              where: 'Right Leg',
+              dr: 2,
+              role: 'Limb',
+            },
+          },
+        },
+      }
+
+      // @ts-ignore
+      await actor._preUpdate(updateData, {}, {})
+
+      expect(Object.keys(updateData.system).length).toBe(1)
+      expect(Object.keys(updateData.system)).toContain('hitlocationsV2')
+      expect(updateData.system.hitlocationsV2).toEqual([
+        {
+          ...allHitLocations[0],
+          where: 'Head',
+          _dr: 1,
+          role: 'Head',
+        },
+        {
+          ...allHitLocations[1],
+          where: 'Torso',
+          _dr: 2,
+          role: 'Torso',
+        },
+        {
+          ...allHitLocations[2],
+          where: 'Left Arm',
+          _dr: 3,
+          role: 'Limb',
+        },
+        {
+          ...allHitLocations[3],
+          where: 'Right Arm',
+          _dr: 3,
+          role: 'Limb',
+        },
+        {
+          where: 'Left Leg',
+          _dr: 2,
+          role: 'Limb',
+        },
+        {
+          where: 'Right Leg',
+          _dr: 2,
+          role: 'Limb',
+        },
+      ])
+    })
+  })
 })
