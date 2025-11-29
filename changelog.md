@@ -4,13 +4,6 @@
 
 ### Features
 
-- You can now drag the Modifier Bucket to a macro slot, the chat log, or chat input.
-
-### Bugfixes
-
-- Fixed a few layout problems with the Simplified character sheet.
-- Fixed a few layout problems with the Active Effects List application.
-- Fixed bug that always showed "Full Sheet" on the Switch Sheet header button.
 
 ## Release 0.18.6 10/17/2025
 
