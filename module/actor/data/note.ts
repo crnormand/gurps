@@ -63,8 +63,8 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContai
     return ContainerUtils.getContainerDepth(this)
   }
 
-  contains(note: NoteV2): boolean {
-    return ContainerUtils.contains(this, note)
+  containsItem(note: NoteV2): boolean {
+    return ContainerUtils.containsItem(this, note)
   }
 
   get ancestors(): NoteV2[] {

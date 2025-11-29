@@ -2298,7 +2298,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   private async promptEquipmentQuantity(eqt: string, title: string): Promise<number | null> {
-    // @ts-expect-error
     const result: number | null = await foundry.applications.api.DialogV2.wait({
       window: { title: title },
       content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/transfer-equipment.hbs', {
