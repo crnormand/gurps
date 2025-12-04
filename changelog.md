@@ -4,22 +4,19 @@
 
 ### Features
 
-
-## Release 0.18.7
+## Release 0.18.7 12/4/2025
 
 ### Bugfixes
 
 - Clean up some CSS to fix problems in the Gaming Ballistic character sheets.
-
 
 ## Release 0.18.6 10/17/2025
 
 ### Bugfixes
 
 - Unable to add accuracy of Mooks/NPC \#2393
-- OTF "*Costs" not applying if right-click activation \#2389
+- OTF "\*Costs" not applying if right-click activation \#2389
 - Spell Damage Building up above Modifier Bucket and Cannot Remove It \#2391
-
 
 ## Release 0.18.5 08/05/2025
 
