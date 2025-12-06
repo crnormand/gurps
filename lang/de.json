@@ -2,8 +2,7 @@
   "TYPES": {
     "Actor": {
       "character": "Charakter (v1)",
-      "characterV2": "Charakter (v2)",
-      "enemy": "Gegner"
+      "characterV2": "Charakter (v2)"
     },
     "Item": {
       "feature": "Merkmal (v1)",
@@ -1582,6 +1581,10 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
+    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
+    "CharacterImporter": {
+      "Title": "Importiere von GCS 5",
+      "NoFileSelected": "Keine Datei für den Import ausgewählt."
+    }
   }
 }

@@ -2,8 +2,7 @@
   "TYPES": {
     "Actor": {
       "character": "Персонаж",
-      "characterV2": "Персонаж (v2)",
-      "enemy": "Противник"
+      "characterV2": "Персонаж (v2)"
     },
     "Item": {
       "feature": "Особенность",
@@ -1583,6 +1582,10 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это."
+    "youDoNotHavePermssion": "У вас нет разрешения на это.",
+    "CharacterImporter": {
+      "Title": "Импорт из GCS 5",
+      "NoFileSelected": "Файл для импорта не выбран."
+    }
   }
 }

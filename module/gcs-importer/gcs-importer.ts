@@ -4,7 +4,7 @@ import { GcsCharacter } from './schema/character.js'
 async function importGCS(actor?: Actor.OfType<'characterV2'>) {
   return new foundry.applications.api.DialogV2({
     window: {
-      title: 'Import from GCS 5.36',
+      title: game.i18n?.localize('GURPS.CharacterImporter.Title'),
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate(
@@ -21,7 +21,7 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
           // @ts-expect-error types are idk
           const files = button.form?.elements.data.files
           if (!files || files.length === 0) {
-            ui.notifications?.error('No file selected for import.')
+            ui.notifications?.error(game.i18n!.localize('GURPS.CharacterImporter.NoFileSelected'))
             return
           } else {
             // Measure how long importing takes
