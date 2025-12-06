@@ -10,6 +10,7 @@ import { ResourceTracker } from '../resource-tracker/index.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
+import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 
@@ -1647,7 +1648,15 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   async _onFileImport(event) {
     event.preventDefault()
-    new ActorImporter(this.actor).importActor()
+    switch (this.actor.type) {
+      case 'character':
+        return new ActorImporter(this.actor).importActor()
+      case 'enemy':
+      case 'characterV2':
+        return importGCS(this.actor)
+      default:
+        throw new Error(`Invalid actor type for import: ${this.actor.type}`)
+    }
     // this.actor.importCharacter()
   }
 

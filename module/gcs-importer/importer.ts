@@ -50,14 +50,17 @@ class GcsImporter {
    * Given a GCS Character, create a (new) GURPS Actor.
    * @param input GCS Character data
    */
-  static async importCharacter(input: GcsCharacter): Promise<GurpsActorV2<'characterV2'>> {
-    return await new GcsImporter(input).#importCharacter()
+  static async importCharacter(
+    input: GcsCharacter,
+    actor?: Actor.OfType<'characterV2'>
+  ): Promise<GurpsActorV2<'characterV2'>> {
+    return await new GcsImporter(input).#importCharacter(actor)
   }
 
   /* ---------------------------------------- */
 
-  async #importCharacter(): Promise<GurpsActorV2<'characterV2'>> {
-    const _id = foundry.utils.randomID()
+  async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<GurpsActorV2<'characterV2'>> {
+    const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
     const name = this.input.profile.name ?? 'Imported Character'
 
@@ -79,14 +82,21 @@ class GcsImporter {
       items: this.items,
     })
 
-    const actor = (await Actor.create({
-      _id,
-      name,
-      type,
-      img: this.img,
-      system: this.output as any,
-      items: this.items as any,
-    })) as GurpsActorV2<'characterV2'> | undefined
+    actor
+      ? await actor.update({
+          name,
+          img: this.img,
+          system: this.output as any,
+          items: this.items as any,
+        })
+      : (actor = (await Actor.create({
+          _id,
+          name,
+          type,
+          img: this.img,
+          system: this.output as any,
+          items: this.items as any,
+        })) as GurpsActorV2<'characterV2'> | undefined)
 
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')

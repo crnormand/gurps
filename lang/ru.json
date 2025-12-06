@@ -1,4 +1,20 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Персонаж",
+      "characterV2": "Персонаж (v2)"
+    },
+    "Item": {
+      "feature": "Особенность",
+      "skill": "Навык",
+      "spell": "Заклинание",
+      "equipment": "Снаряжение",
+      "featureV2": "Особенность (v2)",
+      "skillV2": "Навык (v2)",
+      "spellV2": "Заклинание (v2)",
+      "equipmentV2": "Снаряжение (v2)"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Очк",
     "abbrevRef": "Ссыл",
@@ -1566,6 +1582,10 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это."
+    "youDoNotHavePermssion": "У вас нет разрешения на это.",
+    "CharacterImporter": {
+      "Title": "Импорт из GCS 5",
+      "NoFileSelected": "Файл для импорта не выбран."
+    }
   }
 }

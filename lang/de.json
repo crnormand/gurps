@@ -1,4 +1,20 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Charakter (v1)",
+      "characterV2": "Charakter (v2)"
+    },
+    "Item": {
+      "feature": "Merkmal (v1)",
+      "skill": "Fertigkeit (v1)",
+      "spell": "Zauberspruch (v1)",
+      "equipment": "Ausrüstung (v1)",
+      "featureV2": "Merkmal (v2)",
+      "skillV2": "Fertigkeit (v2)",
+      "spellV2": "Zauberspruch (v2)",
+      "equipmentV2": "Ausrüstung (v2)"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
@@ -1565,6 +1581,10 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
+    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
+    "CharacterImporter": {
+      "Title": "Importiere von GCS 5",
+      "NoFileSelected": "Keine Datei für den Import ausgewählt."
+    }
   }
 }
