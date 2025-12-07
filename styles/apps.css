@@ -2242,7 +2242,7 @@ details .popup.square5x4 {
 }
 
 .modifier-list.me-info {
-  max-height: 100px;
+  /* max-height: 100px; */
   overflow-x: auto;
 }
 
@@ -2957,7 +2957,7 @@ li.combatant.active {
 }
 .me-tag,
 .me-at {
-  flex: 1.5;
+  flex: 1;
   padding: 4px;
   text-align: left;
 }
