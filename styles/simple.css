@@ -293,6 +293,12 @@
   font-size: var(--font-size-11);
 }
 
+.npc-sheet .gmod,
+.gurpsactorsheet .gmod {
+  color: black;
+  background-color: rgb(255, 230, 190) !important;
+}
+
 .npc-sheet .gmod.test,
 .npc-sheet .gmod:hover,
 .gurpsactorsheet .gmod.test,
@@ -305,12 +311,6 @@
   /* border-right: 1px solid rgb(128, 95, 65) !important; */
   /* border-bottom: 1px solid rgb(128, 95, 65) !important; */
   border-radius: 3px;
-}
-
-.npc-sheet .gmod,
-.gurpsactorsheet .gmod {
-  color: black;
-  background-color: rgb(255, 230, 190) !important;
 }
 
 .npc-sheet .gmod:active,
@@ -331,6 +331,12 @@
   z-index: 99;
 }
 
+.npc-sheet .glinkmod:hover,
+.gurpsactorsheet .glinkmod:hover {
+  background-color: var(--color-glinkmod);
+  border-color: darkorange;
+}
+
 .gga-app.glinkmod {
   cursor: pointer;
   color: black;
@@ -341,12 +347,6 @@
   border: 1px solid;
   border-color: rgb(230, 205, 165);
   margin-bottom: 2px;
-}
-
-.npc-sheet .glinkmod:hover,
-.gurpsactorsheet .glinkmod:hover {
-  background-color: var(--color-glinkmod);
-  border-color: darkorange;
 }
 
 .gga-app.glinkmod:active {
@@ -365,24 +365,9 @@
   z-index: 99;
 }
 
-.gga-app.glinkmodplus:hover {
-  cursor: pointer;
-  text-decoration: none;
-  background-image: none;
-  background-color: rgb(0, 255, 0) !important;
-  color: black;
-  padding: 1px 1px 1px 1px;
-  border-top: 2px solid #cccccc;
-  border-right: 2px solid #333333;
-  border-bottom: 2px solid #333333;
-  border-left: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -1px -2px -1px -4px;
-  font-weight: bold;
-}
-
 .gga-app.glinkmodplus {
   color: black;
+  background-image: none;
   background-color: rgb(175, 255, 175) !important;
 }
 
@@ -390,7 +375,6 @@
   cursor: pointer;
   text-decoration: none;
   color: black;
-  background-image: none;
   background-color: rgb(0, 255, 0) !important;
   padding: 1px 1px 1px 1px;
   border-bottom: 2px solid #cccccc;
@@ -403,10 +387,30 @@
   font-weight: normal;
 }
 
+.gga-app.glinkmodplus:hover {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: rgb(0, 255, 0) !important;
+  color: black;
+  padding: 1px 1px 1px 1px;
+  border-top: 2px solid #cccccc;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #cccccc;
+  border-radius: 8px;
+  margin: -1px -2px -1px -4px;
+  font-weight: bold;
+}
+
+.gga-app.glinkmodminus {
+  color: black;
+  background-image: none;
+  background-color: rgb(255, 175, 175) !important;
+}
+
 .gga-app.glinkmodminus:hover {
   cursor: pointer;
   text-decoration: none;
-  background-image: none;
   background-color: rgb(255, 0, 0) !important;
   color: yellow;
   text-shadow: 1px 1px black;
@@ -425,7 +429,6 @@
   text-decoration: none;
   color: yellow;
   text-shadow: 1px 1px black;
-  background-image: none;
   background-color: rgb(255, 0, 0) !important;
   padding: 1px 1px 1px 1px;
   border-bottom: 2px solid #cccccc;
@@ -438,17 +441,14 @@
   font-weight: normal;
 }
 
-.gga-app.glinkmodminus {
-  color: black;
-  background-color: rgb(255, 175, 175) !important;
-}
-
 .gga-popup-window .glinkmodminus {
+  background-image: none;
   background-color: transparent !important;
   color: lightpink;
 }
 
 .gga-popup-window .glinkmodplus {
+  background-image: none;
   background-color: transparent !important;
   color: palegreen;
 }
@@ -478,6 +478,19 @@
   text-shadow: 0 0 5px green;
 }
 
+.gga-chat-messsage .gurpslink,
+.simple-container .gurpslink,
+.gga-app .gurpslink,
+.gurpsactorsheet .gurpslink {
+  color: black;
+  background-image: none;
+  background-color: #ffffbe !important;
+  border-radius: 3px;
+  padding: 0 3px;
+  border: 1px solid bisque;
+  /* margin-bottom: 2px; */
+}
+
 .gga-chat-messsage .gurpslink:hover,
 .gga-chat-messsage .gurpslink.test,
 .simple-container .gurpslink:hover,
@@ -499,19 +512,6 @@
   /* margin: -2px -4px -2px -6px; */
   overflow: visible;
   z-index: 99;
-}
-
-.gga-chat-messsage .gurpslink,
-.simple-container .gurpslink,
-.gga-app .gurpslink,
-.gurpsactorsheet .gurpslink {
-  color: black;
-  background: none;
-  background-color: #ffffbe !important;
-  border-radius: 3px;
-  padding: 0 3px;
-  border: 1px solid bisque;
-  /* margin-bottom: 2px; */
 }
 
 .gga-chat-messsage .gurpslink:active,
