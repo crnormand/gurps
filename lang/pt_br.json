@@ -2,7 +2,8 @@
   "TYPES": {
     "Actor": {
       "character": "Personagem (v1)",
-      "characterV2": "Personagem (v2)"
+      "characterV2": "Personagem (v2)",
+      "enemy": "Inimigo"
     },
     "Item": {
       "feature": "Característica (v1)",

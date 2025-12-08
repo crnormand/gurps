@@ -2,7 +2,8 @@
   "TYPES": {
     "Actor": {
       "character": "Персонаж",
-      "characterV2": "Персонаж (v2)"
+      "characterV2": "Персонаж (v2)",
+      "enemy": "Противник"
     },
     "Item": {
       "feature": "Особенность",
