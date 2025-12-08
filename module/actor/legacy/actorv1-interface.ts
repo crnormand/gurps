@@ -48,7 +48,7 @@ interface ActorV1Interface {
   _forceRender(): void
   _removeItemAdditions(itemId: string): Promise<void>
   _sanityCheckItemSettings(component: AnyObject): Promise<boolean>
-  _updateItemFromForm(item: Item): Promise<void>
+  _updateItemFromForm(item: GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>): Promise<void>
   accumulateDamageRoll(action: any): Promise<void>
   addNewItemData(itemData: Record<string, any>, targetkey: string | null): void
   addTaggedRollModifiers(
@@ -80,7 +80,7 @@ interface ActorV1Interface {
   decrementDamageAccumulator(index: number): Promise<void>
   deleteEquipment(path: string, depth?: number): Promise<GurpsItemV2 | undefined>
   findAdvantage(name: string): Advantage | undefined
-  findEquipmentByName(pattern: string, otherFirst?: boolean): [Item | null, string | null] | null
+  findEquipmentByName(pattern: string, otherFirst?: boolean): [GurpsItemV2 | null, string | null] | null
   findUsingAction(action: Record<string, any>, chatthing: string, formula: string, thing: string): RollInfo
   getChecks(type: string): {
     data: CheckInfo[] | Record<string, CheckInfo> | Record<string, CheckInfo[]>

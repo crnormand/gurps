@@ -1,4 +1,21 @@
 {
+  "TYPES": {
+    "Actor": {
+      "character": "Персонаж",
+      "characterV2": "Персонаж (v2)",
+      "enemy": "Противник"
+    },
+    "Item": {
+      "feature": "Особенность",
+      "skill": "Навык",
+      "spell": "Заклинание",
+      "equipment": "Снаряжение",
+      "featureV2": "Особенность (v2)",
+      "skillV2": "Навык (v2)",
+      "spellV2": "Заклинание (v2)",
+      "equipmentV2": "Снаряжение (v2)"
+    }
+  },
   "GURPS": {
     "abbrevPoints": "Очк",
     "abbrevRef": "Ссыл",
@@ -693,6 +710,7 @@
     "importSelectFileOverwriteAction": "Перезаписать данные для: <b>{name}</b>.",
     "importSelectFileSource": "Исходные данные",
     "importSelectFileTitle": "Выберите файл, экспортированный из GCS или GCA.",
+    "importSelectFileTitleGCS": "Выберите файл, экспортированный из GCS 5+.",
     "importSheetHint": "Импорт данных для {name} с использованием {generator}. Пожалуйста, подождите...",
     "importSheetTitle": "Импорт листа {generator}",
     "importSource": "Источник",

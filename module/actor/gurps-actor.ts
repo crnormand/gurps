@@ -551,7 +551,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2
    */
   async internalUpdate(data: Actor.UpdateData, context?: Record<string, any>): Promise<this | undefined> {
-    console.trace('internalUpdate', data)
     return this.update(data, { ...context, render: false })
   }
 
@@ -1321,7 +1320,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * NOTE: Both character and characterV2.
    */
-  findEquipmentByName(pattern: string, otherFirst = false): [Item | null, string | null] | null {
+  findEquipmentByName(pattern: string, otherFirst = false): [GurpsItemV2 | null, string | null] | null {
     if (this.isNewActorType) {
       // Removed leading slashes
       const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))
@@ -1779,11 +1778,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       await this.update(update)
 
-      let item = this.items.get(eqt.itemid)
+      let item: any = this.items.get(eqt.itemid)
       if (!!item) {
-        item.system.eqt!.count = count
+        item.modelV1.eqt!.count = count
         if (game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-          item.system.eqt!.ignoreImportQty = true
+          item.modelV1.eqt!.ignoreImportQty = true
 
         await item.actor!._updateItemFromForm(item)
       }
@@ -2412,7 +2411,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       ])
 
       await this.addItemData(localItem, targetKey) // only created 1 item
-      const item = this.items.get(localItem._id)
+      const item = this.items.get(localItem._id) as GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>
       return this._updateItemFromForm(item!)
     }
   }
@@ -3999,14 +3998,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    * @param item
    */
-  async _updateItemFromForm(item: Item) {
+  async _updateItemFromForm(item: GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>) {
     if (this.isNewActorType) return
 
     const sysKey =
       item.type === 'equipment'
         ? this._findEqtkeyForId('itemid', item.id)
-        : // @ts-expect-error
-          this._findSysKeyForId('itemid', item.id!, item.actorComponentKey)
+        : this._findSysKeyForId('itemid', item.id!, item.actorComponentKey)
 
     if (!sysKey) {
       console.warn(`GURPS | Could not find Actor Component for Item ${item.name} (${item.id})`)
@@ -4040,12 +4038,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // Update Item
-    item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
-    // @ts-expect-error
+    item.modelV1.modifierTags = cleanTags(item.modelV1.modifierTags).join(', ')
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
 
     // Update Actor Component
-    // @ts-expect-error
     const itemInfo = item.getItemInfo()
     await this.internalUpdate({
       [sysKey]: {
@@ -4054,9 +4050,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
         itemInfo,
-        addToQuickRoll: item.system.addToQuickRoll,
-        modifierTags: item.system.modifierTags,
-        itemModifiers: item.system.itemModifiers,
+        addToQuickRoll: item.modelV1.addToQuickRoll,
+        modifierTags: item.modelV1.modifierTags,
+        itemModifiers: item.modelV1.itemModifiers,
       },
     })
     await this._addItemAdditions(item, sysKey)
