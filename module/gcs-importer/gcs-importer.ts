@@ -1,7 +1,7 @@
 import { GcsImporter } from './importer.js'
 import { GcsCharacter } from './schema/character.js'
 
-async function importGCS(actor?: Actor.OfType<'characterV2'>) {
+async function importGCS(actor?: Actor.OfType<'characterV2' | 'enemy'>) {
   return new foundry.applications.api.DialogV2({
     window: {
       title: game.i18n?.localize('GURPS.CharacterImporter.Title'),
