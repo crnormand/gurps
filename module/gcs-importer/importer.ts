@@ -83,12 +83,51 @@ class GcsImporter {
     })
 
     if (actor) {
+      // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
+      const savedEquipmentCounts = new Map<string, number>()
+      const savedEquipmentUses = new Map<string, number>()
+      actor.items.forEach(item => {
+        const eqt = (item.system as any).eqt
+        if (eqt && eqt.importFrom === 'GCS' && eqt.ignoreImportQty && eqt.importid) {
+          savedEquipmentCounts.set(eqt.importid, eqt.count)
+          savedEquipmentUses.set(eqt.importid, eqt.uses)
+        }
+      })
+
+      // When importing into existing actor, delete only GCS-imported items
+      const gcsImportedItems = actor.items.filter(item => {
+        const component =
+          (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
+        return component?.importFrom === 'GCS'
+      })
+
+      if (gcsImportedItems.length > 0) {
+        await actor.deleteEmbeddedDocuments(
+          'Item',
+          gcsImportedItems.map(i => i.id!)
+        )
+      }
+
+      // Update actor with new system data and create new items
       await actor.update({
         name,
         img: this.img,
         system: this.output as any,
-        items: this.items as any,
       })
+
+      // Restore saved counts and uses in raw item data before creating embedded documents
+      if (savedEquipmentCounts.size > 0) {
+        for (const itemData of this.items) {
+          const eqt = (itemData as any).system?.eqt
+          if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
+            eqt.count = savedEquipmentCounts.get(eqt.importid)
+            eqt.uses = savedEquipmentUses.get(eqt.importid)
+            eqt.ignoreImportQty = true
+          }
+        }
+      }
+
+      await actor.createEmbeddedDocuments('Item', this.items as any)
     } else {
       actor = (await Actor.create({
         _id,
@@ -618,6 +657,8 @@ class GcsImporter {
       notes: item.calc?.resolved_notes || item.local_notes || item.notes || '',
       pageref: item.reference ?? '',
       vtt_notes: item.vtt_notes ?? null,
+      importFrom: 'GCS',
+      importid: item.id ?? '',
     }
     return component
   }
@@ -692,6 +733,8 @@ class GcsImporter {
       weightsum: equipment.calc?.extended_weight,
       uses: equipment.uses ?? 0,
       maxuses: equipment.max_uses ?? 0,
+      originalCount: String(equipment.quantity ?? 1),
+      ignoreImportQty: false,
     }
   }
 
