@@ -82,22 +82,23 @@ class GcsImporter {
       items: this.items,
     })
 
-    actor
-      ? await actor.update({
-          name,
-          img: this.img,
-          system: this.output as any,
-          items: this.items as any,
-        })
-      : (actor = (await Actor.create({
-          _id,
-          name,
-          type,
-          img: this.img,
-          system: this.output as any,
-          items: this.items as any,
-        })) as GurpsActorV2<'characterV2'> | undefined)
-
+    if (actor) {
+      await actor.update({
+        name,
+        img: this.img,
+        system: this.output as any,
+        items: this.items as any,
+      })
+    } else {
+      actor = (await Actor.create({
+        _id,
+        name,
+        type,
+        img: this.img,
+        system: this.output as any,
+        items: this.items as any,
+      })) as GurpsActorV2<'characterV2'> | undefined
+    }
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')
     }
