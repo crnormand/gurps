@@ -10,7 +10,6 @@
   <div class='ref header'>{{localize "GURPS.abbrevReference"}}</div>
 
   {{#each (flatlist system.ads)}}
-    {{debug ../isEditing}}
     {{#if (and ../isEditing (not this.traitV2))}}
       <div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
         <i class='fas fa-times'></i>

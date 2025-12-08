@@ -171,6 +171,7 @@ describe('GurpsActorV2', () => {
               addToQuickRoll: true,
               open: true,
               disabled: true,
+              isContainer: false,
               itemModifiers: 'mod1, mod2',
               modifierTags: '@tag1, @tag2, @tag3',
               containedBy: null,
@@ -185,32 +186,6 @@ describe('GurpsActorV2', () => {
               },
             },
           },
-          // {
-          //   _id: 'ad5',
-          //   type: 'featureV2',
-          //   name: 'Ad-Five',
-          //   sort: 1,
-          //   system: {
-          //     actions: {},
-          //     isContainer: false,
-          //     itemModifiers: '',
-          //     open: true,
-          //     reactions: [],
-          //     conditionalmods: [],
-          //     disabled: null,
-          //     containedBy: null,
-          //     fea: {
-          //       name: 'Ad-Five',
-          //       notes: 'Some note.',
-          //       pageref: 'DFA77',
-          //       vtt_notes: '',
-          //       cr: 12,
-          //       level: 5,
-          //       userdesc: '',
-          //       points: 5,
-          //     },
-          //   },
-          // },
         ])
         expect(Object.keys(updateData.system).includes('ads')).toBe(false)
       })

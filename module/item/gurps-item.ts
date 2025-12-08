@@ -22,6 +22,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   // Narrowed view of this.system for GurpsItem logic.
   get modelV1() {
+    // @ts-expect-error: Temporary until full migration.
     return this.system as ItemV1Model
   }
 
@@ -145,11 +146,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override async deleteDialog(options = {}) {
+  override async deleteDialog(options = {}): Promise<this | false | null | undefined> {
     // Display custom delete dialog when deleting a container with contents
     const count = this.contents.length
     if (count) {
-      return foundry.applications.api.Dialog.confirm({
+      const response = await foundry.applications.api.Dialog.confirm({
         window: {
           title: `${game.i18n?.format('DOCUMENT.Delete', { type: game.i18n.localize('DOCUMENT.Item') })}: ${this.name}`,
         },
@@ -170,6 +171,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
         },
         options: { ...options },
       })
+      return response ? this : undefined
     }
 
     return super.deleteDialog(options)

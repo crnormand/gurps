@@ -919,11 +919,6 @@
   grid-template-columns: 1fr;
 }
 
-#sheet #condition .fieldblock {
-  /* display: inline-grid; */
-  /* grid-template-columns: min-content 1fr min-content; */
-}
-
 #combat-tab #condition .fieldblock .label {
   padding-left: 1em;
 }

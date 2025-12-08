@@ -37,6 +37,7 @@ interface Equipment {
   importFrom: string
   fromItem: string
   addToQuickRoll: boolean
+  modifierTags: string
 }
 
 interface Feature {
@@ -67,6 +68,8 @@ interface Feature {
   duringotf: string
   passotf: string
   failotf: string
+  addToQuickRoll: boolean
+  modifierTags: string
 }
 
 interface Skill {
@@ -223,7 +226,7 @@ interface ItemV1Interface {
   getItemInfo(): Record<string, any>
 }
 
-interface ItemV1Model {}
+type ItemV1Model = Equipment | Feature | Spell | Skill
 
 export {
   type ItemV1Interface,
