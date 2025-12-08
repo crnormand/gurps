@@ -1,24 +1,28 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
-## Release 0.19.0 FoundryV13 _ONLY_
+
+## Release 1.0.0 FoundryV13 _ONLY_
 
 ### Features
 
-- You can now drag the Modifier Bucket to a macro slot, the chat log, or chat input.
+## Release 0.18.8 12/7/2025
 
 ### Bugfixes
 
-- Fixed a few layout problems with the Simplified character sheet.
-- Fixed a few layout problems with the Active Effects List application.
-- Fixed bug that always showed "Full Sheet" on the Switch Sheet header button.
+- Fix visual problems with the Effect Modifiers window.
+
+## Release 0.18.7 12/4/2025
+
+### Bugfixes
+
+- Clean up some CSS to fix problems in the Gaming Ballistic character sheets.
 
 ## Release 0.18.6 10/17/2025
 
 ### Bugfixes
 
 - Unable to add accuracy of Mooks/NPC \#2393
-- OTF "*Costs" not applying if right-click activation \#2389
+- OTF "\*Costs" not applying if right-click activation \#2389
 - Spell Damage Building up above Modifier Bucket and Cannot Remove It \#2391
-
 
 ## Release 0.18.5 08/05/2025
 

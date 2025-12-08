@@ -33,7 +33,9 @@ interface DamageModule extends GurpsModule {
 
 function init() {
   console.log('GURPS | Initializing GURPS Damage module.')
+  // TODO: Must update to HTML instead of JQuery.
   Hooks.on('renderChatMessage', DamageChat._renderDamageChat)
+  // TODO: Must update to HTML instead of JQuery.
   Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
   Hooks.on('init', () => {
     GURPS.ApplyDamageDialog = ApplyDamageDialog

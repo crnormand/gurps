@@ -1,5 +1,5 @@
-import * as utilities from '../lib/utilities.js'
-import { displayMod, makeSelect } from '../lib/utilities.js'
+import * as utilities from '../../lib/utilities.js'
+import { displayMod, makeSelect } from '../../lib/utilities.js'
 
 describe('utilities', () => {
   describe('displayMod', () => {

@@ -289,6 +289,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.allNotes.filter(item => item.containedBy === null)
   }
 
+  // @deprecated Legacy collection.
   get notes() {
     return arrayToObject(
       this.notesV2.map(item => new NoteV1(item)),

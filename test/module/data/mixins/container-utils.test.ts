@@ -1,5 +1,5 @@
-import { ContainerUtils } from '../module/data/mixins/container-utils.js'
-import { IContainable } from '../module/data/mixins/containable.js'
+import { ContainerUtils } from '../../../../module/data/mixins/container-utils.js'
+import { IContainable } from '../../../../module/data/mixins/containable.js'
 
 interface MockContainable extends IContainable<MockContainable> {
   id: string
@@ -33,8 +33,8 @@ describe('ContainerUtils', () => {
       get allContents() {
         return ContainerUtils.getAllContents(this)
       },
-      contains(item: MockContainable) {
-        return ContainerUtils.contains(this, item)
+      containsItem(item: MockContainable) {
+        return ContainerUtils.containsItem(this, item)
       },
       get isContained(): boolean {
         return ContainerUtils.isContained(this)
@@ -133,7 +133,7 @@ describe('ContainerUtils', () => {
       const container = createMockContainable('container1')
       const item = createMockContainable('item1', 'container1')
 
-      expect(container.contains(item)).toBe(true)
+      expect(container.containsItem(item)).toBe(true)
     })
 
     it('should return true if item is contained indirectly', () => {
@@ -141,14 +141,14 @@ describe('ContainerUtils', () => {
       createMockContainable('intermediate', 'container1')
       const item = createMockContainable('item1', 'intermediate')
 
-      expect(container.contains(item)).toBe(true)
+      expect(container.containsItem(item)).toBe(true)
     })
 
     it('should return false if item is not contained', () => {
       const container = createMockContainable('container1')
       const item = createMockContainable('item1')
 
-      expect(container.contains(item)).toBe(false)
+      expect(container.containsItem(item)).toBe(false)
     })
   })
 

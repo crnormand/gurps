@@ -73,11 +73,15 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     return this.modelV2.containerDepth
   }
 
+  get contains(): GurpsItemV2[] {
+    return this.contents
+  }
+
   /**
    * Check if this container contains the specified item.
    */
-  contains(item: GurpsItemV2): boolean {
-    return this.modelV2.contains(item)
+  containsItem(item: GurpsItemV2): boolean {
+    return this.modelV2.containsItem(item)
   }
 
   get ancestors(): GurpsItemV2[] {

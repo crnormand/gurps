@@ -156,7 +156,6 @@ class TraitV1 {
     updateData['system'] = {}
     updateData.system['open'] = true
     updateData.system['containedBy'] = null
-    updateData.system['isContainer'] = false
     updateData.system['fea'] = {}
     updateData.system.fea.points = 0
 

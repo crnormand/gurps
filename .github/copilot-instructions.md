@@ -9,10 +9,12 @@ This document provides comprehensive guidance for AI coding agents working on th
 ### Key Information
 
 - **System ID**: `gurps`
-- **Foundry Compatibility**: v13.x (minimum v13, verified v13.346)
+- **Version**: 0.18.6 (1.0.0-alpha in development)
+- **Foundry Compatibility**: v13.x (minimum v13, verified v13.350)
 - **Primary Languages**: TypeScript (modern modules), JavaScript (legacy)
 - **License**: Steve Jackson Games Online Policy compliant
 - **Main Authors**: Chris Normand (nose66), M. Jeff Wilson (nick.coffin.pi), Mikolaj Tomczynski (sasiedny)
+- **Repository**: crnormand/gurps on GitHub
 
 ## Architecture Overview
 
@@ -20,8 +22,15 @@ This document provides comprehensive guidance for AI coding agents working on th
 
 The system follows Foundry's dual-architecture pattern:
 
-1. **Legacy V1 Documents** (`GurpsActor`, `GurpsItem`) - Original JavaScript implementation
-2. **Modern V2 Documents** (`GurpsActorV2`, `GurpsItemV2`) - New TypeScript implementation
+1. **Legacy V1 Documents** (`GurpsActor`, `GurpsItem`) - Original JavaScript implementation in `module/actor/_actor.js` and `module/_item.js`
+2. **Modern V2 Documents** (`GurpsActorV2`, `GurpsItemV2`) - New TypeScript implementation in `module/actor/gurps-actor.ts` and `module/item/gurps-item.ts`
+
+Key patterns:
+
+- V2 documents extend Foundry base classes: `Actor<SubType>`, `foundry.documents.Item<SubType>`
+- Data models use `TypeDataModel` and extend `BaseItemModel` for items
+- Items implement `IContainable` interface for nested container support
+- Both V1 and V2 coexist during migration period
 
 ### Module Organization
 
@@ -30,7 +39,7 @@ module/
 ├── actor/           # Actor documents, sheets, and components
 ├── item/            # Item documents, sheets, and data models
 ├── action/          # Attack and action system
-├── data/            # Data models and schemas (TypeScript)
+├── data/            # Data models and schemas (TypeScript) not directly tied to Foundry documents
 ├── combat/          # Combat and initiative system
 ├── damage/          # Damage calculation and application
 ├── effects/         # Active effects and status management
@@ -43,10 +52,14 @@ module/
 
 ### Key Libraries and Dependencies
 
-- **lib/**: Core utilities without Foundry dependencies
-- **utils/**: Foundry-dependent utilities
-- **scripts/**: Third-party JavaScript libraries
+- **assets/**: Static assets (images, fonts)
+- **dev-utilities/**: Development utilities
+- **exportutils/**: Export utilities for external character sheet programs
 - **lang/**: Internationalization files (en, de, fr, pt_br, ru)
+- **lib/**: Third-party JavaScript libraries independent of Foundry
+- **utils/**: Foundry-dependent utilities
+- **scripts/**: Javascript libraries dependent on Foundry but not part of the module
+- **test/**: Unit tests using Jest with TypeScript support
 
 ## Coding Standards and Patterns
 
@@ -56,8 +69,9 @@ module/
 
 1. Follow TypeScript best practices and idiomatic patterns
 2. Maintain existing code structure and organization
-3. Write unit tests for new functionality. Use table-driven unit tests when possible.
+3. Write unit tests for new functionality. Use table-driven unit tests (test.each) when possible.
 4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate
+5. Use strict TypeScript settings - the project enforces noImplicitAny, strictNullChecks, and other strict flags
 
 #### File Extensions and Types
 
@@ -87,7 +101,7 @@ module/
 
 ```typescript
 // V2 Pattern (preferred for new code)
-class GurpsActorV2<SubType extends Actor.SubType = Actor.SubType> extends foundry.documents.Actor<SubType> {
+class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override prepareBaseData(): void {
     super.prepareBaseData()
     // Custom preparation
@@ -106,15 +120,23 @@ export class GurpsActor extends Actor {
 ##### Data Models
 
 ```typescript
-// Use Foundry's DataModel for structured data
-class LengthSchema {
+// Use Foundry's TypeDataModel for structured data
+class MyDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      value: new fields.NumberField({ required: true, min: 0 }),
-      unit: new fields.StringField({
-        choices: Object.values(LengthUnit),
-        initial: LengthUnit.Inch,
-      }),
+      name: new fields.StringField({ required: true }),
+      value: new fields.NumberField({ initial: 0 }),
+    }
+  }
+}
+
+// Item data models extend BaseItemModel
+class SkillModel extends BaseItemModel<SkillSchema> {
+  static defineSchema() {
+    return {
+      ...super.defineSchema(),
+      difficulty: new fields.StringField(),
+      points: new fields.NumberField({ min: 0 }),
     }
   }
 }
@@ -160,14 +182,37 @@ export class Skill extends Leveled {
 #### Item System V2 (Modern)
 
 ```typescript
-// Modern items use typed data models
-class SkillModel extends BaseItemModel {
+// Modern items use typed data models extending BaseItemModel
+class SkillModel extends BaseItemModel<SkillSchema> {
   static defineSchema() {
     return {
       ...super.defineSchema(),
       difficulty: new fields.StringField(),
       points: new fields.NumberField({ min: 0 }),
     }
+  }
+
+  // Item models can have computed properties
+  get effectiveLevel(): number {
+    // Implementation
+  }
+}
+
+// Items implement IContainable interface for nested item support
+class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
+  extends foundry.documents.Item<SubType>
+  implements IContainable<GurpsItemV2>
+{
+  get containedBy(): string | null {
+    return this.modelV2.containedBy ?? null
+  }
+
+  get contents(): GurpsItemV2[] {
+    return this.modelV2.contents
+  }
+
+  containsItem(item: GurpsItemV2): boolean {
+    return this.modelV2.containsItem(item)
   }
 }
 ```
@@ -221,10 +266,11 @@ const name = actor.name || 'Unknown Actor'
 
 #### Unit Tests
 
-- Use Jest with TypeScript support
+- Use Jest with TypeScript support via ts-jest and experimental VM modules
 - Place tests in `test/` directory
 - Mock Foundry globals in `test/jest.setup.js`
 - Test files should end with `.test.ts` or `.test.js`
+- Use table-driven tests (test.each) for multiple test cases
 
 ```typescript
 // Example test structure
@@ -235,6 +281,60 @@ describe('Length', () => {
     expect(length?.unit).toBe(Length.Unit.Inch)
   })
 })
+
+// Table-driven test example
+test.each([
+  ['1d6+2 cr', { type: 'damage', formula: '1d6+2', damagetype: 'cr' }],
+  ['2d-1 cut', { type: 'damage', formula: '2d-1', damagetype: 'cut' }],
+])('parses damage: %s', (input, expected) => {
+  const result = parseForRollOrDamage(input)
+  expect(result).toMatchObject(expected)
+})
+```
+
+#### Mocking Patterns
+
+```typescript
+// Mock Foundry TypeDataModel with getter-only property support
+global.foundry = {
+  abstract: {
+    TypeDataModel: class {
+      constructor(data, options) {
+        if (data) {
+          for (const [key, value] of Object.entries(data)) {
+            // Check if it's a getter in this class or any parent class
+            let obj = this
+            let isGetter = false
+            while (obj) {
+              const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+              if (descriptor && descriptor.get && !descriptor.set) {
+                isGetter = true
+                break
+              }
+              obj = Object.getPrototypeOf(obj)
+            }
+            if (isGetter) continue
+            this[key] = value
+          }
+        }
+      }
+    },
+  },
+}
+
+// Mock embedded document operations
+actor.updateEmbeddedDocuments = jest.fn().mockResolvedValue([])
+actor.createEmbeddedDocuments = jest.fn().mockResolvedValue([])
+actor.deleteEmbeddedDocuments = jest.fn().mockResolvedValue([])
+
+// Mock game.settings for tests
+// @ts-expect-error
+if (!global.game.settings) {
+  // @ts-expect-error
+  global.game.settings = {
+    get: jest.fn().mockReturnValue(false),
+  }
+}
 ```
 
 #### Test Commands
@@ -243,6 +343,70 @@ describe('Length', () => {
 npm run test      # Run tests once
 npm run tdd       # Run tests with coverage and watch mode
 ```
+
+#### Jest Configuration
+
+The project uses Jest with experimental VM modules:
+
+- **Preset**: ts-jest/presets/default-esm
+- **Environment**: node
+- **Extensions as ESM**: .ts, .tsx
+- **Module name mapper**: Maps .js imports to TypeScript files, stubs miscellaneous-settings
+- **Transform**: ts-jest with useESM enabled
+- **Setup files**: test/jest.setup.js (excluded from TypeScript compilation)
+
+Key configuration:
+
+```javascript
+export default {
+  preset: 'ts-jest/presets/default-esm',
+  testEnvironment: 'node',
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  moduleNameMapper: {
+    '^(.*)\\.js$': '$1',
+    '^module/(.*)$': '<rootDir>/module/$1',
+    '^../../lib/miscellaneous-settings\\.js$': '<rootDir>/test/stubs/miscellaneous-settings-stub.js',
+  },
+  setupFiles: ['./test/jest.setup.js'],
+}
+```
+
+#### Current Test Coverage
+
+The project includes tests organized to mirror the module structure:
+
+**Actor Tests:**
+
+- `test/module/actor/gurps-actor.test.ts` - GurpsActorV2 instantiation and parseItemKey utility tests
+- `test/module/actor/gurps-actor-preupdate.test.ts` - GurpsActorV2.\_preUpdate method (legacy data translation)
+- `test/module/actor/gurps-actor-moveitem.test.ts` - GurpsActorV2.moveItem method (drag-drop, reordering, splitting)
+
+**Chat Tests:**
+
+- `test/module/chat/slam-calculator.test.ts` - GURPS slam damage calculations
+
+**Data Model Tests:**
+
+- `test/module/data/common/length.test.ts` - Length measurement conversions
+- `test/module/data/mixins/container-utils.test.ts` - Container utility functions
+
+**Utility Tests:**
+
+- `test/module/utilities/text-utilties.test.ts` - Text utility functions
+
+**Library Tests:**
+
+- `test/lib/utilities.test.ts` - Utility functions (displayMod, makeSelect, splitArgs, etc.)
+- `test/lib/parselink.test.ts` - Link parsing and damage formula parsing
+
+Test infrastructure:
+
+- `test/jest.setup.js` - Foundry VTT API mocking (TypeDataModel, Actor, Item, etc.)
+- `test/foundry-utils/` - Foundry collection mocks
+- `test/stubs/` - Stub implementations for dependencies
+
+**Test Organization:**
+Tests are organized in a directory structure that mirrors the module source files being tested. When adding new tests, place them in the corresponding location under `test/` that matches the `module/` or `lib/` directory structure. Large test files should be split by method or feature area for better maintainability.
 
 ## Development Workflow
 
@@ -265,6 +429,23 @@ npm run dev           # Development mode with watchers
 npm run watch         # Watch all file types
 ```
 
+### TypeScript Configuration
+
+The project uses strict TypeScript settings:
+
+- **Target**: ESNext
+- **Module**: NodeNext with NodeNext resolution
+- **Strict mode**: Enabled with noImplicitAny, strictNullChecks, strictFunctionTypes
+- **Output**: dist/ directory with source maps
+- **Types**: Includes jquery, jest, and fvtt-types
+- **Exclusions**: build/, node_modules/, dist/, dev-utilities/, scripts/, test/jest.setup.js
+
+Key TypeScript patterns:
+
+- Use `@ts-expect-error` for intentional type violations (e.g., accessing global.game in tests)
+- Exclude Jest setup files from compilation to avoid namespace conflicts
+- Global type definitions in `global.d.ts` extend Foundry types
+
 ### File Organization
 
 #### Module Boundaries
@@ -286,13 +467,32 @@ npm run watch         # Watch all file types
 #### Data Model Usage
 
 ```typescript
-// Use Foundry DataModel for structured data
-class MyDataModel extends foundry.abstract.DataModel {
+// Use Foundry TypeDataModel for structured data
+class MyDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
       name: new fields.StringField({ required: true }),
       value: new fields.NumberField({ initial: 0 }),
     }
+  }
+}
+
+// Item data models extend BaseItemModel with typed schemas
+class EquipmentModel extends BaseItemModel<EquipmentSchema> {
+  static defineSchema() {
+    return {
+      ...super.defineSchema(),
+      eqt: new fields.SchemaField({
+        count: new fields.NumberField({ initial: 1, min: 0 }),
+        carried: new fields.BooleanField({ initial: false }),
+        equipped: new fields.BooleanField({ initial: false }),
+      }),
+    }
+  }
+
+  // Computed properties
+  get isCarried(): boolean {
+    return this.eqt.carried
   }
 }
 ```
@@ -319,15 +519,6 @@ function getItemAttacks(options = { attackType: 'both' }) {
 ```
 
 ### ❌ Anti-Patterns
-
-#### Direct DOM Manipulation
-
-```typescript
-// Avoid - use Foundry's application system instead
-document.getElementById('my-element').innerHTML = 'content'
-
-// Prefer - use Handlebars templates and Application classes
-```
 
 #### Synchronous File Operations
 
@@ -450,6 +641,10 @@ const formatted = game.i18n.format('GURPS.DamageFormula', { damage: '2d+1' })
 
 ### Code Comments
 
+- Use JSDoc for public APIs
+- Document complex logic with inline comments
+- Comments should begin with a capital letter and end with a period or question mark.
+
 ```typescript
 /**
  * Calculate effective skill level including modifiers
@@ -493,15 +688,6 @@ function getSkillLevel(actor, skillName) {
 
 ## Quick Reference
 
-### Common File Locations
-
-- **Main System**: `module/gurps.js`
-- **Actor Classes**: `module/actor/gurps-actor.ts` (V2), `module/actor/actor.js` (V1)
-- **Item Classes**: `module/item/gurps-item.ts` (V2), `module/item.js` (V1)
-- **Data Models**: `module/*/data/*.ts`
-- **Tests**: `test/*.test.ts`
-- **Utilities**: `lib/` (Foundry-independent), `utils/` (Foundry-dependent)
-
 ### Build Commands
 
 ```bash
@@ -515,7 +701,6 @@ npm run prettier     # Format code
 ### Key Globals
 
 - `GURPS` - System global object
-- `game.gurps` - System runtime instance
 - `CONFIG.Actor.documentClass` - Actor document class
 - `CONFIG.Item.documentClass` - Item document class
 
