@@ -4,6 +4,12 @@
 
 ### Features
 
+## Release 0.18.8 12/7/2025
+
+### Bugfixes
+
+- Fix visual problems with the Effect Modifiers window.
+
 ## Release 0.18.7 12/4/2025
 
 ### Bugfixes
