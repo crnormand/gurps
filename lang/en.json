@@ -710,6 +710,7 @@
     "importSelectFileOverwriteAction": "Overwrite the data for: <b>{name}</b>.",
     "importSelectFileSource": "Source Data",
     "importSelectFileTitle": "Select a file exported from GCS or GCA.",
+    "importSelectFileTitleGCS": "Select a file exported from GCS 5+.",
     "importSheetHint": "Importing data for {name} using {generator}. Please wait...",
     "importSheetTitle": "Importing {generator} Sheet",
     "importSource": "Source",
@@ -1582,10 +1583,6 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermssion": "You do not have permission to do that.",
-    "CharacterImporter": {
-      "Title": "Import from GCS 5",
-      "NoFileSelected": "No file selected for import."
-    }
+    "youDoNotHavePermssion": "You do not have permission to do that."
   }
 }

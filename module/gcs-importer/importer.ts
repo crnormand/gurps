@@ -127,7 +127,7 @@ class GcsImporter {
         }
       }
 
-      await actor.createEmbeddedDocuments('Item', this.items as any)
+      await actor.createEmbeddedDocuments('Item', this.items as any, { keepId: true })
     } else {
       actor = (await Actor.create({
         _id,

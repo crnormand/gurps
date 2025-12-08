@@ -710,6 +710,7 @@
     "importSelectFileOverwriteAction": "Die Daten für: <b>{name}</b> überschreiben.",
     "importSelectFileSource": "Quelldaten",
     "importSelectFileTitle": "Wähle eine Datei, die aus GCS oder GCA exportiert wurde.",
+    "importSelectFileTitleGCS": "Wähle eine Datei, die aus GCS 5+ exportiert wurde.",
     "importSheetHint": "Importiere Daten für {name} mit {generator}. Bitte warten...",
     "importSheetTitle": "Importiere {generator} Blatt",
     "importSource": "Quelle",
@@ -1582,10 +1583,6 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun",
-    "CharacterImporter": {
-      "Title": "Importiere von GCS 5",
-      "NoFileSelected": "Keine Datei für den Import ausgewählt."
-    }
+    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
   }
 }

@@ -710,6 +710,7 @@
     "importSelectFileOverwriteAction": "Перезаписать данные для: <b>{name}</b>.",
     "importSelectFileSource": "Исходные данные",
     "importSelectFileTitle": "Выберите файл, экспортированный из GCS или GCA.",
+    "importSelectFileTitleGCS": "Выберите файл, экспортированный из GCS 5+.",
     "importSheetHint": "Импорт данных для {name} с использованием {generator}. Пожалуйста, подождите...",
     "importSheetTitle": "Импорт листа {generator}",
     "importSource": "Источник",
@@ -1583,10 +1584,6 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это.",
-    "CharacterImporter": {
-      "Title": "Импорт из GCS 5",
-      "NoFileSelected": "Файл для импорта не выбран."
-    }
+    "youDoNotHavePermssion": "У вас нет разрешения на это."
   }
 }

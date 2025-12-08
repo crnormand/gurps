@@ -710,6 +710,7 @@
     "importSelectFileOverwriteAction": "Ecraser les données pour: <b>{name}</b>.",
     "importSelectFileSource": "Données Source",
     "importSelectFileTitle": "Sélectionnez un fichier exporté depuis GCS ou GCA.",
+    "importSelectFileTitleGCS": "Sélectionnez un fichier exporté depuis GCS 5+.",
     "importSheetHint": "Importation des données pour {name} en utilisant {generator}. Veuillez patienter...",
     "importSheetTitle": "Importation de la Feuille {generator}",
     "importSource": "Source",
@@ -1582,10 +1583,6 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela.",
-    "CharacterImporter": {
-      "Title": "Importer depuis GCS 5",
-      "NoFileSelected": "Aucun fichier sélectionné pour l'importation."
-    }
+    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela."
   }
 }
