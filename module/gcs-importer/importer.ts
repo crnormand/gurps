@@ -23,6 +23,7 @@ import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
+import { OVERWRITE_HP_FP } from './types.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -69,7 +70,7 @@ class GcsImporter {
     if (actor) this.actor = actor
 
     this.#importPortrait()
-    this.#importAttributes()
+    await this.#importAttributes()
     this.#importProfile()
     this.#importHitLocations()
     this.#importItems()
@@ -158,7 +159,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importAttributes() {
+  async #importAttributes() {
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {}, WILL: {}, PER: {}, QN: {} }
 
     for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PER'] as const) {
@@ -228,12 +229,66 @@ class GcsImporter {
     this.output.swing = this.input.calc.swing
     this.output.dodge = { value: this.input.calc.dodge[0] ?? 0 }
 
-    if (this.actor) this.#promptPointPoolOverwrite()
+    await this.#promptPointPoolOverwrite()
   }
 
   /* ---------------------------------------- */
 
-  #promptPointPoolOverwrite() {}
+  async #promptPointPoolOverwrite() {
+    if (!this.actor) return // No need to run this if there is no existing actor
+    const currentHP = this.actor.system.HP.value
+    const currentFP = this.actor.system.FP.value
+
+    const statsDifference = currentHP !== this.output.HP!.value || currentFP !== this.output.FP!.value
+
+    if (!statsDifference) return
+
+    const promptSetting = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP)
+    if (promptSetting === 'yes') return // Automatically overwrite from file
+    if (promptSetting === 'no') {
+      // Automatically ignore values from file
+      this.output.HP!.value = currentHP
+      this.output.FP!.value = currentFP
+      return
+    }
+
+    if (promptSetting === 'ask') {
+      const stopOverwrite = await foundry.applications.api.DialogV2.wait({
+        window: {
+          title: game.i18n!.localize('GURPS.importOverwriteHpFp'),
+        },
+        content: game.i18n!.format('GURPS.importSaveOrOverwriteHpFp', {
+          currentHP: `${currentHP}`,
+          currentFP: `${currentFP}`,
+          hp: `${this.output.HP!.value}`,
+          fp: `${this.output.FP!.value}`,
+        }),
+        modal: true,
+        buttons: [
+          {
+            action: 'save',
+            label: game.i18n!.localize('GURPS.save'),
+            icon: 'far fa-square',
+            default: true,
+            callback: () => true,
+          },
+          {
+            action: 'overwrite',
+            label: game.i18n!.localize('GURPS.overwrite'),
+            icon: 'fas fa-edit',
+            callback: () => false,
+          },
+        ],
+      })
+
+      if (stopOverwrite) {
+        this.output.HP!.value = currentHP
+        this.output.FP!.value = currentFP
+      }
+
+      return
+    }
+  }
 
   /* ---------------------------------------- */
 

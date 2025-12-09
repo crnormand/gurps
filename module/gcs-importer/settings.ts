@@ -45,12 +45,8 @@ export default function initializeGameSettings() {
       },
       initial: 'ask',
     }),
-    // choices: {
-    //   yes: game.i18n.localize('GURPS.settingImportHPAndFPUseFile'),
-    //   no: game.i18n.localize('GURPS.settingImportHPAndFPIgnore'),
-    //   ask: game.i18n.localize('GURPS.settingImportHPAndFPAsk'),
-    // },
     onChange: value => {
+      // Old setting no longer shows up so set it through this one.
       const oldValue = value === 'yes' ? 0 : value === 'no' ? 1 : 2
       game.settings.set(GURPS.SYSTEM_NAME, SETTING_IMPORT_HP_FP, oldValue)
     },
