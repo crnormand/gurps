@@ -29,7 +29,7 @@ export default function initializeGameSettings() {
     onChange: value => console.log(`Import of Current HP and FP : ${value}`),
   })
 
-  // Import new settings
+  // Register new settings
   game.settings.register(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP, {
     name: game.i18n.localize('GURPS.settingImportHPAndFP'),
     hint: game.i18n.localize('GURPS.settingHintImportHPAndFP'),
