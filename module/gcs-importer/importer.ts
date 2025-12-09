@@ -29,6 +29,7 @@ import { NoteV2Schema } from 'module/actor/data/note.js'
  * This class handles the conversion of GCS character data into the format used by the GURPS system.
  */
 class GcsImporter {
+  actor?: GurpsActorV2<'characterV2'>
   input: GcsCharacter
   output: DataModel.CreateData<CharacterSchema>
   items: DataModel.CreateData<DataModel.SchemaOf<GcsItem<any>>>[]
@@ -63,6 +64,9 @@ class GcsImporter {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
     const name = this.input.profile.name ?? 'Imported Character'
+
+    // Set actor as a GcsImporter property for easier reference
+    if (actor) this.actor = actor
 
     this.#importPortrait()
     this.#importAttributes()
@@ -223,7 +227,13 @@ class GcsImporter {
     this.output.thrust = this.input.calc.thrust
     this.output.swing = this.input.calc.swing
     this.output.dodge = { value: this.input.calc.dodge[0] ?? 0 }
+
+    if (this.actor) this.#promptPointPoolOverwrite()
   }
+
+  /* ---------------------------------------- */
+
+  #promptPointPoolOverwrite() {}
 
   /* ---------------------------------------- */
 
