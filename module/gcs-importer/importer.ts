@@ -286,7 +286,6 @@ class GcsImporter {
       this.output.FP!.value = currentFP
     }
 
-    return
   }
 
   /* ---------------------------------------- */
