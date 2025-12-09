@@ -83,7 +83,7 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
 
     const entries: SettingEntry[] = []
 
-    // go through all settings, and conver them to modern data fields if not already converted.
+    // go through all settings, and convert them to modern data fields if not already converted.
     // also, collect values and localized labels and hints.
     for (const setting of settings) {
       const entry: SettingEntry = { value: game.settings!.get(GURPS.SYSTEM_NAME, setting.key as any) }
