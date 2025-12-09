@@ -252,42 +252,41 @@ class GcsImporter {
       return
     }
 
-    if (promptSetting === 'ask') {
-      const keepCurrentValues = await foundry.applications.api.DialogV2.wait({
-        window: {
-          title: game.i18n!.localize('GURPS.importOverwriteHpFp'),
+    // Defaulting to ask
+    const keepCurrentValues = await foundry.applications.api.DialogV2.wait({
+      window: {
+        title: game.i18n!.localize('GURPS.importOverwriteHpFp'),
+      },
+      content: game.i18n!.format('GURPS.importSaveOrOverwriteHpFp', {
+        currentHP: `${currentHP}`,
+        currentFP: `${currentFP}`,
+        hp: `${this.output.HP!.value}`,
+        fp: `${this.output.FP!.value}`,
+      }),
+      modal: true,
+      buttons: [
+        {
+          action: 'save',
+          label: game.i18n!.localize('GURPS.save'),
+          icon: 'far fa-square',
+          default: true,
+          callback: () => true,
         },
-        content: game.i18n!.format('GURPS.importSaveOrOverwriteHpFp', {
-          currentHP: `${currentHP}`,
-          currentFP: `${currentFP}`,
-          hp: `${this.output.HP!.value}`,
-          fp: `${this.output.FP!.value}`,
-        }),
-        modal: true,
-        buttons: [
-          {
-            action: 'save',
-            label: game.i18n!.localize('GURPS.save'),
-            icon: 'far fa-square',
-            default: true,
-            callback: () => true,
-          },
-          {
-            action: 'overwrite',
-            label: game.i18n!.localize('GURPS.overwrite'),
-            icon: 'fas fa-edit',
-            callback: () => false,
-          },
-        ],
-      })
+        {
+          action: 'overwrite',
+          label: game.i18n!.localize('GURPS.overwrite'),
+          icon: 'fas fa-edit',
+          callback: () => false,
+        },
+      ],
+    })
 
-      if (keepCurrentValues) {
-        this.output.HP!.value = currentHP
-        this.output.FP!.value = currentFP
-      }
-
-      return
+    if (keepCurrentValues) {
+      this.output.HP!.value = currentHP
+      this.output.FP!.value = currentFP
     }
+
+    return
   }
 
   /* ---------------------------------------- */
