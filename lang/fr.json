@@ -1583,6 +1583,27 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela."
+    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela.",
+    "Dialog": {
+      "Save": "Enregistrer",
+      "Overwrite": "Écraser"
+    },
+    "Importer": {
+      "PromptHPandFP": {
+        "Title": "Écraser les HP et FP actuels ?",
+        "Content": "<p>Voulez-vous <strong>enregistrer</strong> les valeurs actuelles de HP (<strong>{currentHP}</strong>) et FP (<strong>{currentFP}</strong>), ou <strong>écraser</strong> ces valeurs avec celles du fichier importé (HP : <strong>{hp}</strong>, FP : <strong>{fp}</strong>) ?</p>"
+      },
+      "Settings": {
+        "Title": "Paramètres de l'importateur",
+        "Hint": "Paramètres pour l'importateur de personnage GURPS",
+        "OverwriteHPandFP": {
+          "Name": "Écraser les HP et FP",
+          "Hint": "REMARQUE : Les HP et FP actuels sont toujours lus à partir du fichier lors de la première importation.",
+          "Yes": "Toujours écraser à partir du fichier.",
+          "No": "Ne jamais écraser à partir du fichier.",
+          "Ask": "Demander à chaque importation."
+        }
+      }
+    }
   }
 }

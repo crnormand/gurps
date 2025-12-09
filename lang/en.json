@@ -1583,6 +1583,27 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermssion": "You do not have permission to do that.",
+    "Dialog": {
+      "Save": "Save",
+      "Overwrite": "Overwrite"
+    },
+    "Importer": {
+      "PromptHPandFP": {
+        "Title": "Overwrite Current HP and FP?",
+        "Content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      },
+      "Settings": {
+        "Title": "Importer Settings",
+        "Hint": "Settings for the GURPS Character Importer",
+        "OverwriteHPandFP": {
+          "Name": "Overwrite HP & FP",
+          "Hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
+          "Yes": "Always overwrite from file.",
+          "No": "Never overwrite from file.",
+          "Ask": "Ask each time during import."
+        }
+      }
+    }
   }
 }

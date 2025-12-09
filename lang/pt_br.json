@@ -1583,6 +1583,27 @@
     "written": "Escrito",
     "yard": "jarda",
     "yards": "jardas",
-    "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
+    "youDoNotHavePermssion": "Você não tem permissão para fazer isso.",
+    "Dialog": {
+      "Save": "Salvar",
+      "Overwrite": "Sobrescrever"
+    },
+    "Importer": {
+      "PromptHPandFP": {
+        "Title": "Sobrescrever HP e FP atuais?",
+        "Content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      },
+      "Settings": {
+        "Title": "Configurações do Importador",
+        "Hint": "Configurações para o Importador de Personagens GURPS",
+        "OverwriteHPandFP": {
+          "Name": "Sobrescrever HP e FP",
+          "Hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
+          "Yes": "Sempre sobrescrever do arquivo.",
+          "No": "Nunca sobrescrever do arquivo.",
+          "Ask": "Perguntar a cada importação."
+        }
+      }
+    }
   }
 }

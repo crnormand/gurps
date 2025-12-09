@@ -1584,6 +1584,27 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это."
+    "youDoNotHavePermssion": "У вас нет разрешения на это.",
+    "Dialog": {
+      "Save": "Сохранить",
+      "Overwrite": "Перезаписать"
+    },
+    "Importer": {
+      "PromptHPandFP": {
+        "Title": "Перезаписать текущие HP и FP?",
+        "Content": "<p>Вы хотите <strong>сохранить</strong> текущие значения HP (<strong>{currentHP}</strong>) и FP (<strong>{currentFP}</strong>), или <strong>перезаписать</strong> их значениями из импортируемого файла (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      },
+      "Settings": {
+        "Title": "Настройки импортера",
+        "Hint": "Настройки для импортера персонажей GURPS",
+        "OverwriteHPandFP": {
+          "Name": "Перезаписать HP и FP",
+          "Hint": "ПРИМЕЧАНИЕ: Текущие HP и FP всегда считываются из файла при первом импорте.",
+          "Yes": "Всегда перезаписывать из файла.",
+          "No": "Никогда не перезаписывать из файла.",
+          "Ask": "Спрашивать каждый раз при импорте."
+        }
+      }
+    }
   }
 }
