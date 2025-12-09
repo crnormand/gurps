@@ -1589,6 +1589,13 @@
       "Overwrite": "Sobrescrever"
     },
     "Importer": {
+      "Prompt": {
+        "Title": "Importar dados do personagem para {name}",
+        "Description": "Selecione um arquivo exportado do GCS 5+.",
+        "Source": "Dados de origem",
+        "Note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+      },
       "PromptHPandFP": {
         "Title": "Sobrescrever HP e FP atuais?",
         "Content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"

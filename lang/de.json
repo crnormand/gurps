@@ -1589,6 +1589,13 @@
       "Overwrite": "Überschreiben"
     },
     "Importer": {
+      "Prompt": {
+        "Title": "Charakterdaten für {name} importieren",
+        "Description": "Wählen Sie eine aus GCS 5+ exportierte Datei aus.",
+        "Source": "Quelldaten",
+        "Note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+      },
       "PromptHPandFP": {
         "Title": "Aktuelle HP und FP überschreiben?",
         "Content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>"

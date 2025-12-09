@@ -2,31 +2,24 @@ import { GcsImporter } from './importer.js'
 import { GcsCharacter } from './schema/character.js'
 
 async function importGCS(actor?: Actor.OfType<'characterV2'>) {
-  const defaultActorName = game.i18n!.localize('TYPES.Actor.characterV2')
+  if (!game.i18n) throw Error('GURPS | game.i18n not available when trying to import GCS character!')
+
+  const name = actor ? actor.name : game.i18n.localize('TYPES.Actor.characterV2')
 
   return new foundry.applications.api.DialogV2({
     window: {
-      title: game.i18n!.format(`GURPS.importCharacterData`, { name: actor?.name || defaultActorName }),
+      title: game.i18n.format('GURPS.Importer.Prompt.Title', { name }),
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate(
-      'systems/gurps/templates/gcs-importer/import-gcs-or-gca.hbs',
+      'systems/gurps/templates/gcs-importer/import-gcs5.hbs',
       {
-        title: game.i18n!.localize('GURPS.importSelectFileTitleGCS'),
-        source: game.i18n!.localize('GURPS.importSelectFileSource'),
-        describeAction: game.i18n!.localize('GURPS.importSelectFileDescribeAction'),
-        overwriteAction: new Handlebars.SafeString(
-          game.i18n!.format('GURPS.importSelectFileOverwriteAction', {
-            name: actor?.name || defaultActorName,
-          })
-        ),
-        itemAction: new Handlebars.SafeString(
-          game.i18n!.format('GURPS.importSelectFileItemAction', {
-            equipType: game.i18n!.localize('GURPS.importTraitToFoundryItem'),
-            equipColor: '#35713e',
-          })
-        ),
-        note: game.i18n!.localize('GURPS.importSelectFileNote'),
+        description: game.i18n.localize('GURPS.Importer.Prompt.Description'),
+        source: game.i18n.localize('GURPS.Importer.Prompt.Source'),
+        note: game.i18n.format('GURPS.Importer.Prompt.Note', {
+          name,
+        }),
+        warning: game.i18n.localize('GURPS.Importer.Prompt.Warning'),
       }
     ),
     buttons: [

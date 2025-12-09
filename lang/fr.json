@@ -1589,6 +1589,13 @@
       "Overwrite": "Écraser"
     },
     "Importer": {
+      "Prompt": {
+        "Title": "Importer les données du personnage pour {name}",
+        "Description": "Sélectionnez un fichier exporté depuis GCS 5+.",
+        "Source": "Données source",
+        "Note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
+        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+      },
       "PromptHPandFP": {
         "Title": "Écraser les HP et FP actuels ?",
         "Content": "<p>Voulez-vous <strong>enregistrer</strong> les valeurs actuelles de HP (<strong>{currentHP}</strong>) et FP (<strong>{currentFP}</strong>), ou <strong>écraser</strong> ces valeurs avec celles du fichier importé (HP : <strong>{hp}</strong>, FP : <strong>{fp}</strong>) ?</p>"

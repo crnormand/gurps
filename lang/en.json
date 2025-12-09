@@ -1589,6 +1589,13 @@
       "Overwrite": "Overwrite"
     },
     "Importer": {
+      "Prompt": {
+        "Title": "Import Character Data for {name}",
+        "Description": "Select a file exported from GCS 5+.",
+        "Source": "Source Data",
+        "Note": "This import will overwrite the data for: <strong>{name}</strong>.",
+        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+      },
       "PromptHPandFP": {
         "Title": "Overwrite Current HP and FP?",
         "Content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"

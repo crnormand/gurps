@@ -1590,6 +1590,13 @@
       "Overwrite": "Перезаписать"
     },
     "Importer": {
+      "Prompt": {
+        "Title": "Импортировать данные персонажа для {name}",
+        "Description": "Выберите файл, экспортированный из GCS 5+.",
+        "Source": "Исходные данные",
+        "Note": "Этот импорт перезапишет данные для: <strong>{name}</strong>.",
+        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
+      },
       "PromptHPandFP": {
         "Title": "Перезаписать текущие HP и FP?",
         "Content": "<p>Вы хотите <strong>сохранить</strong> текущие значения HP (<strong>{currentHP}</strong>) и FP (<strong>{currentFP}</strong>), или <strong>перезаписать</strong> их значениями из импортируемого файла (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
