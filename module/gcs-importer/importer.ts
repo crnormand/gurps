@@ -253,7 +253,7 @@ class GcsImporter {
     }
 
     if (promptSetting === 'ask') {
-      const stopOverwrite = await foundry.applications.api.DialogV2.wait({
+      const keepCurrentValues = await foundry.applications.api.DialogV2.wait({
         window: {
           title: game.i18n!.localize('GURPS.importOverwriteHpFp'),
         },
@@ -281,7 +281,7 @@ class GcsImporter {
         ],
       })
 
-      if (stopOverwrite) {
+      if (keepCurrentValues) {
         this.output.HP!.value = currentHP
         this.output.FP!.value = currentFP
       }
