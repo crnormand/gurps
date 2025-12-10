@@ -267,6 +267,7 @@ class GcsImporter {
       buttons: [
         {
           action: 'save',
+          // TODO: consider renaming this option to "Keep"
           label: game.i18n!.localize('GURPS.Dialog.Save'),
           icon: 'far fa-square',
           default: true,
@@ -285,7 +286,6 @@ class GcsImporter {
       this.output.HP!.value = currentHP
       this.output.FP!.value = currentFP
     }
-
   }
 
   /* ---------------------------------------- */

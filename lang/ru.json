@@ -1584,7 +1584,7 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это.",
+    "youDoNotHavePermission": "У вас нет разрешения на это.",
     "Dialog": {
       "Save": "Сохранить",
       "Overwrite": "Перезаписать"

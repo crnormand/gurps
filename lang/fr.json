@@ -1583,7 +1583,7 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela.",
+    "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela.",
     "Dialog": {
       "Save": "Enregistrer",
       "Overwrite": "Écraser"

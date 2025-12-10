@@ -1332,7 +1332,7 @@ export class GurpsActor extends Actor {
    */
   async handleItemDrop(dragData) {
     if (!this.isOwner) {
-      ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
+      ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermission'))
       return
     }
     // New item created in Foundry v12.331 dragData:
@@ -1511,7 +1511,7 @@ export class GurpsActor extends Actor {
           itemData: dragData.itemData,
           count: +count,
         })
-      } else ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermssion'))
+      } else ui.notifications?.warn(game.i18n.localize('GURPS.youDoNotHavePermission'))
     }
     this._forceRender()
   }

@@ -1583,7 +1583,7 @@
     "written": "Escrito",
     "yard": "jarda",
     "yards": "jardas",
-    "youDoNotHavePermssion": "Você não tem permissão para fazer isso.",
+    "youDoNotHavePermission": "Você não tem permissão para fazer isso.",
     "Dialog": {
       "Save": "Salvar",
       "Overwrite": "Sobrescrever"

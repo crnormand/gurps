@@ -1583,7 +1583,7 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermssion": "You do not have permission to do that.",
+    "youDoNotHavePermission": "You do not have permission to do that.",
     "Dialog": {
       "Save": "Save",
       "Overwrite": "Overwrite"
