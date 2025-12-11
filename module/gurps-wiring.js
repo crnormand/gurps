@@ -1,6 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import GgaContextMenu from './utilities/contextmenu.js'
+import GgaContextMenuV2 from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
@@ -65,38 +65,45 @@ export default class GurpsWiring {
   }
 
   static createPdfLinkMenu(link) {
+    console.assert(link instanceof HTMLElement)
     let text = link.innerText
-    let parent = $(link).parent()
+    let parent = link.parentElement
 
     let actor = GURPS.LastActor
     let users = actor?.getOwners()?.filter(u => !u.isGM) || []
     let otf = '[PDF:' + text + ']'
     let names = users.map(u => u.name).join(' ')
 
-    let container = $(parent).closest('section.window-content')
+    let container = parent.closest('section.window-content')
+    console.assert(container instanceof HTMLElement)
 
-    new GgaContextMenu(container, parent, '.pdflink', `Send PDF:${text}...`, [
-      {
-        name: 'To Everyone',
-        icon: '<i class="fas fa-user-friends"></i>',
-        callback: () => GURPS.sendOtfMessage(otf, false),
-        condition: () => game.user.isGM,
-      },
-      {
-        name: `Whisper to ${names}`,
-        icon: '<i class="fas fa-user-secret"></i>',
-        callback: () => GURPS.sendOtfMessage(otf, false, users),
-        condition: () => game.user.isGM && users.length > 0,
-      },
-      {
-        name: 'Copy to Chat',
-        icon: '<i class="far fa-comment"></i>',
-        callback: () => {
-          $(document).find('#chat-message').val(otf)
+    new GgaContextMenuV2(
+      container,
+      parent,
+      '.pdflink',
+      /*`Send PDF:${text}...`,*/ [
+        {
+          name: `Send PDF:${text} to Everyone`,
+          icon: '<i class="fas fa-user-friends"></i>',
+          callback: () => GURPS.sendOtfMessage(otf, false),
+          condition: () => game.user.isGM,
         },
-        condition: () => true,
-      },
-    ])
+        {
+          name: `Whisper PDF:${text} to ${names}`,
+          icon: '<i class="fas fa-user-secret"></i>',
+          callback: () => GURPS.sendOtfMessage(otf, false, users),
+          condition: () => game.user.isGM && users.length > 0,
+        },
+        {
+          name: `Copy PDF:${text} to Chat`,
+          icon: '<i class="far fa-comment"></i>',
+          callback: () => {
+            $(document).find('#chat-message').val(otf)
+          },
+          condition: () => true,
+        },
+      ]
+    )
   }
 
   /**
