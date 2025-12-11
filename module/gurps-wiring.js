@@ -67,21 +67,20 @@ export default class GurpsWiring {
   static createPdfLinkMenu(link) {
     console.assert(link instanceof HTMLElement)
     let text = link.innerText
-    let parent = link.parentElement
+    let target = link.parentElement
 
     let actor = GURPS.LastActor
     let users = actor?.getOwners()?.filter(u => !u.isGM) || []
     let otf = '[PDF:' + text + ']'
     let names = users.map(u => u.name).join(' ')
 
-    let container = parent.closest('section.window-content')
+    let container = target.closest('section.window-content')
     console.assert(container instanceof HTMLElement)
 
     new GgaContextMenuV2(
-      container,
-      parent,
+      target,
       '.pdflink',
-      /*`Send PDF:${text}...`,*/ [
+      [
         {
           name: `Send PDF:${text} to Everyone`,
           icon: '<i class="fas fa-user-friends"></i>',
@@ -102,7 +101,8 @@ export default class GurpsWiring {
           },
           condition: () => true,
         },
-      ]
+      ],
+      container
     )
   }
 
