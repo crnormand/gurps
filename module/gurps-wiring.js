@@ -81,7 +81,7 @@ export default class GurpsWiring {
       container,
       parent,
       '.pdflink',
-      /*`Send PDF:${text}...`,*/ [
+      [
         {
           name: `Send PDF:${text} to Everyone`,
           icon: '<i class="fas fa-user-friends"></i>',
