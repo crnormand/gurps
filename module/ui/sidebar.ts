@@ -1,6 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
 
-class GurpsSidebar extends Sidebar {
+class GurpsSidebar extends foundry.applications.sidebar.Sidebar {
   override toggleExpanded(expanded: boolean): void {
     super.toggleExpanded(expanded)
     GURPS.ModifierBucket.refreshPosition()
