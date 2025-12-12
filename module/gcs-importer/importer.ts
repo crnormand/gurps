@@ -253,7 +253,7 @@ class GcsImporter {
     }
 
     // Defaulting to ask
-    const overwriteOption: 'keep' | 'overwrite' = await foundry.applications.api.DialogV2.wait({
+    const overwriteOption: 'keep' | 'overwrite' | null = await foundry.applications.api.DialogV2.wait({
       window: {
         title: game.i18n!.localize('GURPS.importer.promptHPandFP.title'),
       },
@@ -267,7 +267,6 @@ class GcsImporter {
       buttons: [
         {
           action: 'keep',
-          // TODO: consider renaming this option to "Keep"
           label: game.i18n!.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,

@@ -618,7 +618,7 @@ export class ActorImporter {
           buttons: [
             {
               action: 'save',
-              label: game.i18n.localize('GURPS.dialog.save'),
+              label: game.i18n.localize('GURPS.dialog.keep'),
               icon: 'far fa-square',
               default: true,
               callback: () => true,
@@ -1331,7 +1331,7 @@ export class ActorImporter {
       buttons: [
         {
           action: 'save',
-          label: game.i18n.localize('GURPS.dialog.save'),
+          label: game.i18n.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,
           callback: () => true,
