@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Charakter (v1)",
-      "characterV2": "Charakter (v2)",
-      "enemy": "Gegner"
-    },
-    "Item": {
-      "feature": "Merkmal (v1)",
-      "skill": "Fertigkeit (v1)",
-      "spell": "Zauberspruch (v1)",
-      "equipment": "Ausrüstung (v1)",
-      "featureV2": "Merkmal (v2)",
-      "skillV2": "Fertigkeit (v2)",
-      "spellV2": "Zauberspruch (v2)",
-      "equipmentV2": "Ausrüstung (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "{name} aus der Ausrüstungsliste entfernen?",
     "confirmRoll": "Würfelbestätigung",
     "consumeAction": "Consommer l'Action",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Kopiere PDF:{text} im Chat",
+        "sendToEveryone": "Sende PDF:{text} an Alle",
+        "whisperToOwners": "Flüstere PDF:{text} an {owners}"
+      }
+    },
     "ControlRoll": "Kontrollwurf",
     "copyright": "GURPS ist ein Warenzeichen von Steve Jackson Games, und seine Regeln und Kunstwerke sind urheberrechtlich geschützt von Steve Jackson Games. Alle Rechte vorbehalten von Steve Jackson Games. Diese Spielhilfe ist die ursprüngliche Kreation von Chris Normand/Nose66 und wird zur freien Verteilung und nicht zum Weiterverkauf unter den Genehmigungen von http://www.sjgames.com/general/online_policy.html veröffentlicht.",
     "CR0": "KR: N/A (Kann Nicht Widerstehen)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Haut",
     "descriptionTechLevel": "Techlevel (TL)",
     "destroyed": "Zerstört",
+    "dialog": {
+      "keep": "Behalten",
+      "overwrite": "Überschreiben",
+      "save": "Speichern"
+    },
     "Dice": "Würfel",
     "diceAddDamageRule": "Würfel+Zusatzregel:",
     "disable": "Deaktivieren",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Beeinflusst nicht Aktive Verteidigung oder andere denfensive Reaktionen.",
     "effectsTemporaryAttributePenalties": "Siehe Temporary Attribute Penalties",
     "effectsTermination": "Beendigungsbedingung (OtF)",
+    "encumbranceLevel-0": "Keine (0)",
     "encumbranceLevel-00000": "Keine (0)",
     "encumbranceLevel-00001": "Leicht (1)",
     "encumbranceLevel-00002": "Mittel (2)",
     "encumbranceLevel-00003": "Schwer (3)",
     "encumbranceLevel-00004": "S-Schwer (4)",
-    "encumbranceLevel-0": "Keine (0)",
     "encumbranceLevel-1": "Leicht (1)",
     "encumbranceLevel-2": "Mittel (2)",
     "encumbranceLevel-3": "Schwer (3)",
@@ -668,6 +663,33 @@
     "importCurrentActor": "Aktueller Schauspieler",
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "Keine Dateien für den Import ausgewählt."
+      },
+      "prompt": {
+        "description": "Wählen Sie eine GCS 5+-Datei aus.",
+        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+        "source": "Quelldaten",
+        "title": "Charakterdaten für {name} importieren",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+      },
+      "promptHPandFP": {
+        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>",
+        "title": "Aktuelle HP und FP überschreiben?"
+      },
+      "settings": {
+        "hint": "Einstellungen für den GURPS Charakter-Importer",
+        "overwriteHPandFP": {
+          "ask": "Jedes Mal beim Import fragen.",
+          "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
+          "name": "HP & FP überschreiben",
+          "no": "Nie aus der Datei überschreiben.",
+          "yes": "Immer aus der Datei überschreiben."
+        },
+        "title": "Importer-Einstellungen"
+      }
+    },
     "importErrorParsingXML": "Fehler beim Parsen von XML: {text}.",
     "importFantasyGroundUnsupported": "Der Fantasy Grounds Import wird nicht länger unterstützt.",
     "importFile": "Datei",
@@ -1581,38 +1603,23 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun",
-    "dialog": {
-      "keep": "Behalten",
-      "save": "Speichern",
-      "overwrite": "Überschreiben"
+    "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun"
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Charakter (v1)",
+      "characterV2": "Charakter (v2)",
+      "enemy": "Gegner"
     },
-    "importer": {
-      "prompt": {
-        "title": "Charakterdaten für {name} importieren",
-        "description": "Wählen Sie eine GCS 5+-Datei aus.",
-        "source": "Quelldaten",
-        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
-      },
-      "error": {
-        "noFilesSelected": "Keine Dateien für den Import ausgewählt."
-      },
-      "promptHPandFP": {
-        "title": "Aktuelle HP und FP überschreiben?",
-        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>"
-      },
-      "settings": {
-        "title": "Importer-Einstellungen",
-        "hint": "Einstellungen für den GURPS Charakter-Importer",
-        "overwriteHPandFP": {
-          "name": "HP & FP überschreiben",
-          "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
-          "yes": "Immer aus der Datei überschreiben.",
-          "no": "Nie aus der Datei überschreiben.",
-          "ask": "Jedes Mal beim Import fragen."
-        }
-      }
+    "Item": {
+      "equipment": "Ausrüstung (v1)",
+      "equipmentV2": "Ausrüstung (v2)",
+      "feature": "Merkmal (v1)",
+      "featureV2": "Merkmal (v2)",
+      "skill": "Fertigkeit (v1)",
+      "skillV2": "Fertigkeit (v2)",
+      "spell": "Zauberspruch (v1)",
+      "spellV2": "Zauberspruch (v2)"
     }
   }
 }
