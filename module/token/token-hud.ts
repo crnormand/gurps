@@ -53,6 +53,6 @@ export default class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
     }
 
     const maneuverId = target.dataset.statusId || 'do_nothing'
-    this.object.setManeuver(maneuverId)
+    await this.object.setManeuver(maneuverId)
   }
 }
