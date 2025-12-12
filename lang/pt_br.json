@@ -1291,10 +1291,6 @@
     "settingImportHintBrowserImporter": "Marque isso se você NÃO estiver hospedando localmente sua instância do Foundry (você está hospedando externamente, como por exemplo na Oracle Cloud). Dessa forma, a janela de importação se lembrará da localização dos arquivos importados durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, a janela de Arquivo não precisará ser aberta).",
     "settingImportHintEncoding": "Se você estiver importando um personagem e caracteres unicode não estiverem sendo exibidos, modifique esta configuração para codificação UTF-8.",
     "settingImportHintExtendedValuesGCS": "Se ativado, o sistema importará os valores estendidos de Custo e Peso ao importar Pacotes de Equipamentos GCS.",
-    "settingImportHPAndFP": "Importação: PV e FP Atuais",
-    "settingImportHPAndFPAsk": "Perguntar antes de sobrescrever durante a importação.",
-    "settingImportHPAndFPIgnore": "Ignorar os valores de PV e FP atuais do arquivo.",
-    "settingImportHPAndFPUseFile": "Utilizar os valores de PV e FP atuais do arquivo.",
     "settingImportIgnoreName": "Importação: Ignorar atributo 'nome'",
     "settingLabelMookGenerator": "Editor Padrão do Gerador de Mook",
     "settingLabelShowItemImage": "Selecione as características",
@@ -1597,7 +1593,7 @@
       },
       "promptHPandFP": {
         "title": "Sobrescrever HP e FP atuais?",
-        "content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+        "content": "<p>Você deseja <strong>manter</strong> os valores atuais de PV (<strong>{currentHP}</strong>) e PF (<strong>{currentFP}</strong>), ou <strong>sobrescrevê-los</strong> com os valores do arquivo importado (PV: <strong>{hp}</strong>, PF: <strong>{fp}</strong>)?</p>"
       },
       "settings": {
         "title": "Configurações do Importador",
