@@ -664,41 +664,41 @@
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
     "importer": {
-      "prompt": {
-        "title": "Import Character Data for {name}",
-        "description": "Select a GCS 5+ file.",
-        "source": "Source Data",
-        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
-      },
       "error": {
         "noFilesSelected": "No files selected for import."
       },
-      "promptHPandFP": {
-        "title": "Overwrite Current HP and FP?",
-        "content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      "prompt": {
+        "description": "Select a GCS 5+ file.",
+        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
+        "source": "Source Data",
+        "title": "Import Character Data for {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
       },
       "promptBodyPlan": {
-        "title": "Overwrite Current BodyPlan?",
-        "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>"
+        "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>",
+        "title": "Overwrite Current BodyPlan?"
+      },
+      "promptHPandFP": {
+        "content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "title": "Overwrite Current HP and FP?"
       },
       "settings": {
-        "title": "Importer Settings",
         "hint": "Settings for the GURPS Character Importer",
-        "overwriteHPandFP": {
-          "name": "Overwrite HP & FP",
-          "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
-          "yes": "Always overwrite from file",
-          "no": "Never overwrite from file",
-          "ask": "Ask each time during import"
-        },
         "overwriteBodyPlan": {
-          "name": "Overwrite Body Plan",
+          "ask": "Ask each time during import",
           "hint": "NOTE: Current body plan is always read from the file during the initial import.",
-          "yes": "Always overwrite from file",
+          "name": "Overwrite Body Plan",
           "no": "Never overwrite from file",
-          "ask": "Ask each time during import"
-        }
+          "yes": "Always overwrite from file"
+        },
+        "overwriteHPandFP": {
+          "ask": "Ask each time during import",
+          "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
+          "name": "Overwrite HP & FP",
+          "no": "Never overwrite from file",
+          "yes": "Always overwrite from file"
+        },
+        "title": "Importer Settings"
       }
     },
     "importErrorParsingXML": "Error parsing XML: {text}.",
@@ -731,7 +731,6 @@
     "importOldGCSFile": "Your character was saved with an older version of GCS, which does not output some required attributes. Update GCS to at least version 4.36, open and save your character file, then try again.",
     "importOnImport": "On Import",
     "importReplace": "Replace",
-
     "importSeeUsersGuide": "Check the Users Guide for details on where to get the latest version.",
     "importSelected": "Import Selected",
     "importSelectFileDescribeAction": "This import will:",

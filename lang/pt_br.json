@@ -664,37 +664,37 @@
     "importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Diretório está vazio. Nenhum arquivo será importado.",
     "importer": {
-      "prompt": {
-        "title": "Importar dados do personagem para {name}",
-        "description": "Selecione um arquivo GCS 5+.",
-        "source": "Dados de origem",
-        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
-      },
       "error": {
         "noFilesSelected": "Nenhum arquivo selecionado para importação."
       },
+      "prompt": {
+        "description": "Selecione um arquivo GCS 5+.",
+        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+        "source": "Dados de origem",
+        "title": "Importar dados do personagem para {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+      },
       "promptHPandFP": {
-        "title": "Sobrescrever HP e FP atuais?",
-        "content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+        "content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "title": "Sobrescrever HP e FP atuais?"
       },
       "settings": {
-        "title": "Configurações do Importador",
         "hint": "Configurações para o Importador de Personagens GURPS",
-        "overwriteHPandFP": {
-          "name": "Sobrescrever HP e FP",
-          "hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
-          "yes": "Sempre sobrescrever do arquivo",
-          "no": "Nunca sobrescrever do arquivo",
-          "ask": "Perguntar a cada importação"
-        },
         "overwriteBodyPlan": {
-          "name": "Sobrescrever Plano Corporal",
+          "ask": "Perguntar a cada importação",
           "hint": "NOTA: O plano corporal atual é sempre lido do arquivo durante a importação inicial.",
-          "yes": "Sempre sobrescrever do arquivo",
+          "name": "Sobrescrever Plano Corporal",
           "no": "Nunca sobrescrever do arquivo",
-          "ask": "Perguntar a cada importação"
-        }
+          "yes": "Sempre sobrescrever do arquivo"
+        },
+        "overwriteHPandFP": {
+          "ask": "Perguntar a cada importação",
+          "hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
+          "name": "Sobrescrever HP e FP",
+          "no": "Nunca sobrescrever do arquivo",
+          "yes": "Sempre sobrescrever do arquivo"
+        },
+        "title": "Configurações do Importador"
       }
     },
     "importErrorParsingXML": "Erro ao analisar o XML: {text}.",
@@ -727,7 +727,6 @@
     "importOldGCSFile": "Seu personagem foi salvo com uma versão mais antiga do GCS, que não exporta alguns dos atributos necessários. Atualize o GCS para no mínimo a versão 4.36, abra e salve o arquivo de personagem e então tente novamente.",
     "importOnImport": "Ao Importar",
     "importReplace": "Substituir",
-
     "importSeeUsersGuide": "Verifique o Manual do Usuário para detalhes de onde conseguir a última versão.",
     "importSelected": "Importar Selecionados",
     "importSelectFileDescribeAction": "Esta importação irá:",
@@ -1307,13 +1306,11 @@
     "settingHintUseQuickRolls": "Quando ativado, o sistema exibirá um botão de Rolagem Rápida no Rastreador de Combate.",
     "settingHintUseQuintessence": "Se ativado, adiciona o atributo Quintessência, e Pontos de Quintessência se tornam disponíveis para uso como um Controle de Recursos.",
     "settingHintUseTaggedModifiers": "Se ativado, o sistema adicionará automaticamente os modificadores marcados ao teste.",
-
     "settingImportBrowserImporter": "Utilizar janela de importação para não hospedado localmente",
     "settingImportEncoding": "Importar codificação de arquivo",
     "settingImportEncodingISO8859": "ISO-8859-1 (default)",
     "settingImportEncodingUTF8": "UTF-8",
     "settingImportExtendedValuesGCS": "Importar valores estendidos de Compendiums GCS",
-
     "settingImportHintBrowserImporter": "Marque isso se você NÃO estiver hospedando localmente sua instância do Foundry (você está hospedando externamente, como por exemplo na Oracle Cloud). Dessa forma, a janela de importação se lembrará da localização dos arquivos importados durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, a janela de Arquivo não precisará ser aberta).",
     "settingImportHintEncoding": "Se você estiver importando um personagem e caracteres unicode não estiverem sendo exibidos, modifique esta configuração para codificação UTF-8.",
     "settingImportHintExtendedValuesGCS": "Se ativado, o sistema importará os valores estendidos de Custo e Peso ao importar Pacotes de Equipamentos GCS.",

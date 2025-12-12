@@ -664,37 +664,37 @@
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
     "importer": {
-      "prompt": {
-        "title": "Charakterdaten für {name} importieren",
-        "description": "Wählen Sie eine GCS 5+-Datei aus.",
-        "source": "Quelldaten",
-        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
-      },
       "error": {
         "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
+      "prompt": {
+        "description": "Wählen Sie eine GCS 5+-Datei aus.",
+        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+        "source": "Quelldaten",
+        "title": "Charakterdaten für {name} importieren",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+      },
       "promptHPandFP": {
-        "title": "Aktuelle HP und FP überschreiben?",
-        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>"
+        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>",
+        "title": "Aktuelle HP und FP überschreiben?"
       },
       "settings": {
-        "title": "Importer-Einstellungen",
         "hint": "Einstellungen für den GURPS Charakter-Importer",
-        "overwriteHPandFP": {
-          "name": "HP & FP überschreiben",
-          "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
-          "yes": "Immer aus der Datei überschreiben",
-          "no": "Nie aus der Datei überschreiben",
-          "ask": "Jedes Mal beim Import fragen"
-        },
         "overwriteBodyPlan": {
-          "name": "Körperplan überschreiben",
+          "ask": "Jedes Mal während des Imports nachfragen",
           "hint": "HINWEIS: Der aktuelle Körperplan wird beim ersten Import immer aus der Datei gelesen.",
-          "yes": "Immer aus Datei überschreiben",
+          "name": "Körperplan überschreiben",
           "no": "Niemals aus Datei überschreiben",
-          "ask": "Jedes Mal während des Imports nachfragen"
-        }
+          "yes": "Immer aus Datei überschreiben"
+        },
+        "overwriteHPandFP": {
+          "ask": "Jedes Mal beim Import fragen",
+          "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
+          "name": "HP & FP überschreiben",
+          "no": "Nie aus der Datei überschreiben",
+          "yes": "Immer aus der Datei überschreiben"
+        },
+        "title": "Importer-Einstellungen"
       }
     },
     "importErrorParsingXML": "Fehler beim Parsen von XML: {text}.",
@@ -727,7 +727,6 @@
     "importOldGCSFile": "Ihr Charakter wurde mit einer älteren Version von GCS gespeichert, die einige erforderliche Attribute nicht ausgibt. Aktualisieren Sie GCS auf mindestens Version 4.36, öffnen und speichern Sie Ihre Charakterdatei und versuchen Sie es erneut.",
     "importOnImport": "Beim Import",
     "importReplace": "Ersetzen",
-
     "importSeeUsersGuide": "Im Benutzerhandbuch befinden sich Informationen darüber, wo  die neueste Version zu erhalten ist.",
     "importSelected": "Ausgewählte importieren",
     "importSelectFileDescribeAction": "Dieser Import wird:",
@@ -1307,13 +1306,11 @@
     "settingHintUseQuickRolls": "Wenn aktiviert, wird das System einen Schnellwurfknopf im Kampftracker anzeigen.",
     "settingHintUseQuintessence": "Wenn aktiviert, wird das Quintessenz-Attribut hinzugefügt, und Quintessenzpunkte können als Ressourcenanzeige verwendet werden.",
     "settingHintUseTaggedModifiers": "Wenn aktiviert, fügt das System automatisch markierte Modifikatoren zum Wurf hinzu.",
-
     "settingImportBrowserImporter": "Nicht lokal gehosteten Importdialog verwenden",
     "settingImportEncoding": "Kodierung der Importdatei",
     "settingImportEncodingISO8859": "ISO-8859-1 (Standard)",
     "settingImportEncodingUTF8": "UTF-8",
     "settingImportExtendedValuesGCS": "Importiere erweiterte Werte aus GCS-Kompendien",
-
     "settingImportHintBrowserImporter": "Diese Option aktivieren, wenn die Foundry-Instanz nicht lokal gehosted wird (Z.B. über The Forge). Dieser Importdialog kann sich den Speicherort der Importdatei während der Sitzung merken (d. h., wenn die Figur in derselben Sitzung erneut importiert wird, muss der Dateidialog nicht aufgerufen werden).",
     "settingImportHintEncoding": "Wenn ein Charakter importiert wird und die Unicode-Zeichen nicht korrekt angezeigt werden, sollte diese Einstellung auf UTF-8-Kodierung gestellt werden.",
     "settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
