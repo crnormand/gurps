@@ -318,8 +318,7 @@ class GcsImporter {
       // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
       // damage and other effects.
       let tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()] as any
-      let entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
-      // @ts-expect-error
+      let entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id) as any
       let role = entry?.role ?? entry?.id
 
       const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
@@ -340,13 +339,12 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   async #promptHitLocationOverwrite() {
-    // No need to run this if there is no existing actor
-    // or if this is the first import
+    // No need to run this if there is no existing actor or if this is the first import.
     if (!this.actor || !this.actor.system.traits.modifiedon) return
 
     const currentBodyPlan = this.actor.system.additionalresources.bodyplan
 
-    // Remove derived values / all values not proper to the hit location on its own
+    // Remove derived values / all values not proper to the hit location on its own.
     const currentHitLocations = this.actor.system.hitlocationsV2.map(e => {
       const location = e.toObject() as any
       delete location._damageType
@@ -365,9 +363,9 @@ class GcsImporter {
 
     const promptSetting = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN)
     if (promptSetting === 'yes')
-      return // Automatically overwrite from file
+      return // Automatically overwrite from file.
     else if (promptSetting === 'no') {
-      // Automatically ignore values from file
+      // Automatically ignore values from file.
       this.output.additionalresources!.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
       return
