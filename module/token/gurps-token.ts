@@ -78,3 +78,5 @@ export default class GurpsToken extends foundry.canvas.placeables.Token {
     )
   }
 }
+
+export { GurpsToken }
