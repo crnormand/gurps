@@ -297,6 +297,17 @@ global.foundry = {
       // @ts-ignore
       renderTemplate: async () => '',
     },
+    ux: {
+      // @ts-ignore
+      ContextMenu: class {
+        constructor(element, selector, menuItems, options) {
+          this.element = element
+          this.selector = selector
+          this.menuItems = menuItems
+          this.options = options
+        }
+      },
+    },
   },
 }
 
