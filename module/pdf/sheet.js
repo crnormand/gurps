@@ -22,7 +22,6 @@ export default class GurpsPDFSheet extends foundry.applications.sheets.journal.J
     return foundry.utils.mergeObject(context, {
       params: this._getViewerParams(),
       pageNumber: (this.options.pageNumber || 0) + (this.document.system.offset || 0),
-      v13: true,
     })
   }
 }

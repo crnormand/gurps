@@ -7,22 +7,22 @@ export function registerPDFSettings() {
 
   // Support for combined or separate Basic Set PDFs
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_BASICSET_PDF, {
-    name: 'GURPS.settingBasicPDFs',
-    hint: 'GURPS.settingHintBasicPDFs',
+    name: 'GURPS.pdf.settings.basicPDFs',
+    hint: 'GURPS.pdf.settings.basicPDFsHint',
     scope: 'world',
     config: false,
     type: String as any,
     choices: {
-      Combined: 'GURPS.settingBasicPDFsCombined',
-      Separate: 'GURPS.settingBasicPDFsSeparate',
+      Combined: 'GURPS.pdf.settings.basicPDFsCombined',
+      Separate: 'GURPS.pdf.settings.basicPDFsSeparate',
     },
     default: 'Combined',
     onChange: value => console.log(`Basic Set PDFs : ${value}`),
   })
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_PDF_OPEN_FIRST, {
-    name: 'GURPS.settingPDFOpenFirst',
-    hint: 'GURPS.settingHintPDFOpenFirst',
+    name: 'GURPS.pdf.settings.openFirst',
+    hint: 'GURPS.pdf.settings.openFirstHint',
     scope: 'world',
     config: false,
     type: Boolean as any,
@@ -31,9 +31,9 @@ export function registerPDFSettings() {
   })
 
   game.settings.registerMenu(GURPS.SYSTEM_NAME, MODULE_NAME, {
-    name: 'GURPS.pdf.settingsName',
-    hint: 'GURPS.pdf.settingsHint',
-    label: 'GURPS.pdf.settingsButton',
+    name: 'GURPS.pdf.settings.name',
+    hint: 'GURPS.pdf.settings.hint',
+    label: 'GURPS.pdf.settings.button',
     type: PDFSettingsApplication,
     restricted: false,
     icon: 'fa-solid fa-file-pdf',
@@ -52,7 +52,7 @@ class PDFSettingsApplication extends GurpsSettingsApplication {
   constructor(options?: any) {
     super(
       {
-        title: game.i18n!.localize('GURPS.pdf.settingsName'),
+        title: game.i18n!.localize('GURPS.pdf.settings.name'),
         module: MODULE_NAME,
         icon: 'fa-solid fa-file-pdf',
       },

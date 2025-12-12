@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Character (v1)",
-      "characterV2": "Character (v2)",
-      "enemy": "Enemy"
-    },
-    "Item": {
-      "feature": "Feature (v1)",
-      "skill": "Skill (v1)",
-      "spell": "Spell (v1)",
-      "equipment": "Equipment (v1)",
-      "featureV2": "Feature (v2)",
-      "skillV2": "Skill (v2)",
-      "spellV2": "Spell (v2)",
-      "equipmentV2": "Equipment (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -374,6 +357,11 @@
     "descriptionSkin": "Skin",
     "descriptionTechLevel": "Tech Level (TL)",
     "destroyed": "Destroyed",
+    "dialog": {
+      "keep": "Keep",
+      "overwrite": "Overwrite",
+      "save": "Save"
+    },
     "Dice": "Dice",
     "diceAddDamageRule": "Dice+Adds Rule:",
     "disable": "Disable",
@@ -489,12 +477,12 @@
     "effectsNotApplicableDefenses": "Does not apply to Active Defenses or other defensive reactions.",
     "effectsTemporaryAttributePenalties": "See Temporary Attribute Penalties",
     "effectsTermination": "Termination Condition (OtF)",
+    "encumbranceLevel-0": "None (0)",
     "encumbranceLevel-00000": "None (0)",
     "encumbranceLevel-00001": "Light (1)",
     "encumbranceLevel-00002": "Medium (2)",
     "encumbranceLevel-00003": "Heavy (3)",
     "encumbranceLevel-00004": "X-Heavy (4)",
-    "encumbranceLevel-0": "None (0)",
     "encumbranceLevel-1": "Light (1)",
     "encumbranceLevel-2": "Medium (2)",
     "encumbranceLevel-3": "Heavy (3)",
@@ -668,6 +656,33 @@
     "importCurrentActor": "Current Actor",
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "No files selected for import."
+      },
+      "prompt": {
+        "description": "Select a GCS 5+ file.",
+        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
+        "source": "Source Data",
+        "title": "Import Character Data for {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+      },
+      "promptHPandFP": {
+        "content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "title": "Overwrite Current HP and FP?"
+      },
+      "settings": {
+        "hint": "Settings for the GURPS Character Importer",
+        "overwriteHPandFP": {
+          "ask": "Ask each time during import.",
+          "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
+          "name": "Overwrite HP & FP",
+          "no": "Never overwrite from file.",
+          "yes": "Always overwrite from file."
+        },
+        "title": "Importer Settings"
+      }
+    },
     "importErrorParsingXML": "Error parsing XML: {text}.",
     "importFantasyGroundUnsupported": "We no longer support the Fantasy Grounds import.",
     "importFile": "File",
@@ -1050,12 +1065,23 @@
     "pass": "Pass",
     "pasteStatBlockHere": "Paste your stat block here",
     "pdf": {
-      "settingsButton": "PDF Settings",
-      "settingsHint": "Configure how PDFs are handled.",
-      "settingsName": "PDFs"
+      "code": "PDF Book Code",
+      "codePlaceholder": "PDF Code: (e.g., 'B' or 'MA')",
+      "offset": "Page Offset",
+      "offsetChangeHint": "When you change this value, the viewer adjusts so that the displayed page corresponds to the entered offset (e.g., page 5).",
+      "offsetPlaceholder": "Offset: (e.g., -5, 0, or 2)",
+      "settings": {
+        "basicPDFs": "Basic Set PDF(s)",
+        "basicPDFsCombined": "Combined Basic Set (code 'B')",
+        "basicPDFsHint": "Select 'Combined' or 'Separate' and use the associated PDF codes. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the test.",
+        "basicPDFsSeparate": "Separate (Characters, 'B'; Campaigns, 'BX')",
+        "button": "PDF Settings",
+        "hint": "Configure how PDFs are handled.",
+        "name": "PDFs",
+        "openFirst": "Open first PDF found",
+        "openFirstHint": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered."
+      }
     },
-    "pdfCode": "PDF Book Code",
-    "pdfCodePlaceholder": "PDF Code: (e.g., 'B' or 'MA')",
     "pdfCrippling": "B420",
     "pdfDamageRoll": "B378",
     "pdfGrappling": "B370",
@@ -1073,8 +1099,6 @@
     "pdfKnockdownStun": "B420",
     "pdfLPT": "B142",
     "pdfMajorWound": "B420",
-    "pdfOffset": "Page Offset",
-    "pdfOffsetPlaceholder": "Offset: (e.g., -5, 0, or 2)",
     "pdfPageReference": "Page Ref",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",
@@ -1209,9 +1233,6 @@
     "settingAnnounceCriticalRolls": "Announce Critical Rolls",
     "settingAutoAddTaggedModifiers": "Auto Add Tagged Modifiers",
     "settingAutoIgnoreQty": "Import: Auto save Foundry Qty/Count",
-    "settingBasicPDFs": "Basic Set PDF(s)",
-    "settingBasicPDFsCombined": "Combined Basic Set (code 'B')",
-    "settingBasicPDFsSeparate": "Separate (Characters, 'B'; Campaigns, 'BX')",
     "settingBlockImport": "Only TRUSTED players may Import",
     "settingCalculateEnc": "Actor: Calculate Encumbrance",
     "settingCheckConditionalModifiers": "Check Conditional Modifiers in Actor Sheet",
@@ -1234,7 +1255,6 @@
     "settingHintAnnounceCriticalRolls": "If checked, the system will announce, with animation and sound, critical hits and misses. Only for players and non blind rolls. Need Sequencer installed.",
     "settingHintAutoAddTaggedModifiers": "If checked, the system will automatically add tagged modifiers to the roll.",
     "settingHintAutoIgnoreQty": "If checked, this will automatically set the 'Save current QTY/Count on import' flag on a peice of equipment when the user changes the QTY/Count (and it will display the little blue file icon). NOTE: This does not detect changes in 'Uses'. If you need to remember 'Uses' between imports, you will need to manually set the flag for that equipment.",
-    "settingHintBasicPDFs": "Select 'Combined' or 'Separate' and use the associated PDF codes when configuring PDFoundry. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.",
     "settingHintBlockImport": "If checked, the 'Import' button will only be displayed on the character sheet if the player permission level is 'Trusted', 'Assistant' or 'GameMaster'",
     "settingHintCalculateEnc": "If checked, the Encumbrance level will be set automatically based on the carried equipment (and you cannot change the Encumbrance level manually). If this is turned off, you can change the Encumbrance level by clicking on the new level.",
     "settingHintCheckConditionalModifiers": "If checked, the system will look for Conditional Modifiers in the Actor Sheet and add them to Effect Modifiers Popout.",
@@ -1253,7 +1273,6 @@
     "settingHintModifyDicePlusAdds": "If checked, the system will use the 'Modify Dice + Adds' optional rule, when you add bucket modifiers for damage rolls, as per B269.",
     "settingHintMookGenerator": "Edit the initial values of the Mook Generator",
     "settingHintOnTarget": "Adds addition aiming-related maneuvers from the Pyramid #3/120 article On Target.",
-    "settingHintPDFOpenFirst": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered.",
     "settingHintPlayerBlindRoll": "If not checked, holding down the SHIFT key when you are making a roll will make a Self roll (only you can see it, no matter who you are). If checked, when players hold down the SHIFT key, it will make it a Blind Roll instead (GMs still get a Self roll).",
     "settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message). If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
     "settingHintQtyItems": "If checked, a small icon will appear after equipment where the QTY/Count will be saved during imports",
@@ -1315,7 +1334,6 @@
     "settingNoEquipAllowedHint": "Warning: You're trying to edit an equipment that is not linked to a Foundry item when settings 'Use Foundry Items for Equipment' is active. Please reimport the character sheet to recreate the Foundry item for this actor.",
     "settingNoItemAllowedHint": "Warning: You're trying to edit an imported Item when settings 'Use Foundry Items for Equipment' is disabled. Please reimport the character sheet to recreate the Equipment for this actor.",
     "settingOnTarget": "Use On Target Ranged Modifiers",
-    "settingPDFOpenFirst": "Open first PDF found",
     "settingPlayerBlindRoll": "Enable Blind rolls for Players",
     "settingPlayerChatPrivate": "Player Chat commands private",
     "settingQtyItems": "Actor: Display QTY/Count saved Flag",
@@ -1578,38 +1596,23 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermission": "You do not have permission to do that.",
-    "dialog": {
-      "keep": "Keep",
-      "save": "Save",
-      "overwrite": "Overwrite"
+    "youDoNotHavePermission": "You do not have permission to do that."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Character (v1)",
+      "characterV2": "Character (v2)",
+      "enemy": "Enemy"
     },
-    "importer": {
-      "prompt": {
-        "title": "Import Character Data for {name}",
-        "description": "Select a GCS 5+ file.",
-        "source": "Source Data",
-        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
-      },
-      "error": {
-        "noFilesSelected": "No files selected for import."
-      },
-      "promptHPandFP": {
-        "title": "Overwrite Current HP and FP?",
-        "content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
-      },
-      "settings": {
-        "title": "Importer Settings",
-        "hint": "Settings for the GURPS Character Importer",
-        "overwriteHPandFP": {
-          "name": "Overwrite HP & FP",
-          "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
-          "yes": "Always overwrite from file.",
-          "no": "Never overwrite from file.",
-          "ask": "Ask each time during import."
-        }
-      }
+    "Item": {
+      "equipment": "Equipment (v1)",
+      "equipmentV2": "Equipment (v2)",
+      "feature": "Feature (v1)",
+      "featureV2": "Feature (v2)",
+      "skill": "Skill (v1)",
+      "skillV2": "Skill (v2)",
+      "spell": "Spell (v1)",
+      "spellV2": "Spell (v2)"
     }
   }
 }
