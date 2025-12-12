@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Personagem (v1)",
-      "characterV2": "Personagem (v2)",
-      "enemy": "Inimigo"
-    },
-    "Item": {
-      "feature": "Característica (v1)",
-      "skill": "Perícia (v1)",
-      "spell": "Mágica (v1)",
-      "equipment": "Equipamento (v1)",
-      "featureV2": "Característica (v2)",
-      "skillV2": "Perícia (v2)",
-      "spellV2": "Mágica (v2)",
-      "equipmentV2": "Equipamento (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Ptos",
     "abbrevRef": "Ref",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "Remover {name} da Lista de Equipamentos?",
     "confirmRoll": "Confirmação de Rolagem",
     "consumeAction": "Consumir Ação",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Copiar PDF:{text} para o Chat",
+        "sendToEveryone": "Enviar PDF:{text} para Todos",
+        "whisperToOwners": "Sussurrar PDF:{text} para {owners}"
+      }
+    },
     "ControlRoll": "Teste de Controle",
     "copyright": "GURPS é marca registrada da Steve Jackson Games, que também detém direitos autorais sobre suas regras e arte. Todos os direitos reservados pela Steve Jackson Games. Este auxílio de jogo é criação original de Chris Normand/Nose66 e é distribuído gratuitamente, sendo vetada a venda, ver permissões em http://www.sjgames.com/general/online_policy.html",
     "CR0": "CR: N/D (Incapaz de Resistir)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Pele",
     "descriptionTechLevel": "Nível Tecnológico (NT)",
     "destroyed": "Destruído(a)",
+    "dialog": {
+      "keep": "Manter",
+      "overwrite": "Sobrescrever",
+      "save": "Salvar"
+    },
     "Dice": "Dados",
     "diceAddDamageRule": "Regra de Dados+Adições:",
     "disable": "Desativar",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Não se aplica a Defesas Ativas ou outras reações defensivas.",
     "effectsTemporaryAttributePenalties": "Ver Penalidades de Atributo Temporárias",
     "effectsTermination": "Condição para Finalizar (OtF)",
+    "encumbranceLevel-0": "Nenhum (0)",
     "encumbranceLevel-00000": "Nenhum (0)",
     "encumbranceLevel-00001": "Leve (1)",
     "encumbranceLevel-00002": "Médio (2)",
     "encumbranceLevel-00003": "Pesado (3)",
     "encumbranceLevel-00004": "M-Pesado (4)",
-    "encumbranceLevel-0": "Nenhum (0)",
     "encumbranceLevel-1": "Leve (1)",
     "encumbranceLevel-2": "Médio (2)",
     "encumbranceLevel-3": "Pesado (3)",
@@ -668,6 +663,33 @@
     "importCurrentActor": "Ator Atual",
     "importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Diretório está vazio. Nenhum arquivo será importado.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "Nenhum arquivo selecionado para importação."
+      },
+      "prompt": {
+        "description": "Selecione um arquivo GCS 5+.",
+        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+        "source": "Dados de origem",
+        "title": "Importar dados do personagem para {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+      },
+      "promptHPandFP": {
+        "content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "title": "Sobrescrever HP e FP atuais?"
+      },
+      "settings": {
+        "hint": "Configurações para o Importador de Personagens GURPS",
+        "overwriteHPandFP": {
+          "ask": "Perguntar a cada importação.",
+          "hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
+          "name": "Sobrescrever HP e FP",
+          "no": "Nunca sobrescrever do arquivo.",
+          "yes": "Sempre sobrescrever do arquivo."
+        },
+        "title": "Configurações do Importador"
+      }
+    },
     "importErrorParsingXML": "Erro ao analisar o XML: {text}.",
     "importFantasyGroundUnsupported": "Não é mais possível importar um arquivo de Fantasy Grounds.",
     "importFile": "Arquivo",
@@ -1583,6 +1605,23 @@
     "written": "Escrito",
     "yard": "jarda",
     "yards": "jardas",
-    "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
+    "youDoNotHavePermission": "Você não tem permissão para fazer isso."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Personagem (v1)",
+      "characterV2": "Personagem (v2)",
+      "enemy": "Inimigo"
+    },
+    "Item": {
+      "equipment": "Equipamento (v1)",
+      "equipmentV2": "Equipamento (v2)",
+      "feature": "Característica (v1)",
+      "featureV2": "Característica (v2)",
+      "skill": "Perícia (v1)",
+      "skillV2": "Perícia (v2)",
+      "spell": "Mágica (v1)",
+      "spellV2": "Mágica (v2)"
+    }
   }
 }

@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Персонаж",
-      "characterV2": "Персонаж (v2)",
-      "enemy": "Противник"
-    },
-    "Item": {
-      "feature": "Особенность",
-      "skill": "Навык",
-      "spell": "Заклинание",
-      "equipment": "Снаряжение",
-      "featureV2": "Особенность (v2)",
-      "skillV2": "Навык (v2)",
-      "spellV2": "Заклинание (v2)",
-      "equipmentV2": "Снаряжение (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Очк",
     "abbrevRef": "Ссыл",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "Удалить {name} из списка снаряжения?",
     "confirmRoll": "Подтверждение броска",
     "consumeAction": "Consommer l'Action",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Скопировать PDF:{text} в чат",
+        "sendToEveryone": "Отправить PDF:{text} всем",
+        "whisperToOwners": "Шепнуть PDF:{text} к {owners}"
+      }
+    },
     "ControlRoll": "Бросок контроля",
     "copyright": "GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html",
     "CR0": "Кб: N/A (Не могу сопротивляться)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Кожа",
     "descriptionTechLevel": "Технологический уровень (ТУ)",
     "destroyed": "Уничтожен",
+    "dialog": {
+      "keep": "Оставить",
+      "overwrite": "Перезаписать",
+      "save": "Сохранить"
+    },
     "Dice": "Кубики",
     "diceAddDamageRule": "Правило кубиков+добавок:",
     "disable": "Отключить",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Не применяется к активной защите или другим защитным реакциям.",
     "effectsTemporaryAttributePenalties": "См. Временные штрафы атрибутов",
     "effectsTermination": "Условие завершения (OtF)",
+    "encumbranceLevel-0": "Нет (0)",
     "encumbranceLevel-00000": "Нет (0)",
     "encumbranceLevel-00001": "Лёгкая (1)",
     "encumbranceLevel-00002": "Средняя (2)",
     "encumbranceLevel-00003": "Тяжёлая (3)",
     "encumbranceLevel-00004": "Очень тяжёлая (4)",
-    "encumbranceLevel-0": "Нет (0)",
     "encumbranceLevel-1": "Лёгкая (1)",
     "encumbranceLevel-2": "Средняя (2)",
     "encumbranceLevel-3": "Тяжёлая (3)",
@@ -668,6 +663,33 @@
     "importCurrentActor": "Текущий персонаж",
     "importCurrentVersions": "Текущие версии: '{GCAVersion}' и '{GCSVersion}'.",
     "importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "Файлы для импорта не выбраны."
+      },
+      "prompt": {
+        "description": "Выберите файл GCS 5+.",
+        "note": "Этот импорт перезапишет данные для: <strong>{name}</strong>.",
+        "source": "Исходные данные",
+        "title": "Импортировать данные персонажа для {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
+      },
+      "promptHPandFP": {
+        "content": "<p>Вы хотите <strong>сохранить</strong> текущие значения HP (<strong>{currentHP}</strong>) и FP (<strong>{currentFP}</strong>), или <strong>перезаписать</strong> их значениями из импортируемого файла (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "title": "Перезаписать текущие HP и FP?"
+      },
+      "settings": {
+        "hint": "Настройки для импортера персонажей GURPS",
+        "overwriteHPandFP": {
+          "ask": "Спрашивать каждый раз при импорте.",
+          "hint": "ПРИМЕЧАНИЕ: Текущие HP и FP всегда считываются из файла при первом импорте.",
+          "name": "Перезаписать HP и FP",
+          "no": "Никогда не перезаписывать из файла.",
+          "yes": "Всегда перезаписывать из файла."
+        },
+        "title": "Настройки импортера"
+      }
+    },
     "importErrorParsingXML": "Ошибка разбора XML: {text}.",
     "importFantasyGroundUnsupported": "Мы больше не поддерживаем импорт из Fantasy Grounds.",
     "importFile": "Файл",
@@ -698,9 +720,7 @@
     "importNoXMLDetected": "XML не обнаружен. Вы импортируете правильный XML-файл?",
     "importOldGCSFile": "Ваш персонаж был сохранен с использованием старой версии GCS, которая не выводит некоторые необходимые атрибуты. Обновите GCS до версии не ниже 4.36, откройте и сохраните файл персонажа, затем попробуйте снова.",
     "importOnImport": "При импорте",
-    "importOverwriteHpFp": "Перезаписать или сохранить текущие ЕЖ и ЕУ",
-    "importReplace": "Заменить",
-    "importSaveOrOverwriteHpFp": "<div><p>Вы хотите:</p><p>&nbsp;&bull;&nbsp;<strong>Сохранить</strong> текущие значения ЕЖ ({currentHP}) и ЕУ ({currentFP})</p><p>Или:</p><p>&nbsp;&bull;&nbsp;<strong>Перезаписать</strong> их данными импорта, ЕЖ ({hp}) и ЕУ ({fp})?</p></div>",
+    "importReplace": "Replace",
     "importSaveOverwriteBodyPlan": "<div><p>Вы хотите:</p><p>&nbsp;&bull;&nbsp;<strong>Сохранить</strong> текущее значение плана тела ({curentBodyPlan})</p><p>Или:</p><p>&nbsp;&bull;&nbsp;<strong>Перезаписать</strong> его импортированным планом тела, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Проверьте Руководство пользователя для получения информации о том, где получить последнюю версию.",
     "importSelected": "Импортировать выбранное",
@@ -1584,6 +1604,23 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
-    "youDoNotHavePermssion": "У вас нет разрешения на это."
+    "youDoNotHavePermission": "У вас нет разрешения на это."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Персонаж",
+      "characterV2": "Персонаж (v2)",
+      "enemy": "Противник"
+    },
+    "Item": {
+      "equipment": "Снаряжение",
+      "equipmentV2": "Снаряжение (v2)",
+      "feature": "Особенность",
+      "featureV2": "Особенность (v2)",
+      "skill": "Навык",
+      "skillV2": "Навык (v2)",
+      "spell": "Заклинание",
+      "spellV2": "Заклинание (v2)"
+    }
   }
 }

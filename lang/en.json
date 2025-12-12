@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Character (v1)",
-      "characterV2": "Character (v2)",
-      "enemy": "Enemy"
-    },
-    "Item": {
-      "feature": "Feature (v1)",
-      "skill": "Skill (v1)",
-      "spell": "Spell (v1)",
-      "equipment": "Equipment (v1)",
-      "featureV2": "Feature (v2)",
-      "skillV2": "Skill (v2)",
-      "spellV2": "Spell (v2)",
-      "equipmentV2": "Equipment (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "Remove {name} from the Equipment List?",
     "confirmRoll": "Roll Confirmation",
     "consumeAction": "Consume Action",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Copy PDF:{text} to Chat",
+        "sendToEveryone": "Send PDF:{text} to Everyone",
+        "whisperToOwners": "Whisper PDF:{text} to {owners}"
+      }
+    },
     "ControlRoll": "Control Roll",
     "copyright": "GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html",
     "CR0": "CR: N/A (Cannot Resist)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Skin",
     "descriptionTechLevel": "Tech Level (TL)",
     "destroyed": "Destroyed",
+    "dialog": {
+      "keep": "Keep",
+      "overwrite": "Overwrite",
+      "save": "Save"
+    },
     "Dice": "Dice",
     "diceAddDamageRule": "Dice+Adds Rule:",
     "disable": "Disable",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Does not apply to Active Defenses or other defensive reactions.",
     "effectsTemporaryAttributePenalties": "See Temporary Attribute Penalties",
     "effectsTermination": "Termination Condition (OtF)",
+    "encumbranceLevel-0": "None (0)",
     "encumbranceLevel-00000": "None (0)",
     "encumbranceLevel-00001": "Light (1)",
     "encumbranceLevel-00002": "Medium (2)",
     "encumbranceLevel-00003": "Heavy (3)",
     "encumbranceLevel-00004": "X-Heavy (4)",
-    "encumbranceLevel-0": "None (0)",
     "encumbranceLevel-1": "Light (1)",
     "encumbranceLevel-2": "Medium (2)",
     "encumbranceLevel-3": "Heavy (3)",
@@ -668,6 +663,33 @@
     "importCurrentActor": "Current Actor",
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "No files selected for import."
+      },
+      "prompt": {
+        "description": "Select a GCS 5+ file.",
+        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
+        "source": "Source Data",
+        "title": "Import Character Data for {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+      },
+      "promptHPandFP": {
+        "content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "title": "Overwrite Current HP and FP?"
+      },
+      "settings": {
+        "hint": "Settings for the GURPS Character Importer",
+        "overwriteHPandFP": {
+          "ask": "Ask each time during import.",
+          "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
+          "name": "Overwrite HP & FP",
+          "no": "Never overwrite from file.",
+          "yes": "Always overwrite from file."
+        },
+        "title": "Importer Settings"
+      }
+    },
     "importErrorParsingXML": "Error parsing XML: {text}.",
     "importFantasyGroundUnsupported": "We no longer support the Fantasy Grounds import.",
     "importFile": "File",
@@ -1583,6 +1605,23 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermission": "You do not have permission to do that."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Character (v1)",
+      "characterV2": "Character (v2)",
+      "enemy": "Enemy"
+    },
+    "Item": {
+      "equipment": "Equipment (v1)",
+      "equipmentV2": "Equipment (v2)",
+      "feature": "Feature (v1)",
+      "featureV2": "Feature (v2)",
+      "skill": "Skill (v1)",
+      "skillV2": "Skill (v2)",
+      "spell": "Spell (v1)",
+      "spellV2": "Spell (v2)"
+    }
   }
 }

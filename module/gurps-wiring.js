@@ -56,12 +56,6 @@ export default class GurpsWiring {
         this.createPdfLinkMenu(link)
       }
     }
-
-    // html.find('.pdflink').on('contextmenu', event => {
-    //   event.preventDefault()
-    //   let el = event.currentTarget
-    //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    // })
   }
 
   static createPdfLinkMenu(link) {
@@ -77,33 +71,28 @@ export default class GurpsWiring {
     let container = parent.closest('section.window-content')
     console.assert(container instanceof HTMLElement)
 
-    new GgaContextMenuV2(
-      container,
-      parent,
-      '.pdflink',
-      [
-        {
-          name: `Send PDF:${text} to Everyone`,
-          icon: '<i class="fas fa-user-friends"></i>',
-          callback: () => GURPS.sendOtfMessage(otf, false),
-          condition: () => game.user.isGM,
+    new GgaContextMenuV2(container, parent, '.pdflink', [
+      {
+        name: game.i18n.format('GURPS.contextmenu.pdf.sendToEveryone', { text: text }),
+        icon: '<i class="fas fa-user-friends"></i>',
+        callback: () => GURPS.sendOtfMessage(otf, false),
+        condition: () => game.user.isGM,
+      },
+      {
+        name: game.i18n.format('GURPS.contextmenu.pdf.whisperToOwners', { text: text, owners: names }),
+        icon: '<i class="fas fa-user-secret"></i>',
+        callback: () => GURPS.sendOtfMessage(otf, false, users),
+        condition: () => game.user.isGM && users.length > 0,
+      },
+      {
+        name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
+        icon: '<i class="far fa-comment"></i>',
+        callback: () => {
+          $(document).find('#chat-message').val(otf)
         },
-        {
-          name: `Whisper PDF:${text} to ${names}`,
-          icon: '<i class="fas fa-user-secret"></i>',
-          callback: () => GURPS.sendOtfMessage(otf, false, users),
-          condition: () => game.user.isGM && users.length > 0,
-        },
-        {
-          name: `Copy PDF:${text} to Chat`,
-          icon: '<i class="far fa-comment"></i>',
-          callback: () => {
-            $(document).find('#chat-message').val(otf)
-          },
-          condition: () => true,
-        },
-      ]
-    )
+        condition: () => true,
+      },
+    ])
   }
 
   /**
