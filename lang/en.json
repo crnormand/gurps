@@ -693,7 +693,6 @@
     "importMultiple": "Multiple Import",
     "importMultipleActors": "Import Multiple Actors",
     "importNoCharacterFormat": "Unable to detect the 'character' format. Most likely you are trying to import the 'npc' format.",
-    "importNoFilesSelected": "No files selected for import.",
     "importNoJSONDetected": "Cannot parse JSON. Your GCS file seems to be corrupted.",
     "importNoXMLDetected": "No XML detected. Are you importing the correct XML file?",
     "importOldGCSFile": "Your character was saved with an older version of GCS, which does not output some required attributes. Update GCS to at least version 4.36, open and save your character file, then try again.",
@@ -1581,16 +1580,20 @@
     "yards": "yards",
     "youDoNotHavePermission": "You do not have permission to do that.",
     "dialog": {
+      "keep": "Keep",
       "save": "Save",
       "overwrite": "Overwrite"
     },
     "importer": {
       "prompt": {
         "title": "Import Character Data for {name}",
-        "description": "Select a file exported from GCS 5+.",
+        "description": "Select a GCS 5+ file.",
         "source": "Source Data",
         "note": "This import will overwrite the data for: <strong>{name}</strong>.",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+      },
+      "error": {
+        "noFilesSelected": "No files selected for import."
       },
       "promptHPandFP": {
         "title": "Overwrite Current HP and FP?",

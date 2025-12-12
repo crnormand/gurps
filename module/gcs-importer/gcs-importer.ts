@@ -8,18 +8,18 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
 
   return new foundry.applications.api.DialogV2({
     window: {
-      title: game.i18n.format('GURPS.Importer.Prompt.Title', { name }),
+      title: game.i18n.format('GURPS.importer.prompt.title', { name }),
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/gcs-importer/import-gcs5.hbs',
       {
-        description: game.i18n.localize('GURPS.Importer.Prompt.Description'),
-        source: game.i18n.localize('GURPS.Importer.Prompt.Source'),
-        note: game.i18n.format('GURPS.Importer.Prompt.Note', {
+        description: game.i18n.localize('GURPS.importer.prompt.description'),
+        source: game.i18n.localize('GURPS.importer.prompt.source'),
+        note: game.i18n.format('GURPS.importer.prompt.note', {
           name,
         }),
-        warning: game.i18n.localize('GURPS.Importer.Prompt.Warning'),
+        warning: game.i18n.localize('GURPS.importer.prompt.warning'),
       }
     ),
     buttons: [
@@ -32,7 +32,7 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
           // @ts-expect-error types are idk
           const files = button.form?.elements.data.files
           if (!files || files.length === 0) {
-            ui.notifications?.error(game.i18n!.localize('GURPS.importNoFilesSelected'))
+            ui.notifications?.error(game.i18n!.localize('GURPS.importer.error.noFilesSelected'))
             return
           } else {
             // Measure how long importing takes
@@ -42,9 +42,6 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
             const text = await GURPS.readTextFromFile(file)
             const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
             const importedActor = await GcsImporter.importCharacter(char, actor)
-
-            console.log(importedActor)
-            console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
           }
         },
       },

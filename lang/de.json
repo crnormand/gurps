@@ -693,7 +693,6 @@
     "importMultiple": "Mehrfacher Import",
     "importMultipleActors": "Mehrere Schauspieler importieren",
     "importNoCharacterFormat": "Das Format 'character' kann nicht erkannt werden. Wahrscheinlich wird versuchst, das 'npc'-Format zu importieren.",
-    "importNoFilesSelected": "Keine Dateien zum Importieren ausgewählt.",
     "importNoJSONDetected": "JSON kann nicht geparst werden. Ihre GCS-Datei scheint beschädigt zu sein.",
     "importNoXMLDetected": "Kein XML erkannt. Wird die richtige XML-Datei importiert?",
     "importOldGCSFile": "Ihr Charakter wurde mit einer älteren Version von GCS gespeichert, die einige erforderliche Attribute nicht ausgibt. Aktualisieren Sie GCS auf mindestens Version 4.36, öffnen und speichern Sie Ihre Charakterdatei und versuchen Sie es erneut.",
@@ -1581,16 +1580,20 @@
     "yards": "Yards",
     "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun",
     "dialog": {
+      "keep": "Behalten",
       "save": "Speichern",
       "overwrite": "Überschreiben"
     },
     "importer": {
       "prompt": {
         "title": "Charakterdaten für {name} importieren",
-        "description": "Wählen Sie eine aus GCS 5+ exportierte Datei aus.",
+        "description": "Wählen Sie eine GCS 5+-Datei aus.",
         "source": "Quelldaten",
         "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+      },
+      "error": {
+        "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
       "promptHPandFP": {
         "title": "Aktuelle HP und FP überschreiben?",
