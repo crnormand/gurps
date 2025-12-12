@@ -42,6 +42,9 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
             const text = await GURPS.readTextFromFile(file)
             const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
             const importedActor = await GcsImporter.importCharacter(char, actor)
+
+            console.debug('Imported data:', importedActor)
+            console.debug(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
           }
         },
       },

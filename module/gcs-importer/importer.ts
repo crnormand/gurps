@@ -79,14 +79,6 @@ class GcsImporter {
     this.#importNotes()
     this.#createStandardTrackers()
 
-    console.log({
-      _id,
-      name,
-      type,
-      system: this.output,
-      items: this.items,
-    })
-
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = new Map<string, number>()
@@ -726,8 +718,6 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importTraitComponent(trait: GcsTrait): DataModel.CreateData<TraitComponentSchema> {
-    // console.log('Importing trait component', trait)
-
     return {
       ...this.#importBaseComponent(trait),
       cr: trait.cr ?? null,
