@@ -1596,7 +1596,23 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermission": "You do not have permission to do that.",
+    "youDoNotHavePermission": "You do not have permission to do that."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Character (v1)",
+      "characterV2": "Character (v2)",
+      "enemy": "Enemy"
+    },
+    "Item": {
+      "equipment": "Equipment (v1)",
+      "equipmentV2": "Equipment (v2)",
+      "feature": "Feature (v1)",
+      "featureV2": "Feature (v2)",
+      "skill": "Skill (v1)",
+      "skillV2": "Skill (v2)",
+      "spell": "Spell (v1)",
+      "spellV2": "Spell (v2)"
     }
   }
 }
