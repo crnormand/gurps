@@ -4,6 +4,12 @@
 
 ### Features
 
+## Release 0.18.9 12/12/2025
+
+### Bugfixes
+
+- Note fields in Foundry items not deletable and filling up with data \#2399.
+
 ## Release 0.18.8 12/7/2025
 
 ### Bugfixes

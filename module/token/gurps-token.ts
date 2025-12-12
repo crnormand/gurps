@@ -2,7 +2,7 @@ import Maneuvers from '../actor/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
-class GurpsToken extends foundry.canvas.placeables.Token {
+export default class GurpsToken extends foundry.canvas.placeables.Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
@@ -78,4 +78,5 @@ class GurpsToken extends foundry.canvas.placeables.Token {
     )
   }
 }
+
 export { GurpsToken }

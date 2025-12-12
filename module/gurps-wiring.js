@@ -1,6 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import GgaContextMenu from './utilities/contextmenu.js'
+import GgaContextMenuV2 from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
@@ -56,40 +56,36 @@ export default class GurpsWiring {
         this.createPdfLinkMenu(link)
       }
     }
-
-    // html.find('.pdflink').on('contextmenu', event => {
-    //   event.preventDefault()
-    //   let el = event.currentTarget
-    //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    // })
   }
 
   static createPdfLinkMenu(link) {
+    console.assert(link instanceof HTMLElement)
     let text = link.innerText
-    let parent = $(link).parent()
+    let parent = link.parentElement
 
     let actor = GURPS.LastActor
     let users = actor?.getOwners()?.filter(u => !u.isGM) || []
     let otf = '[PDF:' + text + ']'
     let names = users.map(u => u.name).join(' ')
 
-    let container = $(parent).closest('section.window-content')
+    let container = parent.closest('section.window-content')
+    console.assert(container instanceof HTMLElement)
 
-    new GgaContextMenu(container, parent, '.pdflink', `Send PDF:${text}...`, [
+    new GgaContextMenuV2(container, parent, '.pdflink', [
       {
-        name: 'To Everyone',
+        name: game.i18n.format('GURPS.contextmenu.pdf.sendToEveryone', { text: text }),
         icon: '<i class="fas fa-user-friends"></i>',
         callback: () => GURPS.sendOtfMessage(otf, false),
         condition: () => game.user.isGM,
       },
       {
-        name: `Whisper to ${names}`,
+        name: game.i18n.format('GURPS.contextmenu.pdf.whisperToOwners', { text: text, owners: names }),
         icon: '<i class="fas fa-user-secret"></i>',
         callback: () => GURPS.sendOtfMessage(otf, false, users),
         condition: () => game.user.isGM && users.length > 0,
       },
       {
-        name: 'Copy to Chat',
+        name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
         icon: '<i class="far fa-comment"></i>',
         callback: () => {
           $(document).find('#chat-message').val(otf)
