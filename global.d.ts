@@ -140,6 +140,10 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
     'gurps.portrait-path': 'global' | 'world'
 
+    'gurps.importer.overwrite-hp-fp': foundry.data.fields.StringField<{
+      choices: { yes: string; no: string; ask: string }
+    }>
+
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.convert-ranged': boolean
     'gurps.check-equipped': boolean
@@ -171,5 +175,6 @@ declare module 'fvtt-types/configuration' {
     'gurps.combat-location-modifiers': boolean
     'gurps.show-the-math': boolean
     'gurps.default-add-action': 'apply' | 'quiet' | 'target'
+    'gurps.import_hp_fp': number
   }
 }

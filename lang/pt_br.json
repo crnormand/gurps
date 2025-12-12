@@ -693,14 +693,11 @@
     "importMultiple": "Importação Múltipla",
     "importMultipleActors": "Importar Múltiplos Atores",
     "importNoCharacterFormat": "Incapaz de detectar o formato de 'personagem'. É possível que você esteja tentando importar o formato 'npc'.",
-    "importNoFilesSelected": "Nenhum arquivo selecionado para importação.",
     "importNoJSONDetected": "Incapaz de analisar JSON. Seu arquivo do GCS aparenta estar corrompido.",
     "importNoXMLDetected": "Nenhum XML detectado. Você está importando o arquivo XML correto?",
     "importOldGCSFile": "Seu personagem foi salvo com uma versão mais antiga do GCS, que não exporta alguns dos atributos necessários. Atualize o GCS para no mínimo a versão 4.36, abra e salve o arquivo de personagem e então tente novamente.",
     "importOnImport": "Ao Importar",
-    "importOverwriteHpFp": "Sobrescrever ou Salvar PV e PF Atuais",
     "importReplace": "Substituir",
-    "importSaveOrOverwriteHpFp": "<div><p>Você deseja:</p><p>&nbsp;&bull;&nbsp;<strong>Salvar</strong> os valores atuais de PV ({currentHP}) e PF ({currentFP})</p><p>Ou:</p><p>&nbsp;&bull;&nbsp;<strong>Sobrescrever</strong> com os dados importados, PV ({hp}) e PF ({fp})?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Você deseja:</p><p>&nbsp;&bull;&nbsp;<strong>Salvar</strong> o tipo de corpo atual ({curentBodyPlan})</p><p>Ou:</p><p>&nbsp;&bull;&nbsp;<strong>Sobrescrever</strong> com o tipo de corpo importado, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Verifique o Manual do Usuário para detalhes de onde conseguir a última versão.",
     "importSelected": "Importar Selecionados",
@@ -1046,7 +1043,6 @@
     "otherEquipment": "Outros Equipamentos",
     "otherTab": "Verificações",
     "overridden": "substituído",
-    "overwrite": "Sobrescrever",
     "parentItemTooltip": "<div>De {type}:<br>{name}</div>",
     "parry": "Aparar",
     "parryBasePenalty": "Penalidade base de aparar",
@@ -1197,7 +1193,6 @@
     "rsl": "NH Rltv.",
     "rt": "CR",
     "runningShoveAndKnockOver": "Encontrão e Derrubar",
-    "save": "Salvar",
     "saveRollforEffect": "Teste de resistência para evitar efeitos.",
     "selectActorFirst": "Por favor, selecione um ator primeiro.",
     "selectTargetForDamageWarning": "Arraste o dano para o(s) alvo(s), ou solte na tela para aplicar aos tokens selecionados.",
@@ -1583,6 +1578,38 @@
     "written": "Escrito",
     "yard": "jarda",
     "yards": "jardas",
-    "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
+    "youDoNotHavePermission": "Você não tem permissão para fazer isso.",
+    "dialog": {
+      "keep": "Manter",
+      "save": "Salvar",
+      "overwrite": "Sobrescrever"
+    },
+    "importer": {
+      "prompt": {
+        "title": "Importar dados do personagem para {name}",
+        "description": "Selecione um arquivo GCS 5+.",
+        "source": "Dados de origem",
+        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+      },
+      "error": {
+        "noFilesSelected": "Nenhum arquivo selecionado para importação."
+      },
+      "promptHPandFP": {
+        "title": "Sobrescrever HP e FP atuais?",
+        "content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      },
+      "settings": {
+        "title": "Configurações do Importador",
+        "hint": "Configurações para o Importador de Personagens GURPS",
+        "overwriteHPandFP": {
+          "name": "Sobrescrever HP e FP",
+          "hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
+          "yes": "Sempre sobrescrever do arquivo.",
+          "no": "Nunca sobrescrever do arquivo.",
+          "ask": "Perguntar a cada importação."
+        }
+      }
+    }
   }
 }

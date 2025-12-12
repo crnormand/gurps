@@ -2,31 +2,24 @@ import { GcsImporter } from './importer.js'
 import { GcsCharacter } from './schema/character.js'
 
 async function importGCS(actor?: Actor.OfType<'characterV2'>) {
-  const defaultActorName = game.i18n!.localize('TYPES.Actor.characterV2')
+  if (!game.i18n) throw Error('GURPS | game.i18n not available when trying to import GCS character!')
+
+  const name = actor ? actor.name : game.i18n.localize('TYPES.Actor.characterV2')
 
   return new foundry.applications.api.DialogV2({
     window: {
-      title: game.i18n!.format(`GURPS.importCharacterData`, { name: actor?.name || defaultActorName }),
+      title: game.i18n.format('GURPS.importer.prompt.title', { name }),
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate(
-      'systems/gurps/templates/gcs-importer/import-gcs-or-gca.hbs',
+      'systems/gurps/templates/gcs-importer/import-gcs5.hbs',
       {
-        title: game.i18n!.localize('GURPS.importSelectFileTitleGCS'),
-        source: game.i18n!.localize('GURPS.importSelectFileSource'),
-        describeAction: game.i18n!.localize('GURPS.importSelectFileDescribeAction'),
-        overwriteAction: new Handlebars.SafeString(
-          game.i18n!.format('GURPS.importSelectFileOverwriteAction', {
-            name: actor?.name || defaultActorName,
-          })
-        ),
-        itemAction: new Handlebars.SafeString(
-          game.i18n!.format('GURPS.importSelectFileItemAction', {
-            equipType: game.i18n!.localize('GURPS.importTraitToFoundryItem'),
-            equipColor: '#35713e',
-          })
-        ),
-        note: game.i18n!.localize('GURPS.importSelectFileNote'),
+        description: game.i18n.localize('GURPS.importer.prompt.description'),
+        source: game.i18n.localize('GURPS.importer.prompt.source'),
+        note: game.i18n.format('GURPS.importer.prompt.note', {
+          name,
+        }),
+        warning: game.i18n.localize('GURPS.importer.prompt.warning'),
       }
     ),
     buttons: [
@@ -39,7 +32,7 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
           // @ts-expect-error types are idk
           const files = button.form?.elements.data.files
           if (!files || files.length === 0) {
-            ui.notifications?.error(game.i18n!.localize('GURPS.importNoFilesSelected'))
+            ui.notifications?.error(game.i18n!.localize('GURPS.importer.error.noFilesSelected'))
             return
           } else {
             // Measure how long importing takes
@@ -50,8 +43,8 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
             const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
             const importedActor = await GcsImporter.importCharacter(char, actor)
 
-            console.log(importedActor)
-            console.log(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
+            console.debug('Imported data:', importedActor)
+            console.debug(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
           }
         },
       },

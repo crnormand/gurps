@@ -112,7 +112,7 @@ class MultipleImportApp extends Application {
         // Import the selected files
         const selectedFiles = this.data.files.filter(it => it.selected)
         if (selectedFiles.length === 0) {
-          return ui.notifications.error(game.i18n.localize('GURPS.importNoFilesSelected'))
+          return ui.notifications.error(game.i18n.localize('GURPS.importer.error.noFilesSelected'))
         }
         this._importFiles(selectedFiles)
         return this.close()

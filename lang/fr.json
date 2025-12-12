@@ -693,14 +693,11 @@
     "importMultiple": "Importation Multiple",
     "importMultipleActors": "Importer plusieurs acteurs",
     "importNoCharacterFormat": "Impossible de détecter le format de 'Personnage'. Il semble que vous tentiez d'importer le format 'pnj'.",
-    "importNoFilesSelected": "Aucun fichier sélectionné pour l'importation.",
     "importNoJSONDetected": "Impossible d'analyser le JSON. Votre fichier GCS semble corrompu.",
     "importNoXMLDetected": "Pas de XML détecté. Importez vous le bon fichier XML?",
     "importOldGCSFile": "Votre personnage a été enregistré avec une ancienne version de GCS, ce qui ne donne pas les attributs requis. Mettez au moins GCS à jour en version 4.36, ouvrez et enregistrer votre fichier personnage et ré-essayez.",
     "importOnImport": "À l'Importation",
-    "importOverwriteHpFp": "Écraser ou Sauvegarder les PV & PF Actuels",
     "importReplace": "Remplacer",
-    "importSaveOrOverwriteHpFp": "<div><p>Voulez-vous :</p><p>&nbsp;&bull;&nbsp;<strong>Sauvegarder</strong> les valeurs actuelles de PV ({currentHP}) & PF ({currentFP})</p><p>Ou :</p><p>&nbsp;&bull;&nbsp;<strong>Écraser</strong> avec les données importées, PV ({hp}) & PF ({fp}) ?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Voulez-vous :</p><p>&nbsp;&bull;&nbsp;<strong>Sauvegarder</strong> la valeur actuelle du type ({curentBodyPlan})</p><p>Ou :</p><p>&nbsp;&bull;&nbsp;<strong>Écraser</strong> avec le type importé, ({bodyPlan}) ?</p></div>",
     "importSeeUsersGuide": "Vérifiez le guide d'utilisation pour savoir où trouver la dernière version.",
     "importSelected": "Importer sélectionné",
@@ -1046,7 +1043,6 @@
     "otherEquipment": "Autre Equipment",
     "otherTab": "Vérifications",
     "overridden": "ignoré",
-    "overwrite": "Écraser",
     "parentItemTooltip": "De {type}: {name}",
     "parry": "Parade",
     "parryBasePenalty": "Pénalité de base pour parer",
@@ -1197,7 +1193,6 @@
     "rsl": "NRC",
     "rt": "RT",
     "runningShoveAndKnockOver": "Courir Pousser & Renverser",
-    "save": "Sauvegarder",
     "saveRollforEffect": "Jet de sauvegarde pour éviter les effets.",
     "selectActorFirst": "Veuillez d'abord sélectionner un acteur.",
     "selectTargetForDamageWarning": "Déposez les dégâts sur la ou les cibles, ou déposez-les sur la scène pour les appliquer au(x) jeton(s) ciblé(s).",
@@ -1583,6 +1578,38 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela."
+    "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela.",
+    "dialog": {
+      "keep": "Garder",
+      "save": "Enregistrer",
+      "overwrite": "Écraser"
+    },
+    "importer": {
+      "prompt": {
+        "title": "Importer les données du personnage pour {name}",
+        "description": "Sélectionnez un fichier GCS 5+.",
+        "source": "Données source",
+        "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+      },
+      "error": {
+        "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
+      },
+      "promptHPandFP": {
+        "title": "Écraser les HP et FP actuels ?",
+        "content": "<p>Voulez-vous <strong>enregistrer</strong> les valeurs actuelles de HP (<strong>{currentHP}</strong>) et FP (<strong>{currentFP}</strong>), ou <strong>écraser</strong> ces valeurs avec celles du fichier importé (HP : <strong>{hp}</strong>, FP : <strong>{fp}</strong>) ?</p>"
+      },
+      "settings": {
+        "title": "Paramètres de l'importateur",
+        "hint": "Paramètres pour l'importateur de personnage GURPS",
+        "overwriteHPandFP": {
+          "name": "Écraser les HP et FP",
+          "hint": "REMARQUE : Les HP et FP actuels sont toujours lus à partir du fichier lors de la première importation.",
+          "yes": "Toujours écraser à partir du fichier.",
+          "no": "Ne jamais écraser à partir du fichier.",
+          "ask": "Demander à chaque importation."
+        }
+      }
+    }
   }
 }
