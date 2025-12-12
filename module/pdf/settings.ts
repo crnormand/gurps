@@ -1,7 +1,7 @@
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
 import { MODULE_NAME, SETTING_BASICSET_PDF, SETTING_PDF_OPEN_FIRST } from './types.js'
 
-export function registerPDFSettings() {
+function registerPDFSettings() {
   if (!game.settings || !game.i18n)
     throw new Error('GURPS | PDF module requires game.settings and game.i18n to be available!')
 
@@ -40,11 +40,11 @@ export function registerPDFSettings() {
   })
 }
 
-export function isOpenFirstPDFSetting(): boolean {
+function isOpenFirstPDFSetting(): boolean {
   return game.settings?.get(GURPS.SYSTEM_NAME, SETTING_PDF_OPEN_FIRST) ?? false
 }
 
-export function getBasicSetPDFSetting(): string {
+function getBasicSetPDFSetting(): string {
   return game.settings?.get(GURPS.SYSTEM_NAME, SETTING_BASICSET_PDF) as string
 }
 
@@ -60,3 +60,5 @@ class PDFSettingsApplication extends GurpsSettingsApplication {
     )
   }
 }
+
+export { registerPDFSettings, isOpenFirstPDFSetting, getBasicSetPDFSetting }

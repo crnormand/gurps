@@ -1,7 +1,7 @@
 import { GurpsModule } from 'module/gurps-module.js'
 import { handleOnPdf, handlePdf, SJGProductMappings } from './pdf-refs.js'
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting, registerPDFSettings } from './settings.js'
-import GurpsPDFSheet from './sheet.js'
+import { GurpsPDFSheet } from './sheet.js'
 
 export interface PdfModuleType extends GurpsModule {
   handlePdf: typeof handlePdf

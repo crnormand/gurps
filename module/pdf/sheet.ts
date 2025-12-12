@@ -1,4 +1,4 @@
-export default class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
+class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
   // @ts-expect-error: Wait for FVTT types to catch up.
   static override EDIT_PARTS = foundry.utils.mergeObject(super.EDIT_PARTS, {
     content: {
@@ -25,3 +25,5 @@ export default class GurpsPDFSheet extends foundry.applications.sheets.journal.J
     })
   }
 }
+
+export { GurpsPDFSheet }

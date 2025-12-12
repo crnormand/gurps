@@ -1,7 +1,7 @@
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.js'
-import GurpsPDFSheet from './sheet.js'
+import { GurpsPDFSheet } from './sheet.js'
 
-export const SJGProductMappings: Record<string, string> = {
+const SJGProductMappings: Record<string, string> = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
   ACT3: 'http://www.warehouse23.com/products/gurps-action-3-furious-fists',
   B: 'http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns',
@@ -65,7 +65,7 @@ export const SJGProductMappings: Record<string, string> = {
   'DFRPG:E': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
 }
 
-export function handleOnPdf(event: Event): void {
+function handleOnPdf(event: Event): void {
   event.preventDefault()
   event.stopPropagation()
   const target = event.currentTarget as HTMLElement
@@ -73,7 +73,7 @@ export function handleOnPdf(event: Event): void {
   handlePdf(pdf)
 }
 
-export function handlePdf(links: string): void {
+function handlePdf(links: string): void {
   // Just in case we get sent multiple links separated by commas, we will open them all
   // or just the first found, depending on SETTING_PDF_OPEN_FIRST.
   let success = false
@@ -140,3 +140,5 @@ export function handlePdf(links: string): void {
     }
   }
 }
+
+export { SJGProductMappings, handlePdf, handleOnPdf }
