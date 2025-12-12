@@ -663,7 +663,7 @@
     "importCurrentActor": "Aktueller Schauspieler",
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
-"importer": {
+    "importer": {
       "prompt": {
         "title": "Charakterdaten für {name} importieren",
         "description": "Wählen Sie eine GCS 5+-Datei aus.",

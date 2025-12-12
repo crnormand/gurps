@@ -663,7 +663,7 @@
     "importCurrentActor": "Current Actor",
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
-"importer": {
+    "importer": {
       "prompt": {
         "title": "Import Character Data for {name}",
         "description": "Select a GCS 5+ file.",
@@ -700,7 +700,7 @@
           "ask": "Ask each time during import"
         }
       }
-},
+    },
     "importErrorParsingXML": "Error parsing XML: {text}.",
     "importFantasyGroundUnsupported": "We no longer support the Fantasy Grounds import.",
     "importFile": "File",
