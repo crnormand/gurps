@@ -33,7 +33,6 @@ export default class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
       // TODO: revise any to specific type
       maneuvers: Object.entries(GURPS.Maneuvers.getAll()).map(([id, maneuver]: [string, any]) => {
         return {
-          // @ts-expect-error: waiting for types to catch up.
           cssClass: activeEffects.some(effect => effect.icon === maneuver._data.icon) ? 'active' : '',
           src: maneuver._data.icon,
           title: game.i18n?.localize(maneuver._data.label) ?? maneuver._data.label,

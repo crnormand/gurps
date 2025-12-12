@@ -51,7 +51,11 @@ export function getBasicSetPDFSetting(): string {
 class PDFSettingsApplication extends GurpsSettingsApplication {
   constructor(options?: any) {
     super(
-      { title: game.i18n!.localize('GURPS.pdf.settingsName'), module: MODULE_NAME, icon: 'fa-solid fa-file-pdf' },
+      {
+        title: game.i18n!.localize('GURPS.pdf.settingsName'),
+        module: MODULE_NAME,
+        icon: 'fa-solid fa-file-pdf',
+      },
       options
     )
   }
