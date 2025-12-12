@@ -698,7 +698,7 @@
     "importOldGCSFile": "Votre personnage a été enregistré avec une ancienne version de GCS, ce qui ne donne pas les attributs requis. Mettez au moins GCS à jour en version 4.36, ouvrez et enregistrer votre fichier personnage et ré-essayez.",
     "importOnImport": "À l'Importation",
     "importReplace": "Remplacer",
-    "importSaveOverwriteBodyPlan": "<div><p>Voulez-vous :</p><p>&nbsp;&bull;&nbsp;<strong>Sauvegarder</strong> la valeur actuelle du type ({curentBodyPlan})</p><p>Ou :</p><p>&nbsp;&bull;&nbsp;<strong>Écraser</strong> avec le type importé, ({bodyPlan}) ?</p></div>",
+
     "importSeeUsersGuide": "Vérifiez le guide d'utilisation pour savoir où trouver la dernière version.",
     "importSelected": "Importer sélectionné",
     "importSelectFileDescribeAction": "Cet import va:",
@@ -1278,16 +1278,13 @@
     "settingHintUseQuickRolls": "Si activé, le système affichera un bouton de Jet Rapide dans le Suivi de Combat.",
     "settingHintUseQuintessence": "Si activé, ajoute l'attribut Quintessence, et les Points de Quintessence deviennent disponibles pour être utilisés comme Suivi de Ressource.",
     "settingHintUseTaggedModifiers": "Si activé, le système ajoutera automatiquement les modificateurs marqués au jet.",
-    "settingImportBodyPlan": "Import: Type/Localisations",
-    "settingImportBodyPlanAsk": "Demander avant d'écraser pendant l'import.",
-    "settingImportBodyPlanIgnore": "Ignorer le Type depuis le fichier d'import.",
-    "settingImportBodyPlanUseFile": "Utiliser le Type depuis le fichier d'import.",
+
     "settingImportBrowserImporter": "Utiliser la fenêtre d'import pour hôte distant",
     "settingImportEncoding": "Encodage des fichiers d'importation",
     "settingImportEncodingISO8859": "ISO-8859-1 (défaut)",
     "settingImportEncodingUTF8": "UTF-8",
     "settingImportExtendedValuesGCS": "Importer les valeurs étendues des Compendiums GCS",
-    "settingImportHintBodyPlan": "NOTE: Le type est toujours lu depuis le fichier durant l'import initial.",
+
     "settingImportHintBrowserImporter": "Cocher ceci si vous n'hébergez pas votre instance de Foundry localement (vous hébergez à distance, par ex. Forge). Cette fenêtre d'import peut mémoriser l'emplacement de vos fichiers d'import pendant la session (cela signifie que si vous importez de nouveau le personnage dans la même session, la fenêtre ne se rouvrira pas).",
     "settingImportHintEncoding": "Si vous importez un personnage et les caractères unicodes ne s'affichent pas correctement, changez ce réglage en UTF-8.",
     "settingImportHintExtendedValuesGCS": "If enabled, le système importera les valeurs étendues pour le Coût et le Poids lors de l'importation des Packs d'Equipement GCS.",
@@ -1605,9 +1602,16 @@
         "overwriteHPandFP": {
           "name": "Écraser les HP et FP",
           "hint": "REMARQUE : Les HP et FP actuels sont toujours lus à partir du fichier lors de la première importation.",
-          "yes": "Toujours écraser à partir du fichier.",
-          "no": "Ne jamais écraser à partir du fichier.",
-          "ask": "Demander à chaque importation."
+          "yes": "Toujours écraser à partir du fichier",
+          "no": "Ne jamais écraser à partir du fichier",
+          "ask": "Demander à chaque importation"
+        },
+        "overwriteBodyPlan": {
+          "name": "Écraser le plan corporel",
+          "hint": "REMARQUE : Le plan corporel actuel est toujours lu à partir du fichier lors de l'importation initiale.",
+          "yes": "Toujours écraser à partir du fichier",
+          "no": "Ne jamais écraser à partir du fichier",
+          "ask": "Demander à chaque importation"
         }
       }
     }

@@ -698,7 +698,7 @@
     "importOldGCSFile": "Ihr Charakter wurde mit einer älteren Version von GCS gespeichert, die einige erforderliche Attribute nicht ausgibt. Aktualisieren Sie GCS auf mindestens Version 4.36, öffnen und speichern Sie Ihre Charakterdatei und versuchen Sie es erneut.",
     "importOnImport": "Beim Import",
     "importReplace": "Ersetzen",
-    "importSaveOverwriteBodyPlan": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> des aktuellen Körperplans ({curentBodyPlan})</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit dem importierten Körperplan ({bodyPlan})?</p></div>",
+
     "importSeeUsersGuide": "Im Benutzerhandbuch befinden sich Informationen darüber, wo  die neueste Version zu erhalten ist.",
     "importSelected": "Ausgewählte importieren",
     "importSelectFileDescribeAction": "Dieser Import wird:",
@@ -1278,16 +1278,13 @@
     "settingHintUseQuickRolls": "Wenn aktiviert, wird das System einen Schnellwurfknopf im Kampftracker anzeigen.",
     "settingHintUseQuintessence": "Wenn aktiviert, wird das Quintessenz-Attribut hinzugefügt, und Quintessenzpunkte können als Ressourcenanzeige verwendet werden.",
     "settingHintUseTaggedModifiers": "Wenn aktiviert, fügt das System automatisch markierte Modifikatoren zum Wurf hinzu.",
-    "settingImportBodyPlan": "Import: Körperform/Trefferzone",
-    "settingImportBodyPlanAsk": "Beim Import vor dem Überschreiben nachfragen",
-    "settingImportBodyPlanIgnore": "Ignoriere Körperform der Importdatei.",
-    "settingImportBodyPlanUseFile": "Verwende Körperform der Importdatei.",
+
     "settingImportBrowserImporter": "Nicht lokal gehosteten Importdialog verwenden",
     "settingImportEncoding": "Kodierung der Importdatei",
     "settingImportEncodingISO8859": "ISO-8859-1 (Standard)",
     "settingImportEncodingUTF8": "UTF-8",
     "settingImportExtendedValuesGCS": "Importiere erweiterte Werte aus GCS-Kompendien",
-    "settingImportHintBodyPlan": "HINWEIS: Die Körperform wird beim ersten Import immer aus der Datei gelesen.",
+
     "settingImportHintBrowserImporter": "Diese Option aktivieren, wenn die Foundry-Instanz nicht lokal gehosted wird (Z.B. über The Forge). Dieser Importdialog kann sich den Speicherort der Importdatei während der Sitzung merken (d. h., wenn die Figur in derselben Sitzung erneut importiert wird, muss der Dateidialog nicht aufgerufen werden).",
     "settingImportHintEncoding": "Wenn ein Charakter importiert wird und die Unicode-Zeichen nicht korrekt angezeigt werden, sollte diese Einstellung auf UTF-8-Kodierung gestellt werden.",
     "settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
@@ -1605,9 +1602,16 @@
         "overwriteHPandFP": {
           "name": "HP & FP überschreiben",
           "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
-          "yes": "Immer aus der Datei überschreiben.",
-          "no": "Nie aus der Datei überschreiben.",
-          "ask": "Jedes Mal beim Import fragen."
+          "yes": "Immer aus der Datei überschreiben",
+          "no": "Nie aus der Datei überschreiben",
+          "ask": "Jedes Mal beim Import fragen"
+        },
+        "overwriteBodyPlan": {
+          "name": "Körperplan überschreiben",
+          "hint": "HINWEIS: Der aktuelle Körperplan wird beim ersten Import immer aus der Datei gelesen.",
+          "yes": "Immer aus Datei überschreiben",
+          "no": "Niemals aus Datei überschreiben",
+          "ask": "Jedes Mal während des Imports nachfragen"
         }
       }
     }

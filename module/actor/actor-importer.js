@@ -1322,10 +1322,10 @@ export class ActorImporter {
 
   async getSaveOrOverwriteBodyPlan(saveprot, currentPlan, newPlan) {
     return await foundry.applications.api.DialogV2.wait({
-      window: { title: game.i18n.localize('GURPS.importHitLocationBodyPlan') },
-      content: game.i18n.format('GURPS.importSaveOverwriteBodyPlan', {
-        curentBodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + currentPlan)}`,
-        bodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + newPlan)}`,
+      window: { title: game.i18n.localize('GURPS.importer.promptBodyPlan.title') },
+      content: game.i18n.format('GURPS.importer.promptBodyPlan.content', {
+        currentBodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + currentPlan)}`,
+        bodyplan: `${game.i18n.localize('GURPS.BODYPLAN' + newPlan)}`,
       }),
       modal: true,
       buttons: [

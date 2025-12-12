@@ -23,7 +23,7 @@ import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
-import { OVERWRITE_HP_FP } from './types.js'
+import { OVERWRITE_HP_FP, OVERWRITE_BODYPLAN } from './types.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -72,7 +72,7 @@ class GcsImporter {
     this.#importPortrait()
     await this.#importAttributes()
     this.#importProfile()
-    this.#importHitLocations()
+    await this.#importHitLocations()
     this.#importItems()
     this.#importPointTotals()
     this.#importMiscValues()
@@ -303,7 +303,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importHitLocations() {
+  async #importHitLocations() {
     this.output.additionalresources ||= {}
     this.output.additionalresources.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
 
@@ -314,8 +314,8 @@ class GcsImporter {
 
       // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
       // damage and other effects.
-      let temp = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()] as any
-      let entry = Object.values(temp).find((entry: any) => entry.id === location.id)
+      let tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()] as any
+      let entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
       // @ts-expect-error
       let role = entry?.role ?? entry?.id
 
@@ -330,6 +330,74 @@ class GcsImporter {
 
       ;(this.output.hitlocationsV2 as DataModel.CreateData<HitLocationSchemaV2>[]).push(newLocation)
     })
+
+    await this.#promptHitLocationOverwrite()
+  }
+
+  /* ---------------------------------------- */
+
+  async #promptHitLocationOverwrite() {
+    // No need to run this if there is no existing actor
+    // or if this is the first import
+    if (!this.actor || !this.actor.system.traits.modifiedon) return
+
+    const currentBodyPlan = this.actor.system.additionalresources.bodyplan
+
+    // Remove derived values / all values not proper to the hit location on its own
+    const currentHitLocations = this.actor.system.hitlocationsV2.map(e => {
+      const location = e.toObject() as any
+      delete location._damageType
+      delete location._dr
+      delete location.drCap
+      delete location.drItem
+      delete location.drMod
+      return location
+    })
+
+    const statsDifference =
+      currentBodyPlan !== this.output.additionalresources!.bodyplan ||
+      (this.output.hitlocationsV2 as any[]).equals(currentHitLocations)
+
+    if (!statsDifference) return
+
+    const promptSetting = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN)
+    if (promptSetting === 'yes')
+      return // Automatically overwrite from file
+    else if (promptSetting === 'no') {
+      // Automatically ignore values from file
+      this.output.additionalresources!.bodyplan = currentBodyPlan
+      this.output.hitlocationsV2 = currentHitLocations
+      return
+    }
+
+    const overwriteOption: 'keep' | 'overwrite' | null = await foundry.applications.api.DialogV2.wait({
+      window: {
+        title: game.i18n!.localize('GURPS.importer.promptBodyPlan.title'),
+      },
+      content: game.i18n!.format('GURPS.importer.promptBodyPlan.content', {
+        currentBodyPlan,
+        bodyplan: `${this.output.additionalresources!.bodyplan}`,
+      }),
+      modal: true,
+      buttons: [
+        {
+          action: 'keep',
+          label: game.i18n!.localize('GURPS.dialog.keep'),
+          icon: 'far fa-square',
+          default: true,
+        },
+        {
+          action: 'overwrite',
+          label: game.i18n!.localize('GURPS.dialog.overwrite'),
+          icon: 'fas fa-edit',
+        },
+      ],
+    })
+
+    if (overwriteOption === 'keep') {
+      this.output.additionalresources!.bodyplan = currentBodyPlan
+      this.output.hitlocationsV2 = currentHitLocations
+    }
   }
 
   /* ---------------------------------------- */
