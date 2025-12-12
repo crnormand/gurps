@@ -675,7 +675,7 @@
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
       },
       "promptHPandFP": {
-        "content": "<p>Voulez-vous <strong>enregistrer</strong> les valeurs actuelles de HP (<strong>{currentHP}</strong>) et FP (<strong>{currentFP}</strong>), ou <strong>écraser</strong> ces valeurs avec celles du fichier importé (HP : <strong>{hp}</strong>, FP : <strong>{fp}</strong>) ?</p>",
+        "content": "<p>Voulez-vous <strong>garder</strong> les valeurs actuelles de PV (<strong>{currentHP}</strong>) et PF (<strong>{currentFP}</strong>), ou les <strong>écraser</strong> avec celles du fichier importé (PV : <strong>{hp}</strong>, PF : <strong>{fp}</strong>) ?</p>",
         "title": "Écraser les HP et FP actuels ?"
       },
       "settings": {
@@ -1313,10 +1313,6 @@
     "settingImportHintBrowserImporter": "Cocher ceci si vous n'hébergez pas votre instance de Foundry localement (vous hébergez à distance, par ex. Forge). Cette fenêtre d'import peut mémoriser l'emplacement de vos fichiers d'import pendant la session (cela signifie que si vous importez de nouveau le personnage dans la même session, la fenêtre ne se rouvrira pas).",
     "settingImportHintEncoding": "Si vous importez un personnage et les caractères unicodes ne s'affichent pas correctement, changez ce réglage en UTF-8.",
     "settingImportHintExtendedValuesGCS": "If enabled, le système importera les valeurs étendues pour le Coût et le Poids lors de l'importation des Packs d'Equipement GCS.",
-    "settingImportHPAndFP": "Import: PV et PF Actuels",
-    "settingImportHPAndFPAsk": "Demander avant d'écraser pendant l'import.",
-    "settingImportHPAndFPIgnore": "Ignorer PV et PF Actuels du fichier importé.",
-    "settingImportHPAndFPUseFile": "Utiliser PV et PF Actuels du fichier importé.",
     "settingImportIgnoreName": "Import: Ignorer l'attribut 'Nom'",
     "settingLabelMookGenerator": "Editeur du Générateur de Mook par Défaut",
     "settingLabelShowItemImage": "Sélectionner les traits",

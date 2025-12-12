@@ -675,7 +675,7 @@
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
       },
       "promptHPandFP": {
-        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>",
+        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>behalten</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>",
         "title": "Aktuelle HP und FP überschreiben?"
       },
       "settings": {
@@ -1313,10 +1313,6 @@
     "settingImportHintBrowserImporter": "Diese Option aktivieren, wenn die Foundry-Instanz nicht lokal gehosted wird (Z.B. über The Forge). Dieser Importdialog kann sich den Speicherort der Importdatei während der Sitzung merken (d. h., wenn die Figur in derselben Sitzung erneut importiert wird, muss der Dateidialog nicht aufgerufen werden).",
     "settingImportHintEncoding": "Wenn ein Charakter importiert wird und die Unicode-Zeichen nicht korrekt angezeigt werden, sollte diese Einstellung auf UTF-8-Kodierung gestellt werden.",
     "settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
-    "settingImportHPAndFP": "Import: Aktuelle TP und AP",
-    "settingImportHPAndFPAsk": "Beim Import vor dem Überschreiben nachfragen",
-    "settingImportHPAndFPIgnore": "Die aktuellen TP und AP der Importdatei werden ignoriert.",
-    "settingImportHPAndFPUseFile": "Verwenden Sie die aktuellen TP und AP aus der Importdatei.",
     "settingImportIgnoreName": "Import: Attribut 'Name' ignorieren",
     "settingLabelMookGenerator": "Mook Generator Standardwerte Editor",
     "settingLabelShowItemImage": "Wähle Eigenschaften, um Bilder anzuzeigen",
