@@ -356,7 +356,7 @@ class GcsImporter {
 
     const statsDifference =
       currentBodyPlan !== this.output.additionalresources!.bodyplan ||
-      (this.output.hitlocationsV2 as any[]).equals(currentHitLocations)
+      !(this.output.hitlocationsV2 as any[]).equals(currentHitLocations)
 
     if (!statsDifference) return
 
