@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Personnage (v1)",
-      "characterV2": "Personnage (v2)",
-      "enemy": "Ennemi"
-    },
-    "Item": {
-      "feature": "Trait (v1)",
-      "skill": "Compétence (v1)",
-      "spell": "Sort (v1)",
-      "equipment": "Équipement (v1)",
-      "featureV2": "Trait (v2)",
-      "skillV2": "Compétence (v2)",
-      "spellV2": "Sort (v2)",
-      "equipmentV2": "Équipement (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "Retirer {name} de la Liste d'Équipement ?",
     "confirmRoll": "Confirmation du Jet",
     "consumeAction": "Consommer l'Action",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Copier PDF:{text} au Chat",
+        "sendToEveryone": "Envoyer PDF:{text} à Tout le Monde",
+        "whisperToOwners": "Chuchoter PDF:{text} à {owners}"
+      }
+    },
     "ControlRoll": "Jet de Contrôle",
     "copyright": "GURPS est une marque déposée de Steve Jackson Games, et ses règles et illustrations sont protégées par leurs droits d'auteur. Tous les droits sont réservés à Steve Jackson Games. Cette aide de jeu est la création originale de Chris Normand/Nose66 et est distribuée gratuitement et non revendable, avec la permission gracieuse de http://www.sjgames.com/general/online_policy.html",
     "CR0": "PC: N/A (Ne peut Résister)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Peau",
     "descriptionTechLevel": "Niveau Technologique (NT)",
     "destroyed": "Détruit",
+    "dialog": {
+      "keep": "Garder",
+      "overwrite": "Écraser",
+      "save": "Enregistrer"
+    },
     "Dice": "Dé",
     "diceAddDamageRule": "Règle des dés+ajouts:",
     "disable": "Désactiver",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Ne s'applique pas aux Défenses Actives ou autre réactions défensives.",
     "effectsTemporaryAttributePenalties": "Voir Pénalités d'Attribut Temporaires",
     "effectsTermination": "Condition de Terminaison (OtF)",
+    "encumbranceLevel-0": "Aucun (0)",
     "encumbranceLevel-00000": "Aucun (0)",
     "encumbranceLevel-00001": "Léger (1)",
     "encumbranceLevel-00002": "Moyen (2)",
     "encumbranceLevel-00003": "Lourd (3)",
     "encumbranceLevel-00004": "X-Lourd (4)",
-    "encumbranceLevel-0": "Aucun (0)",
     "encumbranceLevel-1": "Léger (1)",
     "encumbranceLevel-2": "Moyen (2)",
     "encumbranceLevel-3": "Lourd (3)",
@@ -668,6 +663,33 @@
     "importCurrentActor": "Acteur Actuel",
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
+      },
+      "prompt": {
+        "description": "Sélectionnez un fichier GCS 5+.",
+        "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
+        "source": "Données source",
+        "title": "Importer les données du personnage pour {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+      },
+      "promptHPandFP": {
+        "content": "<p>Voulez-vous <strong>garder</strong> les valeurs actuelles de PV (<strong>{currentHP}</strong>) et PF (<strong>{currentFP}</strong>), ou les <strong>écraser</strong> avec celles du fichier importé (PV : <strong>{hp}</strong>, PF : <strong>{fp}</strong>) ?</p>",
+        "title": "Écraser les HP et FP actuels ?"
+      },
+      "settings": {
+        "hint": "Paramètres pour l'importateur de personnage GURPS",
+        "overwriteHPandFP": {
+          "ask": "Demander à chaque importation.",
+          "hint": "REMARQUE : Les HP et FP actuels sont toujours lus à partir du fichier lors de la première importation.",
+          "name": "Écraser les HP et FP",
+          "no": "Ne jamais écraser à partir du fichier.",
+          "yes": "Toujours écraser à partir du fichier."
+        },
+        "title": "Paramètres de l'importateur"
+      }
+    },
     "importErrorParsingXML": "Erreur d'analyse XML: {text}.",
     "importFantasyGroundUnsupported": "Nous ne gérons plus l'import de Fantasy Grounds.",
     "importFile": "Fichier",
@@ -693,14 +715,11 @@
     "importMultiple": "Importation Multiple",
     "importMultipleActors": "Importer plusieurs acteurs",
     "importNoCharacterFormat": "Impossible de détecter le format de 'Personnage'. Il semble que vous tentiez d'importer le format 'pnj'.",
-    "importNoFilesSelected": "Aucun fichier sélectionné pour l'importation.",
     "importNoJSONDetected": "Impossible d'analyser le JSON. Votre fichier GCS semble corrompu.",
     "importNoXMLDetected": "Pas de XML détecté. Importez vous le bon fichier XML?",
     "importOldGCSFile": "Votre personnage a été enregistré avec une ancienne version de GCS, ce qui ne donne pas les attributs requis. Mettez au moins GCS à jour en version 4.36, ouvrez et enregistrer votre fichier personnage et ré-essayez.",
     "importOnImport": "À l'Importation",
-    "importOverwriteHpFp": "Écraser ou Sauvegarder les PV & PF Actuels",
     "importReplace": "Remplacer",
-    "importSaveOrOverwriteHpFp": "<div><p>Voulez-vous :</p><p>&nbsp;&bull;&nbsp;<strong>Sauvegarder</strong> les valeurs actuelles de PV ({currentHP}) & PF ({currentFP})</p><p>Ou :</p><p>&nbsp;&bull;&nbsp;<strong>Écraser</strong> avec les données importées, PV ({hp}) & PF ({fp}) ?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Voulez-vous :</p><p>&nbsp;&bull;&nbsp;<strong>Sauvegarder</strong> la valeur actuelle du type ({curentBodyPlan})</p><p>Ou :</p><p>&nbsp;&bull;&nbsp;<strong>Écraser</strong> avec le type importé, ({bodyPlan}) ?</p></div>",
     "importSeeUsersGuide": "Vérifiez le guide d'utilisation pour savoir où trouver la dernière version.",
     "importSelected": "Importer sélectionné",
@@ -1046,7 +1065,6 @@
     "otherEquipment": "Autre Equipment",
     "otherTab": "Vérifications",
     "overridden": "ignoré",
-    "overwrite": "Écraser",
     "parentItemTooltip": "De {type}: {name}",
     "parry": "Parade",
     "parryBasePenalty": "Pénalité de base pour parer",
@@ -1197,7 +1215,6 @@
     "rsl": "NRC",
     "rt": "RT",
     "runningShoveAndKnockOver": "Courir Pousser & Renverser",
-    "save": "Sauvegarder",
     "saveRollforEffect": "Jet de sauvegarde pour éviter les effets.",
     "selectActorFirst": "Veuillez d'abord sélectionner un acteur.",
     "selectTargetForDamageWarning": "Déposez les dégâts sur la ou les cibles, ou déposez-les sur la scène pour les appliquer au(x) jeton(s) ciblé(s).",
@@ -1296,10 +1313,6 @@
     "settingImportHintBrowserImporter": "Cocher ceci si vous n'hébergez pas votre instance de Foundry localement (vous hébergez à distance, par ex. Forge). Cette fenêtre d'import peut mémoriser l'emplacement de vos fichiers d'import pendant la session (cela signifie que si vous importez de nouveau le personnage dans la même session, la fenêtre ne se rouvrira pas).",
     "settingImportHintEncoding": "Si vous importez un personnage et les caractères unicodes ne s'affichent pas correctement, changez ce réglage en UTF-8.",
     "settingImportHintExtendedValuesGCS": "If enabled, le système importera les valeurs étendues pour le Coût et le Poids lors de l'importation des Packs d'Equipement GCS.",
-    "settingImportHPAndFP": "Import: PV et PF Actuels",
-    "settingImportHPAndFPAsk": "Demander avant d'écraser pendant l'import.",
-    "settingImportHPAndFPIgnore": "Ignorer PV et PF Actuels du fichier importé.",
-    "settingImportHPAndFPUseFile": "Utiliser PV et PF Actuels du fichier importé.",
     "settingImportIgnoreName": "Import: Ignorer l'attribut 'Nom'",
     "settingLabelMookGenerator": "Editeur du Générateur de Mook par Défaut",
     "settingLabelShowItemImage": "Sélectionner les traits",
@@ -1583,6 +1596,23 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela."
+    "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Personnage (v1)",
+      "characterV2": "Personnage (v2)",
+      "enemy": "Ennemi"
+    },
+    "Item": {
+      "equipment": "Équipement (v1)",
+      "equipmentV2": "Équipement (v2)",
+      "feature": "Trait (v1)",
+      "featureV2": "Trait (v2)",
+      "skill": "Compétence (v1)",
+      "skillV2": "Compétence (v2)",
+      "spell": "Sort (v1)",
+      "spellV2": "Sort (v2)"
+    }
   }
 }

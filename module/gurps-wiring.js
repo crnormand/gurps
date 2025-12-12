@@ -56,12 +56,6 @@ export default class GurpsWiring {
         this.createPdfLinkMenu(link)
       }
     }
-
-    // html.find('.pdflink').on('contextmenu', event => {
-    //   event.preventDefault()
-    //   let el = event.currentTarget
-    //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    // })
   }
 
   static createPdfLinkMenu(link) {

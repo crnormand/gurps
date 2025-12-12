@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Charakter (v1)",
-      "characterV2": "Charakter (v2)",
-      "enemy": "Gegner"
-    },
-    "Item": {
-      "feature": "Merkmal (v1)",
-      "skill": "Fertigkeit (v1)",
-      "spell": "Zauberspruch (v1)",
-      "equipment": "Ausrüstung (v1)",
-      "featureV2": "Merkmal (v2)",
-      "skillV2": "Fertigkeit (v2)",
-      "spellV2": "Zauberspruch (v2)",
-      "equipmentV2": "Ausrüstung (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "{name} aus der Ausrüstungsliste entfernen?",
     "confirmRoll": "Würfelbestätigung",
     "consumeAction": "Consommer l'Action",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Kopiere PDF:{text} im Chat",
+        "sendToEveryone": "Sende PDF:{text} an Alle",
+        "whisperToOwners": "Flüstere PDF:{text} an {owners}"
+      }
+    },
     "ControlRoll": "Kontrollwurf",
     "copyright": "GURPS ist ein Warenzeichen von Steve Jackson Games, und seine Regeln und Kunstwerke sind urheberrechtlich geschützt von Steve Jackson Games. Alle Rechte vorbehalten von Steve Jackson Games. Diese Spielhilfe ist die ursprüngliche Kreation von Chris Normand/Nose66 und wird zur freien Verteilung und nicht zum Weiterverkauf unter den Genehmigungen von http://www.sjgames.com/general/online_policy.html veröffentlicht.",
     "CR0": "KR: N/A (Kann Nicht Widerstehen)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Haut",
     "descriptionTechLevel": "Techlevel (TL)",
     "destroyed": "Zerstört",
+    "dialog": {
+      "keep": "Behalten",
+      "overwrite": "Überschreiben",
+      "save": "Speichern"
+    },
     "Dice": "Würfel",
     "diceAddDamageRule": "Würfel+Zusatzregel:",
     "disable": "Deaktivieren",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Beeinflusst nicht Aktive Verteidigung oder andere denfensive Reaktionen.",
     "effectsTemporaryAttributePenalties": "Siehe Temporary Attribute Penalties",
     "effectsTermination": "Beendigungsbedingung (OtF)",
+    "encumbranceLevel-0": "Keine (0)",
     "encumbranceLevel-00000": "Keine (0)",
     "encumbranceLevel-00001": "Leicht (1)",
     "encumbranceLevel-00002": "Mittel (2)",
     "encumbranceLevel-00003": "Schwer (3)",
     "encumbranceLevel-00004": "S-Schwer (4)",
-    "encumbranceLevel-0": "Keine (0)",
     "encumbranceLevel-1": "Leicht (1)",
     "encumbranceLevel-2": "Mittel (2)",
     "encumbranceLevel-3": "Schwer (3)",
@@ -668,6 +663,33 @@
     "importCurrentActor": "Aktueller Schauspieler",
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
+    "importer": {
+      "error": {
+        "noFilesSelected": "Keine Dateien für den Import ausgewählt."
+      },
+      "prompt": {
+        "description": "Wählen Sie eine GCS 5+-Datei aus.",
+        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+        "source": "Quelldaten",
+        "title": "Charakterdaten für {name} importieren",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+      },
+      "promptHPandFP": {
+        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>behalten</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>",
+        "title": "Aktuelle HP und FP überschreiben?"
+      },
+      "settings": {
+        "hint": "Einstellungen für den GURPS Charakter-Importer",
+        "overwriteHPandFP": {
+          "ask": "Jedes Mal beim Import fragen.",
+          "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
+          "name": "HP & FP überschreiben",
+          "no": "Nie aus der Datei überschreiben.",
+          "yes": "Immer aus der Datei überschreiben."
+        },
+        "title": "Importer-Einstellungen"
+      }
+    },
     "importErrorParsingXML": "Fehler beim Parsen von XML: {text}.",
     "importFantasyGroundUnsupported": "Der Fantasy Grounds Import wird nicht länger unterstützt.",
     "importFile": "Datei",
@@ -693,14 +715,11 @@
     "importMultiple": "Mehrfacher Import",
     "importMultipleActors": "Mehrere Schauspieler importieren",
     "importNoCharacterFormat": "Das Format 'character' kann nicht erkannt werden. Wahrscheinlich wird versuchst, das 'npc'-Format zu importieren.",
-    "importNoFilesSelected": "Keine Dateien zum Importieren ausgewählt.",
     "importNoJSONDetected": "JSON kann nicht geparst werden. Ihre GCS-Datei scheint beschädigt zu sein.",
     "importNoXMLDetected": "Kein XML erkannt. Wird die richtige XML-Datei importiert?",
     "importOldGCSFile": "Ihr Charakter wurde mit einer älteren Version von GCS gespeichert, die einige erforderliche Attribute nicht ausgibt. Aktualisieren Sie GCS auf mindestens Version 4.36, öffnen und speichern Sie Ihre Charakterdatei und versuchen Sie es erneut.",
     "importOnImport": "Beim Import",
-    "importOverwriteHpFp": "Aktuelle TP & AP überschreiben oder speichern",
     "importReplace": "Ersetzen",
-    "importSaveOrOverwriteHpFp": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> der aktuellen TP ({currentHP}) & AP ({currentFP}) Werte</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit den Importdaten, TP ({hp}) & AP ({fp})?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> des aktuellen Körperplans ({curentBodyPlan})</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit dem importierten Körperplan ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Im Benutzerhandbuch befinden sich Informationen darüber, wo  die neueste Version zu erhalten ist.",
     "importSelected": "Ausgewählte importieren",
@@ -1046,7 +1065,6 @@
     "otherEquipment": "Weitere Ausrüstung",
     "otherTab": "Prüfungen",
     "overridden": "überschrieben",
-    "overwrite": "Überschreiben",
     "parentItemTooltip": "<div>Von {type}:<br>{name}</div>",
     "parry": "Parieren",
     "parryBasePenalty": "Grundstrafe für Parieren",
@@ -1197,7 +1215,6 @@
     "rsl": "RSL",
     "rt": "RA",
     "runningShoveAndKnockOver": "Schieben & Umstoßen (Rennend)",
-    "save": "Speichern",
     "saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden.",
     "selectActorFirst": "Bitte wählen Sie zuerst einen Schauspieler aus.",
     "selectTargetForDamageWarning": "Ziehe den Schaden auf das Ziel oder ziehe ihn auf die Karte, um ihn auf das ausgewählte Token anzuwenden.",
@@ -1296,10 +1313,6 @@
     "settingImportHintBrowserImporter": "Diese Option aktivieren, wenn die Foundry-Instanz nicht lokal gehosted wird (Z.B. über The Forge). Dieser Importdialog kann sich den Speicherort der Importdatei während der Sitzung merken (d. h., wenn die Figur in derselben Sitzung erneut importiert wird, muss der Dateidialog nicht aufgerufen werden).",
     "settingImportHintEncoding": "Wenn ein Charakter importiert wird und die Unicode-Zeichen nicht korrekt angezeigt werden, sollte diese Einstellung auf UTF-8-Kodierung gestellt werden.",
     "settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
-    "settingImportHPAndFP": "Import: Aktuelle TP und AP",
-    "settingImportHPAndFPAsk": "Beim Import vor dem Überschreiben nachfragen",
-    "settingImportHPAndFPIgnore": "Die aktuellen TP und AP der Importdatei werden ignoriert.",
-    "settingImportHPAndFPUseFile": "Verwenden Sie die aktuellen TP und AP aus der Importdatei.",
     "settingImportIgnoreName": "Import: Attribut 'Name' ignorieren",
     "settingLabelMookGenerator": "Mook Generator Standardwerte Editor",
     "settingLabelShowItemImage": "Wähle Eigenschaften, um Bilder anzuzeigen",
@@ -1583,6 +1596,23 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
+    "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun"
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Charakter (v1)",
+      "characterV2": "Charakter (v2)",
+      "enemy": "Gegner"
+    },
+    "Item": {
+      "equipment": "Ausrüstung (v1)",
+      "equipmentV2": "Ausrüstung (v2)",
+      "feature": "Merkmal (v1)",
+      "featureV2": "Merkmal (v2)",
+      "skill": "Fertigkeit (v1)",
+      "skillV2": "Fertigkeit (v2)",
+      "spell": "Zauberspruch (v1)",
+      "spellV2": "Zauberspruch (v2)"
+    }
   }
 }

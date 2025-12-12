@@ -1984,7 +1984,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           itemData: dragData.itemData,
           count: +count,
         })
-      } else ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermssion'))
+      } else ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermission'))
     }
     return false
   }
@@ -3190,7 +3190,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   async handleItemDrop(dragData: Record<string, any>): Promise<void> {
     if (!this.isOwner) {
-      ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermssion'))
+      ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermission'))
       return
     }
     // New item created in Foundry v12.331 dragData:
