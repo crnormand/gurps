@@ -1075,8 +1075,8 @@
       "code": "PDF-Buchcode",
       "codePlaceholder": "PDF-Code: (z.B. 'B' oder 'MA')",
       "offset": "Seitenoffset",
-      "offsetPlaceholder": "Offset: (z.B. -5, 0 oder 2)",
       "offsetChangeHint": "Wenn Sie diesen Wert ändern, passt sich der Viewer so an, dass die angezeigte Seite dem eingegebenen Offset entspricht (z. B. Seite 5).",
+      "offsetPlaceholder": "Offset: (z.B. -5, 0 oder 2)",
       "settings": {
         "basicPDFs": "Basis Set PDF(s)",
         "basicPDFsCombined": "Kombiniertes Basis Set (Code 'B')",

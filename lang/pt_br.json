@@ -1075,8 +1075,8 @@
       "code": "Código do PDF",
       "codePlaceholder": "Código do PDF: (ex.: 'B' ou 'MA')",
       "offset": "Ajuste de página",
-      "offsetPlaceholder": "Ajuste: (ex.: -5, 0 ou 2)",
       "offsetChangeHint": "Ao alterar este valor, o visualizador ajusta para que a página exibida corresponda ao ajuste informado (por exemplo, página 5).",
+      "offsetPlaceholder": "Ajuste: (ex.: -5, 0 ou 2)",
       "settings": {
         "basicPDFs": "PDFs do Basic Set",
         "basicPDFsCombined": "Basic Set Combinado (código 'B')",

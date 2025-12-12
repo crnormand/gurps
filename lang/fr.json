@@ -1075,8 +1075,8 @@
       "code": "Code Livre PDF",
       "codePlaceholder": "Code PDF : (ex. : 'B' ou 'MA')",
       "offset": "Décalage de Page",
-      "offsetPlaceholder": "Décalage : (ex. : -5, 0 ou 2)",
       "offsetChangeHint": "Lorsque vous modifiez cette valeur, le lecteur ajuste l'affichage afin que la page corresponde au décalage indiqué (par ex., page 5).",
+      "offsetPlaceholder": "Décalage : (ex. : -5, 0 ou 2)",
       "settings": {
         "basicPDFs": "Ensemble de base PDF(s)",
         "basicPDFsCombined": "Ensemble de base Combiné (code 'B')",
