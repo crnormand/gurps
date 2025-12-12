@@ -1593,7 +1593,7 @@
       },
       "promptHPandFP": {
         "title": "Aktuelle HP und FP überschreiben?",
-        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>behalten</strong> oder sie mit den Werten aus der Importdatei (<strong>HP: {hp}</strong>, <strong>FP: {fp}</strong>) <strong>überschreiben</strong>?</p>"
+        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>behalten</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>"
       },
       "settings": {
         "title": "Importer-Einstellungen",
