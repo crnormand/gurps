@@ -607,8 +607,8 @@ export class ActorImporter {
       }
       if (option == 2) {
         saveCurrent = await foundry.applications.api.DialogV2.wait({
-          window: { title: game.i18n.localize('GURPS.importOverwriteHpFp') },
-          content: game.i18n.format('GURPS.importSaveOrOverwriteHpFp', {
+          window: { title: game.i18n.localize('GURPS.importer.promprtHPandFP.title') },
+          content: game.i18n.format('GURPS.importer.promprtHPandFP.content', {
             currentHP: data.HP.value,
             currentFP: data.FP.value,
             hp: hp,
@@ -618,14 +618,14 @@ export class ActorImporter {
           buttons: [
             {
               action: 'save',
-              label: game.i18n.localize('GURPS.save'),
+              label: game.i18n.localize('GURPS.dialog.save'),
               icon: 'far fa-square',
               default: true,
               callback: () => true,
             },
             {
               action: 'overwrite',
-              label: game.i18n.localize('GURPS.overwrite'),
+              label: game.i18n.localize('GURPS.dialog.overwrite'),
               icon: 'fas fa-edit',
               callback: () => false,
             },
@@ -1331,14 +1331,14 @@ export class ActorImporter {
       buttons: [
         {
           action: 'save',
-          label: game.i18n.localize('GURPS.save'),
+          label: game.i18n.localize('GURPS.dialog.save'),
           icon: 'far fa-square',
           default: true,
           callback: () => true,
         },
         {
           action: 'overwrite',
-          label: game.i18n.localize('GURPS.overwrite'),
+          label: game.i18n.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
           callback: () => false,
         },

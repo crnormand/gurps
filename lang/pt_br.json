@@ -698,9 +698,7 @@
     "importNoXMLDetected": "Nenhum XML detectado. Você está importando o arquivo XML correto?",
     "importOldGCSFile": "Seu personagem foi salvo com uma versão mais antiga do GCS, que não exporta alguns dos atributos necessários. Atualize o GCS para no mínimo a versão 4.36, abra e salve o arquivo de personagem e então tente novamente.",
     "importOnImport": "Ao Importar",
-    "importOverwriteHpFp": "Sobrescrever ou Salvar PV e PF Atuais",
     "importReplace": "Substituir",
-    "importSaveOrOverwriteHpFp": "<div><p>Você deseja:</p><p>&nbsp;&bull;&nbsp;<strong>Salvar</strong> os valores atuais de PV ({currentHP}) e PF ({currentFP})</p><p>Ou:</p><p>&nbsp;&bull;&nbsp;<strong>Sobrescrever</strong> com os dados importados, PV ({hp}) e PF ({fp})?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Você deseja:</p><p>&nbsp;&bull;&nbsp;<strong>Salvar</strong> o tipo de corpo atual ({curentBodyPlan})</p><p>Ou:</p><p>&nbsp;&bull;&nbsp;<strong>Sobrescrever</strong> com o tipo de corpo importado, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Verifique o Manual do Usuário para detalhes de onde conseguir a última versão.",
     "importSelected": "Importar Selecionados",
@@ -1046,7 +1044,6 @@
     "otherEquipment": "Outros Equipamentos",
     "otherTab": "Verificações",
     "overridden": "substituído",
-    "overwrite": "Sobrescrever",
     "parentItemTooltip": "<div>De {type}:<br>{name}</div>",
     "parry": "Aparar",
     "parryBasePenalty": "Penalidade base de aparar",
@@ -1197,7 +1194,6 @@
     "rsl": "NH Rltv.",
     "rt": "CR",
     "runningShoveAndKnockOver": "Encontrão e Derrubar",
-    "save": "Salvar",
     "saveRollforEffect": "Teste de resistência para evitar efeitos.",
     "selectActorFirst": "Por favor, selecione um ator primeiro.",
     "selectTargetForDamageWarning": "Arraste o dano para o(s) alvo(s), ou solte na tela para aplicar aos tokens selecionados.",
@@ -1584,31 +1580,31 @@
     "yard": "jarda",
     "yards": "jardas",
     "youDoNotHavePermission": "Você não tem permissão para fazer isso.",
-    "Dialog": {
-      "Save": "Salvar",
-      "Overwrite": "Sobrescrever"
+    "dialog": {
+      "save": "Salvar",
+      "overwrite": "Sobrescrever"
     },
-    "Importer": {
-      "Prompt": {
-        "Title": "Importar dados do personagem para {name}",
-        "Description": "Selecione um arquivo exportado do GCS 5+.",
-        "Source": "Dados de origem",
-        "Note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
-        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+    "importer": {
+      "prompt": {
+        "title": "Importar dados do personagem para {name}",
+        "description": "Selecione um arquivo exportado do GCS 5+.",
+        "source": "Dados de origem",
+        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
       },
-      "PromptHPandFP": {
-        "Title": "Sobrescrever HP e FP atuais?",
-        "Content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      "promptHPandFP": {
+        "title": "Sobrescrever HP e FP atuais?",
+        "content": "<p>Você deseja <strong>salvar</strong> os valores atuais de HP (<strong>{currentHP}</strong>) e FP (<strong>{currentFP}</strong>), ou <strong>sobrescrever</strong> com os valores do arquivo importado (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
       },
-      "Settings": {
-        "Title": "Configurações do Importador",
-        "Hint": "Configurações para o Importador de Personagens GURPS",
-        "OverwriteHPandFP": {
-          "Name": "Sobrescrever HP e FP",
-          "Hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
-          "Yes": "Sempre sobrescrever do arquivo.",
-          "No": "Nunca sobrescrever do arquivo.",
-          "Ask": "Perguntar a cada importação."
+      "settings": {
+        "title": "Configurações do Importador",
+        "hint": "Configurações para o Importador de Personagens GURPS",
+        "overwriteHPandFP": {
+          "name": "Sobrescrever HP e FP",
+          "hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
+          "yes": "Sempre sobrescrever do arquivo.",
+          "no": "Nunca sobrescrever do arquivo.",
+          "ask": "Perguntar a cada importação."
         }
       }
     }

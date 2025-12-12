@@ -698,9 +698,7 @@
     "importNoXMLDetected": "Kein XML erkannt. Wird die richtige XML-Datei importiert?",
     "importOldGCSFile": "Ihr Charakter wurde mit einer älteren Version von GCS gespeichert, die einige erforderliche Attribute nicht ausgibt. Aktualisieren Sie GCS auf mindestens Version 4.36, öffnen und speichern Sie Ihre Charakterdatei und versuchen Sie es erneut.",
     "importOnImport": "Beim Import",
-    "importOverwriteHpFp": "Aktuelle TP & AP überschreiben oder speichern",
     "importReplace": "Ersetzen",
-    "importSaveOrOverwriteHpFp": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> der aktuellen TP ({currentHP}) & AP ({currentFP}) Werte</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit den Importdaten, TP ({hp}) & AP ({fp})?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Möchten Sie:</p><p>&nbsp;&bull;&nbsp;<strong>Speichern</strong> des aktuellen Körperplans ({curentBodyPlan})</p><p>Oder:</p><p>&nbsp;&bull;&nbsp;<strong>Überschreiben</strong> mit dem importierten Körperplan ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Im Benutzerhandbuch befinden sich Informationen darüber, wo  die neueste Version zu erhalten ist.",
     "importSelected": "Ausgewählte importieren",
@@ -1046,7 +1044,6 @@
     "otherEquipment": "Weitere Ausrüstung",
     "otherTab": "Prüfungen",
     "overridden": "überschrieben",
-    "overwrite": "Überschreiben",
     "parentItemTooltip": "<div>Von {type}:<br>{name}</div>",
     "parry": "Parieren",
     "parryBasePenalty": "Grundstrafe für Parieren",
@@ -1197,7 +1194,6 @@
     "rsl": "RSL",
     "rt": "RA",
     "runningShoveAndKnockOver": "Schieben & Umstoßen (Rennend)",
-    "save": "Speichern",
     "saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden.",
     "selectActorFirst": "Bitte wählen Sie zuerst einen Schauspieler aus.",
     "selectTargetForDamageWarning": "Ziehe den Schaden auf das Ziel oder ziehe ihn auf die Karte, um ihn auf das ausgewählte Token anzuwenden.",
@@ -1584,31 +1580,31 @@
     "yard": "Yard",
     "yards": "Yards",
     "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun",
-    "Dialog": {
-      "Save": "Speichern",
-      "Overwrite": "Überschreiben"
+    "dialog": {
+      "save": "Speichern",
+      "overwrite": "Überschreiben"
     },
-    "Importer": {
-      "Prompt": {
-        "Title": "Charakterdaten für {name} importieren",
-        "Description": "Wählen Sie eine aus GCS 5+ exportierte Datei aus.",
-        "Source": "Quelldaten",
-        "Note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
-        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+    "importer": {
+      "prompt": {
+        "title": "Charakterdaten für {name} importieren",
+        "description": "Wählen Sie eine aus GCS 5+ exportierte Datei aus.",
+        "source": "Quelldaten",
+        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
       },
-      "PromptHPandFP": {
-        "Title": "Aktuelle HP und FP überschreiben?",
-        "Content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>"
+      "promptHPandFP": {
+        "title": "Aktuelle HP und FP überschreiben?",
+        "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>speichern</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>"
       },
-      "Settings": {
-        "Title": "Importer-Einstellungen",
-        "Hint": "Einstellungen für den GURPS Charakter-Importer",
-        "OverwriteHPandFP": {
-          "Name": "HP & FP überschreiben",
-          "Hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
-          "Yes": "Immer aus der Datei überschreiben.",
-          "No": "Nie aus der Datei überschreiben.",
-          "Ask": "Jedes Mal beim Import fragen."
+      "settings": {
+        "title": "Importer-Einstellungen",
+        "hint": "Einstellungen für den GURPS Charakter-Importer",
+        "overwriteHPandFP": {
+          "name": "HP & FP überschreiben",
+          "hint": "HINWEIS: Aktuelle HP und FP werden beim ersten Import immer aus der Datei gelesen.",
+          "yes": "Immer aus der Datei überschreiben.",
+          "no": "Nie aus der Datei überschreiben.",
+          "ask": "Jedes Mal beim Import fragen."
         }
       }
     }

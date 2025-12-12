@@ -698,9 +698,7 @@
     "importNoXMLDetected": "No XML detected. Are you importing the correct XML file?",
     "importOldGCSFile": "Your character was saved with an older version of GCS, which does not output some required attributes. Update GCS to at least version 4.36, open and save your character file, then try again.",
     "importOnImport": "On Import",
-    "importOverwriteHpFp": "Overwrite or Save Current HP & FP",
     "importReplace": "Replace",
-    "importSaveOrOverwriteHpFp": "<div><p>Do you want to:</p><p>&nbsp;&bull;&nbsp;<strong>Save</strong> the current HP ({currentHP}) & FP ({currentFP}) values</p><p>Or:</p><p>&nbsp;&bull;&nbsp;<strong>Overwrite</strong> it with the import data, HP ({hp}) & FP ({fp})?</p></div>",
     "importSaveOverwriteBodyPlan": "<div><p>Do you want to:</p><p>&nbsp;&bull;&nbsp;<strong>Save</strong> the current body plan ({curentBodyPlan}) value</p><p>Or:</p><p>&nbsp;&bull;&nbsp;<strong>Overwrite</strong> it with the imported body plan, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Check the Users Guide for details on where to get the latest version.",
     "importSelected": "Import Selected",
@@ -1046,7 +1044,6 @@
     "otherEquipment": "Other Equipment",
     "otherTab": "Checks",
     "overridden": "overridden",
-    "overwrite": "Overwrite",
     "parentItemTooltip": "<div>From {type}:<br>{name}</div>",
     "parry": "Parry",
     "parryBasePenalty": "Parry base penalty",
@@ -1197,7 +1194,6 @@
     "rsl": "RSL",
     "rt": "RT",
     "runningShoveAndKnockOver": "Running Shove & Knock Over",
-    "save": "Save",
     "saveRollforEffect": "Save Roll to avoid effects",
     "selectActorFirst": "Please, select an Actor first.",
     "selectTargetForDamageWarning": "Drop the damage on the target(s), or drop on the canvas to apply to targeted token(s).",
@@ -1584,31 +1580,31 @@
     "yard": "yard",
     "yards": "yards",
     "youDoNotHavePermission": "You do not have permission to do that.",
-    "Dialog": {
-      "Save": "Save",
-      "Overwrite": "Overwrite"
+    "dialog": {
+      "save": "Save",
+      "overwrite": "Overwrite"
     },
-    "Importer": {
-      "Prompt": {
-        "Title": "Import Character Data for {name}",
-        "Description": "Select a file exported from GCS 5+.",
-        "Source": "Source Data",
-        "Note": "This import will overwrite the data for: <strong>{name}</strong>.",
-        "Warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+    "importer": {
+      "prompt": {
+        "title": "Import Character Data for {name}",
+        "description": "Select a file exported from GCS 5+.",
+        "source": "Source Data",
+        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
       },
-      "PromptHPandFP": {
-        "Title": "Overwrite Current HP and FP?",
-        "Content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
+      "promptHPandFP": {
+        "title": "Overwrite Current HP and FP?",
+        "content": "<p>Do you want to <strong>Save</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>"
       },
-      "Settings": {
-        "Title": "Importer Settings",
-        "Hint": "Settings for the GURPS Character Importer",
-        "OverwriteHPandFP": {
-          "Name": "Overwrite HP & FP",
-          "Hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
-          "Yes": "Always overwrite from file.",
-          "No": "Never overwrite from file.",
-          "Ask": "Ask each time during import."
+      "settings": {
+        "title": "Importer Settings",
+        "hint": "Settings for the GURPS Character Importer",
+        "overwriteHPandFP": {
+          "name": "Overwrite HP & FP",
+          "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
+          "yes": "Always overwrite from file.",
+          "no": "Never overwrite from file.",
+          "ask": "Ask each time during import."
         }
       }
     }

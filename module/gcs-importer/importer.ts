@@ -255,9 +255,9 @@ class GcsImporter {
     // Defaulting to ask
     const keepCurrentValues = await foundry.applications.api.DialogV2.wait({
       window: {
-        title: game.i18n!.localize('GURPS.Importer.PromptHPandFP.Title'),
+        title: game.i18n!.localize('GURPS.importer.promptHPandFP.title'),
       },
-      content: game.i18n!.format('GURPS.Importer.PromptHPandFP.Content', {
+      content: game.i18n!.format('GURPS.importer.promptHPandFP.content', {
         currentHP: `${currentHP}`,
         currentFP: `${currentFP}`,
         hp: `${this.output.HP!.value}`,
@@ -268,14 +268,14 @@ class GcsImporter {
         {
           action: 'save',
           // TODO: consider renaming this option to "Keep"
-          label: game.i18n!.localize('GURPS.Dialog.Save'),
+          label: game.i18n!.localize('GURPS.dialog.save'),
           icon: 'far fa-square',
           default: true,
           callback: () => true,
         },
         {
           action: 'overwrite',
-          label: game.i18n!.localize('GURPS.Dialog.Overwrite'),
+          label: game.i18n!.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
           callback: () => false,
         },
