@@ -227,7 +227,10 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   async #promptPointPoolOverwrite() {
-    if (!this.actor) return // No need to run this if there is no existing actor
+    // No need to run this if there is no existing actor
+    // or if this is the first import
+    if (!this.actor || !this.actor.system.traits.modifiedon) return
+
     const currentHP = this.actor.system.HP.value
     const currentFP = this.actor.system.FP.value
 

@@ -1,21 +1,4 @@
 {
-  "TYPES": {
-    "Actor": {
-      "character": "Personnage (v1)",
-      "characterV2": "Personnage (v2)",
-      "enemy": "Ennemi"
-    },
-    "Item": {
-      "feature": "Trait (v1)",
-      "skill": "Compétence (v1)",
-      "spell": "Sort (v1)",
-      "equipment": "Équipement (v1)",
-      "featureV2": "Trait (v2)",
-      "skillV2": "Compétence (v2)",
-      "spellV2": "Sort (v2)",
-      "equipmentV2": "Équipement (v2)"
-    }
-  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -304,6 +287,13 @@
     "confirmRemoveItem": "Retirer {name} de la Liste d'Équipement ?",
     "confirmRoll": "Confirmation du Jet",
     "consumeAction": "Consommer l'Action",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Copier PDF:{text} au Chat",
+        "sendToEveryone": "Envoyer PDF:{text} à Tout le Monde",
+        "whisperToOwners": "Chuchoter PDF:{text} à {owners}"
+      }
+    },
     "ControlRoll": "Jet de Contrôle",
     "copyright": "GURPS est une marque déposée de Steve Jackson Games, et ses règles et illustrations sont protégées par leurs droits d'auteur. Tous les droits sont réservés à Steve Jackson Games. Cette aide de jeu est la création originale de Chris Normand/Nose66 et est distribuée gratuitement et non revendable, avec la permission gracieuse de http://www.sjgames.com/general/online_policy.html",
     "CR0": "PC: N/A (Ne peut Résister)",
@@ -374,6 +364,11 @@
     "descriptionSkin": "Peau",
     "descriptionTechLevel": "Niveau Technologique (NT)",
     "destroyed": "Détruit",
+    "dialog": {
+      "keep": "Garder",
+      "overwrite": "Écraser",
+      "save": "Enregistrer"
+    },
     "Dice": "Dé",
     "diceAddDamageRule": "Règle des dés+ajouts:",
     "disable": "Désactiver",
@@ -489,12 +484,12 @@
     "effectsNotApplicableDefenses": "Ne s'applique pas aux Défenses Actives ou autre réactions défensives.",
     "effectsTemporaryAttributePenalties": "Voir Pénalités d'Attribut Temporaires",
     "effectsTermination": "Condition de Terminaison (OtF)",
+    "encumbranceLevel-0": "Aucun (0)",
     "encumbranceLevel-00000": "Aucun (0)",
     "encumbranceLevel-00001": "Léger (1)",
     "encumbranceLevel-00002": "Moyen (2)",
     "encumbranceLevel-00003": "Lourd (3)",
     "encumbranceLevel-00004": "X-Lourd (4)",
-    "encumbranceLevel-0": "Aucun (0)",
     "encumbranceLevel-1": "Léger (1)",
     "encumbranceLevel-2": "Moyen (2)",
     "encumbranceLevel-3": "Lourd (3)",
@@ -668,6 +663,40 @@
     "importCurrentActor": "Acteur Actuel",
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
+    "importer": {
+      "prompt": {
+        "title": "Importer les données du personnage pour {name}",
+        "description": "Sélectionnez un fichier GCS 5+.",
+        "source": "Données source",
+        "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+      },
+      "error": {
+        "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
+      },
+      "promptHPandFP": {
+        "title": "Écraser les HP et FP actuels ?",
+        "content": "<p>Voulez-vous <strong>enregistrer</strong> les valeurs actuelles de HP (<strong>{currentHP}</strong>) et FP (<strong>{currentFP}</strong>), ou <strong>écraser</strong> ces valeurs avec celles du fichier importé (HP : <strong>{hp}</strong>, FP : <strong>{fp}</strong>) ?</p>"
+      },
+      "settings": {
+        "title": "Paramètres de l'importateur",
+        "hint": "Paramètres pour l'importateur de personnage GURPS",
+        "overwriteHPandFP": {
+          "name": "Écraser les HP et FP",
+          "hint": "REMARQUE : Les HP et FP actuels sont toujours lus à partir du fichier lors de la première importation.",
+          "yes": "Toujours écraser à partir du fichier",
+          "no": "Ne jamais écraser à partir du fichier",
+          "ask": "Demander à chaque importation"
+        },
+        "overwriteBodyPlan": {
+          "name": "Écraser le plan corporel",
+          "hint": "REMARQUE : Le plan corporel actuel est toujours lu à partir du fichier lors de l'importation initiale.",
+          "yes": "Toujours écraser à partir du fichier",
+          "no": "Ne jamais écraser à partir du fichier",
+          "ask": "Demander à chaque importation"
+        }
+      }
+    },
     "importErrorParsingXML": "Erreur d'analyse XML: {text}.",
     "importFantasyGroundUnsupported": "Nous ne gérons plus l'import de Fantasy Grounds.",
     "importFile": "Fichier",
@@ -1575,45 +1604,23 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
-    "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela.",
-    "dialog": {
-      "keep": "Garder",
-      "save": "Enregistrer",
-      "overwrite": "Écraser"
+    "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela."
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Personnage (v1)",
+      "characterV2": "Personnage (v2)",
+      "enemy": "Ennemi"
     },
-    "importer": {
-      "prompt": {
-        "title": "Importer les données du personnage pour {name}",
-        "description": "Sélectionnez un fichier GCS 5+.",
-        "source": "Données source",
-        "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
-      },
-      "error": {
-        "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
-      },
-      "promptHPandFP": {
-        "title": "Écraser les HP et FP actuels ?",
-        "content": "<p>Voulez-vous <strong>enregistrer</strong> les valeurs actuelles de HP (<strong>{currentHP}</strong>) et FP (<strong>{currentFP}</strong>), ou <strong>écraser</strong> ces valeurs avec celles du fichier importé (HP : <strong>{hp}</strong>, FP : <strong>{fp}</strong>) ?</p>"
-      },
-      "settings": {
-        "title": "Paramètres de l'importateur",
-        "hint": "Paramètres pour l'importateur de personnage GURPS",
-        "overwriteHPandFP": {
-          "name": "Écraser les HP et FP",
-          "hint": "REMARQUE : Les HP et FP actuels sont toujours lus à partir du fichier lors de la première importation.",
-          "yes": "Toujours écraser à partir du fichier",
-          "no": "Ne jamais écraser à partir du fichier",
-          "ask": "Demander à chaque importation"
-        },
-        "overwriteBodyPlan": {
-          "name": "Écraser le plan corporel",
-          "hint": "REMARQUE : Le plan corporel actuel est toujours lu à partir du fichier lors de l'importation initiale.",
-          "yes": "Toujours écraser à partir du fichier",
-          "no": "Ne jamais écraser à partir du fichier",
-          "ask": "Demander à chaque importation"
-        }
-      }
+    "Item": {
+      "equipment": "Équipement (v1)",
+      "equipmentV2": "Équipement (v2)",
+      "feature": "Trait (v1)",
+      "featureV2": "Trait (v2)",
+      "skill": "Compétence (v1)",
+      "skillV2": "Compétence (v2)",
+      "spell": "Sort (v1)",
+      "spellV2": "Sort (v2)"
     }
   }
 }
