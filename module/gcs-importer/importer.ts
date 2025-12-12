@@ -271,13 +271,11 @@ class GcsImporter {
           label: game.i18n!.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,
-          callback: () => true,
         },
         {
           action: 'overwrite',
           label: game.i18n!.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
-          callback: () => false,
         },
       ],
     })
