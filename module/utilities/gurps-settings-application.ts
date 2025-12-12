@@ -1,8 +1,15 @@
+import fields = foundry.data.fields
+
 // define an object with two fields: title and icon.
 type GurpsSettingsConfig = {
   title: string // Title of the Settings window.
   module: string // Name of the GURPS module.
   icon?: string // Icon to display in the title bar.
+}
+
+type SettingEntry<Field extends fields.DataField = fields.DataField.Any> = {
+  value?: fields.DataField.PersistedTypeFor<Field>
+  field?: Field
 }
 
 /**
@@ -74,11 +81,44 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
         s.id.startsWith(`gurps.${this._module}.`)
       ) as any) || []
 
-    // go through all settings, and collect their values
-    for (const setting of settings) setting.value = game.settings!.get(GURPS.SYSTEM_NAME, setting.key as any)
+    const entries: SettingEntry[] = []
+
+    // go through all settings, and convert them to modern data fields if not already converted.
+    // also, collect values and localized labels and hints.
+    for (const setting of settings) {
+      const entry: SettingEntry = { value: game.settings!.get(GURPS.SYSTEM_NAME, setting.key as any) }
+
+      if (setting.type instanceof fields.DataField) {
+        entry.field = setting.type
+      } else if (setting.type === Boolean) {
+        entry.field = new fields.BooleanField({ initial: setting.default ?? false })
+      } else if (setting.type === Number) {
+        const { min, max, step } = setting.range ?? {}
+        entry.field = new fields.NumberField({
+          required: true,
+          choices: setting.choices,
+          initial: setting.default,
+          min,
+          max,
+          step,
+        })
+      } else {
+        entry.field = new fields.StringField({
+          required: true,
+          nullable: false,
+          choices: setting.choices,
+          initial: setting.default,
+        })
+      }
+      entry.field!.name = `${setting.namespace}.${setting.key}`
+      entry.field!.label ||= game.i18n!.localize(setting.name ?? '')
+      entry.field!.hint ||= game.i18n!.localize(setting.hint ?? '')
+
+      entries.push(entry)
+    }
 
     const result = foundry.utils.mergeObject(context, {
-      settings: settings,
+      entries,
     })
     return result
   }

@@ -23,12 +23,14 @@ import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
+import { OVERWRITE_HP_FP } from './types.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
  * This class handles the conversion of GCS character data into the format used by the GURPS system.
  */
 class GcsImporter {
+  actor?: GurpsActorV2<'characterV2'>
   input: GcsCharacter
   output: DataModel.CreateData<CharacterSchema>
   items: DataModel.CreateData<DataModel.SchemaOf<GcsItem<any>>>[]
@@ -64,8 +66,11 @@ class GcsImporter {
     const type = 'characterV2'
     const name = this.input.profile.name ?? 'Imported Character'
 
+    // Set actor as a GcsImporter property for easier reference
+    if (actor) this.actor = actor
+
     this.#importPortrait()
-    this.#importAttributes()
+    await this.#importAttributes()
     this.#importProfile()
     this.#importHitLocations()
     this.#importItems()
@@ -73,14 +78,6 @@ class GcsImporter {
     this.#importMiscValues()
     this.#importNotes()
     this.#createStandardTrackers()
-
-    console.log({
-      _id,
-      name,
-      type,
-      system: this.output,
-      items: this.items,
-    })
 
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
@@ -154,7 +151,7 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
-  #importAttributes() {
+  async #importAttributes() {
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {}, WILL: {}, PER: {}, QN: {} }
 
     for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PER'] as const) {
@@ -223,6 +220,64 @@ class GcsImporter {
     this.output.thrust = this.input.calc.thrust
     this.output.swing = this.input.calc.swing
     this.output.dodge = { value: this.input.calc.dodge[0] ?? 0 }
+
+    await this.#promptPointPoolOverwrite()
+  }
+
+  /* ---------------------------------------- */
+
+  async #promptPointPoolOverwrite() {
+    // No need to run this if there is no existing actor
+    // or if this is the first import
+    if (!this.actor || !this.actor.system.traits.modifiedon) return
+
+    const currentHP = this.actor.system.HP.value
+    const currentFP = this.actor.system.FP.value
+
+    const statsDifference = currentHP !== this.output.HP!.value || currentFP !== this.output.FP!.value
+
+    if (!statsDifference) return
+
+    const promptSetting = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP)
+    if (promptSetting === 'yes') return // Automatically overwrite from file
+    if (promptSetting === 'no') {
+      // Automatically ignore values from file
+      this.output.HP!.value = currentHP
+      this.output.FP!.value = currentFP
+      return
+    }
+
+    // Defaulting to ask
+    const overwriteOption: 'keep' | 'overwrite' | null = await foundry.applications.api.DialogV2.wait({
+      window: {
+        title: game.i18n!.localize('GURPS.importer.promptHPandFP.title'),
+      },
+      content: game.i18n!.format('GURPS.importer.promptHPandFP.content', {
+        currentHP: `${currentHP}`,
+        currentFP: `${currentFP}`,
+        hp: `${this.output.HP!.value}`,
+        fp: `${this.output.FP!.value}`,
+      }),
+      modal: true,
+      buttons: [
+        {
+          action: 'keep',
+          label: game.i18n!.localize('GURPS.dialog.keep'),
+          icon: 'far fa-square',
+          default: true,
+        },
+        {
+          action: 'overwrite',
+          label: game.i18n!.localize('GURPS.dialog.overwrite'),
+          icon: 'fas fa-edit',
+        },
+      ],
+    })
+
+    if (overwriteOption === 'keep') {
+      this.output.HP!.value = currentHP
+      this.output.FP!.value = currentFP
+    }
   }
 
   /* ---------------------------------------- */
@@ -666,8 +721,6 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importTraitComponent(trait: GcsTrait): DataModel.CreateData<TraitComponentSchema> {
-    // console.log('Importing trait component', trait)
-
     return {
       ...this.#importBaseComponent(trait),
       cr: trait.cr ?? null,

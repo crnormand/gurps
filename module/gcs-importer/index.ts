@@ -1,6 +1,7 @@
 import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
 import { importGCS } from './gcs-importer.js'
+import initializeGameSettings from './settings.js'
 
 interface GcsImportModule extends GurpsModule {}
 
@@ -9,6 +10,8 @@ function init() {
 
   Hooks.on('init', () => {
     CONFIG.Actor.dataModels.characterV2 = CharacterModel
+
+    initializeGameSettings()
   })
 
   Hooks.on('ready', () => {

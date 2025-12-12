@@ -57,7 +57,7 @@
 
     <div class='gga-group'>
       <h2>{{localize 'GURPS.attributes'}}</h2>
-      {{#if (eq itemType 'equipment')}}
+      {{#if (or (eq itemType 'equipment') (eq itemType 'equipmentV2'))}}
         {{~>items}}
       {{/if}}
       {{#if (or (eq itemType 'feature') (eq itemType 'featureV2'))}}
@@ -66,7 +66,7 @@
       {{#if (or (eq itemType 'skill') (eq itemType 'skillV2'))}}
         {{>skill}}
       {{/if}}
-      {{#if (eq itemType 'spell')}}
+      {{#if (or (eq itemType 'spell') (eq itemType 'spellV2'))}}
         {{>spell}}
       {{/if}}
     </div>
