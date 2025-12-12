@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.9
+
+### Bugfixes
+
+- Note fields in Foundry items not deletable and filling up with data \#2399.
+
 ## Release 0.18.8 12/7/2025
 
 ### Bugfixes
