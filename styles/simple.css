@@ -1385,19 +1385,19 @@ div#other {
   padding-left: 50px;
 }
 
-.equipmentlist .headermenu i,
-#notes .headermenu i,
-#spells .headermenu i,
-#skills .headermenu i,
-#ranged .headermenu i,
-#advantages .headermenu i,
-#melee .headermenu i,
-#combat-trackers .trackerhead i,
-#conditionalmods .condmodhead i,
-#reactions .reacthead i,
-#location .hlhead i {
-  color: white;
+.equipmentlist .headermenu > i,
+#notes .headermenu > i,
+#spells .headermenu > i,
+#skills .headermenu > i,
+#ranged .headermenu > i,
+#advantages .headermenu > i,
+#melee .headermenu > i,
+#combat-trackers .trackerhead > i,
+#conditionalmods .condmodhead > i,
+#reactions .reacthead > i,
+#location .hlhead > i {
   margin-left: 0.5em;
+  color: white;
 }
 
 #encumbrance .option input,

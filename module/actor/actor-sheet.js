@@ -13,6 +13,7 @@ import { cleanTags } from './effect-modifier-popout.js'
 import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
+import GgaContextMenuV2 from '../ui/context-menu.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -605,7 +606,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         },
       },
     ]
-    new ContextMenu(html, '.notesmenu', notesMenuItems)
+    new GgaContextMenuV2(html, '.notesmenu', notesMenuItems)
 
     html.find('[data-onethird]').click(ev => {
       ev.preventDefault()
@@ -710,7 +711,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _createGlobalItemMenus(html) {
-    let opts = [
+    let menus = [
       this._createMenu(
         game.i18n.localize('GURPS.delete'),
         '<i class="fas fa-trash"></i>',
@@ -718,15 +719,15 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         this._isRemovable.bind(this)
       ),
     ]
-    new ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu' })
-    new ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu' })
-    new ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu' })
+    new GgaContextMenuV2(html, '.adsdraggable', menus)
+    new GgaContextMenuV2(html, '.skldraggable', menus)
+    new GgaContextMenuV2(html, '.spldraggable', menus)
   }
 
   _createEquipmentItemMenus(html) {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
-    let opts = [
+    let menus = [
       this._createMenu(game.i18n.localize('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsAscending'),
@@ -748,14 +749,14 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
-    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
+    new GgaContextMenuV2(html, '.equipmenucarried', [movedown, ...menus])
 
     let moveup = this._createMenu(
       game.i18n.localize('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
-    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
+    new GgaContextMenuV2(html, '.equipmenuother', [moveup, ...menus])
   }
 
   _editEquipment(target) {
@@ -1415,7 +1416,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
     eventname.split(' ').forEach(function (e) {
-      new ContextMenu(html, cssclass, menuitems, { eventName: e })
+      new GgaContextMenuV2(html, cssclass, menuitems, null, { eventName: e })
     })
   }
 
@@ -1955,11 +1956,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   }
 
   makeDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, this.deleteItemMenu(obj), { eventName: eventname })
+    new GgaContextMenuV2(html, cssclass, this.deleteItemMenu(obj))
   }
 
   makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, [this.addItemMenu(name, obj, path)], { eventName: eventname })
+    new GgaContextMenuV2(html, cssclass, [this.addItemMenu(name, obj, path)])
   }
 
   activateListeners(html) {
