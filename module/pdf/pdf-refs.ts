@@ -1,7 +1,7 @@
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.js'
-import { createGurpsPDFSheetViewer } from './sheet.js'
+import { GurpsPDFSheet } from './sheet.js'
 
-export const SJGProductMappings = {
+const SJGProductMappings: Record<string, string> = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
   ACT3: 'http://www.warehouse23.com/products/gurps-action-3-furious-fists',
   B: 'http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns',
@@ -65,16 +65,17 @@ export const SJGProductMappings = {
   'DFRPG:E': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
 }
 
-export function handleOnPdf(event) {
+function handleOnPdf(event: Event): void {
   event.preventDefault()
   event.stopPropagation()
-  let pdf = event.currentTarget.dataset?.pdf || event.currentTarget.innerText
+  const target = event.currentTarget as HTMLElement
+  const pdf = target.dataset?.pdf || target.innerText
   handlePdf(pdf)
 }
 
-export function handlePdf(links) {
+function handlePdf(links: string): void {
   // Just in case we get sent multiple links separated by commas, we will open them all
-  // or just the first found, depending on SETTING_PDF_OPEN_FIRST
+  // or just the first found, depending on SETTING_PDF_OPEN_FIRST.
   let success = false
   for (let link of links.split(',')) {
     if (!!success && isOpenFirstPDFSetting()) continue
@@ -82,6 +83,7 @@ export function handlePdf(links) {
     let i = t.indexOf(':')
     let book = ''
     let page = 0
+
     if (i > 0) {
       // Special case for refs like "PU8:12" or "DFRPG:A12"
       // First we need to check if after the colon is only numbers or has a letter
@@ -113,16 +115,20 @@ export function handlePdf(links) {
         page += 2
       } else page -= 335
     }
-    const pdfPages = []
-    game.journal.forEach(j => {
+
+    const pdfPages: foundry.documents.JournalEntryPage[] = []
+    game.journal!.forEach(j => {
       j.pages.forEach(p => {
         if (p.type === 'pdf') pdfPages.push(p)
       })
     })
-    let journalPage = null
-    if (pdfPages.length) journalPage = pdfPages.find(e => e.system.code === book)
+
+    let journalPage: foundry.documents.JournalEntryPage | undefined = undefined
+    if (pdfPages.length) journalPage = pdfPages.find(e => (e.system as any).code === book)
+
     if (journalPage) {
-      const viewer = createGurpsPDFSheetViewer(journalPage, page)
+      // @ts-expect-error pageNumber may not be typed in Foundry's API.
+      const viewer = new GurpsPDFSheet({ document: journalPage, pageNumber: page, mode: 'view' })
       viewer.render(true)
       success = true
     } else {
@@ -134,3 +140,5 @@ export function handlePdf(links) {
     }
   }
 }
+
+export { SJGProductMappings, handlePdf, handleOnPdf }
