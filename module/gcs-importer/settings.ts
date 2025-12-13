@@ -34,7 +34,7 @@ export default function initializeGameSettings() {
     name: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.name'),
     hint: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.hint'),
     scope: 'world',
-    config: true,
+    config: false,
     default: 2,
     type: Number,
     // @ts-expect-error: weird type nonsense
