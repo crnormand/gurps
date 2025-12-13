@@ -1311,7 +1311,7 @@ export class ActorImporter {
         saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot) return {}
+    if (saveprot === 'save') return {}
     else
       return {
         'system.-=hitlocations': null,
@@ -1334,13 +1334,11 @@ export class ActorImporter {
           label: game.i18n.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,
-          callback: () => true,
         },
         {
           action: 'overwrite',
           label: game.i18n.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
-          callback: () => false,
         },
       ],
     })
@@ -2140,7 +2138,7 @@ export class ActorImporter {
         saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot) return {}
+    if (saveprot === 'save') return {}
     else
       return {
         'system.-=hitlocations': null,
