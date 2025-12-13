@@ -72,7 +72,10 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     new foundry.applications.api.DialogV2(
       {
         window: { title: 'Fright Check' },
-        content: await renderTemplate('systems/gurps/templates/frightcheck-macro.hbs', data),
+        content: await foundry.applications.handlebars.renderTemplate(
+          'systems/gurps/templates/frightcheck-macro.hbs',
+          data
+        ),
         buttons: [
           {
             action: 'rollFrightCheck',
@@ -182,17 +185,20 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let margin = finaltarget - roll.total
     let failure = margin < 0
 
-    let content = await renderTemplate('systems/gurps/templates/frightcheck-results.hbs', {
-      WILLVar: WILLVar,
-      targetmods: targetmods,
-      finaltarget: finaltarget,
-      ruleOf14: ruleOf14,
-      rtotal: roll.total,
-      failure: failure,
-      margin: finaltarget - roll.total,
-      loaded: roll.isLoaded,
-      rolls: roll.dice[0].results.map(it => it.result).join(),
-    })
+    let content = await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/frightcheck-results.hbs',
+      {
+        WILLVar: WILLVar,
+        targetmods: targetmods,
+        finaltarget: finaltarget,
+        ruleOf14: ruleOf14,
+        rtotal: roll.total,
+        failure: failure,
+        margin: finaltarget - roll.total,
+        loaded: roll.isLoaded,
+        rolls: roll.dice[0].results.map(it => it.result).join(),
+      }
+    )
 
     await ChatMessage.create({
       type: CONST.CHAT_MESSAGE_STYLES.ROLL,

@@ -94,7 +94,7 @@ export class SlamCalculator {
     let result = this.format(resultData.effect.localizationKey, resultData)
     result = resultData.effect.createButton(result, resultData)
 
-    let html = await renderTemplate('systems/gurps/templates/slam-results.hbs', {
+    let html = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/slam-results.hbs', {
       id: this._generateUniqueId(),
       attacker: data.attackerToken?.name,
       attackerHp: data.attackerHp,

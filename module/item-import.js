@@ -9,7 +9,7 @@ export const AddImportEquipmentButton = async function (html) {
       window: {
         title: game.i18n.localize('GURPS.itemImport'),
       },
-      content: await renderTemplate('systems/gurps/templates/item-import.hbs'),
+      content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/item-import.hbs'),
       buttons: [
         {
           action: 'import',
