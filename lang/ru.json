@@ -675,7 +675,7 @@
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
       },
       "promptHPandFP": {
-        "content": "<p>Вы хотите <strong>сохранить</strong> текущие значения HP (<strong>{currentHP}</strong>) и FP (<strong>{currentFP}</strong>), или <strong>перезаписать</strong> их значениями из импортируемого файла (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
+        "content": "<p>Вы хотите <strong>оставить</strong> текущие значения HP (<strong>{currentHP}</strong>) и FP (<strong>{currentFP}</strong>), или <strong>перезаписать</strong> их значениями из импортируемого файла (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
         "title": "Перезаписать текущие HP и FP?"
       },
       "settings": {
@@ -1317,10 +1317,6 @@
     "settingImportHintBrowserImporter": "Отметьте это, если вы не размещаете свой экземпляр Foundry локально (вы размещаете его внешне, например, Forge). Этот диалог импорта может запомнить расположение вашего файла импорта во время сеанса (что означает, что если вы импортируете персонажа снова, в том же сеансе, он не будет вызывать диалог выбора файла).",
     "settingImportHintEncoding": "Если вы импортируете персонажа, и символы Unicode отображаются некорректно, измените эту настройку на кодировку UTF-8.",
     "settingImportHintExtendedValuesGCS": "Если включено, система будет импортировать расширенные значения для Стоимости и Веса при импорте пакетов снаряжения GCS.",
-    "settingImportHPAndFP": "Импорт: Текущие ЕЖ и ЕУ",
-    "settingImportHPAndFPAsk": "Спрашивать перед перезаписью во время импорта.",
-    "settingImportHPAndFPIgnore": "Игнорировать текущие ЕЖ и ЕУ из файла импорта.",
-    "settingImportHPAndFPUseFile": "Использовать текущие ЕЖ и ЕУ из файла импорта.",
     "settingImportIgnoreName": "Импорт: Игнорировать атрибут 'имя'",
     "settingLabelMookGenerator": "Редактор значений по умолчанию генератора статистов",
     "settingLabelShowItemImage": "Выберите черты для отображения изображений",
