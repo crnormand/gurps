@@ -8,7 +8,7 @@ class GgaContextMenuV2 extends foundry.applications.ux.ContextMenu {
     target: HTMLElement,
     selector: string | null | undefined,
     menuItems: ContextMenu.Entry<HTMLElement>[],
-    container?: HTMLElement,
+    container?: HTMLElement | null,
     options?: ContextMenu.ConstructorOptions<false>
   ) {
     // Force jQuery to be false.
