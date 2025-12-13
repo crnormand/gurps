@@ -1,10 +1,13 @@
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
 import fields = foundry.data.fields
 
-// @deprecated constant
-import { SETTING_IMPORT_HP_FP } from '../../lib/miscellaneous-settings.js'
-
-import { MODULE_NAME, OVERWRITE_HP_FP } from './types.js'
+import {
+  MODULE_NAME,
+  OVERWRITE_HP_FP,
+  OVERWRITE_BODYPLAN,
+  SETTING_IMPORT_HP_FP,
+  SETTING_IMPORT_BODYPLAN,
+} from './types.js'
 
 const SETTINGS = 'GURPS.importer.settings.title'
 
@@ -26,8 +29,26 @@ export default function initializeGameSettings() {
       1: game.i18n.localize('GURPS.importer.settings.overwriteHPandFP.no'),
       2: game.i18n.localize('GURPS.importer.settings.overwriteHPandFP.ask'),
     },
-    onChange: value => console.log(`Import of Current HP and FP : ${value}`),
   })
+
+  /* ---------------------------------------- */
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_IMPORT_BODYPLAN, {
+    name: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.name'),
+    hint: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.hint'),
+    scope: 'world',
+    config: false,
+    default: 2,
+    type: Number,
+    // @ts-expect-error: weird type nonsense
+    choices: {
+      0: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.yes'), // Yes, always overwrite
+      1: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.no'), // No, never overwrite
+      2: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.ask'), // Ask before overwriting
+    },
+  })
+
+  /* ---------------------------------------- */
 
   // Register new settings
   game.settings.register(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP, {
@@ -49,6 +70,30 @@ export default function initializeGameSettings() {
       // Old setting no longer shows up so set it through this one.
       const oldValue = value === 'yes' ? 0 : value === 'no' ? 1 : 2
       game.settings.set(GURPS.SYSTEM_NAME, SETTING_IMPORT_HP_FP, oldValue)
+    },
+  })
+
+  /* ---------------------------------------- */
+
+  game.settings.register(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN, {
+    name: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.name'),
+    hint: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.hint'),
+    scope: 'world',
+    config: false,
+    type: new fields.StringField({
+      required: true,
+      nullable: false,
+      choices: {
+        yes: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.yes'), // Yes, always overwrite
+        no: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.no'), // No, never overwrite
+        ask: game.i18n.localize('GURPS.importer.settings.overwriteBodyPlan.ask'), // Ask before overwriting
+      },
+      initial: 'ask',
+    }),
+    onChange: value => {
+      // Old setting no longer shows up so set it through this one.
+      const oldValue = value === 'yes' ? 0 : value === 'no' ? 1 : 2
+      game.settings.set(GURPS.SYSTEM_NAME, SETTING_IMPORT_BODYPLAN, oldValue)
     },
   })
 
