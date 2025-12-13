@@ -238,9 +238,9 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const promptSetting = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP)
-    if (promptSetting === 'yes') return // Automatically overwrite from file
-    if (promptSetting === 'no') {
+    const automaticOverwrite = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP)
+    if (automaticOverwrite === 'yes') return // Automatically overwrite from file
+    if (automaticOverwrite === 'no') {
       // Automatically ignore values from file
       this.output.HP!.value = currentHP
       this.output.FP!.value = currentFP
@@ -361,10 +361,10 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const promptSetting = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN)
-    if (promptSetting === 'yes')
+    const automaticOverwrite = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN)
+    if (automaticOverwrite === 'yes')
       return // Automatically overwrite from file.
-    else if (promptSetting === 'no') {
+    else if (automaticOverwrite === 'no') {
       // Automatically ignore values from file.
       this.output.additionalresources!.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
