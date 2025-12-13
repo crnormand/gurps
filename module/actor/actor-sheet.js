@@ -144,9 +144,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
-    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     this._createGlobalItemMenus(html)
-    // }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -606,7 +604,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         },
       },
     ]
-    new GgaContextMenuV2(html, '.notesmenu', notesMenuItems)
+
+    new GgaContextMenuV2(html[0], '.notesmenu', notesMenuItems)
 
     html.find('[data-onethird]').click(ev => {
       ev.preventDefault()
@@ -719,9 +718,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         this._isRemovable.bind(this)
       ),
     ]
-    new GgaContextMenuV2(html, '.adsdraggable', menus)
-    new GgaContextMenuV2(html, '.skldraggable', menus)
-    new GgaContextMenuV2(html, '.spldraggable', menus)
+    new GgaContextMenuV2(html[0], '.adsdraggable', menus)
+    new GgaContextMenuV2(html[0], '.skldraggable', menus)
+    new GgaContextMenuV2(html[0], '.spldraggable', menus)
   }
 
   _createEquipmentItemMenus(html) {
@@ -749,18 +748,18 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
-    new GgaContextMenuV2(html, '.equipmenucarried', [movedown, ...menus])
+    new GgaContextMenuV2(html[0], '.equipmenucarried', [movedown, ...menus])
 
     let moveup = this._createMenu(
       game.i18n.localize('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
-    new GgaContextMenuV2(html, '.equipmenuother', [moveup, ...menus])
+    new GgaContextMenuV2(html[0], '.equipmenuother', [moveup, ...menus])
   }
 
   _editEquipment(target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
     this.editEquipment(this.actor, path, o)
   }
@@ -775,12 +774,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _deleteItem(target) {
-    let key = target[0].dataset.key
-    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-    //   if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-    //   else GURPS.removeKey(this.actor, key)
-    //   this.actor.refreshDR().then()
-    // } else {
+    let key = target.dataset.key
     let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
     if (!!item) {
       this.actor._removeItemAdditions(item.id).then(() => {
@@ -789,13 +783,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           this.actor.refreshDR().then()
         })
       })
-      // }
     }
   }
 
   _sortContentAscending(target) {
-    this._sortContent(target[0].dataset.key, 'contains', false)
-    this._sortContent(target[0].dataset.key, 'collapsed', false)
+    this._sortContent(target.dataset.key, 'contains', false)
+    this._sortContent(target.dataset.key, 'collapsed', false)
   }
 
   async _sortContent(parentpath, objkey, reverse) {
@@ -814,19 +807,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _sortContentDescending(target) {
-    this._sortContent(target[0].dataset.key, 'contains', true)
-    this._sortContent(target[0].dataset.key, 'collapsed', true)
+    this._sortContent(target.dataset.key, 'contains', true)
+    this._sortContent(target.dataset.key, 'collapsed', true)
   }
 
   _moveEquipment(list, target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     this.actor.moveEquipment(path, list)
-  }
-
-  _hasContents(target) {
-    let path = target[0].dataset.key
-    let elements = $(target).siblings(`.desc[data-key="${path}.contains"]`)
-    return elements.length > 0
   }
 
   /**
@@ -835,7 +822,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
    * @returns true if the object is a container ... ie, it has a non-empty contains collection
    */
   _isSortable(includeCollapsed, target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     let x = GURPS.decode(this.actor, path)
     if (x?.contains && Object.keys(x.contains).length > 1) return true
     if (includeCollapsed) return x?.collapsed && Object.keys(x.collapsed).length > 1
@@ -843,7 +830,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _isRemovable(target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     let ac = GURPS.decode(this.actor, path)
     let item
     if (ac.itemid) {
@@ -887,12 +874,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
-          // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
           obj.save = true
           let payload = obj.toItemData(this.actor, '')
           const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
           obj.itemid = item._id
-          // }
           if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
         }
         let o = GURPS.decode(this.actor, path) || {}
@@ -1416,7 +1401,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
     eventname.split(' ').forEach(function (e) {
-      new GgaContextMenuV2(html, cssclass, menuitems, null, { eventName: e })
+      new GgaContextMenuV2(html[0], cssclass, menuitems, null, { eventName: e })
     })
   }
 
@@ -1956,11 +1941,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   }
 
   makeDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
-    new GgaContextMenuV2(html, cssclass, this.deleteItemMenu(obj))
+    new GgaContextMenuV2(html[0], cssclass, this.deleteItemMenu(obj))
   }
 
   makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
-    new GgaContextMenuV2(html, cssclass, [this.addItemMenu(name, obj, path)])
+    new GgaContextMenuV2(html[0], cssclass, [this.addItemMenu(name, obj, path)])
   }
 
   activateListeners(html) {
