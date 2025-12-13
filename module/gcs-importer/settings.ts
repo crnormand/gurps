@@ -1,10 +1,13 @@
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
 import fields = foundry.data.fields
 
-// @deprecated constant
-import { SETTING_IMPORT_HP_FP, SETTING_IMPORT_BODYPLAN } from '../../lib/miscellaneous-settings.js'
-
-import { MODULE_NAME, OVERWRITE_HP_FP, OVERWRITE_BODYPLAN } from './types.js'
+import {
+  MODULE_NAME,
+  OVERWRITE_HP_FP,
+  OVERWRITE_BODYPLAN,
+  SETTING_IMPORT_HP_FP,
+  SETTING_IMPORT_BODYPLAN,
+} from './types.js'
 
 const SETTINGS = 'GURPS.importer.settings.title'
 
