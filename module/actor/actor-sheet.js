@@ -590,7 +590,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         name: 'Edit',
         icon: "<i class='fas fa-edit'></i>",
         callback: e => {
-          let path = e[0].dataset.key
+          let path = e.dataset.key
           let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
           this.editNotes(this.actor, path, o)
         },
@@ -599,13 +599,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          this.actor.deleteNote(e[0].dataset.key)
-          // GURPS.removeKey(this.actor, e[0].dataset.key)
+          this.actor.deleteNote(e.dataset.key)
         },
       },
     ]
 
-    new GgaContextMenuV2(html[0], '.notesmenu', notesMenuItems)
+    new GgaContextMenuV2(html[0], '.notesmenu', notesMenuItems, null, { fixed: true })
 
     html.find('[data-onethird]').click(ev => {
       ev.preventDefault()
