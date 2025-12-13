@@ -168,8 +168,7 @@ export default class ModifierBucketEditor extends Application {
 
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
 
-    GurpsWiring.hookupGurps(html)
-    GurpsWiring.hookupGurpsRightClick(html)
+    GurpsWiring.hookupAllEvents(html[0])
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))

@@ -18,18 +18,21 @@ export default class DamageChat {
   static damageDragImage = null
 
   /**
-   * @param {{ data: { flags: { transfer: string; }; }; }} app
-   * @param {JQuery<HTMLElement>} html
-   * @param {any} _msg
+   * @param {ChatMessage} app
+   * @param {HTMLElement} html
+   * @param {MessageData} _msg
    */
   static async _renderDamageChat(app, html, _msg) {
-    if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
+    // Convert jQuery to HTMLElement if needed for backward compatibility
+    if (html instanceof jQuery) html = html[0]
+
+    if (!html.querySelector('.damage-chat-message')) return // this is not a damage chat message
 
     app.flags.gurps.transfer = app.flags.gurps.transfer || {}
     let transfer = app.flags.gurps.transfer
 
     // for each damage-message, set the drag-and-drop events and data
-    let damageMessages = html.find('.damage-message')
+    let damageMessages = html.querySelectorAll('.damage-message')
     if (!!damageMessages && damageMessages.length > 0) {
       for (let index = 0; index < damageMessages.length; index++) {
         let message = damageMessages[index]
@@ -39,7 +42,7 @@ export default class DamageChat {
     } // end-if (!!damageMessages && damageMessages.length)
 
     // for the damage-all-message, set the drag-and-drop events and data
-    let allDamageMessage = html.find('.damage-all-message')
+    let allDamageMessage = html.querySelectorAll('.damage-all-message')
     if (!!allDamageMessage && allDamageMessage.length == 1) {
       let message = allDamageMessage[0]
 
@@ -47,13 +50,13 @@ export default class DamageChat {
     }
 
     // If there was a target, enable the GM's apply button
-    let button = html.find(':button.apply-all')
-    button.hide()
+    let button = html.querySelector(':button.apply-all')
+    button.style.display = 'none'
     if (!!transfer.userTarget && transfer.userTarget != null) {
       if (game.user.isGM) {
-        button.show()
+        button.style.display = 'block'
 
-        button.on('click', ev => {
+        button.addEventListener('click', ev => {
           // get actor from id
           let token = canvas.tokens?.get(transfer.userTarget) // ...
           // get payload; its either the "all damage" payload or ...

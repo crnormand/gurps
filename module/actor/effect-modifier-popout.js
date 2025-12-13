@@ -180,7 +180,7 @@ export class EffectModifierPopout extends Application {
   activateListeners(html) {
     super.activateListeners(html)
 
-    GurpsWiring.hookupGurps(html)
+    GurpsWiring.hookupGurps(html[0])
 
     html.find('a.gurpslink').on('contextmenu', ev => this.onRightClick(ev))
     html.find('.gurpslink').on('contextmenu', ev => this.onRightClick(ev))
