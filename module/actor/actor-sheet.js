@@ -13,7 +13,7 @@ import { cleanTags } from './effect-modifier-popout.js'
 import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
-import GgaContextMenuV2 from '../ui/context-menu.js'
+import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

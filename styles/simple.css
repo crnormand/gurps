@@ -1396,8 +1396,8 @@ div#other {
 #conditionalmods .condmodhead > i,
 #reactions .reacthead > i,
 #location .hlhead > i {
-  margin-left: 0.5em;
   color: white;
+  margin-left: 0.5em;
 }
 
 #encumbrance .option input,

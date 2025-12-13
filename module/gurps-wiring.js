@@ -1,6 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import GgaContextMenuV2 from './ui/context-menu.js'
+import { GgaContextMenuV2 } from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
@@ -69,26 +69,25 @@ export default class GurpsWiring {
     let names = users.map(u => u.name).join(' ')
 
     let container = target.closest('section.window-content')
-    console.assert(container instanceof HTMLElement)
 
     new GgaContextMenuV2(
       target,
       '.pdflink',
       [
         {
-          name: `Send PDF:${text} to Everyone`,
+          name: game.i18n.format('GURPS.contextmenu.pdf.sendToEveryone', { text: text }),
           icon: '<i class="fas fa-user-friends"></i>',
           callback: () => GURPS.sendOtfMessage(otf, false),
           condition: () => game.user.isGM,
         },
         {
-          name: `Whisper PDF:${text} to ${names}`,
+          name: game.i18n.format('GURPS.contextmenu.pdf.whisperToOwners', { text: text, owners: names }),
           icon: '<i class="fas fa-user-secret"></i>',
           callback: () => GURPS.sendOtfMessage(otf, false, users),
           condition: () => game.user.isGM && users.length > 0,
         },
         {
-          name: `Copy PDF:${text} to Chat`,
+          name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
           icon: '<i class="far fa-comment"></i>',
           callback: () => {
             $(document).find('#chat-message').val(otf)
