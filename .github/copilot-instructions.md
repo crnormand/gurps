@@ -243,6 +243,8 @@ export const Combat: GurpsModule = {
 }
 ```
 
+- Do not use default exports; prefer named exports for clarity.
+
 ### Error Handling and Validation
 
 #### Type Guards
