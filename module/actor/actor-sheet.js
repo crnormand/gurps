@@ -1940,11 +1940,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   }
 
   makeDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
-    new GgaContextMenuV2(html[0], cssclass, this.deleteItemMenu(obj))
+    new GgaContextMenuV2(html[0], cssclass, this.deleteItemMenu(obj), null, { eventName: eventname })
   }
 
   makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
-    new GgaContextMenuV2(html[0], cssclass, [this.addItemMenu(name, obj, path)])
+    new GgaContextMenuV2(html[0], cssclass, [this.addItemMenu(name, obj, path)], null, { eventName: eventname })
   }
 
   activateListeners(html) {
