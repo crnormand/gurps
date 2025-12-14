@@ -925,16 +925,18 @@ export class GurpsActor extends Actor {
   sendChatMessage(msg) {
     let self = this
 
-    renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] }).then(content => {
-      let users = self.getOwners()
-      let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+    foundry.applications.handlebars
+      .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] })
+      .then(content => {
+        let users = self.getOwners()
+        let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
 
-      let messageData = {
-        content: content,
-        whisper: ids || null,
-      }
-      ChatMessage.create(messageData)
-    })
+        let messageData = {
+          content: content,
+          whisper: ids || null,
+        }
+        ChatMessage.create(messageData)
+      })
   }
 
   async internalUpdate(data, context) {
@@ -1519,7 +1521,9 @@ export class GurpsActor extends Actor {
   async promptEquipmentQuantity(eqt, title) {
     return await foundry.applications.api.DialogV2.prompt({
       window: { title: title },
-      content: await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt }),
+      content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/transfer-equipment.hbs', {
+        eqt: eqt,
+      }),
       ok: {
         label: game.i18n.localize('GURPS.ok'),
         callback: (_, button, __) => button.form.elements.qty.valueAsNumber,

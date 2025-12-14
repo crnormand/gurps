@@ -74,7 +74,7 @@ export class ActorImporter {
         width: 400,
         height: 'auto',
       },
-      content: await renderTemplate(
+      content: await foundry.applications.handlebars.renderTemplate(
         'systems/gurps/templates/import-gcs-v1-data.hbs',
         SmartImporter.getTemplateOptions(this.actor)
       ),
@@ -137,13 +137,16 @@ export class ActorImporter {
 
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
-        lines: msg,
-        version: version,
-        GCAVersion: GCAVersion,
-        GCSVersion: this.GCSVersion,
-        url: GURPS.USER_GUIDE_URL,
-      })
+      let content = await foundry.applications.handlebars.renderTemplate(
+        'systems/gurps/templates/chat-import-actor-errors.hbs',
+        {
+          lines: msg,
+          version: version,
+          GCAVersion: GCAVersion,
+          GCSVersion: this.GCSVersion,
+          url: GURPS.USER_GUIDE_URL,
+        }
+      )
       ChatMessage.create({
         content: content,
         user: game.user.id,
@@ -205,13 +208,16 @@ export class ActorImporter {
           message: err.message,
         })
       )
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
-        lines: [msg],
-        version: this.GC,
-        GCAVersion: GCAVersion,
-        GCSVersion: this.GCSVersion,
-        url: GURPS.USER_GUIDE_URL,
-      })
+      let content = await foundry.applications.handlebars.renderTemplate(
+        'systems/gurps/templates/chat-import-actor-errors.hbs',
+        {
+          lines: [msg],
+          version: this.GC,
+          GCAVersion: GCAVersion,
+          GCSVersion: this.GCSVersion,
+          url: GURPS.USER_GUIDE_URL,
+        }
+      )
       ui.notifications?.warn(msg)
       let chatData = {
         user: game.user.id,
@@ -269,13 +275,16 @@ export class ActorImporter {
       let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
-        lines: msg,
-        version: 'GCS Direct',
-        GCAVersion: GCAVersion,
-        GCSVersion: this.GCSVersion,
-        url: GURPS.USER_GUIDE_URL,
-      })
+      let content = await foundry.applications.handlebars.renderTemplate(
+        'systems/gurps/templates/chat-import-actor-errors.hbs',
+        {
+          lines: msg,
+          version: 'GCS Direct',
+          GCAVersion: GCAVersion,
+          GCSVersion: this.GCSVersion,
+          url: GURPS.USER_GUIDE_URL,
+        }
+      )
 
       let chatData = {
         user: game.user.id,
@@ -400,13 +409,16 @@ export class ActorImporter {
     }
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
-        lines: msg,
-        version: version,
-        GCAVersion: GCAVersion,
-        GCSVersion: this.GCSVersion,
-        url: GURPS.USER_GUIDE_URL,
-      })
+      let content = await foundry.applications.handlebars.renderTemplate(
+        'systems/gurps/templates/chat-import-actor-errors.hbs',
+        {
+          lines: msg,
+          version: version,
+          GCAVersion: GCAVersion,
+          GCSVersion: this.GCSVersion,
+          url: GURPS.USER_GUIDE_URL,
+        }
+      )
 
       ChatMessage.create({
         content: content,
@@ -497,13 +509,16 @@ export class ActorImporter {
       let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>')) // FIXME: Why suppressMessage is not available here?
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
-        lines: msg,
-        version: version,
-        GCAVersion: GCAVersion,
-        GCSVersion: this.GCSVersion,
-        url: GURPS.USER_GUIDE_URL,
-      })
+      let content = await foundry.applications.handlebars.renderTemplate(
+        'systems/gurps/templates/chat-import-actor-errors.hbs',
+        {
+          lines: msg,
+          version: version,
+          GCAVersion: GCAVersion,
+          GCSVersion: this.GCSVersion,
+          url: GURPS.USER_GUIDE_URL,
+        }
+      )
 
       let chatData = {
         user: game.user.id,

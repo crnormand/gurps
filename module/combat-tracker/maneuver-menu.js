@@ -29,7 +29,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
   currentManeuver.addClass('maneuver-badge')
   const maneuvers = Maneuvers.getAll()
 
-  const menuHtml = await renderTemplate('systems/gurps/templates/maneuver-menu.hbs', {
+  const menuHtml = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/maneuver-menu.hbs', {
     combatant,
     maneuvers,
   })
@@ -65,7 +65,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
   const label = Maneuvers.getManeuver(actions.currentManeuver).label
   const allIcons = TokenActions.getManeuverIcons(actions.currentManeuver)
   const maneuverTooltip = $(
-    await renderTemplate('systems/gurps/templates/maneuver-button-tooltip.hbs', {
+    await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/maneuver-button-tooltip.hbs', {
       label,
       maxMove,
       allIcons,

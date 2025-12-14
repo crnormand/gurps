@@ -227,16 +227,18 @@ class ChatProcessorRegistry {
   _sendPriv(priv) {
     if (priv.length === 0) return
     let lines = priv.slice()
-    renderTemplate('systems/gurps/templates/chat-processing.hbs', {
-      lines: lines,
-    }).then(content => {
-      ChatMessage.create({
-        alreadyProcessed: true,
-        content: content,
-        user: game.user?.id,
-        whisper: [game.user?.id || ''],
+    foundry.applications.handlebars
+      .renderTemplate('systems/gurps/templates/chat-processing.hbs', {
+        lines: lines,
       })
-    })
+      .then(content => {
+        ChatMessage.create({
+          alreadyProcessed: true,
+          content: content,
+          user: game.user?.id,
+          whisper: [game.user?.id || ''],
+        })
+      })
     priv.length = 0
   }
 
@@ -250,12 +252,14 @@ class ChatProcessorRegistry {
     let d = foundry.utils.duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
     d.alreadyProcessed = true
     let lines = pub.slice()
-    renderTemplate('systems/gurps/templates/chat-processing.hbs', {
-      lines: lines,
-    }).then(content => {
-      d.content = content
-      ChatMessage.create(d)
-    })
+    foundry.applications.handlebars
+      .renderTemplate('systems/gurps/templates/chat-processing.hbs', {
+        lines: lines,
+      })
+      .then(content => {
+        d.content = content
+        ChatMessage.create(d)
+      })
     pub.length = 0
   }
 
