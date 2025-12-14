@@ -30,7 +30,11 @@ class GgaContextMenuV2 extends foundry.applications.ux.ContextMenu {
     super._injectMenu(menu, target)
 
     const container = this.container || target.parentElement
-    const containerRect = container!.getBoundingClientRect()
+    if (!container) {
+      // If there is no container, we cannot constrain the menu position.
+      return
+    }
+    const containerRect = container.getBoundingClientRect()
 
     const menuRect = menu.getBoundingClientRect()
     const parentRect = target.getBoundingClientRect()
