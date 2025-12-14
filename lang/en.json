@@ -674,18 +674,29 @@
         "title": "Import Character Data for {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
       },
+      "promptBodyPlan": {
+        "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>",
+        "title": "Overwrite Current BodyPlan?"
+      },
       "promptHPandFP": {
         "content": "<p>Do you want to <strong>Keep</strong> the current HP (<strong>{currentHP}</strong>) and FP (<strong>{currentFP}</strong>) values, or <strong>Overwrite</strong> them with the values from the import file (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
         "title": "Overwrite Current HP and FP?"
       },
       "settings": {
         "hint": "Settings for the GURPS Character Importer",
+        "overwriteBodyPlan": {
+          "ask": "Ask each time during import",
+          "hint": "NOTE: Current body plan is always read from the file during the initial import.",
+          "name": "Overwrite Body Plan",
+          "no": "Never overwrite from file",
+          "yes": "Always overwrite from file"
+        },
         "overwriteHPandFP": {
-          "ask": "Ask each time during import.",
+          "ask": "Ask each time during import",
           "hint": "NOTE: Current HP and FP are always read from the file during the initial import.",
           "name": "Overwrite HP & FP",
-          "no": "Never overwrite from file.",
-          "yes": "Always overwrite from file."
+          "no": "Never overwrite from file",
+          "yes": "Always overwrite from file"
         },
         "title": "Importer Settings"
       }
@@ -720,7 +731,6 @@
     "importOldGCSFile": "Your character was saved with an older version of GCS, which does not output some required attributes. Update GCS to at least version 4.36, open and save your character file, then try again.",
     "importOnImport": "On Import",
     "importReplace": "Replace",
-    "importSaveOverwriteBodyPlan": "<div><p>Do you want to:</p><p>&nbsp;&bull;&nbsp;<strong>Save</strong> the current body plan ({curentBodyPlan}) value</p><p>Or:</p><p>&nbsp;&bull;&nbsp;<strong>Overwrite</strong> it with the imported body plan, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Check the Users Guide for details on where to get the latest version.",
     "importSelected": "Import Selected",
     "importSelectFileDescribeAction": "This import will:",
@@ -1304,16 +1314,11 @@
     "settingHintUseQuickRolls": "When enabled, system will show a Quick Roll button in Combat Tracker.",
     "settingHintUseQuintessence": "If enabled, adds the Quintessence attribute, and Quintessence Points become available to use as a Resource Tracker.",
     "settingHintUseTaggedModifiers": "If checked, the system will automatically add tagged modifiers to the roll.",
-    "settingImportBodyPlan": "Import: Body Plan/Hit Locations",
-    "settingImportBodyPlanAsk": "Ask before overwriting during import.",
-    "settingImportBodyPlanIgnore": "Ignore the import file's Body Plan.",
-    "settingImportBodyPlanUseFile": "Use the import file's Body Plan.",
     "settingImportBrowserImporter": "Use non-locally hosted import dialog",
     "settingImportEncoding": "Import file encoding",
     "settingImportEncodingISO8859": "ISO-8859-1 (default)",
     "settingImportEncodingUTF8": "UTF-8",
     "settingImportExtendedValuesGCS": "Import Extended Values from GCS Compendiums",
-    "settingImportHintBodyPlan": "NOTE: The Body Plan is always read from the file during the initial import.",
     "settingImportHintBrowserImporter": "Check this if you are not hosting your Foundry instance locally (you are hosting externally, i.e. Forge). This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
     "settingImportHintEncoding": "If you are importing a character and the unicode characters are not displaying correctly, change this setting to UTF-8 encoding.",
     "settingImportHintExtendedValuesGCS": "If enabled, system will import the extended values for Cost and Weight when importing GCS Equipment Packs.",

@@ -1311,7 +1311,7 @@ export class ActorImporter {
         saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot) return {}
+    if (saveprot === 'save') return {}
     else
       return {
         'system.-=hitlocations': null,
@@ -1322,10 +1322,10 @@ export class ActorImporter {
 
   async getSaveOrOverwriteBodyPlan(saveprot, currentPlan, newPlan) {
     return await foundry.applications.api.DialogV2.wait({
-      window: { title: game.i18n.localize('GURPS.importHitLocationBodyPlan') },
-      content: game.i18n.format('GURPS.importSaveOverwriteBodyPlan', {
-        curentBodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + currentPlan)}`,
-        bodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + newPlan)}`,
+      window: { title: game.i18n.localize('GURPS.importer.promptBodyPlan.title') },
+      content: game.i18n.format('GURPS.importer.promptBodyPlan.content', {
+        currentBodyPlan: `${game.i18n.localize('GURPS.BODYPLAN' + currentPlan)}`,
+        bodyplan: `${game.i18n.localize('GURPS.BODYPLAN' + newPlan)}`,
       }),
       modal: true,
       buttons: [
@@ -1334,13 +1334,11 @@ export class ActorImporter {
           label: game.i18n.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,
-          callback: () => true,
         },
         {
           action: 'overwrite',
           label: game.i18n.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
-          callback: () => false,
         },
       ],
     })
@@ -2140,7 +2138,7 @@ export class ActorImporter {
         saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
       }
     }
-    if (saveprot) return {}
+    if (saveprot === 'save') return {}
     else
       return {
         'system.-=hitlocations': null,
