@@ -141,6 +141,9 @@ declare module 'fvtt-types/configuration' {
     'gurps.importer.overwrite-hp-fp': foundry.data.fields.StringField<{
       choices: { yes: string; no: string; ask: string }
     }>
+    'gurps.importer.overwrite-bodyplan': foundry.data.fields.StringField<{
+      choices: { yes: string; no: string; ask: string }
+    }>
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.convert-ranged': boolean
@@ -174,5 +177,6 @@ declare module 'fvtt-types/configuration' {
     'gurps.show-the-math': boolean
     'gurps.default-add-action': 'apply' | 'quiet' | 'target'
     'gurps.import_hp_fp': number
+    'gurps.import_bodyplan': number
   }
 }

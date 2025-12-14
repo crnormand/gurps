@@ -8,10 +8,13 @@
 export default async function selectTarget(targets, selectOptions = { selectAll: false, single: false }) {
   return await foundry.applications.api.DialogV2.prompt({
     window: { title: game.i18n.localize('GURPS.selectToken'), resizable: true },
-    content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
-      tokens: targets,
-      single: selectOptions.single,
-    }),
+    content: await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/apply-damage/select-token.hbs',
+      {
+        tokens: targets,
+        single: selectOptions.single,
+      }
+    ),
     ok: {
       callback: (event, button, dialog) => {
         const allTokens = button.form.elements.tokens

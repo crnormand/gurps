@@ -21,7 +21,7 @@ export default async function getUserInput(options) {
         width: options.width ?? 800,
         height: options.height ?? 'auto',
       },
-      content: await renderTemplate('systems/gurps/templates/get-user-input.hbs', {
+      content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/get-user-input.hbs', {
         block: options.content || '',
         placeholder: options.placeholder || 'GURPS.enterTextHere',
       }),

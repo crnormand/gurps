@@ -497,7 +497,7 @@ export default class ApplyDamageDialog extends Application {
   }
 
   async _renderTemplate(template, data) {
-    return renderTemplate('systems/gurps/templates/apply-damage/' + template, data)
+    return foundry.applications.handlebars.renderTemplate('systems/gurps/templates/apply-damage/' + template, data)
   }
 
   async _handleTestSaveEffectButtonClick(ev) {

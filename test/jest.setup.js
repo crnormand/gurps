@@ -294,7 +294,6 @@ global.foundry = {
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
-      // @ts-ignore
       renderTemplate: async () => '',
     },
     ux: {

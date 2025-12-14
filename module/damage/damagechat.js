@@ -378,7 +378,7 @@ export default class DamageChat {
     let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
     damageType = !!diceData.extdamagetype ? `${damageType} ${diceData.extdamagetype}` : damageType
 
-    let html = await renderTemplate('systems/gurps/templates/damage-message.hbs', {
+    let html = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/damage-message.hbs', {
       draggableData: draggableData,
       rolled: diceData.rolled,
       dice: diceData.diceText,

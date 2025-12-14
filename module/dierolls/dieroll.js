@@ -378,7 +378,7 @@ export async function doRoll({
       position: {
         height: 'auto',
       },
-      content: await renderTemplate(`systems/gurps/templates/${template}`, {
+      content: await foundry.applications.handlebars.renderTemplate(`systems/gurps/templates/${template}`, {
         formula: formula,
         thing: thing,
         target: origtarget,
@@ -629,7 +629,10 @@ async function _doRoll({
     await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)
   }
 
-  let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
+  let message = await foundry.applications.handlebars.renderTemplate(
+    'systems/gurps/templates/die-roll-chat-message.hbs',
+    chatdata
+  )
 
   messageData.content = message
   messageData.rolls = [roll]

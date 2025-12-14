@@ -36,11 +36,14 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
 
   const choice = await foundry.applications.api.DialogV2.wait({
     window: { title: game.i18n.localize('GURPS.resolveDamage.title') },
-    content: await renderTemplate('systems/gurps/templates/apply-damage/resolve-damage-roll.hbs', {
-      otf: otf,
-      rolls: 2,
-      def: GURPS.lastTargetedRoll?.rofrcl || 2,
-    }),
+    content: await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/apply-damage/resolve-damage-roll.hbs',
+      {
+        otf: otf,
+        rolls: 2,
+        def: GURPS.lastTargetedRoll?.rofrcl || 2,
+      }
+    ),
     buttons: buttons,
     default: 'send',
   })

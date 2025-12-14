@@ -680,12 +680,19 @@
       },
       "settings": {
         "hint": "Configurações para o Importador de Personagens GURPS",
+        "overwriteBodyPlan": {
+          "ask": "Perguntar a cada importação",
+          "hint": "NOTA: O plano corporal atual é sempre lido do arquivo durante a importação inicial.",
+          "name": "Sobrescrever Plano Corporal",
+          "no": "Nunca sobrescrever do arquivo",
+          "yes": "Sempre sobrescrever do arquivo"
+        },
         "overwriteHPandFP": {
-          "ask": "Perguntar a cada importação.",
+          "ask": "Perguntar a cada importação",
           "hint": "NOTA: HP e FP atuais sempre são lidos do arquivo durante a importação inicial.",
           "name": "Sobrescrever HP e FP",
-          "no": "Nunca sobrescrever do arquivo.",
-          "yes": "Sempre sobrescrever do arquivo."
+          "no": "Nunca sobrescrever do arquivo",
+          "yes": "Sempre sobrescrever do arquivo"
         },
         "title": "Configurações do Importador"
       }
@@ -720,7 +727,6 @@
     "importOldGCSFile": "Seu personagem foi salvo com uma versão mais antiga do GCS, que não exporta alguns dos atributos necessários. Atualize o GCS para no mínimo a versão 4.36, abra e salve o arquivo de personagem e então tente novamente.",
     "importOnImport": "Ao Importar",
     "importReplace": "Substituir",
-    "importSaveOverwriteBodyPlan": "<div><p>Você deseja:</p><p>&nbsp;&bull;&nbsp;<strong>Salvar</strong> o tipo de corpo atual ({curentBodyPlan})</p><p>Ou:</p><p>&nbsp;&bull;&nbsp;<strong>Sobrescrever</strong> com o tipo de corpo importado, ({bodyPlan})?</p></div>",
     "importSeeUsersGuide": "Verifique o Manual do Usuário para detalhes de onde conseguir a última versão.",
     "importSelected": "Importar Selecionados",
     "importSelectFileDescribeAction": "Esta importação irá:",
@@ -1304,16 +1310,11 @@
     "settingHintUseQuickRolls": "Quando ativado, o sistema exibirá um botão de Rolagem Rápida no Rastreador de Combate.",
     "settingHintUseQuintessence": "Se ativado, adiciona o atributo Quintessência, e Pontos de Quintessência se tornam disponíveis para uso como um Controle de Recursos.",
     "settingHintUseTaggedModifiers": "Se ativado, o sistema adicionará automaticamente os modificadores marcados ao teste.",
-    "settingImportBodyPlan": "Importar: Tipo de Corpo/Pontos de Impacto",
-    "settingImportBodyPlanAsk": "Perguntar antes de sobrescrever durante a importação.",
-    "settingImportBodyPlanIgnore": "Ignorar o Tipo de Corpo que consta no arquivo de importação.",
-    "settingImportBodyPlanUseFile": "Utilizar o Tipo de Corpo que consta no arquivo de importação.",
     "settingImportBrowserImporter": "Utilizar janela de importação para não hospedado localmente",
     "settingImportEncoding": "Importar codificação de arquivo",
     "settingImportEncodingISO8859": "ISO-8859-1 (default)",
     "settingImportEncodingUTF8": "UTF-8",
     "settingImportExtendedValuesGCS": "Importar valores estendidos de Compendiums GCS",
-    "settingImportHintBodyPlan": "NOTA: O Tipo de Corpo sempre é copiado do arquivo durante a primeira importação.",
     "settingImportHintBrowserImporter": "Marque isso se você NÃO estiver hospedando localmente sua instância do Foundry (você está hospedando externamente, como por exemplo na Oracle Cloud). Dessa forma, a janela de importação se lembrará da localização dos arquivos importados durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, a janela de Arquivo não precisará ser aberta).",
     "settingImportHintEncoding": "Se você estiver importando um personagem e caracteres unicode não estiverem sendo exibidos, modifique esta configuração para codificação UTF-8.",
     "settingImportHintExtendedValuesGCS": "Se ativado, o sistema importará os valores estendidos de Custo e Peso ao importar Pacotes de Equipamentos GCS.",
