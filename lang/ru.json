@@ -674,6 +674,10 @@
         "title": "Импортировать данные персонажа для {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
       },
+      "promptBodyPlan": {
+        "content": "<p>Вы хотите <strong>Оставить</strong> текущую форму тела (<strong>{currentBodyPlan}</strong>), или <strong>Перезаписать</strong> её формой тела из импортируемого файла (<strong>{bodyplan}</strong>)?</p>",
+        "title": "Перезаписать текущую форму тела?"
+      },
       "promptHPandFP": {
         "content": "<p>Вы хотите <strong>оставить</strong> текущие значения HP (<strong>{currentHP}</strong>) и FP (<strong>{currentFP}</strong>), или <strong>перезаписать</strong> их значениями из импортируемого файла (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>)?</p>",
         "title": "Перезаписать текущие HP и FP?"
