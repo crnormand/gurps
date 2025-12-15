@@ -1,6 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import GgaContextMenuV2 from './ui/context-menu.js'
+import { GgaContextMenuV2 } from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
@@ -61,38 +61,42 @@ export default class GurpsWiring {
   static createPdfLinkMenu(link) {
     console.assert(link instanceof HTMLElement)
     let text = link.innerText
-    let parent = link.parentElement
+    let target = link.parentElement
 
     let actor = GURPS.LastActor
     let users = actor?.getOwners()?.filter(u => !u.isGM) || []
     let otf = '[PDF:' + text + ']'
     let names = users.map(u => u.name).join(' ')
 
-    let container = parent.closest('section.window-content')
-    if (container) console.assert(container instanceof HTMLElement)
+    let container = target.closest('section.window-content')
 
-    new GgaContextMenuV2(container, parent, '.pdflink', [
-      {
-        name: game.i18n.format('GURPS.contextmenu.pdf.sendToEveryone', { text: text }),
-        icon: '<i class="fas fa-user-friends"></i>',
-        callback: () => GURPS.sendOtfMessage(otf, false),
-        condition: () => game.user.isGM,
-      },
-      {
-        name: game.i18n.format('GURPS.contextmenu.pdf.whisperToOwners', { text: text, owners: names }),
-        icon: '<i class="fas fa-user-secret"></i>',
-        callback: () => GURPS.sendOtfMessage(otf, false, users),
-        condition: () => game.user.isGM && users.length > 0,
-      },
-      {
-        name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
-        icon: '<i class="far fa-comment"></i>',
-        callback: () => {
-          $(document).find('#chat-message').val(otf)
+    new GgaContextMenuV2(
+      target,
+      '.pdflink',
+      [
+        {
+          name: game.i18n.format('GURPS.contextmenu.pdf.sendToEveryone', { text: text }),
+          icon: '<i class="fas fa-user-friends"></i>',
+          callback: () => GURPS.sendOtfMessage(otf, false),
+          condition: () => game.user.isGM,
         },
-        condition: () => true,
-      },
-    ])
+        {
+          name: game.i18n.format('GURPS.contextmenu.pdf.whisperToOwners', { text: text, owners: names }),
+          icon: '<i class="fas fa-user-secret"></i>',
+          callback: () => GURPS.sendOtfMessage(otf, false, users),
+          condition: () => game.user.isGM && users.length > 0,
+        },
+        {
+          name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
+          icon: '<i class="far fa-comment"></i>',
+          callback: () => {
+            $(document).find('#chat-message').val(otf)
+          },
+          condition: () => true,
+        },
+      ],
+      container
+    )
   }
 
   /**

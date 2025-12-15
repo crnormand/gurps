@@ -13,6 +13,7 @@ import { cleanTags } from './effect-modifier-popout.js'
 import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
+import { GgaContextMenuV2 } from '../ui/context-menu.js'
 import { ImportSettings } from '../gcs-importer/index.js'
 
 /**
@@ -144,9 +145,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     this._createHeaderMenus(html)
     this._createEquipmentItemMenus(html)
-    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     this._createGlobalItemMenus(html)
-    // }
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -592,7 +591,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         name: 'Edit',
         icon: "<i class='fas fa-edit'></i>",
         callback: e => {
-          let path = e[0].dataset.key
+          let path = e.dataset.key
           let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
           this.editNotes(this.actor, path, o)
         },
@@ -601,12 +600,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          this.actor.deleteNote(e[0].dataset.key)
-          // GURPS.removeKey(this.actor, e[0].dataset.key)
+          this.actor.deleteNote(e.dataset.key)
         },
       },
     ]
-    new ContextMenu(html, '.notesmenu', notesMenuItems)
+
+    new GgaContextMenuV2(html[0], '.notesmenu', notesMenuItems, null, { fixed: true })
 
     html.find('[data-onethird]').click(ev => {
       ev.preventDefault()
@@ -711,7 +710,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _createGlobalItemMenus(html) {
-    let opts = [
+    let menus = [
       this._createMenu(
         game.i18n.localize('GURPS.delete'),
         '<i class="fas fa-trash"></i>',
@@ -719,15 +718,15 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         this._isRemovable.bind(this)
       ),
     ]
-    new ContextMenu(html, '.adsdraggable', opts, { eventName: 'contextmenu' })
-    new ContextMenu(html, '.skldraggable', opts, { eventName: 'contextmenu' })
-    new ContextMenu(html, '.spldraggable', opts, { eventName: 'contextmenu' })
+    new GgaContextMenuV2(html[0], '.adsdraggable', menus)
+    new GgaContextMenuV2(html[0], '.skldraggable', menus)
+    new GgaContextMenuV2(html[0], '.spldraggable', menus)
   }
 
   _createEquipmentItemMenus(html) {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
-    let opts = [
+    let menus = [
       this._createMenu(game.i18n.localize('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsAscending'),
@@ -749,18 +748,18 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
-    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
+    new GgaContextMenuV2(html[0], '.equipmenucarried', [movedown, ...menus])
 
     let moveup = this._createMenu(
       game.i18n.localize('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
-    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
+    new GgaContextMenuV2(html[0], '.equipmenuother', [moveup, ...menus])
   }
 
   _editEquipment(target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
     this.editEquipment(this.actor, path, o)
   }
@@ -775,12 +774,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _deleteItem(target) {
-    let key = target[0].dataset.key
-    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-    //   if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-    //   else GURPS.removeKey(this.actor, key)
-    //   this.actor.refreshDR().then()
-    // } else {
+    let key = target.dataset.key
     let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
     if (!!item) {
       this.actor._removeItemAdditions(item.id).then(() => {
@@ -789,13 +783,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           this.actor.refreshDR().then()
         })
       })
-      // }
     }
   }
 
   _sortContentAscending(target) {
-    this._sortContent(target[0].dataset.key, 'contains', false)
-    this._sortContent(target[0].dataset.key, 'collapsed', false)
+    this._sortContent(target.dataset.key, 'contains', false)
+    this._sortContent(target.dataset.key, 'collapsed', false)
   }
 
   async _sortContent(parentpath, objkey, reverse) {
@@ -814,19 +807,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _sortContentDescending(target) {
-    this._sortContent(target[0].dataset.key, 'contains', true)
-    this._sortContent(target[0].dataset.key, 'collapsed', true)
+    this._sortContent(target.dataset.key, 'contains', true)
+    this._sortContent(target.dataset.key, 'collapsed', true)
   }
 
   _moveEquipment(list, target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     this.actor.moveEquipment(path, list)
-  }
-
-  _hasContents(target) {
-    let path = target[0].dataset.key
-    let elements = $(target).siblings(`.desc[data-key="${path}.contains"]`)
-    return elements.length > 0
   }
 
   /**
@@ -835,7 +822,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
    * @returns true if the object is a container ... ie, it has a non-empty contains collection
    */
   _isSortable(includeCollapsed, target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     let x = GURPS.decode(this.actor, path)
     if (x?.contains && Object.keys(x.contains).length > 1) return true
     if (includeCollapsed) return x?.collapsed && Object.keys(x.collapsed).length > 1
@@ -843,7 +830,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _isRemovable(target) {
-    let path = target[0].dataset.key
+    let path = target.dataset.key
     let ac = GURPS.decode(this.actor, path)
     let item
     if (ac.itemid) {
@@ -887,12 +874,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       icon: '<i class="fas fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
-          // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
           obj.save = true
           let payload = obj.toItemData(this.actor, '')
           const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
           obj.itemid = item._id
-          // }
           if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
         }
         let o = GURPS.decode(this.actor, path) || {}
@@ -1425,7 +1410,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
     eventname.split(' ').forEach(function (e) {
-      new ContextMenu(html, cssclass, menuitems, { eventName: e })
+      new GgaContextMenuV2(html[0], cssclass, menuitems, null, { eventName: e })
     })
   }
 
@@ -1965,11 +1950,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   }
 
   makeDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, this.deleteItemMenu(obj), { eventName: eventname })
+    new GgaContextMenuV2(html[0], cssclass, this.deleteItemMenu(obj), null, { eventName: eventname })
   }
 
   makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, [this.addItemMenu(name, obj, path)], { eventName: eventname })
+    new GgaContextMenuV2(html[0], cssclass, [this.addItemMenu(name, obj, path)], null, { eventName: eventname })
   }
 
   activateListeners(html) {
