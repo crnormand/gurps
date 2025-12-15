@@ -66,7 +66,7 @@ class GcsImporter {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
     const name =
-      ImportSettings.overwriteName() && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
+      !ImportSettings.overwriteName() && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
 
     // Set actor as a GcsImporter property for easier reference
     if (actor) this.actor = actor
