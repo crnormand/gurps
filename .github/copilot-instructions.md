@@ -221,6 +221,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
 #### ES Module Imports
 
+- Do not use default exports; prefer named exports for clarity.
+
 ```typescript
 // Relative imports with extensions
 import { GurpsActor } from './actor/gurps-actor.js'
@@ -242,8 +244,6 @@ export const Combat: GurpsModule = {
   },
 }
 ```
-
-- Do not use default exports; prefer named exports for clarity.
 
 ### Error Handling and Validation
 
@@ -596,6 +596,15 @@ const formatted = game.i18n.format('GURPS.DamageFormula', { damage: '2d+1' })
 - French (fr)
 - Portuguese/Brazil (pt_br)
 - Russian (ru)
+
+### Localization Files
+
+- Located in `lang/` directory
+- Use JSON format with key-value pairs
+- Using camelCase for keys (e.g., `GURPS.skillLevel`)
+- Maintain consistency across languages
+- Keys should be descriptive and hierarchical
+- Keys should be sorted alphabetically within each file
 
 ## Performance Considerations
 
