@@ -2502,7 +2502,7 @@ export class GurpsActor extends Actor {
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
       item.type === 'equipment' &&
-      ImportSettings.ignoreQuantityOnImport &&
+      ImportSettings.ignoreQuantityOnImport() &&
       !!item.system.eqt.originalCount &&
       !isNaN(item.system.eqt.originalCount) &&
       item.system.eqt.originalCount !== item.system.eqt.count
