@@ -13,6 +13,7 @@ import { cleanTags } from './effect-modifier-popout.js'
 import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
+import { ImporterSettings } from '../gcs-importer/index.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -952,7 +953,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let actor = this.actor
     let list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path))
     let obj = new Note('', true)
-    let dlgHtml = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
+    let dlgHtml = await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/note-editor-popup.hbs',
+      obj
+    )
 
     let d = new Dialog(
       {
@@ -1121,7 +1125,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let d = new Dialog(
       {
         title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/actor/update-tracker.hbs', { templates: templates }),
+        content: await foundry.applications.handlebars.renderTemplate(
+          'systems/gurps/templates/actor/update-tracker.hbs',
+          { templates: templates }
+        ),
         buttons: buttons,
         default: 'edit',
         templates: templates,
@@ -1156,7 +1163,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
-    let dlgHtml = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/equipment-editor-popup.hbs', obj)
+    let dlgHtml = await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/equipment-editor-popup.hbs',
+      obj
+    )
 
     if (!(await this.actor._sanityCheckItemSettings(obj))) return
 
@@ -1627,7 +1637,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       },
     ]
 
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
+    if (!ImporterSettings.onlyTrustedUsersCanImport() || game.user.isTrusted)
       b.push({
         label: 'Import',
         class: 'import',

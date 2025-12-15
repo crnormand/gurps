@@ -683,7 +683,35 @@
         "title": "Overwrite Current HP and FP?"
       },
       "settings": {
+        "autoIgnoreImportQty": {
+          "hint": "If checked, this will automatically set the 'Preserve Quantity' flag on equipment when the Quantity is updated to preserve both Quantity and Uses. NOTE: This does not automatically detect changes in the 'Uses' field. If the 'Uses' count needs to be preserved, manually set the flag for that equipment.",
+          "name": "Automatically Keep Equipment Quantity and Uses"
+        },
+        "displayPreserveQtyIndicator": {
+          "hint": "If checked, display an indicator on equipment that has the 'Preserve Quantity' flag.",
+          "name": "Display 'Preserve Quantity' Indicator"
+        },
+        "fileEncoding": {
+          "hint": "Select the file encoding to use when importing GCS or GCA files. Most files should use UTF-8 encoding, but some older files may require ISO-8859-1 (Latin-1) encoding.",
+          "name": "Import File Encoding",
+          "options": {
+            "ISO-8859-1": "ISO-8859-1 (Latin-1)",
+            "UTF-8": "UTF-8"
+          }
+        },
         "hint": "Settings for the GURPS Character Importer",
+        "overwrite-name": {
+          "hint": "If checked, the system will replace the Actor's name during imports. Set to false (unchecked) if the name that you use in Foundry differs from GCA/GCS and you don't want it overwritten on every import.",
+          "name": "Overwrite Name from Import"
+        },
+        "importGcsLibExtendedValues": {
+          "hint": "If checked, the system will import extended values for Cost and Weight when importing GCS Equipment libraries.",
+          "name": "Import GCS Compendium Extended Values"
+        },
+        "onlyTrustedPlayersAllowed": {
+          "hint": "If checked, the 'Import' button will only be displayed on the character sheet if the player permission level is 'Trusted', 'Assistant' or 'GameMaster'.",
+          "name": "Only Trusted Players are Allowed to Import"
+        },
         "overwriteBodyPlan": {
           "ask": "Ask each time during import",
           "hint": "NOTE: Current body plan is always read from the file during the initial import.",
@@ -698,7 +726,15 @@
           "no": "Never overwrite from file",
           "yes": "Always overwrite from file"
         },
-        "title": "Importer Settings"
+        "overwritePortrait": {
+          "hint": "If checked, the system will overwrite the Actor portrait image during imports.",
+          "name": "Overwrite Portrait Image"
+        },
+        "title": "Importer Settings",
+        "useBrowserImporter": {
+          "hint": "If checked, use the 'smart' file browser. This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
+          "name": "Use Smart File Browser"
+        }
       }
     },
     "importErrorParsingXML": "Error parsing XML: {text}.",
@@ -1249,8 +1285,6 @@
     "settingAllowTargetedRolls": "Check for Targets before roll",
     "settingAnnounceCriticalRolls": "Announce Critical Rolls",
     "settingAutoAddTaggedModifiers": "Auto Add Tagged Modifiers",
-    "settingAutoIgnoreQty": "Import: Auto save Foundry Qty/Count",
-    "settingBlockImport": "Only TRUSTED players may Import",
     "settingCalculateEnc": "Actor: Calculate Encumbrance",
     "settingCheckConditionalModifiers": "Check Conditional Modifiers in Actor Sheet",
     "settingColorSheetMenuHint": "Color Character Sheet Settings",
@@ -1271,8 +1305,6 @@
     "settingHintAllowTargetedRolls": "If checked, the system will check if there is a target selected before making a roll.",
     "settingHintAnnounceCriticalRolls": "If checked, the system will announce, with animation and sound, critical hits and misses. Only for players and non blind rolls. Need Sequencer installed.",
     "settingHintAutoAddTaggedModifiers": "If checked, the system will automatically add tagged modifiers to the roll.",
-    "settingHintAutoIgnoreQty": "If checked, this will automatically set the 'Save current QTY/Count on import' flag on a peice of equipment when the user changes the QTY/Count (and it will display the little blue file icon). NOTE: This does not detect changes in 'Uses'. If you need to remember 'Uses' between imports, you will need to manually set the flag for that equipment.",
-    "settingHintBlockImport": "If checked, the 'Import' button will only be displayed on the character sheet if the player permission level is 'Trusted', 'Assistant' or 'GameMaster'",
     "settingHintCalculateEnc": "If checked, the Encumbrance level will be set automatically based on the carried equipment (and you cannot change the Encumbrance level manually). If this is turned off, you can change the Encumbrance level by clicking on the new level.",
     "settingHintCheckConditionalModifiers": "If checked, the system will look for Conditional Modifiers in the Actor Sheet and add them to Effect Modifiers Popout.",
     "settingHintCombatInitiative": "This is the formula used by Foundry to determine turn order in combat. Warning: Only change this if you know what you are doing! We do not parse this for correctness. Set this field blank to reset the formula back to the GURPS Combat Turn Sequence, B362.",
@@ -1283,7 +1315,6 @@
     "settingHintFlagUserCreated": "If checked, a small icon will appear after user created (not imported) equipment and before user created notes.",
     "settingHintGlobalItems": "If checked, a small icon will appear after equipment (and features) dropped from Foundry Compendiums",
     "settingHintImportHPAndFP": "NOTE: Current HP and FP are always read from the file during the initial import.",
-    "settingHintImportIgnoreName": "If checked, the system will ignore the 'name' attribute of the Actor during imports. This is useful if the name that you use in Foundry differs from GCA/GCS and you don't want it overwritten on every import.",
     "settingHintManeuverDetail": "Determines what maneuver is visible to players other than the GM or Owner, if any. 'Full Detail': E.g., show \"All-out Attack (Determined)\" and \"Feint\" exactly as shown. 'No Feint': As 'Full Detail' except Feint shows as \"Attack\". 'General': As 'Full, No Feint' except option is not shown -- e.g., All-out Attack (Strong) shows as \"All-out Attack\". (GM and Owner always see Full Detail.)",
     "settingHintManeuverMove": "Setting the maneuver (in combat) updates the actor's move value to the maximum allowed by the maneuver (e.g., none, step, half, etc.).",
     "settingHintManeuverVisibility": "Determines who can see a token's maneuver icon.",
@@ -1292,7 +1323,6 @@
     "settingHintOnTarget": "Adds addition aiming-related maneuvers from the Pyramid #3/120 article On Target.",
     "settingHintPlayerBlindRoll": "If not checked, holding down the SHIFT key when you are making a roll will make a Self roll (only you can see it, no matter who you are). If checked, when players hold down the SHIFT key, it will make it a Blind Roll instead (GMs still get a Self roll).",
     "settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message). If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
-    "settingHintQtyItems": "If checked, a small icon will appear after equipment where the QTY/Count will be saved during imports",
     "settingHintRangeStrategy": "Sets the formula to use to calculate range penalties.",
     "settingHintRemoveUnequipped": "If checked, the names of the Melee and Ranged attacks will be compared to the carried equipment list, and if a name match is found, the attack will only be listed if the equipment is Equipped",
     "settingHintSheetDetail": "Select the character sheet that you want as the 'Quick Sheet'. It will be displayed in the title bar, and the user can click between it and the 'Full (GCS)' sheet",
@@ -1314,15 +1344,6 @@
     "settingHintUseQuickRolls": "When enabled, system will show a Quick Roll button in Combat Tracker.",
     "settingHintUseQuintessence": "If enabled, adds the Quintessence attribute, and Quintessence Points become available to use as a Resource Tracker.",
     "settingHintUseTaggedModifiers": "If checked, the system will automatically add tagged modifiers to the roll.",
-    "settingImportBrowserImporter": "Use non-locally hosted import dialog",
-    "settingImportEncoding": "Import file encoding",
-    "settingImportEncodingISO8859": "ISO-8859-1 (default)",
-    "settingImportEncodingUTF8": "UTF-8",
-    "settingImportExtendedValuesGCS": "Import Extended Values from GCS Compendiums",
-    "settingImportHintBrowserImporter": "Check this if you are not hosting your Foundry instance locally (you are hosting externally, i.e. Forge). This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
-    "settingImportHintEncoding": "If you are importing a character and the unicode characters are not displaying correctly, change this setting to UTF-8 encoding.",
-    "settingImportHintExtendedValuesGCS": "If enabled, system will import the extended values for Cost and Weight when importing GCS Equipment Packs.",
-    "settingImportIgnoreName": "Import: Ignore 'name' attribute",
     "settingLabelMookGenerator": "Mook Generator Default Editor",
     "settingLabelShowItemImage": "Select Traits to show Images",
     "settingLabelUseQuickRolls": "Quick Roll Configuration",
@@ -1344,7 +1365,6 @@
     "settingOnTarget": "Use On Target Ranged Modifiers",
     "settingPlayerBlindRoll": "Enable Blind rolls for Players",
     "settingPlayerChatPrivate": "Player Chat commands private",
-    "settingQtyItems": "Actor: Display QTY/Count saved Flag",
     "settingRangeStrategy": "Combat: Range modifier strategy",
     "settingRangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
     "settingRangeStrategyStandard": "Size and Speed/Range Table",

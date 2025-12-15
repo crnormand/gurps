@@ -16,6 +16,7 @@ import {
   Skill,
   Spell,
 } from './actor-components.js'
+import { ImportSettings } from '../gcs-importer/index.js'
 
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
@@ -49,8 +50,7 @@ export class ActorImporter {
   }
 
   async _openImportDialog() {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_BROWSER_IMPORTER))
-      await this._openNonLocallyHostedImportDialog()
+    if (ImportSettings.useSmartImporter()) await this._openNonLocallyHostedImportDialog()
     else await this._openLocallyHostedImportDialog()
   }
 
@@ -242,7 +242,7 @@ export class ActorImporter {
       this.actor._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IGNORE_IMPORT_NAME)) {
+      if (ImportSettings.overwriteName()) {
         await this.actor.update({ name: nm, 'prototypeToken.name': nm })
       }
 
@@ -476,7 +476,7 @@ export class ActorImporter {
       this.actor._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IGNORE_IMPORT_NAME)) {
+      if (ImportSettings.overwriteName()) {
         await this.actor.update({ name: nm, 'token.name': nm })
       }
 
@@ -613,14 +613,17 @@ export class ActorImporter {
     }
   }
 
+  /**
+   * @returns false to overwrite, true to keep.
+   */
   async promptForSaveOrOverwrite(data, hp, fp) {
     let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_HP_FP)
-      if (option == 0) {
+      let overwriteHpFp = ImportSettings.overwriteHpAndFp()
+      if (overwriteHpFp === 'no') {
         saveCurrent = true
       }
-      if (option == 2) {
+      if (overwriteHpFp === 'ask') {
         saveCurrent = await foundry.applications.api.DialogV2.wait({
           window: { title: game.i18n.localize('GURPS.importer.promprtHPandFP.title') },
           content: game.i18n.format('GURPS.importer.promprtHPandFP.content', {
@@ -1316,18 +1319,11 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
-      if (option == 1) {
-        saveprot = true
-      }
-      if (option == 2) {
-        saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
-      }
-    }
-    if (saveprot === 'save') return {}
-    else
+      let overwrite = ImportSettings.overwriteBodyPlan()
+      if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
+      if (overwrite !== 'yes') return
+    } else
       return {
         'system.-=hitlocations': null,
         'system.hitlocations': prot,
@@ -1335,7 +1331,7 @@ export class ActorImporter {
       }
   }
 
-  async getSaveOrOverwriteBodyPlan(saveprot, currentPlan, newPlan) {
+  async askOverwriteBodyPlan(currentPlan, newPlan) {
     return await foundry.applications.api.DialogV2.wait({
       window: { title: game.i18n.localize('GURPS.importer.promptBodyPlan.title') },
       content: game.i18n.format('GURPS.importer.promptBodyPlan.content', {
@@ -1345,13 +1341,13 @@ export class ActorImporter {
       modal: true,
       buttons: [
         {
-          action: 'save',
+          action: 'no',
           label: game.i18n.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,
         },
         {
-          action: 'overwrite',
+          action: 'yes',
           label: game.i18n.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
         },
@@ -1616,7 +1612,7 @@ export class ActorImporter {
       'system.traits': ts,
     }
 
-    if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_OVERWRITE_PORTRAITS)) {
+    if (ImportSettings.overwritePortrait()) {
       if (p.portrait) {
         if (game.user.hasPermission('FILES_UPLOAD')) {
           r.img = `data:image/png;base64,${p.portrait}.png`
@@ -2143,18 +2139,11 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let option = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_BODYPLAN)
-      if (option == 1) {
-        saveprot = true
-      }
-      if (option == 2) {
-        saveprot = await this.getSaveOrOverwriteBodyPlan(saveprot, data.additionalresources.bodyplan, bodyplan)
-      }
-    }
-    if (saveprot === 'save') return {}
-    else
+      let overwrite = ImportSettings.overwriteBodyPlan()
+      if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
+      if (overwrite !== 'yes') return
+    } else
       return {
         'system.-=hitlocations': null,
         'system.hitlocations': prot,

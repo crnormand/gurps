@@ -120,65 +120,82 @@ declare module 'fvtt-types/configuration' {
   /* ---------------------------------------- */
 
   interface SettingConfig {
-    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.bucket-position': 'left' | 'right'
-    'gurps.resource-tracker.manager': new (options?: any) => ResourceTracker.TemplateManager
-    'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
-    'gurps.use-quick-rolls': AnyMutableObject
-    'gurps.show-confirmation-roll-dialog': boolean
-    'gurps.modify-dice-plus-adds': boolean
-    'gurps.pdf.basicset': 'Combined' | 'Separate'
-    'gurps.pdf.open-first': boolean
-    'gurps.damage.default-hitlocation': 'Torso' | 'Random'
-    'gurps.damage.simple-add': foundry.data.fields.BooleanField
     'gurps.damage.apply-divisor': foundry.data.fields.BooleanField
     'gurps.damage.blunt-trauma': foundry.data.fields.BooleanField
     'gurps.damage.body-hits': foundry.data.fields.BooleanField
+    'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
+    'gurps.damage.default-hitlocation': 'Torso' | 'Random'
     'gurps.damage.location-modifiers': foundry.data.fields.BooleanField
     'gurps.damage.only-gms-open-add': foundry.data.fields.BooleanField
+    'gurps.damage.simple-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
-    'gurps.damage.default-action': 'apply' | 'quiet' | 'target'
-    'gurps.portrait-path': 'global' | 'world'
-
-    'gurps.importer.overwrite-hp-fp': foundry.data.fields.StringField<{
-      choices: { yes: string; no: string; ask: string }
+    'gurps.importer.auto-ignore-qty': foundry.data.fields.BooleanField
+    'gurps.importer.display-preserve-qty-flag': boolean
+    'gurps.importer.import-extended-values-gcs': foundry.data.fields.BooleanField
+    'gurps.importer.import-file-encoding': foundry.data.fields.StringField<{
+      choices: { Latin1: string; UTF8: string }
     }>
+    'gurps.importer.only-trusted-import': foundry.data.fields.BooleanField
     'gurps.importer.overwrite-bodyplan': foundry.data.fields.StringField<{
-      choices: { yes: string; no: string; ask: string }
+      choices: { overwrite: string; keep: string; ask: string }
     }>
+    'gurps.importer.overwrite-hp-fp': foundry.data.fields.StringField<{
+      choices: { overwrite: string; keep: string; ask: string }
+    }>
+    'gurps.importer.overwrite-name': foundry.data.fields.BooleanField
+    'gurps.importer.overwrite-portraits': foundry.data.fields.BooleanField
+    'gurps.importer.use-browser-importer': foundry.data.fields.BooleanField
+    'gurps.modify-dice-plus-adds': boolean
+    'gurps.pdf.basicset': 'Combined' | 'Separate'
+    'gurps.pdf.open-first': boolean
+    'gurps.portrait-path': 'global' | 'world'
+    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
+    'gurps.resource-tracker.manager': new (options?: any) => ResourceTracker.TemplateManager
+    'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
+    'gurps.show-confirmation-roll-dialog': boolean
+    'gurps.use-quick-rolls': AnyMutableObject
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
-    'gurps.convert-ranged': boolean
-    'gurps.check-equipped': boolean
-    'gurps.automatic-encumbrance': boolean
-    'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
-    'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
+    'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
-    'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
-    'gurps.maneuver-updates-move': boolean
-    'gurps.automatic-onethird': boolean
-    'gurps.show-chat-reeling-tired': boolean
-    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
-    'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
+    'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
     'gurps.auto-ignore-qty': boolean
+    'gurps.automatic-encumbrance': boolean
+    'gurps.automatic-onethird': boolean
+    'gurps.check-equipped': boolean
+    'gurps.convert-ranged': boolean
+    'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
+    'gurps.maneuver-updates-move': boolean
+    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
+    'gurps.show-chat-reeling-tired': boolean
+    'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
     'gurps.use-quintessence': boolean
     'gurps.use-tagged-modifiers': TaggedModifiersSettings
 
     // TODO: Deprecated settings.
-    'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
+    'gurps.auto-ignore-qty': boolean
     'gurps.basicsetpdf': String
-    'gurps.pdf-open-first': boolean
-    'gurps.only-gms-open-add': boolean
-    'gurps.combat-simple-damage': boolean
-    'gurps.default-hitlocation': 'Torso' | 'Random'
+    'gurps.block-import': boolean
     'gurps.combat-apply-divisor': boolean
     'gurps.combat-blunt-trauma': boolean
     'gurps.combat-body-hits': boolean
     'gurps.combat-location-modifiers': boolean
-    'gurps.show-the-math': boolean
+    'gurps.combat-simple-damage': boolean
     'gurps.default-add-action': 'apply' | 'quiet' | 'target'
-    'gurps.import_hp_fp': number
+    'gurps.default-hitlocation': 'Torso' | 'Random'
+    'gurps.ignore_import_name': boolean
+    'gurps.ignoreImportQty': boolean
+    'gurps.import-file-encoding': 0 | 1
     'gurps.import_bodyplan': number
+    'gurps.import_extended_values_gcs': boolean
+    'gurps.import_hp_fp': number
+    'gurps.only-gms-open-add': boolean
+    'gurps.overwrite-portraitsk': boolean
+    'gurps.pdf-open-first': boolean
+    'gurps.show-the-math': boolean
+    'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
+    'gurps.use-browser-importer': boolean
   }
 }
