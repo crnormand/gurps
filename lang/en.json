@@ -700,10 +700,6 @@
           }
         },
         "hint": "Settings for the GURPS Character Importer",
-        "overwrite-name": {
-          "hint": "If checked, the system will replace the Actor's name during imports. Set to false (unchecked) if the name that you use in Foundry differs from GCA/GCS and you don't want it overwritten on every import.",
-          "name": "Overwrite Name from Import"
-        },
         "importGcsLibExtendedValues": {
           "hint": "If checked, the system will import extended values for Cost and Weight when importing GCS Equipment libraries.",
           "name": "Import GCS Compendium Extended Values"
@@ -725,6 +721,10 @@
           "name": "Overwrite HP & FP",
           "no": "Never overwrite from file",
           "yes": "Always overwrite from file"
+        },
+        "overwriteName": {
+          "hint": "If checked, the system will replace the Actor's name during imports. Set to false (unchecked) if the name that you use in Foundry differs from GCA/GCS and you don't want it overwritten on every import.",
+          "name": "Overwrite Name from Import"
         },
         "overwritePortrait": {
           "hint": "If checked, the system will overwrite the Actor portrait image during imports.",

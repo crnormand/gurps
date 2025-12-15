@@ -69,7 +69,7 @@ export default class GurpsWiring {
     let names = users.map(u => u.name).join(' ')
 
     let container = parent.closest('section.window-content')
-    console.assert(container instanceof HTMLElement)
+    if (container) console.assert(container instanceof HTMLElement)
 
     new GgaContextMenuV2(container, parent, '.pdflink', [
       {

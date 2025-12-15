@@ -1,11 +1,12 @@
 import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
 import { importGCS } from './gcs-importer.js'
+import { migrate } from './migrate.js'
 import initializeGameSettings from './settings.js'
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
-  DISPLAY_PRESERVE_QTY_FLAG,
   IMPORT_EXTENDED_VALUES_GCS,
+  IMPORT_FILE_ENCODING,
   ONLY_TRUSTED_IMPORT,
   OVERWRITE_BODYPLAN,
   OVERWRITE_HP_FP,
@@ -32,9 +33,7 @@ function init() {
 
 const GcsImport: GcsImportModule = {
   init,
-  migrate: async () => {
-    game.settings!.storage.get('world')!.contents.filter((it: Setting) => it.key.startsWith('gurps.'))
-  },
+  migrate,
 }
 
 /**
@@ -43,7 +42,7 @@ const GcsImport: GcsImportModule = {
  * These are separate from the Module because they may be used with other importers.
  */
 const ImportSettings = {
-  displayPreserveQuantity: () => game.settings!.get(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG),
+  getFileEncoding: () => game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_FILE_ENCODING),
   ignoreQuantityOnImport: () => game.settings!.get(GURPS.SYSTEM_NAME, AUTOMATICALLY_SET_IGNORE_QTY),
   importExtendedValues: () => game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_EXTENDED_VALUES_GCS),
   onlyTrustedUsersCanImport: () => game.settings!.get(GURPS.SYSTEM_NAME, ONLY_TRUSTED_IMPORT),

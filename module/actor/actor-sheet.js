@@ -13,7 +13,7 @@ import { cleanTags } from './effect-modifier-popout.js'
 import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
-import { ImporterSettings } from '../gcs-importer/index.js'
+import { ImportSettings } from '../gcs-importer/index.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1637,7 +1637,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       },
     ]
 
-    if (!ImporterSettings.onlyTrustedUsersCanImport() || game.user.isTrusted)
+    if (!ImportSettings.onlyTrustedUsersCanImport() || game.user.isTrusted)
       b.push({
         label: 'Import',
         class: 'import',
