@@ -1,18 +1,23 @@
-export default class GgaContextMenuV2 extends foundry.applications.ux.ContextMenu {
+/**
+ * An extended ContextMenu class which better handles positioning within a container element.
+ * Specifically, it ensures that the context menu does not overflow the boundaries of the container
+ * by adjusting its horizontal position as needed.
+ */
+class GgaContextMenuV2 extends foundry.applications.ux.ContextMenu {
   constructor(
-    container: HTMLElement,
-    element: HTMLElement,
+    target: HTMLElement,
     selector: string | null | undefined,
     menuItems: ContextMenu.Entry<HTMLElement>[],
+    container?: HTMLElement | null,
     options?: ContextMenu.ConstructorOptions<false>
   ) {
     // Force jQuery to be false.
-    super(element, selector, menuItems, { eventName: 'contextmenu', ...options, jQuery: false })
+    super(target, selector, menuItems, { eventName: 'contextmenu', ...options, jQuery: false })
 
-    this.container = container
+    this.container = container ?? undefined
   }
 
-  container: HTMLElement
+  container: HTMLElement | undefined
 
   /**
    * Set the position of the context menu, taking into consideration whether the menu should expand upward or downward,
@@ -25,15 +30,21 @@ export default class GgaContextMenuV2 extends foundry.applications.ux.ContextMen
     super._injectMenu(menu, target)
 
     const container = this.container || target.parentElement
+    if (!container) {
+      // If there is no container, we cannot constrain the menu position.
+      return
+    }
     const containerRect = container.getBoundingClientRect()
 
-    const contextRect = menu.getBoundingClientRect()
+    const menuRect = menu.getBoundingClientRect()
     const parentRect = target.getBoundingClientRect()
 
-    if (contextRect.right > containerRect.right) {
-      menu.style.left = `${parentRect.width - contextRect.width}px`
-    } else if (contextRect.left < containerRect.left) {
+    if (menuRect.right > containerRect.right) {
+      menu.style.left = `${parentRect.width - menuRect.width}px`
+    } else if (menuRect.left < containerRect.left) {
       menu.style.left = `0px`
     }
   }
 }
+
+export { GgaContextMenuV2 }

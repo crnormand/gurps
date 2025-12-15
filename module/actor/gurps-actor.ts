@@ -50,6 +50,7 @@ import { ResourceTracker } from '../resource-tracker/index.js'
 import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { NoteV1 } from './legacy/note-adapter.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
+import { ImportSettings } from '../gcs-importer/index.js'
 
 function DamageModule() {
   return GURPS.module.Damage
@@ -1408,7 +1409,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
-    if (this.getSetting(Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY, false) === true) {
+    if (ImportSettings.ignoreQuantityOnImport()) {
       updateData.system.eqt.ignoreImportQty = true
     }
 
@@ -1772,7 +1773,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       if (!(await this._sanityCheckItemSettings(eqt))) return
       let update = { [eqtkey + '.count']: count }
 
-      if (game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+      if (ImportSettings.ignoreQuantityOnImport())
         // @ts-expect-error
         update[eqtkey + '.ignoreImportQty'] = true
 
@@ -1781,8 +1782,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let item: any = this.items.get(eqt.itemid)
       if (!!item) {
         item.modelV1.eqt!.count = count
-        if (game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-          item.modelV1.eqt!.ignoreImportQty = true
+        if (ImportSettings.ignoreQuantityOnImport()) item.modelV1.eqt!.ignoreImportQty = true
 
         await item.actor!._updateItemFromForm(item)
       }
@@ -4025,7 +4025,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
       item.type === 'equipment' &&
-      game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) &&
+      ImportSettings.ignoreQuantityOnImport() &&
       // @ts-expect-error
       !!item.system.eqt.originalCount &&
       // @ts-expect-error

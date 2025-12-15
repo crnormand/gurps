@@ -29,6 +29,8 @@ Global Override body {
   left: calc(50% - 75px);
   font-size: var(--font-size-11);
   text-shadow: none;
+  text-align: left;
+  color: black;
 }
 
 .gurpsactorsheet .itemmenu #context-menu {

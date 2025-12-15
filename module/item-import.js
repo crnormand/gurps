@@ -1,5 +1,6 @@
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { zeroFill } from '../lib/utilities.js'
+import { ImportSettings } from './gcs-importer/index.js'
 
 export const AddImportEquipmentButton = async function (html) {
   const button = document.createElement('button')
@@ -103,7 +104,7 @@ export class ItemImporter {
   }
 
   _getItemCost(i) {
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+    if (!ImportSettings.importExtendedValues()) {
       return this._getCostValue(i)
     }
 
@@ -118,7 +119,7 @@ export class ItemImporter {
   }
 
   _getItemWeight(i) {
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_EXTENDED_VALUES_GCS)) {
+    if (!ImportSettings.importExtendedValues()) {
       return this._getWeightValue(i)
     }
 
