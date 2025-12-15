@@ -5,6 +5,7 @@ import { migrate } from './migrate.js'
 import initializeGameSettings from './settings.js'
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
+  DISPLAY_PRESERVE_QTY_FLAG,
   IMPORT_EXTENDED_VALUES_GCS,
   IMPORT_FILE_ENCODING,
   ONLY_TRUSTED_IMPORT,
@@ -42,6 +43,7 @@ const GcsImport: GcsImportModule = {
  * These are separate from the Module because they may be used with other importers.
  */
 const ImportSettings = {
+  displayPreserveQuantity: () => game.settings!.get(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG),
   getFileEncoding: () => game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_FILE_ENCODING),
   ignoreQuantityOnImport: () => game.settings!.get(GURPS.SYSTEM_NAME, AUTOMATICALLY_SET_IGNORE_QTY),
   importExtendedValues: () => game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_EXTENDED_VALUES_GCS),

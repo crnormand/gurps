@@ -12,6 +12,7 @@ import {
   ONLY_TRUSTED_IMPORT,
   AUTOMATICALLY_SET_IGNORE_QTY,
   OVERWRITE_NAME,
+  DISPLAY_PRESERVE_QTY_FLAG,
 } from './types.js'
 
 const SETTINGS = 'GURPS.importer.settings.title'
@@ -151,6 +152,18 @@ export default function initializeGameSettings() {
     type: new fields.BooleanField(),
     default: false,
     onChange: value => console.log(`Automatically set ignore QTY : ${value}`),
+  })
+
+  /* ---------------------------------------- */
+
+  game.settings.register(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG, {
+    name: 'GURPS.importer.settings.displayPreserveQtyIndicator.name',
+    hint: 'GURPS.importer.settings.displayPreserveQtyIndicator.hint',
+    scope: 'world',
+    config: false,
+    type: new fields.BooleanField(),
+    default: true,
+    onChange: value => console.log(`Show an indicator for QTY/Count saved items : ${value}`),
   })
 
   /* ---------------------------------------- */

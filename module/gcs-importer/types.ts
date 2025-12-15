@@ -22,6 +22,7 @@ export const SETTING_ignoreImportQty = 'ignoreImportQty'
 export const SETTING_OVERWRITE_PORTRAITS = 'overwrite-portraitsk'
 
 export const AUTOMATICALLY_SET_IGNORE_QTY = `${MODULE_NAME}.auto-ignore-qty`
+export const DISPLAY_PRESERVE_QTY_FLAG = `${MODULE_NAME}.display-preserve-qty-flag`
 export const IMPORT_EXTENDED_VALUES_GCS = `${MODULE_NAME}.import-extended-values-gcs`
 export const IMPORT_FILE_ENCODING = `${MODULE_NAME}.import-file-encoding`
 export const ONLY_TRUSTED_IMPORT = `${MODULE_NAME}.only-trusted-import`

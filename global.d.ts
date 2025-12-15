@@ -131,7 +131,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.simple-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
     'gurps.importer.auto-ignore-qty': foundry.data.fields.BooleanField
-    'gurps.importer.display-preserve-qty-flag': boolean
+    'gurps.importer.display-preserve-qty-flag': foundry.data.fields.BooleanField
     'gurps.importer.import-extended-values-gcs': foundry.data.fields.BooleanField
     'gurps.importer.import-file-encoding': foundry.data.fields.StringField<{
       choices: { Latin1: string; UTF8: string }

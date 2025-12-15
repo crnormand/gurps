@@ -1,5 +1,6 @@
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
+  DISPLAY_PRESERVE_QTY_FLAG,
   IMPORT_EXTENDED_VALUES_GCS,
   IMPORT_FILE_ENCODING,
   ONLY_TRUSTED_IMPORT,
@@ -16,6 +17,7 @@ import {
   SETTING_IMPORT_HP_FP,
   SETTING_OVERWRITE_PORTRAITS,
   SETTING_USE_BROWSER_IMPORTER,
+  SETTING_ignoreImportQty,
   USE_BROWSER_IMPORTER,
 } from './types.js'
 
@@ -62,6 +64,7 @@ const legacyMigrations = new Map<string, MigrationHandler>([
     value => game.settings!.set(GURPS.SYSTEM_NAME, IMPORT_FILE_ENCODING, toEncoding(value)),
   ],
   [SETTING_USE_BROWSER_IMPORTER, value => game.settings!.set(GURPS.SYSTEM_NAME, USE_BROWSER_IMPORTER, Boolean(value))],
+  [SETTING_ignoreImportQty, value => game.settings!.set(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG, Boolean(value))],
   [SETTING_OVERWRITE_PORTRAITS, value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_PORTRAITS, Boolean(value))],
 ])
 
