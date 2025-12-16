@@ -937,7 +937,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let actor = this.actor
     let list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path))
     let obj = new Note('', true)
-    let dlgHtml = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
+    let dlgHtml = await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/note-editor-popup.hbs',
+      obj
+    )
 
     let d = new Dialog(
       {
@@ -1106,7 +1109,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let d = new Dialog(
       {
         title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/actor/update-tracker.hbs', { templates: templates }),
+        content: await foundry.applications.handlebars.renderTemplate(
+          'systems/gurps/templates/actor/update-tracker.hbs',
+          { templates: templates }
+        ),
         buttons: buttons,
         default: 'edit',
         templates: templates,
@@ -1141,7 +1147,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
-    let dlgHtml = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/equipment-editor-popup.hbs', obj)
+    let dlgHtml = await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/equipment-editor-popup.hbs',
+      obj
+    )
 
     if (!(await this.actor._sanityCheckItemSettings(obj))) return
 
@@ -1657,7 +1666,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     if (event.shiftKey)
       // Hold down the shift key for Simplified
       newSheet = 'gurps.GurpsActorSimplifiedSheet'
-    if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
+    if (game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL))
       // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = 'gurps.GurpsActorNpcSheet'
 
