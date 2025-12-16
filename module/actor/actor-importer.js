@@ -564,8 +564,8 @@ export class ActorImporter {
     let hp = i(json.hps)
     let fp = i(json.fps)
 
-    let saveCurrent = await this.promptForSaveOrOverwrite(data, hp, fp)
-    if (!saveCurrent) {
+    let overwrite = await this.promptForSaveOrOverwrite(data, hp, fp)
+    if (overwrite !== 'keep') {
       data.HP.value = hp
       data.FP.value = fp
     }
@@ -614,18 +614,18 @@ export class ActorImporter {
   }
 
   /**
-   * TODO Probably should be refactored to return 'keep' or 'overwrite' instead of boolean.
-   * @returns false to overwrite, true to keep.
+   *
+   * @param {*} data
+   * @param {number} hp
+   * @param {number} fp
+   * @returns Promise<"keep" | "overwrite">
    */
   async promptForSaveOrOverwrite(data, hp, fp) {
-    let saveCurrent = false
+    let overwrite = ImportSettings.overwriteHpAndFp
+
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let overwriteHpFp = ImportSettings.overwriteHpAndFp
-      if (overwriteHpFp === 'keep') {
-        saveCurrent = true
-      }
-      if (overwriteHpFp === 'ask') {
-        saveCurrent = await foundry.applications.api.DialogV2.wait({
+      if (overwrite === 'ask') {
+        overwrite = await foundry.applications.api.DialogV2.wait({
           window: { title: game.i18n.localize('GURPS.importer.promprtHPandFP.title') },
           content: game.i18n.format('GURPS.importer.promprtHPandFP.content', {
             currentHP: data.HP.value,
@@ -640,19 +640,18 @@ export class ActorImporter {
               label: game.i18n.localize('GURPS.dialog.keep'),
               icon: 'far fa-square',
               default: true,
-              callback: () => true,
             },
             {
               action: 'overwrite',
               label: game.i18n.localize('GURPS.dialog.overwrite'),
               icon: 'fas fa-edit',
-              callback: () => false,
             },
           ],
         })
       }
     }
-    return saveCurrent
+
+    return overwrite
   }
 
   /**
@@ -1500,8 +1499,8 @@ export class ActorImporter {
     let fp = atts.find(e => e.attr_id === 'fp')?.calc?.current || 0
     let qp = atts.find(e => e.attr_id === 'qp')?.calc?.current || 0
 
-    let saveCurrent = await this.promptForSaveOrOverwrite(data, hp, fp)
-    if (!saveCurrent) {
+    let overwrite = await this.promptForSaveOrOverwrite(data, hp, fp)
+    if (overwrite !== 'keep') {
       data.HP.value = hp
       data.FP.value = fp
     }
