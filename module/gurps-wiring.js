@@ -126,7 +126,7 @@ export default class GurpsWiring {
   static _chatClickGmod(event) {
     let element = event.currentTarget
     let desc = element.dataset.name
-    GurpsWiring.handleGurpslink(event, GURPS.LastActor, desc)
+    GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
   /**
