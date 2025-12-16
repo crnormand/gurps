@@ -50,7 +50,7 @@ export class ActorImporter {
   }
 
   async _openImportDialog() {
-    if (ImportSettings.useSmartImporter()) await this._openNonLocallyHostedImportDialog()
+    if (ImportSettings.useSmartImporter) await this._openNonLocallyHostedImportDialog()
     else await this._openLocallyHostedImportDialog()
   }
 
@@ -242,7 +242,7 @@ export class ActorImporter {
       this.actor._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (ImportSettings.overwriteName()) {
+      if (ImportSettings.overwriteName) {
         await this.actor.update({ name: nm, 'prototypeToken.name': nm })
       }
 
@@ -476,7 +476,7 @@ export class ActorImporter {
       this.actor._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (ImportSettings.overwriteName()) {
+      if (ImportSettings.overwriteName) {
         await this.actor.update({ name: nm, 'token.name': nm })
       }
 
@@ -620,7 +620,7 @@ export class ActorImporter {
   async promptForSaveOrOverwrite(data, hp, fp) {
     let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let overwriteHpFp = ImportSettings.overwriteHpAndFp()
+      let overwriteHpFp = ImportSettings.overwriteHpAndFp
       if (overwriteHpFp === 'keep') {
         saveCurrent = true
       }
@@ -1321,7 +1321,7 @@ export class ActorImporter {
     temp.forEach(it => GURPS.put(prot, it, index++))
 
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let overwrite = ImportSettings.overwriteBodyPlan()
+      let overwrite = ImportSettings.overwriteBodyPlan
       if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
       if (overwrite !== 'overwrite') return
     } else
@@ -1613,7 +1613,7 @@ export class ActorImporter {
       'system.traits': ts,
     }
 
-    if (ImportSettings.overwritePortrait()) {
+    if (ImportSettings.overwritePortrait) {
       if (p.portrait) {
         if (game.user.hasPermission('FILES_UPLOAD')) {
           r.img = `data:image/png;base64,${p.portrait}.png`
@@ -2141,7 +2141,7 @@ export class ActorImporter {
     temp.forEach(it => GURPS.put(prot, it, index++))
 
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let overwrite = ImportSettings.overwriteBodyPlan()
+      let overwrite = ImportSettings.overwriteBodyPlan
       if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
       if (overwrite !== 'overwrite') return
     } else

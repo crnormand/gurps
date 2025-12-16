@@ -1409,7 +1409,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
-    if (ImportSettings.ignoreQuantityOnImport()) {
+    if (ImportSettings.ignoreQuantityOnImport) {
       updateData.system.eqt.ignoreImportQty = true
     }
 
@@ -1773,7 +1773,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       if (!(await this._sanityCheckItemSettings(eqt))) return
       let update = { [eqtkey + '.count']: count }
 
-      if (ImportSettings.ignoreQuantityOnImport())
+      if (ImportSettings.ignoreQuantityOnImport)
         // @ts-expect-error
         update[eqtkey + '.ignoreImportQty'] = true
 
@@ -1782,7 +1782,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let item: any = this.items.get(eqt.itemid)
       if (!!item) {
         item.modelV1.eqt!.count = count
-        if (ImportSettings.ignoreQuantityOnImport()) item.modelV1.eqt!.ignoreImportQty = true
+        if (ImportSettings.ignoreQuantityOnImport) item.modelV1.eqt!.ignoreImportQty = true
 
         await item.actor!._updateItemFromForm(item)
       }
@@ -4025,7 +4025,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
       item.type === 'equipment' &&
-      ImportSettings.ignoreQuantityOnImport() &&
+      ImportSettings.ignoreQuantityOnImport &&
       // @ts-expect-error
       !!item.system.eqt.originalCount &&
       // @ts-expect-error

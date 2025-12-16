@@ -65,9 +65,8 @@ class GcsImporter {
   async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<GurpsActorV2<'characterV2'>> {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
-    
-    const name =
-      !ImportSettings.overwriteName() && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
+
+    const name = !ImportSettings.overwriteName && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
 
     // Set actor as a GcsImporter property for easier reference
     if (actor) this.actor = actor
@@ -158,7 +157,7 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importPortrait() {
-    if (this.actor && !ImportSettings.overwritePortrait()) {
+    if (this.actor && !ImportSettings.overwritePortrait) {
       return
     }
 
@@ -256,7 +255,7 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const automaticOverwrite = ImportSettings.overwriteHpAndFp()
+    const automaticOverwrite = ImportSettings.overwriteHpAndFp
     if (automaticOverwrite === 'overwrite') return // Automatically overwrite from file
     if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file
@@ -379,7 +378,7 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const automaticOverwrite = ImportSettings.overwriteBodyPlan()
+    const automaticOverwrite = ImportSettings.overwriteBodyPlan
     if (automaticOverwrite === 'overwrite')
       return // Automatically overwrite from file.
     else if (automaticOverwrite === 'keep') {

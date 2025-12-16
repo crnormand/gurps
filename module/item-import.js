@@ -104,7 +104,7 @@ export class ItemImporter {
   }
 
   _getItemCost(i) {
-    if (!ImportSettings.importExtendedValues()) {
+    if (!ImportSettings.importExtendedValues) {
       return this._getCostValue(i)
     }
 
@@ -119,7 +119,7 @@ export class ItemImporter {
   }
 
   _getItemWeight(i) {
-    if (!ImportSettings.importExtendedValues()) {
+    if (!ImportSettings.importExtendedValues) {
       return this._getWeightValue(i)
     }
 
