@@ -159,7 +159,7 @@ export default class GurpsWiring {
   }
 
   /**
-   * @param {JQuery.ContextMenuEvent} event
+   * @param {Event} event
    */
   static _onRightClickGurpslink(event) {
     event.preventDefault()
