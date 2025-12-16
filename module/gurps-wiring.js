@@ -5,24 +5,27 @@ import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
   static hookupAllEvents(html) {
-    this.hookupGurps(html)
-    this.hookupGurpsRightClick(html)
+    // Convert jQuery to HTMLElement if needed for backward compatibility
+    if (html instanceof jQuery) html = html[0]
+
+    GurpsWiring.hookupGurps(html)
+    GurpsWiring._hookupGurpsRightClick(html)
   }
 
   /**
-   * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
-   * @param {JQuery<HTMLElement>} html
+   * Given an HTMLElement, attach all of our listeners to it. No need to call bind(), since they don't use "this".
+   * @param {HTMLElement} html
    */
   static hookupGurps(html) {
-    html.find('.gurpslink').on('click', GurpsWiring.chatClickGurpslink)
-    html.find('.gmod').on('click', GurpsWiring.chatClickGmod)
-    html.find('.glinkmod').on('click', GurpsWiring.chatClickGmod)
-    html.find('.glinkmodplus').on('click', GurpsWiring.chatClickGmod)
-    html.find('.glinkmodminus').on('click', GurpsWiring.chatClickGmod)
-    html.find('.pdflink').on('click', GURPS.modules.Pdf.handleOnPdf)
+    html.querySelectorAll('.gurpslink').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGurpslink))
+    html.querySelectorAll('.gmod').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
+    html.querySelectorAll('.glinkmod').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
+    html.querySelectorAll('.glinkmodplus').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
+    html.querySelectorAll('.glinkmodminus').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
+    html.querySelectorAll('.pdflink').forEach(el => el.addEventListener('click', GURPS.modules.Pdf.handleOnPdf))
 
     // Make any OtF element draggable
-    html.find('[data-otf]').each((_, li) => {
+    html.querySelectorAll('[data-otf]').forEach(li => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
         let display = ''
@@ -40,25 +43,36 @@ export default class GurpsWiring {
   }
 
   /**
-   * @param {JQuery<HTMLElement>} html
+   * @param {HTMLElement} html
    */
-  static hookupGurpsRightClick(html) {
-    html.find('a.gurpslink').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.gurpslink').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.glinkmod').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.glinkmodplus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.glinkmodminus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.gmod').on('contextmenu', GurpsWiring.onRightClickGmod)
-    html.find('[data-otf]').on('contextmenu', GurpsWiring.onRightClickOtf)
+  static _hookupGurpsRightClick(html) {
+    html
+      .querySelectorAll('a.gurpslink')
+      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
+    html
+      .querySelectorAll('.gurpslink')
+      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
+    html
+      .querySelectorAll('.glinkmod')
+      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
+    html
+      .querySelectorAll('.glinkmodplus')
+      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
+    html
+      .querySelectorAll('.glinkmodminus')
+      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
+    html.querySelectorAll('.gmod').forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGmod))
+    html.querySelectorAll('[data-otf]').forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickOtf))
 
-    if (html.find('.pdflink').length > 0) {
-      for (const link of html.find('.pdflink')) {
-        this.createPdfLinkMenu(link)
+    const pdfLinks = html.querySelectorAll('.pdflink')
+    if (pdfLinks.length > 0) {
+      for (const link of pdfLinks) {
+        GurpsWiring._createPdfLinkMenu(link)
       }
     }
   }
 
-  static createPdfLinkMenu(link) {
+  static _createPdfLinkMenu(link) {
     console.assert(link instanceof HTMLElement)
     let text = link.innerText
     let target = link.parentElement
@@ -100,19 +114,19 @@ export default class GurpsWiring {
   }
 
   /**
-   * @param {JQuery.MouseEventBase} event
+   * @param {Event} event
    */
-  static chatClickGurpslink(event) {
+  static _chatClickGurpslink(event) {
     GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
   /**
-   * @param {JQuery.ClickEvent} event
+   * @param {Event} event
    */
-  static chatClickGmod(event) {
+  static _chatClickGmod(event) {
     let element = event.currentTarget
     let desc = element.dataset.name
-    GurpsWiring.handleGurpslink(event, GURPS.LastActor, desc)
+    GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
   /**
@@ -120,18 +134,16 @@ export default class GurpsWiring {
    * and followed the On-the-Fly formulas. As such, we may already have an action block (base 64 encoded so we can handle
    * any text). If not, we will just re-parse the text looking for the action block.
    *
-   * @param {JQuery.MouseEventBase} event
-   * @param {undefined} [desc]
-   * @param {undefined} [targets]
+   * @param {Event} event
    */
-  static handleGurpslink(event, actor, desc, options) {
+  static handleGurpslink(event, actor, options) {
     event.preventDefault()
     let element = event.currentTarget
     let action = element.dataset?.action // If we have already parsed
     if (!!action) action = JSON.parse(atou(action))
-    else action = parselink(element.innerText /*, desc */).action
+    else action = parselink(element.innerText).action
 
-    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf /*, desc */).action
+    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf).action
 
     if (options?.combined) {
       action.formula = multiplyDice(action.formula, options.combined)
@@ -147,9 +159,9 @@ export default class GurpsWiring {
   }
 
   /**
-   * @param {JQuery.ContextMenuEvent} event
+   * @param {Event} event
    */
-  static onRightClickGurpslink(event) {
+  static _onRightClickGurpslink(event) {
     event.preventDefault()
     event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
@@ -162,7 +174,7 @@ export default class GurpsWiring {
     }
   }
 
-  static async onRightClickGmod(event) {
+  static async _onRightClickGmod(event) {
     event.preventDefault()
     let el = event.currentTarget
     let n = el.dataset.name
@@ -170,7 +182,7 @@ export default class GurpsWiring {
     GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
   }
 
-  static async onRightClickOtf(event) {
+  static async _onRightClickOtf(event) {
     event.preventDefault()
     let el = event.currentTarget
     let isDamageRoll = el.dataset.hasOwnProperty('damage')
