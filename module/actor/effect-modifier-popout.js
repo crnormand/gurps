@@ -42,7 +42,7 @@ export const getRangedModifier = (source, target) => {
   return rangeModifier
 }
 
-export class EffectModifierPopout extends Application {
+export class EffectModifierPopout extends foundry.appv1.api.Application {
   constructor(token, callback, options = {}) {
     super(options)
     this._token = token

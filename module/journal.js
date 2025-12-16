@@ -10,7 +10,7 @@ export default class GurpsJournalEntry {
   }
 
   /**
-   * @param {Application} _app
+   * @param {foundry.appv1.api.Application} _app
    * @param {JQuery<HTMLElement>} html
    * @param {*} _options
    */

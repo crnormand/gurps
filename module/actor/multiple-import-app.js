@@ -33,7 +33,7 @@ export const AddMultipleImportButton = function (html) {
   html.querySelector('.header-actions').append(button)
 }
 
-class MultipleImportApp extends Application {
+class MultipleImportApp extends foundry.appv1.api.Application {
   static getSource(filename) {
     if (filename.endsWith('.gcs')) return 'GCS'
     else return 'GCA'

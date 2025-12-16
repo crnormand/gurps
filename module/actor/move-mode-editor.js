@@ -1,4 +1,4 @@
-export default class MoveModeEditor extends Application {
+export default class MoveModeEditor extends foundry.appv1.api.Application {
   constructor(actor, options) {
     super(options)
 

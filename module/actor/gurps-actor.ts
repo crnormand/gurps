@@ -148,7 +148,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    *
    * NOTE: STUB. Not convinced this is needed in the new system.
    */
-  async openSheet(newSheet: Application | foundry.applications.api.ApplicationV2): Promise<void> {
+  async openSheet(newSheet: foundry.appv1.api.Application | foundry.applications.api.ApplicationV2): Promise<void> {
     const sheet = this.sheet
     if (sheet) {
       await sheet.close()

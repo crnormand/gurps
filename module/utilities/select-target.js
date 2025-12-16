@@ -31,8 +31,7 @@ export default async function selectTarget(targets, selectOptions = { selectAll:
       },
     },
     render: (event, dialog) => {
-      // COMPATIBILITY: v12
-      const element = game.release.generation >= 13 ? dialog.element : dialog
+      const element = dialog.element
 
       const tokenCheckboxes = Array.from(element.querySelectorAll('input[name="tokens"]')) ?? []
 

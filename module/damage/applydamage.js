@@ -33,7 +33,7 @@ const simpleDialogHeight = 160
  *     armorDivisor: 2
  *   }
  */
-export default class ApplyDamageDialog extends Application {
+export default class ApplyDamageDialog extends foundry.appv1.api.Application {
   /**
    * Create a new ADD.
    *

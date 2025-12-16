@@ -1,4 +1,4 @@
-export class ResourceTrackerEditor extends Application {
+export class ResourceTrackerEditor extends foundry.appv1.api.Application {
   /**
    * Create a new Resource Tracker Editor
    * @param {import('./resource-tracker.js').TrackerInstance} tracker data to update

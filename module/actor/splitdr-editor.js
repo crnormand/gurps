@@ -1,4 +1,4 @@
-export default class SplitDREditor extends Application {
+export default class SplitDREditor extends foundry.appv1.api.Application {
   constructor(actor, key, options) {
     super(options)
 

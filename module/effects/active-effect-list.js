@@ -1,4 +1,4 @@
-export default class GurpsActiveEffectListSheet extends Application {
+export default class GurpsActiveEffectListSheet extends foundry.appv1.api.Application {
   constructor(actor, options) {
     super(options)
 

@@ -8,7 +8,7 @@ export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/
  * @typedef {{oldValue?: string, oldSelectionStart?: number|null, oldSelectionEnd?: number|null}} SelectionHistory
  */
 
-export default class ResolveDiceRoll extends Application {
+export default class ResolveDiceRoll extends foundry.appv1.api.Application {
   /**
    * @param {GurpsDie} diceTerm
    */

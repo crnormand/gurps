@@ -8,7 +8,7 @@ import * as HitLocations from '../hitlocation/hitlocation.js'
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
  * to the current or other actors.
  */
-export default class ModifierBucketEditor extends Application {
+export default class ModifierBucketEditor extends foundry.appv1.api.Application {
   constructor(bucket, options = {}) {
     super(options)
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window

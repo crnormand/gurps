@@ -391,9 +391,7 @@ class ModifierStack {
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
-// export class ModifierBucket extends foundry.appv1.api.Application {
-// COMPATIBILITY: v12
-export class ModifierBucket extends Application {
+export class ModifierBucket extends foundry.appv1.api.Application {
   constructor(options = {}) {
     super(options)
 

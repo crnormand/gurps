@@ -77,7 +77,7 @@ export class GurpsActor extends Actor {
 
   // 0.8.x added steps necessary to switch sheets
   /**
-   * @param {Application} newSheet
+   * @param {foundry.appv1.api.Application} newSheet
    */
   async openSheet(newSheet) {
     const sheet = this.sheet

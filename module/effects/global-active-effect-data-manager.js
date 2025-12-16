@@ -93,7 +93,7 @@ export class GlobalActiveEffectDataControl {
   }
 }
 
-class ActiveEffectManagerPopout extends Application {
+class ActiveEffectManagerPopout extends foundry.appv1.api.Application {
   constructor(callback, options = {}) {
     super(options)
     this._callback = callback
