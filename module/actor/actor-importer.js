@@ -1319,16 +1319,18 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let overwrite = ImportSettings.overwriteBodyPlan
+    let overwrite = ImportSettings.overwriteBodyPlan
+    if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
       if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
-      if (overwrite !== 'overwrite') return
-    } else
-      return {
-        'system.-=hitlocations': null,
-        'system.hitlocations': prot,
-        'system.additionalresources.bodyplan': bodyplan,
-      }
+    }
+
+    if (overwrite !== 'overwrite') return {}
+
+    return {
+      'system.-=hitlocations': null,
+      'system.hitlocations': prot,
+      'system.additionalresources.bodyplan': bodyplan,
+    }
   }
 
   async askOverwriteBodyPlan(currentPlan, newPlan) {
@@ -2139,16 +2141,18 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
+    let overwrite = ImportSettings.overwriteBodyPlan
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let overwrite = ImportSettings.overwriteBodyPlan
       if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
-      if (overwrite !== 'overwrite') return
-    } else
-      return {
-        'system.-=hitlocations': null,
-        'system.hitlocations': prot,
-        'system.additionalresources.bodyplan': bodyplan,
-      }
+    }
+
+    if (overwrite !== 'overwrite') return {}
+
+    return {
+      'system.-=hitlocations': null,
+      'system.hitlocations': prot,
+      'system.additionalresources.bodyplan': bodyplan,
+    }
   }
 
   importPointTotalsFromGCS(total, atts, ads, skills, spells) {
