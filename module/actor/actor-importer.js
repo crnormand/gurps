@@ -626,8 +626,8 @@ export class ActorImporter {
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       if (overwrite === 'ask') {
         overwrite = await foundry.applications.api.DialogV2.wait({
-          window: { title: game.i18n.localize('GURPS.importer.promprtHPandFP.title') },
-          content: game.i18n.format('GURPS.importer.promprtHPandFP.content', {
+          window: { title: game.i18n.localize('GURPS.importer.promptHPandFP.title') },
+          content: game.i18n.format('GURPS.importer.promptHPandFP.content', {
             currentHP: data.HP.value,
             currentFP: data.FP.value,
             hp: hp,
