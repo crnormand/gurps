@@ -6,7 +6,7 @@ import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components
 
 // export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
 // COMPATIBILITY: v12
-export class GurpsItemSheet extends ItemSheet {
+export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
