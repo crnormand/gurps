@@ -80,7 +80,7 @@ import { Action } from './action/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
-import { GcsImport } from './gcs-importer/index.js'
+import { GcsImport, ImportSettings } from './gcs-importer/index.js'
 import { Length } from './data/common/length.js'
 import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
@@ -290,8 +290,7 @@ if (!globalThis.GURPS) {
         reader.abort()
         reject()
       }
-      if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_IMPORT_FILE_ENCODING) == 1)
-        reader.readAsText(file, 'UTF-8')
+      if (ImportSettings.fileEncoding == 'UTF8') reader.readAsText(file, 'UTF-8')
       else reader.readAsText(file, 'ISO-8859-1')
     })
   }

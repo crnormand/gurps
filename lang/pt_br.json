@@ -664,6 +664,7 @@
     "importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Diretório está vazio. Nenhum arquivo será importado.",
     "importer": {
+      "defaultName": "Personagem Importado",
       "error": {
         "noFilesSelected": "Nenhum arquivo selecionado para importação."
       },
@@ -674,12 +675,40 @@
         "title": "Importar dados do personagem para {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
       },
+      "promptBodyPlan": {
+        "content": "<p>Você deseja <strong>Manter</strong> o plano corporal atual (<strong>{currentBodyPlan}</strong>), ou <strong>Sobrescrever</strong> com o plano corporal do arquivo de importação (<strong>{bodyplan}</strong>)?</p>",
+        "title": "Sobrescrever Plano Corporal Atual?"
+      },
       "promptHPandFP": {
         "content": "<p>Você deseja <strong>manter</strong> os valores atuais de PV (<strong>{currentHP}</strong>) e PF (<strong>{currentFP}</strong>), ou <strong>sobrescrevê-los</strong> com os valores do arquivo importado (PV: <strong>{hp}</strong>, PF: <strong>{fp}</strong>)?</p>",
         "title": "Sobrescrever HP e FP atuais?"
       },
       "settings": {
+        "autoIgnoreImportQty": {
+          "hint": "Se marcado, isso definirá automaticamente a flag 'Preservar Quantidade' nos equipamentos quando a Quantidade for atualizada para preservar tanto a Quantidade quanto os Usos. NOTA: Isso não detecta automaticamente mudanças no campo 'Usos'. Se a contagem de 'Usos' precisar ser preservada, defina manualmente a flag para esse equipamento.",
+          "name": "Manter Automaticamente a Quantidade e os Usos do Equipamento"
+        },
+        "displayPreserveQtyIndicator": {
+          "hint": "Se marcado, exiba um indicador nos equipamentos que têm a flag 'Preservar Quantidade'.",
+          "name": "Exibir Indicador de 'Preservar Quantidade'"
+        },
+        "fileEncoding": {
+          "hint": "Selecione a codificação de arquivo a ser usada ao importar arquivos GCS ou GCA. A maioria dos arquivos deve usar codificação UTF-8, mas alguns arquivos mais antigos podem exigir codificação ISO-8859-1 (Latin-1).",
+          "name": "Codificação do Arquivo de Importação",
+          "options": {
+            "ISO-8859-1": "ISO-8859-1 (Latin-1)",
+            "UTF-8": "UTF-8"
+          }
+        },
         "hint": "Configurações para o Importador de Personagens GURPS",
+        "importGcsLibExtendedValues": {
+          "hint": "Se marcado, o sistema importará valores estendidos para Custo e Peso ao importar bibliotecas de Equipamento GCS.",
+          "name": "Importar Valores Estendidos do Compêndio GCS"
+        },
+        "onlyTrustedPlayersAllowed": {
+          "hint": "Se marcado, o botão 'Importar' será exibido na ficha do personagem apenas se o nível de permissão do jogador for 'Confiável', 'Assistente' ou 'Mestre do Jogo'.",
+          "name": "Apenas Jogadores Confiáveis Podem Importar"
+        },
         "overwriteBodyPlan": {
           "ask": "Perguntar a cada importação",
           "hint": "NOTA: O plano corporal atual é sempre lido do arquivo durante a importação inicial.",
@@ -694,7 +723,19 @@
           "no": "Nunca sobrescrever do arquivo",
           "yes": "Sempre sobrescrever do arquivo"
         },
-        "title": "Configurações do Importador"
+        "overwriteName": {
+          "hint": "Se marcado, o sistema substituirá o nome do Ator durante as importações. Defina como falso (desmarcado) se o nome que você usa no Foundry for diferente do GCA/GCS e você não quiser que ele seja sobrescrito em cada importação.",
+          "name": "Sobrescrever Nome da Importação"
+        },
+        "overwritePortrait": {
+          "hint": "Se marcado, o sistema substituirá a imagem do retrato do Ator durante as importações.",
+          "name": "Sobrescrever Imagem do Retrato"
+        },
+        "title": "Configurações do Importador",
+        "useBrowserImporter": {
+          "hint": "Se marcado, use o 'navegador de arquivos inteligente'. Este diálogo de importação pode lembrar a localização do seu arquivo de importação durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, não precisará abrir o diálogo de Arquivo).",
+          "name": "Usar Navegador de Arquivos Inteligente"
+        }
       }
     },
     "importErrorParsingXML": "Erro ao analisar o XML: {text}.",
@@ -1245,8 +1286,6 @@
     "settingAllowTargetedRolls": "Verificar Alvos antes de rolar",
     "settingAnnounceCriticalRolls": "Anunciar Rolagens Críticas",
     "settingAutoAddTaggedModifiers": "Adicionar Automaticamente Modificadores Marcados",
-    "settingAutoIgnoreQty": "Importar: Salvar automaticamente a Qtd/Contagem do Foundry",
-    "settingBlockImport": "Apenas jogadores CONFIÁVEIS podem Importar",
     "settingCalculateEnc": "Ator: Calcular Base de Carga",
     "settingCheckConditionalModifiers": "Verificar modificadores condicionais na ficha do ator",
     "settingColorSheetMenuHint": "Configuração de Cor da Planilha de Personagem",
@@ -1267,8 +1306,6 @@
     "settingHintAllowTargetedRolls": "Se marcado, o sistema verificará se há um alvo selecionado antes de fazer uma rolagem.",
     "settingHintAnnounceCriticalRolls": "Se marcado, o sistema anunciará, com animação e som, acertos e falhas críticas. Apenas para jogadores e rolagens não ocultas. Necessita do Sequencer instalado.",
     "settingHintAutoAddTaggedModifiers": "Se marcado, o sistema adicionará automaticamente os modificadores marcados à rolagem.",
-    "settingHintAutoIgnoreQty": "Se marcada, esta opção vai configurar automaticamente a opção 'Salvar QTD/Contagem atual na importação' em um determinado equipamento quando o usuário mudar a QTD/Contagem (e vai exibir um pequeno ícone azul de arquivo). NOTA: Isto não detecta mudanças nos 'Usos'. Se você precisar se lembrar dos 'Usos' entre as importações, você precisa configurar manualmente isso no equipamento.",
-    "settingHintBlockImport": "Se marcado, o botão 'Importar' só será exibido na planilha de personagem caso o jogador em questão possuir o nível de permissão 'Confiável', 'Assistente' ou 'GameMaster'",
     "settingHintCalculateEnc": "Se marcado, o nível de Base de Carga será configurado automaticamente baseado no equipamento portado (e você não poderá modificar o nível de Base de Carga manualmente). Se desmarcado, você pode modificar o nível de Base de Carga clicando no nível desejado.",
     "settingHintCheckConditionalModifiers": "Se ativado, o sistema procurará modificadores condicionais na ficha do ator e os adicionará à janela pop-up de modificadores de efeito.",
     "settingHintCombatInitiative": "Trata-se da fórmula utilizada pelo Foundry para determinar a ordem dos turnos no combate. Aviso: Só mude isto se você souber o que está fazendo! Nós não avaliamos o que está aqui para determinar se está correto ou não. Deixe este campo em branco para redefinir a fórmula para a Sequência de Combate do GURPS, B362.",
@@ -1279,7 +1316,6 @@
     "settingHintFlagUserCreated": "Se marcado, um pequeno ícone vai aparecer na frente de equipamento criado pelo usuário (não importado) e antes de notas criadas pelo usuário.",
     "settingHintGlobalItems": "Se marcado, um pequeno ícone aparecerá após equipamentos (e características) adicionados a partir de Compêndios do Foundry",
     "settingHintImportHPAndFP": "NOTA: Os PV e PF Atuais sempre serão copiados do arquivo durante a primeira importação.",
-    "settingHintImportIgnoreName": "Se marcado, o sistema vai ignorar o atributo 'nome' do Ator durante a importação. Isso é útil caso o nome que você utiliza no Foundry for diferente daquele que consta no GCA/GCS e se você não quiser ter que modificá-lo cada vez que fizer uma importação.",
     "settingHintManeuverDetail": "Determina qual manobra é visível para os jogadores que não sejam o MJ ou o Dono, se houver algum. 'Todos os Detalhes': Ex.:, mostrar \"Ataque Total (Determinado)\" e \"Fintar\" exatamente como exibidos. 'Sem Fintar': Como 'Todos os Detalhes', exceto que Fintar aparece como \"Ataque\". 'Geral': Como 'Completo, Sem Fintar' exceto que a opção não é exibida -- ex.:, Ataque Total (Forte) aparece como \"Ataque Total\". (O MJ e o Dono sempre veem Todos os Detalhes)",
     "settingHintManeuverMove": "Configurar a manobra (em combate) atualiza o valor de deslocamento do ator para o máximo permitido pela manobra (ex.: nenhum, passo, metade, etc.).",
     "settingHintManeuverVisibility": "Determina quem pode ver o ícone de manobra de uma miniatura.",
@@ -1288,7 +1324,6 @@
     "settingHintOnTarget": "Adiciona manobras extras relacionadas a mira do artigo Pyramid #3/120 On Target.",
     "settingHintPlayerBlindRoll": "Se não estiver marcado, segurar a tecla SHIFT quando for fazer uma rolagem de dados resultará numa rolagem Oculta (só você pode ver, não importa quem você seja). Se marcado, quando os jogadores segurarem a tecla SHIFT eles farão uma Rolagem às Cegas (O MJ vê como uma Rolagem Oculta).",
     "settingHintPlayerChatPrivate": "Se marcado, a maioria dos comandos de chat (ex.: /hp, /fp, /qty, etc.) serão exibidas como sussurros para o jogador (ao invés de uma mensagem pública). Se você confia nos seus jogadores e não gosta de ver o chat repleto de comandos de chat, desative isto.",
-    "settingHintQtyItems": "Se marcado, um pequeno ícone vai aparecer na frente de equipamento cuja QTD/Contagem será mantida durante importações",
     "settingHintRangeStrategy": "Configura a fórmula a ser utilizada para calcular as penalidades de distância.",
     "settingHintRemoveUnequipped": "Se marcado, os nomes dos ataques Corpo a Corpo e à Distância serão comparados à lista de equipamentos portados, e se for encontrada alguma equivalência, o ataque será listado somente se estiver Equipado",
     "settingHintSheetDetail": "Seleciona a planilha de personagem que você deseja que seja a 'Planilha Rápida'. Ela será exibida na barra de título e o usuário pode escolher entre ela e a 'Planilha completa'",
@@ -1310,15 +1345,6 @@
     "settingHintUseQuickRolls": "Quando ativado, o sistema exibirá um botão de Rolagem Rápida no Rastreador de Combate.",
     "settingHintUseQuintessence": "Se ativado, adiciona o atributo Quintessência, e Pontos de Quintessência se tornam disponíveis para uso como um Controle de Recursos.",
     "settingHintUseTaggedModifiers": "Se ativado, o sistema adicionará automaticamente os modificadores marcados ao teste.",
-    "settingImportBrowserImporter": "Utilizar janela de importação para não hospedado localmente",
-    "settingImportEncoding": "Importar codificação de arquivo",
-    "settingImportEncodingISO8859": "ISO-8859-1 (default)",
-    "settingImportEncodingUTF8": "UTF-8",
-    "settingImportExtendedValuesGCS": "Importar valores estendidos de Compendiums GCS",
-    "settingImportHintBrowserImporter": "Marque isso se você NÃO estiver hospedando localmente sua instância do Foundry (você está hospedando externamente, como por exemplo na Oracle Cloud). Dessa forma, a janela de importação se lembrará da localização dos arquivos importados durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, a janela de Arquivo não precisará ser aberta).",
-    "settingImportHintEncoding": "Se você estiver importando um personagem e caracteres unicode não estiverem sendo exibidos, modifique esta configuração para codificação UTF-8.",
-    "settingImportHintExtendedValuesGCS": "Se ativado, o sistema importará os valores estendidos de Custo e Peso ao importar Pacotes de Equipamentos GCS.",
-    "settingImportIgnoreName": "Importação: Ignorar atributo 'nome'",
     "settingLabelMookGenerator": "Editor Padrão do Gerador de Mook",
     "settingLabelShowItemImage": "Selecione as características",
     "settingLabelUseQuickRolls": "Configuração de Rolagem Rápida",
@@ -1340,7 +1366,6 @@
     "settingOnTarget": "Usar Modificadores de Mira On Target",
     "settingPlayerBlindRoll": "Permitir rolagens às cegas para os Jogadores",
     "settingPlayerChatPrivate": "Comandos privados no Chat de Jogadores",
-    "settingQtyItems": "Ator: Marcar QTD/Contagem salva",
     "settingRangeStrategy": "Combate: Estratégia de modificador de Distância",
     "settingRangeStrategyRangeBands": "Bandas de Distância de Monster Hunters 2",
     "settingRangeStrategyStandard": "Tabela de Tamanho e Velocidade/Distância",

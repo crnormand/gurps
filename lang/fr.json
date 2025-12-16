@@ -664,6 +664,7 @@
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
     "importer": {
+      "defaultName": "Personnage importé",
       "error": {
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },
@@ -674,12 +675,40 @@
         "title": "Importer les données du personnage pour {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
       },
+      "promptBodyPlan": {
+        "content": "<p>Voulez-vous <strong>Conserver</strong> le plan corporel actuel (<strong>{currentBodyPlan}</strong>), ou <strong>Écraser</strong> avec le plan corporel du fichier d'importation (<strong>{bodyplan}</strong>)?</p>",
+        "title": "Écraser le Plan Corporel Actuel?"
+      },
       "promptHPandFP": {
         "content": "<p>Voulez-vous <strong>garder</strong> les valeurs actuelles de PV (<strong>{currentHP}</strong>) et PF (<strong>{currentFP}</strong>), ou les <strong>écraser</strong> avec celles du fichier importé (PV : <strong>{hp}</strong>, PF : <strong>{fp}</strong>) ?</p>",
         "title": "Écraser les HP et FP actuels ?"
       },
       "settings": {
+        "autoIgnoreImportQty": {
+          "hint": "Si coché, cela définira automatiquement le drapeau 'Conserver la Quantité' sur l'équipement lorsque la Quantité est mise à jour pour préserver à la fois la Quantité et les Utilisations. REMARQUE : Cela ne détecte pas automatiquement les changements dans le champ 'Utilisations'. Si le compte 'Utilisations' doit être préservé, définissez manuellement le drapeau pour cet équipement.",
+          "name": "Conserver Automatiquement la Quantité et les Utilisations de l'Équipement"
+        },
+        "displayPreserveQtyIndicator": {
+          "hint": "Si coché, afficher un indicateur sur l'équipement qui a le drapeau 'Conserver la Quantité'.",
+          "name": "Afficher l'Indicateur 'Conserver la Quantité'"
+        },
+        "fileEncoding": {
+          "hint": "Sélectionnez l'encodage de fichier à utiliser lors de l'importation de fichiers GCS ou GCA. La plupart des fichiers devraient utiliser l'encodage UTF-8, mais certains fichiers plus anciens peuvent nécessiter l'encodage ISO-8859-1 (Latin-1).",
+          "name": "Encodage de Fichier à Importer",
+          "options": {
+            "ISO-8859-1": "ISO-8859-1 (Latin-1)",
+            "UTF-8": "UTF-8"
+          }
+        },
         "hint": "Paramètres pour l'importateur de personnage GURPS",
+        "importGcsLibExtendedValues": {
+          "hint": "Si coché, le système importera des valeurs étendues pour le Coût et le Poids lors de l'importation des bibliothèques d'Équipement GCS.",
+          "name": "Importer les Valeurs Étendues du Compendium GCS"
+        },
+        "onlyTrustedPlayersAllowed": {
+          "hint": "Si coché, le bouton 'Importer' ne sera affiché sur la feuille de personnage que si le niveau de permission du joueur est 'Fiable', 'Assistant' ou 'Maître de Jeu'.",
+          "name": "Seules les Joueurs Fiables Sont Autorisés à Importer"
+        },
         "overwriteBodyPlan": {
           "ask": "Demander à chaque importation",
           "hint": "REMARQUE : Le plan corporel actuel est toujours lu à partir du fichier lors de l'importation initiale.",
@@ -694,7 +723,19 @@
           "no": "Ne jamais écraser à partir du fichier",
           "yes": "Toujours écraser à partir du fichier"
         },
-        "title": "Paramètres de l'importateur"
+        "overwriteName": {
+          "hint": "Si coché, le système remplacera le nom de l'Acteur lors des imports. Définissez sur faux (non coché) si le nom que vous utilisez dans Foundry diffère de GCA/GCS et que vous ne souhaitez pas qu'il soit écrasé à chaque import.",
+          "name": "Remplacer le Nom lors de l'Importation"
+        },
+        "overwritePortrait": {
+          "hint": "Si coché, le système écrasera l'image de portrait de l'Acteur lors des imports.",
+          "name": "Remplacer l'Image de Portrait"
+        },
+        "title": "Paramètres de l'importateur",
+        "useBrowserImporter": {
+          "hint": "Si coché, utilisez le 'navigateur de fichiers intelligent'. Cette boîte de dialogue d'importation peut mémoriser l'emplacement de votre fichier d'importation pendant la session (ce qui signifie que si vous importez le personnage à nouveau, dans la même session, il n'aura pas à faire apparaître la boîte de dialogue de fichier).",
+          "name": "Utiliser le Navigateur de Fichiers Intelligent"
+        }
       }
     },
     "importErrorParsingXML": "Erreur d'analyse XML: {text}.",
@@ -1245,8 +1286,6 @@
     "settingAllowTargetedRolls": "Vérifier les cibles avant le jet",
     "settingAnnounceCriticalRolls": "Annoncer les Jets Critiques",
     "settingAutoAddTaggedModifiers": "Ajouter Automatiquement les Modificateurs Étiquetés",
-    "settingAutoIgnoreQty": "Import: Sauvegarde Qté/Compte Foundry Auto",
-    "settingBlockImport": "Seuls les joueurs de 'Trusted' peuvent Importer",
     "settingCalculateEnc": "Acteur: Calcul de l'Encombrement",
     "settingCheckConditionalModifiers": "Vérifier les modificateurs conditionnels sur la feuille de l'acteur",
     "settingColorSheetMenuHint": "Paramètres Coloration Feuille Personnage",
@@ -1267,8 +1306,6 @@
     "settingHintAllowTargetedRolls": "Si coché, le système vérifiera si une cible est sélectionnée avant de faire un jet.",
     "settingHintAnnounceCriticalRolls": "Si coché, le système annoncera, avec animation et son, les réussites et échecs critiques. Seulement pour les joueurs et les jets non cachés. Nécessite Sequencer installé.",
     "settingHintAutoAddTaggedModifiers": "Si coché, le système ajoutera automatiquement les modificateurs étiquetés au jet.",
-    "settingHintAutoIgnoreQty": "Si coché, cela définira automatiquement le flag 'Sauvegarde QTE/Compte Actuel à l'import' sur un équipement quand l'utilisateur change la QTE/Compte (et cela affichera la petite icône de fichier bleu). NOTE: Cela ne détecte pas les changements de 'Nombre d'Utilisations'. Si vous avez besoin de vous rappeler 'Nombre d'Utilisations' entre les imports, vous aurez besoin de définir manuellement le flag sur cet équipement.",
-    "settingHintBlockImport": "Si coché, le bouton 'Import' sera seulement affiché sur la fiche de personnage si le niveau de permission est 'Trusted', 'Assistant' or 'GameMaster'",
     "settingHintCalculateEnc": "Si coché, le niveau d'Encombrement sera automatiquement basé sur les équipements portés (et vous ne pourrez changer le niveau d'encombrement manuellement). Si désactivé, vous pouvez changer le niveau d'encombrement en cliquant sur le nouveau niveau.",
     "settingHintCheckConditionalModifiers": "Si activé, le système recherchera des modificateurs conditionnels sur la feuille de l'acteur et les ajoutera à la fenêtre contextuelle des modificateurs d'effet.",
     "settingHintCombatInitiative": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
@@ -1279,7 +1316,6 @@
     "settingHintFlagUserCreated": "Si coché, une petit icône apparaîtra après un équipement ou une note créé par l'utilisateur.",
     "settingHintGlobalItems": "Si coché, une petite icône apparaîtra après l'équipement (et les caractéristiques) déposés depuis les Compendiums Foundry",
     "settingHintImportHPAndFP": "NOTE: PV et PF Actuels sont toujours lus depuis le fichier lors de l'import inital.",
-    "settingHintImportIgnoreName": "Si coché, le système ignorera l'attribut 'Nom' de l'Acteur durant les imports. C'est utile si le nom sur Foundry est différent de GCA/GCS et que vous ne voulez pas écraser à chaque import.",
     "settingHintManeuverDetail": "Détermine quelle manoeuvre est visible par les joueurs autres que le MJ ou le Propriétaire, si applicable. 'Tous les Détails': E.g., montre \"Attaque Massive (Déterminée)\" et \"Feinte\" exactement comme montrés. 'Pas de Feinte': comme 'Tous les Détails' sauf Feinte montrée comme \"Attaque\". 'Général': comme 'Tous les Détails, Pas de Feinte' sauf option non montrée -- e.g., Attaque Massive (En Puissance) montrée comme \"Attaque Massive\". (MJ et Propriétaire voient toujours Tous les Détails.)",
     "settingHintManeuverMove": "Définir la manœuvre (en combat) met à jour la valeur de déplacement de l'acteur au maximum autorisé par la manœuvre (ex : aucun, pas, moitié, etc.).",
     "settingHintManeuverVisibility": "Détermine qui peut voir les icônes de manoeuvre d'un token.",
@@ -1288,7 +1324,6 @@
     "settingHintOnTarget": "Ajoute des manœuvres supplémentaires liées à la visée depuis l'article Pyramid #3/120 On Target.",
     "settingHintPlayerBlindRoll": "Si non coché, maintenir la touche MAJ quand vous faites un jet en fera un jet Personnel (Seulement vous pouvez le voir, peu importe qui vous êtes). Si coché, quand les joueurs maintiennent la touche MAJ, cela fera un jet à l'Aveugle à la place.(GMs still get a Self roll).",
     "settingHintPlayerChatPrivate": "Si coché, la plupart des commandes du chat(e.g. /hp, /fp, /qty, etc.) seront affichées comme message privé au joueur (au lieu d'un message hors personnage). Si vous faites confiance à vos personnages, et n'aimez pas voir le chat rempli par leurs commandes, activez-le.",
-    "settingHintQtyItems": "Si coché, une petite icône apparaîtra après l'équipement où QTE/compte sera sauvegardé pendant les imports",
     "settingHintRangeStrategy": "Définit la formule à utiliser pour calculer les pénalités de portée.",
     "settingHintRemoveUnequipped": "Si coché, les noms des attaques de Mêlée et à Distance seront comparés à la liste des équipements portés, et si une correspondance est trouvée, l'attaque sera seulement listée si l'équipement est équipé",
     "settingHintSheetDetail": "Sélectionnez la feuille de personnage que vous voulez comme 'Feuille Rapide'. Cela s'affichera la bar de titre, et l'utilisateur peut cliquer pour cycler entre celle-ci et la 'Feuille (GCS)' Complète",
@@ -1310,15 +1345,6 @@
     "settingHintUseQuickRolls": "Si activé, le système affichera un bouton de Jet Rapide dans le Suivi de Combat.",
     "settingHintUseQuintessence": "Si activé, ajoute l'attribut Quintessence, et les Points de Quintessence deviennent disponibles pour être utilisés comme Suivi de Ressource.",
     "settingHintUseTaggedModifiers": "Si activé, le système ajoutera automatiquement les modificateurs marqués au jet.",
-    "settingImportBrowserImporter": "Utiliser la fenêtre d'import pour hôte distant",
-    "settingImportEncoding": "Encodage des fichiers d'importation",
-    "settingImportEncodingISO8859": "ISO-8859-1 (défaut)",
-    "settingImportEncodingUTF8": "UTF-8",
-    "settingImportExtendedValuesGCS": "Importer les valeurs étendues des Compendiums GCS",
-    "settingImportHintBrowserImporter": "Cocher ceci si vous n'hébergez pas votre instance de Foundry localement (vous hébergez à distance, par ex. Forge). Cette fenêtre d'import peut mémoriser l'emplacement de vos fichiers d'import pendant la session (cela signifie que si vous importez de nouveau le personnage dans la même session, la fenêtre ne se rouvrira pas).",
-    "settingImportHintEncoding": "Si vous importez un personnage et les caractères unicodes ne s'affichent pas correctement, changez ce réglage en UTF-8.",
-    "settingImportHintExtendedValuesGCS": "If enabled, le système importera les valeurs étendues pour le Coût et le Poids lors de l'importation des Packs d'Equipement GCS.",
-    "settingImportIgnoreName": "Import: Ignorer l'attribut 'Nom'",
     "settingLabelMookGenerator": "Editeur du Générateur de Mook par Défaut",
     "settingLabelShowItemImage": "Sélectionner les traits",
     "settingLabelUseQuickRolls": "Configuration du Jet Rapide",
@@ -1340,7 +1366,6 @@
     "settingOnTarget": "Utiliser les modificateurs de portée On Target",
     "settingPlayerBlindRoll": "Activer les Jets Cachés pour les Joueurs",
     "settingPlayerChatPrivate": "Commande de chat des joueurs privées",
-    "settingQtyItems": "Acteur: Afficher le Flag QTE/compte sauvegardé",
     "settingRangeStrategy": "Combat: Stratégie de modification de Portée",
     "settingRangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
     "settingRangeStrategyStandard": "Table de Taille et Vitesse/Portée",
