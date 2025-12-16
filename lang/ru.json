@@ -664,6 +664,7 @@
     "importCurrentVersions": "Текущие версии: '{GCAVersion}' и '{GCSVersion}'.",
     "importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
     "importer": {
+      "defaultName": "Импортированный персонаж",
       "error": {
         "noFilesSelected": "Файлы для импорта не выбраны."
       },
@@ -766,7 +767,7 @@
     "importNoXMLDetected": "XML не обнаружен. Вы импортируете правильный XML-файл?",
     "importOldGCSFile": "Ваш персонаж был сохранен с использованием старой версии GCS, которая не выводит некоторые необходимые атрибуты. Обновите GCS до версии не ниже 4.36, откройте и сохраните файл персонажа, затем попробуйте снова.",
     "importOnImport": "При импорте",
-    "importReplace": "Replace",
+    "importReplace": "Заменить",
     "importSeeUsersGuide": "Проверьте Руководство пользователя для получения информации о том, где получить последнюю версию.",
     "importSelected": "Импортировать выбранное",
     "importSelectFileDescribeAction": "Этот импорт выполнит:",

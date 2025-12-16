@@ -65,10 +65,11 @@ class GcsImporter {
   async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<GurpsActorV2<'characterV2'>> {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
-    const name =
-      ImportSettings.overwriteName() && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
 
-    // Set actor as a GcsImporter property for easier reference
+    const importedName = this.input.profile.name ?? game.i18n!.localize('GURPS.importer.defaultName')
+    const name = ImportSettings.overwriteName ? importedName : (actor?.name ?? importedName)
+
+    // Set actor as a GcsImporter property for easier reference.
     if (actor) this.actor = actor
 
     this.#importPortrait()
@@ -84,7 +85,7 @@ class GcsImporter {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.saveEquipmentCountsIfNecessary(
-        actor.items.contents as GurpsItemV2<'equipmentV2'>[]
+        actor.items.contents.filter(item => item.type === 'equipmentV2') as GurpsItemV2<'equipmentV2'>[]
       )
 
       // When importing into existing actor, delete only GCS-imported items
@@ -122,8 +123,8 @@ class GcsImporter {
       for (const itemData of this.items) {
         const eqt = (itemData as any).system?.eqt
         if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
-          eqt.count = savedEquipmentCounts.get(eqt.importid)?.quantity
-          eqt.uses = savedEquipmentCounts.get(eqt.importid)?.uses
+          eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
+          eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
           eqt.ignoreImportQty = true
         }
       }
@@ -157,7 +158,7 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importPortrait() {
-    if (this.actor && !ImportSettings.overwritePortrait()) {
+    if (this.actor && !ImportSettings.overwritePortrait) {
       return
     }
 
@@ -255,7 +256,7 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const automaticOverwrite = ImportSettings.overwriteHpAndFp()
+    const automaticOverwrite = ImportSettings.overwriteHpAndFp
     if (automaticOverwrite === 'overwrite') return // Automatically overwrite from file
     if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file
@@ -378,7 +379,7 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const automaticOverwrite = ImportSettings.overwriteBodyPlan()
+    const automaticOverwrite = ImportSettings.overwriteBodyPlan
     if (automaticOverwrite === 'overwrite')
       return // Automatically overwrite from file.
     else if (automaticOverwrite === 'keep') {

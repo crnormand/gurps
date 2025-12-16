@@ -43,16 +43,36 @@ const GcsImport: GcsImportModule = {
  * These are separate from the Module because they may be used with other importers.
  */
 const ImportSettings = {
-  displayPreserveQuantity: () => game.settings!.get(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG),
-  getFileEncoding: () => game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_FILE_ENCODING),
-  ignoreQuantityOnImport: () => game.settings!.get(GURPS.SYSTEM_NAME, AUTOMATICALLY_SET_IGNORE_QTY),
-  importExtendedValues: () => game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_EXTENDED_VALUES_GCS),
-  onlyTrustedUsersCanImport: () => game.settings!.get(GURPS.SYSTEM_NAME, ONLY_TRUSTED_IMPORT),
-  overwriteBodyPlan: () => game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN),
-  overwriteHpAndFp: () => game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP),
-  overwriteName: () => game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_NAME),
-  overwritePortrait: () => game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_PORTRAITS),
-  useSmartImporter: () => game.settings!.get(GURPS.SYSTEM_NAME, USE_BROWSER_IMPORTER),
+  get displayPreserveQuantity(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG)
+  },
+  get fileEncoding(): 'Latin1' | 'UTF8' {
+    return game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_FILE_ENCODING) as 'Latin1' | 'UTF8'
+  },
+  get ignoreQuantityOnImport(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, AUTOMATICALLY_SET_IGNORE_QTY)
+  },
+  get importExtendedValues(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, IMPORT_EXTENDED_VALUES_GCS)
+  },
+  get onlyTrustedUsersCanImport(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, ONLY_TRUSTED_IMPORT)
+  },
+  get overwriteBodyPlan(): 'keep' | 'overwrite' | 'ask' {
+    return game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN) as 'keep' | 'overwrite' | 'ask'
+  },
+  get overwriteHpAndFp(): 'keep' | 'overwrite' | 'ask' {
+    return game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP) as 'keep' | 'overwrite' | 'ask'
+  },
+  get overwriteName(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_NAME)
+  },
+  get overwritePortrait(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, OVERWRITE_PORTRAITS)
+  },
+  get useSmartImporter(): boolean {
+    return game.settings!.get(GURPS.SYSTEM_NAME, USE_BROWSER_IMPORTER)
+  },
 }
 
 export { GcsImport, ImportSettings }

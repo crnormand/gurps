@@ -1622,7 +1622,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       },
     ]
 
-    if (!ImportSettings.onlyTrustedUsersCanImport() || game.user.isTrusted)
+    if (!ImportSettings.onlyTrustedUsersCanImport || game.user.isTrusted)
       b.push({
         label: 'Import',
         class: 'import',

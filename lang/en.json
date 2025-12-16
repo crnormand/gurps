@@ -664,6 +664,7 @@
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
     "importer": {
+      "defaultName": "Imported Character",
       "error": {
         "noFilesSelected": "No files selected for import."
       },

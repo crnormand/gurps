@@ -290,7 +290,7 @@ if (!globalThis.GURPS) {
         reader.abort()
         reject()
       }
-      if (ImportSettings.getFileEncoding() == 'UTF8') reader.readAsText(file, 'UTF-8')
+      if (ImportSettings.fileEncoding == 'UTF8') reader.readAsText(file, 'UTF-8')
       else reader.readAsText(file, 'ISO-8859-1')
     })
   }
