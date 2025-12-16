@@ -664,6 +664,7 @@
     "importCurrentVersions": "Текущие версии: '{GCAVersion}' и '{GCSVersion}'.",
     "importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
     "importer": {
+      "defaultName": "Импортированный персонаж",
       "error": {
         "noFilesSelected": "Файлы для импорта не выбраны."
       },

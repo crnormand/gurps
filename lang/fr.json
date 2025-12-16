@@ -664,6 +664,7 @@
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
     "importer": {
+      "defaultName": "Personnage importé",
       "error": {
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },

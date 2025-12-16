@@ -664,6 +664,7 @@
     "importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Diretório está vazio. Nenhum arquivo será importado.",
     "importer": {
+      "defaultName": "Personagem Importado",
       "error": {
         "noFilesSelected": "Nenhum arquivo selecionado para importação."
       },

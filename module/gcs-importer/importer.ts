@@ -66,9 +66,10 @@ class GcsImporter {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
 
-    const name = !ImportSettings.overwriteName && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
+    const importedName = this.input.profile.name ?? game.i18n!.localize('GURPS.importer.defaultName')
+    const name = ImportSettings.overwriteName ? importedName : (actor?.name ?? importedName)
 
-    // Set actor as a GcsImporter property for easier reference
+    // Set actor as a GcsImporter property for easier reference.
     if (actor) this.actor = actor
 
     this.#importPortrait()
