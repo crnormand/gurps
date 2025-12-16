@@ -123,8 +123,8 @@ class GcsImporter {
       for (const itemData of this.items) {
         const eqt = (itemData as any).system?.eqt
         if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
-          eqt.count = savedEquipmentCounts.get(eqt.importid)?.quantity
-          eqt.uses = savedEquipmentCounts.get(eqt.importid)?.uses
+          eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
+          eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
           eqt.ignoreImportQty = true
         }
       }
