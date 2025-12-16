@@ -23,7 +23,8 @@ import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
-import { OVERWRITE_HP_FP, OVERWRITE_BODYPLAN } from './types.js'
+import { GurpsItemV2 } from 'module/item/gurps-item.js'
+import { ImportSettings } from './index.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -64,9 +65,11 @@ class GcsImporter {
   async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<GurpsActorV2<'characterV2'>> {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
-    const name = this.input.profile.name ?? 'Imported Character'
 
-    // Set actor as a GcsImporter property for easier reference
+    const importedName = this.input.profile.name ?? game.i18n!.localize('GURPS.importer.defaultName')
+    const name = ImportSettings.overwriteName ? importedName : (actor?.name ?? importedName)
+
+    // Set actor as a GcsImporter property for easier reference.
     if (actor) this.actor = actor
 
     this.#importPortrait()
@@ -81,29 +84,12 @@ class GcsImporter {
 
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
-      const savedEquipmentCounts = new Map<string, number>()
-      const savedEquipmentUses = new Map<string, number>()
-      actor.items.forEach(item => {
-        const eqt = (item.system as any).eqt
-        if (eqt && eqt.importFrom === 'GCS' && eqt.ignoreImportQty && eqt.importid) {
-          savedEquipmentCounts.set(eqt.importid, eqt.count)
-          savedEquipmentUses.set(eqt.importid, eqt.uses)
-        }
-      })
+      const savedEquipmentCounts = this.saveEquipmentCountsIfNecessary(
+        actor.items.contents.filter(item => item.type === 'equipmentV2') as GurpsItemV2<'equipmentV2'>[]
+      )
 
       // When importing into existing actor, delete only GCS-imported items
-      const gcsImportedItems = actor.items.filter(item => {
-        const component =
-          (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
-        return component?.importFrom === 'GCS'
-      })
-
-      if (gcsImportedItems.length > 0) {
-        await actor.deleteEmbeddedDocuments(
-          'Item',
-          gcsImportedItems.map(i => i.id!)
-        )
-      }
+      await this.deleteGcsImportedItems(actor)
 
       // Update actor with new system data and create new items
       await actor.update({
@@ -113,16 +99,7 @@ class GcsImporter {
       })
 
       // Restore saved counts and uses in raw item data before creating embedded documents
-      if (savedEquipmentCounts.size > 0) {
-        for (const itemData of this.items) {
-          const eqt = (itemData as any).system?.eqt
-          if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
-            eqt.count = savedEquipmentCounts.get(eqt.importid)
-            eqt.uses = savedEquipmentUses.get(eqt.importid)
-            eqt.ignoreImportQty = true
-          }
-        }
-      }
+      this.restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
       await actor.createEmbeddedDocuments('Item', this.items as any, { keepId: true })
     } else {
@@ -141,9 +118,50 @@ class GcsImporter {
     return actor
   }
 
+  private restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
+    if (savedEquipmentCounts.size > 0) {
+      for (const itemData of this.items) {
+        const eqt = (itemData as any).system?.eqt
+        if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
+          eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
+          eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
+          eqt.ignoreImportQty = true
+        }
+      }
+    }
+  }
+
+  private async deleteGcsImportedItems(actor: GurpsActorV2<'characterV2'>) {
+    const gcsImportedItems = actor.items.filter(item => {
+      const component =
+        (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
+      return component?.importFrom === 'GCS'
+    })
+
+    await actor.deleteEmbeddedDocuments(
+      'Item',
+      gcsImportedItems.map(i => i.id!)
+    )
+  }
+
+  private saveEquipmentCountsIfNecessary(items: GurpsItemV2<'equipmentV2'>[]) {
+    const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
+    items.forEach(item => {
+      const eqt = (item.system as any).eqt
+      if (eqt && eqt.importFrom === 'GCS' && eqt.ignoreImportQty && eqt.importid) {
+        savedEquipmentCounts.set(eqt.importid, { quantity: eqt.count, uses: eqt.uses })
+      }
+    })
+    return savedEquipmentCounts
+  }
+
   /* ---------------------------------------- */
 
   #importPortrait() {
+    if (this.actor && !ImportSettings.overwritePortrait) {
+      return
+    }
+
     if (game.user?.hasPermission('FILES_UPLOAD')) {
       this.img = `data:image/png;base64,${this.input.profile.portrait}.png`
     }
@@ -238,9 +256,9 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const automaticOverwrite = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP)
-    if (automaticOverwrite === 'yes') return // Automatically overwrite from file
-    if (automaticOverwrite === 'no') {
+    const automaticOverwrite = ImportSettings.overwriteHpAndFp
+    if (automaticOverwrite === 'overwrite') return // Automatically overwrite from file
+    if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file
       this.output.HP!.value = currentHP
       this.output.FP!.value = currentFP
@@ -361,10 +379,10 @@ class GcsImporter {
 
     if (!statsDifference) return
 
-    const automaticOverwrite = game.settings?.get(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN)
-    if (automaticOverwrite === 'yes')
+    const automaticOverwrite = ImportSettings.overwriteBodyPlan
+    if (automaticOverwrite === 'overwrite')
       return // Automatically overwrite from file.
-    else if (automaticOverwrite === 'no') {
+    else if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file.
       this.output.additionalresources!.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations

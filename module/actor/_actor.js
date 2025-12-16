@@ -2397,8 +2397,7 @@ export class GurpsActor extends Actor {
     let eqt = foundry.utils.getProperty(this, eqtkey)
     if (!(await this._sanityCheckItemSettings(eqt))) return
     let update = { [eqtkey + '.count']: count }
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-      update[eqtkey + '.ignoreImportQty'] = true
+    if (ImportSettings.ignoreQuantityOnImport) update[eqtkey + '.ignoreImportQty'] = true
     await this.update(update)
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       eqt = foundry.utils.getProperty(this, eqtkey)
@@ -2415,8 +2414,7 @@ export class GurpsActor extends Actor {
       let item = this.items.get(eqt.itemid)
       if (!!item) {
         item.system.eqt.count = count
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
-          item.system.eqt.ignoreImportQty = true
+        if (ImportSettings.ignoreQuantityOnImport) item.system.eqt.ignoreImportQty = true
         await item.actor._updateItemFromForm(item)
       }
       await this.updateParentOf(eqtkey, false)
@@ -2504,7 +2502,7 @@ export class GurpsActor extends Actor {
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
       item.type === 'equipment' &&
-      game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY) &&
+      ImportSettings.ignoreQuantityOnImport &&
       !!item.system.eqt.originalCount &&
       !isNaN(item.system.eqt.originalCount) &&
       item.system.eqt.originalCount !== item.system.eqt.count

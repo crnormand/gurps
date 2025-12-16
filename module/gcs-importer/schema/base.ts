@@ -35,7 +35,7 @@ class GcsElement<
     schema: Schema = this.defineSchema() as Schema
   ): DataModel.CreateData<Schema> {
     const data: Partial<DataModel.CreateData<Schema>> = {}
-    const replacements: Record<string, string> = (importData.replacements as unknown as Record<string, string>) ?? {}
+    const replacements: Record<string, string> = (importData?.replacements as unknown as Record<string, string>) ?? {}
 
     for (const [key, field] of Object.entries(schema)) {
       ;(data as AnyMutableObject)[key] = this._importField(importData[key], field, key, replacements)

@@ -338,38 +338,6 @@ export default function addChatHooks() {
       } else return true
     })
 
-    // Look for blind messages with .message-results and remove them
-    /*  Hooks.on("renderChatMessage", (log, content, data) => {
-			  if (!!data.message.blind) {
-				  if (data.author?.isSelf && !data.author.isGm) {   // We are rendering the chat message for the sender (and they are not the GM)
-					$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
-				  }
-				}
-			  });  */
-
-    // TODO Add the "for" attribute to a collapsible panel label. This is needed
-    // because the server in 0.7.8 strips the "for" attribute in an attempt
-    // to guard against weird security hacks. When "for" is whitelisted as
-    // a valid attribute (future) we can remove this.
-    Hooks.on('renderChatMessage', (_app, html, _msg) => {
-      // this is a fucking hack
-      let wrapper = html.find('.collapsible-wrapper')
-      if (GURPS.lastTargetedRoll && !GURPS.lastTargetedRoll.msgId) {
-        GURPS.lastTargetedRoll.msgId = _msg.message._id
-      }
-      if (wrapper.length > 0) {
-        //console.log($(wrapper).hbs())
-        let input = $(wrapper).find('input.toggle')[0]
-        let label = $(input).siblings('label.label-toggle')[0]
-        let id = input.id
-        let labelFor = $(label).attr('for')
-        if (labelFor !== id) {
-          $(label).attr('for', id)
-          console.log(`add the 'for' attribute if needed: ${$(wrapper).html()}`)
-        }
-      }
-    })
-
     // Look for RESULTS from a RollTable.   RollTables do not generate regular chat messages
     Hooks.on(
       'preCreateChatMessage',
@@ -401,7 +369,7 @@ export default function addChatHooks() {
       }
     )
 
-    Hooks.on('renderChatMessage', (_app, html, _msg) => {
+    Hooks.on('renderChatMessageHTML', (_app, html, _msg) => {
       GurpsWiring.hookupAllEvents(html)
     })
 

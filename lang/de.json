@@ -664,6 +664,7 @@
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
     "importer": {
+      "defaultName": "Importierter Charakter",
       "error": {
         "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
@@ -674,12 +675,40 @@
         "title": "Charakterdaten für {name} importieren",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
       },
+      "promptBodyPlan": {
+        "content": "<p>Möchten Sie den aktuellen Körperplan <strong>beibehalten</strong> (<strong>{currentBodyPlan}</strong>) oder ihn mit dem Körperplan aus der Importdatei <strong>überschreiben</strong> (<strong>{bodyplan}</strong>)?</p>",
+        "title": "Aktuellen Körperplan überschreiben?"
+      },
       "promptHPandFP": {
         "content": "<p>Möchten Sie die aktuellen HP (<strong>{currentHP}</strong>) und FP (<strong>{currentFP}</strong>) <strong>behalten</strong> oder sie mit den Werten aus der Importdatei (HP: <strong>{hp}</strong>, FP: <strong>{fp}</strong>) <strong>überschreiben</strong>?</p>",
         "title": "Aktuelle HP und FP überschreiben?"
       },
       "settings": {
+        "autoIgnoreImportQty": {
+          "hint": "Wenn aktiviert, wird automatisch die Kennzeichnung 'Menge beibehalten' bei der Ausrüstung gesetzt, wenn die Menge aktualisiert wird, um sowohl Menge als auch Verwendungen zu erhalten. HINWEIS: Dies erkennt Änderungen im Feld 'Verwendungen' nicht automatisch. Wenn die Anzahl der 'Verwendungen' erhalten bleiben soll, stellen Sie die Kennzeichnung manuell für diese Ausrüstung ein.",
+          "name": "Menge und Verwendungen der Ausrüstung automatisch beibehalten"
+        },
+        "displayPreserveQtyIndicator": {
+          "hint": "Wenn aktiviert, wird ein Indikator für Ausrüstung angezeigt, die die Kennzeichnung 'Menge beibehalten' hat.",
+          "name": "Indikator 'Menge beibehalten' anzeigen"
+        },
+        "fileEncoding": {
+          "hint": "Wählen Sie die Dateicodierung aus, die beim Importieren von GCS- oder GCA-Dateien verwendet werden soll. Die meisten Dateien sollten UTF-8-Codierung verwenden, aber einige ältere Dateien erfordern möglicherweise ISO-8859-1 (Latin-1)-Codierung.",
+          "name": "Dateicodierung importieren",
+          "options": {
+            "ISO-8859-1": "ISO-8859-1 (Latin-1)",
+            "UTF-8": "UTF-8"
+          }
+        },
         "hint": "Einstellungen für den GURPS Charakter-Importer",
+        "importGcsLibExtendedValues": {
+          "hint": "Wenn aktiviert, importiert das System erweiterte Werte für Kosten und Gewicht beim Importieren von GCS-Ausrüstungsbibliotheken.",
+          "name": "Erweiterte Werte der GCS-Kompendium importieren"
+        },
+        "onlyTrustedPlayersAllowed": {
+          "hint": "Wenn aktiviert, wird die Schaltfläche 'Importieren' auf dem Charakterbogen nur angezeigt, wenn die Spielerberechtigungsstufe 'Vertraut', 'Assistent' oder 'Spielleiter' ist.",
+          "name": "Nur vertrauenswürdige Spieler dürfen importieren"
+        },
         "overwriteBodyPlan": {
           "ask": "Jedes Mal während des Imports nachfragen",
           "hint": "HINWEIS: Der aktuelle Körperplan wird beim ersten Import immer aus der Datei gelesen.",
@@ -694,7 +723,19 @@
           "no": "Nie aus der Datei überschreiben",
           "yes": "Immer aus der Datei überschreiben"
         },
-        "title": "Importer-Einstellungen"
+        "overwriteName": {
+          "hint": "Wenn aktiviert, ersetzt das System den Namen des Akteurs während der Importe. Setzen Sie auf false (deaktiviert), wenn der Name, den Sie in Foundry verwenden, von GCA/GCS abweicht und Sie nicht möchten, dass er bei jedem Import überschrieben wird.",
+          "name": "Namen aus dem Import überschreiben"
+        },
+        "overwritePortrait": {
+          "hint": "Wenn aktiviert, wird das Akteurporträtbild während der Importe überschrieben.",
+          "name": "Porträtbild überschreiben"
+        },
+        "title": "Importer-Einstellungen",
+        "useBrowserImporter": {
+          "hint": "Wenn aktiviert, verwenden Sie den 'intelligenten' Dateibrowser. Dieser Importdialog kann sich den Speicherort Ihrer Importdatei während der Sitzung merken (was bedeutet, dass Sie den Charakter bei erneutem Importieren in derselben Sitzung nicht den Dateibrowser öffnen müssen).",
+          "name": "Intelligenten Dateibrowser verwenden"
+        }
       }
     },
     "importErrorParsingXML": "Fehler beim Parsen von XML: {text}.",
@@ -1245,8 +1286,6 @@
     "settingAllowTargetedRolls": "Überprüfen Sie die Ziele vor dem Wurf",
     "settingAnnounceCriticalRolls": "Kritische Würfe ankündigen",
     "settingAutoAddTaggedModifiers": "Automatisch Tagged Modifikatoren hinzufügen",
-    "settingAutoIgnoreQty": "Import: Automatisch speichere Foundry Anzahl",
-    "settingBlockImport": "Nur SERIÖSE Spieler dürfen importieren",
     "settingCalculateEnc": "Akteur Berechnen der Belastung",
     "settingCheckConditionalModifiers": "Bedingte Modifikatoren im Schauspielerblatt überprüfen",
     "settingColorSheetMenuHint": "Farbige Charakterbogen-Einstellungen",
@@ -1267,8 +1306,6 @@
     "settingHintAllowTargetedRolls": "Wenn aktiviert, überprüft das System, ob ein Ziel ausgewählt ist, bevor ein Wurf durchgeführt wird.",
     "settingHintAnnounceCriticalRolls": "Wenn aktiviert, wird das System kritische Treffer und Fehlschläge mit Animation und Sound ankündigen. Nur für Spieler und nicht verdeckte Würfe. Benötigt Sequencer.",
     "settingHintAutoAddTaggedModifiers": "Wenn aktiviert, wird das System automatisch Tagged Modifikatoren zum Wurf hinzufügen.",
-    "settingHintAutoIgnoreQty": "Wenn diese Option aktiviert ist, wird automatisch die 'Aktuelle Menge/Anzahl beim Import speichern' Markierung für einen Gegenstand gesetzt, spbald der Benutzer die Menge/Anzahl ändert (und das kleine blaue Dateisymbol wird angezeigt). HINWEIS: Diese Funktion erkennt keine Änderungen der 'Anwendungen'. Wenn die 'Anwendungen' zwischen den Importen bestehen bleiben müssen, muß die Markierung für diesen Gegenstand manuell gesetzet werden.",
-    "settingHintBlockImport": "Wenn diese Option aktiviert ist, wird die Schaltfläche 'Importieren' nur dann auf dem Charakterbogen angezeigt, wenn der Spieler die Berechtigungsstufe 'Seriös', 'SL-Assistent' oder 'Spielleitung' hat.",
     "settingHintCalculateEnc": "Wenn diese Option aktiviert ist, wird die Belastungsstufe automatisch auf der Grundlage der mitgeführten Ausrüstung festgelegt (und die Belastungsstufe kann nicht manuell geändert werden). Wenn dies deaktiviert ist, kann die Belastungsstufe geändert werden, indem auf die neue Stufe geklickt wird.",
     "settingHintCheckConditionalModifiers": "Wenn aktiviert, sucht das System nach bedingten Modifikatoren im Schauspielerblatt und fügt sie dem Effektmodifikatoren-Popup hinzu.",
     "settingHintCombatInitiative": "Dies ist die Formel, die von Foundry verwendet wird, um die Zugreihenfolge im Kampf zu bestimmen. Achtung! Ändere dies nur, wenn Du weist, was Du tust!  Dies wird nicht auf Korrektheit überprüft. Dieses Feld leer lassen, um die Formel auf die GURPS Combat Turn Sequence, B362, zurückzusetzen.",
@@ -1279,7 +1316,6 @@
     "settingHintFlagUserCreated": "Wenn diese Option aktiviert ist, wird ein kleines Symbol hinter von Benutzer-erstellten (nicht importierten) Gegenständen und vor von Benutzer-erstellten Notizen angezeigt.",
     "settingHintGlobalItems": "Wenn aktiviert, erscheint ein kleines Symbol hinter Ausrüstung (und Funktionen), die aus Foundry-Kompendien gezogen wurden.",
     "settingHintImportHPAndFP": "HINWEIS: Die aktuellen TP und AP werden beim ersten Import immer aus der Datei gelesen.",
-    "settingHintImportIgnoreName": "Wenn diese Option aktiviert ist, ignoriert das System das Attribut 'Name' des Akteurs während des Imports. Dies ist nützlich, wenn der Name, der in Foundry verwendet wird, von GCA/GCS abweicht und nicht gewollt ist, dass er bei jedem Import überschrieben wird.",
     "settingHintManeuverDetail": "Legt fest, welche Manöver für andere Spieler außer dem SL oder dem Besitzer sichtbar sind. 'Alle Details': Zeigt z.B. \"Massiver Angriff (Entschlossen)[Determined]\" und \"Finte (Feint)\" genau so. 'Keine Finte': Wie 'Alle Details' außer Finten werden als \"Angriff (Attack)\" angezeigt. 'Allgemein': Wie 'Keine Finte' jedoch werden keine Optionen angezeigt. Z.B. Massiver Angriff (Stark)[Strong] wird als \"Massiver Angriff\" angezeigt.  (SL und Besitzer sehen immer alle Details.)",
     "settingHintManeuverMove": "Das Setzen des Manövers (im Kampf) aktualisiert den Bewegungswert des Akteurs auf das Maximum, das durch das Manöver erlaubt ist (z.B. keine, Schritt, halb, etc.).",
     "settingHintManeuverVisibility": "Legt fest, wer das Manöversymbol eines Tokens sehen kann.",
@@ -1288,7 +1324,6 @@
     "settingHintOnTarget": "Fügt zusätzliche zielbezogene Manöver aus dem Pyramid #3/120 Artikel 'On Target' hinzu.",
     "settingHintPlayerBlindRoll": "Wenn diese Option nicht aktiviert ist, wird bei einem Wurf mit gedrückter UMSCHALT-Taste ein Selbst-Wurf durchgeführt (nur du kannst ihn sehen, egal wer du bist). Wenn das Häkchen gesetzt ist, machen Spieler, die die SHIFT-Taste gedrückt halten, stattdessen einen verdeckten Wurf (SL machen immer noch einen Selbst-Wurf).",
     "settingHintPlayerChatPrivate": "Wenn diese Option aktiviert ist, werden die meisten Chat-Befehle (z.B. /hp, /fp, /qty, etc.) als Flüstern für den Spieler angezeigt (anstelle einer 'Out of Character'-Nachricht). Wenn du deinen Spielern vertraust und nicht möchtest, dass sich der Chat mit ihren Chat-Befehlen füllt, aktiviere diese Option.",
-    "settingHintQtyItems": "Wenn diese Option aktiviert ist, wird ein kleines Symbol hinter von Benutzer-erstellten (nicht importierten) Gegenständen und vor vom Benutzer-erstellten Notizen angezeigt.",
     "settingHintRangeStrategy": "Legt die Formel fest, die zur Berechnung von Fernkampf Modifikator verwendet wird.",
     "settingHintRemoveUnequipped": "Wenn diese Option aktiviert ist, werden die Namen der Nahkampf- und Fernkampfangriffe mit der Liste der getragenen Ausrüstung verglichen, und wenn eine Namensübereinstimmung gefunden wird, wird der Angriff nur aufgeführt, wenn die Ausrüstung ausgerüstet ist",
     "settingHintSheetDetail": "Wähle den Charakterbogen, der als 'Quick Sheet' verwenden werden soll. Er wird in der Titelleiste angezeigt, und der Benutzer kann zwischen ihm und dem 'Vollständigen (GCS)' Blatt wählen.",
@@ -1310,15 +1345,6 @@
     "settingHintUseQuickRolls": "Wenn aktiviert, wird das System einen Schnellwurfknopf im Kampftracker anzeigen.",
     "settingHintUseQuintessence": "Wenn aktiviert, wird das Quintessenz-Attribut hinzugefügt, und Quintessenzpunkte können als Ressourcenanzeige verwendet werden.",
     "settingHintUseTaggedModifiers": "Wenn aktiviert, fügt das System automatisch markierte Modifikatoren zum Wurf hinzu.",
-    "settingImportBrowserImporter": "Nicht lokal gehosteten Importdialog verwenden",
-    "settingImportEncoding": "Kodierung der Importdatei",
-    "settingImportEncodingISO8859": "ISO-8859-1 (Standard)",
-    "settingImportEncodingUTF8": "UTF-8",
-    "settingImportExtendedValuesGCS": "Importiere erweiterte Werte aus GCS-Kompendien",
-    "settingImportHintBrowserImporter": "Diese Option aktivieren, wenn die Foundry-Instanz nicht lokal gehosted wird (Z.B. über The Forge). Dieser Importdialog kann sich den Speicherort der Importdatei während der Sitzung merken (d. h., wenn die Figur in derselben Sitzung erneut importiert wird, muss der Dateidialog nicht aufgerufen werden).",
-    "settingImportHintEncoding": "Wenn ein Charakter importiert wird und die Unicode-Zeichen nicht korrekt angezeigt werden, sollte diese Einstellung auf UTF-8-Kodierung gestellt werden.",
-    "settingImportHintExtendedValuesGCS": "Wenn aktiviert, importiert das System die erweiterten Werte für Kosten und Gewicht beim Import von GCS-Ausrüstungspaketen.",
-    "settingImportIgnoreName": "Import: Attribut 'Name' ignorieren",
     "settingLabelMookGenerator": "Mook Generator Standardwerte Editor",
     "settingLabelShowItemImage": "Wähle Eigenschaften, um Bilder anzuzeigen",
     "settingLabelUseQuickRolls": "Schnellwurfkonfiguration",
@@ -1340,7 +1366,6 @@
     "settingOnTarget": "On Target Fernkampfmodifikatoren verwenden",
     "settingPlayerBlindRoll": "Aktiviere verdeckte Würfe für Spieler",
     "settingPlayerChatPrivate": "Private Spieler-Chat-Befehle",
-    "settingQtyItems": "Akteur: Zeige Anzahl gespeichert Markierung",
     "settingRangeStrategy": "Kampf: Fernkampf Modifikator Auswahl",
     "settingRangeStrategyRangeBands": "Monster Hunters 2 Reichweiten Bereich",
     "settingRangeStrategyStandard": "Tabelle für Größe und Geschwindigkeit/Entfernung",
