@@ -74,7 +74,7 @@ export default function initializeGameSettings() {
     scope: 'world',
     config: false,
     type: new fields.BooleanField(),
-    default: false,
+    default: true,
     onChange: value => console.log(`Import Extended Cost/Weight from GCS : ${value}`),
   })
 
@@ -86,7 +86,7 @@ export default function initializeGameSettings() {
     scope: 'world',
     config: false,
     type: new fields.BooleanField(),
-    default: false,
+    default: true,
     onChange: value => console.log(`Ignore import name : ${value}`),
   })
 
@@ -109,6 +109,7 @@ export default function initializeGameSettings() {
     hint: 'GURPS.importer.settings.overwriteBodyPlan.hint',
     scope: 'world',
     config: false,
+    default: 'ask',
     type: new fields.StringField({
       required: true,
       nullable: false,
@@ -129,6 +130,7 @@ export default function initializeGameSettings() {
     hint: 'GURPS.importer.settings.overwriteHPandFP.hint',
     scope: 'world',
     config: false,
+    default: 'ask',
     type: new fields.StringField({
       required: true,
       nullable: false,
@@ -150,7 +152,7 @@ export default function initializeGameSettings() {
     scope: 'world',
     config: false,
     type: new fields.BooleanField(),
-    default: false,
+    default: true,
     onChange: value => console.log(`Automatically set ignore QTY : ${value}`),
   })
 

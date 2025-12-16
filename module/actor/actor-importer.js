@@ -1319,12 +1319,16 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let overwrite = ImportSettings.overwriteBodyPlan
-    if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
-      if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
-    }
+    let overwrite = ImportSettings.overwriteBodyPlan // "ask", "keep", "overwrite"
+    if (data.lastImport) {
+      if (!!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
+        if (overwrite === 'ask')
+          overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
+      }
 
-    if (overwrite !== 'overwrite') return {}
+      // If we're not overwriting and we have an existing bodyplan, return the empty object.
+      if (overwrite !== 'overwrite' && data.additionalresources.bodyplan) return {}
+    }
 
     return {
       'system.-=hitlocations': null,
@@ -2141,12 +2145,16 @@ export class ActorImporter {
     let index = 0
     temp.forEach(it => GURPS.put(prot, it, index++))
 
-    let overwrite = ImportSettings.overwriteBodyPlan
-    if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
-    }
+    let overwrite = ImportSettings.overwriteBodyPlan // "ask", "keep", "overwrite"
+    if (data.lastImport) {
+      if (!!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
+        if (overwrite === 'ask')
+          overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
+      }
 
-    if (overwrite !== 'overwrite') return {}
+      // If we're not overwriting and we have an existing bodyplan, return the empty object.
+      if (overwrite !== 'overwrite' && data.additionalresources.bodyplan) return {}
+    }
 
     return {
       'system.-=hitlocations': null,

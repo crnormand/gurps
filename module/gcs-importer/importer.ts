@@ -85,7 +85,7 @@ class GcsImporter {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.saveEquipmentCountsIfNecessary(
-        actor.items.contents as GurpsItemV2<'equipmentV2'>[]
+        actor.items.contents.filter(item => item.type === 'equipmentV2') as GurpsItemV2<'equipmentV2'>[]
       )
 
       // When importing into existing actor, delete only GCS-imported items
