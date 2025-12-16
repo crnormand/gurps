@@ -49,7 +49,7 @@ const legacyMigrations = new Map<string, MigrationHandler>([
     SETTING_IMPORT_BODYPLAN,
     value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN, toOverwriteChoice(value)),
   ],
-  [SETTING_IGNORE_IMPORT_NAME, value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_NAME, !Boolean(value))],
+  [SETTING_IGNORE_IMPORT_NAME, value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_NAME, Boolean(!value))],
   [SETTING_BLOCK_IMPORT, value => game.settings!.set(GURPS.SYSTEM_NAME, ONLY_TRUSTED_IMPORT, Boolean(value))],
   [
     SETTING_AUTOMATICALLY_SET_IGNOREQTY,

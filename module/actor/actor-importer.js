@@ -614,13 +614,14 @@ export class ActorImporter {
   }
 
   /**
+   * TODO Probably should be refactored to return 'keep' or 'overwrite' instead of boolean.
    * @returns false to overwrite, true to keep.
    */
   async promptForSaveOrOverwrite(data, hp, fp) {
     let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       let overwriteHpFp = ImportSettings.overwriteHpAndFp()
-      if (overwriteHpFp === 'no') {
+      if (overwriteHpFp === 'keep') {
         saveCurrent = true
       }
       if (overwriteHpFp === 'ask') {
@@ -635,7 +636,7 @@ export class ActorImporter {
           modal: true,
           buttons: [
             {
-              action: 'save',
+              action: 'keep',
               label: game.i18n.localize('GURPS.dialog.keep'),
               icon: 'far fa-square',
               default: true,
@@ -1322,7 +1323,7 @@ export class ActorImporter {
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
       let overwrite = ImportSettings.overwriteBodyPlan()
       if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
-      if (overwrite !== 'yes') return
+      if (overwrite !== 'overwrite') return
     } else
       return {
         'system.-=hitlocations': null,
@@ -1341,13 +1342,13 @@ export class ActorImporter {
       modal: true,
       buttons: [
         {
-          action: 'no',
+          action: 'keep',
           label: game.i18n.localize('GURPS.dialog.keep'),
           icon: 'far fa-square',
           default: true,
         },
         {
-          action: 'yes',
+          action: 'overwrite',
           label: game.i18n.localize('GURPS.dialog.overwrite'),
           icon: 'fas fa-edit',
         },
@@ -2142,7 +2143,7 @@ export class ActorImporter {
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
       let overwrite = ImportSettings.overwriteBodyPlan()
       if (overwrite === 'ask') overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
-      if (overwrite !== 'yes') return
+      if (overwrite !== 'overwrite') return
     } else
       return {
         'system.-=hitlocations': null,

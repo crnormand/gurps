@@ -65,6 +65,7 @@ class GcsImporter {
   async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<GurpsActorV2<'characterV2'>> {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
+    
     const name =
       !ImportSettings.overwriteName() && actor ? actor.name : (this.input.profile.name ?? 'Imported Character')
 
