@@ -162,9 +162,20 @@ class GcsImporter {
       return
     }
 
-    if (game.user?.hasPermission('FILES_UPLOAD')) {
-      this.img = `data:image/png;base64,${this.input.profile.portrait}.png`
+    if (!game.user?.hasPermission('FILES_UPLOAD')) {
+      console.warn(
+        `GURPS | User ${game.user?.name} does not have permissions to upload a portrait to the user directory.
+Portrait will not be imported.`
+      )
+      return
     }
+
+    if (!this.input.profile.portrait) {
+      // No portrait provided. Don't import.
+      return
+    }
+
+    this.img = `data:image/png:base64,${this.input.profile.portrait}.png`
   }
 
   /* ---------------------------------------- */
