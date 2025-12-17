@@ -175,7 +175,7 @@ Portrait will not be imported.`
       return
     }
 
-    this.img = `data:image/png:base64,${this.input.profile.portrait}.png`
+    this.img = `data:image/png;base64,${this.input.profile.portrait}.png`
   }
 
   /* ---------------------------------------- */
