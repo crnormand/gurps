@@ -559,19 +559,25 @@ async function _doRoll({
     chatdata['otf'] = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
     chatdata['followon'] = optionalArgs.followon
 
+    // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      // if the attached obj (see handleRoll()) as Recoil information, do the additional math
-      let rofrcl = Math.floor(margin / parseFloat(optionalArgs.obj.rcl)) + 1
-      if (!!optionalArgs.obj.rof) {
-        let rof = optionalArgs.obj.rof
-        let m = rof.match(/(\d+)[×xX\*](\d+)/) // Support shotgun RoF (3x9)
-        if (!!m) rofrcl = Math.min(rofrcl, parseInt(m[1]) * parseInt(m[2]))
-        else rofrcl = Math.min(rofrcl, parseInt(rof))
+      let rofText = optionalArgs.obj.rof || '1'
+      let potentialHits = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1
+
+      const rof = Math.min(optionalArgs.shots || 1, parseInt(optionalArgs.obj.rof))
+      potentialHits = Math.min(rof, potentialHits)
+      rofText = potentialHits.toString()
+
+      // Support shotgun RoF (3x9, for example).
+      const m = optionalArgs.obj.rof.match(/(\d+)[×xX\*](\d+)/)
+      if (m) {
+        potentialHits = potentialHits * parseInt(m[2])
+        rofText = `${rof}x${m[2]}`
       }
 
-      chatdata['rof'] = optionalArgs.obj.rof
+      chatdata['rof'] = rofText
       chatdata['rcl'] = optionalArgs.obj.rcl
-      chatdata['rofrcl'] = rofrcl
+      chatdata['rofrcl'] = potentialHits
     }
 
     chatdata['optlabel'] = optionalArgs.text || ''

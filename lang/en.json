@@ -1136,7 +1136,7 @@
     "rollNewTarget": "New Target: ({target})",
     "rollSuccess": "Success!",
     "rollTotal": "Rolled ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Total possible hits ({link})<br/>due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>.",
+    "rollTotalHits": "Total hits ({link}) due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Roll vs",
     "rsl": "RSL",
     "rt": "RT",

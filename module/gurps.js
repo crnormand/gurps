@@ -82,13 +82,15 @@ import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
+import getUserInput from './utilities/get-user-input.js'
+import { GetNumberInput } from './ui/get-number-input.js'
 
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
-  GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
+  GURPS.SYSTEM_NAME = 'gurps' // Use this global instead of importing miscellaneous-settings everywhere.
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
@@ -143,9 +145,6 @@ if (!globalThis.GURPS) {
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
-
-  // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
-
   GURPS.SetLastActor = SetLastActor
   GURPS.ClearLastActor = ClearLastActor
 
@@ -176,7 +175,6 @@ if (!globalThis.GURPS) {
       })
   }
 
-  // TODO Why are these global?  Because they are used as semaphores for certain multithreaded processes
   GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
   GURPS.PendingOTFs = []
   GURPS.IgnoreTokenSelect = false
@@ -924,6 +922,13 @@ if (!globalThis.GURPS) {
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+
+      if (parseInt(att.rof) > 1) {
+        const shots = await askForNumberOfShots(parseInt(att.rof))
+        const bonusForRoF = calculateRoFModifier(shots)
+        if (bonusForRoF !== 0) GURPS.ModifierBucket.addModifier(bonusForRoF, `RoF ${shots}`, targetmods)
+        opt.shots = shots
+      }
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return await doRoll({
@@ -1282,7 +1287,7 @@ if (!globalThis.GURPS) {
       // If there is no (actor) GURPS.LastActor or the actor is the same as the original actor, use the original actor.
       if (!actor || actor.id === originalActor.id) actor = originalActor
     }
-    
+
     // const origAction = action
     const originalOtf = action.orig
     const calcOnly = action.calcOnly
@@ -2614,4 +2619,24 @@ const showGURPSCopyright = function () {
     // @ts-ignore
     whisper: [game.user],
   })
+}
+
+const askForNumberOfShots = async function (maxshots) {
+  return await GetNumberInput({
+    title: 'Number of Shots',
+    headerText: `How many shots do you want to fire?`,
+    promptText: `Enter number of shots (1-${maxshots}):`,
+    min: 1,
+    max: maxshots,
+    value: maxshots,
+  })
+}
+
+const calculateRoFModifier = function (rof) {
+  if (rof < 17) return Math.ceil(rof / 4) - 1
+  if (rof < 25) return 4
+  if (rof < 50) return 5
+  if (rof < 100) return 6
+
+  return Math.floor(rof / 100) + 6
 }
