@@ -5,6 +5,7 @@
 ### Features
 
 - Prompt user for number of shots when attacking with high RoF weapon, and add appropriate modifier.
+- Effect Modifier for Size Modifier to auto apply #2208
 
 ## Release 0.18.9 12/12/2025
 

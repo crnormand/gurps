@@ -106,7 +106,9 @@ export class GurpsActor extends Actor {
       let sizemod = this.system.traits?.sizemod?.toString() || '+0'
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
       if (sizemod !== '0' && sizemod !== '+0') {
-        this.system.conditions.target.modifiers.push(game.i18n.format('GURPS.modifiersSize', { sm: sizemod }))
+        this.system.conditions.target.modifiers.push(
+          `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit '@combatmod'`
+        )
       }
     }
 
