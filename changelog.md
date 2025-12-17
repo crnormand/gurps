@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.10
+
+### Features
+
+- Prompt user for number of shots when attacking with high RoF weapon, and add appropriate modifier.
+
 ## Release 0.18.9 12/12/2025
 
 ### Bugfixes
