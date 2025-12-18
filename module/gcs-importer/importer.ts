@@ -163,8 +163,8 @@ class GcsImporter {
     }
 
     if (!game.user?.hasPermission('FILES_UPLOAD')) {
-      console.warn(
-        `GURPS | User ${game.user?.name} does not have permissions to upload a portrait to the user directory.
+      ui.notifications?.warn(
+        `User "${game.user?.name}" does not have permissions to upload a portrait to the user directory.
 Portrait will not be imported.`
       )
       return
