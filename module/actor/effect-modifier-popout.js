@@ -145,7 +145,7 @@ export class EffectModifierPopout extends Application {
         result.targetmodifiers = [...result.targetmodifiers, ...data]
       }
 
-      // Sort the target modifiers by itemID.
+      // Sort the target modifiers by itemId.
       result.targetmodifiers.sort((a, b) => {
         return a.itemId.localeCompare(b.itemId)
       })
