@@ -50,7 +50,7 @@ import { ResourceTracker } from '../resource-tracker/index.js'
 import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { NoteV1 } from './legacy/note-adapter.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
-import { ImportSettings } from '../gcs-importer/index.js'
+import { ImportSettings } from '../importer/index.js'
 
 function DamageModule() {
   return GURPS.module.Damage

@@ -1,6 +1,6 @@
 import DataModel = foundry.abstract.DataModel
 
-import { CharacterSchema } from '../actor/data/character.js'
+import { CharacterSchema } from '../../actor/data/character.js'
 import { GcsCharacter } from './schema/character.js'
 import { GcsItem } from './schema/base.js'
 import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
@@ -9,22 +9,22 @@ import { GcsTrait } from './schema/trait.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
 import { AnyGcsItem } from './schema/index.js'
 import { GcsEquipment } from './schema/equipment.js'
-import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../action/melee-attack.js'
-import { RangedAttackComponentSchema, RangedAttackSchema } from '../action/ranged-attack.js'
+import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../../action/melee-attack.js'
+import { RangedAttackComponentSchema, RangedAttackSchema } from '../../action/ranged-attack.js'
 import { GcsWeapon } from './schema/weapon.js'
-import { SkillComponentSchema, SkillSchema } from '../item/data/skill.js'
+import { SkillComponentSchema, SkillSchema } from '../../item/data/skill.js'
 import { GcsSkill } from './schema/skill.js'
-import { SpellComponentSchema, SpellSchema } from '../item/data/spell.js'
+import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
 import { GcsSpell } from './schema/spell.js'
-import { EquipmentSchema, EquipmentComponentSchema } from '../item/data/equipment.js'
+import { EquipmentSchema, EquipmentComponentSchema } from '../../item/data/equipment.js'
 import { GcsNote } from './schema/note.js'
-import { HitLocationSchemaV2 } from '../actor/data/hit-location-entry.js'
+import { HitLocationSchemaV2 } from '../../actor/data/hit-location-entry.js'
 
-import { hitlocationDictionary } from '../hitlocation/hitlocation.js'
+import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
 import { GurpsItemV2 } from 'module/item/gurps-item.js'
-import { ImportSettings } from './index.js'
+import { ImportSettings } from '../index.js'
 
 /**
  * GCS Importer class for importing GCS characters into the system.

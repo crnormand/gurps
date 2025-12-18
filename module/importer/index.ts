@@ -1,8 +1,8 @@
 import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
-import { importGCS } from './gcs-importer.js'
+import { importGCS } from './gcs-importer/gcs-importer.js'
 import { migrate } from './migrate.js'
-import initializeGameSettings from './settings.js'
+import { initializeGameSettings } from './settings.js'
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
   DISPLAY_PRESERVE_QTY_FLAG,
@@ -16,10 +16,12 @@ import {
   USE_BROWSER_IMPORTER,
 } from './types.js'
 
-interface GcsImportModule extends GurpsModule {}
+interface ImporterModule extends GurpsModule {
+  importGCS: typeof importGCS
+}
 
 function init() {
-  console.log('GURPS | Initializing GURPS GCSImport module.')
+  console.log('GURPS | Initializing GURPS Importer module.')
 
   Hooks.on('init', () => {
     CONFIG.Actor.dataModels.characterV2 = CharacterModel
@@ -32,9 +34,10 @@ function init() {
   })
 }
 
-const GcsImport: GcsImportModule = {
+const Importer: ImporterModule = {
   init,
   migrate,
+  importGCS,
 }
 
 /**
@@ -75,4 +78,4 @@ const ImportSettings = {
   },
 }
 
-export { GcsImport, ImportSettings }
+export { Importer, ImportSettings }

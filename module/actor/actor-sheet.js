@@ -10,11 +10,10 @@ import { ResourceTracker } from '../resource-tracker/index.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
-import { importGCS } from '../gcs-importer/gcs-importer.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 import { GgaContextMenuV2 } from '../ui/context-menu.js'
-import { ImportSettings } from '../gcs-importer/index.js'
+import { importGCS, ImportSettings } from '../importer/index.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

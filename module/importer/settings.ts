@@ -17,7 +17,7 @@ import {
 
 const SETTINGS = 'GURPS.importer.settings.title'
 
-export default function initializeGameSettings() {
+export function initializeGameSettings() {
   if (!game.settings || !game.i18n)
     throw new Error('GURPS | Importer module requires game.settings and game.i18n to be available!')
 

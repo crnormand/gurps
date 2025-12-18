@@ -80,7 +80,7 @@ import { Action } from './action/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
 import { Damage } from './damage/index.js'
-import { GcsImport, ImportSettings } from './gcs-importer/index.js'
+import { Importer, ImportSettings } from './importer/index.js'
 import { Length } from './data/common/length.js'
 import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
@@ -124,7 +124,7 @@ if (!globalThis.GURPS) {
     Canvas,
     Combat,
     Damage,
-    GcsImport,
+    Importer,
     Pdf,
     ResourceTracker,
     Token,
