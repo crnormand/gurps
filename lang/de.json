@@ -936,6 +936,7 @@
     "modifierSizeDetail": "Differenz im Nahkampf; Absolut im Fernkampf",
     "modifierSizeEntry": "{SM} Größe {us} ({metric})",
     "modifiersSize": "{sm} für Größenmodifikator",
+    "modifiersSizeDifference": "{sm} für Größenmodifikator-Unterschied (Quelle {sourceSM}, Ziel {targetSM})",
     "modifierStatus": "Zustand",
     "modifierStatusAffliction": "Zustand und Gebrechen",
     "modifierStatusShock1": "-1 auf IQ/DX Würfe (Shock 1)",

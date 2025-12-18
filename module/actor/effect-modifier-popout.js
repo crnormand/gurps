@@ -55,16 +55,15 @@ export const getSizeModifier = (source, target) => {
   if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
     const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
     const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
-    const sizeDiff = attackerSM - targetSM
+    const sizeDiff = targetSM - attackerSM
     if (sizeDiff !== 0) {
-      const sizeMod = sizeDiff > 0 ? -sizeDiff * 2 : -sizeDiff
-      const smText = `${sizeMod >= 0 ? '+' : ''}${sizeMod}`
+      const smText = `${sizeDiff >= 0 ? '+' : ''}${sizeDiff}`
       sizeModifier = game.i18n.format('GURPS.modifiersSizeDifference', {
         sm: smText,
         sourceSM: attackerSM,
         targetSM: targetSM,
       })
-      sizeModifier += ` ${baseTags} @combatmod @sizemod`
+      sizeModifier += ` ${baseTags} @sizemod`
     }
   }
   return sizeModifier
@@ -128,19 +127,26 @@ export class EffectModifierPopout extends Application {
       result.targetmodifiers = target.actor
         ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
         : []
-      const rangeModifier = getRangedModifier(this.getToken(), target)
-      if (rangeModifier) {
-        const data = this.convertModifiers([rangeModifier])
-        result.targetmodifiers = [...result.targetmodifiers, ...data]
-      }
-      // Add the range to the target
-      results.push(result)
 
       const smModifier = getSizeModifier(this.getToken(), target)
       if (smModifier) {
         result.targetmodifiers = [...result.targetmodifiers, ...this.convertModifiers([smModifier])]
       }
+
+      const rangeModifier = getRangedModifier(this.getToken(), target)
+      if (rangeModifier) {
+        const data = this.convertModifiers([rangeModifier])
+        result.targetmodifiers = [...result.targetmodifiers, ...data]
+      }
+
+      // Sort the target modifiers by itemID.
+      result.targetmodifiers.sort((a, b) => {
+        return a.itemId.localeCompare(b.itemId)
+      })
+
+      results.push(result)
     }
+
     return results
   }
 

@@ -157,13 +157,13 @@ export class GurpsActor extends Actor {
       if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
         if (sizemod !== '0' && sizemod !== '+0') {
           this.system.conditions.target.modifiers.push(
-            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @combatmod @sizemod`
+            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @sizemod`
           )
         }
       } else {
         if (sizemod !== '0' && sizemod !== '+0') {
           this.system.conditions.target.modifiers.push(
-            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #ranged @combatmod @sizemod`
+            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #ranged @sizemod`
           )
         }
       }
