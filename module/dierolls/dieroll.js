@@ -561,7 +561,7 @@ async function _doRoll({
 
     // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      let rofText = optionalArgs.obj.rof || '1'
+      let rofText
       let potentialHits = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1
 
       const rof = Math.min(optionalArgs.shots || 1, parseInt(optionalArgs.obj.rof))
