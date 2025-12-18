@@ -423,25 +423,6 @@ export class GurpsActor extends Actor {
     await this.internalUpdate({ 'system.conditions.usermods': newMods })
   }
 
-  async removeTargetModifiers(tags, sources) {
-    let targetMods = this.system.conditions.target.modifiers || []
-    let modsToRemove = targetMods.filter(m => {
-      let clean = cleanTags(m)
-      let hasTag = tags.find(t => clean.includes(t)) != null
-      let hasSource = sources.find(s => m.includes(s)) != null
-      return hasTag && hasSource
-    })
-    this.system.conditions.target.modifiers = targetMods.filter(m => !modsToRemove.includes(m))
-    await this.internalUpdate({ 'system.conditions.target.modifiers': this.system.conditions.target.modifiers })
-  }
-
-  async addTargetModifier({ modifier, tags = [], sources = [] }) {
-    this.system.conditions.target.modifiers.push(
-      `${modifier} ${tags.map(t => `'${t}'`).join(' ')} ${sources.map(s => `'${s}'`).join(' ')}`
-    )
-    await this.internalUpdate({ 'system.conditions.target.modifiers': this.system.conditions.target.modifiers })
-  }
-
   /**
    * Add Actor Modifier Effects from Character Sheet
    * @param {object} commit

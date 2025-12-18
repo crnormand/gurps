@@ -47,6 +47,12 @@ export const getRangedModifier = (source, target) => {
   return rangeModifier
 }
 
+/**
+ * Get the relative Size Modifier between source and target for melee attacks.
+ * @param {GurpsToken} source
+ * @param {GurpsToken} target
+ * @returns a string representing the size modifier, or undefined if no modifier applies.
+ */
 export const getSizeModifier = (source, target) => {
   const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
