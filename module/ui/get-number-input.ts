@@ -32,6 +32,7 @@ async function GetNumberInput(options: GetNumberInputOptions): Promise<number> {
       },
     })
   } catch (err) {
+    console.error('GetNumberInput: failed to open or process number input dialog.', err)
     return options.value || 1
   }
 }
