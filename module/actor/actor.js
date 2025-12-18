@@ -90,7 +90,7 @@ function extractRollRefFromAttack(chatThing) {
  * @returns {string} The reference code (e.g., 'st', 'dodge')
  */
 function extractRefFromAttributeOrDefense(chatThing) {
-  return chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
+  return chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).split(':')[0]
 }
 
 export class GurpsActor extends Actor {
