@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.10
+
+### Features
+
+- Prompt user for number of shots when attacking with high RoF weapon, and add appropriate modifier.
+- Effect Modifier for Size Modifier to auto apply. #2208
+- Optional rule to use relative SM for melee attacks. #2174
+
 ## Release 0.18.9 12/12/2025
 
 ### Bugfixes

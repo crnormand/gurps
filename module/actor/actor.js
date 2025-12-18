@@ -45,6 +45,32 @@ export const MoveModes = {
   Space: 'GURPS.moveModeSpace',
 }
 
+const ROLL_REF_CODES = {
+  MELEE: 'm',
+  RANGED: 'r',
+  PARRY: 'p',
+  BLOCK: 'b',
+  DAMAGE: 'd',
+  SKILL: 'sk',
+  SPELL: 'sp',
+  DODGE: 'dodge',
+}
+
+const ATTRIBUTE_REF_CODES = {
+  ST: 'st',
+  DX: 'dx',
+  IQ: 'iq',
+  HT: 'ht',
+  WILL: 'will',
+  PER: 'per',
+  FRIGHT_CHECK: 'frightcheck',
+  VISION: 'vision',
+  HEARING: 'hearing',
+  TASTE_SMELL: 'tastesmell',
+  TOUCH: 'touch',
+  CR: 'cr',
+}
+
 export class GurpsActor extends Actor {
   /** @override */
   getRollData() {
@@ -105,8 +131,19 @@ export class GurpsActor extends Actor {
 
       let sizemod = this.system.traits?.sizemod?.toString() || '+0'
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
-      if (sizemod !== '0' && sizemod !== '+0') {
-        this.system.conditions.target.modifiers.push(game.i18n.format('GURPS.modifiersSize', { sm: sizemod }))
+
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+        if (sizemod !== '0' && sizemod !== '+0') {
+          this.system.conditions.target.modifiers.push(
+            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @combatmod @sizemod`
+          )
+        }
+      } else {
+        if (sizemod !== '0' && sizemod !== '+0') {
+          this.system.conditions.target.modifiers.push(
+            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #ranged @combatmod @sizemod`
+          )
+        }
       }
     }
 
@@ -362,6 +399,25 @@ export class GurpsActor extends Actor {
     let userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     let newMods = userMods.filter(m => !m.includes(reference) || m.includes('@man:') || !m.includes('@eft:'))
     await this.internalUpdate({ 'system.conditions.usermods': newMods })
+  }
+
+  async removeTargetModifiers(tags, sources) {
+    let targetMods = this.system.conditions.target.modifiers || []
+    let modsToRemove = targetMods.filter(m => {
+      let clean = cleanTags(m)
+      let hasTag = tags.find(t => clean.includes(t)) != null
+      let hasSource = sources.find(s => m.includes(s)) != null
+      return hasTag && hasSource
+    })
+    this.system.conditions.target.modifiers = targetMods.filter(m => !modsToRemove.includes(m))
+    await this.internalUpdate({ 'system.conditions.target.modifiers': this.system.conditions.target.modifiers })
+  }
+
+  async addTargetModifier({ modifier, tags = [], sources = [] }) {
+    this.system.conditions.target.modifiers.push(
+      `${modifier} ${tags.map(t => `'${t}'`).join(' ')} ${sources.map(s => `'${s}'`).join(' ')}`
+    )
+    await this.internalUpdate({ 'system.conditions.target.modifiers': this.system.conditions.target.modifiers })
   }
 
   /**
@@ -3049,44 +3105,36 @@ export class GurpsActor extends Actor {
         .match(/(\S+):/)?.[1]
         .toLowerCase()
       switch (ref) {
-        case 'm':
+        case ROLL_REF_CODES.MELEE:
           refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allMeleeRolls.split(',').map(it => it.trim().toLowerCase()))
           break
-        case 'r':
+        case ROLL_REF_CODES.RANGED:
           refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allRangedRolls.split(',').map(it => it.trim().toLowerCase()))
           break
-        case 'p':
+        case ROLL_REF_CODES.PARRY:
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
           break
-        case 'b':
+        case ROLL_REF_CODES.BLOCK:
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
           break
-        case 'd':
+        case ROLL_REF_CODES.DAMAGE:
           refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
           isDamageRoll = true
           break
-        case 'sk':
+        case ROLL_REF_CODES.SKILL:
           refTags = taggedSettings.allSkillRolls.split(',').map(it => it.trim().toLowerCase())
           break
-        case 'sp':
+        case ROLL_REF_CODES.SPELL:
           refTags = taggedSettings.allSpellRolls.split(',').map(it => it.trim().toLowerCase())
           if (taggedSettings.useSpellCollegeAsTag) {
             const spell = optionalArgs.obj
             const collegeTags = cleanTags(spell.college)
             refTags = refTags.concat(collegeTags)
           }
-          break
-        case 'p':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'b':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
           break
         default:
           refTags = []
@@ -3105,36 +3153,36 @@ export class GurpsActor extends Actor {
       let refTags
       let regex = /(?<="|:).+(?=\s\(|"|])/gm
       switch (ref) {
-        case 'st':
-        case 'dx':
-        case 'iq':
-        case 'ht':
+        case ATTRIBUTE_REF_CODES.ST:
+        case ATTRIBUTE_REF_CODES.DX:
+        case ATTRIBUTE_REF_CODES.IQ:
+        case ATTRIBUTE_REF_CODES.HT:
           refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
           break
-        case 'will':
-        case 'per':
-        case 'frightcheck':
-        case 'vision':
-        case 'hearing':
-        case 'tastesmell':
-        case 'touch':
-        case 'cr':
+        case ATTRIBUTE_REF_CODES.WILL:
+        case ATTRIBUTE_REF_CODES.PER:
+        case ATTRIBUTE_REF_CODES.FRIGHT_CHECK:
+        case ATTRIBUTE_REF_CODES.VISION:
+        case ATTRIBUTE_REF_CODES.HEARING:
+        case ATTRIBUTE_REF_CODES.TASTE_SMELL:
+        case ATTRIBUTE_REF_CODES.TOUCH:
+        case ATTRIBUTE_REF_CODES.CR:
           refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
           break
-        case 'dodge':
+        case ROLL_REF_CODES.DODGE:
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(
             taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
           )
           break
-        case 'p':
+        case ROLL_REF_CODES.PARRY:
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
           itemRef = chatThing.match(regex)?.[0]
           if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
           break
-        case 'b':
+        case ROLL_REF_CODES.BLOCK:
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
 
@@ -3168,6 +3216,7 @@ export class GurpsActor extends Actor {
         if (key) return game.i18n.localize(key) + mod.replace(key, '')
         return mod
       }) || []
+
     // Actor Targeted Mods
     let targetMods = []
     for (const target of Array.from(game.user.targets)) {
@@ -3182,6 +3231,7 @@ export class GurpsActor extends Actor {
       const rangeMod = getRangedModifier(actorToken, target)
       if (rangeMod) targetMods.push(rangeMod)
     }
+
     const allMods = [...userMods, ...selfMods, ...targetMods]
     const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
 
@@ -3230,15 +3280,15 @@ export class GurpsActor extends Actor {
     const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
     if (!isCombatant && settingsUseMaxActions === 'AllCombatant') return false
     const actionType = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
-    const isAttack = action?.type === 'attack' || ['m', 'r'].includes(actionType)
+    const isAttack = action?.type === 'attack' || [ROLL_REF_CODES.MELEE, ROLL_REF_CODES.RANGED].includes(actionType)
     const isDefense =
       action?.attribute === 'dodge' ||
       action?.type === 'weapon-parry' ||
       action?.type === 'weapon-block' ||
-      ['dodge', 'p', 'b'].includes(actionType)
-    const isDodge = action?.attribute === 'dodge' || actionType === 'dodge'
-    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === 'sk'
-    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === 'sp'
+      [ROLL_REF_CODES.DODGE, ROLL_REF_CODES.PARRY, ROLL_REF_CODES.BLOCK].includes(actionType)
+    const isDodge = action?.attribute === 'dodge' || actionType === ROLL_REF_CODES.DODGE
+    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === ROLL_REF_CODES.SKILL
+    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === ROLL_REF_CODES.SPELL
     if ((isSpell || isAttack || isDefense) && !isDodge) {
       return actorComp.consumeAction !== undefined ? actorComp.consumeAction : true
     } else if (isSkill) {

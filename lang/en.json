@@ -1306,6 +1306,8 @@
     "settingTokenToolsShowEffectMods": "Show Effect Modifier Popup",
     "settingUseEquipped": "Actor: Weight based on 'Equipped'",
     "settingUseFoundryItems": "Use Foundry Items for Player Data",
+    "settingUseSizeModifierDifferenceInMelee": "Combat: Use Size Modifier Difference in Melee",
+    "settingHintUseSizeModifierDifferenceInMelee": "Apply the difference in Size Modifier (SM) between attacker and defender to melee attack rolls.",
     "settingUseMaxActions": "Use Max Actions Check",
     "settingUsePhysicalDice": "Use Physical Dice",
     "settingUseQuickRolls": "Use Quick Roll Button",

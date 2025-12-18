@@ -5,7 +5,7 @@ import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
-export {  }
+export {}
 
 declare global {
   var GURPS: any
@@ -34,5 +34,6 @@ declare global {
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.basicsetpdf': String
     'gurps.pdf-open-first': boolean
+    'gurps.use-size-modifier-difference-in-melee': boolean
   }
 }
