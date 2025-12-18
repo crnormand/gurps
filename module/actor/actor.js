@@ -74,7 +74,7 @@ const ATTRIBUTE = {
 /**
  * Extract the roll reference code from a chat thing string with attack format: `@R:attackname`
  * @param {string} chatThing - The chat thing string
- * @returns {string} The reference code (e.g., 'm', 'r', 'd')
+ * @returns {string} The reference code (e.g., 'm', 'r', 'd', 'sk', 'sp', 'dodge')
  */
 function extractRollRefFromAttack(chatThing) {
   return chatThing
