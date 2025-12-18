@@ -323,6 +323,15 @@
     "colorSheetMenuColorAreas": "Farbige Bereiche",
     "colorSheetMenuCustomColors": "Benutzerdefinierte Farben",
     "colorSheetMenuOverride": "Farben überschreiben",
+    "combat": {
+      "rof": {
+        "bonusLabel": "RoF {shots}",
+        "numberOfShotsLabel": "Anzahl der Schüsse eingeben (1-{max}):",
+        "numberOfShotsPrompt": "Wie viele Schüsse sollen abgegeben werden?",
+        "numberOfShotsTitle": "Anzahl der Schüsse"
+      },
+      "rollTotalHits": "Gesamttreffer<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>. ({link})"
+    },
     "combatInfo": "Kampfinfo",
     "combatInitiative": "Kampf Initiative",
     "CombatOnlyTag": "Nur Kampf-Tag",
@@ -1134,7 +1143,6 @@
     "rollNewTarget": "Neues Ziel: ({target})",
     "rollSuccess": "Erfolg!",
     "rollTotal": "Gewürfelt ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Gesamttreffer ({link})<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Wurf gegen",
     "rsl": "RSL",
     "rt": "RA",

@@ -1,5 +1,3 @@
-import DialogV2 from 'node_modules/fvtt-types/src/foundry/client/applications/api/dialog.mjs'
-
 interface GetNumberInputOptions {
   title: string
   headerText: string
@@ -27,7 +25,7 @@ async function GetNumberInput(options: GetNumberInputOptions): Promise<number> {
       }),
       ok: {
         label: options.okLabel || 'GURPS.submit',
-        callback: (event: Event, button: HTMLButtonElement, dialog: DialogV2.Any) =>
+        callback: (event: Event, button: HTMLButtonElement, dialog: foundry.applications.api.DialogV2.Any) =>
           (button.form!.elements as any).number.valueAsNumber,
       },
     })

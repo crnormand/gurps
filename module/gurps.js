@@ -16,6 +16,7 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
+import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -82,7 +83,6 @@ import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
-import getUserInput from './utilities/get-user-input.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 
 export let GURPS = undefined
@@ -923,10 +923,25 @@ if (!globalThis.GURPS) {
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
 
-      if (parseInt(att.rof) > 1) {
-        const shots = await askForNumberOfShots(parseInt(att.rof))
+      const parsedRateOfFire = parseInt(att.rof)
+      if (parsedRateOfFire > 1) {
+        const shots = await GetNumberInput({
+          title: game.i18n.localize('GURPS.combat.rof.numberOfShotsTitle'),
+          headerText: action.orig,
+          promptText: game.i18n.localize('GURPS.combat.rof.numberOfShotsPrompt'),
+          label: game.i18n.format('GURPS.combat.rof.numberOfShotsLabel', { max: parsedRateOfFire }),
+          min: 1,
+          max: parsedRateOfFire,
+          value: parsedRateOfFire,
+        })
+
         const bonusForRoF = calculateRoFModifier(shots)
-        if (bonusForRoF !== 0) GURPS.ModifierBucket.addModifier(bonusForRoF, `RoF ${shots}`, targetmods)
+        if (bonusForRoF !== 0)
+          GURPS.ModifierBucket.addModifier(
+            bonusForRoF,
+            game.i18n.format('GURPS.combat.rof.bonusLabel', { shots }),
+            targetmods
+          )
         opt.shots = shots
       }
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
@@ -1086,62 +1101,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
      */
-    async attribute({ action, actor, event, originalOtf, calcOnly }) {
-      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
-      if (!actor && (!action || !action.target)) {
-        ui.notifications?.warn('You must have a character selected')
-        return false
-      }
-      let target = parseInt(action.target) // is it pre-targeted (ST12)
-      if (!target && !!actor) {
-        if (!!action.melee) {
-          // Is it trying to match to an attack name (should only occur with Parry: & Block:
-          let meleeAttack = GURPS.findAttack(actor.system, action.melee)
-          if (!!meleeAttack) {
-            target = parseInt(meleeAttack[action.attribute.toLowerCase()]) // should only occur with parry & block
-          }
-        } else {
-          target = parseInt(foundry.utils.getProperty(actor.system, action.path))
-        }
-      }
-      const thing = action.name
-      if (!target) {
-        return false
-      }
-      if (calcOnly) {
-        let modifier = parseInt(action.mod) ?? 0
-        if (isNaN(modifier)) modifier = 0
-        return { target: target + modifier, thing: thing }
-      }
-      let targetmods = []
-      let aid = actor ? `@${actor.id}@` : ''
-      const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
-      let opt = {
-        blind: action.blindroll,
-        event: event,
-        action: action,
-        obj: action.obj,
-        text: '',
-      }
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
-      opt.text = ''
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
-      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
-
-      return doRoll({
-        actor,
-        targetmods,
-        prefix: game.i18n.localize('GURPS.rollVs'),
-        thing,
-        chatthing,
-        origtarget: target,
-        optionalArgs: opt,
-        action,
-      })
-    },
+    async attribute({ action, actor, event, originalOtf, calcOnly }) {},
     /**
      * @param {Object} data
      *
@@ -2619,24 +2579,4 @@ const showGURPSCopyright = function () {
     // @ts-ignore
     whisper: [game.user],
   })
-}
-
-const askForNumberOfShots = async function (maxshots) {
-  return await GetNumberInput({
-    title: 'Number of Shots',
-    headerText: `How many shots do you want to fire?`,
-    promptText: `Enter number of shots (1-${maxshots}):`,
-    min: 1,
-    max: maxshots,
-    value: maxshots,
-  })
-}
-
-const calculateRoFModifier = function (rof) {
-  if (rof < 17) return Math.ceil(rof / 4) - 1
-  if (rof < 25) return 4
-  if (rof < 50) return 5
-  if (rof < 100) return 6
-
-  return Math.floor(rof / 100) + 6
 }

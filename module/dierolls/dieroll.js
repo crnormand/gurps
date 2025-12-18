@@ -569,10 +569,10 @@ async function _doRoll({
       rofText = potentialHits.toString()
 
       // Support shotgun RoF (3x9, for example).
-      const m = optionalArgs.obj.rof.match(/(\d+)[×xX\*](\d+)/)
-      if (m) {
-        potentialHits = potentialHits * parseInt(m[2])
-        rofText = `${rof}x${m[2]}`
+      const matchShotgunRoF = optionalArgs.obj.rof.match(/(?<rof>\d+)[×xX\*](?<projectiles>\d+)/)
+      if (matchShotgunRoF) {
+        potentialHits = potentialHits * matchShotgunRoF.groups.projectiles
+        rofText = `${rof}x${matchShotgunRoF.groups.projectiles}`
       }
 
       chatdata['rof'] = rofText
