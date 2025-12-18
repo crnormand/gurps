@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error - test-only import; module resolution not configured in tsconfig for this path
 import { calculateRoFModifier } from '../module/combat/utilities'
 
 describe('calculateRoFModifier', () => {
