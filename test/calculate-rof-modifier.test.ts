@@ -1,4 +1,5 @@
-import { calculateRoFModifier } from '../module/combat/utilities.js'
+// @ts-ignore
+import { calculateRoFModifier } from '../module/combat/utilities'
 
 describe('calculateRoFModifier', () => {
   test.each([

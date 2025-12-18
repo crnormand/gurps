@@ -20,8 +20,8 @@ async function GetNumberInput(options: GetNumberInputOptions): Promise<number> {
         label: options.label,
         value: options.value || 1,
         min: options.min || 1,
-        max: options.max || 100,
-        step: options.step || 1,
+        max: options.max ?? 100,
+        step: options.step ?? 1,
       }),
       ok: {
         label: options.okLabel || 'GURPS.submit',
