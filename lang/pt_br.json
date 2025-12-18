@@ -323,6 +323,15 @@
     "colorSheetMenuColorAreas": "Áreas de Cor",
     "colorSheetMenuCustomColors": "Cores Personalizadas",
     "colorSheetMenuOverride": "Desconsiderar Cores",
+    "combat": {
+      "rof": {
+        "bonusLabel": "Cadência {shots}",
+        "numberOfShotsLabel": "Informe o número de disparos (1-{max}):",
+        "numberOfShotsPrompt": "Quantos disparos você deseja efetuar?",
+        "numberOfShotsTitle": "Número de Disparos"
+      },
+      "rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis<br/>devido à CdT ({rof}) e o RCO ({rcl}). ({link})"
+    },
     "combatInfo": "Informações de Combate",
     "combatInitiative": "Iniciativa de Combate",
     "CombatOnlyTag": "Tag apenas de combate",
@@ -1134,7 +1143,6 @@
     "rollNewTarget": "Novo alvo: ({target})",
     "rollSuccess": "Sucesso!",
     "rollTotal": "Resultado da rolagem ({rolls}) = {rtotal}.",
-    "rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis ({link})<br/>devido à CdT ({rof}) e o RCO ({rcl}).",
     "rollVs": "Rolagem contra",
     "rsl": "NH Rltv.",
     "rt": "CR",

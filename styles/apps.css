@@ -42,10 +42,6 @@ Global Override body {
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  background:
-    url(/systems/gurps/icons/hex2.webp) repeat,
-    url(/ui/parchment.jpg) repeat,
-    #dcdcd0;
   color: black;
 }
 
