@@ -2695,7 +2695,7 @@ export class GurpsActor extends Actor {
         .map(p => `${p.trim()}.`)
         .join('</p><p>')
 
-      await foundry.applications.api.DialogV2.wait({
+      await foundry.applications.api.DialogV2.prompt({
         window: { title: game.i18n.localize('GURPS.settingNoEditAllowed') },
         content: `<p>${body}</p>`,
         ok: {

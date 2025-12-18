@@ -323,6 +323,15 @@
     "colorSheetMenuColorAreas": "Цветовые области",
     "colorSheetMenuCustomColors": "Пользовательские цвета",
     "colorSheetMenuOverride": "Переопределить цвета",
+    "combat": {
+      "rof": {
+        "bonusLabel": "Темп огня {shots}",
+        "numberOfShotsLabel": "Введите количество выстрелов (1-{max}):",
+        "numberOfShotsPrompt": "Сколько выстрелов вы хотите сделать?",
+        "numberOfShotsTitle": "Количество выстрелов"
+      },
+      "rollTotalHits": "Общее количество возможных попаданий<br/>из-за Сс ({rof}) и Отд ({rcl}) равно <span class='roll-value'>{rofrcl}</span>. ({link})"
+    },
     "combatInfo": "Информация о бое",
     "combatInitiative": "Инициатива в бою",
     "CombatOnlyTag": "Только боевой тег",
@@ -1134,7 +1143,6 @@
     "rollNewTarget": "Новая цель: ({target})",
     "rollSuccess": "Успех!",
     "rollTotal": "Бросок ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Общее количество возможных попаданий ({link})<br/>из-за Сс ({rof}) и Отд ({rcl}) равно <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Бросок против",
     "rsl": "ОУН",
     "rt": "СР",

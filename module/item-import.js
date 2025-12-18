@@ -133,6 +133,7 @@ export class ItemImporter {
   }
 
   async _importItem(i, pack, filename, timestamp) {
+    console.log('Importing Item: ', i.description)
     this.count++
     if (i.children?.length)
       for (let ch of i.children) {

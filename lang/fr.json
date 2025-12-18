@@ -323,6 +323,15 @@
     "colorSheetMenuColorAreas": "Coloration Zones",
     "colorSheetMenuCustomColors": "Couleurs Personnalisées",
     "colorSheetMenuOverride": "Ecraser Couleurs",
+    "combat": {
+      "rof": {
+        "bonusLabel": "Cadence {shots}",
+        "numberOfShotsLabel": "Entrez le nombre de tirs (1-{max}) :",
+        "numberOfShotsPrompt": "Combien de tirs voulez-vous effectuer ?",
+        "numberOfShotsTitle": "Nombre de tirs"
+      },
+      "rollTotalHits": "Total des coups possibles<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>. ({link})"
+    },
     "combatInfo": "Infos de Combat",
     "combatInitiative": "Initiative de Combat",
     "CombatOnlyTag": "Tag de combat uniquement",
@@ -1134,7 +1143,6 @@
     "rollNewTarget": "Nouvelle Cible: ({target})",
     "rollSuccess": "Succès!",
     "rollTotal": "Jeté ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Total des coups possibles ({link})<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Jet contre",
     "rsl": "NRC",
     "rt": "RT",

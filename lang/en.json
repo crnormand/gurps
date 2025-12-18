@@ -323,6 +323,15 @@
     "colorSheetMenuColorAreas": "Color Areas",
     "colorSheetMenuCustomColors": "Custom Colors",
     "colorSheetMenuOverride": "Override Colors",
+    "combat": {
+      "rof": {
+        "bonusLabel": "RoF {shots}",
+        "numberOfShotsLabel": "Enter number of shots (1-{max}):",
+        "numberOfShotsPrompt": "How many shots do you want to fire?",
+        "numberOfShotsTitle": "Number of Shots"
+      },
+      "rollTotalHits": "Total hits due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>. ({link})"
+    },
     "combatInfo": "Combat Info",
     "combatInitiative": "Combat Initiative",
     "CombatOnlyTag": "Combat Only Tag",
@@ -1137,7 +1146,6 @@
     "rollNewTarget": "New Target: ({target})",
     "rollSuccess": "Success!",
     "rollTotal": "Rolled ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Total possible hits ({link})<br/>due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Roll vs",
     "rsl": "RSL",
     "rt": "RT",
