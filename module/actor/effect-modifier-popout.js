@@ -47,6 +47,29 @@ export const getRangedModifier = (source, target) => {
   return rangeModifier
 }
 
+export const getSizeModifier = (source, target) => {
+  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const rangedTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
+  const baseTags = `#${rangedTag}`
+  let sizeModifier
+  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+    const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
+    const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
+    const sizeDiff = attackerSM - targetSM
+    if (sizeDiff !== 0) {
+      const sizeMod = sizeDiff > 0 ? -sizeDiff * 2 : -sizeDiff
+      const smText = `${sizeMod >= 0 ? '+' : ''}${sizeMod}`
+      sizeModifier = game.i18n.format('GURPS.modifiersSizeDifference', {
+        sm: smText,
+        sourceSM: attackerSM,
+        targetSM: targetSM,
+      })
+      sizeModifier += ` ${baseTags} @combatmod @sizemod`
+    }
+  }
+  return sizeModifier
+}
+
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
     super(options)
@@ -112,6 +135,11 @@ export class EffectModifierPopout extends Application {
       }
       // Add the range to the target
       results.push(result)
+
+      const smModifier = getSizeModifier(this.getToken(), target)
+      if (smModifier) {
+        result.targetmodifiers = [...result.targetmodifiers, ...this.convertModifiers([smModifier])]
+      }
     }
     return results
   }
