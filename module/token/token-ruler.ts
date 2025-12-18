@@ -27,8 +27,10 @@ function registerTokenRuler() {
       const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
       const yards = Length.from(waypoint.measurement.cost, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
 
-      // @ts-expect-error: waiting for actor update to DataModel
-      if (yards <= Math.ceil(actor.system.currentmove / 10)) {
+      if (yards === 0) {
+        return data
+        // @ts-expect-error: waiting for actor update to DataModel
+      } else if (yards <= Math.ceil(actor.system.currentmove / 10)) {
         return { ...data, color: 0x0000ff } // Step: blue
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentmove) {
