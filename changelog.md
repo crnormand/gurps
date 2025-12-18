@@ -8,6 +8,11 @@
 - Effect Modifier for Size Modifier to auto apply \#2208
 - Allow optional rule for using the difference in Size Modifiers in melee combat. \#2174
 
+### Bugfixes
+
+- Restore missing lang tags. #2430
+- Fix sprint distance when changing encumbrance levels. #2420
+
 ## Release 0.18.9 12/12/2025
 
 ### Bugfixes
@@ -31,7 +36,7 @@
 ### Bugfixes
 
 - Unable to add accuracy of Mooks/NPC \#2393
-- OTF "*Costs" not applying if right-click activation \#2389
+- OTF "\*Costs" not applying if right-click activation \#2389
 - Spell Damage Building up above Modifier Bucket and Cannot Remove It \#2391
 
 ## Release 0.18.5 08/05/2025

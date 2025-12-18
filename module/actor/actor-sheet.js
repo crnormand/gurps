@@ -1823,6 +1823,7 @@ export class GurpsActorSheet extends ActorSheet {
               [t]: true,
               'system.currentmove': parseInt(enc.move),
               'system.currentdodge': parseInt(enc.dodge),
+              'system.currentsprint': parseInt(enc.currentsprint),
             })
           } else if (enc.current) {
             await this.actor.internalUpdate({ [t]: false })
