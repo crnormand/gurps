@@ -3215,7 +3215,8 @@ export class GurpsActor extends Actor {
           const parsedBulk = parseInt(optionalArgs?.obj?.bulk ?? '0', 10)
           const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
           const maneuverMod = bulkPenalty < -2 ? bulkPenalty : -2
-          let desc = userMod.match(/^[+-]\d+(.*?)(?=[#@])/) ? userMod.match(/^[+-]\d+(.*?)(?=[#@])/)[1].trim() : ''
+          const maneuverMatch = userMod.match(/^[+-]\d+(.*?)(?=[#@])/)
+          let desc = maneuverMatch ? maneuverMatch[1].trim() : ''
           if (maneuverMod !== -2) desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
           await GURPS.ModifierBucket.addModifier(maneuverMod.toString(), desc, undefined, true)
           continue
