@@ -5,7 +5,7 @@ import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
-export {}
+export {  }
 
 declare global {
   var GURPS: any

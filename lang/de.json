@@ -330,7 +330,11 @@
         "numberOfShotsPrompt": "Wie viele Schüsse sollen abgegeben werden?",
         "numberOfShotsTitle": "Anzahl der Schüsse"
       },
-      "rollTotalHits": "Gesamttreffer<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>. ({link})"
+      "rollTotalHits": "Gesamttreffer<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Kampf: Größenmodifikator-Unterschied im Nahkampf verwenden",
+        "useRelativeSizeInMeleeHint": "Wendet die Differenz im Größenmodifikator (SM) zwischen Angreifer und Verteidiger auf Nahkampf-Angriffswürfe an."
+      }
     },
     "combatInfo": "Kampfinfo",
     "combatInitiative": "Kampf Initiative",

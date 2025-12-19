@@ -3193,6 +3193,36 @@ export class GurpsActor extends Actor {
     return isDamageRoll
   }
 
+  /**
+   * Extracts the applicable tagged modifier tags for attribute checks and defense rolls.
+   *
+   * This method determines which tagged modifier settings should apply based on the type of check being performed. For
+   * basic attributes (ST, DX, IQ, HT), it returns tags from both the specific attribute setting and the general "All
+   * Attributes Rolls" setting. For defenses, it combines the general defense tags with defense-specific tags.
+   *
+   * @param {string} chatThing - The roll description text (e.g., "DX" or "Dodge")
+   * @param {Object} taggedSettings - Object containing tagged modifier settings from game settings
+   * @param {string} taggedSettings.allSTRolls - Comma-separated tags for ST rolls
+   * @param {string} taggedSettings.allDXRolls - Comma-separated tags for DX rolls
+   * @param {string} taggedSettings.allIQRolls - Comma-separated tags for IQ rolls
+   * @param {string} taggedSettings.allHTRolls - Comma-separated tags for HT rolls
+   * @param {string} taggedSettings.allAttributesRolls - Comma-separated tags for all basic attribute rolls
+   * @param {string} taggedSettings.allDefenseRolls - Comma-separated tags for all defense rolls
+   * @param {string} taggedSettings.allDODGERolls - Comma-separated tags for dodge rolls
+   * @param {string} taggedSettings.allParryRolls - Comma-separated tags for parry rolls
+   * @param {string} taggedSettings.allBlockRolls - Comma-separated tags for block rolls
+   * @returns {string[]} Array of lowercase, trimmed tag strings that apply to this roll
+   *
+   * @example
+   * // For a DX check, returns tags from both "All DX Rolls" and "All Attributes Rolls"
+   * const tags = actor._getTagsFromCheck("DX", taggedSettings);
+   * // returns ["#all", "#attribute", "#dx"] if they exist in taggedSettings.
+   *
+   * @example
+   * // For a Dodge, returns tags from both "All Defense Rolls" and "All Dodge Rolls"
+   * const tags = actor._getTagsFromCheck("Dodge", taggedSettings);
+   * // returns ["#all", "#defense", "#dodge"] if they exist in taggedSettings.
+   */
   _getTagsFromCheck(chatThing, taggedSettings) {
     let refTags
 
@@ -3240,6 +3270,15 @@ export class GurpsActor extends Actor {
     return refTags
   }
 
+  /**
+   * Extracts the equipment reference (e.g., weapon or shield name) from a parry/block roll string.
+   *
+   * The chat text is expected to include the item name in quotes or after a colon, followed by a parenthetical roll
+   * type. Only Parry and Block rolls should produce an item reference.
+   *
+   * @param {string} chatThing - Raw roll description text from chat
+   * @returns {string|undefined} The trimmed item reference if present, otherwise undefined
+   */
   _getItemRefFromCheck(chatThing) {
     const regex = /(?<="|:).+(?=\s\(|"|])/gm
     let itemRef = chatThing.match(regex)?.[0]
@@ -3251,6 +3290,27 @@ export class GurpsActor extends Actor {
     return itemRef
   }
 
+  /**
+   * Collects the applicable tagged modifier tags for item-based or attribute-based rolls.
+   *
+   * Determines the roll category (melee, ranged, parry, block, damage, skill, spell) from the chat text and returns
+   * the configured tag list for that category. For spells, optionally appends college tags when enabled via settings.
+   *
+   * @param {string} chatThing - Raw roll description text from chat
+   * @param {Object} taggedSettings - Tagged modifier settings from game settings
+   * @param {string} taggedSettings.allAttackRolls - Comma-separated tags for all attack rolls
+   * @param {string} taggedSettings.allMeleeRolls - Comma-separated tags for melee attacks
+   * @param {string} taggedSettings.allRangedRolls - Comma-separated tags for ranged attacks
+   * @param {string} taggedSettings.allDefenseRolls - Comma-separated tags for all defenses
+   * @param {string} taggedSettings.allParryRolls - Comma-separated tags for parry rolls
+   * @param {string} taggedSettings.allBlockRolls - Comma-separated tags for block rolls
+   * @param {string} taggedSettings.allDamageRolls - Comma-separated tags for damage rolls
+   * @param {string} taggedSettings.allSkillRolls - Comma-separated tags for skill rolls
+   * @param {string} taggedSettings.allSpellRolls - Comma-separated tags for spell rolls
+   * @param {boolean} taggedSettings.useSpellCollegeAsTag - Whether to append spell college tags
+   * @param {{obj?: Object}} optionalArgs - Optional context (e.g., the spell object when resolving colleges)
+   * @returns {string[]} Array of lowercase, trimmed tag strings that apply to the roll
+   */
   _getTagsFromItemOrAttr(chatThing, taggedSettings, optionalArgs) {
     let refTags
     const ref = extractRollRefFromAttack(chatThing)
@@ -3291,6 +3351,15 @@ export class GurpsActor extends Actor {
     return refTags
   }
 
+  /**
+   * Returns true when the roll string represents a damage roll.
+   *
+   * Uses the same roll-ref parsing as attack rolls to identify the category and checks for the DAMAGE ref. Helper for
+   * deciding whether damage-specific tags or behaviors should apply.
+   *
+   * @param {string} chatThing - Raw roll description text from chat
+   * @returns {boolean} True if the extracted roll ref is DAMAGE; otherwise false
+   */
   _getDamageRollFromItemOrAttr(chatThing) {
     const ref = extractRollRefFromAttack(chatThing)
     return ref === ROLL_TYPE.DAMAGE
