@@ -81,7 +81,7 @@ function extractRollRefFromAttack(chatThing) {
     .split('@')
     .pop()
     .match(/(\S+):/)?.[1]
-    .toLowerCase()
+    ?.toLowerCase()
 }
 
 /**
