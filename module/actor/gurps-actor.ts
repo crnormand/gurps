@@ -2193,7 +2193,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     } as Item.UpdateData
 
     if (item.type === 'equipmentV2') {
-      // @ts-expect-error: wrong type for _id provied by fvtt-types
+      // @ts-expect-error: wrong type for _id provided by fvtt-types
       update.system!.eqt = { carried: targetCollection === 'system.equipmentV2.carried' }
     }
 
@@ -2548,10 +2548,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       .filter(i => i.type === 'equipment')
       .slice()
       .sort((a, b) => b.name.localeCompare(a.name)) // in case items are in the same list... add them alphabetically
-
-    const a: Item.OfType<'equipment'> = {} as any
-
-    a.system
 
     let good: Item.OfType<'equipment'>[] = []
     while (orig.length > 0) {
