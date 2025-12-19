@@ -670,7 +670,7 @@ Portrait will not be imported.`
     trait.childItems?.forEach((child: GcsTrait, childIndex: number) => this.#importTrait(child, childIndex, _id))
 
     // component.contains = children.map((c: Item.CreateData) => c._id as string)
-    const item: Item.CreateData = {
+    const item: Item.CreateData<'featureV2'> = {
       _id,
       type,
       name,
@@ -705,7 +705,7 @@ Portrait will not be imported.`
     const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
     skill.childItems?.forEach((child: GcsSkill, childIndex: number) => this.#importSkill(child, childIndex, _id))
 
-    const item: Item.CreateData = {
+    const item: Item.CreateData<'skillV2'> = {
       _id,
       type,
       name,
@@ -741,7 +741,7 @@ Portrait will not be imported.`
 
     spell.childItems?.forEach((child: GcsSpell, childIndex: number) => this.#importSpell(child, childIndex, _id))
 
-    const item: Item.CreateData = {
+    const item: Item.CreateData<'spellV2'> = {
       _id,
       type,
       name,
@@ -784,7 +784,7 @@ Portrait will not be imported.`
       this.#importEquipment(child, childIndex, carried, _id)
     )
 
-    const item: Item.CreateData = {
+    const item: Item.CreateData<'equipmentV2'> = {
       _id,
       type,
       name,

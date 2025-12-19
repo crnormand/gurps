@@ -22,8 +22,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   // Narrowed view of this.system for GurpsItem logic.
   get modelV1() {
-    // @ts-expect-error: Temporary until full migration.
-    return this.system as ItemV1Model
+    if (this.isNewItemType) throw new Error('Item subtype is not a V1 model')
+
+    return this.system as unknown as ItemV1Model<SubType>
   }
 
   // Common guard for new actor subtypes.
@@ -102,7 +103,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   async toggleOpen(expandOnly: boolean = false): Promise<void> {
     const newValue = !this.modelV2.open
     if (expandOnly && !newValue) return
-    await this.update({ 'system.open': newValue } as Item.UpdateData)
+    // @ts-expect-error: system does not recognise Item SubType
+    await this.update({ 'system.open': newValue })
   }
 
   /* ---------------------------------------- */
@@ -370,7 +372,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   toggleCollapsed(expandOnly: boolean = false): void {
     const newValue = !this.modelV2.open
     if (expandOnly && !newValue) return
-    this.update({ 'system.open': newValue } as Item.UpdateData)
+
+    // @ts-expect-error: system does not recognise Item SubType
+    this.update({ 'system.open': newValue })
   }
 
   /* ---------------------------------------- */

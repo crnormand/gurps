@@ -9,7 +9,7 @@ class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends found
   /**
    * Pre-organized arrays of data models by type.
    */
-  #types: Map<string, Set<string>> = new Map()
+  #types = new Map<string, Set<string>>()
 
   /* ---------------------------------------- */
 

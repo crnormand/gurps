@@ -1957,7 +1957,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           // Otherwise, create a new item.
           // @ts-expect-error
           item.system.eqt.count = count
-          await this.addNewItemData(item)
+          await this.addNewItemData(item as Record<string, any>)
         }
 
         // Adjust the source actor's equipment.
@@ -2193,7 +2193,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     } as Item.UpdateData
 
     if (item.type === 'equipmentV2') {
-      // @ts-expect-error
+      // @ts-expect-error: wrong type for _id provied by fvtt-types
       update.system!.eqt = { carried: targetCollection === 'system.equipmentV2.carried' }
     }
 
@@ -2544,18 +2544,23 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list
-    let orig = this.items.contents
+    let orig: Item.OfType<'equipment'>[] = this.items.contents
       .filter(i => i.type === 'equipment')
       .slice()
       .sort((a, b) => b.name.localeCompare(a.name)) // in case items are in the same list... add them alphabetically
 
-    let good: GurpsItemV2[] = []
+    const a: Item.OfType<'equipment'> = {} as any
+
+    a.system
+
+    let good: Item.OfType<'equipment'>[] = []
     while (orig.length > 0) {
       // We are trying to place 'parent' items before we place 'children' items
-      let left: GurpsItemV2[] = []
+      let left: Item.OfType<'equipment'>[] = []
       let atLeastOne = false
 
       for (const i of orig) {
+        // @ts-expect-error: equipment item type not registering correctly
         if (!i.system.eqt!.parentuuid || good.find(e => e.system.eqt!.uuid == i.system.eqt!.parentuuid)) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
@@ -3212,7 +3217,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // Process Actor Component, Parent (dropped) Item and Child Items.
 
     // 1. This global item was already dropped?
-    // @ts-expect-error
+    // @ts-expect-error: old item type not registering correctly
     const found = this.items.find(it => it.system.globalid === data.system.globalid)
     if (!!found) {
       ui.notifications?.warn(game.i18n!.localize('GURPS.cannotDropItemAlreadyExists'))
@@ -3284,7 +3289,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       await this.updateEmbeddedDocuments('Item', [
         {
           _id: parentItem!.id,
-          // @ts-expect-error
+          // @ts-expect-error: old item type not registering correctly
           'system.globalid': dragData.uuid,
           'system.melee': data.system.melee,
           'system.ranged': data.system.ranged,
@@ -4024,16 +4029,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // If originalCount exists, let's check if the count has changed
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
-      item.type === 'equipment' &&
+      item.isOfType('equipment') &&
       ImportSettings.ignoreQuantityOnImport &&
-      // @ts-expect-error
+      // @ts-expect-error: equipment system type not registering correctly
       !!item.system.eqt.originalCount &&
-      // @ts-expect-error
+      // @ts-expect-error: equipment system type not registering correctly
       !isNaN(item.system.eqt.originalCount) &&
-      // @ts-expect-error
+      // @ts-expect-error: equipment system type not registering correctly
       item.system.eqt.originalCount !== item.modelV1.eqt.count
     ) {
-      // @ts-expect-error
+      // @ts-expect-error: equipment system type not registering correctly
       item.system.eqt.ignoreImportQty = true
     }
 
@@ -4045,7 +4050,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const itemInfo = item.getItemInfo()
     await this.internalUpdate({
       [sysKey]: {
-        // @ts-expect-error
+        // @ts-expect-error: equipment system type not registering correctly
         ...item.system[item.itemSysKey],
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
@@ -4086,9 +4091,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns
    */
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
-    // @ts-expect-error
+    // @ts-expect-error: equipment system type not registering correctly
     let item = this.items.find(i => i.system.originalName === name)
-    // @ts-expect-error
+    // @ts-expect-error: equipment system type not registering correctly
     if (!item) item = this.items.find(i => i.system.name === name)
     if (!!item) return item
 
@@ -4282,7 +4287,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let rawItem = this.items.get(srceqt.itemid)
       if (rawItem) {
         let item = rawItem as GurpsItemV2<'equipment'>
-        // @ts-expect-error
         item.modelV1.eqt.count = count
         await this.addNewItemData(item, targetkey)
         await this.updateParentOf(targetkey, true)

@@ -1,4 +1,4 @@
-import { AnyMutableObject } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
@@ -7,13 +7,14 @@ import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
 import { SpellModel } from 'module/item/data/spell.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
-import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
+import { BaseAction } from 'module/action/base-action.ts'
+import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 
 export {}
 
@@ -149,7 +150,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.pdf.open-first': boolean
     'gurps.portrait-path': 'global' | 'world'
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
-    'gurps.resource-tracker.manager': new (options?: any) => ResourceTracker.TemplateManager
+    'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
@@ -159,7 +160,6 @@ declare module 'fvtt-types/configuration' {
     'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
-    'gurps.auto-ignore-qty': boolean
     'gurps.automatic-encumbrance': boolean
     'gurps.automatic-onethird': boolean
     'gurps.check-equipped': boolean
