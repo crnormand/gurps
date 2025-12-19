@@ -54,6 +54,7 @@ export const getRangedModifier = (source, target) => {
  * @returns {string|undefined} a string representing the size modifier, or undefined if no modifier applies.
  */
 export const getSizeModifier = (source, target) => {
+  if (!source || !target) return undefined
   const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
   const baseTags = `#${meleeTag}`
