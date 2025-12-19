@@ -1821,8 +1821,9 @@ export class GurpsActorSheet extends ActorSheet {
           if (key === enckey) {
             await this.actor.internalUpdate({
               [t]: true,
-              'system.currentmove': parseInt(enc.move),
-              'system.currentdodge': parseInt(enc.dodge),
+              'system.currentmove': parseInt(enc.currentmove),
+              'system.currentdodge': parseInt(enc.currentdodge),
+              'system.currentsprint': parseInt(enc.currentsprint),
             })
           } else if (enc.current) {
             await this.actor.internalUpdate({ [t]: false })

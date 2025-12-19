@@ -699,10 +699,12 @@ export class GurpsActor extends Actor {
         if (!enc.level) enc.level = parseInt(enckey) // FIXME: Why enc.level=NaN after GCA import?
         let threshold = 10 - 2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
+
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
-        enc.currentsprint = Math.max(1, Math.floor(effectiveSprint * threshold))
+        enc.currentsprint = Math.max(enc.currentmove + 1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
+
         // TODO remove additionalresources.showflightmove
         // if (!!data.additionalresources?.showflightmove)
         enc.currentmovedisplay = this._isEnhancedMove() ? enc.currentmove + '/' + enc.currentsprint : enc.currentmove
@@ -2438,6 +2440,7 @@ export class GurpsActor extends Actor {
           enc.current = true
           this.system.currentmove = parseInt(enc.currentmove)
           this.system.currentdodge = parseInt(enc.currentdodge)
+          this.system.currentsprint = parseInt(enc.currentsprint)
         } else if (enc.current) {
           enc.current = false
         }
