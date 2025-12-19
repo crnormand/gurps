@@ -34,5 +34,6 @@ declare global {
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.basicsetpdf': String
     'gurps.pdf-open-first': boolean
+    'gurps.use-size-modifier-difference-in-melee': boolean
   }
 }

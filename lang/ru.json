@@ -330,7 +330,11 @@
         "numberOfShotsPrompt": "Сколько выстрелов вы хотите сделать?",
         "numberOfShotsTitle": "Количество выстрелов"
       },
-      "rollTotalHits": "Общее количество возможных попаданий<br/>из-за Сс ({rof}) и Отд ({rcl}) равно <span class='roll-value'>{rofrcl}</span>. ({link})"
+      "rollTotalHits": "Общее количество возможных попаданий<br/>из-за Сс ({rof}) и Отд ({rcl}) равно <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Бой: Использовать разницу модификатора размера в ближнем бою",
+        "useRelativeSizeInMeleeHint": "Применять разницу модификатора размера (SM) между атакующим и защищающимся к броскам атаки в ближнем бою."
+      }
     },
     "combatInfo": "Информация о бое",
     "combatInitiative": "Инициатива в бою",
@@ -936,6 +940,7 @@
     "modifierSizeDetail": "Разница в ближнем бою; Абсолют в дальнем",
     "modifierSizeEntry": "{SM} Размер {us} ({metric})",
     "modifiersSize": "{sm} для Модификатора Размеров",
+    "modifiersSizeDifference": "{sm} для разницы Модификатора Размеров (источник {sourceSM}, цель {targetSM})",
     "modifierStatus": "Статус",
     "modifierStatusAffliction": "Статус и Аффликции",
     "modifierStatusShock1": "-1 к проверкам ИН/ЛВ (Шок 1)",

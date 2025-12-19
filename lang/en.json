@@ -330,7 +330,11 @@
         "numberOfShotsPrompt": "How many shots do you want to fire?",
         "numberOfShotsTitle": "Number of Shots"
       },
-      "rollTotalHits": "Total hits due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>. ({link})"
+      "rollTotalHits": "Total hits due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Combat: Use Size Modifier Difference in Melee",
+        "useRelativeSizeInMeleeHint": "Apply the difference in Size Modifier (SM) between attacker and defender to melee attack rolls."
+      }
     },
     "combatInfo": "Combat Info",
     "combatInitiative": "Combat Initiative",
@@ -936,6 +940,7 @@
     "modifierSizeDetail": "Difference in Melee; Absolute in Ranged",
     "modifierSizeEntry": "{SM} Size {us} ({metric})",
     "modifiersSize": "{sm} for Size Modifier",
+    "modifiersSizeDifference": "{sm} for Size Modifier difference (source {sourceSM}, target {targetSM})",
     "modifierStatus": "Status",
     "modifierStatusAffliction": "Status and Afflictions",
     "modifierStatusShock1": "-1 to IQ/DX checks (Shock 1)",
