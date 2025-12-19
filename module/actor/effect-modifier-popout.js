@@ -51,7 +51,7 @@ export const getRangedModifier = (source, target) => {
  * Get the relative Size Modifier between source and target for melee attacks.
  * @param {GurpsToken} source
  * @param {GurpsToken} target
- * @returns {string|undefined} a string representing the size modifier, or undefined if no modifier applies.
+ * @returns {string|undefined} a string representing the size modifier, or undefined if no modifier applies or the setting is disabled.
  */
 export const getSizeModifier = (source, target) => {
   if (!source || !target) return undefined
