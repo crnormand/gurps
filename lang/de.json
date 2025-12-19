@@ -334,6 +334,10 @@
       "setting": {
         "useRelativeSizeInMelee": "Kampf: Größenmodifikator-Unterschied im Nahkampf verwenden",
         "useRelativeSizeInMeleeHint": "Wendet die Differenz im Größenmodifikator (SM) zwischen Angreifer und Verteidiger auf Nahkampf-Angriffswürfe an."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Keine aktiven Token für Akteur {name} zum Aktualisieren des Manövers.",
+        "noActiveTokensToUpdatePosture": "Keine aktiven Token für Akteur {name} zum Aktualisieren der Haltung."
       }
     },
     "combatInfo": "Kampfinfo",

@@ -334,6 +334,10 @@
       "setting": {
         "useRelativeSizeInMelee": "Combat: Use Size Modifier Difference in Melee",
         "useRelativeSizeInMeleeHint": "Apply the difference in Size Modifier (SM) between attacker and defender to melee attack rolls."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "No active tokens for actor {name} to update maneuver.",
+        "noActiveTokensToUpdatePosture": "No active tokens for actor {name} to update posture."
       }
     },
     "combatInfo": "Combat Info",

@@ -334,6 +334,10 @@
       "setting": {
         "useRelativeSizeInMelee": "Combate: Usar Diferença de Modificador de Tamanho no Corpo a Corpo",
         "useRelativeSizeInMeleeHint": "Aplicar a diferença no Modificador de Tamanho (SM) entre atacante e defensor nas rolagens de ataque corpo a corpo."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Nenhum token ativo para o ator {name} atualizar manobra.",
+        "noActiveTokensToUpdatePosture": "Nenhum token ativo para o ator {name} atualizar postura."
       }
     },
     "combatInfo": "Informações de Combate",

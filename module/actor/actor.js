@@ -1068,16 +1068,17 @@ export class GurpsActor extends Actor {
     const status = CONFIG.statusEffects.find(e => e.id === statusId)
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
 
+    let existing = []
     if (foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture') {
-      let existing = this.getAllActivePostureEffects()
+      existing = this.getAllActivePostureEffects()
       existing = existing.filter(e => e.statuses.find(s => s !== statusId))
-
-      for (const it of existing) {
-        await super.toggleStatusEffect(it.statuses.first())
-      }
     }
 
     await super.toggleStatusEffect(statusId, { active, overlay })
+
+    for (const it of existing) {
+      await super.toggleStatusEffect(it.statuses.first())
+    }
   }
 
   getAllActivePostureEffects() {
@@ -1090,16 +1091,20 @@ export class GurpsActor extends Actor {
    */
   async replaceManeuver(maneuverText) {
     let tokens = this._findTokens()
-    if (tokens && tokens.length) for (const t of tokens) await t.setManeuver(maneuverText)
+    if (!tokens || tokens.length === 0) {
+      // Show a UI notification using i18n
+      ui.notifications.warn(
+        game.i18n.format('GURPS.combat.ui.noActiveTokensToUpdateManeuver', { name: this.displayname })
+      )
+      return
+    }
+
+    for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   async replacePosture(changeData) {
-    let tokens = this._findTokens()
-    if (tokens)
-      for (const t of tokens) {
-        let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
-        await this.toggleStatusEffect(id)
-      }
+    let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
+    await this.toggleStatusEffect(id)
   }
 
   /**
@@ -3090,8 +3095,8 @@ export class GurpsActor extends Actor {
   /**
    * Resolve and add tagged Modifier Effects.
    *
-   * System will lookup each roll modifiers inside system.conditions.usermods
-   * against the Items.modifierTags and add the modifiers to the ModifierBucket.
+   * System will lookup each roll modifiers inside system.conditions.usermods against the Items.modifierTags and add
+   * the modifiers to the ModifierBucket.
    *
    * @param chatThing
    * @param optionalArgs
@@ -3177,16 +3182,19 @@ export class GurpsActor extends Actor {
         if (userMod.includes('#maneuver')) {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
+
         if (optionalArgs.hasOwnProperty('itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
+
         if (actorInCombat) {
           canApply =
             canApply && (!taggedSettings.nonCombatOnlyTag || !modifierTags.includes(taggedSettings.nonCombatOnlyTag))
         } else {
           canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
         }
+
         if (canApply) {
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = userMod.match(regex)?.[1].trim() || ''

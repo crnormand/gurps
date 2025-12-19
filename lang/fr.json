@@ -334,6 +334,10 @@
       "setting": {
         "useRelativeSizeInMelee": "Combat : Utiliser la différence de modificateur de taille au corps à corps",
         "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Aucun token actif pour l'acteur {name} pour mettre à jour la manœuvre.",
+        "noActiveTokensToUpdatePosture": "Aucun token actif pour l'acteur {name} pour mettre à jour la posture."
       }
     },
     "combatInfo": "Infos de Combat",
