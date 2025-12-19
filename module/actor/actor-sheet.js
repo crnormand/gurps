@@ -420,21 +420,25 @@ export class GurpsActorSheet extends ActorSheet {
       details.open = !details.open
     })
 
-    // Handle the "Posture" dropdown on the tabbed sheet.
-    html.find('#condition details#posture .popup .button').click(ev => {
+    html.find('#posture').on('change', async ev => {
       ev.preventDefault()
-      const details = $(ev.currentTarget).closest('details')
+      let target = $(ev.currentTarget)
+      await this.actor.replacePosture(target.val())
+    })
+
+    // Handle the "Posture" dropdown on the NPC sheet.
+    html.find('#condition details#posture .popup .button').click(async ev => {
+      ev.preventDefault()
       const target = $(ev.currentTarget)[0]
-      this.actor.replacePosture(target.alt)
-      details.open = !details.open
+      await this.actor.replacePosture(target.alt)
     })
 
     // Handle the "Posture" dropdown on the tabbed sheet.
-    html.find('#combat-status details#posture .popup .button').click(ev => {
+    html.find('#combat-status details#posture .popup .button').click(async ev => {
       ev.preventDefault()
       const details = $(ev.currentTarget).closest('details')
       const target = $(ev.currentTarget)[0]
-      this.actor.replacePosture(target.alt)
+      await this.actor.replacePosture(target.alt)
       details.open = !details.open
     })
 
@@ -664,11 +668,6 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
       this.actor.replaceManeuver(target.val())
-    })
-
-    html.find('#posture').on('change', ev => {
-      let target = $(ev.currentTarget)
-      this.actor.replacePosture(target.val())
     })
 
     html.find('#move-mode').on('change', ev => {

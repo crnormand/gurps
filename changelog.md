@@ -7,10 +7,12 @@
 - Handle ranged attacks with high RoF: prompt for number of shots, add appropriate modifier, and automatically apply Bulk penalty for Move and Attack. \#2421
 - Auto apply Effect Modifier for Size Modifier. \#2208
 - Allow optional rule for using the difference in Size Modifiers in melee combat. \#2174
+
 ### Bugfixes
 
 - Restore missing lang tags. #2430
-- Fix sprint distance when changing encumbrance levels. #2420
+- Fix sprint distance when changing encumbrance levels. \#2420
+- Changing Posture from character sheet takes two tries \#2423
 
 ## Release 0.18.9 12/12/2025
 
