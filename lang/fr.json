@@ -330,7 +330,15 @@
         "numberOfShotsPrompt": "Combien de tirs voulez-vous effectuer ?",
         "numberOfShotsTitle": "Nombre de tirs"
       },
-      "rollTotalHits": "Total des coups possibles<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>. ({link})"
+      "rollTotalHits": "Total des coups possibles<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Combat : Utiliser la différence de modificateur de taille au corps à corps",
+        "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Aucun token actif pour l'acteur {name} pour mettre à jour la manœuvre.",
+        "noActiveTokensToUpdatePosture": "Aucun token actif pour l'acteur {name} pour mettre à jour la posture."
+      }
     },
     "combatInfo": "Infos de Combat",
     "combatInitiative": "Initiative de Combat",
