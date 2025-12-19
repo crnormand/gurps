@@ -1,4 +1,4 @@
-import cpx from 'cpx'
+import cpx from 'cpx2'
 
 const staticFolders = ['assets', 'icons', 'lang', 'lib', 'scripts', 'utils', 'ui', 'exportutils', 'templates']
 const staticFiles = ['changelog.md', 'LICENSE.txt', 'README.md', 'system.json', 'template.json']

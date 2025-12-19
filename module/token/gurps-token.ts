@@ -33,7 +33,9 @@ export default class GurpsToken extends foundry.canvas.placeables.Token {
     const maneuver = Maneuvers.get(maneuverId)
     if (!maneuver) return
 
-    const activeManeuvers = Maneuvers.getActiveEffectManeuvers(Array.from(this.actor?.effects.values() ?? []))
+    const activeManeuvers = Maneuvers.getActiveEffectManeuvers(
+      Array.from(this.actor?.effects.values() ?? []) as ActiveEffect.Implementation[]
+    )
     // if there is a single active effect maneuver, update its data
     if (activeManeuvers.length === 1) {
       if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) await activeManeuvers[0].update(maneuver)
@@ -71,7 +73,9 @@ export default class GurpsToken extends foundry.canvas.placeables.Token {
    * Maneuver.
    */
   async removeManeuver(): Promise<void> {
-    let maneuvers = Maneuvers.getActiveEffectManeuvers(Array.from(this.actor?.effects.values() ?? []))
+    let maneuvers = Maneuvers.getActiveEffectManeuvers(
+      Array.from(this.actor?.effects.values() ?? []) as ActiveEffect.Implementation[]
+    )
     this.actor?.deleteEmbeddedDocuments(
       'ActiveEffect',
       maneuvers.map(m => m.id!)

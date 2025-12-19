@@ -226,7 +226,14 @@ interface ItemV1Interface {
   getItemInfo(): Record<string, any>
 }
 
-type ItemV1Model = Equipment | Feature | Spell | Skill
+type ItemTypeMap = {
+  equipment: Equipment
+  feature: Feature
+  skill: Skill
+  spell: Spell
+}
+
+type ItemV1Model<SubType extends Item.SubType> = SubType extends keyof ItemTypeMap ? ItemTypeMap[SubType] : never
 
 export {
   type ItemV1Interface,

@@ -420,7 +420,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #setCurrentManeuver() {
     // Set current maneuver to maneuver active effect if a valid one is present
-    const maneuverEffect = this.parent.effects.find((effect: ActiveEffect.Implementation) =>
+    const maneuverEffect = this.parent.effects.find((effect: ActiveEffect) =>
       effect.statuses.some((status: string) => status === 'maneuver')
     )
     this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
