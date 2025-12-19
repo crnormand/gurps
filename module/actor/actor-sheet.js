@@ -13,7 +13,7 @@ import { cleanTags } from './effect-modifier-popout.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 import { GgaContextMenuV2 } from '../ui/context-menu.js'
-import { importGCS, ImportSettings } from '../importer/index.js'
+import { ImportSettings } from '../importer/index.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1647,7 +1647,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         return new ActorImporter(this.actor).importActor()
       case 'enemy':
       case 'characterV2':
-        return importGCS(this.actor)
+        return GURPS.modules.Importer.importGCS(this.actor)
       default:
         throw new Error(`Invalid actor type for import: ${this.actor.type}`)
     }
