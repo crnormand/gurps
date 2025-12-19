@@ -3197,16 +3197,29 @@ export class GurpsActor extends Actor {
         if (userMod.includes('#maneuver')) {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
+
         if (optionalArgs.hasOwnProperty('itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
+
         if (actorInCombat) {
           canApply =
             canApply && (!taggedSettings.nonCombatOnlyTag || !modifierTags.includes(taggedSettings.nonCombatOnlyTag))
         } else {
           canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
         }
+
+        // If the modifier is the move-and-attack maneuver and the attack is ranged, update the modifier value to -2 or Bulk of the weapon (optionalArgs.obj.bulk), whichever is worse.
+        if (canApply && userMod.includes('#maneuver') && userMod.includes('@man:move_and_attack') && tag === 'ranged') {
+          const bulkPenalty = parseInt(optionalArgs?.obj?.bulk ?? '0')
+          const maneuverMod = bulkPenalty < -2 ? bulkPenalty : -2
+          let desc = userMod.match(/^[+-]\d+(.*?)(?=[#@])/) ? userMod.match(/^[+-]\d+(.*?)(?=[#@])/)[1].trim() : ''
+          if (maneuverMod !== -2) desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
+          await GURPS.ModifierBucket.addModifier(maneuverMod.toString(), desc, undefined, true)
+          continue
+        }
+
         if (canApply) {
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = userMod.match(regex)?.[1].trim() || ''

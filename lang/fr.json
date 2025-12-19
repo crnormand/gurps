@@ -869,8 +869,10 @@
       "fencingRetreat": "pour Parade (Escrime, etc. Retraite)",
       "feverishDefense": "à la défense (Défense Massive)",
       "heroicCharge": "Charge Héroïque",
-      "mightyBlow": "dégâts (Coup Puissant)",
-      "moveAndAttack": "pour toucher (Attaque Mobile)",
+      "mightyBlow": "Dégâts (Coup Puissant)",
+      "moveAndAttack": "à toucher (Attaque Mobile)",
+      "moveAndAttackBulkPenaltyApplied": "Pénalité de Masse appliquée (Attaque Mobile)",
+      "moveAndAttackRangedBulk": "ou la Masse de l’arme, la pire des deux",
       "onTargetAiming": "Sur Cible",
       "pdf": {
         "aim": "B364",

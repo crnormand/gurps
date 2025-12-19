@@ -871,6 +871,8 @@
       "heroicCharge": "Heroic Charge",
       "mightyBlow": "damage (Mighty Blow)",
       "moveAndAttack": "to hit (Move and Attack)",
+      "moveAndAttackBulkPenaltyApplied": "Bulk penalty applied (Move and Attack)",
+      "moveAndAttackRangedBulk": "or Bulk of weapon, whichever is worse",
       "onTargetAiming": "On Target",
       "pdf": {
         "aim": "B364",

@@ -871,6 +871,8 @@
       "heroicCharge": "Героический Рывок",
       "mightyBlow": "к урону (Мощный Удар)",
       "moveAndAttack": "к попаданию (Движение и Атака)",
+      "moveAndAttackBulkPenaltyApplied": "Штраф за Разм применён (Движение и атака)",
+      "moveAndAttackRangedBulk": "или Разм оружия, что хуже",
       "onTargetAiming": "На Цели",
       "pdf": {
         "aim": "B364",
