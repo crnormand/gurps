@@ -3218,12 +3218,12 @@ export class GurpsActor extends Actor {
    * @example
    * // For a DX check, returns tags from both "All DX Rolls" and "All Attributes Rolls"
    * const tags = actor._getTagsFromCheck("DX", taggedSettings);
-   * // returns ["#all", "#attribute", "#dx"] if they exist in taggedSettings.
+   * // returns ["all", "attribute", "dx"] if those tags are present in the relevant taggedSettings values.
    *
    * @example
    * // For a Dodge, returns tags from both "All Defense Rolls" and "All Dodge Rolls"
    * const tags = actor._getTagsFromCheck("Dodge", taggedSettings);
-   * // returns ["#all", "#defense", "#dodge"] if they exist in taggedSettings.
+   * // returns ["all", "defense", "dodge"] if those tags are present in the relevant taggedSettings values.
    */
   _getTagsFromCheck(chatThing, taggedSettings) {
     let refTags
