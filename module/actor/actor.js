@@ -3155,11 +3155,13 @@ export class GurpsActor extends Actor {
         else targetMods.push(mod)
       }
       const actorToken = this.getActiveTokens()[0]
-      const rangeMod = getRangedModifier(actorToken, target)
-      if (rangeMod) targetMods.push(rangeMod)
+      if (actorToken) {
+        const rangeMod = getRangedModifier(actorToken, target)
+        if (rangeMod) targetMods.push(rangeMod)
 
-      const sizeMod = getSizeModifier(actorToken, target)
-      if (sizeMod) targetMods.push(sizeMod)
+        const sizeMod = getSizeModifier(actorToken, target)
+        if (sizeMod) targetMods.push(sizeMod)
+      }
     }
 
     const allMods = [...userMods, ...selfMods, ...targetMods]
