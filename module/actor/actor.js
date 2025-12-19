@@ -3201,11 +3201,13 @@ export class GurpsActor extends Actor {
         if (canApply && userMod.includes('#maneuver') && userMod.includes('@man:move_and_attack') && tag === 'ranged') {
           const parsedBulk = parseInt(optionalArgs?.obj?.bulk ?? '0', 10)
           const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
-          const maneuverMod = bulkPenalty < -2 ? bulkPenalty : -2
+          const DEFAULT_PENALTY = -2
+          
+          const maneuverMod = bulkPenalty < DEFAULT_PENALTY ? bulkPenalty : DEFAULT_PENALTY
 
           const maneuverMatch = userMod.match(/^[+-]\d+(.*?)(?=[#@])/)
           let desc = maneuverMatch ? maneuverMatch[1].trim() : ''
-          if (maneuverMod !== -2) desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
+          if (maneuverMod !== DEFAULT_PENALTY) desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
 
           if (maneuverMod !== 0) await GURPS.ModifierBucket.addModifier(maneuverMod.toString(), desc, undefined, true)
           continue
