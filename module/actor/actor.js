@@ -3212,7 +3212,8 @@ export class GurpsActor extends Actor {
 
         // If the modifier is the move-and-attack maneuver and the attack is ranged, update the modifier value to -2 or Bulk of the weapon (optionalArgs.obj.bulk), whichever is worse.
         if (canApply && userMod.includes('#maneuver') && userMod.includes('@man:move_and_attack') && tag === 'ranged') {
-          const bulkPenalty = parseInt(optionalArgs?.obj?.bulk ?? '0')
+          const parsedBulk = parseInt(optionalArgs?.obj?.bulk ?? '0', 10)
+          const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
           const maneuverMod = bulkPenalty < -2 ? bulkPenalty : -2
           let desc = userMod.match(/^[+-]\d+(.*?)(?=[#@])/) ? userMod.match(/^[+-]\d+(.*?)(?=[#@])/)[1].trim() : ''
           if (maneuverMod !== -2) desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
