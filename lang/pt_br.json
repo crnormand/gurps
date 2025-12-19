@@ -944,6 +944,7 @@
     "modifierSizeDetail": "Diferença no Corpo a Corpo; Absoluta à Distância",
     "modifierSizeEntry": "{SM} Tamanho {us} ({metric})",
     "modifiersSize": "{sm} para Modificador de Tamanho",
+    "modifiersSizeDifference": "{sm} para Diferença de Modificador de Tamanho (fonte {sourceSM}, alvo {targetSM})",
     "modifierStatus": "Estado",
     "modifierStatusAffliction": "Estado e Atribulações",
     "modifierStatusShock1": "-1 para testes de IQ/DX (Choque 1)",

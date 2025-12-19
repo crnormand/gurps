@@ -944,6 +944,7 @@
     "modifierSizeDetail": "Différence en Mêlée; Absolu à Distance",
     "modifierSizeEntry": "{SM} Taille {us} ({metric})",
     "modifiersSize": "{sm} pour Modificateur de Taille",
+    "modifiersSizeDifference": "{sm} pour la différence de Modificateur de Taille (source {sourceSM}, cible {targetSM})",
     "modifierStatus": "Statuts",
     "modifierStatusAffliction": "Statuts et Afflictions",
     "modifierStatusShock1": "-1 aux jets de QI/DX (Choc 1)",

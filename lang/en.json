@@ -944,6 +944,7 @@
     "modifierSizeDetail": "Difference in Melee; Absolute in Ranged",
     "modifierSizeEntry": "{SM} Size {us} ({metric})",
     "modifiersSize": "{sm} for Size Modifier",
+    "modifiersSizeDifference": "{sm} for Size Modifier difference (source {sourceSM}, target {targetSM})",
     "modifierStatus": "Status",
     "modifierStatusAffliction": "Status and Afflictions",
     "modifierStatusShock1": "-1 to IQ/DX checks (Shock 1)",
