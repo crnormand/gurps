@@ -158,8 +158,11 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importPortrait() {
-    if (this.actor && !ImportSettings.overwritePortrait) {
-      return
+    if (this.actor) {
+      // If actor exists, assume we're keeping the current portrait unless otherwise specified
+      this.img = this.actor.img ?? ''
+
+      if (!ImportSettings.overwritePortrait) return
     }
 
     if (!game.user?.hasPermission('FILES_UPLOAD')) {
