@@ -97,8 +97,7 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.overwritePortrait.hint',
     scope: 'world',
     config: false,
-    type: new fields.BooleanField(),
-    default: true,
+    type: new fields.BooleanField({ initial: true }),
     onChange: value => console.log(`Overwrite Portraits : ${value}`),
   })
 
