@@ -16,7 +16,7 @@ import {
   Skill,
   Spell,
 } from './actor-components.js'
-import { ImportSettings } from '../gcs-importer/index.js'
+import { ImportSettings } from '../importer/index.js'
 
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
