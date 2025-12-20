@@ -669,7 +669,7 @@
         "noFilesSelected": "No files selected for import."
       },
       "prompt": {
-        "description": "Select a GCS 5+ file.",
+        "description": "Select a GCS 5 or GCA 5 file.",
         "note": "This import will overwrite the data for: <strong>{name}</strong>.",
         "source": "Source Data",
         "title": "Import Character Data for {name}",

@@ -1,6 +1,6 @@
 import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
-import { importGCS } from './gcs-importer/gcs-importer.js'
+import { importerPrompt } from './importer-prompt.js'
 import { migrate } from './migrate.js'
 import { initializeGameSettings } from './settings.js'
 import {
@@ -17,7 +17,7 @@ import {
 } from './types.js'
 
 interface ImporterModule extends GurpsModule {
-  importGCS: typeof importGCS
+  importerPrompt: typeof importerPrompt
 }
 
 function init() {
@@ -30,14 +30,14 @@ function init() {
   })
 
   Hooks.on('ready', () => {
-    GURPS.importGCS = importGCS
+    GURPS.import = importerPrompt
   })
 }
 
 const Importer: ImporterModule = {
   init,
   migrate,
-  importGCS,
+  importerPrompt,
 }
 
 /**

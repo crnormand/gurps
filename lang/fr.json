@@ -669,7 +669,7 @@
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },
       "prompt": {
-        "description": "Sélectionnez un fichier GCS 5+.",
+        "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
         "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
         "source": "Données source",
         "title": "Importer les données du personnage pour {name}",

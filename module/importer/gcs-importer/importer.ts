@@ -21,9 +21,7 @@ import { GcsNote } from './schema/note.js'
 import { HitLocationSchemaV2 } from '../../actor/data/hit-location-entry.js'
 
 import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
-import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
-import { GurpsItemV2 } from 'module/item/gurps-item.js'
 import { ImportSettings } from '../index.js'
 
 /**
@@ -31,7 +29,7 @@ import { ImportSettings } from '../index.js'
  * This class handles the conversion of GCS character data into the format used by the GURPS system.
  */
 class GcsImporter {
-  actor?: GurpsActorV2<'characterV2'>
+  actor?: Actor.OfType<'characterV2'>
   input: GcsCharacter
   output: DataModel.CreateData<CharacterSchema>
   items: DataModel.CreateData<DataModel.SchemaOf<GcsItem<any>>>[]
@@ -56,13 +54,13 @@ class GcsImporter {
   static async importCharacter(
     input: GcsCharacter,
     actor?: Actor.OfType<'characterV2'>
-  ): Promise<GurpsActorV2<'characterV2'>> {
+  ): Promise<Actor.OfType<'characterV2'>> {
     return await new GcsImporter(input).#importCharacter(actor)
   }
 
   /* ---------------------------------------- */
 
-  async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<GurpsActorV2<'characterV2'>> {
+  async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<Actor.OfType<'characterV2'>> {
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
 
@@ -84,12 +82,12 @@ class GcsImporter {
 
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
-      const savedEquipmentCounts = this.saveEquipmentCountsIfNecessary(
-        actor.items.contents.filter(item => item.type === 'equipmentV2') as GurpsItemV2<'equipmentV2'>[]
+      const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
+        actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
       )
 
       // When importing into existing actor, delete only GCS-imported items
-      await this.deleteGcsImportedItems(actor)
+      await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
       await actor.update({
@@ -99,7 +97,7 @@ class GcsImporter {
       })
 
       // Restore saved counts and uses in raw item data before creating embedded documents
-      this.restoreEquipmentCountsAndUses(savedEquipmentCounts)
+      this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
       await actor.createEmbeddedDocuments('Item', this.items as any, { keepId: true })
     } else {
@@ -110,7 +108,7 @@ class GcsImporter {
         img: this.img,
         system: this.output as any,
         items: this.items as any,
-      })) as GurpsActorV2<'characterV2'> | undefined
+      })) as Actor.OfType<'characterV2'> | undefined
     }
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')
@@ -118,7 +116,9 @@ class GcsImporter {
     return actor
   }
 
-  private restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
+  /* ---------------------------------------- */
+
+  #restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
         const eqt = (itemData as any).system?.eqt
@@ -131,8 +131,10 @@ class GcsImporter {
     }
   }
 
-  private async deleteGcsImportedItems(actor: GurpsActorV2<'characterV2'>) {
-    const gcsImportedItems = actor.items.filter(item => {
+  /* ---------------------------------------- */
+
+  async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
+    const importedItems = actor.items.filter(item => {
       const component =
         (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
       return component?.importFrom === 'GCS'
@@ -140,11 +142,13 @@ class GcsImporter {
 
     await actor.deleteEmbeddedDocuments(
       'Item',
-      gcsImportedItems.map(i => i.id!)
+      importedItems.map(i => i.id!)
     )
   }
 
-  private saveEquipmentCountsIfNecessary(items: GurpsItemV2<'equipmentV2'>[]) {
+  /* ---------------------------------------- */
+
+  #saveEquipmentCountsIfNecessary(items: Item.OfType<'equipmentV2'>[]) {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
     items.forEach(item => {
       const eqt = (item.system as any).eqt

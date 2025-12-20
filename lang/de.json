@@ -669,7 +669,7 @@
         "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
       "prompt": {
-        "description": "Wählen Sie eine GCS 5+-Datei aus.",
+        "description": "Wählen Sie eine GCS 5- oder GCA 5-Datei aus.",
         "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
         "source": "Quelldaten",
         "title": "Charakterdaten für {name} importieren",
