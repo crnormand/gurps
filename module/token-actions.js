@@ -397,12 +397,12 @@ export class TokenActions {
       const signal = this.toHitBonus > 0 ? '+' : '-'
       const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toHitBonus' : 'GURPS.toHitPenalty')
       if (this.currentManeuver === 'move_and_attack') {
-        const rangeLabel = game.i18n.localize('GURPS.modifiers_.moveAndAttackRangedBulk')
+        const rangedBulkLabel = game.i18n.localize('GURPS.modifiers_.moveAndAttackRangedBulk')
         addModifier(
           `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} *Max:9 #melee #maneuver @man:${this.currentManeuver}`
         )
         addModifier(
-          `${signal}${Math.abs(this.toHitBonus / 2)} ${rangeLabel} #ranged #maneuver @man:${this.currentManeuver}`
+          `${signal}${Math.abs(this.toHitBonus / 2)} ${rangedBulkLabel} #ranged #maneuver @man:${this.currentManeuver}`
         )
       } else {
         addModifier(`${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)
@@ -419,10 +419,6 @@ export class TokenActions {
       addModifier(
         `${signal}${Math.abs(this.defenseBonus)} ${signalLabel} #parry #block #dodge #maneuver @man:${this.currentManeuver}`
       )
-    }
-
-    if (this.evaluateTurns > 0) {
-      addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
     }
 
     Object.keys(this.currentParry).map(k => {
