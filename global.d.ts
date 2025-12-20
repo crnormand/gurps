@@ -143,7 +143,7 @@ declare module 'fvtt-types/configuration' {
       choices: { overwrite: string; keep: string; ask: string }
     }>
     'gurps.importer.overwrite-name': foundry.data.fields.BooleanField
-    'gurps.importer.overwrite-portraits': foundry.data.fields.BooleanField
+    'gurps.importer.overwrite-portraits': foundry.data.fields.BooleanField<{ initial: true }>
     'gurps.importer.use-browser-importer': foundry.data.fields.BooleanField
     'gurps.modify-dice-plus-adds': boolean
     'gurps.pdf.basicset': 'Combined' | 'Separate'

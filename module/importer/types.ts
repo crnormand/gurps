@@ -19,7 +19,7 @@ export const SETTING_USE_BROWSER_IMPORTER = 'use-browser-importer'
 // @deprecated: old setting name
 export const SETTING_ignoreImportQty = 'ignoreImportQty'
 // @deprecated: old setting name
-export const SETTING_OVERWRITE_PORTRAITS = 'overwrite-portraitsk'
+export const SETTING_OVERWRITE_PORTRAITS = 'overwrite-portraits'
 
 export const AUTOMATICALLY_SET_IGNORE_QTY = `${MODULE_NAME}.auto-ignore-qty`
 export const DISPLAY_PRESERVE_QTY_FLAG = `${MODULE_NAME}.display-preserve-qty-flag`
