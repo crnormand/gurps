@@ -4,8 +4,8 @@
 
 ### Features
 
-- Prompt user for number of shots when attacking with high RoF weapon, and add appropriate modifier. \#2421
-- Effect Modifier for Size Modifier to auto apply. \#2208
+- Handle ranged attacks with high RoF: prompt for number of shots, add appropriate modifier, and automatically apply Bulk penalty for Move and Attack. \#2421
+- Auto apply Effect Modifier for Size Modifier. \#2208
 - Allow optional rule for using the difference in Size Modifiers in melee combat. \#2174
 
 ### Bugfixes

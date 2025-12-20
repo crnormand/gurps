@@ -879,6 +879,8 @@
       "heroicCharge": "Heroischer Angriff",
       "mightyBlow": "Schaden (Mächtiger Schlag)",
       "moveAndAttack": "auf Angriff (Bewegen und Angreifen)",
+      "moveAndAttackBulkPenaltyApplied": "Handlichkeits-Malus angewendet (Bewegen und Angreifen)",
+      "moveAndAttackRangedBulk": "oder Handlichkeit der Waffe, je nachdem was schlechter ist",
       "onTargetAiming": "Auf Ziel",
       "pdf": {
         "aim": "B364",
