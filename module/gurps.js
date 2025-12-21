@@ -2391,8 +2391,13 @@ if (!globalThis.GURPS) {
         const tokenImage = $(combatantElement).find('.token-image')
         tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
       }
-      // Add Quick Roll and Maneuvers Menu Listeners
+      // Add Quick Roll Listeners.
       addQuickRollListeners()
+      // addManeuverListeners()
+    })
+
+    Hooks.once('renderCombatTracker', async function (_app, element, _options, _context) {
+      // Add Maneuvers Menu Listeners.
       addManeuverListeners()
     })
 

@@ -96,6 +96,7 @@ export const addQuickRollListeners = () => {
     .on('click', '.quick-roll-blind-toggle', async function (event) {
       event.preventDefault()
       event.stopPropagation()
+      console.log('Quick Roll Blind Toggle Clicked')
       const combatantId = $(this).data('combatant-id')
       const combatant = game.combat.combatants.get(combatantId)
       const token = canvas.tokens.get(combatant.token.id)
@@ -113,6 +114,7 @@ export const addQuickRollListeners = () => {
   $(document)
     .off('mouseover', '.quick-roll-menu')
     .on('mouseover', '.quick-roll-menu', function (event) {
+      console.log('Quick Roll Menu Hovered')
       $(document).on('keydown', updateText)
       $(document).on('keyup', updateText)
 
@@ -121,6 +123,7 @@ export const addQuickRollListeners = () => {
   $(document)
     .off('mouseout', '.quick-roll-menu')
     .on('mouseout', '.quick-roll-menu', function (event) {
+      console.log('Quick Roll Menu Unhovered')
       const button = $(this)
       const attackValue = button.find('.qr-attack-value')
       attackValue.text(button.data('skill'))
@@ -135,6 +138,7 @@ export const addQuickRollListeners = () => {
     .on('click', '.quick-roll-button', async function (event) {
       event.preventDefault()
       event.stopPropagation()
+      console.log('Quick Roll Menu Button Clicked')
 
       const button = $(this)
       const combatantId = button.data('combatant-id')

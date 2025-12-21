@@ -1093,7 +1093,7 @@ export class GurpsActor extends Actor {
     let tokens = this._findTokens()
     if (!tokens || tokens.length === 0) {
       // Show a UI notification using i18n
-      ui.notifications.warn(
+      ui.notifications?.warn(
         game.i18n.format('GURPS.combat.ui.noActiveTokensToUpdateManeuver', { name: this.displayname })
       )
       return
@@ -3183,12 +3183,10 @@ export class GurpsActor extends Actor {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
 
-
         if (optionalArgs.hasOwnProperty('itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
-
 
         if (actorInCombat) {
           canApply =
@@ -3202,12 +3200,13 @@ export class GurpsActor extends Actor {
           const parsedBulk = parseInt(optionalArgs?.obj?.bulk ?? '0', 10)
           const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
           const DEFAULT_PENALTY = -2
-          
+
           const maneuverMod = bulkPenalty < DEFAULT_PENALTY ? bulkPenalty : DEFAULT_PENALTY
 
           const maneuverMatch = userMod.match(/^[+-]\d+(.*?)(?=[#@])/)
           let desc = maneuverMatch ? maneuverMatch[1].trim() : ''
-          if (maneuverMod !== DEFAULT_PENALTY) desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
+          if (maneuverMod !== DEFAULT_PENALTY)
+            desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
 
           if (maneuverMod !== 0) await GURPS.ModifierBucket.addModifier(maneuverMod.toString(), desc, undefined, true)
           continue

@@ -340,6 +340,9 @@
         "noActiveTokensToUpdatePosture": "No active tokens for actor {name} to update posture."
       }
     },
+    "combatTracker": {
+      "initiative": "Initiative: {value}"
+    },
     "combatInfo": "Combat Info",
     "combatInitiative": "Combat Initiative",
     "CombatOnlyTag": "Combat Only Tag",
