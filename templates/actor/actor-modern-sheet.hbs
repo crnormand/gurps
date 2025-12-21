@@ -1,0 +1,568 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <div class='modern-sheet'>
+    {{!-- PERSISTENT HEADER - Always visible --}}
+    <header class='ms-header'>
+      {{!-- Portrait --}}
+      <div class='ms-portrait'>
+        <img src='{{actor.img}}' data-edit='img' title='{{actor.name}}' />
+      </div>
+
+      {{!-- Identity with HP/FP under name --}}
+      <div class='ms-identity'>
+        <h1 class='ms-name'>{{actor.name}}</h1>
+        <div class='ms-hp-fp-row'>
+          <div class='ms-resource ms-hp'>
+            <div class='ms-resource-label' title='{{localize "GURPS.attributesHPNAME"}}'>HP</div>
+            {{!-- Display mode: bar + text --}}
+            <div class='ms-resource-display' data-edit-target='hp'>
+              <div class='ms-resource-bar'>
+                <div class='ms-resource-fill' style='width: {{percent system.HP.value system.HP.max}}%;'></div>
+              </div>
+              <span class='ms-resource-text'>{{system.HP.value}}/{{system.HP.max}}</span>
+            </div>
+            {{!-- Edit mode: inputs (hidden by default) --}}
+            <div class='ms-resource-edit'>
+              <input type='number' name='system.HP.value' value='{{system.HP.value}}' class='ms-resource-input'/>
+              <span class='ms-resource-separator'>/</span>
+              <input type='number' name='system.HP.max' value='{{system.HP.max}}' class='ms-resource-input'/>
+            </div>
+            <button type='button' class='ms-resource-reset' data-action='reset-hp' title='Reset to max'>
+              <i class='fas fa-undo'></i>
+            </button>
+            {{#if system.conditions.reeling}}<span class='ms-condition-badge' title='{{localize "GURPS.HP.reeling"}}'>R</span>{{/if}}
+          </div>
+          <div class='ms-resource ms-fp'>
+            <div class='ms-resource-label' title='{{localize "GURPS.attributesFPNAME"}}'>FP</div>
+            {{!-- Display mode: bar + text --}}
+            <div class='ms-resource-display' data-edit-target='fp'>
+              <div class='ms-resource-bar'>
+                <div class='ms-resource-fill' style='width: {{percent system.FP.value system.FP.max}}%;'></div>
+              </div>
+              <span class='ms-resource-text'>{{system.FP.value}}/{{system.FP.max}}</span>
+            </div>
+            {{!-- Edit mode: inputs (hidden by default) --}}
+            <div class='ms-resource-edit'>
+              <input type='number' name='system.FP.value' value='{{system.FP.value}}' class='ms-resource-input'/>
+              <span class='ms-resource-separator'>/</span>
+              <input type='number' name='system.FP.max' value='{{system.FP.max}}' class='ms-resource-input'/>
+            </div>
+            <button type='button' class='ms-resource-reset' data-action='reset-fp' title='Reset to max'>
+              <i class='fas fa-undo'></i>
+            </button>
+            {{#if system.conditions.exhausted}}<span class='ms-condition-badge' title='{{localize "GURPS.FP.tired"}}'>T</span>{{/if}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Primary Attributes (including WILL and PER) --}}
+      <div class='ms-attrs-primary'>
+        <div class='ms-attr-badge rollable' data-otf='ST' title='{{localize "GURPS.attributesST"}} [{{system.attributes.ST.points}}]'>
+          <span class='ms-attr-value'>{{system.attributes.ST.value}}</span>
+          <span class='ms-attr-label'>ST</span>
+        </div>
+        <div class='ms-attr-badge rollable' data-otf='DX' title='{{localize "GURPS.attributesDX"}} [{{system.attributes.DX.points}}]'>
+          <span class='ms-attr-value'>{{system.attributes.DX.value}}</span>
+          <span class='ms-attr-label'>DX</span>
+        </div>
+        <div class='ms-attr-badge rollable' data-otf='IQ' title='{{localize "GURPS.attributesIQ"}} [{{system.attributes.IQ.points}}]'>
+          <span class='ms-attr-value'>{{system.attributes.IQ.value}}</span>
+          <span class='ms-attr-label'>IQ</span>
+        </div>
+        <div class='ms-attr-badge rollable' data-otf='HT' title='{{localize "GURPS.attributesHT"}} [{{system.attributes.HT.points}}]'>
+          <span class='ms-attr-value'>{{system.attributes.HT.value}}</span>
+          <span class='ms-attr-label'>HT</span>
+        </div>
+        <div class='ms-attr-badge rollable' data-otf='WILL' title='{{localize "GURPS.attributesWILL"}} [{{system.attributes.WILL.points}}]'>
+          <span class='ms-attr-value'>{{system.attributes.WILL.value}}</span>
+          <span class='ms-attr-label'>WILL</span>
+        </div>
+        <div class='ms-attr-badge rollable' data-otf='PER' title='{{localize "GURPS.attributesPER"}} [{{system.attributes.PER.points}}]'>
+          <span class='ms-attr-value'>{{system.attributes.PER.value}}</span>
+          <span class='ms-attr-label'>PER</span>
+        </div>
+      </div>
+    </header>
+
+    {{!-- SECONDARY STATS ROW --}}
+    <div class='ms-stats-row'>
+      <div class='ms-stat'>
+        <span class='ms-stat-label'>{{localize 'GURPS.basicspeed'}}:</span>
+        <span class='ms-stat-value'>{{system.basicspeed.value}}</span>
+      </div>
+      <div class='ms-stat'>
+        <span class='ms-stat-label'>{{localize 'GURPS.basicmove'}}:</span>
+        <span class='ms-stat-value'>{{system.basicmove.value}}</span>
+      </div>
+      <div class='ms-stat'>
+        <span class='ms-stat-label'>{{localize 'GURPS.dodge'}}:</span>
+        {{>dice-button otf='Dodge' level=system.currentdodge}}
+      </div>
+      <div class='ms-stat'>
+        <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}:</span>
+        {{>dice-button otf=(concat system.thrust ' dmg') level=system.thrust damage=true}}
+      </div>
+      <div class='ms-stat'>
+        <span class='ms-stat-label'>{{localize 'GURPS.swing'}}:</span>
+        {{>dice-button otf=(concat system.swing ' dmg') level=system.swing damage=true}}
+      </div>
+    </div>
+
+    {{!-- SENSES ROW --}}
+    <div class='ms-senses-row'>
+      <div class='ms-sense-item'>
+        <span class='ms-sense-label'>{{localize 'GURPS.vision'}}:</span>
+        {{>dice-button otf='Vision' level=system.vision}}
+      </div>
+      <div class='ms-sense-item'>
+        <span class='ms-sense-label'>{{localize 'GURPS.hearing'}}:</span>
+        {{>dice-button otf='Hearing' level=system.hearing}}
+      </div>
+      <div class='ms-sense-item'>
+        <span class='ms-sense-label'>{{localize 'GURPS.tastesmell'}}:</span>
+        {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
+      </div>
+      <div class='ms-sense-item'>
+        <span class='ms-sense-label'>{{localize 'GURPS.touch'}}:</span>
+        {{>dice-button otf='Touch' level=system.touch}}
+      </div>
+      <div class='ms-sense-item'>
+        <span class='ms-sense-label'>{{localize 'GURPS.frightcheck'}}:</span>
+        {{>dice-button otf='Fright Check' level=system.frightcheck}}
+      </div>
+    </div>
+
+    {{!-- STATUS BAR (outside tabs) --}}
+    <div class='ms-status-bar'>
+      <div class='ms-status-item'>
+        <label>{{localize 'GURPS.modifierPosture'}}:</label>
+        <select name='system.conditions.posture'>
+          <option value='standing' {{select-if system.conditions.posture 'standing'}}>{{localize 'GURPS.status.Standing'}}</option>
+          {{#with system.conditions.posture as |posture|}}
+            {{#each (listAllPostures) as |this key|}}
+              <option value='{{key}}' {{select-if posture key}}>{{localize this.name}}</option>
+            {{/each}}
+          {{/with}}
+        </select>
+      </div>
+      {{#if (ne system.conditions.maneuver 'undefined')}}
+      <div class='ms-status-item'>
+        <label>{{localize 'GURPS.maneuver'}}:</label>
+        <select name='system.conditions.maneuver' {{disabled (not (inCombat this))}}>
+          <option value='undefined' {{select-if system.conditions.maneuver 'undefined'}}>{{localize 'GURPS.none'}}</option>
+          {{#with system.conditions.maneuver as |maneuver|}}
+            {{#each (listAllManeuvers) as |this key|}}
+              <option value='{{key}}' {{select-if maneuver key}}>{{localize this.label}}</option>
+            {{/each}}
+          {{/with}}
+        </select>
+      </div>
+      {{/if}}
+      <div class='ms-status-item'>
+        <span>{{localize 'GURPS.conditionsCombatMove'}}: <strong>{{system.conditions.move}}</strong></span>
+      </div>
+    </div>
+
+    {{!-- TAB NAVIGATION --}}
+    <nav class='ms-tabs' data-group='modern-tabs'>
+      <a class='ms-tab-item' data-tab='character' title='{{localize "GURPS.attributes"}}'>
+        <i class='fas fa-user'></i>
+        <span>{{localize "GURPS.attributes"}}</span>
+      </a>
+      <a class='ms-tab-item' data-tab='combat' title='{{localize "GURPS.combatTab"}}'>
+        <i class='fas fa-shield-alt'></i>
+        <span>{{localize "GURPS.combatTab"}}</span>
+      </a>
+      <a class='ms-tab-item' data-tab='equipment' title='{{localize "GURPS.equipmentTab"}}'>
+        <i class='fas fa-backpack'></i>
+        <span>{{localize "GURPS.equipmentTab"}}</span>
+      </a>
+      <a class='ms-tab-item' data-tab='notes' title='{{localize "GURPS.notes"}}'>
+        <i class='fas fa-book'></i>
+        <span>{{localize "GURPS.notes"}}</span>
+      </a>
+    </nav>
+
+    {{!-- TAB CONTENT --}}
+    <section class='ms-body'>
+      {{!-- Tab 1: Character (Main) - Single column layout --}}
+      <div class='tab' data-tab='character' data-group='modern-tabs'>
+        {{!-- Skills --}}
+        <div class='ms-section'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-graduation-cap'></i>
+            {{localize 'GURPS.skills'}}
+          </h3>
+          <div class='ms-skills-list'>
+            {{#each (flatlist system.skills)}}
+            <div class='ms-skill-row'>
+              <div class='ms-row-header'>
+                <span class='ms-skill-name'>{{this.name}}</span>
+                <span class='ms-skill-rsl'>{{this.relativelevel}}</span>
+                {{>dice-button otf=(concat 'Sk:"' this.name '"') level=this.level}}
+              </div>
+              <div class='ms-notes'>
+                {{#if this.notes}}
+                  {{{gurpslinkbr this.notes}}}
+                {{else}}
+                  <span class='ms-notes-empty'>{{localize 'GURPS.none'}}</span>
+                {{/if}}
+              </div>
+            </div>
+            {{else}}
+            <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+            {{/each}}
+          </div>
+        </div>
+
+        {{!-- Advantages --}}
+        <div class='ms-section'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-star'></i>
+            {{localize 'GURPS.advantages'}}
+          </h3>
+          <div class='ms-traits-list'>
+            {{#each (flatlist system.ads)}}
+            <div class='ms-trait-row ms-advantage'>
+              <div class='ms-row-header'>
+                <span class='ms-trait-name'>{{stripOtfs this.name}}</span>
+                <span class='ms-trait-points'>[{{this.points}}]</span>
+                {{#if this.pageref}}<span class='ms-trait-ref'>{{this.pageref}}</span>{{/if}}
+                {{#each (extractOtfs this.name this.notes)}}
+                {{>dice-button otf=this.formula text=this.text encodedAction=this.encodedAction}}
+                {{/each}}
+              </div>
+              <div class='ms-notes'>
+                {{#if this.notes}}
+                  {{{gurpslinkbr this.notes}}}
+                {{else}}
+                  <span class='ms-notes-empty'>{{localize 'GURPS.none'}}</span>
+                {{/if}}
+              </div>
+            </div>
+            {{else}}
+            <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+            {{/each}}
+          </div>
+        </div>
+
+        {{!-- Disadvantages --}}
+        <div class='ms-section'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-skull'></i>
+            {{localize 'GURPS.pointsDisadvantages'}}
+          </h3>
+          <div class='ms-traits-list'>
+            {{#each (flatlist system.disads)}}
+            <div class='ms-trait-row ms-disadvantage'>
+              <div class='ms-row-header'>
+                <span class='ms-trait-name'>{{stripOtfs this.name}}</span>
+                <span class='ms-trait-points'>[{{this.points}}]</span>
+                {{#if this.pageref}}<span class='ms-trait-ref'>{{this.pageref}}</span>{{/if}}
+                {{#each (extractOtfs this.name this.notes)}}
+                {{>dice-button otf=this.formula text=this.text encodedAction=this.encodedAction}}
+                {{/each}}
+              </div>
+              <div class='ms-notes'>
+                {{#if this.notes}}
+                  {{{gurpslinkbr this.notes}}}
+                {{else}}
+                  <span class='ms-notes-empty'>{{localize 'GURPS.none'}}</span>
+                {{/if}}
+              </div>
+            </div>
+            {{else}}
+            <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+            {{/each}}
+          </div>
+        </div>
+
+        {{!-- Spells if present --}}
+        {{#if (notEmpty system.spells)}}
+        <div class='ms-section'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-hat-wizard'></i>
+            {{localize 'GURPS.spells'}}
+          </h3>
+          <div class='ms-skills-list'>
+            {{#each (flatlist system.spells)}}
+            <div class='ms-skill-row'>
+              <div class='ms-row-header'>
+                <span class='ms-skill-name'>{{this.name}}</span>
+                <span class='ms-skill-rsl'>{{this.college}}</span>
+                {{>dice-button otf=(concat 'Sp:"' this.name '"') level=this.level}}
+              </div>
+              <div class='ms-notes'>
+                {{#if this.notes}}
+                  {{{gurpslinkbr this.notes}}}
+                {{else}}
+                  <span class='ms-notes-empty'>{{localize 'GURPS.none'}}</span>
+                {{/if}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- Reactions --}}
+        {{#if (notEmpty system.reactions)}}
+        <div class='ms-section'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-heart'></i>
+            {{localize 'GURPS.reactionMods'}}
+          </h3>
+          <div class='ms-modifier-list'>
+            {{#each (flatlist system.reactions)}}
+            <div class='ms-modifier-row'>
+              <span class='ms-modifier-value'>{{this.modifier}}</span>
+              <span class='ms-modifier-situation'>{{this.situation}}</span>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- Conditional Modifiers --}}
+        {{#if (notEmpty system.conditionalmods)}}
+        <div class='ms-section'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-balance-scale'></i>
+            {{localize 'GURPS.conditionalMods'}}
+          </h3>
+          <div class='ms-modifier-list'>
+            {{#each (flatlist system.conditionalmods)}}
+            <div class='ms-modifier-row'>
+              <span class='ms-modifier-value'>{{this.modifier}}</span>
+              <span class='ms-modifier-situation'>{{this.situation}}</span>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+
+      {{!-- Tab 2: Combat --}}
+      <div class='tab' data-tab='combat' data-group='modern-tabs'>
+        {{!-- Attacks Section (moved from Character tab) --}}
+        <div class='ms-attacks-section'>
+          {{!-- Melee Attacks --}}
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-sword'></i>
+              {{localize 'GURPS.melee'}}
+            </h3>
+            <div class='ms-attacks-list'>
+              {{#if (notEmpty system.melee)}}
+              <div class='ms-attack-header'>
+                <span class='ms-attack-name'>{{localize 'GURPS.melee'}}</span>
+                <span class='ms-attack-usage'>{{localize 'GURPS.usage'}}</span>
+                <span class='ms-attack-level'>{{localize 'GURPS.level'}}</span>
+                <span class='ms-attack-damage'>{{localize 'GURPS.damage'}}</span>
+                <span class='ms-attack-reach'>{{localize 'GURPS.reach'}}</span>
+                <span class='ms-attack-parry'>{{localize 'GURPS.parry'}}</span>
+              </div>
+              {{/if}}
+              {{#each (attackflatlist system.melee)}}
+              <div class='ms-attack-row rollable' data-otf='{{quotedAttackName "M" this}}'>
+                <span class='ms-attack-name'>{{this.name}}</span>
+                <span class='ms-attack-usage'>{{this.mode}}</span>
+                <span class='ms-attack-level'>{{this.level}}</span>
+                <span class='ms-attack-damage'>{{>dice-button otf=this.damage text=this.damage damage=true color='var(--ms-hp)'}}</span>
+                <span class='ms-attack-reach'>{{this.reach}}</span>
+                <span class='ms-attack-parry'>{{>dice-button otf=(quotedAttackName "P" this) text=this.parry color='var(--ms-text-muted)'}}</span>
+              </div>
+              {{else}}
+              <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+              {{/each}}
+            </div>
+          </div>
+
+          {{!-- Ranged Attacks --}}
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-bullseye'></i>
+              {{localize 'GURPS.ranged'}}
+            </h3>
+            <div class='ms-attacks-list'>
+              {{#if (notEmpty system.ranged)}}
+              <div class='ms-attack-header'>
+                <span class='ms-attack-name'>{{localize 'GURPS.ranged'}}</span>
+                <span class='ms-attack-usage'>{{localize 'GURPS.usage'}}</span>
+                <span class='ms-attack-level'>{{localize 'GURPS.level'}}</span>
+                <span class='ms-attack-damage'>{{localize 'GURPS.damage'}}</span>
+                <span class='ms-attack-acc'>{{localize 'GURPS.accuracy'}}</span>
+                <span class='ms-attack-range'>{{localize 'GURPS.range'}}</span>
+              </div>
+              {{/if}}
+              {{#each (attackflatlist system.ranged)}}
+              <div class='ms-attack-row rollable' data-otf='{{quotedAttackName "R" this}}'>
+                <span class='ms-attack-name'>{{this.name}}</span>
+                <span class='ms-attack-usage'>{{this.mode}}</span>
+                <span class='ms-attack-level'>{{this.level}}</span>
+                <span class='ms-attack-damage'>{{>dice-button otf=this.damage text=this.damage damage=true color='var(--ms-hp)'}}</span>
+                <span class='ms-attack-acc'>{{this.acc}}</span>
+                <span class='ms-attack-range'>{{this.range}}</span>
+              </div>
+              {{else}}
+              <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+
+        {{!-- Encumbrance & Hit Locations --}}
+        <div class='ms-combat-grid'>
+          {{!-- Encumbrance --}}
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-weight-hanging'></i>
+              {{localize 'GURPS.encumbrance'}}
+            </h3>
+            {{>encumbrance}}
+          </div>
+
+          {{!-- Hit Locations --}}
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-child'></i>
+              {{localize 'GURPS.hitLocation'}}
+            </h3>
+            {{>locations parent=../data}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Tab 3: Equipment --}}
+      <div class='tab' data-tab='equipment' data-group='modern-tabs'>
+        <div class='ms-equipment-grid'>
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-briefcase'></i>
+              {{localize 'GURPS.equipment'}} ({{localize 'GURPS.carried'}})
+            </h3>
+            {{>equipment container='carried' data=this.data}}
+          </div>
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-archive'></i>
+              {{localize 'GURPS.equipment'}} ({{localize 'GURPS.other'}})
+            </h3>
+            {{>equipment container='other' data=this.data}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Tab 4: Notes (Redesigned) --}}
+      <div class='tab' data-tab='notes' data-group='modern-tabs'>
+        {{!-- Identity & Description Card --}}
+        <div class='ms-section ms-identity-card'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-id-card'></i>
+            {{localize 'GURPS.identity'}} & {{localize 'GURPS.description'}}
+          </h3>
+          <div class='ms-identity-grid'>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.name'}}</label>
+              <input type='text' name='name' value='{{actor.name}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionTitle'}}</label>
+              <input type='text' name='system.description.title' value='{{system.description.title}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionPlayer'}}</label>
+              <input type='text' name='system.description.player' value='{{system.description.player}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionGender'}}</label>
+              <input type='text' name='system.description.gender' value='{{system.description.gender}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionAge'}}</label>
+              <input type='text' name='system.description.age' value='{{system.description.age}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionHeight'}}</label>
+              <input type='text' name='system.description.height' value='{{system.description.height}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionWeight'}}</label>
+              <input type='text' name='system.description.weight' value='{{system.description.weight}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionRace'}}</label>
+              <input type='text' name='system.description.race' value='{{system.description.race}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionSizeModifier'}}</label>
+              <input type='text' name='system.description.sizemod' value='{{system.description.sizemod}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionTechLevel'}}</label>
+              <input type='text' name='system.description.techlevel' value='{{system.description.techlevel}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionHair'}}</label>
+              <input type='text' name='system.description.hair' value='{{system.description.hair}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionEyes'}}</label>
+              <input type='text' name='system.description.eyes' value='{{system.description.eyes}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionSkin'}}</label>
+              <input type='text' name='system.description.skin' value='{{system.description.skin}}'/>
+            </div>
+            <div class='ms-field'>
+              <label>{{localize 'GURPS.descriptionHand'}}</label>
+              <input type='text' name='system.description.hand' value='{{system.description.hand}}'/>
+            </div>
+          </div>
+        </div>
+
+        {{!-- Points Summary Bar --}}
+        <div class='ms-section ms-points-bar'>
+          <h3 class='ms-section-header'>
+            <i class='fas fa-coins'></i>
+            {{localize 'GURPS.points'}}
+          </h3>
+          <div class='ms-points-row'>
+            <span class='ms-points-item'><strong>{{system.totalpoints.total}}</strong> {{localize 'GURPS.pointsTotal'}}</span>
+            <span class='ms-points-item'><strong>{{system.totalpoints.unspent}}</strong> {{localize 'GURPS.pointsUnspent'}}</span>
+            <span class='ms-points-item'><strong>{{system.totalpoints.attributes}}</strong> {{localize 'GURPS.pointsAttributes'}}</span>
+            <span class='ms-points-item'><strong>{{system.totalpoints.ads}}</strong> {{localize 'GURPS.pointsAdvantages'}}</span>
+            <span class='ms-points-item'><strong>{{system.totalpoints.disads}}</strong> {{localize 'GURPS.pointsDisadvantages'}}</span>
+            <span class='ms-points-item'><strong>{{system.totalpoints.skills}}</strong> {{localize 'GURPS.pointsSkills'}}</span>
+            <span class='ms-points-item'><strong>{{system.totalpoints.spells}}</strong> {{localize 'GURPS.pointsSpells'}}</span>
+          </div>
+        </div>
+
+        {{!-- Two-column: Notes + Lifting/Misc --}}
+        <div class='ms-notes-columns'>
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-sticky-note'></i>
+              {{localize 'GURPS.notes'}}
+            </h3>
+            {{>notes}}
+          </div>
+          <div class='ms-section'>
+            <h3 class='ms-section-header'>
+              <i class='fas fa-dumbbell'></i>
+              {{localize 'GURPS.lifting'}}
+            </h3>
+            {{>lifting}}
+            <div class='ms-misc-info'>
+              <div><strong>{{localize 'GURPS.miscellaneousCreated'}}:</strong> {{system.description.createdon}}</div>
+              <div><strong>{{localize 'GURPS.miscellaneousModified'}}:</strong> {{system.description.modifiedon}}</div>
+            </div>
+          </div>
+        </div>
+
+        {{!-- Trackers --}}
+        {{>trackers}}
+      </div>
+    </section>
+  </div>
+  {{>footer}}
+</form>

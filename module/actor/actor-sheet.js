@@ -2294,6 +2294,71 @@ export class GurpsInventorySheet extends GurpsActorSheet {
   }
 }
 
+export class GurpsActorModernSheet extends GurpsActorSheet {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
+      width: 750,
+      height: 816,
+      tabs: [{ navSelector: '.ms-tabs', contentSelector: '.ms-body', initial: 'character' }],
+      scrollY: ['.ms-body .tab'],
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
+    })
+  }
+
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/actor-modern-sheet.hbs'
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html)
+
+    html.find('.ms-resource-display').click(event => {
+      event.preventDefault()
+      const resourceElement = event.currentTarget.closest('.ms-resource')
+      resourceElement.classList.add('editing')
+      const inputElement = resourceElement.querySelector('.ms-resource-input')
+      if (inputElement) {
+        inputElement.focus()
+        inputElement.select()
+      }
+    })
+
+    html.find('.ms-resource-input').on('blur', event => {
+      const resourceElement = event.currentTarget.closest('.ms-resource')
+      setTimeout(() => {
+        if (!resourceElement.contains(document.activeElement)) {
+          resourceElement.classList.remove('editing')
+        }
+      }, 100)
+    })
+
+    html.find('.ms-resource-input').on('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        event.currentTarget.blur()
+        event.currentTarget.closest('.ms-resource').classList.remove('editing')
+      }
+    })
+
+    html.find('.ms-resource-reset[data-action="reset-hp"]').click(event => {
+      event.preventDefault()
+      this.actor.update({ 'system.HP.value': this.actor.system.HP.max })
+    })
+
+    html.find('.ms-resource-reset[data-action="reset-fp"]').click(event => {
+      event.preventDefault()
+      this.actor.update({ 'system.FP.value': this.actor.system.FP.max })
+    })
+
+    html.find('.ms-skill-row, .ms-trait-row').click(event => {
+      if (event.target.closest('.ms-use-button')) return
+      event.currentTarget.classList.toggle('expanded')
+    })
+  }
+}
+
 export class ItemImageSettings extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
