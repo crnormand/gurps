@@ -2378,22 +2378,14 @@ if (!globalThis.GURPS) {
           continue
         }
 
-        // Get Combat Initiative
-        const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
-
         // Add Quick Roll Menu
         combatantElement = await addQuickRollButton(combatantElement, combatant, token)
 
         // Add Maneuver Menu
         combatantElement = await addManeuverMenu(combatantElement, combatant, token)
-
-        // Add Tooltip to Token Image
-        const tokenImage = $(combatantElement).find('.token-image')
-        tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
       }
       // Add Quick Roll Listeners.
       addQuickRollListeners()
-      // addManeuverListeners()
     })
 
     Hooks.once('renderCombatTracker', async function (_app, element, _options, _context) {
