@@ -13,6 +13,12 @@ Global Override body {
   font-family: var(--font-family-icons);
 }
 
+.system-gurps .control-icon[data-palette='maneuvers'] img,
+.system-gurps .token-effect,
+.system-gurps .effect-control {
+  filter: none;
+}
+
 .window-app.gcs.pdf .window-content {
   overflow: clip;
   padding: 0;
@@ -2691,10 +2697,6 @@ li.combatant.active {
 .maneuver-tooltip:first-child {
   bottom: -550% !important;
 } */
-
-.combat-sidebar .combat-tracker .token-effect {
-  filter: none;
-}
 
 .mv-icons {
   display: flex;
