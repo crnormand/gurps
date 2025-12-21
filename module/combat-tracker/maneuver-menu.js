@@ -26,13 +26,29 @@ export const addManeuverMenu = async (html, combatant, token) => {
   currentManeuver.src = actorManeuver.icon
 
   // Update initiative tooltip.
-  const initiative = combatant?.initiative
-  const replacementText = initiative !== null ? initiative.toFixed(5) : 'N/A'
-  currentManeuver.title = game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText })
+  // currentManeuver.title = game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText })
 
   // Add active class if initialized.
+  const initiative = combatant?.initiative
   if (typeof initiative === 'number') currentManeuver.classList.add('active')
   else currentManeuver.classList.remove('active')
+
+  // Prepare tooltip.
+  const actions = await TokenActions.fromToken(token)
+  const maxMove = actions.getMaxMove()
+  const label = Maneuvers.getManeuver(actions.currentManeuver).label
+  const allIcons = TokenActions.getManeuverIcons(actions.currentManeuver)
+  const tooltipHtmlString = await foundry.applications.handlebars.renderTemplate(
+    'systems/gurps/templates/maneuver-button-tooltip.hbs',
+    {
+      label,
+      maxMove,
+      allIcons,
+    }
+  )
+
+  currentManeuver.setAttribute('aria-label', 'Maneuver Badge')
+  currentManeuver.setAttribute('data-tooltip-html', tooltipHtmlString)
 
   // Replace initiative span with maneuver image.
   const initiativeSpan = html.querySelector?.('.token-initiative')
@@ -53,24 +69,23 @@ export const addManeuverMenu = async (html, combatant, token) => {
   tempDiv.innerHTML = menuHtmlString
   html.appendChild(tempDiv.firstElementChild)
 
-  // Prepare tooltip.
-  const actions = await TokenActions.fromToken(token)
-  const maxMove = actions.getMaxMove()
-  const label = Maneuvers.getManeuver(actions.currentManeuver).label
-  const allIcons = TokenActions.getManeuverIcons(actions.currentManeuver)
-  const tooltipHtmlString = await foundry.applications.handlebars.renderTemplate(
-    'systems/gurps/templates/maneuver-button-tooltip.hbs',
-    {
-      label,
-      maxMove,
-      allIcons,
-    }
-  )
+  // Find the maneuver token-effect and remove it and its tooltip entry.
+  const tokenEffects = html.querySelector('.token-effects')
+  let tooltipHtml = tokenEffects?.getAttribute('data-tooltip-html')
+  tooltipHtml = tooltipHtml?.toString().replace(/<li>(.*?maneuvers.*?)<\/li>/, '')
+  tokenEffects?.setAttribute('data-tooltip-html', tooltipHtml || '')
 
-  // Convert tooltip HTML string to DOM element and append to html.
-  const tooltipDiv = document.createElement('div')
-  tooltipDiv.innerHTML = tooltipHtmlString
-  html.appendChild(tooltipDiv.firstElementChild)
+  const maneuverEffect = tokenEffects?.querySelector(`.token-effect[src*="maneuver"]`)
+  if (maneuverEffect) maneuverEffect.remove()
+
+  // Finally, set the token image tooltip content.
+  const image = html.querySelector?.('.token-image')
+  if (image) {
+    image.setAttribute('aria-label', 'Token Image')
+
+    const replacementText = initiative !== null ? initiative.toFixed(5) : 'N/A'
+    image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
+  }
 
   return html
 }
@@ -80,20 +95,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
  */
 export const addManeuverListeners = () => {
   console.log('Adding Maneuver Menu Listeners to Combat Tracker')
-
-  // const tracker = document.querySelector('#sidebar-content #combat .combat-tracker')
-
-  if (document._handleManeuverBadgeContextMenu) {
-    document.removeEventListener('contextmenu', document._handleManeuverBadgeContextMenu)
-  }
-
-  if (document._handleManeuverBadgeClick) {
-    document.removeEventListener('click', document._handleManeuverBadgeClick)
-  }
-
-  if (document._handleManeuverMenuToggle) {
-    document.removeEventListener('click', document._handleManeuverMenuToggle)
-  }
 
   // Global click handler to hide menus
   document.addEventListener('click', event => {
@@ -106,94 +107,87 @@ export const addManeuverListeners = () => {
   })
 
   // Context menu handler for "Do Nothing"
-  const handleManeuverBadgeRightClick = async event => {
+  document.addEventListener('contextmenu', async event => {
     // Ensure click is on the maneuver badge
     if (!event.target.classList.contains('maneuver-badge')) return
 
-    {
-      const combatantElement = event.target.closest('[class*="combatant"]')
-      if (!combatantElement) return
+    const combatantElement = event.target.closest('[class*="combatant"]')
+    if (!combatantElement) return
 
-      event.preventDefault()
-      event.stopPropagation()
+    event.preventDefault()
+    event.stopPropagation()
 
-      const combatantId = combatantElement.dataset.combatantId
-      const combatant = game.combat.combatants.get(combatantId)
+    const combatantId = combatantElement.dataset.combatantId
+    const combatant = game.combat.combatants.get(combatantId)
 
-      console.log('Setting maneuver to Do Nothing for combatant:', combatant.id)
+    console.log('Setting maneuver to Do Nothing for combatant:', combatant.id)
 
-      const doNothing = Maneuvers.getManeuver('do_nothing')
-      const token = canvas.tokens.get(combatant.token.id)
-      const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
-      if (currentManeuverName === 'do_nothing') return
-      await token.setManeuver(doNothing.flags.gurps.name)
-    }
-  }
-  document.addEventListener('contextmenu', handleManeuverBadgeRightClick)
-  document._handleManeuverBadgeContextMenu = handleManeuverBadgeRightClick
+    const doNothing = Maneuvers.getManeuver('do_nothing')
+    const token = canvas.tokens.get(combatant.token.id)
+    const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+    if (currentManeuverName === 'do_nothing') return
+    await token.setManeuver(doNothing.flags.gurps.name)
+  })
 
   // Menu item click handler
-  const handleManeuverBadgeClick = async event => {
+  document.addEventListener('click', async event => {
     const target = event.target.closest('.maneuver-select-info')
     if (!target) return
 
-    {
-      event.preventDefault()
-      event.stopPropagation()
+    event.preventDefault()
+    event.stopPropagation()
 
-      console.log('Maneuver menu item clicked')
+    console.log('Maneuver menu item clicked')
 
-      // Hide all menus
-      document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
-        menu.style.display = 'none'
-      })
+    // Hide all menus
+    document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
+      menu.style.display = 'none'
+    })
 
-      const menu = target.closest('.maneuver-combat-tracker-menu')
-      const combatantId = menu?.dataset.combatantId
-      const maneuverName = target.dataset.maneuver
+    const menu = target.closest('.maneuver-combat-tracker-menu')
+    const combatantId = menu?.dataset.combatantId
+    const maneuverName = target.dataset.maneuver
 
-      const combatant = game.combat.combatants.get(combatantId)
-      const token = canvas.tokens.get(combatant.token.id)
+    const combatant = game.combat.combatants.get(combatantId)
+    const token = canvas.tokens.get(combatant.token.id)
 
-      const currentManeuver = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
-      if (currentManeuver === maneuverName) return
+    const currentManeuver = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+    if (currentManeuver === maneuverName) return
 
-      await token.actor.update({
-        'system.conditions.maneuver': maneuverName,
-      })
-      await token.setManeuver(maneuverName)
+    await token.actor.update({
+      'system.conditions.maneuver': maneuverName,
+    })
+    await token.setManeuver(maneuverName)
 
-      await token.drawEffects()
-    }
-  }
-  document.addEventListener('click', handleManeuverBadgeClick)
-  document._handleManeuverBadgeClick = handleManeuverBadgeClick
+    await token.drawEffects()
+  })
 
   // Click handler to toggle menu
-  const handleManeuverMenuToggle = event => {
+  document.addEventListener('click', event => {
     // Ensure click is on the maneuver badge
     if (!event.target.classList.contains('maneuver-badge')) return
 
-    {
-      const combatantElement = event.target.closest('[class*="combatant"]')
-      if (!combatantElement) return
+    const combatantElement = event.target.closest('[class*="combatant"]')
+    if (!combatantElement) return
 
-      event.preventDefault()
-      event.stopPropagation()
+    event.preventDefault()
+    event.stopPropagation()
 
-      const combatantId = combatantElement.dataset.combatantId
-      const combatant = game.combat.combatants.get(combatantId)
+    const combatantId = combatantElement.dataset.combatantId
+    const combatant = game.combat.combatants.get(combatantId)
 
-      console.log('Toggling maneuver menu for combatant:', combatant.id)
+    console.log('Toggling maneuver menu for combatant:', combatant.id)
 
-      const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
-      if (menu) {
-        menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
-      }
+    const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
+    if (menu) {
+      // Set menu top to badge bottom
+      const badgeRect = event.target.getBoundingClientRect()
+      const menuRect = menu.getBoundingClientRect()
+      const offsetTop = badgeRect.bottom - menuRect.top
+      menu.style.top = `${offsetTop}px`
+      menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
     }
-  }
-  document.addEventListener('click', handleManeuverMenuToggle)
-  document._handleManeuverMenuToggle = handleManeuverMenuToggle
+  })
 }
 
 function getCombatantFromEvent(event) {

@@ -13,6 +13,8 @@
 - Restore missing lang tags. #2430
 - Fix sprint distance when changing encumbrance levels. \#2420
 - Changing Posture from character sheet takes two tries \#2423
+- Restore (and enhance) the Change Maneuver menu in the Combat Tracker.
+- Fix the positioning of the Quick Roll menu.
 
 ## Release 0.18.9 12/12/2025
 

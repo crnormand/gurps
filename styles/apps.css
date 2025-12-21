@@ -2658,22 +2658,19 @@ li.combatant.active {
 }
 
 .maneuver-tooltip {
-  visibility: hidden;
-  background-color: black;
-  color: #fff;
   text-align: center;
-  border-radius: 5px;
+  min-width: 8rem;
+  /* 
   padding: 5px;
   position: absolute;
   z-index: 1;
   top: 100%;
   transition: opacity 0.3s;
-  width: 100px;
   left: auto;
   right: 0;
-  margin-left: 0;
+  margin-left: 0; */
 }
-.maneuver-tooltip::after {
+/* .maneuver-tooltip::after {
   content: '';
   position: absolute;
   bottom: 100%;
@@ -2693,6 +2690,10 @@ li.combatant.active {
 
 .maneuver-tooltip:first-child {
   bottom: -550% !important;
+} */
+
+.combat-sidebar .combat-tracker .token-effect {
+  filter: none;
 }
 
 .mv-icons {
@@ -2717,6 +2718,8 @@ li.combatant.active {
     ***********************************
  */
 .quick-roll-menu {
+  position: absolute;
+  top: 48px;
   background-color: rgba(0, 0, 0, 0.9);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: none;
