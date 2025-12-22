@@ -175,9 +175,6 @@ export const addManeuverListeners = () => {
     event.preventDefault()
     event.stopPropagation()
 
-    const combatantId = combatantElement.dataset.combatantId
-    const combatant = game.combat.combatants.get(combatantId)
-
     const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
     if (menu) {
       // Set menu top to badge bottom relative to the parent element, so it works even if the menu is hidden
@@ -188,10 +185,4 @@ export const addManeuverListeners = () => {
       menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
     }
   })
-}
-
-function getCombatantFromEvent(event) {
-  const combatantId = event.target.closest('[class*="combatant actor directory-item flexrow"]')?.dataset.combatantId
-  const combatant = game.combat.combatants.get(combatantId)
-  return combatant
 }
