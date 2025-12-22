@@ -2388,10 +2388,7 @@ if (!globalThis.GURPS) {
       addQuickRollListeners()
     })
 
-    Hooks.once('renderCombatTracker', async function (_app, element, _options, _context) {
-      // Add Maneuvers Menu Listeners.
-      addManeuverListeners()
-    })
+    addManeuverListeners()
 
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {

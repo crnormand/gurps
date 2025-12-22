@@ -14,8 +14,6 @@ import { TokenActions } from '../token-actions.js'
 export const addManeuverMenu = async (html, combatant, token) => {
   if (!token?.actor) return html
 
-  console.log('Adding Maneuver Menu to Combat Tracker for combatant:', combatant.id)
-
   // Determine current maneuver and icon.
   let actorManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
   if (!actorManeuverName || actorManeuverName === 'undefined') actorManeuverName = 'do_nothing'
@@ -24,9 +22,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
   const currentManeuver = document.createElement('img')
   currentManeuver.className = 'token-effect maneuver-badge'
   currentManeuver.src = actorManeuver.icon
-
-  // Update initiative tooltip.
-  // currentManeuver.title = game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText })
 
   // Add active class if initialized.
   const initiative = combatant?.initiative
@@ -49,6 +44,28 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   currentManeuver.setAttribute('aria-label', 'Maneuver Badge')
   currentManeuver.setAttribute('data-tooltip-html', tooltipHtmlString)
+
+  // Context menu handler for "Do Nothing"
+  currentManeuver.addEventListener(
+    'contextmenu',
+    async event => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      const combatantElement = event.target.closest('[class*="combatant"]')
+      if (!combatantElement) return
+
+      const combatantId = combatantElement.dataset.combatantId
+      const combatant = game.combat.combatants.get(combatantId)
+
+      const doNothing = Maneuvers.getManeuver('do_nothing')
+      const token = canvas.tokens.get(combatant.token.id)
+      const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+      if (currentManeuverName === 'do_nothing') return
+      await token.setManeuver(doNothing.flags.gurps.name)
+    },
+    { once: true }
+  )
 
   // Replace initiative span with maneuver image.
   const initiativeSpan = html.querySelector?.('.token-initiative')
@@ -94,8 +111,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
  * Add Maneuver Menu Listeners to Combat Tracker.
  */
 export const addManeuverListeners = () => {
-  console.log('Adding Maneuver Menu Listeners to Combat Tracker')
-
   // Global click handler to hide menus
   document.addEventListener('click', event => {
     if (event.target.classList?.contains('maneuver-badge')) return
@@ -106,29 +121,6 @@ export const addManeuverListeners = () => {
     }
   })
 
-  // Context menu handler for "Do Nothing"
-  document.addEventListener('contextmenu', async event => {
-    // Ensure click is on the maneuver badge
-    if (!event.target.classList.contains('maneuver-badge')) return
-
-    const combatantElement = event.target.closest('[class*="combatant"]')
-    if (!combatantElement) return
-
-    event.preventDefault()
-    event.stopPropagation()
-
-    const combatantId = combatantElement.dataset.combatantId
-    const combatant = game.combat.combatants.get(combatantId)
-
-    console.log('Setting maneuver to Do Nothing for combatant:', combatant.id)
-
-    const doNothing = Maneuvers.getManeuver('do_nothing')
-    const token = canvas.tokens.get(combatant.token.id)
-    const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
-    if (currentManeuverName === 'do_nothing') return
-    await token.setManeuver(doNothing.flags.gurps.name)
-  })
-
   // Menu item click handler
   document.addEventListener('click', async event => {
     const target = event.target.closest('.maneuver-select-info')
@@ -136,8 +128,6 @@ export const addManeuverListeners = () => {
 
     event.preventDefault()
     event.stopPropagation()
-
-    console.log('Maneuver menu item clicked')
 
     // Hide all menus
     document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
@@ -175,8 +165,6 @@ export const addManeuverListeners = () => {
 
     const combatantId = combatantElement.dataset.combatantId
     const combatant = game.combat.combatants.get(combatantId)
-
-    console.log('Toggling maneuver menu for combatant:', combatant.id)
 
     const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
     if (menu) {

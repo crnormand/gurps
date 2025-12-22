@@ -100,7 +100,6 @@ export const addQuickRollListeners = () => {
     .on('click', '.quick-roll-blind-toggle', async function (event) {
       event.preventDefault()
       event.stopPropagation()
-      console.log('Quick Roll Blind Toggle Clicked')
       const combatantId = $(this).data('combatant-id')
       const combatant = game.combat.combatants.get(combatantId)
       const token = canvas.tokens.get(combatant.token.id)
