@@ -88,10 +88,22 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   // Find the maneuver token-effect and remove it and its tooltip entry.
   const tokenEffects = html.querySelector('.token-effects')
-  let tooltipHtml = tokenEffects?.getAttribute('data-tooltip-html')
-  tooltipHtml = tooltipHtml?.toString().replace(/<li>(.*?maneuvers.*?)<\/li>/, '')
-  tokenEffects?.setAttribute('data-tooltip-html', tooltipHtml || '')
+  const tooltipHtmlRaw = tokenEffects?.getAttribute('data-tooltip-html')
+  if (tokenEffects && tooltipHtmlRaw) {
+    const tempTooltipContainer = document.createElement('div')
+    tempTooltipContainer.innerHTML = tooltipHtmlRaw.toString()
 
+    const tooltipListItems = tempTooltipContainer.querySelectorAll('li')
+    tooltipListItems.forEach(li => {
+      const text = li.textContent || ''
+      if (text.toLowerCase().includes('maneuvers')) {
+        li.remove()
+      }
+    })
+
+    const cleanedTooltipHtml = tempTooltipContainer.innerHTML
+    tokenEffects.setAttribute('data-tooltip-html', cleanedTooltipHtml)
+  }
   const maneuverEffect = tokenEffects?.querySelector(`.token-effect[src*="maneuver"]`)
   if (maneuverEffect) maneuverEffect.remove()
 
