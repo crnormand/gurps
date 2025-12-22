@@ -439,8 +439,6 @@
   cursor: pointer;
   font-size: 10px;
 
-  &:first-of-type { margin-left: auto; }
-
   &:hover {
     background: var(--ms-bg-hover);
     border-color: var(--ms-accent);
@@ -459,8 +457,8 @@
 }
 
 .ms-attacks-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--ms-gap);
 }
 
@@ -479,11 +477,7 @@
   color: var(--ms-text-muted);
   text-transform: uppercase;
 
-  .ms-attack-name { }
-  .ms-attack-level { text-align: center; }
-  .ms-attack-damage { }
-  .ms-attack-reach, .ms-attack-acc { text-align: center; }
-  .ms-attack-parry, .ms-attack-range { text-align: center; }
+  > span:not(:first-child) { text-align: center; }
 }
 
 .ms-attack-row {
@@ -498,6 +492,8 @@
   &:last-child { border-bottom: none; }
   &:hover { background: var(--ms-bg-hover); }
 
+  > span:not(:first-child) { text-align: center; }
+
   .ms-attack-name {
     white-space: nowrap;
     overflow: hidden;
@@ -507,7 +503,6 @@
 
   .ms-attack-level {
     font-weight: 700;
-    text-align: center;
     color: var(--ms-accent);
   }
 
@@ -517,13 +512,8 @@
     cursor: pointer;
   }
 
-  .ms-attack-reach, .ms-attack-acc {
-    text-align: center;
-    color: var(--ms-text-muted);
-  }
-
+  .ms-attack-reach, .ms-attack-acc,
   .ms-attack-parry, .ms-attack-range {
-    text-align: center;
     color: var(--ms-text-muted);
   }
 }
@@ -657,182 +647,6 @@
     }
   }
 
-  #encumbrance {
-    font-size: 11px;
-    border: 1px solid var(--ms-border);
-    border-radius: var(--ms-radius);
-    overflow: hidden;
-
-    // All headers
-    .header {
-      background: var(--ms-bg-section);
-      color: var(--ms-text-muted);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 8px 6px;
-      border-bottom: 2px solid var(--ms-border);
-    }
-
-    // Data rows
-    .encmarker, .enc, .load, .move, .dodge {
-      padding: 6px;
-      background: var(--ms-bg-card);
-      border-bottom: 1px solid var(--ms-border-light);
-      color: var(--ms-text);
-    }
-
-    // Zebra striping using row groups
-    .enc:nth-child(10n+6),
-    .enc:nth-child(10n+7),
-    .enc:nth-child(10n+8),
-    .enc:nth-child(10n+9),
-    .enc:nth-child(10n+10) {
-      background: var(--ms-bg-section);
-    }
-
-    // Current encumbrance level highlight
-    .current, .encmarker.current ~ .enc,
-    .encmarker.current ~ .load,
-    .encmarker.current ~ .move,
-    .encmarker.current ~ .dodge {
-      background: var(--ms-accent-light);
-      font-weight: 600;
-    }
-
-    // Marker column
-    .encmarker {
-      text-align: center;
-      color: var(--ms-accent);
-    }
-
-    // Bottom controls
-    .label-field-pair {
-      background: var(--ms-bg-section);
-      padding: 8px;
-      border-top: 1px solid var(--ms-border);
-
-      select {
-        padding: 4px 8px;
-      }
-    }
-  }
-
-  #location {
-    font-size: 11px;
-    border: 1px solid var(--ms-border);
-    border-radius: var(--ms-radius);
-    overflow: hidden;
-
-    // All headers
-    .header {
-      background: var(--ms-bg-section);
-      color: var(--ms-text-muted);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 8px 6px;
-      border-bottom: 2px solid var(--ms-border);
-    }
-
-    // Data cells
-    .roll, .where, .penalty, .dr, .itemmenu {
-      padding: 5px 6px;
-      background: var(--ms-bg-card);
-      border-bottom: 1px solid var(--ms-border-light);
-      color: var(--ms-text);
-    }
-
-    // Alternating row colors - target row groups
-    > div:nth-child(even):not(.header) {
-      .roll, .where, .penalty, .dr {
-        background: var(--ms-bg-section);
-      }
-    }
-
-    // DR column emphasis
-    .dr {
-      font-weight: 600;
-      color: var(--ms-accent);
-    }
-
-    // Penalty column - red for negatives
-    .penalty {
-      color: var(--ms-disadvantage);
-    }
-
-    // Where column
-    .where {
-      font-weight: 500;
-    }
-  }
-
-  [id^="equipment"] {
-    font-size: 11px;
-    border: 1px solid var(--ms-border);
-    border-radius: var(--ms-radius);
-    overflow: hidden;
-
-    // All headers
-    .header {
-      background: var(--ms-bg-section);
-      color: var(--ms-text-muted);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 8px 6px;
-      border-bottom: 2px solid var(--ms-border);
-    }
-
-    // Data cells
-    .equipped, .qty, .desc, .uses, .cost, .weight, .sum_cost, .sum_weight, .ref, .itemmenu {
-      padding: 6px;
-      background: var(--ms-bg-card);
-      border-bottom: 1px solid var(--ms-border-light);
-      color: var(--ms-text);
-    }
-
-    // Row hover
-    .eqtdraggable, .equipmenu {
-      &:hover ~ .qty,
-      &:hover ~ .desc,
-      &:hover ~ .uses,
-      &:hover ~ .cost,
-      &:hover ~ .weight,
-      &:hover ~ .sum_cost,
-      &:hover ~ .sum_weight,
-      &:hover ~ .ref {
-        background: var(--ms-bg-hover);
-      }
-    }
-
-    // Item description
-    .desc {
-      .gga-desc-text {
-        color: var(--ms-text);
-      }
-      .list_note {
-        font-size: 10px;
-        color: var(--ms-text-muted);
-        font-style: italic;
-      }
-    }
-
-    // Reference links
-    .ref a {
-      color: var(--ms-accent);
-      text-decoration: none;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    // Numeric columns
-    .cost, .weight, .sum_cost, .sum_weight {
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
   #identity {
     .header {
       background: transparent;
@@ -954,70 +768,6 @@
           border: none;
         }
       }
-    }
-  }
-
-  #lifting {
-    font-size: 11px;
-
-    .header {
-      background: transparent;
-      color: var(--ms-text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 0 0 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-      margin-bottom: 8px;
-    }
-
-    .lift {
-      font-weight: 600;
-      color: var(--ms-accent);
-      padding: 4px 8px 4px 0;
-    }
-
-    .liftdesc {
-      color: var(--ms-text-muted);
-      padding: 4px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-    }
-  }
-
-  #notes {
-    font-size: 11px;
-
-    .header {
-      background: transparent;
-      color: var(--ms-text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 0 0 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-      margin-bottom: 8px;
-
-      .addnoteicon {
-        color: var(--ms-accent);
-        cursor: pointer;
-        &:hover { color: var(--ms-text); }
-      }
-    }
-
-    .desc, .ref {
-      padding: 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-    }
-
-    .notedraggable, .notesmenu {
-      &:hover {
-        background: var(--ms-bg-hover);
-      }
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
     }
   }
 
@@ -1262,58 +1012,6 @@
   }
 }
 
-.modern-sheet {
-  #encumbrance,
-  #location,
-  #lifting,
-  [id^="equipment"],
-  #notes {
-    width: 100%;
-  }
-
-  #lifting {
-    // Override all green background from simple.css
-    .lift, .liftdesc {
-      background: var(--ms-bg-card);
-    }
-
-    // Modern zebra striping
-    .liftdesc:nth-last-child(4n + 1),
-    .lift:nth-last-child(4n + 2) {
-      background: var(--ms-bg-section);
-    }
-
-    // Ensure proper styling
-    .header {
-      background: var(--ms-bg-section);
-      color: var(--ms-text-muted);
-    }
-  }
-
-  #location {
-    .penalty {
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
-      font-weight: 600;
-
-      &:hover {
-        background: var(--ms-disadvantage-bg);
-        text-decoration: underline;
-      }
-    }
-
-    // Also make roll column clickable-looking
-    .roll {
-      cursor: pointer;
-      &:hover {
-        color: var(--ms-accent);
-      }
-    }
-  }
-}
-
 .ms-attack-header, .ms-attack-row {
   grid-template-columns: 1fr 50px 36px 70px 50px 50px;
 }
@@ -1322,4 +1020,671 @@
   text-align: center;
   font-size: 10px;
   color: var(--ms-text-muted);
+}
+
+// ============================================
+// Modern Encumbrance Table
+// ============================================
+.ms-encumbrance-table {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+.ms-enc-header {
+  display: grid;
+  grid-template-columns: 24px 1fr 60px 60px 60px;
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+
+  > span {
+    padding: 8px 6px;
+  }
+}
+
+.ms-enc-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 60px 60px 60px;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:nth-child(odd) {
+    background: var(--ms-bg-section);
+  }
+
+  &.ms-current {
+    background: var(--ms-accent-light);
+    font-weight: 600;
+  }
+
+  &.ms-clickable {
+    cursor: pointer;
+    &:hover {
+      background: var(--ms-bg-hover);
+    }
+  }
+
+  > span {
+    padding: 6px;
+  }
+}
+
+.ms-enc-marker {
+  text-align: center;
+  color: var(--ms-accent);
+}
+
+.ms-enc-level {
+  font-weight: 500;
+}
+
+.ms-enc-load, .ms-enc-move, .ms-enc-dodge {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-enc-dodge.rollable {
+  color: var(--ms-accent);
+  cursor: pointer;
+  &:hover { text-decoration: underline; }
+}
+
+.ms-dodge-bonus {
+  margin-left: 4px;
+  color: var(--ms-advantage);
+  &.rollable {
+    cursor: pointer;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-enc-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--ms-bg-section);
+  border-top: 1px solid var(--ms-border);
+  font-size: 11px;
+
+  label {
+    color: var(--ms-text-muted);
+  }
+
+  select {
+    padding: 4px 8px;
+  }
+}
+
+.ms-lock-icon {
+  margin-left: auto;
+  color: var(--ms-accent);
+  &.ms-unlocked {
+    color: coral;
+  }
+}
+
+// ============================================
+// Modern Hit Locations Table
+// ============================================
+.ms-locations-table {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+.ms-loc-header {
+  display: grid;
+  grid-template-columns: 50px 1fr 60px 60px;
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+
+  > span {
+    padding: 8px 6px;
+  }
+}
+
+.ms-loc-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 60px 60px;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:nth-child(odd) {
+    background: var(--ms-bg-section);
+  }
+
+  > span {
+    padding: 5px 6px;
+  }
+}
+
+.ms-loc-roll {
+  text-align: center;
+  color: var(--ms-text-muted);
+}
+
+.ms-loc-where {
+  font-weight: 500;
+}
+
+.ms-loc-penalty {
+  text-align: center;
+  color: var(--ms-disadvantage);
+  cursor: pointer;
+  font-weight: 600;
+
+  &:hover {
+    background: var(--ms-disadvantage-bg);
+    text-decoration: underline;
+  }
+}
+
+.ms-loc-dr {
+  text-align: center;
+  font-weight: 600;
+  color: var(--ms-accent);
+
+  &.ms-modified {
+    color: #3268a8;
+  }
+}
+
+
+// ============================================
+// Modern Footer
+// ============================================
+.ms-footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--ms-text-dim);
+  padding: 8px;
+  border-top: 1px solid var(--ms-border-light);
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ============================================
+// Section Header Icons (Add, Menu)
+// ============================================
+.ms-add-icon, .ms-menu-icon {
+  margin-left: auto;
+  color: var(--ms-accent);
+  cursor: pointer;
+  font-size: 12px;
+
+  &:hover {
+    color: var(--ms-text);
+  }
+}
+
+.ms-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &.headermenu {
+    cursor: pointer;
+  }
+}
+
+// ============================================
+// Modern Equipment Table
+// ============================================
+.ms-equipment-table {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+.ms-eqt-header {
+  display: grid;
+  grid-template-columns: 32px 60px 1fr 60px 60px 40px 50px;
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+
+  > span {
+    padding: 8px 6px;
+  }
+}
+
+.ms-eqt-row {
+  display: grid;
+  grid-template-columns: 32px 60px 1fr 60px 60px 40px 50px;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:nth-child(odd) {
+    background: var(--ms-bg-section);
+  }
+
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+
+  > span {
+    padding: 6px;
+  }
+}
+
+.ms-eqt-equipped {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  .fa-check-circle {
+    color: var(--ms-accent);
+  }
+
+  .ms-inactive {
+    color: var(--ms-text-dim);
+  }
+}
+
+.ms-eqt-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  .equipmentbutton {
+    color: var(--ms-text-muted);
+    cursor: pointer;
+    font-size: 10px;
+
+    &:hover {
+      color: var(--ms-accent);
+    }
+  }
+}
+
+.ms-eqt-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .expandcollapseicon {
+    margin-right: 4px;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} {
+      padding-left: #{6 + $i * 12}px;
+    }
+  }
+}
+
+.ms-eqt-notes {
+  font-size: 10px;
+  color: var(--ms-text-muted);
+  font-style: italic;
+}
+
+.ms-eqt-cost, .ms-eqt-weight {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-eqt-ref {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-eqt-actions, .ms-note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ms-action-btn {
+  color: var(--ms-text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+
+  &:hover {
+    opacity: 1;
+    color: var(--ms-accent);
+  }
+
+  &.ms-delete:hover {
+    color: var(--ms-hp);
+  }
+}
+
+// ============================================
+// Modern Notes List
+// ============================================
+.ms-notes-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-gap);
+}
+
+.ms-notes-list {
+  font-size: 11px;
+}
+
+.ms-note-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+}
+
+.ms-note-content {
+  flex: 1;
+
+  .expandcollapseicon {
+    margin-right: 4px;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} {
+      padding-left: #{$i * 12}px;
+    }
+  }
+}
+
+.ms-note-ref {
+  flex-shrink: 0;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-user-created {
+  color: var(--ms-accent);
+  margin-left: 4px;
+}
+
+// ============================================
+// Modern Lifting List
+// ============================================
+.ms-lifting-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 11px;
+}
+
+.ms-lift-value {
+  font-weight: 600;
+  color: var(--ms-accent);
+  text-align: right;
+  padding: 4px 0;
+}
+
+.ms-lift-label {
+  color: var(--ms-text-muted);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+}
+
+.ms-misc-info {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ms-border-light);
+  font-size: 11px;
+  color: var(--ms-text-muted);
+}
+
+// ============================================
+// Modern Trackers
+// ============================================
+.ms-trackers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .tracked-resource {
+    background: var(--ms-bg-card);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: 8px;
+
+    .header {
+      background: var(--ms-accent);
+    }
+  }
+}
+
+// ============================================
+// Collapsible Section Headers
+// ============================================
+.ms-section-header.ms-collapsible {
+  cursor: pointer;
+  user-select: none;
+
+  .ms-collapse-icon {
+    transition: transform 0.2s;
+  }
+
+  &.collapsed .ms-collapse-icon {
+    transform: rotate(-90deg);
+  }
+}
+
+.ms-section-count {
+  font-weight: normal;
+  color: var(--ms-text-dim);
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.ms-section.collapsed {
+  .ms-section-content {
+    display: none;
+  }
+
+  .ms-section-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+// ============================================
+// Skills Table
+// ============================================
+.ms-skills-table {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+.ms-skills-header {
+  display: grid;
+  grid-template-columns: 1fr 50px 60px;
+  gap: 4px;
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+  padding: 6px 8px;
+
+  > span:not(:first-child) {
+    text-align: center;
+  }
+}
+
+.ms-skills-row {
+  display: grid;
+  grid-template-columns: 1fr 50px 60px;
+  gap: 4px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--ms-border-light);
+  cursor: pointer;
+
+  &:nth-child(odd) { background: var(--ms-bg-section); }
+  &:hover { background: var(--ms-bg-hover); }
+  &:last-child { border-bottom: none; }
+}
+
+// ============================================
+// Traits Table
+// ============================================
+.ms-traits-table {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+.ms-traits-header {
+  display: grid;
+  grid-template-columns: 1fr minmax(150px, auto) 60px 60px;
+  gap: 4px;
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+  padding: 6px 8px;
+
+  > span:not(:first-child) {
+    text-align: center;
+  }
+}
+
+.ms-traits-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(150px, auto) 60px 60px;
+  gap: 4px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--ms-border-light);
+  cursor: pointer;
+
+  &:nth-child(odd) { background: var(--ms-bg-section); }
+  &:hover { background: var(--ms-bg-hover); }
+  &:last-child { border-bottom: none; }
+}
+
+// ============================================
+// Table Column Styles
+// ============================================
+.ms-col-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+
+  .expandcollapseicon {
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+    width: 12px;
+    text-align: center;
+
+    &:hover { color: var(--ms-accent); }
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} { padding-left: #{$i * 16}px; }
+  }
+}
+
+.ms-col-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-col-rsl {
+  text-align: center;
+  color: var(--ms-text-dim);
+  font-size: 10px;
+}
+
+.ms-col-level {
+  text-align: center;
+  font-weight: 600;
+  color: var(--ms-accent);
+}
+
+.ms-col-otf {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+
+.ms-col-points {
+  text-align: center;
+  font-weight: 600;
+}
+
+.ms-col-points-positive { color: var(--ms-advantage); }
+.ms-col-points-negative { color: var(--ms-disadvantage); }
+
+.ms-col-ref {
+  text-align: center;
+  font-size: 10px;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ============================================
+// Row Notes (expandable)
+// ============================================
+.ms-skills-row.expanded,
+.ms-traits-row.expanded {
+  .ms-row-notes { display: block; }
+}
+
+.ms-row-notes {
+  display: none;
+  grid-column: 1 / -1;
+  padding: 6px 8px 6px 24px;
+  font-size: 11px;
+  color: var(--ms-text-dim);
+  background: var(--ms-bg-hover);
+  border-top: 1px dashed var(--ms-border-light);
 }

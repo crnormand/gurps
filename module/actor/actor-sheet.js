@@ -2311,6 +2311,25 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     return 'systems/gurps/templates/actor/actor-modern-sheet.hbs'
   }
 
+  getData() {
+    const sheetData = super.getData()
+    const countItems = (obj) => {
+      if (!obj || typeof obj !== 'object') return 0
+      let count = 0
+      for (const key in obj) {
+        count++
+        if (obj[key]?.contains) count += countItems(obj[key].contains)
+        if (obj[key]?.collapsed) count += countItems(obj[key].collapsed)
+      }
+      return count
+    }
+    sheetData.skillCount = countItems(sheetData.system?.skills)
+    sheetData.traitCount = countItems(sheetData.system?.ads)
+    sheetData.meleeCount = countItems(sheetData.system?.melee)
+    sheetData.rangedCount = countItems(sheetData.system?.ranged)
+    return sheetData
+  }
+
   activateListeners(html) {
     super.activateListeners(html)
 
@@ -2352,9 +2371,108 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       this.actor.update({ 'system.FP.value': this.actor.system.FP.max })
     })
 
-    html.find('.ms-skill-row, .ms-trait-row').click(event => {
+    html.find('.ms-skills-row, .ms-traits-row').click(event => {
       if (event.target.closest('.ms-use-button')) return
+      if (event.target.closest('.expandcollapseicon')) return
       event.currentTarget.classList.toggle('expanded')
+    })
+
+    html.find('.ms-section-header.ms-collapsible').click(event => {
+      if (event.target.closest('.expandcollapseicon')) return
+      const header = event.currentTarget
+      const section = header.closest('.ms-section')
+      section.classList.toggle('collapsed')
+      header.classList.toggle('collapsed')
+    })
+
+    html.find('[data-action="add-equipment"]').click(async event => {
+      event.preventDefault()
+      const container = event.currentTarget.dataset.container
+      const path = `system.equipment.${container}`
+      const obj = new Equipment(`${game.i18n.localize('GURPS.equipment')}...`, true)
+      if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        obj.save = true
+        const payload = obj.toItemData(this.actor, '')
+        const [item] = await this.actor.createEmbeddedDocuments('Item', [payload])
+        obj.itemid = item._id
+      }
+      if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: container, generator: '' })
+      const list = GURPS.decode(this.actor, path) || {}
+      GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+    })
+
+    html.find('[data-action="add-note"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.notes'
+      const actor = this.actor
+      const list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path)) || {}
+      const obj = new Note('', true)
+      const dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
+      new Dialog({
+        title: 'Note Editor',
+        content: dlgHtml,
+        buttons: {
+          one: {
+            label: 'Create',
+            callback: async html => {
+              obj.notes = html.find('.notes').val()
+              obj.title = html.find('.title').val()
+              GURPS.put(list, obj)
+              await actor.internalUpdate({ [path]: list })
+            },
+          },
+        },
+        default: 'one',
+      }).render(true)
+    })
+
+    html.find('[data-action="add-tracker"]').click(event => {
+      event.preventDefault()
+      this.actor.addTracker()
+    })
+
+    html.find('[data-action="edit-equipment"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editEquipment(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-equipment"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        await this.actor.deleteEquipment(key)
+        await this.actor.refreshDR()
+      } else {
+        const obj = GURPS.decode(this.actor, key)
+        const item = this.actor.items.get(obj.itemid)
+        if (item) {
+          await this.actor._removeItemAdditions(item.id)
+          await this.actor.deleteEmbeddedDocuments('Item', [item.id])
+          GURPS.removeKey(this.actor, key)
+          await this.actor.refreshDR()
+        }
+      }
+    })
+
+    html.find('[data-action="edit-note"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editNotes(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-note"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      GURPS.removeKey(this.actor, key)
+      await this.actor.refreshDR()
     })
   }
 }
