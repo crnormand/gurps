@@ -112,7 +112,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
   if (image) {
     image.setAttribute('aria-label', 'Token Image')
 
-    const replacementText = initiative !== null ? initiative.toFixed(5) : 'N/A'
+    const replacementText = typeof initiative === 'number' ? initiative.toFixed(5) : 'N/A'
     image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
   }
 
