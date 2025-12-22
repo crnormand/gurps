@@ -1093,7 +1093,7 @@ export class GurpsActor extends Actor {
     let tokens = this._findTokens()
     if (!tokens || tokens.length === 0) {
       // Show a UI notification using i18n
-      ui.notifications.warn(
+      ui.notifications?.warn(
         game.i18n.format('GURPS.combat.ui.noActiveTokensToUpdateManeuver', { name: this.displayname })
       )
       return
