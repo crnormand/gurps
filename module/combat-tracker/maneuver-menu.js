@@ -180,10 +180,10 @@ export const addManeuverListeners = () => {
 
     const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
     if (menu) {
-      // Set menu top to badge bottom
+      // Set menu top to badge bottom relative to the parent element, so it works even if the menu is hidden
       const badgeRect = event.target.getBoundingClientRect()
-      const menuRect = menu.getBoundingClientRect()
-      const offsetTop = badgeRect.bottom - menuRect.top
+      const parentRect = menu.parentElement?.getBoundingClientRect() || badgeRect
+      const offsetTop = badgeRect.bottom - parentRect.top
       menu.style.top = `${offsetTop}px`
       menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
     }
