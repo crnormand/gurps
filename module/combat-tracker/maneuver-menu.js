@@ -181,7 +181,6 @@ export const addManeuverListeners = () => {
       // Set menu top to badge bottom
       const badgeRect = event.target.getBoundingClientRect()
       const menuRect = menu.getBoundingClientRect()
-      // menu.style.top = `${badgeRect.bottom}px`
 
       if (badgeRect.bottom + menuRect.height > window.innerHeight) {
         menu.style.top = `${badgeRect.top - menuRect.height}px`
