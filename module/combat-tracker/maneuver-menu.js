@@ -148,9 +148,12 @@ export const addManeuverListeners = () => {
     const combatantId = menu?.dataset.combatantId
     const maneuverName = target.dataset.maneuver
 
+    if (!game.combat || !combatantId) return
     const combatant = game.combat.combatants.get(combatantId)
-    const token = canvas.tokens.get(combatant.token.id)
+    if (!combatant || !combatant.token?.id) return
 
+    const token = canvas.tokens?.get(combatant.token.id)
+    if (!token?.actor) return
     const currentManeuver = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
     if (currentManeuver === maneuverName) return
 
