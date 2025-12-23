@@ -499,6 +499,12 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
       schema.calcs.fields
     ) as AnyMutableObject
 
+    data.attackmodes = Array.from(xml.querySelector(':scope > attackmodes')?.querySelectorAll('attackmode') ?? []).map(
+      node => GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode.schema.fields)
+    )
+
+    console.log(data)
+
     return new this(data)
   }
 

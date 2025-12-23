@@ -54,6 +54,7 @@ async function importerPrompt(actor?: Actor.OfType<'characterV2'>) {
               case 'gca5': {
                 const xmlText = new DOMParser().parseFromString(text, 'application/xml')
                 const gca5File = GCA5.fromXML(xmlText)
+                console.log('parsed data:', gca5File)
                 const importedActor = await GcaImporter.importCharacter(gca5File.character[0], actor)
                 console.debug('Imported data:', importedActor)
                 break

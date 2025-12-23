@@ -382,13 +382,15 @@ Portrait will not be imported.`
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
+    const damage = `${weapon.chardamage} ${weapon.chardamtype}`
+
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
       name: item.name,
       notes: weapon.notes ?? '',
       pageref: '',
       mode: weapon.name ?? '',
       import: weapon.charskillscore ?? 0,
-      damage: weapon.chardamage ?? '',
+      damage,
       st: weapon.charminst ?? '',
       reach: weapon.charreach ?? '',
       parry: weapon.charparry ?? '',
@@ -409,13 +411,15 @@ Portrait will not be imported.`
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
+    const damage = `${weapon.chardamage} ${weapon.chardamtype}`
+
     const component: DataModel.CreateData<RangedAttackComponentSchema> = {
       name: item.name ?? '',
       notes: weapon.notes ?? '',
       pageref: '',
       mode: weapon.name ?? '',
       import: weapon.charskillscore ?? 0,
-      damage: weapon.chardamage ?? '',
+      damage,
       st: weapon.charminst ?? '',
       acc: weapon.characc ?? '',
       range: weapon.charrangemax ?? '',
