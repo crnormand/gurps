@@ -56,10 +56,14 @@ export const addManeuverMenu = async (html, combatant, token) => {
       if (!combatantElement) return
 
       const combatantId = combatantElement.dataset.combatantId
+      if (!combatantId || !game.combat) return
+
       const combatant = game.combat.combatants.get(combatantId)
+      if (!combatant || !combatant.token) return
 
       const doNothing = Maneuvers.getManeuver('do_nothing')
-      const token = canvas.tokens.get(combatant.token.id)
+      const token = canvas?.tokens?.get(combatant.token.id)
+      if (!token || !token.actor) return
       const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
       if (currentManeuverName === 'do_nothing') return
       await token.setManeuver(doNothing.flags.gurps.name)
