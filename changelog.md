@@ -10,9 +10,10 @@
 
 ### Bugfixes
 
-- Restore missing lang tags. #2430
+- Restore missing lang tags. \#2430
 - Fix sprint distance when changing encumbrance levels. \#2420
 - Changing Posture from character sheet takes two tries \#2423
+- Effect Modifiers calculation of distance from source to target is sometimes incorrect by 1. \#2441
 
 ## Release 0.18.9 12/12/2025
 
