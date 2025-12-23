@@ -52,7 +52,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
       event.preventDefault()
       event.stopPropagation()
 
-      const combatantElement = event.target.closest('[class*="combatant"]')
+      const combatantElement = event.target.closest('.combatant')
       if (!combatantElement) return
 
       const combatantId = combatantElement.dataset.combatantId
@@ -132,6 +132,7 @@ export const addManeuverListeners = () => {
     if (event.target.classList?.contains('maneuver-badge') || event.target.closest('.maneuver-select-info')) return
     document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
       menu.style.display = 'none'
+      menu.closest('.combatant').querySelector('.maneuver-badge').classList.remove('open')
     })
   })
 
@@ -140,12 +141,15 @@ export const addManeuverListeners = () => {
     const target = event.target.closest('.maneuver-select-info')
     if (!target) return
 
+    const badge = event.target.closest('.maneuver-badge')
+
     event.preventDefault()
     event.stopPropagation()
 
     // Hide all menus
     document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
       menu.style.display = 'none'
+      menu.closest('.combatant').querySelector('.maneuver-badge').classList.remove('open')
     })
 
     const menu = target.closest('.maneuver-combat-tracker-menu')
@@ -161,32 +165,43 @@ export const addManeuverListeners = () => {
     const currentManeuver = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
     if (currentManeuver === maneuverName) return
 
-    await token.actor.update({
-      'system.conditions.maneuver': maneuverName,
-    })
     await token.setManeuver(maneuverName)
-
     await token.drawEffects()
+    ui.combat?.render()
   })
 
   // Click handler to toggle menu
   document.addEventListener('click', event => {
     // Ensure click is on the maneuver badge
     if (!event.target.classList.contains('maneuver-badge')) return
+    const badge = event.target
 
-    const combatantElement = event.target.closest('.combatant')
+    const combatantElement = badge.closest('.combatant')
     if (!combatantElement) return
 
     event.preventDefault()
     event.stopPropagation()
 
-    const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
+    // Close all the menus. We'll toggle the clicked one after.
+    document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
+      menu.style.display = 'none'
+      menu.closest('.combatant').querySelector('.maneuver-badge').classList.remove('open')
+    })
+
+    const menu = badge.parentElement.querySelector('.maneuver-combat-tracker-menu')
     if (menu) {
-      menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
+      if (menu.style.display === 'block') {
+        menu.style.display = 'none'
+        badge.classList.remove('open')
+        return
+      } else {
+        menu.style.display = 'block'
+        badge.classList.add('open')
+      }
 
       if (menu.style.display === 'none') return
       // Set menu top to badge bottom
-      const badgeRect = event.target.getBoundingClientRect()
+      const badgeRect = badge.getBoundingClientRect()
       const menuRect = menu.getBoundingClientRect()
 
       if (badgeRect.bottom + menuRect.height > window.innerHeight) {

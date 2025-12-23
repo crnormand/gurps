@@ -2584,13 +2584,17 @@ details .popup.square5x4 {
   opacity: 1;
 }
 
+.token-effect.maneuver-badge.open {
+  filter: invert(1);
+}
+
 li.combatant.active {
   display: flex;
   flex-wrap: wrap;
 }
 
 .maneuver-combat-tracker-menu {
-  position: absolute;
+  position: fixed;
   background-color: rgba(0, 0, 0, 0.95);
   border: 2px solid #337244;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -2664,37 +2668,7 @@ li.combatant.active {
 .maneuver-tooltip {
   text-align: center;
   min-width: 8rem;
-  /* 
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  top: 100%;
-  transition: opacity 0.3s;
-  left: auto;
-  right: 0;
-  margin-left: 0; */
 }
-/* .maneuver-tooltip::after {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  left: 75%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent black transparent;
-}
-
-.token-initiative:hover ~ .maneuver-tooltip {
-  visibility: visible;
-  z-index: 200;
-  font-size: 0.8em;
-  line-height: 1.1;
-}
-
-.maneuver-tooltip:first-child {
-  bottom: -550% !important;
-} */
 
 .mv-icons {
   display: flex;
