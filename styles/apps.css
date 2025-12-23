@@ -2591,7 +2591,6 @@ li.combatant.active {
 
 .maneuver-combat-tracker-menu {
   position: absolute;
-  top: 48px;
   background-color: rgba(0, 0, 0, 0.95);
   border: 2px solid #337244;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);

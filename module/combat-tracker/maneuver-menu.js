@@ -104,7 +104,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
     const cleanedTooltipHtml = tempTooltipContainer.innerHTML
     tokenEffects.setAttribute('data-tooltip-html', cleanedTooltipHtml)
   }
-  const maneuverEffect = tokenEffects?.querySelector(`.token-effect[src*="maneuver"]`)
+  const maneuverEffect = tokenEffects?.querySelector(`img.token-effect[src*="/maneuvers/"]`)
   if (maneuverEffect) maneuverEffect.remove()
 
   // Finally, set the token image tooltip content.
@@ -125,12 +125,10 @@ export const addManeuverMenu = async (html, combatant, token) => {
 export const addManeuverListeners = () => {
   // Global click handler to hide menus
   document.addEventListener('click', event => {
-    if (event.target.classList?.contains('maneuver-badge')) return
-    if (!event.target.closest('.maneuver-select-info')) {
-      document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
-        menu.style.display = 'none'
-      })
-    }
+    if (event.target.classList?.contains('maneuver-badge') || event.target.closest('.maneuver-select-info')) return
+    document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
+      menu.style.display = 'none'
+    })
   })
 
   // Menu item click handler
@@ -169,7 +167,7 @@ export const addManeuverListeners = () => {
     // Ensure click is on the maneuver badge
     if (!event.target.classList.contains('maneuver-badge')) return
 
-    const combatantElement = event.target.closest('[class*="combatant"]')
+    const combatantElement = event.target.closest('.combatant')
     if (!combatantElement) return
 
     event.preventDefault()
@@ -177,12 +175,19 @@ export const addManeuverListeners = () => {
 
     const menu = event.target.parentElement.querySelector('.maneuver-combat-tracker-menu')
     if (menu) {
+      menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
+
+      if (menu.style.display === 'none') return
       // Set menu top to badge bottom
       const badgeRect = event.target.getBoundingClientRect()
       const menuRect = menu.getBoundingClientRect()
-      const offsetTop = badgeRect.bottom - menuRect.top
-      menu.style.top = `${offsetTop}px`
-      menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none'
+      // menu.style.top = `${badgeRect.bottom}px`
+
+      if (badgeRect.bottom + menuRect.height > window.innerHeight) {
+        menu.style.top = `${badgeRect.top - menuRect.height}px`
+      } else {
+        menu.style.top = `${badgeRect.bottom}px`
+      }
     }
   })
 }
