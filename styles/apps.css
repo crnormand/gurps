@@ -2582,7 +2582,6 @@ details .popup.square5x4 {
 
 .token-effect.maneuver-badge.active {
   opacity: 1;
-  filter: none;
 }
 
 li.combatant.active {
