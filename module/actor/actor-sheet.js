@@ -1358,6 +1358,28 @@ export class GurpsActorSheet extends ActorSheet {
     )
   }
 
+  async editModifier(actor, path, obj, isReaction = true) {
+    const dlgHtml = await renderTemplate('systems/gurps/templates/modifier-editor-popup.hbs', obj)
+    const title = isReaction
+      ? game.i18n.localize('GURPS.reaction')
+      : game.i18n.localize('GURPS.conditionalModifier')
+    new Dialog({
+      title: `${title} Editor`,
+      content: dlgHtml,
+      buttons: {
+        one: {
+          label: game.i18n.localize('GURPS.update'),
+          callback: async html => {
+            obj.modifier = parseInt(html.find('.modifier').val()) || 0
+            obj.situation = html.find('.situation').val()
+            await actor.internalUpdate({ [path]: obj })
+          },
+        },
+      },
+      default: 'one',
+    }).render(true)
+  }
+
   async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await renderTemplate(html, obj)
     let d = new Dialog(
@@ -2329,6 +2351,21 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
+
+    const totalpoints = sheetData.system?.totalpoints || {}
+    const racePoints = parseInt(totalpoints.race) || 0
+    sheetData.positivePoints =
+      (parseInt(totalpoints.ads) || 0) +
+      (parseInt(totalpoints.attributes) || 0) +
+      (parseInt(totalpoints.skills) || 0) +
+      (parseInt(totalpoints.spells) || 0) +
+      (racePoints > 0 ? racePoints : 0)
+    sheetData.negativePoints = Math.abs(
+      (parseInt(totalpoints.disads) || 0) +
+      (parseInt(totalpoints.quirks) || 0) +
+      (racePoints < 0 ? racePoints : 0)
+    )
+
     return sheetData
   }
 
@@ -2363,6 +2400,66 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       }
     })
 
+    html.find('.ms-name-display').click(event => {
+      event.preventDefault()
+      const container = event.currentTarget.closest('.ms-name-container')
+      container.classList.add('editing')
+      const inputElement = container.querySelector('.ms-name-input')
+      if (inputElement) {
+        inputElement.focus()
+        inputElement.select()
+      }
+    })
+
+    html.find('.ms-name-input').on('blur', event => {
+      event.currentTarget.closest('.ms-name-container').classList.remove('editing')
+      const newName = event.currentTarget.value.trim()
+      if (newName && newName !== this.actor.name) {
+        this.actor.update({ name: newName })
+      }
+    })
+
+    html.find('.ms-name-input').on('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        event.stopPropagation()
+        event.currentTarget.closest('.ms-name-container').classList.remove('editing')
+        event.currentTarget.blur()
+      }
+    })
+
+    html.find('.ms-tag-display').click(event => {
+      event.preventDefault()
+      const tag = event.currentTarget.closest('.ms-tag')
+      tag.classList.add('editing')
+      const inputElement = tag.querySelector('.ms-tag-input')
+      if (inputElement) {
+        inputElement.focus()
+        inputElement.select()
+      }
+    })
+
+    html.find('.ms-tag-input').on('blur', event => {
+      event.currentTarget.closest('.ms-tag').classList.remove('editing')
+      const field = event.currentTarget.dataset.field
+      const newValue = event.currentTarget.value.trim()
+      if (field) {
+        const currentValue = foundry.utils.getProperty(this.actor, field)
+        if (newValue !== currentValue) {
+          this.actor.update({ [field]: newValue })
+        }
+      }
+    })
+
+    html.find('.ms-tag-input').on('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        event.stopPropagation()
+        event.currentTarget.closest('.ms-tag').classList.remove('editing')
+        event.currentTarget.blur()
+      }
+    })
+
     html.find('.ms-resource-reset[data-action="reset-hp"]').click(event => {
       event.preventDefault()
       this.actor.update({ 'system.HP.value': this.actor.system.HP.max })
@@ -2373,19 +2470,70 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       this.actor.update({ 'system.FP.value': this.actor.system.FP.max })
     })
 
+    html.find('.ms-dr-display').click(event => {
+      event.preventDefault()
+      const drElement = event.currentTarget.closest('.ms-loc-dr')
+      drElement.classList.add('editing')
+      const inputElement = drElement.querySelector('.ms-dr-input')
+      if (inputElement) {
+        inputElement.focus()
+        inputElement.select()
+      }
+    })
+
+    html.find('.ms-dr-input').on('blur', event => {
+      const drElement = event.currentTarget.closest('.ms-loc-dr')
+      drElement.classList.remove('editing')
+    })
+
+    html.find('.ms-dr-input').on('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        event.currentTarget.blur()
+      }
+    })
+
     html.find('.ms-skills-row, .ms-traits-row').click(event => {
       if (event.target.closest('.ms-use-button')) return
       if (event.target.closest('.expandcollapseicon')) return
+      if (event.target.closest('.ms-row-actions')) return
       event.currentTarget.classList.toggle('expanded')
     })
 
     html.find('.ms-section-header.ms-collapsible').click(event => {
       if (event.target.closest('.expandcollapseicon')) return
+      if (event.target.closest('.ms-add-icon')) return
       const header = event.currentTarget
       const section = header.closest('.ms-section')
       section.classList.toggle('collapsed')
       header.classList.toggle('collapsed')
     })
+
+    const openQuickNoteEditor = async () => {
+      let noteText = this.actor.system.additionalresources.qnotes || ''
+      noteText = noteText.replace(/<br>/g, '\n')
+      let actor = this.actor
+
+      const dialog = await new foundry.applications.api.DialogV2({
+        window: { title: 'Quick Note', resizable: true },
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<textarea rows="4" id="i">${noteText}</textarea><b>Examples:</b>
+          [+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
+        buttons: [
+          {
+            label: 'Save',
+            icon: 'fas fa-save',
+            callback: (event, button, dialog) => {
+              let value = button.form.elements.i.value
+              actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
+            },
+          },
+        ],
+      }).render({ force: true })
+      dialog.element.querySelector('textarea').addEventListener('drop', this.dropFoundryLinks.bind(this))
+    }
+
+    html.find('.ms-quicknotes-content').dblclick(openQuickNoteEditor)
+    html.find('.ms-quicknotes-edit').click(openQuickNoteEditor)
 
     html.find('[data-action="add-equipment"]').click(async event => {
       event.preventDefault()
@@ -2446,11 +2594,16 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       event.preventDefault()
       event.stopPropagation()
       const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.name || game.i18n.localize('GURPS.equipment')}</strong>?</p>`,
+      })
+      if (!confirmed) return
       if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
         await this.actor.deleteEquipment(key)
         await this.actor.refreshDR()
       } else {
-        const obj = GURPS.decode(this.actor, key)
         const item = this.actor.items.get(obj.itemid)
         if (item) {
           await this.actor._removeItemAdditions(item.id)
@@ -2473,6 +2626,12 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       event.preventDefault()
       event.stopPropagation()
       const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.notes || game.i18n.localize('GURPS.notes')}</strong>?</p>`,
+      })
+      if (!confirmed) return
       GURPS.removeKey(this.actor, key)
       await this.actor.refreshDR()
     })
@@ -2508,7 +2667,244 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       event.stopPropagation()
       const effectId = event.currentTarget.dataset.effectId
       const effect = this.actor.effects.get(effectId)
-      if (effect) await effect.delete()
+      if (!effect) return
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      await effect.delete()
+    })
+
+    html.find('[data-action="add-skill"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.skills'
+      const obj = new Skill(game.i18n.localize('GURPS.skill'), '10')
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editSkills(this.actor, fullPath, newObj)
+    })
+
+    html.find('[data-action="edit-skill"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editSkills(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-skill"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.name || game.i18n.localize('GURPS.skill')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
+    })
+
+    html.find('[data-action="add-trait"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.ads'
+      const obj = new Advantage(game.i18n.localize('GURPS.advantage'))
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editAds(this.actor, fullPath, newObj)
+    })
+
+    html.find('[data-action="edit-trait"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editAds(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-trait"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.name || game.i18n.localize('GURPS.advantage')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
+    })
+
+    html.find('[data-action="add-spell"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.spells'
+      const obj = new Spell(game.i18n.localize('GURPS.spell'), '10')
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editSpells(this.actor, fullPath, newObj)
+    })
+
+    html.find('[data-action="edit-spell"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editSpells(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-spell"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.name || game.i18n.localize('GURPS.spell')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
+    })
+
+    html.find('[data-action="add-reaction"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.reactions'
+      const obj = new Reaction(0, game.i18n.localize('GURPS.reaction'))
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editModifier(this.actor, fullPath, newObj, true)
+    })
+
+    html.find('[data-action="edit-reaction"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editModifier(this.actor, path, obj, true)
+    })
+
+    html.find('[data-action="delete-reaction"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.situation || game.i18n.localize('GURPS.reaction')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
+    })
+
+    html.find('[data-action="add-conditional"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.conditionalmods'
+      const obj = new Modifier(0, game.i18n.localize('GURPS.conditionalModifier'))
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editModifier(this.actor, fullPath, newObj, false)
+    })
+
+    html.find('[data-action="edit-conditional"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editModifier(this.actor, path, obj, false)
+    })
+
+    html.find('[data-action="delete-conditional"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.situation || game.i18n.localize('GURPS.conditionalModifier')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
+    })
+
+    html.find('[data-action="add-melee"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.melee'
+      const obj = new Melee(game.i18n.localize('GURPS.melee'), '10', '1d')
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editMelee(this.actor, fullPath, newObj)
+    })
+
+    html.find('[data-action="edit-melee"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editMelee(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-melee"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.name || game.i18n.localize('GURPS.melee')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
+    })
+
+    html.find('[data-action="add-ranged"]').click(async event => {
+      event.preventDefault()
+      const path = 'system.ranged'
+      const obj = new Ranged(game.i18n.localize('GURPS.ranged'), '10', '1d')
+      const list = GURPS.decode(this.actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(obj))
+      await this.actor.internalUpdate({ [path]: list })
+      const fullPath = `${path}.${key}`
+      const newObj = foundry.utils.duplicate(GURPS.decode(this.actor, fullPath))
+      await this.editRanged(this.actor, fullPath, newObj)
+    })
+
+    html.find('[data-action="edit-ranged"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const path = event.currentTarget.dataset.key
+      const obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+      await this.editRanged(this.actor, path, obj)
+    })
+
+    html.find('[data-action="delete-ranged"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const key = event.currentTarget.dataset.key
+      const obj = GURPS.decode(this.actor, key)
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize('GURPS.delete'),
+        content: `<p>${game.i18n.localize('GURPS.delete')}: <strong>${obj?.name || game.i18n.localize('GURPS.ranged')}</strong>?</p>`,
+      })
+      if (!confirmed) return
+      GURPS.removeKey(this.actor, key)
     })
   }
 }
