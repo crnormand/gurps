@@ -141,8 +141,6 @@ export const addManeuverListeners = () => {
     const target = event.target.closest('.maneuver-select-info')
     if (!target) return
 
-    const badge = event.target.closest('.maneuver-badge')
-
     event.preventDefault()
     event.stopPropagation()
 
