@@ -20,6 +20,7 @@
 - Restore (and enhance) the Change Maneuver menu in the Combat Tracker.
 - Fix the positioning of the Quick Roll menu.
 - Effect Modifiers calculation of distance from source to target is sometimes incorrect by 1. \#2441
+- Fix -1 per 10 yards range calculation.
 
 ## Release 0.18.9 12/12/2025
 
