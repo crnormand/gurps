@@ -340,6 +340,9 @@
         "noActiveTokensToUpdatePosture": "Нет активных токенов для актёра {name} для обновления постуры."
       }
     },
+    "combatTracker": {
+      "initiative": "Инициатива: {value}"
+    },
     "combatInfo": "Информация о бое",
     "combatInitiative": "Инициатива в бою",
     "CombatOnlyTag": "Только боевой тег",
