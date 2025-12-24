@@ -10,6 +10,7 @@ import { ResourceTracker } from '../resource-tracker/index.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
+import EffectPicker from './effect-picker.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 
@@ -2327,6 +2328,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.traitCount = countItems(sheetData.system?.ads)
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
+    sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
     return sheetData
   }
 
@@ -2473,6 +2475,40 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       const key = event.currentTarget.dataset.key
       GURPS.removeKey(this.actor, key)
       await this.actor.refreshDR()
+    })
+
+    html.find('.ms-posture-selected').click(event => {
+      event.stopPropagation()
+      const dropdown = event.currentTarget.closest('.ms-posture-dropdown')
+      dropdown.classList.toggle('open')
+    })
+
+    html.find('.ms-posture-option').click(async event => {
+      event.stopPropagation()
+      const posture = event.currentTarget.dataset.value
+      const dropdown = event.currentTarget.closest('.ms-posture-dropdown')
+      dropdown.classList.remove('open')
+      await this.actor.replacePosture(posture)
+    })
+
+    html.on('click', event => {
+      const dropdown = html.find('.ms-posture-dropdown.open')[0]
+      if (dropdown && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('open')
+      }
+    })
+
+    html.find('[data-action="add-effect"]').click(event => {
+      event.preventDefault()
+      new EffectPicker(this.actor).render(true)
+    })
+
+    html.find('[data-action="delete-effect"]').click(async event => {
+      event.preventDefault()
+      event.stopPropagation()
+      const effectId = event.currentTarget.dataset.effectId
+      const effect = this.actor.effects.get(effectId)
+      if (effect) await effect.delete()
     })
   }
 }

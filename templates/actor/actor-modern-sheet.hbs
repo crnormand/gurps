@@ -2,25 +2,51 @@
   <div class='modern-sheet'>
     {{!-- PERSISTENT HEADER - Always visible --}}
     <header class='ms-header'>
-      {{!-- Portrait --}}
+      {{!-- Portrait with HP overlay --}}
       <div class='ms-portrait'>
         <img src='{{actor.img}}' data-edit='img' title='{{actor.name}}' />
+        <div class='ms-hp-overlay' style='height: calc(100% - {{percent system.HP.value system.HP.max}}%);'></div>
       </div>
 
-      {{!-- Identity with HP/FP under name --}}
+      {{!-- Identity: Name, Attributes, HP/FP --}}
       <div class='ms-identity'>
         <h1 class='ms-name'>{{actor.name}}</h1>
+        {{!-- Primary Attributes Row --}}
+        <div class='ms-attrs-row'>
+          <div class='ms-attr-badge rollable' data-otf='ST' title='{{localize "GURPS.attributesST"}} [{{system.attributes.ST.points}}]'>
+            <span class='ms-attr-value'>{{system.attributes.ST.value}}</span>
+            <span class='ms-attr-label'>ST</span>
+          </div>
+          <div class='ms-attr-badge rollable' data-otf='DX' title='{{localize "GURPS.attributesDX"}} [{{system.attributes.DX.points}}]'>
+            <span class='ms-attr-value'>{{system.attributes.DX.value}}</span>
+            <span class='ms-attr-label'>DX</span>
+          </div>
+          <div class='ms-attr-badge rollable' data-otf='IQ' title='{{localize "GURPS.attributesIQ"}} [{{system.attributes.IQ.points}}]'>
+            <span class='ms-attr-value'>{{system.attributes.IQ.value}}</span>
+            <span class='ms-attr-label'>IQ</span>
+          </div>
+          <div class='ms-attr-badge rollable' data-otf='HT' title='{{localize "GURPS.attributesHT"}} [{{system.attributes.HT.points}}]'>
+            <span class='ms-attr-value'>{{system.attributes.HT.value}}</span>
+            <span class='ms-attr-label'>HT</span>
+          </div>
+          <div class='ms-attr-badge rollable' data-otf='WILL' title='{{localize "GURPS.attributesWILL"}} [{{system.attributes.WILL.points}}]'>
+            <span class='ms-attr-value'>{{system.attributes.WILL.value}}</span>
+            <span class='ms-attr-label'>WILL</span>
+          </div>
+          <div class='ms-attr-badge rollable' data-otf='PER' title='{{localize "GURPS.attributesPER"}} [{{system.attributes.PER.points}}]'>
+            <span class='ms-attr-value'>{{system.attributes.PER.value}}</span>
+            <span class='ms-attr-label'>PER</span>
+          </div>
+        </div>
+        {{!-- HP/FP Row --}}
         <div class='ms-hp-fp-row'>
           <div class='ms-resource ms-hp'>
-            <div class='ms-resource-label' title='{{localize "GURPS.attributesHPNAME"}}'>HP</div>
-            {{!-- Display mode: bar + text --}}
-            <div class='ms-resource-display' data-edit-target='hp'>
+            <div class='ms-resource-display' data-edit-target='hp' title='{{localize "GURPS.attributesHPNAME"}}'>
               <div class='ms-resource-bar'>
                 <div class='ms-resource-fill' style='width: {{percent system.HP.value system.HP.max}}%;'></div>
               </div>
               <span class='ms-resource-text'>{{system.HP.value}}/{{system.HP.max}}</span>
             </div>
-            {{!-- Edit mode: inputs (hidden by default) --}}
             <div class='ms-resource-edit'>
               <input type='number' name='system.HP.value' value='{{system.HP.value}}' class='ms-resource-input'/>
               <span class='ms-resource-separator'>/</span>
@@ -32,15 +58,12 @@
             {{#if system.conditions.reeling}}<span class='ms-condition-badge' title='{{localize "GURPS.HP.reeling"}}'>R</span>{{/if}}
           </div>
           <div class='ms-resource ms-fp'>
-            <div class='ms-resource-label' title='{{localize "GURPS.attributesFPNAME"}}'>FP</div>
-            {{!-- Display mode: bar + text --}}
-            <div class='ms-resource-display' data-edit-target='fp'>
+            <div class='ms-resource-display' data-edit-target='fp' title='{{localize "GURPS.attributesFPNAME"}}'>
               <div class='ms-resource-bar'>
                 <div class='ms-resource-fill' style='width: {{percent system.FP.value system.FP.max}}%;'></div>
               </div>
               <span class='ms-resource-text'>{{system.FP.value}}/{{system.FP.max}}</span>
             </div>
-            {{!-- Edit mode: inputs (hidden by default) --}}
             <div class='ms-resource-edit'>
               <input type='number' name='system.FP.value' value='{{system.FP.value}}' class='ms-resource-input'/>
               <span class='ms-resource-separator'>/</span>
@@ -54,95 +77,85 @@
         </div>
       </div>
 
-      {{!-- Primary Attributes (including WILL and PER) --}}
-      <div class='ms-attrs-primary'>
-        <div class='ms-attr-badge rollable' data-otf='ST' title='{{localize "GURPS.attributesST"}} [{{system.attributes.ST.points}}]'>
-          <span class='ms-attr-value'>{{system.attributes.ST.value}}</span>
-          <span class='ms-attr-label'>ST</span>
+      {{!-- Secondary Stats: Speed, Move, Dodge, Thrust, Swing, Senses --}}
+      <div class='ms-secondary-stats'>
+        <div class='ms-stat'>
+          <span class='ms-stat-label'>Spd</span>
+          <span class='ms-stat-value'>{{system.basicspeed.value}}</span>
         </div>
-        <div class='ms-attr-badge rollable' data-otf='DX' title='{{localize "GURPS.attributesDX"}} [{{system.attributes.DX.points}}]'>
-          <span class='ms-attr-value'>{{system.attributes.DX.value}}</span>
-          <span class='ms-attr-label'>DX</span>
+        <div class='ms-stat'>
+          <span class='ms-stat-label'>Move</span>
+          <span class='ms-stat-value'>{{system.basicmove.value}}</span>
         </div>
-        <div class='ms-attr-badge rollable' data-otf='IQ' title='{{localize "GURPS.attributesIQ"}} [{{system.attributes.IQ.points}}]'>
-          <span class='ms-attr-value'>{{system.attributes.IQ.value}}</span>
-          <span class='ms-attr-label'>IQ</span>
+        <div class='ms-stat'>
+          <span class='ms-stat-label'>Dodge</span>
+          {{>dice-button otf='Dodge' level=system.currentdodge}}
         </div>
-        <div class='ms-attr-badge rollable' data-otf='HT' title='{{localize "GURPS.attributesHT"}} [{{system.attributes.HT.points}}]'>
-          <span class='ms-attr-value'>{{system.attributes.HT.value}}</span>
-          <span class='ms-attr-label'>HT</span>
+        <div class='ms-stat'>
+          <span class='ms-stat-label'>Thr</span>
+          {{>dice-button otf=(concat system.thrust ' dmg') level=system.thrust damage=true}}
         </div>
-        <div class='ms-attr-badge rollable' data-otf='WILL' title='{{localize "GURPS.attributesWILL"}} [{{system.attributes.WILL.points}}]'>
-          <span class='ms-attr-value'>{{system.attributes.WILL.value}}</span>
-          <span class='ms-attr-label'>WILL</span>
+        <div class='ms-stat'>
+          <span class='ms-stat-label'>Sw</span>
+          {{>dice-button otf=(concat system.swing ' dmg') level=system.swing damage=true}}
         </div>
-        <div class='ms-attr-badge rollable' data-otf='PER' title='{{localize "GURPS.attributesPER"}} [{{system.attributes.PER.points}}]'>
-          <span class='ms-attr-value'>{{system.attributes.PER.value}}</span>
-          <span class='ms-attr-label'>PER</span>
+        <div class='ms-sense-item'>
+          <i class='fas fa-eye' title='{{localize "GURPS.vision"}}'></i>
+          {{>dice-button otf='Vision' level=system.vision}}
+        </div>
+        <div class='ms-sense-item'>
+          <i class='fas fa-ear-listen' title='{{localize "GURPS.hearing"}}'></i>
+          {{>dice-button otf='Hearing' level=system.hearing}}
+        </div>
+        <div class='ms-sense-item'>
+          <i class='fas fa-wind' title='{{localize "GURPS.tastesmell"}}'></i>
+          {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
+        </div>
+        <div class='ms-sense-item'>
+          <i class='fas fa-hand' title='{{localize "GURPS.touch"}}'></i>
+          {{>dice-button otf='Touch' level=system.touch}}
+        </div>
+        <div class='ms-sense-item'>
+          <i class='fas fa-ghost' title='{{localize "GURPS.frightcheck"}}'></i>
+          {{>dice-button otf='Fright Check' level=system.frightcheck}}
         </div>
       </div>
     </header>
 
-    {{!-- SECONDARY STATS ROW --}}
-    <div class='ms-stats-row'>
-      <div class='ms-stat'>
-        <span class='ms-stat-label'>{{localize 'GURPS.basicspeed'}}:</span>
-        <span class='ms-stat-value'>{{system.basicspeed.value}}</span>
-      </div>
-      <div class='ms-stat'>
-        <span class='ms-stat-label'>{{localize 'GURPS.basicmove'}}:</span>
-        <span class='ms-stat-value'>{{system.basicmove.value}}</span>
-      </div>
-      <div class='ms-stat'>
-        <span class='ms-stat-label'>{{localize 'GURPS.dodge'}}:</span>
-        {{>dice-button otf='Dodge' level=system.currentdodge}}
-      </div>
-      <div class='ms-stat'>
-        <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}:</span>
-        {{>dice-button otf=(concat system.thrust ' dmg') level=system.thrust damage=true}}
-      </div>
-      <div class='ms-stat'>
-        <span class='ms-stat-label'>{{localize 'GURPS.swing'}}:</span>
-        {{>dice-button otf=(concat system.swing ' dmg') level=system.swing damage=true}}
-      </div>
-    </div>
-
-    {{!-- SENSES ROW --}}
-    <div class='ms-senses-row'>
-      <div class='ms-sense-item'>
-        <span class='ms-sense-label'>{{localize 'GURPS.vision'}}:</span>
-        {{>dice-button otf='Vision' level=system.vision}}
-      </div>
-      <div class='ms-sense-item'>
-        <span class='ms-sense-label'>{{localize 'GURPS.hearing'}}:</span>
-        {{>dice-button otf='Hearing' level=system.hearing}}
-      </div>
-      <div class='ms-sense-item'>
-        <span class='ms-sense-label'>{{localize 'GURPS.tastesmell'}}:</span>
-        {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
-      </div>
-      <div class='ms-sense-item'>
-        <span class='ms-sense-label'>{{localize 'GURPS.touch'}}:</span>
-        {{>dice-button otf='Touch' level=system.touch}}
-      </div>
-      <div class='ms-sense-item'>
-        <span class='ms-sense-label'>{{localize 'GURPS.frightcheck'}}:</span>
-        {{>dice-button otf='Fright Check' level=system.frightcheck}}
-      </div>
-    </div>
-
     {{!-- STATUS BAR (outside tabs) --}}
     <div class='ms-status-bar'>
-      <div class='ms-status-item'>
-        <label>{{localize 'GURPS.modifierPosture'}}:</label>
-        <select name='system.conditions.posture'>
-          <option value='standing' {{select-if system.conditions.posture 'standing'}}>{{localize 'GURPS.status.Standing'}}</option>
-          {{#with system.conditions.posture as |posture|}}
-            {{#each (listAllPostures) as |this key|}}
-              <option value='{{key}}' {{select-if posture key}}>{{localize this.name}}</option>
-            {{/each}}
-          {{/with}}
-        </select>
+      <div class='ms-status-item ms-posture-dropdown'>
+        <div class='ms-posture-selected' data-posture='{{system.conditions.posture}}'>
+          {{#if (eq system.conditions.posture 'prone')}}<span>{{localize 'GURPS.status.Prone'}}</span>
+          {{else if (eq system.conditions.posture 'kneel')}}<span>{{localize 'GURPS.status.Kneel'}}</span>
+          {{else if (eq system.conditions.posture 'crouch')}}<span>{{localize 'GURPS.status.Crouch'}}</span>
+          {{else if (eq system.conditions.posture 'sit')}}<span>{{localize 'GURPS.status.Sit'}}</span>
+          {{else if (eq system.conditions.posture 'crawl')}}<span>{{localize 'GURPS.status.Crawling'}}</span>
+          {{else}}<span>{{localize 'GURPS.status.Standing'}}</span>
+          {{/if}}
+          <span class='ms-posture-icons'>
+            {{#if (eq system.conditions.posture 'prone')}}<img src='systems/gurps/icons/statuses/dd-condition-prone.webp' />
+            {{else if (eq system.conditions.posture 'kneel')}}<img src='systems/gurps/icons/statuses/condition-kneel.webp' />
+            {{else if (eq system.conditions.posture 'crouch')}}<img src='systems/gurps/icons/statuses/condition-crouch.webp' />
+            {{else if (eq system.conditions.posture 'sit')}}<img src='systems/gurps/icons/statuses/condition-sit.webp' />
+            {{else if (eq system.conditions.posture 'crawl')}}<img src='systems/gurps/icons/statuses/condition-crawl.webp' />
+            {{else}}<img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+            {{/if}}
+            <i class='fas fa-caret-down'></i>
+          </span>
+        </div>
+        <div class='ms-posture-options'>
+          <div class='ms-posture-option' data-value='standing'>
+            <span>{{localize 'GURPS.status.Standing'}}</span>
+            <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+          </div>
+          {{#each (listAllPostures) as |this key|}}
+          <div class='ms-posture-option' data-value='{{key}}'>
+            <span>{{localize this.name}}</span>
+            <img src='{{this.img}}' />
+          </div>
+          {{/each}}
+        </div>
       </div>
       {{#if (ne system.conditions.maneuver 'undefined')}}
       <div class='ms-status-item'>
@@ -160,6 +173,23 @@
       <div class='ms-status-item'>
         <span>{{localize 'GURPS.conditionsCombatMove'}}: <strong>{{system.conditions.move}}</strong></span>
       </div>
+      {{!-- ACTIVE EFFECTS TAGS (enabled only) --}}
+      {{#each effects}}
+      {{#unless this.disabled}}
+      <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
+        <span class='ms-effect-icon-wrapper'>
+          {{#if this.icon}}<img src='{{this.icon}}' class='ms-effect-icon' />{{/if}}
+          <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
+            <i class='fas fa-trash'></i>
+          </button>
+        </span>
+        <span class='ms-tag-text'>{{this.name}}</span>
+      </span>
+      {{/unless}}
+      {{/each}}
+      <button class='ms-effect-add' data-action='add-effect' title='Add Effect'>
+        <i class='fas fa-plus'></i>
+      </button>
     </div>
 
     {{!-- TAB NAVIGATION --}}
@@ -186,6 +216,41 @@
     <section class='ms-body'>
       {{!-- Tab 1: Character (Main) - Single column layout --}}
       <div class='tab' data-tab='character' data-group='modern-tabs'>
+        {{!-- Modifiers (Reactions & Conditional Modifiers) --}}
+        {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}}
+        <div class='ms-section' data-section='modifiers'>
+          <h3 class='ms-section-header ms-collapsible'>
+            <i class='fas fa-caret-down ms-collapse-icon'></i>
+            <i class='fas fa-balance-scale'></i>
+            {{localize 'GURPS.modifier'}}s
+            <span class='ms-section-count'>({{modifierCount}})</span>
+          </h3>
+          <div class='ms-section-content'>
+            <div class='ms-modifiers-table'>
+              <div class='ms-modifiers-header'>
+                <span></span>
+                <span>{{localize 'GURPS.description'}}</span>
+                <span>{{localize 'GURPS.modifier'}}</span>
+              </div>
+              {{#each (flatlist system.reactions)}}
+              <div class='ms-modifiers-row' data-key='system.reactions.{{@key}}'>
+                <span class='ms-col-type'><span class='ms-type-badge ms-type-reaction' title='{{localize "GURPS.reaction"}}'>R</span></span>
+                <span class='ms-col-situation'>{{{gurpslink this.situation}}}</span>
+                <span class='ms-col-modifier'>{{>dice-button otf=(concat (displayNumber this.modifier) ' ' this.situation) level=this.modifier}}</span>
+              </div>
+              {{/each}}
+              {{#each (flatlist system.conditionalmods)}}
+              <div class='ms-modifiers-row' data-key='system.conditionalmods.{{@key}}'>
+                <span class='ms-col-type'><span class='ms-type-badge ms-type-conditional' title='{{localize "GURPS.conditionalModifier"}}'>C</span></span>
+                <span class='ms-col-situation'>{{{gurpslink this.situation}}}</span>
+                <span class='ms-col-modifier'>{{>dice-button otf=(concat (displayNumber this.modifier) ' ' this.situation) level=this.modifier}}</span>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
         {{!-- Skills --}}
         <div class='ms-section' data-section='skills'>
           <h3 class='ms-section-header ms-collapsible'>
@@ -284,42 +349,6 @@
                   <span class='ms-notes-empty'>{{localize 'GURPS.none'}}</span>
                 {{/if}}
               </div>
-            </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- Reactions --}}
-        {{#if (notEmpty system.reactions)}}
-        <div class='ms-section'>
-          <h3 class='ms-section-header'>
-            <i class='fas fa-heart'></i>
-            {{localize 'GURPS.reactionMods'}}
-          </h3>
-          <div class='ms-modifier-list'>
-            {{#each (flatlist system.reactions)}}
-            <div class='ms-modifier-row'>
-              <span class='ms-modifier-value'>{{this.modifier}}</span>
-              <span class='ms-modifier-situation'>{{this.situation}}</span>
-            </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- Conditional Modifiers --}}
-        {{#if (notEmpty system.conditionalmods)}}
-        <div class='ms-section'>
-          <h3 class='ms-section-header'>
-            <i class='fas fa-balance-scale'></i>
-            {{localize 'GURPS.conditionalMods'}}
-          </h3>
-          <div class='ms-modifier-list'>
-            {{#each (flatlist system.conditionalmods)}}
-            <div class='ms-modifier-row'>
-              <span class='ms-modifier-value'>{{this.modifier}}</span>
-              <span class='ms-modifier-situation'>{{this.situation}}</span>
             </div>
             {{/each}}
           </div>

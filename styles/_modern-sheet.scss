@@ -13,6 +13,10 @@
       overflow: hidden;
     }
   }
+
+  .window-resizable-handle {
+    background: #f8f6f2;
+  }
 }
 
 .modern-sheet {
@@ -34,6 +38,7 @@
   --ms-disadvantage-bg: rgba(139, 58, 58, 0.08);
   --ms-hp: #b83232;
   --ms-fp: #3268a8;
+  --ms-hp-overlay: rgba(184, 50, 50, 0.5);
   --ms-radius: 4px;
   --ms-gap: 8px;
 
@@ -54,18 +59,19 @@
 
 .ms-header {
   display: grid;
-  grid-template-columns: 64px 1fr auto;
+  grid-template-columns: 120px auto 1fr;
   gap: 12px;
-  align-items: center;
+  align-items: stretch;
   background: var(--ms-bg-header);
   border-bottom: 2px solid var(--ms-border);
   padding: 10px 12px;
 }
 
 .ms-portrait {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--ms-radius);
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--ms-border);
   flex-shrink: 0;
@@ -76,18 +82,33 @@
     height: 100%;
     object-fit: cover;
   }
+
+  .ms-hp-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ms-hp-overlay);
+    pointer-events: none;
+    transition: height 0.3s ease;
+  }
 }
 
 .ms-identity {
   min-width: 0;
   align-self: center;
+  width: fit-content;
 
   .ms-name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     margin: 0 0 2px 0;
     line-height: 1.2;
     color: var(--ms-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 246px;
   }
 
   .ms-tagline {
@@ -96,21 +117,22 @@
   }
 }
 
-.ms-attrs-primary {
+.ms-attrs-row {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   align-items: center;
+  margin: 4px 0;
 }
 
 .ms-attr-badge {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 10px;
+  padding: 4px 6px;
   background: var(--ms-bg-card);
   border: 1px solid var(--ms-border);
   border-radius: var(--ms-radius);
-  min-width: 48px;
+  min-width: 38px;
   cursor: pointer;
   transition: background 0.1s;
 
@@ -120,18 +142,18 @@
   }
 
   .ms-attr-value {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 700;
     line-height: 1;
     color: var(--ms-text);
   }
 
   .ms-attr-label {
-    font-size: 10px;
+    font-size: 8px;
     font-weight: 600;
     color: var(--ms-text-muted);
     text-transform: uppercase;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 }
 
@@ -174,7 +196,7 @@
   .ms-resource-text {
     font-size: 11px;
     font-weight: 600;
-    min-width: 40px;
+    min-width: 32px;
     text-align: right;
     color: var(--ms-text);
   }
@@ -217,6 +239,42 @@
       cursor: pointer;
 
       &:hover { text-decoration: underline; }
+    }
+  }
+}
+
+.ms-secondary-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  gap: 8px 12px;
+  padding: 4px 0;
+  font-size: 12px;
+
+  .ms-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .ms-stat-label {
+      color: var(--ms-text-muted);
+    }
+
+    .ms-stat-value {
+      font-weight: 600;
+      color: var(--ms-text);
+    }
+  }
+
+  .ms-sense-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    i {
+      font-size: 12px;
+      color: var(--ms-text-muted);
     }
   }
 }
@@ -852,25 +910,23 @@
 
 .ms-hp-fp-row {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-top: 4px;
 
   .ms-resource {
-    flex: 1;
-    min-width: 120px;
+    min-width: 0;
   }
 }
 
 .ms-resource-display {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
-  flex: 1;
 
   .ms-resource-bar {
-    flex: 1;
-    min-width: 60px;
+    width: 60px;
+    flex-shrink: 0;
   }
 
   &:hover {
@@ -927,14 +983,14 @@
 }
 
 .ms-resource-reset {
-  background: transparent;
+  background: rgba(0, 0, 0, 0);
   border: none;
   color: var(--ms-text-muted);
   cursor: pointer;
-  padding: 2px 6px;
+  padding: 2px 2px;
   border-radius: var(--ms-radius);
-  margin-left: 4px;
-  transition: background 0.15s, color 0.15s;
+  transition: background .15s, color .15s;
+  line-height: initial;
 
   &:hover {
     background: var(--ms-bg-hover);
@@ -980,7 +1036,8 @@
 .ms-status-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  align-items: center;
+  gap: 6px;
   padding: 8px 12px;
   background: var(--ms-bg-card);
   border-bottom: 2px solid var(--ms-border);
@@ -1009,6 +1066,217 @@
       color: var(--ms-text);
       font-weight: 500;
     }
+  }
+
+  .ms-posture-dropdown {
+    position: relative;
+  }
+
+  .ms-posture-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 130px;
+    padding: 3px 8px;
+    font-size: 11px;
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    background: var(--ms-bg);
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--ms-accent);
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    .ms-posture-icons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    i {
+      font-size: 10px;
+      color: var(--ms-text-muted);
+    }
+  }
+
+  .ms-posture-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    min-width: 130px;
+    margin-top: 2px;
+    background: var(--ms-bg-card);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .ms-posture-dropdown.open .ms-posture-options {
+    display: block;
+  }
+
+  .ms-posture-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--ms-bg-hover);
+    }
+
+    &:first-child {
+      border-radius: var(--ms-radius) var(--ms-radius) 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 var(--ms-radius) var(--ms-radius);
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+  }
+}
+
+.ms-modifier-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  line-height: 1.3;
+
+  .ms-tag-value {
+    font-weight: 700;
+  }
+
+  .ms-tag-text {
+    color: inherit;
+    opacity: 0.9;
+  }
+
+  &.ms-tag-positive {
+    background: var(--ms-advantage-bg);
+    color: var(--ms-advantage);
+    border: 1px solid var(--ms-advantage);
+  }
+
+  &.ms-tag-negative {
+    background: var(--ms-disadvantage-bg);
+    color: var(--ms-disadvantage);
+    border: 1px solid var(--ms-disadvantage);
+  }
+}
+
+.ms-effect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  line-height: 1.3;
+  background: rgba(62, 106, 77, 0.1);
+  color: var(--ms-accent);
+  border: 1px solid var(--ms-accent);
+
+  &.ms-effect-bad {
+    background: var(--ms-disadvantage-bg);
+    color: var(--ms-disadvantage);
+    border: 1px solid var(--ms-disadvantage);
+  }
+}
+
+.ms-effect-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.ms-effect-icon-wrapper {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-effect-delete {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: inherit;
+  font-size: 10px;
+
+  i {
+    margin: 0;
+  }
+
+  &:hover {
+    color: var(--ms-disadvantage);
+  }
+}
+
+.ms-effect-tag:hover {
+  .ms-effect-icon {
+    display: none;
+  }
+  .ms-effect-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.ms-effect-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 10px;
+  line-height: 1;
+  background: rgba(62, 106, 77, 0.1);
+  color: var(--ms-accent);
+  border: 1px solid var(--ms-accent);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  i {
+    display: flex;
+    margin: 0;
+  }
+
+  &:hover {
+    background: rgba(62, 106, 77, 0.25);
   }
 }
 
@@ -1605,6 +1873,83 @@
 }
 
 // ============================================
+// Modifiers Table (Reactions & Conditional Mods)
+// ============================================
+.ms-modifiers-table {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+.ms-modifiers-header {
+  display: grid;
+  grid-template-columns: 30px 1fr 60px;
+  gap: 4px;
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+  padding: 6px 8px;
+}
+
+.ms-modifiers-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 60px;
+  gap: 4px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:nth-child(odd) { background: var(--ms-bg-section); }
+  &:hover { background: var(--ms-bg-hover); }
+  &:last-child { border-bottom: none; }
+}
+
+.ms-col-type {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ms-type-reaction {
+  background: rgba(46, 90, 62, 0.15);
+  color: var(--ms-advantage);
+  border: 1px solid var(--ms-advantage);
+}
+
+.ms-type-conditional {
+  background: rgba(50, 104, 168, 0.15);
+  color: #3268a8;
+  border: 1px solid #3268a8;
+}
+
+.ms-col-situation {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ms-col-modifier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ============================================
 // Table Column Styles
 // ============================================
 .ms-col-name {
@@ -1636,7 +1981,7 @@
 
 .ms-col-rsl {
   text-align: center;
-  color: var(--ms-text-dim);
+  color: var(--ms-text);
   font-size: 10px;
 }
 
@@ -1687,4 +2032,132 @@
   color: var(--ms-text-dim);
   background: var(--ms-bg-hover);
   border-top: 1px dashed var(--ms-border-light);
+}
+
+// ============================================
+// Effect Picker Dialog
+// ============================================
+.effect-picker {
+  .window-content {
+    padding: 0;
+    background: #f8f6f2;
+  }
+}
+
+.effect-picker-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.effect-picker-search-wrapper {
+  padding: 12px;
+  border-bottom: 1px solid #d8d4cc;
+  background: #ffffff;
+}
+
+.effect-picker-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d8d4cc;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #f8f6f2;
+
+  &:focus {
+    outline: none;
+    border-color: #3e6a4d;
+    box-shadow: 0 0 0 2px rgba(62, 106, 77, 0.15);
+  }
+}
+
+.effect-picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.effect-picker-category {
+  margin-bottom: 4px;
+
+  &.collapsed {
+    .effect-picker-category-header i {
+      transform: rotate(-90deg);
+    }
+
+    .effect-picker-category-content {
+      display: none;
+    }
+  }
+}
+
+.effect-picker-category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+
+  i {
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.effect-picker-category-count {
+  margin-left: auto;
+  padding: 2px 6px;
+  background: #eceae6;
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+.effect-picker-category-content {
+  padding: 0 8px;
+}
+
+.effect-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(62, 106, 77, 0.12);
+  }
+
+  &:active {
+    background: rgba(62, 106, 77, 0.2);
+  }
+}
+
+.effect-picker-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.effect-picker-name {
+  font-size: 13px;
+  color: #1a1a1a;
+}
+
+.effect-picker-empty {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
 }

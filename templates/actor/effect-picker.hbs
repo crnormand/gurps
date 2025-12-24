@@ -1,0 +1,29 @@
+<div class="effect-picker-container">
+  <div class="effect-picker-search-wrapper">
+    <input type="text" class="effect-picker-search" placeholder="{{localize 'GURPS.effectPicker.search'}}">
+  </div>
+
+  <div class="effect-picker-list">
+    {{#each categories}}
+    <div class="effect-picker-category">
+      <div class="effect-picker-category-header">
+        <i class="fas fa-chevron-down"></i>
+        <span>{{this.label}}</span>
+        <span class="effect-picker-category-count">{{this.effects.length}}</span>
+      </div>
+      <div class="effect-picker-category-content">
+        {{#each this.effects}}
+        <div class="effect-picker-item" data-effect-id="{{this.id}}">
+          <img src="{{this.img}}" class="effect-picker-icon">
+          <span class="effect-picker-name">{{this.localizedName}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/each}}
+
+    <div class="effect-picker-empty" style="display: none;">
+      {{localize 'GURPS.effectPicker.noEffects'}}
+    </div>
+  </div>
+</div>
