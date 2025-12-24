@@ -15,7 +15,8 @@ export const calculateRange = (token1, token2) => {
   // SSRT value without invoking it.
   const ruler = new CONFIG.Canvas.rulerClass(game.user)
 
-  let dist = canvas.grid.measurePath([token1.document, token2.document]).distance
+  const path = canvas.grid.measurePath([token1.document, token2.document])
+  let dist = canvas.grid.isGridless ? path.distance : path.spaces
 
   if (game.release.generation === 12) {
     const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
