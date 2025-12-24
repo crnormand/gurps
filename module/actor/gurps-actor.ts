@@ -2547,6 +2547,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let orig: Item.OfType<'equipment'>[] = this.items.contents
       .filter(i => i.type === 'equipment')
       .slice()
+      .map(i => i as Item.OfType<'equipment'>)
       .sort((a, b) => b.name.localeCompare(a.name)) // in case items are in the same list... add them alphabetically
 
     let good: Item.OfType<'equipment'>[] = []
