@@ -272,6 +272,26 @@
     "colorSheetMenuColorAreas": "Цветовые области",
     "colorSheetMenuCustomColors": "Пользовательские цвета",
     "colorSheetMenuOverride": "Переопределить цвета",
+    "combat": {
+      "rof": {
+        "bonusLabel": "Темп огня {shots}",
+        "numberOfShotsLabel": "Введите количество выстрелов (1-{max}):",
+        "numberOfShotsPrompt": "Сколько выстрелов вы хотите сделать?",
+        "numberOfShotsTitle": "Количество выстрелов"
+      },
+      "rollTotalHits": "Общее количество возможных попаданий<br/>из-за Сс ({rof}) и Отд ({rcl}) равно <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Бой: Использовать разницу модификатора размера в ближнем бою",
+        "useRelativeSizeInMeleeHint": "Применять разницу модификатора размера (SM) между атакующим и защищающимся к броскам атаки в ближнем бою."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Нет активных токенов для актёра {name} для обновления манёвра.",
+        "noActiveTokensToUpdatePosture": "Нет активных токенов для актёра {name} для обновления постуры."
+      }
+    },
+    "combatTracker": {
+      "initiative": "Инициатива: {value}"
+    },
     "combatInfo": "Информация о бое",
     "combatInitiative": "Инициатива в бою",
     "CombatOnlyTag": "Только боевой тег",
@@ -982,6 +1002,8 @@
       "heroicCharge": "Героический Рывок",
       "mightyBlow": "к урону (Мощный Удар)",
       "moveAndAttack": "к попаданию (Движение и Атака)",
+      "moveAndAttackBulkPenaltyApplied": "Штраф за Разм применён (Движение и атака)",
+      "moveAndAttackRangedBulk": "или Разм оружия, что хуже",
       "onTargetAiming": "На Цели",
       "pdf": {
         "aim": "B364",
@@ -1047,6 +1069,7 @@
     "modifierSizeDetail": "Разница в ближнем бою; Абсолют в дальнем",
     "modifierSizeEntry": "{SM} Размер {us} ({metric})",
     "modifiersSize": "{sm} для Модификатора Размеров",
+    "modifiersSizeDifference": "{sm} для разницы Модификатора Размеров (источник {sourceSM}, цель {targetSM})",
     "modifierStatus": "Статус",
     "modifierStatusAffliction": "Статус и Аффликции",
     "modifierStatusShock1": "-1 к проверкам ИН/ЛВ (Шок 1)",
@@ -1266,7 +1289,6 @@
     "rollNewTarget": "Новая цель: ({target})",
     "rollSuccess": "Успех!",
     "rollTotal": "Бросок ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Общее количество возможных попаданий ({link})<br/>из-за Сс ({rof}) и Отд ({rcl}) равно <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Бросок против",
     "rsl": "ОУН",
     "rt": "СР",

@@ -417,21 +417,25 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       details.open = !details.open
     })
 
-    // Handle the "Posture" dropdown on the tabbed sheet.
-    html.find('#condition details#posture .popup .button').click(ev => {
+    html.find('#posture').on('change', async ev => {
       ev.preventDefault()
-      const details = $(ev.currentTarget).closest('details')
+      let target = $(ev.currentTarget)
+      await this.actor.replacePosture(target.val())
+    })
+
+    // Handle the "Posture" dropdown on the NPC sheet.
+    html.find('#condition details#posture .popup .button').click(async ev => {
+      ev.preventDefault()
       const target = $(ev.currentTarget)[0]
-      this.actor.replacePosture(target.alt)
-      details.open = !details.open
+      await this.actor.replacePosture(target.alt)
     })
 
     // Handle the "Posture" dropdown on the tabbed sheet.
-    html.find('#combat-status details#posture .popup .button').click(ev => {
+    html.find('#combat-status details#posture .popup .button').click(async ev => {
       ev.preventDefault()
       const details = $(ev.currentTarget).closest('details')
       const target = $(ev.currentTarget)[0]
-      this.actor.replacePosture(target.alt)
+      await this.actor.replacePosture(target.alt)
       details.open = !details.open
     })
 
@@ -662,11 +666,6 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
       this.actor.replaceManeuver(target.val())
-    })
-
-    html.find('#posture').on('change', ev => {
-      let target = $(ev.currentTarget)
-      this.actor.replacePosture(target.val())
     })
 
     html.find('#move-mode').on('change', ev => {
@@ -1764,13 +1763,14 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       })
       const newIndex = key
 
-      const newLocal = {
+      const updates = {
         [`system.encumbrance.${currentIndex}.current`]: false,
         [`system.encumbrance.${newIndex}.current`]: true,
         'system.currentmove': parseInt(encs[newIndex].move),
         'system.currentdodge': parseInt(encs[newIndex].dodge),
+        'system.currentsprint': parseInt(encs[newIndex].currentsprint),
       }
-      await this.actor.update(newLocal)
+      await this.actor.update(updates)
     } else {
       ui.notifications.warn(
         "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."

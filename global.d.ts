@@ -195,5 +195,6 @@ declare module 'fvtt-types/configuration' {
     'gurps.show-the-math': boolean
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.use-browser-importer': boolean
+    'gurps.use-size-modifier-difference-in-melee': boolean
   }
 }

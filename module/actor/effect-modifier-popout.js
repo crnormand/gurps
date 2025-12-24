@@ -15,7 +15,8 @@ export const calculateRange = (token1, token2) => {
   // SSRT value without invoking it.
   const ruler = new CONFIG.Canvas.rulerClass(game.user)
 
-  let dist = canvas.grid.measurePath([token1.document, token2.document]).distance
+  const path = canvas.grid.measurePath([token1.document, token2.document])
+  let dist = canvas.grid.isGridless ? path.distance : path.spaces
 
   const yards = Length.from(dist, canvas.scene.grid.units).to(Length.Unit.Yard).value
   return {
@@ -40,6 +41,35 @@ export const getRangedModifier = (source, target) => {
     rangeModifier += ` ${baseTags} @combatmod`
   }
   return rangeModifier
+}
+
+/**
+ * Get the relative Size Modifier between source and target for melee attacks.
+ * @param {GurpsToken} source
+ * @param {GurpsToken} target
+ * @returns {string|undefined} a string representing the size modifier, or undefined if no modifier applies or the setting is disabled.
+ */
+export const getSizeModifier = (source, target) => {
+  if (!source || !target) return undefined
+  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
+  const baseTags = `#${meleeTag}`
+  let sizeModifier
+  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+    const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
+    const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
+    const sizeDiff = targetSM - attackerSM
+    if (sizeDiff !== 0) {
+      const smText = `${sizeDiff >= 0 ? '+' : ''}${sizeDiff}`
+      sizeModifier = game.i18n.format('GURPS.modifiersSizeDifference', {
+        sm: smText,
+        sourceSM: attackerSM,
+        targetSM: targetSM,
+      })
+      sizeModifier += ` ${baseTags} @sizemod`
+    }
+  }
+  return sizeModifier
 }
 
 export class EffectModifierPopout extends Application {
@@ -100,23 +130,61 @@ export class EffectModifierPopout extends Application {
       result.targetmodifiers = target.actor
         ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
         : []
+
+      const smModifier = getSizeModifier(this.getToken(), target)
+      if (smModifier) {
+        result.targetmodifiers = [...result.targetmodifiers, ...this.convertModifiers([smModifier])]
+      }
+
       const rangeModifier = getRangedModifier(this.getToken(), target)
       if (rangeModifier) {
         const data = this.convertModifiers([rangeModifier])
         result.targetmodifiers = [...result.targetmodifiers, ...data]
       }
-      // Add the range to the target
+
+      // Sort the target modifiers by itemId.
+      result.targetmodifiers.sort((a, b) => {
+        return a.itemId.localeCompare(b.itemId)
+      })
+
       results.push(result)
     }
+
     return results
   }
 
+  /**
+   * convertModifiers takes a list of modifier strings (e.g., “+2 Aim @itemId #tag”) and turns each into a structured
+   * object used by the UI. For each entry it:
+   *
+   * Parses tags (#...) via getTags.
+   *
+   * Extracts the item reference after @. If it’s a system path (system.*), it pulls data from the actor; if it’s a
+   * special ref:
+   *  - man:<id> → finds the maneuver and uses its localized name/type.
+   *  - eft:<id> → resolves an active effect from the actor.
+   *
+   * Otherwise, it treats the ref as an item ID on the actor.
+   *
+   * Determines itemName (from the resolved object or the raw ref) and itemType (maneuver, active-effect,
+   * conditional/reaction/system type, or notfound fallback).
+   *
+   * Builds a localized description (getDescription strips off tags/refs) and a gurpslink link for display.
+   *
+   * Returns an array of objects: { link, desc, itemName, itemType, itemId, tags }.
+   *
+   * If the input isn’t an array, it returns an empty array.
+   *
+   * @param {*} list
+   * @returns
+   */
   convertModifiers(list) {
     return Array.isArray(list)
       ? list.map(it => {
           const tags = this.getTags(it)
           let itemReference = it.match(/@(\S+)/)?.[1] || 'custom'
           let obj = {}
+
           if (itemReference.includes('system.')) {
             if (itemReference.includes('.conditionalmods.')) {
               obj.name = game.i18n.localize('GURPS.conditionalMods')
@@ -128,6 +196,7 @@ export class EffectModifierPopout extends Application {
           } else if (itemReference.match(/\w{3}:/)) {
             const refType = itemReference.match(/(\w{3}):/)[1]
             const refValue = itemReference.match(/\w{3}:(\S+)/)[1]
+
             switch (refType) {
               case 'man':
                 const maneuver = Maneuvers.getManeuver(refValue)
@@ -138,6 +207,7 @@ export class EffectModifierPopout extends Application {
                 const effect = this._token?.actor.effects.get(refValue)
                 obj.name = effect?.name || game.i18n.localize('GURPS.ActiveEffect')
                 obj.type = 'active-effect'
+                break
             }
           } else {
             obj = this._token?.actor.items.get(itemReference) || {}

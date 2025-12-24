@@ -272,6 +272,26 @@
     "colorSheetMenuColorAreas": "Coloration Zones",
     "colorSheetMenuCustomColors": "Couleurs Personnalisées",
     "colorSheetMenuOverride": "Ecraser Couleurs",
+    "combat": {
+      "rof": {
+        "bonusLabel": "Cadence {shots}",
+        "numberOfShotsLabel": "Entrez le nombre de tirs (1-{max}) :",
+        "numberOfShotsPrompt": "Combien de tirs voulez-vous effectuer ?",
+        "numberOfShotsTitle": "Nombre de tirs"
+      },
+      "rollTotalHits": "Total des coups possibles<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Combat : Utiliser la différence de modificateur de taille au corps à corps",
+        "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Aucun token actif pour l'acteur {name} pour mettre à jour la manœuvre.",
+        "noActiveTokensToUpdatePosture": "Aucun token actif pour l'acteur {name} pour mettre à jour la posture."
+      }
+    },
+    "combatTracker": {
+      "initiative": "Initiative: {value}"
+    },
     "combatInfo": "Infos de Combat",
     "combatInitiative": "Initiative de Combat",
     "CombatOnlyTag": "Tag de combat uniquement",
@@ -980,8 +1000,10 @@
       "fencingRetreat": "pour Parade (Escrime, etc. Retraite)",
       "feverishDefense": "à la défense (Défense Massive)",
       "heroicCharge": "Charge Héroïque",
-      "mightyBlow": "dégâts (Coup Puissant)",
+      "mightyBlow": "Dégâts (Coup Puissant)",
       "moveAndAttack": "pour toucher (Attaque Mobile)",
+      "moveAndAttackBulkPenaltyApplied": "Pénalité de Masse appliquée (Attaque Mobile)",
+      "moveAndAttackRangedBulk": "ou la Masse de l’arme, la pire des deux",
       "onTargetAiming": "Sur Cible",
       "pdf": {
         "aim": "B364",
@@ -1047,6 +1069,7 @@
     "modifierSizeDetail": "Différence en Mêlée; Absolu à Distance",
     "modifierSizeEntry": "{SM} Taille {us} ({metric})",
     "modifiersSize": "{sm} pour Modificateur de Taille",
+    "modifiersSizeDifference": "{sm} pour la différence de Modificateur de Taille (source {sourceSM}, cible {targetSM})",
     "modifierStatus": "Statuts",
     "modifierStatusAffliction": "Statuts et Afflictions",
     "modifierStatusShock1": "-1 aux jets de QI/DX (Choc 1)",
@@ -1266,7 +1289,6 @@
     "rollNewTarget": "Nouvelle Cible: ({target})",
     "rollSuccess": "Succès!",
     "rollTotal": "Jeté ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Total des coups possibles ({link})<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Jet contre",
     "rsl": "NRC",
     "rt": "RT",

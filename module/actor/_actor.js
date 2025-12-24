@@ -20,7 +20,7 @@ import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
+import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -43,6 +43,54 @@ export const MoveModes = {
   Air: 'GURPS.moveModeAir',
   Water: 'GURPS.moveModeWater',
   Space: 'GURPS.moveModeSpace',
+}
+
+const ROLL_TYPE = {
+  MELEE: 'm',
+  RANGED: 'r',
+  PARRY: 'p',
+  BLOCK: 'b',
+  DAMAGE: 'd',
+  SKILL: 'sk',
+  SPELL: 'sp',
+  DODGE: 'dodge',
+}
+
+const ATTRIBUTE = {
+  ST: 'st',
+  DX: 'dx',
+  IQ: 'iq',
+  HT: 'ht',
+  WILL: 'will',
+  PER: 'per',
+  FRIGHT_CHECK: 'frightcheck',
+  VISION: 'vision',
+  HEARING: 'hearing',
+  TASTE_SMELL: 'tastesmell',
+  TOUCH: 'touch',
+  CR: 'cr',
+}
+
+/**
+ * Extract the roll reference code from a chat thing string with attack format: `@R:attackname`
+ * @param {string} chatThing - The chat thing string
+ * @returns {string} The reference code (e.g., 'm', 'r', 'd', 'sk', 'sp', 'dodge')
+ */
+function extractRollRefFromAttack(chatThing) {
+  return chatThing
+    .split('@')
+    .pop()
+    .match(/(\S+):/)?.[1]
+    ?.toLowerCase()
+}
+
+/**
+ * Extract the roll/attribute reference code from a chat thing string with attribute format: `[ST]` or `dodge`
+ * @param {string} chatThing - The chat thing string
+ * @returns {string} The reference code (e.g., 'st', 'dodge')
+ */
+function extractRefFromAttributeOrDefense(chatThing) {
+  return chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).split(':')[0]
 }
 
 export class GurpsActor extends Actor {
@@ -115,8 +163,19 @@ export class GurpsActor extends Actor {
 
       let sizemod = this.system.traits?.sizemod?.toString() || '+0'
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
-      if (sizemod !== '0' && sizemod !== '+0') {
-        this.system.conditions.target.modifiers.push(game.i18n.format('GURPS.modifiersSize', { sm: sizemod }))
+
+      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+        if (sizemod !== '0' && sizemod !== '+0') {
+          this.system.conditions.target.modifiers.push(
+            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @sizemod`
+          )
+        }
+      } else {
+        if (sizemod !== '0' && sizemod !== '+0') {
+          this.system.conditions.target.modifiers.push(
+            `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #ranged @sizemod`
+          )
+        }
       }
     }
 
@@ -638,10 +697,12 @@ export class GurpsActor extends Actor {
         if (!enc.level) enc.level = parseInt(enckey) // FIXME: Why enc.level=NaN after GCA import?
         let threshold = 10 - 2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
+
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
-        enc.currentsprint = Math.max(1, Math.floor(effectiveSprint * threshold))
+        enc.currentsprint = Math.max(enc.currentmove + 1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
+
         // TODO remove additionalresources.showflightmove
         // if (!!data.additionalresources?.showflightmove)
         enc.currentmovedisplay = this._isEnhancedMove() ? enc.currentmove + '/' + enc.currentsprint : enc.currentmove
@@ -950,16 +1011,17 @@ export class GurpsActor extends Actor {
     const status = CONFIG.statusEffects.find(e => e.id === statusId)
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to Actor#toggleStatusEffect`)
 
+    let existing = []
     if (foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture') {
-      let existing = this.getAllActivePostureEffects()
+      existing = this.getAllActivePostureEffects()
       existing = existing.filter(e => e.statuses.find(s => s !== statusId))
-
-      for (const it of existing) {
-        await super.toggleStatusEffect(it.statuses.first())
-      }
     }
 
     await super.toggleStatusEffect(statusId, { active, overlay })
+
+    for (const it of existing) {
+      await super.toggleStatusEffect(it.statuses.first())
+    }
   }
 
   getAllActivePostureEffects() {
@@ -972,16 +1034,20 @@ export class GurpsActor extends Actor {
    */
   async replaceManeuver(maneuverText) {
     let tokens = this._findTokens()
-    if (tokens && tokens.length) for (const t of tokens) await t.setManeuver(maneuverText)
+    if (!tokens || tokens.length === 0) {
+      // Show a UI notification using i18n
+      ui.notifications?.warn(
+        game.i18n.format('GURPS.combat.ui.noActiveTokensToUpdateManeuver', { name: this.displayname })
+      )
+      return
+    }
+
+    for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   async replacePosture(changeData) {
-    let tokens = this._findTokens()
-    if (tokens)
-      for (const t of tokens) {
-        let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
-        await this.toggleStatusEffect(id)
-      }
+    let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
+    await this.toggleStatusEffect(id)
   }
 
   /**
@@ -2380,6 +2446,7 @@ export class GurpsActor extends Actor {
           enc.current = true
           this.system.currentmove = parseInt(enc.currentmove)
           this.system.currentdodge = parseInt(enc.currentdodge)
+          this.system.currentsprint = parseInt(enc.currentsprint)
         } else if (enc.current) {
           enc.current = false
         }
@@ -2970,8 +3037,8 @@ export class GurpsActor extends Actor {
   /**
    * Resolve and add tagged Modifier Effects.
    *
-   * System will lookup each roll modifiers inside system.conditions.usermods
-   * against the Items.modifierTags and add the modifiers to the ModifierBucket.
+   * System will lookup each roll modifiers inside system.conditions.usermods against the Items.modifierTags and add
+   * the modifiers to the ModifierBucket.
    *
    * @param chatThing
    * @param optionalArgs
@@ -2982,57 +3049,13 @@ export class GurpsActor extends Actor {
     const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
 
-    // First get Item or Attribute Effect Tags
     let modifierTags, itemRef, refTags
+
+    // First get Item or Attribute Effect Tags
     if (optionalArgs.obj) {
-      const ref = chatThing
-        .split('@')
-        .pop()
-        .match(/(\S+):/)?.[1]
-        .toLowerCase()
-      switch (ref) {
-        case 'm':
-          refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allMeleeRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'r':
-          refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allRangedRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'p':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'b':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'd':
-          refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
-          isDamageRoll = true
-          break
-        case 'sk':
-          refTags = taggedSettings.allSkillRolls.split(',').map(it => it.trim().toLowerCase())
-          break
-        case 'sp':
-          refTags = taggedSettings.allSpellRolls.split(',').map(it => it.trim().toLowerCase())
-          if (taggedSettings.useSpellCollegeAsTag) {
-            const spell = optionalArgs.obj
-            const collegeTags = cleanTags(spell.college)
-            refTags = refTags.concat(collegeTags)
-          }
-          break
-        case 'p':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'b':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        default:
-          refTags = []
-      }
+      refTags = this._getTagsFromItemOrAttr(chatThing, taggedSettings, optionalArgs)
+      isDamageRoll = this._getDamageRollFromItemOrAttr(chatThing)
+
       // Item or Actor Component
       modifierTags =
         (optionalArgs.obj?.modifierTags || '')
@@ -3043,49 +3066,9 @@ export class GurpsActor extends Actor {
       itemRef = optionalArgs.obj.name || optionalArgs.obj.originalName
     } else if (chatThing) {
       // Targeted Roll or Attribute Check
-      const ref = chatThing.split('@').pop().toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
-      let refTags
-      let regex = /(?<="|:).+(?=\s\(|"|])/gm
-      switch (ref) {
-        case 'st':
-        case 'dx':
-        case 'iq':
-        case 'ht':
-          refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'will':
-        case 'per':
-        case 'frightcheck':
-        case 'vision':
-        case 'hearing':
-        case 'tastesmell':
-        case 'touch':
-        case 'cr':
-          refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
-          break
-        case 'dodge':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(
-            taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
-          )
-          break
-        case 'p':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          itemRef = chatThing.match(regex)?.[0]
-          if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
-          break
-        case 'b':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+      refTags = this._getTagsFromCheck(chatThing, taggedSettings)
+      itemRef = this._getItemRefFromCheck(chatThing)
 
-          itemRef = chatThing.match(regex)?.[0]
-          if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
-          break
-        default:
-          refTags = []
-      }
       modifierTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
@@ -3110,6 +3093,7 @@ export class GurpsActor extends Actor {
         if (key) return game.i18n.localize(key) + mod.replace(key, '')
         return mod
       }) || []
+
     // Actor Targeted Mods
     let targetMods = []
     for (const target of Array.from(game.user.targets)) {
@@ -3121,9 +3105,15 @@ export class GurpsActor extends Actor {
         else targetMods.push(mod)
       }
       const actorToken = this.getActiveTokens()[0]
-      const rangeMod = getRangedModifier(actorToken, target)
-      if (rangeMod) targetMods.push(rangeMod)
+      if (actorToken) {
+        const rangeMod = getRangedModifier(actorToken, target)
+        if (rangeMod) targetMods.push(rangeMod)
+
+        const sizeMod = getSizeModifier(actorToken, target)
+        if (sizeMod) targetMods.push(sizeMod)
+      }
     }
+
     const allMods = [...userMods, ...selfMods, ...targetMods]
     const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
 
@@ -3134,16 +3124,36 @@ export class GurpsActor extends Actor {
         if (userMod.includes('#maneuver')) {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
+
         if (optionalArgs.hasOwnProperty('itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
+
         if (actorInCombat) {
           canApply =
             canApply && (!taggedSettings.nonCombatOnlyTag || !modifierTags.includes(taggedSettings.nonCombatOnlyTag))
         } else {
           canApply = canApply && (!taggedSettings.combatOnlyTag || !modifierTags.includes(taggedSettings.combatOnlyTag))
         }
+
+        // If the modifier is the move-and-attack maneuver and the attack is ranged, update the modifier value to -2 or Bulk of the weapon (optionalArgs.obj.bulk), whichever is worse.
+        if (canApply && userMod.includes('#maneuver') && userMod.includes('@man:move_and_attack') && tag === 'ranged') {
+          const parsedBulk = parseInt(optionalArgs?.obj?.bulk ?? '0', 10)
+          const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
+          const DEFAULT_PENALTY = -2
+
+          const maneuverMod = bulkPenalty < DEFAULT_PENALTY ? bulkPenalty : DEFAULT_PENALTY
+
+          const maneuverMatch = userMod.match(/^[+-]\d+(.*?)(?=[#@])/)
+          let desc = maneuverMatch ? maneuverMatch[1].trim() : ''
+          if (maneuverMod !== DEFAULT_PENALTY)
+            desc = game.i18n.localize('GURPS.modifiers_.moveAndAttackBulkPenaltyApplied')
+
+          if (maneuverMod !== 0) await GURPS.ModifierBucket.addModifier(maneuverMod.toString(), desc, undefined, true)
+          continue
+        }
+
         if (canApply) {
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = userMod.match(regex)?.[1].trim() || ''
@@ -3153,6 +3163,178 @@ export class GurpsActor extends Actor {
       }
     }
     return isDamageRoll
+  }
+
+  /**
+   * Extracts the applicable tagged modifier tags for attribute checks and defense rolls.
+   *
+   * This method determines which tagged modifier settings should apply based on the type of check being performed. For
+   * basic attributes (ST, DX, IQ, HT), it returns tags from both the specific attribute setting and the general "All
+   * Attributes Rolls" setting. For defenses, it combines the general defense tags with defense-specific tags.
+   *
+   * @param {string} chatThing - The roll description text (e.g., "DX" or "Dodge")
+   * @param {Object} taggedSettings - Object containing tagged modifier settings from game settings
+   * @param {string} taggedSettings.allSTRolls - Comma-separated tags for ST rolls
+   * @param {string} taggedSettings.allDXRolls - Comma-separated tags for DX rolls
+   * @param {string} taggedSettings.allIQRolls - Comma-separated tags for IQ rolls
+   * @param {string} taggedSettings.allHTRolls - Comma-separated tags for HT rolls
+   * @param {string} taggedSettings.allAttributesRolls - Comma-separated tags for all basic attribute rolls
+   * @param {string} taggedSettings.allDefenseRolls - Comma-separated tags for all defense rolls
+   * @param {string} taggedSettings.allDODGERolls - Comma-separated tags for dodge rolls
+   * @param {string} taggedSettings.allParryRolls - Comma-separated tags for parry rolls
+   * @param {string} taggedSettings.allBlockRolls - Comma-separated tags for block rolls
+   * @returns {string[]} Array of lowercase, trimmed tag strings that apply to this roll
+   *
+   * @example
+   * // For a DX check, returns tags from both "All DX Rolls" and "All Attributes Rolls"
+   * const tags = actor._getTagsFromCheck("DX", taggedSettings);
+   * // returns ["all", "attribute", "dx"] if those tags are present in the relevant taggedSettings values.
+   *
+   * @example
+   * // For a Dodge, returns tags from both "All Defense Rolls" and "All Dodge Rolls"
+   * const tags = actor._getTagsFromCheck("Dodge", taggedSettings);
+   * // returns ["all", "defense", "dodge"] if those tags are present in the relevant taggedSettings values.
+   */
+  _getTagsFromCheck(chatThing, taggedSettings) {
+    let refTags
+
+    const ref = extractRefFromAttributeOrDefense(chatThing)
+    switch (ref) {
+      case ATTRIBUTE.ST:
+      case ATTRIBUTE.DX:
+      case ATTRIBUTE.IQ:
+      case ATTRIBUTE.HT:
+        refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allAttributesRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+
+      case ATTRIBUTE.WILL:
+      case ATTRIBUTE.PER:
+      case ATTRIBUTE.FRIGHT_CHECK:
+      case ATTRIBUTE.VISION:
+      case ATTRIBUTE.HEARING:
+      case ATTRIBUTE.TASTE_SMELL:
+      case ATTRIBUTE.TOUCH:
+      case ATTRIBUTE.CR:
+        refTags = taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+        break
+
+      case ROLL_TYPE.DODGE:
+        refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(
+          taggedSettings[`all${ref.toUpperCase()}Rolls`].split(',').map(it => it.trim().toLowerCase())
+        )
+        break
+
+      case ROLL_TYPE.PARRY:
+        refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+
+      case ROLL_TYPE.BLOCK:
+        refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+
+      default:
+        refTags = []
+    }
+    return refTags
+  }
+
+  /**
+   * Extracts the equipment reference (e.g., weapon or shield name) from a parry/block roll string.
+   *
+   * The chat text is expected to include the item name in quotes or after a colon, followed by a parenthetical roll
+   * type. Only Parry and Block rolls should produce an item reference.
+   *
+   * @param {string} chatThing - Raw roll description text from chat
+   * @returns {string|undefined} The trimmed item reference if present, otherwise undefined
+   */
+  _getItemRefFromCheck(chatThing) {
+    const regex = /(?<="|:).+(?=\s\(|"|])/gm
+    let itemRef = chatThing.match(regex)?.[0]
+    if (itemRef) {
+      const ref = extractRefFromAttributeOrDefense(chatThing)
+      console.assert(ref === ROLL_TYPE.PARRY || ref === ROLL_TYPE.BLOCK, 'ItemRef only for Parry or Block rolls')
+      itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
+    }
+    return itemRef
+  }
+
+  /**
+   * Collects the applicable tagged modifier tags for item-based or attribute-based rolls.
+   *
+   * Determines the roll category (melee, ranged, parry, block, damage, skill, spell) from the chat text and returns
+   * the configured tag list for that category. For spells, optionally appends college tags when enabled via settings.
+   *
+   * @param {string} chatThing - Raw roll description text from chat
+   * @param {Object} taggedSettings - Tagged modifier settings from game settings
+   * @param {string} taggedSettings.allAttackRolls - Comma-separated tags for all attack rolls
+   * @param {string} taggedSettings.allMeleeRolls - Comma-separated tags for melee attacks
+   * @param {string} taggedSettings.allRangedRolls - Comma-separated tags for ranged attacks
+   * @param {string} taggedSettings.allDefenseRolls - Comma-separated tags for all defenses
+   * @param {string} taggedSettings.allParryRolls - Comma-separated tags for parry rolls
+   * @param {string} taggedSettings.allBlockRolls - Comma-separated tags for block rolls
+   * @param {string} taggedSettings.allDamageRolls - Comma-separated tags for damage rolls
+   * @param {string} taggedSettings.allSkillRolls - Comma-separated tags for skill rolls
+   * @param {string} taggedSettings.allSpellRolls - Comma-separated tags for spell rolls
+   * @param {boolean} taggedSettings.useSpellCollegeAsTag - Whether to append spell college tags
+   * @param {{obj?: Object}} optionalArgs - Optional context (e.g., the spell object when resolving colleges)
+   * @returns {string[]} Array of lowercase, trimmed tag strings that apply to the roll
+   */
+  _getTagsFromItemOrAttr(chatThing, taggedSettings, optionalArgs) {
+    let refTags
+    const ref = extractRollRefFromAttack(chatThing)
+    switch (ref) {
+      case ROLL_TYPE.MELEE:
+        refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allMeleeRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+      case ROLL_TYPE.RANGED:
+        refTags = taggedSettings.allAttackRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allRangedRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+      case ROLL_TYPE.PARRY:
+        refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+      case ROLL_TYPE.BLOCK:
+        refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
+        refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
+        break
+      case ROLL_TYPE.DAMAGE:
+        refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
+        break
+      case ROLL_TYPE.SKILL:
+        refTags = taggedSettings.allSkillRolls.split(',').map(it => it.trim().toLowerCase())
+        break
+      case ROLL_TYPE.SPELL:
+        refTags = taggedSettings.allSpellRolls.split(',').map(it => it.trim().toLowerCase())
+        if (taggedSettings.useSpellCollegeAsTag) {
+          const spell = optionalArgs.obj
+          const collegeTags = cleanTags(spell.college)
+          refTags = refTags.concat(collegeTags)
+        }
+        break
+      default:
+        refTags = []
+    }
+    return refTags
+  }
+
+  /**
+   * Returns true when the roll string represents a damage roll.
+   *
+   * Uses the same roll-ref parsing as attack rolls to identify the category and checks for the DAMAGE ref. Helper for
+   * deciding whether damage-specific tags or behaviors should apply.
+   *
+   * @param {string} chatThing - Raw roll description text from chat
+   * @returns {boolean} True if the extracted roll ref is DAMAGE; otherwise false
+   */
+  _getDamageRollFromItemOrAttr(chatThing) {
+    const ref = extractRollRefFromAttack(chatThing)
+    return ref === ROLL_TYPE.DAMAGE
   }
 
   /**
@@ -3172,15 +3354,15 @@ export class GurpsActor extends Actor {
     const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
     if (!isCombatant && settingsUseMaxActions === 'AllCombatant') return false
     const actionType = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
-    const isAttack = action?.type === 'attack' || ['m', 'r'].includes(actionType)
+    const isAttack = action?.type === 'attack' || [ROLL_TYPE.MELEE, ROLL_TYPE.RANGED].includes(actionType)
     const isDefense =
       action?.attribute === 'dodge' ||
       action?.type === 'weapon-parry' ||
       action?.type === 'weapon-block' ||
-      ['dodge', 'p', 'b'].includes(actionType)
-    const isDodge = action?.attribute === 'dodge' || actionType === 'dodge'
-    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === 'sk'
-    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === 'sp'
+      [ROLL_TYPE.DODGE, ROLL_TYPE.PARRY, ROLL_TYPE.BLOCK].includes(actionType)
+    const isDodge = action?.attribute === 'dodge' || actionType === ROLL_TYPE.DODGE
+    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === ROLL_TYPE.SKILL
+    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === ROLL_TYPE.SPELL
     if ((isSpell || isAttack || isDefense) && !isDodge) {
       return actorComp.consumeAction !== undefined ? actorComp.consumeAction : true
     } else if (isSkill) {

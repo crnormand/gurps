@@ -22,7 +22,9 @@ export default class GurpsTokenRuler extends foundry.canvas.placeables.tokens.To
     const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
     const yards = Length.from(waypoint.measurement.cost, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
 
-    if (yards <= Math.ceil(actor.system.currentmove / 10)) {
+    if (yards === 0) {
+      return data
+    } else if (yards <= Math.ceil(actor.system.currentmove / 10)) {
       return { ...data, color: 0x0000ff } // Step: blue
     } else if (yards <= actor.system.currentmove) {
       return { ...data, color: 0x00ff00 } // Normal move: green

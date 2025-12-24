@@ -272,6 +272,26 @@
     "colorSheetMenuColorAreas": "Farbige Bereiche",
     "colorSheetMenuCustomColors": "Benutzerdefinierte Farben",
     "colorSheetMenuOverride": "Farben überschreiben",
+    "combat": {
+      "rof": {
+        "bonusLabel": "RoF {shots}",
+        "numberOfShotsLabel": "Anzahl der Schüsse eingeben (1-{max}):",
+        "numberOfShotsPrompt": "Wie viele Schüsse sollen abgegeben werden?",
+        "numberOfShotsTitle": "Anzahl der Schüsse"
+      },
+      "rollTotalHits": "Gesamttreffer<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Kampf: Größenmodifikator-Unterschied im Nahkampf verwenden",
+        "useRelativeSizeInMeleeHint": "Wendet die Differenz im Größenmodifikator (SM) zwischen Angreifer und Verteidiger auf Nahkampf-Angriffswürfe an."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Keine aktiven Token für Akteur {name} zum Aktualisieren des Manövers.",
+        "noActiveTokensToUpdatePosture": "Keine aktiven Token für Akteur {name} zum Aktualisieren der Haltung."
+      }
+    },
+    "combatTracker": {
+      "initiative": "Initiative: {value}"
+    },
     "combatInfo": "Kampfinfo",
     "combatInitiative": "Kampf Initiative",
     "CombatOnlyTag": "Nur Kampf-Tag",
@@ -982,6 +1002,8 @@
       "heroicCharge": "Heroischer Angriff",
       "mightyBlow": "Schaden (Mächtiger Schlag)",
       "moveAndAttack": "auf Angriff (Bewegen und Angreifen)",
+      "moveAndAttackBulkPenaltyApplied": "Handlichkeits-Malus angewendet (Bewegen und Angreifen)",
+      "moveAndAttackRangedBulk": "oder Handlichkeit der Waffe, je nachdem was schlechter ist",
       "onTargetAiming": "Auf Ziel",
       "pdf": {
         "aim": "B364",
@@ -1047,6 +1069,7 @@
     "modifierSizeDetail": "Differenz im Nahkampf; Absolut im Fernkampf",
     "modifierSizeEntry": "{SM} Größe {us} ({metric})",
     "modifiersSize": "{sm} für Größenmodifikator",
+    "modifiersSizeDifference": "{sm} für Größenmodifikator-Unterschied (Quelle {sourceSM}, Ziel {targetSM})",
     "modifierStatus": "Zustand",
     "modifierStatusAffliction": "Zustand und Gebrechen",
     "modifierStatusShock1": "-1 auf IQ/DX Würfe (Shock 1)",
@@ -1266,7 +1289,6 @@
     "rollNewTarget": "Neues Ziel: ({target})",
     "rollSuccess": "Erfolg!",
     "rollTotal": "Gewürfelt ({rolls}) = {rtotal}.",
-    "rollTotalHits": "Gesamttreffer ({link})<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>.",
     "rollVs": "Wurf gegen",
     "rsl": "RSL",
     "rt": "RA",

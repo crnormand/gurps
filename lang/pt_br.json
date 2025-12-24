@@ -272,6 +272,26 @@
     "colorSheetMenuColorAreas": "Áreas de Cor",
     "colorSheetMenuCustomColors": "Cores Personalizadas",
     "colorSheetMenuOverride": "Desconsiderar Cores",
+    "combat": {
+      "rof": {
+        "bonusLabel": "Cadência {shots}",
+        "numberOfShotsLabel": "Informe o número de disparos (1-{max}):",
+        "numberOfShotsPrompt": "Quantos disparos você deseja efetuar?",
+        "numberOfShotsTitle": "Número de Disparos"
+      },
+      "rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis<br/>devido à CdT ({rof}) e o RCO ({rcl}). ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Combate: Usar Diferença de Modificador de Tamanho no Corpo a Corpo",
+        "useRelativeSizeInMeleeHint": "Aplicar a diferença no Modificador de Tamanho (SM) entre atacante e defensor nas rolagens de ataque corpo a corpo."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "Nenhum token ativo para o ator {name} atualizar manobra.",
+        "noActiveTokensToUpdatePosture": "Nenhum token ativo para o ator {name} atualizar postura."
+      }
+    },
+    "combatTracker": {
+      "initiative": "Iniciativa: {value}"
+    },
     "combatInfo": "Informações de Combate",
     "combatInitiative": "Iniciativa de Combate",
     "CombatOnlyTag": "Tag apenas de combate",
@@ -981,7 +1001,9 @@
       "feverishDefense": "para defesa (Defesa Exaltada)",
       "heroicCharge": "Investida Heroica",
       "mightyBlow": "dano (Golpe Poderoso)",
-      "moveAndAttack": "ao ataque (Avançar e Atacar)",
+      "moveAndAttack": "para acertar (Avançar e Atacar)",
+      "moveAndAttackBulkPenaltyApplied": "Penalidade de Magnitude aplicada (Avançar e Atacar)",
+      "moveAndAttackRangedBulk": "ou Magnitude da arma, o que for pior",
       "onTargetAiming": "No Alvo",
       "pdf": {
         "aim": "B364",
@@ -1047,6 +1069,7 @@
     "modifierSizeDetail": "Diferença no Corpo a Corpo; Absoluta à Distância",
     "modifierSizeEntry": "{SM} Tamanho {us} ({metric})",
     "modifiersSize": "{sm} para Modificador de Tamanho",
+    "modifiersSizeDifference": "{sm} para Diferença de Modificador de Tamanho (fonte {sourceSM}, alvo {targetSM})",
     "modifierStatus": "Estado",
     "modifierStatusAffliction": "Estado e Atribulações",
     "modifierStatusShock1": "-1 para testes de IQ/DX (Choque 1)",
@@ -1266,7 +1289,6 @@
     "rollNewTarget": "Novo alvo: ({target})",
     "rollSuccess": "Sucesso!",
     "rollTotal": "Resultado da rolagem ({rolls}) = {rtotal}.",
-    "rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis ({link})<br/>devido à CdT ({rof}) e o RCO ({rcl}).",
     "rollVs": "Rolagem contra",
     "rsl": "NH Rltv.",
     "rt": "CR",

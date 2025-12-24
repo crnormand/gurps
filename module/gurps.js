@@ -15,6 +15,7 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
+import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -90,13 +91,14 @@ import { UI } from './ui/index.js'
 import { Migration } from '../lib/migration.js'
 import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
 import { GurpsItemV2 } from './item/gurps-item.js'
+import { GetNumberInput } from './ui/get-number-input.js'
 
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
-  GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
+  GURPS.SYSTEM_NAME = 'gurps' // Use this global instead of importing miscellaneous-settings everywhere.
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
@@ -153,9 +155,6 @@ if (!globalThis.GURPS) {
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
-
-  // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
-
   GURPS.SetLastActor = SetLastActor
   GURPS.ClearLastActor = ClearLastActor
 
@@ -186,7 +185,6 @@ if (!globalThis.GURPS) {
       })
   }
 
-  // TODO Why are these global?  Because they are used as semaphores for certain multithreaded processes
   GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
   GURPS.PendingOTFs = []
   GURPS.IgnoreTokenSelect = false
@@ -933,6 +931,28 @@ if (!globalThis.GURPS) {
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+
+      const parsedRateOfFire = parseInt(att.rof)
+      if (parsedRateOfFire > 1) {
+        const shots = await GetNumberInput({
+          title: game.i18n.localize('GURPS.combat.rof.numberOfShotsTitle'),
+          headerText: action.orig,
+          promptText: game.i18n.localize('GURPS.combat.rof.numberOfShotsPrompt'),
+          label: game.i18n.format('GURPS.combat.rof.numberOfShotsLabel', { max: parsedRateOfFire }),
+          min: 1,
+          max: parsedRateOfFire,
+          value: parsedRateOfFire,
+        })
+
+        const bonusForRoF = calculateRoFModifier(shots)
+        if (bonusForRoF !== 0)
+          GURPS.ModifierBucket.addModifier(
+            bonusForRoF,
+            game.i18n.format('GURPS.combat.rof.bonusLabel', { shots }),
+            targetmods
+          )
+        opt.shots = shots
+      }
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return await doRoll({
@@ -2258,25 +2278,18 @@ if (!globalThis.GURPS) {
           continue
         }
 
-        // Get Combat Initiative
-        const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
-
         // Add Quick Roll Menu
         combatantElement = await addQuickRollButton(combatantElement, combatant, token)
 
         // Add Maneuver Menu
         combatantElement = await addManeuverMenu(combatantElement, combatant, token)
-
-        // Add Tooltip to Token Image
-        const tokenImage = $(combatantElement).find('.token-image')
-        tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
       }
-      // Add Quick Roll and Maneuvers Menu Listeners
+      // Add Quick Roll Listeners.
       addQuickRollListeners()
-      addManeuverListeners()
     })
 
-    // TODO Move to a "Module".
+    addManeuverListeners()
+
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
