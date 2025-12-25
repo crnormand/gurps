@@ -19,6 +19,36 @@ $ms-hp: #b83232;
 $ms-fp: #3268a8;
 $ms-fp-bg: rgba(50, 104, 168, 0.15);
 $ms-hp-overlay: rgba(184, 50, 50, 0.5);
+
+$ms-bg-dark: #1c1a17;
+$ms-bg-header-dark: #252320;
+$ms-bg-card-dark: #2a2825;
+$ms-bg-hover-dark: #35322d;
+$ms-bg-section-dark: #222019;
+$ms-bg-muted-dark: #1a1816;
+
+$ms-border-dark: #3a3732;
+$ms-border-light-dark: #2e2b27;
+
+$ms-text-dark: #e8e4dc;
+$ms-text-muted-dark: #a8a49c;
+$ms-text-dim-dark: #6a665e;
+
+$ms-accent-dark: #5a9e6f;
+$ms-accent-light-dark: rgba(90, 158, 111, 0.15);
+
+$ms-advantage-dark: #5cb378;
+$ms-advantage-bg-dark: rgba(92, 179, 120, 0.12);
+
+$ms-disadvantage-dark: #c75f5f;
+$ms-disadvantage-bg-dark: rgba(199, 95, 95, 0.12);
+
+$ms-hp-dark: #e05a5a;
+$ms-hp-overlay-dark: rgba(224, 90, 90, 0.6);
+
+$ms-fp-dark: #5a9dd8;
+$ms-fp-bg-dark: rgba(90, 157, 216, 0.15);
+
 $ms-radius-sm: 3px;
 $ms-radius: 4px;
 $ms-radius-md: 6px;
@@ -109,4 +139,28 @@ $ms-space-12: 24px;
   --ms-space-8: #{$ms-space-8};
   --ms-space-10: #{$ms-space-10};
   --ms-space-12: #{$ms-space-12};
+}
+
+@mixin css-variables-dark {
+  --ms-bg: #{$ms-bg-dark};
+  --ms-bg-header: #{$ms-bg-header-dark};
+  --ms-bg-card: #{$ms-bg-card-dark};
+  --ms-bg-hover: #{$ms-bg-hover-dark};
+  --ms-bg-section: #{$ms-bg-section-dark};
+  --ms-bg-muted: #{$ms-bg-muted-dark};
+  --ms-border: #{$ms-border-dark};
+  --ms-border-light: #{$ms-border-light-dark};
+  --ms-text: #{$ms-text-dark};
+  --ms-text-muted: #{$ms-text-muted-dark};
+  --ms-text-dim: #{$ms-text-dim-dark};
+  --ms-accent: #{$ms-accent-dark};
+  --ms-accent-light: #{$ms-accent-light-dark};
+  --ms-advantage: #{$ms-advantage-dark};
+  --ms-advantage-bg: #{$ms-advantage-bg-dark};
+  --ms-disadvantage: #{$ms-disadvantage-dark};
+  --ms-disadvantage-bg: #{$ms-disadvantage-bg-dark};
+  --ms-hp: #{$ms-hp-dark};
+  --ms-hp-overlay: #{$ms-hp-overlay-dark};
+  --ms-fp: #{$ms-fp-dark};
+  --ms-fp-bg: #{$ms-fp-bg-dark};
 }

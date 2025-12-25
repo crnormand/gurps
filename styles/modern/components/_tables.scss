@@ -130,7 +130,7 @@
   grid-column: 1 / -1;
   padding: var(--ms-space-3) var(--ms-space-4) var(--ms-space-3) var(--ms-space-12);
   font-size: var(--ms-font-sm);
-  color: var(--ms-text-dim);
+  color: var(--ms-text-muted);
   background: var(--ms-bg-hover);
   border-top: 1px dashed var(--ms-border-light);
 }
@@ -282,7 +282,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   margin-left: auto;
   color: var(--ms-accent);
   &.ms-unlocked {
-    color: coral;
+    color: var(--ms-disadvantage);
   }
 }
 

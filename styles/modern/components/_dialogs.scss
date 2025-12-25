@@ -125,3 +125,111 @@
   color: $ms-text-muted;
   font-style: italic;
 }
+
+body.theme-dark {
+  .effect-picker .window-content {
+    background: $ms-bg-dark;
+  }
+
+  .effect-picker-search-wrapper {
+    border-color: $ms-border-dark;
+    background: $ms-bg-card-dark;
+  }
+
+  .effect-picker-search {
+    border-color: $ms-border-dark;
+    background: $ms-bg-dark;
+    color: $ms-text-dark;
+
+    &:focus {
+      border-color: $ms-accent-dark;
+      box-shadow: 0 0 0 2px $ms-accent-light-dark;
+    }
+  }
+
+  .effect-picker-category-header {
+    color: $ms-text-muted-dark;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  .effect-picker-category-count {
+    background: $ms-bg-muted-dark;
+    color: $ms-text-muted-dark;
+  }
+
+  .effect-picker-item {
+    &:hover {
+      background: $ms-accent-light-dark;
+    }
+
+    &:active {
+      background: rgba($ms-accent-dark, 0.2);
+    }
+  }
+
+  .effect-picker-name {
+    color: $ms-text-dark;
+  }
+
+  .effect-picker-empty {
+    color: $ms-text-muted-dark;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.theme-light) {
+    .effect-picker .window-content {
+      background: $ms-bg-dark;
+    }
+
+    .effect-picker-search-wrapper {
+      border-color: $ms-border-dark;
+      background: $ms-bg-card-dark;
+    }
+
+    .effect-picker-search {
+      border-color: $ms-border-dark;
+      background: $ms-bg-dark;
+      color: $ms-text-dark;
+
+      &:focus {
+        border-color: $ms-accent-dark;
+        box-shadow: 0 0 0 2px $ms-accent-light-dark;
+      }
+    }
+
+    .effect-picker-category-header {
+      color: $ms-text-muted-dark;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+    }
+
+    .effect-picker-category-count {
+      background: $ms-bg-muted-dark;
+      color: $ms-text-muted-dark;
+    }
+
+    .effect-picker-item {
+      &:hover {
+        background: $ms-accent-light-dark;
+      }
+
+      &:active {
+        background: rgba($ms-accent-dark, 0.2);
+      }
+    }
+
+    .effect-picker-name {
+      color: $ms-text-dark;
+    }
+
+    .effect-picker-empty {
+      color: $ms-text-muted-dark;
+    }
+  }
+}

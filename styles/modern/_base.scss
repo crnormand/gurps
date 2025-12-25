@@ -18,6 +18,16 @@
   .window-resizable-handle {
     background: $ms-bg;
   }
+
+  body.theme-dark & .window-resizable-handle {
+    background: $ms-bg-dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body:not(.theme-light) & .window-resizable-handle {
+      background: $ms-bg-dark;
+    }
+  }
 }
 
 .modern-sheet {
@@ -39,6 +49,48 @@
   *, *::before, *::after {
     box-sizing: border-box;
   }
+
+  body.theme-dark & {
+    @include css-variables-dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body:not(.theme-light) & {
+      @include css-variables-dark;
+    }
+  }
+
+  .pdflink {
+    color: var(--ms-accent);
+    text-decoration: none;
+    text-shadow: none;
+
+    &:hover {
+      color: var(--ms-accent);
+      text-decoration: underline;
+      text-shadow: none;
+    }
+  }
+
+  .gurpslink {
+    color: var(--ms-text);
+    background-color: var(--ms-accent-light);
+    border-color: var(--ms-border);
+
+    &:hover, &.test {
+      color: var(--ms-text);
+      background-color: var(--ms-accent-light);
+    }
+
+    &:active {
+      color: var(--ms-text);
+      background-color: var(--ms-accent-light);
+    }
+  }
+
+  .glinkmod, .glinkmodplus, .glinkmodminus {
+    color: var(--ms-text);
+  }
 }
 
 .ms-footer {
@@ -47,6 +99,7 @@
   color: var(--ms-text-dim);
   padding: var(--ms-space-4);
   border-top: 1px solid var(--ms-border-light);
+  background: var(--ms-bg);
 
   a {
     color: var(--ms-accent);

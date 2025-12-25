@@ -20,7 +20,7 @@
     border-color: var(--ms-accent);
   }
 
-  i { font-size: var(--ms-font-xs); color: var(--ms-text-dim); }
+  i { font-size: var(--ms-font-xs); color: var(--ms-text-muted); }
 
   .ms-btn-level {
     font-weight: var(--ms-weight-semibold);
@@ -112,6 +112,7 @@
   }
 
   &:hover {
-    background: rgba(62, 106, 77, 0.25);
+    background: var(--ms-accent-light);
+    filter: brightness(0.95);
   }
 }
