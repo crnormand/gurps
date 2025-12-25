@@ -1,11 +1,13 @@
+@use '../mixins' as *;
+
 .modern-sheet {
   input[type="text"], input[type="number"], textarea, select {
     background: var(--ms-bg);
     color: var(--ms-text);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
-    padding: 4px 8px;
-    font-size: 11px;
+    padding: var(--ms-space-2) var(--ms-space-4);
+    font-size: var(--ms-font-xs);
 
     &:focus {
       outline: none;
@@ -22,26 +24,17 @@
   }
 
   #identity {
-    .header {
-      background: transparent;
-      color: var(--ms-text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 0 0 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-      margin-bottom: 8px;
-    }
+    .header { @include form-header; }
 
     .fieldblock {
       display: grid;
       grid-template-columns: 70px 1fr;
-      gap: 4px 8px;
+      gap: var(--ms-space-2) var(--ms-space-4);
       align-items: center;
 
       .label {
         color: var(--ms-text-muted);
-        font-size: 11px;
+        font-size: var(--ms-font-xs);
         text-align: right;
       }
 
@@ -52,89 +45,63 @@
   }
 
   #description {
-    .header {
-      background: transparent;
-      color: var(--ms-text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 0 0 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-      margin-bottom: 8px;
-    }
+    .header { @include form-header; }
 
     .fieldblock {
       display: grid;
       grid-template-columns: 80px 1fr;
-      gap: 4px 8px;
+      gap: var(--ms-space-2) var(--ms-space-4);
       align-items: center;
 
       .label {
         color: var(--ms-text-muted);
-        font-size: 11px;
+        font-size: var(--ms-font-xs);
         text-align: right;
 
         &.textarea {
           align-self: start;
-          padding-top: 4px;
+          padding-top: var(--ms-space-2);
         }
       }
     }
   }
 
   #miscellaneous {
-    .header {
-      background: transparent;
-      color: var(--ms-text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 0 0 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-      margin-bottom: 8px;
-    }
+    .header { @include form-header; }
 
     .fieldblock {
       display: grid;
       grid-template-columns: 70px 1fr;
-      gap: 4px 8px;
+      gap: var(--ms-space-2) var(--ms-space-4);
       align-items: center;
 
       .label {
         color: var(--ms-text-muted);
-        font-size: 11px;
+        font-size: var(--ms-font-xs);
         text-align: right;
       }
     }
   }
 
   #points {
-    .header {
-      background: transparent;
-      color: var(--ms-text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      padding: 0 0 6px 0;
-      border-bottom: 1px solid var(--ms-border-light);
-      margin-bottom: 8px;
-    }
+    .header { @include form-header; }
 
     .fieldblock {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 8px;
+      gap: var(--ms-space-4);
 
       .label {
         color: var(--ms-text-muted);
-        font-size: 10px;
+        font-size: var(--ms-font-xs);
       }
 
       .field {
         input {
           width: 60px;
           text-align: right;
-          font-weight: 600;
+          font-weight: var(--ms-weight-semibold);
+          @include tabular-nums;
         }
 
         &.noedit input {
@@ -154,9 +121,9 @@
       margin-bottom: var(--ms-gap);
 
       .tracker-name {
-        font-weight: 600;
+        font-weight: var(--ms-weight-semibold);
         color: var(--ms-text);
-        margin-bottom: 4px;
+        margin-bottom: var(--ms-space-2);
       }
     }
   }
@@ -166,18 +133,19 @@
   .ms-identity-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 8px;
+    gap: var(--ms-space-4);
   }
 
   .ms-field {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--ms-space-1);
 
     label {
-      font-size: 10px;
+      font-size: var(--ms-font-xs);
       color: var(--ms-text-muted);
       text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     input, select {
@@ -190,17 +158,19 @@
   .ms-points-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: var(--ms-space-8);
   }
 
   .ms-points-item {
-    font-size: 12px;
+    font-size: var(--ms-font-xs);
     color: var(--ms-text-muted);
 
     strong {
       color: var(--ms-text);
-      font-size: 14px;
-      margin-right: 4px;
+      font-size: var(--ms-font-md);
+      font-weight: var(--ms-weight-bold);
+      @include tabular-nums;
+      margin-right: var(--ms-space-2);
     }
   }
 }

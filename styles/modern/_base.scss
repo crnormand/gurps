@@ -31,7 +31,10 @@
   background: var(--ms-bg);
   color: var(--ms-text);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--ms-font-md);
+  line-height: var(--ms-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   *, *::before, *::after {
     box-sizing: border-box;
@@ -40,9 +43,9 @@
 
 .ms-footer {
   text-align: center;
-  font-size: 10px;
+  font-size: var(--ms-font-xs);
   color: var(--ms-text-dim);
-  padding: 8px;
+  padding: var(--ms-space-4);
   border-top: 1px solid var(--ms-border-light);
 
   a {

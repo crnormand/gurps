@@ -3,6 +3,7 @@ $ms-bg-header: #f0ede8;
 $ms-bg-card: #ffffff;
 $ms-bg-hover: #f0ede8;
 $ms-bg-section: #fafaf8;
+$ms-bg-muted: #eceae6;
 $ms-border: #d8d4cc;
 $ms-border-light: #e8e4dc;
 $ms-text: #1a1a1a;
@@ -16,9 +17,42 @@ $ms-disadvantage: #8b3a3a;
 $ms-disadvantage-bg: rgba(139, 58, 58, 0.08);
 $ms-hp: #b83232;
 $ms-fp: #3268a8;
+$ms-fp-bg: rgba(50, 104, 168, 0.15);
 $ms-hp-overlay: rgba(184, 50, 50, 0.5);
+$ms-radius-sm: 3px;
 $ms-radius: 4px;
+$ms-radius-md: 6px;
+$ms-radius-pill: 999px;
 $ms-gap: 8px;
+
+$ms-transition-fast: 0.1s;
+$ms-transition-normal: 0.15s;
+$ms-transition-slow: 0.2s;
+
+$ms-font-xs: 0.75rem;
+$ms-font-sm: 0.8125rem;
+$ms-font-md: 0.875rem;
+$ms-font-lg: 1rem;
+$ms-font-xl: 1.125rem;
+
+$ms-weight-normal: 400;
+$ms-weight-medium: 500;
+$ms-weight-semibold: 600;
+$ms-weight-bold: 700;
+
+$ms-leading-tight: 1.2;
+$ms-leading-normal: 1.4;
+$ms-leading-relaxed: 1.5;
+
+$ms-space-1: 2px;
+$ms-space-2: 4px;
+$ms-space-3: 6px;
+$ms-space-4: 8px;
+$ms-space-5: 10px;
+$ms-space-6: 12px;
+$ms-space-8: 16px;
+$ms-space-10: 20px;
+$ms-space-12: 24px;
 
 @mixin css-variables {
   --ms-bg: #{$ms-bg};
@@ -26,6 +60,7 @@ $ms-gap: 8px;
   --ms-bg-card: #{$ms-bg-card};
   --ms-bg-hover: #{$ms-bg-hover};
   --ms-bg-section: #{$ms-bg-section};
+  --ms-bg-muted: #{$ms-bg-muted};
   --ms-border: #{$ms-border};
   --ms-border-light: #{$ms-border-light};
   --ms-text: #{$ms-text};
@@ -39,7 +74,39 @@ $ms-gap: 8px;
   --ms-disadvantage-bg: #{$ms-disadvantage-bg};
   --ms-hp: #{$ms-hp};
   --ms-fp: #{$ms-fp};
+  --ms-fp-bg: #{$ms-fp-bg};
   --ms-hp-overlay: #{$ms-hp-overlay};
+  --ms-radius-sm: #{$ms-radius-sm};
   --ms-radius: #{$ms-radius};
+  --ms-radius-md: #{$ms-radius-md};
+  --ms-radius-pill: #{$ms-radius-pill};
   --ms-gap: #{$ms-gap};
+  --ms-transition-fast: #{$ms-transition-fast};
+  --ms-transition-normal: #{$ms-transition-normal};
+  --ms-transition-slow: #{$ms-transition-slow};
+
+  --ms-font-xs: #{$ms-font-xs};
+  --ms-font-sm: #{$ms-font-sm};
+  --ms-font-md: #{$ms-font-md};
+  --ms-font-lg: #{$ms-font-lg};
+  --ms-font-xl: #{$ms-font-xl};
+
+  --ms-weight-normal: #{$ms-weight-normal};
+  --ms-weight-medium: #{$ms-weight-medium};
+  --ms-weight-semibold: #{$ms-weight-semibold};
+  --ms-weight-bold: #{$ms-weight-bold};
+
+  --ms-leading-tight: #{$ms-leading-tight};
+  --ms-leading-normal: #{$ms-leading-normal};
+  --ms-leading-relaxed: #{$ms-leading-relaxed};
+
+  --ms-space-1: #{$ms-space-1};
+  --ms-space-2: #{$ms-space-2};
+  --ms-space-3: #{$ms-space-3};
+  --ms-space-4: #{$ms-space-4};
+  --ms-space-5: #{$ms-space-5};
+  --ms-space-6: #{$ms-space-6};
+  --ms-space-8: #{$ms-space-8};
+  --ms-space-10: #{$ms-space-10};
+  --ms-space-12: #{$ms-space-12};
 }

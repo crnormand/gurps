@@ -108,3 +108,63 @@ export function bindAllInlineEdits(html: JQuery, actor: GurpsActor): void {
     bindInlineEdit(html, { ...config, onBlur })
   })
 }
+
+export function bindAttributeEdit(html: JQuery, actor: GurpsActor): void {
+  const wrapperSelector = '.ms-attr-wrapper'
+  const badgeSelector = '.ms-attr-badge'
+  const inputSelector = '.ms-attr-input'
+  const editButtonSelector = '.ms-attr-edit'
+  const editingClass = 'editing'
+
+  html.find(editButtonSelector).on('click', (event: JQuery.ClickEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const wrapper = (event.currentTarget as HTMLElement).closest(wrapperSelector) as HTMLElement
+    const badge = wrapper.querySelector(badgeSelector) as HTMLElement
+    badge.classList.add(editingClass)
+    const input = badge.querySelector(inputSelector) as HTMLInputElement
+    if (input) {
+      input.focus()
+      input.select()
+    }
+  })
+
+  html.find(badgeSelector).on('click', (event: JQuery.ClickEvent) => {
+    const badge = event.currentTarget as HTMLElement
+    if (badge.classList.contains(editingClass)) {
+      event.stopPropagation()
+    }
+  })
+
+  html.find(inputSelector).on('blur', (event: JQuery.BlurEvent) => {
+    const input = event.currentTarget as HTMLInputElement
+    const badge = input.closest(badgeSelector) as HTMLElement
+    badge.classList.remove(editingClass)
+
+    const attrName = badge.dataset.attr
+    const fieldPath = `system.attributes.${attrName}.import`
+    const newValue = parseInt(input.value, 10)
+    const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
+
+    if (!isNaN(newValue) && newValue !== currentValue) {
+      actor.update({ [fieldPath]: newValue })
+    }
+  })
+
+  html.find(inputSelector).on('keydown', (event: JQuery.KeyDownEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      ;(event.currentTarget as HTMLInputElement).blur()
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      const input = event.currentTarget as HTMLInputElement
+      const badge = input.closest(badgeSelector) as HTMLElement
+      badge.classList.remove(editingClass)
+      const attrName = badge.dataset.attr
+      const fieldPath = `system.attributes.${attrName}.import`
+      input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+    }
+  })
+}

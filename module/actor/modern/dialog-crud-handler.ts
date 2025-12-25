@@ -1,9 +1,8 @@
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { GurpsActor } from '../actor.js'
-import { GurpsActorSheet } from '../actor-sheet.js'
 import { confirmAndDelete } from './crud-handler.js'
 
-export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheet): void {
+export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheetEditMethods): void {
   const entityType = 'equipment'
 
   html.find(`[data-action="add-${entityType}"]`).on('click', async (event: JQuery.ClickEvent) => {
@@ -11,17 +10,23 @@ export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet:
     const target = event.currentTarget as HTMLElement
     const container = target.dataset.container ?? ''
     const path = `system.equipment.${container}`
+
     const { Equipment } = await import('../actor-components.js')
-    const obj = new Equipment(`${game.i18n!.localize('GURPS.equipment')}...`, true)
-    if (game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS as any)) {
-      obj.save = true
-      const payload = obj.toItemData(actor, '') as any
-      const [item] = await actor.createEmbeddedDocuments('Item', [payload])
-      obj.itemid = (item as { _id: string })._id
+    const newEquipment: EquipmentInstance = new Equipment(`${game.i18n!.localize('GURPS.equipment')}...`, true)
+
+    if (game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      newEquipment.save = true
+      const payload = newEquipment.toItemData(actor, '')
+      const [item] = await actor.createEmbeddedDocuments('Item', [payload] as never)
+      newEquipment.itemid = (item as { _id: string })._id
     }
-    if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: container, generator: '' })
-    const list = GURPS.decode<Record<string, unknown>>(actor, path) || {}
-    GURPS.put(list, foundry.utils.duplicate(obj))
+
+    if (!newEquipment.uuid) {
+      newEquipment.uuid = newEquipment._getGGAId({ name: newEquipment.name ?? '', type: container, generator: '' })
+    }
+
+    const list = GURPS.decode<Record<string, EquipmentComponent>>(actor, path) || {}
+    GURPS.put(list, foundry.utils.duplicate(newEquipment) as EquipmentComponent)
     await actor.internalUpdate({ [path]: list })
   })
 
@@ -29,55 +34,59 @@ export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet:
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const path = target.dataset.key ?? ''
-    const obj = foundry.utils.duplicate(GURPS.decode(actor, path))
-    await sheet.editEquipment(actor, path, obj)
+    const equipmentPath = target.dataset.key ?? ''
+    const equipmentData = foundry.utils.duplicate(GURPS.decode<EquipmentComponent>(actor, equipmentPath))
+    await sheet.editEquipment(actor, equipmentPath, equipmentData)
   })
 
   html.find(`[data-action="delete-${entityType}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const key = target.dataset.key ?? ''
-    const obj = GURPS.decode<{ name?: string; itemid?: string }>(actor, key)
-    const confirmed = await confirmAndDelete(actor, key, obj?.name, 'GURPS.equipment')
-    if (confirmed) {
-      if (!game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS as any)) {
-        await actor.deleteEquipment(key)
-        await actor.refreshDR()
-      } else {
-        const item = actor.items.get(obj?.itemid ?? '')
-        if (item && item.id) {
-          await actor._removeItemAdditions(item.id)
-          await actor.deleteEmbeddedDocuments('Item', [item.id])
-          GURPS.removeKey(actor, key)
-          await actor.refreshDR()
-        }
-      }
+    const equipmentKey = target.dataset.key ?? ''
+    const equipmentData = GURPS.decode<EquipmentComponent>(actor, equipmentKey)
+
+    const confirmed = await confirmAndDelete(actor, equipmentKey, equipmentData?.name, 'GURPS.equipment')
+    if (!confirmed) return
+
+    if (!game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      await actor.deleteEquipment(equipmentKey)
+      await actor.refreshDR()
+      return
+    }
+
+    const item = actor.items.get(equipmentData?.itemid ?? '')
+    if (item && item.id) {
+      await actor._removeItemAdditions(item.id)
+      await actor.deleteEmbeddedDocuments('Item', [item.id])
+      GURPS.removeKey(actor, equipmentKey)
+      await actor.refreshDR()
     }
   })
 }
 
-export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheet): void {
+export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheetEditMethods): void {
   const entityType = 'note'
   const path = 'system.notes'
 
   html.find(`[data-action="add-${entityType}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     const { Note } = await import('../actor-components.js')
-    const list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path) as Record<string, unknown>) || {}
-    const obj = new Note('', true) as any
-    const dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
+    const list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path) as Record<string, NoteComponent>) || {}
+    const newNote = new Note('', true) as NoteComponent
+
+    const dialogContent = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', newNote as Record<string, string>)
+
     new Dialog({
       title: 'Note Editor',
-      content: dlgHtml,
+      content: dialogContent,
       buttons: {
         one: {
           label: 'Create',
           callback: async (dialogHtml: JQuery) => {
-            obj.notes = dialogHtml.find('.notes').val() as string
-            obj.title = dialogHtml.find('.title').val() as string
-            GURPS.put(list, obj)
+            newNote.notes = dialogHtml.find('.notes').val() as string
+            newNote.title = dialogHtml.find('.title').val() as string
+            GURPS.put(list, newNote)
             await actor.internalUpdate({ [path]: list })
           },
         },
@@ -90,18 +99,19 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const key = target.dataset.key ?? ''
-    const obj = foundry.utils.duplicate(GURPS.decode(actor, key))
-    await sheet.editNotes(actor, key, obj)
+    const notePath = target.dataset.key ?? ''
+    const noteData = foundry.utils.duplicate(GURPS.decode<NoteComponent>(actor, notePath))
+    await sheet.editNotes(actor, notePath, noteData)
   })
 
   html.find(`[data-action="delete-${entityType}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const key = target.dataset.key ?? ''
-    const obj = GURPS.decode<{ notes?: string }>(actor, key)
-    const confirmed = await confirmAndDelete(actor, key, obj?.notes, 'GURPS.notes')
+    const noteKey = target.dataset.key ?? ''
+    const noteData = GURPS.decode<NoteComponent>(actor, noteKey)
+
+    const confirmed = await confirmAndDelete(actor, noteKey, noteData?.notes, 'GURPS.notes')
     if (confirmed) {
       await actor.refreshDR()
     }

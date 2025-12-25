@@ -7,17 +7,17 @@
 }
 
 .ms-section-header {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
   color: var(--ms-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  margin: 0 0 8px 0;
-  padding-bottom: 6px;
+  margin: 0 0 var(--ms-space-4) 0;
+  padding-bottom: var(--ms-space-3);
   border-bottom: 1px solid var(--ms-border-light);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ms-space-3);
 
   i {
     color: var(--ms-accent);
@@ -32,7 +32,7 @@
   margin-left: auto;
   color: var(--ms-accent);
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--ms-font-xs);
 
   &:hover {
     color: var(--ms-text);
@@ -53,10 +53,10 @@
 }
 
 .ms-section-count {
-  font-weight: normal;
+  font-weight: var(--ms-weight-normal);
   color: var(--ms-text-dim);
-  font-size: 10px;
-  margin-left: 4px;
+  font-size: var(--ms-font-xs);
+  margin-left: var(--ms-space-2);
 }
 
 .ms-section.collapsed {
@@ -84,8 +84,8 @@
 
 .ms-empty {
   text-align: center;
-  padding: 12px;
+  padding: var(--ms-space-6);
   color: var(--ms-text-dim);
   font-style: italic;
-  font-size: 11px;
+  font-size: var(--ms-font-xs);
 }

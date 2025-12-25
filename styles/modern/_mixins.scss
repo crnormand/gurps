@@ -1,11 +1,12 @@
 @mixin table-header {
   background: var(--ms-bg-section);
   color: var(--ms-text-muted);
-  font-size: 10px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
   text-transform: uppercase;
+  letter-spacing: 0.03em;
   border-bottom: 2px solid var(--ms-border);
-  padding: 6px 8px;
+  padding: var(--ms-space-3) var(--ms-space-4);
 
   > span:not(:first-child) {
     text-align: center;
@@ -13,7 +14,7 @@
 }
 
 @mixin table-row {
-  padding: 5px 8px;
+  padding: var(--ms-space-2) var(--ms-space-4);
   border-bottom: 1px solid var(--ms-border-light);
   cursor: pointer;
 
@@ -23,7 +24,7 @@
 }
 
 @mixin table-container {
-  font-size: 11px;
+  font-size: var(--ms-font-sm);
   border: 1px solid var(--ms-border);
   border-radius: var(--ms-radius);
   overflow: hidden;
@@ -45,17 +46,17 @@
 }
 
 @mixin section-header {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
   color: var(--ms-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  margin: 0 0 8px 0;
-  padding-bottom: 6px;
+  margin: 0 0 var(--ms-space-4) 0;
+  padding-bottom: var(--ms-space-3);
   border-bottom: 1px solid var(--ms-border-light);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ms-space-3);
 
   i { color: var(--ms-accent); }
 }
@@ -63,7 +64,7 @@
 @mixin action-button {
   color: var(--ms-text-muted);
   cursor: pointer;
-  font-size: 11px;
+  font-size: var(--ms-font-xs);
   opacity: 0.6;
   transition: opacity 0.15s, color 0.15s;
 
@@ -80,18 +81,19 @@
 @mixin form-header {
   background: transparent;
   color: var(--ms-text-muted);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
   text-transform: uppercase;
-  padding: 0 0 6px 0;
+  letter-spacing: 0.03em;
+  padding: 0 0 var(--ms-space-3) 0;
   border-bottom: 1px solid var(--ms-border-light);
-  margin-bottom: 8px;
+  margin-bottom: var(--ms-space-4);
 }
 
 @mixin field-grid($label-width: 70px) {
   display: grid;
   grid-template-columns: $label-width 1fr;
-  gap: 4px 8px;
+  gap: var(--ms-space-2) var(--ms-space-4);
   align-items: center;
 }
 
@@ -154,6 +156,39 @@
   @include interactive-row;
 
   > span {
-    padding: 6px;
+    padding: var(--ms-space-3);
+  }
+}
+
+@mixin tabular-nums {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@mixin flex-center-y {
+  display: flex;
+  align-items: center;
+}
+
+@mixin flex-center-x {
+  display: flex;
+  justify-content: center;
+}
+
+@mixin hover-inset($radius: var(--ms-radius-sm)) {
+  &:hover {
+    background: var(--ms-bg-hover);
+    padding-left: var(--ms-space-2);
+    padding-right: var(--ms-space-2);
+    margin-left: calc(-1 * var(--ms-space-2));
+    margin-right: calc(-1 * var(--ms-space-2));
+    border-radius: $radius;
+  }
+}
+
+@mixin focus-ring {
+  &:focus {
+    outline: none;
+    border-color: var(--ms-accent);
+    box-shadow: 0 0 0 2px var(--ms-accent-light);
   }
 }

@@ -1,17 +1,16 @@
 import { GurpsActor } from '../actor.js'
-import { GurpsActorSheet } from '../actor-sheet.js'
 
 export function buildEntityPath(basePath: string, key: string): string {
   return `${basePath}.${key}`
 }
 
 export function getDisplayName(
-  obj: Record<string, unknown> | undefined,
-  displayProperty: string,
+  obj: EntityComponentBase | undefined,
+  displayProperty: keyof EntityComponentBase,
   fallbackLocaleKey: string
 ): string {
   if (obj && typeof obj[displayProperty] === 'string') {
-    return obj[displayProperty] as string
+    return obj[displayProperty]
   }
   return game.i18n!.localize(fallbackLocaleKey)
 }
@@ -32,49 +31,51 @@ export async function confirmAndDelete(
   return confirmed ?? false
 }
 
-export function bindCrudActions(
+export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
   actor: GurpsActor,
-  sheet: GurpsActorSheet,
+  sheet: TSheet,
   config: EntityConfigWithMethod
 ): void {
   const { entityName, path, EntityClass, editMethod, localeKey, displayProperty = 'name', createArgs } = config
 
   html.find(`[data-action="add-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
-    const obj = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
-    const list = GURPS.decode<Record<string, unknown>>(actor, path) || {}
-    const key = GURPS.put(list, foundry.utils.duplicate(obj))
+    const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
+    const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
+    const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
     await actor.internalUpdate({ [path]: list })
+
     const fullPath = buildEntityPath(path, key)
-    const newObj = foundry.utils.duplicate(GURPS.decode(actor, fullPath))
-    await editMethod.call(sheet, actor, fullPath, newObj)
+    const duplicatedEntity = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, fullPath))
+    await editMethod.call(sheet, actor, fullPath, duplicatedEntity)
   })
 
   html.find(`[data-action="edit-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const objPath = target.dataset.key ?? ''
-    const obj = foundry.utils.duplicate(GURPS.decode(actor, objPath))
-    await editMethod.call(sheet, actor, objPath, obj)
+    const entityPath = target.dataset.key ?? ''
+    const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
+    await editMethod.call(sheet, actor, entityPath, entityData)
   })
 
   html.find(`[data-action="delete-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const key = target.dataset.key ?? ''
-    const obj = GURPS.decode<Record<string, unknown>>(actor, key)
-    await confirmAndDelete(actor, key, obj?.[displayProperty] as string | undefined, localeKey)
+    const entityKey = target.dataset.key ?? ''
+    const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
+    const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
+    await confirmAndDelete(actor, entityKey, displayValue, localeKey)
   })
 }
 
-export function bindModifierCrudActions(
+export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
   actor: GurpsActor,
-  sheet: GurpsActorSheet,
-  editMethod: (actor: GurpsActor, path: string, obj: unknown, isReaction: boolean) => Promise<void>,
+  sheet: TSheet,
+  editMethod: TSheet['editModifier'],
   isReaction: boolean
 ): void {
   const entityName = isReaction ? 'reaction' : 'conditional'
@@ -84,31 +85,32 @@ export function bindModifierCrudActions(
   html.find(`[data-action="add-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     const { Reaction, Modifier } = await import('../actor-components.js')
-    const EntityClass = isReaction ? Reaction : Modifier
-    const obj = new EntityClass('0', game.i18n!.localize(localeKey))
-    const list = GURPS.decode<Record<string, unknown>>(actor, path) || {}
-    const key = GURPS.put(list, foundry.utils.duplicate(obj))
+    const ModifierClass = isReaction ? Reaction : Modifier
+    const newModifier = new ModifierClass('0', game.i18n!.localize(localeKey))
+    const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
+    const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
     await actor.internalUpdate({ [path]: list })
+
     const fullPath = buildEntityPath(path, key)
-    const newObj = foundry.utils.duplicate(GURPS.decode(actor, fullPath))
-    await editMethod.call(sheet, actor, fullPath, newObj, isReaction)
+    const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
+    await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
   })
 
   html.find(`[data-action="edit-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const objPath = target.dataset.key ?? ''
-    const obj = foundry.utils.duplicate(GURPS.decode(actor, objPath))
-    await editMethod.call(sheet, actor, objPath, obj, isReaction)
+    const modifierPath = target.dataset.key ?? ''
+    const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
+    await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
   })
 
   html.find(`[data-action="delete-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
     event.preventDefault()
     event.stopPropagation()
     const target = event.currentTarget as HTMLElement
-    const key = target.dataset.key ?? ''
-    const obj = GURPS.decode<Record<string, unknown>>(actor, key)
-    await confirmAndDelete(actor, key, obj?.situation as string | undefined, localeKey)
+    const modifierKey = target.dataset.key ?? ''
+    const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
+    await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
   })
 }

@@ -1,18 +1,20 @@
+@use '../mixins' as *;
+
 .ms-resources {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--ms-space-3);
   min-width: 140px;
 }
 
 .ms-resource {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ms-space-3);
 
   .ms-resource-label {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: var(--ms-font-xs);
+    font-weight: var(--ms-weight-semibold);
     width: 24px;
     color: var(--ms-text-muted);
   }
@@ -21,7 +23,7 @@
     flex: 1;
     height: 10px;
     background: var(--ms-border-light);
-    border-radius: 5px;
+    border-radius: var(--ms-radius-sm);
     overflow: hidden;
     border: 1px solid var(--ms-border);
 
@@ -35,27 +37,23 @@
   &.ms-fp .ms-resource-fill { background: var(--ms-fp); }
 
   .ms-resource-text {
-    font-size: 11px;
-    font-weight: 600;
     min-width: 32px;
-    text-align: right;
-    color: var(--ms-text);
   }
 
   .ms-condition-badge {
-    font-size: 9px;
-    font-weight: 700;
-    color: #fff;
+    font-size: var(--ms-font-xs);
+    font-weight: var(--ms-weight-bold);
+    color: var(--ms-bg-card);
     background: var(--ms-hp);
-    padding: 1px 4px;
-    border-radius: 3px;
+    padding: 1px var(--ms-space-2);
+    border-radius: var(--ms-radius-sm);
   }
 }
 
 .ms-hp-fp-row {
   display: flex;
-  gap: 12px;
-  margin-top: 4px;
+  gap: var(--ms-space-6);
+  margin-top: var(--ms-space-2);
 
   .ms-resource {
     min-width: 0;
@@ -65,7 +63,7 @@
 .ms-resource-display {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ms-space-2);
   cursor: pointer;
 
   .ms-resource-bar {
@@ -81,8 +79,9 @@
 }
 
 .ms-resource-text {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
   min-width: 45px;
   text-align: right;
   color: var(--ms-text);
@@ -92,7 +91,7 @@
 .ms-resource-edit {
   display: none;
   align-items: center;
-  gap: 2px;
+  gap: var(--ms-space-1);
 }
 
 .ms-resource.editing {
@@ -106,10 +105,11 @@
 
 .ms-resource-input {
   width: 36px;
-  padding: 2px 4px;
+  padding: var(--ms-space-1) var(--ms-space-2);
   text-align: center;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
   border: 1px solid var(--ms-border);
   border-radius: var(--ms-radius);
   background: var(--ms-bg-card);
@@ -122,8 +122,8 @@
 
 .ms-resource-separator {
   color: var(--ms-text-muted);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-medium);
 }
 
 .ms-resource-reset {
@@ -131,7 +131,7 @@
   border: none;
   color: var(--ms-text-muted);
   cursor: pointer;
-  padding: 2px 2px;
+  padding: var(--ms-space-1);
   border-radius: var(--ms-radius);
   transition: background .15s, color .15s;
   line-height: initial;
@@ -142,6 +142,6 @@
   }
 
   i {
-    font-size: 10px;
+    font-size: var(--ms-font-xs);
   }
 }

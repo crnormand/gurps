@@ -1,26 +1,28 @@
+@use '../mixins' as *;
+
 .ms-status-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: var(--ms-space-3);
+  padding: var(--ms-space-4) var(--ms-space-6);
   background: var(--ms-bg-card);
   border-bottom: 2px solid var(--ms-border);
-  font-size: 11px;
+  font-size: var(--ms-font-xs);
 
   .ms-status-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--ms-space-3);
 
     label {
       color: var(--ms-text-muted);
-      font-weight: 500;
+      font-weight: var(--ms-weight-medium);
     }
 
     select {
-      padding: 3px 8px;
-      font-size: 11px;
+      padding: var(--ms-space-1) var(--ms-space-4);
+      font-size: var(--ms-font-xs);
       border: 1px solid var(--ms-border);
       border-radius: var(--ms-radius);
       background: var(--ms-bg);
@@ -29,7 +31,7 @@
 
     span {
       color: var(--ms-text);
-      font-weight: 500;
+      font-weight: var(--ms-weight-medium);
     }
   }
 
@@ -41,10 +43,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: var(--ms-space-3);
     min-width: 130px;
-    padding: 3px 8px;
-    font-size: 11px;
+    padding: var(--ms-space-1) var(--ms-space-4);
+    font-size: var(--ms-font-xs);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
     background: var(--ms-bg);
@@ -63,11 +65,11 @@
     .ms-posture-icons {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: var(--ms-space-2);
     }
 
     i {
-      font-size: 10px;
+      font-size: var(--ms-font-xs);
       color: var(--ms-text-muted);
     }
   }
@@ -79,7 +81,7 @@
     left: 0;
     z-index: 100;
     min-width: 130px;
-    margin-top: 2px;
+    margin-top: var(--ms-space-1);
     background: var(--ms-bg-card);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
@@ -94,9 +96,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
-    padding: 6px 10px;
-    font-size: 11px;
+    gap: var(--ms-space-3);
+    padding: var(--ms-space-3) var(--ms-space-5);
+    font-size: var(--ms-font-xs);
     cursor: pointer;
     white-space: nowrap;
 
@@ -123,14 +125,14 @@
 .ms-status-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--ms-space-4);
 }
 
 .ms-status-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: var(--ms-space-4);
+  font-size: var(--ms-font-xs);
 
   .ms-status-label {
     color: var(--ms-text-muted);
@@ -138,7 +140,8 @@
   }
 
   .ms-status-value {
-    font-weight: 600;
+    font-weight: var(--ms-weight-semibold);
+    @include tabular-nums;
     color: var(--ms-text);
 
     &.rollable {
@@ -150,11 +153,11 @@
 
   select {
     flex: 1;
-    padding: 4px 8px;
+    padding: var(--ms-space-2) var(--ms-space-4);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
     background: var(--ms-bg);
-    font-size: 11px;
+    font-size: var(--ms-font-xs);
     color: var(--ms-text);
   }
 }
@@ -162,21 +165,22 @@
 .ms-senses-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: var(--ms-space-3);
 }
 
 .ms-sense-item {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: var(--ms-space-2);
+  font-size: var(--ms-font-xs);
 
   .ms-sense-label {
     color: var(--ms-text-muted);
   }
 
   .ms-sense-value {
-    font-weight: 600;
+    font-weight: var(--ms-weight-semibold);
+    @include tabular-nums;
     color: var(--ms-text);
 
     &.rollable {

@@ -1,7 +1,9 @@
+@use '../variables' as *;
+
 .effect-picker {
   .window-content {
     padding: 0;
-    background: #f8f6f2;
+    background: $ms-bg;
   }
 }
 
@@ -12,34 +14,34 @@
 }
 
 .effect-picker-search-wrapper {
-  padding: 12px;
-  border-bottom: 1px solid #d8d4cc;
-  background: #ffffff;
+  padding: $ms-space-6;
+  border-bottom: 1px solid $ms-border;
+  background: $ms-bg-card;
 }
 
 .effect-picker-search {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d8d4cc;
-  border-radius: 6px;
-  font-size: 13px;
-  background: #f8f6f2;
+  padding: $ms-space-4 $ms-space-6;
+  border: 1px solid $ms-border;
+  border-radius: $ms-radius-md;
+  font-size: $ms-font-sm;
+  background: $ms-bg;
 
   &:focus {
     outline: none;
-    border-color: #3e6a4d;
-    box-shadow: 0 0 0 2px rgba(62, 106, 77, 0.15);
+    border-color: $ms-accent;
+    box-shadow: 0 0 0 2px $ms-accent-light;
   }
 }
 
 .effect-picker-list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0;
+  padding: $ms-space-4 0;
 }
 
 .effect-picker-category {
-  margin-bottom: 4px;
+  margin-bottom: $ms-space-2;
 
   &.collapsed {
     .effect-picker-category-header i {
@@ -55,18 +57,19 @@
 .effect-picker-category-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  font-weight: 600;
-  font-size: 11px;
+  gap: $ms-gap;
+  padding: $ms-space-4 $ms-space-6;
+  font-weight: $ms-weight-semibold;
+  font-size: $ms-font-xs;
   text-transform: uppercase;
-  color: #666;
+  letter-spacing: 0.03em;
+  color: $ms-text-muted;
   cursor: pointer;
   user-select: none;
 
   i {
-    font-size: 10px;
-    transition: transform 0.2s;
+    font-size: $ms-font-xs;
+    transition: transform $ms-transition-slow;
   }
 
   &:hover {
@@ -76,49 +79,49 @@
 
 .effect-picker-category-count {
   margin-left: auto;
-  padding: 2px 6px;
-  background: #eceae6;
-  border-radius: 10px;
-  font-size: 10px;
+  padding: $ms-space-1 $ms-space-3;
+  background: $ms-bg-muted;
+  border-radius: $ms-radius-pill;
+  font-size: $ms-font-xs;
 }
 
 .effect-picker-category-content {
-  padding: 0 8px;
+  padding: 0 $ms-space-4;
 }
 
 .effect-picker-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 6px;
+  gap: $ms-space-5;
+  padding: $ms-space-4 $ms-space-6;
+  border-radius: $ms-radius-md;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background $ms-transition-normal;
 
   &:hover {
-    background: rgba(62, 106, 77, 0.12);
+    background: $ms-accent-light;
   }
 
   &:active {
-    background: rgba(62, 106, 77, 0.2);
+    background: rgba($ms-accent, 0.2);
   }
 }
 
 .effect-picker-icon {
   width: 24px;
   height: 24px;
-  border-radius: 4px;
+  border-radius: $ms-radius;
   object-fit: contain;
 }
 
 .effect-picker-name {
-  font-size: 13px;
-  color: #1a1a1a;
+  font-size: $ms-font-sm;
+  color: $ms-text;
 }
 
 .effect-picker-empty {
-  padding: 24px;
+  padding: $ms-space-12;
   text-align: center;
-  color: #666;
+  color: $ms-text-muted;
   font-style: italic;
 }

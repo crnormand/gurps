@@ -1,27 +1,20 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits } from './inline-edit-handler.js'
+import { bindAllInlineEdits, bindAttributeEdit } from './inline-edit-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
 import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
 import { bindRowExpand, bindSectionCollapse, bindResourceReset } from './collapse-handler.js'
 
-interface NestedContainer {
-  contains?: Record<string, NestedContainer>
-  collapsed?: Record<string, NestedContainer>
-}
+export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
+  if (!record) return 0
 
-export function countItems(obj: unknown): number {
-  if (!obj || typeof obj !== 'object') return 0
-  let count = 0
-  const record = obj as Record<string, NestedContainer>
-  for (const key in record) {
-    count++
-    if (record[key]?.contains) count += countItems(record[key].contains)
-    if (record[key]?.collapsed) count += countItems(record[key].collapsed)
-  }
-  return count
+  return Object.values(record).reduce((count, item) => {
+    const nestedContains = item?.contains ? countItems(item.contains) : 0
+    const nestedCollapsed = item?.collapsed ? countItems(item.collapsed) : 0
+    return count + 1 + nestedContains + nestedCollapsed
+  }, 0)
 }
 
 export function calculatePositivePoints(totalpoints: TotalPoints): number {
@@ -45,18 +38,7 @@ export function calculateNegativePoints(totalpoints: TotalPoints): number {
 }
 
 interface ModernSheetData {
-  system?: {
-    skills?: Record<string, unknown>
-    ads?: Record<string, unknown>
-    melee?: Record<string, unknown>
-    ranged?: Record<string, unknown>
-    reactions?: Record<string, unknown>
-    conditionalmods?: Record<string, unknown>
-    totalpoints?: TotalPoints
-    additionalresources?: {
-      qnotes?: string
-    }
-  }
+  system?: GurpsActorSystem
   skillCount?: number
   traitCount?: number
   meleeCount?: number
@@ -104,6 +86,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     super.activateListeners(html)
 
     bindAllInlineEdits(html, this.actor)
+    bindAttributeEdit(html, this.actor)
 
     bindResourceReset(html, this.actor, [
       { selector: '.ms-resource-reset[data-action="reset-hp"]', resourcePath: 'system.HP.value', maxPath: 'system.HP.max' },
@@ -121,16 +104,17 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     })
 
     const openQuickNoteEditor = async () => {
-      let noteText = (this.actor.system as any).additionalresources?.qnotes || ''
-      noteText = noteText.replace(/<br>/g, '\n')
+      const actorSystem = this.actor.system as GurpsActorSystem
+      const noteText = (actorSystem.additionalresources?.qnotes || '').replace(/<br>/g, '\n')
       const actor = this.actor
 
-      const dialog = await new (foundry.applications.api as any).DialogV2({
+      const dialog = await new foundry.applications.api.DialogV2({
         window: { title: 'Quick Note', resizable: true },
         content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<textarea rows="4" id="i">${noteText}</textarea><b>Examples:</b>
           [+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
         buttons: [
           {
+            action: 'save',
             label: 'Save',
             icon: 'fas fa-save',
             callback: (_event: Event, button: HTMLButtonElement) => {
@@ -149,8 +133,8 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     html.find('.ms-quicknotes-content').on('dblclick', openQuickNoteEditor)
     html.find('.ms-quicknotes-edit').on('click', openQuickNoteEditor)
 
-    bindEquipmentCrudActions(html, this.actor, this as unknown as GurpsActorSheet)
-    bindNoteCrudActions(html, this.actor, this as unknown as GurpsActorSheet)
+    bindEquipmentCrudActions(html, this.actor, this)
+    bindNoteCrudActions(html, this.actor, this)
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
     this.bindEffectActions(html)
@@ -190,18 +174,18 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   }
 
   bindEntityCrudActions(html: JQuery): void {
-    const sheet = this as unknown as GurpsActorSheet
     entityConfigurations.forEach(config => {
+      const editMethodKey = config.editMethod as keyof this
       const resolvedConfig: EntityConfigWithMethod = {
         ...config,
-        editMethod: (this as unknown as Record<string, unknown>)[config.editMethod] as EntityConfigWithMethod['editMethod'],
-        createArgs: config.createArgs?.() as any
+        editMethod: (this[editMethodKey] as EntityConfigWithMethod['editMethod']).bind(this),
+        createArgs: config.createArgs?.()
       }
-      bindCrudActions(html, this.actor, sheet, resolvedConfig)
+      bindCrudActions(html, this.actor, this, resolvedConfig)
     })
 
     modifierConfigurations.forEach(({ isReaction }) => {
-      bindModifierCrudActions(html, this.actor, sheet, this.editModifier.bind(this), isReaction)
+      bindModifierCrudActions(html, this.actor, this, this.editModifier.bind(this), isReaction)
     })
   }
 }

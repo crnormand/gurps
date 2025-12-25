@@ -5,9 +5,9 @@ export function bindRowExpand(html: JQuery, config: RowExpandConfig): void {
 
   html.find(rowSelector).on('click', (event: JQuery.ClickEvent) => {
     const target = event.target as HTMLElement
-    for (const selector of excludeSelectors) {
-      if (target.closest(selector)) return
-    }
+    const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+    if (shouldExclude) return
+
     const row = event.currentTarget as HTMLElement
     row.classList.toggle(expandedClass)
   })
@@ -18,9 +18,9 @@ export function bindSectionCollapse(html: JQuery, config: SectionCollapseConfig)
 
   html.find(headerSelector).on('click', (event: JQuery.ClickEvent) => {
     const target = event.target as HTMLElement
-    for (const selector of excludeSelectors) {
-      if (target.closest(selector)) return
-    }
+    const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+    if (shouldExclude) return
+
     const header = event.currentTarget as HTMLElement
     const section = header.closest('.ms-section') as HTMLElement
     section.classList.toggle(collapsedClass)
@@ -29,11 +29,11 @@ export function bindSectionCollapse(html: JQuery, config: SectionCollapseConfig)
 }
 
 export function bindResourceReset(html: JQuery, actor: GurpsActor, configs: ResourceResetConfig[]): void {
-  for (const { selector, resourcePath, maxPath } of configs) {
+  configs.forEach(({ selector, resourcePath, maxPath }) => {
     html.find(selector).on('click', (event: JQuery.ClickEvent) => {
       event.preventDefault()
       const maxValue = foundry.utils.getProperty(actor, maxPath)
       actor.update({ [resourcePath]: maxValue })
     })
-  }
+  })
 }

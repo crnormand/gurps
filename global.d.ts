@@ -97,6 +97,16 @@ declare global {
     name?: string
     notes?: string
     uuid?: string
+    contains?: NestedEntityRecord
+    collapsed?: NestedEntityRecord
+  }
+
+  interface NestedEntityRecord {
+    [key: string]: EntityComponentBase
+  }
+
+  interface ModifierComponent extends EntityComponentBase {
+    situation?: string
   }
 
   interface InlineEditConfig {
@@ -133,23 +143,29 @@ declare global {
     onSelect: (value: string) => Promise<void> | void
   }
 
+  type EntityConstructorArgs = string[]
+
+  interface EntityComponentClass {
+    new(name?: string, ...args: never[]): EntityComponentBase
+  }
+
   interface EntityConfiguration {
     entityName: string
     path: string
-    EntityClass: new (...args: any[]) => EntityComponentBase
+    EntityClass: EntityComponentClass
     editMethod: string
     localeKey: string
     displayProperty?: string
-    createArgs?: () => any[]
+    createArgs?: () => EntityConstructorArgs
   }
 
   interface ModifierConfiguration {
     isReaction: boolean
   }
 
-  type EntityConfigWithMethod = Omit<EntityConfiguration, 'editMethod'> & {
-    editMethod: (actor: GurpsActor, path: string, obj: unknown) => Promise<void>
-    createArgs?: any[]
+  type EntityConfigWithMethod = Omit<EntityConfiguration, 'editMethod' | 'createArgs'> & {
+    editMethod: (actor: GurpsActor, path: string, obj: EntityComponentBase) => Promise<void>
+    createArgs?: EntityConstructorArgs
   }
 
   interface DocumentClassConfig {
@@ -172,10 +188,76 @@ declare global {
     'gurps.modify-dice-plus-adds': boolean
     'gurps.pdf.basicset': String
     'gurps.pdf.open-first': boolean
+    'gurps.use-foundry-items': boolean
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.basicsetpdf': String
     'gurps.pdf-open-first': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
+  }
+
+  interface DialogV2Config {
+    window?: { title?: string; resizable?: boolean }
+    content?: string
+    buttons?: Array<{
+      action?: string
+      label: string
+      icon?: string
+      callback?: (event: Event, button: HTMLButtonElement) => void
+    }>
+  }
+
+  interface NoteComponent extends EntityComponentBase {
+    notes?: string
+    title?: string
+  }
+
+  interface EquipmentComponent extends EntityComponentBase {
+    save?: boolean
+    itemid?: string
+  }
+
+  interface EquipmentInstance extends EquipmentComponent {
+    toItemData(actor: GurpsActor, path: string): Record<string, string | number | boolean | object>
+    _getGGAId(config: { name: string; type: string; generator: string }): string
+  }
+
+  interface GurpsActorSheetEditMethods {
+    editEquipment(actor: GurpsActor, path: string, obj: EntityComponentBase): Promise<void>
+    editNotes(actor: GurpsActor, path: string, obj: EntityComponentBase): Promise<void>
+    editModifier(actor: GurpsActor, path: string, obj: EntityComponentBase, isReaction: boolean): Promise<void>
+  }
+
+  interface GurpsActorSystem {
+    HP?: { value: number; max: number }
+    FP?: { value: number; max: number }
+    additionalresources?: {
+      qnotes?: string
+    }
+    skills?: NestedEntityRecord
+    ads?: NestedEntityRecord
+    melee?: NestedEntityRecord
+    ranged?: NestedEntityRecord
+    reactions?: Record<string, ModifierComponent>
+    conditionalmods?: Record<string, ModifierComponent>
+    totalpoints?: TotalPoints
+    equipment?: {
+      carried?: Record<string, EquipmentComponent>
+      other?: Record<string, EquipmentComponent>
+    }
+    notes?: Record<string, NoteComponent>
+  }
+}
+
+declare module '*/miscellaneous-settings.js' {
+  export const SYSTEM_NAME: 'gurps'
+  export const SETTING_USE_FOUNDRY_ITEMS: 'use-foundry-items'
+}
+
+declare namespace foundry.applications.api {
+  class DialogV2 {
+    constructor(config: DialogV2Config)
+    render(options?: { force?: boolean }): Promise<DialogV2>
+    element: HTMLElement
   }
 }

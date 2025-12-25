@@ -8,7 +8,7 @@
 .ms-spells-row .ms-col-college {
   text-align: center;
   color: var(--ms-text-dim);
-  font-size: 10px;
+  font-size: var(--ms-font-xs);
   @include truncate;
 }
 
@@ -25,20 +25,20 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
 }
 
 .ms-type-reaction {
-  background: rgba(46, 90, 62, 0.15);
+  background: var(--ms-advantage-bg);
   color: var(--ms-advantage);
   border: 1px solid var(--ms-advantage);
 }
 
 .ms-type-conditional {
-  background: rgba(50, 104, 168, 0.15);
-  color: #3268a8;
-  border: 1px solid #3268a8;
+  background: var(--ms-fp-bg);
+  color: var(--ms-fp);
+  border: 1px solid var(--ms-fp);
 }
 
 .ms-col-situation {
@@ -57,7 +57,7 @@
 .ms-col-name {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ms-space-2);
   overflow: hidden;
 
   .expandcollapseicon {
@@ -84,24 +84,26 @@
 .ms-col-rsl {
   text-align: center;
   color: var(--ms-text);
-  font-size: 10px;
+  font-size: var(--ms-font-xs);
 }
 
 .ms-col-level {
   text-align: center;
-  font-weight: 600;
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
   color: var(--ms-accent);
 }
 
 .ms-col-otf {
   display: flex;
-  gap: 2px;
+  gap: var(--ms-space-1);
   justify-content: center;
 }
 
 .ms-col-points {
   text-align: center;
-  font-weight: 600;
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
 }
 
 .ms-col-points-positive { color: var(--ms-advantage); }
@@ -109,7 +111,7 @@
 
 .ms-col-ref {
   text-align: center;
-  font-size: 10px;
+  font-size: var(--ms-font-xs);
 
   a {
     color: var(--ms-accent);
@@ -126,8 +128,8 @@
 .ms-row-notes {
   display: none;
   grid-column: 1 / -1;
-  padding: 6px 8px 6px 24px;
-  font-size: 11px;
+  padding: var(--ms-space-3) var(--ms-space-4) var(--ms-space-3) var(--ms-space-12);
+  font-size: var(--ms-font-sm);
   color: var(--ms-text-dim);
   background: var(--ms-bg-hover);
   border-top: 1px dashed var(--ms-border-light);
@@ -140,22 +142,22 @@
 }
 
 .ms-attacks-list {
-  font-size: 11px;
+  font-size: var(--ms-font-sm);
 }
 
 $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
 
 .ms-attack-header {
   @include grid-header($attack-columns);
-  padding: 4px 0;
-  font-size: 9px;
+  padding: var(--ms-space-2) 0;
+  font-size: var(--ms-font-xs);
 }
 
 .ms-attack-row {
   display: grid;
   grid-template-columns: $attack-columns;
-  gap: 4px;
-  padding: 5px 0;
+  gap: var(--ms-space-2);
+  padding: var(--ms-space-2) 0;
   border-bottom: 1px solid var(--ms-border-light);
   @include interactive-row;
 
@@ -171,13 +173,14 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
   }
 
   .ms-attack-level {
-    font-weight: 700;
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
     color: var(--ms-accent);
   }
 
   .ms-attack-damage {
     color: var(--ms-hp);
-    font-weight: 600;
+    font-weight: var(--ms-weight-semibold);
     cursor: pointer;
   }
 
@@ -189,7 +192,7 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
 
 .ms-attack-usage {
   text-align: center;
-  font-size: 10px;
+  font-size: var(--ms-font-xs);
   color: var(--ms-text-muted);
 }
 
@@ -203,7 +206,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   @include grid-header($encumbrance-columns);
 
   > span {
-    padding: 8px 6px;
+    padding: var(--ms-space-4) var(--ms-space-3);
     text-align: center;
   }
 }
@@ -217,7 +220,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 
   &.ms-current {
     background: var(--ms-accent-light);
-    font-weight: 600;
+    font-weight: var(--ms-weight-semibold);
   }
 
   &.ms-clickable {
@@ -225,7 +228,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   }
 
   > span {
-    padding: 6px;
+    padding: var(--ms-space-3);
     text-align: center;
   }
 }
@@ -236,12 +239,12 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 }
 
 .ms-enc-level {
-  font-weight: 500;
+  font-weight: var(--ms-weight-medium);
 }
 
 .ms-enc-load, .ms-enc-move, .ms-enc-dodge {
   text-align: center;
-  font-variant-numeric: tabular-nums;
+  @include tabular-nums;
 }
 
 .ms-enc-dodge.rollable {
@@ -249,7 +252,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 }
 
 .ms-dodge-bonus {
-  margin-left: 4px;
+  margin-left: var(--ms-space-2);
   color: var(--ms-advantage);
   &.rollable {
     cursor: pointer;
@@ -260,18 +263,18 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-enc-mode {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
+  gap: var(--ms-space-4);
+  padding: var(--ms-space-4);
   background: var(--ms-bg-section);
   border-top: 1px solid var(--ms-border);
-  font-size: 11px;
+  font-size: var(--ms-font-xs);
 
   label {
     color: var(--ms-text-muted);
   }
 
   select {
-    padding: 4px 8px;
+    padding: var(--ms-space-2) var(--ms-space-4);
   }
 }
 
@@ -293,7 +296,7 @@ $locations-columns: 50px 1fr 60px 60px;
   @include grid-header($locations-columns);
 
   > span {
-    padding: 8px 6px;
+    padding: var(--ms-space-4) var(--ms-space-3);
     text-align: center;
   }
 }
@@ -306,7 +309,7 @@ $locations-columns: 50px 1fr 60px 60px;
   @include zebra-striping;
 
   > span {
-    padding: 5px 6px;
+    padding: var(--ms-space-2) var(--ms-space-3);
     text-align: center;
   }
 }
@@ -317,14 +320,15 @@ $locations-columns: 50px 1fr 60px 60px;
 }
 
 .ms-loc-where {
-  font-weight: 500;
+  font-weight: var(--ms-weight-medium);
 }
 
 .ms-loc-penalty {
   text-align: center;
   color: var(--ms-disadvantage);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
 
   &:hover {
     background: var(--ms-disadvantage-bg);
@@ -336,12 +340,13 @@ $locations-columns: 50px 1fr 60px 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 600;
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
   color: var(--ms-accent);
-  padding: 5px 6px;
+  padding: var(--ms-space-2) var(--ms-space-3);
 
   &.ms-modified {
-    color: #3268a8;
+    color: var(--ms-fp);
   }
 
   .ms-dr-display {
@@ -358,12 +363,12 @@ $locations-columns: 50px 1fr 60px 60px;
     max-width: 50px;
     height: 1.2em;
     text-align: center;
-    font-weight: 600;
+    font-weight: var(--ms-weight-semibold);
     font-size: inherit;
     line-height: 1;
     border: 1px solid var(--ms-accent);
-    border-radius: 3px;
-    padding: 0 4px;
+    border-radius: var(--ms-radius-sm);
+    padding: 0 var(--ms-space-2);
     background: var(--ms-bg-card);
     box-sizing: border-box;
   }
@@ -389,20 +394,21 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
   @include grid-header($equipment-columns);
 
   > span {
-    padding: 8px 6px;
+    padding: var(--ms-space-4) var(--ms-space-3);
   }
 }
 
 .ms-eqt-row {
   display: grid;
   grid-template-columns: $equipment-columns;
+  align-items: center;
   background: var(--ms-bg-card);
   border-bottom: 1px solid var(--ms-border-light);
   @include zebra-striping;
   @include interactive-row;
 
   > span {
-    padding: 6px;
+    padding: var(--ms-space-3);
   }
 }
 
@@ -425,12 +431,12 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--ms-space-2);
 
   .equipmentbutton {
     color: var(--ms-text-muted);
     cursor: pointer;
-    font-size: 10px;
+    font-size: var(--ms-font-xs);
 
     &:hover {
       color: var(--ms-accent);
@@ -441,10 +447,10 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
 .ms-eqt-name {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--ms-space-1);
 
   .expandcollapseicon {
-    margin-right: 4px;
+    margin-right: var(--ms-space-2);
     cursor: pointer;
     color: var(--ms-text-muted);
   }
@@ -457,14 +463,14 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
 }
 
 .ms-eqt-notes {
-  font-size: 10px;
+  font-size: var(--ms-font-xs);
   color: var(--ms-text-muted);
   font-style: italic;
 }
 
 .ms-eqt-cost, .ms-eqt-weight {
   text-align: right;
-  font-variant-numeric: tabular-nums;
+  @include tabular-nums;
 }
 
 .ms-eqt-ref {
@@ -480,19 +486,20 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
 }
 
 .ms-modifier-list {
-  font-size: 11px;
+  font-size: var(--ms-font-xs);
 }
 
 .ms-modifier-row {
   display: flex;
-  gap: 8px;
-  padding: 4px 0;
+  gap: var(--ms-space-4);
+  padding: var(--ms-space-2) 0;
   border-bottom: 1px solid var(--ms-border-light);
 
   &:last-child { border-bottom: none; }
 
   .ms-modifier-value {
-    font-weight: 700;
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
     color: var(--ms-accent);
     min-width: 30px;
   }
