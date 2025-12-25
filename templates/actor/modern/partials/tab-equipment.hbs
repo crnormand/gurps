@@ -1,0 +1,15 @@
+{{>equipment-table
+    container="carried"
+    items=system.equipment.carried
+    showEquipped=true
+    title=(concat (localize "GURPS.equipmentCarried") " (" (toLocaleString eqtsummary.eqtlbs) " " (localize "GURPS.lbs") "; $" (toLocaleString eqtsummary.eqtcost) ")")
+    icon="fa-briefcase"
+}}
+
+{{>equipment-table
+    container="other"
+    items=system.equipment.other
+    showEquipped=false
+    title=(concat (localize "GURPS.equipmentOther") " ($" (toLocaleString eqtsummary.othercost) ")")
+    icon="fa-archive"
+}}

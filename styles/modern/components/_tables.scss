@@ -1,0 +1,522 @@
+@use '../mixins' as *;
+
+@include grid-table('skills', 1fr 50px 60px 50px);
+@include grid-table('spells', 1fr 100px 50px 60px 50px);
+@include grid-table('traits', 1fr minmax(100px, auto) 50px 50px 50px);
+@include grid-table('modifiers', 30px 1fr 60px 50px);
+
+.ms-spells-row .ms-col-college {
+  text-align: center;
+  color: var(--ms-text-dim);
+  font-size: 10px;
+  @include truncate;
+}
+
+.ms-col-type {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ms-type-reaction {
+  background: rgba(46, 90, 62, 0.15);
+  color: var(--ms-advantage);
+  border: 1px solid var(--ms-advantage);
+}
+
+.ms-type-conditional {
+  background: rgba(50, 104, 168, 0.15);
+  color: #3268a8;
+  border: 1px solid #3268a8;
+}
+
+.ms-col-situation {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ms-col-modifier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-col-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+
+  .expandcollapseicon {
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+    width: 12px;
+    text-align: center;
+
+    &:hover { color: var(--ms-accent); }
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} { padding-left: #{$i * 16}px; }
+  }
+}
+
+.ms-col-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-col-rsl {
+  text-align: center;
+  color: var(--ms-text);
+  font-size: 10px;
+}
+
+.ms-col-level {
+  text-align: center;
+  font-weight: 600;
+  color: var(--ms-accent);
+}
+
+.ms-col-otf {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+
+.ms-col-points {
+  text-align: center;
+  font-weight: 600;
+}
+
+.ms-col-points-positive { color: var(--ms-advantage); }
+.ms-col-points-negative { color: var(--ms-disadvantage); }
+
+.ms-col-ref {
+  text-align: center;
+  font-size: 10px;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-skills-row.expanded,
+.ms-traits-row.expanded {
+  .ms-row-notes { display: block; }
+}
+
+.ms-row-notes {
+  display: none;
+  grid-column: 1 / -1;
+  padding: 6px 8px 6px 24px;
+  font-size: 11px;
+  color: var(--ms-text-dim);
+  background: var(--ms-bg-hover);
+  border-top: 1px dashed var(--ms-border-light);
+}
+
+.ms-attacks-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-gap);
+}
+
+.ms-attacks-list {
+  font-size: 11px;
+}
+
+$attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
+
+.ms-attack-header {
+  @include grid-header($attack-columns);
+  padding: 4px 0;
+  font-size: 9px;
+}
+
+.ms-attack-row {
+  display: grid;
+  grid-template-columns: $attack-columns;
+  gap: 4px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+  @include interactive-row;
+
+  &:last-child { border-bottom: none; }
+
+  > span:not(:first-child) { text-align: center; }
+
+  .ms-attack-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ms-text);
+  }
+
+  .ms-attack-level {
+    font-weight: 700;
+    color: var(--ms-accent);
+  }
+
+  .ms-attack-damage {
+    color: var(--ms-hp);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .ms-attack-reach, .ms-attack-acc,
+  .ms-attack-parry, .ms-attack-range {
+    color: var(--ms-text-muted);
+  }
+}
+
+.ms-attack-usage {
+  text-align: center;
+  font-size: 10px;
+  color: var(--ms-text-muted);
+}
+
+$encumbrance-columns: 24px 1fr 60px 60px 60px;
+
+.ms-encumbrance-table {
+  @include table-container;
+}
+
+.ms-enc-header {
+  @include grid-header($encumbrance-columns);
+
+  > span {
+    padding: 8px 6px;
+    text-align: center;
+  }
+}
+
+.ms-enc-row {
+  display: grid;
+  grid-template-columns: $encumbrance-columns;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+  @include zebra-striping;
+
+  &.ms-current {
+    background: var(--ms-accent-light);
+    font-weight: 600;
+  }
+
+  &.ms-clickable {
+    @include interactive-row;
+  }
+
+  > span {
+    padding: 6px;
+    text-align: center;
+  }
+}
+
+.ms-enc-marker {
+  text-align: center;
+  color: var(--ms-accent);
+}
+
+.ms-enc-level {
+  font-weight: 500;
+}
+
+.ms-enc-load, .ms-enc-move, .ms-enc-dodge {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-enc-dodge.rollable {
+  @include rollable-link;
+}
+
+.ms-dodge-bonus {
+  margin-left: 4px;
+  color: var(--ms-advantage);
+  &.rollable {
+    cursor: pointer;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-enc-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--ms-bg-section);
+  border-top: 1px solid var(--ms-border);
+  font-size: 11px;
+
+  label {
+    color: var(--ms-text-muted);
+  }
+
+  select {
+    padding: 4px 8px;
+  }
+}
+
+.ms-lock-icon {
+  margin-left: auto;
+  color: var(--ms-accent);
+  &.ms-unlocked {
+    color: coral;
+  }
+}
+
+$locations-columns: 50px 1fr 60px 60px;
+
+.ms-locations-table {
+  @include table-container;
+}
+
+.ms-loc-header {
+  @include grid-header($locations-columns);
+
+  > span {
+    padding: 8px 6px;
+    text-align: center;
+  }
+}
+
+.ms-loc-row {
+  display: grid;
+  grid-template-columns: $locations-columns;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+  @include zebra-striping;
+
+  > span {
+    padding: 5px 6px;
+    text-align: center;
+  }
+}
+
+.ms-loc-roll {
+  text-align: center;
+  color: var(--ms-text-muted);
+}
+
+.ms-loc-where {
+  font-weight: 500;
+}
+
+.ms-loc-penalty {
+  text-align: center;
+  color: var(--ms-disadvantage);
+  cursor: pointer;
+  font-weight: 600;
+
+  &:hover {
+    background: var(--ms-disadvantage-bg);
+    text-decoration: underline;
+  }
+}
+
+.ms-loc-dr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  color: var(--ms-accent);
+  padding: 5px 6px;
+
+  &.ms-modified {
+    color: #3268a8;
+  }
+
+  .ms-dr-display {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .ms-dr-input {
+    display: none;
+    width: 100%;
+    max-width: 50px;
+    height: 1.2em;
+    text-align: center;
+    font-weight: 600;
+    font-size: inherit;
+    line-height: 1;
+    border: 1px solid var(--ms-accent);
+    border-radius: 3px;
+    padding: 0 4px;
+    background: var(--ms-bg-card);
+    box-sizing: border-box;
+  }
+
+  &.editing {
+    .ms-dr-display {
+      display: none;
+    }
+
+    .ms-dr-input {
+      display: inline-block;
+    }
+  }
+}
+
+$equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
+
+.ms-equipment-table {
+  @include table-container;
+}
+
+.ms-eqt-header {
+  @include grid-header($equipment-columns);
+
+  > span {
+    padding: 8px 6px;
+  }
+}
+
+.ms-eqt-row {
+  display: grid;
+  grid-template-columns: $equipment-columns;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+  @include zebra-striping;
+  @include interactive-row;
+
+  > span {
+    padding: 6px;
+  }
+}
+
+.ms-eqt-equipped {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  .fa-check-circle {
+    color: var(--ms-accent);
+  }
+
+  .ms-inactive {
+    color: var(--ms-text-dim);
+  }
+}
+
+.ms-eqt-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  .equipmentbutton {
+    color: var(--ms-text-muted);
+    cursor: pointer;
+    font-size: 10px;
+
+    &:hover {
+      color: var(--ms-accent);
+    }
+  }
+}
+
+.ms-eqt-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .expandcollapseicon {
+    margin-right: 4px;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} {
+      padding-left: #{6 + $i * 12}px;
+    }
+  }
+}
+
+.ms-eqt-notes {
+  font-size: 10px;
+  color: var(--ms-text-muted);
+  font-style: italic;
+}
+
+.ms-eqt-cost, .ms-eqt-weight {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-eqt-ref {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-modifier-list {
+  font-size: 11px;
+}
+
+.ms-modifier-row {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:last-child { border-bottom: none; }
+
+  .ms-modifier-value {
+    font-weight: 700;
+    color: var(--ms-accent);
+    min-width: 30px;
+  }
+
+  .ms-modifier-situation {
+    flex: 1;
+    color: var(--ms-text);
+  }
+}
+
+.ms-combat-layout {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  gap: var(--ms-gap);
+}
+
+.ms-combat-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-gap);
+}
+
+.ms-combat-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-gap);
+}

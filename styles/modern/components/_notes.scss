@@ -1,0 +1,280 @@
+.ms-notes-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-gap);
+
+  .ms-misc-info {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ms-border-light);
+    font-size: 11px;
+    color: var(--ms-text-muted);
+
+    div {
+      padding: 2px 0;
+    }
+  }
+}
+
+.ms-notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-gap);
+}
+
+.ms-notes-list {
+  font-size: 11px;
+}
+
+.ms-note-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+}
+
+.ms-note-content {
+  flex: 1;
+
+  .expandcollapseicon {
+    margin-right: 4px;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} {
+      padding-left: #{$i * 12}px;
+    }
+  }
+}
+
+.ms-note-ref {
+  flex-shrink: 0;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-user-created {
+  color: var(--ms-accent);
+  margin-left: 4px;
+}
+
+.ms-skill-row {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+  transition: background 0.1s;
+  cursor: pointer;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: var(--ms-bg-hover); padding-left: 4px; padding-right: 4px; margin-left: -4px; margin-right: -4px; border-radius: 3px; }
+
+  .ms-skill-name {
+    flex: 1;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ms-text);
+  }
+
+  .ms-skill-rsl {
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--ms-text-dim);
+    margin-right: 8px;
+  }
+
+  .ms-skill-level {
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 28px;
+    text-align: center;
+    background: var(--ms-accent-light);
+    color: var(--ms-accent);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+}
+
+.ms-trait-row {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover {
+    background: var(--ms-bg-hover);
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-left: -4px;
+    margin-right: -4px;
+    border-radius: 3px;
+  }
+
+  &.ms-advantage {
+    .ms-trait-points { color: var(--ms-advantage); }
+  }
+
+  &.ms-disadvantage {
+    .ms-trait-points { color: var(--ms-disadvantage); }
+  }
+
+  .ms-trait-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ms-text);
+  }
+
+  .ms-trait-points {
+    font-weight: 700;
+    margin-left: 8px;
+    font-size: 11px;
+  }
+
+  .ms-trait-ref {
+    font-size: 10px;
+    color: var(--ms-accent);
+    margin-left: 6px;
+  }
+}
+
+.ms-row-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.ms-skill-row.expanded,
+.ms-trait-row.expanded {
+  .ms-notes { display: block; }
+}
+
+.ms-notes {
+  display: none;
+  width: 100%;
+  padding: 6px 0 6px 20px;
+  font-size: 11px;
+  color: var(--ms-text-dim);
+  line-height: 1.4;
+}
+
+.ms-notes-empty {
+  font-style: italic;
+  color: var(--ms-text-dim);
+}
+
+.ms-lifting-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 11px;
+}
+
+.ms-lift-value {
+  font-weight: 600;
+  color: var(--ms-accent);
+  text-align: right;
+  padding: 4px 0;
+}
+
+.ms-lift-label {
+  color: var(--ms-text-muted);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+}
+
+.ms-misc-info {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ms-border-light);
+  font-size: 11px;
+  color: var(--ms-text-muted);
+}
+
+.ms-trackers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .tracked-resource {
+    background: var(--ms-bg-card);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: 8px;
+
+    .header {
+      background: var(--ms-accent);
+    }
+  }
+}
+
+.ms-quicknotes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 2px;
+  padding-right: 6px;
+  margin-bottom: 12px;
+  background: var(--ms-bg-card);
+  border: 2px dashed var(--ms-accent);
+  border-radius: var(--ms-radius);
+}
+
+.ms-quicknotes-content {
+  flex: 1;
+  cursor: text;
+  padding: 6px;
+
+  > .glinkmod, > .gurpslink {
+    color: var(--ms-accent);
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    &:hover {
+      text-decoration-style: solid;
+    }
+  }
+}
+
+.ms-quicknotes-text {
+  &:empty {
+    display: none;
+  }
+}
+
+.ms-quicknotes-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ms-quicknotes-placeholder {
+  color: var(--ms-text-dim);
+  font-style: italic;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.ms-quicknotes-edit {
+  color: var(--ms-text-dim);
+  cursor: pointer;
+  padding: 4px;
+  &:hover {
+    color: var(--ms-accent);
+  }
+}

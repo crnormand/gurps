@@ -1,0 +1,17 @@
+<div class='ms-combat-layout'>
+  {{!-- Left column: Attacks (70%) --}}
+  <div class='ms-combat-left'>
+    <div class='ms-attacks-section'>
+      {{>attack-table section="melee" icon="fa-sword" title=(localize "GURPS.melee") count=meleeCount items=system.melee path="system.melee" attackType="melee" otfPrefix="M" isMelee=true editAction="edit-melee" deleteAction="delete-melee" addAction="add-melee" addLabel=(localize "GURPS.melee")}}
+
+      {{>attack-table section="ranged" icon="fa-crosshairs" title=(localize "GURPS.ranged") count=rangedCount items=system.ranged path="system.ranged" attackType="ranged" otfPrefix="R" isMelee=false editAction="edit-ranged" deleteAction="delete-ranged" addAction="add-ranged" addLabel=(localize "GURPS.ranged")}}
+    </div>
+  </div>
+
+  {{!-- Right column: Hit Locations + Encumbrance (30%) --}}
+  <div class='ms-combat-right'>
+    {{>hitlocations-table}}
+
+    {{>encumbrance-table}}
+  </div>
+</div>

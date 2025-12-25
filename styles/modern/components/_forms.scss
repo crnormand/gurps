@@ -1,0 +1,206 @@
+.modern-sheet {
+  input[type="text"], input[type="number"], textarea, select {
+    background: var(--ms-bg);
+    color: var(--ms-text);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: 4px 8px;
+    font-size: 11px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--ms-accent);
+    }
+  }
+
+  .rollable {
+    cursor: pointer;
+    &:hover {
+      color: var(--ms-accent);
+      text-decoration: underline;
+    }
+  }
+
+  #identity {
+    .header {
+      background: transparent;
+      color: var(--ms-text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0 0 6px 0;
+      border-bottom: 1px solid var(--ms-border-light);
+      margin-bottom: 8px;
+    }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 4px 8px;
+      align-items: center;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: 11px;
+        text-align: right;
+      }
+
+      .field input {
+        width: 100%;
+      }
+    }
+  }
+
+  #description {
+    .header {
+      background: transparent;
+      color: var(--ms-text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0 0 6px 0;
+      border-bottom: 1px solid var(--ms-border-light);
+      margin-bottom: 8px;
+    }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 4px 8px;
+      align-items: center;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: 11px;
+        text-align: right;
+
+        &.textarea {
+          align-self: start;
+          padding-top: 4px;
+        }
+      }
+    }
+  }
+
+  #miscellaneous {
+    .header {
+      background: transparent;
+      color: var(--ms-text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0 0 6px 0;
+      border-bottom: 1px solid var(--ms-border-light);
+      margin-bottom: 8px;
+    }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 4px 8px;
+      align-items: center;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: 11px;
+        text-align: right;
+      }
+    }
+  }
+
+  #points {
+    .header {
+      background: transparent;
+      color: var(--ms-text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0 0 6px 0;
+      border-bottom: 1px solid var(--ms-border-light);
+      margin-bottom: 8px;
+    }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: 10px;
+      }
+
+      .field {
+        input {
+          width: 60px;
+          text-align: right;
+          font-weight: 600;
+        }
+
+        &.noedit input {
+          background: transparent;
+          border: none;
+        }
+      }
+    }
+  }
+
+  .trackers {
+    .tracker {
+      background: var(--ms-bg-card);
+      border: 1px solid var(--ms-border);
+      border-radius: var(--ms-radius);
+      padding: var(--ms-gap);
+      margin-bottom: var(--ms-gap);
+
+      .tracker-name {
+        font-weight: 600;
+        color: var(--ms-text);
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
+.ms-identity-card {
+  .ms-identity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+  }
+
+  .ms-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    label {
+      font-size: 10px;
+      color: var(--ms-text-muted);
+      text-transform: uppercase;
+    }
+
+    input, select {
+      width: 100%;
+    }
+  }
+}
+
+.ms-points-bar {
+  .ms-points-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .ms-points-item {
+    font-size: 12px;
+    color: var(--ms-text-muted);
+
+    strong {
+      color: var(--ms-text);
+      font-size: 14px;
+      margin-right: 4px;
+    }
+  }
+}

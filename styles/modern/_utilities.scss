@@ -1,0 +1,42 @@
+@use 'mixins' as *;
+
+.ms-truncate { @include truncate; }
+
+.ms-rollable { @include rollable-link; }
+
+.ms-text-positive { color: var(--ms-advantage); }
+.ms-text-negative { color: var(--ms-disadvantage); }
+.ms-text-muted { color: var(--ms-text-muted); }
+.ms-text-dim { color: var(--ms-text-dim); }
+
+.ms-font-bold { font-weight: 600; }
+.ms-font-normal { font-weight: 400; }
+
+.ms-text-center { text-align: center; }
+.ms-text-right { text-align: right; }
+
+.ms-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-gap-xs { gap: 2px; }
+.ms-gap-sm { gap: 4px; }
+.ms-gap-md { gap: 8px; }
+.ms-gap-lg { gap: 12px; }
+.ms-gap-xl { gap: 16px; }
+
+.ms-text-accent { color: var(--ms-accent); }
+.ms-text-advantage { color: var(--ms-advantage); }
+.ms-text-disadvantage { color: var(--ms-disadvantage); }
+
+.ms-tabular-nums { font-variant-numeric: tabular-nums; }
+
+.ms-clickable { cursor: pointer; }
+.ms-hover-highlight {
+  &:hover { background: var(--ms-bg-hover); }
+}
+
+.ms-border-bottom { border-bottom: 1px solid var(--ms-border-light); }
+.ms-border-bottom-strong { border-bottom: 2px solid var(--ms-border); }

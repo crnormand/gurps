@@ -1,0 +1,124 @@
+.effect-picker {
+  .window-content {
+    padding: 0;
+    background: #f8f6f2;
+  }
+}
+
+.effect-picker-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.effect-picker-search-wrapper {
+  padding: 12px;
+  border-bottom: 1px solid #d8d4cc;
+  background: #ffffff;
+}
+
+.effect-picker-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d8d4cc;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #f8f6f2;
+
+  &:focus {
+    outline: none;
+    border-color: #3e6a4d;
+    box-shadow: 0 0 0 2px rgba(62, 106, 77, 0.15);
+  }
+}
+
+.effect-picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.effect-picker-category {
+  margin-bottom: 4px;
+
+  &.collapsed {
+    .effect-picker-category-header i {
+      transform: rotate(-90deg);
+    }
+
+    .effect-picker-category-content {
+      display: none;
+    }
+  }
+}
+
+.effect-picker-category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+
+  i {
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.effect-picker-category-count {
+  margin-left: auto;
+  padding: 2px 6px;
+  background: #eceae6;
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+.effect-picker-category-content {
+  padding: 0 8px;
+}
+
+.effect-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(62, 106, 77, 0.12);
+  }
+
+  &:active {
+    background: rgba(62, 106, 77, 0.2);
+  }
+}
+
+.effect-picker-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.effect-picker-name {
+  font-size: 13px;
+  color: #1a1a1a;
+}
+
+.effect-picker-empty {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}

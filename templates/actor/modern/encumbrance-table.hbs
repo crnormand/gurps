@@ -1,0 +1,45 @@
+{{!-- Encumbrance Table Partial --}}
+<div class='ms-section'>
+  <h3 class='ms-section-header'>
+    <i class='fas fa-weight-hanging'></i>
+    {{localize 'GURPS.encumbranceMoveDodge'}}
+    {{#if (automaticEncumbrance)}}
+      <i class='fas fa-lock ms-lock-icon' title='{{localize "GURPS.autoEncumbrance"}}: ON'></i>
+    {{else}}
+      <i class='fas fa-unlock ms-lock-icon ms-unlocked' title='{{localize "GURPS.autoEncumbrance"}}: OFF'></i>
+    {{/if}}
+  </h3>
+  <div class='ms-encumbrance-table'>
+    <div class='ms-enc-header'>
+      <span></span>
+      <span>{{localize 'GURPS.level'}}</span>
+      <span>{{localize 'GURPS.maxload'}}</span>
+      <span>{{localize 'GURPS.move'}}</span>
+      <span>{{localize 'GURPS.dodge'}}</span>
+    </div>
+    {{#each system.encumbrance}}
+    <div class='ms-enc-row {{#if current}}ms-current{{/if}} {{#unless (automaticEncumbrance)}}ms-clickable{{/unless}}' data-key='{{@key}}'>
+      <span class='ms-enc-marker'>{{#if current}}▶{{/if}}</span>
+      <span class='ms-enc-level'>{{{localizeKey (concat 'GURPS.encumbranceLevel-' @key)}}}</span>
+      <span class='ms-enc-load'>{{displayDecimal weight number=1 removeZeros=true}}</span>
+      <span class='ms-enc-move'>{{currentmovedisplay}}</span>
+      <span class='ms-enc-dodge {{#if current}}rollable{{/if}}' {{#if current}}data-otf='Dodge'{{/if}}>
+        {{currentdodge}}
+        {{#if ../system.defenses.dodge.bonus}}
+          <span class='ms-dodge-bonus {{#if current}}rollable{{/if}}' {{#if current}}data-otf='Dodge {{{displayNumber ../system.defenses.dodge.bonus}}} DB'{{/if}}>
+            {{{displayNumber ../system.defenses.dodge.bonus}}}
+          </span>
+        {{/if}}
+      </span>
+    </div>
+    {{/each}}
+    <div class='ms-enc-mode'>
+      <label for='move-mode'>{{localize 'GURPS.moveMode'}}:</label>
+      <select id='move-mode' {{disabled (lt (length system.move) 2)}}>
+        {{#each system.move as |this key|}}
+          <option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+</div>

@@ -2,7 +2,7 @@ import { gurpslink } from '../module/utilities/gurpslink.js'
 import { DamageTable } from '../module/damage/damage-tables.js'
 
 beforeAll(() => {
-  globalThis.GURPS = {}
+  globalThis.GURPS = {} as any
   // @ts-ignore
   globalThis.game = {
     i18n: {

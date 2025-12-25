@@ -1,0 +1,48 @@
+<div class='ms-secondary-stats'>
+  <fieldset class='ms-stat-box'>
+    <legend>{{localize 'GURPS.attributesSecondary'}}</legend>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.basicspeed'}}</span>
+      <span class='ms-stat-value'>{{system.basicspeed.value}}</span>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.basicmove'}}</span>
+      <span class='ms-stat-value'>{{system.basicmove.value}}</span>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.dodge'}}</span>
+      {{>dice-button otf='Dodge' level=system.currentdodge}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}</span>
+      {{>dice-button otf=(concat system.thrust ' dmg') level=system.thrust damage=true}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.swing'}}</span>
+      {{>dice-button otf=(concat system.swing ' dmg') level=system.swing damage=true}}
+    </div>
+  </fieldset>
+  <fieldset class='ms-stat-box'>
+    <legend>{{localize 'GURPS.effectPicker.senses'}}</legend>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.vision'}}</span>
+      {{>dice-button otf='Vision' level=system.vision}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.hearing'}}</span>
+      {{>dice-button otf='Hearing' level=system.hearing}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.tastesmell'}}</span>
+      {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.touch'}}</span>
+      {{>dice-button otf='Touch' level=system.touch}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.frightcheck'}}</span>
+      {{>dice-button otf='Fright Check' level=system.frightcheck}}
+    </div>
+  </fieldset>
+</div>

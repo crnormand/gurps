@@ -1,0 +1,159 @@
+@mixin table-header {
+  background: var(--ms-bg-section);
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ms-border);
+  padding: 6px 8px;
+
+  > span:not(:first-child) {
+    text-align: center;
+  }
+}
+
+@mixin table-row {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--ms-border-light);
+  cursor: pointer;
+
+  &:nth-child(odd) { background: var(--ms-bg-section); }
+  &:hover { background: var(--ms-bg-hover); }
+  &:last-child { border-bottom: none; }
+}
+
+@mixin table-container {
+  font-size: 11px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  overflow: hidden;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin rollable-link {
+  color: var(--ms-accent);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@mixin section-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ms-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 8px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--ms-border-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  i { color: var(--ms-accent); }
+}
+
+@mixin action-button {
+  color: var(--ms-text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+
+  &:hover {
+    opacity: 1;
+    color: var(--ms-accent);
+  }
+
+  &.ms-delete:hover {
+    color: var(--ms-hp);
+  }
+}
+
+@mixin form-header {
+  background: transparent;
+  color: var(--ms-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0 0 6px 0;
+  border-bottom: 1px solid var(--ms-border-light);
+  margin-bottom: 8px;
+}
+
+@mixin field-grid($label-width: 70px) {
+  display: grid;
+  grid-template-columns: $label-width 1fr;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+@mixin indent-levels($max: 5, $base-indent: 16px) {
+  @for $i from 1 through $max {
+    &.indent#{$i} { padding-left: #{$i * $base-indent}; }
+  }
+}
+
+@mixin grid-table($name, $columns, $gap: 4px) {
+  .ms-#{$name}-table {
+    @include table-container;
+  }
+
+  .ms-#{$name}-header {
+    display: grid;
+    grid-template-columns: $columns;
+    gap: $gap;
+    @include table-header;
+  }
+
+  .ms-#{$name}-row {
+    display: grid;
+    grid-template-columns: $columns;
+    gap: $gap;
+    @include table-row;
+  }
+}
+
+@mixin interactive-row {
+  cursor: pointer;
+  transition: background 0.1s;
+  &:hover { background: var(--ms-bg-hover); }
+}
+
+@mixin zebra-striping {
+  &:nth-child(odd) { background: var(--ms-bg-section); }
+}
+
+@mixin table-cell-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin grid-header($columns, $gap: 4px) {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: $gap;
+  @include table-header;
+}
+
+@mixin grid-row($columns, $gap: 4px) {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: $gap;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border-light);
+  @include zebra-striping;
+  @include interactive-row;
+
+  > span {
+    padding: 6px;
+  }
+}

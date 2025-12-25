@@ -1,0 +1,316 @@
+.ms-header {
+  display: grid;
+  grid-template-columns: 120px auto 1fr;
+  gap: 12px;
+  align-items: start;
+  background: var(--ms-bg-header);
+  border-bottom: none;
+  padding: 10px 12px;
+}
+
+.ms-portrait-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ms-portrait {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--ms-border);
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ms-hp-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ms-hp-overlay);
+    pointer-events: none;
+    transition: height 0.3s ease;
+  }
+}
+
+.ms-points-badge {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: var(--ms-bg);
+  border: 2px solid var(--ms-disadvantage);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 10;
+
+  .ms-points-positive {
+    color: var(--ms-advantage);
+  }
+
+  .ms-points-separator {
+    color: var(--ms-text-muted);
+  }
+
+  .ms-points-negative {
+    color: var(--ms-disadvantage);
+  }
+}
+
+.ms-identity {
+  min-width: 0;
+  align-self: start;
+  width: fit-content;
+
+  .ms-name-container {
+    .ms-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 2px 0;
+      line-height: 1.2;
+      color: var(--ms-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 246px;
+      border-bottom: none;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--ms-accent);
+      }
+    }
+
+    .ms-name-input {
+      display: none;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.2;
+      border: none;
+      border-bottom: 2px solid var(--ms-hp);
+      border-radius: 0;
+      padding: 0;
+      max-width: 246px;
+      background: transparent;
+      color: var(--ms-text);
+      outline: none;
+    }
+
+    &.editing {
+      .ms-name { display: none; }
+      .ms-name-input { display: block; }
+    }
+  }
+
+  .ms-tagline {
+    font-size: 11px;
+    color: var(--ms-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+
+    .ms-tag {
+      cursor: pointer;
+      padding: 1px 2px;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &:not(:first-child)::before {
+        content: '•';
+        color: var(--ms-text-dim);
+      }
+
+      &:hover {
+        background: var(--ms-bg-hover);
+      }
+
+      .ms-tag-display {
+        font-weight: 600;
+        height: 15px;
+        line-height: 15px;
+      }
+
+      .ms-tag-input {
+        display: none;
+        font-size: 11px;
+        font-weight: 600;
+        height: 15px;
+        line-height: 15px;
+        border: none;
+        border-bottom: 1px solid var(--ms-hp);
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+        width: 60px;
+        background: transparent;
+        color: var(--ms-text);
+        outline: none;
+        box-sizing: content-box;
+      }
+
+      &.editing {
+        .ms-tag-display { display: none; }
+        .ms-tag-input { display: inline-block; }
+      }
+    }
+  }
+}
+
+.ms-attrs-row {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.ms-attr-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 6px;
+  background: var(--ms-bg-card);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  min-width: 38px;
+  cursor: pointer;
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--ms-accent-light);
+    border-color: var(--ms-accent);
+  }
+
+  .ms-attr-value {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ms-text);
+  }
+
+  .ms-attr-label {
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--ms-text-muted);
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+}
+
+.ms-secondary-stats {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 8px;
+  font-size: 12px;
+
+  .ms-stat-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 0;
+    padding: 6px 10px;
+    border: 2px solid var(--ms-border);
+
+    legend {
+      padding: 0 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--ms-text);
+      text-transform: uppercase;
+    }
+  }
+
+  .ms-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .ms-stat-label {
+      color: var(--ms-text-muted);
+    }
+
+    .ms-stat-value {
+      font-weight: 600;
+      color: var(--ms-text);
+    }
+  }
+}
+
+.ms-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 8px 12px;
+  background: var(--ms-bg-card);
+  border-bottom: 1px solid var(--ms-border);
+  font-size: 12px;
+}
+
+.ms-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .ms-stat-label {
+    color: var(--ms-text-muted);
+  }
+
+  .ms-stat-value {
+    font-weight: 600;
+    color: var(--ms-text);
+
+    &.rollable {
+      color: var(--ms-accent);
+      cursor: pointer;
+
+      &:hover { text-decoration: underline; }
+    }
+  }
+}
+
+.ms-senses-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 6px 12px;
+  background: var(--ms-bg-section);
+  border-bottom: 1px solid var(--ms-border-light);
+  font-size: 11px;
+
+  .ms-sense-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .ms-sense-label {
+      color: var(--ms-text-muted);
+    }
+
+    .ms-sense-value {
+      font-weight: 600;
+      color: var(--ms-text);
+
+      &.rollable {
+        color: var(--ms-accent);
+        cursor: pointer;
+        &:hover { text-decoration: underline; }
+      }
+    }
+  }
+}

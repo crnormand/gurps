@@ -21,7 +21,6 @@ import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
-  GurpsActorModernSheet,
   GurpsActorNpcSheet,
   GurpsActorSheet,
   GurpsActorSheetReduced,
@@ -29,6 +28,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
+import { GurpsActorModernSheet } from './actor/modern/index.js'
 import { GurpsActor } from './actor/actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'

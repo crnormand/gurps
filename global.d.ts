@@ -8,7 +8,149 @@ import { GurpsToken } from './module/token/gurps-token.ts'
 export {  }
 
 declare global {
-  var GURPS: any
+  interface GurpsAction {
+    type: string
+    sourceId?: string
+    orig?: string
+    calcOnly?: boolean
+    next?: GurpsAction
+    [key: string]: unknown
+  }
+
+  interface DamageData {
+    attacker?: string
+    dice?: string
+    damage?: number
+    damageType?: string
+    armorDivisor?: number
+    [key: string]: unknown
+  }
+
+  interface GURPSGlobal {
+    SYSTEM_NAME: 'gurps'
+    decode<T = unknown>(actor: GurpsActor, path: string): T
+    put<T>(list: Record<string, T>, obj: T): string
+    removeKey(actor: GurpsActor, key: string): void
+    performAction(
+      action: GurpsAction,
+      actor: Actor | GurpsActor | null,
+      event?: Event | null,
+      targets?: string[]
+    ): Promise<boolean>
+    stopActions: boolean
+
+    ModifierBucket: {
+      setTempRangeMod(mod: number): void
+      addTempRangeMod(): void
+      currentSum(): number
+      clear(): Promise<void>
+      refreshPosition(): void
+    }
+
+    DamageTables: {
+      translate(damageType: string): string
+      woundModifiers: Record<string, { label?: string; icon?: string; color?: string; multiplier?: number; resource?: boolean }>
+      damageTypeMap: Record<string, string>
+    }
+
+    SSRT: {
+      getModifier(yards: number): number
+    }
+
+    rangeObject: {
+      ranges: Array<{ modifier: number; max: number; penalty: number }>
+    }
+
+    Maneuvers: {
+      get(id: string): { icon?: string } | undefined
+      getAll(): Record<string, { id: string; icon: string; label: string }>
+    }
+
+    ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
+    DamageChat: {
+      _renderDamageChat(app: { data: { flags: { transfer: string } }; flags: { gurps: { transfer: object } } }, html: JQuery, msg: object): Promise<void>
+    }
+    resolveDamageRoll: (
+      event: Event,
+      actor: GurpsActor,
+      otf: string,
+      overridetxt: string | null,
+      isGM: boolean,
+      isOtf?: boolean
+    ) => Promise<void>
+    SJGProductMappings: Record<string, string>
+  }
+
+  var GURPS: GURPSGlobal
+
+  interface TotalPoints {
+    race?: string | number
+    ads?: string | number
+    attributes?: string | number
+    skills?: string | number
+    spells?: string | number
+    disads?: string | number
+    quirks?: string | number
+  }
+
+  interface EntityComponentBase {
+    name?: string
+    notes?: string
+    uuid?: string
+  }
+
+  interface InlineEditConfig {
+    displaySelector: string
+    containerSelector: string
+    inputSelector: string
+    editingClass?: string
+    fieldType?: 'name' | 'tag'
+    onBlur?: (input: HTMLInputElement) => void
+  }
+
+  interface RowExpandConfig {
+    rowSelector: string
+    excludeSelectors?: string[]
+    expandedClass?: string
+  }
+
+  interface SectionCollapseConfig {
+    headerSelector: string
+    excludeSelectors?: string[]
+    collapsedClass?: string
+  }
+
+  interface ResourceResetConfig {
+    selector: string
+    resourcePath: string
+    maxPath: string
+  }
+
+  interface DropdownConfig {
+    dropdownSelector: string
+    toggleSelector: string
+    optionSelector: string
+    onSelect: (value: string) => Promise<void> | void
+  }
+
+  interface EntityConfiguration {
+    entityName: string
+    path: string
+    EntityClass: new (...args: any[]) => EntityComponentBase
+    editMethod: string
+    localeKey: string
+    displayProperty?: string
+    createArgs?: () => any[]
+  }
+
+  interface ModifierConfiguration {
+    isReaction: boolean
+  }
+
+  type EntityConfigWithMethod = Omit<EntityConfiguration, 'editMethod'> & {
+    editMethod: (actor: GurpsActor, path: string, obj: unknown) => Promise<void>
+    createArgs?: any[]
+  }
 
   interface DocumentClassConfig {
     Actor: typeof GurpsActor

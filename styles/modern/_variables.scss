@@ -1,0 +1,45 @@
+$ms-bg: #f8f6f2;
+$ms-bg-header: #f0ede8;
+$ms-bg-card: #ffffff;
+$ms-bg-hover: #f0ede8;
+$ms-bg-section: #fafaf8;
+$ms-border: #d8d4cc;
+$ms-border-light: #e8e4dc;
+$ms-text: #1a1a1a;
+$ms-text-muted: #555555;
+$ms-text-dim: #888888;
+$ms-accent: #3e6a4d;
+$ms-accent-light: rgba(62, 106, 77, 0.1);
+$ms-advantage: #2e5a3e;
+$ms-advantage-bg: rgba(46, 90, 62, 0.08);
+$ms-disadvantage: #8b3a3a;
+$ms-disadvantage-bg: rgba(139, 58, 58, 0.08);
+$ms-hp: #b83232;
+$ms-fp: #3268a8;
+$ms-hp-overlay: rgba(184, 50, 50, 0.5);
+$ms-radius: 4px;
+$ms-gap: 8px;
+
+@mixin css-variables {
+  --ms-bg: #{$ms-bg};
+  --ms-bg-header: #{$ms-bg-header};
+  --ms-bg-card: #{$ms-bg-card};
+  --ms-bg-hover: #{$ms-bg-hover};
+  --ms-bg-section: #{$ms-bg-section};
+  --ms-border: #{$ms-border};
+  --ms-border-light: #{$ms-border-light};
+  --ms-text: #{$ms-text};
+  --ms-text-muted: #{$ms-text-muted};
+  --ms-text-dim: #{$ms-text-dim};
+  --ms-accent: #{$ms-accent};
+  --ms-accent-light: #{$ms-accent-light};
+  --ms-advantage: #{$ms-advantage};
+  --ms-advantage-bg: #{$ms-advantage-bg};
+  --ms-disadvantage: #{$ms-disadvantage};
+  --ms-disadvantage-bg: #{$ms-disadvantage-bg};
+  --ms-hp: #{$ms-hp};
+  --ms-fp: #{$ms-fp};
+  --ms-hp-overlay: #{$ms-hp-overlay};
+  --ms-radius: #{$ms-radius};
+  --ms-gap: #{$ms-gap};
+}

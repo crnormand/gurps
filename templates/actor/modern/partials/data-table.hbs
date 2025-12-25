@@ -1,0 +1,31 @@
+<div class='ms-section' data-section='{{section}}'>
+  {{>section-header icon=icon title=title count=count collapsible=true}}
+  <div class='ms-section-content'>
+    <div class='ms-{{entityType}}-table'>
+      <div class='ms-{{entityType}}-header'>
+        <span>{{localize 'GURPS.name'}}</span>
+        {{#if hasCollege}}<span>{{localize 'GURPS.spellCollege'}}</span>{{/if}}
+        <span>{{localize 'GURPS.level'}}</span>
+        <span>RSL</span>
+        <span></span>
+      </div>
+      {{#each items}}
+      {{#unless this.isCollapsed}}
+      <div class='ms-{{../entityType}}-row' data-key='{{../path}}.{{@key}}'>
+        <span class='ms-col-name indent{{indent}}'>
+          <span class='ms-col-name-text'>{{this.name}}</span>
+        </span>
+        {{#if ../hasCollege}}<span class='ms-col-college'>{{this.college}}</span>{{/if}}
+        <span class='ms-col-level'>{{>dice-button otf=(concat ../otfPrefix ':"' this.name '"') level=this.level}}</span>
+        <span class='ms-col-rsl'>{{this.relativelevel}}</span>
+        {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
+        {{>row-notes notes=this.notes}}
+      </div>
+      {{/unless}}
+      {{else}}
+      <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      {{>add-row action=addAction label=addLabel}}
+    </div>
+  </div>
+</div>

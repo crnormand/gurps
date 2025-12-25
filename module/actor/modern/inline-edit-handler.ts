@@ -1,0 +1,110 @@
+import { GurpsActor } from '../actor.js'
+
+export function shouldUpdateName(newName: string, currentName: string): boolean {
+  const trimmedName = newName.trim()
+  return trimmedName.length > 0 && trimmedName !== currentName
+}
+
+export function shouldUpdateField(newValue: string, currentValue: string | undefined): boolean {
+  const trimmedValue = newValue.trim()
+  return trimmedValue !== (currentValue ?? '')
+}
+
+export function bindInlineEdit(html: JQuery, config: InlineEditConfig): void {
+  const { displaySelector, containerSelector, inputSelector, editingClass = 'editing', onBlur } = config
+
+  html.find(displaySelector).on('click', (event: JQuery.ClickEvent) => {
+    event.preventDefault()
+    const container = (event.currentTarget as HTMLElement).closest(containerSelector) as HTMLElement
+    container.classList.add(editingClass)
+    const input = container.querySelector(inputSelector) as HTMLInputElement | null
+    if (input) {
+      input.focus()
+      input.select()
+    }
+  })
+
+  html.find(inputSelector).on('blur', (event: JQuery.BlurEvent) => {
+    const input = event.currentTarget as HTMLInputElement
+    const container = input.closest(containerSelector) as HTMLElement
+    setTimeout(() => {
+      if (!container.contains(document.activeElement)) {
+        container.classList.remove(editingClass)
+        onBlur?.(input)
+      }
+    }, 100)
+  })
+
+  html.find(inputSelector).on('keydown', (event: JQuery.KeyDownEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      const input = event.currentTarget as HTMLInputElement
+      const container = input.closest(containerSelector) as HTMLElement
+      container.classList.remove(editingClass)
+      input.blur()
+    }
+  })
+}
+
+interface InlineEditConfigInternal extends InlineEditConfig {
+  fieldType?: 'name' | 'tag'
+}
+
+const inlineEditConfigs: InlineEditConfigInternal[] = [
+  {
+    displaySelector: '.ms-resource-display',
+    containerSelector: '.ms-resource',
+    inputSelector: '.ms-resource-input'
+  },
+  {
+    displaySelector: '.ms-name-display',
+    containerSelector: '.ms-name-container',
+    inputSelector: '.ms-name-input',
+    fieldType: 'name'
+  },
+  {
+    displaySelector: '.ms-tag-display',
+    containerSelector: '.ms-tag',
+    inputSelector: '.ms-tag-input',
+    fieldType: 'tag'
+  },
+  {
+    displaySelector: '.ms-dr-display',
+    containerSelector: '.ms-loc-dr',
+    inputSelector: '.ms-dr-input'
+  }
+]
+
+export function buildOnBlurHandler(
+  config: InlineEditConfigInternal,
+  actor: GurpsActor
+): ((input: HTMLInputElement) => void) | undefined {
+  if (config.fieldType === 'name') {
+    return (input: HTMLInputElement) => {
+      const newName = input.value
+      if (shouldUpdateName(newName, actor.name)) {
+        actor.update({ name: newName.trim() })
+      }
+    }
+  }
+  if (config.fieldType === 'tag') {
+    return (input: HTMLInputElement) => {
+      const field = input.dataset.field
+      const newValue = input.value
+      if (field) {
+        const currentValue = foundry.utils.getProperty(actor, field) as string | undefined
+        if (shouldUpdateField(newValue, currentValue)) {
+          actor.update({ [field]: newValue.trim() })
+        }
+      }
+    }
+  }
+  return undefined
+}
+
+export function bindAllInlineEdits(html: JQuery, actor: GurpsActor): void {
+  inlineEditConfigs.forEach(config => {
+    const onBlur = buildOnBlurHandler(config, actor)
+    bindInlineEdit(html, { ...config, onBlur })
+  })
+}
