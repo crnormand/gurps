@@ -168,3 +168,60 @@ export function bindAttributeEdit(html: JQuery, actor: GurpsActor): void {
     }
   })
 }
+
+export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
+  const fieldsetSelector = '.ms-editable-stats'
+  const editButtonSelector = '.ms-stat-box-edit'
+  const inputSelector = '.ms-stat-input'
+  const editingClass = 'editing'
+
+  html.find(editButtonSelector).on('click', (event: JQuery.ClickEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const fieldset = (event.currentTarget as HTMLElement).closest(fieldsetSelector) as HTMLElement
+    fieldset.classList.toggle(editingClass)
+    if (fieldset.classList.contains(editingClass)) {
+      const firstInput = fieldset.querySelector(inputSelector) as HTMLInputElement
+      if (firstInput) {
+        firstInput.focus()
+        firstInput.select()
+      }
+    }
+  })
+
+  html.find(`${fieldsetSelector} ${inputSelector}`).on('blur', (event: JQuery.BlurEvent) => {
+    const input = event.currentTarget as HTMLInputElement
+    const fieldset = input.closest(fieldsetSelector) as HTMLElement
+
+    setTimeout(() => {
+      if (!fieldset.contains(document.activeElement)) {
+        fieldset.classList.remove(editingClass)
+
+        const fieldPath = input.name
+        const newValue = parseFloat(input.value)
+        const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
+
+        if (!isNaN(newValue) && newValue !== currentValue) {
+          actor.update({ [fieldPath]: newValue })
+        }
+      }
+    }, 100)
+  })
+
+  html.find(`${fieldsetSelector} ${inputSelector}`).on('keydown', (event: JQuery.KeyDownEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      const input = event.currentTarget as HTMLInputElement
+      input.blur()
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      const input = event.currentTarget as HTMLInputElement
+      const fieldset = input.closest(fieldsetSelector) as HTMLElement
+      fieldset.classList.remove(editingClass)
+      const fieldPath = input.name
+      input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+    }
+  })
+}

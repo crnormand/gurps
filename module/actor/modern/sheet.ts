@@ -1,6 +1,6 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits, bindAttributeEdit } from './inline-edit-handler.js'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit } from './inline-edit-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
@@ -82,11 +82,22 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     return sheetData
   }
 
+  override async _render(force?: boolean, options?: Application.RenderOptions): Promise<void> {
+    const scrollContainer = this.element?.find('.ms-body')[0]
+    const scrollTop = scrollContainer?.scrollTop ?? 0
+    await super._render(force, options)
+    if (scrollTop > 0) {
+      const newContainer = this.element?.find('.ms-body')[0]
+      if (newContainer) newContainer.scrollTop = scrollTop
+    }
+  }
+
   override activateListeners(html: JQuery): void {
     super.activateListeners(html)
 
     bindAllInlineEdits(html, this.actor)
     bindAttributeEdit(html, this.actor)
+    bindSecondaryStatsEdit(html, this.actor)
 
     bindResourceReset(html, this.actor, [
       { selector: '.ms-resource-reset[data-action="reset-hp"]', resourcePath: 'system.HP.value', maxPath: 'system.HP.max' },

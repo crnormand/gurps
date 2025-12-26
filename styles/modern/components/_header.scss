@@ -306,6 +306,91 @@
       font-weight: var(--ms-weight-semibold);
       @include tabular-nums;
       color: var(--ms-text);
+
+      &.rollable {
+        color: var(--ms-accent);
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .ms-stat-input {
+      display: none;
+      width: 3ch;
+      height: 1em;
+      line-height: 1;
+      font-size: inherit;
+      font-weight: var(--ms-weight-semibold);
+      @include tabular-nums;
+      border: none;
+      border-bottom: 1px solid var(--ms-accent);
+      border-radius: 0;
+      background: transparent;
+      color: var(--ms-text);
+      outline: none;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      -moz-appearance: textfield;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      &[type='text'] {
+        width: 4ch;
+      }
+    }
+  }
+
+  .ms-editable-stats {
+    position: relative;
+
+    .ms-stat-box-edit {
+      visibility: hidden;
+      position: absolute;
+      top: -8px;
+      right: calc(var(--ms-space-2) - 2px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--ms-text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      transition: color 0.1s;
+
+      &:hover {
+        color: var(--ms-accent);
+      }
+    }
+
+    &:hover .ms-stat-box-edit {
+      visibility: visible;
+    }
+
+    &.editing {
+      .ms-stat-display {
+        display: none;
+      }
+
+      .ms-stat-input {
+        display: inline-block;
+      }
+
+      .ms-stat-box-edit {
+        visibility: visible;
+        color: var(--ms-accent);
+      }
     }
   }
 }
