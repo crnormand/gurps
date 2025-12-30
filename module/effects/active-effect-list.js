@@ -44,7 +44,8 @@ export default class GurpsActiveEffectListSheet extends Application {
       case 'create':
         await this.actor.createEmbeddedDocuments('ActiveEffect', [
           {
-            label: game.i18n.localize('GURPS.effectNew', 'New Effect'),
+            name: game.i18n.localize('GURPS.effectNew'),
+            label: game.i18n.localize('GURPS.effectNew'),
             icon: 'icons/svg/aura.svg',
             disabled: true,
           },
