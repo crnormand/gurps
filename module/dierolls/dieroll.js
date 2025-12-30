@@ -1,5 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
+import { getTokenForActor } from '../utilities/token.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -115,7 +116,7 @@ export async function doRoll({
     if (actorTokens.length === 1) {
       token = actorTokens[0]
     } else {
-      token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      token = getTokenForActor(actor)
     }
     result = await actor.canRoll(action, token, chatthing, optionalArgs.obj)
   }

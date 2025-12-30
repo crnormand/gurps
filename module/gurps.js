@@ -36,6 +36,7 @@ import { GurpsItemSheet } from './item-sheet.js'
 import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
+import { getTokenForActor } from './utilities/token.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -576,7 +577,7 @@ if (!globalThis.GURPS) {
       }
 
       let canRoll = { result: true }
-      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      const token = getTokenForActor(actor)
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -670,7 +671,7 @@ if (!globalThis.GURPS) {
       }
 
       let canRoll = { result: true }
-      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      const token = getTokenForActor(actor)
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
