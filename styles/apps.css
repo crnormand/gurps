@@ -51,13 +51,7 @@ Global Override body {
   color: black;
 }
 
-/* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
-.gga-meta-group {
-  align-items: center;
-  text-align: center;
-  padding: 5px;
-  border: 1px solid #999;
-}
+
 
 /* using h3 elements as a row label -- remove margin */
 .gga-app h3 {
