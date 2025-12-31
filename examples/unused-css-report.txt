@@ -1,0 +1,254 @@
+
+CSS File: dist/gurps.css
+  - .system-gurps .control-icon[data-palette=maneuvers] img
+  - 
+.gga-group .shaded
+  - 
+.gga-app .fab
+  - 
+.gga-app .fad
+  - 
+.gga-app .fal
+  - .gurps .ranged_options
+  - #combat-sheet .resource-spinner button
+  - #combat-sheet .resource-spinner input
+  - 
+.addtrackericon:hover
+  - #condition .fieldblock .field[name="system.conditions.combatmove"]
+  - #combat-sheet .fieldblock .field[name="system.conditions.combatmove"]
+  - #bucket-container.force-left
+  - #modtooltipcenter
+  - #modtooltipright > div > *
+  - 
+#modtooltipcenter > div > *
+  - #modtooltipright
+  - .modtooltipgroup
+  - .modtooltipgroup > *
+  - .standalonggurpslink
+  - .standalonggurpslink:hover
+  - .standalonggurpslink:active
+  - #token-hud .maneuver-content
+  - #token-hud .status-maneuvers
+  - #token-hud .status-maneuvers .effect-control.active
+  - .window-app .window-header .window-title .document-debug-link
+  - .debug-content
+  - .color-equipment
+  - .color-spell
+  - .color-skill
+  - .color-feature
+  - .apply-damage-quick
+  - .w100
+  - .mw50
+  - .cr-damage-type
+  - .cr-damage-type span
+  - .directory-list .directory-item.actor
+  - .directory-list .directory-item.actor > .profile.actor-profile
+  - .grid-4col
+  - .grid-5col
+  - .grid-6col
+  - .grid-7col
+  - .grid-8col
+  - .grid-9col
+  - .grid-10col
+  - .grid-11col
+  - .grid-12col
+  - 
+.flex-group-right
+  - .flex-group-right
+  - .boilerplate .item-form
+  - .boilerplate .sheet-header .header-fields
+  - .boilerplate .sheet-header h1.charname
+  - .boilerplate .sheet-header h1.charname input
+  - .boilerplate .tox .tox-editor-container
+  - .boilerplate .tox .tox-edit-area
+  - .boilerplate .resource-label
+  - .boilerplate .items-list
+  - .boilerplate .items-list .item-header
+  - .boilerplate .items-list .item
+  - .boilerplate .items-list .item .item-image
+  - .boilerplate .items-list .item img
+  - .boilerplate .items-list .item-name
+  - .boilerplate .items-list .item-controls
+  - .npc-sheet-grid-container
+  - 
+.npc-sheet-grid-container #portrait .img-display
+  - .npc-input-nt
+  - .npc-input-img
+  - .gcs-input-sm10
+  - .gcs-input-2
+  - .gcs-input-3
+  - .gcs-input-10
+  - #testdialog
+  - #threed6 #threed6dicerotactive
+  - #threed6:hover #threed6dicerot
+  - #threed6:active #threed6dicerotactive
+  - .gga-chat-messsage .gurpslink
+  - 
+.simple-container .gurpslink
+  - .gga-chat-messsage .gurpslink:hover
+  - 
+.gga-chat-messsage .gurpslink.test
+  - 
+.simple-container .gurpslink:hover
+  - 
+.simple-container .gurpslink.test
+  - .gga-chat-messsage .gurpslink:active
+  - 
+.simple-container .gurpslink:active
+  - .gurps .sheet-header .header-fields
+  - .gurps .sheet-header h1.charname
+  - .gurps .sheet-header h1.charname input
+  - 
+.gurps .editor-content
+  - .gurps .item-list .item-name
+  - .gurps .item-list .item-controls
+  - .gga-tableheader.two-header
+  - .gurps .attributes .fill-in
+  - .gurps .attributes .fill-in:hover
+  - .gurps .attributes-header
+  - .gurps .attributes-header .attribute-label
+  - .gurps .attributes-header .attribute-control
+  - .gurps .attributes-list
+  - .gurps .attributes-list li > *
+  - .gurps .attributes-list a.attribute-control
+  - 
+#combat-tab #combat-status deatils[open] > summary
+  - 
+#combat-trackers .trackerhead i
+  - 
+#conditionalmods .condmodhead i
+  - 
+#reactions .reacthead i
+  - 
+#location .hlhead i
+  - #encumbrance.dodgeh
+  - 
+#notes .spellsmenu i:hover
+  - 
+#spells .spellsmenu i:hover
+  - 
+#skills .skillsmenu i:hover
+  - .points-fp
+  - 
+#encumbrance .dodgeh
+  - #combat-weapons
+  - 
+#combat-condition
+  - 
+#combat-location
+  - #combat-identity
+  - #combat-encumber
+  - .gurps #combat-sheet .condition-block .basic-label
+  - 
+.resource-spinner .depleted
+  - #combat-location
+  - #combat-encumber-container
+  - #combat-encumber-container .encmarkerh
+  - 
+#combat-encumber-container .ench
+  - 
+#combat-encumber-container .loadh
+  - 
+#combat-encumber-container .moveh
+  - 
+#combat-encumber-container .dodgeh
+  - 
+#combat-encumber-container .encmarker
+  - 
+#combat-encumber-container .enc
+  - 
+#combat-encumber-container .load
+  - 
+#combat-encumber-container .move
+  - 
+#combat-encumber-container .dodge
+  - #combat-encumber .header:first-child
+  - 
+#combat-location .header:first-child
+  - #combat-encumber .encmarker:nth-last-child(10n+5)
+  - 
+#combat-encumber .enc:nth-last-child(10n+4)
+  - 
+#combat-encumber .load:nth-last-child(10n+3)
+  - 
+#combat-encumber .move:nth-last-child(10n+2)
+  - 
+#combat-encumber .dodge:nth-last-child(10n+1)
+  - 
+#combat-location .roll:nth-last-child(8n+4)
+  - 
+#combat-location .where:nth-last-child(8n+3)
+  - 
+#combat-location .penalty:nth-last-child(8n+2)
+  - 
+#combat-location .dr:nth-last-child(8n+1)
+  - #combat-location .header:nth-last-child(8n+4)
+  - 
+#combat-location .header:nth-last-child(8n+3)
+  - 
+#combat-location .header:nth-last-child(8n+2)
+  - 
+#combat-location .header:nth-last-child(8n+1)
+  - #combat-location > div:nth-last-child(-n+4)
+  - #combat-location .roll
+  - 
+#combat-location .where
+  - 
+#combat-location .penalty
+  - 
+#combat-location .dr
+  - #combat-attrs-container
+  - #combat-attrs-1
+  - #combat-attrs-2
+  - #combat-encumber > div:nth-last-child(-n+5)
+  - 
+#combat-location > div:nth-last-child(-n+4)
+  - #combat-encumber .current:nth-last-child(10n+5)
+  - 
+#combat-encumber .current:nth-last-child(10n+4)
+  - 
+#combat-encumber .current:nth-last-child(10n+3)
+  - 
+#combat-encumber .current:nth-last-child(10n+2)
+  - 
+#combat-encumber .current:nth-last-child(10n+1)
+  - #combat-weapons .desc
+  - 
+#combat-weapons .list_note
+  - 
+#combat-weapons .usage
+  - 
+#combat-weapons .level
+  - 
+#combat-weapons .parry
+  - 
+#combat-weapons .damage
+  - 
+#combat-weapons .reach
+  - 
+#combat-weapons .st
+  - 
+#combat-weapons .acc
+  - 
+#combat-weapons .range
+  - 
+#combat-weapons .rof
+  - 
+#combat-weapons .shots
+  - 
+#combat-weapons .bulk
+  - 
+#combat-weapons .rcl
+  - #combat-attrs-damage-sw
+  - #combat-attrs-damage-thr
+  - .table-column
+  - .table-column .list_note
+  - .table-column.center
+  - .table-column span
+  - body.theme-light
+  - body.theme-dark
+  - section.window-content article.journal-entry-page
+  - section.window-content article.journal-entry-page div:first-child
+  - .journal-entry-page.pdf.view
+
+Total unused selectors detected: 182
