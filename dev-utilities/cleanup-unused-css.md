@@ -9,7 +9,9 @@ This document outlines the **182 unused CSS selectors** detected by PurgeCSS ana
 - **Report generated:** `examples/unused-css-report.txt`
 - **Tool:** PurgeCSS v7.0.2 with safelist for dynamic `.fa-*`, `.icon-*`, `.ui-*`, `.dialog-*`, `.gm-*`, `.selected`, indent classes, and standard Foundry state classes
 
-**WARNING** Don't take the script's word for anything, verify before removing!
+```diff
+-WARNING: Don't take the script's word for anything, verify before removing!
+```
 
 ## Major Unused Blocks by File
 
