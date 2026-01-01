@@ -17,26 +17,6 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-export function calculatePositivePoints(totalpoints: TotalPoints): number {
-  const racePoints = parseInt(String(totalpoints.race ?? 0)) || 0
-  return (
-    (parseInt(String(totalpoints.ads ?? 0)) || 0) +
-    (parseInt(String(totalpoints.attributes ?? 0)) || 0) +
-    (parseInt(String(totalpoints.skills ?? 0)) || 0) +
-    (parseInt(String(totalpoints.spells ?? 0)) || 0) +
-    (racePoints > 0 ? racePoints : 0)
-  )
-}
-
-export function calculateNegativePoints(totalpoints: TotalPoints): number {
-  const racePoints = parseInt(String(totalpoints.race ?? 0)) || 0
-  return Math.abs(
-    (parseInt(String(totalpoints.disads ?? 0)) || 0) +
-    (parseInt(String(totalpoints.quirks ?? 0)) || 0) +
-    (racePoints < 0 ? racePoints : 0)
-  )
-}
-
 interface ModernSheetData {
   system?: GurpsActorSystem
   skillCount?: number
@@ -44,8 +24,6 @@ interface ModernSheetData {
   meleeCount?: number
   rangedCount?: number
   modifierCount?: number
-  positivePoints?: number
-  negativePoints?: number
 }
 
 export class GurpsActorModernSheet extends GurpsActorSheet {
@@ -74,10 +52,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
-
-    const totalpoints = sheetData.system?.totalpoints || {}
-    sheetData.positivePoints = calculatePositivePoints(totalpoints)
-    sheetData.negativePoints = calculateNegativePoints(totalpoints)
 
     return sheetData
   }

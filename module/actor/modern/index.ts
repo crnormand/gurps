@@ -1,4 +1,4 @@
-export { GurpsActorModernSheet, countItems, calculatePositivePoints, calculateNegativePoints } from './sheet.js'
+export { GurpsActorModernSheet, countItems } from './sheet.js'
 export { bindInlineEdit, bindAllInlineEdits, shouldUpdateName, shouldUpdateField, buildOnBlurHandler } from './inline-edit-handler.js'
 export { bindCrudActions, bindModifierCrudActions, confirmAndDelete, buildEntityPath, getDisplayName } from './crud-handler.js'
 export { entityConfigurations, modifierConfigurations } from './entity-config.js'

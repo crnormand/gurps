@@ -49,38 +49,6 @@
   }
 }
 
-.ms-points-badge {
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: var(--ms-space-2);
-  padding: var(--ms-space-2) var(--ms-space-6);
-  background: var(--ms-bg);
-  border: 2px solid var(--ms-disadvantage);
-  border-radius: var(--ms-radius);
-  font-size: var(--ms-font-md);
-  font-weight: var(--ms-weight-bold);
-  @include tabular-nums;
-  line-height: 1;
-  pointer-events: none;
-  z-index: 10;
-
-  .ms-points-positive {
-    color: var(--ms-advantage);
-  }
-
-  .ms-points-separator {
-    color: var(--ms-text-muted);
-  }
-
-  .ms-points-negative {
-    color: var(--ms-disadvantage);
-  }
-}
-
 .ms-identity {
   min-width: 0;
   align-self: start;
