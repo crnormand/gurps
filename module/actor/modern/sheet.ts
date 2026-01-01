@@ -122,6 +122,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindNoteCrudActions(html, this.actor, this)
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
+    this.bindManeuverActions(html)
     this.bindEffectActions(html)
     this.bindEntityCrudActions(html)
   }
@@ -132,6 +133,15 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       toggleSelector: '.ms-posture-selected',
       optionSelector: '.ms-posture-option',
       onSelect: (posture: string) => this.actor.replacePosture(posture)
+    })
+  }
+
+  bindManeuverActions(html: JQuery): void {
+    bindDropdownToggle(html, {
+      dropdownSelector: '.ms-maneuver-dropdown',
+      toggleSelector: '.ms-maneuver-selected',
+      optionSelector: '.ms-maneuver-option',
+      onSelect: (maneuver: string) => this.actor.replaceManeuver(maneuver)
     })
   }
 
