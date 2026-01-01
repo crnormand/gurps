@@ -1,4 +1,5 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
 import EffectPicker from '../effect-picker.js'
 import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit } from './inline-edit-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
@@ -24,6 +25,7 @@ interface ModernSheetData {
   meleeCount?: number
   rangedCount?: number
   modifierCount?: number
+  showHPTinting?: boolean
 }
 
 export class GurpsActorModernSheet extends GurpsActorSheet {
@@ -52,6 +54,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
+    sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
 
     return sheetData
   }

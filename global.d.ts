@@ -194,6 +194,7 @@ declare global {
     'gurps.basicsetpdf': String
     'gurps.pdf-open-first': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
+    'gurps.portrait-hp-tinting': boolean
   }
 
   interface DialogV2Config {
@@ -252,6 +253,7 @@ declare global {
 declare module '*/miscellaneous-settings.js' {
   export const SYSTEM_NAME: 'gurps'
   export const SETTING_USE_FOUNDRY_ITEMS: 'use-foundry-items'
+  export const SETTING_PORTRAIT_HP_TINTING: 'portrait-hp-tinting'
 }
 
 declare namespace foundry.applications.api {
