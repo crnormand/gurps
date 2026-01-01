@@ -176,8 +176,10 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
   display: grid;
   grid-template-columns: $attack-columns;
   gap: var(--ms-space-2);
-  padding: var(--ms-space-2) 0;
+  padding: var(--ms-space-2) var(--ms-space-3);
   border-bottom: 1px solid var(--ms-border-light);
+  background: var(--ms-bg-card);
+  @include zebra-striping;
   @include interactive-row;
 
   &:last-child { border-bottom: none; }
@@ -529,20 +531,9 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
   }
 }
 
-.ms-combat-layout {
+.ms-combat-bottom {
   display: grid;
-  grid-template-columns: 5fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--ms-gap);
-}
-
-.ms-combat-left {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-gap);
-}
-
-.ms-combat-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-gap);
+  margin-top: var(--ms-gap);
 }

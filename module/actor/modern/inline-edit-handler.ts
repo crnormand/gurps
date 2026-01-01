@@ -225,3 +225,51 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
     }
   })
 }
+
+export function bindPointsEdit(html: JQuery, actor: GurpsActor): void {
+  const itemSelector = '.ms-points-item'
+  const inputSelector = '.ms-points-input'
+  const editingClass = 'editing'
+
+  html.find(itemSelector).on('click', (event: JQuery.ClickEvent) => {
+    const item = event.currentTarget as HTMLElement
+    if (item.classList.contains(editingClass)) return
+
+    item.classList.add(editingClass)
+    const input = item.querySelector(inputSelector) as HTMLInputElement
+    if (input) {
+      input.focus()
+      input.select()
+    }
+  })
+
+  html.find(inputSelector).on('blur', (event: JQuery.BlurEvent) => {
+    const input = event.currentTarget as HTMLInputElement
+    const item = input.closest(itemSelector) as HTMLElement
+    item.classList.remove(editingClass)
+
+    const fieldPath = input.name
+    const newValue = parseInt(input.value, 10)
+    const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
+
+    if (!isNaN(newValue) && newValue !== currentValue) {
+      actor.update({ [fieldPath]: newValue })
+    }
+  })
+
+  html.find(inputSelector).on('keydown', (event: JQuery.KeyDownEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      ;(event.currentTarget as HTMLInputElement).blur()
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      const input = event.currentTarget as HTMLInputElement
+      const item = input.closest(itemSelector) as HTMLElement
+      item.classList.remove(editingClass)
+      const fieldPath = input.name
+      input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+    }
+  })
+}

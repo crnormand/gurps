@@ -1,7 +1,7 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit } from './inline-edit-handler.js'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
@@ -59,6 +59,20 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     return sheetData
   }
 
+  override getCustomHeaderButtons() {
+    const blockImport = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT as never) as boolean
+    if (blockImport && !game.user!.isTrusted) return []
+
+    return [
+      {
+        label: 'Import',
+        class: 'import',
+        icon: 'fas fa-file-import',
+        onclick: async (event: Event) => this._onFileImport(event),
+      },
+    ]
+  }
+
   override async _render(force?: boolean, options?: Application.RenderOptions): Promise<void> {
     const scrollContainer = this.element?.find('.ms-body')[0]
     const scrollTop = scrollContainer?.scrollTop ?? 0
@@ -75,6 +89,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindAllInlineEdits(html, this.actor)
     bindAttributeEdit(html, this.actor)
     bindSecondaryStatsEdit(html, this.actor)
+    bindPointsEdit(html, this.actor)
 
     bindResourceReset(html, this.actor, [
       { selector: '.ms-resource-reset[data-action="reset-hp"]', resourcePath: 'system.HP.value', maxPath: 'system.HP.max' },
