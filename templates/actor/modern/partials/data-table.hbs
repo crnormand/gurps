@@ -11,8 +11,9 @@
       </div>
       {{#each items}}
       {{#unless this.isCollapsed}}
-      <div class='ms-{{../entityType}}-row' data-key='{{../path}}.{{@key}}'>
+      <div class='ms-{{../entityType}}-row' data-key='{{../path}}.{{@key}}' data-indent='{{indent}}' data-has-children='{{hasContains}}'>
         <span class='ms-col-name indent{{indent}}'>
+          {{#if hasContains}}<i class='fas fa-caret-down ms-container-icon'></i>{{/if}}
           <span class='ms-col-name-text'>{{this.name}}</span>
         </span>
         {{#if ../hasCollege}}<span class='ms-col-college'>{{this.college}}</span>{{/if}}

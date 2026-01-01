@@ -5,6 +5,14 @@
 @include grid-table('traits', 1fr minmax(100px, auto) 50px 50px 50px);
 @include grid-table('modifiers', 30px 1fr 60px 50px);
 
+.container-collapsed .ms-container-icon {
+  transform: rotate(-90deg);
+}
+
+.ms-child-hidden {
+  display: none;
+}
+
 .ms-spells-row .ms-col-college {
   text-align: center;
   color: var(--ms-text-dim);
@@ -66,6 +74,17 @@
     color: var(--ms-text-muted);
     width: 12px;
     text-align: center;
+
+    &:hover { color: var(--ms-accent); }
+  }
+
+  .ms-container-icon {
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+    width: 12px;
+    text-align: center;
+    transition: transform 0.15s ease;
 
     &:hover { color: var(--ms-accent); }
   }

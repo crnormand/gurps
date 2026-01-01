@@ -11,8 +11,9 @@
       </div>
       {{#each (flatlist system.ads)}}
       {{#unless isCollapsed}}
-      <div class='ms-traits-row {{pointsClass this.points}}' data-key='system.ads.{{@key}}'>
+      <div class='ms-traits-row {{pointsClass this.points}}' data-key='system.ads.{{@key}}' data-indent='{{indent}}' data-has-children='{{hasContains}}'>
         <span class='ms-col-name indent{{indent}}'>
+          {{#if hasContains}}<i class='fas fa-caret-down ms-container-icon'></i>{{/if}}
           <span class='ms-col-name-text'>{{stripOtfs this.name}}</span>
         </span>
         <span class='ms-col-otf'>

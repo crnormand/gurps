@@ -6,7 +6,7 @@ import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
 import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
-import { bindRowExpand, bindSectionCollapse, bindResourceReset } from './collapse-handler.js'
+import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -89,6 +89,12 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindSectionCollapse(html, {
       headerSelector: '.ms-section-header.ms-collapsible',
       excludeSelectors: ['.expandcollapseicon', '.ms-add-icon']
+    })
+
+    bindContainerCollapse(html, this.actor.id!, {
+      tableSelector: '.ms-traits-table, .ms-skills-table, .ms-spells-table',
+      rowSelector: '.ms-traits-row, .ms-skills-row, .ms-spells-row',
+      excludeSelectors: ['.ms-row-actions', '.ms-use-button', '.ms-col-otf', '.ms-col-level']
     })
 
     const openQuickNoteEditor = async () => {

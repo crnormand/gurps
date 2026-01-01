@@ -136,6 +136,12 @@ declare global {
     maxPath: string
   }
 
+  interface ContainerCollapseConfig {
+    tableSelector: string
+    rowSelector: string
+    excludeSelectors?: string[]
+  }
+
   interface DropdownConfig {
     dropdownSelector: string
     toggleSelector: string
