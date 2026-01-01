@@ -35,9 +35,17 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--ms-hp-overlay);
     pointer-events: none;
-    transition: height 0.3s ease;
+    transition: height 0.3s ease, background 0.3s ease;
+    background: transparent;
+
+    &[data-hp-threshold="1"] { background: var(--ms-hp-overlay-1); }
+    &[data-hp-threshold="2"] { background: var(--ms-hp-overlay-2); }
+    &[data-hp-threshold="3"] { background: var(--ms-hp-overlay-3); }
+    &[data-hp-threshold="4"] { background: var(--ms-hp-overlay-4); }
+    &[data-hp-threshold="5"] { background: var(--ms-hp-overlay-5); }
+    &[data-hp-threshold="6"] { background: var(--ms-hp-overlay-6); }
+    &[data-hp-threshold="7"] { background: var(--ms-hp-overlay-7); }
   }
 }
 
