@@ -1,4 +1,30 @@
 import { GurpsActor } from '../actor.js'
+import { GurpsItem } from '../../item.js'
+
+export type EntityWithItemId = EntityComponentBase & { itemid?: string }
+type GurpsItemWithEditingActor = GurpsItem & { editingActor?: GurpsActor; system?: { fromItem?: string } }
+type ActorWithSanityCheck = GurpsActor & { _sanityCheckItemSettings(obj: unknown): Promise<boolean> }
+
+export async function openItemSheetIfFoundryItem(
+  actor: GurpsActor,
+  entityData: EntityWithItemId
+): Promise<boolean> {
+  if (!entityData?.itemid) return false
+
+  if (!(await (actor as ActorWithSanityCheck)._sanityCheckItemSettings(entityData))) return true
+
+  let item = actor.items.get(entityData.itemid) as GurpsItemWithEditingActor | undefined
+  if (!item) return false
+
+  if (item.system?.fromItem) {
+    item = actor.items.get(item.system.fromItem) as GurpsItemWithEditingActor | undefined
+  }
+  if (!item) return false
+
+  item.editingActor = actor
+  item.sheet?.render(true)
+  return true
+}
 
 export function buildEntityPath(basePath: string, key: string): string {
   return `${basePath}.${key}`
@@ -57,6 +83,9 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     const target = event.currentTarget as HTMLElement
     const entityPath = target.dataset.key ?? ''
     const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
+
+    if (await openItemSheetIfFoundryItem(actor, entityData as EntityWithItemId)) return
+
     await editMethod.call(sheet, actor, entityPath, entityData)
   })
 

@@ -1,6 +1,6 @@
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { GurpsActor } from '../actor.js'
-import { confirmAndDelete } from './crud-handler.js'
+import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.js'
 
 export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheetEditMethods): void {
   const entityType = 'equipment'
@@ -36,6 +36,9 @@ export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet:
     const target = event.currentTarget as HTMLElement
     const equipmentPath = target.dataset.key ?? ''
     const equipmentData = foundry.utils.duplicate(GURPS.decode<EquipmentComponent>(actor, equipmentPath))
+
+    if (await openItemSheetIfFoundryItem(actor, equipmentData)) return
+
     await sheet.editEquipment(actor, equipmentPath, equipmentData)
   })
 
