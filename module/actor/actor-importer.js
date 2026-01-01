@@ -1983,7 +1983,8 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('n') ? 'note' : 'note_container'
     }
-    n.notes = i.calc?.resolved_text ?? i.text ?? ''
+    n.notes = i.markdown ?? i.calc?.resolved_text ?? i.text ?? ''
+
     n.uuid = i.id
     n.parentuuid = p
     n.pageRef(i.reference || '')
