@@ -22,6 +22,7 @@ const GCAVersion = 'GCA-11'
 
 export class ActorImporter {
   GCSVersion = 0
+  json = {}
 
   constructor(actor) {
     this.actor = actor
@@ -123,6 +124,7 @@ export class ActorImporter {
     let importResult = false
     try {
       r = JSON.parse(json)
+      this.json = r
     } catch (err) {
       msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
