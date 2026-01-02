@@ -32,7 +32,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   static override get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
-      width: 750,
+      width: 768,
       height: 816,
       tabs: [{ navSelector: '.ms-tabs', contentSelector: '.ms-body', initial: 'character' }],
       scrollY: ['.ms-body .tab'],

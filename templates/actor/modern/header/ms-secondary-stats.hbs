@@ -22,13 +22,13 @@
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='{{system.thrust}} dmg' data-damage='true'>{{system.thrust}}</span>
+      {{>dice-button otf=(concat system.thrust ' dmg') text=system.thrust damage=true}}
       <input class='ms-stat-input' type='text'
              name='system.thrust' value='{{system.thrust}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.swing'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='{{system.swing}} dmg' data-damage='true'>{{system.swing}}</span>
+      {{>dice-button otf=(concat system.swing ' dmg') text=system.swing damage=true}}
       <input class='ms-stat-input' type='text'
              name='system.swing' value='{{system.swing}}'/>
     </div>
@@ -40,31 +40,31 @@
     </button>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.vision'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='Vision'>{{system.vision}}</span>
+      {{>dice-button otf='Vision' level=system.vision}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.vision' value='{{system.vision}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.hearing'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='Hearing'>{{system.hearing}}</span>
+      {{>dice-button otf='Hearing' level=system.hearing}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.hearing' value='{{system.hearing}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.tastesmell'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='Taste/Smell'>{{system.tastesmell}}</span>
+      {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.tastesmell' value='{{system.tastesmell}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.touch'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='Touch'>{{system.touch}}</span>
+      {{>dice-button otf='Touch' level=system.touch}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.touch' value='{{system.touch}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.frightcheck'}}</span>
-      <span class='ms-stat-value ms-stat-display rollable' data-otf='Fright Check'>{{system.frightcheck}}</span>
+      {{>dice-button otf='Fright Check' level=system.frightcheck}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.frightcheck' value='{{system.frightcheck}}'/>
     </div>
