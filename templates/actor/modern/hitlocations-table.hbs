@@ -1,0 +1,30 @@
+{{!-- Hit Locations Table Partial --}}
+<div class='ms-section'>
+  <h3 class='ms-section-header'>
+    <i class='fas fa-person'></i>
+    {{localize 'GURPS.hitLocation'}}
+  </h3>
+  <div class='ms-locations-table'>
+    <div class='ms-loc-header'>
+      <span>{{localize 'GURPS.roll'}}</span>
+      <span>{{localize 'GURPS.hitLocationWhere'}}</span>
+      <span>{{localize 'GURPS.hitLocationPenalty'}}</span>
+      <span>{{localize 'GURPS.hitLocationDR'}}</span>
+    </div>
+    {{#each system.hitlocations}}
+    <div class='ms-loc-row'>
+      <span class='ms-loc-roll'>{{hitlocationroll where roll ../parent}}</span>
+      <span class='ms-loc-where'>{{localize (concat 'GURPS.hitLocation' where) where}}</span>
+      <span class='ms-loc-penalty {{gmod penalty}}' data-name='to hit {{where}}' data-otf='{{penalty}} to hit {{where}}'>{{{displayNumber (hitlocationpenalty where penalty ../parent)}}}</span>
+      <div class='ms-loc-dr {{#if (DRisModified this)}}ms-modified{{/if}}'>
+        {{#if ../document.limited}}
+          ??
+        {{else}}
+          <span class='ms-dr-display'>{{dr}}{{#each split as |value key|}}<span title='{{localize key}}'>/{{value}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</span>
+          <input type='text' class='ms-dr-input' name='system.hitlocations.{{@key}}.import' value='{{import}}'/>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

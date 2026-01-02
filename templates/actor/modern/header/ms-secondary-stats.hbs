@@ -1,0 +1,72 @@
+<div class='ms-secondary-stats'>
+  <fieldset class='ms-stat-box ms-editable-stats'>
+    <legend>{{localize 'GURPS.attributesSecondary'}}</legend>
+    <button class='ms-stat-box-edit' type='button' title='Edit'>
+      <i class='fas fa-pen'></i>
+    </button>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.basicspeed'}}</span>
+      <span class='ms-stat-value ms-stat-display'>{{system.basicspeed.value}}</span>
+      <input class='ms-stat-input' type='number' step='0.25'
+             name='system.basicspeed.value' value='{{system.basicspeed.value}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.basicmove'}}</span>
+      <span class='ms-stat-value ms-stat-display'>{{system.basicmove.value}}</span>
+      <input class='ms-stat-input' type='number' step='1'
+             name='system.basicmove.value' value='{{system.basicmove.value}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.dodge'}}</span>
+      {{>dice-button otf='Dodge' level=system.currentdodge}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}</span>
+      {{>dice-button otf=(concat system.thrust ' dmg') text=system.thrust damage=true}}
+      <input class='ms-stat-input' type='text'
+             name='system.thrust' value='{{system.thrust}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.swing'}}</span>
+      {{>dice-button otf=(concat system.swing ' dmg') text=system.swing damage=true}}
+      <input class='ms-stat-input' type='text'
+             name='system.swing' value='{{system.swing}}'/>
+    </div>
+  </fieldset>
+  <fieldset class='ms-stat-box ms-editable-stats'>
+    <legend>{{localize 'GURPS.effectPicker.senses'}}</legend>
+    <button class='ms-stat-box-edit' type='button' title='Edit'>
+      <i class='fas fa-pen'></i>
+    </button>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.vision'}}</span>
+      {{>dice-button otf='Vision' level=system.vision}}
+      <input class='ms-stat-input' type='number' step='1'
+             name='system.vision' value='{{system.vision}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.hearing'}}</span>
+      {{>dice-button otf='Hearing' level=system.hearing}}
+      <input class='ms-stat-input' type='number' step='1'
+             name='system.hearing' value='{{system.hearing}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.tastesmell'}}</span>
+      {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
+      <input class='ms-stat-input' type='number' step='1'
+             name='system.tastesmell' value='{{system.tastesmell}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.touch'}}</span>
+      {{>dice-button otf='Touch' level=system.touch}}
+      <input class='ms-stat-input' type='number' step='1'
+             name='system.touch' value='{{system.touch}}'/>
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.frightcheck'}}</span>
+      {{>dice-button otf='Fright Check' level=system.frightcheck}}
+      <input class='ms-stat-input' type='number' step='1'
+             name='system.frightcheck' value='{{system.frightcheck}}'/>
+    </div>
+  </fieldset>
+</div>

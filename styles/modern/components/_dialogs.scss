@@ -1,0 +1,127 @@
+@use '../mixins' as *;
+
+.effect-picker {
+  .window-content {
+    padding: 0;
+    background: var(--ms-bg);
+  }
+}
+
+.effect-picker-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.effect-picker-search-wrapper {
+  padding: var(--ms-space-6);
+  border-bottom: 1px solid var(--ms-border);
+  background: var(--ms-bg-card);
+}
+
+.effect-picker-search {
+  width: 100%;
+  padding: var(--ms-space-4) var(--ms-space-6);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius-md);
+  font-size: var(--ms-font-sm);
+  background: var(--ms-bg);
+
+  &:focus {
+    outline: none;
+    border-color: var(--ms-accent);
+    box-shadow: 0 0 0 2px var(--ms-accent-light);
+  }
+}
+
+.effect-picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ms-space-4) 0;
+}
+
+.effect-picker-category {
+  margin-bottom: var(--ms-space-2);
+
+  &.collapsed {
+    .effect-picker-category-header i {
+      transform: rotate(-90deg);
+    }
+
+    .effect-picker-category-content {
+      display: none;
+    }
+  }
+}
+
+.effect-picker-category-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-gap);
+  padding: var(--ms-space-4) var(--ms-space-6);
+  font-weight: var(--ms-weight-semibold);
+  font-size: var(--ms-font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ms-text-muted);
+  cursor: pointer;
+  user-select: none;
+
+  i {
+    font-size: var(--ms-font-xs);
+    transition: transform var(--ms-transition-slow);
+  }
+
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+}
+
+.effect-picker-category-count {
+  margin-left: auto;
+  padding: var(--ms-space-1) var(--ms-space-3);
+  background: var(--ms-bg-muted);
+  border-radius: var(--ms-radius-pill);
+  font-size: var(--ms-font-xs);
+}
+
+.effect-picker-category-content {
+  padding: 0 var(--ms-space-4);
+}
+
+.effect-picker-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-5);
+  padding: var(--ms-space-4) var(--ms-space-6);
+  border-radius: var(--ms-radius-md);
+  cursor: pointer;
+  transition: background var(--ms-transition-normal);
+
+  &:hover {
+    background: var(--ms-accent-light);
+  }
+
+  &:active {
+    background: color-mix(in srgb, var(--ms-accent) 20%, transparent);
+  }
+}
+
+.effect-picker-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--ms-radius);
+  object-fit: contain;
+}
+
+.effect-picker-name {
+  font-size: var(--ms-font-sm);
+  color: var(--ms-text);
+}
+
+.effect-picker-empty {
+  padding: var(--ms-space-12);
+  text-align: center;
+  color: var(--ms-text-muted);
+  font-style: italic;
+}

@@ -1,0 +1,57 @@
+{{!-- Equipment Table Partial --}}
+{{!-- Parameters: container (carried/other), items, showEquipped, title, icon --}}
+<div class='ms-section'>
+  <h3 class='ms-section-header'>
+    <i class='fas {{icon}}'></i>
+    {{{title}}}
+  </h3>
+  <div class='ms-equipment-table'>
+    <div class='ms-eqt-header'>
+      <span class='ms-eqt-equipped'>{{#if showEquipped}}{{localize 'GURPS.equipmentEquipped'}}{{/if}}</span>
+      <span class='ms-eqt-qty'>{{localize 'GURPS.equipmentQuantity'}}</span>
+      <span class='ms-eqt-name'>{{localize 'GURPS.equipment'}}</span>
+      <span class='ms-eqt-cost'>$</span>
+      <span class='ms-eqt-weight'><i class='fas fa-weight-hanging'></i></span>
+      <span class='ms-eqt-ref'>{{localize 'GURPS.pdfRef'}}</span>
+      <span class='ms-eqt-actions'></span>
+    </div>
+    {{#each (flatlist items)}}
+    {{#unless isCollapsed}}
+    <div class='ms-eqt-row equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
+      <span class='ms-eqt-equipped {{#if ../showEquipped}}changeequip{{/if}}' data-key='system.equipment.{{../container}}.{{@key}}'>
+        {{#if ../showEquipped}}
+          {{#if this.equipped}}
+            <i class='fas fa-circle-check'></i>
+          {{else}}
+            <i class='far fa-circle ms-inactive'></i>
+          {{/if}}
+        {{/if}}
+      </span>
+      <span class='ms-eqt-qty'>
+        <i class='fa-solid fa-circle-minus equipmentbutton' data-key='system.equipment.{{../container}}.{{@key}}' data-operation='equipment-dec'></i>
+        <span>{{count}}</span>
+        <i class='fa-solid fa-circle-plus equipmentbutton' data-key='system.equipment.{{../container}}.{{@key}}' data-operation='equipment-inc'></i>
+      </span>
+      <span class='ms-eqt-name indent{{indent}}'>
+        {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
+        {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
+        {{{gurpslink name}}}
+        {{#if notes}}<div class='ms-eqt-notes'>{{{gurpslinkbr notes}}}</div>{{/if}}
+      </span>
+      <span class='ms-eqt-cost'>{{toLocaleString (toNumber cost)}}</span>
+      <span class='ms-eqt-weight'>{{toLocaleString (toNumber weight)}}</span>
+      <span class='ms-eqt-ref'>{{{pdflinkext this}}}</span>
+      <span class='ms-eqt-actions'>
+        <i class='fas fa-pen-to-square ms-action-btn' data-action='edit-equipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Edit'></i>
+        <i class='fas fa-trash ms-action-btn ms-delete' data-action='delete-equipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Delete'></i>
+      </span>
+    </div>
+    {{/unless}}
+    {{else}}
+    <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+    {{/each}}
+    <div class='ms-add-row'>
+      <span class='ms-add-btn' data-action='add-equipment' data-container='{{container}}'><i class='fas fa-plus'></i> {{localize 'GURPS.equipment'}}</span>
+    </div>
+  </div>
+</div>

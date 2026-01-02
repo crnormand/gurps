@@ -1,0 +1,118 @@
+@use '../mixins' as *;
+
+.ms-use-button {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  width: fit-content;
+  gap: var(--ms-space-1);
+  padding: 0 var(--ms-space-2);
+  margin-left: var(--ms-space-2);
+  background: var(--ms-bg-card);
+  color: var(--ms-text);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius-sm);
+  cursor: pointer;
+  font-size: var(--ms-font-xs);
+
+  &:hover {
+    background: var(--ms-bg-hover);
+    border-color: var(--ms-accent);
+  }
+
+  i { font-size: var(--ms-font-xs); color: var(--ms-text-muted); }
+
+  .ms-btn-level {
+    font-weight: var(--ms-weight-semibold);
+    @include tabular-nums;
+  }
+
+  .ms-btn-text {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.ms-eqt-actions, .ms-note-actions, .ms-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ms-space-4);
+}
+
+.ms-action-btn {
+  color: var(--ms-text-muted);
+  cursor: pointer;
+  font-size: var(--ms-font-xs);
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+
+  &:hover {
+    opacity: 1;
+    color: var(--ms-accent);
+  }
+
+  &.ms-delete:hover {
+    color: var(--ms-hp);
+  }
+}
+
+.ms-add-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--ms-space-6);
+  padding: var(--ms-space-4) 0;
+  border-top: 1px solid var(--ms-border-light);
+  margin-top: var(--ms-space-2);
+}
+
+.ms-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  padding: var(--ms-space-2) var(--ms-space-6);
+  color: var(--ms-accent);
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-medium);
+  cursor: pointer;
+  border-radius: var(--ms-radius);
+  transition: background 0.15s, color 0.15s;
+
+  i {
+    font-size: var(--ms-font-xs);
+  }
+
+  &:hover {
+    background: var(--ms-accent-light);
+    color: var(--ms-text);
+  }
+}
+
+.ms-effect-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: var(--ms-font-xs);
+  line-height: 1;
+  background: var(--ms-accent-light);
+  color: var(--ms-accent);
+  border: 1px solid var(--ms-accent);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  i {
+    display: flex;
+    margin: 0;
+  }
+
+  &:hover {
+    background: var(--ms-accent-light);
+    filter: brightness(0.95);
+  }
+}

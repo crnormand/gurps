@@ -1,0 +1,16 @@
+{{!-- Full-width attacks --}}
+<div class='ms-attacks-section'>
+  {{>attack-table section="melee" icon="fa-sword" title=(localize "GURPS.melee") count=meleeCount items=system.melee path="system.melee" attackType="melee" otfPrefix="M" isMelee=true editAction="edit-melee" deleteAction="delete-melee" addAction="add-melee" addLabel=(localize "GURPS.melee")}}
+
+  {{>attack-table section="ranged" icon="fa-crosshairs" title=(localize "GURPS.ranged") count=rangedCount items=system.ranged path="system.ranged" attackType="ranged" otfPrefix="R" isMelee=false editAction="edit-ranged" deleteAction="delete-ranged" addAction="add-ranged" addLabel=(localize "GURPS.ranged")}}
+</div>
+
+{{!-- Side-by-side: Hit Locations + Encumbrance (50%/50%) --}}
+<div class='ms-combat-bottom'>
+  <div class='ms-combat-bottom-left'>
+    {{>hitlocations-table}}
+  </div>
+  <div class='ms-combat-bottom-right'>
+    {{>encumbrance-table}}
+  </div>
+</div>

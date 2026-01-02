@@ -16,6 +16,8 @@
       "fvtt-types"
     ] /* Specify type package names to be included without being referenced in a source file. */,
     "resolveJsonModule": true /* Enable importing .json files. */,
+    "allowImportingTsExtensions": true /* Allow imports to include TypeScript file extensions. */,
+    "rewriteRelativeImportExtensions": true /* Rewrite '.ts' extensions to '.js' in relative import paths. */,
 
     /* JavaScript Support */
     "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,

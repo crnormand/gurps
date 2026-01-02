@@ -311,4 +311,46 @@ describe('utilities', () => {
       expect(utilities.escapeHtml('<div>')).toBe('&lt;div&gt;')
     })
   })
+
+  describe('stripBracketContents', () => {
+    test('returns empty string for null or undefined', () => {
+      expect(utilities.stripBracketContents(null)).toBe('')
+      expect(utilities.stripBracketContents(undefined)).toBe('')
+      expect(utilities.stripBracketContents('')).toBe('')
+    })
+
+    test('removes single OTF bracket', () => {
+      expect(utilities.stripBracketContents('Attack [HT]')).toBe('Attack')
+      expect(utilities.stripBracketContents('[HT] Attack')).toBe('Attack')
+      expect(utilities.stripBracketContents('Do [HT] now')).toBe('Do now')
+    })
+
+    test('removes multiple OTF brackets', () => {
+      expect(utilities.stripBracketContents('Foo [HT] bar [Will] baz')).toBe('Foo bar baz')
+      expect(utilities.stripBracketContents('[HT] and [Will]')).toBe('and')
+    })
+
+    test('handles complex OTF formulas', () => {
+      expect(utilities.stripBracketContents('Shadow Step [IQ-10 *Costs 1 FP]')).toBe('Shadow Step')
+      expect(utilities.stripBracketContents('[Sk:"Stealth"-2] sneaking')).toBe('sneaking')
+    })
+
+    test('collapses multiple spaces', () => {
+      expect(utilities.stripBracketContents('Foo  [HT]  bar')).toBe('Foo bar')
+      expect(utilities.stripBracketContents('Multiple   spaces')).toBe('Multiple spaces')
+    })
+
+    test('trims whitespace', () => {
+      expect(utilities.stripBracketContents('  [HT] Attack  ')).toBe('Attack')
+      expect(utilities.stripBracketContents('[HT]')).toBe('')
+    })
+
+    test('handles text without brackets', () => {
+      expect(utilities.stripBracketContents('No brackets here')).toBe('No brackets here')
+    })
+
+    test('handles nested-looking content correctly', () => {
+      expect(utilities.stripBracketContents('Text [outer [inner] still] more')).toBe('Text still] more')
+    })
+  })
 })

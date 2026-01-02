@@ -1,0 +1,102 @@
+@use '../mixins' as *;
+
+.ms-modifier-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  padding: var(--ms-space-1) var(--ms-space-4);
+  border-radius: var(--ms-radius-pill);
+  font-size: var(--ms-font-xs);
+  line-height: var(--ms-leading-normal);
+
+  .ms-tag-value {
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
+  }
+
+  .ms-tag-text {
+    color: inherit;
+    opacity: 0.9;
+  }
+
+  &.ms-tag-positive {
+    background: var(--ms-advantage-bg);
+    color: var(--ms-advantage);
+    border: 1px solid var(--ms-advantage);
+  }
+
+  &.ms-tag-negative {
+    background: var(--ms-disadvantage-bg);
+    color: var(--ms-disadvantage);
+    border: 1px solid var(--ms-disadvantage);
+  }
+}
+
+.ms-effect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  padding: var(--ms-space-1) var(--ms-space-4);
+  border-radius: var(--ms-radius-pill);
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
+  line-height: var(--ms-leading-normal);
+  background: var(--ms-accent-light);
+  color: var(--ms-accent);
+  border: 1px solid var(--ms-accent);
+
+  &.ms-effect-bad {
+    background: var(--ms-disadvantage-bg);
+    color: var(--ms-disadvantage);
+    border: 1px solid var(--ms-disadvantage);
+  }
+}
+
+.ms-effect-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.ms-effect-icon-wrapper {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-effect-delete {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: inherit;
+  font-size: var(--ms-font-xs);
+
+  i {
+    margin: 0;
+  }
+
+  &:hover {
+    color: var(--ms-disadvantage);
+  }
+}
+
+.ms-effect-tag:hover {
+  .ms-effect-icon {
+    display: none;
+  }
+  .ms-effect-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

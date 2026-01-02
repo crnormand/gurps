@@ -1,0 +1,33 @@
+<div class='ms-section' data-section='modifiers'>
+  {{>section-header icon="fa-balance-scale" title=(concat (localize "GURPS.modifier") "s") count=modifierCount collapsible=true}}
+  <div class='ms-section-content'>
+    <div class='ms-modifiers-table'>
+      <div class='ms-modifiers-header'>
+        <span></span>
+        <span>{{localize 'GURPS.description'}}</span>
+        <span>{{localize 'GURPS.modifier'}}</span>
+        <span></span>
+      </div>
+      {{#each (flatlist system.reactions)}}
+      <div class='ms-modifiers-row' data-key='system.reactions.{{@key}}'>
+        <span class='ms-col-type'><span class='ms-type-badge ms-type-reaction' title='{{localize "GURPS.reaction"}}'>R</span></span>
+        <span class='ms-col-situation'>{{{gurpslink this.situation}}}</span>
+        <span class='ms-col-modifier'>{{>dice-button otf=(concat (displayNumber this.modifier) ' ' this.situation) level=this.modifier color=(modifierColor this.modifier)}}</span>
+        {{>row-actions editAction="edit-reaction" deleteAction="delete-reaction" key=(concat "system.reactions." @key)}}
+      </div>
+      {{/each}}
+      {{#each (flatlist system.conditionalmods)}}
+      <div class='ms-modifiers-row' data-key='system.conditionalmods.{{@key}}'>
+        <span class='ms-col-type'><span class='ms-type-badge ms-type-conditional' title='{{localize "GURPS.conditionalModifier"}}'>C</span></span>
+        <span class='ms-col-situation'>{{{gurpslink this.situation}}}</span>
+        <span class='ms-col-modifier'>{{>dice-button otf=(concat (displayNumber this.modifier) ' ' this.situation) level=this.modifier color=(modifierColor this.modifier)}}</span>
+        {{>row-actions editAction="edit-conditional" deleteAction="delete-conditional" key=(concat "system.conditionalmods." @key)}}
+      </div>
+      {{/each}}
+      <div class='ms-add-row'>
+        <span class='ms-add-btn' data-action='add-reaction'><i class='fas fa-plus'></i> {{localize 'GURPS.reaction'}}</span>
+        <span class='ms-add-btn' data-action='add-conditional'><i class='fas fa-plus'></i> {{localize 'GURPS.conditionalModifier'}}</span>
+      </div>
+    </div>
+  </div>
+</div>

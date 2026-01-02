@@ -1,0 +1,34 @@
+<div class='ms-section' data-section='traits'>
+  {{>section-header icon="fa-sparkles" title=(localize "GURPS.advDisadvPerkQuirks") count=traitCount collapsible=true}}
+  <div class='ms-section-content'>
+    <div class='ms-traits-table'>
+      <div class='ms-traits-header'>
+        <span>{{localize 'GURPS.name'}}</span>
+        <span>OTF</span>
+        <span>CP</span>
+        <span>{{localize 'GURPS.pdfRef'}}</span>
+        <span></span>
+      </div>
+      {{#each (flatlist system.ads)}}
+      <div class='ms-traits-row {{pointsClass this.points}}' data-key='system.ads.{{@key}}' data-indent='{{indent}}' data-has-children='{{or hasContains hasCollapsed}}'>
+        <span class='ms-col-name indent{{indent}}'>
+          {{#if (or hasContains hasCollapsed)}}<i class='fas fa-caret-down ms-container-icon'></i>{{/if}}
+          <span class='ms-col-name-text'>{{stripOtfs this.name}}</span>
+        </span>
+        <span class='ms-col-otf'>
+          {{#each (extractOtfs this.name this.notes)}}
+          {{>dice-button otf=this.formula text=this.text encodedAction=this.encodedAction}}
+          {{/each}}
+        </span>
+        <span class='ms-col-points {{pointsClass this.points}}'>[{{this.points}}]</span>
+        <span class='ms-col-ref'>{{{pdflinkext this}}}</span>
+        {{>row-actions editAction="edit-trait" deleteAction="delete-trait" key=(concat "system.ads." @key)}}
+        {{>row-notes notes=this.notes}}
+      </div>
+      {{else}}
+      <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      {{>add-row action="add-trait" label=(localize "GURPS.advantage")}}
+    </div>
+  </div>
+</div>
