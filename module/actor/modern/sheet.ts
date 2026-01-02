@@ -1,11 +1,13 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit } from './inline-edit-handler.js'
-import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
-import { entityConfigurations, modifierConfigurations } from './entity-config.js'
-import { bindDropdownToggle } from './dropdown-handler.js'
-import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
-import { bindRowExpand, bindSectionCollapse, bindResourceReset } from './collapse-handler.js'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
+import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
+import { entityConfigurations, modifierConfigurations } from './entity-config.ts'
+import { bindDropdownToggle } from './dropdown-handler.ts'
+import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
+import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
+import { isPostureOrManeuver } from './utils/effect.ts'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -17,42 +19,22 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-export function calculatePositivePoints(totalpoints: TotalPoints): number {
-  const racePoints = parseInt(String(totalpoints.race ?? 0)) || 0
-  return (
-    (parseInt(String(totalpoints.ads ?? 0)) || 0) +
-    (parseInt(String(totalpoints.attributes ?? 0)) || 0) +
-    (parseInt(String(totalpoints.skills ?? 0)) || 0) +
-    (parseInt(String(totalpoints.spells ?? 0)) || 0) +
-    (racePoints > 0 ? racePoints : 0)
-  )
-}
-
-export function calculateNegativePoints(totalpoints: TotalPoints): number {
-  const racePoints = parseInt(String(totalpoints.race ?? 0)) || 0
-  return Math.abs(
-    (parseInt(String(totalpoints.disads ?? 0)) || 0) +
-    (parseInt(String(totalpoints.quirks ?? 0)) || 0) +
-    (racePoints < 0 ? racePoints : 0)
-  )
-}
-
 interface ModernSheetData {
   system?: GurpsActorSystem
+  effects?: ActiveEffect[]
   skillCount?: number
   traitCount?: number
   meleeCount?: number
   rangedCount?: number
   modifierCount?: number
-  positivePoints?: number
-  negativePoints?: number
+  showHPTinting?: boolean
 }
 
 export class GurpsActorModernSheet extends GurpsActorSheet {
   static override get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
-      width: 750,
+      width: 768,
       height: 816,
       tabs: [{ navSelector: '.ms-tabs', contentSelector: '.ms-body', initial: 'character' }],
       scrollY: ['.ms-body .tab'],
@@ -69,17 +51,30 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   override getData(): ModernSheetData {
     const sheetData = super.getData() as ModernSheetData
 
+    sheetData.effects = sheetData.effects?.filter(effect => !isPostureOrManeuver(effect))
+
     sheetData.skillCount = countItems(sheetData.system?.skills)
     sheetData.traitCount = countItems(sheetData.system?.ads)
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
-
-    const totalpoints = sheetData.system?.totalpoints || {}
-    sheetData.positivePoints = calculatePositivePoints(totalpoints)
-    sheetData.negativePoints = calculateNegativePoints(totalpoints)
+    sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
 
     return sheetData
+  }
+
+  override getCustomHeaderButtons() {
+    const blockImport = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT as never) as boolean
+    if (blockImport && !game.user!.isTrusted) return []
+
+    return [
+      {
+        label: 'Import',
+        class: 'import',
+        icon: 'fas fa-file-import',
+        onclick: async (event: Event) => this._onFileImport(event),
+      },
+    ]
   }
 
   override async _render(force?: boolean, options?: Application.RenderOptions): Promise<void> {
@@ -98,6 +93,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindAllInlineEdits(html, this.actor)
     bindAttributeEdit(html, this.actor)
     bindSecondaryStatsEdit(html, this.actor)
+    bindPointsEdit(html, this.actor)
 
     bindResourceReset(html, this.actor, [
       { selector: '.ms-resource-reset[data-action="reset-hp"]', resourcePath: 'system.HP.value', maxPath: 'system.HP.max' },
@@ -112,6 +108,12 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindSectionCollapse(html, {
       headerSelector: '.ms-section-header.ms-collapsible',
       excludeSelectors: ['.expandcollapseicon', '.ms-add-icon']
+    })
+
+    bindContainerCollapse(html, this.actor.id!, {
+      tableSelector: '.ms-traits-table, .ms-skills-table, .ms-spells-table',
+      rowSelector: '.ms-traits-row, .ms-skills-row, .ms-spells-row',
+      excludeSelectors: ['.ms-row-actions', '.ms-use-button', '.ms-col-otf', '.ms-col-level']
     })
 
     const openQuickNoteEditor = async () => {
@@ -148,6 +150,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindNoteCrudActions(html, this.actor, this)
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
+    this.bindManeuverActions(html)
     this.bindEffectActions(html)
     this.bindEntityCrudActions(html)
   }
@@ -158,6 +161,15 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       toggleSelector: '.ms-posture-selected',
       optionSelector: '.ms-posture-option',
       onSelect: (posture: string) => this.actor.replacePosture(posture)
+    })
+  }
+
+  bindManeuverActions(html: JQuery): void {
+    bindDropdownToggle(html, {
+      dropdownSelector: '.ms-maneuver-dropdown',
+      toggleSelector: '.ms-maneuver-selected',
+      optionSelector: '.ms-maneuver-option',
+      onSelect: (maneuver: string) => this.actor.replaceManeuver(maneuver)
     })
   }
 

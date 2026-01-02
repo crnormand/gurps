@@ -5,6 +5,14 @@
 @include grid-table('traits', 1fr minmax(100px, auto) 50px 50px 50px);
 @include grid-table('modifiers', 30px 1fr 60px 50px);
 
+.container-collapsed .ms-container-icon {
+  transform: rotate(-90deg);
+}
+
+.ms-child-hidden {
+  display: none;
+}
+
 .ms-spells-row .ms-col-college {
   text-align: center;
   color: var(--ms-text-dim);
@@ -66,6 +74,17 @@
     color: var(--ms-text-muted);
     width: 12px;
     text-align: center;
+
+    &:hover { color: var(--ms-accent); }
+  }
+
+  .ms-container-icon {
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--ms-text-muted);
+    width: 12px;
+    text-align: center;
+    transition: transform 0.15s ease;
 
     &:hover { color: var(--ms-accent); }
   }
@@ -157,8 +176,10 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
   display: grid;
   grid-template-columns: $attack-columns;
   gap: var(--ms-space-2);
-  padding: var(--ms-space-2) 0;
+  padding: var(--ms-space-2) var(--ms-space-3);
   border-bottom: 1px solid var(--ms-border-light);
+  background: var(--ms-bg-card);
+  @include zebra-striping;
   @include interactive-row;
 
   &:last-child { border-bottom: none; }
@@ -384,7 +405,7 @@ $locations-columns: 50px 1fr 60px 60px;
   }
 }
 
-$equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
+$equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
 
 .ms-equipment-table {
   @include table-container;
@@ -392,15 +413,18 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
 
 .ms-eqt-header {
   @include grid-header($equipment-columns);
+  padding-left: 0;
+  padding-right: 0;
 
   > span {
-    padding: var(--ms-space-4) var(--ms-space-3);
+    padding: var(--ms-space-4) var(--ms-space-2);
   }
 }
 
 .ms-eqt-row {
   display: grid;
   grid-template-columns: $equipment-columns;
+  gap: 4px;
   align-items: center;
   background: var(--ms-bg-card);
   border-bottom: 1px solid var(--ms-border-light);
@@ -408,7 +432,7 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
   @include interactive-row;
 
   > span {
-    padding: var(--ms-space-3);
+    padding: var(--ms-space-3) var(--ms-space-2);
   }
 }
 
@@ -510,20 +534,9 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
   }
 }
 
-.ms-combat-layout {
+.ms-combat-bottom {
   display: grid;
-  grid-template-columns: 5fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--ms-gap);
-}
-
-.ms-combat-left {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-gap);
-}
-
-.ms-combat-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-gap);
+  margin-top: var(--ms-gap);
 }

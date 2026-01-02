@@ -39,11 +39,13 @@ modern/
 
 ---
 
-## CSS Variables vs SCSS Variables
+## CSS Variables
 
-**Use CSS Variables** (`var(--ms-*)`) for components inside `.modern-sheet`. They switch automatically with theme.
+CSS variables (`var(--ms-*)`) are defined at `body` level and automatically switch between light and dark themes.
 
-**Use SCSS Variables** (`$ms-*`) for dialogs and popups in separate windows. They don't inherit CSS variables from the sheet, so you must handle dark theme manually with `body.theme-dark` selectors.
+**All components** (sheet and dialogs): Use CSS variables. No manual dark theme handling needed.
+
+SCSS variables (`$ms-*`) exist only as source definitions in `_variables.scss` for the theme mixins. Do not use them directly in component styles.
 
 ---
 
@@ -132,7 +134,6 @@ Gaps within elements must be smaller than gaps between elements. This creates vi
 2. Import mixins: `@use '../mixins' as *;`
 3. Use CSS variables for all themeable values
 4. Follow `ms-` class naming convention
-5. For dialogs outside `.modern-sheet`, add explicit dark theme handling
 
 ---
 

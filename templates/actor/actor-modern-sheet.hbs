@@ -48,17 +48,25 @@
           {{/each}}
         </div>
       </div>
-      {{#if (ne system.conditions.maneuver 'undefined')}}
-      <div class='ms-status-item'>
-        <label>{{localize 'GURPS.maneuver'}}:</label>
-        <select name='system.conditions.maneuver' {{disabled (not (inCombat this))}}>
-          <option value='undefined' {{select-if system.conditions.maneuver 'undefined'}}>{{localize 'GURPS.none'}}</option>
-          {{#with system.conditions.maneuver as |maneuver|}}
-            {{#each (listAllManeuvers) as |this key|}}
-              <option value='{{key}}' {{select-if maneuver key}}>{{localize this.label}}</option>
-            {{/each}}
+      {{#if (inCombat this)}}
+      <div class='ms-status-item ms-maneuver-dropdown'>
+        <div class='ms-maneuver-selected' data-maneuver='{{system.conditions.maneuver}}'>
+          {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
+          <span>{{localize maneuver.label}}</span>
+          <span class='ms-maneuver-icons'>
+            <img src='{{maneuver.icon}}' />
+            <i class='fas fa-caret-down'></i>
+          </span>
           {{/with}}
-        </select>
+        </div>
+        <div class='ms-maneuver-options'>
+          {{#each (listAllManeuvers) as |this key|}}
+          <div class='ms-maneuver-option' data-value='{{key}}'>
+            <span>{{localize this.label}}</span>
+            <img src='{{this.icon}}' />
+          </div>
+          {{/each}}
+        </div>
       </div>
       {{/if}}
       <div class='ms-status-item'>

@@ -711,6 +711,7 @@
     "knockback": "Projeção, {amount} {unit}",
     "knockbackCheck": "{name}: teste de {dx}, {acrobacia}, ou {judô} ou sofra uma queda!",
     "language": "Idioma",
+    "lbs": "lbs",
     "lessThan": "Menos que",
     "level": "Nív.",
     "liftingAndMovingThings": "Levantar e Mover Objetos",

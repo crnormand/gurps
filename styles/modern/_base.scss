@@ -1,5 +1,19 @@
 @use 'variables' as *;
 
+body {
+  @include css-variables;
+
+  &.theme-dark {
+    @include css-variables-dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:not(.theme-light) {
+      @include css-variables-dark;
+    }
+  }
+}
+
 .app.window-app.sheet.actor.modern-sheet {
   .window-content {
     overflow: hidden;
@@ -16,23 +30,11 @@
   }
 
   .window-resizable-handle {
-    background: $ms-bg;
-  }
-
-  body.theme-dark & .window-resizable-handle {
-    background: $ms-bg-dark;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body:not(.theme-light) & .window-resizable-handle {
-      background: $ms-bg-dark;
-    }
+    background: var(--ms-bg);
   }
 }
 
 .modern-sheet {
-  @include css-variables;
-
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -48,16 +50,6 @@
 
   *, *::before, *::after {
     box-sizing: border-box;
-  }
-
-  body.theme-dark & {
-    @include css-variables-dark;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body:not(.theme-light) & {
-      @include css-variables-dark;
-    }
   }
 
   .pdflink {

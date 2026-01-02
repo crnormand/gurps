@@ -10,9 +10,9 @@
         <span></span>
       </div>
       {{#each (flatlist system.ads)}}
-      {{#unless isCollapsed}}
-      <div class='ms-traits-row {{pointsClass this.points}}' data-key='system.ads.{{@key}}'>
+      <div class='ms-traits-row {{pointsClass this.points}}' data-key='system.ads.{{@key}}' data-indent='{{indent}}' data-has-children='{{or hasContains hasCollapsed}}'>
         <span class='ms-col-name indent{{indent}}'>
+          {{#if (or hasContains hasCollapsed)}}<i class='fas fa-caret-down ms-container-icon'></i>{{/if}}
           <span class='ms-col-name-text'>{{stripOtfs this.name}}</span>
         </span>
         <span class='ms-col-otf'>
@@ -25,7 +25,6 @@
         {{>row-actions editAction="edit-trait" deleteAction="delete-trait" key=(concat "system.ads." @key)}}
         {{>row-notes notes=this.notes}}
       </div>
-      {{/unless}}
       {{else}}
       <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}

@@ -1,3 +1,62 @@
+{{!-- Points Summary Bar --}}
+<div class='ms-section ms-points-bar'>
+  <h3 class='ms-section-header'>
+    <i class='fas fa-chart-pie'></i>
+    {{localize 'GURPS.points'}}
+  </h3>
+  <div class='ms-points-row'>
+    <span class='ms-points-item' data-path='system.totalpoints.total'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.total}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.total' value='{{system.totalpoints.total}}'/>
+      </span>
+      {{localize 'GURPS.pointsTotal'}}
+    </span>
+    <span class='ms-points-item' data-path='system.totalpoints.unspent'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.unspent}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.unspent' value='{{system.totalpoints.unspent}}'/>
+      </span>
+      {{localize 'GURPS.pointsUnspent'}}
+    </span>
+    <span class='ms-points-item' data-path='system.totalpoints.attributes'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.attributes}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.attributes' value='{{system.totalpoints.attributes}}'/>
+      </span>
+      {{localize 'GURPS.pointsAttributes'}}
+    </span>
+    <span class='ms-points-item' data-path='system.totalpoints.ads'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.ads}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.ads' value='{{system.totalpoints.ads}}'/>
+      </span>
+      {{localize 'GURPS.pointsAdvantages'}}
+    </span>
+    <span class='ms-points-item' data-path='system.totalpoints.disads'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.disads}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.disads' value='{{system.totalpoints.disads}}'/>
+      </span>
+      {{localize 'GURPS.pointsDisadvantages'}}
+    </span>
+    <span class='ms-points-item' data-path='system.totalpoints.skills'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.skills}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.skills' value='{{system.totalpoints.skills}}'/>
+      </span>
+      {{localize 'GURPS.pointsSkills'}}
+    </span>
+    <span class='ms-points-item' data-path='system.totalpoints.spells'>
+      <span class='ms-points-value'>
+        <span class='ms-points-display'>{{system.totalpoints.spells}}</span>
+        <input type='number' class='ms-points-input' name='system.totalpoints.spells' value='{{system.totalpoints.spells}}'/>
+      </span>
+      {{localize 'GURPS.pointsSpells'}}
+    </span>
+  </div>
+</div>
+
 {{!-- Identity & Description Card --}}
 <div class='ms-section ms-identity-card'>
   <h3 class='ms-section-header'>
@@ -61,23 +120,6 @@
       <label>{{localize 'GURPS.descriptionHand'}}</label>
       <input type='text' name='system.traits.hand' value='{{system.traits.hand}}'/>
     </div>
-  </div>
-</div>
-
-{{!-- Points Summary Bar --}}
-<div class='ms-section ms-points-bar'>
-  <h3 class='ms-section-header'>
-    <i class='fas fa-chart-pie'></i>
-    {{localize 'GURPS.points'}}
-  </h3>
-  <div class='ms-points-row'>
-    <span class='ms-points-item'><strong>{{system.totalpoints.total}}</strong> {{localize 'GURPS.pointsTotal'}}</span>
-    <span class='ms-points-item'><strong>{{system.totalpoints.unspent}}</strong> {{localize 'GURPS.pointsUnspent'}}</span>
-    <span class='ms-points-item'><strong>{{system.totalpoints.attributes}}</strong> {{localize 'GURPS.pointsAttributes'}}</span>
-    <span class='ms-points-item'><strong>{{system.totalpoints.ads}}</strong> {{localize 'GURPS.pointsAdvantages'}}</span>
-    <span class='ms-points-item'><strong>{{system.totalpoints.disads}}</strong> {{localize 'GURPS.pointsDisadvantages'}}</span>
-    <span class='ms-points-item'><strong>{{system.totalpoints.skills}}</strong> {{localize 'GURPS.pointsSkills'}}</span>
-    <span class='ms-points-item'><strong>{{system.totalpoints.spells}}</strong> {{localize 'GURPS.pointsSpells'}}</span>
   </div>
 </div>
 

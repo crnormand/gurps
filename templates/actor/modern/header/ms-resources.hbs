@@ -4,7 +4,7 @@
       <div class='ms-resource-bar'>
         <div class='ms-resource-fill' style='width: {{percent system.HP.value system.HP.max}}%;'></div>
       </div>
-      <span class='ms-resource-text'>{{system.HP.value}}/{{system.HP.max}}</span>
+      <span class='ms-resource-text {{#if (isNegative system.HP.value)}}ms-hp-negative{{/if}}'>{{system.HP.value}}/{{system.HP.max}}</span>
     </div>
     <div class='ms-resource-edit'>
       <input type='number' name='system.HP.value' value='{{system.HP.value}}' class='ms-resource-input'/>

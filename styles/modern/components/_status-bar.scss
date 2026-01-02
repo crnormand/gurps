@@ -120,6 +120,94 @@
       object-fit: contain;
     }
   }
+
+  .ms-maneuver-dropdown {
+    position: relative;
+  }
+
+  .ms-maneuver-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ms-space-3);
+    min-width: 140px;
+    padding: var(--ms-space-1) var(--ms-space-4);
+    font-size: var(--ms-font-xs);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    background: var(--ms-bg);
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--ms-accent);
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    .ms-maneuver-icons {
+      display: flex;
+      align-items: center;
+      gap: var(--ms-space-2);
+    }
+
+    i {
+      font-size: var(--ms-font-xs);
+      color: var(--ms-text-muted);
+    }
+  }
+
+  .ms-maneuver-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    width: max-content;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: var(--ms-space-1);
+    background: var(--ms-bg-card);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .ms-maneuver-dropdown.open .ms-maneuver-options {
+    display: block;
+  }
+
+  .ms-maneuver-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ms-space-3);
+    padding: var(--ms-space-3) var(--ms-space-5);
+    font-size: var(--ms-font-xs);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--ms-bg-hover);
+    }
+
+    &:first-child {
+      border-radius: var(--ms-radius) var(--ms-radius) 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 var(--ms-radius) var(--ms-radius);
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+  }
 }
 
 .ms-status-grid {

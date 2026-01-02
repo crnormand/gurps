@@ -23,12 +23,17 @@
       <span class='ms-enc-level'>{{{localizeKey (concat 'GURPS.encumbranceLevel-' @key)}}}</span>
       <span class='ms-enc-load'>{{displayDecimal weight number=1 removeZeros=true}}</span>
       <span class='ms-enc-move'>{{currentmovedisplay}}</span>
-      <span class='ms-enc-dodge {{#if current}}rollable{{/if}}' {{#if current}}data-otf='Dodge'{{/if}}>
-        {{currentdodge}}
-        {{#if ../system.defenses.dodge.bonus}}
-          <span class='ms-dodge-bonus {{#if current}}rollable{{/if}}' {{#if current}}data-otf='Dodge {{{displayNumber ../system.defenses.dodge.bonus}}} DB'{{/if}}>
-            {{{displayNumber ../system.defenses.dodge.bonus}}}
-          </span>
+      <span class='ms-enc-dodge'>
+        {{#if current}}
+          {{>dice-button otf='Dodge' level=currentdodge}}
+          {{#if ../system.defenses.dodge.bonus}}
+            {{>dice-button otf=(concat 'Dodge ' (displayNumber ../system.defenses.dodge.bonus) ' DB') text=(displayNumber ../system.defenses.dodge.bonus)}}
+          {{/if}}
+        {{else}}
+          {{currentdodge}}
+          {{#if ../system.defenses.dodge.bonus}}
+            <span class='ms-dodge-bonus'>{{{displayNumber ../system.defenses.dodge.bonus}}}</span>
+          {{/if}}
         {{/if}}
       </span>
     </div>

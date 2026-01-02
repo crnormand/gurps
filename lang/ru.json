@@ -711,6 +711,7 @@
     "knockback": "Отбрасывание, ",
     "knockbackCheck": "{name}: бросьте {dx}, {acrobatics} или {judo}, или упадите!",
     "language": "Язык",
+    "lbs": "фнт",
     "lessThan": "Меньше чем",
     "level": "Уровень",
     "liftingAndMovingThings": "Поднятие и перемещение предметов",
