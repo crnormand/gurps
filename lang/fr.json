@@ -711,6 +711,7 @@
     "knockback": "Renversement, {amount} {unit}",
     "knockbackCheck": "{name}: jet {dx}, {acrobatics}, ou {judo} ou chute!",
     "language": "Langue",
+    "lbs": "lbs",
     "lessThan": "Moins de",
     "level": "Niveau",
     "liftingAndMovingThings": "Porter & Déplacer des Choses",

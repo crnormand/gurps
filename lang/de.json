@@ -711,6 +711,7 @@
     "knockback": "Rückprall, {amount} {unit}",
     "knockbackCheck": "{name}: Würfle {dx}, {acrobatics}, oder {judo} oder stürze!",
     "language": "Sprache",
+    "lbs": "lbs",
     "lessThan": "Weniger als",
     "level": "Stufe",
     "liftingAndMovingThings": "Dinge Heben & Bewegen",

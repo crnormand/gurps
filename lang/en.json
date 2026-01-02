@@ -711,6 +711,7 @@
     "knockback": "Knockback, {amount} {unit}",
     "knockbackCheck": "{name}: roll {dx}, {acrobatics}, or {judo} or fall!",
     "language": "Language",
+    "lbs": "lbs",
     "lessThan": "Less than",
     "level": "Level",
     "liftingAndMovingThings": "Lifting & Moving Things",

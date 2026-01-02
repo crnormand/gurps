@@ -405,7 +405,7 @@ $locations-columns: 50px 1fr 60px 60px;
   }
 }
 
-$equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
+$equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
 
 .ms-equipment-table {
   @include table-container;
@@ -413,15 +413,18 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
 
 .ms-eqt-header {
   @include grid-header($equipment-columns);
+  padding-left: 0;
+  padding-right: 0;
 
   > span {
-    padding: var(--ms-space-4) var(--ms-space-3);
+    padding: var(--ms-space-4) var(--ms-space-2);
   }
 }
 
 .ms-eqt-row {
   display: grid;
   grid-template-columns: $equipment-columns;
+  gap: 4px;
   align-items: center;
   background: var(--ms-bg-card);
   border-bottom: 1px solid var(--ms-border-light);
@@ -429,7 +432,7 @@ $equipment-columns: 32px 60px 1fr 60px 60px 40px 50px;
   @include interactive-row;
 
   > span {
-    padding: var(--ms-space-3);
+    padding: var(--ms-space-3) var(--ms-space-2);
   }
 }
 
