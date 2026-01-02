@@ -256,6 +256,25 @@ declare global {
   }
 }
 
+interface GurpsEffectFlags {
+  effect?: {
+    type?: string
+    pdfref?: string
+  }
+  name?: string
+  move?: string
+  defense?: string
+  fullturn?: boolean
+}
+
+declare global {
+  interface FlagConfig {
+    ActiveEffect: {
+      gurps?: GurpsEffectFlags
+    }
+  }
+}
+
 declare module '*/miscellaneous-settings.js' {
   export const SYSTEM_NAME: 'gurps'
   export const SETTING_USE_FOUNDRY_ITEMS: 'use-foundry-items'

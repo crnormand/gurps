@@ -1,12 +1,13 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.js'
-import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
-import { entityConfigurations, modifierConfigurations } from './entity-config.js'
-import { bindDropdownToggle } from './dropdown-handler.js'
-import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
-import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
+import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
+import { entityConfigurations, modifierConfigurations } from './entity-config.ts'
+import { bindDropdownToggle } from './dropdown-handler.ts'
+import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
+import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
+import { isPostureOrManeuver } from './utils/effect.ts'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -20,6 +21,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
 
 interface ModernSheetData {
   system?: GurpsActorSystem
+  effects?: ActiveEffect[]
   skillCount?: number
   traitCount?: number
   meleeCount?: number
@@ -48,6 +50,8 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
 
   override getData(): ModernSheetData {
     const sheetData = super.getData() as ModernSheetData
+
+    sheetData.effects = sheetData.effects?.filter(effect => !isPostureOrManeuver(effect))
 
     sheetData.skillCount = countItems(sheetData.system?.skills)
     sheetData.traitCount = countItems(sheetData.system?.ads)
