@@ -4,4 +4,4 @@ export { bindCrudActions, bindModifierCrudActions, confirmAndDelete, buildEntity
 export { entityConfigurations, modifierConfigurations } from './entity-config.ts'
 export { bindDropdownToggle } from './dropdown-handler.ts'
 export { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
-export { bindRowExpand, bindSectionCollapse, bindResourceReset } from './collapse-handler.ts'
+export { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'

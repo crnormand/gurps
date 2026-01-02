@@ -43,4 +43,10 @@ describe('isPostureOrManeuver', () => {
 
     expect(isPostureOrManeuver(effect)).toBe(true)
   })
+
+  test('returns true when effect has both maneuver status and posture flag', () => {
+    const effect = mockEffect({ statuses: new Set(['maneuver']), flagType: 'posture' })
+
+    expect(isPostureOrManeuver(effect)).toBe(true)
+  })
 })

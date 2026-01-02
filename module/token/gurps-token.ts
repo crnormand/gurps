@@ -36,11 +36,11 @@ class GurpsToken extends Token {
     const maneuver = Maneuvers.get(maneuverId)
     if (!maneuver) return
 
+    maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name
+
     const activeManeuvers = Maneuvers.getActiveEffectManeuvers(Array.from(this.actor?.effects.values() ?? []))
-    // if there is a single active effect maneuver, update its data
     if (activeManeuvers.length === 1) {
       if (activeManeuvers[0].getFlag('gurps', 'name') !== maneuverId) {
-        maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name
         await activeManeuvers[0].update(maneuver)
       }
     } else {
@@ -50,7 +50,6 @@ class GurpsToken extends Token {
           activeManeuvers.map(m => m.id!)
         )
       }
-      maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name
       maneuver.statuses = Array.from(new Set([maneuver.id, ...(maneuver.statuses ?? [])]))
       await this.actor?.createEmbeddedDocuments('ActiveEffect', [maneuver])
     }

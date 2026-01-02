@@ -165,6 +165,7 @@ export function bindAttributeEdit(html: JQuery, actor: GurpsActor): void {
       const attrName = badge.dataset.attr
       const fieldPath = `system.attributes.${attrName}.import`
       input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+      input.blur()
     }
   })
 }
@@ -222,6 +223,7 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
       fieldset.classList.remove(editingClass)
       const fieldPath = input.name
       input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+      input.blur()
     }
   })
 }
@@ -270,6 +272,7 @@ export function bindPointsEdit(html: JQuery, actor: GurpsActor): void {
       item.classList.remove(editingClass)
       const fieldPath = input.name
       input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+      input.blur()
     }
   })
 }
