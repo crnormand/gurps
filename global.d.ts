@@ -254,6 +254,13 @@ declare global {
     }
     notes?: Record<string, NoteComponent>
   }
+
+  interface GurpsMoveMode {
+    mode: string
+    basic: string
+    enhanced: string
+    default: boolean
+  }
 }
 
 interface GurpsEffectFlags {

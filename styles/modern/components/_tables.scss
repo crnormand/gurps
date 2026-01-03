@@ -299,6 +299,110 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   }
 }
 
+.ms-move-mode-dropdown {
+  position: relative;
+}
+
+.ms-move-mode-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ms-space-3);
+  min-width: 130px;
+  padding: var(--ms-space-1) var(--ms-space-4);
+  font-size: var(--ms-font-xs);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  background: var(--ms-bg);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--ms-accent);
+  }
+
+  .ms-move-mode-icons {
+    display: flex;
+    align-items: center;
+    gap: var(--ms-space-2);
+  }
+
+  i {
+    font-size: var(--ms-font-xs);
+    color: var(--ms-text-muted);
+  }
+}
+
+.ms-move-mode-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  min-width: 130px;
+  margin-top: var(--ms-space-1);
+  background: var(--ms-bg-card);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ms-move-mode-dropdown.open .ms-move-mode-options {
+  display: block;
+}
+
+.ms-move-mode-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ms-space-3);
+  padding: var(--ms-space-3) var(--ms-space-5);
+  font-size: var(--ms-font-xs);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+
+  &:first-child {
+    border-radius: var(--ms-radius) var(--ms-radius) 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 var(--ms-radius) var(--ms-radius);
+  }
+
+  img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+}
+
+.ms-move-mode-edit {
+  visibility: hidden;
+  display: flex;
+  flex: 0;
+  justify-content: center;
+  align-items: center;
+  height: 25px;
+  margin-top: var(--ms-space-1);
+  border: none;
+  background: transparent;
+  color: var(--ms-text-muted);
+  font-size: var(--ms-font-xs);
+  cursor: pointer;
+  transition: color 0.1s;
+
+  &:hover {
+    color: var(--ms-accent);
+  }
+}
+
+.ms-enc-mode:hover .ms-move-mode-edit {
+  visibility: visible;
+}
+
 .ms-lock-icon {
   margin-left: auto;
   color: var(--ms-accent);

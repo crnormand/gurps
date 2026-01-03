@@ -8,6 +8,7 @@ import { bindDropdownToggle } from './dropdown-handler.ts'
 import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
+import MoveModeEditor from '../move-mode-editor.js'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -28,6 +29,7 @@ interface ModernSheetData {
   rangedCount?: number
   modifierCount?: number
   showHPTinting?: boolean
+  moveMode?: GurpsMoveMode
 }
 
 export class GurpsActorModernSheet extends GurpsActorSheet {
@@ -59,6 +61,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
     sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
+    sheetData.moveMode = this.actor.getCurrentMoveMode()
 
     return sheetData
   }
@@ -151,6 +154,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
     this.bindManeuverActions(html)
+    this.bindMoveModeActions(html)
     this.bindEffectActions(html)
     this.bindEntityCrudActions(html)
   }
@@ -169,7 +173,19 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       dropdownSelector: '.ms-maneuver-dropdown',
       toggleSelector: '.ms-maneuver-selected',
       optionSelector: '.ms-maneuver-option',
-      onSelect: (maneuver: string) => this.actor.replaceManeuver(maneuver)
+      onSelect: (maneuver: string) => this.actor.replaceManeuver(maneuver),
+    })
+  }
+
+  bindMoveModeActions(html: JQuery): void {
+    html.find('.ms-move-mode-edit').on('click', () => {
+      new MoveModeEditor(this.actor).render(true)
+    })
+    bindDropdownToggle(html, {
+      dropdownSelector: '.ms-move-mode-dropdown',
+      toggleSelector: '.ms-move-mode-selected',
+      optionSelector: '.ms-move-mode-option',
+      onSelect: (mode: string) => this.actor.setMoveDefault(mode),
     })
   }
 

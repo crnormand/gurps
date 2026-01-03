@@ -40,11 +40,36 @@
     {{/each}}
     <div class='ms-enc-mode'>
       <label for='move-mode'>{{localize 'GURPS.moveMode'}}:</label>
-      <select id='move-mode' {{disabled (lt (length system.move) 2)}}>
-        {{#each system.move as |this key|}}
-          <option value='{{@key}}' {{select-if this.default true}}>{{localize this.mode}}</option>
-        {{/each}}
-      </select>
+			<div class="ms-move-mode-dropdown">
+				<div class="ms-move-mode-selected">
+					{{#with moveMode as |mode|}}
+					<span>{{localize mode.mode}}</span>
+					<span>(
+						{{mode.basic}}
+						{{#if mode.enhanced}}
+							/{{mode.enhanced}}
+						{{/if}}
+						)</span>
+						<span class='ms-move-mode-icons'>
+							<i class='fas fa-caret-down'></i>
+						</span>
+					{{/with}}
+				</div>
+				<div class="ms-move-mode-options">
+					{{#each system.move as |this key|}}
+					<div class="ms-move-mode-option" data-value="{{key}}">
+						<span>{{localize this.mode}}</span>
+						<span>(
+							{{this.basic}}
+							{{#if this.enhanced}}
+								/{{this.enhanced}}
+							{{/if}}
+							)</span>
+					</div>
+					{{/each}}
+				</div>
+			</div>
+			<button type='button' class='ms-move-mode-edit' title='{{localize "GURPS.moveMode"}}'><i class='fas fa-pen'></i></button>
     </div>
   </div>
 </div>
