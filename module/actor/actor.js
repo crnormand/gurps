@@ -671,20 +671,13 @@ export class GurpsActor extends Actor {
     // let found = this.items.filter(it => it.type === 'feature').find(it => it.name.match(new RegExp(advname, 'i')))
     // This code is for no Foundry items.
 
-    // flatten the advantages into a single array. an advantage is a container if it has a `contains` property
-    const list = []
-    const traverse = ads => {
-      for (const key in ads) {
-        const adv = ads[key]
-        list.push(adv)
-        if (adv.contains) {
-          traverse(adv.contains)
-        }
-      }
-    }
-    traverse(this.system.ads)
+    const list = GURPS.flattenContainedList(this.system.ads)
+    return list.find(it => it.name.match(new RegExp(advname, 'i')))
+  }
 
-    return Object.values(list).find(it => it.name.match(new RegExp(advname, 'i')))
+  findSkill(skillname) {
+    const list = GURPS.flattenContainedList(this.system.skills)
+    return list.find(it => it.name.match(new RegExp(skillname, 'i')))
   }
 
   /**

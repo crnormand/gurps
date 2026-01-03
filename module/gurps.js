@@ -7,6 +7,7 @@ import {
   arrayToObject,
   atou,
   d6ify,
+  flattenContainedList,
   makeRegexPatternFrom,
   objectToArray,
   quotedAttackName,
@@ -1353,23 +1354,20 @@ if (!globalThis.GURPS) {
 
   /**
    * @param {GurpsActor | GurpsActorData} actor
-   * @param {string} sname
+   * @param {string} adName
    * @returns {any}
    */
-  function findAdDisad(actor, sname) {
-    var t
-    if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.system
-    sname = makeRegexPatternFrom(sname, false)
-    let regex = new RegExp(sname, 'i')
-    recurselist(actor.ads, s => {
-      if (s.name.match(regex)) {
-        t = s
-      }
-    })
-    return t
+  function findAdDisad(actor, adName) {
+    if (!actor) return null
+    return actor.findAdvantage(adName)
   }
   GURPS.findAdDisad = findAdDisad
+
+  function findSkill(actor, skillName) {
+    if (!actor) return null
+    return actor.findSkill(skillName)
+  }
+  GURPS.findSkill = findSkill
 
   /**
    * @param {GurpsActor | GurpsActorData} actor
@@ -1935,6 +1933,7 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.recurselist = recurselist
+  GURPS.flattenContainedList = flattenContainedList
   GURPS.parselink = parselink
 
   /* -------------------------------------------- */
