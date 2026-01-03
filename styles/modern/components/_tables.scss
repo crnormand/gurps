@@ -221,6 +221,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 
 .ms-encumbrance-table {
   @include table-container;
+  overflow: visible;
 }
 
 .ms-enc-header {
