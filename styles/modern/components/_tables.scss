@@ -372,12 +372,6 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   &:last-child {
     border-radius: 0 0 var(--ms-radius) var(--ms-radius);
   }
-
-  img {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-  }
 }
 
 .ms-move-mode-edit {
