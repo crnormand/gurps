@@ -1392,26 +1392,36 @@ export class GurpsActor extends Actor {
         default: moveData[k].default,
       })
 
-    // if mode already exists, abandon update.
+    // if mode already exists, update.
     for (const k in move) {
       if (move[k].mode === mode) {
+        move[k].basic = basic ?? move[k].basic
+        move[k].enhanced = enhanced ?? move[k].enhanced
+        const isNewDefault = isDefault ? true : move[k].default
+        if (isNewDefault) Object.values(move).forEach(it => (it.default = false))
+        move[k].default = isNewDefault
+
+        // Remove existing entries and add the new ones.
+        await this.update({ 'system.move': move })
+
         return
       }
     }
 
-    // add a new entry at the end.
-    let empty = Object.values(moveData).length === 0
+    // When adding the first move mode, make it default unless overridden by "isDefault".
+    const isNewDefault = Object.values(moveData).length === 0 || isDefault
+    if (isNewDefault) Object.values(move).forEach(it => (it.default = false))
+
+    // add the new entry
     GURPS.put(move, {
       mode: mode,
-      basic: basic ?? this.system.basicmove.value * 2,
+      // B18: If you have Flight (p.56), air Move equals Basic Speed × 2 (not Basic Move × 2).
+      basic: basic ?? this.system.basicspeed.value * 2,
       enhanced: enhanced,
-      default: empty || isDefault,
+      default: isNewDefault,
     })
 
-    // remove existing entries
-    await this.update({ 'system.-=move': null })
-
-    // add the new entries
+    // Remove existing entries and add the new ones.
     await this.update({ 'system.move': move })
   }
 
