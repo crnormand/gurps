@@ -22,6 +22,7 @@ const GCAVersion = 'GCA-11'
 
 export class ActorImporter {
   GCSVersion = 0
+  json = {}
 
   constructor(actor) {
     this.actor = actor
@@ -123,6 +124,7 @@ export class ActorImporter {
     let importResult = false
     try {
       r = JSON.parse(json)
+      this.json = r
     } catch (err) {
       msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
@@ -1907,6 +1909,7 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('e') ? 'equipment' : 'equipment_container'
     }
+
     e.name = i.description || 'Equipment'
     e.originalName = i.description
     e.originalCount = i.type === 'equipment_container' ? 1 : i.quantity || 0
@@ -1924,6 +1927,7 @@ export class ActorImporter {
     e.parentuuid = p
     e.notes = ''
     e.notes = this._resolveNotes(i)
+    
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
         if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
@@ -1948,6 +1952,7 @@ export class ActorImporter {
         e.ignoreImportQty = true
       }
     }
+
     // Process Item here
     e = await this._processItemFrom(e, 'GCS')
     let ch = []
@@ -1958,6 +1963,7 @@ export class ActorImporter {
         e.weight -= j.weight * j.count
       }
     }
+    
     return [e].concat(ch)
   }
 
@@ -1981,7 +1987,8 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('n') ? 'note' : 'note_container'
     }
-    n.notes = i.calc?.resolved_text ?? i.text ?? ''
+    n.notes = i.markdown ?? i.calc?.resolved_text ?? i.text ?? ''
+
     n.uuid = i.id
     n.parentuuid = p
     n.pageRef(i.reference || '')
@@ -2596,11 +2603,16 @@ export class ActorImporter {
         )
       }
       // When Item does not have uuid (some cases in GCA) we need to check against the originalName too
-      const existingItem = this.actor.items.find(
-        i =>
-          i.system.importid === actorComp.uuid ||
-          (!!i.system[i.itemSysKey]?.originalName && i.system[i.itemSysKey].originalName === actorComp.originalName)
-      )
+      const componentType = actorComp.constructor.name.toLowerCase()
+
+      const existingItem = this.actor.items.find(i => {
+        const itemType = i.type === 'feature' ? 'advantage' : i.type
+        return (
+          itemType === componentType &&
+          (i.system.importid === actorComp.uuid ||
+            (!!i.system[i.itemSysKey]?.originalName && i.system[i.itemSysKey].originalName === actorComp.originalName))
+        )
+      })
 
       // Check if we need to update the Item
       if (!actorComp._itemNeedsUpdate(existingItem)) {

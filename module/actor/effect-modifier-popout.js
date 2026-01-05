@@ -210,7 +210,7 @@ export class EffectModifierPopout extends Application {
                 break
               case 'eft':
                 const effect = this._token?.actor.effects.get(refValue)
-                obj.name = effect?.name || game.i18n.localize('GURPS.ActiveEffect')
+                obj.name = effect?.name || game.i18n.localize('GURPS.activeEffect')
                 obj.type = 'active-effect'
                 break
             }

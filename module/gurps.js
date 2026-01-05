@@ -7,6 +7,7 @@ import {
   arrayToObject,
   atou,
   d6ify,
+  flattenContainedList,
   makeRegexPatternFrom,
   objectToArray,
   quotedAttackName,
@@ -38,6 +39,7 @@ import { GurpsItemSheet } from './item-sheet.js'
 import { GurpsItem } from './item.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
+import { getTokenForActor } from './utilities/token.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -578,7 +580,7 @@ if (!globalThis.GURPS) {
       }
 
       let canRoll = { result: true }
-      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      const token = getTokenForActor(actor)
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -672,7 +674,7 @@ if (!globalThis.GURPS) {
       }
 
       let canRoll = { result: true }
-      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      const token = getTokenForActor(actor)
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -1341,23 +1343,20 @@ if (!globalThis.GURPS) {
 
   /**
    * @param {GurpsActor | GurpsActorData} actor
-   * @param {string} sname
+   * @param {string} adName
    * @returns {any}
    */
-  function findAdDisad(actor, sname) {
-    var t
-    if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.system
-    sname = makeRegexPatternFrom(sname, false)
-    let regex = new RegExp(sname, 'i')
-    recurselist(actor.ads, s => {
-      if (s.name.match(regex)) {
-        t = s
-      }
-    })
-    return t
+  function findAdDisad(actor, adName) {
+    if (!actor) return null
+    return actor.findAdvantage(adName)
   }
   GURPS.findAdDisad = findAdDisad
+
+  function findSkill(actor, skillName) {
+    if (!actor) return null
+    return actor.findSkill(skillName)
+  }
+  GURPS.findSkill = findSkill
 
   /**
    * @param {GurpsActor | GurpsActorData} actor
@@ -1922,6 +1921,7 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.recurselist = recurselist
+  GURPS.flattenContainedList = flattenContainedList
   GURPS.parselink = parselink
 
   /* -------------------------------------------- */
