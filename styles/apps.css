@@ -53,13 +53,7 @@ Global Override body {
   color: black;
 }
 
-/* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
-.gga-meta-group {
-  align-items: center;
-  text-align: center;
-  padding: 5px;
-  border: 1px solid #999;
-}
+
 
 /* using h3 elements as a row label -- remove margin */
 .gga-app h3 {
@@ -1991,6 +1985,7 @@ details .popup.square5x4 {
   box-shadow:
     0 4px 8px 4px rgba(0, 0, 0, 0.8),
     0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  background: #f0f0e0;
 }
 
 .modtooltip .plus,
