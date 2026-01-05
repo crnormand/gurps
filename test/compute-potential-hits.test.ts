@@ -2,8 +2,11 @@
 import { computePotentialHits } from '../module/dierolls/compute-potential-hits'
 
 describe('Compute Potential Hits', () => {
-  const chatdata: Record<string, unknown> = {}
+  let chatdata: Record<string, unknown>
 
+  beforeEach(() => {
+    chatdata = {}
+  })
   test('caps hits by available shots', () => {
     computePotentialHits({ obj: { rcl: '2', rof: '4' }, shots: 3 }, 5, chatdata)
     expect(chatdata).toEqual({ rof: '3', rcl: '2', rofrcl: 3 })
