@@ -10,6 +10,9 @@
 - Cannot create Active Effects from Actor Sheet \#2447
 - Fright Check dialog text unreadable (v18.10) \#2446
 - Shotgun-type Weapons Calculate RoF Results Incorrectly \#2463
+- Fixed Move Mode editing to correctly handle defaults.
+- When checking for an existing item, include Item.type in comparison.
+- Correctly handle markdown in imported Notes.
 
 ## Release 0.18.10 12/24/2025
 
