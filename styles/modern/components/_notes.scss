@@ -26,6 +26,7 @@
 
 .ms-notes-list {
   font-size: var(--ms-font-xs);
+  min-width: 0;
 }
 
 .ms-note-row {
@@ -41,6 +42,8 @@
 
 .ms-note-content {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
 
   .expandcollapseicon {
     margin-right: var(--ms-space-2);
