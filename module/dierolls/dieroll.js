@@ -563,7 +563,12 @@ async function _doRoll({
 
     // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      computePotentialHits(optionalArgs, margin, chatdata)
+      /** @type {import('./compute-potential-hits.js').WeaponDescriptor} */
+      const weapon = { recoil: optionalArgs.obj.rcl, rateOfFire: optionalArgs.obj.rof }
+      const potentialHits = computePotentialHits(weapon, optionalArgs.shots, margin)
+      chatdata['rof'] = potentialHits.rateOfFire
+      chatdata['rcl'] = potentialHits.recoil
+      chatdata['rofrcl'] = potentialHits.potentialHits
     }
 
     chatdata['optlabel'] = optionalArgs.text || ''

@@ -1,24 +1,20 @@
 // @ts-expect-error - test-only import; module resolution not configured in tsconfig for this path
-import { computePotentialHits } from '../module/dierolls/compute-potential-hits'
+import { computePotentialHits, WeaponDescriptor } from '../module/dierolls/compute-potential-hits'
 
 describe('Compute Potential Hits', () => {
-  let chatdata: Record<string, unknown>
-
-  beforeEach(() => {
-    chatdata = {}
-  })
   test('caps hits by available shots', () => {
-    computePotentialHits({ obj: { rcl: '2', rof: '4' }, shots: 3 }, 5, chatdata)
-    expect(chatdata).toEqual({ rof: '3', rcl: '2', rofrcl: 3 })
+    const result = computePotentialHits({ recoil: '2', rateOfFire: '4' }, 3, 5)
+    expect(result).toEqual({ rateOfFire: '3', recoil: '2', potentialHits: 3 })
   })
 
   test('limits potential hits to current RoF', () => {
-    computePotentialHits({ obj: { rcl: '2', rof: '4' }, shots: 1 }, 20, chatdata)
-    expect(chatdata).toEqual({ rof: '1', rcl: '2', rofrcl: 1 })
+    const result = computePotentialHits({ recoil: '2', rateOfFire: '4' }, 1, 20)
+    expect(result).toEqual({ rateOfFire: '1', recoil: '2', potentialHits: 1 })
   })
 
   describe('caps hits by recoil and margin of success', () => {
-    let optionalArgs: { obj: { rcl: string; rof: string }; shots: number } = { obj: { rcl: '0', rof: '0' }, shots: 0 }
+    let weapon: WeaponDescriptor | undefined = undefined
+    let shots: number | undefined = undefined
     let margin: number | undefined = undefined
 
     beforeEach(() => {
@@ -29,46 +25,44 @@ describe('Compute Potential Hits', () => {
         const shotsMatch = text.match(/Shots\((?<shots>\d+)\)/)
         const marginMatch = text.match(/Margin\((?<margin>-?\d+)\)/)
 
-        optionalArgs = {
-          obj: {
-            rof: `${rofMatch!.groups!.rof}`,
-            rcl: `${rclMatch!.groups!.rcl}`,
-          },
-          shots: parseInt(shotsMatch!.groups!.shots, 10),
+        weapon = {
+          rateOfFire: `${rofMatch!.groups!.rof}`,
+          recoil: `${rclMatch!.groups!.rcl}`,
         }
+        shots = parseInt(shotsMatch!.groups!.shots, 10) || undefined
         margin = marginMatch ? parseInt(marginMatch.groups!.margin, 10) : undefined
       }
     })
 
     test('#> Recoil("2") RoF("4") Shots(4) Margin(0)', () => {
-      computePotentialHits(optionalArgs, margin, chatdata)
-      expect(chatdata).toEqual({ rof: '4', rcl: '2', rofrcl: 1 })
+      const result = computePotentialHits(weapon, shots, margin)
+      expect(result).toEqual({ rateOfFire: '4', recoil: '2', potentialHits: 1 })
     })
 
     test('#> Recoil("2") RoF("4") Shots(4) Margin(1)', () => {
-      computePotentialHits(optionalArgs, margin, chatdata)
-      expect(chatdata).toEqual({ rof: '4', rcl: '2', rofrcl: 1 })
+      const result = computePotentialHits(weapon, shots, margin)
+      expect(result).toEqual({ rateOfFire: '4', recoil: '2', potentialHits: 1 })
     })
 
     test('#> Recoil("2") RoF("12") Shots(12) Margin(10)', () => {
-      computePotentialHits(optionalArgs, margin, chatdata)
-      expect(chatdata).toEqual({ rof: '12', rcl: '2', rofrcl: 6 })
+      const result = computePotentialHits(weapon, shots, margin)
+      expect(result).toEqual({ rateOfFire: '12', recoil: '2', potentialHits: 6 })
     })
 
     describe('supports Shotgun RoF notation', () => {
       test('#> Recoil("2") RoF("2x9") Shots(1) Margin(7) = 4', () => {
-        computePotentialHits(optionalArgs, margin, chatdata)
-        expect(chatdata).toEqual({ rof: '1x9', rcl: '2', rofrcl: 4 })
+        const result = computePotentialHits(weapon, shots, margin)
+        expect(result).toEqual({ rateOfFire: '1x9', recoil: '2', potentialHits: 4 })
       })
 
       test('#> Recoil("2") RoF("3x9") Shots(2) Margin(10) = 6', () => {
-        computePotentialHits(optionalArgs, margin, chatdata)
-        expect(chatdata).toEqual({ rof: '2x9', rcl: '2', rofrcl: 6 })
+        const result = computePotentialHits(weapon, shots, margin)
+        expect(result).toEqual({ rateOfFire: '2x9', recoil: '2', potentialHits: 6 })
       })
 
       test('#> Recoil("1") RoF("3x9") Shots(3) Margin(10) = 11', () => {
-        computePotentialHits(optionalArgs, margin, chatdata)
-        expect(chatdata).toEqual({ rof: '3x9', rcl: '1', rofrcl: 11 })
+        const result = computePotentialHits(weapon, shots, margin)
+        expect(result).toEqual({ rateOfFire: '3x9', recoil: '1', potentialHits: 11 })
       })
     })
   })
