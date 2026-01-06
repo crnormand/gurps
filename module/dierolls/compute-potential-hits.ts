@@ -2,7 +2,7 @@
 const SHOTGUN_ROF = /(?<rof>\d+)[×xX\*](?<projectiles>\d+)/
 
 /**
- * Calclates potential hits based on weapon stats and margin of success, and returns data for chat message.
+ * Calculates potential hits based on weapon stats and margin of success, and returns data for chat message.
  * @param optionalArgs.obj The weapon object containing rate of fire and recoil.
  * @param optionalArgs.shots The number of shots fired.
  * @param marginOfSuccess The margin of success from the attack roll.
