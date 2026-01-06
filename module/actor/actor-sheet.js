@@ -1357,6 +1357,28 @@ export class GurpsActorSheet extends ActorSheet {
     )
   }
 
+  async editModifier(actor, path, obj, isReaction = true) {
+    const dlgHtml = await renderTemplate('systems/gurps/templates/modifier-editor-popup.hbs', obj)
+    const title = isReaction
+      ? game.i18n.localize('GURPS.reaction')
+      : game.i18n.localize('GURPS.conditionalModifier')
+    new Dialog({
+      title: `${title} Editor`,
+      content: dlgHtml,
+      buttons: {
+        one: {
+          label: game.i18n.localize('GURPS.update'),
+          callback: async html => {
+            obj.modifier = parseInt(html.find('.modifier').val()) || 0
+            obj.situation = html.find('.situation').val()
+            await actor.internalUpdate({ [path]: obj })
+          },
+        },
+      },
+      default: 'one',
+    }).render(true)
+  }
+
   async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await renderTemplate(html, obj)
     let d = new Dialog(

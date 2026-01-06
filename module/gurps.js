@@ -13,6 +13,7 @@ import {
   quotedAttackName,
   recurselist,
   sanitize,
+  stripBracketContents,
   utoa,
   wait,
   zeroFill,
@@ -28,6 +29,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
+import { GurpsActorModernSheet } from './actor/modern/index.js'
 import { GurpsActor } from './actor/actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -892,11 +894,7 @@ if (!globalThis.GURPS) {
       let p = 'A:'
       if (!!action.isMelee && !action.isRanged) p = 'M:'
       if (!action.isMelee && !!action.isRanged) p = 'R:'
-      // Need to finagle chatthing to allow for attack names that include OtFs
-      let thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      let thing = stripBracketContents(att.name)
       let qn = quotedAttackName({ name: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${p}${qn}]`
@@ -989,10 +987,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         return false
       }
-      const thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      const thing = stripBracketContents(att.name)
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
@@ -1053,10 +1048,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         return false
       }
-      const thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      const thing = stripBracketContents(att.name)
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
@@ -1184,10 +1176,7 @@ if (!globalThis.GURPS) {
       if (!action) {
         return false
       }
-      let thing = action.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      let thing = stripBracketContents(action.name)
       if (calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
@@ -1518,8 +1507,7 @@ if (!globalThis.GURPS) {
       // "M:"["Quarterstaff"A:"Quarterstaff (Thrust)"] (Thrust)""
       let m = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
       if (!!m) otf = m[1] + ':' + m[2] + (!!m[4] ? m[4] : '')
-      otf = otf.replace(/\[.*\]/, '')
-      otf = otf.replace(/ +/g, ' ') // remove duplicate blanks
+      otf = stripBracketContents(otf)
       return GURPS.executeOTF(otf)
     } else if ('name' in element.dataset) {
       prefix = '' // "Attempting ";
@@ -2037,6 +2025,10 @@ if (!globalThis.GURPS) {
         label: 'Tabbed Sheet',
         makeDefault: false,
       })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
+        label: 'Modern',
+        makeDefault: false,
+      })
       foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
         label: 'Reduced Mode',
         makeDefault: false,
@@ -2073,6 +2065,10 @@ if (!globalThis.GURPS) {
       })
       Actors.registerSheet('gurps', GurpsActorTabSheet, {
         label: 'Tabbed Sheet',
+        makeDefault: false,
+      })
+      Actors.registerSheet('gurps', GurpsActorModernSheet, {
+        label: 'Modern',
         makeDefault: false,
       })
       Actors.registerSheet('gurps', GurpsActorSheetReduced, {

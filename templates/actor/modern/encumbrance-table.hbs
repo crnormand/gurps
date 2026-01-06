@@ -1,0 +1,75 @@
+{{!-- Encumbrance Table Partial --}}
+<div class='ms-section'>
+  <h3 class='ms-section-header'>
+    <i class='fas fa-weight-hanging'></i>
+    {{localize 'GURPS.encumbranceMoveDodge'}}
+    {{#if (automaticEncumbrance)}}
+      <i class='fas fa-lock ms-lock-icon' title='{{localize "GURPS.autoEncumbrance"}}: ON'></i>
+    {{else}}
+      <i class='fas fa-unlock ms-lock-icon ms-unlocked' title='{{localize "GURPS.autoEncumbrance"}}: OFF'></i>
+    {{/if}}
+  </h3>
+  <div class='ms-encumbrance-table'>
+    <div class='ms-enc-header'>
+      <span></span>
+      <span>{{localize 'GURPS.level'}}</span>
+      <span>{{localize 'GURPS.maxload'}}</span>
+      <span>{{localize 'GURPS.move'}}</span>
+      <span>{{localize 'GURPS.dodge'}}</span>
+    </div>
+    {{#each system.encumbrance}}
+    <div class='ms-enc-row {{#if current}}ms-current{{/if}} {{#unless (automaticEncumbrance)}}ms-clickable{{/unless}}' data-key='{{@key}}'>
+      <span class='ms-enc-marker'>{{#if current}}▶{{/if}}</span>
+      <span class='ms-enc-level'>{{{localizeKey (concat 'GURPS.encumbranceLevel-' @key)}}}</span>
+      <span class='ms-enc-load'>{{displayDecimal weight number=1 removeZeros=true}}</span>
+      <span class='ms-enc-move'>{{currentmovedisplay}}</span>
+      <span class='ms-enc-dodge'>
+        {{#if current}}
+          {{>dice-button otf='Dodge' level=currentdodge}}
+          {{#if ../system.defenses.dodge.bonus}}
+            {{>dice-button otf=(concat 'Dodge ' (displayNumber ../system.defenses.dodge.bonus) ' DB') text=(displayNumber ../system.defenses.dodge.bonus)}}
+          {{/if}}
+        {{else}}
+          {{currentdodge}}
+          {{#if ../system.defenses.dodge.bonus}}
+            <span class='ms-dodge-bonus'>{{{displayNumber ../system.defenses.dodge.bonus}}}</span>
+          {{/if}}
+        {{/if}}
+      </span>
+    </div>
+    {{/each}}
+    <div class='ms-enc-mode'>
+      <label for='move-mode'>{{localize 'GURPS.moveMode'}}:</label>
+      <div class="ms-move-mode-dropdown">
+        <div class="ms-move-mode-selected">
+          {{#with moveMode as |mode|}}
+          <span>{{localize mode.mode}}</span>
+          <span>(
+            {{mode.basic}}
+            {{#if mode.enhanced}}
+              /{{mode.enhanced}}
+            {{/if}}
+            )</span>
+            <span class='ms-move-mode-icons'>
+              <i class='fas fa-caret-down'></i>
+            </span>
+          {{/with}}
+        </div>
+        <div class="ms-move-mode-options">
+          {{#each system.move as |this key|}}
+          <div class="ms-move-mode-option" data-value="{{key}}">
+            <span>{{localize this.mode}}</span>
+            <span>(
+              {{this.basic}}
+              {{#if this.enhanced}}
+                /{{this.enhanced}}
+              {{/if}}
+              )</span>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      <button type='button' class='ms-move-mode-edit' title='{{localize "GURPS.moveMode"}}'><i class='fas fa-pen'></i></button>
+    </div>
+  </div>
+</div>

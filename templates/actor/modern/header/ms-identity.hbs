@@ -1,0 +1,30 @@
+<div class='ms-name-container'>
+  <h1 class='ms-name ms-name-display'>{{actor.name}}</h1>
+  <input type='text' form='none' value='{{actor.name}}' class='ms-name-input' data-field='name'/>
+</div>
+<div class='ms-tagline'>
+  {{#if system.traits.race}}
+  <span class='ms-tag ms-tag-race'>
+    <span class='ms-tag-display'>{{system.traits.race}}</span>
+    <input type='text' form='none' value='{{system.traits.race}}' class='ms-tag-input' data-field='system.traits.race' placeholder='Race'/>
+  </span>
+  {{/if}}
+  {{#if system.traits.gender}}
+  <span class='ms-tag ms-tag-gender'>
+    <span class='ms-tag-display'>{{system.traits.gender}}</span>
+    <input type='text' form='none' value='{{system.traits.gender}}' class='ms-tag-input' data-field='system.traits.gender' placeholder='Gender'/>
+  </span>
+  {{/if}}
+  {{#if system.traits.age}}
+  <span class='ms-tag ms-tag-age'>
+    <span class='ms-tag-display'>{{system.traits.age}} years</span>
+    <input type='text' form='none' value='{{system.traits.age}}' class='ms-tag-input' data-field='system.traits.age' placeholder='Age'/>
+  </span>
+  {{/if}}
+  {{#if system.traits.techlevel}}
+  <span class='ms-tag ms-tag-tl'>
+    <span class='ms-tag-display'>TL{{system.traits.techlevel}}</span>
+    <input type='text' form='none' value='{{system.traits.techlevel}}' class='ms-tag-input' data-field='system.traits.techlevel' placeholder='TL'/>
+  </span>
+  {{/if}}
+</div>

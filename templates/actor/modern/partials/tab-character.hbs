@@ -1,0 +1,45 @@
+{{!-- Quick Notes --}}
+<div class='ms-quicknotes'>
+  <div class='ms-quicknotes-content'>
+    {{#if system.additionalresources.qnotes}}
+      {{{gurpslink system.additionalresources.qnotes}}}
+    {{else}}
+      <span class='ms-quicknotes-placeholder'>Double click to edit Quick Note</span>
+    {{/if}}
+  </div>
+  <i class='fas fa-pen-to-square ms-quicknotes-edit'></i>
+</div>
+
+{{>modifiers-table}}
+
+{{>data-table
+  section="skills"
+  icon="fa-graduation-cap"
+  title=(localize "GURPS.skills")
+  count=skillCount
+  items=(flatlist system.skills)
+  path="system.skills"
+  entityType="skills"
+  otfPrefix="Sk"
+  editAction="edit-skill"
+  deleteAction="delete-skill"
+  addAction="add-skill"
+  addLabel=(localize "GURPS.skill")
+}}
+
+{{>traits-table}}
+
+{{>data-table
+  section="spells"
+  icon="fa-hat-wizard"
+  title=(localize "GURPS.spells")
+  items=(flatlist system.spells)
+  path="system.spells"
+  entityType="spells"
+  otfPrefix="Sp"
+  editAction="edit-spell"
+  deleteAction="delete-spell"
+  addAction="add-spell"
+  addLabel=(localize "GURPS.spell")
+  hasCollege=true
+}}
