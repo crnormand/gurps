@@ -27,7 +27,7 @@ export function computePotentialHits(
   // Could be '3x9' for shotguns, but we want just the first number.
   const maxRateOfFire = parseInt(weapon.rateOfFire)
 
-  const weaponRecoil = Math.max(1, parseInt(weapon.recoil) || 1)
+  const weaponRecoil = parseInt(weapon.recoil) || 1
   const numberShotsFired = Math.min(shots || 1, maxRateOfFire)
 
   // Support shotgun RoF (3x9, for example).
