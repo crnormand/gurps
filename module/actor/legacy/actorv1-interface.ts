@@ -250,6 +250,7 @@ interface ActorV1Model {
   conditionalmods: Record<string, Modifier>
   reactions: Record<string, Modifier>
   additionalresources: {
+    qnotes?: string
     bodyplan: string
     tracker: Record<string, TrackerInstance>
   }

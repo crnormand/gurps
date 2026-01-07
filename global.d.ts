@@ -11,16 +11,107 @@ import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracke
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
-import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { Advantage, Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
+import { DamageActionSchema } from 'module/actor/data/character-components.ts'
+import DamageChat from 'module/damage/damagechat.js'
 
 export {}
 
 declare global {
   var GURPS: {
     SYSTEM_NAME: 'gurps'
+
+    module: {
+      Damage: any
+    }
+
+    LastActor: Actor.Implementation | null
+
+    StatusEffect: {
+      lookup(id: string): any
+    }
+    SavedStatusEffects: typeof CONFIG.statusEffects
+    StatusEffectStanding: 'standing'
+    StatusEffectStandingLabel: 'GURPS.status.Standing'
+
+    decode<T = unknown>(actor: Actor.Implementation, path: string): T
+
+    put<T>(list: Record<string, T>, obj: T): string
+
+    parselink(input: string): { text: string; action?: GurpsAction }
+
+    removeKey(actor: Actor.Implementation, key: string): void
+
+    insertBeforeKey(actor: Actor.Implementation, path: string, newobj: AnyObject): Promise<void>
+
+    findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
+
+    readTextFromFile(file: File): Promise<string>
+
+    performAction(
+      action: GurpsAction | foundry.data.fields.SchemaField.SourceData<DamageActionSchema> | undefined,
+      actor: Actor | GurpsActor | null,
+      event?: Event | null,
+      targets?: string[]
+    ): Promise<boolean | { target: any; thing: any } | undefined>
+
+    stopActions: boolean
+
+    ModifierBucket: foundry.appv1.api.Application & {
+      setTempRangeMod(mod: number): void
+      addTempRangeMod(): void
+      currentSum(): number
+      clear(): Promise<void>
+      refreshPosition(): void
+      addModifier(mod: string | number, reason: string, list?: Modifier[] | undefined, tagged: boolean): void
+    }
+
+    // @deprecated -- TODO: move to module
+    DamageChat: typeof DamageChat
+
+    // @deprecated -- TODO: move to module
+    DamageTables: {
+      translate(damageType: string): string
+      woundModifiers: Record<
+        string,
+        { label?: string; icon?: string; color?: string; multiplier?: number; resource?: boolean }
+      >
+      damageTypeMap: Record<string, string>
+    }
+
+    // @deprecated -- TODO: move to module
+    SSRT: {
+      getModifier(yards: number): number
+    }
+
+    // @deprecated -- TODO: move to module
+    rangeObject: {
+      ranges: Array<{ modifier: number; max: number; penalty: number }>
+    }
+
+    // @deprecated -- TODO: move to module
+    Maneuvers: {
+      get(id?: string | null): ManeuverData | undefined
+      getAll(): Record<string, { id: string; icon: string; label: string }>
+    }
+
+    // @deprecated -- TODO: move to module
+    ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
+
+    resolveDamageRoll: (
+      event: Event,
+      actor: GurpsActor,
+      otf: string,
+      overridetxt: string | null,
+      isGM: boolean,
+      isOtf?: boolean
+    ) => Promise<void>
+
+    SJGProductMappings: Record<string, string>
+
     CONFIG: {
       Action: Record<
         string,
@@ -32,10 +123,258 @@ declare global {
       // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
       [key: string]: unknown
     }
-  } & any
+  }
 
   /* ---------------------------------------- */
+
+  // @deprecated TODO: REMOVE. Legacy
+  interface ManeuverData {
+    name: string
+    label: string
+    move: string | null
+    defense?: string
+    fullturn?: boolean
+    icon: string
+    alt?: string | null
+    introducedBy?: string | null
+  }
+
+  /* ---------------------------------------- */
+
+  interface Modifier {
+    mod: string
+    modint: number
+    desc: string
+    plus: boolean
+    tagged: boolean
+  }
+
+  /* ---------------------------------------- */
+
+  interface GurpsAction {
+    type: string
+    sourceId?: string
+    orig?: string
+    calcOnly?: boolean
+    // NOTE: not sure if this is accurate
+    action?: GurpsAction
+    next?: GurpsAction
+    [key: string]: unknown
+  }
+
+  /* ---------------------------------------- */
+
+  interface DamageData {
+    attacker?: string
+    dice?: string
+    damage?: number
+    damageType?: string
+    armorDivisor?: number
+    [key: string]: unknown
+  }
+
+  /* ---------------------------------------- */
+
+  interface DialogV2Config {
+    window?: { title?: string; resizable?: boolean }
+    content?: string
+    buttons?: Array<{
+      action?: string
+      label: string
+      icon?: string
+      callback?: (event: Event, button: HTMLButtonElement) => void
+    }>
+  }
+
+  /* ---------------------------------------- */
+
+  interface TotalPoints {
+    race?: string | number
+    ads?: string | number
+    attributes?: string | number
+    skills?: string | number
+    spells?: string | number
+    disads?: string | number
+    quirks?: string | number
+  }
+
+  /* ---------------------------------------- */
+
+  interface EntityComponentBase {
+    name?: string
+    notes?: string
+    uuid?: string
+    contains?: NestedEntityRecord
+    collapsed?: NestedEntityRecord
+  }
+
+  /* ---------------------------------------- */
+
+  interface NestedEntityRecord {
+    [key: string]: EntityComponentBase
+  }
+
+  /* ---------------------------------------- */
+
+  interface ModifierComponent extends EntityComponentBase {
+    situation?: string
+  }
+
+  /* ---------------------------------------- */
+
+  interface InlineEditConfig {
+    displaySelector: string
+    containerSelector: string
+    inputSelector: string
+    editingClass?: string
+    fieldType?: 'name' | 'tag'
+    onBlur?: (input: HTMLInputElement) => void
+  }
+
+  /* ---------------------------------------- */
+
+  interface RowExpandConfig {
+    rowSelector: string
+    excludeSelectors?: string[]
+    expandedClass?: string
+  }
+
+  /* ---------------------------------------- */
+
+  interface SectionCollapseConfig {
+    headerSelector: string
+    excludeSelectors?: string[]
+    collapsedClass?: string
+  }
+
+  /* ---------------------------------------- */
+
+  interface ResourceResetConfig {
+    selector: string
+    resourcePath: string
+    maxPath: string
+  }
+
+  /* ---------------------------------------- */
+
+  interface ContainerCollapseConfig {
+    tableSelector: string
+    rowSelector: string
+    excludeSelectors?: string[]
+  }
+
+  /* ---------------------------------------- */
+
+  interface DropdownConfig {
+    dropdownSelector: string
+    toggleSelector: string
+    optionSelector: string
+    onSelect: (value: string) => Promise<void> | void
+  }
+
+  /* ---------------------------------------- */
+
+  type EntityConstructorArgs = string[]
+
+  interface EntityComponentClass {
+    new (name?: string, ...args: never[]): EntityComponentBase
+  }
+
+  interface EntityConfiguration {
+    entityName: string
+    path: string
+    EntityClass: EntityComponentClass
+    editMethod: string
+    localeKey: string
+    displayProperty?: string
+    createArgs?: () => EntityConstructorArgs
+  }
+
+  interface ModifierConfiguration {
+    isReaction: boolean
+  }
+
+  type EntityConfigWithMethod = Omit<EntityConfiguration, 'editMethod' | 'createArgs'> & {
+    editMethod: (actor: Actor.Implementation, path: string, obj: EntityComponentBase) => Promise<void>
+    createArgs?: EntityConstructorArgs
+  }
+
+  /* ---------------------------------------- */
+
+  interface NoteComponent extends EntityComponentBase {
+    notes?: string
+    title?: string
+  }
+
+  /* ---------------------------------------- */
+
+  interface EquipmentComponent extends EntityComponentBase {
+    save?: boolean
+    itemid?: string
+  }
+
+  /* ---------------------------------------- */
+
+  interface EquipmentInstance extends EquipmentComponent {
+    toItemData(actor: Actor.Implementation, path: string): Record<string, string | number | boolean | object>
+    _getGGAId(config: { name: string; type: string; generator: string }): string
+  }
+
+  /* ---------------------------------------- */
+
+  interface GurpsActorSheetEditMethods {
+    editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
+    editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
+    editModifier(
+      actor: Actor.Implementation,
+      path: string,
+      obj: EntityComponentBase,
+      isReaction: boolean
+    ): Promise<void>
+  }
+
+  /* ---------------------------------------- */
+
+  interface GurpsActorSystem {
+    HP?: { value: number; max: number }
+    FP?: { value: number; max: number }
+    additionalresources?: {
+      qnotes?: string
+    }
+    skills?: NestedEntityRecord
+    ads?: NestedEntityRecord
+    melee?: NestedEntityRecord
+    ranged?: NestedEntityRecord
+    reactions?: Record<string, ModifierComponent>
+    conditionalmods?: Record<string, ModifierComponent>
+    totalpoints?: TotalPoints
+    equipment?: {
+      carried?: Record<string, EquipmentComponent>
+      other?: Record<string, EquipmentComponent>
+    }
+    notes?: Record<string, NoteComponent>
+  }
+
+  /* ---------------------------------------- */
+
+  interface GurpsEffectFlags {
+    effect?: {
+      type?: string
+      pdfref?: string
+    }
+    name?: string
+    alt?: string
+    move?: string
+    defense?: string
+    fullturn?: boolean
+    duration?: { delaySeconds: number | null }
+    endCondition?: string
+    terminateActions?: { type: string; args: string }[]
+    statusId?: string
+  }
 }
+
+/* ---------------------------------------- */
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
@@ -47,11 +386,11 @@ declare module 'fvtt-types/configuration' {
 
   /* ---------------------------------------- */
 
-  /* ---------------------------------------- */
-
   interface ConfiguredItem<SubType extends Item.SubType> {
     document: GurpsItemV2<SubType>
   }
+
+  /* ---------------------------------------- */
 
   interface ConfiguredActor<SubType extends Actor.SubType> {
     document: GurpsActorV2<SubType>
@@ -61,17 +400,7 @@ declare module 'fvtt-types/configuration' {
 
   interface FlagConfig {
     ActiveEffect: {
-      gurps: {
-        name: string
-        alt: string
-        duration: { delaySeconds: number | null }
-        endCondition: string
-        terminateActions: { type: string; args: string }[]
-        statusId: string
-        effect: {
-          type: string
-        }
-      }
+      gurps: GurpsEffectFlags
     }
     ChatMessage: {
       gurps: {
@@ -196,5 +525,20 @@ declare module 'fvtt-types/configuration' {
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.use-browser-importer': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
+    'gurps.portrait-hp-tinting': boolean
   }
 }
+
+// declare module '*/miscellaneous-settings.js' {
+//   export const SYSTEM_NAME: 'gurps'
+//   export const SETTING_USE_FOUNDRY_ITEMS: 'use-foundry-items'
+//   export const SETTING_PORTRAIT_HP_TINTING: 'portrait-hp-tinting'
+// }
+//
+// declare namespace foundry.applications.api {
+//   class DialogV2 {
+//     constructor(config: DialogV2Config)
+//     render(options?: { force?: boolean }): Promise<DialogV2>
+//     element: HTMLElement
+//   }
+// }

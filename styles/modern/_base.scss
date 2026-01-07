@@ -1,0 +1,104 @@
+@use 'variables' as *;
+
+body {
+  @include css-variables;
+
+  &.theme-dark {
+    @include css-variables-dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:not(.theme-light) {
+      @include css-variables-dark;
+    }
+  }
+}
+
+.app.window-app.sheet.actor.modern-sheet {
+  .window-content {
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+
+    > form {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  }
+
+  .window-resizable-handle {
+    background: var(--ms-bg);
+  }
+}
+
+.modern-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ms-bg);
+  color: var(--ms-text);
+  font-family: inherit;
+  font-size: var(--ms-font-md);
+  line-height: var(--ms-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  .pdflink {
+    color: var(--ms-accent);
+    text-decoration: none;
+    text-shadow: none;
+
+    &:hover {
+      color: var(--ms-accent);
+      text-decoration: underline;
+      text-shadow: none;
+    }
+  }
+
+  .gurpslink {
+    color: var(--ms-text);
+    background-color: var(--ms-accent-light);
+    border-color: var(--ms-border);
+
+    &:hover, &.test {
+      color: var(--ms-text);
+      background-color: var(--ms-accent-light);
+    }
+
+    &:active {
+      color: var(--ms-text);
+      background-color: var(--ms-accent-light);
+    }
+  }
+
+  .glinkmod, .glinkmodplus, .glinkmodminus {
+    color: var(--ms-text);
+  }
+}
+
+.ms-footer {
+  text-align: center;
+  font-size: var(--ms-font-xs);
+  color: var(--ms-text-dim);
+  padding: var(--ms-space-4);
+  border-top: 1px solid var(--ms-border-light);
+  background: var(--ms-bg);
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-equipment-grid {
+}

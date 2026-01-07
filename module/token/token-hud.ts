@@ -26,7 +26,10 @@ export default class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
     const activeEffects = this.object.actor?.effects.contents ?? []
 
     const currentManeuverId = this.object.actor?.system.conditions.maneuver
-    const maneuverIcon = GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png'
+
+    const maneuverIcon = currentManeuverId
+      ? (GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
+      : 'systems/gurps/icons/maneuvers/man-nothing.png'
 
     return foundry.utils.mergeObject(context, {
       icons: { maneuvers: maneuverIcon },

@@ -710,17 +710,17 @@ export class GurpsActor extends Actor {
   }
 
   _isEnhancedMove() {
-    return !!this._getCurrentMoveMode()?.enhanced
+    return !!this.getCurrentMoveMode()?.enhanced
   }
 
   _getSprintMove() {
-    let current = this._getCurrentMoveMode()
+    let current = this.getCurrentMoveMode()
     if (!current) return 0
     if (current?.enhanced) return current.enhanced
     return Math.floor(current.basic * 1.2)
   }
 
-  _getCurrentMoveMode() {
+  getCurrentMoveMode() {
     let move = this.system.move
     let current = Object.values(move).find(it => it.default)
     if (!current && Object.keys(move).length > 0) return move['00000']
