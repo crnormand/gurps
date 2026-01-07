@@ -1058,7 +1058,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    // HACK: bad type used here, to fix later
     await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
