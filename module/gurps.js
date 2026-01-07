@@ -1378,12 +1378,6 @@ if (!globalThis.GURPS) {
   }
   GURPS.findSkill = findSkill
 
-  function findSkill(actor, skillName) {
-    if (!actor) return null
-    return actor.findSkill(skillName)
-  }
-  GURPS.findSkill = findSkill
-
   /**
    * @param {GurpsActorV2 | GurpsActorData} actor
    * @param {string} sname
