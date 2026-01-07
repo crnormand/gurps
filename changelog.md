@@ -1,5 +1,19 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.11
+
+### Bugfixes
+
+- Missing lang tags \#2450
+- Can't roll from Actor Sheet when Canvas disabled #2449
+- ModToolTip with transparent BG \#2448
+- Cannot create Active Effects from Actor Sheet \#2447
+- Fright Check dialog text unreadable (v18.10) \#2446
+- Shotgun-type Weapons Calculate RoF Results Incorrectly \#2463
+- Fixed Move Mode editing to correctly handle defaults.
+- When checking for an existing item, include Item.type in comparison.
+- Correctly handle markdown in imported Notes.
+
 ## Release 0.18.10 12/24/2025
 
 ### Features
