@@ -11,7 +11,7 @@ import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracke
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
-import { Advantage, Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { BaseAction } from 'module/action/base-action.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
@@ -53,7 +53,7 @@ declare global {
 
     performAction(
       action: GurpsAction | foundry.data.fields.SchemaField.SourceData<DamageActionSchema> | undefined,
-      actor: Actor | GurpsActor | null,
+      actor: Actor.Implementation | null,
       event?: Event | null,
       targets?: string[]
     ): Promise<boolean | { target: any; thing: any } | undefined>
@@ -66,7 +66,7 @@ declare global {
       currentSum(): number
       clear(): Promise<void>
       refreshPosition(): void
-      addModifier(mod: string | number, reason: string, list?: Modifier[] | undefined, tagged: boolean): void
+      addModifier(mod: string | number, reason: string, list?: Modifier[], tagged?: boolean): void
     }
 
     // @deprecated -- TODO: move to module
@@ -99,11 +99,11 @@ declare global {
     }
 
     // @deprecated -- TODO: move to module
-    ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
+    ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
 
     resolveDamageRoll: (
       event: Event,
-      actor: GurpsActor,
+      actor: Actor.Implementation,
       otf: string,
       overridetxt: string | null,
       isGM: boolean,
