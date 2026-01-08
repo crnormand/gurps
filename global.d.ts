@@ -276,9 +276,13 @@ declare global {
 
   type EntityConstructorArgs = string[]
 
+  /* ---------------------------------------- */
+
   interface EntityComponentClass {
     new (name?: string, ...args: never[]): EntityComponentBase
   }
+
+  /* ---------------------------------------- */
 
   interface EntityConfiguration {
     entityName: string
@@ -290,9 +294,13 @@ declare global {
     createArgs?: () => EntityConstructorArgs
   }
 
+  /* ---------------------------------------- */
+
   interface ModifierConfiguration {
     isReaction: boolean
   }
+
+  /* ---------------------------------------- */
 
   type EntityConfigWithMethod = Omit<EntityConfiguration, 'editMethod' | 'createArgs'> & {
     editMethod: (actor: Actor.Implementation, path: string, obj: EntityComponentBase) => Promise<void>
