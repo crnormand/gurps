@@ -1,20 +1,23 @@
-# [Users Guide](https://github.com/crnormand/gurps/wiki) for GURPS 4e Game Aid for Foundry VTT
+![FoundryVTT](https://img.shields.io/badge/foundry-v12-green?color=2b82fc&label=FoundryVTT&style=for-the-badge)
+![FoundryVTT](https://img.shields.io/badge/foundry-v13-green?color=2b82fc&label=FoundryVTT&style=for-the-badge)
+[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fgurps&colorB=448d34&style=for-the-badge)](https://forge-vtt.com/bazaar#package=gurps)
+[![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/crnormand/gurps/refs/heads/main/LICENSE.txt)
+
+# GURPS Game Aid for Foundry VTT
+
+A Game Aid for the Generic Univeral Role-Playing System (GURPS) from [Steve Jackson Games](http://www.sjgames.com/).
+
+[User Guide](https://github.com/crnormand/gurps/wiki)
 
 ## Current Release Version 0.18.10
 
-Compatible with FoundryVTT v12.x AND **v13.x**!
-
-### [Change Log](changelog.md)
-
-The list was getting just too long, so it has been moved to a separate file. Click above to see what has changed.
-
 If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
-Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/VzybymD8z6))
+Join us on Discord: [GURPS Discord](https://discord.gg/VzybymD8z6))
 
 Thanks 🙂!
 
-#### Legal
+## Legal
 
 The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
