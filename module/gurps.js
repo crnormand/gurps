@@ -27,6 +27,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
+import { GurpsActorModernSheet } from './actor/modern/index.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -2021,6 +2022,10 @@ if (!globalThis.GURPS) {
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
       label: 'Reduced Mode',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
+      label: 'Modern',
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {

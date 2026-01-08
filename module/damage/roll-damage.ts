@@ -123,6 +123,7 @@ export async function rollDamage(
         action.hitlocation
       )
       if (action.next) {
+        // @ts-expect-error: Unrefined type
         return await GURPS.performAction(action.next, actor, event, targets)
       }
       return true
@@ -143,6 +144,7 @@ export async function rollDamage(
       action.hitlocation
     )
     if (action.next) {
+      // @ts-expect-error: Unrefined type
       return await GURPS.performAction(action.next, actor, event, targets)
     }
     return true

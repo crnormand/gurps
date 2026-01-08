@@ -151,6 +151,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
+  get currentmovemode(): fields.SchemaField.SourceData<MoveSchema> {
+    return this.moveV2.find(mv => mv.default)!
+  }
+
   get currentdodge(): number {
     return this.currentEncumbranceData?.currentdodge ?? 0
   }
@@ -834,7 +838,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       const detail = this.getSetting(Settings.SETTING_MANEUVER_DETAIL, 'General')
       if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')!
       }
     }
 

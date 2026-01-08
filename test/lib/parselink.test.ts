@@ -2,8 +2,7 @@ import { parseForRollOrDamage, parselink } from '../../lib/parselink.js'
 import { DamageTable } from '../../module/damage/damage-tables.js'
 
 beforeAll(() => {
-  /** @type {Game} */
-  globalThis.GURPS = {}
+  globalThis.GURPS = {} as any
 
   /** @type {Game} */
   // @ts-ignore

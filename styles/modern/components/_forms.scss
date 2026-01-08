@@ -1,0 +1,213 @@
+@use '../mixins' as *;
+
+.modern-sheet {
+  input[type="text"], input[type="number"], textarea, select {
+    background: var(--ms-bg);
+    color: var(--ms-text);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: var(--ms-space-2) var(--ms-space-4);
+    font-size: var(--ms-font-xs);
+
+    &:focus {
+      outline: none;
+      border-color: var(--ms-accent);
+    }
+  }
+
+  .rollable {
+    cursor: pointer;
+    &:hover {
+      color: var(--ms-accent);
+      text-decoration: underline;
+    }
+  }
+
+  #identity {
+    .header { @include form-header; }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: var(--ms-space-2) var(--ms-space-4);
+      align-items: center;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: var(--ms-font-xs);
+        text-align: right;
+      }
+
+      .field input {
+        width: 100%;
+      }
+    }
+  }
+
+  #description {
+    .header { @include form-header; }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: var(--ms-space-2) var(--ms-space-4);
+      align-items: center;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: var(--ms-font-xs);
+        text-align: right;
+
+        &.textarea {
+          align-self: start;
+          padding-top: var(--ms-space-2);
+        }
+      }
+    }
+  }
+
+  #miscellaneous {
+    .header { @include form-header; }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: var(--ms-space-2) var(--ms-space-4);
+      align-items: center;
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: var(--ms-font-xs);
+        text-align: right;
+      }
+    }
+  }
+
+  #points {
+    .header { @include form-header; }
+
+    .fieldblock {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: var(--ms-space-4);
+
+      .label {
+        color: var(--ms-text-muted);
+        font-size: var(--ms-font-xs);
+      }
+
+      .field {
+        input {
+          width: 60px;
+          text-align: right;
+          font-weight: var(--ms-weight-semibold);
+          @include tabular-nums;
+        }
+
+        &.noedit input {
+          background: transparent;
+          border: none;
+        }
+      }
+    }
+  }
+
+  .trackers {
+    .tracker {
+      background: var(--ms-bg-card);
+      border: 1px solid var(--ms-border);
+      border-radius: var(--ms-radius);
+      padding: var(--ms-gap);
+      margin-bottom: var(--ms-gap);
+
+      .tracker-name {
+        font-weight: var(--ms-weight-semibold);
+        color: var(--ms-text);
+        margin-bottom: var(--ms-space-2);
+      }
+    }
+  }
+}
+
+.ms-identity-card {
+  .ms-identity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--ms-space-4);
+  }
+
+  .ms-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ms-space-1);
+
+    label {
+      font-size: var(--ms-font-xs);
+      color: var(--ms-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    input, select {
+      width: 100%;
+    }
+  }
+}
+
+.ms-points-bar {
+  .ms-points-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ms-space-8);
+  }
+
+  .ms-points-item {
+    font-size: var(--ms-font-xs);
+    color: var(--ms-text-muted);
+    cursor: pointer;
+
+    &:hover .ms-points-display {
+      text-decoration: underline;
+    }
+
+    &.editing {
+      .ms-points-display { visibility: hidden; }
+      .ms-points-input { opacity: 1; }
+    }
+  }
+
+  .ms-points-value {
+    display: inline-block;
+    position: relative;
+    margin-right: var(--ms-space-2);
+  }
+
+  .ms-points-display {
+    display: inline-block;
+    color: var(--ms-text);
+    font-size: var(--ms-font-md);
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
+    padding: 0 var(--ms-space-2);
+    min-width: 3ch;
+    text-align: center;
+  }
+
+  .ms-points-input {
+    position: absolute;
+    top: -1px;
+    left: -3px;
+    width: calc(100% + 6px);
+    height: calc(100% + 2px);
+    text-align: center;
+    font-size: var(--ms-font-md);
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
+    padding: 0 var(--ms-space-2);
+    border: 1px solid var(--ms-accent);
+    border-radius: var(--ms-radius-sm);
+    background: var(--ms-bg-card);
+    opacity: 0;
+    box-sizing: border-box;
+  }
+}
