@@ -5,7 +5,7 @@
 
 # GURPS Game Aid for Foundry VTT
 
-A Game Aid for the Generic Universal Role-Playing System (GURPS) from [Steve Jackson Games](http://www.sjgames.com/).
+A Game Aid for the Generic Universal Role-Playing System (GURPS) from [Steve Jackson Games](https://www.sjgames.com/).
 
 [User Guide](https://github.com/crnormand/gurps/wiki)
 
@@ -21,9 +21,9 @@ Thanks 🙂!
 
 ## Legal
 
-The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
+The material presented here is my original creation, intended for use with the [GURPS](https://www.sjgames.com/gurps) system from [Steve Jackson Games](https://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
-[GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
+[GURPS](https://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](https://www.sjgames.com/general/online_policy.html)
 
 This game system DOES NOT provide information contained in paid publications. It is only intended to allow people to play GURPS online using their GURPS books/PDFs.
 
