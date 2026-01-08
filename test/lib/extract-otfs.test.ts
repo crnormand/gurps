@@ -1,5 +1,5 @@
-import { gurpslink } from '../module/utilities/gurpslink.js'
-import { DamageTable } from '../module/damage/damage-tables.js'
+import { gurpslink } from '../../module/utilities/gurpslink.js'
+import { DamageTable } from '../../module/damage/damage-tables.js'
 
 beforeAll(() => {
   globalThis.GURPS = {} as any

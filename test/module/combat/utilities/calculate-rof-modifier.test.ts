@@ -1,5 +1,4 @@
-// @ts-expect-error - test-only import; module resolution not configured in tsconfig for this path
-import { calculateRoFModifier } from '../module/combat/utilities'
+import { calculateRoFModifier } from '../../../../module/combat/utilities.ts'
 
 describe('calculateRoFModifier', () => {
   test.each([
