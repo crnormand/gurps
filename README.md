@@ -5,7 +5,7 @@
 
 # GURPS Game Aid for Foundry VTT
 
-A Game Aid for the Generic Univeral Role-Playing System (GURPS) from [Steve Jackson Games](http://www.sjgames.com/).
+A Game Aid for the Generic Universal Role-Playing System (GURPS) from [Steve Jackson Games](http://www.sjgames.com/).
 
 [User Guide](https://github.com/crnormand/gurps/wiki)
 
