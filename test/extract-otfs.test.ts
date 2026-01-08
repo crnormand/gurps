@@ -1,4 +1,4 @@
-import { gurpslink2 } from '../module/utilities/gurpslink.js'
+import { gurpslink } from '../module/utilities/gurpslink.js'
 import { DamageTable } from '../module/damage/damage-tables.js'
 
 beforeAll(() => {
@@ -30,7 +30,7 @@ const rollableTypes = [
 
 function extractOtfs(text: string) {
   if (!text) return []
-  const actions = gurpslink2(text, true) as any[]
+  const actions = gurpslink(text, true) as any[]
 
   return actions
     .filter(action => action.action && rollableTypes.includes(action.action.type))
