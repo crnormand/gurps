@@ -1,7 +1,7 @@
 ![FoundryVTT](https://img.shields.io/badge/foundry-v12-green?color=2b82fc&label=FoundryVTT&style=for-the-badge)
 ![FoundryVTT](https://img.shields.io/badge/foundry-v13-green?color=2b82fc&label=FoundryVTT&style=for-the-badge)
 [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fgurps&colorB=448d34&style=for-the-badge)](https://forge-vtt.com/bazaar#package=gurps)
-[![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/crnormand/gurps/refs/heads/main/LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/crnormand/gurps/refs/heads/main/LICENSE.txt)
 
 # GURPS Game Aid for Foundry VTT
 
