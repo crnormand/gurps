@@ -86,7 +86,7 @@ class GcsImporter {
         actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
       )
 
-      // When importing into existing actor, delete only GCS-imported items
+      // When importing into existing actor, delete only imported items
       await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
@@ -133,11 +133,20 @@ class GcsImporter {
 
   /* ---------------------------------------- */
 
+  /**
+   * Removes any items on the actor imported from an external program.
+   * This function does not discriminate between GCS or GCA imported items,
+   * as there could theoretically be cases in which items are imported from GCA,
+   * then from GCS, or vice versa. Not sure why anyone would do that, but we're accounting
+   * for it here.
+   *
+   * @param actor - The affected actor
+   */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
       const component =
         (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
-      return component?.importFrom === 'GCS'
+      return ['GCS', 'GCA'].includes(component?.importFrom)
     })
 
     await actor.deleteEmbeddedDocuments(

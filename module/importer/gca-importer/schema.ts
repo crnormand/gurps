@@ -503,8 +503,6 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
       node => GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode.schema.fields)
     )
 
-    console.log(data)
-
     return new this(data)
   }
 

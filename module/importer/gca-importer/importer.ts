@@ -14,10 +14,10 @@ import { ItemComponentSchema } from 'module/item/data/component.js'
 import { EquipmentSchema, EquipmentComponentSchema } from 'module/item/data/equipment.js'
 import { SkillSchema, SkillComponentSchema } from 'module/item/data/skill.js'
 import { HitLocationSchemaV2 } from 'module/actor/data/hit-location-entry.js'
+import { ImportSettings } from '../index.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
-import { ImportSettings } from '../index.js'
 
 class GcaImporter {
   actor?: Actor.OfType<'characterV2'>
@@ -68,7 +68,7 @@ class GcaImporter {
         actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
       )
 
-      // When importing into existing actor, delete only GCA-imported items
+      // When importing into existing actor, delete only imported items
       await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
@@ -115,11 +115,20 @@ class GcaImporter {
 
   /* ---------------------------------------- */
 
+  /**
+   * Removes any items on the actor imported from an external program.
+   * This function does not discriminate between GCS or GCA imported items,
+   * as there could theoretically be cases in which items are imported from GCA,
+   * then from GCS, or vice versa. Not sure why anyone would do that, but we're accounting
+   * for it here.
+   *
+   * @param actor - The affected actor
+   */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
       const component =
         (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
-      return component?.importFrom === 'GCA'
+      return ['GCS', 'GCA'].includes(component?.importFrom)
     })
 
     await actor.deleteEmbeddedDocuments(
