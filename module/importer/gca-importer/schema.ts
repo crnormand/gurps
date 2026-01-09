@@ -465,6 +465,7 @@ const gcaAttackModeSchema = () => {
     charminst: new fields.StringField({ required: true, nullable: true }),
     charparry: new fields.StringField({ required: true, nullable: true }),
     charparryscore: new fields.StringField({ required: true, nullable: true }),
+    charblockscore: new fields.StringField({ required: true, nullable: true }),
     charradius: new fields.StringField({ required: true, nullable: true }),
     charrangehalfdam: new fields.StringField({ required: true, nullable: true }),
     charrangemax: new fields.StringField({ required: true, nullable: true }),
@@ -499,9 +500,17 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
       schema.calcs.fields
     ) as AnyMutableObject
 
-    data.attackmodes = Array.from(xml.querySelector(':scope > attackmodes')?.querySelectorAll('attackmode') ?? []).map(
-      node => GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode.schema.fields)
-    )
+    // GCA always produces at least one attackmode child node. For traits which do not have an attack,
+    // this node is empty except for a <name> child node. Sometimes a <notes> node is also present, but this
+    // does not constitute an full attack as far as GGA is concerned. If only 2 fields are present (which should
+    // never be the case for any real attacks), the import is skipped.
+    data.attackmodes = Array.from(
+      xml.querySelector(':scope > attackmodes')?.querySelectorAll('attackmode') ?? []
+    ).reduce((acc: DataModel.CreateData<GCAAttackModeSchema>[], node) => {
+      if (node.children.length > 2)
+        acc.push(GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode.schema.fields))
+      return acc
+    }, [])
 
     return new this(data)
   }

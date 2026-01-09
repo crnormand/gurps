@@ -427,8 +427,7 @@ Portrait will not be imported.`
       st: weapon.charminst ?? '',
       reach: weapon.charreach ?? '',
       parry: weapon.charparry ?? '',
-      // FIXME: currently no way to get block value from base data. May need to be calculated.
-      block: '',
+      block: weapon.charblockscore ?? '',
     }
 
     return {
