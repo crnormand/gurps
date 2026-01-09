@@ -447,6 +447,17 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
+  /**
+   * Imports the GCA-schema'd Trait and converts it to a GGA Trait ("feature"").
+   * TODO: trait.calcs.levelnames is a commat delimited list (as a string), with optional
+   * quote marks. Valid formats include: "foo","bar,"baz" or foo, bar, baz.
+   * This decides what the "names" of levels of a trait are. This is used for traits
+   * such as:
+   * - Trading Character Points for Money (DFRPG:A95)
+   * - Combat Reflexes (B43)
+   * Ideally this should be implemented in a similar way to how it is done in GCA, for greater
+   * parity and data retention.
+   */
   #importTrait(trait: GCATrait, containedBy: string | null = null): Item.CreateData {
     const type = 'featureV2'
     const _id = foundry.utils.randomID()
@@ -583,10 +594,13 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importTraitComponent(trait: GCATrait): DataModel.CreateData<TraitComponentSchema> {
+    // If the cost includes a separator "/", the Trait is treated as leveled by GCA.
+    const isLeveled = trait.calcs.cost?.includes('/') ?? false
+
     return {
       ...this.#importBaseComponent(trait),
       cr: 0,
-      level: trait.level ?? 0,
+      level: isLeveled ? (trait.level ?? 0) : null,
       userdesc: trait.ref?.description ?? '',
       points: trait.points ?? 0,
     }
