@@ -32,6 +32,9 @@ declare global {
       Importer: {
         importGCS(actor: Actor.Implementation): Promise<void>
       }
+      Pdf: {
+        handleOnPdf(event: Event): void
+      }
     }
 
     LastActor: Actor.Implementation | null
@@ -110,12 +113,22 @@ declare global {
 
     resolveDamageRoll: (
       event: Event,
-      actor: Actor.Implementation,
+      actor: Actor.Implementation | null,
       otf: string,
       overridetxt: string | null,
       isGM: boolean,
       isOtf?: boolean
     ) => Promise<void>
+
+    whisperOtfToOwner: (
+      otf: string,
+      overridetxt: string | null,
+      event: Event,
+      blindcheck: boolean | GurpsAction,
+      actor: Actor.Implementation | null
+    ) => void
+
+    sendOtfMessage: (content: string, blindroll: boolean, users?: User[] | null) => void
 
     SJGProductMappings: Record<string, string>
 
