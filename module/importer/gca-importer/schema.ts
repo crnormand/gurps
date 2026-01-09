@@ -500,6 +500,11 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
       schema.calcs.fields
     ) as AnyMutableObject
 
+    data.ref = this._primitiveFieldsFromXML(
+      xml.querySelector(':scope > ref') as HTMLElement,
+      schema.ref.fields
+    ) as AnyMutableObject
+
     // GCA always produces at least one attackmode child node. For traits which do not have an attack,
     // this node is empty except for a <name> child node. Sometimes a <notes> node is also present, but this
     // does not constitute an full attack as far as GGA is concerned. If only 2 fields are present (which should
