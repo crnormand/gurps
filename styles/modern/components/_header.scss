@@ -36,16 +36,32 @@
     left: 0;
     right: 0;
     pointer-events: none;
-    transition: height 0.3s ease, background 0.3s ease;
+    transition:
+      height 0.3s ease,
+      background 0.3s ease;
     background: transparent;
 
-    &[data-hp-threshold="1"] { background: var(--ms-hp-overlay-1); }
-    &[data-hp-threshold="2"] { background: var(--ms-hp-overlay-2); }
-    &[data-hp-threshold="3"] { background: var(--ms-hp-overlay-3); }
-    &[data-hp-threshold="4"] { background: var(--ms-hp-overlay-4); }
-    &[data-hp-threshold="5"] { background: var(--ms-hp-overlay-5); }
-    &[data-hp-threshold="6"] { background: var(--ms-hp-overlay-6); }
-    &[data-hp-threshold="7"] { background: var(--ms-hp-overlay-7); }
+    &[data-hp-threshold='1'] {
+      background: var(--ms-hp-overlay-1);
+    }
+    &[data-hp-threshold='2'] {
+      background: var(--ms-hp-overlay-2);
+    }
+    &[data-hp-threshold='3'] {
+      background: var(--ms-hp-overlay-3);
+    }
+    &[data-hp-threshold='4'] {
+      background: var(--ms-hp-overlay-4);
+    }
+    &[data-hp-threshold='5'] {
+      background: var(--ms-hp-overlay-5);
+    }
+    &[data-hp-threshold='6'] {
+      background: var(--ms-hp-overlay-6);
+    }
+    &[data-hp-threshold='7'] {
+      background: var(--ms-hp-overlay-7);
+    }
   }
 }
 
@@ -89,8 +105,12 @@
     }
 
     &.editing {
-      .ms-name { display: none; }
-      .ms-name-input { display: block; }
+      .ms-name {
+        display: none;
+      }
+      .ms-name-input {
+        display: block;
+      }
     }
   }
 
@@ -144,8 +164,12 @@
       }
 
       &.editing {
-        .ms-tag-display { display: none; }
-        .ms-tag-input { display: inline-block; }
+        .ms-tag-display {
+          display: none;
+        }
+        .ms-tag-input {
+          display: inline-block;
+        }
       }
     }
   }
@@ -239,8 +263,12 @@
   &.editing {
     background: var(--ms-bg);
 
-    .ms-attr-display { display: none; }
-    .ms-attr-input { display: block; }
+    .ms-attr-display {
+      display: none;
+    }
+    .ms-attr-input {
+      display: block;
+    }
   }
 }
 
@@ -400,7 +428,9 @@
       color: var(--ms-accent);
       cursor: pointer;
 
-      &:hover { text-decoration: underline; }
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
@@ -431,7 +461,9 @@
       &.rollable {
         color: var(--ms-accent);
         cursor: pointer;
-        &:hover { text-decoration: underline; }
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }

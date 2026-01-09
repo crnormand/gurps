@@ -54,25 +54,25 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
   {
     displaySelector: '.ms-resource-display',
     containerSelector: '.ms-resource',
-    inputSelector: '.ms-resource-input'
+    inputSelector: '.ms-resource-input',
   },
   {
     displaySelector: '.ms-name-display',
     containerSelector: '.ms-name-container',
     inputSelector: '.ms-name-input',
-    fieldType: 'name'
+    fieldType: 'name',
   },
   {
     displaySelector: '.ms-tag-display',
     containerSelector: '.ms-tag',
     inputSelector: '.ms-tag-input',
-    fieldType: 'tag'
+    fieldType: 'tag',
   },
   {
     displaySelector: '.ms-dr-display',
     containerSelector: '.ms-loc-dr',
-    inputSelector: '.ms-dr-input'
-  }
+    inputSelector: '.ms-dr-input',
+  },
 ]
 
 export function buildOnBlurHandler(

@@ -1927,7 +1927,7 @@ export class ActorImporter {
     e.parentuuid = p
     e.notes = ''
     e.notes = this._resolveNotes(i)
-    
+
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
         if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
@@ -1963,7 +1963,7 @@ export class ActorImporter {
         e.weight -= j.weight * j.count
       }
     }
-    
+
     return [e].concat(ch)
   }
 

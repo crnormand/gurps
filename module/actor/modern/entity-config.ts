@@ -7,14 +7,14 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Skill,
     editMethod: 'editSkills',
     localeKey: 'GURPS.skill',
-    createArgs: () => [game.i18n!.localize('GURPS.skill'), '10']
+    createArgs: () => [game.i18n!.localize('GURPS.skill'), '10'],
   },
   {
     entityName: 'trait',
     path: 'system.ads',
     EntityClass: Advantage,
     editMethod: 'editAds',
-    localeKey: 'GURPS.advantage'
+    localeKey: 'GURPS.advantage',
   },
   {
     entityName: 'spell',
@@ -22,7 +22,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Spell,
     editMethod: 'editSpells',
     localeKey: 'GURPS.spell',
-    createArgs: () => [game.i18n!.localize('GURPS.spell'), '10']
+    createArgs: () => [game.i18n!.localize('GURPS.spell'), '10'],
   },
   {
     entityName: 'melee',
@@ -30,7 +30,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Melee,
     editMethod: 'editMelee',
     localeKey: 'GURPS.melee',
-    createArgs: () => [game.i18n!.localize('GURPS.melee'), '10', '1d']
+    createArgs: () => [game.i18n!.localize('GURPS.melee'), '10', '1d'],
   },
   {
     entityName: 'ranged',
@@ -38,11 +38,8 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Ranged,
     editMethod: 'editRanged',
     localeKey: 'GURPS.ranged',
-    createArgs: () => [game.i18n!.localize('GURPS.ranged'), '10', '1d']
-  }
+    createArgs: () => [game.i18n!.localize('GURPS.ranged'), '10', '1d'],
+  },
 ]
 
-export const modifierConfigurations: ModifierConfiguration[] = [
-  { isReaction: true },
-  { isReaction: false }
-]
+export const modifierConfigurations: ModifierConfiguration[] = [{ isReaction: true }, { isReaction: false }]

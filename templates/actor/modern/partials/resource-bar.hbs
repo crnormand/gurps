@@ -6,12 +6,15 @@
     <span class='ms-resource-text'>{{resource.value}}/{{resource.max}}</span>
   </div>
   <div class='ms-resource-edit'>
-    <input type='number' name='{{valuePath}}' value='{{resource.value}}' class='ms-resource-input'/>
+    <input type='number' name='{{valuePath}}' value='{{resource.value}}' class='ms-resource-input' />
     <span class='ms-resource-separator'>/</span>
-    <input type='number' name='{{maxPath}}' value='{{resource.max}}' class='ms-resource-input'/>
+    <input type='number' name='{{maxPath}}' value='{{resource.max}}' class='ms-resource-input' />
   </div>
   <button type='button' class='ms-resource-reset' data-action='reset-{{type}}' title='Reset to max'>
     <i class='fas fa-rotate-left'></i>
   </button>
-  {{#if showCondition}}<span class='ms-condition-badge' title='{{localize conditionTitleKey}}'>{{conditionBadge}}</span>{{/if}}
+  {{#if showCondition}}<span
+      class='ms-condition-badge'
+      title='{{localize conditionTitleKey}}'
+    >{{conditionBadge}}</span>{{/if}}
 </div>

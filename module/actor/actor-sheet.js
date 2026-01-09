@@ -1359,9 +1359,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async editModifier(actor, path, obj, isReaction = true) {
     const dlgHtml = await renderTemplate('systems/gurps/templates/modifier-editor-popup.hbs', obj)
-    const title = isReaction
-      ? game.i18n.localize('GURPS.reaction')
-      : game.i18n.localize('GURPS.conditionalModifier')
+    const title = isReaction ? game.i18n.localize('GURPS.reaction') : game.i18n.localize('GURPS.conditionalModifier')
     new Dialog({
       title: `${title} Editor`,
       content: dlgHtml,
