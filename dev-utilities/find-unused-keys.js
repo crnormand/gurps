@@ -14,6 +14,15 @@ import path from 'path'
 let rootPath = process.argv.slice(2)
 console.log(rootPath)
 
+const ignore = [
+  /GURPS\.BODYPLAN.+/,
+  /GURPS\.CR\d+/,
+  /GURPS\.damageType[A-Z].+/,
+  /GURPS\.encumbranceLevel-\d+/,
+  /GURPS\.hitLocation[A-Z].+/,
+  /TYPES\..+/,
+]
+
 /**
  * Define a function to get the files.
  * @param {*} dirPath
@@ -39,12 +48,36 @@ const getAllFiles = function (dirPath, arrayOfFiles) {
 
 // read the tags from en.json
 let object = JSON.parse(fs.readFileSync('lang/en.json', 'utf8'))
+
+// object is a hierarchical structure; flatten it
+const flattenObject = (obj, parent, res = {}) => {
+  for (let key in obj) {
+    let propName = parent ? parent + '.' + key : key
+    if (typeof obj[key] == 'object') {
+      flattenObject(obj[key], propName, res)
+    } else {
+      res[propName] = obj[key]
+    }
+  }
+  return res
+}
+
+object = flattenObject(object)
+
 let keys = Object.keys(object)
+
+// Filter out ignored keys, based on regexes in ignore[]
+keys = keys.filter(key => {
+  for (let i = 0; i < ignore.length; i++) {
+    if (key.match(ignore[i]) !== null) return false
+  }
+  return true
+})
 
 // find any keys that do no match -- indicates I've got the wrong regex
 console.log('Keys that do not match expected pattern')
 console.log('=======================================')
-let regex = /^GURPS\.[A-Za-z0-9. \-\+,\*\/]+$/g
+let regex = /^(GURPS\.|TYPES\.)[A-Za-z0-9. _\-\+,\*\/]+$/g
 keys.forEach(key => {
   if (!key.match(regex)) console.log(key)
 })

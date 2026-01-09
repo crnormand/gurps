@@ -50,7 +50,7 @@ export default class DamageChat {
     }
 
     // If there was a target, enable the GM's apply button
-    let button = html.querySelector(':button.apply-all')
+    let button = html.querySelector('button.apply-all')
     if (button == null) return
 
     button.style.display = 'none'

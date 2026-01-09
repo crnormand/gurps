@@ -1,5 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
+import { getTokenForActor } from '../utilities/token.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -115,7 +116,7 @@ export async function doRoll({
     if (actorTokens.length === 1) {
       token = actorTokens[0]
     } else {
-      token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      token = getTokenForActor(actor)
     }
     result = await actor.canRoll(action, token, chatthing, optionalArgs.obj)
   }
@@ -559,19 +560,25 @@ async function _doRoll({
     chatdata['otf'] = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
     chatdata['followon'] = optionalArgs.followon
 
+    // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      // if the attached obj (see handleRoll()) as Recoil information, do the additional math
-      let rofrcl = Math.floor(margin / parseFloat(optionalArgs.obj.rcl)) + 1
-      if (!!optionalArgs.obj.rof) {
-        let rof = optionalArgs.obj.rof
-        let m = rof.match(/(\d+)[×xX\*](\d+)/) // Support shotgun RoF (3x9)
-        if (!!m) rofrcl = Math.min(rofrcl, parseInt(m[1]) * parseInt(m[2]))
-        else rofrcl = Math.min(rofrcl, parseInt(rof))
+      let rofText
+      let potentialHits = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1
+
+      const rof = Math.min(optionalArgs.shots || 1, parseInt(optionalArgs.obj.rof))
+      potentialHits = Math.min(rof, potentialHits)
+      rofText = potentialHits.toString()
+
+      // Support shotgun RoF (3x9, for example).
+      const matchShotgunRoF = optionalArgs.obj.rof.match(/(?<rof>\d+)[×xX\*](?<projectiles>\d+)/)
+      if (matchShotgunRoF) {
+        potentialHits = potentialHits * matchShotgunRoF.groups.projectiles
+        rofText = `${rof}x${matchShotgunRoF.groups.projectiles}`
       }
 
-      chatdata['rof'] = optionalArgs.obj.rof
+      chatdata['rof'] = rofText
       chatdata['rcl'] = optionalArgs.obj.rcl
-      chatdata['rofrcl'] = rofrcl
+      chatdata['rofrcl'] = potentialHits
     }
 
     chatdata['optlabel'] = optionalArgs.text || ''

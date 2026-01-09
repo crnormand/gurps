@@ -391,24 +391,28 @@ export class TokenActions {
     const allModifiers = await foundry.utils
       .getProperty(this.actor, 'system.conditions.usermods')
       .filter(m => !m.includes('#maneuver') && !m.includes('@eft:'))
+
     const maneuverModifiers = []
     if (this.toHitBonus !== 0) {
       const signal = this.toHitBonus > 0 ? '+' : '-'
       const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toHitBonus' : 'GURPS.toHitPenalty')
       if (this.currentManeuver === 'move_and_attack') {
+        const rangedBulkLabel = game.i18n.localize('GURPS.modifiers_.moveAndAttackRangedBulk')
         addModifier(
           `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} *Max:9 #melee #maneuver @man:${this.currentManeuver}`
         )
         addModifier(
-          `${signal}${Math.abs(this.toHitBonus / 2)} ${signalLabel} #ranged #maneuver @man:${this.currentManeuver}`
+          `${signal}${Math.abs(this.toHitBonus / 2)} ${rangedBulkLabel} #ranged #maneuver @man:${this.currentManeuver}`
         )
       } else {
         addModifier(`${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)
       }
     }
+
     if (this.evaluateTurns > 0) {
       addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
     }
+
     if (this.defenseBonus !== 0) {
       const signal = this.defenseBonus > 0 ? '+' : '-'
       const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toDefenseBonus' : 'GURPS.toDefensePenalty')
@@ -416,9 +420,7 @@ export class TokenActions {
         `${signal}${Math.abs(this.defenseBonus)} ${signalLabel} #parry #block #dodge #maneuver @man:${this.currentManeuver}`
       )
     }
-    if (this.evaluateTurns > 0) {
-      addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
-    }
+
     Object.keys(this.currentParry).map(k => {
       const parry = this.currentParry[k]
       if (parry.currentPenalty !== 0) {
@@ -429,6 +431,7 @@ export class TokenActions {
         )
       }
     })
+
     Object.keys(this.currentAim).map(k => {
       const aim = this.currentAim[k]
       if (aim.aimBonus !== 0) {
@@ -437,6 +440,7 @@ export class TokenActions {
         addModifier(`${signal}${Math.abs(aim.aimBonus)} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`)
       }
     })
+
     await this.actor.update({
       'system.conditions.usermods': [...allModifiers, ...maneuverModifiers],
     })

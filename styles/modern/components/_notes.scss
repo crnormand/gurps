@@ -1,0 +1,288 @@
+@use '../mixins' as *;
+
+.ms-notes-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-gap);
+
+  .ms-misc-info {
+    margin-top: var(--ms-space-6);
+    padding-top: var(--ms-space-6);
+    border-top: 1px solid var(--ms-border-light);
+    font-size: var(--ms-font-xs);
+    color: var(--ms-text-muted);
+
+    div {
+      padding: var(--ms-space-1) 0;
+    }
+  }
+}
+
+.ms-notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-gap);
+}
+
+.ms-notes-list {
+  font-size: var(--ms-font-xs);
+  min-width: 0;
+}
+
+.ms-note-row {
+  display: flex;
+  gap: var(--ms-space-4);
+  padding: var(--ms-space-3) 0;
+  border-bottom: 1px solid var(--ms-border-light);
+
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+}
+
+.ms-note-content {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+
+  .expandcollapseicon {
+    margin-right: var(--ms-space-2);
+    cursor: pointer;
+    color: var(--ms-text-muted);
+  }
+
+  @for $i from 1 through 5 {
+    &.indent#{$i} {
+      padding-left: #{$i * 12}px;
+    }
+  }
+}
+
+.ms-note-ref {
+  flex-shrink: 0;
+
+  a {
+    color: var(--ms-accent);
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.ms-user-created {
+  color: var(--ms-accent);
+  margin-left: var(--ms-space-2);
+}
+
+.ms-skill-row {
+  padding: var(--ms-space-2) 0;
+  border-bottom: 1px solid var(--ms-border-light);
+  transition: background 0.1s;
+  cursor: pointer;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: var(--ms-bg-hover); padding-left: var(--ms-space-2); padding-right: var(--ms-space-2); margin-left: calc(-1 * var(--ms-space-2)); margin-right: calc(-1 * var(--ms-space-2)); border-radius: var(--ms-radius-sm); }
+
+  .ms-skill-name {
+    flex: 1;
+    font-size: var(--ms-font-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ms-text);
+  }
+
+  .ms-skill-rsl {
+    flex-shrink: 0;
+    font-size: var(--ms-font-xs);
+    color: var(--ms-text-dim);
+    margin-right: var(--ms-space-4);
+  }
+
+  .ms-skill-level {
+    font-size: var(--ms-font-sm);
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
+    min-width: 28px;
+    text-align: center;
+    background: var(--ms-accent-light);
+    color: var(--ms-accent);
+    border-radius: var(--ms-radius);
+    padding: var(--ms-space-1) var(--ms-space-3);
+  }
+}
+
+.ms-trait-row {
+  padding: var(--ms-space-2) 0;
+  border-bottom: 1px solid var(--ms-border-light);
+  font-size: var(--ms-font-xs);
+  cursor: pointer;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover {
+    background: var(--ms-bg-hover);
+    padding-left: var(--ms-space-2);
+    padding-right: var(--ms-space-2);
+    margin-left: calc(-1 * var(--ms-space-2));
+    margin-right: calc(-1 * var(--ms-space-2));
+    border-radius: var(--ms-radius-sm);
+  }
+
+  &.ms-advantage {
+    .ms-trait-points { color: var(--ms-advantage); }
+  }
+
+  &.ms-disadvantage {
+    .ms-trait-points { color: var(--ms-disadvantage); }
+  }
+
+  .ms-trait-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ms-text);
+  }
+
+  .ms-trait-points {
+    font-weight: var(--ms-weight-bold);
+    @include tabular-nums;
+    margin-left: var(--ms-space-4);
+    font-size: var(--ms-font-xs);
+  }
+
+  .ms-trait-ref {
+    font-size: var(--ms-font-xs);
+    color: var(--ms-accent);
+    margin-left: var(--ms-space-3);
+  }
+}
+
+.ms-row-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.ms-skill-row.expanded,
+.ms-trait-row.expanded {
+  .ms-notes { display: block; }
+}
+
+.ms-notes {
+  display: none;
+  width: 100%;
+  padding: var(--ms-space-3) 0 var(--ms-space-3) var(--ms-space-10);
+  font-size: var(--ms-font-xs);
+  color: var(--ms-text-dim);
+  line-height: var(--ms-leading-normal);
+}
+
+.ms-notes-empty {
+  font-style: italic;
+  color: var(--ms-text-dim);
+}
+
+.ms-lifting-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--ms-space-2) var(--ms-space-6);
+  font-size: var(--ms-font-xs);
+}
+
+.ms-lift-value {
+  font-weight: var(--ms-weight-semibold);
+  @include tabular-nums;
+  color: var(--ms-accent);
+  text-align: right;
+  padding: var(--ms-space-2) 0;
+}
+
+.ms-lift-label {
+  color: var(--ms-text-muted);
+  padding: var(--ms-space-2) 0;
+  border-bottom: 1px solid var(--ms-border-light);
+}
+
+.ms-misc-info {
+  margin-top: var(--ms-space-6);
+  padding-top: var(--ms-space-6);
+  border-top: 1px solid var(--ms-border-light);
+  font-size: var(--ms-font-xs);
+  color: var(--ms-text-muted);
+}
+
+.ms-trackers-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-4);
+
+  .tracked-resource {
+    background: var(--ms-bg-card);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: var(--ms-space-4);
+
+    .header {
+      background: var(--ms-accent);
+    }
+  }
+}
+
+.ms-quicknotes {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-4);
+  padding: var(--ms-space-1);
+  padding-right: var(--ms-space-3);
+  margin-bottom: var(--ms-space-6);
+  background: var(--ms-bg-card);
+  border: 2px dashed var(--ms-accent);
+  border-radius: var(--ms-radius);
+}
+
+.ms-quicknotes-content {
+  flex: 1;
+  cursor: text;
+  padding: var(--ms-space-3);
+
+  > .glinkmod, > .gurpslink {
+    color: var(--ms-accent);
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    &:hover {
+      text-decoration-style: solid;
+    }
+  }
+}
+
+.ms-quicknotes-text {
+  &:empty {
+    display: none;
+  }
+}
+
+.ms-quicknotes-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ms-space-2);
+}
+
+.ms-quicknotes-placeholder {
+  color: var(--ms-text-dim);
+  font-style: italic;
+  font-size: var(--ms-font-xs);
+  margin-left: var(--ms-space-3);
+}
+
+.ms-quicknotes-edit {
+  color: var(--ms-text-dim);
+  cursor: pointer;
+  padding: var(--ms-space-2);
+  &:hover {
+    color: var(--ms-accent);
+  }
+}

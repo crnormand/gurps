@@ -192,9 +192,11 @@ export class GurpsItemSheet extends ItemSheet {
     }
 
     // When editing a Compendium Item, Actor does not exist, so we need to update the Item directly
-    await this.item.update({ [`system.${this.item.itemSysKey}.name`]: this.item.name })
+    if (!this.item.isNewItemType) {
+      await this.item.update({ [`system.${this.item.itemSysKey}.name`]: this.item.name })
+    }
     const actor = this.item.editingActor || this.actor
-    if (!!actor) {
+    if (!!actor && !this.item.isNewItemType) {
       const actorCompKey =
         this.item.type === 'equipment'
           ? actor._findEqtkeyForId('itemid', this.item.id)

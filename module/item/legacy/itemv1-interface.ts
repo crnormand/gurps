@@ -42,16 +42,16 @@ interface Equipment {
 
 interface Feature {
   fea: {
-    notes: ''
-    pageref: ''
+    notes: string
+    pageref: string
     contains: {}
-    uuid: ''
-    parentuuid: ''
-    points: 0
-    userdesc: ''
-    note: ''
-    name: ''
-    originalName: ''
+    uuid: string
+    parentuuid: string
+    points: number
+    userdesc: string
+    note: string
+    name: string
+    originalName: string
   }
   melee: {}
   ranged: {}

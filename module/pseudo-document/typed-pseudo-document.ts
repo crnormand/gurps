@@ -5,8 +5,7 @@ import Document = foundry.abstract.Document
 import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
 
 interface TypedPseudoDocumentCreateDialogOptions
-  extends foundry.config.ApplicationConfiguration,
-    foundry.applications.api.Dialog.WaitOptions {}
+  extends foundry.config.ApplicationConfiguration, foundry.applications.api.Dialog.WaitOptions {}
 
 class TypedPseudoDocument<
   Schema extends TypedPseudoDocumentSchema = TypedPseudoDocumentSchema,
@@ -102,8 +101,10 @@ class TypedPseudoDocument<
       ).outerHTML,
     }
 
-    // TODO: implement
-    const inputData = await GURPS.applications.api.DSDialog.input(foundry.utils.mergeObject(defaultOptions, options))
+    // TODO: implement, fix type
+    const inputData = await foundry.applications.api.DialogV2.input(
+      foundry.utils.mergeObject(defaultOptions, options) as any
+    )
 
     if (!inputData) return
 

@@ -100,7 +100,7 @@
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.9/system.zip",
+  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.10/system.zip",
   "socket": true,
   "license": "LICENSE.txt"
 }

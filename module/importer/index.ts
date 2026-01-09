@@ -28,10 +28,6 @@ function init() {
 
     initializeGameSettings()
   })
-
-  Hooks.on('ready', () => {
-    GURPS.import = importerPrompt
-  })
 }
 
 const Importer: ImporterModule = {

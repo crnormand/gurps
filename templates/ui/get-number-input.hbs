@@ -1,0 +1,19 @@
+<div style='text-align: center;'>
+  <p style='font-size: large;'><strong>{{headerText}}</strong></p>
+  <p>{{promptText}}</p>
+  <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
+    <label for='get-number-input'>{{label}}</label>
+    <input
+      id='get-number-input'
+      type='number'
+      name='number'
+      class='digits-only'
+      style='text-align: center;'
+      min='{{min}}'
+      max='{{max}}'
+      step='{{step}}'
+      value='{{value}}'
+    />
+  </div>
+  <br />
+</div>

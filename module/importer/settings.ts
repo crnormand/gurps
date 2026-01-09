@@ -174,7 +174,7 @@ export function initializeGameSettings() {
     name: SETTINGS,
     label: SETTINGS,
     hint: 'GURPS.importer.settings.hint',
-    icon: 'fa-light fa-file-import',
+    icon: 'fa-solid fa-file-import',
     type: ImportSettingsApplication,
     restricted: false,
   })
@@ -182,6 +182,6 @@ export function initializeGameSettings() {
 
 class ImportSettingsApplication extends GurpsSettingsApplication {
   constructor(options?: any) {
-    super({ title: game.i18n!.localize(SETTINGS), module: MODULE_NAME, icon: 'fa-light fa-file-import' }, options)
+    super({ title: game.i18n!.localize(SETTINGS), module: MODULE_NAME, icon: 'fa-solid fa-file-import' }, options)
   }
 }

@@ -46,7 +46,6 @@ export default class GurpsToken extends foundry.canvas.placeables.Token {
           (activeManeuvers as { id: string }[]).map(m => m.id!)
         )
       }
-      maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name
       maneuver.statuses = Array.from(new Set([maneuver.id, ...(maneuver.statuses ?? [])]))
       await this.actor?.createEmbeddedDocuments('ActiveEffect', [maneuver])
     }

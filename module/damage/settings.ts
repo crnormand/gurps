@@ -243,7 +243,7 @@ export default function initializeGameSettings() {
     name: game.i18n.localize(SETTINGS),
     label: game.i18n.localize(SETTINGS),
     hint: 'GURPS.dmg.settings.titleHint',
-    icon: 'fa-light fa-face-head-bandage',
+    icon: 'fa-solid fa-face-head-bandage',
     type: DamageSettingsApplication,
     restricted: false,
   })
@@ -287,6 +287,6 @@ export function defaultADDAction(): string {
 
 class DamageSettingsApplication extends GurpsSettingsApplication {
   constructor(options?: any) {
-    super({ title: game.i18n!.localize(SETTINGS), module: MODULE_NAME, icon: 'fa-light fa-face-head-bandage' }, options)
+    super({ title: game.i18n!.localize(SETTINGS), module: MODULE_NAME, icon: 'fa-solid fa-face-head-bandage' }, options)
   }
 }

@@ -4,6 +4,24 @@
 
 ### Features
 
+## Release 0.18.10 12/24/2025
+
+### Features
+
+- Handle ranged attacks with high RoF: prompt for number of shots, add appropriate modifier, and automatically apply Bulk penalty for Move and Attack. \#2421
+- Auto apply Effect Modifier for Size Modifier. \#2208
+- Allow optional rule for using the difference in Size Modifiers in melee combat. \#2174
+
+### Bugfixes
+
+- Restore missing lang tags. \#2430
+- Fix sprint distance when changing encumbrance levels. \#2420
+- Changing Posture from character sheet takes two tries \#2423
+- Restore (and enhance) the Change Maneuver menu in the Combat Tracker.
+- Fix the positioning of the Quick Roll menu.
+- Effect Modifiers calculation of distance from source to target is sometimes incorrect by 1. \#2441
+- Fix -1 per 10 yards range calculation.
+
 ## Release 0.18.9 12/12/2025
 
 ### Bugfixes

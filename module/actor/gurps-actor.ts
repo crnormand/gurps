@@ -318,6 +318,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /*  Accessors                               */
   /* ---------------------------------------- */
 
+  get currentMoveMode() {
+    return this.isNewActorType ? this.modelV2.currentMoveMode : this._getCurrentMoveMode
+  }
+
   /**
    * NOTE: Both character and characterV2
    */
@@ -431,7 +435,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       const detail = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
       if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
+        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')!
       }
     }
 
@@ -755,7 +759,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = userMod.match(regex)?.[1].trim() || ''
           const mod = userMod.match(/[-+]\d+/)?.[0] || '0'
-          await GURPS.ModifierBucket.addModifier(mod, desc, undefined, true)
+          GURPS.ModifierBucket.addModifier(mod, desc, undefined, true)
         }
       }
     }
@@ -2031,7 +2035,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         let item = this.items.get(object.itemid)!
         await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.parentuuid': '' } as Item.UpdateData])
       }
-      let target = { ...GURPS.decode(this, targetkey) } // shallow copy the list
+      let target = { ...GURPS.decode<EquipmentV1>(this, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, sourcekey)
       let eqtkey = GURPS.put(target, object)
       await this.updateItemAdditionsBasedOn(object, targetkey + '.' + eqtkey)
@@ -2547,6 +2551,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let orig: Item.OfType<'equipment'>[] = this.items.contents
       .filter(i => i.type === 'equipment')
       .slice()
+      .map(i => i as Item.OfType<'equipment'>)
       .sort((a, b) => b.name.localeCompare(a.name)) // in case items are in the same list... add them alphabetically
 
     let good: Item.OfType<'equipment'>[] = []
@@ -3837,7 +3842,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let skillAction = parselink(otf).action
     if (!skillAction) return
     skillAction.calcOnly = true
-    const results = await GURPS.performAction(skillAction, this)
+    const results = (await GURPS.performAction(skillAction, this)) as { target: any; thing: any }
     return results?.target
   }
 
@@ -4217,7 +4222,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let index = parseInt(components.pop()!)
     let path = components.join('.')
 
-    let object = GURPS.decode(this, path)
+    let object = GURPS.decode<AnyObject>(this, path)
     let array = objectToArray(object)
 
     // Delete the whole object.
@@ -4245,7 +4250,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let index = parseInt(components.pop()!)
     let path = components.join('.')
 
-    let object = GURPS.decode(this, path)
+    let object = GURPS.decode<AnyObject>(this, path)
     let array = objectToArray(object)
 
     // Delete the whole object.

@@ -6,6 +6,7 @@ import {
   arrayToObject,
   atou,
   d6ify,
+  flattenContainedList,
   makeRegexPatternFrom,
   objectToArray,
   quotedAttackName,
@@ -15,6 +16,7 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
+import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -25,6 +27,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
+import { GurpsActorModernSheet } from './actor/modern/index.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -33,6 +36,7 @@ import { AddImportEquipmentButton } from './item-import.js'
 import { GurpsItemSheet } from './item-sheet.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
+import { getTokenForActor } from './utilities/token.js'
 
 /**
  * Added to color the rollable parts of the character sheet.
@@ -90,13 +94,14 @@ import { UI } from './ui/index.js'
 import { Migration } from '../lib/migration.js'
 import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
 import { GurpsItemV2 } from './item/gurps-item.js'
+import { GetNumberInput } from './ui/get-number-input.js'
 
 export let GURPS = undefined
 
 if (!globalThis.GURPS) {
   GURPS = {}
   globalThis.GURPS = GURPS // Make GURPS global!
-  GURPS.SYSTEM_NAME = 'gurps' // TODO Use this global instead of importing miscellaneous-settings everywhere
+  GURPS.SYSTEM_NAME = 'gurps' // Use this global instead of importing miscellaneous-settings everywhere.
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
@@ -153,9 +158,6 @@ if (!globalThis.GURPS) {
   // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
   GURPS.LastActor = null
   GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
-
-  // TODO Any functions that do not directly access Foundry code or other modules should be moved to separate file(s) to allow testing.
-
   GURPS.SetLastActor = SetLastActor
   GURPS.ClearLastActor = ClearLastActor
 
@@ -186,7 +188,6 @@ if (!globalThis.GURPS) {
       })
   }
 
-  // TODO Why are these global?  Because they are used as semaphores for certain multithreaded processes
   GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
   GURPS.PendingOTFs = []
   GURPS.IgnoreTokenSelect = false
@@ -587,7 +588,7 @@ if (!globalThis.GURPS) {
       }
 
       let canRoll = { result: true }
-      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      const token = getTokenForActor(actor)
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -681,7 +682,7 @@ if (!globalThis.GURPS) {
       }
 
       let canRoll = { result: true }
-      const token = actor?.getActiveTokens()?.[0] || canvas.tokens.controlled[0]
+      const token = getTokenForActor(actor)
       if (actor) canRoll = await actor.canRoll(action, token)
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -933,6 +934,28 @@ if (!globalThis.GURPS) {
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+
+      const parsedRateOfFire = parseInt(att.rof)
+      if (parsedRateOfFire > 1) {
+        const shots = await GetNumberInput({
+          title: game.i18n.localize('GURPS.combat.rof.numberOfShotsTitle'),
+          headerText: action.orig,
+          promptText: game.i18n.localize('GURPS.combat.rof.numberOfShotsPrompt'),
+          label: game.i18n.format('GURPS.combat.rof.numberOfShotsLabel', { max: parsedRateOfFire }),
+          min: 1,
+          max: parsedRateOfFire,
+          value: parsedRateOfFire,
+        })
+
+        const bonusForRoF = calculateRoFModifier(shots)
+        if (bonusForRoF !== 0)
+          GURPS.ModifierBucket.addModifier(
+            bonusForRoF,
+            game.i18n.format('GURPS.combat.rof.bonusLabel', { shots }),
+            targetmods
+          )
+        opt.shots = shots
+      }
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return await doRoll({
@@ -1340,24 +1363,21 @@ if (!globalThis.GURPS) {
   GURPS.objectToArray = objectToArray
 
   /**
-   * @param {GurpsActorV2 | GurpsActorData} actor
+   * @param {GurpsActorV2} actor
    * @param {string} sname
    * @returns {any}
    */
-  function findAdDisad(actor, sname) {
-    var t
-    if (!actor) return t
-    if (actor instanceof GurpsActorV2) actor = actor.system
-    sname = makeRegexPatternFrom(sname, false)
-    let regex = new RegExp(sname, 'i')
-    recurselist(actor.ads, s => {
-      if (s.name.match(regex)) {
-        t = s
-      }
-    })
-    return t
+  function findAdDisad(actor, adName) {
+    if (!actor) return null
+    return actor.findAdvantage(adName)
   }
   GURPS.findAdDisad = findAdDisad
+
+  function findSkill(actor, skillName) {
+    if (!actor) return null
+    return actor.findSkill(skillName)
+  }
+  GURPS.findSkill = findSkill
 
   /**
    * @param {GurpsActorV2 | GurpsActorData} actor
@@ -1917,6 +1937,7 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.recurselist = recurselist
+  GURPS.flattenContainedList = flattenContainedList
   GURPS.parselink = parselink
 
   /* -------------------------------------------- */
@@ -2001,6 +2022,10 @@ if (!globalThis.GURPS) {
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
       label: 'Reduced Mode',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
+      label: 'Modern',
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
@@ -2258,25 +2283,18 @@ if (!globalThis.GURPS) {
           continue
         }
 
-        // Get Combat Initiative
-        const combatantInitiative = $(combatantElement).find('.token-initiative .initiative').text()
-
         // Add Quick Roll Menu
         combatantElement = await addQuickRollButton(combatantElement, combatant, token)
 
         // Add Maneuver Menu
         combatantElement = await addManeuverMenu(combatantElement, combatant, token)
-
-        // Add Tooltip to Token Image
-        const tokenImage = $(combatantElement).find('.token-image')
-        tokenImage.attr('title', `${game.i18n.localize('GURPS.combatInitiative')}: ${combatantInitiative}`)
       }
-      // Add Quick Roll and Maneuvers Menu Listeners
+      // Add Quick Roll Listeners.
       addQuickRollListeners()
-      addManeuverListeners()
     })
 
-    // TODO Move to a "Module".
+    addManeuverListeners()
+
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
