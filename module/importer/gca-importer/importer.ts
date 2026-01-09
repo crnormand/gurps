@@ -355,21 +355,33 @@ Portrait will not be imported.`
 
     const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
     this.output.hitlocationsV2 = []
-    this.input.body?.forEach(location => {
-      if (location.display === 0) return // Skip hidden locations
+    this.input.hitlocationtable.hitlocationlines?.forEach(location => {
+      // Some properties of the hit location are stored not in the hit location table, but in the body table.
+      // These are different but related tables. All locations in "hitlocationtable" *should* be in "body".
+      // However, different names may be in use. We're accounting for these possibilities.
+      let lookupName = location.location
+      if (lookupName === 'Eye') lookupName = 'Eyes'
+      if (lookupName === 'Foot') lookupName = 'Feet'
+      if (lookupName === 'Hand') lookupName = 'Hands'
+
+      const bodyLocation = this.input.body?.find(e => e.name === lookupName)
+      if (!bodyLocation) {
+        console.error(`Failed to import hit location table entry "${location.location}". No matching body part found.`)
+        return
+      }
 
       let roll = ''
 
       if (table) {
-        const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, location.name)
+        const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, bodyLocation.name)
         if (standardEntry) {
           roll = standardEntry.roll
         }
       }
 
       const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
-        where: location.name ?? '',
-        import: parseInt(location.dr) ?? 0,
+        where: location.location ?? '',
+        import: parseInt(bodyLocation.dr) ?? 0,
         rollText: roll,
         split: {},
       }

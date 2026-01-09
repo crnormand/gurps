@@ -483,6 +483,34 @@ type GCAAttackModeSchema = ReturnType<typeof gcaAttackModeSchema>
 
 /* ---------------------------------------- */
 
+class GCAHitLocationLine extends GCASchemaBlock<GCAHitLocationLineSchema> {
+  static override defineSchema(): GCAHitLocationLineSchema {
+    return gcaHitLocationLineSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static fromXML(xml: HTMLElement): GCAHitLocationLine {
+    const schema = this.schema.fields
+
+    const data: Partial<DataModel.CreateData<GCAHitLocationLineSchema>> = this._primitiveFieldsFromXML(xml, schema)
+    return new this(data)
+  }
+}
+
+const gcaHitLocationLineSchema = () => {
+  return {
+    roll: new fields.StringField({ required: true, nullable: false }),
+    location: new fields.StringField({ required: true, nullable: false }),
+    penalty: new fields.StringField({ required: true, nullable: false }),
+    notes: new fields.StringField({ required: true, nullable: false }),
+  }
+}
+
+type GCAHitLocationLineSchema = ReturnType<typeof gcaHitLocationLineSchema>
+
+/* ---------------------------------------- */
+
 class GCATrait extends GCASchemaBlock<GCATraitSchema> {
   static override defineSchema(): GCATraitSchema {
     return gcaTraitSchema()
@@ -740,6 +768,8 @@ const gcaTraitSchema = () => {
         noresync: new fields.StringField({ required: true, nullable: true }),
         disadat: new fields.StringField({ required: true, nullable: true }),
 
+        vttnotes: new fields.StringField({ required: true, nullable: true }),
+
         appliedsymbols: new fields.StringField({ required: true, nullable: true }),
       },
       { required: true, nullable: true }
@@ -828,6 +858,16 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
             GCAMessage.fromXML(node as HTMLElement)
           )
         : []
+
+    data.hitlocationtable = {
+      ...this._primitiveFieldsFromXML(
+        xml.querySelector(':scope > hitlocationtable') as HTMLElement,
+        schema.hitlocationtable.fields
+      ),
+      hitlocationlines: Array.from(
+        xml.querySelector(':scope > hitlocationtable')?.querySelectorAll('hitlocationline') ?? []
+      ).map(node => GCAHitLocationLine.fromXML(node as HTMLElement)),
+    }
 
     data.traits = {
       attributes: Array.from(xml.querySelector(':scope > traits > attributes')?.querySelectorAll('trait') ?? []).map(
@@ -1182,6 +1222,15 @@ const gcaCharacterSchema = () => {
 
     tags: new fields.ArrayField(new fields.EmbeddedDataField(GCAUnknownTag), { required: true, nullable: true }),
     messages: new fields.ArrayField(new fields.EmbeddedDataField(GCAMessage), { required: true, nullable: true }),
+
+    hitlocationtable: new fields.SchemaField({
+      name: new fields.StringField({ required: true, nullable: false }),
+      description: new fields.StringField({ required: true, nullable: true }),
+      hitlocationlines: new fields.ArrayField(new fields.EmbeddedDataField(GCAHitLocationLine), {
+        required: true,
+        nullable: false,
+      }),
+    }),
 
     traits: new fields.SchemaField(
       {
