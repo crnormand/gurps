@@ -28,6 +28,12 @@ declare global {
       Damage: any
     }
 
+    modules: {
+      Importer: {
+        importGCS(actor: Actor.Implementation): Promise<void>
+      }
+    }
+
     LastActor: Actor.Implementation | null
 
     StatusEffect: {

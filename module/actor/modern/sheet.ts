@@ -17,6 +17,7 @@ import { bindDropdownToggle } from './dropdown-handler.ts'
 import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
+import { getGame, getUser, isHTMLElement } from '../../types/guards.ts'
 import MoveModeEditor from '../move-mode-editor.js'
 import { ImportSettings } from '../../importer/index.js'
 import { ActorImporter } from '../actor-importer.js'
@@ -92,7 +93,7 @@ export class GurpsActorModernSheet extends SheetBase {
   }
 
   get template(): string {
-    if (!game.user!.isGM && this.actor.limited) {
+    if (!getUser().isGM && this.actor.limited) {
       return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
     }
     return 'systems/gurps/templates/actor/actor-modern-sheet.hbs'
@@ -115,7 +116,7 @@ export class GurpsActorModernSheet extends SheetBase {
       rangedCount: countItems(actorSystem?.ranged),
       modifierCount:
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
-      showHPTinting: game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
+      showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
       cssClass: 'gurps sheet actor modern-sheet',
     }
@@ -127,7 +128,7 @@ export class GurpsActorModernSheet extends SheetBase {
     const controls = super._getHeaderControls()
 
     const blockImport = ImportSettings.onlyTrustedUsersCanImport
-    if (!blockImport || game.user!.isTrusted) {
+    if (!blockImport || getUser().isTrusted) {
       controls.unshift({
         icon: 'fas fa-file-import',
         label: 'Import',
@@ -175,7 +176,9 @@ export class GurpsActorModernSheet extends SheetBase {
       excludeSelectors: ['.expandcollapseicon', '.ms-add-icon'],
     })
 
-    bindContainerCollapse(html, this.actor.id!, {
+    const actorId = this.actor.id
+    if (!actorId) return
+    bindContainerCollapse(html, actorId, {
       tableSelector: '.ms-traits-table, .ms-skills-table, .ms-spells-table',
       rowSelector: '.ms-traits-row, .ms-skills-row, .ms-spells-row',
       excludeSelectors: ['.ms-row-actions', '.ms-use-button', '.ms-col-otf', '.ms-col-level'],
@@ -198,8 +201,8 @@ export class GurpsActorModernSheet extends SheetBase {
     // Bind entity CRUD actions
     this.#bindEntityCrudActions(html)
 
-    // Wire up OTF rollable elements (requires jQuery wrapper for now)
-    GurpsWiring.hookupAllEvents($(html))
+    // Wire up OTF rollable elements
+    GurpsWiring.hookupAllEvents(html)
 
     // Make OTF elements draggable
     html.querySelectorAll<HTMLElement>('[data-otf]').forEach(element => {
@@ -238,12 +241,10 @@ export class GurpsActorModernSheet extends SheetBase {
     const action = target.dataset.action
     if (action === 'resetHp' || action === 'reset-hp') {
       const maxValue = foundry.utils.getProperty(this.actor, 'system.HP.max') as number
-      // @ts-expect-error Dynamic path notation
-      await this.actor.internalUpdate({ 'system.HP.value': maxValue })
+      await this.actor.internalUpdate({ 'system.HP.value': maxValue } as Actor.UpdateData)
     } else if (action === 'resetFp' || action === 'reset-fp') {
       const maxValue = foundry.utils.getProperty(this.actor, 'system.FP.max') as number
-      // @ts-expect-error Dynamic path notation
-      await this.actor.internalUpdate({ 'system.FP.value': maxValue })
+      await this.actor.internalUpdate({ 'system.FP.value': maxValue } as Actor.UpdateData)
     }
   }
 
@@ -264,8 +265,8 @@ export class GurpsActorModernSheet extends SheetBase {
     if (!effect) return
 
     const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: game.i18n!.localize('GURPS.delete') },
-      content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
+      window: { title: getGame().i18n.localize('GURPS.delete') },
+      content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
     })
     if (confirmed) {
       await effect.delete()
@@ -279,7 +280,6 @@ export class GurpsActorModernSheet extends SheetBase {
         return new ActorImporter(this.actor).importActor()
       case 'enemy':
       case 'characterV2':
-        // @ts-expect-error GURPS.modules is dynamically populated
         return GURPS.modules.Importer.importGCS(this.actor)
       default:
         throw new Error(`Invalid actor type for import: ${this.actor.type}`)
@@ -318,8 +318,7 @@ export class GurpsActorModernSheet extends SheetBase {
             const form = button.form as HTMLFormElement
             const input = form.elements.namedItem('i') as HTMLTextAreaElement
             const value = input.value
-            // @ts-expect-error: Not sure why key is not recognized. TODO: fix
-            actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
+            actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') } as Actor.UpdateData)
           },
         },
       ],
@@ -379,7 +378,8 @@ export class GurpsActorModernSheet extends SheetBase {
 
   #onClickRoll(event: MouseEvent): void {
     event.preventDefault()
-    const target = event.currentTarget as HTMLElement
+    const target = event.currentTarget
+    if (!isHTMLElement(target)) return
     const otf = target.dataset.otf
     if (otf) {
       GURPS.performAction({ orig: otf, type: 'skill-spell', actor: this.actor }, this.actor, event)
@@ -457,39 +457,48 @@ export class GurpsActorModernSheet extends SheetBase {
       'systems/gurps/templates/equipment-editor-popup.hbs',
       obj
     )
-    new Dialog(
-      {
-        title: 'Equipment Editor',
-        content: dlgHtml,
-        buttons: {
-          one: {
-            label: 'Update',
-            callback: async (html: JQuery) => {
-              obj.name = html.find('.name').val() || ''
-              obj.notes = html.find('.notes').val() || ''
-              obj.pageref = html.find('.pageref').val() || ''
-              obj.count = parseFloat(html.find('.count').val() as string) || 0
-              obj.cost = parseFloat(html.find('.cost').val() as string) || 0
-              obj.weight = parseFloat(html.find('.weight').val() as string) || 0
-              obj.carried = html.find('.carried').is(':checked')
-              obj.equipped = html.find('.equipped').is(':checked')
-              obj.save = html.find('.save').is(':checked')
-              actor.editItem(path, obj)
-            },
+    const dialog = await new foundry.applications.api.DialogV2({
+      window: { title: 'Equipment Editor', resizable: true },
+      content: dlgHtml,
+      buttons: [
+        {
+          action: 'update',
+          label: 'Update',
+          icon: 'fas fa-save',
+          callback: (_event: Event, button: HTMLButtonElement) => {
+            const form = button.form
+            if (!form) return
+            const getValue = (selector: string): string => {
+              const el = form.querySelector(selector)
+              return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : ''
+            }
+            const isChecked = (selector: string): boolean => {
+              const el = form.querySelector(selector)
+              return el instanceof HTMLInputElement ? el.checked : false
+            }
+            obj.name = getValue('.name') || ''
+            obj.notes = getValue('.notes') || ''
+            obj.pageref = getValue('.pageref') || ''
+            obj.count = parseFloat(getValue('.count')) || 0
+            obj.cost = parseFloat(getValue('.cost')) || 0
+            obj.weight = parseFloat(getValue('.weight')) || 0
+            obj.carried = isChecked('.carried')
+            obj.equipped = isChecked('.equipped')
+            obj.save = isChecked('.save')
+            actor.editItem(path, obj)
           },
         },
-        render: (h: JQuery) => {
-          h.find('textarea').on('drop', this.dropFoundryLinks.bind(this) as JQuery.TypeEventHandler<HTMLTextAreaElement, undefined, HTMLTextAreaElement, HTMLTextAreaElement, 'drop'>)
-          h.find('input').on('drop', this.dropFoundryLinks.bind(this) as JQuery.TypeEventHandler<HTMLInputElement, undefined, HTMLInputElement, HTMLInputElement, 'drop'>)
-        },
-      },
-      {
-        width: 560,
-        popOut: true,
-        minimizable: false,
-        jQuery: true,
-      }
-    ).render(true)
+      ],
+      position: { width: 560 },
+    }).render({ force: true })
+
+    const element = dialog.element
+    element.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(textarea => {
+      textarea.addEventListener('drop', this.dropFoundryLinks.bind(this))
+    })
+    element.querySelectorAll<HTMLInputElement>('input').forEach(input => {
+      input.addEventListener('drop', this.dropFoundryLinks.bind(this))
+    })
   }
 
   async editNotes(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
@@ -516,24 +525,29 @@ export class GurpsActorModernSheet extends SheetBase {
       obj
     )
     const title = isReaction
-      ? game.i18n!.localize('GURPS.reaction')
-      : game.i18n!.localize('GURPS.conditionalModifier')
+      ? getGame().i18n.localize('GURPS.reaction')
+      : getGame().i18n.localize('GURPS.conditionalModifier')
 
-    new Dialog({
-      title: `${title} Editor`,
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: `${title} Editor` },
       content: dlgHtml,
-      buttons: {
-        one: {
-          label: game.i18n!.localize('GURPS.update'),
-          callback: async (html: JQuery) => {
-            obj.modifier = parseInt(html.find('.modifier').val() as string) || 0
-            obj.situation = html.find('.situation').val()
-            await actor.internalUpdate({ [path]: obj })
+      buttons: [
+        {
+          action: 'update',
+          label: getGame().i18n.localize('GURPS.update'),
+          icon: 'fas fa-save',
+          callback: (_event: Event, button: HTMLButtonElement) => {
+            const form = button.form
+            if (!form) return
+            const modifierInput = form.querySelector('.modifier')
+            const situationInput = form.querySelector('.situation')
+            obj.modifier = modifierInput instanceof HTMLInputElement ? parseInt(modifierInput.value) || 0 : 0
+            obj.situation = situationInput instanceof HTMLInputElement ? situationInput.value : ''
+            actor.internalUpdate({ [path]: obj })
           },
         },
-      },
-      default: 'one',
-    }).render(true)
+      ],
+    })
   }
 
   async editItem(
@@ -547,42 +561,51 @@ export class GurpsActorModernSheet extends SheetBase {
     width = 560
   ): Promise<void> {
     const dlgHtml = await foundry.applications.handlebars.renderTemplate(template, obj)
-    new Dialog(
-      {
-        title: title,
-        content: dlgHtml,
-        buttons: {
-          one: {
-            label: 'Update',
-            callback: async (html: JQuery) => {
-              strprops.forEach(a => (obj[a] = html.find(`.${a}`)?.val() || ''))
-              numprops.forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val() as string)))
+    const dialog = await new foundry.applications.api.DialogV2({
+      window: { title, resizable: true },
+      content: dlgHtml,
+      buttons: [
+        {
+          action: 'update',
+          label: 'Update',
+          icon: 'fas fa-save',
+          callback: (_event: Event, button: HTMLButtonElement) => {
+            const form = button.form
+            if (!form) return
+            const getValue = (selector: string): string => {
+              const el = form.querySelector(selector)
+              return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : ''
+            }
+            const isChecked = (selector: string): boolean => {
+              const el = form.querySelector(selector)
+              return el instanceof HTMLInputElement ? el.checked : false
+            }
+            strprops.forEach(prop => (obj[prop] = getValue(`.${prop}`) || ''))
+            numprops.forEach(prop => (obj[prop] = parseFloat(getValue(`.${prop}`))))
 
-              const quickRoll = html.find('.quick-roll')
-              if (quickRoll.length) obj.addToQuickRoll = quickRoll.is(':checked')
+            const quickRoll = form.querySelector('.quick-roll')
+            if (quickRoll) obj.addToQuickRoll = isChecked('.quick-roll')
 
-              const consumeAction = html.find('.consumeAction')
-              if (consumeAction.length) obj.consumeAction = consumeAction.is(':checked')
+            const consumeAction = form.querySelector('.consumeAction')
+            if (consumeAction) obj.consumeAction = isChecked('.consumeAction')
 
-              const save = html.find('.save')
-              if (save.length) obj.save = save.is(':checked')
+            const save = form.querySelector('.save')
+            if (save) obj.save = isChecked('.save')
 
-              actor.editItem(path, obj)
-            },
+            actor.editItem(path, obj)
           },
         },
-        render: (h: JQuery) => {
-          h.find('textarea').on('drop', this.dropFoundryLinks.bind(this) as JQuery.TypeEventHandler<HTMLTextAreaElement, undefined, HTMLTextAreaElement, HTMLTextAreaElement, 'drop'>)
-          h.find('input').on('drop', this.dropFoundryLinks.bind(this) as JQuery.TypeEventHandler<HTMLInputElement, undefined, HTMLInputElement, HTMLInputElement, 'drop'>)
-        },
-      },
-      {
-        width: width,
-        popOut: true,
-        minimizable: false,
-        jQuery: true,
-      }
-    ).render(true)
+      ],
+      position: { width },
+    }).render({ force: true })
+
+    const element = dialog.element
+    element.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(textarea => {
+      textarea.addEventListener('drop', this.dropFoundryLinks.bind(this))
+    })
+    element.querySelectorAll<HTMLInputElement>('input').forEach(input => {
+      input.addEventListener('drop', this.dropFoundryLinks.bind(this))
+    })
   }
 
   // ============================================

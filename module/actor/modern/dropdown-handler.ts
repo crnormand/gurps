@@ -1,3 +1,5 @@
+import { isHTMLElement } from '../../types/guards.ts'
+
 export function bindDropdownToggle(html: HTMLElement, config: DropdownConfig): void {
   const { dropdownSelector, toggleSelector, optionSelector, onSelect } = config
 
@@ -5,7 +7,10 @@ export function bindDropdownToggle(html: HTMLElement, config: DropdownConfig): v
   toggles.forEach(toggle => {
     toggle.addEventListener('click', (event: MouseEvent) => {
       event.stopPropagation()
-      const dropdown = (event.currentTarget as HTMLElement).closest(dropdownSelector) as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
+      const dropdown = target.closest(dropdownSelector)
+      if (!isHTMLElement(dropdown)) return
       dropdown.classList.toggle('open')
     })
   })
@@ -14,18 +19,20 @@ export function bindDropdownToggle(html: HTMLElement, config: DropdownConfig): v
   options.forEach(option => {
     option.addEventListener('click', async (event: MouseEvent) => {
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const value = target.dataset.value ?? ''
-      const dropdown = target.closest(dropdownSelector) as HTMLElement
+      const dropdown = target.closest(dropdownSelector)
+      if (!isHTMLElement(dropdown)) return
       dropdown.classList.remove('open')
       await onSelect(value)
     })
   })
 
-  // Close dropdown when clicking outside
   html.addEventListener('click', (event: MouseEvent) => {
     const openDropdown = html.querySelector(`${dropdownSelector}.open`)
-    if (openDropdown && !openDropdown.contains(event.target as Node)) {
+    const target = event.target
+    if (openDropdown && isHTMLElement(target) && !openDropdown.contains(target)) {
       openDropdown.classList.remove('open')
     }
   })

@@ -1,4 +1,5 @@
 import { Advantage, Melee, Ranged, Skill, Spell } from '../actor-components.js'
+import { getGame } from '../../types/guards.ts'
 
 export const entityConfigurations: EntityConfiguration[] = [
   {
@@ -7,7 +8,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Skill,
     editMethod: 'editSkills',
     localeKey: 'GURPS.skill',
-    createArgs: () => [game.i18n!.localize('GURPS.skill'), '10']
+    createArgs: () => [getGame().i18n.localize('GURPS.skill'), '10']
   },
   {
     entityName: 'trait',
@@ -22,7 +23,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Spell,
     editMethod: 'editSpells',
     localeKey: 'GURPS.spell',
-    createArgs: () => [game.i18n!.localize('GURPS.spell'), '10']
+    createArgs: () => [getGame().i18n.localize('GURPS.spell'), '10']
   },
   {
     entityName: 'melee',
@@ -30,7 +31,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Melee,
     editMethod: 'editMelee',
     localeKey: 'GURPS.melee',
-    createArgs: () => [game.i18n!.localize('GURPS.melee'), '10', '1d']
+    createArgs: () => [getGame().i18n.localize('GURPS.melee'), '10', '1d']
   },
   {
     entityName: 'ranged',
@@ -38,7 +39,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     EntityClass: Ranged,
     editMethod: 'editRanged',
     localeKey: 'GURPS.ranged',
-    createArgs: () => [game.i18n!.localize('GURPS.ranged'), '10', '1d']
+    createArgs: () => [getGame().i18n.localize('GURPS.ranged'), '10', '1d']
   }
 ]
 

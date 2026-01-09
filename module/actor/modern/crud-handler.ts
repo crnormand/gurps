@@ -1,3 +1,5 @@
+import { getGame, isHTMLElement } from '../../types/guards.ts'
+
 export type EntityWithItemId = EntityComponentBase & { itemid?: string }
 type GurpsItemWithEditingActor = Item.Implementation & {
   editingActor?: Actor.Implementation
@@ -38,7 +40,7 @@ export function getDisplayName(
   if (obj && typeof obj[displayProperty] === 'string') {
     return obj[displayProperty]
   }
-  return game.i18n!.localize(fallbackLocaleKey)
+  return getGame().i18n.localize(fallbackLocaleKey)
 }
 
 export async function confirmAndDelete(
@@ -48,8 +50,8 @@ export async function confirmAndDelete(
   fallbackLocaleKey: string
 ): Promise<boolean> {
   const confirmed = await foundry.applications.api.DialogV2.confirm({
-    window: { title: game.i18n!.localize('GURPS.delete') },
-    content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
+    window: { title: getGame().i18n.localize('GURPS.delete') },
+    content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${displayName || getGame().i18n.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
     GURPS.removeKey(actor, key)
@@ -69,7 +71,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
-      const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
+      const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(getGame().i18n.localize(localeKey))
       const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
       const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
       await actor.internalUpdate({ [path]: list })
@@ -85,7 +87,8 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const entityPath = target.dataset.key ?? ''
       const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
 
@@ -100,7 +103,8 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const entityKey = target.dataset.key ?? ''
       const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
       const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
@@ -126,7 +130,7 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
       event.preventDefault()
       const { Reaction, Modifier } = await import('../actor-components.js')
       const ModifierClass = isReaction ? Reaction : Modifier
-      const newModifier = new ModifierClass('0', game.i18n!.localize(localeKey))
+      const newModifier = new ModifierClass('0', getGame().i18n.localize(localeKey))
       const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
       const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
       await actor.internalUpdate({ [path]: list })
@@ -142,7 +146,8 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const modifierPath = target.dataset.key ?? ''
       const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
       await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
@@ -154,7 +159,8 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const modifierKey = target.dataset.key ?? ''
       const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
       await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)

@@ -104,7 +104,10 @@ export default class GurpsWiring {
           name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
           icon: '<i class="far fa-comment"></i>',
           callback: () => {
-            $(document).find('#chat-message').val(otf)
+            const chatInput = document.querySelector('#chat-message')
+            if (chatInput instanceof HTMLInputElement || chatInput instanceof HTMLTextAreaElement) {
+              chatInput.value = otf
+            }
           },
           condition: () => true,
         },

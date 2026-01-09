@@ -1,9 +1,11 @@
+import { isHTMLElement } from '../../types/guards.ts'
+
 export function bindContainerCollapse(html: HTMLElement, actorId: string, config: ContainerCollapseConfig): void {
   const { tableSelector, rowSelector, excludeSelectors = [] } = config
 
   const tables = html.querySelectorAll<HTMLElement>(tableSelector)
   tables.forEach(table => {
-    const rows = Array.from(table.querySelectorAll(rowSelector)) as HTMLElement[]
+    const rows = Array.from(table.querySelectorAll<HTMLElement>(rowSelector))
 
     restoreCollapsedState(rows, actorId)
 
@@ -12,7 +14,8 @@ export function bindContainerCollapse(html: HTMLElement, actorId: string, config
       if (!hasChildren) return
 
       row.addEventListener('click', (event: MouseEvent) => {
-        const target = event.target as HTMLElement
+        const target = event.target
+        if (!isHTMLElement(target)) return
         const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
         if (shouldExclude) return
 
@@ -109,7 +112,8 @@ export function bindRowExpand(html: HTMLElement, config: RowExpandConfig): void 
   const rows = html.querySelectorAll<HTMLElement>(rowSelector)
   rows.forEach(row => {
     row.addEventListener('click', (event: MouseEvent) => {
-      const target = event.target as HTMLElement
+      const target = event.target
+      if (!isHTMLElement(target)) return
       const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
       if (shouldExclude) return
 
@@ -124,11 +128,13 @@ export function bindSectionCollapse(html: HTMLElement, config: SectionCollapseCo
   const headers = html.querySelectorAll<HTMLElement>(headerSelector)
   headers.forEach(header => {
     header.addEventListener('click', (event: MouseEvent) => {
-      const target = event.target as HTMLElement
+      const target = event.target
+      if (!isHTMLElement(target)) return
       const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
       if (shouldExclude) return
 
-      const section = header.closest('.ms-section') as HTMLElement
+      const section = header.closest('.ms-section')
+      if (!isHTMLElement(section)) return
       section.classList.toggle(collapsedClass)
       header.classList.toggle(collapsedClass)
     })

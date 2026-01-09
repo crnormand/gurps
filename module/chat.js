@@ -102,7 +102,9 @@ class ChatProcessorRegistry {
     this.msgs.quiet = false
     this.msgs.oldQuiet = false
     this.msgs.data = chatmsgData
-    this.msgs.event = event || { shiftKey: false, ctrlKey: false, data: {} }
+    this.msgs.event = event
+      ? { shiftKey: event.shiftKey, ctrlKey: event.ctrlKey, data: event.data || {}, currentTarget: event.currentTarget }
+      : { shiftKey: false, ctrlKey: false, data: {} }
 
     let answer = await this.processLines(message)
     this.send()

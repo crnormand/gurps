@@ -1,4 +1,5 @@
 import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.ts'
+import { getGame, isHTMLElement } from '../../types/guards.ts'
 
 export function bindEquipmentCrudActions(
   html: HTMLElement,
@@ -11,12 +12,13 @@ export function bindEquipmentCrudActions(
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const container = target.dataset.container ?? ''
       const path = `system.equipment.${container}`
 
       const { Equipment } = await import('../actor-components.js')
-      const newEquipment = new Equipment(`${game.i18n!.localize('GURPS.equipment')}...`, true)
+      const newEquipment = new Equipment(`${getGame().i18n.localize('GURPS.equipment')}...`, true)
       newEquipment.save = true
       const payload = newEquipment.toItemData(actor, '')
       const [item] = await actor.createEmbeddedDocuments('Item', [payload] as never)
@@ -37,7 +39,8 @@ export function bindEquipmentCrudActions(
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const equipmentPath = target.dataset.key ?? ''
       const equipmentData = foundry.utils.duplicate(GURPS.decode<EquipmentComponent>(actor, equipmentPath))
 
@@ -52,7 +55,8 @@ export function bindEquipmentCrudActions(
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const equipmentKey = target.dataset.key ?? ''
       const equipmentData = GURPS.decode<EquipmentComponent>(actor, equipmentKey)
 
@@ -86,23 +90,27 @@ export function bindNoteCrudActions(
         newNote as Record<string, string>
       )
 
-      new Dialog({
-        title: 'Note Editor',
+      await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Note Editor' },
         content: dialogContent,
-        buttons: {
-          one: {
+        buttons: [
+          {
+            action: 'create',
             label: 'Create',
-            callback: async (dialogHtml: JQuery) => {
-              newNote.notes = dialogHtml.find('.notes').val() as string
-              newNote.title = dialogHtml.find('.title').val() as string
+            icon: 'fas fa-plus',
+            callback: (_event: Event, button: HTMLButtonElement) => {
+              const form = button.form
+              if (!form) return
+              const notesInput = form.querySelector('.notes')
+              const titleInput = form.querySelector('.title')
+              newNote.notes = notesInput instanceof HTMLTextAreaElement ? notesInput.value : ''
+              newNote.title = titleInput instanceof HTMLInputElement ? titleInput.value : ''
               GURPS.put(list, newNote)
-              // HACK: to fix type here
-              await actor.internalUpdate({ [path as keyof typeof actor]: list })
+              actor.internalUpdate({ [path]: list } as Actor.UpdateData)
             },
           },
-        },
-        default: 'one',
-      }).render(true)
+        ],
+      })
     })
   })
 
@@ -111,7 +119,8 @@ export function bindNoteCrudActions(
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const notePath = target.dataset.key ?? ''
       const noteData = foundry.utils.duplicate(GURPS.decode<NoteComponent>(actor, notePath))
       await sheet.editNotes(actor, notePath, noteData)
@@ -123,7 +132,8 @@ export function bindNoteCrudActions(
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget as HTMLElement
+      const target = event.currentTarget
+      if (!isHTMLElement(target)) return
       const noteKey = target.dataset.key ?? ''
       const noteData = GURPS.decode<NoteComponent>(actor, noteKey)
 
