@@ -21,7 +21,13 @@
 
     &:hover {
       color: var(--ms-text);
-      background: var(--ms-bg-hover);
+      background: none;
+      outline: none;
+      box-shadow: none;
+    }
+
+    &::before, &::after {
+      display: none;
     }
 
     &.active {

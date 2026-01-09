@@ -32,6 +32,7 @@ declare global {
 
     StatusEffect: {
       lookup(id: string): any
+      getAllPostures(): Record<string, any>
     }
     SavedStatusEffects: typeof CONFIG.statusEffects
     StatusEffectStanding: 'standing'

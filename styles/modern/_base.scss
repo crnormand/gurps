@@ -14,23 +14,44 @@ body {
   }
 }
 
-.app.window-app.sheet.actor.modern-sheet {
-  .window-content {
-    overflow: hidden;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
+.window-content:has(.modern-sheet) {
+  @include css-variables;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  background: var(--ms-bg);
+}
 
-    > form {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+body.theme-dark .window-content:has(.modern-sheet) {
+  @include css-variables-dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.theme-light) .window-content:has(.modern-sheet) {
+    @include css-variables-dark;
   }
+}
+
+.app.window-app.sheet.actor.modern-sheet {
+  border: none;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  background: var(--ms-bg);
 
   .window-resizable-handle {
     background: var(--ms-bg);
+  }
+}
+
+body.theme-dark .app.window-app.sheet.actor.modern-sheet {
+  @include css-variables-dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.theme-light) .app.window-app.sheet.actor.modern-sheet {
+    @include css-variables-dark;
   }
 }
 
@@ -50,6 +71,10 @@ body {
 
   *, *::before, *::after {
     box-sizing: border-box;
+  }
+
+  button {
+    min-height: unset;
   }
 
   .pdflink {

@@ -1,7 +1,8 @@
-export function bindContainerCollapse(html: JQuery, actorId: string, config: ContainerCollapseConfig): void {
+export function bindContainerCollapse(html: HTMLElement, actorId: string, config: ContainerCollapseConfig): void {
   const { tableSelector, rowSelector, excludeSelectors = [] } = config
 
-  html.find(tableSelector).each((_index: number, table: HTMLElement) => {
+  const tables = html.querySelectorAll<HTMLElement>(tableSelector)
+  tables.forEach(table => {
     const rows = Array.from(table.querySelectorAll(rowSelector)) as HTMLElement[]
 
     restoreCollapsedState(rows, actorId)
@@ -102,40 +103,47 @@ const restoreCollapsedState = (rows: HTMLElement[], actorId: string): void => {
   })
 }
 
-export function bindRowExpand(html: JQuery, config: RowExpandConfig): void {
+export function bindRowExpand(html: HTMLElement, config: RowExpandConfig): void {
   const { rowSelector, excludeSelectors = [], expandedClass = 'expanded' } = config
 
-  html.find(rowSelector).on('click', (event: JQuery.ClickEvent) => {
-    const target = event.target as HTMLElement
-    const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
-    if (shouldExclude) return
+  const rows = html.querySelectorAll<HTMLElement>(rowSelector)
+  rows.forEach(row => {
+    row.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+      if (shouldExclude) return
 
-    const row = event.currentTarget as HTMLElement
-    row.classList.toggle(expandedClass)
+      row.classList.toggle(expandedClass)
+    })
   })
 }
 
-export function bindSectionCollapse(html: JQuery, config: SectionCollapseConfig): void {
+export function bindSectionCollapse(html: HTMLElement, config: SectionCollapseConfig): void {
   const { headerSelector, excludeSelectors = [], collapsedClass = 'collapsed' } = config
 
-  html.find(headerSelector).on('click', (event: JQuery.ClickEvent) => {
-    const target = event.target as HTMLElement
-    const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
-    if (shouldExclude) return
+  const headers = html.querySelectorAll<HTMLElement>(headerSelector)
+  headers.forEach(header => {
+    header.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+      if (shouldExclude) return
 
-    const header = event.currentTarget as HTMLElement
-    const section = header.closest('.ms-section') as HTMLElement
-    section.classList.toggle(collapsedClass)
-    header.classList.toggle(collapsedClass)
+      const section = header.closest('.ms-section') as HTMLElement
+      section.classList.toggle(collapsedClass)
+      header.classList.toggle(collapsedClass)
+    })
   })
 }
 
-export function bindResourceReset(html: JQuery, actor: Actor.Implementation, configs: ResourceResetConfig[]): void {
+export function bindResourceReset(html: HTMLElement, actor: Actor.Implementation, configs: ResourceResetConfig[]): void {
   configs.forEach(({ selector, resourcePath, maxPath }) => {
-    html.find(selector).on('click', (event: JQuery.ClickEvent) => {
-      event.preventDefault()
-      const maxValue = foundry.utils.getProperty(actor, maxPath)
-      actor.update({ [resourcePath]: maxValue })
+    const buttons = html.querySelectorAll<HTMLElement>(selector)
+    buttons.forEach(button => {
+      button.addEventListener('click', (event: MouseEvent) => {
+        event.preventDefault()
+        const maxValue = foundry.utils.getProperty(actor, maxPath)
+        actor.update({ [resourcePath]: maxValue })
+      })
     })
   })
 }

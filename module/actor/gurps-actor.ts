@@ -250,19 +250,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const status = CONFIG.statusEffects.find(effect => effect.id === statusId)
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActorV2#toggleStatusEffect`)
 
-    // TODO See if isPostureEffect can be moved to status.
     if (this.isPostureEffect(status)) {
-      // If the status effect is a posture, remove all other postures first
-      let postureEffects = this.getAllActivePostureEffects().filter(e => e.statuses.find(s => s !== statusId))
-      for (const it of postureEffects) {
-        await super.toggleStatusEffect(it.statuses.first()!, options)
+      const postureEffects = this.getAllActivePostureEffects().filter(effect => !effect.statuses.has(statusId))
+      for (const postureEffect of postureEffects) {
+        await super.toggleStatusEffect(postureEffect.statuses.first()!, options)
       }
-
-      await this.deleteEmbeddedDocuments(
-        'ActiveEffect',
-        postureEffects.map(e => e.id!),
-        { parent: this }
-      )
     }
 
     return super.toggleStatusEffect(statusId, options)
@@ -319,7 +311,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   get currentMoveMode() {
-    return this.isNewActorType ? this.modelV2.currentMoveMode : this._getCurrentMoveMode
+    return this.isNewActorType ? this.modelV2.currentMoveMode : this._getCurrentMoveMode()
   }
 
   /**
@@ -1195,8 +1187,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * one toggles status effects. Consider unifying the behavior.
    */
   async replacePosture(postureId: string) {
-    const id = postureId === GURPS.StatusEffectStanding ? this.modelV2.conditions.posture : postureId
-    this.toggleStatusEffect(id)
+    if (postureId === GURPS.StatusEffectStanding) {
+      for (const statusId of Object.keys(GURPS.StatusEffect.getAllPostures())) {
+        const effect = this.effects.find(activeEffect => activeEffect.statuses.has(statusId))
+        if (effect) await effect.delete()
+      }
+    } else {
+      await this.toggleStatusEffect(postureId)
+    }
   }
 
   /* ---------------------------------------- */

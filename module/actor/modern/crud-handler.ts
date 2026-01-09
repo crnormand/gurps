@@ -48,7 +48,7 @@ export async function confirmAndDelete(
   fallbackLocaleKey: string
 ): Promise<boolean> {
   const confirmed = await foundry.applications.api.DialogV2.confirm({
-    title: game.i18n!.localize('GURPS.delete'),
+    window: { title: game.i18n!.localize('GURPS.delete') },
     content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
@@ -58,50 +58,59 @@ export async function confirmAndDelete(
 }
 
 export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
-  html: JQuery,
+  html: HTMLElement,
   actor: Actor.Implementation,
   sheet: TSheet,
   config: EntityConfigWithMethod
 ): void {
   const { entityName, path, EntityClass, editMethod, localeKey, displayProperty = 'name', createArgs } = config
 
-  html.find(`[data-action="add-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
-    const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
-    const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
-    await actor.internalUpdate({ [path]: list })
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityName}"]`)
+  addButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
+      const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
+      await actor.internalUpdate({ [path]: list })
 
-    const fullPath = buildEntityPath(path, key)
-    const duplicatedEntity = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, fullPath))
-    await editMethod.call(sheet, actor, fullPath, duplicatedEntity)
+      const fullPath = buildEntityPath(path, key)
+      const duplicatedEntity = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, fullPath))
+      await editMethod.call(sheet, actor, fullPath, duplicatedEntity)
+    })
   })
 
-  html.find(`[data-action="edit-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const entityPath = target.dataset.key ?? ''
-    const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityName}"]`)
+  editButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget as HTMLElement
+      const entityPath = target.dataset.key ?? ''
+      const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
 
-    if (await openItemSheetIfFoundryItem(actor, entityData as EntityWithItemId)) return
+      if (await openItemSheetIfFoundryItem(actor, entityData as EntityWithItemId)) return
 
-    await editMethod.call(sheet, actor, entityPath, entityData)
+      await editMethod.call(sheet, actor, entityPath, entityData)
+    })
   })
 
-  html.find(`[data-action="delete-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const entityKey = target.dataset.key ?? ''
-    const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
-    const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
-    await confirmAndDelete(actor, entityKey, displayValue, localeKey)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityName}"]`)
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget as HTMLElement
+      const entityKey = target.dataset.key ?? ''
+      const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
+      const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
+      await confirmAndDelete(actor, entityKey, displayValue, localeKey)
+    })
   })
 }
 
 export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
-  html: JQuery,
+  html: HTMLElement,
   actor: Actor.Implementation,
   sheet: TSheet,
   editMethod: TSheet['editModifier'],
@@ -111,35 +120,44 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
   const path = isReaction ? 'system.reactions' : 'system.conditionalmods'
   const localeKey = isReaction ? 'GURPS.reaction' : 'GURPS.conditionalModifier'
 
-  html.find(`[data-action="add-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    const { Reaction, Modifier } = await import('../actor-components.js')
-    const ModifierClass = isReaction ? Reaction : Modifier
-    const newModifier = new ModifierClass('0', game.i18n!.localize(localeKey))
-    const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
-    const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
-    await actor.internalUpdate({ [path]: list })
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityName}"]`)
+  addButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      const { Reaction, Modifier } = await import('../actor-components.js')
+      const ModifierClass = isReaction ? Reaction : Modifier
+      const newModifier = new ModifierClass('0', game.i18n!.localize(localeKey))
+      const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
+      await actor.internalUpdate({ [path]: list })
 
-    const fullPath = buildEntityPath(path, key)
-    const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
-    await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
+      const fullPath = buildEntityPath(path, key)
+      const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
+      await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
+    })
   })
 
-  html.find(`[data-action="edit-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const modifierPath = target.dataset.key ?? ''
-    const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
-    await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityName}"]`)
+  editButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget as HTMLElement
+      const modifierPath = target.dataset.key ?? ''
+      const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
+      await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
+    })
   })
 
-  html.find(`[data-action="delete-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const modifierKey = target.dataset.key ?? ''
-    const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
-    await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityName}"]`)
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget as HTMLElement
+      const modifierKey = target.dataset.key ?? ''
+      const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
+      await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
+    })
   })
 }

@@ -1,8 +1,9 @@
 @use '../mixins' as *;
 
-.ms-use-button {
+.modern-sheet .ms-use-button {
   display: inline-flex;
   align-items: center;
+  vertical-align: middle;
   height: 16px;
   width: fit-content;
   gap: var(--ms-space-1);
@@ -14,6 +15,8 @@
   border-radius: var(--ms-radius-sm);
   cursor: pointer;
   font-size: var(--ms-font-xs);
+  line-height: 1;
+  position: static;
 
   &:hover {
     background: var(--ms-bg-hover);

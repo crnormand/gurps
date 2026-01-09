@@ -27,7 +27,7 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
-import { GurpsActorModernSheet } from './actor/modern/index.js'
+import { GurpsActorModernSheet } from './actor/modern/sheet.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
