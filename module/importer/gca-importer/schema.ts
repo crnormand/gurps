@@ -1227,6 +1227,7 @@ const gcaCharacterSchema = () => {
     basicdamages: new fields.ArrayField(
       new fields.SchemaField({
         st: new fields.NumberField({ required: true, nullable: false }),
+        // NOTE: These values seem to always be numbers but are treated as strings by the GCA schema.
         thbase: new fields.StringField({ required: true, nullable: false }),
         thadd: new fields.StringField({ required: true, nullable: false }),
         swbase: new fields.StringField({ required: true, nullable: false }),

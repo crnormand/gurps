@@ -61,6 +61,7 @@ class GcaImporter {
     this.#importHitLocations()
     this.#importItems()
     this.#importPointTotals()
+    this.#importMiscValues()
 
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
@@ -253,9 +254,19 @@ Portrait will not be imported.`
       }
     }
 
-    // FIXME: GCA does not store these, so they will need to be calculated dynamically from Striking ST
-    this.output.thrust = '1d-1'
-    this.output.swing = '1d+1'
+    const st = this.output.attributes?.ST?.import ?? 0
+
+    let basicDamageEntry = this.input.basicdamages.find(e => e.st === st)
+    if (!basicDamageEntry) {
+      console.error(`GURPS | Failed to import basic damages: No entry corresponding to ST value "${st}"`)
+      basicDamageEntry = { st: 0, thbase: '1', thadd: '-6', swbase: '1', swadd: '-6' }
+    }
+
+    const thrust = `${basicDamageEntry.thbase}d${basicDamageEntry.thadd === '0' ? '' : basicDamageEntry.thadd}`
+    const swing = `${basicDamageEntry.swbase}d${basicDamageEntry.swadd === '0' ? '' : basicDamageEntry.swadd}`
+
+    this.output.thrust = thrust
+    this.output.swing = swing
   }
 
   #importProfile() {
@@ -346,6 +357,19 @@ Portrait will not be imported.`
       total: 0,
       unspent: 0,
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #importMiscValues() {
+    this.output.moveV2 = [
+      {
+        mode: 'GURPS.moveModeGround',
+        basic: this.output.basicmove?.value ?? 5,
+        enhanced: 0,
+        default: true,
+      },
+    ]
   }
 
   /* ---------------------------------------- */
