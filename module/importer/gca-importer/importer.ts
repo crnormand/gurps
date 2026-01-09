@@ -19,6 +19,16 @@ import { ImportSettings } from '../index.js'
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
 
+/**
+ * NOTE: Some parts of this importer are not fully implemented and cannot be without pretty significantly
+ * complicating the importer. These should be implemented later, as specified per item below:
+ * - Some Ads/Disads have names which change depending on the level of the Ad/Disad. GGA currently has
+ *   no data model field to support this functionality, but it should be added at some point.
+ * - Some attacks use unconvential damage strings. For example "slam+2" for shields, or the prefix "~"
+ *   to indicate a leveled attack (e.g. Fireball). The damage dice parsing system does not currently
+ *   support this functionality, but should be expanded to do so at some point.
+ */
+
 class GcaImporter {
   actor?: Actor.OfType<'characterV2'>
   input: GCACharacter
@@ -254,6 +264,7 @@ Portrait will not be imported.`
       }
     }
 
+    // Import Basic Thrust and Basic Swing damage
     const st = this.output.attributes?.ST?.import ?? 0
 
     let basicDamageEntry = this.input.basicdamages.find(e => e.st === st)
@@ -267,7 +278,47 @@ Portrait will not be imported.`
 
     this.output.thrust = thrust
     this.output.swing = swing
+
+    // Import speeds for move modes(based on attributes in GGA)
+    this.output.moveV2 = [
+      {
+        mode: 'GURPS.moveModeGround',
+        default: true,
+        ...this.#importMoveType('Ground Move'),
+      },
+      {
+        mode: 'GURPS.moveModeAir',
+        default: false,
+        ...this.#importMoveType('Air Move'),
+      },
+      {
+        mode: 'GURPS.moveModeWater',
+        default: false,
+        ...this.#importMoveType('Water Move'),
+      },
+      {
+        mode: 'GURPS.moveModeSpace',
+        default: false,
+        ...this.#importMoveType('Space Move'),
+      },
+    ]
   }
+
+  /* ---------------------------------------- */
+
+  #importMoveType(moveType: string) {
+    const basicMove = this.input.traits.attributes.find(attr => attr.name.toLowerCase() === moveType.toLowerCase())
+    // NOTE: This may need localization.
+    const enhancedMove = this.input.traits.attributes.find(
+      attr => attr.name.toLowerCase() === `Enhanced ${moveType}`.toLowerCase()
+    )
+    return {
+      basic: basicMove?.score ?? 0,
+      enhanced: enhancedMove?.score ?? 0,
+    }
+  }
+
+  /* ---------------------------------------- */
 
   #importProfile() {
     const { vitals } = this.input
@@ -361,16 +412,7 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
-  #importMiscValues() {
-    this.output.moveV2 = [
-      {
-        mode: 'GURPS.moveModeGround',
-        basic: this.output.basicmove?.value ?? 5,
-        enhanced: 0,
-        default: true,
-      },
-    ]
-  }
+  #importMiscValues() {}
 
   /* ---------------------------------------- */
 
