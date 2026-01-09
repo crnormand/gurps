@@ -2,6 +2,10 @@
 
 ## Release 0.18.11
 
+### Features
+
+- Modern UI Actor sheet (thanks, @daynin!)
+
 ### Bugfixes
 
 - Missing lang tags \#2450
