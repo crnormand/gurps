@@ -663,6 +663,7 @@ Portrait will not be imported.`
       name: item.name ?? '',
       notes: item.ref?.notes ?? '',
       pageref: item.ref?.page ?? '',
+      vtt_notes: item.ref?.vttnotes ?? '',
       importFrom: 'GCA',
     }
     return component

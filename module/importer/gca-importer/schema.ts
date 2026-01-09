@@ -400,6 +400,7 @@ const gcaModifierSchema = () => {
     tier: new fields.StringField({ required: true, nullable: true }),
     upto: new fields.StringField({ required: true, nullable: true }),
     levelnames: new fields.StringField({ required: true, nullable: true }),
+    description: new fields.StringField({ required: true, nullable: true }),
 
     extended: new fields.ArrayField(new fields.EmbeddedDataField(GCAUnknownTag), { required: true, nullable: true }),
 
@@ -450,6 +451,9 @@ const gcaAttackModeSchema = () => {
     skillused: new fields.StringField({ required: true, nullable: true }),
     stcap: new fields.StringField({ required: true, nullable: true }),
 
+    scopeacc: new fields.StringField({ required: true, nullable: true }),
+    malf: new fields.StringField({ required: true, nullable: true }),
+
     damagebasedon: new fields.StringField({ required: true, nullable: true }),
     minstbasedon: new fields.StringField({ required: true, nullable: true }),
     reachbasedon: new fields.StringField({ required: true, nullable: true }),
@@ -465,7 +469,9 @@ const gcaAttackModeSchema = () => {
     charminst: new fields.StringField({ required: true, nullable: true }),
     charparry: new fields.StringField({ required: true, nullable: true }),
     charparryscore: new fields.StringField({ required: true, nullable: true }),
+
     charblockscore: new fields.StringField({ required: true, nullable: true }),
+
     charradius: new fields.StringField({ required: true, nullable: true }),
     charrangehalfdam: new fields.StringField({ required: true, nullable: true }),
     charrangemax: new fields.StringField({ required: true, nullable: true }),
@@ -476,7 +482,27 @@ const gcaAttackModeSchema = () => {
     charskillscore: new fields.NumberField({ required: true, nullable: true }),
     charskillused: new fields.StringField({ required: true, nullable: true }),
 
+    charskillusedkey: new fields.StringField({ required: true, nullable: true }),
+
+    charscopeacc: new fields.StringField({ required: true, nullable: true }),
+    charmalf: new fields.StringField({ required: true, nullable: true }),
+
+    uses: new fields.StringField({ required: true, nullable: true }),
+    uses_sections: new fields.StringField({ required: true, nullable: true }),
+    uses_used: new fields.StringField({ required: true, nullable: true }),
+    uses_settings: new fields.StringField({ required: true, nullable: true }),
+
     itemnotes: new fields.StringField({ required: true, nullable: true }),
+
+    vttmodenotes: new fields.StringField({ required: true, nullable: true }),
+
+    rollto: new fields.StringField({ required: true, nullable: true }),
+    rolltophrase: new fields.StringField({ required: true, nullable: true }),
+
+    minimode_damage: new fields.StringField({ required: true, nullable: true }),
+    minimode_damtype: new fields.StringField({ required: true, nullable: true }),
+    minimode_armordivisor: new fields.StringField({ required: true, nullable: true }),
+    minimode_radius: new fields.StringField({ required: true, nullable: true }),
   }
 }
 type GCAAttackModeSchema = ReturnType<typeof gcaAttackModeSchema>
@@ -588,7 +614,10 @@ const gcaTraitSchema = () => {
     parrylevel: new fields.NumberField({ required: true, nullable: true }),
     blocklevel: new fields.NumberField({ required: true, nullable: true }),
     hide: new fields.StringField({ required: true, nullable: true }),
-    locked: new fields.StringField({ required: true, nullable: true }),
+    lock: new fields.StringField({ required: true, nullable: true }),
+
+    displaynameformula: new fields.StringField({ required: true, nullable: true }),
+    vars: new fields.StringField({ required: true, nullable: true }),
 
     calcs: new fields.SchemaField(
       {
@@ -1161,6 +1190,10 @@ const gcaCharacterSchema = () => {
         nodefaultleveldiscount: new fields.NumberField({ required: true, nullable: true }),
 
         allowusertraitordering: new fields.NumberField({ required: true, nullable: true }),
+
+        flagoverspentskills: new fields.NumberField({ required: true, nullable: true }),
+
+        applydbtoactivedefenses: new fields.NumberField({ required: true, nullable: true }),
 
         traitgrouping: new fields.ArrayField(new fields.EmbeddedDataField(GCAGroupingOptions), {
           required: true,
