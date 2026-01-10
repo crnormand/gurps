@@ -1,4 +1,4 @@
-// @ts-ignore - extension-less import to match repo convention under ts-jest ESM
+// @ts-expect-error - extension-less import for ts-jest ESM
 import { convertRangeTextToArray } from '../../../module/utilities/text-utilties'
 
 describe('convertRangeTextToArray', () => {

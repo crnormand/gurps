@@ -4,12 +4,10 @@ import { DamageTable } from '../../module/damage/damage-tables.js'
 beforeAll(() => {
   globalThis.GURPS = {} as any
 
-  /** @type {Game} */
-  // @ts-ignore
+  // @ts-expect-error - mock for testing
   globalThis.game = {
     i18n: {
-      // @ts-ignore
-      localize: str => str,
+      localize: (str: string) => str,
     },
   }
 })

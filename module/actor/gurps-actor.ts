@@ -158,10 +158,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (sheet) {
       await sheet.close()
 
-      // @ts-expect-error: ignore
+      // @ts-expect-error - Foundry VTT internal API not fully typed
       delete this.apps[sheet.appId]
 
-      // @ts-expect-error: ignore
+      // @ts-expect-error - Foundry VTT internal API not fully typed
       await this.setFlag('core', 'sheetClass', newSheet)
 
       this.ignoreRender = false
@@ -784,7 +784,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         if (Object.hasOwn(optionalArgs, 'itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
-          // @ts-expect-error: itemPath may not exist
+          // @ts-expect-error - itemPath is checked via hasOwn but not in type definition
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
 
@@ -905,11 +905,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result = {
             name: item.name,
             uuid: item.uuid,
-            // @ts-expect-error: itemid missing in types
+            // @ts-expect-error - actor component property not in Item type
             itemId: item.itemid,
-            // @ts-expect-error: fromItem missing in types
+            // @ts-expect-error - actor component property not in Item type
             fromItem: item.fromItem,
-            // @ts-expect-error: pageref missing in types
+            // @ts-expect-error - actor component property not in Item type
             pageRef: item.pageref,
           }
         } else {
@@ -1301,7 +1301,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   async accumulateDamageRoll(action: Record<string, any>): Promise<void> {
-    // @ts-expect-error
     if (this.isNewActorType) return this.modelV2.accumulateDamageRoll(action)
 
     // Legacy V1 handling.
@@ -1450,7 +1449,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       recurselist(
         list1,
-        // @ts-ignore
+        // @ts-expect-error - callback signature differs from recurselist type
         (e, k, d) => {
           const l = patterns.length - 1
           const p = patterns[Math.min(d, l)]
@@ -1466,7 +1465,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       )
       recurselist(
         list2,
-        // @ts-ignore
+        // @ts-expect-error - callback signature differs from recurselist type
         (e, k, d) => {
           const l = patterns.length - 1
           const p = patterns[Math.min(d, l)]
@@ -1624,9 +1623,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
               if (attack.addToQuickRoll) {
                 let comp = this.findByOriginalName(attack.originalName || attack.name)
 
-                // @ts-expect-error: Possible null return
+                // @ts-expect-error - findEquipmentByName may return empty array
                 if (!comp) comp = this.findEquipmentByName(attack.name)[0] ?? null
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
                 let oftName = attack.name
@@ -1673,9 +1672,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
               if (parseInt(defense[key] || 0) > 0 && defense.addToQuickRoll) {
                 let comp = this.findByOriginalName(defense.originalName || defense.name)
 
-                // @ts-expect-error: Possible null return
+                // @ts-expect-error - findEquipmentByName may return empty array
                 if (!comp) comp = this.findEquipmentByName(defense.name)[0]
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
                 let otf = `${key.slice(0, 1)}:"${defense.name}"`
@@ -1707,7 +1706,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
             recurselist((this.modelV1 as Record<string, any>)[traitType], (trait, _k, _d) => {
               if (trait.addToQuickRoll) {
                 const comp = this.findByOriginalName(trait.originalName || trait.name)
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${traitType.slice(0, -1)}`)
 
@@ -1903,7 +1902,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const update = { [eqtkey + '.count']: count }
 
       if (ImportSettings.ignoreQuantityOnImport)
-        // @ts-expect-error
+        // @ts-expect-error - dynamic property assignment to update object
         update[eqtkey + '.ignoreImportQty'] = true
 
       await this.update(update)
@@ -2018,7 +2017,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         await this.internalUpdate(commit)
 
         if (canvas!.tokens!.controlled.length > 0) {
-          // @ts-expect-error
+          // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
           await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
         }
       }
@@ -2079,7 +2078,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         if (existing) {
           // If found, increment the count of the existing item.
-          // @ts-expect-error
+          // @ts-expect-error - equipmentV2 system type not fully typed
           await this.updateEqtCountV2(existing[0].id!, existing[0].system.eqt.count + count)
         } else {
           // If not found, create a new item with the specified count.
@@ -2092,7 +2091,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       } else {
         // Legacy actor type
         // Search the target actor (this) for an item with the same name.
-        // @ts-expect-error
+        // @ts-expect-error - itemid property from actor component
         const item = srcActor.items.get(eqt.itemid)
 
         const destKey = this._findEqtkeyForId('name', eqt.name)
@@ -2104,7 +2103,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           await this.updateEqtCount(destKey, +destEqt.count + count)
         } else {
           // Otherwise, create a new item.
-          // @ts-expect-error
+          // @ts-expect-error - equipment system eqt property not fully typed
           item.system.eqt.count = count
           await this.addNewItemData(item as Record<string, any>)
         }
@@ -2370,7 +2369,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     } as Item.UpdateData
 
     if (item.type === 'equipmentV2') {
-      // @ts-expect-error: wrong type for _id provided by fvtt-types
+      // @ts-expect-error - equipmentV2 system type not fully typed
       update.system!.eqt = { carried: targetCollection === 'system.equipmentV2.carried' }
     }
 
@@ -2488,7 +2487,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           action: 'ok',
           label: game.i18n!.localize('GURPS.ok'),
           icon: 'fa-solid fa-check',
-          // @ts-expect-error
+          // @ts-expect-error - DialogV2 callback button.form.elements not fully typed
           callback: (_, button, __) => parseInt(button.form!.elements.qty.valueAsNumber),
         },
       ],
@@ -2586,7 +2585,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       if (typeof itemData.toObject === 'function') {
         d = itemData.toObject()
-        // @ts-expect-error
+        // @ts-expect-error - equipment system eqt property not fully typed
         d.system.eqt.count = itemData.system.eqt.count // For some reason the count isn't deepcopied correctly.
       }
 
@@ -2597,7 +2596,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const localItem = localItems[0]
 
       await this.updateEmbeddedDocuments('Item', [
-        // @ts-expect-error
+        // @ts-expect-error - equipment system eqt property not fully typed
         { _id: localItem.id, 'system.eqt.uuid': generateUniqueId(), 'system.eqt.save': true },
       ])
 
@@ -2762,7 +2761,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let atLeastOne = false
 
       for (const i of orig) {
-        // @ts-expect-error: equipment item type not registering correctly
+        // @ts-expect-error - equipment system eqt property not fully typed
         if (!i.system.eqt!.parentuuid || good.find(e => e.system.eqt!.uuid == i.system.eqt!.parentuuid)) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
@@ -2806,7 +2805,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     if (canvas!.tokens!.controlled.length > 0) {
-      // @ts-expect-error
+      // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
       await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
   }
@@ -3025,11 +3024,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       eqt.itemid = itemData._id
       eqt.globalid = _data.uuid
 
-      // @ts-expect-error
       eqt.equipped = _data.equipped ?? true
       eqt.img = itemData.img
 
-      // @ts-expect-error
       eqt.carried = _data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
@@ -3090,7 +3087,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (found) {
       // Use existing actor component uuid
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access on modelV1
       const existingActorComponent = (this.modelV1[key] as Record<string, any>).find(e => e.fromItem === parentItem._id)
 
       childItemData.uuid = existingActorComponent?.uuid || ''
@@ -3211,7 +3208,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @param item
    */
   async updateItem(item: Item): Promise<void> {
-    // @ts-ignore
+    // @ts-expect-error - editingActor is a runtime property
     delete item.editingActor
     this.ignoreRender = true
     if (item.id) await this._removeItemAdditions(item.id)
@@ -3485,14 +3482,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       return
     }
 
-    // @ts-expect-error Ensure globalid is set.
+    // @ts-expect-error - globalid property not in base Item type
     if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
 
     // Process Actor Component, Parent (dropped) Item and Child Items.
 
     // 1. This global item was already dropped?
-    // @ts-expect-error: old item type not registering correctly
+    // @ts-expect-error - globalid property not in base Item type
     const found = this.items.find(it => it.system.globalid === data.system.globalid)
 
     if (found) {
@@ -3507,10 +3504,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // 2. Check if Actor Component exists
     const actorCompKey =
-      // @ts-expect-error
+      // @ts-expect-error - custom item type properties not in base type
       data.type === 'equipment'
         ? this._findEqtkeyForId('globalid', data.system.globalid)
-        : // @ts-expect-error
+        : // @ts-expect-error - custom item type properties not in base type
           this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
     const actorComp = foundry.utils.getProperty(this, actorCompKey!) as Named | undefined
 
@@ -3521,7 +3518,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let actorComp
       let targetKey
 
-      // @ts-expect-error
+      // @ts-expect-error - custom item type not in base Item type
       switch (data.type) {
         case 'equipment':
           actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
@@ -3541,24 +3538,24 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           break
       }
 
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access on actor component
       actorComp.itemInfo.img = data.img
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access via itemSysKey
       actorComp.otf = data.system[data.itemSysKey].otf
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access via itemSysKey
       actorComp.checkotf = data.system[data.itemSysKey].checkotf
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access via itemSysKey
       actorComp.duringotf = data.system[data.itemSysKey].duringotf
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access via itemSysKey
       actorComp.passotf = data.system[data.itemSysKey].passotf
-      // @ts-expect-error
+      // @ts-expect-error - dynamic property access via itemSysKey
       actorComp.failotf = data.system[data.itemSysKey].failotf
 
       // 4. Create Parent Item
       const importer = new ActorImporter(this)
 
       actorComp = await importer._processItemFrom(actorComp, '')
-      // @ts-expect-error
+      // @ts-expect-error - itemid property added by importer
       const parentItem = this.items.get(actorComp.itemid)
       const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
 
@@ -3571,7 +3568,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       await this.updateEmbeddedDocuments('Item', [
         {
           _id: parentItem!.id,
-          // @ts-expect-error: old item type not registering correctly
+          // @ts-expect-error - globalid property not in base Item type
           'system.globalid': dragData.uuid,
           'system.melee': data.system.melee,
           'system.ranged': data.system.ranged,
@@ -3591,19 +3588,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       await this.internalUpdate({ [targetKey!]: systemObject })
 
-      // @ts-expect-error
+      // @ts-expect-error - custom item type not in base Item type
       if (data.type === 'equipment') await Equipment.calc(actorComp)
 
       // 6. Process Child Items for created Item
       const actorCompKey =
-        // @ts-expect-error
+        // @ts-expect-error - custom item type properties not in base type
         data.type === 'equipment'
-          ? // @ts-expect-error
+          ? // @ts-expect-error - equipment system eqt property not fully typed
             this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
-          : // @ts-expect-error
+          : // @ts-expect-error - dynamic property access via itemSysKey
             this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
 
-      // @ts-expect-error
+      // @ts-expect-error - parentItem type mismatch with method signature
       await this._addItemAdditions(parentItem, actorCompKey)
     }
 
@@ -3865,9 +3862,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           if (action.action) {
             this.ignoreRender = true
             action.action.calcOnly = true
-            // @ts-ignore
             GURPS.performAction(action.action, this).then(ret => {
-              // @ts-ignore
+              // @ts-expect-error - ret.target property from performAction result
               e.level = ret.target
 
               if (isMelee) {
@@ -3875,7 +3871,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
                   const p = '' + e.parry
                   let m = p.match(/([+-]\d+)(.*)/)
 
-                  // @ts-ignore
+                  // @ts-expect-error - assigning array literal to match result type
                   if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -3890,7 +3886,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
                   const b = '' + e.block
                   let m = b.match(/([+-]\d+)(.*)/)
 
-                  // @ts-ignore
+                  // @ts-expect-error - assigning array literal to match result type
                   if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -4247,7 +4243,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const item = this.items.get(eqt.itemid)!
 
       await this.updateEmbeddedDocuments('Item', [
-        // @ts-expect-error
+        // @ts-expect-error - equipment system properties not fully typed
         { _id: item.id, 'system.equipped': equipped, 'system.carried': carried },
       ])
 
@@ -4256,7 +4252,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     for (const k in eqt.contains) {
-      // @ts-expect-error
+      // @ts-expect-error - contains entries typed as Equipment
       await this._updateEqtStatus(eqt.contains[k], eqtkey + '.contains.' + k, carried, equipped)
     }
 
@@ -4340,10 +4336,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   private async _removeItemEffect(itemId: string) {
     const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
-    // @ts-expect-error
+    // @ts-expect-error - userMods array type not inferred from getProperty
     const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
 
-    // @ts-expect-error
+    // @ts-expect-error - usermods property type not fully typed
     await this.update({ 'system.conditions.usermods': mods })
   }
 
@@ -4369,7 +4365,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (!(await this._sanityCheckItemSettings(actorComp))) return
 
-    // @ts-expect-error
+    // @ts-expect-error - editingActor is a runtime property
     if (item.editingActor) delete item.editingActor
 
     await this._removeItemAdditions(item.id!)
@@ -4380,14 +4376,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (
       item.isOfType('equipment') &&
       ImportSettings.ignoreQuantityOnImport &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       !!item.system.eqt.originalCount &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       !isNaN(item.system.eqt.originalCount) &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       item.system.eqt.originalCount !== item.modelV1.eqt.count
     ) {
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       item.system.eqt.ignoreImportQty = true
     }
 
@@ -4400,7 +4396,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     await this.internalUpdate({
       [sysKey]: {
-        // @ts-expect-error: equipment system type not registering correctly
+        // @ts-expect-error - dynamic property access via itemSysKey
         ...item.system[item.itemSysKey],
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
@@ -4445,10 +4441,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns
    */
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
-    // @ts-expect-error: equipment system type not registering correctly
+    // @ts-expect-error - custom item system property not in base type
     let item = this.items.find(i => i.system.originalName === name)
 
-    // @ts-expect-error: equipment system type not registering correctly
+    // @ts-expect-error - custom item system property not in base type
     if (!item) item = this.items.find(i => i.system.name === name)
     if (item) return item
 
@@ -4998,7 +4994,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         const value = data[key as keyof typeof data]
 
         if (field === 'current' && !!value) {
-          // @ts-expect-error
+          // @ts-expect-error - dynamic property assignment to update data
           data[`system.additionalresources.currentEncumbrance`] = index
         }
 

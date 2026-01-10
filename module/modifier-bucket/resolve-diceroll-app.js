@@ -62,7 +62,7 @@ export default class ResolveDiceRoll extends Application {
     super.activateListeners(html)
 
     // accept only digits and commas
-    // @ts-ignore
+    // @ts-expect-error - inputFilter is a jQuery plugin method not in standard types
     html.find('input').inputFilter(value => commaSeparatedNumbers.test(value))
 
     html.find('input').on('change', () => {
@@ -136,7 +136,7 @@ export default class ResolveDiceRoll extends Application {
       // diceTerm.term._loaded = result
     }
 
-    // @ts-ignore
+    // @ts-expect-error - applyCallback accepts a boolean parameter at runtime
     this.applyCallback(true)
   }
 

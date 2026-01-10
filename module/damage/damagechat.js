@@ -430,7 +430,7 @@ export default class DamageChat {
       numtimes: draggableData.length > 1 ? ' x' + draggableData.length : '',
     })
 
-    // @ts-ignore
+    // @ts-expect-error - getSpeaker accepts actor which may be User in our implementation
     const speaker = ChatMessage.getSpeaker({ actor: actor })
     /** @type {Record<string,any>} */
     let messageData = {
@@ -482,7 +482,7 @@ export default class DamageChat {
 
       if (dice.length > 0) {
         // The user made a "multi-damage" roll... let them see the dice!
-        // @ts-ignore
+        // @ts-expect-error - dice3d is added by Dice So Nice module and not in core types
         game.dice3d.show({ throws: throws })
       }
     } else {

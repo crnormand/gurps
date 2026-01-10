@@ -1,5 +1,3 @@
-// @ts-nocheck: TODO: Fix typescript errors later
-
 export default class GurpsActiveEffect extends ActiveEffect {
   /**
    * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
@@ -34,7 +32,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
   ): Promise<boolean | void> {
     const effectIdTag = `@eft:${this._id}`
 
-    changed.changes?.map(effect => {
+    // @ts-expect-error - UpdateData.changes type doesn't include map method
+    changed.changes?.map((effect: any) => {
       if (this.allUserModKeys.includes(effect.key) && !effect.value.includes(effectIdTag)) {
         // If exists a bad reference on the line, like `@bad-dog123`, let's remove it first
         const badRefRegex = /@\S+/g
@@ -53,6 +52,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     const buttonAddedClass = `fa-check-circle`
 
     for (const status of this._source.statuses) {
+      // @ts-expect-error - parent exists at runtime for embedded documents
       const selector = `span.${status}[data-actor="${this.parent._id}"]`
       const spans = $(selector)
 
@@ -68,6 +68,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   override _onCreate(data: ActiveEffect.CreateData, options: ActiveEffect.Database.OnCreateOperation, userId: string) {
     super._onCreate(data, options, userId)
 
+    // @ts-expect-error - game.users exists at runtime in Foundry context
     if (game?.users?.get(userId).isSelf) {
       if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
     }
@@ -76,12 +77,15 @@ export default class GurpsActiveEffect extends ActiveEffect {
     const buttonAddClass = `fa-plus-circle`
     const buttonAddedClass = `fa-check-circle`
 
+    // @ts-expect-error - statuses is iterable at runtime, parent exists for embedded docs
     for (const status of data.statuses) {
+      // @ts-expect-error - parent exists at runtime for embedded documents
       const selector = `span.${status}[data-actor="${this.parent._id}"]`
       const spans = $(selector)
 
       for (const span of spans) {
         $(span).removeClass(`${buttonAddClass} black`).addClass(`${buttonAddedClass} green`)
+        // @ts-expect-error - game.i18n exists at runtime
         $(span).attr('title', game.i18n.localize(`GURPS.remove${status}Effect`))
       }
     }
@@ -96,6 +100,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
     if (otf) {
       // TODO Monitor this -- ActiveEffect.flags.core.status is deprecated
+      // @ts-expect-error - statusId is a valid core flag for ActiveEffect
       this.setFlag('core', 'statusId', `${this.name}-endCondition`)
     }
   }
@@ -110,11 +115,12 @@ export default class GurpsActiveEffect extends ActiveEffect {
     return data ?? []
   }
 
-  static getName(effect: ActiveEffect.Implementation): string {
+  static getName(effect: ActiveEffect.Implementation): string | undefined {
     return effect.getFlag('gurps', 'name')
   }
 
   static async clearEffectsOnSelectedToken() {
+    // @ts-expect-error - GURPS.LastActor is checked for null at runtime
     const effect = GURPS.LastActor.effects.contents
 
     for (let i = 0; i < effect.length; i++) {
@@ -125,6 +131,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       console.debug(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
 
       if (status === false) {
+        // @ts-expect-error - GURPS.LastActor is checked for null at runtime
         await GURPS.LastActor.deleteEmbeddedDocuments('ActiveEffect', [effect_id])
       }
     }
@@ -143,14 +150,18 @@ export default class GurpsActiveEffect extends ActiveEffect {
       const val = value.args[key]
 
       if (foundry.utils.getType(val) === 'string' && val.startsWith('@')) {
+        // @ts-expect-error - dynamic property access on actor
         value.args[key] = actor[val.slice(1)]
       } else if (foundry.utils.getType(val) === 'string' && val.startsWith('!')) {
+        // @ts-expect-error - game.i18n exists at runtime
         value.args[key] = game.i18n.localize(val.slice(1))
       }
 
+      // @ts-expect-error - game.i18n exists at runtime
       if (key === 'pdfref') value.args.pdfref = game.i18n.localize(val)
     }
 
+    // @ts-expect-error - game.i18n exists at runtime
     const msg = value.args ? game.i18n.format(value.msg, value.args) : game.i18n.localize(value.msg)
 
     foundry.applications.handlebars

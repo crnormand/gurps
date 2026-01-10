@@ -3,7 +3,7 @@
  */
 export function readyTimesUpSetup() {
   Hooks.on('createActiveEffect', effect => {
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
 
     if (effect.transfer && !(getEffectActor(effect) instanceof Actor)) return
@@ -55,7 +55,7 @@ export function readyTimesUpSetup() {
   })
 
   Hooks.on('updateActiveEffect', async (effect, update) => {
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (!effect.transfer && effect.parent instanceof Item) return
     if (!hasDurationSeconds(effect) || (update.disabled ?? effect.disabled)) GMEffectQueue('deleteEffect', effect)
@@ -66,7 +66,7 @@ export function readyTimesUpSetup() {
 
   Hooks.on('deleteActiveEffect', effect => {
     // if (!timesUpEnabled) return;
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (debugEnabled > 1) debug('active effect deleted', effect.uuid, effect.updateDuration(), isTransferEffect(effect))
     GMEffectQueue('deleteEffect', effect)
@@ -74,12 +74,12 @@ export function readyTimesUpSetup() {
 
   Hooks.on('updateWorldTime', async (worldTime, dt) => {
     if (!timesUpEnabled) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     warn('world time update', worldTime, dt)
 
     for (let entry of effectQueue.effects) {
-      //@ts-expect-error
+      // @ts-expect-error - Foundry VTT API not fully typed
       const effect = fromUuidSync(entry)
 
       if (effect && isEffectExpired(effect, { secondsOnly: true })) {
@@ -92,9 +92,9 @@ export function readyTimesUpSetup() {
   })
 
   Hooks.on('preUpdateCombat', async (combat, update, options) => {
-    //@ts-expect-error
+    // @ts-expect-error - Times Up module integration
     foundry.utils.setProperty(options, 'times-up.combat.round', combat.round)
-    //@ts-expect-error
+    // @ts-expect-error - Times Up module integration
     foundry.utils.setProperty(options, 'times-up.combat.turn', combat.turn)
 
     return true
@@ -103,12 +103,12 @@ export function readyTimesUpSetup() {
   Hooks.on('updateCombat', async (combat, update, options, user) => {
     // Think about multiple gms and viewing different combats.
     if (!timesUpEnabled) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (debugEnabled > 1) debug('update combat', combat, update, options, user)
     let combatantIndex = 0
     const totalTurns = combat.combatants?.contents.length ?? 0
-    //@ts-expect-error
+    // @ts-expect-error - Times Up module integration
     const lastCombatTurn =
       (foundry.utils.getProperty(options, 'times-up.combat.round') ?? combat.round) * totalTurns +
       (foundry.utils.getProperty(options, 'times-up.combat.turn') ?? combat.turn)
@@ -129,7 +129,7 @@ export function readyTimesUpSetup() {
         }
 
         const checkTurn = (update.round ?? combat.round) * totalTurns + (update.turn ?? combat.turn)
-        //@ts-expect-error
+        // @ts-expect-error - Times Up module integration
         let lastCheckedTurn =
           (foundry.utils.getProperty(options, 'times-up.combat.round') ?? combat.round) * totalTurns +
           (foundry.utils.getProperty(options, 'times-up.combat.turn') ?? combat.turn)
@@ -138,7 +138,7 @@ export function readyTimesUpSetup() {
         let combatantNextTurn = (update.round ?? combat.round) * totalTurns + combatantIndex
 
         if (combatantNextTurn < checkTurn) combatantNextTurn += totalTurns
-        //@ts-expect-error
+        // @ts-expect-error - Times Up module integration
         let combatantLastTurn =
           (foundry.utils.getProperty(options, 'times-up.combat.round') ?? combat.round) * totalTurns + combatantIndex
 
@@ -147,7 +147,7 @@ export function readyTimesUpSetup() {
           // Handle any turn start/end effects
           for (let effect of getApplicableEffects(actor, { includeEnchantments: true })) {
             let effectStart = (effect.duration.startRound ?? 0) * totalTurns + (effect.duration.startTurn ?? 0)
-            //@ts-expect-error
+            // @ts-expect-error - DAE module integration
             const specialDuration = foundry.utils.getProperty(effect, 'flags.dae.specialDuration')
 
             if (specialDuration?.length > 0) {
@@ -231,7 +231,7 @@ export function readyTimesUpSetup() {
             if (!testActor) continue
 
             for (let effect of getApplicableEffects(testActor, { includeEnchantments: true })) {
-              //@ts-expect-error
+              // @ts-expect-error - DAE module integration
               const specialDuration = foundry.utils.getProperty(effect, 'flags.dae.specialDuration')
 
               if (!(specialDuration?.length > 0)) continue
@@ -266,7 +266,7 @@ export function readyTimesUpSetup() {
 
   Hooks.on('combatStart', async combat => {
     if (!timesUpEnabled) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
 
     for (let combatant of combat.combatants) {
@@ -276,21 +276,21 @@ export function readyTimesUpSetup() {
 
   Hooks.on('createCombatant', async combatant => {
     if (!timesUpEnabled) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (combatant.actor) setEffectsExpiryToRounds(combatant.actor, combatant.combat)
   })
 
   Hooks.on('deleteCombatant', async combatant => {
     if (!timesUpEnabled) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (combatant.actor) setEffectsExpiryToSeconds(combatant.actor)
   })
 
   Hooks.on('deleteCombat', async combat => {
     if (!timesUpEnabled) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
 
     for (let combatant of combat.combatants) {
@@ -303,7 +303,7 @@ export function readyTimesUpSetup() {
     if (!timesUpEnabled) return
 
     for (let effect of getApplicableEffects(actor, { includeEnchantments: true })) {
-      //@ts-expect-error
+      // @ts-expect-error - DAE module integration
       const specialDurations = foundry.utils.getProperty(effect, 'flags.dae.specialDuration')
 
       if (specialDurations?.includes('combatEnd')) {
@@ -317,7 +317,7 @@ export function readyTimesUpSetup() {
 
   Hooks.on('createItem', async item => {
     if (CONFIG.ActiveEffect.legacyTransferral) return
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (debugEnabled > 1) debug('create item', item.uuid, item.effects)
     item.effects.forEach(effect => {
@@ -329,7 +329,7 @@ export function readyTimesUpSetup() {
   })
 
   Hooks.on('updateItem', async item => {
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (CONFIG.ActiveEffect.legacyTransferral) return
 
@@ -359,7 +359,7 @@ export function readyTimesUpSetup() {
   })
 
   Hooks.on('deleteItem', async item => {
-    //@ts-expect-error
+    // @ts-expect-error - Foundry VTT API not fully typed
     if (!game.users.activeGM?.isSelf) return
     if (debugEnabled > 1) debug('delete item', item.uuid, item.effects)
     item.effects.forEach(effect => {

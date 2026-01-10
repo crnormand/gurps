@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error - extension-less import for ts-jest ESM
 import { Length } from '../../../../module/data/common/length'
 
 describe('Length', () => {

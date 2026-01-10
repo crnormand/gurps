@@ -696,7 +696,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -735,7 +735,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -773,7 +773,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -816,7 +816,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -958,7 +958,6 @@ Portrait will not be imported.`
       this.#importNote(child, id)
     })
 
-    // @ts-expect-error
     this.output.allNotes!.push(note)
   }
 

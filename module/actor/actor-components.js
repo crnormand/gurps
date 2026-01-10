@@ -1062,7 +1062,7 @@ export class Equipment extends Named {
 
     // NOTE: no longer necessary with DataModel validation
     const num = (/** @type {string | number} */ s) => {
-      // @ts-ignore
+      // @ts-expect-error - isNaN accepts string for type coercion
       return isNaN(s) ? 0 : Number(s)
     }
 
@@ -1082,7 +1082,7 @@ export class Equipment extends Named {
 
     if (eqt.contains) {
       for (let k in eqt.contains) {
-        // @ts-ignore
+        // @ts-expect-error - contains entries are Equipment objects
         let e = eqt.contains[k]
 
         await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
@@ -1093,7 +1093,7 @@ export class Equipment extends Named {
 
     if (eqt.collapsed) {
       for (let k in eqt.collapsed) {
-        // @ts-ignore
+        // @ts-expect-error - collapsed entries are Equipment objects
         let e = eqt.collapsed[k]
 
         await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)

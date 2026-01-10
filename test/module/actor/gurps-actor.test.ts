@@ -8,13 +8,13 @@ describe('GurpsActorV2', () => {
   beforeEach(() => {
     // Ensure minimal globals exist
     global.GURPS = global.GURPS || { module: {} }
-    // @ts-expect-error
+    // @ts-expect-error - mock for testing
     global.game = global.game || {}
 
     // Instantiate with minimal data that our test base Actor supports
     actor = new GurpsActorV2({ name: 'Test Actor', type: 'characterV2' })
     actor.system = new CharacterModel()
-    // @ts-expect-error
+    // @ts-expect-error - mock for testing
     actor.system._source = { allNotes: [], moveV2: [] }
   })
 

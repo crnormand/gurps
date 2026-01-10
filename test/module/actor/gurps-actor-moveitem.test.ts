@@ -13,16 +13,16 @@ describe('GurpsActorV2.moveItem', () => {
   beforeEach(async () => {
     // Ensure minimal globals exist
     global.GURPS = global.GURPS || { module: {} }
-    // @ts-expect-error
+    // @ts-expect-error - game is a partial mock for testing
     global.game = global.game || {}
 
     // Import EquipmentModel
     EquipmentModel = (await import('../../../module/item/data/equipment.js')).EquipmentModel
 
     // Mock game.settings for updateEqtCountV2
-    // @ts-expect-error
+    // @ts-expect-error - game is a partial mock for testing
     if (!global.game.settings) {
-      // @ts-expect-error
+      // @ts-expect-error - game is a partial mock for testing
       global.game.settings = {
         get: jest.fn().mockReturnValue(false), // Default to false for settings
       }
@@ -31,7 +31,7 @@ describe('GurpsActorV2.moveItem', () => {
     // Instantiate with minimal data that our test base Actor supports
     actor = new GurpsActorV2({ name: 'Test Actor', type: 'characterV2' })
     actor.system = new CharacterModel()
-    // @ts-expect-error
+    // @ts-expect-error - _source is a private property being set for testing
     actor.system._source = { allNotes: [], moveV2: [] }
 
     // Mock updateEmbeddedDocuments to track calls

@@ -159,7 +159,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
         dialog.render(true)
       })
     } else {
-      // @ts-ignore
+      // @ts-expect-error - Foundry VTT dice API changed between versions, super._evaluate signature varies
       return await super._evaluate({ minimize, maximize })
     }
   }
@@ -821,12 +821,12 @@ export class ModifierBucket extends Application {
     this.SHOWING = true
     // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
     // let position = {
-    //   // @ts-ignore
+    //   // @ts-expect-error - accessing private property
     //   left: 805 + 70 / 2 - this.editor.position.width / 2,
-    //   // @ts-ignore
+    //   // @ts-expect-error - accessing private property
     //   top: window.innerHeight - this.editor.position.height - 4,
     // }
-    // @ts-ignore
+    // @ts-expect-error - accessing private property _position
     // this.editor._position = position
     this.editor.render(true)
   }

@@ -621,7 +621,7 @@ class FpHpChatProcessor extends ChatProcessor {
 
           if (dc.length > 0) {
             // The user made a "multi-damage" roll... let them see the dice!
-            // @ts-ignore
+            // @ts-expect-error - dice3d is added by Dice So Nice module and not in core types
             game.dice3d.show({ throws: throws })
           }
         }

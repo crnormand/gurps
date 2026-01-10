@@ -231,7 +231,7 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list
-    // @ts-ignore
+    // @ts-expect-error - GurpsItem type not recognized by TS
     let orig = /** @type {GurpsItem[]} */ (
       this.items.contents
         .filter(i => i.type === 'equipment')
@@ -249,7 +249,7 @@ export class GurpsActor extends Actor {
       let atLeastOne = false
 
       for (const i of orig) {
-        // @ts-ignore
+        // @ts-expect-error - dynamic property access on item system
         if (!i.system.eqt.parentuuid || good.find(e => e.system.eqt.uuid == i.system.eqt.parentuuid)) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
@@ -399,11 +399,11 @@ export class GurpsActor extends Actor {
     // if (!!data.conditions.exhausted)
     //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, _k, _d) => {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access on recurselist element
       if (e.import) e.level = parseInt(+e.import)
     })
     recurselist(data.spells, (e, _k, _d) => {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access on recurselist element
       if (e.import) e.level = parseInt(+e.import)
     })
 
@@ -699,7 +699,7 @@ export class GurpsActor extends Actor {
       sum += this._sumeqt(e.collapsed, type, checkEquipped)
     }
 
-    // @ts-ignore
+    // @ts-expect-error - parseInt accepts number for truncation
     return parseInt(sum * 100) / 100
   }
 
@@ -973,7 +973,7 @@ export class GurpsActor extends Actor {
             this.ignoreRender = true
             action.action.calcOnly = true
             GURPS.performAction(action.action, this).then(ret => {
-              // @ts-ignore
+              // @ts-expect-error - ret.target exists on performAction result
               e.level = ret.target
 
               if (isMelee) {
@@ -981,7 +981,7 @@ export class GurpsActor extends Actor {
                   let p = '' + e.parry
                   let m = p.match(/([+-]\d+)(.*)/)
 
-                  // @ts-ignore
+                  // @ts-expect-error - assigning array literal to regex match result
                   if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -996,7 +996,7 @@ export class GurpsActor extends Actor {
                   let b = '' + e.block
                   let m = b.match(/([+-]\d+)(.*)/)
 
-                  // @ts-ignore
+                  // @ts-expect-error - assigning array literal to regex match result
                   if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -1764,7 +1764,7 @@ export class GurpsActor extends Actor {
    * @param {Item} item
    */
   async updateItem(item) {
-    // @ts-ignore
+    // @ts-expect-error - editingActor is a custom property added dynamically
     delete item.editingActor
     this.ignoreRender = true
     if (item.id) await this._removeItemAdditions(item.id)
@@ -1805,13 +1805,13 @@ export class GurpsActor extends Actor {
   async addNewItemData(itemData, targetkey = null) {
     let d = itemData
 
-    // @ts-ignore
+    // @ts-expect-error - toObject may exist on Document-like objects
     if (typeof itemData.toObject === 'function') {
       d = itemData.toObject()
       d.system.eqt.count = itemData.system.eqt.count // For some reason the count isn't deepcopied correctly.
     }
 
-    // @ts-ignore
+    // @ts-expect-error - Foundry VTT API not fully typed
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
 
@@ -1999,18 +1999,18 @@ export class GurpsActor extends Actor {
   async _addItemElement(itemData, eqtkey, key) {
     let found = false
 
-    // @ts-ignore
+    // @ts-expect-error - dynamic property access with string key
     recurselist(this.system[key], (e, _k, _d) => {
       if (e.itemid == itemData._id) found = true
     })
     if (found) return
-    // @ts-ignore
+    // @ts-expect-error - dynamic property access with string key
     let list = { ...this.system[key] } // shallow copy
     let i = 0
 
-    // @ts-ignore
+    // @ts-expect-error - dynamic property access with string key
     for (const k in itemData.system[key]) {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access with string key
       let e = foundry.utils.duplicate(itemData.system[key][k])
 
       e.itemid = itemData._id

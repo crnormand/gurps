@@ -279,12 +279,12 @@ if (!globalThis.GURPS) {
     const reader = new FileReader()
 
     return new Promise((resolve, reject) => {
-      // @ts-ignore
+      // @ts-expect-error - FileReader event handler type mismatch with ProgressEvent
       reader.onload = _ev => {
         resolve(reader.result)
       }
 
-      // @ts-ignore
+      // @ts-expect-error - FileReader event handler type mismatch with ProgressEvent
       reader.onerror = _ev => {
         reader.abort()
         reject()
@@ -369,7 +369,7 @@ if (!globalThis.GURPS) {
           '{['[+isArray] +
           Object.keys(obj)
             .map(function (key) {
-              // @ts-ignore
+              // @ts-expect-error - dynamic property access on unknown object type
               return '\n\t' + indent + key + ': ' + objToString(obj[key], (ndeep || 1) + 1)
             })
             .join(',') +
@@ -442,11 +442,11 @@ if (!globalThis.GURPS) {
       // Skill-12
       skill = {
         name: action.name,
-        // @ts-ignore
+        // @ts-expect-error - action.target is string but parseInt expects string|undefined
         level: parseInt(action.target),
       }
     }
-    // @ts-ignore
+    // @ts-expect-error - GURPS global object not fully typed
     else skill = GURPS.findSkillSpell(actor?.system, action.name, !!action.isSkillOnly, !!action.isSpellOnly)
 
     if (!skill) {
@@ -455,7 +455,7 @@ if (!globalThis.GURPS) {
 
     let skillLevel = skill.level
 
-    // @ts-ignore
+    // @ts-expect-error - dynamically adding obj property to action
     action.obj = skill
 
     // on a floating skill check, we want the skill with the highest relative skill level
@@ -549,7 +549,7 @@ if (!globalThis.GURPS) {
      * @param {JQuery.Event|null} data.event
      */
     async chat({ action, actor, event }) {
-      // @ts-ignore
+      // @ts-expect-error - Foundry VTT API not fully typed
       const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
         KeyboardManager.MODIFIER_KEYS.CONTROL
       )}\n${action.orig}`
@@ -562,7 +562,7 @@ if (!globalThis.GURPS) {
       let savedActor = GURPS.LastActor
 
       if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor.
-      // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
+      // @ts-expect-error - custom chatmsgData property added to MouseEvent
       let ret = await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
 
       if (savedActor) GURPS.SetLastActor(savedActor)
@@ -1597,7 +1597,7 @@ if (!globalThis.GURPS) {
     let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
 
     if (isMelee)
-      // @ts-ignore
+      // @ts-expect-error - actor.melee type not fully typed
       recurselist(actor.melee, (e, _k, _d) => {
         if (!t) {
           let full = e.name
@@ -1612,7 +1612,7 @@ if (!globalThis.GURPS) {
       })
     //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
     if (isRanged && !t)
-      // @ts-ignore
+      // @ts-expect-error - actor.ranged type not fully typed
       recurselist(actor.ranged, (e, _k, _d) => {
         if (!t) {
           let full = e.name
@@ -1825,7 +1825,7 @@ if (!globalThis.GURPS) {
       if (target.match(/^[hf]p/i)) {
         let k = target.toUpperCase()
 
-        // @ts-ignore
+        // @ts-expect-error - dynamic property access on actor.system
         delta = actor.system[k].value - delta
         await actor.update({ ['system.' + k + '.value']: delta })
       }
@@ -2012,7 +2012,7 @@ if (!globalThis.GURPS) {
     let sorted = Object.keys(object)
       .sort()
       .reduce((a, v) => {
-        // @ts-ignore
+        // @ts-expect-error - dynamic property access on accumulator object
         a[v] = object[v]
 
         return a
@@ -2206,7 +2206,7 @@ if (!globalThis.GURPS) {
     let d = m && !!m[2] ? parseInt(m[2]) : 5
 
     CONFIG.Combat.initiative = {
-      // @ts-ignore - technically, m could be null
+      // @ts-expect-error - m could be null but is checked implicitly by context
       formula: m[1],
       decimals: d, // Important to be able to maintain resolution
     }
@@ -2320,7 +2320,7 @@ if (!globalThis.GURPS) {
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
-    // @ts-ignore
+    // @ts-expect-error - Foundry VTT hook callback parameter types not fully typed
     Hooks.on('createRollTable', async function (entity, _options, _userId) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
@@ -2507,22 +2507,22 @@ if (!globalThis.GURPS) {
 
       if (!html.hasClass('bound')) {
         html.addClass('bound')
-        // @ts-ignore
+        // @ts-expect-error - jQuery event handler types not fully compatible
         html.on('drop', function (ev) {
           ev.preventDefault()
           ev.stopPropagation()
           let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
 
-          // @ts-ignore
+          // @ts-expect-error - jQuery selector chain returns optional string
           let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-          // @ts-ignore
+          // @ts-expect-error - game.combat could be null
           let target = game.combat.combatants.filter(c => c.id === combatant)[0]
 
           let event = ev.originalEvent
           let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
           if (dropData.type === 'damageItem') {
-            // @ts-ignore
+            // @ts-expect-error - handleDamageDrop is a custom GURPS actor method
             target.actor.handleDamageDrop(dropData.payload)
           }
 
@@ -2897,7 +2897,7 @@ const showGURPSCopyright = function () {
     <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
   </div>
 </div>`,
-    // @ts-ignore
+    // @ts-expect-error - game.user could be null but is safe in this context
     whisper: [game.user],
   })
 }

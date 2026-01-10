@@ -323,7 +323,7 @@ export default class Maneuvers {
    * @returns {ManeuverData}
    */
   static get(id) {
-    // @ts-ignore
+    // @ts-expect-error - dynamic property access returns Maneuver which has data property
     return Maneuvers.getAll()[id]?.data
   }
 
@@ -382,7 +382,7 @@ export default class Maneuvers {
     let data = {}
 
     for (const key in Maneuvers.getAll()) {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access returns Maneuver which has data property
       data[key] = Maneuvers.getAll()[key].data
     }
 

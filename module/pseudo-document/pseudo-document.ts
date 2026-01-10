@@ -209,7 +209,6 @@ class PseudoDocument<
    */
   get isSource() {
     const docName = this.documentName
-    // @ts-expect-error: TODO: revise parent types
     const fieldPath = this.parent.constructor.metadata.embedded[docName]
     const parent = this.parent instanceof foundry.abstract.TypeDataModel ? this.parent.parent : this.parent
     const source = foundry.utils.getProperty(parent._source, fieldPath) as AnyObject
@@ -274,7 +273,6 @@ class PseudoDocument<
 
     ;(this.constructor as typeof PseudoDocument)._configureUpdates('delete', this.document, update, operation)
 
-    // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
     return this.document.update(update, operation)
   }
 
@@ -311,7 +309,6 @@ class PseudoDocument<
 
     ;(this.constructor as typeof PseudoDocument)._configureUpdates('update', this.document, update, operation)
 
-    // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
     return this.document.update(update, operation)
   }
 

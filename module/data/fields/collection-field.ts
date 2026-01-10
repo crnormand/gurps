@@ -67,7 +67,6 @@ class CollectionField<
   const Options extends CollectionField.Options<AnyObject> = CollectionField.DefaultOptions,
   const AssignmentType = CollectionField.AssignmentType<Model, Options>,
   const InitializedType = CollectionField.InitializedType<Model, Options>,
-  // @ts-expect-error: types haven't quite caught up
   const PersistedType extends AnyObject | null | undefined = CollectionField.PersistedType<Element, Options>,
 > extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {
   /* ---------------------------------------- */

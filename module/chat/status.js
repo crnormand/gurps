@@ -208,7 +208,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   isEffectActive(token, effect) {
     /** @type {GurpsActorV2} */
-    // @ts-ignore
+    // @ts-expect-error - GurpsActorV2 type assertion for actor from token
     let actor = token?.actor || game.actors?.get(token?.document.actorId)
 
     return actor.isEffectActive(effect)

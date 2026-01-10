@@ -1,12 +1,12 @@
 global.foundry = {
   abstract: {
-    // @ts-ignore
+    // @ts-expect-error - mock class for testing
     DataModel: class {
       constructor(data) {
         Object.assign(this, data)
       }
     },
-    // @ts-ignore
+    // @ts-expect-error - mock class for testing
     TypeDataModel: class {
       constructor(data) {
         const isGetterProperty = (instance, propertyKey) => {
@@ -40,7 +40,7 @@ global.foundry = {
 
       static LOCALIZATION_PREFIXES = []
     },
-    // @ts-ignore
+    // @ts-expect-error - mock class for testing
     Document: class {
       constructor(data) {
         this._id = data?._id || 'TEST_ID'
@@ -49,7 +49,7 @@ global.foundry = {
     },
   },
   documents: {
-    // @ts-ignore
+    // @ts-expect-error - mock class for testing
     BaseActor: class {
       constructor(data = {}) {
         this.name = data.name || ''
@@ -61,7 +61,7 @@ global.foundry = {
         this._id = data._id || this.id
       }
     },
-    // @ts-ignore
+    // @ts-expect-error - mock class for testing
     BaseItem: class {
       constructor(data = {}, options = {}) {
         this.name = data.name || ''
@@ -87,11 +87,11 @@ global.foundry = {
       }
     },
   },
-  // @ts-ignore
+  // @ts-expect-error - mock namespace for testing
   data: {
-    // @ts-ignore
+    // @ts-expect-error - mock namespace for testing
     fields: {
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       TypedSchemaField: class TypedSchemaField {
         constructor(types, options) {
           this.types = types
@@ -102,46 +102,46 @@ global.foundry = {
           return true
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       TypedObjectField: class TypedObjectField {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       SchemaField: class SchemaField {
         constructor(schema, options) {
           this.schema = schema
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       StringField: class StringField {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       NumberField: class NumberField {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       BooleanField: class BooleanField {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       ArrayField: class ArrayField {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       ObjectField: class ObjectField {
         constructor(options) {
           this.options = options
@@ -199,7 +199,7 @@ global.foundry = {
     deepClone: obj => {
       try {
         // Prefer structuredClone when available
-        // @ts-ignore
+        // @ts-expect-error - structuredClone may not exist in all environments
         if (typeof structuredClone === 'function') return structuredClone(obj)
       } catch {
         // fall through to JSON clone
@@ -209,7 +209,7 @@ global.foundry = {
     },
     // Foundry has both deepClone and duplicate; map duplicate to deepClone here
     duplicate: obj => {
-      // @ts-ignore
+      // @ts-expect-error - accessing global.foundry mock
       return global.foundry.utils.deepClone(obj)
     },
     flattenObject: (obj, _d = 0) => {
@@ -298,30 +298,30 @@ global.foundry = {
   appv1: {
     sheets: {
       // Minimal base classes to satisfy extends
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       ActorSheet: class {},
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       ItemSheet: class {},
     },
   },
   applications: {
     api: {
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       Application: class {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       ApplicationV2: class {},
-      // @ts-ignore
+      // @ts-expect-error - mock mixin for testing
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
       renderTemplate: async () => '',
     },
     ux: {
-      // @ts-ignore
+      // @ts-expect-error - mock class for testing
       ContextMenu: class {
         constructor(element, selector, menuItems, options) {
           this.element = element
@@ -340,7 +340,7 @@ foundry.documents.Actor = foundry.documents.BaseActor
 
 global.canvas = {
   layer: {
-    // @ts-ignore
+    // @ts-expect-error - simplified mock implementation
     get: () => ({}),
   },
 }
@@ -348,7 +348,7 @@ global.canvas = {
 global.game = {
   ready: true,
   i18n: {
-    // @ts-ignore
+    // @ts-expect-error - mock method for testing
     localize: key => {
       // Mock specific GURPS localization keys
       if (key === 'GURPS.CR12') return 'CR: 12 (Resist Quite Often)'
@@ -441,14 +441,14 @@ global.Item = class extends foundry.documents.BaseItem {
 }
 
 // Minimal Application base class for sheet subclasses used by imports
-// @ts-ignore
+// @ts-expect-error - mock class for testing
 global.Application = class {
   constructor(_options = {}) {}
   render() {}
 }
 
 // Minimal ContextMenu for utilities/contextmenu usages
-// @ts-ignore
+// @ts-expect-error - mock class for testing
 global.ContextMenu = class {
   constructor(_element, _selector, _items, _events) {}
 }

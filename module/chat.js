@@ -101,7 +101,7 @@ class ChatProcessorRegistry {
     if (!chatmsgData)
       chatmsgData = {
         user: game.user?.id || null,
-        // @ts-ignore
+        // @ts-expect-error - partial speaker object initialization
         speaker: {
           actor: GURPS.LastActor ? GURPS.LastActor.id : undefined,
         },
@@ -189,8 +189,8 @@ class ChatProcessorRegistry {
         // immediately flush our stored msgs, and execute the slash command using the default parser
         this.send()
         GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-        ui.chat // @ts-ignore
-          ?.processMessage(line)
+        // @ts-expect-error - Foundry VTT ChatLog API not fully typed
+        ui.chat?.processMessage(line)
           .catch(err => {
             ui.notifications?.error(err)
             console.error(err)
@@ -351,7 +351,7 @@ export default function addChatHooks() {
   Hooks.once('init', async function () {
     GURPS.ChatProcessors = ChatProcessors
     Hooks.on('chatMessage', (_log, message, chatmsgData) => {
-      // @ts-ignore
+      // @ts-expect-error - custom property added to chat message data
       if (chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
 
       if (GURPS.ChatCommandsInProcess.includes(message)) {
@@ -366,7 +366,7 @@ export default function addChatHooks() {
       // if we are going to process this message, and if so, return false so Foundry doesn't
       if (ChatProcessors.willTryToHandle(message)) {
         // Now we can handle the processing of each line in an async method, so we can ensure a single thread
-        // @ts-ignore
+        // @ts-expect-error - chatmsgData type mismatch with expected parameter
         ChatProcessors.startProcessingLines(message, chatmsgData)
 
         return false
