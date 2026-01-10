@@ -235,10 +235,6 @@ export class GurpsActorModernSheet extends SheetBase {
     })
   }
 
-  // ============================================
-  // Static Action Handlers
-  // ============================================
-
   static async #onResetResource(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
     const action = target.dataset.action
@@ -300,10 +296,6 @@ export class GurpsActorModernSheet extends SheetBase {
     event.preventDefault()
     new MoveModeEditor(this.actor).render(true)
   }
-
-  // ============================================
-  // Instance Methods
-  // ============================================
 
   async #openQuickNoteEditor(): Promise<void> {
     const actorSystem = this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>
@@ -398,10 +390,6 @@ export class GurpsActorModernSheet extends SheetBase {
       GURPS.performAction({ orig: otf, type: 'skill-spell', actor: this.actor }, this.actor, event)
     }
   }
-
-  // ============================================
-  // Edit Methods (from base GurpsActorSheet)
-  // ============================================
 
   async editSkills(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
     if (obj.consumeAction === undefined) obj.consumeAction = false
@@ -705,10 +693,6 @@ export class GurpsActorModernSheet extends SheetBase {
       input.addEventListener('drop', this.dropFoundryLinks.bind(this))
     })
   }
-
-  // ============================================
-  // Utility Methods
-  // ============================================
 
   dropFoundryLinks(event: Event | JQuery.DropEvent, modelkey?: string): void {
     const ev = (event as JQuery.DropEvent).originalEvent ?? (event as DragEvent)
