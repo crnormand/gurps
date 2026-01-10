@@ -205,16 +205,9 @@ Portrait will not be imported.`
 
     for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PER'] as const) {
       const attribute = this.input.attributes.find(attr => attr.attr_id === key.toLowerCase())
-      if (attribute) {
-        this.output.attributes[key] = {
-          import: attribute.calc.value,
-          points: attribute.calc.points,
-        }
-      } else {
-        this.output.attributes[key] = {
-          import: 10,
-          points: 0,
-        }
+      this.output.attributes[key] = {
+        import: attribute?.calc.value ?? 10,
+        points: attribute?.calc.points ?? 0,
       }
     }
 
