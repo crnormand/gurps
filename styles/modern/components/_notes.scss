@@ -234,10 +234,11 @@
 
 .ms-trackers-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--ms-space-4);
 
   .tracked-resource {
+    flex: 0 1;
     background: var(--ms-bg-card);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
@@ -245,6 +246,10 @@
 
     .header {
       background: var(--ms-accent);
+    }
+
+    button i {
+      color: var(--ms-text);
     }
   }
 }
