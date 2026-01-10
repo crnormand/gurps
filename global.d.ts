@@ -208,6 +208,7 @@ declare global {
     'gurps.pdf-open-first': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
     'gurps.portrait-hp-tinting': boolean
+    'gurps.automatic-encumbrance': boolean
   }
 
   interface DialogV2Config {

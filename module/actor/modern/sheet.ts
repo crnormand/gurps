@@ -162,7 +162,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
     this.bindManeuverActions(html)
-    this.bindMoveModeActions(html)
+    this.bindEncumbranceActions(html)
     this.bindEffectActions(html)
     this.bindEntityCrudActions(html)
   }
@@ -185,7 +185,11 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     })
   }
 
-  bindMoveModeActions(html: JQuery): void {
+  bindEncumbranceActions(html: JQuery): void {
+    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE) === false) {
+      html.find('.ms-enc-row').on('click', this._onClickEnc.bind(this))
+    }
+
     html.find('.ms-move-mode-edit').on('click', () => {
       new MoveModeEditor(this.actor).render(true)
     })
