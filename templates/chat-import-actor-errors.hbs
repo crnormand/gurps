@@ -1,16 +1,16 @@
-<div class="gga-chat-message">
-  <div class="prefix">{{localize "GURPS.warning"}}</div>
-  <div class="roll-result">
+<div class='gga-chat-message'>
+  <div class='prefix'>{{localize 'GURPS.warning'}}</div>
+  <div class='roll-result'>
     <ul>
       {{#each lines}}
-      <li>{{{this}}}</li>
+        <li>{{{this}}}</li>
       {{/each}}
     </ul>
-    <div class="aside">
-      <p>{{localize "GURPS.importFileVersion" version=this.version}}</p>
-      <p>{{localize "GURPS.importCurrentVersions" GCAVersion=this.GCAVersion GCSVersion=this.GCSVersion}}</p>
-      <p>{{localize "GURPS.importSeeUsersGuide"}}</p>
-      <a href="{{url}}">{{localize "GURPS.gameAidUsersGuide"}}</a>
+    <div class='aside'>
+      <p>{{localize 'GURPS.importFileVersion' version=this.version}}</p>
+      <p>{{localize 'GURPS.importCurrentVersions' GCAVersion=this.GCAVersion GCSVersion=this.GCSVersion}}</p>
+      <p>{{localize 'GURPS.importSeeUsersGuide'}}</p>
+      <a href='{{url}}'>{{localize 'GURPS.gameAidUsersGuide'}}</a>
     </div>
   </div>
 </div>

@@ -78,7 +78,10 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
     const list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path) as Record<string, NoteComponent>) || {}
     const newNote = new Note('', true) as NoteComponent
 
-    const dialogContent = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', newNote as Record<string, string>)
+    const dialogContent = await renderTemplate(
+      'systems/gurps/templates/note-editor-popup.hbs',
+      newNote as Record<string, string>
+    )
 
     new Dialog({
       title: 'Note Editor',

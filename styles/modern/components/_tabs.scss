@@ -30,7 +30,9 @@
       font-weight: 600;
     }
 
-    i { font-size: 12px; }
+    i {
+      font-size: 12px;
+    }
   }
 }
 
@@ -43,6 +45,8 @@
 
   .tab {
     display: none;
-    &.active { display: block; }
+    &.active {
+      display: block;
+    }
   }
 }

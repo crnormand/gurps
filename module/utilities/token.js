@@ -1,2 +1,1 @@
-export const getTokenForActor = actor =>
-  actor?.getActiveTokens()?.[0] ?? canvas.tokens?.controlled?.[0]
+export const getTokenForActor = actor => actor?.getActiveTokens()?.[0] ?? canvas.tokens?.controlled?.[0]
