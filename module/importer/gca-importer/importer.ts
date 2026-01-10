@@ -62,7 +62,7 @@ class GcaImporter {
     const type = 'character'
     const name = this.input.name ?? 'Imported Character'
 
-    // Set actor as a GcsImporter property for easier reference.
+    // Set actor as a GcaImporter property for easier reference.
     if (actor) this.actor = actor
 
     this.#importPortrait()
