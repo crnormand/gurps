@@ -189,6 +189,13 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-wrapper-object-types': 'warn',
       'no-unused-vars': 'off',
+      'import/extensions': [
+        'error',
+        'always',
+        {
+          ignorePackages: true,
+        },
+      ],
       'import/order': [
         'error',
         {

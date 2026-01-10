@@ -1,9 +1,8 @@
+import { fields } from '../../types/foundry/index.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
 import { CharacterModel } from './character.js'
-
-const fields = foundry.data.fields
 
 /* ---------------------------------------- */
 

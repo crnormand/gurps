@@ -33,55 +33,22 @@ describe('GurpsActorV2._preUpdate', () => {
 
   describe('translate legacy Ads data', () => {
     beforeEach(() => {
+      const createMockItem = (id: string, name: string, containedBy: string | null) =>
+        new GurpsItemV2({
+          _id: id,
+          name,
+          type: 'featureV2',
+          // @ts-expect-error - partial mock data for testing
+          system: new TraitModel({ containedBy } as unknown),
+        })
+
       const allAds = [
-        new GurpsItemV2({
-          _id: 'ad1',
-          name: 'Ad 1',
-          type: 'featureV2',
-          system: new TraitModel({
-            containedBy: null,
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2',
-          name: 'Ad 2',
-          type: 'featureV2',
-          system: new TraitModel({
-            containedBy: null,
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad3',
-          name: 'Ad 3',
-          type: 'featureV2',
-          system: new TraitModel({
-            containedBy: null,
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2.1',
-          name: 'Ad 2.1',
-          type: 'featureV2',
-          system: new TraitModel({
-            containedBy: 'ad2',
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2.2',
-          name: 'Ad 2.2',
-          type: 'featureV2',
-          system: new TraitModel({
-            containedBy: 'ad2',
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2.2.1',
-          name: 'Ad 2.2.1',
-          type: 'featureV2',
-          system: new TraitModel({
-            containedBy: 'ad2.2',
-          }),
-        }),
+        createMockItem('ad1', 'Ad 1', null),
+        createMockItem('ad2', 'Ad 2', null),
+        createMockItem('ad3', 'Ad 3', null),
+        createMockItem('ad2.1', 'Ad 2.1', 'ad2'),
+        createMockItem('ad2.2', 'Ad 2.2', 'ad2'),
+        createMockItem('ad2.2.1', 'Ad 2.2.1', 'ad2.2'),
       ]
 
       // Mock the actor's items collection for testing: actor.items should return our test ads.

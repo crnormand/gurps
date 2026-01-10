@@ -1,5 +1,4 @@
-const fields = foundry.data.fields
-
+import { fields } from '../../../types/foundry/index.js'
 import { GcsAttribute } from './attribute.js'
 import { GcsElement } from './base.js'
 import { GcsBody } from './body.js'

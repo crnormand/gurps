@@ -47,3 +47,6 @@ export const requireDataset = (element: HTMLElement, key: string): string => {
 export const isHTMLElement = (value: unknown): value is HTMLElement => value instanceof HTMLElement
 
 export const isHTMLInputElement = (value: unknown): value is HTMLInputElement => value instanceof HTMLInputElement
+
+export const isObject = (value: unknown): value is Record<string, unknown> =>
+  isDefined(value) && typeof value === 'object'

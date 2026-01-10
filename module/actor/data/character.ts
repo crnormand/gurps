@@ -5,6 +5,8 @@ import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
 
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
+import { fields } from '../../types/foundry/index.js'
+
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX } from '../../../lib/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '../../../lib/utilities.js'
@@ -47,8 +49,6 @@ import {
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
 import { NoteV2 } from './note.js'
-
-const fields = foundry.data.fields
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {

@@ -3,6 +3,8 @@ import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
 
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
+import { fields } from '../types/foundry/index.ts'
+
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -29,7 +31,7 @@ import { parseItemKey } from '../utilities/object-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { ReactionSchema } from './data/character-components.js'
+import { DamageActionSchema, ReactionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 import {
@@ -705,14 +707,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         case 'p':
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          itemRef = chatThing.match(regex)?.[0] ?? null
+          itemRef = chatThing.match(regex)?.[0]
           if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
           break
         case 'b':
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
 
-          itemRef = chatThing.match(regex)?.[0] ?? null
+          itemRef = chatThing.match(regex)?.[0]
           if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
           break
         default:
@@ -1300,24 +1302,22 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * NOTE: Both character and characterV2.
    */
-  async accumulateDamageRoll(action: Record<string, any>): Promise<void> {
+  async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
     if (this.isNewActorType) return this.modelV2.accumulateDamageRoll(action)
 
     // Legacy V1 handling.
-    // initialize the damageAccumulators property if it doesn't exist:
     if (!this.modelV1.conditions.damageAccumulators) this.modelV1.conditions.damageAccumulators = []
 
     const accumulators = this.modelV1.conditions.damageAccumulators
-
-    // first, try to find an existing accumulator, and increment if found
     const existing = accumulators.findIndex(it => it.orig === action.orig)
 
     if (existing !== -1) return this.incrementDamageAccumulator(existing)
 
     // an existing accumulator is not found, create one
-    action.count = 1
-    delete action.accumulate
-    accumulators.push(action as DamageAccumulator)
+    const legacyAction = action as unknown as DamageAccumulator
+
+    legacyAction.count = 1
+    accumulators.push(legacyAction)
     await this.internalUpdate({ 'system.conditions.damageAccumulators': accumulators } as Actor.UpdateData)
     GURPS.ModifierBucket.render()
   }

@@ -2,10 +2,9 @@ import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 import { AnyObject } from 'fvtt-types/utils'
 
+import { DataModel, fields } from '../types/foundry/index.js'
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
-
-const fields = foundry.data.fields
 
 class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,

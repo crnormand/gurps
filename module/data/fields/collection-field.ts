@@ -1,7 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
 
-const fields = foundry.data.fields
-
+import { DataModel, fields } from '../../types/foundry/index.js'
 import { PseudoDocument } from '../../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '../../pseudo-document/typed-pseudo-document.js'
 import { ModelCollection } from '../model-collection.js'
@@ -67,7 +66,8 @@ class CollectionField<
   const Options extends CollectionField.Options<AnyObject> = CollectionField.DefaultOptions,
   const AssignmentType = CollectionField.AssignmentType<Model, Options>,
   const InitializedType = CollectionField.InitializedType<Model, Options>,
-  const PersistedType extends AnyObject | null | undefined = CollectionField.PersistedType<Element, Options>,
+  const PersistedType = CollectionField.PersistedType<Element, Options>,
+  // @ts-expect-error: PersistedType is an array which doesn't satisfy the base class constraint
 > extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {
   /* ---------------------------------------- */
 

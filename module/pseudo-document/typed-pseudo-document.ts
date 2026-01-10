@@ -1,5 +1,4 @@
-const fields = foundry.data.fields
-
+import { DataModel, Document, fields } from '../types/foundry/index.js'
 import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
 
 interface TypedPseudoDocumentCreateDialogOptions
@@ -57,16 +56,17 @@ class TypedPseudoDocument<
     data: DataModel.CreateData<Schema>,
     { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
   ): Promise<Document.Any | undefined> {
-    data = foundry.utils.deepClone(data)
-    if (!data.type) data.type = Object.keys(this.TYPES)[0]
+    const createData = foundry.utils.deepClone(data) as DataModel.CreateData<Schema> & { type?: string }
 
-    if (!data.type || !(data.type in this.TYPES)) {
+    if (!createData.type) createData.type = Object.keys(this.TYPES)[0]
+
+    if (!createData.type || !(createData.type in this.TYPES)) {
       throw new Error(
-        `The '${data.type}' type is not a valid type for a '${this.metadata.documentName}' pseudo-document!`
+        `The '${createData.type}' type is not a valid type for a '${this.metadata.documentName}' pseudo-document!`
       )
     }
 
-    return super.create(data, { parent, ...operation })
+    return super.create(createData as DataModel.CreateData<TypedPseudoDocumentSchema>, { parent, ...operation })
   }
 
   /* ---------------------------------------- */
@@ -116,9 +116,9 @@ class TypedPseudoDocument<
 
 /* ---------------------------------------- */
 
-const typedPseudoDocumentSchema = (self: DataModel.AnyConstructor) => {
+const typedPseudoDocumentSchema = (self: { TYPES: Record<string, unknown> }) => {
   return {
-    type: new fields.DocumentTypeField(self, { required: true, nullable: false }),
+    type: new fields.DocumentTypeField(self as unknown as Document.AnyConstructor, { required: true, nullable: false }),
   }
 }
 

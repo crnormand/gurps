@@ -1,3 +1,4 @@
+import { DataModel } from '../../types/foundry/index.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { BaseItemModel } from 'module/item/data/base.js'
@@ -958,7 +959,9 @@ Portrait will not be imported.`
       this.#importNote(child, id)
     })
 
-    this.output.allNotes!.push(note)
+    if (Array.isArray(this.output.allNotes)) {
+      this.output.allNotes.push(note)
+    }
   }
 
   /* ---------------------------------------- */

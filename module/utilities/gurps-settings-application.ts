@@ -1,4 +1,4 @@
-const fields = foundry.data.fields
+import { fields } from '../types/foundry/index.js'
 
 // define an object with two fields: title and icon.
 type GurpsSettingsConfig = {
