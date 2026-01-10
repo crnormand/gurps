@@ -3,8 +3,6 @@ import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
 
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
-import { fields } from '../types/foundry/index.ts'
-
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -26,6 +24,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
+import { fields } from '../types/foundry/index.ts'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { parseItemKey } from '../utilities/object-utils.js'
 

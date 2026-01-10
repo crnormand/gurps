@@ -1,8 +1,8 @@
-// @ts-expect-error - extension-less import for ts-jest ESM
-import { Length } from '../../../../module/data/common/length'
+import { Length } from '../../../../module/data/common/length.ts'
 
 describe('Length', () => {
-  Length._localize = (key: any) => key // or a mock function
+  // @ts-expect-error - mock for testing
+  Length._localize = (key: any) => key
 
   describe('fromString', () => {
     it('parses inches', () => {
@@ -131,6 +131,7 @@ describe('Length', () => {
 
   describe('From -> To', () => {
     it('converts from feet to inches', () => {
+      // @ts-expect-error - testing string unit shorthand
       const yards = Length.from(3, 'yd').to(Length.Unit.Yard).value
 
       expect(yards).toBe(3)

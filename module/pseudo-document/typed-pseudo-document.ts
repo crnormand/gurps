@@ -1,4 +1,5 @@
 import { DataModel, Document, fields } from '../types/foundry/index.js'
+
 import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
 
 interface TypedPseudoDocumentCreateDialogOptions

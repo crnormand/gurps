@@ -1,4 +1,5 @@
 import { fields } from '../../../types/foundry/index.js'
+
 import { GcsElement } from './base.js'
 
 class GcsHitLocation extends GcsElement<GcsHitLocationData> {

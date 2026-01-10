@@ -456,7 +456,7 @@ declare module 'fvtt-types/configuration' {
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
     }
-    ChatMessage: {}
+    ChatMessage: Record<string, unknown>
   }
 
   /* ---------------------------------------- */

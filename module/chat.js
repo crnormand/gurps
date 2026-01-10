@@ -190,11 +190,10 @@ class ChatProcessorRegistry {
         this.send()
         GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
         // @ts-expect-error - Foundry VTT ChatLog API not fully typed
-        ui.chat?.processMessage(line)
-          .catch(err => {
-            ui.notifications?.error(err)
-            console.error(err)
-          })
+        ui.chat?.processMessage(line).catch(err => {
+          ui.notifications?.error(err)
+          console.error(err)
+        })
       } else this.pub(line) // If not handled, must just be public text
     }
 

@@ -1,6 +1,7 @@
 import { AnyObject } from 'fvtt-types/utils'
 
 import { fields } from '../../../types/foundry/index.js'
+
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsSkillDefault } from './skill-default.js'
 import { GcsWeapon } from './weapon.js'

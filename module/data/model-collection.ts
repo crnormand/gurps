@@ -1,5 +1,5 @@
-import { DataModel } from '../types/foundry/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import { DataModel } from '../types/foundry/index.js'
 
 class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends foundry.utils.Collection<Model> {
   /* ---------------------------------------- */

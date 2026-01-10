@@ -1,4 +1,3 @@
-import { DataModel } from '../../types/foundry/index.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { BaseItemModel } from 'module/item/data/base.js'
@@ -14,6 +13,7 @@ import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { EquipmentSchema, EquipmentComponentSchema } from '../../item/data/equipment.js'
 import { SkillComponentSchema, SkillSchema } from '../../item/data/skill.js'
 import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
+import { DataModel } from '../../types/foundry/index.js'
 import { ImportSettings } from '../index.js'
 
 import { GcsItem } from './schema/base.js'

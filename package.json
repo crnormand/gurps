@@ -15,6 +15,7 @@
     "eslint-plugin-import": "^2.32.0",
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "handlebars": "^4.7.7",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "^3.5.3",
@@ -49,10 +50,13 @@
     "lint:fix": "eslint . --fix",
     "tdd": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --config=jest.config.mjs",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --config=jest.config.mjs",
+    "typecheck": "tsc --noEmit",
+    "verify": "run-s format:check lint typecheck test",
     "wach:styles": "sass --watch --update --style=expanded gurps.scss:dist/gurps.css",
     "watch": "run-p wach:styles watch:code watch:static",
     "watch:code": "tsc-watch",
-    "watch:static": "node build/cpx.js --watch"
+    "watch:static": "node build/cpx.js --watch",
+    "prepare": "husky"
   },
   "type": "module",
   "version": "0.18.6"

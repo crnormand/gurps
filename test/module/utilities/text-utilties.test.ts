@@ -1,5 +1,4 @@
-// @ts-expect-error - extension-less import for ts-jest ESM
-import { convertRangeTextToArray } from '../../../module/utilities/text-utilties'
+import { convertRangeTextToArray } from '../../../module/utilities/text-utilties.ts'
 
 describe('convertRangeTextToArray', () => {
   test('parses a single inclusive range', () => {

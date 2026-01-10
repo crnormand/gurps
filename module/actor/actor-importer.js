@@ -2723,9 +2723,9 @@ export class ActorImporter {
     let oldotf = oldobj[objkey]
 
     newobj[objkey] = oldotf
-    var notes, newotf
 
-    ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
+    const [notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
+
     if (newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
   }

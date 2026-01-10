@@ -5,8 +5,6 @@ import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
 
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
-import { fields } from '../../types/foundry/index.js'
-
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX } from '../../../lib/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '../../../lib/utilities.js'
@@ -19,6 +17,7 @@ import { SkillV1 } from '../../item/legacy/skill-adapter.js'
 import { SpellV1 } from '../../item/legacy/spell-adapter.js'
 import { TraitV1 } from '../../item/legacy/trait-adapter.js'
 import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
+import { fields } from '../../types/foundry/index.js'
 import { multiplyDice } from '../../utilities/damage-utils.js'
 import { roundTo } from '../../utilities/math.js'
 import { HitLocationEntry } from '../actor-components.js'
