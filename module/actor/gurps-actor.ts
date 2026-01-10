@@ -654,14 +654,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           }
 
           break
-        case 'p':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
-        case 'b':
-          refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
-          refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
-          break
         default:
           refTags = []
       }
@@ -713,14 +705,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         case 'p':
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allParryRolls.split(',').map(it => it.trim().toLowerCase()))
-          itemRef = chatThing.match(regex)?.[0]!
+          itemRef = chatThing.match(regex)?.[0] ?? null
           if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
           break
         case 'b':
           refTags = taggedSettings.allDefenseRolls.split(',').map(it => it.trim().toLowerCase())
           refTags = refTags.concat(taggedSettings.allBlockRolls.split(',').map(it => it.trim().toLowerCase()))
 
-          itemRef = chatThing.match(regex)?.[0]!
+          itemRef = chatThing.match(regex)?.[0] ?? null
           if (itemRef) itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
           break
         default:
@@ -790,7 +782,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           canApply = canApply && (userMod.includes(itemRef!) || userMod.includes('@man:'))
         }
 
-        if (optionalArgs.hasOwnProperty('itemPath')) {
+        if (Object.hasOwn(optionalArgs, 'itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           // @ts-expect-error: itemPath may not exist
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
@@ -848,7 +840,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let name: string, mode: string | undefined
 
     switch (originType) {
-      case 'attack':
+      case 'attack': {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+)\)/)?.[1]
         const path = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
@@ -876,6 +868,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         break
+      }
 
       case 'weapon-block':
       case 'weapon-parry':
@@ -904,7 +897,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         break
-      case 'skill-spell':
+
+      case 'skill-spell': {
         const item = this.findByOriginalName(action.name)
 
         if (item) {
@@ -929,8 +923,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         break
+      }
 
-      case 'attribute':
+      case 'attribute': {
         let attrName = action?.overridetxt
 
         if (!attrName) attrName = game.i18n!.localize(`GURPS.${action.attrkey.toLowerCase()}`)
@@ -943,6 +938,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           pageRef: null,
         }
         break
+      }
 
       case 'controlroll':
         result = {
@@ -1561,7 +1557,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let size = 0
 
       switch (checkType) {
-        case 'attributeChecks':
+        case 'attributeChecks': {
           const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']
 
           for (const key of keys) {
@@ -1578,7 +1574,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.data = checks
           result.size = checks.length
           break
-        case 'otherChecks':
+        }
+
+        case 'otherChecks': {
           const icons = {
             checks: {
               vision: 'fa-solid fa-eye',
@@ -1614,7 +1612,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.data = data
           result.size = size
           break
-        case 'attackChecks':
+        }
+
+        case 'attackChecks': {
           const attacks = ['melee', 'ranged']
 
           for (const key of attacks) {
@@ -1651,7 +1651,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.data = data
           result.size = size
           break
-        case 'defenseChecks':
+        }
+
+        case 'defenseChecks': {
           recurselist(this.modelV1.encumbrance, (enc, _k, _d) => {
             if (enc.current) {
               data.dodge = {
@@ -1696,7 +1698,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.data = data
           result.size = size + 1
           break
-        case 'markedChecks':
+        }
+
+        case 'markedChecks': {
           const traits = ['skills', 'spells', 'ads']
 
           for (const traitType of traits) {
@@ -1743,6 +1747,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.data = checks
           result.size = checks.length
           break
+        }
       }
 
       return result
@@ -2266,7 +2271,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // Parse the source and target keys.
     const [sourceCollection, sourceIndex, sourcePath] = parseItemKey(sourcekey)
-    let [targetCollection, targetIndex, targetPath] = parseItemKey(targetkey)
+    const [targetCollection, targetIndex_, targetPath_] = parseItemKey(targetkey)
+    let targetIndex = targetIndex_
+    let targetPath = targetPath_
 
     const allowed =
       targetCollection.startsWith('system.equipmentV2') && sourceCollection.startsWith('system.equipmentV2')
@@ -2314,7 +2321,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     ) as GurpsItemV2[]
 
     // Adjust the target index if dropping before and the source comes before the target.
-    if (where === 'before' && isSrcFirst) targetIndex && targetIndex > 0 ? targetIndex-- : 0
+    if (where === 'before' && isSrcFirst && targetIndex && targetIndex > 0) targetIndex--
     if (where === 'after' && !isSrcFirst) targetIndex = undefined // Add to the end of the array.
 
     // Dropping inside a container. Set the target to be the end of the container's contents.
@@ -3004,7 +3011,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         let index = 0
         const list = foundry.utils.getProperty(this, targetkey) as Record<string, any>
 
-        while (list.hasOwnProperty(zeroFill(index))) index++
+        while (Object.hasOwn(list, zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
       } else targetkey = 'system.equipment.other'
     if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
@@ -3019,11 +3026,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       eqt.globalid = _data.uuid
 
       // @ts-expect-error
-      eqt.equipped = !!_data.equipped ?? true
+      eqt.equipped = _data.equipped ?? true
       eqt.img = itemData.img
 
       // @ts-expect-error
-      eqt.carried = !!_data.carried ?? true
+      eqt.carried = _data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
 
@@ -3051,7 +3058,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       if (!!parentItem.system[subType] && typeof parentItem.system[subType] === 'object') {
         for (const key in parentItem.system[subType]) {
-          if (parentItem.system[subType].hasOwnProperty(key)) {
+          if (Object.hasOwn(parentItem.system[subType], key)) {
             const childItemData = parentItem.system[subType][key]
             const commitData = await this._addChildItemElement(parentItem, childItemData, subType, newList)
 
@@ -3702,7 +3709,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch {
+      // During game startup, an exception is being thrown trying to access 'game.combat'
+    }
 
     const updateMove = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 

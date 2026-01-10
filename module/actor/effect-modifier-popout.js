@@ -215,18 +215,21 @@ export class EffectModifierPopout extends Application {
             const refValue = itemReference.match(/\w{3}:(\S+)/)[1]
 
             switch (refType) {
-              case 'man':
+              case 'man': {
                 const maneuver = Maneuvers.getManeuver(refValue)
 
                 obj.name = game.i18n.localize(maneuver.label)
                 obj.type = 'maneuver'
                 break
-              case 'eft':
+              }
+
+              case 'eft': {
                 const effect = this._token?.actor.effects.get(refValue)
 
                 obj.name = effect?.name || game.i18n.localize('GURPS.activeEffect')
                 obj.type = 'active-effect'
                 break
+              }
             }
           } else {
             obj = this._token?.actor.items.get(itemReference) || {}

@@ -2684,7 +2684,7 @@ export class ActorImporter {
       if (i.id.startsWith('P')) i.type = 'spell_container'
     }
 
-    if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
+    if ((i.type === 'skill_container' || i.type === 'spell_container') && i.children?.length)
       for (let j of i.children) skills = this.skPointCount(j, skills)
     else skills += i.points ?? 0
 
@@ -2724,6 +2724,7 @@ export class ActorImporter {
 
     newobj[objkey] = oldotf
     var notes, newotf
+
     ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
     if (newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
@@ -2812,7 +2813,7 @@ export class ActorImporter {
     // increment the count for a tableScore if it contains the same hit location as "prot"
     locations.forEach(function (hitLocation) {
       tableNames.forEach(function (tableName) {
-        if (HitLocations.hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
+        if (Object.hasOwn(HitLocations.hitlocationDictionary[tableName], hitLocation.where)) {
           tableScores[tableName] = tableScores[tableName] + 1
         }
       })

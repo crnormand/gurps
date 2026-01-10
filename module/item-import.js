@@ -82,7 +82,7 @@ export class ItemImporter {
     if ([5].includes(j.version)) {
       // Version 5 does not have a type field ... find some other way to validate the data.
       // Verify that the contained objects has an 'equipped' field.
-      if (j.rows[0].hasOwnProperty('quantity') === false) {
+      if (Object.hasOwn(j.rows[0], 'quantity') === false) {
         return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
       }
     } else if ([2, 4].includes(j.version)) {
@@ -388,7 +388,7 @@ export class ItemImporter {
   }
 
   isRangedWeapon(w) {
-    return w.hasOwnProperty('range')
+    return Object.hasOwn(w, 'range')
   }
 
   isMeleeWeapon(w) {

@@ -401,7 +401,9 @@ export default function addChatHooks() {
               }
             })
           }
-        } catch {} // a dangerous game... but limited to GURPs /roll OtF
+        } catch {
+          // a dangerous game... but limited to GURPs /roll OtF
+        }
 
         let newContent = gurpslink(c)
 

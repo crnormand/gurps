@@ -127,9 +127,7 @@ export class EffectModifierControl {
 
     // FIXME Yet another crappy hack ... no idea why when switching from one token to another we end up in the
     // "no token selected" state. This fixes that problem.
-    let self = this
-
-    setTimeout(() => self._ui?.render(false), 250)
+    setTimeout(() => this._ui?.render(false), 250)
   }
 
   async close(options) {

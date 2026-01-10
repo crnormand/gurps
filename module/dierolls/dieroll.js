@@ -312,7 +312,8 @@ export async function doRoll({
         itemColor = '#c5360b'
         rollType = game.i18n.localize('GURPS.ControlRoll')
         break
-      case 'attribute':
+
+      case 'attribute': {
         itemColor = '#620707'
         const ref = chatthing.split('@').pop().slice(0, -1)
 
@@ -375,6 +376,8 @@ export async function doRoll({
         }
 
         break
+      }
+
       default:
         itemIcon = 'fas fa-dice'
         itemColor = '#015401'
@@ -707,7 +710,9 @@ async function _doRoll({
 
   try {
     isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
-  } catch {}
+  } catch {
+    // Keyboard manager may not be available during initialization
+  }
 
   if (
     game.settings.get('core', 'rollMode') === 'blindroll' ||

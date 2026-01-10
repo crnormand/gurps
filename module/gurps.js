@@ -577,12 +577,14 @@ if (!globalThis.GURPS) {
      */
     dragdrop({ action }) {
       switch (action.link) {
-        case 'JournalEntry':
+        case 'JournalEntry': {
           let j = game.journal?.get(action.id)
 
           if (j) j.sheet?.render(true)
 
           return true
+        }
+
         case 'JournalEntryPage':
           Journal._showEntry(action.id)
 
@@ -1888,7 +1890,7 @@ if (!globalThis.GURPS) {
   function put(obj, value, index = -1) {
     if (index == -1) {
       index = 0
-      while (obj.hasOwnProperty(zeroFill(index))) index++
+      while (Object.hasOwn(obj, zeroFill(index))) index++
     }
 
     let k = zeroFill(index)
@@ -1934,7 +1936,7 @@ if (!globalThis.GURPS) {
       // Since keys are serial index, move up any items after the current index
       i = i + 1
 
-      while (object.hasOwnProperty(zeroFill(i))) {
+      while (Object.hasOwn(object, zeroFill(i))) {
         let k = zeroFill(i)
 
         object[key] = object[k]
@@ -1999,7 +2001,7 @@ if (!globalThis.GURPS) {
     let start = parseInt(key)
 
     i = start + 1
-    while (object.hasOwnProperty(zeroFill(i))) i++
+    while (Object.hasOwn(object, zeroFill(i))) i++
     i = i - 1
 
     for (let z = i; z >= start; z--) {
@@ -2105,7 +2107,7 @@ if (!globalThis.GURPS) {
     let canblind = false
 
     if (blindcheck) {
-      canblind = blindcheck == true || blindcheck.hasOwnProperty('blindroll')
+      canblind = blindcheck == true || Object.hasOwn(blindcheck, 'blindroll')
 
       if (canblind && blindcheck.blindroll) {
         otf = '!' + otf
@@ -2554,7 +2556,6 @@ if (!globalThis.GURPS) {
         html.find('.combatant').each((_, li) => {
           li.setAttribute('draggable', true)
           li.addEventListener('dragstart', ev => {
-            if (ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
             let dragIcon = $(event.currentTarget).find('.token-image')[0]
 
             ev.dataTransfer.setDragImage(dragIcon, 25, 25)

@@ -89,7 +89,7 @@ export class GurpsItem extends Item {
   }
 
   get hasOTFs() {
-    !!this.getItemOTFs(true)
+    return !!this.getItemOTFs(true)
   }
 
   async toogleEquip(equipped) {

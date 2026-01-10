@@ -1013,13 +1013,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           dr = drCap
           drMod = drCap - drItem - value.import
           break
-        case '!':
+
+        case '!': {
           const mod = parseInt(formula.slice(1))
 
           drMod = mod
           dr = mod
           drCap = mod
           break
+        }
+
         default:
           drMod = parseInt(formula)
           dr = Math.max(0, value.import, drMod, drItem)
@@ -1344,7 +1347,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
         return { data: checks, size: checks.length }
 
-      case 'markedChecks':
+      case 'markedChecks': {
         const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2', 'spellV2'))
 
         for (const item of items) {
@@ -1367,6 +1370,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
 
         return { data: checks, size: checks.length }
+      }
 
       default:
         return { data: [], size: 0 }
@@ -1592,7 +1596,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
 
       case 'weapon-block':
-
       case 'weapon-parry': {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+?)\)/)?.[1]

@@ -1078,11 +1078,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       case 'Item':
         item = game.items.get(dragData.id)
         break
-      case 'JournalEntryPage':
+
+      case 'JournalEntryPage': {
         let j = game.journal.get(dragData.id)
 
         item = j.pages.get(dragData.uuid.split('.').at(-1))
         break
+      }
     }
 
     // const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
@@ -1863,7 +1865,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async _onRightClickOtf(event) {
     event.preventDefault()
     let el = event.currentTarget
-    let isDamageRoll = el.dataset.hasOwnProperty('damage')
+    let isDamageRoll = Object.hasOwn(el.dataset, 'damage')
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {

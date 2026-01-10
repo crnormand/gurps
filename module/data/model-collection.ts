@@ -1,7 +1,5 @@
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 
-const DataModel = foundry.abstract.DataModel
-
 class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends foundry.utils.Collection<Model> {
   /* ---------------------------------------- */
   /*  Properties                              */

@@ -90,7 +90,8 @@ export default class DamageChat {
       case 'Item':
         await actor.handleItemDrop(dropData)
         break
-      case 'equipment':
+
+      case 'equipment': {
         const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
 
         if (token.length !== 1) {
@@ -100,6 +101,7 @@ export default class DamageChat {
 
         await token[0].actor.handleEquipmentDrop(dropData)
         break
+      }
     }
 
     return false

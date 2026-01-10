@@ -9,25 +9,26 @@ global.foundry = {
     // @ts-ignore
     TypeDataModel: class {
       constructor(data) {
+        const isGetterProperty = (instance, propertyKey) => {
+          let prototype = instance
+
+          while (prototype) {
+            const descriptor = Object.getOwnPropertyDescriptor(prototype, propertyKey)
+
+            if (descriptor && descriptor.get && !descriptor.set) {
+              return true
+            }
+
+            prototype = Object.getPrototypeOf(prototype)
+          }
+
+          return false
+        }
+
         // Only assign properties that don't already exist as getters
         if (data) {
           for (const [key, value] of Object.entries(data)) {
-            // Check if it's a getter in this class or any parent class
-            let obj = this
-            let isGetter = false
-
-            while (obj) {
-              const descriptor = Object.getOwnPropertyDescriptor(obj, key)
-
-              if (descriptor && descriptor.get && !descriptor.set) {
-                isGetter = true
-                break
-              }
-
-              obj = Object.getPrototypeOf(obj)
-            }
-
-            if (isGetter) continue
+            if (isGetterProperty(this, key)) continue
             this[key] = value
           }
         }

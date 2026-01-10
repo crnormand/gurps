@@ -153,8 +153,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
     const msg = value.args ? game.i18n.format(value.msg, value.args) : game.i18n.localize(value.msg)
 
-    const self = this
-
     foundry.applications.handlebars
       .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] })
       .then(content => {
@@ -168,7 +166,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
         ChatMessage.create(messageData)
         ui.combat?.render()
-        self.chatmessages.push(value.msg)
+        this.chatmessages.push(value.msg)
       })
   }
 

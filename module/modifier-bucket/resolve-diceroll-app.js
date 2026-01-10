@@ -92,7 +92,7 @@ export default class ResolveDiceRoll extends Application {
           target.oldSelectionStart = target.selectionStart
           target.oldSelectionEnd = target.selectionEnd
           diceTerm.text = target.value
-        } else if (target.hasOwnProperty('oldValue')) {
+        } else if (Object.hasOwn(target, 'oldValue')) {
           target.value = target.oldValue || target.value
           target.setSelectionRange(target.oldSelectionStart || null, target.oldSelectionEnd || null)
         } else {

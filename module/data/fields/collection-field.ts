@@ -1,7 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
 
 const fields = foundry.data.fields
-const DataModel = foundry.abstract.DataModel
 
 import { PseudoDocument } from '../../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '../../pseudo-document/typed-pseudo-document.js'

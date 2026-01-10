@@ -1,6 +1,4 @@
 const fields = foundry.data.fields
-const DataModel = foundry.abstract.DataModel
-const Document = foundry.abstract.Document
 
 import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
 

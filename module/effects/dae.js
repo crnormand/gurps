@@ -40,12 +40,11 @@ function DAEfromUuid(uuid) {
       doc = doc.getEmbeddedDocument(embeddedName, embeddedId)
       parts = parts.slice(2)
     }
-  } finally {
-    /*catch (err) {
-      error(`dae | could not fetch ${uuid} ${err}`)
-    } */
-    return doc || null
+  } catch {
+    // could not fetch uuid
   }
+
+  return doc || null
 }
 
 function DAEfromActorUuid(uuid) {

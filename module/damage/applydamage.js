@@ -528,7 +528,7 @@ export default class ApplyDamageDialog extends Application {
     switch (effect.type) {
       case 'headvitalshit':
       case 'majorwound':
-      case 'crippling':
+      case 'crippling': {
         const htCheck =
           (effect?.modifier ?? 0) === 0
             ? 'HT'
@@ -538,8 +538,9 @@ export default class ApplyDamageDialog extends Application {
 
         otf = `/r [!${htCheck}]`
         break
+      }
 
-      case 'knockback':
+      case 'knockback': {
         const dx = game.i18n.localize('GURPS.attributesDX')
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
         const localeAcrobaticsName = game.i18n.localize('GURPS.skillAcrobatics')
@@ -553,6 +554,7 @@ export default class ApplyDamageDialog extends Application {
 
         otf = `/r [!${dxCheck} | Sk:${localeAcrobaticsCheck} | Sk:${localeJudoCheck}]`
         break
+      }
     }
 
     if (otf) await this.actor.runOTF(otf)
@@ -596,7 +598,7 @@ export default class ApplyDamageDialog extends Application {
     const span = button.find('span')
 
     switch (effect.type) {
-      case 'shock':
+      case 'shock': {
         // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
         const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
@@ -627,6 +629,8 @@ export default class ApplyDamageDialog extends Application {
         }
 
         break
+      }
+
       case 'headvitalshit':
       case 'majorwound':
       case 'crippling':
@@ -680,7 +684,6 @@ export default class ApplyDamageDialog extends Application {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
 
-      object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
 
       if (token) button = `/sel ${token.id} \\\\ ${button}`

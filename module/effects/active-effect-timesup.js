@@ -197,6 +197,7 @@ export function readyTimesUpSetup() {
                   }
 
                   if (['startEveryTurn', 'startEveryTurnAny'].includes(macroRepeat)) break
+                // falls through
                 case 'endEveryTurn':
                 case 'endEveryTurnAny':
                   if (

@@ -1,5 +1,3 @@
-const DataModel = foundry.abstract.DataModel
-
 import { NoteV2Schema } from 'module/actor/data/note.js'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.js'
 import { BaseItemModel } from 'module/item/data/base.js'

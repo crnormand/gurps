@@ -66,7 +66,7 @@ export class GurpsRoll extends Roll {
     const _data = super._prepareData(data)
 
     // Add the gmodc property, that returns the current sum of the modifier bucket and then clears it.
-    if (!_data.hasOwnProperty('gmodc'))
+    if (!Object.hasOwn(_data, 'gmodc'))
       Object.defineProperty(_data, 'gmodc', {
         get() {
           let m = GURPS.ModifierBucket.currentSum()
@@ -144,7 +144,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
     let physicalDice = game.user?.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     if (physicalDice) {
-      return new Promise(async resolve => {
+      return new Promise(resolve => {
         let dialog = new ResolveDiceRoll(this)
 
         let callback = async () => {
@@ -943,7 +943,7 @@ export class ModifierBucket extends Application {
         // Can't adjust position if there is no #chat-message element
         if (!chatBox) return
 
-        const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
+        const chatBoxIsFloating = chatBox.parentNode.id === 'chat-notifications'
 
         const uiRight = document.getElementById('ui-right-column-1')
 

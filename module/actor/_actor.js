@@ -806,7 +806,9 @@ export class GurpsActor extends Actor {
 
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch {
+      // During game startup, an exception is being thrown trying to access 'game.combat'
+    }
 
     let updateMove = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
@@ -1029,7 +1031,7 @@ export class GurpsActor extends Actor {
    */
   async update(data, context) {
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
-      if (data.hasOwnProperty('system.HP.value')) {
+      if (Object.hasOwn(data, 'system.HP.value')) {
         let flag = data['system.HP.value'] < this.system.HP.max / 3
 
         if (!!this.system.conditions.reeling != flag) {
@@ -1048,7 +1050,7 @@ export class GurpsActor extends Actor {
         }
       }
 
-      if (data.hasOwnProperty('system.FP.value')) {
+      if (Object.hasOwn(data, 'system.FP.value')) {
         let flag = data['system.FP.value'] < this.system.FP.max / 3
 
         if (!!this.system.conditions.exhausted != flag) {
@@ -1074,12 +1076,10 @@ export class GurpsActor extends Actor {
   }
 
   sendChatMessage(msg) {
-    let self = this
-
     foundry.applications.handlebars
       .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] })
       .then(content => {
-        let users = self.getOwners()
+        let users = this.getOwners()
         let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
 
         let messageData = {
@@ -1883,7 +1883,7 @@ export class GurpsActor extends Actor {
         let index = 0
         let list = foundry.utils.getProperty(this, targetkey)
 
-        while (list.hasOwnProperty(zeroFill(index))) index++
+        while (Object.hasOwn(list, zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
       } else targetkey = 'system.equipment.other'
     if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
@@ -1897,9 +1897,9 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = _data.uuid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = !!_data.equipped ?? true
+      eqt.equipped = _data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = !!_data.carried ?? true
+      eqt.carried = _data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
 
@@ -1938,7 +1938,7 @@ export class GurpsActor extends Actor {
 
         if (!!parentItem.system[subType] && typeof parentItem.system[subType] === 'object') {
           for (const key in parentItem.system[subType]) {
-            if (parentItem.system[subType].hasOwnProperty(key)) {
+            if (Object.hasOwn(parentItem.system[subType], key)) {
               const childItemData = parentItem.system[subType][key]
               const commitData = await this._addChildItemElement(parentItem, childItemData, subType, newList)
 
@@ -3200,7 +3200,7 @@ export class GurpsActor extends Actor {
     let size = 0
 
     switch (checkType) {
-      case 'attributeChecks':
+      case 'attributeChecks': {
         const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']
 
         for (const key of keys) {
@@ -3217,7 +3217,9 @@ export class GurpsActor extends Actor {
         result.data = checks
         result.size = checks.length
         break
-      case 'otherChecks':
+      }
+
+      case 'otherChecks': {
         const icons = {
           checks: {
             vision: 'fa-solid fa-eye',
@@ -3253,7 +3255,9 @@ export class GurpsActor extends Actor {
         result.data = data
         result.size = size
         break
-      case 'attackChecks':
+      }
+
+      case 'attackChecks': {
         const attacks = ['melee', 'ranged']
 
         for (const key of attacks) {
@@ -3288,7 +3292,9 @@ export class GurpsActor extends Actor {
         result.data = data
         result.size = size
         break
-      case 'defenseChecks':
+      }
+
+      case 'defenseChecks': {
         recurselist(this.system.encumbrance, (enc, _k, _d) => {
           if (enc.current) {
             data.dodge = {
@@ -3331,7 +3337,9 @@ export class GurpsActor extends Actor {
         result.data = data
         result.size = size + 1
         break
-      case 'markedChecks':
+      }
+
+      case 'markedChecks': {
         const traits = ['skills', 'spells', 'ads']
 
         for (const traitType of traits) {
@@ -3377,6 +3385,7 @@ export class GurpsActor extends Actor {
         result.data = checks
         result.size = checks.length
         break
+      }
     }
 
     return result
@@ -3486,7 +3495,7 @@ export class GurpsActor extends Actor {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
 
-        if (optionalArgs.hasOwnProperty('itemPath')) {
+        if (Object.hasOwn(optionalArgs, 'itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
@@ -3937,7 +3946,7 @@ export class GurpsActor extends Actor {
     let name, mode
 
     switch (originType) {
-      case 'attack':
+      case 'attack': {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+)\)/)?.[1]
         const path = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
@@ -3965,6 +3974,7 @@ export class GurpsActor extends Actor {
         }
 
         break
+      }
 
       case 'weapon-block':
       case 'weapon-parry':
@@ -3993,7 +4003,8 @@ export class GurpsActor extends Actor {
         }
 
         break
-      case 'skill-spell':
+
+      case 'skill-spell': {
         const item = this.findByOriginalName(action.name)
 
         if (item) {
@@ -4015,8 +4026,9 @@ export class GurpsActor extends Actor {
         }
 
         break
+      }
 
-      case 'attribute':
+      case 'attribute': {
         let attrName = action?.overridetxt
 
         if (!attrName) attrName = game.i18n.localize(`GURPS.${action.attrkey.toLowerCase()}`)
@@ -4029,6 +4041,7 @@ export class GurpsActor extends Actor {
           pageRef: null,
         }
         break
+      }
 
       case 'controlroll':
         result = {

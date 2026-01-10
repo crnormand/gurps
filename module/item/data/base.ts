@@ -23,7 +23,7 @@ type ItemMetadata = Readonly<{
   /** Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
   /** Record of actions the item can perform */
-  actions: Record<string, Function>
+  actions: Record<string, (...args: any[]) => any>
   /** A set of Item subtypes that this item cna contain as children */
   childTypes: string[]
   /** A set of Item subtypes that this item can contain as modifiers */

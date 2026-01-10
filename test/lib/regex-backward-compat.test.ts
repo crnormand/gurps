@@ -15,8 +15,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: ranged-attack.ts, actor-importer.js, chat-processors.js, anim.js, gurps.js, _actor.js, gurps-actor.ts
    */
   describe('Category 1: Numeric/Decimal Patterns [\\d.]', () => {
-    // OLD: /[\d\.]+/  NEW: /[\d.]+/
-    const oldPattern = /[\d\.]+/
+    // OLD: /[\d.]+/  NEW: /[\d.]+/
+    const oldPattern = /[\d.]+/
     const newPattern = /[\d.]+/
 
     test.each([
@@ -35,6 +35,7 @@ describe('Regex Backward Compatibility', () => {
 
     test('extracted match is identical', () => {
       const testInput = 'value: 123.456 units'
+
       expect(testInput.match(oldPattern)?.[0]).toBe(testInput.match(newPattern)?.[0])
       expect(testInput.match(oldPattern)?.[0]).toBe('123.456')
     })
@@ -45,8 +46,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: chat-processors.js, everything.js, chat.js, status.js, tracker.js, anim.js
    */
   describe('Category 2: Command Prefix Patterns [/?]', () => {
-    // OLD: /^[\/\?]help$/i  NEW: /^[/?]help$/i
-    const oldPattern = /^[\/\?]help$/i
+    // OLD: /^[/?]help$/i  NEW: /^[/?]help$/i
+    const oldPattern = /^[/?]help$/i
     const newPattern = /^[/?]help$/i
 
     test.each([
@@ -63,7 +64,7 @@ describe('Regex Backward Compatibility', () => {
     })
 
     // Test with command suffix pattern
-    const oldSuffixPattern = /^[\/\?](sound|status|wait)$/i
+    const oldSuffixPattern = /^[/?](sound|status|wait)$/i
     const newSuffixPattern = /^[/?](sound|status|wait)$/i
 
     test.each([
@@ -85,8 +86,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: chat-processors.js, damage-tables.js, dierolls/dieroll.js, damagechat.js
    */
   describe('Category 3: Multiplier Patterns [×xX*]', () => {
-    // OLD: /[×xX\*]\d+/  NEW: /[×xX*]\d+/
-    const oldPattern = /[×xX\*]\d+/
+    // OLD: /[×xX*]\d+/  NEW: /[×xX*]\d+/
+    const oldPattern = /[×xX*]\d+/
     const newPattern = /[×xX*]\d+/
 
     test.each([
@@ -104,6 +105,7 @@ describe('Regex Backward Compatibility', () => {
 
     test('extracted multiplier is identical', () => {
       const testInput = '3d6 x5 damage'
+
       expect(testInput.match(oldPattern)?.[0]).toBe(testInput.match(newPattern)?.[0])
       expect(testInput.match(oldPattern)?.[0]).toBe('x5')
     })
@@ -114,8 +116,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: _actor.js, gurps-actor.ts
    */
   describe('Category 4: Split DR Pattern [/|]', () => {
-    // OLD: /(\d+) *([/\|]) *(\d+)/  NEW: /(\d+) *([/|]) *(\d+)/
-    const oldPattern = /(\d+) *([/\|]) *(\d+)/
+    // OLD: /(\d+) *([/|]) *(\d+)/  NEW: /(\d+) *([/|]) *(\d+)/
+    const oldPattern = /(\d+) *([/|]) *(\d+)/
     const newPattern = /(\d+) *([/|]) *(\d+)/
 
     test.each([
@@ -150,8 +152,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: _actor.js, gurps-actor.ts
    */
   describe('Category 5: Bracket Replacement Pattern [[\\]]', () => {
-    // OLD: /[\[\]]/g  NEW: /[[\]]/g
-    const oldPattern = /[\[\]]/g
+    // OLD: /[[\]]/g  NEW: /[[\]]/g
+    const oldPattern = /[[\]]/g
     const newPattern = /[[\]]/g
 
     test.each([
@@ -170,6 +172,7 @@ describe('Regex Backward Compatibility', () => {
 
     test('replacement is identical', () => {
       const testInput = '[Skill-10]'
+
       // Reset lastIndex before each use
       oldPattern.lastIndex = 0
       newPattern.lastIndex = 0
@@ -183,9 +186,9 @@ describe('Regex Backward Compatibility', () => {
    * Files: chat-processors.js
    */
   describe('Category 6: Sign Patterns [+\\-=]', () => {
-    // OLD: /[\+-=]\w+/  NEW: /[+\-=]\w+/
+    // OLD: /[+\-=]\w+/  NEW: /[+\-=]\w+/
     // Note: In the old pattern, \+ was unnecessarily escaped
-    const oldPattern = /[\+-=]\w+/
+    const oldPattern = /[+\-=]\w+/
     const newPattern = /[+\-=]\w+/
 
     test.each([
@@ -207,8 +210,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: chat-processors.js, anim.js
    */
   describe('Category 7: Stretch Patterns [+>]', () => {
-    // OLD: /[\+>]\d+/  NEW: /[+>]\d+/
-    const oldPattern = /[\+>]\d+/
+    // OLD: /[+>]\d+/  NEW: /[+>]\d+/
+    const oldPattern = /[+>]\d+/
     const newPattern = /[+>]\d+/
 
     test.each([
@@ -229,8 +232,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: status.js
    */
   describe('Category 8: Status Target Pattern [^@: ]', () => {
-    // OLD: /[^\@: ]+/  NEW: /[^@: ]+/
-    const oldPattern = /[^\@: ]+/
+    // OLD: /[^@: ]+/  NEW: /[^@: ]+/
+    const oldPattern = /[^@: ]+/
     const newPattern = /[^@: ]+/
 
     test.each([
@@ -247,6 +250,7 @@ describe('Regex Backward Compatibility', () => {
 
     test('extracted status name is identical', () => {
       const testInput = 'stunned @self'
+
       expect(testInput.match(oldPattern)?.[0]).toBe(testInput.match(newPattern)?.[0])
       expect(testInput.match(oldPattern)?.[0]).toBe('stunned')
     })
@@ -257,8 +261,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: tracker.js
    */
   describe('Category 9: Tracker Parens Pattern [^)]', () => {
-    // OLD: /\(([^\)]+)\)/  NEW: /\(([^)]+)\)/
-    const oldPattern = /\(([^\)]+)\)/
+    // OLD: /\(([^)]+)\)/  NEW: /\(([^)]+)\)/
+    const oldPattern = /\(([^)]+)\)/
     const newPattern = /\(([^)]+)\)/
 
     test.each([
@@ -315,8 +319,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: resolve-diceroll-app.js
    */
   describe('Category 11: Comma-Separated Numbers [ ,0-9.+-]', () => {
-    // OLD: /^\d*([ ,0-9\.\+-])*$/  NEW: /^\d*([ ,0-9.+-])*$/
-    const oldPattern = /^\d*([ ,0-9\.\+-])*$/
+    // OLD: /^\d*([ ,0-9.+-])*$/  NEW: /^\d*([ ,0-9.+-])*$/
+    const oldPattern = /^\d*([ ,0-9.+-])*$/
     const newPattern = /^\d*([ ,0-9.+-])*$/
 
     test.each([
@@ -340,13 +344,13 @@ describe('Regex Backward Compatibility', () => {
    * Files: ranged-attack.ts, _actor.js, gurps-actor.ts
    */
   describe('Category 12: Range Conversion Patterns', () => {
-    // Single range: OLD: /^\s*[×xX]([\d\.]+)\s*$/  NEW: /^\s*[×xX]([\d.]+)\s*$/
-    const oldSinglePattern = /^\s*[×xX]([\d\.]+)\s*$/
+    // Single range: OLD: /^\s*[×xX]([\d.]+)\s*$/  NEW: /^\s*[×xX]([\d.]+)\s*$/
+    const oldSinglePattern = /^\s*[×xX]([\d.]+)\s*$/
     const newSinglePattern = /^\s*[×xX]([\d.]+)\s*$/
 
-    // Double range: OLD: /^\s*[×xX]([\d\.]+)\s*-\s*[×xX]([\d\.]+)\s*$/
+    // Double range: OLD: /^\s*[×xX]([\d.]+)\s*-\s*[×xX]([\d.]+)\s*$/
     //               NEW: /^\s*[×xX]([\d.]+)\s*-\s*[×xX]([\d.]+)\s*$/
-    const oldDoublePattern = /^\s*[×xX]([\d\.]+)\s*-\s*[×xX]([\d\.]+)\s*$/
+    const oldDoublePattern = /^\s*[×xX]([\d.]+)\s*-\s*[×xX]([\d.]+)\s*$/
     const newDoublePattern = /^\s*[×xX]([\d.]+)\s*-\s*[×xX]([\d.]+)\s*$/
 
     describe('single range pattern', () => {
@@ -365,6 +369,7 @@ describe('Regex Backward Compatibility', () => {
 
       test('captured multiplier is identical', () => {
         const testInput = 'x3.5'
+
         expect(testInput.match(oldSinglePattern)?.[1]).toBe(testInput.match(newSinglePattern)?.[1])
         expect(testInput.match(newSinglePattern)?.[1]).toBe('3.5')
       })
@@ -401,8 +406,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: chat-processors.js
    */
   describe('Category 13: Dot/Slash Prefix Pattern [./]', () => {
-    // OLD: /^[.\/](.*?)$/  NEW: /^[./](.*?)$/
-    const oldPattern = /^[.\/](.*?)$/
+    // OLD: /^[./](.*?)$/  NEW: /^[./](.*?)$/
+    const oldPattern = /^[./](.*?)$/
     const newPattern = /^[./](.*?)$/
 
     test.each([
@@ -423,8 +428,8 @@ describe('Regex Backward Compatibility', () => {
    * Files: chat-processors.js
    */
   describe('Category 14: Equipment Search Pattern [o.:]', () => {
-    // OLD: /^(o[\.:])?(.*)/i  NEW: /^(o[.:])?(.*)/i
-    const oldPattern = /^(o[\.:])?(.*)/i
+    // OLD: /^(o[.:])?(.*)/i  NEW: /^(o[.:])?(.*)/i
+    const oldPattern = /^(o[.:])?(.*)/i
     const newPattern = /^(o[.:])?(.*)/i
 
     test.each([
@@ -457,16 +462,17 @@ describe('Regex Backward Compatibility', () => {
    */
   describe('Edge Cases', () => {
     test('multiple occurrences in global pattern', () => {
-      const oldPattern = /[\d\.]+/g
+      const oldPattern = /[\d.]+/g
       const newPattern = /[\d.]+/g
 
       const testInput = '1.5 and 2.5 and 3.5'
+
       expect(testInput.match(oldPattern)).toEqual(testInput.match(newPattern))
       expect(testInput.match(newPattern)).toEqual(['1.5', '2.5', '3.5'])
     })
 
     test('unicode multiplication sign', () => {
-      const oldPattern = /[×xX\*]/
+      const oldPattern = /[×xX*]/
       const newPattern = /[×xX*]/
 
       expect(oldPattern.test('×')).toBe(true)
@@ -475,8 +481,8 @@ describe('Regex Backward Compatibility', () => {
     })
 
     test('en-dash vs hyphen-minus', () => {
-      const oldPattern = /[–\-]/
-      const newPattern = /[–\-]/
+      const oldPattern = /[–-]/
+      const newPattern = /[–-]/
 
       // Both should match both characters
       expect(oldPattern.test('–')).toBe(true) // en-dash

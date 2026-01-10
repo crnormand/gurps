@@ -94,11 +94,13 @@ class PseudoDocument<
    * The parent document of this pseudo-document.
    */
   get document(): Document.Any {
-    let parent: DataModel.Any = this
+    const findDocument = (model: DataModel.Any): Document.Any => {
+      if (model instanceof Document) return model
 
-    while (!(parent instanceof Document)) parent = parent.parent
+      return findDocument(model.parent)
+    }
 
-    return parent
+    return findDocument(this)
   }
 
   /* ---------------------------------------- */
