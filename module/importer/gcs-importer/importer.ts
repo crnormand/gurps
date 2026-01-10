@@ -87,7 +87,6 @@ class GcsImporter {
         actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
       )
 
-      // When importing into existing actor, delete only imported items
       await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
