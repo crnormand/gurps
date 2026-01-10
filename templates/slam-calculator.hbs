@@ -1,57 +1,55 @@
-<form class="gga-app" slam-calculator autocomplete="off">
+<form class='gga-app' slam-calculator autocomplete='off'>
   <h2>
     {{attackerToken.name}}
-    <i>{{localize "GURPS.slams"}} <i class="subtle fas fa-align-right"></i><i class="fas fa-running"></i></i>
+    <i>{{localize 'GURPS.slams'}} <i class='subtle fas fa-align-right'></i><i class='fas fa-running'></i></i>
     {{targetToken.name}}
   </h2>
-  <div style="display: flex; justify-content: center; align-items: stretch; align-self: center">
-    <span
-      ><label for="dfrpgrules">{{localize "GURPS.slamDFRPGRules"}}:</label>
-      <input id="dfrpgrules" type="checkbox" {{checked useDFRPGRules}}
-    /></span>
+  <div style='display: flex; justify-content: center; align-items: stretch; align-self: center'>
+    <span><label for='dfrpgrules'>{{localize 'GURPS.slamDFRPGRules'}}:</label>
+      <input id='dfrpgrules' type='checkbox' {{checked useDFRPGRules}} /></span>
   </div>
-  <div class="gga-group inputs" style="height: unset; border: none">
+  <div class='gga-group inputs' style='height: unset; border: none'>
     <h4>{{attackerToken.name}}</h4>
-    <div class="label-value-row">
+    <div class='label-value-row'>
       {{#if useDFRPGRules}}
-      <label>{{localize "GURPS.thrust"}}:</label>
-      <div><input id="attacker-thr" type="text" value="{{attackerThr}}" data-dtype="String" /></div>
+        <label>{{localize 'GURPS.thrust'}}:</label>
+        <div><input id='attacker-thr' type='text' value='{{attackerThr}}' data-dtype='String' /></div>
       {{else}}
-      <label>{{localize "GURPS.HP"}}:</label>
-      <div><input id="attacker-hp" type="text" value="{{attackerHp}}" data-dtype="Number" /></div>
+        <label>{{localize 'GURPS.HP'}}:</label>
+        <div><input id='attacker-hp' type='text' value='{{attackerHp}}' data-dtype='Number' /></div>
       {{/if}}
-      <label>{{localize "GURPS.slamVelocity"}}:</label>
-      <div><input id="attacker-speed" type="text" value="{{attackerSpeed}}" data-dtype="Number" /></div>
-      <label for="aoa">{{localize "GURPS.slamAOAStrong"}}:</label>
-      <div><input id="aoa" type="checkbox" /></div>
-      <label>{{localize "GURPS.slamShieldDB"}}:</label>
-      <div><input id="db" type="text" value="{{shieldDB}}" data-dtype="Number" /></div>
+      <label>{{localize 'GURPS.slamVelocity'}}:</label>
+      <div><input id='attacker-speed' type='text' value='{{attackerSpeed}}' data-dtype='Number' /></div>
+      <label for='aoa'>{{localize 'GURPS.slamAOAStrong'}}:</label>
+      <div><input id='aoa' type='checkbox' /></div>
+      <label>{{localize 'GURPS.slamShieldDB'}}:</label>
+      <div><input id='db' type='text' value='{{shieldDB}}' data-dtype='Number' /></div>
     </div>
   </div>
-  <div class="gga-group inputs" style="height: unset; border: none; padding-top: 0.5em">
+  <div class='gga-group inputs' style='height: unset; border: none; padding-top: 0.5em'>
     <h4>{{targetToken.name}}</h4>
-    <div class="label-value-row">
+    <div class='label-value-row'>
       {{#if useDFRPGRules}}
-      <label>{{localize "GURPS.thrust"}}:</label>
-      <div><input id="target-thr" type="text" value="{{targetThr}}" data-dtype="String" /></div>
+        <label>{{localize 'GURPS.thrust'}}:</label>
+        <div><input id='target-thr' type='text' value='{{targetThr}}' data-dtype='String' /></div>
       {{else}}
-      <label>{{localize "GURPS.HP"}}:</label>
-      <input id="target-hp" type="text" value="{{targetHp}}" data-dtype="Number" />
+        <label>{{localize 'GURPS.HP'}}:</label>
+        <input id='target-hp' type='text' value='{{targetHp}}' data-dtype='Number' />
       {{/if}}
-      <label>{{localize "GURPS.slamVelocity"}}:</label>
-      <div><input id="target-speed" type="text" value="{{targetSpeed}}" data-dtype="Number" /></div>
+      <label>{{localize 'GURPS.slamVelocity'}}:</label>
+      <div><input id='target-speed' type='text' value='{{targetSpeed}}' data-dtype='Number' /></div>
     </div>
   </div>
   <div
-    class="gga-group inputs"
-    style="border: none; border-top: 1px solid #999; height: unset; margin: 0.5em 0; padding-top: 0.5em"
+    class='gga-group inputs'
+    style='border: none; border-top: 1px solid #999; height: unset; margin: 0.5em 0; padding-top: 0.5em'
   >
-    <div class="label-value-row">
-      <label><strong>{{localize "GURPS.slamRelativeVelocity"}}:</strong></label>
-      <input id="relative-speed" type="text" value="{{relativeSpeed}}" readonly disabled />
+    <div class='label-value-row'>
+      <label><strong>{{localize 'GURPS.slamRelativeVelocity'}}:</strong></label>
+      <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled />
     </div>
   </div>
-  <div class="button-bar">
-    <button><i class="fas fa-check"></i> {{localize "GURPS.resolve"}}</button>
+  <div class='button-bar'>
+    <button><i class='fas fa-check'></i> {{localize 'GURPS.resolve'}}</button>
   </div>
 </form>

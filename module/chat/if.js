@@ -1,6 +1,7 @@
 'use strict'
 
 import { parselink } from '../../lib/parselink.js'
+
 import ChatProcessor from './chat-processor.js'
 
 export class IfChatProcessor extends ChatProcessor {
@@ -10,14 +11,17 @@ export class IfChatProcessor extends ChatProcessor {
   matches(line) {
     // Since this can get called recursively, we cannot use an instance variable to save the match status
     let m = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
+
     return m
   }
 
   async _handleResult(then) {
     let m = then.match(/^\[([^\]]+)\]/)
-    if (!!m) {
+
+    if (m) {
       let action = parselink(m[1].trim())
-      if (!!action.action) {
+
+      if (action.action) {
         if (action.action.type === 'modifier')
           // only need to show modifiers, everything else does something.
           this.priv(then)
@@ -35,16 +39,20 @@ export class IfChatProcessor extends ChatProcessor {
     const results = {
       s: restOfLine, // assume what is left if the success result.
     } // s, f, cs, cf
+
     if (restOfLine.match(/{.*}/)) {
       // using the advanced sytax
       m = XRegExp.matchRecursive(restOfLine, '{', '}', 'g', { valueNames: ['between', null, 'match', null] })
       let needSuccess = true // if we don't get a prefix, assume it is s:{} 'success'
       var next, key
+
       while ((next = m.shift())) {
         let v = next.value.trim()
+
         if (next.name === 'between' && v.endsWith(':')) key = v.slice(0, -1)
         if (!key || !key.trim()) key = needSuccess ? 's' : 'f'
         if (key === 's') needSuccess = false
+
         if (next.name === 'match') {
           results[key] = next.value
           key = ''
@@ -55,8 +63,10 @@ export class IfChatProcessor extends ChatProcessor {
       results.s = m[1].trim()
       results.f = m[2].trim()
     }
+
     let action = parselink(otf)
-    if (!!action.action) {
+
+    if (action.action) {
       if (
         ['skill-spell', 'attribute', 'attack', 'controlroll', 'chat', 'test-exists', 'iftest'].includes(
           action.action.type
@@ -65,21 +75,25 @@ export class IfChatProcessor extends ChatProcessor {
         this.priv(line)
         this.send()
         let event = this.msgs().event
+
         event.chatmsgData = this.msgs().data
         let pass = await GURPS.performAction(action.action, GURPS.LastActor, event)
-        if (!!GURPS.stopActions) {
+
+        if (GURPS.stopActions) {
           console.log('Stop actions after dialog canceled')
           GURPS.stopActions = false
+
           return
         }
+
         if (invert) pass = !pass
         if (pass) {
           if (!!results.cs && GURPS.lastTargetedRoll?.isCritSuccess) {
             await this._handleResult(results.cs)
-          } else if (!!results.s) await this._handleResult(results.s)
+          } else if (results.s) await this._handleResult(results.s)
         } else if (!!results.cf && GURPS.lastTargetedRoll?.isCritFailure) {
           await this._handleResult(results.cf)
-        } else if (!!results.f) await this._handleResult(results.f)
+        } else if (results.f) await this._handleResult(results.f)
       } else this.priv(`${game.i18n.localize('GURPS.chatMustBeACheck')}: [${otf}]`)
     } else this.priv(`${game.i18n.localize('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
   }

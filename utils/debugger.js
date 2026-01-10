@@ -6,15 +6,17 @@ globalThis._patchedFuncs = {}
 export let patchFunc = (prop, func, type = 'WRAPPER') => {
   let nonLibWrapper = () => {
     const id = foundry.utils.randomID()
+
     _patchedFuncs[id] = eval(prop)
     eval(`${prop} = function (event) {
             return func.call(this, ${type != 'OVERRIDE' ? `_patchedFuncs["${id}"].bind(this),` : ''} ...arguments);
         }`)
   }
+
   if (game.modules.get('lib-wrapper')?.active) {
     try {
       libWrapper.register('gurps', prop, func, type)
-    } catch (e) {
+    } catch {
       nonLibWrapper()
     }
   } else {
@@ -39,6 +41,7 @@ export class GGADebugger {
       const label = game.i18n.localize(this.object.constructor.metadata.label)
       const name = this.object.name
       const srcLink = document.createElement('a')
+
       srcLink.classList.add('document-debug-link')
       srcLink.setAttribute('alt', game.i18n.localize('GURPS.settingShowDebugTooltip'))
       srcLink.dataset.tooltip = game.i18n.localize('GURPS.settingShowDebugTooltip')
@@ -55,6 +58,7 @@ export class GGADebugger {
               label: 'Copy',
               callback: () => {
                 let src = JSON.stringify(this.object, null, 2)
+
                 game.clipboard.copyPlainText(src)
                 ui.notifications.info(`Copied to clipboard`)
               },
@@ -67,6 +71,7 @@ export class GGADebugger {
           },
           default: 'close',
         })
+
         await dialog.render(true)
       })
       title.append(srcLink)

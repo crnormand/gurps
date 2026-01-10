@@ -1,5 +1,6 @@
 import { GcsElement } from './base.js'
-import fields = foundry.data.fields
+
+const fields = foundry.data.fields
 
 /* ---------------------------------------- */
 

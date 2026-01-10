@@ -51,19 +51,23 @@ export class SlamCalculator {
     const slam = this._getSlamData(data)
 
     let attackerRoll = this._roll.create(diceToFormula(slam.attackerDice, `[Slam Attacker's roll]`, true))
+
     await attackerRoll.evaluate()
 
     let attackerMin = false
     let attackerResult = attackerRoll.total + slam.attackerAdds
+
     if (attackerResult < 1) {
       attackerResult = 1
       attackerMin = true
     }
 
     let targetRoll = this._roll.create(diceToFormula(slam.targetDice, `[Slam Defender's roll]`, true))
+
     await targetRoll.evaluate()
     let targetMin = false
     let targetResult = targetRoll.total + slam.targetAdds
+
     if (targetResult < 1) {
       targetResult = 1
       targetMin = true
@@ -92,6 +96,7 @@ export class SlamCalculator {
     }
 
     let result = this.format(resultData.effect.localizationKey, resultData)
+
     result = resultData.effect.createButton(result, resultData)
 
     let html = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/slam-results.hbs', {
@@ -140,6 +145,7 @@ export class SlamCalculator {
 
     await ChatMessage.create(messageData)
     let targets = []
+
     game.user.targets.forEach(t => targets.push(t))
     game.user.targets.clear()
     await GURPS.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name} "slam damage"]`)
@@ -209,9 +215,11 @@ export class SlamCalculator {
     }
 
     let dice = []
+
     rollArray.forEach(r => {
       r.dice.forEach(d => {
         let type = 'd' + d.faces
+
         d.results.forEach(s =>
           dice.push({
             result: s.result,
@@ -238,13 +246,16 @@ export class SlamCalculator {
       roll.terms.length > 1
         ? `${this.localize('GURPS.rolled')} (${results})`
         : `${this.localize('GURPS.rolled')} ${results}`
+
     if (roll.terms[2]?.number !== '0') explanation += `${roll.terms[1].formula}${roll.terms[2].formula}`
 
-    if (!!isAoAStrong) explanation += ` + 2 (${this.localize('GURPS.slamAOAStrong')})`
+    if (isAoAStrong) explanation += ` + 2 (${this.localize('GURPS.slamAOAStrong')})`
     let sign = shieldDB >= 0 ? '+' : '-'
-    if (!!shieldDB) explanation += ` ${sign} ${Math.abs(shieldDB)} (${this.localize('GURPS.slamShieldDB')})`
-    if (!!velocity) explanation += ` + ${velocity} ${this.localize('GURPS.slamRelativeVelocity')}`
+
+    if (shieldDB) explanation += ` ${sign} ${Math.abs(shieldDB)} (${this.localize('GURPS.slamShieldDB')})`
+    if (velocity) explanation += ` + ${velocity} ${this.localize('GURPS.slamRelativeVelocity')}`
     if (min) explanation += ` (${this.localize('GURPS.minimum')} 1)`
+
     return explanation
   }
 }

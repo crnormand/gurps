@@ -1,5 +1,5 @@
-import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { arrayToObject } from '../../../lib/utilities.js'
+import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { GurpsItemV2 } from '../gurps-item.js'
 
 // Make selected prototype getters enumerable own properties so Object.values() includes them.
@@ -38,6 +38,7 @@ class TraitV1 {
     const containedItems: GurpsItemV2<'featureV2'>[] = this.traitV2.sortedContents.map(
       it => it as GurpsItemV2<'featureV2'>
     )
+
     this._contains = arrayToObject(
       containedItems?.map(item => new TraitV1(item)),
       5
@@ -123,6 +124,7 @@ class TraitV1 {
       .filter(it => it)
       .join('<br>')
       .trim()
+
     return notes
   }
 
@@ -152,6 +154,7 @@ class TraitV1 {
 
   static getUpdateData(newData: Partial<TraitV1>, traitv1?: TraitV1): Record<string, any> {
     const updateData: Record<string, any> = {}
+
     updateData['type'] = 'featureV2'
     updateData['system'] = {}
     updateData.system['open'] = true
@@ -193,6 +196,7 @@ class TraitV1 {
     if (Object.keys(newData).includes('name')) {
       const level = newData.level ?? traitv1?.level ?? null
       const nameWithoutLevel = newData.name!.replace(new RegExp(`\\s${level}$`), '')
+
       updateData['name'] = nameWithoutLevel
       updateData.system.fea['name'] = nameWithoutLevel
     }
@@ -203,6 +207,7 @@ class TraitV1 {
       // Escape special regex characters in crText (parentheses, etc.)
       const escapedCrText = crText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       let notesWithoutCR = newData.notes!.replace(new RegExp(`^\\[${escapedCrText}:.*?\\]`), '')
+
       if (notesWithoutCR.startsWith('<br/>')) notesWithoutCR = notesWithoutCR.substring(5)
 
       updateData.system.fea['notes'] = notesWithoutCR

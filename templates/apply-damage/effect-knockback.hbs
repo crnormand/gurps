@@ -1,26 +1,26 @@
-<li name="result-effect">
+<li name='result-effect'>
   <div>
     <div>
-      <header>{{localize "GURPS.knockback" amount=amount unit=unit}}</header>
-      <aside>{{localize "GURPS.dxJudoAcrobaticsCheckToRemainStanding" modifierText=modifierText}}</aside>
+      <header>{{localize 'GURPS.knockback' amount=amount unit=unit}}</header>
+      <aside>{{localize 'GURPS.dxJudoAcrobaticsCheckToRemainStanding' modifierText=modifierText}}</aside>
     </div>
-    <div id="test-knockback" class="with-send-button">
-      <button name="test-knockback" data-effect="{{jsonStringify this}}">
-        <span class="fa fa-dice" title="{{testTitle}}"></span>
+    <div id='test-knockback' class='with-send-button'>
+      <button name='test-knockback' data-effect='{{jsonStringify this}}'>
+        <span class='fa fa-dice' title='{{testTitle}}'></span>
       </button>
     </div>
     {{#each buttons as |button|}}
-    <div id="add-knockback" class="with-send-button">
-      <button name="add-knockback" data-effect="{{jsonStringify this}}">
-        <span class="fa {{spanClass}} {{effectName}}" data-actor="{{actorId}}" title="{{effectTitle}}"></span>
-      </button>
-    </div>
+      <div id='add-knockback' class='with-send-button'>
+        <button name='add-knockback' data-effect='{{jsonStringify this}}'>
+          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}' title='{{effectTitle}}'></span>
+        </button>
+      </div>
     {{/each}}
-    <div class="with-send-button">
-      <button name="send-knockback" data-struct="{{jsonStringify this}}" title="Send to chat">
-        <span class="fa fa-comment-alt"></span>
+    <div class='with-send-button'>
+      <button name='send-knockback' data-struct='{{jsonStringify this}}' title='Send to chat'>
+        <span class='fa fa-comment-alt'></span>
       </button>
     </div>
-    <div><span class="pdflink">{{localize "GURPS.pdfKnockback"}}</span></div>
+    <div><span class='pdflink'>{{localize 'GURPS.pdfKnockback'}}</span></div>
   </div>
 </li>

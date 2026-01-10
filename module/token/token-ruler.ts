@@ -17,6 +17,7 @@ export default class GurpsTokenRuler extends foundry.canvas.placeables.tokens.To
     // @ts-expect-error waiting for types to catch up
     const data = super._getGridHighlightStyle(waypoint, offset)
     const actor = this.token.actor
+
     if (!actor) return data
 
     const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)

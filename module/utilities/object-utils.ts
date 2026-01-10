@@ -4,12 +4,14 @@
  * @param object The object to define properties on.
  * @param keys The keys of the properties to define.
  */
-function defineGetterProperties(object: Object, keys: readonly string[]) {
+function defineGetterProperties(object: object, keys: readonly string[]) {
   const proto = Object.getPrototypeOf(object)
+
   for (const key of keys) {
     if (Object.prototype.hasOwnProperty.call(object, key)) continue // already own
 
     const desc = Object.getOwnPropertyDescriptor(proto, key)
+
     if (desc?.get) {
       Object.defineProperty(object, key, {
         get: desc.get.bind(object),
@@ -43,6 +45,7 @@ function parseItemKey(key: string): [string, number | undefined, string, string 
 
   // Collection is the first two components unless it is equipment, then its the first three.
   let primaryComponentPath = [components[0], components[1]].join('.')
+
   if (primaryComponentPath === 'system.equipmentV2') primaryComponentPath += '.' + components[2]
 
   // Determine how many components make up the primary path
@@ -55,15 +58,18 @@ function parseItemKey(key: string): [string, number | undefined, string, string 
 
   // Check if the last component is a property (non-numeric).
   const lastComponent = components[components.length - 1]
+
   if (isNaN(parseInt(lastComponent))) {
     // It's a property.
     const property = components.pop()
     const index = components[components.length - 1].match(/^\d+$/) ? parseInt(components.pop() ?? '0') : undefined
-    let path: string | null = components.join('.').replace(primaryComponentPath, '').replace(/^\./, '')
+    const path: string | null = components.join('.').replace(primaryComponentPath, '').replace(/^\./, '')
+
     return [primaryComponentPath, index, path, property]
   }
+
   const index = components[components.length - 1].match(/^\d+$/) ? parseInt(components.pop() ?? '0') : 0
-  let path: string | null = components.join('.').replace(primaryComponentPath, '').replace(/^\./, '')
+  const path: string | null = components.join('.').replace(primaryComponentPath, '').replace(/^\./, '')
 
   return [primaryComponentPath, index, path, undefined]
 }

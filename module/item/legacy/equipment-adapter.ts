@@ -1,7 +1,7 @@
-import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { arrayToObject } from '../../../lib/utilities.js'
-import { GurpsItemV2 } from '../gurps-item.js'
+import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { EquipmentModel } from '../data/equipment.js'
+import { GurpsItemV2 } from '../gurps-item.js'
 
 // Make selected prototype getters enumerable own properties so Object.values() includes them.
 const getterKeys = [
@@ -47,6 +47,7 @@ class EquipmentV1 {
     const containedItems: GurpsItemV2<'equipmentV2'>[] = this.equipmentV2.sortedContents.map(
       it => it as GurpsItemV2<'equipmentV2'>
     )
+
     this._contains = arrayToObject(
       containedItems?.map(item => new EquipmentV1(item)),
       5
@@ -143,6 +144,7 @@ class EquipmentV1 {
       .filter(it => it)
       .join('<br>')
       .trim()
+
     return notes
   }
 

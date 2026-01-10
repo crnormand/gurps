@@ -1,5 +1,5 @@
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+const fields = foundry.data.fields
+const DataModel = foundry.abstract.DataModel
 
 abstract class ItemComponent<Schema extends ItemComponentSchema = ItemComponentSchema> extends DataModel<Schema> {
   static override defineSchema(): ItemComponentSchema {

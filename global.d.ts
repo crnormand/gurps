@@ -1,22 +1,23 @@
-import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
-import { GurpsCombatant } from 'module/combat/combatant.ts'
-import { GurpsToken } from 'module/token/gurps-token.ts'
-import { GurpsItemV2 } from 'module/item/gurps-item.ts'
-import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
-import { EquipmentModel } from 'module/item/data/equipment.ts'
-import { TraitModel } from 'module/item/data/trait.ts'
-import { SpellModel } from 'module/item/data/spell.ts'
-import { SkillModel } from 'module/item/data/skill.ts'
-import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
-import { CharacterModel } from 'module/actor/data/character.ts'
-import { GurpsActiveEffect } from 'module/effects/active-effect.js'
-import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
-import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
-import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { BaseAction } from 'module/action/base-action.ts'
-import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { DamageActionSchema } from 'module/actor/data/character-components.ts'
+import { CharacterModel } from 'module/actor/data/character.ts'
+import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
+import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
+import { GurpsCombatant } from 'module/combat/combatant.ts'
 import DamageChat from 'module/damage/damagechat.js'
+import { GurpsActiveEffect } from 'module/effects/active-effect.js'
+import { EquipmentModel } from 'module/item/data/equipment.ts'
+import { SkillModel } from 'module/item/data/skill.ts'
+import { SpellModel } from 'module/item/data/spell.ts'
+import { TraitModel } from 'module/item/data/trait.ts'
+import { GurpsItemV2 } from 'module/item/gurps-item.ts'
+import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
+import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
+import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
+import { GurpsToken } from 'module/token/gurps-token.ts'
+
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 export {}
 
@@ -28,10 +29,20 @@ declare global {
       Damage: any
     }
 
+    modules: {
+      Importer: {
+        importGCS(actor: Actor.Implementation): Promise<void>
+      }
+      Pdf: {
+        handleOnPdf(event: Event): void
+      }
+    }
+
     LastActor: Actor.Implementation | null
 
     StatusEffect: {
       lookup(id: string): any
+      getAllPostures(): Record<string, any>
     }
     SavedStatusEffects: typeof CONFIG.statusEffects
     StatusEffectStanding: 'standing'
@@ -103,12 +114,22 @@ declare global {
 
     resolveDamageRoll: (
       event: Event,
-      actor: Actor.Implementation,
+      actor: Actor.Implementation | null,
       otf: string,
       overridetxt: string | null,
       isGM: boolean,
       isOtf?: boolean
     ) => Promise<void>
+
+    whisperOtfToOwner: (
+      otf: string,
+      overridetxt: string | null,
+      event: Event,
+      blindcheck: boolean | GurpsAction,
+      actor: Actor.Implementation | null
+    ) => void
+
+    sendOtfMessage: (content: string, blindroll: boolean, users?: User[] | null) => void
 
     SJGProductMappings: Record<string, string>
 
@@ -435,7 +456,7 @@ declare module 'fvtt-types/configuration' {
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
     }
-    ChatMessage: {}
+    ChatMessage: Record<string, unknown>
   }
 
   /* ---------------------------------------- */
@@ -511,7 +532,7 @@ declare module 'fvtt-types/configuration' {
 
     // TODO: Deprecated settings.
     'gurps.auto-ignore-qty': boolean
-    'gurps.basicsetpdf': String
+    'gurps.basicsetpdf': string
     'gurps.block-import': boolean
     'gurps.combat-apply-divisor': boolean
     'gurps.combat-blunt-trauma': boolean

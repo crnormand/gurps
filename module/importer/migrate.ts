@@ -31,13 +31,16 @@ type OverwriteChoice = (typeof OVERWRITE_CHOICE)[keyof typeof OVERWRITE_CHOICE]
 
 function toOverwriteChoice(value: unknown): OverwriteChoice {
   const numeric = typeof value === 'number' ? value : Number(value)
+
   if (numeric === 0) return OVERWRITE_CHOICE.overwrite
   if (numeric === 1) return OVERWRITE_CHOICE.keep
+
   return OVERWRITE_CHOICE.ask
 }
 
 function toEncoding(value: unknown): 'Latin1' | 'UTF8' {
   const numeric = typeof value === 'number' ? value : Number(value)
+
   return numeric === 0 ? 'Latin1' : 'UTF8'
 }
 
@@ -73,6 +76,7 @@ const legacyMigrations = new Map<string, MigrationHandler>([
  */
 export async function migrate(): Promise<void> {
   const storage = game.settings?.storage.get('world') as foundry.documents.collections.WorldSettings
+
   if (!storage) return
 
   const namespacePrefix = `${GURPS.SYSTEM_NAME}.`
@@ -84,6 +88,7 @@ export async function migrate(): Promise<void> {
 
     const legacyKey = entry.key.slice(namespacePrefix.length)
     const handler = legacyMigrations.get(legacyKey)
+
     if (!handler) continue
 
     migrations.push(handler(entry.value).then(() => undefined))

@@ -1,11 +1,12 @@
 import { isPostureOrManeuver } from '../../module/actor/modern/utils/effect.ts'
 
-const mockEffect = (options: { statuses?: Set<string>, flagType?: string } = {}) => ({
-  statuses: options.statuses,
-  flags: {
-    gurps: options.flagType ? { effect: { type: options.flagType } } : undefined
-  }
-}) as unknown as ActiveEffect
+const mockEffect = (options: { statuses?: Set<string>; flagType?: string } = {}) =>
+  ({
+    statuses: options.statuses,
+    flags: {
+      gurps: options.flagType ? { effect: { type: options.flagType } } : undefined,
+    },
+  }) as unknown as ActiveEffect
 
 describe('isPostureOrManeuver', () => {
   test('returns false for regular effects', () => {

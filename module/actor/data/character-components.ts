@@ -1,4 +1,4 @@
-import fields = foundry.data.fields
+const fields = foundry.data.fields
 
 const attributeSchema = () => {
   return {
