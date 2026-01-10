@@ -18,6 +18,7 @@ import { ImportSettings } from '../index.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
+import { createDataIsOfType } from '../helpers.ts'
 
 /**
  * NOTE: Some parts of this importer are not fully implemented and cannot be without pretty significantly
@@ -33,7 +34,7 @@ class GcaImporter {
   actor?: Actor.OfType<'characterV2'>
   input: GCACharacter
   output: DataModel.CreateData<CharacterSchema>
-  items: DataModel.CreateData<DataModel.SchemaOf<GCATrait>>[]
+  items: Item.CreateData[]
   img: string
 
   /* ---------------------------------------- */
@@ -76,36 +77,37 @@ class GcaImporter {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
-        actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
+        actor.items.contents.filter(item => item.isOfType('equipmentV2'))
       )
 
-      // When importing into existing actor, delete only imported items
       await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
       await actor.update({
         name,
         img: this.img,
-        system: this.output as any,
+        system: this.output,
       })
 
       // Restore saved counts and uses in raw item data before creating embedded documents
       this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
-      await actor.createEmbeddedDocuments('Item', this.items as any, { keepId: true })
+      await actor.createEmbeddedDocuments('Item', this.items, { keepId: true })
     } else {
-      actor = (await Actor.create({
+      // @ts-expect-error: Actor shows as stored type, but is not stored.
+      actor = await Actor.create({
         _id,
         name,
         type,
         img: this.img,
-        system: this.output as any,
-        items: this.items as any,
-      })) as Actor.OfType<'characterV2'> | undefined
+        system: this.output,
+        items: this.items,
+      })
     }
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')
     }
+
     return actor
   }
 
@@ -114,11 +116,13 @@ class GcaImporter {
   #restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
-        const eqt = (itemData as any).system?.eqt
-        if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
-          eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
-          eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
-          eqt.ignoreImportQty = true
+        if (createDataIsOfType(itemData, 'equipmentV2')) {
+          const eqt = itemData.system?.eqt
+          if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
+            eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
+            eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
+            eqt.ignoreImportQty = true
+          }
         }
       }
     }
@@ -137,8 +141,7 @@ class GcaImporter {
    */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
-      const component =
-        (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
+      const component = item.system.fea ?? item.system.ski ?? item.system.spl ?? item.system.eqt
       return ['GCS', 'GCA'].includes(component?.importFrom)
     })
 
@@ -153,7 +156,7 @@ class GcaImporter {
   #saveEquipmentCountsIfNecessary(items: Item.OfType<'equipmentV2'>[]) {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
     items.forEach(item => {
-      const eqt = (item.system as any).eqt
+      const eqt = item.system.eqt
       if (eqt && eqt.importFrom === 'GCA' && eqt.ignoreImportQty && eqt.importid) {
         savedEquipmentCounts.set(eqt.importid, { quantity: eqt.count, uses: eqt.uses })
       }
@@ -355,42 +358,47 @@ Portrait will not be imported.`
     this.output.additionalresources.bodyplan = this.input.bodytype ?? 'Humanoid'
 
     const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
-    this.output.hitlocationsV2 = []
-    this.input.hitlocationtable.hitlocationlines?.forEach(location => {
-      // Some properties of the hit location are stored not in the hit location table, but in the body table.
-      // These are different but related tables. All locations in "hitlocationtable" *should* be in "body".
-      // However, different names may be in use. We're accounting for these possibilities.
-      let lookupName = location.location
-      if (lookupName === 'Eye') lookupName = 'Eyes'
-      if (lookupName === 'Foot') lookupName = 'Feet'
-      if (lookupName === 'Hand') lookupName = 'Hands'
 
-      const bodyLocation = this.input.body?.find(e => e.name === lookupName)
-      if (!bodyLocation) {
-        console.error(`Failed to import hit location table entry "${location.location}". No matching body part found.`)
-        return
-      }
+    this.output.hitlocationsV2 = this.input.hitlocationtable.hitlocationlines.reduce(
+      (acc: DataModel.CreateData<HitLocationSchemaV2>[], location) => {
+        // Some properties of the hit location are stored not in the hit location table, but in the body table.
+        // These are different but related tables. All locations in "hitlocationtable" *should* be in "body".
+        // However, different names may be in use. We're accounting for these possibilities.
+        let lookupName = location.location
+        if (lookupName === 'Eye') lookupName = 'Eyes'
+        if (lookupName === 'Foot') lookupName = 'Feet'
+        if (lookupName === 'Hand') lookupName = 'Hands'
 
-      let roll = ''
-
-      if (table) {
-        const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, bodyLocation.name)
-        if (standardEntry) {
-          roll = standardEntry.roll
+        const bodyLocation = this.input.body?.find(e => e.name === lookupName)
+        if (!bodyLocation) {
+          console.error(
+            `Failed to import hit location table entry "${location.location}". No matching body part found.`
+          )
+          return acc
         }
-      }
 
-      const dr = parseInt(bodyLocation.dr)
+        let roll = ''
 
-      const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
-        where: location.location ?? '',
-        import: Number.isNaN(dr) ? 0 : dr,
-        rollText: roll,
-        split: {},
-      }
+        if (table) {
+          const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, bodyLocation.name)
+          if (standardEntry) {
+            roll = standardEntry.roll
+          }
+        }
 
-      ;(this.output.hitlocationsV2 as DataModel.CreateData<HitLocationSchemaV2>[]).push(newLocation)
-    })
+        const dr = parseInt(bodyLocation.dr)
+
+        const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
+          where: location.location ?? '',
+          import: Number.isNaN(dr) ? 0 : dr,
+          rollText: roll,
+          split: {},
+        }
+        acc.push(newLocation)
+        return acc
+      },
+      []
+    )
   }
 
   /* ---------------------------------------- */
@@ -437,23 +445,25 @@ Portrait will not be imported.`
   ): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {}, containedBy }
 
-    system.actions = item.attackmodes
-      ?.map((action: GCAAttackMode) => this.#importWeapon(action, item))
-      .reduce(
-        (
-          acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
-          weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
-        ) => {
-          if (!weapon._id || typeof weapon._id !== 'string') {
-            console.error('GURPS | Failed to import weapon: No _id set.')
-            console.error(weapon)
+    if (item.attackmodes) {
+      system.actions = item.attackmodes
+        .map((action: GCAAttackMode) => this.#importWeapon(action, item))
+        .reduce(
+          (
+            acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
+            weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
+          ) => {
+            if (!weapon._id || typeof weapon._id !== 'string') {
+              console.error('GURPS | Failed to import weapon: No _id set.')
+              console.error(weapon)
+              return acc
+            }
+            acc[weapon._id] = weapon
             return acc
-          }
-          acc[weapon._id] = weapon
-          return acc
-        },
-        {}
-      ) as any
+          },
+          {}
+        )
+    }
 
     return system
   }
@@ -538,7 +548,7 @@ Portrait will not be imported.`
    * Ideally this should be implemented in a similar way to how it is done in GCA, for greater
    * parity and data retention.
    */
-  #importTrait(trait: GCATrait, containedBy: string | null = null): Item.CreateData {
+  #importTrait(trait: GCATrait, containedBy: string | null = null): void {
     const type = 'featureV2'
     const _id = foundry.utils.randomID()
 
@@ -575,12 +585,11 @@ Portrait will not be imported.`
     }
 
     this.items.push(item)
-    return item
   }
 
   /* ---------------------------------------- */
 
-  #importSkill(skill: GCATrait, containedBy: string | null = null): Item.CreateData {
+  #importSkill(skill: GCATrait, containedBy: string | null = null): void {
     const type = 'skillV2'
     const _id = foundry.utils.randomID()
     // TODO: localize
@@ -602,12 +611,11 @@ Portrait will not be imported.`
     }
 
     this.items.push(item)
-    return item
   }
 
   /* ---------------------------------------- */
 
-  #importSpell(spell: GCATrait, containedBy: string | null = null): Item.CreateData {
+  #importSpell(spell: GCATrait, containedBy: string | null = null): void {
     const type = 'spellV2'
     const _id = foundry.utils.randomID()
     // TODO: localize
@@ -629,12 +637,11 @@ Portrait will not be imported.`
     }
 
     this.items.push(item)
-    return item
   }
 
   /* ---------------------------------------- */
 
-  #importEquipment(equipment: GCATrait, containedBy: string | null = null): Item.CreateData {
+  #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
     const type = 'equipmentV2'
     const _id = foundry.utils.randomID()
     const name = equipment.name ?? 'Equipment'
@@ -656,7 +663,6 @@ Portrait will not be imported.`
     }
 
     this.items.push(item)
-    return item
   }
 
   /* ---------------------------------------- */
