@@ -1,4 +1,5 @@
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
+
 import { EffectModifierPopout } from './effect-modifier-popout.js'
 
 export class EffectModifierControl {
@@ -39,6 +40,7 @@ export class EffectModifierControl {
 
     // show the token control as active
     let toggle = $.find(`[data-tool=${EffectModifierControl.EffectModName}]`)
+
     if (this._showPopup) toggle[0]?.classList.add('active')
     else toggle[0]?.classList.remove('active')
 
@@ -60,6 +62,7 @@ export class EffectModifierControl {
   _createEffectModifierButton(controls) {
     if (this.shouldUseEffectModifierPopup()) {
       const tokenButton = controls.tokens
+
       if (tokenButton) {
         const newButton = {
           name: EffectModifierControl.EffectModName,
@@ -75,20 +78,17 @@ export class EffectModifierControl {
             GURPS.EffectModifierControl.showPopup = value
           },
         }
+
         tokenButton.tools[EffectModifierControl.EffectModName] = newButton
       }
     }
   }
 
-  _updatedActiveEffect(effect, _, __) {
-    let effectID = effect?.parent.id
-    let sharedStateID = this.token?.actor.id
+  _updatedActiveEffect(effect) {
     if (effect?.parent.id === this.token?.actor.id) this._ui.render(false)
   }
 
   _updateToken(tokenDocument) {
-    let tokenID = tokenDocument.object?.id
-    let sharedStateID = this.token?.id
     if (tokenDocument.object === this.token) this._ui.render(false)
   }
 
@@ -119,8 +119,7 @@ export class EffectModifierControl {
   }
 
   _controlToken(token, isControlled) {
-    let sharedStateID = this.token?.id
-    console.log(`controlToken: isControlled: ${isControlled}, token: ${token?.id}, current token: ${sharedStateID}`)
+    console.log(`controlToken: isControlled: ${isControlled}, token: ${token?.id}, current token: ${this.token?.id}`)
     if (isControlled) this.token = token
     else if (this.token === token) this.token = null
 
@@ -129,6 +128,7 @@ export class EffectModifierControl {
     // FIXME Yet another crappy hack ... no idea why when switching from one token to another we end up in the
     // "no token selected" state. This fixes that problem.
     let self = this
+
     setTimeout(() => self._ui?.render(false), 250)
   }
 

@@ -6,7 +6,6 @@
  * to think really hard about potentially moving the class back to actor.js.
  */
 
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { simpleHash } from '../../lib/simple-hash.js'
 import { arraysEqual, compareColleges, convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 
@@ -56,6 +55,7 @@ export class _Base {
    */
   pageRef(r) {
     this.pageref = r
+
     if (!!r && r.match(/https?:\/\//i)) {
       this.pageref = '*Link'
       this.externallink = r
@@ -67,10 +67,11 @@ export class _Base {
    * @param {string} n
    */
   setNotes(n) {
-    if (!!n) {
+    if (n) {
       let v = extractP(n)
       let k = 'Page Ref: '
       let i = v.indexOf(k)
+
       if (i >= 0) {
         this.notes = v.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
@@ -87,9 +88,11 @@ export class _Base {
       actorComp instanceof Equipment
         ? actor._findEqtkeyForId('uuid', actorComp.uuid)
         : actor._findSysKeyForId('uuid', actorComp.uuid, this.actorSystemKey)
-    if (!!existingComponentKey) {
+
+    if (existingComponentKey) {
       const existingComponentItem = actor.items.get(actorComp.itemid)
-      if (!!existingComponentItem) {
+
+      if (existingComponentItem) {
         // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
         actorComp.itemid = existingComponentItem.itemid || ''
         // }
@@ -99,6 +102,7 @@ export class _Base {
         actorComp.itemInfo = {}
       }
     }
+
     return actorComp
   }
 }
@@ -113,9 +117,10 @@ export class Named extends _Base {
   }
 
   setName(name) {
-    if (!!name) {
+    if (name) {
       let k = 'Page Ref: '
       let i = name.indexOf(k)
+
       if (i >= 0) {
         this.name = name.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
@@ -134,12 +139,15 @@ export class Named extends _Base {
    */
   findDefaultImage() {
     let item
-    if (!!this.itemid) {
+
+    if (this.itemid) {
       item = game.items.get(this.itemid)
-      if (!!item?.system.globalid) {
+
+      if (item?.system.globalid) {
         item = game.items.get(item.system.globalid.split('.').pop())
       }
     }
+
     return item?.img
   }
 
@@ -154,20 +162,25 @@ export class Named extends _Base {
    */
   _getGGAId(objProps) {
     let uniqueId
-    if (!!this.uuid) {
+
+    if (this.uuid) {
       // UUID from GCS/GCA
       uniqueId = this.uuid
     }
+
     if (!!this.save && !uniqueId) {
       // User created System Object
       uniqueId = `GGA${foundry.utils.randomID(13)}`
     }
+
     if (!uniqueId) {
       // System Object imported from GCS/GCA without a UUID
       const { name, type, generator } = objProps
       const hashKey = `${name}${type}${generator}`
+
       uniqueId = simpleHash(hashKey)
     }
+
     return uniqueId
   }
 
@@ -194,7 +207,7 @@ export class Named extends _Base {
    * @param {Actor} actor - The actor to use.
    * @return {*} The converted item data.
    */
-  toItemData(actor, fromProgram = '') {
+  toItemData() {
     throw new Error('Not implemented')
   }
 
@@ -211,7 +224,9 @@ export class Named extends _Base {
   static fromObject(data, actor) {
     // Just an example. Make sure you make a more robust method in the subclass.
     let actorComp = new this(data.name)
+
     Object.assign(actorComp, data)
+
     return this._checkComponentInActor(actor, actorComp)
   }
 
@@ -228,7 +243,7 @@ export class Named extends _Base {
    * @param {Object} item - The item to check for an update.
    * @return {boolean} - Returns true if the item needs an update, otherwise false.
    */
-  _itemNeedsUpdate(item) {
+  _itemNeedsUpdate() {
     throw new Error('Not implemented')
   }
 
@@ -248,7 +263,8 @@ export class Named extends _Base {
     const actorItemInfo = actor.system.backupItemInfo
     const importId = this.uuid
     const originalName = this.originalName
-    if (!!actorItemInfo) {
+
+    if (actorItemInfo) {
       this.itemInfo = actorItemInfo[importId] || actorItemInfo[originalName]
     }
   }
@@ -355,6 +371,7 @@ export class Skill extends Leveled {
     const uniqueId = this._getGGAId({ name: this.name, type: 'skill', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
+
     return {
       name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -398,6 +415,7 @@ export class Skill extends Leveled {
   }
   static fromObject(data, actor) {
     let skill
+
     if (data instanceof Skill) {
       skill = data
     } else {
@@ -414,15 +432,18 @@ export class Skill extends Leveled {
       skill['type'] = data['type']
       skill.consumeAction = data.consumeAction
     }
+
     return this._checkComponentInActor(actor, skill)
   }
   _itemNeedsUpdate(item) {
     let result = false
+
     if (!item) {
       result = true
       console.log(`Foundry Item: ${this.name} does not exist`)
     } else {
       const itemData = item.system[item.itemSysKey]
+
       result =
         itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
@@ -432,8 +453,9 @@ export class Skill extends Leveled {
         itemData.import !== this['import'] ||
         itemData.relativelevel !== this.relativelevel ||
         itemData['type'] !== this['type']
-      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+      if (result) console.log(`Foundry Item: ${this.name} needs update`)
     }
+
     return result
   }
   findDefaultImage() {
@@ -469,6 +491,7 @@ export class Spell extends Leveled {
     const uniqueId = this._getGGAId({ name: this.name, type: 'spell', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
+
     return {
       name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -519,6 +542,7 @@ export class Spell extends Leveled {
   }
   static fromObject(data, actor) {
     let spell
+
     if (data instanceof Spell) {
       spell = data
     } else {
@@ -543,16 +567,19 @@ export class Spell extends Leveled {
       spell.difficulty = data.difficulty
       spell.consumeAction = data.consumeAction
     }
+
     return this._checkComponentInActor(actor, spell)
   }
 
   _itemNeedsUpdate(item) {
     let result = false
+
     if (!item) {
       result = true
       console.log(`Foundry Item: ${this.name} does not exist`)
     } else {
       const itemData = item.system[item.itemSysKey]
+
       result =
         itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
@@ -570,8 +597,9 @@ export class Spell extends Leveled {
         itemData.resist !== this.resist ||
         itemData.casttime !== this.casttime ||
         itemData.difficulty !== this.difficulty
-      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+      if (result) console.log(`Foundry Item: ${this.name} needs update`)
     }
+
     return result
   }
   findDefaultImage() {
@@ -603,6 +631,7 @@ export class Advantage extends NamedCost {
     const uniqueId = this._getGGAId({ name: this.name, type: 'feature', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
+
     return {
       name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -644,6 +673,7 @@ export class Advantage extends NamedCost {
   }
   static fromObject(data, actor) {
     let adv
+
     if (data instanceof Advantage) {
       adv = data
     } else {
@@ -660,15 +690,18 @@ export class Advantage extends NamedCost {
       adv.level = data.level
       adv.cr = data.cr
     }
+
     return this._checkComponentInActor(actor, adv)
   }
   _itemNeedsUpdate(item) {
     let result = false
+
     if (!item) {
       result = true
       console.log(`Foundry Item: ${this.name} does not exist`)
     } else {
       const itemData = item.system[item.itemSysKey]
+
       result =
         itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
@@ -679,8 +712,9 @@ export class Advantage extends NamedCost {
         itemData.note !== this.note ||
         itemData.level !== this.level ||
         itemData.cr !== this.cr
-      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+      if (result) console.log(`Foundry Item: ${this.name} needs update`)
     }
+
     return result
   }
   findDefaultImage() {
@@ -732,6 +766,7 @@ export class Melee extends Attack {
   }
   static fromObject(data, actor) {
     let melee
+
     if (data instanceof Melee) {
       melee = data
     } else {
@@ -757,6 +792,7 @@ export class Melee extends Attack {
       melee.extraAttacks = data.extraAttacks || 0
       melee.consumeAction = data.consumeAction || true
     }
+
     return this._checkComponentInActor(actor, melee)
   }
   static get actorSystemKey() {
@@ -771,6 +807,7 @@ export class Melee extends Attack {
     const uniqueId = this._getGGAId({ name: this.name, type: 'melee', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
+
     return {
       name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -843,12 +880,13 @@ export class Ranged extends Attack {
     this.max = ''
   }
   checkRange() {
-    if (!!this.halfd) this.range = this.halfd
-    if (!!this.max) this.range = this.max
+    if (this.halfd) this.range = this.halfd
+    if (this.max) this.range = this.max
     if (!!this.halfd && !!this.max) this.range = this.halfd + '/' + this.max
   }
   static fromObject(data, actor) {
     let ranged
+
     if (data instanceof Ranged) {
       ranged = data
     } else {
@@ -877,6 +915,7 @@ export class Ranged extends Attack {
       ranged.extraAttacks = data.extraAttacks || 0
       ranged.consumeAction = data.consumeAction || true
     }
+
     return this._checkComponentInActor(actor, ranged)
   }
   static get actorSystemKey() {
@@ -891,6 +930,7 @@ export class Ranged extends Attack {
     const uniqueId = this._getGGAId({ name: this.name, type: 'ranged', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
+
     return {
       name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -1019,11 +1059,13 @@ export class Equipment extends Named {
    */
   static async calcUpdate(actor, eqt, objkey) {
     if (!eqt) return
+
     // NOTE: no longer necessary with DataModel validation
     const num = (/** @type {string | number} */ s) => {
       // @ts-ignore
       return isNaN(s) ? 0 : Number(s)
     }
+
     // NOTE: no longer necessary with DataModel validation
     const cln = (/** @type {number} */ s) => {
       return !s ? 0 : num(String(s).replace(/,/g, ''))
@@ -1037,25 +1079,30 @@ export class Equipment extends Named {
     eqt.weight = cln(eqt.weight)
     let cs = eqt.count * eqt.cost
     let ws = eqt.count * eqt.weight
-    if (!!eqt.contains) {
+
+    if (eqt.contains) {
       for (let k in eqt.contains) {
         // @ts-ignore
         let e = eqt.contains[k]
+
         await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
         cs += e.costsum
         ws += e.weightsum
       }
     }
-    if (!!eqt.collapsed) {
+
+    if (eqt.collapsed) {
       for (let k in eqt.collapsed) {
         // @ts-ignore
         let e = eqt.collapsed[k]
+
         await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
         cs += e.costsum
         ws += e.weightsum
       }
     }
-    if (!!actor)
+
+    if (actor)
       await actor.update({
         [objkey + '.costsum']: cs,
         [objkey + '.weightsum']: ws,
@@ -1075,6 +1122,7 @@ export class Equipment extends Named {
     const uniqueId = this._getGGAId({ name: this.name, type: 'equipment', generator: fromProgram })
     const importId = !this.save ? uniqueId : ''
     const importFrom = this.importFrom || fromProgram
+
     return {
       name: this.itemInfo?.name || this.name,
       img: this.itemInfo?.img || this.findDefaultImage(),
@@ -1124,6 +1172,7 @@ export class Equipment extends Named {
 
   static fromObject(data, actor) {
     let equip
+
     if (data instanceof Equipment) {
       equip = data
     } else {
@@ -1148,15 +1197,18 @@ export class Equipment extends Named {
       equip.ignoreImportQty = data.ignoreImportQty
       equip.contains = data.contains || {}
     }
+
     return this._checkComponentInActor(actor, equip)
   }
   _itemNeedsUpdate(item) {
     let result = false
+
     if (!item) {
       result = true
       console.log(`Foundry Item: ${this.name} does not exist`)
     } else {
       const itemData = item.system[item.itemSysKey]
+
       result =
         itemData.originalName !== this.originalName ||
         itemData.notes !== this.notes ||
@@ -1171,8 +1223,9 @@ export class Equipment extends Named {
         itemData.uuid !== this.uuid ||
         itemData.parentuuid !== this.parentuuid ||
         itemData.location !== this.location
-      if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
+      if (result) console.log(`Foundry Item: ${this.name} needs update`)
     }
+
     return result
   }
   findDefaultImage() {
@@ -1220,6 +1273,7 @@ export class HitLocationEntry {
       if (value.dr < lowestDR) lowestDR = value.dr
       if (value.where === 'Torso') torsoDR = value.dr
     }
+
     // return the average of torso and lowest dr
     return Math.ceil((lowestDR + torsoDR) / 2)
   }
@@ -1239,7 +1293,8 @@ export class HitLocationEntry {
 
   getDR(damageType) {
     if (!damageType || !this.split) return this._dr
-    return !!this?.split[damageType] ? this.split[damageType] : this._dr
+
+    return this?.split[damageType] ? this.split[damageType] : this._dr
   }
 
   get dr() {

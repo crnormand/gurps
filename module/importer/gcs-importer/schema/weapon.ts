@@ -1,7 +1,9 @@
-import { GcsElement } from './base.js'
-import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
+
+import { GcsElement } from './base.js'
 import { GcsSkillDefault } from './skill-default.js'
+
+const fields = foundry.data.fields
 
 class GcsWeapon extends GcsElement<WeaponData> {
   static override defineSchema(): WeaponData {
@@ -14,6 +16,7 @@ class GcsWeapon extends GcsElement<WeaponData> {
     if (name === 'defaults') {
       return data?.map((defaultData: AnyObject) => GcsSkillDefault.fromImportData(defaultData as any), { parent: this })
     }
+
     return super._importField(data, field, name)
   }
 

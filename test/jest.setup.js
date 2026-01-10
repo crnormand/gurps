@@ -2,27 +2,31 @@ global.foundry = {
   abstract: {
     // @ts-ignore
     DataModel: class {
-      constructor(data, options) {
+      constructor(data) {
         Object.assign(this, data)
       }
     },
     // @ts-ignore
     TypeDataModel: class {
-      constructor(data, options) {
+      constructor(data) {
         // Only assign properties that don't already exist as getters
         if (data) {
           for (const [key, value] of Object.entries(data)) {
             // Check if it's a getter in this class or any parent class
             let obj = this
             let isGetter = false
+
             while (obj) {
               const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+
               if (descriptor && descriptor.get && !descriptor.set) {
                 isGetter = true
                 break
               }
+
               obj = Object.getPrototypeOf(obj)
             }
+
             if (isGetter) continue
             this[key] = value
           }
@@ -37,7 +41,7 @@ global.foundry = {
     },
     // @ts-ignore
     Document: class {
-      constructor(data, options) {
+      constructor(data) {
         this._id = data?._id || 'TEST_ID'
         Object.assign(this, data)
       }
@@ -46,7 +50,7 @@ global.foundry = {
   documents: {
     // @ts-ignore
     BaseActor: class {
-      constructor(data = {}, options = {}) {
+      constructor(data = {}) {
         this.name = data.name || ''
         this.type = data.type || 'base'
         this.items = []
@@ -73,6 +77,7 @@ global.foundry = {
 
       async update(data) {
         Object.assign(this, data)
+
         return this
       }
 
@@ -92,7 +97,7 @@ global.foundry = {
           this.options = options
         }
 
-        _validateSpecial(value) {
+        _validateSpecial() {
           return true
         }
       },
@@ -159,17 +164,20 @@ global.foundry = {
       }
 
       find(predicate) {
-        for (const [key, value] of this.entries()) {
+        for (const [, value] of this.entries()) {
           if (predicate(value)) return value
         }
+
         return undefined
       }
 
       filter(predicate) {
         const result = []
-        for (const [key, value] of this.entries()) {
+
+        for (const [, value] of this.entries()) {
           if (predicate(value)) result.push(value)
         }
+
         return result
       }
     },
@@ -178,10 +186,12 @@ global.foundry = {
       if (!obj || !path) return undefined
       const parts = String(path).split('.')
       let ref = obj
+
       for (const p of parts) {
         if (ref == null) return undefined
         ref = ref[p]
       }
+
       return ref
     },
     // Basic deep clone implementation for tests
@@ -190,9 +200,10 @@ global.foundry = {
         // Prefer structuredClone when available
         // @ts-ignore
         if (typeof structuredClone === 'function') return structuredClone(obj)
-      } catch (e) {
+      } catch {
         // fall through to JSON clone
       }
+
       return JSON.parse(JSON.stringify(obj))
     },
     // Foundry has both deepClone and duplicate; map duplicate to deepClone here
@@ -202,24 +213,30 @@ global.foundry = {
     },
     flattenObject: (obj, _d = 0) => {
       const flat = {}
+
       if (_d > 100) {
         throw new Error('Maximum depth exceeded')
       }
+
       for (const [k, v] of Object.entries(obj)) {
         const t = foundry.utils.getType(v)
+
         if (t === 'Object') {
           if (foundry.utils.isEmpty(v)) flat[k] = v
           const inner = foundry.utils.flattenObject(v, _d + 1)
+
           for (const [ik, iv] of Object.entries(inner)) {
             flat[`${k}.${ik}`] = iv
           }
         } else flat[k] = v
       }
+
       return flat
     },
     getType: variable => {
       // Primitive types, handled with simple typeof check
       const typeOf = typeof variable
+
       if (typeOf !== 'object') return typeOf
 
       // Special cases of object
@@ -231,6 +248,7 @@ global.foundry = {
       for (const [cls, type] of typePrototypes) {
         if (variable instanceof cls) return type
       }
+
       if ('HTMLElement' in globalThis && variable instanceof globalThis.HTMLElement) return 'HTMLElement'
 
       // Unknown Object type
@@ -238,6 +256,7 @@ global.foundry = {
     },
     isEmpty: value => {
       const t = foundry.utils.getType(value)
+
       switch (t) {
         case 'undefined':
           return true
@@ -259,15 +278,19 @@ global.foundry = {
       let parent
       let target = object
       const parts = key.split('.')
+
       for (const p of parts) {
         if (!target) return false
         const type = typeof target
+
         if (type !== 'object' && type !== 'function') return false
         if (!(p in target)) return false
         parent = target
         target = parent[p]
       }
+
       delete parent[parts.at(-1)]
+
       return true
     },
   },
@@ -322,11 +345,13 @@ global.canvas = {
 }
 
 global.game = {
+  ready: true,
   i18n: {
     // @ts-ignore
     localize: key => {
       // Mock specific GURPS localization keys
       if (key === 'GURPS.CR12') return 'CR: 12 (Resist Quite Often)'
+
       // Add more as needed
       return key
     },
@@ -404,10 +429,12 @@ global.Item = class extends foundry.documents.BaseItem {
 
   static async create(data, options = {}) {
     const item = new this(data, options)
+
     // If there's a parent, add to their items collection
     if (options.parent && options.parent.items) {
       options.parent.items.set(item.id, item)
     }
+
     return item
   }
 }

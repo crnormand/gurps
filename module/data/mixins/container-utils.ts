@@ -17,10 +17,12 @@ export class ContainerUtils {
   static getAncestors<T>(containable: IContainable<T>): T[] {
     const ancestors: T[] = []
     let current = containable.container
+
     while (current) {
       ancestors.unshift(current)
       current = (current as unknown as IContainable<T>).container
     }
+
     return ancestors
   }
 
@@ -31,6 +33,7 @@ export class ContainerUtils {
    */
   static getDescendants<T>(containable: IContainable<T>, filter?: (item: T) => boolean): T[] {
     const descendants = containable.allContents
+
     return filter ? descendants.filter(filter) : descendants
   }
 
@@ -66,6 +69,7 @@ export class ContainerUtils {
    */
   static containsItem<T>(container: IContainable<T>, item: T): boolean {
     const allContents = container.allContents
+
     return allContents.some(contained => (contained as IContainable<T>).id === (item as IContainable<T>).id)
   }
 
@@ -76,6 +80,7 @@ export class ContainerUtils {
    */
   static getContainerDepth<T>(containable: IContainable<T>): number {
     if (!containable.isContained) return 0
+
     return 1 + (containable.container! as unknown as IContainable<T>).containerDepth
   }
 

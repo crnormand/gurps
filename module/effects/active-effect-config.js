@@ -29,6 +29,7 @@ export default class GurpsActiveEffectConfig extends foundry.applications.sheets
    */
   render(force, options = {}) {
     if (options.hasOwnProperty('parentWindow')) this._parentWindow = options.parentWindow
+
     return super.render(force, options)
   }
 

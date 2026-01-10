@@ -1,7 +1,7 @@
-import { defineGetterProperties } from '../../utilities/object-utils.js'
-import { NoteV2 } from '../data/note.js'
 import { arrayToObject } from '../../../lib/utilities.js'
+import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { CharacterModel } from '../data/character.js'
+import { NoteV2 } from '../data/note.js'
 
 const getterKeys = [
   'uuid',
@@ -19,6 +19,7 @@ const getterKeys = [
 class NoteV1 {
   static updateNoteV2(notev2: any, changes: any) {
     const keys = Object.keys(changes)
+
     for (const key of keys) {
       switch (key) {
         case 'pageref':
@@ -45,6 +46,7 @@ class NoteV1 {
     defineGetterProperties(this, getterKeys)
 
     const containedItems: NoteV2[] = this.model.allNotes.filter(n => n.containedBy === this.noteV2.id)
+
     this._contains = arrayToObject(
       containedItems?.map(item => new NoteV1(item)),
       5

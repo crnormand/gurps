@@ -23,7 +23,10 @@
     border-color: var(--ms-accent);
   }
 
-  i { font-size: var(--ms-font-xs); color: var(--ms-text-muted); }
+  i {
+    font-size: var(--ms-font-xs);
+    color: var(--ms-text-muted);
+  }
 
   .ms-btn-level {
     font-weight: var(--ms-weight-semibold);
@@ -38,7 +41,9 @@
   }
 }
 
-.ms-eqt-actions, .ms-note-actions, .ms-row-actions {
+.ms-eqt-actions,
+.ms-note-actions,
+.ms-row-actions {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +55,9 @@
   cursor: pointer;
   font-size: var(--ms-font-xs);
   opacity: 0.6;
-  transition: opacity 0.15s, color 0.15s;
+  transition:
+    opacity 0.15s,
+    color 0.15s;
 
   &:hover {
     opacity: 1;
@@ -81,7 +88,9 @@
   font-weight: var(--ms-weight-medium);
   cursor: pointer;
   border-radius: var(--ms-radius);
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   i {
     font-size: var(--ms-font-xs);

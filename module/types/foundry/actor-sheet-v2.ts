@@ -66,7 +66,9 @@ export interface HeaderControlsEntry {
 }
 
 export interface HandlebarsActorSheetV2Constructor<TDocument extends Actor = Actor> {
-  new (options?: DeepPartial<ActorSheetV2Configuration> & { document?: TDocument }): HandlebarsActorSheetV2Instance<TDocument>
+  new (
+    options?: DeepPartial<ActorSheetV2Configuration> & { document?: TDocument }
+  ): HandlebarsActorSheetV2Instance<TDocument>
   DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration>
   PARTS: Record<string, HandlebarsTemplatePart>
 }

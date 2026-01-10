@@ -1,6 +1,7 @@
 import { convertRangeTextToArray } from '../../utilities/text-utilties.js'
-import DataModel = foundry.abstract.DataModel
-import fields = foundry.data.fields
+
+const DataModel = foundry.abstract.DataModel
+const fields = foundry.data.fields
 
 class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
   static override defineSchema(): HitLocationSchemaV2 {
@@ -33,6 +34,7 @@ class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
 
   getDR(damageType: string | null = null): number {
     if (damageType === null || !this.split) return this._dr
+
     return this.split.hasOwnProperty(damageType) ? (this.split as Record<string, number>)[damageType] : this._dr
   }
 
@@ -75,6 +77,7 @@ const hitLocationSchema = () => {
     role: new fields.StringField({ required: false, nullable: false, initial: '' }),
   }
 }
+
 type HitLocationSchemaV2 = ReturnType<typeof hitLocationSchema>
 
 /* ---------------------------------------- */

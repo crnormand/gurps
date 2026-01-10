@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals'
-import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
+
 import { CharacterModel } from '../../../module/actor/data/character.js'
+import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
 import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
 
 describe('GurpsActorV2.moveItem', () => {
@@ -108,7 +109,7 @@ describe('GurpsActorV2.moveItem', () => {
 
       // Add toObject method for splitting functionality
       // @ts-expect-error: adding mock method
-      item.toObject = (source = true) => {
+      item.toObject = () => {
         return {
           _id: item._id,
           name: item.name,
@@ -214,6 +215,7 @@ describe('GurpsActorV2.moveItem', () => {
         },
       }),
     })
+
     otherItem.parent = actor
     actor.system.allEquipmentV2.push(otherItem)
 
@@ -288,6 +290,7 @@ describe('GurpsActorV2.moveItem', () => {
 
     // Expect eq1 to be containedBy eq2 and at the end of the embedded array.
     const movedItem = updates.find((u: any) => u._id === 'eq1')
+
     expect(movedItem.system.containedBy).toBe('eq2')
     expect(movedItem.sort).toBe(1)
   })
@@ -321,6 +324,7 @@ describe('GurpsActorV2.moveItem', () => {
         },
       }),
     })
+
     otherItem.parent = actor
 
     actor.system.allEquipmentV2.push(otherItem as any)
@@ -399,6 +403,7 @@ describe('GurpsActorV2.moveItem', () => {
       (call: any) =>
         call[0] === 'Item' && call[1].some((update: any) => update._id === 'eq1' && update.system?.eqt?.count === 3)
     )
+
     expect(countUpdateCall).toBeDefined()
   })
 
@@ -470,6 +475,7 @@ function setEquipmentQuantity(actor: GurpsActorV2<'characterV2'>, value: number)
 function getUpdates(actor: GurpsActorV2<'characterV2'>) {
   const calls = (actor.updateEmbeddedDocuments as jest.Mock).mock.calls[0]
   const updates = calls[1] as any[]
+
   return updates
 }
 

@@ -1,16 +1,15 @@
 import { generateUniqueId } from '../../lib/utilities.js'
-import { GurpsDie } from './bucket-app.js'
 
-export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/
+export const commaSeparatedNumbers = /^\d*([ ,0-9.+-])*$/
 
 /**
- * @typedef {{term: GurpsDie, text: string}} RollResult
+ * @typedef {{term: import('./bucket-app.js').GurpsDie, text: string}} RollResult
  * @typedef {{oldValue?: string, oldSelectionStart?: number|null, oldSelectionEnd?: number|null}} SelectionHistory
  */
 
 export default class ResolveDiceRoll extends Application {
   /**
-   * @param {GurpsDie} diceTerm
+   * @param {import('./bucket-app.js').GurpsDie} diceTerm
    */
   constructor(diceTerm, options = {}, id = generateUniqueId()) {
     super(options)
@@ -22,6 +21,7 @@ export default class ResolveDiceRoll extends Application {
     this.fakeId = id
 
     this.applyCallback = () => {}
+
     this.rollCallback = () => {}
   }
 
@@ -48,7 +48,9 @@ export default class ResolveDiceRoll extends Application {
    */
   getData(options) {
     const data = /** @type {ResolveDiceRollData}*/ (/** type {undefined} */ super.getData(options))
+
     data.diceTerm = this.diceTerms
+
     return data
   }
 
@@ -63,15 +65,17 @@ export default class ResolveDiceRoll extends Application {
     // @ts-ignore
     html.find('input').inputFilter(value => commaSeparatedNumbers.test(value))
 
-    html.find('input').on('change', ev => {
+    html.find('input').on('change', () => {
       let inputs = html.find('input.invalid')
+
       this.applyEnabled = !inputs.length
     })
 
     // update the diceTerm text
     html.find('input').on('change', ev => {
       let diceTerm = this.diceTerms.find(it => it.term.id === ev.currentTarget.id)
-      if (!!diceTerm) diceTerm.text = ev.currentTarget.value
+
+      if (diceTerm) diceTerm.text = ev.currentTarget.value
     })
 
     // set/remove invalid from an input
@@ -80,9 +84,9 @@ export default class ResolveDiceRoll extends Application {
       let target = ev.currentTarget
       let id = target.id
       let diceTerm = this.diceTerms.find(it => it.term.id === id)
-      let valid = !!diceTerm ? this.isValid(diceTerm.term, target.value) : false
+      let valid = diceTerm ? this.isValid(diceTerm.term, target.value) : false
 
-      if (!!diceTerm) {
+      if (diceTerm) {
         if (valid) {
           target.oldValue = target.value
           target.oldSelectionStart = target.selectionStart
@@ -106,12 +110,14 @@ export default class ResolveDiceRoll extends Application {
 
       // enable the apply button if all inputs have valid entries
       let inputs = html.find('input.gurps-invalid')
+
       html.find('#apply').prop('disabled', !!inputs.length)
     })
 
     html.find('input').on('keypress', ev => {
       if (ev.keyCode == 13) {
         let apply = $(html.find('#apply'))
+
         if (apply.is(':disabled')) return
         apply.trigger('click')
       }
@@ -125,9 +131,11 @@ export default class ResolveDiceRoll extends Application {
   _applyCallback() {
     for (const diceTerm of this.diceTerms) {
       let result = this.getValues(diceTerm)
+
       result.forEach(n => diceTerm.term.results.push({ active: true, result: n }))
       // diceTerm.term._loaded = result
     }
+
     // @ts-ignore
     this.applyCallback(true)
   }
@@ -135,8 +143,10 @@ export default class ResolveDiceRoll extends Application {
   async _rollCallback() {
     for (const diceTerm of this.diceTerms) {
       let result = this.getValues(diceTerm)
+
       result.forEach(n => diceTerm.term.results.push({ active: true, result: n }))
     }
+
     this.rollCallback()
   }
 
@@ -151,6 +161,7 @@ export default class ResolveDiceRoll extends Application {
     // if the value does not contain a comma, it must be between min and max
     if (!this.isIndividualDieResults(text)) {
       let value = parseInt(text)
+
       return value >= minPerDie * term.number && value <= maxPerDie * term.number
     }
 
@@ -161,8 +172,10 @@ export default class ResolveDiceRoll extends Application {
         if (value !== value) return false // NaN
         if (value < minPerDie || value > maxPerDie) return false
       }
+
       return true
     }
+
     return false
   }
 
@@ -176,6 +189,7 @@ export default class ResolveDiceRoll extends Application {
     if (this.isIndividualDieResults(text)) return this.convertToArryOfInt(text)
 
     let target = parseInt(text)
+
     return this.generate({ number: diceTerm.term.number, faces: diceTerm.term.faces }, target)
   }
 
@@ -212,7 +226,7 @@ export default class ResolveDiceRoll extends Application {
    *    add up to the target value.
    */
   generate(dice, target, results = []) {
-    if (!!target) {
+    if (target) {
       if (dice.number === 1) results.push(target)
       else {
         dice.number--
@@ -231,6 +245,7 @@ export default class ResolveDiceRoll extends Application {
         results.push(Math.ceil(CONFIG.Dice.randomUniform() * dice.faces))
       }
     }
+
     return results
   }
 }

@@ -56,14 +56,17 @@ export default class ModifierBucketEditor extends Application {
   get journals() {
     const settings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS) || []
     let bucketPages = []
+
     game.journal.forEach(j => {
       j.pages.forEach(p => {
         for (const k in settings) {
           const id = settings[k]
+
           if (p.id == id) bucketPages.push(p)
         }
       })
     })
+
     return bucketPages
   }
 
@@ -73,6 +76,7 @@ export default class ModifierBucketEditor extends Application {
       .map(it => {
         const regex = it.includes('@man:') ? /^(.*?)(?=[#@])/ : /^(.*?)(?=[#@(])/
         const desc = it.match(regex)?.[1]
+
         return desc ? `[${game.i18n.localize(desc.trim())}]` : `[${game.i18n.localize(it).trim()}]`
       })
       .map(it => gurpslink(it))
@@ -90,7 +94,7 @@ export default class ModifierBucketEditor extends Application {
     data.rangedmods = ModifierLiterals.RangedMods.split('\n')
     data.defensemods = ModifierLiterals.DefenseMods.split('\n')
     data.speedrangemods = [game.i18n.localize('GURPS.modifierRangeTitle')].concat(GURPS.rangeObject.modifiers)
-    data.actorname = !!GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
+    data.actorname = GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.hasRole('TRUSTED') || game.user?.hasRole('ASSISTANT')
@@ -107,24 +111,30 @@ export default class ModifierBucketEditor extends Application {
     data.effortmods = ModifierLiterals.ExtraEffortModifiers
     data.currentmods = []
 
-    if (!!GURPS.LastActor) {
+    if (GURPS.LastActor) {
       let self = this.convertModifiers(GURPS.LastActor.system.conditions.self.modifiers)
+
       self.forEach(e => data.currentmods.push(e))
 
       let target = this.convertModifiers(GURPS.LastActor.system.conditions.target.modifiers)
+
       if (target.length > 0) {
         data.currentmods.push(horiz(game.i18n.localize('GURPS.targetedModifiers')))
         target.forEach(e => data.currentmods.push(e))
       }
+
       let user = this.convertModifiers(
         GURPS.LastActor.system.conditions.usermods ? GURPS.LastActor.system.conditions.usermods : []
       )
+
       if (user.length > 0) {
         let uc = '(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
+
         data.currentmods.push(horiz(game.i18n.localize('GURPS.equipmentUserCreated')))
         user.forEach(e => data.currentmods.push(e.replace(uc, '')))
       }
     }
+
     return data
   }
 
@@ -147,6 +157,7 @@ export default class ModifierBucketEditor extends Application {
       const width = parseFloat(html.css('width').replace('px', ''))
 
       let left = 0
+
       if (positionSetting === 'left') {
         left = Math.max(buttonLeft + buttonWidth / 2 - width / 2, 10)
       } else {
@@ -177,11 +188,13 @@ export default class ModifierBucketEditor extends Application {
 
     // get the tabs
     let tabs = html.find('.tabbedcontent')
+
     this.numberOfTabs = tabs.length
 
     // make the current tab visible
     for (let index = 0; index < tabs.length; index++) {
       const element = tabs[index]
+
       if (index === this.tabIndex) {
         element.classList.remove('invisible')
       } else {
@@ -200,6 +213,7 @@ export default class ModifierBucketEditor extends Application {
     } else {
       this.tabIndex--
     }
+
     this.render(false)
   }
 
@@ -209,11 +223,13 @@ export default class ModifierBucketEditor extends Application {
     } else {
       this.tabIndex = 0
     }
+
     this.render(false)
   }
 
   _onClickClose(ev) {
     let name = ev.currentTarget.id
+
     if (name === this._currentlyShowing) {
       ev.currentTarget.checked = false
       this._currentlyShowing = null
@@ -230,6 +246,7 @@ export default class ModifierBucketEditor extends Application {
     // find the toggle input above this element and remove the checked property
     let div = $(ev.currentTarget).parent().closest('.collapsible-content')
     let toggle = div.siblings('input')
+
     $(toggle).prop('checked', false)
     this._onSimpleList(ev, '')
   }
@@ -254,6 +271,7 @@ export default class ModifierBucketEditor extends Application {
     event.stopPropagation()
     let element = event.currentTarget
     let parsed = parselink(element.value)
+
     if (!!parsed.action && parsed.action.type === 'modifier') {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else {
@@ -278,9 +296,11 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let v = element.value
+
     if (!v) v = element.textContent
     v = v.trim()
     let i = v.indexOf(' ')
+
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
     this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
   }
@@ -289,6 +309,7 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let id = element.dataset.id
+
     this.bucket.sendBucketToPlayer(id)
     setTimeout(() => this.bucket.showOthers(), 1000) // Need time for clients to update...and
   }
@@ -297,6 +318,7 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let index = element.dataset.index
+
     this.bucket.modifierStack.removeIndex(index)
     this.bucket.refresh()
   }
@@ -339,6 +361,7 @@ const ModifierLiterals = {
         game.i18n.localize('GURPS.modifierAfflictionRetch'),
       ]
     }
+
     return this._statusModifiers
   },
 
@@ -403,6 +426,7 @@ const ModifierLiterals = {
 
       for (let loc in HitLocations.hitlocationRolls) {
         let hit = HitLocations.hitlocationRolls[loc]
+
         // Only include the items in the menu is skip is false (or empty)
         if (!hit.skip) {
           let parts = [
@@ -411,13 +435,15 @@ const ModifierLiterals = {
             game.i18n.localize('GURPS.hitLocation' + loc),
           ]
 
-          if (!!hit.desc) {
+          if (hit.desc) {
             parts.push(`[${hit.desc.map(it => game.i18n.localize(it)).join(', ')}]`)
           }
+
           this._HitLocationModifiers.push(parts.join(' '))
         }
       }
     }
+
     return this._HitLocationModifiers
   },
 

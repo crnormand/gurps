@@ -2,11 +2,13 @@ import { isHTMLElement, isHTMLInputElement } from '../../types/guards.ts'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
+
   return trimmedName.length > 0 && trimmedName !== currentName
 }
 
 export function shouldUpdateField(newValue: string, currentValue: string | undefined): boolean {
   const trimmedValue = newValue.trim()
+
   return trimmedValue !== (currentValue ?? '')
 }
 
@@ -14,15 +16,19 @@ export function bindInlineEdit(html: HTMLElement, config: InlineEditConfig): voi
   const { displaySelector, containerSelector, inputSelector, editingClass = 'editing', onBlur } = config
 
   const displays = html.querySelectorAll<HTMLElement>(displaySelector)
+
   displays.forEach(display => {
     display.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
       const target = event.currentTarget
+
       if (!isHTMLElement(target)) return
       const container = target.closest(containerSelector)
+
       if (!isHTMLElement(container)) return
       container.classList.add(editingClass)
       const input = container.querySelector(inputSelector)
+
       if (isHTMLInputElement(input)) {
         input.focus()
         input.select()
@@ -31,11 +37,14 @@ export function bindInlineEdit(html: HTMLElement, config: InlineEditConfig): voi
   })
 
   const inputs = html.querySelectorAll<HTMLInputElement>(inputSelector)
+
   inputs.forEach(input => {
     input.addEventListener('blur', (event: FocusEvent) => {
       const inputElement = event.currentTarget
+
       if (!isHTMLInputElement(inputElement)) return
       const container = inputElement.closest(containerSelector)
+
       if (!isHTMLElement(container)) return
       setTimeout(() => {
         if (!container.contains(document.activeElement)) {
@@ -49,8 +58,10 @@ export function bindInlineEdit(html: HTMLElement, config: InlineEditConfig): voi
       if (event.key === 'Enter') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (!isHTMLInputElement(inputElement)) return
         const container = inputElement.closest(containerSelector)
+
         if (!isHTMLElement(container)) return
         container.classList.remove(editingClass)
         inputElement.blur()
@@ -95,29 +106,35 @@ export function buildOnBlurHandler(
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
       const newName = input.value
+
       if (shouldUpdateName(newName, actor.name)) {
         actor.update({ name: newName.trim() })
       }
     }
   }
+
   if (config.fieldType === 'tag') {
     return (input: HTMLInputElement) => {
       const field = input.dataset.field
       const newValue = input.value
+
       if (field) {
         const currentValue = foundry.utils.getProperty(actor, field) as string | undefined
+
         if (shouldUpdateField(newValue, currentValue)) {
           actor.update({ [field]: newValue.trim() })
         }
       }
     }
   }
+
   return undefined
 }
 
 export function bindAllInlineEdits(html: HTMLElement, actor: Actor.Implementation): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
+
     bindInlineEdit(html, { ...config, onBlur })
   })
 }
@@ -130,18 +147,23 @@ export function bindAttributeEdit(html: HTMLElement, actor: Actor.Implementation
   const editingClass = 'editing'
 
   const editButtons = html.querySelectorAll<HTMLElement>(editButtonSelector)
+
   editButtons.forEach(button => {
     button.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
       const target = event.currentTarget
+
       if (!isHTMLElement(target)) return
       const wrapper = target.closest(wrapperSelector)
+
       if (!isHTMLElement(wrapper)) return
       const badge = wrapper.querySelector(badgeSelector)
+
       if (!isHTMLElement(badge)) return
       badge.classList.add(editingClass)
       const input = badge.querySelector(inputSelector)
+
       if (isHTMLInputElement(input)) {
         input.focus()
         input.select()
@@ -150,6 +172,7 @@ export function bindAttributeEdit(html: HTMLElement, actor: Actor.Implementation
   })
 
   const badges = html.querySelectorAll<HTMLElement>(badgeSelector)
+
   badges.forEach(badge => {
     badge.addEventListener('click', (event: MouseEvent) => {
       if (badge.classList.contains(editingClass)) {
@@ -159,11 +182,14 @@ export function bindAttributeEdit(html: HTMLElement, actor: Actor.Implementation
   })
 
   const inputs = html.querySelectorAll<HTMLInputElement>(inputSelector)
+
   inputs.forEach(input => {
     input.addEventListener('blur', (event: FocusEvent) => {
       const inputElement = event.currentTarget
+
       if (!isHTMLInputElement(inputElement)) return
       const badge = inputElement.closest(badgeSelector)
+
       if (!isHTMLElement(badge)) return
       badge.classList.remove(editingClass)
 
@@ -181,18 +207,22 @@ export function bindAttributeEdit(html: HTMLElement, actor: Actor.Implementation
       if (event.key === 'Enter') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (isHTMLInputElement(inputElement)) inputElement.blur()
       }
 
       if (event.key === 'Escape') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (!isHTMLInputElement(inputElement)) return
         const badge = inputElement.closest(badgeSelector)
+
         if (!isHTMLElement(badge)) return
         badge.classList.remove(editingClass)
         const attrName = badge.dataset.attr
         const fieldPath = `system.attributes.${attrName}.import`
+
         inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
         inputElement.blur()
       }
@@ -207,17 +237,22 @@ export function bindSecondaryStatsEdit(html: HTMLElement, actor: Actor.Implement
   const editingClass = 'editing'
 
   const editButtons = html.querySelectorAll<HTMLElement>(editButtonSelector)
+
   editButtons.forEach(button => {
     button.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
       const target = event.currentTarget
+
       if (!isHTMLElement(target)) return
       const fieldset = target.closest(fieldsetSelector)
+
       if (!isHTMLElement(fieldset)) return
       fieldset.classList.toggle(editingClass)
+
       if (fieldset.classList.contains(editingClass)) {
         const firstInput = fieldset.querySelector(inputSelector)
+
         if (isHTMLInputElement(firstInput)) {
           firstInput.focus()
           firstInput.select()
@@ -227,11 +262,14 @@ export function bindSecondaryStatsEdit(html: HTMLElement, actor: Actor.Implement
   })
 
   const inputs = html.querySelectorAll<HTMLInputElement>(`${fieldsetSelector} ${inputSelector}`)
+
   inputs.forEach(input => {
     input.addEventListener('blur', (event: FocusEvent) => {
       const inputElement = event.currentTarget
+
       if (!isHTMLInputElement(inputElement)) return
       const fieldset = inputElement.closest(fieldsetSelector)
+
       if (!isHTMLElement(fieldset)) return
 
       setTimeout(() => {
@@ -253,17 +291,21 @@ export function bindSecondaryStatsEdit(html: HTMLElement, actor: Actor.Implement
       if (event.key === 'Enter') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (isHTMLInputElement(inputElement)) inputElement.blur()
       }
 
       if (event.key === 'Escape') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (!isHTMLInputElement(inputElement)) return
         const fieldset = inputElement.closest(fieldsetSelector)
+
         if (!isHTMLElement(fieldset)) return
         fieldset.classList.remove(editingClass)
         const fieldPath = inputElement.name
+
         inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
         inputElement.blur()
       }
@@ -277,14 +319,17 @@ export function bindPointsEdit(html: HTMLElement, actor: Actor.Implementation): 
   const editingClass = 'editing'
 
   const items = html.querySelectorAll<HTMLElement>(itemSelector)
+
   items.forEach(item => {
     item.addEventListener('click', (event: MouseEvent) => {
       const itemElement = event.currentTarget
+
       if (!isHTMLElement(itemElement)) return
       if (itemElement.classList.contains(editingClass)) return
 
       itemElement.classList.add(editingClass)
       const input = itemElement.querySelector(inputSelector)
+
       if (isHTMLInputElement(input)) {
         input.focus()
         input.select()
@@ -293,11 +338,14 @@ export function bindPointsEdit(html: HTMLElement, actor: Actor.Implementation): 
   })
 
   const inputs = html.querySelectorAll<HTMLInputElement>(inputSelector)
+
   inputs.forEach(input => {
     input.addEventListener('blur', (event: FocusEvent) => {
       const inputElement = event.currentTarget
+
       if (!isHTMLInputElement(inputElement)) return
       const item = inputElement.closest(itemSelector)
+
       if (!isHTMLElement(item)) return
       item.classList.remove(editingClass)
 
@@ -314,17 +362,21 @@ export function bindPointsEdit(html: HTMLElement, actor: Actor.Implementation): 
       if (event.key === 'Enter') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (isHTMLInputElement(inputElement)) inputElement.blur()
       }
 
       if (event.key === 'Escape') {
         event.preventDefault()
         const inputElement = event.currentTarget
+
         if (!isHTMLInputElement(inputElement)) return
         const item = inputElement.closest(itemSelector)
+
         if (!isHTMLElement(item)) return
         item.classList.remove(editingClass)
         const fieldPath = inputElement.name
+
         inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
         inputElement.blur()
       }

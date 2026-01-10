@@ -53,8 +53,6 @@ Global Override body {
   color: black;
 }
 
-
-
 /* using h3 elements as a row label -- remove margin */
 .gga-app h3 {
   margin-bottom: 0;

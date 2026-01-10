@@ -1,6 +1,14 @@
 <div class='ms-portrait-wrapper'>
   <div class='ms-portrait'>
-    <img src='{{actor.img}}' data-action='configurePrototypeToken' title='Total: {{system.totalpoints.total}}&#10;Unspent: {{system.totalpoints.unspent}}&#10;&#10;Attributes: {{system.totalpoints.attributes}}&#10;Advantages: {{system.totalpoints.ads}}&#10;Disadvantages: {{system.totalpoints.disads}}&#10;Quirks: {{system.totalpoints.quirks}}&#10;Skills: {{system.totalpoints.skills}}&#10;Spells: {{system.totalpoints.spells}}&#10;Race: {{system.totalpoints.race}}' />
-    {{#if showHPTinting}}<div class='ms-hp-overlay' style='height: {{hpOverlayHeight system.HP.value system.HP.max}}%;' data-hp-threshold='{{hpThreshold system.HP.value system.HP.max}}'></div>{{/if}}
+    <img
+      src='{{actor.img}}'
+      data-action='configurePrototypeToken'
+      title='Total: {{system.totalpoints.total}}&#10;Unspent: {{system.totalpoints.unspent}}&#10;&#10;Attributes: {{system.totalpoints.attributes}}&#10;Advantages: {{system.totalpoints.ads}}&#10;Disadvantages: {{system.totalpoints.disads}}&#10;Quirks: {{system.totalpoints.quirks}}&#10;Skills: {{system.totalpoints.skills}}&#10;Spells: {{system.totalpoints.spells}}&#10;Race: {{system.totalpoints.race}}'
+    />
+    {{#if showHPTinting}}<div
+        class='ms-hp-overlay'
+        style='height: {{hpOverlayHeight system.HP.value system.HP.max}}%;'
+        data-hp-threshold='{{hpThreshold system.HP.value system.HP.max}}'
+      ></div>{{/if}}
   </div>
 </div>

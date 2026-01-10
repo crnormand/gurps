@@ -31,8 +31,10 @@ async function importGCS(actor?: Actor.OfType<'characterV2'>) {
         callback: async (_1, button, _2) => {
           // @ts-expect-error types are idk
           const files = button.form?.elements.data.files
+
           if (!files || files.length === 0) {
             ui.notifications?.error(game.i18n!.localize('GURPS.importer.error.noFilesSelected'))
+
             return
           } else {
             // Measure how long importing takes

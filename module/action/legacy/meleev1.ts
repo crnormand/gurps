@@ -115,4 +115,5 @@ class MeleeV1 {
     return this.meleeV2.mel.weight
   }
 }
+
 export { MeleeV1 }

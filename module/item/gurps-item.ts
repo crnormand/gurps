@@ -1,15 +1,15 @@
-import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import { BaseItemModel } from './data/base.js'
-import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
-import { ModelCollection } from '../data/model-collection.js'
-import { IContainable } from '../data/mixins/containable.js'
-
-import { TraitComponent, TraitModel } from './data/trait.js'
-import { SkillComponent, SkillModel } from './data/skill.js'
-import { EquipmentComponent, EquipmentModel } from './data/equipment.js'
-import { SpellComponent, SpellModel } from './data/spell.js'
-import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
 import { recurselist } from '../../lib/utilities.js'
+import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
+import { IContainable } from '../data/mixins/containable.js'
+import { ModelCollection } from '../data/model-collection.js'
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+
+import { BaseItemModel } from './data/base.js'
+import { EquipmentComponent, EquipmentModel } from './data/equipment.js'
+import { SkillComponent, SkillModel } from './data/skill.js'
+import { SpellComponent, SpellModel } from './data/spell.js'
+import { TraitComponent, TraitModel } from './data/trait.js'
+import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
@@ -55,6 +55,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   get container(): GurpsItemV2 | null {
     if (!this.modelV2.containedBy) return null
+
     return (this.parent?.items.get(this.modelV2.containedBy) as GurpsItemV2) || null
   }
 
@@ -102,6 +103,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
    */
   async toggleOpen(expandOnly: boolean = false): Promise<void> {
     const newValue = !this.modelV2.open
+
     if (expandOnly && !newValue) return
     // @ts-expect-error: system does not recognise Item SubType
     await this.update({ 'system.open': newValue })
@@ -132,8 +134,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
   ): Item.Embedded.DocumentFor<EmbeddedName> | undefined {
     const systemEmbeds = this.modelV2?.metadata.embedded ?? {}
+
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
+
       return (
         (foundry.utils.getProperty(this, path) as ModelCollection<any>).get(id, {
           invalid,
@@ -141,6 +145,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
         }) ?? undefined
       )
     }
+
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
   }
 
@@ -155,6 +160,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   override async deleteDialog(options = {}): Promise<this | false | null | undefined> {
     // Display custom delete dialog when deleting a container with contents
     const count = this.contents.length
+
     if (count) {
       const response = await foundry.applications.api.Dialog.confirm({
         window: {
@@ -172,11 +178,13 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
             const deleteContents = (
               (event.currentTarget as HTMLElement).querySelector('[name="deleteContents"]') as HTMLInputElement
             )?.checked
+
             this.delete({ deleteContents })
           },
         },
         options: { ...options },
       })
+
       return response ? this : undefined
     }
 
@@ -190,11 +198,13 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
    */
   getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
     const collectionPath = this.modelV2?.metadata.embedded?.[embeddedName]
+
     if (!collectionPath) {
       throw new Error(
         `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
       )
     }
+
     return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
   }
 
@@ -204,6 +214,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     super.prepareBaseData()
 
     const documentNames = Object.keys(this.modelV2?.metadata?.embedded ?? {})
+
     for (const documentName of documentNames) {
       for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
         pseudoDocument.prepareBaseData()
@@ -217,6 +228,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     super.prepareDerivedData()
 
     const documentNames = Object.keys(this.modelV2?.metadata?.embedded ?? {})
+
     for (const documentName of documentNames) {
       for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
         pseudoDocument.prepareDerivedData()
@@ -260,6 +272,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
         )[]
       default:
         console.error(`GURPS | GurpsItem#getItemAttacks: Invalid attackType value: ${options.attackType}`)
+
         return []
     }
   }
@@ -278,6 +291,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   async toggleEnabled(enabled: boolean | null = null) {
     if (!this.isOfType('equipmentV2')) {
       console.warn(`Item of type "${this.type}" cannot be toggled.`)
+
       return
     }
 
@@ -301,6 +315,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     if (this.type === 'skillV2') return this.ski
     if (this.type === 'spellV2') return this.spl
     if (this.type === 'equipmentV2') return this.eqt
+
     return null
   }
 
@@ -308,6 +323,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   get fea(): TraitComponent | null {
     if (!(this.system instanceof TraitModel)) return null
+
     return this.system.fea
   }
 
@@ -315,6 +331,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   get ski(): SkillComponent | null {
     if (!(this.system instanceof SkillModel)) return null
+
     return this.system.ski
   }
 
@@ -322,6 +339,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   get spl(): SpellComponent | null {
     if (!(this.system instanceof SpellModel)) return null
+
     return this.system.spl
   }
 
@@ -329,6 +347,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   get eqt(): EquipmentComponent | null {
     if (!(this.system instanceof EquipmentModel)) return null
+
     return this.system.eqt
   }
 
@@ -363,7 +382,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
       rangedAtk: 'ranged',
     } as Record<string, string>
     const sysKey = keys[this.type]
+
     if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
+
     return sysKey
   }
 
@@ -371,6 +392,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   toggleCollapsed(expandOnly: boolean = false): void {
     const newValue = !this.modelV2.open
+
     if (expandOnly && !newValue) return
 
     // @ts-expect-error: system does not recognise Item SubType
@@ -409,12 +431,15 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     const actorComponentUUID = component.uuid
 
     // Look at Melee and Ranged attacks in actor.system
-    let attacks: Record<string, any>[] = []
+    const attacks: Record<string, any>[] = []
     let attackTypes = ['melee', 'ranged']
+
     if (attackType !== 'both') attackTypes = [attackType]
-    for (let type of attackTypes) {
+
+    for (const type of attackTypes) {
       recurselist((this.actor!.system as Record<string, any>)[type], (e, _k, _d) => {
         let key = undefined
+
         if (!!actorComponentUUID && e.uuid === actorComponentUUID) {
           key = this.actor!._findSysKeyForId('uuid', e.uuid, type)
         } else if (!!originalName && e.originalName === originalName) {
@@ -424,7 +449,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
         } else if (this.id === e.fromItem) {
           key = this.actor!._findSysKeyForId('fromItem', e.fromItem, type)
         }
-        if (!!key) {
+
+        if (key) {
           attacks.push({
             component: e,
             key,
@@ -432,6 +458,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
         }
       })
     }
+
     return attacks
   }
 
@@ -455,7 +482,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
       rangedAtk: 'rng',
     }
     const sysKey = keys[this.type]
+
     if (!sysKey) throw new Error(`No item system key found for ${this.type}`)
+
     return sysKey
   }
 
@@ -502,8 +531,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
    * @deprecated GurpsItem only.
    */
   getItemInfo(): Record<string, any> {
-    let data = foundry.utils.duplicate(this)
-    let itemSystem = data.system
+    const data = foundry.utils.duplicate(this)
+    const itemSystem = data.system
+
     return {
       id: this._id,
       img: this.img,

@@ -9,8 +9,9 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
       action: 'send',
       label: 'GURPS.resolveDamage.sendTo',
       icon: 'fas fa-paper-plane',
-      callback: (event, button, dialog) => {
+      callback: (_event, button) => {
         const rolls = button.form.elementsnumber?.valueAsNumber || 1
+
         return { rolls: rolls, action: 'send' }
       },
     })
@@ -20,7 +21,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
     action: 'multiple',
     label: 'GURPS.resolveDamage.multiple',
     icon: 'fas fa-clone',
-    callback: (event, button, dialog) => {
+    callback: (_event, button) => {
       return { rolls: button.form.elements.number?.valueAsNumber, action: 'multiple' }
     },
   })
@@ -29,7 +30,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
     action: 'combine',
     label: 'GURPS.resolveDamage.combine',
     icon: 'fas fa-plus',
-    callback: (event, button, dialog) => {
+    callback: (_event, button) => {
       return { rolls: button.form.elements.number?.valueAsNumber, action: 'combine' }
     },
   })
@@ -52,15 +53,19 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
     case 'send':
       GURPS.whisperOtfToOwner(otf, overridetxt, event, false, actor) // Can't blind roll damages (yet)
       break
+
     case 'multiple': {
       const rolls = choice.rolls || 1
       let targets = Array.from({ length: rolls }, (_, i) => (i + 1).toString())
+
       if (isOtf) GurpsWiring.handleGurpslink(event, actor, { targets: targets })
       else GURPS.handleRoll(event, actor, { targets: targets })
       break
     }
+
     case 'combine': {
       const rolls = choice.rolls || 1
+
       if (isOtf) otf = multiplyDice(otf, rolls)
       if (isOtf) GurpsWiring.handleGurpslink(event, actor, { combined: rolls })
       else GURPS.handleRoll(event, actor, { combined: rolls })

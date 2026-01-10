@@ -1,5 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { i18nFallback } from '../utilities/i18nFallback.js'
+
 import DamageChat from './damagechat.js'
 
 export async function rollDamage(
@@ -17,6 +18,7 @@ export async function rollDamage(
     throw new Error('GURPS | rollDamage: game settings or i18n or users not available.')
 
   const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+
   if (showRollDialog && !canRoll.isSlam) {
     // Get Actor Info
     const gmUser = game.users.find((it: User) => it.isGM && it.active)
@@ -56,6 +58,7 @@ export async function rollDamage(
     if ($(document).find('.dialog-button.cancel').length > 0) {
       // Wait for the dialog to close.
       await new Promise(resolve => setTimeout(resolve, 500))
+
       // If there still is a cancel button, click it.
       for (const button of $(document).find('.dialog-button.cancel')) {
         console.log('clicking cancel button')
@@ -122,14 +125,17 @@ export async function rollDamage(
         action.extdamagetype,
         action.hitlocation
       )
+
       if (action.next) {
         // @ts-expect-error: Unrefined type
         return await GURPS.performAction(action.next, actor, event, targets)
       }
+
       return true
     } else {
       await GURPS.ModifierBucket.clear()
       GURPS.stopActions = true
+
       return false
     }
   } else {
@@ -143,10 +149,12 @@ export async function rollDamage(
       action.extdamagetype,
       action.hitlocation
     )
+
     if (action.next) {
       // @ts-expect-error: Unrefined type
       return await GURPS.performAction(action.next, actor, event, targets)
     }
+
     return true
   }
 }

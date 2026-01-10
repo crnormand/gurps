@@ -1,6 +1,5 @@
 'use strict'
 
-import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
@@ -33,16 +32,19 @@ export default class DamageChat {
 
     // for each damage-message, set the drag-and-drop events and data
     let damageMessages = html.querySelectorAll('.damage-message')
+
     if (!!damageMessages && damageMessages.length > 0) {
       for (let index = 0; index < damageMessages.length; index++) {
         let message = damageMessages[index]
         let payload = transfer.payload[index]
+
         makeElementDraggable(message, 'damageItem', 'dragging', payload, DamageChat.damageDragImage, [30, 30])
       }
     } // end-if (!!damageMessages && damageMessages.length)
 
     // for the damage-all-message, set the drag-and-drop events and data
     let allDamageMessage = html.querySelectorAll('.damage-all-message')
+
     if (!!allDamageMessage && allDamageMessage.length == 1) {
       let message = allDamageMessage[0]
 
@@ -51,19 +53,22 @@ export default class DamageChat {
 
     // If there was a target, enable the GM's apply button
     let button = html.querySelector('button.apply-all')
+
     if (button == null) return
 
     button.style.display = 'none'
+
     if (!!transfer.userTarget && transfer.userTarget != null) {
       if (game.user.isGM) {
         button.style.display = 'block'
 
-        button.addEventListener('click', ev => {
+        button.addEventListener('click', () => {
           // get actor from id
           let token = canvas.tokens?.get(transfer.userTarget) // ...
           // get payload; its either the "all damage" payload or ...
           let actor = token?.actor
-          if (!!actor) actor.handleDamageDrop(transfer.payload)
+
+          if (actor) actor.handleDamageDrop(transfer.payload)
           else ui.notifications?.warn('Unable to find token with ID:' + transfer.userTarget)
         })
       }
@@ -87,13 +92,16 @@ export default class DamageChat {
         break
       case 'equipment':
         const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
+
         if (token.length !== 1) {
           ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForEquipmentWarning'))
           break
         }
+
         await token[0].actor.handleEquipmentDrop(dropData)
         break
     }
+
     return false
   }
 
@@ -126,15 +134,18 @@ export default class DamageChat {
     let dice = null
     let diceFormula = addBucketToDamage(diceText, true) // run before applyMods()
     const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
     if (!tokenNames || tokenNames.length == 0) tokenNames.push('')
 
     const oldAutoEmpty = GURPS.ModifierBucket.modifierStack.AUTO_EMPTY
+
     GURPS.ModifierBucket.modifierStack.AUTO_EMPTY = false
 
     for (const tokenName of tokenNames) {
       targetmods = GURPS.ModifierBucket.applyMods() // append any global mods
 
       let diceMods
+
       if (taggedSettings.autoAdd) {
         diceMods = []
       } else {
@@ -193,6 +204,7 @@ export default class DamageChat {
 
     if (!result) {
       ui.notifications?.warn(`Invalid Dice formula: "${originalDiceText}"`)
+
       return null
     }
 
@@ -201,27 +213,33 @@ export default class DamageChat {
     if (originalDiceText.slice(-1) === '!') diceText = diceText + '!'
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
-    let multiplier = !!result.groups?.mult ? parseFloat(result.groups.mult) : 1
-    let divisor = !!result.groups?.divisor ? parseFloat(result.groups.divisor) : 0
+    let multiplier = result.groups?.mult ? parseFloat(result.groups.mult) : 1
+    let divisor = result.groups?.divisor ? parseFloat(result.groups.divisor) : 0
 
     let adds1 = 0
-    let temp = !!result.groups?.adds1 ? result.groups.adds1 : ''
+    let temp = result.groups?.adds1 ? result.groups.adds1 : ''
+
     if (!!temp && temp !== '') {
       let m = temp.match(/([+-])@margin/)
-      if (!!m) {
+
+      if (m) {
         let mrg = GURPS.lastTargetedRoll?.margin || 0
+
         if (m[1] == '+') temp = '' + mrg
         else {
           if (mrg <= 0) temp = '' + mrg
           else temp = '-' + mrg
         }
       }
+
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds1 = parseInt(temp)
     }
 
     let adds2 = 0
-    temp = !!result.groups?.adds2 ? result.groups.adds2 : ''
+
+    temp = result.groups?.adds2 ? result.groups.adds2 : ''
+
     if (!!temp && temp !== '') {
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds2 = parseInt(temp)
@@ -229,10 +247,12 @@ export default class DamageChat {
 
     let formula = diceText
     let rolled = false
-    if (!!result.groups?.D) {
+
+    if (result.groups?.D) {
       rolled = true
       if (result.groups.D === 'd') formula = d6ify(diceText, '[Damage]') // GURPS dice (assume 6)
     }
+
     let displayText = overrideDiceText || diceText // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1
 
@@ -245,10 +265,13 @@ export default class DamageChat {
     }
 
     let modifier = 0
+
     for (let m of targetmods) {
       modifier += m.modint
     }
+
     let additionalText = ''
+
     if (multiplier > 1) {
       additionalText += `×${multiplier}`
     }
@@ -270,6 +293,7 @@ export default class DamageChat {
       adds2: adds2,
       min: min,
     }
+
     // console.log(diceData)
     return diceData
   }
@@ -284,16 +308,20 @@ export default class DamageChat {
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods, hitlocation) {
     let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
+
     await roll.evaluate()
 
     let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
     let rollTotal = roll.total || 0
+
     diceData.loaded = roll.isLoaded
 
     let b378 = false
+
     if (rollTotal < diceData.min) {
       rollTotal = diceData.min
+
       if (diceData.damageType !== 'cr') {
         b378 = true
       }
@@ -302,8 +330,10 @@ export default class DamageChat {
     let damage = rollTotal * diceData.multiplier
 
     let explainLineOne = null
+
     if ((roll.dice.length > 0 && roll.dice[0].results.length > 1) || diceData.adds1 !== 0) {
       let tempString = ''
+
       if (roll.dice.length > 0) {
         tempString = roll.dice[0].results.map(it => it.result).join()
         tempString = `Rolled (${tempString})`
@@ -314,14 +344,17 @@ export default class DamageChat {
       if (diceData.adds1 !== 0) {
         let sign = diceData.adds1 < 0 ? '−' : '+'
         let value = Math.abs(diceData.adds1)
+
         tempString = `${tempString} ${sign} ${value}`
       }
 
       if (diceData.adds2 !== 0) {
         let sign = diceData.adds2 < 0 ? '-' : '+'
         let value = Math.abs(diceData.adds2)
+
         tempString = `${tempString} ${sign} ${value}`
       }
+
       explainLineOne = `${tempString} = ${dicePlusAdds}.`
     }
 
@@ -361,6 +394,7 @@ export default class DamageChat {
       target: tokenName,
       hitlocation: hitlocation,
     }
+
     return contentData
   }
 
@@ -373,12 +407,14 @@ export default class DamageChat {
    */
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
     let userTarget = null
-    if (!!game.user.targets.size) {
+
+    if (game.user.targets.size) {
       userTarget = game.user.targets.values().next().value
     }
 
     let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
-    damageType = !!diceData.extdamagetype ? `${damageType} ${diceData.extdamagetype}` : damageType
+
+    damageType = diceData.extdamagetype ? `${damageType} ${diceData.extdamagetype}` : damageType
 
     let html = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/damage-message.hbs', {
       draggableData: draggableData,
@@ -412,7 +448,7 @@ export default class DamageChat {
     messageData['flags.gurps.transfer'] = {
       type: 'damageItem',
       payload: draggableData,
-      userTarget: !!userTarget ? userTarget.id : null,
+      userTarget: userTarget ? userTarget.id : null,
     }
 
     if (isNiceDiceEnabled()) {
@@ -428,6 +464,7 @@ export default class DamageChat {
       rolls.forEach(roll => {
         roll.dice.forEach(die => {
           let type = 'd' + die.faces
+
           die.results.forEach(s =>
             dice.push({
               result: s.result,
@@ -440,6 +477,7 @@ export default class DamageChat {
         })
       })
       throws.push({ dice: dice })
+
       if (dice.length > 0) {
         // The user made a "multi-damage" roll... let them see the dice!
         // @ts-ignore
@@ -459,8 +497,10 @@ export default class DamageChat {
     // 3. The User existing Targets or the Token which user dropped the damage on
     let attackerActor = game.actors.get(dropData.payload.attacker)
     const { user } = game
+
     if (!isValidUser(user, attackerActor)) {
       ui.notifications?.warn(game.i18n.localize('GURPS.invalidUserForDamageWarning'))
+
       return false
     }
 
@@ -471,6 +511,7 @@ export default class DamageChat {
 
       if (!selectedTokens || selectedTokens.length === 0) {
         ui.notifications?.warn(game.i18n.localize('GURPS.selectTargetForDamageWarning'))
+
         return false
       }
 
@@ -483,6 +524,7 @@ export default class DamageChat {
         dropData.payload.token = target
         if (target.actor) await target.actor.handleDamageDrop(dropData.payload)
       }
+
       return false
     }
 
@@ -492,7 +534,9 @@ export default class DamageChat {
       if (game.user.isGM) return true
       const userCanAdd = !onlyGMsCanOpenADD()
       const userOwnsAttacker = attackerActor ? user.character === attackerActor : false
+
       if (!userOwnsAttacker) ui.notifications?.warn(game.i18n.localize('GURPS.noUserForDamageWarning'))
+
       return userCanAdd && userOwnsAttacker
     }
   }
@@ -514,12 +558,13 @@ export default class DamageChat {
     let selectedTokens = canvas.tokens.objects.children.filter(t => t.hitArea.contains(x - t.x, y - t.y))
 
     if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, { single: single })
+
     return selectedTokens
   }
 }
 
 DamageChat.fullRegex =
-  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX*](?<mult>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {

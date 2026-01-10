@@ -1,8 +1,9 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
+import { ImportSettings } from '../importer/index.js'
 import { SmartImporter } from '../smart-importer.js'
+
 import {
   Advantage,
   Encumbrance,
@@ -16,7 +17,6 @@ import {
   Skill,
   Spell,
 } from './actor-components.js'
-import { ImportSettings } from '../importer/index.js'
 
 // const GCA5Version = 'GCA5-14'
 const GCAVersion = 'GCA-11'
@@ -31,20 +31,26 @@ export class ActorImporter {
 
   async importActor() {
     let path = this.actor.system.additionalresources.importpath
+
     if (path) {
       let match = path.match(/.*[/\\]Data[/\\](.*)/)
+
       // If the path is inside the Foundry Data directory, then we can read the file directly and import it.
       if (match) {
         let fileUrl = match[1].replace(/\\/g, '/')
         let xhr = new XMLHttpRequest()
+
         xhr.responseType = 'arraybuffer'
         xhr.open('GET', fileUrl)
+
         xhr.onload = () => {
           if (xhr.status === 200) {
             let source = arrayBuffertoBase64(xhr.response)
+
             this.importActorFromExternalProgram(source, match[1], path)
           } else this._openImportDialog()
         }
+
         xhr.send(null)
       } else await this._openImportDialog()
     } else await this._openImportDialog()
@@ -59,6 +65,7 @@ export class ActorImporter {
     try {
       const file = await SmartImporter.getFileForActor(this.actor)
       const res = await this.importActorFromExternalProgram(await file.text(), file.name, file.path)
+
       if (res) SmartImporter.setFileForActor(this.actor, file)
     } catch (e) {
       ui.notifications?.error(e)
@@ -87,11 +94,13 @@ export class ActorImporter {
           default: true,
           callback: async (_, button, __) => {
             let files = button.form.elements.data.files
+
             if (!files.length) {
               return ui.notifications.error(game.i18n.localize('GURPS.noFile'))
             } else {
               const file = files[0]
               const text = await GURPS.readTextFromFile(file)
+
               await this.importActorFromExternalProgram(text, file.name, file.path)
             }
           },
@@ -108,6 +117,7 @@ export class ActorImporter {
 
   async importActorFromExternalProgram(source, importName, importPath, suppressMessage = false) {
     if (importName.endsWith('.gcs')) return this.importActorFromGCS(source, importName, importPath, suppressMessage)
+
     return this.importActorFromGCA(source, importName, importPath, suppressMessage)
   }
 
@@ -122,19 +132,22 @@ export class ActorImporter {
     let exit = false
     let loadingDialog
     let importResult = false
+
     try {
       r = JSON.parse(json)
       this.json = r
-    } catch (err) {
+    } catch {
       msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
     }
-    if (!!r) {
+
+    if (r) {
       if (!r.calc) {
         msg.push(game.i18n.localize('GURPS.importOldGCSFile'))
         exit = true
       }
     }
+
     this.GCSVersion = r.version
 
     if (msg.length > 0) {
@@ -149,6 +162,7 @@ export class ActorImporter {
           url: GURPS.USER_GUIDE_URL,
         }
       )
+
       ChatMessage.create({
         content: content,
         user: game.user.id,
@@ -158,6 +172,7 @@ export class ActorImporter {
     }
 
     let nm = r['profile']['name']
+
     console.log("Importing '" + nm + "'")
     let starttime = performance.now()
     let commit = {}
@@ -166,8 +181,10 @@ export class ActorImporter {
     loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCS' })
     commit = { ...commit, ...{ 'system.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.actor.system.additionalresources || {}
+
     ar.importname = importname || ar.importname
     ar.importpath = importpath || ar.importpath
+
     try {
       commit = { ...commit, ...{ 'system.additionalresources': ar } }
       commit = { ...commit, ...(await this.importAttributesFromGCS(r.attributes, r.equipment, r.calc)) }
@@ -220,12 +237,14 @@ export class ActorImporter {
           url: GURPS.USER_GUIDE_URL,
         }
       )
+
       ui.notifications?.warn(msg)
       let chatData = {
         user: game.user.id,
         content: content,
         whisper: [game.user.id],
       }
+
       ChatMessage.create(chatData, {})
       // Don't return
     }
@@ -252,14 +271,16 @@ export class ActorImporter {
       // if (this.isUsingFoundryItems()) {
       for (let key of ['ads', 'skills', 'spells']) {
         await aRecurselist(this.actor.system[key], async t => {
-          if (!!t.itemid) {
+          if (t.itemid) {
             const i = this.actor.items.get(t.itemid)
-            if (!!i.system.globalid) {
+
+            if (i.system.globalid) {
               await this.actor._addItemAdditions(i, '')
             }
           }
         })
       }
+
       // }
       // Recalculate DR
       await this.actor.refreshDR()
@@ -275,6 +296,7 @@ export class ActorImporter {
     } catch (err) {
       console.log(err.stack)
       let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+
       if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>'))
       let content = await foundry.applications.handlebars.renderTemplate(
@@ -293,10 +315,12 @@ export class ActorImporter {
         content: content,
         whisper: [game.user.id],
       }
+
       ChatMessage.create(chatData, {})
     } finally {
-      if (!!loadingDialog) await loadingDialog.close()
+      if (loadingDialog) await loadingDialog.close()
     }
+
     return importResult
   }
 
@@ -318,6 +342,7 @@ export class ActorImporter {
       ],
       form: { closeOnSubmit: false },
     }).render({ force: true })
+
     return dialog
   }
 
@@ -333,6 +358,7 @@ export class ActorImporter {
     let version = 'unknown'
     let vernum = 1
     let exit = false
+
     if (!r) {
       if (importName.endsWith('.gca5')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
       if (importName.endsWith('.gca4')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
@@ -341,13 +367,15 @@ export class ActorImporter {
     } else {
       // The character object starts here
       c = r.character
+
       if (!c) {
         msg.push(game.i18n.localize('GURPS.importNoCharacterFormat'))
         exit = true
       }
 
       let parsererror = r.parsererror
-      if (!!parsererror) {
+
+      if (parsererror) {
         msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
         exit = true
       }
@@ -356,18 +384,23 @@ export class ActorImporter {
       // Sorry for the horrible version checking... it sort of evolved organically
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       isFoundryGCA5 = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA5')
+
       if (!(isFoundryGCA || isFoundryGCA5)) {
         msg.push(game.i18n.localize('GURPS.importFantasyGroundUnsupported'))
         exit = true
       }
+
       version = ra?.version || ''
-      const v = !!ra?.version ? ra.version.split('-') : []
+      const v = ra?.version ? ra.version.split('-') : []
+
       if (isFoundryGCA) {
         if (isFoundryGCA5) {
-          if (!!v[1]) vernum = parseInt(v[1])
+          if (v[1]) vernum = parseInt(v[1])
+
           if (vernum < 12) {
             msg.push(game.i18n.localize('GURPS.importGCA5ImprovedInventoryHandling'))
           }
+
           if (vernum < 13) {
             msg.push(game.i18n.localize('GURPS.importGCA5ImprovedBlock'))
           }
@@ -375,40 +408,52 @@ export class ActorImporter {
           if (!v[1]) {
             msg.push(game.i18n.localize('GURPS.importGCANoBodyPlan'))
           }
-          if (!!v[1]) vernum = parseInt(v[1])
+
+          if (v[1]) vernum = parseInt(v[1])
+
           if (vernum < 2) {
             msg.push(game.i18n.localize('GURPS.importGCANoInnateRangedAndParent'))
           }
+
           if (vernum < 3) {
             msg.push(game.i18n.localize('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
           }
+
           if (vernum < 4) {
             msg.push(game.i18n.localize('GURPS.importGCANoParent'))
           }
+
           if (vernum < 5) {
             msg.push(game.i18n.localize('GURPS.importGCANoSanitizeNotes'))
           }
+
           if (vernum < 6) {
             msg.push(game.i18n.localize('GURPS.importGCANoMeleeIfAlsoRanged'))
           }
+
           if (vernum < 7) {
             msg.push(game.i18n.localize('GURPS.importGCABadBlockForDB'))
           }
+
           if (vernum < 8) {
             msg.push(game.i18n.localize('GURPS.importGCANoHideFlag'))
           }
+
           if (vernum < 9) {
             msg.push(game.i18n.localize('GURPS.importGCAChildrenWeights'))
           }
+
           if (vernum < 10) {
             msg.push(game.i18n.localize('GURPS.importGCAAdvMods'))
           }
+
           if (vernum < 11) {
             msg.push(game.i18n.localize('GURPS.importGCAConditionalModifiers'))
           }
         }
       }
     }
+
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
       let content = await foundry.applications.handlebars.renderTemplate(
@@ -429,13 +474,17 @@ export class ActorImporter {
       })
       if (exit) return false // Some errors cannot be forgiven ;-)
     }
+
     let nm = this.textFrom(c.name)
+
     console.log("Importing '" + nm + "'")
     let starttime = performance.now()
 
     let commit = {}
+
     commit = { ...commit, ...{ 'system.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.actor.system.additionalresources || {}
+
     ar.importName = importName || ar.importName
     ar.importPath = importPath || ar.importPath
     ar.importversion = ra.version
@@ -443,6 +492,7 @@ export class ActorImporter {
 
     let loadingDialog
     let importResult = false
+
     try {
       // if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
       loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
@@ -461,9 +511,10 @@ export class ActorImporter {
       commit = { ...commit, ...this.importNotesFromGCA(c.description, c.notelist) }
       commit = { ...commit, ...(await this.importEquipmentFromGCA(c.inventorylist)) }
       commit = { ...commit, ...(await this.importProtectionFromGCA(c.combat?.protectionlist)) }
-    } catch (err) {
+    } catch {
       // Don't return, because we want to see how much actually gets committed.
     }
+
     console.log('Starting commit')
 
     let deletes = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => key.includes('.-=')))
@@ -486,14 +537,16 @@ export class ActorImporter {
       // if (this.isUsingFoundryItems()) {
       for (let key of ['ads', 'skills', 'spells']) {
         await aRecurselist(this.actor.system[key], async t => {
-          if (!!t.itemid) {
+          if (t.itemid) {
             const i = this.actor.items.get(t.itemid)
-            if (!!i.system.globalid) {
+
+            if (i.system.globalid) {
               await this.actor._addItemAdditions(i, '')
             }
           }
         })
       }
+
       // }
       // Recalculate DR
       await this.actor.refreshDR()
@@ -509,6 +562,7 @@ export class ActorImporter {
     } catch (err) {
       console.log(err.stack)
       let msg = [game.i18n.format('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+
       if (err.message == 'Maximum depth exceeded') msg.push(game.i18n.localize('GURPS.importTooManyContainers'))
       ui.notifications?.warn(msg.join('<br>')) // FIXME: Why suppressMessage is not available here?
       let content = await foundry.applications.handlebars.renderTemplate(
@@ -527,10 +581,12 @@ export class ActorImporter {
         content: content,
         whisper: [game.user.id],
       }
+
       ChatMessage.create(chatData, {})
     } finally {
-      if (!!loadingDialog) await loadingDialog.close()
+      if (loadingDialog) await loadingDialog.close()
     }
+
     return importResult
   }
 
@@ -567,12 +623,14 @@ export class ActorImporter {
     let fp = i(json.fps)
 
     let overwrite = await this.promptForSaveOrOverwrite(data, hp, fp)
+
     if (overwrite !== 'keep') {
       data.HP.value = hp
       data.FP.value = fp
     }
 
     let lm = {}
+
     lm.basiclift = t(json.basiclift)
     lm.carryonback = t(json.carryonback)
     lm.onehandedlift = t(json.onehandedlift)
@@ -663,6 +721,7 @@ export class ActorImporter {
     if (!json) return
     let t = this.textFrom
     let ts = {}
+
     ts.race = t(json.race)
     ts.height = t(json.height)
     ts.weight = t(json.weight)
@@ -678,12 +737,16 @@ export class ActorImporter {
     ts.techlevel = t(json.tl)
     // <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
     let a = t(json.appearance)
+
     ts.appearance = a
+
     try {
       let x = a.indexOf(', Eyes: ')
+
       if (x >= 0) {
         ts.gender = a.substring(0, x)
         let y = a.indexOf(', Hair: ')
+
         ts.eyes = a.substring(x + 8, y)
         x = a.indexOf(', Skin: ')
         ts.hair = a.substring(y + 8, x)
@@ -693,6 +756,7 @@ export class ActorImporter {
       console.log('Unable to parse appearance traits for ')
       console.log(this)
     }
+
     return {
       'system.-=traits': null,
       'system.traits': ts,
@@ -705,17 +769,18 @@ export class ActorImporter {
    */
   async importAdsFromGCA(adsjson, disadsjson) {
     /** @type {Advantage[]} */
-    if (!!adsjson || !!disadsjson) await this._preImport('GCA', 'feature')
     let list = []
+
     await this.importBaseAdvantagesFromGCA(list, adsjson)
     await this.importBaseAdvantagesFromGCA(list, disadsjson)
 
     // Find all Features with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.ads, async t => {
-      if (!!t.itemid) {
+      if (t.itemid) {
         const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
           t = await this._processItemFrom(t, 'GCA')
           list.push(t)
@@ -737,11 +802,13 @@ export class ActorImporter {
   async importBaseAdvantagesFromGCA(datalist, json) {
     if (!json) return
     let t = this.textFrom /// shortcut to make code smaller
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let a = new Advantage()
+
         a.name = t(j.name)
         a.originalName = t(j.name)
         a.points = this.intFrom(j.points)
@@ -750,6 +817,7 @@ export class ActorImporter {
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('ads', a.uuid)
+
         this._migrateOtfsAndNotes(old, a, t(j.vtt_notes))
         a = await this._processItemFrom(a, 'GCA')
         datalist.push(a)
@@ -762,14 +830,15 @@ export class ActorImporter {
    */
   async importSkillsFromGCA(json) {
     if (!json) return
-    await this._preImport('GCA', 'skill')
     let temp = []
     let t = this.textFrom /// shortcut to make code smaller
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let sk = new Skill()
+
         sk.name = t(j.name)
         sk.originalName = t(j.name)
         sk.type = t(j.type)
@@ -778,10 +847,11 @@ export class ActorImporter {
         sk.points = this.intFrom(j.points)
         sk.relativelevel = t(j.relativelevel)
         sk.setNotes(t(j.text))
-        if (!!j.pageref) sk.pageRef(t(j.pageref))
+        if (j.pageref) sk.pageRef(t(j.pageref))
         sk.uuid = t(j.uuid)
         sk.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('skills', sk.uuid)
+
         this._migrateOtfsAndNotes(old, sk, t(j.vtt_notes))
         sk = await this._processItemFrom(sk, 'GCA')
         temp.push(sk)
@@ -791,9 +861,10 @@ export class ActorImporter {
     // Find all skills with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.skills, async t => {
-      if (!!t.itemid) {
+      if (t.itemid) {
         const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
           t = await this._processItemFrom(t, 'GCA')
           temp.push(t)
@@ -816,26 +887,29 @@ export class ActorImporter {
    */
   async importSpellsFromGCA(json) {
     if (!json) return
-    await this._preImport('GCA', 'spell')
     let temp = []
     let t = this.textFrom /// shortcut to make code smaller
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let sp = new Spell()
+
         sp.name = t(j.name)
         sp.originalName = t(j.name)
         sp.class = t(j.class)
         sp.college = t(j.college)
         let cm = t(j.costmaintain)
         let i = cm.indexOf('/')
+
         if (i >= 0) {
           sp.cost = cm.substring(0, i)
           sp.maintain = cm.substr(i + 1)
         } else {
           sp.cost = cm
         }
+
         sp.setNotes(t(j.text))
         sp.pageRef(t(j.pageref))
         sp.duration = t(j.duration)
@@ -845,6 +919,7 @@ export class ActorImporter {
         sp.uuid = t(j.uuid)
         sp.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('spells', sp.uuid)
+
         this._migrateOtfsAndNotes(old, sp, t(j.vtt_notes))
         sp = await this._processItemFrom(sp, 'GCA')
         temp.push(sp)
@@ -854,9 +929,10 @@ export class ActorImporter {
     // Find all spells with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.spells, async t => {
-      if (!!t.itemid) {
+      if (t.itemid) {
         const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
           t = await this._processItemFrom(t, 'GCA')
           temp.push(t)
@@ -879,26 +955,31 @@ export class ActorImporter {
     let t = this.textFrom
     let melee = {}
     let index = 0
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+
         for (let k2 in j.meleemodelist) {
           if (k2.startsWith('id-')) {
             let j2 = j.meleemodelist[k2]
             let m = new Melee()
+
             m.name = t(j.name)
             m.originalName = t(j.name)
             m.st = t(j.st)
             m.weight = t(j.weight)
             m.techlevel = t(j.tl)
             m.cost = t(j.cost)
+
             try {
               m.setNotes(t(j.text))
             } catch {
               console.log(m)
               console.log(t(j.text))
             }
+
             m.mode = t(j2.name)
             m.import = t(j2.level)
             m.damage = t(j2.damage)
@@ -906,6 +987,7 @@ export class ActorImporter {
             m.parry = t(j2.parry)
             m.block = t(j2.block)
             let old = this._findElementIn('melee', false, m.name, m.mode)
+
             this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
 
             GURPS.put(melee, m, index++)
@@ -913,6 +995,7 @@ export class ActorImporter {
         }
       }
     }
+
     return {
       'system.-=melee': null,
       'system.melee': melee,
@@ -927,41 +1010,50 @@ export class ActorImporter {
     let t = this.textFrom
     let ranged = {}
     let index = 0
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+
         for (let k2 in j.rangedmodelist) {
           if (k2.startsWith('id-')) {
             let j2 = j.rangedmodelist[k2]
             let r = new Ranged()
+
             r.name = t(j.name)
             r.originalName = t(j.name)
             r.st = t(j.st)
             r.bulk = t(j.bulk)
             r.legalityclass = t(j.lc)
             r.ammo = t(j.ammo)
+
             try {
               r.setNotes(t(j.text))
             } catch {
               console.log(r)
               console.log(t(j.text))
             }
+
             r.mode = t(j2.name)
             r.import = t(j2.level)
             r.damage = t(j2.damage)
             r.acc = t(j2.acc)
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+
             if (m) {
               r.acc = m[1]
               r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
+
             r.rof = t(j2.rof)
             r.shots = t(j2.shots)
             r.rcl = t(j2.rcl)
             let rng = t(j2.range)
+
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
+
             this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
 
             GURPS.put(ranged, r, index++)
@@ -969,6 +1061,7 @@ export class ActorImporter {
         }
       }
     }
+
     return {
       'system.-=ranged': null,
       'system.ranged': ranged,
@@ -983,70 +1076,47 @@ export class ActorImporter {
     if (!json) return
     let t = this.textFrom
     let temp = []
-    if (!!descjson) {
+
+    if (descjson) {
       // support for GCA description
 
       let n = new Note()
+
       n.notes = t(descjson).replace(/\\r/g, '\n')
       n.imported = true
       temp.push(n)
     }
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let n = /** @type {Note & { imported: boolean, uuid: string, parentuuid: string }} */ (new Note())
+
         //n.setNotes(t(j.text));
         n.notes = t(j.name)
         let txt = t(j.text)
-        if (!!txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
+
+        if (txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
         n.uuid = t(j.uuid)
         n.parentuuid = t(j.parentuuid)
         n.pageref = t(j.pageref)
         let old = this._findElementIn('notes', n.uuid)
+
         this._migrateOtfsAndNotes(old, n)
         temp.push(n)
       }
     }
+
     // Save the old User Entered Notes.
     recurselist(this.actor.system.notes, t => {
-      if (!!t.save) temp.push(t)
+      if (t.save) temp.push(t)
     })
+
     return {
       'system.-=notes': null,
       'system.notes': this.foldList(temp),
     }
-  }
-
-  async _preImport(generator, itemType) {
-    // if (!this.isUsingFoundryItems()) {
-    //   // Before we import, we need to find all eligible items,
-    //   // and backup their exclusive info inside Actor system.itemInfo
-    //   const isEligibleItem = item => {
-    //     const sysKey =
-    //       itemType === 'equipment'
-    //         ? this.actor._findEqtkeyForId('itemid', item.id)
-    //         : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
-    //     return (
-    //       (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
-    //       !foundry.utils.getProperty(this.actor, sysKey)?.save
-    //     )
-    //   }
-    //   let backupItemData = foundry.utils.getProperty(this.actor, `system.backupItemInfo`) || {}
-    //   const eligibleItems = this.actor.items.filter(i => !!isEligibleItem(i))
-    //   backupItemData = eligibleItems.reduce((acc, i) => {
-    //     return {
-    //       ...acc,
-    //       [i.system.importid || i.system.originalName]: i.getItemInfo(),
-    //     }
-    //   }, backupItemData)
-    //   await this.actor.internalUpdate({ 'system.backupItemInfo': backupItemData })
-    //   if (eligibleItems.length > 0)
-    //     await this.actor.deleteEmbeddedDocuments(
-    //       'Item',
-    //       eligibleItems.map(i => i.id)
-    //     )
-    // }
   }
 
   /**
@@ -1058,12 +1128,12 @@ export class ActorImporter {
     let i = this.intFrom
 
     this.ignoreRender = true
-    await this._preImport('GCA', 'equipment')
 
     /**
      * @type {Equipment[]}
      */
     let temp = []
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -1071,13 +1141,15 @@ export class ActorImporter {
         let { name, techLevel } = this.parseEquipmentNameAndTL(t, j)
         let parentuuid = t(j.parentuuid)
         let eqt = new Equipment()
+
         eqt.name = name
         eqt.originalName = t(j.name)
         eqt.count = i(j.count)
         eqt.originalCount = i(j.count)
-        eqt.cost = !!parentuuid ? t(j.cost) : 0
+        eqt.cost = parentuuid ? t(j.cost) : 0
         eqt.location = t(j.location)
         let cstatus = i(j.carried)
+
         eqt.carried = cstatus >= 1
         eqt.equipped = cstatus == 2
         eqt.techlevel = techLevel
@@ -1095,13 +1167,16 @@ export class ActorImporter {
 
         eqt.pageRef(t(j.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
+
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
         this._migrateOtfsAndNotes(old, eqt)
-        if (!!old) {
+
+        if (old) {
           eqt.name = old.name
           eqt.carried = old.carried
           eqt.equipped = old.equipped
           eqt.parentuuid = old.parentuuid
+
           if (old.ignoreImportQty) {
             eqt.count = old.count
             eqt.uses = old.uses
@@ -1109,6 +1184,7 @@ export class ActorImporter {
             eqt.ignoreImportQty = true
           }
         }
+
         // Process Item here
         eqt = await this._processItemFrom(eqt, 'GCA')
         temp.push(eqt)
@@ -1118,7 +1194,8 @@ export class ActorImporter {
     // Save the old User Entered Notes.
     await aRecurselist(this.actor.system.equipment?.carried, async t => {
       t.carried = true
-      if (!!t.save) {
+
+      if (t.save) {
         if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
         t = await this._processItemFrom(t, 'GCA')
         temp.push(t)
@@ -1126,7 +1203,8 @@ export class ActorImporter {
     }) // Ensure carried eqt stays in carried
     await aRecurselist(this.actor.system.equipment?.other, async t => {
       t.carried = false
-      if (!!t.save) {
+
+      if (t.save) {
         if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
         t = await this._processItemFrom(t, 'GCA')
         temp.push(t)
@@ -1151,12 +1229,14 @@ export class ActorImporter {
     // Put everything in it container (if found), otherwise at the top level
     for (const eqt of temp) {
       let parent = null
-      if (!!eqt.parentuuid) {
+
+      if (eqt.parentuuid) {
         parent = temp.find(e => e.uuid === eqt.parentuuid)
-        if (!!parent) GURPS.put(parent.contains, eqt)
+        if (parent) GURPS.put(parent.contains, eqt)
         else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
       }
-      await this._updateItemContains(eqt, parent)
+
+      await this._updateItemContains(eqt)
     }
 
     let equipment = {
@@ -1168,11 +1248,13 @@ export class ActorImporter {
 
     for (const eqt of temp) {
       await Equipment.calc(eqt)
+
       if (!eqt.parentuuid) {
         if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
         else GURPS.put(equipment.other, eqt, oindex++)
       }
     }
+
     return {
       'system.-=equipment': null,
       'system.equipment': equipment,
@@ -1189,17 +1271,21 @@ export class ActorImporter {
     let fullName = t(j.name)
     let techLevel = t(j.tl)
     const localizedTL = game.i18n.localize('GURPS.TL')
-    let regex = new RegExp(`.+\/[TL|${localizedTL}].+`)
-    if (!!fullName.match(regex)) {
+    let regex = new RegExp(`.+/[TL|${localizedTL}].+`)
+
+    if (fullName.match(regex)) {
       let i = fullName.lastIndexOf('/TL') || fullName.lastIndexOf(`/${localizedTL}`)
-      if (!!i) {
+
+      if (i) {
         name = fullName.substring(0, i)
         techLevel = fullName.substring(i + 3)
       }
     }
+
     if (!name) {
       name = fullName
     }
+
     return { name, techLevel }
   }
 
@@ -1210,16 +1296,19 @@ export class ActorImporter {
     if (!json) return
     let t = this.textFrom
     let data = this.actor.system
-    if (!!data.additionalresources.ignoreinputbodyplan) return
+
+    if (data.additionalresources.ignoreinputbodyplan) return
 
     /** @type {HitLocations.HitLocation[]}  */
     let locations = []
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let hl = new HitLocations.HitLocation(t(j.location))
         let i = t(j.dr)
+
         if (i.match(/^\d+ *(\+ *\d+ *)?$/)) i = eval(t(j.dr)) // supports "0 + 8"
         hl.import = !i ? 0 : i
         hl.penalty = t(j.db)
@@ -1230,14 +1319,17 @@ export class ActorImporter {
         while (locations.filter(it => it.where == hl.where).length > 0) {
           hl.where = hl.where + '*'
         }
+
         locations.push(hl)
       }
     }
 
     // Do the results contain vitals? If not, add it.
     let vitals = locations.filter(value => value.where === HitLocations.HitLocation.VITALS)
+
     if (vitals.length === 0) {
       let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
+
       hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
       hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
       hl.import = '0'
@@ -1248,11 +1340,13 @@ export class ActorImporter {
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
     let bodyplan = t(json.bodyplan)?.toLowerCase() // Was a body plan actually in the import?
+
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
 
     /** @type {HitLocations.HitLocation[]}  */
     let locs = []
+
     locations.forEach(e => {
       if (!!table && !!table[e.where]) {
         // if e.where already exists in table, don't map
@@ -1274,10 +1368,11 @@ export class ActorImporter {
     }
     // update location's roll and penalty based on the bodyplan
 
-    if (!!table) {
+    if (table) {
       Object.values(locations).forEach(it => {
         let [lbl, entry] = HitLocations.HitLocation.findTableEntry(table, it.where)
-        if (!!entry) {
+
+        if (entry) {
           it.where = lbl // It might be renamed (ex: Skull -> Brain)
           if (!it.penalty) it.penalty = entry.penalty
           if (!it.roll || it.roll.length === 0 || it.roll === HitLocations.HitLocation.DEFAULT) it.roll = entry.roll
@@ -1289,8 +1384,10 @@ export class ActorImporter {
     // other entries, append them at the end.
     /** @type {HitLocations.HitLocation[]}  */
     let temp = []
+
     Object.keys(table).forEach(key => {
       let results = Object.values(locations).filter(loc => loc.where === key)
+
       if (results.length > 0) {
         if (results.length > 1) {
           // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
@@ -1298,6 +1395,7 @@ export class ActorImporter {
 
           /** @type {string | null} */
           let last = null
+
           results.forEach(r => {
             if (r.import != last) {
               d += '|' + r.import
@@ -1305,9 +1403,10 @@ export class ActorImporter {
             }
           })
 
-          if (!!d) d = d.substring(1)
+          if (d) d = d.substring(1)
           results[0].import = d
         }
+
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
       } else {
@@ -1319,9 +1418,11 @@ export class ActorImporter {
 
     let prot = {}
     let index = 0
+
     temp.forEach(it => GURPS.put(prot, it, index++))
 
     let overwrite = ImportSettings.overwriteBodyPlan // "ask", "keep", "overwrite"
+
     if (data.lastImport) {
       if (!!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
         if (overwrite === 'ask')
@@ -1368,6 +1469,7 @@ export class ActorImporter {
     let langs = {}
     let index = 0
     let t = this.textFrom
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         let j = json[key]
@@ -1376,9 +1478,11 @@ export class ActorImporter {
         let w = t(j.written)
         let p = t(j.points)
         let l = new Language(n, s, w, p)
+
         GURPS.put(langs, l, index++)
       }
     }
+
     return {
       'system.-=languages': null,
       'system.languages': langs,
@@ -1394,16 +1498,19 @@ export class ActorImporter {
     let a = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
+
     a.forEach((/** @type {string} */ m) => {
-      if (!!m) {
+      if (m) {
         let t = m.trim()
         let i = t.indexOf(' ')
         let mod = t.substring(0, i)
         let sit = t.substring(i + 1)
         let r = new Reaction(mod, sit)
+
         GURPS.put(rs, r, index++)
       }
     })
+
     return {
       'system.-=reactions': null,
       'system.reactions': rs,
@@ -1420,26 +1527,33 @@ export class ActorImporter {
     let index = 0
     let cm = 0
     let cd = 0
+
     for (let i = 0; i < 5; i++) {
       let e = new Encumbrance()
+
       e.level = i
       let k = 'enc_' + i
       let c = t(json[k])
+
       e.current = c === '1'
       k = 'enc' + i
       e.key = k
       let k2 = k + '_weight'
+
       e.weight = t(json[k2])
       k2 = k + '_move'
       e.move = this.intFrom(json[k2])
       k2 = k + '_dodge'
       e.dodge = this.intFrom(json[k2])
+
       if (e.current) {
         cm = e.move
         cd = e.dodge
       }
+
       GURPS.put(es, e, index++)
     }
+
     return {
       'system.currentmove': cm,
       'system.currentdodge': cd,
@@ -1455,6 +1569,7 @@ export class ActorImporter {
     if (!json) return
 
     let i = this.intFrom
+
     return {
       'system.totalpoints.attributes': i(json.attributes),
       'system.totalpoints.ads': i(json.ads),
@@ -1476,6 +1591,7 @@ export class ActorImporter {
     if (!atts) return
     let data = this.actor.system
     let att = data.attributes
+
     if (!att.QN) {
       // upgrade older actors to include Q
       att.QN = {}
@@ -1508,17 +1624,20 @@ export class ActorImporter {
     let qp = atts.find(e => e.attr_id === 'qp')?.calc?.current || 0
 
     let overwrite = await this.promptForSaveOrOverwrite(data, hp, fp)
+
     if (overwrite !== 'keep') {
       data.HP.value = hp
       data.FP.value = fp
     }
+
     data.QP.value = qp
 
-    let bl_string = calc?.basic_lift.match(/[\d,\.]+/g)[0]
+    let bl_string = calc?.basic_lift.match(/[\d,.]+/g)[0]
     let bl_value = parseDecimalNumber(bl_string)
     let bl_unit = calc?.basic_lift.replace(bl_string + ' ', '')
 
     let lm = {}
+
     lm.basiclift = (bl_value * 1).toString() + ' ' + bl_unit
     lm.carryonback = (bl_value * 15).toString() + ' ' + bl_unit
     lm.onehandedlift = (bl_value * 2).toString() + ' ' + bl_unit
@@ -1528,9 +1647,11 @@ export class ActorImporter {
     lm.twohandedlift = (bl_value * 8).toString() + ' ' + bl_unit
 
     let bm = atts.find(e => e.attr_id === 'basic_move')?.calc?.value || 0
+
     data.basicmove.value = bm.toString()
     data.basicmove.points = atts.find(e => e.attr_id === 'basic_move')?.calc?.points || 0
     let bs = atts.find(e => e.attr_id === 'basic_speed')?.calc?.value || 0
+
     data.basicspeed.value = bs.toString()
     data.basicspeed.points = atts.find(e => e.attr_id === 'basic_speed')?.calc?.points || 0
 
@@ -1550,22 +1671,27 @@ export class ActorImporter {
     let ew = [1, 2, 3, 6, 10]
     let index = 0
     let total_carried = this.calcTotalCarried(eqp)
+
     for (let i = 0; i <= 4; i++) {
       let e = new Encumbrance()
+
       e.level = i
       e.current = false
       e.key = 'enc' + i
       let weight_value = bl_value * ew[i]
+
       // e.current = total_carried <= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
       e.current =
         (total_carried < weight_value || i == 4 || bl_value == 0) && (i == 0 || total_carried > bl_value * ew[i - 1])
       e.weight = weight_value.toString() + ' ' + bl_unit
       e.move = calc?.move[i].toString()
       e.dodge = calc?.dodge[i]
+
       if (e.current) {
         cm = e.move
         cd = e.dodge
       }
+
       GURPS.put(es, e, index++)
     }
 
@@ -1594,6 +1720,7 @@ export class ActorImporter {
   async importTraitsFromGCS(p, cd, md) {
     if (!p) return
     let ts = {}
+
     ts.race = ''
     ts.height = p.height || ''
     ts.weight = p.weight || ''
@@ -1631,12 +1758,13 @@ export class ActorImporter {
         }
       }
     }
+
     return r
   }
 
   async importAdsFromGCS(ads) {
     let temp = []
-    if (!!ads) await this._preImport('GCS', 'feature')
+
     for (let i of ads) {
       temp = temp.concat(await this.importAd(i, ''))
     }
@@ -1644,9 +1772,10 @@ export class ActorImporter {
     // Find all adds with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.ads, async t => {
-      if (!!t.itemid) {
+      if (t.itemid) {
         const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
           t = await this._processItemFrom(t, 'GCS')
           temp.push(t)
@@ -1672,6 +1801,7 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('t') ? 'trait' : 'trait_container'
     }
+
     a.originalName = i.name
     a.points = i.calc?.points
     a.notes = this._resolveNotes(i)
@@ -1684,25 +1814,29 @@ export class ActorImporter {
 
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
-        if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
+        if (!j.disabled) a.notes += `${a.notes ? '; ' : ''}${j.name}${j.notes ? ' (' + j.notes + ')' : ''}`
     }
-    // Not certain if this is needed, or is it a type-o (note vs. notes)
-    if (!!a.note) a.notes += (!!a.notes ? '\n' : '') + a.note
 
-    if (!!a.userdesc) a.notes += (!!a.notes ? '\n' : '') + a.userdesc
+    // Not certain if this is needed, or is it a type-o (note vs. notes)
+    if (a.note) a.notes += (a.notes ? '\n' : '') + a.note
+
+    if (a.userdesc) a.notes += (a.notes ? '\n' : '') + a.userdesc
     a.pageRef(i.reference)
     a.uuid = i.id
     a.parentuuid = p
     a = this._substituteItemReplacements(a, i)
 
     let old = this._findElementIn('ads', a.uuid)
+
     this._migrateOtfsAndNotes(old, a, i.vtt_notes)
     a = await this._processItemFrom(a, 'GCS')
 
     let ch = []
+
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(await this.importAd(j, i.id))
     }
+
     return [a].concat(ch)
   }
 
@@ -1711,9 +1845,9 @@ export class ActorImporter {
   }
 
   async importSkillsFromGCS(sks) {
-    await this._preImport('GCS', 'skill')
     if (!sks) return
     let temp = []
+
     for (let i of sks) {
       temp = temp.concat(await this.importSk(i, ''))
     }
@@ -1721,9 +1855,10 @@ export class ActorImporter {
     // Find all skills with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.skills, async t => {
-      if (!!t.itemid) {
+      if (t.itemid) {
         const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
           t = await this._processItemFrom(t, 'GCS')
           temp.push(t)
@@ -1742,25 +1877,33 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
     }
+
     let name =
-      i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
+      i.name + (i.tech_level ? `/TL${i.tech_level}` : '') + (i.specialization ? ` (${i.specialization})` : '') ||
       'Skill'
+
     if (i.type == 'technique' && !!i.default) {
       let addition = ''
+
       addition = ' (' + i.default.name
-      if (!!i.default.specialization) {
+
+      if (i.default.specialization) {
         addition += ' (' + i.default.specialization + ')'
       }
+
       name += addition + ')'
     }
+
     let s = new Skill(name, '')
+
     s.originalName = name
     s.pageRef(i.reference || '')
     s.uuid = i.id
     s.parentuuid = p
+
     if (['skill', 'technique'].includes(i.type)) {
       s.type = i.type.toUpperCase()
-      s.import = !!i.calc ? i.calc.level : ''
+      s.import = i.calc ? i.calc.level : ''
       if (s.level == 0) s.level = ''
       s.points = i.points
       s.relativelevel = i.calc?.rsl
@@ -1769,31 +1912,36 @@ export class ActorImporter {
       // Usually containers
       s.level = ''
     }
+
     s = this._substituteItemReplacements(s, i)
     let old = this._findElementIn('skills', s.uuid)
+
     this._migrateOtfsAndNotes(old, s, i.vtt_notes)
     s = await this._processItemFrom(s, 'GCS')
 
     let ch = []
+
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(await this.importSk(j, i.id))
     }
+
     return [s].concat(ch)
   }
 
   async importSpellsFromGCS(sps) {
-    await this._preImport('GCS', 'spell')
     if (!sps) return
     let temp = []
+
     for (let i of sps) {
       temp = temp.concat(await this.importSp(i, ''))
     }
 
     // Find all spells with globalId
     await aRecurselist(this.actor.system.spells, async t => {
-      if (!!t.itemid) {
+      if (t.itemid) {
         const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
           t = await this._processItemFrom(t, 'GCS')
           temp.push(t)
@@ -1809,14 +1957,17 @@ export class ActorImporter {
 
   async importSp(i, p) {
     let s = new Spell()
+
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
     }
+
     s.name = i.name || 'Spell'
     s.originalName = i.name
     s.uuid = i.id
     s.parentuuid = p
     s.pageRef(i.reference || '')
+
     if (['spell', 'ritual_magic_spell'].includes(i.type)) {
       s.class = i.spell_class || ''
       s.college = i.college || ''
@@ -1833,33 +1984,38 @@ export class ActorImporter {
 
     s = this._substituteItemReplacements(s, i)
     let old = this._findElementIn('spells', s.uuid)
+
     this._migrateOtfsAndNotes(old, s, i.vtt_notes)
     s = await this._processItemFrom(s, 'GCS')
 
     let ch = []
+
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(await this.importSp(j, i.id))
     }
+
     return [s].concat(ch)
   }
 
   async importEquipmentFromGCS(eq, oeq) {
     this.ignoreRender = true
-    await this._preImport('GCS', 'equipment')
     if (!eq && !oeq) return
     let temp = []
-    if (!!eq)
+
+    if (eq)
       for (let i of eq) {
         temp = temp.concat(await this.importEq(i, '', true))
       }
-    if (!!oeq)
+
+    if (oeq)
       for (let i of oeq) {
         temp = temp.concat(await this.importEq(i, '', false))
       }
 
     await aRecurselist(this.actor.system.equipment?.carried, async t => {
       t.carried = true
-      if (!!t.save) {
+
+      if (t.save) {
         if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
         t = await this._processItemFrom(t, 'GCS')
         temp.push(t)
@@ -1867,7 +2023,8 @@ export class ActorImporter {
     })
     await aRecurselist(this.actor.system.equipment?.other, async t => {
       t.carried = false
-      if (!!t.save) {
+
+      if (t.save) {
         if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
         t = await this._processItemFrom(t, 'GCS')
         temp.push(t)
@@ -1890,12 +2047,14 @@ export class ActorImporter {
 
     for (const e of temp) {
       let parent = null
-      if (!!e.parentuuid) {
+
+      if (e.parentuuid) {
         parent = temp.find(f => f.uuid === e.parentuuid)
-        if (!!parent) GURPS.put(parent.contains, e)
+        if (parent) GURPS.put(parent.contains, e)
         else e.parentuuid = ''
       }
-      await this._updateItemContains(e, parent)
+
+      await this._updateItemContains(e)
     }
 
     let equipment = {
@@ -1907,11 +2066,13 @@ export class ActorImporter {
 
     for (const eqt of temp) {
       await Equipment.calc(eqt)
+
       if (!eqt.parentuuid) {
         if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
         else GURPS.put(equipment.other, eqt, oindex++)
       }
     }
+
     return {
       'system.-=equipment': null,
       'system.equipment': equipment,
@@ -1920,6 +2081,7 @@ export class ActorImporter {
 
   async importEq(i, p, carried) {
     let e = new Equipment()
+
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('e') ? 'equipment' : 'equipment_container'
     }
@@ -1944,21 +2106,25 @@ export class ActorImporter {
 
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
-        if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
+        if (!j.disabled) e.notes += `${e.notes ? '; ' : ''}${j.name}${j.notes ? ' (' + j.notes + ')' : ''}`
     }
-    if (!!e.note) e.notes += (!!e.notes ? '\n' : '') + e.note
+
+    if (e.note) e.notes += (e.notes ? '\n' : '') + e.note
     e.weight =
       (parseFloat(i.calc?.extended_weight) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || '0'
     e.pageRef(i.reference || '')
     e = this._substituteItemReplacements(e, i)
     let old = this._findElementIn('equipment.carried', e.uuid)
+
     if (!old) old = this._findElementIn('equipment.other', e.uuid)
     this._migrateOtfsAndNotes(old, e, i.vtt_notes)
-    if (!!old) {
+
+    if (old) {
       e.name = old.name
       e.carried = old.carried
       e.equipped = old.equipped
       e.parentuuid = old.parentuuid
+
       if (old.ignoreImportQty) {
         e.count = old.count
         e.uses = old.uses
@@ -1970,8 +2136,10 @@ export class ActorImporter {
     // Process Item here
     e = await this._processItemFrom(e, 'GCS')
     let ch = []
+
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(await this.importEq(j, i.id, carried))
+
       for (let j of ch) {
         e.cost -= j.cost * j.count
         e.weight -= j.weight * j.count
@@ -1984,12 +2152,15 @@ export class ActorImporter {
   importNotesFromGCS(notes) {
     if (!notes) return
     let temp = []
+
     for (let i of notes) {
       temp = temp.concat(this.importNote(i, ''))
     }
+
     recurselist(this.actor.system.notes, t => {
-      if (!!t.save) temp.push(t)
+      if (t.save) temp.push(t)
     })
+
     return {
       'system.-=notes': null,
       'system.notes': this.foldList(temp),
@@ -1998,9 +2169,11 @@ export class ActorImporter {
 
   importNote(i, p) {
     let n = new Note()
+
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('n') ? 'note' : 'note_container'
     }
+
     n.notes = i.markdown ?? i.calc?.resolved_text ?? i.text ?? ''
 
     n.uuid = i.id
@@ -2009,11 +2182,14 @@ export class ActorImporter {
     n.pageRef(i.reference || '')
     n = this._substituteItemReplacements(n, i)
     let old = this._findElementIn('notes', n.uuid)
+
     this._migrateOtfsAndNotes(old, n)
     let ch = []
+
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importNote(j, i.id))
     }
+
     return [n].concat(ch)
   }
 
@@ -2022,17 +2198,21 @@ export class ActorImporter {
     let final = profile.SM || 0
     let temp = [].concat(ads, skills, equipment)
     let all = []
+
     for (let i of temp) {
       all = all.concat(this.recursiveGet(i))
     }
+
     for (let i of all) {
       if (i.features?.length)
         for (let f of i.features) {
           if (f.type == 'attribute_bonus' && f.attribute == 'sm')
-            final += f.amount * (!!i.levels ? parseFloat(i.levels) : 1)
+            final += f.amount * (i.levels ? parseFloat(i.levels) : 1)
         }
     }
+
     ts.sizemod = this.signedNum(final)
+
     return {
       'system.-=traits': null,
       'system.traits': ts,
@@ -2042,42 +2222,56 @@ export class ActorImporter {
   async importProtectionFromGCS(hls) {
     if (!hls) return
     let data = this.actor.system
-    if (!!data.additionalresources.ignoreinputbodyplan) return
+
+    if (data.additionalresources.ignoreinputbodyplan) return
 
     /** @type {HitLocations.HitLocation[]} */
     let locations = []
+
     for (let i of hls.locations) {
       let l = new HitLocations.HitLocation(i.table_name)
+
       l.import = i.calc?.dr.all?.toString() || '0'
+
       for (let [key, value] of Object.entries(i.calc?.dr))
         if (key != 'all') {
           let damtype = GURPS.DamageTables.damageTypeMap[key]
+
           if (!l.split) l.split = {}
           l.split[damtype] = +l.import + value
         }
+
       l.penalty = i.hit_penalty?.toString() || '0'
+
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
       }
+
       locations.push(l)
     }
+
     let vitals = locations.filter(value => value.where === HitLocations.HitLocation.VITALS)
+
     if (vitals.length === 0) {
       let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
+
       hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
       hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
       hl.import = '0'
       locations.push(hl)
     }
+
     // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
     let bodyplan = hls.name.toLowerCase() // Was a body plan actually in the import?
+
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
 
     /** @type {HitLocations.HitLocation[]}  */
     let locs = []
+
     locations.forEach(e => {
       if (!!table && !!table[e.where]) {
         // if e.where already exists in table, don't map
@@ -2099,10 +2293,11 @@ export class ActorImporter {
     }
     // update location's roll and penalty based on the bodyplan
 
-    if (!!table) {
+    if (table) {
       Object.values(locations).forEach(it => {
         let [lbl, entry] = HitLocations.HitLocation.findTableEntry(table, it.where)
-        if (!!entry) {
+
+        if (entry) {
           it.where = lbl // It might be renamed (ex: Skull -> Brain)
           if (!it.penalty) it.penalty = entry.penalty
           if (!it.roll || it.roll.length === 0 || it.roll === HitLocations.HitLocation.DEFAULT) it.roll = entry.roll
@@ -2114,8 +2309,10 @@ export class ActorImporter {
     // other entries, append them at the end.
     /** @type {HitLocations.HitLocation[]}  */
     let temp = []
+
     Object.keys(table).forEach(key => {
       let results = Object.values(locations).filter(loc => loc.where === key)
+
       if (results.length > 0) {
         if (results.length > 1) {
           // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
@@ -2123,6 +2320,7 @@ export class ActorImporter {
 
           /** @type {string | null} */
           let last = null
+
           results.forEach(r => {
             if (r.import != last) {
               d += '|' + r.import
@@ -2130,9 +2328,10 @@ export class ActorImporter {
             }
           })
 
-          if (!!d) d = d.substring(1)
+          if (d) d = d.substring(1)
           results[0].import = d
         }
+
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
       } else {
@@ -2144,9 +2343,11 @@ export class ActorImporter {
 
     let prot = {}
     let index = 0
+
     temp.forEach(it => GURPS.put(prot, it, index++))
 
     let overwrite = ImportSettings.overwriteBodyPlan // "ask", "keep", "overwrite"
+
     if (data.lastImport) {
       if (!!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
         if (overwrite === 'ask')
@@ -2177,12 +2378,14 @@ export class ActorImporter {
     let p_unspent = total
     let p_total = total
     let p_race = 0
+
     for (let i of atts) p_atts += i.calc?.points
     for (let i of ads)
       [p_ads, p_disads, p_quirks, p_race] = this.adPointCount(i, p_ads, p_disads, p_quirks, p_race, true)
     for (let i of skills) p_skills = this.skPointCount(i, p_skills)
     for (let i of spells) p_spells = this.skPointCount(i, p_spells)
     p_unspent -= p_atts + p_ads + p_disads + p_quirks + p_skills + p_spells + p_race
+
     return {
       'system.totalpoints.attributes': p_atts,
       'system.totalpoints.ads': p_ads,
@@ -2203,11 +2406,14 @@ export class ActorImporter {
     let index_c = 0
     let temp = [].concat(ads, skills, equipment)
     let all = []
+
     for (let i of temp) {
       all = all.concat(this.recursiveGet(i))
     }
+
     let temp_r = []
     let temp_c = []
+
     for (let i of all) {
       if (i.features?.length)
         for (let f of i.features) {
@@ -2224,30 +2430,40 @@ export class ActorImporter {
           }
         }
     }
+
     let temp_r2 = []
     let temp_c2 = []
+
     for (let i of temp_r) {
       let existing_condition = temp_r2.find(e => e.situation == i.situation)
-      if (!!existing_condition) existing_condition.modifier += i.modifier
+
+      if (existing_condition) existing_condition.modifier += i.modifier
       else temp_r2.push(i)
     }
+
     for (let i of temp_c) {
       let existing_condition = temp_c2.find(e => e.situation == i.situation)
-      if (!!existing_condition) existing_condition.modifier += i.modifier
+
+      if (existing_condition) existing_condition.modifier += i.modifier
       else temp_c2.push(i)
     }
+
     for (let i of temp_r2) {
       let r = new Reaction()
+
       r.modifier = i.modifier.toString()
       r.situation = i.situation
       GURPS.put(rs, r, index_r++)
     }
+
     for (let i of temp_c2) {
       let c = new Modifier()
+
       c.modifier = i.modifier.toString()
       c.situation = i.situation
       GURPS.put(cs, c, index_c++)
     }
+
     return {
       'system.-=reactions': null,
       'system.reactions': rs,
@@ -2263,17 +2479,21 @@ export class ActorImporter {
     let r_index = 0
     let temp = [].concat(ads, skills, spells, equipment)
     let all = []
+
     for (let i of temp) {
       all = all.concat(this.recursiveGet(i))
     }
+
     for (let i of all) {
       if (i.weapons?.length) {
         for (let w of i.weapons) {
           if (this.GCSVersion === 5) {
             w.type = w.id.startsWith('w') ? 'melee_weapon' : 'ranged_weapon'
           }
+
           if (w.type == 'melee_weapon') {
             let m = new Melee()
+
             m.name = i.name || i.description || ''
             m.originalName = i.name
             m.st = w.strength || ''
@@ -2290,11 +2510,13 @@ export class ActorImporter {
             m.block = w.calc?.block || ''
             m = this._substituteItemReplacements(m, i)
             let old = this._findElementIn('melee', false, m.name, m.mode)
+
             this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
 
             GURPS.put(melee, m, m_index++)
           } else if (w.type == 'ranged_weapon') {
             let r = new Ranged()
+
             r.name = i.name || i.description || ''
             r.originalName = i.name
             r.st = w.strength || ''
@@ -2308,16 +2530,19 @@ export class ActorImporter {
             r.damage = w.calc?.damage || ''
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+
             if (m) {
               r.acc = m[1]
               r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
+
             r.rof = w.rate_of_fire || ''
             r.shots = w.shots || ''
             r.rcl = w.recoil || ''
             r.range = w.calc?.range || w.range || ''
             r = this._substituteItemReplacements(r, i)
             let old = this._findElementIn('ranged', false, r.name, r.mode)
+
             this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
             GURPS.put(ranged, r, r_index++)
@@ -2325,6 +2550,7 @@ export class ActorImporter {
         }
       }
     }
+
     return {
       'system.-=melee': null,
       'system.melee': melee,
@@ -2340,7 +2566,9 @@ export class ActorImporter {
   textFrom(o) {
     if (!o) return ''
     let t = o['#text']
+
     if (!t) return ''
+
     return t.trim()
   }
 
@@ -2351,7 +2579,9 @@ export class ActorImporter {
   intFrom(o) {
     if (!o) return 0
     let i = o['#text']
+
     if (!i) return 0
+
     return parseInt(i)
   }
 
@@ -2361,28 +2591,36 @@ export class ActorImporter {
   floatFrom(o) {
     if (!o) return 0
     let f = o['#text'].trim()
+
     if (!f) return 0
+
     return f.includes(',') ? parseDecimalNumber(f, { thousands: '.', decimal: ',' }) : parseDecimalNumber(f)
   }
 
   calcTotalCarried(eqp) {
     let t = 0
+
     if (!eqp) return t
+
     for (let i of eqp) {
       let w = 0
+
       w += parseFloat(i.weight || '0') * (i.type == 'equipment_container' ? 1 : i.quantity || 0)
       if (i.children?.length) w += this.calcTotalCarried(i.children)
       t += w
     }
+
     return t
   }
 
   recursiveGet(i) {
     if (!i) return []
     let ch = []
+
     if (i.children?.length) for (let j of i.children) ch = ch.concat(this.recursiveGet(j))
     if (i.modifiers?.length) for (let j of i.modifiers) ch = ch.concat(this.recursiveGet(j))
     if (!!i.disabled || (i.equipped != null && i.equipped == false)) return []
+
     return [i].concat(ch)
   }
 
@@ -2399,15 +2637,17 @@ export class ActorImporter {
     var foundkey
     let foundLength = Number.MAX_VALUE
     let l = foundry.utils.getProperty(this.actor, 'system.' + list)
+
     recurselist(l, (e, k, _d) => {
       if (
         (uuid && e.uuid == uuid) ||
         (!!e.name && e.name.startsWith(name) && e.name.length < foundLength && e.mode == mode)
       ) {
         foundkey = k
-        foundLength = !!e.name ? e.name.length : foundLength
+        foundLength = e.name ? e.name.length : foundLength
       }
     })
+
     return foundkey == null ? foundkey : foundry.utils.getProperty(this.actor, 'system.' + list + '.' + foundkey)
   }
 
@@ -2415,10 +2655,12 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('t') ? 'trait' : 'trait_container'
     }
+
     if (i.type == 'trait_container' && i.container_type == 'race') race += i.calc?.points
     else if (i.type == 'trait_container' && i.container_type == 'alternative_abilities') ads += i.calc?.points
     else if (i.type == 'trait_container' && !!i.children?.length) {
       var [a, d] = [0, 0]
+
       for (let j of i.children) [a, d, quirks, race] = this.adPointCount(j, a, d, quirks, race)
       if (toplevel) {
         if (a > 0) ads += a
@@ -2428,6 +2670,7 @@ export class ActorImporter {
     } else if (i.calc?.points == -1) quirks += i.calc?.points
     else if (i.calc?.points > 0) ads += i.calc?.points
     else disads += i.calc?.points
+
     return [ads, disads, quirks, race]
   }
 
@@ -2440,9 +2683,11 @@ export class ActorImporter {
       if (i.id.startsWith('p')) i.type = 'spell'
       if (i.id.startsWith('P')) i.type = 'spell_container'
     }
+
     if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
       for (let j of i.children) skills = this.skPointCount(j, skills)
     else skills += i.points ?? 0
+
     return skills
   }
 
@@ -2452,8 +2697,8 @@ export class ActorImporter {
    * @param {Skill|Spell|Ranged|Melee} newobj
    */
   _migrateOtfsAndNotes(oldobj = {}, newobj, importvttnotes = '', usagenotes = '') {
-    if (!!importvttnotes) newobj.notes += (!!newobj.notes ? ' ' : '') + importvttnotes
-    if (!!usagenotes) newobj.notes += (!!newobj.notes ? ' ' : '') + usagenotes
+    if (importvttnotes) newobj.notes += (newobj.notes ? ' ' : '') + importvttnotes
+    if (usagenotes) newobj.notes += (newobj.notes ? ' ' : '') + usagenotes
     this._updateOtf('check', oldobj, newobj)
     this._updateOtf('during', oldobj, newobj)
     this._updateOtf('pass', oldobj, newobj)
@@ -2476,10 +2721,11 @@ export class ActorImporter {
   _updateOtf(otfkey, oldobj, newobj) {
     let objkey = otfkey + 'otf'
     let oldotf = oldobj[objkey]
+
     newobj[objkey] = oldotf
     var notes, newotf
     ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
-    if (!!newotf) newobj[objkey] = newotf
+    if (newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
   }
 
@@ -2488,10 +2734,12 @@ export class ActorImporter {
     if (!text) return [text, null]
     let otf = null
     let found = true
+
     while (found) {
       found = false
       var start
       let patstart = text.toLowerCase().indexOf(key[0] + ':[')
+
       if (patstart < 0) {
         patstart = text.toLowerCase().indexOf(key + ':[')
         if (patstart < 0) return [text, otf]
@@ -2499,21 +2747,27 @@ export class ActorImporter {
       } else start = patstart + 3
       let cnt = 1
       let i = start
+
       if (i >= text.length) return [text, otf]
+
       do {
         let ch = text[i++]
+
         if (ch == '[') cnt++
         if (ch == ']') cnt--
       } while (i < text.length && cnt > 0)
+
       if (cnt == 0) {
         found = true
         otf = text.substring(start, i - 1)
         let front = text.substring(0, patstart)
         let end = text.substr(i)
+
         if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
         text = front + end
       } else return [text, otf]
     }
+
     return [text, otf]
   }
 
@@ -2523,18 +2777,21 @@ export class ActorImporter {
    */
   foldList(flat, target = {}) {
     flat.forEach(obj => {
-      if (!!obj.parentuuid) {
+      if (obj.parentuuid) {
         const parent = flat.find(o => o.uuid == obj.parentuuid)
-        if (!!parent) {
+
+        if (parent) {
           if (!parent.contains) parent.contains = {} // lazy init for older characters
           GURPS.put(parent.contains, obj)
         } else obj.parentuuid = '' // Can't find a parent, so put it in the top list.  should never happen with GCS
       }
     })
     let index = 0
+
     flat.forEach(obj => {
       if (!obj.parentuuid) GURPS.put(target, obj, index++)
     })
+
     return target
   }
 
@@ -2549,6 +2806,7 @@ export class ActorImporter {
     // create a map of tableName:count
     /** @type {Record<string, number>} */
     let tableScores = {}
+
     tableNames.forEach(it => (tableScores[it] = 0))
 
     // increment the count for a tableScore if it contains the same hit location as "prot"
@@ -2563,6 +2821,7 @@ export class ActorImporter {
     // Select the tableScore with the highest score.
     let match = -1
     let name = HitLocations.HitLocation.HUMANOID
+
     Object.keys(tableScores).forEach(function (score) {
       if (tableScores[score] > match) {
         match = tableScores[score]
@@ -2573,11 +2832,14 @@ export class ActorImporter {
     // In the case of a tie, select the one whose score is closest to the number of entries
     // in the table.
     let results = Object.keys(tableScores).filter(it => tableScores[it] === match)
+
     if (results.length > 1) {
       let diff = Number.MAX_SAFE_INTEGER
+
       results.forEach(key => {
         // find the smallest difference
         let table = HitLocations.hitlocationDictionary[key]
+
         if (Object.keys(table).length - match < diff) {
           diff = Object.keys(table).length - match
           name = key
@@ -2598,6 +2860,7 @@ export class ActorImporter {
         }
       }
     }
+
     return item
   }
 
@@ -2616,11 +2879,13 @@ export class ActorImporter {
         'Invalid Actor Component. To process a Item it must be an Equipment, Skill, Spell, Ranged or Melee Attack or Advantage'
       )
     }
+
     // When Item does not have uuid (some cases in GCA) we need to check against the originalName too
     const componentType = actorComp.constructor.name.toLowerCase()
 
     const existingItem = this.actor.items.find(i => {
       const itemType = i.type === 'feature' ? 'advantage' : i.type
+
       return (
         itemType === componentType &&
         (i.system.importid === actorComp.uuid ||
@@ -2637,21 +2902,23 @@ export class ActorImporter {
       actorComp.itemModifiers = existingItem.system.itemModifiers
       actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
       actorComp.modifierTags = existingItem.system.modifierTags
+
       return actorComp
     }
 
     // Create or Update item
     const itemData = actorComp.toItemData(this.actor, fromProgram)
-    const [item] = !!existingItem
+    const [item] = existingItem
       ? await this.actor.updateEmbeddedDocuments('Item', [{ _id: existingItem._id, system: itemData.system }])
       : await this.actor.createEmbeddedDocuments('Item', [itemData])
+
     // Update Actor Component for new Items
-    if (!!item) {
+    if (item) {
       actorComp.name = item.name
       actorComp.itemid = item._id
       actorComp.itemInfo = item.getItemInfo()
       actorComp.uuid = item.system[item.itemSysKey].uuid
-    } else if (!!existingItem) {
+    } else if (existingItem) {
       actorComp.name = existingItem.name
       actorComp.itemid = existingItem._id
       actorComp.itemInfo = existingItem.getItemInfo()
@@ -2660,16 +2927,19 @@ export class ActorImporter {
       actorComp.addToQuickRoll = existingItem.system.addToQuickRoll
       actorComp.modifierTags = existingItem.system.modifierTags
     }
+
     // }
     return actorComp
   }
 
-  async _updateItemContains(actorComp, parent) {
+  async _updateItemContains(actorComp) {
     // if (this.isUsingFoundryItems()) {
     const item = this.actor.items.get(actorComp.itemid)
-    if (!!item) {
+
+    if (item) {
       if (!actorComp.parentuuid) {
         const itemSysContain = `system.${item.itemSysKey}.contains`
+
         await this.actor.updateEmbeddedDocuments('Item', [{ _id: item._id, [itemSysContain]: actorComp.contains }])
       }
     }

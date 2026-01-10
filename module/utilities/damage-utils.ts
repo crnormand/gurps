@@ -3,7 +3,7 @@ interface DiceData {
   adds: number
 }
 
-export const diceRegex = /^(?<dice>\d+)d(?<sides>\d*)((?<sign>[\–\-+])(?<adds>\d+))?(?<remainder>.*)?/
+export const diceRegex = /^(?<dice>\d+)d(?<sides>\d*)((?<sign>[–\-+])(?<adds>\d+))?(?<remainder>.*)?/
 
 /**
  *
@@ -12,6 +12,7 @@ export const diceRegex = /^(?<dice>\d+)d(?<sides>\d*)((?<sign>[\–\-+])(?<adds>
  */
 export const multiplyDice = (diceterm: string, factor: number): string | undefined => {
   const match = diceterm.match(diceRegex)
+
   if (!match?.groups) return undefined
 
   const groups = match.groups
@@ -33,11 +34,11 @@ export const multiplyDice = (diceterm: string, factor: number): string | undefin
   return `${dice}d${sides}${sign}${adds}${remainder}`.trim()
 }
 
-export const isValidDiceTerm = (diceterm: string): boolean =>
-  !!diceterm.match(diceRegex)
+export const isValidDiceTerm = (diceterm: string): boolean => !!diceterm.match(diceRegex)
 
 export const addDice = (diceterm: string, addend: number): string | undefined => {
   const match = diceterm.match(diceRegex)
+
   if (!match?.groups) return undefined
 
   const groups = match.groups
@@ -46,6 +47,7 @@ export const addDice = (diceterm: string, addend: number): string | undefined =>
 
   // Convert groups.adds to a number.
   let adds = groups.adds ? parseInt(groups.adds) : 0
+
   // Apply the sign to the adds.
   adds = sign === '+' ? adds : -adds
   // Add the addend.
@@ -55,16 +57,19 @@ export const addDice = (diceterm: string, addend: number): string | undefined =>
 
   const sides = groups.sides ?? ''
   const remainder = groups.remainder ?? ''
+
   return `${dice}d${sides}${addString}${remainder}`.trim()
 }
 
 export const getDiceData = (diceterm: string): DiceData | undefined => {
   const match = diceterm.match(diceRegex)
+
   if (!match?.groups) return undefined
 
   const groups = match.groups
   const dice = parseInt(groups.dice)
   let adds = groups.adds ? parseInt(groups.adds) : 0
+
   if (groups.sign !== '+') adds = -adds
 
   return { dice: dice, adds: adds }
@@ -91,6 +96,7 @@ export const getDicePlusAdds = (rawDamage: number): DiceData => {
 
   // Otherwise, round fractions of 0.5 or more up to a full die.
   let dice = Math.floor(rawDamage)
+
   if (rawDamage - dice >= 0.5) dice++
 
   return { dice: dice, adds: 0 }

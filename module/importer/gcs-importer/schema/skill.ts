@@ -1,8 +1,10 @@
-import fields = foundry.data.fields
+import { AnyObject } from 'fvtt-types/utils'
+
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsSkillDefault } from './skill-default.js'
 import { GcsWeapon } from './weapon.js'
-import { AnyObject } from 'fvtt-types/utils'
+
+const fields = foundry.data.fields
 
 class GcsSkill extends GcsItem<SkillModel> {
   static override metadata = {

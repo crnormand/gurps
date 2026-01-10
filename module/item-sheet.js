@@ -1,7 +1,8 @@
 'use strict'
+
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
-import * as Settings from '../lib/miscellaneous-settings.js'
 import { recurselist } from '../lib/utilities.js'
+
 import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
 
 // export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
@@ -25,15 +26,17 @@ export class GurpsItemSheet extends ItemSheet {
   /** @override */
   getData() {
     const sheetData = super.getData()
+
     sheetData.itemType = this.item.type
     sheetData.data = this.item.system
     sheetData.system = this.item.system
-    if (!!this.item.system.eqt) sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
+    if (this.item.system.eqt) sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
     if (this.item.ski && this.item.ski.consumeAction === undefined) sheetData.data.ski.consumeAction = false
     if (this.item.spl && this.item.spl.consumeAction === undefined) sheetData.data.spl.consumeAction = true
     sheetData.name = this.item.name
     if (!this.item.system.globalid && !this.item.parent)
       this.item.update({ 'system.globalid': this.item.id, _id: this.item.id })
+
     return sheetData
   }
 
@@ -52,10 +55,11 @@ export class GurpsItemSheet extends ItemSheet {
         'system.eqt.name': nm,
         name: nm,
       }
-      recurselist(this.item.system.melee, (e, k, d) => {
+
+      recurselist(this.item.system.melee, (_e, k) => {
         commit = { ...commit, ...{ ['system.melee.' + k + '.name']: nm } }
       })
-      recurselist(this.item.system.ranged, (e, k, d) => {
+      recurselist(this.item.system.ranged, (_e, k) => {
         commit = { ...commit, ...{ ['system.ranged.' + k + '.name']: nm } }
       })
       await this.item.update(commit)
@@ -65,6 +69,7 @@ export class GurpsItemSheet extends ItemSheet {
     html.find('#add-melee').click(async ev => {
       ev.preventDefault()
       let m = new Melee()
+
       m.name = this.item.name
       await this._addToList('melee', m)
     })
@@ -74,6 +79,7 @@ export class GurpsItemSheet extends ItemSheet {
     html.find('#add-ranged').click(async ev => {
       ev.preventDefault()
       let r = new Ranged()
+
       r.name = this.item.name
       r.legalityclass = 'lc'
       await this._addToList('ranged', r)
@@ -82,6 +88,7 @@ export class GurpsItemSheet extends ItemSheet {
     html.find('#add-skill').click(async ev => {
       ev.preventDefault()
       let r = new Skill()
+
       r.rsl = '-'
       await this._addToList('skills', r)
     })
@@ -89,12 +96,14 @@ export class GurpsItemSheet extends ItemSheet {
     html.find('#add-spell').click(async ev => {
       ev.preventDefault()
       let r = new Spell()
+
       await this._addToList('spells', r)
     })
 
     html.find('#add-ads').click(async ev => {
       ev.preventDefault()
       let r = new Advantage()
+
       await this._addToList('ads', r)
     })
 
@@ -105,11 +114,14 @@ export class GurpsItemSheet extends ItemSheet {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
         let img = new Image()
+
         img.src = this.item.img
         const w = 50
         const h = 50
         const preview = DragDrop.createDragImage(img, w, h)
+
         ev.dataTransfer.setDragImage(preview, 0, 0)
+
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
@@ -125,23 +137,29 @@ export class GurpsItemSheet extends ItemSheet {
   }
 
   dropFoundryLinks(ev) {
-    if (!!ev.originalEvent) ev = ev.originalEvent
+    if (ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
     var n
+
     if (dragData.type == 'JournalEntry') {
       n = game.journal.get(dragData.id).name
     }
+
     if (dragData.type == 'Actor') {
       n = game.actors.get(dragData.id).name
     }
+
     if (dragData.type == 'RollTable') {
       n = game.tables.get(dragData.id).name
     }
+
     if (dragData.type == 'Item') {
       n = game.items.get(dragData.id).name
     }
-    if (!!n) {
+
+    if (n) {
       let add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
+
       $(ev.currentTarget).val($(ev.currentTarget).val() + add)
     }
   }
@@ -149,14 +167,17 @@ export class GurpsItemSheet extends ItemSheet {
   async _deleteKey(ev) {
     let key = ev.currentTarget.getAttribute('name')
     let path = ev.currentTarget.getAttribute('data-path')
+
     GURPS.removeKey(this.item, path + '.' + key)
   }
 
   async _onDrop(event) {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
+
     if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
     let srcActor = game.actors.get(dragData.actorid)
     let srcData = foundry.utils.getProperty(srcActor, dragData.key)
+
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
     // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
@@ -174,6 +195,7 @@ export class GurpsItemSheet extends ItemSheet {
 
   async _addToList(key, data) {
     let list = this.item.system[key] || {}
+
     GURPS.put(list, data)
     await this.item.update({ ['system.' + key]: list })
   }
@@ -187,7 +209,8 @@ export class GurpsItemSheet extends ItemSheet {
 
   async close() {
     await super.close()
-    if (/* !!this.useFoundryItems && */ !!this.isContainer) {
+
+    if (/* !!this.useFoundryItems && */ this.isContainer) {
       ui.notifications.info(`Saving Item ${this.item.name}... Please wait.`)
     }
 
@@ -195,7 +218,9 @@ export class GurpsItemSheet extends ItemSheet {
     if (!this.item.isNewItemType) {
       await this.item.update({ [`system.${this.item.itemSysKey}.name`]: this.item.name })
     }
+
     const actor = this.item.editingActor || this.actor
+
     if (!!actor && !this.item.isNewItemType) {
       const actorCompKey =
         this.item.type === 'equipment'
@@ -224,12 +249,15 @@ export class GurpsItemSheet extends ItemSheet {
         system: this.item.system,
       })
     }
+
     if (actor) await actor.refreshDR()
+
     // Not sure if this is the way to refresh UI if you're editing an Item from a token
     if (canvas.tokens.controlled.length > 0) {
       await canvas.tokens.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
     }
-    if (/* !!this.useFoundryItems && */ !!this.isContainer) {
+
+    if (/* !!this.useFoundryItems && */ this.isContainer) {
       ui.notifications.info(`Item ${this.item.name} saved!`)
     }
   }

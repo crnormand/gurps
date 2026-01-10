@@ -1,4 +1,5 @@
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
+
 import {
   APPLY_DIVISOR,
   BLUNT_TRAUMA,

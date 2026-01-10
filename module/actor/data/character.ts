@@ -1,3 +1,39 @@
+import { MeleeAttackModel } from 'module/action/melee-attack.js'
+import { RangedAttackModel } from 'module/action/ranged-attack.js'
+import { EquipmentModel } from 'module/item/data/equipment.js'
+import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
+
+import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+
+import * as Settings from '../../../lib/miscellaneous-settings.js'
+import { COSTS_REGEX } from '../../../lib/parselink.js'
+import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '../../../lib/utilities.js'
+import { MeleeV1 } from '../../action/legacy/meleev1.js'
+import { RangedV1 } from '../../action/legacy/rangedv1.js'
+import * as HitLocations from '../../hitlocation/hitlocation.js'
+import { BaseItemModel } from '../../item/data/base.js'
+import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
+import { SkillV1 } from '../../item/legacy/skill-adapter.js'
+import { SpellV1 } from '../../item/legacy/spell-adapter.js'
+import { TraitV1 } from '../../item/legacy/trait-adapter.js'
+import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
+import { multiplyDice } from '../../utilities/damage-utils.js'
+import { roundTo } from '../../utilities/math.js'
+import { HitLocationEntry } from '../actor-components.js'
+import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
+import { NoteV1 } from '../legacy/note-adapter.js'
+import {
+  MOVE_HALF,
+  MOVE_NONE,
+  MOVE_ONE,
+  MOVE_ONETHIRD,
+  MOVE_STEP,
+  MOVE_TWO_STEPS,
+  MOVE_TWOTHIRDS,
+} from '../maneuver.js'
+import { CheckInfo } from '../types.js'
+
+import { BaseActorModel } from './base.js'
 import {
   attributeSchema,
   conditionsSchema,
@@ -9,44 +45,10 @@ import {
   poolSchema,
   ReactionSchema,
 } from './character-components.js'
-import { NoteV2 } from './note.js'
-import fields = foundry.data.fields
 import { HitLocationEntryV2 } from './hit-location-entry.js'
-import { BaseItemModel } from '../../item/data/base.js'
-import { AnyObject, DeepPartial } from 'fvtt-types/utils'
-import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '../../../lib/utilities.js'
-import * as Settings from '../../../lib/miscellaneous-settings.js'
-import * as HitLocations from '../../hitlocation/hitlocation.js'
-import { BaseActorModel } from './base.js'
-import {
-  MOVE_HALF,
-  MOVE_NONE,
-  MOVE_ONE,
-  MOVE_ONETHIRD,
-  MOVE_STEP,
-  MOVE_TWO_STEPS,
-  MOVE_TWOTHIRDS,
-} from '../maneuver.js'
-import { multiplyDice } from '../../utilities/damage-utils.js'
-import { COSTS_REGEX } from '../../../lib/parselink.js'
-import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
-import { MeleeAttackModel } from 'module/action/melee-attack.js'
-import { RangedAttackModel } from 'module/action/ranged-attack.js'
-import { EquipmentModel } from 'module/item/data/equipment.js'
+import { NoteV2 } from './note.js'
 
-// Legacy models.
-import { HitLocationEntry } from '../actor-components.js'
-import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
-import { TraitV1 } from '../../item/legacy/trait-adapter.js'
-import { MeleeV1 } from '../../action/legacy/meleev1.js'
-import { RangedV1 } from '../../action/legacy/rangedv1.js'
-import { SkillV1 } from '../../item/legacy/skill-adapter.js'
-import { EquipmentV1 } from '../../item/legacy/equipment-adapter.js'
-import { SpellV1 } from '../../item/legacy/spell-adapter.js'
-import { CheckInfo } from '../types.js'
-import { roundTo } from '../../utilities/math.js'
-import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
-import { NoteV1 } from '../legacy/note-adapter.js'
+const fields = foundry.data.fields
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
@@ -58,6 +60,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // Local settings helper mirrors actor’s wrapper and avoids strict KeyFor typing.
   private getSetting<T>(key: string, fallback: T): T {
     const val = (game.settings as any)?.get(GURPS.SYSTEM_NAME, key)
+
     return (val ?? fallback) as T
   }
 
@@ -116,6 +119,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       .map(it => HitLocationEntryV1.createFromV2(it))
       .reduce((acc: Record<string, HitLocationEntryV1>, location) => {
         acc[location.where] = location
+
         return acc
       }, {})
   }
@@ -169,6 +173,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   get currentflight(): number {
     const flightmode = this.moveV2.find(mv => this.isAirMoveMode(mv))
+
     return flightmode?.basic ?? 0
   }
 
@@ -320,6 +325,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
     return this.parent.items.reduce((acc: any[], item) => {
       acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
+
       return acc
     }, [])
   }
@@ -364,6 +370,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // Add the default size modifier to the target conditions
     if (this.traits.sizemod !== 0) {
       const sizeModifier = this.traits.sizemod > 0 ? `+${this.traits.sizemod}` : `${this.traits.sizemod}`
+
       this.conditions.target?.modifiers?.push(game.i18n?.format('GURPS.modifiersSize', { sm: sizeModifier }) ?? '')
     }
   }
@@ -374,6 +381,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // Reset the calculated values of attributes
     Object.keys(this.attributes).forEach(key => {
       const attribute = this.attributes[key as keyof typeof this.attributes]
+
       this.attributes[key as keyof typeof this.attributes].value = attribute.import
     })
   }
@@ -384,6 +392,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this._globalBonuses = this.parent.items.reduce((acc: AnyObject[], item) => {
       if (!(item.system instanceof BaseItemModel)) return acc
       acc.push(...item.system.getGlobalBonuses())
+
       return acc
     }, [])
 
@@ -427,6 +436,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const maneuverEffect = this.parent.effects.find((effect: ActiveEffect) =>
       effect.statuses.some((status: string) => status === 'maneuver')
     )
+
     this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
   }
 
@@ -448,6 +458,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const carriedItems = onlyCountEquipped
       ? this.allEquipmentCarried.filter(item => item.system.component.equipped)
       : this.allEquipmentCarried
+
     this.eqtsummary = {
       eqtcost: roundTo(
         carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
@@ -481,6 +492,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       if (bonus.type !== 'attribute') continue
 
       const attrKey = bonus.attrkey
+
       if (this.attributes[attrKey as keyof typeof this.attributes]) {
         this.attributes[attrKey as keyof typeof this.attributes].value += bonus.mod as number
       }
@@ -598,8 +610,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this._globalBonuses.forEach(bonus => {
       // TODO: revise type
       const match = (bonus.text as string).match(/\[(?<bonus>[+-]\d+)\s*DB\]/)
+
       if (match) {
         const bonusAmount = parseInt(match.groups?.bonus ?? '0')
+
         this.defenses.parry.bonus += bonusAmount
         this.defenses.block.bonus += bonusAmount
         this.defenses.dodge.bonus += bonusAmount
@@ -609,14 +623,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.component.parry) return acc
       const newParry = parseInt(attack.component.parry)
+
       if (newParry > acc) acc = newParry
+
       return acc
     }, 0)
 
     this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.component.block) return acc
       const newblock = parseInt(attack.component.block)
+
       if (newblock > acc) acc = newblock
+
       return acc
     }, 0)
   }
@@ -629,13 +647,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
+
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
       }
 
       for (const attack of item.getItemAttacks()) {
         if ((item.system as BaseItemModel).itemModifiers === '') continue
+
         for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
           const modifierDescription = `${modifier} ${item.id}`
+
           if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
         }
       }
@@ -663,11 +684,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   #getMoveAdjustmentForManeuver(base: number): { value: number; tooltip: string } {
     let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
     const maneuver = GURPS.Maneuvers.get(this.conditions.maneuver)
+
     if (maneuver) {
       tooltip = game.i18n?.localize(maneuver.label) ?? ''
       const override = this.#getMoveAdjustmentForOverride(base, maneuver.move)
+
       return override ?? { value: base, tooltip }
     }
+
     return { value: base, tooltip }
   }
 
@@ -676,11 +700,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   #getMoveAdjustmentForPosture(base: number): { value: number; tooltip: string } {
     let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
     const posture = GURPS.StatusEffect.lookup(this.conditions.posture)
+
     if (posture) {
       tooltip = game.i18n?.localize(posture.name) ?? ''
       const override = this.#getMoveAdjustmentForOverride(base, posture.move)
+
       return override ?? { value: base, tooltip }
     }
+
     return { value: base, tooltip }
   }
 
@@ -751,16 +778,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       if (changed.system?.HP?.value !== undefined) {
         const isReeling = changed.system.HP.value < this.HP.max / 3
+
         if (this.conditions.reeling !== isReeling) {
           this.parent.toggleStatusEffect('reeling', { active: isReeling })
 
           if (doAnnounce) {
-            let tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
-            let message =
+            const tag = isReeling ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+            const message =
               game.i18n?.format(tag, {
                 name: this.parent.displayname,
                 pdfref: game.i18n.localize('GURPS.pdfReeling'),
               }) ?? ''
+
             this.parent.sendChatMessage(message)
           }
         }
@@ -768,16 +797,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       if (changed.system?.FP?.value !== undefined) {
         const isExhausted = changed.system.FP.value < this.FP.max / 3
+
         if (this.conditions.exhausted !== isExhausted) {
           this.parent.toggleStatusEffect('exhausted', { active: isExhausted })
 
           if (doAnnounce) {
-            let tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
-            let message =
+            const tag = isExhausted ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+            const message =
               game.i18n?.format(tag, {
                 name: this.parent.displayname,
                 pdfref: game.i18n.localize('GURPS.pdfTired'),
               }) ?? ''
+
             this.parent.sendChatMessage(message)
           }
         }
@@ -813,6 +844,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   get torsoDR(): HitLocationEntryV2 | undefined {
     // We assume that the torso is the hit location with a penalty of 0.
     const torsoLocation = this.hitlocationsV2.find(location => location.penalty === 0)
+
     return torsoLocation
   }
 
@@ -826,19 +858,22 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
    */
   getTemporaryEffects(effects: ActiveEffect.Implementation[]): ActiveEffect.Implementation[] {
     const maneuver = effects.find(e => e.isManeuver)
+
     if (!maneuver) return effects
 
     const nonManeuverEffects = effects.filter(e => !e.isManeuver)
 
     const visibility = this.getSetting(Settings.SETTING_MANEUVER_VISIBILITY, 'NoOne')
+
     if (visibility === 'NoOne') return nonManeuverEffects
 
     if (!game.user?.isGM && !this.parent.isOwner) {
       if (visibility === 'GMAndOwner') return nonManeuverEffects
 
       const detail = this.getSetting(Settings.SETTING_MANEUVER_DETAIL, 'General')
+
       if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')!
+        if (maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')!
       }
     }
 
@@ -852,9 +887,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   protected get _drBonusesFromItems(): Record<string, number> {
     return this._globalBonuses.reduce((acc: Record<string, number>, bonus: AnyObject) => {
       const bonusMatch = (bonus.text as string).match(/DR\s*([+-]\d+)\s*(.*)/)
+
       if (!bonusMatch) return acc
 
-      let modifier = parseInt(bonusMatch[1])
+      const modifier = parseInt(bonusMatch[1])
+
       if (isNaN(modifier)) return acc
 
       const locationPatterns = splitArgs(bonusMatch[2] ?? '').map(name => new RegExp(makeRegexPatternFrom(name))) ?? []
@@ -863,6 +900,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         if (!locationPatterns.some(pattern => location.where.match(pattern))) continue
         acc[location.where] = (acc[location.where] ?? 0) + modifier
       }
+
       return acc
     }, {})
   }
@@ -880,7 +918,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     locations: string[]
   ): Promise<{ changed: boolean; msg: string; info?: string; warn?: string }> {
     let changed = false
-    let actorLocations = this.hitlocationsV2
+    const actorLocations = this.hitlocationsV2
     let affectedLocations: string[] = []
     let availableLocations: string[] = []
 
@@ -889,11 +927,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       // This part of the function effectively filters the locations to only those
       // matching an existing body plan.
       const bodyPlan = this.additionalresources.bodyplan
+
       if (bodyPlan === '') {
         return { changed: false, msg: '', warn: 'No body plan defined for the actor.' }
       }
 
       const table = HitLocations.HitLocation.getHitLocationRolls(bodyPlan)
+
       availableLocations = Object.keys(table).map(key => key.toLowerCase())
 
       // NOTE: this checks whether any of the provided location names contain the available location
@@ -915,19 +955,24 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     for (const [index, value] of Object.entries(actorLocations)) {
       let processedFormula = '+0'
+
       if (locations.length === 0 || affectedLocations.includes(value.where.toLowerCase())) {
         changed = true
         processedFormula = formula
       }
+
       this.#addDRChanges(changes, processedFormula, value, index)
     }
 
     if (changed) {
       const msg = `${this.parent.name}: DR ${formula} applied to ${affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all hit locations'}.`
+
       // const validChanges = this.#validDRChanges(changes)
       await this.parent.update(changes as Actor.UpdateData)
+
       return { changed, msg, info: msg }
     }
+
     return { changed, msg: '', info: `${this.parent.name}: /dr command with formula ${formula} had no effect.` }
   }
 
@@ -970,6 +1015,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           break
         case '!':
           const mod = parseInt(formula.slice(1))
+
           drMod = mod
           dr = mod
           drCap = mod
@@ -1003,6 +1049,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const accumulatedActions = this.conditions.damageAccumulators
 
     const existingActionIndex = accumulatedActions.findIndex(e => e.orig === action.orig)
+
     if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
     action.count = 1
@@ -1016,6 +1063,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   async incrementDamageAccumulator(index: number): Promise<void> {
     const count = (this.conditions.damageAccumulators[index].count ?? 0) + 1
+
     await this.parent.update({ [`system.conditions.damageAccumulators.${index}.accumulate`]: count })
   }
 
@@ -1023,8 +1071,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   async decrementDamageAccumulator(index: number): Promise<void> {
     const count = (this.conditions.damageAccumulators[index].count ?? 0) - 1
+
     if (count < 1) {
       const accumulators = this.conditions.damageAccumulators
+
       accumulators.splice(index, 1)
 
       // @ts-expect-error: not sure why the path is not recognised
@@ -1036,6 +1086,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   async clearDamageAccumulator(index: number): Promise<void> {
     const accumulators = this.conditions.damageAccumulators
+
     accumulators.splice(index, 1)
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
@@ -1048,8 +1099,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const accumulator = accumulators[index]
 
     const roll = multiplyDice(accumulator.roll ?? '', accumulator.count ?? 1)
+
     if (accumulator.costs) {
       const costs = accumulator.costs.match(COSTS_REGEX)
+
       if (costs)
         accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '0')} ${costs.groups?.type}`
     }
@@ -1066,6 +1119,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // NOTE: change from previous schema, where path was used instead of index
   async removeTracker(index: number): Promise<void> {
     const trackers = this.additionalresources.tracker
+
     if (index < 0 || index >= trackers.length) return
     trackers.splice(index, 1)
     // @ts-expect-error: not sure why the path is not recognised
@@ -1076,6 +1130,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   async addTracker(): Promise<void> {
     const trackers = this.additionalresources.tracker ?? []
+
     trackers.push(new TrackerInstance())
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.additionalresources.tracker': trackers })
@@ -1086,6 +1141,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   get trackersByName(): Record<string, TrackerInstance> {
     return this.additionalresources.tracker.reduce((acc: Record<string, TrackerInstance>, tracker: TrackerInstance) => {
       acc[tracker.name] = tracker
+
       return acc
     }, {})
   }
@@ -1095,6 +1151,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // @deprecated -- Use GurpsActorV2.setMoveDefault instead.
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
+
     move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
       moveEntry.default = moveEntry.mode === value
     })
@@ -1117,6 +1174,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }): Promise<void> {
     const move = this.moveV2 ?? []
     const existingMove = move.find(entry => entry.mode === mode)
+
     if (existingMove) {
       existingMove.basic = basic ?? existingMove.basic
       existingMove.enhanced = enhanced ?? existingMove.enhanced
@@ -1153,6 +1211,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             isOTF: true,
           })
         })
+
         return { data: checks, size: checks.length }
       case 'otherChecks':
         checks.push(
@@ -1215,16 +1274,19 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             },
           ]
         )
+
         return { data: checks, size: checks.length }
       case 'attackChecks':
         checks.push(
           ...this.parent.items
             .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
               acc.push(...item.getItemAttacks())
+
               return acc
             }, [])
             .map(attack => {
               const otfName = attack.component.mode ? `${attack.name} (${attack.component.mode})` : attack.name
+
               return {
                 img: attack.img ?? '',
                 symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
@@ -1237,6 +1299,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
               }
             })
         )
+
         return { data: checks, size: checks.length }
       case 'defenseChecks':
         checks.push(
@@ -1275,16 +1338,20 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
               otf: `B:${otfName}`,
               isOTF: true,
             })
+
           return acc
         }, checks)
+
         return { data: checks, size: checks.length }
 
       case 'markedChecks':
         const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2', 'spellV2'))
+
         for (const item of items) {
           if (item.system.addToQuickRoll) {
             const type = item.type === 'featureV2' ? 'ad' : item.type
             let value = 0
+
             if (item.isOfType('skillV2', 'spellV2')) value = item.system.component.import
 
             checks.push({
@@ -1319,6 +1386,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       Settings.SETTING_USE_TAGGED_MODIFIERS,
       null
     ) as TaggedModifiersSettings | null
+
     if (!taggedSettings) return false
 
     const allRollTags: string[] = taggedSettings.allRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
@@ -1379,7 +1447,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
 
       const ref = chatThing.split('@').pop()!.toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
-      let regex = /(?<="|:).+(?=\s\(|"|])/gm
+      const regex = /(?<="|:).+(?=\s\(|"|])/gm
 
       if (ref && correspondingTags[ref]) {
         if (ref === 'p' || ref === 'b') {
@@ -1401,6 +1469,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
 
       const attackMods = attack?.component.modifierTags ?? []
+
       modifierTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name ?? ''
     }
@@ -1412,6 +1481,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const selfMods =
       this.conditions.self.modifiers?.map(mod => {
         const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+
         return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
       }) ?? []
 
@@ -1419,19 +1489,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const targetMods =
       game.user?.targets.reduce((acc: string[], target: Token.Implementation) => {
         const actor = target.actor
+
         if (!actor || !actor.isOfType('character', 'enemy')) return acc
 
         acc.push(
           ...((actor.system as CharacterModel).conditions.target.modifiers?.map(mod => {
             const key = mod.match(/(GURPS.\w+)/)?.[1] || ''
+
             return key ? game.i18n?.localize(key) + mod.replace(key, '') : mod
           }) ?? [])
         )
+
         return acc
       }, []) ?? []
 
     const actorInCombat = this.parent.inCombat
     const allMods: string[] = [...userMods, ...selfMods, ...targetMods]
+
     for (const mod of allMods) {
       const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
 
@@ -1454,6 +1528,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = mod.match(regex)?.[1].trim() || ''
           const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
+
           // TODO: evaluate whether this causes too many data preparation cycles
           await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
         }
@@ -1487,6 +1562,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
     const originType: string | null = action ? action.type : null
     let name: string, mode: string | undefined
+
     switch (originType) {
       case 'attack': {
         name = action.name.split('(')[0].trim()
@@ -1496,6 +1572,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           // @ts-expect-error: Not sure why this isn't resolving correctly.
           .getItemAttacks({ attackType })
           .find(e => e.name === name && (!mode || e.component.mode === mode))
+
         if (weapon)
           return {
             name: weapon.name ?? '',
@@ -1513,13 +1590,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
+
       case 'weapon-block':
+
       case 'weapon-parry': {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+?)\)/)?.[1]
         const weapon = this.parent
           .getItemAttacks({ attackType: 'melee' })
           .find(e => e.name === name && (!mode || e.component.mode === mode))
+
         if (weapon)
           return {
             name: weapon.name ?? '',
@@ -1537,8 +1617,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
+
       case 'skill-spell': {
         const item = [...this.allSkillsV2, ...this.allSpellsV2].find(e => e.name === action.name)
+
         if (item)
           return {
             name: item.name,
@@ -1556,10 +1638,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
+
       case 'attribute': {
         let attrName = action?.overridetxt
+
         if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
         if (attrName.startsWith('GURPS')) attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey}NAME`) ?? ''
+
         return {
           name: attrName,
           uuid: null,
@@ -1568,6 +1653,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           pageRef: null,
         }
       }
+
       case 'controlroll': {
         return {
           name: action.overridetxt || action.orig,
@@ -1577,6 +1663,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           pageRef: null,
         }
       }
+
       default: {
         return {
           name: thing ? thing : chatthing ? chatthing.split('/[')[0] : formula,
@@ -1809,6 +1896,7 @@ const characterSchema = () => {
     // }, { required: true, nullable: false }),
   }
 }
+
 type CharacterSchema = ReturnType<typeof characterSchema>
 
 /* ---------------------------------------- */

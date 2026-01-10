@@ -69,7 +69,9 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -94,7 +96,8 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
     background-color: var(--ms-accent-light);
     border-color: var(--ms-border);
 
-    &:hover, &.test {
+    &:hover,
+    &.test {
       color: var(--ms-text);
       background-color: var(--ms-accent-light);
     }
@@ -105,7 +108,9 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
     }
   }
 
-  .glinkmod, .glinkmodplus, .glinkmodminus {
+  .glinkmod,
+  .glinkmodplus,
+  .glinkmodminus {
     color: var(--ms-text);
   }
 }
@@ -121,7 +126,9 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
   a {
     color: var(--ms-accent);
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

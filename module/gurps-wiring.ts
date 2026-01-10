@@ -1,8 +1,9 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
+
+import { getGame, getUser, isHTMLElement } from './types/guards.js'
 import { GgaContextMenuV2 } from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
-import { getGame, getUser, isHTMLElement } from './types/guards.js'
 
 interface HandleGurpslinkOptions {
   combined?: number
@@ -31,9 +32,11 @@ export default class GurpsWiring {
       element.setAttribute('draggable', 'true')
       element.addEventListener('dragstart', (event: DragEvent) => {
         const target = event.currentTarget
+
         if (!isHTMLElement(target)) return
 
         const display = target.dataset.action ? target.innerText : ''
+
         event.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
@@ -66,6 +69,7 @@ export default class GurpsWiring {
     html.querySelectorAll('[data-otf]').forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickOtf))
 
     const pdfLinks = html.querySelectorAll('.pdflink')
+
     if (pdfLinks.length > 0) {
       for (const link of pdfLinks) {
         if (isHTMLElement(link)) {
@@ -78,6 +82,7 @@ export default class GurpsWiring {
   private static _createPdfLinkMenu(link: HTMLElement): void {
     const text = link.innerText
     const target = link.parentElement
+
     if (!target) return
 
     const actor = GURPS.LastActor
@@ -108,6 +113,7 @@ export default class GurpsWiring {
           icon: '<i class="far fa-comment"></i>',
           callback: () => {
             const chatInput = document.querySelector<HTMLInputElement | HTMLTextAreaElement>('#chat-message')
+
             if (chatInput) chatInput.value = otf
           },
           condition: () => true,
@@ -133,14 +139,18 @@ export default class GurpsWiring {
   static handleGurpslink(event: Event, actor: Actor.Implementation | null, options?: HandleGurpslinkOptions): void {
     event.preventDefault()
     const element = event.currentTarget
+
     if (!isHTMLElement(element)) return
 
-    let action = element.dataset?.action ? JSON.parse(atou(element.dataset.action)) : parselink(element.innerText).action
+    let action = element.dataset?.action
+      ? JSON.parse(atou(element.dataset.action))
+      : parselink(element.innerText).action
 
     if (!action && element.dataset?.otf) action = parselink(element.dataset.otf).action
 
     if (options?.combined && action) {
       const multiplier = options.combined
+
       action.formula = multiplyDice(action.formula, multiplier)
       action.costs = action.costs
         ? action.costs.replace(
@@ -155,15 +165,20 @@ export default class GurpsWiring {
 
   private static _onRightClickGurpslink(event: Event): void {
     event.preventDefault()
+
     if (event instanceof MouseEvent) {
       event.stopImmediatePropagation()
     }
+
     const el = event.currentTarget
+
     if (!isHTMLElement(el)) return
 
     const actionData = el.dataset.action
+
     if (actionData) {
       const action = JSON.parse(atou(actionData))
+
       if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage') {
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, getUser().isGM, true)
       } else {
@@ -175,16 +190,19 @@ export default class GurpsWiring {
   private static _onRightClickGmod(event: Event): void {
     event.preventDefault()
     const el = event.currentTarget
+
     if (!isHTMLElement(el)) return
 
     const n = el.dataset.name ?? ''
     const t = el.innerText
+
     GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, GURPS.LastActor)
   }
 
   private static _onRightClickOtf(event: Event): void {
     event.preventDefault()
     const el = event.currentTarget
+
     if (!isHTMLElement(el)) return
 
     const isDamageRoll = 'damage' in el.dataset

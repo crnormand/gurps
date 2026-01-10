@@ -1,4 +1,5 @@
 import { atou } from '../lib/utilities.js'
+
 import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
@@ -14,7 +15,7 @@ export default class GurpsJournalEntry {
    * @param {JQuery<HTMLElement>} html
    * @param {*} _options
    */
-  static _renderJournalPageSheet(app, html, document, options) {
+  static _renderJournalPageSheet(app, html, document) {
     if ((game.release?.generation ?? 12) >= 13) {
       if (!app.isView) return
     } else if (document.isEditable) return
@@ -28,27 +29,33 @@ export default class GurpsJournalEntry {
       if (html instanceof HTMLElement) html = $(html)
 
       let h = html.parent().find('.journal-page-content')
+
       if (!!h && h.length > 0) {
         GurpsWiring.hookupAllEvents(html)
 
-        const dropHandler = function (event, app, options) {
+        const dropHandler = function (event, app) {
           event.preventDefault()
           if (event.originalEvent) event = event.originalEvent
           const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+
           if (!!data && !!data.otf) {
             let cmd = ''
-            if (!!data.encodedAction) {
+
+            if (data.encodedAction) {
               let action = JSON.parse(atou(data.encodedAction))
+
               if (action.quiet) cmd += '!'
             }
+
             cmd += data.otf
-            if (!!data.displayname) {
-              let q = '"'
-              if (data.displayname.includes('"')) q = "'"
+
+            if (data.displayname) {
               cmd = "'" + data.displayname + "'" + cmd
             }
+
             cmd = '[' + cmd + ']'
             let content = app.document.text.content
+
             if (content) cmd = '<br>' + cmd
             app.document.update({ 'text.content': content + cmd })
           }
@@ -57,7 +64,7 @@ export default class GurpsJournalEntry {
         html
           .parent()
           .parent()
-          .on('drop', event => dropHandler(event, app, document))
+          .on('drop', event => dropHandler(event, app))
       }
     }, 10)
   }

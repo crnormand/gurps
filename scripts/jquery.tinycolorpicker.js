@@ -114,7 +114,6 @@
      * @private
      */
     function _setImage() {
-      // eslint-disable-next-line no-undef
       const colorPicker = new Image()
       const backgroundUrl = $track
         .css('background-image')
@@ -290,6 +289,7 @@
 
       function hex(x) {
         const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+
         return isNaN(x) ? '00' : digits[(x - (x % 16)) / 16] + digits[x % 16]
       }
 

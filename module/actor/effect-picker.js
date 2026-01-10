@@ -75,28 +75,30 @@ export default class EffectPicker extends Application {
     const activeEffectIds = new Set(
       this.actor.effects
         .filter(effect => !effect.disabled)
-        .flatMap(effect => effect.statuses ? Array.from(effect.statuses) : [])
+        .flatMap(effect => (effect.statuses ? Array.from(effect.statuses) : []))
     )
 
     const allEffects = CONFIG.statusEffects.filter(effect => effect.id !== 'dead')
 
-    const categories = Object.entries(EffectPicker.EFFECT_CATEGORIES).map(([key, category]) => {
-      const effects = category.ids
-        .map(effectId => allEffects.find(effect => effect.id === effectId))
-        .filter(effect => effect !== undefined)
-        .filter(effect => !activeEffectIds.has(effect.id))
-        .map(effect => ({
-          ...effect,
-          localizedName: game.i18n.localize(effect.name),
-        }))
+    const categories = Object.entries(EffectPicker.EFFECT_CATEGORIES)
+      .map(([key, category]) => {
+        const effects = category.ids
+          .map(effectId => allEffects.find(effect => effect.id === effectId))
+          .filter(effect => effect !== undefined)
+          .filter(effect => !activeEffectIds.has(effect.id))
+          .map(effect => ({
+            ...effect,
+            localizedName: game.i18n.localize(effect.name),
+          }))
 
-      return {
-        key,
-        label: game.i18n.localize(category.label),
-        effects,
-        hasEffects: effects.length > 0,
-      }
-    }).filter(category => category.hasEffects)
+        return {
+          key,
+          label: game.i18n.localize(category.label),
+          effects,
+          hasEffects: effects.length > 0,
+        }
+      })
+      .filter(category => category.hasEffects)
 
     return {
       categories,
@@ -113,12 +115,14 @@ export default class EffectPicker extends Application {
     html.find('.effect-picker-item').on('click', async event => {
       event.preventDefault()
       const effectId = event.currentTarget.dataset.effectId
+
       await this.addEffect(effectId)
       this.close()
     })
 
     html.find('.effect-picker-category-header').on('click', event => {
       const categoryElement = event.currentTarget.closest('.effect-picker-category')
+
       categoryElement.classList.toggle('collapsed')
     })
 
@@ -136,6 +140,7 @@ export default class EffectPicker extends Application {
       items.each((itemIndex, itemElement) => {
         const name = $(itemElement).find('.effect-picker-name').text().toLowerCase()
         const matches = !query || name.includes(searchLower)
+
         $(itemElement).toggle(matches)
         if (matches) visibleCount++
       })
@@ -145,11 +150,13 @@ export default class EffectPicker extends Application {
     })
 
     const hasVisible = this.element.find('.effect-picker-item:visible').length > 0
+
     this.element.find('.effect-picker-empty').toggle(!hasVisible)
   }
 
   async addEffect(effectId) {
     const statusEffect = CONFIG.statusEffects.find(effect => effect.id === effectId)
+
     if (!statusEffect) return
 
     const effectData = {
@@ -157,9 +164,9 @@ export default class EffectPicker extends Application {
       icon: statusEffect.img,
       disabled: false,
       statuses: [statusEffect.id],
-      ...statusEffect.changes && { changes: statusEffect.changes },
-      ...statusEffect.flags && { flags: statusEffect.flags },
-      ...statusEffect.duration && { duration: statusEffect.duration },
+      ...(statusEffect.changes && { changes: statusEffect.changes }),
+      ...(statusEffect.flags && { flags: statusEffect.flags }),
+      ...(statusEffect.duration && { duration: statusEffect.duration }),
     }
 
     await this.actor.createEmbeddedDocuments('ActiveEffect', [effectData])

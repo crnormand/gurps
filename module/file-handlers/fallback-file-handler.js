@@ -8,6 +8,7 @@ class FallbackFile {
     return this.file.text()
   }
 }
+
 class FallbackFolder {
   constructor(files, name) {
     this._files = files
@@ -17,6 +18,7 @@ class FallbackFolder {
     return extensions ? this._files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : this._files
   }
 }
+
 export class FallbackFileHandler {
   static async _getFileOrFolder({ template, templateOptions = {}, mode, extensions = [] }) {
     const inputElement =
@@ -40,6 +42,7 @@ export class FallbackFileHandler {
             if (!inputElementObject.files) return reject(`input element isn't file input`)
 
             let files = Array.from(inputElementObject.files)
+
             files = extensions.length > 0 ? files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : files
 
             files.length === 0

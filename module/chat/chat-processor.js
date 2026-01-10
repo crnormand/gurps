@@ -9,7 +9,7 @@ export default class ChatProcessor {
    * @param {string} line - chat command
    * @returns {RegExpMatchArray|null|undefined} true if this processor will handle this chat command
    */
-  matches(line) {
+  matches() {
     return null
   }
 
@@ -18,7 +18,7 @@ export default class ChatProcessor {
    * @param {string} line - chat command
    * @returns {RegExpMatchArray|null|undefined} true if this processor will report how to use command
    */
-  usagematches(line) {
+  usagematches() {
     return null
   }
 
@@ -28,7 +28,7 @@ export default class ChatProcessor {
    * @param {any|null} msgs
    * @returns {Promise<any>}
    */
-  async process(line, msgs = null) {}
+  async process() {}
 
   /**
    * Override to return the '/help' display string

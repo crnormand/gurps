@@ -12,7 +12,7 @@
  */
 export default async function getUserInput(options) {
   return new Promise(async resolve => {
-    const dialog = await new foundry.applications.api.DialogV2({
+    await new foundry.applications.api.DialogV2({
       window: {
         title: options.title,
         resizable: true,

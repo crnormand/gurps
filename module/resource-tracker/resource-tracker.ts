@@ -1,4 +1,4 @@
-import fields = foundry.data.fields
+const fields = foundry.data.fields
 
 /* ---------------------------------------- */
 
@@ -12,6 +12,7 @@ class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> 
 
     if (template.initialValue !== null) {
       tracker.value = parseInt(template.initialValue) || 0
+
       if (isNaN(tracker.value)) {
         // try to use initialValue as a path to another value
         tracker.value =

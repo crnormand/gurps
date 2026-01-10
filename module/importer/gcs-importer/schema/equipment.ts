@@ -1,4 +1,5 @@
-import fields = foundry.data.fields
+const fields = foundry.data.fields
+
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsEquipmentModifier } from './equipment-modifier.js'
 import { GcsWeapon } from './weapon.js'

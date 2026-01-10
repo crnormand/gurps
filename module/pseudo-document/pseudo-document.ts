@@ -1,11 +1,13 @@
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
-import Document = foundry.abstract.Document
 import { AnyObject } from 'fvtt-types/utils'
 
-import { type BaseItemModel } from '../item/data/base.js'
-import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 import { type ModelCollection } from '../data/model-collection.js'
+import { type BaseItemModel } from '../item/data/base.js'
+
+import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
+
+const fields = foundry.data.fields
+const DataModel = foundry.abstract.DataModel
+const Document = foundry.abstract.Document
 
 type PseudoDocumentMetadata = {
   /* ---------------------------------------- */
@@ -80,7 +82,9 @@ class PseudoDocument<
    */
   get uuid(): string {
     let parent = this.parent
+
     while (!(parent instanceof PseudoDocument) && !(parent instanceof Document)) parent = parent.parent
+
     return [parent.uuid, this.documentName, this.id].join('.')
   }
 
@@ -91,7 +95,9 @@ class PseudoDocument<
    */
   get document(): Document.Any {
     let parent: DataModel.Any = this
+
     while (!(parent instanceof Document)) parent = parent.parent
+
     return parent
   }
 
@@ -151,12 +157,15 @@ class PseudoDocument<
     { invalid = false, strict = false }: { invalid?: boolean; strict?: boolean } = {}
   ): PseudoDocument | null {
     const embeds = this.metadata.embedded ?? {}
+
     if (embeddedName in embeds) {
       const path = embeds[embeddedName]
+
       return (
         (foundry.utils.getProperty(this, path) as ModelCollection<PseudoDocument>).get(id, { invalid, strict }) ?? null
       )
     }
+
     return null
   }
 
@@ -167,11 +176,13 @@ class PseudoDocument<
    */
   getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection {
     const collectionPath = this.metadata.embedded[embeddedName]
+
     if (!collectionPath) {
       throw new Error(
         `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
       )
     }
+
     return foundry.utils.getProperty(this, collectionPath) as ModelCollection
   }
 
@@ -200,9 +211,11 @@ class PseudoDocument<
     const fieldPath = this.parent.constructor.metadata.embedded[docName]
     const parent = this.parent instanceof foundry.abstract.TypeDataModel ? this.parent.parent : this.parent
     const source = foundry.utils.getProperty(parent._source, fieldPath) as AnyObject
+
     if (foundry.utils.getType(source) !== 'Object') {
       throw new Error('Source is not an object!')
     }
+
     return this.id in source
   }
 
@@ -219,6 +232,7 @@ class PseudoDocument<
     if (!parent) {
       throw new Error('A parent document must be specified for the creation of a pseudo-document!')
     }
+
     const id =
       operation.keepId && foundry.data.validators.isValidId((data._id as string | undefined) ?? '')
         ? data._id
@@ -227,13 +241,17 @@ class PseudoDocument<
     const fieldPath = (parent.system!.constructor as typeof BaseItemModel).metadata.embedded?.[
       this.metadata.documentName
     ]
+
     if (!fieldPath) {
       const type = 'type' in parent ? parent.type : 'base'
+
       throw new Error(`A ${parent.documentName} of type '${type}' does not support ${this.metadata.documentName}!`)
     }
 
     const update = { [`${fieldPath}.${id}`]: { ...data, _id: id } }
+
     this._configureUpdates('create', parent, update, operation)
+
     // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
     return parent.update(update, operation)
   }
@@ -269,6 +287,7 @@ class PseudoDocument<
     const activityData = foundry.utils.mergeObject(this.toObject(), {
       name: game.i18n?.format('DOCUMENT.CopyOf', { name: 'name' in this ? (this.name as string) : '' }),
     })
+
     return (this.constructor as typeof PseudoDocument).create(activityData, { parent: this.document })
   }
 
@@ -287,7 +306,9 @@ class PseudoDocument<
     if (!this.isSource) throw new Error('You cannot update a non-source pseudo-document!')
     const path = [this.fieldPath, this.id].join('.')
     const update = { [path]: change }
+
     ;(this.constructor as typeof PseudoDocument)._configureUpdates('update', this.document, update, operation)
+
     // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
     return this.document.update(update, operation)
   }

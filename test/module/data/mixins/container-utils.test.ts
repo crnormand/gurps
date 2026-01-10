@@ -1,5 +1,5 @@
-import { ContainerUtils } from '../../../../module/data/mixins/container-utils.js'
 import { IContainable } from '../../../../module/data/mixins/containable.js'
+import { ContainerUtils } from '../../../../module/data/mixins/container-utils.js'
 
 interface MockContainable extends IContainable<MockContainable> {
   id: string
@@ -52,7 +52,9 @@ describe('ContainerUtils', () => {
         return ContainerUtils.isContainedBy(this, item)
       },
     }
+
     _contents.push(mock)
+
     return mock
   }
 
@@ -65,12 +67,14 @@ describe('ContainerUtils', () => {
   describe('isContained', () => {
     it('should return false for items with no container', () => {
       const item = createMockContainable('item1', null)
+
       expect(item.isContained).toBe(false)
     })
 
     it('should return true for contained items', () => {
       createMockContainable('container1')
       const item = createMockContainable('item1', 'container1')
+
       expect(item.isContained).toBe(true)
     })
   })
@@ -92,6 +96,7 @@ describe('ContainerUtils', () => {
     it('should return empty array for items with no contents', () => {
       const item = createMockContainable('item1')
       const allContents = item.allContents
+
       expect(allContents).toHaveLength(0)
     })
   })
@@ -112,6 +117,7 @@ describe('ContainerUtils', () => {
     it('should return empty array for top-level items', () => {
       const item = createMockContainable('item1')
       const ancestors = item.ancestors
+
       expect(ancestors).toHaveLength(0)
     })
   })
@@ -138,6 +144,7 @@ describe('ContainerUtils', () => {
 
     it('should return true if item is contained indirectly', () => {
       const container = createMockContainable('container1')
+
       createMockContainable('intermediate', 'container1')
       const item = createMockContainable('item1', 'intermediate')
 
@@ -155,6 +162,7 @@ describe('ContainerUtils', () => {
   describe('getDescendants', () => {
     it('should return all descendants without filter', () => {
       const container = createMockContainable('container1')
+
       createMockContainable('child1', 'container1')
       createMockContainable('child2', 'container1')
       createMockContainable('subchild', 'child1')
@@ -167,6 +175,7 @@ describe('ContainerUtils', () => {
 
     it('should return filtered descendants', () => {
       const container = createMockContainable('container1')
+
       createMockContainable('child1', 'container1')
       createMockContainable('child2', 'container1')
       createMockContainable('subchild', 'child1')
@@ -179,6 +188,7 @@ describe('ContainerUtils', () => {
 
     it('should return empty array if no descendants match filter', () => {
       const container = createMockContainable('container1')
+
       createMockContainable('child1', 'container1')
       createMockContainable('child2', 'container1')
 
@@ -190,6 +200,7 @@ describe('ContainerUtils', () => {
     it('should return empty array for items with no contents', () => {
       const item = createMockContainable('item1')
       const descendants = item.getDescendants()
+
       expect(descendants).toHaveLength(0)
     })
   })
@@ -206,6 +217,7 @@ describe('ContainerUtils', () => {
 
     it('should return true if item is indirectly contained by specified container', () => {
       const container = createMockContainable('container1')
+
       createMockContainable('intermediate', 'container1')
       const item = createMockContainable('item1', 'intermediate')
 
