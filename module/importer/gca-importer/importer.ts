@@ -59,7 +59,7 @@ class GcaImporter {
 
   async #importCharacter(actor?: Actor.OfType<'characterV2'>) {
     const _id = foundry.utils.randomID()
-    const type = 'character'
+    const type = 'characterV2'
     const name = this.input.name ?? 'Imported Character'
 
     // Set actor as a GcaImporter property for easier reference.
