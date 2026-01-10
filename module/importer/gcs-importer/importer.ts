@@ -174,8 +174,9 @@ class GcsImporter {
     if (this.actor) {
       // If actor exists, assume we're keeping the current portrait unless otherwise specified
       this.img = this.actor.img ?? ''
+      const isDefaultImage = this.img === (this.actor.constructor as typeof Actor).DEFAULT_ICON
 
-      if (!ImportSettings.overwritePortrait) return
+      if (!ImportSettings.overwritePortrait && !isDefaultImage) return
     }
 
     if (!game.user?.hasPermission('FILES_UPLOAD')) {
@@ -191,7 +192,7 @@ Portrait will not be imported.`
       return
     }
 
-    this.img = `data:image/png;base64,${this.input.profile.portrait}.png`
+    this.img = `data:image/png;base64,${this.input.profile.portrait}`
   }
 
   /* ---------------------------------------- */

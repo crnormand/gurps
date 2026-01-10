@@ -865,6 +865,9 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
       ['portraitimage']
     ) as AnyMutableObject
 
+    // Remove whitespace from base64 data
+    data.vitals.portraitimage = xml.querySelector(':scope > vitals > portraitimage')?.textContent.replace(/\s+/g, '')
+
     data.basicdefense = this._primitiveFieldsFromXML(
       xml.querySelector(':scope > basicdefense') as HTMLElement,
       schema.basicdefense.fields
