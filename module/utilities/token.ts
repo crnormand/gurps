@@ -1,4 +1,4 @@
-import { isDefined } from '../types/guards.ts'
+import { isDefined } from './guards.ts'
 
 export const getTokenForActor = (actor: Actor.Implementation | null | undefined): Token | undefined => {
   const firstActiveToken = actor?.getActiveTokens()?.[0]

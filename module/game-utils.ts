@@ -1,4 +1,4 @@
-import { isDefined } from './types/guards.ts'
+import { isDefined } from './utilities/guards.ts'
 
 export const isConfigurationAllowed = (actor: Actor.Implementation): boolean => {
   const user = game.user

@@ -10,7 +10,7 @@ import type {
   HeaderControlsEntry,
   HandlebarsActorSheetV2Constructor,
 } from '../../types/foundry/actor-sheet-v2.ts'
-import { getGame, getUser, isHTMLElement } from '../../types/guards.ts'
+import { getGame, getUser, isHTMLElement } from '../../utilities/guards.ts'
 import { ActorImporter } from '../actor-importer.js'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.ts'

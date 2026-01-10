@@ -1,4 +1,4 @@
-import { isHTMLElement, isHTMLInputElement } from '../../types/guards.ts'
+import { isHTMLElement, isHTMLInputElement } from '../../utilities/guards.ts'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()

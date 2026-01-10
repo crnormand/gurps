@@ -1,9 +1,9 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
 
-import { getGame, getUser, isHTMLElement } from './types/guards.js'
 import { GgaContextMenuV2 } from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
+import { getGame, getUser, isHTMLElement } from './utilities/guards.js'
 
 interface HandleGurpslinkOptions {
   combined?: number
