@@ -2,7 +2,6 @@ import DataModel = foundry.abstract.DataModel
 
 import { CharacterSchema } from '../../actor/data/character.js'
 import { GcsCharacter } from './schema/character.js'
-import { GcsItem } from './schema/base.js'
 import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
 import { BaseItemModel } from 'module/item/data/base.js'
 import { GcsTrait } from './schema/trait.js'
@@ -23,6 +22,8 @@ import { HitLocationSchemaV2 } from '../../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { NoteV2Schema } from 'module/actor/data/note.js'
 import { ImportSettings } from '../index.js'
+import { createDataIsOfType } from '../helpers.ts'
+import { AnyMutableObject } from 'fvtt-types/utils'
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -32,7 +33,7 @@ class GcsImporter {
   actor?: Actor.OfType<'characterV2'>
   input: GcsCharacter
   output: DataModel.CreateData<CharacterSchema>
-  items: DataModel.CreateData<DataModel.SchemaOf<GcsItem<any>>>[]
+  items: Item.CreateData[]
   img: string
 
   /* ---------------------------------------- */
@@ -93,22 +94,23 @@ class GcsImporter {
       await actor.update({
         name,
         img: this.img,
-        system: this.output as any,
+        system: this.output,
       })
 
       // Restore saved counts and uses in raw item data before creating embedded documents
       this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
-      await actor.createEmbeddedDocuments('Item', this.items as any, { keepId: true })
+      await actor.createEmbeddedDocuments('Item', this.items, { keepId: true })
     } else {
-      actor = (await Actor.create({
+      // @ts-expect-error: Actor shows as stored type, but is not stored.
+      actor = await Actor.create({
         _id,
         name,
         type,
         img: this.img,
-        system: this.output as any,
-        items: this.items as any,
-      })) as Actor.OfType<'characterV2'> | undefined
+        system: this.output,
+        items: this.items,
+      })
     }
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')
@@ -121,11 +123,13 @@ class GcsImporter {
   #restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
-        const eqt = (itemData as any).system?.eqt
-        if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
-          eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
-          eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
-          eqt.ignoreImportQty = true
+        if (createDataIsOfType(itemData, 'equipmentV2')) {
+          const eqt = itemData.system?.eqt
+          if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
+            eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
+            eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
+            eqt.ignoreImportQty = true
+          }
         }
       }
     }
@@ -144,8 +148,7 @@ class GcsImporter {
    */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
-      const component =
-        (item.system as any).fea ?? (item.system as any).ski ?? (item.system as any).spl ?? (item.system as any).eqt
+      const component = item.system.fea ?? item.system.ski ?? item.system.spl ?? item.system.eqt
       return ['GCS', 'GCA'].includes(component?.importFrom)
     })
 
@@ -160,7 +163,7 @@ class GcsImporter {
   #saveEquipmentCountsIfNecessary(items: Item.OfType<'equipmentV2'>[]) {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
     items.forEach(item => {
-      const eqt = (item.system as any).eqt
+      const eqt = item.system.eqt
       if (eqt && eqt.importFrom === 'GCS' && eqt.ignoreImportQty && eqt.importid) {
         savedEquipmentCounts.set(eqt.importid, { quantity: eqt.count, uses: eqt.uses })
       }
@@ -356,28 +359,32 @@ Portrait will not be imported.`
     this.output.additionalresources ||= {}
     this.output.additionalresources.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
 
-    this.output.hitlocationsV2 = []
-    this.input.settings.body_type.locations.forEach(location => {
-      const split = { ...(location.calc.dr as Record<string, number>) }
-      delete split.all // Remove the 'all' key, as it is already present in the 'import' field
+    this.output.hitlocationsV2 = this.input.settings.body_type.locations.reduce(
+      (acc: DataModel.CreateData<HitLocationSchemaV2>[], location) => {
+        const split = { ...(location.calc.dr as Record<string, number>) }
+        delete split.all // Remove the 'all' key, as it is already present in the 'import' field
 
-      // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
-      // damage and other effects.
-      let tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()] as any
-      let entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id) as any
-      let role = entry?.role ?? entry?.id
+        // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
+        // damage and other effects.
+        let tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()]
+        let entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
+        // @ts-expect-error: currently untyped. to come back to.
+        let role = entry?.role ?? entry?.id
 
-      const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
-        where: location.table_name ?? '',
-        import: (location.calc.dr as Record<string, number>).all ?? 0,
-        penalty: location.hit_penalty ?? 0,
-        rollText: location.calc.roll_range ?? '-',
-        split,
-        role,
-      }
+        const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
+          where: location.table_name ?? '',
+          import: (location.calc.dr as Record<string, number>).all ?? 0,
+          penalty: location.hit_penalty ?? 0,
+          rollText: location.calc.roll_range ?? '-',
+          split,
+          role,
+        }
 
-      ;(this.output.hitlocationsV2 as DataModel.CreateData<HitLocationSchemaV2>[]).push(newLocation)
-    })
+        acc.push(newLocation)
+        return acc
+      },
+      []
+    )
 
     await this.#promptHitLocationOverwrite()
   }
@@ -392,7 +399,7 @@ Portrait will not be imported.`
 
     // Remove derived values / all values not proper to the hit location on its own.
     const currentHitLocations = this.actor.system.hitlocationsV2.map(e => {
-      const location = e.toObject() as any
+      const location = e.toObject() as AnyMutableObject
       delete location._damageType
       delete location._dr
       delete location.drCap
@@ -403,7 +410,8 @@ Portrait will not be imported.`
 
     const statsDifference =
       currentBodyPlan !== this.output.additionalresources!.bodyplan ||
-      !(this.output.hitlocationsV2 as any[]).equals(currentHitLocations)
+      // @ts-expect-error: for some reason, the Array here is not being recognised as one. Type system issue?
+      !currentHitLocations.equals(this.output.hitlocationsV2)
 
     if (!statsDifference) return
 

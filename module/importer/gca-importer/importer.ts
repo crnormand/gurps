@@ -1,5 +1,6 @@
-import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
 import DataModel = foundry.abstract.DataModel
+
+import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
 import { CharacterSchema } from 'module/actor/data/character.js'
 import { BaseItemModel } from 'module/item/data/base.js'
 import {
