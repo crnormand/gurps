@@ -379,9 +379,11 @@ Portrait will not be imported.`
         }
       }
 
+      const dr = parseInt(bodyLocation.dr)
+
       const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
         where: location.location ?? '',
-        import: parseInt(bodyLocation.dr) ?? 0,
+        import: Number.isNaN(dr) ? 0 : dr,
         rollText: roll,
         split: {},
       }
