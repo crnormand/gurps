@@ -21,7 +21,7 @@
         <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.name}}</span>
         <span class='ms-attack-usage'>{{this.mode}}</span>
         <span class='ms-attack-level'>{{this.level}}</span>
-        <span class='ms-attack-damage'>{{>dice-button otf=this.damage level=null text=this.damage damage=true color='var(--ms-hp)'}}</span>
+        <span class='ms-attack-damage'>{{>dice-button otf=(quotedAttackName "D" this) level=null text=this.damage damage=true color='var(--ms-hp)'}}</span>
         {{#if ../isMelee}}
         <span class='ms-attack-reach'>{{this.reach}}</span>
         <span class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
