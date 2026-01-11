@@ -1,9 +1,9 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
 
+import { fields } from '../../types/foundry/index.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
-
-const fields = foundry.data.fields
 
 class TraitModel extends BaseItemModel<TraitSchema> {
   static override defineSchema(): TraitSchema {

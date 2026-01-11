@@ -2,6 +2,7 @@ export { Application } from './application.ts'
 export { fields } from './data-fields.ts'
 export { DataModel } from './data-model.ts'
 export { Document } from './document.ts'
+export { TypeDataModel } from './type-data-model.ts'
 
 export type {
   ActorSheetV2ActionHandler,

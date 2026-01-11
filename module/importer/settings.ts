@@ -1,6 +1,5 @@
+import { fields } from '../types/foundry/index.js'
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
-
-const fields = foundry.data.fields
 
 import {
   MODULE_NAME,

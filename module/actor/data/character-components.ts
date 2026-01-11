@@ -1,4 +1,4 @@
-const fields = foundry.data.fields
+import { fields } from '../../types/foundry/index.js'
 
 const attributeSchema = () => {
   return {

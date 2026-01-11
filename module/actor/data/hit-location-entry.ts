@@ -1,7 +1,5 @@
+import { DataModel, fields } from '../../types/foundry/index.js'
 import { convertRangeTextToArray } from '../../utilities/text-utilties.js'
-
-const DataModel = foundry.abstract.DataModel
-const fields = foundry.data.fields
 
 class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
   static override defineSchema(): HitLocationSchemaV2 {

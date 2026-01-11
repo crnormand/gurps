@@ -1,9 +1,9 @@
 import { AnyObject } from 'fvtt-types/utils'
 
+import { fields } from '../../types/foundry/index.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
-
-const fields = foundry.data.fields
 
 class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   static override defineSchema(): EquipmentSchema {

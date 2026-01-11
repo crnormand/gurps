@@ -1,11 +1,10 @@
-const fields = foundry.data.fields
-
 import { AnyObject } from 'fvtt-types/utils'
 
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+import { fields } from '../types/foundry/index.js'
 
 import { BaseAction, BaseActionSchema } from './base-action.js'
 

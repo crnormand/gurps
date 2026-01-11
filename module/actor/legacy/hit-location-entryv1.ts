@@ -1,8 +1,6 @@
+import { DataModel, fields } from '../../types/foundry/index.js'
 import { convertRangeTextToArray } from '../../utilities/text-utilties.js'
 import { HitLocationEntryV2 } from '../data/hit-location-entry.js'
-
-const fields = foundry.data.fields
-const DataModel = foundry.abstract.DataModel
 
 class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
   static createFromV2(entry: HitLocationEntryV2): HitLocationEntryV1 {

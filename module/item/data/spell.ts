@@ -2,11 +2,10 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { parselink } from '../../../lib/parselink.js'
 import { makeRegexPatternFrom } from '../../../lib/utilities.js'
+import { fields } from '../../types/foundry/index.js'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
-
-const fields = foundry.data.fields
 
 class SpellModel extends BaseItemModel<SpellSchema> {
   static override defineSchema(): SpellSchema {
