@@ -3133,7 +3133,7 @@ export class GurpsActor extends Actor {
       modifierTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
-      if (!attack) {
+      if (!attack || optionalArgs?.action?.type === 'damage') {
         refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
         isDamageRoll = true
       } else {
