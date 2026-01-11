@@ -284,6 +284,16 @@ describe('utilities', () => {
       const item = { name: 'Attack', mode: 'Mode' }
       expect(utilities.quotedAttackName(item)).toBe('"Attack (Mode)"')
     })
+
+    test('should return quoted attack name without mode', () => {
+      const item = { name: 'Attack' }
+      expect(utilities.quotedAttackName(item)).toBe('"Attack"')
+    })
+
+    test('should handle quoted item name', () => {
+      const item = { name: 'Sword "Saethors Bane"' }
+      expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethors Bane"'`)
+    })
   })
 
   describe('arraysEqual', () => {
