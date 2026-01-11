@@ -669,7 +669,7 @@ if (!globalThis.GURPS) {
       const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = formula
       if (actor && taggedSettings.autoAdd) {
-        await actor.addTaggedRollModifiers('', {}, action.att)
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 

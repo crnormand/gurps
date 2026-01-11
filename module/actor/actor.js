@@ -3109,6 +3109,7 @@ export class GurpsActor extends Actor {
     let isDamageRoll = false
     const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
+    const actionType = optionalArgs?.action?.type ?? ''
 
     let modifierTags, itemRef, refTags
 
@@ -3133,7 +3134,7 @@ export class GurpsActor extends Actor {
       modifierTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
-      if (!attack || optionalArgs?.action?.type === 'damage') {
+      if (!attack || ['damage', 'attackdamage', 'dervieddamage'].includes(actionType)) {
         refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
         isDamageRoll = true
       } else {
