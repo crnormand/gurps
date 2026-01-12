@@ -1,6 +1,6 @@
 'use strict'
 
-import { DragDropType } from 'module/drag-drop-types.ts'
+import { DragDropType } from '../drag-drop-types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'

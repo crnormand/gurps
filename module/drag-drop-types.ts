@@ -7,10 +7,4 @@ export enum DragDropType {
 
   /** Initiative reordering in combat tracker */
   INITIATIVE = 'initiative',
-
-  /** Item drops for adding to actor inventory */
-  ITEM = 'Item',
-
-  /** Equipment drops for equipping on actor */
-  EQUIPMENT = 'equipment',
 }
