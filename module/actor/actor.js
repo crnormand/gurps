@@ -3134,7 +3134,7 @@ export class GurpsActor extends Actor {
       modifierTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
-      if (!attack || ['damage', 'attackdamage', 'dervieddamage'].includes(actionType)) {
+      if (!attack || ['damage', 'attackdamage', 'deriveddamage'].includes(actionType)) {
         refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
         isDamageRoll = true
       } else {
