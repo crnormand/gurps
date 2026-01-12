@@ -121,6 +121,7 @@ export class GurpsActorSheet extends ActorSheet {
     GurpsWiring.hookupAllEvents(html)
 
     // Allow OTFs on this actor sheet to be draggable.
+    // TODO Redundant with `GurpsWiring.hookupAllEvents`, above.
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {

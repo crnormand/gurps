@@ -64,8 +64,6 @@ import { GGADebugger } from '../utils/debugger.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
-import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
-import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -81,6 +79,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
+import { CombatTracker } from './combat-tracker/CombatTracker.ts'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { Pdf } from './pdf/index.js'
@@ -120,6 +119,7 @@ if (!globalThis.GURPS) {
   GURPS.modules = {
     Canvas,
     Combat,
+    CombatTracker,
     Damage,
     Pdf,
     ResourceTracker,
@@ -2300,91 +2300,6 @@ if (!globalThis.GURPS) {
       } else setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
       return false
     })
-
-    Hooks.on('renderCombatTracker', async function (_app, element, _options, _context) {
-      const html = $(element)
-      if (!html.hasClass('bound')) {
-        html.addClass('bound')
-        // @ts-ignore
-        html.on('drop', function (ev) {
-          ev.preventDefault()
-          ev.stopPropagation()
-          let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
-
-          // @ts-ignore
-          let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-          // @ts-ignore
-          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
-
-          let event = ev.originalEvent
-          let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
-          if (dropData.type === 'damageItem') {
-            // @ts-ignore
-            target.actor.handleDamageDrop(dropData.payload)
-          }
-          if (dropData.type === 'initiative') {
-            let target = game.combat.combatants.get(combatant)
-            let src = game.combat.combatants.get(dropData.combatant)
-            let updates = []
-            if (!!target && !!src) {
-              if (target.initiative < src.initiative) {
-                updates.push({
-                  _id: dropData.combatant,
-                  initiative: target.initiative - 0.00001,
-                })
-                console.log('Moving ' + src.name + ' below ' + target.name)
-              } else {
-                updates.push({
-                  _id: dropData.combatant,
-                  initiative: target.initiative + 0.00001,
-                })
-                console.log('Moving ' + src.name + ' above ' + target.name)
-              }
-              game.combat.updateEmbeddedDocuments('Combatant', updates)
-            }
-          }
-        })
-      }
-
-      if (game.user.isGM) {
-        html.find('.combatant').each((_, li) => {
-          li.setAttribute('draggable', true)
-          li.addEventListener('dragstart', ev => {
-            if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-            let dragIcon = $(event.currentTarget).find('.token-image')[0]
-            ev.dataTransfer.setDragImage(dragIcon, 25, 25)
-            return ev.dataTransfer.setData(
-              'text/plain',
-              JSON.stringify({
-                type: 'initiative',
-                combatant: li.getAttribute('data-combatant-id'),
-              })
-            )
-          })
-        })
-      }
-
-      // Resolve Quick Roll and Maneuver buttons
-      const combatants = html.find('.combatant')
-      for (let combatantElement of combatants) {
-        const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
-        const token = canvas.tokens.get(combatant.token.id)
-        if (!token) {
-          console.warn(`Token not found for combatant: ${combatant.name}`)
-          continue
-        }
-
-        // Add Quick Roll Menu
-        combatantElement = await addQuickRollButton(combatantElement, combatant, token)
-
-        // Add Maneuver Menu
-        combatantElement = await addManeuverMenu(combatantElement, combatant, token)
-      }
-      // Add Quick Roll Listeners.
-      addQuickRollListeners()
-    })
-
-    addManeuverListeners()
 
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
