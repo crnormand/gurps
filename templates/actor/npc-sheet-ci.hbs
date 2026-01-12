@@ -203,7 +203,7 @@
             </div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="system.melee.{{@key}}"
               data-otf='{{quotedAttackName 'M' this}}'>{{this.level}}</div>
-            <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+            <div class="damage rollable" data-damage data-otf='{{quotedAttackName "D" this}}'>{{this.damage}}</div>
           {{/listattack}}
         </div>
       </div>
@@ -226,7 +226,7 @@
               data-otf='{{{displayNumber this.acc}}} Acc'>
               {{{displayNumber this.acc showPlus=false}}}
             </div>
-            <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+            <div class="damage rollable" data-damage data-otf='{{quotedAttackName "D" this}}'>{{this.damage}}</div>
           {{/listattack}}
         </div>
       </div>

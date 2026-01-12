@@ -71,7 +71,11 @@
           {{{gurpslink this.name}}}
           <div class='list_note'>{{{gurpslink this.notes}}}</div>
         </div>
-        <div class='rollable simple_roll_label' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+        <div
+          class='rollable simple_roll_label'
+          data-damage
+          data-otf='{{quotedAttackName "D" this}}'
+        >{{this.damage}}</div>
         <div class='rollable simple_roll_label' data-name='{{this.name}} ({{this.mode}})' data-otf='A:"{{this.name}}"'>
           {{this.level}}
         </div>
