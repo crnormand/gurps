@@ -1491,7 +1491,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.actor.ignoreRender = true
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-    if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
+    if (dragData.type === DragDropType.DAMAGE) this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
     await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')

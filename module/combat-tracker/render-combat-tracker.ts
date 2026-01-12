@@ -1,35 +1,33 @@
 import { addManeuverMenu } from './maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './quick-roll-menu.js'
+import { DragDropType } from '../drag-drop-types.js'
 
 export async function renderCombatTracker(_app: any, element: HTMLElement, _options: any, _context: any) {
-  const html = $(element)
-  if (!html.hasClass('bound')) {
-    html.addClass('bound')
+  if (!element.classList.contains('bound')) {
+    element.classList.add('bound')
 
-    html.on('drop', function (ev) {
+    element.addEventListener('drop', function (ev) {
       ev.preventDefault()
       ev.stopPropagation()
 
-      let event = ev.originalEvent
-      if (!event?.dataTransfer) return
-
-      let elementMouseIsOver = document.elementFromPoint(ev.clientX!, ev.clientY!)
-      if (!elementMouseIsOver) return
-
+      if (!ev.dataTransfer) return
       if (!game.combat) return
 
-      let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-      let target = game.combat.combatants.filter(c => c.id === combatant)[0]
+      let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
+      if (!elementMouseIsOver) return
 
-      let dropData = JSON.parse(event.dataTransfer!.getData('text/plain'))
-      if (dropData.type === 'damageItem') {
-        if (target.actor) target.actor.handleDamageDrop(dropData.payload)
+      let combatantElement = elementMouseIsOver.closest('.combatant') as HTMLElement | null
+      let combatantId = combatantElement?.dataset.combatantId
+      if (!combatantId) return
+
+      let target = game.combat.combatants.get(combatantId)
+
+      let dropData = JSON.parse(ev.dataTransfer.getData('text/plain'))
+      if (dropData.type === DragDropType.DAMAGE) {
+        if (target?.actor) target.actor.handleDamageDrop(dropData.payload)
       }
 
-      if (dropData.type === 'initiative') {
-        if (!combatant) return
-
-        let target = game.combat.combatants.get(combatant)
+      if (dropData.type === DragDropType.INITIATIVE) {
         let src = game.combat.combatants.get(dropData.combatant)
         let updates = []
 
@@ -55,20 +53,22 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
 
   if (!game.user) return
   if (game.user.isGM) {
-    html.find('.combatant').each((_, li) => {
+    const combatantElements = element.querySelectorAll<HTMLElement>('.combatant')
+    combatantElements.forEach(li => {
       li.setAttribute('draggable', 'true')
       li.addEventListener('dragstart', ev => {
         if (!ev.currentTarget) return
-        let display = (ev.currentTarget as HTMLElement).innerText ?? 'combatant'
-        let dragIcon = $(ev.currentTarget).find('.token-image')[0]
+        const currentTarget = ev.currentTarget as HTMLElement
+        let display = currentTarget.innerText ?? 'combatant'
+        let dragIcon = currentTarget.querySelector<HTMLElement>('.token-image')
 
         if (dragIcon) ev.dataTransfer!.setDragImage(dragIcon, 25, 25)
         return ev.dataTransfer!.setData(
           'text/plain',
           JSON.stringify({
-            type: 'initiative',
+            type: DragDropType.INITIATIVE,
             displayname: display,
-            combatant: li.getAttribute('data-combatant-id'),
+            combatant: li.dataset.combatantId,
           })
         )
       })
@@ -76,7 +76,7 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
   }
 
   // Resolve Quick Roll and Maneuver buttons
-  const combatants = html.find('.combatant')
+  const combatants = element.querySelectorAll<HTMLElement>('.combatant')
   for (let combatantElement of combatants) {
     const combatant = await game.combat!.combatants.get(combatantElement.dataset!.combatantId!)!
     const token = canvas!.tokens!.get(combatant.token?.id ?? '')
