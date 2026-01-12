@@ -1,5 +1,15 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.12
+
+### Bugfixes
+
+- Modern UI sheet uses `GURPS.LastActor` as actor target instead of sheet actor \#2472
+- Modern UI sheet cuts off tall portraits \#2474
+- Can't change encumbrance manually on modern UI sheet \#2475
+- Modern UI sheet does not display resource trackers \#2476
+- Weapon attack tagged modifiers are sometimes added to damage rolls \#2482
+
 ## Release 0.18.11 01/09/2026
 
 ### Features
@@ -9,7 +19,7 @@
 ### Bugfixes
 
 - Missing lang tags \#2450
-- Can't roll from Actor Sheet when Canvas disabled #2449
+- Can't roll from Actor Sheet when Canvas disabled \#2449
 - ModToolTip with transparent BG \#2448
 - Cannot create Active Effects from Actor Sheet \#2447
 - Fright Check dialog text unreadable (v18.10) \#2446
@@ -155,7 +165,7 @@
 - Improved targeting of damage #2178
 - Auto-Apply of modifiers should require Roll Confirmation to be active #2151
 
-### Bugfixes:
+### Bugfixes
 
 - Apply Damage fails when any token in the scene has no actor #2169
 - Some skills not recognized if not quoted in OtF #2163
@@ -1522,7 +1532,7 @@ Release 0.8.11 - 2/4/2021
 - revamped the chat message handler (it actually works now)
 - Added currentdodge, currentmove, equippedparry and equippedblock attributes (for use with modules like Token Tooltip Alt)
 - Added GM Send function to Journal entries
-- Enhance OtF for damage to allow "*Costs ?FP" [4d-4 burn *Costs 4FP]
+- Enhance OtF for damage to allow "*Costs ?FP" [4d-4 burn*Costs 4FP]
 - "Best of" skill or attribute OtF [S:Skillname|DX-2], actually infinite, can be used to try other skills [S:Skill1|S:Skill2|ST|S:Skill3|IQ-4 default]
 - Copy to chat input (GM Send). Can't do clipboard
 - Chat command /:<macro name> - call macro

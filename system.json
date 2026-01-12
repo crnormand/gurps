@@ -1,89 +1,96 @@
 {
-  "id": "gurps",
-  "title": "GURPS 4e Game Aid (Unofficial)",
-  "description": "A game aid to help play GURPS 4e for Foundry VTT",
-  "version": "0.18.11",
   "authors": [
     {
-      "name": "Chris Normand",
-      "email": "nose66@bellsouth.net",
       "discord": "nose66",
-      "flags": {}
+      "email": "nose66@bellsouth.net",
+      "flags": {},
+      "name": "Chris Normand"
     },
     {
-      "name": "M. Jeff Wilson",
       "discord": "nick.coffin.pi",
-      "flags": {}
+      "flags": {},
+      "name": "M. Jeff Wilson"
     },
     {
-      "name": "Mikolaj Tomczynski",
-      "email": "mikolaj@tomczynski.org",
       "discord": "sasiedny",
-      "flags": {}
+      "email": "mikolaj@tomczynski.org",
+      "flags": {},
+      "name": "Mikolaj Tomczynski"
     }
   ],
+  "background": "systems/gurps/assets/gurps-background.webp",
   "compatibility": {
-    "minimum": "12",
     "maximum": "13",
+    "minimum": "12",
     "verified": "13.351"
   },
-  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
-  "scripts": ["scripts/jquery.tinycolorpicker.js"],
-  "styles": ["gurps.css"],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json",
-      "flags": {}
-    },
-    {
-      "lang": "pt-BR",
-      "name": "Português (Brasil)",
-      "path": "lang/pt_br.json",
-      "flags": {}
-    },
-    {
-      "lang": "de",
-      "name": "Deutsch (German)",
-      "path": "lang/de.json",
-      "flags": {}
-    },
-    {
-      "lang": "ru",
-      "name": "русский (Russian)",
-      "path": "lang/ru.json",
-      "flags": {}
-    },
-    {
-      "lang": "Fr",
-      "name": "French",
-      "path": "lang/fr.json",
-      "flags": {}
-    }
+  "description": "A game aid to help play GURPS 4e for Foundry VTT",
+  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.12/system.zip",
+  "esmodules": [
+    "module/gurps.js",
+    "lib/xregexp-all.js"
   ],
   "grid": {
     "distance": 1,
     "units": "yd"
   },
-  "media": [
+  "id": "gurps",
+  "languages": [
     {
-      "type": "cover",
-      "loop": false,
-      "flags": {}
+      "flags": {},
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
     },
     {
-      "type": "setup",
-      "url": "systems/gurps/assets/gurps-thumbnail.webp",
-      "thumbnail": "systems/gurps/assets/gurps-thumbnail.webp"
+      "flags": {},
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt_br.json"
+    },
+    {
+      "flags": {},
+      "lang": "de",
+      "name": "Deutsch (German)",
+      "path": "lang/de.json"
+    },
+    {
+      "flags": {},
+      "lang": "ru",
+      "name": "русский (Russian)",
+      "path": "lang/ru.json"
+    },
+    {
+      "flags": {},
+      "lang": "Fr",
+      "name": "French",
+      "path": "lang/fr.json"
     }
   ],
-  "background": "systems/gurps/assets/gurps-background.webp",
-  "primaryTokenAttribute": "HP",
-  "secondaryTokenAttribute": "FP",
-  "url": "https://github.com/crnormand/gurps",
+  "license": "LICENSE.txt",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.11/system.zip",
+  "media": [
+    {
+      "flags": {},
+      "loop": false,
+      "type": "cover"
+    },
+    {
+      "thumbnail": "systems/gurps/assets/gurps-thumbnail.webp",
+      "type": "setup",
+      "url": "systems/gurps/assets/gurps-thumbnail.webp"
+    }
+  ],
+  "primaryTokenAttribute": "HP",
+  "scripts": [
+    "scripts/jquery.tinycolorpicker.js"
+  ],
+  "secondaryTokenAttribute": "FP",
   "socket": true,
-  "license": "LICENSE.txt"
+  "styles": [
+    "gurps.css"
+  ],
+  "title": "GURPS 4e Game Aid (Unofficial)",
+  "url": "https://github.com/crnormand/gurps",
+  "version": "0.18.12"
 }
