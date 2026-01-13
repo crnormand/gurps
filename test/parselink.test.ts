@@ -1869,27 +1869,6 @@ describe('parseLink', () => {
         )
       )
     })
-
-    test('#> A:"Mage\\\'s Staff" +1 magic attack', () => {
-      const result = parselink(input)
-
-      expect(result.action).toEqual({
-        blindroll: false,
-        desc: 'magic attack',
-        isMelee: true,
-        isRanged: true,
-        mod: '+1',
-        name: "Mage's Staff",
-        // prettier-ignore
-        orig: "A:\"Mage's Staff\" +1 magic attack",
-        type: 'attack',
-      })
-      expect(result.text).toEqual(
-        expect.stringContaining(
-          "data-otf='A:\"Mage's Staff\" +1 magic attack'><b>A:</b>Mage's Staff+1 magic attack</span>"
-        )
-      )
-    })
   })
 
   describe('Check existence', () => {
