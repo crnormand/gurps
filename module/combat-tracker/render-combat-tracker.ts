@@ -37,6 +37,7 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
         console.warn('Unexpected drop data format in combat tracker:', dropData)
         return
       }
+
       if (dropData.type === DragDropType.DAMAGE) {
         if (target?.actor) target.actor.handleDamageDrop(dropData.payload)
       }
@@ -45,22 +46,25 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
         let src = game.combat.combatants.get(dropData.combatant)
         let updates: any[] = []
 
-        if (target && src && target.id !== src.id) {
-          const targetInitiative =
-            typeof target.initiative === 'number' ? target.initiative : 0
-          const srcInitiative =
-            typeof src.initiative === 'number' ? src.initiative : 0
-
-          if (targetInitiative < srcInitiative) {
+        // The problem with this approach is that if you drag two or more combatants to the same position, they will
+        // end up with the same initiative value and their order relative to each other is nondeterministic. A more
+        // robust solution would require recalculating initiatives for all combatants between the source and target
+        // positions, which is more complex.
+        //
+        // Also: GitHub Copilot suggested that we allow for reordering even when initiative values are missing, by treating
+        // missing initiatives as zero. This effectively sets initiative on actors that had none before, which may be
+        // unexpected behavior (such as not being able to roll initiative again to set it afresh).
+        if (target?.initiative && src?.initiative && target.id !== src.id) {
+          if (target.initiative < src.initiative) {
             updates.push({
               _id: dropData.combatant,
-              initiative: targetInitiative - 0.00001,
+              initiative: target.initiative - 0.00001,
             })
             console.log('Moving ' + src.name + ' below ' + target.name)
           } else {
             updates.push({
               _id: dropData.combatant,
-              initiative: targetInitiative + 0.00001,
+              initiative: target.initiative + 0.00001,
             })
             console.log('Moving ' + src.name + ' above ' + target.name)
           }
@@ -77,6 +81,14 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
       li.setAttribute('draggable', 'true')
       li.addEventListener('dragstart', ev => {
         if (!ev.currentTarget) return
+
+        // If the combatant doesn't have an initiative, don't allow dragging for reordering.
+        const li = ev.currentTarget as HTMLElement
+        const combatantId = li.dataset.combatantId
+        if (!combatantId) return
+        const combatant = game.combat?.combatants.get(combatantId)
+        if (!combatant || combatant.initiative === null) return
+
         const currentTarget = ev.currentTarget as HTMLElement
         let display = currentTarget.innerText ?? 'combatant'
         let dragIcon = currentTarget.querySelector<HTMLElement>('.token-image')

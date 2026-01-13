@@ -1,3 +1,4 @@
+import { DragDropType } from '../drag-drop-types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -17,9 +18,7 @@ import SplitDREditor from './splitdr-editor.js'
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {foundry.appv1.sheets.ActorSheet}
  */
-// COMPATIBILITY: v12
-// export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
-export class GurpsActorSheet extends ActorSheet {
+export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
