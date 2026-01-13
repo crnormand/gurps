@@ -97,8 +97,24 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
   // Resolve Quick Roll and Maneuver buttons
   const combatants = element.querySelectorAll<HTMLElement>('.combatant')
   for (let combatantElement of combatants) {
-    const combatant = await game.combat!.combatants.get(combatantElement.dataset!.combatantId!)!
-    const token = canvas!.tokens!.get(combatant.token?.id ?? '')
+    const combatantId = combatantElement.dataset?.combatantId
+    if (!combatantId) {
+      console.warn('Combatant id not found for element', combatantElement)
+      continue
+    }
+
+    if (!game.combat) {
+      console.warn('No active combat found when resolving combat tracker buttons')
+      continue
+    }
+
+    const combatant = game.combat.combatants.get(combatantId)
+    if (!combatant) {
+      console.warn(`Combatant not found for id: ${combatantId}`)
+      continue
+    }
+
+    const token = canvas?.tokens?.get(combatant.token?.id ?? '')
     if (!token) {
       console.warn(`Token not found for combatant: ${combatant.name ?? 'unknown'}`)
       continue
