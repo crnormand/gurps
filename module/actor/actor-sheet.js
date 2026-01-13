@@ -1,3 +1,4 @@
+import { DragDropType } from '../drag-drop-types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -17,9 +18,7 @@ import SplitDREditor from './splitdr-editor.js'
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {foundry.appv1.sheets.ActorSheet}
  */
-// COMPATIBILITY: v12
-// export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
-export class GurpsActorSheet extends ActorSheet {
+export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -121,6 +120,7 @@ export class GurpsActorSheet extends ActorSheet {
     GurpsWiring.hookupAllEvents(html)
 
     // Allow OTFs on this actor sheet to be draggable.
+    // TODO Redundant with `GurpsWiring.hookupAllEvents`, above.
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
@@ -1490,7 +1490,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.actor.ignoreRender = true
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-    if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
+    if (dragData.type === DragDropType.DAMAGE) this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
     await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
