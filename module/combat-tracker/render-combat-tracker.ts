@@ -121,10 +121,10 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
     }
 
     // Add Quick Roll Menu
-    combatantElement = await addQuickRollButton(combatantElement, combatant, token)
+    await addQuickRollButton(combatantElement, combatant, token)
 
     // Add Maneuver Menu
-    combatantElement = await addManeuverMenu(combatantElement, combatant, token)
+    await addManeuverMenu(combatantElement, combatant, token)
   }
   // Add Quick Roll Listeners.
   addQuickRollListeners()
