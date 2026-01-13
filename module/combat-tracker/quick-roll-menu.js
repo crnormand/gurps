@@ -64,16 +64,19 @@ export const addQuickRollButton = async (html, combatant, token) => {
   // Add Quick Roll Menu
   const actions = await TokenActions.fromToken(token)
   const { actor } = token
-  const quickRollMenu = await renderTemplate('systems/gurps/templates/quick-roll-menu.hbs', {
-    actor,
-    combatant,
-    blindRoll: actions.blindAsDefault,
-    attributeChecks: actor.getChecks('attributeChecks'),
-    otherChecks: actor.getChecks('otherChecks'),
-    attackChecks: actor.getChecks('attackChecks'),
-    defenseChecks: actor.getChecks('defenseChecks'),
-    markedChecks: actor.getChecks('markedChecks'),
-  })
+  const quickRollMenu = await foundry.applications.handlebars.renderTemplate(
+    'systems/gurps/templates/quick-roll-menu.hbs',
+    {
+      actor,
+      combatant,
+      blindRoll: actions.blindAsDefault,
+      attributeChecks: actor.getChecks('attributeChecks'),
+      otherChecks: actor.getChecks('otherChecks'),
+      attackChecks: actor.getChecks('attackChecks'),
+      defenseChecks: actor.getChecks('defenseChecks'),
+      markedChecks: actor.getChecks('markedChecks'),
+    }
+  )
   const quickMenu = $(quickRollMenu)
   $(html).append(quickMenu)
 
