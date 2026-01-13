@@ -22,7 +22,21 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
 
       let target = game.combat.combatants.get(combatantId)
 
-      let dropData = JSON.parse(ev.dataTransfer.getData('text/plain'))
+      const rawData = ev.dataTransfer.getData('text/plain')
+      if (!rawData) return
+
+      let dropData: any
+      try {
+        dropData = JSON.parse(rawData)
+      } catch (error) {
+        console.warn('Invalid drop data received in combat tracker:', rawData, error)
+        return
+      }
+
+      if (!dropData || typeof dropData !== 'object') {
+        console.warn('Unexpected drop data format in combat tracker:', dropData)
+        return
+      }
       if (dropData.type === DragDropType.DAMAGE) {
         if (target?.actor) target.actor.handleDamageDrop(dropData.payload)
       }
