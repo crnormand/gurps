@@ -43,19 +43,24 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
 
       if (dropData.type === DragDropType.INITIATIVE) {
         let src = game.combat.combatants.get(dropData.combatant)
-        let updates = []
+        let updates: any[] = []
 
-        if (target?.initiative && src?.initiative && target.id !== src.id) {
-          if (target.initiative < src.initiative) {
+        if (target && src && target.id !== src.id) {
+          const targetInitiative =
+            typeof target.initiative === 'number' ? target.initiative : 0
+          const srcInitiative =
+            typeof src.initiative === 'number' ? src.initiative : 0
+
+          if (targetInitiative < srcInitiative) {
             updates.push({
               _id: dropData.combatant,
-              initiative: target.initiative - 0.00001,
+              initiative: targetInitiative - 0.00001,
             })
             console.log('Moving ' + src.name + ' below ' + target.name)
           } else {
             updates.push({
               _id: dropData.combatant,
-              initiative: target.initiative + 0.00001,
+              initiative: targetInitiative + 0.00001,
             })
             console.log('Moving ' + src.name + ' above ' + target.name)
           }
