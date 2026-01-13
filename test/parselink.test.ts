@@ -1848,7 +1848,7 @@ describe('parseLink', () => {
       )
     })
 
-    test('#> A:"Mage\\\'s Staff" +1 magic attack', () => {
+    test('#> A:"Mage\'s Staff" +1 magic attack', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
@@ -1858,15 +1858,30 @@ describe('parseLink', () => {
         isRanged: true,
         mod: '+1',
         name: "Mage's Staff",
-        // prettier-ignore
-        orig: "A:\"Mage's Staff\" +1 magic attack",
+        orig: 'A:"Mage\'s Staff" +1 magic attack',
         type: 'attack',
       })
       expect(result.text).toEqual(
         expect.stringContaining(
-          // prettier-ignore
           "data-otf='A:\"Mage's Staff\" +1 magic attack'><b>A:</b>Mage's Staff+1 magic attack</span>"
         )
+      )
+    })
+
+    test("#> A:'Sword \"Saethor\\'s Bane\"'", () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        name: 'Sword "Saethor*s Bane"',
+        orig: 'A:\'Sword "Saethor*s Bane"\'',
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining('data-otf=\'A:\'Sword "Saethor*s Bane"\'\'><b>A:</b>Sword "Saethor*s Bane"</span>')
       )
     })
   })
