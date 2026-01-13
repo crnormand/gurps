@@ -305,7 +305,7 @@ class ChatProcessorRegistry {
     this.msgs.oldQuiet = quiet
     this.msgs.data.whisper = [game.user?.id]
     // HACK: This try / catch prevents errors from showing to the user in cases where properties shiftKey and/or ctrlKey of `this.msgs.event`
-    // are not writeable, such as if the event is a PointerEvent (e.g. in Token Action HUD). This is a temporary  and not *true* solution to
+    // are not writeable, such as if the event is a PointerEvent (e.g. in Token Action HUD). This is a temporary and not *true* solution to
     // the underlying problem, potentially caused by the attempt to modify the event in the first place (rather than just the resulting message
     // properties). It should not persist following any refactor of our chat processing code. - MT
     try {
