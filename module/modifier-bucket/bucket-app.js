@@ -617,7 +617,7 @@ export class ModifierBucket extends Application {
     globalModifier?.addEventListener('click', event => this._onClick(event))
     globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
     globalModifier?.addEventListener('dragstart', ev => {
-      let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+      const bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
       return ev.dataTransfer?.setData(
         'text/plain',
         JSON.stringify({
