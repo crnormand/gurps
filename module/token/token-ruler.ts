@@ -42,7 +42,7 @@ function registerTokenRuler() {
     /* ---------------------------------------- */
 
     /**
-     * Get the color for a segment or hex decoration based on the distance travelled by a token.
+     * Get the color for a segment or hex decoration based on the distance traveled by a token.
      */
     protected _getColorForDistance(distance: number, defaultColor: PIXI.ColorSource = 0x000000): PIXI.ColorSource {
       const actor = this.token.actor
