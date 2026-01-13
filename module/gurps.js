@@ -79,7 +79,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
-import { CombatTracker } from './combat-tracker/CombatTracker.ts'
+import { CombatTracker } from './combat-tracker/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { Pdf } from './pdf/index.js'
