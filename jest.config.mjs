@@ -12,5 +12,6 @@ export default {
   },
   moduleFileExtensions: ['js', 'ts', 'json', 'node'],
   transformIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFiles: ['./test/jest.setup.js'],
 }
