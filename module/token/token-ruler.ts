@@ -1,4 +1,5 @@
 import { Length, LengthUnit } from '../data/common/length.js'
+import { tokenMoveColors } from './constants.ts'
 
 // COMPATIBILITY: v12
 function registerTokenRuler() {
@@ -58,15 +59,15 @@ function registerTokenRuler() {
         return defaultColor
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= Math.ceil(actor.system.currentmove / 10)) {
-        return 0x0000ff // Step: blue
+        return tokenMoveColors.step
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentmove) {
-        return 0x00ff00 // Normal move: green
+        return tokenMoveColors.move
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentsprint) {
-        return 0xffff00 // Sprint / Enhanced move: yellow
+        return tokenMoveColors.sprint
       } else {
-        return 0xff0000 // More than sprint: red
+        return tokenMoveColors.over
       }
     }
   }
