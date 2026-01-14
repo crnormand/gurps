@@ -10,8 +10,8 @@
 - Modern UI sheet does not display resource trackers \#2476
 - Weapon attack tagged modifiers are sometimes added to damage rolls \#2482
 - Dashes in Ranged Weapon names used as Modifiers \#2461
-- Fixed drag-and-drop on the combat tracker.
-- Fixed drag-and-drop on the Modifier Bucket.
+- Fixed drag-and-drop on the combat tracker. \#2486
+- Fixed drag-and-drop on the Modifier Bucket. \#2486
 
 ## Release 0.18.11 01/09/2026
 
