@@ -1,4 +1,5 @@
 import { Length, LengthUnit } from '../data/common/length.js'
+import { tokenMoveColors } from './constants.ts'
 
 // COMPATIBILITY: v12
 function registerTokenRuler() {
@@ -8,38 +9,65 @@ function registerTokenRuler() {
   class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     /**
      * Get the style to be used to highlight the grid offset.
-     * @param {DeepReadonly<Omit<TokenRulerWaypoint, "index"|"center"|"size"|"ray">>} waypoint    The waypoint
-     * @param {DeepReadonly<GridOffset3D>} offset  An occupied grid offset at the given waypoint that is to be highlighted
-     * @returns {{color?: PIXI.ColorSource; alpha?: number; texture?: PIXI.Texture; matrix?: PIXI.Matrix | null}}
-     *   The color, alpha, texture, and texture matrix to be used to draw the grid space.
-     *   If the alpha is 0, the grid space is not highlighted.
+     * @param waypoint - The waypoint
+     * @param offset   - An occupied grid offset at the given waypoint that is to be highlighted
+     * @returns The color, alpha, texture, and texture matrix to be used to draw the grid space.
+     *          If the alpha is 0, the grid space is not highlighted.
      */
     protected override _getGridHighlightStyle(
-      // @ts-expect-error: waiting for types to catch up
-      waypoint: TokenRulerWaypoint,
-      offset: { i: number; j: number }
-    ): { color?: PIXI.ColorSource; alpha?: number; texture?: PIXI.Texture; matrix?: PIXI.Matrix | null } {
-      // @ts-expect-error waiting for types to catch up
+      waypoint: foundry.canvas.placeables.tokens.TokenRuler.Waypoint,
+      offset: foundry.grid.BaseGrid.Offset3D
+    ): foundry.canvas.placeables.tokens.TokenRuler.GridHighlightStyle {
       const data = super._getGridHighlightStyle(waypoint, offset)
       const actor = this.token.actor
       if (!actor) return data
 
+      return { ...data, color: this._getColorForDistance(waypoint.measurement.cost, data.color) }
+    }
+
+    /* ---------------------------------------- */
+
+    /**
+     * Get the style of the segment from the previous to the given waypoint.
+     * @param waypoint - The waypoint
+     * @returns The line width, color, and alpha of the segment.  If the width is 0, no segment is drawn.
+     */
+    protected override _getSegmentStyle(
+      waypoint: foundry.canvas.placeables.tokens.TokenRuler.Waypoint
+    ): Ruler.SegmentStyle {
+      const style = super._getSegmentStyle(waypoint)
+
+      return { ...style, color: this._getColorForDistance(waypoint.measurement.cost, style.color) }
+    }
+
+    /* ---------------------------------------- */
+
+    /**
+     * Get the color for a segment or hex decoration based on the distance traveled by a token.
+     * @param distance - The measured distance used to determine the color.
+     * @param defaultColor - The default color to use if no special color is determined.
+     * @returns The color to use for the segment or grid highlight.
+     */
+    protected _getColorForDistance(distance: number, defaultColor: PIXI.ColorSource = 0x000000): PIXI.ColorSource {
+      const actor = this.token.actor
+      if (!actor) return defaultColor
+
       const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
-      const yards = Length.from(waypoint.measurement.cost, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
+      const yards = Length.from(distance, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
 
       if (yards === 0) {
-        return data
+        return defaultColor
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= Math.ceil(actor.system.currentmove / 10)) {
-        return { ...data, color: 0x0000ff } // Step: blue
+        return tokenMoveColors.step
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentmove) {
-        return { ...data, color: 0x00ff00 } // Normal move: green
+        return tokenMoveColors.move
         // @ts-expect-error: waiting for actor update to DataModel
       } else if (yards <= actor.system.currentsprint) {
-        return { ...data, color: 0xffff00 } // Sprint / Enhanced move: yellow
+        return tokenMoveColors.sprint
       } else {
-        return { ...data, color: 0xff0000 } // More than sprint: red
+        return tokenMoveColors.over
       }
     }
   }
