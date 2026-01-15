@@ -305,9 +305,10 @@ class ChatProcessorRegistry {
     this.msgs.oldQuiet = quiet
     this.msgs.data.whisper = [game.user?.id]
     // HACK: This try / catch prevents errors from showing to the user in cases where properties shiftKey and/or ctrlKey of `this.msgs.event`
-    // are not writeable, such as if the event is a PointerEvent (e.g. in Token Action HUD). This is a temporary and not *true* solution to
-    // the underlying problem, potentially caused by the attempt to modify the event in the first place (rather than just the resulting message
-    // properties). It should not persist following any refactor of our chat processing code. - MT
+    // are not writeable, such as if the event is a PointerEvent (e.g. in Token Action HUD). The real underlying problem is that we are
+    // attempting to mutate properties of a native Event object, whose modifier-key properties may be immutable; a more correct long-term
+    // solution would be to store the desired shift/ctrl flags separately (e.g. on the message data) rather than modifying the event object
+    // itself. This workaround should not persist following any refactor of our chat processing code. - MT
     try {
       foundry.utils.mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
     } catch (err) {
