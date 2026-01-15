@@ -9,6 +9,7 @@
 - Can't change encumbrance manually on modern UI sheet \#2475
 - Modern UI sheet does not display resource trackers \#2476
 - Weapon attack tagged modifiers are sometimes added to damage rolls \#2482
+- Some Token Action HUD interactions cause errors to appear for the user
 - Dashes in Ranged Weapon names used as Modifiers \#2461
 - Fixed drag-and-drop on the combat tracker. \#2486
 - Fixed drag-and-drop on the Modifier Bucket. \#2486
