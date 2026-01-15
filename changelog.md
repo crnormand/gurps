@@ -14,6 +14,7 @@
 - Fixed drag-and-drop on the combat tracker. \#2486
 - Fixed drag-and-drop on the Modifier Bucket. \#2486
 - Movement range color indicators do not appear on gridless maps \#2489
+- DR Modifiers not working using Foundry Items \#2496
 
 ## Release 0.18.11 01/09/2026
 
