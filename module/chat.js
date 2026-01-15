@@ -311,7 +311,7 @@ class ChatProcessorRegistry {
     try {
       foundry.utils.mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
     } catch (err) {
-      console.warn(err)
+      console.warn('Failed to set event flags on event object:', err)
     }
   }
 }
