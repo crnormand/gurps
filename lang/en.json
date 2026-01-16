@@ -567,6 +567,7 @@
     "grapplingUnrestrained": "Unrestrained",
     "groundCreatures": "Ground creatures",
     "groundCreaturesSuffer": "Ground creatures suffer",
+    "half": "Half",
     "hardRoll": "Difficult chance",
     "headVitalsHit": "Head or Vitals Hit ",
     "hearing": "Hearing",
@@ -1456,6 +1457,8 @@
     "splitQuantity": "Split Quantity",
     "spoken": "Spoken",
     "statsTab": "Stats",
+    "step": "Step",
+    "stepOrTwo": "Step or Two",
     "status": {
       "Agony": "Agony",
       "Aim": "Aiming",
@@ -1592,6 +1595,7 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
+    "years": "years",
     "youDoNotHavePermssion": "You do not have permission to do that."
   }
 }
