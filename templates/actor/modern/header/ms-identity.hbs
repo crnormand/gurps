@@ -12,7 +12,7 @@
         value='{{system.traits.race}}'
         class='ms-tag-input'
         data-field='system.traits.race'
-        placeholder='Race'
+        placeholder='{{localize "GURPS.pointsRace"}}'
       />
     </span>
   {{/if}}
@@ -25,20 +25,20 @@
         value='{{system.traits.gender}}'
         class='ms-tag-input'
         data-field='system.traits.gender'
-        placeholder='Gender'
+        placeholder='{{localize "GURPS.descriptionGender"}}'
       />
     </span>
   {{/if}}
   {{#if system.traits.age}}
     <span class='ms-tag ms-tag-age'>
-      <span class='ms-tag-display'>{{system.traits.age}} years</span>
+      <span class='ms-tag-display'>{{system.traits.age}} {{localize "GURPS.years"}}</span>
       <input
         type='text'
         form='none'
         value='{{system.traits.age}}'
         class='ms-tag-input'
         data-field='system.traits.age'
-        placeholder='Age'
+        placeholder='{{localize "GURPS.descriptionAge"}}'
       />
     </span>
   {{/if}}
@@ -51,7 +51,7 @@
         value='{{system.traits.techlevel}}'
         class='ms-tag-input'
         data-field='system.traits.techlevel'
-        placeholder='TL'
+        placeholder='{{localize "GURPS.TL"}}'
       />
     </span>
   {{/if}}

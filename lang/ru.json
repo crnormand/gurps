@@ -346,7 +346,7 @@
     "combatInfo": "Информация о бое",
     "combatInitiative": "Инициатива в бою",
     "CombatOnlyTag": "Только боевой тег",
-    "combatTab": "Combat",
+    "combatTab": "Бой",
     "combatTracker": {
       "initiative": "Инициатива: {value}"
     },
@@ -355,7 +355,7 @@
     "conditionalModifier": "Условный модификатор",
     "conditionalMods": "Условные модификаторы",
     "conditions": "Статус",
-    "conditionsCombatMove": "Боевой ход",
+    "conditionsCombatMove": "Боевое движение",
     "confirmClearHintUserMods": "Вы уверены, что хотите очистить все пользовательские модификаторы?",
     "confirmClearUserMods": "Очистить все пользовательские модификаторы?",
     "confirmRemoveItem": "Удалить {name} из списка снаряжения?",
@@ -377,7 +377,7 @@
     "crippling": "Калечащее ранение, ",
     "current": "Текущий",
     "currentdodge": "Уклонение",
-    "damage": "Повреждения",
+    "damage": "Урон",
     "damageAbbrevburn": "обж",
     "damageAbbrevcor": "рзед",
     "damageAbbrevcr": "дроб",
@@ -434,7 +434,7 @@
     "diceAddDamageRule": "Правило кубиков+добавок:",
     "disable": "Отключить",
     "disadvantage": "Недостаток",
-    "dodge": "Уклонение",
+    "dodge": "Уклон.",
     "dragrulerFly": "Летать",
     "dragrulerSprint": "Спринт",
     "dragrulerWalk": "Ходьба",
@@ -506,6 +506,9 @@
     "fail": "Неудача",
     "fairRoll": "Справедливый шанс",
     "fallsDownApplyProne": "{name}: падает!",
+    "FP": {
+      "tired": "Утомлен"
+    },
     "fc": {
       "areaIsolated": "Область изолирована",
       "beastly": "Звероподобный",
@@ -567,11 +570,15 @@
     "grapplingUnrestrained": "Свободный",
     "groundCreatures": "Наземные существа",
     "groundCreaturesSuffer": "Наземные существо получают",
+    "half": "Половина",
     "hardRoll": "Сложный шанс",
     "headVitalsHit": "Попадание в голову или ЖВО",
     "hearing": "Слух",
     "highPainThreshold": "Высокий болевой порог",
     "highPainThresholdNoPenalty": "Высокий болевой порог отменяет штраф",
+    "HP": {
+      "reeling": "Измотан"
+    },
     "hitLocation": "Зона попадания",
     "hitLocationArm": "Рука",
     "hitLocationArm 1-2": "Рука 1-2",
@@ -993,7 +1000,7 @@
     "modifierVeryUnfavorable": "Очень Неблагоприятный",
     "modifierViewScale": "Корзина: Масштабный коэффициент",
     "modifierViewScaleHint": "Используйте это, чтобы увеличить или уменьшить размер Корзины модификаторов.",
-    "move": "Движение",
+    "move": "Движ.",
     "moveConstant": "{value} {unit}/сек ({reason})",
     "moveFull": "Полный",
     "moveHalf": "Половина ({reason})",
@@ -1039,7 +1046,7 @@
     "overridden": "перезаписан",
     "overwrite": "Перезаписать",
     "parentItemTooltip": "<div>Из {type}:<br>{name}</div>",
-    "parry": "Парирование",
+    "parry": "Парир.",
     "parryBasePenalty": "Базовый штраф за парирование",
     "parrybonus": "Бонус парирования",
     "pass": "Проход",
@@ -1457,6 +1464,8 @@
     "splitQuantity": "Разделить количество",
     "spoken": "Устный",
     "statsTab": "Stats",
+    "step": "Шаг",
+    "stepOrTwo": "Шаг или два",
     "status": {
       "Agony": "Агония",
       "Aim": "Целится",
@@ -1485,7 +1494,7 @@
       "Counter8": "Счётчик 8",
       "Counter9": "Счётчик 9",
       "Crawling": "Ползание",
-      "Crouch": "Присев",
+      "Crouch": "Присел",
       "Deaf": "Оглушён",
       "Disable": "Недееспособен",
       "Disarmed": "Обезоружен",
@@ -1509,7 +1518,7 @@
       "SeverePain4": "Серьёзная боль (-4)",
       "SeverePain5": "Серьёзная боль (-5)",
       "Silence": "Немой",
-      "Sit": "Сидя",
+      "Sit": "Сидит",
       "Sleep": "Сон",
       "Sprint": "Спринт",
       "Standing": "Стоит",
@@ -1571,7 +1580,7 @@
     "twoHandLift": "Подъём двумя руками",
     "unconscious": "Без сознания",
     "update": "Обновить",
-    "usage": "Применение",
+    "usage": "Режим",
     "useBreakpoints": "Использовать контрольные точки",
     "userModInputPlaceholder": "Например: +1 Удача ГМ #попадание #урон #проверка #бой",
     "userModsRefreshed": "Модификации пользователя обновлены",
@@ -1593,6 +1602,7 @@
     "written": "Письменный",
     "yard": "ярд",
     "yards": "ярды",
+    "years": "лет",
     "youDoNotHavePermssion": "У вас нет разрешения на это."
   }
 }

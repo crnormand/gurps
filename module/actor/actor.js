@@ -846,15 +846,13 @@ export class GurpsActor extends Actor {
       case MOVE_STEP:
         return {
           move: this._getStep(),
-          text: 'Step',
-          //  text: game.i18n.format('GURPS.moveStep', { reason: reason })
+          text: game.i18n.localize('GURPS.step'),
         }
 
       case MOVE_TWO_STEPS:
         return {
           move: this._getStep() * 2,
-          text: 'Step or Two',
-          //          text: game.i18n.format('GURPS.moveTwoSteps', { reason: reason })
+          text: game.i18n.localize('GURPS.stepOrTwo'),
         }
 
       case MOVE_ONETHIRD:
@@ -867,8 +865,7 @@ export class GurpsActor extends Actor {
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
-          text: 'Half',
-          //          text: game.i18n.format('GURPS.moveHalf', { reason: reason }),
+          text: game.i18n.localize('GURPS.half'),
         }
 
       case MOVE_TWOTHIRDS:

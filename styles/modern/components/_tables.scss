@@ -178,7 +178,7 @@
   font-size: var(--ms-font-sm);
 }
 
-$attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
+$attack-columns: 1fr 60px 36px 90px 50px 55px 50px;
 
 .ms-attack-header {
   @include grid-header($attack-columns);
@@ -617,7 +617,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
 
 .ms-eqt-cost,
 .ms-eqt-weight {
-  text-align: right;
+  text-align: center;
   @include tabular-nums;
 }
 
