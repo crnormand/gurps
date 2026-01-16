@@ -2737,13 +2737,13 @@ export class GurpsActor extends Actor {
         let m = bonus.match(/\[(.*)\]/)
         if (!!m) bonus = m[1] // remove extranious  [ ]
 
-        m = bonus.match(/DR *([+-]\d+) *(.*)/)
+        m = bonus.match(/DR *(?<delta>[+-]\d+) *(?<locations>.*)/)
         if (!!m) {
-          let delta = parseInt(m[1])
+          let delta = parseInt(m.groups.delta)
           let locPatterns = null
 
-          if (!!m[2]) {
-            let locs = splitArgs(m[2])
+          if (!!m.groups.locations) {
+            let locs = splitArgs(m.groups.locations)
             locPatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             recurselist(actorLocations, (e, _k, _d) => {
               if (!locPatterns || locPatterns.find(p => !!e.where && e.where.match(p)) != null) {
@@ -2752,6 +2752,15 @@ export class GurpsActor extends Actor {
                   ...itemMap[e.key],
                   [item.name]: delta,
                 }
+              }
+            })
+          } else {
+            // No locations specified, so apply to all.
+            recurselist(actorLocations, (e, _k, _d) => {
+              if (update) e.drItem += delta
+              itemMap[e.where] = {
+                ...itemMap[e.key],
+                [item.name]: delta,
               }
             })
           }
