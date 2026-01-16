@@ -8,6 +8,7 @@ class GurpsSidebar extends foundry.applications.sidebar.Sidebar {
 
   override changeTab(tab: string, group: string, options: AnyObject): void {
     super.changeTab(tab, group, options)
+
     if (this.expanded) {
       GURPS.ModifierBucket.refreshPosition()
     }

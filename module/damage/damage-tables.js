@@ -71,6 +71,7 @@ const damageTypeMap = {
 export class DamageTable {
   constructor() {
     let translationTable = {}
+
     translationTable[game.i18n.localize('GURPS.damageAbbrevburn')] = 'burn'
     translationTable[game.i18n.localize('GURPS.damageAbbrevcor')] = 'cor'
     translationTable[game.i18n.localize('GURPS.damageAbbrevcr')] = 'cr'
@@ -91,7 +92,8 @@ export class DamageTable {
 
   translate(alias) {
     let result = damageTypeMap[alias]
-    if (!!result) return result
+
+    if (result) return result
 
     // otherwise try a translation
     return this.translationTable[alias]
@@ -106,6 +108,6 @@ export class DamageTable {
   }
 
   parseDmg(dmg) {
-    return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
+    return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
   }
 }

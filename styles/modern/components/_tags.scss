@@ -35,6 +35,7 @@
 .ms-effect-tag {
   display: inline-flex;
   align-items: center;
+  vertical-align: middle;
   gap: var(--ms-space-2);
   padding: var(--ms-space-1) var(--ms-space-4);
   border-radius: var(--ms-radius-pill);
@@ -72,6 +73,7 @@
   display: none;
   position: absolute;
   inset: 0;
+  height: 16px;
   background: none;
   border: none;
   border-radius: 50%;

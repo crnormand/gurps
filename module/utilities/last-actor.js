@@ -13,6 +13,7 @@ export const ClearLastActor = function (actor) {
 
     // GURPS.ModifierBucket.refresh()
     const tokens = canvas.tokens
+
     if (tokens && tokens.controlled.length > 0) {
       GURPS.SetLastActor(tokens.controlled[0].actor)
     } // There may still be tokens selected... if so, select one of them

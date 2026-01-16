@@ -1,5 +1,6 @@
 import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
+
 import { importGCS } from './gcs-importer/gcs-importer.js'
 import { migrate } from './migrate.js'
 import { initializeGameSettings } from './settings.js'

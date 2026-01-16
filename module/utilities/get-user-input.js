@@ -11,8 +11,13 @@
  * @returns {Promise<Array>} - A promise that resolves with the user's input.
  */
 export default async function getUserInput(options) {
-  return new Promise(async resolve => {
-    const dialog = await new foundry.applications.api.DialogV2({
+  const content = await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/get-user-input.hbs', {
+    block: options.content || '',
+    placeholder: options.placeholder || 'GURPS.enterTextHere',
+  })
+
+  return new Promise(resolve => {
+    new foundry.applications.api.DialogV2({
       window: {
         title: options.title,
         resizable: true,
@@ -21,10 +26,7 @@ export default async function getUserInput(options) {
         width: options.width ?? 800,
         height: options.height ?? 'auto',
       },
-      content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/get-user-input.hbs', {
-        block: options.content || '',
-        placeholder: options.placeholder || 'GURPS.enterTextHere',
-      }),
+      content,
       buttons: [
         {
           action: 'import',
@@ -40,7 +42,7 @@ export default async function getUserInput(options) {
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],
-      submit: async result => resolve(result),
+      submit: result => resolve(result),
       form: { closeOnSubmit: true },
     }).render({ force: true })
   })
