@@ -1192,6 +1192,7 @@
     "selectTargetForDamageWarning": "Drop the damage on the target(s), or drop on the canvas to apply to targeted token(s).",
     "selectTargetForEquipmentWarning": "Drop the equipment on a single target token",
     "selectToken": "Select Token",
+    "sendToChat": "Send to chat",
     "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
@@ -1457,8 +1458,6 @@
     "splitQuantity": "Split Quantity",
     "spoken": "Spoken",
     "statsTab": "Stats",
-    "step": "Step",
-    "stepOrTwo": "Step or Two",
     "status": {
       "Agony": "Agony",
       "Aim": "Aiming",
@@ -1520,8 +1519,11 @@
       "Suffocate": "Suffocating",
       "TerriblePain": "Terrible Pain",
       "Tipsy": "Tipsy",
+      "tired": "Tired",
       "Wait": "Waiting"
     },
+    "step": "Step",
+    "stepOrTwo": "Step or Two",
     "submit": "Submit",
     "suffersAMajorWound": "{name} suffers a Major Wound",
     "suffersHeadVitalsWound": "{name} was struck in the {location} with a Shock penalty.",

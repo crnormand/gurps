@@ -9,19 +9,21 @@
       </aside>
     </div>
     <div id='test-vitals' class='with-send-button'>
-      <button name='test-vitals' data-effect='{{jsonStringify this}}'>
+      <button name='test-vitals' data-effect='{{jsonStringify this}}' title='{{testTitle}}'>
         <span class='fa fa-dice' title='{{testTitle}}'></span>
       </button>
     </div>
     {{#each buttons as |button|}}
       <div id='add-vitals' class='with-send-button'>
-        <button name='add-vitals' data-effect='{{jsonStringify this}}'>
-          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}' title='{{effectTitle}}'></span>
+        <button name='add-vitals' data-effect='{{jsonStringify this}}' title='{{effectTitle}}'>
+          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}'></span>
         </button>
       </div>
     {{/each}}
     <div class='with-send-button'>
-      <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
+      <button name='send-wound' data-struct='{{jsonStringify this}}' title='{{localize "GURPS.sendToChat"}}'><span
+          class='fa fa-comment-alt'
+        ></span></button>
     </div>
     <div><span class='pdflink'>{{localize 'GURPS.pdfKnockdownStun'}}</span></div>
   </div>
