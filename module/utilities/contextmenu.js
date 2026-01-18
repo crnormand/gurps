@@ -1,3 +1,5 @@
+// Context Menu
+// COMPATIBILITY: v12
 // export default class GgaContextMenu extends foundry.applications.ux.ContextMenu {
 export default class GgaContextMenu extends ContextMenu {
   constructor(container, element, selector, title, menuItems, events = { eventName: 'contextmenu' }) {

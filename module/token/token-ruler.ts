@@ -72,6 +72,12 @@ function registerTokenRuler() {
     }
   }
 
+  // COMPATIBILITY: v12
+  interface GurpsTokenRuler {
+    // @ts-expect-error: waiting for Foundry update to DataModel
+    token: Token.Implementation
+  }
+
   CONFIG.Token.rulerClass = GurpsTokenRuler
 }
 
