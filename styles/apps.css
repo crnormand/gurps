@@ -2733,7 +2733,7 @@ li.combatant.active {
 
 button.quick-roll-button.sm.atk {
   display: inline-flex;
-  align-items: anchor-center;
+  align-items: center;
 }
 
 .w100 {
