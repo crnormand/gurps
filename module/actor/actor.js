@@ -129,6 +129,14 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /** @override */
+  _onUpdate(changed, options, userId) {
+    if (changed.flags?.core?.sheetClass !== undefined && game.user.id !== userId) {
+      delete changed.flags.core.sheetClass
+    }
+    super._onUpdate(changed, options, userId)
+  }
+
   prepareData() {
     super.prepareData()
     // By default, it does this:
