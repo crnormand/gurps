@@ -567,6 +567,7 @@
     "grapplingUnrestrained": "Livre",
     "groundCreatures": "Criaturas Terrestres",
     "groundCreaturesSuffer": "Criaturas terrestres recebem",
+    "half": "Metade",
     "hardRoll": "Chance difícil",
     "headVitalsHit": "Acerto na cabeça ou orgãos vitais ",
     "hearing": "Audição",
@@ -1191,6 +1192,7 @@
     "selectTargetForDamageWarning": "Arraste o dano para o(s) alvo(s), ou solte na tela para aplicar aos tokens selecionados.",
     "selectTargetForEquipmentWarning": "Solte o equipamento em um único token alvo",
     "selectToken": "Selecionar Miniatura",
+    "sendToChat": "Enviar para o bate-papo",
     "serverity": "Severidade",
     "setManeuver": "Configurar Manobra",
     "settingActiveEffects": "Acionar Efeitos Ativos",
@@ -1517,8 +1519,11 @@
       "Suffocate": "Sufocando",
       "TerriblePain": "Dor Terrível",
       "Tipsy": "Embriagado(a)",
+      "Tired": "Cansado(a)",
       "Wait": "Aguardando"
     },
+    "step": "Passo",
+    "stepOrTwo": "Passo ou Dois",
     "submit": "Enviar",
     "suffersAMajorWound": "{name} sofre um Ferimento Grave",
     "suffersHeadVitalsWound": "{name} foi atingido(a) no(a) {location} com uma Penalidade de Choque.",
@@ -1592,6 +1597,7 @@
     "written": "Escrito",
     "yard": "jarda",
     "yards": "jardas",
+    "years": "anos",
     "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
   }
 }

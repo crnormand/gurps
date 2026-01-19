@@ -567,6 +567,7 @@
     "grapplingUnrestrained": "Non Contenu",
     "groundCreatures": "Créatures terrestres",
     "groundCreaturesSuffer": "Créatures terrestres souffrent",
+    "half": "Moitié",
     "hardRoll": "Chance difficile",
     "headVitalsHit": "Tête ou Vital touché ",
     "hearing": "Ouïe",
@@ -1191,6 +1192,7 @@
     "selectTargetForDamageWarning": "Déposez les dégâts sur la ou les cibles, ou déposez-les sur la scène pour les appliquer au(x) jeton(s) ciblé(s).",
     "selectTargetForEquipmentWarning": "Déposez l'équipement sur un seul jeton cible",
     "selectToken": "Sélectionner Token",
+    "sendToChat": "Envoyer au chat",
     "serverity": "Gravité",
     "setManeuver": "Définir Manoeuvre",
     "settingActiveEffects": "Activer Effets Actifs",
@@ -1517,8 +1519,11 @@
       "Suffocate": "Suffoque",
       "TerriblePain": "Douleur Terrible",
       "Tipsy": "Pompette",
+      "Tired": "Fatigué",
       "Wait": "En Attente"
     },
+    "step": "Pas",
+    "stepOrTwo": "Un ou deux pas",
     "submit": "Soumettre",
     "suffersAMajorWound": "{name} souffre d'une Blessure Grave",
     "suffersHeadVitalsWound": "{name} a été touché sur {location} avec une pénalité de Choc.",
@@ -1592,6 +1597,7 @@
     "written": "Écrit",
     "yard": "mètre",
     "yards": "mètres",
+    "years": "années",
     "youDoNotHavePermssion": "Vous n'avez pas les autorisations pour faire cela."
   }
 }
