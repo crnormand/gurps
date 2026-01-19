@@ -386,13 +386,13 @@ export class Skill extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -507,13 +507,13 @@ export class Spell extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -632,13 +632,13 @@ export class Advantage extends NamedCost {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -810,13 +810,13 @@ export class Melee extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -933,13 +933,13 @@ export class Ranged extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -1103,7 +1103,7 @@ export class Equipment extends Named {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',
@@ -1111,7 +1111,7 @@ export class Equipment extends Named {
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }

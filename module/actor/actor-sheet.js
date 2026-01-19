@@ -1189,7 +1189,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
                 item.system.eqt.techlevel = obj.techlevel
                 item.system.eqt.notes = obj.notes
                 item.system.eqt.pageref = obj.pageref
-                item.system.itemModifiers = obj.itemModifiers
+                item.system.itemModifiers = obj.itemModifiers.trim()
                 await actor._updateItemFromForm(item)
                 await actor.updateParentOf(path, false)
               }

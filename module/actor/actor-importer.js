@@ -2450,9 +2450,9 @@ export class ActorImporter {
     if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name
     // If notes have `\n  ` fix it
     newobj.notes = newobj.notes.replace(/\n\s\s+/g, ' ')
-    if (!newobj.itemModifiers) newobj.itemModifiers = oldobj.itemModifiers || ''
+    if (!newobj.itemModifiers) newobj.itemModifiers = (oldobj.itemModifiers || '').trim()
     if (!newobj.addToQuickRoll) newobj.addToQuickRoll = oldobj.addToQuickRoll || false
-    if (!newobj.modifierTags) newobj.modifierTags = oldobj.modifierTags || ''
+    if (!newobj.modifierTags) newobj.modifierTags = (oldobj.modifierTags || '').trim()
   }
 
   /**
