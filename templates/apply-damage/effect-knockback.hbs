@@ -5,19 +5,19 @@
       <aside>{{localize 'GURPS.dxJudoAcrobaticsCheckToRemainStanding' modifierText=modifierText}}</aside>
     </div>
     <div id='test-knockback' class='with-send-button'>
-      <button name='test-knockback' data-effect='{{jsonStringify this}}'>
-        <span class='fa fa-dice' title='{{testTitle}}'></span>
+      <button name='test-knockback' data-effect='{{jsonStringify this}}' title='{{testTitle}}'>
+        <span class='fa fa-dice'></span>
       </button>
     </div>
     {{#each buttons as |button|}}
       <div id='add-knockback' class='with-send-button'>
-        <button name='add-knockback' data-effect='{{jsonStringify this}}'>
-          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}' title='{{effectTitle}}'></span>
+        <button name='add-knockback' data-effect='{{jsonStringify this}}' title='{{effectTitle}}'>
+          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}'></span>
         </button>
       </div>
     {{/each}}
     <div class='with-send-button'>
-      <button name='send-knockback' data-struct='{{jsonStringify this}}' title='Send to chat'>
+      <button name='send-knockback' data-struct='{{jsonStringify this}}' title='{{localize "GURPS.sendToChat"}}'>
         <span class='fa fa-comment-alt'></span>
       </button>
     </div>

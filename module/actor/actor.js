@@ -3152,8 +3152,6 @@ export class GurpsActor extends Actor {
     }
 
     // Then get the modifiers from:
-    // Actor User Mods
-    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
     // Actor Self Mods
     const selfMods =
       foundry.utils.getProperty(this, 'system.conditions.self.modifiers').map(mod => {
@@ -3181,6 +3179,9 @@ export class GurpsActor extends Actor {
         if (sizeMod) targetMods.push(sizeMod)
       }
     }
+
+    // Actor User Mods
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
 
     const allMods = [...userMods, ...selfMods, ...targetMods]
     const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
