@@ -506,9 +506,6 @@
     "fail": "Неудача",
     "fairRoll": "Справедливый шанс",
     "fallsDownApplyProne": "{name}: падает!",
-    "FP": {
-      "tired": "Утомлен"
-    },
     "fc": {
       "areaIsolated": "Область изолирована",
       "beastly": "Звероподобный",
@@ -576,9 +573,6 @@
     "hearing": "Слух",
     "highPainThreshold": "Высокий болевой порог",
     "highPainThresholdNoPenalty": "Высокий болевой порог отменяет штраф",
-    "HP": {
-      "reeling": "Измотан"
-    },
     "hitLocation": "Зона попадания",
     "hitLocationArm": "Рука",
     "hitLocationArm 1-2": "Рука 1-2",
@@ -1198,6 +1192,7 @@
     "selectTargetForDamageWarning": "Перетащите урон на цель(и) или на холст, чтобы применить его к выбранным токенам.",
     "selectTargetForEquipmentWarning": "Перетащите снаряжение на один токен цели",
     "selectToken": "Выберите токен",
+    "sendToChat": "Отправить в чат",
     "serverity": "Тяжесть",
     "setManeuver": "Установить манёвр",
     "settingActiveEffects": "Включить активные эффекты",
@@ -1464,8 +1459,6 @@
     "splitQuantity": "Разделить количество",
     "spoken": "Устный",
     "statsTab": "Stats",
-    "step": "Шаг",
-    "stepOrTwo": "Шаг или два",
     "status": {
       "Agony": "Агония",
       "Aim": "Целится",
@@ -1527,8 +1520,11 @@
       "Suffocate": "Удушье",
       "TerriblePain": "Ужасная боль",
       "Tipsy": "Поддатость",
+      "tired": "Утомлен",
       "Wait": "Ожидание"
     },
+    "step": "Шаг",
+    "stepOrTwo": "Шаг или два",
     "submit": "Отправить",
     "suffersAMajorWound": "{name} получает серьёзную рану",
     "suffersHeadVitalsWound": "{name} получил удар в {location} с штрафом за шок.",
