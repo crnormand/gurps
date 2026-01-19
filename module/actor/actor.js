@@ -2644,7 +2644,7 @@ export class GurpsActor extends Actor {
     }
 
     // Update Item
-    item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
+    item.system.modifierTags = cleanTags(item.system.modifierTags)
     await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
 
     // Update Actor Component
@@ -2656,8 +2656,8 @@ export class GurpsActor extends Actor {
         parentuuid: actorComp.parentuuid,
         itemInfo,
         addToQuickRoll: item.system.addToQuickRoll,
-        modifierTags: item.system.modifierTags,
-        itemModifiers: item.system.itemModifiers,
+        modifierTags: (item.system.modifierTags || '').trim(),
+        itemModifiers: (item.system.itemModifiers || '').trim(),
       },
     })
     await this._addItemAdditions(item, sysKey)
