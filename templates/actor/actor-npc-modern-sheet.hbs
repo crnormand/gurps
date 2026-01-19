@@ -1,0 +1,189 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <div class='modern-sheet ms-compact'>
+    <header class='ms-header'>
+      {{>ms-portrait}}
+
+      <div class='ms-identity'>
+        {{>ms-identity compact=true}}
+        {{>ms-attributes}}
+        {{>ms-resources}}
+      </div>
+
+      {{>ms-secondary-stats showCombatStats=true parryblock=parryblock defense=defense}}
+    </header>
+
+    <div class='ms-status-bar'>
+      <div class='ms-status-item ms-posture-dropdown'>
+        <div class='ms-posture-selected' data-posture='{{system.conditions.posture}}'>
+          {{#if (eq system.conditions.posture 'prone')}}<span>{{localize 'GURPS.status.Prone'}}</span>
+          {{else if (eq system.conditions.posture 'kneel')}}<span>{{localize 'GURPS.status.Kneel'}}</span>
+          {{else if (eq system.conditions.posture 'crouch')}}<span>{{localize 'GURPS.status.Crouch'}}</span>
+          {{else if (eq system.conditions.posture 'sit')}}<span>{{localize 'GURPS.status.Sit'}}</span>
+          {{else if (eq system.conditions.posture 'crawl')}}<span>{{localize 'GURPS.status.Crawling'}}</span>
+          {{else}}<span>{{localize 'GURPS.status.Standing'}}</span>
+          {{/if}}
+          <span class='ms-posture-icons'>
+            {{#if (eq system.conditions.posture 'prone')}}<img src='systems/gurps/icons/statuses/dd-condition-prone.webp' />
+            {{else if (eq system.conditions.posture 'kneel')}}<img src='systems/gurps/icons/statuses/condition-kneel.webp' />
+            {{else if (eq system.conditions.posture 'crouch')}}<img src='systems/gurps/icons/statuses/condition-crouch.webp' />
+            {{else if (eq system.conditions.posture 'sit')}}<img src='systems/gurps/icons/statuses/condition-sit.webp' />
+            {{else if (eq system.conditions.posture 'crawl')}}<img src='systems/gurps/icons/statuses/condition-crawl.webp' />
+            {{else}}<img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+            {{/if}}
+            <i class='fas fa-caret-down'></i>
+          </span>
+        </div>
+        <div class='ms-posture-options'>
+          <div class='ms-posture-option' data-value='standing'>
+            <span>{{localize 'GURPS.status.Standing'}}</span>
+            <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+          </div>
+          {{#each (listAllPostures) as |this key|}}
+          <div class='ms-posture-option' data-value='{{key}}'>
+            <span>{{localize this.name}}</span>
+            <img src='{{this.img}}' />
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      {{#if (inCombat this)}}
+      <div class='ms-status-item ms-maneuver-dropdown'>
+        <div class='ms-maneuver-selected' data-maneuver='{{system.conditions.maneuver}}'>
+          {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
+          <span>{{localize maneuver.label}}</span>
+          <span class='ms-maneuver-icons'>
+            <img src='{{maneuver.icon}}' />
+            <i class='fas fa-caret-down'></i>
+          </span>
+          {{/with}}
+        </div>
+        <div class='ms-maneuver-options'>
+          {{#each (listAllManeuvers) as |this key|}}
+          <div class='ms-maneuver-option' data-value='{{key}}'>
+            <span>{{localize this.label}}</span>
+            <img src='{{this.icon}}' />
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+      <div class='ms-status-item'>
+        <span>{{localize 'GURPS.conditionsCombatMove'}}: <strong>{{system.conditions.move}}</strong></span>
+      </div>
+      {{#each effects}}
+      {{#unless this.disabled}}
+      <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
+        <span class='ms-effect-icon-wrapper'>
+          {{#if this.icon}}<img src='{{this.icon}}' class='ms-effect-icon' />{{/if}}
+          <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
+            <i class='fas fa-trash'></i>
+          </button>
+        </span>
+        <span class='ms-tag-text'>{{this.name}}</span>
+      </span>
+      {{/unless}}
+      {{/each}}
+      <button type='button' class='ms-effect-add' data-action='add-effect' title='Add Effect'>
+        <i class='fas fa-plus'></i>
+      </button>
+    </div>
+
+    <section class='ms-npc-body'>
+      <div class='ms-npc-combat-row'>
+        {{>attack-table section="melee" icon="fa-sword" title=(localize "GURPS.melee") count=meleeCount items=system.melee path="system.melee" attackType="melee" otfPrefix="M" isMelee=true editAction="edit-melee" deleteAction="delete-melee" addAction="add-melee" addLabel=(localize "GURPS.melee")}}
+
+        {{>attack-table section="ranged" icon="fa-crosshairs" title=(localize "GURPS.ranged") count=rangedCount items=system.ranged path="system.ranged" attackType="ranged" otfPrefix="R" isMelee=false editAction="edit-ranged" deleteAction="delete-ranged" addAction="add-ranged" addLabel=(localize "GURPS.ranged")}}
+      </div>
+
+      <div class='ms-npc-skills-row'>
+        {{>data-table
+          section="skills"
+          icon="fa-graduation-cap"
+          title=(localize "GURPS.skills")
+          count=skillCount
+          items=(flatlist system.skills)
+          path="system.skills"
+          entityType="skills"
+          otfPrefix="Sk"
+          editAction="edit-skill"
+          deleteAction="delete-skill"
+          addAction="add-skill"
+          addLabel=(localize "GURPS.skill")
+        }}
+
+        {{#if (notEmpty system.spells)}}
+        {{>data-table
+          section="spells"
+          icon="fa-hat-wizard"
+          title=(localize "GURPS.spells")
+          items=(flatlist system.spells)
+          path="system.spells"
+          entityType="spells"
+          otfPrefix="Sp"
+          editAction="edit-spell"
+          deleteAction="delete-spell"
+          addAction="add-spell"
+          addLabel=(localize "GURPS.spell")
+          hasCollege=true
+        }}
+        {{/if}}
+      </div>
+
+      {{>traits-table}}
+
+      {{>equipment-table container="carried" items=system.equipment.carried showEquipped=true title=(localize "GURPS.equipment") icon="fa-box"}}
+
+      <div class='ms-section' data-section='notes'>
+        {{>section-header icon="fa-sticky-note" title=(localize "GURPS.notes")}}
+        <div class='ms-section-content'>
+          {{#each (flatlist system.notes)}}
+          <div class='ms-notes-row' data-key='system.notes.{{@key}}'>
+            <span class='ms-note-text'>{{{gurpslinkbr this.notes}}}</span>
+            {{>row-actions editAction="edit-note" deleteAction="delete-note" key=(concat "system.notes." @key)}}
+          </div>
+          {{else}}
+          <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+          {{/each}}
+          {{>add-row action="add-note" label=(localize "GURPS.notes")}}
+        </div>
+      </div>
+
+      {{#if useCI}}
+      <div class='ms-section ms-ci-section'>
+        {{>section-header icon="fa-heartbeat" title=(localize "GURPS.addInjury")}}
+        <div class='ms-section-content'>
+          <div class='ms-ci-controls'>
+            <div class='ms-ci-control'>
+              <span class='ms-ci-label'>Severity</span>
+              <div class='ms-ci-spinner'>
+                <button type='button' data-operation='ci-severity-dec'><i class='fas fa-minus'></i></button>
+                <input name='system.conditionalinjury.injury.severity' type='text' value='{{system.conditionalinjury.injury.severity}}' data-dtype='String' data-operation='ci-severity-set' />
+                <button type='button' data-operation='ci-severity-inc'><i class='fas fa-plus'></i></button>
+              </div>
+              <button type='button' class='ms-ci-reset' data-operation='ci-reset'><i class='fas fa-undo'></i></button>
+            </div>
+            <div class='ms-ci-control'>
+              <span class='ms-ci-label'>Time to Heal</span>
+              <div class='ms-ci-spinner'>
+                <button type='button' data-operation='ci-days-dec'><i class='fas fa-minus'></i></button>
+                <input name='injury.daystoheal' type='text' value='{{system.conditionalinjury.injury.daystoheal}}' data-dtype='Number' data-operation='ci-days-set' />
+                <button type='button' data-operation='ci-days-inc'><i class='fas fa-plus'></i></button>
+              </div>
+              <span class='ms-ci-label'>{{localize 'GURPS.days'}}</span>
+            </div>
+            <div class='ms-ci-status'>
+              <span class='ms-ci-severity-badge {{ciCurrentGrossEffects system.conditionalinjury.injury.severity "style"}}'>
+                {{ciCurrentGrossEffects system.conditionalinjury.injury.severity 'label'}}
+              </span>
+              <span class='ms-ci-info'>
+                [{{#if system.conditionalinjury.RT.points}}{{system.conditionalinjury.RT.points}}{{else}}{{system.HP.points}}{{/if}}]
+                {{system.conditionalinjury.RT.value}} {{localize 'GURPS.rt'}} | {{system.HP.max}} HP
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+    </section>
+  </div>
+</form>

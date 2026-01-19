@@ -1741,8 +1741,8 @@ export class GurpsActorSheet extends ActorSheet {
       // Hold down the shift key for Simplified
       newSheet = 'gurps.GurpsActorSimplifiedSheet'
     if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
-      // Hold down the Ctrl key (Command on Mac) for Simplified
-      newSheet = 'gurps.GurpsActorNpcSheet'
+      // Hold down the Ctrl key (Command on Mac) for NPC/mini sheet
+      newSheet = 'gurps.GurpsActorNpcModernSheet'
 
     this.actor.openSheet(newSheet)
   }
@@ -2231,57 +2231,6 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html)
-    html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
-  }
-
-  async _onClickRollableIcon(ev) {
-    ev.preventDefault()
-    let element = ev.currentTarget
-    let val = element.dataset.value
-    let parsed = parselink(val)
-    GURPS.performAction(parsed.action, this.actor, ev)
-  }
-}
-
-export class GurpsActorNpcSheet extends GurpsActorSheet {
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 750,
-      height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  get template() {
-    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
-  }
-
-  getData() {
-    const data = super.getData()
-    data.currentdodge = this.actor.system.currentdodge
-    data.currentmove = this.actor.system.currentmove
-    data.defense = this.actor.getTorsoDr()
-    let p = this.actor.getEquippedParry()
-    //    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet
-    //    if (b > 0)
-    //      data.parryblock = p + "/" + b;
-    //    else
-    data.parryblock = p
-
-    return data
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html)
-    html.find('.npc-sheet').click(ev => {
-      this._onfocus(ev)
-    })
     html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
   }
 

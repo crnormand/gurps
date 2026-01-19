@@ -2,6 +2,9 @@
   <h1 class='ms-name ms-name-display'>{{actor.name}}</h1>
   <input type='text' form='none' value='{{actor.name}}' class='ms-name-input' data-field='name' />
 </div>
+{{#if compact}}
+{{#if system.traits.title}}<div class='ms-title'>{{system.traits.title}}</div>{{/if}}
+{{/if}}
 <div class='ms-tagline'>
   {{#if system.traits.race}}
     <span class='ms-tag ms-tag-race'>
