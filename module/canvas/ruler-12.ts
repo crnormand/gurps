@@ -19,7 +19,7 @@ export class GurpsRulerV12 extends Ruler {
     GURPS.ModifierBucket.setTempRangeMod(mod)
     if (segment.last) {
       let total = dist(totalDistance, gridUnits)
-      if (total != label) label += ` [${total}]`
+      if (total !== label) label += ` [${total}]`
     }
 
     return label + ` (${mod})`
@@ -30,7 +30,7 @@ export class GurpsRulerV12 extends Ruler {
   // @ts-expect-error: Waiting for types to catch up
   override _endMeasurement() {
     // @ts-expect-error: dependent on DragRuler
-    let addRangeMod = !this.draggedEntity // Will be false is using DragRuler and it was movement
+    let addRangeMod = !this.draggedEntity // Will be false if using DragRuler and it was movement
     // @ts-expect-error: Waiting for types to catch up
     super._endMeasurement()
     if (addRangeMod) GURPS.ModifierBucket.addTempRangeMod()
