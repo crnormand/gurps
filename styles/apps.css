@@ -2731,6 +2731,11 @@ li.combatant.active {
   align-items: center;
 }
 
+button.quick-roll-button.sm.atk {
+  display: inline-flex;
+  align-items: center;
+}
+
 .w100 {
   width: 100%;
 }
