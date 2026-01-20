@@ -791,6 +791,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, skills are stored as skill Items, not in system.skills
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=skills': null,
+      }
+    }
+
     return {
       'system.-=skills': null,
       'system.skills': this.foldList(temp),
@@ -1730,6 +1737,13 @@ export class ActorImporter {
           }
         }
       })
+    }
+
+    // When using Foundry Items, skills are stored as skill Items, not in system.skills
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=skills': null,
+      }
     }
 
     return {
