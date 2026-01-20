@@ -1080,13 +1080,6 @@ export class ActorImporter {
     this.ignoreRender = true
     await this._preImport('GCA', 'equipment')
 
-    // When using Foundry Items, equipment is stored as equipment Items, not in system.equipment
-    if (this.isUsingFoundryItems()) {
-      return {
-        'system.-=equipment': null,
-      }
-    }
-
     /**
      * @type {Equipment[]}
      */
@@ -1834,18 +1827,16 @@ export class ActorImporter {
     }
 
     // Find all spells with globalId
-    if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.spells, async t => {
-        if (!!t.itemid) {
-          const i = this.actor.items.get(t.itemid)
-          if (!!i?.system.globalid) {
-            if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
-            t = await this._processItemFrom(t, 'GCS')
-            temp.push(t)
-          }
+    await aRecurselist(this.actor.system.spells, async t => {
+      if (!!t.itemid) {
+        const i = this.actor.items.get(t.itemid)
+        if (!!i?.system.globalid) {
+          if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
+          t = await this._processItemFrom(t, 'GCS')
+          temp.push(t)
         }
-      })
-    }
+      }
+    })
 
     // When using Foundry Items, spells are stored as spell Items, not in system.spells
     if (this.isUsingFoundryItems()) {
