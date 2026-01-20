@@ -2501,6 +2501,10 @@ const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
   if (!game.user.isGM) return
 
   const token = canvas.tokens.get(newTurn.tokenId)
+  if (!token) {
+    console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
+    return
+  }
 
   console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
 
