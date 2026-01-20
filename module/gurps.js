@@ -2175,8 +2175,6 @@ if (!globalThis.GURPS) {
     GURPS.ActorSheets = { character: GurpsActorSheet }
 
     Hooks.call('gurpsinit', GURPS)
-
-    // CONFIG.debug.hooks = true
   })
 
   Hooks.once('ready', async function () {
