@@ -2504,7 +2504,7 @@ const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
 
   const token = canvas.tokens.get(newTurn.tokenId)
 
-  console.info(`New combat round started: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
+  console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
 
   const actions = await TokenActions.fromToken(token)
   await actions.newTurn(newTurn.round)
