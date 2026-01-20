@@ -205,6 +205,7 @@ export class GurpsActor extends Actor {
     this._buildSpellsFromItems()
     this._buildEquipmentFromItems()
     this._buildMeleeFromItems()
+    this._buildRangedFromItems()
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
@@ -454,6 +455,51 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Build in-memory system.ranged from Items of type 'ranged'.
+   * This allows the rest of the code to continue working with system.ranged
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildRangedFromItems() {
+    // Initialize empty ranged object
+    this.system.ranged = {}
+
+    // Populate from ranged Items
+    const topLevelRanged = this.items.contents.filter(item => item.type === 'ranged' && !item.system.rng.parentuuid)
+    for (const item of topLevelRanged) {
+      this._addRangedAndChildren(item, this.system.ranged)
+    }
+  }
+
+  /**
+   * Recursively add a ranged attack and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The ranged item
+   * @param {Object} collection - The collection to add to
+   */
+  _addRangedAndChildren(item, collection) {
+    const ranged = foundry.utils.duplicate(item.system.rng)
+    if (!ranged.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    ranged.itemid = item.id
+
+    // Add the ranged to the collection
+    GURPS.put(collection, ranged)
+
+    // Initialize contains if not present
+    if (!ranged.contains) ranged.contains = {}
+
+    // Find and add child ranged
+    const childRanged = this.items.contents.filter(
+      child => child.type === 'ranged' && child.system.rng.parentuuid === ranged.uuid
+    )
+    for (const childItem of childRanged) {
+      this._addRangedAndChildren(childItem, ranged.contains)
+    }
+  }
+
   // execute after every import.
   async postImport() {
     this.calculateDerivedValues()
@@ -523,6 +569,12 @@ export class GurpsActor extends Actor {
     const hasMeleeItems = this.items.contents.some(item => item.type === 'melee')
     if (hasMeleeItems && Object.keys(this.system.melee).length > 0) {
       await this.internalUpdate({ 'system.melee': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.ranged if it exists and there are ranged Items to replace it
+    const hasRangedItems = this.items.contents.some(item => item.type === 'ranged')
+    if (hasRangedItems && Object.keys(this.system.ranged).length > 0) {
+      await this.internalUpdate({ 'system.ranged': {} }, { diff: false, render: false })
     }
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components

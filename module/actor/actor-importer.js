@@ -881,11 +881,6 @@ export class ActorImporter {
     if (!json) return
     let t = this.textFrom
 
-    // When using Foundry Items, melee attacks are stored as melee Items, not in system.melee
-    if (this.isUsingFoundryItems()) {
-      return {}
-    }
-
     let melee = {}
     let index = 0
     for (let key in json) {
@@ -922,6 +917,13 @@ export class ActorImporter {
         }
       }
     }
+
+    // When using Foundry Items, melee attacks are stored as melee Items, not in system.melee
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=melee': null,
+      }
+    }
     return {
       'system.-=melee': null,
       'system.melee': melee,
@@ -934,6 +936,7 @@ export class ActorImporter {
   importCombatRangedFromGCA(json) {
     if (!json) return
     let t = this.textFrom
+
     let ranged = {}
     let index = 0
     for (let key in json) {
@@ -976,6 +979,13 @@ export class ActorImporter {
             GURPS.put(ranged, r, index++)
           }
         }
+      }
+    }
+
+    // When using Foundry Items, ranged attacks are stored as ranged Items, not in system.ranged
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=ranged': null,
       }
     }
     return {
