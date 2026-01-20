@@ -861,6 +861,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, spells are stored as spell Items, not in system.spells
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=spells': null,
+      }
+    }
+
     return {
       'system.-=spells': null,
       'system.spells': this.foldList(temp),
@@ -1804,16 +1811,25 @@ export class ActorImporter {
     }
 
     // Find all spells with globalId
-    await aRecurselist(this.actor.system.spells, async t => {
-      if (!!t.itemid) {
-        const i = this.actor.items.get(t.itemid)
-        if (!!i?.system.globalid) {
-          if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
-          t = await this._processItemFrom(t, 'GCS')
-          temp.push(t)
+    if (this.isUsingFoundryItems()) {
+      await aRecurselist(this.actor.system.spells, async t => {
+        if (!!t.itemid) {
+          const i = this.actor.items.get(t.itemid)
+          if (!!i?.system.globalid) {
+            if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
+            t = await this._processItemFrom(t, 'GCS')
+            temp.push(t)
+          }
         }
+      })
+    }
+
+    // When using Foundry Items, spells are stored as spell Items, not in system.spells
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=spells': null,
       }
-    })
+    }
 
     return {
       'system.-=spells': null,

@@ -202,6 +202,7 @@ export class GurpsActor extends Actor {
     // Build in-memory data structures from Items
     this._buildFeaturesFromItems()
     this._buildSkillsFromItems()
+    this._buildSpellsFromItems()
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
@@ -314,6 +315,51 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Build in-memory system.spells from Items of type 'spell'.
+   * This allows the rest of the code to continue working with system.spells
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildSpellsFromItems() {
+    // Initialize empty spells object
+    this.system.spells = {}
+
+    // Populate from spell Items
+    const topLevelSpells = this.items.contents.filter(item => item.type === 'spell' && !item.system.spl.parentuuid)
+    for (const item of topLevelSpells) {
+      this._addSpellsAndChildren(item, this.system.spells)
+    }
+  }
+
+  /**
+   * Recursively add a spell and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The spell item
+   * @param {Object} collection - The collection to add to
+   */
+  _addSpellsAndChildren(item, collection) {
+    const spell = foundry.utils.duplicate(item.system.spl)
+    if (!spell.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    spell.itemid = item.id
+
+    // Add the spell to the collection
+    GURPS.put(collection, spell)
+
+    // Initialize contains if not present
+    if (!spell.contains) spell.contains = {}
+
+    // Find and add child spells
+    const childSpells = this.items.contents.filter(
+      child => child.type === 'spell' && child.system.spl.parentuuid === spell.uuid
+    )
+    for (const childItem of childSpells) {
+      this._addSpellsAndChildren(childItem, spell.contains)
+    }
+  }
+
   // execute after every import.
   async postImport() {
     this.calculateDerivedValues()
@@ -365,6 +411,12 @@ export class GurpsActor extends Actor {
     const hasSkillItems = this.items.contents.some(item => item.type === 'skill')
     if (hasSkillItems && Object.keys(this.system.skills).length > 0) {
       await this.internalUpdate({ 'system.skills': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.spells if it exists and there are spell Items to replace it
+    const hasSpellItems = this.items.contents.some(item => item.type === 'spell')
+    if (hasSpellItems && Object.keys(this.system.spells).length > 0) {
+      await this.internalUpdate({ 'system.spells': {} }, { diff: false, render: false })
     }
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
