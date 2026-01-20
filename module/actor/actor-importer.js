@@ -880,6 +880,12 @@ export class ActorImporter {
   importCombatMeleeFromGCA(json) {
     if (!json) return
     let t = this.textFrom
+
+    // When using Foundry Items, melee attacks are stored as melee Items, not in system.melee
+    if (this.isUsingFoundryItems()) {
+      return {}
+    }
+
     let melee = {}
     let index = 0
     for (let key in json) {
@@ -2301,6 +2307,13 @@ export class ActorImporter {
   }
 
   importCombatFromGCS(ads, skills, spells, equipment) {
+    // When using Foundry Items, melee and ranged attacks are stored as Items, not in system.melee/ranged
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=melee': null,
+      }
+    }
+
     let melee = {}
     let ranged = {}
     let m_index = 0

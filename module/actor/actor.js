@@ -204,6 +204,7 @@ export class GurpsActor extends Actor {
     this._buildSkillsFromItems()
     this._buildSpellsFromItems()
     this._buildEquipmentFromItems()
+    this._buildMeleeFromItems()
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
@@ -408,6 +409,51 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Build in-memory system.melee from Items of type 'melee'.
+   * This allows the rest of the code to continue working with system.melee
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildMeleeFromItems() {
+    // Initialize empty melee object
+    this.system.melee = {}
+
+    // Populate from melee Items
+    const topLevelMelee = this.items.contents.filter(item => item.type === 'melee' && !item.system.mel.parentuuid)
+    for (const item of topLevelMelee) {
+      this._addMeleeAndChildren(item, this.system.melee)
+    }
+  }
+
+  /**
+   * Recursively add a melee attack and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The melee item
+   * @param {Object} collection - The collection to add to
+   */
+  _addMeleeAndChildren(item, collection) {
+    const melee = foundry.utils.duplicate(item.system.mel)
+    if (!melee.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    melee.itemid = item.id
+
+    // Add the melee to the collection
+    GURPS.put(collection, melee)
+
+    // Initialize contains if not present
+    if (!melee.contains) melee.contains = {}
+
+    // Find and add child melee
+    const childMelee = this.items.contents.filter(
+      child => child.type === 'melee' && child.system.mel.parentuuid === melee.uuid
+    )
+    for (const childItem of childMelee) {
+      this._addMeleeAndChildren(childItem, melee.contains)
+    }
+  }
+
   // execute after every import.
   async postImport() {
     this.calculateDerivedValues()
@@ -471,6 +517,12 @@ export class GurpsActor extends Actor {
     const hasEquipmentItems = this.items.contents.some(item => item.type === 'equipment')
     if (hasEquipmentItems && Object.keys(this.system.eqt).length > 0) {
       await this.internalUpdate({ 'system.eqt': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.melee if it exists and there are melee Items to replace it
+    const hasMeleeItems = this.items.contents.some(item => item.type === 'melee')
+    if (hasMeleeItems && Object.keys(this.system.melee).length > 0) {
+      await this.internalUpdate({ 'system.melee': {} }, { diff: false, render: false })
     }
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
