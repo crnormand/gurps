@@ -1332,11 +1332,6 @@ export class GurpsActor extends Actor {
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
   async update(data, context) {
-    // Write to the console if data contains 'system.ads'.
-    if (data.hasOwnProperty('system.ads')) {
-      console.log('GURPS | Actor update called with ads change:', data)
-    }
-
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('system.HP.value')) {
         let flag = data['system.HP.value'] < this.system.HP.max / 3
@@ -2253,7 +2248,7 @@ export class GurpsActor extends Actor {
 
   /**
    * Process Child Items from Parent Item.
-   *
+   * NOTE: This should only be called when USE_FOUNDRY_ITEMS is FALSE.
    * Why I did not use the original code? Too complex to add new scenarios.
    *
    * @param parentItem
@@ -2269,31 +2264,12 @@ export class GurpsActor extends Actor {
       let existingActorComponent = this.system[key].find(e => e.fromItem === parentItem._id)
       childItemData.uuid = existingActorComponent?.uuid || ''
     }
-
-    // For 'ads' type, create a feature Item instead of adding to actor component
-    if (key === 'ads') {
-      const advantage = Advantage.fromObject(childItemData, this)
-      advantage.fromItem = parentItem._id
-      advantage.parentuuid = '' // Top-level child
-
-      const featureItem = await this.createEmbeddedDocuments('Item', [
-        {
-          type: 'feature',
-          name: advantage.name,
-          system: {
-            fea: advantage,
-          },
-        },
-      ])
-
-      // Still update list for compatibility with existing code
-      GURPS.put(list, advantage)
-      return { ['system.' + key]: list }
-    }
-
-    // For other types (skills, spells, melee, ranged), continue with original behavior
+    // Let's (re)create the child Item with updated Child Item information
     let actorComp
     switch (key) {
+      case 'ads':
+        actorComp = Advantage.fromObject(childItemData, this)
+        break
       case 'skills':
         actorComp = Skill.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
