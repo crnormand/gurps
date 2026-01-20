@@ -1064,6 +1064,13 @@ export class ActorImporter {
     this.ignoreRender = true
     await this._preImport('GCA', 'equipment')
 
+    // When using Foundry Items, equipment is stored as equipment Items, not in system.equipment
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=equipment': null,
+      }
+    }
+
     /**
      * @type {Equipment[]}
      */
@@ -1877,6 +1884,13 @@ export class ActorImporter {
     this.ignoreRender = true
     await this._preImport('GCS', 'equipment')
     if (!eq && !oeq) return
+
+    // When using Foundry Items, equipment is stored as equipment Items, not in system.equipment
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=equipment': null,
+      }
+    }
     let temp = []
     if (!!eq)
       for (let i of eq) {

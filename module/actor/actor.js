@@ -203,6 +203,7 @@ export class GurpsActor extends Actor {
     this._buildFeaturesFromItems()
     this._buildSkillsFromItems()
     this._buildSpellsFromItems()
+    this._buildEquipmentFromItems()
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
@@ -360,6 +361,53 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Build in-memory system.eqt from Items of type 'equipment'.
+   * This allows the rest of the code to continue working with system.eqt
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildEquipmentFromItems() {
+    // Initialize empty equipment object
+    this.system.eqt = {}
+
+    // Populate from equipment Items
+    const topLevelEquipment = this.items.contents.filter(
+      item => item.type === 'equipment' && !item.system.eqt.parentuuid
+    )
+    for (const item of topLevelEquipment) {
+      this._addEquipmentAndChildren(item, this.system.eqt)
+    }
+  }
+
+  /**
+   * Recursively add an equipment and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The equipment item
+   * @param {Object} collection - The collection to add to
+   */
+  _addEquipmentAndChildren(item, collection) {
+    const equipment = foundry.utils.duplicate(item.system.eqt)
+    if (!equipment.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    equipment.itemid = item.id
+
+    // Add the equipment to the collection
+    GURPS.put(collection, equipment)
+
+    // Initialize contains if not present
+    if (!equipment.contains) equipment.contains = {}
+
+    // Find and add child equipment
+    const childEquipment = this.items.contents.filter(
+      child => child.type === 'equipment' && child.system.eqt.parentuuid === equipment.uuid
+    )
+    for (const childItem of childEquipment) {
+      this._addEquipmentAndChildren(childItem, equipment.contains)
+    }
+  }
+
   // execute after every import.
   async postImport() {
     this.calculateDerivedValues()
@@ -417,6 +465,12 @@ export class GurpsActor extends Actor {
     const hasSpellItems = this.items.contents.some(item => item.type === 'spell')
     if (hasSpellItems && Object.keys(this.system.spells).length > 0) {
       await this.internalUpdate({ 'system.spells': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.eqt if it exists and there are equipment Items to replace it
+    const hasEquipmentItems = this.items.contents.some(item => item.type === 'equipment')
+    if (hasEquipmentItems && Object.keys(this.system.eqt).length > 0) {
+      await this.internalUpdate({ 'system.eqt': {} }, { diff: false, render: false })
     }
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
