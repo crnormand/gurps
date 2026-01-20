@@ -199,6 +199,9 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
+    // Build in-memory data structures from Items
+    this._buildFeaturesFromItems()
+
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -218,6 +221,51 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
+  }
+
+  /**
+   * Build in-memory system.ads from Items of type 'feature'.
+   * This allows the rest of the code to continue working with system.ads
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildFeaturesFromItems() {
+    // Initialize empty advantages object
+    this.system.ads = {}
+
+    // Populate from feature Items
+    const topLevelFeatures = this.items.contents.filter(item => item.type === 'feature' && !item.system.fea.parentuuid)
+    for (const item of topLevelFeatures) {
+      this._addFeaturesAndChildren(item, this.system.ads)
+    }
+  }
+
+  /**
+   * Recursively add an advantage and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The feature item
+   * @param {Object} collection - The collection to add to
+   */
+  _addFeaturesAndChildren(item, collection) {
+    const advantage = foundry.utils.duplicate(item.system.fea)
+    if (!advantage.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    advantage.itemid = item.id
+
+    // Add the advantage to the collection
+    GURPS.put(collection, advantage)
+
+    // Initialize contains if not present
+    if (!advantage.contains) advantage.contains = {}
+
+    // Find and add child features
+    const childFeatures = this.items.contents.filter(
+      child => child.type === 'feature' && child.system.fea.parentuuid === advantage.uuid
+    )
+    for (const childItem of childFeatures) {
+      this._addFeaturesAndChildren(childItem, advantage.contains)
+    }
   }
 
   // execute after every import.
@@ -261,6 +309,12 @@ export class GurpsActor extends Actor {
     await this.setResourceTrackers()
     await this.syncLanguages()
 
+    // Clear persisted system.ads if it exists and there are feature Items to replace it
+    const hasFeatureItems = this.items.contents.some(item => item.type === 'feature')
+    if (hasFeatureItems && Object.keys(this.system.ads).length > 0) {
+      await this.internalUpdate({ 'system.ads': {} }, { diff: false, render: false })
+    }
+
     // If using Foundry Items we can remove Modifier Effects from Actor Components
     const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
@@ -287,22 +341,27 @@ export class GurpsActor extends Actor {
   }
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
+  // Creates feature Items for languages instead of updating system.ads directly
   async syncLanguages() {
     if (this.system.languages) {
-      let updated = false
-      let newads = { ...this.system.ads }
       let langn = /Language:?/i
       let langt = new RegExp(game.i18n.localize('GURPS.language') + ':?', 'i')
+      const itemsToCreate = []
+
       recurselist(this.system.languages, (e, _k, _d) => {
         let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
-            // GCA4/GCS style
-            a.name = game.i18n.localize('GURPS.language') + ': ' + a.name
-            updated = true
+            // GCA4/GCS style - update existing feature Item
+            const existingItem = this.items.contents.find(
+              item => item.type === 'feature' && item.system.fea.uuid === a.uuid
+            )
+            if (existingItem) {
+              existingItem.update({ 'system.fea.name': game.i18n.localize('GURPS.language') + ': ' + a.name })
+            }
           }
         } else {
-          // GCA5 style (Language without Adv)
+          // GCA5 style (Language without Adv) - create new feature Item
           let n = game.i18n.localize('GURPS.language') + ': ' + e.name
           if (e.spoken == e.written)
             // If equal, then just report single level
@@ -311,15 +370,25 @@ export class GurpsActor extends Actor {
             // Otherwise, report type and level (like GCA4)
             n += ' (' + game.i18n.localize('GURPS.spoken') + ') (' + e.spoken + ')'
           else n += ' (' + game.i18n.localize('GURPS.written') + ') (' + e.written + ')'
-          let a = new Advantage()
-          a.name = n
-          a.points = e.points
-          GURPS.put(newads, a)
-          updated = true
+
+          const languageAdv = new Advantage()
+          languageAdv.name = n
+          languageAdv.points = e.points
+          languageAdv.uuid = foundry.utils.randomID(16)
+
+          itemsToCreate.push({
+            type: 'feature',
+            name: n,
+            system: {
+              fea: languageAdv,
+            },
+          })
         }
       })
-      if (updated) {
-        await this.internalUpdate({ 'system.ads': newads })
+
+      // Create all new language Items at once
+      if (itemsToCreate.length > 0) {
+        await this.createEmbeddedDocuments('Item', itemsToCreate)
       }
     }
   }
@@ -1001,6 +1070,11 @@ export class GurpsActor extends Actor {
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
   async update(data, context) {
+    // Write to the console if data contains 'system.ads'.
+    if (data.hasOwnProperty('system.ads')) {
+      console.log('GURPS | Actor update called with ads change:', data)
+    }
+
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('system.HP.value')) {
         let flag = data['system.HP.value'] < this.system.HP.max / 3
@@ -1546,6 +1620,8 @@ export class GurpsActor extends Actor {
           })
         }
 
+        // Store nested data on parent Item for reference (but won't be used for rendering,
+        // child Items will be created via _addItemAdditions)
         await this.updateEmbeddedDocuments('Item', [
           {
             _id: parentItem.id,
@@ -1931,12 +2007,31 @@ export class GurpsActor extends Actor {
       let existingActorComponent = this.system[key].find(e => e.fromItem === parentItem._id)
       childItemData.uuid = existingActorComponent?.uuid || ''
     }
-    // Let's (re)create the child Item with updated Child Item information
+
+    // For 'ads' type, create a feature Item instead of adding to actor component
+    if (key === 'ads') {
+      const advantage = Advantage.fromObject(childItemData, this)
+      advantage.fromItem = parentItem._id
+      advantage.parentuuid = '' // Top-level child
+
+      const featureItem = await this.createEmbeddedDocuments('Item', [
+        {
+          type: 'feature',
+          name: advantage.name,
+          system: {
+            fea: advantage,
+          },
+        },
+      ])
+
+      // Still update list for compatibility with existing code
+      GURPS.put(list, advantage)
+      return { ['system.' + key]: list }
+    }
+
+    // For other types (skills, spells, melee, ranged), continue with original behavior
     let actorComp
     switch (key) {
-      case 'ads':
-        actorComp = Advantage.fromObject(childItemData, this)
-        break
       case 'skills':
         actorComp = Skill.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)

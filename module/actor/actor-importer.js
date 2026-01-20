@@ -706,6 +706,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, advantages are stored as feature Items, not in system.ads
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=ads': null,
+      }
+    }
+
     return {
       'system.-=ads': null,
       'system.ads': this.foldList(list),
@@ -1639,6 +1646,13 @@ export class ActorImporter {
           }
         }
       })
+    }
+
+    // When using Foundry Items, advantages are stored as feature Items, not in system.ads
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=ads': null,
+      }
     }
 
     return {
