@@ -22,14 +22,13 @@ import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
   GurpsActorSheet,
   GurpsActorSheetReduced,
   GurpsActorSimplifiedSheet,
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
-import { GurpsActorModernSheet } from './actor/modern/index.js'
+import { GurpsActorModernSheet, GurpsActorNpcModernSheet } from './actor/modern/index.js'
 import { GurpsActor } from './actor/actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -2013,7 +2012,7 @@ if (!globalThis.GURPS) {
         label: 'Simple',
         makeDefault: false,
       })
-      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
         label: 'NPC/mini',
         makeDefault: false,
       })
@@ -2055,7 +2054,7 @@ if (!globalThis.GURPS) {
         label: 'Simple',
         makeDefault: false,
       })
-      Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+      Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
         label: 'NPC/mini',
         makeDefault: false,
       })
