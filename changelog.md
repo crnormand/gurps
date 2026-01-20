@@ -19,6 +19,7 @@
 - Restore Foundry v12 compatibility \#2500
 - ADD tool tips missing \#2503
 - Fix blank usermods being created.
+- Error when player chooses to end his turn in combat \#2502
 
 ## Release 0.18.11 01/09/2026
 
