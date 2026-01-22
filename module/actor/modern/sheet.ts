@@ -276,14 +276,10 @@ export class GurpsActorModernSheet extends SheetBase {
   static async #onImportActor(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
 
-    switch (this.actor.type) {
-      case 'character':
-        return new ActorImporter(this.actor).importActor()
-      case 'enemy':
-      case 'characterV2':
-        return GURPS.modules.Importer.importGCS(this.actor)
-      default:
-        throw new Error(`Invalid actor type for import: ${this.actor.type}`)
+    if (this.actor.isOfType('characterV2')) {
+      await GURPS.modules.Importer.importerPrompt(this.actor)
+    } else {
+      return new ActorImporter(this.actor).importActor()
     }
   }
 
