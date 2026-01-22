@@ -14,7 +14,6 @@ This document lists the members (static, instance methods, and accessors) that a
 ### Static
 
 - `static asGurpsItem(item)`
-
   - Signature: `(item: Item) => GurpsItem` (cast/adapter helper).
   - Purpose: Cast a generic `Item` to the `GurpsItem` type for convenience.
 
@@ -29,34 +28,27 @@ This document lists the members (static, instance methods, and accessors) that a
 - ~~`prepareData()`~~
 
 - `getItemAttacks(getAttOptions = {})`
-
   - Signature: `(getAttOptions?: { attackType?: 'both'|'melee'|'ranged', checkOnly?: boolean }) => Array|boolean`
   - Purpose: Search the owning actor's `melee` and `ranged` component lists for entries that correspond to this Item (matches by `uuid`, `originalName`, `name`, or `fromItem`). Returns an array of objects `{ component, key }` or — if `checkOnly` is true — a boolean indicating presence.
 
 - `get hasAttacks()`
-
   - Getter. Returns a boolean that indicates whether `getItemAttacks({ checkOnly: true })` found entries.
 
 - `getItemOTFs(checkOnly = false)`
-
   - Signature: `(checkOnly?: boolean) => { text: string, action?: Action } | boolean`
   - Purpose: Parses `system[ itemSysKey ].notes` via `parselink` and returns the parsed action structure (or a boolean if `checkOnly`).
 
 - `get hasOTFs()`
-
   - Getter. Intended to return `!!this.getItemOTFs(true)`. (Note: the implementation in the source file lacks an explicit `return` and therefore is a bug.)
 
 - `async toogleEquip(equipped)`
-
   - Signature: `async (equipped: boolean|undefined) => Promise<void>`
   - Purpose: Toggle equipment state for legacy equipment items. Updates actor equipment entries and item/system fields. (Note: method name is spelled `toogleEquip` in source.)
 
 - `async internalUpdate(data, context)`
-
   - Wrapper around `this.update(data, ctx)` that respects `this.ignoreRender` and merges provided context with `{ render: !this.ignoreRender }`.
 
 - `get actorComponentKey()`
-
   - Getter. Maps the item `type` to the corresponding actor system key:
     - `equipment` → `equipment`
     - `feature` → `ads`
@@ -67,7 +59,6 @@ This document lists the members (static, instance methods, and accessors) that a
   - Throws if no mapping is found.
 
 - `get itemSysKey()`
-
   - Getter. Maps the item `type` to the item system key used on `this.system`:
     - `equipment` → `eqt`
     - `feature` → `fea`

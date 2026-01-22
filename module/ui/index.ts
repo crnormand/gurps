@@ -1,4 +1,5 @@
 import { GurpsModule } from 'module/gurps-module.js'
+
 import { GurpsSidebar } from './sidebar.js'
 
 function init() {

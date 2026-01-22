@@ -31,6 +31,7 @@ const FileHandler = IS_CHROMIUM ? ChromiumFileHandler : FallbackFileHandler
 export class UniversalFileHandler {
   static async getFile({ template, templateOptions = {}, extensions = [] }) {
     extensions = typeof extensions === 'string' ? [extensions] : extensions
+
     return FileHandler.getFile({ template, templateOptions, extensions })
   }
 

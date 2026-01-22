@@ -1,20 +1,20 @@
 import { AnyObject } from 'fvtt-types/utils'
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+
 import { PseudoDocument } from '../../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '../../pseudo-document/typed-pseudo-document.js'
+import { DataModel, fields } from '../../types/foundry/index.js'
 import { ModelCollection } from '../model-collection.js'
 
 class LazyTypedSchemaField<
   const Types extends fields.TypedSchemaField.Types,
   const Options extends fields.TypedSchemaField.Options<Types> = fields.TypedSchemaField.DefaultOptions,
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const AssignmentType = fields.TypedSchemaField.AssignmentType<Types, Options>,
   const InitializedType = fields.TypedSchemaField.InitializedType<Types, Options>,
   const PersistedType = fields.TypedSchemaField.PersistedType<Types, Options>,
 > extends fields.TypedSchemaField<Types, Options, AssignmentType, InitializedType, PersistedType> {
   protected override _validateSpecial(value: AssignmentType): boolean | void {
     if (!value || (value as any).type in this.types) return super._validateSpecial(value)
+
     return true
   }
 }
@@ -64,16 +64,15 @@ class CollectionField<
   const Model extends DataModel.ConcreteConstructor,
   const Element extends CollectionField.Element<Model> = CollectionField.Element<Model>,
   const Options extends CollectionField.Options<AnyObject> = CollectionField.DefaultOptions,
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const AssignmentType = CollectionField.AssignmentType<Model, Options>,
   const InitializedType = CollectionField.InitializedType<Model, Options>,
-  // @ts-expect-error: types haven't quite caught up
-  const PersistedType extends AnyObject | null | undefined = CollectionField.PersistedType<Element, Options>,
+  const PersistedType = CollectionField.PersistedType<Element, Options>,
+  // @ts-expect-error: PersistedType is an array which doesn't satisfy the base class constraint
 > extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {
   /* ---------------------------------------- */
 
   constructor(model: Model, options?: Options, context?: fields.DataField.ConstructionContext) {
-    let field = foundry.utils.isSubclass(model, TypedPseudoDocument)
+    const field = foundry.utils.isSubclass(model, TypedPseudoDocument)
       ? (new LazyTypedSchemaField(model.TYPES) as unknown as Element)
       : (new fields.EmbeddedDataField(model) as unknown as Element)
 
@@ -89,6 +88,7 @@ class CollectionField<
   ): InitializedType | (() => InitializedType | null) {
     const init = super.initialize(value, model, options)
     const collection = new ModelCollection()
+
     // @ts-expect-error: types haven't quite caught up
     for (const [id, model] of Object.entries(init)) {
       if (model instanceof PseudoDocument) {
@@ -98,6 +98,7 @@ class CollectionField<
         collection.setInvalid(model)
       }
     }
+
     return collection as InitializedType
   }
 }

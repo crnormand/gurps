@@ -16,7 +16,8 @@ class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPage
   })
 
   override async _prepareContext(options: any): Promise<any> {
-    let context = await super._prepareContext(options)
+    const context = await super._prepareContext(options)
+
     return foundry.utils.mergeObject(context, {
       // @ts-expect-error: Wait for FVTT types to catch up.
       params: this._getViewerParams(),

@@ -1,8 +1,10 @@
 'use strict'
+
 import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
 import { isValidDiceTerm } from '../utilities/damage-utils.js'
 import selectTarget from '../utilities/select-target.js'
+
 import ChatProcessor from './chat-processor.js'
 import { SlamCalculator } from './slam-calc.js'
 
@@ -26,10 +28,12 @@ export default class SlamChatProcessor extends ChatProcessor {
     return line.startsWith('/slam')
   }
 
-  async process(line) {
+  async process() {
     let actor = GURPS.LastActor
+
     if (!actor) {
       ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+
       return
     }
 
@@ -51,11 +55,10 @@ export default class SlamChatProcessor extends ChatProcessor {
   }
 }
 
-const diceregex = /^(?<dice>\d+)d(?<mods>[+-]\d+)?/i
-
 class SlamCalculatorForm extends FormApplication {
   static process(actor, target) {
     let calc = new SlamCalculatorForm(actor, target)
+
     calc.render(true)
   }
 
@@ -80,14 +83,14 @@ class SlamCalculatorForm extends FormApplication {
       format: game.i18n.format,
     })
 
-    this._attackerHp = !!attacker ? attacker.actor.system.HP.max : 10
-    this._attackerSpeed = !!attacker ? parseInt(attacker.actor.system.basicmove.value) : 5
+    this._attackerHp = attacker ? attacker.actor.system.HP.max : 10
+    this._attackerSpeed = attacker ? parseInt(attacker.actor.system.basicmove.value) : 5
 
-    this._targetHp = !!target ? target.actor.system.HP.max : 10
+    this._targetHp = target ? target.actor.system.HP.max : 10
     this._targetSpeed = 0
 
-    this._attackerThr = !!attacker ? attacker.actor.system.thrust : '1d-5'
-    this._targetThr = !!target ? target.actor.system.thrust : '1d-5'
+    this._attackerThr = attacker ? attacker.actor.system.thrust : '1d-5'
+    this._targetThr = target ? target.actor.system.thrust : '1d-5'
 
     this._isAoAStrong = false
     this._useDFRPGRules = true
@@ -127,6 +130,7 @@ class SlamCalculatorForm extends FormApplication {
     data.isAoAStrong = this._isAoAStrong
     data.shieldDB = this._shieldDB
     data.useDFRPGRules = this._useDFRPGRules
+
     return data
   }
 
@@ -134,7 +138,7 @@ class SlamCalculatorForm extends FormApplication {
     return this._attackerSpeed + this._targetSpeed
   }
 
-  _updateObject(event) {
+  _updateObject() {
     this._calculator.process(this.getData())
   }
 

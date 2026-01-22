@@ -7,11 +7,13 @@ function countItems(obj: unknown): number {
   if (!obj || typeof obj !== 'object') return 0
   let count = 0
   const record = obj as Record<string, NestedContainer>
+
   for (const key in record) {
     count++
     if (record[key]?.contains) count += countItems(record[key].contains)
     if (record[key]?.collapsed) count += countItems(record[key].collapsed)
   }
+
   return count
 }
 
@@ -39,6 +41,7 @@ describe('countItems', () => {
       item2: { name: 'Skill 2' },
       item3: { name: 'Skill 3' },
     }
+
     expect(countItems(items)).toBe(3)
   })
 
@@ -52,6 +55,7 @@ describe('countItems', () => {
         },
       },
     }
+
     expect(countItems(items)).toBe(3)
   })
 
@@ -65,6 +69,7 @@ describe('countItems', () => {
         },
       },
     }
+
     expect(countItems(items)).toBe(3)
   })
 
@@ -83,6 +88,7 @@ describe('countItems', () => {
         },
       },
     }
+
     expect(countItems(items)).toBe(4)
   })
 
@@ -98,6 +104,7 @@ describe('countItems', () => {
         },
       },
     }
+
     expect(countItems(items)).toBe(3)
   })
 })

@@ -1,4 +1,4 @@
-import fields = foundry.data.fields
+import { fields } from '../../../types/foundry/index.js'
 
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsTraitModifier } from './trait-modifier.js'
@@ -49,10 +49,12 @@ class GcsTrait extends GcsItem<TraitModel> {
   get effectivelyDisabled(): boolean {
     if (this.disabled) return true
     let parent = this.parent
+
     while (parent instanceof GcsTrait) {
       if (parent.disabled) return true
       parent = parent.parent
     }
+
     return false
   }
 
@@ -63,11 +65,14 @@ class GcsTrait extends GcsItem<TraitModel> {
     if (!this.isContainer) return this.calc?.points ?? 0
 
     let points = 0
+
     if (this.container_type === 'alternative_abilities') {
       const values = this.childItems.map((child: GcsTrait) => child.adjustedPoints) ?? []
+
       points = Math.max(...values)
       const maximum = points
       let found = false
+
       for (const value of values) {
         if (!found && value === maximum) {
           found = true
@@ -89,6 +94,7 @@ class GcsTrait extends GcsItem<TraitModel> {
 	*/
   get isAttribute(): boolean {
     if (!this.isContainer) return false
+
     return this.container_type === 'attribute'
   }
 
@@ -99,6 +105,7 @@ class GcsTrait extends GcsItem<TraitModel> {
 	*/
   get isAncestry(): boolean {
     if (!this.isContainer) return false
+
     return this.container_type === 'ancestry'
   }
 

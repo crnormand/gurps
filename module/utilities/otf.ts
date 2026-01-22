@@ -26,6 +26,7 @@ export function extractOtfs(text: string) {
     .map(action => {
       let actionData = action.action
       const dataActionMatch = action.text.match(/data-action='([^']+)'/)
+
       if (dataActionMatch) {
         actionData = JSON.parse(atob(dataActionMatch[1]))
       }
@@ -51,6 +52,7 @@ export function extractOtfs(text: string) {
       }
 
       let fullFormula = actionData.orig
+
       if (actionData.overridetxt) {
         fullFormula = `"${actionData.overridetxt}" ${actionData.orig}`
       }
