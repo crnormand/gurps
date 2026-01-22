@@ -1,5 +1,4 @@
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+import { DataModel, fields } from '../../types/foundry/index.js'
 
 abstract class ItemComponent<Schema extends ItemComponentSchema = ItemComponentSchema> extends DataModel<Schema> {
   static override defineSchema(): ItemComponentSchema {

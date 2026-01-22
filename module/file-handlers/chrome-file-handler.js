@@ -8,6 +8,7 @@ class ChromiumFile {
     return (await this.handle.getFile()).text()
   }
 }
+
 class ChromiumFolder {
   constructor(handle) {
     this.handle = handle
@@ -15,12 +16,14 @@ class ChromiumFolder {
   }
   async files(extensions) {
     const allFiles = await this._getFiles()
+
     return extensions ? allFiles.filter(f => extensions.some(ext => f.name.endsWith(ext))) : allFiles
   }
   async _getFiles(handle, path) {
     path = path ?? this.name
     handle = handle ?? this.handle
     const files = []
+
     for await (let [name, child] of handle.entries()) {
       if (child instanceof FileSystemDirectoryHandle) {
         files.push(...(await this._getFiles(child, `${path}/${name}`)))
@@ -28,9 +31,11 @@ class ChromiumFolder {
         files.push(new ChromiumFile(child, `${path}/${child.name}`))
       }
     }
+
     return files
   }
 }
+
 export class ChromiumFileHandler {
   static File = ChromiumFile
   static Folder = ChromiumFolder
@@ -56,6 +61,7 @@ export class ChromiumFileHandler {
           const element = game.release.generation >= 13 ? dialog.element : dialog
 
           const fileChosenDiv = element.querySelector('#selectedFile')
+
           element.querySelector('#importButton').addEventListener('click', async event => {
             event.preventDefault() // Prevent default browser dialog dismiss behavior.
             event.stopPropagation() // Prevent the event from propagating further
@@ -72,11 +78,13 @@ export class ChromiumFileHandler {
               excludeAcceptAllOption: true,
               multiple: false,
             }
+
             if (mode === 'file') {
               handle = (await (extensions.length > 0 ? showOpenFilePicker(pickerOpts) : showOpenFilePicker()))[0]
             } else {
               handle = await showDirectoryPicker()
             }
+
             fileChosenDiv.innerText = handle.name
           })
         },

@@ -1,10 +1,8 @@
-Actor Class API Surface (auto-generated)
-========================================
+# Actor Class API Surface (auto-generated)
 
 - Generated on: 2025-10-13T18:05:42.510Z
 
-GurpsActor (module/actor/actor.js)
-----------------------------------
+## GurpsActor (module/actor/actor.js)
 
 ### Getters
 
@@ -24,7 +22,7 @@ GurpsActor (module/actor/actor.js)
 
 - **\_addChildItemElement() — [async]**
 - **\_addItemAdditions() — [async]**
-- *\_addItemElement() — [async]*
+- _\_addItemElement() — [async]_
 - **\_addNewItemEquipment() — [async]**
 - **\_adjustMove()**
 - **\_applyItemBonuses()**
@@ -36,7 +34,7 @@ GurpsActor (module/actor/actor.js)
 - **\_collapseQuantumEq()**
 - **\_findEqtkeyForId()**
 - **\_findSysKeyForId()**
-- *\_findTokens()*
+- _\_findTokens()_
 - **\_forceRender()**
 - **\_getCurrentMove()**
 - **\_getCurrentMoveMode()**
@@ -63,7 +61,7 @@ GurpsActor (module/actor/actor.js)
 - **\_updateItemFromForm() — [async]**
 - **accumulateDamageRoll() — [async]**
 - **addItemData() — [async]**
-- *addMoveMode() — [async]*
+- _addMoveMode() — [async]_
 - **addNewItemData() — [async]**
 - **addTaggedRollModifiers() — [async]**
 - **addTracker() — [async]**
@@ -71,7 +69,7 @@ GurpsActor (module/actor/actor.js)
 - **applyDamageAccumulator() — [async]**
 - **applyItemModEffects()**
 - **applyTrackerTemplate() — [async]**
-- *asGurpsActor()*
+- _asGurpsActor()_
 - **calculateDerivedValues()**
 - **canConsumeAction()**
 - **canRoll() — [async]**
@@ -94,9 +92,9 @@ GurpsActor (module/actor/actor.js)
 - **getEquippedBlock**()
 - **getEquippedDefenseBonuses**()
 - **getEquippedParry**()
-- *getOwners()*
+- _getOwners()_
 - **getPortraitPath()**
-- *getRollData()*
+- _getRollData()_
 - **getTorsoDr()**
 - **getTrackersAsArray() — [static]**
 - **handleDamageDrop()**
@@ -111,10 +109,10 @@ GurpsActor (module/actor/actor.js)
 - **postImport() — [async]**
 - **prepareBaseData()**
 - **prepareDerivedData()**
-- *prepareEmbeddedEntities()*
+- _prepareEmbeddedEntities()_
 - **promptEquipmentQuantity() — [async]**
 - **refreshDR() — [async]**
-- *removeAccents()*
+- _removeAccents()_
 - **removeModEffectFor() — [async]**
 - **removeTracker() — [async]**
 - **reorderItem() — [async]**
@@ -127,7 +125,7 @@ GurpsActor (module/actor/actor.js)
 - **syncLanguages() — [async]**
 - **toggleExpand() — [async]**
 - **toggleStatusEffect() — [async]**
-- *update() — [async]*
+- _update() — [async]_
 - **updateEqtCount() — [async]**
 - **updateItem() — [async]**
 - **updateItemAdditionsBasedOn() — [async]**

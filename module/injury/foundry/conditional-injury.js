@@ -3,9 +3,8 @@ import * as CI from '../domain/ConditionalInjury.js'
 
 export default class GurpsConditionalInjury {
   constructor() {
-    let self = this
-    Handlebars.registerHelper('ciSeveritiesTooltip', self.severitiesTooltip)
-    Handlebars.registerHelper('ciCurrentGrossEffects', self.currentGrossEffects)
+    Handlebars.registerHelper('ciSeveritiesTooltip', this.severitiesTooltip)
+    Handlebars.registerHelper('ciCurrentGrossEffects', this.currentGrossEffects)
   }
 
   async update() {
@@ -23,6 +22,7 @@ export default class GurpsConditionalInjury {
 
   severitiesTooltip = opt => {
     const data = CI.conditionalEffectsTable.map(row => ({ severity: row.severity, label: row.grossEffects }))
+
     data.forEach(row => {
       if (row.severity === '-7 or less') {
         row.severity = '<= -7'
@@ -34,9 +34,11 @@ export default class GurpsConditionalInjury {
     })
 
     let results = ''
+
     data.forEach(item => {
       results += opt.fn(item)
     })
+
     return results
   }
 

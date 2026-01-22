@@ -18,9 +18,15 @@
   border-bottom: 1px solid var(--ms-border-light);
   cursor: pointer;
 
-  &:nth-child(odd) { background: var(--ms-bg-section); }
-  &:hover { background: var(--ms-bg-hover); }
-  &:last-child { border-bottom: none; }
+  &:nth-child(odd) {
+    background: var(--ms-bg-section);
+  }
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 @mixin table-container {
@@ -58,7 +64,9 @@
   align-items: center;
   gap: var(--ms-space-3);
 
-  i { color: var(--ms-accent); }
+  i {
+    color: var(--ms-accent);
+  }
 }
 
 @mixin action-button {
@@ -66,7 +74,9 @@
   cursor: pointer;
   font-size: var(--ms-font-xs);
   opacity: 0.6;
-  transition: opacity 0.15s, color 0.15s;
+  transition:
+    opacity 0.15s,
+    color 0.15s;
 
   &:hover {
     opacity: 1;
@@ -99,7 +109,9 @@
 
 @mixin indent-levels($max: 5, $base-indent: 16px) {
   @for $i from 1 through $max {
-    &.indent#{$i} { padding-left: #{$i * $base-indent}; }
+    &.indent#{$i} {
+      padding-left: #{$i * $base-indent};
+    }
   }
 }
 
@@ -126,11 +138,15 @@
 @mixin interactive-row {
   cursor: pointer;
   transition: background 0.1s;
-  &:hover { background: var(--ms-bg-hover); }
+  &:hover {
+    background: var(--ms-bg-hover);
+  }
 }
 
 @mixin zebra-striping {
-  &:nth-child(odd) { background: var(--ms-bg-section); }
+  &:nth-child(odd) {
+    background: var(--ms-bg-section);
+  }
 }
 
 @mixin table-cell-center {

@@ -1,5 +1,4 @@
-// @ts-expect-error - test-only import
-import { shouldUpdateName, shouldUpdateField } from '../../module/actor/modern/inline-edit-handler'
+import { shouldUpdateName, shouldUpdateField } from '../../module/actor/modern/inline-edit-handler.ts'
 
 describe('shouldUpdateName', () => {
   test('returns true when name is different', () => {

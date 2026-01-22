@@ -1,6 +1,6 @@
+import { arrayToObject } from '../../../lib/utilities.js'
 import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { GurpsItemV2 } from '../gurps-item.js'
-import { arrayToObject } from '../../../lib/utilities.js'
 
 const getterKeys = [
   'addToQuickRoll',
@@ -46,6 +46,7 @@ class SpellV1 {
     const containedItems: GurpsItemV2<'spellV2'>[] = this.spellV2.sortedContents.map(
       item => item as GurpsItemV2<'spellV2'>
     )
+
     this._contains = arrayToObject(
       containedItems?.map(item => new SpellV1(item)),
       5
@@ -149,6 +150,7 @@ class SpellV1 {
   get notes(): string {
     const vttNotes = this.spellV2.system.spl?.vtt_notes
     const notes = this.spellV2.system.spl?.notes
+
     return [notes, vttNotes]
       .filter(it => !!it)
       .join('<br>')

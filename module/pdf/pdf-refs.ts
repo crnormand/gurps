@@ -70,6 +70,7 @@ function handleOnPdf(event: Event): void {
   event.stopPropagation()
   const target = event.currentTarget as HTMLElement
   const pdf = target.dataset?.pdf || target.innerText
+
   handlePdf(pdf)
 }
 
@@ -77,23 +78,26 @@ function handlePdf(links: string): void {
   // Just in case we get sent multiple links separated by commas, we will open them all
   // or just the first found, depending on SETTING_PDF_OPEN_FIRST.
   let success = false
-  for (let link of links.split(',')) {
+
+  for (const link of links.split(',')) {
     if (!!success && isOpenFirstPDFSetting()) continue
-    let t = link.trim()
-    let i = t.indexOf(':')
+    const t = link.trim()
+    const i = t.indexOf(':')
     let book = ''
     let page = 0
 
     if (i > 0) {
       // Special case for refs like "PU8:12" or "DFRPG:A12"
       // First we need to check if after the colon is only numbers or has a letter
-      let afterColon = t.substring(i + 1).trim()
+      const afterColon = t.substring(i + 1).trim()
+
       if (afterColon.match(/^[0-9]+$/)) {
         book = t.substring(0, i).trim()
         page = parseInt(afterColon)
       } else {
-        let codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
-        let codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
+        const codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
+        const codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
+
         book = `${codeBefore}:${codeAfter}` // e.g. "DFRPG:A"
         page = parseInt(afterColon.replace(/[a-zA-Z]*/g, '')) // e.g. 12
       }
@@ -101,8 +105,10 @@ function handlePdf(links: string): void {
       book = t.replace(/(.*?)[0-9].*/g, '$1').trim()
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
     }
+
     // Special case for Separate Basic Set PDFs
-    let setting = getBasicSetPDFSetting()
+    const setting = getBasicSetPDFSetting()
+
     if (book === 'B') {
       if (page > 336)
         if (setting === 'Separate') {
@@ -117,6 +123,7 @@ function handlePdf(links: string): void {
     }
 
     const pdfPages: foundry.documents.JournalEntryPage[] = []
+
     game.journal!.forEach(j => {
       j.pages.forEach(p => {
         if (p.type === 'pdf') pdfPages.push(p)
@@ -124,15 +131,18 @@ function handlePdf(links: string): void {
     })
 
     let journalPage: foundry.documents.JournalEntryPage | undefined = undefined
+
     if (pdfPages.length) journalPage = pdfPages.find(e => (e.system as any).code === book)
 
     if (journalPage) {
       // @ts-expect-error pageNumber may not be typed in Foundry's API.
       const viewer = new GurpsPDFSheet({ document: journalPage, pageNumber: page, mode: 'view' })
+
       viewer.render(true)
       success = true
     } else {
-      let url = GURPS.SJGProductMappings[book]
+      const url = GURPS.SJGProductMappings[book]
+
       if (url)
         // url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
         window.open(url, '_blank')

@@ -75,7 +75,9 @@
     width: 12px;
     text-align: center;
 
-    &:hover { color: var(--ms-accent); }
+    &:hover {
+      color: var(--ms-accent);
+    }
   }
 
   .ms-container-icon {
@@ -86,11 +88,15 @@
     text-align: center;
     transition: transform 0.15s ease;
 
-    &:hover { color: var(--ms-accent); }
+    &:hover {
+      color: var(--ms-accent);
+    }
   }
 
   @for $i from 1 through 5 {
-    &.indent#{$i} { padding-left: #{$i * 16}px; }
+    &.indent#{$i} {
+      padding-left: #{$i * 16}px;
+    }
   }
 }
 
@@ -125,8 +131,12 @@
   @include tabular-nums;
 }
 
-.ms-col-points-positive { color: var(--ms-advantage); }
-.ms-col-points-negative { color: var(--ms-disadvantage); }
+.ms-col-points-positive {
+  color: var(--ms-advantage);
+}
+.ms-col-points-negative {
+  color: var(--ms-disadvantage);
+}
 
 .ms-col-ref {
   text-align: center;
@@ -135,13 +145,17 @@
   a {
     color: var(--ms-accent);
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
 .ms-skills-row.expanded,
 .ms-traits-row.expanded {
-  .ms-row-notes { display: block; }
+  .ms-row-notes {
+    display: block;
+  }
 }
 
 .ms-row-notes {
@@ -182,9 +196,13 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
   @include zebra-striping;
   @include interactive-row;
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
-  > span:not(:first-child) { text-align: center; }
+  > span:not(:first-child) {
+    text-align: center;
+  }
 
   .ms-attack-name {
     white-space: nowrap;
@@ -205,8 +223,10 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
     cursor: pointer;
   }
 
-  .ms-attack-reach, .ms-attack-acc,
-  .ms-attack-parry, .ms-attack-range {
+  .ms-attack-reach,
+  .ms-attack-acc,
+  .ms-attack-parry,
+  .ms-attack-range {
     color: var(--ms-text-muted);
   }
 }
@@ -264,7 +284,9 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   font-weight: var(--ms-weight-medium);
 }
 
-.ms-enc-load, .ms-enc-move, .ms-enc-dodge {
+.ms-enc-load,
+.ms-enc-move,
+.ms-enc-dodge {
   text-align: center;
   @include tabular-nums;
 }
@@ -278,7 +300,9 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
   color: var(--ms-advantage);
   &.rollable {
     cursor: pointer;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -591,7 +615,8 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   font-style: italic;
 }
 
-.ms-eqt-cost, .ms-eqt-weight {
+.ms-eqt-cost,
+.ms-eqt-weight {
   text-align: right;
   @include tabular-nums;
 }
@@ -604,7 +629,9 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   a {
     color: var(--ms-accent);
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -618,7 +645,9 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   padding: var(--ms-space-2) 0;
   border-bottom: 1px solid var(--ms-border-light);
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
   .ms-modifier-value {
     font-weight: var(--ms-weight-bold);

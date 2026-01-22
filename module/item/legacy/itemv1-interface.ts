@@ -18,16 +18,16 @@ interface Equipment {
     maxuses: string
     parentuuid: string
     uuid: string
-    contains: {}
+    contains: Record<string, unknown>
     originalName: string
     originalCount: string
     ignoreImportQty: boolean
   }
-  melee: {}
-  ranged: {}
-  ads: {}
-  skills: {}
-  spells: {}
+  melee: Record<string, unknown>
+  ranged: Record<string, unknown>
+  ads: Record<string, unknown>
+  skills: Record<string, unknown>
+  spells: Record<string, unknown>
   bonuses: string
   itemModifiers: string
   equipped: boolean
@@ -44,7 +44,7 @@ interface Feature {
   fea: {
     notes: string
     pageref: string
-    contains: {}
+    contains: Record<string, unknown>
     uuid: string
     parentuuid: string
     points: number
@@ -53,11 +53,11 @@ interface Feature {
     name: string
     originalName: string
   }
-  melee: {}
-  ranged: {}
-  ads: {}
-  skills: {}
-  spells: {}
+  melee: Record<string, unknown>
+  ranged: Record<string, unknown>
+  ads: Record<string, unknown>
+  skills: Record<string, unknown>
+  spells: Record<string, unknown>
   bonuses: string
   itemModifiers: string
   globalid: string
@@ -77,7 +77,7 @@ interface Skill {
     name: string
     notes: string
     pageref: string
-    contains: {}
+    contains: Record<string, unknown>
     uuid: string
     parentuuid: string
     points: number
@@ -93,11 +93,11 @@ interface Skill {
     originalName: string
     consumeAction: boolean
   }
-  melee: {}
-  ranged: {}
-  ads: {}
-  skills: {}
-  spells: {}
+  melee: Record<string, unknown>
+  ranged: Record<string, unknown>
+  ads: Record<string, unknown>
+  skills: Record<string, unknown>
+  spells: Record<string, unknown>
   bonuses: string
   itemModifiers: string
   globalid: string
@@ -113,7 +113,7 @@ interface Spell {
     name: string
     notes: string
     pageref: string
-    contains: {}
+    contains: Record<string, unknown>
     uuid: string
     parentuuid: string
     points: number
@@ -136,11 +136,11 @@ interface Spell {
     originalName: string
     consumeAction: boolean
   }
-  melee: {}
-  ranged: {}
-  ads: {}
-  skills: {}
-  spells: {}
+  melee: Record<string, unknown>
+  ranged: Record<string, unknown>
+  ads: Record<string, unknown>
+  skills: Record<string, unknown>
+  spells: Record<string, unknown>
   bonuses: string
   itemModifiers: string
   globalid: string
@@ -156,7 +156,7 @@ interface MeleeAtk {
     name: string
     notes: string
     pageref: string
-    contains: {}
+    contains: Record<string, unknown>
     uuid: string
     parentuuid: string
     import: string
@@ -188,7 +188,7 @@ interface RangedAtk {
     name: string
     notes: string
     pageref: string
-    contains: {}
+    contains: Record<string, unknown>
     uuid: string
     parentuuid: string
     import: string

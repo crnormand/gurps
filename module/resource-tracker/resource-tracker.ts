@@ -1,4 +1,4 @@
-import fields = foundry.data.fields
+import { fields } from '../types/foundry/index.js'
 
 /* ---------------------------------------- */
 
@@ -12,11 +12,13 @@ class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> 
 
     if (template.initialValue !== null) {
       tracker.value = parseInt(template.initialValue) || 0
+
       if (isNaN(tracker.value)) {
         // try to use initialValue as a path to another value
-        tracker.value =
-          // TODO: verify this works
-          Number(foundry.utils.getProperty(actor, 'system.' + template.initialValue)) ?? template.tracker.value
+        // TODO: verify this works
+        const foundValue = Number(foundry.utils.getProperty(actor, 'system.' + template.initialValue))
+
+        tracker.value = isNaN(foundValue) ? template.tracker.value : foundValue
       }
     }
 

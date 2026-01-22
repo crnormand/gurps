@@ -1,5 +1,4 @@
-import TypeDataModel = foundry.abstract.TypeDataModel
-import fields = foundry.data.fields
+import { fields, TypeDataModel } from '../../types/foundry/index.js'
 
 type ActorMetadata = Readonly<{
   /** The expected `type` value */

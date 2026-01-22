@@ -1,6 +1,6 @@
-import { GcsImporter } from './gcs-importer/importer.js'
 import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
+import { GcsImporter } from './gcs-importer/importer.js'
 import { GcsCharacter } from './gcs-importer/schema/character.js'
 
 async function importerPrompt(actor?: Actor.OfType<'characterV2'>) {
@@ -33,8 +33,10 @@ async function importerPrompt(actor?: Actor.OfType<'characterV2'>) {
         callback: async (_1, button, _2) => {
           // @ts-expect-error types are idk
           const files = button.form?.elements.data.files
+
           if (!files || files.length === 0) {
             ui.notifications?.error(game.i18n!.localize('GURPS.importer.error.noFilesSelected'))
+
             return
           } else {
             // Measure how long importing takes
@@ -48,6 +50,7 @@ async function importerPrompt(actor?: Actor.OfType<'characterV2'>) {
               case 'gcs': {
                 const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
                 const importedActor = await GcsImporter.importCharacter(char, actor)
+
                 console.debug('Imported data:', importedActor)
                 break
               }
@@ -55,12 +58,15 @@ async function importerPrompt(actor?: Actor.OfType<'characterV2'>) {
                 const xmlText = new DOMParser().parseFromString(text, 'application/xml')
                 const gca5File = GCA5.fromXML(xmlText)
                 const importedActor = await GcaImporter.importCharacter(gca5File.character[0], actor)
+
                 console.debug('Imported data:', importedActor)
                 break
               }
+
               default:
                 throw new Error(`GURPS | Unrecognized file type for character import: ${extension}`)
             }
+
             console.debug(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
           }
         },

@@ -1,4 +1,5 @@
 import { GurpsModule } from 'module/gurps-module.js'
+
 import { registerRuler } from './ruler.js'
 
 function init() {
