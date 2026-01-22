@@ -11,6 +11,7 @@ export function createDataIsOfType<SubType extends Item.SubType>(
   data: Item.CreateData,
   ...types: SubType[]
 ): data is TypedItemCreateData<SubType>
+
 export function createDataIsOfType(data: Item.CreateData, ...types: string[]): boolean {
   return types.includes(data.type as Item.SubType)
 }

@@ -102,6 +102,7 @@ export async function migrate(): Promise<void> {
   for (const key of deletions) {
     // Remove migrated legacy settings so the migration only runs once.
     const settingToDelete = storage.get(key)
+
     if (settingToDelete) {
       await settingToDelete.delete()
       console.debug(`GURPS | Deleting migrated legacy setting: ${key}`)

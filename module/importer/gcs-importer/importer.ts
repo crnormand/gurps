@@ -1,22 +1,23 @@
-import { CharacterSchema } from '../../actor/data/character.js'
-import { GcsCharacter } from './schema/character.js'
-import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
+import { NoteV2Schema } from 'module/actor/data/note.js'
 import { BaseItemModel } from 'module/item/data/base.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
+import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
+
+import { AnyMutableObject } from 'fvtt-types/utils'
 
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../../action/melee-attack.js'
 import { RangedAttackComponentSchema, RangedAttackSchema } from '../../action/ranged-attack.js'
+import { CharacterSchema } from '../../actor/data/character.js'
 import { HitLocationSchemaV2 } from '../../actor/data/hit-location-entry.js'
 import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { EquipmentSchema, EquipmentComponentSchema } from '../../item/data/equipment.js'
 import { SkillComponentSchema, SkillSchema } from '../../item/data/skill.js'
 import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
 import { DataModel } from '../../types/foundry/index.js'
-import { NoteV2Schema } from 'module/actor/data/note.js'
-import { ImportSettings } from '../index.js'
 import { createDataIsOfType } from '../helpers.ts'
-import { AnyMutableObject } from 'fvtt-types/utils'
+import { ImportSettings } from '../index.js'
 
+import { GcsCharacter } from './schema/character.js'
 import { GcsEquipment } from './schema/equipment.js'
 import { AnyGcsItem } from './schema/index.js'
 import { GcsNote } from './schema/note.js'
@@ -126,6 +127,7 @@ class GcsImporter {
       for (const itemData of this.items) {
         if (createDataIsOfType(itemData, 'equipmentV2')) {
           const eqt = itemData.system?.eqt
+
           if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
             eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
             eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
@@ -150,6 +152,7 @@ class GcsImporter {
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
       const component = item.system.fea ?? item.system.ski ?? item.system.spl ?? item.system.eqt
+
       return ['GCS', 'GCA'].includes(component?.importFrom)
     })
 
@@ -166,6 +169,7 @@ class GcsImporter {
 
     items.forEach(item => {
       const eqt = item.system.eqt
+
       if (eqt && eqt.importFrom === 'GCS' && eqt.ignoreImportQty && eqt.importid) {
         savedEquipmentCounts.set(eqt.importid, { quantity: eqt.count, uses: eqt.uses })
       }
@@ -209,6 +213,7 @@ Portrait will not be imported.`
 
     for (const key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PER'] as const) {
       const attribute = this.input.attributes.find(attr => attr.attr_id === key.toLowerCase())
+
       this.output.attributes[key] = {
         import: attribute?.calc.value ?? 10,
         points: attribute?.calc.points ?? 0,
@@ -367,14 +372,15 @@ Portrait will not be imported.`
     this.output.hitlocationsV2 = this.input.settings.body_type.locations.reduce(
       (acc: DataModel.CreateData<HitLocationSchemaV2>[], location) => {
         const split = { ...(location.calc.dr as Record<string, number>) }
+
         delete split.all // Remove the 'all' key, as it is already present in the 'import' field
 
         // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
         // damage and other effects.
-        let tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()]
-        let entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
+        const tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()]
+        const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
         // @ts-expect-error: currently untyped. to come back to.
-        let role = entry?.role ?? entry?.id
+        const role = entry?.role ?? entry?.id
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           where: location.table_name ?? '',
@@ -386,6 +392,7 @@ Portrait will not be imported.`
         }
 
         acc.push(newLocation)
+
         return acc
       },
       []
@@ -405,6 +412,7 @@ Portrait will not be imported.`
     // Remove derived values / all values not proper to the hit location on its own.
     const currentHitLocations = this.actor.system.hitlocationsV2.map(e => {
       const location = e.toObject() as AnyMutableObject
+
       delete location._damageType
       delete location._dr
       delete location.drCap
