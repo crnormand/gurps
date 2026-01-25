@@ -2486,27 +2486,30 @@ if (!globalThis.GURPS) {
       await resetTokenActions(combat)
     })
 
-    // TODO: Move to the combat module.
-    Hooks.on('combatRound', async (combat, round) => {
-      await handleCombatTurn(combat, round)
-    })
-
-    // TODO: Move to the combat module.
-    Hooks.on('combatTurn', async (combat, turn, combatant) => {
-      await handleCombatTurn(combat, turn)
-    })
+    if (game.user.isGM) {
+      Hooks.on('combatTurnChange', async (combat, previousTurn, newTurn) => {
+        await handleCombatTurnChange(combat, previousTurn, newTurn)
+      })
+    }
 
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
 }
 
-const handleCombatTurn = async (combat, round) => {
-  const nextCombatant = combat.nextCombatant
-  console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
-  const token = canvas.tokens.get(nextCombatant.token.id)
+const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
+  if (!game.user.isGM) return
+
+  const token = canvas.tokens.get(newTurn.tokenId)
+  if (!token) {
+    console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
+    return
+  }
+
+  console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
+
   const actions = await TokenActions.fromToken(token)
-  await actions.newTurn(round.round)
+  await actions.newTurn(newTurn.round)
 }
 
 const resetTokenActions = async combat => {
