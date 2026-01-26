@@ -13,6 +13,43 @@ Global Override body {
   font-family: var(--font-family-icons);
 }
 
+:root {
+  --controlhover: 0 0 5px red;
+  --sectiongap: 0.05in;
+  --smallemgap: 0.2em;
+  --fontawesomefamily: 'Font Awesome 6 Pro';
+  --lightgrey: rgba(0, 0, 0, 0.3);
+  --headerfontsize: 80%;
+  --standardborder: 1px solid black;
+}
+
+.system-gurps {
+  --gga-color-pdflink: blue;
+  --gga-background-rollable: #ffffbe;
+  --gga-background-rollable-hover: gold;
+  --gga-background-gmod: rgb(255, 230, 190);
+  --gga-background-gmod-hover: orange;
+  --gga-color-gurpslink: rgb(121, 107, 73);
+  --gga-background-gurpslink: lightgoldenrodyellow;
+  --gga-bordercolor-gurpslink: darkgoldenrod;
+  --gga-color-gurpslink-hover: #252320;
+  --gga-background-glinkmod: #e0e0e0;
+  --gga-bordercolor-glinkmod: grey;
+  --gga-color-glinkmod-hover: #252320;
+  --gga-background-glinkmodplus: #d0ffd0;
+  --gga-bordercolor-glinkmodplus: darkgreen;
+  --gga-color-glinkmodplus: #2e5a3e;
+  --gga-background-glinkmodplus-hover: lightgreen;
+  --gga-background-glinkmodminus: rgb(255, 207, 214);
+  --gga-bordercolor-glinkmodminus: rgb(122, 21, 21);
+  --gga-color-glinkmodminus: firebrick;
+  --gga-background-glinkmodminus-hover: #ff999f;
+  --gga-color-popup-glinkmodminus: hotpink;
+}
+
+.system-gurps.theme-dark {
+  --gga-color-pdflink: #6cb4ee;
+}
 .system-gurps .control-icon[data-palette='maneuvers'] img,
 .system-gurps .token-effect,
 .system-gurps .effect-control {
@@ -2064,6 +2101,12 @@ details .popup.square5x4 {
 /* =================================================== */
 /* Copy of glink and gurpslink from simple.css         */
 /* =================================================== */
+.system-gurps .gurpslink > b {
+  font-weight: 900;
+  color: black;
+  font-family: inherit;
+}
+
 .system-gurps .gurpslink,
 .system-gurps .glinkmodplus,
 .system-gurps .glinkmodminus,
@@ -2071,20 +2114,21 @@ details .popup.square5x4 {
   padding: 2px 8px;
   border-radius: 999px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.6;
+  display: inline-block;
 }
 
 .system-gurps .gurpslink {
-  border: 1px solid darkgoldenrod;
-  background: lightgoldenrodyellow;
-  color: hsl(43, 25%, 38%);
+  border: 1px solid var(--gga-bordercolor-gurpslink);
+  background: var(--gga-background-gurpslink);
+  color: var(--gga-color-gurpslink);
 }
 
 .system-gurps .gurpslink:hover,
 .system-gurps .glinkmodplus:hover,
 .system-gurps .glinkmodminus:hover,
 .system-gurps .glinkmod:hover {
-  color: #252320;
+  color: var(--gga-color-gurpslink-hover);
   cursor: pointer;
 }
 
@@ -2096,27 +2140,33 @@ details .popup.square5x4 {
 }
 
 .system-gurps .gurpslink:hover {
-  background-color: var(--color-gurpslink);
+  background-color: var(--gga-background-rollable-hover);
+}
+
+.system-gurps .glinkmod {
+  background-color: var(--gga-background-glinkmod);
+  border: 1px solid var(--gga-bordercolor-glinkmod);
+  color: black;
 }
 
 .system-gurps .glinkmodplus {
-  background-color: #d0fdd0;
-  border: 1px solid darkgreen;
-  color: darkgreen;
+  background-color: var(--gga-background-glinkmodplus);
+  border: 1px solid var(--gga-bordercolor-glinkmodplus);
+  color: var(--gga-color-glinkmodplus);
 }
 
 .system-gurps .glinkmodplus:hover {
-  background-color: lightgreen;
+  background-color: var(--gga-background-glinkmodplus-hover);
 }
 
 .system-gurps .glinkmodminus {
-  background-color: rgb(255, 207, 214);
-  border: 1px solid rgb(122, 21, 21);
-  color: firebrick;
+  background-color: var(--gga-background-glinkmodminus);
+  border: 1px solid var(--gga-bordercolor-glinkmodminus);
+  color: var(--gga-color-glinkmodminus);
 }
 
 .system-gurps .glinkmodminus:hover {
-  background-color: rgb(250, 161, 176);
+  background-color: var(--gga-background-glinkmodminus-hover);
 }
 
 .modtooltip .glinkmod,
@@ -2141,6 +2191,35 @@ details .popup.square5x4 {
 .modtooltip .glinkmod:active,
 .modtooltip .glinkmodminus:active {
   background-color: rgba(255, 255, 240, 0.4) !important;
+}
+
+.gga-popup-window .glinkmodminus,
+.gga-popup-window .glinkmodplus {
+  line-height: 1.2;
+}
+
+.gga-popup-window .glinkmodminus {
+  background-color: transparent;
+  color: var(--gga-color-popup-glinkmodminus);
+  border-color: var(--gga-color-glinkmodminus);
+}
+
+.gga-popup-window .glinkmodplus {
+  background-color: transparent;
+  color: palegreen;
+}
+
+.gga-popup-window .modifier-list {
+  list-style-type: none;
+}
+
+.gga-popup-window .heading {
+  padding-left: 1em;
+  border-bottom: 1px solid dimgrey;
+}
+
+.gga-popup-window .glinkmodplus:hover {
+  text-shadow: 0 0 5px green;
 }
 
 .removemod.plus {
