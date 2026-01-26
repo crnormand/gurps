@@ -198,6 +198,14 @@
   text-decoration: underline;
 }
 
+.system-gurps.theme-light .pdflink {
+  color: blue;
+}
+
+.system-gurps.theme-dark .pdflink {
+  color: #6cb4ee;
+}
+
 @media (prefers-color-scheme: dark) {
   .pdflink {
     color: #6cb4ee;
