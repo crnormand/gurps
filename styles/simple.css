@@ -218,10 +218,7 @@
   }
 }
 
-.gurps.sheet.actor .pdflink {
-  font-size: var(--font-size-10);
-}
-
+.gurps.sheet.actor .pdflink,
 #sheet.gurpsactorsheet .pdflink {
   font-size: var(--font-size-10);
 }
