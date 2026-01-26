@@ -193,35 +193,21 @@
   position: relative;
 }
 
-/* .gurpstippable:hover::before {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 130%;
-  left: -50%;
-  min-width: 20px;
-  border-radius: 6px;
-  padding: 8px;
-  color: #fff;
-  background-color: #555;
-  z-index: 102;
-}
-
-.gurpstippable:hover::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-  z-index: 102;
-} */
-
 .pdflink {
   text-shadow: none;
-  color: blue;
   text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pdflink {
+    color: #6cb4ee;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .pdflink {
+    color: blue;
+  }
 }
 
 .gurps.sheet.actor .pdflink {
@@ -337,110 +323,6 @@
   border-color: darkorange;
 }
 
-.gga-app.glinkmod {
-  cursor: pointer;
-  color: black;
-  background: none;
-  background-color: rgb(255, 230, 190);
-  padding: 0 3px;
-  border-radius: 3px;
-  border: 1px solid;
-  border-color: rgb(230, 205, 165);
-  margin-bottom: 2px;
-}
-
-.gga-app.glinkmod:active {
-  text-decoration: none;
-  color: black;
-  background-image: none;
-  background-color: darkorange;
-  /* padding: 1px 1px 1px 1px; */
-  border-bottom: 1px solid #cccccc;
-  border-left: 1px solid #333333;
-  border-top: 1px solid #333333;
-  border-right: 1px solid #cccccc;
-  /* border-radius: 8px; */
-  border: 1px darkorange inset;
-  margin: 1px -2px -1px 2px;
-  z-index: 99;
-}
-
-.gga-app.glinkmodplus {
-  color: black;
-  background-image: none;
-  background-color: rgb(175, 255, 175) !important;
-}
-
-.gga-app.glinkmodplus:active {
-  cursor: pointer;
-  text-decoration: none;
-  color: black;
-  background-color: rgb(0, 255, 0) !important;
-  padding: 1px 1px 1px 1px;
-  border-bottom: 2px solid #cccccc;
-  border-left: 2px solid #333333;
-  border-top: 2px solid #333333;
-  border-right: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -1px -3px -1px -3px;
-  z-index: 99;
-  font-weight: normal;
-}
-
-.gga-app.glinkmodplus:hover {
-  cursor: pointer;
-  text-decoration: none;
-  background-color: rgb(0, 255, 0) !important;
-  color: black;
-  padding: 1px 1px 1px 1px;
-  border-top: 2px solid #cccccc;
-  border-right: 2px solid #333333;
-  border-bottom: 2px solid #333333;
-  border-left: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -1px -2px -1px -4px;
-  font-weight: bold;
-}
-
-.gga-app.glinkmodminus {
-  color: black;
-  background-image: none;
-  background-color: rgb(255, 175, 175) !important;
-}
-
-.gga-app.glinkmodminus:hover {
-  cursor: pointer;
-  text-decoration: none;
-  background-color: rgb(255, 0, 0) !important;
-  color: yellow;
-  text-shadow: 1px 1px black;
-  padding: 1px 1px 1px 1px;
-  border-top: 2px solid #cccccc;
-  border-right: 2px solid #333333;
-  border-bottom: 2px solid #333333;
-  border-left: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -1px -2px -1px -4px;
-  font-weight: bold;
-}
-
-.gga-app.glinkmodminus:active {
-  cursor: pointer;
-  text-decoration: none;
-  color: yellow;
-  text-shadow: 1px 1px black;
-  background-color: rgb(255, 0, 0) !important;
-  padding: 1px 1px 1px 1px;
-  border-bottom: 2px solid #cccccc;
-  border-left: 2px solid #333333;
-  border-top: 2px solid #333333;
-  border-right: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -1px -3px -1px -3px;
-  z-index: 99;
-  font-weight: normal;
-}
-
 .gga-popup-window .glinkmodminus {
   background-image: none;
   background-color: transparent !important;
@@ -476,61 +358,6 @@
 
 .gga-popup-window .glinkmodplus:hover {
   text-shadow: 0 0 5px green;
-}
-
-.gga-chat-messsage .gurpslink,
-.simple-container .gurpslink,
-.gga-app .gurpslink,
-.gurpsactorsheet .gurpslink {
-  color: black;
-  background-image: none;
-  background-color: #ffffbe !important;
-  border-radius: 3px;
-  padding: 0 3px;
-  border: 1px solid bisque;
-  /* margin-bottom: 2px; */
-}
-
-.gga-chat-messsage .gurpslink:hover,
-.gga-chat-messsage .gurpslink.test,
-.simple-container .gurpslink:hover,
-.simple-container .gurpslink.test,
-.gga-app .gurpslink:hover,
-.gga-app .gurpslink.test,
-.gurpsactorsheet .gurpslink:hover,
-.gurpsactorsheet .gurpslink.test {
-  cursor: pointer;
-  text-decoration: none;
-  background-color: var(--color-gurpslink) !important;
-  color: black;
-  /* padding: 2px 3px; */
-  /* border-top: 1px solid #cccccc; */
-  /* border-right: 1px solid #333333; */
-  /* border-bottom: 1px solid #333333; */
-  /* border-left: 1px solid #cccccc; */
-  /* border-radius: 3px; */
-  /* margin: -2px -4px -2px -6px; */
-  overflow: visible;
-  z-index: 99;
-}
-
-.gga-chat-messsage .gurpslink:active,
-.simple-container .gurpslink:active,
-.gga-app .gurpslink:active,
-.gurpsactorsheet .gurpslink:active {
-  cursor: pointer;
-  text-decoration: none;
-  color: black;
-  background-color: rgb(255, 255, 128) !important;
-  /* padding: 2px 3px 2px 3px;
-  border-bottom: 1px solid #cccccc;
-  border-left: 1px solid #333333;
-  border-top: 1px solid #333333;
-  border-right: 1px solid #cccccc;
-  border-radius: 8px;
-  margin: -2px -5px -2px -3px; */
-  overflow: visible;
-  z-index: 99;
 }
 
 .gurps .window-content {

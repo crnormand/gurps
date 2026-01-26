@@ -2064,108 +2064,91 @@ details .popup.square5x4 {
 /* =================================================== */
 /* Copy of glink and gurpslink from simple.css         */
 /* =================================================== */
-.modtooltip .glinkmod,
-.modtooltip .glinkmodplus,
-.modtooltip .glinkmodminus,
-.modtooltip .gurpslink,
-.gga-chat-message .glinkmod,
-.gga-chat-message .glinkmodplus,
-.gga-chat-message .glinkmodminus,
-.gga-chat-message .gurpslink {
-  /* padding: 0.0825em 0.165em; */
-  border: 0.0825em solid rgb(122, 121, 113);
-  border-radius: 0.25em;
-  /* margin: 5px 0; */
+.system-gurps .gurpslink,
+.system-gurps .glinkmodplus,
+.system-gurps .glinkmodminus,
+.system-gurps .glinkmod {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.system-gurps .gurpslink {
+  border: 1px solid darkgoldenrod;
+  background: lightgoldenrodyellow;
+  color: hsl(43, 25%, 38%);
+}
+
+.system-gurps .gurpslink:hover,
+.system-gurps .glinkmodplus:hover,
+.system-gurps .glinkmodminus:hover,
+.system-gurps .glinkmod:hover {
+  color: #252320;
+  cursor: pointer;
+}
+
+.system-gurps .gurpslink:active,
+.system-gurps .glinkmodplus:active,
+.system-gurps .glinkmodminus:active,
+.system-gurps .glinkmod:active {
+  filter: invert(100%);
+}
+
+.system-gurps .gurpslink:hover {
+  background-color: var(--color-gurpslink);
+}
+
+.system-gurps .glinkmodplus {
+  background-color: #d0fdd0;
+  border: 1px solid darkgreen;
+  color: darkgreen;
+}
+
+.system-gurps .glinkmodplus:hover {
+  background-color: lightgreen;
+}
+
+.system-gurps .glinkmodminus {
+  background-color: rgb(255, 207, 214);
+  border: 1px solid rgb(122, 21, 21);
+  color: firebrick;
+}
+
+.system-gurps .glinkmodminus:hover {
+  background-color: rgb(250, 161, 176);
 }
 
 .modtooltip .glinkmod,
 .modtooltip .glinkmodplus,
-.modtooltip .glinkmodminus,
-.modtooltip .gurpslink {
+.modtooltip .glinkmodminus {
+  background: unset;
+  border: unset;
+  padding: unset;
   font-size: var(--font-size-small);
-}
-
-.modtooltip .glinkmod,
-.modtooltip .glinkmodplus,
-.modtooltip .glinkmodminus,
-.modtooltip .gurpslink {
-  background-color: unset !important;
-}
-
-.gga-chat-message .glinkmod,
-.gga-chat-message .glinkmodplus,
-.gga-chat-message .glinkmodminus,
-.gga-chat-message .gurpslink {
-  background-color: rgba(255, 255, 240, 0.8) !important;
 }
 
 .modtooltip .glinkmodplus:hover,
 .modtooltip .glinkmod:hover,
-.modtooltip .glinkmodminus:hover,
-.modtooltip .gurpslink:hover,
-.gga-chat-message .glinkmodplus:hover,
-.gga-chat-message .glinkmod:hover,
-.gga-chat-message .glinkmodminus:hover,
-.gga-chat-message .gurpslink:hover {
+.modtooltip .glinkmodminus:hover {
   cursor: pointer;
   text-shadow: none;
   font-weight: unset;
   background-color: rgba(255, 255, 240, 0.8) !important;
-}
-
-.gga-chat-message .glinkmodplus:hover,
-.gga-chat-message .glinkmod:hover,
-.gga-chat-message .glinkmodminus:hover,
-.gga-chat-message .gurpslink:hover {
-  box-shadow: 0 0 5px red;
 }
 
 .modtooltip .glinkmodplus:active,
 .modtooltip .glinkmod:active,
-.modtooltip .glinkmodminus:active,
-.modtooltip .gurpslink:active,
-.gga-chat-message .glinkmodplus:active,
-.gga-chat-message .glinkmod:active,
-.gga-chat-message .glinkmodminus:active,
-.gga-chat-message .gurpslink:active {
+.modtooltip .glinkmodminus:active {
   background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
-.standalonggurpslink {
-  color: darkblue !important;
-  background-color: rgba(225, 225, 210, 0.8) !important;
-  padding: 0.0825em 0.165em;
-  border: 0.0825em solid rgb(122, 121, 113);
-  border-radius: 0.25em;
-  margin: 0.0825em 0;
-}
-
-.standalonggurpslink:hover {
-  box-shadow: 0 0 5px rgb(128, 0, 0) !important;
-  cursor: pointer;
-  text-shadow: none;
-  font-weight: unset;
-  background-color: rgba(255, 255, 240, 0.8) !important;
-}
-
-.standalonggurpslink:active {
-  background-color: rgba(255, 255, 240, 0.4) !important;
-}
-
-.removemod.plus,
-.gga-chat-message .glinkmodplus,
-.modtooltip .glinkmodplus {
+.removemod.plus {
   color: darkgreen;
 }
 
-.gga-chat-message .glinkmodminus,
 .modtooltip .glinkmodminus {
   color: darkred;
-}
-
-.modtooltip .gurpslink,
-.gga-chat-message .gurpslink {
-  color: darkblue;
 }
 
 .modtooltip .modifier-row {
