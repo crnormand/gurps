@@ -2136,7 +2136,7 @@ details .popup.square5x4 {
 .system-gurps .glinkmodplus:active,
 .system-gurps .glinkmodminus:active,
 .system-gurps .glinkmod:active {
-  filter: invert(100%);
+  filter: invert(80%);
 }
 
 .system-gurps .gurpslink:hover {
