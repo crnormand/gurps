@@ -164,6 +164,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     this.bindManeuverActions(html)
     this.bindEncumbranceActions(html)
     this.bindEffectActions(html)
+    this.bindRangedAccActions(html)
     this.bindLiftingActions(html)
     this.bindEntityCrudActions(html)
   }
@@ -222,6 +223,22 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       if (confirmed) {
         await effect.delete()
       }
+    })
+  }
+
+  bindRangedAccActions(html: JQuery): void {
+    html.find('[data-action="add-acc"]').on('click', (event: JQuery.ClickEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget as HTMLElement
+      const accRaw = target.dataset.acc ?? ''
+      const name = target.dataset.name ?? ''
+      const parsed = accRaw.match(/-?\d+/)?.[0]
+      if (!parsed) return
+      const accValue = Number(parsed)
+      if (Number.isNaN(accValue) || accValue === 0) return
+      const mod = accValue > 0 ? `+${accValue}` : `${accValue}`
+      GURPS.ModifierBucket.addModifier(mod, `Acc (${name})`)
     })
   }
 
