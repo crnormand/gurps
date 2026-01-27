@@ -359,6 +359,36 @@ export class GurpsActor extends Actor {
     if (!saved) setTimeout(() => this._forceRender(), 333)
   }
 
+  async recalcLiftingMoving() {
+    const stValue = Number(this.system.attributes?.ST?.value)
+    if (!stValue || Number.isNaN(stValue)) {
+      await this.internalUpdate({
+        'system.liftingmoving': {
+          basiclift: '',
+          onehandedlift: '',
+          twohandedlift: '',
+          shove: '',
+          runningshove: '',
+          carryonback: '',
+          shiftslightly: '',
+        },
+      })
+      return
+    }
+    const basicLift = Math.floor((stValue * stValue) / 5)
+    await this.internalUpdate({
+      'system.liftingmoving': {
+        basiclift: basicLift,
+        onehandedlift: basicLift * 2,
+        twohandedlift: basicLift * 8,
+        shove: basicLift * 12,
+        runningshove: basicLift * 24,
+        carryonback: basicLift * 15,
+        shiftslightly: basicLift * 50,
+      },
+    })
+  }
+
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
   _initializeStartingValues() {

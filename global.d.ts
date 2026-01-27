@@ -303,3 +303,9 @@ declare namespace foundry.applications.api {
     element: HTMLElement
   }
 }
+
+declare module './module/actor/actor.js' {
+  interface GurpsActor {
+    recalcLiftingMoving(): Promise<void>
+  }
+}

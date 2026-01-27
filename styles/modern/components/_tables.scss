@@ -229,6 +229,17 @@ $attack-columns: 1fr 60px 36px 90px 50px 55px 50px;
   .ms-attack-range {
     color: var(--ms-text-muted);
   }
+
+  .ms-attack-acc-value {
+    color: #c4a24b;
+    cursor: pointer;
+    font-weight: var(--ms-weight-semibold);
+  }
+
+  .ms-attack-acc-value:hover {
+    color: #d8b45c;
+    text-decoration: underline;
+  }
 }
 
 .ms-attack-usage {
