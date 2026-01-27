@@ -1050,6 +1050,7 @@ export class Equipment extends Named {
       }
     }
     if (!!actor)
+      // TODO If USE_FOUNDRY_ITEMS is true, make sure the Item is updated.
       await actor.update({
         [objkey + '.costsum']: cs,
         [objkey + '.weightsum']: ws,

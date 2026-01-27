@@ -173,6 +173,8 @@ export class ActorImporter {
         ...commit,
         ...this.importSizeFromGCS(commit, r.profile, r.traits || r.advantages || [], r.skills, r.equipment),
       }
+
+      // TODO Continue from here.
       commit = { ...commit, ...(await this.importAdsFromGCS(r.traits || r.advantages || [])) }
       commit = { ...commit, ...(await this.importSkillsFromGCS(r.skills)) }
       commit = { ...commit, ...(await this.importSpellsFromGCS(r.spells)) }
@@ -1037,6 +1039,7 @@ export class ActorImporter {
     }
   }
 
+  // Ignore if using Foundry Items.
   async _preImport(generator, itemType) {
     if (!this.isUsingFoundryItems()) {
       // Before we import, we need to find all eligible items,
@@ -1891,13 +1894,6 @@ export class ActorImporter {
     this.ignoreRender = true
     await this._preImport('GCS', 'equipment')
     if (!eq && !oeq) return
-
-    // When using Foundry Items, equipment is stored as equipment Items, not in system.equipment
-    if (this.isUsingFoundryItems()) {
-      return {
-        'system.-=equipment': null,
-      }
-    }
     let temp = []
     if (!!eq)
       for (let i of eq) {
@@ -1958,9 +1954,31 @@ export class ActorImporter {
 
     for (const eqt of temp) {
       await Equipment.calc(eqt)
+
+      // TODO Update Foundry Item.
+      if (this.isUsingFoundryItems()) {
+        const item = this.actor.items.get(eqt.itemid)
+        if (!!item) {
+          const itemSysContain = `system.${item.itemSysKey}.`
+          await this.actor.updateEmbeddedDocuments('Item', [
+            {
+              _id: item._id,
+              eqt,
+            },
+          ])
+        }
+      }
+
       if (!eqt.parentuuid) {
         if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
         else GURPS.put(equipment.other, eqt, oindex++)
+      }
+    }
+
+    // When using Foundry Items, equipment is stored as equipment Items, not in system.equipment
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=equipment': null,
       }
     }
     return {

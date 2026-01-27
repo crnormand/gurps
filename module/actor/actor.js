@@ -371,14 +371,14 @@ export class GurpsActor extends Actor {
    */
   _buildEquipmentFromItems() {
     // Initialize empty equipment object
-    this.system.eqt = {}
+    this.system.equipment = {}
 
     // Populate from equipment Items
     const topLevelEquipment = this.items.contents.filter(
       item => item.type === 'equipment' && !item.system.eqt.parentuuid
     )
     for (const item of topLevelEquipment) {
-      this._addEquipmentAndChildren(item, this.system.eqt)
+      this._addEquipmentAndChildren(item, this.system.equipment)
     }
   }
 
@@ -3002,7 +3002,13 @@ export class GurpsActor extends Actor {
 
     // Update Item
     item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
-    await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+    await this.updateEmbeddedDocuments('Item', [
+      {
+        _id: item.id,
+        system: item.system,
+        name: item.name,
+      },
+    ])
 
     // Update Actor Component
     const itemInfo = item.getItemInfo()
