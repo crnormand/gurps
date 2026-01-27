@@ -2718,7 +2718,10 @@ export class ActorImporter {
       const componentType = actorComp.constructor.name.toLowerCase()
 
       const existingItem = this.actor.items.find(i => {
-        const itemType = i.type === 'feature' ? 'advantage' : i.type
+        const itemType = i.type
+          .replace('feature', 'advantage')
+          .replace('rangedAtk', 'ranged')
+          .replace('meleeAtk', 'melee')
         return (
           itemType === componentType &&
           (i.system.importid === actorComp.uuid ||

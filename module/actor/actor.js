@@ -371,14 +371,24 @@ export class GurpsActor extends Actor {
    */
   _buildEquipmentFromItems() {
     // Initialize empty equipment object
-    this.system.equipment = {}
+    this.system.equipment = {
+      carried: {},
+      other: {},
+    }
 
     // Populate from equipment Items
     const topLevelEquipment = this.items.contents.filter(
-      item => item.type === 'equipment' && !item.system.eqt.parentuuid
+      item => item.type === 'equipment' && !item.system.eqt.parentuuid && item.system.eqt.carried
     )
     for (const item of topLevelEquipment) {
-      this._addEquipmentAndChildren(item, this.system.equipment)
+      this._addEquipmentAndChildren(item, this.system.equipment.carried)
+    }
+
+    const topLevelOtherEquipment = this.items.contents.filter(
+      item => item.type === 'equipment' && !item.system.eqt.parentuuid && !item.system.eqt.carried
+    )
+    for (const item of topLevelOtherEquipment) {
+      this._addEquipmentAndChildren(item, this.system.equipment.other)
     }
   }
 
@@ -421,7 +431,7 @@ export class GurpsActor extends Actor {
     this.system.melee = {}
 
     // Populate from melee Items
-    const topLevelMelee = this.items.contents.filter(item => item.type === 'melee' && !item.system.mel.parentuuid)
+    const topLevelMelee = this.items.contents.filter(item => item.type === 'meleeAtk' && !item.system.mel.parentuuid)
     for (const item of topLevelMelee) {
       this._addMeleeAndChildren(item, this.system.melee)
     }
@@ -448,7 +458,7 @@ export class GurpsActor extends Actor {
 
     // Find and add child melee
     const childMelee = this.items.contents.filter(
-      child => child.type === 'melee' && child.system.mel.parentuuid === melee.uuid
+      child => child.type === 'meleeAtk' && child.system.mel.parentuuid === melee.uuid
     )
     for (const childItem of childMelee) {
       this._addMeleeAndChildren(childItem, melee.contains)
@@ -466,7 +476,7 @@ export class GurpsActor extends Actor {
     this.system.ranged = {}
 
     // Populate from ranged Items
-    const topLevelRanged = this.items.contents.filter(item => item.type === 'ranged' && !item.system.rng.parentuuid)
+    const topLevelRanged = this.items.contents.filter(item => item.type === 'rangedAtk' && !item.system.rng.parentuuid)
     for (const item of topLevelRanged) {
       this._addRangedAndChildren(item, this.system.ranged)
     }
@@ -493,7 +503,7 @@ export class GurpsActor extends Actor {
 
     // Find and add child ranged
     const childRanged = this.items.contents.filter(
-      child => child.type === 'ranged' && child.system.rng.parentuuid === ranged.uuid
+      child => child.type === 'rangedAtk' && child.system.rng.parentuuid === ranged.uuid
     )
     for (const childItem of childRanged) {
       this._addRangedAndChildren(childItem, ranged.contains)
@@ -561,8 +571,8 @@ export class GurpsActor extends Actor {
 
     // Clear persisted system.eqt if it exists and there are equipment Items to replace it
     const hasEquipmentItems = this.items.contents.some(item => item.type === 'equipment')
-    if (hasEquipmentItems && Object.keys(this.system.eqt).length > 0) {
-      await this.internalUpdate({ 'system.eqt': {} }, { diff: false, render: false })
+    if (hasEquipmentItems && Object.keys(this.system.equipment).length > 0) {
+      await this.internalUpdate({ 'system.equipment': {} }, { diff: false, render: false })
     }
 
     // Clear persisted system.melee if it exists and there are melee Items to replace it
@@ -1320,6 +1330,28 @@ export class GurpsActor extends Actor {
   _getStep() {
     let step = Math.ceil(parseInt(this.system.basicmove.value.toString()) / 10)
     return Math.max(1, step)
+  }
+
+  async _preUpdate(changed, options, user) {
+    if (changed.system?.ads) {
+      console.debug('ITEMS: ads changed', changed.system.ads)
+    }
+    if (changed.system?.skills) {
+      console.debug('ITEMS: skills changed', changed.system.skills)
+    }
+    if (changed.system?.spells) {
+      console.debug('ITEMS: spells changed', changed.system.spells)
+    }
+    if (changed.system?.equipment) {
+      console.debug('ITEMS: equipment changed', changed.system.equipment)
+    }
+    if (changed.system?.melee) {
+      console.debug('ITEMS: melee changed', changed.system.melee)
+    }
+    if (changed.system?.ranged) {
+      console.debug('ITEMS: ranged changed', changed.system.ranged)
+    }
+    return super._preUpdate(changed, options, user)
   }
 
   /**
