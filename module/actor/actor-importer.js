@@ -196,7 +196,7 @@ export class ActorImporter {
       commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages || [], r.skills, r.equipment) }
       commit = {
         ...commit,
-        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment),
+        ...(await this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment)),
       }
     } catch (err) {
       console.log(err.stack)
@@ -438,8 +438,8 @@ export class ActorImporter {
       commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
       commit = { ...commit, ...(await this.importSkillsFromGCA(c.abilities?.skilllist)) }
       commit = { ...commit, ...this.importTraitsfromGCA(c.traits) }
-      commit = { ...commit, ...this.importCombatMeleeFromGCA(c.combat?.meleecombatlist) }
-      commit = { ...commit, ...this.importCombatRangedFromGCA(c.combat?.rangedcombatlist) }
+      commit = { ...commit, ...(await this.importCombatMeleeFromGCA(c.combat?.meleecombatlist)) }
+      commit = { ...commit, ...(await this.importCombatRangedFromGCA(c.combat?.rangedcombatlist)) }
       commit = { ...commit, ...(await this.importSpellsFromGCA(c.abilities?.spelllist)) }
       commit = { ...commit, ...this.importLangFromGCA(c.traits?.languagelist) }
       commit = { ...commit, ...(await this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist)) }
@@ -877,7 +877,7 @@ export class ActorImporter {
   /**
    * @param {{ [key: string]: any }} json
    */
-  importCombatMeleeFromGCA(json) {
+  async importCombatMeleeFromGCA(json) {
     if (!json) return
     let t = this.textFrom
 
@@ -912,6 +912,11 @@ export class ActorImporter {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
 
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              m = await this._processItemFrom(m, 'GCA')
+            }
+
             GURPS.put(melee, m, index++)
           }
         }
@@ -933,7 +938,7 @@ export class ActorImporter {
   /**
    * @param {{ [key: string]: any }} json
    */
-  importCombatRangedFromGCA(json) {
+  async importCombatRangedFromGCA(json) {
     if (!json) return
     let t = this.textFrom
 
@@ -975,6 +980,11 @@ export class ActorImporter {
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
+
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              r = await this._processItemFrom(r, 'GCA')
+            }
 
             GURPS.put(ranged, r, index++)
           }
@@ -2307,7 +2317,7 @@ export class ActorImporter {
     }
   }
 
-  importCombatFromGCS(ads, skills, spells, equipment) {
+  async importCombatFromGCS(ads, skills, spells, equipment) {
     let melee = {}
     let ranged = {}
     let m_index = 0
@@ -2343,6 +2353,11 @@ export class ActorImporter {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
 
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              m = await this._processItemFrom(m, 'GCS')
+            }
+
             GURPS.put(melee, m, m_index++)
           } else if (w.type == 'ranged_weapon') {
             let r = new Ranged()
@@ -2371,6 +2386,11 @@ export class ActorImporter {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              r = await this._processItemFrom(r, 'GCS')
+            }
+
             GURPS.put(ranged, r, r_index++)
           }
         }
@@ -2381,6 +2401,7 @@ export class ActorImporter {
     if (this.isUsingFoundryItems()) {
       return {
         'system.-=melee': null,
+        'system.-=ranged': null,
       }
     }
 
