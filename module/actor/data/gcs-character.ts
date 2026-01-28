@@ -121,9 +121,9 @@ const attributeDefSchema = () => {
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
     id: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
     // TODO: STUB. Include enum or enumlike values for attribute types
-    type: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    type: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for attribute placement
-    placement: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    placement: new fields.StringField({ required: true, nullable: false }),
     name: new fields.StringField({ required: true, nullable: false }),
     fullName: new fields.StringField({ required: true, nullable: false }),
     // NOTE: This is parsed as JS code, but no type yet exists for this.
@@ -195,19 +195,19 @@ const sheetSettingsSchema = () => {
     }),
     bodyType: new fields.EmbeddedDataField(GcsBody),
     // TODO: STUB. Include enum or enumlike values for damage progression
-    damageProgression: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    damageProgression: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for default length units
-    defaultLengthUnits: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    defaultLengthUnits: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for default weight units
-    defaultWeightUnits: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    defaultWeightUnits: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for display type (if we're using this at all)
-    userDescriptionDisplay: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    userDescriptionDisplay: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for display type (if we're using this at all)
-    modifiersDisplay: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    modifiersDisplay: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for display type (if we're using this at all)
-    notesDisplay: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    notesDisplay: new fields.StringField({ required: true, nullable: false }),
     // TODO: STUB. Include enum or enumlike values for display type (if we're using this at all)
-    skillLevelAdjDisplay: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    skillLevelAdjDisplay: new fields.StringField({ required: true, nullable: false }),
     useMultiplicativeModifiers: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     useModifyingDicePlusAdds: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     useHalfStatDefaults: new fields.BooleanField({ required: true, nullable: false, initial: false }),
@@ -247,7 +247,7 @@ const gcsCharacterSchema = () => {
     // ModifiedOn       jio.Time        `json:"modified_date"`
     // ThirdParty       map[string]any  `json:"third_party,omitzero"`
     version: new fields.NumberField({ required: true, nullable: false, initial: GcsCharacterVersion }),
-    tid: new fields.DocumentIdField({ required: true, nullable: false, initial: foundry.utils.randomID }),
+    tid: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
     totalPoints: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     pointsRecord: new fields.ArrayField(new fields.SchemaField(pointsRecordSchema()), {
       required: true,
